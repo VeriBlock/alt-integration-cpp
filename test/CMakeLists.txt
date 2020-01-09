@@ -3,3 +3,6 @@ target_link_libraries(vblake_test vblake)
 
 addtest(streamutils_test streamutils_test.cpp)
 target_link_libraries(streamutils_test streamutils)
+
+addtest(base58_test base58_test.cpp)
+target_link_libraries(base58_test base58)
