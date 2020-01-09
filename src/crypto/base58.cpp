@@ -7,6 +7,7 @@
 #include <vector>
 #include <limits>
 #include <veriblock/base58.h>
+#include <stdexcept>
 
 namespace Veriblock 
 {
