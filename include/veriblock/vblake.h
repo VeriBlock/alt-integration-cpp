@@ -6,10 +6,12 @@
 
 #define VBLAKE_HASH_SIZE 24
 
-// state context
+/**
+ * State context.
+ */
 typedef struct {
-  uint8_t b[64];  // input buffer
-  uint64_t h[8];  // chained state
+  uint8_t b[64];  ///< input buffer
+  uint64_t h[8];  ///< chained state
 } vblake_ctx;
 
 /**

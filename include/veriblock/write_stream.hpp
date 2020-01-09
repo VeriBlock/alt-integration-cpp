@@ -7,6 +7,9 @@
 
 namespace VeriBlock {
 
+  /**
+   * Binary writer that is useful dugin binary serialization.
+   */
   class WriteStream {
    public:
     WriteStream() = default;
