@@ -7,6 +7,9 @@
 
 namespace VeriBlock {
 
+  /**
+   * Binary reading stream, that is useful during binary deserialization.
+   */
   class ReadStream {
    public:
     ReadStream(const void *buff, size_t size);
