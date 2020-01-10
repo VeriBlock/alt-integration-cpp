@@ -13,20 +13,20 @@ static std::vector<uint32_t> g_Indexes(128);
 static const uint32_t g_kBase_256 = 256;
 static const size_t g_kBase59 = g_Base59Alphabet.size();
 
-static uint8_t divmod59(std::vector<uint8_t> &number, uint32_t startAt) {
-  uint32_t remainder = 0;
-  for (uint32_t i = startAt; i < number.size(); i++) {
+static uint8_t divmod59(std::vector<uint8_t> &number, size_t startAt) {
+    size_t remainder = 0;
+  for (size_t i = startAt; i < number.size(); i++) {
     uint32_t digit256 = (uint32_t)number[i] & 0xFF;
-    uint32_t temp = remainder * g_kBase_256 + digit256;
+    size_t temp = remainder * g_kBase_256 + digit256;
     number[i] = (uint8_t)(temp / g_kBase59);
     remainder = temp % g_kBase59;
   }
   return (uint8_t)remainder;
 }
 
-static uint8_t divmod256(std::vector<uint8_t> &number59, int startAt) {
-  int remainder = 0;
-  for (int i = startAt; i < number59.size(); i++) {
+static uint8_t divmod256(std::vector<uint8_t> &number59, size_t startAt) {
+    size_t remainder = 0;
+  for (size_t i = startAt; i < number59.size(); i++) {
     int digit59 = (int8_t)number59[i] & 0xFF;
     size_t temp = remainder * g_kBase59 + digit59;
     number59[i] = (uint8_t)(temp / g_kBase_256);
@@ -36,7 +36,7 @@ static uint8_t divmod256(std::vector<uint8_t> &number59, int startAt) {
 }
 
 static bool isBase59String(std::string toTest) {
-  for (int i = 0; i < toTest.length(); i++) {
+  for (size_t i = 0; i < toTest.size(); i++) {
     if (!g_Base59Alphabet.find(toTest[i])) {
       return false;
     }
@@ -59,7 +59,7 @@ std::string base59_encode(const void *buf, size_t nSize) {
   memcpy(input.data(), buf, nSize);
 
   // Count leading zeroes
-  int32_t zeroCount = 0;
+  size_t zeroCount = 0;
   while (zeroCount < input.size() && input[zeroCount] == 0) {
     ++zeroCount;
   }
@@ -68,7 +68,7 @@ std::string base59_encode(const void *buf, size_t nSize) {
   std::vector<uint8_t> temp(input.size() * 2);
   size_t j = temp.size();
 
-  int32_t startAt = zeroCount;
+  size_t startAt = zeroCount;
   while (startAt < input.size()) {
     uint8_t mod = divmod59(input, startAt);
     if (input[startAt] == 0) {
@@ -83,8 +83,8 @@ std::string base59_encode(const void *buf, size_t nSize) {
   }
 
   // Add as many leading '1' as there were leading zeros.
-  while (--zeroCount >= 0) {
-    temp[--j] = g_Base59Alphabet[0];
+  for (; zeroCount != -1; zeroCount--) {
+      temp[--j] = g_Base59Alphabet[0];
   }
 
   result.resize(temp.size() - j);
@@ -99,14 +99,14 @@ std::vector<uint8_t> base59_decode(const std::string &input) {
   }
 
   memset(g_Indexes.data(), -1, g_Indexes.size() * sizeof(uint32_t));
-  for (uint32_t i = 0; i < g_Base59Alphabet.size(); i++) {
-    g_Indexes[g_Base59Alphabet[i]] = i;
+  for (size_t i = 0; i < g_Base59Alphabet.size(); i++) {
+    g_Indexes[g_Base59Alphabet[i]] = (uint32_t)i;
   }
 
   std::vector<uint8_t> input59(input.size());
 
   // Transform the String to a base59 byte sequence
-  for (int8_t i = 0; i < input.size(); ++i) {
+  for (size_t i = 0; i < input.size(); ++i) {
     char c = input[i];
 
     int digit59 = -1;
