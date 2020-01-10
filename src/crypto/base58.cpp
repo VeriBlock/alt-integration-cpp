@@ -58,8 +58,8 @@ static bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch,
   while (*psz && IsSpace(*psz))
     psz++;
   // Skip and count leading '1's.
-  int zeroes = 0;
-  int length = 0;
+  size_t zeroes = 0;
+  size_t length = 0;
   while (*psz == '1') {
     zeroes++;
     if (zeroes > max_ret_len)
