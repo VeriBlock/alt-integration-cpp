@@ -83,7 +83,7 @@ std::string base59_encode(const void *buf, size_t nSize) {
   }
 
   // Add as many leading '1' as there were leading zeros.
-  for (; zeroCount != (size_t)-1; zeroCount--) {
+  for (--zeroCount; zeroCount != (size_t)-1; zeroCount--) {
       temp[--j] = g_Base59Alphabet[0];
   }
 
