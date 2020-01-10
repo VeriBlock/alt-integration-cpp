@@ -53,7 +53,7 @@ static const int8_t mapBase58[256] = {
 };
 
 static bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch,
-                         int max_ret_len) {
+                         size_t max_ret_len) {
   // Skip leading spaces.
   while (*psz && IsSpace(*psz))
     psz++;
@@ -67,7 +67,7 @@ static bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch,
     psz++;
   }
   // Allocate enough space in big-endian base256 representation.
-  int size = strlen(psz) * 733 / 1000 + 1; // log(58) / log(256), rounded up.
+  size_t size = strlen(psz) * 733 / 1000 + 1; // log(58) / log(256), rounded up.
   std::vector<unsigned char> b256(size);
   // Process the characters.
   static_assert(sizeof(mapBase58) / sizeof(mapBase58[0]) == 256,
@@ -115,7 +115,7 @@ static std::string EncodeBase58(const unsigned char *pbegin,
     zeroes++;
   }
   // Allocate enough space in big-endian base58 representation.
-  int size = (pend - pbegin) * 138 / 100 + 1; // log(256) / log(58), rounded up.
+  size_t size = (pend - pbegin) * 138 / 100 + 1; // log(256) / log(58), rounded up.
   std::vector<unsigned char> b58(size);
   // Process the bytes.
   while (pbegin != pend) {
@@ -147,7 +147,7 @@ static std::string EncodeBase58(const unsigned char *pbegin,
 }
 
 static bool DecodeBase58(const std::string &str,
-                         std::vector<unsigned char> &vchRet, int max_ret_len) {
+                         std::vector<unsigned char> &vchRet, size_t max_ret_len) {
   if (!ValidAsCString(str)) {
     return false;
   }
