@@ -50,17 +50,12 @@ jobs:
           submodules: true
           clean: true
           fetch-depth: 1
-#        - name: install dependencies
-#          run: |
-#            set -e
-#            git clone -b release-1.10.0 https://github.com/google/googletest/
-#            cd googletest
-#            mkdir build
-#            cd build
-#            cmake .. -DCMAKE_BUILD_TYPE=Release
-#            sudo make -j2 install
+        - name: install dependencies
+          run: |
+            vcpkg integrate install
+            vcpkg install gtest
       - name: cmake
-        run: cmake . -Bbuild
+        run: cmake . -Bbuild -DCMAKE_TOOLCHAIN_FILE=${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
       - name: build
         run: cmake --build build -- -j2
       - name: test
