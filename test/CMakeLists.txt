@@ -6,3 +6,6 @@ target_link_libraries(streamutils_test streamutils)
 
 addtest(base58_test base58_test.cpp)
 target_link_libraries(base58_test base58)
+
+addtest(base59_test base59_test.cpp)
+target_link_libraries(base59_test base59)
