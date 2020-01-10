@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build:
+  linux:
     runs-on: ubuntu-18.04
     env:
       CC: clang
@@ -34,6 +34,30 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build --parallel 2
       - name: test
         run: cmake --build build --target test
+
+
+  windows:
+    runs-on: windows-latest
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
+      VCPKG_DEFAULT_TRIPLET: x64-windows
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: true
+          clean: true
+          fetch-depth: 1
+      - name: install dependencies
+        run: |
+          vcpkg integrate install
+          vcpkg install gtest
+      - name: cmake
+        run: cmake . -Bbuild -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+      - name: build
+        run: cmake --build build --parallel 2
+      - name: test
+        run: cmake --build build --target RUN_TESTS

@@ -53,6 +53,9 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/w14296)                  # 'operator': expression is always 'boolean_value'
     add_flag(/w14826)                  # Conversion from 'type1' to 'type_2' is sign-extended. This may cause unexpected runtime behavior.
     add_flag(/w14640)                  # Enable warning on thread un-safe static member initialization
+
+    # disable these warnings:
+    add_flag(/wd4389)                  # disable warning: 'operator' : signed/unsigned mismatch
 endif()
 
 include(GNUInstallDirs)
