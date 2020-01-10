@@ -35,15 +35,6 @@ static uint8_t divmod256(std::vector<uint8_t> &number59, size_t startAt) {
   return (uint8_t)remainder;
 }
 
-static bool isBase59String(std::string toTest) {
-  for (size_t i = 0; i < toTest.size(); i++) {
-    if (!g_Base59Alphabet.find(toTest[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
 std::string base59_encode(const void *buf, size_t nSize) {
   std::string result;
 
