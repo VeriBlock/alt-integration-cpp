@@ -1,10 +1,12 @@
 #include <gtest/gtest.h>
+
 #include <vector>
-#include <veriblock/base58.h>
+
+#include "veriblock/strutil.hpp"
 
 struct TestCase {
-  std::vector<uint8_t> binData;
-  std::string baseData;
+  std::vector<uint8_t> binData{};
+  std::string baseData{};
 };
 
 class Base58Test : public testing::TestWithParam<TestCase> {};
@@ -36,14 +38,14 @@ static std::vector<TestCase> g_Cases = {
 
 TEST_P(Base58Test, Encode) {
   auto tc = GetParam();
-  EXPECT_EQ(Veriblock::base58_encode(tc.binData.data(), tc.binData.size()),
-            tc.baseData);
+  EXPECT_EQ(VeriBlock::EncodeBase58(tc.binData), tc.baseData);
 }
 
 TEST_P(Base58Test, Decode) {
   auto tc = GetParam();
-  EXPECT_EQ(Veriblock::base58_decode(tc.baseData), tc.binData);
+  EXPECT_EQ(VeriBlock::DecodeBase58(tc.baseData), tc.binData);
 }
 
-INSTANTIATE_TEST_SUITE_P(Base58Regression, Base58Test,
+INSTANTIATE_TEST_SUITE_P(Base58Regression,
+                         Base58Test,
                          testing::ValuesIn(g_Cases));

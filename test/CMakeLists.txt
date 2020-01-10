@@ -8,4 +8,4 @@ addtest(serde_test serde_test.cpp)
 target_link_libraries(serde_test vbkutils)
 
 addtest(base58_test base58_test.cpp)
-target_link_libraries(base58_test base58)
+target_link_libraries(base58_test vbkutils)

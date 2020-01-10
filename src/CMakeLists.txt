@@ -4,5 +4,5 @@ add_library(vbkutils
         strutil.cpp
         read_stream.cpp
         write_stream.cpp
-        crypto/base58.cpp
+        base58.cpp
         )

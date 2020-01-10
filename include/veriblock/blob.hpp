@@ -62,7 +62,7 @@ struct Blob {
   }
 
  private:
-  void assign(Slice<const uint8_t> slice) {
+  inline void assign(Slice<const uint8_t> slice) {
     if (slice.size() != N) {
       throw std::invalid_argument("Blob(): invalid slice size");
     }

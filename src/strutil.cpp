@@ -1,5 +1,7 @@
 #include "veriblock/strutil.hpp"
 
+#include <stdexcept>
+
 namespace VeriBlock {
 
 static const signed char p_util_hexdigit[256] = {
@@ -30,7 +32,7 @@ inline signed char HexDigit(char c) {
   return p_util_hexdigit[(unsigned char)c];
 }
 
-std::vector<uint8_t> ParseHex(const char* psz) {
+std::vector<uint8_t> ParseHex(const char *psz) {
   // convert hex dump to vector
   std::vector<uint8_t> vch;
   while (true) {
@@ -46,11 +48,11 @@ std::vector<uint8_t> ParseHex(const char* psz) {
   return vch;
 }
 
-std::vector<uint8_t> ParseHex(const std::string& hex) {
+std::vector<uint8_t> ParseHex(const std::string &hex) {
   return ParseHex(hex.c_str());
 }
 
-bool IsHex(const std::string& str) {
+bool IsHex(const std::string &str) {
   for (char it : str) {
     if (HexDigit(it) < 0) return false;
   }
