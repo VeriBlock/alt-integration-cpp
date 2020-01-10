@@ -83,7 +83,7 @@ std::string base59_encode(const void *buf, size_t nSize) {
   }
 
   // Add as many leading '1' as there were leading zeros.
-  for (; zeroCount != -1; zeroCount--) {
+  for (; zeroCount != (size_t)-1; zeroCount--) {
       temp[--j] = g_Base59Alphabet[0];
   }
 
@@ -107,7 +107,7 @@ std::vector<uint8_t> base59_decode(const std::string &input) {
 
   // Transform the String to a base59 byte sequence
   for (size_t i = 0; i < input.size(); ++i) {
-    char c = input[i];
+    uint8_t c = input[i];
 
     int digit59 = -1;
     if (c >= 0 && c < 128) {
@@ -121,7 +121,7 @@ std::vector<uint8_t> base59_decode(const std::string &input) {
   }
 
   // Count leading zeroes
-  int8_t zeroCount = 0;
+  size_t zeroCount = 0;
   while (zeroCount < input59.size() && input59[zeroCount] == 0) {
     ++zeroCount;
   }
@@ -130,7 +130,7 @@ std::vector<uint8_t> base59_decode(const std::string &input) {
   std::vector<uint8_t> temp(input.size());
   size_t j = temp.size();
 
-  int8_t startAt = zeroCount;
+  size_t startAt = zeroCount;
   while (startAt < input59.size()) {
     uint8_t mod = divmod256(input59, startAt);
     if (input59[startAt] == 0) {
