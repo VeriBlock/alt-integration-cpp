@@ -62,10 +62,10 @@ TEST(ReadStream, Negative) {
   VeriBlock::ReadStream stream(buf);
 
   EXPECT_EQ(stream.readBE<uint32_t>(), 4294967295ull);
-  EXPECT_EQ(stream.remaining(), 0);
+  EXPECT_EQ(stream.remaining(), 0u);
   stream.reset();
   EXPECT_EQ(stream.readBE<int32_t>(), -1);
-  EXPECT_EQ(stream.remaining(), 0);
+  EXPECT_EQ(stream.remaining(), 0u);
 }
 
 TEST(WriteStream, Write) {
