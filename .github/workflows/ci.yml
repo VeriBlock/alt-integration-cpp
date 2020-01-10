@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build:
+  linux:
     runs-on: ubuntu-18.04
     env:
       CC: clang
@@ -37,3 +37,31 @@ jobs:
         run: cmake --build build -- -j2
       - name: test
         run: cmake --build build --target test
+
+
+    windows:
+      runs-on: windows-latest
+      env:
+        CTEST_OUTPUT_ON_FAILURE: 1
+      steps:
+        - uses: actions/checkout@v1
+          name: checkout
+          with:
+            submodules: true
+            clean: true
+            fetch-depth: 1
+#        - name: install dependencies
+#          run: |
+#            set -e
+#            git clone -b release-1.10.0 https://github.com/google/googletest/
+#            cd googletest
+#            mkdir build
+#            cd build
+#            cmake .. -DCMAKE_BUILD_TYPE=Release
+#            sudo make -j2 install
+        - name: cmake
+          run: cmake . -Bbuild
+        - name: build
+          run: cmake --build build -- -j2
+        - name: test
+          run: cmake --build build --target test
