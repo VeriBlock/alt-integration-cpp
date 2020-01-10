@@ -1,5 +1,5 @@
-#ifndef _VBCRYPTO
-#define _VBCRYPTO
+#ifndef _BASE58_H
+#define _BASE58_H
 
 #include <vector>
 #include <string>
