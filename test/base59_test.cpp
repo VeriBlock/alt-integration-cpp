@@ -9,6 +9,7 @@ struct TestCase {
 
 class Base59Test : public testing::TestWithParam<TestCase> {};
 
+//  test data
 static std::vector<TestCase> g_Cases = {
     {
         {},
