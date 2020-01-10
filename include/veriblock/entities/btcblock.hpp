@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-#include "sha256hash.hpp"
+#include "veriblock/entities/hashes.hpp"
 #include "veriblock/read_stream.hpp"
 
 namespace VeriBlock {
@@ -19,8 +19,8 @@ struct BtcBlock {
   static BtcBlock fromRaw(ReadStream& stream) {
     BtcBlock block{};
     block.version = stream.readLE<uint32_t>();
-    block.previousBlock = Sha256Hash::fromRaw(stream);
-    block.merkleRoot = Sha256Hash::fromRaw(stream);
+    block.previousBlock = stream.readSlice(SHA256_HASH_SIZE);
+    block.merkleRoot = stream.readSlice(SHA256_HASH_SIZE);
     block.timestamp = stream.readLE<uint32_t>();
     block.bits = stream.readLE<uint32_t>();
     block.nonce = stream.readLE<uint32_t>();
@@ -28,10 +28,9 @@ struct BtcBlock {
   }
 
   static BtcBlock fromVbk(ReadStream& stream) {
-    const auto bytes =
-        readSingleByteLenValue(stream, BTC_HEADER_SIZE, BTC_HEADER_SIZE);
-    ReadStream s(bytes);
-    return BtcBlock::fromRaw(s);
+    ReadStream valStream(
+        readSingleByteLenValue(stream, BTC_HEADER_SIZE, BTC_HEADER_SIZE));
+    return BtcBlock::fromRaw(valStream);
   }
 };
 

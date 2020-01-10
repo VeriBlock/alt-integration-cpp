@@ -8,6 +8,7 @@ enum TxType {
   VBK_POP_TX = 0x02,
 };
 
+constexpr auto SHA256_HASH_SIZE = 32;
 constexpr auto BTC_HEADER_SIZE = 80;
 constexpr auto VBK_HEADER_SIZE = 64;
 

@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <vector>
 
+#include "blob.hpp"
 #include "consts.hpp"
 #include "read_stream.hpp"
 #include "slice.hpp"
