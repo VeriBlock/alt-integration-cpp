@@ -55,7 +55,7 @@ jobs:
           vcpkg integrate install
           vcpkg install gtest
       - name: cmake
-        run: cmake . -Bbuild -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+        run: cmake . -Bbuild -A x86 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
       - name: build
         run: cmake --build build --parallel 2
       - name: test
