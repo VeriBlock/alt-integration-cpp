@@ -11,6 +11,7 @@ enum TxType {
 constexpr auto SHA256_HASH_SIZE = 32;
 constexpr auto BTC_HEADER_SIZE = 80;
 constexpr auto VBK_HEADER_SIZE = 64;
+constexpr auto BTC_TX_MAX_RAW_SIZE = 4 * 1000 * 1000;
 
 }  // namespace VeriBlock
 
