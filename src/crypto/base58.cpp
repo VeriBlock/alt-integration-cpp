@@ -74,10 +74,10 @@ static bool DecodeBase58(const char *psz, std::vector<unsigned char> &vch,
                 "mapBase58.size() should be 256"); // guarantee not out of range
   while (*psz && !IsSpace(*psz)) {
     // Decode base58 character
-    int carry = mapBase58[(uint8_t)*psz];
+    size_t carry = mapBase58[(uint8_t)*psz];
     if (carry == -1) // Invalid b58 character
       return false;
-    int i = 0;
+    size_t i = 0;
     for (std::vector<unsigned char>::reverse_iterator it = b256.rbegin();
          (carry != 0 || i < length) && (it != b256.rend()); ++it, ++i) {
       carry += 58 * (*it);
