@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <vector>
 #include <veriblock/read_stream.hpp>
 #include <veriblock/write_stream.hpp>
@@ -25,6 +26,20 @@ TEST(ReadStream, Read) {
   stream.reset();
 
   EXPECT_THROW(stream.read(5), std::out_of_range);
+
+  stream.reset();
+
+  auto sl1 = stream.readSlice(2);
+  EXPECT_EQ(sl1.data(), buf.data());
+  EXPECT_EQ(sl1.size(), 2);
+  EXPECT_EQ(sl1[0], 0);
+  EXPECT_EQ(sl1[1], 1);
+
+  auto sl2 = stream.readSlice(2);
+  EXPECT_EQ(sl2.data(), buf.data() + 2);
+  EXPECT_EQ(sl2.size(), 2);
+  EXPECT_EQ(sl2[0], 2);
+  EXPECT_EQ(sl2[1], 3);
 }
 
 TEST(ReadStream, BE) {
@@ -94,8 +109,8 @@ TEST(WriteStream, BE) {
   stream.writeBE<int64_t>(-4);
 
   EXPECT_EQ(stream.data().size(),
-            sizeof(int8_t) * 2 + sizeof(int16_t) * 2 + sizeof(int32_t) * 2
-                + sizeof(int64_t) * 2);
+            sizeof(int8_t) * 2 + sizeof(int16_t) * 2 + sizeof(int32_t) * 2 +
+                sizeof(int64_t) * 2);
   EXPECT_EQ(stream.data(),
             (std::vector<uint8_t>{
                 1,    0xff, 2,    0,    0xfe, 0xff, 3,    0,    0,    0,
@@ -115,8 +130,8 @@ TEST(WriteStream, LE) {
   stream.writeLE<int64_t>(-4);
 
   EXPECT_EQ(stream.data().size(),
-            sizeof(int8_t) * 2 + sizeof(int16_t) * 2 + sizeof(int32_t) * 2
-                + sizeof(int64_t) * 2);
+            sizeof(int8_t) * 2 + sizeof(int16_t) * 2 + sizeof(int32_t) * 2 +
+                sizeof(int64_t) * 2);
   EXPECT_EQ(stream.data(),
             (std::vector<uint8_t>{
                 1,    0xff, 0,    2,    0xff, 0xfe, 0,    0,    0,    3,
