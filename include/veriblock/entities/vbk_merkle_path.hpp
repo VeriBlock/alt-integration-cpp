@@ -10,9 +10,9 @@ namespace VeriBlock {
 
 struct VbkMerklePath {
   int32_t treeIndex{};
-  std::vector<Sha256Hash> layers{};
-  Sha256Hash subject{};
   int32_t index{};
+  Sha256Hash subject{};
+  std::vector<Sha256Hash> layers{};
 
   static VbkMerklePath fromRaw(ReadStream& stream) {
     VbkMerklePath mp;
