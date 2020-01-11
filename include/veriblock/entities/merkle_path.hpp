@@ -34,7 +34,7 @@ struct MerklePath {
     path.layers.reserve(numLayers);
     for (int i = 0; i < numLayers; i++) {
       path.layers.emplace_back(
-          readVarLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE));
+          readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE));
     }
 
     return path;
