@@ -51,8 +51,9 @@ Slice<const uint8_t> readSingleByteLenValue(
 
 template <typename T,
           typename = typename std::enable_if<std::is_integral<T>::value>::type>
-T readSingleBEValue(ReadStream& stream, int32_t min, int32_t max) {
-  return ReadStream(pad(readSingleByteLenValue(stream, min, max), max))
+T readSingleBEValue(ReadStream& stream) {
+  return ReadStream(
+             pad(readSingleByteLenValue(stream, 0, sizeof(T)), sizeof(T)))
       .readBE<T>();
 }
 
@@ -70,7 +71,7 @@ std::vector<T> readArrayOf(ReadStream& stream,
                            int32_t min,
                            int32_t max,
                            std::function<T(ReadStream&)> readFunc) {
-  const auto count = readSingleBEValue<int32_t>(stream, 0, 4);
+  const auto count = readSingleBEValue<int32_t>(stream);
   checkRange(count, min, max);
 
   std::vector<T> items;
