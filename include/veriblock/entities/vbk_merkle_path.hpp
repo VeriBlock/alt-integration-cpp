@@ -4,7 +4,6 @@
 #include <cstdint>
 
 #include "veriblock/entities/hashes.hpp"
-#include "veriblock/entities/merkle_path.hpp"
 #include "veriblock/serde.hpp"
 
 namespace VeriBlock {
