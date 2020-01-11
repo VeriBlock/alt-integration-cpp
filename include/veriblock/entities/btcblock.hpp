@@ -4,7 +4,7 @@
 #include <cstdint>
 
 #include "veriblock/entities/hashes.hpp"
-#include "veriblock/read_stream.hpp"
+#include "veriblock/serde.hpp"
 
 namespace VeriBlock {
 
@@ -27,7 +27,7 @@ struct BtcBlock {
     return block;
   }
 
-  static BtcBlock fromVbk(ReadStream& stream) {
+  static BtcBlock fromVbkEncoding(ReadStream& stream) {
     ReadStream valStream(
         readSingleByteLenValue(stream, BTC_HEADER_SIZE, BTC_HEADER_SIZE));
     return BtcBlock::fromRaw(valStream);

@@ -4,7 +4,7 @@ namespace VeriBlock {
 Slice<const uint8_t> readVarLenValue(ReadStream& stream,
                                      int minLen,
                                      int maxLen) {
-  auto length = readSingleBEValue<int32_t>(stream, 0, 4);
+  auto length = readSingleBEValue<int32_t>(stream);
   checkRange(length, minLen, maxLen);
   return stream.readSlice(length);
 }
