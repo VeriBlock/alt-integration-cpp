@@ -17,6 +17,13 @@
 
 namespace VeriBlock {
 
+/**
+ * Checks if expression 'min' <= 'num' <= 'max' is true. If false, throws.
+ * @param num number to check
+ * @param min min value
+ * @param max max value
+ * @throws std::out_of_range
+ */
 void checkRange(int64_t num, int64_t min, int64_t max);
 
 /**
@@ -39,16 +46,44 @@ std::vector<uint8_t> pad(const T& v, size_t size) {
   return ret;
 }
 
+/**
+ * Read variable length value, which consists of
+ * `[N=(4 bytes = size of slice) | N bytes slice]`
+ * Size of slice should be within range [minLen; maxLen]
+ * @param stream read data from this stream
+ * @param minLen minimum possible value of slice size
+ * @param maxLen maximum possible value of slice size
+ * @throws std::out_of_range if size is out of range or stream is out of data
+ * @return slice with data
+ */
 Slice<const uint8_t> readVarLenValue(
     ReadStream& stream,
     int32_t minLen = 0,
     int32_t maxLen = std::numeric_limits<int32_t>::max());
 
+/**
+ * Read variable length value, which consists of
+ * `[N=(1 byte = size of slice) | N bytes slice]`
+ * Size of slice should be within range [minLen; maxLen]
+ * @param stream read data from this stream
+ * @param minLen minimum possible value of slice size
+ * @param maxLen maximum possible value of slice size
+ * @throws std::out_of_range if size is out of range or stream is out of data
+ * @return slice with data
+ */
 Slice<const uint8_t> readSingleByteLenValue(
     ReadStream& stream,
     int32_t minLen = 0,
     int32_t maxLen = std::numeric_limits<int32_t>::max());
 
+/**
+ * Read single Big-Endian value from a stream.
+ * This function interprets sizeof(T) bytes as Big-Endian number and returns it.
+ * @tparam T number type - uint64_t, etc.
+ * @param stream read data from this stream
+ * @throws std::out_of_range if stream is out of data
+ * @return read number
+ */
 template <typename T,
           typename = typename std::enable_if<std::is_integral<T>::value>::type>
 T readSingleBEValue(ReadStream& stream) {
@@ -66,6 +101,16 @@ struct NetworkBytePair {
 
 NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
 
+/**
+ * Reads array of entities of type T.
+ * @tparam T type of entity to read
+ * @param stream read data from this stream
+ * @param min min size of array
+ * @param max max size of array
+ * @param readFunc function that is called to read single value of type T
+ * @throws std::out_of_range if stream is out of data
+ * @return vector of read elements of type T
+ */
 template <typename T>
 std::vector<T> readArrayOf(ReadStream& stream,
                            int32_t min,
