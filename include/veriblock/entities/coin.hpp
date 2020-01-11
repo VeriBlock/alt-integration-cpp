@@ -8,25 +8,15 @@
 namespace VeriBlock {
 
 struct Coin {
+  int64_t units;
+
   explicit Coin(int64_t atomicUnits) : units(atomicUnits) {}
 
   static Coin fromVbkEncoding(ReadStream& stream) {
-    return Coin(readSingleBEValue<int64_t>(stream, 0, 8));
+    return Coin(readSingleBEValue<int64_t>(stream));
   }
-
-  Coin& operator=(int64_t val) {
-    this->units = val;
-    return *this;
-  }
-
-  bool operator==(const Coin& other) const noexcept {
-    return units == other.units;
-  }
-
-  explicit operator int64_t() const noexcept { return units; }
 
  private:
-  int64_t units;
 };
 
 }  // namespace VeriBlock

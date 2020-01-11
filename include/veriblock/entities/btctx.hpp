@@ -10,16 +10,13 @@
 namespace VeriBlock {
 
 struct BtcTx {
+  std::vector<uint8_t> tx;
+
   BtcTx(Slice<const uint8_t> slice) : tx(slice.begin(), slice.end()) {}
 
   static BtcTx fromVbkEncoding(ReadStream& stream) {
     return BtcTx(readVarLenValue(stream, 0, BTC_TX_MAX_RAW_SIZE));
   }
-
-  bool operator==(const BtcTx& other) const noexcept { return tx == other.tx; }
-
- private:
-  std::vector<uint8_t> tx;
 };
 
 }  // namespace VeriBlock

@@ -4,7 +4,7 @@
 #include <cstdint>
 
 #include "veriblock/entities/hashes.hpp"
-#include "veriblock/read_stream.hpp"
+#include "veriblock/serde.hpp"
 
 namespace VeriBlock {
 

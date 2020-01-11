@@ -25,7 +25,11 @@ struct Blob {
 
   Blob() = default;
 
-  explicit Blob(Slice<const uint8_t> slice) { assign(slice); }
+  Blob(Slice<const uint8_t> slice) { assign(slice); }
+  Blob(const std::vector<uint8_t>& v) { assign(v); }
+
+  Blob(const Blob<N>& other): data_(other.data_) {}
+  Blob(Blob<N>&& other): data_(std::move(other.data_)) {}
 
   iterator begin() noexcept { return data_.begin(); }
 
@@ -35,15 +39,17 @@ struct Blob {
 
   const_iterator end() const noexcept { return data_.end(); }
 
-  constexpr size_type size() const noexcept { return N; }
+  static size_type size() noexcept { return N; }
 
   pointer data() noexcept { return data_.data(); }
 
   const_pointer data() const noexcept { return data_.data(); }
 
-  std::string toHex() { return HexStr(data_.begin(), data_.end()); }
+  std::string toHex() const { return HexStr(data_.begin(), data_.end()); }
 
-  bool operator==(const Blob<N>& other) { return data_ == other; }
+  bool operator==(const Blob<N>& other) const noexcept {
+    return data_ == other.data_;
+  }
 
   Blob<N>& operator=(const Blob<N>& other) {
     this->data_ = other.data_;
@@ -71,6 +77,12 @@ struct Blob {
 
   std::array<uint8_t, N> data_;
 };  // namespace VeriBlock
+
+/// custom gtest printer, which prints Blob of any size as hexstring
+template <size_t size>
+void PrintTo(const Blob<size>& blob, ::std::ostream* os) {
+  *os << blob.toHex();
+}
 
 }  // namespace VeriBlock
 
