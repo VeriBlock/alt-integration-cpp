@@ -3,9 +3,10 @@
 #include <stdexcept>
 #include <string.h>
 #include <vector>
-#include <veriblock/base58.h>
+#include <veriblock/base58.hpp>
+#include <string>
 
-namespace Veriblock {
+namespace VeriBlock {
 
 static std::string g_Base59Alphabet =
     "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0";
@@ -35,7 +36,7 @@ static uint8_t divmod256(std::vector<uint8_t> &number59, size_t startAt) {
   return (uint8_t)remainder;
 }
 
-std::string base59_encode(const void *buf, size_t nSize) {
+std::string EncodeBase59(const void *buf, size_t nSize) {
   std::string result;
 
   if (!nSize) {
@@ -66,7 +67,7 @@ std::string base59_encode(const void *buf, size_t nSize) {
       ++startAt;
     }
     temp[--j] = g_Base59Alphabet[mod];
-  }
+  };
 
   // Strip extra '1' if any
   while (j < temp.size() && temp[j] == g_Base59Alphabet.c_str()[0]) {
@@ -83,7 +84,12 @@ std::string base59_encode(const void *buf, size_t nSize) {
   return result;
 };
 
-std::vector<uint8_t> base59_decode(const std::string &input) {
+std::string EncodeBase59(const unsigned char *pbegin, 
+    const unsigned char *pend) {
+    return EncodeBase59(pbegin, pend - pbegin);
+};
+
+std::vector<uint8_t> DecodeBase59(const std::string &input) {
   std::vector<uint8_t> result;
   if (input.empty()) {
     return result;

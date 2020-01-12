@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <vector>
-#include <veriblock/base59.h>
+#include <veriblock/base59.hpp>
 
 struct TestCase {
     std::vector<uint8_t> binData;
@@ -37,13 +37,13 @@ static std::vector<TestCase> g_Cases = {
 
 TEST_P(Base59Test, Encode) {
     auto tc = GetParam();
-    EXPECT_EQ(Veriblock::base59_encode(tc.binData.data(), tc.binData.size()),
+    EXPECT_EQ(VeriBlock::EncodeBase59(tc.binData),
         tc.baseData);
 }
 
 TEST_P(Base59Test, Decode) {
     auto tc = GetParam();
-    EXPECT_EQ(Veriblock::base59_decode(tc.baseData), tc.binData);
+    EXPECT_EQ(VeriBlock::DecodeBase59(tc.baseData), tc.binData);
 }
 
 INSTANTIATE_TEST_SUITE_P(Base59Regression, Base59Test,
