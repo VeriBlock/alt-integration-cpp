@@ -6,6 +6,7 @@
 
 #define VBLAKE_HASH_SIZE 24
 
+namespace VeriBlock {
 /**
  * State context.
  */
@@ -27,8 +28,9 @@ void vblake_init(vblake_ctx *ctx);  // secret key
  * @param inlen size of input buffer. At most 64 bytes.
  * @return 0 if succeeded, -1 if input buffer is more than 64 bytes.
  */
-int vblake_update(vblake_ctx *ctx,                // context
-                  const void *in, size_t inlen);  // data to be hashed
+int vblake_update(vblake_ctx *ctx,  // context
+                  const void *in,
+                  size_t inlen);  // data to be hashed
 
 /**
  * Generate the message digest.
@@ -44,7 +46,10 @@ void vblake_final(vblake_ctx *ctx, void *out);
  * @param inlen length of input data, not more than 64 bytes
  * @return 0 if succeeded, -1 if inlen is more than 64 bytes
  */
-int vblake(void *out,                      // return buffer for digest
-           const void *in, size_t inlen);  // data to be hashed
+int vblake(void *out,  // return buffer for digest
+           const void *in,
+           size_t inlen);  // data to be hashed
+
+}  // namespace VeriBlock
 
 #endif  // ALT_INTEGRATION_VBLAKE_HPP

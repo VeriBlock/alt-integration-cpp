@@ -1,22 +1,28 @@
 // A simple vblake Reference Implementation.
 
+#include <veriblock/vblake.h>
+
 #include <cstdio>
 #include <cstring>
-#include <veriblock/vblake.h>
 
 #ifndef _countof
 #define _countof(x) (sizeof(x) / sizeof(x[0]))
 #endif
 
+namespace VeriBlock {
 //==========================================================================================
 //                      CONSTS
 //==========================================================================================
 
 static const uint64_t cnt_vblake_iv = 8;
-static const uint64_t vblake_iv[cnt_vblake_iv] = {
-    0x4BBF42C1F006AD9Dl, 0x5D11A8C3B5AEB12El, 0xA64AB78DC2774652l,
-    0xC67595724658F253l, 0xB8864E79CB891E56l, 0x12ED593E29FB41A1l,
-    0xB1DA3AB63C60BAA8l, 0x6D20E50C1F954DEDl};
+static const uint64_t vblake_iv[cnt_vblake_iv] = {0x4BBF42C1F006AD9Dl,
+                                                  0x5D11A8C3B5AEB12El,
+                                                  0xA64AB78DC2774652l,
+                                                  0xC67595724658F253l,
+                                                  0xB8864E79CB891E56l,
+                                                  0x12ED593E29FB41A1l,
+                                                  0xB1DA3AB63C60BAA8l,
+                                                  0x6D20E50C1F954DEDl};
 
 static const uint8_t sigma[16][16] = {
     {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
@@ -36,13 +42,22 @@ static const uint8_t sigma[16][16] = {
     {9, 0, 5, 7, 2, 4, 10, 15, 14, 1, 11, 12, 6, 8, 3, 13},
     {2, 12, 6, 10, 0, 11, 8, 3, 4, 13, 7, 5, 15, 14, 1, 9}};
 
-static const uint64_t vblake_c[] = {
-    0xA51B6A89D489E800L, 0xD35B2E0E0B723800L, 0xA47B39A2AE9F9000L,
-    0x0C0EFA33E77E6488L, 0x4F452FEC309911EBL, 0x3CFCC66F74E1022CL,
-    0x4606AD364DC879DDL, 0xBBA055B53D47C800L, 0x531655D90C59EB1BL,
-    0xD1A00BA6DAE5B800L, 0x2FE452DA9632463EL, 0x98A7B5496226F800L,
-    0xBAFCD004F92CA000L, 0x64A39957839525E7L, 0xD859E6F081AAE000L,
-    0x63D980597B560E6BL};
+static const uint64_t vblake_c[] = {0xA51B6A89D489E800L,
+                                    0xD35B2E0E0B723800L,
+                                    0xA47B39A2AE9F9000L,
+                                    0x0C0EFA33E77E6488L,
+                                    0x4F452FEC309911EBL,
+                                    0x3CFCC66F74E1022CL,
+                                    0x4606AD364DC879DDL,
+                                    0xBBA055B53D47C800L,
+                                    0x531655D90C59EB1BL,
+                                    0xD1A00BA6DAE5B800L,
+                                    0x2FE452DA9632463EL,
+                                    0x98A7B5496226F800L,
+                                    0xBAFCD004F92CA000L,
+                                    0x64A39957839525E7L,
+                                    0xD859E6F081AAE000L,
+                                    0x63D980597B560E6BL};
 
 //==========================================================================================
 //                                  TOOLS
@@ -58,26 +73,32 @@ static inline uint64_t vblake_ROTR64(uint64_t x, uint64_t y) {
 //
 // The G Mixing function from the Blake2 specification.
 //
-static void vblake_B2B_G(uint64_t *v, uint32_t a, uint32_t b, uint32_t c,
-                                uint32_t d, uint64_t x, uint64_t y, uint64_t c1,
-                                uint64_t c2) {
-  v[a] = v[a] + v[b] + (x ^ c1);                                       
-  v[d] ^= v[a];                                                        
-  v[d] = vblake_ROTR64(v[d], 60);                                      
-  v[c] = v[c] + v[d];                                                  
-  v[b] = vblake_ROTR64(v[b] ^ v[c], 43);                               
-  v[a] = v[a] + v[b] + (y ^ c2);                                       
-  v[d] = vblake_ROTR64(v[d] ^ v[a], 5);                                
-  v[c] = v[c] + v[d];                                                  
-  v[b] = vblake_ROTR64(v[b] ^ v[c], 18);                               
+static void vblake_B2B_G(uint64_t *v,
+                         uint32_t a,
+                         uint32_t b,
+                         uint32_t c,
+                         uint32_t d,
+                         uint64_t x,
+                         uint64_t y,
+                         uint64_t c1,
+                         uint64_t c2) {
+  v[a] = v[a] + v[b] + (x ^ c1);
+  v[d] ^= v[a];
+  v[d] = vblake_ROTR64(v[d], 60);
+  v[c] = v[c] + v[d];
+  v[b] = vblake_ROTR64(v[b] ^ v[c], 43);
+  v[a] = v[a] + v[b] + (y ^ c2);
+  v[d] = vblake_ROTR64(v[d] ^ v[a], 5);
+  v[c] = v[c] + v[d];
+  v[b] = vblake_ROTR64(v[b] ^ v[c], 18);
 
   // X'Y'Z' + X'YZ + XY'Z + XYZ'    LUT: 10010110
   v[d] ^= (~v[a] & ~v[b] & ~v[c]) | (~v[a] & v[b] & v[c]) |
-          (v[a] & ~v[b] & v[c]) | (v[a] & v[b] & ~v[c]);               
+          (v[a] & ~v[b] & v[c]) | (v[a] & v[b] & ~v[c]);
 
   // X'Y'Z + X'YZ' + XY'Z' + XYZ    LUT: 01101001
   v[d] ^= (~v[a] & ~v[b] & v[c]) | (~v[a] & v[b] & ~v[c]) |
-          (v[a] & ~v[b] & ~v[c]) | (v[a] & v[b] & v[c]);               
+          (v[a] & ~v[b] & ~v[c]) | (v[a] & v[b] & v[c]);
 }
 
 //==========================================================================================
@@ -119,22 +140,78 @@ static void vblake_compress(vblake_ctx *ctx) {
   // of sigma from reference BLAKE implementation
 
   for (i = 0; i < kNumOfRounds; i++) {
-    vblake_B2B_G(v, 0, 4, 8, 12, m[sigma[i][1]], m[sigma[i][0]],
-                 vblake_c[sigma[i][1]], vblake_c[sigma[i][0]]);
-    vblake_B2B_G(v, 1, 5, 9, 13, m[sigma[i][3]], m[sigma[i][2]],
-                 vblake_c[sigma[i][3]], vblake_c[sigma[i][2]]);
-    vblake_B2B_G(v, 2, 6, 10, 14, m[sigma[i][5]], m[sigma[i][4]],
-                 vblake_c[sigma[i][5]], vblake_c[sigma[i][4]]);
-    vblake_B2B_G(v, 3, 7, 11, 15, m[sigma[i][7]], m[sigma[i][6]],
-                 vblake_c[sigma[i][7]], vblake_c[sigma[i][6]]);
-    vblake_B2B_G(v, 0, 5, 10, 15, m[sigma[i][9]], m[sigma[i][8]],
-                 vblake_c[sigma[i][9]], vblake_c[sigma[i][8]]);
-    vblake_B2B_G(v, 1, 6, 11, 12, m[sigma[i][11]], m[sigma[i][10]],
-                 vblake_c[sigma[i][11]], vblake_c[sigma[i][10]]);
-    vblake_B2B_G(v, 2, 7, 8, 13, m[sigma[i][13]], m[sigma[i][12]],
-                 vblake_c[sigma[i][13]], vblake_c[sigma[i][12]]);
-    vblake_B2B_G(v, 3, 4, 9, 14, m[sigma[i][15]], m[sigma[i][14]],
-                 vblake_c[sigma[i][15]], vblake_c[sigma[i][14]]);
+    vblake_B2B_G(v,
+                 0,
+                 4,
+                 8,
+                 12,
+                 m[sigma[i][1]],
+                 m[sigma[i][0]],
+                 vblake_c[sigma[i][1]],
+                 vblake_c[sigma[i][0]]);
+    vblake_B2B_G(v,
+                 1,
+                 5,
+                 9,
+                 13,
+                 m[sigma[i][3]],
+                 m[sigma[i][2]],
+                 vblake_c[sigma[i][3]],
+                 vblake_c[sigma[i][2]]);
+    vblake_B2B_G(v,
+                 2,
+                 6,
+                 10,
+                 14,
+                 m[sigma[i][5]],
+                 m[sigma[i][4]],
+                 vblake_c[sigma[i][5]],
+                 vblake_c[sigma[i][4]]);
+    vblake_B2B_G(v,
+                 3,
+                 7,
+                 11,
+                 15,
+                 m[sigma[i][7]],
+                 m[sigma[i][6]],
+                 vblake_c[sigma[i][7]],
+                 vblake_c[sigma[i][6]]);
+    vblake_B2B_G(v,
+                 0,
+                 5,
+                 10,
+                 15,
+                 m[sigma[i][9]],
+                 m[sigma[i][8]],
+                 vblake_c[sigma[i][9]],
+                 vblake_c[sigma[i][8]]);
+    vblake_B2B_G(v,
+                 1,
+                 6,
+                 11,
+                 12,
+                 m[sigma[i][11]],
+                 m[sigma[i][10]],
+                 vblake_c[sigma[i][11]],
+                 vblake_c[sigma[i][10]]);
+    vblake_B2B_G(v,
+                 2,
+                 7,
+                 8,
+                 13,
+                 m[sigma[i][13]],
+                 m[sigma[i][12]],
+                 vblake_c[sigma[i][13]],
+                 vblake_c[sigma[i][12]]);
+    vblake_B2B_G(v,
+                 3,
+                 4,
+                 9,
+                 14,
+                 m[sigma[i][15]],
+                 m[sigma[i][14]],
+                 vblake_c[sigma[i][15]],
+                 vblake_c[sigma[i][14]]);
   }
 
   // Update h[0 .. 7]
@@ -187,7 +264,7 @@ void vblake_init(vblake_ctx *ctx) { vblake_create_ctx(ctx); }
 //
 // Add "inlen" bytes from "in" into the hash.
 //
-int vblake_update(vblake_ctx *ctx, const void *in, size_t inlen) // data bytes
+int vblake_update(vblake_ctx *ctx, const void *in, size_t inlen)  // data bytes
 {
   if (inlen > 64) {
     return -1;
@@ -221,3 +298,5 @@ int vblake(void *out, const void *in, size_t inlen) {
   vblake_final(&ctx, out);
   return 0;
 }
+
+}  // namespace VeriBlock
