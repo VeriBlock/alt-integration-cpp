@@ -9,7 +9,7 @@ namespace VeriBlock {
     std::string EncodeBase59(const unsigned char *pbegin,
         const unsigned char *pend);
 
-    // std::string EncodeBase58(const uint8_t *buf, size_t size);
+    std::string EncodeBase58(const uint8_t *buf, size_t size);
 
     template <typename T,
         typename = typename std::enable_if<sizeof(typename T::value_type) ==

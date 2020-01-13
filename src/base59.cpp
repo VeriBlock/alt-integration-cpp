@@ -10,7 +10,6 @@ namespace VeriBlock {
 
 static std::string g_Base59Alphabet =
     "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0";
-static std::vector<uint32_t> g_Indexes(128);
 static const uint32_t g_kBase_256 = 256;
 static const size_t g_kBase59 = g_Base59Alphabet.size();
 
@@ -36,17 +35,16 @@ static uint8_t divmod256(std::vector<uint8_t> &number59, size_t startAt) {
   return (uint8_t)remainder;
 }
 
-std::string EncodeBase59(const void *buf, size_t nSize) {
-  std::string result;
+std::string EncodeBase59(const uint8_t *buf, size_t nSize) {
 
   if (!nSize) {
-    return result;
+    return std::string();
   }
 
   // Make a copy of the input since we are going to modify it.
   std::vector<uint8_t> input(nSize);
   if (input.empty()) {
-    return result;
+    return std::string();
   }
   memcpy(input.data(), buf, nSize);
 
@@ -75,13 +73,11 @@ std::string EncodeBase59(const void *buf, size_t nSize) {
   }
 
   // Add as many leading '1' as there were leading zeros.
-  for (--zeroCount; zeroCount != (size_t)-1; zeroCount--) {
+  for (--zeroCount; zeroCount != std::numeric_limits<size_t>::max(); zeroCount--) {
       temp[--j] = g_Base59Alphabet[0];
   }
 
-  result.resize(temp.size() - j);
-  memcpy((void *)result.data(), &temp.data()[j], temp.size() - j);
-  return result;
+  return std::string{temp.begin(), temp.end() - j};
 };
 
 std::string EncodeBase59(const unsigned char *pbegin, 
@@ -94,8 +90,8 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
   if (input.empty()) {
     return result;
   }
+  std::vector<uint32_t> g_Indexes(128, -1);
 
-  memset(g_Indexes.data(), -1, g_Indexes.size() * sizeof(uint32_t));
   for (size_t i = 0; i < g_Base59Alphabet.size(); i++) {
     g_Indexes[g_Base59Alphabet[i]] = (uint32_t)i;
   }
@@ -141,10 +137,7 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
   while (j < temp.size() && temp[j] == 0) {
     ++j;
   }
-  result.resize(temp.size() - j + zeroCount);
-  memcpy(result.data(), temp.data() + j - zeroCount,
-         temp.size() - j + zeroCount);
-  return result;
+  return std::vector<uint8_t>{temp.data() + j - zeroCount, temp.data() - j + zeroCount};
 }
 
 } // namespace Veriblock
