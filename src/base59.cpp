@@ -13,6 +13,16 @@ static std::string g_Base59Alphabet =
 static const uint32_t g_kBase_256 = 256;
 static const size_t g_kBase59 = g_Base59Alphabet.size();
 
+static const std::vector<int8_t> g_Indexes = {
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+-1, -1, -1, -1, -1, -1, -1, -1, 58, 0, 1, 2, 3, 4, 5, 6, 7, 8, -1, -1, -1, -1, -
+1, -1, -1, 9, 10, 11, 12, 13, 14, 15, 16, -1, 17, 18, 19, 20, 21, -1, 22, 23, 24
+, 25, 26, 27, 28, 29, 30, 31, 32, -1, -1, -1, -1, -1, -1, 33, 34, 35, 36, 37, 38
+, 39, 40, 41, 42, 43, -1, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57
+, -1, -1, -1, -1, -1 };
+
+
 static uint8_t divmod59(std::vector<uint8_t> &number, size_t startAt) {
     size_t remainder = 0;
   for (size_t i = startAt; i < number.size(); i++) {
@@ -42,11 +52,10 @@ std::string EncodeBase59(const uint8_t *buf, size_t nSize) {
   }
 
   // Make a copy of the input since we are going to modify it.
-  std::vector<uint8_t> input(nSize);
+  std::vector<uint8_t> input(buf, buf+nSize);
   if (input.empty()) {
     return std::string();
   }
-  memcpy(input.data(), buf, nSize);
 
   // Count leading zeroes
   size_t zeroCount = 0;
@@ -77,7 +86,7 @@ std::string EncodeBase59(const uint8_t *buf, size_t nSize) {
       temp[--j] = g_Base59Alphabet[0];
   }
 
-  return std::string{temp.begin(), temp.end() - j};
+  return std::string{temp.begin()+j, temp.end()};
 };
 
 std::string EncodeBase59(const unsigned char *pbegin, 
@@ -86,14 +95,8 @@ std::string EncodeBase59(const unsigned char *pbegin,
 };
 
 std::vector<uint8_t> DecodeBase59(const std::string &input) {
-  std::vector<uint8_t> result;
   if (input.empty()) {
-    return result;
-  }
-  std::vector<uint32_t> g_Indexes(128, -1);
-
-  for (size_t i = 0; i < g_Base59Alphabet.size(); i++) {
-    g_Indexes[g_Base59Alphabet[i]] = (uint32_t)i;
+    return std::vector<uint8_t>();
   }
 
   std::vector<uint8_t> input59(input.size());
@@ -137,7 +140,7 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
   while (j < temp.size() && temp[j] == 0) {
     ++j;
   }
-  return std::vector<uint8_t>{temp.data() + j - zeroCount, temp.data() - j + zeroCount};
+  return std::vector<uint8_t>{temp.data() + j - zeroCount, temp.data() + temp.size()};
 }
 
 } // namespace Veriblock
