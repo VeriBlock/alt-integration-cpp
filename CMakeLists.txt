@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
 option(TESTING "Build tests" ON)
 
 ## setup compilation flags
@@ -63,6 +64,10 @@ include(GNUInstallDirs)
 include_directories(include)
 
 add_subdirectory(src)
+
+if(CLANG_TIDY)
+    include(cmake/clang-tidy.cmake)
+endif()
 
 if(TESTING)
     enable_testing()
