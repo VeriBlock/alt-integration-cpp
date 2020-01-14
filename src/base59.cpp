@@ -53,9 +53,6 @@ std::string EncodeBase59(const uint8_t *buf, size_t nSize) {
 
   // Make a copy of the input since we are going to modify it.
   std::vector<uint8_t> input(buf, buf+nSize);
-  if (input.empty()) {
-    return std::string();
-  }
 
   // Count leading zeroes
   size_t zeroCount = 0;
@@ -110,7 +107,7 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
       digit59 = g_Indexes[c];
     }
     if (digit59 < 0) {
-      throw new std::invalid_argument("Not a Base59 input");
+      throw new std::invalid_argument("DecodeBase59() : Not a Base59 input");
     }
 
     input59[i] = (uint8_t)digit59;
@@ -140,7 +137,7 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
   while (j < temp.size() && temp[j] == 0) {
     ++j;
   }
-  return std::vector<uint8_t>{temp.data() + j - zeroCount, temp.data() + temp.size()};
+  return std::vector<uint8_t>{temp.begin() + j - zeroCount, temp.end()};
 }
 
 } // namespace Veriblock
