@@ -12,7 +12,7 @@ void checkRange(int64_t num, int64_t min, int64_t max) {
   }
 }
 
-Slice<const uint8_t> trimmedSlice(int64_t input) {
+std::vector<uint8_t> trimmedArray(int64_t input) {
   int x = sizeof(int64_t);
   do {
     if ((input >> ((x - 1) * 8)) != 0) {
@@ -23,11 +23,11 @@ Slice<const uint8_t> trimmedSlice(int64_t input) {
 
   std::vector<uint8_t> output(x);
   for (int i = 0; i < x; i++) {
-    output[x - i - 1] = (uint8_t)input;
+    output[x - i - 1] = (uint8_t) input;
     input >>= 8;
   }
 
-  return Slice<const uint8_t>(output);
+  return output;
 }
 
 Slice<const uint8_t> readVarLenValue(ReadStream& stream,
@@ -49,13 +49,13 @@ Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
 void writeSingleByteLenValue(WriteStream& stream,
                              Slice<const uint8_t> value) {
   checkRange(value.size(), 0, std::numeric_limits<uint8_t>::max());
-  stream.writeBE<uint8_t>((uint8_t) value.size());
+  stream.writeBE((uint8_t) value.size());
   stream.write(value);
 }
 
 void writeSingleBEValue(WriteStream& stream, int64_t value) {
-  Slice<const uint8_t> dataBytes = trimmedSlice(value);
-  stream.writeBE<uint8_t>((uint8_t) dataBytes.size());
+  std::vector<uint8_t> dataBytes = trimmedArray(value);
+  stream.writeBE((uint8_t) dataBytes.size());
   stream.write(dataBytes);
 }
 

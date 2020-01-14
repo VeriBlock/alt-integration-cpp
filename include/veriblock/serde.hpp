@@ -33,7 +33,7 @@ void checkRange(int64_t num, int64_t min, int64_t max);
  * @param input value to convert
  * @return converted and trimmed byte array
  */
-Slice<const uint8_t> trimmedSlice(int64_t input);
+std::vector<uint8_t> trimmedArray(int64_t input);
 
 /**
  * Pad container 'v' to have size at least 'size', by adding leading zeroes
