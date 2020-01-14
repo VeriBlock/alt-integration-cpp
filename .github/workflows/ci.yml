@@ -27,7 +27,7 @@ jobs:
           set -e
 
           sudo apt update
-          sudo apt install -y clang-tidy clang-tidy-6.0 libllvm6.0
+          sudo apt install -y clang-tidy clang-tidy-6.0 llvm-6.0
 
           # google test
           (
