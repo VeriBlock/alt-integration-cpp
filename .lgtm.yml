@@ -7,7 +7,7 @@ extraction:
       - export GIT=true
     configure:
       command:
-        - cmake . -Bbuild
+        - cmake . -Bbuild -DTESTING=OFF
     before_index:
       - export GTEST_DIR=$LGTM_SRC/googletest
     index:
