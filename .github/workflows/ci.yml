@@ -11,6 +11,7 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-18.04
+    container: veriblock/btcdev
     env:
       CC: clang
       CXX: clang++
@@ -22,23 +23,6 @@ jobs:
           submodules: true
           clean: true
           fetch-depth: 1
-      - name: install dependencies
-        run: |
-          set -e
-
-          sudo apt update
-          sudo apt remove -y clang-6.0 libclang-common-6.0-dev libclang1-6.0 libllvm6.0
-          sudo apt install -y clang-tidy clang
-
-          # google test
-          (
-            git clone -b release-1.10.0 https://github.com/google/googletest/
-            cd googletest
-            mkdir build
-            cd build
-            cmake .. -DCMAKE_BUILD_TYPE=Release
-            sudo make -j2 install
-          )
       - name: cmake
         run: cmake . -Bbuild -DCLANG_TIDY=ON
       - name: build
