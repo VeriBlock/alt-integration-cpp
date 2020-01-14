@@ -3,7 +3,9 @@
 
 #include <stdint.h>
 
+#include <algorithm>
 #include <vector>
+#include <veriblock/entities/merkle_path.hpp>
 
 namespace VeriBlock {
 using ByteArray = std::vector<uint8_t>;
@@ -12,7 +14,7 @@ template <typename Hasher>
 class MerkleTree {
  protected:
   Hasher hashWriter;
-  uint32_t nTransactions;
+  size_t nTransactions;
   std::vector<ByteArray> vHash;
 
  protected:
@@ -55,8 +57,60 @@ class MerkleTree {
  public:
   MerkleTree() : nTransactions(0) {}
 
-  MerkleTree(std::vector<ByteArray> transactions)
-      : nTransactions(transactions.size()) {}
+  MerkleTree(const std::vector<ByteArray>& transactions)
+      : nTransactions(transactions.size()) {
+    buildTree(transactions);
+  }
+
+  std::vector<ByteArray> getMerklePath(const ByteArray& transaction) {
+    ByteArray hash = hashWriter.hash(transaction);
+    uint32_t bottomWidth = getBottomWidth(nTransactions);
+
+    std::vector<ByteArray> merklePath;
+
+    size_t index = 0;
+    for (size_t i = 0; i < bottomWidth; ++i) {
+      if (vHash[i] == hash) {
+        index = i;
+        merklePath.push_back(hash);
+        break;
+      }
+    }
+    while (index != vHash.size() - 1)
+      if (index & 1) {
+        merklePath.push_back(vHash[index - 1]);
+        index = index / 2 + bottomWidth;
+      } else {
+        merklePath.push_back(vHash[index + 1]);
+        index = (index + 1) / 2 + bottomWidth;
+      }
+    return merklePath;
+  }
+
+  std::vector<ByteArray> getMerklePath1(const ByteArray& transaction) {
+    ByteArray hash = hashWriter.hash(transaction);
+    uint32_t bottomWidth = getBottomWidth(nTransactions);
+
+    std::vector<ByteArray> merklePath;
+
+    size_t index = 0;
+    for (size_t i = 0; i < bottomWidth; ++i) {
+      if (vHash[i] == hash) {
+        index = i;
+        merklePath.push_back(hash);
+        break;
+      }
+    }
+    while (index != vHash.size() - 1)
+      if (index & 1) {
+        merklePath.push_back(vHash[index - 1]);
+        index = index / 2 + bottomWidth;
+      } else {
+        merklePath.push_back(vHash[index + 1]);
+        index = (index + 1) / 2 + bottomWidth;
+      }
+    return merklePath;
+  }
 
   ByteArray getMerkleRoot() { return vHash.back(); }
 };
