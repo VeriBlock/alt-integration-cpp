@@ -9,6 +9,7 @@
 #include "blob.hpp"
 #include "consts.hpp"
 #include "read_stream.hpp"
+#include "write_stream.hpp"
 #include "slice.hpp"
 
 /**
@@ -25,6 +26,14 @@ namespace VeriBlock {
  * @throws std::out_of_range
  */
 void checkRange(int64_t num, int64_t min, int64_t max);
+
+/**
+ * Converts the input to the byte array and trims it's size to the
+ * lowest possible value
+ * @param input value to convert
+ * @return converted and trimmed byte array
+ */
+Slice<const uint8_t> trimmedSlice(int64_t input);
 
 /**
  * Pad container 'v' to have size at least 'size', by adding leading zeroes
@@ -91,6 +100,36 @@ T readSingleBEValue(ReadStream& stream) {
              pad(readSingleByteLenValue(stream, 0, sizeof(T)), sizeof(T)))
       .readBE<T>();
 }
+
+/**
+ * Write single byte length value, which consists of
+ * `N bytes slice`
+ * Appends 1 byte slice size to the stream
+ * @param stream write data to this stream
+ * @param value slice data that should be written
+ * @throws std::out_of_range if value size is too high
+ */
+void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value);
+
+/**
+ * Write single Big-Endian value to the stream.
+ * This function converts number to the bytes array
+ * in Big-Endian order and writes to the stream
+ * @param stream write data to this stream
+ * @param value value to be written
+ * @throws std::out_of_range if stream is out of data
+ */
+void writeSingleBEValue(WriteStream& stream, int64_t value);
+
+/**
+ * Write variable length value, which consists of
+ * `N bytes slice`
+ * Appends up to 8 bytes slice size to the stream and
+ * 1 byte slice length size
+ * @param stream write data to this stream
+ * @param value slice data that should be written
+ */
+void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value);
 
 struct NetworkBytePair {
   ///< works as std::optional. if hasNetworkByte is true, networkByte is set

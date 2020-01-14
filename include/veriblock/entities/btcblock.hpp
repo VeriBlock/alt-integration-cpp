@@ -32,6 +32,21 @@ struct BtcBlock {
         readSingleByteLenValue(stream, BTC_HEADER_SIZE, BTC_HEADER_SIZE));
     return BtcBlock::fromRaw(valStream);
   }
+
+  static void toRaw(BtcBlock& block, WriteStream& stream) {
+    stream.writeLE(block.version);
+    stream.write(block.previousBlock);
+    stream.write(block.merkleRoot);
+    stream.writeLE(block.timestamp);
+    stream.writeLE(block.bits);
+    stream.writeLE(block.nonce);
+  }
+
+  static void toVbkEncoding(BtcBlock& block, WriteStream& stream) {
+    WriteStream blockData;
+    toRaw(block, blockData);
+    writeSingleByteLenValue(stream, blockData.data());
+  }
 };
 
 }  // namespace VeriBlock
