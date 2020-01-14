@@ -33,7 +33,7 @@ struct BtcBlock {
     return BtcBlock::fromRaw(valStream);
   }
 
-  static void toRaw(const BtcBlock& block, WriteStream& stream) {
+  static void toRaw(WriteStream& stream, const BtcBlock& block) {
     stream.writeLE(block.version);
     stream.write(block.previousBlock);
     stream.write(block.merkleRoot);
@@ -42,10 +42,10 @@ struct BtcBlock {
     stream.writeLE(block.nonce);
   }
 
-  static void toVbkEncoding(const BtcBlock& block, WriteStream& stream) {
-    WriteStream blockData;
-    toRaw(block, blockData);
-    writeSingleByteLenValue(stream, blockData.data());
+  static void toVbkEncoding(WriteStream& stream, const BtcBlock& block) {
+    WriteStream blockStream;
+    toRaw(blockStream, block);
+    writeSingleByteLenValue(stream, blockStream.data());
   }
 };
 
