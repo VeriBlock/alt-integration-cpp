@@ -107,7 +107,7 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
       digit59 = g_Indexes[c];
     }
     if (digit59 < 0) {
-      throw new std::invalid_argument("DecodeBase59() : Not a Base59 input");
+      throw std::invalid_argument("DecodeBase59() : Not a Base59 input");
     }
 
     input59[i] = (uint8_t)digit59;
