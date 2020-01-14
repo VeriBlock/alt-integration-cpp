@@ -1,10 +1,7 @@
-#include <assert.h>
 #include <limits>
 #include <stdexcept>
-#include <string.h>
-#include <vector>
-#include <veriblock/base58.hpp>
 #include <string>
+#include <vector>
 
 namespace VeriBlock {
 
@@ -14,17 +11,16 @@ static const uint32_t g_kBase_256 = 256;
 static const size_t g_kBase59 = g_Base59Alphabet.size();
 
 static const std::vector<int8_t> g_Indexes = {
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
--1, -1, -1, -1, -1, -1, -1, -1, 58, 0, 1, 2, 3, 4, 5, 6, 7, 8, -1, -1, -1, -1, -
-1, -1, -1, 9, 10, 11, 12, 13, 14, 15, 16, -1, 17, 18, 19, 20, 21, -1, 22, 23, 24
-, 25, 26, 27, 28, 29, 30, 31, 32, -1, -1, -1, -1, -1, -1, 33, 34, 35, 36, 37, 38
-, 39, 40, 41, 42, 43, -1, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57
-, -1, -1, -1, -1, -1 };
-
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 58, 0,  1,  2,  3,  4,  5,  6,  7,
+    8,  -1, -1, -1, -1, -1, -1, -1, 9,  10, 11, 12, 13, 14, 15, 16, -1, 17, 18,
+    19, 20, 21, -1, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, -1, -1, -1, -1,
+    -1, -1, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, -1, 44, 45, 46, 47, 48,
+    49, 50, 51, 52, 53, 54, 55, 56, 57, -1, -1, -1, -1, -1};
 
 static uint8_t divmod59(std::vector<uint8_t> &number, size_t startAt) {
-    size_t remainder = 0;
+  size_t remainder = 0;
   for (size_t i = startAt; i < number.size(); i++) {
     uint32_t digit256 = (uint32_t)number[i] & 0xFF;
     size_t temp = remainder * g_kBase_256 + digit256;
@@ -35,7 +31,7 @@ static uint8_t divmod59(std::vector<uint8_t> &number, size_t startAt) {
 }
 
 static uint8_t divmod256(std::vector<uint8_t> &number59, size_t startAt) {
-    size_t remainder = 0;
+  size_t remainder = 0;
   for (size_t i = startAt; i < number59.size(); i++) {
     int digit59 = (int8_t)number59[i] & 0xFF;
     size_t temp = remainder * g_kBase59 + digit59;
@@ -46,22 +42,21 @@ static uint8_t divmod256(std::vector<uint8_t> &number59, size_t startAt) {
 }
 
 std::string EncodeBase59(const uint8_t *buf, size_t nSize) {
-
   if (!nSize) {
-    return std::string();
+    return {};
   }
 
   // Make a copy of the input since we are going to modify it.
-  std::vector<uint8_t> input(buf, buf+nSize);
+  std::vector<uint8_t> input(buf, buf + nSize);
 
   // Count leading zeroes
   size_t zeroCount = 0;
-  while (zeroCount < input.size() && input[zeroCount] == 0) {
+  while (zeroCount < nSize && input[zeroCount] == 0) {
     ++zeroCount;
   }
 
   // The actual encoding
-  std::vector<uint8_t> temp(input.size() * 2);
+  std::vector<uint8_t> temp(nSize * 2);
   size_t j = temp.size();
 
   size_t startAt = zeroCount;
@@ -79,38 +74,34 @@ std::string EncodeBase59(const uint8_t *buf, size_t nSize) {
   }
 
   // Add as many leading '1' as there were leading zeros.
-  for (--zeroCount; zeroCount != std::numeric_limits<size_t>::max(); zeroCount--) {
-      temp[--j] = g_Base59Alphabet[0];
+  for (--zeroCount; zeroCount != std::numeric_limits<size_t>::max();
+       zeroCount--) {
+    temp[--j] = g_Base59Alphabet[0];
   }
 
-  return std::string{temp.begin()+j, temp.end()};
+  return std::string{temp.begin() + j, temp.end()};
 };
 
-std::string EncodeBase59(const unsigned char *pbegin, 
-    const unsigned char *pend) {
-    return EncodeBase59(pbegin, pend - pbegin);
+std::string EncodeBase59(const unsigned char *pbegin,
+                         const unsigned char *pend) {
+  return EncodeBase59(pbegin, pend - pbegin);
 };
 
 std::vector<uint8_t> DecodeBase59(const std::string &input) {
   if (input.empty()) {
-    return std::vector<uint8_t>();
+    return {};
   }
 
   std::vector<uint8_t> input59(input.size());
 
   // Transform the String to a base59 byte sequence
   for (size_t i = 0; i < input.size(); ++i) {
-    uint8_t c = input[i];
-
-    int digit59 = -1;
-    if (c >= 0 && c < 128) {
-      digit59 = g_Indexes[c];
-    }
+    int8_t digit59 = g_Indexes[input[i]];
     if (digit59 < 0) {
       throw std::invalid_argument("DecodeBase59() : Not a Base59 input");
     }
 
-    input59[i] = (uint8_t)digit59;
+    input59[i] = digit59;
   }
 
   // Count leading zeroes
@@ -140,4 +131,4 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
   return std::vector<uint8_t>{temp.begin() + j - zeroCount, temp.end()};
 }
 
-} // namespace Veriblock
+}  // namespace VeriBlock
