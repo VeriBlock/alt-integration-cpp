@@ -26,17 +26,18 @@ jobs:
         run: |
           set -e
 
+          sudo apt update
+          sudo apt install -y clang-tidy llvm
+
           # google test
           (
-          git clone -b release-1.10.0 https://github.com/google/googletest/
-          cd googletest
-          mkdir build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          sudo make -j2 install
+            git clone -b release-1.10.0 https://github.com/google/googletest/
+            cd googletest
+            mkdir build
+            cd build
+            cmake .. -DCMAKE_BUILD_TYPE=Release
+            sudo make -j2 install
           )
-
-          sudo apt install -y clang-tidy
       - name: cmake
         run: cmake . -Bbuild -DCLANG_TIDY=ON
       - name: build
