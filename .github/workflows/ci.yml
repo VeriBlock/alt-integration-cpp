@@ -32,7 +32,7 @@ jobs:
           cmake .. -DCMAKE_BUILD_TYPE=Release
           sudo make -j2 install
       - name: cmake
-        run: cmake . -Bbuild
+        run: cmake . -Bbuild -DCLANG_TIDY=ON
       - name: build
         run: cmake --build build --parallel 2
       - name: test
