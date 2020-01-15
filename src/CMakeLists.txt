@@ -6,4 +6,5 @@ add_library(vbkutils
         write_stream.cpp
         base58.cpp
 		base59.cpp
+		sha2.cpp
         )
