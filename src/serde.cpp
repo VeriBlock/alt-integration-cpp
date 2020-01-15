@@ -13,7 +13,7 @@ void checkRange(int64_t num, int64_t min, int64_t max) {
 }
 
 std::vector<uint8_t> trimmedArray(int64_t input) {
-  int x = sizeof(int64_t);
+  size_t x = sizeof(int64_t);
   do {
     if ((input >> ((x - 1) * 8)) != 0) {
       break;
