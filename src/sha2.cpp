@@ -55,6 +55,9 @@
 }
 #endif
 
+#define _CRT_SECURE_NO_DEPRECATE
+#define _CRT_SECURE_NO_WARNINGS
+
 /*
  * SHA-256 context setup
  */
