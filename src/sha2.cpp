@@ -28,6 +28,7 @@
  *  http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf
  */
 
+#include <stdint.h>
 #include <veriblock/sha2.hpp>
 #include <string.h>
 #include <stdio.h>
