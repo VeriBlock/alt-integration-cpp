@@ -40,6 +40,24 @@ struct VbkBlock {
     ReadStream blockStream(blockBytes);
     return VbkBlock::fromRaw(blockStream);
   }
+
+  static void toRaw(WriteStream& stream, const VbkBlock& block) {
+    stream.writeBE(block.height);
+    stream.writeBE(block.version);
+    stream.write(block.previousBlock);
+    stream.write(block.previousKeystone);
+    stream.write(block.secondPreviousKeystone);
+    stream.write(block.merkleRoot);
+    stream.writeBE(block.timestamp);
+    stream.writeBE(block.difficulty);
+    stream.writeBE(block.nonce);
+  }
+
+  static void toVbkEncoding(WriteStream& stream, const VbkBlock& block) {
+    WriteStream blockStream;
+    toRaw(blockStream, block);
+    writeSingleByteLenValue(stream, blockStream.data());
+  }
 };
 
 }  // namespace VeriBlock

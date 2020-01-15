@@ -33,8 +33,7 @@ struct MerklePath {
 
     path.layers.reserve(numLayers);
     for (int i = 0; i < numLayers; i++) {
-      path.layers.emplace_back(
-          readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE));
+      path.layers[i] = readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
     }
 
     return path;
@@ -45,6 +44,25 @@ struct MerklePath {
     auto merkleBytes = readVarLenValue(stream, 0, MAX_MERKLE_BYTES);
     ReadStream merkleStream(merkleBytes);
     return MerklePath::fromRaw(merkleStream, subject);
+  }
+
+  static void toRaw(WriteStream& stream, const MerklePath& path) {
+    writeSingleFixedBEValue(stream, path.index);
+    writeSingleFixedBEValue(stream, (int32_t) path.layers.size());
+
+    const auto subjectSizeBytes = fixedArray((int32_t) path.subject.size());
+    writeSingleFixedBEValue(stream, (int32_t)subjectSizeBytes.size());
+    stream.write(subjectSizeBytes);
+
+    for (auto layer : path.layers) {
+      writeSingleByteLenValue(stream, layer);
+    }
+  }
+
+  static void toVbkEncoding(WriteStream& stream, const MerklePath& path) {
+    WriteStream pathStream;
+    toRaw(pathStream, path);
+    writeVarLenValue(stream, pathStream.data());
   }
 };
 

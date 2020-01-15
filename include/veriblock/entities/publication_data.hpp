@@ -26,6 +26,13 @@ struct PublicationData {
         readVarLenValue(stream, 0, MAX_PAYOUT_SIZE_PUBLICATION_DATA).asVector();
     return pub;
   }
+
+  static void toRaw(WriteStream& stream, const PublicationData& pub) {
+    writeSingleBEValue(stream, pub.identifier);
+    writeVarLenValue(stream, pub.header);
+    writeVarLenValue(stream, pub.contextInfo);
+    writeVarLenValue(stream, pub.payoutInfo);
+  }
 };
 
 }  // namespace VeriBlock

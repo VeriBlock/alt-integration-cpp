@@ -6,7 +6,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include "blob.hpp"
 #include "consts.hpp"
 #include "read_stream.hpp"
 #include "write_stream.hpp"
@@ -34,6 +33,19 @@ void checkRange(int64_t num, int64_t min, int64_t max);
  * @return converted and trimmed byte array
  */
 std::vector<uint8_t> trimmedArray(int64_t input);
+
+/**
+ * Converts the input to the byte array
+ * @param input value to convert
+ * @return converted byte array
+ */
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type>
+std::vector<uint8_t> fixedArray(T input) {
+  WriteStream inputStream;
+  inputStream.writeBE(input);
+  return std::vector<uint8_t>{inputStream.data()};
+}
 
 /**
  * Pad container 'v' to have size at least 'size', by adding leading zeroes
@@ -114,12 +126,28 @@ void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value);
 /**
  * Write single Big-Endian value to the stream.
  * This function converts number to the bytes array
- * in Big-Endian order and writes to the stream
+ * in Big-Endian order, trims it and writes to the stream
  * @param stream write data to this stream
  * @param value value to be written
  * @throws std::out_of_range if stream is out of data
  */
 void writeSingleBEValue(WriteStream& stream, int64_t value);
+
+/**
+ * Write single Big-Endian value to the stream.
+ * This function converts number to the bytes array
+ * in Big-Endian order and writes to the stream
+ * @param stream write data to this stream
+ * @param value value to be written
+ * @throws std::out_of_range if stream is out of data
+ */
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type>
+void writeSingleFixedBEValue(WriteStream& stream, T value) {
+  WriteStream dataStream;
+  dataStream.writeBE(value);
+  writeSingleByteLenValue(stream, dataStream.data());
+}
 
 /**
  * Write variable length value, which consists of
