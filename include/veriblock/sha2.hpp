@@ -25,6 +25,7 @@
 #ifndef _SHA2_H
 #define _SHA2_H
 
+#include <stdint.h>
 #include <vector>
 
 /**
