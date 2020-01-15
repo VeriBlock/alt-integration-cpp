@@ -46,3 +46,17 @@ TEST(VbkMerklePath, Serialize) {
 
   EXPECT_EQ(pathEncoded, defaultPathEncoded);
 }
+
+TEST(VbkMerklePath, RoundTrip) {
+  auto merklePath = ParseHex(defaultPathEncoded);
+  auto stream = ReadStream(merklePath);
+  auto decoded = VbkMerklePath::fromRaw(stream);
+  EXPECT_EQ(decoded.index, defaultIndex);
+
+  WriteStream outputStream;
+  decoded.toRaw(outputStream);
+  auto pathBytes = outputStream.data();
+  auto pathReEncoded = HexStr(pathBytes);
+
+  EXPECT_EQ(pathReEncoded, defaultPathEncoded);
+}

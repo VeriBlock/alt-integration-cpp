@@ -33,3 +33,16 @@ TEST(PublicationData, Serialize) {
   auto pubEncoded = HexStr(pubBytes);
   EXPECT_EQ(pubEncoded, defaultPublicationEncoded);
 }
+
+TEST(PublicationData, RoundTrip) {
+  auto pub = ParseHex(defaultPublicationEncoded);
+  auto stream = ReadStream(pub);
+  auto decoded = PublicationData::fromRaw(stream);
+  EXPECT_EQ(decoded.identifier, defaultPublication.identifier);
+
+  WriteStream outputStream;
+  decoded.toRaw(outputStream);
+  auto pubBytes = outputStream.data();
+  auto pubReEncoded = HexStr(pubBytes);
+  EXPECT_EQ(pubReEncoded, defaultPublicationEncoded);
+}
