@@ -57,7 +57,7 @@ TEST(MerklePath, Serialize) {
   MerklePath path{defaultLayers, subject, defaultIndex};
 
   WriteStream stream;
-  MerklePath::toVbkEncoding(stream, path);
+  path.toVbkEncoding(stream);
   auto pathBytes = stream.data();
   auto pathEncoded = HexStr(pathBytes);
 

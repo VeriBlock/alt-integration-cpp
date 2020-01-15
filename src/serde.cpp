@@ -47,19 +47,19 @@ Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
 }
 
 void writeSingleByteLenValue(WriteStream& stream,
-                             const std::vector<uint8_t> value) {
+                             const Slice<const uint8_t>& value) {
   checkRange(value.size(), 0, std::numeric_limits<uint8_t>::max());
-  stream.writeBE((uint8_t) value.size());
+  stream.writeBE<uint8_t>((uint8_t) value.size());
   stream.write(value);
 }
 
 void writeSingleBEValue(WriteStream& stream, int64_t value) {
   std::vector<uint8_t> dataBytes = trimmedArray(value);
-  stream.writeBE((uint8_t) dataBytes.size());
+  stream.writeBE<uint8_t>((uint8_t)dataBytes.size());
   stream.write(dataBytes);
 }
 
-void writeVarLenValue(WriteStream& stream, const std::vector<uint8_t> value) {
+void writeVarLenValue(WriteStream& stream, const Slice<const uint8_t>& value) {
   writeSingleBEValue(stream, value.size());
   stream.write(value);
 }

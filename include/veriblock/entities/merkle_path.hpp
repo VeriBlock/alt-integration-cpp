@@ -46,22 +46,22 @@ struct MerklePath {
     return MerklePath::fromRaw(merkleStream, subject);
   }
 
-  static void toRaw(WriteStream& stream, const MerklePath& path) {
-    writeSingleFixedBEValue(stream, path.index);
-    writeSingleFixedBEValue(stream, (int32_t) path.layers.size());
+  void toRaw(WriteStream& stream) const {
+    writeSingleFixedBEValue<int32_t>(stream, index);
+    writeSingleFixedBEValue<int32_t>(stream, (int32_t)layers.size());
 
-    const auto subjectSizeBytes = fixedArray((int32_t) path.subject.size());
-    writeSingleFixedBEValue(stream, (int32_t)subjectSizeBytes.size());
+    const auto subjectSizeBytes = fixedArray((int32_t) subject.size());
+    writeSingleFixedBEValue<int32_t>(stream, (int32_t)subjectSizeBytes.size());
     stream.write(subjectSizeBytes);
 
-    for (auto layer : path.layers) {
-      writeSingleByteLenValue(stream, layer.asVector());
+    for (const auto& layer : layers) {
+      writeSingleByteLenValue(stream, layer);
     }
   }
 
-  static void toVbkEncoding(WriteStream& stream, const MerklePath& path) {
+  void toVbkEncoding(WriteStream& stream) const {
     WriteStream pathStream;
-    toRaw(pathStream, path);
+    toRaw(pathStream);
     writeVarLenValue(stream, pathStream.data());
   }
 };

@@ -27,11 +27,11 @@ struct PublicationData {
     return pub;
   }
 
-  static void toRaw(WriteStream& stream, const PublicationData& pub) {
-    writeSingleBEValue(stream, pub.identifier);
-    writeVarLenValue(stream, pub.header);
-    writeVarLenValue(stream, pub.contextInfo);
-    writeVarLenValue(stream, pub.payoutInfo);
+  void toRaw(WriteStream& stream) const {
+    writeSingleBEValue(stream, identifier);
+    writeVarLenValue(stream, header);
+    writeVarLenValue(stream, contextInfo);
+    writeVarLenValue(stream, payoutInfo);
   }
 };
 

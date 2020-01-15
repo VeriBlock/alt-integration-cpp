@@ -28,7 +28,7 @@ TEST(PublicationData, Deserialize) {
 
 TEST(PublicationData, Serialize) {
   WriteStream stream;
-  PublicationData::toRaw(stream, defaultPublication);
+  defaultPublication.toRaw(stream);
   auto pubBytes = stream.data();
   auto pubEncoded = HexStr(pubBytes);
   EXPECT_EQ(pubEncoded, defaultPublicationEncoded);

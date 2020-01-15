@@ -41,21 +41,21 @@ struct VbkBlock {
     return VbkBlock::fromRaw(blockStream);
   }
 
-  static void toRaw(WriteStream& stream, const VbkBlock& block) {
-    stream.writeBE(block.height);
-    stream.writeBE(block.version);
-    stream.write(block.previousBlock);
-    stream.write(block.previousKeystone);
-    stream.write(block.secondPreviousKeystone);
-    stream.write(block.merkleRoot);
-    stream.writeBE(block.timestamp);
-    stream.writeBE(block.difficulty);
-    stream.writeBE(block.nonce);
+  void toRaw(WriteStream& stream) const {
+    stream.writeBE<int32_t>(height);
+    stream.writeBE<int16_t>(version);
+    stream.write(previousBlock);
+    stream.write(previousKeystone);
+    stream.write(secondPreviousKeystone);
+    stream.write(merkleRoot);
+    stream.writeBE<int32_t>(timestamp);
+    stream.writeBE<int32_t>(difficulty);
+    stream.writeBE<int32_t>(nonce);
   }
 
-  static void toVbkEncoding(WriteStream& stream, const VbkBlock& block) {
+  void toVbkEncoding(WriteStream& stream) const {
     WriteStream blockStream;
-    toRaw(blockStream, block);
+    toRaw(blockStream);
     writeSingleByteLenValue(stream, blockStream.data());
   }
 };

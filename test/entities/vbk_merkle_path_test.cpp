@@ -40,7 +40,7 @@ TEST(VbkMerklePath, Serialize) {
   VbkMerklePath path{defaultTreeIndex, defaultIndex, subject, defaultLayers};
 
   WriteStream stream;
-  VbkMerklePath::toRaw(stream, path);
+  path.toRaw(stream);
   auto pathBytes = stream.data();
   auto pathEncoded = HexStr(pathBytes);
 

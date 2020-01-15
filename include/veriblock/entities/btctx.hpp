@@ -18,7 +18,7 @@ struct BtcTx {
     return BtcTx(readVarLenValue(stream, 0, BTC_TX_MAX_RAW_SIZE));
   }
 
-  static void toVbkEncoding(WriteStream& stream, const BtcTx& tx) {
+  void toVbkEncoding(WriteStream& stream) const {
     writeVarLenValue(stream, tx.tx);
   }
 };

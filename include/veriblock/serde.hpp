@@ -121,7 +121,7 @@ T readSingleBEValue(ReadStream& stream) {
  * @param value data that should be written
  * @throws std::out_of_range if value size is too high
  */
-void writeSingleByteLenValue(WriteStream& stream, const std::vector<uint8_t> value);
+void writeSingleByteLenValue(WriteStream& stream, const Slice<const uint8_t>& value);
 
 /**
  * Write single Big-Endian value to the stream.
@@ -157,7 +157,7 @@ void writeSingleFixedBEValue(WriteStream& stream, T value) {
  * @param stream write data to this stream
  * @param value data that should be written
  */
-void writeVarLenValue(WriteStream& stream, const std::vector<uint8_t> value);
+void writeVarLenValue(WriteStream& stream, const Slice<const uint8_t>& value);
 
 struct NetworkBytePair {
   ///< works as std::optional. if hasNetworkByte is true, networkByte is set
@@ -166,7 +166,7 @@ struct NetworkBytePair {
   uint8_t typeId = 0;
 };
 
-NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
+//NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
 
 /**
  * Reads array of entities of type T.

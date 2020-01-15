@@ -41,7 +41,7 @@ TEST(VbkBlock, Deserialize) {
 
 TEST(VbkBlock, Serialize) {
   WriteStream stream;
-  VbkBlock::toVbkEncoding(stream, defaultBlock);
+  defaultBlock.toVbkEncoding(stream);
   auto vbkBytes = stream.data();
   auto blockEncoded = HexStr(vbkBytes);
   EXPECT_EQ(blockEncoded, defaultBlockEncoded);
@@ -54,7 +54,7 @@ TEST(VbkBlock, RoundTrip) {
   EXPECT_EQ(decoded.version, defaultBlock.version);
 
   WriteStream outputStream;
-  VbkBlock::toVbkEncoding(outputStream, decoded);
+  decoded.toVbkEncoding(outputStream);
   auto vbkBytes = outputStream.data();
   auto blockReEncoded = HexStr(vbkBytes);
   EXPECT_EQ(blockReEncoded, defaultBlockEncoded);

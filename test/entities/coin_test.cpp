@@ -9,7 +9,7 @@ using namespace VeriBlock;
 TEST(Coin, RoundTrip) {
   Coin input{ 123456789L };
   WriteStream stream;
-  Coin::toVbkEncoding(stream, input);
+  input.toVbkEncoding(stream);
   auto coinEncoded = stream.data();
   ReadStream readStream{ coinEncoded };
   auto output = Coin::fromVbkEncoding(readStream);

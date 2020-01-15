@@ -67,8 +67,8 @@ struct Blob {
     return ret;
   }
 
-  constexpr std::vector<value_type> asVector() const {
-    return std::vector<value_type>(data_.begin(), data_.end());
+  const std::vector<value_type>& asVector() const {
+    return std::vector<value_type>{data_.begin(), data_.end()};
   }
 
  private:

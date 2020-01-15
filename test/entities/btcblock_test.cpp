@@ -36,7 +36,7 @@ TEST(BtcBlock, Deserialize) {
 
 TEST(BtcBlock, Serialize) {
   WriteStream stream;
-  BtcBlock::toRaw(stream, defaultBlock);
+  defaultBlock.toRaw(stream);
   auto btcBytes = stream.data();
   auto blockEncoded = HexStr(btcBytes);
   EXPECT_EQ(blockEncoded, defaultBlockEncoded);
@@ -49,7 +49,7 @@ TEST(BtcBlock, RoundTrip) {
   EXPECT_EQ(decoded.version, defaultBlock.version);
 
   WriteStream outputStream;
-  BtcBlock::toRaw(outputStream, decoded);
+  decoded.toRaw(outputStream);
   auto btcBytes = outputStream.data();
   auto blockReEncoded = HexStr(btcBytes);
   EXPECT_EQ(blockReEncoded, defaultBlockEncoded);

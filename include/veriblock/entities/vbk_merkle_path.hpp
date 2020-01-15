@@ -30,13 +30,13 @@ struct VbkMerklePath {
     return mp;
   }
 
-  static void toRaw(WriteStream& stream, const VbkMerklePath& path) {
-    writeSingleFixedBEValue(stream, path.treeIndex);
-    writeSingleFixedBEValue(stream, path.index);
-    writeSingleByteLenValue(stream, path.subject.asVector());
-    writeSingleFixedBEValue(stream, (int32_t) path.layers.size());
-    for (auto layer : path.layers) {
-      writeSingleByteLenValue(stream, layer.asVector());
+  void toRaw(WriteStream& stream) const {
+    writeSingleFixedBEValue<int32_t>(stream, treeIndex);
+    writeSingleFixedBEValue<int32_t>(stream, index);
+    writeSingleByteLenValue(stream, subject);
+    writeSingleFixedBEValue<int32_t>(stream, (int32_t)layers.size());
+    for (const auto& layer : layers) {
+      writeSingleByteLenValue(stream, layer);
     }
   }
 };
