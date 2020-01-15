@@ -55,9 +55,6 @@
 }
 #endif
 
-#define _CRT_SECURE_NO_DEPRECATE
-#define _CRT_SECURE_NO_WARNINGS
-
 /*
  * SHA-256 context setup
  */
@@ -324,38 +321,6 @@ void sha2( const unsigned char *input, int ilen,
     sha2_finish( &ctx, output );
 
     memset( &ctx, 0, sizeof( sha2_context ) );
-}
-
-/*
- * output = SHA-256( file contents )
- */
-int sha2_file( const char *path, unsigned char output[32], int is224 )
-{
-    FILE *f;
-    size_t n;
-    sha2_context ctx;
-    unsigned char buf[1024];
-
-    if( ( f = fopen( path, "rb" ) ) == NULL )
-        return( 1 );
-
-    sha2_starts( &ctx, is224 );
-
-    while( ( n = fread( buf, 1, sizeof( buf ), f ) ) > 0 )
-        sha2_update( &ctx, buf, (int) n );
-
-    sha2_finish( &ctx, output );
-
-    memset( &ctx, 0, sizeof( sha2_context ) );
-
-    if( ferror( f ) != 0 )
-    {
-        fclose( f );
-        return( 2 );
-    }
-
-    fclose( f );
-    return( 0 );
 }
 
 /*
