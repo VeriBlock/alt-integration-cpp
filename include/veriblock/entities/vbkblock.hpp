@@ -9,15 +9,15 @@
 namespace VeriBlock {
 
 struct VbkBlock {
-  int32_t height;
-  int16_t version;
-  VBlakeBlockHash previousBlock;
-  VBlakePrevKeystoneHash previousKeystone;
-  VBlakePrevKeystoneHash secondPreviousKeystone;
-  VbkMerkleRootSha256Hash merkleRoot;
-  int32_t timestamp;
-  int32_t difficulty;
-  int32_t nonce;
+  int32_t height{};
+  int16_t version{};
+  VBlakeBlockHash previousBlock{};
+  VBlakePrevKeystoneHash previousKeystone{};
+  VBlakePrevKeystoneHash secondPreviousKeystone{};
+  VbkMerkleRootSha256Hash merkleRoot{};
+  int32_t timestamp{};
+  int32_t difficulty{};
+  int32_t nonce{};
 
   static VbkBlock fromRaw(ReadStream& stream) {
     VbkBlock block{};

@@ -29,7 +29,7 @@ struct Blob {
   Blob(const std::vector<uint8_t>& v) { assign(v); }
 
   Blob(const Blob<N>& other): data_(other.data_) {}
-  Blob(Blob<N>&& other): data_(std::move(other.data_)) {}
+  Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 
   iterator begin() noexcept { return data_.begin(); }
 
@@ -65,6 +65,10 @@ struct Blob {
     Blob<N> ret = data_;
     std::reverse(ret.begin(), ret.end());
     return ret;
+  }
+
+  constexpr std::vector<value_type> asVector() const {
+    return std::vector<value_type>(data_.begin(), data_.end());
   }
 
  private:

@@ -44,7 +44,7 @@ template <typename T,
 std::vector<uint8_t> fixedArray(T input) {
   WriteStream inputStream;
   inputStream.writeBE(input);
-  return std::vector<uint8_t>{inputStream.data()};
+  return inputStream.data();
 }
 
 /**
@@ -115,13 +115,13 @@ T readSingleBEValue(ReadStream& stream) {
 
 /**
  * Write single byte length value, which consists of
- * `N bytes slice`
- * Appends 1 byte slice size to the stream
+ * `N bytes vector`
+ * Appends 1 byte data length to the stream
  * @param stream write data to this stream
- * @param value slice data that should be written
+ * @param value data that should be written
  * @throws std::out_of_range if value size is too high
  */
-void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value);
+void writeSingleByteLenValue(WriteStream& stream, const std::vector<uint8_t> value);
 
 /**
  * Write single Big-Endian value to the stream.
@@ -151,13 +151,13 @@ void writeSingleFixedBEValue(WriteStream& stream, T value) {
 
 /**
  * Write variable length value, which consists of
- * `N bytes slice`
- * Appends up to 8 bytes slice size to the stream and
- * 1 byte slice length size
+ * `N bytes vector`
+ * Appends up to 8 bytes data length to the stream and
+ * 1 byte data length size
  * @param stream write data to this stream
- * @param value slice data that should be written
+ * @param value data that should be written
  */
-void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value);
+void writeVarLenValue(WriteStream& stream, const std::vector<uint8_t> value);
 
 struct NetworkBytePair {
   ///< works as std::optional. if hasNetworkByte is true, networkByte is set

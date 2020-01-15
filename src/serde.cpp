@@ -22,7 +22,7 @@ std::vector<uint8_t> trimmedArray(int64_t input) {
   } while (x > 1);
 
   std::vector<uint8_t> output(x);
-  for (int i = 0; i < x; i++) {
+  for (size_t i = 0; i < x; i++) {
     output[x - i - 1] = (uint8_t) input;
     input >>= 8;
   }
@@ -47,7 +47,7 @@ Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
 }
 
 void writeSingleByteLenValue(WriteStream& stream,
-                             Slice<const uint8_t> value) {
+                             const std::vector<uint8_t> value) {
   checkRange(value.size(), 0, std::numeric_limits<uint8_t>::max());
   stream.writeBE((uint8_t) value.size());
   stream.write(value);
@@ -59,12 +59,12 @@ void writeSingleBEValue(WriteStream& stream, int64_t value) {
   stream.write(dataBytes);
 }
 
-void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value) {
+void writeVarLenValue(WriteStream& stream, const std::vector<uint8_t> value) {
   writeSingleBEValue(stream, value.size());
   stream.write(value);
 }
 
-NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
+/*NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
   NetworkBytePair ret;
   auto networkOrType = stream.readBE<uint8_t>();
   if (networkOrType != (uint8_t)type) {
@@ -76,6 +76,6 @@ NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
   }
 
   return ret;
-}
+}*/
 
 }  // namespace VeriBlock

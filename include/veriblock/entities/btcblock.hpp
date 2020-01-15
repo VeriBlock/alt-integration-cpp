@@ -9,12 +9,12 @@
 namespace VeriBlock {
 
 struct BtcBlock {
-  uint32_t version;
-  Sha256Hash previousBlock;
-  Sha256Hash merkleRoot;
-  uint32_t timestamp;
-  uint32_t bits;
-  uint32_t nonce;
+  uint32_t version{};
+  Sha256Hash previousBlock{};
+  Sha256Hash merkleRoot{};
+  uint32_t timestamp{};
+  uint32_t bits{};
+  uint32_t nonce{};
 
   static BtcBlock fromRaw(ReadStream& stream) {
     BtcBlock block{};

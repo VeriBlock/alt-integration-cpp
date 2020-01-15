@@ -55,7 +55,7 @@ struct MerklePath {
     stream.write(subjectSizeBytes);
 
     for (auto layer : path.layers) {
-      writeSingleByteLenValue(stream, layer);
+      writeSingleByteLenValue(stream, layer.asVector());
     }
   }
 
