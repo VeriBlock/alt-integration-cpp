@@ -26,43 +26,61 @@
 #define _SHA2_H
 
 #include <stdint.h>
-#include <vector>
+
+namespace VeriBlock {
 
 /**
  * \brief          SHA-256 context structure
  */
-typedef struct
-{
-    uint32_t total[2];     /*!< number of bytes processed  */
-    uint32_t state[8];     /*!< intermediate digest state  */
-    uint8_t buffer[64];   /*!< data block being processed */
+typedef struct {
+  uint32_t total[2];  /*!< number of bytes processed  */
+  uint32_t state[8];  /*!< intermediate digest state  */
+  uint8_t buffer[64]; /*!< data block being processed */
 
-    uint8_t ipad[64];     /*!< HMAC: inner padding        */
-    uint8_t opad[64];     /*!< HMAC: outer padding        */
-    int is224;            /*!< 0 => SHA-256, else SHA-224 */
-}
-sha2_context;
+  uint8_t ipad[64]; /*!< HMAC: inner padding        */
+  uint8_t opad[64]; /*!< HMAC: outer padding        */
+  int is224;        /*!< 0 => SHA-256, else SHA-224 */
+} sha256_context;
 
 //=====================================================================================
 //  External interfaces
 //=====================================================================================
-namespace VeriBlock {
-    void sha256_init    (sha2_context *ctx);
-    void sha256_update  (sha2_context *ctx, const unsigned char *input, uint32_t ilen);
-    std::vector<uint8_t> sha256_finish(sha2_context *ctx);
-    void sha256_reset   (sha2_context *ctx);
-    std::vector<uint8_t> sha256(const uint8_t* buf, size_t nsize);
-    
 
-    template <typename T,
-        typename = typename std::enable_if<sizeof(typename T::value_type) ==
-        1>::type>
-        std::vector<uint8_t> sha256(const T &container) {
-        const uint8_t *ptr = reinterpret_cast<const uint8_t*>(container.data());
-        return sha256(ptr, container.size());
-    }
+/**
+ * Initialize sha256 context
+ * @param ctx
+ */
+void sha256_init(sha256_context *ctx);
 
-}
+/**
+ * Add bytes to context
+ * @param ctx context
+ * @param input input bytes
+ * @param ilen length of input bytes
+ */
+void sha256_update(sha256_context *ctx, const uint8_t *input, uint32_t ilen);
 
+/**
+ * Finalize hash calculation. Hash will be written to \p out.
+ * @param ctx context
+ * @param out preallocated output of size 32 bytes
+ */
+void sha256_finish(sha256_context *ctx, uint8_t *out);
+
+/**
+ * Reset context for reuse.
+ * @param ctx context
+ */
+void sha256_reset(sha256_context *ctx);
+
+/**
+ * All-in-one sha256 hash calculation.
+ * @param out preallocated buffer of 32 bytes
+ * @param buf input buffer
+ * @param nsize size of input buffer
+ */
+void sha256(uint8_t *out, const uint8_t *buf, uint32_t nsize);
+
+}  // namespace VeriBlock
 
 #endif /* sha2.h */

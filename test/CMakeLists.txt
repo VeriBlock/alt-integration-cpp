@@ -14,5 +14,5 @@ target_link_libraries(base58_test vbkutils)
 addtest(base59_test base59_test.cpp)
 target_link_libraries(base59_test vbkutils)
 
-addtest(sha2_test sha2_test.cpp)
+addtest(sha2_test sha256_test.cpp)
 target_link_libraries(sha2_test vbkutils)
