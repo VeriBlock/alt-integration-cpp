@@ -404,8 +404,6 @@ void sha256_finish(sha256_context *ctx, uint8_t *output) {
   sha2_finish(ctx, output);
 }
 
-void sha256_reset(sha256_context *ctx) { sha2_hmac_reset(ctx); }
-
 void sha256(uint8_t *out, const uint8_t *buf, uint32_t nsize) {
   sha256_context ctx{};
   sha256_init(&ctx);

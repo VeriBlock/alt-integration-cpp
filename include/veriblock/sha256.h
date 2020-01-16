@@ -27,6 +27,8 @@
 
 #include <stdint.h>
 
+#define SHA256_HASH_SIZE 32
+
 namespace VeriBlock {
 
 /**
@@ -41,10 +43,6 @@ typedef struct {
   uint8_t opad[64]; /*!< HMAC: outer padding        */
   int is224;        /*!< 0 => SHA-256, else SHA-224 */
 } sha256_context;
-
-//=====================================================================================
-//  External interfaces
-//=====================================================================================
 
 /**
  * Initialize sha256 context
@@ -66,12 +64,6 @@ void sha256_update(sha256_context *ctx, const uint8_t *input, uint32_t ilen);
  * @param out preallocated output of size 32 bytes
  */
 void sha256_finish(sha256_context *ctx, uint8_t *out);
-
-/**
- * Reset context for reuse.
- * @param ctx context
- */
-void sha256_reset(sha256_context *ctx);
 
 /**
  * All-in-one sha256 hash calculation.
