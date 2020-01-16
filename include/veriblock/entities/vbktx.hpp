@@ -4,17 +4,14 @@
 #include <cstdint>
 #include <vector>
 
-#include "veriblock/serde.hpp"
 #include "veriblock/consts.hpp"
+#include "veriblock/serde.hpp"
 #include "veriblock/slice.hpp"
-#include "veriblock/blob.hpp"
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/coin.hpp"
 #include "veriblock/entities/output.hpp"
 #include "veriblock/entities/publication_data.hpp"
-
-//using PublicKey = Blob<PUBLIC_KEY_SIZE>;
 
 namespace VeriBlock {
 
@@ -46,8 +43,8 @@ struct VbkTx {
   std::vector<uint8_t> publicKey;
 
   static VbkTx fromRaw(ReadStream& stream,
-                       Slice<const uint8_t> _publicKey,
-                       Slice<const uint8_t> _signature) {
+                       Slice<const uint8_t> _signature,
+                       Slice<const uint8_t> _publicKey) {
     NetworkBytePair networkOrType = readNetworkByte(stream, TxType::VBK_TX);
     Address sourceAddress = Address::fromVbkEncoding(stream);
     Coin sourceAmount = Coin::fromVbkEncoding(stream);

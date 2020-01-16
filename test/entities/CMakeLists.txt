@@ -8,5 +8,6 @@ addtest(entities_serde_test
         vbkblock_test.cpp
         publication_data_test.cpp
         vbktx_test.cpp
+        vbkpoptx_test.cpp
         )
 target_link_libraries(entities_serde_test vbkutils)

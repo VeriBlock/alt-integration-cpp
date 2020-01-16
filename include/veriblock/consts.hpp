@@ -18,6 +18,7 @@ enum class TxType {
 constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
 constexpr const auto MAX_PAYOUT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
+constexpr const auto MAX_CONTEXT_COUNT = 150000;
 constexpr const auto SHA256_HASH_SIZE = 32;
 constexpr const auto VBK_MERKLE_ROOT_SIZE = 16;
 constexpr const auto VBLAKE_PREVIOUS_BLOCK_SIZE = 12;
@@ -78,6 +79,27 @@ constexpr const auto MAX_RAWTX_SIZE_VBKTX =
     1 + 8 +
     // data.size.size, data.size, data
     5 + MAX_SIZE_PUBLICATION_DATA +
+    // signature.size, signature
+    1 + MAX_SIGNATURE_SIZE +
+    // publicKey.size, publicKey
+    1 + PUBLIC_KEY_SIZE +
+    // raw.size.size, raw.size
+    5;
+
+constexpr const auto MAX_RAWTX_SIZE_VBKPOPTX =
+    // network byte, type
+    1 + 1 +
+    // address.size, address
+    1 + ADDRESS_SIZE +
+    // publishedBlock.size, publishedBlock
+    1 + VBK_HEADER_SIZE +
+    // bitcoinTransaction.size.size, bitcoinTransaction.size, bitcoinTransaction
+    5 + BTC_TX_MAX_RAW_SIZE + MAX_MERKLE_BYTES +
+    // blockOfProof.size, blockOfProof
+    1 + BTC_HEADER_SIZE +
+    // blockOfProofContext.size.size, blockOfProofContext.size,
+    // blockOfProofContext
+    5 + (BTC_HEADER_SIZE + 1) * MAX_CONTEXT_COUNT +
     // signature.size, signature
     1 + MAX_SIGNATURE_SIZE +
     // publicKey.size, publicKey
