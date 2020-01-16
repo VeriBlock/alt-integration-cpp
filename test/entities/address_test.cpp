@@ -4,13 +4,12 @@
 
 #include "util/literals.hpp"
 
-using std::string_literals::operator""s;
 using namespace VeriBlock;
 
 // standard address
 static auto ADDRESS_BYTES =
     "01166772F51AB208D32771AB1506970EEB664462730B838E"_unhex;
-static auto ADDRESS_VALUE = "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"s;
+static std::string ADDRESS_VALUE = "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX";
 
 TEST(Address, Deserialize) {
   // TODO: add test for multisig addr
