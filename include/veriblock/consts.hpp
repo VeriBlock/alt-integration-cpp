@@ -19,6 +19,8 @@ constexpr const auto BTC_HEADER_SIZE = 80;
 constexpr const auto VBK_HEADER_SIZE = 64;
 constexpr const auto BTC_TX_MAX_RAW_SIZE = 4 * 1000 * 1000;
 constexpr const auto MAX_LAYER_COUNT_MERKLE = 40;
+// NodeCore is using byte value when serializing outputs so we limit to 255
+constexpr const auto MAX_OUTPUTS_COUNT = 255;
 /**
  * size = (hash + hash.length) * MAX_LAYER_COUNT + (index + index.length) +
  * (layers.size + layers.size.length) +
@@ -27,6 +29,17 @@ constexpr const auto MAX_LAYER_COUNT_MERKLE = 40;
  */
 constexpr const auto MAX_MERKLE_BYTES =
     (SHA256_HASH_SIZE + 1) * MAX_LAYER_COUNT_MERKLE + 5 + 5 + 5 + 5 + 4;
+
+constexpr const auto MAX_SIZE_PUBLICATION_DATA =
+    // identifier.size, identifier
+    9 +
+    // header.size.size, header.size, header
+    5 + MAX_HEADER_SIZE_PUBLICATION_DATA +
+    // payoutInfo.size.size, payoutInfo.size, payoutInfo
+    5 + MAX_PAYOUT_SIZE_PUBLICATION_DATA +
+    // contextInfo.size.size, contextInfo.size, contextInfo
+    5 + MAX_CONTEXT_SIZE_PUBLICATION_DATA;
+
 }  // namespace VeriBlock
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_CONSTS_HPP_

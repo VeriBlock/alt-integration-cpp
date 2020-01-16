@@ -167,7 +167,15 @@ struct NetworkBytePair {
   uint8_t typeId = 0;
 };
 
-// NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
+/**
+ * Read optional network byte from the stream
+ * @param stream read data from this stream
+ * @param type compare network byte with this type and use as transaction
+ * type if type == network byte
+ * @throws std::out_of_range if stream is out of data
+ * @return NetworkBytePair structure
+ */
+NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
 
 /**
  * Reads array of entities of type T.
