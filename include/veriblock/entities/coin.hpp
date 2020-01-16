@@ -20,7 +20,9 @@ struct Coin {
     writeSingleBEValue(stream, units);
   }
 
- private:
+  bool operator==(const Coin& other) const noexcept {
+    return units == other.units;
+  }
 };
 
 }  // namespace VeriBlock
