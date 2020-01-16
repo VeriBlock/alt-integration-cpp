@@ -19,6 +19,7 @@ constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
 constexpr const auto MAX_PAYOUT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_COUNT = 150000;
+constexpr const auto MAX_CONTEXT_COUNT_ALT_PUBLICATION = 15000;
 constexpr const auto SHA256_HASH_SIZE = 32;
 constexpr const auto VBK_MERKLE_ROOT_SIZE = 16;
 constexpr const auto VBLAKE_PREVIOUS_BLOCK_SIZE = 12;

@@ -9,5 +9,7 @@ addtest(entities_serde_test
         publication_data_test.cpp
         vbktx_test.cpp
         vbkpoptx_test.cpp
+        atv_test.cpp
+        vtb_test.cpp
         )
 target_link_libraries(entities_serde_test vbkutils)
