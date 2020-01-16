@@ -1,8 +1,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_OUTPUT_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_OUTPUT_HPP_
 
-#include <cstdint>
-
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/coin.hpp"
 
