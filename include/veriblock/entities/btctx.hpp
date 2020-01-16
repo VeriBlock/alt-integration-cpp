@@ -19,7 +19,7 @@ struct BtcTx {
   }
 
   void toVbkEncoding(WriteStream& stream) const {
-    writeVarLenValue(stream, tx.tx);
+    writeVarLenValue(stream, tx);
   }
 };
 

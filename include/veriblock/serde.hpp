@@ -8,8 +8,8 @@
 
 #include "consts.hpp"
 #include "read_stream.hpp"
-#include "write_stream.hpp"
 #include "slice.hpp"
+#include "write_stream.hpp"
 
 /**
  * Contains veriblock-specific serialization and deserialziation primitives.
@@ -121,7 +121,8 @@ T readSingleBEValue(ReadStream& stream) {
  * @param value data that should be written
  * @throws std::out_of_range if value size is too high
  */
-void writeSingleByteLenValue(WriteStream& stream, const Slice<const uint8_t>& value);
+void writeSingleByteLenValue(WriteStream& stream,
+                             const Slice<const uint8_t>& value);
 
 /**
  * Write single Big-Endian value to the stream.
@@ -145,7 +146,7 @@ template <typename T,
           typename = typename std::enable_if<std::is_integral<T>::value>::type>
 void writeSingleFixedBEValue(WriteStream& stream, T value) {
   WriteStream dataStream;
-  dataStream.writeBE(value);
+  dataStream.writeBE<T>(value);
   writeSingleByteLenValue(stream, dataStream.data());
 }
 
@@ -166,7 +167,7 @@ struct NetworkBytePair {
   uint8_t typeId = 0;
 };
 
-//NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
+// NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
 
 /**
  * Reads array of entities of type T.

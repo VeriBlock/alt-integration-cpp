@@ -23,7 +23,7 @@ std::vector<uint8_t> trimmedArray(int64_t input) {
 
   std::vector<uint8_t> output(x);
   for (size_t i = 0; i < x; i++) {
-    output[x - i - 1] = (uint8_t) input;
+    output[x - i - 1] = (uint8_t)input;
     input >>= 8;
   }
 
@@ -49,7 +49,7 @@ Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
 void writeSingleByteLenValue(WriteStream& stream,
                              const Slice<const uint8_t>& value) {
   checkRange(value.size(), 0, std::numeric_limits<uint8_t>::max());
-  stream.writeBE<uint8_t>((uint8_t) value.size());
+  stream.writeBE<uint8_t>((uint8_t)value.size());
   stream.write(value);
 }
 

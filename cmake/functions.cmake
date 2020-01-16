@@ -5,8 +5,6 @@ function(disable_clang_tidy target)
             )
 endfunction()
 
-
-
 function(addtest test_name)
     add_executable(${test_name} ${ARGN})
     addtest_part(${test_name} ${ARGN})
