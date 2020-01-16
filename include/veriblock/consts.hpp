@@ -3,6 +3,13 @@
 
 namespace VeriBlock {
 
+enum class AddressType {
+    ZERO_UNUSED = 0,
+    STANDARD = 1,
+    PROOF_OF_PROOF = 2,
+    MULTISIG = 3,
+};
+
 enum class TxType {
   VBK_TX = 0x01,
   VBK_POP_TX = 0x02,
@@ -21,6 +28,19 @@ constexpr const auto BTC_TX_MAX_RAW_SIZE = 4 * 1000 * 1000;
 constexpr const auto MAX_LAYER_COUNT_MERKLE = 40;
 // NodeCore is using byte value when serializing outputs so we limit to 255
 constexpr const auto MAX_OUTPUTS_COUNT = 255;
+
+constexpr const auto ADDRESS_SIZE = 30;
+constexpr const auto MULTISIG_ADDRESS_SIZE = 30;
+constexpr const auto MULTISIG_ENDING_CHAR = '0';
+constexpr const auto MULTISIG_ADDRESS_M_VALUE = 1;
+constexpr const auto MULTISIG_ADDRESS_N_VALUE = 2;
+constexpr const auto MULTISIG_ADDRESS_MIN_N_VALUE = 2;
+constexpr const auto MULTISIG_ADDRESS_MAX_N_VALUE = 58;
+constexpr const auto MULTISIG_ADDRESS_MAX_M_VALUE = 58;
+constexpr const auto MULTISIG_ADDRESS_DATA_START = 0;
+constexpr const auto MULTISIG_ADDRESS_DATA_END = 24;
+constexpr const auto MULTISIG_ADDRESS_CHECKSUM_END = 28;
+
 /**
  * size = (hash + hash.length) * MAX_LAYER_COUNT + (index + index.length) +
  * (layers.size + layers.size.length) +
