@@ -68,6 +68,24 @@ std::vector<uint8_t> pad(const T& v, size_t size) {
 }
 
 /**
+ * Pad container 'v' to have size at least 'size', by adding trailing zeroes
+ * @tparam T input container type
+ * @param v input container
+ * @param size output vector will have at least 'size' bytes
+ * @return new vector with padded data
+ */
+template <typename T>
+std::vector<uint8_t> trailpad(const T& v, size_t size) {
+  if (v.size() > size) {
+    return std::vector<uint8_t>{v.begin(), v.end()};
+  }
+
+  std::vector<uint8_t> ret(size, 0);
+  std::copy(v.begin(), v.end(), ret.begin());
+  return ret;
+}
+
+/**
  * Read variable length value, which consists of
  * `[N=(4 bytes = size of slice) | N bytes slice]`
  * Size of slice should be within range [minLen; maxLen]

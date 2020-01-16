@@ -6,6 +6,22 @@
 
 using namespace VeriBlock;
 
+TEST(Coin, Serialize) {
+  Coin input{3500000000};
+  WriteStream stream;
+  input.toVbkEncoding(stream);
+  auto coinEncoded = stream.data();
+  EXPECT_EQ(HexStr(coinEncoded), "04d09dc300");
+}
+
+TEST(Coin, Deserialize) {
+  auto coinBytes = "04d09dc300"_unhex;
+  ReadStream readStream{coinBytes};
+  auto output = Coin::fromVbkEncoding(readStream);
+
+  EXPECT_EQ(output.units, 3500000000);
+}
+
 TEST(Coin, RoundTrip) {
   Coin input{ 123456789L };
   WriteStream stream;
