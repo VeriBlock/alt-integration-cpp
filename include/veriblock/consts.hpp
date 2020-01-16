@@ -3,7 +3,7 @@
 
 namespace VeriBlock {
 
-enum TxType {
+enum class TxType {
   VBK_TX = 0x01,
   VBK_POP_TX = 0x02,
 };

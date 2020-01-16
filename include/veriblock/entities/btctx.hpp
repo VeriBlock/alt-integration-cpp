@@ -17,6 +17,10 @@ struct BtcTx {
   static BtcTx fromVbkEncoding(ReadStream& stream) {
     return BtcTx(readVarLenValue(stream, 0, BTC_TX_MAX_RAW_SIZE));
   }
+
+  void toVbkEncoding(WriteStream& stream) const {
+    writeVarLenValue(stream, tx);
+  }
 };
 
 }  // namespace VeriBlock

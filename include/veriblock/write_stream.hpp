@@ -8,7 +8,7 @@
 namespace VeriBlock {
 
   /**
-   * Binary writer that is useful dugin binary serialization.
+   * Binary writer that is useful during binary serialization.
    */
   class WriteStream {
    public:
@@ -20,26 +20,24 @@ namespace VeriBlock {
 
     template <typename T,
               typename =
-                  typename std::enable_if<sizeof(typename T::value_type)>::type>
+                  typename std::enable_if<sizeof(typename T::value_type) == 1>::type>
     void write(const T &t) {
       write(t.data(), t.size());
     }
 
-    template <
-        typename T,
-        typename = typename std::enable_if<std::is_integral<T>::value>::type>
+    template <typename T,
+              typename = typename std::enable_if<std::is_integral<T>::value>::type>
     void writeBE(T num) {
-      for (size_t i = 0, shift = 0; i < sizeof(T); i++, shift += 8) {
+      for (size_t i = 0, shift = (sizeof(T) - 1) * 8; i < sizeof(T);
+           i++, shift -= 8) {
         m_data.push_back((num >> shift) & 0xffu);
       }
     }
 
-    template <
-        typename T,
-        typename = typename std::enable_if<std::is_integral<T>::value>::type>
+    template <typename T,
+              typename = typename std::enable_if<std::is_integral<T>::value>::type>
     void writeLE(T num) {
-      for (size_t i = 0, shift = (sizeof(T) - 1) * 8; i < sizeof(T);
-           i++, shift -= 8) {
+      for (size_t i = 0, shift = 0; i < sizeof(T); i++, shift += 8) {
         m_data.push_back((num >> shift) & 0xffu);
       }
     }

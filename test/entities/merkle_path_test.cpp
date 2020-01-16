@@ -6,32 +6,75 @@
 
 using namespace VeriBlock;
 
+static const std::string defaultPathEncoded =
+    "02019f040000067b040000000c040000000400000020204d66077fdf24246ffd6b6979dfed"
+    "ef5d46588654addeb35edb11e993c131f61220023d1abe8758c6f917ec0c65674bbd43d66e"
+    "e14dc667b3117dfc44690c6f5af120096ddba03ca952af133fb06307c24171e53bf50ab76f"
+    "1edeabde5e99f78d4ead202f32cf1bee50349d56fc1943af84f2d2abda520f64dc4db37b2f"
+    "3db20b0ecb572093e70120f1b539d0c1495b368061129f30d35f9e436f32d69967ae86031a"
+    "275620f554378a116e2142f9f6315a38b19bd8a1b2e6dc31201f2d37a058f03c39c06c2008"
+    "24705685ceca003c95140434ee9d8bbbf4474b83fd4ecc2766137db9a44d7420b7b9e52f3e"
+    "e8ce4fbb8be7d6cf66d33a20293f806c69385136662a74453fb162201732c9a35e80d4796b"
+    "abea76aace50b49f6079ea3e349f026b4491cfe720ad17202d9b57e92ab51fe28a587050fd"
+    "82abb30abd699a5ce8b54e7cd49b2a827bcb9920dcba229acdc6b7f028ba756fd5abbfebd3"
+    "1b4227cd4137d728ec5ea56c457618202cf1439a6dbcc1a35e96574bddbf2c5db9174af5ad"
+    "0d278fe92e06e4ac349a42";
+
+static const std::vector<Sha256Hash> defaultLayers{
+    "4d66077fdf24246ffd6b6979dfedef5d46588654addeb35edb11e993c131f612"_unhex,
+    "023d1abe8758c6f917ec0c65674bbd43d66ee14dc667b3117dfc44690c6f5af1"_unhex,
+    "096ddba03ca952af133fb06307c24171e53bf50ab76f1edeabde5e99f78d4ead"_unhex,
+    "2f32cf1bee50349d56fc1943af84f2d2abda520f64dc4db37b2f3db20b0ecb57"_unhex,
+    "93e70120f1b539d0c1495b368061129f30d35f9e436f32d69967ae86031a2756"_unhex,
+    "f554378a116e2142f9f6315a38b19bd8a1b2e6dc31201f2d37a058f03c39c06c"_unhex,
+    "0824705685ceca003c95140434ee9d8bbbf4474b83fd4ecc2766137db9a44d74"_unhex,
+    "b7b9e52f3ee8ce4fbb8be7d6cf66d33a20293f806c69385136662a74453fb162"_unhex,
+    "1732c9a35e80d4796babea76aace50b49f6079ea3e349f026b4491cfe720ad17"_unhex,
+    "2d9b57e92ab51fe28a587050fd82abb30abd699a5ce8b54e7cd49b2a827bcb99"_unhex,
+    "dcba229acdc6b7f028ba756fd5abbfebd31b4227cd4137d728ec5ea56c457618"_unhex,
+    "2cf1439a6dbcc1a35e96574bddbf2c5db9174af5ad0d278fe92e06e4ac349a42"_unhex};
+
+static const std::string defaultSubject =
+    "94e097b110ba3adbb7b6c4c599d31d675de7be6e722407410c08ef352be585f1";
+
+static const int defaultIndex = 1659;
+
 TEST(MerklePath, Deserialize) {
-  auto merklePath =
-      "02019F040000067B040000000C040000000400000020204D66077FDF24246FFD6B6979DFEDEF5D46588654ADDEB35EDB11E993C131F61220023D1ABE8758C6F917EC0C65674BBD43D66EE14DC667B3117DFC44690C6F5AF120096DDBA03CA952AF133FB06307C24171E53BF50AB76F1EDEABDE5E99F78D4EAD202F32CF1BEE50349D56FC1943AF84F2D2ABDA520F64DC4DB37B2F3DB20B0ECB572093E70120F1B539D0C1495B368061129F30D35F9E436F32D69967AE86031A275620F554378A116E2142F9F6315A38B19BD8A1B2E6DC31201F2D37A058F03C39C06C200824705685CECA003C95140434EE9D8BBBF4474B83FD4ECC2766137DB9A44D7420B7B9E52F3EE8CE4FBB8BE7D6CF66D33A20293F806C69385136662A74453FB162201732C9A35E80D4796BABEA76AACE50B49F6079EA3E349F026B4491CFE720AD17202D9B57E92AB51FE28A587050FD82ABB30ABD699A5CE8B54E7CD49B2A827BCB9920DCBA229ACDC6B7F028BA756FD5ABBFEBD31B4227CD4137D728EC5EA56C457618202CF1439A6DBCC1A35E96574BDDBF2C5DB9174AF5AD0D278FE92E06E4AC349A42"_unhex;
-  auto subject =
-      "94E097B110BA3ADBB7B6C4C599D31D675DE7BE6E722407410C08EF352BE585F1"_unhex;
+  auto merklePath = ParseHex(defaultPathEncoded);
+  auto subject = ParseHex(defaultSubject);
   auto stream = ReadStream(merklePath);
   auto decoded = MerklePath::fromVbkEncoding(stream, Sha256Hash(subject));
 
-  std::vector<Sha256Hash> expectedLayers{
-      "4d66077fdf24246ffd6b6979dfedef5d46588654addeb35edb11e993c131f612"_unhex,
-      "023d1abe8758c6f917ec0c65674bbd43d66ee14dc667b3117dfc44690c6f5af1"_unhex,
-      "096ddba03ca952af133fb06307c24171e53bf50ab76f1edeabde5e99f78d4ead"_unhex,
-      "2f32cf1bee50349d56fc1943af84f2d2abda520f64dc4db37b2f3db20b0ecb57"_unhex,
-      "93e70120f1b539d0c1495b368061129f30d35f9e436f32d69967ae86031a2756"_unhex,
-      "f554378a116e2142f9f6315a38b19bd8a1b2e6dc31201f2d37a058f03c39c06c"_unhex,
-      "0824705685ceca003c95140434ee9d8bbbf4474b83fd4ecc2766137db9a44d74"_unhex,
-      "b7b9e52f3ee8ce4fbb8be7d6cf66d33a20293f806c69385136662a74453fb162"_unhex,
-      "1732c9a35e80d4796babea76aace50b49f6079ea3e349f026b4491cfe720ad17"_unhex,
-      "2d9b57e92ab51fe28a587050fd82abb30abd699a5ce8b54e7cd49b2a827bcb99"_unhex,
-      "dcba229acdc6b7f028ba756fd5abbfebd31b4227cd4137d728ec5ea56c457618"_unhex,
-      "2cf1439a6dbcc1a35e96574bddbf2c5db9174af5ad0d278fe92e06e4ac349a42"_unhex};
-
-  EXPECT_EQ(decoded.index, 1659);
-  EXPECT_EQ(decoded.subject.toHex(),
-            "94e097b110ba3adbb7b6c4c599d31d675de7be6e722407410c08ef352be585f1");
-  EXPECT_EQ(decoded.layers, expectedLayers);
+  EXPECT_EQ(decoded.index, defaultIndex);
+  EXPECT_EQ(decoded.subject.toHex(), defaultSubject);
+  EXPECT_EQ(decoded.layers, defaultLayers);
 
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
+}
+
+TEST(MerklePath, Serialize) {
+  auto subject = ParseHex(defaultSubject);
+  MerklePath path{defaultLayers, subject, defaultIndex};
+
+  WriteStream stream;
+  path.toVbkEncoding(stream);
+  auto pathBytes = stream.data();
+  auto pathEncoded = HexStr(pathBytes);
+
+  EXPECT_EQ(pathEncoded, defaultPathEncoded);
+}
+
+TEST(MerklePath, RoundTrip) {
+  auto merklePath = ParseHex(defaultPathEncoded);
+  auto subject = ParseHex(defaultSubject);
+  auto stream = ReadStream(merklePath);
+  auto decoded = MerklePath::fromVbkEncoding(stream, Sha256Hash(subject));
+  EXPECT_EQ(decoded.index, defaultIndex);
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto pathBytes = outputStream.data();
+  auto pathReEncoded = HexStr(pathBytes);
+
+  EXPECT_EQ(pathReEncoded, defaultPathEncoded);
 }

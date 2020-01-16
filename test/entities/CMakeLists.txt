@@ -1,4 +1,5 @@
 addtest(entities_serde_test
+        coin_test.cpp
         btcblock_test.cpp
         merkle_path_test.cpp
         vbk_merkle_path_test.cpp

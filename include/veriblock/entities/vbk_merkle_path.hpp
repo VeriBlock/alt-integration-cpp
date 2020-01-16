@@ -29,6 +29,16 @@ struct VbkMerklePath {
 
     return mp;
   }
+
+  void toRaw(WriteStream& stream) const {
+    writeSingleFixedBEValue<int32_t>(stream, treeIndex);
+    writeSingleFixedBEValue<int32_t>(stream, index);
+    writeSingleByteLenValue(stream, subject);
+    writeSingleFixedBEValue<int32_t>(stream, (int32_t)layers.size());
+    for (const auto& layer : layers) {
+      writeSingleByteLenValue(stream, layer);
+    }
+  }
 };
 
 }  // namespace VeriBlock

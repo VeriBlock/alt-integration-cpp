@@ -97,16 +97,16 @@ TEST(WriteStream, Write) {
             (std::vector<uint8_t>{1, 2, 3, 4, 5, 6, 'a', 9, 8, 7}));
 }
 
-TEST(WriteStream, BE) {
+TEST(WriteStream, LE) {
   VeriBlock::WriteStream stream;
-  stream.writeBE<uint8_t>(1);
-  stream.writeBE<int8_t>(-1);
-  stream.writeBE<uint16_t>(2);
-  stream.writeBE<int16_t>(-2);
-  stream.writeBE<uint32_t>(3);
-  stream.writeBE<int32_t>(-3);
-  stream.writeBE<uint64_t>(4);
-  stream.writeBE<int64_t>(-4);
+  stream.writeLE<uint8_t>(1);
+  stream.writeLE<int8_t>(-1);
+  stream.writeLE<uint16_t>(2);
+  stream.writeLE<int16_t>(-2);
+  stream.writeLE<uint32_t>(3);
+  stream.writeLE<int32_t>(-3);
+  stream.writeLE<uint64_t>(4);
+  stream.writeLE<int64_t>(-4);
 
   EXPECT_EQ(stream.data().size(),
             sizeof(int8_t) * 2 + sizeof(int16_t) * 2 + sizeof(int32_t) * 2 +
@@ -118,16 +118,16 @@ TEST(WriteStream, BE) {
                 0,    0,    0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}));
 }
 
-TEST(WriteStream, LE) {
+TEST(WriteStream, BE) {
   VeriBlock::WriteStream stream;
-  stream.writeLE<uint8_t>(1);
-  stream.writeLE<int8_t>(-1);
-  stream.writeLE<uint16_t>(2);
-  stream.writeLE<int16_t>(-2);
-  stream.writeLE<uint32_t>(3);
-  stream.writeLE<int32_t>(-3);
-  stream.writeLE<uint64_t>(4);
-  stream.writeLE<int64_t>(-4);
+  stream.writeBE<uint8_t>(1);
+  stream.writeBE<int8_t>(-1);
+  stream.writeBE<uint16_t>(2);
+  stream.writeBE<int16_t>(-2);
+  stream.writeBE<uint32_t>(3);
+  stream.writeBE<int32_t>(-3);
+  stream.writeBE<uint64_t>(4);
+  stream.writeBE<int64_t>(-4);
 
   EXPECT_EQ(stream.data().size(),
             sizeof(int8_t) * 2 + sizeof(int16_t) * 2 + sizeof(int32_t) * 2 +

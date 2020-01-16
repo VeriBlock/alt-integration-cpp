@@ -259,4 +259,3 @@ CheckOptions:
     value:           '3'
   - key:             cppcoreguidelines-macro-usage.CheckCapsOnly
     value:           '1'
-...

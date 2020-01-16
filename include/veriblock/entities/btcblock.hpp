@@ -9,12 +9,12 @@
 namespace VeriBlock {
 
 struct BtcBlock {
-  uint32_t version;
-  Sha256Hash previousBlock;
-  Sha256Hash merkleRoot;
-  uint32_t timestamp;
-  uint32_t bits;
-  uint32_t nonce;
+  uint32_t version{};
+  Sha256Hash previousBlock{};
+  Sha256Hash merkleRoot{};
+  uint32_t timestamp{};
+  uint32_t bits{};
+  uint32_t nonce{};
 
   static BtcBlock fromRaw(ReadStream& stream) {
     BtcBlock block{};
@@ -31,6 +31,21 @@ struct BtcBlock {
     ReadStream valStream(
         readSingleByteLenValue(stream, BTC_HEADER_SIZE, BTC_HEADER_SIZE));
     return BtcBlock::fromRaw(valStream);
+  }
+
+  void toRaw(WriteStream& stream) const {
+    stream.writeLE<uint32_t>(version);
+    stream.write(previousBlock);
+    stream.write(merkleRoot);
+    stream.writeLE<uint32_t>(timestamp);
+    stream.writeLE<uint32_t>(bits);
+    stream.writeLE<uint32_t>(nonce);
+  }
+
+  void toVbkEncoding(WriteStream& stream) const {
+    WriteStream blockStream;
+    toRaw(blockStream);
+    writeSingleByteLenValue(stream, blockStream.data());
   }
 };
 

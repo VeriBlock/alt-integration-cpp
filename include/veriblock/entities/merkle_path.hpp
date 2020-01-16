@@ -46,6 +46,25 @@ struct MerklePath {
     ReadStream merkleStream(merkleBytes);
     return MerklePath::fromRaw(merkleStream, subject);
   }
+
+  void toRaw(WriteStream& stream) const {
+    writeSingleFixedBEValue<int32_t>(stream, index);
+    writeSingleFixedBEValue<int32_t>(stream, (int32_t)layers.size());
+
+    const auto subjectSizeBytes = fixedArray((int32_t) subject.size());
+    writeSingleFixedBEValue<int32_t>(stream, (int32_t)subjectSizeBytes.size());
+    stream.write(subjectSizeBytes);
+
+    for (const auto& layer : layers) {
+      writeSingleByteLenValue(stream, layer);
+    }
+  }
+
+  void toVbkEncoding(WriteStream& stream) const {
+    WriteStream pathStream;
+    toRaw(pathStream);
+    writeVarLenValue(stream, pathStream.data());
+  }
 };
 
 }  // namespace VeriBlock

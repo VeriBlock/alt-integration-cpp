@@ -9,15 +9,15 @@
 namespace VeriBlock {
 
 struct VbkBlock {
-  int32_t height;
-  int16_t version;
-  VBlakeBlockHash previousBlock;
-  VBlakePrevKeystoneHash previousKeystone;
-  VBlakePrevKeystoneHash secondPreviousKeystone;
-  VbkMerkleRootSha256Hash merkleRoot;
-  int32_t timestamp;
-  int32_t difficulty;
-  int32_t nonce;
+  int32_t height{};
+  int16_t version{};
+  VBlakeBlockHash previousBlock{};
+  VBlakePrevKeystoneHash previousKeystone{};
+  VBlakePrevKeystoneHash secondPreviousKeystone{};
+  VbkMerkleRootSha256Hash merkleRoot{};
+  int32_t timestamp{};
+  int32_t difficulty{};
+  int32_t nonce{};
 
   static VbkBlock fromRaw(ReadStream& stream) {
     VbkBlock block{};
@@ -39,6 +39,24 @@ struct VbkBlock {
         readSingleByteLenValue(stream, VBK_HEADER_SIZE, VBK_HEADER_SIZE);
     ReadStream blockStream(blockBytes);
     return VbkBlock::fromRaw(blockStream);
+  }
+
+  void toRaw(WriteStream& stream) const {
+    stream.writeBE<int32_t>(height);
+    stream.writeBE<int16_t>(version);
+    stream.write(previousBlock);
+    stream.write(previousKeystone);
+    stream.write(secondPreviousKeystone);
+    stream.write(merkleRoot);
+    stream.writeBE<int32_t>(timestamp);
+    stream.writeBE<int32_t>(difficulty);
+    stream.writeBE<int32_t>(nonce);
+  }
+
+  void toVbkEncoding(WriteStream& stream) const {
+    WriteStream blockStream;
+    toRaw(blockStream);
+    writeSingleByteLenValue(stream, blockStream.data());
   }
 };
 
