@@ -16,6 +16,10 @@ struct Coin {
     return Coin(readSingleBEValue<int64_t>(stream));
   }
 
+  void toVbkEncoding(WriteStream& stream) const {
+    writeSingleBEValue(stream, units);
+  }
+
  private:
 };
 

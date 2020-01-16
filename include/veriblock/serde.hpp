@@ -6,10 +6,10 @@
 #include <stdexcept>
 #include <vector>
 
-#include "blob.hpp"
 #include "consts.hpp"
 #include "read_stream.hpp"
 #include "slice.hpp"
+#include "write_stream.hpp"
 
 /**
  * Contains veriblock-specific serialization and deserialziation primitives.
@@ -25,6 +25,27 @@ namespace VeriBlock {
  * @throws std::out_of_range
  */
 void checkRange(int64_t num, int64_t min, int64_t max);
+
+/**
+ * Converts the input to the byte array and trims it's size to the
+ * lowest possible value
+ * @param input value to convert
+ * @return converted and trimmed byte array
+ */
+std::vector<uint8_t> trimmedArray(int64_t input);
+
+/**
+ * Converts the input to the byte array
+ * @param input value to convert
+ * @return converted byte array
+ */
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type>
+std::vector<uint8_t> fixedArray(T input) {
+  WriteStream inputStream;
+  inputStream.writeBE(input);
+  return inputStream.data();
+}
 
 /**
  * Pad container 'v' to have size at least 'size', by adding leading zeroes
@@ -92,6 +113,53 @@ T readSingleBEValue(ReadStream& stream) {
       .readBE<T>();
 }
 
+/**
+ * Write single byte length value, which consists of
+ * `N bytes vector`
+ * Appends 1 byte data length to the stream
+ * @param stream write data to this stream
+ * @param value data that should be written
+ * @throws std::out_of_range if value size is too high
+ */
+void writeSingleByteLenValue(WriteStream& stream,
+                             const Slice<const uint8_t>& value);
+
+/**
+ * Write single Big-Endian value to the stream.
+ * This function converts number to the bytes array
+ * in Big-Endian order, trims it and writes to the stream
+ * @param stream write data to this stream
+ * @param value value to be written
+ * @throws std::out_of_range if stream is out of data
+ */
+void writeSingleBEValue(WriteStream& stream, int64_t value);
+
+/**
+ * Write single Big-Endian value to the stream.
+ * This function converts number to the bytes array
+ * in Big-Endian order and writes to the stream
+ * @param stream write data to this stream
+ * @param value value to be written
+ * @throws std::out_of_range if stream is out of data
+ */
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type>
+void writeSingleFixedBEValue(WriteStream& stream, T value) {
+  WriteStream dataStream;
+  dataStream.writeBE<T>(value);
+  writeSingleByteLenValue(stream, dataStream.data());
+}
+
+/**
+ * Write variable length value, which consists of
+ * `N bytes vector`
+ * Appends up to 8 bytes data length to the stream and
+ * 1 byte data length size
+ * @param stream write data to this stream
+ * @param value data that should be written
+ */
+void writeVarLenValue(WriteStream& stream, const Slice<const uint8_t>& value);
+
 struct NetworkBytePair {
   ///< works as std::optional. if hasNetworkByte is true, networkByte is set
   bool hasNetworkByte = false;
@@ -99,7 +167,7 @@ struct NetworkBytePair {
   uint8_t typeId = 0;
 };
 
-NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
+// NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
 
 /**
  * Reads array of entities of type T.
