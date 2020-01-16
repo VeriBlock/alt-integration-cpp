@@ -34,8 +34,8 @@ TEST_P(Sha256Test, OneShot) {
   auto tc = GetParam();
   std::vector<uint8_t> result(32, 0);
   VeriBlock::sha256(result.data(),
-                    reinterpret_cast<const uint8_t*>(tc.baseData.data()),
-                    tc.baseData.size());
+                    (const uint8_t*)(tc.baseData.data()),
+                    (uint32_t)tc.baseData.size());
   EXPECT_EQ(result, tc.binData);
 }
 
