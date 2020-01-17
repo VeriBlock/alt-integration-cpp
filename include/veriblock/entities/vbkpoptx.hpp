@@ -18,6 +18,16 @@
 namespace VeriBlock {
 
 struct VbkPopTx {
+  Address address;
+  VbkBlock publishedBlock;
+  BtcTx bitcoinTransaction;
+  MerklePath merklePath;
+  BtcBlock blockOfProof;
+  std::vector<BtcBlock> blockOfProofContext;
+  std::vector<uint8_t> signature;
+  std::vector<uint8_t> publicKey;
+  uint8_t networkByte;
+
   VbkPopTx(Address _address,
            VbkBlock _publishedBlock,
            BtcTx _bitcoinTransaction,
@@ -36,16 +46,6 @@ struct VbkPopTx {
         signature(_signature.begin(), _signature.end()),
         publicKey(_publicKey.begin(), _publicKey.end()),
         networkByte(_networkByte) {}
-
-  Address address;
-  VbkBlock publishedBlock;
-  BtcTx bitcoinTransaction;
-  MerklePath merklePath;
-  BtcBlock blockOfProof;
-  std::vector<BtcBlock> blockOfProofContext;
-  std::vector<uint8_t> signature;
-  std::vector<uint8_t> publicKey;
-  uint8_t networkByte;
 
   static VbkPopTx fromRaw(ReadStream& stream,
                           Slice<const uint8_t> _signature,

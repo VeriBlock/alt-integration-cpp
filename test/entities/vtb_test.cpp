@@ -55,7 +55,7 @@ static const std::string defaultVtbEncoded =
 TEST(VTB, Deserialize) {
   const auto vtbBytes = ParseHex(defaultVtbEncoded);
   auto stream = ReadStream(vtbBytes);
-  auto decoded = VTB::fromRaw(stream);
+  auto decoded = VTB::fromVbkEncoding(stream);
 
   EXPECT_EQ(decoded.transaction.address, Address(AddressType::STANDARD, "VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 }

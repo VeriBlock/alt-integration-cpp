@@ -16,6 +16,15 @@
 namespace VeriBlock {
 
 struct VbkTx {
+  uint8_t txtype;
+  Address sourceAddress;
+  Coin sourceAmount;
+  std::vector<Output> outputs;
+  int64_t signatureIndex;
+  PublicationData publicationData;
+  std::vector<uint8_t> signature;
+  std::vector<uint8_t> publicKey;
+
   VbkTx(uint8_t _txtype,
         Address _sourceAddress,
         Coin _sourceAmount,
@@ -32,15 +41,6 @@ struct VbkTx {
         publicationData(std::move(_publicationData)),
         signature(_signature.begin(), _signature.end()),
         publicKey(_publicKey.begin(), _publicKey.end()) {}
-
-  uint8_t txtype;
-  Address sourceAddress;
-  Coin sourceAmount;
-  std::vector<Output> outputs;
-  int64_t signatureIndex;
-  PublicationData publicationData;
-  std::vector<uint8_t> signature;
-  std::vector<uint8_t> publicKey;
 
   static VbkTx fromRaw(ReadStream& stream,
                        Slice<const uint8_t> _signature,

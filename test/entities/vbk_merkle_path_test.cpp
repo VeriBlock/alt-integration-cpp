@@ -37,7 +37,7 @@ TEST(VbkMerklePath, Deserialize) {
 
 TEST(VbkMerklePath, Serialize) {
   auto subject = ParseHex(defaultSubject);
-  VbkMerklePath path{defaultTreeIndex, defaultIndex, subject, defaultLayers};
+  VbkMerklePath path(defaultTreeIndex, defaultIndex, subject, defaultLayers);
 
   WriteStream stream;
   path.toRaw(stream);

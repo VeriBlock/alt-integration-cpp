@@ -23,7 +23,7 @@ static const std::string defaultAtvEncoded =
 TEST(ATV, Deserialize) {
   const auto atvBytes = ParseHex(defaultAtvEncoded);
   auto stream = ReadStream(atvBytes);
-  auto decoded = ATV::fromRaw(stream);
+  auto decoded = ATV::fromVbkEncoding(stream);
 
   EXPECT_EQ(decoded.transaction.sourceAddress, Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 }

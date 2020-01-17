@@ -2,32 +2,43 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBK_MERKLE_PATH_HPP_
 
 #include <cstdint>
+#include <vector>
+
+#include "veriblock/serde.hpp"
+#include "veriblock/consts.hpp"
 
 #include "veriblock/entities/hashes.hpp"
-#include "veriblock/serde.hpp"
 
 namespace VeriBlock {
 
 struct VbkMerklePath {
-  int32_t treeIndex{};
-  int32_t index{};
-  Sha256Hash subject{};
-  std::vector<Sha256Hash> layers{};
+  int32_t treeIndex;
+  int32_t index;
+  Sha256Hash subject;
+  std::vector<Sha256Hash> layers;
+
+  VbkMerklePath(int32_t _treeIndex,
+                int32_t _index,
+                Sha256Hash _subject,
+                std::vector<Sha256Hash> _layers)
+      : treeIndex(_treeIndex),
+        index(_index),
+        subject(_subject),
+        layers(std::move(_layers)) {}
 
   static VbkMerklePath fromRaw(ReadStream& stream) {
-    VbkMerklePath mp;
-    mp.treeIndex = readSingleBEValue<int32_t>(stream);
-    mp.index = readSingleBEValue<int32_t>(stream);
-    mp.subject =
+    int32_t treeIndex = readSingleBEValue<int32_t>(stream);
+    int32_t index = readSingleBEValue<int32_t>(stream);
+    Sha256Hash subject =
         readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
 
-    mp.layers = readArrayOf<Sha256Hash>(
+    auto layers = readArrayOf<Sha256Hash>(
         stream, 0, MAX_LAYER_COUNT_MERKLE, [](ReadStream& stream) {
           return readSingleByteLenValue(
               stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
         });
 
-    return mp;
+    return VbkMerklePath(treeIndex, index, subject, layers);
   }
 
   void toRaw(WriteStream& stream) const {

@@ -6,7 +6,6 @@
 
 #include "veriblock/serde.hpp"
 #include "veriblock/consts.hpp"
-#include "veriblock/slice.hpp"
 
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vbkblock.hpp"
@@ -15,6 +14,11 @@
 namespace VeriBlock {
 
 struct ATV {
+  VbkTx transaction;
+  VbkMerklePath merklePath;
+  VbkBlock containingBlock;
+  std::vector<VbkBlock> context;
+
   ATV(VbkTx _transaction,
       VbkMerklePath _merklePath,
       VbkBlock _containingBlock,
@@ -24,12 +28,7 @@ struct ATV {
         containingBlock(std::move(_containingBlock)),
         context(std::move(_context)) {}
 
-  VbkTx transaction;
-  VbkMerklePath merklePath;
-  VbkBlock containingBlock;
-  std::vector<VbkBlock> context;
-
-  static ATV fromRaw(ReadStream& stream) {
+  static ATV fromVbkEncoding(ReadStream& stream) {
     VbkTx transaction = VbkTx::fromVbkEncoding(stream);
     VbkMerklePath merklePath = VbkMerklePath::fromRaw(stream);
     VbkBlock containingBlock = VbkBlock::fromVbkEncoding(stream);
@@ -38,10 +37,7 @@ struct ATV {
           return VbkBlock::fromVbkEncoding(stream);
         });
 
-    return ATV(transaction,
-               merklePath,
-               containingBlock,
-               context);
+    return ATV(transaction, merklePath, containingBlock, context);
   }
 };
 

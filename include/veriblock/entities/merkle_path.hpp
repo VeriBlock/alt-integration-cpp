@@ -1,23 +1,30 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 
+#include <cstdint>
+#include <vector>
 #include <cassert>
 #include <stdexcept>
 
-#include "veriblock/entities/hashes.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/consts.hpp"
+
+#include "veriblock/entities/hashes.hpp"
 
 namespace VeriBlock {
 
 struct MerklePath {
-  std::vector<Sha256Hash> layers{};
-  Sha256Hash subject{};
-  int32_t index{};
+  std::vector<Sha256Hash> layers;
+  Sha256Hash subject;
+  int32_t index;
+
+  MerklePath(int32_t _index,
+             Sha256Hash _subject,
+             std::vector<Sha256Hash> _layers)
+      : index(_index), subject(_subject), layers(std::move(_layers)) {}
 
   static MerklePath fromRaw(ReadStream& stream, const Sha256Hash& subject) {
-    MerklePath path;
-    path.subject = subject;
-    path.index = readSingleBEValue<int32_t>(stream);
+    int32_t index = readSingleBEValue<int32_t>(stream);
     const auto numLayers = readSingleBEValue<int32_t>(stream);
     checkRange(numLayers, 0, MAX_LAYER_COUNT_MERKLE);
 
@@ -31,13 +38,14 @@ struct MerklePath {
           "MerklePath.fromRaw(): bad size of bottom data");
     }
 
-    path.layers.reserve(numLayers);
+    std::vector<Sha256Hash> layers;
+    layers.reserve(numLayers);
     for (int i = 0; i < numLayers; i++) {
-      path.layers.emplace_back(
+      layers.emplace_back(
           readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE));
     }
 
-    return path;
+    return MerklePath(index, subject, layers);
   }
 
   static MerklePath fromVbkEncoding(ReadStream& stream,
