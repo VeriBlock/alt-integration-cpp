@@ -9,17 +9,17 @@ using namespace VeriBlock;
 static const PublicationData publicationData{0, ""_v, ""_v, ""_v};
 static const std::vector<uint8_t> emptyBytes64(64);
 
-static const VbkTx defaultTx{
+static const VbkTx defaultTx(
     1,
     Address(AddressType::STANDARD, "V8dy5tWcP7y36kxiJwxKPKUrWAJbjs"),
-    Coin{3500000000},
+    Coin(3500000000),
     std::vector<Output>{
-        Output{Address(AddressType::STANDARD, "V7GghFKRA6BKqtHD7LTdT2ao93DRNA"),
-               Coin{3499999999}}},
+        Output(Address(AddressType::STANDARD, "V7GghFKRA6BKqtHD7LTdT2ao93DRNA"),
+               Coin(3499999999))},
     5904,
     publicationData,
-    Slice<const uint8_t>{emptyBytes64},
-    Slice<const uint8_t>{emptyBytes64}};
+    Slice<const uint8_t>(emptyBytes64),
+    Slice<const uint8_t>(emptyBytes64));
 
 static const std::string defaultTxEncoded =
     "014901011667a654ee3e0c918d8652b63829d7f3bef98524bf899604d09dc3000101166790"

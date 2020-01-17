@@ -86,7 +86,7 @@ struct VbkPopTx {
     auto rawTx = readVarLenValue(stream, 0, MAX_RAWTX_SIZE_VBKPOPTX);
     auto signature = readSingleByteLenValue(stream, 0, MAX_SIGNATURE_SIZE);
     auto publicKey = readSingleByteLenValue(stream, 0, PUBLIC_KEY_SIZE);
-    ReadStream rawTxStream{rawTx};
+    ReadStream rawTxStream(rawTx);
     return fromRaw(rawTxStream, signature, publicKey);
   }
 };

@@ -6,7 +6,7 @@
 
 using namespace VeriBlock;
 
-static const VbkBlock defaultBlock{
+static const VbkBlock defaultBlock(
     5000,
     2,
     "449c60619294546ad825af03"_unhex,
@@ -15,7 +15,7 @@ static const VbkBlock defaultBlock{
     "26bbfda7d5e4462ef24ae02d67e47d78"_unhex,
     1553699059,
     16842752,
-    1};
+    1);
 
 static const std::string defaultBlockEncoded =
     "40000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e"
