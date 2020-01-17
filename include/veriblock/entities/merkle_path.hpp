@@ -14,9 +14,9 @@
 namespace VeriBlock {
 
 struct MerklePath {
-  std::vector<Sha256Hash> layers;
-  Sha256Hash subject;
   int32_t index;
+  Sha256Hash subject;
+  std::vector<Sha256Hash> layers;
 
   MerklePath(int32_t _index,
              Sha256Hash _subject,
