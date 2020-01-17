@@ -61,9 +61,9 @@ struct VbkPopTx {
            (uint32_t)bitcoinTransaction.tx.size());
     sha256(btctxHash, btctxHash, SHA256_HASH_SIZE);
 
-    Slice<uint8_t> btctxSlice{btctxHash, SHA256_HASH_SIZE};
+    Slice<uint8_t> btctxSlice(btctxHash, SHA256_HASH_SIZE);
     MerklePath merklePath =
-        MerklePath::fromVbkEncoding(stream, Sha256Hash{btctxSlice});
+        MerklePath::fromVbkEncoding(stream, Sha256Hash(btctxSlice));
     BtcBlock blockOfProof = BtcBlock::fromVbkEncoding(stream);
 
     auto btcContext = readArrayOf<BtcBlock>(

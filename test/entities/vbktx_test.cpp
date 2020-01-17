@@ -10,7 +10,7 @@ static const PublicationData publicationData{0, ""_v, ""_v, ""_v};
 static const std::vector<uint8_t> emptyBytes64(64);
 
 static const VbkTx defaultTx(
-    1,
+    NetworkBytePair{false, 0, 1},
     Address(AddressType::STANDARD, "V8dy5tWcP7y36kxiJwxKPKUrWAJbjs"),
     Coin(3500000000),
     std::vector<Output>{
@@ -34,7 +34,7 @@ TEST(VbkTx, Deserialize) {
   auto stream = ReadStream(vbktx);
   auto decoded = VbkTx::fromVbkEncoding(stream);
 
-  EXPECT_EQ(decoded.txtype, defaultTx.txtype);
+  EXPECT_EQ(decoded.networkOrType.typeId, defaultTx.networkOrType.typeId);
   EXPECT_EQ(decoded.sourceAddress, defaultTx.sourceAddress);
   EXPECT_EQ(decoded.sourceAmount, defaultTx.sourceAmount);
   EXPECT_EQ(decoded.signatureIndex, defaultTx.signatureIndex);
@@ -45,4 +45,25 @@ TEST(VbkTx, Deserialize) {
   EXPECT_EQ(decoded.publicKey, defaultTx.publicKey);
 
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
+}
+
+TEST(VbkTx, Serialize) {
+  WriteStream stream;
+  defaultTx.toVbkEncoding(stream);
+  auto txBytes = stream.data();
+  auto txEncoded = HexStr(txBytes);
+  EXPECT_EQ(txEncoded, defaultTxEncoded);
+}
+
+TEST(VbkTx, RoundTrip) {
+  auto txDecoded = ParseHex(defaultTxEncoded);
+  auto stream = ReadStream(txDecoded);
+  auto decoded = VbkTx::fromVbkEncoding(stream);
+  EXPECT_EQ(decoded.signatureIndex, defaultTx.signatureIndex);
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto txBytes = outputStream.data();
+  auto txReEncoded = HexStr(txBytes);
+  EXPECT_EQ(txReEncoded, defaultTxEncoded);
 }

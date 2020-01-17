@@ -16,7 +16,7 @@
 namespace VeriBlock {
 
 struct VbkTx {
-  uint8_t txtype;
+  NetworkBytePair networkOrType;
   Address sourceAddress;
   Coin sourceAmount;
   std::vector<Output> outputs;
@@ -25,7 +25,7 @@ struct VbkTx {
   std::vector<uint8_t> signature;
   std::vector<uint8_t> publicKey;
 
-  VbkTx(uint8_t _txtype,
+  VbkTx(NetworkBytePair _networkOrType,
         Address _sourceAddress,
         Coin _sourceAmount,
         std::vector<Output> _outputs,
@@ -33,7 +33,7 @@ struct VbkTx {
         PublicationData _publicationData,
         Slice<const uint8_t> _signature,
         Slice<const uint8_t> _publicKey)
-      : txtype(_txtype),
+      : networkOrType(std::move(_networkOrType)),
         sourceAddress(std::move(_sourceAddress)),
         sourceAmount(_sourceAmount),
         outputs(std::move(_outputs)),
@@ -59,10 +59,10 @@ struct VbkTx {
     int64_t signatureIndex = readSingleBEValue<int64_t>(stream);
     auto pubBytes = readVarLenValue(stream, 0, MAX_SIZE_PUBLICATION_DATA);
 
-    ReadStream pubBytesStream{pubBytes};
+    ReadStream pubBytesStream(pubBytes);
     PublicationData publicationData = PublicationData::fromRaw(pubBytesStream);
 
-    return VbkTx(networkOrType.typeId,
+    return VbkTx(networkOrType,
                  sourceAddress,
                  sourceAmount,
                  outputs,
@@ -78,6 +78,29 @@ struct VbkTx {
     auto publicKey = readSingleByteLenValue(stream, 0, PUBLIC_KEY_SIZE);
     ReadStream rawTxStream(rawTx);
     return fromRaw(rawTxStream, signature, publicKey);
+  }
+
+  void toRaw(WriteStream& stream) const {
+    writeNetworkByte(stream, networkOrType);
+    sourceAddress.toVbkEncoding(stream);
+    sourceAmount.toVbkEncoding(stream);
+    stream.writeBE<uint8_t>((uint8_t)outputs.size());
+    for (const auto& output : outputs) {
+      output.toVbkEncoding(stream);
+    }
+    writeSingleBEValue(stream, signatureIndex);
+
+    WriteStream pubBytesStream;
+    publicationData.toRaw(pubBytesStream);
+    writeVarLenValue(stream, pubBytesStream.data());
+  }
+
+  void toVbkEncoding(WriteStream& stream) const {
+    WriteStream txStream;
+    toRaw(txStream);
+    writeVarLenValue(stream, txStream.data());
+    writeSingleByteLenValue(stream, signature);
+    writeSingleByteLenValue(stream, publicKey);
   }
 };
 

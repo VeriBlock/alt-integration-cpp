@@ -169,12 +169,20 @@ struct NetworkBytePair {
 /**
  * Read optional network byte from the stream
  * @param stream read data from this stream
- * @param type compare network byte with this type and use as transaction
- * type if type == network byte
+ * @param type use this value to detect if we are reading
+ * network byte or type byte
  * @throws std::out_of_range if stream is out of data
  * @return NetworkBytePair structure
  */
 NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
+
+/**
+ * Write optional network byte to the stream
+ * @param stream write data to this stream
+ * @param networkOrType write network byte if available, write type
+ * byte after
+ */
+void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
 
 /**
  * Reads array of entities of type T.

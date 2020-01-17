@@ -78,4 +78,11 @@ NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
   return ret;
 }
 
+void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
+  if (networkOrType.hasNetworkByte) {
+    stream.writeBE<uint8_t>(networkOrType.networkByte);
+  }
+  stream.writeBE<uint8_t>(networkOrType.typeId);
+}
+
 }  // namespace VeriBlock
