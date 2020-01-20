@@ -1,22 +1,25 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 
+#include <cstdint>
+#include <vector>
 #include <cassert>
 #include <stdexcept>
 
-#include "veriblock/entities/hashes.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/consts.hpp"
+
+#include "veriblock/entities/hashes.hpp"
 
 namespace VeriBlock {
 
 struct MerklePath {
-  std::vector<Sha256Hash> layers{};
-  Sha256Hash subject{};
   int32_t index{};
+  Sha256Hash subject{};
+  std::vector<Sha256Hash> layers{};
 
   static MerklePath fromRaw(ReadStream& stream, const Sha256Hash& subject) {
-    MerklePath path;
-    path.subject = subject;
+    MerklePath path{};
     path.index = readSingleBEValue<int32_t>(stream);
     const auto numLayers = readSingleBEValue<int32_t>(stream);
     checkRange(numLayers, 0, MAX_LAYER_COUNT_MERKLE);
@@ -37,6 +40,7 @@ struct MerklePath {
           readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE));
     }
 
+    path.subject = subject;
     return path;
   }
 

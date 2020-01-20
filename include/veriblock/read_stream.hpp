@@ -63,7 +63,7 @@ class ReadStream {
     T t = 0;
     for (size_t i = 0, shift = (sizeof(T) - 1) * 8; i < sizeof(T);
          i++, shift -= 8) {
-      t += m_Buffer[m_Pos++] << shift;
+      t += ((T) m_Buffer[m_Pos++]) << shift;
     }
     return t;
   }

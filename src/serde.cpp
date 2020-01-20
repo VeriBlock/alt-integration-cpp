@@ -63,18 +63,26 @@ void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value) {
   stream.write(value);
 }
 
-/*NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
+NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
   NetworkBytePair ret;
   auto networkOrType = stream.readBE<uint8_t>();
-  if (networkOrType != (uint8_t)type) {
+
+  if (networkOrType == (uint8_t) type) {
+    ret.typeId = networkOrType;
+  } else {
     ret.hasNetworkByte = true;
     ret.networkByte = networkOrType;
     ret.typeId = stream.readBE<uint8_t>();
-  } else {
-    ret.typeId = networkOrType;
   }
 
   return ret;
-}*/
+}
+
+void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
+  if (networkOrType.hasNetworkByte) {
+    stream.writeBE<uint8_t>(networkOrType.networkByte);
+  }
+  stream.writeBE<uint8_t>(networkOrType.typeId);
+}
 
 }  // namespace VeriBlock
