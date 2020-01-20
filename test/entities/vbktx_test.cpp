@@ -10,7 +10,7 @@ static const PublicationData publicationData{0, ""_v, ""_v, ""_v};
 static const std::vector<uint8_t> emptyBytes64(64);
 
 static const VbkTx defaultTx{
-    NetworkBytePair{false, 0, 1},
+    NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
     Address(AddressType::STANDARD, "V8dy5tWcP7y36kxiJwxKPKUrWAJbjs"),
     Coin(3500000000),
     std::vector<Output>{
