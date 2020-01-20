@@ -41,7 +41,6 @@ typedef struct {
 
   uint8_t ipad[64]; /*!< HMAC: inner padding        */
   uint8_t opad[64]; /*!< HMAC: outer padding        */
-  int is224;        /*!< 0 => SHA-256, else SHA-224 */
 } sha256_context;
 
 /**
@@ -63,7 +62,7 @@ void sha256_update(sha256_context *ctx, const uint8_t *input, uint32_t ilen);
  * @param ctx context
  * @param out preallocated output of size 32 bytes
  */
-void sha256_finish(sha256_context *ctx, uint8_t *out);
+void sha256_finish(sha256_context *ctx, uint8_t out[SHA256_HASH_SIZE]);
 
 /**
  * All-in-one sha256 hash calculation.
@@ -71,7 +70,7 @@ void sha256_finish(sha256_context *ctx, uint8_t *out);
  * @param buf input buffer
  * @param nsize size of input buffer
  */
-void sha256(uint8_t *out, const uint8_t *buf, uint32_t nsize);
+void sha256(uint8_t out[SHA256_HASH_SIZE], const uint8_t *buf, uint32_t nsize);
 
 }  // namespace VeriBlock
 
