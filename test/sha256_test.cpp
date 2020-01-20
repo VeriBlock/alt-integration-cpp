@@ -47,7 +47,7 @@ TEST_P(Sha256Test, HashTwice) {
 
 TEST_P(Sha256Test, IUF) {
   auto tc = GetParam();
-  std::vector<uint8_t> result(32, 0);
+  std::vector<uint8_t> result(SHA256_HASH_SIZE, 0);
 
   VeriBlock::sha256_context ctx{};
   VeriBlock::sha256_init(&ctx);

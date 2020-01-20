@@ -60,33 +60,19 @@ namespace VeriBlock {
 /*
  * SHA-256 context setup
  */
-void sha2_starts(sha256_context *ctx, int is224) {
+void sha256_init(sha256_context *ctx) {
   ctx->total[0] = 0;
   ctx->total[1] = 0;
 
-  if (is224 == 0) {
-    /* SHA-256 */
-    ctx->state[0] = 0x6A09E667;
-    ctx->state[1] = 0xBB67AE85;
-    ctx->state[2] = 0x3C6EF372;
-    ctx->state[3] = 0xA54FF53A;
-    ctx->state[4] = 0x510E527F;
-    ctx->state[5] = 0x9B05688C;
-    ctx->state[6] = 0x1F83D9AB;
-    ctx->state[7] = 0x5BE0CD19;
-  } else {
-    /* SHA-224 */
-    ctx->state[0] = 0xC1059ED8;
-    ctx->state[1] = 0x367CD507;
-    ctx->state[2] = 0x3070DD17;
-    ctx->state[3] = 0xF70E5939;
-    ctx->state[4] = 0xFFC00B31;
-    ctx->state[5] = 0x68581511;
-    ctx->state[6] = 0x64F98FA7;
-    ctx->state[7] = 0xBEFA4FA4;
-  }
-
-  ctx->is224 = is224;
+  /* SHA-256 */
+  ctx->state[0] = 0x6A09E667;
+  ctx->state[1] = 0xBB67AE85;
+  ctx->state[2] = 0x3C6EF372;
+  ctx->state[3] = 0xA54FF53A;
+  ctx->state[4] = 0x510E527F;
+  ctx->state[5] = 0x9B05688C;
+  ctx->state[6] = 0x1F83D9AB;
+  ctx->state[7] = 0x5BE0CD19;
 }
 
 static void sha2_process(sha256_context *ctx, const unsigned char data[64]) {
@@ -219,9 +205,9 @@ static void sha2_process(sha256_context *ctx, const unsigned char data[64]) {
 /*
  * SHA-256 process buffer
  */
-void sha2_update(sha256_context *ctx,
-                 const unsigned char *input,
-                 uint32_t ilen) {
+void sha256_update(sha256_context *ctx,
+                   const unsigned char *input,
+                   uint32_t ilen) {
   uint32_t fill;
   uint32_t left;
 
@@ -262,7 +248,7 @@ static const unsigned char sha2_padding[64] = {
 /*
  * SHA-256 final digest
  */
-void sha2_finish(sha256_context *ctx, unsigned char output[32]) {
+void sha256_finish(sha256_context *ctx, unsigned char output[32]) {
   unsigned long last, padn;
   unsigned long high, low;
   unsigned char msglen[8];
@@ -276,8 +262,8 @@ void sha2_finish(sha256_context *ctx, unsigned char output[32]) {
   last = ctx->total[0] & 0x3F;
   padn = (last < 56) ? (56 - last) : (120 - last);
 
-  sha2_update(ctx, (unsigned char *)sha2_padding, padn);
-  sha2_update(ctx, msglen, 8);
+  sha256_update(ctx, (unsigned char *)sha2_padding, padn);
+  sha256_update(ctx, msglen, 8);
 
   PUT_ULONG_BE(ctx->state[0], output, 0);
   PUT_ULONG_BE(ctx->state[1], output, 4);
@@ -286,129 +272,22 @@ void sha2_finish(sha256_context *ctx, unsigned char output[32]) {
   PUT_ULONG_BE(ctx->state[4], output, 16);
   PUT_ULONG_BE(ctx->state[5], output, 20);
   PUT_ULONG_BE(ctx->state[6], output, 24);
-
-  if (ctx->is224 == 0) PUT_ULONG_BE(ctx->state[7], output, 28);
+  PUT_ULONG_BE(ctx->state[7], output, 28);
 }
 
 /*
  * output = SHA-256( input buffer )
  */
-void sha2(const unsigned char *input,
-          int ilen,
-          unsigned char output[32],
-          int is224) {
+void sha256(unsigned char output[32],
+            const unsigned char *input,
+            uint32_t ilen) {
   sha256_context ctx;
 
-  sha2_starts(&ctx, is224);
-  sha2_update(&ctx, input, ilen);
-  sha2_finish(&ctx, output);
-
-  memset(&ctx, 0, sizeof(sha256_context));
-}
-
-/*
- * SHA-256 HMAC context setup
- */
-void sha2_hmac_starts(sha256_context *ctx,
-                      const unsigned char *key,
-                      int keylen,
-                      int is224) {
-  int i;
-  unsigned char sum[32];
-
-  if (keylen > 64) {
-    sha2(key, keylen, sum, is224);
-    keylen = (is224) ? 28 : 32;
-    key = sum;
-  }
-
-  memset(ctx->ipad, 0x36, 64);
-  memset(ctx->opad, 0x5C, 64);
-
-  for (i = 0; i < keylen; i++) {
-    ctx->ipad[i] = (unsigned char)(ctx->ipad[i] ^ key[i]);
-    ctx->opad[i] = (unsigned char)(ctx->opad[i] ^ key[i]);
-  }
-
-  sha2_starts(ctx, is224);
-  sha2_update(ctx, ctx->ipad, 64);
-
-  memset(sum, 0, sizeof(sum));
-}
-
-/*
- * SHA-256 HMAC process buffer
- */
-void sha2_hmac_update(sha256_context *ctx,
-                      const unsigned char *input,
-                      int ilen) {
-  sha2_update(ctx, input, ilen);
-}
-
-/*
- * SHA-256 HMAC final digest
- */
-void sha2_hmac_finish(sha256_context *ctx, unsigned char output[32]) {
-  int is224, hlen;
-  unsigned char tmpbuf[32];
-
-  is224 = ctx->is224;
-  hlen = (is224 == 0) ? 32 : 28;
-
-  sha2_finish(ctx, tmpbuf);
-  sha2_starts(ctx, is224);
-  sha2_update(ctx, ctx->opad, 64);
-  sha2_update(ctx, tmpbuf, hlen);
-  sha2_finish(ctx, output);
-
-  memset(tmpbuf, 0, sizeof(tmpbuf));
-}
-
-/*
- * SHA-256 HMAC context reset
- */
-void sha2_hmac_reset(sha256_context *ctx) {
-  sha2_starts(ctx, ctx->is224);
-  sha2_update(ctx, ctx->ipad, 64);
-}
-
-/*
- * output = HMAC-SHA-256( hmac key, input buffer )
- */
-void sha2_hmac(const unsigned char *key,
-               int keylen,
-               const unsigned char *input,
-               int ilen,
-               unsigned char output[32],
-               int is224) {
-  sha256_context ctx;
-
-  sha2_hmac_starts(&ctx, key, keylen, is224);
-  sha2_hmac_update(&ctx, input, ilen);
-  sha2_hmac_finish(&ctx, output);
-
-  memset(&ctx, 0, sizeof(sha256_context));
-}
-
-//=====================================================================================
-//  external interfaces
-//=====================================================================================
-
-void sha256_init(sha256_context *ctx) { sha2_starts(ctx, 0); }
-
-void sha256_update(sha256_context *ctx, const uint8_t *input, uint32_t ilen) {
-  sha2_update(ctx, input, ilen);
-}
-
-void sha256_finish(sha256_context *ctx, uint8_t *output) {
-  sha2_finish(ctx, output);
-}
-
-void sha256(uint8_t *out, const uint8_t *buf, uint32_t nsize) {
-  sha256_context ctx{};
   sha256_init(&ctx);
-  sha256_update(&ctx, buf, nsize);
-  sha256_finish(&ctx, out);
+  sha256_update(&ctx, input, ilen);
+  sha256_finish(&ctx, output);
+
+  memset(&ctx, 0, sizeof(sha256_context));
 }
 
 }  // namespace VeriBlock
