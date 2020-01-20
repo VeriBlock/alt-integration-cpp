@@ -12,36 +12,28 @@
 namespace VeriBlock {
 
 struct VbkMerklePath {
-  int32_t treeIndex;
-  int32_t index;
-  Sha256Hash subject;
-  std::vector<Sha256Hash> layers;
+  int32_t treeIndex{};
+  int32_t index{};
+  Sha256Hash subject{};
+  std::vector<Sha256Hash> layers{};
 
-  VbkMerklePath(int32_t _treeIndex,
-                int32_t _index,
-                Sha256Hash _subject,
-                std::vector<Sha256Hash> _layers)
-      : treeIndex(_treeIndex),
-        index(_index),
-        subject(_subject),
-        layers(std::move(_layers)) {}
-
-  static VbkMerklePath fromRaw(ReadStream& stream) {
-    int32_t treeIndex = readSingleBEValue<int32_t>(stream);
-    int32_t index = readSingleBEValue<int32_t>(stream);
-    Sha256Hash subject =
+  static VbkMerklePath fromVbkEncoding(ReadStream& stream) {
+    VbkMerklePath path{};
+    path.treeIndex = readSingleBEValue<int32_t>(stream);
+    path.index = readSingleBEValue<int32_t>(stream);
+    path.subject =
         readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
 
-    auto layers = readArrayOf<Sha256Hash>(
+    path.layers = readArrayOf<Sha256Hash>(
         stream, 0, MAX_LAYER_COUNT_MERKLE, [](ReadStream& stream) {
           return readSingleByteLenValue(
               stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
         });
 
-    return VbkMerklePath(treeIndex, index, subject, layers);
+    return path;
   }
 
-  void toRaw(WriteStream& stream) const {
+  void toVbkEncoding(WriteStream& stream) const {
     writeSingleFixedBEValue<int32_t>(stream, treeIndex);
     writeSingleFixedBEValue<int32_t>(stream, index);
     writeSingleByteLenValue(stream, subject);

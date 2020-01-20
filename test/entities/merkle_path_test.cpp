@@ -54,7 +54,7 @@ TEST(MerklePath, Deserialize) {
 
 TEST(MerklePath, Serialize) {
   auto subject = ParseHex(defaultSubject);
-  MerklePath path(defaultIndex, subject, defaultLayers);
+  MerklePath path{defaultIndex, subject, defaultLayers};
 
   WriteStream stream;
   path.toVbkEncoding(stream);

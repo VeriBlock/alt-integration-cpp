@@ -14,30 +14,33 @@
 namespace VeriBlock {
 
 struct ATV {
-  VbkTx transaction;
-  VbkMerklePath merklePath;
-  VbkBlock containingBlock;
-  std::vector<VbkBlock> context;
-
-  ATV(VbkTx _transaction,
-      VbkMerklePath _merklePath,
-      VbkBlock _containingBlock,
-      std::vector<VbkBlock> _context)
-      : transaction(std::move(_transaction)),
-        merklePath(std::move(_merklePath)),
-        containingBlock(std::move(_containingBlock)),
-        context(std::move(_context)) {}
+  VbkTx transaction{};
+  VbkMerklePath merklePath{};
+  VbkBlock containingBlock{};
+  std::vector<VbkBlock> context{};
 
   static ATV fromVbkEncoding(ReadStream& stream) {
-    VbkTx transaction = VbkTx::fromVbkEncoding(stream);
-    VbkMerklePath merklePath = VbkMerklePath::fromRaw(stream);
-    VbkBlock containingBlock = VbkBlock::fromVbkEncoding(stream);
-    auto context = readArrayOf<VbkBlock>(
+    ATV atv{};
+    atv.transaction = VbkTx::fromVbkEncoding(stream);
+    atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
+    atv.containingBlock = VbkBlock::fromVbkEncoding(stream);
+    atv.context = readArrayOf<VbkBlock>(
         stream, 0, MAX_CONTEXT_COUNT_ALT_PUBLICATION, [](ReadStream& stream) {
           return VbkBlock::fromVbkEncoding(stream);
         });
 
-    return ATV(transaction, merklePath, containingBlock, context);
+    return atv;
+  }
+
+  void toVbkEncoding(WriteStream& stream) const {
+    WriteStream txStream;
+    transaction.toVbkEncoding(stream);
+    merklePath.toVbkEncoding(stream);
+    containingBlock.toVbkEncoding(stream);
+    writeSingleBEValue(stream, context.size());
+    for (const auto& block : context) {
+      block.toVbkEncoding(stream);
+    }
   }
 };
 

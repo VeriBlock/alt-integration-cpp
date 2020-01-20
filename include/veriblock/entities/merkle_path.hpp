@@ -14,17 +14,13 @@
 namespace VeriBlock {
 
 struct MerklePath {
-  int32_t index;
-  Sha256Hash subject;
-  std::vector<Sha256Hash> layers;
-
-  MerklePath(int32_t _index,
-             Sha256Hash _subject,
-             std::vector<Sha256Hash> _layers)
-      : index(_index), subject(_subject), layers(std::move(_layers)) {}
+  int32_t index{};
+  Sha256Hash subject{};
+  std::vector<Sha256Hash> layers{};
 
   static MerklePath fromRaw(ReadStream& stream, const Sha256Hash& subject) {
-    int32_t index = readSingleBEValue<int32_t>(stream);
+    MerklePath path{};
+    path.index = readSingleBEValue<int32_t>(stream);
     const auto numLayers = readSingleBEValue<int32_t>(stream);
     checkRange(numLayers, 0, MAX_LAYER_COUNT_MERKLE);
 
@@ -38,14 +34,14 @@ struct MerklePath {
           "MerklePath.fromRaw(): bad size of bottom data");
     }
 
-    std::vector<Sha256Hash> layers;
-    layers.reserve(numLayers);
+    path.layers.reserve(numLayers);
     for (int i = 0; i < numLayers; i++) {
-      layers.emplace_back(
+      path.layers.emplace_back(
           readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE));
     }
 
-    return MerklePath(index, subject, layers);
+    path.subject = subject;
+    return path;
   }
 
   static MerklePath fromVbkEncoding(ReadStream& stream,

@@ -8,7 +8,9 @@
 namespace VeriBlock {
 
 struct Coin {
-  int64_t units;
+  int64_t units{};
+
+  Coin() = default;
 
   explicit Coin(int64_t atomicUnits) : units(atomicUnits) {}
 

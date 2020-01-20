@@ -7,8 +7,10 @@
 namespace VeriBlock {
 
 struct Output {
-  Address address;
-  Coin coin;
+  Address address{};
+  Coin coin{};
+
+  Output() = default;
 
   Output(Address _address, Coin _coin)
       : address(std::move(_address)), coin(_coin) {}

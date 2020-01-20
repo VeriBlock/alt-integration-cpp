@@ -59,3 +59,17 @@ TEST(VTB, Deserialize) {
 
   EXPECT_EQ(decoded.transaction.address, Address(AddressType::STANDARD, "VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 }
+
+TEST(VTB, RoundTrip) {
+  auto vtbBytes = ParseHex(defaultVtbEncoded);
+  auto stream = ReadStream(vtbBytes);
+  auto decoded = VTB::fromVbkEncoding(stream);
+  EXPECT_EQ(decoded.transaction.address,
+            Address(AddressType::STANDARD, "VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto txBytes = outputStream.data();
+  auto txReEncoded = HexStr(txBytes);
+  EXPECT_EQ(txReEncoded, defaultVtbEncoded);
+}

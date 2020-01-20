@@ -9,34 +9,22 @@
 namespace VeriBlock {
 
 struct BtcBlock {
-  uint32_t version;
-  Sha256Hash previousBlock;
-  Sha256Hash merkleRoot;
-  uint32_t timestamp;
-  uint32_t bits;
-  uint32_t nonce;
-
-  BtcBlock(uint32_t _version,
-           Sha256Hash _previousBlock,
-           Sha256Hash _merkleRoot,
-           uint32_t _timestamp,
-           uint32_t _bits,
-           uint32_t _nonce)
-      : version(_version),
-        previousBlock(_previousBlock),
-        merkleRoot(_merkleRoot),
-        timestamp(_timestamp),
-        bits(_bits),
-        nonce(_nonce) {}
+  uint32_t version{};
+  Sha256Hash previousBlock{};
+  Sha256Hash merkleRoot{};
+  uint32_t timestamp{};
+  uint32_t bits{};
+  uint32_t nonce{};
 
   static BtcBlock fromRaw(ReadStream& stream) {
-    uint32_t version = stream.readLE<uint32_t>();
-    Sha256Hash previousBlock = stream.readSlice(SHA256_HASH_SIZE);
-    Sha256Hash merkleRoot = stream.readSlice(SHA256_HASH_SIZE);
-    uint32_t timestamp = stream.readLE<uint32_t>();
-    uint32_t bits = stream.readLE<uint32_t>();
-    uint32_t nonce = stream.readLE<uint32_t>();
-    return BtcBlock(version, previousBlock, merkleRoot, timestamp, bits, nonce);
+    BtcBlock block{};
+    block.version = stream.readLE<uint32_t>();
+    block.previousBlock = stream.readSlice(SHA256_HASH_SIZE);
+    block.merkleRoot = stream.readSlice(SHA256_HASH_SIZE);
+    block.timestamp = stream.readLE<uint32_t>();
+    block.bits = stream.readLE<uint32_t>();
+    block.nonce = stream.readLE<uint32_t>();
+    return block;
   }
 
   static BtcBlock fromVbkEncoding(ReadStream& stream) {

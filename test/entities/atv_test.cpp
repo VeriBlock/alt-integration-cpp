@@ -27,3 +27,17 @@ TEST(ATV, Deserialize) {
 
   EXPECT_EQ(decoded.transaction.sourceAddress, Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 }
+
+TEST(ATV, RoundTrip) {
+  auto atvBytes = ParseHex(defaultAtvEncoded);
+  auto stream = ReadStream(atvBytes);
+  auto decoded = ATV::fromVbkEncoding(stream);
+  EXPECT_EQ(decoded.transaction.sourceAddress,
+            Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto txBytes = outputStream.data();
+  auto txReEncoded = HexStr(txBytes);
+  EXPECT_EQ(txReEncoded, defaultAtvEncoded);
+}

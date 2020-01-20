@@ -13,33 +13,33 @@
 namespace VeriBlock {
 
 struct VTB {
-  VbkPopTx transaction;
-  VbkMerklePath merklePath;
-  VbkBlock containingBlock;
-  std::vector<VbkBlock> context;
-
-  VTB(VbkPopTx _transaction,
-      VbkMerklePath _merklePath,
-      VbkBlock _containingBlock,
-      std::vector<VbkBlock> _context)
-      : transaction(std::move(_transaction)),
-        merklePath(std::move(_merklePath)),
-        containingBlock(std::move(_containingBlock)),
-        context(std::move(_context)) {}
+  VbkPopTx transaction{};
+  VbkMerklePath merklePath{};
+  VbkBlock containingBlock{};
+  std::vector<VbkBlock> context{};
 
   static VTB fromVbkEncoding(ReadStream& stream) {
-    VbkPopTx transaction = VbkPopTx::fromVbkEncoding(stream);
-    VbkMerklePath merklePath = VbkMerklePath::fromRaw(stream);
-    VbkBlock containingBlock = VbkBlock::fromVbkEncoding(stream);
-    auto context = readArrayOf<VbkBlock>(
+    VTB vtb{};
+    vtb.transaction = VbkPopTx::fromVbkEncoding(stream);
+    vtb.merklePath = VbkMerklePath::fromVbkEncoding(stream);
+    vtb.containingBlock = VbkBlock::fromVbkEncoding(stream);
+    vtb.context = readArrayOf<VbkBlock>(
         stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
           return VbkBlock::fromVbkEncoding(stream);
         });
 
-    return VTB(transaction,
-               merklePath,
-               containingBlock,
-               context);
+    return vtb;
+  }
+
+  void toVbkEncoding(WriteStream& stream) const {
+    WriteStream txStream;
+    transaction.toVbkEncoding(stream);
+    merklePath.toVbkEncoding(stream);
+    containingBlock.toVbkEncoding(stream);
+    writeSingleBEValue(stream, context.size());
+    for (const auto& block : context) {
+      block.toVbkEncoding(stream);
+    }
   }
 };
 

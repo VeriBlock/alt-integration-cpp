@@ -16,60 +16,38 @@
 namespace VeriBlock {
 
 struct VbkTx {
-  NetworkBytePair networkOrType;
-  Address sourceAddress;
-  Coin sourceAmount;
-  std::vector<Output> outputs;
-  int64_t signatureIndex;
-  PublicationData publicationData;
-  std::vector<uint8_t> signature;
-  std::vector<uint8_t> publicKey;
-
-  VbkTx(NetworkBytePair _networkOrType,
-        Address _sourceAddress,
-        Coin _sourceAmount,
-        std::vector<Output> _outputs,
-        int64_t _signatureIndex,
-        PublicationData _publicationData,
-        Slice<const uint8_t> _signature,
-        Slice<const uint8_t> _publicKey)
-      : networkOrType(std::move(_networkOrType)),
-        sourceAddress(std::move(_sourceAddress)),
-        sourceAmount(_sourceAmount),
-        outputs(std::move(_outputs)),
-        signatureIndex(_signatureIndex),
-        publicationData(std::move(_publicationData)),
-        signature(_signature.begin(), _signature.end()),
-        publicKey(_publicKey.begin(), _publicKey.end()) {}
+  NetworkBytePair networkOrType{};
+  Address sourceAddress{};
+  Coin sourceAmount{};
+  std::vector<Output> outputs{};
+  int64_t signatureIndex{};
+  PublicationData publicationData{};
+  std::vector<uint8_t> signature{};
+  std::vector<uint8_t> publicKey{};
 
   static VbkTx fromRaw(ReadStream& stream,
                        Slice<const uint8_t> _signature,
                        Slice<const uint8_t> _publicKey) {
-    NetworkBytePair networkOrType = readNetworkByte(stream, TxType::VBK_TX);
-    Address sourceAddress = Address::fromVbkEncoding(stream);
-    Coin sourceAmount = Coin::fromVbkEncoding(stream);
+    VbkTx tx{};
+    tx.networkOrType = readNetworkByte(stream, TxType::VBK_TX);
+    tx.sourceAddress = Address::fromVbkEncoding(stream);
+    tx.sourceAmount = Coin::fromVbkEncoding(stream);
 
     uint8_t outputSize = stream.readBE<uint8_t>();
-    std::vector<Output> outputs;
-    outputs.reserve(outputSize);
+    tx.outputs.reserve(outputSize);
     for (size_t i = 0; i < outputSize; i++) {
-      outputs.emplace_back(Output::fromVbkEncoding(stream));
+      tx.outputs.emplace_back(Output::fromVbkEncoding(stream));
     }
 
-    int64_t signatureIndex = readSingleBEValue<int64_t>(stream);
+    tx.signatureIndex = readSingleBEValue<int64_t>(stream);
     auto pubBytes = readVarLenValue(stream, 0, MAX_SIZE_PUBLICATION_DATA);
 
     ReadStream pubBytesStream(pubBytes);
-    PublicationData publicationData = PublicationData::fromRaw(pubBytesStream);
+    tx.publicationData = PublicationData::fromRaw(pubBytesStream);
+    tx.signature = std::vector<uint8_t>(_signature.begin(), _signature.end());
+    tx.publicKey = std::vector<uint8_t>(_publicKey.begin(), _publicKey.end());
 
-    return VbkTx(networkOrType,
-                 sourceAddress,
-                 sourceAmount,
-                 outputs,
-                 signatureIndex,
-                 publicationData,
-                 _signature,
-                 _publicKey);
+    return tx;
   }
 
   static VbkTx fromVbkEncoding(ReadStream& stream) {

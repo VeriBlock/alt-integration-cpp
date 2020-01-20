@@ -10,57 +10,31 @@
 namespace VeriBlock {
 
 struct VbkBlock {
-  int32_t height;
-  int16_t version;
-  VBlakeBlockHash previousBlock;
-  VBlakePrevKeystoneHash previousKeystone;
-  VBlakePrevKeystoneHash secondPreviousKeystone;
-  VbkMerkleRootSha256Hash merkleRoot;
-  int32_t timestamp;
-  int32_t difficulty;
-  int32_t nonce;
-
-  VbkBlock(int32_t _height,
-           int16_t _version,
-           VBlakeBlockHash _previousBlock,
-           VBlakePrevKeystoneHash _previousKeystone,
-           VBlakePrevKeystoneHash _secondPreviousKeystone,
-           VbkMerkleRootSha256Hash _merkleRoot,
-           int32_t _timestamp,
-           int32_t _difficulty,
-           int32_t _nonce)
-      : height(_height),
-        version(_version),
-        previousBlock(_previousBlock),
-        previousKeystone(_previousKeystone),
-        secondPreviousKeystone(_secondPreviousKeystone),
-        merkleRoot(_merkleRoot),
-        timestamp(_timestamp),
-        difficulty(_difficulty),
-        nonce(_nonce) {}
+  int32_t height{};
+  int16_t version{};
+  VBlakeBlockHash previousBlock{};
+  VBlakePrevKeystoneHash previousKeystone{};
+  VBlakePrevKeystoneHash secondPreviousKeystone{};
+  VbkMerkleRootSha256Hash merkleRoot{};
+  int32_t timestamp{};
+  int32_t difficulty{};
+  int32_t nonce{};
 
   static VbkBlock fromRaw(ReadStream& stream) {
-    int32_t height = stream.readBE<int32_t>();
-    int16_t version = stream.readBE<int16_t>();
-    VBlakeBlockHash previousBlock =
+    VbkBlock block{};
+    block.height = stream.readBE<int32_t>();
+    block.version = stream.readBE<int16_t>();
+    block.previousBlock =
         stream.readSlice(VBLAKE_PREVIOUS_BLOCK_SIZE);
-    VBlakePrevKeystoneHash previousKeystone =
+    block.previousKeystone =
         stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_SIZE);
-    VBlakePrevKeystoneHash secondPreviousKeystone =
+    block.secondPreviousKeystone =
         stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_SIZE);
-    VbkMerkleRootSha256Hash merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_SIZE);
-    int32_t timestamp = stream.readBE<int32_t>();
-    int32_t difficulty = stream.readBE<int32_t>();
-    int32_t nonce = stream.readBE<int32_t>();
-    return VbkBlock(height,
-                    version,
-                    previousBlock,
-                    previousKeystone,
-                    secondPreviousKeystone,
-                    merkleRoot,
-                    timestamp,
-                    difficulty,
-                    nonce);
+    block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_SIZE);
+    block.timestamp = stream.readBE<int32_t>();
+    block.difficulty = stream.readBE<int32_t>();
+    block.nonce = stream.readBE<int32_t>();
+    return block;
   }
 
   static VbkBlock fromVbkEncoding(ReadStream& stream) {
