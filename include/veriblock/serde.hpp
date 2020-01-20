@@ -57,7 +57,7 @@ std::vector<uint8_t> fixedArray(T input) {
 template <typename T>
 std::vector<uint8_t> pad(const T& v, size_t size) {
   if (v.size() > size) {
-    return std::vector<uint8_t>{v.begin(), v.end()};
+    return std::vector<uint8_t>(v.begin(), v.end());
   }
 
   std::vector<uint8_t> ret(size, 0);
@@ -166,7 +166,23 @@ struct NetworkBytePair {
   uint8_t typeId = 0;
 };
 
-// NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
+/**
+ * Read optional network byte from the stream
+ * @param stream read data from this stream
+ * @param type use this value to detect if we are reading
+ * network byte or type byte
+ * @throws std::out_of_range if stream is out of data
+ * @return NetworkBytePair structure
+ */
+NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
+
+/**
+ * Write optional network byte to the stream
+ * @param stream write data to this stream
+ * @param networkOrType write network byte if available, write type
+ * byte after
+ */
+void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
 
 /**
  * Reads array of entities of type T.

@@ -7,11 +7,13 @@
 namespace VeriBlock {
 
 struct Output {
+  Address address{};
+  Coin coin{};
+
+  Output() = default;
+
   Output(Address _address, Coin _coin)
       : address(std::move(_address)), coin(_coin) {}
-
-  Address address;
-  Coin coin;
 
   bool operator==(const Output& other) const noexcept {
     return address == other.address && coin == other.coin;

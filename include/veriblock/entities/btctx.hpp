@@ -10,7 +10,9 @@
 namespace VeriBlock {
 
 struct BtcTx {
-  std::vector<uint8_t> tx;
+  std::vector<uint8_t> tx{};
+
+  BtcTx() = default;
 
   BtcTx(Slice<const uint8_t> slice) : tx(slice.begin(), slice.end()) {}
 

@@ -11,8 +11,10 @@
 
 namespace VeriBlock {
 
+// TODO: add autodetection of address type
 struct Address {
-  // TODO: add autodetection of address type
+  Address() = default;
+
   Address(AddressType type, std::string addr)
       : m_Type(type), m_Address(std::move(addr)) {}
 
@@ -65,8 +67,8 @@ struct Address {
   }
 
  private:
-  AddressType m_Type;
-  std::string m_Address;
+  AddressType m_Type{};
+  std::string m_Address{};
 };
 
 }  // namespace VeriBlock

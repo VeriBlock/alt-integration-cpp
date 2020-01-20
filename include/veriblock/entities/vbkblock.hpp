@@ -3,8 +3,9 @@
 
 #include <cstdint>
 
-#include "veriblock/entities/hashes.hpp"
 #include "veriblock/serde.hpp"
+
+#include "veriblock/entities/hashes.hpp"
 
 namespace VeriBlock {
 
@@ -23,8 +24,10 @@ struct VbkBlock {
     VbkBlock block{};
     block.height = stream.readBE<int32_t>();
     block.version = stream.readBE<int16_t>();
-    block.previousBlock = stream.readSlice(VBLAKE_PREVIOUS_BLOCK_SIZE);
-    block.previousKeystone = stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_SIZE);
+    block.previousBlock =
+        stream.readSlice(VBLAKE_PREVIOUS_BLOCK_SIZE);
+    block.previousKeystone =
+        stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_SIZE);
     block.secondPreviousKeystone =
         stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_SIZE);
     block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_SIZE);

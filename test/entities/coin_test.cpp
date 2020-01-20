@@ -6,12 +6,28 @@
 
 using namespace VeriBlock;
 
-TEST(Coin, RoundTrip) {
-  Coin input{ 123456789L };
+TEST(Coin, Serialize) {
+  Coin input(3500000000);
   WriteStream stream;
   input.toVbkEncoding(stream);
   auto coinEncoded = stream.data();
-  ReadStream readStream{ coinEncoded };
+  EXPECT_EQ(HexStr(coinEncoded), "04d09dc300");
+}
+
+TEST(Coin, Deserialize) {
+  auto coinBytes = "04d09dc300"_unhex;
+  ReadStream readStream(coinBytes);
+  auto output = Coin::fromVbkEncoding(readStream);
+
+  EXPECT_EQ(output.units, 3500000000);
+}
+
+TEST(Coin, RoundTrip) {
+  Coin input(123456789);
+  WriteStream stream;
+  input.toVbkEncoding(stream);
+  auto coinEncoded = stream.data();
+  ReadStream readStream(coinEncoded);
   auto output = Coin::fromVbkEncoding(readStream);
 
   EXPECT_EQ(output.units, input.units);
@@ -19,7 +35,7 @@ TEST(Coin, RoundTrip) {
 
 TEST(Coin, Invalid) {
   std::vector<uint8_t> coinEncoded(9, 0xFF);
-  ReadStream readStream{ coinEncoded };
+  ReadStream readStream(coinEncoded);
 
   EXPECT_THROW(Coin::fromVbkEncoding(readStream), std::out_of_range);
 }

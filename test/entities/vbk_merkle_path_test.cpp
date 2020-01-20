@@ -25,7 +25,7 @@ static const int defaultIndex = 0;
 TEST(VbkMerklePath, Deserialize) {
   auto merklePath = ParseHex(defaultPathEncoded);
   auto stream = ReadStream(merklePath);
-  auto decoded = VbkMerklePath::fromRaw(stream);
+  auto decoded = VbkMerklePath::fromVbkEncoding(stream);
 
   EXPECT_EQ(decoded.treeIndex, defaultTreeIndex);
   EXPECT_EQ(decoded.index, defaultIndex);
@@ -40,7 +40,7 @@ TEST(VbkMerklePath, Serialize) {
   VbkMerklePath path{defaultTreeIndex, defaultIndex, subject, defaultLayers};
 
   WriteStream stream;
-  path.toRaw(stream);
+  path.toVbkEncoding(stream);
   auto pathBytes = stream.data();
   auto pathEncoded = HexStr(pathBytes);
 
@@ -50,11 +50,11 @@ TEST(VbkMerklePath, Serialize) {
 TEST(VbkMerklePath, RoundTrip) {
   auto merklePath = ParseHex(defaultPathEncoded);
   auto stream = ReadStream(merklePath);
-  auto decoded = VbkMerklePath::fromRaw(stream);
+  auto decoded = VbkMerklePath::fromVbkEncoding(stream);
   EXPECT_EQ(decoded.index, defaultIndex);
 
   WriteStream outputStream;
-  decoded.toRaw(outputStream);
+  decoded.toVbkEncoding(outputStream);
   auto pathBytes = outputStream.data();
   auto pathReEncoded = HexStr(pathBytes);
 
