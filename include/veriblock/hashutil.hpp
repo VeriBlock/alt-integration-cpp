@@ -15,7 +15,7 @@ namespace VeriBlock {
  * @param data read data from this array
  * @return vector with SHA256 hash of the input data
  */
-Sha256Hash sha256get(Slice<uint8_t> data);
+Sha256Hash sha256(Slice<uint8_t> data);
 
 /**
  * Calculates SHA256 of the input data twice

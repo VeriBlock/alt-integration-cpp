@@ -7,5 +7,5 @@ add_library(vbkutils
         base58.cpp
         base59.cpp
         sha256.cpp
-        shautil.cpp
+        hashutil.cpp
         )

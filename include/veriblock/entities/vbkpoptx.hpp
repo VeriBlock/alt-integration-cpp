@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
+#include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
-#include "veriblock/shautil.hpp"
 #include "veriblock/slice.hpp"
 
 #include "veriblock/entities/address.hpp"

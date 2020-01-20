@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "veriblock/shautil.hpp"
+#include "veriblock/hashutil.hpp"
 
 #include "util/literals.hpp"
 
@@ -35,7 +35,7 @@ static std::vector<TestCase> g_Cases = {
 
 TEST_P(Sha256Test, OneShot) {
   auto tc = GetParam();
-  auto result = VeriBlock::sha256get(tc.data);
+  auto result = VeriBlock::sha256(tc.data);
   EXPECT_EQ(result, tc.hashBytes);
 }
 
