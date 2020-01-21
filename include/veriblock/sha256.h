@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 
-#define SHA256_HASH_SIZE 32
+#include "veriblock/consts.hpp"
 
 namespace VeriBlock {
 

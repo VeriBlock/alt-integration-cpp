@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <veriblock/entities/hashes.hpp>
 
 #include "veriblock/hashutil.hpp"
 
@@ -65,3 +66,28 @@ TEST_P(Sha256Test, IUF) {
 INSTANTIATE_TEST_SUITE_P(Sha256Regression,
                          Sha256Test,
                          testing::ValuesIn(g_Cases));
+
+TEST(Sha256Test, Sha256Hash_compareTest) {
+  VeriBlock::Sha256Hash hash1(
+      "00000000000000000000000000000000000000000000000000000000000000ff"_unhex);
+  VeriBlock::Sha256Hash hash2(
+      "0000000000000000000000000000000000000000000000000000000000000fff"_unhex);
+
+  ASSERT_TRUE(hash2 > hash1);
+  ASSERT_TRUE(hash1 < hash2);
+
+  hash1 = VeriBlock::Sha256Hash(
+      "00000000000000000000000000000000000000000000000000000000000033ff"_unhex);
+  hash2 = VeriBlock::Sha256Hash(
+      "00000000000000000000000000000000000000000000000000000000000032ff"_unhex);
+
+  ASSERT_TRUE(hash1 > hash2);
+  ASSERT_TRUE(hash2 < hash1);
+
+  hash1 = VeriBlock::Sha256Hash(
+      "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff322"_unhex);
+  hash2 = VeriBlock::Sha256Hash(
+      "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff322"_unhex);
+
+  ASSERT_TRUE(hash1 == hash2);
+}

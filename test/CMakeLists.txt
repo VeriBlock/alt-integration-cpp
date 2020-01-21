@@ -19,3 +19,7 @@ target_link_libraries(sha2_test vbkutils)
 
 addtest(secp256k1_test secp256k1_test.cpp)
 target_link_libraries(secp256k1_test secp256k1 vbkutils)
+
+addtest(stateless_validation_test stateless_validation_test.cpp)
+target_link_libraries(stateless_validation_test vbkutils)
+

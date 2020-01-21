@@ -12,4 +12,5 @@ add_library(vbkutils
         base59.cpp
         sha256.cpp
         hashutil.cpp
+        stateless_validation.cpp
         )
