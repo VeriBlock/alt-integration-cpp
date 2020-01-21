@@ -219,18 +219,18 @@ static int secp256k1_pubkey_load(const secp256k1_context* ctx, secp256k1_ge* ge,
     // workaround for MSVC constant expression warning
     int secp256k1_ge_storage_size = sizeof(secp256k1_ge_storage);
     if (secp256k1_ge_storage_size == 64) {
-      /* When the secp256k1_ge_storage type is exactly 64 byte, use its
-       * representation inside secp256k1_pubkey, as conversion is very fast.
-       * Note that secp256k1_pubkey_save must use the same representation. */
-      secp256k1_ge_storage s;
-      memcpy(&s, &pubkey->data[0], sizeof(s));
-      secp256k1_ge_from_storage(ge, &s);
+        /* When the secp256k1_ge_storage type is exactly 64 byte, use its
+         * representation inside secp256k1_pubkey, as conversion is very fast.
+         * Note that secp256k1_pubkey_save must use the same representation. */
+        secp256k1_ge_storage s;
+        memcpy(&s, &pubkey->data[0], sizeof(s));
+        secp256k1_ge_from_storage(ge, &s);
     } else {
-      /* Otherwise, fall back to 32-byte big endian for X and Y. */
-      secp256k1_fe x, y;
-      secp256k1_fe_set_b32(&x, pubkey->data);
-      secp256k1_fe_set_b32(&y, pubkey->data + 32);
-      secp256k1_ge_set_xy(ge, &x, &y);
+        /* Otherwise, fall back to 32-byte big endian for X and Y. */
+        secp256k1_fe x, y;
+        secp256k1_fe_set_b32(&x, pubkey->data);
+        secp256k1_fe_set_b32(&y, pubkey->data + 32);
+        secp256k1_ge_set_xy(ge, &x, &y);
     }
     ARG_CHECK(!secp256k1_fe_is_zero(&ge->x));
     return 1;
@@ -240,15 +240,15 @@ static void secp256k1_pubkey_save(secp256k1_pubkey* pubkey, secp256k1_ge* ge) {
     // workaround for MSVC constant expression warning
     int secp256k1_ge_storage_size = sizeof(secp256k1_ge_storage);
     if (secp256k1_ge_storage_size == 64) {
-      secp256k1_ge_storage s;
-      secp256k1_ge_to_storage(&s, ge);
-      memcpy(&pubkey->data[0], &s, sizeof(s));
+        secp256k1_ge_storage s;
+        secp256k1_ge_to_storage(&s, ge);
+        memcpy(&pubkey->data[0], &s, sizeof(s));
     } else {
-      VERIFY_CHECK(!secp256k1_ge_is_infinity(ge));
-      secp256k1_fe_normalize_var(&ge->x);
-      secp256k1_fe_normalize_var(&ge->y);
-      secp256k1_fe_get_b32(pubkey->data, &ge->x);
-      secp256k1_fe_get_b32(pubkey->data + 32, &ge->y);
+        VERIFY_CHECK(!secp256k1_ge_is_infinity(ge));
+        secp256k1_fe_normalize_var(&ge->x);
+        secp256k1_fe_normalize_var(&ge->y);
+        secp256k1_fe_get_b32(pubkey->data, &ge->x);
+        secp256k1_fe_get_b32(pubkey->data + 32, &ge->y);
     }
 }
 
@@ -295,15 +295,15 @@ static void secp256k1_ecdsa_signature_load(const secp256k1_context* ctx, secp256
     // workaround for MSVC constant expression warning
     int secp256k1_scalar_size = sizeof(secp256k1_scalar);
     if (secp256k1_scalar_size == 32) {
-      /* When the secp256k1_scalar type is exactly 32 byte, use its
-       * representation inside secp256k1_ecdsa_signature, as conversion is very
-       * fast. Note that secp256k1_ecdsa_signature_save must use the same
-       * representation. */
-      memcpy(r, &sig->data[0], 32);
-      memcpy(s, &sig->data[32], 32);
+        /* When the secp256k1_scalar type is exactly 32 byte, use its
+         * representation inside secp256k1_ecdsa_signature, as conversion is very
+         * fast. Note that secp256k1_ecdsa_signature_save must use the same
+         * representation. */
+        memcpy(r, &sig->data[0], 32);
+        memcpy(s, &sig->data[32], 32);
     } else {
-      secp256k1_scalar_set_b32(r, &sig->data[0], NULL);
-      secp256k1_scalar_set_b32(s, &sig->data[32], NULL);
+        secp256k1_scalar_set_b32(r, &sig->data[0], NULL);
+        secp256k1_scalar_set_b32(s, &sig->data[32], NULL);
     }
 }
 
@@ -311,11 +311,11 @@ static void secp256k1_ecdsa_signature_save(secp256k1_ecdsa_signature* sig, const
     // workaround for MSVC constant expression warning
     int secp256k1_scalar_size = sizeof(secp256k1_scalar);
     if (secp256k1_scalar_size == 32) {
-      memcpy(&sig->data[0], r, 32);
-      memcpy(&sig->data[32], s, 32);
+        memcpy(&sig->data[0], r, 32);
+        memcpy(&sig->data[32], s, 32);
     } else {
-      secp256k1_scalar_get_b32(&sig->data[0], r);
-      secp256k1_scalar_get_b32(&sig->data[32], s);
+        secp256k1_scalar_get_b32(&sig->data[0], r);
+        secp256k1_scalar_get_b32(&sig->data[32], s);
     }
 }
 
