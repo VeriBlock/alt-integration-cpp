@@ -91,3 +91,61 @@ TEST(Sha256Test, Sha256Hash_compareTest) {
 
   ASSERT_TRUE(hash1 == hash2);
 }
+
+TEST(Sha256Test, Sha256Hash_decodeBits) {
+  VeriBlock::Sha256Hash hash = VeriBlock::decodeBits(0x04800000);
+
+  EXPECT_EQ(
+      hash,
+      VeriBlock::Sha256Hash(
+          "0000000000000000000000000000000000000000000000000000000000000000"_unhex));
+
+  hash = VeriBlock::decodeBits(0x01123456);
+
+  EXPECT_EQ(
+      hash,
+      VeriBlock::Sha256Hash(
+          "0000000000000000000000000000000000000000000000000000000000000012"_unhex));
+
+  hash = VeriBlock::decodeBits(0x02123456);
+
+  EXPECT_EQ(
+      hash,
+      VeriBlock::Sha256Hash(
+          "0000000000000000000000000000000000000000000000000000000000001234"_unhex));
+
+  hash = VeriBlock::decodeBits(0x03123456);
+  VeriBlock::Sha256Hash hash2;
+
+  EXPECT_EQ(
+      hash,
+      VeriBlock::Sha256Hash(
+          "0000000000000000000000000000000000000000000000000000000000123456"_unhex));
+
+  hash = VeriBlock::decodeBits(0x04123456);
+  hash2 = VeriBlock::Sha256Hash(
+      "0000000000000000000000000000000000000000000000000000000012345600"_unhex);
+
+  EXPECT_EQ(
+      hash,
+      VeriBlock::Sha256Hash(
+          "0000000000000000000000000000000000000000000000000000000012345600"_unhex));
+
+  hash = VeriBlock::decodeBits(0x05009234);
+  hash2 = VeriBlock::Sha256Hash(
+      "0000000000000000000000000000000000000000000000000000000092340000"_unhex);
+
+  EXPECT_EQ(
+      hash,
+      VeriBlock::Sha256Hash(
+          "0000000000000000000000000000000000000000000000000000000092340000"_unhex));
+
+  hash = VeriBlock::decodeBits(0x20123456);
+  hash2 = VeriBlock::Sha256Hash(
+      "1234560000000000000000000000000000000000000000000000000000000000"_unhex);
+
+  EXPECT_EQ(
+      hash,
+      VeriBlock::Sha256Hash(
+          "1234560000000000000000000000000000000000000000000000000000000000"_unhex));
+}
