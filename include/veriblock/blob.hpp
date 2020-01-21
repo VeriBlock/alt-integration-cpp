@@ -52,10 +52,6 @@ struct Blob {
 
   std::string toHex() const { return HexStr(data_.begin(), data_.end()); }
 
-  bool operator==(const Blob<N>& other) const noexcept {
-    return data_ == other.data_;
-  }
-
   Blob<N>& operator=(const Blob<N>& other) {
     this->data_ = other.data_;
     return *this;
@@ -66,6 +62,19 @@ struct Blob {
     return *this;
   }
 
+  int compareTo(const Blob<N> b) const {
+    for (int i = N - 1; i >= 0; --i) {
+      if (data_[i] < b.data_[i]) {
+        return -1;
+      }
+      if (data_[i] > b.data_[i]) {
+        return 1;
+      }
+    }
+
+    return 0;
+  }
+
   Blob<N> reverse() {
     Blob<N> ret = data_;
     std::reverse(ret.begin(), ret.end());
@@ -74,6 +83,25 @@ struct Blob {
 
   std::vector<value_type> asVector() const {
     return std::vector<value_type>{data_.begin(), data_.end()};
+  }
+
+  friend inline bool operator==(const Blob<N>& a, const Blob<N>& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
+  }
+  friend inline bool operator!=(const Blob<N>& a, const Blob<N>& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
+  }
+  friend inline bool operator>(const Blob<N>& a, const Blob<N>& b) {
+    return a.compareTo(b) > 0;
+  }
+  friend inline bool operator<(const Blob<N>& a, const Blob<N>& b) {
+    return a.compareTo(b) < 0;
+  }
+  friend inline bool operator>=(const Blob<N>& a, const Blob<N>& b) {
+    return a.compareTo(b) >= 0;
+  }
+  friend inline bool operator<=(const Blob<N>& a, const Blob<N>& b) {
+    return a.compareTo(b) <= 0;
   }
 
  private:

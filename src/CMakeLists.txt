@@ -17,4 +17,5 @@ add_library(vbkutils
         signutil.cpp
         $<TARGET_OBJECTS:secp256k1>
         $<TARGET_OBJECTS:vblake>
+        stateless_validation.cpp
         )
