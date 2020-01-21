@@ -1,5 +1,6 @@
-#include <gtest/gtest.h>
 #include "veriblock/secp256k1.h"
+
+#include <gtest/gtest.h>
 
 #include <vector>
 
@@ -25,8 +26,29 @@ TEST(SECP256K1, Verify) {
   secp256k1_ecdsa_signature_parse_compact(
       ctx, &signature, defaultSignatureCompact.data());
 
-  int ret = secp256k1_ecdsa_verify(ctx, &signature, defaultMessage.data(), &pubkey);
+  int ret =
+      secp256k1_ecdsa_verify(ctx, &signature, defaultMessage.data(), &pubkey);
   secp256k1_context_destroy(ctx);
 
   EXPECT_EQ(ret, 1);
+}
+
+TEST(SECP256K1, VerifyInvalid) {
+  secp256k1_context* ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN |
+                                                    SECP256K1_CONTEXT_VERIFY);
+
+  secp256k1_pubkey pubkey;
+  secp256k1_ec_pubkey_create(ctx, &pubkey, defaultPrivateKey.data());
+
+  auto signatureCopy = std::vector<uint8_t>(defaultSignatureCompact);
+  signatureCopy[0] = 0xAA;
+  secp256k1_ecdsa_signature signature;
+  secp256k1_ecdsa_signature_parse_compact(
+      ctx, &signature, signatureCopy.data());
+
+  int ret =
+      secp256k1_ecdsa_verify(ctx, &signature, defaultMessage.data(), &pubkey);
+  secp256k1_context_destroy(ctx);
+
+  EXPECT_EQ(ret, 0);
 }
