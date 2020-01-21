@@ -290,9 +290,9 @@ static int secp256k1_scalar_cond_negate(secp256k1_scalar *r, int flag) {
 #define muladd(a,b) { \
     uint32_t tl, th; \
     { \
-        uint64_t t = (uint64_t)a * b; \
+        uint64_t t = (uint64_t)a * (uint64_t)b; \
         th = t >> 32;         /* at most 0xFFFFFFFE */ \
-        tl = t; \
+        tl = (uint32_t)t; \
     } \
     c0 += tl;                 /* overflow is handled on the next line */ \
     th += (c0 < tl) ? 1 : 0;  /* at most 0xFFFFFFFF */ \
@@ -305,9 +305,9 @@ static int secp256k1_scalar_cond_negate(secp256k1_scalar *r, int flag) {
 #define muladd_fast(a,b) { \
     uint32_t tl, th; \
     { \
-        uint64_t t = (uint64_t)a * b; \
+        uint64_t t = (uint64_t)a * (uint64_t)b; \
         th = t >> 32;         /* at most 0xFFFFFFFE */ \
-        tl = t; \
+        tl = (uint32_t)t; \
     } \
     c0 += tl;                 /* overflow is handled on the next line */ \
     th += (c0 < tl) ? 1 : 0;  /* at most 0xFFFFFFFF */ \
@@ -319,9 +319,9 @@ static int secp256k1_scalar_cond_negate(secp256k1_scalar *r, int flag) {
 #define muladd2(a,b) { \
     uint32_t tl, th, th2, tl2; \
     { \
-        uint64_t t = (uint64_t)a * b; \
+        uint64_t t = (uint64_t)a * (uint64_t)b; \
         th = t >> 32;               /* at most 0xFFFFFFFE */ \
-        tl = t; \
+        tl = (uint32_t)t; \
     } \
     th2 = th + th;                  /* at most 0xFFFFFFFE (in case th was 0x7FFFFFFF) */ \
     c2 += (th2 < th) ? 1 : 0;       /* never overflows by contract (verified the next line) */ \
@@ -509,7 +509,7 @@ static void secp256k1_scalar_reduce_512(secp256k1_scalar *r, const uint32_t *l) 
     r->d[7] = c & 0xFFFFFFFFUL; c >>= 32;
 
     /* Final reduction of r. */
-    secp256k1_scalar_reduce(r, c + secp256k1_scalar_check_overflow(r));
+    secp256k1_scalar_reduce(r, (uint32_t)(c + secp256k1_scalar_check_overflow(r)));
 }
 
 static void secp256k1_scalar_mul_512(uint32_t *l, const secp256k1_scalar *a, const secp256k1_scalar *b) {
