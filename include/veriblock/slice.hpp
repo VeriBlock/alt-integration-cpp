@@ -36,7 +36,7 @@ struct Slice {
           std::is_convertible<typename Container::pointer, pointer>::value &&
           std::is_convertible<
               typename Container::pointer,
-              decltype(std::declval<Container>().data())>::value>>
+              decltype(std::declval<Container>().data())>::value>::type>
   constexpr Slice(Container &cont) noexcept : Slice(cont.data(), cont.size()) {}
 
   constexpr pointer data() const noexcept { return storage_; }

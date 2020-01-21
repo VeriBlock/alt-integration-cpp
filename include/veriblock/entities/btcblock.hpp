@@ -5,6 +5,7 @@
 
 #include "veriblock/entities/hashes.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/sha256.h"
 
 namespace VeriBlock {
 
@@ -46,6 +47,19 @@ struct BtcBlock {
     WriteStream blockStream;
     toRaw(blockStream);
     writeSingleByteLenValue(stream, blockStream.data());
+  }
+
+  Sha256Hash getBlockHash() const {
+    Sha256Hash hash;
+
+    WriteStream stream;
+    toRaw(stream);
+
+    sha256_context context;
+    sha256_init(&context);
+    sha256_update(&context, stream.data().data(), stream.data().size());
+    sha256_finish(&context, hash.data());
+    return hash;
   }
 };
 
