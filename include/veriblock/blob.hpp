@@ -36,13 +36,13 @@ struct Blob {
   Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 
-  iterator begin() noexcept { return data_.begin(); }
+  iterator begin() noexcept { return data_.data(); }
 
-  const_iterator begin() const noexcept { return data_.begin(); }
+  const_iterator begin() const noexcept { return data_.data(); }
 
-  iterator end() noexcept { return data_.end(); }
+  iterator end() noexcept { return data_.data() + N; }
 
-  const_iterator end() const noexcept { return data_.end(); }
+  const_iterator end() const noexcept { return data_.data() + N; }
 
   static size_type size() noexcept { return N; }
 
@@ -63,7 +63,7 @@ struct Blob {
   }
 
   int compareTo(const Blob<N> b) const {
-    for (int i = N - 1; i >= 0; --i) {
+    for (int i = 0; i < N - 1; ++i) {
       if (data_[i] < b.data_[i]) {
         return -1;
       }
@@ -75,8 +75,8 @@ struct Blob {
     return 0;
   }
 
-  Blob<N> reverse() {
-    Blob<N> ret = data_;
+  Blob<N> reverse() const {
+    Blob<N> ret = *this;
     std::reverse(ret.begin(), ret.end());
     return ret;
   }
