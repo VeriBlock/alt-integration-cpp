@@ -1,8 +1,7 @@
-#include "veriblock/entities/vbkblock.hpp"
-
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include "veriblock/entities/vbkblock.hpp"
 
 using namespace VeriBlock;
 
@@ -57,4 +56,23 @@ TEST(VbkBlock, RoundTrip) {
   auto vbkBytes = outputStream.data();
   auto blockReEncoded = HexStr(vbkBytes);
   EXPECT_EQ(blockReEncoded, defaultBlockEncoded);
+}
+
+TEST(VbkBlock, getBlockHash_test) {
+  VbkBlock block;
+  block.height = 5000;
+  block.version = 2;
+  block.previousBlock = VBlakePrevBlockHash("94E7DC3E3BE21A96ECCF0FBD"_unhex);
+  block.previousKeystone = VBlakePrevKeystoneHash("F5F62A3331DC995C36"_unhex);
+  block.secondPreviousKeystone =
+      VBlakePrevKeystoneHash("B0935637860679DDD5"_unhex);
+  block.merkleRoot =
+      VbkMerkleRootSha256Hash("67C9A83EF1B99B981ACBE73C1380F6DD"_unhex);
+  block.timestamp = 1553699987;
+  block.difficulty = 117586646;
+  block.nonce = 1924857207;
+
+  EXPECT_EQ(block.getBlockHash(),
+            VBlakeBlockHash(
+                "000000000000480D8196D5B0B41861D032377F5165BB4452"_unhex));
 }

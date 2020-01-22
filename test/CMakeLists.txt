@@ -3,7 +3,7 @@ include_directories(${CMAKE_CURRENT_LIST_DIR})
 add_subdirectory(entities)
 
 addtest(vblake_test vblake_test.cpp)
-target_link_libraries(vblake_test vblake vbkutils)
+target_link_libraries(vblake_test vbkutils)
 
 addtest(streamutils_test streamutils_test.cpp)
 target_link_libraries(streamutils_test vbkutils)

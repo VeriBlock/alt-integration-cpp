@@ -1,6 +1,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCBLOCK_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCBLOCK_HPP_
 
+#include <algorithm>
 #include <cstdint>
 
 #include "veriblock/entities/hashes.hpp"
@@ -20,8 +21,10 @@ struct BtcBlock {
   static BtcBlock fromRaw(ReadStream& stream) {
     BtcBlock block{};
     block.version = stream.readLE<uint32_t>();
-    block.previousBlock = stream.readSlice(SHA256_HASH_SIZE);
-    block.merkleRoot = stream.readSlice(SHA256_HASH_SIZE);
+    block.previousBlock =
+        ((Sha256Hash)stream.readSlice(SHA256_HASH_SIZE)).reverse();
+    block.merkleRoot =
+        ((Sha256Hash)stream.readSlice(SHA256_HASH_SIZE)).reverse();
     block.timestamp = stream.readLE<uint32_t>();
     block.bits = stream.readLE<uint32_t>();
     block.nonce = stream.readLE<uint32_t>();
@@ -36,8 +39,8 @@ struct BtcBlock {
 
   void toRaw(WriteStream& stream) const {
     stream.writeLE<uint32_t>(version);
-    stream.write(previousBlock);
-    stream.write(merkleRoot);
+    stream.write(previousBlock.reverse());
+    stream.write(merkleRoot.reverse());
     stream.writeLE<uint32_t>(timestamp);
     stream.writeLE<uint32_t>(bits);
     stream.writeLE<uint32_t>(nonce);
@@ -55,10 +58,9 @@ struct BtcBlock {
     WriteStream stream;
     toRaw(stream);
 
-    sha256_context context;
-    sha256_init(&context);
-    sha256_update(&context, stream.data().data(), stream.data().size());
-    sha256_finish(&context, hash.data());
+    sha256(hash.data(), stream.data().data(), (uint32_t)stream.data().size());
+    sha256(hash.data(), hash.data(), SHA256_HASH_SIZE);
+    std::reverse(hash.begin(), hash.end());
     return hash;
   }
 };

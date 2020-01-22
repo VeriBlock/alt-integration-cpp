@@ -1,6 +1,8 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_CONSTS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_CONSTS_HPP_
 
+#include <stdint.h>
+
 namespace VeriBlock {
 
 enum class AddressType {
@@ -21,6 +23,7 @@ constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_COUNT = 150000;
 constexpr const auto MAX_CONTEXT_COUNT_ALT_PUBLICATION = 15000;
 constexpr const auto SHA256_HASH_SIZE = 32;
+constexpr const auto VBLAKE_BLOCK_SIZE = 24;
 constexpr const auto VBK_MERKLE_ROOT_SIZE = 16;
 constexpr const auto VBLAKE_PREVIOUS_BLOCK_SIZE = 12;
 constexpr const auto VBLAKE_PREVIOUS_KEYSTONE_SIZE = 9;
@@ -53,6 +56,9 @@ constexpr const auto MULTISIG_ADDRESS_CHECKSUM_END = 28;
  * (subject.length.size + subject.length.size.size) + (subject.length) +
  * (data_size)
  */
+
+constexpr const uint32_t ALLOWED_TIME_DRIFT = 60 * 5;
+
 constexpr const auto MAX_MERKLE_BYTES =
     (SHA256_HASH_SIZE + 1) * MAX_LAYER_COUNT_MERKLE + 5 + 5 + 5 + 5 + 4;
 
