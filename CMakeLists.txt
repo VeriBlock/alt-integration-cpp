@@ -46,7 +46,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     # using Visual Studio C++
     add_flag(/W4)                      # displays level 1, level 2, and level 3 warnings, and all level 4 (informational) warnings that are not turned off by default.
-    # add_flag(/WX)                      # treats all compiler warnings as errors.
+    add_flag(/WX)                      # treats all compiler warnings as errors.
     add_flag(/permissive-)             # enforces standards conformance
     add_flag(/w14242)                  # 'identfier': conversion from 'type1' to 'type1', possible loss of data
     add_flag(/w14263)                  # 'function': member function does not override any base class virtual member function
