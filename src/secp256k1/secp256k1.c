@@ -216,7 +216,9 @@ void secp256k1_scratch_space_destroy(const secp256k1_context *ctx, secp256k1_scr
 }
 
 static int secp256k1_pubkey_load(const secp256k1_context* ctx, secp256k1_ge* ge, const secp256k1_pubkey* pubkey) {
-    if (sizeof(secp256k1_ge_storage) == 64) {
+    // workaround for MSVC constant expression warning
+    int secp256k1_ge_storage_size = sizeof(secp256k1_ge_storage);
+    if (secp256k1_ge_storage_size == 64) {
         /* When the secp256k1_ge_storage type is exactly 64 byte, use its
          * representation inside secp256k1_pubkey, as conversion is very fast.
          * Note that secp256k1_pubkey_save must use the same representation. */
@@ -235,7 +237,9 @@ static int secp256k1_pubkey_load(const secp256k1_context* ctx, secp256k1_ge* ge,
 }
 
 static void secp256k1_pubkey_save(secp256k1_pubkey* pubkey, secp256k1_ge* ge) {
-    if (sizeof(secp256k1_ge_storage) == 64) {
+    // workaround for MSVC constant expression warning
+    int secp256k1_ge_storage_size = sizeof(secp256k1_ge_storage);
+    if (secp256k1_ge_storage_size == 64) {
         secp256k1_ge_storage s;
         secp256k1_ge_to_storage(&s, ge);
         memcpy(&pubkey->data[0], &s, sizeof(s));
@@ -288,10 +292,13 @@ int secp256k1_ec_pubkey_serialize(const secp256k1_context* ctx, unsigned char *o
 
 static void secp256k1_ecdsa_signature_load(const secp256k1_context* ctx, secp256k1_scalar* r, secp256k1_scalar* s, const secp256k1_ecdsa_signature* sig) {
     (void)ctx;
-    if (sizeof(secp256k1_scalar) == 32) {
+    // workaround for MSVC constant expression warning
+    int secp256k1_scalar_size = sizeof(secp256k1_scalar);
+    if (secp256k1_scalar_size == 32) {
         /* When the secp256k1_scalar type is exactly 32 byte, use its
-         * representation inside secp256k1_ecdsa_signature, as conversion is very fast.
-         * Note that secp256k1_ecdsa_signature_save must use the same representation. */
+         * representation inside secp256k1_ecdsa_signature, as conversion is very
+         * fast. Note that secp256k1_ecdsa_signature_save must use the same
+         * representation. */
         memcpy(r, &sig->data[0], 32);
         memcpy(s, &sig->data[32], 32);
     } else {
@@ -301,7 +308,9 @@ static void secp256k1_ecdsa_signature_load(const secp256k1_context* ctx, secp256
 }
 
 static void secp256k1_ecdsa_signature_save(secp256k1_ecdsa_signature* sig, const secp256k1_scalar* r, const secp256k1_scalar* s) {
-    if (sizeof(secp256k1_scalar) == 32) {
+    // workaround for MSVC constant expression warning
+    int secp256k1_scalar_size = sizeof(secp256k1_scalar);
+    if (secp256k1_scalar_size == 32) {
         memcpy(&sig->data[0], r, 32);
         memcpy(&sig->data[32], s, 32);
     } else {

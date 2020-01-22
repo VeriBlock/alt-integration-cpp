@@ -603,14 +603,24 @@ static void secp256k1_ecmult_strauss_wnaf(const secp256k1_ecmult_context *ctx, c
         }
 #else
         for (np = 0; np < no; ++np) {
-            if (i < state->ps[np].bits_na && (n = state->ps[np].wnaf_na[i])) {
-                ECMULT_TABLE_GET_GE(&tmpa, state->pre_a + np * ECMULT_TABLE_SIZE(WINDOW_A), n, WINDOW_A);
-                secp256k1_gej_add_ge_var(r, r, &tmpa, NULL);
+            if (i < state->ps[np].bits_na) {
+                n = state->ps[np].wnaf_na[i];
+                if (n) {
+                    ECMULT_TABLE_GET_GE(
+                        &tmpa,
+                        state->pre_a + np * ECMULT_TABLE_SIZE(WINDOW_A),
+                        n,
+                        WINDOW_A);
+                    secp256k1_gej_add_ge_var(r, r, &tmpa, NULL);
+                }
             }
         }
-        if (i < bits_ng && (n = wnaf_ng[i])) {
-            ECMULT_TABLE_GET_GE_STORAGE(&tmpa, *ctx->pre_g, n, WINDOW_G);
-            secp256k1_gej_add_zinv_var(r, r, &tmpa, &Z);
+        if (i < bits_ng) {
+            n = wnaf_ng[i];
+            if (n) {
+              ECMULT_TABLE_GET_GE_STORAGE(&tmpa, *ctx->pre_g, n, WINDOW_G);
+              secp256k1_gej_add_zinv_var(r, r, &tmpa, &Z);
+            }
         }
 #endif
     }
@@ -686,7 +696,7 @@ static int secp256k1_ecmult_strauss_batch(const secp256k1_callback* error_callba
         }
         secp256k1_gej_set_ge(&points[i], &point);
     }
-    secp256k1_ecmult_strauss_wnaf(ctx, &state, r, n_points, points, scalars, inp_g_sc);
+    secp256k1_ecmult_strauss_wnaf(ctx, &state, r, (int)n_points, points, scalars, inp_g_sc);
     secp256k1_scratch_apply_checkpoint(error_callback, scratch, scratch_checkpoint);
     return 1;
 }
@@ -807,7 +817,7 @@ static int secp256k1_ecmult_pippenger_wnaf(secp256k1_gej *buckets, int bucket_wi
         return 1;
     }
 
-    for (i = n_wnaf - 1; i >= 0; i--) {
+    for (i = (int)(n_wnaf - 1); i >= 0; i--) {
         secp256k1_gej running_sum;
 
         for(j = 0; j < ECMULT_TABLE_SIZE(bucket_window+2); j++) {
@@ -1025,7 +1035,7 @@ static int secp256k1_ecmult_pippenger_batch(const secp256k1_callback* error_call
 
     state_space->ps = (struct secp256k1_pippenger_point_state *) secp256k1_scratch_alloc(error_callback, scratch, entries * sizeof(*state_space->ps));
     state_space->wnaf_na = (int *) secp256k1_scratch_alloc(error_callback, scratch, entries*(WNAF_SIZE(bucket_window+1)) * sizeof(int));
-    buckets = (secp256k1_gej *) secp256k1_scratch_alloc(error_callback, scratch, (1<<bucket_window) * sizeof(*buckets));
+    buckets = (secp256k1_gej *) secp256k1_scratch_alloc(error_callback, scratch, (1LL<<bucket_window) * sizeof(*buckets));
     if (state_space->ps == NULL || state_space->wnaf_na == NULL || buckets == NULL) {
         secp256k1_scratch_apply_checkpoint(error_callback, scratch, scratch_checkpoint);
         return 0;
