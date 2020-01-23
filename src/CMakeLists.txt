@@ -4,6 +4,7 @@ add_subdirectory(secp256k1)
 
 add_library(vblake vblake.cpp)
 add_library(vbkutils
+        checks.cpp
         serde.cpp
         strutil.cpp
         read_stream.cpp
