@@ -82,5 +82,7 @@ TEST(SECP256K1, Sign) {
   auto signatureHex = VeriBlock::HexStr(signatureSlice);
   auto defaultSignatureHex = VeriBlock::HexStr(defaultSignatureCompact);
 
+  secp256k1_context_destroy(ctx);
+
   EXPECT_EQ(signatureHex, defaultSignatureHex);
 }

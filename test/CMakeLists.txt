@@ -19,3 +19,6 @@ target_link_libraries(sha2_test vbkutils)
 
 addtest(secp256k1_test secp256k1_test.cpp)
 target_link_libraries(secp256k1_test secp256k1 vbkutils)
+
+addtest(signutil_test signutil_test.cpp)
+target_link_libraries(signutil_test secp256k1 vbkutils)
