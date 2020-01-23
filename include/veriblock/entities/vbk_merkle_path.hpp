@@ -4,18 +4,17 @@
 #include <cstdint>
 #include <vector>
 
-#include "veriblock/serde.hpp"
 #include "veriblock/consts.hpp"
-
 #include "veriblock/entities/hashes.hpp"
+#include "veriblock/serde.hpp"
 
 namespace VeriBlock {
 
 struct VbkMerklePath {
   int32_t treeIndex{};
   int32_t index{};
-  Sha256Hash subject{};
-  std::vector<Sha256Hash> layers{};
+  uint256 subject{};
+  std::vector<uint256> layers{};
 
   static VbkMerklePath fromVbkEncoding(ReadStream& stream) {
     VbkMerklePath path{};
@@ -24,7 +23,7 @@ struct VbkMerklePath {
     path.subject =
         readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
 
-    path.layers = readArrayOf<Sha256Hash>(
+    path.layers = readArrayOf<uint256>(
         stream, 0, MAX_LAYER_COUNT_MERKLE, [](ReadStream& stream) {
           return readSingleByteLenValue(
               stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);

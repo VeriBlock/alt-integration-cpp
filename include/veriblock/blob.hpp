@@ -62,19 +62,6 @@ struct Blob {
     return *this;
   }
 
-  int compareTo(const Blob<N>& b) const {
-    for (int i = 0; i < N - 1; ++i) {
-      if (data_[i] < b.data_[i]) {
-        return -1;
-      }
-      if (data_[i] > b.data_[i]) {
-        return 1;
-      }
-    }
-
-    return 0;
-  }
-
   Blob<N> reverse() const {
     Blob<N> ret = *this;
     std::reverse(ret.begin(), ret.end());
@@ -92,16 +79,16 @@ struct Blob {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
   }
   friend inline bool operator>(const Blob<N>& a, const Blob<N>& b) {
-    return a.compareTo(b) > 0;
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) > 0;
   }
   friend inline bool operator<(const Blob<N>& a, const Blob<N>& b) {
-    return a.compareTo(b) < 0;
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) < 0;
   }
   friend inline bool operator>=(const Blob<N>& a, const Blob<N>& b) {
-    return a.compareTo(b) >= 0;
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) >= 0;
   }
   friend inline bool operator<=(const Blob<N>& a, const Blob<N>& b) {
-    return a.compareTo(b) <= 0;
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) <= 0;
   }
 
  private:

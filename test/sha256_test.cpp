@@ -2,15 +2,12 @@
 
 #include <cstdint>
 #include <vector>
-#include <veriblock/entities/hashes.hpp>
-
-<<<<<<< HEAD
-#include "veriblock/hashutil.hpp"
 
 #include "util/literals.hpp"
-=======
+#include "veriblock/entities/hashes.hpp"
+#include "veriblock/hashutil.hpp"
+
 using namespace VeriBlock;
->>>>>>> fix btc serialization/deserialization. Add checkBtcBlock/checkVbkBlock validation.
 
 struct TestCase {
   std::vector<uint8_t> data;
@@ -71,78 +68,78 @@ INSTANTIATE_TEST_SUITE_P(Sha256Regression,
                          Sha256Test,
                          testing::ValuesIn(g_Cases));
 
-TEST(Sha256Test, Sha256Hash_compareTest) {
-  VeriBlock::Sha256Hash hash1(
+TEST(Sha256Test, uint256_compareTest) {
+  VeriBlock::uint256 hash1(
       "00000000000000000000000000000000000000000000000000000000000000ff"_unhex);
-  VeriBlock::Sha256Hash hash2(
+  VeriBlock::uint256 hash2(
       "0000000000000000000000000000000000000000000000000000000000000fff"_unhex);
 
   ASSERT_TRUE(hash2 > hash1);
   ASSERT_TRUE(hash1 < hash2);
 
-  hash1 = VeriBlock::Sha256Hash(
+  hash1 = VeriBlock::uint256(
       "00000000000000000000000000000000000000000000000000000000000033ff"_unhex);
-  hash2 = VeriBlock::Sha256Hash(
+  hash2 = VeriBlock::uint256(
       "00000000000000000000000000000000000000000000000000000000000032ff"_unhex);
 
   ASSERT_TRUE(hash1 > hash2);
   ASSERT_TRUE(hash2 < hash1);
 
-  hash1 = VeriBlock::Sha256Hash(
+  hash1 = VeriBlock::uint256(
       "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff322"_unhex);
-  hash2 = VeriBlock::Sha256Hash(
+  hash2 = VeriBlock::uint256(
       "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff322"_unhex);
 
   ASSERT_TRUE(hash1 == hash2);
 }
 
-TEST(Sha256Test, Sha256Hash_decodeBits) {
-  Sha256Hash target = decodeBits<SHA256_HASH_SIZE>(0x04800000);
+TEST(Sha256Test, uint256_decodeBits) {
+  uint256 target = decodeBits(0x04800000);
 
   EXPECT_EQ(
       target,
-      Sha256Hash(
+      uint256(
           "0000000000000000000000000000000000000000000000000000000000000000"_unhex));
 
-  target = decodeBits<SHA256_HASH_SIZE>(0x01123456);
+  target = decodeBits(0x01123456);
 
   EXPECT_EQ(
       target,
-      Sha256Hash(
+      uint256(
           "0000000000000000000000000000000000000000000000000000000000000012"_unhex));
 
-  target = decodeBits<SHA256_HASH_SIZE>(0x02123456);
+  target = decodeBits(0x02123456);
 
   EXPECT_EQ(
       target,
-      Sha256Hash(
+      uint256(
           "0000000000000000000000000000000000000000000000000000000000001234"_unhex));
 
-  target = decodeBits<SHA256_HASH_SIZE>(0x03123456);
+  target = decodeBits(0x03123456);
 
   EXPECT_EQ(
       target,
-      Sha256Hash(
+      uint256(
           "0000000000000000000000000000000000000000000000000000000000123456"_unhex));
 
-  target = decodeBits<SHA256_HASH_SIZE>(0x04123456);
+  target = decodeBits(0x04123456);
 
   EXPECT_EQ(
       target,
-      Sha256Hash(
+      uint256(
           "0000000000000000000000000000000000000000000000000000000012345600"_unhex));
 
-  target = decodeBits<SHA256_HASH_SIZE>(0x05009234);
+  target = decodeBits(0x05009234);
 
   EXPECT_EQ(
       target,
-      Sha256Hash(
+      uint256(
           "0000000000000000000000000000000000000000000000000000000092340000"_unhex));
 
-  target = decodeBits<SHA256_HASH_SIZE>(0x20123456);
+  target = decodeBits(0x20123456);
 
   EXPECT_EQ(
       target,
-      Sha256Hash(
+      uint256(
           "1234560000000000000000000000000000000000000000000000000000000000"_unhex));
 }
