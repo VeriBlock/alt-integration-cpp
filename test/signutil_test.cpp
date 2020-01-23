@@ -23,7 +23,7 @@ static auto defaultSignatureDer =
 
 TEST(SIGN_UTIL, GenPubKey) {
   auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyAsn1);
-  auto publicKey = VeriBlock::derivePublicKey(privateKey, false);
+  auto publicKey = VeriBlock::derivePublicKey(privateKey);
   auto publicKeyEncoded = VeriBlock::publicKeyToVbk(publicKey);
 
   auto publicKeyEncodedHex = VeriBlock::HexStr(publicKeyEncoded);
@@ -32,7 +32,7 @@ TEST(SIGN_UTIL, GenPubKey) {
 
 TEST(SIGN_UTIL, Sign) {
   auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyAsn1);
-  auto signature = VeriBlock::sha256EcdsaSign(defaultMsg, privateKey);
+  auto signature = VeriBlock::veriBlockSign(defaultMsg, privateKey);
   auto signatureEncodedHex = VeriBlock::HexStr(signature);
 
   //EXPECT_EQ(signatureEncodedHex, VeriBlock::HexStr(defaultSignatureDer));
@@ -40,8 +40,8 @@ TEST(SIGN_UTIL, Sign) {
 
 TEST(SIGN_UTIL, Verify) {
   auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyAsn1);
-  auto publicKey = VeriBlock::derivePublicKey(privateKey, false);
-  int ret =
-      VeriBlock::sha256EcdsaVerify(defaultMsg, defaultSignatureDer, publicKey);
+  auto publicKey = VeriBlock::derivePublicKey(privateKey);
+  int ret = VeriBlock::veriBlockVerify(
+      defaultMsg, defaultSignatureDer, publicKey);
   EXPECT_EQ(ret, 1);
 }

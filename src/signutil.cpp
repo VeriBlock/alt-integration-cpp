@@ -45,7 +45,7 @@ static std::vector<uint8_t> publicKeyUncompress(Slice<uint8_t> publicKey) {
   checkRange(publicKey.size(),
              PUBLIC_KEY_COMPRESSED_SIZE, PUBLIC_KEY_COMPRESSED_SIZE);
 
-  Secp256k1Context ctx{secp256k1_context_create(SECP256K1_CONTEXT_NONE)};
+  Secp256k1Context ctx{secp256k1_context_create(SECP256K1_CONTEXT_SIGN)};
 
   secp256k1_pubkey pubkey;
   int res = secp256k1_ec_pubkey_parse(
@@ -90,11 +90,11 @@ static std::vector<uint8_t> publicKeyAsn1ToUncompressed(Slice<uint8_t> publicKey
   return result;
 }
 
-std::vector<uint8_t> privateKeyFromVbk(Slice<uint8_t> key) {
+PrivateKey privateKeyFromVbk(Slice<uint8_t> key) {
   return getPrivateKeyFromAsn1(key);
 }
 
-std::vector<uint8_t> publicKeyFromVbk(Slice<uint8_t> key) {
+PublicKey publicKeyFromVbk(Slice<uint8_t> key) {
   if (key.size() == PUBLIC_KEY_ASN1_SIZE) {
     return publicKeyAsn1ToUncompressed(key);
   }
@@ -110,26 +110,24 @@ std::vector<uint8_t> publicKeyFromVbk(Slice<uint8_t> key) {
   throw std::invalid_argument("publicKeyFromVbk(): invalid public key");
 }
 
-std::vector<uint8_t> publicKeyToVbk(Slice<uint8_t> key) {
+std::vector<uint8_t> publicKeyToVbk(PublicKey key) {
   return publicKeyUncompressedToAsn1(key);
 }
 
-std::vector<uint8_t> derivePublicKey(Slice<uint8_t> privateKey,
-                                     bool compressed) {
+PublicKey derivePublicKey(PrivateKey privateKey) {
   checkRange(privateKey.size(), PRIVATE_KEY_SIZE, PRIVATE_KEY_SIZE);
-  Secp256k1Context ctx{secp256k1_context_create(SECP256K1_CONTEXT_NONE)};
+  Secp256k1Context ctx{secp256k1_context_create(SECP256K1_CONTEXT_SIGN)};
   secp256k1_pubkey pubkey;
   secp256k1_ec_pubkey_create(ctx(), &pubkey, privateKey.data());
 
-  size_t outputlen =
-      compressed ? PUBLIC_KEY_COMPRESSED_SIZE : PUBLIC_KEY_UNCOMPRESSED_SIZE;
+  size_t outputlen = PUBLIC_KEY_UNCOMPRESSED_SIZE;
   std::vector<uint8_t> output(outputlen);
   int res = secp256k1_ec_pubkey_serialize(
       ctx(),
       output.data(),
       &outputlen,
       &pubkey,
-      compressed ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED);
+      SECP256K1_EC_UNCOMPRESSED);
   if (!res) {
     throw std::invalid_argument(
         "derivePublicKey(): public key serialize failed");
@@ -137,8 +135,8 @@ std::vector<uint8_t> derivePublicKey(Slice<uint8_t> privateKey,
   return output;
 }
 
-std::vector<uint8_t> sha256EcdsaSign(Slice<uint8_t> message,
-                                     Slice<uint8_t> privateKey) {
+std::vector<uint8_t> veriBlockSign(Slice<uint8_t> message,
+                                   PrivateKey privateKey) {
   Secp256k1Context ctx{secp256k1_context_create(SECP256K1_CONTEXT_SIGN)};
   secp256k1_pubkey pubkey;
   secp256k1_ec_pubkey_create(ctx(), &pubkey, privateKey.data());
@@ -164,9 +162,9 @@ std::vector<uint8_t> sha256EcdsaSign(Slice<uint8_t> message,
   return output;
 }
 
-int sha256EcdsaVerify(Slice<uint8_t> message,
-                      Slice<uint8_t> signatureEncoded,
-                      Slice<uint8_t> publicKey) {
+int veriBlockVerify(Slice<uint8_t> message,
+                    Slice<uint8_t> signatureEncoded,
+                    PublicKey publicKey) {
   Secp256k1Context ctx{secp256k1_context_create(SECP256K1_CONTEXT_VERIFY)};
   secp256k1_pubkey pubkey;
   secp256k1_ec_pubkey_parse(ctx(), &pubkey, publicKey.data(), publicKey.size());
