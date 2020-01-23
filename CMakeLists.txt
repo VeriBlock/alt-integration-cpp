@@ -19,13 +19,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
-option(TESTING "Build tests" ON)
+option(ASAN         "Enable Address Sanitizer" OFF)
+option(TSAN         "Enable Thread Sanitizer" OFF)
+option(UBSAN        "Enable Undefined Behavior Sanitizer" OFF)
+option(WERROR       "Treat warnings as errors" ON)
+option(TESTING      "Build tests" ON)
 
 ## setup compilation flags
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
+    if(WERROR)
+        add_compile_options(-Werror)
+    endif()
     # enable those flags
     add_flag(-Wall)
-    add_flag(-Werror)
     add_flag(-Wextra)
     add_flag(-Woverloaded-virtual)     # warn if you overload (not override) a virtual function
     add_flag(-Wformat=2)               # warn on security issues around functions that format output (ie printf)
@@ -43,10 +49,17 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Werror-non-virtual-dtor) # warn the user if a class with virtual functions has a non-virtual destructor. This helps catch hard to track down memory errors
     add_flag(-Werror-sign-compare)     # warn the user if they compare a signed and unsigned numbers
     add_flag(-Werror-reorder)          # field '$1' will be initialized after field '$2'
+
+    # disable errors
+    add_flag(-Wno-unused-function)
+    add_flag(-Wno-nonnull-compare)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    if(WERROR)
+        add_flag(/WX)                      # treats all compiler warnings as errors.
+    endif()
+
     # using Visual Studio C++
     add_flag(/W4)                      # displays level 1, level 2, and level 3 warnings, and all level 4 (informational) warnings that are not turned off by default.
-    add_flag(/WX)                      # treats all compiler warnings as errors.
     add_flag(/permissive-)             # enforces standards conformance
     add_flag(/w14242)                  # 'identfier': conversion from 'type1' to 'type1', possible loss of data
     add_flag(/w14263)                  # 'function': member function does not override any base class virtual member function
@@ -69,7 +82,21 @@ if(CLANG_TIDY)
     include(cmake/clang-tidy.cmake)
 endif()
 
+if(ASAN)
+    include(cmake/asan.cmake)
+elseif(TSAN)
+    include(cmake/tsan.cmake)
+elseif(UBSAN)
+    include(cmake/ubsan.cmake)
+endif()
+
 if(TESTING)
     enable_testing()
     add_subdirectory(test)
 endif()
+
+message(STATUS "CLANG_TIDY=${CLANG_TIDY}")
+message(STATUS "ASAN=${ASAN}")
+message(STATUS "TSAN=${TSAN}")
+message(STATUS "UBSAN=${UBSAN}")
+message(STATUS "WERROR=${WERROR}")
