@@ -12,6 +12,10 @@ jobs:
   linux:
     runs-on: ubuntu-18.04
     container: veriblock/btcdev
+    strategy:
+      fail-fast: false
+      matrix:
+        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DTSAN=ON", "-DUBSAN=ON"]
     env:
       CC: clang
       CXX: clang++
@@ -24,7 +28,7 @@ jobs:
           clean: true
           fetch-depth: 1
       - name: cmake
-        run: cmake . -Bbuild -DCLANG_TIDY=ON
+        run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
         run: cmake --build build -- -j2
       - name: test
