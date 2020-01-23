@@ -8,23 +8,23 @@ namespace VeriBlock {
 
 bool checkProofOfWork(const BtcBlock& block) {
   uint256 blockHash = block.getHash();
-  uint256 target = decodeBits(block.bits);
+  uint256 target = decodeBits((uint32_t)block.bits);
 
   return target > blockHash;
 }
 
 bool checkProofOfWork(const VbkBlock& block) {
   // TODO : write the target calculation
-  uint192 blockHash = block.getHash();
-  uint256 target = decodeBits(block.difficulty);
+  // uint192 blockHash = block.getHash();
+  // uint256 target = decodeBits(block.difficulty);
 
-  return true;
+  return block.version;
 }
 
 template <typename BlockType>
 bool checkMaximumDrift(const BlockType& block) {
   uint32_t currentTime = currentTimestamp4();
-  return block.timestamp < currentTime + ALLOWED_TIME_DRIFT;
+  return (uint32_t)block.timestamp < currentTime + ALLOWED_TIME_DRIFT;
 }
 
 bool checkBtcBlock(const BtcBlock& block, ValidationState& state) {

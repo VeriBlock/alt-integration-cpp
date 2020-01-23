@@ -69,7 +69,8 @@ struct Slice {
 
   Slice<ElementType> reverse() const {
     Slice<ElementType> ret = *this;
-    std::reverse(ret.begin(), ret.end());
+    std::reverse(const_cast<value_type *>(ret.begin()),
+                 const_cast<value_type *>(ret.end()));
     return ret;
   }
 
