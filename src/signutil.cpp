@@ -96,14 +96,29 @@ PrivateKey privateKeyFromVbk(Slice<uint8_t> key) {
 
 PublicKey publicKeyFromVbk(Slice<uint8_t> key) {
   if (key.size() == PUBLIC_KEY_ASN1_SIZE) {
+    if (key[23] != 0x04) {
+      throw std::invalid_argument(
+          "publicKeyFromVbk(): unknown public key format");
+    }
+
     return publicKeyAsn1ToUncompressed(key);
   }
 
   if (key.size() == PUBLIC_KEY_UNCOMPRESSED_SIZE) {
+    if (key[0] != 0x04) {
+      throw std::invalid_argument(
+          "publicKeyFromVbk(): unknown public key format");
+    }
     return std::vector<uint8_t>(key.begin(), key.end());
   }
 
   if (key.size() == PUBLIC_KEY_COMPRESSED_SIZE) {
+    if (key[0] != 0x02 && key[0] != 0x03) {
+      throw std::invalid_argument(
+          "publicKeyFromVbk(): invalid key format, expected 0x02 or 0x03 as "
+          "first byte");
+    }
+
     return publicKeyUncompress(key);
   }
 
