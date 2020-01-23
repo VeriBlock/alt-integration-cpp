@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstring>
 
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
