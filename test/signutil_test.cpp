@@ -5,19 +5,16 @@
 #include "util/literals.hpp"
 
 static auto defaultPrivateKeyVbk =
-    "303E020100301006072A8648CE3D020106052B8104000A04273025020101042017"
-    "869E398A7ACD18729B8FC6D47DCFE9C1A2B5871334D00471EFC3985762FF8F"_unhex;
+    "303e020100301006072a8648ce3d020106052b8104000a0427302502010104203abf83fa470423d4788a760ef6b7aae1dacf98784b0646057a0adca24e522acb"_unhex;
 
 static auto defaultPublicKeyVbk =
-    "3056301006072a8648ce3d020106052b8104000a034200044b649515a30a4361dd"
-    "875f8fad16c37142116217e5b8069c444773b59911bcce38782d7ba06c0b9b7713"
-    "05d065279ce9f2288c8eab5328d260629085f7653504"_unhex;
+    "3056301006072a8648ce3d020106052b8104000a034200042fca63a20cb5208c2a55ff5099ca1966b7f52e687600784d1de062c1dd9c8a5fe55b2ba5d906c703d37cbd02ecd9c97a806110fa05d9014a102a0513dd354ec5"_unhex;
 
 static auto defaultMsg =
-    "4cb778a158601701c98028b778e583859ef814ba1a57284fadef720a1dd5fbb7"_unhex;
+    "Hello world"_v;
 
 static auto defaultSignatureVbk =
-    "304402204d0e47f42007c6c1fd3cd6248b7a65d6c892147666f4a2e817b83d80db661f48022079307e54b1b841c0b531dd6270a485429be61800decae6b936741edbe3cd7800"_unhex;
+    "3044022008d07afee77324d0bced6f3bce19892d0413981e83e68401cd83d1e1ed3bc37c022005273429062dcf623ccd04c8d9c9e601e7fc45b5db32900c9b0ffda2dbc8f452"_unhex;
 
 TEST(SIGN_UTIL, GenPubKey) {
   auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyVbk);
@@ -28,13 +25,13 @@ TEST(SIGN_UTIL, GenPubKey) {
   EXPECT_EQ(publicKeyEncodedHex, VeriBlock::HexStr(defaultPublicKeyVbk));
 }
 
-/*TEST(SIGN_UTIL, Sign) {
+TEST(SIGN_UTIL, Sign) {
   auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyVbk);
   auto signature = VeriBlock::veriBlockSign(defaultMsg, privateKey);
   auto signatureEncodedHex = VeriBlock::HexStr(signature);
 
   EXPECT_EQ(signatureEncodedHex, VeriBlock::HexStr(defaultSignatureVbk));
-}*/
+}
 
 TEST(SIGN_UTIL, Verify) {
   auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyVbk);
