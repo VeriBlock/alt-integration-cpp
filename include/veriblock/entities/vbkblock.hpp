@@ -60,7 +60,7 @@ struct VbkBlock {
     writeSingleByteLenValue(stream, blockStream.data());
   }
 
-  uint192 getBlockHash() const {
+  uint192 getHash() const {
     WriteStream stream;
     toRaw(stream);
 
