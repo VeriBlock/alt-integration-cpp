@@ -66,6 +66,12 @@ struct Slice {
     return const_reverse_iterator{cbegin()};
   }
 
+  Slice<ElementType> reverse() const {
+    Slice<ElementType> ret = *this;
+    std::reverse(ret.begin(), ret.end());
+    return ret;
+  }
+
  private:
   pointer storage_;
   size_t size_;

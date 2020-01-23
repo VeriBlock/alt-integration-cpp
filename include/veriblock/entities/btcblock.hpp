@@ -21,9 +21,8 @@ struct BtcBlock {
   static BtcBlock fromRaw(ReadStream& stream) {
     BtcBlock block{};
     block.version = stream.readLE<uint32_t>();
-    block.previousBlock =
-        ((uint256)stream.readSlice(SHA256_HASH_SIZE)).reverse();
-    block.merkleRoot = ((uint256)stream.readSlice(SHA256_HASH_SIZE)).reverse();
+    block.previousBlock = stream.readSlice(SHA256_HASH_SIZE).reverse();
+    block.merkleRoot = stream.readSlice(SHA256_HASH_SIZE).reverse();
     block.timestamp = stream.readLE<uint32_t>();
     block.bits = stream.readLE<uint32_t>();
     block.nonce = stream.readLE<uint32_t>();
