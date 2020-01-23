@@ -57,7 +57,7 @@ struct Blob {
     return *this;
   }
 
-  int compareTo(const Blob<N> b) const {
+  int compareTo(const Blob<N>& b) const {
     for (int i = 0; i < N - 1; ++i) {
       if (data_[i] < b.data_[i]) {
         return -1;

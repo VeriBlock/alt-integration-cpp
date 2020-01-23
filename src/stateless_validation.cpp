@@ -29,13 +29,11 @@ bool checkMaximumDrift(const BlockType& block) {
 
 bool checkBtcBlock(const BtcBlock& block, ValidationState& state) {
   if (!checkProofOfWork(block)) {
-    return state.Invalid("checkBtcBlock is failed",
-                         "Block hash is higher than target");
+    return state.Invalid("checkBtcBlock", "Block hash is higher than target");
   }
 
   if (!checkMaximumDrift(block)) {
-    return state.Invalid("checkBtcBlock is failed",
-                         "Block is too far in the future");
+    return state.Invalid("checkBtcBlock", "Block is too far in the future");
   }
 
   return true;
@@ -43,13 +41,11 @@ bool checkBtcBlock(const BtcBlock& block, ValidationState& state) {
 
 bool checkVbkBlock(const VbkBlock& block, ValidationState& state) {
   if (!checkProofOfWork(block)) {
-    return state.Invalid("checkVbkBlock is failed",
-                         "Block hash is higher than target");
+    return state.Invalid("checkVbkBlock", "Block hash is higher than target");
   }
 
   if (!checkMaximumDrift(block)) {
-    return state.Invalid("checkVbkBlock is failed",
-                         "Block is too far in the future");
+    return state.Invalid("checkVbkBlock", "Block is too far in the future");
   }
 
   return true;

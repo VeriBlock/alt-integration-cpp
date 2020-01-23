@@ -58,7 +58,7 @@ struct BtcBlock {
     WriteStream stream;
     toRaw(stream);
 
-    sha256(hash.data(), stream.data().data(), (uint32_t)stream.data().size());
+    sha256(hash.data(), stream.data().data(), BTC_HEADER_SIZE);
     sha256(hash.data(), hash.data(), SHA256_HASH_SIZE);
     std::reverse(hash.begin(), hash.end());
     return hash;
