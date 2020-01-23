@@ -153,7 +153,7 @@ static const VbkBlock vtbVbkBlock{4976,
                                   "b53c1f4e259e6a0df23721a0b3b4b7ab"_unhex,
                                   1553699345,
                                   117576138,
-                                  4028382977};
+                                  -266584319};
 
 static const VTB defaultVtb{
     defaultTx, vtbProofPath, vtbVbkBlock, std::vector<VbkBlock>{}};
