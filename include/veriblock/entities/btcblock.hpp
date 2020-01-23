@@ -50,7 +50,7 @@ struct BtcBlock {
     writeSingleByteLenValue(stream, blockStream.data());
   }
 
-  uint256 getBlockHash() const {
+  uint256 getHash() const {
     WriteStream stream;
     toRaw(stream);
 
