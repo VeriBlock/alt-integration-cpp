@@ -5,15 +5,15 @@
 #include <cstdint>
 
 #include "veriblock/entities/hashes.hpp"
+#include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
-#include "veriblock/sha256.h"
 
 namespace VeriBlock {
 
 struct BtcBlock {
   uint32_t version{};
-  Sha256Hash previousBlock{};
-  Sha256Hash merkleRoot{};
+  uint256 previousBlock{};
+  uint256 merkleRoot{};
   uint32_t timestamp{};
   uint32_t bits{};
   uint32_t nonce{};
@@ -22,9 +22,8 @@ struct BtcBlock {
     BtcBlock block{};
     block.version = stream.readLE<uint32_t>();
     block.previousBlock =
-        ((Sha256Hash)stream.readSlice(SHA256_HASH_SIZE)).reverse();
-    block.merkleRoot =
-        ((Sha256Hash)stream.readSlice(SHA256_HASH_SIZE)).reverse();
+        ((uint256)stream.readSlice(SHA256_HASH_SIZE)).reverse();
+    block.merkleRoot = ((uint256)stream.readSlice(SHA256_HASH_SIZE)).reverse();
     block.timestamp = stream.readLE<uint32_t>();
     block.bits = stream.readLE<uint32_t>();
     block.nonce = stream.readLE<uint32_t>();
@@ -52,16 +51,11 @@ struct BtcBlock {
     writeSingleByteLenValue(stream, blockStream.data());
   }
 
-  Sha256Hash getBlockHash() const {
-    Sha256Hash hash;
-
+  uint256 getBlockHash() const {
     WriteStream stream;
     toRaw(stream);
 
-    sha256(hash.data(), stream.data().data(), BTC_HEADER_SIZE);
-    sha256(hash.data(), hash.data(), SHA256_HASH_SIZE);
-    std::reverse(hash.begin(), hash.end());
-    return hash;
+    return sha256twice(stream.data()).reverse();
   }
 };
 

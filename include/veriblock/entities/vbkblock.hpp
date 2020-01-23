@@ -3,20 +3,19 @@
 
 #include <cstdint>
 
-#include "veriblock/serde.hpp"
-#include "veriblock/vblake.h"
-
 #include "veriblock/entities/hashes.hpp"
+#include "veriblock/hashutil.hpp"
+#include "veriblock/serde.hpp"
 
 namespace VeriBlock {
 
 struct VbkBlock {
   uint32_t height{};
   int16_t version{};
-  VBlakePrevBlockHash previousBlock{};
-  VBlakePrevKeystoneHash previousKeystone{};
-  VBlakePrevKeystoneHash secondPreviousKeystone{};
-  VbkMerkleRootSha256Hash merkleRoot{};
+  uint144 previousBlock{};
+  uint72 previousKeystone{};
+  uint72 secondPreviousKeystone{};
+  uint128 merkleRoot{};
   uint32_t timestamp{};
   uint32_t difficulty{};
   uint32_t nonce{};
@@ -25,10 +24,8 @@ struct VbkBlock {
     VbkBlock block{};
     block.height = stream.readBE<uint32_t>();
     block.version = stream.readBE<int16_t>();
-    block.previousBlock =
-        stream.readSlice(VBLAKE_PREVIOUS_BLOCK_SIZE);
-    block.previousKeystone =
-        stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_SIZE);
+    block.previousBlock = stream.readSlice(VBLAKE_PREVIOUS_BLOCK_SIZE);
+    block.previousKeystone = stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_SIZE);
     block.secondPreviousKeystone =
         stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_SIZE);
     block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_SIZE);
@@ -63,15 +60,11 @@ struct VbkBlock {
     writeSingleByteLenValue(stream, blockStream.data());
   }
 
-  VBlakeBlockHash getBlockHash() const {
-    VBlakeBlockHash hash;
-
+  uint192 getBlockHash() const {
     WriteStream stream;
     toRaw(stream);
 
-    vblake(hash.data(), stream.data().data(), VBK_HEADER_SIZE);
-
-    return hash;
+    return vblake(stream.data());
   }
 };
 

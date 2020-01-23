@@ -57,9 +57,9 @@ TEST(BtcBlock, RoundTrip) {
 TEST(BtcBlock, getBlockHash_test) {
   BtcBlock block;
   block.version = 536870912;
-  block.previousBlock = Sha256Hash(
+  block.previousBlock = uint256(
       "00000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def7"_unhex);
-  block.merkleRoot = Sha256Hash(
+  block.merkleRoot = uint256(
       "5e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f8"_unhex);
   block.timestamp = 1555501858;
   block.bits = 436279940;
@@ -67,6 +67,6 @@ TEST(BtcBlock, getBlockHash_test) {
 
   EXPECT_EQ(
       block.getBlockHash(),
-      Sha256Hash(
+      uint256(
           "000000000000000246200f09b513e517a3bd8c591a3b692d9852ddf1ee0f8b3a"_unhex));
 }
