@@ -69,7 +69,7 @@ struct VbkBlock {
     WriteStream stream;
     toRaw(stream);
 
-    vblake(hash.data(), stream.data().data(), stream.data().size());
+    vblake(hash.data(), stream.data().data(), VBK_HEADER_SIZE);
 
     return hash;
   }

@@ -27,8 +27,8 @@ constexpr const auto VBLAKE_BLOCK_SIZE = 24;
 constexpr const auto VBK_MERKLE_ROOT_SIZE = 16;
 constexpr const auto VBLAKE_PREVIOUS_BLOCK_SIZE = 12;
 constexpr const auto VBLAKE_PREVIOUS_KEYSTONE_SIZE = 9;
-constexpr const auto BTC_HEADER_SIZE = 80;
-constexpr const auto VBK_HEADER_SIZE = 64;
+constexpr const uint32_t BTC_HEADER_SIZE = 80;
+constexpr const uint32_t VBK_HEADER_SIZE = 64;
 constexpr const auto BTC_TX_MAX_RAW_SIZE = 4 * 1000 * 1000;
 constexpr const auto MAX_LAYER_COUNT_MERKLE = 40;
 // NodeCore is using byte value when serializing outputs so we limit to 255
