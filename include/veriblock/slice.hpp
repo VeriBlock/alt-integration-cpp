@@ -1,6 +1,7 @@
 #ifndef __SLICE__HPP__
 #define __SLICE__HPP__
 
+#include <algorithm>
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
