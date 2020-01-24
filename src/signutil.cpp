@@ -142,9 +142,8 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
               "derivePublicKey(): invalid public key");
   Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
   secp256k1_pubkey pubkey;
-  int pubCreated = secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
   // should be always 1
-  assert(pubCreated == 1);
+  assert(secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data()) == 1);
 
   size_t outputlen = PUBLIC_KEY_UNCOMPRESSED_SIZE;
   std::vector<uint8_t> output(outputlen);
@@ -159,9 +158,8 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
 Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
   Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
   secp256k1_pubkey pubkey;
-  int pubCreated = secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
   // should be always 1
-  assert(pubCreated == 1);
+  assert(secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data()) == 1);
 
   auto messageHash = sha256(message);
 
