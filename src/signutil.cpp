@@ -157,10 +157,6 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
 
 Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
   Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
-  secp256k1_pubkey pubkey;
-  // should be always 1
-  assert(secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data()) == 1);
-
   auto messageHash = sha256(message);
 
   secp256k1_ecdsa_signature signature;
