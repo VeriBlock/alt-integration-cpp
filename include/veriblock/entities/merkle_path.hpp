@@ -1,24 +1,23 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 
-#include <cstdint>
-#include <vector>
 #include <cassert>
+#include <cstdint>
 #include <stdexcept>
+#include <vector>
 
-#include "veriblock/serde.hpp"
 #include "veriblock/consts.hpp"
-
-#include "veriblock/entities/hashes.hpp"
+#include "veriblock/uint.hpp"
+#include "veriblock/serde.hpp"
 
 namespace VeriBlock {
 
 struct MerklePath {
   int32_t index{};
-  Sha256Hash subject{};
-  std::vector<Sha256Hash> layers{};
+  uint256 subject{};
+  std::vector<uint256> layers{};
 
-  static MerklePath fromRaw(ReadStream& stream, const Sha256Hash& subject) {
+  static MerklePath fromRaw(ReadStream& stream, const uint256& subject) {
     MerklePath path{};
     path.index = readSingleBEValue<int32_t>(stream);
     const auto numLayers = readSingleBEValue<int32_t>(stream);
@@ -45,7 +44,7 @@ struct MerklePath {
   }
 
   static MerklePath fromVbkEncoding(ReadStream& stream,
-                                    const Sha256Hash& subject) {
+                                    const uint256& subject) {
     auto merkleBytes = readVarLenValue(stream, 0, MAX_MERKLE_BYTES);
     ReadStream merkleStream(merkleBytes);
     return MerklePath::fromRaw(merkleStream, subject);
@@ -55,7 +54,7 @@ struct MerklePath {
     writeSingleFixedBEValue<int32_t>(stream, index);
     writeSingleFixedBEValue<int32_t>(stream, (int32_t)layers.size());
 
-    const auto subjectSizeBytes = fixedArray((int32_t) subject.size());
+    const auto subjectSizeBytes = fixedArray((int32_t)subject.size());
     writeSingleFixedBEValue<int32_t>(stream, (int32_t)subjectSizeBytes.size());
     stream.write(subjectSizeBytes);
 

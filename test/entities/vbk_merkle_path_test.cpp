@@ -1,8 +1,7 @@
-#include "veriblock/entities/vbk_merkle_path.hpp"
-
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include "veriblock/entities/vbk_merkle_path.hpp"
 
 using namespace VeriBlock;
 
@@ -12,7 +11,7 @@ static const std::string defaultPathEncoded =
     "00000000000000200000000000000000000000000000000000000000000000000000000000"
     "000000";
 
-static const std::vector<Sha256Hash> defaultLayers{
+static const std::vector<uint256> defaultLayers{
     "0000000000000000000000000000000000000000000000000000000000000000"_unhex,
     "0000000000000000000000000000000000000000000000000000000000000000"_unhex};
 

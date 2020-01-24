@@ -2,6 +2,9 @@ include_directories(${CMAKE_CURRENT_LIST_DIR})
 
 add_subdirectory(entities)
 
+addtest(blockutil_test uint_tests.cpp)
+target_link_libraries(blockutil_test vbkutils)
+
 addtest(vblake_test vblake_test.cpp)
 target_link_libraries(vblake_test vbkutils)
 
@@ -14,8 +17,8 @@ target_link_libraries(base58_test vbkutils)
 addtest(base59_test base59_test.cpp)
 target_link_libraries(base59_test vbkutils)
 
-addtest(sha2_test sha256_test.cpp)
-target_link_libraries(sha2_test vbkutils)
+addtest(sha256_test sha256_test.cpp)
+target_link_libraries(sha256_test vbkutils)
 
 addtest(secp256k1_test secp256k1_test.cpp)
 target_link_libraries(secp256k1_test vbkutils)
