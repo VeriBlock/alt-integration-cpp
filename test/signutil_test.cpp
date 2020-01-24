@@ -39,3 +39,12 @@ TEST(SIGN_UTIL, Verify) {
   int ret = VeriBlock::veriBlockVerify(defaultMsg, defaultSignatureVbk, publicKey);
   EXPECT_EQ(ret, 1);
 }
+
+TEST(SIGN_UTIL, Invalid) {
+  std::vector<uint8_t> dummy{1,2,3};
+  EXPECT_THROW(VeriBlock::privateKeyFromVbk(dummy), std::invalid_argument);
+  EXPECT_THROW(VeriBlock::derivePublicKey(dummy), std::invalid_argument);
+  EXPECT_THROW(VeriBlock::publicKeyToVbk(dummy), std::invalid_argument);
+  EXPECT_THROW(VeriBlock::veriBlockSign(dummy, dummy), std::invalid_argument);
+  EXPECT_THROW(VeriBlock::veriBlockVerify(dummy, dummy, dummy), std::invalid_argument);
+}

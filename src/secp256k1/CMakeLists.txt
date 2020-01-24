@@ -1,1 +1,1 @@
-add_library(secp256k1 secp256k1.cpp)
+add_library(secp256k1 OBJECT secp256k1.c)
