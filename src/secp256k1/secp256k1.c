@@ -70,7 +70,7 @@ struct secp256k1_context_struct {
 
 static const secp256k1_context secp256k1_context_no_precomp_ = {
     { 0 },
-    { 0, 0, 0 },
+    { 0 },
     { secp256k1_default_illegal_callback_fn, 0 },
     { secp256k1_default_error_callback_fn, 0 }
 };
