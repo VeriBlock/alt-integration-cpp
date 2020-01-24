@@ -8,12 +8,12 @@
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
 
-static auto defaultPrivateKey =
+static const auto defaultPrivateKey =
     "aa4eca67cf7573eaedab283fb5f7c638ec0a9e99583a27288a07e5533b4d6d75"_unhex;
-static auto defaultMessage =
+static const auto defaultMessage =
     "591b075a0e88b3d4449848ead2f69ff39b145747912c1690457455dd1c90ac64"_unhex;
 
-static auto defaultSignatureCompact =
+static const auto defaultSignatureCompact =
     "870170004b938c1362e2a329a44ebbb1e4d24f43428466fcc978f4c40d835a52"
     "731ca13658c176a67d8466b5fb46225299985cf1e95b52c42d93205b943f47a3"_unhex;
 
@@ -81,6 +81,5 @@ TEST(SECP256K1, Sign) {
   VeriBlock::Slice<uint8_t> signatureSlice(sig, 64);
   auto signatureHex = VeriBlock::HexStr(signatureSlice);
   auto defaultSignatureHex = VeriBlock::HexStr(defaultSignatureCompact);
-
   EXPECT_EQ(signatureHex, defaultSignatureHex);
 }
