@@ -217,7 +217,7 @@ SECP256K1_INLINE static int secp256k1_scalar_is_zero(const secp256k1_scalar *a) 
     return (a->d[0] | a->d[1] | a->d[2] | a->d[3] | a->d[4] | a->d[5] | a->d[6] | a->d[7]) == 0;
 }
 
-static void secp256k1_scalar_negate(secp256k1_scalar *r, const secp256k1_scalar *a) {
+/*static void secp256k1_scalar_negate(secp256k1_scalar *r, const secp256k1_scalar *a) {
     uint32_t nonzero = 0xFFFFFFFFUL * (secp256k1_scalar_is_zero(a) == 0);
     // use temporary value as a workaround for MSVC warning
     uint32_t dd = ~a->d[0];
@@ -243,6 +243,25 @@ static void secp256k1_scalar_negate(secp256k1_scalar *r, const secp256k1_scalar 
     r->d[6] = t & nonzero; t >>= 32;
     dd = ~a->d[7];
     t += (uint64_t)dd + SECP256K1_N_7;
+    r->d[7] = t & nonzero;
+}*/
+static void secp256k1_scalar_negate(secp256k1_scalar *r, const secp256k1_scalar *a) {
+    uint32_t nonzero = 0xFFFFFFFFUL * (secp256k1_scalar_is_zero(a) == 0);
+    uint64_t t = (uint64_t)(~a->d[0]) + SECP256K1_N_0 + 1;
+    r->d[0] = t & nonzero; t >>= 32;
+    t += (uint64_t)(~a->d[1]) + SECP256K1_N_1;
+    r->d[1] = t & nonzero; t >>= 32;
+    t += (uint64_t)(~a->d[2]) + SECP256K1_N_2;
+    r->d[2] = t & nonzero; t >>= 32;
+    t += (uint64_t)(~a->d[3]) + SECP256K1_N_3;
+    r->d[3] = t & nonzero; t >>= 32;
+    t += (uint64_t)(~a->d[4]) + SECP256K1_N_4;
+    r->d[4] = t & nonzero; t >>= 32;
+    t += (uint64_t)(~a->d[5]) + SECP256K1_N_5;
+    r->d[5] = t & nonzero; t >>= 32;
+    t += (uint64_t)(~a->d[6]) + SECP256K1_N_6;
+    r->d[6] = t & nonzero; t >>= 32;
+    t += (uint64_t)(~a->d[7]) + SECP256K1_N_7;
     r->d[7] = t & nonzero;
 }
 
