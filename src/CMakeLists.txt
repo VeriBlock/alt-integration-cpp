@@ -15,3 +15,4 @@ add_library(vbkutils
         hashutil.cpp
         signutil.cpp
         )
+target_link_libraries(vbkutils secp256k1)
