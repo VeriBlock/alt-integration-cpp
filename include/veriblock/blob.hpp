@@ -16,8 +16,13 @@ struct Blob {
   typedef const value_type* const_pointer;
   typedef value_type& reference;
   typedef const value_type& const_reference;
+#ifdef _MSC_VER
   using iterator       = std::_Array_iterator<value_type, N>;
   using const_iterator = std::_Array_const_iterator<value_type, N>;
+#else
+  typedef value_type* iterator;
+  typedef const value_type* const_iterator;
+#endif
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
   typedef std::reverse_iterator<iterator> reverse_iterator;

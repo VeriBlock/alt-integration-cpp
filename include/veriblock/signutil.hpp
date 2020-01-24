@@ -72,7 +72,7 @@ Signature veriBlockSign(Slice<const uint8_t> message,
  * with secp256k1 algorithm. Public key should be derived
  * from signer's private key.
  * @param message message to verify with
- * @param signatureEncoded VBK encoded signature to verify
+ * @param signature VBK encoded signature to verify
  * @param publicKey verify signature with this public key
  * @throws std::out_of_range if publicKey is malformed
  * @return 1 if signature is valid, 0 - otherwise

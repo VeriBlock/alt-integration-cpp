@@ -70,6 +70,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 
     # disable these warnings:
     add_flag(/wd4389)                  # disable warning: 'operator' : signed/unsigned mismatch
+    add_flag(/wd4319)                  # disable warning: 'operator' : signed/unsigned mismatch
 endif()
 
 include(GNUInstallDirs)

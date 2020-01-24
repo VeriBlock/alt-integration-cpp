@@ -110,22 +110,6 @@ static void secp256k1_ge_set_gej(secp256k1_ge *r, secp256k1_gej *a) {
     r->y = a->y;
 }
 
-static void secp256k1_ge_set_gej_var(secp256k1_ge *r, secp256k1_gej *a) {
-    secp256k1_fe z2, z3;
-    r->infinity = a->infinity;
-    if (a->infinity) {
-        return;
-    }
-    secp256k1_fe_inv_var(&a->z, &a->z);
-    secp256k1_fe_sqr(&z2, &a->z);
-    secp256k1_fe_mul(&z3, &a->z, &z2);
-    secp256k1_fe_mul(&a->x, &a->x, &z2);
-    secp256k1_fe_mul(&a->y, &a->y, &z3);
-    secp256k1_fe_set_int(&a->z, 1);
-    r->x = a->x;
-    r->y = a->y;
-}
-
 static void secp256k1_ge_set_all_gej_var(secp256k1_ge *r, const secp256k1_gej *a, size_t len) {
     secp256k1_fe u;
     size_t i;
@@ -199,12 +183,6 @@ static void secp256k1_gej_set_infinity(secp256k1_gej *r) {
     secp256k1_fe_clear(&r->z);
 }
 
-static void secp256k1_ge_set_infinity(secp256k1_ge *r) {
-    r->infinity = 1;
-    secp256k1_fe_clear(&r->x);
-    secp256k1_fe_clear(&r->y);
-}
-
 static void secp256k1_gej_clear(secp256k1_gej *r) {
     r->infinity = 0;
     secp256k1_fe_clear(&r->x);
@@ -267,26 +245,6 @@ static void secp256k1_gej_neg(secp256k1_gej *r, const secp256k1_gej *a) {
 
 static int secp256k1_gej_is_infinity(const secp256k1_gej *a) {
     return a->infinity;
-}
-
-static int secp256k1_gej_is_valid_var(const secp256k1_gej *a) {
-    secp256k1_fe y2, x3, z2, z6;
-    if (a->infinity) {
-        return 0;
-    }
-    /** y^2 = x^3 + 7
-     *  (Y/Z^3)^2 = (X/Z^2)^3 + 7
-     *  Y^2 / Z^6 = X^3 / Z^6 + 7
-     *  Y^2 = X^3 + 7*Z^6
-     */
-    secp256k1_fe_sqr(&y2, &a->y);
-    secp256k1_fe_sqr(&x3, &a->x); secp256k1_fe_mul(&x3, &x3, &a->x);
-    secp256k1_fe_sqr(&z2, &a->z);
-    secp256k1_fe_sqr(&z6, &z2); secp256k1_fe_mul(&z6, &z6, &z2);
-    secp256k1_fe_mul_int(&z6, CURVE_B);
-    secp256k1_fe_add(&x3, &z6);
-    secp256k1_fe_normalize_weak(&x3);
-    return secp256k1_fe_equal_var(&y2, &x3);
 }
 
 static int secp256k1_ge_is_valid_var(const secp256k1_ge *a) {
@@ -690,19 +648,5 @@ static void secp256k1_ge_mul_lambda(secp256k1_ge *r, const secp256k1_ge *a) {
     secp256k1_fe_mul(&r->x, &r->x, &beta);
 }
 #endif
-
-static int secp256k1_gej_has_quad_y_var(const secp256k1_gej *a) {
-    secp256k1_fe yz;
-
-    if (a->infinity) {
-        return 0;
-    }
-
-    /* We rely on the fact that the Jacobi symbol of 1 / a->z^3 is the same as
-     * that of a->z. Thus a->y / a->z^3 is a quadratic residue iff a->y * a->z
-       is */
-    secp256k1_fe_mul(&yz, &a->y, &a->z);
-    return secp256k1_fe_is_quad_var(&yz);
-}
 
 #endif /* SECP256K1_GROUP_IMPL_H */
