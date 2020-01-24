@@ -18,7 +18,7 @@ struct Blob {
   typedef value_type& reference;
   typedef const value_type& const_reference;
 #ifdef _MSC_VER
-  using iterator       = std::_Array_iterator<value_type, N>;
+  using iterator = std::_Array_iterator<value_type, N>;
   using const_iterator = std::_Array_const_iterator<value_type, N>;
 #else
   typedef value_type* iterator;
@@ -92,6 +92,9 @@ struct Blob {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) <= 0;
   }
 
+  value_type& operator[](size_t index) noexcept { return data_[index]; }
+  value_type& operator[](size_t index) const noexcept { return data_[index]; }
+
  private:
   inline void assign(Slice<const uint8_t> slice) {
     if (slice.size() != N) {
@@ -100,7 +103,7 @@ struct Blob {
     std::copy(slice.begin(), slice.end(), data_.begin());
   }
 
-  std::array<uint8_t, N> data_;
+  std::array<value_type, N> data_;
 };  // namespace VeriBlock
 
 /// custom gtest printer, which prints Blob of any size as hexstring

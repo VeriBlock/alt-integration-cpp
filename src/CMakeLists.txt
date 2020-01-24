@@ -5,6 +5,7 @@ add_subdirectory(secp256k1)
 add_library(vblake OBJECT vblake.cpp)
 
 add_library(vbkutils
+        uint.cpp
         checks.cpp
         serde.cpp
         strutil.cpp

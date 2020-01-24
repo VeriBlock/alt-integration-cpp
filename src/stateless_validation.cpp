@@ -1,6 +1,5 @@
-#include <veriblock/blockutils.hpp>
 #include <veriblock/consts.hpp>
-#include <veriblock/entities/hashes.hpp>
+#include <veriblock/uint.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/time.hpp>
 

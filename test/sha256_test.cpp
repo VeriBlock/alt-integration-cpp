@@ -4,8 +4,7 @@
 #include <vector>
 
 #include "util/literals.hpp"
-#include "veriblock/blockutils.hpp"
-#include "veriblock/entities/hashes.hpp"
+#include "veriblock/uint.hpp"
 #include "veriblock/hashutil.hpp"
 
 using namespace VeriBlock;

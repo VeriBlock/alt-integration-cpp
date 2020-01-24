@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
-#include "veriblock/entities/hashes.hpp"
+#include "veriblock/uint.hpp"
 #include "veriblock/serde.hpp"
 
 namespace VeriBlock {
