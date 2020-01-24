@@ -1,8 +1,7 @@
-#include "veriblock/entities/merkle_path.hpp"
-
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include "veriblock/entities/merkle_path.hpp"
 
 using namespace VeriBlock;
 
@@ -20,7 +19,7 @@ static const std::string defaultPathEncoded =
     "1b4227cd4137d728ec5ea56c457618202cf1439a6dbcc1a35e96574bddbf2c5db9174af5ad"
     "0d278fe92e06e4ac349a42";
 
-static const std::vector<Sha256Hash> defaultLayers{
+static const std::vector<uint256> defaultLayers{
     "4d66077fdf24246ffd6b6979dfedef5d46588654addeb35edb11e993c131f612"_unhex,
     "023d1abe8758c6f917ec0c65674bbd43d66ee14dc667b3117dfc44690c6f5af1"_unhex,
     "096ddba03ca952af133fb06307c24171e53bf50ab76f1edeabde5e99f78d4ead"_unhex,
@@ -43,7 +42,7 @@ TEST(MerklePath, Deserialize) {
   auto merklePath = ParseHex(defaultPathEncoded);
   auto subject = ParseHex(defaultSubject);
   auto stream = ReadStream(merklePath);
-  auto decoded = MerklePath::fromVbkEncoding(stream, Sha256Hash(subject));
+  auto decoded = MerklePath::fromVbkEncoding(stream, uint256(subject));
 
   EXPECT_EQ(decoded.index, defaultIndex);
   EXPECT_EQ(decoded.subject.toHex(), defaultSubject);
@@ -68,7 +67,7 @@ TEST(MerklePath, RoundTrip) {
   auto merklePath = ParseHex(defaultPathEncoded);
   auto subject = ParseHex(defaultSubject);
   auto stream = ReadStream(merklePath);
-  auto decoded = MerklePath::fromVbkEncoding(stream, Sha256Hash(subject));
+  auto decoded = MerklePath::fromVbkEncoding(stream, uint256(subject));
   EXPECT_EQ(decoded.index, defaultIndex);
 
   WriteStream outputStream;

@@ -1,8 +1,7 @@
-#include "veriblock/entities/vtb.hpp"
-
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include "veriblock/entities/vtb.hpp"
 
 using namespace VeriBlock;
 
@@ -37,39 +36,39 @@ static const auto btcTxBytes =
 
 static const MerklePath defaultPath{
     1659,
-    Sha256Hash(
+    uint256(
         "94E097B110BA3ADBB7B6C4C599D31D675DE7BE6E722407410C08EF352BE585F1"_unhex),
-    std::vector<Sha256Hash>{
-        Sha256Hash(
+    std::vector<uint256>{
+        uint256(
             "4D66077FDF24246FFD6B6979DFEDEF5D46588654ADDEB35EDB11E993C131F612"_unhex),
-        Sha256Hash(
+        uint256(
             "023D1ABE8758C6F917EC0C65674BBD43D66EE14DC667B3117DFC44690C6F5AF1"_unhex),
-        Sha256Hash(
+        uint256(
             "096DDBA03CA952AF133FB06307C24171E53BF50AB76F1EDEABDE5E99F78D4EAD"_unhex),
-        Sha256Hash(
+        uint256(
             "2F32CF1BEE50349D56FC1943AF84F2D2ABDA520F64DC4DB37B2F3DB20B0ECB57"_unhex),
-        Sha256Hash(
+        uint256(
             "93E70120F1B539D0C1495B368061129F30D35F9E436F32D69967AE86031A2756"_unhex),
-        Sha256Hash(
+        uint256(
             "F554378A116E2142F9F6315A38B19BD8A1B2E6DC31201F2D37A058F03C39C06C"_unhex),
-        Sha256Hash(
+        uint256(
             "0824705685CECA003C95140434EE9D8BBBF4474B83FD4ECC2766137DB9A44D74"_unhex),
-        Sha256Hash(
+        uint256(
             "B7B9E52F3EE8CE4FBB8BE7D6CF66D33A20293F806C69385136662A74453FB162"_unhex),
-        Sha256Hash(
+        uint256(
             "1732C9A35E80D4796BABEA76AACE50B49F6079EA3E349F026B4491CFE720AD17"_unhex),
-        Sha256Hash(
+        uint256(
             "2D9B57E92AB51FE28A587050FD82ABB30ABD699A5CE8B54E7CD49B2A827BCB99"_unhex),
-        Sha256Hash(
+        uint256(
             "DCBA229ACDC6B7F028BA756FD5ABBFEBD31B4227CD4137D728EC5EA56C457618"_unhex),
-        Sha256Hash(
+        uint256(
             "2CF1439A6DBCC1A35E96574BDDBF2C5DB9174AF5AD0D278FE92E06E4AC349A42"_unhex)}};
 
 static const BtcBlock defaultBtcBlock{
     549453824,
-    Sha256Hash(
+    uint256(
         "134f09d43659eb53982d9afb444b96fa4bb58c037d2914000000000000000000"_unhex),
-    Sha256Hash(
+    uint256(
         "ce0b1a9a77dd0db127b5df4bc368cd6ac299a9747d991ec2dacbc0b699a2e4a5"_unhex),
     1553699251,
     388767596,
@@ -77,9 +76,9 @@ static const BtcBlock defaultBtcBlock{
 
 static const BtcBlock btcBlock1{
     545259520,
-    Sha256Hash(
+    uint256(
         "fc61cc9d4eac4b2d14761a4d06af8a9ef073dcd7fb5e0d000000000000000000"_unhex),
-    Sha256Hash(
+    uint256(
         "a31508d4b101d0ad11e43ef9419c23fc277f67edae83c598ee70866dbcef5e25"_unhex),
     1553697574,
     388767596,
@@ -87,9 +86,9 @@ static const BtcBlock btcBlock1{
 
 static const BtcBlock btcBlock2{
     541065216,
-    Sha256Hash(
+    uint256(
         "3f8e3980304439d853c302f6e496285e110e2512515313000000000000000000"_unhex),
-    Sha256Hash(
+    uint256(
         "39a72c22268381bd8d9dcfe002f472634a24cf0454de8b50f89e10891e5ffb1d"_unhex),
     1553698272,
     388767596,
@@ -97,9 +96,9 @@ static const BtcBlock btcBlock2{
 
 static const BtcBlock btcBlock3{
     536870912,
-    Sha256Hash(
+    uint256(
         "baa42e40345a7f826a31d37db1a5d64b67b72732477422000000000000000000"_unhex),
-    Sha256Hash(
+    uint256(
         "a33ad6be0634647b26633ab85fa8de258480bbb25e59c68e48bb0b608b12362b"_unhex),
     1553699088,
     388767596,
@@ -130,20 +129,20 @@ static const VbkPopTx defaultTx{
 static const VbkMerklePath vtbProofPath{
     0,
     13,
-    Sha256Hash(
+    uint256(
         "2a014e88ed7ab65cdfaa85daeab07eea6cba5e147f736edd8d02c2f9ddf0dec6"_unhex),
-    std::vector<Sha256Hash>{
-        Sha256Hash(
+    std::vector<uint256>{
+        uint256(
             "5b977ea09a554ad56957f662284044e7d37450ddadf7db3647712f5969399787"_unhex),
-        Sha256Hash(
+        uint256(
             "20d0a3d873eeeee6a222a75316dce60b53ca43eaea09d27f0ece897303a53ae9"_unhex),
-        Sha256Hash(
+        uint256(
             "c06fe913dca5dc2736563b80834d69e6dfdf1b1e92383ea62791e410421b6c11"_unhex),
-        Sha256Hash(
+        uint256(
             "049f68d350eeb8b3df630c8308b5c8c2ba4cd6210868395b084af84d19ff0e90"_unhex),
-        Sha256Hash(
+        uint256(
             "0000000000000000000000000000000000000000000000000000000000000000"_unhex),
-        Sha256Hash(
+        uint256(
             "36252dfc621de420fb083ad9d8767cba627eddeec64e421e9576cee21297dd0a"_unhex)}};
 
 static const VbkBlock vtbVbkBlock{4976,
@@ -181,16 +180,16 @@ static const std::string defaultVtbEncoded =
     "1732c9a35e80d4796babea76aace50b49f6079ea3e349f026b4491cfe720ad17202d9b57e9"
     "2ab51fe28a587050fd82abb30abd699a5ce8b54e7cd49b2a827bcb9920dcba229acdc6b7f0"
     "28ba756fd5abbfebd31b4227cd4137d728ec5ea56c457618202cf1439a6dbcc1a35e96574b"
-    "ddbf2c5db9174af5ad0d278fe92e06e4ac349a42500000c020134f09d43659eb53982d9afb"
-    "444b96fa4bb58c037d2914000000000000000000ce0b1a9a77dd0db127b5df4bc368cd6ac2"
-    "99a9747d991ec2dacbc0b699a2e4a5b3919b5c6c1f2c1773703bc001035000008020fc61cc"
-    "9d4eac4b2d14761a4d06af8a9ef073dcd7fb5e0d000000000000000000a31508d4b101d0ad"
-    "11e43ef9419c23fc277f67edae83c598ee70866dbcef5e25268b9b5c6c1f2c17e11874af50"
-    "000040203f8e3980304439d853c302f6e496285e110e251251531300000000000000000039"
-    "a72c22268381bd8d9dcfe002f472634a24cf0454de8b50f89e10891e5ffb1de08d9b5c6c1f"
-    "2c1744290a925000000020baa42e40345a7f826a31d37db1a5d64b67b72732477422000000"
-    "000000000000a33ad6be0634647b26633ab85fa8de258480bbb25e59c68e48bb0b608b1236"
-    "2b10919b5c6c1f2c1749c4d1f0473045022100f4dce45edcc6bfc4a1f44ef04e47e90a348e"
+    "ddbf2c5db9174af5ad0d278fe92e06e4ac349a42500000c02000000000000000000014297d"
+    "038cb54bfa964b44fb9a2d9853eb5936d4094f13a5e4a299b6c0cbdac21e997d74a999c26a"
+    "cd68c34bdfb527b10ddd779a1a0bceb3919b5c6c1f2c1773703bc001035000008020000000"
+    "0000000000000d5efbd7dc73f09e8aaf064d1a76142d4bac4e9dcc61fc255eefbc6d8670ee"
+    "98c583aeed677f27fc239c41f93ee411add001b1d40815a3268b9b5c6c1f2c17e11874af50"
+    "0000402000000000000000000013535112250e115e2896e4f602c353d839443080398e3f1d"
+    "fb5f1e89109ef8508bde5404cf244a6372f402e0cf9d8dbd818326222ca739e08d9b5c6c1f"
+    "2c1744290a9250000000200000000000000000002274473227b7674bd6a5b17dd3316a827f"
+    "5a34402ea4ba2b36128b600bbb488ec6595eb2bb808425dea85fb83a63267b643406bed63a"
+    "a310919b5c6c1f2c1749c4d1f0473045022100f4dce45edcc6bfc4a1f44ef04e47e90a348e"
     "fd471f742f18b882ac77a8d0e89e0220617cf7c4a22211991687b17126c1bb007a3b2a25c5"
     "50f75d66b857a8fd9d75e7583056301006072a8648ce3d020106052b8104000a03420004b3"
     "c10470c8e8e426f1937758d9fb5e97a1891176cb37d4c12d4af4107b1aa3e8a8a754c06a22"
@@ -210,7 +209,8 @@ TEST(VTB, Deserialize) {
   auto stream = ReadStream(vtbBytes);
   auto decoded = VTB::fromVbkEncoding(stream);
 
-  EXPECT_EQ(decoded.transaction.address, Address(AddressType::STANDARD, "VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+  EXPECT_EQ(decoded.transaction.address,
+            Address(AddressType::STANDARD, "VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 }
 
 TEST(VTB, Serialize) {

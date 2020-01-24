@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstring>
 
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
@@ -17,7 +18,7 @@ struct Blob {
   typedef value_type& reference;
   typedef const value_type& const_reference;
 #ifdef _MSC_VER
-  using iterator       = std::_Array_iterator<value_type, N>;
+  using iterator = std::_Array_iterator<value_type, N>;
   using const_iterator = std::_Array_const_iterator<value_type, N>;
 #else
   typedef value_type* iterator;
@@ -52,10 +53,6 @@ struct Blob {
 
   std::string toHex() const { return HexStr(data_.begin(), data_.end()); }
 
-  bool operator==(const Blob<N>& other) const noexcept {
-    return data_ == other.data_;
-  }
-
   Blob<N>& operator=(const Blob<N>& other) {
     this->data_ = other.data_;
     return *this;
@@ -66,8 +63,8 @@ struct Blob {
     return *this;
   }
 
-  Blob<N> reverse() {
-    Blob<N> ret = data_;
+  Blob<N> reverse() const {
+    Blob<N> ret = *this;
     std::reverse(ret.begin(), ret.end());
     return ret;
   }
@@ -75,6 +72,28 @@ struct Blob {
   std::vector<value_type> asVector() const {
     return std::vector<value_type>{data_.begin(), data_.end()};
   }
+
+  friend inline bool operator==(const Blob<N>& a, const Blob<N>& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
+  }
+  friend inline bool operator!=(const Blob<N>& a, const Blob<N>& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
+  }
+  friend inline bool operator>(const Blob<N>& a, const Blob<N>& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) > 0;
+  }
+  friend inline bool operator<(const Blob<N>& a, const Blob<N>& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) < 0;
+  }
+  friend inline bool operator>=(const Blob<N>& a, const Blob<N>& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) >= 0;
+  }
+  friend inline bool operator<=(const Blob<N>& a, const Blob<N>& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) <= 0;
+  }
+
+  value_type& operator[](size_t index) noexcept { return data_[index]; }
+  value_type& operator[](size_t index) const noexcept { return data_[index]; }
 
  private:
   inline void assign(Slice<const uint8_t> slice) {
@@ -84,7 +103,7 @@ struct Blob {
     std::copy(slice.begin(), slice.end(), data_.begin());
   }
 
-  std::array<uint8_t, N> data_;
+  std::array<value_type, N> data_;
 };  // namespace VeriBlock
 
 /// custom gtest printer, which prints Blob of any size as hexstring

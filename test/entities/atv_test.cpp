@@ -1,8 +1,7 @@
-#include "veriblock/entities/atv.hpp"
-
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include "veriblock/entities/atv.hpp"
 
 using namespace VeriBlock;
 
@@ -32,24 +31,23 @@ static const VbkTx defaultTx{
 static const VbkMerklePath defaultPath{
     1,
     0,
-    Sha256Hash(
+    uint256(
         "1fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c"_unhex),
-    std::vector<Sha256Hash>{
-        Sha256Hash(
+    std::vector<uint256>{
+        uint256(
             "0000000000000000000000000000000000000000000000000000000000000000"_unhex),
-        Sha256Hash(
+        uint256(
             "0000000000000000000000000000000000000000000000000000000000000000"_unhex)}};
 
-static const VbkBlock defaultVbkBlock{
-    5000,
-    2,
-    "449c60619294546ad825af03"_unhex,
-    "b0935637860679ddd5"_unhex,
-    "5ee4fd21082e18686e"_unhex,
-    "26bbfda7d5e4462ef24ae02d67e47d78"_unhex,
-    1553699059,
-    16842752,
-    1};
+static const VbkBlock defaultVbkBlock{5000,
+                                      2,
+                                      "449c60619294546ad825af03"_unhex,
+                                      "b0935637860679ddd5"_unhex,
+                                      "5ee4fd21082e18686e"_unhex,
+                                      "26bbfda7d5e4462ef24ae02d67e47d78"_unhex,
+                                      1553699059,
+                                      16842752,
+                                      1};
 
 static const ATV defaultAtv{
     defaultTx, defaultPath, defaultVbkBlock, std::vector<VbkBlock>{}};
@@ -73,7 +71,8 @@ TEST(ATV, Deserialize) {
   auto stream = ReadStream(atvBytes);
   auto decoded = ATV::fromVbkEncoding(stream);
 
-  EXPECT_EQ(decoded.transaction.sourceAddress, Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+  EXPECT_EQ(decoded.transaction.sourceAddress,
+            Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 }
 
 TEST(ATV, Serialize) {

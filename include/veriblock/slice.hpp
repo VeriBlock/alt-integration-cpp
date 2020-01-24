@@ -1,6 +1,7 @@
 #ifndef __SLICE__HPP__
 #define __SLICE__HPP__
 
+#include <algorithm>
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
@@ -36,7 +37,7 @@ struct Slice {
           std::is_convertible<typename Container::pointer, pointer>::value &&
           std::is_convertible<
               typename Container::pointer,
-              decltype(std::declval<Container>().data())>::value>>
+              decltype(std::declval<Container>().data())>::value>::type>
   constexpr Slice(Container &cont) noexcept : Slice(cont.data(), cont.size()) {}
 
   constexpr pointer data() const noexcept { return storage_; }
@@ -64,6 +65,13 @@ struct Slice {
   }
   constexpr const_reverse_iterator crend() const noexcept {
     return const_reverse_iterator{cbegin()};
+  }
+
+  Slice<ElementType> reverse() const {
+    Slice<ElementType> ret = *this;
+    std::reverse(const_cast<value_type *>(ret.begin()),
+                 const_cast<value_type *>(ret.end()));
+    return ret;
   }
 
  private:
