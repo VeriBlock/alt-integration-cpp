@@ -14,6 +14,11 @@ static const int PUBLIC_KEY_UNCOMPRESSED_SIZE = 65;
 
 using PrivateKey = Blob<PRIVATE_KEY_SIZE>;
 using PublicKey = Blob<PUBLIC_KEY_UNCOMPRESSED_SIZE>;
+using Signature = std::vector<uint8_t>;
+
+// VBK encoded keys are plain byte arrays
+using PrivateKeyVbk = std::vector<uint8_t>;
+using PublicKeyVbk = std::vector<uint8_t>;
 
 /**
  * Convert VBK encoded private key to the PrivateKey type.
@@ -21,7 +26,7 @@ using PublicKey = Blob<PUBLIC_KEY_UNCOMPRESSED_SIZE>;
  * @throws std::out_of_range if key is malformed
  * @return PrivateKey for inner use
  */
-PrivateKey privateKeyFromVbk(Slice<uint8_t> key);
+PrivateKey privateKeyFromVbk(PrivateKeyVbk key);
 
 /**
  * Convert VBK encoded public key to the PublicKey type.
@@ -29,7 +34,7 @@ PrivateKey privateKeyFromVbk(Slice<uint8_t> key);
  * @throws std::out_of_range if key is malformed
  * @return PublicKey for inner use
  */
-PublicKey publicKeyFromVbk(Slice<uint8_t> key);
+PublicKey publicKeyFromVbk(PublicKeyVbk key);
 
 /**
  * Convert PublicKey type to VBK encoding.
@@ -37,7 +42,7 @@ PublicKey publicKeyFromVbk(Slice<uint8_t> key);
  * @throws std::out_of_range if key is malformed
  * @return byte array with VBK encoded public key
  */
-std::vector<uint8_t> publicKeyToVbk(PublicKey key);
+PublicKeyVbk publicKeyToVbk(PublicKey key);
 
 /**
  * Derive public key from the private key.
@@ -56,8 +61,8 @@ PublicKey derivePublicKey(PrivateKey privateKey);
  * @throws std::out_of_range if privateKey is malformed
  * @return byte array with VBK encoded signature
  */
-std::vector<uint8_t> veriBlockSign(Slice<uint8_t> message,
-                                   PrivateKey privateKey);
+Signature veriBlockSign(Slice<const uint8_t> message,
+                        PrivateKey privateKey);
 
 /**
  * Verify message previously signed with veriBlockSign.
@@ -72,8 +77,8 @@ std::vector<uint8_t> veriBlockSign(Slice<uint8_t> message,
  * @throws std::out_of_range if publicKey is malformed
  * @return 1 if signature is valid, 0 - otherwise
  */
-int veriBlockVerify(Slice<uint8_t> message,
-                    Slice<uint8_t> signatureEncoded,
+int veriBlockVerify(Slice<const uint8_t> message,
+                    Signature signature,
                     PublicKey publicKey);
 
 }  // namespace VeriBlock
