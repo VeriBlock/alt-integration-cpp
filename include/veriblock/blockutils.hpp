@@ -1,3 +1,6 @@
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKUTILS_HPP
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKUTILS_HPP
+
 #include "entities/hashes.hpp"
 
 namespace VeriBlock {
@@ -30,3 +33,5 @@ inline uint256 decodeBits(const uint32_t& bits) {
 // TODO: write the encodeBits function
 inline uint32_t encodeBits(const uint256& target);
 }  // namespace VeriBlock
+
+#endif

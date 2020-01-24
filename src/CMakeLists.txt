@@ -15,4 +15,5 @@ add_library(vbkutils
         hashutil.cpp
         vblake.cpp
         stateless_validation.cpp
+        arith_uint256.cpp
         )

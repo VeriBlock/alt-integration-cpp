@@ -24,7 +24,11 @@ struct Blob {
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  Blob() = default;
+  Blob() {
+    for (int i = 0; i < N; i++) {
+      data_[i] = 0;
+    }
+  };
 
   Blob(Slice<const uint8_t> slice) { assign(slice); }
   Blob(const std::vector<uint8_t>& v) { assign(v); }
@@ -87,7 +91,7 @@ struct Blob {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) <= 0;
   }
 
- private:
+ protected:
   inline void assign(Slice<const uint8_t> slice) {
     if (slice.size() != N) {
       throw std::invalid_argument("Blob(): invalid slice size");

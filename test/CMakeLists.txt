@@ -23,3 +23,6 @@ target_link_libraries(secp256k1_test secp256k1 vbkutils)
 addtest(stateless_validation_test stateless_validation_test.cpp)
 target_link_libraries(stateless_validation_test vbkutils)
 
+addtest(arith_uint256_test arith_uint256_test.cpp)
+target_link_libraries(arith_uint256_test vbkutils)
+
