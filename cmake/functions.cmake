@@ -40,9 +40,23 @@ endfunction()
 
 # conditionally applies flag. If flag is supported by current compiler, it will be added to compile options.
 function(add_flag flag)
-    check_cxx_compiler_flag(${flag} FLAG_${flag})
-    if (FLAG_${flag} EQUAL 1)
+    check_cxx_compiler_flag(${flag} CXXFLAG_${flag})
+    if (CXXFLAG_${flag} EQUAL 1)
         add_compile_options(${flag})
+    endif ()
+endfunction()
+
+function(add_c_flag flag)
+    check_c_compiler_flag(${flag} CFLAG_${flag})
+    if (CFLAG_${flag} EQUAL 1)
+        add_cache_flag(CMAKE_C_FLAGS ${flag})
+    endif ()
+endfunction()
+
+function(add_cxx_flag flag)
+    check_cxx_compiler_flag(${flag} CXXFLAG_${flag})
+    if (CXXFLAG_${flag} EQUAL 1)
+        add_cache_flag(CMAKE_CXX_FLAGS ${flag})
     endif ()
 endfunction()
 
