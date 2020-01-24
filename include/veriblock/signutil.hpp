@@ -8,9 +8,9 @@
 
 namespace VeriBlock {
 
-static const int PRIVATE_KEY_SIZE = 32;
-static const int PUBLIC_KEY_COMPRESSED_SIZE = 33;
-static const int PUBLIC_KEY_UNCOMPRESSED_SIZE = 65;
+static const size_t PRIVATE_KEY_SIZE = 32;
+static const size_t PUBLIC_KEY_COMPRESSED_SIZE = 33;
+static const size_t PUBLIC_KEY_UNCOMPRESSED_SIZE = 65;
 
 using PrivateKey = Blob<PRIVATE_KEY_SIZE>;
 using PublicKey = Blob<PUBLIC_KEY_UNCOMPRESSED_SIZE>;

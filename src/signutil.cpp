@@ -33,13 +33,15 @@ static const std::string ASN1_PREFIX_PUBKEY =
     "3056301006072A8648CE3D020106052B8104000A034200";
 static const auto ASN1_PREFIX_PUBKEY_BYTES = ParseHex(ASN1_PREFIX_PUBKEY);
 
-static const int PRIVATE_KEY_ASN1_SIZE =
-    (int)ASN1_PREFIX_PRIVKEY_BYTES.size() + PRIVATE_KEY_SIZE;
+static const size_t PRIVATE_KEY_ASN1_SIZE =
+    ASN1_PREFIX_PRIVKEY_BYTES.size() + PRIVATE_KEY_SIZE;
 
-static const int PUBLIC_KEY_ASN1_SIZE =
-    (int)ASN1_PREFIX_PUBKEY_BYTES.size() + PUBLIC_KEY_UNCOMPRESSED_SIZE;
+static const size_t PUBLIC_KEY_ASN1_SIZE =
+    ASN1_PREFIX_PUBKEY_BYTES.size() + PUBLIC_KEY_UNCOMPRESSED_SIZE;
 
-static void checkLength(size_t num, size_t expected, const std::string& message) {
+static void checkLength(size_t num,
+                        size_t expected,
+                        const std::string& message) {
   if (num != expected) {
     throw std::invalid_argument(message);
   }
@@ -140,7 +142,9 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
               "derivePublicKey(): invalid public key");
   Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
   secp256k1_pubkey pubkey;
-  secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
+  int pubCreated = secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
+  // should be always 1
+  assert(pubCreated == 1);
 
   size_t outputlen = PUBLIC_KEY_UNCOMPRESSED_SIZE;
   std::vector<uint8_t> output(outputlen);
@@ -155,17 +159,15 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
 Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
   Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
   secp256k1_pubkey pubkey;
-  secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
+  int pubCreated = secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
+  // should be always 1
+  assert(pubCreated == 1);
 
   auto messageHash = sha256(message);
 
   secp256k1_ecdsa_signature signature;
-  if (!secp256k1_ecdsa_sign(ctx,
-                            &signature,
-                            messageHash.data(),
-                            privateKey.data(),
-                            NULL,
-                            NULL)) {
+  if (!secp256k1_ecdsa_sign(
+          ctx, &signature, messageHash.data(), privateKey.data(), NULL, NULL)) {
     throw std::invalid_argument("sha256EcdsaSign(): cannot sign");
   }
 
@@ -180,7 +182,10 @@ int veriBlockVerify(Slice<const uint8_t> message,
                     PublicKey publicKey) {
   Secp256k1Context ctx(SECP256K1_CONTEXT_VERIFY);
   secp256k1_pubkey pubkey;
-  secp256k1_ec_pubkey_parse(ctx, &pubkey, publicKey.data(), publicKey.size());
+  if (!secp256k1_ec_pubkey_parse(
+          ctx, &pubkey, publicKey.data(), publicKey.size())) {
+    throw std::invalid_argument("veriBlockVerify(): cannot parse public key");
+  }
 
   secp256k1_ecdsa_signature signatureDecoded;
   secp256k1_ecdsa_signature_parse_der(
