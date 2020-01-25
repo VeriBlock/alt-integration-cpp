@@ -3,8 +3,8 @@
 #include <cassert>
 
 #include "veriblock/hashutil.hpp"
-#include "veriblock/secp256k1.h"
 #include "veriblock/strutil.hpp"
+#include "veriblock/third_party/secp256k1.h"
 
 namespace VeriBlock {
 

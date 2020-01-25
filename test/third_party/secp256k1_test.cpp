@@ -1,4 +1,4 @@
-#include "veriblock/secp256k1.h"
+#include "veriblock/third_party/secp256k1.h"
 
 #include <gtest/gtest.h>
 
