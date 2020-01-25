@@ -52,6 +52,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     # disable errors
     add_flag(-Wno-unused-function)
     add_flag(-Wno-nonnull-compare)
+    add_flag(-Wno-unknown-pragmas)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     if(WERROR)
         add_compile_options(/WX)                      # treats all compiler warnings as errors.

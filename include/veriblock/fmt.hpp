@@ -1,7 +1,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_FMT_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_FMT_HPP_
 
+#pragma warning(push, 0)
 #include <veriblock/third_party/tinyfmt.hpp>
+#pragma warning(pop)
 
 /**
  * A facade for a third party formatting library.
