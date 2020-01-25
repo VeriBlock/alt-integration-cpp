@@ -3,9 +3,9 @@
 
 #include <cstddef>
 
-#include "sha256.h"
 #include "slice.hpp"
 #include "vblake.h"
+#include "veriblock/third_party/sha256.h"
 #include "veriblock/uint.hpp"
 
 namespace VeriBlock {
