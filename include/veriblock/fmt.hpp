@@ -1,6 +1,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_FMT_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_FMT_HPP_
 
+// disable MSVS warnings in this file
 #pragma warning(push, 0)
 #include <veriblock/third_party/tinyfmt.hpp>
 #pragma warning(pop)
