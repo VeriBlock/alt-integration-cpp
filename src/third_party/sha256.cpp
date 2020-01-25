@@ -31,7 +31,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <veriblock/sha256.h>
+#include <veriblock/third_party/sha256.h>
 
 /*
  * 32-bit integer manipulation macros (big endian)

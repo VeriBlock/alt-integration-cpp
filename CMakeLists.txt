@@ -52,6 +52,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     # disable errors
     add_flag(-Wno-unused-function)
     add_flag(-Wno-nonnull-compare)
+    add_flag(-Wno-unknown-pragmas)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     if(WERROR)
         add_compile_options(/WX)                      # treats all compiler warnings as errors.
@@ -69,6 +70,8 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 
     # disable these warnings:
     add_flag(/wd4389)                  # disable warning: 'operator' : signed/unsigned mismatch
+    add_flag(/wd4455)                  # disable warning: 'operator ""s': literal suffix identifiers that do not start with an underscore are reserved
+    add_flag(/wd4127)                  # disable warning: conditional expression is constant
 endif()
 
 include(GNUInstallDirs)

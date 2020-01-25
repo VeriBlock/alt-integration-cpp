@@ -6,7 +6,7 @@
 
 #define HAVE_CONFIG_H 1
 
-#include "veriblock/secp256k1.h"
+#include "veriblock/third_party/secp256k1.h"
 
 #include "util.h"
 #include "num_impl.h"
