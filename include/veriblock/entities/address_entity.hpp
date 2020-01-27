@@ -23,7 +23,7 @@ struct AddressEntity {
   }
 
   const std::string& getAddr() const noexcept { return m_Address; }
-  const AddressType getType() const noexcept { return m_Type; }
+  AddressType getType() const noexcept { return m_Type; }
 
   private:
     AddressType m_Type{};
