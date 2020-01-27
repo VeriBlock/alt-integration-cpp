@@ -1,5 +1,5 @@
-#ifndef _BASE58_H
-#define _BASE58_H
+#ifndef ALT_INTEGRATION_VERIBLOCK_BASE58_HPP
+#define ALT_INTEGRATION_VERIBLOCK_BASE58_HPP
 
 #include <string>
 #include <vector>
