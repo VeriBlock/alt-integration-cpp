@@ -72,8 +72,10 @@ struct Blob {
     return std::vector<value_type>{data_.begin(), data_.end()};
   }
 
-  value_type& operator[](size_t index) noexcept { return data_[index]; }
-  value_type& operator[](size_t index) const noexcept { return data_[index]; }
+  const value_type& operator[](size_t index) noexcept { return data_[index]; }
+  const value_type& operator[](size_t index) const noexcept {
+    return data_[index];
+  }
 
   friend inline bool operator==(const Blob<N>& a, const Blob<N>& b) {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
