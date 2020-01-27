@@ -1,29 +1,25 @@
-#include <veriblock/consts.hpp>
-#include <veriblock/uint.hpp>
-#include <veriblock/stateless_validation.hpp>
-#include <veriblock/time.hpp>
+#include "veriblock/arith_uint256.hpp"
+#include "veriblock/consts.hpp"
+#include "veriblock/stateless_validation.hpp"
 
 namespace VeriBlock {
 
-bool checkProofOfWork(const BtcBlock& block) {
-  uint256 blockHash = block.getHash();
-  uint256 target = decodeBits((uint32_t)block.bits);
+static const ArithUint256 MAXIMUM_DIFFICULTY(
+    "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
+bool checkProofOfWork(const BtcBlock& block) {
+  ArithUint256 blockHash(block.getHash());
+  ArithUint256 target;
+  target.decodeBits(block.bits);
   return target > blockHash;
 }
 
 bool checkProofOfWork(const VbkBlock& block) {
-  // TODO : write the target calculation
-  // uint192 blockHash = block.getHash();
-  // uint256 target = decodeBits(block.difficulty);
-
-  return block.version;
-}
-
-template <typename BlockType>
-bool checkMaximumDrift(const BlockType& block) {
-  uint32_t currentTime = currentTimestamp4();
-  return (uint32_t)block.timestamp < currentTime + ALLOWED_TIME_DRIFT;
+  ArithUint256 blockHash(block.getHash());
+  ArithUint256 target;
+  target.decodeBits(block.difficulty);
+  target = MAXIMUM_DIFFICULTY / target;
+  return target > blockHash;
 }
 
 bool checkBtcBlock(const BtcBlock& block, ValidationState& state) {

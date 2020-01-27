@@ -1,5 +1,5 @@
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOB_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOB_HPP_
+#ifndef ALT_INTEGRATION_VERIBLOCK_BLOB_HPP_
+#define ALT_INTEGRATION_VERIBLOCK_BLOB_HPP_
 
 #include <algorithm>
 #include <array>
@@ -17,19 +17,18 @@ struct Blob {
   typedef const value_type* const_pointer;
   typedef value_type& reference;
   typedef const value_type& const_reference;
-#ifdef _MSC_VER
-  using iterator = std::_Array_iterator<value_type, N>;
-  using const_iterator = std::_Array_const_iterator<value_type, N>;
-#else
   typedef value_type* iterator;
   typedef const value_type* const_iterator;
-#endif
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  Blob() = default;
+  Blob() {
+    for (size_t i = 0; i < N; i++) {
+      data_[i] = 0;
+    }
+  };
 
   Blob(Slice<const uint8_t> slice) { assign(slice); }
   Blob(const std::vector<uint8_t>& v) { assign(v); }
@@ -37,13 +36,13 @@ struct Blob {
   Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 
-  iterator begin() noexcept { return data_.begin(); }
+  iterator begin() noexcept { return data_.data(); }
 
-  const_iterator begin() const noexcept { return data_.begin(); }
+  const_iterator begin() const noexcept { return data_.data(); }
 
-  iterator end() noexcept { return data_.end(); }
+  iterator end() noexcept { return data_.data() + N; }
 
-  const_iterator end() const noexcept { return data_.end(); }
+  const_iterator end() const noexcept { return data_.data() + N; }
 
   static size_type size() noexcept { return N; }
 
@@ -73,29 +72,19 @@ struct Blob {
     return std::vector<value_type>{data_.begin(), data_.end()};
   }
 
+  const value_type& operator[](size_t index) noexcept { return data_[index]; }
+  const value_type& operator[](size_t index) const noexcept {
+    return data_[index];
+  }
+
   friend inline bool operator==(const Blob<N>& a, const Blob<N>& b) {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
   }
   friend inline bool operator!=(const Blob<N>& a, const Blob<N>& b) {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
   }
-  friend inline bool operator>(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) > 0;
-  }
-  friend inline bool operator<(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) < 0;
-  }
-  friend inline bool operator>=(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) >= 0;
-  }
-  friend inline bool operator<=(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) <= 0;
-  }
 
-  value_type& operator[](size_t index) noexcept { return data_[index]; }
-  value_type& operator[](size_t index) const noexcept { return data_[index]; }
-
- private:
+ protected:
   inline void assign(Slice<const uint8_t> slice) {
     if (slice.size() != N) {
       throw std::invalid_argument("Blob(): invalid slice size");

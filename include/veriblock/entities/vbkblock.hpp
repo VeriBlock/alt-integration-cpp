@@ -64,8 +64,7 @@ struct VbkBlock {
   uint192 getHash() const {
     WriteStream stream;
     toRaw(stream);
-
-    return vblake(stream.data());
+    return vblake(stream.data()).reverse();
   }
 };
 

@@ -1,5 +1,5 @@
-#ifndef ALT_INTEGRATION_VBLAKE_HPP
-#define ALT_INTEGRATION_VBLAKE_HPP
+#ifndef ALT_INTEGRATION_VERIBLOCK_VBLAKE_H
+#define ALT_INTEGRATION_VERIBLOCK_VBLAKE_H
 
 #include <stddef.h>
 #include <stdint.h>
