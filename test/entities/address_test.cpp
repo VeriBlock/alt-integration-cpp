@@ -62,8 +62,7 @@ TEST(Address, DerivedFromPublicKey) {
       "f6c86952be4823a4c08e65e4cdbeb904a8b95763aa"_unhex;
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
   AddressEntity address = addressFromString(addressString);
-  EXPECT_EQ(addressIsDerivedFromPublicKey(address, publicKey),
-            true);
+  EXPECT_TRUE(addressIsDerivedFromPublicKey(address, publicKey));
 }
 
 TEST(Address, NotDerivedFromPublicKey) {
@@ -73,7 +72,7 @@ TEST(Address, NotDerivedFromPublicKey) {
       "f6c86952be4823a4c08e65e4cdbeb904a8b95763aa"_unhex;
   std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
   AddressEntity address = addressFromString(addressString);
-  EXPECT_EQ(addressIsDerivedFromPublicKey(address, publicKey), false);
+  EXPECT_FALSE(addressIsDerivedFromPublicKey(address, publicKey));
 }
 
 TEST(Address, ParseStandard) {
