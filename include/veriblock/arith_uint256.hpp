@@ -27,7 +27,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     if (bytes.size() > SHA256_HASH_SIZE) {
       throw uint_error("size of the string number more than SHA256_HASH_SIZE");
     }
-    for (int i = 0; i < bytes.size() && i < SHA256_HASH_SIZE; ++i) {
+    for (size_t i = 0; i < bytes.size() && i < SHA256_HASH_SIZE; ++i) {
       data_[i] = bytes[bytes.size() - 1 - i];
     }
   }
@@ -39,7 +39,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     if (b.size() > SHA256_HASH_SIZE) {
       throw uint_error("size of the Blob<N> more than SHA256_HASH_SIZE");
     }
-    for (int i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i) {
       this->data_[i] = b.data()[i];
     }
   }
