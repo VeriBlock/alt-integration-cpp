@@ -1,4 +1,4 @@
-#include "veriblock/entities/address.hpp"
+#include "veriblock/address.hpp"
 
 #include <gtest/gtest.h>
 
@@ -12,9 +12,8 @@ static auto ADDRESS_BYTES =
 static std::string ADDRESS_VALUE = "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX";
 
 TEST(Address, Deserialize) {
-  // TODO: add test for multisig addr
   auto stream = ReadStream(ADDRESS_BYTES);
-  auto address = Address::fromVbkEncoding(stream);
+  auto address = addressFromVbkEncoding(stream);
 
   EXPECT_EQ(address, ADDRESS_VALUE);
 
@@ -22,22 +21,27 @@ TEST(Address, Deserialize) {
 }
 
 TEST(Address, Serialize) {
-  // TODO: add test for multisig addr
-  auto address = Address(AddressType::STANDARD, ADDRESS_VALUE);
+  auto address = AddressEntity(AddressType::STANDARD, ADDRESS_VALUE);
   auto stream = WriteStream();
 
-  address.toVbkEncoding(stream);
+  addressToVbkEncoding(address, stream);
 
   EXPECT_EQ(stream.data(), ADDRESS_BYTES);
 }
 
 TEST(Address, RoundTrip) {
   auto stream = ReadStream(ADDRESS_BYTES);
-  auto decoded = Address::fromVbkEncoding(stream);
-  EXPECT_EQ(decoded.data(), ADDRESS_VALUE);
+  auto decoded = addressFromVbkEncoding(stream);
+  EXPECT_EQ(decoded.getAddr(), ADDRESS_VALUE);
 
   WriteStream outputStream;
-  decoded.toVbkEncoding(outputStream);
+  addressToVbkEncoding(decoded, outputStream);
   auto bytes = outputStream.data();
   EXPECT_EQ(bytes, ADDRESS_BYTES);
+}
+
+TEST(Address, ValidStandard) {
+  std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
+  AddressEntity address = addressFromString(addressString);
+  EXPECT_EQ(address.getType(), AddressType::STANDARD);
 }

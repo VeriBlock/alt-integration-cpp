@@ -9,17 +9,19 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/slice.hpp"
 
-#include "veriblock/entities/address.hpp"
+#include "veriblock/entities/address_entity.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/btctx.hpp"
 #include "veriblock/entities/merkle_path.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
+#include "veriblock/address.hpp"
+
 namespace VeriBlock {
 
 struct VbkPopTx {
   NetworkBytePair networkOrType{};
-  Address address{};
+  AddressEntity address{};
   VbkBlock publishedBlock{};
   BtcTx bitcoinTransaction{};
   MerklePath merklePath{};
@@ -33,7 +35,7 @@ struct VbkPopTx {
                           Slice<const uint8_t> _publicKey) {
     VbkPopTx tx{};
     tx.networkOrType = readNetworkByte(stream, TxType::VBK_POP_TX);
-    tx.address = Address::fromVbkEncoding(stream);
+    tx.address = addressFromVbkEncoding(stream);
     tx.publishedBlock = VbkBlock::fromVbkEncoding(stream);
     tx.bitcoinTransaction = BtcTx::fromVbkEncoding(stream);
 
@@ -64,7 +66,7 @@ struct VbkPopTx {
                                       networkOrType.networkByte,
                                       (uint8_t)TxType::VBK_POP_TX};
     writeNetworkByte(stream, popNetworkPair);
-    address.toVbkEncoding(stream);
+    addressToVbkEncoding(address, stream);
     publishedBlock.toVbkEncoding(stream);
     bitcoinTransaction.toVbkEncoding(stream);
     merklePath.toVbkEncoding(stream);

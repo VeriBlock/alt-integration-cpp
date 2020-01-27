@@ -20,7 +20,7 @@ static const auto defaultPublicKey =
 
 static const VbkTx defaultTx{
     NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
-    Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
+    AddressEntity(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
     Coin(1000),
     std::vector<Output>{},
     7,
@@ -72,7 +72,7 @@ TEST(ATV, Deserialize) {
   auto decoded = ATV::fromVbkEncoding(stream);
 
   EXPECT_EQ(decoded.transaction.sourceAddress,
-            Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+      AddressEntity(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 }
 
 TEST(ATV, Serialize) {
@@ -88,7 +88,7 @@ TEST(ATV, RoundTrip) {
   auto stream = ReadStream(atvBytes);
   auto decoded = ATV::fromVbkEncoding(stream);
   EXPECT_EQ(decoded.transaction.sourceAddress,
-            Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+      AddressEntity(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);

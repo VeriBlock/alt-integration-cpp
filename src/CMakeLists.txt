@@ -16,6 +16,7 @@ add_library(vbkutils
         stateless_validation.cpp
         arith_uint256.cpp
         signutil.cpp
+        address.cpp
         $<TARGET_OBJECTS:secp256k1>
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:vblake>
