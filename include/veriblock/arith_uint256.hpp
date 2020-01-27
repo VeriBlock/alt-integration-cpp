@@ -40,7 +40,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
       throw uint_error("size of the Blob<N> more than SHA256_HASH_SIZE");
     }
     for (size_t i = 0; i < N; ++i) {
-      this->data_[i] = b.data()[i];
+      this->data_[i] = b[i];
     }
   }
 
@@ -173,8 +173,8 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
 
   ArithUint256& operator++() {
     // prefix operator
-    for (int i = 0; i < SHA256_HASH_SIZE && ++data_[i] == 0; ++i)
-      ;
+    for (int i = 0; i < SHA256_HASH_SIZE && ++data_[i] == 0; ++i) {
+    }
     return *this;
   }
 
@@ -189,8 +189,8 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     // prefix operator
     for (int i = 0; i < SHA256_HASH_SIZE &&
                     --data_[i] == std::numeric_limits<uint8_t>::max();
-         ++i)
-      ;
+         ++i) {
+    }
     return *this;
   }
 
