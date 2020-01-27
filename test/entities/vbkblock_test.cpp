@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
 using namespace VeriBlock;
@@ -70,6 +71,6 @@ TEST(VbkBlock, getBlockHash_test) {
   block.difficulty = 117586646;
   block.nonce = 1924857207;
 
-  EXPECT_EQ(block.getHash(),
-            uint192("000000000000480D8196D5B0B41861D032377F5165BB4452"_unhex));
+  EXPECT_EQ(ArithUint256(block.getHash()),
+            ArithUint256("000000000000480D8196D5B0B41861D032377F5165BB4452"));
 }

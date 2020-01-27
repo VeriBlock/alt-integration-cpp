@@ -1,5 +1,5 @@
 /**
- * \file sha2.h
+ * \file sha256.h
  *
  *  Copyright (C) 2006-2010, Brainspark B.V.
  *

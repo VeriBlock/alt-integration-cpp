@@ -1,6 +1,6 @@
-#include <time.h>
 #ifndef ALT_INTEGRATION_VERIBLOCK_TIME_HPP
 #define ALT_INTEGRATION_VERIBLOCK_TIME_HPP
+#include <time.h>
 
 namespace VeriBlock {
 

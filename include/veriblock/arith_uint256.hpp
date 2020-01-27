@@ -9,7 +9,7 @@
 #include <string>
 
 #include "veriblock/blob.hpp"
-#include "veriblock/entities/hashes.hpp"
+#include "veriblock/consts.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace VeriBlock {
@@ -248,13 +248,6 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
   friend inline const ArithUint256 operator*(const ArithUint256& a,
                                              uint32_t b) {
     return ArithUint256(a) *= b;
-  }
-
-  friend inline bool operator==(const ArithUint256& a, const ArithUint256& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
-  }
-  friend inline bool operator!=(const ArithUint256& a, const ArithUint256& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
   }
   friend inline bool operator>(const ArithUint256& a, const ArithUint256& b) {
     return a.compareTo(b) > 0;

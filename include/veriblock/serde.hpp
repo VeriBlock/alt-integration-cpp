@@ -7,8 +7,9 @@
 #include <vector>
 
 #include "consts.hpp"
-#include "read_stream.hpp"
 #include "slice.hpp"
+#include "checks.hpp"
+#include "read_stream.hpp"
 #include "write_stream.hpp"
 
 /**
@@ -16,15 +17,6 @@
  */
 
 namespace VeriBlock {
-
-/**
- * Checks if expression 'min' <= 'num' <= 'max' is true. If false, throws.
- * @param num number to check
- * @param min min value
- * @param max max value
- * @throws std::out_of_range
- */
-void checkRange(int64_t num, int64_t min, int64_t max);
 
 /**
  * Converts the input to the byte array and trims it's size to the

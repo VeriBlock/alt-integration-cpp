@@ -3,9 +3,9 @@
 
 #include <cstdint>
 
-#include "veriblock/entities/hashes.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 
@@ -64,7 +64,6 @@ struct VbkBlock {
   uint192 getHash() const {
     WriteStream stream;
     toRaw(stream);
-
     return vblake(stream.data()).reverse();
   }
 };

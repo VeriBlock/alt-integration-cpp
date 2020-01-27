@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include <cstdint>
+
 namespace VeriBlock {
 
 enum class AddressType {

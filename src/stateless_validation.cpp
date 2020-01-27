@@ -1,6 +1,5 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/consts.hpp"
-#include "veriblock/entities/hashes.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace VeriBlock {
@@ -12,7 +11,6 @@ bool checkProofOfWork(const BtcBlock& block) {
   ArithUint256 blockHash(block.getHash());
   ArithUint256 target;
   target.decodeBits(block.bits);
-
   return target > blockHash;
 }
 
@@ -21,7 +19,6 @@ bool checkProofOfWork(const VbkBlock& block) {
   ArithUint256 target;
   target.decodeBits(block.difficulty);
   target = MAXIMUM_DIFFICULTY / target;
-
   return target > blockHash;
 }
 

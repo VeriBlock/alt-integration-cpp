@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
-#include "veriblock/entities/hashes.hpp"
+#include "veriblock/uint.hpp"
 #include "veriblock/serde.hpp"
 
 namespace VeriBlock {
@@ -24,9 +24,9 @@ struct MerklePath {
     checkRange(numLayers, 0, MAX_LAYER_COUNT_MERKLE);
 
     const auto sizeOfSizeBottomData = readSingleBEValue<int32_t>(stream);
-    // TODO: if this assert failed, something is wrong with the code
-    assert(sizeOfSizeBottomData == 4);
-    // TODO: review this line
+    if(sizeOfSizeBottomData != sizeof(int32_t)) {
+      throw std::invalid_argument("MerklePath.fromRaw(): bad sizeOfSizeBottomData");
+    }
     const auto sizeOfBottomData = stream.readBE<int32_t>();
     if (sizeOfBottomData != SHA256_HASH_SIZE) {
       throw std::invalid_argument(

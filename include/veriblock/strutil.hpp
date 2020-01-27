@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "base58.hpp"
+#include "base59.hpp"
 
 namespace VeriBlock {
 
