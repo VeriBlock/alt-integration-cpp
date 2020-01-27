@@ -17,7 +17,6 @@ constexpr const auto MULTISIG_ADDRESS_N_VALUE = 2;
 constexpr const auto MULTISIG_ADDRESS_MIN_N_VALUE = 2;
 constexpr const auto MULTISIG_ADDRESS_MAX_N_VALUE = 58;
 constexpr const auto MULTISIG_ADDRESS_MAX_M_VALUE = 58;
-constexpr const auto MULTISIG_ADDRESS_DATA_START = 0;
 constexpr const auto MULTISIG_ADDRESS_DATA_END = 24;
 constexpr const auto MULTISIG_ADDRESS_CHECKSUM_END = 28;
 
