@@ -10,11 +10,8 @@ using namespace VeriBlock;
 const unsigned char R1Array[] =
     "\x9c\x52\x4a\xdb\xcf\x56\x11\x12\x2b\x29\x12\x5e\x5d\x35\xd2\xd2"
     "\x22\x81\xaa\xb5\x33\xf0\x08\x32\xd5\x56\xb1\xf9\xea\xe5\x1d\x7d";
-const double R1Ldouble =
-    0.4887374590559308955;  // R1L equals roughly R1Ldouble * 2^256
 const ArithUint256 R1L(std::vector<uint8_t>(R1Array,
                                             R1Array + SHA256_HASH_SIZE));
-const uint64_t R1LLow64 = 0x121156cfdb4a529cULL;
 
 const unsigned char R2Array[] =
     "\x70\x32\x1d\x7c\x47\xa5\x6b\x40\x26\x7e\x0a\xc3\xa6\x9c\xb6\xbf"
