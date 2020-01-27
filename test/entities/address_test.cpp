@@ -15,7 +15,8 @@ TEST(Address, Deserialize) {
   auto stream = ReadStream(ADDRESS_BYTES);
   auto address = addressFromVbkEncoding(stream);
 
-  EXPECT_EQ(address, ADDRESS_VALUE);
+  EXPECT_EQ(address.getAddr(), ADDRESS_VALUE);
+  EXPECT_EQ(address.getType(), AddressType::STANDARD);
 
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
@@ -44,4 +45,61 @@ TEST(Address, ValidStandard) {
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
   AddressEntity address = addressFromString(addressString);
   EXPECT_EQ(address.getType(), AddressType::STANDARD);
+  EXPECT_EQ(address.getAddr(), addressString);
+}
+
+TEST(Address, ValidMultisig) {
+  std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
+  AddressEntity address = addressFromString(addressString);
+  EXPECT_EQ(address.getType(), AddressType::MULTISIG);
+  EXPECT_EQ(address.getAddr(), addressString);
+}
+
+TEST(Address, DerivedFromPublicKey) {
+  auto publicKey =
+      "3056301006072a8648ce3d020106052b8104000a03420004cb427e41a0114874080"
+      "a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002"
+      "f6c86952be4823a4c08e65e4cdbeb904a8b95763aa"_unhex;
+  std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
+  AddressEntity address = addressFromString(addressString);
+  EXPECT_EQ(addressIsDerivedFromPublicKey(address, publicKey),
+            true);
+}
+
+TEST(Address, NotDerivedFromPublicKey) {
+  auto publicKey =
+      "3056301006072a8648ce3d020106052b8104000a03420004cb427e41a0114874080"
+      "a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002"
+      "f6c86952be4823a4c08e65e4cdbeb904a8b95763aa"_unhex;
+  std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
+  AddressEntity address = addressFromString(addressString);
+  EXPECT_EQ(addressIsDerivedFromPublicKey(address, publicKey), false);
+}
+
+TEST(Address, ParseStandard) {
+  std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
+  AddressEntity address = addressFromString(addressString);
+  WriteStream outputStream;
+  addressToVbkEncoding(address, outputStream);
+  auto bytes = outputStream.data();
+  auto stream = ReadStream(bytes);
+  auto decoded = addressFromVbkEncoding(stream);
+
+  EXPECT_EQ(decoded.getAddr(), addressString);
+  EXPECT_EQ(decoded.getType(), AddressType::STANDARD);
+  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
+}
+
+TEST(Address, ParseMultisig) {
+  std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
+  AddressEntity address = addressFromString(addressString);
+  WriteStream outputStream;
+  addressToVbkEncoding(address, outputStream);
+  auto bytes = outputStream.data();
+  auto stream = ReadStream(bytes);
+  auto decoded = addressFromVbkEncoding(stream);
+
+  EXPECT_EQ(decoded.getAddr(), addressString);
+  EXPECT_EQ(decoded.getType(), AddressType::MULTISIG);
+  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }

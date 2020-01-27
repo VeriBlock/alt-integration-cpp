@@ -36,7 +36,7 @@ static std::string getChecksumPortionFromAddress(const std::string& address,
   assert(address.length() == ADDRESS_SIZE);
   if (multisig) {
     return address.substr(MULTISIG_ADDRESS_DATA_END + 1,
-                          MULTISIG_ADDRESS_CHECKSUM_END + 1);
+        MULTISIG_ADDRESS_CHECKSUM_END - MULTISIG_ADDRESS_DATA_END);
   }
   return address.substr(MULTISIG_ADDRESS_DATA_END + 1);
 }
