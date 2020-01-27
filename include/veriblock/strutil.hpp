@@ -33,5 +33,7 @@ inline std::string HexStr(const T& vch) {
   return HexStr(vch.begin(), vch.end());
 }
 
+std::vector<uint8_t> toBytes(const std::string input);
+
 }  // namespace VeriBlock
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STRUTIL_HPP_
