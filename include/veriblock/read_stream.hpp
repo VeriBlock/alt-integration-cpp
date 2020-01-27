@@ -1,5 +1,5 @@
-#ifndef VERIBLOCK_READ_STREAM_H_
-#define VERIBLOCK_READ_STREAM_H_
+#ifndef ALT_INTEGRATION_VERIBLOCK_READ_STREAM_HPP
+#define ALT_INTEGRATION_VERIBLOCK_READ_STREAM_HPP
 
 #include <stdexcept>
 #include <type_traits>

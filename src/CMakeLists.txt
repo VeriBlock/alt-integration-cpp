@@ -5,7 +5,6 @@ add_subdirectory(third_party)
 add_library(vblake OBJECT vblake.cpp)
 
 add_library(vbkutils
-        uint.cpp
         checks.cpp
         serde.cpp
         strutil.cpp
@@ -14,9 +13,10 @@ add_library(vbkutils
         base58.cpp
         base59.cpp
         hashutil.cpp
+        stateless_validation.cpp
+        arith_uint256.cpp
         signutil.cpp
         $<TARGET_OBJECTS:secp256k1>
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:vblake>
-        stateless_validation.cpp
         )

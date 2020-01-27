@@ -1,5 +1,5 @@
-#ifndef __SHAUTIL__HPP__
-#define __SHAUTIL__HPP__
+#ifndef ALT_INTEGRATION_VERIBLOCK_SHAUTIL_HPP
+#define ALT_INTEGRATION_VERIBLOCK_SHAUTIL_HPP
 
 #include <cstddef>
 
