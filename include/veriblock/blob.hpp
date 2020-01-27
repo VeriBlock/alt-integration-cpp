@@ -25,7 +25,7 @@ struct Blob {
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
   Blob() {
-    for (int i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
       data_[i] = 0;
     }
   };
