@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
 
 using namespace VeriBlock;
@@ -66,7 +67,7 @@ TEST(BtcBlock, getBlockHash_test) {
   block.nonce = 2599551022;
 
   EXPECT_EQ(
-      block.getHash(),
-      uint256(
-          "000000000000000246200f09b513e517a3bd8c591a3b692d9852ddf1ee0f8b3a"_unhex));
+      ArithUint256(block.getHash()),
+      ArithUint256(
+          "000000000000000246200f09b513e517a3bd8c591a3b692d9852ddf1ee0f8b3a"));
 }

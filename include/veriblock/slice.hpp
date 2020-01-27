@@ -1,5 +1,5 @@
-#ifndef __SLICE__HPP__
-#define __SLICE__HPP__
+#ifndef ALT_INTEGRATION_VERIBLOCK_SLICE_HPP
+#define ALT_INTEGRATION_VERIBLOCK_SLICE_HPP
 
 #include <algorithm>
 #include <cstddef>
