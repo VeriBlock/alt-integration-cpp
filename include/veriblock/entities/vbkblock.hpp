@@ -65,7 +65,7 @@ struct VbkBlock {
     WriteStream stream;
     toRaw(stream);
 
-    return vblake(stream.data());
+    return vblake(stream.data()).reverse();
   }
 };
 

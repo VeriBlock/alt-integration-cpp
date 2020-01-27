@@ -1,5 +1,5 @@
-#ifndef ALT_INTEGRATION_SERDE_HPP
-#define ALT_INTEGRATION_SERDE_HPP
+#ifndef ALT_INTEGRATION_VERIBLOCK_SERDE_HPP
+#define ALT_INTEGRATION_VERIBLOCK_SERDE_HPP
 
 #include <functional>
 #include <limits>

@@ -54,7 +54,7 @@ struct BtcBlock {
     WriteStream stream;
     toRaw(stream);
 
-    return sha256twice(stream.data()).reverse();
+    return sha256twice(stream.data());
   }
 };
 

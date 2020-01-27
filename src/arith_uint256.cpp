@@ -2,6 +2,38 @@
 
 using namespace VeriBlock;
 
+ArithUint256& ArithUint256::decodeBits(const uint32_t& bits) {
+  ArithUint256 target;
+  int nSize = bits >> 24;
+  uint32_t nWord = bits & 0x007fffff;
+  if (nSize <= 3) {
+    nWord >>= 8 * (3 - nSize);
+    data_[0] = (uint8_t)nWord;
+    data_[1] = (uint8_t)(nWord >> 8);
+    data_[2] = (uint8_t)(nWord >> 16);
+    data_[3] = (uint8_t)(nWord >> 24);
+  } else {
+    data_[0] = (uint8_t)nWord;
+    data_[1] = (uint8_t)(nWord >> 8);
+    data_[2] = (uint8_t)(nWord >> 16);
+    data_[3] = (uint8_t)(nWord >> 24);
+    *this <<= 8 * (nSize - 3);
+  }
+  return *this;
+}
+
+int ArithUint256::compareTo(const ArithUint256& b) const {
+  for (int i = SHA256_HASH_SIZE - 1; i >= 0; i--) {
+    if (data_[i] < b.data_[i]) {
+      return -1;
+    }
+    if (data_[i] > b.data_[i]) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 ArithUint256& ArithUint256::operator<<=(unsigned int shift) {
   ArithUint256 a(*this);
   for (int i = 0; i < SHA256_HASH_SIZE; i++) {

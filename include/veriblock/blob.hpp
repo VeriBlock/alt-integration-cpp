@@ -1,5 +1,5 @@
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOB_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOB_HPP_
+#ifndef ALT_INTEGRATION_VERIBLOCK_BLOB_HPP_
+#define ALT_INTEGRATION_VERIBLOCK_BLOB_HPP_
 
 #include <algorithm>
 #include <array>
@@ -70,25 +70,6 @@ struct Blob {
 
   std::vector<value_type> asVector() const {
     return std::vector<value_type>{data_.begin(), data_.end()};
-  }
-
-  friend inline bool operator==(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
-  }
-  friend inline bool operator!=(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
-  }
-  friend inline bool operator>(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) > 0;
-  }
-  friend inline bool operator<(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) < 0;
-  }
-  friend inline bool operator>=(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) >= 0;
-  }
-  friend inline bool operator<=(const Blob<N>& a, const Blob<N>& b) {
-    return memcmp(a.data_.data(), b.data_.data(), a.size()) <= 0;
   }
 
  protected:

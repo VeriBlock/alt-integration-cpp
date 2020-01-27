@@ -1,5 +1,5 @@
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ARITH_UINT256_H
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ARITH_UINT256_H
+#ifndef ALT_INTEGRATION_VERIBLOCK_ARITH_UINT256_HPP
+#define ALT_INTEGRATION_VERIBLOCK_ARITH_UINT256_HPP
 
 #include <stdint.h>
 
@@ -10,6 +10,7 @@
 
 #include "veriblock/blob.hpp"
 #include "veriblock/entities/hashes.hpp"
+#include "veriblock/strutil.hpp"
 
 namespace VeriBlock {
 class uint_error : public std::runtime_error {
@@ -21,7 +22,28 @@ class uint_error : public std::runtime_error {
 class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
  public:
   ArithUint256() {}
+  ArithUint256(const std::string& value) {
+    std::vector<uint8_t> bytes = ParseHex(value);
+    if (bytes.size() > SHA256_HASH_SIZE) {
+      throw uint_error("size of the string number more than SHA256_HASH_SIZE");
+    }
+    for (int i = 0; i < bytes.size() && i < SHA256_HASH_SIZE; ++i) {
+      data_[i] = bytes[bytes.size() - 1 - i];
+    }
+  }
+
   ArithUint256(const Blob<SHA256_HASH_SIZE>& b) : Blob<SHA256_HASH_SIZE>(b) {}
+
+  template <size_t N>
+  ArithUint256(const Blob<N>& b) {
+    if (b.size() > SHA256_HASH_SIZE) {
+      throw uint_error("size of the Blob<N> more than SHA256_HASH_SIZE");
+    }
+    for (int i = 0; i < N; ++i) {
+      this->data_[i] = b.data()[i];
+    }
+  }
+
   ArithUint256(uint64_t b) {
     data_[0] = (uint8_t)b;
     data_[1] = (uint8_t)(b >> 8);
@@ -52,8 +74,6 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     ++ret;
     return ret;
   }
-
-  double getdouble() const;
 
   ArithUint256& operator=(uint64_t b) {
     data_[0] = (uint8_t)b;
@@ -187,6 +207,8 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
    */
   unsigned int bits() const;
 
+  int compareTo(const ArithUint256& b) const;
+
   friend inline const ArithUint256 operator+(const ArithUint256& a,
                                              const ArithUint256& b) {
     return ArithUint256(a) += b;
@@ -228,13 +250,27 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     return ArithUint256(a) *= b;
   }
 
-  friend uint256 ArithToUint256(const ArithUint256&);
-  friend ArithUint256 UintToArith256(const uint256&);
+  friend inline bool operator==(const ArithUint256& a, const ArithUint256& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
+  }
+  friend inline bool operator!=(const ArithUint256& a, const ArithUint256& b) {
+    return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
+  }
+  friend inline bool operator>(const ArithUint256& a, const ArithUint256& b) {
+    return a.compareTo(b) > 0;
+  }
+  friend inline bool operator<(const ArithUint256& a, const ArithUint256& b) {
+    return a.compareTo(b) < 0;
+  }
+  friend inline bool operator>=(const ArithUint256& a, const ArithUint256& b) {
+    return a.compareTo(b) >= 0;
+  }
+  friend inline bool operator<=(const ArithUint256& a, const ArithUint256& b) {
+    return a.compareTo(b) <= 0;
+  }
+
+  ArithUint256& decodeBits(const uint32_t& bits);
 };
-
-uint256 ArithToUint256(const ArithUint256&);
-ArithUint256 UintToArith256(const uint256&);
-
 }  // namespace VeriBlock
 
 #endif  // BITCOIN_ARITH_UINT256_H
