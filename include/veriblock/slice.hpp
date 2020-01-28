@@ -34,10 +34,10 @@ struct Slice {
       class Container,
       typename = typename std::enable_if<
           sizeof(typename Container::value_type) == 1 &&
-          std::is_convertible<typename Container::pointer, pointer>::value &&
+          std::is_convertible<typename Container::pointer, pointer>::value && 
           std::is_convertible<
               typename Container::pointer,
-              decltype(std::declval<Container>().data())>::value>::type>
+              decltype(std::declval<Container>().data())>::value>>
   constexpr Slice(Container &cont) noexcept : Slice(cont.data(), cont.size()) {}
 
   constexpr pointer data() const noexcept { return storage_; }

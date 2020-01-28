@@ -11,10 +11,10 @@ static const std::vector<uint8_t> emptyBytes64(64);
 
 static const VbkTx defaultTx{
     NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
-    AddressEntity(AddressType::STANDARD, "V8dy5tWcP7y36kxiJwxKPKUrWAJbjs"),
+    Address::fromString("V8dy5tWcP7y36kxiJwxKPKUrWAJbjs"),
     Coin(3500000000),
     std::vector<Output>{Output(
-        AddressEntity(AddressType::STANDARD, "V7GghFKRA6BKqtHD7LTdT2ao93DRNA"),
+        Address::fromString("V7GghFKRA6BKqtHD7LTdT2ao93DRNA"),
                Coin(3499999999))},
     5904,
     publicationData,

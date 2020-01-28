@@ -1,7 +1,8 @@
-#include "veriblock/address.hpp"
+#include "veriblock/entities/address.hpp"
 
 #include <cassert>
 
+#include "veriblock/consts.hpp"
 #include "veriblock/base58.hpp"
 #include "veriblock/base59.hpp"
 #include "veriblock/hashutil.hpp"
@@ -63,7 +64,7 @@ static bool isBase59String(const std::string& input) {
 }
 
 static std::string calculateChecksum(const std::string& data, bool multisig) {
-  std::vector<uint8_t> dataBytes = toBytes(data);
+  auto dataBytes = toBytes(data);
   auto hash = sha256(dataBytes);
   std::string checksum = EncodeBase58(hash);
   if (multisig) {
@@ -72,33 +73,32 @@ static std::string calculateChecksum(const std::string& data, bool multisig) {
   return checksum.substr(0, 4 + 1);
 }
 
-static std::string addressChecksum(const AddressEntity& address) {
+static std::string addressChecksum(const Address& address) {
   return calculateChecksum(address.getAddr(),
                            address.getType() == AddressType::MULTISIG);
 }
 
-AddressEntity addressFromPublicKey(Slice<const uint8_t> publicKey) {
+Address Address::fromPublicKey(Slice<const uint8_t> publicKey) {
   auto keyHash = sha256(publicKey);
   auto keyHashEncoded = EncodeBase58(keyHash);
   auto data =
       std::string{"V"} + keyHashEncoded.substr(0, MULTISIG_ADDRESS_DATA_END);
   auto checksum = calculateChecksum(data, false);
-  return AddressEntity(AddressType::STANDARD, data + checksum);
+  return Address(AddressType::STANDARD, data + checksum);
 }
 
-bool addressIsDerivedFromPublicKey(const AddressEntity& address,
-                                   Slice<const uint8_t> publicKey) {
-  auto expectedAddress = addressFromPublicKey(publicKey);
-  if (!(address == expectedAddress)) {
+bool Address::isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const {
+  auto expectedAddress =fromPublicKey(publicKey);
+  if (*this != expectedAddress) {
     return false;
   }
-  if (addressChecksum(address) != addressChecksum(expectedAddress)) {
+  if (addressChecksum(*this) != addressChecksum(expectedAddress)) {
     return false;
   }
   return true;
 }
 
-AddressEntity addressFromString(const std::string& input) {
+Address Address::fromString(const std::string& input) {
   if (input.size() != ADDRESS_SIZE) {
     throw std::invalid_argument("isValidAddress(): invalid address length");
   }
@@ -156,15 +156,15 @@ AddressEntity addressFromString(const std::string& input) {
     throw std::invalid_argument("isValidAddress(): checksum does not match");
   }
 
-  return AddressEntity(multisig ? AddressType::MULTISIG : AddressType::STANDARD,
-                       input);
+  return Address(multisig ? AddressType::MULTISIG : AddressType::STANDARD,
+                 input);
 }
 
-std::string addressToString(const AddressEntity& address) {
-  return address.getAddr();
+std::string Address::toString() const {
+  return this->getAddr();
 }
 
-AddressEntity addressFromVbkEncoding(ReadStream& stream) {
+Address Address::fromVbkEncoding(ReadStream& stream) {
   auto addressType = (AddressType)stream.readLE<uint8_t>();
   auto addressBytes =
       readSingleByteLenValue(stream, 0, VeriBlock::ADDRESS_SIZE);
@@ -182,18 +182,18 @@ AddressEntity addressFromVbkEncoding(ReadStream& stream) {
           "addressFromVbkEncoding(): invalid address type: neither standard, nor multisig");
   }
 
-  return addressFromString(address);
+  return fromString(address);
 }
 
-void addressToVbkEncoding(const AddressEntity& address, WriteStream& stream) {
-  stream.writeBE<uint8_t>((uint8_t)address.getType());
+void Address::toVbkEncoding(WriteStream& stream) const {
+  stream.writeBE<uint8_t>((uint8_t)getType());
   std::vector<uint8_t> decoded;
-  switch (address.getType()) {
+  switch (getType()) {
     case AddressType::STANDARD:
-      decoded = DecodeBase58(address.getAddr());
+      decoded = DecodeBase58(getAddr());
       break;
     case AddressType ::MULTISIG:
-      decoded = DecodeBase59(address.getAddr());
+      decoded = DecodeBase59(getAddr());
       break;
     default:
       throw std::invalid_argument("addressToVbkEncoding(): unexpected address type to encode");

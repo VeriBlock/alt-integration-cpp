@@ -7,13 +7,6 @@
 
 namespace VeriBlock {
 
-enum class AddressType {
-  ZERO_UNUSED = 0,
-  STANDARD = 1,
-  PROOF_OF_PROOF = 2,
-  MULTISIG = 3,
-};
-
 enum class TxType {
   VBK_TX = 0x01,
   VBK_POP_TX = 0x02,

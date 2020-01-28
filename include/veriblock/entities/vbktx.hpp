@@ -14,13 +14,11 @@
 #include "veriblock/slice.hpp"
 #include "veriblock/uint.hpp"
 
-#include "veriblock/address.hpp"
-
 namespace VeriBlock {
 
 struct VbkTx {
   NetworkBytePair networkOrType{};
-  AddressEntity sourceAddress{};
+  Address sourceAddress{};
   Coin sourceAmount{};
   std::vector<Output> outputs{};
   int64_t signatureIndex{};
@@ -33,7 +31,7 @@ struct VbkTx {
                        Slice<const uint8_t> _publicKey) {
     VbkTx tx{};
     tx.networkOrType = readNetworkByte(stream, TxType::VBK_TX);
-    tx.sourceAddress = addressFromVbkEncoding(stream);
+    tx.sourceAddress = Address::fromVbkEncoding(stream);
     tx.sourceAmount = Coin::fromVbkEncoding(stream);
 
     uint8_t outputSize = stream.readBE<uint8_t>();
@@ -63,7 +61,7 @@ struct VbkTx {
 
   void toRaw(WriteStream& stream) const {
     writeNetworkByte(stream, networkOrType);
-    addressToVbkEncoding(sourceAddress, stream);
+    sourceAddress.toVbkEncoding(stream);
     sourceAmount.toVbkEncoding(stream);
     stream.writeBE<uint8_t>((uint8_t)outputs.size());
     for (const auto& output : outputs) {

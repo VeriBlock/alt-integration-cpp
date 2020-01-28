@@ -117,7 +117,7 @@ static const auto defaultPublicKey =
 
 static const VbkPopTx defaultTx{
     networkByte,
-    AddressEntity(AddressType::STANDARD, "VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
+    Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
     defaultVbkBlock,
     BtcTx(btcTxBytes),
     defaultPath,
@@ -197,7 +197,7 @@ TEST(VbkPopTx, RoundTrip) {
   auto stream = ReadStream(txDecoded);
   auto decoded = VbkPopTx::fromVbkEncoding(stream);
   EXPECT_EQ(decoded.address,
-      AddressEntity(AddressType::STANDARD, "VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+      Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);

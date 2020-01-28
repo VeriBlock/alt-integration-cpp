@@ -1,4 +1,4 @@
-#include "veriblock/address.hpp"
+#include "veriblock/entities/address.hpp"
 
 #include <gtest/gtest.h>
 
@@ -13,7 +13,7 @@ static std::string ADDRESS_VALUE = "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX";
 
 TEST(Address, Deserialize) {
   auto stream = ReadStream(ADDRESS_BYTES);
-  auto address = addressFromVbkEncoding(stream);
+  auto address = Address::fromVbkEncoding(stream);
 
   EXPECT_EQ(address.getAddr(), ADDRESS_VALUE);
   EXPECT_EQ(address.getType(), AddressType::STANDARD);
@@ -22,35 +22,35 @@ TEST(Address, Deserialize) {
 }
 
 TEST(Address, Serialize) {
-  auto address = AddressEntity(AddressType::STANDARD, ADDRESS_VALUE);
+  auto address = Address::fromString(ADDRESS_VALUE);
   auto stream = WriteStream();
 
-  addressToVbkEncoding(address, stream);
+  address.toVbkEncoding(stream);
 
   EXPECT_EQ(stream.data(), ADDRESS_BYTES);
 }
 
 TEST(Address, RoundTrip) {
   auto stream = ReadStream(ADDRESS_BYTES);
-  auto decoded = addressFromVbkEncoding(stream);
+  auto decoded = Address::fromVbkEncoding(stream);
   EXPECT_EQ(decoded.getAddr(), ADDRESS_VALUE);
 
   WriteStream outputStream;
-  addressToVbkEncoding(decoded, outputStream);
+  decoded.toVbkEncoding(outputStream);
   auto bytes = outputStream.data();
   EXPECT_EQ(bytes, ADDRESS_BYTES);
 }
 
 TEST(Address, ValidStandard) {
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
-  AddressEntity address = addressFromString(addressString);
+  Address address = Address::fromString(addressString);
   EXPECT_EQ(address.getType(), AddressType::STANDARD);
   EXPECT_EQ(address.getAddr(), addressString);
 }
 
 TEST(Address, ValidMultisig) {
   std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
-  AddressEntity address = addressFromString(addressString);
+  Address address = Address::fromString(addressString);
   EXPECT_EQ(address.getType(), AddressType::MULTISIG);
   EXPECT_EQ(address.getAddr(), addressString);
 }
@@ -61,8 +61,8 @@ TEST(Address, DerivedFromPublicKey) {
       "a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002"
       "f6c86952be4823a4c08e65e4cdbeb904a8b95763aa"_unhex;
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
-  AddressEntity address = addressFromString(addressString);
-  EXPECT_TRUE(addressIsDerivedFromPublicKey(address, publicKey));
+  Address address = Address::fromString(addressString);
+  EXPECT_TRUE(address.isDerivedFromPublicKey(publicKey));
 }
 
 TEST(Address, NotDerivedFromPublicKey) {
@@ -71,18 +71,18 @@ TEST(Address, NotDerivedFromPublicKey) {
       "a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002"
       "f6c86952be4823a4c08e65e4cdbeb904a8b95763aa"_unhex;
   std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
-  AddressEntity address = addressFromString(addressString);
-  EXPECT_FALSE(addressIsDerivedFromPublicKey(address, publicKey));
+  Address address = Address::fromString(addressString);
+  EXPECT_FALSE(address.isDerivedFromPublicKey(publicKey));
 }
 
 TEST(Address, ParseStandard) {
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
-  AddressEntity address = addressFromString(addressString);
+  Address address = Address::fromString(addressString);
   WriteStream outputStream;
-  addressToVbkEncoding(address, outputStream);
+  address.toVbkEncoding(outputStream);
   auto bytes = outputStream.data();
   auto stream = ReadStream(bytes);
-  auto decoded = addressFromVbkEncoding(stream);
+  auto decoded = Address::fromVbkEncoding(stream);
 
   EXPECT_EQ(decoded.getAddr(), addressString);
   EXPECT_EQ(decoded.getType(), AddressType::STANDARD);
@@ -91,12 +91,12 @@ TEST(Address, ParseStandard) {
 
 TEST(Address, ParseMultisig) {
   std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
-  AddressEntity address = addressFromString(addressString);
+  Address address = Address::fromString(addressString);
   WriteStream outputStream;
-  addressToVbkEncoding(address, outputStream);
+  address.toVbkEncoding(outputStream);
   auto bytes = outputStream.data();
   auto stream = ReadStream(bytes);
-  auto decoded = addressFromVbkEncoding(stream);
+  auto decoded = Address::fromVbkEncoding(stream);
 
   EXPECT_EQ(decoded.getAddr(), addressString);
   EXPECT_EQ(decoded.getType(), AddressType::MULTISIG);

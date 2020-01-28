@@ -14,13 +14,11 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/slice.hpp"
 
-#include "veriblock/address.hpp"
-
 namespace VeriBlock {
 
 struct VbkPopTx {
   NetworkBytePair networkOrType{};
-  AddressEntity address{};
+  Address address{};
   VbkBlock publishedBlock{};
   BtcTx bitcoinTransaction{};
   MerklePath merklePath{};
@@ -34,7 +32,7 @@ struct VbkPopTx {
                           Slice<const uint8_t> _publicKey) {
     VbkPopTx tx{};
     tx.networkOrType = readNetworkByte(stream, TxType::VBK_POP_TX);
-    tx.address = addressFromVbkEncoding(stream);
+    tx.address = Address::fromVbkEncoding(stream);
     tx.publishedBlock = VbkBlock::fromVbkEncoding(stream);
     tx.bitcoinTransaction = BtcTx::fromVbkEncoding(stream);
 
@@ -61,16 +59,8 @@ struct VbkPopTx {
   }
 
   void toRaw(WriteStream& stream) const {
-<<<<<<< HEAD
-    NetworkBytePair popNetworkPair = {networkOrType.hasNetworkByte,
-                                      networkOrType.networkByte,
-                                      (uint8_t)TxType::VBK_POP_TX};
-    writeNetworkByte(stream, popNetworkPair);
-    addressToVbkEncoding(address, stream);
-=======
     writeNetworkByte(stream, networkOrType);
     address.toVbkEncoding(stream);
->>>>>>> master
     publishedBlock.toVbkEncoding(stream);
     bitcoinTransaction.toVbkEncoding(stream);
     merklePath.toVbkEncoding(stream);
