@@ -3,10 +3,11 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <vector>
 
-#include "veriblock/uint.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 
@@ -17,6 +18,11 @@ struct BtcBlock {
   uint32_t timestamp{};
   uint32_t bits{};
   uint32_t nonce{};
+
+  static BtcBlock fromRaw(const std::vector<uint8_t>& bytes) {
+    ReadStream stream(bytes);
+    return fromRaw(stream);
+  }
 
   static BtcBlock fromRaw(ReadStream& stream) {
     BtcBlock block{};
