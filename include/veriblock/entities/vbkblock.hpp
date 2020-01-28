@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKBLOCK_HPP_
 
 #include <cstdint>
+#include <vector>
 
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
@@ -19,6 +20,11 @@ struct VbkBlock {
   int32_t timestamp{};
   int32_t difficulty{};
   int32_t nonce{};
+
+  static VbkBlock fromRaw(const std::vector<uint8_t>& bytes) {
+    ReadStream stream(bytes);
+    return fromRaw(stream);
+  }
 
   static VbkBlock fromRaw(ReadStream& stream) {
     VbkBlock block{};

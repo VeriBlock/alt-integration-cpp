@@ -5,15 +5,14 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
-#include "veriblock/hashutil.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/slice.hpp"
-
-#include "veriblock/entities/address_entity.hpp"
+#include "veriblock/entities/address.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/btctx.hpp"
 #include "veriblock/entities/merkle_path.hpp"
 #include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/hashutil.hpp"
+#include "veriblock/serde.hpp"
+#include "veriblock/slice.hpp"
 
 #include "veriblock/address.hpp"
 
@@ -62,11 +61,16 @@ struct VbkPopTx {
   }
 
   void toRaw(WriteStream& stream) const {
+<<<<<<< HEAD
     NetworkBytePair popNetworkPair = {networkOrType.hasNetworkByte,
                                       networkOrType.networkByte,
                                       (uint8_t)TxType::VBK_POP_TX};
     writeNetworkByte(stream, popNetworkPair);
     addressToVbkEncoding(address, stream);
+=======
+    writeNetworkByte(stream, networkOrType);
+    address.toVbkEncoding(stream);
+>>>>>>> master
     publishedBlock.toVbkEncoding(stream);
     bitcoinTransaction.toVbkEncoding(stream);
     merklePath.toVbkEncoding(stream);
@@ -84,6 +88,12 @@ struct VbkPopTx {
     writeVarLenValue(stream, txStream.data());
     writeSingleByteLenValue(stream, signature);
     writeSingleByteLenValue(stream, publicKey);
+  }
+
+  uint256 getHash() const {
+    WriteStream stream;
+    toRaw(stream);
+    return sha256(stream.data());
   }
 };
 

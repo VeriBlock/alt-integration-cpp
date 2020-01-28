@@ -5,13 +5,14 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/slice.hpp"
-
-#include "veriblock/entities/address_entity.hpp"
+#include "veriblock/entities/address.hpp"
 #include "veriblock/entities/coin.hpp"
 #include "veriblock/entities/output.hpp"
 #include "veriblock/entities/publication_data.hpp"
+#include "veriblock/hashutil.hpp"
+#include "veriblock/serde.hpp"
+#include "veriblock/slice.hpp"
+#include "veriblock/uint.hpp"
 
 #include "veriblock/address.hpp"
 
@@ -81,6 +82,12 @@ struct VbkTx {
     writeVarLenValue(stream, txStream.data());
     writeSingleByteLenValue(stream, signature);
     writeSingleByteLenValue(stream, publicKey);
+  }
+
+  uint256 getHash() const {
+    WriteStream stream;
+    toRaw(stream);
+    return sha256(stream.data());
   }
 };
 
