@@ -163,7 +163,10 @@ TEST(StatelessValidation, checkVbkBlock_when_checkMaximumDrift_invalid_test) {
 
 TEST(StatelessValidation, ATV_checkMerklePath_valid) {
   ValidationState state;
-  ASSERT_TRUE(checkMerklePath(validATV, state));
+  ASSERT_TRUE(checkMerklePath(validATV.merklePath,
+                              validATV.transaction.getHash(),
+                              validATV.containingBlock.merkleRoot,
+                              state));
 }
 
 TEST(StatelessValidation, ATV_checkMerklePath_different_transactions_invalid) {
@@ -172,7 +175,10 @@ TEST(StatelessValidation, ATV_checkMerklePath_different_transactions_invalid) {
       "5B977EA09A554AD56957F662284044E7D37450DDADF7DB3647712F5969399787"_unhex);
 
   ValidationState state;
-  ASSERT_FALSE(checkMerklePath(atv, state));
+  ASSERT_FALSE(checkMerklePath(atv.merklePath,
+                               atv.transaction.getHash(),
+                               atv.containingBlock.merkleRoot,
+                               state));
 }
 
 TEST(StatelessValidation, ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
@@ -181,12 +187,18 @@ TEST(StatelessValidation, ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
       uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
 
   ValidationState state;
-  ASSERT_FALSE(checkMerklePath(atv, state));
+  ASSERT_FALSE(checkMerklePath(atv.merklePath,
+                               atv.transaction.getHash(),
+                               atv.containingBlock.merkleRoot,
+                               state));
 }
 
 TEST(StatelessValidation, VTB_checkMerklePath_valid) {
   ValidationState state;
-  ASSERT_TRUE(checkMerklePath(validVTB, state));
+  ASSERT_TRUE(checkMerklePath(validVTB.merklePath,
+                              validVTB.transaction.getHash(),
+                              validVTB.containingBlock.merkleRoot,
+                              state));
 }
 
 TEST(StatelessValidation, VTB_checkMerklePath_different_transaction_invalid) {
@@ -195,7 +207,10 @@ TEST(StatelessValidation, VTB_checkMerklePath_different_transaction_invalid) {
       "3A014E88ED7AB65CDFAA85DAEAB07EEA6CBA5E147F736EDD8D02C2F9DDF0DEC6"_unhex);
 
   ValidationState state;
-  ASSERT_FALSE(checkMerklePath(vtb, state));
+  ASSERT_FALSE(checkMerklePath(vtb.merklePath,
+                               vtb.transaction.getHash(),
+                               vtb.containingBlock.merkleRoot,
+                               state));
 }
 
 TEST(StatelessValidation, VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
@@ -203,5 +218,8 @@ TEST(StatelessValidation, VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
   vtb.containingBlock.merkleRoot =
       uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
   ValidationState state;
-  ASSERT_FALSE(checkMerklePath(vtb, state));
+  ASSERT_FALSE(checkMerklePath(vtb.merklePath,
+                               vtb.transaction.getHash(),
+                               vtb.containingBlock.merkleRoot,
+                               state));
 }

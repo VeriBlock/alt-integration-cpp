@@ -21,20 +21,19 @@ bool checkMaximumDrift(const BlockType& block) {
   return (uint32_t)block.timestamp < currentTime + ALLOWED_TIME_DRIFT;
 }
 
-template <typename PublicationType>
-bool checkMerklePath(const PublicationType& publication,
+template <typename MerklePathType, typename HashType1, typename HashType2>
+bool checkMerklePath(const MerklePathType& merklePath,
+                     const HashType1& transactionHash,
+                     const HashType2& merkleRoot,
                      ValidationState& state) {
-  if (publication.merklePath.subject != publication.transaction.getHash()) {
-    return state.Invalid(
-        "checkMerklePath()",
-        "VeriBlock PoP Transaction cannot be proven by merkle path");
+  if (merklePath.subject != transactionHash) {
+    return state.Invalid("checkMerklePath()",
+                         "Transaction hash cannot be proven by merkle path");
   }
 
-  if (publication.merklePath.calculateMerkleRoot() !=
-      publication.containingBlock.merkleRoot) {
-    return state.Invalid(
-        "checkMerklePath()",
-        "VeriBlock PoP transaction does not belong to containing block");
+  if (merklePath.calculateMerkleRoot() != merkleRoot) {
+    return state.Invalid("checkMerklePath()",
+                         "merkle path does not belong to block hash");
   }
 
   return true;
