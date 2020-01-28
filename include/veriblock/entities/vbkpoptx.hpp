@@ -5,15 +5,14 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
-#include "veriblock/hashutil.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/slice.hpp"
-
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/btctx.hpp"
 #include "veriblock/entities/merkle_path.hpp"
 #include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/hashutil.hpp"
+#include "veriblock/serde.hpp"
+#include "veriblock/slice.hpp"
 
 namespace VeriBlock {
 
@@ -82,6 +81,12 @@ struct VbkPopTx {
     writeVarLenValue(stream, txStream.data());
     writeSingleByteLenValue(stream, signature);
     writeSingleByteLenValue(stream, publicKey);
+  }
+
+  uint256 getHash() const {
+    WriteStream stream;
+    toRaw(stream);
+    return sha256(stream.data());
   }
 };
 

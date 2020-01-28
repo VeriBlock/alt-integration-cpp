@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
-#include "veriblock/uint.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 
@@ -40,6 +40,36 @@ struct VbkMerklePath {
     for (const auto& layer : layers) {
       writeSingleByteLenValue(stream, layer);
     }
+  }
+
+  uint128 calculateMerkleRoot() const {
+    uint256 cursor = subject;
+    int layerIndex = index;
+    for (int i = 0; i < layers.size(); ++i) {
+      if (i == layers.size() - 1) {
+        /* The last layer is the BlockContentMetapackage hash and will always be
+           the "left" side, so set the layerIndex to 1 */
+        layerIndex = 1;
+      } else if (i == layers.size() - 2) {
+        /* The second to last layer is the joining with the opposite transaction
+           type group (normal vs pop), so use the tree index specified in the
+           compact format */
+        layerIndex = treeIndex;
+      }
+      if (layerIndex & 1) {
+        std::vector<uint8_t> data(layers[i].begin(), layers[i].end());
+        data.insert(data.end(), cursor.begin(), cursor.end());
+        cursor = sha256(data);
+      } else {
+        std::vector<uint8_t> data(cursor.begin(), cursor.end());
+        data.insert(data.end(), layers[i].begin(), layers[i].end());
+        cursor = sha256(data);
+      }
+
+      layerIndex >>= 1;
+    }
+
+    return trim<VBK_MERKLE_ROOT_HASH_SIZE, SHA256_HASH_SIZE>(cursor);
   }
 };
 
