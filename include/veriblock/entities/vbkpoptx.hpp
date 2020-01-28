@@ -59,10 +59,7 @@ struct VbkPopTx {
   }
 
   void toRaw(WriteStream& stream) const {
-    NetworkBytePair popNetworkPair = {networkOrType.hasNetworkByte,
-                                      networkOrType.networkByte,
-                                      (uint8_t)TxType::VBK_POP_TX};
-    writeNetworkByte(stream, popNetworkPair);
+    writeNetworkByte(stream, networkOrType);
     address.toVbkEncoding(stream);
     publishedBlock.toVbkEncoding(stream);
     bitcoinTransaction.toVbkEncoding(stream);

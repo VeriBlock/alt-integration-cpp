@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
+#include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
@@ -45,7 +46,7 @@ struct VbkMerklePath {
   uint128 calculateMerkleRoot() const {
     uint256 cursor = subject;
     int layerIndex = index;
-    for (int i = 0; i < layers.size(); ++i) {
+    for (size_t i = 0; i < layers.size(); ++i) {
       if (i == layers.size() - 1) {
         /* The last layer is the BlockContentMetapackage hash and will always be
            the "left" side, so set the layerIndex to 1 */
