@@ -14,6 +14,7 @@ struct BtcTx {
 
   BtcTx() = default;
 
+  BtcTx(const std::vector<uint8_t>& bytes) : tx(bytes) {}
   BtcTx(Slice<const uint8_t> slice) : tx(slice.begin(), slice.end()) {}
 
   static BtcTx fromVbkEncoding(ReadStream& stream) {

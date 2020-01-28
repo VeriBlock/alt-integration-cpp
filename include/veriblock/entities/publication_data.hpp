@@ -14,6 +14,11 @@ struct PublicationData {
   std::vector<uint8_t> payoutInfo{};
   std::vector<uint8_t> contextInfo{};
 
+  static PublicationData fromRaw(const std::vector<uint8_t> bytes) {
+    ReadStream stream(bytes);
+    return fromRaw(stream);
+  }
+
   static PublicationData fromRaw(ReadStream& stream) {
     PublicationData pub;
     pub.identifier = readSingleBEValue<int64_t>(stream);

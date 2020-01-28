@@ -95,6 +95,14 @@ struct Blob {
   std::array<value_type, N> data_;
 };  // namespace VeriBlock
 
+template <size_t M, size_t N>
+Blob<M> trim(const Blob<N>& data) {
+  if (data.size() < M) {
+    throw std::invalid_argument("Blob(): invalid data size");
+  }
+  return Blob<M>(std::vector<uint8_t>(data.data(), data.data() + M));
+}
+
 /// custom gtest printer, which prints Blob of any size as hexstring
 template <size_t size>
 void PrintTo(const Blob<size>& blob, ::std::ostream* os) {
