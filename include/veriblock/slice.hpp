@@ -26,25 +26,16 @@ struct Slice {
 
   Slice() : storage_(nullptr), size_(0) {}
 
-  Slice(pointer ptr, size_t size) : storage_(ptr), size_(size) {}
+  Slice(const pointer ptr, size_t size) : storage_(ptr), size_(size) {}
 
   // NB: the SFINAE here uses .data() as a incomplete/imperfect proxy for the
   // requirement on Container to be a contiguous sequence container.
   template <
       class Container,
       typename = typename std::enable_if<
-          sizeof(typename Container::value_type) == 1 &&
-          std::is_convertible<typename Container::pointer, pointer>::value && 
-          std::is_convertible<
-              typename Container::pointer,
-              decltype(std::declval<Container>().data())>::value>>
-  constexpr Slice(Container &cont) noexcept : Slice(cont.data(), cont.size()) {}
-
-  Slice(const std::string &cont) : Slice(
-      reinterpret_cast<pointer>(
-          const_cast<std::string::pointer>(
-              cont.data())),
-      cont.size()) {}
+          sizeof(typename Container::value_type) == 1>::type>
+  constexpr Slice(Container &cont) noexcept
+      : Slice(reinterpret_cast<const pointer>(cont.data()), cont.size()) {}
 
   constexpr pointer data() const noexcept { return storage_; }
 
