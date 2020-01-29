@@ -3,72 +3,89 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 
-#include "veriblock/base58.hpp"
-#include "veriblock/base59.hpp"
-#include "veriblock/serde.hpp"
+#include "veriblock/read_stream.hpp"
+#include "veriblock/write_stream.hpp"
+#include "veriblock/slice.hpp"
 
 namespace VeriBlock {
 
-// TODO: add autodetection of address type
+enum class AddressType {
+  ZERO_UNUSED = 0,
+  STANDARD = 1,
+  PROOF_OF_PROOF = 2,
+  MULTISIG = 3,
+};
+
 struct Address {
   Address() = default;
 
-  Address(AddressType type, std::string addr)
-      : m_Type(type), m_Address(std::move(addr)) {}
-
   bool operator==(const Address& other) const noexcept {
     return m_Address == other.m_Address;
+  }
+  bool operator!=(const Address& other) const noexcept {
+    return !(this->operator==(other));
   }
 
   bool operator==(const std::string& other) const noexcept {
     return m_Address == other;
   }
-
-  const std::string& data() const noexcept { return m_Address; }
-
-  void toVbkEncoding(WriteStream& stream) const {
-    stream.writeBE<uint8_t>((uint8_t)m_Type);
-    std::vector<uint8_t> decoded;
-    switch (m_Type) {
-      case AddressType::STANDARD:
-        decoded = DecodeBase58(m_Address);
-        break;
-      case AddressType ::MULTISIG:
-        decoded = DecodeBase59(m_Address);
-        break;
-      default:
-        throw std::invalid_argument("unexpected address type to encode");
-    }
-
-    writeSingleByteLenValue(stream, decoded);
+  bool operator!=(const std::string& other) const noexcept {
+    return !(this->operator==(other));
   }
 
-  static Address fromVbkEncoding(ReadStream& stream) {
-    auto addressType = (AddressType)stream.readLE<uint8_t>();
-    auto addressBytes =
-        readSingleByteLenValue(stream, 0, VeriBlock::ADDRESS_SIZE);
+  AddressType getType() const noexcept { return m_Type; }
 
-    std::string address;
-    switch (addressType) {
-      case AddressType::STANDARD:
-        address = EncodeBase58(addressBytes);
-        break;
-      case AddressType::MULTISIG:
-        address = EncodeBase59(addressBytes);
-        break;
-      default:
-        throw std::invalid_argument(
-            "invalid address type: neither standard, nor multisig");
-    }
+  /**
+   * Convert public key to VBK standard address.
+   * @param publicKey byte array containing public key
+   * @return Address containing VBK address
+   */
+  static Address fromPublicKey(Slice<const uint8_t> publicKey);
 
-    return Address(addressType, address);
-  }
+  /**
+   * Check if given address is generated with provided public key
+   * @param publicKey byte array containing public key
+   * @return true if address is derived from public key
+   */
+  bool isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const;
 
- private:
-  AddressType m_Type{};
-  std::string m_Address{};
+  /**
+   * Parse provided string and convert it to VBK address
+   * @param input should contain text representation of an address
+   * @throws std::invalid_argument if provided string is not valid
+   * @return Address containing VBK address
+   */
+  static Address fromString(const std::string& input);
+
+  /**
+   * Convert VBK address to text representation
+   * @return string with VBK address
+   */
+  const std::string& toString() const noexcept;
+
+  /**
+   * Read data from the stream and convert it to VBK address
+   * @param stream data stream to read from
+   * @throws std::invalid_argument if stream data cannot be converted
+   * to the VBK address
+   * @return Address containing VBK address
+   */
+  static Address fromVbkEncoding(ReadStream& stream);
+
+  /**
+   * Convert VBK address to data stream using VBK byte format
+   * @param stream data stream to write into
+   * @throws std::invalid_argument if address has unsupported type
+   */
+  void toVbkEncoding(WriteStream& stream) const;
+
+  private:
+    AddressType m_Type{};
+    std::string m_Address{};
+
+    Address(AddressType type, std::string addr)
+        : m_Type(type), m_Address(std::move(addr)) {}
 };
 
 }  // namespace VeriBlock

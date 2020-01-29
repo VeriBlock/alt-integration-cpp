@@ -28,7 +28,7 @@ static const VbkBlock validVbkBlock = {
 
 static const ATV validATV = {
     {{false, 0, (uint8_t)TxType::VBK_TX},
-     Address(AddressType::STANDARD, "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
+     Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
      Coin(1000),
      std::vector<Output>(),
      7,
@@ -57,7 +57,7 @@ static const ATV validATV = {
 
 static const VTB validVTB = {
     {{false, 0, (uint8_t)TxType::VBK_POP_TX},
-     Address(AddressType::STANDARD, "VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
+     Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
      VbkBlock::fromRaw(
          "000013350002A793C872D6F6460E90BED62342BB968195F8C515D3EED7277A09EFAC4BE99F95F0A15628B06BA3B44C0190B5C0495C9B8ACD0701C5235EBBBE9C"_unhex),
      BtcTx(
