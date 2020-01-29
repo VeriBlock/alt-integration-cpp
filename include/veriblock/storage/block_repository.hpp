@@ -84,9 +84,9 @@ struct BlockRepository {
     /**
      * Remove potentially many blocks at given height.
      * @param height block height
-     * @return true if at least one block removed, false otherwise.
+     * @return number of blocks removed.
      */
-    virtual bool removeByHeight(height_t height) = 0;
+    virtual size_t removeByHeight(height_t height) = 0;
 
     /**
      * Clear batch from any modifying operations.
@@ -110,18 +110,18 @@ struct BlockRepository {
    * out argument is ignored.
    * @return true if block found at given height, false otherwise.
    */
-  virtual bool getByHeight(const height_t& height,
+  virtual bool getByHeight(height_t height,
                            std::vector<stored_block_t>* out) = 0;
 
   /**
    * Load many blocks from disk in memory by a list of hashes.
    * @param hashes[in] a list of hashes to load.
-   * @param out[out] if non-null, blocks will be written here. If null passed,
-   * out argument is ignored.
-   * @return true if at least one block has been found, false otherwise.
+   * @param out[out] if non-null, blocks will be appended to this vector. If
+   * null passed, out argument is ignored.
+   * @return number of blocks appended to output vector.
    */
-  virtual bool getManyByHash(Slice<const hash_t> hashes,
-                             std::vector<stored_block_t>* out) = 0;
+  virtual size_t getManyByHash(Slice<const hash_t> hashes,
+                               std::vector<stored_block_t>* out) = 0;
 
   /**
    * Write a single block. If block with such hash exists, db will overwrite
@@ -130,7 +130,7 @@ struct BlockRepository {
    * @return true if block already existed in db and we overwrote it. False
    * otherwise.
    */
-  virtual void put(const stored_block_t& block) = 0;
+  virtual bool put(const stored_block_t& block) = 0;
 
   /**
    * Remove a single block from storage identified by its hash.
@@ -142,9 +142,9 @@ struct BlockRepository {
   /**
    * Remove potentially many blocks at given height.
    * @param height block height
-   * @return true if at least one block removed, false otherwise.
+   * @return number of blocks removed
    */
-  virtual int removeByHeight(height_t height) = 0;
+  virtual size_t removeByHeight(height_t height) = 0;
 
   /**
    * Create new WriteBatch, to perform BULK modify operations.
