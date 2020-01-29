@@ -64,11 +64,8 @@ struct Slice {
     return const_reverse_iterator{cbegin()};
   }
 
-  Slice<ElementType> reverse() const {
-    Slice<ElementType> ret = *this;
-    std::reverse(const_cast<value_type *>(ret.begin()),
-                 const_cast<value_type *>(ret.end()));
-    return ret;
+  std::vector<value_type> reverse() const {
+    return std::vector<value_type>(rbegin(), rend());
   }
 
  private:
