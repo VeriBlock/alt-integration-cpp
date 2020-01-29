@@ -65,9 +65,7 @@ struct Slice {
   }
 
   std::vector<value_type> reverse() const {
-    std::vector<value_type> ret(begin(), end());
-    std::reverse(ret.begin(), ret.end());
-    return ret;
+    return std::vector<value_type>(rbegin(), rend());
   }
 
  private:
