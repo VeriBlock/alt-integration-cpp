@@ -12,10 +12,6 @@ namespace VeriBlock {
 static const ArithUint256 MAXIMUM_DIFFICULTY(
     "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
-static const std::vector<uint8_t> prefix =
-    ParseHex("3056301006072A8648CE3D020106052B8104000A034200");
-static const uint32_t prefix_size = 23;
-
 bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
                                        ValidationState& state) {
   WriteStream stream;
