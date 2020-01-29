@@ -34,8 +34,6 @@ struct Address {
     return m_Address == other;
   }
 
-  const std::string& data() const noexcept { return m_Address; }
-
   AddressType getType() const noexcept { return m_Type; }
 
   /**

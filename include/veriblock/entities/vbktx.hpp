@@ -18,7 +18,7 @@ namespace VeriBlock {
 
 struct VbkTx {
   NetworkBytePair networkOrType{};
-  Address address{};
+  Address sourceAddress{};
   Coin sourceAmount{};
   std::vector<Output> outputs{};
   int64_t signatureIndex{};
@@ -31,7 +31,7 @@ struct VbkTx {
                        Slice<const uint8_t> _publicKey) {
     VbkTx tx{};
     tx.networkOrType = readNetworkByte(stream, TxType::VBK_TX);
-    tx.address = Address::fromVbkEncoding(stream);
+    tx.sourceAddress = Address::fromVbkEncoding(stream);
     tx.sourceAmount = Coin::fromVbkEncoding(stream);
 
     uint8_t outputSize = stream.readBE<uint8_t>();
@@ -61,7 +61,7 @@ struct VbkTx {
 
   void toRaw(WriteStream& stream) const {
     writeNetworkByte(stream, networkOrType);
-    address.toVbkEncoding(stream);
+    sourceAddress.toVbkEncoding(stream);
     sourceAmount.toVbkEncoding(stream);
     stream.writeBE<uint8_t>((uint8_t)outputs.size());
     for (const auto& output : outputs) {

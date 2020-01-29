@@ -23,25 +23,6 @@ bool checkMaximumDrift(const BlockType& block, ValidationState& state) {
   return true;
 }
 
-template <typename TransactionType>
-bool checkSignature(const TransactionType& tx, ValidationState& state) {
-  if (!tx.address.isDerivedFromPublicKey(Slice<const uint8_t>(tx.publicKey))) {
-    return state.Invalid("checkSignature()",
-                         "Invalid transaction",
-                         "Transaction contains an invalid public key");
-  }
-
-  if (!veriBlockVerify(
-          Slice<const uint8_t>(tx.getHash().data(), tx.getHash().size()),
-          tx.signature,
-          publicKeyFromVbk(tx.publicKey))) {
-    return state.Invalid("checkSignature()",
-                         "Invalid transaction",
-                         "Transaction is incorrectly signed");
-  }
-  return true;
-}
-
 template <typename MerklePathType, typename HashType1, typename HashType2>
 bool checkMerklePath(const MerklePathType& merklePath,
                      const HashType1& transactionHash,
@@ -61,6 +42,10 @@ bool checkMerklePath(const MerklePathType& merklePath,
 
   return true;
 }
+
+bool checkSignature(const VbkTx& tx, ValidationState& state);
+
+bool checkSignature(const VbkPopTx& tx, ValidationState& state);
 
 bool checkBitcoinBlocks(const VbkPopTx& tx, ValidationState& state);
 

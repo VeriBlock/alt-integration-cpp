@@ -137,4 +137,42 @@ bool checkVbkBlock(const VbkBlock& block, ValidationState& state) {
   }
   return true;
 }
+
+bool checkSignature(const VbkTx& tx, ValidationState& state) {
+  if (!tx.sourceAddress.isDerivedFromPublicKey(
+          Slice<const uint8_t>(tx.publicKey))) {
+    return state.Invalid("checkSignature()",
+                         "Invalid Vbk transaction",
+                         "Vbk transaction contains an invalid public key");
+  }
+
+  if (!veriBlockVerify(
+          Slice<const uint8_t>(tx.getHash().data(), tx.getHash().size()),
+          tx.signature,
+          publicKeyFromVbk(tx.publicKey))) {
+    return state.Invalid("checkSignature()",
+                         "Vbk transaction",
+                         "Vbk transaction is incorrectly signed");
+  }
+  return true;
+}
+
+bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
+  if (!tx.address.isDerivedFromPublicKey(Slice<const uint8_t>(tx.publicKey))) {
+    return state.Invalid("checkSignature()",
+                         "Invalid Vbk Pop transaction",
+                         "Vbk Pop transaction contains an invalid public key");
+  }
+
+  if (!veriBlockVerify(
+          Slice<const uint8_t>(tx.getHash().data(), tx.getHash().size()),
+          tx.signature,
+          publicKeyFromVbk(tx.publicKey))) {
+    return state.Invalid("checkSignature()",
+                         "Invalid Vbk Pop transaction",
+                         "Vbk Pop transaction is incorrectly signed");
+  }
+  return true;
+}
+
 }  // namespace VeriBlock

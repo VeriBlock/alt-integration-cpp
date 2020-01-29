@@ -74,14 +74,14 @@ struct MerklePath {
   uint256 calculateMerkleRoot() const {
     uint256 cursor = subject;
     int layerIndex = index;
-    for (size_t i = 0; i < layers.size(); ++i) {
+    for (const auto& layer : layers) {
       if (layerIndex & 1) {
-        std::vector<uint8_t> data(layers[i].begin(), layers[i].end());
+        std::vector<uint8_t> data(layer.begin(), layer.end());
         data.insert(data.end(), cursor.begin(), cursor.end());
         cursor = sha256twice(data);
       } else {
         std::vector<uint8_t> data(cursor.begin(), cursor.end());
-        data.insert(data.end(), layers[i].begin(), layers[i].end());
+        data.insert(data.end(), layer.begin(), layer.end());
         cursor = sha256twice(data);
       }
 
