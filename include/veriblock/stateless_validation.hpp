@@ -26,13 +26,18 @@ bool checkMaximumDrift(const BlockType& block, ValidationState& state) {
 template <typename TransactionType>
 bool checkSignature(const TransactionType& tx, ValidationState& state) {
   // TODO add an address validation
+  if (!tx.address.isDerivedFromPublicKey(Slice<const uint8_t>(tx.publicKey))) {
+    return state.Invalid("checkSignature()",
+                         "Invalid transaction",
+                         "Transaction contains an invalid public key");
+  }
 
   if (!veriBlockVerify(
           Slice<const uint8_t>(tx.getHash().data(), tx.getHash().size()),
           tx.signature,
           publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("checkSignature()",
-                         "Invalid Vbk Pop transaction",
+                         "Invalid transaction",
                          "Transaction is incorrectly signed");
   }
   return true;
