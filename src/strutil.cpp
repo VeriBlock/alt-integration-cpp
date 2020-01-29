@@ -59,4 +59,8 @@ bool IsHex(const std::string &str) {
   return (!str.empty()) && (str.size() % 2 == 0);
 }
 
+std::vector<uint8_t> toBytes(const std::string input) {
+  return std::vector<uint8_t>(input.begin(), input.end());
+}
+
 }  // namespace VeriBlock
