@@ -64,8 +64,7 @@ static bool isBase59String(const std::string& input) {
 }
 
 static std::string calculateChecksum(const std::string& data, bool multisig) {
-  auto dataBytes = toBytes(data);
-  auto hash = sha256(dataBytes);
+  auto hash = sha256(data);
   std::string checksum = EncodeBase58(hash);
   if (multisig) {
     return checksum.substr(0, 3 + 1);
@@ -74,7 +73,7 @@ static std::string calculateChecksum(const std::string& data, bool multisig) {
 }
 
 static std::string addressChecksum(const Address& address) {
-  return calculateChecksum(address.getAddr(),
+  return calculateChecksum(address.toString(),
                            address.getType() == AddressType::MULTISIG);
 }
 
@@ -160,9 +159,7 @@ Address Address::fromString(const std::string& input) {
                  input);
 }
 
-std::string Address::toString() const {
-  return this->getAddr();
-}
+const std::string& Address::toString() const noexcept { return m_Address; }
 
 Address Address::fromVbkEncoding(ReadStream& stream) {
   auto addressType = (AddressType)stream.readLE<uint8_t>();
@@ -190,10 +187,10 @@ void Address::toVbkEncoding(WriteStream& stream) const {
   std::vector<uint8_t> decoded;
   switch (getType()) {
     case AddressType::STANDARD:
-      decoded = DecodeBase58(getAddr());
+      decoded = DecodeBase58(toString());
       break;
     case AddressType ::MULTISIG:
-      decoded = DecodeBase59(getAddr());
+      decoded = DecodeBase59(toString());
       break;
     default:
       throw std::invalid_argument("addressToVbkEncoding(): unexpected address type to encode");

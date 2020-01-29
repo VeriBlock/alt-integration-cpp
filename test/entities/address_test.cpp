@@ -15,7 +15,7 @@ TEST(Address, Deserialize) {
   auto stream = ReadStream(ADDRESS_BYTES);
   auto address = Address::fromVbkEncoding(stream);
 
-  EXPECT_EQ(address.getAddr(), ADDRESS_VALUE);
+  EXPECT_EQ(address.toString(), ADDRESS_VALUE);
   EXPECT_EQ(address.getType(), AddressType::STANDARD);
 
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
@@ -33,7 +33,7 @@ TEST(Address, Serialize) {
 TEST(Address, RoundTrip) {
   auto stream = ReadStream(ADDRESS_BYTES);
   auto decoded = Address::fromVbkEncoding(stream);
-  EXPECT_EQ(decoded.getAddr(), ADDRESS_VALUE);
+  EXPECT_EQ(decoded.toString(), ADDRESS_VALUE);
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -45,14 +45,14 @@ TEST(Address, ValidStandard) {
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
   Address address = Address::fromString(addressString);
   EXPECT_EQ(address.getType(), AddressType::STANDARD);
-  EXPECT_EQ(address.getAddr(), addressString);
+  EXPECT_EQ(address.toString(), addressString);
 }
 
 TEST(Address, ValidMultisig) {
   std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
   Address address = Address::fromString(addressString);
   EXPECT_EQ(address.getType(), AddressType::MULTISIG);
-  EXPECT_EQ(address.getAddr(), addressString);
+  EXPECT_EQ(address.toString(), addressString);
 }
 
 TEST(Address, DerivedFromPublicKey) {
@@ -84,7 +84,7 @@ TEST(Address, ParseStandard) {
   auto stream = ReadStream(bytes);
   auto decoded = Address::fromVbkEncoding(stream);
 
-  EXPECT_EQ(decoded.getAddr(), addressString);
+  EXPECT_EQ(decoded.toString(), addressString);
   EXPECT_EQ(decoded.getType(), AddressType::STANDARD);
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
@@ -98,7 +98,7 @@ TEST(Address, ParseMultisig) {
   auto stream = ReadStream(bytes);
   auto decoded = Address::fromVbkEncoding(stream);
 
-  EXPECT_EQ(decoded.getAddr(), addressString);
+  EXPECT_EQ(decoded.toString(), addressString);
   EXPECT_EQ(decoded.getType(), AddressType::MULTISIG);
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }

@@ -34,7 +34,6 @@ struct Address {
     return !(this->operator==(other));
   }
 
-  const std::string& getAddr() const noexcept { return m_Address; }
   AddressType getType() const noexcept { return m_Type; }
 
   /**
@@ -63,7 +62,7 @@ struct Address {
    * Convert VBK address to text representation
    * @return string with VBK address
    */
-  std::string toString() const;
+  const std::string& toString() const noexcept;
 
   /**
    * Read data from the stream and convert it to VBK address
