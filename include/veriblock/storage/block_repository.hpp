@@ -40,7 +40,7 @@ struct Error : public std::exception {};
  *
  * @tparam Block Stored Block type
  *
- * @invariant any instance is invalid state - database is opened when valid
+ * @invariant any instance is in valid state - database is opened when valid
  * instance of BlockRepository created. To close database, delete the instance.
  */
 template <typename Block>
