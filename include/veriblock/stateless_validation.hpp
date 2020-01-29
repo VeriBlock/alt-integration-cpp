@@ -25,7 +25,6 @@ bool checkMaximumDrift(const BlockType& block, ValidationState& state) {
 
 template <typename TransactionType>
 bool checkSignature(const TransactionType& tx, ValidationState& state) {
-  // TODO add an address validation
   if (!tx.address.isDerivedFromPublicKey(Slice<const uint8_t>(tx.publicKey))) {
     return state.Invalid("checkSignature()",
                          "Invalid transaction",
@@ -79,7 +78,6 @@ bool checkVbkTx(const VbkTx& tx, ValidationState& state);
 bool checkBtcBlock(const BtcBlock& block, ValidationState& state);
 
 bool checkVbkBlock(const VbkBlock& block, ValidationState& state);
-
 }  // namespace VeriBlock
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK_STATELESS_VALIDATION_H

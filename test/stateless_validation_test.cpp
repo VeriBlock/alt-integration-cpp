@@ -246,6 +246,14 @@ TEST(StatelessValidation, VbkPopTx_checkSignature_signature_invalid) {
   ASSERT_FALSE(checkSignature(tx, state));
 }
 
+TEST(StatelessValidation, VbkPopTx_different_address_invalid) {
+  VbkPopTx tx = validPopTx;
+  tx.publicKey =
+      "3056301006072A8648CE3D020106052B8104000A03420004DE4EE8300C3CD99E913536CF53C4ADD179F048F8FE90E5ADF3ED19668DD1DBF6C2D8E692B1D36EAC7187950620A28838DA60A8C9DD60190C14C59B82CB90319E"_unhex;
+  ValidationState state;
+  ASSERT_FALSE(checkSignature(tx, state));
+}
+
 TEST(StatelessValidation, checkBitcoinTransactionForPoPData_invalid) {
   VbkPopTx tx = validPopTx;
   tx.publishedBlock = VbkBlock::fromRaw(
@@ -297,4 +305,12 @@ TEST(StatelessValidation, VbkTx_checkSignature_signature_invalid) {
   ValidationState state;
   checkVbkTx(tx, state);
   ASSERT_FALSE(checkVbkTx(tx, state));
+}
+
+TEST(StatelessValidation, VbkTx_different_address_invalid) {
+  VbkTx tx = validVbkTx;
+  tx.publicKey =
+      "3056301006072A8648CE3D020106552B8104000A03420004DE4EE8300C3CD99E913536CF53C4ADD179F048F8FE90E5ADF3ED19668DD1DBF6C2D8E692B1D36EAC7187950620A28838DA60A8C9DD60190C14C59B82CB90319E"_unhex;
+  ValidationState state;
+  ASSERT_FALSE(checkSignature(tx, state));
 }
