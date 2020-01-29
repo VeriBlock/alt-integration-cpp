@@ -16,6 +16,9 @@ namespace VeriBlock {
  * Multiple blocks may be stored at the given height.
  *
  * @tparam Block Stored Block type
+ *
+ * @invariant any instance is invalid state - database is opened when valid
+ * instance of BlockRepository created. To close database, delete the instance.
  */
 template <typename Block>
 struct BlockRepository {
