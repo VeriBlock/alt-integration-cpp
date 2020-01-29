@@ -44,7 +44,7 @@ struct Slice {
       reinterpret_cast<pointer>(
           const_cast<std::string::pointer>(
               cont.data())),
-    cont.size()) {}
+      cont.size()) {}
 
   constexpr pointer data() const noexcept { return storage_; }
 
