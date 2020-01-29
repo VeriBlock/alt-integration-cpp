@@ -49,7 +49,7 @@ struct BlockRepository {
   using stored_block_t = Block;
   //! block has type
   using hash_t = typename Block::hash_t;
-  //! block heiehgt type
+  //! block height type
   using height_t = typename Block::height_t;
 
   virtual ~BlockRepository() = default;
@@ -70,8 +70,7 @@ struct BlockRepository {
      * Write a single block. If block with such hash exists, db will overwrite
      * it.
      * @param block to be written in a batch
-     * @return true if block already existed in db and we overwrote it. False
-     * otherwise.
+     * @return true if we overwrite existing block, false otherwise.
      */
     virtual bool put(const stored_block_t& block) = 0;
 
@@ -151,7 +150,7 @@ struct BlockRepository {
    * Create new WriteBatch, to perform BULK modify operations.
    * @return a pointer to new WriteBatch instance.
    */
-  virtual std::unique_ptr<WriteBatch> getBatch() = 0;
+  virtual std::unique_ptr<WriteBatch> newBatch() = 0;
 
   /**
    * Efficiently commit given batch on-disk.
