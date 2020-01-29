@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_VERIBLOCK_VALIDATION_STATE_HPP
 
 #include <string>
+#include <vector>
 
 namespace VeriBlock {
 
@@ -25,14 +26,21 @@ class ValidationState {
    * error.
    * @return always returns false
    */
-  bool Invalid(const std::string &reject_reason = "",
+  bool Invalid(const std::string &function_name,
+               const std::string &reject_reason = "",
                const std::string &debug_message = "") {
+    stack_trace.push_back(function_name);
     m_reject_reason = reject_reason;
     m_debug_message = debug_message;
     if (m_mode != MODE_ERROR) {
       m_mode = MODE_INVALID;
     }
 
+    return false;
+  }
+
+  bool addStackFunction(const std::string &function_name) {
+    stack_trace.push_back(function_name);
     return false;
   }
 
@@ -65,6 +73,7 @@ class ValidationState {
   } m_mode;
   std::string m_reject_reason;
   std::string m_debug_message;
+  std::vector<std::string> stack_trace;
 };
 
 }  // namespace VeriBlock

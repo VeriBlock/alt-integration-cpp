@@ -45,6 +45,11 @@ struct Address {
     writeSingleByteLenValue(stream, decoded);
   }
 
+  void getPopBytes(WriteStream& stream) const {
+    std::vector<uint8_t> bytes = DecodeBase58(m_Address.substr(1));
+    stream.write(std::vector<uint8_t>(bytes.begin(), bytes.begin() + 16));
+  }
+
   static Address fromVbkEncoding(ReadStream& stream) {
     auto addressType = (AddressType)stream.readLE<uint8_t>();
     auto addressBytes =

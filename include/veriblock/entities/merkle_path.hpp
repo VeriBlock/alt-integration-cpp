@@ -7,8 +7,9 @@
 #include <vector>
 
 #include "veriblock/consts.hpp"
-#include "veriblock/uint.hpp"
+#include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 
@@ -24,8 +25,9 @@ struct MerklePath {
     checkRange(numLayers, 0, MAX_LAYER_COUNT_MERKLE);
 
     const auto sizeOfSizeBottomData = readSingleBEValue<int32_t>(stream);
-    if(sizeOfSizeBottomData != sizeof(int32_t)) {
-      throw std::invalid_argument("MerklePath.fromRaw(): bad sizeOfSizeBottomData");
+    if (sizeOfSizeBottomData != sizeof(int32_t)) {
+      throw std::invalid_argument(
+          "MerklePath.fromRaw(): bad sizeOfSizeBottomData");
     }
     const auto sizeOfBottomData = stream.readBE<int32_t>();
     if (sizeOfBottomData != SHA256_HASH_SIZE) {
@@ -67,6 +69,26 @@ struct MerklePath {
     WriteStream pathStream;
     toRaw(pathStream);
     writeVarLenValue(stream, pathStream.data());
+  }
+
+  uint256 calculateMerkleRoot() const {
+    uint256 cursor = subject;
+    int layerIndex = index;
+    for (size_t i = 0; i < layers.size(); ++i) {
+      if (layerIndex & 1) {
+        std::vector<uint8_t> data(layers[i].begin(), layers[i].end());
+        data.insert(data.end(), cursor.begin(), cursor.end());
+        cursor = sha256twice(data);
+      } else {
+        std::vector<uint8_t> data(cursor.begin(), cursor.end());
+        data.insert(data.end(), layers[i].begin(), layers[i].end());
+        cursor = sha256twice(data);
+      }
+
+      layerIndex >>= 1;
+    }
+
+    return cursor;
   }
 };
 
