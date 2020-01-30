@@ -4,8 +4,10 @@
 #include <cstdint>
 #include <vector>
 
+#include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/slice.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 
@@ -24,6 +26,8 @@ struct BtcTx {
   void toVbkEncoding(WriteStream& stream) const {
     writeVarLenValue(stream, tx);
   }
+
+  uint256 getHash() const { return sha256twice(tx); }
 };
 
 }  // namespace VeriBlock
