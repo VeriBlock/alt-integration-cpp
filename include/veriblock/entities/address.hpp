@@ -20,9 +20,6 @@ enum class AddressType {
 struct Address {
   Address() = default;
 
-  Address(AddressType type, std::string addr)
-      : m_Type(type), m_Address(std::move(addr)) {}
-
   bool operator==(const Address& other) const noexcept {
     return m_Address == other.m_Address;
   }
@@ -87,6 +84,9 @@ struct Address {
   void toVbkEncoding(WriteStream& stream) const;
 
  private:
+  Address(AddressType type, std::string addr)
+      : m_Type(type), m_Address(std::move(addr)) {}
+
   AddressType m_Type{};
   std::string m_Address{};
 };
