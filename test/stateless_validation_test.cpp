@@ -206,7 +206,7 @@ TEST(StatelessValidation, ATV_checkVeriBlockBlocks_blocks_not_contigous) {
       VbkBlock::fromRaw(
           "0000136E0002479695C9DE9AE24345187976B0935637860679DDD55EE4FD21082E18686EA9E8BC5B6B41348F93D5D8FA6A91F1D55C9B919F07021CC236237392"_unhex)};
   ValidationState state;
-  ASSERT_FALSE(checkVeriBlockBlocks(atv.context, state));
+  ASSERT_FALSE(checkVbkBlocks(atv.context, state));
 }
 
 TEST(StatelessValidation, VTB_valid) {
@@ -248,7 +248,7 @@ TEST(StatelessValidation, VTB_checkVeriBlockBlocks_blocks_not_contigous) {
       VbkBlock::fromRaw(
           "0000136E0002479695C9DE9AE24345187976B0935637860679DDD55EE4FD21082E18686EA9E8BC5B6B41348F93D5D8FA6A91F1D55C9B919F07021CC236237392"_unhex)};
   ValidationState state;
-  ASSERT_FALSE(checkVeriBlockBlocks(vtb.context, state));
+  ASSERT_FALSE(checkVbkBlocks(vtb.context, state));
 }
 
 TEST(StatelessValidtion, checkVbkPopTx_valid) {
@@ -309,7 +309,7 @@ TEST(StatelessValidation, checkBitcoinBlocks_when_not_contiguous) {
   VbkPopTx tx = validPopTx;
   tx.blockOfProofContext.erase(tx.blockOfProofContext.begin() + 1);
   ValidationState state;
-  ASSERT_FALSE(checkBitcoinBlocks(tx.blockOfProofContext, state));
+  ASSERT_FALSE(checkBtcBlocks(tx.blockOfProofContext, state));
 }
 
 TEST(StatelessValidation, checkVbkTx_valid) {

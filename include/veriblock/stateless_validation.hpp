@@ -47,11 +47,11 @@ bool checkSignature(const VbkTx& tx, ValidationState& state);
 
 bool checkSignature(const VbkPopTx& tx, ValidationState& state);
 
-bool checkBitcoinBlocks(const std::vector<BtcBlock>& btcBlocks,
-                        ValidationState& state);
+bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlocks,
+                    ValidationState& state);
 
-bool checkVeriBlockBlocks(const std::vector<VbkBlock>& vbkBlocks,
-                          ValidationState& state);
+bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
+                    ValidationState& state);
 
 bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
                                        ValidationState& state);

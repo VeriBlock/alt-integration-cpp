@@ -40,47 +40,51 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
       "Bitcoin transaction does not contain PoP publication data");
 }
 
-bool checkBitcoinBlocks(const std::vector<BtcBlock>& btcBlock,
-                        ValidationState& state) {
-  uint256 lashHash;
-  for (const auto& block : btcBlock) {
-    if (!checkBtcBlock(block, state)) {
+bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
+                    ValidationState& state) {
+  if (btcBlock.empty()) {
+    return true;
+  }
+
+  uint256 lastHash = btcBlock[0].getHash();
+  for (size_t i = 1; i < btcBlock.size(); ++i) {
+    if (!checkBtcBlock(btcBlock[i], state)) {
       return state.addStackFunction("checkBitcoinBlocks()");
     }
 
-    if (lashHash != uint256()) {
-      // Check that it's the next height and affirms the previous hash
-      if (block.previousBlock != lashHash.reverse()) {
-        return state.Invalid("checkBitcoinBlocks()",
-                             "Invalid Vbk Pop transaction",
-                             "Blocks are not contiguous");
-      }
+    // Check that it's the next height and affirms the previous hash
+    if (btcBlock[i].previousBlock != lastHash.reverse()) {
+      return state.Invalid("checkBitcoinBlocks()",
+                           "Invalid Vbk Pop transaction",
+                           "Blocks are not contiguous");
     }
-    lashHash = block.getHash();
+    lastHash = btcBlock[i].getHash();
   }
   return true;
 }
 
-bool checkVeriBlockBlocks(const std::vector<VbkBlock>& vbkBlocks,
-                          ValidationState& state) {
-  int32_t lastHeight = 0;
-  uint192 lastHash;
+bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
+                    ValidationState& state) {
+  if (vbkBlocks.empty()) {
+    return true;
+  }
 
-  for (const auto& block : vbkBlocks) {
-    if (!checkVbkBlock(block, state)) {
+  int32_t lastHeight = vbkBlocks[0].height;
+  uint192 lastHash = vbkBlocks[0].getHash();
+
+  for (size_t i = 0; i < vbkBlocks.size(); ++i) {
+    if (!checkVbkBlock(vbkBlocks[i], state)) {
       return state.addStackFunction("checkVeriBlockBlocks()");
     }
 
-    if (lastHash != uint192()) {
-      if (block.height != lastHeight + 1 ||
-          block.getHash() != lastHash.reverse()) {
-        return state.Invalid("checkVeriBlockBlocks()",
-                             "VeriBlock Blocks invalid",
-                             "Blocks are not contiguous");
-      }
+    if (vbkBlocks[i].height != lastHeight + 1 ||
+        vbkBlocks[i].getHash() != lastHash.reverse()) {
+      return state.Invalid("checkVeriBlockBlocks()",
+                           "VeriBlock Blocks invalid",
+                           "Blocks are not contiguous");
     }
-    lastHeight = block.height;
-    lastHash = block.getHash();
+    lastHeight = vbkBlocks[i].height;
+    lastHash = vbkBlocks[i].getHash();
   }
   return true;
 }
@@ -126,7 +130,7 @@ bool checkVbkPopTx(const VbkPopTx& tx, ValidationState& state) {
     return state.addStackFunction("checkVbkPopTx()");
   }
 
-  if (!checkBitcoinBlocks(tx.blockOfProofContext, state)) {
+  if (!checkBtcBlocks(tx.blockOfProofContext, state)) {
     return state.addStackFunction("checkVbkPopTx()");
   }
 
@@ -164,8 +168,7 @@ bool checkVbkBlock(const VbkBlock& block, ValidationState& state) {
 }
 
 bool checkSignature(const VbkTx& tx, ValidationState& state) {
-  if (!tx.sourceAddress.isDerivedFromPublicKey(
-          Slice<const uint8_t>(tx.publicKey))) {
+  if (!tx.sourceAddress.isDerivedFromPublicKey(tx.publicKey)) {
     return state.Invalid("checkSignature()",
                          "Invalid Vbk transaction",
                          "Vbk transaction contains an invalid public key");
@@ -183,7 +186,7 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
 }
 
 bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
-  if (!tx.address.isDerivedFromPublicKey(Slice<const uint8_t>(tx.publicKey))) {
+  if (!tx.address.isDerivedFromPublicKey(tx.publicKey)) {
     return state.Invalid("checkSignature()",
                          "Invalid Vbk Pop transaction",
                          "Vbk Pop transaction contains an invalid public key");
@@ -211,7 +214,7 @@ bool checkATV(const ATV& atv, ValidationState& state) {
     return state.addStackFunction("checkATV()");
   }
 
-  if (!checkVeriBlockBlocks(atv.context, state)) {
+  if (!checkVbkBlocks(atv.context, state)) {
     return state.addStackFunction("checkATV()");
   }
 
@@ -230,7 +233,7 @@ bool checkVTB(const VTB& vtb, ValidationState& state) {
     return state.addStackFunction("checkVTB()");
   }
 
-  if (!checkVeriBlockBlocks(vtb.context, state)) {
+  if (!checkVbkBlocks(vtb.context, state)) {
     return state.addStackFunction("checkVTB()");
   }
 
