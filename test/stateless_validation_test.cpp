@@ -169,12 +169,9 @@ TEST(StatelessValidation, checkVbkBlock_when_checkMaximumDrift_invalid_test) {
   ASSERT_FALSE(checkProofOfWork(block, state));
 }
 
-TEST(StatelessValidation, ATV_checkMerklePath_valid) {
+TEST(StatelessValidation, ATV_valid) {
   ValidationState state;
-  ASSERT_TRUE(checkMerklePath(validATV.merklePath,
-                              validATV.transaction.getHash(),
-                              validATV.containingBlock.merkleRoot,
-                              state));
+  ASSERT_TRUE(checkATV(validATV, state));
 }
 
 TEST(StatelessValidation, ATV_checkMerklePath_different_transaction_invalid) {
@@ -201,7 +198,18 @@ TEST(StatelessValidation, ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
                                state));
 }
 
-TEST(StatelessValidation, VTB_checkMerklePath_valid) {
+TEST(StatelessValidation, ATV_checkVeriBlockBlocks_blocks_not_contigous) {
+  ATV atv = validATV;
+  atv.context = {
+      VbkBlock::fromRaw(
+          "0000136D0002F903421B4902C14349C57BA5B0935637860679DDD55EE4FD21082E18686E419C0F1A5E87635F1F32447638D07BED5C9B918A070213309FCF3256"_unhex),
+      VbkBlock::fromRaw(
+          "0000136E0002479695C9DE9AE24345187976B0935637860679DDD55EE4FD21082E18686EA9E8BC5B6B41348F93D5D8FA6A91F1D55C9B919F07021CC236237392"_unhex)};
+  ValidationState state;
+  ASSERT_FALSE(checkVeriBlockBlocks(atv.context, state));
+}
+
+TEST(StatelessValidation, VTB_valid) {
   ValidationState state;
   ASSERT_TRUE(checkMerklePath(validVTB.merklePath,
                               validVTB.transaction.getHash(),
@@ -230,6 +238,17 @@ TEST(StatelessValidation, VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
                                vtb.transaction.getHash(),
                                vtb.containingBlock.merkleRoot,
                                state));
+}
+
+TEST(StatelessValidation, VTB_checkVeriBlockBlocks_blocks_not_contigous) {
+  VTB vtb = validVTB;
+  vtb.context = {
+      VbkBlock::fromRaw(
+          "0000136D0002F903421B4902C14349C57BA5B0935637860679DDD55EE4FD21082E18686E419C0F1A5E87635F1F32447638D07BED5C9B918A070213309FCF3256"_unhex),
+      VbkBlock::fromRaw(
+          "0000136E0002479695C9DE9AE24345187976B0935637860679DDD55EE4FD21082E18686EA9E8BC5B6B41348F93D5D8FA6A91F1D55C9B919F07021CC236237392"_unhex)};
+  ValidationState state;
+  ASSERT_FALSE(checkVeriBlockBlocks(vtb.context, state));
 }
 
 TEST(StatelessValidtion, checkVbkPopTx_valid) {
@@ -290,7 +309,7 @@ TEST(StatelessValidation, checkBitcoinBlocks_when_not_contiguous) {
   VbkPopTx tx = validPopTx;
   tx.blockOfProofContext.erase(tx.blockOfProofContext.begin() + 1);
   ValidationState state;
-  ASSERT_FALSE(checkBitcoinBlocks(tx, state));
+  ASSERT_FALSE(checkBitcoinBlocks(tx.blockOfProofContext, state));
 }
 
 TEST(StatelessValidation, checkVbkTx_valid) {

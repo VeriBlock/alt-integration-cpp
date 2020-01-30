@@ -40,9 +40,10 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
       "Bitcoin transaction does not contain PoP publication data");
 }
 
-bool checkBitcoinBlocks(const VbkPopTx& tx, ValidationState& state) {
+bool checkBitcoinBlocks(const std::vector<BtcBlock>& btcBlock,
+                        ValidationState& state) {
   uint256 lashHash;
-  for (const auto& block : tx.blockOfProofContext) {
+  for (const auto& block : btcBlock) {
     if (!checkBtcBlock(block, state)) {
       return state.addStackFunction("checkBitcoinBlocks()");
     }
@@ -56,6 +57,30 @@ bool checkBitcoinBlocks(const VbkPopTx& tx, ValidationState& state) {
       }
     }
     lashHash = block.getHash();
+  }
+  return true;
+}
+
+bool checkVeriBlockBlocks(const std::vector<VbkBlock>& vbkBlocks,
+                          ValidationState& state) {
+  int32_t lastHeight = 0;
+  uint192 lastHash;
+
+  for (const auto& block : vbkBlocks) {
+    if (!checkVbkBlock(block, state)) {
+      return state.addStackFunction("checkVeriBlockBlocks()");
+    }
+
+    if (lastHash != uint192()) {
+      if (block.height != lastHeight + 1 ||
+          block.getHash() != lastHash.reverse()) {
+        return state.Invalid("checkVeriBlockBlocks()",
+                             "VeriBlock Blocks invalid",
+                             "Blocks are not contiguous");
+      }
+    }
+    lastHeight = block.height;
+    lastHash = block.getHash();
   }
   return true;
 }
@@ -101,7 +126,7 @@ bool checkVbkPopTx(const VbkPopTx& tx, ValidationState& state) {
     return state.addStackFunction("checkVbkPopTx()");
   }
 
-  if (!checkBitcoinBlocks(tx, state)) {
+  if (!checkBitcoinBlocks(tx.blockOfProofContext, state)) {
     return state.addStackFunction("checkVbkPopTx()");
   }
 
@@ -172,6 +197,43 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
                          "Invalid Vbk Pop transaction",
                          "Vbk Pop transaction is incorrectly signed");
   }
+  return true;
+}
+
+bool checkATV(const ATV& atv, ValidationState& state) {
+  if (!checkVbkTx(atv.transaction, state)) {
+    return state.addStackFunction("checkATV()");
+  }
+  if (!checkMerklePath(atv.merklePath,
+                       atv.transaction.getHash(),
+                       atv.containingBlock.merkleRoot,
+                       state)) {
+    return state.addStackFunction("checkATV()");
+  }
+
+  if (!checkVeriBlockBlocks(atv.context, state)) {
+    return state.addStackFunction("checkATV()");
+  }
+
+  return true;
+}
+
+bool checkVTB(const VTB& vtb, ValidationState& state) {
+  if (!checkVbkPopTx(vtb.transaction, state)) {
+    return state.addStackFunction("checkVTB()");
+  }
+
+  if (!checkMerklePath(vtb.merklePath,
+                       vtb.transaction.getHash(),
+                       vtb.containingBlock.merkleRoot,
+                       state)) {
+    return state.addStackFunction("checkVTB()");
+  }
+
+  if (!checkVeriBlockBlocks(vtb.context, state)) {
+    return state.addStackFunction("checkVTB()");
+  }
+
   return true;
 }
 

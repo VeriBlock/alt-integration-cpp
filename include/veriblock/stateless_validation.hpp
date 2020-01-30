@@ -47,7 +47,11 @@ bool checkSignature(const VbkTx& tx, ValidationState& state);
 
 bool checkSignature(const VbkPopTx& tx, ValidationState& state);
 
-bool checkBitcoinBlocks(const VbkPopTx& tx, ValidationState& state);
+bool checkBitcoinBlocks(const std::vector<BtcBlock>& btcBlocks,
+                        ValidationState& state);
+
+bool checkVeriBlockBlocks(const std::vector<VbkBlock>& vbkBlocks,
+                          ValidationState& state);
 
 bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
                                        ValidationState& state);
@@ -63,6 +67,10 @@ bool checkVbkTx(const VbkTx& tx, ValidationState& state);
 bool checkBtcBlock(const BtcBlock& block, ValidationState& state);
 
 bool checkVbkBlock(const VbkBlock& block, ValidationState& state);
+
+bool checkATV(const ATV& atv, ValidationState& state);
+
+bool checkVTB(const VTB& vtb, ValidationState& state);
 }  // namespace VeriBlock
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK_STATELESS_VALIDATION_H
