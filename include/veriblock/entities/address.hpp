@@ -5,8 +5,8 @@
 #include <string>
 
 #include "veriblock/read_stream.hpp"
-#include "veriblock/write_stream.hpp"
 #include "veriblock/slice.hpp"
+#include "veriblock/write_stream.hpp"
 
 namespace VeriBlock {
 
@@ -30,11 +30,14 @@ struct Address {
   bool operator==(const std::string& other) const noexcept {
     return m_Address == other;
   }
-  bool operator!=(const std::string& other) const noexcept {
-    return !(this->operator==(other));
-  }
 
   AddressType getType() const noexcept { return m_Type; }
+
+  /**
+   * Return a Pop bytes from the address
+   * @param stream data stream to write into
+   */
+  void getPopBytes(WriteStream& stream) const;
 
   /**
    * Convert public key to VBK standard address.
@@ -80,12 +83,12 @@ struct Address {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
-  private:
-    AddressType m_Type{};
-    std::string m_Address{};
+ private:
+  Address(AddressType type, std::string addr)
+      : m_Type(type), m_Address(std::move(addr)) {}
 
-    Address(AddressType type, std::string addr)
-        : m_Type(type), m_Address(std::move(addr)) {}
+  AddressType m_Type{};
+  std::string m_Address{};
 };
 
 }  // namespace VeriBlock

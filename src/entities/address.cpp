@@ -1,10 +1,9 @@
-#include "veriblock/entities/address.hpp"
-
 #include <cassert>
 
-#include "veriblock/consts.hpp"
 #include "veriblock/base58.hpp"
 #include "veriblock/base59.hpp"
+#include "veriblock/consts.hpp"
+#include "veriblock/entities/address.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 
@@ -35,7 +34,8 @@ static std::string getChecksumPortionFromAddress(const std::string& address,
                                                  bool multisig) {
   assert(address.length() == ADDRESS_SIZE);
   if (multisig) {
-    return address.substr(MULTISIG_ADDRESS_DATA_END + 1,
+    return address.substr(
+        MULTISIG_ADDRESS_DATA_END + 1,
         MULTISIG_ADDRESS_CHECKSUM_END - MULTISIG_ADDRESS_DATA_END);
   }
   return address.substr(MULTISIG_ADDRESS_DATA_END + 1);
@@ -87,7 +87,7 @@ Address Address::fromPublicKey(Slice<const uint8_t> publicKey) {
 }
 
 bool Address::isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const {
-  auto expectedAddress =fromPublicKey(publicKey);
+  auto expectedAddress = fromPublicKey(publicKey);
   if (*this != expectedAddress) {
     return false;
   }
@@ -176,7 +176,8 @@ Address Address::fromVbkEncoding(ReadStream& stream) {
       break;
     default:
       throw std::invalid_argument(
-          "addressFromVbkEncoding(): invalid address type: neither standard, nor multisig");
+          "addressFromVbkEncoding(): invalid address type: neither standard, "
+          "nor multisig");
   }
 
   return fromString(address);
@@ -193,10 +194,16 @@ void Address::toVbkEncoding(WriteStream& stream) const {
       decoded = DecodeBase59(toString());
       break;
     default:
-      throw std::invalid_argument("addressToVbkEncoding(): unexpected address type to encode");
+      throw std::invalid_argument(
+          "addressToVbkEncoding(): unexpected address type to encode");
   }
 
   writeSingleByteLenValue(stream, decoded);
+}
+
+void Address::getPopBytes(WriteStream& stream) const {
+  std::vector<uint8_t> bytes = DecodeBase58(m_Address.substr(1));
+  stream.write(std::vector<uint8_t>(bytes.begin(), bytes.begin() + 16));
 }
 
 }  // namespace VeriBlock
