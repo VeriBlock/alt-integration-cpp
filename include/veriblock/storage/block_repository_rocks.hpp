@@ -23,6 +23,8 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   BlockRepositoryRocks(std::shared_ptr<rocksdb::DB> db) : _db(db) {}
 
   bool put(const stored_block_t& block) override {
+    // add hash -> block record
+
     // prepare DB key from the block hash bytes
     std::vector<uint8_t> blockHash = block.hash.asVector();
     char* blockHashBytes = reinterpret_cast<char*>(blockHash.data());
@@ -36,7 +38,10 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     char* blockBytes = reinterpret_cast<char*>(tempStreamData.data());
     rocksdb::Slice dbValue(blockBytes, tempStreamData.size());
     rocksdb::Status s = _db->Put(rocksdb::WriteOptions(), dbKey, dbValue);
-    return s.ok();
+    if (!s.ok()) return s.ok();
+
+    ///TODO: also add height -> hash record. Note: height -> hash is one to many.
+    ///TODO: we have to put both writes inside a transaction
   }
 
   bool getByHash(const hash_t& hash, stored_block_t* out) override {

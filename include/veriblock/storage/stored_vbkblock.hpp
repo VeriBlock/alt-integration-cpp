@@ -30,6 +30,7 @@ struct StoredVbkBlock {
   static StoredVbkBlock fromBlock(VbkBlock _block) {
     StoredVbkBlock storedBlock{};
     uint192 hash = _block.getHash();
+    ///TODO: I think it is better to prepend zeroes than append
     ArithUint256 extendedHash(hash);
     storedBlock.hash = extendedHash;
     storedBlock.height = _block.height;
