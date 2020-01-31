@@ -32,6 +32,54 @@ struct Error : public std::exception {};
 }  // namespace db
 
 /**
+ * @class WriteBatch
+ * @brief Efficiently implements bulk write operation for BlockRepository.
+ *
+ * @invariant WriteBatch is always in valid state.
+ * @invariant WriteBatch does not modify on-disk storage after put/remove
+ * operations. It does, when \p BlockRepository::commit is executed on this
+ * batch.
+ */
+template <typename Block>
+struct WriteBatch {
+  //! stored block type
+  using stored_block_t = Block;
+  //! block has type
+  using hash_t = typename Block::hash_t;
+  //! block height type
+  using height_t = typename Block::height_t;
+
+  virtual ~WriteBatch() = default;
+
+  /**
+   * Write a single block. If block with such hash exists, db will overwrite
+   * it.
+   * @param block to be written in a batch
+   * @return true if we overwrite existing block, false otherwise.
+   */
+  virtual bool put(const stored_block_t& block) = 0;
+
+  /**
+   * Remove a single block from storage identified by its hash.
+   * @param hash block hash
+   * @return true if removed, false if no such element found.
+   */
+  virtual bool removeByHash(const hash_t& hash) = 0;
+
+  /**
+   * Remove potentially many blocks at given height.
+   * @param height block height
+   * @return number of blocks removed.
+   */
+  virtual size_t removeByHeight(height_t height) = 0;
+
+  /**
+   * Clear batch from any modifying operations.
+   */
+  virtual void clear() = 0;
+};
+
+/**
  * @class BlockRepository
  *
  * @brief Represents a block tree stored on disk.
@@ -53,46 +101,6 @@ struct BlockRepository {
   using height_t = typename Block::height_t;
 
   virtual ~BlockRepository() = default;
-
-  /**
-   * @class WriteBatch
-   * @brief Efficiently implements bulk write operation for BlockRepository.
-   *
-   * @invariant WriteBatch is always in valid state.
-   * @invariant WriteBatch does not modify on-disk storage after put/remove
-   * operations. It does, when \p BlockRepository::commit is executed on this
-   * batch.
-   */
-  struct WriteBatch {
-    virtual ~WriteBatch() = default;
-
-    /**
-     * Write a single block. If block with such hash exists, db will overwrite
-     * it.
-     * @param block to be written in a batch
-     * @return true if we overwrite existing block, false otherwise.
-     */
-    virtual bool put(const stored_block_t& block) = 0;
-
-    /**
-     * Remove a single block from storage identified by its hash.
-     * @param hash block hash
-     * @return true if removed, false if no such element found.
-     */
-    virtual bool removeByHash(const hash_t& hash) = 0;
-
-    /**
-     * Remove potentially many blocks at given height.
-     * @param height block height
-     * @return number of blocks removed.
-     */
-    virtual size_t removeByHeight(height_t height) = 0;
-
-    /**
-     * Clear batch from any modifying operations.
-     */
-    virtual void clear() = 0;
-  };
 
   /**
    * Load a block from disk in memory, by its hash.
@@ -150,13 +158,13 @@ struct BlockRepository {
    * Create new WriteBatch, to perform BULK modify operations.
    * @return a pointer to new WriteBatch instance.
    */
-  virtual std::unique_ptr<WriteBatch> newBatch() = 0;
+  virtual std::unique_ptr<WriteBatch<stored_block_t>> newBatch() = 0;
 
   /**
    * Efficiently commit given batch on-disk.
    * @param batch
    */
-  virtual void commit(WriteBatch& batch) = 0;
+  virtual void commit(WriteBatch<stored_block_t>& batch) = 0;
 };
 
 }  // namespace VeriBlock

@@ -23,3 +23,6 @@ target_link_libraries(arith_uint256_test vbkutils)
 
 addtest(signutil_test signutil_test.cpp)
 target_link_libraries(signutil_test vbkutils)
+
+addtest(storage_test storage_test.cpp)
+target_link_libraries(storage_test vbkutils)
