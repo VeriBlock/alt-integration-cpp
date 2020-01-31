@@ -1,5 +1,5 @@
-#ifndef ALT_INTEGRATION_VERIBLOCK_BLOCK_REPO_ROCKS_HPP
-#define ALT_INTEGRATION_VERIBLOCK_BLOCK_REPO_ROCKS_HPP
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
 
 #include <rocksdb/db.h>
 
@@ -30,7 +30,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
     // prepare DB value from the block header bytes
     WriteStream stream;
-    block.header.toRaw(stream);
+    block.block.toRaw(stream);
     // stream data is read only so make a copy first
     std::vector<uint8_t> tempStreamData(stream.data().begin(), stream.data().end());
     char* blockBytes = reinterpret_cast<char*>(tempStreamData.data());
@@ -80,4 +80,4 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
 }  // namespace VeriBlock
 
-#endif  //ALT_INTEGRATION_VERIBLOCK_BLOCK_REPO_ROCKS_HPP
+#endif  //ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
