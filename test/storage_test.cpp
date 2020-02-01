@@ -27,20 +27,41 @@ static const VbkBlock defaultBlockVbk{5000,
                                       16842752,
                                       1};
 
-TEST(Storage, configTest) {
-  rocksdb::DB *db;
+static rocksdb::Status openDB(
+    rocksdb::DB **db, std::vector<rocksdb::ColumnFamilyHandle *> &cfHandles) {
+  // open DB with two user column families and one default
+  std::vector<rocksdb::ColumnFamilyDescriptor> column_families;
+  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
+      rocksdb::kDefaultColumnFamilyName, rocksdb::ColumnFamilyOptions()));
+  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
+      "height_hashes", rocksdb::ColumnFamilyOptions()));
+  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
+      "hash_block", rocksdb::ColumnFamilyOptions()));
   rocksdb::Options options;
   options.create_if_missing = true;
-  rocksdb::Status s = rocksdb::DB::Open(options, "db-test", &db);
+  options.create_missing_column_families = true;
+  return rocksdb::DB::Open(options, "db-test", column_families, &cfHandles, db);
+}
+
+TEST(Storage, configTest) {
+  rocksdb::DB *db = 0;
+  std::vector<rocksdb::ColumnFamilyHandle *> cfHandles;
+  rocksdb::Status s = openDB(&db, cfHandles);
   ASSERT_TRUE(s.ok());
 
   auto dbPtr = std::shared_ptr<rocksdb::DB>(db);
-  BlockRepositoryRocks<StoredBtcBlock> repoBtc(dbPtr);
+  auto heightHashesHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[1]);
+  auto hashBlockHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[2]);
+  BlockRepositoryRocks<StoredBtcBlock> repoBtc(
+      dbPtr, hashBlockHandlePtr, heightHashesHandlePtr);
   StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
   bool retBtc = repoBtc.put(blockBtc);
   ASSERT_TRUE(retBtc);
 
-  BlockRepositoryRocks<StoredVbkBlock> repoVbk(dbPtr);
+  BlockRepositoryRocks<StoredVbkBlock> repoVbk(
+      dbPtr, hashBlockHandlePtr, heightHashesHandlePtr);
   StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
   bool retVbk = repoVbk.put(blockVbk);
   ASSERT_TRUE(retVbk);

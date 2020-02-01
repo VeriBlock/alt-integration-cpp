@@ -32,6 +32,7 @@ struct Blob {
 
   Blob(Slice<const uint8_t> slice) { assign(slice); }
   Blob(const std::vector<uint8_t>& v) { assign(v); }
+  Blob(const std::string& v) { assign(v); }
 
   Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
@@ -77,11 +78,35 @@ struct Blob {
     return data_[index];
   }
 
+  int compareTo(const Blob<N>& b) const {
+    for (int i = N - 1; i >= 0; i--) {
+      if (data_[i] < b.data_[i]) {
+        return -1;
+      }
+      if (data_[i] > b.data_[i]) {
+        return 1;
+      }
+    }
+    return 0;
+  }
+
   friend inline bool operator==(const Blob<N>& a, const Blob<N>& b) {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
   }
   friend inline bool operator!=(const Blob<N>& a, const Blob<N>& b) {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
+  }
+  friend inline bool operator>(const Blob<N>& a, const Blob<N>& b) {
+    return a.compareTo(b) > 0;
+  }
+  friend inline bool operator<(const Blob<N>& a, const Blob<N>& b) {
+    return a.compareTo(b) < 0;
+  }
+  friend inline bool operator>=(const Blob<N>& a, const Blob<N>& b) {
+    return a.compareTo(b) >= 0;
+  }
+  friend inline bool operator<=(const Blob<N>& a, const Blob<N>& b) {
+    return a.compareTo(b) <= 0;
   }
 
  protected:
