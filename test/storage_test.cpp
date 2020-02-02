@@ -39,19 +39,13 @@ enum class CF_NAMES {
 static const std::string dbName = "db-test";
 // this is main DB instance
 static rocksdb::DB *dbInstance = nullptr;
-static std::shared_ptr<rocksdb::DB> dbPtr{};
 static std::vector<rocksdb::ColumnFamilyHandle *> cfHandles{};
-static std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>> cfHandlePtrs{};
 // column families in the DB
 static std::vector<std::string> cfNames{"default",
                                         "height_hashes_btc",
                                         "hash_block_btc",
                                         "height_hashes_vbk",
                                         "hash_block_vbk"};
-
-// block storage
-static BlockRepositoryRocks<StoredBtcBlock> repoBtc{};
-static BlockRepositoryRocks<StoredVbkBlock> repoVbk{};
 
 static rocksdb::Status openDB() {
   /// TODO: erase DB before opening otherwise it may fail if scheme was changed
@@ -62,6 +56,7 @@ static rocksdb::Status openDB() {
     column_families.push_back(rocksdb::ColumnFamilyDescriptor(
         cfName, rocksdb::ColumnFamilyOptions()));
   }
+  cfHandles.clear();
   rocksdb::Options options;
   options.create_if_missing = true;
   options.create_missing_column_families = true;
@@ -74,12 +69,20 @@ static rocksdb::Status openDB() {
 // this class allows to properly close DB before opening it again
 class TestStorage : public ::testing::Test {
  protected:
+  std::shared_ptr<rocksdb::DB> dbPtr;
+  std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>>
+      cfHandlePtrs;
+  // block storage
+  BlockRepositoryRocks<StoredBtcBlock> repoBtc;
+  BlockRepositoryRocks<StoredVbkBlock> repoVbk;
+
   void SetUp() {
     rocksdb::Status s = openDB();
     ASSERT_TRUE(s.ok());
 
     // prepare smart pointers to look after DB cleanup
     dbPtr = std::shared_ptr<rocksdb::DB>(dbInstance);
+    cfHandlePtrs = std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>>();
     for (rocksdb::ColumnFamilyHandle *cfHandle : cfHandles) {
       auto cfHandlePtr = std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandle);
       cfHandlePtrs.push_back(cfHandlePtr);
@@ -95,12 +98,8 @@ class TestStorage : public ::testing::Test {
         cfHandlePtrs[(int)CF_NAMES::HEIGHT_HASHES_VBK],
         cfHandlePtrs[(int)CF_NAMES::HASH_BLOCK_VBK]);
   }
-  void TearDown() {
-    repoBtc.~BlockRepositoryRocks();
-    repoVbk.~BlockRepositoryRocks();
-    cfHandlePtrs.clear();
-    dbPtr.~shared_ptr();
-  }
+
+  void TearDown() { }
 };
 
 TEST_F(TestStorage, ConfigTest) {

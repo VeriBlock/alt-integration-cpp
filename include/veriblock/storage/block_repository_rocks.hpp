@@ -85,9 +85,21 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   bool getByHeight(height_t height, std::vector<stored_block_t>* out) override {
-    (void)height;
-    (void)out;
-    return false;
+    bool found = false;
+    auto hashSet = getHashesByHeight(height);
+    for (const hash_t& hash : hashSet) {
+      stored_block_t outBlock;
+      bool hashResult = getByHash(hash, &outBlock);
+      if (!hashResult) {
+        ///TODO: some information about non-existing block
+        continue;
+      }
+      found = true;
+      if (out) {
+        out->push_back(outBlock);
+      }
+    }
+    return found;
   }
 
   size_t getManyByHash(Slice<const hash_t> hashes,
@@ -118,6 +130,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   std::shared_ptr<cf_handle_t> _heightHashesHandle{};
   std::shared_ptr<cf_handle_t> _hashBlockHandle{};
 
+  // fetch and decode hashes blob from the DB
   std::set<hash_t> getHashesByHeight(height_t height) {
     std::string heightStr = std::to_string(height);
     std::string dbValue{};
@@ -130,6 +143,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return hashesFromString(dbValue);
   }
 
+  // decode hashes blob
   std::set<hash_t> hashesFromString(const std::string& hashesData) {
     if (hashesData.size() % sizeof(hash_t)) {
       throw db::DbError("Not parceable hashes blob");
@@ -144,6 +158,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return result;
   }
 
+  // encode hashes into blob for DB storage
   std::string hashesToString(const std::set<hash_t>& hashes) const {
     std::string result{};
     for (hash_t hash : hashes) {
