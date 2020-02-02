@@ -30,12 +30,24 @@ struct StoredVbkBlock {
   static StoredVbkBlock fromBlock(VbkBlock _block) {
     StoredVbkBlock storedBlock{};
     uint192 hash = _block.getHash();
-    ///TODO: I think it is better to prepend zeroes than append
     ArithUint256 extendedHash(hash);
     storedBlock.hash = extendedHash;
     storedBlock.height = _block.height;
     storedBlock.block = _block;
     return storedBlock;
+  }
+
+  std::string toRaw() const {
+    WriteStream stream;
+    block.toRaw(stream);
+    return std::string(reinterpret_cast<const char*>(stream.data().data()),
+                       stream.data().size());
+  }
+
+  static StoredVbkBlock fromRaw(const std::string& bytes) {
+    ReadStream stream(bytes);
+    VbkBlock block = VbkBlock::fromRaw(stream);
+    return fromBlock(block);
   }
 };
 

@@ -3,9 +3,8 @@
 
 #include <cstdint>
 
-#include "veriblock/uint.hpp"
-
 #include "veriblock/entities/btcblock.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 
@@ -32,6 +31,20 @@ struct StoredBtcBlock {
     storedBlock.height = _height;
     storedBlock.block = _block;
     return storedBlock;
+  }
+
+  std::string toRaw() const {
+    WriteStream stream;
+    block.toRaw(stream);
+    stream.writeLE<height_t>(height);
+    return std::string(reinterpret_cast<const char *>(stream.data().data()), stream.data().size());
+  }
+
+  static StoredBtcBlock fromRaw(const std::string& bytes) {
+    ReadStream stream(bytes);
+    BtcBlock block = BtcBlock::fromRaw(stream);
+    height_t _height = stream.readLE<height_t>();
+    return fromBlock(block, _height);
   }
 };
 

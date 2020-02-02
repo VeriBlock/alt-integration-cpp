@@ -2,12 +2,9 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
 
 #include <set>
-
 #include <rocksdb/db.h>
-
 #include "veriblock/serde.hpp"
 #include "veriblock/strutil.hpp"
-
 #include "veriblock/storage/block_repository.hpp"
 #include "veriblock/storage/db_error.hpp"
 
@@ -35,14 +32,14 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   bool put(const stored_block_t& block) override {
     // add hash -> block record
-    std::string blockHashBytes(
+
+    std::string blockHash(
       reinterpret_cast<const char*>(block.hash.data()),
       block.hash.size());
-    std::string blockBytes = blockToBytes(block);
+    std::string blockBytes = block.toRaw();
 
     rocksdb::Status s = _db->Put(rocksdb::WriteOptions(),
-                                 _hashBlockHandle.get(),
-                                 blockHashBytes,
+                                 _hashBlockHandle.get(), blockHash,
                                  blockBytes);
     if (!s.ok()) {
       throw db::DbError(s.ToString());
@@ -51,6 +48,8 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     // add height -> hashes record
 
     auto hashesList = getHashesByHeight(block.height);
+    ///TODO: non-atomic change of the value. Do something about it.
+
     std::string heightStr = std::to_string(block.height);
     hashesList.insert(block.hash);
     std::string hashesStr = hashesToString(hashesList);
@@ -62,15 +61,24 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     if (!s.ok()) {
       throw db::DbError(s.ToString());
     }
-
-    s = _db->Flush(rocksdb::FlushOptions());
-    return s.ok();
+    return true;
   }
 
   bool getByHash(const hash_t& hash, stored_block_t* out) override {
-    (void)hash;
-    (void)out;
-    return false;
+    std::string blockHash(reinterpret_cast<const char*>(hash.data()),
+                          hash.size());
+
+    std::string dbValue{};
+    rocksdb::Status s = _db->Get(rocksdb::ReadOptions(), _hashBlockHandle.get(),
+                                 blockHash,
+                                 &dbValue);
+    if (!s.ok()) {
+      if (s.IsNotFound()) return false;
+      throw db::DbError(s.ToString());
+    }
+
+    *out = stored_block_t::fromRaw(dbValue);
+    return true;
   }
 
   bool getByHeight(height_t height, std::vector<stored_block_t>* out) override {
@@ -106,13 +114,6 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   std::shared_ptr<rocksdb::DB> _db;
   std::shared_ptr<cf_handle_t> _hashBlockHandle;
   std::shared_ptr<cf_handle_t> _heightHashesHandle;
-
-  std::string blockToBytes(const stored_block_t& block) const {
-    // prepare DB value from the block header bytes
-    WriteStream stream;
-    block.block.toRaw(stream);
-    return std::string(stream.data().begin(), stream.data().end());
-  }
 
   std::set<hash_t> getHashesByHeight(height_t height) {
     std::string heightStr = std::to_string(height);

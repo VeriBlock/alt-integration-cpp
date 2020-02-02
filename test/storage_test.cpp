@@ -29,21 +29,27 @@ static const VbkBlock defaultBlockVbk{5000,
 
 static rocksdb::Status openDB(
     rocksdb::DB **db, std::vector<rocksdb::ColumnFamilyHandle *> &cfHandles) {
-  // open DB with two user column families and one default
+  ///TODO: erase DB before opening otherwise it may fail if scheme was changed
+
+  // prepare column families
   std::vector<rocksdb::ColumnFamilyDescriptor> column_families;
   column_families.push_back(rocksdb::ColumnFamilyDescriptor(
       rocksdb::kDefaultColumnFamilyName, rocksdb::ColumnFamilyOptions()));
   column_families.push_back(rocksdb::ColumnFamilyDescriptor(
-      "height_hashes", rocksdb::ColumnFamilyOptions()));
+      "height_hashes_btc", rocksdb::ColumnFamilyOptions()));
   column_families.push_back(rocksdb::ColumnFamilyDescriptor(
-      "hash_block", rocksdb::ColumnFamilyOptions()));
+      "hash_block_btc", rocksdb::ColumnFamilyOptions()));
+  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
+      "height_hashes_vbk", rocksdb::ColumnFamilyOptions()));
+  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
+      "hash_block_vbk", rocksdb::ColumnFamilyOptions()));
   rocksdb::Options options;
   options.create_if_missing = true;
   options.create_missing_column_families = true;
   return rocksdb::DB::Open(options, "db-test", column_families, &cfHandles, db);
 }
 
-TEST(Storage, configTest) {
+TEST(Storage, ConfigTest) {
   rocksdb::DB *db = 0;
   std::vector<rocksdb::ColumnFamilyHandle *> cfHandles;
   rocksdb::Status s = openDB(&db, cfHandles);
@@ -54,19 +60,57 @@ TEST(Storage, configTest) {
   // destroy it properly otherwise we will see assertion failed
   auto defaultHandlePtr =
       std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[0]);
-  auto heightHashesHandlePtr =
+  auto heightHashesBtcHandlePtr =
       std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[1]);
-  auto hashBlockHandlePtr =
+  auto hashBlockBtcHandlePtr =
       std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[2]);
+  auto heightHashesVbkHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[3]);
+  auto hashBlockVbkHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[4]);
   BlockRepositoryRocks<StoredBtcBlock> repoBtc(
-      dbPtr, hashBlockHandlePtr, heightHashesHandlePtr);
+      dbPtr, hashBlockBtcHandlePtr, heightHashesBtcHandlePtr);
   StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
   bool retBtc = repoBtc.put(blockBtc);
   ASSERT_TRUE(retBtc);
 
   BlockRepositoryRocks<StoredVbkBlock> repoVbk(
-      dbPtr, hashBlockHandlePtr, heightHashesHandlePtr);
+      dbPtr, hashBlockVbkHandlePtr, heightHashesVbkHandlePtr);
   StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
   bool retVbk = repoVbk.put(blockVbk);
   ASSERT_TRUE(retVbk);
+}
+
+TEST(Storage, PutAndGet) {
+  rocksdb::DB *db = 0;
+  std::vector<rocksdb::ColumnFamilyHandle *> cfHandles;
+  rocksdb::Status s = openDB(&db, cfHandles);
+  ASSERT_TRUE(s.ok());
+
+  auto dbPtr = std::shared_ptr<rocksdb::DB>(db);
+  // make sure we save a pointer to default handle. We should
+  // destroy it properly otherwise we will see assertion failed
+  auto defaultHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[0]);
+  auto heightHashesBtcHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[1]);
+  auto hashBlockBtcHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[2]);
+  auto heightHashesVbkHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[3]);
+  auto hashBlockVbkHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[4]);
+  BlockRepositoryRocks<StoredBtcBlock> repoBtc(
+      dbPtr, hashBlockBtcHandlePtr, heightHashesBtcHandlePtr);
+  StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
+  bool retBtc = repoBtc.put(blockBtc);
+  ASSERT_TRUE(retBtc);
+
+  StoredBtcBlock readBlock;
+  bool readResult = repoBtc.getByHash(defaultBlockBtc.getHash(), &readBlock);
+  ASSERT_TRUE(readResult);
+
+  EXPECT_EQ(blockBtc.height, readBlock.height);
+  EXPECT_EQ(blockBtc.hash, readBlock.hash);
+  EXPECT_EQ(blockBtc.block.version, readBlock.block.version);
 }
