@@ -23,12 +23,15 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
  public:
+  BlockRepositoryRocks() = default;
+
   BlockRepositoryRocks(std::shared_ptr<rocksdb::DB> db,
-                       std::shared_ptr<cf_handle_t> hashBlockHandle,
-                       std::shared_ptr<cf_handle_t> heightHashesHandle)
+                       std::shared_ptr<cf_handle_t> heightHashesHandle,
+                       std::shared_ptr<cf_handle_t> hashBlockHandle)
       : _db(db),
-        _hashBlockHandle(hashBlockHandle),
-        _heightHashesHandle(heightHashesHandle) {}
+        _heightHashesHandle(heightHashesHandle),
+        _hashBlockHandle(hashBlockHandle)
+  {}
 
   bool put(const stored_block_t& block) override {
     // add hash -> block record
@@ -111,9 +114,9 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   void commit(WriteBatch<stored_block_t>& batch) override { (void)batch; }
 
  private:
-  std::shared_ptr<rocksdb::DB> _db;
-  std::shared_ptr<cf_handle_t> _hashBlockHandle;
-  std::shared_ptr<cf_handle_t> _heightHashesHandle;
+  std::shared_ptr<rocksdb::DB> _db{};
+  std::shared_ptr<cf_handle_t> _heightHashesHandle{};
+  std::shared_ptr<cf_handle_t> _hashBlockHandle{};
 
   std::set<hash_t> getHashesByHeight(height_t height) {
     std::string heightStr = std::to_string(height);

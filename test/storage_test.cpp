@@ -27,81 +27,92 @@ static const VbkBlock defaultBlockVbk{5000,
                                       16842752,
                                       1};
 
-static rocksdb::Status openDB(
-    rocksdb::DB **db, std::vector<rocksdb::ColumnFamilyHandle *> &cfHandles) {
-  ///TODO: erase DB before opening otherwise it may fail if scheme was changed
+enum class CF_NAMES {
+  DEFAULT = 0,
+  HEIGHT_HASHES_BTC,
+  HASH_BLOCK_BTC,
+  HEIGHT_HASHES_VBK,
+  HASH_BLOCK_VBK
+};
+
+// DB name
+static const std::string dbName = "db-test";
+// this is main DB instance
+static rocksdb::DB *dbInstance = nullptr;
+static std::shared_ptr<rocksdb::DB> dbPtr{};
+static std::vector<rocksdb::ColumnFamilyHandle *> cfHandles{};
+static std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>> cfHandlePtrs{};
+// column families in the DB
+static std::vector<std::string> cfNames{"default",
+                                        "height_hashes_btc",
+                                        "hash_block_btc",
+                                        "height_hashes_vbk",
+                                        "hash_block_vbk"};
+
+// block storage
+static BlockRepositoryRocks<StoredBtcBlock> repoBtc{};
+static BlockRepositoryRocks<StoredVbkBlock> repoVbk{};
+
+static rocksdb::Status openDB() {
+  /// TODO: erase DB before opening otherwise it may fail if scheme was changed
 
   // prepare column families
   std::vector<rocksdb::ColumnFamilyDescriptor> column_families;
-  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
-      rocksdb::kDefaultColumnFamilyName, rocksdb::ColumnFamilyOptions()));
-  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
-      "height_hashes_btc", rocksdb::ColumnFamilyOptions()));
-  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
-      "hash_block_btc", rocksdb::ColumnFamilyOptions()));
-  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
-      "height_hashes_vbk", rocksdb::ColumnFamilyOptions()));
-  column_families.push_back(rocksdb::ColumnFamilyDescriptor(
-      "hash_block_vbk", rocksdb::ColumnFamilyOptions()));
+  for (std::string cfName : cfNames) {
+    column_families.push_back(rocksdb::ColumnFamilyDescriptor(
+        cfName, rocksdb::ColumnFamilyOptions()));
+  }
   rocksdb::Options options;
   options.create_if_missing = true;
   options.create_missing_column_families = true;
-  return rocksdb::DB::Open(options, "db-test", column_families, &cfHandles, db);
+  rocksdb::Status s = rocksdb::DB::Open(
+      options, dbName, column_families, &cfHandles, &dbInstance);
+  if (!s.ok()) return s;
+  return s;
 }
 
-TEST(Storage, ConfigTest) {
-  rocksdb::DB *db = 0;
-  std::vector<rocksdb::ColumnFamilyHandle *> cfHandles;
-  rocksdb::Status s = openDB(&db, cfHandles);
-  ASSERT_TRUE(s.ok());
+// this class allows to properly close DB before opening it again
+class TestStorage : public ::testing::Test {
+ protected:
+  void SetUp() {
+    rocksdb::Status s = openDB();
+    ASSERT_TRUE(s.ok());
 
-  auto dbPtr = std::shared_ptr<rocksdb::DB>(db);
-  // make sure we save a pointer to default handle. We should
-  // destroy it properly otherwise we will see assertion failed
-  auto defaultHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[0]);
-  auto heightHashesBtcHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[1]);
-  auto hashBlockBtcHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[2]);
-  auto heightHashesVbkHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[3]);
-  auto hashBlockVbkHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[4]);
-  BlockRepositoryRocks<StoredBtcBlock> repoBtc(
-      dbPtr, hashBlockBtcHandlePtr, heightHashesBtcHandlePtr);
+    // prepare smart pointers to look after DB cleanup
+    dbPtr = std::shared_ptr<rocksdb::DB>(dbInstance);
+    for (rocksdb::ColumnFamilyHandle *cfHandle : cfHandles) {
+      auto cfHandlePtr = std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandle);
+      cfHandlePtrs.push_back(cfHandlePtr);
+    }
+
+    repoBtc = BlockRepositoryRocks<StoredBtcBlock>(
+        dbPtr,
+        cfHandlePtrs[(int)CF_NAMES::HEIGHT_HASHES_BTC],
+        cfHandlePtrs[(int)CF_NAMES::HASH_BLOCK_BTC]);
+
+    repoVbk = BlockRepositoryRocks<StoredVbkBlock>(
+        dbPtr,
+        cfHandlePtrs[(int)CF_NAMES::HEIGHT_HASHES_VBK],
+        cfHandlePtrs[(int)CF_NAMES::HASH_BLOCK_VBK]);
+  }
+  void TearDown() {
+    repoBtc.~BlockRepositoryRocks();
+    repoVbk.~BlockRepositoryRocks();
+    cfHandlePtrs.clear();
+    dbPtr.~shared_ptr();
+  }
+};
+
+TEST_F(TestStorage, ConfigTest) {
   StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
   bool retBtc = repoBtc.put(blockBtc);
   ASSERT_TRUE(retBtc);
-
-  BlockRepositoryRocks<StoredVbkBlock> repoVbk(
-      dbPtr, hashBlockVbkHandlePtr, heightHashesVbkHandlePtr);
   StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
   bool retVbk = repoVbk.put(blockVbk);
   ASSERT_TRUE(retVbk);
 }
 
-TEST(Storage, PutAndGet) {
-  rocksdb::DB *db = 0;
-  std::vector<rocksdb::ColumnFamilyHandle *> cfHandles;
-  rocksdb::Status s = openDB(&db, cfHandles);
-  ASSERT_TRUE(s.ok());
-
-  auto dbPtr = std::shared_ptr<rocksdb::DB>(db);
-  // make sure we save a pointer to default handle. We should
-  // destroy it properly otherwise we will see assertion failed
-  auto defaultHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[0]);
-  auto heightHashesBtcHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[1]);
-  auto hashBlockBtcHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[2]);
-  auto heightHashesVbkHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[3]);
-  auto hashBlockVbkHandlePtr =
-      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[4]);
-  BlockRepositoryRocks<StoredBtcBlock> repoBtc(
-      dbPtr, hashBlockBtcHandlePtr, heightHashesBtcHandlePtr);
+TEST_F(TestStorage, PutAndGet) {
   StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
   bool retBtc = repoBtc.put(blockBtc);
   ASSERT_TRUE(retBtc);
