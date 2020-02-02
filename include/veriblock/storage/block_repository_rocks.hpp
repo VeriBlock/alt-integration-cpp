@@ -104,9 +104,20 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   size_t getManyByHash(Slice<const hash_t> hashes,
                        std::vector<stored_block_t>* out) override {
-    (void)hashes;
-    (void)out;
-    return 0;
+    size_t found = 0;
+    for (const hash_t& hash : hashes) {
+      stored_block_t outBlock;
+      bool blockResult = getByHash(hash, &outBlock);
+      if (!blockResult) {
+        /// TODO: some information about non-existing block
+        continue;
+      }
+      found++;
+      if (out) {
+        out->push_back(outBlock);
+      }
+    }
+    return found;
   }
 
   bool removeByHash(const hash_t& hash) override {

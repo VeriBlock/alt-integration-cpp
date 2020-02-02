@@ -17,6 +17,14 @@ static const BtcBlock defaultBlockBtc{
     436279940u,
     (uint32_t)-1695416274};
 
+static const BtcBlock btcBlock1{
+    545259520,
+    "fc61cc9d4eac4b2d14761a4d06af8a9ef073dcd7fb5e0d000000000000000000"_unhex,
+    "a31508d4b101d0ad11e43ef9419c23fc277f67edae83c598ee70866dbcef5e25"_unhex,
+    1553697574,
+    388767596,
+    (uint32_t)-1351345951};
+
 static const VbkBlock defaultBlockVbk{5000,
                                       2,
                                       "449c60619294546ad825af03"_unhex,
@@ -123,4 +131,20 @@ TEST_F(TestStorage, PutAndGet) {
   EXPECT_EQ(blockBtc.height, readBlock.height);
   EXPECT_EQ(blockBtc.hash, readBlock.hash);
   EXPECT_EQ(blockBtc.block.version, readBlock.block.version);
+}
+
+TEST_F(TestStorage, GetMany) {
+  StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
+  StoredBtcBlock anotherBlockBtc = StoredBtcBlock::fromBlock(btcBlock1, 0);
+  bool retBtc = repoBtc.put(blockBtc);
+  ASSERT_TRUE(retBtc);
+  retBtc = repoBtc.put(anotherBlockBtc);
+  ASSERT_TRUE(retBtc);
+
+  std::vector<StoredBtcBlock> out{};
+  bool readResult = repoBtc.getByHeight(0, &out);
+  ASSERT_TRUE(readResult);
+
+  EXPECT_EQ(out.size(), 2);
+  ///TODO: check for block data in the result set
 }
