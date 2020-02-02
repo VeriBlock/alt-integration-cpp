@@ -50,6 +50,10 @@ TEST(Storage, configTest) {
   ASSERT_TRUE(s.ok());
 
   auto dbPtr = std::shared_ptr<rocksdb::DB>(db);
+  // make sure we save a pointer to default handle. We should
+  // destroy it properly otherwise we will see assertion failed
+  auto defaultHandlePtr =
+      std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[0]);
   auto heightHashesHandlePtr =
       std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandles[1]);
   auto hashBlockHandlePtr =

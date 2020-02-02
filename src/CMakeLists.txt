@@ -32,7 +32,6 @@ add_library(vbkutils
         $<TARGET_OBJECTS:secp256k1>
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:vblake>
-        storage/block_repository_rocks.cpp
         )
 
 target_link_libraries(vbkutils PRIVATE RocksDB::rocksdb)
