@@ -1,12 +1,14 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
 
-#include <set>
 #include <rocksdb/db.h>
+
+#include <set>
+
 #include "veriblock/serde.hpp"
-#include "veriblock/strutil.hpp"
 #include "veriblock/storage/block_repository.hpp"
 #include "veriblock/storage/db_error.hpp"
+#include "veriblock/strutil.hpp"
 
 namespace VeriBlock {
 
@@ -18,7 +20,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   using hash_t = typename Block::hash_t;
   //! block height type
   using height_t = typename Block::height_t;
-  
+
   //! column family type
   using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
@@ -30,33 +32,35 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
                        std::shared_ptr<cf_handle_t> hashBlockHandle)
       : _db(db),
         _heightHashesHandle(heightHashesHandle),
-        _hashBlockHandle(hashBlockHandle)
-  {}
+        _hashBlockHandle(hashBlockHandle) {}
 
   bool put(const stored_block_t& block) override {
     // add hash -> block record
 
-    std::string blockHash(
-      reinterpret_cast<const char*>(block.hash.data()),
-      block.hash.size());
+    std::string blockHash(reinterpret_cast<const char*>(block.hash.data()),
+                          block.hash.size());
     std::string blockBytes = block.toRaw();
 
-    rocksdb::Status s = _db->Put(rocksdb::WriteOptions(),
-                                 _hashBlockHandle.get(), blockHash,
-                                 blockBytes);
+    rocksdb::Status s = _db->Put(
+        rocksdb::WriteOptions(), _hashBlockHandle.get(), blockHash, blockBytes);
     if (!s.ok()) {
       throw db::DbError(s.ToString());
     }
 
     // add height -> hashes record
 
-    auto hashesList = getHashesByHeight(block.height);
-    ///TODO: non-atomic change of the value. Do something about it.
+    std::set<hash_t> hashesList = getHashesByHeight(block.height);
+    size_t hashesListSize = hashesList.size();
 
     std::string heightStr = std::to_string(block.height);
     hashesList.insert(block.hash);
-    std::string hashesStr = hashesToString(hashesList);
 
+    // nothing changed - no need for the DB update
+    if (hashesList.size() == hashesListSize) {
+      return true;
+    }
+
+    std::string hashesStr = hashesToString(hashesList);
     s = _db->Put(rocksdb::WriteOptions(),
                  _heightHashesHandle.get(),
                  heightStr,
@@ -70,11 +74,9 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   bool getByHash(const hash_t& hash, stored_block_t* out) override {
     std::string blockHash(reinterpret_cast<const char*>(hash.data()),
                           hash.size());
-
     std::string dbValue{};
-    rocksdb::Status s = _db->Get(rocksdb::ReadOptions(), _hashBlockHandle.get(),
-                                 blockHash,
-                                 &dbValue);
+    rocksdb::Status s = _db->Get(
+        rocksdb::ReadOptions(), _hashBlockHandle.get(), blockHash, &dbValue);
     if (!s.ok()) {
       if (s.IsNotFound()) return false;
       throw db::DbError(s.ToString());
@@ -86,12 +88,11 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   bool getByHeight(height_t height, std::vector<stored_block_t>* out) override {
     bool found = false;
-    auto hashSet = getHashesByHeight(height);
-    for (const hash_t& hash : hashSet) {
-      stored_block_t outBlock;
-      bool hashResult = getByHash(hash, &outBlock);
-      if (!hashResult) {
-        ///TODO: some information about non-existing block
+    std::set<hash_t> hashesList = getHashesByHeight(height);
+    for (const hash_t& hash : hashesList) {
+      stored_block_t outBlock{};
+      if (!getByHash(hash, &outBlock)) {
+        /// TODO: some information about non-existing block
         continue;
       }
       found = true;
@@ -106,9 +107,8 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
                        std::vector<stored_block_t>* out) override {
     size_t found = 0;
     for (const hash_t& hash : hashes) {
-      stored_block_t outBlock;
-      bool blockResult = getByHash(hash, &outBlock);
-      if (!blockResult) {
+      stored_block_t outBlock{};
+      if (!getByHash(hash, &outBlock)) {
         /// TODO: some information about non-existing block
         continue;
       }
@@ -122,20 +122,19 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   bool removeByHash(const hash_t& hash) override {
     // obtain block information
-    stored_block_t outBlock;
-    bool hashResult = getByHash(hash, &outBlock);
-    if (!hashResult) return hashResult;
+    stored_block_t outBlock{};
+    if (!getByHash(hash, &outBlock)) return false;
 
     // obtain hashes blob for the block height
-    auto hashSet = getHashesByHeight(outBlock.height);
+    std::set<hash_t> hashesList = getHashesByHeight(outBlock.height);
 
     // remove block hash from the hashes blob
-    auto hashRecord = hashSet.find(hash);
-    if (hashRecord != hashSet.end()) {
-      hashSet.erase(hashRecord);
+    auto hashRecord = hashesList.find(hash);
+    if (hashRecord != hashesList.end()) {
+      hashesList.erase(hashRecord);
 
       std::string heightStr = std::to_string(outBlock.height);
-      std::string hashesStr = hashesToString(hashSet);
+      std::string hashesStr = hashesToString(hashesList);
 
       // update hashes blob in the DB
       rocksdb::Status updateStatus = _db->Put(rocksdb::WriteOptions(),
@@ -152,11 +151,10 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   size_t removeByHeight(height_t height) override {
     // obtain hashes blob for the height
-    auto hashSet = getHashesByHeight(height);
+    std::set<hash_t> hashesList = getHashesByHeight(height);
     size_t deletedCount = 0;
-    for (const hash_t& hash : hashSet) {
-      bool deleted = deleteBlockByHash(hash);
-      if (!deleted) continue;
+    for (const hash_t& hash : hashesList) {
+      if (!deleteBlockByHash(hash)) continue;
       deletedCount++;
     }
 
@@ -232,4 +230,4 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
 }  // namespace VeriBlock
 
-#endif  //ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
