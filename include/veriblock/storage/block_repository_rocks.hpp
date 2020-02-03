@@ -121,13 +121,52 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   bool removeByHash(const hash_t& hash) override {
-    (void)hash;
-    return false;
+    // obtain block information
+    stored_block_t outBlock;
+    bool hashResult = getByHash(hash, &outBlock);
+    if (!hashResult) return hashResult;
+
+    // obtain hashes blob for the block height
+    auto hashSet = getHashesByHeight(outBlock.height);
+
+    // remove block hash from the hashes blob
+    auto hashRecord = hashSet.find(hash);
+    if (hashRecord != hashSet.end()) {
+      hashSet.erase(hashRecord);
+
+      std::string heightStr = std::to_string(outBlock.height);
+      std::string hashesStr = hashesToString(hashSet);
+
+      // update hashes blob in the DB
+      rocksdb::Status updateStatus = _db->Put(rocksdb::WriteOptions(),
+                                              _heightHashesHandle.get(),
+                                              heightStr,
+                                              hashesStr);
+      if (!updateStatus.ok()) {
+        throw db::DbError(updateStatus.ToString());
+      }
+    }
+
+    return deleteBlockByHash(hash);
   }
 
   size_t removeByHeight(height_t height) override {
-    (void)height;
-    return 0;
+    // obtain hashes blob for the height
+    auto hashSet = getHashesByHeight(height);
+    size_t deletedCount = 0;
+    for (const hash_t& hash : hashSet) {
+      bool deleted = deleteBlockByHash(hash);
+      if (!deleted) continue;
+      deletedCount++;
+    }
+
+    std::string heightStr = std::to_string(height);
+    rocksdb::Status s = _db->Delete(
+        rocksdb::WriteOptions(), _heightHashesHandle.get(), heightStr);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+    return deletedCount;
   }
 
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
@@ -152,6 +191,17 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
       throw db::DbError(s.ToString());
     }
     return hashesFromString(dbValue);
+  }
+
+  bool deleteBlockByHash(const hash_t& hash) {
+    std::string blockHash(reinterpret_cast<const char*>(hash.data()),
+                          hash.size());
+    rocksdb::Status s =
+        _db->Delete(rocksdb::WriteOptions(), _hashBlockHandle.get(), blockHash);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+    return true;
   }
 
   // decode hashes blob
