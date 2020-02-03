@@ -97,13 +97,13 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
         uint32_t limit =
             std::min(chunkDescriptorLength, chunkOffset + offsetLength);
         int sectionOffsetValue =
-            getIntFromBits(chunkDescriptor, chunkOffset, limit);
+            ::getIntFromBits(chunkDescriptor, chunkOffset, limit);
 
         uint32_t sectionLengthValue = 0;
         if (i == 0) {
           sectionLengthValue = (uint32_t)pop_data.size() - totalBytesRead;
         } else {
-          sectionLengthValue = getIntFromBits(
+          sectionLengthValue = ::getIntFromBits(
               chunkDescriptor, chunkOffset - sectionLength, chunkOffset);
         }
         buffer.position(buffer.position() + sectionOffsetValue);
