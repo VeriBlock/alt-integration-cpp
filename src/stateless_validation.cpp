@@ -79,8 +79,8 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
       std::vector<bool> chunkDescriptor;
       // Read from Slice bits
       uint32_t chunkDescriptorLength = 0;
-      for (uint32_t i1 = 0; i1 < chunkDescriptorBytes.size(); ++i1) {
-        std::bitset<8> temp(chunkDescriptorBytes[i1]);
+      for (const auto& i1 : chunkDescriptorBytes) {
+        std::bitset<8> temp(i1);
         for (uint32_t i2 = 0; i2 < 8; ++i2) {
           chunkDescriptor.push_back(temp[i2]);
           if (temp[i2]) {
@@ -90,7 +90,7 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
       }
 
       int totalBytesRead = 0;
-      buffer.position(0);
+      buffer.setPosition(0);
       std::vector<uint8_t> extracted;
       for (int i = chunks - 1; i >= 0; --i) {
         uint32_t chunkOffset = waste + (i * (offsetLength + sectionLength));
@@ -106,7 +106,7 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
           sectionLengthValue = ::getIntFromBits(
               chunkDescriptor, chunkOffset - sectionLength, chunkOffset);
         }
-        buffer.position(buffer.position() + sectionOffsetValue);
+        buffer.setPosition(buffer.position() + sectionOffsetValue);
         Slice<const uint8_t> bytes = buffer.readSlice(sectionLengthValue);
         totalBytesRead += sectionLengthValue;
         extracted.insert(extracted.end(), bytes.begin(), bytes.end());
@@ -115,7 +115,7 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
       if (pop_data == extracted) {
         return true;
       }
-      buffer.position(lastPos);
+      buffer.setPosition(lastPos);
     }
   } catch (const std::exception&) {
   }
