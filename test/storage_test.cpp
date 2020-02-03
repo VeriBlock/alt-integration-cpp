@@ -9,7 +9,7 @@
 
 using namespace VeriBlock;
 
-static const BtcBlock defaultBlockBtc{
+static const BtcBlock btcBlock1{
     536870912u,
     "f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000"_unhex,
     "f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"_unhex,
@@ -17,7 +17,7 @@ static const BtcBlock defaultBlockBtc{
     436279940u,
     (uint32_t)-1695416274};
 
-static const BtcBlock btcBlock1{
+static const BtcBlock btcBlock2{
     545259520,
     "fc61cc9d4eac4b2d14761a4d06af8a9ef073dcd7fb5e0d000000000000000000"_unhex,
     "a31508d4b101d0ad11e43ef9419c23fc277f67edae83c598ee70866dbcef5e25"_unhex,
@@ -110,8 +110,8 @@ class TestStorage : public ::testing::Test {
   void TearDown() { }
 };
 
-TEST_F(TestStorage, ConfigTest) {
-  StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
+TEST_F(TestStorage, SimplePut) {
+  StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(btcBlock1, 0);
   bool retBtc = repoBtc.put(blockBtc);
   ASSERT_TRUE(retBtc);
   StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
@@ -120,25 +120,49 @@ TEST_F(TestStorage, ConfigTest) {
 }
 
 TEST_F(TestStorage, PutAndGet) {
-  StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
+  StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(btcBlock1, 0);
   bool retBtc = repoBtc.put(blockBtc);
   ASSERT_TRUE(retBtc);
 
   StoredBtcBlock readBlock;
-  bool readResult = repoBtc.getByHash(defaultBlockBtc.getHash(), &readBlock);
+  bool readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
 
-  EXPECT_EQ(blockBtc.height, readBlock.height);
-  EXPECT_EQ(blockBtc.hash, readBlock.hash);
-  EXPECT_EQ(blockBtc.block.version, readBlock.block.version);
+  EXPECT_EQ(readBlock.height, blockBtc.height);
+  EXPECT_EQ(readBlock.hash, blockBtc.hash);
+  EXPECT_EQ(readBlock.hash, btcBlock1.getHash());
+  EXPECT_EQ(readBlock.height, 0);
+  EXPECT_EQ(readBlock.block.version, btcBlock1.version);
+  EXPECT_EQ(readBlock.block.previousBlock, btcBlock1.previousBlock);
+  EXPECT_EQ(readBlock.block.timestamp, btcBlock1.timestamp);
+  EXPECT_EQ(readBlock.block.bits, btcBlock1.bits);
+}
+
+TEST_F(TestStorage, PutAndGetVbk) {
+  StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
+  bool retVbk = repoVbk.put(blockVbk);
+  ASSERT_TRUE(retVbk);
+
+  StoredVbkBlock readBlock;
+  bool readResult = repoVbk.getByHash(
+      StoredVbkBlock::getExtendedHash(defaultBlockVbk.getHash()), &readBlock);
+  ASSERT_TRUE(readResult);
+
+  EXPECT_EQ(readBlock.height, defaultBlockVbk.height);
+  EXPECT_EQ(readBlock.hash,
+            StoredVbkBlock::getExtendedHash(defaultBlockVbk.getHash()));
+  EXPECT_EQ(readBlock.block.getHash(), defaultBlockVbk.getHash());
+  EXPECT_EQ(readBlock.block.version, defaultBlockVbk.version);
+  EXPECT_EQ(readBlock.block.previousBlock, defaultBlockVbk.previousBlock);
+  EXPECT_EQ(readBlock.block.timestamp, defaultBlockVbk.timestamp);
 }
 
 TEST_F(TestStorage, GetMany) {
-  StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(defaultBlockBtc, 0);
-  StoredBtcBlock anotherBlockBtc = StoredBtcBlock::fromBlock(btcBlock1, 0);
-  bool retBtc = repoBtc.put(blockBtc);
+  StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
+  StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 0);
+  bool retBtc = repoBtc.put(storedBtcBlock1);
   ASSERT_TRUE(retBtc);
-  retBtc = repoBtc.put(anotherBlockBtc);
+  retBtc = repoBtc.put(storedBtcBlock2);
   ASSERT_TRUE(retBtc);
 
   std::vector<StoredBtcBlock> out{};
@@ -146,5 +170,18 @@ TEST_F(TestStorage, GetMany) {
   ASSERT_TRUE(readResult);
 
   EXPECT_EQ(out.size(), 2);
-  ///TODO: check for block data in the result set
+  
+  StoredBtcBlock blockOut1 = out[0];
+  StoredBtcBlock blockOut2 = out[1];
+  if (blockOut1.hash != storedBtcBlock1.hash) {
+    blockOut1 = out[1];
+    blockOut2 = out[0];
+  }
+
+  EXPECT_EQ(blockOut1.hash, storedBtcBlock1.hash);
+  EXPECT_EQ(blockOut1.height, 0);
+  EXPECT_EQ(blockOut1.block.version, btcBlock1.version);
+  EXPECT_EQ(blockOut2.hash, storedBtcBlock2.hash);
+  EXPECT_EQ(blockOut2.height, 0);
+  EXPECT_EQ(blockOut2.block.version, btcBlock2.version);
 }

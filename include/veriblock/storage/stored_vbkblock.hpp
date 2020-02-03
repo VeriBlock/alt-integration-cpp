@@ -29,9 +29,7 @@ struct StoredVbkBlock {
 
   static StoredVbkBlock fromBlock(VbkBlock _block) {
     StoredVbkBlock storedBlock{};
-    uint192 hash = _block.getHash();
-    ArithUint256 extendedHash(hash);
-    storedBlock.hash = extendedHash;
+    storedBlock.hash = getExtendedHash(_block.getHash());
     storedBlock.height = _block.height;
     storedBlock.block = _block;
     return storedBlock;
@@ -49,6 +47,8 @@ struct StoredVbkBlock {
     VbkBlock block = VbkBlock::fromRaw(stream);
     return fromBlock(block);
   }
+
+  static hash_t getExtendedHash(const uint192& hash) { return ArithUint256(hash); }
 };
 
 }  // namespace VeriBlock
