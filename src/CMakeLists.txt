@@ -34,4 +34,4 @@ add_library(vbkutils
         $<TARGET_OBJECTS:vblake>
         )
 
-target_link_libraries(vbkutils PRIVATE RocksDB::rocksdb)
+target_link_libraries(vbkutils RocksDB::rocksdb)

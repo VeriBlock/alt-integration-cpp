@@ -1,5 +1,4 @@
-# target_link_libraries(main PRIVATE RocksDB::rocksdb RocksDB::rocksdb-shared)
-find_package(RocksDB CONFIG REQUIRED)
+find_package(RocksDB REQUIRED)
 
 find_package(GTest)
 if(NOT GTEST_FOUND)

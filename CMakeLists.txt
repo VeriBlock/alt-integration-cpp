@@ -6,11 +6,11 @@ if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-
 project(alt-integration C CXX)
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules")
 include(cmake/functions.cmake)
 include(cmake/dependencies.cmake)
 
@@ -20,9 +20,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
-option(ASAN         "Enable Address Sanitizer" OFF)
-option(TSAN         "Enable Thread Sanitizer" OFF)
-option(UBSAN        "Enable Undefined Behavior Sanitizer" OFF)
+option(ASAN         "Enable Address Sanitizer" ON)
+option(TSAN         "Enable Thread Sanitizer" ON)
+option(UBSAN        "Enable Undefined Behavior Sanitizer" ON)
 option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 
@@ -53,6 +53,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wno-unused-function)
     add_flag(-Wno-nonnull-compare)
     add_flag(-Wno-unknown-pragmas)
+    add_cxx_flag(-Wno-literal-suffix)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     if(WERROR)
         add_compile_options(/WX)                      # treats all compiler warnings as errors.
