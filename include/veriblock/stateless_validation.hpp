@@ -12,6 +12,9 @@
 
 namespace VeriBlock {
 
+bool containsSplit(const std::vector<uint8_t>& pop_data,
+                   const std::vector<uint8_t>& btcTx_data);
+
 template <typename BlockType>
 bool checkMaximumDrift(const BlockType& block, ValidationState& state) {
   uint32_t currentTime = currentTimestamp4();
