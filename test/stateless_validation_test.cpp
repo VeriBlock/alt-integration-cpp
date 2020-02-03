@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include "util/test_utils.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 using namespace VeriBlock;
@@ -108,7 +109,12 @@ static const ATV validATV = {
      1553699059,
      16842752,
      1},
-    std::vector<VbkBlock>()};
+    {VbkBlock::fromRaw(
+         "000212B90002500640D2DCFDD047AF3F197C2BB743C05C2619919657462191847838E067A540836ABBE2C5AB1AA8DA98602D68C05DFB5C010405F5E1584D4024"_unhex),
+     VbkBlock::fromRaw(
+         "000212BA0002539544FC18F77FD997B080D52BB743C05C2619919657462191847838E067FF19E383F41F4B8A586142E47DB3B6225DFB5C080405F5E15876C544"_unhex),
+     VbkBlock::fromRaw(
+         "000212BB0002304FB9683DAFC9396A7F36492BB743C05C2619919657462191847838E067A87CF5F304B4E102B104320C5CBA33B85DFB5C500405F5E15A2670DE"_unhex)}};
 
 static const VTB validVTB = {
     validPopTx,
@@ -129,7 +135,13 @@ static const VTB validVTB = {
       uint256(
           "36252DFC621DE420FB083AD9D8767CBA627EDDEEC64E421E9576CEE21297DD0A"_unhex)}},
     VbkBlock::fromRaw(
-        "000013700002449C60619294546AD825AF03B0935637860679DDD55EE4FD21082E18686EB53C1F4E259E6A0DF23721A0B3B4B7AB5C9B9211070211CAF01C3F01"_unhex)};
+        "000013700002449C60619294546AD825AF03B0935637860679DDD55EE4FD21082E18686EB53C1F4E259E6A0DF23721A0B3B4B7AB5C9B9211070211CAF01C3F01"_unhex),
+    {VbkBlock::fromRaw(
+         "000212B90002500640D2DCFDD047AF3F197C2BB743C05C2619919657462191847838E067A540836ABBE2C5AB1AA8DA98602D68C05DFB5C010405F5E1584D4024"_unhex),
+     VbkBlock::fromRaw(
+         "000212BA0002539544FC18F77FD997B080D52BB743C05C2619919657462191847838E067FF19E383F41F4B8A586142E47DB3B6225DFB5C080405F5E15876C544"_unhex),
+     VbkBlock::fromRaw(
+         "000212BB0002304FB9683DAFC9396A7F36492BB743C05C2619919657462191847838E067A87CF5F304B4E102B104320C5CBA33B85DFB5C500405F5E15A2670DE"_unhex)}};
 
 TEST(StetlessValidation, checkBtcBlock_when_valid_test) {
   ValidationState state;
@@ -200,21 +212,14 @@ TEST(StatelessValidation, ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
 
 TEST(StatelessValidation, ATV_checkVeriBlockBlocks_blocks_not_contigous) {
   ATV atv = validATV;
-  atv.context = {
-      VbkBlock::fromRaw(
-          "0000136D0002F903421B4902C14349C57BA5B0935637860679DDD55EE4FD21082E18686E419C0F1A5E87635F1F32447638D07BED5C9B918A070213309FCF3256"_unhex),
-      VbkBlock::fromRaw(
-          "0000136E0002479695C9DE9AE24345187976B0935637860679DDD55EE4FD21082E18686EA9E8BC5B6B41348F93D5D8FA6A91F1D55C9B919F07021CC236237392"_unhex)};
+  atv.context.erase(atv.context.begin() + 1);
   ValidationState state;
   ASSERT_FALSE(checkVbkBlocks(atv.context, state));
 }
 
 TEST(StatelessValidation, VTB_valid) {
   ValidationState state;
-  ASSERT_TRUE(checkMerklePath(validVTB.merklePath,
-                              validVTB.transaction.getHash(),
-                              validVTB.containingBlock.merkleRoot,
-                              state));
+  ASSERT_TRUE(checkVTB(validVTB, state));
 }
 
 TEST(StatelessValidation, VTB_checkMerklePath_different_transaction_invalid) {
@@ -242,11 +247,7 @@ TEST(StatelessValidation, VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
 
 TEST(StatelessValidation, VTB_checkVeriBlockBlocks_blocks_not_contigous) {
   VTB vtb = validVTB;
-  vtb.context = {
-      VbkBlock::fromRaw(
-          "0000136D0002F903421B4902C14349C57BA5B0935637860679DDD55EE4FD21082E18686E419C0F1A5E87635F1F32447638D07BED5C9B918A070213309FCF3256"_unhex),
-      VbkBlock::fromRaw(
-          "0000136E0002479695C9DE9AE24345187976B0935637860679DDD55EE4FD21082E18686EA9E8BC5B6B41348F93D5D8FA6A91F1D55C9B919F07021CC236237392"_unhex)};
+  vtb.context.erase(vtb.context.begin() + 1);
   ValidationState state;
   ASSERT_FALSE(checkVbkBlocks(vtb.context, state));
 }
@@ -332,4 +333,75 @@ TEST(StatelessValidation, VbkTx_different_address_invalid) {
       "3056301006072A8648CE3D020106552B8104000A03420004DE4EE8300C3CD99E913536CF53C4ADD179F048F8FE90E5ADF3ED19668DD1DBF6C2D8E692B1D36EAC7187950620A28838DA60A8C9DD60190C14C59B82CB90319E"_unhex;
   ValidationState state;
   ASSERT_FALSE(checkSignature(tx, state));
+}
+
+TEST(StatelessValidation, containsSplit_when_descriptor_before_chunks) {
+  srand(0);
+
+  WriteStream buffer;
+  buffer.write(generateRandonBytesVector(15));
+
+  // Descriptor bytes (3 MAGIC, 1 SIZE, 7 SECTIONALS)
+  buffer.write("927A594624509D41F548C0"_unhex);
+
+  buffer.write(generateRandonBytesVector(10));
+
+  // First chunk of 20 bytes
+  buffer.write("00000767000193093228BD2B4906F6B84BE5E618"_unhex);
+
+  buffer.write(generateRandonBytesVector(39));
+
+  // Second chunk of 20 bytes
+  buffer.write("09C0522626145DDFB988022A0684E2110D384FE2"_unhex);
+
+  buffer.write(generateRandonBytesVector(31));
+
+  // Third chunk of 21 bytes
+  buffer.write("BFD38549CB19C41893C258BA5B9CAB24060BA2D410"_unhex);
+
+  buffer.write(generateRandonBytesVector(35));
+
+  // Fourth chunk of unstated 19 bytes
+  buffer.write("39DFC857801424B0F5DE63992A016F5F38FEB4"_unhex);
+
+  buffer.write(generateRandonBytesVector(22));
+
+  ASSERT_TRUE(containsSplit(
+      "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,
+      buffer.data()));
+}
+
+TEST(StatelessValidation, containsSplit_when_chunked) {
+  srand(0);
+
+  WriteStream buffer;
+  buffer.write(generateRandonBytesVector(15));
+
+  // Descriptor bytes (3 MAGIC, 1 SIZE, 7 SECTIONALS)
+  buffer.write("927A594624509D41F548C0"_unhex);
+
+  buffer.write(generateRandonBytesVector(10));
+
+  buffer.write("00000767000193093228BD2B4906F6B84BE5E618"_unhex);
+
+  buffer.write(generateRandonBytesVector(39));
+
+  // Second chunk of 20 bytes
+  buffer.write("09C0522626145DDFB988022A0684E2110D384FE2"_unhex);
+
+  buffer.write(generateRandonBytesVector(31));
+
+  // Third chunk of 21 bytes
+  buffer.write("BFD38549CB19C41893C258BA5B9CAB24060BA2D410"_unhex);
+
+  buffer.write(generateRandonBytesVector(35));
+
+  // Fourth chunk of unstated 19 bytes
+  buffer.write("39DFC857801424B0F5DE63992A016F5F38FEB4"_unhex);
+
+  buffer.write(generateRandonBytesVector(22));
+
+  ASSERT_TRUE(containsSplit(
+      "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,
+      buffer.data()));
 }
