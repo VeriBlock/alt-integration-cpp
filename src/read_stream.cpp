@@ -21,7 +21,7 @@ void ReadStream::assign(const void *buff, size_t numOfBytes) {
 
 size_t ReadStream::position() const noexcept { return m_Pos; }
 
-void ReadStream::position(const size_t &pos) noexcept { m_Pos = pos; }
+void ReadStream::setPosition(const size_t &pos) noexcept { m_Pos = pos; }
 
 size_t ReadStream::remaining() const noexcept { return (m_Size - m_Pos); }
 
