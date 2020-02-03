@@ -84,6 +84,7 @@ class ReadStream {
   }
 
   size_t position() const noexcept;
+  void position(const size_t &) noexcept;
   size_t remaining() const noexcept;
   bool hasMore(size_t nbytes) const noexcept;
   void reset() noexcept;
