@@ -20,9 +20,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
-option(ASAN         "Enable Address Sanitizer" ON)
-option(TSAN         "Enable Thread Sanitizer" ON)
-option(UBSAN        "Enable Undefined Behavior Sanitizer" ON)
+option(ASAN         "Enable Address Sanitizer" OFF)
+option(TSAN         "Enable Thread Sanitizer" OFF)
+option(UBSAN        "Enable Undefined Behavior Sanitizer" OFF)
 option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 
