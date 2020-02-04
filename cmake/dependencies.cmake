@@ -1,9 +1,7 @@
 if(WIN32)
     find_package(RocksDB CONFIG REQUIRED)
-endif()
-
-if(NOT WIN32)
-    find_package(RocksDB CONFIG REQUIRED)
+else()
+    find_package(RocksDB REQUIRED)
 endif()
 
 find_package(GTest)
