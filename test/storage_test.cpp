@@ -78,8 +78,7 @@ static rocksdb::Status openDB() {
 class TestStorage : public ::testing::Test {
  protected:
   std::shared_ptr<rocksdb::DB> dbPtr;
-  std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>>
-      cfHandlePtrs;
+  std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>> cfHandlePtrs;
   // block storage
   BlockRepositoryRocks<StoredBtcBlock> repoBtc;
   BlockRepositoryRocks<StoredVbkBlock> repoVbk;
@@ -107,7 +106,7 @@ class TestStorage : public ::testing::Test {
         cfHandlePtrs[(int)CF_NAMES::HASH_BLOCK_VBK]);
   }
 
-  void TearDown() { }
+  void TearDown() {}
 };
 
 TEST_F(TestStorage, SimplePut) {
@@ -170,7 +169,7 @@ TEST_F(TestStorage, GetMany) {
   ASSERT_TRUE(readResult);
 
   EXPECT_EQ(out.size(), 2);
-  
+
   StoredBtcBlock blockOut1 = out[0];
   StoredBtcBlock blockOut2 = out[1];
   if (blockOut1.hash != storedBtcBlock1.hash) {
@@ -184,4 +183,109 @@ TEST_F(TestStorage, GetMany) {
   EXPECT_EQ(blockOut2.hash, storedBtcBlock2.hash);
   EXPECT_EQ(blockOut2.height, 0);
   EXPECT_EQ(blockOut2.block.version, btcBlock2.version);
+}
+
+TEST_F(TestStorage, GetManyByHash) {
+  StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
+  StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 0);
+  bool retBtc = repoBtc.put(storedBtcBlock1);
+  ASSERT_TRUE(retBtc);
+  retBtc = repoBtc.put(storedBtcBlock2);
+  ASSERT_TRUE(retBtc);
+
+  std::vector<uint256> hashes{storedBtcBlock1.hash, storedBtcBlock2.hash};
+  Slice<const uint256> hashesSlice(hashes.data(), hashes.size());
+  std::vector<StoredBtcBlock> out{};
+  size_t readResult = repoBtc.getManyByHash(hashesSlice, &out);
+  ASSERT_EQ(readResult, 2);
+
+  EXPECT_EQ(out.size(), 2);
+
+  StoredBtcBlock blockOut1 = out[0];
+  StoredBtcBlock blockOut2 = out[1];
+  if (blockOut1.hash != storedBtcBlock1.hash) {
+    blockOut1 = out[1];
+    blockOut2 = out[0];
+  }
+
+  EXPECT_EQ(blockOut1.hash, storedBtcBlock1.hash);
+  EXPECT_EQ(blockOut2.hash, storedBtcBlock2.hash);
+}
+
+TEST_F(TestStorage, RemoveByHash) {
+  StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
+  bool retBtc = repoBtc.put(storedBtcBlock1);
+  ASSERT_TRUE(retBtc);
+
+  StoredBtcBlock readBlock;
+  bool readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
+  ASSERT_TRUE(readResult);
+
+  bool deleteResult = repoBtc.removeByHash(btcBlock1.getHash());
+  ASSERT_TRUE(deleteResult);
+
+  readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
+  EXPECT_FALSE(readResult);
+}
+
+TEST_F(TestStorage, RemoveByHeight) {
+  StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
+  StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 0);
+  bool retBtc = repoBtc.put(storedBtcBlock1);
+  ASSERT_TRUE(retBtc);
+  retBtc = repoBtc.put(storedBtcBlock2);
+  ASSERT_TRUE(retBtc);
+
+  std::vector<StoredBtcBlock> out{};
+  bool readResult = repoBtc.getByHeight(0, &out);
+  ASSERT_TRUE(readResult);
+
+  EXPECT_EQ(out.size(), 2);
+
+  size_t deleteResult = repoBtc.removeByHeight(0);
+  EXPECT_EQ(deleteResult, 2);
+
+  readResult = repoBtc.getByHeight(0, &out);
+  EXPECT_FALSE(readResult);
+}
+
+TEST_F(TestStorage, RemoveNonExisting) {
+  uint256 zeroHash{};
+  bool deleteResult = repoBtc.removeByHash(zeroHash);
+  EXPECT_FALSE(deleteResult);
+
+  size_t deleteByHeightResult = repoBtc.removeByHeight(1000000);
+  EXPECT_EQ(deleteByHeightResult, 0);
+}
+
+TEST_F(TestStorage, RemovePartially) {
+  StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
+  StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 1);
+  bool retBtc = repoBtc.put(storedBtcBlock1);
+  ASSERT_TRUE(retBtc);
+  retBtc = repoBtc.put(storedBtcBlock2);
+  ASSERT_TRUE(retBtc);
+
+  std::vector<StoredBtcBlock> out{};
+  bool readResult = repoBtc.getByHeight(0, &out);
+  ASSERT_TRUE(readResult);
+  EXPECT_EQ(out.size(), 1);
+
+  // results are appended on consecutive get calls
+  readResult = repoBtc.getByHeight(1, &out);
+  ASSERT_TRUE(readResult);
+  EXPECT_EQ(out.size(), 2);
+
+  out.clear();
+
+  size_t deleteResult = repoBtc.removeByHeight(0);
+  EXPECT_EQ(deleteResult, 1);
+
+  readResult = repoBtc.getByHeight(0, &out);
+  EXPECT_FALSE(readResult);
+  EXPECT_EQ(out.size(), 0);
+
+  readResult = repoBtc.getByHeight(1, &out);
+  EXPECT_TRUE(readResult);
+  EXPECT_EQ(out.size(), 1);
 }
