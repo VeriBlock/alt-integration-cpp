@@ -10,7 +10,7 @@ project(alt-integration C CXX)
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules")
+# list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules")
 include(cmake/functions.cmake)
 include(cmake/dependencies.cmake)
 
@@ -25,6 +25,7 @@ option(TSAN         "Enable Thread Sanitizer" OFF)
 option(UBSAN        "Enable Undefined Behavior Sanitizer" OFF)
 option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
+option(WITH_ROCKSDB "Enable RocksDB storage" ON)
 
 ## setup compilation flags
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
@@ -80,6 +81,10 @@ include(GNUInstallDirs)
 include_directories(include)
 
 add_subdirectory(src)
+
+if(WITH_ROCKSDB)
+    add_subdirectory(deps/rocksdb)
+endif()
 
 if(CLANG_TIDY)
     include(cmake/clang-tidy.cmake)

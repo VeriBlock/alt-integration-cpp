@@ -34,4 +34,6 @@ add_library(vbkutils
         $<TARGET_OBJECTS:vblake>
         )
 
-target_link_libraries(vbkutils RocksDB::rocksdb ${CMAKE_DL_LIBS})
+if(WITH_ROCKSDB)
+    target_link_libraries(vbkutils RocksDB::rocksdb)
+endif()

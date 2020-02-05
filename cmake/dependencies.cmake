@@ -1,7 +1,5 @@
-if(WIN32)
-    find_package(RocksDB CONFIG REQUIRED)
-else()
-    find_package(RocksDB REQUIRED)
+if(WITH_ROCKSDB)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/deps/rocksdb)
 endif()
 
 find_package(GTest)
