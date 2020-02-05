@@ -6,3 +6,5 @@ target_link_libraries(secp256k1_test vbkutils)
 
 addtest(format_test format_test.cpp)
 target_link_libraries(secp256k1_test vbkutils)
+
+addtest(gmock_test gmock_test.cpp)
