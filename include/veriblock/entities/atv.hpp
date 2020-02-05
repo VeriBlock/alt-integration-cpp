@@ -4,12 +4,11 @@
 #include <cstdint>
 #include <vector>
 
-#include "veriblock/serde.hpp"
 #include "veriblock/consts.hpp"
-
-#include "veriblock/entities/vbktx.hpp"
-#include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbk_merkle_path.hpp"
+#include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/entities/vbktx.hpp"
+#include "veriblock/serde.hpp"
 
 namespace VeriBlock {
 
@@ -19,29 +18,18 @@ struct ATV {
   VbkBlock containingBlock{};
   std::vector<VbkBlock> context{};
 
-  static ATV fromVbkEncoding(ReadStream& stream) {
-    ATV atv{};
-    atv.transaction = VbkTx::fromVbkEncoding(stream);
-    atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
-    atv.containingBlock = VbkBlock::fromVbkEncoding(stream);
-    atv.context = readArrayOf<VbkBlock>(
-        stream, 0, MAX_CONTEXT_COUNT_ALT_PUBLICATION, [](ReadStream& stream) {
-          return VbkBlock::fromVbkEncoding(stream);
-        });
+  /**
+   * Read VBK data from the stream and convert it to ATV
+   * @param stream data stream to read from
+   * @return ATV
+   */
+  static ATV fromVbkEncoding(ReadStream& stream);
 
-    return atv;
-  }
-
-  void toVbkEncoding(WriteStream& stream) const {
-    WriteStream txStream;
-    transaction.toVbkEncoding(stream);
-    merklePath.toVbkEncoding(stream);
-    containingBlock.toVbkEncoding(stream);
-    writeSingleBEValue(stream, context.size());
-    for (const auto& block : context) {
-      block.toVbkEncoding(stream);
-    }
-  }
+  /**
+   * Convert ATV to data stream using Vbk byte format
+   * @param stream data stream to write into
+   */
+  void toVbkEncoding(WriteStream& stream) const;
 };
 
 }  // namespace VeriBlock
