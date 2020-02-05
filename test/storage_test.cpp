@@ -60,9 +60,10 @@ static rocksdb::Status openDB() {
 
   // prepare column families
   std::vector<rocksdb::ColumnFamilyDescriptor> column_families;
-  for (std::string cfName : cfNames) {
-    column_families.push_back(rocksdb::ColumnFamilyDescriptor(
-        cfName, rocksdb::ColumnFamilyOptions()));
+  rocksdb::ColumnFamilyOptions cfOption{};
+  for (const std::string& cfName : cfNames) {
+    rocksdb::ColumnFamilyDescriptor descriptor(cfName, cfOption);
+    column_families.push_back(descriptor);
   }
   cfHandles.clear();
   rocksdb::Options options;
