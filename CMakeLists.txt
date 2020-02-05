@@ -6,13 +6,11 @@ if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-
 project(alt-integration C CXX)
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(cmake/functions.cmake)
-include(cmake/dependencies.cmake)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
@@ -25,6 +23,9 @@ option(TSAN         "Enable Thread Sanitizer" OFF)
 option(UBSAN        "Enable Undefined Behavior Sanitizer" OFF)
 option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
+option(WITH_ROCKSDB "Enable RocksDB storage" ON)
+
+include(cmake/dependencies.cmake)
 
 ## setup compilation flags
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
@@ -53,6 +54,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wno-unused-function)
     add_flag(-Wno-nonnull-compare)
     add_flag(-Wno-unknown-pragmas)
+    add_cxx_flag(-Wno-literal-suffix)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     if(WERROR)
         add_compile_options(/WX)                      # treats all compiler warnings as errors.
