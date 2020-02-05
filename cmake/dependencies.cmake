@@ -8,7 +8,7 @@ if(WITH_ROCKSDB)
     set(CMAKE_DISABLE_FIND_PACKAGE_NUMA TRUE CACHE BOOL "disable find NUMA package")
     set(CMAKE_DISABLE_FIND_PACKAGE_gtest TRUE CACHE BOOL "disable find gtest package")
     set(CMAKE_DISABLE_FIND_PACKAGE_Git TRUE CACHE BOOL "disable find git package")
-    message("Add rocksdb")
+    message(STATUS "Adding rocksdb")
     add_subdirectory(${CMAKE_SOURCE_DIR}/deps/rocksdb EXCLUDE_FROM_ALL)
 endif()
 
