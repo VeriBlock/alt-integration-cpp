@@ -4,8 +4,6 @@
 #include <memory>
 #include <vector>
 
-#include "veriblock/storage/repository_exceptions.hpp"
-
 namespace VeriBlock {
 
 template <typename Endorsement, typedef AltChainBlock>
