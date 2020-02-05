@@ -19,15 +19,24 @@ struct BtcTx {
   BtcTx(const std::vector<uint8_t>& bytes) : tx(bytes) {}
   BtcTx(Slice<const uint8_t> slice) : tx(slice.begin(), slice.end()) {}
 
-  static BtcTx fromVbkEncoding(ReadStream& stream) {
-    return BtcTx(readVarLenValue(stream, 0, BTC_TX_MAX_RAW_SIZE));
-  }
+  /**
+   * Read VBK data from the stream and convert it to BtcTx
+   * @param stream data stream to read from
+   * @return BtcTx
+   */
+  static BtcTx fromVbkEncoding(ReadStream& stream);
 
-  void toVbkEncoding(WriteStream& stream) const {
-    writeVarLenValue(stream, tx);
-  }
+  /**
+   * Convert BtcTx to data stream using BtcTx VBK byte format
+   * @param stream data stream to write into
+   */
+  void toVbkEncoding(WriteStream& stream) const;
 
-  uint256 getHash() const { return sha256twice(tx); }
+  /**
+   * Calculate the hash of the btc transaction
+   * @return hash transaction hash
+   */
+  uint256 getHash() const;
 };
 
 }  // namespace VeriBlock

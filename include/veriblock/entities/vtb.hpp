@@ -3,12 +3,10 @@
 
 #include <vector>
 
-#include "veriblock/serde.hpp"
-#include "veriblock/consts.hpp"
-
-#include "veriblock/entities/vbkpoptx.hpp"
-#include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbk_merkle_path.hpp"
+#include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/entities/vbkpoptx.hpp"
+#include "veriblock/serde.hpp"
 
 namespace VeriBlock {
 
@@ -18,29 +16,18 @@ struct VTB {
   VbkBlock containingBlock{};
   std::vector<VbkBlock> context{};
 
-  static VTB fromVbkEncoding(ReadStream& stream) {
-    VTB vtb{};
-    vtb.transaction = VbkPopTx::fromVbkEncoding(stream);
-    vtb.merklePath = VbkMerklePath::fromVbkEncoding(stream);
-    vtb.containingBlock = VbkBlock::fromVbkEncoding(stream);
-    vtb.context = readArrayOf<VbkBlock>(
-        stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
-          return VbkBlock::fromVbkEncoding(stream);
-        });
+  /**
+   * Read VBK data from the stream and convert it to VTB
+   * @param stream data stream to read from
+   * @return VTB
+   */
+  static VTB fromVbkEncoding(ReadStream& stream);
 
-    return vtb;
-  }
-
-  void toVbkEncoding(WriteStream& stream) const {
-    WriteStream txStream;
-    transaction.toVbkEncoding(stream);
-    merklePath.toVbkEncoding(stream);
-    containingBlock.toVbkEncoding(stream);
-    writeSingleBEValue(stream, context.size());
-    for (const auto& block : context) {
-      block.toVbkEncoding(stream);
-    }
-  }
+  /**
+   * Convert VTB to data stream using Vbk byte format
+   * @param stream data stream to write into
+   */
+  void toVbkEncoding(WriteStream& stream) const;
 };
 
 }  // namespace VeriBlock

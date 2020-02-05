@@ -14,30 +14,26 @@ struct PublicationData {
   std::vector<uint8_t> payoutInfo{};
   std::vector<uint8_t> contextInfo{};
 
-  static PublicationData fromRaw(const std::vector<uint8_t> bytes) {
-    ReadStream stream(bytes);
-    return fromRaw(stream);
-  }
+  /**
+   * Read data from the vector of bytes and convert it to
+   * PublicationData
+   * @param stream data stream to read from
+   * @return PublicationData
+   */
+  static PublicationData fromRaw(const std::vector<uint8_t> bytes);
 
-  static PublicationData fromRaw(ReadStream& stream) {
-    PublicationData pub;
-    pub.identifier = readSingleBEValue<int64_t>(stream);
-    pub.header =
-        readVarLenValue(stream, 0, MAX_HEADER_SIZE_PUBLICATION_DATA).asVector();
-    pub.contextInfo =
-        readVarLenValue(stream, 0, MAX_CONTEXT_SIZE_PUBLICATION_DATA)
-            .asVector();
-    pub.payoutInfo =
-        readVarLenValue(stream, 0, MAX_PAYOUT_SIZE_PUBLICATION_DATA).asVector();
-    return pub;
-  }
+  /**
+   * Read data from the stream and convert it to PublicationData
+   * @param stream data stream to read from
+   * @return PublicationData
+   */
+  static PublicationData fromRaw(ReadStream& stream);
 
-  void toRaw(WriteStream& stream) const {
-    writeSingleBEValue(stream, identifier);
-    writeVarLenValue(stream, header);
-    writeVarLenValue(stream, contextInfo);
-    writeVarLenValue(stream, payoutInfo);
-  }
+  /**
+   * Convert PublicationData to data stream using PublicationData byte format
+   * @param stream data stream to write into
+   */
+  void toRaw(WriteStream& stream) const;
 };
 
 }  // namespace VeriBlock
