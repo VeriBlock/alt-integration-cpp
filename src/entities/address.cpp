@@ -47,7 +47,7 @@ static bool isBase58String(const std::string& input) {
     auto decoded = DecodeBase58(input);
     (void)decoded;
     return true;
-  } catch (const std::invalid_argument& e) {
+  } catch (const std::invalid_argument& /*ignore*/) {
     // do not throw - return status instead
   }
   return false;
@@ -58,7 +58,7 @@ static bool isBase59String(const std::string& input) {
     auto decoded = DecodeBase59(input);
     (void)decoded;
     return true;
-  } catch (const std::invalid_argument& e) {
+  } catch (const std::invalid_argument& /*ignore*/) {
     // do not throw - return status instead
   }
   return false;
