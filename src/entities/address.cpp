@@ -1,9 +1,10 @@
+#include "veriblock/entities/address.hpp"
+
 #include <cassert>
 
 #include "veriblock/base58.hpp"
 #include "veriblock/base59.hpp"
 #include "veriblock/consts.hpp"
-#include "veriblock/entities/address.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 
@@ -46,7 +47,7 @@ static bool isBase58String(const std::string& input) {
     auto decoded = DecodeBase58(input);
     (void)decoded;
     return true;
-  } catch (std::invalid_argument e) {
+  } catch (const std::invalid_argument& e) {
     // do not throw - return status instead
   }
   return false;
@@ -57,7 +58,7 @@ static bool isBase59String(const std::string& input) {
     auto decoded = DecodeBase59(input);
     (void)decoded;
     return true;
-  } catch (std::invalid_argument e) {
+  } catch (const std::invalid_argument& e) {
     // do not throw - return status instead
   }
   return false;
