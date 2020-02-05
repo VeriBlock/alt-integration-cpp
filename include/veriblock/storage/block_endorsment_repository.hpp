@@ -6,7 +6,7 @@
 
 namespace VeriBlock {
 
-template <typename Endorsement, typedef AltChainBlock>
+template <typename Endorsement, typename AltChainBlock>
 struct BlockEndorsmentRepository {
   //! stored block type
   using stored_block_t = AltChainBlock;
