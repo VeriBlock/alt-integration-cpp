@@ -14,18 +14,27 @@ struct Coin {
 
   explicit Coin(int64_t atomicUnits) : units(atomicUnits) {}
 
-  static Coin fromVbkEncoding(ReadStream& stream) {
-    return Coin(readSingleBEValue<int64_t>(stream));
-  }
+  /**
+   * Read VBK data from the stream and convert it to Coin
+   * @param stream data stream to read from
+   * @return Coin
+   */
+  static Coin fromVbkEncoding(ReadStream& stream);
 
-  void toVbkEncoding(WriteStream& stream) const {
-    writeSingleBEValue(stream, units);
-  }
+  /**
+   * Convert Coin to data stream using BtcTx Coin byte format
+   * @param stream data stream to write into
+   */
+  void toVbkEncoding(WriteStream& stream) const;
 
-  bool operator==(const Coin& other) const noexcept {
-    return units == other.units;
-  }
-};
+  /**
+   * Compare two Coins for equality
+   * @param other Coin
+   * @result comparing result
+   */
+  bool operator==(const Coin& other) const noexcept;
+
+};  // namespace VeriBlock
 
 }  // namespace VeriBlock
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_

@@ -21,57 +21,45 @@ struct VbkBlock {
   int32_t difficulty{};
   int32_t nonce{};
 
-  static VbkBlock fromRaw(const std::vector<uint8_t>& bytes) {
-    ReadStream stream(bytes);
-    return fromRaw(stream);
-  }
+  /**
+   * Read basic blockheader data from the vector of bytes and convert it to
+   * VbkBlock
+   * @param stream data stream to read from
+   * @return VbkBlock
+   */
+  static VbkBlock fromRaw(const std::vector<uint8_t>& bytes);
 
-  static VbkBlock fromRaw(ReadStream& stream) {
-    VbkBlock block{};
-    block.height = stream.readBE<int32_t>();
-    block.version = stream.readBE<int16_t>();
-    block.previousBlock = stream.readSlice(VBLAKE_PREVIOUS_BLOCK_HASH_SIZE);
-    block.previousKeystone =
-        stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
-    block.secondPreviousKeystone =
-        stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
-    block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE);
-    block.timestamp = stream.readBE<int32_t>();
-    block.difficulty = stream.readBE<int32_t>();
-    block.nonce = stream.readBE<int32_t>();
-    return block;
-  }
+  /**
+   * Read basic blockheader data from the stream and convert it to VbkBlock
+   * @param stream data stream to read from
+   * @return VbkBlock
+   */
+  static VbkBlock fromRaw(ReadStream& stream);
 
-  static VbkBlock fromVbkEncoding(ReadStream& stream) {
-    auto blockBytes =
-        readSingleByteLenValue(stream, VBK_HEADER_SIZE, VBK_HEADER_SIZE);
-    ReadStream blockStream(blockBytes);
-    return VbkBlock::fromRaw(blockStream);
-  }
+  /**
+   * Read VBK data from the stream and convert it to VbkBlock
+   * @param stream data stream to read from
+   * @return VbkBlock
+   */
+  static VbkBlock fromVbkEncoding(ReadStream& stream);
 
-  void toRaw(WriteStream& stream) const {
-    stream.writeBE<int32_t>(height);
-    stream.writeBE<int16_t>(version);
-    stream.write(previousBlock);
-    stream.write(previousKeystone);
-    stream.write(secondPreviousKeystone);
-    stream.write(merkleRoot);
-    stream.writeBE<int32_t>(timestamp);
-    stream.writeBE<int32_t>(difficulty);
-    stream.writeBE<int32_t>(nonce);
-  }
+  /**
+   * Convert VbkBlock to data stream using VbkBlock basic byte format
+   * @param stream data stream to write into
+   */
+  void toRaw(WriteStream& stream) const;
 
-  void toVbkEncoding(WriteStream& stream) const {
-    WriteStream blockStream;
-    toRaw(blockStream);
-    writeSingleByteLenValue(stream, blockStream.data());
-  }
+  /**
+   * Convert VbkBlock to data stream using VbkBlock VBK byte format
+   * @param stream data stream to write into
+   */
+  void toVbkEncoding(WriteStream& stream) const;
 
-  uint192 getHash() const {
-    WriteStream stream;
-    toRaw(stream);
-    return vblake(stream.data()).reverse();
-  }
+  /**
+   * Calculate the hash of the vbk block
+   * @return hash block hash
+   */
+  uint192 getHash() const;
 };
 
 }  // namespace VeriBlock
