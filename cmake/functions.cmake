@@ -6,11 +6,16 @@ function(disable_clang_tidy target)
 endfunction()
 
 function(addtest test_name)
+    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+    find_package(Threads REQUIRED)
+
     add_executable(${test_name} ${ARGN})
     addtest_part(${test_name} ${ARGN})
     target_link_libraries(${test_name}
-            GTest::Main
-            GTest::GTest
+            gtest_main
+            gtest
+            gmock
+            Threads::Threads
             )
     add_test(
             NAME ${test_name}
@@ -34,7 +39,7 @@ function(addtest_part test_name)
             ${ARGN}
             )
     target_link_libraries(${test_name}
-            GTest::GTest
+            gtest
             )
 endfunction()
 

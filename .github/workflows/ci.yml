@@ -11,15 +11,16 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-18.04
-    container: veriblock/btcdev
+    container: veriblock/alt-integration-cpp-dev
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DTSAN=ON", "-DUBSAN=ON"]
+        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DTSAN=ON"]
     env:
       CC: clang
       CXX: clang++
       CTEST_OUTPUT_ON_FAILURE: 1
+      USE_RTTI: 1
     steps:
       - uses: actions/checkout@v1
         name: checkout
@@ -50,7 +51,7 @@ jobs:
       - name: install dependencies
         run: |
           vcpkg integrate install
-          vcpkg install gtest
+          vcpkg install rocksdb
       - name: cmake
         run: cmake . -Bbuild -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
       - name: build
