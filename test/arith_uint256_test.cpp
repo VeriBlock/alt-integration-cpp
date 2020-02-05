@@ -440,7 +440,7 @@ TEST_P(DecodeBitsTest, uint256_decodeBits) {
   auto value = GetParam();
 
   ArithUint256 target;
-  target.decodeBits(value.bits);
+  target.decodeBits(value.bits, nullptr, nullptr);
 
   EXPECT_EQ(target, value.target);
 }

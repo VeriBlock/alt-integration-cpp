@@ -11,7 +11,7 @@ enum class TxType {
   VBK_TX = 0x01,
   VBK_POP_TX = 0x02,
 };
-
+constexpr const auto KEYSTONE_INTERVAL = 5;
 constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
 constexpr const auto MAX_PAYOUT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
@@ -99,6 +99,9 @@ constexpr const auto MAX_RAWTX_SIZE_VBKPOPTX =
     1 + PUBLIC_KEY_SIZE +
     // raw.size.size, raw.size
     5;
+
+constexpr const auto BTC_INMEM_BLOCKS_WINDOW = 1000;
+constexpr const auto VBK_INMEM_BLOCKS_WINDOW = 10000;
 
 }  // namespace VeriBlock
 

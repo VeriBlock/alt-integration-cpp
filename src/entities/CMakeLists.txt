@@ -1,0 +1,15 @@
+add_library(entities OBJECT
+        address.cpp
+        atv.cpp
+        btcblock.cpp
+        btctx.cpp
+        coin.cpp
+        merkle_path.cpp
+        output.cpp
+        publication_data.cpp
+        vbk_merkle_path.cpp
+        vbkblock.cpp
+        vbkpoptx.cpp
+        vbktx.cpp
+        vtb.cpp
+        )
