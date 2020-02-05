@@ -33,3 +33,8 @@ add_library(vbkutils
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:vblake>
         )
+
+if(WITH_ROCKSDB)
+    target_link_libraries(vbkutils rocksdb)
+    target_include_directories(vbkutils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../deps/rocksdb/include>)
+endif()
