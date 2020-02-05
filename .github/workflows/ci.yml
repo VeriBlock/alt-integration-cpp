@@ -50,7 +50,6 @@ jobs:
           fetch-depth: 1
       - name: install dependencies
         run: |
-          echo "set(VCPKG_BUILD_TYPE release)" >> C:/vcpkg/triplets/x64-windows.cmake
           vcpkg integrate install
           vcpkg install rocksdb
       - name: cmake
