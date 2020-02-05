@@ -10,6 +10,7 @@ if(WITH_ROCKSDB)
     set(CMAKE_DISABLE_FIND_PACKAGE_Git TRUE CACHE BOOL "disable find git package")
     message(STATUS "Adding rocksdb")
     add_subdirectory(${CMAKE_SOURCE_DIR}/deps/rocksdb EXCLUDE_FROM_ALL)
+    disable_clang_tidy(rocksdb)
 endif()
 
 find_package(GTest)
