@@ -38,7 +38,7 @@ struct Blob {
   Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 
-  iterator begin() noexcept { return data_.data(); }
+  iterator begin() noexcept { return data_.begin(); }
 
   const_iterator begin() const noexcept { return data_.begin(); }
 

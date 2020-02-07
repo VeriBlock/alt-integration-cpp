@@ -15,46 +15,63 @@ struct DummyBlock {
 };
 
 struct ChainTest : public ::testing::Test {
-  Chain<DummyBlock> chain;
-  std::vector<BlockIndex<DummyBlock>> blocks;
-
-  size_t SIZE = 10;
+  Chain<DummyBlock> chain{};
+  std::vector<BlockIndex<DummyBlock>> blocks{};
+  const size_t SIZE = 10;
 
   ChainTest() {
+    // prepare block storage
     for (size_t i = 0; i < SIZE; i++) {
-      BlockIndex<DummyBlock> index;
-      index.height = i;
-      index.pprev = i == 0 ? nullptr : &blocks[i - 1];
+      BlockIndex<DummyBlock> index{};
+      index.height = (int)i;
+      index.pprev = nullptr;
       blocks.push_back(index);
+    }
+
+    // no need to setup links for lists with less than 2 elements
+    if (SIZE < 2) return;
+
+    // fill in the links to previous blocks
+    for (size_t i = 0; i < (SIZE - 1); i++) {
+      auto elem = &blocks[SIZE - i - 1];
+      elem->pprev = &blocks[SIZE - i - 2];
     }
   }
 
-  void validateChain(Chain<DummyBlock>& c) {
-    auto* tip = c.tip();
+  // validate that chain contains the same blocks in the same order
+  void validateChain() {
+    auto* tip = chain.tip();
     ASSERT_NE(tip, nullptr);
 
-    for (int i = 0; i < c.height(); i++) {
-      EXPECT_EQ(c[i], &blocks[i]);
+    for (int i = 0; i < chain.size(); i++) {
+      EXPECT_EQ(chain[i], &blocks[i]);
     }
   }
 };
 
 TEST_F(ChainTest, StartsAt0) {
-  chain.setTip(&*blocks.rbegin());
-  EXPECT_EQ(chain.height(), SIZE);
+  chain.setTip(&(*blocks.rbegin()));
+  EXPECT_EQ(chain.size(), SIZE);
   EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
-  for (size_t i = 0; i < SIZE; i++) {
+
+  // check 'contains' method
+  for (int i = 0; i < (int)SIZE; i++) {
     EXPECT_EQ(chain[i], &blocks[i]);
-    EXPECT_TRUE(chain.contains(blocks[i]));
-  }
-  EXPECT_EQ(chain[-1], nullptr);
-  EXPECT_EQ(chain[SIZE + 1], nullptr);
-  for (size_t i = 0; i < SIZE - 1; i++) {
-    EXPECT_EQ(chain.next(blocks[i]), &blocks[i + 1]);
+    EXPECT_TRUE(chain.contains(&blocks[i]));
   }
 
+  // check out of range blocks
+  EXPECT_EQ(chain[-1], nullptr);
+  EXPECT_EQ(chain[(int)SIZE + 1], nullptr);
+
+  // check 'next' method
+  for (size_t i = 0; i < SIZE - 1; i++) {
+    EXPECT_EQ(chain.next(&blocks[i]), &(blocks[i + 1]));
+  }
+
+  // check 'setTip' method
   for (size_t i = 0; i < SIZE; i++) {
     chain.setTip(&blocks[i]);
-    validateChain(chain);
+    validateChain();
   }
 }

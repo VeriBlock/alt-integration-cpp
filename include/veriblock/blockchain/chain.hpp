@@ -9,7 +9,7 @@
 namespace VeriBlock {
 
 /**
- * Full-inmemory chain representation.
+ * Fully in-memory chain representation.
  *
  * Every chain has exactly one block at every height.
  *
@@ -31,29 +31,35 @@ struct Chain {
 
   height_t getStartHeight() const { return startHeight_; }
 
-  bool contains(const index_t& index) const {
-    return (*this)[index.height] == &index;
+  height_t toInnerHeight(height_t in) const {
+    assert(in >= startHeight_);
+    return in - startHeight_;
+  }
+
+  bool contains(const index_t* index) const {
+    return (*this)[index->height] == index;
   }
 
   index_t* operator[](height_t height) const {
-    if (height < startHeight_ ||
-        height > height_t(chain.size() + startHeight_)) {
+    if (height < startHeight_) return nullptr;
+
+    height_t innerHeight = toInnerHeight(height);
+    if (innerHeight >= chain.size()) {
       return nullptr;
     }
-    return chain[height - startHeight_];
+    return chain[innerHeight];
   }
 
-  index_t* next(const index_t& index) const {
-    if (contains(index)) {
-      return (*this)[index.height + 1];
-    } else {
+  index_t* next(const index_t* index) const {
+    if (!contains(index)) {
       return nullptr;
     }
+    return (*this)[index->height + 1];
   }
 
-  height_t height() const { return chain.size() - 1 + startHeight_; }
+  height_t size() const { return (height_t)chain.size() + startHeight_; }
 
-  index_t* tip() const { return chain.empty() ? nullptr : (*this)[height()]; }
+  index_t* tip() const { return chain.empty() ? nullptr : (*this)[size() - 1]; }
 
   index_t* bootstrap() const { return chain.empty() ? nullptr : chain[0]; }
 
@@ -63,11 +69,15 @@ struct Chain {
       return;
     }
 
-    assert(index->height >= startHeight_);
+    height_t innerHeight = toInnerHeight(index->height);
+    chain.resize(innerHeight + 1);
 
-    chain.resize(index->height + 1 - startHeight_);
-    while (index != nullptr && operator[](index->height) != index) {
-      chain[index->height - startHeight_] = index;
+    ///TODO: may stuck here forever when fed with malformed data
+    while (true) {
+      if (index == nullptr) break;
+      if (contains(index)) break;
+      innerHeight = toInnerHeight(index->height);
+      chain[innerHeight] = index;
       index = index->pprev;
     }
   }
@@ -79,7 +89,7 @@ struct Chain {
 
  private:
   height_t startHeight_ = 0;
-  std::vector<index_t*> chain;
+  std::vector<index_t*> chain{};
 };
 
 }  // namespace VeriBlock
