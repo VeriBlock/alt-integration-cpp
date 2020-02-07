@@ -31,6 +31,8 @@ jobs:
       - name: build
         run: cmake --build build -- -j2
       - name: test
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
         run: cmake --build build --target test
 
 
