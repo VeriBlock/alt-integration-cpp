@@ -52,14 +52,26 @@ jobs:
       - name: install vcpkg
         run: vcpkg integrate install
 
-      - name: Cache vcpkg artifacts
-        id: cache-vcpkg
+      - name: cache vcpkg packages
         uses: actions/cache@v1
         with:
-          path: C:/vcpkg          
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('CMakeLists.txt') }}-${{ hashFiles('cmake/*.cmake') }}
-          restore-keys: |
-            ${{ runner.os }}-vcpkg-
+          path: C:/vcpkg/packages
+          key: ${{ runner.os }}-pack-${{ hashFiles('**/*.cmake') }}
+          restore-keys: ${{ runner.os }}-pack-
+
+      - name: cache vcpkg buildtrees
+        uses: actions/cache@v1
+        with:
+          path: C:/vcpkg/buildtrees
+          key: ${{ runner.os }}-build-${{ hashFiles('**/*.cmake') }}
+          restore-keys: ${{ runner.os }}-build-
+
+      - name: cache vcpkg triplets
+        uses: actions/cache@v1
+        with:
+          path: C:/vcpkg/triplets
+          key: ${{ runner.os }}-tripl-${{ hashFiles('**/*.cmake') }}
+          restore-keys: ${{ runner.os }}-tripl-
 
       - name: install dependencies
         run: vcpkg install rocksdb
