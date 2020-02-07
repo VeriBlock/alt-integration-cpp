@@ -79,7 +79,7 @@ static std::vector<uint8_t> publicKeyUncompressedToAsn1(PublicKey publicKey) {
   result.insert(result.end(),
                 ASN1_PREFIX_PUBKEY_BYTES.begin(),
                 ASN1_PREFIX_PUBKEY_BYTES.end());
-  result.insert(result.end(), publicKey.begin(), publicKey.end());
+  result.insert(result.end(), std::begin(publicKey), std::end(publicKey));
   return result;
 }
 

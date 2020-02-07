@@ -20,19 +20,19 @@ jobs:
       CC: clang
       CXX: clang++
       CTEST_OUTPUT_ON_FAILURE: 1
-      USE_RTTI: 1
     steps:
       - uses: actions/checkout@v1
         name: checkout
         with:
           submodules: true
           clean: true
-          fetch-depth: 1
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
         run: cmake --build build -- -j2
       - name: test
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
         run: cmake --build build --target test
 
 

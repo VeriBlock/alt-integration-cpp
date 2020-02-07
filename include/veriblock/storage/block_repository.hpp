@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <veriblock/slice.hpp>
+#include <veriblock/storage/cursor.hpp>
 
 namespace VeriBlock {
 
@@ -48,6 +49,8 @@ struct WriteBatch {
   using hash_t = typename Block::hash_t;
   //! block height type
   using height_t = typename Block::height_t;
+  //! iterator type
+  using cursor_t = Cursor<height_t, stored_block_t>;
 
   virtual ~WriteBatch() = default;
 
@@ -109,7 +112,7 @@ struct BlockRepository {
    * passed, out argument is ignored.
    * @return true if block found, false otherwise.
    */
-  virtual bool getByHash(const hash_t& hash, stored_block_t* out) = 0;
+  virtual bool getByHash(const hash_t& hash, stored_block_t* out) const = 0;
 
   /**
    * Load potentially many blocks from disk in memory by their height.
@@ -119,7 +122,7 @@ struct BlockRepository {
    * @return true if block found at given height, false otherwise.
    */
   virtual bool getByHeight(height_t height,
-                           std::vector<stored_block_t>* out) = 0;
+                           std::vector<stored_block_t>* out) const = 0;
 
   /**
    * Load many blocks from disk in memory by a list of hashes.
@@ -129,7 +132,7 @@ struct BlockRepository {
    * @return number of blocks appended to output vector.
    */
   virtual size_t getManyByHash(Slice<const hash_t> hashes,
-                               std::vector<stored_block_t>* out) = 0;
+                               std::vector<stored_block_t>* out) const = 0;
 
   /**
    * Write a single block. If block with such hash exists, db will overwrite
@@ -165,6 +168,14 @@ struct BlockRepository {
    * @param batch
    */
   virtual void commit(WriteBatch<stored_block_t>& batch) = 0;
+
+  /**
+   * Returns iterator, that is used for height iteration over blockchain.
+   * @return
+   */
+  virtual std::shared_ptr<Cursor<height_t, stored_block_t>> getCursor() = 0;
+
+  bool contains(const hash_t& hash) const { return getByHash(hash, nullptr); }
 };
 
 }  // namespace VeriBlock

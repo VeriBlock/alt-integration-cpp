@@ -67,9 +67,9 @@ bool checkVbkPopTx(const VbkPopTx& tx, ValidationState& state);
 
 bool checkVbkTx(const VbkTx& tx, ValidationState& state);
 
-bool checkBtcBlock(const BtcBlock& block, ValidationState& state);
+bool checkBlock(const BtcBlock& block, ValidationState& state);
 
-bool checkVbkBlock(const VbkBlock& block, ValidationState& state);
+bool checkBlock(const VbkBlock& block, ValidationState& state);
 
 bool checkATV(const ATV& atv, ValidationState& state);
 
