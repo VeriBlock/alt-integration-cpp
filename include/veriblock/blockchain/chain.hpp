@@ -31,11 +31,6 @@ struct Chain {
 
   height_t getStartHeight() const { return startHeight_; }
 
-  height_t toInnerHeight(height_t in) const {
-    assert(in >= startHeight_);
-    return in - startHeight_;
-  }
-
   bool contains(const index_t* index) const {
     return (*this)[index->height] == index;
   }
@@ -44,7 +39,7 @@ struct Chain {
     if (height < startHeight_) return nullptr;
 
     height_t innerHeight = toInnerHeight(height);
-    if (innerHeight >= chain.size()) {
+    if (innerHeight >= height_t(chain.size())) {
       return nullptr;
     }
     return chain[innerHeight];
@@ -93,6 +88,11 @@ struct Chain {
  private:
   height_t startHeight_ = 0;
   std::vector<index_t*> chain{};
+
+  height_t toInnerHeight(height_t in) const {
+    assert(in >= startHeight_);
+    return in - startHeight_;
+  }
 };
 
 }  // namespace VeriBlock
