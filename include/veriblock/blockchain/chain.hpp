@@ -54,11 +54,12 @@ struct Chain {
 
   height_t size() const { return (height_t)chain.size() + startHeight_; }
 
-  height_t height() const { return height_t(chain.size() - 1 + startHeight_); }
-
-  index_t* tip() const {
-    return chain.empty() ? nullptr : (*this)[size() - 1];
+  height_t height() const {
+    return chain.empty() ? startHeight_
+                         : height_t(chain.size() - 1 + startHeight_);
   }
+
+  index_t* tip() const { return chain.empty() ? nullptr : (*this)[size() - 1]; }
 
   index_t* bootstrap() const { return chain.empty() ? nullptr : chain[0]; }
 
@@ -71,7 +72,7 @@ struct Chain {
     height_t innerHeight = toInnerHeight(index->height);
     chain.resize(innerHeight + 1);
 
-    ///TODO: may stuck here forever when fed with malformed data
+    /// TODO: may stuck here forever when fed with malformed data
     while (true) {
       if (index == nullptr) break;
       if (contains(index)) break;
