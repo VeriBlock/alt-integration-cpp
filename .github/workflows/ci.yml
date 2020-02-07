@@ -52,19 +52,12 @@ jobs:
       - name: install vcpkg
         run: vcpkg integrate install
 
-      - name: cache vcpkg packages
+      - name: cache vcpkg installed
         uses: actions/cache@v1
         with:
-          path: C:/vcpkg/packages
-          key: ${{ runner.os }}-pack-${{ hashFiles('**/*.cmake') }}
-          restore-keys: ${{ runner.os }}-pack-
-
-      - name: cache vcpkg buildtrees
-        uses: actions/cache@v1
-        with:
-          path: C:/vcpkg/buildtrees
-          key: ${{ runner.os }}-build-${{ hashFiles('**/*.cmake') }}
-          restore-keys: ${{ runner.os }}-build-
+          path: C:/vcpkg/installed
+          key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}
+          restore-keys: ${{ runner.os }}-install-
 
       - name: cache vcpkg triplets
         uses: actions/cache@v1
