@@ -20,7 +20,6 @@ jobs:
       CC: clang
       CXX: clang++
       CTEST_OUTPUT_ON_FAILURE: 1
-      USE_RTTI: 1
     steps:
       - uses: actions/checkout@v1
         name: checkout
