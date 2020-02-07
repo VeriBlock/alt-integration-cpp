@@ -26,7 +26,6 @@ jobs:
         with:
           submodules: true
           clean: true
-          fetch-depth: 1
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
