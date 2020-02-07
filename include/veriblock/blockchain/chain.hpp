@@ -52,10 +52,12 @@ struct Chain {
     return (*this)[index->height + 1];
   }
 
-  height_t nextHeight() const { return (height_t)chain.size() + startHeight_; }
+  height_t size() const { return (height_t)chain.size() + startHeight_; }
+
+  height_t height() const { return height_t(chain.size() - 1 + startHeight_); }
 
   index_t* tip() const {
-    return chain.empty() ? nullptr : (*this)[nextHeight() - 1];
+    return chain.empty() ? nullptr : (*this)[size() - 1];
   }
 
   index_t* bootstrap() const { return chain.empty() ? nullptr : chain[0]; }

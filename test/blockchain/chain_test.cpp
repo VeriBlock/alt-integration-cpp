@@ -43,7 +43,7 @@ struct ChainTest : public ::testing::Test {
     auto* tip = chain.tip();
     ASSERT_NE(tip, nullptr);
 
-    for (int i = chain.getStartHeight(); i < chain.nextHeight(); i++) {
+    for (int i = chain.getStartHeight(); i < chain.size(); i++) {
       EXPECT_EQ(chain[i], &blocks[i]);
     }
   }
@@ -51,7 +51,7 @@ struct ChainTest : public ::testing::Test {
 
 TEST_F(ChainTest, StartsAt0) {
   chain.setTip(&(*blocks.rbegin()));
-  EXPECT_EQ(chain.nextHeight(), SIZE);
+  EXPECT_EQ(chain.size(), SIZE);
   EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
 
   // check 'contains' method
@@ -80,7 +80,7 @@ TEST_F(ChainTest, StartsAt1) {
   // chain starts with height = 1
   chain = Chain<DummyBlock>(1);
   chain.setTip(&(*blocks.rbegin()));
-  EXPECT_EQ(chain.nextHeight(), SIZE);
+  EXPECT_EQ(chain.size(), SIZE);
   EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
 
   // check 'contains' method
