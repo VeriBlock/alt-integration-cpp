@@ -57,9 +57,11 @@ struct Chain {
     return (*this)[index->height + 1];
   }
 
-  height_t size() const { return (height_t)chain.size() + startHeight_; }
+  height_t nextHeight() const { return (height_t)chain.size() + startHeight_; }
 
-  index_t* tip() const { return chain.empty() ? nullptr : (*this)[size() - 1]; }
+  index_t* tip() const {
+    return chain.empty() ? nullptr : (*this)[nextHeight() - 1];
+  }
 
   index_t* bootstrap() const { return chain.empty() ? nullptr : chain[0]; }
 
@@ -76,6 +78,7 @@ struct Chain {
     while (true) {
       if (index == nullptr) break;
       if (contains(index)) break;
+      if (index->height < startHeight_) break;
       innerHeight = toInnerHeight(index->height);
       chain[innerHeight] = index;
       index = index->pprev;

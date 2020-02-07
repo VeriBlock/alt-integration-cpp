@@ -43,7 +43,7 @@ struct ChainTest : public ::testing::Test {
     auto* tip = chain.tip();
     ASSERT_NE(tip, nullptr);
 
-    for (int i = 0; i < chain.size(); i++) {
+    for (int i = chain.getStartHeight(); i < chain.nextHeight(); i++) {
       EXPECT_EQ(chain[i], &blocks[i]);
     }
   }
@@ -51,7 +51,7 @@ struct ChainTest : public ::testing::Test {
 
 TEST_F(ChainTest, StartsAt0) {
   chain.setTip(&(*blocks.rbegin()));
-  EXPECT_EQ(chain.size(), SIZE);
+  EXPECT_EQ(chain.nextHeight(), SIZE);
   EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
 
   // check 'contains' method
@@ -74,4 +74,38 @@ TEST_F(ChainTest, StartsAt0) {
     chain.setTip(&blocks[i]);
     validateChain();
   }
+}
+
+TEST_F(ChainTest, StartsAt1) {
+  // chain starts with height = 1
+  chain = Chain<DummyBlock>(1);
+  chain.setTip(&(*blocks.rbegin()));
+  EXPECT_EQ(chain.nextHeight(), SIZE);
+  EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
+
+  // check 'contains' method
+  for (int i = 1; i < (int)SIZE; i++) {
+    EXPECT_EQ(chain[i], &blocks[i]);
+    EXPECT_TRUE(chain.contains(&blocks[i]));
+  }
+  // blocks with height = 0 are no longer in the chain
+  EXPECT_EQ(chain[0], nullptr);
+  EXPECT_FALSE(chain.contains(&blocks[0]));
+
+  // check out of range blocks
+  EXPECT_EQ(chain[-1], nullptr);
+  EXPECT_EQ(chain[(int)SIZE + 1], nullptr);
+
+  // check 'next' method
+  for (size_t i = 1; i < SIZE - 1; i++) {
+    EXPECT_EQ(chain.next(&blocks[i]), &(blocks[i + 1]));
+  }
+  EXPECT_EQ(chain.next(&blocks[0]), nullptr);
+
+  // check 'setTip' method
+  for (size_t i = 1; i < SIZE; i++) {
+    chain.setTip(&blocks[i]);
+    validateChain();
+  }
+  // do not try to chain.setTip(&blocks[0]) - it breaks assertion
 }
