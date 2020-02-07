@@ -57,14 +57,12 @@ jobs:
         with:
           path: C:/vcpkg/installed
           key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}
-          restore-keys: ${{ runner.os }}-install-
 
       - name: cache vcpkg triplets
         uses: actions/cache@v1
         with:
           path: C:/vcpkg/triplets
           key: ${{ runner.os }}-tripl-${{ hashFiles('**/*.cmake') }}
-          restore-keys: ${{ runner.os }}-tripl-
 
       - name: install dependencies
         run: vcpkg install rocksdb
