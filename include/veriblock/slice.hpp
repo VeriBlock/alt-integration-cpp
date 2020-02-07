@@ -73,6 +73,12 @@ struct Slice {
   size_t size_;
 };
 
+/// custom gtest printer, which prints Blob of any size as hexstring
+template <typename T>
+inline void PrintTo(const Slice<T>& slice, ::std::ostream* os) {
+  *os << "Slice(" << slice.data() << ", " << slice.size() << ")";
+}
+
 }  // namespace VeriBlock
 
 #endif  //__SLICE__HPP__

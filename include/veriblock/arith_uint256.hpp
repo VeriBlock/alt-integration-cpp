@@ -261,8 +261,13 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
   friend inline bool operator<=(const ArithUint256& a, const ArithUint256& b) {
     return a.compareTo(b) <= 0;
   }
+  friend inline bool operator==(const ArithUint256& a, uint64_t b) {
+    return a.compareTo(b) == 0;
+  }
 
-  ArithUint256& decodeBits(const uint32_t& bits);
+  ArithUint256& decodeBits(const uint32_t& bits,
+                           bool* negative,
+                           bool* overflow);
 };
 }  // namespace VeriBlock
 
