@@ -48,10 +48,25 @@ jobs:
           submodules: true
           clean: true
           fetch-depth: 1
+
+      - name: install vcpkg
+        run: vcpkg integrate install
+
+      - name: cache vcpkg installed
+        uses: actions/cache@v1
+        with:
+          path: C:/vcpkg/installed
+          key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}
+
+      - name: cache vcpkg triplets
+        uses: actions/cache@v1
+        with:
+          path: C:/vcpkg/triplets
+          key: ${{ runner.os }}-tripl-${{ hashFiles('**/*.cmake') }}
+
       - name: install dependencies
-        run: |
-          vcpkg integrate install
-          vcpkg install rocksdb
+        run: vcpkg install rocksdb
+
       - name: cmake
         run: cmake . -Bbuild -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
       - name: build
