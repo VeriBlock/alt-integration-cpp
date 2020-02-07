@@ -4,7 +4,7 @@
 
 - (optional) gtest/gmock - https://github.com/google/googletest/releases/tag/release-1.10.0
 
-- RocksDB - https://github.com/facebook/rocksdb
+- (optional) RocksDB - https://github.com/facebook/rocksdb
 
 ## Linux
 
