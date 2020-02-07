@@ -163,7 +163,7 @@ bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
 
   uint256 lastHash = btcBlock[0].getHash();
   for (size_t i = 1; i < btcBlock.size(); ++i) {
-    if (!checkBtcBlock(btcBlock[i], state)) {
+    if (!checkBlock(btcBlock[i], state)) {
       return state.addStackFunction("checkBitcoinBlocks()");
     }
 
@@ -188,7 +188,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
   uint192 lastHash = vbkBlocks[0].getHash();
 
   for (size_t i = 1; i < vbkBlocks.size(); ++i) {
-    if (!checkVbkBlock(vbkBlocks[i], state)) {
+    if (!checkBlock(vbkBlocks[i], state)) {
       return state.addStackFunction("checkVeriBlockBlocks()");
     }
 
@@ -209,7 +209,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
   ArithUint256 blockHash(block.getHash());
   ArithUint256 target;
-  target.decodeBits(block.bits);
+  target.decodeBits(block.bits, nullptr, nullptr);
   if (target <= blockHash) {
     return state.Invalid("checkProofOfWork()",
                          "Invalid Btc Block",
@@ -221,7 +221,7 @@ bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
 bool checkProofOfWork(const VbkBlock& block, ValidationState& state) {
   ArithUint256 blockHash(block.getHash());
   ArithUint256 target;
-  target.decodeBits(block.difficulty);
+  target.decodeBits(block.difficulty, nullptr, nullptr);
   target = MAXIMUM_DIFFICULTY / target;
   if (target <= blockHash) {
     return state.Invalid("checkProofOfWork()",
@@ -261,7 +261,7 @@ bool checkVbkTx(const VbkTx& tx, ValidationState& state) {
   return true;
 }
 
-bool checkBtcBlock(const BtcBlock& block, ValidationState& state) {
+bool checkBlock(const BtcBlock& block, ValidationState& state) {
   if (!checkProofOfWork(block, state)) {
     return state.addStackFunction("checkBtcBlock()");
   }
@@ -273,7 +273,7 @@ bool checkBtcBlock(const BtcBlock& block, ValidationState& state) {
   return true;
 }
 
-bool checkVbkBlock(const VbkBlock& block, ValidationState& state) {
+bool checkBlock(const VbkBlock& block, ValidationState& state) {
   if (!checkProofOfWork(block, state)) {
     return state.addStackFunction("checkVbkBlock()");
   }

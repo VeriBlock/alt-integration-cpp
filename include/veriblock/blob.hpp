@@ -12,17 +12,18 @@ namespace VeriBlock {
 
 template <size_t N>
 struct Blob {
-  typedef uint8_t value_type;
-  typedef value_type* pointer;
-  typedef const value_type* const_pointer;
-  typedef value_type& reference;
-  typedef const value_type& const_reference;
-  typedef value_type* iterator;
-  typedef const value_type* const_iterator;
-  typedef std::size_t size_type;
-  typedef std::ptrdiff_t difference_type;
-  typedef std::reverse_iterator<iterator> reverse_iterator;
-  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  using value_type = uint8_t;
+  using storage_t = std::array<value_type, N>;
+  using pointer = typename storage_t::pointer;
+  using const_pointer = typename storage_t::const_pointer;
+  using reference = typename storage_t::reference;
+  using const_reference = typename storage_t::const_reference;
+  using iterator = typename storage_t::iterator;
+  using const_iterator = typename storage_t::const_iterator;
+  using size_type = typename storage_t::size_type;
+  using difference_type = typename storage_t::difference_type;
+  using reverse_iterator = typename storage_t::reverse_iterator;
+  using const_reverse_iterator = typename storage_t::const_reverse_iterator;
 
   Blob() {
     for (size_t i = 0; i < N; i++) {
@@ -37,13 +38,13 @@ struct Blob {
   Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 
-  iterator begin() noexcept { return data_.data(); }
+  iterator begin() noexcept { return data_.begin(); }
 
-  const_iterator begin() const noexcept { return data_.data(); }
+  const_iterator begin() const noexcept { return data_.begin(); }
 
-  iterator end() noexcept { return data_.data() + N; }
+  iterator end() noexcept { return data_.end(); }
 
-  const_iterator end() const noexcept { return data_.data() + N; }
+  const_iterator end() const noexcept { return data_.end(); }
 
   static size_type size() noexcept { return N; }
 
@@ -109,6 +110,16 @@ struct Blob {
     return a.compareTo(b) <= 0;
   }
 
+  template <size_t M>
+  Blob<M> trim() const {
+    if (N < M) {
+      throw std::invalid_argument("Blob(): invalid data size");
+    }
+    Blob<M> m;
+    std::copy(data(), data() + M, m.begin());
+    return m;
+  }
+
  protected:
   inline void assign(Slice<const uint8_t> slice) {
     if (slice.size() != N) {
@@ -117,7 +128,7 @@ struct Blob {
     std::copy(slice.begin(), slice.end(), data_.begin());
   }
 
-  std::array<value_type, N> data_;
+  storage_t data_;
 };  // namespace VeriBlock
 
 template <size_t M, size_t N>
@@ -135,5 +146,15 @@ void PrintTo(const Blob<size>& blob, ::std::ostream* os) {
 }
 
 }  // namespace VeriBlock
+
+namespace std {
+
+template <size_t N>
+struct hash<VeriBlock::Blob<N>> {
+  size_t operator()(const VeriBlock::Blob<N>& x) const {
+    return std::hash<std::string>{}(std::string{x.begin(), x.end()});
+  }
+};
+}  // namespace std
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOB_HPP_

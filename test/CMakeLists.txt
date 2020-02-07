@@ -1,5 +1,6 @@
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
+add_subdirectory(blockchain)
 add_subdirectory(third_party)
 add_subdirectory(entities)
 

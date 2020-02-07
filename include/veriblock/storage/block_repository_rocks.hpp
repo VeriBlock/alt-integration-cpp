@@ -71,7 +71,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return true;
   }
 
-  bool getByHash(const hash_t& hash, stored_block_t* out) override {
+  bool getByHash(const hash_t& hash, stored_block_t* out) const override {
     std::string blockHash(reinterpret_cast<const char*>(hash.data()),
                           hash.size());
     std::string dbValue{};
@@ -86,7 +86,8 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return true;
   }
 
-  bool getByHeight(height_t height, std::vector<stored_block_t>* out) override {
+  bool getByHeight(height_t height,
+                   std::vector<stored_block_t>* out) const override {
     bool found = false;
     std::set<hash_t> hashesList = getHashesByHeight(height);
     for (const hash_t& hash : hashesList) {
@@ -104,7 +105,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   size_t getManyByHash(Slice<const hash_t> hashes,
-                       std::vector<stored_block_t>* out) override {
+                       std::vector<stored_block_t>* out) const override {
     size_t found = 0;
     for (const hash_t& hash : hashes) {
       stored_block_t outBlock{};
@@ -173,13 +174,17 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   void commit(WriteBatch<stored_block_t>& batch) override { (void)batch; }
 
+  std::shared_ptr<Cursor<height_t, stored_block_t>> getCursor() override {
+    return nullptr;
+  }
+
  private:
   std::shared_ptr<rocksdb::DB> _db{};
   std::shared_ptr<cf_handle_t> _heightHashesHandle{};
   std::shared_ptr<cf_handle_t> _hashBlockHandle{};
 
   // fetch and decode hashes blob from the DB
-  std::set<hash_t> getHashesByHeight(height_t height) {
+  std::set<hash_t> getHashesByHeight(height_t height) const {
     std::string heightStr = std::to_string(height);
     std::string dbValue{};
     rocksdb::Status s = _db->Get(
@@ -203,7 +208,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   // decode hashes blob
-  std::set<hash_t> hashesFromString(const std::string& hashesData) {
+  std::set<hash_t> hashesFromString(const std::string& hashesData) const {
     if (hashesData.size() % sizeof(hash_t)) {
       throw db::DbError("Not parceable hashes blob");
     }

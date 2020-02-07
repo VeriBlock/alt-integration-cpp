@@ -2,23 +2,27 @@
 
 using namespace VeriBlock;
 
-ArithUint256& ArithUint256::decodeBits(const uint32_t& bits) {
+ArithUint256& ArithUint256::decodeBits(const uint32_t& bits,
+                                       bool* negative,
+                                       bool* overflow) {
   ArithUint256 target;
-  int nSize = bits >> 24;
-  uint32_t nWord = bits & 0x007fffff;
+  int nSize = bits >> 24u;
+  uint32_t nWord = bits & 0x007fffffu;
   if (nSize <= 3) {
     nWord >>= 8 * (3 - nSize);
-    data_[0] = (uint8_t)nWord;
-    data_[1] = (uint8_t)(nWord >> 8);
-    data_[2] = (uint8_t)(nWord >> 16);
-    data_[3] = (uint8_t)(nWord >> 24);
+    *this = nWord;
   } else {
-    data_[0] = (uint8_t)nWord;
-    data_[1] = (uint8_t)(nWord >> 8);
-    data_[2] = (uint8_t)(nWord >> 16);
-    data_[3] = (uint8_t)(nWord >> 24);
+    *this = nWord;
     *this <<= 8 * (nSize - 3);
   }
+  if (negative) {
+    *negative = (nWord != 0) && ((bits & 0x00800000u) != 0);
+  }
+  if (overflow) {
+    *overflow = nWord != 0 && ((nSize > 34) || (nWord > 0xff && nSize > 33) ||
+                               (nWord > 0xffff && nSize > 32));
+  }
+
   return *this;
 }
 
