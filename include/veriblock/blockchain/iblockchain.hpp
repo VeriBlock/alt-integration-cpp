@@ -12,6 +12,10 @@
 
 namespace VeriBlock {
 
+/**
+ * Blockchain is a tree of blocks with single "bootstrap" block as root.
+ * @tparam Block
+ */
 template <typename Block>
 struct IBlockchain {
   using block_t = Block;
