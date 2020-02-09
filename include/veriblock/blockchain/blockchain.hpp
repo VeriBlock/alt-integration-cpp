@@ -5,7 +5,6 @@
 #include <set>
 #include <unordered_map>
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/blockchain/btc_fork_resolution.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/fork_resolution.hpp>
 #include <veriblock/blockchain/iblockchain.hpp>
