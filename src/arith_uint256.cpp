@@ -1,5 +1,7 @@
 #include "veriblock/arith_uint256.hpp"
 
+#include <cassert>
+
 using namespace VeriBlock;
 
 ArithUint256& ArithUint256::decodeBits(const uint32_t& bits,
@@ -137,4 +139,33 @@ unsigned int ArithUint256::bits() const {
     }
   }
   return 0;
+}
+
+uint32_t ArithUint256::encodeBits(bool negative) const {
+  int nSize = (bits() + 7) / 8;
+  uint32_t nCompact = 0;
+  if (nSize <= 3) {
+    nCompact = GetLow64() << 8 * (3 - nSize);
+  } else {
+    ArithUint256 bn = *this >> 8 * (nSize - 3);
+    nCompact = bn.GetLow64();
+  }
+  // The 0x00800000 bit denotes the sign.
+  // Thus, if it is already set, divide the mantissa by 256 and increase the
+  // exponent.
+  if (nCompact & 0x00800000) {
+    nCompact >>= 8;
+    nSize++;
+  }
+  assert((nCompact & ~0x007fffff) == 0);
+  assert(nSize < 256);
+  nCompact |= nSize << 24;
+  nCompact |= (negative && (nCompact & 0x007fffff) ? 0x00800000 : 0);
+  return nCompact;
+}
+
+uint64_t ArithUint256::GetLow64() const {
+  const uint32_t* p1 = (uint32_t*)(&data_[0]);
+  const uint32_t* p2 = (uint32_t*)(&data_[4]);
+  return *p1 | (uint64_t)*p2 << 32;
 }

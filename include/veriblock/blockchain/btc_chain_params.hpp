@@ -16,6 +16,9 @@ struct BtcChainParams {
   virtual bool getAllowMinDifficultyBlocks() const noexcept = 0;
   virtual bool getPowNoRetargeting() const noexcept = 0;
   virtual BtcBlock getGenesisBlock() const noexcept = 0;
+  int64_t getDifficultyAdjustmentInterval() const noexcept {
+    return getPowTargetTimespan() / getPowTargetSpacing();
+  }
 };
 
 struct BtcChainParamsMain : public BtcChainParams {

@@ -1,17 +1,24 @@
+#include "veriblock/arith_uint256.hpp"
+
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <veriblock/uint.hpp>
 
 #include "util/literals.hpp"
-#include "veriblock/arith_uint256.hpp"
 
 using namespace VeriBlock;
 
 const unsigned char R1Array[] =
     "\x9c\x52\x4a\xdb\xcf\x56\x11\x12\x2b\x29\x12\x5e\x5d\x35\xd2\xd2"
     "\x22\x81\xaa\xb5\x33\xf0\x08\x32\xd5\x56\xb1\xf9\xea\xe5\x1d\x7d";
-const ArithUint256 R1L(std::vector<uint8_t>(R1Array,
-                                            R1Array + SHA256_HASH_SIZE));
+const char R1ArrayHex[] =
+    "7D1DE5EAF9B156D53208F033B5AA8122D2d2355d5e12292b121156cfdb4a529c";
+// const double R1Ldouble =
+//    0.4887374590559308955;  // R1L equals roughly R1Ldouble * 2^256
+const ArithUint256 R1L =
+    uint256(std::vector<unsigned char>(R1Array, R1Array + 32));
+const uint64_t R1LLow64 = 0x121156cfdb4a529cULL;
 
 const unsigned char R2Array[] =
     "\x70\x32\x1d\x7c\x47\xa5\x6b\x40\x26\x7e\x0a\xc3\xa6\x9c\xb6\xbf"
@@ -370,81 +377,164 @@ TEST(ArithUint256, divide) {
 
 struct TestCase {
   uint32_t bits;
-  ArithUint256 target;
+  uint32_t compact;
+  std::string hex;
+  bool negative = false;
+  bool overflow = false;
 };
 
 class DecodeBitsTest : public testing::TestWithParam<TestCase> {};
 
 static std::vector<TestCase> decodeBits_cases = {
     {0x04800000,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x00123456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x01003456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x02000056,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x03000000,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x04000000,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x00923456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x01803456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x02800056,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x03800000,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x04800000,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000000")},
+     0,
+     "0000000000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
     {0x01123456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000000012")},
+     0x01120000U,
+     "0000000000000000000000000000000000000000000000000000000000000012",
+     false,
+     false},
     {0x01fedcba,
-     ArithUint256(
-         "000000000000000000000000000000000000000000000000000000000000007e")},
+     0x01fe0000U,
+     "000000000000000000000000000000000000000000000000000000000000007e",
+     true,
+     false},
     {0x02123456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000001234")},
+     0x02123400U,
+     "0000000000000000000000000000000000000000000000000000000000001234",
+     false,
+     false},
     {0x03123456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000000123456")},
+     0x03123456U,
+     "0000000000000000000000000000000000000000000000000000000000123456",
+     false,
+     false},
     {0x04123456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000012345600")},
+     0x04123456U,
+     "0000000000000000000000000000000000000000000000000000000012345600",
+     false,
+     false},
     {0x04923456,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000012345600")},
+     0x04923456U,
+     "0000000000000000000000000000000000000000000000000000000012345600",
+     true,
+     false},
     {0x05009234,
-     ArithUint256(
-         "0000000000000000000000000000000000000000000000000000000092340000")},
+     0x05009234U,
+     "0000000000000000000000000000000000000000000000000000000092340000",
+     false,
+     false},
     {0x20123456,
-     ArithUint256(
-         "1234560000000000000000000000000000000000000000000000000000000000")},
-
+     0x20123456U,
+     "1234560000000000000000000000000000000000000000000000000000000000",
+     false,
+     false},
 };
 
 TEST_P(DecodeBitsTest, uint256_decodeBits) {
   auto value = GetParam();
 
   ArithUint256 target;
-  target.decodeBits(value.bits, nullptr, nullptr);
+  auto negative = false;
+  auto overflow = false;
+  target.decodeBits(value.bits, &negative, &overflow);
 
-  EXPECT_EQ(target, value.target);
+  EXPECT_EQ(target.toHex(), value.hex);
+  EXPECT_EQ(target.encodeBits(value.negative), value.compact);
+  EXPECT_EQ(negative, value.negative);
+  EXPECT_EQ(overflow, value.overflow);
+}
+
+TEST(DecodeBitsTest, uint256_overflow) {
+  ArithUint256 target;
+  auto negative = false;
+  auto overflow = false;
+  target.decodeBits(0xff123456, &negative, &overflow);
+  EXPECT_FALSE(negative);
+  EXPECT_TRUE(overflow);
 }
 
 INSTANTIATE_TEST_SUITE_P(decodeBitsRegression,
                          DecodeBitsTest,
                          testing::ValuesIn(decodeBits_cases));
+
+TEST(DecodeBitsTest, Methods) {
+  EXPECT_EQ(R1L, ArithUint256(R1ArrayHex));
+
+  ArithUint256 TmpL(R1L);
+  EXPECT_EQ(TmpL, R1L);
+  TmpL.setHex(R2L.toHex());
+  EXPECT_EQ(TmpL, R2L);
+  TmpL.setHex(ZeroL.toHex());
+  EXPECT_EQ(TmpL, 0);
+  TmpL.setHex(HalfL.toHex());
+  EXPECT_EQ(TmpL, HalfL);
+
+  TmpL.setHex(R1L.toHex());
+  EXPECT_EQ(R1L.size(), 32);
+  EXPECT_EQ(R2L.size(), 32);
+  EXPECT_EQ(ZeroL.size(), 32);
+  EXPECT_EQ(MaxL.size(), 32);
+  EXPECT_EQ(R1L.GetLow64(), R1LLow64);
+  EXPECT_EQ(HalfL.GetLow64(), 0x0000000000000000ULL);
+  EXPECT_EQ(OneL.GetLow64(), 0x0000000000000001ULL);
+
+  std::string hex =
+      "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+  TmpL.setHex(hex);
+  EXPECT_EQ(TmpL.encodeBits(false), 0x207fffff);
+  EXPECT_EQ(ArithUint256(ParseHex(hex)).encodeBits(false), 0x207fffff);
+  EXPECT_EQ(ArithUint256(hex).encodeBits(false), 0x207fffff);
+}

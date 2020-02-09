@@ -57,6 +57,14 @@ struct BtcBlock {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  uint32_t getDifficulty() const {
+    return bits;
+  }
+
+  uint32_t getBlockTime() const {
+    return timestamp;
+  }
+
   ArithUint256 getBlockProof() const {
     ArithUint256 bnTarget;
     bool negative;

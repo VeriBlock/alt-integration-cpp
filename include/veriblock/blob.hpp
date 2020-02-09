@@ -25,11 +25,7 @@ struct Blob {
   using reverse_iterator = typename storage_t::reverse_iterator;
   using const_reverse_iterator = typename storage_t::const_reverse_iterator;
 
-  Blob() {
-    for (size_t i = 0; i < N; i++) {
-      data_[i] = 0;
-    }
-  };
+  Blob() { data_.fill(0); };
 
   Blob(Slice<const uint8_t> slice) { assign(slice); }
   Blob(const std::vector<uint8_t>& v) { assign(v); }
@@ -130,14 +126,6 @@ struct Blob {
 
   storage_t data_;
 };  // namespace VeriBlock
-
-template <size_t M, size_t N>
-Blob<M> trim(const Blob<N>& data) {
-  if (data.size() < M) {
-    throw std::invalid_argument("Blob(): invalid data size");
-  }
-  return Blob<M>(std::vector<uint8_t>(data.data(), data.data() + M));
-}
 
 /// custom gtest printer, which prints Blob of any size as hexstring
 template <size_t size>

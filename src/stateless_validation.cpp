@@ -1,3 +1,5 @@
+#include "veriblock/stateless_validation.hpp"
+
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -6,7 +8,6 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
-#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -194,8 +195,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
     if (vbkBlocks[i].height != lastHeight + 1 ||
         vbkBlocks[i].previousBlock.reverse() !=
-            trim<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE, VBLAKE_BLOCK_HASH_SIZE>(
-                lastHash)) {
+            lastHash.trim<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
       return state.Invalid("checkVeriBlockBlocks()",
                            "VeriBlock Blocks invalid",
                            "Blocks are not contiguous");
