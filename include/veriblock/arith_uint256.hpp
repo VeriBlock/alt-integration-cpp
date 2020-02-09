@@ -21,10 +21,9 @@ class uint_error : public std::runtime_error {
 /** 256-bit unsigned big integer. */
 class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
  public:
-  ArithUint256() { data_.fill(0); }
-  ArithUint256(const std::string& value) { setHex(value); }
+  ArithUint256() = default;
 
-  ArithUint256(const Blob<SHA256_HASH_SIZE>& b) : Blob<SHA256_HASH_SIZE>(b) {}
+  ArithUint256(const std::vector<uint8_t>& v) : Blob<SHA256_HASH_SIZE>(v) {}
 
   template <size_t N>
   ArithUint256(const Blob<N>& b) {
@@ -255,6 +254,15 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     return a.compareTo(b) == 0;
   }
 
+  static ArithUint256 fromHex(const std::string& hex) {
+    ArithUint256 u;
+    u.setHex(hex);
+    return u;
+  }
+
+  // toHex should be inverted
+  std::string toHex() const { return HexStr(data_.rbegin(), data_.rend()); }
+
   uint64_t GetLow64() const;
 
   ArithUint256& decodeBits(const uint32_t& bits,
@@ -269,7 +277,8 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
       throw uint_error("size of the string number more than SHA256_HASH_SIZE");
     }
 
-    assign(bytes);
+    // setHex must be set inverted
+    std::copy(bytes.begin(), bytes.end(), data_.rbegin());
   }
 };
 

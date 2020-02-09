@@ -29,7 +29,6 @@ struct Blob {
 
   Blob(Slice<const uint8_t> slice) { assign(slice); }
   Blob(const std::vector<uint8_t>& v) { assign(v); }
-  Blob(const std::string& v) { assign(v); }
 
   Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
@@ -49,6 +48,11 @@ struct Blob {
   const_pointer data() const noexcept { return data_.data(); }
 
   std::string toHex() const { return HexStr(data_.begin(), data_.end()); }
+
+  static Blob<N> fromHex(const std::string& hex) {
+    auto data = ParseHex(hex);
+    return Blob<N>(data);
+  }
 
   Blob<N>& operator=(const Blob<N>& other) {
     this->data_ = other.data_;

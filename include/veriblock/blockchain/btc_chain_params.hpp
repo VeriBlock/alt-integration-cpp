@@ -25,8 +25,8 @@ struct BtcChainParamsMain : public BtcChainParams {
   ~BtcChainParamsMain() override = default;
 
   uint256 getPowLimit() const override {
-    return uint256(ParseHex(
-        "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"));
+    return uint256::fromHex(
+        "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
   }
 
   int getPowTargetTimespan() const noexcept override {
@@ -41,7 +41,7 @@ struct BtcChainParamsMain : public BtcChainParams {
     block.timestamp = 1231006505;
     block.nonce = 2083236893;
     block.bits = 0x1d00ffff;
-    block.merkleRoot = ParseHex(
+    block.merkleRoot = uint256::fromHex(
         "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b");
 
     ValidationState state;
@@ -57,8 +57,8 @@ struct BtcChainParamsTest : public BtcChainParams {
   ~BtcChainParamsTest() override = default;
 
   uint256 getPowLimit() const override {
-    return uint256(ParseHex(
-        "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"));
+    return uint256::fromHex(
+        "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
   }
 
   int getPowTargetTimespan() const noexcept override {
@@ -73,7 +73,7 @@ struct BtcChainParamsTest : public BtcChainParams {
     block.timestamp = 1296688602;
     block.nonce = 414098458;
     block.bits = 0x1d00ffff;
-    block.merkleRoot = ParseHex(
+    block.merkleRoot = uint256::fromHex(
         "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b");
 
     ValidationState state;
@@ -89,7 +89,7 @@ struct BtcChainParamsRegTest : public BtcChainParams {
   ~BtcChainParamsRegTest() override = default;
 
   uint256 getPowLimit() const override {
-    return ParseHex(
+    return uint256::fromHex(
         "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
   }
 
@@ -105,8 +105,8 @@ struct BtcChainParamsRegTest : public BtcChainParams {
     block.timestamp = 1296688602;
     block.nonce = 2;
     block.bits = 0x207fffff;
-    block.merkleRoot = uint256(ParseHex(
-        "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
+    block.merkleRoot = uint256::fromHex(
+        "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b");
 
     ValidationState state;
     assert(checkBlock(block, state));
