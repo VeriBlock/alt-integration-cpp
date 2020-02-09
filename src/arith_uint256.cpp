@@ -4,7 +4,7 @@
 
 using namespace VeriBlock;
 
-ArithUint256& ArithUint256::decodeBits(const uint32_t& bits,
+ArithUint256& ArithUint256::decodeBits(uint32_t bits,
                                        bool* negative,
                                        bool* overflow) {
   ArithUint256 target;

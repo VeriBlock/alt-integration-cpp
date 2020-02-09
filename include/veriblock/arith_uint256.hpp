@@ -25,6 +25,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
 
   ArithUint256(const std::vector<uint8_t>& v) : Blob<SHA256_HASH_SIZE>(v) {}
 
+  // regular bytes should not be reversed
   template <size_t N>
   ArithUint256(const Blob<N>& b) {
     if (b.size() > SHA256_HASH_SIZE) {
@@ -265,9 +266,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
 
   uint64_t GetLow64() const;
 
-  ArithUint256& decodeBits(const uint32_t& bits,
-                           bool* negative,
-                           bool* overflow);
+  ArithUint256& decodeBits(uint32_t bits, bool* negative, bool* overflow);
 
   uint32_t encodeBits(bool negative = false) const;
 

@@ -51,6 +51,7 @@ struct Blob {
 
   static Blob<N> fromHex(const std::string& hex) {
     auto data = ParseHex(hex);
+    // Blob should set parsed hex in normal order
     return Blob<N>(data);
   }
 

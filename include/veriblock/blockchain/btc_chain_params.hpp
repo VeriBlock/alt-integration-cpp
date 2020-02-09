@@ -26,7 +26,7 @@ struct BtcChainParamsMain : public BtcChainParams {
 
   uint256 getPowLimit() const override {
     return uint256::fromHex(
-        "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000");
   }
 
   int getPowTargetTimespan() const noexcept override {
@@ -58,7 +58,7 @@ struct BtcChainParamsTest : public BtcChainParams {
 
   uint256 getPowLimit() const override {
     return uint256::fromHex(
-        "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000");
   }
 
   int getPowTargetTimespan() const noexcept override {
@@ -90,7 +90,7 @@ struct BtcChainParamsRegTest : public BtcChainParams {
 
   uint256 getPowLimit() const override {
     return uint256::fromHex(
-        "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f");
   }
 
   int getPowTargetTimespan() const noexcept override {
