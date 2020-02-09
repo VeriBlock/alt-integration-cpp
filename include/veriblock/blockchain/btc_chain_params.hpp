@@ -5,6 +5,8 @@
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/strutil.hpp>
 #include <veriblock/uint.hpp>
+#include <veriblock/validation_state.hpp>
+#include <veriblock/stateless_validation.hpp>
 
 namespace VeriBlock {
 

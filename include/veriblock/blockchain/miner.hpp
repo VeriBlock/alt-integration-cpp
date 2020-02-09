@@ -4,8 +4,6 @@
 #include <memory>
 #include <stdexcept>
 #include <veriblock/blockchain/blockchain.hpp>
-#include <veriblock/blockchain/btc_chain_params.hpp>
-#include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/fmt.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/time.hpp>
@@ -67,6 +65,7 @@ struct Miner {
   std::shared_ptr<ChainParams> params_;
 };
 
+// TODO: move this to vbk_miner.hpp and implement proper method
 // template <>
 // VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
 //    const merkle_t& merkle) {

@@ -1,3 +1,3 @@
 add_library(blockchain OBJECT
-        blockchain.cpp
+        btc_blockchain.cpp
         )
