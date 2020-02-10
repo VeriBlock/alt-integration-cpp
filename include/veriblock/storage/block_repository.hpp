@@ -102,6 +102,8 @@ struct BlockRepository {
   using hash_t = typename Block::hash_t;
   //! block height type
   using height_t = typename Block::height_t;
+  //! iterator type
+  using cursor_t = Cursor<height_t, stored_block_t>;
 
   virtual ~BlockRepository() = default;
 
@@ -173,7 +175,7 @@ struct BlockRepository {
    * Returns iterator, that is used for height iteration over blockchain.
    * @return
    */
-  virtual std::shared_ptr<Cursor<height_t, stored_block_t>> getCursor() = 0;
+  virtual std::shared_ptr<cursor_t> getCursor() = 0;
 
   bool contains(const hash_t& hash) const { return getByHash(hash, nullptr); }
 };

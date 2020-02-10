@@ -8,23 +8,27 @@
 namespace VeriBlock {
 
 template <typename Block>
+struct WriteBatchMock : public WriteBatch<Block> {
+  ~WriteBatchMock() override = default;
+  using stored_block_t = Block;
+  using hash_t = typename Block::hash_t;
+  using height_t = typename Block::height_t;
+
+  MOCK_METHOD1_T(put, bool(const stored_block_t& block));
+  MOCK_METHOD1_T(removeByHash, bool(const hash_t& hash));
+  MOCK_METHOD1_T(removeByHeight, size_t(height_t height));
+  MOCK_METHOD0(clear, void());
+};
+
+template <typename Block>
 struct BlockRepositoryMock : public BlockRepository<Block> {
   using stored_block_t = Block;
   using hash_t = typename Block::hash_t;
   using height_t = typename Block::height_t;
-  using batch_t = typename BlockRepository<Block>::WriteBatch;
+  using batch_t = WriteBatch<Block>;
   using cursor_t = typename BlockRepository<Block>::cursor_t;
 
   ~BlockRepositoryMock() override = default;
-
-  struct WriteBatchMock : public BlockRepository<Block>::WriteBatch {
-    ~WriteBatchMock() override = default;
-
-    MOCK_METHOD1_T(put, bool(const stored_block_t& block));
-    MOCK_METHOD1_T(removeByHash, bool(const hash_t& hash));
-    MOCK_METHOD1_T(removeByHeight, size_t(height_t height));
-    MOCK_METHOD0(clear, void());
-  };
 
   MOCK_CONST_METHOD2_T(getByHash, bool(const hash_t&, stored_block_t*));
   MOCK_CONST_METHOD2_T(getByHeight,

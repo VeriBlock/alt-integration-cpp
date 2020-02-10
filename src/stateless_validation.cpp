@@ -27,8 +27,8 @@ int getIntFromBits(const std::vector<bool>& bits,
 
 namespace VeriBlock {
 
-static const ArithUint256 MAXIMUM_DIFFICULTY(
-    "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+static const auto MAXIMUM_DIFFICULTY =
+    ArithUint256::fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
 bool containsSplit(const std::vector<uint8_t>& pop_data,
                    const std::vector<uint8_t>& btcTx_data) {
@@ -194,8 +194,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
     if (vbkBlocks[i].height != lastHeight + 1 ||
         vbkBlocks[i].previousBlock.reverse() !=
-            trim<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE, VBLAKE_BLOCK_HASH_SIZE>(
-                lastHash)) {
+            lastHash.trim<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
       return state.Invalid("checkVeriBlockBlocks()",
                            "VeriBlock Blocks invalid",
                            "Blocks are not contiguous");
@@ -208,8 +207,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
 bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
   ArithUint256 blockHash(block.getHash());
-  ArithUint256 target;
-  target.decodeBits(block.bits, nullptr, nullptr);
+  ArithUint256 target = ArithUint256::fromBits(block.bits, nullptr, nullptr);
   if (target <= blockHash) {
     return state.Invalid("checkProofOfWork()",
                          "Invalid Btc Block",
@@ -220,8 +218,7 @@ bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
 
 bool checkProofOfWork(const VbkBlock& block, ValidationState& state) {
   ArithUint256 blockHash(block.getHash());
-  ArithUint256 target;
-  target.decodeBits(block.difficulty, nullptr, nullptr);
+  ArithUint256 target = ArithUint256::fromBits(block.difficulty, nullptr, nullptr);
   target = MAXIMUM_DIFFICULTY / target;
   if (target <= blockHash) {
     return state.Invalid("checkProofOfWork()",

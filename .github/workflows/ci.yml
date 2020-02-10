@@ -27,12 +27,11 @@ jobs:
           submodules: true
           clean: true
       - name: cmake
-        run: cmake . -Bbuild ${{ matrix.flags }}
+        # TODO: remove -DWITH_ROCKSDB=OFF
+        run: cmake . -Bbuild ${{ matrix.flags }} -DWITH_ROCKSDB=OFF
       - name: build
         run: cmake --build build -- -j2
       - name: test
-        env:
-          CTEST_OUTPUT_ON_FAILURE: 1
         run: cmake --build build --target test
 
 

@@ -3,33 +3,38 @@
 
 #include <cassert>
 #include <veriblock/entities/btcblock.hpp>
+#include <veriblock/stateless_validation.hpp>
 #include <veriblock/strutil.hpp>
 #include <veriblock/uint.hpp>
+#include <veriblock/validation_state.hpp>
 
 namespace VeriBlock {
 
 struct BtcChainParams {
   virtual ~BtcChainParams() = default;
   virtual uint256 getPowLimit() const = 0;
-  virtual int getPowTargetTimespan() const noexcept = 0;
-  virtual int getPowTargetSpacing() const noexcept = 0;
+  virtual uint32_t getPowTargetTimespan() const noexcept = 0;
+  virtual uint32_t getPowTargetSpacing() const noexcept = 0;
   virtual bool getAllowMinDifficultyBlocks() const noexcept = 0;
   virtual bool getPowNoRetargeting() const noexcept = 0;
   virtual BtcBlock getGenesisBlock() const noexcept = 0;
+  uint32_t getDifficultyAdjustmentInterval() const noexcept {
+    return getPowTargetTimespan() / getPowTargetSpacing();
+  }
 };
 
 struct BtcChainParamsMain : public BtcChainParams {
   ~BtcChainParamsMain() override = default;
 
   uint256 getPowLimit() const override {
-    return uint256(ParseHex(
-        "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"));
+    return uint256::fromHex(
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000");
   }
 
-  int getPowTargetTimespan() const noexcept override {
+  uint32_t getPowTargetTimespan() const noexcept override {
     return 14 * 24 * 60 * 60;  // two weeks
   }
-  int getPowTargetSpacing() const noexcept override { return 10 * 60; }
+  uint32_t getPowTargetSpacing() const noexcept override { return 10 * 60; }
   bool getAllowMinDifficultyBlocks() const noexcept override { return false; }
   bool getPowNoRetargeting() const noexcept override { return false; }
   BtcBlock getGenesisBlock() const noexcept override {
@@ -38,7 +43,7 @@ struct BtcChainParamsMain : public BtcChainParams {
     block.timestamp = 1231006505;
     block.nonce = 2083236893;
     block.bits = 0x1d00ffff;
-    block.merkleRoot = ParseHex(
+    block.merkleRoot = uint256::fromHex(
         "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b");
 
     ValidationState state;
@@ -54,14 +59,14 @@ struct BtcChainParamsTest : public BtcChainParams {
   ~BtcChainParamsTest() override = default;
 
   uint256 getPowLimit() const override {
-    return uint256(ParseHex(
-        "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"));
+    return uint256::fromHex(
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000");
   }
 
-  int getPowTargetTimespan() const noexcept override {
+  uint32_t getPowTargetTimespan() const noexcept override {
     return 14 * 24 * 60 * 60;
   }
-  int getPowTargetSpacing() const noexcept override { return 10 * 60; }
+  uint32_t getPowTargetSpacing() const noexcept override { return 10 * 60; }
   bool getAllowMinDifficultyBlocks() const noexcept override { return true; }
   bool getPowNoRetargeting() const noexcept override { return false; }
   BtcBlock getGenesisBlock() const noexcept override {
@@ -70,7 +75,7 @@ struct BtcChainParamsTest : public BtcChainParams {
     block.timestamp = 1296688602;
     block.nonce = 414098458;
     block.bits = 0x1d00ffff;
-    block.merkleRoot = ParseHex(
+    block.merkleRoot = uint256::fromHex(
         "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b");
 
     ValidationState state;
@@ -86,14 +91,14 @@ struct BtcChainParamsRegTest : public BtcChainParams {
   ~BtcChainParamsRegTest() override = default;
 
   uint256 getPowLimit() const override {
-    return ParseHex(
-        "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+    return uint256::fromHex(
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f");
   }
 
-  int getPowTargetTimespan() const noexcept override {
+  uint32_t getPowTargetTimespan() const noexcept override {
     return 14 * 24 * 60 * 60;
   }
-  int getPowTargetSpacing() const noexcept override { return 10 * 60; }
+  uint32_t getPowTargetSpacing() const noexcept override { return 10 * 60; }
   bool getAllowMinDifficultyBlocks() const noexcept override { return true; }
   bool getPowNoRetargeting() const noexcept override { return true; }
   BtcBlock getGenesisBlock() const noexcept override {
@@ -102,8 +107,8 @@ struct BtcChainParamsRegTest : public BtcChainParams {
     block.timestamp = 1296688602;
     block.nonce = 2;
     block.bits = 0x207fffff;
-    block.merkleRoot = uint256(ParseHex(
-        "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
+    block.merkleRoot = uint256::fromHex(
+        "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b");
 
     ValidationState state;
     assert(checkBlock(block, state));
