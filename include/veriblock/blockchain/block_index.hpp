@@ -34,9 +34,9 @@ struct BlockIndex {
   uint32_t getBlockTime() const { return header.getBlockTime(); }
   uint32_t getDifficulty() const { return header.getDifficulty(); }
   int64_t getMedianTimePast() const {
-    int64_t pmedian[medianTimeSpan];
-    int64_t* pbegin = &pmedian[medianTimeSpan];
-    int64_t* pend = &pmedian[medianTimeSpan];
+    std::array<int64_t, medianTimeSpan> pmedian;
+    auto* pbegin = &pmedian[medianTimeSpan];
+    auto* pend = &pmedian[medianTimeSpan];
 
     const BlockIndex* pindex = this;
     for (int i = 0; i < medianTimeSpan && pindex; i++, pindex = pindex->pprev) {

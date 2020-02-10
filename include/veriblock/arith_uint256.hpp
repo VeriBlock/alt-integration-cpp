@@ -255,29 +255,18 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     return a.compareTo(b) == 0;
   }
 
-  static ArithUint256 fromHex(const std::string& hex) {
-    ArithUint256 u;
-    u.setHex(hex);
-    return u;
-  }
+  static ArithUint256 fromHex(const std::string& hex);
 
   // toHex should be inverted
-  std::string toHex() const { return HexStr(data_.rbegin(), data_.rend()); }
+  std::string toHex() const;
 
-  uint64_t GetLow64() const;
+  uint64_t getLow64() const;
 
-  ArithUint256& decodeBits(uint32_t bits, bool* negative, bool* overflow);
+  static ArithUint256 fromBits(uint32_t bits, bool* negative = nullptr, bool* overflow = nullptr);
 
-  uint32_t encodeBits(bool negative = false) const;
+  uint32_t toBits(bool negative = false) const;
 
-  void setHex(const std::string& value) {
-    std::vector<uint8_t> bytes = ParseHex(value);
-    if (bytes.size() > SHA256_HASH_SIZE) {
-      throw uint_error("size of the string number more than SHA256_HASH_SIZE");
-    }
-
-    std::copy(bytes.rbegin(), bytes.rend(), data_.begin());
-  }
+  void setHex(const std::string& value);
 };
 
 /// custom gtest printer, which prints Blob of any size as hexstring

@@ -207,8 +207,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
 bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
   ArithUint256 blockHash(block.getHash());
-  ArithUint256 target;
-  target.decodeBits(block.bits, nullptr, nullptr);
+  ArithUint256 target = ArithUint256::fromBits(block.bits, nullptr, nullptr);
   if (target <= blockHash) {
     return state.Invalid("checkProofOfWork()",
                          "Invalid Btc Block",
@@ -219,8 +218,7 @@ bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
 
 bool checkProofOfWork(const VbkBlock& block, ValidationState& state) {
   ArithUint256 blockHash(block.getHash());
-  ArithUint256 target;
-  target.decodeBits(block.difficulty, nullptr, nullptr);
+  ArithUint256 target = ArithUint256::fromBits(block.difficulty, nullptr, nullptr);
   target = MAXIMUM_DIFFICULTY / target;
   if (target <= blockHash) {
     return state.Invalid("checkProofOfWork()",

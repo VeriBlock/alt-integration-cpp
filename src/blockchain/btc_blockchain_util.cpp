@@ -49,8 +49,7 @@ static uint32_t calculateNextWorkRequired(
 
   // Retarget
   const ArithUint256 bnPowLimit = params.getPowLimit();
-  ArithUint256 bnNew;
-  bnNew.encodeBits(currentTip.getDifficulty());
+  ArithUint256 bnNew = ArithUint256::fromBits(currentTip.getDifficulty());
   bnNew *= nActualTimespan;
   bnNew /= powTargetTimespan;
 
@@ -58,7 +57,7 @@ static uint32_t calculateNextWorkRequired(
     bnNew = bnPowLimit;
   }
 
-  return bnNew.encodeBits();
+  return bnNew.toBits();
 }
 
 // copied from BTC
@@ -66,8 +65,7 @@ template <>
 uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
                              const BtcBlock& block,
                              const BtcChainParams& params) {
-  unsigned int nProofOfWorkLimit =
-      ArithUint256(params.getPowLimit()).encodeBits();
+  unsigned int nProofOfWorkLimit = ArithUint256(params.getPowLimit()).toBits();
 
   // Only change once per difficulty adjustment interval
   if ((currentTip.height + 1) % params.getDifficultyAdjustmentInterval() != 0) {

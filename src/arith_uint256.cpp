@@ -1,20 +1,21 @@
-#include <cassert>
-
 #include "veriblock/arith_uint256.hpp"
+
+#include <cassert>
 
 using namespace VeriBlock;
 
-ArithUint256& ArithUint256::decodeBits(uint32_t bits,
-                                       bool* negative,
-                                       bool* overflow) {
+ArithUint256 ArithUint256::fromBits(uint32_t bits,
+                                    bool* negative,
+                                    bool* overflow) {
+  ArithUint256 target;
   int nSize = bits >> 24u;
   uint32_t nWord = bits & 0x007fffffu;
   if (nSize <= 3) {
     nWord >>= 8 * (3 - nSize);
-    *this = nWord;
+    target = nWord;
   } else {
-    *this = nWord;
-    *this <<= 8 * (nSize - 3);
+    target = nWord;
+    target <<= 8 * (nSize - 3);
   }
   if (negative) {
     *negative = (nWord != 0) && ((bits & 0x00800000u) != 0);
@@ -24,7 +25,7 @@ ArithUint256& ArithUint256::decodeBits(uint32_t bits,
                                (nWord > 0xffff && nSize > 32));
   }
 
-  return *this;
+  return target;
 }
 
 int ArithUint256::compareTo(const ArithUint256& b) const {
@@ -140,14 +141,14 @@ unsigned int ArithUint256::bits() const {
   return 0;
 }
 
-uint32_t ArithUint256::encodeBits(bool negative) const {
+uint32_t ArithUint256::toBits(bool negative) const {
   int nSize = (bits() + 7) / 8;
   uint32_t nCompact = 0;
   if (nSize <= 3) {
-    nCompact = (uint32_t)GetLow64() << 8 * (3 - nSize);
+    nCompact = (uint32_t)getLow64() << 8 * (3 - nSize);
   } else {
     ArithUint256 bn = *this >> 8 * (nSize - 3);
-    nCompact = (uint32_t)bn.GetLow64();
+    nCompact = (uint32_t)bn.getLow64();
   }
   // The 0x00800000 bit denotes the sign.
   // Thus, if it is already set, divide the mantissa by 256 and increase the
@@ -163,8 +164,24 @@ uint32_t ArithUint256::encodeBits(bool negative) const {
   return nCompact;
 }
 
-uint64_t ArithUint256::GetLow64() const {
+uint64_t ArithUint256::getLow64() const {
   const uint32_t* p1 = (uint32_t*)(&data_[0]);
   const uint32_t* p2 = (uint32_t*)(&data_[4]);
   return *p1 | (uint64_t)*p2 << 32;
+}
+ArithUint256 ArithUint256::fromHex(const std::string& hex) {
+  ArithUint256 u;
+  u.setHex(hex);
+  return u;
+}
+std::string ArithUint256::toHex() const {
+  return HexStr(data_.rbegin(), data_.rend());
+}
+void ArithUint256::setHex(const std::string& value) {
+  std::vector<uint8_t> bytes = ParseHex(value);
+  if (bytes.size() > SHA256_HASH_SIZE) {
+    throw uint_error("length of the number is more than 32 bytes");
+  }
+
+  std::copy(bytes.rbegin(), bytes.rend(), data_.begin());
 }

@@ -17,6 +17,7 @@ void createBlock(Block& block) {
     ++block.nonce;
     if (block.nonce >= std::numeric_limits<decltype(block.nonce)>::max()) {
       ++block.timestamp;
+      block.nonce = 0;
     }
   }
 }
@@ -27,24 +28,12 @@ struct Miner {
   using hash_t = decltype(Block::previousBlock);
   using index_t = BlockIndex<Block>;
 
-  Miner(std::shared_ptr<BlockTree<Block>> chain,
-        std::shared_ptr<ChainParams> params)
-      : blockchain_(std::move(chain)), params_(std::move(params)) {}
-
-  void bootstrap() {
-    ValidationState state;
-    if (!blockchain_->bootstrap(0, params_->getGenesisBlock(), state)) {
-      throw std::logic_error(
-          format("miner bootstrapped with invalid block: %s, %s",
-                 state.GetRejectReason(),
-                 state.GetDebugMessage()));
-    }
-  }
+  Miner(std::shared_ptr<ChainParams> params) : params_(std::move(params)) {}
 
   // One must define their own template specialization for given Block and
   // ChainParams types. Otherwise, get pretty compilation error.
   Block getBlockTemplate(const BlockIndex<BtcBlock>& tip,
-                         const merkle_t& /*ignore*/) const;
+                         const merkle_t& merkleRoot) const;
 
   Block createNextBlock(const index_t& prev, const merkle_t& merkle) {
     Block block = getBlockTemplate(prev, merkle);
@@ -52,33 +41,7 @@ struct Miner {
     return block;
   }
 
-  //! mine next block after "prev"
-  Block createAndApplyNextBlock(const index_t& prev, const merkle_t& merkle) {
-    Block block = getBlockTemplate(prev, merkle);
-    createBlock(block);
-    ValidationState state;
-    if (!blockchain_->acceptBlock(block, state)) {
-      throw std::logic_error(format("miner created invalid block: %s, %s",
-                                    state.GetRejectReason(),
-                                    state.GetDebugMessage()));
-    }
-    return block;
-  }
-
-  //! mine next block after tip
-  Block createAndApplyNextBlock(const merkle_t& merkle) {
-    auto& bestChain = this->blockchain_->getBestChain();
-    auto* tip = bestChain.tip();
-    if (tip == nullptr) {
-      throw std::logic_error(
-          "miner attempted to create block template, but blockchain is not "
-          "bootstrapped");
-    }
-    return createAndApplyNextBlock(*tip, merkle);
-  }
-
  private:
-  std::shared_ptr<BlockTree<Block>> blockchain_;
   std::shared_ptr<ChainParams> params_;
 };
 

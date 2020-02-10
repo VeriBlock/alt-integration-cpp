@@ -1,3 +1,5 @@
+#include "veriblock/arith_uint256.hpp"
+
 #include <gtest/gtest.h>
 
 #include <algorithm>
@@ -5,7 +7,6 @@
 #include <string>
 
 #include "util/literals.hpp"
-#include "veriblock/arith_uint256.hpp"
 #include "veriblock/uint.hpp"
 
 using namespace VeriBlock;
@@ -143,7 +144,7 @@ TEST(ArithUint256, shifts) {
     TmpL >>= i;
     ASSERT_TRUE(TmpL == (MaxL >> i));
   }
-  ArithUint256 c1L = ArithUint256(0x0123456789abcdefULL);
+  ArithUint256 c1L = 0x0123456789abcdefULL;
   ArithUint256 c2L = c1L << 128;
   for (unsigned int i = 0; i < 128; ++i) {
     ASSERT_TRUE((c1L << i) == (c2L >> (128 - i)));
@@ -487,22 +488,23 @@ static std::vector<TestCase> decodeBits_cases = {
 TEST_P(DecodeBitsTest, uint256_decodeBits) {
   auto value = GetParam();
 
-  ArithUint256 target;
   auto negative = false;
   auto overflow = false;
-  target.decodeBits(value.bits, &negative, &overflow);
+  ArithUint256 target =
+      ArithUint256::fromBits(value.bits, &negative, &overflow);
 
   EXPECT_EQ(target.toHex(), value.hex);
-  EXPECT_EQ(target.encodeBits(value.negative), value.compact);
+  EXPECT_EQ(target.toBits(value.negative), value.compact);
   EXPECT_EQ(negative, value.negative);
   EXPECT_EQ(overflow, value.overflow);
 }
 
 TEST(DecodeBitsTest, uint256_overflow) {
-  ArithUint256 target;
   auto negative = false;
   auto overflow = false;
-  target.decodeBits(0xff123456, &negative, &overflow);
+  ArithUint256 target =
+      ArithUint256::fromBits(0xff123456, &negative, &overflow);
+  (void)target;
   EXPECT_FALSE(negative);
   EXPECT_TRUE(overflow);
 }
@@ -528,13 +530,13 @@ TEST(DecodeBitsTest, Methods) {
   EXPECT_EQ(R2L.size(), 32);
   EXPECT_EQ(ZeroL.size(), 32);
   EXPECT_EQ(MaxL.size(), 32);
-  EXPECT_EQ(R1L.GetLow64(), R1LLow64);
-  EXPECT_EQ(HalfL.GetLow64(), 0x0000000000000000ULL);
-  EXPECT_EQ(OneL.GetLow64(), 0x0000000000000001ULL);
+  EXPECT_EQ(R1L.getLow64(), R1LLow64);
+  EXPECT_EQ(HalfL.getLow64(), 0x0000000000000000ULL);
+  EXPECT_EQ(OneL.getLow64(), 0x0000000000000001ULL);
 
   std::string hex =
       "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
   TmpL.setHex(hex);
-  EXPECT_EQ(TmpL.encodeBits(false), 0x207fffff);
-  EXPECT_EQ(ArithUint256::fromHex(hex).encodeBits(false), 0x207fffff);
+  EXPECT_EQ(TmpL.toBits(false), 0x207fffff);
+  EXPECT_EQ(ArithUint256::fromHex(hex).toBits(false), 0x207fffff);
 }
