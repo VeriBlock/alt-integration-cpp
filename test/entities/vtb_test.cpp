@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <string>
+#include <vector>
+
 #include "util/literals.hpp"
 #include "veriblock/entities/vtb.hpp"
 
@@ -210,7 +213,7 @@ TEST(VTB, Deserialize) {
   auto decoded = VTB::fromVbkEncoding(stream);
 
   EXPECT_EQ(decoded.transaction.address,
-      Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 }
 
 TEST(VTB, Serialize) {
@@ -226,7 +229,7 @@ TEST(VTB, RoundTrip) {
   auto stream = ReadStream(vtbBytes);
   auto decoded = VTB::fromVbkEncoding(stream);
   EXPECT_EQ(decoded.transaction.address,
-      Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);

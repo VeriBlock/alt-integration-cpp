@@ -72,7 +72,7 @@ TEST(ATV, Deserialize) {
   auto decoded = ATV::fromVbkEncoding(stream);
 
   EXPECT_EQ(decoded.transaction.sourceAddress,
-      Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+            Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 }
 
 TEST(ATV, Serialize) {
@@ -88,7 +88,7 @@ TEST(ATV, RoundTrip) {
   auto stream = ReadStream(atvBytes);
   auto decoded = ATV::fromVbkEncoding(stream);
   EXPECT_EQ(decoded.transaction.sourceAddress,
-      Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+            Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);

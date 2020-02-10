@@ -1,11 +1,12 @@
-#include "veriblock/arith_uint256.hpp"
-
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <veriblock/uint.hpp>
+#include <ostream>
+#include <string>
 
 #include "util/literals.hpp"
+#include "veriblock/arith_uint256.hpp"
+#include "veriblock/uint.hpp"
 
 using namespace VeriBlock;
 

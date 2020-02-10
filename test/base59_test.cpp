@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <util/literals.hpp>
+#include <ostream>
+#include <string>
 #include <vector>
-#include <veriblock/base59.hpp>
+
+#include "util/literals.hpp"
+#include "veriblock/base59.hpp"
 
 struct TestCase {
   std::vector<uint8_t> binData;

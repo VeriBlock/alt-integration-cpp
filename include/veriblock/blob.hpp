@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <string>
 
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
@@ -29,6 +30,7 @@ struct Blob {
 
   Blob(Slice<const uint8_t> slice) { assign(slice); }
   Blob(const std::vector<uint8_t>& v) { assign(v); }
+  Blob(const std::string& str) { assign(str); }
 
   Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
@@ -127,6 +129,13 @@ struct Blob {
       throw std::invalid_argument("Blob(): invalid slice size");
     }
     std::copy(slice.begin(), slice.end(), data_.begin());
+  }
+
+  inline void assign(const std::string& str) {
+    if (str.size() != N) {
+      throw std::invalid_argument("Blob(): invalid slice size");
+    }
+    std::copy(str.begin(), str.end(), data_.begin());
   }
 
   storage_t data_;

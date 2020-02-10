@@ -1,8 +1,10 @@
-#include "veriblock/entities/address.hpp"
-
 #include <gtest/gtest.h>
 
+#include <ostream>
+#include <string>
+
 #include "util/literals.hpp"
+#include "veriblock/entities/address.hpp"
 
 using namespace VeriBlock;
 

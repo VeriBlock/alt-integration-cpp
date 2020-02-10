@@ -1,8 +1,9 @@
-#include "veriblock/entities/output.hpp"
-
 #include <gtest/gtest.h>
 
+#include <string>
+
 #include "util/literals.hpp"
+#include "veriblock/entities/output.hpp"
 
 using namespace VeriBlock;
 
@@ -10,8 +11,7 @@ static const auto OUTPUT_BYTES =
     "01166772F51AB208D32771AB1506970EEB664462730B838E020539"_unhex;
 
 static const Output OUTPUT_VALUE =
-    Output(Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
-           Coin(1337));
+    Output(Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"), Coin(1337));
 
 TEST(Output, Deserialize) {
   auto stream = ReadStream(OUTPUT_BYTES);

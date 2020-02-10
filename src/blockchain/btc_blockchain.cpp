@@ -36,6 +36,38 @@ void determineBestChain(Chain<BtcBlock>& currentBest,
   }
 }
 
+uint32_t calculateNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
+                                   uint32_t nFirstBlockTime,
+                                   const BtcChainParams& params) {
+  if (params.getPowNoRetargeting()) {
+    return currentTip.getDifficulty();
+  }
+
+  auto powTargetTimespan = params.getPowTargetTimespan();
+
+  // Limit adjustment step
+  uint32_t nActualTimespan = currentTip.getBlockTime() - nFirstBlockTime;
+  if (nActualTimespan < powTargetTimespan / 4) {
+    nActualTimespan = powTargetTimespan / 4;
+  }
+  if (nActualTimespan > powTargetTimespan * 4) {
+    nActualTimespan = powTargetTimespan * 4;
+  }
+
+  // Retarget
+  const ArithUint256 bnPowLimit = params.getPowLimit();
+  ArithUint256 bnNew;
+  bnNew.encodeBits(currentTip.getDifficulty());
+  bnNew *= nActualTimespan;
+  bnNew /= powTargetTimespan;
+
+  if (bnNew > bnPowLimit) {
+    bnNew = bnPowLimit;
+  }
+
+  return bnNew.encodeBits();
+}
+
 uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
                              const BtcBlock& block,
                              const BtcChainParams& params) {
@@ -65,46 +97,13 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
   }
 
   // Go back by what we want to be 14 days worth of blocks
-  int nHeightFirst =
+  uint32_t nHeightFirst =
       currentTip.height - (params.getDifficultyAdjustmentInterval() - 1);
-  assert(nHeightFirst >= 0);
   const auto* pindexFirst = currentTip.getAncestor(nHeightFirst);
   assert(pindexFirst);
 
   return calculateNextWorkRequired(
       currentTip, pindexFirst->getBlockTime(), params);
-}
-
-uint32_t calculateNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
-                                   int64_t nFirstBlockTime,
-                                   const BtcChainParams& params) {
-  if (params.getPowNoRetargeting()) {
-    return currentTip.getDifficulty();
-  }
-
-  auto powTargetTimespan = params.getPowTargetTimespan();
-
-  // Limit adjustment step
-  int64_t nActualTimespan = currentTip.getBlockTime() - nFirstBlockTime;
-  if (nActualTimespan < powTargetTimespan / 4) {
-    nActualTimespan = powTargetTimespan / 4;
-  }
-  if (nActualTimespan > powTargetTimespan * 4) {
-    nActualTimespan = powTargetTimespan * 4;
-  }
-
-  // Retarget
-  const ArithUint256 bnPowLimit = params.getPowLimit();
-  ArithUint256 bnNew;
-  bnNew.encodeBits(currentTip.getDifficulty());
-  bnNew *= nActualTimespan;
-  bnNew /= powTargetTimespan;
-
-  if (bnNew > bnPowLimit) {
-    bnNew = bnPowLimit;
-  }
-
-  return bnNew.encodeBits();
 }
 
 }  // namespace VeriBlock

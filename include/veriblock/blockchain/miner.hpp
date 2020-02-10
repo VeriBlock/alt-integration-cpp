@@ -40,6 +40,10 @@ struct Miner {
     }
   }
 
+  // One must define their own template specialization for given Block and
+  // ChainParams types. Otherwise, get pretty compilation error.
+  Block getBlockTemplate(const merkle_t& /*ignore*/) const;
+
   Block mineNextBlock(const merkle_t& merkle = merkle_t{}) {
     Block block = getBlockTemplate(merkle);
     createBlock(block);
@@ -50,14 +54,6 @@ struct Miner {
                                     state.GetDebugMessage()));
     }
     return block;
-  }
-
-  // One must define their own template specialization for given Block and
-  // ChainParams types. Otherwise, get pretty compilation error.
-  Block getBlockTemplate(const merkle_t& /*ignore*/) const {
-    static_assert(sizeof(Block) == 0,
-                  "There is no template definition for these types. Use "
-                  "existing definitions or define them yourself.");
   }
 
  private:

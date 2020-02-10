@@ -3,22 +3,22 @@
 
 #include <cassert>
 #include <veriblock/entities/btcblock.hpp>
+#include <veriblock/stateless_validation.hpp>
 #include <veriblock/strutil.hpp>
 #include <veriblock/uint.hpp>
 #include <veriblock/validation_state.hpp>
-#include <veriblock/stateless_validation.hpp>
 
 namespace VeriBlock {
 
 struct BtcChainParams {
   virtual ~BtcChainParams() = default;
   virtual uint256 getPowLimit() const = 0;
-  virtual int getPowTargetTimespan() const noexcept = 0;
-  virtual int getPowTargetSpacing() const noexcept = 0;
+  virtual uint32_t getPowTargetTimespan() const noexcept = 0;
+  virtual uint32_t getPowTargetSpacing() const noexcept = 0;
   virtual bool getAllowMinDifficultyBlocks() const noexcept = 0;
   virtual bool getPowNoRetargeting() const noexcept = 0;
   virtual BtcBlock getGenesisBlock() const noexcept = 0;
-  int64_t getDifficultyAdjustmentInterval() const noexcept {
+  uint32_t getDifficultyAdjustmentInterval() const noexcept {
     return getPowTargetTimespan() / getPowTargetSpacing();
   }
 };
@@ -31,10 +31,10 @@ struct BtcChainParamsMain : public BtcChainParams {
         "ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000");
   }
 
-  int getPowTargetTimespan() const noexcept override {
+  uint32_t getPowTargetTimespan() const noexcept override {
     return 14 * 24 * 60 * 60;  // two weeks
   }
-  int getPowTargetSpacing() const noexcept override { return 10 * 60; }
+  uint32_t getPowTargetSpacing() const noexcept override { return 10 * 60; }
   bool getAllowMinDifficultyBlocks() const noexcept override { return false; }
   bool getPowNoRetargeting() const noexcept override { return false; }
   BtcBlock getGenesisBlock() const noexcept override {
@@ -63,10 +63,10 @@ struct BtcChainParamsTest : public BtcChainParams {
         "ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000");
   }
 
-  int getPowTargetTimespan() const noexcept override {
+  uint32_t getPowTargetTimespan() const noexcept override {
     return 14 * 24 * 60 * 60;
   }
-  int getPowTargetSpacing() const noexcept override { return 10 * 60; }
+  uint32_t getPowTargetSpacing() const noexcept override { return 10 * 60; }
   bool getAllowMinDifficultyBlocks() const noexcept override { return true; }
   bool getPowNoRetargeting() const noexcept override { return false; }
   BtcBlock getGenesisBlock() const noexcept override {
@@ -95,10 +95,10 @@ struct BtcChainParamsRegTest : public BtcChainParams {
         "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f");
   }
 
-  int getPowTargetTimespan() const noexcept override {
+  uint32_t getPowTargetTimespan() const noexcept override {
     return 14 * 24 * 60 * 60;
   }
-  int getPowTargetSpacing() const noexcept override { return 10 * 60; }
+  uint32_t getPowTargetSpacing() const noexcept override { return 10 * 60; }
   bool getAllowMinDifficultyBlocks() const noexcept override { return true; }
   bool getPowNoRetargeting() const noexcept override { return true; }
   BtcBlock getGenesisBlock() const noexcept override {
