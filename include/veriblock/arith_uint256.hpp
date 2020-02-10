@@ -21,27 +21,17 @@ class uint_error : public std::runtime_error {
 /** 256-bit unsigned big integer. */
 class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
  public:
-  ArithUint256() {}
-  ArithUint256(const std::string& value) {
-    std::vector<uint8_t> bytes = ParseHex(value);
-    if (bytes.size() > SHA256_HASH_SIZE) {
-      throw uint_error("size of the string number more than SHA256_HASH_SIZE");
-    }
-    for (size_t i = 0; i < bytes.size() && i < SHA256_HASH_SIZE; ++i) {
-      data_[i] = bytes[bytes.size() - 1 - i];
-    }
-  }
+  ArithUint256() = default;
 
-  ArithUint256(const Blob<SHA256_HASH_SIZE>& b) : Blob<SHA256_HASH_SIZE>(b) {}
+  ArithUint256(const std::vector<uint8_t>& v) : Blob<SHA256_HASH_SIZE>(v) {}
 
+  // regular bytes should not be reversed
   template <size_t N>
   ArithUint256(const Blob<N>& b) {
     if (b.size() > SHA256_HASH_SIZE) {
       throw uint_error("size of the Blob<N> more than SHA256_HASH_SIZE");
     }
-    for (size_t i = 0; i < N; ++i) {
-      this->data_[i] = b[i];
-    }
+    assign(b);
   }
 
   ArithUint256(uint64_t b) {
@@ -265,10 +255,25 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     return a.compareTo(b) == 0;
   }
 
-  ArithUint256& decodeBits(const uint32_t& bits,
-                           bool* negative,
-                           bool* overflow);
+  static ArithUint256 fromHex(const std::string& hex);
+
+  // toHex should be inverted
+  std::string toHex() const;
+
+  uint64_t getLow64() const;
+
+  static ArithUint256 fromBits(uint32_t bits, bool* negative = nullptr, bool* overflow = nullptr);
+
+  uint32_t toBits(bool negative = false) const;
+
+  void setHex(const std::string& value);
 };
+
+/// custom gtest printer, which prints Blob of any size as hexstring
+inline void PrintTo(const ArithUint256& uint, ::std::ostream* os) {
+  *os << uint.toHex();
+}
+
 }  // namespace VeriBlock
 
 #endif  // BITCOIN_ARITH_UINT256_H

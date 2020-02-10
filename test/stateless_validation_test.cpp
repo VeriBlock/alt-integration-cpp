@@ -178,7 +178,7 @@ TEST(StatelessValidation, checkVbkBlock_when_checkMaximumDrift_invalid_test) {
   VbkBlock block = validVbkBlock;
   block.timestamp = std::numeric_limits<uint32_t>::max();
   ValidationState state;
-  ASSERT_FALSE(checkProofOfWork(block, state));
+  ASSERT_FALSE(checkMaximumDrift(block, state));
 }
 
 TEST(StatelessValidation, ATV_valid) {

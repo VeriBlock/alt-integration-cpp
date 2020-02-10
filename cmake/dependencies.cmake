@@ -11,6 +11,7 @@ endif()
 
 if(TESTING)
     message(STATUS "Adding gtest")
+    set(gtest_hide_internal_symbols TRUE CACHE BOOL "hide internal gtest symbols")
     set(INSTALL_GTEST FALSE CACHE BOOL "install gtest")
     set(BUILD_GMOCK ON CACHE BOOL "build gmock")
     set(BUILD_GTEST ON CACHE BOOL "build gtest")

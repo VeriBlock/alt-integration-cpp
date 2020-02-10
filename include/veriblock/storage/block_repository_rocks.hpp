@@ -215,9 +215,10 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
     std::set<hash_t> result{};
     for (size_t i = 0; i < (hashesData.size() / sizeof(hash_t)); i++) {
-      auto blobPart =
+      std::string blobPartStr =
           hashesData.substr(i * sizeof(hash_t), (i + 1) * sizeof(hash_t));
-      result.insert(blobPart);
+
+      result.insert(Blob<32>(blobPartStr));
     }
     return result;
   }

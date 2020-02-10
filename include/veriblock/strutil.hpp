@@ -13,6 +13,11 @@ bool IsHex(const std::string& str);
 std::vector<uint8_t> ParseHex(const char* psz);
 std::vector<uint8_t> ParseHex(const std::string& hex);
 
+constexpr inline bool IsSpace(char c) noexcept {
+  return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' ||
+      c == '\v';
+}
+
 template <typename T>
 std::string HexStr(const T itbegin, const T itend) {
   std::string rv;

@@ -54,11 +54,6 @@ struct Chain {
 
   height_t size() const { return (height_t)chain.size() + startHeight_; }
 
-  height_t height() const {
-    return chain.empty() ? startHeight_
-                         : height_t(chain.size() - 1 + startHeight_);
-  }
-
   index_t* tip() const { return chain.empty() ? nullptr : (*this)[size() - 1]; }
 
   index_t* bootstrap() const { return chain.empty() ? nullptr : chain[0]; }

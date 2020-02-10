@@ -1,5 +1,6 @@
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
+add_subdirectory(blockchain)
 add_subdirectory(third_party)
 add_subdirectory(entities)
 
@@ -17,6 +18,7 @@ add_library(vbkutils
         stateless_validation.cpp
         arith_uint256.cpp
         signutil.cpp
+        $<TARGET_OBJECTS:blockchain>
         $<TARGET_OBJECTS:entities>
         $<TARGET_OBJECTS:secp256k1>
         $<TARGET_OBJECTS:sha256>
