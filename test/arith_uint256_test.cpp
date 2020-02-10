@@ -1,11 +1,12 @@
-#include "veriblock/arith_uint256.hpp"
-
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <veriblock/uint.hpp>
+#include <ostream>
+#include <string>
 
 #include "util/literals.hpp"
+#include "veriblock/arith_uint256.hpp"
+#include "veriblock/uint.hpp"
 
 using namespace VeriBlock;
 
@@ -26,7 +27,7 @@ const unsigned char R2Array[] =
 const ArithUint256 R2L(std::vector<uint8_t>(R2Array,
                                             R2Array + SHA256_HASH_SIZE));
 
-const ArithUint256 R1LPlusR2L(
+const ArithUint256 R1LPlusR2L = ArithUint256::fromHex(
     "549FB09FEA236A1EA3E31D4D58F1B1369288D204211CA751527CFC175767850C");
 
 const unsigned char ZeroArray[] =
@@ -305,11 +306,11 @@ TEST(ArithUint256, PlusMinus) {
 TEST(ArithUint256, multiply) {
   ASSERT_TRUE(
       (R1L * R1L) ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "62a38c0486f01e45879d7910a7761bf30d5237e9873f9bff3642a732c4d84f10"));
   ASSERT_TRUE(
       (R1L * R2L) ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "de37805e9986996cfba76ff6ba51c008df851987d9dd323f0e5de07760529c40"));
   ASSERT_TRUE((R1L * ZeroL) == ZeroL);
   ASSERT_TRUE((R1L * OneL) == R1L);
@@ -318,7 +319,7 @@ TEST(ArithUint256, multiply) {
 
   ASSERT_TRUE(
       (R2L * R2L) ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "ac8c010096767d3cae5005dec28bb2b45a1d85ab7996ccd3e102a650f74ff100"));
   ASSERT_TRUE((R2L * ZeroL) == ZeroL);
   ASSERT_TRUE((R2L * OneL) == R2L);
@@ -331,30 +332,30 @@ TEST(ArithUint256, multiply) {
 
   ASSERT_TRUE(
       (R1L * 3) ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "7759b1c0ed14047f961ad09b20ff83687876a0181a367b813634046f91def7d4"));
 
   ASSERT_TRUE(
       (R2L * 0x87654321UL) ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "23f7816e30c4ae2017257b7a0fa64d60402f5234d46e746b61c960d09a26d070"));
 }
 
 TEST(ArithUint256, divide) {
-  ArithUint256 D1L(
+  auto D1L = ArithUint256::fromHex(
       "00000000000000000000000000000000000000000000000ad7133ac1977fa2b7");
 
-  ArithUint256 D2L(
+  auto D2L = ArithUint256::fromHex(
       "0000000000000000000000000000000000000000000000000000000ecd751716");
 
   ASSERT_TRUE(
       R1L / D1L ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "00000000000000000b8ac01106981635d9ed112290f8895545a7654dde28fb3a"));
 
   ASSERT_TRUE(
       R1L / D2L ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "000000000873ce8efec5b67150bad3aa8c5fcb70e947586153bf2cec7c37c57a"));
   ASSERT_TRUE(R1L / OneL == R1L);
   ASSERT_TRUE(R1L / MaxL == ZeroL);
@@ -363,12 +364,12 @@ TEST(ArithUint256, divide) {
 
   ASSERT_TRUE(
       R2L / D1L ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "000000000000000013e1665895a1cc981de6d93670105a6b3ec3b73141b3a3c5"));
 
   ASSERT_TRUE(
       R2L / D2L ==
-      ArithUint256(
+      ArithUint256::fromHex(
           "000000000e8f0abe753bb0afe2e9437ee85d280be60882cf0bd1aaf7fa3cc2c4"));
   ASSERT_TRUE(R2L / OneL == R2L);
   ASSERT_TRUE(R2L / MaxL == ZeroL);
@@ -511,7 +512,7 @@ INSTANTIATE_TEST_SUITE_P(decodeBitsRegression,
                          testing::ValuesIn(decodeBits_cases));
 
 TEST(DecodeBitsTest, Methods) {
-  EXPECT_EQ(R1L, ArithUint256(R1ArrayHex));
+  EXPECT_EQ(R1L, ArithUint256::fromHex(R1ArrayHex));
 
   ArithUint256 TmpL(R1L);
   EXPECT_EQ(TmpL, R1L);
@@ -535,6 +536,5 @@ TEST(DecodeBitsTest, Methods) {
       "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
   TmpL.setHex(hex);
   EXPECT_EQ(TmpL.encodeBits(false), 0x207fffff);
-  EXPECT_EQ(ArithUint256(ParseHex(hex)).encodeBits(false), 0x207fffff);
-  EXPECT_EQ(ArithUint256(hex).encodeBits(false), 0x207fffff);
+  EXPECT_EQ(ArithUint256::fromHex(hex).encodeBits(false), 0x207fffff);
 }

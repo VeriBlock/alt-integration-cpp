@@ -1,13 +1,37 @@
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_MINER_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_MINER_HPP_
-
-#include <veriblock/blockchain/miner.hpp>
+#include <veriblock/blockchain/btc_blockchain_util.hpp>
+#include <veriblock/blockchain/btc_chain_params.hpp>
+#include <veriblock/entities/btcblock.hpp>
 
 namespace VeriBlock {
 
-uint32_t calculateNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
-                                   int64_t nFirstBlockTime,
-                                   const BtcChainParams& params) {
+template <>
+BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
+    const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) const {
+  BtcBlock block;
+  block.version = tip.header.version;
+  block.previousBlock = tip.header.getHash();
+  block.merkleRoot = merkle;
+  // TODO: is this correct?
+  block.timestamp =
+      std::max(currentTimestamp4(), (uint32_t)tip.getMedianTimePast());
+  block.bits = getNextWorkRequired(tip, block, *params_);
+  return block;
+}
+
+template <>
+void determineBestChain(Chain<BtcBlock>& currentBest,
+                        BlockIndex<BtcBlock>& indexNew) {
+  if (currentBest.tip() == nullptr ||
+      currentBest.tip()->chainWork < indexNew.chainWork) {
+    currentBest.setTip(&indexNew);
+  }
+}
+
+// copied from BTC
+static uint32_t calculateNextWorkRequired(
+    const BlockIndex<BtcBlock>& currentTip,
+    uint32_t nFirstBlockTime,
+    const BtcChainParams& params) {
   if (params.getPowNoRetargeting()) {
     return currentTip.getDifficulty();
   }
@@ -15,7 +39,7 @@ uint32_t calculateNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
   auto powTargetTimespan = params.getPowTargetTimespan();
 
   // Limit adjustment step
-  int64_t nActualTimespan = currentTip.getBlockTime() - nFirstBlockTime;
+  uint32_t nActualTimespan = currentTip.getBlockTime() - nFirstBlockTime;
   if (nActualTimespan < powTargetTimespan / 4) {
     nActualTimespan = powTargetTimespan / 4;
   }
@@ -37,6 +61,8 @@ uint32_t calculateNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
   return bnNew.encodeBits();
 }
 
+// copied from BTC
+template <>
 uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
                              const BtcBlock& block,
                              const BtcChainParams& params) {
@@ -66,9 +92,8 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
   }
 
   // Go back by what we want to be 14 days worth of blocks
-  int nHeightFirst =
+  uint32_t nHeightFirst =
       currentTip.height - (params.getDifficultyAdjustmentInterval() - 1);
-  assert(nHeightFirst >= 0);
   const auto* pindexFirst = currentTip.getAncestor(nHeightFirst);
   assert(pindexFirst);
 
@@ -76,27 +101,4 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
       currentTip, pindexFirst->getBlockTime(), params);
 }
 
-template <>
-BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
-    const merkle_t& merkle) const {
-  auto& bestChain = this->blockchain_->getBestChain();
-  auto* tip = bestChain.tip();
-  if (tip == nullptr) {
-    throw std::logic_error(
-        "miner attempted to create block template, but blockchain is not "
-        "bootstrapped");
-  }
-
-  BtcBlock block;
-  block.version = tip->header.version;
-  block.previousBlock = tip->header.getHash();
-  block.merkleRoot = merkle;
-  block.timestamp =
-      std::max(currentTimestamp4(), (uint32_t)tip->getMedianTimePast());
-  block.bits = getNextWorkRequired(*tip, block, *params_);
-  return block;
-}
-
 }  // namespace VeriBlock
-
-#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_MINER_HPP_

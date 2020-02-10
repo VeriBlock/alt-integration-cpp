@@ -1,32 +1,46 @@
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_HPP_
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_
 
 #include <memory>
 #include <set>
 #include <unordered_map>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
-#include <veriblock/blockchain/fork_resolution.hpp>
-#include <veriblock/blockchain/iblockchain.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
 namespace VeriBlock {
 
+/**
+ * BlockTree is a tree of blocks with single "bootstrap" block as root.
+ * @tparam Block
+ */
 template <typename Block>
-struct Blockchain : public IBlockchain<Block> {
+struct BlockTree {
   using block_t = Block;
   using index_t = BlockIndex<block_t>;
   using hash_t = typename Block::hash_t;
   using height_t = typename Block::height_t;
 
-  Blockchain(std::shared_ptr<BlockRepository<index_t>> repo)
+  BlockTree(std::shared_ptr<BlockRepository<index_t>> repo)
       : repo_(std::move(repo)) {}
 
+  /**
+   * Bootstrap blockchain with a single bootstrap block on given height.
+   *
+   * This function does all blockchain integrity checks, does blockchain cleanup
+   * and in general, very slow.
+   *
+   * @param height bootstrap block height
+   * @param block bootstrap block header
+   * @return true if blockchain has been loaded successfully. False, if
+   * blockchain stored in BlockRepository had some invalid data.
+   */
   bool bootstrap(height_t height,
                  const block_t& block,
-                 ValidationState& state) override {
+                 ValidationState& state) {
     if (!checkBlock(block, state)) {
       return state.addStackFunction("bootstrap()");
     }
@@ -44,12 +58,12 @@ struct Blockchain : public IBlockchain<Block> {
     return true;
   }
 
-  index_t* getBlockIndex(const hash_t& hash) override {
+  index_t* getBlockIndex(const hash_t& hash) {
     auto it = block_index_.find(hash);
     return it == block_index_.end() ? nullptr : &it->second;
   }
 
-  bool acceptBlock(const block_t& block, ValidationState& state) override {
+  bool acceptBlock(const block_t& block, ValidationState& state) {
     if (!checkBlock(block, state)) {
       return state.addStackFunction("acceptBlockHeader()");
     }
@@ -73,9 +87,7 @@ struct Blockchain : public IBlockchain<Block> {
     return true;
   }
 
-  const Chain<Block>& getBestChain() const override {
-    return this->activeChain_;
-  }
+  const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
  private:
   std::unordered_map<hash_t, index_t> block_index_;
@@ -146,8 +158,9 @@ struct Blockchain : public IBlockchain<Block> {
     std::sort(sortedByHeight.begin(), sortedByHeight.end());
     for (const auto& item : sortedByHeight) {
       index_t* index = item.second;
-      index->chainWork = index->pprev ? index->pprev->chainWork
-                                      : 0 + index->header.getBlockProof();
+      index->chainWork =
+          index->pprev ? index->pprev->chainWork + index->header.getBlockProof()
+                       : 0;
       determineBestChain(activeChain_, *index);
     }
 
@@ -157,4 +170,4 @@ struct Blockchain : public IBlockchain<Block> {
 
 }  // namespace VeriBlock
 
-#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_

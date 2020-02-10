@@ -71,6 +71,9 @@ TEST(VbkBlock, getBlockHash_test) {
   block.difficulty = 117586646;
   block.nonce = 1924857207;
 
-  EXPECT_EQ(ArithUint256(block.getHash()),
-            ArithUint256("000000000000480D8196D5B0B41861D032377F5165BB4452"));
+  EXPECT_EQ(
+      ArithUint256(block.getHash()),
+      ArithUint256(
+          "0000000000000000000000000000480D8196D5B0B41861D032377F5165BB4452"_unhex)
+          .reverse());
 }

@@ -1,5 +1,3 @@
-#include "veriblock/stateless_validation.hpp"
-
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -8,6 +6,7 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
+#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -28,8 +27,8 @@ int getIntFromBits(const std::vector<bool>& bits,
 
 namespace VeriBlock {
 
-static const ArithUint256 MAXIMUM_DIFFICULTY(
-    "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+static const auto MAXIMUM_DIFFICULTY =
+    ArithUint256::fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
 bool containsSplit(const std::vector<uint8_t>& pop_data,
                    const std::vector<uint8_t>& btcTx_data) {

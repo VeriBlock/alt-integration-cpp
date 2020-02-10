@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <string>
 
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
@@ -27,9 +28,18 @@ struct Blob {
 
   Blob() { data_.fill(0); };
 
-  Blob(Slice<const uint8_t> slice) { assign(slice); }
-  Blob(const std::vector<uint8_t>& v) { assign(v); }
-  Blob(const std::string& v) { assign(v); }
+  Blob(Slice<const uint8_t> slice) {
+    data_.fill(0);
+    assign(slice);
+  }
+  Blob(const std::vector<uint8_t>& v) {
+    data_.fill(0);
+    assign(v);
+  }
+  Blob(const std::string& str) {
+    data_.fill(0);
+    assign(str);
+  }
 
   Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
@@ -49,6 +59,12 @@ struct Blob {
   const_pointer data() const noexcept { return data_.data(); }
 
   std::string toHex() const { return HexStr(data_.begin(), data_.end()); }
+
+  static Blob<N> fromHex(const std::string& hex) {
+    auto data = ParseHex(hex);
+    // Blob should set parsed hex in normal order
+    return Blob<N>(data);
+  }
 
   Blob<N>& operator=(const Blob<N>& other) {
     this->data_ = other.data_;
@@ -118,10 +134,17 @@ struct Blob {
 
  protected:
   inline void assign(Slice<const uint8_t> slice) {
-    if (slice.size() != N) {
+    if (slice.size() > N) {
       throw std::invalid_argument("Blob(): invalid slice size");
     }
     std::copy(slice.begin(), slice.end(), data_.begin());
+  }
+
+  inline void assign(const std::string& str) {
+    if (str.size() > N) {
+      throw std::invalid_argument("Blob(): invalid slice size");
+    }
+    std::copy(str.begin(), str.end(), data_.begin());
   }
 
   storage_t data_;

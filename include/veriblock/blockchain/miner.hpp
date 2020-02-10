@@ -3,9 +3,7 @@
 
 #include <memory>
 #include <stdexcept>
-#include <veriblock/blockchain/blockchain.hpp>
-#include <veriblock/blockchain/btc_chain_params.hpp>
-#include <veriblock/blockchain/vbk_chain_params.hpp>
+#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/fmt.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/time.hpp>
@@ -27,8 +25,9 @@ template <typename Block, typename ChainParams>
 struct Miner {
   using merkle_t = decltype(Block::merkleRoot);
   using hash_t = decltype(Block::previousBlock);
+  using index_t = BlockIndex<Block>;
 
-  Miner(std::shared_ptr<IBlockchain<Block>> chain,
+  Miner(std::shared_ptr<BlockTree<Block>> chain,
         std::shared_ptr<ChainParams> params)
       : blockchain_(std::move(chain)), params_(std::move(params)) {}
 
@@ -42,8 +41,20 @@ struct Miner {
     }
   }
 
-  Block mineNextBlock(const merkle_t& merkle = merkle_t{}) {
-    Block block = getBlockTemplate(merkle);
+  // One must define their own template specialization for given Block and
+  // ChainParams types. Otherwise, get pretty compilation error.
+  Block getBlockTemplate(const BlockIndex<BtcBlock>& tip,
+                         const merkle_t& /*ignore*/) const;
+
+  Block createNextBlock(const index_t& prev, const merkle_t& merkle) {
+    Block block = getBlockTemplate(prev, merkle);
+    createBlock(block);
+    return block;
+  }
+
+  //! mine next block after "prev"
+  Block createAndApplyNextBlock(const index_t& prev, const merkle_t& merkle) {
+    Block block = getBlockTemplate(prev, merkle);
     createBlock(block);
     ValidationState state;
     if (!blockchain_->acceptBlock(block, state)) {
@@ -54,19 +65,24 @@ struct Miner {
     return block;
   }
 
-  // One must define their own template specialization for given Block and
-  // ChainParams types. Otherwise, get pretty compilation error.
-  Block getBlockTemplate(const merkle_t& /*ignore*/) const {
-    static_assert(sizeof(Block) == 0,
-                  "There is no template definition for these types. Use "
-                  "existing definitions or define them yourself.");
+  //! mine next block after tip
+  Block createAndApplyNextBlock(const merkle_t& merkle) {
+    auto& bestChain = this->blockchain_->getBestChain();
+    auto* tip = bestChain.tip();
+    if (tip == nullptr) {
+      throw std::logic_error(
+          "miner attempted to create block template, but blockchain is not "
+          "bootstrapped");
+    }
+    return createAndApplyNextBlock(*tip, merkle);
   }
 
  private:
-  std::shared_ptr<IBlockchain<Block>> blockchain_;
+  std::shared_ptr<BlockTree<Block>> blockchain_;
   std::shared_ptr<ChainParams> params_;
 };
 
+// TODO: move this to vbk_miner.hpp and implement proper method
 // template <>
 // VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
 //    const merkle_t& merkle) {

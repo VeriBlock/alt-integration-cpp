@@ -1,8 +1,7 @@
-#include "veriblock/signutil.hpp"
-
 #include <cassert>
 
 #include "veriblock/hashutil.hpp"
+#include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 #include "veriblock/third_party/secp256k1.h"
 
@@ -130,16 +129,10 @@ PublicKey publicKeyFromVbk(PublicKeyVbk key) {
 }
 
 PublicKeyVbk publicKeyToVbk(PublicKey key) {
-  checkLength(key.size(),
-              PUBLIC_KEY_UNCOMPRESSED_SIZE,
-              "publicKeyToVbk(): invalid public key");
   return publicKeyUncompressedToAsn1(key);
 }
 
 PublicKey derivePublicKey(PrivateKey privateKey) {
-  checkLength(privateKey.size(),
-              PRIVATE_KEY_SIZE,
-              "derivePublicKey(): invalid public key");
   Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
   secp256k1_pubkey pubkey;
   int pubCreated = secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
