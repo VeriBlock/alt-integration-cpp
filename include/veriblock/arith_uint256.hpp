@@ -276,8 +276,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
       throw uint_error("size of the string number more than SHA256_HASH_SIZE");
     }
 
-    // setHex must be set inverted
-    std::copy(bytes.begin(), bytes.end(), data_.rbegin());
+    std::copy(bytes.rbegin(), bytes.rend(), data_.begin());
   }
 };
 

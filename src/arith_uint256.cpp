@@ -7,7 +7,6 @@ using namespace VeriBlock;
 ArithUint256& ArithUint256::decodeBits(uint32_t bits,
                                        bool* negative,
                                        bool* overflow) {
-  ArithUint256 target;
   int nSize = bits >> 24u;
   uint32_t nWord = bits & 0x007fffffu;
   if (nSize <= 3) {
