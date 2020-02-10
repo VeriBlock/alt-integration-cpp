@@ -91,7 +91,7 @@ TEST_F(BtcBlockchainTest, Scenario1) {
   }
 
   // @then
-  for (size_t i = 1; i < chain.size(); i++) {
+  for (uint32_t i = 1; i < (uint32_t)chain.size(); i++) {
     ASSERT_TRUE(chain[i]);
     ASSERT_TRUE(chain[i - 1]);
     // corrent previousBlock set
