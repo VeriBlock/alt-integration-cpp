@@ -1,6 +1,6 @@
-#include "veriblock/arith_uint256.hpp"
-
 #include <cassert>
+
+#include "veriblock/arith_uint256.hpp"
 
 using namespace VeriBlock;
 
@@ -174,9 +174,11 @@ ArithUint256 ArithUint256::fromHex(const std::string& hex) {
   u.setHex(hex);
   return u;
 }
+
 std::string ArithUint256::toHex() const {
   return HexStr(data_.rbegin(), data_.rend());
 }
+
 void ArithUint256::setHex(const std::string& value) {
   std::vector<uint8_t> bytes = ParseHex(value);
   if (bytes.size() > SHA256_HASH_SIZE) {

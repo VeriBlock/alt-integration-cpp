@@ -67,7 +67,7 @@ TEST(BtcBlock, getBlockHash_test) {
   block.nonce = 2599551022;
 
   EXPECT_EQ(
-      ArithUint256(block.getHash()),
+      ArithUint256::fromLEBytes(block.getHash()),
       ArithUint256::fromHex(
           "000000000000000246200f09b513e517a3bd8c591a3b692d9852ddf1ee0f8b3a"));
 }

@@ -69,7 +69,7 @@ struct BlockTree {
       return state.addStackFunction("acceptBlockHeader()");
     }
 
-    auto it = block_index_.find(block.previousBlock.reverse());
+    auto it = block_index_.find(block.previousBlock);
     if (it == block_index_.end()) {
       return state.Invalid("acceptBlockHeader()",
                            "no-prev-block",
@@ -116,7 +116,7 @@ struct BlockTree {
 
     current = touchBlockIndex(hash);
     current->header = block;
-    current->pprev = getBlockIndex(block.previousBlock.reverse());
+    current->pprev = getBlockIndex(block.previousBlock);
 
     if (current->pprev) {
       // prev block found
@@ -147,7 +147,7 @@ struct BlockTree {
 
       index_t* index = touchBlockIndex(hash);
       *index = value;
-      index->pprev = touchBlockIndex(value.header.previousBlock.reverse());
+      index->pprev = touchBlockIndex(value.header.previousBlock);
     }
 
     // fill block_index map

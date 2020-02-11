@@ -9,7 +9,7 @@ BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
     const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) const {
   BtcBlock block;
   block.version = tip.header.version;
-  block.previousBlock = tip.header.getHash().reverse();
+  block.previousBlock = tip.header.getHash();
   block.merkleRoot = merkle;
   // TODO: is this correct?
   block.timestamp =
