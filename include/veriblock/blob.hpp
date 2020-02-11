@@ -132,6 +132,16 @@ struct Blob {
     return m;
   }
 
+  template <size_t M>
+  Blob<M> trimLE() const {
+    if (N < M) {
+      throw std::invalid_argument("Blob(): invalid data size");
+    }
+    Blob<M> m;
+    std::copy(data() + size() - M, data() + size(), m.begin());
+    return m;
+  }
+
  protected:
   inline void assign(Slice<const uint8_t> slice) {
     if (slice.size() > N) {
