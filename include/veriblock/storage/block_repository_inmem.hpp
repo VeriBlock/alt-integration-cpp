@@ -45,7 +45,7 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     bool a = _it != nullptr;
     // within valid contiguous memory array range
     bool b = _it >= &_etl[0];
-    bool c = _it < &_etl[_etl.size()];
+    bool c = _it <= &_etl[_etl.size() - 1];
     return a && b && c;
   }
   void next() override { ++_it; }
