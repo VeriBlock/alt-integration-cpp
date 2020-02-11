@@ -263,7 +263,7 @@ struct AcceptTest : public testing::TestWithParam<AcceptTestCase> {
   std::shared_ptr<StrictMock<BlockRepositoryMock<index_t>>> repo;
   std::shared_ptr<StrictMock<CursorMock<height_t, index_t>>> cursor;
   ValidationState state;
-  std::string test_blockheaders_file_path = "../../../test/blockchain/";
+  std::string test_blockheaders_file_path = "../../test/blockchain/";
 
   AcceptTest() {
     cursor = std::make_shared<StrictMock<CursorMock<height_t, index_t>>>();
