@@ -97,8 +97,7 @@ TEST_F(BtcBlockchainTest, Scenario1) {
     ASSERT_TRUE(chain[i]);
     ASSERT_TRUE(chain[i - 1]);
     // corrent previousBlock set
-    EXPECT_EQ(chain[i]->header.previousBlock.reverse(),
-              chain[i - 1]->getHash());
+    EXPECT_EQ(chain[i]->header.previousBlock, chain[i - 1]->getHash());
     // timestamp is increasing
     EXPECT_GE(chain[i]->header.timestamp, chain[i - 1]->getBlockTime());
     // bits is same for RegTest
@@ -207,25 +206,25 @@ static std::vector<BootstrapTestCase> bootstrap_test_cases = {
     {
         BtcBlock::fromRaw("0100000000000000000000000000000000000000000000000000000000000000000000003ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a29ab5f49ffff001d1dac2b7c"_unhex),
         0, 
-        uint256::fromHex("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f").reverse()
+        uint256::fromHex("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f")
     },
     //mainnet 15687 height block
     {
         BtcBlock::fromRaw("01000000d9e9506d9b1800242adae0e97c96f77c86ec8ad3e1cca88a39f5a63b000000008563a346f8466a5d5106797aa54ccfe3829042970d78fa635427335f326c71f2857d1c4affff001d2d6f7258"_unhex),
         15687, 
-        uint256::fromHex("000000002f361e7a5c28e1d11bd153830f31081445538c67495bb72b1768ab4a").reverse()
+        uint256::fromHex("000000002f361e7a5c28e1d11bd153830f31081445538c67495bb72b1768ab4a")
     },
     //testnet genesis block
     {
         BtcBlock::fromRaw("0100000000000000000000000000000000000000000000000000000000000000000000003ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4adae5494dffff001d1aa4ae18"_unhex),
         0, 
-        uint256::fromHex("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943").reverse()
+        uint256::fromHex("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943")
     },
     //testnet 12554 height block
     {
         BtcBlock::fromRaw("010000006ed26f617543137b35fd866d8771ce41768110c0fc089d70692e6d1c000000002ed0cde332d6c9d5fea9bf8a6a66375c2cc1d343b4285f5e38ca2aa76e0d3a1d3708c34fc0ff3f1c662b2430"_unhex),
         12554, 
-        uint256::fromHex("0000000030f55553e130da0c3f8fac97a2745ae1c742f683037177dd3715460e").reverse()
+        uint256::fromHex("0000000030f55553e130da0c3f8fac97a2745ae1c742f683037177dd3715460e")
     },
     // clang-format on
 };
@@ -275,8 +274,9 @@ struct AcceptTest : public testing::TestWithParam<AcceptTestCase> {
   }
 };
 
-static std::vector<AcceptTestCase> accept_test_cases = {{"btc_blockheaders_1"},
-                                                        {"btc_blockheaders_2"}};
+static std::vector<AcceptTestCase> accept_test_cases = {
+    {"btc_blockheaders_mainnet_0_10000"},
+    {"btc_blockheaders_mainnet_30000_40000"}};
 
 TEST_P(AcceptTest, accept_test) {
   auto value = GetParam();
