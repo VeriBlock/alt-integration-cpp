@@ -6,6 +6,7 @@
 #include "mock/storage/cursor_mock.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/btc_blockchain_util.hpp"
+#include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/blockchain/miner.hpp"
 
 using namespace VeriBlock;
@@ -65,6 +66,48 @@ struct BtcBlockchainInstance {
   };
 };
 
+struct VbkBlockchainInstance {
+  using block_t = VbkBlock;
+  using index_t = typename BlockTree<block_t>::index_t;
+  using height_t = typename BlockTree<block_t>::height_t;
+  using params_t = VbkChainParams;
+
+  std::shared_ptr<StrictMock<BlockRepositoryMock<index_t>>> repo;
+  std::shared_ptr<StrictMock<CursorMock<height_t, index_t>>> cursor;
+  std::shared_ptr<BlockTree<block_t>> blockchain;
+
+  std::shared_ptr<params_t> chainparam;
+  std::shared_ptr<Miner<block_t, params_t>> miner;
+
+  height_t height = 0;
+  ValidationState state;
+
+  VbkBlockchainInstance() {
+    chainparam = std::make_shared<VbkChainParamsRegTest>();
+    miner = std::make_shared<Miner<block_t, params_t>>(chainparam);
+
+    cursor = std::make_shared<StrictMock<CursorMock<height_t, index_t>>>();
+    repo = std::make_shared<StrictMock<BlockRepositoryMock<index_t>>>();
+    blockchain = std::make_shared<BlockTree<block_t>>(repo);
+
+    EXPECT_CALL(*repo, getCursor()).WillRepeatedly(Return(cursor));
+
+    // @given
+    auto genesis = chainparam->getGenesisBlock();
+
+    EXPECT_CALL(*repo, put(Field(&index_t::header, genesis)))
+        .WillRepeatedly(Return(false));
+    EXPECT_CALL(*cursor, seekToFirst()).Times(1);
+    // database is empty, so first isValid will return false
+    EXPECT_CALL(*cursor, isValid()).WillOnce(Return(false));
+
+    // @when
+    auto result = blockchain->bootstrap(height, genesis, state);
+    EXPECT_TRUE(result);
+    EXPECT_TRUE(state.IsValid());
+  };
+};
+
 /**
  * Scenario 1
  *
@@ -78,7 +121,8 @@ struct BtcBlockchainInstance {
  * - blocks are statelessly valid
  */
 TYPED_TEST_P(BlockchainTest, Scenario1) {
-  //auto blockchain = TypeParam();
+  using hash_t = typename TypeParam::block_t::hash_t;
+
   auto genesis = this->blockchain.chainparam->getGenesisBlock();
 
   auto& chain = this->blockchain.blockchain->getBestChain();
@@ -104,10 +148,11 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   for (uint32_t i = 1; i < (uint32_t)chain.size(); i++) {
     ASSERT_TRUE(chain[i]);
     ASSERT_TRUE(chain[i - 1]);
-    // corrent previousBlock set
-    EXPECT_EQ(chain[i]->header.previousBlock, chain[i - 1]->getHash());
+    // current previousBlock set
+    hash_t previousBlockHash(chain[i]->header.previousBlock);
+    EXPECT_EQ(previousBlockHash, chain[i - 1]->getHash());
     // timestamp is increasing
-    EXPECT_GE(chain[i]->header.timestamp, chain[i - 1]->getBlockTime());
+    EXPECT_GE(chain[i]->header.getBlockTime(), chain[i - 1]->getBlockTime());
     // bits is same for RegTest
     EXPECT_EQ(chain[i]->getDifficulty(), chain[i - 1]->getDifficulty())
         << "different at " << i;
@@ -115,13 +160,15 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
 }
 
 TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
+  using block_t = typename TypeParam::block_t;
+
   auto genesis = this->blockchain.chainparam->getGenesisBlock();
   EXPECT_CALL(*this->blockchain.repo, put(_)).WillRepeatedly(Return(false));
   auto& best = this->blockchain.blockchain->getBestChain();
 
-  std::vector<BtcBlock> fork1{genesis};
+  std::vector<block_t> fork1{genesis};
   std::generate_n(
-      std::back_inserter(fork1), 100 - 1 /* genesis */, [&]() -> BtcBlock {
+      std::back_inserter(fork1), 100 - 1 /* genesis */, [&]() -> block_t {
         auto* tip = best.tip();
         EXPECT_TRUE(tip);
         auto block = this->blockchain.miner->createNextBlock(*tip, {});
@@ -134,7 +181,7 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
   EXPECT_EQ(best.size(), 100);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
-  std::vector<BtcBlock> fork2 = fork1;
+  std::vector<block_t> fork2 = fork1;
   // last common block is 49
   fork2.resize(50);
   // mine total 100 new blocks on top of existing 50
@@ -190,7 +237,6 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(BlockchainTest, Scenario1, ForkResolutionWorks);
 
+typedef ::testing::Types<BtcBlockchainInstance, VbkBlockchainInstance> MyTypes;
 INSTANTIATE_TYPED_TEST_SUITE_P(BlockchainTestSuite,
-                               BlockchainTest,
-                               /// TODO: add VBK blockchain here
-                               ::testing::Types<BtcBlockchainInstance>);
+                               BlockchainTest, MyTypes);

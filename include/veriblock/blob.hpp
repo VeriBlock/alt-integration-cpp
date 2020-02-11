@@ -40,8 +40,12 @@ struct Blob {
     data_.fill(0);
     assign(str);
   }
+  Blob(const Blob<N>& other) {
+    data_.fill(0);
+    assign(other);
+  }
 
-  Blob(const Blob<N>& other) : data_(other.data_) {}
+  //Blob(const Blob<N>& other) : data_(other.data_) {}
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 
   iterator begin() noexcept { return data_.begin(); }
@@ -145,6 +149,14 @@ struct Blob {
       throw std::invalid_argument("Blob(): invalid slice size");
     }
     std::copy(str.begin(), str.end(), data_.begin());
+  }
+
+  template <size_t M>
+  inline void assign(const Blob<M>& blob) {
+    if (N < M) {
+      throw std::invalid_argument("Blob(): invalid blob size");
+    }
+    std::copy(blob.begin(), blob.end(), data_.begin());
   }
 
   storage_t data_;

@@ -47,6 +47,13 @@ void VbkBlock::toVbkEncoding(WriteStream& stream) const {
   writeSingleByteLenValue(stream, blockStream.data());
 }
 
+uint32_t VbkBlock::getDifficulty() const { return difficulty; }
+
+uint32_t VbkBlock::getBlockTime() const { return timestamp; }
+
+/// TODO: https://veriblock.atlassian.net/browse/BTC-218
+ArithUint256 VbkBlock::getBlockProof() const { return difficulty; }
+
 uint192 VbkBlock::getHash() const {
   WriteStream stream;
   toRaw(stream);
