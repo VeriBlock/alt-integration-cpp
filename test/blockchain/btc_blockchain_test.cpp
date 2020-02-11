@@ -43,7 +43,7 @@ struct BlockchainFixture {
     repo = std::make_shared<StrictMock<BlockRepositoryMock<index_t>>>();
 
     EXPECT_CALL(*repo, put(_)).WillRepeatedly(Return(true));
-    EXPECT_CALL(*repo, getCursor()).WillRepeatedly(Return(cursor));
+    EXPECT_CALL(*repo, newCursor()).WillRepeatedly(Return(cursor));
   }
 };
 
