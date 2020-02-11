@@ -51,10 +51,8 @@ struct WriteBatch {
   using stored_block_t = Block;
   //! block has type
   using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
   //! iterator type
-  using cursor_t = Cursor<height_t, stored_block_t>;
+  using cursor_t = Cursor<hash_t, stored_block_t>;
 
   virtual ~WriteBatch() = default;
 

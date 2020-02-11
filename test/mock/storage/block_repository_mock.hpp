@@ -15,7 +15,6 @@ struct WriteBatchMock : public WriteBatch<Block> {
   ~WriteBatchMock() override = default;
   using stored_block_t = Block;
   using hash_t = typename Block::hash_t;
-  using height_t = typename Block::height_t;
 
   MOCK_METHOD1_T(put, void(const stored_block_t& block));
   MOCK_METHOD1_T(removeByHash, void(const hash_t& hash));
@@ -27,7 +26,6 @@ template <typename Block>
 struct BlockRepositoryMock : public BlockRepository<Block> {
   using stored_block_t = Block;
   using hash_t = typename Block::hash_t;
-  using height_t = typename Block::height_t;
   using batch_t = WriteBatch<Block>;
   using cursor_t = typename BlockRepository<Block>::cursor_t;
 
