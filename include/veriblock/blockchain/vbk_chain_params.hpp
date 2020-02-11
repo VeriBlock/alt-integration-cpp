@@ -9,6 +9,10 @@ namespace VeriBlock {
 
 //! works as optional<uint8_t>
 struct VbkNetworkType {
+  VbkNetworkType(bool _hasValue, uint8_t _value) :
+      hasValue(_hasValue),
+      value(_value) {}
+
   //! if hasValue == false, it is mainnet
   bool hasValue = false;
   //! otherwise, use value for network ID
@@ -36,7 +40,7 @@ struct VbkChainParamsMain : public VbkChainParams {
     return uint256(ParseHex("d18c2e2800"));
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
-    return {false, 0};
+    return VbkNetworkType(false, 0);
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
   VbkBlock getGenesisBlock() const noexcept override {
@@ -56,7 +60,7 @@ struct VbkChainParamsTest : public VbkChainParams {
     return uint256(ParseHex("5f5e100"));
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
-    return {true, 0xAA};
+    return VbkNetworkType(true, 0xAA);
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
   VbkBlock getGenesisBlock() const noexcept override {
@@ -76,7 +80,7 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     return uint256(ParseHex("1"));
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
-    return VbkNetworkType{true, 0xBB};
+    return VbkNetworkType(true, 0xBB);
   }
   bool getPowNoRetargeting() const noexcept override { return true; }
   VbkBlock getGenesisBlock() const noexcept override {
@@ -100,7 +104,7 @@ struct VbkChainParamsAlpha : public VbkChainParams {
     return uint256(ParseHex("989600"));
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
-    return {true, 0xAA};
+    return VbkNetworkType(true, 0xAA);
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
   VbkBlock getGenesisBlock() const noexcept override {

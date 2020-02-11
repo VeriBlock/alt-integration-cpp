@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "veriblock/arith_uint256.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
@@ -11,6 +12,9 @@
 namespace VeriBlock {
 
 struct VbkBlock {
+  using hash_t = uint192;
+  using height_t = int32_t;
+
   int32_t height{};
   int16_t version{};
   uint144 previousBlock{};
@@ -55,24 +59,37 @@ struct VbkBlock {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  /*
+   * Getter for difficulty
+   * @return block difficulty
+   */
+  uint32_t getDifficulty() const;
+
+  /*
+   * Getter for timestamp
+   * @return block timestamp
+   */
+  uint32_t getBlockTime() const;
+
+  /*
+   * TODO
+   */
+  ArithUint256 getBlockProof() const;
+
+  friend bool operator==(const VbkBlock& a, const VbkBlock& b) {
+    return a.height == b.height && a.version == b.version &&
+           a.previousBlock == b.previousBlock &&
+           a.previousKeystone == b.previousKeystone &&
+           a.secondPreviousKeystone == b.secondPreviousKeystone &&
+           a.merkleRoot == b.merkleRoot && a.timestamp == b.timestamp &&
+           a.difficulty == b.difficulty && a.nonce == b.nonce;
+  }
+
   /**
    * Calculate the hash of the vbk block
    * @return hash block hash
    */
   uint192 getHash() const;
-
-  friend bool operator==(const VbkBlock& a, const VbkBlock& b) {
-    // clang-format off
-    return a.difficulty == b.difficulty &&
-           a.version == b.version &&
-           a.timestamp == b.timestamp &&
-           a.nonce == b.nonce &&
-           a.merkleRoot == b.merkleRoot &&
-           a.previousBlock == b.previousBlock &&
-           a.previousKeystone == b.previousKeystone &&
-           a.secondPreviousKeystone == b.secondPreviousKeystone;
-    // clang-format on
-  }
 };
 
 }  // namespace VeriBlock
