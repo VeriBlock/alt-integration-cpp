@@ -33,7 +33,10 @@ struct Slice {
   template <
       class Container,
       typename = typename std::enable_if<
-          sizeof(typename Container::value_type) == 1>::type>
+          sizeof(typename Container::value_type) == 1 ||
+          std::is_same<typename std::remove_const<ElementType>::type,
+                       typename std::remove_const<
+                           typename Container::value_type>::type>::value>::type>
   constexpr Slice(Container &cont) noexcept
       : Slice(reinterpret_cast<const pointer>(cont.data()), cont.size()) {}
 
@@ -75,7 +78,7 @@ struct Slice {
 
 /// custom gtest printer, which prints Blob of any size as hexstring
 template <typename T>
-inline void PrintTo(const Slice<T>& slice, ::std::ostream* os) {
+inline void PrintTo(const Slice<T> &slice, ::std::ostream *os) {
   *os << "Slice(" << slice.data() << ", " << slice.size() << ")";
 }
 
