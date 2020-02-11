@@ -32,7 +32,7 @@ struct Miner {
 
   // One must define their own template specialization for given Block and
   // ChainParams types. Otherwise, get pretty compilation error.
-  Block getBlockTemplate(const BlockIndex<BtcBlock>& tip,
+  Block getBlockTemplate(const BlockIndex<Block>& tip,
                          const merkle_t& merkleRoot) const;
 
   Block createNextBlock(const index_t& prev, const merkle_t& merkle) {

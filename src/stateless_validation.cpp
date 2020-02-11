@@ -216,6 +216,7 @@ bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
   return true;
 }
 
+///TODO: fix https://veriblock.atlassian.net/browse/BTC-222
 bool checkProofOfWork(const VbkBlock& block, ValidationState& state) {
   ArithUint256 blockHash = ArithUint256::fromLEBytes(block.getHash());
   ArithUint256 target =
