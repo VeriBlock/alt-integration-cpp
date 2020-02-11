@@ -257,12 +257,19 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
 
   static ArithUint256 fromHex(const std::string& hex);
 
+  template <size_t N>
+  static ArithUint256 fromLEBytes(const Blob<N>& b) {
+    return ArithUint256(b.reverse());
+  }
+
   // toHex should be inverted
   std::string toHex() const;
 
   uint64_t getLow64() const;
 
-  static ArithUint256 fromBits(uint32_t bits, bool* negative = nullptr, bool* overflow = nullptr);
+  static ArithUint256 fromBits(uint32_t bits,
+                               bool* negative = nullptr,
+                               bool* overflow = nullptr);
 
   uint32_t toBits(bool negative = false) const;
 

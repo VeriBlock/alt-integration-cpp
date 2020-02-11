@@ -168,7 +168,7 @@ bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
     }
 
     // Check that it's the next height and affirms the previous hash
-    if (btcBlock[i].previousBlock != lastHash.reverse()) {
+    if (btcBlock[i].previousBlock != lastHash) {
       return state.Invalid("checkBitcoinBlocks()",
                            "Invalid Vbk Pop transaction",
                            "Blocks are not contiguous");
@@ -193,8 +193,8 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
     }
 
     if (vbkBlocks[i].height != lastHeight + 1 ||
-        vbkBlocks[i].previousBlock.reverse() !=
-            lastHash.trim<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
+        vbkBlocks[i].previousBlock !=
+            lastHash.trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
       return state.Invalid("checkVeriBlockBlocks()",
                            "VeriBlock Blocks invalid",
                            "Blocks are not contiguous");
@@ -206,7 +206,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 }
 
 bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
-  ArithUint256 blockHash(block.getHash());
+  ArithUint256 blockHash = ArithUint256::fromLEBytes(block.getHash());
   ArithUint256 target = ArithUint256::fromBits(block.bits, nullptr, nullptr);
   if (target <= blockHash) {
     return state.Invalid("checkProofOfWork()",
@@ -218,8 +218,9 @@ bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
 
 ///TODO: fix https://veriblock.atlassian.net/browse/BTC-222
 bool checkProofOfWork(const VbkBlock& block, ValidationState& state) {
-  ArithUint256 blockHash(block.getHash());
-  ArithUint256 target = ArithUint256::fromBits(block.difficulty, nullptr, nullptr);
+  ArithUint256 blockHash = ArithUint256::fromLEBytes(block.getHash());
+  ArithUint256 target =
+      ArithUint256::fromBits(block.difficulty, nullptr, nullptr);
   target = MAXIMUM_DIFFICULTY / target;
   if (target <= blockHash) {
     return state.Invalid("checkProofOfWork()",

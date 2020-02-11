@@ -55,6 +55,7 @@ struct BlockTree {
       return state.Error("block-index-no-genesis");
     }
 
+    repo_->put(*index);
     return true;
   }
 

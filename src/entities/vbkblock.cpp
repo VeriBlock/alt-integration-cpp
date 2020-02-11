@@ -57,5 +57,5 @@ ArithUint256 VbkBlock::getBlockProof() const { return difficulty; }
 uint192 VbkBlock::getHash() const {
   WriteStream stream;
   toRaw(stream);
-  return vblake(stream.data()).reverse();
+  return vblake(stream.data());
 }

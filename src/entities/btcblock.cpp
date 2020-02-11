@@ -42,5 +42,5 @@ void BtcBlock::toVbkEncoding(WriteStream& stream) const {
 uint256 BtcBlock::getHash() const {
   WriteStream stream;
   toRaw(stream);
-  return sha256twice(stream.data());
+  return sha256twice(stream.data()).reverse();
 }
