@@ -50,5 +50,5 @@ void VbkBlock::toVbkEncoding(WriteStream& stream) const {
 uint192 VbkBlock::getHash() const {
   WriteStream stream;
   toRaw(stream);
-  return vblake(stream.data()).reverse();
+  return vblake(stream.data());
 }
