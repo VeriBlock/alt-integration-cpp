@@ -197,7 +197,7 @@ TEST(VbkPopTx, RoundTrip) {
   auto stream = ReadStream(txDecoded);
   auto decoded = VbkPopTx::fromVbkEncoding(stream);
   EXPECT_EQ(decoded.address,
-      Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);

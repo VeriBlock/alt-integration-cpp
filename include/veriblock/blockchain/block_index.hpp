@@ -81,6 +81,11 @@ struct BlockIndex {
     index.header = Block::fromRaw(stream);
     return index;
   }
+
+  friend bool operator==(const BlockIndex<Block>& a,
+                         const BlockIndex<Block>& b) {
+    return a.header == b.header;
+  }
 };
 
 }  // namespace VeriBlock
