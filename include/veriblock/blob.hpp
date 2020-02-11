@@ -40,10 +40,13 @@ struct Blob {
     data_.fill(0);
     assign(str);
   }
-  Blob(Blob<N>& other) {
+  template <size_t M>
+  Blob(const Blob<M>& other) {
     data_.fill(0);
     assign(other);
   }
+
+  Blob(const Blob<N>& other) : data_(other.data_) {}
 
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 

@@ -60,12 +60,14 @@ struct VbkBlock {
   void toVbkEncoding(WriteStream& stream) const;
 
   /*
-   * TODO
+   * Getter for difficulty
+   * @return block difficulty
    */
   uint32_t getDifficulty() const;
 
   /*
-   * TODO
+   * Getter for timestamp
+   * @return block timestamp
    */
   uint32_t getBlockTime() const;
 
