@@ -22,24 +22,30 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     }
   }
   ~CursorInmem() override = default;
-  void seekToFirst() override { _it = _etl.begin(); };
+  void seekToFirst() override { _it = &_etl[0]; };
   void seek(const hash_t& key) override {
-    _it = std::find_if(_etl.begin(), _etl.end(), [&key](const pair& p) {
+    auto it = std::find_if(_etl.begin(), _etl.end(), [&key](const pair& p) {
       return p.first == key;
     });
+
+    if (it == _etl.end()) {
+      _it = nullptr;
+    } else {
+      _it = &*it;
+    }
   }
   void seekToLast() override {
     if (_etl.empty()) {
-      _it = _etl.end();
+      _it = nullptr;
     } else {
-      _it = _etl.end() - 1;
+      _it = &_etl[_etl.size() - 1];
     }
   }
   bool isValid() const override {
-    bool a = _it != _etl.end();
+    bool a = _it != nullptr;
     // within valid contiguous memory array range
-    bool b = _it >= _etl.begin();
-    bool c = _it < _etl.end();
+    bool b = _it >= &_etl[0];
+    bool c = _it < &_etl[_etl.size()];
     return a && b && c;
   }
   void next() override { ++_it; }
@@ -49,7 +55,7 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
 
  private:
   std::vector<pair> _etl;
-  typename std::vector<pair>::iterator _it;
+  const pair* _it;
 };
 
 template <typename Block>
