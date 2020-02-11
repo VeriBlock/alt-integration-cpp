@@ -55,6 +55,7 @@ struct BlockTree {
       return state.Error("block-index-no-genesis");
     }
 
+    repo_->put(*index);
     return true;
   }
 
@@ -68,7 +69,7 @@ struct BlockTree {
       return state.addStackFunction("acceptBlockHeader()");
     }
 
-    auto it = block_index_.find(block.previousBlock);
+    auto it = block_index_.find(block.previousBlock.reverse());
     if (it == block_index_.end()) {
       return state.Invalid("acceptBlockHeader()",
                            "no-prev-block",
@@ -115,7 +116,7 @@ struct BlockTree {
 
     current = touchBlockIndex(hash);
     current->header = block;
-    current->pprev = getBlockIndex(block.previousBlock);
+    current->pprev = getBlockIndex(block.previousBlock.reverse());
 
     if (current->pprev) {
       // prev block found
@@ -146,7 +147,7 @@ struct BlockTree {
 
       index_t* index = touchBlockIndex(hash);
       *index = value;
-      index->pprev = touchBlockIndex(value.header.previousBlock);
+      index->pprev = touchBlockIndex(value.header.previousBlock.reverse());
     }
 
     // fill block_index map
