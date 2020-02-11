@@ -90,19 +90,6 @@ struct VbkBlock {
    * @return hash block hash
    */
   uint192 getHash() const;
-
-  friend bool operator==(const VbkBlock& a, const VbkBlock& b) {
-    // clang-format off
-    return a.difficulty == b.difficulty &&
-           a.version == b.version &&
-           a.timestamp == b.timestamp &&
-           a.nonce == b.nonce &&
-           a.merkleRoot == b.merkleRoot &&
-           a.previousBlock == b.previousBlock &&
-           a.previousKeystone == b.previousKeystone &&
-           a.secondPreviousKeystone == b.secondPreviousKeystone;
-    // clang-format on
-  }
 };
 
 }  // namespace VeriBlock
