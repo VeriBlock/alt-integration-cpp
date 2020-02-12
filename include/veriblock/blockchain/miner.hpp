@@ -10,18 +10,6 @@
 
 namespace VeriBlock {
 
-template <typename Block>
-void createBlock(Block& block) {
-  ValidationState state;
-  while (!checkProofOfWork(block, state)) {
-    ++block.nonce;
-    if (block.nonce >= std::numeric_limits<decltype(block.nonce)>::max()) {
-      ++block.timestamp;
-      block.nonce = 0;
-    }
-  }
-}
-
 template <typename Block, typename ChainParams>
 struct Miner {
   using merkle_t = decltype(Block::merkleRoot);
@@ -29,6 +17,17 @@ struct Miner {
   using index_t = BlockIndex<Block>;
 
   Miner(std::shared_ptr<ChainParams> params) : params_(std::move(params)) {}
+
+  void createBlock(Block& block) {
+    ValidationState state;
+    while (!checkProofOfWork(block, *params_)) {
+      ++block.nonce;
+      if (block.nonce >= std::numeric_limits<decltype(block.nonce)>::max()) {
+        ++block.timestamp;
+        block.nonce = 0;
+      }
+    }
+  }
 
   // One must define their own template specialization for given Block and
   // ChainParams types. Otherwise, get pretty compilation error.

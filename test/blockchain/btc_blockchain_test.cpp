@@ -3,6 +3,7 @@
 #include <fstream>
 #include <memory>
 
+#include "block_headers.hpp"
 #include "mock/storage/block_repository_mock.hpp"
 #include "mock/storage/cursor_mock.hpp"
 #include "util/literals.hpp"
@@ -29,17 +30,18 @@ struct BootstrapTestCase {
 
 struct BlockchainFixture {
   using block_t = BtcBlock;
-  using index_t = typename BlockTree<block_t>::index_t;
-  using height_t = typename BlockTree<block_t>::height_t;
-  using hash_t = typename BlockTree<block_t>::hash_t;
+  using param_t = BtcChainParams;
+  using index_t = typename BlockTree<block_t, param_t>::index_t;
+  using height_t = typename BlockTree<block_t, param_t>::height_t;
+  using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
+  std::shared_ptr<BtcChainParams> params;
   std::shared_ptr<StrictMock<BlockRepositoryMock<index_t>>> repo;
   std::shared_ptr<StrictMock<CursorMock<hash_t, index_t>>> cursor;
   ValidationState state;
 
-  std::string test_blockheaders_file_path = "../../../test/blockchain/";
-
   BlockchainFixture() {
+    params = std::make_shared<BtcChainParamsRegTest>();
     cursor = std::make_shared<StrictMock<CursorMock<hash_t, index_t>>>();
     repo = std::make_shared<StrictMock<BlockRepositoryMock<index_t>>>();
 
@@ -88,7 +90,9 @@ TEST_P(BootstrapTest, bootstrap_test) {
   EXPECT_CALL(*cursor, seekToFirst()).Times(1);
   EXPECT_CALL(*cursor, isValid()).WillOnce(Return(false));
 
-  BlockTree<BtcBlock> block_chain(repo);
+  std::shared_ptr<BtcChainParams> param =
+      std::make_shared<BtcChainParamsMain>();
+  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, std::move(param));
   ASSERT_TRUE(
       block_chain.bootstrap(value.height, value.bootstrap_block, state));
   EXPECT_TRUE(state.IsValid());
@@ -106,14 +110,14 @@ struct AcceptTest : public testing::TestWithParam<std::string>,
                     public BlockchainFixture {};
 
 static std::vector<std::string> accept_test_cases = {
-    {"btc_blockheaders_mainnet_0_10000"},
-    {"btc_blockheaders_mainnet_30000_40000"}};
+    generated::btc_blockheaders_mainnet_0_10000,
+    generated::btc_blockheaders_mainnet_30000_40000};
 
 TEST_P(AcceptTest, accept_test) {
   auto value = GetParam();
 
-  std::ifstream file(test_blockheaders_file_path + value);
-  EXPECT_TRUE(!file.fail());
+  std::istringstream file(value);
+  ASSERT_TRUE(!file.fail());
 
   uint32_t first_block_height;
   file >> first_block_height;
@@ -125,7 +129,7 @@ TEST_P(AcceptTest, accept_test) {
   EXPECT_CALL(*cursor, seekToFirst()).Times(1);
   EXPECT_CALL(*cursor, isValid()).WillOnce(Return(false));
 
-  BlockTree<BtcBlock> block_chain(repo);
+  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, params);
   ASSERT_TRUE(
       block_chain.bootstrap(first_block_height, bootstrap_block, state));
   EXPECT_TRUE(state.IsValid());

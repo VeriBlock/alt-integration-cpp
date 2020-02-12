@@ -18,15 +18,15 @@ using ::testing::StrictMock;
 template <typename TestCase>
 struct BlockchainTest : public ::testing::Test {
   using block_t = typename TestCase::block_t;
-  using index_t = typename BlockTree<block_t>::index_t;
+  using params_base_t = typename TestCase::params_base_t;
+  using index_t = typename BlockTree<block_t, params_base_t >::index_t;
   using height_t = typename TestCase::height_t;
   using params_t = typename TestCase::params_t;
   using hash_t = typename block_t::hash_t;
-  using params_base_t = typename TestCase::params_base_t;
 
   std::shared_ptr<StrictMock<BlockRepositoryMock<index_t>>> repo;
   std::shared_ptr<StrictMock<CursorMock<hash_t, index_t>>> cursor;
-  std::shared_ptr<BlockTree<block_t>> blockchain;
+  std::shared_ptr<BlockTree<block_t, params_base_t>> blockchain;
 
   std::shared_ptr<params_base_t> chainparam;
   std::shared_ptr<Miner<block_t, params_base_t>> miner;
@@ -40,7 +40,7 @@ struct BlockchainTest : public ::testing::Test {
 
     cursor = std::make_shared<StrictMock<CursorMock<hash_t, index_t>>>();
     repo = std::make_shared<StrictMock<BlockRepositoryMock<index_t>>>();
-    blockchain = std::make_shared<BlockTree<block_t>>(repo);
+    blockchain = std::make_shared<BlockTree<block_t, params_base_t>>(repo, chainparam);
 
     EXPECT_CALL(*repo, newCursor()).WillRepeatedly(Return(cursor));
 

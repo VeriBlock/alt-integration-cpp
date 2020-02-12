@@ -1,8 +1,11 @@
+#include "veriblock/stateless_validation.hpp"
+
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
 #include "util/test_utils.hpp"
-#include "veriblock/stateless_validation.hpp"
+#include "veriblock/blockchain/btc_chain_params.hpp"
+#include "veriblock/blockchain/vbk_chain_params.hpp"
 
 using namespace VeriBlock;
 
@@ -143,199 +146,188 @@ static const VTB validVTB = {
      VbkBlock::fromRaw(
          "000212BB0002304FB9683DAFC9396A7F36492BB743C05C2619919657462191847838E067A87CF5F304B4E102B104320C5CBA33B85DFB5C500405F5E15A2670DE"_unhex)}};
 
-TEST(StetlessValidation, checkBtcBlock_when_valid_test) {
+struct StatelessValidationTest : public ::testing::Test {
+  BtcChainParamsRegTest btc;
+  VbkChainParamsRegTest vbk;
   ValidationState state;
-  ASSERT_TRUE(checkBlock(validBtcBlock, state));
+};
+
+TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
+  ASSERT_TRUE(checkBlock(validBtcBlock, state, btc));
 }
 
-TEST(StatelessValidation, checkBtcBlock_when_checkProofOfWork_invalid_test) {
+TEST_F(StatelessValidationTest,
+       checkBtcBlock_when_checkProofOfWork_invalid_test) {
   BtcBlock block = validBtcBlock;
   block.nonce = 1;
-  ValidationState state;
-  ASSERT_FALSE(checkProofOfWork(block, state));
+  ASSERT_FALSE(checkProofOfWork(block, btc));
 }
 
-TEST(StatelessValidation, checkBtcBlock_when_checkMaximumDrift_invalid_test) {
+TEST_F(StatelessValidationTest,
+       checkBtcBlock_when_checkMaximumDrift_invalid_test) {
   BtcBlock block = validBtcBlock;
   block.timestamp = std::numeric_limits<uint32_t>::max();
-  ValidationState state;
   ASSERT_FALSE(checkMaximumDrift(block, state));
 }
 
-TEST(StatelessValidation, checkVbkBlock_when_valid_test) {
-  ValidationState state;
-  ASSERT_TRUE(checkBlock(validVbkBlock, state));
+TEST_F(StatelessValidationTest, check_valid_vbk_block) {
+  ASSERT_TRUE(checkBlock(validVbkBlock, state, vbk));
 }
 
-TEST(StatelessValidation, checkVbkBlock_when_checkProofOfWork_invalid_test) {
+TEST_F(StatelessValidationTest,
+       checkVbkBlock_when_checkProofOfWork_invalid_test) {
   VbkBlock block = validVbkBlock;
   block.nonce = 1;
-  ValidationState state;
-  ASSERT_FALSE(checkProofOfWork(block, state));
+  ASSERT_FALSE(checkProofOfWork(block, vbk));
 }
 
-TEST(StatelessValidation, checkVbkBlock_when_checkMaximumDrift_invalid_test) {
+TEST_F(StatelessValidationTest,
+       checkVbkBlock_when_checkMaximumDrift_invalid_test) {
   VbkBlock block = validVbkBlock;
   block.timestamp = std::numeric_limits<uint32_t>::max();
-  ValidationState state;
   ASSERT_FALSE(checkMaximumDrift(block, state));
 }
 
-TEST(StatelessValidation, ATV_valid) {
-  ValidationState state;
-  ASSERT_TRUE(checkATV(validATV, state));
+TEST_F(StatelessValidationTest, ATV_valid) {
+  ASSERT_TRUE(checkATV(validATV, state, vbk));
 }
 
-TEST(StatelessValidation, ATV_checkMerklePath_different_transaction_invalid) {
+TEST_F(StatelessValidationTest,
+       ATV_checkMerklePath_different_transaction_invalid) {
   ATV atv = validATV;
   atv.merklePath.subject = uint256(
       "5B977EA09A554AD56957F662284044E7D37450DDADF7DB3647712F5969399787"_unhex);
 
-  ValidationState state;
   ASSERT_FALSE(checkMerklePath(atv.merklePath,
                                atv.transaction.getHash(),
                                atv.containingBlock.merkleRoot,
                                state));
 }
 
-TEST(StatelessValidation, ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
+TEST_F(StatelessValidationTest,
+       ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
   ATV atv = validATV;
   atv.containingBlock.merkleRoot =
       uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
 
-  ValidationState state;
   ASSERT_FALSE(checkMerklePath(atv.merklePath,
                                atv.transaction.getHash(),
                                atv.containingBlock.merkleRoot,
                                state));
 }
 
-TEST(StatelessValidation, ATV_checkVeriBlockBlocks_blocks_not_contigous) {
+TEST_F(StatelessValidationTest, ATV_checkVeriBlockBlocks_blocks_not_contigous) {
   ATV atv = validATV;
   atv.context.erase(atv.context.begin() + 1);
-  ValidationState state;
-  ASSERT_FALSE(checkVbkBlocks(atv.context, state));
+  ASSERT_FALSE(checkVbkBlocks(atv.context, state, vbk));
 }
 
-TEST(StatelessValidation, VTB_valid) {
-  ValidationState state;
-  ASSERT_TRUE(checkVTB(validVTB, state));
+TEST_F(StatelessValidationTest, VTB_valid) {
+  ASSERT_TRUE(checkVTB(validVTB, state, vbk, btc));
 }
 
-TEST(StatelessValidation, VTB_checkMerklePath_different_transaction_invalid) {
+TEST_F(StatelessValidationTest,
+       VTB_checkMerklePath_different_transaction_invalid) {
   VTB vtb = validVTB;
   vtb.merklePath.subject = uint256(
       "3A014E88ED7AB65CDFAA85DAEAB07EEA6CBA5E147F736EDD8D02C2F9DDF0DEC6"_unhex);
 
-  ValidationState state;
   ASSERT_FALSE(checkMerklePath(vtb.merklePath,
                                vtb.transaction.getHash(),
                                vtb.containingBlock.merkleRoot,
                                state));
 }
 
-TEST(StatelessValidation, VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
+TEST_F(StatelessValidationTest,
+       VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
   VTB vtb = validVTB;
   vtb.containingBlock.merkleRoot =
       uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
-  ValidationState state;
   ASSERT_FALSE(checkMerklePath(vtb.merklePath,
                                vtb.transaction.getHash(),
                                vtb.containingBlock.merkleRoot,
                                state));
 }
 
-TEST(StatelessValidation, VTB_checkVeriBlockBlocks_blocks_not_contigous) {
+TEST_F(StatelessValidationTest, VTB_checkVeriBlockBlocks_blocks_not_contigous) {
   VTB vtb = validVTB;
   vtb.context.erase(vtb.context.begin() + 1);
-  ValidationState state;
-  ASSERT_FALSE(checkVbkBlocks(vtb.context, state));
+  ASSERT_FALSE(checkVbkBlocks(vtb.context, state, vbk));
 }
 
-TEST(StatelessValidtion, checkVbkPopTx_valid) {
-  ValidationState state;
-  ASSERT_TRUE(checkVbkPopTx(validPopTx, state));
+TEST_F(StatelessValidationTest, checkVbkPopTx_valid) {
+  ASSERT_TRUE(checkVbkPopTx(validPopTx, state, btc));
 }
 
-TEST(StatelessValidation, VbkPopTx_checkSignature_signature_invalid) {
+TEST_F(StatelessValidationTest, VbkPopTx_checkSignature_signature_invalid) {
   VbkPopTx tx = validPopTx;
   tx.signature =
       "30450220034DC73796E9870E6679F47E48F3AC794327FD19D9023C228CD134D8ED87B796"
       "022100AD0CE8A520AAE704447920CA365D57A881A82A7455293A9C10E622E0BDD732AF"_unhex;
-  ValidationState state;
   ASSERT_FALSE(checkSignature(tx, state));
 }
 
-TEST(StatelessValidation, VbkPopTx_different_address_invalid) {
+TEST_F(StatelessValidationTest, VbkPopTx_different_address_invalid) {
   VbkPopTx tx = validPopTx;
   tx.publicKey =
       "3056301006072A8648CE3D020106052B8104000A03420004DE4EE8300C3CD99E913536CF53C4ADD179F048F8FE90E5ADF3ED19668DD1DBF6C2D8E692B1D36EAC7187950620A28838DA60A8C9DD60190C14C59B82CB90319E"_unhex;
-  ValidationState state;
   ASSERT_FALSE(checkSignature(tx, state));
 }
 
-TEST(StatelessValidation, checkBitcoinTransactionForPoPData_invalid) {
+TEST_F(StatelessValidationTest, checkBitcoinTransactionForPoPData_invalid) {
   VbkPopTx tx = validPopTx;
   tx.publishedBlock = VbkBlock::fromRaw(
       "00001388000294E7DC3E3BE21A96ECCF0FBDF5F62A3331DC995C36B0935637860679DDD5DB0F135312B2C27867C9A83EF1B99B985C9B949307023AD672BAFD77"_unhex);
-  ValidationState state;
   ASSERT_FALSE(checkBitcoinTransactionForPoPData(tx, state));
 }
 
-TEST(StatelessValidation,
-     checkBitcoinMerklePath_different_transaction_invalid) {
+TEST_F(StatelessValidationTest,
+       checkBitcoinMerklePath_different_transaction_invalid) {
   VbkPopTx tx = validPopTx;
   tx.merklePath.subject = uint256(
       "012A4E88ED7AB65CDFAA85DAEAB07EEA6CBA5E147F736EDD8D02C2F9DDF0DEC6"_unhex);
-  ValidationState state;
   ASSERT_FALSE(checkMerklePath(tx.merklePath,
                                tx.bitcoinTransaction.getHash(),
                                tx.blockOfProof.merkleRoot,
                                state));
 }
 
-TEST(StatelessValidation,
-     checkBitcoinMerklePath_merkle_root_do_not_match_invalid) {
+TEST_F(StatelessValidationTest,
+       checkBitcoinMerklePath_merkle_root_do_not_match_invalid) {
   VbkPopTx tx = validPopTx;
   tx.blockOfProof = BtcBlock::fromRaw(
       "00000020BAA42E40345A7F826A31D37DB1A5D64B67B72732477422000000000000000000A33AD6BE0634647B26633AB85FA8DE258480BBB25E59C68E48BB0B608B12362B10919B5C6C1F2C1749C4D1F0"_unhex);
-  ValidationState state;
   ASSERT_FALSE(checkMerklePath(tx.merklePath,
                                tx.bitcoinTransaction.getHash(),
                                tx.blockOfProof.merkleRoot,
                                state));
 }
 
-TEST(StatelessValidation, checkBitcoinBlocks_when_not_contiguous) {
+TEST_F(StatelessValidationTest, checkBitcoinBlocks_when_not_contiguous) {
   VbkPopTx tx = validPopTx;
   tx.blockOfProofContext.erase(tx.blockOfProofContext.begin() + 1);
-  ValidationState state;
-  ASSERT_FALSE(checkBtcBlocks(tx.blockOfProofContext, state));
+  ASSERT_FALSE(checkBtcBlocks(tx.blockOfProofContext, state, btc));
 }
 
-TEST(StatelessValidation, checkVbkTx_valid) {
-  ValidationState state;
+TEST_F(StatelessValidationTest, checkVbkTx_valid) {
   ASSERT_TRUE(checkVbkTx(validVbkTx, state));
 }
 
-TEST(StatelessValidation, VbkTx_checkSignature_signature_invalid) {
+TEST_F(StatelessValidationTest, VbkTx_checkSignature_signature_invalid) {
   VbkTx tx = validVbkTx;
   tx.signature =
       "30440220398B74708DC8F8AEE68FCE0C47B8959E6FCE6354665DA3ED87583F708E62AA6B02202E6C00C00487763C55E92C7B8E1DD538B7375D8DF2B2117E75ACBB9DB7DEB3C7"_unhex;
-  ValidationState state;
-  checkVbkTx(tx, state);
   ASSERT_FALSE(checkVbkTx(tx, state));
 }
 
-TEST(StatelessValidation, VbkTx_different_address_invalid) {
+TEST_F(StatelessValidationTest, VbkTx_different_address_invalid) {
   VbkTx tx = validVbkTx;
   tx.publicKey =
       "3056301006072A8648CE3D020106552B8104000A03420004DE4EE8300C3CD99E913536CF53C4ADD179F048F8FE90E5ADF3ED19668DD1DBF6C2D8E692B1D36EAC7187950620A28838DA60A8C9DD60190C14C59B82CB90319E"_unhex;
-  ValidationState state;
   ASSERT_FALSE(checkSignature(tx, state));
 }
 
-TEST(StatelessValidation, containsSplit_when_descriptor_before_chunks) {
+TEST_F(StatelessValidationTest, containsSplit_when_descriptor_before_chunks) {
   srand(0);
 
   WriteStream buffer;
@@ -371,7 +363,7 @@ TEST(StatelessValidation, containsSplit_when_descriptor_before_chunks) {
       buffer.data()));
 }
 
-TEST(StatelessValidation, containsSplit_when_chunked) {
+TEST_F(StatelessValidationTest, containsSplit_when_chunked) {
   srand(0);
 
   WriteStream buffer;

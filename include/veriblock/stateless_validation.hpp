@@ -3,6 +3,8 @@
 
 #include "entities/vbkblock.hpp"
 #include "validation_state.hpp"
+#include "veriblock/blockchain/btc_chain_params.hpp"
+#include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
@@ -51,29 +53,42 @@ bool checkSignature(const VbkTx& tx, ValidationState& state);
 bool checkSignature(const VbkPopTx& tx, ValidationState& state);
 
 bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlocks,
-                    ValidationState& state);
+                    ValidationState& state,
+                    const BtcChainParams& param);
 
 bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
-                    ValidationState& state);
+                    ValidationState& state,
+                    const VbkChainParams& param);
 
 bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
                                        ValidationState& state);
 
-bool checkProofOfWork(const BtcBlock& block, ValidationState& state);
+bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param);
 
-bool checkProofOfWork(const VbkBlock& block, ValidationState& state);
+bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param);
 
-bool checkVbkPopTx(const VbkPopTx& tx, ValidationState& state);
+bool checkVbkPopTx(const VbkPopTx& tx,
+                   ValidationState& state,
+                   const BtcChainParams& param);
 
 bool checkVbkTx(const VbkTx& tx, ValidationState& state);
 
-bool checkBlock(const BtcBlock& block, ValidationState& state);
+bool checkBlock(const BtcBlock& block,
+                ValidationState& state,
+                const BtcChainParams& params);
 
-bool checkBlock(const VbkBlock& block, ValidationState& state);
+bool checkBlock(const VbkBlock& block,
+                ValidationState& state,
+                const VbkChainParams& params);
 
-bool checkATV(const ATV& atv, ValidationState& state);
+bool checkATV(const ATV& atv,
+              ValidationState& state,
+              const VbkChainParams& vbk);
 
-bool checkVTB(const VTB& vtb, ValidationState& state);
+bool checkVTB(const VTB& vtb,
+              ValidationState& state,
+              const VbkChainParams& vbk,
+              const BtcChainParams& btc);
 }  // namespace VeriBlock
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK_STATELESS_VALIDATION_H
