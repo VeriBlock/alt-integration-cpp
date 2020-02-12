@@ -21,10 +21,11 @@ struct BlockchainTest : public ::testing::Test {
   using index_t = typename BlockTree<block_t>::index_t;
   using height_t = typename TestCase::height_t;
   using params_t = typename TestCase::params_t;
+  using hash_t = typename block_t::hash_t;
   using params_base_t = typename TestCase::params_base_t;
 
   std::shared_ptr<StrictMock<BlockRepositoryMock<index_t>>> repo;
-  std::shared_ptr<StrictMock<CursorMock<height_t, index_t>>> cursor;
+  std::shared_ptr<StrictMock<CursorMock<hash_t, index_t>>> cursor;
   std::shared_ptr<BlockTree<block_t>> blockchain;
 
   std::shared_ptr<params_base_t> chainparam;
@@ -37,11 +38,11 @@ struct BlockchainTest : public ::testing::Test {
     chainparam = std::make_shared<params_t>();
     miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
 
-    cursor = std::make_shared<StrictMock<CursorMock<height_t, index_t>>>();
+    cursor = std::make_shared<StrictMock<CursorMock<hash_t, index_t>>>();
     repo = std::make_shared<StrictMock<BlockRepositoryMock<index_t>>>();
     blockchain = std::make_shared<BlockTree<block_t>>(repo);
 
-    EXPECT_CALL(*repo, getCursor()).WillRepeatedly(Return(cursor));
+    EXPECT_CALL(*repo, newCursor()).WillRepeatedly(Return(cursor));
 
     // @given
     auto genesis = chainparam->getGenesisBlock();
