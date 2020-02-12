@@ -1,3 +1,5 @@
+#include "veriblock/stateless_validation.hpp"
+
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -6,7 +8,6 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
-#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -48,7 +49,7 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
       lastPos = buffer.position();
       // Parse the first byte to get the number of chunks, their positions and
       // lengths
-      uint8_t descriptor = buffer.readBE<uint8_t>();
+      auto descriptor = buffer.readBE<uint8_t>();
 
       uint32_t chunks = 0;
       uint32_t offsetLength = 4;
@@ -156,14 +157,15 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
 }
 
 bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
-                    ValidationState& state) {
+                    ValidationState& state,
+                    const BtcChainParams& params) {
   if (btcBlock.empty()) {
     return true;
   }
 
   uint256 lastHash = btcBlock[0].getHash();
   for (size_t i = 1; i < btcBlock.size(); ++i) {
-    if (!checkBlock(btcBlock[i], state)) {
+    if (!checkBlock(btcBlock[i], state, params)) {
       return state.addStackFunction("checkBitcoinBlocks()");
     }
 
@@ -179,7 +181,8 @@ bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
 }
 
 bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
-                    ValidationState& state) {
+                    ValidationState& state,
+                    const VbkChainParams& param) {
   if (vbkBlocks.empty()) {
     return true;
   }
@@ -188,7 +191,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
   uint192 lastHash = vbkBlocks[0].getHash();
 
   for (size_t i = 1; i < vbkBlocks.size(); ++i) {
-    if (!checkBlock(vbkBlocks[i], state)) {
+    if (!checkBlock(vbkBlocks[i], state, param)) {
       return state.addStackFunction("checkVeriBlockBlocks()");
     }
 
@@ -205,32 +208,39 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
   return true;
 }
 
-bool checkProofOfWork(const BtcBlock& block, ValidationState& state) {
+bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param) {
   ArithUint256 blockHash = ArithUint256::fromLEBytes(block.getHash());
-  ArithUint256 target = ArithUint256::fromBits(block.bits, nullptr, nullptr);
-  if (target <= blockHash) {
-    return state.Invalid("checkProofOfWork()",
-                         "Invalid Btc Block",
-                         "Block hash is higher than target");
+  bool negative = false;
+  bool overflow = false;
+  auto target = ArithUint256::fromBits(block.bits, &negative, &overflow);
+
+  if (negative || overflow || target == 0 ||
+      target > ArithUint256(param.getPowLimit())) {
+    return false;
   }
-  return true;
+
+  return !(blockHash > target);
 }
 
-///TODO: fix https://veriblock.atlassian.net/browse/BTC-222
-bool checkProofOfWork(const VbkBlock& block, ValidationState& state) {
-  ArithUint256 blockHash = ArithUint256::fromLEBytes(block.getHash());
-  ArithUint256 target =
-      ArithUint256::fromBits(block.difficulty, nullptr, nullptr);
+bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
+  auto blockHash = ArithUint256::fromLEBytes(block.getHash());
+  bool negative = false;
+  bool overflow = false;
+  auto target = ArithUint256::fromBits(block.difficulty, &negative, &overflow);
+
+  if (negative || overflow || target == 0 ||
+      target <= ArithUint256(param.getMinimumDifficulty())) {
+    return false;
+  }
+
   target = MAXIMUM_DIFFICULTY / target;
-  if (target <= blockHash) {
-    return state.Invalid("checkProofOfWork()",
-                         "Invalid VbkBlock Block",
-                         "Block hash is higher than target");
-  }
-  return true;
+
+  return !(blockHash > target);
 }
 
-bool checkVbkPopTx(const VbkPopTx& tx, ValidationState& state) {
+bool checkVbkPopTx(const VbkPopTx& tx,
+                   ValidationState& state,
+                   const BtcChainParams& btc) {
   if (!checkSignature(tx, state)) {
     return state.addStackFunction("checkVbkPopTx()");
   }
@@ -246,7 +256,7 @@ bool checkVbkPopTx(const VbkPopTx& tx, ValidationState& state) {
     return state.addStackFunction("checkVbkPopTx()");
   }
 
-  if (!checkBtcBlocks(tx.blockOfProofContext, state)) {
+  if (!checkBtcBlocks(tx.blockOfProofContext, state, btc)) {
     return state.addStackFunction("checkVbkPopTx()");
   }
 
@@ -256,29 +266,6 @@ bool checkVbkPopTx(const VbkPopTx& tx, ValidationState& state) {
 bool checkVbkTx(const VbkTx& tx, ValidationState& state) {
   if (!checkSignature(tx, state)) {
     return state.addStackFunction("checkVbkTx()");
-  }
-  return true;
-}
-
-bool checkBlock(const BtcBlock& block, ValidationState& state) {
-  if (!checkProofOfWork(block, state)) {
-    return state.addStackFunction("checkBtcBlock()");
-  }
-
-  if (!checkMaximumDrift(block, state)) {
-    return state.addStackFunction("checkBtcBlock()");
-  }
-
-  return true;
-}
-
-bool checkBlock(const VbkBlock& block, ValidationState& state) {
-  if (!checkProofOfWork(block, state)) {
-    return state.addStackFunction("checkVbkBlock()");
-  }
-
-  if (!checkMaximumDrift(block, state)) {
-    return state.addStackFunction("checkVbkBlock()");
   }
   return true;
 }
@@ -319,7 +306,9 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
   return true;
 }
 
-bool checkATV(const ATV& atv, ValidationState& state) {
+bool checkATV(const ATV& atv,
+              ValidationState& state,
+              const VbkChainParams& params) {
   if (!checkVbkTx(atv.transaction, state)) {
     return state.addStackFunction("checkATV()");
   }
@@ -330,15 +319,18 @@ bool checkATV(const ATV& atv, ValidationState& state) {
     return state.addStackFunction("checkATV()");
   }
 
-  if (!checkVbkBlocks(atv.context, state)) {
+  if (!checkVbkBlocks(atv.context, state, params)) {
     return state.addStackFunction("checkATV()");
   }
 
   return true;
 }
 
-bool checkVTB(const VTB& vtb, ValidationState& state) {
-  if (!checkVbkPopTx(vtb.transaction, state)) {
+bool checkVTB(const VTB& vtb,
+              ValidationState& state,
+              const VbkChainParams& vbk,
+              const BtcChainParams& btc) {
+  if (!checkVbkPopTx(vtb.transaction, state, btc)) {
     return state.addStackFunction("checkVTB()");
   }
 
@@ -349,8 +341,38 @@ bool checkVTB(const VTB& vtb, ValidationState& state) {
     return state.addStackFunction("checkVTB()");
   }
 
-  if (!checkVbkBlocks(vtb.context, state)) {
+  if (!checkVbkBlocks(vtb.context, state, vbk)) {
     return state.addStackFunction("checkVTB()");
+  }
+
+  return true;
+}
+
+bool checkBlock(const VbkBlock& block,
+                ValidationState& state,
+                const VbkChainParams& params) {
+  if (!checkProofOfWork(block, params)) {
+    return state.Invalid(
+        "checkBlock", "vbk-bad-pow", "Invalid Block proof of work");
+  }
+
+  if (!checkMaximumDrift(block, state)) {
+    return state.addStackFunction("checkBlock()");
+  }
+
+  return true;
+}
+
+bool checkBlock(const BtcBlock& block,
+                ValidationState& state,
+                const BtcChainParams& params) {
+  if (!checkProofOfWork(block, params)) {
+    return state.Invalid(
+        "checkBlock", "btc-bad-pow", "Invalid Block proof of work");
+  }
+
+  if (!checkMaximumDrift(block, state)) {
+    return state.addStackFunction("checkBlock()");
   }
 
   return true;

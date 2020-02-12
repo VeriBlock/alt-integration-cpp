@@ -17,15 +17,17 @@ namespace VeriBlock {
  * BlockTree is a tree of blocks with single "bootstrap" block as root.
  * @tparam Block
  */
-template <typename Block>
+template <typename Block, typename ChainParams>
 struct BlockTree {
   using block_t = Block;
+  using params_t = ChainParams;
   using index_t = BlockIndex<block_t>;
   using hash_t = typename Block::hash_t;
   using height_t = typename Block::height_t;
 
-  BlockTree(std::shared_ptr<BlockRepository<index_t>> repo)
-      : repo_(std::move(repo)) {}
+  BlockTree(std::shared_ptr<BlockRepository<index_t>> repo,
+            std::shared_ptr<ChainParams> param)
+      : repo_(std::move(repo)), param_(std::move(param)) {}
 
   /**
    * Bootstrap blockchain with a single bootstrap block on given height.
@@ -41,7 +43,7 @@ struct BlockTree {
   bool bootstrap(height_t height,
                  const block_t& block,
                  ValidationState& state) {
-    if (!checkBlock(block, state)) {
+    if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("bootstrap()");
     }
 
@@ -65,7 +67,7 @@ struct BlockTree {
   }
 
   bool acceptBlock(const block_t& block, ValidationState& state) {
-    if (!checkBlock(block, state)) {
+    if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("acceptBlockHeader()");
     }
 
@@ -94,6 +96,7 @@ struct BlockTree {
   std::unordered_map<hash_t, index_t> block_index_;
   Chain<Block> activeChain_;
   std::shared_ptr<BlockRepository<index_t>> repo_;
+  std::shared_ptr<ChainParams> param_;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& hash) {
@@ -140,8 +143,7 @@ struct BlockTree {
       auto value = cursor->value();
       auto hash = value.header.getHash();
 
-      // TODO: add consensus params to checkProofOfWork?
-      if (!checkProofOfWork(value.header, state)) {
+      if (!checkProofOfWork(value.header, *param_)) {
         return state.Error("load-bad-proof-of-work");
       }
 
