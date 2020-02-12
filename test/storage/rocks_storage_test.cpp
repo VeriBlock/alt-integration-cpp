@@ -157,35 +157,6 @@ TEST_F(TestStorage, PutAndGetVbk) {
   EXPECT_EQ(readBlock.block.timestamp, defaultBlockVbk.timestamp);
 }
 
-TEST_F(TestStorage, GetMany) {
-  StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
-  StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 0);
-  bool retBtc = repoBtc.put(storedBtcBlock1);
-  ASSERT_TRUE(retBtc);
-  retBtc = repoBtc.put(storedBtcBlock2);
-  ASSERT_TRUE(retBtc);
-
-  std::vector<StoredBtcBlock> out{};
-  bool readResult = repoBtc.getByHeight(0, &out);
-  ASSERT_TRUE(readResult);
-
-  EXPECT_EQ(out.size(), 2);
-
-  StoredBtcBlock blockOut1 = out[0];
-  StoredBtcBlock blockOut2 = out[1];
-  if (blockOut1.hash != storedBtcBlock1.hash) {
-    blockOut1 = out[1];
-    blockOut2 = out[0];
-  }
-
-  EXPECT_EQ(blockOut1.hash, storedBtcBlock1.hash);
-  EXPECT_EQ(blockOut1.height, 0);
-  EXPECT_EQ(blockOut1.block.version, btcBlock1.version);
-  EXPECT_EQ(blockOut2.hash, storedBtcBlock2.hash);
-  EXPECT_EQ(blockOut2.height, 0);
-  EXPECT_EQ(blockOut2.block.version, btcBlock2.version);
-}
-
 TEST_F(TestStorage, GetManyByHash) {
   StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
   StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 0);
@@ -229,34 +200,10 @@ TEST_F(TestStorage, RemoveByHash) {
   EXPECT_FALSE(readResult);
 }
 
-TEST_F(TestStorage, RemoveByHeight) {
-  StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
-  StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 0);
-  bool retBtc = repoBtc.put(storedBtcBlock1);
-  ASSERT_TRUE(retBtc);
-  retBtc = repoBtc.put(storedBtcBlock2);
-  ASSERT_TRUE(retBtc);
-
-  std::vector<StoredBtcBlock> out{};
-  bool readResult = repoBtc.getByHeight(0, &out);
-  ASSERT_TRUE(readResult);
-
-  EXPECT_EQ(out.size(), 2);
-
-  size_t deleteResult = repoBtc.removeByHeight(0);
-  EXPECT_EQ(deleteResult, 2);
-
-  readResult = repoBtc.getByHeight(0, &out);
-  EXPECT_FALSE(readResult);
-}
-
 TEST_F(TestStorage, RemoveNonExisting) {
   uint256 zeroHash{};
   bool deleteResult = repoBtc.removeByHash(zeroHash);
   EXPECT_FALSE(deleteResult);
-
-  size_t deleteByHeightResult = repoBtc.removeByHeight(1000000);
-  EXPECT_EQ(deleteByHeightResult, 0);
 }
 
 TEST_F(TestStorage, RemovePartially) {
@@ -267,26 +214,18 @@ TEST_F(TestStorage, RemovePartially) {
   retBtc = repoBtc.put(storedBtcBlock2);
   ASSERT_TRUE(retBtc);
 
-  std::vector<StoredBtcBlock> out{};
-  bool readResult = repoBtc.getByHeight(0, &out);
+  StoredBtcBlock readBlock;
+  bool readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
-  EXPECT_EQ(out.size(), 1);
-
-  // results are appended on consecutive get calls
-  readResult = repoBtc.getByHeight(1, &out);
+  readResult = repoBtc.getByHash(btcBlock2.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
-  EXPECT_EQ(out.size(), 2);
 
-  out.clear();
-
-  size_t deleteResult = repoBtc.removeByHeight(0);
+  size_t deleteResult = repoBtc.removeByHash(btcBlock1.getHash());
   EXPECT_EQ(deleteResult, 1);
 
-  readResult = repoBtc.getByHeight(0, &out);
+  readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
   EXPECT_FALSE(readResult);
-  EXPECT_EQ(out.size(), 0);
 
-  readResult = repoBtc.getByHeight(1, &out);
+  readResult = repoBtc.getByHash(btcBlock2.getHash(), &readBlock);
   EXPECT_TRUE(readResult);
-  EXPECT_EQ(out.size(), 1);
 }
