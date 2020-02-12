@@ -20,6 +20,8 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   using hash_t = typename Block::hash_t;
   //! block height type
   using height_t = typename Block::height_t;
+  //! iterator type
+  using cursor_t = Cursor<hash_t, stored_block_t>;
 
   //! column family type
   using cf_handle_t = rocksdb::ColumnFamilyHandle;
@@ -86,24 +88,6 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return true;
   }
 
-  bool getByHeight(height_t height,
-                   std::vector<stored_block_t>* out) const override {
-    bool found = false;
-    std::set<hash_t> hashesList = getHashesByHeight(height);
-    for (const hash_t& hash : hashesList) {
-      stored_block_t outBlock{};
-      if (!getByHash(hash, &outBlock)) {
-        /// TODO: some information about non-existing block
-        continue;
-      }
-      found = true;
-      if (out) {
-        out->push_back(outBlock);
-      }
-    }
-    return found;
-  }
-
   size_t getManyByHash(Slice<const hash_t> hashes,
                        std::vector<stored_block_t>* out) const override {
     size_t found = 0;
@@ -150,31 +134,11 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return deleteBlockByHash(hash);
   }
 
-  size_t removeByHeight(height_t height) override {
-    // obtain hashes blob for the height
-    std::set<hash_t> hashesList = getHashesByHeight(height);
-    size_t deletedCount = 0;
-    for (const hash_t& hash : hashesList) {
-      if (!deleteBlockByHash(hash)) continue;
-      deletedCount++;
-    }
-
-    std::string heightStr = std::to_string(height);
-    rocksdb::Status s = _db->Delete(
-        rocksdb::WriteOptions(), _heightHashesHandle.get(), heightStr);
-    if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
-    }
-    return deletedCount;
-  }
-
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
     return nullptr;
   }
 
-  void commit(WriteBatch<stored_block_t>& batch) override { (void)batch; }
-
-  std::shared_ptr<Cursor<height_t, stored_block_t>> getCursor() override {
+  std::shared_ptr<cursor_t> newCursor() override {
     return nullptr;
   }
 
