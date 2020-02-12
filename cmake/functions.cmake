@@ -79,3 +79,34 @@ function(add_cache_flag var_name flag)
         set("${var_name}" "${flag} ${${var_name}}" CACHE STRING "" FORCE)
     endif()
 endfunction()
+
+# reads file contents and creates a single cpp in ${CMAKE_CURRENT_BINARY_DIR}/${varname}.cpp
+## varname[in] - variable name, as well as file name
+## infile[in] - input file path
+## out[out] - returns full path to generated file
+##
+####################################################
+## add this to hpp, and include this hpp to access
+## the variable.
+####################################################
+## #pragma once
+## namespace generated {
+##   extern const char ${varname}[];
+## }
+##
+function(gencpp varname infile out)
+    get_filename_component(_absin ${infile} REALPATH)
+    set(path ${varname}.cpp)
+    set(${out} ${path} PARENT_SCOPE)
+
+    add_custom_command(
+            OUTPUT ${path}
+            COMMAND filetoheader
+            ARGS
+            ${varname}
+            ${_absin}
+            ${path}
+            DEPENDS filetoheader
+            COMMENT "Generating ${varname}.cpp..."
+    )
+endfunction()
