@@ -27,8 +27,7 @@ jobs:
           submodules: true
           clean: true
       - name: cmake
-        # TODO: remove -DWITH_ROCKSDB=OFF
-        run: cmake . -Bbuild ${{ matrix.flags }} -DWITH_ROCKSDB=OFF
+        run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
         run: cmake --build build -- -j2
       - name: test
@@ -39,7 +38,6 @@ jobs:
     runs-on: windows-latest
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
-      VCPKG_DEFAULT_TRIPLET: x64-windows
     steps:
       - uses: actions/checkout@v1
         name: checkout
@@ -48,26 +46,8 @@ jobs:
           clean: true
           fetch-depth: 1
 
-      - name: install vcpkg
-        run: vcpkg integrate install
-
-      - name: cache vcpkg installed
-        uses: actions/cache@v1
-        with:
-          path: C:/vcpkg/installed
-          key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}
-
-      - name: cache vcpkg triplets
-        uses: actions/cache@v1
-        with:
-          path: C:/vcpkg/triplets
-          key: ${{ runner.os }}-tripl-${{ hashFiles('**/*.cmake') }}
-
-      - name: install dependencies
-        run: vcpkg install rocksdb
-
       - name: cmake
-        run: cmake . -Bbuild -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+        run: cmake . -Bbuild -A x64
       - name: build
         run: cmake --build build --parallel 2
       - name: test
