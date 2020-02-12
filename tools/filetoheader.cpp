@@ -11,7 +11,7 @@ void write(InStream& in, OutStream& out, const std::string& var) {
   std::string line;
   while (std::getline(in, line)) {
     for (char c : line) {
-      out << reinterpret_cast<int>(c) << ", ";
+      out << static_cast<int>(c) << ", ";
     }
     out << static_cast<int>('\n') << ", " << std::endl;
   }
