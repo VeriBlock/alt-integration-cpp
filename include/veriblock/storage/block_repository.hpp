@@ -32,6 +32,10 @@ struct UnrecoverableError : public std::exception {};
 struct Error : public std::exception {};
 }  // namespace db
 
+// forward decl
+template <typename Block>
+struct BlockRepository;
+
 /**
  * @class WriteBatch
  * @brief Efficiently implements bulk write operation for BlockRepository.
@@ -47,10 +51,8 @@ struct WriteBatch {
   using stored_block_t = Block;
   //! block has type
   using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
   //! iterator type
-  using cursor_t = Cursor<height_t, stored_block_t>;
+  using cursor_t = Cursor<hash_t, stored_block_t>;
 
   virtual ~WriteBatch() = default;
 
@@ -58,28 +60,25 @@ struct WriteBatch {
    * Write a single block. If block with such hash exists, db will overwrite
    * it.
    * @param block to be written in a batch
-   * @return true if we overwrite existing block, false otherwise.
    */
-  virtual bool put(const stored_block_t& block) = 0;
+  virtual void put(const stored_block_t& block) = 0;
 
   /**
    * Remove a single block from storage identified by its hash.
    * @param hash block hash
-   * @return true if removed, false if no such element found.
    */
-  virtual bool removeByHash(const hash_t& hash) = 0;
-
-  /**
-   * Remove potentially many blocks at given height.
-   * @param height block height
-   * @return number of blocks removed.
-   */
-  virtual size_t removeByHeight(height_t height) = 0;
+  virtual void removeByHash(const hash_t& hash) = 0;
 
   /**
    * Clear batch from any modifying operations.
    */
   virtual void clear() = 0;
+
+  /**
+   * Efficiently commit given batch on-disk. Clears batch from changes.
+   * @param repo
+   */
+  virtual void commit(BlockRepository<Block>& repo) = 0;
 };
 
 /**
@@ -103,7 +102,7 @@ struct BlockRepository {
   //! block height type
   using height_t = typename Block::height_t;
   //! iterator type
-  using cursor_t = Cursor<height_t, stored_block_t>;
+  using cursor_t = Cursor<hash_t, stored_block_t>;
 
   virtual ~BlockRepository() = default;
 
@@ -115,16 +114,6 @@ struct BlockRepository {
    * @return true if block found, false otherwise.
    */
   virtual bool getByHash(const hash_t& hash, stored_block_t* out) const = 0;
-
-  /**
-   * Load potentially many blocks from disk in memory by their height.
-   * @param height[in] block height
-   * @param out[out] if non-null, blocks will be written here. If null passed,
-   * out argument is ignored.
-   * @return true if block found at given height, false otherwise.
-   */
-  virtual bool getByHeight(height_t height,
-                           std::vector<stored_block_t>* out) const = 0;
 
   /**
    * Load many blocks from disk in memory by a list of hashes.
@@ -153,29 +142,16 @@ struct BlockRepository {
   virtual bool removeByHash(const hash_t& hash) = 0;
 
   /**
-   * Remove potentially many blocks at given height.
-   * @param height block height
-   * @return number of blocks removed
-   */
-  virtual size_t removeByHeight(height_t height) = 0;
-
-  /**
    * Create new WriteBatch, to perform BULK modify operations.
    * @return a pointer to new WriteBatch instance.
    */
   virtual std::unique_ptr<WriteBatch<stored_block_t>> newBatch() = 0;
 
   /**
-   * Efficiently commit given batch on-disk.
-   * @param batch
-   */
-  virtual void commit(WriteBatch<stored_block_t>& batch) = 0;
-
-  /**
    * Returns iterator, that is used for height iteration over blockchain.
    * @return
    */
-  virtual std::shared_ptr<cursor_t> getCursor() = 0;
+  virtual std::shared_ptr<cursor_t> newCursor() = 0;
 
   bool contains(const hash_t& hash) const { return getByHash(hash, nullptr); }
 };

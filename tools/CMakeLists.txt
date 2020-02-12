@@ -1,0 +1,1 @@
+add_executable(filetoheader EXCLUDE_FROM_ALL filetoheader.cpp)

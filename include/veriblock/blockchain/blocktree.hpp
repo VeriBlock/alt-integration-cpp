@@ -133,7 +133,7 @@ struct BlockTree {
   }
 
   bool load(ValidationState& state) {
-    auto cursor = repo_->getCursor();
+    auto cursor = repo_->newCursor();
 
     // load blocks into memory
     for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
