@@ -31,19 +31,20 @@ struct BlockchainFixture {
   using block_t = BtcBlock;
   using index_t = typename BlockTree<block_t>::index_t;
   using height_t = typename BlockTree<block_t>::height_t;
+  using hash_t = typename BlockTree<block_t>::hash_t;
 
   std::shared_ptr<StrictMock<BlockRepositoryMock<index_t>>> repo;
-  std::shared_ptr<StrictMock<CursorMock<height_t, index_t>>> cursor;
+  std::shared_ptr<StrictMock<CursorMock<hash_t, index_t>>> cursor;
   ValidationState state;
 
   std::string test_blockheaders_file_path = "../../../test/blockchain/";
 
   BlockchainFixture() {
-    cursor = std::make_shared<StrictMock<CursorMock<height_t, index_t>>>();
+    cursor = std::make_shared<StrictMock<CursorMock<hash_t, index_t>>>();
     repo = std::make_shared<StrictMock<BlockRepositoryMock<index_t>>>();
 
     EXPECT_CALL(*repo, put(_)).WillRepeatedly(Return(true));
-    EXPECT_CALL(*repo, getCursor()).WillRepeatedly(Return(cursor));
+    EXPECT_CALL(*repo, newCursor()).WillRepeatedly(Return(cursor));
   }
 };
 
