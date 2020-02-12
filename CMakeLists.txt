@@ -94,6 +94,8 @@ elseif(UBSAN)
     include(cmake/ubsan.cmake)
 endif()
 
+add_subdirectory(tools)
+
 if(TESTING)
     enable_testing()
     add_subdirectory(test)
