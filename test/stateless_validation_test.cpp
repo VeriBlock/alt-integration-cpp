@@ -232,7 +232,6 @@ TEST_F(StatelessValidationTest,
   vtb.merklePath.subject = uint256(
       "3A014E88ED7AB65CDFAA85DAEAB07EEA6CBA5E147F736EDD8D02C2F9DDF0DEC6"_unhex);
 
-  ValidationState state;
   ASSERT_FALSE(checkMerklePath(vtb.merklePath,
                                vtb.transaction.getHash(),
                                vtb.containingBlock.merkleRoot,
