@@ -60,14 +60,12 @@ struct WriteBatch {
    * Write a single block. If block with such hash exists, db will overwrite
    * it.
    * @param block to be written in a batch
-   * @return true if we overwrite existing block, false otherwise.
    */
   virtual void put(const stored_block_t& block) = 0;
 
   /**
    * Remove a single block from storage identified by its hash.
    * @param hash block hash
-   * @return true if removed, false if no such element found.
    */
   virtual void removeByHash(const hash_t& hash) = 0;
 
