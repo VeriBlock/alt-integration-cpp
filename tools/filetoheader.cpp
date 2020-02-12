@@ -20,6 +20,7 @@ void write(InStream& in, OutStream& out, const std::string& var) {
   out << "};" << std::endl;  // end of namespace
 }
 
+// NOLINTNEXTLINE
 int main(int argc, char** argv) {
   if (argc != 4) {
     std::cout << R"(  Usage:
@@ -28,9 +29,9 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  std::string var = argv[1];
-  std::string in = argv[2];
-  std::string out = argv[3];
+  std::string var = argv[1]; // NOLINT
+  std::string in = argv[2];  // NOLINT
+  std::string out = argv[3]; // NOLINT
   std::fstream fout(out, std::fstream::out);
   std::fstream fin(in, std::fstream::in);
 
