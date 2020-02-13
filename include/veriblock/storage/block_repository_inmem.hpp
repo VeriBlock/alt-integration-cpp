@@ -22,46 +22,22 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     }
   }
   ~CursorInmem() override = default;
-  void seekToFirst() override {
-    if (_etl.empty()) {
-      _it = nullptr;
-    } else {
-      _it = &_etl[0];
-    }
-  }
+  void seekToFirst() override { _it = _etl.cbegin(); }
   void seek(const hash_t& key) override {
-    auto it = std::find_if(_etl.begin(), _etl.end(), [&key](const pair& p) {
+    _it = std::find_if(_etl.cbegin(), _etl.cend(), [&key](const pair& p) {
       return p.first == key;
     });
-
-    if (it == _etl.end()) {
-      _it = nullptr;
-    } else {
-      _it = &*it;
-    }
   }
-  void seekToLast() override {
-    if (_etl.empty()) {
-      _it = nullptr;
-    } else {
-      _it = &_etl[_etl.size() - 1];
-    }
-  }
-  bool isValid() const override {
-    bool a = _it != nullptr;
-    // within valid contiguous memory array range
-    bool b = _it >= &_etl[0];
-    bool c = _it <= &_etl[_etl.size() - 1];
-    return a && b && c;
-  }
+  void seekToLast() override { _it = --_etl.cend(); }
+  bool isValid() const override { return _it != _etl.cend(); }
   void next() override { ++_it; }
-  void prev() override { --_it; }
+  void prev() override { _it = _it != _etl.cbegin() ? --_it : _etl.cend(); }
   hash_t key() const override { return _it->first; }
   stored_block_t value() const override { return *_it->second; }
 
  private:
   std::vector<pair> _etl;
-  const pair* _it;
+  typename std::vector<pair>::const_iterator _it;
 };
 
 template <typename Block>
