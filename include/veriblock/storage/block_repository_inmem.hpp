@@ -124,7 +124,7 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   //! block height type
   using height_t = typename Block::height_t;
   //! iterator type
-  using cursor_t = Cursor<height_t, stored_block_t>;
+  using cursor_t = Cursor<hash_t, stored_block_t>;
 
   ~BlockRepositoryInmem() override = default;
 

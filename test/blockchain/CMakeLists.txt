@@ -18,3 +18,5 @@ addtest(blockchain_test
         ${outcpp2}
         )
 target_link_libraries(blockchain_test vbkutils)
+
+
