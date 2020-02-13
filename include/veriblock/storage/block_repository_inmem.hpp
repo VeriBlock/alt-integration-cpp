@@ -41,8 +41,18 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     bool c = _it < _etl.cend();
     return a && b && c;
   }
-  void next() override { ++_it; }
-  void prev() override { --_it; }
+  void next() override {
+    if(_it < _etl.cend()) {
+      ++_it;
+    }
+  }
+  void prev() override {
+    if (_it == _etl.cbegin()) {
+      _it = _etl.cend();
+    } else {
+      --_it;
+    }
+  }
   hash_t key() const override { return _it->first; }
   stored_block_t value() const override { return *_it->second; }
 
