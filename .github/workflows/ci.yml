@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DTSAN=ON", "-DCOVERAGE=ON"]
+        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DTSAN=ON"]
     env:
       CC: clang
       CXX: clang++
@@ -32,12 +32,6 @@ jobs:
         run: cmake --build build -- -j2
       - name: test
         run: cmake --build build --target test
-      - if: matrix.flags == '-DCOVERAGE=ON'
-        name: collect coverage
-        shell: bash
-        run: |
-          cmake --build build --target ctest_coverage
-          bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
 
   coverage:

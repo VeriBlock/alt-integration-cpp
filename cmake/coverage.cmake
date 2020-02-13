@@ -11,6 +11,7 @@ set(COVERAGE_EXCLUDES
         '${CMAKE_SOURCE_DIR}/deps/*'
         '${CMAKE_SOURCE_DIR}/build/*'
         '${CMAKE_SOURCE_DIR}/cmake-build-*/*'
+        '/usr/include/*'
         )
 
 setup_target_for_coverage_gcovr_xml(
