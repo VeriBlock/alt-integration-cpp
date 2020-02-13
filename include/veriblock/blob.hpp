@@ -92,6 +92,10 @@ struct Blob {
     return std::vector<value_type>{data_.begin(), data_.end()};
   }
 
+  std::string asString() const {
+    return std::string{data_.begin(), data_.end()};
+  }
+
   const value_type& operator[](size_t index) noexcept { return data_[index]; }
   const value_type& operator[](size_t index) const noexcept {
     return data_[index];
