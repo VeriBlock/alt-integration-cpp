@@ -40,6 +40,30 @@ jobs:
           bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
 
+  coverage:
+    runs-on: ubuntu-18.04
+    container: veriblock/alt-integration-cpp-dev
+    env:
+      CC: gcc
+      CXX: g++
+      CTEST_OUTPUT_ON_FAILURE: 1
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: true
+          clean: true
+      - name: cmake
+        run: cmake . -Bbuild ${{ matrix.flags }} -DCOVERAGE=ON
+      - name: build
+        run: cmake --build build -- -j2
+      - name: test
+        run: cmake --build build --target ctest_coverage
+      - name: collect coverage
+        shell: bash
+        run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
+
+
   windows:
     runs-on: windows-latest
     env:
