@@ -26,6 +26,14 @@ option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 option(WITH_ROCKSDB "Enable RocksDB storage" ON)
 
+if (WIN32)
+  set(FIND_ROCKSDB_DEFAULT TRUE)
+else()
+  set(FIND_ROCKSDB_DEFAULT FALSE)
+endif()
+
+option(FIND_ROCKSDB "Use \"ON\" to search for RocksDB in installed packages" ${FIND_ROCKSDB_DEFAULT})
+
 include(cmake/dependencies.cmake)
 
 ## setup compilation flags
