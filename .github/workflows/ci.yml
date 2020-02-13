@@ -27,7 +27,7 @@ jobs:
           submodules: true
           clean: true
       - name: cmake
-        run: cmake . -Bbuild ${{ matrix.flags }}
+        run: cmake . -Bbuild ${{ matrix.flags }} -DFIND_ROCKSDB=OFF
       - name: build
         run: cmake --build build -- -j2
       - name: test
@@ -37,11 +37,11 @@ jobs:
         shell: bash
         run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
-
   windows:
     runs-on: windows-latest
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
+      VCPKG_DEFAULT_TRIPLET: x64-windows
     steps:
       - uses: actions/checkout@v1
         name: checkout
@@ -50,8 +50,20 @@ jobs:
           clean: true
           fetch-depth: 1
 
+      - name: install vcpkg
+        run: vcpkg integrate install
+
+      - name: cache vcpkg installed
+        uses: actions/cache@v1
+        with:
+          path: C:/vcpkg/installed
+          key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}-${{ hashFiles('CMakeLists.txt') }}
+
+      - name: install dependencies
+        run: vcpkg install rocksdb
+
       - name: cmake
-        run: cmake . -Bbuild -A x64
+        run: cmake . -Bbuild -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
       - name: build
         run: cmake --build build --parallel 2
       - name: test
