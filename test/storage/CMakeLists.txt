@@ -1,6 +1,6 @@
 if(WITH_ROCKSDB)
     addtest(rocks_storage_test rocks_storage_test.cpp)
-    target_link_libraries(rocks_storage_test vbkutils)
+    target_link_libraries(rocks_storage_test vbkutils rocksdb)
 endif()
 
 addtest(inmem_storage_test inmem_storage_test.cpp)
