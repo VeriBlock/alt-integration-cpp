@@ -4,19 +4,14 @@
 #include <memory>
 
 #include "block_headers.hpp"
-#include "mock/storage/block_repository_mock.hpp"
-#include "mock/storage/cursor_mock.hpp"
 #include "util/literals.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/btc_blockchain_util.hpp"
 #include "veriblock/blockchain/miner.hpp"
+#include "veriblock/storage/block_repository_inmem.hpp"
 
 using namespace VeriBlock;
-using ::testing::_;
-using ::testing::Field;
-using ::testing::Return;
-using ::testing::StrictMock;
 
 struct BootstrapTestCase {
   using block_t = BtcBlock;
@@ -36,17 +31,12 @@ struct BlockchainFixture {
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
   std::shared_ptr<BtcChainParams> params;
-  std::shared_ptr<StrictMock<BlockRepositoryMock<index_t>>> repo;
-  std::shared_ptr<StrictMock<CursorMock<hash_t, index_t>>> cursor;
+  std::shared_ptr<BlockRepository<index_t>> repo;
   ValidationState state;
 
   BlockchainFixture() {
     params = std::make_shared<BtcChainParamsRegTest>();
-    cursor = std::make_shared<StrictMock<CursorMock<hash_t, index_t>>>();
-    repo = std::make_shared<StrictMock<BlockRepositoryMock<index_t>>>();
-
-    EXPECT_CALL(*repo, put(_)).WillRepeatedly(Return(true));
-    EXPECT_CALL(*repo, newCursor()).WillRepeatedly(Return(cursor));
+    repo = std::make_shared<BlockRepositoryInmem<index_t>>();
   }
 };
 
@@ -85,14 +75,8 @@ struct BootstrapTest : public testing::TestWithParam<BootstrapTestCase>,
 TEST_P(BootstrapTest, bootstrap_test) {
   auto value = GetParam();
 
-  EXPECT_EQ(value.bootstrap_block.getHash(), value.block_hash);
-
-  EXPECT_CALL(*cursor, seekToFirst()).Times(1);
-  EXPECT_CALL(*cursor, isValid()).WillOnce(Return(false));
-
-  std::shared_ptr<BtcChainParams> param =
-      std::make_shared<BtcChainParamsMain>();
-  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, std::move(param));
+  params = std::make_shared<BtcChainParamsMain>();
+  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, params);
   ASSERT_TRUE(
       block_chain.bootstrap(value.height, value.bootstrap_block, state));
   EXPECT_TRUE(state.IsValid());
@@ -100,23 +84,40 @@ TEST_P(BootstrapTest, bootstrap_test) {
   EXPECT_EQ(block_chain.getBestChain().tip()->header, value.bootstrap_block);
   EXPECT_EQ(block_chain.getBestChain().bootstrap()->header,
             value.bootstrap_block);
+  EXPECT_EQ(block_chain.getBestChain().tip()->getHash(), value.block_hash);
 }
 
 INSTANTIATE_TEST_SUITE_P(BootstrapBlocksRegression,
                          BootstrapTest,
                          testing::ValuesIn(bootstrap_test_cases));
 
-struct AcceptTest : public testing::TestWithParam<std::string>,
+struct BtcTestCase {
+  std::string headers;
+  std::shared_ptr<BtcChainParams> params;
+};
+
+struct AcceptTest : public testing::TestWithParam<BtcTestCase>,
                     public BlockchainFixture {};
 
-static std::vector<std::string> accept_test_cases = {
-    generated::btc_blockheaders_mainnet_0_10000,
-    generated::btc_blockheaders_mainnet_30000_40000};
+static std::vector<BtcTestCase> accept_test_cases = {
+    {
+        generated::btc_blockheaders_mainnet_0_10000,
+        std::make_shared<BtcChainParamsMain>()
+      },
+    {
+        generated::btc_blockheaders_mainnet_30000_40000,
+        std::make_shared<BtcChainParamsMain>()
+    },
+    {
+        generated::btc_blockheaders_testnet_0_10000,
+        std::make_shared<BtcChainParamsTest>()
+    },
+    };
 
-TEST_P(AcceptTest, accept_test) {
+TEST_P(AcceptTest, CanAcceptRealBlockHeaders) {
   auto value = GetParam();
 
-  std::istringstream file(value);
+  std::istringstream file(value.headers);
   ASSERT_TRUE(!file.fail());
 
   uint32_t first_block_height;
@@ -126,10 +127,7 @@ TEST_P(AcceptTest, accept_test) {
   EXPECT_TRUE(file >> temp);
   BtcBlock bootstrap_block = BtcBlock::fromRaw(ParseHex(temp));
 
-  EXPECT_CALL(*cursor, seekToFirst()).Times(1);
-  EXPECT_CALL(*cursor, isValid()).WillOnce(Return(false));
-
-  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, params);
+  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, value.params);
   ASSERT_TRUE(
       block_chain.bootstrap(first_block_height, bootstrap_block, state));
   EXPECT_TRUE(state.IsValid());

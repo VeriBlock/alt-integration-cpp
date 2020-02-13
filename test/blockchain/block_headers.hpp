@@ -4,6 +4,7 @@
 namespace generated {
 
 extern const char btc_blockheaders_mainnet_0_10000[];
+extern const char btc_blockheaders_testnet_0_10000[];
 extern const char btc_blockheaders_mainnet_30000_40000[];
 
 }
