@@ -27,7 +27,7 @@ jobs:
           submodules: true
           clean: true
       - name: cmake
-        run: cmake . -Bbuild ${{ matrix.flags }} -DFIND_ROCKSDB=OFF
+        run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
         run: cmake --build build -- -j2
       - name: test
