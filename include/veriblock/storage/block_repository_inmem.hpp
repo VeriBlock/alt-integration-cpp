@@ -22,7 +22,13 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     }
   }
   ~CursorInmem() override = default;
-  void seekToFirst() override { _it = &_etl[0]; };
+  void seekToFirst() override {
+    if (_etl.empty()) {
+      _it = nullptr;
+    } else {
+      _it = &_etl[0];
+    }
+  }
   void seek(const hash_t& key) override {
     auto it = std::find_if(_etl.begin(), _etl.end(), [&key](const pair& p) {
       return p.first == key;
