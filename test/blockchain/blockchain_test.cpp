@@ -6,8 +6,8 @@
 #include "mock/storage/cursor_mock.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/btc_blockchain_util.hpp"
-#include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/blockchain/miner.hpp"
+#include "veriblock/blockchain/vbk_chain_params.hpp"
 
 using namespace VeriBlock;
 using ::testing::_;
@@ -19,7 +19,7 @@ template <typename TestCase>
 struct BlockchainTest : public ::testing::Test {
   using block_t = typename TestCase::block_t;
   using params_base_t = typename TestCase::params_base_t;
-  using index_t = typename BlockTree<block_t, params_base_t >::index_t;
+  using index_t = typename BlockTree<block_t, params_base_t>::index_t;
   using height_t = typename TestCase::height_t;
   using params_t = typename TestCase::params_t;
   using hash_t = typename block_t::hash_t;
@@ -31,7 +31,7 @@ struct BlockchainTest : public ::testing::Test {
   std::shared_ptr<params_base_t> chainparam;
   std::shared_ptr<Miner<block_t, params_base_t>> miner;
 
-  height_t height = 0;
+  height_t height;
   ValidationState state;
 
   BlockchainTest() {
@@ -40,7 +40,8 @@ struct BlockchainTest : public ::testing::Test {
 
     cursor = std::make_shared<StrictMock<CursorMock<hash_t, index_t>>>();
     repo = std::make_shared<StrictMock<BlockRepositoryMock<index_t>>>();
-    blockchain = std::make_shared<BlockTree<block_t, params_base_t>>(repo, chainparam);
+    blockchain =
+        std::make_shared<BlockTree<block_t, params_base_t>>(repo, chainparam);
 
     EXPECT_CALL(*repo, newCursor()).WillRepeatedly(Return(cursor));
 
@@ -70,7 +71,7 @@ struct BtcTestCase {
   using height_t = block_t::height_t;
 };
 
-///TODO: uncomment when ready for test
+/// TODO: uncomment when ready for test
 /*struct VbkTestCase {
   using block_t = VbkBlock;
   using params_base_t = VbkChainParams;
@@ -110,8 +111,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   for (size_t i = 0; i < 10000; i++) {
     auto tip = chain.tip();
     auto block = this->miner->createNextBlock(*tip, {});
-    ASSERT_TRUE(
-        this->blockchain->acceptBlock(block, this->state))
+    ASSERT_TRUE(this->blockchain->acceptBlock(block, this->state))
         << this->state.GetDebugMessage();
   }
 
@@ -141,8 +141,7 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
         auto* tip = best.tip();
         EXPECT_TRUE(tip);
         auto block = this->miner->createNextBlock(*tip, {});
-        EXPECT_TRUE(this->blockchain->acceptBlock(
-            block, this->state))
+        EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
             << this->state.GetDebugMessage();
         return block;
       });
@@ -156,12 +155,10 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
   // mine total 100 new blocks on top of existing 50
   std::generate_n(std::back_inserter(fork2), 100, [&]() {
     // take last block at fork2 and create mine new block on top of that
-    auto index =
-        this->blockchain->getBlockIndex(fork2.rbegin()->getHash());
+    auto index = this->blockchain->getBlockIndex(fork2.rbegin()->getHash());
     EXPECT_TRUE(index);
     auto block = this->miner->createNextBlock(*index, {});
-    EXPECT_TRUE(
-        this->blockchain->acceptBlock(block, this->state))
+    EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
         << this->state.GetDebugMessage();
     return block;
   });
@@ -172,12 +169,10 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
 
   // create 30 blocks at fork1
   std::generate_n(std::back_inserter(fork1), 30, [&]() {
-    auto index =
-        this->blockchain->getBlockIndex(fork1.rbegin()->getHash());
+    auto index = this->blockchain->getBlockIndex(fork1.rbegin()->getHash());
     EXPECT_TRUE(index);
     auto block = this->miner->createNextBlock(*index, {});
-    EXPECT_TRUE(
-        this->blockchain->acceptBlock(block, this->state))
+    EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
         << this->state.GetDebugMessage();
     return block;
   });
@@ -188,12 +183,10 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
 
   // create another 30 blocks at fork1
   std::generate_n(std::back_inserter(fork1), 30, [&]() {
-    auto index =
-        this->blockchain->getBlockIndex(fork1.rbegin()->getHash());
+    auto index = this->blockchain->getBlockIndex(fork1.rbegin()->getHash());
     EXPECT_TRUE(index);
     auto block = this->miner->createNextBlock(*index, {});
-    EXPECT_TRUE(
-        this->blockchain->acceptBlock(block, this->state))
+    EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
         << this->state.GetDebugMessage();
     return block;
   });
@@ -206,6 +199,5 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(BlockchainTest, Scenario1, ForkResolutionWorks);
 
-typedef ::testing::Types<BtcTestCase/*, VbkTestCase*/> MyTypes;
-INSTANTIATE_TYPED_TEST_SUITE_P(BlockchainTestSuite,
-                               BlockchainTest, MyTypes);
+typedef ::testing::Types<BtcTestCase /*, VbkTestCase*/> MyTypes;
+INSTANTIATE_TYPED_TEST_SUITE_P(BlockchainTestSuite, BlockchainTest, MyTypes);
