@@ -33,7 +33,7 @@ jobs:
       - name: test
         run: cmake --build build --target test
       - name: collect coverage
-        if: matrix.flags == "-DCOVERAGE=ON"
+        if: matrix.flags == -DCOVERAGE=ON
         run: bash -c "bash <(curl -s https://codecov.io/bash) -s build -t ${{ secrets.CODECOV_TOKEN }}"
 
 
