@@ -32,9 +32,10 @@ jobs:
         run: cmake --build build -- -j2
       - name: test
         run: cmake --build build --target test
-      - name: collect coverage
-        if: matrix.flags == -DCOVERAGE=ON
-        run: bash -c "bash <(curl -s https://codecov.io/bash) -s build -t ${{ secrets.CODECOV_TOKEN }}"
+      - if: matrix.flags == '-DCOVERAGE=ON'
+        name: collect coverage
+        shell: bash
+        run: bash <(curl -s https://codecov.io/bash) -s build -t ${{ secrets.CODECOV_TOKEN }}
 
 
   windows:
