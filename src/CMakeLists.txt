@@ -26,6 +26,10 @@ add_library(vbkutils
         )
 
 if(WITH_ROCKSDB)
-    target_link_libraries(vbkutils rocksdb)
-    target_include_directories(vbkutils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../deps/rocksdb/include>)
+    if(FIND_ROCKSDB)
+        target_link_libraries(vbkutils RocksDB::rocksdb)
+    else()
+        target_link_libraries(vbkutils rocksdb)
+        target_include_directories(vbkutils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../deps/rocksdb/include>)
+    endif()
 endif()

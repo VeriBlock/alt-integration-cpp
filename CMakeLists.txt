@@ -25,6 +25,7 @@ option(COVERAGE     "Enable coverage" OFF)
 option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 option(WITH_ROCKSDB "Enable RocksDB storage" ON)
+option(FIND_ROCKSDB "Use RocksDB storage from installed packages" ON)
 
 include(cmake/dependencies.cmake)
 
