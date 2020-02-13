@@ -22,16 +22,27 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     }
   }
   ~CursorInmem() override = default;
-  void seekToFirst() override { _it = _etl.cbegin(); }
+  void seekToFirst() override {
+    if (_etl.empty()) {
+      _it = _etl.cend();
+    } else {
+      _it = _etl.cbegin();
+    }
+  }
   void seek(const hash_t& key) override {
     _it = std::find_if(_etl.cbegin(), _etl.cend(), [&key](const pair& p) {
       return p.first == key;
     });
   }
   void seekToLast() override { _it = --_etl.cend(); }
-  bool isValid() const override { return _it != _etl.cend(); }
+  bool isValid() const override {
+    bool a = _it != _etl.cend();
+    bool b = _it >= _etl.cbegin();
+    bool c = _it < _etl.cend();
+    return a && b && c;
+  }
   void next() override { ++_it; }
-  void prev() override { _it = _it != _etl.cbegin() ? --_it : _etl.cend(); }
+  void prev() override { --_it; }
   hash_t key() const override { return _it->first; }
   stored_block_t value() const override { return *_it->second; }
 
