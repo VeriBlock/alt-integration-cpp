@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DTSAN=ON", "-DCOVERAGE=ON"]
+        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DTSAN=ON"]
     env:
       CC: clang
       CXX: clang++
@@ -32,8 +32,28 @@ jobs:
         run: cmake --build build -- -j2
       - name: test
         run: cmake --build build --target test
-      - if: matrix.flags == '-DCOVERAGE=ON'
-        name: collect coverage
+
+
+  coverage:
+    runs-on: ubuntu-18.04
+    container: veriblock/alt-integration-cpp-dev
+    env:
+      CC: gcc
+      CXX: g++
+      CTEST_OUTPUT_ON_FAILURE: 1
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: true
+          clean: true
+      - name: cmake
+        run: cmake . -Bbuild ${{ matrix.flags }} -DCOVERAGE=ON
+      - name: build
+        run: cmake --build build -- -j2
+      - name: test
+        run: cmake --build build --target ctest_coverage
+      - name: collect coverage
         shell: bash
         run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
