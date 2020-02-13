@@ -91,17 +91,33 @@ INSTANTIATE_TEST_SUITE_P(BootstrapBlocksRegression,
                          BootstrapTest,
                          testing::ValuesIn(bootstrap_test_cases));
 
-struct AcceptTest : public testing::TestWithParam<std::string>,
+struct BtcTestCase {
+  std::string headers;
+  std::shared_ptr<BtcChainParams> params;
+};
+
+struct AcceptTest : public testing::TestWithParam<BtcTestCase>,
                     public BlockchainFixture {};
 
-static std::vector<std::string> accept_test_cases = {
-    generated::btc_blockheaders_mainnet_0_10000,
-    generated::btc_blockheaders_mainnet_30000_40000};
+static std::vector<BtcTestCase> accept_test_cases = {
+    {
+        generated::btc_blockheaders_mainnet_0_10000,
+        std::make_shared<BtcChainParamsMain>()
+      },
+    {
+        generated::btc_blockheaders_mainnet_30000_40000,
+        std::make_shared<BtcChainParamsMain>()
+    },
+    {
+        generated::btc_blockheaders_testnet_0_10000,
+        std::make_shared<BtcChainParamsTest>()
+    },
+    };
 
-TEST_P(AcceptTest, accept_test) {
+TEST_P(AcceptTest, CanAcceptRealBlockHeaders) {
   auto value = GetParam();
 
-  std::istringstream file(value);
+  std::istringstream file(value.headers);
   ASSERT_TRUE(!file.fail());
 
   uint32_t first_block_height;
@@ -111,7 +127,7 @@ TEST_P(AcceptTest, accept_test) {
   EXPECT_TRUE(file >> temp);
   BtcBlock bootstrap_block = BtcBlock::fromRaw(ParseHex(temp));
 
-  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, params);
+  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, value.params);
   ASSERT_TRUE(
       block_chain.bootstrap(first_block_height, bootstrap_block, state));
   EXPECT_TRUE(state.IsValid());
