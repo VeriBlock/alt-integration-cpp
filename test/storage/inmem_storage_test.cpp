@@ -158,14 +158,17 @@ TEST_F(InmemTest, Cursor) {
   c->seek(1);
   EXPECT_TRUE(c->isValid());  // key found
   EXPECT_EQ(c->value(), (Block{1, 1}));
+
   // iterate before first element
-  c->seekToFirst();
+  EXPECT_NO_FATAL_FAILURE(c->seekToFirst());
   EXPECT_NO_FATAL_FAILURE(c->prev());
   EXPECT_NO_FATAL_FAILURE(c->isValid());
   EXPECT_FALSE(c->isValid());
+
   // iterate after last element
-  c->seekToLast();
+  EXPECT_NO_FATAL_FAILURE(c->seekToLast());
   EXPECT_NO_FATAL_FAILURE(c->next());
+  EXPECT_NO_FATAL_FAILURE(c->isValid());
   EXPECT_FALSE(c->isValid());
 
   c->seek(2);
