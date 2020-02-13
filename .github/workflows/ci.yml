@@ -35,7 +35,7 @@ jobs:
       - if: matrix.flags == '-DCOVERAGE=ON'
         name: collect coverage
         shell: bash
-        run: bash <(curl -s https://codecov.io/bash) -s build -t ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
 
   windows:
