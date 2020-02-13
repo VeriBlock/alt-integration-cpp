@@ -24,7 +24,3 @@ add_library(vbkutils
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:vblake>
         )
-
-if(WITH_ROCKSDB)
-    target_link_libraries(vbkutils rocksdb)
-endif()
