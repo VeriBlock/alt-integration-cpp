@@ -8,6 +8,11 @@
 
 ## Linux
 
+- Run cmake
+```bash
+cmake . -Bbuild -DFIND_ROCKSDB=OFF
+```
+
 ## Windows
 
 - Install RocksDB via vcpkg
