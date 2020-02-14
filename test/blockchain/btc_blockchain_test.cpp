@@ -30,7 +30,7 @@ struct BlockchainFixture {
   using height_t = typename BlockTree<block_t, param_t>::height_t;
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
-  std::shared_ptr<BtcChainParams> params;
+  std::shared_ptr<param_t> params;
   std::shared_ptr<BlockRepository<index_t>> repo;
   ValidationState state;
 
@@ -100,19 +100,13 @@ struct AcceptTest : public testing::TestWithParam<BtcTestCase>,
                     public BlockchainFixture {};
 
 static std::vector<BtcTestCase> accept_test_cases = {
-    {
-        generated::btc_blockheaders_mainnet_0_10000,
-        std::make_shared<BtcChainParamsMain>()
-      },
-    {
-        generated::btc_blockheaders_mainnet_30000_40000,
-        std::make_shared<BtcChainParamsMain>()
-    },
-    {
-        generated::btc_blockheaders_testnet_0_10000,
-        std::make_shared<BtcChainParamsTest>()
-    },
-    };
+    {generated::btc_blockheaders_mainnet_0_10000,
+     std::make_shared<BtcChainParamsMain>()},
+    {generated::btc_blockheaders_mainnet_30000_40000,
+     std::make_shared<BtcChainParamsMain>()},
+    {generated::btc_blockheaders_testnet_0_10000,
+     std::make_shared<BtcChainParamsTest>()},
+};
 
 TEST_P(AcceptTest, CanAcceptRealBlockHeaders) {
   auto value = GetParam();

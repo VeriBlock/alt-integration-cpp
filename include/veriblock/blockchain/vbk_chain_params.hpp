@@ -1,6 +1,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_CHAIN_PARAMS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_CHAIN_PARAMS_HPP_
 
+#include <cassert>
 #include <memory>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/uint.hpp>
@@ -9,9 +10,8 @@ namespace VeriBlock {
 
 //! works as optional<uint8_t>
 struct VbkNetworkType {
-  VbkNetworkType(bool _hasValue, uint8_t _value) :
-      hasValue(_hasValue),
-      value(_value) {}
+  VbkNetworkType(bool _hasValue, uint8_t _value)
+      : hasValue(_hasValue), value(_value) {}
 
   //! if hasValue == false, it is mainnet
   bool hasValue = false;
@@ -28,6 +28,8 @@ struct VbkChainParams {
   virtual VbkNetworkType getTransactionMagicByte() const noexcept = 0;
   virtual bool getPowNoRetargeting() const noexcept = 0;
   virtual VbkBlock getGenesisBlock() const noexcept = 0;
+  virtual uint32_t getRetargetPeriod() const noexcept = 0;
+  virtual uint32_t getTargetBlockTime() const noexcept = 0;
 };
 
 /**
@@ -44,10 +46,34 @@ struct VbkChainParamsMain : public VbkChainParams {
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
   VbkBlock getGenesisBlock() const noexcept override {
+    //{
+    //  "height": 0,
+    //  "version": 2,
+    //  "previousBlock": "000000000000000000000000",
+    //  "previousKeystone": "000000000000000000",
+    //  "secondPreviousKeystone": "000000000000000000",
+    //  "merkleRoot": "a7e5f2b7ec94291767b4d67b4a33682d",
+    //  "timestamp": 1553497611,
+    //  "difficulty": 100722900,
+    //  "nonce": 289244493
+    //}
     VbkBlock block;
-    // TODO: set valid block
+    block.height = 0;
+    block.version = 2;
+    block.merkleRoot = uint128::fromHex("a7e5f2b7ec94291767b4d67b4a33682d");
+    block.timestamp = 1553497611;
+    block.difficulty = 100722900;
+    block.nonce = 289244493;
+
+    assert(block.getHash().toHex() ==
+           "0000000000f4fd66b91f0649bb3fcb137823c5ce317c105c");
+
     return block;
   }
+
+  uint32_t getRetargetPeriod() const noexcept override { return 100; }
+
+  uint32_t getTargetBlockTime() const noexcept override { return 30; }
 };
 
 /**
@@ -64,10 +90,34 @@ struct VbkChainParamsTest : public VbkChainParams {
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
   VbkBlock getGenesisBlock() const noexcept override {
+    //{
+    //  "height": 0,
+    //  "version": 2,
+    //  "previousBlock": "000000000000000000000000",
+    //  "previousKeystone": "000000000000000000",
+    //  "secondPreviousKeystone": "000000000000000000",
+    //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
+    //  "timestamp": 1570649416,
+    //  "difficulty": 67499489,
+    //  "nonce": 14304633
+    //}
     VbkBlock block;
-    // TODO: set valid block
+    block.height = 0;
+    block.version = 2;
+    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
+    block.timestamp = 1570649416;
+    block.difficulty = 67499489;
+    block.nonce = 14304633;
+
+    assert(block.getHash().toHex() ==
+           "00000017eb579ec7d0cdd63379a0615dc3d68032ce248823");
+
     return block;
   }
+
+  uint32_t getRetargetPeriod() const noexcept override { return 100; }
+
+  uint32_t getTargetBlockTime() const noexcept override { return 30; }
 };
 
 /**
@@ -92,6 +142,10 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     block.difficulty = 0;  // TODO
     return block;
   }
+
+  uint32_t getRetargetPeriod() const noexcept override { return 100; }
+
+  uint32_t getTargetBlockTime() const noexcept override { return 30; }
 };
 
 /**
@@ -108,10 +162,33 @@ struct VbkChainParamsAlpha : public VbkChainParams {
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
   VbkBlock getGenesisBlock() const noexcept override {
+    //{
+    //  "height": 0,
+    //  "version": 2,
+    //  "previousBlock": "000000000000000000000000",
+    //  "previousKeystone": "000000000000000000",
+    //  "secondPreviousKeystone": "000000000000000000",
+    //  "merkleRoot": "b34a487a6b3a386689f59d8d2e586363",
+    //  "timestamp": 1555416021,
+    //  "difficulty": 67147926,
+    //  "nonce": 45543957
+    //}
     VbkBlock block;
-    // TODO: set valid block
+    block.height = 0;
+    block.version = 2;
+    block.merkleRoot = uint128::fromHex("b34a487a6b3a386689f59d8d2e586363");
+    block.timestamp = 1555416021;
+    block.difficulty = 67147926;
+    block.nonce = 45543957;
+
+    assert(block.getHash().toHex() ==
+           "000000701198864f3c19fb552ef9c3c10620ba8128dace8e");
     return block;
   }
+
+  uint32_t getRetargetPeriod() const noexcept override { return 100; }
+
+  uint32_t getTargetBlockTime() const noexcept override { return 30; }
 };
 
 }  // namespace VeriBlock
