@@ -11,8 +11,10 @@ using namespace VeriBlock;
 
 static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
                                                   int32_t deltaTime_change,
-                                                  const uint32_t& difficulty,
-                                                  const uint32_t& chainlength) {
+                                                  uint32_t difficulty,
+                                                  uint32_t chainlength) {
+  assert(chainlength != 0);
+
   BlockIndex<VbkBlock> blockIndex;
   blockIndex.header.height = 1;
   blockIndex.header.timestamp = 10000;
