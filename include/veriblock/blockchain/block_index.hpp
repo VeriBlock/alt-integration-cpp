@@ -53,10 +53,6 @@ struct BlockIndex {
       return nullptr;
     }
 
-    if (steps == 0) {
-      return this;
-    }
-
     const BlockIndex* index = this;
     // walk back 'steps' number of blocks
     while (index != nullptr && steps-- > 0) {
