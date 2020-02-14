@@ -9,12 +9,10 @@
 
 using namespace VeriBlock;
 
-static std::vector<BlockIndex<VbkBlock>> getChain(
-    int32_t deltaTime,
-    int32_t deltaTime_change,
-    const uint32_t& difficulty,
-    const uint32_t& chainlength,
-    std::shared_ptr<VbkChainParams> chainparams) {
+static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
+                                                  int32_t deltaTime_change,
+                                                  const uint32_t& difficulty,
+                                                  const uint32_t& chainlength) {
   BlockIndex<VbkBlock> blockIndex;
   blockIndex.header.height = 1;
   blockIndex.header.timestamp = 10000;
@@ -143,8 +141,7 @@ TEST_P(GetNextWorkRequiredTest, getNextWorkRequired_test) {
   std::vector<BlockIndex<VbkBlock>> chain = getChain(value.deltaTime,
                                                      value.deltaTime_change,
                                                      value.chain_difficulty,
-                                                     value.chainlength,
-                                                     chainparams);
+                                                     value.chainlength);
 
   uint32_t result = getNextWorkRequired(
       chain[chain.size() - 2], chain[chain.size() - 1].header, *chainparams);
