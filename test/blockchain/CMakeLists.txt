@@ -25,7 +25,13 @@ addtest(btc_blockchain_test
 target_link_libraries(btc_blockchain_test
         vbkutils
         )
+        
+addtest(vbk_blockchain_test
+        vbk_blockchain_util_test.cpp)
 
+target_link_libraries(vbk_blockchain_test
+        vbkutils
+        )
 
 addtest(blockchain_test
         chain_test.cpp

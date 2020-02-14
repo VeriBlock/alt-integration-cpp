@@ -48,6 +48,23 @@ struct BlockIndex {
     return pbegin[(pend - pbegin) / 2];
   }
 
+  const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
+    if (steps < 0 || steps > this->height) {
+      return nullptr;
+    }
+
+    if (steps == 0) {
+      return this;
+    }
+
+    const BlockIndex* index = this;
+    // walk back 'steps' number of blocks
+    while (index != nullptr && steps-- > 0) {
+      index = index->pprev;
+    }
+    return index;
+  }
+
   const BlockIndex* getAncestor(height_t _height) const {
     if (_height < 0 || _height > this->height) {
       return nullptr;

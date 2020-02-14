@@ -62,23 +62,23 @@ static uint32_t calculateNextWorkRequired(
 
 // copied from BTC
 template <>
-uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
+uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
                              const BtcBlock& block,
                              const BtcChainParams& params) {
   unsigned int nProofOfWorkLimit = ArithUint256(params.getPowLimit()).toBits();
 
   // Only change once per difficulty adjustment interval
-  if ((currentTip.height + 1) % params.getDifficultyAdjustmentInterval() != 0) {
+  if ((prevBlock.height + 1) % params.getDifficultyAdjustmentInterval() != 0) {
     if (params.getAllowMinDifficultyBlocks()) {
       // Special difficulty rule for testnet:
       // If the new block's timestamp is more than 2* 10 minutes
       // then allow mining of a min-difficulty block.
       if (block.timestamp >
-          currentTip.getBlockTime() + params.getPowTargetSpacing() * 2) {
+          prevBlock.getBlockTime() + params.getPowTargetSpacing() * 2) {
         return nProofOfWorkLimit;
       } else {
         // Return the last non-special-min-difficulty-rules-block
-        const BlockIndex<BtcBlock>* pindex = &currentTip;
+        const BlockIndex<BtcBlock>* pindex = &prevBlock;
         while (pindex->pprev &&
                pindex->height % params.getDifficultyAdjustmentInterval() != 0 &&
                pindex->getDifficulty() == nProofOfWorkLimit)
@@ -86,17 +86,17 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
         return pindex->getDifficulty();
       }
     }
-    return currentTip.getDifficulty();
+    return prevBlock.getDifficulty();
   }
 
   // Go back by what we want to be 14 days worth of blocks
   uint32_t nHeightFirst =
-      currentTip.height - (params.getDifficultyAdjustmentInterval() - 1);
-  const auto* pindexFirst = currentTip.getAncestor(nHeightFirst);
+      prevBlock.height - (params.getDifficultyAdjustmentInterval() - 1);
+  const auto* pindexFirst = prevBlock.getAncestor(nHeightFirst);
   assert(pindexFirst);
 
   return calculateNextWorkRequired(
-      currentTip, pindexFirst->getBlockTime(), params);
+      prevBlock, pindexFirst->getBlockTime(), params);
 }
 
 }  // namespace VeriBlock
