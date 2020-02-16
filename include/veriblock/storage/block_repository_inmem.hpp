@@ -167,6 +167,8 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
     return _hash.erase(hash) == 1;
   }
 
+  void clear() override { _hash.clear(); }
+
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
     return std::make_unique<WriteBatchInmem<stored_block_t>>();
   }

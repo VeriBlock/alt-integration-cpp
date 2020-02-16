@@ -5,6 +5,7 @@
 
 #include <set>
 
+#include "veriblock/blob.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/storage/block_repository.hpp"
 #include "veriblock/storage/db_error.hpp"
@@ -30,43 +31,17 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   BlockRepositoryRocks() = default;
 
   BlockRepositoryRocks(std::shared_ptr<rocksdb::DB> db,
-                       std::shared_ptr<cf_handle_t> heightHashesHandle,
                        std::shared_ptr<cf_handle_t> hashBlockHandle)
       : _db(db),
-        _heightHashesHandle(heightHashesHandle),
         _hashBlockHandle(hashBlockHandle) {}
 
   bool put(const stored_block_t& block) override {
-    // add hash -> block record
-
     std::string blockHash(reinterpret_cast<const char*>(block.hash.data()),
                           block.hash.size());
     std::string blockBytes = block.toRaw();
 
     rocksdb::Status s = _db->Put(
         rocksdb::WriteOptions(), _hashBlockHandle.get(), blockHash, blockBytes);
-    if (!s.ok()) {
-      throw db::DbError(s.ToString());
-    }
-
-    // add height -> hashes record
-
-    std::set<hash_t> hashesList = getHashesByHeight(block.height);
-    size_t hashesListSize = hashesList.size();
-
-    std::string heightStr = std::to_string(block.height);
-    hashesList.insert(block.hash);
-
-    // nothing changed - no need for the DB update
-    if (hashesList.size() == hashesListSize) {
-      return true;
-    }
-
-    std::string hashesStr = hashesToString(hashesList);
-    s = _db->Put(rocksdb::WriteOptions(),
-                 _heightHashesHandle.get(),
-                 heightStr,
-                 hashesStr);
     if (!s.ok()) {
       throw db::DbError(s.ToString());
     }
@@ -106,33 +81,21 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   bool removeByHash(const hash_t& hash) override {
-    // obtain block information
     stored_block_t outBlock{};
-    if (!getByHash(hash, &outBlock)) return false;
+    bool existing = getByHash(hash, &outBlock);
+    if (!existing) return false;
 
-    // obtain hashes blob for the block height
-    std::set<hash_t> hashesList = getHashesByHeight(outBlock.height);
-
-    // remove block hash from the hashes blob
-    auto hashRecord = hashesList.find(hash);
-    if (hashRecord != hashesList.end()) {
-      hashesList.erase(hashRecord);
-
-      std::string heightStr = std::to_string(outBlock.height);
-      std::string hashesStr = hashesToString(hashesList);
-
-      // update hashes blob in the DB
-      rocksdb::Status updateStatus = _db->Put(rocksdb::WriteOptions(),
-                                              _heightHashesHandle.get(),
-                                              heightStr,
-                                              hashesStr);
-      if (!updateStatus.ok()) {
-        throw db::DbError(updateStatus.ToString());
-      }
+    std::string blockHash(reinterpret_cast<const char*>(hash.data()),
+                          hash.size());
+    rocksdb::Status s =
+        _db->Delete(rocksdb::WriteOptions(), _hashBlockHandle.get(), blockHash);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
     }
-
-    return deleteBlockByHash(hash);
+    return true;
   }
+
+  void clear() override { }
 
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
     return nullptr;
@@ -144,58 +107,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
  private:
   std::shared_ptr<rocksdb::DB> _db{};
-  std::shared_ptr<cf_handle_t> _heightHashesHandle{};
   std::shared_ptr<cf_handle_t> _hashBlockHandle{};
-
-  // fetch and decode hashes blob from the DB
-  std::set<hash_t> getHashesByHeight(height_t height) const {
-    std::string heightStr = std::to_string(height);
-    std::string dbValue{};
-    rocksdb::Status s = _db->Get(
-        rocksdb::ReadOptions(), _heightHashesHandle.get(), heightStr, &dbValue);
-    if (!s.ok()) {
-      if (s.IsNotFound()) return std::set<hash_t>{};
-      throw db::DbError(s.ToString());
-    }
-    return hashesFromString(dbValue);
-  }
-
-  bool deleteBlockByHash(const hash_t& hash) {
-    std::string blockHash(reinterpret_cast<const char*>(hash.data()),
-                          hash.size());
-    rocksdb::Status s =
-        _db->Delete(rocksdb::WriteOptions(), _hashBlockHandle.get(), blockHash);
-    if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
-    }
-    return true;
-  }
-
-  // decode hashes blob
-  std::set<hash_t> hashesFromString(const std::string& hashesData) const {
-    if (hashesData.size() % sizeof(hash_t)) {
-      throw db::DbError("Not parceable hashes blob");
-    }
-
-    std::set<hash_t> result{};
-    for (size_t i = 0; i < (hashesData.size() / sizeof(hash_t)); i++) {
-      std::string blobPartStr =
-          hashesData.substr(i * sizeof(hash_t), (i + 1) * sizeof(hash_t));
-
-      result.insert(Blob<32>(blobPartStr));
-    }
-    return result;
-  }
-
-  // encode hashes into blob for DB storage
-  std::string hashesToString(const std::set<hash_t>& hashes) const {
-    std::string result{};
-    for (hash_t hash : hashes) {
-      std::string hashStr(hash.begin(), hash.end());
-      result.append(hashStr);
-    }
-    return result;
-  }
 };
 
 }  // namespace VeriBlock

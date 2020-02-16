@@ -142,6 +142,11 @@ struct BlockRepository {
   virtual bool removeByHash(const hash_t& hash) = 0;
 
   /**
+   * Clear the entire blocks data.
+   */
+  virtual void clear() = 0;
+
+  /**
    * Create new WriteBatch, to perform BULK modify operations.
    * @return a pointer to new WriteBatch instance.
    */
