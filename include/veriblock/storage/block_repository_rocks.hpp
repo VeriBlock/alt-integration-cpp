@@ -42,11 +42,17 @@ struct CursorRocks : public Cursor<typename Block::hash_t, Block> {
   void prev() override { _iterator->Prev(); }
 
   hash_t key() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
     auto key = _iterator->key();
     return hash_t(key.ToString());
   }
 
   stored_block_t value() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
     auto value = _iterator->value();
     return stored_block_t::fromRaw(value.ToString());
   }

@@ -255,7 +255,7 @@ TEST_P(StorageTest, Cursor) {
   c->seek(hash100);  // non-existing key
   EXPECT_FALSE(c->isValid());
   // user is responsible for maintaining cursor validity
-  EXPECT_DEATH(c->value(), "");
+  EXPECT_THROW(c->value(), std::out_of_range);
 }
 
 static std::vector<TEST_RUNS> testCases = {

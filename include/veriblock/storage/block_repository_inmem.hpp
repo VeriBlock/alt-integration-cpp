@@ -53,8 +53,20 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
       --_it;
     }
   }
-  hash_t key() const override { return _it->first; }
-  stored_block_t value() const override { return *_it->second; }
+  hash_t key() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+      
+    return _it->first;
+  }
+  stored_block_t value() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+
+    return *_it->second;
+  }
 
  private:
   std::vector<pair> _etl;
