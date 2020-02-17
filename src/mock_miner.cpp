@@ -23,10 +23,8 @@ VbkTx MockMiner::generateSignedVbkTx(const PublicationData& publicationData) {
   transaction.publicKey = defaultPublicKeyVbk;
   transaction.publicationData = publicationData;
 
-  auto privateKey = privateKeyFromVbk(defaultPrivateKeyVbk);
-  auto signature = veriBlockSign(transaction.getHash().slice(), privateKey);
-
-  transaction.signature = signature;
+  transaction.signature = veriBlockSign(
+      transaction.getHash().slice(), privateKeyFromVbk(defaultPrivateKeyVbk));
 
   return transaction;
 }
@@ -44,8 +42,46 @@ ATV MockMiner::generateValidATV(const PublicationData& publicationData) {
   return atv;
 }
 
+VbkPopTx MockMiner::generateSignedVbkPoptx(const VbkBlock& publishedBlock) {
+  VbkPopTx popTx;
+  popTx.networkOrType = {true, 1, (uint8_t)TxType::VBK_POP_TX};
+  popTx.address = Address::fromPublicKey(defaultPublicKeyVbk);
+  popTx.publishedBlock = publishedBlock;
+
+  WriteStream stream;
+  popTx.publishedBlock.toRaw(stream);
+  popTx.address.getPopBytes(stream);
+
+  popTx.bitcoinTransaction = BtcTx(stream.data());
+  auto btcTxHash = popTx.bitcoinTransaction.getHash();
+  popTx.merklePath = {0, btcTxHash, {btcTxHash}};
+  popTx.blockOfProof = btc_miner->createNextBlock(
+      *btc_blockchain->getBestChain().tip(),
+      popTx.merklePath.calculateMerkleRoot().reverse());
+
+  popTx.publicKey = defaultPublicKeyVbk;
+
+  popTx.signature = veriBlockSign(popTx.getHash().slice(),
+                                  privateKeyFromVbk(defaultPrivateKeyVbk));
+
+  return popTx;
+}
+
+VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock) {
+  VTB vtb;
+  vtb.transaction = generateSignedVbkPoptx(publishedBlock);
+  vtb.merklePath = {
+      1, 0, vtb.transaction.getHash(), {vtb.transaction.getHash()}};
+  vtb.containingBlock =
+      vbk_miner->createNextBlock(*vbk_blockchain->getBestChain().tip(),
+                                 vtb.merklePath.calculateMerkleRoot());
+
+  return vtb;
+}
+
 Publications MockMiner::mine(const PublicationData& publicationData) {
   ATV atv = generateValidATV(publicationData);
+  VTB vtb = generateValidVTB(atv.containingBlock);
 
-  return {atv, std::vector<VTB>()};
+  return {atv, {vtb}};
 }

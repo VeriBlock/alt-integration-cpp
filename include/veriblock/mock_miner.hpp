@@ -34,7 +34,6 @@ class MockMiner {
   using vbk_block_tree = BlockTree<vbk_block_t, vbk_params_t>;
   using vbk_block_index_t = vbk_block_tree::index_t;
 
- protected:
   std::shared_ptr<BtcChainParams> btc_params;
   std::shared_ptr<Miner<btc_block_t, btc_params_t>> btc_miner;
   std::shared_ptr<btc_block_tree> btc_blockchain;
@@ -47,11 +46,11 @@ class MockMiner {
 
   ValidationState state;
 
- protected:
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
   ATV generateValidATV(const PublicationData& publicationData);
 
-  VTB generateValidVTB();
+  VbkPopTx generateSignedVbkPoptx(const VbkBlock& publishedBlock);
+  VTB generateValidVTB(const VbkBlock& publishedBlock);
 
  public:
   MockMiner() {
@@ -71,6 +70,9 @@ class MockMiner {
   }
 
   Publications mine(const PublicationData& publicationData);
+
+  std::shared_ptr<VbkChainParams> getVbkParams() const { return vbk_params; }
+  std::shared_ptr<BtcChainParams> getBtcParams() const { return btc_params; }
 };
 
 }  // namespace VeriBlock

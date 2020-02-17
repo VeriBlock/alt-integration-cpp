@@ -277,9 +277,7 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
   }
 
   if (!veriBlockVerify(
-          Slice<const uint8_t>(tx.getHash().data(), tx.getHash().size()),
-          tx.signature,
-          publicKeyFromVbk(tx.publicKey))) {
+          tx.getHash().slice(), tx.signature, publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("checkSignature()",
                          "Vbk transaction",
                          "Vbk transaction is incorrectly signed");

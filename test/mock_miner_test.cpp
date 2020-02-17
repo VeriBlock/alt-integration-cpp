@@ -14,18 +14,6 @@ struct MockMinerTest : public MockMiner, public ::testing::Test {
   PublicationData publicationData;
   ValidationState state;
 
-  VbkTx generateSignedbkTxTest(const PublicationData& pub) {
-    return this->generateSignedVbkTx(pub);
-  }
-
-  ATV generateValidATVTest(const PublicationData& pub) {
-    return this->generateValidATV(pub);
-  }
-
-  std::shared_ptr<VbkChainParams> getVbkParams() const { return vbk_params; }
-
-  std::shared_ptr<BtcChainParams> getBtcParams() const { return btc_params; }
-
   MockMinerTest() {
     publicationData.contextInfo = std::vector<uint8_t>(100, 1);
     publicationData.header = std::vector<uint8_t>(100, 2);
@@ -34,14 +22,14 @@ struct MockMinerTest : public MockMiner, public ::testing::Test {
   }
 };
 
-TEST_F(MockMinerTest, generateSignedVbkTx_test) {
-  VbkTx validTransaction = generateSignedbkTxTest(publicationData);
-  EXPECT_TRUE(checkVbkTx(validTransaction, state));
-  EXPECT_TRUE(state.IsValid());
-}
+TEST_F(MockMinerTest, mine_test) {
+  Publications pubs = mine(publicationData);
 
-TEST_F(MockMinerTest, generateValidATV_test) {
-  ATV validATV = generateValidATVTest(publicationData);
-  EXPECT_TRUE(checkATV(validATV, state, *getVbkParams()));
+  EXPECT_TRUE(checkATV(pubs.atv, state, *getVbkParams()));
   EXPECT_TRUE(state.IsValid());
+
+  for (const auto& vtb : pubs.vtbs) {
+    EXPECT_TRUE(checkVTB(vtb, state, *getVbkParams(), *getBtcParams()));
+    EXPECT_TRUE(state.IsValid());
+  }
 }
