@@ -13,15 +13,18 @@ struct BlockBasic {
   using hash_t = uint256;
   using height_t = int;
 
-  hash_t getHash() const { return hash; }
+  hash_t getHash() const {
+    ArithUint256 hashValue256 = ArithUint256(hashValue);
+    return hashValue256;
+  }
 
-  hash_t hash{};
+  int hashValue = 0;
   int content = 0;
 
   std::string toRaw() const {
     WriteStream stream;
     stream.writeLE<height_t>(content);
-    stream.write(hash);
+    stream.writeLE<int>(hashValue);
     return std::string(reinterpret_cast<const char*>(stream.data().data()),
                        stream.data().size());
   }
@@ -30,12 +33,12 @@ struct BlockBasic {
     ReadStream stream(bytes);
     BlockBasic block;
     block.content = stream.readLE<height_t>();
-    block.hash = stream.read(sizeof(hash_t));
+    block.hashValue = stream.readLE<int>();
     return block;
   }
 
   bool operator==(const BlockBasic& b) const {
-    return hash == b.hash && content == b.content;
+    return hashValue == b.hashValue && content == b.content;
   }
 };
 
@@ -78,46 +81,40 @@ class StorageTest : public testing::TestWithParam<TEST_RUNS> {
 };
 
 TEST_P(StorageTest, Basic) {
-  using hash_t = BlockBasic::hash_t;
-  auto hash1 = hash_t(std::vector<uint8_t>{1});
-  auto hash2 = hash_t(std::vector<uint8_t>{2});
-  auto hash3 = hash_t(std::vector<uint8_t>{3});
-  auto hash4 = hash_t(std::vector<uint8_t>{4});
-
   BlockBasic b;
-  EXPECT_FALSE(repo->put({hash1, 1}));
-  EXPECT_TRUE(repo->getByHash(hash1, &b));
-  EXPECT_EQ(b.hash, hash1);
+  EXPECT_FALSE(repo->put({1, 1}));
+  EXPECT_TRUE(repo->getByHash(BlockBasic{1, 1}.getHash(), &b));
+  EXPECT_EQ(b.hashValue, 1);
   EXPECT_EQ(b.content, 1);
 
-  EXPECT_FALSE(repo->put({hash2, 2}));
-  EXPECT_FALSE(repo->put({hash3, 3}));
-  EXPECT_TRUE(repo->put({hash1, 5}));
+  EXPECT_FALSE(repo->put({2, 2}));
+  EXPECT_FALSE(repo->put({3, 3}));
+  EXPECT_TRUE(repo->put({1, 5}));
 
   // block has been overwritten
-  EXPECT_TRUE(repo->getByHash(hash1, &b));
-  EXPECT_EQ(b.hash, hash1);
+  EXPECT_TRUE(repo->getByHash(BlockBasic{1, 1}.getHash(), &b));
+  EXPECT_EQ(b.hashValue, 1);
   EXPECT_EQ(b.content, 5);
 
-  EXPECT_TRUE(repo->getByHash(hash2, &b));
-  EXPECT_EQ(b.getHash(), hash2);
+  EXPECT_TRUE(repo->getByHash(BlockBasic{2, 1}.getHash(), &b));
+  EXPECT_EQ(b.hashValue, 2);
 
-  EXPECT_TRUE(repo->getByHash(hash3, &b));
-  EXPECT_EQ(b.getHash(), hash3);
+  EXPECT_TRUE(repo->getByHash(BlockBasic{3, 1}.getHash(), &b));
+  EXPECT_EQ(b.hashValue, 3);
 
-  EXPECT_FALSE(repo->getByHash(hash4, &b));
+  EXPECT_FALSE(repo->getByHash(BlockBasic{4, 1}.getHash(), &b));
 
-  std::vector<hash_t> keys{hash1, hash2, hash4};
+  std::vector<BlockBasic::hash_t> keys{BlockBasic{1, 1}.getHash(),
+                           BlockBasic{2, 1}.getHash(),
+                           BlockBasic{4, 1}.getHash()};
   std::vector<BlockBasic> blocks;
   size_t size = repo->getManyByHash(keys, &blocks);
   EXPECT_EQ(size, 2);
-  EXPECT_EQ(blocks[0], (BlockBasic{hash1, 5}));
-  EXPECT_EQ(blocks[1], (BlockBasic{hash2, 2}));
+  EXPECT_EQ(blocks[0], (BlockBasic{1, 5}));
+  EXPECT_EQ(blocks[1], (BlockBasic{2, 2}));
 
-  EXPECT_TRUE(repo->removeByHash(hash1));
-
-  auto hash10 = hash_t(std::vector<uint8_t>{10});
-  EXPECT_FALSE(repo->removeByHash(hash10));
+  EXPECT_TRUE(repo->removeByHash(BlockBasic{1, 1}.getHash()));
+  EXPECT_FALSE(repo->removeByHash(BlockBasic{10, 1}.getHash()));
 }
 
 void checkContents(BlockRepository<BlockBasic>& repo,
@@ -131,8 +128,8 @@ void checkContents(BlockRepository<BlockBasic>& repo,
   std::vector<BlockBasic::hash_t> v;
   std::set<BlockBasic::hash_t> b;
   for (auto& block : blocks) {
-    b.insert(block.hash);
-    v.push_back(block.hash);
+    b.insert(block.getHash());
+    v.push_back(block.getHash());
   }
 
   std::vector<BlockBasic> read;
@@ -143,22 +140,15 @@ void checkContents(BlockRepository<BlockBasic>& repo,
 }
 
 TEST_P(StorageTest, Batch) {
-  using hash_t = BlockBasic::hash_t;
-  auto hash1 = hash_t(std::vector<uint8_t>{1});
-  auto hash2 = hash_t(std::vector<uint8_t>{2});
-  auto hash3 = hash_t(std::vector<uint8_t>{3});
-  auto hash4 = hash_t(std::vector<uint8_t>{4});
-  auto hash5 = hash_t(std::vector<uint8_t>{5});
-
-  EXPECT_FALSE(repo->put({hash1, 1}));
-  EXPECT_FALSE(repo->put({hash2, 2}));
-  EXPECT_FALSE(repo->put({hash3, 3}));
+  EXPECT_FALSE(repo->put({1, 1}));
+  EXPECT_FALSE(repo->put({2, 2}));
+  EXPECT_FALSE(repo->put({3, 3}));
 
   checkContents(*repo,
                 {
-                    {hash1, 1},
-                    {hash2, 2},
-                    {hash3, 3},
+                    {1, 1},
+                    {2, 2},
+                    {3, 3},
                 });
 
   // commit empty batch does nothing
@@ -167,41 +157,33 @@ TEST_P(StorageTest, Batch) {
 
   checkContents(*repo,
                 {
-                    {hash1, 1},
-                    {hash2, 2},
-                    {hash3, 3},
+                    {1, 1},
+                    {2, 2},
+                    {3, 3},
                 });
 
   // commit some changes
-  batch->put({hash4, 4});
-  batch->put({hash5, 5});
-  batch->put({hash1, 9});      // overwrite kv
-  batch->removeByHash(hash2);  // remove existing hash
-  batch->removeByHash(hash5);  // remove key added in batch
-
-  auto hash100 = hash_t(std::vector<uint8_t>{100});
-  batch->removeByHash(hash100);  // remove non-existing key
+  batch->put({4, 4});
+  batch->put({5, 5});
+  batch->put({1, 9});      // overwrite kv
+  batch->removeByHash(BlockBasic{2, 1}.getHash());  // remove existing hash
+  batch->removeByHash(BlockBasic{5, 1}.getHash());  // remove key added in batch
+  batch->removeByHash(BlockBasic{1000, 1}.getHash());  // remove non-existing key
   batch->commit(*repo);
 
   checkContents(*repo,
                 {
-                    {hash1, 9},
-                    {hash3, 3},
-                    {hash4, 4},
+                    {1, 9},
+                    {3, 3},
+                    {4, 4},
                 });
 }
 
 TEST_P(StorageTest, Cursor) {
-  using hash_t = BlockBasic::hash_t;
-  auto hash1 = hash_t(std::vector<uint8_t>{1});
-  auto hash2 = hash_t(std::vector<uint8_t>{2});
-  auto hash3 = hash_t(std::vector<uint8_t>{3});
-  auto hash4 = hash_t(std::vector<uint8_t>{4});
-
-  EXPECT_FALSE(repo->put({hash1, 1}));
-  EXPECT_FALSE(repo->put({hash2, 2}));
-  EXPECT_FALSE(repo->put({hash3, 3}));
-  EXPECT_FALSE(repo->put({hash4, 4}));
+  EXPECT_FALSE(repo->put({1, 1}));
+  EXPECT_FALSE(repo->put({2, 2}));
+  EXPECT_FALSE(repo->put({3, 3}));
+  EXPECT_FALSE(repo->put({4, 4}));
 
   // save order in which blocks appear in DB
   std::vector<BlockBasic> values;
@@ -212,12 +194,12 @@ TEST_P(StorageTest, Cursor) {
 
   c->seekToFirst();
   EXPECT_TRUE(c->isValid());
-  EXPECT_EQ(c->key(), values[0].hash);
+  EXPECT_EQ(c->key(), values[0].getHash());
   EXPECT_EQ(c->value(), values[0]);
 
   c->seekToLast();
   EXPECT_TRUE(c->isValid());
-  EXPECT_EQ(c->key(), values[values.size() - 1].hash);
+  EXPECT_EQ(c->key(), values[values.size() - 1].getHash());
   EXPECT_EQ(c->value(), values[values.size() - 1]);
 
   // read in reversed order
@@ -231,9 +213,9 @@ TEST_P(StorageTest, Cursor) {
   EXPECT_EQ(reversedValues, values);
 
   // find some values
-  c->seek(hash1);
+  c->seek(BlockBasic{1, 1}.getHash());
   EXPECT_TRUE(c->isValid());  // key found
-  EXPECT_EQ(c->value(), (BlockBasic{hash1, 1}));
+  EXPECT_EQ(c->value(), (BlockBasic{1, 1}));
 
   // iterate before first element
   EXPECT_NO_FATAL_FAILURE(c->seekToFirst());
@@ -247,12 +229,11 @@ TEST_P(StorageTest, Cursor) {
   EXPECT_NO_FATAL_FAILURE(c->isValid());
   EXPECT_FALSE(c->isValid());
 
-  c->seek(hash2);
+  c->seek(BlockBasic{2, 2}.getHash());
   EXPECT_TRUE(c->isValid());  // key found
-  EXPECT_EQ(c->value(), (BlockBasic{hash2, 2}));
+  EXPECT_EQ(c->value(), (BlockBasic{2, 2}));
 
-  auto hash100 = hash_t(std::vector<uint8_t>{100});
-  c->seek(hash100);  // non-existing key
+  c->seek(BlockBasic{1000, 1}.getHash());  // non-existing key
   EXPECT_FALSE(c->isValid());
   // user is responsible for maintaining cursor validity
   EXPECT_THROW(c->value(), std::out_of_range);

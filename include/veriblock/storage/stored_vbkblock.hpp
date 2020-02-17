@@ -27,6 +27,8 @@ struct StoredVbkBlock {
   height_t height{};
   VbkBlock block{};
 
+  hash_t getHash() const { return hash; }
+
   static StoredVbkBlock fromBlock(VbkBlock _block) {
     StoredVbkBlock storedBlock{};
     storedBlock.hash = getExtendedHash(_block.getHash());

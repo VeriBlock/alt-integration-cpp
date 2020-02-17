@@ -77,8 +77,9 @@ struct WriteBatchRocks : public WriteBatch<Block> {
       : _db(db), _hashBlockHandle(hashBlockHandle) {}
 
   void put(const stored_block_t& block) override {
-    std::string blockHash(reinterpret_cast<const char*>(block.hash.data()),
-                          block.hash.size());
+    std::string blockHash(
+        reinterpret_cast<const char*>(block.getHash().data()),
+                          block.getHash().size());
     std::string blockBytes = block.toRaw();
     rocksdb::Status s = _batch.Put(_hashBlockHandle.get(), blockHash, blockBytes);
     if (!s.ok() && !s.IsNotFound()) {
@@ -132,10 +133,11 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   bool put(const stored_block_t& block) override {
     stored_block_t outBlock{};
-    bool existing = getByHash(block.hash, &outBlock);
+    bool existing = getByHash(block.getHash(), &outBlock);
 
-    std::string blockHash(reinterpret_cast<const char*>(block.hash.data()),
-                          block.hash.size());
+    std::string blockHash(
+        reinterpret_cast<const char*>(block.getHash().data()),
+        block.getHash().size());
     std::string blockBytes = block.toRaw();
 
     rocksdb::Status s = _db->Put(
