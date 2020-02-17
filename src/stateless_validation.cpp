@@ -28,9 +28,6 @@ int getIntFromBits(const std::vector<bool>& bits,
 
 namespace VeriBlock {
 
-static const auto MAXIMUM_DIFFICULTY =
-    ArithUint256::fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-
 bool containsSplit(const std::vector<uint8_t>& pop_data,
                    const std::vector<uint8_t>& btcTx_data) {
   static const std::vector<uint8_t> magicBytes = {0x92, 0x7a, 0x59};
@@ -188,7 +185,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
   }
 
   int32_t lastHeight = vbkBlocks[0].height;
-  uint192 lastHash = vbkBlocks[0].getHash();
+  auto lastHash = vbkBlocks[0].getHash();
 
   for (size_t i = 1; i < vbkBlocks.size(); ++i) {
     if (!checkBlock(vbkBlocks[i], state, param)) {
@@ -210,12 +207,12 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
 bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param) {
   ArithUint256 blockHash = ArithUint256::fromLEBytes(block.getHash());
+  auto powLimit = ArithUint256(param.getPowLimit());
   bool negative = false;
   bool overflow = false;
   auto target = ArithUint256::fromBits(block.bits, &negative, &overflow);
 
-  if (negative || overflow || target == 0 ||
-      target > ArithUint256(param.getPowLimit())) {
+  if (negative || overflow || target == 0 || target > powLimit) {
     return false;
   }
 
@@ -223,17 +220,18 @@ bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param) {
 }
 
 bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
+  static const auto max = ArithUint256::fromHex(VBK_MAXIMUM_DIFFICULTY);
   auto blockHash = ArithUint256::fromLEBytes(block.getHash());
+  auto minDiff = ArithUint256(param.getMinimumDifficulty());
   bool negative = false;
   bool overflow = false;
   auto target = ArithUint256::fromBits(block.difficulty, &negative, &overflow);
 
-  if (negative || overflow || target == 0 ||
-      target <= ArithUint256(param.getMinimumDifficulty())) {
+  if (negative || overflow || target == 0 || target <= minDiff) {
     return false;
   }
 
-  target = MAXIMUM_DIFFICULTY / target;
+  target = max / target;
 
   return !(blockHash > target);
 }
@@ -356,10 +354,6 @@ bool checkBlock(const VbkBlock& block,
         "checkBlock", "vbk-bad-pow", "Invalid Block proof of work");
   }
 
-  if (!checkMaximumDrift(block, state)) {
-    return state.addStackFunction("checkBlock()");
-  }
-
   return true;
 }
 
@@ -369,10 +363,6 @@ bool checkBlock(const BtcBlock& block,
   if (!checkProofOfWork(block, params)) {
     return state.Invalid(
         "checkBlock", "btc-bad-pow", "Invalid Block proof of work");
-  }
-
-  if (!checkMaximumDrift(block, state)) {
-    return state.addStackFunction("checkBlock()");
   }
 
   return true;

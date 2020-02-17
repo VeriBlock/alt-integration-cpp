@@ -17,17 +17,6 @@ namespace VeriBlock {
 bool containsSplit(const std::vector<uint8_t>& pop_data,
                    const std::vector<uint8_t>& btcTx_data);
 
-template <typename BlockType>
-bool checkMaximumDrift(const BlockType& block, ValidationState& state) {
-  uint32_t currentTime = currentTimestamp4();
-  if ((uint32_t)block.timestamp >= currentTime + ALLOWED_TIME_DRIFT) {
-    return state.Invalid("checkMaximumDrift()",
-                         "Invalid Block",
-                         "Block is too far in the future");
-  }
-  return true;
-}
-
 template <typename MerklePathType, typename HashType1, typename HashType2>
 bool checkMerklePath(const MerklePathType& merklePath,
                      const HashType1& transactionHash,

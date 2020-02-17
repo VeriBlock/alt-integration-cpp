@@ -1,17 +1,31 @@
-#include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
+#include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
 namespace VeriBlock {
 
-/// TODO: https://veriblock.atlassian.net/browse/BTC-219
+template <>
+ArithUint256 getBlockProof(const VbkBlock& block) {
+  bool negative = false;
+  bool overflow = false;
+  auto target = ArithUint256::fromBits(block.difficulty, &negative, &overflow);
+  if (negative || overflow || target == 0) {
+    return 0;
+  }
+
+  // TODO
+  return target;
+}
+
 template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) const {
   VbkBlock block;
   block.version = tip.header.version;
-  block.previousBlock = tip.header.getHash();
+  block.previousBlock =
+      tip.header.getHash().trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone
@@ -19,32 +33,33 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     auto diff = block.height % KEYSTONE_INTERVAL;
     diff = diff == 0 ? KEYSTONE_INTERVAL : diff;
     auto* prevKeystoneIndex = tip.getAncestorBlocksBehind(diff);
+    assert(prevKeystoneIndex != nullptr);
     block.previousKeystone =
         prevKeystoneIndex->getHash()
-            .template trim<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
+            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
 
     // set second previous keystone
     if (block.height >= 2 * KEYSTONE_INTERVAL) {
       auto* secondPrevKeystoneIndex =
-          prevKeystoneIndex->getAncestorBlocksBehind(KEYSTONE_INTERVAL + diff);
+          prevKeystoneIndex->getAncestorBlocksBehind(KEYSTONE_INTERVAL);
+      assert(secondPrevKeystoneIndex != nullptr);
       block.secondPreviousKeystone =
           secondPrevKeystoneIndex->getHash()
-              .template trim<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
+              .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
     }
   }
-  // TODO: is this correct?
-  block.timestamp =
-      std::max(currentTimestamp4(), (uint32_t)tip.getMedianTimePast());
+  block.timestamp = currentTimestamp4();
   block.difficulty = getNextWorkRequired(tip, block, *params_);
   return block;
 }
 
-/// TODO: https://veriblock.atlassian.net/browse/BTC-220
 template <>
 void determineBestChain(Chain<VbkBlock>& currentBest,
                         BlockIndex<VbkBlock>& indexNew) {
-  (void)currentBest;
-  (void)indexNew;
+  if (currentBest.tip() == nullptr ||
+      currentBest.tip()->chainWork < indexNew.chainWork) {
+    currentBest.setTip(&indexNew);
+  }
 }
 
 template <>
@@ -55,7 +70,8 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
                             (params.getRetargetPeriod() - 1) *
                             params.getTargetBlockTime() / 2;
 
-  if ((uint32_t)block.height < params.getRetargetPeriod()) {
+  if (params.getPowNoRetargeting() ||
+      (uint32_t)block.height < params.getRetargetPeriod()) {
     return prevBlock.getDifficulty();
   }
 

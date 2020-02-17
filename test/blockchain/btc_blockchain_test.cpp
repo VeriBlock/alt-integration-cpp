@@ -13,16 +13,6 @@
 
 using namespace VeriBlock;
 
-struct BootstrapTestCase {
-  using block_t = BtcBlock;
-  using hash_t = BtcBlock::hash_t;
-  using height_t = BtcBlock::height_t;
-
-  BtcBlock bootstrap_block;
-  height_t height;
-  hash_t block_hash;
-};
-
 struct BlockchainFixture {
   using block_t = BtcBlock;
   using param_t = BtcChainParams;
@@ -40,105 +30,120 @@ struct BlockchainFixture {
   }
 };
 
-static std::vector<BootstrapTestCase> bootstrap_test_cases = {
-    // clang-format off
-    // mainnet genesis block
-    {
-        BtcBlock::fromRaw("0100000000000000000000000000000000000000000000000000000000000000000000003ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a29ab5f49ffff001d1dac2b7c"_unhex),
-        0, 
-        uint256::fromHex("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f")
-    },
-    //mainnet 15687 height block
-    {
-        BtcBlock::fromRaw("01000000d9e9506d9b1800242adae0e97c96f77c86ec8ad3e1cca88a39f5a63b000000008563a346f8466a5d5106797aa54ccfe3829042970d78fa635427335f326c71f2857d1c4affff001d2d6f7258"_unhex),
-        15687, 
-        uint256::fromHex("000000002f361e7a5c28e1d11bd153830f31081445538c67495bb72b1768ab4a")
-    },
-    //testnet genesis block
-    {
-        BtcBlock::fromRaw("0100000000000000000000000000000000000000000000000000000000000000000000003ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4adae5494dffff001d1aa4ae18"_unhex),
-        0, 
-        uint256::fromHex("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943")
-    },
-    //testnet 12554 height block
-    {
-        BtcBlock::fromRaw("010000006ed26f617543137b35fd866d8771ce41768110c0fc089d70692e6d1c000000002ed0cde332d6c9d5fea9bf8a6a66375c2cc1d343b4285f5e38ca2aa76e0d3a1d3708c34fc0ff3f1c662b2430"_unhex),
-        12554, 
-        uint256::fromHex("0000000030f55553e130da0c3f8fac97a2745ae1c742f683037177dd3715460e")
-    },
-    // clang-format on
-};
-
-struct BootstrapTest : public testing::TestWithParam<BootstrapTestCase>,
-                       public BlockchainFixture {};
-
-TEST_P(BootstrapTest, bootstrap_test) {
-  auto value = GetParam();
-
-  params = std::make_shared<BtcChainParamsMain>();
-  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, params);
-  ASSERT_TRUE(
-      block_chain.bootstrap(value.height, value.bootstrap_block, state));
-  EXPECT_TRUE(state.IsValid());
-
-  EXPECT_EQ(block_chain.getBestChain().tip()->header, value.bootstrap_block);
-  EXPECT_EQ(block_chain.getBestChain().bootstrap()->header,
-            value.bootstrap_block);
-  EXPECT_EQ(block_chain.getBestChain().tip()->getHash(), value.block_hash);
-}
-
-INSTANTIATE_TEST_SUITE_P(BootstrapBlocksRegression,
-                         BootstrapTest,
-                         testing::ValuesIn(bootstrap_test_cases));
-
 struct BtcTestCase {
   std::string headers;
   std::shared_ptr<BtcChainParams> params;
+  size_t startHeight = 0;
+
+  std::vector<BtcBlock> getBlocks() const {
+    std::vector<BtcBlock> ret;
+    std::string data;
+    std::istringstream file(headers);
+    EXPECT_TRUE(!file.fail());
+    while (file >> data) {
+      BtcBlock block = BtcBlock::fromRaw(ParseHex(data));
+      ret.push_back(block);
+    }
+    return ret;
+  }
 };
 
 struct AcceptTest : public testing::TestWithParam<BtcTestCase>,
                     public BlockchainFixture {};
 
 static std::vector<BtcTestCase> accept_test_cases = {
+    /// mainnet
     {generated::btc_blockheaders_mainnet_0_10000,
-     std::make_shared<BtcChainParamsMain>()},
-    {generated::btc_blockheaders_mainnet_30000_40000,
-     std::make_shared<BtcChainParamsMain>()},
+     std::make_shared<BtcChainParamsMain>(),
+     0},
+    {generated::btc_blockheaders_mainnet_0_10000,
+     std::make_shared<BtcChainParamsMain>(),
+     1},
+    {generated::btc_blockheaders_mainnet_0_10000,
+     std::make_shared<BtcChainParamsMain>(),
+     2015},
+    {generated::btc_blockheaders_mainnet_0_10000,
+     std::make_shared<BtcChainParamsMain>(),
+     2016},
+    {generated::btc_blockheaders_mainnet_0_10000,
+     std::make_shared<BtcChainParamsMain>(),
+     2017},
+    {generated::btc_blockheaders_mainnet_0_10000,
+     std::make_shared<BtcChainParamsMain>(),
+     5000},
+    /// testnet
     {generated::btc_blockheaders_testnet_0_10000,
-     std::make_shared<BtcChainParamsTest>()},
+     std::make_shared<BtcChainParamsTest>(),
+     0},
+    {generated::btc_blockheaders_testnet_0_10000,
+     std::make_shared<BtcChainParamsTest>(),
+     1},
+    {generated::btc_blockheaders_testnet_0_10000,
+     std::make_shared<BtcChainParamsTest>(),
+     2015},
+    {generated::btc_blockheaders_testnet_0_10000,
+     std::make_shared<BtcChainParamsTest>(),
+     2016},
+    {generated::btc_blockheaders_testnet_0_10000,
+     std::make_shared<BtcChainParamsTest>(),
+     2017},
+    {generated::btc_blockheaders_testnet_0_10000,
+     std::make_shared<BtcChainParamsTest>(),
+     5000},
 };
 
-TEST_P(AcceptTest, CanAcceptRealBlockHeaders) {
+/**
+ * Read btc_blockheaders file.
+ */
+TEST_P(AcceptTest, BootstrapWithChain) {
   auto value = GetParam();
+  auto allblocks = value.getBlocks();
+  // skip first `startHeight` blocks
+  allblocks = std::vector<BtcBlock>{allblocks.begin() + value.startHeight,
+                                    allblocks.end()};
 
-  std::istringstream file(value.headers);
-  ASSERT_TRUE(!file.fail());
+  // make a bootstrap chain by taking first `numBlocksForBootstrap` blocks
+  auto bootstrapChain = allblocks;
+  bootstrapChain.resize(value.params->numBlocksForBootstrap());
 
-  uint32_t first_block_height;
-  file >> first_block_height;
-
-  std::string temp;
-  EXPECT_TRUE(file >> temp);
-  BtcBlock bootstrap_block = BtcBlock::fromRaw(ParseHex(temp));
+  ASSERT_GE(allblocks.size(), value.params->numBlocksForBootstrap());
+  // make accept chain - the one that is applied on top of current blocktree
+  // state
+  std::vector<BtcBlock> acceptChain{
+      allblocks.begin() + value.params->numBlocksForBootstrap(),
+      allblocks.end()};
 
   BlockTree<BtcBlock, BtcChainParams> block_chain(repo, value.params);
   ASSERT_TRUE(
-      block_chain.bootstrap(first_block_height, bootstrap_block, state));
+      block_chain.bootstrapWithChain(value.startHeight, bootstrapChain, state))
+      << state.GetDebugMessage();
   EXPECT_TRUE(state.IsValid());
+  size_t totalBlocks = bootstrapChain.size();
 
-  EXPECT_EQ(block_chain.getBestChain().tip()->header, bootstrap_block);
-  EXPECT_EQ(block_chain.getBestChain().tip()->height, first_block_height);
+  EXPECT_EQ(block_chain.getBestChain().tip()->header,
+            bootstrapChain[bootstrapChain.size() - 1]);
+  EXPECT_EQ(block_chain.getBestChain().tip()->height,
+            value.startHeight + bootstrapChain.size() - 1);
 
-  while (file >> temp) {
-    BtcBlock block = BtcBlock::fromRaw(ParseHex(temp));
-
-    EXPECT_TRUE(block_chain.acceptBlock(block, state));
+  for (const auto& block : acceptChain) {
+    ASSERT_TRUE(block_chain.acceptBlock(block, state))
+        << "block #" << totalBlocks << "\n"
+        << "rejection: " << state.GetRejectReason() << ", "
+        << "message: " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
     EXPECT_EQ(block_chain.getBestChain().tip()->header, block);
-    EXPECT_EQ(block_chain.getBestChain().tip()->height, ++first_block_height);
+    EXPECT_EQ(block_chain.getBestChain().tip()->height,
+              totalBlocks + value.startHeight);
+    ++totalBlocks;
   }
 }
 
 INSTANTIATE_TEST_SUITE_P(AcceptBlocksRegression,
                          AcceptTest,
-                         testing::ValuesIn(accept_test_cases));
+                         testing::ValuesIn(accept_test_cases),
+                         [](const testing::TestParamInfo<BtcTestCase>& info) {
+                           return format("%d_%snet_startsAt%d",
+                                         info.index,
+                                         info.param.params->networkName(),
+                                         info.param.startHeight);
+                         });

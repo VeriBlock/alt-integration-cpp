@@ -20,10 +20,20 @@ struct BtcChainParams {
   uint32_t getDifficultyAdjustmentInterval() const noexcept {
     return getPowTargetTimespan() / getPowTargetSpacing();
   }
+  virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
+  virtual std::string networkName() const noexcept = 0;
 };
 
 struct BtcChainParamsMain : public BtcChainParams {
   ~BtcChainParamsMain() override = default;
+
+  std::string networkName() const noexcept override {
+    return "main";
+  }
+
+  uint32_t numBlocksForBootstrap() const noexcept override {
+    return getDifficultyAdjustmentInterval();
+  };
 
   uint256 getPowLimit() const override {
     return uint256::fromHex(
@@ -56,6 +66,14 @@ struct BtcChainParamsMain : public BtcChainParams {
 struct BtcChainParamsTest : public BtcChainParams {
   ~BtcChainParamsTest() override = default;
 
+  std::string networkName() const noexcept override {
+    return "test";
+  }
+
+  uint32_t numBlocksForBootstrap() const noexcept override {
+    return getDifficultyAdjustmentInterval();
+  };
+
   uint256 getPowLimit() const override {
     return uint256::fromHex(
         "ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000");
@@ -86,6 +104,14 @@ struct BtcChainParamsTest : public BtcChainParams {
 
 struct BtcChainParamsRegTest : public BtcChainParams {
   ~BtcChainParamsRegTest() override = default;
+
+  std::string networkName() const noexcept override {
+    return "regtest";
+  }
+
+  uint32_t numBlocksForBootstrap() const noexcept override {
+    return getDifficultyAdjustmentInterval();
+  };
 
   uint256 getPowLimit() const override {
     return uint256::fromHex(
