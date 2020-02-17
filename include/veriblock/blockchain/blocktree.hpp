@@ -157,7 +157,6 @@ struct BlockTree {
   bool load(ValidationState& state, bool bootstrapGenesis) {
     // at this point we should have bootstrap block(s) in our storage
     auto cursor = repo_->newCursor();
-    auto batch = repo_->newBatch();
 
     // load blocks into memory
     std::vector<std::pair<height_t, std::unique_ptr<index_t>>> blocks;
