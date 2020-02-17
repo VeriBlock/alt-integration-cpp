@@ -51,22 +51,25 @@ class TestStorage : public ::testing::Test {
 
     repoBtc = database.repoBtc;
     repoVbk = database.repoVbk;
+
+    repoBtc->clear();
+    repoVbk->clear();
   }
 };
 
 TEST_F(TestStorage, SimplePut) {
   StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(btcBlock1, 0);
   bool retBtc = repoBtc->put(blockBtc);
-  ASSERT_TRUE(retBtc);
+  EXPECT_FALSE(retBtc);
   StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
   bool retVbk = repoVbk->put(blockVbk);
-  ASSERT_TRUE(retVbk);
+  EXPECT_FALSE(retVbk);
 }
 
 TEST_F(TestStorage, PutAndGet) {
   StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(btcBlock1, 0);
   bool retBtc = repoBtc->put(blockBtc);
-  ASSERT_TRUE(retBtc);
+  EXPECT_FALSE(retBtc);
 
   StoredBtcBlock readBlock;
   bool readResult = repoBtc->getByHash(btcBlock1.getHash(), &readBlock);
@@ -85,7 +88,7 @@ TEST_F(TestStorage, PutAndGet) {
 TEST_F(TestStorage, PutAndGetVbk) {
   StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
   bool retVbk = repoVbk->put(blockVbk);
-  ASSERT_TRUE(retVbk);
+  EXPECT_FALSE(retVbk);
 
   StoredVbkBlock readBlock;
   bool readResult = repoVbk->getByHash(
@@ -105,9 +108,9 @@ TEST_F(TestStorage, GetManyByHash) {
   StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
   StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 0);
   bool retBtc = repoBtc->put(storedBtcBlock1);
-  ASSERT_TRUE(retBtc);
+  EXPECT_FALSE(retBtc);
   retBtc = repoBtc->put(storedBtcBlock2);
-  ASSERT_TRUE(retBtc);
+  EXPECT_FALSE(retBtc);
 
   std::vector<uint256> hashes{storedBtcBlock1.hash, storedBtcBlock2.hash};
   Slice<const uint256> hashesSlice(hashes.data(), hashes.size());
@@ -131,7 +134,7 @@ TEST_F(TestStorage, GetManyByHash) {
 TEST_F(TestStorage, RemoveByHash) {
   StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
   bool retBtc = repoBtc->put(storedBtcBlock1);
-  ASSERT_TRUE(retBtc);
+  EXPECT_FALSE(retBtc);
 
   StoredBtcBlock readBlock;
   bool readResult = repoBtc->getByHash(btcBlock1.getHash(), &readBlock);
@@ -154,9 +157,9 @@ TEST_F(TestStorage, RemovePartially) {
   StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
   StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 1);
   bool retBtc = repoBtc->put(storedBtcBlock1);
-  ASSERT_TRUE(retBtc);
+  EXPECT_FALSE(retBtc);
   retBtc = repoBtc->put(storedBtcBlock2);
-  ASSERT_TRUE(retBtc);
+  EXPECT_FALSE(retBtc);
 
   StoredBtcBlock readBlock;
   bool readResult = repoBtc->getByHash(btcBlock1.getHash(), &readBlock);

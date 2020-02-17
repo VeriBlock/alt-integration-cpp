@@ -13,6 +13,99 @@
 
 namespace VeriBlock {
 
+//! column family type
+using cf_handle_t = rocksdb::ColumnFamilyHandle;
+
+template <typename Block>
+struct CursorRocks : public Cursor<typename Block::hash_t, Block> {
+  //! stored block type
+  using stored_block_t = Block;
+  //! block has type
+  using hash_t = typename Block::hash_t;
+
+  CursorRocks(std::shared_ptr<rocksdb::DB> db,
+              std::shared_ptr<cf_handle_t> hashBlockHandle)
+      : _db(db), _hashBlockHandle(hashBlockHandle) {
+    auto iterator = _db->NewIterator(rocksdb::ReadOptions(), _hashBlockHandle.get());
+    _iterator = std::unique_ptr<rocksdb::Iterator>(iterator);
+  }
+
+  void seekToFirst() override { _iterator->SeekToFirst(); }
+  void seek(const hash_t& key) override {
+    std::string blockHash(reinterpret_cast<const char*>(key.data()),
+                          key.size());
+    _iterator->Seek(blockHash);
+  }
+  void seekToLast() override { _iterator->SeekToLast(); }
+  bool isValid() const override { return _iterator->Valid(); }
+  void next() override { _iterator->Next(); }
+  void prev() override { _iterator->Prev(); }
+
+  hash_t key() const override {
+    auto key = _iterator->key();
+    return hash_t(key.ToString());
+  }
+
+  stored_block_t value() const override {
+    auto value = _iterator->value();
+    return stored_block_t::fromRaw(value.ToString());
+  }
+
+ private:
+  std::shared_ptr<rocksdb::DB> _db;
+  std::shared_ptr<cf_handle_t> _hashBlockHandle;
+  std::unique_ptr<rocksdb::Iterator> _iterator;
+};
+
+template <typename Block>
+struct WriteBatchRocks : public WriteBatch<Block> {
+  //! stored block type
+  using stored_block_t = Block;
+  //! block has type
+  using hash_t = typename Block::hash_t;
+  //! block height type
+  using height_t = typename Block::height_t;
+
+  WriteBatchRocks(std::shared_ptr<rocksdb::DB> db,
+                  std::shared_ptr<cf_handle_t> hashBlockHandle)
+      : _db(db), _hashBlockHandle(hashBlockHandle) {}
+
+  void put(const stored_block_t& block) override {
+    std::string blockHash(reinterpret_cast<const char*>(block.hash.data()),
+                          block.hash.size());
+    std::string blockBytes = block.toRaw();
+    rocksdb::Status s = _batch.Put(_hashBlockHandle.get(), blockHash, blockBytes);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+  }
+
+  void removeByHash(const hash_t& hash) override {
+    std::string blockHash(reinterpret_cast<const char*>(hash.data()),
+                          hash.size());
+    rocksdb::Status s = _batch.Delete(_hashBlockHandle.get(), blockHash);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+  }
+
+  void clear() override { _batch.Clear(); }
+
+  void commit(BlockRepository<Block>& /* ignore */) override {
+    rocksdb::Status s =
+        _db->Write(rocksdb::WriteOptions(), &_batch);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+    clear();
+  }
+
+ private:
+  std::shared_ptr<rocksdb::DB> _db;
+  std::shared_ptr<cf_handle_t> _hashBlockHandle;
+  rocksdb::WriteBatch _batch{};
+};
+
 template <typename Block>
 class BlockRepositoryRocks : public BlockRepository<Block> {
   //! stored block type
@@ -24,18 +117,17 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   //! iterator type
   using cursor_t = Cursor<hash_t, stored_block_t>;
 
-  //! column family type
-  using cf_handle_t = rocksdb::ColumnFamilyHandle;
-
  public:
   BlockRepositoryRocks() = default;
 
   BlockRepositoryRocks(std::shared_ptr<rocksdb::DB> db,
                        std::shared_ptr<cf_handle_t> hashBlockHandle)
-      : _db(db),
-        _hashBlockHandle(hashBlockHandle) {}
+      : _db(db), _hashBlockHandle(hashBlockHandle) {}
 
   bool put(const stored_block_t& block) override {
+    stored_block_t outBlock{};
+    bool existing = getByHash(block.hash, &outBlock);
+
     std::string blockHash(reinterpret_cast<const char*>(block.hash.data()),
                           block.hash.size());
     std::string blockBytes = block.toRaw();
@@ -45,7 +137,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     if (!s.ok()) {
       throw db::DbError(s.ToString());
     }
-    return true;
+    return existing;
   }
 
   bool getByHash(const hash_t& hash, stored_block_t* out) const override {
@@ -95,14 +187,30 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return true;
   }
 
-  void clear() override { }
+  /// TODO: modifies external column family handle. Do something with it.
+  void clear() override {
+    rocksdb::Status s = _db->DropColumnFamily(_hashBlockHandle.get());
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+
+    auto columnName = _hashBlockHandle->GetName();
+    rocksdb::ColumnFamilyOptions cfOption{};
+    cf_handle_t* handle = nullptr;
+    s = _db->CreateColumnFamily(cfOption, columnName, &handle);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+    _hashBlockHandle = std::shared_ptr<cf_handle_t>(handle);
+  }
 
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
-    return nullptr;
+    return std::make_unique<WriteBatchRocks<stored_block_t>>(_db,
+                                                             _hashBlockHandle);
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
-    return nullptr;
+    return std::make_shared<CursorRocks<Block>>(_db, _hashBlockHandle);
   }
 
  private:
