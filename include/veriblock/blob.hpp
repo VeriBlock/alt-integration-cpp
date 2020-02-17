@@ -58,7 +58,7 @@ struct Blob {
 
   const_iterator end() const noexcept { return data_.end(); }
 
-  static size_type size() noexcept { return N; }
+  static constexpr size_type size() noexcept { return N; }
 
   pointer data() noexcept { return data_.data(); }
 

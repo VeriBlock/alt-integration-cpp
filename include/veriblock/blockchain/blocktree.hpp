@@ -7,6 +7,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
+#include <veriblock/fmt.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
@@ -23,6 +24,7 @@ struct BlockTree {
   using params_t = ChainParams;
   using index_t = BlockIndex<block_t>;
   using hash_t = typename Block::hash_t;
+  using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
 
   BlockTree(std::shared_ptr<BlockRepository<index_t>> repo,
@@ -30,83 +32,100 @@ struct BlockTree {
       : repo_(std::move(repo)), param_(std::move(param)) {}
 
   /**
-   * Bootstrap blockchain with a single bootstrap block on given height.
+   * Bootstrap blockchain with a single genesis block, from "chain parameters"
+   * passed in constructor.
    *
    * This function does all blockchain integrity checks, does blockchain cleanup
    * and in general, very slow.
    *
-   * @param height bootstrap block height
-   * @param block bootstrap block header
-   * @return true if blockchain has been loaded successfully. False, if
-   * blockchain stored in BlockRepository had some invalid data.
+   * @return true if bootstrap was successful, false otherwise
    */
-  bool bootstrap(height_t height,
-                 const block_t& block,
-                 ValidationState& state) {
-    if (!checkBlock(block, state, *param_)) {
-      return state.addStackFunction("bootstrap()");
+  bool bootstrapWithGenesis(ValidationState& state) {
+    assert(block_index_.empty() && "already bootstrapped");
+    auto block = param_->getGenesisBlock();
+    return this->bootstrap(0, block, state);
+  }
+
+  /**
+   * Bootstrap network with a chain that starts at 'startHeight'
+   *
+   * This function does all blockchain integrity checks, does blockchain cleanup
+   * and in general, very slow.
+   *
+   * @param startHeight start height of the chain
+   * @param chain bootstrap chain
+   * @return true if bootstrap was successful, false otherwise
+   */
+  bool bootstrapWithChain(height_t startHeight,
+                          const std::vector<block_t>& chain,
+                          ValidationState& state) {
+    assert(block_index_.empty() && "already bootstrapped");
+    if (chain.empty()) {
+      return state.Invalid("bootstrapWithChain()",
+                           "bootstrap-empty-chain",
+                           "provided bootstrap chain is empty");
     }
 
-    auto* index = insertBlockHeader(block);
-    index->height = height;
-    if (!load(state)) {
-      return state.addStackFunction("bootstrap()");
+    if (chain.size() < param_->numBlocksForBootstrap()) {
+      return state.Invalid("bootstrapWithChain()",
+                           "bootstrap-small-chain",
+                           format("number of blocks in the provided chain is "
+                                  "too small: %d, expected at least %d",
+                                  chain.size(),
+                                  param_->numBlocksForBootstrap()));
     }
 
-    if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
-      return state.Error("block-index-no-genesis");
+    // pick first block from the chain, bootstrap with a single block
+    auto genesis = chain[0];
+    if (!this->bootstrap(startHeight, genesis, state)) {
+      return state.addStackFunction("bootstrapWithChain()");
     }
 
-    repo_->put(*index);
+    // apply the rest of the blocks from the chain on top of our bootstrap
+    // block. disable difficulty checks, because we have not enough blocks in
+    // our store (yet) to check it correctly
+    for (size_t i = 1, size = chain.size(); i < size; i++) {
+      auto& block = chain[i];
+      if (!this->acceptBlock(block, state, false)) {
+        return state.addStackFunction("bootstrapWithChain()");
+      }
+    }
+
     return true;
   }
 
-  index_t* getBlockIndex(const hash_t& hash) {
-    auto it = block_index_.find(hash);
-    return it == block_index_.end() ? nullptr : &it->second;
+  template <size_t N,
+            typename = typename std::enable_if<N == prev_block_hash_t::size() ||
+                                               N == hash_t::size()>::type>
+  index_t* getBlockIndex(const Blob<N>& hash) {
+    auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
+    auto it = block_index_.find(shortHash);
+    return it == block_index_.end() ? nullptr : it->second.get();
   }
 
   bool acceptBlock(const block_t& block, ValidationState& state) {
-    if (!checkBlock(block, state, *param_)) {
-      return state.addStackFunction("acceptBlockHeader()");
-    }
-
-    auto it = block_index_.find(block.previousBlock);
-    if (it == block_index_.end()) {
-      return state.Invalid("acceptBlockHeader()",
-                           "no-prev-block",
-                           "can not find previous block");
-    }
-
-    // TODO: maybe some other validations?
-    // - difficulty calculator(s)?
-    // - block too new?
-    // - block too old?
-
-    auto* index = insertBlockHeader(block);
-    assert(index != nullptr &&
-           "insertBlockHeader should have never returned nullptr");
-    repo_->put(*index);
-    return true;
+    return acceptBlock(block, state, true);
   }
 
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
  private:
-  std::unordered_map<hash_t, index_t> block_index_;
+  std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
   Chain<Block> activeChain_;
   std::shared_ptr<BlockRepository<index_t>> repo_;
   std::shared_ptr<ChainParams> param_;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
-  index_t* touchBlockIndex(const hash_t& hash) {
+  index_t* touchBlockIndex(const hash_t& fullHash) {
+    auto hash = fullHash.template trimLE<prev_block_hash_t::size()>();
     auto it = block_index_.find(hash);
     if (it != block_index_.end()) {
-      return &it->second;
+      return it->second.get();
     }
 
-    it = block_index_.insert({hash, index_t{}}).first;
-    return &it->second;
+    auto* newIndex = new index_t{};
+    it = block_index_.insert({hash, std::unique_ptr<index_t>(newIndex)}).first;
+    return it->second.get();
   }
 
   index_t* insertBlockHeader(const block_t& block) {
@@ -124,10 +143,10 @@ struct BlockTree {
     if (current->pprev) {
       // prev block found
       current->height = current->pprev->height + 1;
-      current->chainWork = current->pprev->chainWork + block.getBlockProof();
+      current->chainWork = current->pprev->chainWork + getBlockProof(block);
     } else {
       current->height = 0;
-      current->chainWork = block.getBlockProof();
+      current->chainWork = getBlockProof(block);
     }
 
     determineBestChain(activeChain_, *current);
@@ -135,38 +154,102 @@ struct BlockTree {
     return current;
   }
 
-  bool load(ValidationState& state) {
+  bool load(ValidationState& state, bool bootstrapGenesis) {
+    // at this point we should have bootstrap block(s) in our storage
     auto cursor = repo_->newCursor();
 
     // load blocks into memory
+    std::vector<std::pair<height_t, std::unique_ptr<index_t>>> blocks;
     for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
       auto value = cursor->value();
-      auto hash = value.header.getHash();
 
       if (!checkProofOfWork(value.header, *param_)) {
         return state.Error("load-bad-proof-of-work");
       }
 
-      index_t* index = touchBlockIndex(hash);
+      auto index = std::unique_ptr<index_t>(new index_t{});
       *index = value;
-      index->pprev = touchBlockIndex(value.header.previousBlock);
+      blocks.push_back({value.height, std::move(index)});
     }
 
-    // fill block_index map
-    std::vector<std::pair<height_t, index_t*>> sortedByHeight;
-    sortedByHeight.reserve(block_index_.size());
-    for (auto& item : block_index_) {
-      sortedByHeight.push_back({item.second.height, &item.second});
-    }
-    std::sort(sortedByHeight.begin(), sortedByHeight.end());
-    for (const auto& item : sortedByHeight) {
-      index_t* index = item.second;
-      index->chainWork =
-          index->pprev ? index->pprev->chainWork + index->header.getBlockProof()
-                       : 0;
-      determineBestChain(activeChain_, *index);
+    size_t processedBlocks = 0;
+    size_t numBlocksForBootstrap = param_->numBlocksForBootstrap();
+    assert(block_index_.size() == 1);
+    std::sort(blocks.begin(), blocks.end());
+    for (const auto& item : blocks) {
+      index_t* index = item.second.get();
+      bool checkDifficulty =
+          bootstrapGenesis || processedBlocks++ > numBlocksForBootstrap;
+      if (acceptBlock(index->header, state, checkDifficulty)) {
+        return state.addStackFunction("load()");
+      }
     }
 
+    return true;
+  }
+
+  bool acceptBlock(const block_t& block,
+                   ValidationState& state,
+                   bool checkDifficulty) {
+    if (!checkBlock(block, state, *param_)) {
+      return state.addStackFunction("acceptBlockHeader()");
+    }
+
+    // we must know previous block
+    auto* prev = getBlockIndex(block.previousBlock);
+    if (prev == nullptr) {
+      return state.Invalid("acceptBlockHeader()",
+                           "bad-prev-block",
+                           "can not find previous block");
+    }
+
+    // check difficulty
+    if (checkDifficulty &&
+        block.getDifficulty() != getNextWorkRequired(*prev, block, *param_)) {
+      return state.Invalid(
+          "acceptBlockHeader()", "bad-diffbits", "incorrect proof of work");
+    }
+
+    const int64_t adjustedTime = currentTimestamp4();
+    const int64_t medianTimePast = prev->getMedianTimePast();
+    if (int64_t(block.getBlockTime()) < medianTimePast) {
+      return state.Invalid("acceptBlockHeader()",
+                           "time-too-old",
+                           "block's timestamp is too early");
+    }
+
+    if (int64_t(block.getBlockTime()) > adjustedTime + MAX_FUTURE_BLOCK_TIME) {
+      return state.Invalid("acceptBlockHeader()",
+                           "time-too-new",
+                           "block timestamp too far in the future");
+    }
+
+    auto* index = insertBlockHeader(block);
+    assert(index != nullptr &&
+           "insertBlockHeader should have never returned nullptr");
+    repo_->put(*index);
+    return true;
+  }
+
+  bool bootstrap(height_t height,
+                 const block_t& block,
+                 ValidationState& state) {
+    if (!checkBlock(block, state, *param_)) {
+      return state.addStackFunction("bootstrap()");
+    }
+
+    auto* index = insertBlockHeader(block);
+    index->height = height;
+    if (!load(state, height == 0)) {
+      return state.addStackFunction("bootstrap()");
+    }
+
+    auto fullHash = block.getHash();
+    if (!block_index_.empty() && !getBlockIndex(fullHash)) {
+      return state.Error("block-index-no-genesis");
+    }
+
+    repo_->put(*index);
     return true;
   }
 };

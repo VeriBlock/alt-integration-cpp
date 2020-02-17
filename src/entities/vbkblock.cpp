@@ -2,7 +2,7 @@
 
 using namespace VeriBlock;
 
-VbkBlock VbkBlock::fromRaw(const std::vector<uint8_t>& bytes) {
+VbkBlock VbkBlock::fromRaw(Slice<const uint8_t> bytes) {
   ReadStream stream(bytes);
   return fromRaw(stream);
 }
@@ -51,11 +51,19 @@ uint32_t VbkBlock::getDifficulty() const { return difficulty; }
 
 uint32_t VbkBlock::getBlockTime() const { return timestamp; }
 
-/// TODO: https://veriblock.atlassian.net/browse/BTC-218
-ArithUint256 VbkBlock::getBlockProof() const { return difficulty; }
-
 uint192 VbkBlock::getHash() const {
   WriteStream stream;
   toRaw(stream);
   return vblake(stream.data());
+}
+
+VbkBlock VbkBlock::fromHex(const std::string& hex) {
+  auto v = ParseHex(hex);
+  return VbkBlock::fromRaw(v);
+}
+
+std::string VbkBlock::toHex() const {
+  WriteStream stream;
+  toRaw(stream);
+  return HexStr(stream.data());
 }
