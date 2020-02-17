@@ -33,7 +33,7 @@ struct BlockchainFixture {
 struct BtcTestCase {
   std::string headers;
   std::shared_ptr<BtcChainParams> params;
-  size_t startHeight = 0;
+  uint32_t startHeight = 0;
 
   std::vector<BtcBlock> getBlocks() const {
     std::vector<BtcBlock> ret;
