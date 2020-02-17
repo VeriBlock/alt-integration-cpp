@@ -197,7 +197,6 @@ TEST_P(StorageTest, Cursor) {
   auto hash2 = hash_t(std::vector<uint8_t>{2});
   auto hash3 = hash_t(std::vector<uint8_t>{3});
   auto hash4 = hash_t(std::vector<uint8_t>{4});
-  auto hash5 = hash_t(std::vector<uint8_t>{5});
 
   EXPECT_FALSE(repo->put({hash1, 1}));
   EXPECT_FALSE(repo->put({hash2, 2}));
