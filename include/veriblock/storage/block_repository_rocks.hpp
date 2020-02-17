@@ -195,21 +195,9 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return true;
   }
 
-  /// TODO: modifies external column family handle. Do something with it.
-  void clear() override {
-    rocksdb::Status s = _db->DropColumnFamily(_hashBlockHandle.get());
-    if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
-    }
-
-    auto columnName = _hashBlockHandle->GetName();
-    rocksdb::ColumnFamilyOptions cfOption{};
-    cf_handle_t* handle = nullptr;
-    s = _db->CreateColumnFamily(cfOption, columnName, &handle);
-    if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
-    }
-    _hashBlockHandle = std::shared_ptr<cf_handle_t>(handle);
+  void clear() override { 
+    // call BlockRepositoryRocksManager.clear() instead
+    return;
   }
 
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {

@@ -3,7 +3,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
-#include "veriblock/storage/block_repository_rocks_setup.hpp"
+#include "veriblock/storage/block_repository_rocks_manager.hpp"
 #include "veriblock/storage/stored_btcblock.hpp"
 #include "veriblock/storage/stored_vbkblock.hpp"
 
@@ -40,13 +40,13 @@ static const std::string dbName = "db-test";
 
 class TestStorage : public ::testing::Test {
  protected:
-  BlockRepositoryRocksInstance<StoredBtcBlock, StoredVbkBlock> database =
-      BlockRepositoryRocksInstance<StoredBtcBlock, StoredVbkBlock>(dbName);
+  BlockRepositoryRocksManager<StoredBtcBlock, StoredVbkBlock> database =
+      BlockRepositoryRocksManager<StoredBtcBlock, StoredVbkBlock>(dbName);
   std::shared_ptr<BlockRepository<StoredBtcBlock>> repoBtc;
   std::shared_ptr<BlockRepository<StoredVbkBlock>> repoVbk;
 
   void SetUp() {
-    rocksdb::Status s = database.Open();
+    rocksdb::Status s = database.open();
     ASSERT_TRUE(s.ok());
 
     repoBtc = database.repoBtc;

@@ -2,7 +2,7 @@
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
-#include "veriblock/storage/block_repository_rocks_setup.hpp"
+#include "veriblock/storage/block_repository_rocks_manager.hpp"
 #include "veriblock/uint.hpp"
 
 using namespace VeriBlock;
@@ -53,7 +53,8 @@ class StorageTest : public testing::TestWithParam<TEST_RUNS> {
     if (repoSelector == TEST_RUNS::INMEM) {
       inmemRepo = std::make_shared<BlockRepositoryInmem<BlockBasic>>();
     } else {
-      rocksdb::Status s = database.Open();
+      rocksdb::Status s = database.open();
+      database.clear();
       rocksBtcRepo = database.repoBtc;
       rocksVbkRepo = database.repoVbk;
     }
@@ -73,7 +74,7 @@ class StorageTest : public testing::TestWithParam<TEST_RUNS> {
   }
 
  protected:
-  BlockRepositoryRocksInstance<BlockBasic, BlockBasic> database;
+  BlockRepositoryRocksManager<BlockBasic, BlockBasic> database;
   std::shared_ptr<BlockRepositoryInmem<BlockBasic>> inmemRepo;
   std::shared_ptr<BlockRepositoryRocks<BlockBasic>> rocksBtcRepo;
   std::shared_ptr<BlockRepositoryRocks<BlockBasic>> rocksVbkRepo;
