@@ -11,7 +11,8 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) const {
   VbkBlock block;
   block.version = tip.header.version;
-  block.previousBlock = tip.header.getHash();
+  block.previousBlock =
+      tip.header.getHash().trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone
@@ -43,8 +44,11 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
 template <>
 void determineBestChain(Chain<VbkBlock>& currentBest,
                         BlockIndex<VbkBlock>& indexNew) {
-  (void)currentBest;
-  (void)indexNew;
+  // It is a temprorary solution, it has been copied from the Btc implementation
+  if (currentBest.tip() == nullptr ||
+      currentBest.tip()->chainWork < indexNew.chainWork) {
+    currentBest.setTip(&indexNew);
+  }
 }
 
 template <>

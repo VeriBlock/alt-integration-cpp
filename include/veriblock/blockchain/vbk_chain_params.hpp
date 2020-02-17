@@ -79,6 +79,7 @@ struct VbkChainParamsMain : public VbkChainParams {
 /**
  * TestNet
  */
+
 struct VbkChainParamsTest : public VbkChainParams {
   ~VbkChainParamsTest() override = default;
   // hex(100000000) = 5f5e100
@@ -134,12 +135,29 @@ struct VbkChainParamsRegTest : public VbkChainParams {
   }
   bool getPowNoRetargeting() const noexcept override { return true; }
   VbkBlock getGenesisBlock() const noexcept override {
+    //{
+    //  "height": 0,
+    //  "version": 2,
+    //  "previousBlock": "000000000000000000000000",
+    //  "previousKeystone": "000000000000000000",
+    //  "secondPreviousKeystone": "000000000000000000",
+    //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
+    //  "timestamp": 1553699987,
+    //  "difficulty": 117586646,
+    //  "nonce": 1924857207
+    //}
+
     VbkBlock block;
     block.height = 0;
     block.version = 2;
-    block.timestamp = 1577367966;
-    // minumum possible difficulty
-    block.difficulty = 0;  // TODO
+    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
+    block.timestamp = 1553699987;
+    block.difficulty = 16842752;
+    block.nonce = 0;
+
+    assert(block.getHash().toHex() ==
+           "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
+
     return block;
   }
 

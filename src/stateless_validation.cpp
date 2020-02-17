@@ -1,5 +1,3 @@
-#include "veriblock/stateless_validation.hpp"
-
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -8,6 +6,7 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
+#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -296,9 +295,7 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
   }
 
   if (!veriBlockVerify(
-          Slice<const uint8_t>(tx.getHash().data(), tx.getHash().size()),
-          tx.signature,
-          publicKeyFromVbk(tx.publicKey))) {
+          tx.getHash().slice(), tx.signature, publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("checkSignature()",
                          "Invalid Vbk Pop transaction",
                          "Vbk Pop transaction is incorrectly signed");

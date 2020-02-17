@@ -18,6 +18,7 @@ add_library(vbkutils
         stateless_validation.cpp
         arith_uint256.cpp
         signutil.cpp
+        mock_miner.cpp
         $<TARGET_OBJECTS:blockchain>
         $<TARGET_OBJECTS:entities>
         $<TARGET_OBJECTS:secp256k1>
