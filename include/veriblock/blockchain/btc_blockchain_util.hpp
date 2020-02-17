@@ -9,7 +9,7 @@
 namespace VeriBlock {
 
 template <>
-uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& currentTip,
+uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
                              const BtcBlock& block,
                              const BtcChainParams& params);
 

@@ -10,7 +10,7 @@ template <typename Block>
 void determineBestChain(Chain<Block>& currentBest, BlockIndex<Block>& indexNew);
 
 template <typename Block, typename ChainParams>
-uint32_t getNextWorkRequired(const BlockIndex<Block>& currentTip,
+uint32_t getNextWorkRequired(const BlockIndex<Block>& prevBlock,
                              const Block& block,
                              const ChainParams& params);
 
