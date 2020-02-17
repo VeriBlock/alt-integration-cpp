@@ -14,8 +14,7 @@ struct BlockBasic {
   using height_t = int;
 
   hash_t getHash() const {
-    ArithUint256 hashValue256 = ArithUint256(hashValue);
-    return hashValue256;
+    return std::move(ArithUint256(hashValue));
   }
 
   int hashValue = 0;
