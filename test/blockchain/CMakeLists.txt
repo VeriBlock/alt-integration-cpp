@@ -55,9 +55,5 @@ target_link_libraries(blockchain_test
         )
 
 
-addtest(block_proof_test block_proof_test.cpp)
-target_link_libraries(block_proof_test vbkutils)
-
-
 addtest(chainparams_test chainparams_test.cpp)
 target_link_libraries(chainparams_test vbkutils)
