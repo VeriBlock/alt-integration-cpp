@@ -24,12 +24,14 @@ struct VbkNetworkType {
  */
 struct VbkChainParams {
   virtual ~VbkChainParams() = default;
+  virtual std::string networkName() const = 0;
   virtual uint256 getMinimumDifficulty() const = 0;
   virtual VbkNetworkType getTransactionMagicByte() const noexcept = 0;
   virtual bool getPowNoRetargeting() const noexcept = 0;
   virtual VbkBlock getGenesisBlock() const noexcept = 0;
   virtual uint32_t getRetargetPeriod() const noexcept = 0;
   virtual uint32_t getTargetBlockTime() const noexcept = 0;
+  virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
 };
 
 /**
@@ -37,9 +39,16 @@ struct VbkChainParams {
  */
 struct VbkChainParamsMain : public VbkChainParams {
   ~VbkChainParamsMain() override = default;
+
+  std::string networkName() const override { return "main"; }
+
+  uint32_t numBlocksForBootstrap() const noexcept override {
+    return getRetargetPeriod();
+  }
+
   // hex(900000000000) = d18c2e2800
   uint256 getMinimumDifficulty() const override {
-    return uint256(ParseHex("d18c2e2800"));
+    return uint256::fromHex("d18c2e2800");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     return VbkNetworkType(false, 0);
@@ -81,9 +90,16 @@ struct VbkChainParamsMain : public VbkChainParams {
  */
 struct VbkChainParamsTest : public VbkChainParams {
   ~VbkChainParamsTest() override = default;
+
+  std::string networkName() const override { return "test"; }
+
+  uint32_t numBlocksForBootstrap() const noexcept override {
+    return getRetargetPeriod();
+  }
+
   // hex(100000000) = 5f5e100
   uint256 getMinimumDifficulty() const override {
-    return uint256(ParseHex("5f5e100"));
+    return uint256::fromHex("5f5e100");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     return VbkNetworkType(true, 0xAA);
@@ -125,9 +141,16 @@ struct VbkChainParamsTest : public VbkChainParams {
  */
 struct VbkChainParamsRegTest : public VbkChainParams {
   ~VbkChainParamsRegTest() override = default;
+
+  std::string networkName() const override { return "regtest"; }
+
+  uint32_t numBlocksForBootstrap() const noexcept override {
+    return getRetargetPeriod();
+  }
+
   // hex(1) = 1
   uint256 getMinimumDifficulty() const override {
-    return uint256(ParseHex("1"));
+    return uint256::fromHex("1");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     return VbkNetworkType(true, 0xBB);
@@ -137,9 +160,14 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     VbkBlock block;
     block.height = 0;
     block.version = 2;
-    block.timestamp = 1577367966;
-    // minumum possible difficulty
-    block.difficulty = 0;  // TODO
+    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
+    block.timestamp = 1553699987;
+    block.difficulty = 16842752;
+    block.nonce = 0;
+
+    assert(block.getHash().toHex() ==
+           "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
+
     return block;
   }
 
@@ -153,9 +181,16 @@ struct VbkChainParamsRegTest : public VbkChainParams {
  */
 struct VbkChainParamsAlpha : public VbkChainParams {
   ~VbkChainParamsAlpha() override = default;
+
+  std::string networkName() const override { return "alpha"; }
+
+  uint32_t numBlocksForBootstrap() const noexcept override {
+    return getRetargetPeriod();
+  }
+
   // hex(9999872) = 989600
   uint256 getMinimumDifficulty() const override {
-    return uint256(ParseHex("989600"));
+    return uint256::fromHex("989600");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     return VbkNetworkType(true, 0xAA);

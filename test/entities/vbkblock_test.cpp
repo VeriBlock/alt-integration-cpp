@@ -63,7 +63,7 @@ TEST(VbkBlock, getBlockHash_test) {
   VbkBlock block;
   block.height = 5000;
   block.version = 2;
-  block.previousBlock = uint144("94E7DC3E3BE21A96ECCF0FBD"_unhex);
+  block.previousBlock = uint96("94E7DC3E3BE21A96ECCF0FBD"_unhex);
   block.previousKeystone = uint72("F5F62A3331DC995C36"_unhex);
   block.secondPreviousKeystone = uint72("B0935637860679DDD5"_unhex);
   block.merkleRoot = uint128("DB0F135312B2C27867C9A83EF1B99B98"_unhex);

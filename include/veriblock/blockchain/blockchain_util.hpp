@@ -14,6 +14,9 @@ uint32_t getNextWorkRequired(const BlockIndex<Block>& prevBlock,
                              const Block& block,
                              const ChainParams& params);
 
+template <typename Block>
+ArithUint256 getBlockProof(const Block& block);
+
 }  // namespace VeriBlock
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_UTIL_HPP_

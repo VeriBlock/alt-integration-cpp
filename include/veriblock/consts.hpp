@@ -3,14 +3,16 @@
 
 #include <cstdint>
 
-#include <cstdint>
-
 namespace VeriBlock {
 
 enum class TxType {
   VBK_TX = 0x01,
   VBK_POP_TX = 0x02,
 };
+
+// 10 minutes
+constexpr const int MAX_FUTURE_BLOCK_TIME = 10 * 60;
+
 constexpr const auto KEYSTONE_INTERVAL = 5;
 constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
 constexpr const auto MAX_PAYOUT_SIZE_PUBLICATION_DATA = 100;
@@ -44,6 +46,9 @@ constexpr const auto MULTISIG_ADDRESS_SIZE = 30;
  */
 
 constexpr const uint32_t ALLOWED_TIME_DRIFT = 60 * 5;
+
+constexpr const auto VBK_MAXIMUM_DIFFICULTY =
+    "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
 
 constexpr const auto MAX_MERKLE_BYTES =
     (SHA256_HASH_SIZE + 1) * MAX_LAYER_COUNT_MERKLE + 5 + 5 + 5 + 5 + 4;
