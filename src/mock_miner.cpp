@@ -17,7 +17,9 @@ static auto defaultPublicKeyVbk = ParseHex(
 VbkTx MockMiner::generateSignedVbkTx(const PublicationData& publicationData) {
   VbkTx transaction;
   transaction.signatureIndex = 7;
-  transaction.networkOrType = {true, 1, (uint8_t)TxType::VBK_TX};
+  transaction.networkOrType.hasNetworkByte = true;
+  transaction.networkOrType.networkByte = 1;
+  transaction.networkOrType.typeId = (uint8_t)TxType::VBK_TX;
   transaction.sourceAmount = Coin(1000);
   transaction.sourceAddress = Address::fromPublicKey(defaultPublicKeyVbk);
   transaction.publicKey = defaultPublicKeyVbk;
@@ -46,7 +48,9 @@ ATV MockMiner::generateValidATV(const PublicationData& publicationData) {
 
 VbkPopTx MockMiner::generateSignedVbkPoptx(const VbkBlock& publishedBlock) {
   VbkPopTx popTx;
-  popTx.networkOrType = {true, 1, (uint8_t)TxType::VBK_POP_TX};
+  popTx.networkOrType.hasNetworkByte = true;
+  popTx.networkOrType.networkByte = 1;
+  popTx.networkOrType.typeId = (uint8_t)TxType::VBK_POP_TX;
   popTx.address = Address::fromPublicKey(defaultPublicKeyVbk);
   popTx.publishedBlock = publishedBlock;
 

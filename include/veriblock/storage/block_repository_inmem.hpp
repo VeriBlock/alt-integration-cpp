@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_INMEM_HPP_
 
 #include <iterator>
+#include <memory>
 #include <veriblock/storage/block_repository.hpp>
 
 namespace VeriBlock {
@@ -42,7 +43,7 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     return a && b && c;
   }
   void next() override {
-    if(_it < _etl.cend()) {
+    if (_it < _etl.cend()) {
       ++_it;
     }
   }
