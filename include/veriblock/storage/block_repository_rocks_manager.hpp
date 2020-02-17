@@ -16,8 +16,6 @@ struct BlockRepositoryRocksManager {
   BlockRepositoryRocksManager(const std::string &name) : dbName(name) {}
 
   rocksdb::Status open() {
-    /// TODO: we assume DB is closed. Add a check.
-
     // prepare column families
     std::vector<rocksdb::ColumnFamilyDescriptor> column_families;
     rocksdb::ColumnFamilyOptions cfOption{};
@@ -38,6 +36,7 @@ struct BlockRepositoryRocksManager {
 
     // prepare smart pointers to keep the DB state
     dbPtr = std::shared_ptr<rocksdb::DB>(dbInstance);
+    cfHandles.clear();
     for (rocksdb::ColumnFamilyHandle *cfHandle : cfHandlesData) {
       auto cfHandlePtr = std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandle);
       cfHandles.push_back(cfHandlePtr);
@@ -52,7 +51,12 @@ struct BlockRepositoryRocksManager {
   }
 
   rocksdb::Status clear() {
-    ///TODO: we assume DB is opened. Add a check.
+    if (!dbPtr) {
+      return rocksdb::Status::NotFound("DB is closed");
+    }
+    if (cfHandles.size() < cfNames.size()) {
+      return rocksdb::Status::NotFound("DB is closed");
+    }
 
     rocksdb::Status s = rocksdb::Status::OK();
     for (size_t i = (size_t)CF_NAMES::HASH_BLOCK_BTC;

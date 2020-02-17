@@ -48,6 +48,8 @@ class TestStorage : public ::testing::Test {
   void SetUp() {
     rocksdb::Status s = database.open();
     ASSERT_TRUE(s.ok());
+    s = database.clear();
+    ASSERT_TRUE(s.ok());
 
     repoBtc = database.repoBtc;
     repoVbk = database.repoVbk;
