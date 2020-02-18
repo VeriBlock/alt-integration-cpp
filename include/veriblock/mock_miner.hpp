@@ -71,7 +71,6 @@ class MockMiner {
     assert(res);
 
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
-    vbk_repo = std::make_shared<BlockRepositoryInmem<vbk_block_index_t>>();
     vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(vbk_params);
     vbk_blockchain = std::make_shared<vbk_block_tree>(vbk_repo, vbk_params);
 
