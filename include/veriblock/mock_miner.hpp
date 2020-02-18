@@ -14,6 +14,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
+#include "veriblock/storage/block_repository_inmem.hpp"
 
 namespace VeriBlock {
 
@@ -34,6 +35,7 @@ class MockMiner {
   using vbk_block_tree = BlockTree<vbk_block_t, vbk_params_t>;
   using vbk_block_index_t = vbk_block_tree::index_t;
 
+ private:
   std::shared_ptr<BtcChainParams> btc_params;
   std::shared_ptr<Miner<btc_block_t, btc_params_t>> btc_miner;
   std::shared_ptr<btc_block_tree> btc_blockchain;
@@ -44,48 +46,52 @@ class MockMiner {
   std::shared_ptr<vbk_block_tree> vbk_blockchain;
   std::shared_ptr<BlockRepository<vbk_block_index_t>> vbk_repo;
 
- private:
-  ValidationState state;
-
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
   ATV generateValidATV(const PublicationData& publicationData,
-                       const VbkBlock::hash_t& lastKnownVbkBlockHash);
+                       const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                       ValidationState& state);
 
-  VbkPopTx generateSignedVbkPoptx(
-      const VbkBlock& publishedBlock,
-      const BtcBlock::hash_t& lastKnownBtcBlockHash);
+  VbkPopTx generateSignedVbkPoptx(const VbkBlock& publishedBlock,
+                                  const BtcBlock::hash_t& lastKnownBtcBlockHash,
+                                  ValidationState& state);
   VTB generateValidVTB(const VbkBlock& publishedBlock,
                        const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                       const uint32_t& vbkBlockDelay);
+                       const uint32_t& vbkBlockDelay,
+                       ValidationState& state);
 
  public:
-  MockMiner(std::shared_ptr<BlockRepository<btc_block_index_t>> btc_repo,
-            std::shared_ptr<BlockRepository<vbk_block_index_t>> vbk_repo)
-      : btc_repo(btc_repo), vbk_repo(vbk_repo) {
-    bool res = false;
-
+  MockMiner() {
     btc_params = std::make_shared<BtcChainParamsRegTest>();
+    btc_repo = std::make_shared<BlockRepositoryInmem<btc_block_index_t>>();
     btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(btc_params);
     btc_blockchain = std::make_shared<btc_block_tree>(btc_repo, btc_params);
 
-    res = btc_blockchain->bootstrapWithGenesis(state);
-    assert(res);
-
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
+    vbk_repo = std::make_shared<BlockRepositoryInmem<vbk_block_index_t>>();
     vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(vbk_params);
     vbk_blockchain = std::make_shared<vbk_block_tree>(vbk_repo, vbk_params);
-
-    res = vbk_blockchain->bootstrapWithGenesis(state);
-    assert(res);
   }
 
   Publications mine(const PublicationData& publicationData,
                     const VbkBlock::hash_t& lastKnownVbkBlockHash,
                     const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                    const uint32_t& vbkBlockDelay);
+                    const uint32_t& vbkBlockDelay,
+                    ValidationState& state);
 
-  void addNewBtcBlocksIntoChainState(const uint32_t& n);
-  void addNewVbkBlocksIntoChainState(const uint32_t& n);
+  void mineBtcBlocks(const uint32_t& n, ValidationState& state);
+  void mineVbkBlocks(const uint32_t& n, ValidationState& state);
+
+  bool bootstrapBtcChainWithGenesis(ValidationState& state);
+
+  bool bootstrapBtcChainWithChain(btc_block_t::height_t startHeight,
+                                  const std::vector<btc_block_t>& chain,
+                                  ValidationState& state);
+
+  bool bootstrapVbkChainWithGenesis(ValidationState& state);
+
+  bool bootstrapVbkChainWithChain(vbk_block_t::height_t startHeight,
+                                  const std::vector<vbk_block_t>& chain,
+                                  ValidationState& state);
 
   std::shared_ptr<VbkChainParams> getVbkParams() const { return vbk_params; }
   std::shared_ptr<BtcChainParams> getBtcParams() const { return btc_params; }

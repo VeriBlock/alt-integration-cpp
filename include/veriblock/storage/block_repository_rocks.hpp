@@ -171,16 +171,16 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   // decode hashes blob
   std::set<hash_t> hashesFromString(const std::string& hashesData) const {
-    if (hashesData.size() % sizeof(hash_t)) {
+    if (hashesData.size() % hash_t::size()) {
       throw db::DbError("Not parceable hashes blob");
     }
 
     std::set<hash_t> result{};
-    for (size_t i = 0; i < (hashesData.size() / sizeof(hash_t)); i++) {
+    for (size_t i = 0; i < (hashesData.size() / hash_t::size()); i++) {
       std::string blobPartStr =
-          hashesData.substr(i * sizeof(hash_t), sizeof(hash_t));
+          hashesData.substr(i * hash_t::size(), hash_t::size());
 
-      result.insert(Blob<sizeof(hash_t)>(blobPartStr));
+      result.insert(Blob<hash_t::size()>(blobPartStr));
     }
     return result;
   }

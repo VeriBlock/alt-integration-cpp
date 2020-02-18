@@ -62,10 +62,6 @@ struct Blob {
 
   pointer data() noexcept { return data_.data(); }
 
-  Slice<const uint8_t> slice() noexcept {
-    return Slice<const uint8_t>(data_.data(), N);
-  }
-
   const_pointer data() const noexcept { return data_.data(); }
 
   std::string toHex() const { return HexStr(data_.begin(), data_.end()); }

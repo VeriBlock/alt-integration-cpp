@@ -170,7 +170,8 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   }
 
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
-    return std::make_unique<WriteBatchInmem<stored_block_t>>();
+    return std::unique_ptr<WriteBatchInmem<stored_block_t>>(
+        new WriteBatchInmem<stored_block_t>());
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
