@@ -49,12 +49,13 @@ class MockMiner {
 
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
   ATV generateValidATV(const PublicationData& publicationData,
-                       const VbkBlock& lastKnownVbkBlock);
+                       const VbkBlock::hash_t& lastKnownVbkBlockHash);
 
-  VbkPopTx generateSignedVbkPoptx(const VbkBlock& publishedBlock,
-                                  const BtcBlock& lastKnownBtcBlock);
+  VbkPopTx generateSignedVbkPoptx(
+      const VbkBlock& publishedBlock,
+      const BtcBlock::hash_t& lastKnownBtcBlockHash);
   VTB generateValidVTB(const VbkBlock& publishedBlock,
-                       const BtcBlock& lastKnownBtcBlock,
+                       const BtcBlock::hash_t& lastKnownBtcBlockHash,
                        const uint32_t& vbkBlockDelay);
 
  public:
@@ -79,8 +80,8 @@ class MockMiner {
   }
 
   Publications mine(const PublicationData& publicationData,
-                    const VbkBlock& lastKnownVbkBlock,
-                    const BtcBlock& lastKnownBtcBlock,
+                    const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                    const BtcBlock::hash_t& lastKnownBtcBlockHash,
                     const uint32_t& vbkBlockDelay);
 
   void addNewBtcBlocksIntoChainState(const uint32_t& n);

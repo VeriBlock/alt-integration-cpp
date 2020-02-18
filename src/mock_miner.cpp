@@ -43,7 +43,7 @@ VbkTx MockMiner::generateSignedVbkTx(const PublicationData& publicationData) {
 }
 
 ATV MockMiner::generateValidATV(const PublicationData& publicationData,
-                                const VbkBlock& lastKnownVbkBlock) {
+                                const VbkBlock::hash_t& lastKnownVbkBlockHash) {
   ATV atv;
   atv.transaction = generateSignedVbkTx(publicationData);
   atv.merklePath.treeIndex = 1;
@@ -52,7 +52,7 @@ ATV MockMiner::generateValidATV(const PublicationData& publicationData,
   atv.merklePath.layers = {atv.transaction.getHash()};
 
   for (BlockIndex<VbkBlock>* walkBlock = vbk_blockchain->getBestChain().tip();
-       walkBlock->header != lastKnownVbkBlock;
+       walkBlock->header.getHash() != lastKnownVbkBlockHash;
        walkBlock = walkBlock->pprev) {
     atv.context.insert(atv.context.begin(), walkBlock->header);
   }
@@ -66,8 +66,9 @@ ATV MockMiner::generateValidATV(const PublicationData& publicationData,
   return atv;
 }
 
-VbkPopTx MockMiner::generateSignedVbkPoptx(const VbkBlock& publishedBlock,
-                                           const BtcBlock& lastKnownBtcBlock) {
+VbkPopTx MockMiner::generateSignedVbkPoptx(
+    const VbkBlock& publishedBlock,
+    const BtcBlock::hash_t& lastKnownBtcBlockHash) {
   VbkPopTx popTx;
   popTx.networkOrType.hasNetworkByte = true;
   popTx.networkOrType.networkByte = 1;
@@ -85,7 +86,7 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(const VbkBlock& publishedBlock,
   popTx.merklePath.layers = {popTx.bitcoinTransaction.getHash()};
 
   for (BlockIndex<BtcBlock>* walkBlock = btc_blockchain->getBestChain().tip();
-       walkBlock->header != lastKnownBtcBlock;
+       walkBlock->header.getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
     popTx.blockOfProofContext.insert(popTx.blockOfProofContext.begin(),
                                      walkBlock->header);
@@ -106,10 +107,11 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(const VbkBlock& publishedBlock,
 }
 
 VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
-                                const BtcBlock& lastKnownBtcBlock,
+                                const BtcBlock::hash_t& lastKnownBtcBlockHash,
                                 const uint32_t& vbkBlockDelay) {
   VTB vtb;
-  vtb.transaction = generateSignedVbkPoptx(publishedBlock, lastKnownBtcBlock);
+  vtb.transaction =
+      generateSignedVbkPoptx(publishedBlock, lastKnownBtcBlockHash);
   vtb.merklePath.treeIndex = 1;
   vtb.merklePath.index = 0;
   vtb.merklePath.subject = vtb.transaction.getHash();
@@ -133,12 +135,12 @@ VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
 }
 
 Publications MockMiner::mine(const PublicationData& publicationData,
-                             const VbkBlock& lastKnownVbkBlock,
-                             const BtcBlock& lastKnownBtcBlock,
+                             const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                             const BtcBlock::hash_t& lastKnownBtcBlockHash,
                              const uint32_t& vbkBlockDelay) {
-  ATV atv = generateValidATV(publicationData, lastKnownVbkBlock);
-  VTB vtb =
-      generateValidVTB(atv.containingBlock, lastKnownBtcBlock, vbkBlockDelay);
+  ATV atv = generateValidATV(publicationData, lastKnownVbkBlockHash);
+  VTB vtb = generateValidVTB(
+      atv.containingBlock, lastKnownBtcBlockHash, vbkBlockDelay);
 
   return {atv, {vtb}};
 }
