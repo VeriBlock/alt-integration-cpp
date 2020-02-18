@@ -85,6 +85,10 @@ struct VbkBlock {
            a.difficulty == b.difficulty && a.nonce == b.nonce;
   }
 
+  friend bool operator!=(const VbkBlock& a, const VbkBlock& b) {
+    return !(a == b);
+  }
+
   /**
    * Calculate the hash of the vbk block
    * @return hash block hash

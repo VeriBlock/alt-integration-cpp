@@ -61,7 +61,7 @@ static rocksdb::Status openDB() {
   // prepare column families
   std::vector<rocksdb::ColumnFamilyDescriptor> column_families;
   rocksdb::ColumnFamilyOptions cfOption{};
-  for (const std::string& cfName : cfNames) {
+  for (const std::string &cfName : cfNames) {
     rocksdb::ColumnFamilyDescriptor descriptor(cfName, cfOption);
     column_families.push_back(descriptor);
   }
@@ -144,13 +144,11 @@ TEST_F(TestStorage, PutAndGetVbk) {
   ASSERT_TRUE(retVbk);
 
   StoredVbkBlock readBlock;
-  bool readResult = repoVbk.getByHash(
-      StoredVbkBlock::getExtendedHash(defaultBlockVbk.getHash()), &readBlock);
+  bool readResult = repoVbk.getByHash(defaultBlockVbk.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
 
   EXPECT_EQ(readBlock.height, defaultBlockVbk.height);
-  EXPECT_EQ(readBlock.hash,
-            StoredVbkBlock::getExtendedHash(defaultBlockVbk.getHash()));
+  EXPECT_EQ(readBlock.hash, defaultBlockVbk.getHash());
   EXPECT_EQ(readBlock.block.getHash(), defaultBlockVbk.getHash());
   EXPECT_EQ(readBlock.block.version, defaultBlockVbk.version);
   EXPECT_EQ(readBlock.block.previousBlock, defaultBlockVbk.previousBlock);

@@ -23,7 +23,10 @@ struct MockMinerTest : public MockMiner, public ::testing::Test {
 };
 
 TEST_F(MockMinerTest, mine_test) {
-  Publications pubs = mine(publicationData);
+  Publications pubs = mine(publicationData,
+                           getVbkParams()->getGenesisBlock(),
+                           getBtcParams()->getGenesisBlock(),
+                           5);
 
   EXPECT_TRUE(checkATV(pubs.atv, state, *getVbkParams()));
   EXPECT_TRUE(state.IsValid());

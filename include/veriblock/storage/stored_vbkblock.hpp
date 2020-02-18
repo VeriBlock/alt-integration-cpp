@@ -3,10 +3,9 @@
 
 #include <cstdint>
 
-#include "veriblock/uint.hpp"
 #include "veriblock/arith_uint256.hpp"
-
 #include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 
@@ -20,7 +19,7 @@ namespace VeriBlock {
  * other methods.
  */
 struct StoredVbkBlock {
-  using hash_t = uint256;
+  using hash_t = VbkBlock::hash_t;
   using height_t = uint32_t;
 
   hash_t hash{};
@@ -29,7 +28,7 @@ struct StoredVbkBlock {
 
   static StoredVbkBlock fromBlock(VbkBlock _block) {
     StoredVbkBlock storedBlock{};
-    storedBlock.hash = getExtendedHash(_block.getHash());
+    storedBlock.hash = _block.getHash();
     storedBlock.height = _block.height;
     storedBlock.block = _block;
     return storedBlock;
@@ -47,8 +46,6 @@ struct StoredVbkBlock {
     VbkBlock block = VbkBlock::fromRaw(stream);
     return fromBlock(block);
   }
-
-  static hash_t getExtendedHash(const uint192& hash) { return ArithUint256(hash); }
 };
 
 }  // namespace VeriBlock

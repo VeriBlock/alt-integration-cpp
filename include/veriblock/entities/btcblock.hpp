@@ -86,6 +86,11 @@ struct BtcBlock {
            a.previousBlock == b.previousBlock;
     // clang-format on
   }
+
+  friend bool operator!=(const BtcBlock& a, const BtcBlock& b) {
+    return !(a == b);
+  }
+
   /**
    * Calculate the hash of the btc block
    * @return hash block hash

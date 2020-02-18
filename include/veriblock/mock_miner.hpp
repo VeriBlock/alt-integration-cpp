@@ -47,10 +47,14 @@ class MockMiner {
   ValidationState state;
 
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
-  ATV generateValidATV(const PublicationData& publicationData);
+  ATV generateValidATV(const PublicationData& publicationData,
+                       const VbkBlock& lastKnownVbkBlock);
 
-  VbkPopTx generateSignedVbkPoptx(const VbkBlock& publishedBlock);
-  VTB generateValidVTB(const VbkBlock& publishedBlock);
+  VbkPopTx generateSignedVbkPoptx(const VbkBlock& publishedBlock,
+                                  const BtcBlock& lastKnownBtcBlock);
+  VTB generateValidVTB(const VbkBlock& publishedBlock,
+                       const BtcBlock& lastKnownBtcBlock,
+                       const uint32_t& vbkBlockDelay);
 
  public:
   MockMiner() {
@@ -75,7 +79,13 @@ class MockMiner {
     assert(res);
   }
 
-  Publications mine(const PublicationData& publicationData);
+  Publications mine(const PublicationData& publicationData,
+                    const VbkBlock& lastKnownVbkBlock,
+                    const BtcBlock& lastKnownBtcBlock,
+                    const uint32_t& vbkBlockDelay);
+
+  void addNewBtcBlocksIntoChainState(const uint32_t& n);
+  void addNewVbkBlocksIntoChainState(const uint32_t& n);
 
   std::shared_ptr<VbkChainParams> getVbkParams() const { return vbk_params; }
   std::shared_ptr<BtcChainParams> getBtcParams() const { return btc_params; }

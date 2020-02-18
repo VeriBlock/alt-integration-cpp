@@ -138,9 +138,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return nullptr;
   }
 
-  std::shared_ptr<cursor_t> newCursor() override {
-    return nullptr;
-  }
+  std::shared_ptr<cursor_t> newCursor() override { return nullptr; }
 
  private:
   std::shared_ptr<rocksdb::DB> _db{};
@@ -180,9 +178,9 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     std::set<hash_t> result{};
     for (size_t i = 0; i < (hashesData.size() / sizeof(hash_t)); i++) {
       std::string blobPartStr =
-          hashesData.substr(i * sizeof(hash_t), (i + 1) * sizeof(hash_t));
+          hashesData.substr(i * sizeof(hash_t), sizeof(hash_t));
 
-      result.insert(Blob<32>(blobPartStr));
+      result.insert(Blob<sizeof(hash_t)>(blobPartStr));
     }
     return result;
   }
