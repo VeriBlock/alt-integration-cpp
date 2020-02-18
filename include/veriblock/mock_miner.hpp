@@ -14,7 +14,6 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "veriblock/storage/block_repository_inmem.hpp"
 
 namespace VeriBlock {
 

@@ -7,6 +7,7 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/mock_miner.hpp"
 #include "veriblock/stateless_validation.hpp"
+#include "veriblock/storage/block_repository_inmem.hpp"
 
 using namespace VeriBlock;
 
