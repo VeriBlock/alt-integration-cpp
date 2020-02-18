@@ -161,8 +161,8 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
 
   bool put(const stored_block_t& block) override {
     auto p = std::make_shared<stored_block_t>(block);
-    auto pair = _hash.insert_or_assign(block.getHash(), std::move(p));
-    return !pair.second;
+    auto pair = _hash.insert(std::make_pair(block.getHash(), std::move(p)));
+    return pair.second;
   }
 
   bool removeByHash(const hash_t& hash) override {
