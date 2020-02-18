@@ -76,9 +76,8 @@ struct WriteBatch {
 
   /**
    * Efficiently commit given batch on-disk. Clears batch from changes.
-   * @param repo
    */
-  virtual void commit(BlockRepository<Block>& repo) = 0;
+  virtual void commit() = 0;
 };
 
 /**
@@ -140,6 +139,11 @@ struct BlockRepository {
    * @return true if removed, false if no such element found.
    */
   virtual bool removeByHash(const hash_t& hash) = 0;
+
+  /**
+   * Clear the entire blocks data.
+   */
+  virtual void clear() = 0;
 
   /**
    * Create new WriteBatch, to perform BULK modify operations.

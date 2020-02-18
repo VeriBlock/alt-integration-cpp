@@ -37,6 +37,7 @@ struct BlockRepositoryMock : public BlockRepository<Block> {
                               std::vector<stored_block_t>* out));
   MOCK_METHOD1_T(put, bool(const stored_block_t& block));
   MOCK_METHOD1_T(removeByHash, bool(const hash_t& hash));
+  MOCK_METHOD0(clear, void());
   MOCK_METHOD0_T(newBatch, std::unique_ptr<batch_t>());
   MOCK_METHOD0_T(newCursor, std::shared_ptr<cursor_t>());
 };
