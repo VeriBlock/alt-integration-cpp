@@ -98,7 +98,7 @@ struct WriteBatchRocks : public WriteBatch<Block> {
 
   void clear() override { _batch.Clear(); }
 
-  void commit(BlockRepository<Block>& /* ignore */) override {
+  void commit() override {
     rocksdb::Status s =
         _db->Write(rocksdb::WriteOptions(), &_batch);
     if (!s.ok() && !s.IsNotFound()) {
@@ -201,8 +201,8 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
-    return std::make_unique<WriteBatchRocks<stored_block_t>>(_db,
-                                                             _hashBlockHandle);
+    return std::unique_ptr<WriteBatchRocks<stored_block_t>>(
+        new WriteBatchRocks<stored_block_t>(_db, _hashBlockHandle));
   }
 
   std::shared_ptr<cursor_t> newCursor() override {

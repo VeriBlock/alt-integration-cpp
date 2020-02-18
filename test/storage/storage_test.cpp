@@ -153,7 +153,7 @@ TEST_P(StorageTest, Batch) {
 
   // commit empty batch does nothing
   auto batch = repo->newBatch();
-  batch->commit(*repo);
+  batch->commit();
 
   checkContents(*repo,
                 {
@@ -169,7 +169,7 @@ TEST_P(StorageTest, Batch) {
   batch->removeByHash(BlockBasic{2, 1}.getHash());  // remove existing hash
   batch->removeByHash(BlockBasic{5, 1}.getHash());  // remove key added in batch
   batch->removeByHash(BlockBasic{1000, 1}.getHash());  // remove non-existing key
-  batch->commit(*repo);
+  batch->commit();
 
   checkContents(*repo,
                 {

@@ -76,9 +76,8 @@ struct WriteBatch {
 
   /**
    * Efficiently commit given batch on-disk. Clears batch from changes.
-   * @param repo
    */
-  virtual void commit(BlockRepository<Block>& repo) = 0;
+  virtual void commit() = 0;
 };
 
 /**
