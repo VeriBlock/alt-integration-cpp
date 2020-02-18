@@ -14,7 +14,9 @@ struct MockMinerTest : public MockMiner, public ::testing::Test {
   PublicationData publicationData;
   ValidationState state;
 
-  MockMinerTest() {
+  MockMinerTest()
+      : MockMiner(std::make_shared<BlockRepositoryInmem<btc_block_index_t>>(),
+                  std::make_shared<BlockRepositoryInmem<vbk_block_index_t>>()) {
     publicationData.contextInfo = std::vector<uint8_t>(100, 1);
     publicationData.header = std::vector<uint8_t>(100, 2);
     publicationData.identifier = 1;

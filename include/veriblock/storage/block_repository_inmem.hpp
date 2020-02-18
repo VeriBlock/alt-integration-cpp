@@ -3,7 +3,8 @@
 
 #include <iterator>
 #include <memory>
-#include <veriblock/storage/block_repository.hpp>
+
+#include "veriblock/storage/block_repository.hpp"
 
 namespace VeriBlock {
 
