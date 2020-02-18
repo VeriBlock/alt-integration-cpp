@@ -15,17 +15,20 @@ static auto defaultPublicKeyVbk = ParseHex(
     "10fa05d9014a102a0513dd354ec5");
 
 template <typename Block, typename BlockParams>
-void mineBlocks(const uint32_t& n,
+bool mineBlocks(const uint32_t& n,
                 std::shared_ptr<Miner<Block, BlockParams>> miner,
                 std::shared_ptr<BlockTree<Block, BlockParams>> blockChain,
                 ValidationState& state) {
-  for (uint32_t i = 0; i < n; ++i) {
+  bool res = true;
+  for (uint32_t i = 0; i < n && res; ++i) {
     BlockIndex<Block>* tip = blockChain->getBestChain().tip();
     assert(tip != nullptr);
 
     Block block = miner->createNextBlock(*tip, {});
-    blockChain->acceptBlock(block, state);
+    res = blockChain->acceptBlock(block, state);
   }
+
+  return res;
 }
 
 VbkTx MockMiner::generateSignedVbkTx(const PublicationData& publicationData) {
@@ -167,12 +170,12 @@ Publications MockMiner::mine(const PublicationData& publicationData,
   return {atv, {vtb}};
 }
 
-void MockMiner::mineBtcBlocks(const uint32_t& n, ValidationState& state) {
-  mineBlocks(n, btc_miner, btc_blockchain, state);
+bool MockMiner::mineBtcBlocks(const uint32_t& n, ValidationState& state) {
+  return mineBlocks(n, btc_miner, btc_blockchain, state);
 }
 
-void MockMiner::mineVbkBlocks(const uint32_t& n, ValidationState& state) {
-  mineBlocks(n, vbk_miner, vbk_blockchain, state);
+bool MockMiner::mineVbkBlocks(const uint32_t& n, ValidationState& state) {
+  return mineBlocks(n, vbk_miner, vbk_blockchain, state);
 }
 
 bool MockMiner::bootstrapBtcChainWithGenesis(ValidationState& state) {

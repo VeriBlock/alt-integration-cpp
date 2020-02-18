@@ -55,8 +55,20 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
       --_it;
     }
   }
-  hash_t key() const override { return _it->first; }
-  stored_block_t value() const override { return *_it->second; }
+  hash_t key() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+
+    return _it->first;
+  }
+  stored_block_t value() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+
+    return *_it->second;
+  }
 
  private:
   std::vector<pair> _etl;
@@ -77,6 +89,8 @@ struct WriteBatchInmem : public WriteBatch<Block> {
 
   enum class Operation { PUT, REMOVE_BY_HASH };
 
+  WriteBatchInmem(BlockRepositoryInmem<stored_block_t>* repo) : _repo(repo) {}
+
   void put(const stored_block_t& block) override {
     _ops.push_back(Operation::PUT);
     _puts.push_back(block);
@@ -93,17 +107,17 @@ struct WriteBatchInmem : public WriteBatch<Block> {
     _puts.clear();
   };
 
-  void commit(BlockRepository<Block>& repo) override {
+  void commit() override {
     auto puts_begin = this->_puts.begin();
     auto removes_begin = this->_removes.begin();
     for (const auto& op : this->_ops) {
       switch (op) {
         case WriteBatchInmem<Block>::Operation::PUT: {
-          repo.put(*puts_begin++);
+          _repo->put(*puts_begin++);
           break;
         }
         case WriteBatchInmem<Block>::Operation::REMOVE_BY_HASH: {
-          repo.removeByHash(*removes_begin++);
+          _repo->removeByHash(*removes_begin++);
           break;
         }
         default:
@@ -115,6 +129,7 @@ struct WriteBatchInmem : public WriteBatch<Block> {
   }
 
  private:
+  BlockRepositoryInmem<stored_block_t>* _repo;
   std::vector<stored_block_t> _puts;
   std::vector<hash_t> _removes;
   std::vector<Operation> _ops;
@@ -170,9 +185,11 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
     return _hash.erase(hash) == 1;
   }
 
+  void clear() override { _hash.clear(); }
+
   std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
     return std::unique_ptr<WriteBatchInmem<stored_block_t>>(
-        new WriteBatchInmem<stored_block_t>());
+        new WriteBatchInmem<stored_block_t>(this));
   }
 
   std::shared_ptr<cursor_t> newCursor() override {

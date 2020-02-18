@@ -3,7 +3,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
-#include "veriblock/storage/block_repository_rocks.hpp"
+#include "veriblock/storage/block_repository_rocks_manager.hpp"
 #include "veriblock/storage/stored_btcblock.hpp"
 #include "veriblock/storage/stored_vbkblock.hpp"
 
@@ -35,97 +35,46 @@ static const VbkBlock defaultBlockVbk{5000,
                                       16842752,
                                       1};
 
-enum class CF_NAMES {
-  DEFAULT = 0,
-  HEIGHT_HASHES_BTC,
-  HASH_BLOCK_BTC,
-  HEIGHT_HASHES_VBK,
-  HASH_BLOCK_VBK
-};
-
 // DB name
 static const std::string dbName = "db-test";
-// this is main DB instance
-static rocksdb::DB *dbInstance = nullptr;
-static std::vector<rocksdb::ColumnFamilyHandle *> cfHandles{};
-// column families in the DB
-static std::vector<std::string> cfNames{"default",
-                                        "height_hashes_btc",
-                                        "hash_block_btc",
-                                        "height_hashes_vbk",
-                                        "hash_block_vbk"};
 
-static rocksdb::Status openDB() {
-  /// TODO: erase DB before opening otherwise it may fail if scheme was changed
-
-  // prepare column families
-  std::vector<rocksdb::ColumnFamilyDescriptor> column_families;
-  rocksdb::ColumnFamilyOptions cfOption{};
-  for (const std::string &cfName : cfNames) {
-    rocksdb::ColumnFamilyDescriptor descriptor(cfName, cfOption);
-    column_families.push_back(descriptor);
-  }
-  cfHandles.clear();
-  rocksdb::Options options;
-  options.create_if_missing = true;
-  options.create_missing_column_families = true;
-  rocksdb::Status s = rocksdb::DB::Open(
-      options, dbName, column_families, &cfHandles, &dbInstance);
-  if (!s.ok()) return s;
-  return s;
-}
-
-// this class allows to properly close DB before opening it again
 class TestStorage : public ::testing::Test {
  protected:
-  std::shared_ptr<rocksdb::DB> dbPtr;
-  std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>> cfHandlePtrs;
-  // block storage
-  BlockRepositoryRocks<StoredBtcBlock> repoBtc;
-  BlockRepositoryRocks<StoredVbkBlock> repoVbk;
+  BlockRepositoryRocksManager<StoredBtcBlock, StoredVbkBlock> database =
+      BlockRepositoryRocksManager<StoredBtcBlock, StoredVbkBlock>(dbName);
+  std::shared_ptr<BlockRepository<StoredBtcBlock>> repoBtc;
+  std::shared_ptr<BlockRepository<StoredVbkBlock>> repoVbk;
 
   void SetUp() {
-    rocksdb::Status s = openDB();
+    rocksdb::Status s = database.open();
+    ASSERT_TRUE(s.ok());
+    s = database.clear();
     ASSERT_TRUE(s.ok());
 
-    // prepare smart pointers to look after DB cleanup
-    dbPtr = std::shared_ptr<rocksdb::DB>(dbInstance);
-    cfHandlePtrs = std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>>();
-    for (rocksdb::ColumnFamilyHandle *cfHandle : cfHandles) {
-      auto cfHandlePtr = std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandle);
-      cfHandlePtrs.push_back(cfHandlePtr);
-    }
+    repoBtc = database.repoBtc;
+    repoVbk = database.repoVbk;
 
-    repoBtc = BlockRepositoryRocks<StoredBtcBlock>(
-        dbPtr,
-        cfHandlePtrs[(int)CF_NAMES::HEIGHT_HASHES_BTC],
-        cfHandlePtrs[(int)CF_NAMES::HASH_BLOCK_BTC]);
-
-    repoVbk = BlockRepositoryRocks<StoredVbkBlock>(
-        dbPtr,
-        cfHandlePtrs[(int)CF_NAMES::HEIGHT_HASHES_VBK],
-        cfHandlePtrs[(int)CF_NAMES::HASH_BLOCK_VBK]);
+    repoBtc->clear();
+    repoVbk->clear();
   }
-
-  void TearDown() {}
 };
 
 TEST_F(TestStorage, SimplePut) {
   StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(btcBlock1, 0);
-  bool retBtc = repoBtc.put(blockBtc);
-  ASSERT_TRUE(retBtc);
+  bool retBtc = repoBtc->put(blockBtc);
+  EXPECT_FALSE(retBtc);
   StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
-  bool retVbk = repoVbk.put(blockVbk);
-  ASSERT_TRUE(retVbk);
+  bool retVbk = repoVbk->put(blockVbk);
+  EXPECT_FALSE(retVbk);
 }
 
 TEST_F(TestStorage, PutAndGet) {
   StoredBtcBlock blockBtc = StoredBtcBlock::fromBlock(btcBlock1, 0);
-  bool retBtc = repoBtc.put(blockBtc);
-  ASSERT_TRUE(retBtc);
+  bool retBtc = repoBtc->put(blockBtc);
+  EXPECT_FALSE(retBtc);
 
   StoredBtcBlock readBlock;
-  bool readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
+  bool readResult = repoBtc->getByHash(btcBlock1.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
 
   EXPECT_EQ(readBlock.height, blockBtc.height);
@@ -140,11 +89,11 @@ TEST_F(TestStorage, PutAndGet) {
 
 TEST_F(TestStorage, PutAndGetVbk) {
   StoredVbkBlock blockVbk = StoredVbkBlock::fromBlock(defaultBlockVbk);
-  bool retVbk = repoVbk.put(blockVbk);
-  ASSERT_TRUE(retVbk);
+  bool retVbk = repoVbk->put(blockVbk);
+  EXPECT_FALSE(retVbk);
 
   StoredVbkBlock readBlock;
-  bool readResult = repoVbk.getByHash(defaultBlockVbk.getHash(), &readBlock);
+  bool readResult = repoVbk->getByHash(defaultBlockVbk.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
 
   EXPECT_EQ(readBlock.height, defaultBlockVbk.height);
@@ -158,15 +107,15 @@ TEST_F(TestStorage, PutAndGetVbk) {
 TEST_F(TestStorage, GetManyByHash) {
   StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
   StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 0);
-  bool retBtc = repoBtc.put(storedBtcBlock1);
-  ASSERT_TRUE(retBtc);
-  retBtc = repoBtc.put(storedBtcBlock2);
-  ASSERT_TRUE(retBtc);
+  bool retBtc = repoBtc->put(storedBtcBlock1);
+  EXPECT_FALSE(retBtc);
+  retBtc = repoBtc->put(storedBtcBlock2);
+  EXPECT_FALSE(retBtc);
 
   std::vector<uint256> hashes{storedBtcBlock1.hash, storedBtcBlock2.hash};
   Slice<const uint256> hashesSlice(hashes.data(), hashes.size());
   std::vector<StoredBtcBlock> out{};
-  size_t readResult = repoBtc.getManyByHash(hashesSlice, &out);
+  size_t readResult = repoBtc->getManyByHash(hashesSlice, &out);
   ASSERT_EQ(readResult, 2);
 
   EXPECT_EQ(out.size(), 2);
@@ -184,46 +133,46 @@ TEST_F(TestStorage, GetManyByHash) {
 
 TEST_F(TestStorage, RemoveByHash) {
   StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
-  bool retBtc = repoBtc.put(storedBtcBlock1);
-  ASSERT_TRUE(retBtc);
+  bool retBtc = repoBtc->put(storedBtcBlock1);
+  EXPECT_FALSE(retBtc);
 
   StoredBtcBlock readBlock;
-  bool readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
+  bool readResult = repoBtc->getByHash(btcBlock1.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
 
-  bool deleteResult = repoBtc.removeByHash(btcBlock1.getHash());
+  bool deleteResult = repoBtc->removeByHash(btcBlock1.getHash());
   ASSERT_TRUE(deleteResult);
 
-  readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
+  readResult = repoBtc->getByHash(btcBlock1.getHash(), &readBlock);
   EXPECT_FALSE(readResult);
 }
 
 TEST_F(TestStorage, RemoveNonExisting) {
   uint256 zeroHash{};
-  bool deleteResult = repoBtc.removeByHash(zeroHash);
+  bool deleteResult = repoBtc->removeByHash(zeroHash);
   EXPECT_FALSE(deleteResult);
 }
 
 TEST_F(TestStorage, RemovePartially) {
   StoredBtcBlock storedBtcBlock1 = StoredBtcBlock::fromBlock(btcBlock1, 0);
   StoredBtcBlock storedBtcBlock2 = StoredBtcBlock::fromBlock(btcBlock2, 1);
-  bool retBtc = repoBtc.put(storedBtcBlock1);
-  ASSERT_TRUE(retBtc);
-  retBtc = repoBtc.put(storedBtcBlock2);
-  ASSERT_TRUE(retBtc);
+  bool retBtc = repoBtc->put(storedBtcBlock1);
+  EXPECT_FALSE(retBtc);
+  retBtc = repoBtc->put(storedBtcBlock2);
+  EXPECT_FALSE(retBtc);
 
   StoredBtcBlock readBlock;
-  bool readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
+  bool readResult = repoBtc->getByHash(btcBlock1.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
-  readResult = repoBtc.getByHash(btcBlock2.getHash(), &readBlock);
+  readResult = repoBtc->getByHash(btcBlock2.getHash(), &readBlock);
   ASSERT_TRUE(readResult);
 
-  size_t deleteResult = repoBtc.removeByHash(btcBlock1.getHash());
+  size_t deleteResult = repoBtc->removeByHash(btcBlock1.getHash());
   EXPECT_EQ(deleteResult, 1);
 
-  readResult = repoBtc.getByHash(btcBlock1.getHash(), &readBlock);
+  readResult = repoBtc->getByHash(btcBlock1.getHash(), &readBlock);
   EXPECT_FALSE(readResult);
 
-  readResult = repoBtc.getByHash(btcBlock2.getHash(), &readBlock);
+  readResult = repoBtc->getByHash(btcBlock2.getHash(), &readBlock);
   EXPECT_TRUE(readResult);
 }

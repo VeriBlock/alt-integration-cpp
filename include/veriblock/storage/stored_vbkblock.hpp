@@ -3,7 +3,6 @@
 
 #include <cstdint>
 
-#include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/uint.hpp"
 
@@ -25,6 +24,8 @@ struct StoredVbkBlock {
   hash_t hash{};
   height_t height{};
   VbkBlock block{};
+
+  hash_t getHash() const { return hash; }
 
   static StoredVbkBlock fromBlock(VbkBlock _block) {
     StoredVbkBlock storedBlock{};

@@ -78,8 +78,8 @@ class MockMiner {
                     const uint32_t& vbkBlockDelay,
                     ValidationState& state);
 
-  void mineBtcBlocks(const uint32_t& n, ValidationState& state);
-  void mineVbkBlocks(const uint32_t& n, ValidationState& state);
+  bool mineBtcBlocks(const uint32_t& n, ValidationState& state);
+  bool mineVbkBlocks(const uint32_t& n, ValidationState& state);
 
   bool bootstrapBtcChainWithGenesis(ValidationState& state);
 
