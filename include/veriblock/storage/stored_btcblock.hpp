@@ -25,6 +25,8 @@ struct StoredBtcBlock {
   height_t height{};
   BtcBlock block{};
 
+  hash_t getHash() const { return hash; }
+
   static StoredBtcBlock fromBlock(BtcBlock _block, height_t _height) {
     StoredBtcBlock storedBlock{};
     storedBlock.hash = _block.getHash();
