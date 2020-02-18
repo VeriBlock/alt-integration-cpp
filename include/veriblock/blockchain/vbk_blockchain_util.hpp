@@ -21,6 +21,9 @@ template <>
 void determineBestChain(Chain<VbkBlock>& currentBest,
                         BlockIndex<VbkBlock>& indexNew);
 
+template <>
+ArithUint256 getBlockProof(const VbkBlock& block);
+
 }  // namespace VeriBlock
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_
