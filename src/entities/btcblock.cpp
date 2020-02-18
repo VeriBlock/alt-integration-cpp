@@ -44,3 +44,14 @@ uint256 BtcBlock::getHash() const {
   toRaw(stream);
   return sha256twice(stream.data()).reverse();
 }
+
+BtcBlock BtcBlock::fromHex(const std::string& hex) {
+  auto v = ParseHex(hex);
+  return BtcBlock::fromRaw(v);
+}
+
+std::string BtcBlock::toHex() const {
+  WriteStream stream;
+  this->toRaw(stream);
+  return HexStr(stream.data());
+}

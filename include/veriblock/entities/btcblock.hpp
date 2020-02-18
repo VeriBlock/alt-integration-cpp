@@ -23,6 +23,8 @@ struct BtcBlock {
   uint32_t bits{};
   uint32_t nonce{};
 
+  static BtcBlock fromHex(const std::string& hex);
+
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
    * BtcBlock
@@ -51,6 +53,8 @@ struct BtcBlock {
    */
   void toRaw(WriteStream& stream) const;
 
+  std::string toHex() const;
+
   /**
    * Convert BtcBlock to data stream using BtcBlock VBK byte format
    * @param stream data stream to write into
@@ -60,21 +64,6 @@ struct BtcBlock {
   uint32_t getDifficulty() const { return bits; }
 
   uint32_t getBlockTime() const { return timestamp; }
-
-  ArithUint256 getBlockProof() const {
-    bool negative;
-    bool overflow;
-    ArithUint256 bnTarget = ArithUint256::fromBits(bits, &negative, &overflow);
-    if (negative || overflow || bnTarget == 0) {
-      return 0;
-    }
-
-    // We need to compute 2**256 / (bnTarget+1), but we can't represent 2**256
-    // as it's too large for an arith_uint256. However, as 2**256 is at least as
-    // large as bnTarget+1, it is equal to ((2**256 - bnTarget - 1) /
-    // (bnTarget+1)) + 1, or ~bnTarget / (bnTarget+1) + 1.
-    return (~bnTarget / (bnTarget + 1)) + 1;
-  }
 
   friend bool operator==(const BtcBlock& a, const BtcBlock& b) {
     // clang-format off

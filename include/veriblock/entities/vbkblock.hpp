@@ -17,7 +17,7 @@ struct VbkBlock {
 
   int32_t height{};
   int16_t version{};
-  uint144 previousBlock{};
+  uint96 previousBlock{};
   uint72 previousKeystone{};
   uint72 secondPreviousKeystone{};
   uint128 merkleRoot{};
@@ -25,13 +25,15 @@ struct VbkBlock {
   int32_t difficulty{};
   int32_t nonce{};
 
+  static VbkBlock fromHex(const std::string& hex);
+
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
    * VbkBlock
    * @param stream data stream to read from
    * @return VbkBlock
    */
-  static VbkBlock fromRaw(const std::vector<uint8_t>& bytes);
+  static VbkBlock fromRaw(Slice<const uint8_t> bytes);
 
   /**
    * Read basic blockheader data from the stream and convert it to VbkBlock
@@ -53,6 +55,8 @@ struct VbkBlock {
    */
   void toRaw(WriteStream& stream) const;
 
+  std::string toHex() const;
+
   /**
    * Convert VbkBlock to data stream using VbkBlock VBK byte format
    * @param stream data stream to write into
@@ -71,11 +75,6 @@ struct VbkBlock {
    */
   uint32_t getBlockTime() const;
 
-  /*
-   * TODO
-   */
-  ArithUint256 getBlockProof() const;
-
   friend bool operator==(const VbkBlock& a, const VbkBlock& b) {
     return a.height == b.height && a.version == b.version &&
            a.previousBlock == b.previousBlock &&
@@ -93,7 +92,7 @@ struct VbkBlock {
    * Calculate the hash of the vbk block
    * @return hash block hash
    */
-  uint192 getHash() const;
+  hash_t getHash() const;
 };
 
 }  // namespace VeriBlock
