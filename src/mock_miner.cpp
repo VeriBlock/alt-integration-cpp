@@ -34,8 +34,10 @@ bool mineBlocks(const uint32_t& n,
 VbkTx MockMiner::generateSignedVbkTx(const PublicationData& publicationData) {
   VbkTx transaction;
   transaction.signatureIndex = 7;
-  transaction.networkOrType.hasNetworkByte = true;
-  transaction.networkOrType.networkByte = 1;
+  transaction.networkOrType.hasNetworkByte =
+      vbk_params->getTransactionMagicByte().hasValue;
+  transaction.networkOrType.networkByte =
+      vbk_params->getTransactionMagicByte().value;
   transaction.networkOrType.typeId = (uint8_t)TxType::VBK_TX;
   transaction.sourceAmount = Coin(1000);
   transaction.sourceAddress = Address::fromPublicKey(defaultPublicKeyVbk);
@@ -82,8 +84,9 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
     const BtcBlock::hash_t& lastKnownBtcBlockHash,
     ValidationState& state) {
   VbkPopTx popTx;
-  popTx.networkOrType.hasNetworkByte = true;
-  popTx.networkOrType.networkByte = 1;
+  popTx.networkOrType.hasNetworkByte =
+      vbk_params->getTransactionMagicByte().hasValue;
+  popTx.networkOrType.networkByte = vbk_params->getTransactionMagicByte().value;
   popTx.networkOrType.typeId = (uint8_t)TxType::VBK_POP_TX;
   popTx.address = Address::fromPublicKey(defaultPublicKeyVbk);
   popTx.publishedBlock = publishedBlock;
