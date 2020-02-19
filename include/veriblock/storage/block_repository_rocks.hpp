@@ -26,7 +26,8 @@ struct CursorRocks : public Cursor<typename Block::hash_t, Block> {
   CursorRocks(std::shared_ptr<rocksdb::DB> db,
               std::shared_ptr<cf_handle_t> hashBlockHandle)
       : _db(db), _hashBlockHandle(hashBlockHandle) {
-    auto iterator = _db->NewIterator(rocksdb::ReadOptions(), _hashBlockHandle.get());
+    auto iterator =
+        _db->NewIterator(rocksdb::ReadOptions(), _hashBlockHandle.get());
     _iterator = std::unique_ptr<rocksdb::Iterator>(iterator);
   }
 
@@ -77,11 +78,11 @@ struct WriteBatchRocks : public WriteBatch<Block> {
       : _db(db), _hashBlockHandle(hashBlockHandle) {}
 
   void put(const stored_block_t& block) override {
-    std::string blockHash(
-        reinterpret_cast<const char*>(block.getHash().data()),
+    std::string blockHash(reinterpret_cast<const char*>(block.getHash().data()),
                           block.getHash().size());
     std::string blockBytes = block.toRaw();
-    rocksdb::Status s = _batch.Put(_hashBlockHandle.get(), blockHash, blockBytes);
+    rocksdb::Status s =
+        _batch.Put(_hashBlockHandle.get(), blockHash, blockBytes);
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
@@ -99,8 +100,7 @@ struct WriteBatchRocks : public WriteBatch<Block> {
   void clear() override { _batch.Clear(); }
 
   void commit() override {
-    rocksdb::Status s =
-        _db->Write(rocksdb::WriteOptions(), &_batch);
+    rocksdb::Status s = _db->Write(rocksdb::WriteOptions(), &_batch);
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
@@ -135,9 +135,8 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     stored_block_t outBlock{};
     bool existing = getByHash(block.getHash(), &outBlock);
 
-    std::string blockHash(
-        reinterpret_cast<const char*>(block.getHash().data()),
-        block.getHash().size());
+    std::string blockHash(reinterpret_cast<const char*>(block.getHash().data()),
+                          block.getHash().size());
     std::string blockBytes = block.toRaw();
 
     rocksdb::Status s = _db->Put(
@@ -195,7 +194,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return true;
   }
 
-  void clear() override { 
+  void clear() override {
     // call BlockRepositoryRocksManager.clear() instead
     return;
   }

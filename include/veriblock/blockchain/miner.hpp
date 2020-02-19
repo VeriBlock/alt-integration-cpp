@@ -19,7 +19,6 @@ struct Miner {
   Miner(std::shared_ptr<ChainParams> params) : params_(std::move(params)) {}
 
   void createBlock(Block& block) {
-    ValidationState state;
     while (!checkProofOfWork(block, *params_)) {
       ++block.nonce;
       if (block.nonce >= std::numeric_limits<decltype(block.nonce)>::max()) {
@@ -43,40 +42,6 @@ struct Miner {
  private:
   std::shared_ptr<ChainParams> params_;
 };
-
-// TODO: move this to vbk_miner.hpp and implement proper method
-// template <>
-// VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
-//    const merkle_t& merkle) {
-//  VbkBlock block;
-//
-//  // TODO: figure out better way to set this data
-//  block.version = blocks_[0].version;
-//  block.difficulty = blocks_[0].difficulty;
-//  block.previousBlock = blocks_[blocks_.size() - 1]
-//                            .getHash()
-//                            .template trim<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
-//  if (blocks_.size() >= KEYSTONE_INTERVAL) {
-//    size_t lastIndex = blocks_.size() - 1;
-//    // set first previous keystone
-//    size_t prevDiff = lastIndex % KEYSTONE_INTERVAL;
-//    block.previousKeystone =
-//        blocks_[lastIndex - prevDiff]
-//            .getHash()
-//            .template trim<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
-//
-//    // set second previous keystone
-//    if (blocks_.size() >= 2 * KEYSTONE_INTERVAL) {
-//      block.secondPreviousKeystone =
-//          blocks_[lastIndex - prevDiff - KEYSTONE_INTERVAL]
-//              .getHash()
-//              .template trim<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
-//    }
-//  }
-//  block.timestamp = currentTimestamp4();
-//  block.merkleRoot = merkle;
-//  return block;
-//}
 
 }  // namespace VeriBlock
 

@@ -88,6 +88,7 @@ struct VbkChainParamsMain : public VbkChainParams {
 /**
  * TestNet
  */
+
 struct VbkChainParamsTest : public VbkChainParams {
   ~VbkChainParamsTest() override = default;
 
@@ -157,6 +158,18 @@ struct VbkChainParamsRegTest : public VbkChainParams {
   }
   bool getPowNoRetargeting() const noexcept override { return true; }
   VbkBlock getGenesisBlock() const noexcept override {
+    //{
+    //  "height": 0,
+    //  "version": 2,
+    //  "previousBlock": "000000000000000000000000",
+    //  "previousKeystone": "000000000000000000",
+    //  "secondPreviousKeystone": "000000000000000000",
+    //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
+    //  "timestamp": 1553699987,
+    //  "difficulty": 117586646,
+    //  "nonce": 1924857207
+    //}
+
     VbkBlock block;
     block.height = 0;
     block.version = 2;

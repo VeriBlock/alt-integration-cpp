@@ -1,6 +1,5 @@
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
-
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -56,6 +55,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
 template <>
 void determineBestChain(Chain<VbkBlock>& currentBest,
                         BlockIndex<VbkBlock>& indexNew) {
+  // It is a temprorary solution, it has been copied from the Btc implementation
   if (currentBest.tip() == nullptr ||
       currentBest.tip()->chainWork < indexNew.chainWork) {
     currentBest.setTip(&indexNew);

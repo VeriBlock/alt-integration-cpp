@@ -3,8 +3,8 @@
 
 #include <cstdint>
 
-#include "veriblock/uint.hpp"
 #include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 

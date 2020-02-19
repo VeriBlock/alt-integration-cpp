@@ -26,3 +26,6 @@ target_link_libraries(arith_uint256_test vbkutils)
 
 addtest(signutil_test signutil_test.cpp)
 target_link_libraries(signutil_test vbkutils)
+
+addtest(mock_miner_test mock_miner_test.cpp)
+target_link_libraries(mock_miner_test vbkutils)
