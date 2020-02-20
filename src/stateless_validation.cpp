@@ -226,7 +226,7 @@ bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
   bool overflow = false;
   auto target = ArithUint256::fromBits(block.difficulty, &negative, &overflow);
 
-  if (negative || overflow || target == 0 || target <= minDiff) {
+  if (negative || overflow || target == 0 || target < minDiff) {
     return false;
   }
 
