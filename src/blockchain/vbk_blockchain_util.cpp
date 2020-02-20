@@ -64,14 +64,14 @@ void determineBestChain(Chain<VbkBlock>& currentBest,
 
 template <>
 uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
-                             const VbkBlock& block,
+                             const VbkBlock&,
                              const VbkChainParams& params) {
   static const uint32_t K = params.getRetargetPeriod() *
                             (params.getRetargetPeriod() - 1) *
                             params.getTargetBlockTime() / 2;
 
   if (params.getPowNoRetargeting() ||
-      (uint32_t)block.height < params.getRetargetPeriod()) {
+      (uint32_t)prevBlock.height < params.getRetargetPeriod()) {
     return prevBlock.getDifficulty();
   }
 
@@ -93,19 +93,26 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
 
     t += solveTime * (params.getRetargetPeriod() - i - 1);
 
-    nextTarget += ArithUint256::fromBits(workBlock->getDifficulty());
+    nextTarget += ArithUint256::fromBits(workBlock->pprev->getDifficulty());
   }
 
-  nextTarget *= 100000000;
+  nextTarget *= 1000000000;
   nextTarget /= (params.getRetargetPeriod() - 1);
-  nextTarget /= 100000000;
+  // Half up rounding
+  nextTarget += 5;
+  nextTarget /= 1000000000;
 
   if (t < (int32_t)(K / 10)) {
     t = (int32_t)(K / 10);
   }
 
-  nextTarget *= (uint32_t)((double)K / t * 100000000);
+  double coef = (double)K / t;
+  // Half up rounding
+  coef += 0.000000005;
+
+  nextTarget *= (uint32_t)(coef * 100000000);
   nextTarget /= 100000000;
+
   ArithUint256 minDif = params.getMinimumDifficulty();
 
   if (nextTarget < minDif) {

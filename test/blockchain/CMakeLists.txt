@@ -33,17 +33,17 @@ target_link_libraries(btc_blockchain_test
         vbkutils
         )
 
-# TODO: fix
-#addtest(vbk_blockchain_test
-#        vbk_blockchain_test.cpp
-#        vbk_blockchain_util_test.cpp
-#        # generated cpps
-#        ${vbk_gen_1}
-#        ${vbk_gen_2}
-#        )
-#target_link_libraries(vbk_blockchain_test
-#        vbkutils
-#        )
+
+addtest(vbk_blockchain_test
+        vbk_blockchain_test.cpp
+        vbk_blockchain_util_test.cpp
+        # generated cpps
+        ${vbk_gen_1}
+        ${vbk_gen_2}
+        )
+target_link_libraries(vbk_blockchain_test
+        vbkutils
+        )
 
 
 addtest(blockchain_test

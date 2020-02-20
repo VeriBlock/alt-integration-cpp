@@ -48,7 +48,7 @@ struct VbkChainParamsMain : public VbkChainParams {
 
   // hex(900000000000) = d18c2e2800
   uint256 getMinimumDifficulty() const override {
-    return uint256::fromHex("d18c2e2800");
+    return ArithUint256::fromHex("d18c2e2800");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     return VbkNetworkType(false, 0);
@@ -100,7 +100,7 @@ struct VbkChainParamsTest : public VbkChainParams {
 
   // hex(100000000) = 5f5e100
   uint256 getMinimumDifficulty() const override {
-    return uint256::fromHex("5f5e100");
+    return ArithUint256::fromHex("05F5E100");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     return VbkNetworkType(true, 0xAA);
@@ -203,7 +203,7 @@ struct VbkChainParamsAlpha : public VbkChainParams {
 
   // hex(9999872) = 989600
   uint256 getMinimumDifficulty() const override {
-    return uint256::fromHex("989600");
+    return ArithUint256::fromHex("989600");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     return VbkNetworkType(true, 0xAA);

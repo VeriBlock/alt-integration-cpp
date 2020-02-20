@@ -125,14 +125,14 @@ static std::vector<GetNextWorkRequiredTestCases>
             (int32_t) VbkChainParamsMain().getTargetBlockTime() + 10,
             10,
             ArithUint256::fromHex("09184E72A000").toBits(),
-            VbkChainParamsMain().getRetargetPeriod() + 1
+            VbkChainParamsMain().getRetargetPeriod()
         },
         {
             ArithUint256::fromHex("08840877ADF0").toBits(),
             (int32_t) VbkChainParamsMain().getTargetBlockTime() - 10,
             -10,
             ArithUint256::fromHex("09184E72A000").toBits(),
-            VbkChainParamsMain().getRetargetPeriod() + 1
+            VbkChainParamsMain().getRetargetPeriod()
         }
         // clang-format on
 };
@@ -145,8 +145,8 @@ TEST_P(GetNextWorkRequiredTest, getNextWorkRequired_test) {
                                                      value.chain_difficulty,
                                                      value.chainlength);
 
-  uint32_t result = getNextWorkRequired(
-      chain[chain.size() - 2], chain[chain.size() - 1].header, *chainparams);
+  uint32_t result =
+      getNextWorkRequired(chain[chain.size() - 1], VbkBlock(), *chainparams);
 
   EXPECT_EQ(value.expected_difficulty, result);
 }
@@ -157,7 +157,7 @@ INSTANTIATE_TEST_SUITE_P(GetNextWorkRequiredRegression,
 struct SingleTest : public ::testing::Test, public VbkBlockchainUtilTest {};
 
 TEST_F(SingleTest, single_test) {
-  uint32_t chainlength = chainparams->getRetargetPeriod() + 1;
+  uint32_t chainlength = chainparams->getRetargetPeriod();
 
   int32_t deltaTime = chainparams->getTargetBlockTime();
 
@@ -186,8 +186,8 @@ TEST_F(SingleTest, single_test) {
     chain[i] = temp;
   }
 
-  uint32_t result = getNextWorkRequired(
-      chain[chain.size() - 2], chain[chain.size() - 1].header, *chainparams);
+  uint32_t result =
+      getNextWorkRequired(chain[chain.size() - 1], VbkBlock(), *chainparams);
 
   EXPECT_EQ(ArithUint256::fromHex("0228C35294D0").toBits(), result);
 }
