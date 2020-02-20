@@ -1,3 +1,5 @@
+add_subdirectory(pop)
+
 gencpp(
         btc_blockheaders_mainnet_0_10000
         btc_blockheaders_mainnet_0_10000.txt

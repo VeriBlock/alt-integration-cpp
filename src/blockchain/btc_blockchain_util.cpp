@@ -28,19 +28,9 @@ BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
   block.version = tip.header.version;
   block.previousBlock = tip.header.getHash();
   block.merkleRoot = merkle;
-  // TODO: is this correct?
   block.timestamp = currentTimestamp4();
   block.bits = getNextWorkRequired(tip, block, *params_);
   return block;
-}
-
-template <>
-void determineBestChain(Chain<BtcBlock>& currentBest,
-                        BlockIndex<BtcBlock>& indexNew) {
-  if (currentBest.tip() == nullptr ||
-      currentBest.tip()->chainWork < indexNew.chainWork) {
-    currentBest.setTip(&indexNew);
-  }
 }
 
 // copied from BTC

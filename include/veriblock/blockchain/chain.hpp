@@ -29,10 +29,15 @@ struct Chain {
 
   explicit Chain(height_t startHeight) : startHeight_(startHeight) {}
 
+  explicit Chain(height_t startHeight, index_t* tip)
+      : startHeight_(startHeight) {
+    setTip(tip);
+  }
+
   height_t getStartHeight() const { return startHeight_; }
 
   bool contains(const index_t* index) const {
-    return (*this)[index->height] == index;
+    return index != nullptr && (*this)[index->height] == index;
   }
 
   index_t* operator[](height_t height) const {
@@ -81,6 +86,21 @@ struct Chain {
   friend bool operator==(const Chain& a, const Chain& b) {
     // TODO: think how to use use startHeight_
     return a.chain.size() == b.chain.size() && a.tip() == b.tip();
+  }
+
+  const index_t* findFork(const index_t* pindex) const {
+    if (pindex == nullptr || size() == 0) {
+      return nullptr;
+    }
+
+    auto lastHeight = size() - 1;
+    if (pindex->height > lastHeight) {
+      pindex = pindex->getAncestor(lastHeight);
+    }
+    while (pindex && !contains(pindex)) {
+      pindex = pindex->pprev;
+    }
+    return pindex;
   }
 
  private:

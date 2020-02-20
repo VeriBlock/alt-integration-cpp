@@ -29,3 +29,6 @@ target_link_libraries(signutil_test vbkutils)
 
 addtest(mock_miner_test mock_miner_test.cpp)
 target_link_libraries(mock_miner_test vbkutils)
+
+addtest(keystone_util_test keystone_util_test.cpp)
+target_link_libraries(keystone_util_test vbkutils)

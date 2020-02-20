@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_VERIBLOCK_CONSTS_HPP
 
 #include <cstdint>
+#include <vector>
 
 namespace VeriBlock {
 
@@ -11,9 +12,10 @@ enum class TxType {
 };
 
 // 10 minutes
-constexpr const int MAX_FUTURE_BLOCK_TIME = 10 * 60;
+constexpr const int ALT_MAX_FUTURE_BLOCK_TIME = 10 * 60;
 
-constexpr const auto KEYSTONE_INTERVAL = 5;
+constexpr const auto VBK_KEYSTONE_INTERVAL = 20;
+constexpr const auto ALT_KEYSTONE_INTERVAL = 5;
 constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
 constexpr const auto MAX_PAYOUT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
@@ -107,6 +109,9 @@ constexpr const auto MAX_RAWTX_SIZE_VBKPOPTX =
 
 constexpr const auto BTC_INMEM_BLOCKS_WINDOW = 1000;
 constexpr const auto VBK_INMEM_BLOCKS_WINDOW = 10000;
+constexpr  const auto BITCOIN_FINALITY_DELAY = 11;
+
+extern const std::vector<int> POP_CONSENSUS_WEIGHTS_BY_RELATIVE_BITCOIN_INDEX;
 
 }  // namespace VeriBlock
 

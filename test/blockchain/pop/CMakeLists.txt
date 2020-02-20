@@ -1,0 +1,2 @@
+addtest(pop_fork_resolution_test pop_fork_resolution_test.cpp)
+target_link_libraries(pop_fork_resolution_test vbkutils)

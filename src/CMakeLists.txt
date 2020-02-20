@@ -8,8 +8,10 @@ add_library(vblake OBJECT vblake.cpp)
 
 add_library(vbkutils
         checks.cpp
+        consts.cpp
         serde.cpp
         strutil.cpp
+        keystone_util.cpp
         read_stream.cpp
         write_stream.cpp
         base58.cpp
@@ -20,6 +22,7 @@ add_library(vbkutils
         signutil.cpp
         mock_miner.cpp
         $<TARGET_OBJECTS:blockchain>
+        $<TARGET_OBJECTS:pop_utils>
         $<TARGET_OBJECTS:entities>
         $<TARGET_OBJECTS:secp256k1>
         $<TARGET_OBJECTS:sha256>
