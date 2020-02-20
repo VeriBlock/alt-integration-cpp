@@ -210,15 +210,17 @@ struct BlockTree {
           "acceptBlockHeader()", "bad-diffbits", "incorrect proof of work");
     }
 
-    const int64_t adjustedTime = currentTimestamp4();
-    const int64_t medianTimePast = prev->getMedianTimePast();
-    if (int64_t(block.getBlockTime()) < medianTimePast) {
+    // TODO move this validation into the statefull function
+    // ContextualCheckBlock() This validation that was moved from the btc, fails
+    // with the vbk chains
+    /*if (int64_t(block.getBlockTime()) < prev->getMedianTimePast()) {
       return state.Invalid("acceptBlockHeader()",
                            "time-too-old",
                            "block's timestamp is too early");
-    }
+    }*/
 
-    if (int64_t(block.getBlockTime()) > adjustedTime + MAX_FUTURE_BLOCK_TIME) {
+    if (int64_t(block.getBlockTime()) >
+        currentTimestamp4() + MAX_FUTURE_BLOCK_TIME) {
       return state.Invalid("acceptBlockHeader()",
                            "time-too-new",
                            "block timestamp too far in the future");

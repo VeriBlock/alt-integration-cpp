@@ -1,5 +1,3 @@
-#include "veriblock/stateless_validation.hpp"
-
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -8,6 +6,7 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
+#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -227,7 +226,7 @@ bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
   bool overflow = false;
   auto target = ArithUint256::fromBits(block.difficulty, &negative, &overflow);
 
-  if (negative || overflow || target == 0 || target <= minDiff) {
+  if (negative || overflow || target == 0 || target < minDiff) {
     return false;
   }
 
