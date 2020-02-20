@@ -1,3 +1,4 @@
+#include <veriblock/third_party/BigDecimal.h>
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
@@ -13,8 +14,6 @@ ArithUint256 getBlockProof(const VbkBlock& block) {
   if (negative || overflow || target == 0) {
     return 0;
   }
-
-  // TODO
   return target;
 }
 
@@ -65,7 +64,7 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
     return prevBlock.getDifficulty();
   }
 
-  ArithUint256 nextTarget;
+  ArithUint256 targetDif = 0;
   int32_t t = 0;
   uint32_t i = 0;
 
@@ -83,33 +82,32 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
 
     t += solveTime * (params.getRetargetPeriod() - i - 1);
 
-    nextTarget += ArithUint256::fromBits(workBlock->pprev->getDifficulty());
+    targetDif += ArithUint256::fromBits(workBlock->pprev->getDifficulty());
   }
 
-  nextTarget *= 1000000000;
+  BCMath::bcscale(15);
+  BCMath nextTarget = BCMath(targetDif.toString());
   nextTarget /= (params.getRetargetPeriod() - 1);
-  // Half up rounding
-  nextTarget += 5;
-  nextTarget /= 1000000000;
+  nextTarget.round(8);
 
   if (t < (int32_t)(K / 10)) {
     t = (int32_t)(K / 10);
   }
 
-  double coef = (double)K / t;
-  // Half up rounding
-  coef += 0.000000005;
+  BCMath coef = K;
+  coef /= t;
+  coef.round(8);
 
-  nextTarget *= (uint32_t)(coef * 100000000);
-  nextTarget /= 100000000;
+  nextTarget *= coef;
 
   ArithUint256 minDif = params.getMinimumDifficulty();
+  targetDif = ArithUint256::fromString(nextTarget.getIntPart());
 
-  if (nextTarget < minDif) {
+  if (targetDif < minDif) {
     return minDif.toBits();
   }
 
-  return nextTarget.toBits();
+  return targetDif.toBits();
 }
 
 }  // namespace VeriBlock

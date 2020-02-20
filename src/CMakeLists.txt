@@ -26,5 +26,6 @@ add_library(vbkutils
         $<TARGET_OBJECTS:entities>
         $<TARGET_OBJECTS:secp256k1>
         $<TARGET_OBJECTS:sha256>
+        $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
         )
