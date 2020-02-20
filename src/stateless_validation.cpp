@@ -274,10 +274,8 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
                          "Vbk transaction contains an invalid public key");
   }
 
-  if (!veriBlockVerify(
-          Slice<const uint8_t>(tx.getHash().data(), tx.getHash().size()),
-          tx.signature,
-          publicKeyFromVbk(tx.publicKey))) {
+  auto hash = tx.getHash();
+  if (!veriBlockVerify(hash, tx.signature, publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("checkSignature()",
                          "Vbk transaction",
                          "Vbk transaction is incorrectly signed");
@@ -291,11 +289,8 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
                          "Invalid Vbk Pop transaction",
                          "Vbk Pop transaction contains an invalid public key");
   }
-
-  if (!veriBlockVerify(
-          Slice<const uint8_t>(tx.getHash().data(), tx.getHash().size()),
-          tx.signature,
-          publicKeyFromVbk(tx.publicKey))) {
+  auto hash = tx.getHash();
+  if (!veriBlockVerify(hash, tx.signature, publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("checkSignature()",
                          "Invalid Vbk Pop transaction",
                          "Vbk Pop transaction is incorrectly signed");

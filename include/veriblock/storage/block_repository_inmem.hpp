@@ -2,7 +2,9 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_INMEM_HPP_
 
 #include <iterator>
-#include <veriblock/storage/block_repository.hpp>
+#include <memory>
+
+#include "veriblock/storage/block_repository.hpp"
 
 namespace VeriBlock {
 
@@ -42,7 +44,7 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     return a && b && c;
   }
   void next() override {
-    if(_it < _etl.cend()) {
+    if (_it < _etl.cend()) {
       ++_it;
     }
   }
@@ -57,7 +59,7 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
     if (!isValid()) {
       throw std::out_of_range("invalid cursor");
     }
-      
+
     return _it->first;
   }
   stored_block_t value() const override {
@@ -87,8 +89,7 @@ struct WriteBatchInmem : public WriteBatch<Block> {
 
   enum class Operation { PUT, REMOVE_BY_HASH };
 
-  WriteBatchInmem(BlockRepositoryInmem<stored_block_t>* repo)
-      : _repo(repo) {}
+  WriteBatchInmem(BlockRepositoryInmem<stored_block_t>* repo) : _repo(repo) {}
 
   void put(const stored_block_t& block) override {
     _ops.push_back(Operation::PUT);
@@ -174,9 +175,10 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   }
 
   bool put(const stored_block_t& block) override {
-    auto p = std::make_shared<stored_block_t>(block);
-    auto pair = _hash.insert_or_assign(block.getHash(), std::move(p));
-    return !pair.second;
+    auto bHash = block.getHash();
+    bool res = _hash.find(bHash) != _hash.end();
+    _hash[bHash] = std::make_shared<stored_block_t>(block);
+    return res;
   }
 
   bool removeByHash(const hash_t& hash) override {

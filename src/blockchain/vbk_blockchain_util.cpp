@@ -55,6 +55,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
 template <>
 void determineBestChain(Chain<VbkBlock>& currentBest,
                         BlockIndex<VbkBlock>& indexNew) {
+  // It is a temprorary solution, it has been copied from the Btc implementation
   if (currentBest.tip() == nullptr ||
       currentBest.tip()->chainWork < indexNew.chainWork) {
     currentBest.setTip(&indexNew);
