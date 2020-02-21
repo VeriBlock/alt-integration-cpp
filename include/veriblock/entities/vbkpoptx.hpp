@@ -17,6 +17,8 @@
 namespace VeriBlock {
 
 struct VbkPopTx {
+  using hash_t = uint256;
+
   NetworkBytePair networkOrType{};
   Address address{};
   VbkBlock publishedBlock{};
@@ -63,7 +65,7 @@ struct VbkPopTx {
    * Calculate the hash of the vbk pop transaction
    * @return hash vbk pop transaction hash
    */
-  uint256 getHash() const;
+  hash_t getHash() const;
 };
 
 }  // namespace VeriBlock
