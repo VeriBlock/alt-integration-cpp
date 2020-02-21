@@ -33,7 +33,7 @@ struct BlockchainFixture {
 struct VbkTestCase {
   std::string headers;
   std::shared_ptr<VbkChainParams> params;
-  size_t startHeight = 0;
+  uint32_t startHeight = 0;
 
   std::vector<VbkBlock> getBlocks() const {
     std::vector<VbkBlock> ret;
@@ -61,16 +61,16 @@ static std::vector<VbkTestCase> accept_test_cases = {
      1},
     {generated::vbk_blockheaders_mainnet_0_10000,
      std::make_shared<VbkChainParamsMain>(),
-     2015},
+     99},
     {generated::vbk_blockheaders_mainnet_0_10000,
      std::make_shared<VbkChainParamsMain>(),
-     2016},
+     100},
     {generated::vbk_blockheaders_mainnet_0_10000,
      std::make_shared<VbkChainParamsMain>(),
-     2017},
+     101},
     {generated::vbk_blockheaders_mainnet_0_10000,
      std::make_shared<VbkChainParamsMain>(),
-     5000},
+     1337},
     /// testnet
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
@@ -80,21 +80,19 @@ static std::vector<VbkTestCase> accept_test_cases = {
      1},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     2015},
+     99},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     2016},
+     100},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     2017},
+     101},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     5000},
+     1337},
 };
 
-/**
- * Read Vbk_blockheaders file.
- */
+//Read Vbk_blockheaders file.
 TEST_P(AcceptTest, BootstrapWithChain) {
   auto value = GetParam();
   auto allblocks = value.getBlocks();

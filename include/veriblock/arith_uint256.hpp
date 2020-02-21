@@ -199,6 +199,10 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
 
   int compareTo(const ArithUint256& b) const;
 
+  std::string toString();
+
+  static ArithUint256 fromString(std::string num);
+
   friend inline const ArithUint256 operator+(const ArithUint256& a,
                                              const ArithUint256& b) {
     return ArithUint256(a) += b;
