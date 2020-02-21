@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <veriblock/blockchain/pop/fork_resolution.hpp>
+#include "veriblock/blockchain/pop/fork_resolution.hpp"
 
 using namespace VeriBlock;
 
