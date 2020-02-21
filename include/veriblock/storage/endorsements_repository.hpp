@@ -12,7 +12,7 @@ namespace VeriBlock {
 
 struct Endorsement {
   // The unique key that identifies this endorsement
-  std::string endorsementKey;
+  VbkPopTx::hash_t endorsementKey;
   // The hash of the VeriBlock block that this DefaultEndorsement endorses
   VbkBlock::hash_t endorsedVbkHash;
   // The hash of the VeriBlock block that contains this DefaultEndorsement
