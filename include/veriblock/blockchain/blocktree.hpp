@@ -27,6 +27,8 @@ struct BlockTree {
   using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
 
+  virtual ~BlockTree() = default;
+
   BlockTree(std::shared_ptr<BlockRepository<index_t>> repo,
             std::shared_ptr<ChainParams> param)
       : repo_(std::move(repo)), param_(std::move(param)) {}
@@ -220,7 +222,7 @@ struct BlockTree {
     }*/
 
     if (int64_t(block.getBlockTime()) >
-        currentTimestamp4() + MAX_FUTURE_BLOCK_TIME) {
+        currentTimestamp4() + ALT_MAX_FUTURE_BLOCK_TIME) {
       return state.Invalid("acceptBlockHeader()",
                            "time-too-new",
                            "block timestamp too far in the future");
@@ -253,6 +255,15 @@ struct BlockTree {
 
     repo_->put(*index);
     return true;
+  }
+
+ protected:
+  virtual void determineBestChain(Chain<block_t>& currentBest,
+                                  index_t& indexNew) {
+    if (currentBest.tip() == nullptr ||
+        currentBest.tip()->chainWork < indexNew.chainWork) {
+      currentBest.setTip(&indexNew);
+    }
   }
 };
 

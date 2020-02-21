@@ -18,10 +18,6 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) const;
 
 template <>
-void determineBestChain(Chain<VbkBlock>& currentBest,
-                        BlockIndex<VbkBlock>& indexNew);
-
-template <>
 ArithUint256 getBlockProof(const VbkBlock& block);
 
 }  // namespace VeriBlock

@@ -18,10 +18,6 @@ BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
     const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) const;
 
 template <>
-void determineBestChain(Chain<BtcBlock>& currentBest,
-                        BlockIndex<BtcBlock>& indexNew);
-
-template <>
 ArithUint256 getBlockProof(const BtcBlock& block);
 
 }  // namespace VeriBlock
