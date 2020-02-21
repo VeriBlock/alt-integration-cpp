@@ -15,17 +15,9 @@ void EndorsementsRepositoryInmem::put(
       break;
     }
   }
-  if (endrs.empty()) {
-    endorsed_map[endorsedBlockHash] = {{
-        popTx.getHash().asString(),
-        popTx.publishedBlock.getHash(),
-        {containingBlockHash},
-        popTx.blockOfProof.getHash(),
-        popTx.address.toString(),
-    }};
-  } else if (endorsement == endrs.end()) {
+  if (endorsement == endrs.end()) {
     endrs.push_back({
-        popTx.getHash().asString(),
+        popTx.getHash(),
         popTx.publishedBlock.getHash(),
         {containingBlockHash},
         popTx.blockOfProof.getHash(),
