@@ -28,9 +28,9 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone
-  if (block.height >= KEYSTONE_INTERVAL) {
-    auto diff = block.height % KEYSTONE_INTERVAL;
-    diff = diff == 0 ? KEYSTONE_INTERVAL : diff;
+  if (block.height >= ALT_KEYSTONE_INTERVAL) {
+    auto diff = block.height % ALT_KEYSTONE_INTERVAL;
+    diff = diff == 0 ? ALT_KEYSTONE_INTERVAL : diff;
     auto* prevKeystoneIndex = tip.getAncestorBlocksBehind(diff);
     assert(prevKeystoneIndex != nullptr);
     block.previousKeystone =
@@ -38,9 +38,9 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
 
     // set second previous keystone
-    if (block.height >= 2 * KEYSTONE_INTERVAL) {
+    if (block.height >= 2 * ALT_KEYSTONE_INTERVAL) {
       auto* secondPrevKeystoneIndex =
-          prevKeystoneIndex->getAncestorBlocksBehind(KEYSTONE_INTERVAL);
+          prevKeystoneIndex->getAncestorBlocksBehind(ALT_KEYSTONE_INTERVAL);
       assert(secondPrevKeystoneIndex != nullptr);
       block.secondPreviousKeystone =
           secondPrevKeystoneIndex->getHash()
@@ -50,16 +50,6 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   block.timestamp = currentTimestamp4();
   block.difficulty = getNextWorkRequired(tip, block, *params_);
   return block;
-}
-
-template <>
-void determineBestChain(Chain<VbkBlock>& currentBest,
-                        BlockIndex<VbkBlock>& indexNew) {
-  // It is a temprorary solution, it has been copied from the Btc implementation
-  if (currentBest.tip() == nullptr ||
-      currentBest.tip()->chainWork < indexNew.chainWork) {
-    currentBest.setTip(&indexNew);
-  }
 }
 
 template <>

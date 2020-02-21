@@ -14,7 +14,7 @@ namespace VeriBlock {
 
 struct BtcBlock {
   using hash_t = uint256;
-  using height_t = uint32_t;
+  using height_t = int32_t;
 
   uint32_t version{};
   uint256 previousBlock{};
@@ -88,5 +88,16 @@ struct BtcBlock {
 };
 
 }  // namespace VeriBlock
+
+namespace std {
+
+template <>
+struct hash<VeriBlock::BtcBlock> {
+  size_t operator()(const VeriBlock::BtcBlock& block) {
+    return VeriBlock::ArithUint256(block.getHash()).getLow64();
+  }
+};
+
+}  // namespace std
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCBLOCK_HPP_
