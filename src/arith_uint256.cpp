@@ -28,6 +28,29 @@ ArithUint256 ArithUint256::fromBits(uint32_t bits,
   return target;
 }
 
+std::string ArithUint256::toString() {
+  ArithUint256 tmp = ArithUint256(*this);
+  std::string out = "";
+  while (true) {
+    ArithUint256 tmpNext = tmp / 10;
+    ArithUint256 decimal = tmp - (tmpNext * 10);
+    tmp = tmpNext;
+    out.push_back((char)(decimal.getLow64() + '0'));
+    if (tmp <= 0) break;
+  }
+  std::reverse(out.begin(), out.end());
+  return out;
+}
+
+ArithUint256 ArithUint256::fromString(std::string num) {
+  ArithUint256 tmp = 0; 
+  for (char sym : num) {
+    tmp *= 10;
+    tmp += (sym - '0');
+  }
+  return tmp;
+}
+
 int ArithUint256::compareTo(const ArithUint256& b) const {
   for (int i = SHA256_HASH_SIZE - 1; i >= 0; i--) {
     if (data_[i] < b.data_[i]) {

@@ -68,6 +68,12 @@ TEST(ArithUint256, basics) {
     ASSERT_TRUE((OneL << i) != ZeroL);
     ASSERT_TRUE(R1L != (R1L ^ (OneL << i)));
   }
+
+  ArithUint256 checkToString = ArithUint256(100);
+  ASSERT_EQ(checkToString.toString(), "100");
+
+  ArithUint256 checkFromString = ArithUint256::fromString("100");
+  ASSERT_EQ(checkFromString, checkToString);
 }
 
 static void shiftArrayRight(unsigned char *to,
