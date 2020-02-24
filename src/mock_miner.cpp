@@ -168,8 +168,8 @@ Publications MockMiner::mine(const PublicationData& publicationData,
 
     assert(tip != nullptr);
 
-    VbkBlock mindeBlock = vbk_miner->createNextBlock(*tip, uint128());
-    vbk_blockchain->acceptBlock(mindeBlock, state);
+    VbkBlock minedBlock = vbk_miner->createNextBlock(*tip, uint128());
+    vbk_blockchain->acceptBlock(minedBlock, state);
   }
 
   VTB vtb = generateValidVTB(atv.containingBlock,

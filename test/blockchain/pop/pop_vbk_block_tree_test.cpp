@@ -117,14 +117,18 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
 TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
   uint32_t numVbkBlocks = 200;
 
+  // in the mock_miner chain state will be 200 blocks + genesis block = 201
+  // blocks
   mock_miner->mineVbkBlocks(numVbkBlocks, state);
   ASSERT_TRUE(state.IsValid());
 
   // initially we have to endorse the genesis block to update the vbkTest chain
   // with the 200 context blocks from the mock_miner state
+  // As a result vbkTest chain state will have 200 blocks + genesis block + 1
+  // block which contains the endorsement (in sum 202 blocks)
   endorseVtbBlock(0);
 
-  ASSERT_TRUE(uint32_t(vbkTest->getBestChain().size() - 2) == numVbkBlocks);
+  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().size() == numVbkBlocks + 2);
 
   // endorse 176 block
   endorseVtbBlock(176);
@@ -169,14 +173,18 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
 TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
   uint32_t numVbkBlocks = 200;
 
+  // in the mock_miner chain state will be 200 blocks + genesis block = 201
+  // blocks
   mock_miner->mineVbkBlocks(numVbkBlocks, state);
   ASSERT_TRUE(state.IsValid());
 
   // initially we have to endorse the genesis block to update the vbkTest chain
   // with the 200 context blocks from the mock_miner state
+  // As a result vbkTest chain state will have 200 blocks + genesis block + 1
+  // block which contains the endorsement (in sum 202 blocks)
   endorseVtbBlock(0);  // btc block height 1
 
-  ASSERT_TRUE(uint32_t(vbkTest->getBestChain().size() - 2) == numVbkBlocks);
+  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().size() == numVbkBlocks + 2);
 
   // endorse 176 block
   endorseVtbBlock(176);  // btc block height 2
