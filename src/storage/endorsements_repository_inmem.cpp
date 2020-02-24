@@ -37,13 +37,16 @@ std::vector<Endorsement> EndorsementsRepositoryInmem::getEndorsementsInChain(
     return result;
   }
 
-  for (const auto& endorsement : endorsed_map.at(endorsedBlockHash)) {
-    for (const auto& containingHashes : endorsement.containingVbkHashes) {
-      if (func(containingHashes)) {
-        result.push_back(endorsement);
-        break;
+  try {
+    for (const auto& endorsement : endorsed_map.at(endorsedBlockHash)) {
+      for (const auto& containingHashes : endorsement.containingVbkHashes) {
+        if (func(containingHashes)) {
+          result.push_back(endorsement);
+          break;
+        }
       }
     }
+  } catch (const std::out_of_range&) {
   }
 
   return result;

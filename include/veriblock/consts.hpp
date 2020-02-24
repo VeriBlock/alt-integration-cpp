@@ -109,7 +109,7 @@ constexpr const auto MAX_RAWTX_SIZE_VBKPOPTX =
 
 constexpr const auto BTC_INMEM_BLOCKS_WINDOW = 1000;
 constexpr const auto VBK_INMEM_BLOCKS_WINDOW = 10000;
-constexpr  const auto BITCOIN_FINALITY_DELAY = 11;
+constexpr const auto BITCOIN_FINALITY_DELAY = 11;
 
 extern const std::vector<int> POP_CONSENSUS_WEIGHTS_BY_RELATIVE_BITCOIN_INDEX;
 
