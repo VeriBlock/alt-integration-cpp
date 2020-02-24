@@ -33,11 +33,13 @@ std::vector<Endorsement> EndorsementsRepositoryInmem::getEndorsementsInChain(
     chainContainsBlockFunc func) const {
   std::vector<Endorsement> result;
 
-  if (endorsed_map.empty()) {
+  auto it = endorsed_map.find(endorsedBlockHash);
+
+  if (it == endorsed_map.end()) {
     return result;
   }
 
-  for (const auto& endorsement : endorsed_map.at(endorsedBlockHash)) {
+  for (const auto& endorsement : it->second) {
     for (const auto& containingHashes : endorsement.containingVbkHashes) {
       if (func(containingHashes)) {
         result.push_back(endorsement);

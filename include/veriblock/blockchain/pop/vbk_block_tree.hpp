@@ -38,6 +38,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   std::vector<KeystoneContext> getKeystoneContext(
       const std::vector<ProtoKeystoneContext>& chain);
+
+  bool isCrossedKeystoneBoundary(const index_t& bottom, const index_t& tip);
 };
 
 }  // namespace VeriBlock

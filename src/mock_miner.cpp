@@ -127,8 +127,8 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
 }
 
 VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
+                                const VbkBlock::hash_t& lastKnownVbkBlockHash,
                                 const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                                const uint32_t& vbkBlockDelay,
                                 ValidationState& state) {
   VTB vtb;
   vtb.transaction =
@@ -138,20 +138,15 @@ VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
   vtb.merklePath.subject = vtb.transaction.getHash();
   vtb.merklePath.layers = {vtb.transaction.getHash()};
 
-  for (uint32_t i = 0; i != vbkBlockDelay; ++i) {
-    BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
-
-    assert(tip != nullptr);
-
-    VbkBlock mindeBlock =
-        vbk_miner->createNextBlock(*tip, vtb.merklePath.calculateMerkleRoot());
-    vbk_blockchain->acceptBlock(mindeBlock, state);
-    vtb.context.push_back(mindeBlock);
-  }
-
   BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
 
   assert(tip != nullptr);
+
+  for (BlockIndex<VbkBlock>* walkBlock = tip;
+       walkBlock->header.getHash() != lastKnownVbkBlockHash;
+       walkBlock = walkBlock->pprev) {
+    vtb.context.insert(vtb.context.begin(), walkBlock->header);
+  }
 
   vtb.containingBlock =
       vbk_miner->createNextBlock(*tip, vtb.merklePath.calculateMerkleRoot());
@@ -167,8 +162,20 @@ Publications MockMiner::mine(const PublicationData& publicationData,
                              const uint32_t& vbkBlockDelay,
                              ValidationState& state) {
   ATV atv = generateValidATV(publicationData, lastKnownVbkBlockHash, state);
-  VTB vtb = generateValidVTB(
-      atv.containingBlock, lastKnownBtcBlockHash, vbkBlockDelay, state);
+
+  for (uint32_t i = 0; i != vbkBlockDelay; ++i) {
+    BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
+
+    assert(tip != nullptr);
+
+    VbkBlock minedBlock = vbk_miner->createNextBlock(*tip, uint128());
+    vbk_blockchain->acceptBlock(minedBlock, state);
+  }
+
+  VTB vtb = generateValidVTB(atv.containingBlock,
+                             atv.containingBlock.getHash(),
+                             lastKnownBtcBlockHash,
+                             state);
 
   return {atv, {vtb}};
 }

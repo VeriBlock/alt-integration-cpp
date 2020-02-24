@@ -46,6 +46,7 @@ class MockMiner {
   std::shared_ptr<vbk_block_tree> vbk_blockchain;
   std::shared_ptr<BlockRepository<vbk_block_index_t>> vbk_repo;
 
+ public:
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
   ATV generateValidATV(const PublicationData& publicationData,
                        const VbkBlock::hash_t& lastKnownVbkBlockHash,
@@ -54,9 +55,10 @@ class MockMiner {
   VbkPopTx generateSignedVbkPoptx(const VbkBlock& publishedBlock,
                                   const BtcBlock::hash_t& lastKnownBtcBlockHash,
                                   ValidationState& state);
+
   VTB generateValidVTB(const VbkBlock& publishedBlock,
+                       const VbkBlock::hash_t& lastKnownVbkBlockHash,
                        const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                       const uint32_t& vbkBlockDelay,
                        ValidationState& state);
 
  public:
