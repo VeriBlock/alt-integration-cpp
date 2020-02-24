@@ -1,10 +1,11 @@
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
 #include <gtest/gtest.h>
 
 #include <memory>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/block_index.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 
 using namespace VeriBlock;
@@ -190,4 +191,57 @@ TEST_F(SingleTest, single_test) {
       getNextWorkRequired(chain[chain.size() - 1], VbkBlock(), *chainparams);
 
   EXPECT_EQ(ArithUint256::fromHex("0228C35294D0").toBits(), result);
+}
+
+TEST(Vbk, CheckBlockTime1) {
+  ValidationState state;
+  const auto startTime = 1'527'000'000;
+  std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain;
+  for (int i = 0; i < 1000; i++) {
+    chain.push_back(std::make_shared<BlockIndex<VbkBlock>>());
+    auto& index = chain[chain.size() - 1];
+    index->height = VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT + i;
+    index->header.timestamp = startTime + (120 * i);
+    index->pprev = i == 0 ? nullptr : chain[i - 1].get();
+  }
+
+  VbkBlock block;
+
+  auto& last = chain[chain.size() - 1];
+  // validateMinimumTimestampWhenAboveMedian
+  block.timestamp = startTime + (120 * 1000);
+  ASSERT_TRUE(checkBlockTime(*last, block, state)) << state.GetRejectReason();
+
+  // validateMinimumTimestampWhenBelowMedian
+  block.timestamp = 1527118679;
+  ASSERT_FALSE(checkBlockTime(*last, block, state)) << state.GetRejectReason();
+  ASSERT_EQ(state.GetRejectReason(), "time-too-old");
+}
+
+TEST(Vbk, CheckBlockTime2) {
+  auto makeBlock = [](int timestamp, int height) -> BlockIndex<VbkBlock> {
+    BlockIndex<VbkBlock> index;
+    index.height = height;
+    index.header.timestamp = timestamp;
+    return index;
+  };
+
+  ValidationState state;
+  std::vector<BlockIndex<VbkBlock>> chain;
+  chain.push_back(makeBlock(1527000000, 110000));
+  chain.push_back(makeBlock(1527500000, 110001));
+  chain.push_back(makeBlock(1528000000, 110002));
+
+  for (size_t i = 0; i < chain.size(); i++) {
+    auto& index = chain[i];
+    index.pprev = i == 0 ? nullptr : &chain[i - 1];
+  }
+
+  VbkBlock block;
+  block.timestamp = 1527499999;
+  ASSERT_FALSE(checkBlockTime(chain[chain.size() - 1], block, state));
+  ASSERT_EQ(state.GetRejectReason(), "time-too-old");
+
+  block.timestamp = 1527500000;
+  ASSERT_TRUE(checkBlockTime(chain[chain.size() - 1], block, state));
 }

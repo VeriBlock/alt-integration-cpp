@@ -1,6 +1,8 @@
-#include <veriblock/third_party/BigDecimal.h>
-#include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
+#include <veriblock/third_party/BigDecimal.h>
+
+#include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -108,6 +110,57 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
   }
 
   return targetDif.toBits();
+}
+
+template <>
+int64_t getMedianTimePast(const BlockIndex<VbkBlock>& prev) {
+  // height of block to be added is prev.height + 1
+
+  // at block 110000 VBK enables different algorithm of median time calculation,
+  // which is implemented in `calculateMinimumTimestamp`. if you even encounter
+  // time error on legacy (pre-110000) VBK mainnet/testnet blocks, you will need
+  // to add `calculateMinimumTimestampLegacy` from VBK here.
+  return calculateMinimumTimestamp(prev);
+}
+
+template <>
+bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
+                    const VbkBlock& block,
+                    ValidationState& state) {
+  int64_t median = getMedianTimePast(prev);
+  if (int64_t(block.getBlockTime()) < median) {
+    return state.Invalid(
+        "checkBlockTime()", "time-too-old", "block's timestamp is too early");
+  }
+
+  // TODO: find out the max future block time for VBK
+  if (int64_t(block.getBlockTime()) >
+      currentTimestamp4() + BTC_MAX_FUTURE_BLOCK_TIME) {
+    return state.Invalid("checkBlockTime()",
+                         "time-too-new",
+                         "block timestamp too far in the future");
+  }
+
+  return true;
+}
+
+int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
+  // Calculate the MEDIAN. If there are an even number of elements,
+  // use the lower of the two.
+
+  size_t i = 0;
+  std::vector<int64_t> pmedian;
+  const BlockIndex<VbkBlock>* pindex = &prev;
+  for (i = 0; i < HISTORY_FOR_TIMESTAMP_AVERAGE; i++, pindex = pindex->pprev) {
+    if (pindex == nullptr) {
+      break;
+    }
+    pmedian.push_back(pindex->getBlockTime());
+  }
+
+  std::sort(pmedian.begin(), pmedian.end());
+  size_t index = i % 2 == 0 ? (i / 2) - 1 : (i / 2);
+  return pmedian.at(index);
 }
 
 }  // namespace VeriBlock
