@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <set>
-#include <unordered_map>
+#include <map>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
@@ -24,7 +24,7 @@ struct BlockTree {
   using params_t = ChainParams;
   using index_t = BlockIndex<block_t>;
   using hash_t = typename Block::hash_t;
-  using prev_block_hash_t = decltype(Block::previousBlock);
+  //using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
 
   virtual ~BlockTree() = default;
@@ -96,13 +96,35 @@ struct BlockTree {
     return true;
   }
 
-  template <size_t N,
-            typename = typename std::enable_if<N == prev_block_hash_t::size() ||
-                                               N == hash_t::size()>::type>
-  index_t* getBlockIndex(const Blob<N>& hash) {
-    auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
-    auto it = block_index_.find(shortHash);
+  index_t* getBlockIndex(const hash_t& hash) {
+    hash_t fullHash = toFullHash(hash);
+    auto it = block_index_.find(fullHash);
     return it == block_index_.end() ? nullptr : it->second.get();
+  }
+
+  template <size_t N,
+            typename = typename std::enable_if<N <= hash_t::size()>::type>
+  index_t* getBlockIndexByPrefix(const Blob<N>& hash) {
+    hash_t fullHash = toFullHash(hash);
+    auto findBegin = block_index_.lower_bound(fullHash);
+    auto findEnd = block_index_.upper_bound(fullHash);
+
+    if (findBegin == block_index_.end()) {
+      return nullptr;
+    }
+
+    // upper_bound never reaches the end of the map so we make sure
+    // to check the upper_bound element as well
+    if (findEnd != block_index_.end()) {
+      findEnd++;
+    }
+
+    for (auto it = findBegin; it != findEnd; it++) {
+      auto shortHash = it->first.trimLE<N>();
+      if (shortHash == hash) return it->second.get();
+    }
+
+    return nullptr;
   }
 
   bool acceptBlock(const block_t& block, ValidationState& state) {
@@ -112,21 +134,22 @@ struct BlockTree {
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
  private:
-  std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
+  std::map<hash_t, std::unique_ptr<index_t>> block_index_;
   Chain<Block> activeChain_;
   std::shared_ptr<BlockRepository<index_t>> repo_;
   std::shared_ptr<ChainParams> param_;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
-  index_t* touchBlockIndex(const hash_t& fullHash) {
-    auto hash = fullHash.template trimLE<prev_block_hash_t::size()>();
-    auto it = block_index_.find(hash);
+  index_t* touchBlockIndex(const hash_t& hash) {
+    hash_t fullHash = toFullHash(hash);
+    auto it = block_index_.find(fullHash);
     if (it != block_index_.end()) {
       return it->second.get();
     }
 
     auto* newIndex = new index_t{};
-    it = block_index_.insert({hash, std::unique_ptr<index_t>(newIndex)}).first;
+    it = block_index_.insert({fullHash, std::unique_ptr<index_t>(newIndex)})
+             .first;
     return it->second.get();
   }
 
@@ -140,7 +163,7 @@ struct BlockTree {
 
     current = touchBlockIndex(hash);
     current->header = block;
-    current->pprev = getBlockIndex(block.previousBlock);
+    current->pprev = getBlockIndexByPrefix(block.previousBlock);
 
     if (current->pprev) {
       // prev block found
@@ -198,7 +221,7 @@ struct BlockTree {
     }
 
     // we must know previous block
-    auto* prev = getBlockIndex(block.previousBlock);
+    auto* prev = getBlockIndexByPrefix(block.previousBlock);
     if (prev == nullptr) {
       return state.Invalid("acceptBlockHeader()",
                            "bad-prev-block",
@@ -248,13 +271,19 @@ struct BlockTree {
       return state.addStackFunction("bootstrap()");
     }
 
-    auto fullHash = block.getHash();
-    if (!block_index_.empty() && !getBlockIndex(fullHash)) {
+    if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
       return state.Error("block-index-no-genesis");
     }
 
     repo_->put(*index);
     return true;
+  }
+
+  template <size_t N>
+  hash_t toFullHash(const Blob<N>& hash) {
+    // this is how we pad with zeroes from the left
+    hash_t fullHash(hash.reverse());
+    return fullHash.reverse();
   }
 
  protected:
