@@ -124,7 +124,7 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
   // with the 200 context blocks from the mock_miner state
   endorseVtbBlock(0);
 
-  ASSERT_TRUE((vbkTest->getBestChain().size() - 2) == numVbkBlocks);
+  ASSERT_TRUE(uint32_t(vbkTest->getBestChain().size() - 2) == numVbkBlocks);
 
   // endorse 176 block
   endorseVtbBlock(176);
@@ -176,7 +176,7 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
   // with the 200 context blocks from the mock_miner state
   endorseVtbBlock(0);  // btc block height 1
 
-  ASSERT_TRUE((vbkTest->getBestChain().size() - 2) == numVbkBlocks);
+  ASSERT_TRUE(uint32_t(vbkTest->getBestChain().size() - 2) == numVbkBlocks);
 
   // endorse 176 block
   endorseVtbBlock(176);  // btc block height 2
