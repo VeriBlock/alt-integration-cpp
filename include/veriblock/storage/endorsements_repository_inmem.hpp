@@ -10,7 +10,7 @@ namespace VeriBlock {
 struct EndorsementsRepositoryInmem : public EndorsementsRepository {
   ~EndorsementsRepositoryInmem() override = default;
 
-  EndorsementsRepositoryInmem() {}
+  EndorsementsRepositoryInmem() = default;
 
   void put(const VbkPopTx& popTx,
            const VbkBlock::hash_t& containingBlockHash) override;

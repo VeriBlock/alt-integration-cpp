@@ -111,7 +111,7 @@ struct BlockTree {
 
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
- private:
+ protected:
   std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
   Chain<Block> activeChain_;
   std::shared_ptr<BlockRepository<index_t>> repo_;

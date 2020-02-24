@@ -106,6 +106,11 @@ std::vector<ProtoKeystoneContext> VbkBlockTree::getProtoKeystoneContext(
 
 void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
                                       BlockTree::index_t& indexNew) {
+  if (currentBest.size() == 0 || currentBest.tip() == nullptr) {
+    currentBest.setTip(&indexNew);
+    return;
+  }
+
   auto* forkIndex = currentBest.findFork(&indexNew);
   // this should never happen. if it is nullptr, it means that we passed
   // `indexNew` index which has no known prev block, which is possible only
@@ -116,18 +121,22 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
   auto* forkKeystone = forkIndex->getAncestor(
       highestKeystoneAtOrBefore(forkIndex->height, VBK_KEYSTONE_INTERVAL));
 
-  // [vbk fork point ... current tip]
-  Chain<block_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
-  auto pkcCurrent = getProtoKeystoneContext(vbkCurrentSubchain);
-  auto kcCurrent = getKeystoneContext(pkcCurrent);
+  int result = 0;
+  if (isCrossedKeystoneBoundary(*forkKeystone, indexNew) &&
+      isCrossedKeystoneBoundary(*forkKeystone, *currentBest.tip())) {
+    // [vbk fork point ... current tip]
+    Chain<block_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
+    auto pkcCurrent = getProtoKeystoneContext(vbkCurrentSubchain);
+    auto kcCurrent = getKeystoneContext(pkcCurrent);
 
-  // [vbk fork point ... new block]
-  Chain<block_t> vbkOther(forkKeystone->height, &indexNew);
-  auto pkcOther = getProtoKeystoneContext(vbkOther);
-  auto kcOther = getKeystoneContext(pkcOther);
+    // [vbk fork point ... new block]
+    Chain<block_t> vbkOther(forkKeystone->height, &indexNew);
+    auto pkcOther = getProtoKeystoneContext(vbkOther);
+    auto kcOther = getKeystoneContext(pkcOther);
 
-  // compare
-  int result = comparePopScore(kcCurrent, kcOther);
+    result = comparePopScore(kcCurrent, kcOther);
+  }
+
   if (result > 0) {
     // other chain won!
     return currentBest.setTip(&indexNew);
@@ -138,5 +147,14 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
     // existing chain is still the best
     return;
   }
+}
+
+bool VbkBlockTree::isCrossedKeystoneBoundary(const index_t& bottom,
+                                             const index_t& tip) {
+  index_t::height_t keystoneIntervalAmount =
+      bottom.height / VBK_KEYSTONE_INTERVAL;
+  index_t::height_t tipIntervalAmount = tip.height / VBK_KEYSTONE_INTERVAL;
+
+  return keystoneIntervalAmount < tipIntervalAmount;
 }
 }  // namespace VeriBlock
