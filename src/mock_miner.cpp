@@ -48,7 +48,7 @@ VbkTx MockMiner::generateSignedVbkTx(const PublicationData& publicationData) {
   transaction.signature =
       veriBlockSign(hash, privateKeyFromVbk(defaultPrivateKeyVbk));
 
-  return std::move(transaction);
+  return transaction;
 }
 
 ATV MockMiner::generateValidATV(const PublicationData& publicationData,
@@ -76,7 +76,7 @@ ATV MockMiner::generateValidATV(const PublicationData& publicationData,
 
   vbk_blockchain->acceptBlock(atv.containingBlock, state);
 
-  return std::move(atv);
+  return atv;
 }
 
 VbkPopTx MockMiner::generateSignedVbkPoptx(
@@ -123,7 +123,7 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
   popTx.signature =
       veriBlockSign(hash, privateKeyFromVbk(defaultPrivateKeyVbk));
 
-  return std::move(popTx);
+  return popTx;
 }
 
 VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
@@ -153,7 +153,7 @@ VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
 
   vbk_blockchain->acceptBlock(vtb.containingBlock, state);
 
-  return std::move(vtb);
+  return vtb;
 }
 
 Publications MockMiner::mine(const PublicationData& publicationData,
