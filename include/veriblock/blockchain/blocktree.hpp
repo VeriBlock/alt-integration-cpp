@@ -24,7 +24,6 @@ struct BlockTree {
   using params_t = ChainParams;
   using index_t = BlockIndex<block_t>;
   using hash_t = typename Block::hash_t;
-  //using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
 
   virtual ~BlockTree() = default;
@@ -96,9 +95,10 @@ struct BlockTree {
     return true;
   }
 
-  index_t* getBlockIndex(const hash_t& hash) {
-    hash_t fullHash = toFullHash(hash);
-    auto it = block_index_.find(fullHash);
+    template <size_t N,
+            typename = typename std::enable_if<N == hash_t::size()>::type>
+  index_t* getBlockIndex(const Blob<N>& hash) {
+    auto it = block_index_.find(hash);
     return it == block_index_.end() ? nullptr : it->second.get();
   }
 

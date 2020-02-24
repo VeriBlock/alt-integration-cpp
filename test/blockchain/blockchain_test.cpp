@@ -86,7 +86,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   EXPECT_EQ(chain[this->height]->height, this->height);
   EXPECT_EQ(chain[this->height]->header, genesis);
 
-  // mine 10000 blocks
+  // mine 5000 blocks
   for (size_t i = 0; i < 5000; i++) {
     auto tip = chain.tip();
     auto block = this->miner->createNextBlock(*tip, {});
@@ -101,7 +101,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
     ASSERT_TRUE(chain[i]);
     ASSERT_TRUE(chain[i - 1]);
     auto prevHash = chain[i]->header.previousBlock;
-    auto index = this->blockchain->getBlockIndex(prevHash);
+    auto index = this->blockchain->getBlockIndexByPrefix(prevHash);
     EXPECT_EQ(index->getHash(), chain[i - 1]->getHash());
     // timestamp is increasing
     EXPECT_GE(chain[i]->header.getBlockTime(), chain[i - 1]->getBlockTime());
