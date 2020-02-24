@@ -158,6 +158,8 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
     pmedian.push_back(pindex->getBlockTime());
   }
 
+  assert(i > 0);
+  assert(!pmedian.empty());
   std::sort(pmedian.begin(), pmedian.end());
   size_t index = i % 2 == 0 ? (i / 2) - 1 : (i / 2);
   return pmedian.at(index);
