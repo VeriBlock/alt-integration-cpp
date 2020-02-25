@@ -2,9 +2,11 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_
 
 #include <veriblock/blockchain/vbk_chain_params.hpp>
+#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
 #include <veriblock/entities/vbkblock.hpp>
+#include <veriblock/blockchain/blockchain_util.hpp>
 
 namespace VeriBlock {
 
@@ -19,6 +21,10 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
 
 template <>
 ArithUint256 getBlockProof(const VbkBlock& block);
+
+template <>
+bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
+    const VbkBlock& block) const;
 
 }  // namespace VeriBlock
 

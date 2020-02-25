@@ -105,4 +105,10 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
       prevBlock, pindexFirst->getBlockTime(), params);
 }
 
+template <>
+bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
+    const BtcBlock&) const {
+  return true;
+}
+
 }  // namespace VeriBlock

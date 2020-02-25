@@ -95,16 +95,16 @@ struct BlockTree {
     return true;
   }
 
-    template <size_t N,
+  template <size_t N,
             typename = typename std::enable_if<N == hash_t::size()>::type>
-  index_t* getBlockIndex(const Blob<N>& hash) {
+  index_t* getBlockIndex(const Blob<N>& hash) const {
     auto it = block_index_.find(hash);
     return it == block_index_.end() ? nullptr : it->second.get();
   }
 
   template <size_t N,
             typename = typename std::enable_if<N <= hash_t::size()>::type>
-  index_t* getBlockIndexByPrefix(const Blob<N>& hash) {
+  index_t* getBlockIndexByPrefix(const Blob<N>& hash) const {
     hash_t fullHash = toFullHash(hash);
     auto findBegin = block_index_.lower_bound(fullHash);
     auto findEnd = block_index_.upper_bound(fullHash);
@@ -203,9 +203,9 @@ struct BlockTree {
     std::sort(blocks.begin(), blocks.end());
     for (const auto& item : blocks) {
       index_t* index = item.second.get();
-      bool checkDifficulty =
+      bool validateBlock =
           bootstrapGenesis || processedBlocks++ > numBlocksForBootstrap;
-      if (acceptBlock(index->header, state, checkDifficulty)) {
+      if (acceptBlock(index->header, state, validateBlock)) {
         return state.addStackFunction("load()");
       }
     }
@@ -215,7 +215,7 @@ struct BlockTree {
 
   bool acceptBlock(const block_t& block,
                    ValidationState& state,
-                   bool checkDifficulty) {
+                   bool validateBlock) {
     if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("acceptBlockHeader()");
     }
@@ -229,7 +229,7 @@ struct BlockTree {
     }
 
     // check difficulty
-    if (checkDifficulty &&
+    if (validateBlock &&
         block.getDifficulty() != getNextWorkRequired(*prev, block, *param_)) {
       return state.Invalid(
           "acceptBlockHeader()", "bad-diffbits", "incorrect proof of work");
@@ -249,6 +249,12 @@ struct BlockTree {
       return state.Invalid("acceptBlockHeader()",
                            "time-too-new",
                            "block timestamp too far in the future");
+    }
+
+    // check keystones
+    if (validateBlock && !validateKeystones(block)) {
+      return state.Invalid(
+          "acceptBlockHeader()", "bad-keystones", "incorrect keystones");
     }
 
     auto* index = insertBlockHeader(block);
@@ -280,11 +286,13 @@ struct BlockTree {
   }
 
   template <size_t N>
-  hash_t toFullHash(const Blob<N>& hash) {
+  hash_t toFullHash(const Blob<N>& hash) const {
     // this is how we pad with zeroes from the left
     hash_t fullHash(hash.reverse());
     return fullHash.reverse();
   }
+
+  bool validateKeystones(const Block& block) const;
 
  protected:
   virtual void determineBestChain(Chain<block_t>& currentBest,

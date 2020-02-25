@@ -27,25 +27,34 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone
-  if (block.height >= ALT_KEYSTONE_INTERVAL) {
-    auto diff = block.height % ALT_KEYSTONE_INTERVAL;
-    diff = diff == 0 ? ALT_KEYSTONE_INTERVAL : diff;
-    auto* prevKeystoneIndex = tip.getAncestorBlocksBehind(diff);
-    assert(prevKeystoneIndex != nullptr);
-    block.previousKeystone =
-        prevKeystoneIndex->getHash()
-            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
+  auto diff = block.height % ALT_KEYSTONE_INTERVAL;
 
-    // set second previous keystone
-    if (block.height >= 2 * ALT_KEYSTONE_INTERVAL) {
-      auto* secondPrevKeystoneIndex =
-          prevKeystoneIndex->getAncestorBlocksBehind(ALT_KEYSTONE_INTERVAL);
-      assert(secondPrevKeystoneIndex != nullptr);
-      block.secondPreviousKeystone =
-          secondPrevKeystoneIndex->getHash()
-              .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
-    }
+  // we do not use previous block as a keystone
+  if (diff == 1) {
+    diff += ALT_KEYSTONE_INTERVAL;
   }
+  // we reference genesis block if we are at the beginning of the chain
+  if (diff > tip.height) {
+    diff = tip.height;
+  }
+
+  auto* prevKeystoneIndex = tip.getAncestor(tip.height - diff);
+  assert(prevKeystoneIndex != nullptr);
+  block.previousKeystone =
+      prevKeystoneIndex->getHash()
+          .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
+
+  // set second previous keystone
+  diff += ALT_KEYSTONE_INTERVAL;
+  if (diff > tip.height) {
+    diff = tip.height;
+  }
+  auto* secondPrevKeystoneIndex = tip.getAncestor(tip.height - diff);
+  assert(secondPrevKeystoneIndex != nullptr);
+  block.secondPreviousKeystone =
+      secondPrevKeystoneIndex->getHash()
+          .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
+
   block.timestamp = currentTimestamp4();
   block.difficulty = getNextWorkRequired(tip, block, *params_);
   return block;
@@ -108,6 +117,16 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
   }
 
   return targetDif.toBits();
+}
+
+template <>
+bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
+    const VbkBlock& block) const {
+  auto keystone = getBlockIndexByPrefix(block.previousKeystone);
+  if (keystone == nullptr) return false;
+  keystone = getBlockIndexByPrefix(block.secondPreviousKeystone);
+  if (keystone == nullptr) return false;
+  return true;
 }
 
 }  // namespace VeriBlock
