@@ -13,7 +13,12 @@ enum class TxType {
 
 // 10 minutes
 constexpr const int ALT_MAX_FUTURE_BLOCK_TIME = 10 * 60;
+// 2 hours
+constexpr const int BTC_MAX_FUTURE_BLOCK_TIME = 2 * 60 * 60;
 
+constexpr const auto HISTORY_FOR_TIMESTAMP_AVERAGE = 20;
+
+constexpr const auto VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT = 110000;
 constexpr const auto VBK_KEYSTONE_INTERVAL = 20;
 constexpr const auto ALT_KEYSTONE_INTERVAL = 5;
 constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;

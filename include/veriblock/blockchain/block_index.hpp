@@ -28,25 +28,9 @@ struct BlockIndex {
   //! block header
   Block header{};
 
-  static constexpr int medianTimeSpan = 11;
-
   hash_t getHash() const { return header.getHash(); }
   uint32_t getBlockTime() const { return header.getBlockTime(); }
   uint32_t getDifficulty() const { return header.getDifficulty(); }
-  int64_t getMedianTimePast() const {
-    int64_t pmedian[medianTimeSpan];
-    std::fill(pmedian, pmedian + medianTimeSpan, 0);
-    auto* pbegin = &pmedian[medianTimeSpan];
-    auto* pend = &pmedian[medianTimeSpan];
-
-    const BlockIndex* pindex = this;
-    for (int i = 0; i < medianTimeSpan && pindex; i++, pindex = pindex->pprev) {
-      *(--pbegin) = pindex->getBlockTime();
-    }
-
-    std::sort(pbegin, pend);
-    return pbegin[(pend - pbegin) / 2];
-  }
 
   const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
     if (steps < 0 || steps > this->height + 1) {

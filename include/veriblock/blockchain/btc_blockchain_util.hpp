@@ -20,6 +20,12 @@ BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
 template <>
 ArithUint256 getBlockProof(const BtcBlock& block);
 
+template <>
+bool checkBlockTime(const BlockIndex<BtcBlock>& prev, const BtcBlock& block, ValidationState& state);
+
+template <>
+int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev);
+
 }  // namespace VeriBlock
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_BLOCKCHAIN_UTIL_HPP_

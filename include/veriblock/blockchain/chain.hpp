@@ -61,7 +61,7 @@ struct Chain {
 
   index_t* tip() const { return chain.empty() ? nullptr : (*this)[size() - 1]; }
 
-  index_t* bootstrap() const { return chain.empty() ? nullptr : chain[0]; }
+  index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
 
   void setTip(index_t* index) {
     if (index == nullptr) {
