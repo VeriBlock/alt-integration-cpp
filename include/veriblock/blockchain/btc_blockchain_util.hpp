@@ -24,6 +24,11 @@ template <>
 bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
     const BlockIndex<BtcBlock>&, const BtcBlock&) const;
 
+bool checkBlockTime(const BlockIndex<BtcBlock>& prev, const BtcBlock& block, ValidationState& state);
+
+template <>
+int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev);
+
 }  // namespace VeriBlock
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_BLOCKCHAIN_UTIL_HPP_

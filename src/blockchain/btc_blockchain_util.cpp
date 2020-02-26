@@ -99,7 +99,9 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
   uint32_t nHeightFirst =
       prevBlock.height - (params.getDifficultyAdjustmentInterval() - 1);
   const auto* pindexFirst = prevBlock.getAncestor(nHeightFirst);
-  assert(pindexFirst);
+  if (pindexFirst == nullptr) {
+    throw std::logic_error("unable to find block ancestor at given height");
+  }
 
   return calculateNextWorkRequired(
       prevBlock, pindexFirst->getBlockTime(), params);
@@ -108,6 +110,42 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
 template <>
 bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
     const BlockIndex<BtcBlock>&, const BtcBlock&) const {
+  return true;
+}
+
+int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev) {
+  static constexpr int medianTimeSpan = 11;
+
+  int64_t pmedian[medianTimeSpan];
+  std::fill(pmedian, pmedian + medianTimeSpan, 0);
+  auto* pbegin = &pmedian[medianTimeSpan];
+  auto* pend = &pmedian[medianTimeSpan];
+
+  const BlockIndex<BtcBlock>* pindex = &prev;
+  for (int i = 0; i < medianTimeSpan && pindex; i++, pindex = pindex->pprev) {
+    *(--pbegin) = pindex->getBlockTime();
+  }
+
+  std::sort(pbegin, pend);
+  return pbegin[(pend - pbegin) / 2];
+}
+
+template <>
+bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
+                    const BtcBlock& block,
+                    ValidationState& state) {
+  if (int64_t(block.getBlockTime()) < getMedianTimePast(prev)) {
+    return state.Invalid(
+        "checkBlockTime()", "time-too-old", "block's timestamp is too early");
+  }
+
+  if (int64_t(block.getBlockTime()) >
+      currentTimestamp4() + BTC_MAX_FUTURE_BLOCK_TIME) {
+    return state.Invalid("checkBlockTime()",
+                         "time-too-new",
+                         "block timestamp too far in the future");
+  }
+
   return true;
 }
 

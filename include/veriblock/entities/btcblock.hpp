@@ -16,12 +16,12 @@ struct BtcBlock {
   using hash_t = uint256;
   using height_t = int32_t;
 
-  uint32_t version{};
+  uint32_t version = 0;
   uint256 previousBlock{};
   uint256 merkleRoot{};
-  uint32_t timestamp{};
-  uint32_t bits{};
-  uint32_t nonce{};
+  uint32_t timestamp = 0;
+  uint32_t bits = 0;
+  uint32_t nonce = 0;
 
   static BtcBlock fromHex(const std::string& hex);
 

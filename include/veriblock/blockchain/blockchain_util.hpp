@@ -4,6 +4,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/chain.hpp>
+#include <veriblock/validation_state.hpp>
 
 namespace VeriBlock {
 
@@ -17,6 +18,13 @@ uint32_t getNextWorkRequired(const BlockIndex<Block>& prevBlock,
 
 template <typename Block>
 ArithUint256 getBlockProof(const Block& block);
+
+template <typename Block>
+int64_t getMedianTimePast(const BlockIndex<Block>& prev);
+
+template <typename Block>
+bool checkBlockTime(const BlockIndex<Block>& prev, const Block& block, ValidationState& state);
+
 
 }  // namespace VeriBlock
 

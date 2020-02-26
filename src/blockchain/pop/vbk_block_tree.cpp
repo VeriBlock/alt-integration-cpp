@@ -13,6 +13,9 @@ std::vector<KeystoneContext> VbkBlockTree::getKeystoneContext(
       [this](const ProtoKeystoneContext& pkc) {
         int earliestEndorsementIndex = std::numeric_limits<int32_t>::max();
         for (const auto* btcIndex : pkc.referencedByBtcBlocks) {
+          if (btcIndex == nullptr) {
+            continue;
+          }
           auto endorsementIndex = btcIndex->height;
           if (endorsementIndex >= earliestEndorsementIndex) {
             continue;
@@ -31,8 +34,11 @@ std::vector<KeystoneContext> VbkBlockTree::getKeystoneContext(
                adjustedEndorsementIndex++) {
             // Ensure that the keystone's block time isn't later than the
             // block time of the Bitcoin block it's endorsed in
-            if (pkc.timestampOfEndorsedBlock <
-                btcBest[adjustedEndorsementIndex]->getBlockTime()) {
+            auto* index = btcBest[adjustedEndorsementIndex];
+            if (index == nullptr) {
+              throw std::logic_error("unexpected nullptr in btc best chain");
+            }
+            if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
               // Timestamp of VeriBlock block is lower than Bitcoin block,
               // set this as the adjusted index if another lower index has
               // not already been set
@@ -56,12 +62,16 @@ std::vector<KeystoneContext> VbkBlockTree::getKeystoneContext(
 std::vector<ProtoKeystoneContext> VbkBlockTree::getProtoKeystoneContext(
     const Chain<VbkBlock>& chain) {
   std::vector<ProtoKeystoneContext> ret;
+  auto* tip = chain.tip();
+  if (tip == nullptr) {
+    throw std::logic_error("unexpected nullptr - no tip in best chain");
+  }
 
-  auto highestPossibleEndorsedBlockHeaderHeight = chain.tip()->height;
+  auto highestPossibleEndorsedBlockHeaderHeight = tip->height;
   auto lastKeystone =
-      highestKeystoneAtOrBefore(chain.tip()->height, VBK_KEYSTONE_INTERVAL);
+      highestKeystoneAtOrBefore(tip->height, VBK_KEYSTONE_INTERVAL);
   auto firstKeystone =
-      firstKeystoneAfter(chain.bootstrap()->height, VBK_KEYSTONE_INTERVAL);
+      firstKeystoneAfter(chain.first()->height, VBK_KEYSTONE_INTERVAL);
 
   // For each keystone, find the endorsements of itself and other blocks which
   // reference it, and look at the earliest Bitcoin block that any of those
@@ -106,6 +116,11 @@ std::vector<ProtoKeystoneContext> VbkBlockTree::getProtoKeystoneContext(
 
 void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
                                       BlockTree::index_t& indexNew) {
+  if (currentBest.size() == 0 || currentBest.tip() == nullptr) {
+    currentBest.setTip(&indexNew);
+    return;
+  }
+
   auto* forkIndex = currentBest.findFork(&indexNew);
   // this should never happen. if it is nullptr, it means that we passed
   // `indexNew` index which has no known prev block, which is possible only
@@ -116,18 +131,22 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
   auto* forkKeystone = forkIndex->getAncestor(
       highestKeystoneAtOrBefore(forkIndex->height, VBK_KEYSTONE_INTERVAL));
 
-  // [vbk fork point ... current tip]
-  Chain<block_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
-  auto pkcCurrent = getProtoKeystoneContext(vbkCurrentSubchain);
-  auto kcCurrent = getKeystoneContext(pkcCurrent);
+  int result = 0;
+  if (isCrossedKeystoneBoundary(*forkKeystone, indexNew) &&
+      isCrossedKeystoneBoundary(*forkKeystone, *currentBest.tip())) {
+    // [vbk fork point ... current tip]
+    Chain<block_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
+    auto pkcCurrent = getProtoKeystoneContext(vbkCurrentSubchain);
+    auto kcCurrent = getKeystoneContext(pkcCurrent);
 
-  // [vbk fork point ... new block]
-  Chain<block_t> vbkOther(forkKeystone->height, &indexNew);
-  auto pkcOther = getProtoKeystoneContext(vbkOther);
-  auto kcOther = getKeystoneContext(pkcOther);
+    // [vbk fork point ... new block]
+    Chain<block_t> vbkOther(forkKeystone->height, &indexNew);
+    auto pkcOther = getProtoKeystoneContext(vbkOther);
+    auto kcOther = getKeystoneContext(pkcOther);
 
-  // compare
-  int result = comparePopScore(kcCurrent, kcOther);
+    result = comparePopScore(kcCurrent, kcOther);
+  }
+
   if (result > 0) {
     // other chain won!
     return currentBest.setTip(&indexNew);
@@ -138,5 +157,14 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
     // existing chain is still the best
     return;
   }
+}
+
+bool VbkBlockTree::isCrossedKeystoneBoundary(const index_t& bottom,
+                                             const index_t& tip) {
+  index_t::height_t keystoneIntervalAmount =
+      bottom.height / VBK_KEYSTONE_INTERVAL;
+  index_t::height_t tipIntervalAmount = tip.height / VBK_KEYSTONE_INTERVAL;
+
+  return keystoneIntervalAmount < tipIntervalAmount;
 }
 }  // namespace VeriBlock
