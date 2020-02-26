@@ -113,6 +113,7 @@ bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
   return true;
 }
 
+template <>
 int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev) {
   static constexpr int medianTimeSpan = 11;
 
