@@ -24,7 +24,7 @@ ArithUint256 getBlockProof(const VbkBlock& block);
 
 template <>
 bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
-    const VbkBlock& block) const;
+    const BlockIndex<VbkBlock>& prevBlock, const VbkBlock& block) const;
 
 }  // namespace VeriBlock
 

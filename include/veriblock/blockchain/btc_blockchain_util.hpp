@@ -22,7 +22,7 @@ ArithUint256 getBlockProof(const BtcBlock& block);
 
 template <>
 bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
-    const BtcBlock&) const;
+    const BlockIndex<BtcBlock>&, const BtcBlock&) const;
 
 }  // namespace VeriBlock
 

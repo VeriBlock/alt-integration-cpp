@@ -252,7 +252,7 @@ struct BlockTree {
     }
 
     // check keystones
-    if (validateBlock && !validateKeystones(block)) {
+    if (validateBlock && !validateKeystones(*prev, block)) {
       return state.Invalid(
           "acceptBlockHeader()", "bad-keystones", "incorrect keystones");
     }
@@ -292,7 +292,7 @@ struct BlockTree {
     return fullHash.reverse();
   }
 
-  bool validateKeystones(const Block& block) const;
+  bool validateKeystones(const BlockIndex<Block>& prevBlock, const Block& block) const;
 
  protected:
   virtual void determineBestChain(Chain<block_t>& currentBest,

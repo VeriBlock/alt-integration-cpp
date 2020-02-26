@@ -107,7 +107,7 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
 
 template <>
 bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
-    const BtcBlock&) const {
+    const BlockIndex<BtcBlock>&, const BtcBlock&) const {
   return true;
 }
 
