@@ -98,7 +98,7 @@ struct BlockTree {
             typename = typename std::enable_if<N == prev_block_hash_t::size() ||
                                                N == hash_t::size()>::type>
   index_t* getBlockIndex(const Blob<N>& hash) const {
-    auto shortHash = hash.trimLE<prev_block_hash_t::size()>();
+    auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
     auto it = block_index_.find(shortHash);
     return it == block_index_.end() ? nullptr : it->second.get();
   }
@@ -124,8 +124,8 @@ struct BlockTree {
 
         while (forkIndex != blockIndex) {
           prevIndex = forkIndex->pprev;
-          block_index_.erase(
-              forkIndex->getHash().trimLE<prev_block_hash_t::size()>());
+          block_index_.erase(forkIndex->getHash()
+                                 .template trimLE<prev_block_hash_t::size()>());
           forkIndex = prevIndex;
         }
       } else {
@@ -160,7 +160,7 @@ struct BlockTree {
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& fullHash) {
-    auto hash = fullHash.trimLE<prev_block_hash_t::size()>();
+    auto hash = fullHash.template trimLE<prev_block_hash_t::size()>();
     auto it = block_index_.find(hash);
     if (it != block_index_.end()) {
       return it->second.get();
@@ -206,7 +206,7 @@ struct BlockTree {
     }
 
     activeChain_.disconnectTip();
-    block_index_.erase(tipHash.trimLE<prev_block_hash_t::size()>());
+    block_index_.erase(tipHash.template trimLE<prev_block_hash_t::size()>());
 
     return true;
   }
