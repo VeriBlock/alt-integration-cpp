@@ -101,7 +101,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
     ASSERT_TRUE(chain[i]);
     ASSERT_TRUE(chain[i - 1]);
     auto prevHash = chain[i]->header.previousBlock;
-    auto index = this->blockchain->getBlockIndexByPrefix(prevHash);
+    auto index = this->blockchain->getBlockIndex(prevHash);
     EXPECT_EQ(index->getHash(), chain[i - 1]->getHash());
     // timestamp is increasing
     EXPECT_GE(chain[i]->header.getBlockTime(), chain[i - 1]->getBlockTime());

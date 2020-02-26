@@ -2,7 +2,6 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_UTIL_HPP_
 
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/validation_state.hpp>
 

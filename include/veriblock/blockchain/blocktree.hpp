@@ -95,16 +95,17 @@ struct BlockTree {
     return true;
   }
 
-  template <size_t N,
-            typename = typename std::enable_if<N == hash_t::size()>::type>
-  index_t* getBlockIndex(const Blob<N>& hash) const {
+  index_t* getBlockIndexExact(const hash_t hash) const {
     auto it = block_index_.find(hash);
     return it == block_index_.end() ? nullptr : it->second.get();
   }
 
   template <size_t N,
             typename = typename std::enable_if<N <= hash_t::size()>::type>
-  index_t* getBlockIndexByPrefix(const Blob<N>& hash) const {
+  index_t* getBlockIndex(const Blob<N>& hash) const {
+    if (N == hash_t::size()) {
+      return getBlockIndexExact(hash);
+    }
     hash_t fullHash = toFullHash(hash);
     auto findBegin = block_index_.lower_bound(fullHash);
     auto findEnd = block_index_.upper_bound(fullHash);
@@ -163,7 +164,7 @@ struct BlockTree {
 
     current = touchBlockIndex(hash);
     current->header = block;
-    current->pprev = getBlockIndexByPrefix(block.previousBlock);
+    current->pprev = getBlockIndex(block.previousBlock);
 
     if (current->pprev) {
       // prev block found
@@ -221,7 +222,7 @@ struct BlockTree {
     }
 
     // we must know previous block
-    auto* prev = getBlockIndexByPrefix(block.previousBlock);
+    auto* prev = getBlockIndex(block.previousBlock);
     if (prev == nullptr) {
       return state.Invalid("acceptBlockHeader()",
                            "bad-prev-block",
