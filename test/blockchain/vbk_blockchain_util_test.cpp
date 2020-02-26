@@ -248,7 +248,7 @@ TEST(Vbk, CheckBlockTime2) {
 }
 
 struct BlockchainTest : public ::testing::Test {
-  using block_t = typename VbkBlock;
+  using block_t = VbkBlock;
   using params_base_t = VbkChainParams;
   using params_t = VbkChainParamsRegTest;
   using index_t = typename BlockTree<block_t, params_base_t>::index_t;
