@@ -252,7 +252,6 @@ struct BlockchainTest : public ::testing::Test {
   using params_base_t = VbkChainParams;
   using params_t = VbkChainParamsRegTest;
   using index_t = typename BlockTree<block_t, params_base_t>::index_t;
-  using hash_t = typename block_t::hash_t;
 
   std::shared_ptr<BlockRepository<index_t>> repo;
   std::shared_ptr<BlockTree<block_t, params_base_t>> blockchain;

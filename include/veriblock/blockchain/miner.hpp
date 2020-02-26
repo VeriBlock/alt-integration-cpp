@@ -13,7 +13,6 @@ namespace VeriBlock {
 template <typename Block, typename ChainParams>
 struct Miner {
   using merkle_t = decltype(Block::merkleRoot);
-  //using hash_t = decltype(Block::previousBlock);
   using index_t = BlockIndex<Block>;
 
   Miner(std::shared_ptr<ChainParams> params) : params_(std::move(params)) {}

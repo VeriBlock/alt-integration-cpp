@@ -4,7 +4,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
-#include <veriblock/blockchain/vbk_chain_params.hpp>
+#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 
