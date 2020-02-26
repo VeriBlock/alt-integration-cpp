@@ -120,7 +120,7 @@ struct BlockTree {
     }
 
     for (auto it = findBegin; it != findEnd; it++) {
-      auto shortHash = it->first.trimLE<N>();
+      auto shortHash = it->first.template trimLE<N>();
       if (shortHash == hash) return it->second.get();
     }
 

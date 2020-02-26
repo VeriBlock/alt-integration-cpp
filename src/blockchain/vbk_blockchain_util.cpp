@@ -25,7 +25,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   VbkBlock block;
   block.version = tip.header.version;
   block.previousBlock =
-      tip.header.getHash().trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
+      tip.header.getHash().template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone
@@ -136,7 +136,8 @@ bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
     auto* prevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
     if (prevKeystoneIndex == nullptr) return false;
 
-    if (prevKeystoneIndex->getHash().trimLE<VbkBlock::keystone_t::size()>() !=
+    if (prevKeystoneIndex->getHash()
+            .template trimLE<VbkBlock::keystone_t::size()>() !=
         block.previousKeystone) {
       return false;
     }
@@ -154,7 +155,7 @@ bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
     if (secondPrevKeystoneIndex == nullptr) return false;
 
     if (secondPrevKeystoneIndex->getHash()
-            .trimLE<VbkBlock::keystone_t::size()>() !=
+            .template trimLE<VbkBlock::keystone_t::size()>() !=
         block.secondPreviousKeystone) {
       return false;
     }

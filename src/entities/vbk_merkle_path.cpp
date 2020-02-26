@@ -55,5 +55,5 @@ uint128 VbkMerklePath::calculateMerkleRoot() const {
     layerIndex >>= 1;
   }
 
-  return cursor.trim<VBK_MERKLE_ROOT_HASH_SIZE>();
+  return cursor.template trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 }
