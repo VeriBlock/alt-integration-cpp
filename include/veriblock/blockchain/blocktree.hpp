@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <set>
-#include <map>
+#include <unordered_map>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
@@ -24,6 +24,7 @@ struct BlockTree {
   using params_t = ChainParams;
   using index_t = BlockIndex<block_t>;
   using hash_t = typename Block::hash_t;
+  using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
 
   virtual ~BlockTree() = default;
@@ -95,37 +96,13 @@ struct BlockTree {
     return true;
   }
 
-  index_t* getBlockIndexExact(const hash_t hash) const {
-    auto it = block_index_.find(hash);
-    return it == block_index_.end() ? nullptr : it->second.get();
-  }
-
   template <size_t N,
-            typename = typename std::enable_if<N <= hash_t::size()>::type>
+            typename = typename std::enable_if<N == prev_block_hash_t::size() ||
+                                               N == hash_t::size()>::type>
   index_t* getBlockIndex(const Blob<N>& hash) const {
-    if (N == hash_t::size()) {
-      return getBlockIndexExact(hash);
-    }
-    hash_t fullHash = toFullHash(hash);
-    auto findBegin = block_index_.lower_bound(fullHash);
-    auto findEnd = block_index_.upper_bound(fullHash);
-
-    if (findBegin == block_index_.end()) {
-      return nullptr;
-    }
-
-    // upper_bound never reaches the end of the map so we make sure
-    // to check the upper_bound element as well
-    if (findEnd != block_index_.end()) {
-      findEnd++;
-    }
-
-    for (auto it = findBegin; it != findEnd; it++) {
-      auto shortHash = it->first.template trimLE<N>();
-      if (shortHash == hash) return it->second.get();
-    }
-
-    return nullptr;
+    auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
+    auto it = block_index_.find(shortHash);
+    return it == block_index_.end() ? nullptr : it->second.get();
   }
 
   bool acceptBlock(const block_t& block, ValidationState& state) {
@@ -134,14 +111,15 @@ struct BlockTree {
 
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
- private:
-  std::map<hash_t, std::unique_ptr<index_t>> block_index_;
+ protected:
+  std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
   Chain<Block> activeChain_;
   std::shared_ptr<BlockRepository<index_t>> repo_;
   std::shared_ptr<ChainParams> param_;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
-  index_t* touchBlockIndex(const hash_t& hash) {
+  index_t* touchBlockIndex(const hash_t& fullHash) {
+    auto hash = fullHash.template trimLE<prev_block_hash_t::size()>();
     auto it = block_index_.find(hash);
     if (it != block_index_.end()) {
       return it->second.get();
@@ -273,16 +251,8 @@ struct BlockTree {
     return true;
   }
 
-  template <size_t N>
-  hash_t toFullHash(const Blob<N>& hash) const {
-    // this is how we pad with zeroes from the left
-    hash_t fullHash(hash.reverse());
-    return fullHash.reverse();
-  }
-
   bool validateKeystones(const BlockIndex<Block>& prevBlock, const Block& block) const;
 
- protected:
   virtual void determineBestChain(Chain<block_t>& currentBest,
                                   index_t& indexNew) {
     if (currentBest.tip() == nullptr ||
