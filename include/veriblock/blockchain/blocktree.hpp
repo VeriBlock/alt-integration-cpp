@@ -142,14 +142,13 @@ struct BlockTree {
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& hash) {
-    hash_t fullHash = toFullHash(hash);
-    auto it = block_index_.find(fullHash);
+    auto it = block_index_.find(hash);
     if (it != block_index_.end()) {
       return it->second.get();
     }
 
     auto* newIndex = new index_t{};
-    it = block_index_.insert({fullHash, std::unique_ptr<index_t>(newIndex)})
+    it = block_index_.insert({hash, std::unique_ptr<index_t>(newIndex)})
              .first;
     return it->second.get();
   }
