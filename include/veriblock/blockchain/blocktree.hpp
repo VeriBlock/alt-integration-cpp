@@ -109,17 +109,42 @@ struct BlockTree {
     return acceptBlock(block, state, true);
   }
 
+  bool disconnectTip(ValidationState& state) {
+    BlockIndex<Block>* currentTip = activeChain_.tip();
+    hash_t tipHash = currentTip->getHash();
+
+    if (currentTip == nullptr) {
+      return state.Invalid(
+          "disconnectTip()", "bad-active-chain", "empty current active chain");
+    }
+
+    if (!repo_->removeByHash(tipHash)) {
+      return state.Invalid("disconnectTip()", "bad-storage", "can not remove");
+    }
+
+    activeChain_.disconnectTip();
+    block_index_.erase(tipHash.trimLE<prev_block_hash_t::size()>());
+    for (const auto& candidate : fork_candidates_) {
+      determineBestChain(activeChain_, *candidate);
+    }
+
+    return true;
+  }
+
+  std::vector<index_t*> getForkCandidates() const { return fork_candidates_; }
+
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
  protected:
   std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
+  std::vector<index_t*> fork_candidates_;
   Chain<Block> activeChain_;
   std::shared_ptr<BlockRepository<index_t>> repo_;
   std::shared_ptr<ChainParams> param_;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& fullHash) {
-    auto hash = fullHash.template trimLE<prev_block_hash_t::size()>();
+    auto hash = fullHash.trimLE<prev_block_hash_t::size()>();
     auto it = block_index_.find(hash);
     if (it != block_index_.end()) {
       return it->second.get();
@@ -154,6 +179,27 @@ struct BlockTree {
     determineBestChain(activeChain_, *current);
 
     return current;
+  }
+
+  void addForkCandidate(BlockIndex<Block>& newCandidate,
+                        BlockIndex<Block>* oldCandidate) {
+    if (&newCandidate == oldCandidate) {
+      return;
+    }
+
+    if (std::find(fork_candidates_.begin(),
+                  fork_candidates_.end(),
+                  &newCandidate) != fork_candidates_.end()) {
+      return;
+    }
+
+    auto it = std::find(
+        fork_candidates_.begin(), fork_candidates_.end(), oldCandidate);
+    if (it != fork_candidates_.end()) {
+      *it = &newCandidate;
+    } else {
+      fork_candidates_.push_back(&newCandidate);
+    }
   }
 
   bool load(ValidationState& state, bool bootstrapGenesis) {
@@ -262,7 +308,10 @@ struct BlockTree {
                                   index_t& indexNew) {
     if (currentBest.tip() == nullptr ||
         currentBest.tip()->chainWork < indexNew.chainWork) {
+      addForkCandidate(*currentBest.tip(), indexNew.pprev);
       currentBest.setTip(&indexNew);
+    } else {
+      addForkCandidate(indexNew, indexNew.pprev);
     }
   }
 };
