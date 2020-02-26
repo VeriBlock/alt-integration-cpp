@@ -149,12 +149,14 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
 
   if (result > 0) {
     // other chain won!
+    addForkCandidate(*currentBest.tip(), indexNew.pprev);
     return currentBest.setTip(&indexNew);
   } else if (result == 0) {
     // pop scores are equal. do PoW fork resolution
     return VbkTree::determineBestChain(currentBest, indexNew);
   } else {
     // existing chain is still the best
+    addForkCandidate(indexNew, indexNew.pprev);
     return;
   }
 }

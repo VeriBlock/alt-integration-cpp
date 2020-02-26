@@ -83,6 +83,8 @@ struct Chain {
     }
   }
 
+  void disconnectTip() { chain.pop_back(); }
+
   friend bool operator==(const Chain& a, const Chain& b) {
     // TODO: think how to use use startHeight_
     return a.chain.size() == b.chain.size() && a.tip() == b.tip();

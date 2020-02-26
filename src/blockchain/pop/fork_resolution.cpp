@@ -51,8 +51,6 @@ struct KeystoneContextList {
   }
 };
 
-
-
 }  // namespace
 
 int comparePopScore(const std::vector<KeystoneContext>& chainA,
@@ -138,10 +136,7 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
 
     if (publicationViolatesFinality(earliestPublicationA,
                                     earliestPublicationB)) {
-      if (earliestPublicationA + BITCOIN_FINALITY_DELAY <
-          earliestPublicationB) {
-        aOutsideFinality = true;
-      }
+      aOutsideFinality = true;
     }
 
     if (publicationViolatesFinality(earliestPublicationB,
@@ -157,4 +152,4 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
   return chainAscore - chainBscore;
 }
 
-}
+}  // namespace VeriBlock
