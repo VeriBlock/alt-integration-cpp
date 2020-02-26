@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <chrono>
+#include <thread>
 #include <veriblock/blockchain/blocktree.hpp>
 
 #include "veriblock/blockchain/block_index.hpp"
@@ -190,7 +192,7 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test) {
+TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   using block_t = typename TypeParam::block_t;
 
   auto genesis = this->chainparam->getGenesisBlock();
@@ -214,6 +216,8 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test) {
   std::vector<block_t> fork2 = fork1;
   fork2.resize(17);
 
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+
   std::generate_n(std::back_inserter(fork2), 2, [&]() {
     // take last block at fork2 and create mine new block on top of that
     auto index = this->blockchain->getBlockIndex(fork2.rbegin()->getHash());
@@ -221,7 +225,6 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test) {
     auto block = this->miner->createNextBlock(*index, {});
     EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
         << this->state.GetDebugMessage();
-    EXPECT_EQ(this->blockchain->getForkCandidates().size(), 1);
     return block;
   });
 
@@ -229,22 +232,99 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test) {
   EXPECT_EQ(best.size(), 20);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
-  EXPECT_TRUE(this->blockchain->disconnectTip(this->state));
+  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
+                                                      this->state));
 
   EXPECT_EQ(best.size(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork1[18].getHash());
 
-  EXPECT_TRUE(this->blockchain->disconnectTip(this->state));
+  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
+                                                      this->state));
 
-  // EXPECT_EQ(best.size(), 19);
-  // EXPECT_EQ(best.tip()->getHash(), fork2[18].getHash());
+  EXPECT_EQ(best.size(), 19);
+  EXPECT_EQ(best.tip()->getHash(), fork2[18].getHash());
+
+  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
+                                                      this->state));
+
+  EXPECT_EQ(best.size(), 18);
+  EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
+
+  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
+                                                      this->state));
+
+  EXPECT_EQ(best.size(), 18);
+  EXPECT_EQ(best.tip()->getHash(), fork1[17].getHash());
+
+  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
+                                                      this->state));
+
+  EXPECT_EQ(best.size(), 17);
+  EXPECT_EQ(best.tip()->getHash(), fork1[16].getHash());
+  EXPECT_EQ(best.tip()->getHash(), fork2[16].getHash());
+
+  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
+                                                      this->state));
+
+  EXPECT_EQ(best.size(), 16);
+  EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
+  EXPECT_EQ(best.tip()->getHash(), fork2[15].getHash());
+}
+
+TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_2) {
+  using block_t = typename TypeParam::block_t;
+
+  auto genesis = this->chainparam->getGenesisBlock();
+  auto& best = this->blockchain->getBestChain();
+
+  std::vector<block_t> fork1{genesis};
+
+  std::generate_n(
+      std::back_inserter(fork1), 20 - 1 /* genesis */, [&]() -> block_t {
+        auto* tip = best.tip();
+        EXPECT_TRUE(tip);
+        auto block = this->miner->createNextBlock(*tip, {});
+        EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
+            << this->state.GetDebugMessage();
+        return block;
+      });
+
+  EXPECT_EQ(best.size(), 20);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  std::vector<block_t> fork2 = fork1;
+  fork2.resize(17);
+
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+
+  std::generate_n(std::back_inserter(fork2), 2, [&]() {
+    // take last block at fork2 and create mine new block on top of that
+    auto index = this->blockchain->getBlockIndex(fork2.rbegin()->getHash());
+    EXPECT_TRUE(index);
+    auto block = this->miner->createNextBlock(*index, {});
+    EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
+        << this->state.GetDebugMessage();
+    return block;
+  });
+
+  EXPECT_EQ(fork2.size(), 19);
+  EXPECT_EQ(best.size(), 20);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best[16]->getHash(),
+                                                      this->state));
+
+  EXPECT_EQ(best.size(), 16);
+  EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
+  EXPECT_EQ(best.tip()->getHash(), fork2[15].getHash());
 }
 
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(BlockchainTest,
                             Scenario1,
                             ForkResolutionWorks,
-                            invalidateTip_test);
+                            invalidateTip_test_scenario_1,
+                            invalidateTip_test_scenario_2);
 
 // clang-format off
 typedef ::testing::Types<

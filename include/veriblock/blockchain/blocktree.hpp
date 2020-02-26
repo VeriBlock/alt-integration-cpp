@@ -100,7 +100,7 @@ struct BlockTree {
             typename = typename std::enable_if<N == prev_block_hash_t::size() ||
                                                N == hash_t::size()>::type>
   index_t* getBlockIndex(const Blob<N>& hash) {
-    auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
+    auto shortHash = hash.trimLE<prev_block_hash_t::size()>();
     auto it = block_index_.find(shortHash);
     return it == block_index_.end() ? nullptr : it->second.get();
   }
@@ -109,29 +109,48 @@ struct BlockTree {
     return acceptBlock(block, state, true);
   }
 
-  bool disconnectTip(ValidationState& state) {
-    BlockIndex<Block>* currentTip = activeChain_.tip();
-    hash_t tipHash = currentTip->getHash();
+  bool invalidateBlockByHash(const hash_t& blockHash, ValidationState& state) {
+    index_t* blockIndex = getBlockIndex(blockHash);
 
-    if (currentTip == nullptr) {
-      return state.Invalid(
-          "disconnectTip()", "bad-active-chain", "empty current active chain");
+    if (blockIndex == nullptr) {
+      return state.Invalid("invalidateBlockByHash()",
+                           "bad-block-hash",
+                           "can not find block by this hash");
     }
 
-    if (!repo_->removeByHash(tipHash)) {
-      return state.Invalid("disconnectTip()", "bad-storage", "can not remove");
+    for (auto it = fork_candidates_.begin(); it != fork_candidates_.end();) {
+      index_t* forkIndex = *it;
+      index_t* prevIndex = nullptr;
+      if (forkIndex->getAncestor(blockIndex->height) == blockIndex) {
+        it = fork_candidates_.erase(it);
+
+        while (forkIndex != blockIndex) {
+          prevIndex = forkIndex->pprev;
+          block_index_.erase(
+              forkIndex->getHash().trimLE<prev_block_hash_t::size()>());
+          forkIndex = prevIndex;
+        }
+      } else {
+        ++it;
+      }
     }
 
-    activeChain_.disconnectTip();
-    block_index_.erase(tipHash.trimLE<prev_block_hash_t::size()>());
-    for (const auto& candidate : fork_candidates_) {
-      determineBestChain(activeChain_, *candidate);
+    while (blockIndex != activeChain_.tip() && state.IsValid()) {
+      disconnectTip(state);
+    }
+
+    disconnectTip(state);
+
+    for (const auto& fork_tip : fork_candidates_) {
+      determineBestChain(activeChain_, *fork_tip);
+    }
+
+    if (state.IsInvalid()) {
+      state.addStackFunction("invalidateBlockByHash()");
     }
 
     return true;
   }
-
-  std::vector<index_t*> getForkCandidates() const { return fork_candidates_; }
 
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
@@ -175,31 +194,47 @@ struct BlockTree {
       current->height = 0;
       current->chainWork = getBlockProof(block);
     }
-
     determineBestChain(activeChain_, *current);
 
     return current;
   }
 
-  void addForkCandidate(BlockIndex<Block>& newCandidate,
+  bool disconnectTip(ValidationState& state) {
+    BlockIndex<Block>* currentTip = activeChain_.tip();
+    hash_t tipHash = currentTip->getHash();
+
+    if (currentTip == nullptr) {
+      return state.Invalid(
+          "disconnectTip()", "bad-active-chain", "empty current active chain");
+    }
+
+    activeChain_.disconnectTip();
+    block_index_.erase(tipHash.trimLE<prev_block_hash_t::size()>());
+
+    return true;
+  }
+
+  void addForkCandidate(BlockIndex<Block>* newCandidate,
                         BlockIndex<Block>* oldCandidate) {
-    if (&newCandidate == oldCandidate) {
+    auto it = std::find(
+        fork_candidates_.begin(), fork_candidates_.end(), oldCandidate);
+    if (it != fork_candidates_.end()) {
+      fork_candidates_.erase(it);
+    }
+
+    if (newCandidate == nullptr ||
+        activeChain_[newCandidate->height] == newCandidate ||
+        (oldCandidate != nullptr && newCandidate == oldCandidate->pprev)) {
       return;
     }
 
     if (std::find(fork_candidates_.begin(),
                   fork_candidates_.end(),
-                  &newCandidate) != fork_candidates_.end()) {
+                  newCandidate) != fork_candidates_.end()) {
       return;
     }
 
-    auto it = std::find(
-        fork_candidates_.begin(), fork_candidates_.end(), oldCandidate);
-    if (it != fork_candidates_.end()) {
-      *it = &newCandidate;
-    } else {
-      fork_candidates_.push_back(&newCandidate);
-    }
+    fork_candidates_.push_back(newCandidate);
   }
 
   bool load(ValidationState& state, bool bootstrapGenesis) {
@@ -308,13 +343,14 @@ struct BlockTree {
                                   index_t& indexNew) {
     if (currentBest.tip() == nullptr ||
         currentBest.tip()->chainWork < indexNew.chainWork) {
-      addForkCandidate(*currentBest.tip(), indexNew.pprev);
+      auto prevTip = currentBest.tip();
       currentBest.setTip(&indexNew);
+      addForkCandidate(prevTip, &indexNew);
     } else {
-      addForkCandidate(indexNew, indexNew.pprev);
+      addForkCandidate(&indexNew, indexNew.pprev);
     }
   }
-};
+};  // namespace VeriBlock
 
 }  // namespace VeriBlock
 
