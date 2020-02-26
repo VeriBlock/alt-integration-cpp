@@ -7,6 +7,7 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
+#include "veriblock/storage/block_repository_inmem.hpp"
 
 using namespace VeriBlock;
 
@@ -244,4 +245,56 @@ TEST(Vbk, CheckBlockTime2) {
 
   block.timestamp = 1527500000;
   ASSERT_TRUE(checkBlockTime(chain[chain.size() - 1], block, state));
+}
+
+struct BlockchainTest : public ::testing::Test {
+  using block_t = typename VbkBlock;
+  using params_base_t = VbkChainParams;
+  using params_t = VbkChainParamsRegTest;
+  using index_t = typename BlockTree<block_t, params_base_t>::index_t;
+  using hash_t = typename block_t::hash_t;
+
+  std::shared_ptr<BlockRepository<index_t>> repo;
+  std::shared_ptr<BlockTree<block_t, params_base_t>> blockchain;
+
+  std::shared_ptr<params_base_t> chainparam;
+  std::shared_ptr<Miner<block_t, params_base_t>> miner;
+  ValidationState state;
+
+  BlockchainTest() {
+    chainparam = std::make_shared<params_t>();
+    repo = std::make_shared<BlockRepositoryInmem<index_t>>();
+    blockchain =
+        std::make_shared<BlockTree<block_t, params_base_t>>(repo, chainparam);
+    miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
+
+    // @when
+    EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
+        << "bootstrapWithGenesis: " << state.GetRejectReason() << ", "
+        << state.GetDebugMessage();
+    EXPECT_TRUE(state.IsValid());
+  };
+};
+
+TEST_F(BlockchainTest, InvalidKeystone1) {
+  auto& chain = this->blockchain->getBestChain();
+  auto block = this->miner->createNextBlock(*chain.tip(), {});
+  auto badKeystone =
+      ArithUint256::fromHex("01").reverse().template trimLE<VbkBlock::keystone_t::size()>();
+  block.previousKeystone = badKeystone;
+
+  ASSERT_FALSE(blockchain->acceptBlock(block, state));
+  ASSERT_EQ(state.GetRejectReason(), "bad-keystones");
+}
+
+TEST_F(BlockchainTest, InvalidKeystone2) {
+  auto& chain = this->blockchain->getBestChain();
+  auto block = this->miner->createNextBlock(*chain.tip(), {});
+  auto badKeystone = ArithUint256::fromHex("01")
+                         .reverse()
+                         .template trimLE<VbkBlock::keystone_t::size()>();
+  block.secondPreviousKeystone = badKeystone;
+
+  ASSERT_FALSE(blockchain->acceptBlock(block, state));
+  ASSERT_EQ(state.GetRejectReason(), "bad-keystones");
 }
