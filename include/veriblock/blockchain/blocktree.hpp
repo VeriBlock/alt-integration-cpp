@@ -109,6 +109,10 @@ struct BlockTree {
 
   void invalidateBlockByHash(const hash_t& blockHash) {
     index_t* blockIndex = getBlockIndex(blockHash);
+    if(blockIndex == nullptr) {
+      // no such block
+      return;
+    }
 
     for (auto chain_it = fork_chains_.begin();
          chain_it != fork_chains_.end();) {
@@ -116,9 +120,9 @@ struct BlockTree {
 
       if (chain_it->tip() == nullptr) {
         chain_it = fork_chains_.erase(chain_it);
-        continue;
+      } else {
+        ++chain_it;
       }
-      ++chain_it;
     }
 
     invalidateBlockFromChain(activeChain_, &blockIndex);
@@ -221,9 +225,9 @@ struct BlockTree {
 
       if (chain_it->tip() == oldCandidate) {
         chain_it = fork_chains_.erase(chain_it);
-        continue;
+      } else {
+        ++chain_it;
       }
-      ++chain_it;
     }
 
     if (activeChain_.contains(newCandidate) || isAdded) {
