@@ -115,7 +115,7 @@ struct BlockTree {
 
     for (auto chain_it = fork_chains_.begin();
          chain_it != fork_chains_.end();) {
-      invalidateBlockFromChain(*chain_it, *blockIndex);
+      invalidateBlockFromChain(*chain_it, blockIndex);
 
       if (chain_it->tip() == nullptr) {
         chain_it = fork_chains_.erase(chain_it);
@@ -124,7 +124,7 @@ struct BlockTree {
       ++chain_it;
     }
 
-    invalidateBlockFromChain(activeChain_, *blockIndex);
+    invalidateBlockFromChain(activeChain_, blockIndex);
 
     for (const auto& fork_chain : fork_chains_) {
       determineBestChain(activeChain_, *fork_chain.tip());
@@ -176,7 +176,11 @@ struct BlockTree {
     return current;
   }
 
-  void invalidateBlockFromChain(Chain<Block>& chain, const index_t& block) {
+  void invalidateBlockFromChain(Chain<Block>& chain, const index_t* block) {
+    if (block == nullptr) {
+      return;
+    }
+
     if (!chain.contains(&block) &&
         chain.tip()->getAncestor(block.height) != &block) {
       return;
