@@ -2,7 +2,6 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_
 
 #include <veriblock/blockchain/blockchain_util.hpp>
-#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
