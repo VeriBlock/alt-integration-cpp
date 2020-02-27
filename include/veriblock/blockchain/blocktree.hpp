@@ -112,6 +112,10 @@ struct BlockTree {
   void invalidateBlockByHash(const hash_t& blockHash) {
     index_t* blockIndex = getBlockIndex(blockHash);
 
+    if (blockIndex == nullptr) {
+      return;
+    }
+
     for (auto chain_it = fork_chains_.begin();
          chain_it != fork_chains_.end();) {
       invalidateBlockFromChain(*chain_it, &blockIndex);
@@ -169,6 +173,7 @@ struct BlockTree {
       current->height = current->pprev->height + 1;
       current->chainWork = current->pprev->chainWork + getBlockProof(block);
     } else {
+      current->height = 0;
       current->chainWork = getBlockProof(block);
     }
     determineBestChain(activeChain_, *current);
