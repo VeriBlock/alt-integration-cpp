@@ -174,6 +174,7 @@ struct BlockTree {
     }
 
     auto* index = insertBlockHeader(block);
+    (void)index; // to prevent "unused variable" warning
     assert(index != nullptr &&
            "insertBlockHeader should have never returned nullptr");
     return true;
