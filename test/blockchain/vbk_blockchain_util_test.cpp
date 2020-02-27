@@ -216,7 +216,7 @@ TEST(Vbk, CheckBlockTime1) {
   // validateMinimumTimestampWhenBelowMedian
   block.timestamp = 1527118679;
   ASSERT_FALSE(checkBlockTime(*last, block, state)) << state.GetRejectReason();
-  ASSERT_EQ(state.GetRejectReason(), "time-too-old");
+  ASSERT_EQ(state.GetRejectReason(), "vbk-time-too-old");
 }
 
 TEST(Vbk, CheckBlockTime2) {
@@ -241,7 +241,7 @@ TEST(Vbk, CheckBlockTime2) {
   VbkBlock block;
   block.timestamp = 1527499999;
   ASSERT_FALSE(checkBlockTime(chain[chain.size() - 1], block, state));
-  ASSERT_EQ(state.GetRejectReason(), "time-too-old");
+  ASSERT_EQ(state.GetRejectReason(), "vbk-time-too-old");
 
   block.timestamp = 1527500000;
   ASSERT_TRUE(checkBlockTime(chain[chain.size() - 1], block, state));
