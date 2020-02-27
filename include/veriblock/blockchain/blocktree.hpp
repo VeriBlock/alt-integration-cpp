@@ -177,6 +177,10 @@ struct BlockTree {
   }
 
   void invalidateBlockFromChain(Chain<Block>& chain, index_t* block) {
+    if (block == nullptr) {
+      return;
+    }
+
     if (!chain.contains(block) &&
         chain.tip()->getAncestor(block->height) != block) {
       return;
