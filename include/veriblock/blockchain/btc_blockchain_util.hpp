@@ -4,7 +4,9 @@
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
+#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/entities/btcblock.hpp>
+#include <veriblock/blockchain/blockchain_util.hpp>
 
 namespace VeriBlock {
 
@@ -21,10 +23,14 @@ template <>
 ArithUint256 getBlockProof(const BtcBlock& block);
 
 template <>
-bool checkBlockTime(const BlockIndex<BtcBlock>& prev, const BtcBlock& block, ValidationState& state);
+bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
+    const BlockIndex<BtcBlock>&, const BtcBlock&) const;
 
 template <>
 int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev);
+
+template <>
+bool checkBlockTime(const BlockIndex<BtcBlock>& prev, const BtcBlock& block, ValidationState& state);
 
 }  // namespace VeriBlock
 
