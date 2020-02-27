@@ -169,7 +169,6 @@ struct BlockTree {
       current->height = current->pprev->height + 1;
       current->chainWork = current->pprev->chainWork + getBlockProof(block);
     } else {
-      // current->height = 0;
       current->chainWork = getBlockProof(block);
     }
     determineBestChain(activeChain_, *current);
@@ -312,8 +311,6 @@ struct BlockTree {
     if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("bootstrap()");
     }
-
-    activeChain_ = Chain<Block>(height);
 
     auto* index = insertBlockHeader(block);
     index->height = height;

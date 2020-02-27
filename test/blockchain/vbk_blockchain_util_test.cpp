@@ -265,7 +265,8 @@ struct BlockchainTest : public ::testing::Test {
     repo = std::make_shared<BlockRepositoryInmem<index_t>>();
     blockchain =
         std::make_shared<BlockTree<block_t, params_base_t>>(repo, chainparam);
-    miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
+    miner = std::make_shared<Miner<block_t, params_base_t>>(
+        chainparam, chainparam->getGenesisBlock().timestamp);
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
