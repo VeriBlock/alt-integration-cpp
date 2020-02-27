@@ -42,8 +42,6 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     block.previousKeystone =
         prevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
-  } else {
-    block.previousKeystone = VbkBlock::keystone_t();
   }
 
   // set second previous keystone
@@ -54,8 +52,6 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     block.secondPreviousKeystone =
         secondPrevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
-  } else {
-    block.secondPreviousKeystone = VbkBlock::keystone_t();
   }
 
   block.timestamp = currentTimestamp4();
