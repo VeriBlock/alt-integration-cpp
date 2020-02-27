@@ -29,7 +29,7 @@ template <>
 bool checkBlockTime(const BlockIndex<BtcBlock>& prev, const BtcBlock& block, ValidationState& state);
 
 template <>
-bool contextuallyValidateBlock(const BlockIndex<BtcBlock>& prev,
+bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
                                const BtcBlock& block,
                                ValidationState& state,
                                const BtcChainParams& params,
