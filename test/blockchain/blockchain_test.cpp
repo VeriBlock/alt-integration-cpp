@@ -267,44 +267,38 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'Z'
-  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
-                                                      this->state));
+  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.height(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork1[18].getHash());
 
   // remove block 'E'
-  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
-                                                      this->state));
+  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.height(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork2[18].getHash());
 
   // remove block 'G'
-  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
-                                                      this->state));
+  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.height(), 17);
   EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
 
   // remove block 'F'
-  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
-                                                      this->state));
+  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.height(), 17);
   EXPECT_EQ(best.tip()->getHash(), fork1[17].getHash());
 
   // remove block 'D'
-  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
-                                                      this->state));
+  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.height(), 16);
   EXPECT_EQ(best.tip()->getHash(), fork1[16].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[16].getHash());
 
   // remove block 'C'
-  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
-                                                      this->state));
+  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.height(), 15);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
@@ -356,8 +350,7 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_2) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'C' and chain above this block
-  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best[16]->getHash(),
-                                                      this->state));
+  this->blockchain->invalidateBlockByHash(best[16]->getHash());
 
   EXPECT_EQ(best.height(), 15);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
@@ -409,13 +402,16 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_3) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'F' and chain above this block
-  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(
-      fork2[fork2.size() - 2].getHash(), this->state));
-
-  EXPECT_TRUE(this->state.IsValid());
+  this->blockchain->invalidateBlockByHash(fork2[fork2.size() - 2].getHash());
 
   EXPECT_EQ(best.height(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // remove block 'Z'
+  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
+
+  EXPECT_EQ(best.height(), 18);
+  EXPECT_EQ(best.tip()->getHash(), fork1[18].getHash());
 }
 
 // make sure to enumerate the test cases here
