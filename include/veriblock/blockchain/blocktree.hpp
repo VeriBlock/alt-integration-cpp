@@ -181,12 +181,12 @@ struct BlockTree {
       return;
     }
 
-    if (!chain.contains(&block) &&
-        chain.tip()->getAncestor(block.height) != &block) {
+    if (!chain.contains(block) &&
+        chain.tip()->getAncestor(block->height) != block) {
       return;
     }
 
-    while (chain.tip() != nullptr && chain.tip() != &block) {
+    while (chain.tip() != nullptr && chain.tip() != block) {
       disconnectTipFromChain(chain);
     }
 
