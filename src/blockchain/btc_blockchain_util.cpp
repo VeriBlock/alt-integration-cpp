@@ -1,3 +1,5 @@
+#include <chrono>
+#include <thread>
 #include <veriblock/blockchain/btc_blockchain_util.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
@@ -23,12 +25,12 @@ ArithUint256 getBlockProof(const BtcBlock& block) {
 
 template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
-    const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) const {
+    const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) {
   BtcBlock block;
   block.version = tip.header.version;
   block.previousBlock = tip.header.getHash();
   block.merkleRoot = merkle;
-  block.timestamp = currentTimestamp4();
+  block.timestamp = ++startTime_;
   block.bits = getNextWorkRequired(tip, block, *params_);
   return block;
 }

@@ -15,6 +15,7 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
+#include "veriblock/time.hpp"
 
 namespace VeriBlock {
 
@@ -65,12 +66,14 @@ class MockMiner {
   MockMiner() {
     btc_params = std::make_shared<BtcChainParamsRegTest>();
     btc_repo = std::make_shared<BlockRepositoryInmem<btc_block_index_t>>();
-    btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(btc_params);
+    btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(
+        btc_params, currentTimestamp4());
     btc_blockchain = std::make_shared<btc_block_tree>(btc_repo, btc_params);
 
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
     vbk_repo = std::make_shared<BlockRepositoryInmem<vbk_block_index_t>>();
-    vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(vbk_params);
+    vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(
+        vbk_params, currentTimestamp4());
     vbk_blockchain = std::make_shared<vbk_block_tree>(vbk_repo, vbk_params);
   }
 

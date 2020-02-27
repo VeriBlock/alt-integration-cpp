@@ -112,27 +112,21 @@ struct BlockTree {
   bool invalidateBlockByHash(const hash_t& blockHash, ValidationState& state) {
     index_t* blockIndex = getBlockIndex(blockHash);
 
-    if (blockIndex == nullptr) {
-      return state.Invalid("invalidateBlockByHash()",
-                           "bad-block-hash",
-                           "can not find block by this hash");
-    }
-
-    for (auto it = fork_candidates_.begin(); it != fork_candidates_.end();) {
-      index_t* forkIndex = *it;
-      index_t* prevIndex = nullptr;
-      if (forkIndex->getAncestor(blockIndex->height) == blockIndex) {
-        it = fork_candidates_.erase(it);
-
-        while (forkIndex != blockIndex) {
-          prevIndex = forkIndex->pprev;
-          block_index_.erase(forkIndex->getHash()
+    for (auto chain_it = fork_chains_.begin();
+         chain_it != fork_chains_.end();) {
+      if (chain_it->tip()->getAncestor(blockIndex->height) == blockIndex) {
+        index_t* walkBlock = chain_it->tip();
+        index_t* prevBlock = nullptr;
+        while (walkBlock != blockIndex) {
+          prevBlock = walkBlock->pprev;
+          block_index_.erase(walkBlock->getHash()
                                  .template trimLE<prev_block_hash_t::size()>());
-          forkIndex = prevIndex;
+          walkBlock = prevBlock;
         }
-      } else {
-        ++it;
+        chain_it = fork_chains_.erase(chain_it);
+        continue;
       }
+      ++chain_it;
     }
 
     while (blockIndex != activeChain_.tip() && state.IsValid()) {
@@ -141,8 +135,8 @@ struct BlockTree {
 
     disconnectTip(state);
 
-    for (const auto& fork_tip : fork_candidates_) {
-      determineBestChain(activeChain_, *fork_tip);
+    for (const auto& fork_chain : fork_chains_) {
+      determineBestChain(activeChain_, *fork_chain.tip());
     }
 
     if (state.IsInvalid()) {
@@ -156,7 +150,7 @@ struct BlockTree {
 
  protected:
   std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
-  std::vector<index_t*> fork_candidates_;
+  std::vector<Chain<Block>> fork_chains_;
   Chain<Block> activeChain_;
   std::shared_ptr<BlockRepository<index_t>> repo_;
   std::shared_ptr<ChainParams> param_;
@@ -216,25 +210,35 @@ struct BlockTree {
 
   void addForkCandidate(BlockIndex<Block>* newCandidate,
                         BlockIndex<Block>* oldCandidate) {
-    auto it = std::find(
-        fork_candidates_.begin(), fork_candidates_.end(), oldCandidate);
-    if (it != fork_candidates_.end()) {
-      fork_candidates_.erase(it);
-    }
-
-    if (newCandidate == nullptr ||
-        activeChain_[newCandidate->height] == newCandidate ||
-        (oldCandidate != nullptr && newCandidate == oldCandidate->pprev)) {
+    if (newCandidate == nullptr) {
       return;
     }
 
-    if (std::find(fork_candidates_.begin(),
-                  fork_candidates_.end(),
-                  newCandidate) != fork_candidates_.end()) {
+    bool isAdded = false;
+    for (auto chain_it = fork_chains_.begin();
+         chain_it != fork_chains_.end();) {
+      if (chain_it->tip() == newCandidate->pprev) {
+        chain_it->setTip(newCandidate);
+        isAdded = true;
+      }
+
+      if (chain_it->tip() == newCandidate) {
+        isAdded = true;
+      }
+
+      if (chain_it->tip() == oldCandidate) {
+        chain_it = fork_chains_.erase(chain_it);
+        continue;
+      }
+      ++chain_it;
+    }
+
+    if (activeChain_.contains(newCandidate) || isAdded) {
       return;
     }
 
-    fork_candidates_.push_back(newCandidate);
+    Chain<Block> newForkChain(newCandidate->height, newCandidate);
+    fork_chains_.push_back(newForkChain);
   }
 
   bool load(ValidationState& state, bool bootstrapGenesis) {
@@ -294,8 +298,8 @@ struct BlockTree {
     }
 
     // TODO move this validation into the statefull function
-    // ContextualCheckBlock() This validation that was moved from the btc, fails
-    // with the vbk chains
+    // ContextualCheckBlock() This validation that was moved from the btc,
+    // fails with the vbk chains
     /*if (int64_t(block.getBlockTime()) < prev->getMedianTimePast()) {
       return state.Invalid("acceptBlockHeader()",
                            "time-too-old",

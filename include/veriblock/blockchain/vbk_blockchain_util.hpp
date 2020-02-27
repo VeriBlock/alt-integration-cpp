@@ -1,9 +1,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_
 
-#include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
+#include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 
 namespace VeriBlock {
@@ -15,7 +15,7 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& currentTip,
 
 template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
-    const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) const;
+    const BlockIndex<VbkBlock>& tip, const merkle_t& merkle);
 
 template <>
 ArithUint256 getBlockProof(const VbkBlock& block);

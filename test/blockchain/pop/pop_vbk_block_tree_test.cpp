@@ -7,6 +7,7 @@
 #include "veriblock/mock_miner.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
 #include "veriblock/storage/endorsements_repository_inmem.hpp"
+#include "veriblock/time.hpp"
 
 using namespace VeriBlock;
 
@@ -102,8 +103,10 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
 
     endorsment_repo = std::make_shared<EndorsementsRepositoryInmem>();
 
-    btc_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(btc_params);
-    vbk_miner = std::make_shared<Miner<VbkBlock, VbkChainParams>>(vbk_params);
+    btc_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(
+        btc_params, currentTimestamp4());
+    vbk_miner = std::make_shared<Miner<VbkBlock, VbkChainParams>>(
+        vbk_params, currentTimestamp4());
 
     vbkTest = std::make_shared<VbkBlockTreeTest>(
         *btcTree, endorsment_repo, vbk_repo, vbk_params);
@@ -125,10 +128,11 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
   // initially we have to endorse the genesis block to update the vbkTest chain
   // with the 200 context blocks from the mock_miner state
   // As a result vbkTest chain state will have 200 blocks + genesis block + 1
-  // block which contains the endorsement (in sum 202 blocks)
+  // block which contains the endorsement (in sum 202 blocks, and the height of
+  // the chain is 201)
   endorseVtbBlock(0);
 
-  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().size() == numVbkBlocks + 2);
+  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().height() == numVbkBlocks + 1);
 
   // endorse 176 block
   endorseVtbBlock(176);
@@ -181,10 +185,11 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
   // initially we have to endorse the genesis block to update the vbkTest chain
   // with the 200 context blocks from the mock_miner state
   // As a result vbkTest chain state will have 200 blocks + genesis block + 1
-  // block which contains the endorsement (in sum 202 blocks)
+  // block which contains the endorsement (in sum 202 blocks, and the height of
+  // the chain is 201)
   endorseVtbBlock(0);  // btc block height 1
 
-  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().size() == numVbkBlocks + 2);
+  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().height() == numVbkBlocks + 1);
 
   // endorse 176 block
   endorseVtbBlock(176);  // btc block height 2
