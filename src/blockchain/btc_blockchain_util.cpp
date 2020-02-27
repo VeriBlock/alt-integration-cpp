@@ -147,10 +147,10 @@ bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
 
 template <>
 bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
-                               const BtcBlock& block,
-                               ValidationState& state,
-                               const BtcChainParams& params,
-                               bool checkDifficulty) {
+                            const BtcBlock& block,
+                            ValidationState& state,
+                            const BtcChainParams& params,
+                            bool checkDifficulty) {
   if (checkDifficulty &&
       block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
     return state.Invalid("contextuallyCheckBlock()",
