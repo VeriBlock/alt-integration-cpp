@@ -129,7 +129,9 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
   }
   if (diff <= tipHeight) {
     auto* prevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
-    if (prevKeystoneIndex == nullptr) return false;
+    if (prevKeystoneIndex == nullptr) {
+      return false;
+    }
 
     if (prevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
@@ -147,7 +149,9 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
   diff += VBK_KEYSTONE_INTERVAL;
   if (diff <= tipHeight) {
     auto* secondPrevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
-    if (secondPrevKeystoneIndex == nullptr) return false;
+    if (secondPrevKeystoneIndex == nullptr) {
+      return false;
+    }
 
     if (secondPrevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
@@ -218,25 +222,25 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
 }
 
 template <>
-bool contextuallyValidateBlock(const BlockIndex<VbkBlock>& prev,
+bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                                const VbkBlock& block,
                                ValidationState& state,
                                const VbkChainParams& params,
-                               bool checkDifficulty) {
-  if (checkDifficulty &&
+                               bool validateByPrevious) {
+  if (!checkBlockTime(prev, block, state)) {
+    return state.addStackFunction("contextuallyCheckBlock()");
+  }
+
+  if (validateByPrevious &&
       block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
-    return state.Invalid("contextuallyValidateBlock()",
+    return state.Invalid("contextuallyCheckBlock()",
                          "vbk-bad-diffbits",
                          "incorrect proof of work");
   }
 
-  if (!checkBlockTime(prev, block, state)) {
-    return state.addStackFunction("contextuallyValidateBlock()");
-  }
-
   // check keystones
-  if (!validateKeystones(prev, block)) {
-    return state.Invalid("contextuallyValidateBlock()",
+  if (validateByPrevious && !validateKeystones(prev, block)) {
+    return state.Invalid("contextuallyCheckBlock()",
                          "vbk-bad-keystones",
                          "incorrect keystones");
   }

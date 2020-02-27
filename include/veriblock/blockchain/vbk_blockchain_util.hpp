@@ -35,11 +35,11 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
                        const VbkBlock& block);
 
 template <>
-bool contextuallyValidateBlock(const BlockIndex<VbkBlock>& prev,
+bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                                const VbkBlock& block,
                                ValidationState& state,
                                const VbkChainParams& params,
-                               bool checkDifficulty);
+                               bool validateByPrevious);
 
 }  // namespace VeriBlock
 

@@ -153,13 +153,13 @@ bool contextuallyValidateBlock(const BlockIndex<BtcBlock>& prev,
                                bool checkDifficulty) {
   if (checkDifficulty &&
       block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
-    return state.Invalid("contextuallyValidateBlock()",
+    return state.Invalid("contextuallyCheckBlock()",
                          "btc-bad-diffbits",
                          "incorrect proof of work of BTC block");
   }
 
   if (!checkBlockTime(prev, block, state)) {
-    return state.addStackFunction("contextuallyValidateBlock()");
+    return state.addStackFunction("contextuallyCheckBlock()");
   }
 
   return true;

@@ -281,7 +281,7 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
   block.previousKeystone = badKeystone;
 
   ASSERT_FALSE(blockchain->acceptBlock(block, state));
-  ASSERT_EQ(state.GetRejectReason(), "bad-keystones");
+  ASSERT_EQ(state.GetRejectReason(), "vbk-bad-keystones");
 }
 
 TEST_F(BlockchainTest, InvalidKeystone2) {
@@ -293,5 +293,5 @@ TEST_F(BlockchainTest, InvalidKeystone2) {
   block.secondPreviousKeystone = badKeystone;
 
   ASSERT_FALSE(blockchain->acceptBlock(block, state));
-  ASSERT_EQ(state.GetRejectReason(), "bad-keystones");
+  ASSERT_EQ(state.GetRejectReason(), "vbk-bad-keystones");
 }

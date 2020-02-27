@@ -112,7 +112,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   BlockTree<VbkBlock, VbkChainParams> tree(value.params);
   ASSERT_TRUE(tree.bootstrapWithChain(
       (int32_t)value.startHeight, bootstrapChain, state))
-      << state.GetDebugMessage();
+      << state.GetRejectReason();
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
 
