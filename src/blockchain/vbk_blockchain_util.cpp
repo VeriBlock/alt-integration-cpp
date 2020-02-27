@@ -118,9 +118,8 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
   return targetDif.toBits();
 }
 
-template <>
 bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
-                       const VbkBlock& block) const {
+                       const VbkBlock& block) {
   auto tipHeight = prevBlock.height;
   auto diff = tipHeight % VBK_KEYSTONE_INTERVAL;
 
@@ -236,7 +235,7 @@ bool contextuallyValidateBlock(const BlockIndex<VbkBlock>& prev,
   }
 
   // check keystones
-  if (validateKeystones(prev, block)) {
+  if (!validateKeystones(prev, block)) {
     return state.Invalid("contextuallyValidateBlock()",
                          "vbk-bad-keystones",
                          "incorrect keystones");

@@ -31,6 +31,9 @@ bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
 
 int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev);
 
+bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
+                       const VbkBlock& block);
+
 template <>
 bool contextuallyValidateBlock(const BlockIndex<VbkBlock>& prev,
                                const VbkBlock& block,

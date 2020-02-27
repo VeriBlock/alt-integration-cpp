@@ -168,7 +168,7 @@ struct BlockTree {
                            "can not find previous block");
     }
 
-    if (contextuallyValidateBlock(*prev, block, state, checkDifficulty)) {
+    if (!contextuallyValidateBlock(*prev, block, state, *param_, checkDifficulty)) {
       return state.addStackFunction("acceptBlock");
     }
 

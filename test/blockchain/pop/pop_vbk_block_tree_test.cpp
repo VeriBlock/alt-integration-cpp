@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <utility>
 
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
@@ -13,12 +14,10 @@ using namespace VeriBlock;
 struct VbkBlockTreeTest : public VbkBlockTree {
   ~VbkBlockTreeTest() override = default;
 
-  VbkBlockTreeTest(
-      BtcTree& btc,
-      std::shared_ptr<EndorsementsRepository> endorsment_repo,
-      std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> blockrepo,
-      std::shared_ptr<VbkChainParams> params)
-      : VbkBlockTree(btc, endorsment_repo, blockrepo, params) {}
+  VbkBlockTreeTest(BtcTree& btc,
+                   std::shared_ptr<EndorsementsRepository> endorsment_repo,
+                   std::shared_ptr<VbkChainParams> params)
+      : VbkBlockTree(btc, std::move(endorsment_repo), std::move(params)) {}
 
   std::vector<ProtoKeystoneContext> getProtoKeystoneContextTest() {
     return getProtoKeystoneContext(this->getBestChain());
@@ -92,12 +91,9 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
   }
 
   VbkBlockTreeTestFixture() {
-    btc_repo = std::make_shared<BlockRepositoryInmem<BlockIndex<BtcBlock>>>();
     btc_params = std::make_shared<BtcChainParamsRegTest>();
-    btcTree = std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(btc_repo,
-                                                                    btc_params);
+    btcTree = std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(btc_params);
 
-    vbk_repo = std::make_shared<BlockRepositoryInmem<BlockIndex<VbkBlock>>>();
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
 
     endorsment_repo = std::make_shared<EndorsementsRepositoryInmem>();
@@ -106,7 +102,7 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
     vbk_miner = std::make_shared<Miner<VbkBlock, VbkChainParams>>(vbk_params);
 
     vbkTest = std::make_shared<VbkBlockTreeTest>(
-        *btcTree, endorsment_repo, vbk_repo, vbk_params);
+        *btcTree, endorsment_repo, vbk_params);
 
     mock_miner = std::make_shared<MockMiner>();
 
