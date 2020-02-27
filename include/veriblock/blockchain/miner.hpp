@@ -14,7 +14,7 @@ struct Miner {
   using merkle_t = decltype(Block::merkleRoot);
   using index_t = BlockIndex<Block>;
 
-  Miner(std::shared_ptr<ChainParams> params, uint32_t startTime)
+  Miner(std::shared_ptr<ChainParams> params, uint32_t startTime = currentTimestamp4())
       : params_(std::move(params)), startTime_(startTime) {}
 
   void createBlock(Block& block) {
