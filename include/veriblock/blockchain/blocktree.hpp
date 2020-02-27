@@ -176,11 +176,7 @@ struct BlockTree {
     return current;
   }
 
-  void invalidateBlockFromChain(Chain<Block>& chain, const index_t* block) {
-    if (block == nullptr) {
-      return;
-    }
-
+  void invalidateBlockFromChain(Chain<Block>& chain, index_t* block) {
     if (!chain.contains(block) &&
         chain.tip()->getAncestor(block->height) != block) {
       return;
@@ -192,6 +188,7 @@ struct BlockTree {
 
     if (chain.tip() != nullptr) {
       disconnectTipFromChain(chain);
+      block = nullptr;
     }
   }
 
