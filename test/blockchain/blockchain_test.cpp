@@ -20,9 +20,7 @@ struct BlockchainTest : public ::testing::Test {
   using params_t = typename TestCase::params_t;
   using hash_t = typename block_t::hash_t;
 
-  std::shared_ptr<BlockRepository<index_t>> repo;
   std::shared_ptr<BlockTree<block_t, params_base_t>> blockchain;
-
   std::shared_ptr<params_base_t> chainparam;
   std::shared_ptr<Miner<block_t, params_base_t>> miner;
 
@@ -33,9 +31,8 @@ struct BlockchainTest : public ::testing::Test {
     chainparam = std::make_shared<params_t>();
     miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
 
-    repo = std::make_shared<BlockRepositoryInmem<index_t>>();
     blockchain =
-        std::make_shared<BlockTree<block_t, params_base_t>>(repo, chainparam);
+        std::make_shared<BlockTree<block_t, params_base_t>>(chainparam);
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
@@ -92,7 +89,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
     auto block = this->miner->createNextBlock(*tip, {});
     ASSERT_TRUE(checkProofOfWork(block, *this->chainparam));
     ASSERT_TRUE(this->blockchain->acceptBlock(block, this->state))
-        << this->state.GetDebugMessage();
+        << this->state.GetRejectReason();
     std::cout << "block #" << i << "\n";
   }
 
@@ -136,7 +133,7 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
         EXPECT_TRUE(tip);
         auto block = this->miner->createNextBlock(*tip, {});
         EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
-            << this->state.GetDebugMessage();
+            << this->state.GetRejectReason();
         return block;
       });
   // we should be at fork1
