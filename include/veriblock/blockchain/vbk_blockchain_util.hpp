@@ -17,7 +17,7 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& currentTip,
 
 template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
-    const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) const;
+    const BlockIndex<VbkBlock>& tip, const merkle_t& merkle);
 
 template <>
 ArithUint256 getBlockProof(const VbkBlock& block);

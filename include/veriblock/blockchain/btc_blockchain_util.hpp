@@ -17,7 +17,7 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
 
 template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
-    const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) const;
+    const BlockIndex<BtcBlock>& tip, const merkle_t& merkle);
 
 template <>
 ArithUint256 getBlockProof(const BtcBlock& block);

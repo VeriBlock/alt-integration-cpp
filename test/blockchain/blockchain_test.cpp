@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <chrono>
-#include <thread>
 #include <veriblock/blockchain/blocktree.hpp>
 
 #include "veriblock/blockchain/block_index.hpp"
@@ -10,6 +8,7 @@
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
+#include "veriblock/time.hpp"
 
 using namespace VeriBlock;
 
@@ -31,7 +30,8 @@ struct BlockchainTest : public ::testing::Test {
 
   BlockchainTest() {
     chainparam = std::make_shared<params_t>();
-    miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
+    miner = std::make_shared<Miner<block_t, params_base_t>>(
+        chainparam, chainparam->getGenesisBlock().timestamp);
 
     blockchain =
         std::make_shared<BlockTree<block_t, params_base_t>>(chainparam);
@@ -80,7 +80,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   auto& chain = this->blockchain->getBestChain();
   EXPECT_NE(chain.tip(), nullptr);
   EXPECT_EQ(chain.tip()->height, this->height);
-  EXPECT_EQ(chain.size(), 1);
+  EXPECT_EQ(chain.height(), 0);
   EXPECT_NE(chain[this->height], nullptr);
   EXPECT_EQ(chain[this->height]->height, this->height);
   EXPECT_EQ(chain[this->height]->header, genesis);
@@ -96,7 +96,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   }
 
   // @then
-  for (uint32_t i = 1; i < (uint32_t)chain.size(); i++) {
+  for (uint32_t i = 1; i <= (uint32_t)chain.height(); i++) {
     ASSERT_TRUE(chain[i]);
     ASSERT_TRUE(chain[i - 1]);
     auto prevHash = chain[i]->header.previousBlock;
@@ -139,7 +139,7 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
         return block;
       });
   // we should be at fork1
-  EXPECT_EQ(best.size(), 100);
+  EXPECT_EQ(best.height(), 99);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   std::vector<block_t> fork2 = fork1;
@@ -157,7 +157,7 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
   });
 
   // we should be at fork2
-  EXPECT_EQ(best.size(), 150);
+  EXPECT_EQ(best.height(), 149);
   EXPECT_EQ(best.tip()->getHash(), fork2.rbegin()->getHash());
 
   // create 30 blocks at fork1
@@ -171,7 +171,7 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
   });
 
   // we should be still at fork2
-  EXPECT_EQ(best.size(), 150);
+  EXPECT_EQ(best.height(), 149);
   EXPECT_EQ(best.tip()->getHash(), fork2.rbegin()->getHash());
 
   // create another 30 blocks at fork1
@@ -185,11 +185,47 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
   });
 
   // we should be at fork1
-  EXPECT_EQ(best.size(), 160);
+  EXPECT_EQ(best.height(), 159);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 }
 
 TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
+  // In this test is considered such case
+  //                / D - E - Z (tip)
+  //  ... - A - B - C
+  //                \ F - G
+  // Blocks are removed consistently so expect behaviour is described below
+  //---
+  // first step
+  //                / D - E (tip)
+  //  ... - A - B - C
+  //                \ F - G
+  //---
+  // second step
+  //                / D
+  //  ... - A - B - C
+  //                \ F - G (tip)
+  //---
+  // third step
+  //                / D
+  //  ... - A - B - C
+  //                \ F (tip)
+  // ---
+  // fourth step
+  //                / D (tip)
+  //  ... - A - B - C
+  //
+  //---
+  // fifth step
+  //
+  //  ... - A - B - C (tip)
+  //
+  //---
+  // sixth step
+  //
+  //  ... - A - B (tip)
+  //
+
   using block_t = typename TypeParam::block_t;
 
   auto genesis = this->chainparam->getGenesisBlock();
@@ -207,13 +243,11 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
         return block;
       });
 
-  EXPECT_EQ(best.size(), 20);
+  EXPECT_EQ(best.height(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   std::vector<block_t> fork2 = fork1;
   fork2.resize(17);
-
-  std::this_thread::sleep_for(std::chrono::seconds(1));
 
   std::generate_n(std::back_inserter(fork2), 2, [&]() {
     // take last block at fork2 and create mine new block on top of that
@@ -226,49 +260,61 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   });
 
   EXPECT_EQ(fork2.size(), 19);
-  EXPECT_EQ(best.size(), 20);
+  EXPECT_EQ(best.height(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
+  // remove block 'Z'
   EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
                                                       this->state));
 
-  EXPECT_EQ(best.size(), 19);
+  EXPECT_EQ(best.height(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork1[18].getHash());
 
+  // remove block 'E'
   EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
                                                       this->state));
 
-  EXPECT_EQ(best.size(), 19);
+  EXPECT_EQ(best.height(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork2[18].getHash());
 
+  // remove block 'G'
   EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
                                                       this->state));
 
-  EXPECT_EQ(best.size(), 18);
+  EXPECT_EQ(best.height(), 17);
   EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
 
+  // remove block 'F'
   EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
                                                       this->state));
 
-  EXPECT_EQ(best.size(), 18);
+  EXPECT_EQ(best.height(), 17);
   EXPECT_EQ(best.tip()->getHash(), fork1[17].getHash());
 
+  // remove block 'D'
   EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
                                                       this->state));
 
-  EXPECT_EQ(best.size(), 17);
+  EXPECT_EQ(best.height(), 16);
   EXPECT_EQ(best.tip()->getHash(), fork1[16].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[16].getHash());
 
+  // remove block 'C'
   EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best.tip()->getHash(),
                                                       this->state));
 
-  EXPECT_EQ(best.size(), 16);
+  EXPECT_EQ(best.height(), 15);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[15].getHash());
 }
 
 TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_2) {
+  // In this test is considered such case
+  //                / D - E - Z (tip)
+  //  ... - A - B - C
+  //                \ F - G
+  // Chain is discarded to the block 'C' in one step
+
   using block_t = typename TypeParam::block_t;
 
   auto genesis = this->chainparam->getGenesisBlock();
@@ -286,13 +332,11 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_2) {
         return block;
       });
 
-  EXPECT_EQ(best.size(), 20);
+  EXPECT_EQ(best.height(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   std::vector<block_t> fork2 = fork1;
   fork2.resize(17);
-
-  std::this_thread::sleep_for(std::chrono::seconds(1));
 
   std::generate_n(std::back_inserter(fork2), 2, [&]() {
     // take last block at fork2 and create mine new block on top of that
@@ -305,15 +349,70 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_2) {
   });
 
   EXPECT_EQ(fork2.size(), 19);
-  EXPECT_EQ(best.size(), 20);
+  EXPECT_EQ(best.height(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
+  // remove block 'C' and chain above this block
   EXPECT_TRUE(this->blockchain->invalidateBlockByHash(best[16]->getHash(),
                                                       this->state));
 
-  EXPECT_EQ(best.size(), 16);
+  EXPECT_EQ(best.height(), 15);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[15].getHash());
+}
+
+TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_3) {
+  // In this test is considered such case
+  //                / D - E - Z (tip)
+  //  ... - A - B - C
+  //                \ F - G
+  // Here only fork blocks are removed (blocks 'F' and 'G')
+
+  using block_t = typename TypeParam::block_t;
+
+  auto genesis = this->chainparam->getGenesisBlock();
+  auto& best = this->blockchain->getBestChain();
+
+  std::vector<block_t> fork1{genesis};
+
+  std::generate_n(
+      std::back_inserter(fork1), 20 - 1 /* genesis */, [&]() -> block_t {
+        auto* tip = best.tip();
+        EXPECT_TRUE(tip);
+        auto block = this->miner->createNextBlock(*tip, {});
+        EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
+            << this->state.GetDebugMessage();
+        return block;
+      });
+
+  EXPECT_EQ(best.height(), 19);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  std::vector<block_t> fork2 = fork1;
+  fork2.resize(17);
+
+  std::generate_n(std::back_inserter(fork2), 2, [&]() {
+    // take last block at fork2 and create mine new block on top of that
+    auto index = this->blockchain->getBlockIndex(fork2.rbegin()->getHash());
+    EXPECT_TRUE(index);
+    auto block = this->miner->createNextBlock(*index, {});
+    EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
+        << this->state.GetDebugMessage();
+    return block;
+  });
+
+  EXPECT_EQ(fork2.size(), 19);
+  EXPECT_EQ(best.height(), 19);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // remove block 'F' and chain above this block
+  EXPECT_TRUE(this->blockchain->invalidateBlockByHash(
+      fork2[fork2.size() - 2].getHash(), this->state));
+
+  EXPECT_TRUE(this->state.IsValid());
+
+  EXPECT_EQ(best.height(), 19);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 }
 
 // make sure to enumerate the test cases here
@@ -321,7 +420,8 @@ REGISTER_TYPED_TEST_SUITE_P(BlockchainTest,
                             Scenario1,
                             ForkResolutionWorks,
                             invalidateTip_test_scenario_1,
-                            invalidateTip_test_scenario_2);
+                            invalidateTip_test_scenario_2,
+                            invalidateTip_test_scenario_3);
 
 // clang-format off
 typedef ::testing::Types<

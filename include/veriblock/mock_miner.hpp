@@ -59,11 +59,13 @@ class MockMiner {
  public:
   MockMiner() {
     btc_params = std::make_shared<BtcChainParamsRegTest>();
-    btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(btc_params);
+    btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(
+        btc_params, currentTimestamp4());
     btc_blockchain = std::make_shared<btc_block_tree>(btc_params);
 
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
-    vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(vbk_params);
+    vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(
+        vbk_params, currentTimestamp4());
     vbk_blockchain = std::make_shared<vbk_block_tree>(vbk_params);
   }
 

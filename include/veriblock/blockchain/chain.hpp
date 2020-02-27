@@ -57,9 +57,9 @@ struct Chain {
     return (*this)[index->height + 1];
   }
 
-  height_t size() const { return (height_t)chain.size() + startHeight_; }
+  height_t height() const { return (height_t)chain.size() + startHeight_ - 1; }
 
-  index_t* tip() const { return chain.empty() ? nullptr : (*this)[size() - 1]; }
+  index_t* tip() const { return chain.empty() ? nullptr : (*this)[height()]; }
 
   index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
 
@@ -91,11 +91,11 @@ struct Chain {
   }
 
   const index_t* findFork(const index_t* pindex) const {
-    if (pindex == nullptr || size() == 0) {
+    if (pindex == nullptr || tip() == nullptr) {
       return nullptr;
     }
 
-    auto lastHeight = size() - 1;
+    auto lastHeight = height();
     if (pindex->height > lastHeight) {
       pindex = pindex->getAncestor(lastHeight);
     }
