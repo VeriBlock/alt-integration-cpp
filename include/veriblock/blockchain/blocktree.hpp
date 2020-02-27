@@ -107,41 +107,25 @@ struct BlockTree {
     return acceptBlock(block, state, true);
   }
 
-  bool invalidateBlockByHash(const hash_t& blockHash, ValidationState& state) {
+  void invalidateBlockByHash(const hash_t& blockHash) {
     index_t* blockIndex = getBlockIndex(blockHash);
 
     for (auto chain_it = fork_chains_.begin();
          chain_it != fork_chains_.end();) {
-      if (chain_it->tip()->getAncestor(blockIndex->height) == blockIndex) {
-        index_t* walkBlock = chain_it->tip();
-        index_t* prevBlock = nullptr;
-        while (walkBlock != blockIndex) {
-          prevBlock = walkBlock->pprev;
-          block_index_.erase(walkBlock->getHash()
-                                 .template trimLE<prev_block_hash_t::size()>());
-          walkBlock = prevBlock;
-        }
+      invalidateBlockFromChain(*chain_it, blockIndex);
+
+      if (chain_it->tip() == nullptr) {
         chain_it = fork_chains_.erase(chain_it);
         continue;
       }
       ++chain_it;
     }
 
-    while (blockIndex != activeChain_.tip() && state.IsValid()) {
-      disconnectTip(state);
-    }
-
-    disconnectTip(state);
+    invalidateBlockFromChain(activeChain_, blockIndex);
 
     for (const auto& fork_chain : fork_chains_) {
       determineBestChain(activeChain_, *fork_chain.tip());
     }
-
-    if (state.IsInvalid()) {
-      state.addStackFunction("invalidateBlockByHash()");
-    }
-
-    return true;
   }
 
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
@@ -190,19 +174,27 @@ struct BlockTree {
     return current;
   }
 
-  bool disconnectTip(ValidationState& state) {
-    BlockIndex<Block>* currentTip = activeChain_.tip();
-    hash_t tipHash = currentTip->getHash();
-
-    if (currentTip == nullptr) {
-      return state.Invalid(
-          "disconnectTip()", "bad-active-chain", "empty current active chain");
+  void invalidateBlockFromChain(Chain<Block>& chain, index_t* block) {
+    if (!chain.contains(block) &&
+        chain.tip()->getAncestor(block->height) != block) {
+      return;
     }
 
-    activeChain_.disconnectTip();
-    block_index_.erase(tipHash.template trimLE<prev_block_hash_t::size()>());
+    while (chain.tip() != nullptr && chain.tip() != block) {
+      disconnectTipFromChain(chain);
+    }
 
-    return true;
+    if (chain.tip() != nullptr) {
+      disconnectTipFromChain(chain);
+    }
+  }
+
+  void disconnectTipFromChain(Chain<Block>& chain) {
+    BlockIndex<Block>* currentTip = chain.tip();
+    hash_t tipHash = currentTip->getHash();
+
+    chain.disconnectTip();
+    block_index_.erase(tipHash.template trimLE<prev_block_hash_t::size()>());
   }
 
   void addForkCandidate(BlockIndex<Block>* newCandidate,
