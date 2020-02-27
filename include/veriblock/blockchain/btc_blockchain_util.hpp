@@ -34,8 +34,7 @@ template <>
 bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
                             const BtcBlock& block,
                             ValidationState& state,
-                            const BtcChainParams& params,
-                            bool checkDifficulty);
+                            const BtcChainParams& params);
 
 }  // namespace VeriBlock
 

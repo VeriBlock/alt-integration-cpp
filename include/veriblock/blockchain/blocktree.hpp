@@ -155,7 +155,7 @@ struct BlockTree {
 
   bool acceptBlock(const block_t& block,
                    ValidationState& state,
-                   bool checkDifficulty) {
+                   bool shouldContextuallyCheck) {
     if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("acceptBlock()");
     }
@@ -168,7 +168,8 @@ struct BlockTree {
                            "can not find previous block");
     }
 
-    if (!contextuallyCheckBlock(*prev, block, state, *param_, checkDifficulty)) {
+    if (shouldContextuallyCheck &&
+        !contextuallyCheckBlock(*prev, block, state, *param_)) {
       return state.addStackFunction("acceptBlock");
     }
 

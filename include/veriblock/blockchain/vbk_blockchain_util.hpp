@@ -38,8 +38,7 @@ template <>
 bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                                const VbkBlock& block,
                                ValidationState& state,
-                               const VbkChainParams& params,
-                               bool validateByPrevious);
+                               const VbkChainParams& params);
 
 }  // namespace VeriBlock
 

@@ -30,8 +30,7 @@ template <typename Block, typename ChainParams>
 bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             const Block& block,
                             ValidationState& state,
-                            const ChainParams& params,
-                            bool checkDifficulty);
+                            const ChainParams& params);
 
 }  // namespace VeriBlock
 

@@ -223,26 +223,23 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
 
 template <>
 bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
-                               const VbkBlock& block,
-                               ValidationState& state,
-                               const VbkChainParams& params,
-                               bool validateByPrevious) {
+                            const VbkBlock& block,
+                            ValidationState& state,
+                            const VbkChainParams& params) {
   if (!checkBlockTime(prev, block, state)) {
     return state.addStackFunction("contextuallyCheckBlock()");
   }
 
-  if (validateByPrevious &&
-      block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
+  if (block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
     return state.Invalid("contextuallyCheckBlock()",
                          "vbk-bad-diffbits",
                          "incorrect proof of work");
   }
 
   // check keystones
-  if (validateByPrevious && !validateKeystones(prev, block)) {
-    return state.Invalid("contextuallyCheckBlock()",
-                         "vbk-bad-keystones",
-                         "incorrect keystones");
+  if (!validateKeystones(prev, block)) {
+    return state.Invalid(
+        "contextuallyCheckBlock()", "vbk-bad-keystones", "incorrect keystones");
   }
 
   return true;
