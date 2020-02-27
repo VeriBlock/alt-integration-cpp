@@ -81,6 +81,11 @@ struct Chain {
       return;
     }
 
+    if(tip() == nullptr || (tip() != nullptr && tip() == index->pprev)) {
+      chain.push_back(index);
+      return;
+    }
+
     height_t innerHeight = toInnerHeight(index->height);
     chain.resize(innerHeight + 1);
 

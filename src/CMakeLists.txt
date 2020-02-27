@@ -8,6 +8,7 @@ add_subdirectory(storage)
 add_library(vblake OBJECT vblake.cpp)
 
 add_library(vbkutils
+        popmanager.cpp
         checks.cpp
         consts.cpp
         serde.cpp
