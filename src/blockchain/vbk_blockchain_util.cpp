@@ -24,28 +24,33 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   VbkBlock block;
   block.version = tip.header.version;
   block.previousBlock =
-      tip.header.getHash().trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
+      tip.header.getHash().template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone
-  if (block.height >= ALT_KEYSTONE_INTERVAL) {
-    auto diff = block.height % ALT_KEYSTONE_INTERVAL;
-    diff = diff == 0 ? ALT_KEYSTONE_INTERVAL : diff;
-    auto* prevKeystoneIndex = tip.getAncestorBlocksBehind(diff);
+  auto diff = tip.height % VBK_KEYSTONE_INTERVAL;
+
+  // we do not use previous block as a keystone
+  if (diff == 0) {
+    diff += VBK_KEYSTONE_INTERVAL;
+  }
+  // we reference genesis block if we are at the beginning of the chain
+  if (diff <= tip.height) {
+    auto* prevKeystoneIndex = tip.getAncestor(tip.height - diff);
     assert(prevKeystoneIndex != nullptr);
     block.previousKeystone =
         prevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
+  }
 
-    // set second previous keystone
-    if (block.height >= 2 * ALT_KEYSTONE_INTERVAL) {
-      auto* secondPrevKeystoneIndex =
-          prevKeystoneIndex->getAncestorBlocksBehind(ALT_KEYSTONE_INTERVAL);
-      assert(secondPrevKeystoneIndex != nullptr);
-      block.secondPreviousKeystone =
-          secondPrevKeystoneIndex->getHash()
-              .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
-    }
+  // set second previous keystone
+  diff += VBK_KEYSTONE_INTERVAL;
+  if (diff <= tip.height) {
+    auto* secondPrevKeystoneIndex = tip.getAncestor(tip.height - diff);
+    assert(secondPrevKeystoneIndex != nullptr);
+    block.secondPreviousKeystone =
+        secondPrevKeystoneIndex->getHash()
+            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
   block.timestamp = startTime_++;
   block.difficulty = getNextWorkRequired(tip, block, *params_);
@@ -109,6 +114,105 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
   }
 
   return targetDif.toBits();
+}
+
+template <>
+bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
+    const BlockIndex<VbkBlock>& prevBlock, const VbkBlock& block) const {
+  auto tipHeight = prevBlock.height;
+  auto diff = tipHeight % VBK_KEYSTONE_INTERVAL;
+
+  // we do not use previous block as a keystone
+  if (diff == 0) {
+    diff += VBK_KEYSTONE_INTERVAL;
+  }
+  if (diff <= tipHeight) {
+    auto* prevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
+    if (prevKeystoneIndex == nullptr) return false;
+
+    if (prevKeystoneIndex->getHash()
+            .template trimLE<VbkBlock::keystone_t::size()>() !=
+        block.previousKeystone) {
+      return false;
+    }
+  } else {
+    // should contain zeroes
+    if (block.previousKeystone != VbkBlock::keystone_t()) {
+      return false;
+    }
+  }
+
+  // set second previous keystone
+  diff += VBK_KEYSTONE_INTERVAL;
+  if (diff <= tipHeight) {
+    auto* secondPrevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
+    if (secondPrevKeystoneIndex == nullptr) return false;
+
+    if (secondPrevKeystoneIndex->getHash()
+            .template trimLE<VbkBlock::keystone_t::size()>() !=
+        block.secondPreviousKeystone) {
+      return false;
+    }
+  } else {
+    // should contain zeroes
+    if (block.secondPreviousKeystone != VbkBlock::keystone_t()) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+int64_t getMedianTimePast(const BlockIndex<VbkBlock>& prev) {
+  // height of block to be added is prev.height + 1
+
+  // at block 110000 VBK enables different algorithm of median time calculation,
+  // which is implemented in `calculateMinimumTimestamp`. if you even encounter
+  // time error on legacy (pre-110000) VBK mainnet/testnet blocks, you will need
+  // to add `calculateMinimumTimestampLegacy` from VBK here.
+  return calculateMinimumTimestamp(prev);
+}
+
+template <>
+bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
+                    const VbkBlock& block,
+                    ValidationState& state) {
+  int64_t median = getMedianTimePast(prev);
+  if (int64_t(block.getBlockTime()) < median) {
+    return state.Invalid(
+        "checkBlockTime()", "time-too-old", "block's timestamp is too early");
+  }
+
+  // TODO: find out the max future block time for VBK
+  if (int64_t(block.getBlockTime()) >
+      currentTimestamp4() + BTC_MAX_FUTURE_BLOCK_TIME) {
+    return state.Invalid("checkBlockTime()",
+                         "time-too-new",
+                         "block timestamp too far in the future");
+  }
+
+  return true;
+}
+
+int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
+  // Calculate the MEDIAN. If there are an even number of elements,
+  // use the lower of the two.
+
+  size_t i = 0;
+  std::vector<int64_t> pmedian;
+  const BlockIndex<VbkBlock>* pindex = &prev;
+  for (i = 0; i < HISTORY_FOR_TIMESTAMP_AVERAGE; i++, pindex = pindex->pprev) {
+    if (pindex == nullptr) {
+      break;
+    }
+    pmedian.push_back(pindex->getBlockTime());
+  }
+
+  assert(i > 0);
+  assert(!pmedian.empty());
+  std::sort(pmedian.begin(), pmedian.end());
+  size_t index = i % 2 == 0 ? (i / 2) - 1 : (i / 2);
+  return pmedian.at(index);
 }
 
 }  // namespace VeriBlock

@@ -10,6 +10,7 @@ set(FLAGS
         -g
         -O1
         -DNDEBUG
+        -Wno-error=null-dereference
         )
 foreach(FLAG IN LISTS FLAGS)
     add_cache_flag(CMAKE_CXX_FLAGS ${FLAG})

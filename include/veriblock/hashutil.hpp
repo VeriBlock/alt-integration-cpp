@@ -27,7 +27,7 @@ uint256 sha256twice(Slice<const uint8_t> data);
 /**
  * Calculates VBlake of the input data
  * @param data read data from this array
- * @return vector with SHA256 hash of the input data
+ * @return vector with VBlake hash of the input data
  */
 uint192 vblake(Slice<const uint8_t> data);
 

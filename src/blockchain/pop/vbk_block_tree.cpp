@@ -13,6 +13,9 @@ std::vector<KeystoneContext> VbkBlockTree::getKeystoneContext(
       [this](const ProtoKeystoneContext& pkc) {
         int earliestEndorsementIndex = std::numeric_limits<int32_t>::max();
         for (const auto* btcIndex : pkc.referencedByBtcBlocks) {
+          if (btcIndex == nullptr) {
+            continue;
+          }
           auto endorsementIndex = btcIndex->height;
           if (endorsementIndex >= earliestEndorsementIndex) {
             continue;
@@ -31,8 +34,11 @@ std::vector<KeystoneContext> VbkBlockTree::getKeystoneContext(
                adjustedEndorsementIndex++) {
             // Ensure that the keystone's block time isn't later than the
             // block time of the Bitcoin block it's endorsed in
-            if (pkc.timestampOfEndorsedBlock <
-                btcBest[adjustedEndorsementIndex]->getBlockTime()) {
+            auto* index = btcBest[adjustedEndorsementIndex];
+            if (index == nullptr) {
+              throw std::logic_error("unexpected nullptr in btc best chain");
+            }
+            if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
               // Timestamp of VeriBlock block is lower than Bitcoin block,
               // set this as the adjusted index if another lower index has
               // not already been set
@@ -56,12 +62,16 @@ std::vector<KeystoneContext> VbkBlockTree::getKeystoneContext(
 std::vector<ProtoKeystoneContext> VbkBlockTree::getProtoKeystoneContext(
     const Chain<VbkBlock>& chain) {
   std::vector<ProtoKeystoneContext> ret;
+  auto* tip = chain.tip();
+  if (tip == nullptr) {
+    throw std::logic_error("unexpected nullptr - no tip in best chain");
+  }
 
-  auto highestPossibleEndorsedBlockHeaderHeight = chain.tip()->height;
+  auto highestPossibleEndorsedBlockHeaderHeight = tip->height;
   auto lastKeystone =
-      highestKeystoneAtOrBefore(chain.tip()->height, VBK_KEYSTONE_INTERVAL);
+      highestKeystoneAtOrBefore(tip->height, VBK_KEYSTONE_INTERVAL);
   auto firstKeystone =
-      firstKeystoneAfter(chain.bootstrap()->height, VBK_KEYSTONE_INTERVAL);
+      firstKeystoneAfter(chain.first()->height, VBK_KEYSTONE_INTERVAL);
 
   // For each keystone, find the endorsements of itself and other blocks which
   // reference it, and look at the earliest Bitcoin block that any of those

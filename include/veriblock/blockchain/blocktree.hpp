@@ -99,7 +99,7 @@ struct BlockTree {
   template <size_t N,
             typename = typename std::enable_if<N == prev_block_hash_t::size() ||
                                                N == hash_t::size()>::type>
-  index_t* getBlockIndex(const Blob<N>& hash) {
+  index_t* getBlockIndex(const Blob<N>& hash) const {
     auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
     auto it = block_index_.find(shortHash);
     return it == block_index_.end() ? nullptr : it->second.get();
@@ -257,9 +257,9 @@ struct BlockTree {
     std::sort(blocks.begin(), blocks.end());
     for (const auto& item : blocks) {
       index_t* index = item.second.get();
-      bool checkDifficulty =
+      bool validateBlock =
           bootstrapGenesis || processedBlocks++ > numBlocksForBootstrap;
-      if (acceptBlock(index->header, state, checkDifficulty)) {
+      if (acceptBlock(index->header, state, validateBlock)) {
         return state.addStackFunction("load()");
       }
     }
@@ -269,7 +269,7 @@ struct BlockTree {
 
   bool acceptBlock(const block_t& block,
                    ValidationState& state,
-                   bool checkDifficulty) {
+                   bool validateBlock) {
     if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("acceptBlockHeader()");
     }
@@ -283,26 +283,20 @@ struct BlockTree {
     }
 
     // check difficulty
-    if (checkDifficulty &&
+    if (validateBlock &&
         block.getDifficulty() != getNextWorkRequired(*prev, block, *param_)) {
       return state.Invalid(
           "acceptBlockHeader()", "bad-diffbits", "incorrect proof of work");
     }
 
-    // TODO move this validation into the statefull function
-    // ContextualCheckBlock() This validation that was moved from the btc,
-    // fails with the vbk chains
-    /*if (int64_t(block.getBlockTime()) < prev->getMedianTimePast()) {
-      return state.Invalid("acceptBlockHeader()",
-                           "time-too-old",
-                           "block's timestamp is too early");
-    }*/
+    if (!checkBlockTime(*prev, block, state)) {
+      return state.addStackFunction("acceptBlockHeader()");
+    }
 
-    if (int64_t(block.getBlockTime()) >
-        currentTimestamp4() + ALT_MAX_FUTURE_BLOCK_TIME) {
-      return state.Invalid("acceptBlockHeader()",
-                           "time-too-new",
-                           "block timestamp too far in the future");
+    // check keystones
+    if (validateBlock && !validateKeystones(*prev, block)) {
+      return state.Invalid(
+          "acceptBlockHeader()", "bad-keystones", "incorrect keystones");
     }
 
     auto* index = insertBlockHeader(block);
@@ -327,8 +321,7 @@ struct BlockTree {
       return state.addStackFunction("bootstrap()");
     }
 
-    auto fullHash = block.getHash();
-    if (!block_index_.empty() && !getBlockIndex(fullHash)) {
+    if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
       return state.Error("block-index-no-genesis");
     }
 
@@ -336,7 +329,9 @@ struct BlockTree {
     return true;
   }
 
- protected:
+  bool validateKeystones(const BlockIndex<Block>& prevBlock,
+                         const Block& block) const;
+
   virtual void determineBestChain(Chain<block_t>& currentBest,
                                   index_t& indexNew) {
     if (currentBest.tip() == nullptr ||
