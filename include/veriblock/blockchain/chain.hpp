@@ -59,6 +59,8 @@ struct Chain {
 
   height_t height() const { return (height_t)chain.size() + startHeight_ - 1; }
 
+  size_t size() const { return chain.size(); }
+
   index_t* tip() const { return chain.empty() ? nullptr : (*this)[height()]; }
 
   index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
