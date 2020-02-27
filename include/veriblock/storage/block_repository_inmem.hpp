@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <memory>
+#include <unordered_map>
 
 #include "veriblock/storage/block_repository.hpp"
 

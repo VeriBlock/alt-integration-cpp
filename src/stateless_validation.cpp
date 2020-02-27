@@ -193,7 +193,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
     if (vbkBlocks[i].height != lastHeight + 1 ||
         vbkBlocks[i].previousBlock !=
-            lastHash.trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
+            lastHash.template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
       return state.Invalid("checkVeriBlockBlocks()",
                            "VeriBlock Blocks invalid",
                            "Blocks are not contiguous");

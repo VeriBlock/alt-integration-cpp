@@ -86,7 +86,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   EXPECT_EQ(chain[this->height]->height, this->height);
   EXPECT_EQ(chain[this->height]->header, genesis);
 
-  // mine 10000 blocks
+  // mine 5000 blocks
   for (size_t i = 0; i < 5000; i++) {
     auto tip = chain.tip();
     auto block = this->miner->createNextBlock(*tip, {});

@@ -108,6 +108,12 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
 }
 
 template <>
+bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
+    const BlockIndex<BtcBlock>&, const BtcBlock&) const {
+  return true;
+}
+
+template <>
 int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev) {
   static constexpr int medianTimeSpan = 11;
 

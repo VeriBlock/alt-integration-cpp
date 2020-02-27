@@ -14,12 +14,13 @@ namespace VeriBlock {
 struct VbkBlock {
   using hash_t = uint192;
   using height_t = int32_t;
+  using keystone_t = uint72;
 
   int32_t height{};
   int16_t version{};
   uint96 previousBlock{};
-  uint72 previousKeystone{};
-  uint72 secondPreviousKeystone{};
+  keystone_t previousKeystone{};
+  keystone_t secondPreviousKeystone{};
   uint128 merkleRoot{};
   int32_t timestamp{};
   int32_t difficulty{};
