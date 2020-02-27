@@ -118,9 +118,8 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
   return targetDif.toBits();
 }
 
-template <>
-bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
-    const BlockIndex<VbkBlock>& prevBlock, const VbkBlock& block) const {
+bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
+                       const VbkBlock& block) {
   auto tipHeight = prevBlock.height;
   auto diff = tipHeight % VBK_KEYSTONE_INTERVAL;
 
@@ -130,7 +129,9 @@ bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
   }
   if (diff <= tipHeight) {
     auto* prevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
-    if (prevKeystoneIndex == nullptr) return false;
+    if (prevKeystoneIndex == nullptr) {
+      return false;
+    }
 
     if (prevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
@@ -148,7 +149,9 @@ bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
   diff += VBK_KEYSTONE_INTERVAL;
   if (diff <= tipHeight) {
     auto* secondPrevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
-    if (secondPrevKeystoneIndex == nullptr) return false;
+    if (secondPrevKeystoneIndex == nullptr) {
+      return false;
+    }
 
     if (secondPrevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
@@ -181,15 +184,16 @@ bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                     ValidationState& state) {
   int64_t median = getMedianTimePast(prev);
   if (int64_t(block.getBlockTime()) < median) {
-    return state.Invalid(
-        "checkBlockTime()", "time-too-old", "block's timestamp is too early");
+    return state.Invalid("checkBlockTime()",
+                         "vbk-time-too-old",
+                         "block's timestamp is too early");
   }
 
   // TODO: find out the max future block time for VBK
   if (int64_t(block.getBlockTime()) >
       currentTimestamp4() + BTC_MAX_FUTURE_BLOCK_TIME) {
     return state.Invalid("checkBlockTime()",
-                         "time-too-new",
+                         "vbk-time-too-new",
                          "block timestamp too far in the future");
   }
 
@@ -215,6 +219,30 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
   std::sort(pmedian.begin(), pmedian.end());
   size_t index = i % 2 == 0 ? (i / 2) - 1 : (i / 2);
   return pmedian.at(index);
+}
+
+template <>
+bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
+                            const VbkBlock& block,
+                            ValidationState& state,
+                            const VbkChainParams& params) {
+  if (!checkBlockTime(prev, block, state)) {
+    return state.addStackFunction("contextuallyCheckBlock()");
+  }
+
+  if (block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
+    return state.Invalid("contextuallyCheckBlock()",
+                         "vbk-bad-diffbits",
+                         "incorrect proof of work");
+  }
+
+  // check keystones
+  if (!validateKeystones(prev, block)) {
+    return state.Invalid(
+        "contextuallyCheckBlock()", "vbk-bad-keystones", "incorrect keystones");
+  }
+
+  return true;
 }
 
 }  // namespace VeriBlock
