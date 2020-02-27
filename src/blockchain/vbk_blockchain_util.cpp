@@ -119,8 +119,8 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
 }
 
 template <>
-bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
-    const BlockIndex<VbkBlock>& prevBlock, const VbkBlock& block) const {
+bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
+                       const VbkBlock& block) const {
   auto tipHeight = prevBlock.height;
   auto diff = tipHeight % VBK_KEYSTONE_INTERVAL;
 
@@ -181,15 +181,16 @@ bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                     ValidationState& state) {
   int64_t median = getMedianTimePast(prev);
   if (int64_t(block.getBlockTime()) < median) {
-    return state.Invalid(
-        "checkBlockTime()", "time-too-old", "block's timestamp is too early");
+    return state.Invalid("checkBlockTime()",
+                         "vbk-time-too-old",
+                         "block's timestamp is too early");
   }
 
   // TODO: find out the max future block time for VBK
   if (int64_t(block.getBlockTime()) >
       currentTimestamp4() + BTC_MAX_FUTURE_BLOCK_TIME) {
     return state.Invalid("checkBlockTime()",
-                         "time-too-new",
+                         "vbk-time-too-new",
                          "block timestamp too far in the future");
   }
 
@@ -215,6 +216,33 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
   std::sort(pmedian.begin(), pmedian.end());
   size_t index = i % 2 == 0 ? (i / 2) - 1 : (i / 2);
   return pmedian.at(index);
+}
+
+template <>
+bool contextuallyValidateBlock(const BlockIndex<VbkBlock>& prev,
+                               const VbkBlock& block,
+                               ValidationState& state,
+                               const VbkChainParams& params,
+                               bool checkDifficulty) {
+  if (checkDifficulty &&
+      block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
+    return state.Invalid("contextuallyValidateBlock()",
+                         "vbk-bad-diffbits",
+                         "incorrect proof of work");
+  }
+
+  if (!checkBlockTime(prev, block, state)) {
+    return state.addStackFunction("contextuallyValidateBlock()");
+  }
+
+  // check keystones
+  if (validateKeystones(prev, block)) {
+    return state.Invalid("contextuallyValidateBlock()",
+                         "vbk-bad-keystones",
+                         "incorrect keystones");
+  }
+
+  return true;
 }
 
 }  // namespace VeriBlock

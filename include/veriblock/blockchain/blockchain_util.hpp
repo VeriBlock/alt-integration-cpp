@@ -24,6 +24,9 @@ int64_t getMedianTimePast(const BlockIndex<Block>& prev);
 template <typename Block>
 bool checkBlockTime(const BlockIndex<Block>& prev, const Block& block, ValidationState& state);
 
+template <typename Block, typename ChainParams>
+bool contextuallyValidateBlock(const BlockIndex<Block>& prev, const Block& block, ValidationState& state, const ChainParams& params, bool checkDifficulty = true);
+
 
 }  // namespace VeriBlock
 

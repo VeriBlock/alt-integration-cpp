@@ -29,9 +29,7 @@ struct BlockTree {
 
   virtual ~BlockTree() = default;
 
-  BlockTree(std::shared_ptr<BlockRepository<index_t>> repo,
-            std::shared_ptr<ChainParams> param)
-      : repo_(std::move(repo)), param_(std::move(param)) {}
+  BlockTree(std::shared_ptr<ChainParams> param) : param_(std::move(param)) {}
 
   /**
    * Bootstrap blockchain with a single genesis block, from "chain parameters"
@@ -114,7 +112,6 @@ struct BlockTree {
  protected:
   std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
   Chain<Block> activeChain_;
-  std::shared_ptr<BlockRepository<index_t>> repo_;
   std::shared_ptr<ChainParams> param_;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
@@ -126,8 +123,7 @@ struct BlockTree {
     }
 
     auto* newIndex = new index_t{};
-    it = block_index_.insert({hash, std::unique_ptr<index_t>(newIndex)})
-             .first;
+    it = block_index_.insert({hash, std::unique_ptr<index_t>(newIndex)}).first;
     return it->second.get();
   }
 
@@ -157,45 +153,11 @@ struct BlockTree {
     return current;
   }
 
-  bool load(ValidationState& state, bool bootstrapGenesis) {
-    // at this point we should have bootstrap block(s) in our storage
-    auto cursor = repo_->newCursor();
-
-    // load blocks into memory
-    std::vector<std::pair<height_t, std::unique_ptr<index_t>>> blocks;
-    for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
-      auto value = cursor->value();
-
-      if (!checkProofOfWork(value.header, *param_)) {
-        return state.Error("load-bad-proof-of-work");
-      }
-
-      auto index = std::unique_ptr<index_t>(new index_t{});
-      *index = value;
-      blocks.push_back({value.height, std::move(index)});
-    }
-
-    size_t processedBlocks = 0;
-    size_t numBlocksForBootstrap = param_->numBlocksForBootstrap();
-    assert(block_index_.size() == 1);
-    std::sort(blocks.begin(), blocks.end());
-    for (const auto& item : blocks) {
-      index_t* index = item.second.get();
-      bool validateBlock =
-          bootstrapGenesis || processedBlocks++ > numBlocksForBootstrap;
-      if (acceptBlock(index->header, state, validateBlock)) {
-        return state.addStackFunction("load()");
-      }
-    }
-
-    return true;
-  }
-
   bool acceptBlock(const block_t& block,
                    ValidationState& state,
-                   bool validateBlock) {
+                   bool checkDifficulty) {
     if (!checkBlock(block, state, *param_)) {
-      return state.addStackFunction("acceptBlockHeader()");
+      return state.addStackFunction("acceptBlock()");
     }
 
     // we must know previous block
@@ -206,27 +168,13 @@ struct BlockTree {
                            "can not find previous block");
     }
 
-    // check difficulty
-    if (validateBlock &&
-        block.getDifficulty() != getNextWorkRequired(*prev, block, *param_)) {
-      return state.Invalid(
-          "acceptBlockHeader()", "bad-diffbits", "incorrect proof of work");
-    }
-
-    if (!checkBlockTime(*prev, block, state)) {
-      return state.addStackFunction("acceptBlockHeader()");
-    }
-
-    // check keystones
-    if (validateBlock && !validateKeystones(*prev, block)) {
-      return state.Invalid(
-          "acceptBlockHeader()", "bad-keystones", "incorrect keystones");
+    if (contextuallyValidateBlock(*prev, block, state, checkDifficulty)) {
+      return state.addStackFunction("acceptBlock");
     }
 
     auto* index = insertBlockHeader(block);
     assert(index != nullptr &&
            "insertBlockHeader should have never returned nullptr");
-    repo_->put(*index);
     return true;
   }
 
@@ -239,19 +187,13 @@ struct BlockTree {
 
     auto* index = insertBlockHeader(block);
     index->height = height;
-    if (!load(state, height == 0)) {
-      return state.addStackFunction("bootstrap()");
-    }
 
     if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
       return state.Error("block-index-no-genesis");
     }
 
-    repo_->put(*index);
     return true;
   }
-
-  bool validateKeystones(const BlockIndex<Block>& prevBlock, const Block& block) const;
 
   virtual void determineBestChain(Chain<block_t>& currentBest,
                                   index_t& indexNew) {

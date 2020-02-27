@@ -1,12 +1,12 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_
 
-#include <veriblock/blockchain/vbk_chain_params.hpp>
+#include <veriblock/blockchain/blockchain_util.hpp>
+#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
-#include <veriblock/blockchain/blocktree.hpp>
+#include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/vbkblock.hpp>
-#include <veriblock/blockchain/blockchain_util.hpp>
 
 namespace VeriBlock {
 
@@ -22,10 +22,6 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
 template <>
 ArithUint256 getBlockProof(const VbkBlock& block);
 
-template <>
-bool BlockTree<VbkBlock, VbkChainParams>::validateKeystones(
-    const BlockIndex<VbkBlock>& prevBlock, const VbkBlock& block) const;
-
 int64_t getMedianTimePast(const BlockIndex<VbkBlock>& prev);
 
 template <>
@@ -34,6 +30,13 @@ bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                     ValidationState& state);
 
 int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev);
+
+template <>
+bool contextuallyValidateBlock(const BlockIndex<VbkBlock>& prev,
+                               const VbkBlock& block,
+                               ValidationState& state,
+                               const VbkChainParams& params,
+                               bool checkDifficulty);
 
 }  // namespace VeriBlock
 
