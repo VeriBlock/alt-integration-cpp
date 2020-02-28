@@ -115,6 +115,17 @@ struct BlockTree {
       return;
     }
 
+    // first we have to analyze the highest forks, to avoid the removing blocks
+    // that can be proceed by another fork chain like in the situation described
+    // below
+    // We have two fork chains that one of the fork chain has been forked from
+    // another
+    //  F - G - H - I
+    //      \ Q
+    // and if block F is being removed, and chain 'F - G - H - I' will be
+    // processed firstly, we will remove block 'G' which is needed for the
+    // another chain, so that chain must be processed firstly
+
     std::sort(
         fork_chains_.begin(),
         fork_chains_.end(),
