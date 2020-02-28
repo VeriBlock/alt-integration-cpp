@@ -128,7 +128,8 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
   // the chain is 201)
   endorseVtbBlock(0);
 
-  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().blocksCount() == numVbkBlocks);
+  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().blocksCount() ==
+              numVbkBlocks + 2);
 
   // endorse 176 block
   endorseVtbBlock(176);
@@ -185,7 +186,8 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
   // the chain is 201)
   endorseVtbBlock(0);  // btc block height 1
 
-  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().blocksCount() == numVbkBlocks);
+  ASSERT_TRUE((uint32_t)vbkTest->getBestChain().blocksCount() ==
+              numVbkBlocks + 2);
 
   // endorse 176 block
   endorseVtbBlock(176);  // btc block height 2
