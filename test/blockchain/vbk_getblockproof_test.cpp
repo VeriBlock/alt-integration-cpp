@@ -21,7 +21,6 @@ struct GetProofTest : public testing::Test {
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
   std::shared_ptr<param_t> params;
-  std::shared_ptr<BlockRepository<index_t>> repo;
   ValidationState state;
 
   std::vector<VbkBlock> allBlocks{};
@@ -29,8 +28,6 @@ struct GetProofTest : public testing::Test {
 
   GetProofTest() {
     params = std::make_shared<VbkChainParamsTest>();
-    repo = std::make_shared<BlockRepositoryInmem<index_t>>();
-
     parseBlocks(generated::vbk_testnet30000);
   }
 
@@ -55,28 +52,28 @@ struct GetProofTest : public testing::Test {
 };
 
 TEST_F(GetProofTest, Blocks100Test) {
-  BlockTree<VbkBlock, VbkChainParams> block_chain(repo, params);
-  ASSERT_TRUE(block_chain.bootstrapWithGenesis(state));
+  BlockTree<VbkBlock, VbkChainParams> tree(params);
+  ASSERT_TRUE(tree.bootstrapWithGenesis(state));
 
   for (size_t i = 1; i < 101; i++) {
-    ASSERT_TRUE(block_chain.acceptBlock(allBlocks[i], state));
+    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state));
     auto hash = allBlocks[i].getHash();
-    index_t* current = block_chain.getBlockIndex(hash);
+    index_t* current = tree.getBlockIndex(hash);
     ASSERT_EQ(current->chainWork, cumulativeDifficulties[i]);
   }
 
-  bool ret = block_chain.acceptBlock(allBlocks[101], state);
+  bool ret = tree.acceptBlock(allBlocks[101], state);
   ASSERT_TRUE(ret);
 }
 
 TEST_F(GetProofTest, Blocks30kTest) {
-  BlockTree<VbkBlock, VbkChainParams> block_chain(repo, params);
-  ASSERT_TRUE(block_chain.bootstrapWithGenesis(state));
+  BlockTree<VbkBlock, VbkChainParams> tree(params);
+  ASSERT_TRUE(tree.bootstrapWithGenesis(state));
 
   for (size_t i = 1; i < allBlocks.size(); i++) {
-    ASSERT_TRUE(block_chain.acceptBlock(allBlocks[i], state));
+    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state));
     auto hash = allBlocks[i].getHash();
-    index_t* current = block_chain.getBlockIndex(hash);
+    index_t* current = tree.getBlockIndex(hash);
     ASSERT_EQ(current->chainWork, cumulativeDifficulties[i]);
   }
 }

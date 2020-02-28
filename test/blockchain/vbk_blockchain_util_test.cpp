@@ -6,7 +6,7 @@
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
-#include "veriblock/storage/block_repository_inmem.hpp"
+#include "veriblock/time.hpp"
 
 using namespace VeriBlock;
 
@@ -216,7 +216,7 @@ TEST(Vbk, CheckBlockTime1) {
   // validateMinimumTimestampWhenBelowMedian
   block.timestamp = 1527118679;
   ASSERT_FALSE(checkBlockTime(*last, block, state)) << state.GetRejectReason();
-  ASSERT_EQ(state.GetRejectReason(), "time-too-old");
+  ASSERT_EQ(state.GetRejectReason(), "vbk-time-too-old");
 }
 
 TEST(Vbk, CheckBlockTime2) {
@@ -241,7 +241,7 @@ TEST(Vbk, CheckBlockTime2) {
   VbkBlock block;
   block.timestamp = 1527499999;
   ASSERT_FALSE(checkBlockTime(chain[chain.size() - 1], block, state));
-  ASSERT_EQ(state.GetRejectReason(), "time-too-old");
+  ASSERT_EQ(state.GetRejectReason(), "vbk-time-too-old");
 
   block.timestamp = 1527500000;
   ASSERT_TRUE(checkBlockTime(chain[chain.size() - 1], block, state));
@@ -253,18 +253,16 @@ struct BlockchainTest : public ::testing::Test {
   using params_t = VbkChainParamsRegTest;
   using index_t = typename BlockTree<block_t, params_base_t>::index_t;
 
-  std::shared_ptr<BlockRepository<index_t>> repo;
   std::shared_ptr<BlockTree<block_t, params_base_t>> blockchain;
-
   std::shared_ptr<params_base_t> chainparam;
   std::shared_ptr<Miner<block_t, params_base_t>> miner;
   ValidationState state;
 
   BlockchainTest() {
     chainparam = std::make_shared<params_t>();
-    repo = std::make_shared<BlockRepositoryInmem<index_t>>();
     blockchain =
-        std::make_shared<BlockTree<block_t, params_base_t>>(repo, chainparam);
+        std::make_shared<BlockTree<block_t, params_base_t>>(chainparam);
+
     miner = std::make_shared<Miner<block_t, params_base_t>>(
         chainparam, chainparam->getGenesisBlock().timestamp);
 
@@ -285,7 +283,7 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
   block.previousKeystone = badKeystone;
 
   ASSERT_FALSE(blockchain->acceptBlock(block, state));
-  ASSERT_EQ(state.GetRejectReason(), "bad-keystones");
+  ASSERT_EQ(state.GetRejectReason(), "vbk-bad-keystones");
 }
 
 TEST_F(BlockchainTest, InvalidKeystone2) {
@@ -297,5 +295,5 @@ TEST_F(BlockchainTest, InvalidKeystone2) {
   block.secondPreviousKeystone = badKeystone;
 
   ASSERT_FALSE(blockchain->acceptBlock(block, state));
-  ASSERT_EQ(state.GetRejectReason(), "bad-keystones");
+  ASSERT_EQ(state.GetRejectReason(), "vbk-bad-keystones");
 }

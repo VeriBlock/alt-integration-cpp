@@ -1,12 +1,11 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_BLOCKCHAIN_UTIL_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_BLOCKCHAIN_UTIL_HPP_
 
+#include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
-#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/entities/btcblock.hpp>
-#include <veriblock/blockchain/blockchain_util.hpp>
 
 namespace VeriBlock {
 
@@ -23,14 +22,18 @@ template <>
 ArithUint256 getBlockProof(const BtcBlock& block);
 
 template <>
-bool BlockTree<BtcBlock, BtcChainParams>::validateKeystones(
-    const BlockIndex<BtcBlock>&, const BtcBlock&) const;
-
-template <>
 int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev);
 
 template <>
-bool checkBlockTime(const BlockIndex<BtcBlock>& prev, const BtcBlock& block, ValidationState& state);
+bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
+                    const BtcBlock& block,
+                    ValidationState& state);
+
+template <>
+bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
+                            const BtcBlock& block,
+                            ValidationState& state,
+                            const BtcChainParams& params);
 
 }  // namespace VeriBlock
 

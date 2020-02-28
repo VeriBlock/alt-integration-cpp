@@ -24,6 +24,7 @@ struct Chain {
   using block_t = Block;
   using index_t = BlockIndex<block_t>;
   using height_t = typename Block::height_t;
+  using storage_t = std::vector<index_t*>;
 
   Chain() = default;
 
@@ -64,6 +65,11 @@ struct Chain {
   index_t* tip() const { return chain.empty() ? nullptr : (*this)[height()]; }
 
   index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
+
+  typename storage_t::iterator begin() { return chain.begin(); }
+  typename storage_t::iterator begin() const { return chain.begin(); }
+  typename storage_t::iterator end() { return chain.end(); }
+  typename storage_t::iterator end() const { return chain.end(); }
 
   void setTip(index_t* index) {
     if (index == nullptr) {

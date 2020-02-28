@@ -113,26 +113,25 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap(),
       allblocks.end()};
 
-  BlockTree<BtcBlock, BtcChainParams> block_chain(repo, value.params);
-  ASSERT_TRUE(
-      block_chain.bootstrapWithChain(value.startHeight, bootstrapChain, state))
+  BlockTree<BtcBlock, BtcChainParams> tree(value.params);
+  ASSERT_TRUE(tree.bootstrapWithChain(value.startHeight, bootstrapChain, state))
       << state.GetDebugMessage();
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
 
-  EXPECT_EQ(block_chain.getBestChain().tip()->header,
+  EXPECT_EQ(tree.getBestChain().tip()->header,
             bootstrapChain[bootstrapChain.size() - 1]);
-  EXPECT_EQ(block_chain.getBestChain().tip()->height,
+  EXPECT_EQ(tree.getBestChain().tip()->height,
             value.startHeight + bootstrapChain.size() - 1);
 
   for (const auto& block : acceptChain) {
-    ASSERT_TRUE(block_chain.acceptBlock(block, state))
+    ASSERT_TRUE(tree.acceptBlock(block, state))
         << "block #" << totalBlocks << "\n"
         << "rejection: " << state.GetRejectReason() << ", "
         << "message: " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
-    EXPECT_EQ(block_chain.getBestChain().tip()->header, block);
-    EXPECT_EQ(block_chain.getBestChain().tip()->height,
+    EXPECT_EQ(tree.getBestChain().tip()->header, block);
+    EXPECT_EQ(tree.getBestChain().tip()->height,
               totalBlocks + value.startHeight);
     ++totalBlocks;
   }

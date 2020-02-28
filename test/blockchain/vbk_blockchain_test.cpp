@@ -9,7 +9,6 @@
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
-#include "veriblock/storage/block_repository_inmem.hpp"
 
 using namespace VeriBlock;
 
@@ -21,13 +20,9 @@ struct BlockchainFixture {
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
   std::shared_ptr<param_t> params;
-  std::shared_ptr<BlockRepository<index_t>> repo;
   ValidationState state;
 
-  BlockchainFixture() {
-    params = std::make_shared<VbkChainParamsRegTest>();
-    repo = std::make_shared<BlockRepositoryInmem<index_t>>();
-  }
+  BlockchainFixture() { params = std::make_shared<VbkChainParamsRegTest>(); }
 };
 
 struct VbkTestCase {
@@ -55,25 +50,24 @@ static std::vector<VbkTestCase> accept_test_cases = {
     /// mainnet
 
     // TODO: BTC-246
-//    {generated::vbk_blockheaders_mainnet_0_10000,
-//     std::make_shared<VbkChainParamsMain>(),
-//     0},
-//    {generated::vbk_blockheaders_mainnet_0_10000,
-//     std::make_shared<VbkChainParamsMain>(),
-//     1},
-//    {generated::vbk_blockheaders_mainnet_0_10000,
-//     std::make_shared<VbkChainParamsMain>(),
-//     99},
-//    {generated::vbk_blockheaders_mainnet_0_10000,
-//     std::make_shared<VbkChainParamsMain>(),
-//     100},
-//    {generated::vbk_blockheaders_mainnet_0_10000,
-//     std::make_shared<VbkChainParamsMain>(),
-//     101},
-//    {generated::vbk_blockheaders_mainnet_0_10000,
-//     std::make_shared<VbkChainParamsMain>(),
-//     1337},
-
+    //    {generated::vbk_blockheaders_mainnet_0_10000,
+    //     std::make_shared<VbkChainParamsMain>(),
+    //     0},
+    //    {generated::vbk_blockheaders_mainnet_0_10000,
+    //     std::make_shared<VbkChainParamsMain>(),
+    //     1},
+    //    {generated::vbk_blockheaders_mainnet_0_10000,
+    //     std::make_shared<VbkChainParamsMain>(),
+    //     99},
+    //    {generated::vbk_blockheaders_mainnet_0_10000,
+    //     std::make_shared<VbkChainParamsMain>(),
+    //     100},
+    //    {generated::vbk_blockheaders_mainnet_0_10000,
+    //     std::make_shared<VbkChainParamsMain>(),
+    //     101},
+    //    {generated::vbk_blockheaders_mainnet_0_10000,
+    //     std::make_shared<VbkChainParamsMain>(),
+    //     1337},
 
     /// testnet
     {generated::vbk_blockheaders_testnet_0_10000,
@@ -96,7 +90,7 @@ static std::vector<VbkTestCase> accept_test_cases = {
      1337},
 };
 
-//Read Vbk_blockheaders file.
+// Read Vbk_blockheaders file.
 TEST_P(AcceptTest, BootstrapWithChain) {
   auto value = GetParam();
   auto allblocks = value.getBlocks();
@@ -115,29 +109,31 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap(),
       allblocks.end()};
 
-  BlockTree<VbkBlock, VbkChainParams> block_chain(repo, value.params);
-  ASSERT_TRUE(block_chain.bootstrapWithChain(
+  BlockTree<VbkBlock, VbkChainParams> tree(value.params);
+  ASSERT_TRUE(tree.bootstrapWithChain(
       (int32_t)value.startHeight, bootstrapChain, state))
-      << state.GetDebugMessage();
+      << state.GetRejectReason();
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
 
-  EXPECT_EQ(block_chain.getBestChain().tip()->header,
+  EXPECT_EQ(tree.getBestChain().tip()->header,
             bootstrapChain[bootstrapChain.size() - 1]);
-  EXPECT_EQ(block_chain.getBestChain().tip()->height,
+  EXPECT_EQ(tree.getBestChain().tip()->height,
             value.startHeight + bootstrapChain.size() - 1);
 
   for (const auto& block : acceptChain) {
-    ASSERT_TRUE(block_chain.acceptBlock(block, state))
+    ASSERT_TRUE(tree.acceptBlock(block, state))
         << "block #" << totalBlocks << "\n"
         << "rejection: " << state.GetRejectReason() << ", "
         << "message: " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
-    EXPECT_EQ(block_chain.getBestChain().tip()->header, block);
-    EXPECT_EQ(block_chain.getBestChain().tip()->height,
+    EXPECT_EQ(tree.getBestChain().tip()->header, block);
+    EXPECT_EQ(tree.getBestChain().tip()->height,
               totalBlocks + value.startHeight);
     ++totalBlocks;
   }
+
+  auto best = tree.getBestChain();
 }
 
 INSTANTIATE_TEST_SUITE_P(AcceptBlocksRegression,

@@ -1,3 +1,5 @@
+#include "veriblock/mock_miner.hpp"
+
 #include <gtest/gtest.h>
 #include <stdint.h>
 
@@ -5,7 +7,6 @@
 
 #include "veriblock/entities/publication_data.hpp"
 #include "veriblock/entities/vbktx.hpp"
-#include "veriblock/mock_miner.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 using namespace VeriBlock;
@@ -21,9 +22,9 @@ struct MockMinerTest : public MockMiner, public ::testing::Test {
     publicationData.payoutInfo = std::vector<uint8_t>(100, 3);
 
     EXPECT_TRUE(bootstrapBtcChainWithGenesis(state));
-    EXPECT_TRUE(state.IsValid());
+    EXPECT_TRUE(state.IsValid()) << state.GetRejectReason();
     EXPECT_TRUE(bootstrapVbkChainWithGenesis(state));
-    EXPECT_TRUE(state.IsValid());
+    EXPECT_TRUE(state.IsValid()) << state.GetRejectReason();
   }
 };
 
@@ -33,9 +34,9 @@ TEST_F(MockMinerTest, mine_test) {
                            getBtcParams()->getGenesisBlock().getHash(),
                            5,
                            state);
-
+  ASSERT_TRUE(state.IsValid()) << state.GetRejectReason();
   EXPECT_TRUE(checkATV(pubs.atv, state, *getVbkParams()));
-  EXPECT_TRUE(state.IsValid());
+  EXPECT_TRUE(state.IsValid()) << state.GetRejectReason();
 
   for (const auto& vtb : pubs.vtbs) {
     EXPECT_TRUE(checkVTB(vtb, state, *getVbkParams(), *getBtcParams()));
