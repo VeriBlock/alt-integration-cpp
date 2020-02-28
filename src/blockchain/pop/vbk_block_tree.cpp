@@ -30,7 +30,7 @@ std::vector<KeystoneContext> VbkBlockTree::getKeystoneContext(
           // earliestEndorsementIndex to a future Bitcoin block
           auto btcBest = btc_.getBestChain();
           for (int adjustedEndorsementIndex = endorsementIndex + 1;
-               adjustedEndorsementIndex <= btcBest.height();
+               adjustedEndorsementIndex <= btcBest.chainHeight();
                adjustedEndorsementIndex++) {
             // Ensure that the keystone's block time isn't later than the
             // block time of the Bitcoin block it's endorsed in

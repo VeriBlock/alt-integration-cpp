@@ -2,8 +2,8 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_
 
 #include <memory>
-#include <set>
 #include <unordered_map>
+#include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
@@ -171,10 +171,9 @@ struct BlockTree {
       current->height = current->pprev->height + 1;
       current->chainWork = current->pprev->chainWork + getBlockProof(block);
     } else {
+      current->height = 0;
       current->chainWork = getBlockProof(block);
     }
-    determineBestChain(activeChain_, *current);
-
     return current;
   }
 
@@ -184,7 +183,8 @@ struct BlockTree {
     }
 
     if (!chain.contains(*block) &&
-        chain.tip()->getAncestor((*block)->height) != *block) {
+        !(activeChain_.contains(*block) &&
+          (*block)->height < chain.first()->height)) {
       return;
     }
 
@@ -213,8 +213,9 @@ struct BlockTree {
     }
 
     bool isAdded = false;
-    for (auto chain_it = fork_chains_.begin();
-         chain_it != fork_chains_.end();) {
+    auto replace_it = fork_chains_.end();
+    for (auto chain_it = fork_chains_.begin(); chain_it != fork_chains_.end();
+         ++chain_it) {
       if (chain_it->tip() == newCandidate->pprev) {
         chain_it->setTip(newCandidate);
         isAdded = true;
@@ -224,19 +225,33 @@ struct BlockTree {
         isAdded = true;
       }
 
-      if (chain_it->tip() == oldCandidate) {
-        chain_it = fork_chains_.erase(chain_it);
-      } else {
-        ++chain_it;
+      if (chain_it->tip() == oldCandidate ||
+          (oldCandidate != nullptr && chain_it->tip() == oldCandidate->pprev)) {
+        replace_it = chain_it;
+        continue;
       }
     }
 
     if (activeChain_.contains(newCandidate) || isAdded) {
+      if (replace_it != fork_chains_.end()) {
+        fork_chains_.erase(replace_it);
+      }
       return;
     }
 
-    Chain<Block> newForkChain(newCandidate->height, newCandidate);
-    fork_chains_.push_back(newForkChain);
+    // find block from the main chain
+    index_t* workBlock = newCandidate;
+    for (; !activeChain_.contains(workBlock->pprev);
+         workBlock = workBlock->pprev)
+      ;
+
+    Chain<Block> newForkChain(workBlock->height, workBlock);
+    newForkChain.setTip(newCandidate);
+    if (replace_it != fork_chains_.end()) {
+      *replace_it = newForkChain;
+    } else {
+      fork_chains_.push_back(newForkChain);
+    }
   }
 
   bool acceptBlock(const block_t& block,
@@ -260,6 +275,9 @@ struct BlockTree {
     }
 
     auto* index = insertBlockHeader(block);
+
+    determineBestChain(activeChain_, *index);
+
     (void)index;  // to prevent "unused variable" warning
     assert(index != nullptr &&
            "insertBlockHeader should have never returned nullptr");
@@ -275,6 +293,8 @@ struct BlockTree {
 
     auto* index = insertBlockHeader(block);
     index->height = height;
+
+    activeChain_ = Chain<Block>(height, index);
 
     if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
       return state.Error("block-index-no-genesis");

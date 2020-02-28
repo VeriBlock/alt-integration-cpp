@@ -132,8 +132,6 @@ TEST_P(AcceptTest, BootstrapWithChain) {
               totalBlocks + value.startHeight);
     ++totalBlocks;
   }
-
-  auto best = tree.getBestChain();
 }
 
 INSTANTIATE_TEST_SUITE_P(AcceptBlocksRegression,

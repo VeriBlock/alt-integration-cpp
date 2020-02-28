@@ -58,11 +58,15 @@ struct Chain {
     return (*this)[index->height + 1];
   }
 
-  height_t height() const { return (height_t)chain.size() + startHeight_ - 1; }
+  height_t chainHeight() const {
+    return (height_t)chain.size() + startHeight_ - 1;
+  }
 
-  size_t size() const { return chain.size(); }
+  size_t blocksCount() const { return chain.size(); }
 
-  index_t* tip() const { return chain.empty() ? nullptr : (*this)[height()]; }
+  index_t* tip() const {
+    return chain.empty() ? nullptr : (*this)[chainHeight()];
+  }
 
   index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
 
@@ -103,7 +107,7 @@ struct Chain {
       return nullptr;
     }
 
-    auto lastHeight = height();
+    auto lastHeight = chainHeight();
     if (pindex->height > lastHeight) {
       pindex = pindex->getAncestor(lastHeight);
     }

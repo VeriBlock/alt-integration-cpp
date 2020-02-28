@@ -46,7 +46,7 @@ TEST_P(ChainTest, Full) {
   auto [start, size] = GetParam();
   auto blocks = makeBlocks(start, size);
   chain = Chain<DummyBlock>(start, &*blocks.rbegin());
-  EXPECT_EQ(chain.height(), start + size - 1);
+  EXPECT_EQ(chain.chainHeight(), start + size - 1);
   EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
 
   // check 'contains' method
@@ -93,6 +93,6 @@ TEST(ChainTest, CreateFrom0) {
   // elements, first 100 of which are null.
   auto blocks = ChainTest::makeBlocks(100, 10);
   Chain<DummyBlock> c(0, &*blocks.rbegin());
-  ASSERT_EQ(c.size(), 110);
-  ASSERT_EQ(c.height(), 109);
+  ASSERT_EQ(c.blocksCount(), 110);
+  ASSERT_EQ(c.chainHeight(), 109);
 }
