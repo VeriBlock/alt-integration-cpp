@@ -252,7 +252,9 @@ struct BlockTree {
     // find block from the main chain
     index_t* workBlock = newCandidate;
     if (forkChainStart == fork_chains_.end()) {
-      workBlock = const_cast<index_t*>(activeChain_.findFork(workBlock));
+      for (; !activeChain_.contains(workBlock->pprev);
+           workBlock = workBlock->pprev)
+        ;
     }
 
     Chain<Block> newForkChain(workBlock->height, workBlock);
