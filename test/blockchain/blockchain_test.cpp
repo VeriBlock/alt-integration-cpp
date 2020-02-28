@@ -383,6 +383,100 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_4) {
   EXPECT_EQ(best.tip()->getHash(), fork3[15].getHash());
 }
 
+TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_5) {
+  // In this test considered this case
+  //                / D - E - Z - P - R (tip)
+  //  ... - A - B - C
+  //                \ F - G - H - I
+  //                      \ Q
+  // Remove block C. Expect C, D, E, Z, F, G, P, R, H, I, Q to be removed.
+
+  using block_t = typename TypeParam::block_t;
+
+  auto genesis = this->chainparam->getGenesisBlock();
+  auto& best = this->blockchain->getBestChain();
+
+  std::vector<block_t> fork1{genesis};
+  this->addToFork(fork1, 21 /*genesis*/);
+
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  std::vector<block_t> fork2 = fork1;
+  fork2.resize(17);
+  this->addToFork(fork2, 4);
+
+  std::vector<block_t> fork3 = fork2;
+  fork3.resize(19);
+  this->addToFork(fork3, 1);
+
+  EXPECT_EQ(fork2.size(), 21);
+  EXPECT_EQ(fork3.size(), 20);
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // remove block 'C' and chain above this block
+  this->blockchain->invalidateBlockByHash(best[16]->getHash());
+
+  EXPECT_EQ(best.blocksCount(), 16);
+  EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
+  EXPECT_EQ(best.tip()->getHash(), fork2[15].getHash());
+  EXPECT_EQ(best.tip()->getHash(), fork3[15].getHash());
+}
+
+TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_6) {
+  // In this test considered this case
+  //                / D - E - Z - P - R (tip)
+  //  ... - A - B - C
+  //                \ F - G - H - I
+  //                      \ Q
+  // Step 1
+  // remove block G with blocks H, I, Q
+  //                / D - E - Z - P - R (tip)
+  //  ... - A - B - C
+  //                \ F
+  // Step 2
+  // remove block D with blocks E, Z, P, R
+  //  ... - A - B - C
+  //                \ F (tip)
+
+  using block_t = typename TypeParam::block_t;
+
+  auto genesis = this->chainparam->getGenesisBlock();
+  auto& best = this->blockchain->getBestChain();
+
+  std::vector<block_t> fork1{genesis};
+  this->addToFork(fork1, 21 /*genesis*/);
+
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  std::vector<block_t> fork2 = fork1;
+  fork2.resize(17);
+  this->addToFork(fork2, 4);
+
+  std::vector<block_t> fork3 = fork2;
+  fork3.resize(19);
+  this->addToFork(fork3, 1);
+
+  EXPECT_EQ(fork2.size(), 21);
+  EXPECT_EQ(fork3.size(), 20);
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // remove block 'G' and chain above this block
+  this->blockchain->invalidateBlockByHash(fork2[18].getHash());
+
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // remove block 'D' and chain above this block
+  this->blockchain->invalidateBlockByHash(fork1[17].getHash());
+
+  EXPECT_EQ(best.blocksCount(), 18);
+  EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
+}
+
 TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_1) {
   // In this test considered this case
   //                / D - E - Z (tip)
@@ -394,7 +488,7 @@ TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_1) {
   //                / D - E - Z
   //  ... - A - B - C
   //                \ F - G - H - I (tip)
-  // After that we will remove block 'F' to check that it will correctly swith
+  // After that we will remove block 'F' to check that it will correctly switch
   // to the main chain Step 3
   //                / D - E - Z (tip)
   //  ... - A - B - C
@@ -435,6 +529,74 @@ TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_1) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 }
 
+TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_2) {
+  // In this test considered this case
+  //                / D - E - Z - P - R (tip)
+  //  ... - A - B - C
+  //                \ F - G - H - I
+  //                      \ Q
+  // Step 2
+  // add 4 blocks to the fork with the tip 'Q'
+  //                / D - E - Z - P - R
+  //  ... - A - B - C
+  //                \ F - G - H - I
+  //                      \ Q - Y - U - M - N (tip)
+  // Step 3
+  // remove block 'D' and blocks E, Z, P, R
+  //
+  //  ... - A - B - C
+  //                \ F - G - H - I
+  //                      \ Q - Y - U - M - N (tip)
+  // Step 4
+  // remove block 'Q' and blocks Y, U, M, N
+  //
+  //  ... - A - B - C
+  //                \ F - G - H - I (tip)
+
+  using block_t = typename TypeParam::block_t;
+
+  auto genesis = this->chainparam->getGenesisBlock();
+  auto& best = this->blockchain->getBestChain();
+
+  std::vector<block_t> fork1{genesis};
+  this->addToFork(fork1, 21 /*genesis*/);
+
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  std::vector<block_t> fork2 = fork1;
+  fork2.resize(17);
+  this->addToFork(fork2, 4);
+
+  std::vector<block_t> fork3 = fork2;
+  fork3.resize(19);
+  this->addToFork(fork3, 1);
+
+  EXPECT_EQ(fork2.size(), 21);
+  EXPECT_EQ(fork3.size(), 20);
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // add blocks Y, U, M, N
+  this->addToFork(fork3, 4);
+
+  EXPECT_EQ(fork3.size(), 24);
+  EXPECT_EQ(best.blocksCount(), 24);
+  EXPECT_EQ(best.tip()->getHash(), fork3.rbegin()->getHash());
+
+  // remove block D
+  this->blockchain->invalidateBlockByHash(fork1[17].getHash());
+
+  EXPECT_EQ(best.blocksCount(), 24);
+  EXPECT_EQ(best.tip()->getHash(), fork3.rbegin()->getHash());
+
+  // remove block Q
+  this->blockchain->invalidateBlockByHash(fork3[19].getHash());
+
+  EXPECT_EQ(best.blocksCount(), 21);
+  EXPECT_EQ(best.tip()->getHash(), fork2.rbegin()->getHash());
+}
+
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(BlockchainTest,
                             Scenario1,
@@ -443,7 +605,10 @@ REGISTER_TYPED_TEST_SUITE_P(BlockchainTest,
                             invalidateTip_test_scenario_2,
                             invalidateTip_test_scenario_3,
                             invalidateTip_test_scenario_4,
-                            acceptBlock_test_scenario_1);
+                            invalidateTip_test_scenario_5,
+                            invalidateTip_test_scenario_6,
+                            acceptBlock_test_scenario_1,
+                            acceptBlock_test_scenario_2);
 
 // clang-format off
 typedef ::testing::Types<

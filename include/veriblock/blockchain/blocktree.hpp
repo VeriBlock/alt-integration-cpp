@@ -117,7 +117,7 @@ struct BlockTree {
 
     for (auto chain_it = fork_chains_.begin();
          chain_it != fork_chains_.end();) {
-      invalidateBlockFromChain(*chain_it, &blockIndex);
+      invalidateBlockFromChain(*chain_it, blockIndex);
 
       if (chain_it->tip() == nullptr) {
         chain_it = fork_chains_.erase(chain_it);
@@ -126,7 +126,10 @@ struct BlockTree {
       ++chain_it;
     }
 
-    invalidateBlockFromChain(activeChain_, &blockIndex);
+    invalidateBlockFromChain(activeChain_, blockIndex);
+
+    block_index_.erase(
+        blockIndex->getHash().template trimLE<prev_block_hash_t::size()>());
 
     for (const auto& fork_chain : fork_chains_) {
       determineBestChain(activeChain_, *fork_chain.tip());
@@ -177,24 +180,26 @@ struct BlockTree {
     return current;
   }
 
-  void invalidateBlockFromChain(Chain<Block>& chain, index_t** block) {
-    if (*block == nullptr) {
+  void invalidateBlockFromChain(Chain<Block>& chain, const index_t* block) {
+    if (block == nullptr) {
       return;
     }
 
-    if (!chain.contains(*block) &&
-        !(activeChain_.contains(*block) &&
-          (*block)->height < chain.first()->height)) {
+    if (!chain.contains(block) &&
+        !(activeChain_.contains(block) &&
+          block->height < chain.first()->height) &&
+        chain.first()->getAncestor(block->height) != block) {
       return;
     }
 
-    while (chain.tip() != nullptr && chain.tip() != *block) {
+    while (chain.tip() != nullptr && chain.tip() != block) {
       disconnectTipFromChain(chain);
     }
 
+    // disconnect the block from the current chain, but do not remove it from
+    // block_index_
     if (chain.tip() != nullptr) {
-      disconnectTipFromChain(chain);
-      *block = nullptr;
+      chain.disconnectTip();
     }
   }
 
@@ -214,6 +219,7 @@ struct BlockTree {
 
     bool isAdded = false;
     auto replace_it = fork_chains_.end();
+    auto forkChainStart = fork_chains_.end();
     for (auto chain_it = fork_chains_.begin(); chain_it != fork_chains_.end();
          ++chain_it) {
       if (chain_it->tip() == newCandidate->pprev) {
@@ -223,6 +229,10 @@ struct BlockTree {
 
       if (chain_it->tip() == newCandidate) {
         isAdded = true;
+      }
+
+      if (chain_it->contains(newCandidate->pprev)) {
+        forkChainStart = chain_it;
       }
 
       if (chain_it->tip() == oldCandidate ||
@@ -241,9 +251,11 @@ struct BlockTree {
 
     // find block from the main chain
     index_t* workBlock = newCandidate;
-    for (; !activeChain_.contains(workBlock->pprev);
-         workBlock = workBlock->pprev)
-      ;
+    if (forkChainStart == fork_chains_.end()) {
+      for (; !activeChain_.contains(workBlock->pprev);
+           workBlock = workBlock->pprev)
+        ;
+    }
 
     Chain<Block> newForkChain(workBlock->height, workBlock);
     newForkChain.setTip(newCandidate);
