@@ -477,6 +477,58 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_6) {
   EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
 }
 
+TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_7) {
+  // In this test considered this case
+  //                / D - E - Z - P - R (tip)
+  //  ... - A - B - C
+  //                \ F - G - H - I
+  //                      \ Q
+  // Step 1
+  // remove block F with blocks G, H, I, Q
+  //                / D - E - Z - P - R (tip)
+  //  ... - A - B - C
+  // Step 2
+  // remove block D with blocks E, Z, P, R
+  //
+  //  ... - A - B - C (tip)
+
+  using block_t = typename TypeParam::block_t;
+
+  auto genesis = this->chainparam->getGenesisBlock();
+  auto& best = this->blockchain->getBestChain();
+
+  std::vector<block_t> fork1{genesis};
+  this->addToFork(fork1, 21 /*genesis*/);
+
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  std::vector<block_t> fork2 = fork1;
+  fork2.resize(17);
+  this->addToFork(fork2, 4);
+
+  std::vector<block_t> fork3 = fork2;
+  fork3.resize(19);
+  this->addToFork(fork3, 1);
+
+  EXPECT_EQ(fork2.size(), 21);
+  EXPECT_EQ(fork3.size(), 20);
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // remove block 'F' and chain above this block
+  this->blockchain->invalidateBlockByHash(fork2[17].getHash());
+
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // remove block 'D' and chain above this block
+  this->blockchain->invalidateBlockByHash(fork1[17].getHash());
+
+  EXPECT_EQ(best.blocksCount(), 17);
+  EXPECT_EQ(best.tip()->getHash(), fork1[16].getHash());
+}
+
 TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_1) {
   // In this test considered this case
   //                / D - E - Z (tip)
@@ -607,6 +659,7 @@ REGISTER_TYPED_TEST_SUITE_P(BlockchainTest,
                             invalidateTip_test_scenario_4,
                             invalidateTip_test_scenario_5,
                             invalidateTip_test_scenario_6,
+                            invalidateTip_test_scenario_7,
                             acceptBlock_test_scenario_1,
                             acceptBlock_test_scenario_2);
 

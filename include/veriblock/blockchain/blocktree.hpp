@@ -1,9 +1,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_
 
+#include <algorithm>
 #include <memory>
 #include <unordered_map>
-#include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
@@ -114,6 +114,13 @@ struct BlockTree {
       // no such block
       return;
     }
+
+    std::sort(
+        fork_chains_.begin(),
+        fork_chains_.end(),
+        [](const Chain<Block>& chain1, const Chain<Block>& chain2) -> bool {
+          return chain1.getStartHeight() > chain2.getStartHeight();
+        });
 
     for (auto chain_it = fork_chains_.begin();
          chain_it != fork_chains_.end();) {
