@@ -29,6 +29,7 @@ struct VbkTestCase {
   std::string headers;
   std::shared_ptr<VbkChainParams> params;
   uint32_t startHeight = 0;
+  uint32_t offset = 0;
 
   std::vector<VbkBlock> getBlocks() const {
     std::vector<VbkBlock> ret;
@@ -48,46 +49,50 @@ struct AcceptTest : public testing::TestWithParam<VbkTestCase>,
 
 static std::vector<VbkTestCase> accept_test_cases = {
     /// mainnet
-
-    // TODO: BTC-246
-    //    {generated::vbk_blockheaders_mainnet_0_10000,
-    //     std::make_shared<VbkChainParamsMain>(),
-    //     0},
-    //    {generated::vbk_blockheaders_mainnet_0_10000,
-    //     std::make_shared<VbkChainParamsMain>(),
-    //     1},
-    //    {generated::vbk_blockheaders_mainnet_0_10000,
-    //     std::make_shared<VbkChainParamsMain>(),
-    //     99},
-    //    {generated::vbk_blockheaders_mainnet_0_10000,
-    //     std::make_shared<VbkChainParamsMain>(),
-    //     100},
-    //    {generated::vbk_blockheaders_mainnet_0_10000,
-    //     std::make_shared<VbkChainParamsMain>(),
-    //     101},
-    //    {generated::vbk_blockheaders_mainnet_0_10000,
-    //     std::make_shared<VbkChainParamsMain>(),
-    //     1337},
+    {generated::vbk_blockheaders_mainnet_200001_230000,
+     std::make_shared<VbkChainParamsMain>(),
+     200001,
+     0},
+    {generated::vbk_blockheaders_mainnet_200001_230000,
+     std::make_shared<VbkChainParamsMain>(),
+     200001,
+     1},
+    {generated::vbk_blockheaders_mainnet_200001_230000,
+     std::make_shared<VbkChainParamsMain>(),
+     200001,
+     99},
+    {generated::vbk_blockheaders_mainnet_200001_230000,
+     std::make_shared<VbkChainParamsMain>(),
+     200001,
+     100},
+    {generated::vbk_blockheaders_mainnet_200001_230000,
+     std::make_shared<VbkChainParamsMain>(),
+     200001,
+     101},
+    {generated::vbk_blockheaders_mainnet_200001_230000,
+     std::make_shared<VbkChainParamsMain>(),
+     200001,
+     1337},
 
     /// testnet
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     0},
+     0, 0},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     1},
+     0, 1},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     99},
+     0, 99},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     100},
+     0, 100},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     101},
+     0, 101},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     1337},
+     0, 1337},
 };
 
 // Read Vbk_blockheaders file.
@@ -95,23 +100,26 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   auto value = GetParam();
   auto allblocks = value.getBlocks();
   // skip first `startHeight` blocks
-  allblocks = std::vector<VbkBlock>{allblocks.begin() + value.startHeight,
-                                    allblocks.end()};
+  allblocks = std::vector<VbkBlock>{
+      allblocks.begin() + value.offset,
+      allblocks.end()};
 
-  // make a bootstrap chain by taking first `numBlocksForBootstrap` blocks
+  // make a bootstrap chain by taking first `numBlocksForBootstrap` x2 blocks
+  // due to forked blocks we take twice the blocks and expect to collect
+  // at least `numBlocksForBootstrap` blocks
   auto bootstrapChain = allblocks;
-  bootstrapChain.resize(value.params->numBlocksForBootstrap());
+  bootstrapChain.resize(value.params->numBlocksForBootstrap() * 2);
 
-  ASSERT_GE(allblocks.size(), value.params->numBlocksForBootstrap());
+  ASSERT_GE(allblocks.size(), value.params->numBlocksForBootstrap() * 2);
   // make accept chain - the one that is applied on top of current blocktree
   // state
   std::vector<VbkBlock> acceptChain{
-      allblocks.begin() + value.params->numBlocksForBootstrap(),
+      allblocks.begin() + value.params->numBlocksForBootstrap() * 2,
       allblocks.end()};
 
   BlockTree<VbkBlock, VbkChainParams> tree(value.params);
   ASSERT_TRUE(tree.bootstrapWithChain(
-      (int32_t)value.startHeight, bootstrapChain, state))
+      (int32_t)value.startHeight + value.offset, bootstrapChain, state))
       << state.GetRejectReason();
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
@@ -119,7 +127,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   EXPECT_EQ(tree.getBestChain().tip()->header,
             bootstrapChain[bootstrapChain.size() - 1]);
   EXPECT_EQ(tree.getBestChain().tip()->height,
-            value.startHeight + bootstrapChain.size() - 1);
+            bootstrapChain[bootstrapChain.size() - 1].height);
 
   for (const auto& block : acceptChain) {
     ASSERT_TRUE(tree.acceptBlock(block, state))
@@ -127,9 +135,14 @@ TEST_P(AcceptTest, BootstrapWithChain) {
         << "rejection: " << state.GetRejectReason() << ", "
         << "message: " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
-    EXPECT_EQ(tree.getBestChain().tip()->header, block);
-    EXPECT_EQ(tree.getBestChain().tip()->height,
-              totalBlocks + value.startHeight);
+
+    // we are not sure that block gets to the main chain. Make sure it at least
+    // exists
+    if (tree.getBestChain().tip()->header != block) {
+      EXPECT_NE(tree.getBlockIndex(block.getHash()), nullptr);
+    }
+
+    EXPECT_EQ(tree.getBestChain().tip()->height, block.height);
     ++totalBlocks;
   }
 }
