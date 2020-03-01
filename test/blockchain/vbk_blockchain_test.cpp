@@ -99,6 +99,7 @@ static std::vector<VbkTestCase> accept_test_cases = {
 TEST_P(AcceptTest, BootstrapWithChain) {
   auto value = GetParam();
   auto allblocks = value.getBlocks();
+
   // skip first `offset` blocks
   allblocks = std::vector<VbkBlock>{
       allblocks.begin() + value.offset,
@@ -118,8 +119,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.end()};
 
   BlockTree<VbkBlock, VbkChainParams> tree(value.params);
-  ASSERT_TRUE(tree.bootstrapWithChain(
-      (int32_t)value.startHeight + value.offset, bootstrapChain, state))
+  ASSERT_TRUE(tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))
       << state.GetRejectReason();
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
