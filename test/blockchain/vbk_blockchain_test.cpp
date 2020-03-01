@@ -99,7 +99,7 @@ static std::vector<VbkTestCase> accept_test_cases = {
 TEST_P(AcceptTest, BootstrapWithChain) {
   auto value = GetParam();
   auto allblocks = value.getBlocks();
-  // skip first `startHeight` blocks
+  // skip first `offset` blocks
   allblocks = std::vector<VbkBlock>{
       allblocks.begin() + value.offset,
       allblocks.end()};
