@@ -275,8 +275,9 @@ struct BlockTree {
 
     Chain<Block> newForkChain(workBlock->height, workBlock);
     newForkChain.setTip(newCandidate);
-    fork_chains_.insert(std::pair<Block::height_t, Chain<Block>>(
-        newForkChain.getStartHeight(), newForkChain));
+    fork_chains_.insert(
+        std::pair<typename Block::height_t, typename Chain<Block>>(
+            newForkChain.getStartHeight(), newForkChain));
   }
 
   bool acceptBlock(const block_t& block,
