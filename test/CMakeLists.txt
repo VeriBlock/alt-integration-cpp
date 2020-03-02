@@ -32,3 +32,9 @@ target_link_libraries(mock_miner_test vbkutils)
 
 addtest(keystone_util_test keystone_util_test.cpp)
 target_link_libraries(keystone_util_test vbkutils)
+
+
+if(WITH_ROCKSDB)
+    addtest(state_manager_test state_manager_test.cpp)
+    target_link_libraries(state_manager_test vbkutils rocksdb)
+endif()
