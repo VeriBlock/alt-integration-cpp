@@ -2,7 +2,6 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_BLOCKCHAIN_UTIL_HPP_
 
 #include <veriblock/blockchain/blockchain_util.hpp>
-#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
@@ -17,7 +16,7 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
 
 template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
-    const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) const;
+    const BlockIndex<BtcBlock>& tip, const merkle_t& merkle);
 
 template <>
 ArithUint256 getBlockProof(const BtcBlock& block);

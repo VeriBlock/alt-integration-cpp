@@ -1,8 +1,7 @@
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
-
 #include <veriblock/third_party/BigDecimal.h>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -21,7 +20,7 @@ ArithUint256 getBlockProof(const VbkBlock& block) {
 
 template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
-    const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) const {
+    const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) {
   VbkBlock block;
   block.version = tip.header.version;
   block.previousBlock =
@@ -54,7 +53,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
 
-  block.timestamp = currentTimestamp4();
+  block.timestamp = startTime_++;
   block.difficulty = getNextWorkRequired(tip, block, *params_);
   return block;
 }

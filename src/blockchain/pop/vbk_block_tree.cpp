@@ -30,7 +30,7 @@ std::vector<KeystoneContext> VbkBlockTree::getKeystoneContext(
           // earliestEndorsementIndex to a future Bitcoin block
           auto btcBest = btc_.getBestChain();
           for (int adjustedEndorsementIndex = endorsementIndex + 1;
-               adjustedEndorsementIndex < btcBest.size();
+               adjustedEndorsementIndex <= btcBest.chainHeight();
                adjustedEndorsementIndex++) {
             // Ensure that the keystone's block time isn't later than the
             // block time of the Bitcoin block it's endorsed in
@@ -116,7 +116,7 @@ std::vector<ProtoKeystoneContext> VbkBlockTree::getProtoKeystoneContext(
 
 void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
                                       BlockTree::index_t& indexNew) {
-  if (currentBest.size() == 0 || currentBest.tip() == nullptr) {
+  if (currentBest.tip() == nullptr) {
     currentBest.setTip(&indexNew);
     return;
   }
@@ -149,12 +149,15 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
 
   if (result > 0) {
     // other chain won!
-    return currentBest.setTip(&indexNew);
+    auto prevTip = currentBest.tip();
+    currentBest.setTip(&indexNew);
+    return addForkCandidate(prevTip, &indexNew);
   } else if (result == 0) {
     // pop scores are equal. do PoW fork resolution
     return VbkTree::determineBestChain(currentBest, indexNew);
   } else {
     // existing chain is still the best
+    addForkCandidate(&indexNew, indexNew.pprev);
     return;
   }
 }

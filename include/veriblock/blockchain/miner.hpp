@@ -6,7 +6,6 @@
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/fmt.hpp>
 #include <veriblock/stateless_validation.hpp>
-#include <veriblock/time.hpp>
 
 namespace VeriBlock {
 
@@ -15,7 +14,8 @@ struct Miner {
   using merkle_t = decltype(Block::merkleRoot);
   using index_t = BlockIndex<Block>;
 
-  Miner(std::shared_ptr<ChainParams> params) : params_(std::move(params)) {}
+  Miner(std::shared_ptr<ChainParams> params, uint32_t startTime = currentTimestamp4())
+      : params_(std::move(params)), startTime_(startTime) {}
 
   void createBlock(Block& block) {
     while (!checkProofOfWork(block, *params_)) {
@@ -30,7 +30,7 @@ struct Miner {
   // One must define their own template specialization for given Block and
   // ChainParams types. Otherwise, get pretty compilation error.
   Block getBlockTemplate(const BlockIndex<Block>& tip,
-                         const merkle_t& merkleRoot) const;
+                         const merkle_t& merkleRoot);
 
   Block createNextBlock(const index_t& prev, const merkle_t& merkle) {
     Block block = getBlockTemplate(prev, merkle);
@@ -40,6 +40,7 @@ struct Miner {
 
  private:
   std::shared_ptr<ChainParams> params_;
+  uint32_t startTime_;
 };
 
 }  // namespace VeriBlock
