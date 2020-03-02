@@ -2,7 +2,6 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_
 
 #include <veriblock/blockchain/blockchain_util.hpp>
-#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/miner.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
@@ -17,7 +16,7 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& currentTip,
 
 template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
-    const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) const;
+    const BlockIndex<VbkBlock>& tip, const merkle_t& merkle);
 
 template <>
 ArithUint256 getBlockProof(const VbkBlock& block);
@@ -36,9 +35,9 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
 
 template <>
 bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
-                               const VbkBlock& block,
-                               ValidationState& state,
-                               const VbkChainParams& params);
+                            const VbkBlock& block,
+                            ValidationState& state,
+                            const VbkChainParams& params);
 
 }  // namespace VeriBlock
 

@@ -24,6 +24,7 @@ struct Chain {
   using block_t = Block;
   using index_t = BlockIndex<block_t>;
   using height_t = typename Block::height_t;
+  using storage_t = std::vector<index_t*>;
 
   Chain() = default;
 
@@ -57,11 +58,22 @@ struct Chain {
     return (*this)[index->height + 1];
   }
 
-  height_t size() const { return (height_t)chain.size() + startHeight_; }
+  height_t chainHeight() const {
+    return (height_t)chain.size() + startHeight_ - 1;
+  }
 
-  index_t* tip() const { return chain.empty() ? nullptr : (*this)[size() - 1]; }
+  size_t blocksCount() const { return chain.size(); }
+
+  index_t* tip() const {
+    return chain.empty() ? nullptr : (*this)[chainHeight()];
+  }
 
   index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
+
+  typename storage_t::iterator begin() { return chain.begin(); }
+  typename storage_t::iterator begin() const { return chain.begin(); }
+  typename storage_t::iterator end() { return chain.end(); }
+  typename storage_t::iterator end() const { return chain.end(); }
 
   void setTip(index_t* index) {
     if (index == nullptr) {
@@ -83,17 +95,19 @@ struct Chain {
     }
   }
 
+  void disconnectTip() { chain.pop_back(); }
+
   friend bool operator==(const Chain& a, const Chain& b) {
     // TODO: think how to use use startHeight_
     return a.chain.size() == b.chain.size() && a.tip() == b.tip();
   }
 
   const index_t* findFork(const index_t* pindex) const {
-    if (pindex == nullptr || size() == 0) {
+    if (pindex == nullptr || tip() == nullptr) {
       return nullptr;
     }
 
-    auto lastHeight = size() - 1;
+    auto lastHeight = chainHeight();
     if (pindex->height > lastHeight) {
       pindex = pindex->getAncestor(lastHeight);
     }

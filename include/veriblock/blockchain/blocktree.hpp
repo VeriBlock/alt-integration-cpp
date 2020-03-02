@@ -1,8 +1,8 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_
 
+#include <algorithm>
 #include <memory>
-#include <set>
 #include <unordered_map>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
@@ -107,10 +107,58 @@ struct BlockTree {
     return acceptBlock(block, state, true);
   }
 
+  void invalidateBlockByHash(const hash_t& blockHash) {
+    index_t* blockIndex = getBlockIndex(blockHash);
+
+    if (blockIndex == nullptr) {
+      // no such block
+      return;
+    }
+
+    std::vector<index_t*> fork_tips;
+
+    for (auto chain_it = fork_chains_.begin();
+         chain_it != fork_chains_.end();) {
+      invalidateBlockFromChain(chain_it->second, blockIndex);
+
+      if (chain_it->second.tip() == nullptr) {
+        chain_it = fork_chains_.erase(chain_it);
+        continue;
+      }
+      fork_tips.push_back(chain_it->second.tip());
+      ++chain_it;
+    }
+
+    invalidateBlockFromChain(activeChain_, blockIndex);
+
+    block_index_.erase(
+        blockIndex->getHash().template trimLE<prev_block_hash_t::size()>());
+
+    for (const auto& fork_tip : fork_tips) {
+      determineBestChain(activeChain_, *fork_tip);
+    }
+  }
+
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
  protected:
   std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
+
+  // first we have to analyze the highest forks, to avoid the removing blocks
+  // that can be proceed by another fork chain like in the situation described
+  // below
+  // We have two fork chains that one of the fork chain has been forked from
+  // another
+  //  F - G - H - I
+  //      \ Q
+  // and if block F is being removed, and chain 'F - G - H - I' will be
+  // processed firstly, we will remove block 'G' which is needed for the
+  // another chain, so that chain must be processed firstly
+
+  std::multimap<typename Block::height_t,
+                Chain<Block>,
+                std::greater<typename Block::height_t>>
+      fork_chains_;
   Chain<Block> activeChain_;
   std::shared_ptr<ChainParams> param_;
 
@@ -147,10 +195,88 @@ struct BlockTree {
       current->height = 0;
       current->chainWork = getBlockProof(block);
     }
-
-    determineBestChain(activeChain_, *current);
-
     return current;
+  }
+
+  void invalidateBlockFromChain(Chain<Block>& chain, const index_t* block) {
+    if (block == nullptr) {
+      return;
+    }
+
+    if (!chain.contains(block) &&
+        !(activeChain_.contains(block) &&
+          block->height < chain.first()->height) &&
+        chain.first()->getAncestor(block->height) != block) {
+      return;
+    }
+
+    while (chain.tip() != nullptr && chain.tip() != block) {
+      disconnectTipFromChain(chain);
+    }
+
+    // disconnect the block from the current chain, but do not remove it from
+    // block_index_
+    if (chain.tip() != nullptr) {
+      chain.disconnectTip();
+    }
+  }
+
+  void disconnectTipFromChain(Chain<Block>& chain) {
+    BlockIndex<Block>* currentTip = chain.tip();
+    hash_t tipHash = currentTip->getHash();
+
+    chain.disconnectTip();
+    block_index_.erase(tipHash.template trimLE<prev_block_hash_t::size()>());
+  }
+
+  void addForkCandidate(BlockIndex<Block>* newCandidate,
+                        BlockIndex<Block>* oldCandidate) {
+    if (newCandidate == nullptr) {
+      return;
+    }
+
+    bool isAdded = false;
+    auto forkChainStart = fork_chains_.end();
+    for (auto chain_it = fork_chains_.begin();
+         chain_it != fork_chains_.end();) {
+      if (chain_it->second.tip() == newCandidate->pprev) {
+        chain_it->second.setTip(newCandidate);
+        isAdded = true;
+      }
+
+      if (chain_it->second.tip() == newCandidate) {
+        isAdded = true;
+      }
+
+      if (chain_it->second.contains(newCandidate->pprev)) {
+        forkChainStart = chain_it;
+      }
+
+      if (chain_it->second.tip() == oldCandidate ||
+          (oldCandidate != nullptr &&
+           chain_it->second.tip() == oldCandidate->pprev)) {
+        chain_it = fork_chains_.erase(chain_it);
+        continue;
+      }
+      ++chain_it;
+    }
+
+    if (activeChain_.contains(newCandidate) || isAdded) {
+      return;
+    }
+
+    // find block from the main chain
+    index_t* workBlock = newCandidate;
+    if (forkChainStart == fork_chains_.end()) {
+      for (; !activeChain_.contains(workBlock->pprev);
+           workBlock = workBlock->pprev)
+        ;
+    }
+
+    Chain<Block> newForkChain(workBlock->height, workBlock);
+    newForkChain.setTip(newCandidate);
+    fork_chains_.insert(std::pair<typename Block::height_t, Chain<Block>>(
+        newForkChain.getStartHeight(), newForkChain));
   }
 
   bool acceptBlock(const block_t& block,
@@ -174,7 +300,10 @@ struct BlockTree {
     }
 
     auto* index = insertBlockHeader(block);
-    (void)index; // to prevent "unused variable" warning
+
+    determineBestChain(activeChain_, *index);
+
+    (void)index;  // to prevent "unused variable" warning
     assert(index != nullptr &&
            "insertBlockHeader should have never returned nullptr");
     return true;
@@ -190,6 +319,8 @@ struct BlockTree {
     auto* index = insertBlockHeader(block);
     index->height = height;
 
+    activeChain_ = Chain<Block>(height, index);
+
     if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
       return state.Error("block-index-no-genesis");
     }
@@ -201,10 +332,14 @@ struct BlockTree {
                                   index_t& indexNew) {
     if (currentBest.tip() == nullptr ||
         currentBest.tip()->chainWork < indexNew.chainWork) {
+      auto prevTip = currentBest.tip();
       currentBest.setTip(&indexNew);
+      addForkCandidate(prevTip, &indexNew);
+    } else {
+      addForkCandidate(&indexNew, indexNew.pprev);
     }
   }
-};
+};  // namespace VeriBlock
 
 }  // namespace VeriBlock
 

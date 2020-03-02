@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/blockchain/chain.hpp>
+#include <veriblock/fmt.hpp>
 
 using namespace VeriBlock;
 using ::testing::_;
@@ -14,98 +15,84 @@ struct DummyBlock {
   using height_t = int;
 };
 
-struct ChainTest : public ::testing::Test {
-  Chain<DummyBlock> chain{};
-  std::vector<BlockIndex<DummyBlock>> blocks{};
-  const size_t SIZE = 10;
+struct TestCase {
+  int start;
+  int size;
+};
 
-  ChainTest() {
-    // prepare block storage
-    for (size_t i = 0; i < SIZE; i++) {
+struct ChainTest : public ::testing::TestWithParam<TestCase> {
+  Chain<DummyBlock> chain{};
+
+  static std::vector<BlockIndex<DummyBlock>> makeBlocks(int startHeight,
+                                                        int size) {
+    std::vector<BlockIndex<DummyBlock>> blocks;
+    for (int i = 0; i < size; i++) {
       BlockIndex<DummyBlock> index{};
-      index.height = (int)i;
+      index.height = i + startHeight;
       index.pprev = nullptr;
       blocks.push_back(index);
     }
 
-    // no need to setup links for lists with less than 2 elements
-    if (SIZE < 2) return;
-
     // fill in the links to previous blocks
-    for (size_t i = 0; i < (SIZE - 1); i++) {
-      auto elem = &blocks[SIZE - i - 1];
-      elem->pprev = &blocks[SIZE - i - 2];
+    for (int i = 0; i < (size - 1); i++) {
+      auto elem = &blocks[size - i - 1];
+      elem->pprev = &blocks[size - i - 2];
     }
-  }
-
-  // validate that chain contains the same blocks in the same order
-  void validateChain() {
-    auto* tip = chain.tip();
-    ASSERT_NE(tip, nullptr);
-
-    for (int i = chain.getStartHeight(); i < chain.size(); i++) {
-      EXPECT_EQ(chain[i], &blocks[i]);
-    }
+    return blocks;
   }
 };
 
-TEST_F(ChainTest, StartsAt0) {
-  chain.setTip(&(*blocks.rbegin()));
-  EXPECT_EQ(chain.size(), SIZE);
+TEST_P(ChainTest, Full) {
+  auto [start, size] = GetParam();
+  auto blocks = makeBlocks(start, size);
+  chain = Chain<DummyBlock>(start, &*blocks.rbegin());
+  EXPECT_EQ(chain.chainHeight(), start + size - 1);
   EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
 
   // check 'contains' method
-  for (int i = 0; i < (int)SIZE; i++) {
-    EXPECT_EQ(chain[i], &blocks[i]);
+  for (int i = 0; i < size; i++) {
+    EXPECT_EQ(chain[i + start], &blocks[i]);
     EXPECT_TRUE(chain.contains(&blocks[i]));
   }
+  EXPECT_EQ(chain[start - 1], nullptr);
 
   // check out of range blocks
   EXPECT_EQ(chain[-1], nullptr);
-  EXPECT_EQ(chain[(int)SIZE + 1], nullptr);
+  EXPECT_EQ(chain[start + size + 1], nullptr);
 
   // check 'next' method
-  for (size_t i = 0; i < SIZE - 1; i++) {
+  for (int i = 0; i < size - 2; i++) {
     EXPECT_EQ(chain.next(&blocks[i]), &(blocks[i + 1]));
   }
+  EXPECT_EQ(chain.next(&blocks[blocks.size() - 1]), nullptr);
 
   // check 'setTip' method
-  for (size_t i = 0; i < SIZE; i++) {
+  for (int i = 0; i < size; i++) {
     chain.setTip(&blocks[i]);
-    validateChain();
   }
 }
 
-TEST_F(ChainTest, StartsAt1) {
-  // chain starts with height = 1
-  chain = Chain<DummyBlock>(1);
-  chain.setTip(&(*blocks.rbegin()));
-  EXPECT_EQ(chain.size(), SIZE);
-  EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
+static const std::vector<TestCase> cases = {
+    {0, 10},
+    {100, 10},
+};
 
-  // check 'contains' method
-  for (int i = 1; i < (int)SIZE; i++) {
-    EXPECT_EQ(chain[i], &blocks[i]);
-    EXPECT_TRUE(chain.contains(&blocks[i]));
-  }
-  // blocks with height = 0 are no longer in the chain
-  EXPECT_EQ(chain[0], nullptr);
-  EXPECT_FALSE(chain.contains(&blocks[0]));
+INSTANTIATE_TEST_SUITE_P(Chain,
+                         ChainTest,
+                         testing::ValuesIn(cases),
+                         [](const testing::TestParamInfo<TestCase>& info) {
+                           return format("%d_start%d_size%d",
+                                         info.index,
+                                         info.param.start,
+                                         info.param.size);
+                         });
 
-  // check out of range blocks
-  EXPECT_EQ(chain[-1], nullptr);
-  EXPECT_EQ(chain[(int)SIZE + 1], nullptr);
-
-  // check 'next' method
-  for (size_t i = 1; i < SIZE - 1; i++) {
-    EXPECT_EQ(chain.next(&blocks[i]), &(blocks[i + 1]));
-  }
-  EXPECT_EQ(chain.next(&blocks[0]), nullptr);
-
-  // check 'setTip' method
-  for (size_t i = 1; i < SIZE; i++) {
-    chain.setTip(&blocks[i]);
-    validateChain();
-  }
-  // do not try to chain.setTip(&blocks[0]) - it breaks assertion
+TEST(ChainTest, CreateFrom0) {
+  // when first block is at height 100 (no blocks behind that), and Chain is
+  // created with height 0, it is expected to see that chain will contain 110
+  // elements, first 100 of which are null.
+  auto blocks = ChainTest::makeBlocks(100, 10);
+  Chain<DummyBlock> c(0, &*blocks.rbegin());
+  ASSERT_EQ(c.blocksCount(), 110);
+  ASSERT_EQ(c.chainHeight(), 109);
 }
