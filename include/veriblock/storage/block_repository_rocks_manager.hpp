@@ -1,6 +1,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_MANAGER_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_MANAGER_HPP_
 
+#include "veriblock/blockchain/block_index.hpp"
+#include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/storage/block_repository_rocks.hpp"
 
 namespace VeriBlock {
@@ -11,8 +14,12 @@ enum class CF_NAMES { DEFAULT = 0, HASH_BLOCK_BTC, HASH_BLOCK_VBK };
 static const std::vector<std::string> cfNames{
     "default", "hash_block_btc", "hash_block_vbk"};
 
-template <typename BlockBtc, typename BlockVbk>
 struct BlockRepositoryRocksManager {
+  template <typename Block_t>
+  using block_repo_t = BlockRepositoryRocks<BlockIndex<Block_t>>;
+
+  using status_t = typename rocksdb::Status;
+
   BlockRepositoryRocksManager(const std::string &name) : dbName(name) {}
 
   rocksdb::Status open() {
@@ -42,10 +49,10 @@ struct BlockRepositoryRocksManager {
       cfHandles.push_back(cfHandlePtr);
     }
 
-    repoBtc = std::make_shared<BlockRepositoryRocks<BlockBtc>>(
+    repoBtc = std::make_shared<block_repo_t<BtcBlock>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_BTC]);
 
-    repoVbk = std::make_shared<BlockRepositoryRocks<BlockVbk>>(
+    repoVbk = std::make_shared<block_repo_t<VbkBlock>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_VBK]);
     return s;
   }
@@ -75,17 +82,17 @@ struct BlockRepositoryRocksManager {
       cfHandles[i] = std::shared_ptr<cf_handle_t>(handle);
     }
 
-    repoBtc = std::make_shared<BlockRepositoryRocks<BlockBtc>>(
+    repoBtc = std::make_shared<block_repo_t<BtcBlock>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_BTC]);
 
-    repoVbk = std::make_shared<BlockRepositoryRocks<BlockVbk>>(
+    repoVbk = std::make_shared<block_repo_t<VbkBlock>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_VBK]);
     return s;
   }
 
   // block storage
-  std::shared_ptr<BlockRepositoryRocks<BlockBtc>> repoBtc;
-  std::shared_ptr<BlockRepositoryRocks<BlockVbk>> repoVbk;
+  std::shared_ptr<block_repo_t<BtcBlock>> repoBtc;
+  std::shared_ptr<block_repo_t<VbkBlock>> repoVbk;
 
  private:
   std::string dbName = "";
