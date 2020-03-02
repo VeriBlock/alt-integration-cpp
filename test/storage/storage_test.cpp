@@ -134,9 +134,10 @@ TYPED_TEST_P(StorageTest, Basic) {
   EXPECT_FALSE(
       this->repo->getByHash(generateBlock<block_t>(4, 1).getHash(), &b));
 
-  std::vector<block_t::hash_t> keys{generateBlock<block_t>(1, 1).getHash(),
-                                    generateBlock<block_t>(2, 1).getHash(),
-                                    generateBlock<block_t>(4, 1).getHash()};
+  std::vector<typename block_t::hash_t> keys{
+      generateBlock<block_t>(1, 1).getHash(),
+      generateBlock<block_t>(2, 1).getHash(),
+      generateBlock<block_t>(4, 1).getHash()};
   std::vector<block_t> blocks;
   size_t size = this->repo->getManyByHash(keys, &blocks);
   EXPECT_EQ(size, 2);
@@ -150,14 +151,14 @@ TYPED_TEST_P(StorageTest, Basic) {
 
 template <typename BlockRepoType, typename BlockType>
 void checkContents(BlockRepoType& repo, const std::vector<BlockType>& blocks) {
-  std::set<BlockType::hash_t> a;
+  std::set<typename BlockType::hash_t> a;
   auto c = repo.newCursor();
   for (c->seekToFirst(); c->isValid(); c->next()) {
     a.insert(c->key());
   }
 
-  std::vector<BlockType::hash_t> v;
-  std::set<BlockType::hash_t> b;
+  std::vector<typename BlockType::hash_t> v;
+  std::set<typename BlockType::hash_t> b;
   for (auto& block : blocks) {
     b.insert(block.getHash());
     v.push_back(block.getHash());
@@ -207,12 +208,13 @@ TYPED_TEST_P(StorageTest, Batch) {
       generateBlock<block_t>(1000, 1).getHash());  // remove non-existing key
   batch->commit();
 
-  checkContents<Batch::repo_t, Batch::block_t>(*this->repo,
-                                               {
-                                                   generateBlock<block_t>(1, 9),
-                                                   generateBlock<block_t>(3, 3),
-                                                   generateBlock<block_t>(4, 4),
-                                               });
+  checkContents<typename Batch::repo_t, typename Batch::block_t>(
+      *this->repo,
+      {
+          generateBlock<block_t>(1, 9),
+          generateBlock<block_t>(3, 3),
+          generateBlock<block_t>(4, 4),
+      });
 }
 
 TYPED_TEST_P(StorageTest, Cursor) {
