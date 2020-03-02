@@ -178,23 +178,25 @@ TYPED_TEST_P(StorageTest, Batch) {
   EXPECT_FALSE(this->repo->put(generateBlock<block_t>(2, 2)));
   EXPECT_FALSE(this->repo->put(generateBlock<block_t>(3, 3)));
 
-  checkContents<Batch::repo_t, Batch::block_t>(*this->repo,
-                                               {
-                                                   generateBlock<block_t>(1, 1),
-                                                   generateBlock<block_t>(2, 2),
-                                                   generateBlock<block_t>(3, 3),
-                                               });
+  checkContents<typename Batch::repo_t, typename Batch::block_t>(
+      *this->repo,
+      {
+          generateBlock<block_t>(1, 1),
+          generateBlock<block_t>(2, 2),
+          generateBlock<block_t>(3, 3),
+      });
 
   // commit empty batch does nothing
   auto batch = this->repo->newBatch();
   batch->commit();
 
-  checkContents<Batch::repo_t, Batch::block_t>(*this->repo,
-                                               {
-                                                   generateBlock<block_t>(1, 1),
-                                                   generateBlock<block_t>(2, 2),
-                                                   generateBlock<block_t>(3, 3),
-                                               });
+  checkContents<typename Batch::repo_t, typename Batch::block_t>(
+      *this->repo,
+      {
+          generateBlock<block_t>(1, 1),
+          generateBlock<block_t>(2, 2),
+          generateBlock<block_t>(3, 3),
+      });
 
   // commit some changes
   batch->put(generateBlock<block_t>(4, 4));
