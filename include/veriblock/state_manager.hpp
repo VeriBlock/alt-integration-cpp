@@ -17,11 +17,7 @@ namespace VeriBlock {
 // template <typename Block_t>  using block_repo_t =
 // (Block repository type that inherits from the BlockRepository);
 
-template <typename BlockRepositoryManager,
-          typename = typename std::enable_if<std::is_base_of<
-              BlockRepository<BlockIndex<BtcBlock>>,
-              typename BlockRepositoryManager::template block_repo_t<
-                  BtcBlock>>::value>::type>
+template <typename BlockRepositoryManager>
 class StateManager {
   template <typename Block_t>
   using block_repo_t =
