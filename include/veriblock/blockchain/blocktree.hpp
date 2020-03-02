@@ -115,32 +115,17 @@ struct BlockTree {
       return;
     }
 
-    // first we have to analyze the highest forks, to avoid the removing blocks
-    // that can be proceed by another fork chain like in the situation described
-    // below
-    // We have two fork chains that one of the fork chain has been forked from
-    // another
-    //  F - G - H - I
-    //      \ Q
-    // and if block F is being removed, and chain 'F - G - H - I' will be
-    // processed firstly, we will remove block 'G' which is needed for the
-    // another chain, so that chain must be processed firstly
-
-    std::sort(
-        fork_chains_.begin(),
-        fork_chains_.end(),
-        [](const Chain<Block>& chain1, const Chain<Block>& chain2) -> bool {
-          return chain1.getStartHeight() > chain2.getStartHeight();
-        });
+    std::vector<index_t*> fork_tips;
 
     for (auto chain_it = fork_chains_.begin();
          chain_it != fork_chains_.end();) {
-      invalidateBlockFromChain(*chain_it, blockIndex);
+      invalidateBlockFromChain(chain_it->second, blockIndex);
 
-      if (chain_it->tip() == nullptr) {
+      if (chain_it->second.tip() == nullptr) {
         chain_it = fork_chains_.erase(chain_it);
         continue;
       }
+      fork_tips.push_back(chain_it->second.tip());
       ++chain_it;
     }
 
@@ -149,8 +134,8 @@ struct BlockTree {
     block_index_.erase(
         blockIndex->getHash().template trimLE<prev_block_hash_t::size()>());
 
-    for (const auto& fork_chain : fork_chains_) {
-      determineBestChain(activeChain_, *fork_chain.tip());
+    for (const auto& fork_tip : fork_tips) {
+      determineBestChain(activeChain_, *fork_tip);
     }
   }
 
@@ -158,7 +143,22 @@ struct BlockTree {
 
  protected:
   std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
-  std::vector<Chain<Block>> fork_chains_;
+
+  // first we have to analyze the highest forks, to avoid the removing blocks
+  // that can be proceed by another fork chain like in the situation described
+  // below
+  // We have two fork chains that one of the fork chain has been forked from
+  // another
+  //  F - G - H - I
+  //      \ Q
+  // and if block F is being removed, and chain 'F - G - H - I' will be
+  // processed firstly, we will remove block 'G' which is needed for the
+  // another chain, so that chain must be processed firstly
+
+  std::multimap<typename Block::height_t,
+                Chain<Block>,
+                std::greater<typename Block::height_t>>
+      fork_chains_;
   Chain<Block> activeChain_;
   std::shared_ptr<ChainParams> param_;
 
@@ -236,34 +236,32 @@ struct BlockTree {
     }
 
     bool isAdded = false;
-    auto replace_it = fork_chains_.end();
     auto forkChainStart = fork_chains_.end();
-    for (auto chain_it = fork_chains_.begin(); chain_it != fork_chains_.end();
-         ++chain_it) {
-      if (chain_it->tip() == newCandidate->pprev) {
-        chain_it->setTip(newCandidate);
+    for (auto chain_it = fork_chains_.begin();
+         chain_it != fork_chains_.end();) {
+      if (chain_it->second.tip() == newCandidate->pprev) {
+        chain_it->second.setTip(newCandidate);
         isAdded = true;
       }
 
-      if (chain_it->tip() == newCandidate) {
+      if (chain_it->second.tip() == newCandidate) {
         isAdded = true;
       }
 
-      if (chain_it->contains(newCandidate->pprev)) {
+      if (chain_it->second.contains(newCandidate->pprev)) {
         forkChainStart = chain_it;
       }
 
-      if (chain_it->tip() == oldCandidate ||
-          (oldCandidate != nullptr && chain_it->tip() == oldCandidate->pprev)) {
-        replace_it = chain_it;
+      if (chain_it->second.tip() == oldCandidate ||
+          (oldCandidate != nullptr &&
+           chain_it->second.tip() == oldCandidate->pprev)) {
+        chain_it = fork_chains_.erase(chain_it);
         continue;
       }
+      ++chain_it;
     }
 
     if (activeChain_.contains(newCandidate) || isAdded) {
-      if (replace_it != fork_chains_.end()) {
-        fork_chains_.erase(replace_it);
-      }
       return;
     }
 
@@ -277,11 +275,8 @@ struct BlockTree {
 
     Chain<Block> newForkChain(workBlock->height, workBlock);
     newForkChain.setTip(newCandidate);
-    if (replace_it != fork_chains_.end()) {
-      *replace_it = newForkChain;
-    } else {
-      fork_chains_.push_back(newForkChain);
-    }
+    fork_chains_.insert(std::pair<Block::height_t, Chain<Block>>(
+        newForkChain.getStartHeight(), newForkChain));
   }
 
   bool acceptBlock(const block_t& block,

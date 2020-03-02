@@ -529,6 +529,48 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_7) {
   EXPECT_EQ(best.tip()->getHash(), fork1[16].getHash());
 }
 
+TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_8) {
+  // In this test considered this case
+  //                / Q - S - Y (fork2)
+  //  ... - A - B - C - D - E - Z - P - R (tip)
+  //                \ F - G - H (fork1)
+  //
+  // Step 1
+  // remove block C with blocks D, E, Z, P, R and fork1, fork2
+  //
+  //  ... - A - B (tip)
+
+  using block_t = typename TypeParam::block_t;
+
+  auto genesis = this->chainparam->getGenesisBlock();
+  auto& best = this->blockchain->getBestChain();
+
+  std::vector<block_t> fork1{genesis};
+  this->addToFork(fork1, 21 /*genesis*/);
+
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  std::vector<block_t> fork2 = fork1;
+  fork2.resize(17);
+  this->addToFork(fork2, 3);
+
+  std::vector<block_t> fork3 = fork1;
+  fork3.resize(17);
+  this->addToFork(fork3, 3);
+
+  EXPECT_EQ(fork2.size(), 20);
+  EXPECT_EQ(fork3.size(), 20);
+  EXPECT_EQ(best.blocksCount(), 22);
+  EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+
+  // remove block 'B' and chain above this block
+  this->blockchain->invalidateBlockByHash(fork1[16].getHash());
+
+  EXPECT_EQ(best.blocksCount(), 16);
+  EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
+}
+
 TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_1) {
   // In this test considered this case
   //                / D - E - Z (tip)
@@ -660,6 +702,7 @@ REGISTER_TYPED_TEST_SUITE_P(BlockchainTest,
                             invalidateTip_test_scenario_5,
                             invalidateTip_test_scenario_6,
                             invalidateTip_test_scenario_7,
+                            invalidateTip_test_scenario_8,
                             acceptBlock_test_scenario_1,
                             acceptBlock_test_scenario_2);
 
