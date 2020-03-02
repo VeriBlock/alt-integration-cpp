@@ -18,8 +18,6 @@ struct BlockRepositoryRocksManager {
   template <typename Block_t>
   using block_repo_t = BlockRepositoryRocks<BlockIndex<Block_t>>;
 
-  using status_t = typename rocksdb::Status;
-
   BlockRepositoryRocksManager(const std::string &name) : dbName(name) {}
 
   rocksdb::Status open() {
