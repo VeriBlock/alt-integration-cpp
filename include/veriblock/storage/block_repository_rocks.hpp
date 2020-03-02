@@ -115,6 +115,7 @@ struct WriteBatchRocks : public WriteBatch<Block> {
 
 template <typename Block>
 class BlockRepositoryRocks : public BlockRepository<Block> {
+ public:
   //! stored block type
   using stored_block_t = Block;
   //! block has type
