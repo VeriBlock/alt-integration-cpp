@@ -27,8 +27,6 @@ class StateManager {
   using block_repo_t =
       typename BlockRepositoryManager::template block_repo_t<Block_t>;
 
-  using status_t = typename BlockRepositoryManager::status_t;
-
   BlockRepositoryManager database;
   std::shared_ptr<block_repo_t<VbkBlock>> vbkRepo;
 
