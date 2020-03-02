@@ -4,12 +4,8 @@
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/storage/block_repository_rocks_manager.hpp"
-#include "veriblock/storage/stored_btcblock.hpp"
-#include "veriblock/storage/stored_vbkblock.hpp"
 
 using namespace VeriBlock;
-
-#include "veriblock/state_manager.hpp"
 
 static const BtcBlock btcBlock1{
     536870912u,
