@@ -12,10 +12,6 @@
 namespace VeriBlock {
 
 /**
- *
- * @warning When you validate single ALT block, you MUST first add all VTBs and
- * then add ATV. The other way, may not pass validation.
- *
  * @invariant does not modify any on-disk state.
  */
 struct PopManager {
