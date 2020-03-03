@@ -30,8 +30,7 @@ struct BlockchainTest : public ::testing::Test {
 
   BlockchainTest() {
     chainparam = std::make_shared<params_t>();
-    miner = std::make_shared<Miner<block_t, params_base_t>>(
-        chainparam, chainparam->getGenesisBlock().timestamp);
+    miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
 
     blockchain =
         std::make_shared<BlockTree<block_t, params_base_t>>(chainparam);
@@ -104,7 +103,6 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
     ASSERT_TRUE(checkProofOfWork(block, *this->chainparam));
     ASSERT_TRUE(this->blockchain->acceptBlock(block, this->state))
         << this->state.GetRejectReason();
-    std::cout << "block #" << i << "\n";
   }
 
   // @then

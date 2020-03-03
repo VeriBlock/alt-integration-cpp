@@ -21,9 +21,9 @@ struct MockMinerTest : public MockMiner, public ::testing::Test {
     publicationData.identifier = 1;
     publicationData.payoutInfo = std::vector<uint8_t>(100, 3);
 
-    EXPECT_TRUE(bootstrapBtcChainWithGenesis(state));
+    EXPECT_TRUE(btc().bootstrapWithGenesis(state));
     EXPECT_TRUE(state.IsValid()) << state.GetRejectReason();
-    EXPECT_TRUE(bootstrapVbkChainWithGenesis(state));
+    EXPECT_TRUE(vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(state.IsValid()) << state.GetRejectReason();
   }
 };

@@ -14,8 +14,8 @@ struct Miner {
   using merkle_t = decltype(Block::merkleRoot);
   using index_t = BlockIndex<Block>;
 
-  Miner(std::shared_ptr<ChainParams> params, uint32_t startTime = currentTimestamp4())
-      : params_(std::move(params)), startTime_(startTime) {}
+  Miner(std::shared_ptr<ChainParams> params)
+      : params_(std::move(params)) {}
 
   void createBlock(Block& block) {
     while (!checkProofOfWork(block, *params_)) {
@@ -40,7 +40,6 @@ struct Miner {
 
  private:
   std::shared_ptr<ChainParams> params_;
-  uint32_t startTime_;
 };
 
 }  // namespace VeriBlock

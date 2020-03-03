@@ -81,7 +81,7 @@ struct Chain {
       return;
     }
 
-    if(tip() == nullptr || (tip() != nullptr && tip() == index->pprev)) {
+    if (tip() == nullptr || tip() == index->pprev) {
       chain.push_back(index);
       return;
     }

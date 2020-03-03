@@ -18,13 +18,21 @@ struct Finalizer {
   std::function<void()> onDestroy;
 };
 
+/// similar construction to try-with-resources in java but for "validation"
+/// functions
 inline bool tryValidateWithResources(const std::function<bool()>& action,
                                      const std::function<void()>& finally) {
   try {
     // try
     if (!action()) {
       // invalid...
-      finally();
+      try {
+        // if we get exception here, just rethrow.
+        // do not invoke finally() again.
+        finally();
+      } catch (...) {
+        throw;
+      }
       return false;
     }
     // valid

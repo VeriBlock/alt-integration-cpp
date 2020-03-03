@@ -1,6 +1,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_
 
+#include <vector>
+#include <cstdint>
+
 namespace VeriBlock {
 
 struct AltBlock {

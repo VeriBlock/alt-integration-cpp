@@ -53,6 +53,8 @@ struct BtcBlock {
    */
   void toRaw(WriteStream& stream) const;
 
+  std::vector<uint8_t> toRaw() const;
+
   std::string toHex() const;
 
   /**

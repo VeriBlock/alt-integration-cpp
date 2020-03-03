@@ -1,7 +1,8 @@
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
 #include <veriblock/third_party/BigDecimal.h>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -53,7 +54,8 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
 
-  block.timestamp = startTime_++;
+  block.timestamp =
+      std::max(tip.getBlockTime() + 1 /* sec */, currentTimestamp4());
   block.difficulty = getNextWorkRequired(tip, block, *params_);
   return block;
 }
@@ -181,16 +183,15 @@ template <>
 bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                     const VbkBlock& block,
                     ValidationState& state) {
+  int64_t blockTime = block.getBlockTime();
   int64_t median = getMedianTimePast(prev);
-  if (int64_t(block.getBlockTime()) < median) {
+  if (blockTime < median) {
     return state.Invalid("checkBlockTime()",
                          "vbk-time-too-old",
                          "block's timestamp is too early");
   }
 
-  // TODO: find out the max future block time for VBK
-  if (int64_t(block.getBlockTime()) >
-      currentTimestamp4() + BTC_MAX_FUTURE_BLOCK_TIME) {
+  if (blockTime > currentTimestamp4() + VBK_MAX_FUTURE_BLOCK_TIME) {
     return state.Invalid("checkBlockTime()",
                          "vbk-time-too-new",
                          "block timestamp too far in the future");
