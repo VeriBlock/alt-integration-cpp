@@ -47,7 +47,7 @@ struct BlockchainTest : public ::testing::Test {
       auto hash = fork.rbegin()->getHash();
       auto* index = this->blockchain->getBlockIndex(hash);
       EXPECT_TRUE(index);
-      auto block = this->miner->createNextBlock(*index, {});
+      auto block = this->miner->createNextBlock(*index);
       EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
           << this->state.GetDebugMessage();
       return block;
