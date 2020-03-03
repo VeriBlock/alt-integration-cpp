@@ -54,8 +54,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
 
-  block.timestamp =
-      std::max(tip.getBlockTime() + 1 /* sec */, currentTimestamp4());
+  block.timestamp = std::max(tip.getBlockTime(), currentTimestamp4());
   block.difficulty = getNextWorkRequired(tip, block, *params_);
   return block;
 }
@@ -191,7 +190,8 @@ bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                          "block's timestamp is too early");
   }
 
-  if (blockTime > currentTimestamp4() + VBK_MAX_FUTURE_BLOCK_TIME) {
+  int64_t maxTime = currentTimestamp4() + VBK_MAX_FUTURE_BLOCK_TIME;
+  if (blockTime > maxTime) {
     return state.Invalid("checkBlockTime()",
                          "vbk-time-too-new",
                          "block timestamp too far in the future");
