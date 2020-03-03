@@ -7,7 +7,6 @@
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
-#include <veriblock/storage/vbk_endorsement_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
 namespace VeriBlock {
@@ -42,19 +41,22 @@ struct PopManager {
 
   /**
    * Atomically add all payloads from ATV and all VTBs.
-   * @param payloads altchain to veriblock publication
+   * @param payloads publications
    * @param state validation state
    * @param parse publication data -> altblock parsing function
    * @return true if payloads added (and valid), false otherwise
    * @invariant payloads ALWAYS added atomically - meaning that if this function
    * returns true, all payloads are fully valid and state has been changed to
    * include new payloads, and if returns false - no state changes made.
+   * @throws may throw if out of memory. In this case, payloads also will be
+   * reverted.
    */
   bool addPayloads(const Payloads& payloads, ValidationState& state);
 
   /**
    * Atomically revert all payloads from given ATV and VTBs.
    * @param atv altchain to veriblock publication
+   * @note does not throw in any circumstance
    */
   void removePayloads(const Payloads& payloads) noexcept;
 
