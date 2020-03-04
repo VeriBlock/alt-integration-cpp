@@ -67,11 +67,10 @@ struct BlockIndex {
     header.toRaw(stream);
   }
 
-  std::string toRaw() const {
+  std::vector<uint8_t> toRaw() const {
     WriteStream stream;
     toRaw(stream);
-    return std::string(reinterpret_cast<const char*>(stream.data().data()),
-                       stream.data().size());
+    return stream.data();
   }
 
   static BlockIndex<Block> fromRaw(ReadStream& stream) {

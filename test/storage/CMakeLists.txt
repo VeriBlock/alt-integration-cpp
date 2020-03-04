@@ -1,4 +1,6 @@
-addtest(storage_test storage_test.cpp endorsements_repository_inmem_test.cpp)
+addtest(storage_test
+        storage_test.cpp
+        )
 target_link_libraries(storage_test vbkutils)
 
 if(WITH_ROCKSDB)
