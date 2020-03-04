@@ -9,6 +9,7 @@
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
 #include "veriblock/time.hpp"
+#include "util/visualize.hpp"
 
 using namespace VeriBlock;
 
@@ -193,6 +194,8 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   fork2.resize(17);
 
   this->addToFork(fork2, 2);
+
+
 
   EXPECT_EQ(fork2.size(), 19);
   EXPECT_EQ(best.blocksCount(), 20);
