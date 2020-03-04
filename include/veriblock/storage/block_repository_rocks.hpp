@@ -75,22 +75,25 @@ struct WriteBatchRocks : public WriteBatch<Block> {
 
   WriteBatchRocks(std::shared_ptr<rocksdb::DB> db,
                   std::shared_ptr<cf_handle_t> hashBlockHandle)
-      : _db(db), _hashBlockHandle(hashBlockHandle) {}
+      : _db(std::move(db)), _hashBlockHandle(std::move(hashBlockHandle)) {}
 
   void put(const stored_block_t& block) override {
-    std::string blockHash(reinterpret_cast<const char*>(block.getHash().data()),
-                          block.getHash().size());
-    std::string blockBytes = block.toRaw();
-    rocksdb::Status s =
-        _batch.Put(_hashBlockHandle.get(), blockHash, blockBytes);
+    auto blockHash = block.getHash();
+    auto blockBytes = block.toRaw();
+
+    rocksdb::Slice key(reinterpret_cast<const char*>(blockHash.data()),
+                       blockHash.size());
+    rocksdb::Slice val(reinterpret_cast<const char*>(blockBytes.data()),
+                       blockBytes.size());
+    rocksdb::Status s = _batch.Put(_hashBlockHandle.get(), key, val);
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
   }
 
   void removeByHash(const hash_t& hash) override {
-    std::string blockHash(reinterpret_cast<const char*>(hash.data()),
-                          hash.size());
+    rocksdb::Slice blockHash(reinterpret_cast<const char*>(hash.data()),
+                             hash.size());
     rocksdb::Status s = _batch.Delete(_hashBlockHandle.get(), blockHash);
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
@@ -136,12 +139,16 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     stored_block_t outBlock{};
     bool existing = getByHash(block.getHash(), &outBlock);
 
-    std::string blockHash(reinterpret_cast<const char*>(block.getHash().data()),
-                          block.getHash().size());
-    std::string blockBytes = block.toRaw();
+    auto blockHash = block.getHash();
+    auto blockBytes = block.toRaw();
 
-    rocksdb::Status s = _db->Put(
-        rocksdb::WriteOptions(), _hashBlockHandle.get(), blockHash, blockBytes);
+    rocksdb::Slice key(reinterpret_cast<const char*>(blockHash.data()),
+                       blockHash.size());
+    rocksdb::Slice val(reinterpret_cast<const char*>(blockBytes.data()),
+                       blockBytes.size());
+
+    rocksdb::Status s =
+        _db->Put(rocksdb::WriteOptions(), _hashBlockHandle.get(), key, val);
     if (!s.ok()) {
       throw db::DbError(s.ToString());
     }

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <veriblock/blockchain/pop/fork_resolution.hpp>
 #include <veriblock/consts.hpp>
 #include <veriblock/keystone_util.hpp>
@@ -23,8 +24,10 @@ int getConsensusScoreFromRelativeBlockStartingAtZero(int64_t relativeBlock) {
 
 struct KeystoneContextList {
   const std::vector<KeystoneContext>& ctx;
+  const int keystoneInterval;
 
-  KeystoneContextList(const std::vector<KeystoneContext>& c) : ctx{c} {}
+  KeystoneContextList(const std::vector<KeystoneContext>& c, int keystoneInt)
+      : ctx{c}, keystoneInterval(keystoneInt) {}
 
   bool empty() const { return ctx.empty(); }
 
@@ -33,7 +36,7 @@ struct KeystoneContextList {
   int lastKeystone() const { return ctx[ctx.size() - 1].vbkBlockHeight; }
 
   const KeystoneContext* getKeystone(int blockNumber) const {
-    if (!isKeystone(blockNumber, VBK_KEYSTONE_INTERVAL)) {
+    if (!isKeystone(blockNumber, keystoneInterval)) {
       throw std::invalid_argument(
           "getKeystone can not be called with a non-keystone block number");
     }
@@ -46,17 +49,17 @@ struct KeystoneContextList {
       return nullptr;
     }
 
-    auto i = (blockNumber - firstKeystone()) / VBK_KEYSTONE_INTERVAL;
+    auto i = (blockNumber - firstKeystone()) / keystoneInterval;
     return &ctx.at(i);
   }
 };
 
-}  // namespace
-
 int comparePopScore(const std::vector<KeystoneContext>& chainA,
-                    const std::vector<KeystoneContext>& chainB) {
-  KeystoneContextList a(chainA);
-  KeystoneContextList b(chainB);
+                           const std::vector<KeystoneContext>& chainB,
+                           int keystoneInterval) {
+  assert(keystoneInterval > 0);
+  KeystoneContextList a(chainA, keystoneInterval);
+  KeystoneContextList b(chainB, keystoneInterval);
 
   if (a.empty() && b.empty()) {
     return 0;
@@ -79,10 +82,7 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
         "start at the same keystone index");
   }
 
-  int AlatestKeystone = a.lastKeystone();
-  int BlatestKeystone = b.lastKeystone();
-  int latestKeystone =
-      BlatestKeystone > AlatestKeystone ? BlatestKeystone : AlatestKeystone;
+  int latestKeystone = std::max(a.lastKeystone(), b.lastKeystone());
 
   bool aOutsideFinality = false;
   bool bOutsideFinality = false;
@@ -90,7 +90,7 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
   int chainBscore = 0;
   for (int keystoneToCompare = earliestKeystone;
        keystoneToCompare <= latestKeystone;
-       keystoneToCompare += VBK_KEYSTONE_INTERVAL) {
+       keystoneToCompare += keystoneInterval) {
     auto* actx = a.getKeystone(keystoneToCompare);
     auto* bctx = b.getKeystone(keystoneToCompare);
 
@@ -150,6 +150,13 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
   }
 
   return chainAscore - chainBscore;
+}
+
+}  // namespace
+
+int ComparePopScore::operator()(const std::vector<KeystoneContext>& chainA,
+                                const std::vector<KeystoneContext>& chainB) {
+  return comparePopScore(chainA, chainB, keystoneInterval);
 }
 
 }  // namespace VeriBlock

@@ -15,6 +15,8 @@ enum class TxType {
 constexpr const int ALT_MAX_FUTURE_BLOCK_TIME = 10 * 60;
 // 2 hours
 constexpr const int BTC_MAX_FUTURE_BLOCK_TIME = 2 * 60 * 60;
+// 5 min
+constexpr const int VBK_MAX_FUTURE_BLOCK_TIME = 5 * 60;
 
 constexpr const auto HISTORY_FOR_TIMESTAMP_AVERAGE = 20;
 

@@ -26,8 +26,18 @@ struct KeystoneContext {
   int firstBtcBlockPublicationHeight;
 };
 
-int comparePopScore(const std::vector<KeystoneContext>& chainA,
-                    const std::vector<KeystoneContext>& chainB);
+struct ComparePopScore {
+  explicit ComparePopScore(uint32_t keystoneInt)
+      : keystoneInterval(keystoneInt) {
+    assert(keystoneInterval > 0);
+  }
+
+  int operator()(const std::vector<KeystoneContext>& chainA,
+                 const std::vector<KeystoneContext>& chainB);
+
+ private:
+  int keystoneInterval;
+};
 
 }  // namespace VeriBlock
 

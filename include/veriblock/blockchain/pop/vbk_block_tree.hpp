@@ -7,7 +7,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/keystone_util.hpp>
-#include <veriblock/storage/endorsements_repository.hpp>
+#include <veriblock/storage/endorsement_repository.hpp>
 
 namespace VeriBlock {
 
@@ -18,15 +18,17 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   ~VbkBlockTree() override = default;
 
   VbkBlockTree(BtcTree& btc,
-               std::shared_ptr<EndorsementsRepository> erepo,
+               std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo,
                std::shared_ptr<VbkChainParams> params)
       : VbkTree(std::move(params)),
         erepo_(std::move(erepo)),
-        btc_(btc) {}
+        btc_(btc),
+        compare_(VBK_KEYSTONE_INTERVAL) {}
 
  private:
-  std::shared_ptr<EndorsementsRepository> erepo_;
+  std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo_;
   BtcTree& btc_;
+  ComparePopScore compare_;
 
   void determineBestChain(Chain<block_t>& currentBest,
                           index_t& indexNew) override;
@@ -37,8 +39,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   std::vector<KeystoneContext> getKeystoneContext(
       const std::vector<ProtoKeystoneContext>& chain);
-
-  bool isCrossedKeystoneBoundary(const index_t& bottom, const index_t& tip);
 };
 
 }  // namespace VeriBlock

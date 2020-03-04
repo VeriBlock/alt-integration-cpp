@@ -94,13 +94,14 @@ std::vector<ProtoKeystoneContext> VbkBlockTree::getProtoKeystoneContext(
       // chain must contain relevantEndorsedBlock
       assert(index != nullptr);
 
-      // get all endorsements belonging to this chain
-      auto endorsements = erepo_->getEndorsementsInChain(
-          index->getHash(),
-          [this, &chain](const VbkBlock::hash_t& hash) -> bool {
-            auto* index = this->getBlockIndex(hash);
-            return index != nullptr && chain.contains(index);
-          });
+      // get all endorsements of this block
+      auto endorsements = erepo_->get(index->getHash());
+      // TODO: remove endorsements that do not belong to this chain
+      //          ,
+      //          [this, &chain](const VbkBlock::hash_t& hash) -> bool {
+      //            auto* index = this->getBlockIndex(hash);
+      //            return index != nullptr && chain.contains(index);
+      //          }
 
       for (const auto& e : endorsements) {
         auto* ind = this->btc_.getBlockIndex(e.blockOfProof);
@@ -132,8 +133,11 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
       highestKeystoneAtOrBefore(forkIndex->height, VBK_KEYSTONE_INTERVAL));
 
   int result = 0;
-  if (isCrossedKeystoneBoundary(*forkKeystone, indexNew) &&
-      isCrossedKeystoneBoundary(*forkKeystone, *currentBest.tip())) {
+  if (isCrossedKeystoneBoundary(
+          forkKeystone->height, indexNew.height, VBK_KEYSTONE_INTERVAL) &&
+      isCrossedKeystoneBoundary(forkKeystone->height,
+                                currentBest.tip()->height,
+                                VBK_KEYSTONE_INTERVAL)) {
     // [vbk fork point ... current tip]
     Chain<block_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
     auto pkcCurrent = getProtoKeystoneContext(vbkCurrentSubchain);
@@ -144,7 +148,7 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
     auto pkcOther = getProtoKeystoneContext(vbkOther);
     auto kcOther = getKeystoneContext(pkcOther);
 
-    result = comparePopScore(kcCurrent, kcOther);
+    result = compare_(kcCurrent, kcOther);
   }
 
   if (result > 0) {
@@ -160,14 +164,5 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
     addForkCandidate(&indexNew, indexNew.pprev);
     return;
   }
-}
-
-bool VbkBlockTree::isCrossedKeystoneBoundary(const index_t& bottom,
-                                             const index_t& tip) {
-  index_t::height_t keystoneIntervalAmount =
-      bottom.height / VBK_KEYSTONE_INTERVAL;
-  index_t::height_t tipIntervalAmount = tip.height / VBK_KEYSTONE_INTERVAL;
-
-  return keystoneIntervalAmount < tipIntervalAmount;
 }
 }  // namespace VeriBlock

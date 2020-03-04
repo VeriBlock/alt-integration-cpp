@@ -26,6 +26,8 @@ struct BlockTree {
   using hash_t = typename Block::hash_t;
   using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
+  using block_index_t =
+      std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
 
   virtual ~BlockTree() = default;
 
@@ -107,6 +109,12 @@ struct BlockTree {
     return acceptBlock(block, state, true);
   }
 
+  void invalidateTip() {
+    auto* tip = getBestChain().tip();
+    assert(tip != nullptr && "not bootstrapped...");
+    invalidateBlockByHash(tip->getHash());
+  }
+
   void invalidateBlockByHash(const hash_t& blockHash) {
     index_t* blockIndex = getBlockIndex(blockHash);
 
@@ -141,8 +149,10 @@ struct BlockTree {
 
   const Chain<Block>& getBestChain() const { return this->activeChain_; }
 
+  const block_index_t& getAllBlocks() const { return block_index_; }
+
  protected:
-  std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>> block_index_;
+  block_index_t block_index_;
 
   // first we have to analyze the highest forks, to avoid the removing blocks
   // that can be proceed by another fork chain like in the situation described
