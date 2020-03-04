@@ -22,6 +22,11 @@ VbkBlock VbkBlock::fromRaw(ReadStream& stream) {
   return block;
 }
 
+VbkBlock VbkBlock::fromRaw(const std::string& bytes) {
+  ReadStream stream(bytes);
+  return fromRaw(stream);
+}
+
 VbkBlock VbkBlock::fromVbkEncoding(ReadStream& stream) {
   auto blockBytes =
       readSingleByteLenValue(stream, VBK_HEADER_SIZE, VBK_HEADER_SIZE);
@@ -39,6 +44,13 @@ void VbkBlock::toRaw(WriteStream& stream) const {
   stream.writeBE<int32_t>(timestamp);
   stream.writeBE<int32_t>(difficulty);
   stream.writeBE<int32_t>(nonce);
+}
+
+std::string VbkBlock::toRaw() const {
+  WriteStream stream;
+  toRaw(stream);
+  return std::string(reinterpret_cast<const char*>(stream.data().data()),
+                     stream.data().size());
 }
 
 void VbkBlock::toVbkEncoding(WriteStream& stream) const {
