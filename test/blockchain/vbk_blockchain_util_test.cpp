@@ -275,7 +275,7 @@ struct BlockchainTest : public ::testing::Test {
 
 TEST_F(BlockchainTest, InvalidKeystone1) {
   auto& chain = this->blockchain->getBestChain();
-  auto block = this->miner->createNextBlock(*chain.tip(), {});
+  auto block = this->miner->createNextBlock(*chain.tip());
   auto badKeystone = ArithUint256::fromHex("01")
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
@@ -287,7 +287,7 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
 
 TEST_F(BlockchainTest, InvalidKeystone2) {
   auto& chain = this->blockchain->getBestChain();
-  auto block = this->miner->createNextBlock(*chain.tip(), {});
+  auto block = this->miner->createNextBlock(*chain.tip());
   auto badKeystone = ArithUint256::fromHex("01")
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();

@@ -54,7 +54,7 @@ struct PopManagerTest : public ::testing::Test {
         std::back_inserter(blocks), size, [&]() -> typename Tree::block_t {
           auto* tip = tree.getBestChain().tip();
           EXPECT_NE(tip, nullptr);
-          auto block = alt_miner->createNextBlock(*tip, {});
+          auto block = alt_miner->createNextBlock(*tip);
           EXPECT_TRUE(tree.acceptBlock(block, state));
           return block;
         });

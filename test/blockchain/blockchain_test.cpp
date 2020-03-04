@@ -99,7 +99,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   // mine 5000 blocks
   for (size_t i = 0; i < 5000; i++) {
     auto tip = chain.tip();
-    auto block = this->miner->createNextBlock(*tip, {});
+    auto block = this->miner->createNextBlock(*tip);
     ASSERT_TRUE(checkProofOfWork(block, *this->chainparam));
     ASSERT_TRUE(this->blockchain->acceptBlock(block, this->state))
         << this->state.GetRejectReason();
@@ -177,36 +177,6 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   //  ... - A - B - C
   //                \ F - G
   // Blocks are removed consistently so expect behaviour is described below
-  //---
-  // first step
-  //                / D - E (tip)
-  //  ... - A - B - C
-  //                \ F - G
-  //---
-  // second step
-  //                / D
-  //  ... - A - B - C
-  //                \ F - G (tip)
-  //---
-  // third step
-  //                / D
-  //  ... - A - B - C
-  //                \ F (tip)
-  // ---
-  // fourth step
-  //                / D (tip)
-  //  ... - A - B - C
-  //
-  //---
-  // fifth step
-  //
-  //  ... - A - B - C (tip)
-  //
-  //---
-  // sixth step
-  //
-  //  ... - A - B (tip)
-  //
 
   using block_t = typename TypeParam::block_t;
 
@@ -229,30 +199,45 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'Z'
+  //                / D - E (tip)
+  //  ... - A - B - C
+  //                \ F - G
   this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.blocksCount(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork1[18].getHash());
 
   // remove block 'E'
+  //                / D
+  //  ... - A - B - C
+  //                \ F - G (tip)
   this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.blocksCount(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork2[18].getHash());
 
   // remove block 'G'
+  //                / D
+  //  ... - A - B - C
+  //                \ F (tip)
   this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.blocksCount(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
 
   // remove block 'F'
+  //                / D (tip)
+  //  ... - A - B - C
+  //
   this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.blocksCount(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork1[17].getHash());
 
   // remove block 'D'
+  //
+  //  ... - A - B - C (tip)
+  //
   this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.blocksCount(), 17);
@@ -260,6 +245,9 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   EXPECT_EQ(best.tip()->getHash(), fork2[16].getHash());
 
   // remove block 'C'
+  //
+  //  ... - A - B (tip)
+  //
   this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
   EXPECT_EQ(best.blocksCount(), 16);

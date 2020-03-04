@@ -22,9 +22,9 @@ bool mineBlocks(const uint32_t& n,
                 ValidationState& state) {
   for (uint32_t i = 0; i < n; ++i) {
     auto* tip = blockChain.getBestChain().tip();
-    assert(tip != nullptr && "not bootstrapped...");
+    assert(tip != nullptr && "block tree is not bootstrapped");
 
-    Block block = miner.createNextBlock(*tip, {});
+    Block block = miner.createNextBlock(*tip);
     if (!blockChain.acceptBlock(block, state)) {
       return false;
     }
