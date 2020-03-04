@@ -18,6 +18,11 @@ BtcBlock BtcBlock::fromRaw(ReadStream& stream) {
   return block;
 }
 
+BtcBlock BtcBlock::fromRaw(const std::string& bytes) {
+  ReadStream stream(bytes);
+  return fromRaw(stream);
+}
+
 BtcBlock BtcBlock::fromVbkEncoding(ReadStream& stream) {
   ReadStream valStream(
       readSingleByteLenValue(stream, BTC_HEADER_SIZE, BTC_HEADER_SIZE));
@@ -31,6 +36,13 @@ void BtcBlock::toRaw(WriteStream& stream) const {
   stream.writeLE<uint32_t>(timestamp);
   stream.writeLE<uint32_t>(bits);
   stream.writeLE<uint32_t>(nonce);
+}
+
+std::string BtcBlock::toRaw() const {
+  WriteStream stream;
+  toRaw(stream);
+  return std::string(reinterpret_cast<const char*>(stream.data().data()),
+                     stream.data().size());
 }
 
 void BtcBlock::toVbkEncoding(WriteStream& stream) const {

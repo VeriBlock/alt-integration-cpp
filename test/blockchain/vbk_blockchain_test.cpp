@@ -77,22 +77,28 @@ static std::vector<VbkTestCase> accept_test_cases = {
     /// testnet
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     0, 0},
+     0,
+     0},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     0, 1},
+     0,
+     1},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     0, 99},
+     0,
+     99},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     0, 100},
+     0,
+     100},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     0, 101},
+     0,
+     101},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
-     0, 1337},
+     0,
+     1337},
 };
 
 // Read Vbk_blockheaders file.
@@ -101,9 +107,8 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   auto allblocks = value.getBlocks();
 
   // skip first `offset` blocks
-  allblocks = std::vector<VbkBlock>{
-      allblocks.begin() + value.offset,
-      allblocks.end()};
+  allblocks =
+      std::vector<VbkBlock>{allblocks.begin() + value.offset, allblocks.end()};
 
   // make a bootstrap chain by taking first `numBlocksForBootstrap` x2 blocks
   // due to forked blocks we take twice the blocks and expect to collect
@@ -119,7 +124,8 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.end()};
 
   BlockTree<VbkBlock, VbkChainParams> tree(value.params);
-  ASSERT_TRUE(tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))
+  ASSERT_TRUE(
+      tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))
       << state.GetRejectReason();
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
@@ -129,8 +135,9 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   EXPECT_EQ(tree.getBestChain().tip()->height,
             bootstrapChain[bootstrapChain.size() - 1].height);
 
+  BlockIndex<VbkBlock> temp_index;
   for (const auto& block : acceptChain) {
-    ASSERT_TRUE(tree.acceptBlock(block, state))
+    ASSERT_TRUE(tree.acceptBlock(block, temp_index, state))
         << "block #" << totalBlocks << "\n"
         << "rejection: " << state.GetRejectReason() << ", "
         << "message: " << state.GetDebugMessage();

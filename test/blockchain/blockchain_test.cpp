@@ -49,7 +49,8 @@ struct BlockchainTest : public ::testing::Test {
       auto* index = this->blockchain->getBlockIndex(hash);
       EXPECT_TRUE(index);
       auto block = this->miner->createNextBlock(*index, {});
-      EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
+      BlockIndex<decltype(block)> temp_index;
+      EXPECT_TRUE(this->blockchain->acceptBlock(block, temp_index, this->state))
           << this->state.GetDebugMessage();
       return block;
     });
@@ -102,7 +103,8 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
     auto tip = chain.tip();
     auto block = this->miner->createNextBlock(*tip, {});
     ASSERT_TRUE(checkProofOfWork(block, *this->chainparam));
-    ASSERT_TRUE(this->blockchain->acceptBlock(block, this->state))
+    BlockIndex<decltype(block)> temp_index;
+    ASSERT_TRUE(this->blockchain->acceptBlock(block, temp_index, this->state))
         << this->state.GetRejectReason();
     std::cout << "block #" << i << "\n";
   }

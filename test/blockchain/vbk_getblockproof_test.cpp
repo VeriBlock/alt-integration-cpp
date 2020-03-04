@@ -55,14 +55,15 @@ TEST_F(GetProofTest, Blocks100Test) {
   BlockTree<VbkBlock, VbkChainParams> tree(params);
   ASSERT_TRUE(tree.bootstrapWithGenesis(state));
 
+  BlockIndex<VbkBlock> temp_index;
   for (size_t i = 1; i < 101; i++) {
-    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state));
+    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], temp_index, state));
     auto hash = allBlocks[i].getHash();
     index_t* current = tree.getBlockIndex(hash);
     ASSERT_EQ(current->chainWork, cumulativeDifficulties[i]);
   }
 
-  bool ret = tree.acceptBlock(allBlocks[101], state);
+  bool ret = tree.acceptBlock(allBlocks[101], temp_index, state);
   ASSERT_TRUE(ret);
 }
 
@@ -70,8 +71,9 @@ TEST_F(GetProofTest, Blocks30kTest) {
   BlockTree<VbkBlock, VbkChainParams> tree(params);
   ASSERT_TRUE(tree.bootstrapWithGenesis(state));
 
+  BlockIndex<VbkBlock> temp_index;
   for (size_t i = 1; i < allBlocks.size(); i++) {
-    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state));
+    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], temp_index, state));
     auto hash = allBlocks[i].getHash();
     index_t* current = tree.getBlockIndex(hash);
     ASSERT_EQ(current->chainWork, cumulativeDifficulties[i]);
