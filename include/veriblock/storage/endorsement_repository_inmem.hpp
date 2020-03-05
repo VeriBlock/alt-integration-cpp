@@ -45,17 +45,17 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
         return;
       }
     }
-  };
+  }
 
   void remove(const container_t& container) override {
     remove(Endorsement::getId(container));
-  };
+  }
 
   void put(const container_t& container) override {
     auto e = Endorsement::fromContainer(container);
 
     e_[e.endorsedHash][e.id] = e;
-  };
+  }
 
   std::vector<endorsement_t> get(
       const endorsed_hash_t& endorsedBlockHash) const override {
@@ -68,13 +68,14 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
     std::vector<endorsement_t> ret;
     ret.reserve(m.size());
 
-    std::transform(m.begin(),
-                   m.end(),
-                   std::back_inserter(ret),
-                   [](const std::pair<eid_t, endorsement_t>& p) { return p.second; });
+    std::transform(
+        m.begin(),
+        m.end(),
+        std::back_inserter(ret),
+        [](const std::pair<eid_t, endorsement_t>& p) { return p.second; });
 
     return ret;
-  };
+  }
 
  private:
   // [endorsed block hash] => [endorsement id] => endorsement

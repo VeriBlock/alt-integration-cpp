@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ATV_HPP_
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 #include "veriblock/consts.hpp"
@@ -26,10 +27,23 @@ struct ATV {
   static ATV fromVbkEncoding(ReadStream& stream);
 
   /**
+   * Read VBK data from the string byte represantation and convert it to ATV
+   * @param string data bytes to read from
+   * @return ATV
+   */
+  static ATV fromVbkEncoding(const std::string& bytes);
+
+  /**
    * Convert ATV to data stream using Vbk byte format
    * @param stream data stream to write into
    */
   void toVbkEncoding(WriteStream& stream) const;
+
+  /**
+   * Convert ATV to bytes data using Vbk byte format
+   * @return bytes data
+   */
+  std::vector<uint8_t> toVbkEncoding() const;
 };
 
 }  // namespace VeriBlock
