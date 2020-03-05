@@ -5,10 +5,10 @@ namespace VeriBlock {
 template <>
 BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream) {
   BtcEndorsement endorsement;
-  endorsement.id = stream.readSlice(SHA256_HASH_SIZE);
-  endorsement.endorsedHash = stream.readSlice(VBLAKE_BLOCK_HASH_SIZE);
-  endorsement.containingHash = stream.readSlice(VBLAKE_BLOCK_HASH_SIZE);
-  endorsement.blockOfProof = stream.readSlice(SHA256_HASH_SIZE);
+  endorsement.id = stream.readSlice(sizeof(id_t));
+  endorsement.endorsedHash = stream.readSlice(sizeof(endorsed_hash_t));
+  endorsement.containingHash = stream.readSlice(sizeof(endorsed_hash_t));
+  endorsement.blockOfProof = stream.readSlice(sizeof(containing_hash_t));
 
   return endorsement;
 }
@@ -37,7 +37,7 @@ std::vector<uint8_t> BtcEndorsement::toVbkEncoding() const {
 template <>
 VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream) {
   VbkEndorsement endorsement;
-  endorsement.id = stream.readSlice(SHA256_HASH_SIZE);
+  endorsement.id = stream.readSlice(sizeof(id_t));
   uint32_t hash_size = stream.readBE<uint32_t>();
   endorsement.endorsedHash.resize(hash_size);
   for (uint32_t i = 0; i < hash_size; ++i) {
@@ -48,7 +48,7 @@ VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream) {
   for (uint32_t i = 0; i < hash_size; ++i) {
     endorsement.containingHash[i] = stream.readBE<uint8_t>();
   }
-  endorsement.blockOfProof = stream.readSlice(VBLAKE_BLOCK_HASH_SIZE);
+  endorsement.blockOfProof = stream.readSlice(sizeof(containing_hash_t));
 
   return endorsement;
 }
