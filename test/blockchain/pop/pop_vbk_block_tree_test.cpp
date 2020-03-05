@@ -7,7 +7,7 @@
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/mock_miner.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
-#include "veriblock/storage/endorsements_repository_inmem.hpp"
+#include "veriblock/storage/endorsement_repository_inmem.hpp"
 #include "veriblock/time.hpp"
 
 using namespace VeriBlock;
@@ -15,9 +15,10 @@ using namespace VeriBlock;
 struct VbkBlockTreeTest : public VbkBlockTree {
   ~VbkBlockTreeTest() override = default;
 
-  VbkBlockTreeTest(BtcTree& btc,
-                   std::shared_ptr<EndorsementsRepository> endorsment_repo,
-                   std::shared_ptr<VbkChainParams> params)
+  VbkBlockTreeTest(
+      BtcTree& btc,
+      std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo,
+      std::shared_ptr<VbkChainParams> params)
       : VbkBlockTree(btc, std::move(endorsment_repo), std::move(params)) {}
 
   std::vector<ProtoKeystoneContext> getProtoKeystoneContextTest() {
@@ -39,7 +40,7 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
   std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> vbk_repo;
   std::shared_ptr<VbkChainParams> vbk_params;
 
-  std::shared_ptr<EndorsementsRepository> endorsment_repo;
+  std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo;
 
   std::shared_ptr<Miner<BtcBlock, BtcChainParams>> btc_miner;
   std::shared_ptr<Miner<VbkBlock, VbkChainParams>> vbk_miner;
@@ -76,13 +77,13 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
     ASSERT_TRUE(vbkTest->acceptBlock(vtb.containingBlock, state));
     ASSERT_TRUE(state.IsValid());
 
-    endorsment_repo->put(vtb.transaction, vtb.containingBlock.getHash());
+    endorsment_repo->put(vtb);
   }
 
   void setUpChains() {
-    ASSERT_TRUE(mock_miner->bootstrapBtcChainWithGenesis(state));
+    ASSERT_TRUE(mock_miner->btc().bootstrapWithGenesis(state));
     ASSERT_TRUE(state.IsValid());
-    ASSERT_TRUE(mock_miner->bootstrapVbkChainWithGenesis(state));
+    ASSERT_TRUE(mock_miner->vbk().bootstrapWithGenesis(state));
     ASSERT_TRUE(state.IsValid());
 
     ASSERT_TRUE(btcTree->bootstrapWithGenesis(state));
@@ -97,12 +98,11 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
 
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
 
-    endorsment_repo = std::make_shared<EndorsementsRepositoryInmem>();
+    endorsment_repo =
+        std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
 
-    btc_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(
-        btc_params, currentTimestamp4());
-    vbk_miner = std::make_shared<Miner<VbkBlock, VbkChainParams>>(
-        vbk_params, currentTimestamp4());
+    btc_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(btc_params);
+    vbk_miner = std::make_shared<Miner<VbkBlock, VbkChainParams>>(vbk_params);
 
     vbkTest = std::make_shared<VbkBlockTreeTest>(
         *btcTree, endorsment_repo, vbk_params);

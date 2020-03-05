@@ -6,6 +6,9 @@ add_subdirectory(blockchain)
 add_subdirectory(third_party)
 add_subdirectory(entities)
 
+addtest(popmanager_test popmanager_test.cpp)
+target_link_libraries(popmanager_test vbkutils)
+
 addtest(vblake_test vblake_test.cpp)
 target_link_libraries(vblake_test vbkutils)
 

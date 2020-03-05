@@ -17,6 +17,8 @@
 namespace VeriBlock {
 
 struct VbkTx {
+  using hash_t = uint256;
+
   NetworkBytePair networkOrType{};
   Address sourceAddress{};
   Coin sourceAmount{};

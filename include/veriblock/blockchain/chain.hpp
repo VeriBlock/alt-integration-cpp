@@ -98,8 +98,8 @@ struct Chain {
   void disconnectTip() { chain.pop_back(); }
 
   friend bool operator==(const Chain& a, const Chain& b) {
-    // TODO: think how to use use startHeight_
-    return a.chain.size() == b.chain.size() && a.tip() == b.tip();
+    // sizes may vary, so compare tips
+    return a.tip() == b.tip();
   }
 
   const index_t* findFork(const index_t* pindex) const {
