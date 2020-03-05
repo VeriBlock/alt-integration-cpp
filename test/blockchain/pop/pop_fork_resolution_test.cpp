@@ -15,12 +15,14 @@ struct PopForkResolutionAwins : public ::testing::TestWithParam<TestCase> {};
 
 TEST_P(PopForkResolutionEqual, Equal) {
   auto [A, B] = GetParam();
+  ComparePopScore comparePopScore(VBK_KEYSTONE_INTERVAL);
   ASSERT_EQ(comparePopScore(A, B), 0);
   ASSERT_EQ(comparePopScore(B, A), 0);
 }
 
 TEST_P(PopForkResolutionAwins, Awins) {
   auto [A, B] = GetParam();
+  ComparePopScore comparePopScore(VBK_KEYSTONE_INTERVAL);
   ASSERT_GT(comparePopScore(A, B), 0);
   ASSERT_LT(comparePopScore(B, A), 0);
 }
@@ -52,12 +54,12 @@ static const std::vector<TestCase> EqualCases = {
      */
     {
       {{10000, 1},{10020, 1},{10040, 2},{10060, 3},{10080, 3},{10100, 4},{10120, 5}},
-        {{10000, 2},{10020, 2},{10040, 3},{10060, 4},{10080, 4},{10100, 5},{10120, 6}}
+      {{10000, 2},{10020, 2},{10040, 3},{10060, 4},{10080, 4},{10100, 5},{10120, 6}}
     },
     /**
      * Scenario: two chains with 1 identical keystone context
      *
-     * Expected: Chain A should be better than Chain B
+     * Expected: Chains should be equal to one another
      */
     {
       {{10000, 100}},

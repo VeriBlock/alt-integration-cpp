@@ -42,14 +42,6 @@ struct BtcBlock {
   static BtcBlock fromRaw(ReadStream& stream);
 
   /**
-   * Read basic blockheader data from the string bytes and convert it to
-   * BtcBlock
-   * @param string bytes data to read from
-   * @return BtcBlock
-   */
-  static BtcBlock fromRaw(const std::string& bytes);
-
-  /**
    * Read VBK data from the stream and convert it to BtcBlock
    * @param stream data stream to read from
    * @return BtcBlock
@@ -63,10 +55,10 @@ struct BtcBlock {
   void toRaw(WriteStream& stream) const;
 
   /**
-   * Convert BtcBlock to data string using BtcBlock basic byte format
+   * Convert BtcBlock to bytes data using BtcBlock basic byte format
    * @return string represantation of the data
    */
-  std::string toRaw() const;
+  std::vector<uint8_t> toRaw() const;
 
   /**
    * Convert BtcBlock to Hex string using BtcBlock basic byte format

@@ -44,4 +44,13 @@ int highestBlockWhichConnectsKeystoneToPrevious(int blockNumberOfKeystone,
 
   return blockNumberOfKeystone + keystoneInterval + 1;
 }
+
+bool isCrossedKeystoneBoundary(int bottomHeight,
+                               int tipHeight,
+                               int keystoneInterval) {
+  auto keystoneIntervalAmount = bottomHeight / keystoneInterval;
+  auto tipIntervalAmount = tipHeight / keystoneInterval;
+
+  return keystoneIntervalAmount < tipIntervalAmount;
+}
 }  // namespace VeriBlock

@@ -95,7 +95,7 @@ TEST_F(TestFixture, LoadBlockTree_test) {
   EXPECT_TRUE(vbkTree.bootstrapWithGenesis(state));
   EXPECT_TRUE(state.IsValid());
 
-  EXPECT_TRUE(LoadBlockTree(btcTree, stateManager.getBtcCursor(), state));
+  EXPECT_TRUE(loadBlockTree(btcTree, stateManager.getBtcCursor(), state));
   EXPECT_TRUE(state.IsValid());
 
   EXPECT_EQ(btcTree.getBestChain().tip()->header,
@@ -115,7 +115,7 @@ TEST_F(TestFixture, LoadBlockTree_test) {
               expectedBtcBlockTree->getBestChain().tip()->getHash());
   }
 
-  EXPECT_TRUE(LoadBlockTree(vbkTree, stateManager.getVbkCursor(), state));
+  EXPECT_TRUE(loadBlockTree(vbkTree, stateManager.getVbkCursor(), state));
   EXPECT_TRUE(state.IsValid());
 
   EXPECT_EQ(vbkTree.getBestChain().tip()->header,

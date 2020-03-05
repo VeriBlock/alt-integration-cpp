@@ -1,10 +1,11 @@
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
 #include <gtest/gtest.h>
 
 #include <memory>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/block_index.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/time.hpp"
 
@@ -53,8 +54,7 @@ struct VbkBlockchainUtilTest {
 
   VbkBlockchainUtilTest() {
     chainparams = std::make_shared<VbkChainParamsMain>();
-    miner = std::make_shared<Miner<block_t, param_t>>(chainparams,
-                                                      currentTimestamp4());
+    miner = std::make_shared<Miner<block_t, param_t>>(chainparams);
   }
 };
 
@@ -263,8 +263,7 @@ struct BlockchainTest : public ::testing::Test {
     blockchain =
         std::make_shared<BlockTree<block_t, params_base_t>>(chainparam);
 
-    miner = std::make_shared<Miner<block_t, params_base_t>>(
-        chainparam, chainparam->getGenesisBlock().timestamp);
+    miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
@@ -276,7 +275,7 @@ struct BlockchainTest : public ::testing::Test {
 
 TEST_F(BlockchainTest, InvalidKeystone1) {
   auto& chain = this->blockchain->getBestChain();
-  auto block = this->miner->createNextBlock(*chain.tip(), {});
+  auto block = this->miner->createNextBlock(*chain.tip());
   auto badKeystone = ArithUint256::fromHex("01")
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
@@ -288,7 +287,7 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
 
 TEST_F(BlockchainTest, InvalidKeystone2) {
   auto& chain = this->blockchain->getBestChain();
-  auto block = this->miner->createNextBlock(*chain.tip(), {});
+  auto block = this->miner->createNextBlock(*chain.tip());
   auto badKeystone = ArithUint256::fromHex("01")
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
