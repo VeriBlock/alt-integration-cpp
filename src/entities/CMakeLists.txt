@@ -13,4 +13,6 @@ add_library(entities OBJECT
         vbkpoptx.cpp
         vbktx.cpp
         vtb.cpp
+        altblock.cpp
+        payloads.cpp
         )
