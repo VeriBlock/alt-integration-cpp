@@ -13,5 +13,6 @@ addtest(entities_serde_test
         vtb_test.cpp
         altblock_test.cpp
         payloads_test.cpp
+        endorsement_test.cpp
         )
 target_link_libraries(entities_serde_test vbkutils)
