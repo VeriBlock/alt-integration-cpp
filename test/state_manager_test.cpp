@@ -28,8 +28,6 @@ struct TestFixture : public ::testing::Test {
   ValidationState state;
 
   void uploadBlocksToTreeAndRepo() {
-    StateChange change = stateManager.beginStateChange();
-
     BlockIndex<BtcBlock> temp_index_btc;
     for (uint32_t i = 0; i < blocksNumber; ++i) {
       BtcBlock newBtcBlock = btcMiner->createNextBlock(
@@ -38,7 +36,7 @@ struct TestFixture : public ::testing::Test {
       ASSERT_TRUE(expectedBtcBlockTree->acceptBlock(
           newBtcBlock, state, &temp_index_btc));
       ASSERT_TRUE(state.IsValid());
-      change.putBtcBlock(temp_index_btc);
+      stateManager.putBtcBlock(temp_index_btc);
     }
 
     BlockIndex<VbkBlock> temp_index_vbk;
@@ -49,11 +47,9 @@ struct TestFixture : public ::testing::Test {
       ASSERT_TRUE(expectedVbkBlockTree->acceptBlock(
           newVbkBlock, state, &temp_index_vbk));
       ASSERT_TRUE(state.IsValid());
-      change.putVbkBlock(temp_index_vbk);
+      stateManager.putVbkBlock(temp_index_vbk);
     }
-
-    change.commit();
-    stateManager.flush();
+    stateManager.commit();
   }
 
   TestFixture() : stateManager(dbName) {
