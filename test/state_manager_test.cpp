@@ -36,7 +36,7 @@ struct TestFixture : public ::testing::Test {
           *expectedBtcBlockTree->getBestChain().tip(), {});
 
       ASSERT_TRUE(expectedBtcBlockTree->acceptBlock(
-          newBtcBlock, temp_index_btc, state));
+          newBtcBlock, state, &temp_index_btc));
       ASSERT_TRUE(state.IsValid());
       change.putBtcBlock(temp_index_btc);
     }
@@ -47,12 +47,13 @@ struct TestFixture : public ::testing::Test {
           *expectedVbkBlockTree->getBestChain().tip(), {});
 
       ASSERT_TRUE(expectedVbkBlockTree->acceptBlock(
-          newVbkBlock, temp_index_vbk, state));
+          newVbkBlock, state, &temp_index_vbk));
       ASSERT_TRUE(state.IsValid());
       change.putVbkBlock(temp_index_vbk);
     }
 
     change.commit();
+    stateManager.flush();
   }
 
   TestFixture() : stateManager(dbName) {

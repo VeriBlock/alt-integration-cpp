@@ -100,7 +100,9 @@ struct WriteBatchRocks : public WriteBatch<Block> {
   void clear() override { _batch.Clear(); }
 
   void commit() override {
-    rocksdb::Status s = _db->Write(rocksdb::WriteOptions(), &_batch);
+    rocksdb::WriteOptions write_options;
+    write_options.disableWAL = true;
+    rocksdb::Status s = _db->Write(write_options, &_batch);
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
@@ -140,8 +142,10 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
                           block.getHash().size());
     std::string blockBytes = block.toRaw();
 
-    rocksdb::Status s = _db->Put(
-        rocksdb::WriteOptions(), _hashBlockHandle.get(), blockHash, blockBytes);
+    rocksdb::WriteOptions write_options;
+    write_options.disableWAL = true;
+    rocksdb::Status s =
+        _db->Put(write_options, _hashBlockHandle.get(), blockHash, blockBytes);
     if (!s.ok()) {
       throw db::DbError(s.ToString());
     }
@@ -187,8 +191,11 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
     std::string blockHash(reinterpret_cast<const char*>(hash.data()),
                           hash.size());
+
+    rocksdb::WriteOptions write_options;
+    write_options.disableWAL = true;
     rocksdb::Status s =
-        _db->Delete(rocksdb::WriteOptions(), _hashBlockHandle.get(), blockHash);
+        _db->Delete(write_options, _hashBlockHandle.get(), blockHash);
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }

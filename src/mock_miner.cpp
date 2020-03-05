@@ -20,13 +20,12 @@ bool mineBlocks(const uint32_t& n,
                 std::shared_ptr<BlockTree<Block, BlockParams>> blockChain,
                 ValidationState& state) {
   bool res = true;
-  BlockIndex<Block> temp_index;
   for (uint32_t i = 0; i < n && res; ++i) {
     BlockIndex<Block>* tip = blockChain->getBestChain().tip();
     assert(tip != nullptr);
 
     Block block = miner->createNextBlock(*tip, {});
-    res = blockChain->acceptBlock(block, temp_index, state);
+    res = blockChain->acceptBlock(block, state);
   }
 
   return res;
@@ -75,8 +74,7 @@ ATV MockMiner::generateValidATV(const PublicationData& publicationData,
   atv.containingBlock =
       vbk_miner->createNextBlock(*tip, atv.merklePath.calculateMerkleRoot());
 
-  BlockIndex<VbkBlock> temp_index;
-  vbk_blockchain->acceptBlock(atv.containingBlock, temp_index, state);
+  vbk_blockchain->acceptBlock(atv.containingBlock, state);
 
   return atv;
 }
@@ -116,8 +114,7 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
   popTx.blockOfProof = btc_miner->createNextBlock(
       *tip, popTx.merklePath.calculateMerkleRoot().reverse());
 
-  BlockIndex<BtcBlock> temp_index;
-  btc_blockchain->acceptBlock(popTx.blockOfProof, temp_index, state);
+  btc_blockchain->acceptBlock(popTx.blockOfProof, state);
 
   popTx.publicKey = defaultPublicKeyVbk;
 
@@ -154,8 +151,7 @@ VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
   vtb.containingBlock =
       vbk_miner->createNextBlock(*tip, vtb.merklePath.calculateMerkleRoot());
 
-  BlockIndex<VbkBlock> temp_index;
-  vbk_blockchain->acceptBlock(vtb.containingBlock, temp_index, state);
+  vbk_blockchain->acceptBlock(vtb.containingBlock, state);
 
   return vtb;
 }
@@ -167,14 +163,13 @@ Publications MockMiner::mine(const PublicationData& publicationData,
                              ValidationState& state) {
   ATV atv = generateValidATV(publicationData, lastKnownVbkBlockHash, state);
 
-  BlockIndex<VbkBlock> temp_index;
   for (uint32_t i = 0; i != vbkBlockDelay; ++i) {
     BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
 
     assert(tip != nullptr);
 
     VbkBlock minedBlock = vbk_miner->createNextBlock(*tip, uint128());
-    vbk_blockchain->acceptBlock(minedBlock, temp_index, state);
+    vbk_blockchain->acceptBlock(minedBlock, state);
   }
 
   VTB vtb = generateValidVTB(atv.containingBlock,

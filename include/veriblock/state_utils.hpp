@@ -12,7 +12,7 @@
 namespace VeriBlock {
 
 template <typename Block_t, typename ChainParams_t>
-bool LoadBlockTree(
+bool loadBlockTree(
     BlockTree<Block_t, ChainParams_t>& tree,
     std::shared_ptr<typename BlockRepository<BlockIndex<Block_t>>::cursor_t>
         cursor,
@@ -30,9 +30,8 @@ bool LoadBlockTree(
               return block1.height < block2.height;
             });
 
-  BlockIndex<Block_t> temp_index;
   for (const auto& block : blocks) {
-    if (!tree.acceptBlock(block.header, temp_index, state)) {
+    if (!tree.acceptBlock(block.header, state)) {
       return state.addStackFunction("LoadBlockTree()");
     }
   }

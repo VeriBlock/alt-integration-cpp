@@ -135,9 +135,8 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   EXPECT_EQ(tree.getBestChain().tip()->height,
             bootstrapChain[bootstrapChain.size() - 1].height);
 
-  BlockIndex<VbkBlock> temp_index;
   for (const auto& block : acceptChain) {
-    ASSERT_TRUE(tree.acceptBlock(block, temp_index, state))
+    ASSERT_TRUE(tree.acceptBlock(block, state))
         << "block #" << totalBlocks << "\n"
         << "rejection: " << state.GetRejectReason() << ", "
         << "message: " << state.GetDebugMessage();
