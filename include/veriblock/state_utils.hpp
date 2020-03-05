@@ -32,7 +32,7 @@ bool loadBlockTree(
 
   for (const auto& block : blocks) {
     if (!tree.acceptBlock(block.header, state)) {
-      return state.addStackFunction("LoadBlockTree()");
+      return state.addStackFunction("loadBlockTree()");
     }
   }
 
