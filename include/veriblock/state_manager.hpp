@@ -17,25 +17,6 @@ namespace VeriBlock {
 // template <typename Block_t>  using block_repo_t =
 // (Block repository type that inherits from the BlockRepository);
 
-class StateChange {
-  std::shared_ptr<WriteBatch<BlockIndex<BtcBlock>>> btcRepoBatch;
-  std::shared_ptr<WriteBatch<BlockIndex<VbkBlock>>> vbkRepoBatch;
-
- public:
-  StateChange(std::shared_ptr<WriteBatch<BlockIndex<BtcBlock>>> btcBatch,
-              std::shared_ptr<WriteBatch<BlockIndex<VbkBlock>>> vbkBatch)
-      : btcRepoBatch(btcBatch), vbkRepoBatch(vbkBatch) {}
-
-  StateChange(std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> btcRepo,
-              std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> vbkRepo)
-      : btcRepoBatch(btcRepo->newBatch()), vbkRepoBatch(vbkRepo->newBatch()){};
-
-  void putBtcBlock(const BlockIndex<BtcBlock>& block);
-  void putVbkBlock(const BlockIndex<VbkBlock>& block);
-
-  void commit();
-};
-
 template <typename BlockRepositoryManager>
 class StateManager {
   template <typename Block_t>
@@ -51,12 +32,16 @@ class StateManager {
  public:
   StateManager(const std::string& name) : database(name) { database.open(); }
 
-  status_t flush() { return database.flush(); }
+  status_t commit() { return database.flush(); }
 
   status_t wipeRepos() { return database.clear(); }
 
-  StateChange beginStateChange() {
-    return StateChange(database.getBtcRepo(), database.getVbkRepo());
+  bool putBtcBlock(const BlockIndex<BtcBlock>& block) {
+    return database.getBtcRepo()->put(block);
+  }
+
+  bool putVbkBlock(const BlockIndex<VbkBlock>& block) {
+    return database.getVbkRepo()->put(block);
   }
 
   std::shared_ptr<cursor_t<BtcBlock>> getBtcCursor() {
