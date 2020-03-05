@@ -86,8 +86,7 @@ struct BlockTree {
     // our store (yet) to check it correctly
     for (size_t i = 1, size = chain.size(); i < size; i++) {
       auto& block = chain[i];
-      index_t temp_index;
-      if (!this->acceptBlock(block, temp_index, state, false)) {
+      if (!this->acceptBlock(block, state, false)) {
         return state.addStackFunction("bootstrapWithChain()");
       }
     }
@@ -105,9 +104,9 @@ struct BlockTree {
   }
 
   bool acceptBlock(const block_t& block,
-                   index_t& blockIndex,
-                   ValidationState& state) {
-    return acceptBlock(block, blockIndex, state, true);
+                   ValidationState& state,
+                   index_t* blockIndex = nullptr) {
+    return acceptBlock(block, state, true, blockIndex);
   }
 
   void invalidateTip() { invalidateBlockByHash(activeChain_.tip()->getHash()); }
@@ -285,9 +284,9 @@ struct BlockTree {
   }
 
   bool acceptBlock(const block_t& block,
-                   index_t& blockIndex,
                    ValidationState& state,
-                   bool shouldContextuallyCheck) {
+                   bool shouldContextuallyCheck,
+                   index_t* blockIndex = nullptr) {
     if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("acceptBlock()");
     }
@@ -311,7 +310,9 @@ struct BlockTree {
 
     assert(index != nullptr &&
            "insertBlockHeader should have never returned nullptr");
-    blockIndex = *index;
+    if (blockIndex != nullptr) {
+      *blockIndex = *index;
+    }
     return true;
   }
 

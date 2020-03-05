@@ -282,8 +282,7 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
                          .template trimLE<VbkBlock::keystone_t::size()>();
   block.previousKeystone = badKeystone;
 
-  BlockIndex<VbkBlock> temp_index;
-  ASSERT_FALSE(blockchain->acceptBlock(block, temp_index, state));
+  ASSERT_FALSE(blockchain->acceptBlock(block, state));
   ASSERT_EQ(state.GetRejectReason(), "vbk-bad-keystones");
 }
 
@@ -295,7 +294,6 @@ TEST_F(BlockchainTest, InvalidKeystone2) {
                          .template trimLE<VbkBlock::keystone_t::size()>();
   block.secondPreviousKeystone = badKeystone;
 
-  BlockIndex<VbkBlock> temp_index;
-  ASSERT_FALSE(blockchain->acceptBlock(block, temp_index, state));
+  ASSERT_FALSE(blockchain->acceptBlock(block, state));
   ASSERT_EQ(state.GetRejectReason(), "vbk-bad-keystones");
 }

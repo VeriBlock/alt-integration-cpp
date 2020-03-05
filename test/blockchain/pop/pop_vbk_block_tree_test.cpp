@@ -60,24 +60,20 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
   }
 
   void processVtb(const VTB& vtb) {
-    BlockIndex<BtcBlock> temp_index_btc;
     for (const auto& block : vtb.transaction.blockOfProofContext) {
-      ASSERT_TRUE(btcTree->acceptBlock(block, temp_index_btc, state));
+      ASSERT_TRUE(btcTree->acceptBlock(block, state));
       ASSERT_TRUE(state.IsValid());
     }
 
-    ASSERT_TRUE(btcTree->acceptBlock(
-        vtb.transaction.blockOfProof, temp_index_btc, state));
+    ASSERT_TRUE(btcTree->acceptBlock(vtb.transaction.blockOfProof, state));
     ASSERT_TRUE(state.IsValid());
 
-    BlockIndex<VbkBlock> temp_index_vbk;
     for (const auto& block : vtb.context) {
-      ASSERT_TRUE(vbkTest->acceptBlock(block, temp_index_vbk, state));
+      ASSERT_TRUE(vbkTest->acceptBlock(block, state));
       ASSERT_TRUE(state.IsValid());
     }
 
-    ASSERT_TRUE(
-        vbkTest->acceptBlock(vtb.containingBlock, temp_index_vbk, state));
+    ASSERT_TRUE(vbkTest->acceptBlock(vtb.containingBlock, state));
     ASSERT_TRUE(state.IsValid());
 
     endorsment_repo->put(vtb.transaction, vtb.containingBlock.getHash());

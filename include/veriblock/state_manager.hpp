@@ -51,6 +51,8 @@ class StateManager {
  public:
   StateManager(const std::string& name) : database(name) { database.open(); }
 
+  status_t flush() { return database.flush(); }
+
   status_t wipeRepos() { return database.clear(); }
 
   StateChange beginStateChange() {
