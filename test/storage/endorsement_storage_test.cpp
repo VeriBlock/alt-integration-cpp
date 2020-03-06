@@ -103,7 +103,13 @@ template <>
 AltProof getDefaultContainer() {
   AltProof container;
   container.endorsed = {{1, 2, 3}, 123, 4125};
-  container.containing = {{1, 2, 3}, 123, 4125};
+  container.containing = {{
+                              11,
+                              12,
+                              24,
+                          },
+                          1247,
+                          1425};
   container.atv = ATV::fromVbkEncoding(
       std::string(defaultAtvEncoded.begin(), defaultAtvEncoded.end()));
 
@@ -122,7 +128,13 @@ template <>
 AltProof getModifiedContainer() {
   AltProof container;
   container.endorsed = {{1, 2, 3}, 123, 4125};
-  container.containing = {{1, 2, 3}, 123, 4125};
+  container.containing = {{
+                              11,
+                              12,
+                              24,
+                          },
+                          1247,
+                          1425};
   container.atv = ATV::fromVbkEncoding(
       std::string(defaultAtvEncoded.begin(), defaultAtvEncoded.end()));
 

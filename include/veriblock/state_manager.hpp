@@ -47,9 +47,10 @@ class StateManager {
   std::shared_ptr<cursor_t<BtcBlock>> getBtcCursor() {
     return database.getBtcRepo()->newCursor();
   }
+
   std::shared_ptr<cursor_t<VbkBlock>> getVbkCursor() {
     return database.getVbkRepo()->newCursor();
-  };
+  }
 };
 
 }  // namespace VeriBlock
