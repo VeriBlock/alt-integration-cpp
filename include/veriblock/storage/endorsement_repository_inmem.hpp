@@ -11,6 +11,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbkpoptx.hpp"
 #include "veriblock/entities/vbktx.hpp"
+#include "veriblock/storage/endorsement_repository.hpp"
 
 namespace std {
 

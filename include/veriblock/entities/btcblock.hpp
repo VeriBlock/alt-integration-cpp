@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <string>
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
@@ -28,14 +29,14 @@ struct BtcBlock {
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
    * BtcBlock
-   * @param stream data stream to read from
+   * @param bytes data to read from
    * @return BtcBlock
    */
   static BtcBlock fromRaw(const std::vector<uint8_t>& bytes);
 
   /**
    * Read basic blockheader data from the stream and convert it to BtcBlock
-   * @param stream data stream to read from
+   * @param stream data to read from
    * @return BtcBlock
    */
   static BtcBlock fromRaw(ReadStream& stream);
@@ -53,8 +54,16 @@ struct BtcBlock {
    */
   void toRaw(WriteStream& stream) const;
 
+  /**
+   * Convert BtcBlock to bytes data using BtcBlock basic byte format
+   * @return string represantation of the data
+   */
   std::vector<uint8_t> toRaw() const;
 
+  /**
+   * Convert BtcBlock to Hex string using BtcBlock basic byte format
+   * @return Hex represantation of the data
+   */
   std::string toHex() const;
 
   /**

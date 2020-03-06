@@ -4,10 +4,10 @@
 #include <memory>
 #include <string>
 
+#include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/storage/block_repository.hpp"
-#include "veriblock/storage/block_repository_rocks_manager.hpp"
 
 namespace VeriBlock {
 
@@ -20,14 +20,36 @@ namespace VeriBlock {
 template <typename BlockRepositoryManager>
 class StateManager {
   template <typename Block_t>
-  using block_repo_t =
-      typename BlockRepositoryManager::template block_repo_t<Block_t>;
+  using block_repo_t = BlockRepository<BlockIndex<Block_t>>;
+
+  template <typename Block_t>
+  using cursor_t = typename block_repo_t<Block_t>::cursor_t;
+
+  using status_t = typename BlockRepositoryManager::status_t;
 
   BlockRepositoryManager database;
-  std::shared_ptr<block_repo_t<VbkBlock>> vbkRepo;
 
  public:
-  StateManager(const std::string &name) : database(name) {}
+  StateManager(const std::string& name) : database(name) { database.open(); }
+
+  status_t commit() { return database.flush(); }
+
+  status_t wipeRepos() { return database.clear(); }
+
+  bool putBtcBlock(const BlockIndex<BtcBlock>& block) {
+    return database.getBtcRepo()->put(block);
+  }
+
+  bool putVbkBlock(const BlockIndex<VbkBlock>& block) {
+    return database.getVbkRepo()->put(block);
+  }
+
+  std::shared_ptr<cursor_t<BtcBlock>> getBtcCursor() {
+    return database.getBtcRepo()->newCursor();
+  }
+  std::shared_ptr<cursor_t<VbkBlock>> getVbkCursor() {
+    return database.getVbkRepo()->newCursor();
+  };
 };
 
 }  // namespace VeriBlock

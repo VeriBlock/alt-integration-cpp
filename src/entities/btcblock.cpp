@@ -50,9 +50,7 @@ BtcBlock BtcBlock::fromHex(const std::string& hex) {
   return BtcBlock::fromRaw(v);
 }
 
-std::string BtcBlock::toHex() const {
-  return HexStr(this->toRaw());
-}
+std::string BtcBlock::toHex() const { return HexStr(this->toRaw()); }
 
 std::vector<uint8_t> BtcBlock::toRaw() const {
   WriteStream stream;
