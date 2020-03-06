@@ -16,8 +16,7 @@ namespace VeriBlock {
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
 template <typename Endorsement>
-class EndorsementRepositoryRocks
-    : public EndorsementRepositoryRocks<Endorsement> {
+class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
  public:
   using endorsement_t = Endorsement;
   using eid_t = typename Endorsement::id_t;
@@ -34,37 +33,31 @@ class EndorsementRepositoryRocks
         _endorsedBlockHashHandle(std::move(endorsedBlockHashHandle)),
         _endorsedIdHandle(std::move(endorsedIdHandle)) {}
 
-  void remove(const eid_t& id) override {
+  void remove(const eid_t& e_id) override {
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
+    rocksdb::Status s;
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
-    std::string outData{};
+    rocksdb::Slice key(reinterpret_cast<const char*>(e_id.data()), e_id.size());
 
-    rocksdb::Status s =
-        _db->Get(rocksdb::ReadOptions(), _endorsedIdHandle.get(), key, outData);
+    std::string valOut;
+    s = _db->Get(rocksdb::ReadOptions(), _endorsedIdHandle.get(), key, &valOut);
 
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
 
-    auto container = container_t::fromVbkEncoding(outData);
-    s = _db->Delete(write_options, _endorsedIdHandle.get(), key);
-
-    if (!s.ok()) {
-      throw db::DbError(s.ToString());
+    if (s.IsNotFound()) {
+      return;
     }
 
-    s = _db->Delete(
-        write_options, _endorsedBlockHashHandle.get(), container.endorsedHash);
-
-    if (!s.ok()) {
-      throw db::DbError(s.ToString());
-    }
+    endorsement_t e = endorsement_t::fromVbkEncoding(valOut);
+    remove(e);
   }
 
   void remove(const container_t& container) override {
-    remove(Endorsement::getId(container));
+    auto e = Endorsement::fromContainer(container);
+    remove(e);
   }
 
   void put(const container_t& container) override {
@@ -78,9 +71,10 @@ class EndorsementRepositoryRocks
                        e.endorsedHash.size());
 
     std::string valOut;
-    s = _db->Get(write_options, _endorsedBlockHashHandle.get(), key, valOut);
+    s = _db->Get(
+        rocksdb::ReadOptions(), _endorsedBlockHashHandle.get(), key, &valOut);
 
-    if (!s.ok()) {
+    if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
 
@@ -88,13 +82,18 @@ class EndorsementRepositoryRocks
     if (!s.IsNotFound()) {
       ReadStream r_stream(valOut);
       uint32_t vec_size = r_stream.readBE<uint32_t>();
-      std::vector<id_t> ids(vec_size + 1);
+      std::vector<eid_t> ids(vec_size + 1);
       for (uint32_t i = 0; i < vec_size; ++i) {
         ids[i] = r_stream.readSlice(sizeof(eid_t));
+
+        if (ids[i] == e.id) {
+          return;
+        }
       }
+
       ids[vec_size] = e.id;
 
-      w_stream.writeBE<uint32_t>(ids.size());
+      w_stream.writeBE<uint32_t>((uint32_t)ids.size());
       for (uint32_t i = 0; i < ids.size(); ++i) {
         w_stream.write(ids[i]);
       }
@@ -126,9 +125,7 @@ class EndorsementRepositoryRocks
   }
 
   std::vector<endorsement_t> get(
-      const endorsed_hash_t& endorsedBlockHash) override {
-    std::vector<endorsement_t> endorsements;
-
+      const endorsed_hash_t& endorsedBlockHash) const override {
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
     rocksdb::Status s;
@@ -137,8 +134,9 @@ class EndorsementRepositoryRocks
                        endorsedBlockHash.size());
 
     std::string valOut;
-    s = _db->Get(write_options, _endorsedBlockHashHandle.get(), key, valOut);
-    if (!s.ok()) {
+    s = _db->Get(
+        rocksdb::ReadOptions(), _endorsedBlockHashHandle.get(), key, &valOut);
+    if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
 
@@ -155,11 +153,82 @@ class EndorsementRepositoryRocks
       auto temp = r_stream.readSlice(sizeof(eid_t));
       key = rocksdb::Slice(reinterpret_cast<const char*>(temp.data()),
                            temp.size());
-      _db->Get(write_options, _endorsedIdHandle.get(), key, endorsement_out);
+      _db->Get(rocksdb::ReadOptions(),
+               _endorsedIdHandle.get(),
+               key,
+               &endorsement_out);
+
+      if (!s.ok() && !s.IsNotFound()) {
+        throw db::DbError(s.ToString());
+      }
+
       endorsements[i] = endorsement_t::fromVbkEncoding(endorsement_out);
     }
 
     return endorsements;
+  }
+
+ private:
+  void remove(const endorsement_t& e) {
+    rocksdb::WriteOptions write_options;
+    write_options.disableWAL = true;
+    rocksdb::Status s;
+
+    rocksdb::Slice key(reinterpret_cast<const char*>(e.endorsedHash.data()),
+                       e.endorsedHash.size());
+
+    std::string valOut;
+    s = _db->Get(
+        rocksdb::ReadOptions(), _endorsedBlockHashHandle.get(), key, &valOut);
+
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+
+    WriteStream w_stream;
+    if (!s.IsNotFound()) {
+      ReadStream r_stream(valOut);
+      uint32_t vec_size = r_stream.readBE<uint32_t>();
+      std::vector<eid_t> ids(vec_size - 1);
+      for (uint32_t i = 0; i < vec_size - 1;) {
+        eid_t id = r_stream.readSlice(sizeof(eid_t));
+        if (id == e.id) {
+          continue;
+        }
+        ids[i++] = id;
+      }
+
+      if (ids.size() != 0) {
+        w_stream.writeBE<uint32_t>((uint32_t)ids.size());
+        for (uint32_t i = 0; i < ids.size(); ++i) {
+          w_stream.write(ids[i]);
+        }
+      }
+    }
+
+    if (w_stream.data().size() != 0) {
+      rocksdb::Slice val(reinterpret_cast<const char*>(w_stream.data().data()),
+                         w_stream.data().size());
+
+      s = _db->Put(write_options, _endorsedBlockHashHandle.get(), key, val);
+      if (!s.ok()) {
+        throw db::DbError(s.ToString());
+      }
+    } else {
+      s = _db->Delete(write_options, _endorsedBlockHashHandle.get(), key);
+
+      if (!s.ok() && !s.IsNotFound()) {
+        throw db::DbError(s.ToString());
+      }
+    }
+
+    key =
+        rocksdb::Slice(reinterpret_cast<const char*>(e.id.data()), e.id.size());
+    s = _db->Delete(write_options, _endorsedIdHandle.get(), key);
+
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
   }
 
  private:

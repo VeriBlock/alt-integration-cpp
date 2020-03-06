@@ -3,24 +3,42 @@
 
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/endorsement.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/storage/block_repository_rocks.hpp"
+#include "veriblock/storage/endorsement_repository_rocks.hpp"
 
 namespace VeriBlock {
 
-enum class CF_NAMES { DEFAULT = 0, HASH_BLOCK_BTC, HASH_BLOCK_VBK };
+enum class CF_NAMES {
+  DEFAULT = 0,
+  HASH_BLOCK_BTC,
+  HASH_BLOCK_VBK,
+  HASH_BTC_ENDORSED_BLOCK,
+  HASH_BTC_ENDORSEMENT_ID,
+  HASH_VBK_ENDORSED_BLOCK,
+  HASH_VBK_ENDORSEMENT_ID
+};
 
 // column families in the DB
-static const std::vector<std::string> cfNames{
-    "default", "hash_block_btc", "hash_block_vbk"};
+static const std::vector<std::string> cfNames{"default",
+                                              "hash_block_btc",
+                                              "hash_block_vbk",
+                                              "hash_btc_endorsed_block",
+                                              "hash_btc_endorsement_id",
+                                              "hash_vbk_endorsed_block",
+                                              "hash_vbk_endorsement_id"};
 
-struct BlockRepositoryRocksManager {
+struct RepositoryRocksManager {
   template <typename Block_t>
   using block_repo_t = BlockRepositoryRocks<BlockIndex<Block_t>>;
 
+  template <typename Endorsement_t>
+  using endorsement_repo_t = EndorsementRepositoryRocks<Endorsement_t>;
+
   using status_t = rocksdb::Status;
 
-  BlockRepositoryRocksManager(const std::string &name) : dbName(name) {}
+  RepositoryRocksManager(const std::string &name) : dbName(name) {}
 
   rocksdb::Status open() {
     // prepare column families
@@ -57,6 +75,12 @@ struct BlockRepositoryRocksManager {
 
     repoVbk = std::make_shared<block_repo_t<VbkBlock>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_VBK]);
+
+    repoBtcEndorsment = std::make_shared<endorsement_repo_t<BtcEndorsement>>(
+        dbPtr,
+        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK],
+        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK]);
+
     return s;
   }
 
@@ -70,7 +94,7 @@ struct BlockRepositoryRocksManager {
 
     rocksdb::Status s = rocksdb::Status::OK();
     for (size_t i = (size_t)CF_NAMES::HASH_BLOCK_BTC;
-         i <= (size_t)CF_NAMES::HASH_BLOCK_VBK;
+         i <= (size_t)CF_NAMES::HASH_VBK_ENDORSEMENT_ID;
          i++) {
       auto columnName = cfHandles[i]->GetName();
       s = dbPtr->DropColumnFamily(cfHandles[i].get());
@@ -90,6 +114,16 @@ struct BlockRepositoryRocksManager {
 
     repoVbk = std::make_shared<block_repo_t<VbkBlock>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_VBK]);
+
+    repoBtcEndorsment = std::make_shared<endorsement_repo_t<BtcEndorsement>>(
+        dbPtr,
+        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK],
+        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK]);
+
+    repoVbkEndorsment = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
+        dbPtr,
+        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSED_BLOCK],
+        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSED_BLOCK]);
     return s;
   }
 
@@ -106,6 +140,16 @@ struct BlockRepositoryRocksManager {
 
   std::shared_ptr<block_repo_t<VbkBlock>> getVbkRepo() const { return repoVbk; }
 
+  std::shared_ptr<endorsement_repo_t<BtcEndorsement>> getBtcEndorsmentRepo()
+      const {
+    return repoBtcEndorsment;
+  }
+
+  std::shared_ptr<endorsement_repo_t<VbkEndorsement>> getVbkEndorsmentRepo()
+      const {
+    return repoVbkEndorsment;
+  }
+
  private:
   std::string dbName = "";
 
@@ -115,6 +159,8 @@ struct BlockRepositoryRocksManager {
 
   std::shared_ptr<block_repo_t<BtcBlock>> repoBtc;
   std::shared_ptr<block_repo_t<VbkBlock>> repoVbk;
+  std::shared_ptr<endorsement_repo_t<BtcEndorsement>> repoBtcEndorsment;
+  std::shared_ptr<endorsement_repo_t<VbkEndorsement>> repoVbkEndorsment;
 };
 
 }  // namespace VeriBlock
