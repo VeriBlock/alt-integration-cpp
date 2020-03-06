@@ -163,7 +163,7 @@ TYPED_TEST_P(EndorsementRepositoryRocksTest, Basic) {
 
   this->endorsementRepo->put(defaultContainer);
   typename Basic::endorsement_t expectedEndorsement1 =
-      typename Basic::endorsement_t::fromContainer(defaultContainer);
+      Basic::endorsement_t::fromContainer(defaultContainer);
 
   typename Basic::container_t modifiedContainer =
       getModifiedContainer<typename Basic::container_t>();
