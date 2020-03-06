@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "veriblock/serde.hpp"
-#include "veriblock/storage/block_repository.hpp"
 #include "veriblock/storage/db_error.hpp"
+#include "veriblock/storage/endorsement_repository.hpp"
 
 namespace VeriBlock {
 
