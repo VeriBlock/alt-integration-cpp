@@ -49,7 +49,8 @@ struct TestFixture : public ::testing::Test {
       ASSERT_TRUE(state.IsValid());
       stateManager.putVbkBlock(temp_index_vbk);
     }
-    // stateManager.commit();
+
+    stateManager.commit();
   }
 
   TestFixture() : stateManager(dbName) {
