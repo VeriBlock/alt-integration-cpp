@@ -73,9 +73,9 @@ struct Endorsement {
 using BtcEndorsement = Endorsement<VbkBlock::hash_t, BtcBlock::hash_t, VTB>;
 
 template <>
-static BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream);
+BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream);
 template <>
-static BtcEndorsement BtcEndorsement::fromVbkEncoding(const std::string& bytes);
+BtcEndorsement BtcEndorsement::fromVbkEncoding(const std::string& bytes);
 template <>
 void BtcEndorsement::toVbkEncoding(WriteStream& stream) const;
 template <>
@@ -89,9 +89,9 @@ BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c);
 using VbkEndorsement =
     Endorsement<std::vector<uint8_t>, VbkBlock::hash_t, AltProof>;
 template <>
-static VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream);
+VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream);
 template <>
-static VbkEndorsement VbkEndorsement::fromVbkEncoding(const std::string& bytes);
+VbkEndorsement VbkEndorsement::fromVbkEncoding(const std::string& bytes);
 template <>
 void VbkEndorsement::toVbkEncoding(WriteStream& stream) const;
 template <>
