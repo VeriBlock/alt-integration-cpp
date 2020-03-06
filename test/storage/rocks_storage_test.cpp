@@ -48,8 +48,8 @@ class TestStorage : public ::testing::Test {
     s = database.clear();
     ASSERT_TRUE(s.ok());
 
-    repoBtc = database.repoBtc;
-    repoVbk = database.repoVbk;
+    repoBtc = database.getBtcRepo();
+    repoVbk = database.getVbkRepo();
 
     repoBtc->clear();
     repoVbk->clear();

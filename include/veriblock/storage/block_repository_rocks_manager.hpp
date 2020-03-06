@@ -18,6 +18,8 @@ struct BlockRepositoryRocksManager {
   template <typename Block_t>
   using block_repo_t = BlockRepositoryRocks<BlockIndex<Block_t>>;
 
+  using status_t = rocksdb::Status;
+
   BlockRepositoryRocksManager(const std::string &name) : dbName(name) {}
 
   rocksdb::Status open() {
@@ -35,6 +37,9 @@ struct BlockRepositoryRocksManager {
     rocksdb::Options options{};
     options.create_if_missing = true;
     options.create_missing_column_families = true;
+    // here is the description of this option
+    // https://github.com/facebook/rocksdb/wiki/Atomic-flush
+    options.atomic_flush = true;
     rocksdb::Status s = rocksdb::DB::Open(
         options, dbName, column_families, &cfHandlesData, &dbInstance);
     if (!s.ok()) return s;
@@ -88,9 +93,18 @@ struct BlockRepositoryRocksManager {
     return s;
   }
 
-  // block storage
-  std::shared_ptr<block_repo_t<BtcBlock>> repoBtc;
-  std::shared_ptr<block_repo_t<VbkBlock>> repoVbk;
+  rocksdb::Status flush() {
+    std::vector<rocksdb::ColumnFamilyHandle *> cfs(cfHandles.size());
+    for (size_t i = 0; i < cfs.size(); ++i) {
+      cfs[i] = cfHandles[i].get();
+    }
+
+    return dbPtr->Flush(rocksdb::FlushOptions(), cfs);
+  }
+
+  std::shared_ptr<block_repo_t<BtcBlock>> getBtcRepo() const { return repoBtc; }
+
+  std::shared_ptr<block_repo_t<VbkBlock>> getVbkRepo() const { return repoVbk; }
 
  private:
   std::string dbName = "";
@@ -98,6 +112,9 @@ struct BlockRepositoryRocksManager {
   // smart pointers for handling DB management
   std::shared_ptr<rocksdb::DB> dbPtr;
   std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>> cfHandles{};
+
+  std::shared_ptr<block_repo_t<BtcBlock>> repoBtc;
+  std::shared_ptr<block_repo_t<VbkBlock>> repoVbk;
 };
 
 }  // namespace VeriBlock

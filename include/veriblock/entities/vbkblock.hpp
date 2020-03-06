@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKBLOCK_HPP_
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
@@ -31,7 +32,7 @@ struct VbkBlock {
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
    * VbkBlock
-   * @param stream data stream to read from
+   * @param bytes data to read fromm
    * @return VbkBlock
    */
   static VbkBlock fromRaw(Slice<const uint8_t> bytes);
@@ -56,6 +57,16 @@ struct VbkBlock {
    */
   void toRaw(WriteStream& stream) const;
 
+  /**
+   * Convert VbkBlock to bytes data using VbkBlock basic byte format
+   * @return string represantation of the data
+   */
+  std::vector<uint8_t> toRaw() const;
+
+  /**
+   * Convert VbkBlock to Hex string using VbkBlock basic byte format
+   * @return Hex represantation of the data
+   */
   std::string toHex() const;
 
   /**
