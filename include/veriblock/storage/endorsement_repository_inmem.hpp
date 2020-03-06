@@ -11,6 +11,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbkpoptx.hpp"
 #include "veriblock/entities/vbktx.hpp"
+#include "veriblock/storage/endorsement_repository.hpp"
 
 namespace std {
 
@@ -68,10 +69,11 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
     std::vector<endorsement_t> ret;
     ret.reserve(m.size());
 
-    std::transform(m.begin(),
-                   m.end(),
-                   std::back_inserter(ret),
-                   [](const std::pair<eid_t, endorsement_t>& p) { return p.second; });
+    std::transform(
+        m.begin(),
+        m.end(),
+        std::back_inserter(ret),
+        [](const std::pair<eid_t, endorsement_t>& p) { return p.second; });
 
     return ret;
   };

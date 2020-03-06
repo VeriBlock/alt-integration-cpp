@@ -26,7 +26,6 @@ add_library(vbkutils
         arith_uint256.cpp
         signutil.cpp
         mock_miner.cpp
-        state_manager.cpp
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:blockchain>
         $<TARGET_OBJECTS:pop_utils>

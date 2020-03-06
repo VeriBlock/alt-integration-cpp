@@ -53,7 +53,7 @@ std::shared_ptr<BlockRepositoryRocks<BlockIndex<BtcBlock>>> getRepo() {
   BlockRepositoryRocksManager database(dbName);
   rocksdb::Status s = database.open();
   database.clear();
-  return database.repoBtc;
+  return database.getBtcRepo();
 }
 
 template <>
@@ -61,7 +61,7 @@ std::shared_ptr<BlockRepositoryRocks<BlockIndex<VbkBlock>>> getRepo() {
   BlockRepositoryRocksManager database(dbName);
   rocksdb::Status s = database.open();
   database.clear();
-  return database.repoVbk;
+  return database.getVbkRepo();
 }
 
 template <typename Block_t>
