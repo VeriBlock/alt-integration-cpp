@@ -2,7 +2,7 @@
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
-#include "veriblock/storage/block_repository_rocks_manager.hpp"
+#include "veriblock/storage/repository_rocks_manager.hpp"
 #include "veriblock/uint.hpp"
 
 using namespace VeriBlock;
@@ -50,7 +50,7 @@ std::shared_ptr<BlockRepositoryInmem<BlockBasic>> getRepo() {
 
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<BtcBlock>>> getRepo() {
-  BlockRepositoryRocksManager database(dbName);
+  RepositoryRocksManager database(dbName);
   rocksdb::Status s = database.open();
   database.clear();
   return database.getBtcRepo();
@@ -58,7 +58,7 @@ std::shared_ptr<BlockRepositoryRocks<BlockIndex<BtcBlock>>> getRepo() {
 
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<VbkBlock>>> getRepo() {
-  BlockRepositoryRocksManager database(dbName);
+  RepositoryRocksManager database(dbName);
   rocksdb::Status s = database.open();
   database.clear();
   return database.getVbkRepo();
