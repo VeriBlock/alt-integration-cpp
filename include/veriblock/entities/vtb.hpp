@@ -24,7 +24,7 @@ struct VTB {
   static VTB fromVbkEncoding(ReadStream& stream);
 
   /**
-   * Read VBK data from the string byte represantation and convert it to VTB
+   * Read VBK data from the string raw byte representation and convert it to VTB
    * @param string data bytes to read from
    * @return VTB
    */
@@ -37,7 +37,7 @@ struct VTB {
   void toVbkEncoding(WriteStream& stream) const;
 
   /**
-   * Convert VTB to bytes data using Vbk byte format
+   * Convert VTB to raw bytes data using Vbk byte format
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;

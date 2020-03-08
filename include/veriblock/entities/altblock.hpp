@@ -21,7 +21,7 @@ struct AltBlock {
   static AltBlock fromVbkEncoding(ReadStream& stream);
 
   /**
-   * Read VBK data from the string byte represantation and convert it to
+   * Read VBK data from the string raw byte representation and convert it to
    * AltBlock
    * @param string data bytes to read from
    * @return AltBlock
@@ -35,7 +35,7 @@ struct AltBlock {
   void toVbkEncoding(WriteStream& stream) const;
 
   /**
-   * Convert AltBlock to bytes data using Vbk byte format
+   * Convert AltBlock to raw bytes data using Vbk byte format
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
