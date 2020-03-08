@@ -68,8 +68,19 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
     write_options.disableWAL = true;
     rocksdb::Status s;
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(e.endorsedHash.data()),
-                       e.endorsedHash.size());
+    std::vector<uint8_t> bytes = e.toVbkEncoding();
+    rocksdb::Slice key(reinterpret_cast<const char*>(e.id.data()), e.id.size());
+    rocksdb::Slice val(reinterpret_cast<const char*>(bytes.data()),
+                       bytes.size());
+
+    s = _db->Put(write_options, _endorsedIdHandle.get(), key, val);
+
+    if (!s.ok()) {
+      throw db::DbError(s.ToString());
+    }
+
+    key = rocksdb::Slice(reinterpret_cast<const char*>(e.endorsedHash.data()),
+                         e.endorsedHash.size());
 
     std::string valOut;
     s = _db->Get(
@@ -103,22 +114,10 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
       w_stream.write(e.id);
     }
 
-    rocksdb::Slice val(reinterpret_cast<const char*>(w_stream.data().data()),
-                       w_stream.data().size());
+    val = rocksdb::Slice(reinterpret_cast<const char*>(w_stream.data().data()),
+                         w_stream.data().size());
 
     s = _db->Put(write_options, _endorsedBlockHashHandle.get(), key, val);
-
-    if (!s.ok()) {
-      throw db::DbError(s.ToString());
-    }
-
-    std::vector<uint8_t> bytes = e.toVbkEncoding();
-    key =
-        rocksdb::Slice(reinterpret_cast<const char*>(e.id.data()), e.id.size());
-    val = rocksdb::Slice(reinterpret_cast<const char*>(bytes.data()),
-                         bytes.size());
-
-    s = _db->Put(write_options, _endorsedIdHandle.get(), key, val);
 
     if (!s.ok()) {
       throw db::DbError(s.ToString());
@@ -234,6 +233,13 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
 
  private:
   std::shared_ptr<rocksdb::DB> _db;
+  // We have two maps [endorsed_block_hash] -> [endorsed_id array]
+  // endorsed_id array is stored using the raw representation described below :
+  // number_of_endorsment_ids(uint32_t), endorsment_id_1_raw_bytes,
+  // endorsment_id_2_raw_bytes, ...
+  // And the another one map is [endorsed_id] -> [endorsement]
+  // endorsement is stored in the raw bytes representation
+
   std::shared_ptr<cf_handle_t> _endorsedBlockHashHandle;
   std::shared_ptr<cf_handle_t> _endorsedIdHandle;
 };

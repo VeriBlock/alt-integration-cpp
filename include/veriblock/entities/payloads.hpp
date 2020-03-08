@@ -21,7 +21,7 @@ struct AltProof {
   static AltProof fromVbkEncoding(ReadStream& stream);
 
   /**
-   * Read VBK data from the string byte represantation and convert it to
+   * Read VBK data from the string raw byte representation and convert it to
    * AltProof
    * @param string data bytes to read from
    * @return AltProof
@@ -35,7 +35,7 @@ struct AltProof {
   void toVbkEncoding(WriteStream& stream) const;
 
   /**
-   * Convert AltProof to bytes data using Vbk byte format
+   * Convert AltProof to raw bytes data using Vbk byte format
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;

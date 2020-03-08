@@ -27,7 +27,7 @@ struct ATV {
   static ATV fromVbkEncoding(ReadStream& stream);
 
   /**
-   * Read VBK data from the string byte represantation and convert it to ATV
+   * Read VBK data from the string raw byte representation and convert it to ATV
    * @param string data bytes to read from
    * @return ATV
    */
@@ -40,7 +40,7 @@ struct ATV {
   void toVbkEncoding(WriteStream& stream) const;
 
   /**
-   * Convert ATV to bytes data using Vbk byte format
+   * Convert ATV to raw bytes data using Vbk byte format
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
