@@ -6,6 +6,7 @@
 
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/endorsement.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/storage/block_repository.hpp"
 
@@ -17,7 +18,7 @@ namespace VeriBlock {
 // template <typename Block_t>  using block_repo_t =
 // (Block repository type that inherits from the BlockRepository);
 
-template <typename BlockRepositoryManager>
+template <typename RepositoryManager>
 class StateManager {
   template <typename Block_t>
   using block_repo_t = BlockRepository<BlockIndex<Block_t>>;
@@ -25,23 +26,54 @@ class StateManager {
   template <typename Block_t>
   using cursor_t = typename block_repo_t<Block_t>::cursor_t;
 
-  using status_t = typename BlockRepositoryManager::status_t;
+  using status_t = typename RepositoryManager::status_t;
 
-  BlockRepositoryManager database;
+  RepositoryManager database;
+  std::unique_ptr<WriteBatch<BlockIndex<BtcBlock>>> btcBlockBatch;
+  std::unique_ptr<WriteBatch<BlockIndex<VbkBlock>>> vbkBlockBatch;
 
  public:
-  StateManager(const std::string& name) : database(name) { database.open(); }
-
-  status_t commit() { return database.flush(); }
-
-  status_t wipeRepos() { return database.clear(); }
-
-  bool putBtcBlock(const BlockIndex<BtcBlock>& block) {
-    return database.getBtcRepo()->put(block);
+  StateManager(const std::string& name) : database(name) {
+    database.open();
+    btcBlockBatch = database.getBtcRepo()->newBatch();
+    vbkBlockBatch = database.getVbkRepo()->newBatch();
   }
 
-  bool putVbkBlock(const BlockIndex<VbkBlock>& block) {
-    return database.getVbkRepo()->put(block);
+  status_t commit() {
+    btcBlockBatch->commit();
+    vbkBlockBatch->commit();
+    return database.flush();
+  }
+
+  status_t wipeRepos() {
+    status_t status = database.clear();
+    btcBlockBatch = database.getBtcRepo()->newBatch();
+    vbkBlockBatch = database.getVbkRepo()->newBatch();
+    return status;
+  }
+
+  void putBtcBlock(const BlockIndex<BtcBlock>& block) {
+    btcBlockBatch->put(block);
+  }
+
+  void removeBtcBlock(const BtcBlock::hash_t& hash) {
+    btcBlockBatch->removeByHash(hash);
+  }
+
+  void putVbkBlock(const BlockIndex<VbkBlock>& block) {
+    vbkBlockBatch->put(block);
+  }
+
+  void removeVbkBlock(const VbkBlock::hash_t& hash) {
+    vbkBlockBatch->removeByHash(hash);
+  }
+
+  void putBtcEndorsement(const BtcEndorsement& endorsement) {
+    database.getBtcEndorsementRepo()->put(endorsement);
+  }
+
+  void putVbkEndorsement(const VbkEndorsement& endorsement) {
+    database.getVbkEndorsementRepo()->put(endorsement);
   }
 
   std::shared_ptr<cursor_t<BtcBlock>> getBtcCursor() {

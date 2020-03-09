@@ -17,17 +17,17 @@ namespace VeriBlock {
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
 template <typename Block>
-struct CursorRocks : public Cursor<typename Block::hash_t, Block> {
+struct BlockCursorRocks : public Cursor<typename Block::hash_t, Block> {
   //! stored block type
   using stored_block_t = Block;
   //! block has type
   using hash_t = typename Block::hash_t;
 
-  CursorRocks(std::shared_ptr<rocksdb::DB> db,
-              std::shared_ptr<cf_handle_t> hashBlockHandle)
-      : _db(db), _hashBlockHandle(hashBlockHandle) {
+  BlockCursorRocks(std::shared_ptr<rocksdb::DB> db,
+                   std::shared_ptr<cf_handle_t> hashBlockHandle)
+      : _db(db) {
     auto iterator =
-        _db->NewIterator(rocksdb::ReadOptions(), _hashBlockHandle.get());
+        _db->NewIterator(rocksdb::ReadOptions(), hashBlockHandle.get());
     _iterator = std::unique_ptr<rocksdb::Iterator>(iterator);
   }
 
@@ -60,7 +60,6 @@ struct CursorRocks : public Cursor<typename Block::hash_t, Block> {
 
  private:
   std::shared_ptr<rocksdb::DB> _db;
-  std::shared_ptr<cf_handle_t> _hashBlockHandle;
   std::unique_ptr<rocksdb::Iterator> _iterator;
 };
 
@@ -220,7 +219,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
-    return std::make_shared<CursorRocks<Block>>(_db, _hashBlockHandle);
+    return std::make_shared<BlockCursorRocks<Block>>(_db, _hashBlockHandle);
   }
 
  private:
