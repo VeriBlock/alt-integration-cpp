@@ -76,10 +76,15 @@ struct RepositoryRocksManager {
     repoVbk = std::make_shared<block_repo_t<VbkBlock>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_VBK]);
 
-    repoBtcEndorsment = std::make_shared<endorsement_repo_t<BtcEndorsement>>(
+    repoBtcEndorsement = std::make_shared<endorsement_repo_t<BtcEndorsement>>(
         dbPtr,
         cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK],
-        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK]);
+        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSEMENT_ID]);
+
+    repoVbkEndorsement = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
+        dbPtr,
+        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSED_BLOCK],
+        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
 
     return s;
   }
@@ -115,15 +120,15 @@ struct RepositoryRocksManager {
     repoVbk = std::make_shared<block_repo_t<VbkBlock>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_VBK]);
 
-    repoBtcEndorsment = std::make_shared<endorsement_repo_t<BtcEndorsement>>(
+    repoBtcEndorsement = std::make_shared<endorsement_repo_t<BtcEndorsement>>(
         dbPtr,
         cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK],
-        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK]);
+        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSEMENT_ID]);
 
-    repoVbkEndorsment = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
+    repoVbkEndorsement = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
         dbPtr,
         cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSED_BLOCK],
-        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSED_BLOCK]);
+        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
     return s;
   }
 
@@ -140,14 +145,14 @@ struct RepositoryRocksManager {
 
   std::shared_ptr<block_repo_t<VbkBlock>> getVbkRepo() const { return repoVbk; }
 
-  std::shared_ptr<endorsement_repo_t<BtcEndorsement>> getBtcEndorsmentRepo()
+  std::shared_ptr<endorsement_repo_t<BtcEndorsement>> getBtcEndorsementRepo()
       const {
-    return repoBtcEndorsment;
+    return repoBtcEndorsement;
   }
 
-  std::shared_ptr<endorsement_repo_t<VbkEndorsement>> getVbkEndorsmentRepo()
+  std::shared_ptr<endorsement_repo_t<VbkEndorsement>> getVbkEndorsementRepo()
       const {
-    return repoVbkEndorsment;
+    return repoVbkEndorsement;
   }
 
  private:
@@ -159,8 +164,8 @@ struct RepositoryRocksManager {
 
   std::shared_ptr<block_repo_t<BtcBlock>> repoBtc;
   std::shared_ptr<block_repo_t<VbkBlock>> repoVbk;
-  std::shared_ptr<endorsement_repo_t<BtcEndorsement>> repoBtcEndorsment;
-  std::shared_ptr<endorsement_repo_t<VbkEndorsement>> repoVbkEndorsment;
+  std::shared_ptr<endorsement_repo_t<BtcEndorsement>> repoBtcEndorsement;
+  std::shared_ptr<endorsement_repo_t<VbkEndorsement>> repoVbkEndorsement;
 };
 
 }  // namespace VeriBlock

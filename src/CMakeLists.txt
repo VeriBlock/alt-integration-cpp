@@ -35,3 +35,7 @@ add_library(vbkutils
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
         )
+        
+if(WITH_ROCKSDB)
+    target_link_libraries(vbkutils rocksdb)
+endif()

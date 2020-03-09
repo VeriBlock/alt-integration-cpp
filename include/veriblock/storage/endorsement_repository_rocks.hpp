@@ -17,6 +17,53 @@ namespace VeriBlock {
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
 template <typename Endorsement>
+struct EndorsementCursorRocks
+    : public Cursor<typename Endorsement::id_t, Endorsement> {
+  using eid_t = typename Endorsement::id_t;
+
+  EndorsementCursorRocks(std::shared_ptr<rocksdb::DB> db,
+                         std::shared_ptr<cf_handle_t> endorsedIdHandle)
+      : _db(db) {
+    auto iterator =
+        _db->NewIterator(rocksdb::ReadOptions(), endorsedIdHandle.get());
+    _iterator = std::unique_ptr<rocksdb::Iterator>(iterator);
+  }
+
+  void seekToFirst() override { _iterator->SeekToFirst(); }
+  void seek(const eid_t& key) override {
+    rocksdb::Slice eid(reinterpret_cast<const char*>(key.data()), key.size());
+    _iterator->Seek(eid);
+  }
+  void seekToLast() override { _iterator->SeekToLast(); }
+  bool isValid() const override { return _iterator->Valid(); }
+  void next() override { _iterator->Next(); }
+  void prev() override { _iterator->Prev(); }
+
+  eid_t key() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+    auto key = _iterator->key();
+
+    return eid_t(key.ToString());
+  }
+
+  Endorsement value() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+    auto value = _iterator->value();
+    std::string str = value.ToString();
+
+    return Endorsement::fromVbkEncoding(value.ToString());
+  }
+
+ private:
+  std::shared_ptr<rocksdb::DB> _db;
+  std::unique_ptr<rocksdb::Iterator> _iterator;
+};
+
+template <typename Endorsement>
 class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
  public:
   using endorsement_t = Endorsement;
@@ -24,6 +71,7 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
   using endorsed_hash_t = typename Endorsement::endorsed_hash_t;
   using containing_hash_t = typename Endorsement::containing_hash_t;
   using container_t = typename Endorsement::container_t;
+  using cursor_t = Cursor<eid_t, Endorsement>;
 
  public:
   EndorsementRepositoryRocks(
@@ -63,7 +111,10 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
 
   void put(const container_t& container) override {
     auto e = Endorsement::fromContainer(container);
+    put(e);
+  }
 
+  void put(const endorsement_t& e) override {
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
     rocksdb::Status s;
@@ -166,6 +217,11 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
     }
 
     return endorsements;
+  }
+
+  std::shared_ptr<cursor_t> newCursor() const override {
+    return std::make_shared<EndorsementCursorRocks<Endorsement>>(
+        _db, _endorsedIdHandle);
   }
 
  private:

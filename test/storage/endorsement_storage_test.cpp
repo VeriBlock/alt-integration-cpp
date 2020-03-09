@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "veriblock/storage/endorsement_repository_inmem.hpp"
 #include "veriblock/storage/endorsement_repository_rocks.hpp"
 #include "veriblock/storage/repository_rocks_manager.hpp"
 
@@ -68,23 +69,33 @@ static const std::vector<uint8_t> defaultAtvEncoded = ParseHex(
     "02449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4"
     "462ef24ae02d67e47d785c9b90f301010000000000010100");
 
-template <typename Endorsement>
-std::shared_ptr<EndorsementRepository<Endorsement>> getRepo();
+template <typename EndorsementRepository_t>
+std::shared_ptr<EndorsementRepository_t> getRepo();
 
 template <>
-std::shared_ptr<EndorsementRepository<BtcEndorsement>> getRepo() {
+std::shared_ptr<EndorsementRepositoryRocks<BtcEndorsement>> getRepo() {
   RepositoryRocksManager rocksManager(dbName);
   rocksManager.open();
   rocksManager.clear();
-  return rocksManager.getBtcEndorsmentRepo();
+  return rocksManager.getBtcEndorsementRepo();
 }
 
 template <>
-std::shared_ptr<EndorsementRepository<VbkEndorsement>> getRepo() {
+std::shared_ptr<EndorsementRepositoryRocks<VbkEndorsement>> getRepo() {
   RepositoryRocksManager rocksManager(dbName);
   rocksManager.open();
   rocksManager.clear();
-  return rocksManager.getVbkEndorsmentRepo();
+  return rocksManager.getVbkEndorsementRepo();
+}
+
+template <>
+std::shared_ptr<EndorsementRepositoryInmem<BtcEndorsement>> getRepo() {
+  return std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
+}
+
+template <>
+std::shared_ptr<EndorsementRepositoryInmem<VbkEndorsement>> getRepo() {
+  return std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
 }
 
 template <typename Container_t>
@@ -142,22 +153,25 @@ AltProof getModifiedContainer() {
   return container;
 }
 
-template <typename Endorsement>
-struct EndorsementRepositoryRocksTest : public ::testing::Test {
-  using endorsement_t = Endorsement;
-  using eid_t = typename Endorsement::id_t;
-  using endorsed_hash_t = typename Endorsement::endorsed_hash_t;
-  using containing_hash_t = typename Endorsement::containing_hash_t;
-  using container_t = typename Endorsement::container_t;
+template <typename EndorsementRepository_t>
+struct EndorsementRepositoryTest : public ::testing::Test {
+  using endorsement_t = typename EndorsementRepository_t::endorsement_t;
+  using eid_t = typename endorsement_t::id_t;
+  using endorsed_hash_t = typename endorsement_t::endorsed_hash_t;
+  using containing_hash_t = typename endorsement_t::containing_hash_t;
+  using container_t = typename endorsement_t::container_t;
+  using cursor_t = typename EndorsementRepository_t::cursor_t;
 
-  std::shared_ptr<EndorsementRepository<Endorsement>> endorsementRepo;
+  std::shared_ptr<EndorsementRepository<endorsement_t>> endorsementRepo;
 
-  EndorsementRepositoryRocksTest() { endorsementRepo = getRepo<Endorsement>(); }
+  EndorsementRepositoryTest() {
+    endorsementRepo = getRepo<EndorsementRepository_t>();
+  }
 };
 
-TYPED_TEST_SUITE_P(EndorsementRepositoryRocksTest);
+TYPED_TEST_SUITE_P(EndorsementRepositoryTest);
 
-TYPED_TEST_P(EndorsementRepositoryRocksTest, Basic) {
+TYPED_TEST_P(EndorsementRepositoryTest, Basic) {
   typename Basic::container_t defaultContainer =
       getDefaultContainer<typename Basic::container_t>();
 
@@ -209,10 +223,175 @@ TYPED_TEST_P(EndorsementRepositoryRocksTest, Basic) {
   EXPECT_EQ(endorsements.size(), 0);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(EndorsementRepositoryRocksTest, Basic);
+TYPED_TEST_P(EndorsementRepositoryTest, Cursor) {
+  typename Cursor::container_t defaultContainer =
+      getDefaultContainer<typename Cursor::container_t>();
 
-typedef ::testing::Types<BtcEndorsement, VbkEndorsement> TypesUnderTest;
+  this->endorsementRepo->put(defaultContainer);
+  typename Cursor::endorsement_t expectedEndorsement1 =
+      Cursor::endorsement_t::fromContainer(defaultContainer);
+
+  typename Cursor::container_t modifiedContainer =
+      getModifiedContainer<typename Cursor::container_t>();
+  this->endorsementRepo->put(modifiedContainer);
+  typename Cursor::endorsement_t expectedEndorsement2 =
+      Cursor::endorsement_t::fromContainer(modifiedContainer);
+
+  std::vector<typename Cursor::endorsement_t> expectedEndorsements = {
+      expectedEndorsement1, expectedEndorsement2};
+
+  std::shared_ptr<typename Cursor::cursor_t> cursor =
+      this->endorsementRepo->newCursor();
+
+  std::vector<typename Cursor::endorsement_t> values;
+  for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
+    values.push_back(cursor->value());
+  }
+
+  EXPECT_EQ(values.size(), expectedEndorsements.size());
+  for (const auto& el : values) {
+    EXPECT_TRUE(std::find(expectedEndorsements.begin(),
+                          expectedEndorsements.end(),
+                          el) != expectedEndorsements.end());
+  }
+
+  cursor->seekToFirst();
+  EXPECT_TRUE(cursor->isValid());
+  EXPECT_EQ(cursor->key(), values[0].id);
+  EXPECT_EQ(cursor->value(), values[0]);
+
+  cursor->seekToLast();
+  EXPECT_TRUE(cursor->isValid());
+  EXPECT_EQ(cursor->key(), values[values.size() - 1].id);
+  EXPECT_EQ(cursor->value(), values[values.size() - 1]);
+
+  // read in reversed order
+  std::vector<typename Cursor::endorsement_t> reversedValues;
+  for (cursor->seekToLast(); cursor->isValid(); cursor->prev()) {
+    reversedValues.push_back(cursor->value());
+  }
+
+  // then reverse it
+  std::reverse(reversedValues.begin(), reversedValues.end());
+  EXPECT_EQ(reversedValues, values);
+
+  // find some values
+  cursor->seek(expectedEndorsement1.id);
+  EXPECT_TRUE(cursor->isValid());  // key found
+  EXPECT_EQ(cursor->value(), expectedEndorsement1);
+
+  // iterate before first element
+  cursor->seekToFirst();
+  cursor->prev();
+  EXPECT_FALSE(cursor->isValid());
+
+  // iterate after last element
+  cursor->seekToLast();
+  cursor->next();
+  EXPECT_FALSE(cursor->isValid());
+
+  cursor->seek(expectedEndorsement2.id);
+  EXPECT_TRUE(cursor->isValid());  // key found
+  EXPECT_EQ(cursor->value(), expectedEndorsement2);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(EndorsementRepositoryTest, Basic, Cursor);
+
+typedef ::testing::Types<EndorsementRepositoryRocks<BtcEndorsement>,
+                         EndorsementRepositoryRocks<VbkEndorsement>,
+                         EndorsementRepositoryInmem<BtcEndorsement>,
+                         EndorsementRepositoryInmem<VbkEndorsement>>
+    TypesUnderTest;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(EndorsementStorageTestSuit,
-                               EndorsementRepositoryRocksTest,
+                               EndorsementRepositoryTest,
                                TypesUnderTest);
+
+TEST(EndorsementRepository, copy_constructor_test1) {
+  std::shared_ptr<EndorsementRepositoryRocks<BtcEndorsement>> rocksRepo1 =
+      getRepo<EndorsementRepositoryRocks<BtcEndorsement>>();
+  std::shared_ptr<EndorsementRepositoryInmem<BtcEndorsement>> inmemRepo1 =
+      getRepo<EndorsementRepositoryInmem<BtcEndorsement>>();
+
+  typename BtcEndorsement::container_t defaultContainer =
+      getDefaultContainer<typename BtcEndorsement::container_t>();
+  BtcEndorsement expectedEndorsement1 =
+      BtcEndorsement::fromContainer(defaultContainer);
+
+  rocksRepo1->put(defaultContainer);
+
+  typename BtcEndorsement::container_t modifiedContainer =
+      getModifiedContainer<typename BtcEndorsement::container_t>();
+  BtcEndorsement expectedEndorsement2 =
+      BtcEndorsement::fromContainer(modifiedContainer);
+
+  rocksRepo1->put(modifiedContainer);
+
+  endorsementRepositoryCopy(*rocksRepo1, *inmemRepo1);
+
+  std::vector<BtcEndorsement> endorsements =
+      inmemRepo1->get(expectedEndorsement1.endorsedHash);
+
+  EXPECT_EQ(endorsements.size(), 2);
+
+  if (endorsements[0].id != expectedEndorsement1.id) {
+    std::reverse(endorsements.begin(), endorsements.end());
+  }
+
+  EXPECT_EQ(expectedEndorsement1.blockOfProof, endorsements[0].blockOfProof);
+  EXPECT_EQ(expectedEndorsement1.containingHash,
+            endorsements[0].containingHash);
+  EXPECT_EQ(expectedEndorsement1.endorsedHash, endorsements[0].endorsedHash);
+  EXPECT_EQ(expectedEndorsement1.id, endorsements[0].id);
+
+  EXPECT_EQ(expectedEndorsement2.blockOfProof, endorsements[1].blockOfProof);
+  EXPECT_EQ(expectedEndorsement2.containingHash,
+            endorsements[1].containingHash);
+  EXPECT_EQ(expectedEndorsement2.endorsedHash, endorsements[1].endorsedHash);
+  EXPECT_EQ(expectedEndorsement2.id, endorsements[1].id);
+}
+
+// vise versa
+TEST(EndorsementRepository, copy_constructor_test2) {
+  std::shared_ptr<EndorsementRepositoryRocks<BtcEndorsement>> rocksRepo1 =
+      getRepo<EndorsementRepositoryRocks<BtcEndorsement>>();
+  std::shared_ptr<EndorsementRepositoryInmem<BtcEndorsement>> inmemRepo1 =
+      getRepo<EndorsementRepositoryInmem<BtcEndorsement>>();
+
+  typename BtcEndorsement::container_t defaultContainer =
+      getDefaultContainer<typename BtcEndorsement::container_t>();
+  BtcEndorsement expectedEndorsement1 =
+      BtcEndorsement::fromContainer(defaultContainer);
+
+  inmemRepo1->put(defaultContainer);
+
+  typename BtcEndorsement::container_t modifiedContainer =
+      getModifiedContainer<typename BtcEndorsement::container_t>();
+  BtcEndorsement expectedEndorsement2 =
+      BtcEndorsement::fromContainer(modifiedContainer);
+
+  inmemRepo1->put(modifiedContainer);
+
+  endorsementRepositoryCopy(*inmemRepo1, *rocksRepo1);
+
+  std::vector<BtcEndorsement> endorsements =
+      inmemRepo1->get(expectedEndorsement1.endorsedHash);
+
+  EXPECT_EQ(endorsements.size(), 2);
+
+  if (endorsements[0].id != expectedEndorsement1.id) {
+    std::reverse(endorsements.begin(), endorsements.end());
+  }
+
+  EXPECT_EQ(expectedEndorsement1.blockOfProof, endorsements[0].blockOfProof);
+  EXPECT_EQ(expectedEndorsement1.containingHash,
+            endorsements[0].containingHash);
+  EXPECT_EQ(expectedEndorsement1.endorsedHash, endorsements[0].endorsedHash);
+  EXPECT_EQ(expectedEndorsement1.id, endorsements[0].id);
+
+  EXPECT_EQ(expectedEndorsement2.blockOfProof, endorsements[1].blockOfProof);
+  EXPECT_EQ(expectedEndorsement2.containingHash,
+            endorsements[1].containingHash);
+  EXPECT_EQ(expectedEndorsement2.endorsedHash, endorsements[1].endorsedHash);
+  EXPECT_EQ(expectedEndorsement2.id, endorsements[1].id);
+}
