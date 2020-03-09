@@ -1,8 +1,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
 
-#include <veriblock/entities/payloads.hpp>
-#include <veriblock/uint.hpp>
+#include "veriblock/entities/payloads.hpp"
+#include "veriblock/serde.hpp"
+#include "veriblock/uint.hpp"
 
 namespace VeriBlock {
 
@@ -34,6 +35,33 @@ struct Endorsement {
   EndorsedHash containingHash;
   ContainingHash blockOfProof;
 
+  /**
+   * Read VBK data from the stream and convert it to Endorsement
+   * @param stream data stream to read from
+   * @return AltProof
+   */
+  static Endorsement fromVbkEncoding(ReadStream& stream);
+
+  /**
+   * Read VBK data from the string raw byte representation and convert it to
+   * Endorsement
+   * @param string data bytes to read from
+   * @return AltProof
+   */
+  static Endorsement fromVbkEncoding(const std::string& bytes);
+
+  /**
+   * Convert Endorsement to data stream using Vbk byte format
+   * @param stream data stream to write into
+   */
+  void toVbkEncoding(WriteStream& stream) const;
+
+  /**
+   * Convert Endorsement to raw bytes data using Vbk byte format
+   * @return bytes data
+   */
+  std::vector<uint8_t> toVbkEncoding() const;
+
   static type fromContainer(const Container& c);
 
   static type::id_t getId(const Container& c);
@@ -43,6 +71,15 @@ struct Endorsement {
 
 // endorsement of VBK blocks in BTC
 using BtcEndorsement = Endorsement<VbkBlock::hash_t, BtcBlock::hash_t, VTB>;
+
+template <>
+BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream);
+template <>
+BtcEndorsement BtcEndorsement::fromVbkEncoding(const std::string& bytes);
+template <>
+void BtcEndorsement::toVbkEncoding(WriteStream& stream) const;
+template <>
+std::vector<uint8_t> BtcEndorsement::toVbkEncoding() const;
 template <>
 BtcEndorsement BtcEndorsement ::fromContainer(const VTB& c);
 template <>
@@ -51,6 +88,14 @@ BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c);
 // endorsement of ALT blocks in VBK
 using VbkEndorsement =
     Endorsement<std::vector<uint8_t>, VbkBlock::hash_t, AltProof>;
+template <>
+VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream);
+template <>
+VbkEndorsement VbkEndorsement::fromVbkEncoding(const std::string& bytes);
+template <>
+void VbkEndorsement::toVbkEncoding(WriteStream& stream) const;
+template <>
+std::vector<uint8_t> VbkEndorsement::toVbkEncoding() const;
 template <>
 VbkEndorsement VbkEndorsement ::fromContainer(const AltProof& c);
 template <>
