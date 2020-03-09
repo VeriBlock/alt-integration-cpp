@@ -15,6 +15,11 @@ VTB VTB::fromVbkEncoding(ReadStream& stream) {
   return vtb;
 }
 
+VTB VTB::fromVbkEncoding(const std::string& bytes) {
+  ReadStream stream(bytes);
+  return fromVbkEncoding(stream);
+}
+
 void VTB::toVbkEncoding(WriteStream& stream) const {
   WriteStream txStream;
   transaction.toVbkEncoding(stream);
@@ -24,4 +29,10 @@ void VTB::toVbkEncoding(WriteStream& stream) const {
   for (const auto& block : context) {
     block.toVbkEncoding(stream);
   }
+}
+
+std::vector<uint8_t> VTB::toVbkEncoding() const {
+  WriteStream stream;
+  toVbkEncoding(stream);
+  return stream.data();
 }

@@ -24,10 +24,23 @@ struct VTB {
   static VTB fromVbkEncoding(ReadStream& stream);
 
   /**
+   * Read VBK data from the string raw byte representation and convert it to VTB
+   * @param string data bytes to read from
+   * @return VTB
+   */
+  static VTB fromVbkEncoding(const std::string& bytes);
+
+  /**
    * Convert VTB to data stream using Vbk byte format
    * @param stream data stream to write into
    */
   void toVbkEncoding(WriteStream& stream) const;
+
+  /**
+   * Convert VTB to raw bytes data using Vbk byte format
+   * @return bytes data
+   */
+  std::vector<uint8_t> toVbkEncoding() const;
 };
 
 }  // namespace VeriBlock

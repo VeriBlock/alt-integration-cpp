@@ -3,7 +3,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
-#include "veriblock/storage/block_repository_rocks_manager.hpp"
+#include "veriblock/storage/repository_rocks_manager.hpp"
 
 using namespace VeriBlock;
 
@@ -38,7 +38,7 @@ static const std::string dbName = "db-test";
 
 class TestStorage : public ::testing::Test {
  protected:
-  BlockRepositoryRocksManager database = BlockRepositoryRocksManager(dbName);
+  RepositoryRocksManager database = RepositoryRocksManager(dbName);
   std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> repoBtc;
   std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> repoVbk;
 

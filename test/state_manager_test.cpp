@@ -6,7 +6,7 @@
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/state_manager.hpp"
 #include "veriblock/state_utils.hpp"
-#include "veriblock/storage/block_repository_rocks_manager.hpp"
+#include "veriblock/storage/repository_rocks_manager.hpp"
 
 using namespace VeriBlock;
 
@@ -15,7 +15,7 @@ static const std::string dbName = "db-test";
 static const uint32_t blocksNumber = 1000;
 
 struct TestFixture : public ::testing::Test {
-  StateManager<BlockRepositoryRocksManager> stateManager;
+  StateManager<RepositoryRocksManager> stateManager;
 
   std::shared_ptr<BtcChainParams> btcParams;
   std::shared_ptr<BlockTree<BtcBlock, BtcChainParams>> expectedBtcBlockTree;
@@ -49,6 +49,7 @@ struct TestFixture : public ::testing::Test {
       ASSERT_TRUE(state.IsValid());
       stateManager.putVbkBlock(temp_index_vbk);
     }
+
     stateManager.commit();
   }
 

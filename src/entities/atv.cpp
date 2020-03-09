@@ -15,6 +15,11 @@ ATV ATV::fromVbkEncoding(ReadStream& stream) {
   return atv;
 }
 
+ATV ATV::fromVbkEncoding(const std::string& bytes) {
+  ReadStream stream(bytes);
+  return fromVbkEncoding(stream);
+}
+
 void ATV::toVbkEncoding(WriteStream& stream) const {
   WriteStream txStream;
   transaction.toVbkEncoding(stream);
@@ -24,4 +29,10 @@ void ATV::toVbkEncoding(WriteStream& stream) const {
   for (const auto& block : context) {
     block.toVbkEncoding(stream);
   }
+}
+
+std::vector<uint8_t> ATV::toVbkEncoding() const {
+  WriteStream stream;
+  toVbkEncoding(stream);
+  return stream.data();
 }
