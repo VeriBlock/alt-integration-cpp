@@ -6,13 +6,10 @@
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
-#include <veriblock/state_manager.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
-#include <veriblock/storage/repository_rocks_manager.hpp>
 #include <veriblock/validation_state.hpp>
 
 namespace VeriBlock {
-
 /**
  * @invariant does not modify any on-disk state.
  */
