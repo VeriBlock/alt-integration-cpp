@@ -10,7 +10,6 @@
 #include <veriblock/validation_state.hpp>
 
 namespace VeriBlock {
-
 /**
  * @invariant does not modify any on-disk state.
  */
