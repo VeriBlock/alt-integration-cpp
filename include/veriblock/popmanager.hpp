@@ -13,8 +13,6 @@
 
 namespace VeriBlock {
 
-static const std::string ALT_SERVICE_DB_NAME = "alt-service-db";
-
 /**
  * @invariant does not modify any on-disk state.
  */
@@ -26,8 +24,7 @@ struct PopManager {
       : btcparam_(std::move(btcp)),
         vbkparam_(std::move(vbkp)),
         btce_(std::move(btce)),
-        vbke_(std::move(vbke)),
-        stateManager_(ALT_SERVICE_DB_NAME) {
+        vbke_(std::move(vbke)) {
     btc_ = std::make_shared<BtcTree>(btcparam_);
     vbk_ = std::make_shared<VbkTree>(*btc_, btce_, vbkparam_);
   }
@@ -81,8 +78,6 @@ struct PopManager {
   std::shared_ptr<VbkTree> vbk_;
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce_;
   std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke_;
-
-  StateManager<RepositoryRocksManager> stateManager_;
 
   bool addVTB(const VTB& vtb, ValidationState& state);
   bool addAltProof(const AltProof& payloads, ValidationState& state);
