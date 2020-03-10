@@ -27,12 +27,81 @@ struct hash<std::vector<uint8_t>> {
 namespace VeriBlock {
 
 template <typename Endorsement>
+struct EndorsementCursorInmem
+    : public Cursor<typename Endorsement::id_t, Endorsement> {
+  using umap = std::unordered_map<
+      typename Endorsement::endorsed_hash_t,
+      std::unordered_map<typename Endorsement::id_t, Endorsement>>;
+
+  using pair = std::pair<typename Endorsement::id_t, Endorsement>;
+
+  EndorsementCursorInmem(const umap& map) {
+    for (const auto& endorsements : map) {
+      for (const auto& endorsement : endorsements.second) {
+        _etl.push_back(pair(endorsement.first, endorsement.second));
+      }
+    }
+  }
+
+  void seekToFirst() override {
+    if (_etl.empty()) {
+      _it = _etl.cend();
+    } else {
+      _it = _etl.cbegin();
+    }
+  }
+  void seek(const typename Endorsement::id_t& key) override {
+    _it = std::find_if(_etl.cbegin(), _etl.cend(), [&key](const pair& p) {
+      return p.first == key;
+    });
+  }
+  void seekToLast() override { _it = --_etl.cend(); }
+  bool isValid() const override {
+    bool a = _it != _etl.cend();
+    bool b = _it >= _etl.cbegin();
+    bool c = _it < _etl.cend();
+    return a && b && c;
+  }
+  void next() override {
+    if (_it < _etl.cend()) {
+      ++_it;
+    }
+  }
+  void prev() override {
+    if (_it == _etl.cbegin()) {
+      _it = _etl.cend();
+    } else {
+      --_it;
+    }
+  }
+  typename Endorsement::id_t key() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+
+    return _it->first;
+  }
+  Endorsement value() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+
+    return _it->second;
+  }
+
+ private:
+  std::vector<pair> _etl;
+  typename std::vector<pair>::const_iterator _it;
+};
+
+template <typename Endorsement>
 struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
   using endorsement_t = Endorsement;
   using eid_t = typename Endorsement::id_t;
   using endorsed_hash_t = typename Endorsement::endorsed_hash_t;
   using containing_hash_t = typename Endorsement::containing_hash_t;
   using container_t = typename Endorsement::container_t;
+  using cursor_t = Cursor<eid_t, Endorsement>;
 
   ~EndorsementRepositoryInmem() override = default;
 
@@ -54,9 +123,10 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
 
   void put(const container_t& container) override {
     auto e = Endorsement::fromContainer(container);
-
-    e_[e.endorsedHash][e.id] = e;
+    put(e);
   }
+
+  void put(const endorsement_t& e) override { e_[e.endorsedHash][e.id] = e; }
 
   std::vector<endorsement_t> get(
       const endorsed_hash_t& endorsedBlockHash) const override {
@@ -76,6 +146,10 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
         [](const std::pair<eid_t, endorsement_t>& p) { return p.second; });
 
     return ret;
+  }
+
+  std::shared_ptr<cursor_t> newCursor() const override {
+    return std::make_shared<EndorsementCursorInmem<Endorsement>>(e_);
   }
 
  private:

@@ -10,7 +10,7 @@
 namespace VeriBlock {
 
 template <typename Block>
-struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
+struct BlockCursorInmem : public Cursor<typename Block::hash_t, Block> {
   //! stored block type
   using stored_block_t = Block;
   //! block has type
@@ -19,12 +19,12 @@ struct CursorInmem : public Cursor<typename Block::hash_t, Block> {
   using umap = std::unordered_map<hash_t, std::shared_ptr<stored_block_t>>;
   using pair = std::pair<hash_t, std::shared_ptr<stored_block_t>>;
 
-  CursorInmem(const umap& map) {
+  BlockCursorInmem(const umap& map) {
     for (const pair& m : map) {
       _etl.push_back(m);
     }
   }
-  ~CursorInmem() override = default;
+  ~BlockCursorInmem() override = default;
   void seekToFirst() override {
     if (_etl.empty()) {
       _it = _etl.cend();
@@ -194,7 +194,7 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
-    return std::make_shared<CursorInmem<Block>>(_hash);
+    return std::make_shared<BlockCursorInmem<Block>>(_hash);
   }
 
  private:
