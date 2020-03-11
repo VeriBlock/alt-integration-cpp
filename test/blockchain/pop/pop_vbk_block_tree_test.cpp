@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "veriblock/blockchain/miner.hpp"
+#include "veriblock/blockchain/pop/fork_resolution.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/mock_miner.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
@@ -19,15 +20,20 @@ struct VbkBlockTreeTest : public VbkBlockTree {
       BtcTree& btc,
       std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo,
       std::shared_ptr<VbkChainParams> params)
-      : VbkBlockTree(btc, std::move(endorsment_repo), std::move(params)) {}
+      : VbkBlockTree(btc, std::move(endorsment_repo), std::move(params)),
+        btc(btc),
+        endorsment_repo(endorsment_repo) {}
 
-  std::vector<ProtoKeystoneContext> getProtoKeystoneContextTest() {
+  std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo;
+  BtcTree& btc;
+  /*
+  std::vector<ProtoKeystoneContext<BtcBlock>> getProtoKeystoneContextTest() {
     return getProtoKeystoneContext(this->getBestChain());
   }
 
   std::vector<KeystoneContext> getKeystoneContextTest() {
     return getKeystoneContext(getProtoKeystoneContext(this->getBestChain()));
-  }
+  }*/
 };
 
 struct VbkBlockTreeTestFixture : ::testing::Test {
@@ -152,23 +158,24 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
   endorseVtbBlock(91);
   endorseVtbBlock(91);
 
-  std::vector<ProtoKeystoneContext> protoContext =
-      vbkTest->getProtoKeystoneContextTest();
+  std::vector<ProtoKeystoneContext<BtcBlock>> protoContext =
+      getProtoKeystoneContext(
+          vbkTest->getBestChain(), vbkTest->btc, vbkTest->endorsment_repo);
 
   EXPECT_EQ(protoContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
 
-  EXPECT_EQ(protoContext[0].vbkBlockHeight, 20);
-  EXPECT_EQ(protoContext[0].referencedByBtcBlocks.size(), 0);
+  EXPECT_EQ(protoContext[0].blockHeight, 20);
+  EXPECT_EQ(protoContext[0].referencedByBlocks.size(), 0);
 
   // keystone with the height 80
-  EXPECT_EQ(protoContext[3].referencedByBtcBlocks.size(), 4);
-  EXPECT_EQ(protoContext[3].vbkBlockHeight, 80);
+  EXPECT_EQ(protoContext[3].referencedByBlocks.size(), 4);
+  EXPECT_EQ(protoContext[3].blockHeight, 80);
   // keystone with the height 140
-  EXPECT_EQ(protoContext[6].referencedByBtcBlocks.size(), 2);
-  EXPECT_EQ(protoContext[6].vbkBlockHeight, 140);
+  EXPECT_EQ(protoContext[6].referencedByBlocks.size(), 2);
+  EXPECT_EQ(protoContext[6].blockHeight, 140);
   // keystone with the height 160
-  EXPECT_EQ(protoContext[7].referencedByBtcBlocks.size(), 3);
-  EXPECT_EQ(protoContext[7].vbkBlockHeight, 160);
+  EXPECT_EQ(protoContext[7].referencedByBlocks.size(), 3);
+  EXPECT_EQ(protoContext[7].blockHeight, 160);
 }
 
 TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
@@ -210,8 +217,10 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
   endorseVtbBlock(91);  // btc block height 9
   endorseVtbBlock(91);  // btc block height 10
 
-  std::vector<KeystoneContext> keystoneContext =
-      vbkTest->getKeystoneContextTest();
+  std::vector<KeystoneContext> keystoneContext = getKeystoneContext(
+      getProtoKeystoneContext(
+          vbkTest->getBestChain(), vbkTest->btc, vbkTest->endorsment_repo),
+      vbkTest->btc);
 
   EXPECT_EQ(keystoneContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
 
