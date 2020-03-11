@@ -13,23 +13,8 @@
 
 using namespace VeriBlock;
 
-struct VbkBlockTreeTest : public VbkBlockTree {
-  ~VbkBlockTreeTest() override = default;
-
-  VbkBlockTreeTest(
-      BtcTree& btc,
-      std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsement_repo,
-      std::shared_ptr<VbkChainParams> params)
-      : VbkBlockTree(btc, std::move(endorsement_repo), std::move(params)),
-        btcTree(btc),
-        endorsement_repo(endorsement_repo) {}
-
-  BtcTree& btcTree;
-  std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsement_repo;
-};
-
 struct VbkBlockTreeTestFixture : ::testing::Test {
-  std::shared_ptr<VbkBlockTreeTest> vbkTest;
+  std::shared_ptr<VbkBlockTree> vbkTest;
 
   std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> btc_repo;
   std::shared_ptr<BtcChainParams> btc_params;
@@ -38,7 +23,7 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
   std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> vbk_repo;
   std::shared_ptr<VbkChainParams> vbk_params;
 
-  std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo;
+  std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsement_repo;
 
   std::shared_ptr<Miner<BtcBlock, BtcChainParams>> btc_miner;
   std::shared_ptr<Miner<VbkBlock, VbkChainParams>> vbk_miner;
@@ -75,7 +60,7 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
     ASSERT_TRUE(vbkTest->acceptBlock(vtb.containingBlock, state));
     ASSERT_TRUE(state.IsValid());
 
-    endorsment_repo->put(vtb);
+    endorsement_repo->put(vtb);
   }
 
   void setUpChains() {
@@ -96,14 +81,14 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
 
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
 
-    endorsment_repo =
+    endorsement_repo =
         std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
 
     btc_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(btc_params);
     vbk_miner = std::make_shared<Miner<VbkBlock, VbkChainParams>>(vbk_params);
 
-    vbkTest = std::make_shared<VbkBlockTreeTest>(
-        *btcTree, endorsment_repo, vbk_params);
+    vbkTest =
+        std::make_shared<VbkBlockTree>(*btcTree, endorsement_repo, vbk_params);
 
     mock_miner = std::make_shared<MockMiner>();
 
@@ -152,7 +137,7 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
 
   std::vector<ProtoKeystoneContext<BtcBlock>> protoContext =
       getProtoKeystoneContext(
-          vbkTest->getBestChain(), vbkTest->btcTree, vbkTest->endorsement_repo);
+          vbkTest->getBestChain(), *this->btcTree, this->endorsement_repo);
 
   EXPECT_EQ(protoContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
 
@@ -211,8 +196,8 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
 
   std::vector<KeystoneContext> keystoneContext = getKeystoneContext(
       getProtoKeystoneContext(
-          vbkTest->getBestChain(), vbkTest->btcTree, vbkTest->endorsement_repo),
-      vbkTest->btcTree);
+          vbkTest->getBestChain(), *this->btcTree, this->endorsement_repo),
+      *this->btcTree);
 
   EXPECT_EQ(keystoneContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
 
