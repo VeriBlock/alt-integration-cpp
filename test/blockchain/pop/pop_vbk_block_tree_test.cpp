@@ -21,11 +21,11 @@ struct VbkBlockTreeTest : public VbkBlockTree {
       std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo,
       std::shared_ptr<VbkChainParams> params)
       : VbkBlockTree(btc, std::move(endorsment_repo), std::move(params)),
-        btc(btc),
+        btcTree(btc),
         endorsment_repo(endorsment_repo) {}
 
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo;
-  BtcTree& btc;
+  BtcTree& btcTree;
   /*
   std::vector<ProtoKeystoneContext<BtcBlock>> getProtoKeystoneContextTest() {
     return getProtoKeystoneContext(this->getBestChain());
@@ -160,7 +160,7 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
 
   std::vector<ProtoKeystoneContext<BtcBlock>> protoContext =
       getProtoKeystoneContext(
-          vbkTest->getBestChain(), vbkTest->btc, vbkTest->endorsment_repo);
+          vbkTest->getBestChain(), vbkTest->btcTree, vbkTest->endorsment_repo);
 
   EXPECT_EQ(protoContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
 
@@ -219,8 +219,8 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
 
   std::vector<KeystoneContext> keystoneContext = getKeystoneContext(
       getProtoKeystoneContext(
-          vbkTest->getBestChain(), vbkTest->btc, vbkTest->endorsment_repo),
-      vbkTest->btc);
+          vbkTest->getBestChain(), vbkTest->btcTree, vbkTest->endorsment_repo),
+      vbkTest->btcTree);
 
   EXPECT_EQ(keystoneContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
 
