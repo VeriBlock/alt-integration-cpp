@@ -18,22 +18,14 @@ struct VbkBlockTreeTest : public VbkBlockTree {
 
   VbkBlockTreeTest(
       BtcTree& btc,
-      std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo,
+      std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsement_repo,
       std::shared_ptr<VbkChainParams> params)
-      : VbkBlockTree(btc, std::move(endorsment_repo), std::move(params)),
+      : VbkBlockTree(btc, std::move(endorsement_repo), std::move(params)),
         btcTree(btc),
-        endorsment_repo(endorsment_repo) {}
+        endorsement_repo(endorsement_repo) {}
 
-  std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsment_repo;
   BtcTree& btcTree;
-  /*
-  std::vector<ProtoKeystoneContext<BtcBlock>> getProtoKeystoneContextTest() {
-    return getProtoKeystoneContext(this->getBestChain());
-  }
-
-  std::vector<KeystoneContext> getKeystoneContextTest() {
-    return getKeystoneContext(getProtoKeystoneContext(this->getBestChain()));
-  }*/
+  std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsement_repo;
 };
 
 struct VbkBlockTreeTestFixture : ::testing::Test {
