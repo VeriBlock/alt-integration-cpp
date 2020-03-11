@@ -152,7 +152,7 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
 
   std::vector<ProtoKeystoneContext<BtcBlock>> protoContext =
       getProtoKeystoneContext(
-          vbkTest->getBestChain(), vbkTest->btcTree, vbkTest->endorsment_repo);
+          vbkTest->getBestChain(), vbkTest->btcTree, vbkTest->endorsement_repo);
 
   EXPECT_EQ(protoContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
 
@@ -211,7 +211,7 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
 
   std::vector<KeystoneContext> keystoneContext = getKeystoneContext(
       getProtoKeystoneContext(
-          vbkTest->getBestChain(), vbkTest->btcTree, vbkTest->endorsment_repo),
+          vbkTest->getBestChain(), vbkTest->btcTree, vbkTest->endorsement_repo),
       vbkTest->btcTree);
 
   EXPECT_EQ(keystoneContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
