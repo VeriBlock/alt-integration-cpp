@@ -118,4 +118,9 @@ bool PopManager::hasUncommittedChanges() const noexcept {
   return !uncommitted_.empty();
 }
 
+int PopManager::compareTwoBranches(const Chain<AltBlock>&,
+                                   const Chain<AltBlock>&) {
+  return 0;
+}
+
 }  // namespace VeriBlock

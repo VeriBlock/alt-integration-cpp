@@ -55,8 +55,8 @@ struct KeystoneContextList {
 };
 
 int comparePopScore(const std::vector<KeystoneContext>& chainA,
-                           const std::vector<KeystoneContext>& chainB,
-                           int keystoneInterval) {
+                    const std::vector<KeystoneContext>& chainB,
+                    int keystoneInterval) {
   assert(keystoneInterval > 0);
   KeystoneContextList a(chainA, keystoneInterval);
   KeystoneContextList b(chainB, keystoneInterval);
