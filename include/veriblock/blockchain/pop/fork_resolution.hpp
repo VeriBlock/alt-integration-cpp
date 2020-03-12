@@ -19,7 +19,7 @@ struct ProtoKeystoneContext {
   ProtoKeystoneContext(int height, int time)
       : blockHeight(height), timestampOfEndorsedBlock(time) {}
 
-  // A map of the Endorsment blocks which reference (endorse a block header
+  // A map of the Endorsement blocks which reference (endorse a block header
   // which is the represented block or references the represented block) to the
   // index of the earliest
   std::set<BlockIndex<EndorsementBlockType>*> referencedByBlocks;
