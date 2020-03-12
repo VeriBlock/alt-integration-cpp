@@ -6,7 +6,6 @@
 #include <veriblock/blockchain/pop/fork_resolution.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
-#include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
 
 namespace VeriBlock {
@@ -32,13 +31,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void determineBestChain(Chain<block_t>& currentBest,
                           index_t& indexNew) override;
-
- protected:
-  std::vector<ProtoKeystoneContext> getProtoKeystoneContext(
-      const Chain<VbkBlock>& chain);
-
-  std::vector<KeystoneContext> getKeystoneContext(
-      const std::vector<ProtoKeystoneContext>& chain);
 };
 
 }  // namespace VeriBlock
