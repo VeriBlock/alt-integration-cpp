@@ -67,10 +67,10 @@ struct PopManager {
    * Determine the best chain of the AltBlocks in accordance with the VeriBlock
    * forkresolution rules
    * @param AltBlock chain1, AltBlock chain2
-   * @return '-1' if chain1 is better, '1' if chain is better, '0' if they are
+   * @return '-1' if chain1 is better, '1' if chain2 is better, '0' if they are
    * the same
-   * @note chain1 and chain2 are being consindered as a forks not a full chains
-   * form the genesis block, they should start at the common block
+   * @note chain1 and chain2 are being consindered as forks not a full chains
+   * from the genesis block, they should start at the common block
    */
   int compareTwoBranches(const Chain<AltBlock>& chain1,
                          const Chain<AltBlock>& chain2);
