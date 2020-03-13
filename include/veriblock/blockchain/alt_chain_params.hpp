@@ -6,6 +6,8 @@
 namespace VeriBlock {
 
 struct AltChainParams {
+  virtual ~AltChainParams() = default;
+
   virtual uint32_t getKeystoneInterval() const noexcept;
 
   virtual uint32_t getFinalityDelay() const noexcept;
