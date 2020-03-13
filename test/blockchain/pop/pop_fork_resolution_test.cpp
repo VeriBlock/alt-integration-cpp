@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
 
 #include "veriblock/blockchain/pop/fork_resolution.hpp"
+#include "veriblock/blockchain/vbk_chain_params.hpp"
 
 using namespace VeriBlock;
+
+const static VbkChainParamsRegTest param;
 
 struct TestCase {
   using V = std::vector<KeystoneContext>;
@@ -15,16 +18,16 @@ struct PopForkResolutionAwins : public ::testing::TestWithParam<TestCase> {};
 
 TEST_P(PopForkResolutionEqual, Equal) {
   auto [A, B] = GetParam();
-  ComparePopScore comparePopScore(VBK_KEYSTONE_INTERVAL);
-  ASSERT_EQ(comparePopScore(A, B), 0);
-  ASSERT_EQ(comparePopScore(B, A), 0);
+  ComparePopScore comparePopScore(param.getKeystoneInterval());
+  ASSERT_EQ(comparePopScore(A, B, param), 0);
+  ASSERT_EQ(comparePopScore(B, A, param), 0);
 }
 
 TEST_P(PopForkResolutionAwins, Awins) {
   auto [A, B] = GetParam();
-  ComparePopScore comparePopScore(VBK_KEYSTONE_INTERVAL);
-  ASSERT_GT(comparePopScore(A, B), 0);
-  ASSERT_LT(comparePopScore(B, A), 0);
+  ComparePopScore comparePopScore(param.getKeystoneInterval());
+  ASSERT_GT(comparePopScore(A, B, param), 0);
+  ASSERT_LT(comparePopScore(B, A, param), 0);
 }
 
 static const std::vector<TestCase> EqualCases = {

@@ -3,9 +3,11 @@
 #include <memory>
 #include <utility>
 
+#include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/pop/fork_resolution.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/mock_miner.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
 #include "veriblock/storage/endorsement_repository_inmem.hpp"
@@ -136,10 +138,13 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
   endorseVtbBlock(91);
 
   std::vector<ProtoKeystoneContext<BtcBlock>> protoContext =
-      getProtoKeystoneContext(
-          vbkTest->getBestChain(), *this->btcTree, this->endorsement_repo);
+      getProtoKeystoneContext(vbkTest->getBestChain(),
+                              *this->btcTree,
+                              this->endorsement_repo,
+                              *this->vbk_params);
 
-  EXPECT_EQ(protoContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
+  EXPECT_EQ(protoContext.size(),
+            numVbkBlocks / this->vbk_params->getKeystoneInterval());
 
   EXPECT_EQ(protoContext[0].blockHeight, 20);
   EXPECT_EQ(protoContext[0].referencedByBlocks.size(), 0);
@@ -194,12 +199,15 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
   endorseVtbBlock(91);  // btc block height 9
   endorseVtbBlock(91);  // btc block height 10
 
-  std::vector<KeystoneContext> keystoneContext = getKeystoneContext(
-      getProtoKeystoneContext(
-          vbkTest->getBestChain(), *this->btcTree, this->endorsement_repo),
-      *this->btcTree);
+  std::vector<KeystoneContext> keystoneContext =
+      getKeystoneContext(getProtoKeystoneContext(vbkTest->getBestChain(),
+                                                 *this->btcTree,
+                                                 this->endorsement_repo,
+                                                 *this->vbk_params),
+                         *this->btcTree);
 
-  EXPECT_EQ(keystoneContext.size(), numVbkBlocks / VBK_KEYSTONE_INTERVAL);
+  EXPECT_EQ(keystoneContext.size(),
+            numVbkBlocks / this->vbk_params->getKeystoneInterval());
 
   EXPECT_EQ(keystoneContext[0].vbkBlockHeight, 20);
   EXPECT_EQ(keystoneContext[0].firstBtcBlockPublicationHeight,
