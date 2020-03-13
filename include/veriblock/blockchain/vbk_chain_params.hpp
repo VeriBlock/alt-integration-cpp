@@ -32,6 +32,14 @@ struct VbkChainParams {
   virtual uint32_t getRetargetPeriod() const noexcept = 0;
   virtual uint32_t getTargetBlockTime() const noexcept = 0;
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
+
+  virtual uint32_t getKeystoneInterval() const noexcept { return 20; }
+
+  virtual uint32_t getFinalityDelay() const noexcept { return 11; }
+
+  std::vector<uint32_t> getForkResolutionLookUpTable() const noexcept {
+    return {100, 100, 95, 89, 80, 69, 56, 40, 21};
+  }
 };
 
 /**
