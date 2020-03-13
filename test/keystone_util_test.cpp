@@ -4,6 +4,8 @@
 
 using namespace VeriBlock;
 
+const static uint32_t VBK_KEYSTONE_INTERVAL = 20;
+
 TEST(KeystoneUtil, testHighestKeystoneAtOrBefore) {
   ASSERT_ANY_THROW(highestKeystoneAtOrBefore(-1, VBK_KEYSTONE_INTERVAL));
   ASSERT_EQ(highestKeystoneAtOrBefore(0, VBK_KEYSTONE_INTERVAL), 0);

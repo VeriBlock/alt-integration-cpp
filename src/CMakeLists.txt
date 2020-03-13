@@ -16,7 +16,6 @@ add_library(strutil OBJECT
 add_library(vbkutils
         popmanager.cpp
         checks.cpp
-        consts.cpp
         serde.cpp
         keystone_util.cpp
         read_stream.cpp
