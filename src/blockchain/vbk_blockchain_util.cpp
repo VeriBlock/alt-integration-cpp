@@ -1,8 +1,7 @@
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
-
 #include <veriblock/third_party/BigDecimal.h>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -29,14 +28,14 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone
-  auto diff = tip.height % VBK_KEYSTONE_INTERVAL;
+  auto diff = tip.height % params_->getKeystoneInterval();
 
   // we do not use previous block as a keystone
   if (diff == 0) {
-    diff += VBK_KEYSTONE_INTERVAL;
+    diff += params_->getKeystoneInterval();
   }
   // we reference genesis block if we are at the beginning of the chain
-  if (diff <= tip.height) {
+  if ((int32_t)diff <= tip.height) {
     auto* prevKeystoneIndex = tip.getAncestor(tip.height - diff);
     assert(prevKeystoneIndex != nullptr);
     block.previousKeystone =
@@ -45,8 +44,8 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   }
 
   // set second previous keystone
-  diff += VBK_KEYSTONE_INTERVAL;
-  if (diff <= tip.height) {
+  diff += params_->getKeystoneInterval();
+  if ((int32_t)diff <= tip.height) {
     auto* secondPrevKeystoneIndex = tip.getAncestor(tip.height - diff);
     assert(secondPrevKeystoneIndex != nullptr);
     block.secondPreviousKeystone =
@@ -119,15 +118,16 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
 }
 
 bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
-                       const VbkBlock& block) {
+                       const VbkBlock& block,
+                       const VbkChainParams& params) {
   auto tipHeight = prevBlock.height;
-  auto diff = tipHeight % VBK_KEYSTONE_INTERVAL;
+  auto diff = tipHeight % params.getKeystoneInterval();
 
   // we do not use previous block as a keystone
   if (diff == 0) {
-    diff += VBK_KEYSTONE_INTERVAL;
+    diff += params.getKeystoneInterval();
   }
-  if (diff <= tipHeight) {
+  if ((int32_t)diff <= tipHeight) {
     auto* prevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
     if (prevKeystoneIndex == nullptr) {
       return false;
@@ -146,8 +146,8 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
   }
 
   // set second previous keystone
-  diff += VBK_KEYSTONE_INTERVAL;
-  if (diff <= tipHeight) {
+  diff += params.getKeystoneInterval();
+  if ((int32_t)diff <= tipHeight) {
     auto* secondPrevKeystoneIndex = prevBlock.getAncestor(tipHeight - diff);
     if (secondPrevKeystoneIndex == nullptr) {
       return false;
@@ -237,7 +237,7 @@ bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
   }
 
   // check keystones
-  if (!validateKeystones(prev, block)) {
+  if (!validateKeystones(prev, block, params)) {
     return state.Invalid(
         "contextuallyCheckBlock()", "vbk-bad-keystones", "incorrect keystones");
   }

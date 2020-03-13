@@ -30,14 +30,172 @@ struct KeystoneContext {
   int firstBtcBlockPublicationHeight;
 };
 
+namespace {
+
+template <typename ConfigType>
+bool publicationViolatesFinality(int pubToCheck,
+                                 int base,
+                                 const ConfigType& config) {
+  int diff = pubToCheck - base;
+  return (int32_t)(diff - config.getFinalityDelay()) > 0;
+}
+
+template <typename ConfigType>
+int getConsensusScoreFromRelativeBlockStartingAtZero(int64_t relativeBlock,
+                                                     const ConfigType& config) {
+  if (relativeBlock < 0 ||
+      (size_t)relativeBlock >= config.getForkResolutionLookUpTable().size()) {
+    return 0;
+  }
+
+  return config.getForkResolutionLookUpTable()[relativeBlock];
+}
+
+struct KeystoneContextList {
+  const std::vector<KeystoneContext>& ctx;
+  const int keystoneInterval;
+
+  KeystoneContextList(const std::vector<KeystoneContext>& c, int keystoneInt)
+      : ctx{c}, keystoneInterval(keystoneInt) {}
+
+  bool empty() const { return ctx.empty(); }
+
+  int firstKeystone() const { return ctx[0].vbkBlockHeight; }
+
+  int lastKeystone() const { return ctx[ctx.size() - 1].vbkBlockHeight; }
+
+  const KeystoneContext* getKeystone(int blockNumber) const {
+    if (!isKeystone(blockNumber, keystoneInterval)) {
+      throw std::invalid_argument(
+          "getKeystone can not be called with a non-keystone block number");
+    }
+
+    if (blockNumber < this->firstKeystone()) {
+      return nullptr;
+    }
+
+    if (blockNumber > this->lastKeystone()) {
+      return nullptr;
+    }
+
+    auto i = (blockNumber - firstKeystone()) / keystoneInterval;
+    return &ctx.at(i);
+  }
+};
+
+template <typename ConfigType>
+int comparePopScore(const std::vector<KeystoneContext>& chainA,
+                    const std::vector<KeystoneContext>& chainB,
+                    int keystoneInterval,
+                    const ConfigType& config) {
+  assert(keystoneInterval > 0);
+  KeystoneContextList a(chainA, keystoneInterval);
+  KeystoneContextList b(chainB, keystoneInterval);
+
+  if (a.empty() && b.empty()) {
+    return 0;
+  }
+
+  if (a.empty()) {
+    // a empty, b is not
+    return -1;
+  }
+
+  if (b.empty()) {
+    // b is empty, a is not
+    return 1;
+  }
+
+  int earliestKeystone = a.firstKeystone();
+  if (earliestKeystone != b.firstKeystone()) {
+    throw std::invalid_argument(
+        "comparePopScore can not be called on two keystone lists that don't "
+        "start at the same keystone index");
+  }
+
+  int latestKeystone = std::max(a.lastKeystone(), b.lastKeystone());
+
+  bool aOutsideFinality = false;
+  bool bOutsideFinality = false;
+  int chainAscore = 0;
+  int chainBscore = 0;
+  for (int keystoneToCompare = earliestKeystone;
+       keystoneToCompare <= latestKeystone;
+       keystoneToCompare += keystoneInterval) {
+    auto* actx = a.getKeystone(keystoneToCompare);
+    auto* bctx = b.getKeystone(keystoneToCompare);
+
+    if (aOutsideFinality) {
+      actx = nullptr;
+    }
+
+    if (bOutsideFinality) {
+      bctx = nullptr;
+    }
+
+    if (actx == nullptr && bctx == nullptr) {
+      break;
+    }
+
+    if (actx == nullptr) {
+      chainBscore += config.getForkResolutionLookUpTable()[0];
+      // Nothing added to chainA; it doesn't have an endorsed keystone at
+      // this height (or any additional height) Optimization note: if chainB
+      // score is greater than A here, we can exit early as A will not have
+      // any additional points
+
+      continue;
+    }
+
+    if (bctx == nullptr) {
+      chainAscore += config.getForkResolutionLookUpTable()[0];
+      // Optimization note: if chainA score is greater than B here, we can
+      // exit early as B will not have any additional points
+      continue;
+    }
+
+    int earliestPublicationA = actx->firstBtcBlockPublicationHeight;
+    int earliestPublicationB = bctx->firstBtcBlockPublicationHeight;
+
+    int earliestPublicationOfEither =
+        std::min(earliestPublicationA, earliestPublicationB);
+
+    chainAscore += getConsensusScoreFromRelativeBlockStartingAtZero(
+        earliestPublicationA - earliestPublicationOfEither, config);
+    chainBscore += getConsensusScoreFromRelativeBlockStartingAtZero(
+        earliestPublicationB - earliestPublicationOfEither, config);
+
+    if (publicationViolatesFinality(
+            earliestPublicationA, earliestPublicationB, config)) {
+      aOutsideFinality = true;
+    }
+
+    if (publicationViolatesFinality(
+            earliestPublicationB, earliestPublicationA, config)) {
+      bOutsideFinality = true;
+    }
+
+    if (aOutsideFinality && bOutsideFinality) {
+      break;
+    }
+  }
+
+  return chainAscore - chainBscore;
+}
+}  // namespace
+
 struct ComparePopScore {
   explicit ComparePopScore(uint32_t keystoneInt)
       : keystoneInterval(keystoneInt) {
     assert(keystoneInterval > 0);
   }
 
+  template <typename ConfigType>
   int operator()(const std::vector<KeystoneContext>& chainA,
-                 const std::vector<KeystoneContext>& chainB);
+                 const std::vector<KeystoneContext>& chainB,
+                 const ConfigType& config) {
+    return comparePopScore(chainA, chainB, keystoneInterval, config);
+  }
 
  private:
   int keystoneInterval;
@@ -106,12 +264,14 @@ std::vector<KeystoneContext> getKeystoneContext(
 template <typename EndorsedBlockType,
           typename EndorsementBlockType,
           typename EndorsementChainParams,
-          typename EndorsementType>
+          typename EndorsementType,
+          typename ConfigType>
 std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
     const Chain<EndorsedBlockType>& chain,
     const BlockTree<EndorsementBlockType, EndorsementChainParams>&
         endorsementBlockTree,
-    std::shared_ptr<EndorsementRepository<EndorsementType>> endorsementRepo) {
+    std::shared_ptr<EndorsementRepository<EndorsementType>> endorsementRepo,
+    const ConfigType& config) {
   std::vector<ProtoKeystoneContext<EndorsementBlockType>> ret;
   auto* tip = chain.tip();
   if (tip == nullptr) {
@@ -120,22 +280,22 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
 
   auto highestPossibleEndorsedBlockHeaderHeight = tip->height;
   auto lastKeystone =
-      highestKeystoneAtOrBefore(tip->height, VBK_KEYSTONE_INTERVAL);
+      highestKeystoneAtOrBefore(tip->height, config.getKeystoneInterval());
   auto firstKeystone =
-      firstKeystoneAfter(chain.first()->height, VBK_KEYSTONE_INTERVAL);
+      firstKeystoneAfter(chain.first()->height, config.getKeystoneInterval());
 
   // For each keystone, find the endorsements of itself and other blocks which
   // reference it, and look at the earliest Bitcoin block that any of those
   // endorsements are contained within.
   for (auto keystoneToConsider = firstKeystone;
        keystoneToConsider <= lastKeystone;
-       keystoneToConsider =
-           firstKeystoneAfter(keystoneToConsider, VBK_KEYSTONE_INTERVAL)) {
+       keystoneToConsider = firstKeystoneAfter(keystoneToConsider,
+                                               config.getKeystoneInterval())) {
     ProtoKeystoneContext<EndorsementBlockType> pkc(
         keystoneToConsider, chain[keystoneToConsider]->height);
 
     auto highestConnectingBlock = highestBlockWhichConnectsKeystoneToPrevious(
-        keystoneToConsider, VBK_KEYSTONE_INTERVAL);
+        keystoneToConsider, config.getKeystoneInterval());
     for (auto relevantEndorsedBlock = keystoneToConsider;
          relevantEndorsedBlock <= highestConnectingBlock &&
          relevantEndorsedBlock <= highestPossibleEndorsedBlockHeaderHeight;
