@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <veriblock/blockchain/pop/fork_resolution.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/popmanager.hpp>
 
@@ -118,9 +119,17 @@ bool PopManager::hasUncommittedChanges() const noexcept {
   return !uncommitted_.empty();
 }
 
-int PopManager::compareTwoBranches(const Chain<AltBlock>&,
-                                   const Chain<AltBlock>&) {
-  return 0;
+int PopManager::compareTwoBranches(const Chain<AltBlock>& chain1,
+                                   const Chain<AltBlock>& chain2) {
+  auto pkcChain1 =
+      getProtoKeystoneContext(chain1, *vbk_, vbke_, *altChainParams_);
+  auto kcChain1 = getKeystoneContext(pkcChain1, *vbk_);
+
+  auto pkcChain2 =
+      getProtoKeystoneContext(chain2, *vbk_, vbke_, *altChainParams_);
+  auto kcChain2 = getKeystoneContext(pkcChain2, *vbk_);
+
+  return altChainCompare_(kcChain1, kcChain2);
 }
 
 }  // namespace VeriBlock
