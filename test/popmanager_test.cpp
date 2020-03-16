@@ -251,4 +251,14 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
 
   EXPECT_GT(altpop->compareTwoBranches(chain1, chain2), 0);
   EXPECT_LT(altpop->compareTwoBranches(chain2, chain1), 0);
+
+  for (size_t i = 0; i < chain1.blocksCount(); i++) {
+    delete chain1.tip();
+    chain1.disconnectTip();
+  }
+
+  for (size_t i = 0; i < chain2.blocksCount(); i++) {
+    delete chain2.tip();
+    chain2.disconnectTip();
+  }
 }
