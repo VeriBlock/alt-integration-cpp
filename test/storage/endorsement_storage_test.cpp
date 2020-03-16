@@ -7,7 +7,7 @@
 using namespace VeriBlock;
 
 // DB name
-static const std::string dbName = "db-test";
+static const std::string dbName = "db-endorsement_storage_test";
 
 static const std::vector<uint8_t> defaultVtbEncoded = ParseHex(
     "02046002011667ff0a897e5d512a0b6da2f41c479867fe6b3a4cae2640000013350002a793"

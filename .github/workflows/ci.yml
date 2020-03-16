@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DTSAN=ON"]
+        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON"]
     env:
       CC: clang
       CXX: clang++
@@ -31,7 +31,7 @@ jobs:
       - name: build
         run: cmake --build build -- -j2
       - name: test
-        run: cmake --build build --target test
+        run: cmake --build build --target test -- j2
 
 
   coverage:

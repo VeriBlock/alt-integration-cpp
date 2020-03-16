@@ -40,6 +40,9 @@ addtest(btc_blockchain_test
 target_link_libraries(btc_blockchain_test
         vbkutils
         )
+set_target_properties(btc_blockchain_test PROPERTIES
+        COST 10000  # 10 sec
+        )
 
 addtest(vbk_blockchain_test
         vbk_blockchain_test.cpp
@@ -51,6 +54,9 @@ addtest(vbk_blockchain_test
 target_link_libraries(vbk_blockchain_test
         vbkutils
         )
+set_target_properties(vbk_blockchain_test PROPERTIES
+        COST 300000  # many sec
+        )
 
 addtest(vbk_getblockproof_test
         vbk_getblockproof_test.cpp
@@ -59,7 +65,9 @@ addtest(vbk_getblockproof_test
 target_link_libraries(vbk_getblockproof_test
         vbkutils
         )
-
+set_target_properties(vbk_getblockproof_test PROPERTIES
+        COST 30000 # 30 sec
+        )
 
 addtest(blockchain_test
         chain_test.cpp
@@ -67,6 +75,9 @@ addtest(blockchain_test
         )
 target_link_libraries(blockchain_test
         vbkutils
+        )
+set_target_properties(blockchain_test PROPERTIES
+        COST 10000  # 10 sec
         )
 
 
