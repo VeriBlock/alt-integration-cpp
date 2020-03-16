@@ -216,49 +216,43 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   EXPECT_EQ(altfork2[99].getHash().asVector(),
             altfork1[99].getHash().asVector());
 
-  BlockIndex<AltBlock>* index_prev = new BlockIndex<AltBlock>();
-  index_prev->header = {
+  BlockIndex<AltBlock> index_prev;
+  index_prev.header = {
       altfork1[99].getHash().asVector(), altfork1[99].getBlockTime(), 99};
-  index_prev->height = 99;
-  index_prev->pprev = nullptr;
+  index_prev.height = 99;
+  index_prev.pprev = nullptr;
 
-  Chain<AltBlock> chain1(index_prev->height, index_prev);
-  Chain<AltBlock> chain2(index_prev->height, index_prev);
+  Chain<AltBlock> chain1(index_prev.height, &index_prev);
+  Chain<AltBlock> chain2(index_prev.height, &index_prev);
 
+  std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt1;
   for (size_t i = 100; i < altfork1.size(); i++) {
     AltBlock block{altfork1[i].getHash().asVector(),
                    altfork1[i].getBlockTime(),
                    (int32_t)i};
 
-    BlockIndex<AltBlock>* index = new BlockIndex<AltBlock>();
+    auto* index = new BlockIndex<AltBlock>();
     index->header = block;
     index->pprev = chain1.tip();
     index->height = (int32_t)i;
     chain1.setTip(index);
+    alt1.emplace_back(index);
   }
 
+  std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt2;
   for (size_t i = 100; i < altfork2.size(); i++) {
     AltBlock block{altfork2[i].getHash().asVector(),
                    altfork2[i].getBlockTime(),
                    (int32_t)i};
 
-    BlockIndex<AltBlock>* index = new BlockIndex<AltBlock>();
+    auto* index = new BlockIndex<AltBlock>();
     index->header = block;
     index->pprev = chain2.tip();
     index->height = (int32_t)i;
     chain2.setTip(index);
+    alt2.emplace_back(index);
   }
 
   EXPECT_GT(altpop->compareTwoBranches(chain1, chain2), 0);
   EXPECT_LT(altpop->compareTwoBranches(chain2, chain1), 0);
-
-  for (size_t i = 0; i < chain1.blocksCount(); i++) {
-    delete chain1.tip();
-    chain1.disconnectTip();
-  }
-
-  for (size_t i = 0; i < chain2.blocksCount(); i++) {
-    delete chain2.tip();
-    chain2.disconnectTip();
-  }
 }
