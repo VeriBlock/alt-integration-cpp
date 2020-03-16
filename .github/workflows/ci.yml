@@ -31,7 +31,7 @@ jobs:
       - name: build
         run: cmake --build build -- -j2
       - name: test
-        run: cmake --build build --target test -- j2
+        run: cmake --build build --target test -- -j2 -V
 
 
   coverage:
