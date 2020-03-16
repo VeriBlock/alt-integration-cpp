@@ -22,12 +22,12 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
       : VbkTree(std::move(params)),
         erepo_(std::move(erepo)),
         btc_(btc),
-        compare_(this->param_->getKeystoneInterval()) {}
+        compare_(*this->param_) {}
 
  private:
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo_;
   BtcTree& btc_;
-  ComparePopScore compare_;
+  ComparePopScore<VbkChainParams> compare_;
 
   void determineBestChain(Chain<block_t>& currentBest,
                           index_t& indexNew) override;

@@ -37,7 +37,7 @@ struct VbkChainParams {
 
   virtual uint32_t getFinalityDelay() const noexcept { return 11; }
 
-  std::vector<uint32_t> getForkResolutionLookUpTable() const noexcept {
+  virtual std::vector<uint32_t> getForkResolutionLookUpTable() const noexcept {
     return {100, 100, 95, 89, 80, 69, 56, 40, 21};
   }
 };

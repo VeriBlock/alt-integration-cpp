@@ -9,9 +9,12 @@
 namespace VeriBlock {
 
 struct AltBlock {
-  std::vector<uint8_t> hash{};
+  using height_t = int32_t;
+  using hash_t = std::vector<uint8_t>;
+
+  hash_t hash{};
   uint32_t timestamp{};
-  int32_t height{};
+  height_t height{};
 
   /**
    * Read VBK data from the stream and convert it to AltBlock
@@ -39,6 +42,8 @@ struct AltBlock {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  hash_t getHash() const { return hash; }
 };
 
 }  // namespace VeriBlock
