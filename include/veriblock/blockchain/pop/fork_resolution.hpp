@@ -86,11 +86,10 @@ struct KeystoneContextList {
 template <typename ConfigType>
 int comparePopScore(const std::vector<KeystoneContext>& chainA,
                     const std::vector<KeystoneContext>& chainB,
-                    int keystoneInterval,
                     const ConfigType& config) {
-  assert(keystoneInterval > 0);
-  KeystoneContextList a(chainA, keystoneInterval);
-  KeystoneContextList b(chainB, keystoneInterval);
+  assert(config.getKeystoneInterval() > 0);
+  KeystoneContextList a(chainA, config.getKeystoneInterval());
+  KeystoneContextList b(chainB, config.getKeystoneInterval());
 
   if (a.empty() && b.empty()) {
     return 0;
@@ -121,7 +120,7 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
   int chainBscore = 0;
   for (int keystoneToCompare = earliestKeystone;
        keystoneToCompare <= latestKeystone;
-       keystoneToCompare += keystoneInterval) {
+       keystoneToCompare += config.getKeystoneInterval()) {
     auto* actx = a.getKeystone(keystoneToCompare);
     auto* bctx = b.getKeystone(keystoneToCompare);
 
@@ -184,21 +183,19 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
 }
 }  // namespace
 
+template <typename ConfigType>
 struct ComparePopScore {
-  explicit ComparePopScore(uint32_t keystoneInt)
-      : keystoneInterval(keystoneInt) {
-    assert(keystoneInterval > 0);
+  explicit ComparePopScore(const ConfigType& config) : config_(config) {
+    assert(config.getKeystoneInterval() > 0);
   }
 
-  template <typename ConfigType>
   int operator()(const std::vector<KeystoneContext>& chainA,
-                 const std::vector<KeystoneContext>& chainB,
-                 const ConfigType& config) {
-    return comparePopScore(chainA, chainB, keystoneInterval, config);
+                 const std::vector<KeystoneContext>& chainB) {
+    return comparePopScore(chainA, chainB, config_);
   }
 
  private:
-  int keystoneInterval;
+  const ConfigType& config_;
 };
 
 template <typename EndorsementBlockType, typename EndorsementChainParams>
@@ -212,7 +209,8 @@ std::vector<KeystoneContext> getKeystoneContext(
       chain.begin(),
       chain.end(),
       std::back_inserter(ret),
-      [&endorsementBlockTree](const ProtoKeystoneContext<BtcBlock>& pkc) {
+      [&endorsementBlockTree](
+          const ProtoKeystoneContext<EndorsementBlockType>& pkc) {
         int earliestEndorsementIndex = std::numeric_limits<int32_t>::max();
         for (const auto* btcIndex : pkc.referencedByBlocks) {
           if (btcIndex == nullptr) {

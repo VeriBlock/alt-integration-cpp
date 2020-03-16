@@ -23,15 +23,20 @@ struct PopManagerTest : public ::testing::Test {
   std::shared_ptr<BtcTree> alt;
   std::shared_ptr<Miner<BtcBlock, BtcChainParams>> alt_miner;
 
+  std::shared_ptr<AltChainParams> altChainParams;
+
   std::shared_ptr<PopManager> altpop;
 
   PopManagerTest() {
+    altChainParams = std::make_shared<AltChainParams>();
+
     btce = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
     vbke = std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
 
     alt = std::make_shared<BtcTree>(btcp);
     alt_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(btcp);
-    altpop = std::make_shared<PopManager>(btcp, vbkp, btce, vbke);
+    altpop =
+        std::make_shared<PopManager>(btcp, vbkp, btce, vbke, altChainParams);
 
     // our altchain stores headers of BTC, VBK and ALT blocks
     EXPECT_TRUE(altpop->btc().bootstrapWithGenesis(state));
@@ -158,4 +163,96 @@ TEST_F(PopManagerTest, Scenario1) {
             *apm.btc().getBestChain().tip()->pprev);
   ASSERT_EQ(*altpop->vbk().getBestChain().tip(),
             *apm.vbk().getBestChain().tip()->pprev);
+}
+
+TEST_F(PopManagerTest, compareTwoBranches_test) {
+  // ALT has genesis + 102 blocks
+  std::vector<BtcBlock> altfork1{btcp->getGenesisBlock()};
+  mineChain(*alt, altfork1, 102);
+  ASSERT_EQ(alt->getBestChain().chainHeight(), 102);
+
+  std::vector<BtcBlock> altfork2 = altfork1;
+  altfork2.resize(100);
+
+  EXPECT_EQ(altfork1.size(), 103);
+  EXPECT_EQ(altfork2.size(), 100);
+
+  // endorse ALT tip, at height 102
+  auto* endorsedAltBlockIndex = alt->getBestChain().tip();
+  PublicationData pub = endorseBlock(endorsedAltBlockIndex->header.toRaw());
+
+  // get last known BTC and VBK hashes (current tips)
+  auto last_vbk = altpop->vbk().getBestChain().tip()->getHash();
+  auto last_btc = altpop->btc().getBestChain().tip()->getHash();
+
+  // mine publications
+  auto [atv, vtbs] = apm.mine(pub, last_vbk, last_btc, 1, state);
+  ASSERT_TRUE(state.IsValid()) << state.GetRejectReason();
+
+  // mine alt block, which CONTAINS this alt pop tx with endorsement
+  mineChain(*alt, altfork1, 1);
+
+  AltProof altProof;
+  altProof.atv = atv;
+  // endorsed ALT block
+  altProof.endorsed = makeAltBlock(*endorsedAltBlockIndex);
+  // block that contains current "payloads"
+  altProof.containing = makeAltBlock(*alt->getBestChain().tip());
+
+  // apply payloads to our current view
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs}, state))
+      << state.GetRejectReason();
+
+  altpop->commit();
+
+  // mine
+  alt->invalidateBlockByHash(altfork1[100].getHash());
+  EXPECT_EQ(alt->getBestChain().blocksCount(), 100);
+  EXPECT_EQ(alt->getBestChain().tip()->getHash(),
+            altfork2[altfork2.size() - 1].getHash());
+
+  mineChain(*alt, altfork2, 8);
+
+  EXPECT_EQ(altfork2[99].getHash().asVector(),
+            altfork1[99].getHash().asVector());
+
+  BlockIndex<AltBlock> index_prev;
+  index_prev.header = {
+      altfork1[99].getHash().asVector(), altfork1[99].getBlockTime(), 99};
+  index_prev.height = 99;
+  index_prev.pprev = nullptr;
+
+  Chain<AltBlock> chain1(index_prev.height, &index_prev);
+  Chain<AltBlock> chain2(index_prev.height, &index_prev);
+
+  std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt1;
+  for (size_t i = 100; i < altfork1.size(); i++) {
+    AltBlock block{altfork1[i].getHash().asVector(),
+                   altfork1[i].getBlockTime(),
+                   (int32_t)i};
+
+    auto* index = new BlockIndex<AltBlock>();
+    index->header = block;
+    index->pprev = chain1.tip();
+    index->height = (int32_t)i;
+    chain1.setTip(index);
+    alt1.emplace_back(index);
+  }
+
+  std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt2;
+  for (size_t i = 100; i < altfork2.size(); i++) {
+    AltBlock block{altfork2[i].getHash().asVector(),
+                   altfork2[i].getBlockTime(),
+                   (int32_t)i};
+
+    auto* index = new BlockIndex<AltBlock>();
+    index->header = block;
+    index->pprev = chain2.tip();
+    index->height = (int32_t)i;
+    chain2.setTip(index);
+    alt2.emplace_back(index);
+  }
+
+  EXPECT_GT(altpop->compareTwoBranches(chain1, chain2), 0);
+  EXPECT_LT(altpop->compareTwoBranches(chain2, chain1), 0);
 }

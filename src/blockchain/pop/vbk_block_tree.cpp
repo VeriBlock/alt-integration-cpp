@@ -37,10 +37,10 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
     auto pkcOther = getProtoKeystoneContext(vbkOther, btc_, erepo_, *param_);
     auto kcOther = getKeystoneContext(pkcOther, btc_);
 
-    result = compare_(kcCurrent, kcOther, *param_);
+    result = compare_(kcCurrent, kcOther);
   }
 
-  if (result > 0) {
+  if (result < 0) {
     // other chain won!
     auto prevTip = currentBest.tip();
     currentBest.setTip(&indexNew);
