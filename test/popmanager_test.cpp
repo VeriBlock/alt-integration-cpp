@@ -225,25 +225,27 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   Chain<AltBlock> chain1(index_prev->height, index_prev);
   Chain<AltBlock> chain2(index_prev->height, index_prev);
 
-  for (int i = 100; i < altfork1.size(); i++) {
-    AltBlock block{
-        altfork1[i].getHash().asVector(), altfork1[i].getBlockTime(), i};
+  for (size_t i = 100; i < altfork1.size(); i++) {
+    AltBlock block{altfork1[i].getHash().asVector(),
+                   altfork1[i].getBlockTime(),
+                   (int32_t)i};
 
     BlockIndex<AltBlock>* index = new BlockIndex<AltBlock>();
     index->header = block;
     index->pprev = chain1.tip();
-    index->height = i;
+    index->height = (int32_t)i;
     chain1.setTip(index);
   }
 
-  for (int i = 100; i < altfork2.size(); i++) {
-    AltBlock block{
-        altfork2[i].getHash().asVector(), altfork2[i].getBlockTime(), i};
+  for (size_t i = 100; i < altfork2.size(); i++) {
+    AltBlock block{altfork2[i].getHash().asVector(),
+                   altfork2[i].getBlockTime(),
+                   (int32_t)i};
 
     BlockIndex<AltBlock>* index = new BlockIndex<AltBlock>();
     index->header = block;
     index->pprev = chain2.tip();
-    index->height = i;
+    index->height = (int32_t)i;
     chain2.setTip(index);
   }
 

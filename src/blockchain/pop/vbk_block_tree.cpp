@@ -40,7 +40,7 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
     result = compare_(kcCurrent, kcOther);
   }
 
-  if (result > 0) {
+  if (result < 0) {
     // other chain won!
     auto prevTip = currentBest.tip();
     currentBest.setTip(&indexNew);
