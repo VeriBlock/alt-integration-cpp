@@ -148,7 +148,7 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
     return ret;
   }
 
-  std::unique_ptr<EndorsementWriteBatch<Endorsement>> newBatch() {
+  std::unique_ptr<EndorsementWriteBatch<Endorsement>> newBatch() override {
     return nullptr;
   }
 
