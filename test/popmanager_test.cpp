@@ -90,7 +90,7 @@ struct PopManagerTest : public ::testing::Test {
 };
 
 TEST_F(PopManagerTest, Scenario1) {
-  std::shared_ptr<StateChange> change = stateManager.newChange();
+  std::unique_ptr<StateChange> change = stateManager.newChange();
 
   // @given: BTC, VBK and ALT chains
   // BTC has genesis + 5 blocks
@@ -129,7 +129,7 @@ TEST_F(PopManagerTest, Scenario1) {
   altProof.containing = makeAltBlock(*alt->getBestChain().tip());
 
   // apply payloads to our current view
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs}, change, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
       << state.GetRejectReason();
   // these payloads are not committed yet
   ASSERT_TRUE(altpop->hasUncommittedChanges());
@@ -141,14 +141,14 @@ TEST_F(PopManagerTest, Scenario1) {
             *apm.vbk().getBestChain().tip()->pprev);
 
   // rollback last addPayloads
-  altpop->rollback(change);
+  altpop->rollback(*change);
 
   // our local view changed to previous state
   ASSERT_EQ(altpop->btc().getBestChain().tip()->getHash(), last_btc);
   ASSERT_EQ(altpop->vbk().getBestChain().tip()->getHash(), last_vbk);
 
   // add same payloads again
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs}, change, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
       << state.GetRejectReason();
   // these payloads are not committed yet
   ASSERT_TRUE(altpop->hasUncommittedChanges());
@@ -164,7 +164,7 @@ TEST_F(PopManagerTest, Scenario1) {
             *apm.vbk().getBestChain().tip()->pprev);
 
   // finally, do rollback again. this should be NOOP
-  altpop->rollback(change);
+  altpop->rollback(*change);
 
   // our local view on btc/vbk chains is still correct
   ASSERT_EQ(*altpop->btc().getBestChain().tip(),
@@ -174,7 +174,7 @@ TEST_F(PopManagerTest, Scenario1) {
 }
 
 TEST_F(PopManagerTest, compareTwoBranches_test) {
-  std::shared_ptr<StateChange> change = stateManager.newChange();
+  std::unique_ptr<StateChange> change = stateManager.newChange();
   // ALT has genesis + 102 blocks
   std::vector<BtcBlock> altfork1{btcp->getGenesisBlock()};
   mineChain(*alt, altfork1, 102);
@@ -209,7 +209,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   altProof.containing = makeAltBlock(*alt->getBestChain().tip());
 
   // apply payloads to our current view
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs}, change, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
       << state.GetRejectReason();
 
   altpop->commit();
