@@ -15,4 +15,4 @@ addtest(entities_serde_test
         payloads_test.cpp
         endorsement_test.cpp
         )
-target_link_libraries(entities_serde_test vbkutils)
+target_link_libraries(entities_serde_test ${LIB_NAME})

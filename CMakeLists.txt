@@ -6,8 +6,14 @@ if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-project(alt-integration C CXX)
 
+set(MAJOR_VERSION 1)
+set(MINOR_VERSION 0)
+set(PATCH_VERSION 0)
+set(SOVERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")
+project(alt-integration VERSION ${SOVERSION} LANGUAGES C CXX)
+
+include(GNUInstallDirs)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(cmake/functions.cmake)
@@ -16,6 +22,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 
@@ -27,6 +34,7 @@ option(COVERAGE     "Enable coverage" OFF)
 option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 option(WITH_ROCKSDB "Enable RocksDB storage" ON)
+option(SHARED       "Build shared lib" OFF)
 
 if (WIN32)
   set(FIND_ROCKSDB_DEFAULT TRUE)
@@ -87,10 +95,8 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/wd4127)                  # disable warning: conditional expression is constant
 endif()
 
-include(GNUInstallDirs)
-
 include_directories(include)
-
+set(LIB_NAME altintegration)
 add_subdirectory(src)
 
 if(CLANG_TIDY)
