@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cstdint>
 #include <vector>
+#include <veriblock/blockchain/blocktree.hpp>
+#include <veriblock/validation_state.hpp>
 
 namespace VeriBlock {
 
@@ -21,6 +23,20 @@ std::vector<std::vector<uint8_t>> getLastKnownBlocks(const BlockTree& tree,
   // reverse them since we add them in reverse order (tip -> genesis)
   std::reverse(ret.begin(), ret.end());
   return ret;
+}
+
+template <typename Block, typename ChainParams>
+bool addBlocks(BlockTree<Block, ChainParams>& tree,
+               const std::vector<std::vector<uint8_t>>& blocks,
+               ValidationState& state) {
+  for (const auto& b : blocks) {
+    Block block = Block::fromRaw(b);
+    if (!tree.acceptBlock(block, state)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 }  // namespace VeriBlock
