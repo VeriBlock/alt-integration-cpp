@@ -45,6 +45,10 @@ else()
   set(FIND_ROCKSDB_DEFAULT FALSE)
 endif()
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 option(FIND_ROCKSDB "Use \"ON\" to search for RocksDB in installed packages" ${FIND_ROCKSDB_DEFAULT})
 
 include(cmake/dependencies.cmake)
