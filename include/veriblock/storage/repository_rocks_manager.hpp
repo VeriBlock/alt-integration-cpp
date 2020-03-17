@@ -14,9 +14,7 @@ enum class CF_NAMES {
   DEFAULT = 0,
   HASH_BLOCK_BTC,
   HASH_BLOCK_VBK,
-  HASH_BTC_ENDORSED_BLOCK,
   HASH_BTC_ENDORSEMENT_ID,
-  HASH_VBK_ENDORSED_BLOCK,
   HASH_VBK_ENDORSEMENT_ID
 };
 
@@ -24,9 +22,7 @@ enum class CF_NAMES {
 static const std::vector<std::string> cfNames{"default",
                                               "hash_block_btc",
                                               "hash_block_vbk",
-                                              "hash_btc_endorsed_block",
                                               "hash_btc_endorsement_id",
-                                              "hash_vbk_endorsed_block",
                                               "hash_vbk_endorsement_id"};
 
 struct RepositoryRocksManager {
@@ -77,14 +73,10 @@ struct RepositoryRocksManager {
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_VBK]);
 
     repoBtcEndorsement = std::make_shared<endorsement_repo_t<BtcEndorsement>>(
-        dbPtr,
-        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK],
-        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSEMENT_ID]);
+        dbPtr, cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSEMENT_ID]);
 
     repoVbkEndorsement = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
-        dbPtr,
-        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSED_BLOCK],
-        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
+        dbPtr, cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
 
     return s;
   }
@@ -121,14 +113,10 @@ struct RepositoryRocksManager {
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_VBK]);
 
     repoBtcEndorsement = std::make_shared<endorsement_repo_t<BtcEndorsement>>(
-        dbPtr,
-        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSED_BLOCK],
-        cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSEMENT_ID]);
+        dbPtr, cfHandles[(int)CF_NAMES::HASH_BTC_ENDORSEMENT_ID]);
 
     repoVbkEndorsement = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
-        dbPtr,
-        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSED_BLOCK],
-        cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
+        dbPtr, cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
     return s;
   }
 

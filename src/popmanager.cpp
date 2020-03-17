@@ -5,7 +5,9 @@
 
 namespace VeriBlock {
 
-bool PopManager::addPayloads(const Payloads& payloads, ValidationState& state) {
+bool PopManager::addPayloads(const Payloads& payloads,
+                             std::shared_ptr<StateChange> stateChange,
+                             ValidationState& state) {
   return tryValidateWithResources(
       [&]() {
         /// ADD ALL VTBs
@@ -24,10 +26,12 @@ bool PopManager::addPayloads(const Payloads& payloads, ValidationState& state) {
 
         return true;
       },
-      [&]() { this->removePayloads(payloads); });
+      [&]() { this->removePayloads(payloads, stateChange); });
 }
 
-void PopManager::removePayloads(const Payloads& payloads) noexcept {
+void PopManager::removePayloads(
+    const Payloads& payloads,
+    std::shared_ptr<StateChange> stateChange) noexcept {
   /// first, remove ATV
   removeAltProof(payloads.alt);
 
@@ -37,7 +41,9 @@ void PopManager::removePayloads(const Payloads& payloads) noexcept {
       v.rbegin(), v.rend(), [this](const VTB& vtb) { removeVTB(vtb); });
 }
 
-bool PopManager::addVTB(const VTB& vtb, ValidationState& state) {
+bool PopManager::addVTB(const VTB& vtb,
+                        std::shared_ptr<StateChange> stateChange,
+                        ValidationState& state) {
   if (!checkVTB(vtb, state, *vbkparam_, *btcparam_)) {
     return state.addStackFunction("addVTB");
   }

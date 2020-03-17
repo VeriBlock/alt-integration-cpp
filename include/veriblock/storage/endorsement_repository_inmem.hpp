@@ -148,6 +148,10 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
     return ret;
   }
 
+  std::unique_ptr<EndorsementWriteBatch<Endorsement>> newBatch() {
+    return nullptr;
+  }
+
   std::shared_ptr<cursor_t> newCursor() const override {
     return std::make_shared<EndorsementCursorInmem<Endorsement>>(e_);
   }
