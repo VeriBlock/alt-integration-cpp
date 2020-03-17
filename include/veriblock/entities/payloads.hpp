@@ -42,8 +42,10 @@ struct AltProof {
 };
 
 struct Payloads {
-  AltProof alt;
-  std::vector<VTB> vtbs;
+  AltProof alt{};
+  std::vector<VTB> vtbs{};
+  std::vector<BtcBlock> btccontext{};
+  std::vector<VbkBlock> vbkcontext{};
 };
 
 }  // namespace VeriBlock

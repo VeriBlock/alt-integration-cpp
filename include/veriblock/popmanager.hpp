@@ -52,7 +52,7 @@ struct PopManager {
    * reverted.
    */
   bool addPayloads(const Payloads& payloads,
-                   std::shared_ptr<StateChange> stateChange,
+                   StateChange& stateChange,
                    ValidationState& state);
 
   /**
@@ -61,12 +61,12 @@ struct PopManager {
    * @note does not throw in any circumstance
    */
   void removePayloads(const Payloads& payloads,
-                      std::shared_ptr<StateChange> stateChange) noexcept;
+                      StateChange& stateChange) noexcept;
 
   bool hasUncommittedChanges() const noexcept;
 
   /// removes all uncommitted payloads
-  void rollback(std::shared_ptr<StateChange> stateChange) noexcept;
+  void rollback(StateChange& stateChange) noexcept;
 
   /// commit currently uncommitted payloads
   void commit();
@@ -99,16 +99,12 @@ struct PopManager {
   std::shared_ptr<AltChainParams> altChainParams_;
   ComparePopScore<AltChainParams> altChainCompare_;
 
-  bool addVTB(const VTB& vtb,
-              std::shared_ptr<StateChange> stateChange,
-              ValidationState& state);
+  bool addVTB(const VTB& vtb, StateChange& stateChange, ValidationState& state);
   bool addAltProof(const AltProof& payloads,
-                   std::shared_ptr<StateChange> stateChange,
+                   StateChange& stateChange,
                    ValidationState& state);
-  void removeAltProof(const AltProof& alt,
-                      std::shared_ptr<StateChange> stateChange) noexcept;
-  void removeVTB(const VTB& vtb,
-                 std::shared_ptr<StateChange> stateChange) noexcept;
+  void removeAltProof(const AltProof& alt, StateChange& stateChange) noexcept;
+  void removeVTB(const VTB& vtb, StateChange& stateChange) noexcept;
 };
 
 }  // namespace VeriBlock

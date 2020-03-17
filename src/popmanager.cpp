@@ -6,10 +6,28 @@
 namespace VeriBlock {
 
 bool PopManager::addPayloads(const Payloads& payloads,
-                             std::shared_ptr<StateChange> stateChange,
+                             StateChange& stateChange,
                              ValidationState& state) {
   return tryValidateWithResources(
       [&]() {
+        /// update btc context
+        for (const auto& b : payloads.btccontext) {
+          BlockIndex<BtcBlock> index;
+          if (!this->btc().acceptBlock(b, state, &index)) {
+            return state.addStackFunction("addPayloads");
+          }
+          stateChange.putBtcBlock(index);
+        }
+
+        /// update vbk context
+        for (const auto& b : payloads.vbkcontext) {
+          BlockIndex<VbkBlock> index;
+          if (!this->vbk().acceptBlock(b, state, &index)) {
+            return state.addStackFunction("addPayloads");
+          }
+          stateChange.putVbkBlock(index);
+        }
+
         /// ADD ALL VTBs
         for (const auto& vtb : payloads.vtbs) {
           if (!this->addVTB(vtb, stateChange, state)) {
@@ -29,9 +47,8 @@ bool PopManager::addPayloads(const Payloads& payloads,
       [&]() { this->removePayloads(payloads, stateChange); });
 }
 
-void PopManager::removePayloads(
-    const Payloads& payloads,
-    std::shared_ptr<StateChange> stateChange) noexcept {
+void PopManager::removePayloads(const Payloads& payloads,
+                                StateChange& stateChange) noexcept {
   /// first, remove ATV
   removeAltProof(payloads.alt, stateChange);
 
@@ -40,10 +57,22 @@ void PopManager::removePayloads(
   std::for_each(v.rbegin(), v.rend(), [this, &stateChange](const VTB& vtb) {
     removeVTB(vtb, stateChange);
   });
+
+  /// remove vbk context
+  for (const auto& b : payloads.vbkcontext) {
+    this->vbk().invalidateBlockByHash(b.getHash());
+    stateChange.removeVbkBlock(b.getHash());
+  }
+
+  /// remove btc context
+  for (const auto& b : payloads.btccontext) {
+    this->btc().invalidateBlockByHash(b.getHash());
+    stateChange.removeBtcBlock(b.getHash());
+  }
 }
 
 bool PopManager::addVTB(const VTB& vtb,
-                        std::shared_ptr<StateChange> stateChange,
+                        StateChange& stateChange,
                         ValidationState& state) {
   if (!checkVTB(vtb, state, *vbkparam_, *btcparam_)) {
     return state.addStackFunction("addVTB");
@@ -55,12 +84,12 @@ bool PopManager::addVTB(const VTB& vtb,
     if (!btc_->acceptBlock(block, state, &index)) {
       return state.addStackFunction("addVTB");
     }
-    stateChange->putBtcBlock(index);
+    stateChange.putBtcBlock(index);
   }
 
   // secondly, add VBK endorsements in BTC
   btce_->put(vtb);
-  stateChange->putBtcEndorsement(vtb);
+  stateChange.putBtcEndorsement(vtb);
 
   // thirdly, add vbk context blocks
   for (const auto& block : vtb.context) {
@@ -68,37 +97,36 @@ bool PopManager::addVTB(const VTB& vtb,
     if (!vbk_->acceptBlock(block, state, &index)) {
       return state.addStackFunction("addVTB");
     }
-    stateChange->putVbkBlock(index);
+    stateChange.putVbkBlock(index);
   }
 
   return true;
 }
 
-void PopManager::removeVTB(const VTB& vtb,
-                           std::shared_ptr<StateChange> stateChange) noexcept {
+void PopManager::removeVTB(const VTB& vtb, StateChange& stateChange) noexcept {
   // remove VBK context in reverse order
   auto& vbkctx = vtb.context;
   std::for_each(
       vbkctx.rbegin(), vbkctx.rend(), [this, &stateChange](const VbkBlock& b) {
         vbk_->invalidateBlockByHash(b.getHash());
-        stateChange->removeVbkBlock(b.getHash());
+        stateChange.removeVbkBlock(b.getHash());
       });
 
   // remove endorsement
   btce_->remove(vtb);
-  stateChange->removeBtcEndorsement(vtb);
+  stateChange.removeBtcEndorsement(vtb);
 
   // remove BTC context in reverse order
   auto& btcctx = vtb.transaction.blockOfProofContext;
   std::for_each(
       btcctx.rbegin(), btcctx.rend(), [this, &stateChange](const BtcBlock& b) {
         btc_->invalidateBlockByHash(b.getHash());
-        stateChange->removeBtcBlock(b.getHash());
+        stateChange.removeBtcBlock(b.getHash());
       });
 }
 
 bool PopManager::addAltProof(const AltProof& payloads,
-                             std::shared_ptr<StateChange> stateChange,
+                             StateChange& stateChange,
                              ValidationState& state) {
   if (!checkATV(payloads.atv, state, *vbkparam_)) {
     return state.addStackFunction("addPayloads");
@@ -109,29 +137,29 @@ bool PopManager::addAltProof(const AltProof& payloads,
     if (!vbk_->acceptBlock(block, state, &index)) {
       return state.addStackFunction("addPayloads");
     }
-    stateChange->putVbkBlock(index);
+    stateChange.putVbkBlock(index);
   }
 
   vbke_->put(payloads);
-  stateChange->putVbkEndorsement(payloads);
+  stateChange.putVbkEndorsement(payloads);
 
   return true;
 }
 
-void PopManager::removeAltProof(
-    const AltProof& alt, std::shared_ptr<StateChange> stateChange) noexcept {
+void PopManager::removeAltProof(const AltProof& alt,
+                                StateChange& stateChange) noexcept {
   auto& vbkctx = alt.atv.context;
   std::for_each(
       vbkctx.rbegin(), vbkctx.rend(), [this, &stateChange](const VbkBlock& b) {
         vbk_->invalidateBlockByHash(b.getHash());
-        stateChange->removeVbkBlock(b.getHash());
+        stateChange.removeVbkBlock(b.getHash());
       });
 
   vbke_->remove(alt);
-  stateChange->removeVbkEndorsement(alt);
+  stateChange.removeVbkEndorsement(alt);
 }
 
-void PopManager::rollback(std::shared_ptr<StateChange> stateChange) noexcept {
+void PopManager::rollback(StateChange& stateChange) noexcept {
   // rollback in reverse order
   std::for_each(uncommitted_.rbegin(),
                 uncommitted_.rend(),

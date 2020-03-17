@@ -39,6 +39,16 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
   return true;
 }
 
+template <typename Block, typename ChainParams>
+bool removeBlocks(BlockTree<Block, ChainParams>& tree,
+                  const std::vector<std::vector<uint8_t>>& blocks) {
+  for (const auto& b : blocks) {
+    tree.invalidateBlockByHash(sha256twice(b));
+  }
+
+  return true;
+}
+
 }  // namespace VeriBlock
 
 #endif  // ALT_INTEGRATION_UTIL_HPP

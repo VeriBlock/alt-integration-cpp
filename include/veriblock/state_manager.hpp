@@ -116,11 +116,12 @@ class StateManager {
  public:
   StateManager(const std::string& name) : database(name) { database.open(); }
 
-  std::shared_ptr<StateChange> newChange() {
-    return std::make_shared<StateChange>(database.getBtcRepo(),
-                                         database.getVbkRepo(),
-                                         database.getBtcEndorsementRepo(),
-                                         database.getVbkEndorsementRepo());
+  std::unique_ptr<StateChange> newChange() {
+    return std::unique_ptr<StateChange>(
+        new StateChange(database.getBtcRepo(),
+                        database.getVbkRepo(),
+                        database.getBtcEndorsementRepo(),
+                        database.getVbkEndorsementRepo()));
   }
 
   status_t commit(std::shared_ptr<StateChange> change) {

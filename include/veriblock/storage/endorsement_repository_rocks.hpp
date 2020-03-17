@@ -212,7 +212,7 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
 
  private:
   std::shared_ptr<rocksdb::DB> _db;
-  // [endorsed_id] -> [endorsement]
+  // [endorsement id] -> [endorsement]
   // endorsement is stored in the raw bytes representation
   std::shared_ptr<cf_handle_t> _endorsedIdHandle;
 };

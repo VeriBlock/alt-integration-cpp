@@ -11,7 +11,6 @@ if(WITH_ROCKSDB)
     target_link_libraries(popmanager_test ${LIB_NAME})
 endif()
 
-
 addtest(vblake_test vblake_test.cpp)
 target_link_libraries(vblake_test ${LIB_NAME})
 
