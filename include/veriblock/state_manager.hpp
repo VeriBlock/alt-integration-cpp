@@ -52,16 +52,32 @@ class StateChange {
     btcEndorsementBatch->put(endorsement);
   }
 
+  void putBtcEndorsement(const BtcEndorsement::container_t& container) {
+    btcEndorsementBatch->put(container);
+  }
+
   void removeBtcEndorsement(const BtcEndorsement& endorsement) {
     btcEndorsementBatch->remove(endorsement.id);
+  }
+
+  void removeBtcEndorsement(const BtcEndorsement::container_t& container) {
+    btcEndorsementBatch->remove(container);
   }
 
   void putVbkEndorsement(const VbkEndorsement& endorsement) {
     vbkEndorsementBatch->put(endorsement);
   }
 
+  void putVbkEndorsement(const VbkEndorsement::container_t& container) {
+    vbkEndorsementBatch->put(container);
+  }
+
   void removeVbkEndorsement(const VbkEndorsement& endorsement) {
     vbkEndorsementBatch->remove(endorsement.id);
+  }
+
+  void removeVbkEndorsement(const VbkEndorsement::container_t& container) {
+    vbkEndorsementBatch->remove(container);
   }
 
   void commit() {
