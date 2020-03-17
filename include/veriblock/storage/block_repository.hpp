@@ -46,7 +46,7 @@ struct BlockRepository;
  * batch.
  */
 template <typename Block>
-struct WriteBatch {
+struct BlockWriteBatch {
   //! stored block type
   using stored_block_t = Block;
   //! block has type
@@ -54,7 +54,7 @@ struct WriteBatch {
   //! iterator type
   using cursor_t = Cursor<hash_t, stored_block_t>;
 
-  virtual ~WriteBatch() = default;
+  virtual ~BlockWriteBatch() = default;
 
   /**
    * Write a single block. If block with such hash exists, db will overwrite
@@ -149,7 +149,7 @@ struct BlockRepository {
    * Create new WriteBatch, to perform BULK modify operations.
    * @return a pointer to new WriteBatch instance.
    */
-  virtual std::unique_ptr<WriteBatch<stored_block_t>> newBatch() = 0;
+  virtual std::unique_ptr<BlockWriteBatch<stored_block_t>> newBatch() = 0;
 
   /**
    * Returns iterator, that is used for height iteration over blockchain.

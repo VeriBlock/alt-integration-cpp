@@ -7,6 +7,7 @@
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
+#include <veriblock/state_manager.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
@@ -50,14 +51,17 @@ struct PopManager {
    * @throws may throw if out of memory. In this case, payloads also will be
    * reverted.
    */
-  bool addPayloads(const Payloads& payloads, ValidationState& state);
+  bool addPayloads(const Payloads& payloads,
+                   std::shared_ptr<StateChange> stateChange,
+                   ValidationState& state);
 
   /**
    * Atomically revert all payloads from given ATV and VTBs.
    * @param atv altchain to veriblock publication
    * @note does not throw in any circumstance
    */
-  void removePayloads(const Payloads& payloads) noexcept;
+  void removePayloads(const Payloads& payloads,
+                      std::shared_ptr<StateChange> stateChange) noexcept;
 
   bool hasUncommittedChanges() const noexcept;
 
@@ -95,7 +99,9 @@ struct PopManager {
   std::shared_ptr<AltChainParams> altChainParams_;
   ComparePopScore<AltChainParams> altChainCompare_;
 
-  bool addVTB(const VTB& vtb, ValidationState& state);
+  bool addVTB(const VTB& vtb,
+              std::shared_ptr<StateChange> stateChange,
+              ValidationState& state);
   bool addAltProof(const AltProof& payloads, ValidationState& state);
   void removeAltProof(const AltProof& alt) noexcept;
   void removeVTB(const VTB& vtb) noexcept;
