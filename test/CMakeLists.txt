@@ -8,7 +8,7 @@ add_subdirectory(entities)
 
 if(WITH_ROCKSDB)
     addtest(popmanager_test popmanager_test.cpp)
-    target_link_libraries(popmanager_test ${LIB_NAME})
+    target_link_libraries(popmanager_test ${LIB_NAME} rocksdb)
 endif()
 
 addtest(vblake_test vblake_test.cpp)
