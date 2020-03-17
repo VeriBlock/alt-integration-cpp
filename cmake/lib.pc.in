@@ -5,5 +5,5 @@ Name: @LIB_NAME@
 Description: Altchain integration library
 Version: @PROJECT_VERSION@
 URL: https://github.com/VeriBlock/alt-integration-cpp
-Libs: -L${libdir}
+Libs: -L${libdir} -l@LIB_NAME@
 Cflags: -I${includedir}
