@@ -15,7 +15,7 @@ VTB VTB::fromVbkEncoding(ReadStream& stream) {
   return vtb;
 }
 
-VTB VTB::fromVbkEncoding(const std::string& bytes) {
+VTB VTB::fromVbkEncoding(Slice<const uint8_t> bytes) {
   ReadStream stream(bytes);
   return fromVbkEncoding(stream);
 }
