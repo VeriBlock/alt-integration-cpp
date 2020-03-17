@@ -8,6 +8,20 @@ namespace VeriBlock {
 bool PopManager::addPayloads(const Payloads& payloads, ValidationState& state) {
   return tryValidateWithResources(
       [&]() {
+        /// update btc context
+        for (const auto& b : payloads.btccontext) {
+          if (!this->btc().acceptBlock(b, state)) {
+            return state.addStackFunction("addPayloads");
+          }
+        }
+
+        /// update vbk context
+        for (const auto& b : payloads.vbkcontext) {
+          if (!this->vbk().acceptBlock(b, state)) {
+            return state.addStackFunction("addPayloads");
+          }
+        }
+
         /// ADD ALL VTBs
         for (const auto& vtb : payloads.vtbs) {
           if (!this->addVTB(vtb, state)) {
@@ -35,6 +49,16 @@ void PopManager::removePayloads(const Payloads& payloads) noexcept {
   auto& v = payloads.vtbs;
   std::for_each(
       v.rbegin(), v.rend(), [this](const VTB& vtb) { removeVTB(vtb); });
+
+  /// remove vbk context
+  for (const auto& b : payloads.vbkcontext) {
+    this->vbk().invalidateBlockByHash(b.getHash());
+  }
+
+  /// remove btc context
+  for (const auto& b : payloads.btccontext) {
+    this->btc().invalidateBlockByHash(b.getHash());
+  }
 }
 
 bool PopManager::addVTB(const VTB& vtb, ValidationState& state) {
