@@ -200,7 +200,7 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
     return endorsements;
   }
 
-  std::unique_ptr<EndorsementWriteBatch<Endorsement>> newBatch() {
+  std::unique_ptr<EndorsementWriteBatch<Endorsement>> newBatch() override {
     return std::unique_ptr<EndorsementWriteBatchRocks<Endorsement>>(
         new EndorsementWriteBatchRocks<Endorsement>(_db, _endorsedIdHandle));
   }
