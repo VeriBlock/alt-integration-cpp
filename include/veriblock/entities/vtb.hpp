@@ -28,7 +28,7 @@ struct VTB {
    * @param string data bytes to read from
    * @return VTB
    */
-  static VTB fromVbkEncoding(const std::string& bytes);
+  static VTB fromVbkEncoding(Slice<const uint8_t> bytes);
 
   /**
    * Convert VTB to data stream using Vbk byte format

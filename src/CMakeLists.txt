@@ -21,6 +21,7 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD}
+        ${CMAKE_SOURCE_DIR}/include/veriblock/alt-util.hpp
         popmanager.cpp
         checks.cpp
         serde.cpp
@@ -47,7 +48,7 @@ endif()
 
 # install step is only for unix, for now...
 
-set_target_properties(PROPERTIES
+set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
         SOVERSION ${VERSION}
         INTERFACE_${LIB_NAME}_MAJOR_VERSION ${MAJOR_VERSION}
