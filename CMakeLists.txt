@@ -6,8 +6,16 @@ if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-project(alt-integration C CXX)
 
+
+set(LIB_NAME altintegration)
+set(MAJOR_VERSION 1 CACHE STRING "Major version")
+set(MINOR_VERSION 0 CACHE STRING "Minor version")
+set(PATCH_VERSION 0 CACHE STRING "Patch version")
+set(VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}" CACHE STRING "Version")
+project(${LIB_NAME} VERSION ${VERSION} LANGUAGES C CXX)
+
+include(GNUInstallDirs)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(cmake/functions.cmake)
@@ -16,7 +24,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
 
 
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
@@ -27,12 +38,17 @@ option(COVERAGE     "Enable coverage" OFF)
 option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 option(WITH_ROCKSDB "Enable RocksDB storage" ON)
+option(SHARED       "Build shared lib" ON)
 
 if (WIN32)
   set(FIND_ROCKSDB_DEFAULT TRUE)
 else()
   set(FIND_ROCKSDB_DEFAULT FALSE)
 endif()
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 option(FIND_ROCKSDB "Use \"ON\" to search for RocksDB in installed packages" ${FIND_ROCKSDB_DEFAULT})
 
@@ -87,10 +103,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/wd4127)                  # disable warning: conditional expression is constant
 endif()
 
-include(GNUInstallDirs)
-
 include_directories(include)
-
 add_subdirectory(src)
 
 if(CLANG_TIDY)
