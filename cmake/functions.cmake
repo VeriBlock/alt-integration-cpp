@@ -22,9 +22,6 @@ function(addtest test_name)
             COMMAND $<TARGET_FILE:${test_name}>
     )
     set_target_properties(${test_name} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_bin
-            ARCHIVE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/test_lib
-            LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/test_lib
             CXX_STANDARD 17
             CXX_STANDARD_REQUIRED TRUE
             )

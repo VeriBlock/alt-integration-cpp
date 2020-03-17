@@ -31,7 +31,7 @@ struct ATV {
    * @param string data bytes to read from
    * @return ATV
    */
-  static ATV fromVbkEncoding(const std::string& bytes);
+  static ATV fromVbkEncoding(Slice<const uint8_t> bytes);
 
   /**
    * Convert ATV to data stream using Vbk byte format
