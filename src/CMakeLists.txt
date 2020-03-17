@@ -50,7 +50,7 @@ endif()
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
-        SOVERSION ${VERSION}
+        SOVERSION ${MAJOR_VERSION}
         INTERFACE_${LIB_NAME}_MAJOR_VERSION ${MAJOR_VERSION}
         )
 set_property(
