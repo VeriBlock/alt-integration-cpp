@@ -66,7 +66,7 @@ struct PopManager {
   bool hasUncommittedChanges() const noexcept;
 
   /// removes all uncommitted payloads
-  void rollback() noexcept;
+  void rollback(std::shared_ptr<StateChange> stateChange) noexcept;
 
   /// commit currently uncommitted payloads
   void commit();
@@ -102,9 +102,13 @@ struct PopManager {
   bool addVTB(const VTB& vtb,
               std::shared_ptr<StateChange> stateChange,
               ValidationState& state);
-  bool addAltProof(const AltProof& payloads, ValidationState& state);
-  void removeAltProof(const AltProof& alt) noexcept;
-  void removeVTB(const VTB& vtb) noexcept;
+  bool addAltProof(const AltProof& payloads,
+                   std::shared_ptr<StateChange> stateChange,
+                   ValidationState& state);
+  void removeAltProof(const AltProof& alt,
+                      std::shared_ptr<StateChange> stateChange) noexcept;
+  void removeVTB(const VTB& vtb,
+                 std::shared_ptr<StateChange> stateChange) noexcept;
 };
 
 }  // namespace VeriBlock
