@@ -18,7 +18,7 @@ bool PopManager::addPayloads(const Payloads& payloads,
         }
 
         /// ADD ATV
-        if (!this->addAltProof(payloads.alt, state)) {
+        if (!this->addAltProof(payloads.alt, stateChange, state)) {
           return state.addStackFunction("addPayloads");
         }
 
