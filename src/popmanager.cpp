@@ -65,7 +65,7 @@ bool PopManager::addVTB(const VTB& vtb,
   // thirdly, add vbk context blocks
   for (const auto& block : vtb.context) {
     BlockIndex<VbkBlock> index;
-    if (!vbk_->acceptBlock(block, state)) {
+    if (!vbk_->acceptBlock(block, state, &index)) {
       return state.addStackFunction("addVTB");
     }
     stateChange->putVbkBlock(index);
