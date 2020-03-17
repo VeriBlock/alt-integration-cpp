@@ -45,45 +45,51 @@ if(WITH_ROCKS)
     target_link_libraries(${LIB_NAME} rocksdb)
 endif()
 
-set_target_properties(PROPERTIES
-        VERSION ${SOVERSION}
-        SOVERSION ${SOVERSION}
-        INTERFACE_alt-integration_MAJOR_VERSION ${MAJOR_VERSION}
-        )
-set_property(
-        TARGET ${LIB_NAME}
-        APPEND PROPERTY
-        COMPATIBLE_INTERFACE_STRING MAJOR_VERSION
-)
-install(TARGETS ${LIB_NAME}
-        EXPORT ${LIB_NAME}Config
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
-        )
-install(
-        DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-install(
-        EXPORT ${LIB_NAME}Config
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
-        NAMESPACE veriblock::
-)
-export(
-        TARGETS ${LIB_NAME}
-        FILE ${LIB_NAME}Config.cmake
-)
-target_include_directories(${LIB_NAME}
-        INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-        )
+if(UNIX)
+    # install step is only for unix, for now...
 
-set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
-configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
-install(FILES "${configured_pc}"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+    set_target_properties(PROPERTIES
+            VERSION ${VERSION}
+            SOVERSION ${VERSION}
+            INTERFACE_${LIB_NAME}_MAJOR_VERSION ${MAJOR_VERSION}
+            )
+    set_property(
+            TARGET ${LIB_NAME}
+            APPEND PROPERTY
+            COMPATIBLE_INTERFACE_STRING MAJOR_VERSION
+    )
+    install(TARGETS ${LIB_NAME}
+            EXPORT ${LIB_NAME}Config
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+            )
+    install(
+            DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+    install(
+            EXPORT ${LIB_NAME}Config
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
+            NAMESPACE veriblock::
+    )
+    export(
+            TARGETS ${LIB_NAME}
+            FILE ${LIB_NAME}Config.cmake
+    )
+    target_include_directories(${LIB_NAME}
+            INTERFACE
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+            )
+
+    set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
+    configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
+    install(FILES "${configured_pc}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+else()
+    message(WARNING "Windows install is not supported yet")
+endif()

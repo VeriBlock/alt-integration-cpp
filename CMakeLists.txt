@@ -7,11 +7,13 @@ if(CCACHE_FOUND)
 endif(CCACHE_FOUND)
 
 
-set(MAJOR_VERSION 1)
-set(MINOR_VERSION 0)
-set(PATCH_VERSION 0)
-set(SOVERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")
-project(alt-integration VERSION ${SOVERSION} LANGUAGES C CXX)
+
+set(LIB_NAME altintegration)
+set(MAJOR_VERSION 1 CACHE STRING "Major version")
+set(MINOR_VERSION 0 CACHE STRING "Minor version")
+set(PATCH_VERSION 0 CACHE STRING "Patch version")
+set(VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}" CACHE STRING "Version")
+project(${LIB_NAME} VERSION ${VERSION} LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 include(CheckCCompilerFlag)
@@ -24,6 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
@@ -96,7 +99,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 include_directories(include)
-set(LIB_NAME altintegration)
 add_subdirectory(src)
 
 if(CLANG_TIDY)
