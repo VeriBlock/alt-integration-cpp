@@ -200,7 +200,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   altProof.containing = makeAltBlock(*alt->getBestChain().tip());
 
   // apply payloads to our current view
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs}, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, state))
       << state.GetRejectReason();
 
   altpop->commit();
