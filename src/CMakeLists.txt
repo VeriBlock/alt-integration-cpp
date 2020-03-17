@@ -47,7 +47,7 @@ endif()
 
 # install step is only for unix, for now...
 
-set_target_properties(PROPERTIES
+set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
         SOVERSION ${VERSION}
         INTERFACE_${LIB_NAME}_MAJOR_VERSION ${MAJOR_VERSION}
