@@ -106,8 +106,7 @@ Container_t getModifiedContainer();
 
 template <>
 VTB getDefaultContainer() {
-  return VTB::fromVbkEncoding(
-      std::string(defaultVtbEncoded.begin(), defaultVtbEncoded.end()));
+  return VTB::fromVbkEncoding(defaultVtbEncoded);
 }
 
 template <>
@@ -121,16 +120,14 @@ AltProof getDefaultContainer() {
                           },
                           1247,
                           1425};
-  container.atv = ATV::fromVbkEncoding(
-      std::string(defaultAtvEncoded.begin(), defaultAtvEncoded.end()));
+  container.atv = ATV::fromVbkEncoding(defaultAtvEncoded);
 
   return container;
 }
 
 template <>
 VTB getModifiedContainer() {
-  VTB vtb = VTB::fromVbkEncoding(
-      std::string(defaultVtbEncoded.begin(), defaultVtbEncoded.end()));
+  VTB vtb = VTB::fromVbkEncoding(defaultVtbEncoded);
   vtb.transaction.bitcoinTransaction = BtcTx({1, 2, 3});
   return vtb;
 }
@@ -146,8 +143,7 @@ AltProof getModifiedContainer() {
                           },
                           1247,
                           1425};
-  container.atv = ATV::fromVbkEncoding(
-      std::string(defaultAtvEncoded.begin(), defaultAtvEncoded.end()));
+  container.atv = ATV::fromVbkEncoding(defaultAtvEncoded);
 
   container.atv.transaction.sourceAmount = Coin(213);
   return container;
