@@ -5,7 +5,7 @@
 
 #include "veriblock/serde.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct Coin {
   int64_t units{};
@@ -34,7 +34,7 @@ struct Coin {
    */
   bool operator==(const Coin& other) const noexcept;
 
-};  // namespace VeriBlock
+};
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_

@@ -5,7 +5,7 @@
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 template <>
 ArithUint256 getBlockProof(const VbkBlock& block) {
@@ -245,4 +245,4 @@ bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
   return true;
 }
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib

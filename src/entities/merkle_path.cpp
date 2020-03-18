@@ -1,6 +1,6 @@
 #include "veriblock/entities/merkle_path.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 MerklePath MerklePath::fromRaw(ReadStream& stream, const uint256& subject) {
   MerklePath path{};

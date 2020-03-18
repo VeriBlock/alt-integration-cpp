@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct AltChainParams {
   virtual ~AltChainParams() = default;
@@ -17,6 +17,6 @@ struct AltChainParams {
   }
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif

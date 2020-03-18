@@ -6,7 +6,7 @@
 
 #include "veriblock/serde.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct AltBlock {
   using height_t = int32_t;
@@ -46,6 +46,6 @@ struct AltBlock {
   hash_t getHash() const { return hash; }
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_

@@ -11,7 +11,7 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/serde.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct ATV {
   VbkTx transaction{};
@@ -46,6 +46,6 @@ struct ATV {
   std::vector<uint8_t> toVbkEncoding() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ATV_HPP_

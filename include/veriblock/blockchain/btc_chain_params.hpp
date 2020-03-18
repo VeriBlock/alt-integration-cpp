@@ -7,7 +7,7 @@
 #include <veriblock/uint.hpp>
 #include <veriblock/validation_state.hpp>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct BtcChainParams {
   virtual ~BtcChainParams() = default;
@@ -141,6 +141,6 @@ struct BtcChainParamsRegTest : public BtcChainParams {
   }
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_CHAIN_PARAMS_HPP_

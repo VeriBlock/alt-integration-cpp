@@ -14,7 +14,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/slice.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct VbkPopTx {
   using hash_t = uint256;
@@ -68,6 +68,6 @@ struct VbkPopTx {
   hash_t getHash() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKPOPTX_HPP_

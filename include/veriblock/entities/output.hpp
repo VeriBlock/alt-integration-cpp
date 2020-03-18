@@ -4,7 +4,7 @@
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/coin.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct Output {
   Address address{};
@@ -36,6 +36,6 @@ struct Output {
   void toVbkEncoding(WriteStream& stream) const;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_OUTPUT_HPP_

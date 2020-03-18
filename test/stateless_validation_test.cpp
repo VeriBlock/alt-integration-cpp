@@ -7,7 +7,7 @@
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 static const BtcBlock validBtcBlock = {
     536870912,

@@ -6,7 +6,7 @@
 
 #define VBLAKE_HASH_SIZE 24
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 /**
  * State context.
  */
@@ -50,6 +50,6 @@ int vblake(void *out,  // return buffer for digest
            const void *in,
            size_t inlen);  // data to be hashed
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_VBLAKE_HPP

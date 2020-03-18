@@ -11,7 +11,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct MerklePath {
   int32_t index{};
@@ -51,6 +51,6 @@ struct MerklePath {
   uint256 calculateMerkleRoot() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_

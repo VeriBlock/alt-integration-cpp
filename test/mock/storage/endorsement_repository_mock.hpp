@@ -3,7 +3,7 @@
 
 #include <veriblock/storage/endorsement_repository.hpp>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 template <typename Endorsement>
 struct EndorsementRepositoryMock : public EndorsementRepository<Endorsement> {
@@ -22,6 +22,6 @@ struct EndorsementRepositoryMock : public EndorsementRepository<Endorsement> {
   MOCK_CONST_METHOD1_T(get, std::vector<Endorsement>(const endorsed_hash_t&));
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_BTC_ENDORSEMENT_REPOSITORY_MOCK_H

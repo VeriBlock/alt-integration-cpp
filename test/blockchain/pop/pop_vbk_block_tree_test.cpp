@@ -13,7 +13,7 @@
 #include "veriblock/storage/endorsement_repository_inmem.hpp"
 #include "veriblock/time.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 struct VbkBlockTreeTestFixture : ::testing::Test {
   std::shared_ptr<VbkBlockTree> vbkTest;

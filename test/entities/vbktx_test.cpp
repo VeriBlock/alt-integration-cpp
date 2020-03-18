@@ -4,7 +4,7 @@
 
 #include "util/literals.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 static const PublicationData publicationData{0, ""_v, ""_v, ""_v};
 static const std::vector<uint8_t> emptyBytes64(64);

@@ -58,12 +58,12 @@ static std::vector<TestCase> g_Cases = {
 
 TEST_P(Base59Test, Encode) {
   auto tc = GetParam();
-  EXPECT_EQ(VeriBlock::EncodeBase59(tc.binData), tc.baseData);
+  EXPECT_EQ(AltIntegrationLib::EncodeBase59(tc.binData), tc.baseData);
 }
 
 TEST_P(Base59Test, Decode) {
   auto tc = GetParam();
-  EXPECT_EQ(VeriBlock::DecodeBase59(tc.baseData), tc.binData);
+  EXPECT_EQ(AltIntegrationLib::DecodeBase59(tc.baseData), tc.binData);
 }
 
 INSTANTIATE_TEST_SUITE_P(Base59Regression,

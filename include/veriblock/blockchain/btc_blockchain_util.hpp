@@ -7,7 +7,7 @@
 #include <veriblock/blockchain/miner.hpp>
 #include <veriblock/entities/btcblock.hpp>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 template <>
 uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
@@ -35,6 +35,6 @@ bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
                             ValidationState& state,
                             const BtcChainParams& params);
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BTC_BLOCKCHAIN_UTIL_HPP_

@@ -24,7 +24,7 @@ struct hash<std::vector<uint8_t>> {
 
 }  // namespace std
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 template <typename Endorsement>
 struct EndorsementCursorInmem
@@ -166,6 +166,6 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
   // clang-format on
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_BTC_ENDORSEMENTS_REPOSITORY_INMEM_HPP_

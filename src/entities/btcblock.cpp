@@ -1,6 +1,6 @@
 #include "veriblock/entities/btcblock.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 BtcBlock BtcBlock::fromRaw(const std::vector<uint8_t>& bytes) {
   ReadStream stream(bytes);
