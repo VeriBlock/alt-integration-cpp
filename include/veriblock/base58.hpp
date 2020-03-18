@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 std::string EncodeBase58(const unsigned char *pbegin,
                          const unsigned char *pend);
@@ -21,6 +21,6 @@ std::string EncodeBase58(const T &container) {
 
 std::vector<uint8_t> DecodeBase58(const std::string &str);
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif

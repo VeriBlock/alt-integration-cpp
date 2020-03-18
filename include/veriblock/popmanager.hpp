@@ -11,7 +11,7 @@
 #include <veriblock/storage/endorsement_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 /**
  * @invariant does not modify any on-disk state.
  */
@@ -107,6 +107,6 @@ struct PopManager {
   void removeVTB(const VTB& vtb, StateChange& stateChange) noexcept;
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPMANAGER_HPP_

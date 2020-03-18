@@ -12,7 +12,7 @@
  * Now it is tinyfmt, but can be any.
  */
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 /**
  * A facade for a printf-like formatting.
@@ -22,6 +22,6 @@ std::string format(const char* fmt, const Args&... args) {
   return tinyformat::format(fmt, args...);
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_FMT_HPP_

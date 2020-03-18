@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 /**
  * Binary writer that is useful during binary serialization.
@@ -50,6 +50,6 @@ class WriteStream {
   std::vector<uint8_t> m_data;
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_WRITE_STREAM_HPP

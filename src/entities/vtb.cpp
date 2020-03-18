@@ -1,6 +1,6 @@
 #include "veriblock/entities/vtb.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 VTB VTB::fromVbkEncoding(ReadStream& stream) {
   VTB vtb{};

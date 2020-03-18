@@ -8,7 +8,7 @@
 #include "veriblock/state_utils.hpp"
 #include "veriblock/storage/repository_rocks_manager.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 // DB name
 static const std::string dbName = "db-test";

@@ -3,7 +3,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/payloads.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 static const PublicationData publicationData{
     0, "header bytes"_v, "payout info bytes"_v, "context info bytes"_v};

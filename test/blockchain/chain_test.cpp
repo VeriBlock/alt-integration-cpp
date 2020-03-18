@@ -4,7 +4,7 @@
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/fmt.hpp>
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 using ::testing::_;
 using ::testing::Field;
 using ::testing::Return;

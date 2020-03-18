@@ -6,7 +6,7 @@
 
 #include "veriblock/serde.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 struct PublicationData {
   int64_t identifier{};
@@ -36,6 +36,6 @@ struct PublicationData {
   void toRaw(WriteStream& stream) const;
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_PUBLICATION_DATA_HPP_

@@ -9,7 +9,7 @@
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/time.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
                                                   int32_t deltaTime_change,

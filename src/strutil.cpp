@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 static const signed char p_util_hexdigit[256] = {
     -1, -1,  -1,  -1,  -1,  -1,  -1,  -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -58,4 +58,4 @@ std::vector<uint8_t> toBytes(const std::string input) {
   return std::vector<uint8_t>(input.begin(), input.end());
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

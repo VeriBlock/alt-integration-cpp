@@ -3,7 +3,7 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/popmanager.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 bool PopManager::addPayloads(const Payloads& payloads,
                              StateChange& stateChange,
@@ -189,4 +189,4 @@ int PopManager::compareTwoBranches(const Chain<AltBlock>& chain1,
   return altChainCompare_(kcChain1, kcChain2);
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

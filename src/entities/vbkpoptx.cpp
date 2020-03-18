@@ -1,6 +1,6 @@
 #include "veriblock/entities/vbkpoptx.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 VbkPopTx VbkPopTx::fromRaw(ReadStream& stream,
                            Slice<const uint8_t> _signature,

@@ -7,7 +7,7 @@
  * Contains checks for range, limits etc
  */
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 /**
  * Checks if expression 'min' <= 'num' <= 'max' is true. If false, throws.
@@ -18,6 +18,6 @@ namespace AltIntegrationLib {
  */
 void checkRange(int64_t num, int64_t min, int64_t max);
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_CHECKS_HPP

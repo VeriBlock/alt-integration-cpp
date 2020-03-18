@@ -10,7 +10,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 struct VbkBlock {
   using hash_t = uint192;
@@ -107,6 +107,6 @@ struct VbkBlock {
   hash_t getHash() const;
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKBLOCK_HPP_

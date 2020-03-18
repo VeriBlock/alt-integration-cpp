@@ -16,7 +16,7 @@
  * Contains veriblock-specific serialization and deserialziation primitives.
  */
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 /**
  * Converts the input to the byte array and trims it's size to the
@@ -204,6 +204,6 @@ std::vector<T> readArrayOf(ReadStream& stream,
   return items;
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_SERDE_HPP

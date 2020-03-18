@@ -4,7 +4,7 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 static const BtcBlock defaultBlock{
     536870912u,

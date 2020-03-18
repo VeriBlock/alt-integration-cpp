@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <veriblock/consts.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 bool isKeystone(int blockNumber, int keystoneInterval);
 int highestKeystoneAtOrBefore(int blockNumber, int keystoneInterval);
@@ -15,6 +15,6 @@ int highestBlockWhichConnectsKeystoneToPrevious(int blockNumberOfKeystone,
 bool isCrossedKeystoneBoundary(int bottomHeight,
                                int tipHeight,
                                int keystoneInterval);
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_KEYSTONE_UTIL_HPP_

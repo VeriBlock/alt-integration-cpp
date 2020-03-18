@@ -3,7 +3,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/endorsement.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 static const BtcEndorsement btcDefaultEndorsement{
     uint256(

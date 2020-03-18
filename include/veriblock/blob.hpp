@@ -9,7 +9,7 @@
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 template <size_t N>
 struct Blob {
@@ -184,13 +184,13 @@ void PrintTo(const Blob<size>& blob, ::std::ostream* os) {
   *os << blob.toHex();
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 namespace std {
 
 template <size_t N>
-struct hash<AltIntegrationLib::Blob<N>> {
-  size_t operator()(const AltIntegrationLib::Blob<N>& x) const {
+struct hash<altintegration::Blob<N>> {
+  size_t operator()(const altintegration::Blob<N>& x) const {
     return std::hash<std::string>{}(std::string{x.begin(), x.end()});
   }
 };

@@ -4,7 +4,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/stateless_validation.hpp>
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 template <typename T>
 struct ParamsTest : public ::testing::Test {};

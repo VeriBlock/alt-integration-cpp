@@ -1,6 +1,6 @@
 #include <veriblock/entities/endorsement.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 template <>
 BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream) {
@@ -110,4 +110,4 @@ VbkEndorsement::id_t VbkEndorsement::getId(const AltProof& c) {
   return c.atv.transaction.getHash();
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

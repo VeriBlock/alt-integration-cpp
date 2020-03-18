@@ -7,7 +7,7 @@
 
 inline std::vector<uint8_t> operator""_unhex(const char *str, size_t size) {
   std::string hex{str, str + size};
-  return AltIntegrationLib::ParseHex(hex);
+  return altintegration::ParseHex(hex);
 }
 
 inline std::vector<uint8_t> operator""_v(const char *str, size_t size) {

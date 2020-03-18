@@ -10,7 +10,7 @@
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 struct BlockchainFixture {
   using block_t = VbkBlock;

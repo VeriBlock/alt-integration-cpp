@@ -7,7 +7,7 @@
 
 #include "slice.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 /**
  * Binary reading stream, that is useful during binary deserialization.
@@ -98,6 +98,6 @@ class ReadStream {
   size_t m_Size = 0;
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif

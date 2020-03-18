@@ -2,7 +2,7 @@
 
 #include "veriblock/arith_uint256.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 ArithUint256 ArithUint256::fromBits(uint32_t bits,
                                     bool* negative,

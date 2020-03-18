@@ -9,7 +9,7 @@
 #include "veriblock/state_manager.hpp"
 #include "veriblock/validation_state.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 template <typename Block_t, typename ChainParams_t>
 bool loadBlockTree(
@@ -39,6 +39,6 @@ bool loadBlockTree(
   return true;
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif
