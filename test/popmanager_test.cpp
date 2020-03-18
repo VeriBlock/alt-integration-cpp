@@ -4,9 +4,13 @@
 #include <random>
 #include <veriblock/mock_miner.hpp>
 #include <veriblock/popmanager.hpp>
+#include <veriblock/state_manager.hpp>
 #include <veriblock/storage/endorsement_repository_inmem.hpp>
+#include <veriblock/storage/repository_rocks_manager.hpp>
 
 using namespace VeriBlock;
+
+static const std::string dbName = "db_test";
 
 struct PopManagerTest : public ::testing::Test {
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
@@ -27,7 +31,9 @@ struct PopManagerTest : public ::testing::Test {
 
   std::shared_ptr<PopManager> altpop;
 
-  PopManagerTest() {
+  StateManager<RepositoryRocksManager> stateManager;
+
+  PopManagerTest() : stateManager(dbName) {
     altChainParams = std::make_shared<AltChainParams>();
 
     btce = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
@@ -84,6 +90,8 @@ struct PopManagerTest : public ::testing::Test {
 };
 
 TEST_F(PopManagerTest, Scenario1) {
+  std::unique_ptr<StateChange> change = stateManager.newChange();
+
   // @given: BTC, VBK and ALT chains
   // BTC has genesis + 5 blocks
   EXPECT_TRUE(apm.mineBtcBlocks(5, state));
@@ -121,7 +129,7 @@ TEST_F(PopManagerTest, Scenario1) {
   altProof.containing = makeAltBlock(*alt->getBestChain().tip());
 
   // apply payloads to our current view
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs}, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
       << state.GetRejectReason();
   // these payloads are not committed yet
   ASSERT_TRUE(altpop->hasUncommittedChanges());
@@ -133,14 +141,14 @@ TEST_F(PopManagerTest, Scenario1) {
             *apm.vbk().getBestChain().tip()->pprev);
 
   // rollback last addPayloads
-  altpop->rollback();
+  altpop->rollback(*change);
 
   // our local view changed to previous state
   ASSERT_EQ(altpop->btc().getBestChain().tip()->getHash(), last_btc);
   ASSERT_EQ(altpop->vbk().getBestChain().tip()->getHash(), last_vbk);
 
   // add same payloads again
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs}, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
       << state.GetRejectReason();
   // these payloads are not committed yet
   ASSERT_TRUE(altpop->hasUncommittedChanges());
@@ -156,7 +164,7 @@ TEST_F(PopManagerTest, Scenario1) {
             *apm.vbk().getBestChain().tip()->pprev);
 
   // finally, do rollback again. this should be NOOP
-  altpop->rollback();
+  altpop->rollback(*change);
 
   // our local view on btc/vbk chains is still correct
   ASSERT_EQ(*altpop->btc().getBestChain().tip(),
@@ -166,6 +174,7 @@ TEST_F(PopManagerTest, Scenario1) {
 }
 
 TEST_F(PopManagerTest, compareTwoBranches_test) {
+  std::unique_ptr<StateChange> change = stateManager.newChange();
   // ALT has genesis + 102 blocks
   std::vector<BtcBlock> altfork1{btcp->getGenesisBlock()};
   mineChain(*alt, altfork1, 102);
@@ -200,7 +209,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   altProof.containing = makeAltBlock(*alt->getBestChain().tip());
 
   // apply payloads to our current view
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
       << state.GetRejectReason();
 
   altpop->commit();

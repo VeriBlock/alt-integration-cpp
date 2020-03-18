@@ -64,7 +64,7 @@ struct BlockCursorRocks : public Cursor<typename Block::hash_t, Block> {
 };
 
 template <typename Block>
-struct WriteBatchRocks : public WriteBatch<Block> {
+struct BlockWriteBatchRocks : public BlockWriteBatch<Block> {
   //! stored block type
   using stored_block_t = Block;
   //! block has type
@@ -72,8 +72,8 @@ struct WriteBatchRocks : public WriteBatch<Block> {
   //! block height type
   using height_t = typename Block::height_t;
 
-  WriteBatchRocks(std::shared_ptr<rocksdb::DB> db,
-                  std::shared_ptr<cf_handle_t> hashBlockHandle)
+  BlockWriteBatchRocks(std::shared_ptr<rocksdb::DB> db,
+                       std::shared_ptr<cf_handle_t> hashBlockHandle)
       : _db(std::move(db)), _hashBlockHandle(std::move(hashBlockHandle)) {}
 
   void put(const stored_block_t& block) override {
@@ -213,9 +213,9 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     return;
   }
 
-  std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
-    return std::unique_ptr<WriteBatchRocks<stored_block_t>>(
-        new WriteBatchRocks<stored_block_t>(_db, _hashBlockHandle));
+  std::unique_ptr<BlockWriteBatch<stored_block_t>> newBatch() override {
+    return std::unique_ptr<BlockWriteBatchRocks<stored_block_t>>(
+        new BlockWriteBatchRocks<stored_block_t>(_db, _hashBlockHandle));
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
