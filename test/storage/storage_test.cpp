@@ -5,7 +5,7 @@
 #include "veriblock/storage/repository_rocks_manager.hpp"
 #include "veriblock/uint.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 struct BlockBasic {
   using hash_t = uint256;

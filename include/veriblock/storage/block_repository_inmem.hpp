@@ -7,7 +7,7 @@
 
 #include "veriblock/storage/block_repository.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 template <typename Block>
 struct BlockCursorInmem : public Cursor<typename Block::hash_t, Block> {
@@ -202,6 +202,6 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   std::unordered_map<hash_t, std::shared_ptr<stored_block_t>> _hash;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_INMEM_HPP_

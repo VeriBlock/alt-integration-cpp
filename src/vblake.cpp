@@ -9,7 +9,7 @@
 #define _countof(x) (sizeof(x) / sizeof(x[0]))
 #endif
 
-namespace VeriBlock {
+namespace altintegration {
 //==========================================================================================
 //                      CONSTS
 //==========================================================================================
@@ -299,4 +299,4 @@ int vblake(void *out, const void *in, size_t inlen) {
   return 0;
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration

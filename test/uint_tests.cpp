@@ -6,7 +6,7 @@
 #include "util/literals.hpp"
 #include "veriblock/uint.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 TEST(uint256, uint256_compareTest) {
   uint256 hash1(

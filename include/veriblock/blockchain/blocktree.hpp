@@ -12,7 +12,7 @@
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 /**
  * BlockTree is a tree of blocks with single "bootstrap" block as root.
@@ -354,8 +354,8 @@ struct BlockTree {
       addForkCandidate(&indexNew, indexNew.pprev);
     }
   }
-};  // namespace VeriBlock
+};
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_

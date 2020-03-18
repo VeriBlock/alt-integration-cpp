@@ -3,7 +3,7 @@
 
 #include <functional>
 
-namespace VeriBlock {
+namespace altintegration {
 
 /**
  * Finalizer holds a function that is executed on
@@ -44,6 +44,6 @@ inline bool tryValidateWithResources(const std::function<bool()>& action,
   }
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_FINALIZER_HPP_

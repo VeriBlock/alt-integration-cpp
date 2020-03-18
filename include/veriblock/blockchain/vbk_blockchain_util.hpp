@@ -7,7 +7,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 template <>
 uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& currentTip,
@@ -40,6 +40,6 @@ bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                             ValidationState& state,
                             const VbkChainParams& params);
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCKCHAIN_UTIL_HPP_

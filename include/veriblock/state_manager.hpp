@@ -11,7 +11,7 @@
 #include "veriblock/storage/block_repository.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 class StateChange {
  public:
@@ -124,8 +124,8 @@ class StateManager {
                         database.getVbkEndorsementRepo()));
   }
 
-  status_t commit(std::shared_ptr<StateChange> change) {
-    change->commit();
+  status_t commit(StateChange& change) {
+    change.commit();
     return database.flush();
   }
 
@@ -143,6 +143,6 @@ class StateManager {
   }
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ! ALT_INTEGRATION_VERIBLOCK

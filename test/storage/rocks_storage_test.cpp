@@ -5,7 +5,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/storage/repository_rocks_manager.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 static const BtcBlock btcBlock1{
     536870912u,

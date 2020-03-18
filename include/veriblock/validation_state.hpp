@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace VeriBlock {
+namespace altintegration {
 
 /**
  * Class that is used for storing validation state.
@@ -76,6 +76,6 @@ class ValidationState {
   std::vector<std::string> stack_trace;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_VALIDATION_STATE_HPP_

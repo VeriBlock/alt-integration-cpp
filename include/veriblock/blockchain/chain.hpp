@@ -6,7 +6,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/storage/block_repository.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 /**
  * Fully in-memory chain representation.
@@ -127,6 +127,6 @@ struct Chain {
   }
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_CHAIN_HPP_

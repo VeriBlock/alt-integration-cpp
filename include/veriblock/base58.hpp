@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace VeriBlock {
+namespace altintegration {
 
 std::string EncodeBase58(const unsigned char *pbegin,
                          const unsigned char *pend);
@@ -21,6 +21,6 @@ std::string EncodeBase58(const T &container) {
 
 std::vector<uint8_t> DecodeBase58(const std::string &str);
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif

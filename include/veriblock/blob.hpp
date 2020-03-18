@@ -9,7 +9,7 @@
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 template <size_t N>
 struct Blob {
@@ -176,7 +176,7 @@ struct Blob {
   }
 
   storage_t data_;
-};  // namespace VeriBlock
+};
 
 /// custom gtest printer, which prints Blob of any size as hexstring
 template <size_t size>
@@ -184,13 +184,13 @@ void PrintTo(const Blob<size>& blob, ::std::ostream* os) {
   *os << blob.toHex();
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 namespace std {
 
 template <size_t N>
-struct hash<VeriBlock::Blob<N>> {
-  size_t operator()(const VeriBlock::Blob<N>& x) const {
+struct hash<altintegration::Blob<N>> {
+  size_t operator()(const altintegration::Blob<N>& x) const {
     return std::hash<std::string>{}(std::string{x.begin(), x.end()});
   }
 };

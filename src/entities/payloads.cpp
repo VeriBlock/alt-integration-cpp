@@ -1,6 +1,6 @@
 #include "veriblock/entities/payloads.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 AltProof AltProof::fromVbkEncoding(ReadStream& stream) {
   AltProof altProof{};
