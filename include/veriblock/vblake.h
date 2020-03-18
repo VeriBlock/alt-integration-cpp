@@ -6,7 +6,7 @@
 
 #define VBLAKE_HASH_SIZE 24
 
-namespace AltIntegrationLib {
+namespace altintegration {
 /**
  * State context.
  */
@@ -50,6 +50,6 @@ int vblake(void *out,  // return buffer for digest
            const void *in,
            size_t inlen);  // data to be hashed
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_VBLAKE_HPP

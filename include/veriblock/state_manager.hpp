@@ -11,7 +11,7 @@
 #include "veriblock/storage/block_repository.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 class StateChange {
  public:
@@ -143,6 +143,6 @@ class StateManager {
   }
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ! ALT_INTEGRATION_VERIBLOCK

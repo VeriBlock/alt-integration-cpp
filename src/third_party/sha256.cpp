@@ -55,7 +55,7 @@
   }
 #endif
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 /*
  * SHA-256 context setup
@@ -290,4 +290,4 @@ void sha256(unsigned char output[32],
   memset(&ctx, 0, sizeof(sha256_context));
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

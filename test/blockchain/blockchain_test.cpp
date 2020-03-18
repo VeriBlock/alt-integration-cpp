@@ -11,7 +11,7 @@
 #include "veriblock/time.hpp"
 #include "util/visualize.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 template <typename TestCase>
 struct BlockchainTest : public ::testing::Test {

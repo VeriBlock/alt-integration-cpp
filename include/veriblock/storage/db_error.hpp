@@ -3,7 +3,7 @@
 
 #include "veriblock/storage/block_repository.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 namespace db {
 
@@ -47,6 +47,6 @@ class DbError : public Error {
 
 }  // namespace db
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  //ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_DB_ERROR_HPP_

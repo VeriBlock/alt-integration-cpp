@@ -1,5 +1,3 @@
-#include "veriblock/third_party/secp256k1.h"
-
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -7,6 +5,7 @@
 #include "util/literals.hpp"
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
+#include "veriblock/third_party/secp256k1.h"
 
 static const auto defaultPrivateKey =
     "aa4eca67cf7573eaedab283fb5f7c638ec0a9e99583a27288a07e5533b4d6d75"_unhex;
@@ -66,11 +65,11 @@ TEST(SECP256K1, Sign) {
 
   secp256k1_ecdsa_signature signature;
   int ret = secp256k1_ecdsa_sign(ctx,
-                       &signature,
-                       defaultMessage.data(),
-                       defaultPrivateKey.data(),
-                       NULL,
-                       NULL);
+                                 &signature,
+                                 defaultMessage.data(),
+                                 defaultPrivateKey.data(),
+                                 NULL,
+                                 NULL);
 
   EXPECT_EQ(ret, 1);
 
@@ -78,8 +77,8 @@ TEST(SECP256K1, Sign) {
   secp256k1_ecdsa_signature_serialize_compact(ctx, sig, &signature);
   secp256k1_context_destroy(ctx);
 
-  AltIntegrationLib::Slice<uint8_t> signatureSlice(sig, 64);
-  auto signatureHex = AltIntegrationLib::HexStr(signatureSlice);
-  auto defaultSignatureHex = AltIntegrationLib::HexStr(defaultSignatureCompact);
+  altintegration::Slice<uint8_t> signatureSlice(sig, 64);
+  auto signatureHex = altintegration::HexStr(signatureSlice);
+  auto defaultSignatureHex = altintegration::HexStr(defaultSignatureCompact);
   EXPECT_EQ(signatureHex, defaultSignatureHex);
 }

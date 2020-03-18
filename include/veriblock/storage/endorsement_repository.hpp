@@ -12,7 +12,7 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/storage/cursor.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 /**
  * @class EndorsementWriteBatch
@@ -90,6 +90,6 @@ void endorsementRepositoryCopy(
   }
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_BTC_ENDORSEMENTS_REPOSITORY_HPP_

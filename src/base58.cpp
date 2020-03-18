@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 inline bool ValidAsCString(const std::string &str) noexcept {
   return str.size() == strlen(str.c_str());
@@ -166,4 +166,4 @@ std::vector<uint8_t> DecodeBase58(const std::string &str) {
   return vch;
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

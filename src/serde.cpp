@@ -1,6 +1,6 @@
 #include <veriblock/serde.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 std::vector<uint8_t> trimmedArray(int64_t input) {
   size_t x = sizeof(int64_t);
@@ -75,4 +75,4 @@ void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
   stream.writeBE<uint8_t>(networkOrType.typeId);
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

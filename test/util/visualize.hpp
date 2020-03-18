@@ -6,7 +6,7 @@
 
 /// Contains utils to create DOT files
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 //   std::ofstream f("file.txt");
 //   WriteBlockTree(f, blockTree);
@@ -55,6 +55,6 @@ void WriteBlockTreeToFile(const std::string& file,
   f.close();
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_VISUALIZE_HPP

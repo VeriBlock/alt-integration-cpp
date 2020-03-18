@@ -5,7 +5,7 @@
 
 #include <veriblock/storage/cursor.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 template <typename K, typename V>
 struct CursorMock : public Cursor<K, V> {
@@ -21,6 +21,6 @@ struct CursorMock : public Cursor<K, V> {
   MOCK_CONST_METHOD0_T(value, V());
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_TEST_MOCK_STORAGE_CURSOR_MOCK_HPP_

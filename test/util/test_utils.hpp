@@ -7,7 +7,7 @@
 #include <random>
 #include <vector>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 template <typename T>
 void generateRandomBytes(T begin, T end) {
@@ -20,6 +20,6 @@ inline std::vector<uint8_t> generateRandonBytesVector(size_t n) {
   return bytes;
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif

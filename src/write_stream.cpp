@@ -1,6 +1,6 @@
 #include <veriblock/write_stream.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 const std::vector<uint8_t> &WriteStream::data() const noexcept {
   return m_data;
@@ -13,4 +13,4 @@ void WriteStream::write(const void *buf, size_t size) {
 
 WriteStream::WriteStream(size_t size) { m_data.reserve(size); }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

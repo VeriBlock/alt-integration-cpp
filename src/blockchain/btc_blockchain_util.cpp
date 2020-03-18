@@ -4,7 +4,7 @@
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 template <>
 ArithUint256 getBlockProof(const BtcBlock& block) {
@@ -165,4 +165,4 @@ bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
   return true;
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

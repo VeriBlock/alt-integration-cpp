@@ -5,7 +5,7 @@
 
 #include "veriblock/serde.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 struct Coin {
   int64_t units{};
@@ -36,5 +36,5 @@ struct Coin {
 
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_

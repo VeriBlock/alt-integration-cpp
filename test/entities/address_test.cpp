@@ -6,7 +6,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/address.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 // standard address
 static auto ADDRESS_BYTES =

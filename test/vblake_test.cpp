@@ -38,7 +38,7 @@ TEST_P(VBlakeTest, Regression) {
   std::vector<uint8_t> actual(VBLAKE_HASH_SIZE, 0);
 
   int ret =
-      AltIntegrationLib::vblake(actual.data(), tc.message.data(), tc.message.size());
+      altintegration::vblake(actual.data(), tc.message.data(), tc.message.size());
 
   ASSERT_EQ(ret, 0);
   EXPECT_EQ(actual, tc.hash);

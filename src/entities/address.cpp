@@ -7,7 +7,7 @@
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 constexpr const auto STARTING_CHAR = 'V';
 constexpr const auto MULTISIG_ENDING_CHAR = '0';
@@ -164,7 +164,7 @@ const std::string& Address::toString() const noexcept { return m_Address; }
 Address Address::fromVbkEncoding(ReadStream& stream) {
   auto addressType = (AddressType)stream.readLE<uint8_t>();
   auto addressBytes =
-      readSingleByteLenValue(stream, 0, AltIntegrationLib::ADDRESS_SIZE);
+      readSingleByteLenValue(stream, 0, altintegration::ADDRESS_SIZE);
 
   std::string address;
   switch (addressType) {
@@ -206,4 +206,4 @@ void Address::getPopBytes(WriteStream& stream) const {
   stream.write(std::vector<uint8_t>(bytes.begin(), bytes.begin() + 16));
 }
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

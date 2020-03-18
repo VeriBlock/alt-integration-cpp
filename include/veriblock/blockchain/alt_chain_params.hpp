@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 struct AltChainParams {
   virtual ~AltChainParams() = default;
@@ -17,6 +17,6 @@ struct AltChainParams {
   }
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif

@@ -15,7 +15,7 @@
 #include "veriblock/entities/vtb.hpp"
 #include "veriblock/storage/endorsement_repository_inmem.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 struct Publications {
   ATV atv;
@@ -90,6 +90,6 @@ class MockMiner {
   std::shared_ptr<BtcChainParams> getBtcParams() const { return btc_params; }
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif

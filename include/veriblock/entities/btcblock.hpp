@@ -11,7 +11,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 struct BtcBlock {
   using hash_t = uint256;
@@ -98,14 +98,14 @@ struct BtcBlock {
   uint256 getHash() const;
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 namespace std {
 
 template <>
-struct hash<AltIntegrationLib::BtcBlock> {
-  size_t operator()(const AltIntegrationLib::BtcBlock& block) {
-    return AltIntegrationLib::ArithUint256(block.getHash()).getLow64();
+struct hash<altintegration::BtcBlock> {
+  size_t operator()(const altintegration::BtcBlock& block) {
+    return altintegration::ArithUint256(block.getHash()).getLow64();
   }
 };
 

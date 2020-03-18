@@ -1,6 +1,6 @@
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
                                       BlockTree::index_t& indexNew) {
@@ -54,4 +54,4 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
     return;
   }
 }
-}  // namespace AltIntegrationLib
+}  // namespace altintegration

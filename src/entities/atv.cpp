@@ -1,6 +1,6 @@
 #include "veriblock/entities/atv.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 ATV ATV::fromVbkEncoding(ReadStream& stream) {
   ATV atv{};

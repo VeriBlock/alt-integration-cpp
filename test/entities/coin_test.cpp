@@ -4,7 +4,7 @@
 
 #include "util/literals.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 TEST(Coin, Serialize) {
   Coin input(3500000000);

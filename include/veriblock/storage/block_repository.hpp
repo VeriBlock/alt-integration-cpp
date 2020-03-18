@@ -7,7 +7,7 @@
 #include <veriblock/slice.hpp>
 #include <veriblock/storage/cursor.hpp>
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 namespace db {
 /**
@@ -160,6 +160,6 @@ struct BlockRepository {
   bool contains(const hash_t& hash) const { return getByHash(hash, nullptr); }
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_HPP_

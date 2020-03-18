@@ -9,7 +9,7 @@
 #include "util/literals.hpp"
 #include "veriblock/uint.hpp"
 
-using namespace AltIntegrationLib;
+using namespace altintegration;
 
 const unsigned char R1Array[] =
     "\x9c\x52\x4a\xdb\xcf\x56\x11\x12\x2b\x29\x12\x5e\x5d\x35\xd2\xd2"

@@ -7,7 +7,7 @@
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/write_stream.hpp"
 
-namespace AltIntegrationLib {
+namespace altintegration {
 
 //! Store block
 template <typename Block>
@@ -91,5 +91,5 @@ struct BlockIndex {
   }
 };
 
-}  // namespace AltIntegrationLib
+}  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
