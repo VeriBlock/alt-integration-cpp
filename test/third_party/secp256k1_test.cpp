@@ -78,8 +78,8 @@ TEST(SECP256K1, Sign) {
   secp256k1_ecdsa_signature_serialize_compact(ctx, sig, &signature);
   secp256k1_context_destroy(ctx);
 
-  VeriBlock::Slice<uint8_t> signatureSlice(sig, 64);
-  auto signatureHex = VeriBlock::HexStr(signatureSlice);
-  auto defaultSignatureHex = VeriBlock::HexStr(defaultSignatureCompact);
+  AltIntegrationLib::Slice<uint8_t> signatureSlice(sig, 64);
+  auto signatureHex = AltIntegrationLib::HexStr(signatureSlice);
+  auto defaultSignatureHex = AltIntegrationLib::HexStr(defaultSignatureCompact);
   EXPECT_EQ(signatureHex, defaultSignatureHex);
 }

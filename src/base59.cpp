@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 static std::string g_Base59Alphabet =
     "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0";
@@ -131,4 +131,4 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
   return std::vector<uint8_t>{temp.begin() + j - zeroCount, temp.end()};
 }
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib

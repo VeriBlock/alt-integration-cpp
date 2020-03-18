@@ -1,6 +1,6 @@
 #include <veriblock/checks.hpp>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 void checkRange(int64_t num, int64_t min, int64_t max) {
   if (num < min) {
@@ -12,4 +12,4 @@ void checkRange(int64_t num, int64_t min, int64_t max) {
   }
 }
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib

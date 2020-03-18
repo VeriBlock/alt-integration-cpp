@@ -8,7 +8,7 @@
 #include "veriblock/state_utils.hpp"
 #include "veriblock/storage/repository_rocks_manager.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 // DB name
 static const std::string dbName = "db-test";
@@ -28,7 +28,7 @@ struct TestFixture : public ::testing::Test {
   ValidationState state;
 
   void uploadBlocksToTreeAndRepo() {
-    std::shared_ptr<StateChange> change = stateManager.newChange();
+    auto change = stateManager.newChange();
 
     BlockIndex<BtcBlock> temp_index_btc;
     for (uint32_t i = 0; i < blocksNumber; ++i) {
@@ -52,7 +52,7 @@ struct TestFixture : public ::testing::Test {
       change->putVbkBlock(temp_index_vbk);
     }
 
-    stateManager.commit(change);
+    stateManager.commit(*change);
   }
 
   TestFixture() : stateManager(dbName) {

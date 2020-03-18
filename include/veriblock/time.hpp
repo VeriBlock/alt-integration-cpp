@@ -3,10 +3,10 @@
 
 #include <time.h>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 inline uint32_t currentTimestamp4() { return (uint32_t)time(0); }
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK

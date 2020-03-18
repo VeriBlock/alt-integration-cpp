@@ -5,7 +5,7 @@
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/validation_state.hpp>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 template <typename Block>
 void determineBestChain(Chain<Block>& currentBest, BlockIndex<Block>& indexNew);
@@ -32,6 +32,6 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             ValidationState& state,
                             const ChainParams& params);
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_UTIL_HPP_

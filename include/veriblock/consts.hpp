@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 enum class TxType {
   VBK_TX = 0x01,
@@ -115,6 +115,6 @@ constexpr const auto MAX_RAWTX_SIZE_VBKPOPTX =
 
 constexpr const auto BTC_INMEM_BLOCKS_WINDOW = 1000;
 constexpr const auto VBK_INMEM_BLOCKS_WINDOW = 10000;
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_CONSTS_HPP_

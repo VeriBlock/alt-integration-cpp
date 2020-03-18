@@ -6,7 +6,7 @@
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/uint.hpp>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 //! works as optional<uint8_t>
 struct VbkNetworkType {
@@ -247,6 +247,6 @@ struct VbkChainParamsAlpha : public VbkChainParams {
   uint32_t getTargetBlockTime() const noexcept override { return 30; }
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_CHAIN_PARAMS_HPP_

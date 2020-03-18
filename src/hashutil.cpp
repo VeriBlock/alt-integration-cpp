@@ -2,7 +2,7 @@
 
 #include "veriblock/hashutil.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 uint256 sha256(Slice<const uint8_t> data) {
   assert(data.size() <= std::numeric_limits<uint32_t>::max());
@@ -23,4 +23,4 @@ uint192 vblake(Slice<const uint8_t> data) {
   return hash;
 }
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib

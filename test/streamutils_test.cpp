@@ -6,7 +6,7 @@
 
 TEST(ReadStream, Read) {
   std::vector<uint8_t> buf{0, 1, 2, 3};
-  VeriBlock::ReadStream stream(buf);
+  AltIntegrationLib::ReadStream stream(buf);
 
   EXPECT_EQ(stream.read(1), std::vector<uint8_t>{0});
   EXPECT_EQ(stream.read(1), std::vector<uint8_t>{1});
@@ -44,7 +44,7 @@ TEST(ReadStream, Read) {
 
 TEST(ReadStream, BE) {
   std::vector<uint8_t> buf{0x06, 0xfb, 0x0a, 0xfd};
-  VeriBlock::ReadStream stream(buf);
+  AltIntegrationLib::ReadStream stream(buf);
 
   EXPECT_EQ(stream.readBE<int8_t>(), 0x06);
   EXPECT_EQ(stream.readBE<uint8_t>(), 0xfb);
@@ -59,7 +59,7 @@ TEST(ReadStream, BE) {
 
 TEST(ReadStream, LE) {
   std::vector<uint8_t> buf{0x06, 0xfb, 0x0a, 0xfd};
-  VeriBlock::ReadStream stream(buf);
+  AltIntegrationLib::ReadStream stream(buf);
 
   EXPECT_EQ(stream.readLE<int8_t>(), 0x6);
   EXPECT_EQ(stream.readLE<uint8_t>(), 0xfb);
@@ -74,7 +74,7 @@ TEST(ReadStream, LE) {
 
 TEST(ReadStream, Negative) {
   std::vector<uint8_t> buf{0xff, 0xff, 0xff, 0xff};
-  VeriBlock::ReadStream stream(buf);
+  AltIntegrationLib::ReadStream stream(buf);
 
   EXPECT_EQ(stream.readBE<uint32_t>(), 4294967295ull);
   EXPECT_EQ(stream.remaining(), 0u);
@@ -84,7 +84,7 @@ TEST(ReadStream, Negative) {
 }
 
 TEST(WriteStream, Write) {
-  VeriBlock::WriteStream stream;
+  AltIntegrationLib::WriteStream stream;
   stream.write(std::vector<uint8_t>{1});
   stream.write(std::vector<uint8_t>{2, 3});
   stream.write(std::vector<uint8_t>{4, 5, 6});
@@ -98,7 +98,7 @@ TEST(WriteStream, Write) {
 }
 
 TEST(WriteStream, LE) {
-  VeriBlock::WriteStream stream;
+  AltIntegrationLib::WriteStream stream;
   stream.writeLE<uint8_t>(1);
   stream.writeLE<int8_t>(-1);
   stream.writeLE<uint16_t>(2);
@@ -119,7 +119,7 @@ TEST(WriteStream, LE) {
 }
 
 TEST(WriteStream, BE) {
-  VeriBlock::WriteStream stream;
+  AltIntegrationLib::WriteStream stream;
   stream.writeBE<uint8_t>(1);
   stream.writeBE<int8_t>(-1);
   stream.writeBE<uint16_t>(2);

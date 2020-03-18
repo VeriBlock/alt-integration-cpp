@@ -6,7 +6,7 @@
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/entities/vtb.hpp>
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct AltProof {
   AltBlock endorsed;
@@ -48,6 +48,6 @@ struct Payloads {
   std::vector<VbkBlock> vbkcontext{};
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_PAYLOADS_HPP

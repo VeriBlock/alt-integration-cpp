@@ -29,7 +29,7 @@
 
 #include "veriblock/consts.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 /**
  * \brief          SHA-256 context structure
@@ -72,6 +72,6 @@ void sha256_finish(sha256_context *ctx, uint8_t out[SHA256_HASH_SIZE]);
  */
 void sha256(uint8_t out[SHA256_HASH_SIZE], const uint8_t *buf, uint32_t nsize);
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif /* sha2.h */

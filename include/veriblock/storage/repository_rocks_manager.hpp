@@ -8,7 +8,7 @@
 #include "veriblock/storage/block_repository_rocks.hpp"
 #include "veriblock/storage/endorsement_repository_rocks.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 enum class CF_NAMES {
   DEFAULT = 0,
@@ -156,6 +156,6 @@ struct RepositoryRocksManager {
   std::shared_ptr<endorsement_repo_t<VbkEndorsement>> repoVbkEndorsement;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_MANAGER_HPP_

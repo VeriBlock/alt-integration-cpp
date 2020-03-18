@@ -1,6 +1,6 @@
 #include "veriblock/entities/coin.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 Coin Coin::fromVbkEncoding(ReadStream& stream) {
   return Coin(readSingleBEValue<int64_t>(stream));

@@ -6,7 +6,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/vtb.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 static const NetworkBytePair networkByte{false, 0, (uint8_t)TxType::VBK_POP_TX};
 

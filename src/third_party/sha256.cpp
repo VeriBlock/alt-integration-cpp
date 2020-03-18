@@ -55,7 +55,7 @@
   }
 #endif
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 /*
  * SHA-256 context setup
@@ -290,4 +290,4 @@ void sha256(unsigned char output[32],
   memset(&ctx, 0, sizeof(sha256_context));
 }
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib

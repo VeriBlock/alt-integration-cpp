@@ -12,7 +12,7 @@
 #include "veriblock/signutil.hpp"
 #include "veriblock/time.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 bool containsSplit(const std::vector<uint8_t>& pop_data,
                    const std::vector<uint8_t>& btcTx_data);
@@ -78,6 +78,6 @@ bool checkVTB(const VTB& vtb,
               ValidationState& state,
               const VbkChainParams& vbk,
               const BtcChainParams& btc);
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK_STATELESS_VALIDATION_H

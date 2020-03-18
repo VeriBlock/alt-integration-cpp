@@ -8,7 +8,7 @@
 #include "veriblock/entities/vbkpoptx.hpp"
 #include "veriblock/serde.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct VTB {
   VbkPopTx transaction{};
@@ -43,6 +43,6 @@ struct VTB {
   std::vector<uint8_t> toVbkEncoding() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VTB_HPP_

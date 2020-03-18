@@ -11,7 +11,7 @@
 #include "veriblock/storage/db_error.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 //! column family type
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
@@ -217,6 +217,6 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
   std::shared_ptr<cf_handle_t> _endorsedIdHandle;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_CURSOR_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_CURSOR_HPP_
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 /**
  * Generic map cursor (iterator).
@@ -56,6 +56,6 @@ struct Cursor {
   virtual V value() const = 0;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_CURSOR_HPP_

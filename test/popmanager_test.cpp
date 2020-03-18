@@ -8,7 +8,7 @@
 #include <veriblock/storage/endorsement_repository_inmem.hpp>
 #include <veriblock/storage/repository_rocks_manager.hpp>
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 static const std::string dbName = "db_test";
 

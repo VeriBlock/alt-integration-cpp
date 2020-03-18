@@ -9,7 +9,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 struct VbkMerklePath {
   int32_t treeIndex{};
@@ -37,6 +37,6 @@ struct VbkMerklePath {
   uint128 calculateMerkleRoot() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBK_MERKLE_PATH_HPP_

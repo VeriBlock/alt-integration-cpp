@@ -12,7 +12,7 @@
 #include "veriblock/consts.hpp"
 #include "veriblock/strutil.hpp"
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 class uint_error : public std::runtime_error {
  public:
   explicit uint_error(const std::string& str) : std::runtime_error(str) {}
@@ -285,6 +285,6 @@ inline void PrintTo(const ArithUint256& uint, ::std::ostream* os) {
   *os << uint.toHex();
 }
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // BITCOIN_ARITH_UINT256_H

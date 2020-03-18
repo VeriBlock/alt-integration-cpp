@@ -1,6 +1,6 @@
 #include "veriblock/entities/altblock.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 AltBlock AltBlock::fromVbkEncoding(ReadStream& stream) {
   AltBlock block;

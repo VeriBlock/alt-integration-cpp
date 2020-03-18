@@ -4,7 +4,7 @@
 
 #include "util/literals.hpp"
 
-using namespace VeriBlock;
+using namespace AltIntegrationLib;
 
 static const std::string defaultPublicationEncoded =
     "0100010c6865616465722062797465730112636f6e7465787420696e666f20627974657301"

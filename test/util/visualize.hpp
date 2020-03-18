@@ -6,7 +6,7 @@
 
 /// Contains utils to create DOT files
 
-namespace VeriBlock {
+namespace AltIntegrationLib {
 
 //   std::ofstream f("file.txt");
 //   WriteBlockTree(f, blockTree);
@@ -55,6 +55,6 @@ void WriteBlockTreeToFile(const std::string& file,
   f.close();
 }
 
-}  // namespace VeriBlock
+}  // namespace AltIntegrationLib
 
 #endif  // ALT_INTEGRATION_VISUALIZE_HPP
