@@ -4,7 +4,7 @@
 #include "veriblock/storage/endorsement_repository_rocks.hpp"
 #include "veriblock/storage/repository_rocks_manager.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 // DB name
 static const std::string dbName = "db-endorsement_storage_test";

@@ -3,7 +3,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/vbkpoptx.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 static const NetworkBytePair networkByte{false, 0, (uint8_t)TxType::VBK_POP_TX};
 

@@ -7,7 +7,7 @@
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/validation_state.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 template <typename BlockTree>
 std::vector<std::vector<uint8_t>> getLastKnownBlocks(const BlockTree& tree,
@@ -49,6 +49,6 @@ bool removeBlocks(BlockTree<Block, ChainParams>& tree,
   return true;
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_UTIL_HPP

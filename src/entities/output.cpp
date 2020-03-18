@@ -1,6 +1,6 @@
 #include "veriblock/entities/output.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 bool Output::operator==(const Output& other) const noexcept {
   return address == other.address && coin == other.coin;

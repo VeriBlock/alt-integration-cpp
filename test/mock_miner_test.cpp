@@ -9,7 +9,7 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/stateless_validation.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 struct MockMinerTest : public MockMiner, public ::testing::Test {
   PublicationData publicationData;

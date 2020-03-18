@@ -1,6 +1,6 @@
 #include <veriblock/keystone_util.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 int highestKeystoneAtOrBefore(int blockNumber, int keystoneInterval) {
   if (blockNumber < 0) {
@@ -53,4 +53,4 @@ bool isCrossedKeystoneBoundary(int bottomHeight,
 
   return keystoneIntervalAmount < tipIntervalAmount;
 }
-}  // namespace VeriBlock
+}  // namespace altintegration

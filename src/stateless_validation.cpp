@@ -25,7 +25,7 @@ int getIntFromBits(const std::vector<bool>& bits,
 
 };  // namespace
 
-namespace VeriBlock {
+namespace altintegration {
 
 bool containsSplit(const std::vector<uint8_t>& pop_data,
                    const std::vector<uint8_t>& btcTx_data) {
@@ -362,4 +362,4 @@ bool checkBlock(const BtcBlock& block,
   return true;
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration

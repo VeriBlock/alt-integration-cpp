@@ -3,7 +3,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/merkle_path.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 static const std::string defaultPathEncoded =
     "02019f040000067b040000000c040000000400000020204d66077fdf24246ffd6b6979dfed"

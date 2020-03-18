@@ -8,7 +8,7 @@
 #include "veriblock/third_party/sha256.h"
 #include "veriblock/uint.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 /**
  * Calculates SHA256 of the input data
@@ -31,6 +31,6 @@ uint256 sha256twice(Slice<const uint8_t> data);
  */
 uint192 vblake(Slice<const uint8_t> data);
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  //__SHAUTIL__HPP__

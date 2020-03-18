@@ -1,7 +1,7 @@
 #include <cstring>
 #include <veriblock/read_stream.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 //============================================================================================
 //                               READSTREAM
@@ -55,4 +55,4 @@ std::vector<uint8_t> ReadStream::read(size_t size) {
   return read<std::vector<uint8_t>>(size);
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration

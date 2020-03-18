@@ -13,7 +13,7 @@ TEST(Format, Works) {
   int min = 44;
 
   std::string actual =
-      VeriBlock::format("%s, %s %d, %.2d:%.2d", weekday, month, day, hour, min);
+      altintegration::format("%s, %s %d, %.2d:%.2d", weekday, month, day, hour, min);
 
   EXPECT_EQ(actual, "Wednesday, July 27, 14:44"s);
 }

@@ -40,12 +40,12 @@ static std::vector<TestCase> g_Cases = {
 
 TEST_P(Base58Test, Encode) {
   auto tc = GetParam();
-  EXPECT_EQ(VeriBlock::EncodeBase58(tc.binData), tc.baseData);
+  EXPECT_EQ(altintegration::EncodeBase58(tc.binData), tc.baseData);
 }
 
 TEST_P(Base58Test, Decode) {
   auto tc = GetParam();
-  EXPECT_EQ(VeriBlock::DecodeBase58(tc.baseData), tc.binData);
+  EXPECT_EQ(altintegration::DecodeBase58(tc.baseData), tc.binData);
 }
 
 INSTANTIATE_TEST_SUITE_P(Base58Regression,

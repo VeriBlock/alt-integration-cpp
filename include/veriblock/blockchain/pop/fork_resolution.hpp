@@ -9,7 +9,7 @@
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 template <typename EndorsementBlockType>
 struct ProtoKeystoneContext {
@@ -324,6 +324,6 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
   return ret;
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_FORK_RESOLUTION_HPP_

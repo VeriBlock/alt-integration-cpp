@@ -1,6 +1,6 @@
 #include "veriblock/entities/btctx.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 BtcTx BtcTx::fromVbkEncoding(ReadStream& stream) {
   return BtcTx(readVarLenValue(stream, 0, BTC_TX_MAX_RAW_SIZE));

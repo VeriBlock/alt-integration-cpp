@@ -15,36 +15,36 @@ static auto defaultSignatureVbk =
     "3044022008d07afee77324d0bced6f3bce19892d0413981e83e68401cd83d1e1ed3bc37c022005273429062dcf623ccd04c8d9c9e601e7fc45b5db32900c9b0ffda2dbc8f452"_unhex;
 
 TEST(SIGN_UTIL, GenPubKey) {
-  auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyVbk);
-  auto publicKey = VeriBlock::derivePublicKey(privateKey);
-  auto publicKeyEncoded = VeriBlock::publicKeyToVbk(publicKey);
+  auto privateKey = altintegration::privateKeyFromVbk(defaultPrivateKeyVbk);
+  auto publicKey = altintegration::derivePublicKey(privateKey);
+  auto publicKeyEncoded = altintegration::publicKeyToVbk(publicKey);
 
-  auto publicKeyEncodedHex = VeriBlock::HexStr(publicKeyEncoded);
-  EXPECT_EQ(publicKeyEncodedHex, VeriBlock::HexStr(defaultPublicKeyVbk));
+  auto publicKeyEncodedHex = altintegration::HexStr(publicKeyEncoded);
+  EXPECT_EQ(publicKeyEncodedHex, altintegration::HexStr(defaultPublicKeyVbk));
 }
 
 TEST(SIGN_UTIL, Sign) {
-  auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyVbk);
-  auto signature = VeriBlock::veriBlockSign(defaultMsg, privateKey);
-  auto signatureEncodedHex = VeriBlock::HexStr(signature);
+  auto privateKey = altintegration::privateKeyFromVbk(defaultPrivateKeyVbk);
+  auto signature = altintegration::veriBlockSign(defaultMsg, privateKey);
+  auto signatureEncodedHex = altintegration::HexStr(signature);
 
-  EXPECT_EQ(signatureEncodedHex, VeriBlock::HexStr(defaultSignatureVbk));
+  EXPECT_EQ(signatureEncodedHex, altintegration::HexStr(defaultSignatureVbk));
 }
 
 TEST(SIGN_UTIL, Verify) {
-  auto privateKey = VeriBlock::privateKeyFromVbk(defaultPrivateKeyVbk);
-  auto publicKey = VeriBlock::derivePublicKey(privateKey);
+  auto privateKey = altintegration::privateKeyFromVbk(defaultPrivateKeyVbk);
+  auto publicKey = altintegration::derivePublicKey(privateKey);
   int ret =
-      VeriBlock::veriBlockVerify(defaultMsg, defaultSignatureVbk, publicKey);
+      altintegration::veriBlockVerify(defaultMsg, defaultSignatureVbk, publicKey);
   EXPECT_EQ(ret, 1);
 }
 
 TEST(SIGN_UTIL, Invalid) {
   std::vector<uint8_t> dummy(100, 1);
-  EXPECT_THROW(VeriBlock::privateKeyFromVbk(dummy), std::invalid_argument);
-  EXPECT_THROW(VeriBlock::derivePublicKey(dummy), std::invalid_argument);
-  EXPECT_THROW(VeriBlock::publicKeyToVbk(dummy), std::invalid_argument);
-  EXPECT_THROW(VeriBlock::veriBlockSign(dummy, dummy), std::invalid_argument);
-  EXPECT_THROW(VeriBlock::veriBlockVerify(dummy, dummy, dummy),
+  EXPECT_THROW(altintegration::privateKeyFromVbk(dummy), std::invalid_argument);
+  EXPECT_THROW(altintegration::derivePublicKey(dummy), std::invalid_argument);
+  EXPECT_THROW(altintegration::publicKeyToVbk(dummy), std::invalid_argument);
+  EXPECT_THROW(altintegration::veriBlockSign(dummy, dummy), std::invalid_argument);
+  EXPECT_THROW(altintegration::veriBlockVerify(dummy, dummy, dummy),
                std::invalid_argument);
 }

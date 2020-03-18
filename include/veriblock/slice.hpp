@@ -7,7 +7,7 @@
 #include <type_traits>
 #include <vector>
 
-namespace VeriBlock {
+namespace altintegration {
 
 /// Non-owning contiguous array. Similar to gsl::span. Essentially, just a pair
 /// T* + size_t
@@ -82,6 +82,6 @@ inline void PrintTo(const Slice<T> &slice, ::std::ostream *os) {
   *os << "Slice(" << slice.data() << ", " << slice.size() << ")";
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  //__SLICE__HPP__

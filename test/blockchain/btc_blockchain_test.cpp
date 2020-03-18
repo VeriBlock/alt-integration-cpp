@@ -11,7 +11,7 @@
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 struct BlockchainFixture {
   using block_t = BtcBlock;

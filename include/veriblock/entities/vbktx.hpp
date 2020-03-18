@@ -14,7 +14,7 @@
 #include "veriblock/slice.hpp"
 #include "veriblock/uint.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 struct VbkTx {
   using hash_t = uint256;
@@ -67,6 +67,6 @@ struct VbkTx {
   uint256 getHash() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKTX_HPP_

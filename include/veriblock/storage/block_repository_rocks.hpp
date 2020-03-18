@@ -11,7 +11,7 @@
 #include "veriblock/storage/db_error.hpp"
 #include "veriblock/strutil.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 //! column family type
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
@@ -227,6 +227,6 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   std::shared_ptr<cf_handle_t> _hashBlockHandle{};
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_

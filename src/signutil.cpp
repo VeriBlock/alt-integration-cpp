@@ -5,7 +5,7 @@
 #include "veriblock/strutil.hpp"
 #include "veriblock/third_party/secp256k1.h"
 
-namespace VeriBlock {
+namespace altintegration {
 
 struct Secp256k1Context {
   secp256k1_context* ctx;
@@ -185,4 +185,4 @@ int veriBlockVerify(Slice<const uint8_t> message,
       ctx, &signatureDecoded, messageHash.data(), &pubkey);
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration

@@ -3,7 +3,7 @@
 #include "veriblock/blockchain/pop/fork_resolution.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 const static VbkChainParamsRegTest param;
 

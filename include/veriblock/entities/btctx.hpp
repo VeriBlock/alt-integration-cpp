@@ -9,7 +9,7 @@
 #include "veriblock/slice.hpp"
 #include "veriblock/uint.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 struct BtcTx {
   std::vector<uint8_t> tx{};
@@ -39,6 +39,6 @@ struct BtcTx {
   uint256 getHash() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCTX_HPP_

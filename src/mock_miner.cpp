@@ -4,7 +4,7 @@
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 static auto defaultPrivateKeyVbk = ParseHex(
     "303e020100301006072a8648ce3d020106052b8104000a0427302502010104203abf83fa47"

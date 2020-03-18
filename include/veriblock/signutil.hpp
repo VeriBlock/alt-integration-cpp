@@ -6,7 +6,7 @@
 #include "slice.hpp"
 #include "blob.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 static const size_t PRIVATE_KEY_SIZE = 32;
 static const size_t PUBLIC_KEY_COMPRESSED_SIZE = 33;
@@ -81,6 +81,6 @@ int veriBlockVerify(Slice<const uint8_t> message,
                     Signature signature,
                     PublicKey publicKey);
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  //__SIGNUTIL__HPP__

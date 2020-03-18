@@ -1,6 +1,6 @@
 #include "veriblock/entities/vbk_merkle_path.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 VbkMerklePath VbkMerklePath::fromVbkEncoding(ReadStream& stream) {
   VbkMerklePath path{};
