@@ -19,12 +19,15 @@ struct AltChainParamsTest : public AltChainParams {
 };
 
 struct AltTreeTest : public AltTree, public testing::Test {
-  std::shared_ptr<AltChainParamsTest> config =
-      std::make_shared<AltChainParamsTest>();
+  std::shared_ptr<AltChainParams> config;
 
   ValidationState state;
 
-  AltTreeTest() : AltTree(config) { bootstrapWithGenesis(state); }
+  AltTreeTest()
+      : config(std::make_shared<AltChainParamsTest>()),
+        AltTree(std::make_shared<AltChainParamsTest>()) {
+    bootstrapWithGenesis(state);
+  }
 
   std::vector<AltBlock> getTips() {
     std::vector<AltBlock> res;
