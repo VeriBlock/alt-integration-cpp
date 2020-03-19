@@ -7,7 +7,7 @@
 
 using namespace altintegration;
 
-struct AltTreeTest : public AltTree {
+struct AltTreeTest : public AltTree, public testing::Test {
   AltChainParams config;
 
   ValidationState state;
