@@ -33,73 +33,49 @@ TEST_F(AltTreeTest, acceptBlock_test) {
   block1.timestamp = 0;
 
   acceptBlock(block1, temp, state);
-
+  std::vector<AltBlock> tips = this->getTips();
   EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block1) != this->getTips().end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) != tips.end());
 
   AltBlock block2;
-  block1.hash = {2, 2, 2};
-  block1.previousBlock = config.getGenesisBlock().hash;
-  block1.height = config.getGenesisBlock().height + 1;
-  block1.timestamp = 0;
+  block2.hash = {2, 2, 2};
+  block2.previousBlock = config.getGenesisBlock().hash;
+  block2.height = config.getGenesisBlock().height + 1;
+  block2.timestamp = 0;
 
   acceptBlock(block2, temp, state);
 
+  tips = this->getTips();
   EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block1) != this->getTips().end());
-
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block2) != this->getTips().end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) != tips.end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block2) != tips.end());
 
   AltBlock block3;
-  block1.hash = {3, 2, 3};
-  block1.previousBlock = block1.hash;
-  block1.height = block1.height + 1;
-  block1.timestamp = 0;
+  block3.hash = {3, 2, 3};
+  block3.previousBlock = block1.hash;
+  block3.height = block1.height + 1;
+  block3.timestamp = 0;
 
   acceptBlock(block3, temp, state);
 
+  tips = this->getTips();
   EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block1) == this->getTips().end());
-
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block2) != this->getTips().end());
-
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block3) != this->getTips().end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) == tips.end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block2) != tips.end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block3) != tips.end());
 
   AltBlock block4;
-  block1.hash = {4, 2, 5};
-  block1.previousBlock = block2.hash;
-  block1.height = block2.height + 1;
-  block1.timestamp = 0;
+  block4.hash = {4, 2, 5};
+  block4.previousBlock = block2.hash;
+  block4.height = block2.height + 1;
+  block4.timestamp = 0;
 
   acceptBlock(block4, temp, state);
 
+  tips = this->getTips();
   EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block1) == this->getTips().end());
-
-  EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block2) == this->getTips().end());
-
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block3) != this->getTips().end());
-
-  EXPECT_TRUE(std::find(this->getTips().begin(),
-                        this->getTips().end(),
-                        block4) != this->getTips().end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) == tips.end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block2) == tips.end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block3) != tips.end());
+  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block4) != tips.end());
 }

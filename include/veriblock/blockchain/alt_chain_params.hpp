@@ -19,7 +19,12 @@ struct AltChainParams {
   }
 
   virtual AltBlock getGenesisBlock() const noexcept {
-    return AltBlock{{1, 2, 3}, {4, 5, 6}, 0, 0};
+    AltBlock genesisBlock;
+    genesisBlock.hash = {1, 2, 3};
+    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.height = 0;
+    genesisBlock.timestamp = 0;
+    return genesisBlock;
   }
 };
 
