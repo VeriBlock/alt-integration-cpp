@@ -227,7 +227,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
 
   BlockIndex<AltBlock> index_prev;
   index_prev.header = {
-      altfork1[99].getHash().asVector(), altfork1[99].getBlockTime(), 99};
+      altfork1[99].getHash().asVector(), {}, altfork1[99].getBlockTime(), 99};
   index_prev.height = 99;
   index_prev.pprev = nullptr;
 
@@ -237,6 +237,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt1;
   for (size_t i = 100; i < altfork1.size(); i++) {
     AltBlock block{altfork1[i].getHash().asVector(),
+                   {},
                    altfork1[i].getBlockTime(),
                    (int32_t)i};
 
@@ -251,6 +252,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt2;
   for (size_t i = 100; i < altfork2.size(); i++) {
     AltBlock block{altfork2[i].getHash().asVector(),
+                   {},
                    altfork2[i].getBlockTime(),
                    (int32_t)i};
 
