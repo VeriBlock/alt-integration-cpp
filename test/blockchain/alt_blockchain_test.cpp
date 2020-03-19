@@ -7,8 +7,20 @@
 
 using namespace altintegration;
 
+struct AltChainParamsTest : public AltChainParams {
+  AltBlock getGenesisBlock() const noexcept override {
+    AltBlock genesisBlock;
+    genesisBlock.hash = {1, 2, 3};
+    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.height = 0;
+    genesisBlock.timestamp = 0;
+    return genesisBlock;
+  }
+};
+
 struct AltTreeTest : public AltTree, public testing::Test {
-  AltChainParams config;
+  std::shared_ptr<AltChainParamsTest> config =
+      std::make_shared<AltChainParamsTest>();
 
   ValidationState state;
 
@@ -28,8 +40,8 @@ TEST_F(AltTreeTest, acceptBlock_test) {
 
   AltBlock block1;
   block1.hash = {1, 2, 5};
-  block1.previousBlock = config.getGenesisBlock().hash;
-  block1.height = config.getGenesisBlock().height + 1;
+  block1.previousBlock = config->getGenesisBlock().hash;
+  block1.height = config->getGenesisBlock().height + 1;
   block1.timestamp = 0;
 
   acceptBlock(block1, temp, state);
@@ -39,8 +51,8 @@ TEST_F(AltTreeTest, acceptBlock_test) {
 
   AltBlock block2;
   block2.hash = {2, 2, 2};
-  block2.previousBlock = config.getGenesisBlock().hash;
-  block2.height = config.getGenesisBlock().height + 1;
+  block2.previousBlock = config->getGenesisBlock().hash;
+  block2.height = config->getGenesisBlock().height + 1;
   block2.timestamp = 0;
 
   acceptBlock(block2, temp, state);

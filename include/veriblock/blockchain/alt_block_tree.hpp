@@ -23,7 +23,7 @@ struct AltTree {
 
   virtual ~AltTree() = default;
 
-  AltTree(const config_t& config) : config_(config) {}
+  AltTree(std::shared_ptr<config_t> config) : config_(config) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -41,7 +41,7 @@ struct AltTree {
  protected:
   std::vector<index_t*> chainTips_;
   block_index_t block_index_;
-  config_t config_;
+  std::shared_ptr<config_t> config_;
 
   index_t* insertBlockHeader(const AltBlock& block);
 
