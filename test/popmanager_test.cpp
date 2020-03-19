@@ -12,6 +12,17 @@ using namespace altintegration;
 
 static const std::string dbName = "db_test";
 
+struct AltChainParamsTest : public AltChainParams {
+  AltBlock getGenesisBlock() const noexcept override {
+    AltBlock genesisBlock;
+    genesisBlock.hash = {1, 2, 3};
+    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.height = 0;
+    genesisBlock.timestamp = 0;
+    return genesisBlock;
+  }
+};
+
 struct PopManagerTest : public ::testing::Test {
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
 
@@ -34,7 +45,7 @@ struct PopManagerTest : public ::testing::Test {
   StateManager<RepositoryRocksManager> stateManager;
 
   PopManagerTest() : stateManager(dbName) {
-    altChainParams = std::make_shared<AltChainParams>();
+    altChainParams = std::make_shared<AltChainParamsTest>();
 
     btce = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
     vbke = std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
