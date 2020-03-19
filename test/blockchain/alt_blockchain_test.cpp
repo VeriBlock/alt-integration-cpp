@@ -24,8 +24,8 @@ struct AltTreeTest : public AltTree, public testing::Test {
   ValidationState state;
 
   AltTreeTest()
-      : config(std::make_shared<AltChainParamsTest>()),
-        AltTree(std::make_shared<AltChainParamsTest>()) {
+      : AltTree(std::make_shared<AltChainParamsTest>()),
+        config(std::make_shared<AltChainParamsTest>()) {
     bootstrapWithGenesis(state);
   }
 
