@@ -21,6 +21,8 @@ struct AltTree {
   using hash_t = typename AltBlock::hash_t;
   using block_index_t = std::unordered_map<hash_t, std::unique_ptr<index_t>>;
 
+  virtual ~AltTree() = default;
+
   AltTree(const config_t& config) : config_(config) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
