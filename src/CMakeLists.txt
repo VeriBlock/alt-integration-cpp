@@ -1,6 +1,7 @@
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
 add_subdirectory(blockchain)
+add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
 add_subdirectory(storage)
@@ -27,6 +28,7 @@ add_library(vbkutils
         mock_miner.cpp
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:blockchain>
+        $<TARGET_OBJECTS:poprewards>
         $<TARGET_OBJECTS:pop_utils>
         $<TARGET_OBJECTS:entities>
         $<TARGET_OBJECTS:secp256k1>
