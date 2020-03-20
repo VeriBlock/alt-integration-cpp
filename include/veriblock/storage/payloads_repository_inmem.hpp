@@ -187,16 +187,19 @@ struct PayloadsRepositoryInmem : public PayloadsRepository<Block, Payloads> {
     return std::vector<stored_payloads_t>(it->second.begin(), it->second.end());
   }
 
-  void removeByHash(const hash_t& hash) { payloads_rep_[hash].clear(); }
+  void removeByHash(const hash_t& hash) override {
+    payloads_rep_[hash].clear();
+  }
 
-  void clear() { payloads_rep_.clear(); }
+  void clear() override { payloads_rep_.clear(); }
 
-  std::unique_ptr<PayloadsWriteBatch<block_t, stored_payloads_t>> newBatch() {
+  std::unique_ptr<PayloadsWriteBatch<block_t, stored_payloads_t>> newBatch()
+      override {
     return std::unique_ptr<PayloadsWritebatchInmem<block_t, stored_payloads_t>>(
         new PayloadsWritebatchInmem<block_t, stored_payloads_t>(this));
   }
 
-  std::shared_ptr<cursor_t> newCursor() {
+  std::shared_ptr<cursor_t> newCursor() override {
     return std::make_shared<PayloadsCursorInmem<block_t, stored_payloads_t>>(
         payloads_rep_);
   }
