@@ -28,7 +28,7 @@ ArithUint256 ArithUint256::fromBits(uint32_t bits,
   return target;
 }
 
-std::string ArithUint256::toString() {
+std::string ArithUint256::toString() const {
   ArithUint256 tmp = ArithUint256(*this);
   std::string out = "";
   while (true) {

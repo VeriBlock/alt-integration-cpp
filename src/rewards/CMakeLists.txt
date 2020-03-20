@@ -1,3 +1,3 @@
 add_library(poprewards OBJECT
-        poprewards.cpp
+        poprewards_calculator.cpp
         )

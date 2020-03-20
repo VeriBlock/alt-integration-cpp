@@ -1,7 +1,6 @@
-#include <algorithm>
 #include <cassert>
 #include <vector>
-#include <veriblock/rewards/poprewards.hpp>
+#include <veriblock/rewards/poprewards_calculator.hpp>
 
 namespace VeriBlock {
 
@@ -18,7 +17,7 @@ static uint32_t getRoundForBlockNumber(const AltChainParams& chainParams,
   }
 
   assert(height > 0);
-  uint32_t round = ((height - 1) % chainParams.getKeystoneInterval()) %
+  uint32_t round = (height % chainParams.getKeystoneInterval()) %
                    (rewardParams.payoutRounds() - 1);
   return round;
 }
@@ -45,58 +44,39 @@ static uint32_t getRoundRatio(const PopRewardsParams& rewardParams,
 }
 
 // resulting threshold has rewardsDecimalsMult precision
-static uint32_t getMaxRewardThreshold(const PopRewardsParams& rewardParams,
+static uint32_t getMaxScoreThreshold(const PopRewardsParams& rewardParams,
                                       uint32_t payoutRound) {
   if (isKeystoneRound(rewardParams, payoutRound)) {
-    return rewardParams.maxRewardThresholdKeystone();
+    return rewardParams.maxScoreThresholdKeystone();
   }
-  return rewardParams.maxRewardThresholdNormal();
+  return rewardParams.maxScoreThresholdNormal();
 }
 
 // slope is how the payout is decreased for each additional block score
 static uint32_t getRoundSlope(const PopRewardsParams& rewardParams,
                               uint32_t payoutRound) {
   PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
-  uint64_t aboveIntendedPayoutMultiplier =
-      curveParams.aboveIntendedPayoutMultiplierNormal();
-  uint64_t widthOfDecreasingLine = curveParams.widthOfDecreasingLineNormal();
-
+  uint32_t slopeRatio = curveParams.slopeNormal();
   if (payoutRound == rewardParams.keystoneRound()) {
-    aboveIntendedPayoutMultiplier =
-        curveParams.aboveIntendedPayoutMultiplierKeystone();
-    widthOfDecreasingLine = curveParams.widthOfDecreasingLineKeystone();
+    slopeRatio = curveParams.slopeKeystone();
   }
-
-  uint64_t maxSlope = 1LL * rewardsDecimalsMult;
-
-  // we only support falling reward slope
-  assert(aboveIntendedPayoutMultiplier <= maxSlope);
-
-  if (widthOfDecreasingLine == 0) return 0;
-
-  return
-      uint32_t(
-        // 1 - aboveIntendedPayoutMultiplier
-        (maxSlope - aboveIntendedPayoutMultiplier) *
-        // increase precision two times
-        rewardsDecimalsMult /
-        // have rewardsDecimalsMult precision in the end
-        widthOfDecreasingLine);
+  return slopeRatio;
 }
 
 // apply the reward curve to the score and subtract it from the current round
 // multiplier
 static ArithUint256 calculateRewardWithSlope(
     const PopRewardsParams& rewardParams,
-                                         ArithUint256 score,
-                                         uint32_t payoutRound) {
+    ArithUint256 score,
+    uint32_t payoutRound) {
   ArithUint256 slope = getRoundSlope(rewardParams, payoutRound);
   uint32_t roundRatio = getRoundRatio(rewardParams, payoutRound);
   PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
 
-  ArithUint256 scoreDecrease = slope *
-                           (score - curveParams.startOfDecreasingLine()) /
-                           rewardsDecimalsMult;
+  assert(score >= curveParams.startOfSlope());
+
+  ArithUint256 scoreDecrease =
+      slope * (score - curveParams.startOfSlope()) / rewardsDecimalsMult;
 
   uint64_t maxScoreDecrease = 1LL * rewardsDecimalsMult;
 
@@ -104,8 +84,10 @@ static ArithUint256 calculateRewardWithSlope(
     scoreDecrease = maxScoreDecrease;
   }
 
-  // (1 - slope * (score - START_OF_DECREASING_LINE_REWARD)) * roundRatio
-  return (maxScoreDecrease - scoreDecrease) * roundRatio / rewardsDecimalsMult;
+  // (1 - slope * (score - START_OF_DECREASING_LINE_REWARD)) * roundRatio * score
+  return (maxScoreDecrease - scoreDecrease) *
+    roundRatio / rewardsDecimalsMult *
+    score / rewardsDecimalsMult;
 }
 
 static ArithUint256 calculateTotalPopBlockReward(
@@ -134,17 +116,16 @@ static ArithUint256 calculateTotalPopBlockReward(
 
   // No use of penalty multiplier, this payout occurs on the flat part of the
   // payout curve
-  if (scoreToDifficulty <= curveParams.startOfDecreasingLine()) {
+  if (scoreToDifficulty <= curveParams.startOfSlope()) {
     uint32_t roundRatio = getRoundRatio(rewardParams, payoutRound);
 
-    // now we apply the score to our budget and apply the current round
-    // multiplier
+    // now we apply the current round multiplier to the score
     return scoreToDifficulty * roundRatio / rewardsDecimalsMult;
   }
 
-  uint32_t maxRewardThreshold = getMaxRewardThreshold(rewardParams, payoutRound);
-  if (score > maxRewardThreshold) {
-    score = maxRewardThreshold;
+  uint32_t maxScoreThreshold = getMaxScoreThreshold(rewardParams, payoutRound);
+  if (scoreToDifficulty > maxScoreThreshold) {
+    scoreToDifficulty = maxScoreThreshold;
   }
 
   // Note that this reward per point is not the true rewardWithSlope if the
@@ -158,7 +139,7 @@ static ArithUint256 calculateTotalPopBlockReward(
 }
 
 // we calculate the reward for a given block
-ArithUint256 PopRewards::calculatePopRewardForBlock(
+ArithUint256 PopRewardsCalculator::calculatePopRewardForBlock(
     const AltChainParams& chainParams,
     const PopRewardsParams& rewardParams,
     uint32_t height,

@@ -11,35 +11,24 @@ static const uint32_t rewardsDecimalsMult = 100000000;
 struct PopRewardsCurveParams {
   virtual ~PopRewardsCurveParams() = default;
 
-  // assume 6 decimals for curve parameters
-  //static const uint32_t curveDecimalsMult = 1000000;
-
-  virtual uint32_t startOfDecreasingLine() const noexcept {
+  // we start decreasing rewards after this score
+  virtual uint32_t startOfSlope() const noexcept {
     return (uint32_t)(1.0 * rewardsDecimalsMult);
   }
 
-  virtual uint32_t widthOfDecreasingLineNormal() const noexcept {
-    return (uint32_t)(1.0 * rewardsDecimalsMult);
+  // we decrease reward coefficient for this value for
+  // each additional score point above startOfDecreasingLine
+  virtual uint32_t slopeNormal() const noexcept {
+    return (uint32_t)(0.2 * rewardsDecimalsMult);
   }
 
-  virtual uint32_t widthOfDecreasingLineKeystone() const noexcept {
-    return (uint32_t)(2.0 * rewardsDecimalsMult);
-  }
-
-  virtual uint32_t aboveIntendedPayoutMultiplierNormal() const noexcept {
-    return (uint32_t)(0.8000 * rewardsDecimalsMult);
-  }
-
-  virtual uint32_t aboveIntendedPayoutMultiplierKeystone() const noexcept {
-    return (uint32_t)(0.5735 * rewardsDecimalsMult);
+  virtual uint32_t slopeKeystone() const noexcept {
+    return (uint32_t)(0.21325 * rewardsDecimalsMult);
   }
 };
 
 struct PopRewardsParams {
   virtual ~PopRewardsParams() = default;
-
-  // assume 4 decimals for roundRatios and thresholds
-  //static const uint32_t ratioDecimalsMult = 1000;
 
   virtual uint32_t keystoneRound() const noexcept { return 3; }
 
@@ -57,11 +46,11 @@ struct PopRewardsParams {
     };
   }
 
-  virtual uint32_t maxRewardThresholdNormal() const noexcept {
+  virtual uint32_t maxScoreThresholdNormal() const noexcept {
     return (uint32_t)(2.0 * rewardsDecimalsMult);
   }
 
-  virtual uint32_t maxRewardThresholdKeystone() const noexcept {
+  virtual uint32_t maxScoreThresholdKeystone() const noexcept {
     return (uint32_t)(3.0 * rewardsDecimalsMult);
   }
 
