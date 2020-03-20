@@ -30,6 +30,13 @@ gencpp(
         vbk_blocks_gen_1
 )
 
+addtest(alt_blockchain_test
+        alt_blockchain_test.cpp
+        )
+        
+target_link_libraries(alt_blockchain_test
+        ${LIB_NAME}
+        )
 
 addtest(btc_blockchain_test
         btc_blockchain_test.cpp
