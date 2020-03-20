@@ -7,6 +7,7 @@ using namespace altintegration;
 
 static const AltBlock defaultBlock{
     "1fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c"_unhex,
+    {},
     156,
     1466};
 

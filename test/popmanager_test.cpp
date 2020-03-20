@@ -12,6 +12,17 @@ using namespace altintegration;
 
 static const std::string dbName = "db_test";
 
+struct AltChainParamsTest : public AltChainParams {
+  AltBlock getGenesisBlock() const noexcept override {
+    AltBlock genesisBlock;
+    genesisBlock.hash = {1, 2, 3};
+    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.height = 0;
+    genesisBlock.timestamp = 0;
+    return genesisBlock;
+  }
+};
+
 struct PopManagerTest : public ::testing::Test {
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
 
@@ -34,7 +45,7 @@ struct PopManagerTest : public ::testing::Test {
   StateManager<RepositoryRocksManager> stateManager;
 
   PopManagerTest() : stateManager(dbName) {
-    altChainParams = std::make_shared<AltChainParams>();
+    altChainParams = std::make_shared<AltChainParamsTest>();
 
     btce = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
     vbke = std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
@@ -227,7 +238,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
 
   BlockIndex<AltBlock> index_prev;
   index_prev.header = {
-      altfork1[99].getHash().asVector(), altfork1[99].getBlockTime(), 99};
+      altfork1[99].getHash().asVector(), {}, altfork1[99].getBlockTime(), 99};
   index_prev.height = 99;
   index_prev.pprev = nullptr;
 
@@ -237,6 +248,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt1;
   for (size_t i = 100; i < altfork1.size(); i++) {
     AltBlock block{altfork1[i].getHash().asVector(),
+                   {},
                    altfork1[i].getBlockTime(),
                    (int32_t)i};
 
@@ -251,6 +263,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt2;
   for (size_t i = 100; i < altfork2.size(); i++) {
     AltBlock block{altfork2[i].getHash().asVector(),
+                   {},
                    altfork2[i].getBlockTime(),
                    (int32_t)i};
 

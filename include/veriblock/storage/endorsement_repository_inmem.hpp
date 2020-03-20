@@ -13,17 +13,6 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
 
-namespace std {
-
-template <>
-struct hash<std::vector<uint8_t>> {
-  size_t operator()(const std::vector<uint8_t>& v) const {
-    return std::hash<std::string>{}({v.begin(), v.end()});
-  }
-};
-
-}  // namespace std
-
 namespace altintegration {
 
 template <typename Endorsement>

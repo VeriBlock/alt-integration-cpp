@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "veriblock/entities/altblock.hpp"
+
 namespace altintegration {
 
 struct AltChainParams {
@@ -15,6 +17,8 @@ struct AltChainParams {
   virtual std::vector<uint32_t> getForkResolutionLookUpTable() const noexcept {
     return {100, 100, 95, 89, 80, 69, 56, 40, 21};
   }
+
+  virtual AltBlock getGenesisBlock() const noexcept = 0;
 };
 
 }  // namespace altintegration

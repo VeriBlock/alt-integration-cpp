@@ -54,10 +54,11 @@ static const ATV defaultAtv{
 
 static const AltBlock defaultContainingBlock{
     "1fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c"_unhex,
+    {},
     156,
     1466};
 static const AltBlock defaultEndorsedBlock{
-    "449c60619294546ad825af03"_unhex, 124, 1246};
+    "449c60619294546ad825af03"_unhex, {}, 124, 1246};
 
 static const AltProof defaultAltProof{
     defaultEndorsedBlock, defaultContainingBlock, defaultAtv};
