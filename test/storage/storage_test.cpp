@@ -38,7 +38,7 @@ struct BlockBasic {
 };
 
 // DB name
-static const std::string dbName = "db-storage_test";
+static const std::string dbName = "db-test";
 
 template <typename Repo_type>
 std::shared_ptr<Repo_type> getRepo();
