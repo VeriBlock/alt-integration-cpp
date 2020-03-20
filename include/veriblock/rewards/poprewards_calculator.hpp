@@ -5,7 +5,7 @@
 #include <veriblock/blockchain/alt_chain_params.hpp>
 #include <veriblock/rewards/poprewards_params.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 /**
  * @invariant does not modify any on-disk state.
  */
@@ -24,6 +24,6 @@ struct PopRewardsCalculator {
       ArithUint256 difficulty);
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_HPP_

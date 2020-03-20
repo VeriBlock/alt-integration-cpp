@@ -2,7 +2,7 @@
 #include <vector>
 #include <veriblock/rewards/poprewards_calculator.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 // rounds for blocks are [4, 1, 2, 3, 1, 2, 3, 1, 2, 3, 4, ...]
 static uint32_t getRoundForBlockNumber(const AltChainParams& chainParams,
@@ -45,7 +45,7 @@ static uint32_t getRoundRatio(const PopRewardsParams& rewardParams,
 
 // resulting threshold has rewardsDecimalsMult precision
 static uint32_t getMaxScoreThreshold(const PopRewardsParams& rewardParams,
-                                      uint32_t payoutRound) {
+                                     uint32_t payoutRound) {
   if (isKeystoneRound(rewardParams, payoutRound)) {
     return rewardParams.maxScoreThresholdKeystone();
   }
@@ -84,10 +84,10 @@ static ArithUint256 calculateRewardWithSlope(
     scoreDecrease = maxScoreDecrease;
   }
 
-  // (1 - slope * (score - START_OF_DECREASING_LINE_REWARD)) * roundRatio * score
-  return (maxScoreDecrease - scoreDecrease) *
-    roundRatio / rewardsDecimalsMult *
-    score / rewardsDecimalsMult;
+  // (1 - slope * (score - START_OF_DECREASING_LINE_REWARD)) * roundRatio *
+  // score
+  return (maxScoreDecrease - scoreDecrease) * roundRatio / rewardsDecimalsMult *
+         score / rewardsDecimalsMult;
 }
 
 static ArithUint256 calculateTotalPopBlockReward(
@@ -164,4 +164,4 @@ ArithUint256 PopRewardsCalculator::calculatePopRewardForBlock(
       chainParams, rewardParams, height, difficulty, scoreForThisBlock);
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration

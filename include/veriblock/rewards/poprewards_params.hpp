@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace VeriBlock {
+namespace altintegration {
 
 // assume 8 decimals for all parameters
 static const uint32_t rewardsDecimalsMult = 100000000;
@@ -59,6 +59,6 @@ struct PopRewardsParams {
   }
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif // ALT_INTEGRATION_INCLUDE_VERIBLOCK_REWARDS_POPREWARDS_PARAMS_HPP_

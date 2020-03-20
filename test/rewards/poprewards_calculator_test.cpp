@@ -5,11 +5,22 @@
 #include "veriblock/mock_miner.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
+
+struct AltChainParamsTest : public AltChainParams {
+  AltBlock getGenesisBlock() const noexcept override {
+    AltBlock genesisBlock;
+    genesisBlock.hash = {1, 2, 3};
+    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.height = 0;
+    genesisBlock.timestamp = 0;
+    return genesisBlock;
+  }
+};
 
 struct RewardsTestFixture : ::testing::Test {
   PopRewardsCalculator rewardsCalculator{};
-  AltChainParams chainParams{};
+  AltChainParamsTest chainParams{};
   PopRewardsParams rewardParams{};
   ArithUint256 defaultScore = 1LL * rewardsDecimalsMult;
   ArithUint256 defaultDifficulty = 1LL * rewardsDecimalsMult;
