@@ -4,10 +4,10 @@
 #include "veriblock/storage/endorsement_repository_rocks.hpp"
 #include "veriblock/storage/repository_rocks_manager.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 // DB name
-static const std::string dbName = "db-test";
+static const std::string dbName = "db-endorsement_storage_test";
 
 static const std::vector<uint8_t> defaultVtbEncoded = ParseHex(
     "02046002011667ff0a897e5d512a0b6da2f41c479867fe6b3a4cae2640000013350002a793"
@@ -106,31 +106,29 @@ Container_t getModifiedContainer();
 
 template <>
 VTB getDefaultContainer() {
-  return VTB::fromVbkEncoding(
-      std::string(defaultVtbEncoded.begin(), defaultVtbEncoded.end()));
+  return VTB::fromVbkEncoding(defaultVtbEncoded);
 }
 
 template <>
 AltProof getDefaultContainer() {
   AltProof container;
-  container.endorsed = {{1, 2, 3}, 123, 4125};
+  container.endorsed = {{1, 2, 3}, {}, 123, 4125};
   container.containing = {{
                               11,
                               12,
                               24,
                           },
+                          {},
                           1247,
                           1425};
-  container.atv = ATV::fromVbkEncoding(
-      std::string(defaultAtvEncoded.begin(), defaultAtvEncoded.end()));
+  container.atv = ATV::fromVbkEncoding(defaultAtvEncoded);
 
   return container;
 }
 
 template <>
 VTB getModifiedContainer() {
-  VTB vtb = VTB::fromVbkEncoding(
-      std::string(defaultVtbEncoded.begin(), defaultVtbEncoded.end()));
+  VTB vtb = VTB::fromVbkEncoding(defaultVtbEncoded);
   vtb.transaction.bitcoinTransaction = BtcTx({1, 2, 3});
   return vtb;
 }
@@ -138,16 +136,16 @@ VTB getModifiedContainer() {
 template <>
 AltProof getModifiedContainer() {
   AltProof container;
-  container.endorsed = {{1, 2, 3}, 123, 4125};
+  container.endorsed = {{1, 2, 3}, {}, 123, 4125};
   container.containing = {{
                               11,
                               12,
                               24,
                           },
+                          {},
                           1247,
                           1425};
-  container.atv = ATV::fromVbkEncoding(
-      std::string(defaultAtvEncoded.begin(), defaultAtvEncoded.end()));
+  container.atv = ATV::fromVbkEncoding(defaultAtvEncoded);
 
   container.atv.transaction.sourceAmount = Coin(213);
   return container;

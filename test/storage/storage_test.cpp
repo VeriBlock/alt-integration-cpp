@@ -5,7 +5,7 @@
 #include "veriblock/storage/repository_rocks_manager.hpp"
 #include "veriblock/uint.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 struct BlockBasic {
   using hash_t = uint256;
@@ -38,7 +38,7 @@ struct BlockBasic {
 };
 
 // DB name
-static const std::string dbName = "db-test";
+static const std::string dbName = "db-storage_test";
 
 template <typename Repo_type>
 std::shared_ptr<Repo_type> getRepo();

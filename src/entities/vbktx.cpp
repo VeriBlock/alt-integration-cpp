@@ -1,6 +1,6 @@
 #include "veriblock/entities/vbktx.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 VbkTx VbkTx::fromRaw(ReadStream& stream,
                      Slice<const uint8_t> _signature,

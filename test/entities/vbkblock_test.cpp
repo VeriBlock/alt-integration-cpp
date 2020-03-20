@@ -4,7 +4,7 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 static const VbkBlock defaultBlock{5000,
                                    2,

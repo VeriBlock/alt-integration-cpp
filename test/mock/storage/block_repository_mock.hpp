@@ -5,7 +5,7 @@
 
 #include <veriblock/storage/block_repository.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 template <typename Block>
 struct BlockRepository;
@@ -42,6 +42,6 @@ struct BlockRepositoryMock : public BlockRepository<Block> {
   MOCK_METHOD0_T(newCursor, std::shared_ptr<cursor_t>());
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_TEST_MOCK_STORAGE_BLOCK_REPOSITORY_MOCK_HPP_

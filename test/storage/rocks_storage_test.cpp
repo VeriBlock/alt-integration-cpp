@@ -5,7 +5,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/storage/repository_rocks_manager.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 static const BtcBlock btcBlock1{
     536870912u,
@@ -34,7 +34,7 @@ static const VbkBlock defaultBlockVbk{5000,
                                       1};
 
 // DB name
-static const std::string dbName = "db-test";
+static const std::string dbName = "db-rocks_storage_test";
 
 class TestStorage : public ::testing::Test {
  protected:
@@ -44,9 +44,9 @@ class TestStorage : public ::testing::Test {
 
   void SetUp() {
     rocksdb::Status s = database.open();
-    ASSERT_TRUE(s.ok());
+    ASSERT_TRUE(s.ok()) << s.ToString();
     s = database.clear();
-    ASSERT_TRUE(s.ok());
+    ASSERT_TRUE(s.ok()) << s.ToString();
 
     repoBtc = database.getBtcRepo();
     repoVbk = database.getVbkRepo();

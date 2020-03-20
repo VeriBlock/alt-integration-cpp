@@ -1,14 +1,13 @@
-#include "veriblock/entities/address.hpp"
-
 #include <cassert>
 
 #include "veriblock/base58.hpp"
 #include "veriblock/base59.hpp"
 #include "veriblock/consts.hpp"
+#include "veriblock/entities/address.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 constexpr const auto STARTING_CHAR = 'V';
 constexpr const auto MULTISIG_ENDING_CHAR = '0';
@@ -165,7 +164,7 @@ const std::string& Address::toString() const noexcept { return m_Address; }
 Address Address::fromVbkEncoding(ReadStream& stream) {
   auto addressType = (AddressType)stream.readLE<uint8_t>();
   auto addressBytes =
-      readSingleByteLenValue(stream, 0, VeriBlock::ADDRESS_SIZE);
+      readSingleByteLenValue(stream, 0, altintegration::ADDRESS_SIZE);
 
   std::string address;
   switch (addressType) {
@@ -207,4 +206,4 @@ void Address::getPopBytes(WriteStream& stream) const {
   stream.write(std::vector<uint8_t>(bytes.begin(), bytes.begin() + 16));
 }
 
-}  // namespace VeriBlock
+}  // namespace altintegration

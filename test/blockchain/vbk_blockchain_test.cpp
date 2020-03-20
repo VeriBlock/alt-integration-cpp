@@ -10,7 +10,7 @@
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 struct BlockchainFixture {
   using block_t = VbkBlock;
@@ -56,23 +56,15 @@ static std::vector<VbkTestCase> accept_test_cases = {
     {generated::vbk_blockheaders_mainnet_200001_230000,
      std::make_shared<VbkChainParamsMain>(),
      200001,
-     1},
+     2014},
     {generated::vbk_blockheaders_mainnet_200001_230000,
      std::make_shared<VbkChainParamsMain>(),
      200001,
-     99},
+     2015},
     {generated::vbk_blockheaders_mainnet_200001_230000,
      std::make_shared<VbkChainParamsMain>(),
      200001,
-     100},
-    {generated::vbk_blockheaders_mainnet_200001_230000,
-     std::make_shared<VbkChainParamsMain>(),
-     200001,
-     101},
-    {generated::vbk_blockheaders_mainnet_200001_230000,
-     std::make_shared<VbkChainParamsMain>(),
-     200001,
-     1337},
+     2016},
 
     /// testnet
     {generated::vbk_blockheaders_testnet_0_10000,
@@ -82,10 +74,6 @@ static std::vector<VbkTestCase> accept_test_cases = {
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
      0,
-     1},
-    {generated::vbk_blockheaders_testnet_0_10000,
-     std::make_shared<VbkChainParamsTest>(),
-     0,
      99},
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
@@ -95,10 +83,6 @@ static std::vector<VbkTestCase> accept_test_cases = {
      std::make_shared<VbkChainParamsTest>(),
      0,
      101},
-    {generated::vbk_blockheaders_testnet_0_10000,
-     std::make_shared<VbkChainParamsTest>(),
-     0,
-     1337},
 };
 
 // Read Vbk_blockheaders file.
@@ -157,8 +141,9 @@ INSTANTIATE_TEST_SUITE_P(AcceptBlocksRegression,
                          AcceptTest,
                          testing::ValuesIn(accept_test_cases),
                          [](const testing::TestParamInfo<VbkTestCase>& info) {
-                           return format("%d_%snet_startsAt%d",
+                           return format("%d_%snet_startsAt%d_offset%d",
                                          info.index,
                                          info.param.params->networkName(),
-                                         info.param.startHeight);
+                                         info.param.startHeight,
+                                         info.param.offset);
                          });

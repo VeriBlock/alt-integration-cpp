@@ -5,7 +5,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 //  Protecting Chain:
 //    A - B - C - D - E - F - G - H - I - J
@@ -101,22 +101,22 @@ VbkEndorsement VbkEndorsement ::fromContainer(const AltProof& c);
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltProof& c);
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 namespace std {
 
 template <>
-struct hash<VeriBlock::BtcEndorsement> {
-  size_t operator()(const VeriBlock::BtcEndorsement& e) const {
-    using eid = VeriBlock::BtcEndorsement::id_t;
+struct hash<altintegration::BtcEndorsement> {
+  size_t operator()(const altintegration::BtcEndorsement& e) const {
+    using eid = altintegration::BtcEndorsement::id_t;
     return std::hash<eid>{}(e.id);
   }
 };
 
 template <>
-struct hash<VeriBlock::VbkEndorsement> {
-  size_t operator()(const VeriBlock::VbkEndorsement& e) const {
-    using eid = VeriBlock::VbkEndorsement::id_t;
+struct hash<altintegration::VbkEndorsement> {
+  size_t operator()(const altintegration::VbkEndorsement& e) const {
+    using eid = altintegration::VbkEndorsement::id_t;
     return std::hash<eid>{}(e.id);
   }
 };

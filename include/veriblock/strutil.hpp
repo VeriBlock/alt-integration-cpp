@@ -7,7 +7,7 @@
 #include "base58.hpp"
 #include "base59.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 bool IsHex(const std::string& str);
 std::vector<uint8_t> ParseHex(const char* psz);
@@ -40,5 +40,5 @@ inline std::string HexStr(const T& vch) {
 
 std::vector<uint8_t> toBytes(const std::string input);
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STRUTIL_HPP_

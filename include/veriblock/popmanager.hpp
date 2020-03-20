@@ -7,10 +7,11 @@
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
+#include <veriblock/state_manager.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 /**
  * @invariant does not modify any on-disk state.
  */
@@ -50,19 +51,22 @@ struct PopManager {
    * @throws may throw if out of memory. In this case, payloads also will be
    * reverted.
    */
-  bool addPayloads(const Payloads& payloads, ValidationState& state);
+  bool addPayloads(const Payloads& payloads,
+                   StateChange& stateChange,
+                   ValidationState& state);
 
   /**
    * Atomically revert all payloads from given ATV and VTBs.
    * @param atv altchain to veriblock publication
    * @note does not throw in any circumstance
    */
-  void removePayloads(const Payloads& payloads) noexcept;
+  void removePayloads(const Payloads& payloads,
+                      StateChange& stateChange) noexcept;
 
   bool hasUncommittedChanges() const noexcept;
 
   /// removes all uncommitted payloads
-  void rollback() noexcept;
+  void rollback(StateChange& stateChange) noexcept;
 
   /// commit currently uncommitted payloads
   void commit();
@@ -95,12 +99,14 @@ struct PopManager {
   std::shared_ptr<AltChainParams> altChainParams_;
   ComparePopScore<AltChainParams> altChainCompare_;
 
-  bool addVTB(const VTB& vtb, ValidationState& state);
-  bool addAltProof(const AltProof& payloads, ValidationState& state);
-  void removeAltProof(const AltProof& alt) noexcept;
-  void removeVTB(const VTB& vtb) noexcept;
+  bool addVTB(const VTB& vtb, StateChange& stateChange, ValidationState& state);
+  bool addAltProof(const AltProof& payloads,
+                   StateChange& stateChange,
+                   ValidationState& state);
+  void removeAltProof(const AltProof& alt, StateChange& stateChange) noexcept;
+  void removeVTB(const VTB& vtb, StateChange& stateChange) noexcept;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPMANAGER_HPP_

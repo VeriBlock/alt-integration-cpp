@@ -8,7 +8,7 @@
 #include <veriblock/fmt.hpp>
 #include <veriblock/stateless_validation.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 template <typename Block, typename ChainParams>
 struct Miner {
@@ -52,6 +52,6 @@ struct Miner {
   uint32_t nonce = 0;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_MINER_HPP_

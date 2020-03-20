@@ -8,7 +8,7 @@
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
 
-namespace VeriBlock {
+namespace altintegration {
 
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
@@ -33,6 +33,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                           index_t& indexNew) override;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_

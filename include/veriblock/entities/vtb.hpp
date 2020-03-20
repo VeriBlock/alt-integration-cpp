@@ -8,7 +8,7 @@
 #include "veriblock/entities/vbkpoptx.hpp"
 #include "veriblock/serde.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 struct VTB {
   VbkPopTx transaction{};
@@ -28,7 +28,7 @@ struct VTB {
    * @param string data bytes to read from
    * @return VTB
    */
-  static VTB fromVbkEncoding(const std::string& bytes);
+  static VTB fromVbkEncoding(Slice<const uint8_t> bytes);
 
   /**
    * Convert VTB to data stream using Vbk byte format
@@ -43,6 +43,6 @@ struct VTB {
   std::vector<uint8_t> toVbkEncoding() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VTB_HPP_

@@ -7,7 +7,7 @@
 
 #include "veriblock/storage/block_repository.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 template <typename Block>
 struct BlockCursorInmem : public Cursor<typename Block::hash_t, Block> {
@@ -80,7 +80,7 @@ template <typename Block>
 struct BlockRepositoryInmem;
 
 template <typename Block>
-struct WriteBatchInmem : public WriteBatch<Block> {
+struct BlockWriteBatchInmem : public BlockWriteBatch<Block> {
   //! stored block type
   using stored_block_t = Block;
   //! block has type
@@ -90,7 +90,8 @@ struct WriteBatchInmem : public WriteBatch<Block> {
 
   enum class Operation { PUT, REMOVE_BY_HASH };
 
-  WriteBatchInmem(BlockRepositoryInmem<stored_block_t>* repo) : _repo(repo) {}
+  BlockWriteBatchInmem(BlockRepositoryInmem<stored_block_t>* repo)
+      : _repo(repo) {}
 
   void put(const stored_block_t& block) override {
     _ops.push_back(Operation::PUT);
@@ -113,11 +114,11 @@ struct WriteBatchInmem : public WriteBatch<Block> {
     auto removes_begin = this->_removes.begin();
     for (const auto& op : this->_ops) {
       switch (op) {
-        case WriteBatchInmem<Block>::Operation::PUT: {
+        case BlockWriteBatchInmem<Block>::Operation::PUT: {
           _repo->put(*puts_begin++);
           break;
         }
-        case WriteBatchInmem<Block>::Operation::REMOVE_BY_HASH: {
+        case BlockWriteBatchInmem<Block>::Operation::REMOVE_BY_HASH: {
           _repo->removeByHash(*removes_begin++);
           break;
         }
@@ -188,9 +189,9 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
 
   void clear() override { _hash.clear(); }
 
-  std::unique_ptr<WriteBatch<stored_block_t>> newBatch() override {
-    return std::unique_ptr<WriteBatchInmem<stored_block_t>>(
-        new WriteBatchInmem<stored_block_t>(this));
+  std::unique_ptr<BlockWriteBatch<stored_block_t>> newBatch() override {
+    return std::unique_ptr<BlockWriteBatchInmem<stored_block_t>>(
+        new BlockWriteBatchInmem<stored_block_t>(this));
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
@@ -201,6 +202,6 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   std::unordered_map<hash_t, std::shared_ptr<stored_block_t>> _hash;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_INMEM_HPP_

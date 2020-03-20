@@ -13,18 +13,7 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
 
-namespace std {
-
-template <>
-struct hash<std::vector<uint8_t>> {
-  size_t operator()(const std::vector<uint8_t>& v) const {
-    return std::hash<std::string>{}({v.begin(), v.end()});
-  }
-};
-
-}  // namespace std
-
-namespace VeriBlock {
+namespace altintegration {
 
 template <typename Endorsement>
 struct EndorsementCursorInmem
@@ -148,6 +137,10 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
     return ret;
   }
 
+  std::unique_ptr<EndorsementWriteBatch<Endorsement>> newBatch() override {
+    return nullptr;
+  }
+
   std::shared_ptr<cursor_t> newCursor() const override {
     return std::make_shared<EndorsementCursorInmem<Endorsement>>(e_);
   }
@@ -162,6 +155,6 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
   // clang-format on
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_BTC_ENDORSEMENTS_REPOSITORY_INMEM_HPP_

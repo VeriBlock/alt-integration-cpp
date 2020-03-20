@@ -5,7 +5,7 @@
 #include "util/literals.hpp"
 #include "veriblock/entities/output.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 static const auto OUTPUT_BYTES =
     "01166772F51AB208D32771AB1506970EEB664462730B838E020539"_unhex;

@@ -11,7 +11,7 @@
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 struct GetProofTest : public testing::Test {
   using block_t = VbkBlock;

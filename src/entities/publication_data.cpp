@@ -1,6 +1,6 @@
 #include "veriblock/entities/publication_data.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 PublicationData PublicationData::fromRaw(const std::vector<uint8_t> bytes) {
   ReadStream stream(bytes);

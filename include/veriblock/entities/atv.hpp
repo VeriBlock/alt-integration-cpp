@@ -11,7 +11,7 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/serde.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 struct ATV {
   VbkTx transaction{};
@@ -31,7 +31,7 @@ struct ATV {
    * @param string data bytes to read from
    * @return ATV
    */
-  static ATV fromVbkEncoding(const std::string& bytes);
+  static ATV fromVbkEncoding(Slice<const uint8_t> bytes);
 
   /**
    * Convert ATV to data stream using Vbk byte format
@@ -46,6 +46,6 @@ struct ATV {
   std::vector<uint8_t> toVbkEncoding() const;
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ATV_HPP_

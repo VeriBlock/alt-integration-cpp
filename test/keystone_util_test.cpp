@@ -2,7 +2,7 @@
 
 #include <veriblock/keystone_util.hpp>
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 const static uint32_t VBK_KEYSTONE_INTERVAL = 20;
 

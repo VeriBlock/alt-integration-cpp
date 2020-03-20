@@ -2,17 +2,19 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 #include "veriblock/serde.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 struct AltBlock {
   using height_t = int32_t;
   using hash_t = std::vector<uint8_t>;
 
   hash_t hash{};
+  hash_t previousBlock{};
   uint32_t timestamp{};
   height_t height{};
 
@@ -44,8 +46,36 @@ struct AltBlock {
   std::vector<uint8_t> toVbkEncoding() const;
 
   hash_t getHash() const { return hash; }
+
+  friend bool operator==(const AltBlock& a, const AltBlock& b) {
+    // clang-format off
+    return a.timestamp == b.timestamp &&
+           a.hash == b.hash &&
+           a.previousBlock == b.previousBlock &&
+           a.height == b.height;
+    // clang-format on
+  }
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
+
+namespace std {
+
+template <>
+struct hash<std::vector<uint8_t>> {
+  size_t operator()(const std::vector<uint8_t>& x) const {
+    return std::hash<std::string>{}(std::string{x.begin(), x.end()});
+  }
+};
+
+template <>
+struct hash<altintegration::AltBlock> {
+  size_t operator()(const altintegration::AltBlock& block) {
+    std::hash<std::vector<uint8_t>> hasher;
+    return hasher(block.getHash());
+  }
+};
+
+}  // namespace std
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_

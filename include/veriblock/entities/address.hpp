@@ -8,7 +8,7 @@
 #include "veriblock/slice.hpp"
 #include "veriblock/write_stream.hpp"
 
-namespace VeriBlock {
+namespace altintegration {
 
 enum class AddressType {
   ZERO_UNUSED = 0,
@@ -91,6 +91,6 @@ struct Address {
   std::string m_Address{};
 };
 
-}  // namespace VeriBlock
+}  // namespace altintegration
 
 #endif

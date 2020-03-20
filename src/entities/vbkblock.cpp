@@ -1,6 +1,6 @@
 #include "veriblock/entities/vbkblock.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 VbkBlock VbkBlock::fromRaw(Slice<const uint8_t> bytes) {
   ReadStream stream(bytes);

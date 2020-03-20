@@ -1,6 +1,6 @@
 #include "veriblock/entities/atv.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 ATV ATV::fromVbkEncoding(ReadStream& stream) {
   ATV atv{};
@@ -15,7 +15,7 @@ ATV ATV::fromVbkEncoding(ReadStream& stream) {
   return atv;
 }
 
-ATV ATV::fromVbkEncoding(const std::string& bytes) {
+ATV ATV::fromVbkEncoding(Slice<const uint8_t> bytes) {
   ReadStream stream(bytes);
   return fromVbkEncoding(stream);
 }

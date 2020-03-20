@@ -7,7 +7,7 @@
 #include "veriblock/hashutil.hpp"
 #include "veriblock/uint.hpp"
 
-using namespace VeriBlock;
+using namespace altintegration;
 
 struct TestCase1 {
   std::vector<uint8_t> data;
@@ -37,13 +37,13 @@ static std::vector<TestCase1> sha256_cases = {
 
 TEST_P(Sha256Test1, OneShot) {
   auto tc = GetParam();
-  auto result = VeriBlock::sha256(tc.data);
+  auto result = altintegration::sha256(tc.data);
   EXPECT_EQ(result, tc.hashBytes);
 }
 
 TEST_P(Sha256Test1, HashTwice) {
   auto tc = GetParam();
-  auto result = VeriBlock::sha256twice(tc.data);
+  auto result = altintegration::sha256twice(tc.data);
   EXPECT_EQ(result, tc.hashTwiceBytes);
 }
 
@@ -51,16 +51,16 @@ TEST_P(Sha256Test1, IUF) {
   auto tc = GetParam();
   std::vector<uint8_t> result(SHA256_HASH_SIZE, 0);
 
-  VeriBlock::sha256_context ctx{};
-  VeriBlock::sha256_init(&ctx);
+  altintegration::sha256_context ctx{};
+  altintegration::sha256_init(&ctx);
 
   // hash of the whole array should equal to the hash of the same string, added
   // byte by byte through sha256_update
   for (auto c : tc.data) {
     std::vector<uint8_t> v{(uint8_t)c};
-    VeriBlock::sha256_update(&ctx, v.data(), 1);
+    altintegration::sha256_update(&ctx, v.data(), 1);
   }
-  VeriBlock::sha256_finish(&ctx, result.data());
+  altintegration::sha256_finish(&ctx, result.data());
   EXPECT_EQ(result, tc.hashBytes);
 }
 
