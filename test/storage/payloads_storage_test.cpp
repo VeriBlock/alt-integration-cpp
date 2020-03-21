@@ -12,6 +12,7 @@
 #include "veriblock/storage/payloads_repository.hpp"
 #include "veriblock/storage/payloads_repository_inmem.hpp"
 #include "veriblock/storage/payloads_repository_rocks.hpp"
+#include "veriblock/storage/repository_rocks_manager.hpp"
 
 using namespace altintegration;
 
@@ -24,6 +25,14 @@ std::shared_ptr<Repo_type> getRepo();
 template <>
 std::shared_ptr<PayloadsRepositoryInmem<AltBlock, Payloads>> getRepo() {
   return std::make_shared<PayloadsRepositoryInmem<AltBlock, Payloads>>();
+}
+
+template <>
+std::shared_ptr<PayloadsRepositoryRocks<AltBlock, Payloads>> getRepo() {
+  RepositoryRocksManager database(dbName);
+  rocksdb::Status s = database.open();
+  database.clear();
+  return database.getPayloadsRepo();
 }
 
 Payloads generatePayloads() {
@@ -131,28 +140,6 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
   EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p3) !=
               payloads.end());
   EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p4) !=
-              payloads.end());
-
-  this->repo->clear();
-
-  payloads = this->repo->get(b1.hash);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p3) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p4) ==
-              payloads.end());
-
-  payloads = this->repo->get(b2.hash);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p3) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p4) ==
               payloads.end());
 }
 
@@ -320,7 +307,8 @@ TYPED_TEST_P(PayloadsRepoTest, Batch) {
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(PayloadsRepoTest, Basic, Cursor, Batch);
 
-typedef ::testing::Types<PayloadsRepositoryInmem<AltBlock, Payloads>>
+typedef ::testing::Types<PayloadsRepositoryInmem<AltBlock, Payloads>,
+                         PayloadsRepositoryRocks<AltBlock, Payloads>>
     TypesUnderTest;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(PayloadsRepoTestSuite,

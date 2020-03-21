@@ -91,7 +91,7 @@ template <typename Block, typename Payloads>
 struct PayloadsRepositoryInmem;
 
 template <typename Block, typename Payloads>
-struct PayloadsWritebatchInmem : public PayloadsWriteBatch<Block, Payloads> {
+struct PayloadsWriteBatchInmem : public PayloadsWriteBatch<Block, Payloads> {
   //! block type
   using block_t = Block;
   //! stored payloads type
@@ -105,9 +105,9 @@ struct PayloadsWritebatchInmem : public PayloadsWriteBatch<Block, Payloads> {
 
   enum class Operation { PUT, REMOVE_BY_HASH };
 
-  ~PayloadsWritebatchInmem() override = default;
+  ~PayloadsWriteBatchInmem() override = default;
 
-  PayloadsWritebatchInmem(
+  PayloadsWriteBatchInmem(
       PayloadsRepositoryInmem<block_t, stored_payloads_t>* repo)
       : _repo(repo) {}
 
@@ -132,13 +132,13 @@ struct PayloadsWritebatchInmem : public PayloadsWriteBatch<Block, Payloads> {
     auto removes_begin = this->_removes.begin();
     for (const auto& op : this->_ops) {
       switch (op) {
-        case PayloadsWritebatchInmem<block_t,
+        case PayloadsWriteBatchInmem<block_t,
                                      stored_payloads_t>::Operation::PUT: {
           _repo->put(puts_begin->first, puts_begin->second);
           ++puts_begin;
           break;
         }
-        case PayloadsWritebatchInmem<block_t, stored_payloads_t>::Operation::
+        case PayloadsWriteBatchInmem<block_t, stored_payloads_t>::Operation::
             REMOVE_BY_HASH: {
           _repo->removeByHash(*removes_begin++);
           break;
@@ -195,8 +195,8 @@ struct PayloadsRepositoryInmem : public PayloadsRepository<Block, Payloads> {
 
   std::unique_ptr<PayloadsWriteBatch<block_t, stored_payloads_t>> newBatch()
       override {
-    return std::unique_ptr<PayloadsWritebatchInmem<block_t, stored_payloads_t>>(
-        new PayloadsWritebatchInmem<block_t, stored_payloads_t>(this));
+    return std::unique_ptr<PayloadsWriteBatchInmem<block_t, stored_payloads_t>>(
+        new PayloadsWriteBatchInmem<block_t, stored_payloads_t>(this));
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
