@@ -247,8 +247,6 @@ TYPED_TEST_P(PayloadsRepoTest, Batch) {
 
   using block_t = typename Batch::block_t;
   using payloads_t = typename Batch::payloads_t;
-  using stored_payloads_container_t =
-      typename Batch::stored_payloads_container_t;
 
   auto batch = this->repo->newBatch();
 
