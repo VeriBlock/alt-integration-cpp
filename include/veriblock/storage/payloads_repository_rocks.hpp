@@ -10,6 +10,7 @@
 #include "veriblock/alt-util.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/storage/db_error.hpp"
 #include "veriblock/storage/payloads_repository.hpp"
 
 namespace altintegration {
