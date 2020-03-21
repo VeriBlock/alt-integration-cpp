@@ -211,25 +211,28 @@ TYPED_TEST_P(PayloadsRepoTest, Cursor) {
   std::reverse(reversedValues.begin(), reversedValues.end());
   EXPECT_EQ(reversedValues, values);
 
-  stored_payloads_container_t expect;
+  stored_payloads_container_t cont;
 
   // find some values
   cursor->seek(b1.hash);
   EXPECT_TRUE(cursor->isValid());  // key found
-  expect = {p1, p2};
-  EXPECT_EQ(cursor->value(), expect);
+  cont = cursor->value();
+  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p1) != cont.end());
+  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p2) != cont.end());
 
   // find some values
   cursor->seek(b2.hash);
   EXPECT_TRUE(cursor->isValid());  // key found
-  expect = {p3, p4};
-  EXPECT_EQ(cursor->value(), expect);
+  cont = cursor->value();
+  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p3) != cont.end());
+  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p4) != cont.end());
 
   // find some values
   cursor->seek(b3.hash);
   EXPECT_TRUE(cursor->isValid());  // key found
-  expect = {p5, p6};
-  EXPECT_EQ(cursor->value(), expect);
+  cont = cursor->value();
+  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p5) != cont.end());
+  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p6) != cont.end());
 
   // iterate before first element
   cursor->seekToFirst();
