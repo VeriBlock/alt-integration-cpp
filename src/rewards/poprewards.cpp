@@ -30,7 +30,7 @@ static PopRewardsBigDecimal getScoreMultiplierFromRelativeBlock(
   return rewardParams.relativeScoreLookupTable()[relativeBlock];
 }
 
-PopRewardsBigDecimal PopRewards::calculatePopScoreFromEndorsements(
+PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
     const AltBlock& endorsedBlock) {
   PopRewardsBigDecimal totalScore = PopRewardsBigDecimal(0.0);
 

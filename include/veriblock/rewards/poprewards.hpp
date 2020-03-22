@@ -22,7 +22,7 @@ struct PopRewards {
 
   /**
    */
-  virtual PopRewardsBigDecimal calculatePopScoreFromEndorsements(
+  virtual PopRewardsBigDecimal scoreFromEndorsements(
       const AltBlock& endorsedBlock);
 
  private:

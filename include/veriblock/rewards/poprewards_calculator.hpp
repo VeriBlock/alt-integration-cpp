@@ -11,18 +11,24 @@ namespace altintegration {
  * @invariant does not modify any on-disk state.
  */
 struct PopRewardsCalculator {
-  PopRewardsCalculator() = default;
+  PopRewardsCalculator(std::shared_ptr<AltChainParams> chainParams,
+                       std::shared_ptr<PopRewardsParams> rewardParams)
+      : chainParams_(std::move(chainParams)),
+        rewardParams_(std::move(rewardParams)) {}
   virtual ~PopRewardsCalculator(){};
 
   /**
-   * score and difficulty are fractional numbers multiplied to rewardsDecimalsMult
+   * score and difficulty are fractional numbers multiplied to
+   * rewardsDecimalsMult
    */
   virtual PopRewardsBigDecimal calculatePopRewardForBlock(
-      const AltChainParams& chainParams,
-      const PopRewardsParams& rewardParams,
       uint32_t height,
       PopRewardsBigDecimal score,
       PopRewardsBigDecimal difficulty);
+
+ private:
+  std::shared_ptr<AltChainParams> chainParams_;
+  std::shared_ptr<PopRewardsParams> rewardParams_;
 };
 
 }  // namespace altintegration

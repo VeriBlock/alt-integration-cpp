@@ -75,13 +75,10 @@ static PopRewardsBigDecimal calculateRewardWithSlope(
 
   PopRewardsBigDecimal scoreDecrease =
       slope * (score - curveParams.startOfSlope());
-  PopRewardsBigDecimal maxScoreDecrease = PopRewardsBigDecimal(1.0);
+  PopRewardsBigDecimal maxScoreDecrease = 1.0;
   if (scoreDecrease > maxScoreDecrease) {
     scoreDecrease = maxScoreDecrease;
   }
-
-  // (1 - slope * (score - START_OF_DECREASING_LINE_REWARD)) * roundRatio *
-  // score
   return (maxScoreDecrease - scoreDecrease) * roundRatio * score;
 }
 
@@ -91,20 +88,18 @@ static PopRewardsBigDecimal calculateTotalPopBlockReward(
     uint32_t height,
     PopRewardsBigDecimal difficulty,
     PopRewardsBigDecimal score) {
-  if (score == PopRewardsBigDecimal(0.0)) {
-    return PopRewardsBigDecimal(0.0);
+  if (score == 0.0) {
+    return 0.0;
   }
 
   // Minimum difficulty
-  if (difficulty < PopRewardsBigDecimal(1.0)) {
-    difficulty = PopRewardsBigDecimal(1.0);
+  if (difficulty < 1.0) {
+    difficulty = 1.0;
   }
 
   uint32_t payoutRound =
       getRoundForBlockNumber(chainParams, rewardParams, height);
-
   PopRewardsBigDecimal scoreToDifficulty = score / difficulty;
-
   PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
 
   // No use of penalty multiplier, this payout occurs on the flat part of the
@@ -134,31 +129,26 @@ static PopRewardsBigDecimal calculateTotalPopBlockReward(
 
 // we calculate the reward for a given block
 PopRewardsBigDecimal PopRewardsCalculator::calculatePopRewardForBlock(
-    const AltChainParams& chainParams,
-    const PopRewardsParams& rewardParams,
     uint32_t height,
     PopRewardsBigDecimal scoreForThisBlock,
     PopRewardsBigDecimal difficulty) {
-  if (scoreForThisBlock == PopRewardsBigDecimal(0.0)) {
-    return PopRewardsBigDecimal(0.0);
+  if (scoreForThisBlock == 0.0) {
+    return 0.0;
   }
 
   // Special case for the first ROUND 3 after keystone - do not adjust for score
   // to difficulty ratio
   uint32_t roundNumber =
-      getRoundForBlockNumber(chainParams, rewardParams, height);
-  if (rewardParams.flatScoreRoundUse() &&
-      roundNumber == rewardParams.flatScoreRound() &&
-      isFirstRoundAfterKeystone(chainParams, rewardParams, height)) {
-    return calculateTotalPopBlockReward(chainParams,
-                                        rewardParams,
-                                        height,
-                                        PopRewardsBigDecimal(1.0),
-                                        PopRewardsBigDecimal(1.0));
+      getRoundForBlockNumber(*chainParams_, *rewardParams_, height);
+  if (rewardParams_->flatScoreRoundUse() &&
+      roundNumber == rewardParams_->flatScoreRound() &&
+      isFirstRoundAfterKeystone(*chainParams_, *rewardParams_, height)) {
+    return calculateTotalPopBlockReward(
+        *chainParams_, *rewardParams_, height, 1.0, 1.0);
   }
 
   return calculateTotalPopBlockReward(
-      chainParams, rewardParams, height, difficulty, scoreForThisBlock);
+      *chainParams_, *rewardParams_, height, difficulty, scoreForThisBlock);
 }
 
 }  // namespace altintegration
