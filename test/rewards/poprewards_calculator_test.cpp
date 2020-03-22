@@ -1,9 +1,10 @@
-﻿#include <gtest/gtest.h>
+﻿#include "veriblock/rewards/poprewards_calculator.hpp"
+
+#include <gtest/gtest.h>
 
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/mock_miner.hpp"
-#include "veriblock/rewards/poprewards_calculator.hpp"
 
 using namespace altintegration;
 
@@ -18,73 +19,81 @@ struct AltChainParamsTest : public AltChainParams {
   }
 };
 
-struct RewardsTestFixture : ::testing::Test {
+struct RewardsCalculatorTestFixture : ::testing::Test {
   PopRewardsCalculator rewardsCalculator{};
   AltChainParamsTest chainParams{};
   PopRewardsParams rewardParams{};
-  ArithUint256 defaultScore = 1LL * rewardsDecimalsMult;
-  ArithUint256 defaultDifficulty = 1LL * rewardsDecimalsMult;
+  PopRewardsBigDecimal defaultScore = PopRewardsBigDecimal(1.0);
+  PopRewardsBigDecimal defaultDifficulty = PopRewardsBigDecimal(1.0);
 
-  RewardsTestFixture() {}
+  RewardsCalculatorTestFixture() {}
 };
 
-TEST_F(RewardsTestFixture, basicReward_test) {
+TEST_F(RewardsCalculatorTestFixture, basicReward_test) {
   // blockNumber is used to detect current round only. Let's start with ROUND_2.
   uint32_t height = 1;
 
   auto totalReward = rewardsCalculator.calculatePopRewardForBlock(
       chainParams, rewardParams, height, defaultScore, defaultDifficulty);
-  ASSERT_TRUE(totalReward > 0);
+  ASSERT_TRUE(totalReward > PopRewardsBigDecimal(0.0));
 
-  ArithUint256 halfScore = defaultScore / 2;
+  PopRewardsBigDecimal halfScore = defaultScore / PopRewardsBigDecimal(2.0);
 
   auto totalReward2 = rewardsCalculator.calculatePopRewardForBlock(
       chainParams, rewardParams, height, halfScore, defaultDifficulty);
-  ASSERT_TRUE(totalReward2 > 0);
-  ASSERT_EQ(totalReward / 2, totalReward2);
+  ASSERT_TRUE(totalReward2 > PopRewardsBigDecimal(0.0));
+  ASSERT_EQ(totalReward / PopRewardsBigDecimal(2.0), totalReward2);
 
   // when score is higher than difficulty we begin to gradually decrease the
   // reward
-  ArithUint256 doubleScore = defaultScore * 2;
+  PopRewardsBigDecimal doubleScore = defaultScore * PopRewardsBigDecimal(2.0);
   auto totalReward3 = rewardsCalculator.calculatePopRewardForBlock(
       chainParams, rewardParams, height, doubleScore, defaultDifficulty);
 
-  ASSERT_TRUE(totalReward3 > 0);
-  ASSERT_GT(totalReward * 2, totalReward3);
+  ASSERT_TRUE(totalReward3 > PopRewardsBigDecimal(0.0));
+  ASSERT_GT(totalReward * PopRewardsBigDecimal(2.0), totalReward3);
   ASSERT_GT(totalReward3, totalReward);
 
   // we limit the reward to 200% threshold (for normal blocks). Let's check
   // this.
-  ArithUint256 doublePlusScore = (uint32_t)(2.1 * rewardsDecimalsMult);
+  PopRewardsBigDecimal doublePlusScore =
+      defaultScore * PopRewardsBigDecimal(2.1);
   auto totalReward4 = rewardsCalculator.calculatePopRewardForBlock(
       chainParams, rewardParams, height, doublePlusScore, defaultDifficulty);
   ASSERT_EQ(totalReward3, totalReward4);
 
   // test the keystone highest reward
   auto totalReward5 = rewardsCalculator.calculatePopRewardForBlock(
-      chainParams, rewardParams, 20, defaultScore * 3, defaultDifficulty);
+      chainParams,
+      rewardParams,
+      20,
+      defaultScore * PopRewardsBigDecimal(3.0),
+      defaultDifficulty);
   ASSERT_GT(totalReward5, totalReward4);
 
   // multiple endorsements may increase the score to 3.0, keystone block ratio
   // is 1.7 (due to reward curve) so the payout is 3.0 * 1.7 = 5.1 *
   // REWARD_PER_BLOCK
-  uint64_t totalReward5Value = totalReward5.getLow64();
-  ASSERT_GT(totalReward5Value, 5ULL * rewardsDecimalsMult);
-  ASSERT_LT(totalReward5Value, 6ULL * rewardsDecimalsMult);
+  ASSERT_GT(totalReward5, PopRewardsBigDecimal(5.0));
+  ASSERT_LT(totalReward5, PopRewardsBigDecimal(6.0));
 
   // test over the highest reward
   auto totalReward6 = rewardsCalculator.calculatePopRewardForBlock(
-      chainParams, rewardParams, 20, defaultScore * 4, defaultDifficulty);
+      chainParams,
+      rewardParams,
+      20,
+      defaultScore * PopRewardsBigDecimal(4.0),
+      defaultDifficulty);
   // we see that the reward is no longer growing
   ASSERT_EQ(totalReward6, totalReward5);
 }
 
-TEST_F(RewardsTestFixture, specialReward_test) {
+TEST_F(RewardsCalculatorTestFixture, specialReward_test) {
   // blockNumber is used to detect current round only. Let's start with ROUND_2.
   uint32_t height = 1;
 
   // let's start with hardcoded difficulty
-  ArithUint256 halfScore = defaultScore / 2;
+  PopRewardsBigDecimal halfScore = defaultScore / PopRewardsBigDecimal(2.0);
 
   auto totalReward1 = rewardsCalculator.calculatePopRewardForBlock(
       chainParams, rewardParams, height, defaultScore, defaultDifficulty);

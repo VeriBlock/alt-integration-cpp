@@ -37,15 +37,13 @@ static bool isFirstRoundAfterKeystone(const AltChainParams& chainParams,
   return false;
 }
 
-// resulting ratio has rewardsDecimalsMult precision
-static uint32_t getRoundRatio(const PopRewardsParams& rewardParams,
-                              uint32_t payoutRound) {
+static PopRewardsBigDecimal getRoundRatio(const PopRewardsParams& rewardParams,
+                                          uint32_t payoutRound) {
   return rewardParams.roundRatios()[payoutRound];
 }
 
-// resulting threshold has rewardsDecimalsMult precision
-static uint32_t getMaxScoreThreshold(const PopRewardsParams& rewardParams,
-                                     uint32_t payoutRound) {
+static PopRewardsBigDecimal getMaxScoreThreshold(
+    const PopRewardsParams& rewardParams, uint32_t payoutRound) {
   if (isKeystoneRound(rewardParams, payoutRound)) {
     return rewardParams.maxScoreThresholdKeystone();
   }
@@ -53,10 +51,10 @@ static uint32_t getMaxScoreThreshold(const PopRewardsParams& rewardParams,
 }
 
 // slope is how the payout is decreased for each additional block score
-static uint32_t getRoundSlope(const PopRewardsParams& rewardParams,
-                              uint32_t payoutRound) {
+static PopRewardsBigDecimal getRoundSlope(const PopRewardsParams& rewardParams,
+                                          uint32_t payoutRound) {
   PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
-  uint32_t slopeRatio = curveParams.slopeNormal();
+  PopRewardsBigDecimal slopeRatio = curveParams.slopeNormal();
   if (payoutRound == rewardParams.keystoneRound()) {
     slopeRatio = curveParams.slopeKeystone();
   }
@@ -65,65 +63,61 @@ static uint32_t getRoundSlope(const PopRewardsParams& rewardParams,
 
 // apply the reward curve to the score and subtract it from the current round
 // multiplier
-static ArithUint256 calculateRewardWithSlope(
+static PopRewardsBigDecimal calculateRewardWithSlope(
     const PopRewardsParams& rewardParams,
-    ArithUint256 score,
+    PopRewardsBigDecimal score,
     uint32_t payoutRound) {
-  ArithUint256 slope = getRoundSlope(rewardParams, payoutRound);
-  uint32_t roundRatio = getRoundRatio(rewardParams, payoutRound);
+  PopRewardsBigDecimal slope = getRoundSlope(rewardParams, payoutRound);
+  PopRewardsBigDecimal roundRatio = getRoundRatio(rewardParams, payoutRound);
   PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
 
   assert(score >= curveParams.startOfSlope());
 
-  ArithUint256 scoreDecrease =
-      slope * (score - curveParams.startOfSlope()) / rewardsDecimalsMult;
-
-  uint64_t maxScoreDecrease = 1LL * rewardsDecimalsMult;
-
+  PopRewardsBigDecimal scoreDecrease =
+      slope * (score - curveParams.startOfSlope());
+  PopRewardsBigDecimal maxScoreDecrease = PopRewardsBigDecimal(1.0);
   if (scoreDecrease > maxScoreDecrease) {
     scoreDecrease = maxScoreDecrease;
   }
 
   // (1 - slope * (score - START_OF_DECREASING_LINE_REWARD)) * roundRatio *
   // score
-  return (maxScoreDecrease - scoreDecrease) * roundRatio / rewardsDecimalsMult *
-         score / rewardsDecimalsMult;
+  return (maxScoreDecrease - scoreDecrease) * roundRatio * score;
 }
 
-static ArithUint256 calculateTotalPopBlockReward(
+static PopRewardsBigDecimal calculateTotalPopBlockReward(
     const AltChainParams& chainParams,
     const PopRewardsParams& rewardParams,
     uint32_t height,
-    ArithUint256 difficulty,
-    ArithUint256 score) {
-  if (score == 0) {
-    return 0;
+    PopRewardsBigDecimal difficulty,
+    PopRewardsBigDecimal score) {
+  if (score == PopRewardsBigDecimal(0.0)) {
+    return PopRewardsBigDecimal(0.0);
   }
 
   // Minimum difficulty
-  if (difficulty < 1LL * rewardsDecimalsMult) {
-    difficulty = 1LL * rewardsDecimalsMult;
+  if (difficulty < PopRewardsBigDecimal(1.0)) {
+    difficulty = PopRewardsBigDecimal(1.0);
   }
 
   uint32_t payoutRound =
       getRoundForBlockNumber(chainParams, rewardParams, height);
 
-  ArithUint256 scoreToDifficulty =
-      // increase precision two times before division
-      score * rewardsDecimalsMult / difficulty;
+  PopRewardsBigDecimal scoreToDifficulty = score / difficulty;
 
   PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
 
   // No use of penalty multiplier, this payout occurs on the flat part of the
   // payout curve
   if (scoreToDifficulty <= curveParams.startOfSlope()) {
-    uint32_t roundRatio = getRoundRatio(rewardParams, payoutRound);
+    PopRewardsBigDecimal roundRatio = getRoundRatio(rewardParams, payoutRound);
 
     // now we apply the current round multiplier to the score
-    return scoreToDifficulty * roundRatio / rewardsDecimalsMult;
+    return scoreToDifficulty * roundRatio;
   }
 
-  uint32_t maxScoreThreshold = getMaxScoreThreshold(rewardParams, payoutRound);
+  PopRewardsBigDecimal maxScoreThreshold =
+      getMaxScoreThreshold(rewardParams, payoutRound);
   if (scoreToDifficulty > maxScoreThreshold) {
     scoreToDifficulty = maxScoreThreshold;
   }
@@ -132,21 +126,21 @@ static ArithUint256 calculateTotalPopBlockReward(
   // score to difficulty ratio is greater than the max reward threshold. Past
   // the max reward threshold, the block reward ceases to grow, but is split
   // amongst a larger number of participants.
-  ArithUint256 rewardWithSlope =
+  PopRewardsBigDecimal rewardWithSlope =
       calculateRewardWithSlope(rewardParams, scoreToDifficulty, payoutRound);
 
   return rewardWithSlope;
 }
 
 // we calculate the reward for a given block
-ArithUint256 PopRewardsCalculator::calculatePopRewardForBlock(
+PopRewardsBigDecimal PopRewardsCalculator::calculatePopRewardForBlock(
     const AltChainParams& chainParams,
     const PopRewardsParams& rewardParams,
     uint32_t height,
-    ArithUint256 scoreForThisBlock,
-    ArithUint256 difficulty) {
-  if (scoreForThisBlock == 0) {
-    return 0;
+    PopRewardsBigDecimal scoreForThisBlock,
+    PopRewardsBigDecimal difficulty) {
+  if (scoreForThisBlock == PopRewardsBigDecimal(0.0)) {
+    return PopRewardsBigDecimal(0.0);
   }
 
   // Special case for the first ROUND 3 after keystone - do not adjust for score
@@ -156,8 +150,11 @@ ArithUint256 PopRewardsCalculator::calculatePopRewardForBlock(
   if (rewardParams.flatScoreRoundUse() &&
       roundNumber == rewardParams.flatScoreRound() &&
       isFirstRoundAfterKeystone(chainParams, rewardParams, height)) {
-    return calculateTotalPopBlockReward(
-        chainParams, rewardParams, height, 1, 1);
+    return calculateTotalPopBlockReward(chainParams,
+                                        rewardParams,
+                                        height,
+                                        PopRewardsBigDecimal(1.0),
+                                        PopRewardsBigDecimal(1.0));
   }
 
   return calculateTotalPopBlockReward(

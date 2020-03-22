@@ -6,6 +6,7 @@
 #include <veriblock/rewards/poprewards_params.hpp>
 
 namespace altintegration {
+
 /**
  * @invariant does not modify any on-disk state.
  */
@@ -16,12 +17,12 @@ struct PopRewardsCalculator {
   /**
    * score and difficulty are fractional numbers multiplied to rewardsDecimalsMult
    */
-  virtual ArithUint256 calculatePopRewardForBlock(
+  virtual PopRewardsBigDecimal calculatePopRewardForBlock(
       const AltChainParams& chainParams,
       const PopRewardsParams& rewardParams,
       uint32_t height,
-      ArithUint256 score,
-      ArithUint256 difficulty);
+      PopRewardsBigDecimal score,
+      PopRewardsBigDecimal difficulty);
 };
 
 }  // namespace altintegration
