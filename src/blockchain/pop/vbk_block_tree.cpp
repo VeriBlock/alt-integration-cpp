@@ -2,7 +2,7 @@
 
 namespace altintegration {
 
-void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
+void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       BlockTree::index_t& indexNew) {
   if (currentBest.tip() == nullptr) {
     currentBest.setTip(&indexNew);
@@ -27,13 +27,13 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
                                 currentBest.tip()->height,
                                 param_->getKeystoneInterval())) {
     // [vbk fork point ... current tip]
-    Chain<block_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
+    Chain<index_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
     auto pkcCurrent =
         getProtoKeystoneContext(vbkCurrentSubchain, btc_, erepo_, *param_);
     auto kcCurrent = getKeystoneContext(pkcCurrent, btc_);
 
     // [vbk fork point ... new block]
-    Chain<block_t> vbkOther(forkKeystone->height, &indexNew);
+    Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
     auto pkcOther = getProtoKeystoneContext(vbkOther, btc_, erepo_, *param_);
     auto kcOther = getKeystoneContext(pkcOther, btc_);
 

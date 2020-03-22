@@ -12,6 +12,7 @@ namespace altintegration {
 //! Store block
 template <typename Block>
 struct BlockIndex {
+  using block_t = Block;
   using hash_t = typename Block::hash_t;
   using height_t = typename Block::height_t;
 

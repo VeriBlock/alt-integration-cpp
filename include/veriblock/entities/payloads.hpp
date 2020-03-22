@@ -11,6 +11,8 @@ namespace altintegration {
 struct AltProof {
   AltBlock endorsed;
   AltBlock containing;
+  // if false, 'atv' should not be validated, as proof does not contain it
+  bool hasAtv{true};
   ATV atv;
 
   /**

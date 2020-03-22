@@ -149,7 +149,7 @@ struct BlockTree {
     }
   }
 
-  const Chain<Block>& getBestChain() const { return this->activeChain_; }
+  const Chain<index_t>& getBestChain() const { return this->activeChain_; }
 
   const block_index_t& getAllBlocks() const { return block_index_; }
 
@@ -168,10 +168,10 @@ struct BlockTree {
   // another chain, so that chain must be processed firstly
 
   std::multimap<typename Block::height_t,
-                Chain<Block>,
+                Chain<index_t>,
                 std::greater<typename Block::height_t>>
       fork_chains_;
-  Chain<Block> activeChain_;
+  Chain<index_t> activeChain_;
   std::shared_ptr<ChainParams> param_;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
@@ -210,7 +210,7 @@ struct BlockTree {
     return current;
   }
 
-  void invalidateBlockFromChain(Chain<Block>& chain, const index_t* block) {
+  void invalidateBlockFromChain(Chain<index_t>& chain, const index_t* block) {
     if (block == nullptr) {
       return;
     }
@@ -233,7 +233,7 @@ struct BlockTree {
     }
   }
 
-  void disconnectTipFromChain(Chain<Block>& chain) {
+  void disconnectTipFromChain(Chain<index_t>& chain) {
     BlockIndex<Block>* currentTip = chain.tip();
     hash_t tipHash = currentTip->getHash();
 
@@ -285,9 +285,9 @@ struct BlockTree {
         ;
     }
 
-    Chain<Block> newForkChain(workBlock->height, workBlock);
+    Chain<index_t> newForkChain(workBlock->height, workBlock);
     newForkChain.setTip(newCandidate);
-    fork_chains_.insert(std::pair<typename Block::height_t, Chain<Block>>(
+    fork_chains_.insert(std::pair<typename Block::height_t, Chain<index_t>>(
         newForkChain.getStartHeight(), newForkChain));
   }
 
@@ -334,7 +334,7 @@ struct BlockTree {
     auto* index = insertBlockHeader(block);
     index->height = height;
 
-    activeChain_ = Chain<Block>(height, index);
+    activeChain_ = Chain<index_t>(height, index);
 
     if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
       return state.Error("block-index-no-genesis");
@@ -343,7 +343,7 @@ struct BlockTree {
     return true;
   }
 
-  virtual void determineBestChain(Chain<block_t>& currentBest,
+  virtual void determineBestChain(Chain<index_t>& currentBest,
                                   index_t& indexNew) {
     if (currentBest.tip() == nullptr ||
         currentBest.tip()->chainWork < indexNew.chainWork) {

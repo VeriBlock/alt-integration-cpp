@@ -52,8 +52,8 @@ struct PopManager {
    * reverted.
    */
   bool addPayloads(const Payloads& payloads,
-                   StateChange& stateChange,
-                   ValidationState& state);
+                   ValidationState& state,
+                   StateChange* change = nullptr);
 
   /**
    * Atomically revert all payloads from given ATV and VTBs.
@@ -61,12 +61,12 @@ struct PopManager {
    * @note does not throw in any circumstance
    */
   void removePayloads(const Payloads& payloads,
-                      StateChange& stateChange) noexcept;
+                      StateChange* change = nullptr) noexcept;
 
   bool hasUncommittedChanges() const noexcept;
 
   /// removes all uncommitted payloads
-  void rollback(StateChange& stateChange) noexcept;
+  void rollback() noexcept;
 
   /// commit currently uncommitted payloads
   void commit();
@@ -80,8 +80,8 @@ struct PopManager {
    * @note chain1 and chain2 are being consindered as forks not a full chains
    * from the genesis block, they should start at the common block
    */
-  int compareTwoBranches(const Chain<AltBlock>& chain1,
-                         const Chain<AltBlock>& chain2);
+  int compareTwoBranches(const Chain<AltBlockIndex>& chain1,
+                         const Chain<AltBlockIndex>& chain2);
 
  private:
   // vector of payloads that have been added to current state,
@@ -99,12 +99,15 @@ struct PopManager {
   std::shared_ptr<AltChainParams> altChainParams_;
   ComparePopScore<AltChainParams> altChainCompare_;
 
-  bool addVTB(const VTB& vtb, StateChange& stateChange, ValidationState& state);
+  bool addVTB(const VTB& vtb,
+              ValidationState& state,
+              StateChange* change = nullptr);
   bool addAltProof(const AltProof& payloads,
-                   StateChange& stateChange,
-                   ValidationState& state);
-  void removeAltProof(const AltProof& alt, StateChange& stateChange) noexcept;
-  void removeVTB(const VTB& vtb, StateChange& stateChange) noexcept;
+                   ValidationState& state,
+                   StateChange* change = nullptr);
+  void removeAltProof(const AltProof& alt,
+                      StateChange* change = nullptr) noexcept;
+  void removeVTB(const VTB& vtb, StateChange* change = nullptr) noexcept;
 };
 
 }  // namespace altintegration

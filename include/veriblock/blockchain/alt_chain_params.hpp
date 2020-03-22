@@ -18,7 +18,7 @@ struct AltChainParams {
     return {100, 100, 95, 89, 80, 69, 56, 40, 21};
   }
 
-  virtual AltBlock getGenesisBlock() const noexcept = 0;
+  virtual AltBlock getBootstrapBlock() const noexcept = 0;
 };
 
 }  // namespace altintegration

@@ -19,11 +19,11 @@ namespace altintegration {
  *
  * @tparam Block
  */
-template <typename Block>
+template <typename BlockIndexT>
 struct Chain {
-  using block_t = Block;
-  using index_t = BlockIndex<block_t>;
-  using height_t = typename Block::height_t;
+  using block_t = typename BlockIndexT::block_t;
+  using index_t = BlockIndexT;
+  using height_t = typename block_t::height_t;
   using storage_t = std::vector<index_t*>;
 
   Chain() = default;

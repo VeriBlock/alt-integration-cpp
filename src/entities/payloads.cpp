@@ -6,7 +6,10 @@ AltProof AltProof::fromVbkEncoding(ReadStream& stream) {
   AltProof altProof{};
   altProof.endorsed = AltBlock::fromVbkEncoding(stream);
   altProof.containing = AltBlock::fromVbkEncoding(stream);
-  altProof.atv = ATV::fromVbkEncoding(stream);
+  altProof.hasAtv = readSingleBEValue<uint8_t>(stream);
+  if (altProof.hasAtv) {
+    altProof.atv = ATV::fromVbkEncoding(stream);
+  }
 
   return altProof;
 }
@@ -19,6 +22,7 @@ AltProof AltProof::fromVbkEncoding(const std::string& bytes) {
 void AltProof::toVbkEncoding(WriteStream& stream) const {
   endorsed.toVbkEncoding(stream);
   containing.toVbkEncoding(stream);
+  writeSingleBEValue(stream, (uint8_t)hasAtv);
   atv.toVbkEncoding(stream);
 }
 

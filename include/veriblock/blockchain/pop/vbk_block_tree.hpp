@@ -29,7 +29,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   BtcTree& btc_;
   ComparePopScore<VbkChainParams> compare_;
 
-  void determineBestChain(Chain<block_t>& currentBest,
+  void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
 };
 

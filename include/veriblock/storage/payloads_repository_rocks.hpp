@@ -6,6 +6,7 @@
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "veriblock/alt-util.hpp"
 #include "veriblock/hashutil.hpp"
@@ -34,8 +35,8 @@ struct PayloadsCursorRocks
       typename PayloadsRepository<Block, Payloads>::stored_payloads_container_t;
 
   PayloadsCursorRocks(std::shared_ptr<rocksdb::DB> db,
-                      std::shared_ptr<cf_handle_t> payloadsHandle)
-      : _db(db) {
+                      const std::shared_ptr<cf_handle_t>& payloadsHandle)
+      : _db(std::move(db)) {
     auto iterator =
         _db->NewIterator(rocksdb::ReadOptions(), payloadsHandle.get());
     _iterator = std::unique_ptr<rocksdb::Iterator>(iterator);
@@ -175,7 +176,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Block, Payloads> {
 
   PayloadsRepositoryRocks(std::shared_ptr<rocksdb::DB> db,
                           std::shared_ptr<cf_handle_t> payloadsHandle)
-      : _db(db), _payloadsHandle(payloadsHandle) {}
+      : _db(std::move(db)), _payloadsHandle(std::move(payloadsHandle)) {}
 
   void put(const hash_t& hash, const stored_payloads_t& payloads) override {
     rocksdb::WriteOptions write_options;
