@@ -71,10 +71,10 @@ static const std::string defaultVtbEncoded =
 
 template <typename T>
 void generateRandomBytes(T begin, T end) {
-  std::generate(begin, end, []() -> uint8_t { return (uint8_t)rand() % 256; });
+  std::generate(begin, end, []() -> uint8_t { return rand() & 0xFF; });
 }
 
-inline std::vector<uint8_t> generateRandonBytesVector(size_t n) {
+inline std::vector<uint8_t> generateRandomBytesVector(size_t n) {
   std::vector<uint8_t> bytes(n);
   generateRandomBytes(bytes.begin(), bytes.end());
   return bytes;

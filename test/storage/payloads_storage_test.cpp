@@ -37,13 +37,13 @@ std::shared_ptr<PayloadsRepositoryRocks<AltBlock, Payloads>> getRepo() {
 
 Payloads generatePayloads() {
   Payloads p;
-  p.alt.containing = {generateRandonBytesVector(32),
-                      generateRandonBytesVector(32),
+  p.alt.containing = {generateRandomBytesVector(32),
+                      generateRandomBytesVector(32),
                       (uint32_t)(std::rand() % 1000 + 1),
                       (int32_t)(std::rand() % 1000 + 1)};
 
-  p.alt.endorsed = {generateRandonBytesVector(32),
-                    generateRandonBytesVector(32),
+  p.alt.endorsed = {generateRandomBytesVector(32),
+                    generateRandomBytesVector(32),
                     (uint32_t)(std::rand() % 1000 + 1),
                     (int32_t)(std::rand() % 1000 + 1)};
 
@@ -61,8 +61,8 @@ Payloads generatePayloads() {
 }
 
 AltBlock generateBlock() {
-  AltBlock b{generateRandonBytesVector(32),
-             generateRandonBytesVector(32),
+  AltBlock b{generateRandomBytesVector(32),
+             generateRandomBytesVector(32),
              (uint32_t)(std::rand() % 1000 + 1),
              (int32_t)(std::rand() % 1000 + 1)};
   return b;
