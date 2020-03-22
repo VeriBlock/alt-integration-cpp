@@ -41,6 +41,12 @@ struct VTB {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  friend bool operator==(const VTB& a, const VTB& b) {
+    // clang-format off
+    return a.toVbkEncoding() == b.toVbkEncoding();
+    // clang-format on
+  }
 };
 
 }  // namespace altintegration

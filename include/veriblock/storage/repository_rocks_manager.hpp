@@ -2,11 +2,14 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_MANAGER_HPP_
 
 #include "veriblock/blockchain/block_index.hpp"
+#include "veriblock/entities/altblock.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/endorsement.hpp"
+#include "veriblock/entities/payloads.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/storage/block_repository_rocks.hpp"
 #include "veriblock/storage/endorsement_repository_rocks.hpp"
+#include "veriblock/storage/payloads_repository_rocks.hpp"
 
 namespace altintegration {
 
@@ -15,7 +18,8 @@ enum class CF_NAMES {
   HASH_BLOCK_BTC,
   HASH_BLOCK_VBK,
   HASH_BTC_ENDORSEMENT_ID,
-  HASH_VBK_ENDORSEMENT_ID
+  HASH_VBK_ENDORSEMENT_ID,
+  HASH_BLOCK_PAYLOADS_CONT
 };
 
 // column families in the DB
@@ -23,7 +27,8 @@ static const std::vector<std::string> cfNames{"default",
                                               "hash_block_btc",
                                               "hash_block_vbk",
                                               "hash_btc_endorsement_id",
-                                              "hash_vbk_endorsement_id"};
+                                              "hash_vbk_endorsement_id",
+                                              "hash_block_payloads_container"};
 
 struct RepositoryRocksManager {
   template <typename Block_t>
@@ -31,6 +36,9 @@ struct RepositoryRocksManager {
 
   template <typename Endorsement_t>
   using endorsement_repo_t = EndorsementRepositoryRocks<Endorsement_t>;
+
+  template <typename Block, typename Payloads>
+  using payloads_repo_t = PayloadsRepositoryRocks<Block, Payloads>;
 
   using status_t = rocksdb::Status;
 
@@ -78,6 +86,9 @@ struct RepositoryRocksManager {
     repoVbkEndorsement = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
 
+    repoPayloads = std::make_shared<payloads_repo_t<AltBlock, Payloads>>(
+        dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_PAYLOADS_CONT]);
+
     return s;
   }
 
@@ -91,7 +102,7 @@ struct RepositoryRocksManager {
 
     rocksdb::Status s = rocksdb::Status::OK();
     for (size_t i = (size_t)CF_NAMES::HASH_BLOCK_BTC;
-         i <= (size_t)CF_NAMES::HASH_VBK_ENDORSEMENT_ID;
+         i <= (size_t)CF_NAMES::HASH_BLOCK_PAYLOADS_CONT;
          i++) {
       auto columnName = cfHandles[i]->GetName();
       s = dbPtr->DropColumnFamily(cfHandles[i].get());
@@ -117,6 +128,9 @@ struct RepositoryRocksManager {
 
     repoVbkEndorsement = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
+
+    repoPayloads = std::make_shared<payloads_repo_t<AltBlock, Payloads>>(
+        dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_PAYLOADS_CONT]);
     return s;
   }
 
@@ -143,6 +157,10 @@ struct RepositoryRocksManager {
     return repoVbkEndorsement;
   }
 
+  std::shared_ptr<payloads_repo_t<AltBlock, Payloads>> getPayloadsRepo() const {
+    return repoPayloads;
+  }
+
  private:
   std::string dbName = "";
 
@@ -154,6 +172,7 @@ struct RepositoryRocksManager {
   std::shared_ptr<block_repo_t<VbkBlock>> repoVbk;
   std::shared_ptr<endorsement_repo_t<BtcEndorsement>> repoBtcEndorsement;
   std::shared_ptr<endorsement_repo_t<VbkEndorsement>> repoVbkEndorsement;
+  std::shared_ptr<payloads_repo_t<AltBlock, Payloads>> repoPayloads;
 };
 
 }  // namespace altintegration

@@ -15,4 +15,10 @@ if(WITH_ROCKSDB)
     set_target_properties(endorsement_storage_test PROPERTIES
             RESOURCE_LOCK db-test
             )
+            
+    addtest(payloads_storage_test payloads_storage_test.cpp)
+    target_link_libraries(payloads_storage_test ${LIB_NAME} rocksdb)
+    set_target_properties(payloads_storage_test PROPERTIES
+            RESOURCE_LOCK db-test
+            )
 endif()

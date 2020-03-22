@@ -319,32 +319,32 @@ TEST_F(StatelessValidationTest, containsSplit_when_descriptor_before_chunks) {
   srand(0);
 
   WriteStream buffer;
-  buffer.write(generateRandonBytesVector(15));
+  buffer.write(generateRandomBytesVector(15));
 
   // Descriptor bytes (3 MAGIC, 1 SIZE, 7 SECTIONALS)
   buffer.write("927A594624509D41F548C0"_unhex);
 
-  buffer.write(generateRandonBytesVector(10));
+  buffer.write(generateRandomBytesVector(10));
 
   // First chunk of 20 bytes
   buffer.write("00000767000193093228BD2B4906F6B84BE5E618"_unhex);
 
-  buffer.write(generateRandonBytesVector(39));
+  buffer.write(generateRandomBytesVector(39));
 
   // Second chunk of 20 bytes
   buffer.write("09C0522626145DDFB988022A0684E2110D384FE2"_unhex);
 
-  buffer.write(generateRandonBytesVector(31));
+  buffer.write(generateRandomBytesVector(31));
 
   // Third chunk of 21 bytes
   buffer.write("BFD38549CB19C41893C258BA5B9CAB24060BA2D410"_unhex);
 
-  buffer.write(generateRandonBytesVector(35));
+  buffer.write(generateRandomBytesVector(35));
 
   // Fourth chunk of unstated 19 bytes
   buffer.write("39DFC857801424B0F5DE63992A016F5F38FEB4"_unhex);
 
-  buffer.write(generateRandonBytesVector(22));
+  buffer.write(generateRandomBytesVector(22));
 
   ASSERT_TRUE(containsSplit(
       "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,
@@ -355,31 +355,31 @@ TEST_F(StatelessValidationTest, containsSplit_when_chunked) {
   srand(0);
 
   WriteStream buffer;
-  buffer.write(generateRandonBytesVector(15));
+  buffer.write(generateRandomBytesVector(15));
 
   // Descriptor bytes (3 MAGIC, 1 SIZE, 7 SECTIONALS)
   buffer.write("927A594624509D41F548C0"_unhex);
 
-  buffer.write(generateRandonBytesVector(10));
+  buffer.write(generateRandomBytesVector(10));
 
   buffer.write("00000767000193093228BD2B4906F6B84BE5E618"_unhex);
 
-  buffer.write(generateRandonBytesVector(39));
+  buffer.write(generateRandomBytesVector(39));
 
   // Second chunk of 20 bytes
   buffer.write("09C0522626145DDFB988022A0684E2110D384FE2"_unhex);
 
-  buffer.write(generateRandonBytesVector(31));
+  buffer.write(generateRandomBytesVector(31));
 
   // Third chunk of 21 bytes
   buffer.write("BFD38549CB19C41893C258BA5B9CAB24060BA2D410"_unhex);
 
-  buffer.write(generateRandonBytesVector(35));
+  buffer.write(generateRandomBytesVector(35));
 
   // Fourth chunk of unstated 19 bytes
   buffer.write("39DFC857801424B0F5DE63992A016F5F38FEB4"_unhex);
 
-  buffer.write(generateRandonBytesVector(22));
+  buffer.write(generateRandomBytesVector(22));
 
   ASSERT_TRUE(containsSplit(
       "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,

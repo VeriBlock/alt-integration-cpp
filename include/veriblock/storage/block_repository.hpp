@@ -37,11 +37,11 @@ template <typename Block>
 struct BlockRepository;
 
 /**
- * @class WriteBatch
+ * @class BlockWriteBatch
  * @brief Efficiently implements bulk write operation for BlockRepository.
  *
- * @invariant WriteBatch is always in valid state.
- * @invariant WriteBatch does not modify on-disk storage after put/remove
+ * @invariant BlockWriteBatch is always in valid state.
+ * @invariant BlockWriteBatch does not modify on-disk storage after put/remove
  * operations. It does, when \p BlockRepository::commit is executed on this
  * batch.
  */
@@ -96,7 +96,7 @@ template <typename Block>
 struct BlockRepository {
   //! stored block type
   using stored_block_t = Block;
-  //! block has type
+  //! block hash type
   using hash_t = typename Block::hash_t;
   //! block height type
   using height_t = typename Block::height_t;
