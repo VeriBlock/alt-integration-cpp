@@ -11,8 +11,8 @@ struct PopRewardsBigDecimal {
 
   PopRewardsBigDecimal() = default;
 
-  PopRewardsBigDecimal(uint64_t b) : value(b) {}
-  PopRewardsBigDecimal(ArithUint256 b) : value(b) {}
+  PopRewardsBigDecimal(uint64_t b) : value(ArithUint256(b) * decimals) {}
+  PopRewardsBigDecimal(ArithUint256 b) : value(b * decimals) {}
   PopRewardsBigDecimal(double b) : value((uint64_t)(b * decimals)) {}
 
   PopRewardsBigDecimal& operator+=(const PopRewardsBigDecimal& b) {
@@ -35,6 +35,13 @@ struct PopRewardsBigDecimal {
     value *= decimals;
     value /= b.value;
     return *this;
+  }
+
+  uint64_t getIntegerFraction() { return (value / decimals).getLow64(); }
+  uint64_t getDecimalFraction() {
+    ArithUint256 integerFraction = getIntegerFraction();
+    integerFraction *= decimals;
+    return ((value - integerFraction) * decimals).getLow64();
   }
 
   friend inline const PopRewardsBigDecimal operator+(
@@ -79,15 +86,11 @@ struct PopRewardsCurveParams {
   virtual ~PopRewardsCurveParams() = default;
 
   // we start decreasing rewards after this score
-  virtual PopRewardsBigDecimal startOfSlope() const noexcept {
-    return 1.0;
-  }
+  virtual PopRewardsBigDecimal startOfSlope() const noexcept { return 1.0; }
 
   // we decrease reward coefficient for this value for
   // each additional score point above startOfDecreasingLine
-  virtual PopRewardsBigDecimal slopeNormal() const noexcept {
-    return 0.2;
-  }
+  virtual PopRewardsBigDecimal slopeNormal() const noexcept { return 0.2; }
 
   virtual PopRewardsBigDecimal slopeKeystone() const noexcept {
     return 0.21325;
@@ -117,6 +120,10 @@ struct PopRewardsParams {
     return 3.0;
   }
 
+  virtual uint32_t difficultyAveragingInterval() const noexcept { return 50; }
+
+  virtual uint32_t rewardSettlementInterval() const noexcept { return 400; }
+
   virtual PopRewardsCurveParams getCurveParams() const noexcept {
     return PopRewardsCurveParams();
   }
@@ -140,4 +147,4 @@ struct PopRewardsParams {
 
 }  // namespace altintegration
 
-#endif // ALT_INTEGRATION_INCLUDE_VERIBLOCK_REWARDS_POPREWARDS_PARAMS_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_REWARDS_POPREWARDS_PARAMS_HPP_
