@@ -84,6 +84,10 @@ class StateManager {
   std::shared_ptr<cursor_t<VbkBlock>> getVbkCursor() {
     return database.getVbkRepo()->newCursor();
   }
+
+  RepositoryManager& getManager() {
+    return database;
+  }
 };
 
 }  // namespace altintegration

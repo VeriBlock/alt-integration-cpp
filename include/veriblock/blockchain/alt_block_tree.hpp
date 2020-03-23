@@ -17,7 +17,9 @@
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/popmanager.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
+#include "veriblock/storage/endorsement_repository_rocks.hpp"
 #include "veriblock/storage/payloads_repository.hpp"
+#include "veriblock/storage/repository_rocks_manager.hpp"
 #include "veriblock/validation_state.hpp"
 
 namespace altintegration {
@@ -30,12 +32,22 @@ struct AltTree {
 
   virtual ~AltTree() = default;
 
-  AltTree(std::shared_ptr<config_t> config,
-          std::shared_ptr<BtcChainParams> btcParams,
-          std::shared_ptr<VbkChainParams> vbkParams,
-          std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce,
-          std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke)
-      : config_(config), pop_(btcParams, vbkParams, btce, vbke, config) {}
+  AltTree(std::shared_ptr<config_t> config, PopManager pop)
+      : config_(std::move(config)), pop_(std::move(pop)) {}
+
+  static AltTree init(
+      const std::shared_ptr<StateManager<RepositoryRocksManager>>& mgr,
+      const std::shared_ptr<AltChainParams>& altp,
+      std::shared_ptr<BtcChainParams> btcp,
+      std::shared_ptr<VbkChainParams> vbkp) {
+    PopManager pop(std::move(btcp),
+                   std::move(vbkp),
+                   mgr->getManager().getBtcEndorsementRepo(),
+                   mgr->getManager().getVbkEndorsementRepo(),
+                   altp);
+
+    return AltTree(altp, std::move(pop));
+  }
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -52,9 +64,7 @@ struct AltTree {
                    ValidationState& state,
                    StateChange* change = nullptr);
 
-  bool setState(const AltBlock::hash_t& hash,
-                ValidationState& state,
-                StateChange* change = nullptr);
+  bool setState(const AltBlock::hash_t& hash, ValidationState& state);
 
   // void invalidateBlockByHash(const hash_t& hash);
 
@@ -67,7 +77,7 @@ struct AltTree {
   std::shared_ptr<config_t> config_;
   std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo_;
 
-  index_t* popState_;
+  index_t* popState_{};
   PopManager pop_;
 
   index_t* insertBlockHeader(const AltBlock& block);

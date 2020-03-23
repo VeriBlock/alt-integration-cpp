@@ -50,12 +50,12 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Error("block-index-no-genesis");
   }
 
+  this->popState_ = index;
+
   return true;
 }
 
-bool AltTree::setState(const AltBlock::hash_t& hash,
-                       ValidationState& state,
-                       StateChange* change) {
+bool AltTree::setState(const AltBlock::hash_t& hash, ValidationState& state) {
   index_t* current = getBlockIndex(hash);
 
   if (current == nullptr) {
@@ -70,11 +70,12 @@ bool AltTree::setState(const AltBlock::hash_t& hash,
     // we need to unapply payloads from this chain until the fork point,
     // and then apply payloads from the fork chain
     if (!unapplyAndApply(pop_, &newPopState, *current, state)) {
-      pop_.rollback();
       return state.addStackFunction("AltTree::acceptBlock");
     }
     popState_ = newPopState;
   }
+
+  return true;
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
@@ -94,7 +95,7 @@ bool AltTree::acceptBlock(const AltBlock& block,
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  if (!setState(index->pprev->getHash(), state, stateChange)) {
+  if (!setState(index->pprev->getHash(), state)) {
     return state.addStackFunction("AltTree::acceptBlock");
   }
 
@@ -174,6 +175,7 @@ bool AltTree::apply(PopManager& pop,
   while (current) {
     for (const auto& p : prepo_->get(current->header.getHash())) {
       if (!pop.addPayloads(p, state)) {
+        pop.rollback();
         return false;
       }
       *popState = current;
@@ -187,6 +189,8 @@ bool AltTree::apply(PopManager& pop,
   }
 
   assert(*popState == &to);
+
+  pop.commit();
 
   return true;
 }
