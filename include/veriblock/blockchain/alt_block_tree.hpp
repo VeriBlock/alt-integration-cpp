@@ -35,8 +35,9 @@ struct AltTree {
   AltTree(std::shared_ptr<config_t> config, PopManager pop)
       : config_(std::move(config)), pop_(std::move(pop)) {}
 
+  template <typename RepositoryManager>
   static AltTree init(
-      const std::shared_ptr<StateManager<RepositoryRocksManager>>& mgr,
+      const std::shared_ptr<StateManager<RepositoryManager>>& mgr,
       const std::shared_ptr<AltChainParams>& altp,
       std::shared_ptr<BtcChainParams> btcp,
       std::shared_ptr<VbkChainParams> vbkp) {
