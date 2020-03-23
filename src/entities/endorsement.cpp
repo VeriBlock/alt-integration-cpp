@@ -52,6 +52,7 @@ VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream) {
   endorsement.blockOfProof = stream.readSlice(sizeof(containing_hash_t));
 
   uint32_t payout_size = stream.readBE<uint32_t>();
+  endorsement.payoutInfo.resize(payout_size);
   for (uint32_t i = 0; i < payout_size; ++i) {
     endorsement.payoutInfo[i] = stream.readBE<uint8_t>();
   }
