@@ -18,11 +18,11 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   VbkBlockTree(BtcTree& btc,
                std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo,
-               std::shared_ptr<VbkChainParams> params)
-      : VbkTree(std::move(params)),
+               const VbkChainParams& params)
+      : VbkTree(params),
         erepo_(std::move(erepo)),
         btc_(btc),
-        compare_(*this->param_) {}
+        compare_(this->param_) {}
 
  private:
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo_;

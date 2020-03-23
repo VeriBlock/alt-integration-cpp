@@ -40,7 +40,7 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Error("already bootstrapped");
   }
 
-  auto block = config_->getBootstrapBlock();
+  auto block = config_.getBootstrapBlock();
   auto* index = insertBlockHeader(block);
 
   assert(index != nullptr &&
@@ -132,7 +132,7 @@ int AltTree::compareThisToOtherChain(index_t* other) {
   PopManager combinedPop = pop_;
   index_t* combinedPopState = popState_;
 
-  auto height = config_->getBootstrapBlock().height;
+  auto height = config_.getBootstrapBlock().height;
   bool ret = apply(combinedPop, &combinedPopState, *other, state);
 
   if (!ret) {
@@ -147,7 +147,7 @@ int AltTree::compareThisToOtherChain(index_t* other) {
 }
 
 void AltTree::unapply(PopManager& pop, index_t** popState, index_t& to) {
-  auto bootstrapHeight = config_->getBootstrapBlock().height;
+  auto bootstrapHeight = config_.getBootstrapBlock().height;
   Chain<index_t> chain(bootstrapHeight, *popState);
   auto* forkPoint = chain.findFork(&to);
   auto* current = chain.tip();
@@ -164,7 +164,7 @@ bool AltTree::apply(PopManager& pop,
                     index_t** popState,
                     index_t& to,
                     ValidationState& state) {
-  Chain<index_t> fork(config_->getBootstrapBlock().height, &to);
+  Chain<index_t> fork(config_.getBootstrapBlock().height, &to);
 
   auto* current = *popState;
   // move forward from forkPoint to "to" and apply payloads in between
@@ -201,7 +201,7 @@ bool AltTree::unapplyAndApply(PopManager& pop,
                               ValidationState& state) {
   unapply(pop, popState, to);
 
-  Chain<index_t> chain(config_->getBootstrapBlock().height, &to);
+  Chain<index_t> chain(config_.getBootstrapBlock().height, &to);
   if (chain.contains(&to)) {
     // do not apply payloads as "to" is in current chain and no new payloads
     // will be added
@@ -211,21 +211,19 @@ bool AltTree::unapplyAndApply(PopManager& pop,
   return apply(pop, popState, to, state);
 }
 
-/*
-void AltTree::invalidateBlockByHash(const AltTree::hash_t& hash) {
-  Chain<index_t> chain(config_->getBootstrapBlock().height, popState_);
-  auto* index = getBlockIndex(hash);
-  if (chain.contains(index)) {
-    ValidationState state;
-    bool ret = unapplyAndApply(pop_, &popState_, *index, state);
-
-    // chain contains index, so we should never ever be adding payloads, only
-    // removing, therefore we never get false here
-    assert(ret);
-  }
-
-  // else:
-  // we don't care, since currently applied chain does NOT contain
-  // block-to-remove, and we do not maintain current best chain
-}
-*/
+// void AltTree::invalidateBlockByHash(const AltTree::hash_t& hash) {
+//  Chain<index_t> chain(config_.getBootstrapBlock().height, popState_);
+//  auto* index = getBlockIndex(hash);
+//  if (chain.contains(index)) {
+//    ValidationState state;
+//    bool ret = unapplyAndApply(pop_, &popState_, *index, state);
+//
+//    // chain contains index, so we should never ever be adding payloads, only
+//    // removing, therefore we never get false here
+//    assert(ret);
+//  }
+//
+//  // else:
+//  // we don't care, since currently applied chain does NOT contain
+//  // block-to-remove, and we do not maintain current best chain
+//}

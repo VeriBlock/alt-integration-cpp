@@ -30,10 +30,10 @@ struct Endorsement {
   using container_t = Container;
 
   // The unique key that identifies this endorsement
-  id_t id;
-  EndorsedHash endorsedHash;
-  EndorsedHash containingHash;
-  ContainingHash blockOfProof;
+  id_t id{};
+  EndorsedHash endorsedHash{};
+  EndorsedHash containingHash{};
+  ContainingHash blockOfProof{};
 
   /**
    * Read VBK data from the stream and convert it to Endorsement

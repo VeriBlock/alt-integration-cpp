@@ -83,7 +83,7 @@ void PopManager::removePayloads(const Payloads& payloads,
 bool PopManager::addVTB(const VTB& vtb,
                         ValidationState& state,
                         StateChange* change) {
-  if (!checkVTB(vtb, state, *vbkparam_, *btcparam_)) {
+  if (!checkVTB(vtb, state, vbkparam_, btcparam_)) {
     return state.addStackFunction("addVTB");
   }
 
@@ -147,7 +147,7 @@ void PopManager::removeVTB(const VTB& vtb, StateChange* change) noexcept {
 bool PopManager::addAltProof(const AltProof& payloads,
                              ValidationState& state,
                              StateChange* change) {
-  if (payloads.hasAtv && !checkATV(payloads.atv, state, *vbkparam_)) {
+  if (payloads.hasAtv && !checkATV(payloads.atv, state, vbkparam_)) {
     return state.addStackFunction("addPayloads");
   }
 
@@ -201,12 +201,10 @@ bool PopManager::hasUncommittedChanges() const noexcept {
 
 int PopManager::compareTwoBranches(const Chain<BlockIndex<AltBlock>>& chain1,
                                    const Chain<BlockIndex<AltBlock>>& chain2) {
-  auto pkcChain1 =
-      getProtoKeystoneContext(chain1, *vbk_, vbke_, *altChainParams_);
+  auto pkcChain1 = getProtoKeystoneContext(chain1, *vbk_, vbke_, altparam_);
   auto kcChain1 = getKeystoneContext(pkcChain1, *vbk_);
 
-  auto pkcChain2 =
-      getProtoKeystoneContext(chain2, *vbk_, vbke_, *altChainParams_);
+  auto pkcChain2 = getProtoKeystoneContext(chain2, *vbk_, vbke_, altparam_);
   auto kcChain2 = getKeystoneContext(pkcChain2, *vbk_);
 
   return altChainCompare_(kcChain1, kcChain2);

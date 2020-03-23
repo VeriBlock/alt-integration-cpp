@@ -16,17 +16,17 @@ namespace altintegration {
  * @invariant does not modify any on-disk state.
  */
 struct PopManager {
-  PopManager(std::shared_ptr<BtcChainParams> btcp,
-             std::shared_ptr<VbkChainParams> vbkp,
+  PopManager(const AltChainParams& altp,
+      const BtcChainParams& btcp,
+             const VbkChainParams& vbkp,
              std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce,
-             std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke,
-             std::shared_ptr<AltChainParams> params)
-      : btcparam_(std::move(btcp)),
-        vbkparam_(std::move(vbkp)),
+             std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke)
+      : altparam_(altp),
+        btcparam_(btcp),
+        vbkparam_(vbkp),
         btce_(std::move(btce)),
         vbke_(std::move(vbke)),
-        altChainParams_(params),
-        altChainCompare_(*params) {
+        altChainCompare_(altp) {
     btc_ = std::make_shared<BtcTree>(btcparam_);
     vbk_ = std::make_shared<VbkTree>(*btc_, btce_, vbkparam_);
   }
@@ -88,15 +88,15 @@ struct PopManager {
   // but not committed
   std::vector<Payloads> uncommitted_;
 
-  std::shared_ptr<BtcChainParams> btcparam_;
-  std::shared_ptr<VbkChainParams> vbkparam_;
+  const AltChainParams& altparam_;
+  const BtcChainParams& btcparam_;
+  const VbkChainParams& vbkparam_;
 
   std::shared_ptr<BtcTree> btc_;
   std::shared_ptr<VbkTree> vbk_;
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce_;
   std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke_;
 
-  std::shared_ptr<AltChainParams> altChainParams_;
   ComparePopScore<AltChainParams> altChainCompare_;
 
   bool addVTB(const VTB& vtb,

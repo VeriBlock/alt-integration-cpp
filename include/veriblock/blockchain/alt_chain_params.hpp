@@ -12,9 +12,11 @@ struct AltChainParams {
 
   virtual uint32_t getKeystoneInterval() const noexcept { return 5; }
 
-  virtual uint32_t getFinalityDelay() const noexcept { return 50; }
+  ///! number of blocks in VBK for finalization
+  virtual uint32_t getFinalityDelay() const noexcept { return 100; }
 
   virtual std::vector<uint32_t> getForkResolutionLookUpTable() const noexcept {
+    // TODO(warchant): this should be recalculated. see paper.
     return {100, 100, 95, 89, 80, 69, 56, 40, 21};
   }
 

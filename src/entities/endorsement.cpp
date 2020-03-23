@@ -63,26 +63,26 @@ template <>
 void VbkEndorsement::toVbkEncoding(WriteStream& stream) const {
   stream.write(id);
   stream.writeBE<uint32_t>((uint32_t)endorsedHash.size());
-  for (size_t i = 0; i < endorsedHash.size(); ++i) {
-    stream.writeBE<uint8_t>(endorsedHash[i]);
+  for (unsigned char i : endorsedHash) {
+    stream.writeBE<uint8_t>(i);
   }
   stream.writeBE<uint32_t>((uint32_t)containingHash.size());
-  for (size_t i = 0; i < containingHash.size(); ++i) {
-    stream.writeBE<uint8_t>(containingHash[i]);
+  for (unsigned char i : containingHash) {
+    stream.writeBE<uint8_t>(i);
   }
   stream.write(blockOfProof);
 }
 
 template <>
 std::vector<uint8_t> VbkEndorsement::toVbkEncoding() const {
-  WriteStream stream;
+  WriteStream stream{};
   toVbkEncoding(stream);
   return stream.data();
 }
 
 template <>
 BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
-  BtcEndorsement e;
+  BtcEndorsement e{};
   e.id = BtcEndorsement::getId(c);
   e.blockOfProof = c.transaction.blockOfProof.getHash();
   e.containingHash = c.containingBlock.getHash();
@@ -92,7 +92,7 @@ BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
 
 template <>
 VbkEndorsement VbkEndorsement::fromContainer(const AltProof& c) {
-  VbkEndorsement e;
+  VbkEndorsement e{};
   e.id = VbkEndorsement::getId(c);
   e.blockOfProof = c.atv.containingBlock.getHash();
   e.endorsedHash = c.endorsed.hash;

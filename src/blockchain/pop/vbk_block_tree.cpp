@@ -17,24 +17,24 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 
   // last common keystone of two forks
   auto* forkKeystone = forkIndex->getAncestor(highestKeystoneAtOrBefore(
-      forkIndex->height, param_->getKeystoneInterval()));
+      forkIndex->height, param_.getKeystoneInterval()));
 
   int result = 0;
   if (isCrossedKeystoneBoundary(forkKeystone->height,
                                 indexNew.height,
-                                param_->getKeystoneInterval()) &&
+                                param_.getKeystoneInterval()) &&
       isCrossedKeystoneBoundary(forkKeystone->height,
                                 currentBest.tip()->height,
-                                param_->getKeystoneInterval())) {
+                                param_.getKeystoneInterval())) {
     // [vbk fork point ... current tip]
     Chain<index_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
     auto pkcCurrent =
-        getProtoKeystoneContext(vbkCurrentSubchain, btc_, erepo_, *param_);
+        getProtoKeystoneContext(vbkCurrentSubchain, btc_, erepo_, param_);
     auto kcCurrent = getKeystoneContext(pkcCurrent, btc_);
 
     // [vbk fork point ... new block]
     Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
-    auto pkcOther = getProtoKeystoneContext(vbkOther, btc_, erepo_, *param_);
+    auto pkcOther = getProtoKeystoneContext(vbkOther, btc_, erepo_, param_);
     auto kcOther = getKeystoneContext(pkcOther, btc_);
 
     result = compare_(kcCurrent, kcOther);

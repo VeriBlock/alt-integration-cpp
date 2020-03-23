@@ -19,7 +19,6 @@
 #include "veriblock/storage/endorsement_repository.hpp"
 #include "veriblock/storage/endorsement_repository_rocks.hpp"
 #include "veriblock/storage/payloads_repository.hpp"
-#include "veriblock/storage/repository_rocks_manager.hpp"
 #include "veriblock/validation_state.hpp"
 
 namespace altintegration {
@@ -32,20 +31,20 @@ struct AltTree {
 
   virtual ~AltTree() = default;
 
-  AltTree(std::shared_ptr<config_t> config, PopManager pop)
-      : config_(std::move(config)), pop_(std::move(pop)) {}
+  AltTree(const AltChainParams& config, PopManager pop)
+      : config_(config), pop_(std::move(pop)) {}
 
   template <typename RepositoryManager>
   static AltTree init(
       const std::shared_ptr<StateManager<RepositoryManager>>& mgr,
-      const std::shared_ptr<AltChainParams>& altp,
-      std::shared_ptr<BtcChainParams> btcp,
-      std::shared_ptr<VbkChainParams> vbkp) {
-    PopManager pop(std::move(btcp),
-                   std::move(vbkp),
+      const AltChainParams& altp,
+      const BtcChainParams& btcp,
+      const VbkChainParams& vbkp) {
+    PopManager pop(altp,
+                   btcp,
+                   vbkp,
                    mgr->getManager().getBtcEndorsementRepo(),
-                   mgr->getManager().getVbkEndorsementRepo(),
-                   altp);
+                   mgr->getManager().getVbkEndorsementRepo());
 
     return AltTree(altp, std::move(pop));
   }
@@ -67,15 +66,16 @@ struct AltTree {
 
   bool setState(const AltBlock::hash_t& hash, ValidationState& state);
 
-  // void invalidateBlockByHash(const hash_t& hash);
+  //   void invalidateBlockByHash(const hash_t& hash);
 
   int compareThisToOtherChain(index_t* other);
 
+  PopManager& currentPopManager() { return pop_; }
   index_t* currentPopState() { return popState_; }
 
  protected:
   block_index_t block_index_;
-  std::shared_ptr<config_t> config_;
+  const AltChainParams& config_;
   std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo_;
 
   index_t* popState_{};
