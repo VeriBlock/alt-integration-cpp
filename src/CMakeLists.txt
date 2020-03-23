@@ -20,6 +20,7 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD}
+        altintegration.cpp
         params.cpp
         popmanager.cpp
         checks.cpp
@@ -44,8 +45,6 @@ add_library(${LIB_NAME} ${BUILD}
 if(WITH_ROCKSDB)
     target_link_libraries(${LIB_NAME} rocksdb)
 endif()
-
-# install step is only for unix, for now...
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}

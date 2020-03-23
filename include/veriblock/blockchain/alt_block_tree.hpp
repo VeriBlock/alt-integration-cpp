@@ -56,8 +56,6 @@ struct AltTree {
 
   bool setState(const AltBlock::hash_t& hash, ValidationState& state);
 
-  //   void invalidateBlockByHash(const hash_t& hash);
-
   int compareThisToOtherChain(index_t* other);
 
   const PopManager& currentPopManager() { return pop_; }
