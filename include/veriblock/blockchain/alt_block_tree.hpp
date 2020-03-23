@@ -13,6 +13,7 @@
 #include "veriblock/blockchain/chain.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/altblock.hpp"
+#include "veriblock/entities/endorsement.hpp"
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/popmanager.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
@@ -29,8 +30,12 @@ struct AltTree {
 
   virtual ~AltTree() = default;
 
-  AltTree(std::shared_ptr<config_t> config, std::shared_ptr<BtcChainParams> btcParams, std::shared_ptr<VbkChainParams> vbkParams, std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce,
-             std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke) : config_(std::move(config), pop_(btcParams, vbkParams, btce, vbke, config) {}
+  AltTree(std::shared_ptr<config_t> config,
+          std::shared_ptr<BtcChainParams> btcParams,
+          std::shared_ptr<VbkChainParams> vbkParams,
+          std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce,
+          std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke)
+      : config_(config), pop_(btcParams, vbkParams, btce, vbke, config) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -55,8 +60,7 @@ struct AltTree {
 
   int compareThisToOtherChain(index_t* other);
 
-  index_t* currentPopState() {
-    return popState_; }
+  index_t* currentPopState() { return popState_; }
 
  protected:
   block_index_t block_index_;
