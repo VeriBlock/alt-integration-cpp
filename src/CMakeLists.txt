@@ -20,7 +20,7 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD}
-        ${CMAKE_SOURCE_DIR}/include/veriblock/alt-util.hpp
+        params.cpp
         popmanager.cpp
         checks.cpp
         serde.cpp
