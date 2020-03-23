@@ -23,7 +23,7 @@ static int getBestPublicationHeight(
 static PopRewardsBigDecimal getScoreMultiplierFromRelativeBlock(
     int relativeBlock, const PopRewardsParams& rewardParams) {
   if (relativeBlock < 0 ||
-      relativeBlock >= rewardParams.relativeScoreLookupTable().size()) {
+      relativeBlock >= (int)rewardParams.relativeScoreLookupTable().size()) {
     return 0.0;
   }
 
