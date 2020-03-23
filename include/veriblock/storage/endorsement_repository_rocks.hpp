@@ -73,7 +73,7 @@ struct EndorsementWriteBatchRocks : public EndorsementWriteBatch<Endorsement> {
 
   EndorsementWriteBatchRocks(std::shared_ptr<rocksdb::DB> db,
                              std::shared_ptr<cf_handle_t> endorsedIdHandle)
-      : _db(db), _endorsedIdHandle(endorsedIdHandle) {}
+      : _db(std::move(db)), _endorsedIdHandle(std::move(endorsedIdHandle)) {}
 
   void put(const container_t& container) override {
     auto e = Endorsement::fromContainer(container);

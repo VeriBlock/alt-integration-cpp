@@ -44,6 +44,12 @@ struct ATV {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  friend bool operator==(const ATV& a, const ATV& b) {
+    // clang-format off
+    return a.toVbkEncoding() == b.toVbkEncoding();
+    // clang-format on
+  }
 };
 
 }  // namespace altintegration
