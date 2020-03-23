@@ -98,6 +98,7 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
 
   std::vector<PopRewardPayout> rewards{};
   auto endorsements = erepo_->get(endorsedBlock.getHash());
+  auto payloads = prepo_->get(endorsedBlock.getHash());
   int bestPublication = getBestPublicationHeight(endorsements, vbk_tree_);
   if (bestPublication < 0) return rewards;
 
@@ -121,6 +122,7 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
 
     PopRewardPayout reward{};
     reward.reward = rewardPerEndorsement.getIntegerFraction();
+    reward.miner = std::string(e.payoutInfo.begin(), e.payoutInfo.end());
     rewards.push_back(reward);
   }
   return rewards;

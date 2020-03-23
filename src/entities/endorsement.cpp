@@ -9,6 +9,7 @@ BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream) {
   endorsement.endorsedHash = stream.readSlice(sizeof(endorsed_hash_t));
   endorsement.containingHash = stream.readSlice(sizeof(endorsed_hash_t));
   endorsement.blockOfProof = stream.readSlice(sizeof(containing_hash_t));
+  endorsement.payoutInfo = {};
 
   return endorsement;
 }
@@ -50,6 +51,11 @@ VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream) {
   }
   endorsement.blockOfProof = stream.readSlice(sizeof(containing_hash_t));
 
+  uint32_t payout_size = stream.readBE<uint32_t>();
+  for (uint32_t i = 0; i < payout_size; ++i) {
+    endorsement.payoutInfo[i] = stream.readBE<uint8_t>();
+  }
+
   return endorsement;
 }
 
@@ -71,6 +77,11 @@ void VbkEndorsement::toVbkEncoding(WriteStream& stream) const {
     stream.writeBE<uint8_t>(containingHash[i]);
   }
   stream.write(blockOfProof);
+
+  stream.writeBE<uint32_t>((uint32_t)payoutInfo.size());
+  for (size_t i = 0; i < payoutInfo.size(); ++i) {
+    stream.writeBE<uint8_t>(payoutInfo[i]);
+  }
 }
 
 template <>
@@ -87,6 +98,7 @@ BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
   e.blockOfProof = c.transaction.blockOfProof.getHash();
   e.containingHash = c.containingBlock.getHash();
   e.endorsedHash = c.transaction.publishedBlock.getHash();
+  e.payoutInfo = {};
   return e;
 }
 
@@ -97,6 +109,7 @@ VbkEndorsement VbkEndorsement::fromContainer(const AltProof& c) {
   e.blockOfProof = c.atv.containingBlock.getHash();
   e.endorsedHash = c.endorsed.hash;
   e.containingHash = c.containing.hash;
+  e.payoutInfo = c.atv.transaction.publicationData.payoutInfo;
   return e;
 }
 
