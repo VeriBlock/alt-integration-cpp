@@ -80,8 +80,8 @@ struct PopManager {
    * @note chain1 and chain2 are being consindered as forks not a full chains
    * from the genesis block, they should start at the common block
    */
-  int compareTwoBranches(const Chain<AltBlockIndex>& chain1,
-                         const Chain<AltBlockIndex>& chain2);
+  int compareTwoBranches(const Chain<BlockIndex<AltBlock>>& chain1,
+                         const Chain<BlockIndex<AltBlock>>& chain2);
 
  private:
   // vector of payloads that have been added to current state,

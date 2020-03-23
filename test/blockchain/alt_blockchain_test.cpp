@@ -31,9 +31,9 @@ struct AltTreeTest : public AltTree, public testing::Test {
 
   std::vector<AltBlock> getTips() {
     std::vector<AltBlock> res;
-    for (const auto& tip : chainTips_) {
+    /*for (const auto& tip : chainTips_) {
       res.push_back(tip->header);
-    }
+    }*/
     return res;
   }
 };
