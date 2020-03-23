@@ -1,5 +1,3 @@
-include_directories(${CMAKE_CURRENT_LIST_DIR})
-
 add_subdirectory(blockchain)
 add_subdirectory(third_party)
 add_subdirectory(entities)
@@ -42,9 +40,6 @@ add_library(${LIB_NAME} ${BUILD}
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
         )
-if(WITH_ROCKSDB)
-    target_link_libraries(${LIB_NAME} rocksdb)
-endif()
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}

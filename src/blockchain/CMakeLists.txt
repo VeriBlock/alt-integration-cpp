@@ -5,7 +5,3 @@ add_library(blockchain OBJECT
         btc_blockchain_util.cpp
         vbk_blockchain_util.cpp
         )
-
-if(WITH_ROCKSDB)
-    target_link_libraries(blockchain rocksdb)
-endif()

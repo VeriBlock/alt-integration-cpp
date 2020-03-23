@@ -31,6 +31,8 @@ struct Config {
           hexblocks.end(),
           std::back_inserter(b.blocks),
           [](const std::string& hexblock) { return Block::fromHex(hexblock); });
+
+      return b;
     }
   };
 

@@ -27,15 +27,19 @@ struct AltChainParamsTest : public AltChainParams {
   }
 };
 
+auto mgr = std::make_shared<StateManager<RepositoryRocksManager>>(dbName);
+
 struct AltTreeTest : public AltTree {
   AltTreeTest(const AltChainParams& config,
               const BtcChainParams& btcChainParams,
               const VbkChainParams& vbkChainParams)
-      : AltTree(
-            init(std::make_shared<StateManager<RepositoryRocksManager>>(dbName),
-                 config,
-                 btcChainParams,
-                 vbkChainParams)) {}
+      : AltTree(config,
+                PopManager(config,
+                           btcChainParams,
+                           vbkChainParams,
+                           mgr->getManager().getBtcEndorsementRepo(),
+                           mgr->getManager().getVbkEndorsementRepo()),
+                mgr->getManager().getPayloadsRepo()) {}
 };
 
 struct AltTreeTestSuite : public testing::Test {
@@ -171,7 +175,7 @@ TEST_F(AltTreeTestSuite, setState_test) {
   EXPECT_EQ(altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
             chain2StateVbkTip->getHash());
 
-  for (int i = 1; i < std::max(chain1.size(), chain2.size()); ++i) {
+  for (size_t i = 1; i < std::max(chain1.size(), chain2.size()); ++i) {
     if (i < chain1.size()) {
       altTree.setState(chain1[i].getHash(), state);
       EXPECT_TRUE(state.IsValid());

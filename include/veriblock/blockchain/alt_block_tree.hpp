@@ -30,19 +30,10 @@ struct AltTree {
 
   virtual ~AltTree() = default;
 
-  template <typename RepositoryManager>
-  static AltTree init(std::shared_ptr<StateManager<RepositoryManager>> mgr,
-                      const AltChainParams& altp,
-                      const BtcChainParams& btcp,
-                      const VbkChainParams& vbkp) {
-    PopManager pop(altp,
-                   btcp,
-                   vbkp,
-                   mgr->getManager().getBtcEndorsementRepo(),
-                   mgr->getManager().getVbkEndorsementRepo());
-
-    return AltTree(altp, std::move(pop), mgr->getManager().getPayloadsRepo());
-  }
+  AltTree(const config_t& config,
+          PopManager pop,
+          std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo)
+      : config_(config), pop_(std::move(pop)), prepo_(std::move(prepo)) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -58,21 +49,22 @@ struct AltTree {
 
   int compareThisToOtherChain(index_t* other);
 
-  const PopManager& currentPopManager() { return pop_; }
-  const index_t* currentPopState() { return popState_; }
+  PopManager& currentPopManager() { return pop_; }
+  index_t* currentPopState() { return popState_; }
+
+  const PopManager& currentPopManager() const  { return pop_; }
+  const index_t* currentPopState() const { return popState_; }
+
+
 
  protected:
   block_index_t block_index_;
   const config_t& config_;
-  std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo_;
 
   index_t* popState_{};
   PopManager pop_;
 
-  AltTree(const config_t& config,
-          PopManager pop,
-          std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo)
-      : config_(config), pop_(std::move(pop)), prepo_(prepo) {}
+  std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo_;
 
   index_t* insertBlockHeader(const AltBlock& block);
 

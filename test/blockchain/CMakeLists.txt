@@ -32,7 +32,7 @@ gencpp(
 
 if(WITH_ROCKSDB)
     addtest(alt_blockchain_test alt_blockchain_test.cpp)
-    target_link_libraries(alt_blockchain_test ${LIB_NAME})
+    target_link_libraries(alt_blockchain_test ${LIB_NAME} rocksdb)
 endif()
 
 addtest(btc_blockchain_test

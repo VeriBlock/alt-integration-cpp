@@ -36,4 +36,14 @@ addtest(mock_miner_test mock_miner_test.cpp)
 target_link_libraries(mock_miner_test ${LIB_NAME})
 
 addtest(keystone_util_test keystone_util_test.cpp)
+<<<<<<< HEAD
 target_link_libraries(keystone_util_test ${LIB_NAME})
+=======
+target_link_libraries(keystone_util_test ${LIB_NAME})
+
+
+if(WITH_ROCKSDB)
+    addtest(state_manager_test state_manager_test.cpp)
+    target_link_libraries(state_manager_test ${LIB_NAME} rocksdb)
+endif()
+>>>>>>> Builds

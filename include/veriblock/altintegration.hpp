@@ -17,11 +17,19 @@ struct AltIntegration {
     alt.state_ =
         std::make_shared<StateManager<RepositoryRocksManager>>(config.dbName);
 
-    // create alt tree
-    alt.altTree_ = std::make_shared<AltTree>(AltTree::init(
-        alt.state_, *config.altParams, *config.btc.params, *config.vbk.params));
+    auto& mgr = alt.state_->getManager();
 
-    // bootstrap alttree
+    // create current pop state
+    PopManager temp(*config.altParams,
+                   *config.btc.params,
+                   *config.vbk.params,
+                   mgr.getBtcEndorsementRepo(),
+                   mgr.getVbkEndorsementRepo());
+
+    // create alt tree
+    alt.altTree_ = std::make_shared<AltTree>(
+        *config.altParams, std::move(temp), mgr.getPayloadsRepo());
+
     ValidationState state;
 
     auto must = [&state](bool ret) {
