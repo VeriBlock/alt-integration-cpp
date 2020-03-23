@@ -19,11 +19,11 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
   std::shared_ptr<VbkBlockTree> vbkTest;
 
   std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> btc_repo;
-  std::shared_ptr<BtcChainParams> btc_params;
+  BtcChainParamsRegTest btc_params;
   std::shared_ptr<BlockTree<BtcBlock, BtcChainParams>> btcTree;
 
   std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> vbk_repo;
-  std::shared_ptr<VbkChainParams> vbk_params;
+  VbkChainParamsRegTest vbk_params;
 
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> endorsement_repo;
 
@@ -78,10 +78,7 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
   }
 
   VbkBlockTreeTestFixture() {
-    btc_params = std::make_shared<BtcChainParamsRegTest>();
     btcTree = std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(btc_params);
-
-    vbk_params = std::make_shared<VbkChainParamsRegTest>();
 
     endorsement_repo =
         std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
@@ -141,10 +138,10 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
       getProtoKeystoneContext(vbkTest->getBestChain(),
                               *this->btcTree,
                               this->endorsement_repo,
-                              *this->vbk_params);
+                              this->vbk_params);
 
   EXPECT_EQ(protoContext.size(),
-            numVbkBlocks / this->vbk_params->getKeystoneInterval());
+            numVbkBlocks / this->vbk_params.getKeystoneInterval());
 
   EXPECT_EQ(protoContext[0].blockHeight, 20);
   EXPECT_EQ(protoContext[0].referencedByBlocks.size(), 0);
@@ -203,11 +200,11 @@ TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
       getKeystoneContext(getProtoKeystoneContext(vbkTest->getBestChain(),
                                                  *this->btcTree,
                                                  this->endorsement_repo,
-                                                 *this->vbk_params),
+                                                 this->vbk_params),
                          *this->btcTree);
 
   EXPECT_EQ(keystoneContext.size(),
-            numVbkBlocks / this->vbk_params->getKeystoneInterval());
+            numVbkBlocks / this->vbk_params.getKeystoneInterval());
 
   EXPECT_EQ(keystoneContext[0].vbkBlockHeight, 20);
   EXPECT_EQ(keystoneContext[0].firstBtcBlockPublicationHeight,

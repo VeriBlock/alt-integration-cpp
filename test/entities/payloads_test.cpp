@@ -61,7 +61,7 @@ static const AltBlock defaultEndorsedBlock{
     "449c60619294546ad825af03"_unhex, {}, 124, 1246};
 
 static const AltProof defaultAltProof{
-    defaultEndorsedBlock, defaultContainingBlock, defaultAtv};
+    defaultEndorsedBlock, defaultContainingBlock, true, defaultAtv};
 
 TEST(AltProof, RoundTrip) {
   std::vector<uint8_t> bytes = defaultAltProof.toVbkEncoding();

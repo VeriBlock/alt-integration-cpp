@@ -2,10 +2,19 @@
 
 #include <algorithm>
 
+#include "util/test_utils.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/alt_chain_params.hpp"
+#include "veriblock/blockchain/btc_chain_params.hpp"
+#include "veriblock/blockchain/miner.hpp"
+#include "veriblock/blockchain/vbk_chain_params.hpp"
+#include "veriblock/mock_miner.hpp"
+#include "veriblock/storage/repository_rocks_manager.hpp"
 
 using namespace altintegration;
+
+// DB name
+static const std::string dbName = "db-test";
 
 struct AltChainParamsTest : public AltChainParams {
   AltBlock getBootstrapBlock() const noexcept override {
@@ -18,79 +27,175 @@ struct AltChainParamsTest : public AltChainParams {
   }
 };
 
-struct AltTreeTest : public AltTree, public testing::Test {
-  std::shared_ptr<AltChainParams> config;
+struct AltTreeTest : public AltTree {
+  AltTreeTest(const AltChainParams& config,
+              const BtcChainParams& btcChainParams,
+              const VbkChainParams& vbkChainParams)
+      : AltTree(
+            init(std::make_shared<StateManager<RepositoryRocksManager>>(dbName),
+                 config,
+                 btcChainParams,
+                 vbkChainParams)) {}
+};
+
+struct AltTreeTestSuite : public testing::Test {
+  AltChainParamsTest config;
+  BtcChainParamsRegTest btcChainParams;
+  VbkChainParamsRegTest vbkChainParams;
+
+  AltTreeTest altTree;
+
+  MockMiner apm;
 
   ValidationState state;
 
-  AltTreeTest()
-      : AltTree(std::make_shared<AltChainParamsTest>()),
-        config(std::make_shared<AltChainParamsTest>()) {
-    bootstrapWithGenesis(state);
+  AltTreeTestSuite()
+      : config(AltChainParamsTest()),
+        btcChainParams(BtcChainParamsRegTest()),
+        vbkChainParams(VbkChainParamsRegTest()),
+        altTree(config, btcChainParams, vbkChainParams) {
+    altTree.bootstrapWithGenesis(state);
+    apm.btc().bootstrapWithGenesis(state);
+    apm.vbk().bootstrapWithGenesis(state);
   }
 
-  std::vector<AltBlock> getTips() {
-    std::vector<AltBlock> res;
-    /*for (const auto& tip : chainTips_) {
-      res.push_back(tip->header);
-    }*/
-    return res;
+  VbkBlock getLastKnownVbkBlock() {
+    return altTree.currentPopManager().vbk().getBestChain().tip()->header;
+  }
+
+  BtcBlock getLastKnownBtcBlock() {
+    return altTree.currentPopManager().btc().getBestChain().tip()->header;
+  }
+
+  std::vector<uint8_t> payoutInfo{1, 2, 3, 4, 5};
+
+  AltBlock generateNextBlock(const AltBlock& last) {
+    AltBlock next;
+    next.previousBlock = last.hash;
+    next.height = last.height + 1;
+    next.hash = generateRandomBytesVector(32);
+    next.timestamp = last.timestamp + 1;
+    return next;
+  }
+
+  void mineAltChainFromBlock(std::vector<AltBlock>& blocks,
+                             int size,
+                             const AltBlock& fromBlock) {
+    AltBlock newBlock = generateNextBlock(fromBlock);
+
+    for (int i = 0; i < size; ++i) {
+      EXPECT_TRUE(altTree.acceptBlock(newBlock, nullptr, state));
+      EXPECT_TRUE(state.IsValid());
+      blocks.push_back(newBlock);
+      newBlock = generateNextBlock(newBlock);
+    }
+  }
+
+  PublicationData endorseBlock(const std::vector<uint8_t>& block) {
+    PublicationData pub;
+    pub.header = block;
+    pub.identifier = 1;
+    pub.contextInfo = {};
+    pub.payoutInfo = payoutInfo;
+    return pub;
+  }
+
+  Payloads getPayloads(const AltBlock& endorsed, const AltBlock& prevBlock) {
+    Publications pub = apm.mine(endorseBlock(endorsed.toVbkEncoding()),
+                                getLastKnownVbkBlock().getHash(),
+                                getLastKnownBtcBlock().getHash(),
+                                0,
+                                state);
+
+    EXPECT_TRUE(state.IsValid());
+
+    AltBlock containing = generateNextBlock(prevBlock);
+
+    Payloads payloads;
+    payloads.alt.containing = containing;
+    payloads.alt.endorsed = endorsed;
+    payloads.alt.atv = pub.atv;
+    payloads.alt.hasAtv = true;
+    payloads.vtbs = pub.vtbs;
+
+    return payloads;
   }
 };
 
-TEST_F(AltTreeTest, acceptBlock_test) {
-  Payloads temp;
+TEST_F(AltTreeTestSuite, setState_test) {
+  srand(0);
 
-  AltBlock block1;
-  block1.hash = {1, 2, 5};
-  block1.previousBlock = config->getBootstrapBlock().hash;
-  block1.height = config->getBootstrapBlock().height + 1;
-  block1.timestamp = 0;
+  std::vector<AltBlock> chain1;
+  mineAltChainFromBlock(chain1, 1, config.getBootstrapBlock());
 
-  acceptBlock(block1, temp, state);
-  std::vector<AltBlock> tips = this->getTips();
-  EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) != tips.end());
+  EXPECT_TRUE(apm.mineBtcBlocks(14, state));
+  EXPECT_TRUE(apm.mineVbkBlocks(30, state));
 
-  AltBlock block2;
-  block2.hash = {2, 2, 2};
-  block2.previousBlock = config->getBootstrapBlock().hash;
-  block2.height = config->getBootstrapBlock().height + 1;
-  block2.timestamp = 0;
+  Payloads payloads1 = getPayloads(*chain1.rbegin(), *chain1.rbegin());
 
-  acceptBlock(block2, temp, state);
+  EXPECT_TRUE(altTree.acceptBlock(payloads1.alt.containing, &payloads1, state));
 
-  tips = this->getTips();
-  EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) != tips.end());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block2) != tips.end());
+  mineAltChainFromBlock(chain1, 10, config.getBootstrapBlock());
 
-  AltBlock block3;
-  block3.hash = {3, 2, 3};
-  block3.previousBlock = block1.hash;
-  block3.height = block1.height + 1;
-  block3.timestamp = 0;
+  const BlockIndex<BtcBlock>* chain1StateBtcTip =
+      apm.btc().getBestChain().tip()->pprev;
+  const BlockIndex<VbkBlock>* chain1StateVbkTip =
+      apm.vbk().getBestChain().tip()->pprev;
 
-  acceptBlock(block3, temp, state);
+  EXPECT_EQ(altTree.currentPopManager().btc().getBestChain().tip()->getHash(),
+            chain1StateBtcTip->getHash());
 
-  tips = this->getTips();
-  EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) == tips.end());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block2) != tips.end());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block3) != tips.end());
+  EXPECT_EQ(altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
+            chain1StateVbkTip->getHash());
 
-  AltBlock block4;
-  block4.hash = {4, 2, 5};
-  block4.previousBlock = block2.hash;
-  block4.height = block2.height + 1;
-  block4.timestamp = 0;
+  std::vector<AltBlock> chain2;
+  mineAltChainFromBlock(chain2, 1, config.getBootstrapBlock());
 
-  acceptBlock(block4, temp, state);
+  EXPECT_TRUE(apm.mineBtcBlocks(14, state));
+  EXPECT_TRUE(apm.mineVbkBlocks(30, state));
 
-  tips = this->getTips();
-  EXPECT_TRUE(state.IsValid());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) == tips.end());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block2) == tips.end());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block3) != tips.end());
-  EXPECT_TRUE(std::find(tips.begin(), tips.end(), block4) != tips.end());
+  Payloads payloads2 = getPayloads(*chain2.rbegin(), *chain2.rbegin());
+
+  EXPECT_TRUE(altTree.acceptBlock(payloads2.alt.containing, &payloads2, state));
+
+  mineAltChainFromBlock(chain2, 15, config.getBootstrapBlock());
+
+  const BlockIndex<BtcBlock>* chain2StateBtcTip =
+      apm.btc().getBestChain().tip()->pprev;
+  const BlockIndex<VbkBlock>* chain2StateVbkTip =
+      apm.vbk().getBestChain().tip()->pprev;
+
+  EXPECT_EQ(altTree.currentPopManager().btc().getBestChain().tip()->getHash(),
+            chain2StateBtcTip->getHash());
+
+  EXPECT_EQ(altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
+            chain2StateVbkTip->getHash());
+
+  for (int i = 1; i < std::max(chain1.size(), chain2.size()); ++i) {
+    if (i < chain1.size()) {
+      altTree.setState(chain1[i].getHash(), state);
+      EXPECT_TRUE(state.IsValid());
+
+      EXPECT_EQ(
+          altTree.currentPopManager().btc().getBestChain().tip()->getHash(),
+          chain1StateBtcTip->getHash());
+
+      EXPECT_EQ(
+          altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
+          chain1StateVbkTip->getHash());
+    }
+
+    if (i < chain2.size()) {
+      altTree.setState(chain2[i].getHash(), state);
+      EXPECT_TRUE(state.IsValid());
+
+      EXPECT_EQ(
+          altTree.currentPopManager().btc().getBestChain().tip()->getHash(),
+          chain2StateBtcTip->getHash());
+
+      EXPECT_EQ(
+          altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
+          chain2StateVbkTip->getHash());
+    }
+  }
 }

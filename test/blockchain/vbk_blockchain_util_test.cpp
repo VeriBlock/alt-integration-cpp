@@ -1,11 +1,10 @@
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
-
 #include <gtest/gtest.h>
 
 #include <memory>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/block_index.hpp"
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/time.hpp"
 
@@ -49,11 +48,10 @@ struct VbkBlockchainUtilTest {
   using param_t = VbkChainParams;
   using block_t = VbkBlock;
 
-  std::shared_ptr<param_t> chainparams;
+  VbkChainParamsMain chainparams;
   std::shared_ptr<Miner<block_t, param_t>> miner;
 
   VbkBlockchainUtilTest() {
-    chainparams = std::make_shared<VbkChainParamsMain>();
     miner = std::make_shared<Miner<block_t, param_t>>(chainparams);
   }
 };
@@ -147,8 +145,8 @@ TEST_P(GetNextWorkRequiredTest, getNextWorkRequired_test) {
                                                      value.chain_difficulty,
                                                      value.chainlength);
 
-  uint32_t result =
-      getNextWorkRequired(chain[chain.size() - 1], VbkBlock(), *chainparams);
+  uint32_t result = getNextWorkRequired<VbkBlock, VbkChainParams>(
+      chain[chain.size() - 1], VbkBlock(), chainparams);
 
   EXPECT_EQ(value.expected_difficulty, result);
 }
@@ -159,9 +157,9 @@ INSTANTIATE_TEST_SUITE_P(GetNextWorkRequiredRegression,
 struct SingleTest : public ::testing::Test, public VbkBlockchainUtilTest {};
 
 TEST_F(SingleTest, single_test) {
-  uint32_t chainlength = chainparams->getRetargetPeriod();
+  uint32_t chainlength = chainparams.getRetargetPeriod();
 
-  int32_t deltaTime = chainparams->getTargetBlockTime();
+  int32_t deltaTime = chainparams.getTargetBlockTime();
 
   BlockIndex<VbkBlock> blockIndex;
   blockIndex.header.height = 1;
@@ -188,8 +186,8 @@ TEST_F(SingleTest, single_test) {
     chain[i] = temp;
   }
 
-  uint32_t result =
-      getNextWorkRequired(chain[chain.size() - 1], VbkBlock(), *chainparams);
+  uint32_t result = getNextWorkRequired<VbkBlock, VbkChainParams>(
+      chain[chain.size() - 1], VbkBlock(), chainparams);
 
   EXPECT_EQ(ArithUint256::fromHex("0228C35294D0").toBits(), result);
 }
@@ -254,12 +252,11 @@ struct BlockchainTest : public ::testing::Test {
   using index_t = typename BlockTree<block_t, params_base_t>::index_t;
 
   std::shared_ptr<BlockTree<block_t, params_base_t>> blockchain;
-  std::shared_ptr<params_base_t> chainparam;
+  params_t chainparam;
   std::shared_ptr<Miner<block_t, params_base_t>> miner;
   ValidationState state;
 
   BlockchainTest() {
-    chainparam = std::make_shared<params_t>();
     blockchain =
         std::make_shared<BlockTree<block_t, params_base_t>>(chainparam);
 

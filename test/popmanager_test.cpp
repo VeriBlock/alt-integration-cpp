@@ -4,9 +4,7 @@
 #include <random>
 #include <veriblock/mock_miner.hpp>
 #include <veriblock/popmanager.hpp>
-#include <veriblock/state_manager.hpp>
 #include <veriblock/storage/endorsement_repository_inmem.hpp>
-#include <veriblock/storage/repository_rocks_manager.hpp>
 
 using namespace altintegration;
 
@@ -29,31 +27,25 @@ struct PopManagerTest : public ::testing::Test {
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce;
   std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke;
 
-  std::shared_ptr<BtcChainParams> btcp =
-      std::make_shared<BtcChainParamsRegTest>();
-  std::shared_ptr<VbkChainParams> vbkp =
-      std::make_shared<VbkChainParamsRegTest>();
+  BtcChainParamsRegTest btcp;
+  VbkChainParamsRegTest vbkp;
 
   MockMiner apm;
   std::shared_ptr<BtcTree> alt;
   std::shared_ptr<Miner<BtcBlock, BtcChainParams>> alt_miner;
 
-  std::shared_ptr<AltChainParams> altChainParams;
+  AltChainParamsTest altChainParams;
 
   std::shared_ptr<PopManager> altpop;
 
-  StateManager<RepositoryRocksManager> stateManager;
-
-  PopManagerTest() : stateManager(dbName) {
-    altChainParams = std::make_shared<AltChainParamsTest>();
-
+  PopManagerTest() {
     btce = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
     vbke = std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
 
     alt = std::make_shared<BtcTree>(btcp);
     alt_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(btcp);
     altpop =
-        std::make_shared<PopManager>(btcp, vbkp, btce, vbke, altChainParams);
+        std::make_shared<PopManager>(altChainParams, btcp, vbkp, btce, vbke);
 
     // our altchain stores headers of BTC, VBK and ALT blocks
     EXPECT_TRUE(altpop->btc().bootstrapWithGenesis(state));
@@ -101,8 +93,6 @@ struct PopManagerTest : public ::testing::Test {
 };
 
 TEST_F(PopManagerTest, Scenario1) {
-  std::unique_ptr<StateChange> change = stateManager.newChange();
-
   // @given: BTC, VBK and ALT chains
   // BTC has genesis + 5 blocks
   EXPECT_TRUE(apm.mineBtcBlocks(5, state));
@@ -113,7 +103,7 @@ TEST_F(PopManagerTest, Scenario1) {
   EXPECT_EQ(apm.vbk().getBestChain().tip()->height, 5);
 
   // ALT has genesis + 10 blocks
-  std::vector<BtcBlock> altfork1{btcp->getGenesisBlock()};
+  std::vector<BtcBlock> altfork1{btcp.getGenesisBlock()};
   mineChain(*alt, altfork1, 10);
   ASSERT_EQ(alt->getBestChain().chainHeight(), 10);
 
@@ -140,7 +130,7 @@ TEST_F(PopManagerTest, Scenario1) {
   altProof.containing = makeAltBlock(*alt->getBestChain().tip());
 
   // apply payloads to our current view
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, state))
       << state.GetRejectReason();
   // these payloads are not committed yet
   ASSERT_TRUE(altpop->hasUncommittedChanges());
@@ -152,14 +142,14 @@ TEST_F(PopManagerTest, Scenario1) {
             *apm.vbk().getBestChain().tip()->pprev);
 
   // rollback last addPayloads
-  altpop->rollback(*change);
+  altpop->rollback();
 
   // our local view changed to previous state
   ASSERT_EQ(altpop->btc().getBestChain().tip()->getHash(), last_btc);
   ASSERT_EQ(altpop->vbk().getBestChain().tip()->getHash(), last_vbk);
 
   // add same payloads again
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, state))
       << state.GetRejectReason();
   // these payloads are not committed yet
   ASSERT_TRUE(altpop->hasUncommittedChanges());
@@ -175,7 +165,7 @@ TEST_F(PopManagerTest, Scenario1) {
             *apm.vbk().getBestChain().tip()->pprev);
 
   // finally, do rollback again. this should be NOOP
-  altpop->rollback(*change);
+  altpop->rollback();
 
   // our local view on btc/vbk chains is still correct
   ASSERT_EQ(*altpop->btc().getBestChain().tip(),
@@ -185,9 +175,8 @@ TEST_F(PopManagerTest, Scenario1) {
 }
 
 TEST_F(PopManagerTest, compareTwoBranches_test) {
-  std::unique_ptr<StateChange> change = stateManager.newChange();
   // ALT has genesis + 102 blocks
-  std::vector<BtcBlock> altfork1{btcp->getGenesisBlock()};
+  std::vector<BtcBlock> altfork1{btcp.getGenesisBlock()};
   mineChain(*alt, altfork1, 102);
   ASSERT_EQ(alt->getBestChain().chainHeight(), 102);
 
@@ -220,7 +209,7 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   altProof.containing = makeAltBlock(*alt->getBestChain().tip());
 
   // apply payloads to our current view
-  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
+  ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, state))
       << state.GetRejectReason();
 
   altpop->commit();
@@ -242,8 +231,8 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   index_prev.height = 99;
   index_prev.pprev = nullptr;
 
-  Chain<AltBlock> chain1(index_prev.height, &index_prev);
-  Chain<AltBlock> chain2(index_prev.height, &index_prev);
+  Chain<BlockIndex<AltBlock>> chain1(index_prev.height, &index_prev);
+  Chain<BlockIndex<AltBlock>> chain2(index_prev.height, &index_prev);
 
   std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt1;
   for (size_t i = 100; i < altfork1.size(); i++) {

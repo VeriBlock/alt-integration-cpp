@@ -31,13 +31,24 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
   current = touchBlockIndex(hash);
   current->header = block;
   current->pprev = getBlockIndex(block.previousBlock);
+  if (current->pprev != nullptr) {
+    current->height = current->pprev->height + 1;
+  }
 
   return current;
 }
 
 bool AltTree::bootstrapWithGenesis(ValidationState& state) {
+  if (!pop_.btc().bootstrapWithGenesis(state)) {
+    return state.Error("btc tree already bootstrapped");
+  }
+
+  if (!pop_.vbk().bootstrapWithGenesis(state)) {
+    return state.Error("vbk tree already bootstrapped");
+  }
+
   if (!block_index_.empty()) {
-    return state.Error("already bootstrapped");
+    return state.Error("alt tree already bootstrapped");
   }
 
   auto block = config_.getBootstrapBlock();
@@ -79,7 +90,7 @@ bool AltTree::setState(const AltBlock::hash_t& hash, ValidationState& state) {
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
-                          const Payloads& payloads,
+                          const Payloads* payloads,
                           ValidationState& state,
                           StateChange* stateChange) {
   // we must know previous block
@@ -95,31 +106,20 @@ bool AltTree::acceptBlock(const AltBlock& block,
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  if (!setState(index->pprev->getHash(), state)) {
-    return state.addStackFunction("AltTree::acceptBlock");
-  }
+  if (payloads != nullptr) {
+    if (!setState(index->pprev->getHash(), state)) {
+      return state.addStackFunction("AltTree::acceptBlock");
+    }
 
-  // we just add payloads via addPayloads, no need to unapply state
-  if (!pop_.addPayloads(payloads, state, stateChange)) {
-    return state.addStackFunction("AltTree::acceptBlock");
+    // we just add payloads via addPayloads, no need to unapply state
+    if (!pop_.addPayloads(*payloads, state, stateChange)) {
+      return state.addStackFunction("AltTree::acceptBlock");
+    }
+    pop_.commit();
   }
-  pop_.commit();
 
   // current state has been changed
   popState_ = index;
-
-  return true;
-}
-
-bool AltTree::acceptBlock(const AltBlock& block,
-                          const std::vector<Payloads>& payloads,
-                          ValidationState& state,
-                          StateChange* change) {
-  for (const auto& p : payloads) {
-    if (!acceptBlock(block, p, state, change)) {
-      return false;
-    }
-  }
 
   return true;
 }
@@ -202,7 +202,7 @@ bool AltTree::unapplyAndApply(PopManager& pop,
   unapply(pop, popState, to);
 
   Chain<index_t> chain(config_.getBootstrapBlock().height, &to);
-  if (chain.contains(&to)) {
+  if (chain.contains(*popState)) {
     // do not apply payloads as "to" is in current chain and no new payloads
     // will be added
     return true;

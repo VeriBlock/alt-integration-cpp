@@ -41,7 +41,7 @@ add_library(${LIB_NAME} ${BUILD}
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
         )
-if(WITH_ROCKS)
+if(WITH_ROCKSDB)
     target_link_libraries(${LIB_NAME} rocksdb)
 endif()
 

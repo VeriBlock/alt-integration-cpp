@@ -20,16 +20,13 @@ struct GetProofTest : public testing::Test {
   using height_t = typename BlockTree<block_t, param_t>::height_t;
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
-  std::shared_ptr<param_t> params;
+  VbkChainParamsTest params;
   ValidationState state;
 
   std::vector<VbkBlock> allBlocks{};
   std::vector<ArithUint256> cumulativeDifficulties{};
 
-  GetProofTest() {
-    params = std::make_shared<VbkChainParamsTest>();
-    parseBlocks(generated::vbk_testnet30000);
-  }
+  GetProofTest() { parseBlocks(generated::vbk_testnet30000); }
 
   void parseBlocks(const std::string& blocks) {
     std::istringstream file(blocks);
