@@ -16,28 +16,25 @@ namespace altintegration {
  * @invariant does not modify any on-disk state.
  */
 struct PopManager {
-  PopManager(const AltChainParams& altp,
-      const BtcChainParams& btcp,
-             const VbkChainParams& vbkp,
-             std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce,
-             std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke)
-      : altparam_(altp),
-        btcparam_(btcp),
-        vbkparam_(vbkp),
-        btce_(std::move(btce)),
-        vbke_(std::move(vbke)),
-        altChainCompare_(altp) {
-    btc_ = std::make_shared<BtcTree>(btcparam_);
-    vbk_ = std::make_shared<VbkTree>(*btc_, btce_, vbkparam_);
-  }
-
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
   using VbkTree = VbkBlockTree;
 
-  BtcTree& btc() { return *btc_; }
-  VbkTree& vbk() { return *vbk_; }
-  const BtcTree& btc() const { return *btc_; }
-  const VbkTree& vbk() const { return *vbk_; }
+  PopManager(const AltChainParams& altp,
+             const BtcChainParams& btcp,
+             const VbkChainParams& vbkp,
+             BtcTree& btc,
+             VbkTree& vbk)
+      : altparam_(altp),
+        btcparam_(btcp),
+        vbkparam_(vbkp),
+        btc_(btc),
+        vbk_(vbk),
+        altChainCompare_(altp) {}
+
+  BtcTree& btc() { return btc_; }
+  VbkTree& vbk() { return vbk_; }
+  const BtcTree& btc() const { return btc_; }
+  const VbkTree& vbk() const { return vbk_; }
 
   /**
    * Atomically add all payloads from ATV and all VTBs.
@@ -51,17 +48,14 @@ struct PopManager {
    * @throws may throw if out of memory. In this case, payloads also will be
    * reverted.
    */
-  bool addPayloads(const Payloads& payloads,
-                   ValidationState& state,
-                   StateChange* change = nullptr);
+  bool addPayloads(const Payloads& payloads, ValidationState& state);
 
   /**
-   * Atomically revert all payloads from given ATV and VTBs.
+   * Atomically revert all payloads from given Payloads.
    * @param atv altchain to veriblock publication
    * @note does not throw in any circumstance
    */
-  void removePayloads(const Payloads& payloads,
-                      StateChange* change = nullptr) noexcept;
+  void removePayloads(const Payloads& payloads) noexcept;
 
   bool hasUncommittedChanges() const noexcept;
 
@@ -92,22 +86,15 @@ struct PopManager {
   const BtcChainParams& btcparam_;
   const VbkChainParams& vbkparam_;
 
-  std::shared_ptr<BtcTree> btc_;
-  std::shared_ptr<VbkTree> vbk_;
-  std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce_;
-  std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke_;
+  BtcTree& btc_;
+  VbkTree& vbk_;
 
   ComparePopScore<AltChainParams> altChainCompare_;
 
-  bool addVTB(const VTB& vtb,
-              ValidationState& state,
-              StateChange* change = nullptr);
-  bool addAltProof(const AltProof& payloads,
-                   ValidationState& state,
-                   StateChange* change = nullptr);
-  void removeAltProof(const AltProof& alt,
-                      StateChange* change = nullptr) noexcept;
-  void removeVTB(const VTB& vtb, StateChange* change = nullptr) noexcept;
+  bool addVTB(const VTB& vtb, ValidationState& state);
+  bool addAltProof(const AltProof& payloads, ValidationState& state);
+  void removeAltProof(const AltProof& alt) noexcept;
+  void removeVTB(const VTB& vtb) noexcept;
 };
 
 }  // namespace altintegration

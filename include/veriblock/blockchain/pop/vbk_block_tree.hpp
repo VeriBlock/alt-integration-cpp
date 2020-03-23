@@ -24,6 +24,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
         btc_(btc),
         compare_(this->param_) {}
 
+  EndorsementRepository<BtcEndorsement>& getEndorsementRepo() {
+    return *erepo_;
+  }
+
  private:
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo_;
   BtcTree& btc_;

@@ -83,10 +83,10 @@ struct KeystoneContextList {
   }
 };
 
-template <typename ConfigType>
+template <typename ProtectedChainConfig>
 int comparePopScore(const std::vector<KeystoneContext>& chainA,
                     const std::vector<KeystoneContext>& chainB,
-                    const ConfigType& config) {
+                    const ProtectedChainConfig& config) {
   assert(config.getKeystoneInterval() > 0);
   KeystoneContextList a(chainA, config.getKeystoneInterval());
   KeystoneContextList b(chainB, config.getKeystoneInterval());
@@ -198,19 +198,17 @@ struct ComparePopScore {
   const ConfigType& config_;
 };
 
-template <typename EndorsementBlockType, typename EndorsementChainParams>
+template <typename ProtectingBlockT, typename ProtectingChainParams>
 std::vector<KeystoneContext> getKeystoneContext(
-    const std::vector<ProtoKeystoneContext<EndorsementBlockType>>& chain,
-    const BlockTree<EndorsementBlockType, EndorsementChainParams>&
-        endorsementBlockTree) {
+    const std::vector<ProtoKeystoneContext<ProtectingBlockT>>& chain,
+    const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree) {
   std::vector<KeystoneContext> ret;
 
   std::transform(
       chain.begin(),
       chain.end(),
       std::back_inserter(ret),
-      [&endorsementBlockTree](
-          const ProtoKeystoneContext<EndorsementBlockType>& pkc) {
+      [&tree](const ProtoKeystoneContext<ProtectingBlockT>& pkc) {
         int earliestEndorsementIndex = std::numeric_limits<int32_t>::max();
         for (const auto* btcIndex : pkc.referencedByBlocks) {
           if (btcIndex == nullptr) {
@@ -228,7 +226,7 @@ std::vector<KeystoneContext> getKeystoneContext(
 
           // look at the future BTC blocks and set the--0
           // earliestEndorsementIndex to a future Bitcoin block
-          auto btcBest = endorsementBlockTree.getBestChain();
+          auto btcBest = tree.getBestChain();
           for (int adjustedEndorsementIndex = endorsementIndex + 1;
                adjustedEndorsementIndex <= btcBest.chainHeight();
                adjustedEndorsementIndex++) {
@@ -265,10 +263,9 @@ template <typename EndorsedBlockType,
           typename EndorsementType,
           typename ConfigType>
 std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
-    const Chain<EndorsedBlockType>& chain,
-    const BlockTree<EndorsementBlockType, EndorsementChainParams>&
-        endorsementBlockTree,
-    std::shared_ptr<EndorsementRepository<EndorsementType>> endorsementRepo,
+    const Chain<BlockIndex<EndorsedBlockType>>& chain,
+    const BlockTree<EndorsementBlockType, EndorsementChainParams>& tree,
+    EndorsementRepository<EndorsementType>& repo,
     const ConfigType& config) {
   std::vector<ProtoKeystoneContext<EndorsementBlockType>> ret;
   auto* tip = chain.tip();
@@ -304,18 +301,12 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
       assert(index != nullptr);
 
       // get all endorsements of this block
-      auto endorsements = endorsementRepo->get(index->getHash());
-      // TODO: remove endorsements that do not belong to this chain
-      //          ,
-      //          [this, &chain](const VbkBlock::hash_t& hash) -> bool {
-      //            auto* index = this->getBlockIndex(hash);
-      //            return index != nullptr && chain.contains(index);
-      //          }
+      // TODO: get all endorsements that belong to the chain
 
-      for (const auto& e : endorsements) {
-        auto* ind = endorsementBlockTree.getBlockIndex(e.blockOfProof);
-        pkc.referencedByBlocks.insert(ind);
-      }
+//      for (const auto& e : endorsements) {
+//        auto* ind = tree.getBlockIndex(e.blockOfProof);
+//        pkc.referencedByBlocks.insert(ind);
+//      }
     }
 
     ret.push_back(std::move(pkc));

@@ -293,8 +293,7 @@ struct BlockTree {
 
   bool acceptBlock(const block_t& block,
                    ValidationState& state,
-                   bool shouldContextuallyCheck,
-                   index_t* blockIndex = nullptr) {
+                   bool shouldContextuallyCheck) {
     if (!checkBlock(block, state, param_)) {
       return state.addStackFunction("acceptBlock()");
     }
@@ -318,9 +317,6 @@ struct BlockTree {
 
     assert(index != nullptr &&
            "insertBlockHeader should have never returned nullptr");
-    if (blockIndex != nullptr) {
-      *blockIndex = *index;
-    }
     return true;
   }
 
