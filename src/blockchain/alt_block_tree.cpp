@@ -14,9 +14,8 @@ AltTree::index_t* AltTree::touchBlockIndex(const hash_t& blockHash) {
     return it->second.get();
   }
 
-  auto* newIndex = new index_t{};
-  it = block_index_.insert({blockHash, std::unique_ptr<index_t>(newIndex)})
-           .first;
+  auto newIndex = std::make_shared<index_t>();
+  it = block_index_.insert({blockHash, std::move(newIndex)}).first;
   return it->second.get();
 }
 

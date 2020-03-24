@@ -108,9 +108,8 @@ struct BlockTree {
   }
 
   bool acceptBlock(const block_t& block,
-                   ValidationState& state,
-                   index_t* blockIndex = nullptr) {
-    return acceptBlock(block, state, true, blockIndex);
+                   ValidationState& state) {
+    return acceptBlock(block, state, true);
   }
 
   void invalidateTip() {

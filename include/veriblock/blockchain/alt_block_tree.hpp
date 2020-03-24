@@ -27,7 +27,7 @@ struct AltTree {
   using params_t = AltChainParams;
   using index_t = BlockIndex<AltBlock>;
   using hash_t = typename AltBlock::hash_t;
-  using block_index_t = std::unordered_map<hash_t, std::unique_ptr<index_t>>;
+  using block_index_t = std::unordered_map<hash_t, std::shared_ptr<index_t>>;
   using VbkTree = VbkBlockTree;
   using BtcTree = VbkTree::BtcTree;
   using POPForkResolution = PopAwareForkResolutionComparator<AltBlock,
@@ -156,6 +156,8 @@ bool removePayloads(AltTree& tree, const Payloads& payloads) {
   for (const auto& b : payloads.vbkcontext) {
     vbk.invalidateBlockByHash(b.getHash());
   }
+
+  return true;
 }
 
 }  // namespace altintegration

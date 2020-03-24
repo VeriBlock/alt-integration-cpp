@@ -313,17 +313,18 @@ struct PopAwareForkResolutionComparator {
   bool setState(const protected_index_t& index, ValidationState& state) {
     // if previous state is unknown, set new state as current
     if (!treeState_) {
-      treeState_ = index;
+      treeState_ = const_cast<protected_index_t *>(&index);
       return true;
     }
 
-    return unapplyAndApply(tree_,
-                           treeState_,
-                           index,
-                           state,
-                           [this](const protected_index_t& block) {
-                             return this->p_.get(block.getHash());
-                           });
+    return unapplyAndApply(
+        tree_,
+        &treeState_,
+        index,
+        state,
+        [this](const protected_index_t& block) -> std::vector<Payloads> {
+          return this->p_.get(block.getHash());
+        });
   }
 
   int operator()(const Chain<protected_index_t>& chainA,
@@ -338,6 +339,8 @@ struct PopAwareForkResolutionComparator {
     };
 
     ValidationState state;
+
+    // make a tree copy
     ProtectingBlockTree temp = getProtectingBlockTree();
     auto* tempState = treeState_;
     // try set current state to chain A
