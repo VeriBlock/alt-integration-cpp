@@ -10,25 +10,26 @@
 
 namespace altintegration {
 
-struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
+struct VbkBlockTree
+    : public BlockTree<VbkBlock, VbkChainParams>,
+      public PopAwareForkResolution<BlockIndex<VbkBlock>,
+                                    VbkChainParams,
+                                    BlockTree<BtcBlock, BtcChainParams>,
+                                    BtcEndorsement> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
-  using comparator_t = ComparePopScore<VbkTree, BtcTree, BtcEndorsement>;
 
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(comparator_t cmp,
-               const VbkChainParams& vbkp,
-               const BtcChainParams& btcp)
-      : VbkTree(vbkp), btc_(btcp), compare_(cmp) {}
+  VbkBlockTree(const VbkChainParams& vbkp,
+               const BtcChainParams& btcp,
+               const EndorsementRepository<BtcEndorsement>& e)
+      : VbkTree(vbkp), PopAwareForkResolution(e, vbkp, btcp) {}
 
-  BtcTree& btc() { return btc_; }
-  const BtcTree& btc() const { return btc_; }
+  BtcTree& btc() { return getProtectingBlockTree(); }
+  const BtcTree& btc() const { return getProtectingBlockTree(); }
 
  private:
-  BtcTree btc_;
-  ComparePopScore<VbkTree, BtcTree, BtcEndorsement> compare_;
-
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
 };

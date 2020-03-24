@@ -9,6 +9,7 @@
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
+#include <veriblock/storage/payloads_repository.hpp>
 
 namespace altintegration {
 
@@ -183,31 +184,179 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
   return chainAscore - chainBscore;
 }
 
-}  // namespace
+/// @invariant atomic: if we have encounter invalid payloads, p and pState
+/// will be in original state after function exits
+template <typename ProtectingBlockTree, typename ProtectedIndex>
+void unapply(
+    ProtectingBlockTree& p,
+    ProtectedIndex** pState,
+    ProtectedIndex& to,
+    const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
+        getPayloadsForBlock) {
+  Chain<ProtectedIndex> chain(0, *pState);
+  auto* forkPoint = chain.findFork(&to);
+  auto* current = chain.tip();
+  while (current && current != forkPoint) {
+    // unapply payloads
+    for (const auto& payloads : getPayloadsForBlock(current)) {
+      removePayloads(p, payloads);
+    }
+    *pState = current;
+    current = current->pprev;
+  }
+}
 
-template <typename ProtectedBlockTree,
-          typename ProtectingBlockTree,
-          typename EndorsementT>
-struct ComparePopScore {
-  using protected_params_t = typename ProtectedBlockTree::params_t;
-  using protected_block_t = typename ProtectedBlockTree::block_t;
-  using protecting_params_t = typename ProtectingBlockTree::params_t;
-  using protected_index_t = typename ProtectedBlockTree::index_t;
-  using protecting_index_t = typename ProtectingBlockTree::index_t;
+/// @invariant atomic: if we have encounter invalid payloads, p and pState
+/// will be in original state after function exits
+template <typename ProtectingBlockTree, typename ProtectedIndex>
+bool apply(
+    ProtectingBlockTree& p,
+    ProtectedIndex** pState,
+    ProtectedIndex& to,
+    ValidationState& state,
+    const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
+        getPayloadsForBlock) {
+  Chain<ProtectedIndex> fork(0, &to);
 
-  explicit ComparePopScore(const EndorsementRepository<EndorsementT>& e,
-                           const protected_params_t& config)
-      : e_(e), config_(config) {
-    assert(config.getKeystoneInterval() > 0);
+  auto* originalPstate = *pState;
+  auto* current = *pState;
+  // move forward from forkPoint to "to" and apply payloads in between
+
+  // exclude fork point itself
+  current = fork.next(current);
+
+  while (current) {
+    for (const auto& payloads : getPayloadsForBlock(current)) {
+      if (addPayloads(p, payloads, state)) {
+        // TODO: rollback added payloads
+        *pState = originalPstate;
+        return state.addStackFunction("PopAwareForkResolution::apply");
+      }
+
+      *pState = current;
+    }
+
+    if (current != &to) {
+      current = fork.next(current);
+    } else {
+      break;
+    }
   }
 
-  int operator()(const ProtectingBlockTree& ing,
-                 const Chain<protected_index_t>& chainA,
-                 const Chain<protected_index_t>& chainB) {
-    assert(chainA.first() != nullptr && chainA.first() == chainB.first());
+  assert(*pState == &to);
 
-    auto getValidEndorsements =
-        [&](const protected_index_t& index) -> std::vector<EndorsementT> {
+  // TODO: commit added payloads
+
+  return true;
+}
+
+/// @invariant atomic: if we have encounter invalid payloads, p and pState
+/// will be in original state after function exits
+template <typename ProtectingBlockTree, typename ProtectedIndex>
+bool unapplyAndApply(
+    ProtectingBlockTree& p,
+    ProtectedIndex** pState,
+    ProtectedIndex& to,
+    ValidationState& state,
+    const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
+        getPayloadsForBlock) {
+  unapply(p, pState, to, getPayloadsForBlock);
+
+  Chain<ProtectedIndex> chain(0, &to);
+  if (chain.contains(*pState)) {
+    // do not apply payloads as "to" is in current chain and no new payloads
+    // will be added
+    return true;
+  }
+
+  return apply(p, pState, to, state, getPayloadsForBlock);
+}
+
+}  // namespace
+
+template <typename ProtectedBlock,
+          typename ProtectedParams,
+          typename ProtectingBlockTree,
+          typename EndorsementT>
+struct PopAwareForkResolution {
+  using protected_params_t = ProtectedParams;
+  using protecting_params_t = typename ProtectingBlockTree::params_t;
+  using protected_index_t = BlockIndex<ProtectedBlock>;
+  using protecting_index_t = typename ProtectingBlockTree::index_t;
+
+  PopAwareForkResolution(
+      const EndorsementRepository<EndorsementT>& e,
+      const PayloadsRepository<ProtectedBlock, Payloads>& prepo,
+      const protected_params_t& protectedParams,
+      const protecting_params_t& protectingParams)
+      : tree_(protectingParams), e_(e), p_(prepo), config_(protectedParams) {
+    assert(protectedParams.getKeystoneInterval() > 0);
+  }
+
+  ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
+  const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
+
+  int comparePopScore(const Chain<protected_index_t>& chainA,
+                      const Chain<protected_index_t>& chainB) {
+    // chains are not empty and chains start at the same block
+    assert(chainA.first() != nullptr && chainA.first() == chainB.first());
+    // first block is a keystone
+    assert(isKeystone(chainA.first().height, config_.getKeystoneInterval()));
+
+    auto getPayloads = [&](const BlockIndex<ProtectedBlock>& index) {
+      return this->p_.get(index.header.getHash());
+    };
+
+    ValidationState state;
+    ProtectingBlockTree temp = getProtectingBlockTree();
+    auto* tempState = treeState_;
+    // try set current state to chain A
+    if (!unapplyAndApply(temp, &tempState, chainA.tip(), state, getPayloads)) {
+      // failed - try set state to chain B
+      if (!unapplyAndApply(
+              temp, &tempState, chainB.tip(), state, getPayloads)) {
+        // failed - this should never happen.
+        // during fork resolution we should always compare one valid chain to
+        // another potentially valid (may be invalid, we'll find out this during
+        // fork resolution).
+        throw std::logic_error(
+            "PopAwareForkResolution::comparePopScore both chains have invalid "
+            "payloads");
+      }
+
+      // chain B is better, because chain A contains bad payloads, and chain B
+      // doesn't
+      return -1;
+    }
+
+    // 'temp' now corresponds to chain A.
+    // apply all payloads from chain B (both chains have same first block - fork
+    // point at keystone)
+    if (!apply(temp, &tempState, *chainB.tip(), state, getPayloads)) {
+      // chain A has valid payloads, and chain B has invalid payloads
+      // chain A is better
+      return 1;
+    }
+
+    // now 'temp' contains payloads from both chains
+
+    /// filter chainA
+    auto pkcChain1 = getProtoKeystoneContext(
+        chainA, tree_, config_, getValidEndorsements(chainA));
+    auto kcChain1 = getKeystoneContext(pkcChain1, tree_);
+
+    /// filter chainB
+    auto pkcChain2 = getProtoKeystoneContext(
+        chainB, tree_, config_, getValidEndorsements(chainB));
+    auto kcChain2 = getKeystoneContext(pkcChain2, tree_);
+
+    return comparePopScore(chainA, chainB, config_);
+  }
+
+ private:
+  std::function<std::vector<EndorsementT>(const protected_index_t&)>
+  getValidEndorsements(const Chain<protected_index_t>& chain) {
+    return [&](const protected_index_t& index) -> std::vector<EndorsementT> {
       // all endorsements of block 'index'
       auto allEndorsements = e_.get(index->getHash());
 
@@ -218,34 +367,27 @@ struct ComparePopScore {
           allEndorsements.end(),
           [&](const EndorsementT& e) {
             // 1. check that containing block is on best chain.
-            auto* edindex = ing.getBlockIndex(e.containing);
+            auto* edindex = tree_.getBlockIndex(e.containing);
 
             // 2. check that blockOfProof is still on best chain.
-            auto* ingindex = ing.getBlockIndex(e.blockOfProof);
+            auto* ingindex = tree_.getBlockIndex(e.blockOfProof);
 
             // endorsed block is guaranteed to be ancestor of containing block
             // therefore, do not do check here
-            return (chainA.contains(edindex) || chainB.contains(edindex)) &&
-                   ing.getBestChain().contains(ingindex);
+            return chain.contains(edindex) &&
+                   tree_.getBestChain().contains(ingindex);
           },
           allEndorsements.end()));
+
+      return allEndorsements;
     };
-
-    /// filter chainA
-    auto pkcChain1 =
-        getProtoKeystoneContext(chainA, ing, config_, getValidEndorsements);
-    auto kcChain1 = getKeystoneContext(pkcChain1, ing);
-
-    /// filter chainB
-    auto pkcChain2 =
-        getProtoKeystoneContext(chainB, ing, config_, getValidEndorsements);
-    auto kcChain2 = getKeystoneContext(pkcChain2, ing);
-
-    return comparePopScore(chainA, chainB, config_);
   }
 
  private:
+  ProtectingBlockTree tree_;
+  protected_index_t* treeState_;
   const EndorsementRepository<EndorsementT>& e_;
+  const PayloadsRepository<ProtectedBlock, Payloads> p_;
   const protected_params_t& config_;
 };
 
@@ -317,8 +459,8 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
     const Chain<BlockIndex<EndorsedBlockType>>& chain,
     const BlockTree<EndorsementBlockType, EndorsementChainParams>& tree,
     const ConfigType& config,
-    std::function<std::vector<EndorsementType>(
-        const BlockIndex<EndorsedBlockType>&)> getEndorsements) {
+    const std::function<std::vector<EndorsementType>(
+        const BlockIndex<EndorsedBlockType>&)>& getValidEndorsements) {
   std::vector<ProtoKeystoneContext<EndorsementBlockType>> ret;
   auto* tip = chain.tip();
   assert(tip != nullptr && "tip must not be nullptr");
@@ -352,7 +494,7 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
 
       // get all endorsements of this block that are on the same chain as that
       // block
-      for (const auto& e : getEndorsements(*index)) {
+      for (const auto& e : getValidEndorsements(*index)) {
         auto* ind = tree.getBlockIndex(e.blockOfProof);
         pkc.referencedByBlocks.insert(ind);
       }

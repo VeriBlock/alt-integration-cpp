@@ -5,6 +5,7 @@ namespace altintegration {
 
 void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       BlockTree::index_t& indexNew) {
+  auto ki = param_.getKeystoneInterval();
   if (currentBest.tip() == nullptr) {
     currentBest.setTip(&indexNew);
     return;
@@ -17,25 +18,20 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   assert(forkIndex != nullptr);
 
   // last common keystone of two forks
-  auto* forkKeystone = forkIndex->getAncestor(highestKeystoneAtOrBefore(
-      forkIndex->height, param_.getKeystoneInterval()));
+  auto commonKeystoneHeight = highestKeystoneAtOrBefore(forkIndex->height, ki);
+  auto* forkKeystone = forkIndex->getAncestor(commonKeystoneHeight);
 
   int result = 0;
-  if (isCrossedKeystoneBoundary(forkKeystone->height,
-                                indexNew.height,
-                                param_.getKeystoneInterval()) &&
-      isCrossedKeystoneBoundary(forkKeystone->height,
-                                currentBest.tip()->height,
-                                param_.getKeystoneInterval())) {
-    // [vbk fork point ... current tip]
+  auto* bestTip = currentBest.tip();
+  if (isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki) &&
+      isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki)) {
+    // [vbk fork point keystone ... current tip]
     Chain<index_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
 
-    // [vbk fork point ... new block]
+    // [vbk fork point keystone ... new block]
     Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
 
-    BtcTree treeCopy;  ///
-
-    result = compare_(treeCopy, vbkCurrentSubchain, vbkOther);
+    result = this->comparePopScore(vbkCurrentSubchain, vbkOther);
   }
 
   if (result < 0) {

@@ -73,8 +73,6 @@ struct AltTree {
   index_t* vbkState_{};
   VbkTree vbk_;
 
-  ComparePopScore<AltTree, VbkTree, VbkEndorsement> compare_;
-
   std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo_;
 
   index_t* insertBlockHeader(const AltBlock& block);
