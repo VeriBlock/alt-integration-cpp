@@ -101,7 +101,7 @@ struct BlockTree {
   template <size_t N,
             typename = typename std::enable_if<N == prev_block_hash_t::size() ||
                                                N == hash_t::size()>::type>
-  index_t* getBlockIndex(const Blob<N>& hash) const {
+  const index_t* getBlockIndex(const Blob<N>& hash) const {
     auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
     auto it = block_index_.find(shortHash);
     return it == block_index_.end() ? nullptr : it->second.get();

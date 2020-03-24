@@ -7,6 +7,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
+#include <veriblock/entities/endorsements.hpp>
 
 namespace altintegration {
 

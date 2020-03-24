@@ -67,7 +67,7 @@ struct PayloadsRepository {
    * @param hash[in] block hash
    * @return payloads data that is referenced to the current block hash.
    */
-  virtual stored_payloads_container_t get(const hash_t& hash) const = 0;
+  virtual stored_payloads_container_t get(Slice<const uint8_t> hash) const = 0;
 
   /**
    * Write a single payload. If payloads with referenced block hash exists,
@@ -75,14 +75,14 @@ struct PayloadsRepository {
    * @param block hash
    * @param payloads to be written in a batch
    */
-  virtual void put(const hash_t& hash, const stored_payloads_t& payloads) = 0;
+  virtual void put(Slice<const uint8_t> hash, const stored_payloads_t& payloads) = 0;
 
   /**
    * Remove a single block from storage identified by its hash.
    * @param hash block hash
    * @return true if removed, false if no such element found.
    */
-  virtual void removeByHash(const hash_t& hash) = 0;
+  virtual void removeByHash(Slice<const uint8_t> hash) = 0;
 
   /**
    * Clear the entire payloads data.

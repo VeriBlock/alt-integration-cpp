@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <map>
+#include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/block_repository.hpp>
@@ -24,6 +25,7 @@ template <typename BlockIndexT>
 struct Chain {
   using block_t = typename BlockIndexT::block_t;
   using index_t = BlockIndexT;
+  using hash_t = typename BlockIndexT::hash_t;
   using height_t = typename block_t::height_t;
   using storage_t = std::vector<index_t*>;
 
@@ -123,6 +125,19 @@ struct Chain {
     auto* fork = findFork(pindex);
     auto keystoneHeight = highestKeystoneAtOrBefore(fork->height, ki);
     return this->operator[](keystoneHeight);
+  }
+
+  std::unordered_set<hash_t> getAllHashesInChain() const {
+    std::unordered_set<hash_t> ret;
+    ret.reserve(chain.size() - startHeight_);
+
+    auto* current = tip();
+    while (current) {
+      ret.insert(current->getHash());
+      current = current->pprev;
+    }
+
+    return ret;
   }
 
  private:
