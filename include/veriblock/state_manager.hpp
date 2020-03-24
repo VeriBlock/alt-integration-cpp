@@ -4,95 +4,38 @@
 #include <memory>
 #include <string>
 
-#include "veriblock/blockchain/block_index.hpp"
-#include "veriblock/entities/btcblock.hpp"
-#include "veriblock/entities/endorsement.hpp"
+#include "veriblock/entities/altblock.hpp"
+#include "veriblock/entities/payloads.hpp"
 #include "veriblock/entities/vbkblock.hpp"
-#include "veriblock/storage/block_repository.hpp"
-#include "veriblock/storage/endorsement_repository.hpp"
+#include "veriblock/storage/payloads_repository.hpp"
 
 namespace altintegration {
 
+template <typename RepositoryManager>
+class StateManager;
+
 class StateChange {
+  friend class StateManager<void>;
+
  public:
   StateChange(
-      std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> btcRepo,
-      std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> vbkRepo,
-      std::shared_ptr<EndorsementRepository<BtcEndorsement>> btcEndorsementRepo,
-      std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbkEndorsementRepo)
-      : btcBlockBatch(btcRepo->newBatch()),
-        vbkBlockBatch(vbkRepo->newBatch()),
-        btcEndorsementBatch(btcEndorsementRepo->newBatch()),
-        vbkEndorsementBatch(vbkEndorsementRepo->newBatch()) {}
+      std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> payoadsAltRepo)
+      : payloadsAltBatch(payoadsAltRepo->newBatch()) {}
 
-  void clear() {
-    btcBlockBatch->clear();
-    vbkBlockBatch->clear();
-    btcEndorsementBatch->clear();
-    vbkEndorsementBatch->clear();
+  void clear() { payloadsAltBatch->clear(); }
+
+  void savePayloads(const Payloads& payloads) {
+    payloadsAltBatch->put(payloads.alt.containing.getHash(), payloads);
   }
 
-  void putBtcBlock(const BlockIndex<BtcBlock>& block) {
-    btcBlockBatch->put(block);
-  }
-
-  void removeBtcBlock(const BtcBlock::hash_t& hash) {
-    btcBlockBatch->removeByHash(hash);
-  }
-
-  void putVbkBlock(const BlockIndex<VbkBlock>& block) {
-    vbkBlockBatch->put(block);
-  }
-
-  void removeVbkBlock(const VbkBlock::hash_t& hash) {
-    vbkBlockBatch->removeByHash(hash);
-  }
-
-  void putBtcEndorsement(const BtcEndorsement& endorsement) {
-    btcEndorsementBatch->put(endorsement);
-  }
-
-  void putBtcEndorsement(const BtcEndorsement::container_t& container) {
-    btcEndorsementBatch->put(container);
-  }
-
-  void removeBtcEndorsement(const BtcEndorsement& endorsement) {
-    btcEndorsementBatch->remove(endorsement.id);
-  }
-
-  void removeBtcEndorsement(const BtcEndorsement::container_t& container) {
-    btcEndorsementBatch->remove(container);
-  }
-
-  void putVbkEndorsement(const VbkEndorsement& endorsement) {
-    vbkEndorsementBatch->put(endorsement);
-  }
-
-  void putVbkEndorsement(const VbkEndorsement::container_t& container) {
-    vbkEndorsementBatch->put(container);
-  }
-
-  void removeVbkEndorsement(const VbkEndorsement& endorsement) {
-    vbkEndorsementBatch->remove(endorsement.id);
-  }
-
-  void removeVbkEndorsement(const VbkEndorsement::container_t& container) {
-    vbkEndorsementBatch->remove(container);
-  }
-
-  void commit() {
-    btcBlockBatch->commit();
-    vbkBlockBatch->commit();
-    btcEndorsementBatch->commit();
-    vbkEndorsementBatch->commit();
+  void removePayloads(const Payloads& payloads) {
+    payloadsAltBatch->removeByHash(payloads.alt.containing.getHash());
   }
 
  private:
-  std::unique_ptr<BlockWriteBatch<BlockIndex<BtcBlock>>> btcBlockBatch;
-  std::unique_ptr<BlockWriteBatch<BlockIndex<VbkBlock>>> vbkBlockBatch;
+  std::unique_ptr<PayloadsWriteBatch<AltBlock, Payloads>> payloadsAltBatch;
 
-  std::unique_ptr<EndorsementWriteBatch<BtcEndorsement>> btcEndorsementBatch;
-  std::unique_ptr<EndorsementWriteBatch<VbkEndorsement>> vbkEndorsementBatch;
+  void commit() { payloadsAltBatch->commit(); }
 };
 
 // BlockRepositoryManager should have an interface described below
@@ -114,14 +57,14 @@ class StateManager {
   RepositoryManager database;
 
  public:
-  StateManager(const std::string& name) : database(name) { database.open(); }
+  StateManager(const std::string& name, std::string path = "")
+      : database(path + "\\" + name) {
+    database.open();
+  }
 
   std::unique_ptr<StateChange> newChange() {
     return std::unique_ptr<StateChange>(
-        new StateChange(database.getBtcRepo(),
-                        database.getVbkRepo(),
-                        database.getBtcEndorsementRepo(),
-                        database.getVbkEndorsementRepo()));
+        new StateChange(database.getAltPayloadsRepo()));
   }
 
   status_t commit(StateChange& change) {

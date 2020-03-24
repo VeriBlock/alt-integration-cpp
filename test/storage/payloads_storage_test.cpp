@@ -32,7 +32,7 @@ std::shared_ptr<PayloadsRepositoryRocks<AltBlock, Payloads>> getRepo() {
   RepositoryRocksManager database(dbName);
   rocksdb::Status s = database.open();
   database.clear();
-  return database.getPayloadsRepo();
+  return database.getAltPayloadsRepo();
 }
 
 Payloads generatePayloads() {
