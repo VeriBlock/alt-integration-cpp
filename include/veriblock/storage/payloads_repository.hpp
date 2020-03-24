@@ -16,14 +16,13 @@ namespace altintegration {
  * @invariant PayloadsWriteBatch does not modify on-disk storage after
  * put/remove operations.
  */
-template <typename Block, typename Payloads>
 struct PayloadsWriteBatch {
   //! stored payloads type
   using stored_payloads_t = Payloads;
   //! block hash type
-  using hash_t = typename Block::hash_t;
+  using hash_t = std::vector<uint8_t>;
   //! block height type
-  using height_t = typename Block::height_t;
+  using height_t = int;
 
   virtual ~PayloadsWriteBatch() = default;
 
@@ -32,13 +31,14 @@ struct PayloadsWriteBatch {
    *db will add new payload to the stored collection of payloads
    * @param block to be written in a batch
    */
-  virtual void put(const hash_t& hash, const stored_payloads_t& payloads) = 0;
+  virtual void put(Slice<const uint8_t> hash,
+                   const stored_payloads_t& payloads) = 0;
 
   /**
    * Remove a single block from storage identified by its hash.
    * @param hash block hash
    */
-  virtual void removeByHash(const hash_t& hash) = 0;
+  virtual void removeByHash(Slice<const uint8_t> hash) = 0;
 
   /**
    * Clear batch from any modifying operations.
@@ -51,20 +51,15 @@ struct PayloadsWriteBatch {
   virtual void commit() = 0;
 };
 
-template <typename Block, typename Payloads>
 struct PayloadsRepository {
-  //! block type
-  using block_t = Block;
   //! stored payloads type
   using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
   //! stored payloads container type
   using stored_payloads_container_t = std::vector<stored_payloads_t>;
+  //! hash type
+  using hash_t = std::vector<uint8_t>;
   //! iterator type
-  using cursor_t = Cursor<hash_t, stored_payloads_container_t>;
+  using cursor_t = Cursor<std::vector<uint8_t>, stored_payloads_container_t>;
 
   virtual ~PayloadsRepository() = default;
 
@@ -73,7 +68,7 @@ struct PayloadsRepository {
    * @param hash[in] block hash
    * @return payloads data that is referenced to the current block hash.
    */
-  virtual stored_payloads_container_t get(const hash_t& hash) const = 0;
+  virtual stored_payloads_container_t get(Slice<const uint8_t> hash) const = 0;
 
   /**
    * Write a single payload. If payloads with referenced block hash exists,
@@ -81,14 +76,15 @@ struct PayloadsRepository {
    * @param block hash
    * @param payloads to be written in a batch
    */
-  virtual void put(const hash_t& hash, const stored_payloads_t& payloads) = 0;
+  virtual void put(Slice<const uint8_t> hash,
+                   const stored_payloads_t& payloads) = 0;
 
   /**
    * Remove a single block from storage identified by its hash.
    * @param hash block hash
    * @return true if removed, false if no such element found.
    */
-  virtual void removeByHash(const hash_t& hash) = 0;
+  virtual void removeByHash(Slice<const uint8_t> hash) = 0;
 
   /**
    * Clear the entire payloads data.
@@ -99,8 +95,7 @@ struct PayloadsRepository {
    * Create new WriteBatch, to perform BULK modify operations.
    * @return a pointer to new WriteBatch instance.
    */
-  virtual std::unique_ptr<PayloadsWriteBatch<block_t, stored_payloads_t>>
-  newBatch() = 0;
+  virtual std::unique_ptr<PayloadsWriteBatch> newBatch() = 0;
 
   /**
    * Returns iterator, that is used for iteration over storage.

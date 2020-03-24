@@ -56,7 +56,8 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 bool AltTree::setState(const AltTree::index_t& index, ValidationState& state) {
-  return cmp_.setState(const_cast<index_t&>(index), state);
+  return AltPopForkResolutionComparator::setState(const_cast<index_t&>(index),
+                                                  state);
 }
 
 bool AltTree::setState(const AltBlock::hash_t& hash, ValidationState& state) {
@@ -132,7 +133,7 @@ int AltTree::compareTwoBranches(index_t* chain1, index_t* chain2) {
   Chain<index_t> subchain1(forkPoint->height, chainA.tip());
   Chain<index_t> subchain2(forkPoint->height, chainB.tip());
 
-  return cmp_(subchain1, subchain2);
+  return comparePopScore(subchain1, subchain2);
 }
 
 template <>

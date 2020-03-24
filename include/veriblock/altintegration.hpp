@@ -3,6 +3,8 @@
 
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/config.hpp>
+#include <veriblock/state_manager.hpp>
+#include <veriblock/storage/endorsement_repository_inmem.hpp>
 #include <veriblock/storage/repository_rocks_manager.hpp>
 
 namespace altintegration {
@@ -18,13 +20,47 @@ struct AltIntegration {
         std::make_shared<StateManager<RepositoryRocksManager>>(config.dbName);
 
     auto& mgr = alt.state_->getManager();
+    alt.btcer_ = mgr.getBtcEndorsementRepo();
+    alt.vbker_ = mgr.getVbkEndorsementRepo();
+    alt.pr_ = mgr.getAltPayloadsRepo();
 
-    // create current pop state
-    PopManager temp(*config.altParams,
-                   *config.btc.params,
-                   *config.vbk.params,
-                   mgr.getBtcEndorsementRepo(),
-                   mgr.getVbkEndorsementRepo());
+    VbkBlockTree::POPComparator vbkcmp(
+        config.vbk.params,
+        config.btc.params,
+        [&](const Chain<BlockIndex<VbkBlock>>& chain) {
+          return [&](const BlockIndex<VbkBlock>& index) -> std::vector<BtcEndorsement>
+                  {
+                    // all endorsements of block 'index'
+                    auto allEndorsements = alt.btcer_->get(index.getHash());
+
+                    // efficiently remove endorsements that do not belong to active
+                    // protect(ing/ed) chains
+                    allEndorsements.erase(std::remove_if(
+                        allEndorsements.begin(),
+                        allEndorsements.end(),
+                        [&](const BtcEndorsement & e) {
+                          // 1. check that containing block is on best chain.
+                          auto* edindex =
+                          protectedBlockTree_.getBlockIndex(e.containingHash);
+
+                          // 2. check that blockOfProof is still on best chain.
+                          auto* ingindex = tree_.getBlockIndex(e.blockOfProof);
+
+                          // endorsed block is guaranteed to be ancestor of containing
+                          block
+                          // therefore, do not do check here
+                          return chain.contains(edindex) &&
+                                 tree_.getBestChain().contains(ingindex);
+                        },
+                        allEndorsements.end()));
+
+                    return allEndorsements;
+                  };
+        },
+        [&](const BlockIndex<VbkBlock>& index) {
+          // we re-use existing alt-payloads repo for VBK payloads
+          return alt.pr_->get(index.getHash().asVector());
+        });
 
     // create alt tree
     alt.altTree_ = std::make_shared<AltTree>(
@@ -63,6 +99,9 @@ struct AltIntegration {
 
   std::shared_ptr<AltTree> altTree_;
   std::shared_ptr<StateManager<RepositoryRocksManager>> state_;
+  std::shared_ptr<EndorsementRepository<BtcEndorsement>> btcer_;
+  std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbker_;
+  std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> pr_;
 };
 
 }  // namespace altintegration

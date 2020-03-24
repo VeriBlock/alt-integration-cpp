@@ -23,7 +23,16 @@
 
 namespace altintegration {
 
-struct AltTree {
+struct AltTree;
+
+using AltPopForkResolutionComparator =
+    PopAwareForkResolutionComparator<AltTree,
+                                     AltBlock,
+                                     AltChainParams,
+                                     VbkBlockTree,
+                                     VbkEndorsement>;
+
+struct AltTree : private AltPopForkResolutionComparator {
   using block_t = AltBlock;
   using params_t = AltChainParams;
   using index_t = BlockIndex<AltBlock>;
@@ -31,20 +40,20 @@ struct AltTree {
   using block_index_t = std::unordered_map<hash_t, std::shared_ptr<index_t>>;
   using VbkTree = VbkBlockTree;
   using BtcTree = VbkTree::BtcTree;
-  using POPForkResolution = PopAwareForkResolutionComparator<AltBlock,
-                                                             AltChainParams,
-                                                             VbkTree,
-                                                             VbkEndorsement>;
 
   virtual ~AltTree() = default;
 
-  AltTree(const params_t& config, POPForkResolution cmp)
-      : config_(config), cmp_(std::move(cmp)) {}
+  AltTree(const EndorsementRepository<VbkEndorsement>& e,
+          const PayloadsRepository& p,
+          const AltChainParams& altp,
+          const VbkChainParams& vbkp)
+      : AltPopForkResolutionComparator(*this, e, p, vbkp, altp),
+        config_(altp) {}
 
-  BtcTree& btc() { return cmp_.getProtectingBlockTree().btc(); }
-  const BtcTree& btc() const { return cmp_.getProtectingBlockTree().btc(); }
-  VbkTree& vbk() { return cmp_.getProtectingBlockTree(); }
-  const VbkTree& vbk() const { return cmp_.getProtectingBlockTree(); }
+  BtcTree& btc() { return this->getProtectingBlockTree().btc(); }
+  const BtcTree& btc() const { return this->getProtectingBlockTree().btc(); }
+  VbkTree& vbk() { return this->getProtectingBlockTree(); }
+  const VbkTree& vbk() const { return this->getProtectingBlockTree(); }
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -77,7 +86,6 @@ struct AltTree {
  protected:
   block_index_t block_index_;
   const params_t& config_;
-  POPForkResolution cmp_;
 
   index_t* insertBlockHeader(const AltBlock& block);
 

@@ -10,23 +10,31 @@
 
 namespace altintegration {
 
-struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
+struct VbkBlockTree;
+
+using VbkPopForkResolutionComparator =
+    PopAwareForkResolutionComparator<VbkBlockTree,
+                                     VbkBlock,
+                                     VbkChainParams,
+                                     BlockTree<BtcBlock, BtcChainParams>,
+                                     BtcEndorsement>;
+
+struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams>,
+                      private VbkPopForkResolutionComparator {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
 
-  using POPForkResolution =
-      PopAwareForkResolutionComparator<VbkBlock,
-                                       VbkChainParams,
-                                       BlockTree<BtcBlock, BtcChainParams>,
-                                       BtcEndorsement>;
-
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(const VbkChainParams& vbkp, POPForkResolution cmp)
-      : VbkTree(vbkp), cmp_(std::move(cmp)) {}
+  VbkBlockTree(const VbkChainParams& vbkp,
+               const BtcChainParams& btcp,
+               const EndorsementRepository<BtcEndorsement>& e,
+               const PayloadsRepository& p)
+      : VbkTree(vbkp),
+        VbkPopForkResolutionComparator(*this, e, p, btcp, vbkp) {}
 
-  BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
-  const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
+  BtcTree& btc() { return this->getProtectingBlockTree(); }
+  const BtcTree& btc() const { return this->getProtectingBlockTree(); }
 
   bool bootstrapWithChain(height_t startHeight,
                           const std::vector<block_t>& chain,
@@ -35,7 +43,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
       return state.addStackFunction("VbkTree::bootstrapWithChain");
     }
 
-    if (!cmp_.setState(*getBestChain().tip(), state)) {
+    if (!this->setState(*getBestChain().tip(), state)) {
       return state.addStackFunction("VbkTree::bootstrapWithChain");
     }
 
@@ -47,7 +55,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
       return state.addStackFunction("VbkTree::bootstrapWithGenesis");
     }
 
-    if (!cmp_.setState(*getBestChain().tip(), state)) {
+    if (!this->setState(*getBestChain().tip(), state)) {
       return state.addStackFunction("VbkTree::bootstrapWithChain");
     }
 
@@ -57,8 +65,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
  private:
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
-
-  POPForkResolution cmp_;
 };
 
 template <>
