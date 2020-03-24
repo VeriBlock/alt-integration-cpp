@@ -190,7 +190,7 @@ template <typename ProtectingBlockTree, typename ProtectedIndex>
 void unapply(
     ProtectingBlockTree& p,
     ProtectedIndex** pState,
-    ProtectedIndex& to,
+    const ProtectedIndex& to,
     const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
         getPayloadsForBlock) {
   if (&to == *pState) {
@@ -217,7 +217,7 @@ template <typename ProtectingBlockTree, typename ProtectedIndex>
 bool apply(
     ProtectingBlockTree& p,
     ProtectedIndex** pState,
-    ProtectedIndex& to,
+    const ProtectedIndex& to,
     ValidationState& state,
     const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
         getPayloadsForBlock) {
@@ -266,7 +266,7 @@ template <typename ProtectingBlockTree, typename ProtectedIndex>
 bool unapplyAndApply(
     ProtectingBlockTree& p,
     ProtectedIndex** pState,
-    ProtectedIndex& to,
+    const ProtectedIndex& to,
     ValidationState& state,
     const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
         getPayloadsForBlock) {
@@ -309,6 +309,16 @@ struct PopAwareForkResolutionComparator {
 
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
+
+  bool setState(const protected_index_t& index, ValidationState& state) {
+    return unapplyAndApply(tree_,
+                           treeState_,
+                           index,
+                           state,
+                           [this](const protected_index_t& block) {
+                             return this->p_.get(block.getHash());
+                           });
+  }
 
   int operator()(const Chain<protected_index_t>& chainA,
                  const Chain<protected_index_t>& chainB) {

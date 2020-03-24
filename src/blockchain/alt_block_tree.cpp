@@ -64,6 +64,10 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
   return true;
 }
 
+bool AltTree::setState(const AltTree::index_t& index, ValidationState& state) {
+  return cmp_.setState(index, state);
+}
+
 bool AltTree::setState(const AltBlock::hash_t& hash, ValidationState& state) {
   auto* to = getBlockIndex(hash);
   if (!to) {
@@ -71,7 +75,7 @@ bool AltTree::setState(const AltBlock::hash_t& hash, ValidationState& state) {
         "AltTree::setState is called on a block that is unknown in altTree");
   }
 
-  return setState(pop_, &popState_, *to, state);
+  return setState(*to, state);
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
@@ -96,55 +100,46 @@ bool AltTree::acceptBlock(const AltBlock& block,
     }
 
     // we just add payloads via addPayloads, no need to unapply state
-    if (!pop_.addPayloads(*payloads, state)) {
-      pop_.rollback();
+    if (!addPayloads(*this, *payloads, state)) {
       return state.addStackFunction("AltTree::acceptBlock");
     }
-    pop_.commit();
   }
 
   // current state has been changed
-  popState_ = index;
+  if (!setState(*index, state)) {
+    return state.addStackFunction("AltTree::acceptBlock");
+  }
 
   return true;
 }
 
+int AltTree::compareTwoBranches(index_t* chain1, index_t* chain2) {
+  if (!chain1 && !chain2) {
+    // chains are equal
+    return 0;
+  }
 
-int AltTree::compareTwoBranches(const Chain<index_t>& chain1,
-                                const Chain<index_t>& chain2) {
-  // chains are not empty
-  assert(chain1.first() != nullptr);
-  assert(chain2.first() != nullptr);
-
-  ValidationState state;
-
-  if (!setState(mgr, &mgrState, *chain1.tip(), state)) {
-    if (!setState(mgr, &mgrState, *chain2.tip(), state)) {
-      // both chains contain invalid payloads, this is logic error
-      throw std::logic_error(
-          "AltTree::compareTwoBranches: both chains contain invalid "
-          "payloads: " +
-          state.GetDebugMessage());
-    }
-
-    // chain A contains invalid payloads, and chain B contains valid payloads,
-    // so chain2 wins
+  if (!chain1) {
+    // chain2 is better
     return -1;
   }
 
-  // chain1 contains valid payloads. we need to apply payloads from
-  // (forkPoint... chain2.tip]
-
-  auto* forkPoint = chain1.findFork(chain2.tip());
-  assert(forkPoint != nullptr && "fork point should exist");
-
-  Chain<index_t> subchain1(forkPoint->height, chain1.tip());
-  Chain<index_t> subchain2(forkPoint->height, chain2.tip());
-
-  if (!apply(mgr, &mgrState, *chain2.tip(), state)) {
-    // chain2 contains invalid payloads, so chain1 wins
+  if (!chain2) {
+    // chain1 is better
     return 1;
   }
 
-  return compare_(mgr.vbk(), subchain1, subchain2);
+  // determine which chain is better
+  auto lowestHeight = config_.getBootstrapBlock().height;
+  Chain<index_t> chainA(lowestHeight, chain1);
+  Chain<index_t> chainB(lowestHeight, chain2);
+
+  auto* forkPoint = chainA.findHighestKeystoneAtOrBeforeFork(
+      chainB.tip(), config_.getKeystoneInterval());
+  assert(forkPoint != nullptr && "fork point should exist");
+
+  Chain<index_t> subchain1(forkPoint->height, chainA.tip());
+  Chain<index_t> subchain2(forkPoint->height, chainB.tip());
+
+  return cmp_(subchain1, subchain2);
 }

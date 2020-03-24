@@ -47,14 +47,20 @@ struct AltTree {
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
+  //! before use, AltTree must be bootstrapped
   bool bootstrapWithGenesis(ValidationState& state);
 
-  // accept block with a single payload from this block
+  //! call acceptBlock on every new altchain block received. if block does not
+  //! contain payloads, pass nullptr.
   bool acceptBlock(const AltBlock& block,
                    const Payloads* payloads,
                    ValidationState& state);
 
+  //! call setState every time TIP of best chain changed.
   bool setState(const AltBlock::hash_t& hash, ValidationState& state);
+
+  //! call setState every time TIP of best chain changed.
+  bool setState(const index_t& index, ValidationState& state);
 
   /**
    * Determine the best chain of the AltBlocks in accordance with the VeriBlock
@@ -65,8 +71,8 @@ struct AltTree {
    * @note chain1 and chain2 are being consindered as forks not a full chains
    * from the genesis block, they should start at the common block
    */
-  int compareTwoBranches(const Chain<index_t>& chain1,
-                         const Chain<index_t>& chain2);
+  int compareTwoBranches(index_t* chain1,
+                         index_t* chain2);
 
  protected:
   block_index_t block_index_;

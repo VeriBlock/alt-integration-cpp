@@ -4,6 +4,7 @@
 #include <cassert>
 #include <map>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/block_repository.hpp>
 
 namespace altintegration {
@@ -115,6 +116,13 @@ struct Chain {
       pindex = pindex->pprev;
     }
     return pindex;
+  }
+
+  const index_t* findHighestKeystoneAtOrBeforeFork(const index_t* pindex,
+                                                   int ki) const {
+    auto* fork = findFork(pindex);
+    auto keystoneHeight = highestKeystoneAtOrBefore(fork->height, ki);
+    return this[keystoneHeight];
   }
 
  private:
