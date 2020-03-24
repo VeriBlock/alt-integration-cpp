@@ -414,14 +414,14 @@ struct PopAwareForkResolutionComparator {
 
   PopAwareForkResolutionComparator(const ProtectedBlockTree& protectedTree,
                                    const EndorsementRepository<EndorsementT>& e,
-                                   const PayloadsRepository& p,
+                                   const PayloadsRepository& payloadsRepository,
                                    const protecting_params_t& protectingParams,
                                    const protected_params_t& protectedParams)
       : tree_(protectingParams),
         protectedTree_(protectedTree),
         config_(protectedParams),
         e_(e),
-        p_(p) {
+        p_(payloadsRepository) {
     assert(config_.getKeystoneInterval() > 0);
   }
 
