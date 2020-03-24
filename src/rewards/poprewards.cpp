@@ -8,10 +8,10 @@ namespace altintegration {
 
 static int getBestPublicationHeight(
     const std::vector<VbkEndorsement>& endorsements,
-    const std::shared_ptr<VbkBlockTree>& vbk_tree) {
+    const VbkBlockTree& vbk_tree) {
   int bestPublication = -1;
   for (const VbkEndorsement& e : endorsements) {
-    auto* block = vbk_tree->getBlockIndex(e.blockOfProof);
+    auto* block = vbk_tree.getBlockIndex(e.blockOfProof);
     if (block == nullptr) continue;
 
     if (block->height < bestPublication || bestPublication < 0)
@@ -26,14 +26,14 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
 
   /// TODO: in Java we were limiting the search in containingBlocks list.
   ///      Maybe we should do the same here as well.
-  auto endorsements = erepo_->get(endorsedBlock.getHash());
+  auto endorsements = erepo_.get(endorsedBlock.getHash());
 
   // we simply find the lowest VBK height in the endorsements
   int bestPublication = getBestPublicationHeight(endorsements, vbk_tree_);
   if (bestPublication < 0) return totalScore;
 
   for (const VbkEndorsement& e : endorsements) {
-    auto* block = vbk_tree_->getBlockIndex(e.blockOfProof);
+    auto* block = vbk_tree_.getBlockIndex(e.blockOfProof);
     if (block == nullptr) continue;
     int relativeHeight = block->height - bestPublication;
     assert(relativeHeight >= 0);
@@ -86,7 +86,7 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
     PopRewardsBigDecimal popDifficulty) {
 
   std::vector<PopRewardPayout> rewards{};
-  auto endorsements = erepo_->get(endorsedBlock.getHash());
+  auto endorsements = erepo_.get(endorsedBlock.getHash());
   int bestPublication = getBestPublicationHeight(endorsements, vbk_tree_);
   if (bestPublication < 0) return rewards;
 
@@ -94,7 +94,7 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
 
   // we have the total reward per block in blockReward. Let's distribute it
   for (const VbkEndorsement& e : endorsements) {
-    auto* block = vbk_tree_->getBlockIndex(e.blockOfProof);
+    auto* block = vbk_tree_.getBlockIndex(e.blockOfProof);
     if (block == nullptr) continue;
 
     int veriBlockHeight = block->height;
@@ -105,7 +105,7 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
 
     PopRewardPayout reward{};
     reward.reward = minerReward.getIntegerFraction();
-    reward.miner = std::string(e.payoutInfo.begin(), e.payoutInfo.end());
+    reward.miner = e.payoutInfo;
     rewards.push_back(reward);
   }
   return rewards;

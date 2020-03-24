@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_REWARDS_POPREWARDS_PARAMS_HPP_
 
 #include <vector>
+#include <veriblock/arith_uint256.hpp>
 
 namespace altintegration {
 

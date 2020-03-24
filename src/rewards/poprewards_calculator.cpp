@@ -126,11 +126,11 @@ static PopRewardsBigDecimal calculateMinerReward(
 PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
     int relativeBlock) {
   if (relativeBlock < 0 ||
-      relativeBlock >= (int)rewardParams_->relativeScoreLookupTable().size()) {
+      relativeBlock >= (int)rewardParams_.relativeScoreLookupTable().size()) {
     return 0.0;
   }
 
-  return rewardParams_->relativeScoreLookupTable()[relativeBlock];
+  return rewardParams_.relativeScoreLookupTable()[relativeBlock];
 }
 
 // we calculate the reward for a given miner
@@ -146,23 +146,23 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateRewardForMiner(
   // Special case for the first ROUND 3 after keystone - do not adjust for score
   // to difficulty ratio
   uint32_t roundNumber =
-      getRoundForBlockNumber(*chainParams_, *rewardParams_, height);
+      getRoundForBlockNumber(chainParams_, rewardParams_, height);
   auto endorsementLevelWeight =
       getScoreMultiplierFromRelativeBlock(vbkRelativeHeight);
 
-  if (rewardParams_->flatScoreRoundUse() &&
-      roundNumber == rewardParams_->flatScoreRound() &&
-      isFirstRoundAfterKeystone(*chainParams_, *rewardParams_, height)) {
-    return calculateMinerReward(*chainParams_,
-                                *rewardParams_,
+  if (rewardParams_.flatScoreRoundUse() &&
+      roundNumber == rewardParams_.flatScoreRound() &&
+      isFirstRoundAfterKeystone(chainParams_, rewardParams_, height)) {
+    return calculateMinerReward(chainParams_,
+                                rewardParams_,
                                 height,
                                 endorsementLevelWeight,
                                 1.0,
                                 1.0);
   }
 
-  return calculateMinerReward(*chainParams_,
-                              *rewardParams_,
+  return calculateMinerReward(chainParams_,
+                              rewardParams_,
                               height,
                               endorsementLevelWeight,
                               difficulty,

@@ -20,10 +20,8 @@ struct AltChainParamsTest : public AltChainParams {
 };
 
 struct RewardsCalculatorTestFixture : ::testing::Test {
-  std::shared_ptr<AltChainParamsTest> chainParams =
-      std::make_shared<AltChainParamsTest>();
-  std::shared_ptr<PopRewardsParams> rewardParams =
-      std::make_shared<PopRewardsParams>();
+  AltChainParamsTest chainParams{};
+  PopRewardsParams rewardParams{};
   PopRewardsCalculator rewardsCalculator =
       PopRewardsCalculator(chainParams, rewardParams);
   PopRewardsBigDecimal defaultScore = 1.0;
@@ -39,7 +37,7 @@ TEST_F(RewardsCalculatorTestFixture, basicReward_test) {
   auto minerReward = rewardsCalculator.calculateRewardForMiner(
       height, 0, defaultScore, defaultDifficulty);
   ASSERT_TRUE(minerReward > 0.0);
-  ASSERT_EQ(minerReward, rewardParams->roundRatios()[height]);
+  ASSERT_EQ(minerReward, rewardParams.roundRatios()[height]);
 
   // score < 1.0 is on the flat reward rate
   PopRewardsBigDecimal halfScore = defaultScore / 2.0;
@@ -109,9 +107,9 @@ TEST_F(RewardsCalculatorTestFixture, specialReward_test) {
 
   // now let's see how the keystone block is being rewarded
   auto minerRewardKeystone1 = rewardsCalculator.calculateRewardForMiner(
-      chainParams->getKeystoneInterval(), 0, defaultScore, defaultDifficulty);
+      chainParams.getKeystoneInterval(), 0, defaultScore, defaultDifficulty);
   auto minerRewardKeystone2 = rewardsCalculator.calculateRewardForMiner(
-      chainParams->getKeystoneInterval(), 0, doubleScore, defaultDifficulty);
+      chainParams.getKeystoneInterval(), 0, doubleScore, defaultDifficulty);
   ASSERT_GT(minerRewardKeystone1, minerRewardKeystone2);
 
   // we see that even when cut down the keystone reward is higher than any
