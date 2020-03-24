@@ -20,7 +20,6 @@ message(STATUS "BUILD=${BUILD}")
 add_library(${LIB_NAME} ${BUILD}
         altintegration.cpp
         params.cpp
-        popmanager.cpp
         checks.cpp
         serde.cpp
         keystone_util.cpp
