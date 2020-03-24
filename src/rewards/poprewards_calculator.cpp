@@ -4,7 +4,7 @@
 
 namespace altintegration {
 
-// rounds for blocks are [4, 1, 2, 3, 1, 2, 3, 1, 2, 3, 4, ...]
+// rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
 static uint32_t getRoundForBlockNumber(const AltChainParams& chainParams,
                                        const PopRewardsParams& rewardParams,
                                        uint32_t height) {
@@ -63,12 +63,11 @@ static PopRewardsBigDecimal getRoundSlope(const PopRewardsParams& rewardParams,
 
 // apply the reward curve to the score and subtract it from the current round
 // multiplier
-static PopRewardsBigDecimal calculateRewardWithSlope(
+static PopRewardsBigDecimal calculateSlopeRatio(
     const PopRewardsParams& rewardParams,
     PopRewardsBigDecimal score,
     uint32_t payoutRound) {
   PopRewardsBigDecimal slope = getRoundSlope(rewardParams, payoutRound);
-  PopRewardsBigDecimal roundRatio = getRoundRatio(rewardParams, payoutRound);
   PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
 
   assert(score >= curveParams.startOfSlope());
@@ -79,13 +78,14 @@ static PopRewardsBigDecimal calculateRewardWithSlope(
   if (scoreDecrease > maxScoreDecrease) {
     scoreDecrease = maxScoreDecrease;
   }
-  return (maxScoreDecrease - scoreDecrease) * roundRatio * score;
+  return (maxScoreDecrease - scoreDecrease);
 }
 
-static PopRewardsBigDecimal calculateTotalPopBlockReward(
+static PopRewardsBigDecimal calculateMinerReward(
     const AltChainParams& chainParams,
     const PopRewardsParams& rewardParams,
     uint32_t height,
+    PopRewardsBigDecimal endorsementWeight,
     PopRewardsBigDecimal difficulty,
     PopRewardsBigDecimal score) {
   if (score == 0.0) {
@@ -101,35 +101,42 @@ static PopRewardsBigDecimal calculateTotalPopBlockReward(
       getRoundForBlockNumber(chainParams, rewardParams, height);
   PopRewardsBigDecimal scoreToDifficulty = score / difficulty;
   PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
+  PopRewardsBigDecimal roundRatio = getRoundRatio(rewardParams, payoutRound);
 
-  // No use of penalty multiplier, this payout occurs on the flat part of the
-  // payout curve
-  if (scoreToDifficulty <= curveParams.startOfSlope()) {
-    PopRewardsBigDecimal roundRatio = getRoundRatio(rewardParams, payoutRound);
+  // penalty multiplier
+  PopRewardsBigDecimal slope = 1.0;
 
-    // now we apply the current round multiplier to the score
-    return scoreToDifficulty * roundRatio;
+  if (scoreToDifficulty > curveParams.startOfSlope()) {
+    PopRewardsBigDecimal maxScoreThreshold =
+        getMaxScoreThreshold(rewardParams, payoutRound);
+    if (scoreToDifficulty > maxScoreThreshold) {
+      scoreToDifficulty = maxScoreThreshold;
+    }
+
+    // Note that this reward per point is not the true rewardWithSlope if the
+    // score to difficulty ratio is greater than the max reward threshold. Past
+    // the max reward threshold, the block reward ceases to grow, but is split
+    // amongst a larger number of participants.
+    slope = calculateSlopeRatio(rewardParams, scoreToDifficulty, payoutRound);
   }
 
-  PopRewardsBigDecimal maxScoreThreshold =
-      getMaxScoreThreshold(rewardParams, payoutRound);
-  if (scoreToDifficulty > maxScoreThreshold) {
-    scoreToDifficulty = maxScoreThreshold;
-  }
-
-  // Note that this reward per point is not the true rewardWithSlope if the
-  // score to difficulty ratio is greater than the max reward threshold. Past
-  // the max reward threshold, the block reward ceases to grow, but is split
-  // amongst a larger number of participants.
-  PopRewardsBigDecimal rewardWithSlope =
-      calculateRewardWithSlope(rewardParams, scoreToDifficulty, payoutRound);
-
-  return rewardWithSlope;
+  return slope * endorsementWeight * roundRatio / difficulty;
 }
 
-// we calculate the reward for a given block
-PopRewardsBigDecimal PopRewardsCalculator::calculatePopRewardForBlock(
+PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
+    int relativeBlock) {
+  if (relativeBlock < 0 ||
+      relativeBlock >= (int)rewardParams_->relativeScoreLookupTable().size()) {
+    return 0.0;
+  }
+
+  return rewardParams_->relativeScoreLookupTable()[relativeBlock];
+}
+
+// we calculate the reward for a given miner
+PopRewardsBigDecimal PopRewardsCalculator::calculateRewardForMiner(
     uint32_t height,
+    uint32_t vbkRelativeHeight,
     PopRewardsBigDecimal scoreForThisBlock,
     PopRewardsBigDecimal difficulty) {
   if (scoreForThisBlock == 0.0) {
@@ -140,15 +147,26 @@ PopRewardsBigDecimal PopRewardsCalculator::calculatePopRewardForBlock(
   // to difficulty ratio
   uint32_t roundNumber =
       getRoundForBlockNumber(*chainParams_, *rewardParams_, height);
+  auto endorsementLevelWeight =
+      getScoreMultiplierFromRelativeBlock(vbkRelativeHeight);
+
   if (rewardParams_->flatScoreRoundUse() &&
       roundNumber == rewardParams_->flatScoreRound() &&
       isFirstRoundAfterKeystone(*chainParams_, *rewardParams_, height)) {
-    return calculateTotalPopBlockReward(
-        *chainParams_, *rewardParams_, height, 1.0, 1.0);
+    return calculateMinerReward(*chainParams_,
+                                *rewardParams_,
+                                height,
+                                endorsementLevelWeight,
+                                1.0,
+                                1.0);
   }
 
-  return calculateTotalPopBlockReward(
-      *chainParams_, *rewardParams_, height, difficulty, scoreForThisBlock);
+  return calculateMinerReward(*chainParams_,
+                              *rewardParams_,
+                              height,
+                              endorsementLevelWeight,
+                              difficulty,
+                              scoreForThisBlock);
 }
 
 }  // namespace altintegration

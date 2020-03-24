@@ -33,96 +33,91 @@ struct RewardsCalculatorTestFixture : ::testing::Test {
 };
 
 TEST_F(RewardsCalculatorTestFixture, basicReward_test) {
-  // blockNumber is used to detect current round only. Let's start with ROUND_2.
+  // blockNumber is used to detect current round only. Let's start with round 1.
   uint32_t height = 1;
 
-  auto totalReward = rewardsCalculator.calculatePopRewardForBlock(
-      height, defaultScore, defaultDifficulty);
-  ASSERT_TRUE(totalReward > 0.0);
+  auto minerReward = rewardsCalculator.calculateRewardForMiner(
+      height, 0, defaultScore, defaultDifficulty);
+  ASSERT_TRUE(minerReward > 0.0);
+  ASSERT_EQ(minerReward, rewardParams->roundRatios()[height]);
 
+  // score < 1.0 is on the flat reward rate
   PopRewardsBigDecimal halfScore = defaultScore / 2.0;
-
-  auto totalReward2 = rewardsCalculator.calculatePopRewardForBlock(
-      height, halfScore, defaultDifficulty);
-  ASSERT_TRUE(totalReward2 > 0.0);
-  ASSERT_EQ(totalReward / 2.0, totalReward2);
+  auto minerReward2 = rewardsCalculator.calculateRewardForMiner(
+      height, 0, halfScore, defaultDifficulty);
+  ASSERT_TRUE(minerReward2 > 0.0);
+  ASSERT_EQ(minerReward, minerReward2);
 
   // when score is higher than difficulty we begin to gradually decrease the
   // reward
   PopRewardsBigDecimal doubleScore = defaultScore * 2.0;
-  auto totalReward3 = rewardsCalculator.calculatePopRewardForBlock(
-      height, doubleScore, defaultDifficulty);
+  auto minerReward3 = rewardsCalculator.calculateRewardForMiner(
+      height, 0, doubleScore, defaultDifficulty);
 
-  ASSERT_TRUE(totalReward3 > 0.0);
-  ASSERT_GT(totalReward * 2.0, totalReward3);
-  ASSERT_GT(totalReward3, totalReward);
+  ASSERT_TRUE(minerReward3 > 0.0);
+  // single miner reward is lower due to decreasing payout after 1.0 score
+  // but 2.0 score means there are more miners hence higher total reward
+  ASSERT_GT(minerReward, minerReward3);
 
   // we limit the reward to 200% threshold (for normal blocks). Let's check
   // this.
-  PopRewardsBigDecimal doublePlusScore =
-      defaultScore * 2.1;
-  auto totalReward4 = rewardsCalculator.calculatePopRewardForBlock(
-      height, doublePlusScore, defaultDifficulty);
-  ASSERT_EQ(totalReward3, totalReward4);
+  PopRewardsBigDecimal doublePlusScore = defaultScore * 2.1;
+  auto minerReward4 = rewardsCalculator.calculateRewardForMiner(
+      height, 0, doublePlusScore, defaultDifficulty);
+  ASSERT_EQ(minerReward3, minerReward4);
 
   // test the keystone highest reward
-  auto totalReward5 = rewardsCalculator.calculatePopRewardForBlock(
-      20,
-      defaultScore * 3.0,
-      defaultDifficulty);
-  ASSERT_GT(totalReward5, totalReward4);
+  // assume three endorsements having 3.0 score in total
+  auto minerReward5 = rewardsCalculator.calculateRewardForMiner(
+      20, 0, defaultScore * 3.0, defaultDifficulty);
+  ASSERT_GT(minerReward5, minerReward4);
 
   // multiple endorsements may increase the score to 3.0, keystone block ratio
-  // is 1.7 (due to reward curve) so the payout is 3.0 * 1.7 = 5.1 *
-  // REWARD_PER_BLOCK
-  ASSERT_GT(totalReward5, 5.0);
-  ASSERT_LT(totalReward5, 6.0);
+  // is 1.7 (due to reward curve) so the payout is 3.0 * 1.7 = 5.1
+  ASSERT_GT(minerReward5 * 3.0, 5.0);
+  ASSERT_LT(minerReward5 * 3.0, 6.0);
 
   // test over the highest reward
-  auto totalReward6 = rewardsCalculator.calculatePopRewardForBlock(
-      20,
-      defaultScore * 4.0,
-      defaultDifficulty);
+  auto minerReward6 = rewardsCalculator.calculateRewardForMiner(
+      20, 0, defaultScore * 4.0, defaultDifficulty);
   // we see that the reward is no longer growing
-  ASSERT_EQ(totalReward6, totalReward5);
+  ASSERT_EQ(minerReward6, minerReward5);
 }
 
 TEST_F(RewardsCalculatorTestFixture, specialReward_test) {
-  // blockNumber is used to detect current round only. Let's start with ROUND_2.
+  // blockNumber is used to detect current round only. Let's start with round 1.
   uint32_t height = 1;
 
   // let's start with hardcoded difficulty
-  PopRewardsBigDecimal halfScore = defaultScore / 2.0;
+  PopRewardsBigDecimal doubleScore = defaultScore * 2.0;
 
-  auto totalReward1 = rewardsCalculator.calculatePopRewardForBlock(
-      height, defaultScore, defaultDifficulty);
-  auto totalReward2 = rewardsCalculator.calculatePopRewardForBlock(
-      height, halfScore, defaultDifficulty);
-  ASSERT_GT(totalReward1, totalReward2);
+  auto minerReward1 = rewardsCalculator.calculateRewardForMiner(
+      height, 0, defaultScore, defaultDifficulty);
+  auto minerReward2 = rewardsCalculator.calculateRewardForMiner(
+      height, 0, doubleScore, defaultDifficulty);
+  // single miner reward is lower due to decreasing payout after 1.0 score
+  // but 2.0 score means there are more miners hence higher total reward
+  ASSERT_GT(minerReward1, minerReward2);
 
-  auto totalReward3 = rewardsCalculator.calculatePopRewardForBlock(
-      height + 1, defaultScore, defaultDifficulty);
-  auto totalReward4 = rewardsCalculator.calculatePopRewardForBlock(
-      height + 1, halfScore, defaultDifficulty);
+  auto minerReward3 = rewardsCalculator.calculateRewardForMiner(
+      height + 1, 0, defaultScore, defaultDifficulty);
+  auto minerReward4 = rewardsCalculator.calculateRewardForMiner(
+      height + 1, 0, doubleScore, defaultDifficulty);
 
-  // round 3 special case - any score has the same reward
-  ASSERT_EQ(totalReward3, totalReward4);
+  // round 2 special case - any score has the same reward
+  ASSERT_EQ(minerReward3, minerReward4);
 
   // now let's see how the keystone block is being rewarded
-  auto totalRewardKeystone1 = rewardsCalculator.calculatePopRewardForBlock(
-      chainParams->getKeystoneInterval(),
-      defaultScore,
-      defaultDifficulty);
-  auto totalRewardKeystone2 = rewardsCalculator.calculatePopRewardForBlock(
-      chainParams->getKeystoneInterval(),
-      halfScore,
-      defaultDifficulty);
-  ASSERT_GT(totalRewardKeystone1, totalRewardKeystone2);
+  auto minerRewardKeystone1 = rewardsCalculator.calculateRewardForMiner(
+      chainParams->getKeystoneInterval(), 0, defaultScore, defaultDifficulty);
+  auto minerRewardKeystone2 = rewardsCalculator.calculateRewardForMiner(
+      chainParams->getKeystoneInterval(), 0, doubleScore, defaultDifficulty);
+  ASSERT_GT(minerRewardKeystone1, minerRewardKeystone2);
 
-  // we see that even when cut in half the keystone reward is higher than any
-  // normal reward from rounds 1-3
-  ASSERT_GT(totalRewardKeystone2, totalReward1);
-  ASSERT_GT(totalRewardKeystone2, totalReward2);
-  ASSERT_GT(totalRewardKeystone2, totalReward3);
-  ASSERT_GT(totalRewardKeystone2, totalReward4);
+  // we see that even when cut down the keystone reward is higher than any
+  // normal reward from rounds 0-2
+  ASSERT_GT(minerRewardKeystone2, minerReward1);
+  ASSERT_GT(minerRewardKeystone2, minerReward2);
+  ASSERT_GT(minerRewardKeystone2, minerReward3);
+  ASSERT_GT(minerRewardKeystone2, minerReward4);
 }

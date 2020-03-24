@@ -19,12 +19,16 @@ struct PopRewardsCalculator {
   virtual ~PopRewardsCalculator(){};
 
   /**
-   * score and difficulty are fractional numbers multiplied to
-   * rewardsDecimalsMult
    */
-  virtual PopRewardsBigDecimal calculatePopRewardForBlock(
+  virtual PopRewardsBigDecimal getScoreMultiplierFromRelativeBlock(
+      int relativeBlock);
+
+  /**
+   */
+  virtual PopRewardsBigDecimal calculateRewardForMiner(
       uint32_t height,
-      PopRewardsBigDecimal score,
+      uint32_t vbkRelativeHeight,
+      PopRewardsBigDecimal scoreForThisBlock,
       PopRewardsBigDecimal difficulty);
 
  private:

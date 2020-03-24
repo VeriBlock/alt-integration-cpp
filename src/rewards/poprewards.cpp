@@ -20,16 +20,6 @@ static int getBestPublicationHeight(
   return bestPublication;
 }
 
-static PopRewardsBigDecimal getScoreMultiplierFromRelativeBlock(
-    int relativeBlock, const PopRewardsParams& rewardParams) {
-  if (relativeBlock < 0 ||
-      relativeBlock >= (int)rewardParams.relativeScoreLookupTable().size()) {
-    return 0.0;
-  }
-
-  return rewardParams.relativeScoreLookupTable()[relativeBlock];
-}
-
 PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
     const AltBlock& endorsedBlock) {
   PopRewardsBigDecimal totalScore = 0.0;
@@ -47,7 +37,7 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
     if (block == nullptr) continue;
     int relativeHeight = block->height - bestPublication;
     assert(relativeHeight >= 0);
-    totalScore += getScoreMultiplierFromRelativeBlock(relativeHeight, rewardParams_);
+    totalScore += calculator_.getScoreMultiplierFromRelativeBlock(relativeHeight);
   }
   return totalScore;
 }
@@ -98,16 +88,12 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
 
   std::vector<PopRewardPayout> rewards{};
   auto endorsements = erepo_->get(endorsedBlock.getHash());
-  auto payloads = prepo_->get(endorsedBlock.getHash());
   int bestPublication = getBestPublicationHeight(endorsements, vbk_tree_);
   if (bestPublication < 0) return rewards;
 
-  auto scoreForThisBlock = scoreFromEndorsements(endorsedBlock);
-  auto blockReward = calculator_.calculatePopRewardForBlock(
-      height, scoreForThisBlock, popDifficulty);
+  auto blockScore = scoreFromEndorsements(endorsedBlock);
 
   // we have the total reward per block in blockReward. Let's distribute it
-  // now.
   for (const VbkEndorsement& e : endorsements) {
     auto* block = vbk_tree_->getBlockIndex(e.blockOfProof);
     if (block == nullptr) continue;
@@ -115,13 +101,11 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
     int veriBlockHeight = block->height;
     int relativeHeight = veriBlockHeight - bestPublication;
     assert(relativeHeight >= 0);
-    auto endorsementLevelWeight =
-        getScoreMultiplierFromRelativeBlock(relativeHeight, rewardParams_);
-    auto rewardPerEndorsement =
-        blockReward * endorsementLevelWeight / scoreForThisBlock;
+    auto minerReward = calculator_.calculateRewardForMiner(
+        height, relativeHeight, blockScore, popDifficulty);
 
     PopRewardPayout reward{};
-    reward.reward = rewardPerEndorsement.getIntegerFraction();
+    reward.reward = minerReward.getIntegerFraction();
     reward.miner = std::string(e.payoutInfo.begin(), e.payoutInfo.end());
     rewards.push_back(reward);
   }

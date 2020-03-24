@@ -7,7 +7,6 @@
 #include <veriblock/rewards/poprewards_calculator.hpp>
 #include <veriblock/rewards/poprewards_params.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
-#include <veriblock/storage/payloads_repository.hpp>
 
 namespace altintegration {
 
@@ -21,12 +20,10 @@ struct PopRewardPayout {
  */
 struct PopRewards {
   PopRewards(std::shared_ptr<EndorsementRepository<VbkEndorsement>> erepo,
-             std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo,
              std::shared_ptr<VbkBlockTree> vbk_tree,
              const PopRewardsParams& rewardParams,
              const PopRewardsCalculator& calculator)
       : erepo_(std::move(erepo)),
-        prepo_(std::move(prepo)),
         vbk_tree_(std::move(vbk_tree)),
         rewardParams_(rewardParams),
         calculator_(calculator) {}
@@ -51,7 +48,6 @@ struct PopRewards {
 
  private:
   std::shared_ptr<EndorsementRepository<VbkEndorsement>> erepo_;
-  std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo_;
   std::shared_ptr<VbkBlockTree> vbk_tree_;
   PopRewardsParams rewardParams_;
   PopRewardsCalculator calculator_;
