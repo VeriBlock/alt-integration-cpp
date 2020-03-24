@@ -39,14 +39,6 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
 }
 
 bool AltTree::bootstrapWithGenesis(ValidationState& state) {
-  if (!btc().bootstrapWithGenesis(state)) {
-    return state.Error("btc tree already bootstrapped");
-  }
-
-  if (!vbk().bootstrapWithGenesis(state)) {
-    return state.Error("vbk tree already bootstrapped");
-  }
-
   if (!block_index_.empty()) {
     return state.Error("alt tree already bootstrapped");
   }

@@ -31,7 +31,27 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   bool bootstrapWithChain(height_t startHeight,
                           const std::vector<block_t>& chain,
                           ValidationState& state) override {
-    auto ret = VbkTree::bootstrapWithChain(startHeight, chain, state);
+    if (!VbkTree::bootstrapWithChain(startHeight, chain, state)) {
+      return state.addStackFunction("VbkTree::bootstrapWithChain");
+    }
+
+    if (!cmp_.setState(*getBestChain().tip(), state)) {
+      return state.addStackFunction("VbkTree::bootstrapWithChain");
+    }
+
+    return true;
+  }
+
+  bool bootstrapWithGenesis(ValidationState& state) override {
+    if (!VbkTree::bootstrapWithGenesis(state)) {
+      return state.addStackFunction("VbkTree::bootstrapWithGenesis");
+    }
+
+    if (!cmp_.setState(*getBestChain().tip(), state)) {
+      return state.addStackFunction("VbkTree::bootstrapWithChain");
+    }
+
+    return true;
   }
 
  private:

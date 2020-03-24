@@ -311,6 +311,12 @@ struct PopAwareForkResolutionComparator {
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
 
   bool setState(const protected_index_t& index, ValidationState& state) {
+    // if previous state is unknown, set new state as current
+    if (!treeState_) {
+      treeState_ = index;
+      return true;
+    }
+
     return unapplyAndApply(tree_,
                            treeState_,
                            index,
