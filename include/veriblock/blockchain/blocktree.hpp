@@ -27,7 +27,7 @@ struct BlockTree {
   using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
   using block_index_t =
-      std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
+      std::unordered_map<prev_block_hash_t, std::shared_ptr<index_t>>;
 
   virtual ~BlockTree() = default;
 
@@ -107,8 +107,7 @@ struct BlockTree {
     return it == block_index_.end() ? nullptr : it->second.get();
   }
 
-  bool acceptBlock(const block_t& block,
-                   ValidationState& state) {
+  bool acceptBlock(const block_t& block, ValidationState& state) {
     return acceptBlock(block, state, true);
   }
 
@@ -183,8 +182,8 @@ struct BlockTree {
       return it->second.get();
     }
 
-    auto* newIndex = new index_t{};
-    it = block_index_.insert({hash, std::unique_ptr<index_t>(newIndex)}).first;
+    auto newIndex = std::make_shared<index_t>();
+    it = block_index_.insert({hash, std::move(newIndex)}).first;
     return it->second.get();
   }
 

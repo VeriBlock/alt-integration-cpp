@@ -38,7 +38,7 @@ bool addPayloads(BlockTree& tree,
                  ValidationState& state);
 
 template <typename BlockTree, typename PayloadsT>
-bool removePayloads(BlockTree& tree, const PayloadsT& payloads);
+void removePayloads(BlockTree& tree, const PayloadsT& payloads);
 
 }  // namespace altintegration
 

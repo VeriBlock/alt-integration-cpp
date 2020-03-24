@@ -122,7 +122,7 @@ struct Chain {
                                                    int ki) const {
     auto* fork = findFork(pindex);
     auto keystoneHeight = highestKeystoneAtOrBefore(fork->height, ki);
-    return this[keystoneHeight];
+    return this->operator[](keystoneHeight);
   }
 
  private:

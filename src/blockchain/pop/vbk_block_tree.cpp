@@ -11,15 +11,12 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   }
 
   auto ki = param_.getKeystoneInterval();
-  auto* forkIndex = currentBest.findFork(&indexNew);
+  auto* forkKeystone =
+      currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
   // this should never happen. if it is nullptr, it means that we passed
   // `indexNew` index which has no known prev block, which is possible only
   // after logic error, OR error in 'findFork'
-  assert(forkIndex != nullptr);
-
-  // last common keystone of two forks
-  auto commonKeystoneHeight = highestKeystoneAtOrBefore(forkIndex->height, ki);
-  auto* forkKeystone = forkIndex->getAncestor(commonKeystoneHeight);
+  assert(forkKeystone != nullptr);
 
   int result = 0;
   auto* bestTip = currentBest.tip();
@@ -60,29 +57,31 @@ bool addPayloads(VbkBlockTree& tree,
         /// update btc context
         for (const auto& b : payloads.btccontext) {
           if (!btc.acceptBlock(b, state)) {
-            return state.addStackFunction("addPayloads");
+            return state.addStackFunction("VbkTree::addPayloads");
           }
         }
 
         /// ADD ALL VTBs
         for (const auto& vtb : payloads.vtbs) {
           if (!checkVTB(vtb, state, tree.getParams(), btc.getParams())) {
-            return state.addStackFunction("addVTB");
+            return state.addStackFunction("VbkTree::addPayloads");
           }
 
           // firstly, add btc context blocks
           for (const auto& block : vtb.transaction.blockOfProofContext) {
             if (!btc.acceptBlock(block, state)) {
-              return state.addStackFunction("addVTB");
+              return state.addStackFunction("VbkTree::addPayloads");
             }
           }
         }
+
+        return true;
       },
       [&]() { removePayloads(tree, payloads); });
 }
 
 template <>
-bool removePayloads(VbkBlockTree& tree, const Payloads& payloads) {
+void removePayloads(VbkBlockTree& tree, const Payloads& payloads) {
   auto& btc = tree.btc();
 
   /// first, remove VTBs context

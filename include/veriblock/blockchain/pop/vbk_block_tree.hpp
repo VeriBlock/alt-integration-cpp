@@ -67,7 +67,7 @@ bool addPayloads(VbkBlockTree& tree,
                  ValidationState& state);
 
 template <>
-bool removePayloads(VbkBlockTree& tree, const Payloads& payloads);
+void removePayloads(VbkBlockTree& tree, const Payloads& payloads);
 
 }  // namespace altintegration
 

@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/block_index.hpp"
@@ -15,7 +16,7 @@
 #include "veriblock/entities/altblock.hpp"
 #include "veriblock/entities/endorsement.hpp"
 #include "veriblock/entities/payloads.hpp"
-#include "veriblock/popmanager.hpp"
+#include "veriblock/finalizer.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
 #include "veriblock/storage/payloads_repository.hpp"
 #include "veriblock/validation_state.hpp"
@@ -71,8 +72,7 @@ struct AltTree {
    * @note chain1 and chain2 are being consindered as forks not a full chains
    * from the genesis block, they should start at the common block
    */
-  int compareTwoBranches(index_t* chain1,
-                         index_t* chain2);
+  int compareTwoBranches(index_t* chain1, index_t* chain2);
 
  protected:
   block_index_t block_index_;
@@ -86,79 +86,12 @@ struct AltTree {
 };
 
 template <>
-bool addPayloads(AltTree& tree,
-                 const Payloads& payloads,
-                 ValidationState& state) {
-  auto& vbk = tree.vbk();
-
-  // does checkVTB internally
-  if (!addPayloads(vbk, payloads, state)) {
-    return state.addStackFunction("AltTree::addPayloads");
-  }
-
-  /// update vbk context
-  for (const auto& b : payloads.vbkcontext) {
-    if (!vbk.acceptBlock(b, state)) {
-      return state.addStackFunction("AltTree::addPayloads");
-    }
-  }
-
-  /// ADD ALL VTBs
-  for (const auto& vtb : payloads.vtbs) {
-    // no need to checkVTB, because first addPayloads does it
-
-    // add vbk context blocks
-    for (const auto& block : vtb.context) {
-      if (!vbk.acceptBlock(block, state)) {
-        return state.addStackFunction("AltTree::addPayloads");
-      }
-    }
-  }
-
-  /// ADD ATV
-  if (payloads.alt.hasAtv) {
-    // check if atv is statelessly valid
-    if (!checkATV(payloads.alt.atv, state, vbk.getParams())) {
-      return state.addStackFunction("AltTree::addPayloads");
-    }
-
-    /// apply atv context
-    for (const auto& block : payloads.alt.atv.context) {
-      if (!vbk.acceptBlock(block, state)) {
-        return state.addStackFunction("AltTree::addPayloads");
-      }
-    }
-  }
-
-  return true;
-}
+void removePayloads(AltTree& tree, const Payloads& payloads);
 
 template <>
-bool removePayloads(AltTree& tree, const Payloads& payloads) {
-  auto& vbk = tree.vbk();
-  removePayloads(tree.vbk(), payloads);
-
-  /// first, remove ATV context
-  if (payloads.alt.hasAtv) {
-    for (const auto& b : payloads.alt.atv.context) {
-      vbk.invalidateBlockByHash(b.getHash());
-    }
-  }
-
-  /// second, remove VTBs context
-  for (const auto& vtb : payloads.vtbs) {
-    for (const auto& b : vtb.context) {
-      vbk.invalidateBlockByHash(b.getHash());
-    }
-  }
-
-  /// third, remove vbk context
-  for (const auto& b : payloads.vbkcontext) {
-    vbk.invalidateBlockByHash(b.getHash());
-  }
-
-  return true;
-}
+bool addPayloads(AltTree& tree,
+                 const Payloads& payloads,
+                 ValidationState& state);
 
 }  // namespace altintegration
 
