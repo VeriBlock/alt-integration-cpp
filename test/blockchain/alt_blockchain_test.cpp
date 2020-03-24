@@ -64,11 +64,11 @@ struct AltTreeTestSuite : public testing::Test {
   }
 
   VbkBlock getLastKnownVbkBlock() {
-    return altTree.currentPopManager().vbk().getBestChain().tip()->header;
+    return altTree.getPopManager().vbk().getBestChain().tip()->header;
   }
 
   BtcBlock getLastKnownBtcBlock() {
-    return altTree.currentPopManager().btc().getBestChain().tip()->header;
+    return altTree.getPopManager().btc().getBestChain().tip()->header;
   }
 
   std::vector<uint8_t> payoutInfo{1, 2, 3, 4, 5};
@@ -146,10 +146,10 @@ TEST_F(AltTreeTestSuite, setState_test) {
   const BlockIndex<VbkBlock>* chain1StateVbkTip =
       apm.vbk().getBestChain().tip()->pprev;
 
-  EXPECT_EQ(altTree.currentPopManager().btc().getBestChain().tip()->getHash(),
+  EXPECT_EQ(altTree.getPopManager().btc().getBestChain().tip()->getHash(),
             chain1StateBtcTip->getHash());
 
-  EXPECT_EQ(altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
+  EXPECT_EQ(altTree.getPopManager().vbk().getBestChain().tip()->getHash(),
             chain1StateVbkTip->getHash());
 
   std::vector<AltBlock> chain2;
@@ -169,10 +169,10 @@ TEST_F(AltTreeTestSuite, setState_test) {
   const BlockIndex<VbkBlock>* chain2StateVbkTip =
       apm.vbk().getBestChain().tip()->pprev;
 
-  EXPECT_EQ(altTree.currentPopManager().btc().getBestChain().tip()->getHash(),
+  EXPECT_EQ(altTree.getPopManager().btc().getBestChain().tip()->getHash(),
             chain2StateBtcTip->getHash());
 
-  EXPECT_EQ(altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
+  EXPECT_EQ(altTree.getPopManager().vbk().getBestChain().tip()->getHash(),
             chain2StateVbkTip->getHash());
 
   for (size_t i = 1; i < std::max(chain1.size(), chain2.size()); ++i) {
@@ -180,12 +180,10 @@ TEST_F(AltTreeTestSuite, setState_test) {
       altTree.setState(chain1[i].getHash(), state);
       EXPECT_TRUE(state.IsValid());
 
-      EXPECT_EQ(
-          altTree.currentPopManager().btc().getBestChain().tip()->getHash(),
+      EXPECT_EQ(altTree.getPopManager().btc().getBestChain().tip()->getHash(),
           chain1StateBtcTip->getHash());
 
-      EXPECT_EQ(
-          altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
+      EXPECT_EQ(altTree.getPopManager().vbk().getBestChain().tip()->getHash(),
           chain1StateVbkTip->getHash());
     }
 
@@ -193,12 +191,10 @@ TEST_F(AltTreeTestSuite, setState_test) {
       altTree.setState(chain2[i].getHash(), state);
       EXPECT_TRUE(state.IsValid());
 
-      EXPECT_EQ(
-          altTree.currentPopManager().btc().getBestChain().tip()->getHash(),
+      EXPECT_EQ(altTree.getPopManager().btc().getBestChain().tip()->getHash(),
           chain2StateBtcTip->getHash());
 
-      EXPECT_EQ(
-          altTree.currentPopManager().vbk().getBestChain().tip()->getHash(),
+      EXPECT_EQ(altTree.getPopManager().vbk().getBestChain().tip()->getHash(),
           chain2StateVbkTip->getHash());
     }
   }

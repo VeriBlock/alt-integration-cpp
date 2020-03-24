@@ -1,4 +1,5 @@
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/finalizer.hpp>
 
 namespace altintegration {
 
@@ -26,14 +27,15 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
       isCrossedKeystoneBoundary(forkKeystone->height,
                                 currentBest.tip()->height,
                                 param_.getKeystoneInterval())) {
-
     // [vbk fork point ... current tip]
     Chain<index_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
 
     // [vbk fork point ... new block]
     Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
 
-    result = compare_(vbkCurrentSubchain, vbkOther);
+    BtcTree treeCopy;  ///
+
+    result = compare_(treeCopy, vbkCurrentSubchain, vbkOther);
   }
 
   if (result < 0) {
@@ -50,4 +52,54 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 }
+
+template <>
+bool addPayloads(VbkBlockTree& tree,
+                 const Payloads& payloads,
+                 ValidationState& state) {
+  return tryValidateWithResources(
+      [&]() -> bool {
+        auto& btc = tree.btc();
+
+        /// update btc context
+        for (const auto& b : payloads.btccontext) {
+          if (!btc.acceptBlock(b, state)) {
+            return state.addStackFunction("addPayloads");
+          }
+        }
+
+        /// ADD ALL VTBs
+        for (const auto& vtb : payloads.vtbs) {
+          if (!checkVTB(vtb, state, tree.getParams(), btc.getParams())) {
+            return state.addStackFunction("addVTB");
+          }
+
+          // firstly, add btc context blocks
+          for (const auto& block : vtb.transaction.blockOfProofContext) {
+            if (!btc.acceptBlock(block, state)) {
+              return state.addStackFunction("addVTB");
+            }
+          }
+        }
+      },
+      [&]() { removePayloads(tree, payloads); });
+}
+
+template <>
+bool removePayloads(VbkBlockTree& tree, const Payloads& payloads) {
+  auto& btc = tree.btc();
+
+  /// first, remove VTBs context
+  for (const auto& vtb : payloads.vtbs) {
+    for (const auto& b : vtb.transaction.blockOfProofContext) {
+      btc.invalidateBlockByHash(b.getHash());
+    }
+  }
+
+  /// remove btc context
+  for (const auto& b : payloads.btccontext) {
+    btc.invalidateBlockByHash(b.getHash());
+  }
+}
+
 }  // namespace altintegration

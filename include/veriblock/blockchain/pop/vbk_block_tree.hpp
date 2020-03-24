@@ -17,15 +17,29 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(comparator_t cmp, const VbkChainParams& params)
-      : VbkTree(params), compare_(cmp) {}
+  VbkBlockTree(comparator_t cmp,
+               const VbkChainParams& vbkp,
+               const BtcChainParams& btcp)
+      : VbkTree(vbkp), btc_(btcp), compare_(cmp) {}
+
+  BtcTree& btc() { return btc_; }
+  const BtcTree& btc() const { return btc_; }
 
  private:
+  BtcTree btc_;
   ComparePopScore<VbkTree, BtcTree, BtcEndorsement> compare_;
 
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
 };
+
+template <>
+bool addPayloads(VbkBlockTree& tree,
+                 const Payloads& payloads,
+                 ValidationState& state);
+
+template <>
+bool removePayloads(VbkBlockTree& tree, const Payloads& payloads);
 
 }  // namespace altintegration
 

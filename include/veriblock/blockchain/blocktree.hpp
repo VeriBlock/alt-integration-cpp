@@ -33,6 +33,8 @@ struct BlockTree {
 
   explicit BlockTree(const ChainParams& param) : param_(param) {}
 
+  const ChainParams& getParams() const { return param_; }
+
   /**
    * Bootstrap blockchain with a single genesis block, from "chain parameters"
    * passed in constructor.

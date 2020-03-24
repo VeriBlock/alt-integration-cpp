@@ -183,17 +183,6 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
   return chainAscore - chainBscore;
 }
 
-template <typename FIN, typename FOUT, typename Arg0>
-inline FOUT not_fn(FIN&& f) {
-  return [&](Arg0&& arg) { return !f(std::forward<Arg0>(arg)); };
-}
-
-template <typename Vector, typename Func>
-inline void filter_if(Vector& v, Func& func) {
-  v.erase(std::remove_if(v.begin(), v.end(), not_fn(std::forward<Func>(func))),
-          v.end());
-}
-
 }  // namespace
 
 template <typename ProtectedBlockTree,
@@ -206,15 +195,14 @@ struct ComparePopScore {
   using protected_index_t = typename ProtectedBlockTree::index_t;
   using protecting_index_t = typename ProtectingBlockTree::index_t;
 
-  explicit ComparePopScore(const ProtectedBlockTree& ed,
-                           const ProtectingBlockTree& ing,
-                           const EndorsementRepository<EndorsementT>& e,
+  explicit ComparePopScore(const EndorsementRepository<EndorsementT>& e,
                            const protected_params_t& config)
-      : protecting_(ing), protected_(ed), e_(e), config_(config) {
+      : e_(e), config_(config) {
     assert(config.getKeystoneInterval() > 0);
   }
 
-  int operator()(const Chain<protected_index_t>& chainA,
+  int operator()(const ProtectingBlockTree& ing,
+                 const Chain<protected_index_t>& chainA,
                  const Chain<protected_index_t>& chainB) {
     assert(chainA.first() != nullptr && chainA.first() == chainB.first());
 
@@ -230,35 +218,33 @@ struct ComparePopScore {
           allEndorsements.end(),
           [&](const EndorsementT& e) {
             // 1. check that containing block is on best chain.
-            auto* edindex = protected_.getBlockIndex(e.containing);
+            auto* edindex = ing.getBlockIndex(e.containing);
 
             // 2. check that blockOfProof is still on best chain.
-            auto* ingindex = protected_.getBlockIndex(e.blockOfProof);
+            auto* ingindex = ing.getBlockIndex(e.blockOfProof);
 
             // endorsed block is guaranteed to be ancestor of containing block
             // therefore, do not do check here
             return (chainA.contains(edindex) || chainB.contains(edindex)) &&
-                   protecting_.getBestChain().contains(ingindex);
+                   ing.getBestChain().contains(ingindex);
           },
           allEndorsements.end()));
     };
 
     /// filter chainA
-    auto pkcChain1 = getProtoKeystoneContext(
-        chainA, protecting_, config_, getValidEndorsements);
-    auto kcChain1 = getKeystoneContext(pkcChain1, protecting_);
+    auto pkcChain1 =
+        getProtoKeystoneContext(chainA, ing, config_, getValidEndorsements);
+    auto kcChain1 = getKeystoneContext(pkcChain1, ing);
 
     /// filter chainB
-    auto pkcChain2 = getProtoKeystoneContext(
-        chainB, protecting_, config_, getValidEndorsements);
-    auto kcChain2 = getKeystoneContext(pkcChain2, protecting_);
+    auto pkcChain2 =
+        getProtoKeystoneContext(chainB, ing, config_, getValidEndorsements);
+    auto kcChain2 = getKeystoneContext(pkcChain2, ing);
 
     return comparePopScore(chainA, chainB, config_);
   }
 
  private:
-  const ProtectingBlockTree& protecting_;
-  const ProtectedBlockTree& protected_;
   const EndorsementRepository<EndorsementT>& e_;
   const protected_params_t& config_;
 };
@@ -291,13 +277,13 @@ std::vector<KeystoneContext> getKeystoneContext(
 
           // look at the future BTC blocks and set the--0
           // earliestEndorsementIndex to a future Bitcoin block
-          auto btcBest = tree.getBestChain();
+          auto best = tree.getBestChain();
           for (int adjustedEndorsementIndex = endorsementIndex + 1;
-               adjustedEndorsementIndex <= btcBest.chainHeight();
+               adjustedEndorsementIndex <= best.chainHeight();
                adjustedEndorsementIndex++) {
             // Ensure that the keystone's block time isn't later than the
             // block time of the Bitcoin block it's endorsed in
-            auto* index = btcBest[adjustedEndorsementIndex];
+            auto* index = best[adjustedEndorsementIndex];
             if (index == nullptr) {
               throw std::logic_error("unexpected nullptr in btc best chain");
             }
@@ -335,9 +321,7 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
         const BlockIndex<EndorsedBlockType>&)> getEndorsements) {
   std::vector<ProtoKeystoneContext<EndorsementBlockType>> ret;
   auto* tip = chain.tip();
-  if (tip == nullptr) {
-    throw std::logic_error("unexpected nullptr - no tip in best chain");
-  }
+  assert(tip != nullptr && "tip must not be nullptr");
 
   auto highestPossibleEndorsedBlockHeaderHeight = tip->height;
   auto lastKeystone =

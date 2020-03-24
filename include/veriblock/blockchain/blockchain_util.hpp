@@ -32,6 +32,14 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             ValidationState& state,
                             const ChainParams& params);
 
+template <typename BlockTree, typename PayloadsT>
+bool addPayloads(BlockTree& tree,
+                 const PayloadsT& payloads,
+                 ValidationState& state);
+
+template <typename BlockTree, typename PayloadsT>
+bool removePayloads(BlockTree& tree, const PayloadsT& payloads);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_UTIL_HPP_

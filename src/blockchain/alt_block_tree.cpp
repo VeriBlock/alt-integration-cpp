@@ -67,32 +67,18 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 bool AltTree::setState(const AltBlock::hash_t& hash, ValidationState& state) {
-  index_t* current = getBlockIndex(hash);
-
-  if (current == nullptr) {
-    return state.Invalid("AltTree::setState",
-                         "current block AltBlock is not present in the AltTree",
-                         "AltTree does not know anything about this block");
+  auto* to = getBlockIndex(hash);
+  if (!to) {
+    throw std::logic_error(
+        "AltTree::setState is called on a block that is unknown in altTree");
   }
 
-  // our current popState is not at desired "current" state, so change it
-  if (popState_ != current) {
-    index_t* newPopState = popState_;
-    // we need to unapply payloads from this chain until the fork point,
-    // and then apply payloads from the fork chain
-    if (!unapplyAndApply(pop_, &newPopState, *current, state)) {
-      return state.addStackFunction("AltTree::acceptBlock");
-    }
-    popState_ = newPopState;
-  }
-
-  return true;
+  return setState(pop_, &popState_, *to, state);
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
                           const Payloads* payloads,
-                          ValidationState& state,
-                          StateChange* stateChange) {
+                          ValidationState& state) {
   // we must know previous block
   auto* prev = getBlockIndex(block.previousBlock);
   if (prev == nullptr) {
@@ -112,7 +98,8 @@ bool AltTree::acceptBlock(const AltBlock& block,
     }
 
     // we just add payloads via addPayloads, no need to unapply state
-    if (!pop_.addPayloads(*payloads, state, stateChange)) {
+    if (!pop_.addPayloads(*payloads, state)) {
+      pop_.rollback();
       return state.addStackFunction("AltTree::acceptBlock");
     }
     pop_.commit();
@@ -124,27 +111,27 @@ bool AltTree::acceptBlock(const AltBlock& block,
   return true;
 }
 
-int AltTree::compareThisToOtherChain(index_t* other) {
-  ValidationState state;
-
-  // create single-use pop manager, which internally combines payloads from
-  // both this chain and the other chain
-  PopManager combinedPop = pop_;
-  index_t* combinedPopState = popState_;
-
-  auto height = config_.getBootstrapBlock().height;
-  bool ret = apply(combinedPop, &combinedPopState, *other, state);
-
-  if (!ret) {
-    // other chain has bad payloads (expired?)
-    return 1;  // this chain wins
-  }
-
-  Chain<index_t> thisChain(height, popState_);
-  Chain<index_t> forkChain(height, other);
-
-  return combinedPop.compareTwoBranches(thisChain, forkChain);
-}
+// int AltTree::compareThisToOtherChain(index_t* other) {
+//  ValidationState state;
+//
+//  // create single-use pop manager, which internally combines payloads from
+//  // both this chain and the other chain
+//  PopManager combinedPop = pop_;
+//  index_t* combinedPopState = popState_;
+//
+//  auto height = config_.getBootstrapBlock().height;
+//  bool ret = apply(combinedPop, &combinedPopState, *other, state);
+//
+//  if (!ret) {
+//    // other chain has bad payloads (expired?)
+//    return 1;  // this chain wins
+//  }
+//
+//  Chain<index_t> thisChain(height, popState_);
+//  Chain<index_t> forkChain(height, other);
+//
+//  return combinedPop.compareTwoBranches(thisChain, forkChain);
+//}
 
 void AltTree::unapply(PopManager& pop, index_t** popState, index_t& to) {
   auto bootstrapHeight = config_.getBootstrapBlock().height;
@@ -211,25 +198,63 @@ bool AltTree::unapplyAndApply(PopManager& pop,
   return apply(pop, popState, to, state);
 }
 
-int AltTree::compareTwoBranches(const Chain<BlockIndex<AltBlock>>& chain1,
-                                const Chain<BlockIndex<AltBlock>>& chain2) {
-  // TODO: find fork point, create 2 subchains and call compare_(subchain1, subchain2);
-  return 0;
+int AltTree::compareTwoBranches(const Chain<index_t>& chain1,
+                                const Chain<index_t>& chain2) {
+  // chains are not empty
+  assert(chain1.first() != nullptr);
+  assert(chain2.first() != nullptr);
+
+  ValidationState state;
+  auto mgr = pop_;
+  auto mgrState = popState_;
+
+  if (!setState(mgr, &mgrState, *chain1.tip(), state)) {
+    if (!setState(mgr, &mgrState, *chain2.tip(), state)) {
+      // both chains contain invalid payloads, this is logic error
+      throw std::logic_error(
+          "AltTree::compareTwoBranches: both chains contain invalid "
+          "payloads: " +
+          state.GetDebugMessage());
+    }
+
+    // chain A contains invalid payloads, and chain B contains valid payloads,
+    // so chain2 wins
+    return -1;
+  }
+
+  // chain1 contains valid payloads. we need to apply payloads from
+  // (forkPoint... chain2.tip]
+
+  auto* forkPoint = chain1.findFork(chain2.tip());
+  assert(forkPoint != nullptr && "fork point should exist");
+
+  Chain<index_t> subchain1(forkPoint->height, chain1.tip());
+  Chain<index_t> subchain2(forkPoint->height, chain2.tip());
+
+  if (!apply(mgr, &mgrState, *chain2.tip(), state)) {
+    // chain2 contains invalid payloads, so chain1 wins
+    return 1;
+  }
+
+  return compare_(mgr.vbk(), subchain1, subchain2);
 }
 
-// void AltTree::invalidateBlockByHash(const AltTree::hash_t& hash) {
-//  Chain<index_t> chain(config_.getBootstrapBlock().height, popState_);
-//  auto* index = getBlockIndex(hash);
-//  if (chain.contains(index)) {
-//    ValidationState state;
-//    bool ret = unapplyAndApply(pop_, &popState_, *index, state);
-//
-//    // chain contains index, so we should never ever be adding payloads, only
-//    // removing, therefore we never get false here
-//    assert(ret);
-//  }
-//
-//  // else:
-//  // we don't care, since currently applied chain does NOT contain
-//  // block-to-remove, and we do not maintain current best chain
-//}
+bool AltTree::setState(PopManager& pop,
+                       AltTree::index_t** popState,
+                       AltTree::index_t& to,
+                       ValidationState& state) {
+  index_t* current = &to;
+
+  // our current popState is not at desired "current" state, so change it
+  if (*popState != current) {
+    index_t* newPopState = *popState;
+    // we need to unapply payloads from this chain until the fork point,
+    // and then apply payloads from the fork chain
+    if (!unapplyAndApply(pop, &newPopState, *current, state)) {
+      return state.addStackFunction("AltTree::setState");
+    }
+    *popState = newPopState;
+  }
+
+  return true;
+}

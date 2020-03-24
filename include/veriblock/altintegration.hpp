@@ -42,7 +42,7 @@ struct AltIntegration {
     // bootstrap ALT tree
     must(alt.tree().bootstrapWithGenesis(state));
 
-    auto& pop = alt.tree().currentPopManager();
+    auto& pop = alt.tree().getPopManager();
 
     // bootstrap BTC tree
     must(pop.btc().bootstrapWithChain(

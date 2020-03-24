@@ -23,18 +23,25 @@
 namespace altintegration {
 
 struct AltTree {
-  using config_t = AltChainParams;
+  using block_t = AltBlock;
+  using params_t = AltChainParams;
   using index_t = BlockIndex<AltBlock>;
   using hash_t = typename AltBlock::hash_t;
   using block_index_t = std::unordered_map<hash_t, std::unique_ptr<index_t>>;
   using VbkTree = VbkBlockTree;
+  using BtcTree = VbkTree::BtcTree;
+  using compare_t = ComparePopScore<AltTree, VbkTree, VbkEndorsement>;
 
   virtual ~AltTree() = default;
 
-  AltTree(const config_t& config,
-          PopManager pop,
-          std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo)
-      : config_(config), pop_(std::move(pop)), prepo_(std::move(prepo)) {}
+  AltTree(const params_t& config,
+          compare_t cmp)
+      : config_(config), compare_(cmp) {}
+
+  BtcTree& btc() { return vbk_.btc(); }
+  const BtcTree& btc() const { return vbk_.btc(); }
+  VbkTree& vbk() { return vbk_; }
+  const VbkTree& vbk() const { return vbk_; }
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -43,16 +50,9 @@ struct AltTree {
   // accept block with a single payload from this block
   bool acceptBlock(const AltBlock& block,
                    const Payloads* payloads,
-                   ValidationState& state,
-                   StateChange* change = nullptr);
+                   ValidationState& state);
 
   bool setState(const AltBlock::hash_t& hash, ValidationState& state);
-
-  PopManager& currentPopManager() { return pop_; }
-  index_t* currentPopState() { return popState_; }
-
-  const PopManager& currentPopManager() const { return pop_; }
-  const index_t* currentPopState() const { return popState_; }
 
   /**
    * Determine the best chain of the AltBlocks in accordance with the VeriBlock
@@ -68,10 +68,10 @@ struct AltTree {
 
  protected:
   block_index_t block_index_;
-  const config_t& config_;
+  const params_t& config_;
 
-  index_t* popState_{};
-  PopManager pop_;
+  index_t* vbkState_{};
+  VbkTree vbk_;
 
   ComparePopScore<AltTree, VbkTree, VbkEndorsement> compare_;
 
@@ -81,19 +81,80 @@ struct AltTree {
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& blockHash);
-
-  void unapply(PopManager& pop, index_t** popState, index_t& to);
-
-  bool apply(PopManager& pop,
-             index_t** popState,
-             index_t& to,
-             ValidationState& state);
-
-  bool unapplyAndApply(PopManager& pop,
-                       index_t** popState,
-                       index_t& to,
-                       ValidationState& state);
 };
+
+template <>
+bool addPayloads(AltTree& tree,
+                 const Payloads& payloads,
+                 ValidationState& state) {
+  auto& vbk = tree.vbk();
+
+  // does checkVTB internally
+  if (!addPayloads(vbk, payloads, state)) {
+    return state.addStackFunction("AltTree::addPayloads");
+  }
+
+  /// update vbk context
+  for (const auto& b : payloads.vbkcontext) {
+    if (!vbk.acceptBlock(b, state)) {
+      return state.addStackFunction("AltTree::addPayloads");
+    }
+  }
+
+  /// ADD ALL VTBs
+  for (const auto& vtb : payloads.vtbs) {
+    // no need to checkVTB, because first addPayloads does it
+
+    // add vbk context blocks
+    for (const auto& block : vtb.context) {
+      if (!vbk.acceptBlock(block, state)) {
+        return state.addStackFunction("AltTree::addPayloads");
+      }
+    }
+  }
+
+  /// ADD ATV
+  if (payloads.alt.hasAtv) {
+    // check if atv is statelessly valid
+    if (!checkATV(payloads.alt.atv, state, vbk.getParams())) {
+      return state.addStackFunction("AltTree::addPayloads");
+    }
+
+    /// apply atv context
+    for (const auto& block : payloads.alt.atv.context) {
+      if (!vbk.acceptBlock(block, state)) {
+        return state.addStackFunction("AltTree::addPayloads");
+      }
+    }
+  }
+
+  return true;
+}
+
+template <>
+bool removePayloads(AltTree& tree, const Payloads& payloads) {
+  auto& vbk = tree.vbk();
+  removePayloads(tree.vbk(), payloads);
+
+  /// first, remove ATV context
+  if (payloads.alt.hasAtv) {
+    for (const auto& b : payloads.alt.atv.context) {
+      vbk.invalidateBlockByHash(b.getHash());
+    }
+  }
+
+  /// second, remove VTBs context
+  for (const auto& vtb : payloads.vtbs) {
+    for (const auto& b : vtb.context) {
+      vbk.invalidateBlockByHash(b.getHash());
+    }
+  }
+
+  /// third, remove vbk context
+  for (const auto& b : payloads.vbkcontext) {
+    vbk.invalidateBlockByHash(b.getHash());
+  }
+}
 
 }  // namespace altintegration
 
