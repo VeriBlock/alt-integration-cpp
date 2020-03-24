@@ -57,8 +57,8 @@ class StateManager {
   RepositoryManager database;
 
  public:
-  StateManager(const std::string& name, std::string path = "")
-      : database(path + "\\" + name) {
+  StateManager(const std::string& dbPath)
+      : database(dbPath) {
     database.open();
   }
 
