@@ -44,7 +44,7 @@ struct BlockTree {
    *
    * @return true if bootstrap was successful, false otherwise
    */
-  bool bootstrapWithGenesis(ValidationState& state) {
+  virtual bool bootstrapWithGenesis(ValidationState& state) {
     assert(block_index_.empty() && "already bootstrapped");
     auto block = param_.getGenesisBlock();
     return this->bootstrap(0, block, state);
@@ -60,9 +60,9 @@ struct BlockTree {
    * @param chain bootstrap chain
    * @return true if bootstrap was successful, false otherwise
    */
-  bool bootstrapWithChain(height_t startHeight,
-                          const std::vector<block_t>& chain,
-                          ValidationState& state) {
+  virtual bool bootstrapWithChain(height_t startHeight,
+                                  const std::vector<block_t>& chain,
+                                  ValidationState& state) {
     assert(block_index_.empty() && "already bootstrapped");
     if (chain.empty()) {
       return state.Invalid("bootstrapWithChain()",

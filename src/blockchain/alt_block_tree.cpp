@@ -39,11 +39,11 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
 }
 
 bool AltTree::bootstrapWithGenesis(ValidationState& state) {
-  if (!pop_.btc().bootstrapWithGenesis(state)) {
+  if (!btc().bootstrapWithGenesis(state)) {
     return state.Error("btc tree already bootstrapped");
   }
 
-  if (!pop_.vbk().bootstrapWithGenesis(state)) {
+  if (!vbk().bootstrapWithGenesis(state)) {
     return state.Error("vbk tree already bootstrapped");
   }
 
@@ -60,8 +60,6 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
   if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
     return state.Error("block-index-no-genesis");
   }
-
-  this->popState_ = index;
 
   return true;
 }
@@ -110,33 +108,6 @@ bool AltTree::acceptBlock(const AltBlock& block,
 
   return true;
 }
-
-// int AltTree::compareThisToOtherChain(index_t* other) {
-//  ValidationState state;
-//
-//  // create single-use pop manager, which internally combines payloads from
-//  // both this chain and the other chain
-//  PopManager combinedPop = pop_;
-//  index_t* combinedPopState = popState_;
-//
-//  auto height = config_.getBootstrapBlock().height;
-//  bool ret = apply(combinedPop, &combinedPopState, *other, state);
-//
-//  if (!ret) {
-//    // other chain has bad payloads (expired?)
-//    return 1;  // this chain wins
-//  }
-//
-//  Chain<index_t> thisChain(height, popState_);
-//  Chain<index_t> forkChain(height, other);
-//
-//  return combinedPop.compareTwoBranches(thisChain, forkChain);
-//}
-
-void AltTree::unapply(PopManager& pop, index_t** popState, index_t& to) {
-
-}
-
 
 
 int AltTree::compareTwoBranches(const Chain<index_t>& chain1,

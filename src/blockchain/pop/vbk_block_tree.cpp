@@ -5,12 +5,12 @@ namespace altintegration {
 
 void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       BlockTree::index_t& indexNew) {
-  auto ki = param_.getKeystoneInterval();
   if (currentBest.tip() == nullptr) {
     currentBest.setTip(&indexNew);
     return;
   }
 
+  auto ki = param_.getKeystoneInterval();
   auto* forkIndex = currentBest.findFork(&indexNew);
   // this should never happen. if it is nullptr, it means that we passed
   // `indexNew` index which has no known prev block, which is possible only
@@ -31,7 +31,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     // [vbk fork point keystone ... new block]
     Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
 
-    result = this->comparePopScore(vbkCurrentSubchain, vbkOther);
+    result = this->cmp_(vbkCurrentSubchain, vbkOther);
   }
 
   if (result < 0) {

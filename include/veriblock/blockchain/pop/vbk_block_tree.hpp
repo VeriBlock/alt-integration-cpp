@@ -10,28 +10,35 @@
 
 namespace altintegration {
 
-struct VbkBlockTree
-    : public BlockTree<VbkBlock, VbkChainParams>,
-      public PopAwareForkResolution<BlockIndex<VbkBlock>,
-                                    VbkChainParams,
-                                    BlockTree<BtcBlock, BtcChainParams>,
-                                    BtcEndorsement> {
+struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
 
+  using POPForkResolution =
+      PopAwareForkResolutionComparator<VbkBlock,
+                                       VbkChainParams,
+                                       BlockTree<BtcBlock, BtcChainParams>,
+                                       BtcEndorsement>;
+
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(const VbkChainParams& vbkp,
-               const BtcChainParams& btcp,
-               const EndorsementRepository<BtcEndorsement>& e)
-      : VbkTree(vbkp), PopAwareForkResolution(e, vbkp, btcp) {}
+  VbkBlockTree(const VbkChainParams& vbkp, POPForkResolution cmp)
+      : VbkTree(vbkp), cmp_(std::move(cmp)) {}
 
-  BtcTree& btc() { return getProtectingBlockTree(); }
-  const BtcTree& btc() const { return getProtectingBlockTree(); }
+  BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
+  const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
+
+  bool bootstrapWithChain(height_t startHeight,
+                          const std::vector<block_t>& chain,
+                          ValidationState& state) override {
+    auto ret = VbkTree::bootstrapWithChain(startHeight, chain, state);
+  }
 
  private:
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
+
+  POPForkResolution cmp_;
 };
 
 template <>

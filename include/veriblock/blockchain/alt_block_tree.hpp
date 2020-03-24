@@ -30,18 +30,20 @@ struct AltTree {
   using block_index_t = std::unordered_map<hash_t, std::unique_ptr<index_t>>;
   using VbkTree = VbkBlockTree;
   using BtcTree = VbkTree::BtcTree;
-  using compare_t = ComparePopScore<AltTree, VbkTree, VbkEndorsement>;
+  using POPForkResolution = PopAwareForkResolutionComparator<AltBlock,
+                                                             AltChainParams,
+                                                             VbkTree,
+                                                             VbkEndorsement>;
 
   virtual ~AltTree() = default;
 
-  AltTree(const params_t& config,
-          compare_t cmp)
-      : config_(config), compare_(cmp) {}
+  AltTree(const params_t& config, POPForkResolution cmp)
+      : config_(config), cmp_(std::move(cmp)) {}
 
-  BtcTree& btc() { return vbk_.btc(); }
-  const BtcTree& btc() const { return vbk_.btc(); }
-  VbkTree& vbk() { return vbk_; }
-  const VbkTree& vbk() const { return vbk_; }
+  BtcTree& btc() { return cmp_.getProtectingBlockTree().btc(); }
+  const BtcTree& btc() const { return cmp_.getProtectingBlockTree().btc(); }
+  VbkTree& vbk() { return cmp_.getProtectingBlockTree(); }
+  const VbkTree& vbk() const { return cmp_.getProtectingBlockTree(); }
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -69,11 +71,7 @@ struct AltTree {
  protected:
   block_index_t block_index_;
   const params_t& config_;
-
-  index_t* vbkState_{};
-  VbkTree vbk_;
-
-  std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> prepo_;
+  POPForkResolution cmp_;
 
   index_t* insertBlockHeader(const AltBlock& block);
 

@@ -193,6 +193,11 @@ void unapply(
     ProtectedIndex& to,
     const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
         getPayloadsForBlock) {
+  if (&to == *pState) {
+    // already at this state
+    return;
+  }
+
   Chain<ProtectedIndex> chain(0, *pState);
   auto* forkPoint = chain.findFork(&to);
   auto* current = chain.tip();
@@ -216,6 +221,11 @@ bool apply(
     ValidationState& state,
     const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
         getPayloadsForBlock) {
+  if (&to == *pState) {
+    // already at this state
+    return true;
+  }
+
   Chain<ProtectedIndex> fork(0, &to);
 
   auto* originalPstate = *pState;
@@ -260,6 +270,10 @@ bool unapplyAndApply(
     ValidationState& state,
     const std::function<std::vector<Payloads>(const ProtectedIndex& index)>&
         getPayloadsForBlock) {
+  if (&to == *pState) {
+    // already at this state
+    return true;
+  }
   unapply(p, pState, to, getPayloadsForBlock);
 
   Chain<ProtectedIndex> chain(0, &to);
@@ -278,32 +292,32 @@ template <typename ProtectedBlock,
           typename ProtectedParams,
           typename ProtectingBlockTree,
           typename EndorsementT>
-struct PopAwareForkResolution {
+struct PopAwareForkResolutionComparator {
   using protected_params_t = ProtectedParams;
   using protecting_params_t = typename ProtectingBlockTree::params_t;
   using protected_index_t = BlockIndex<ProtectedBlock>;
   using protecting_index_t = typename ProtectingBlockTree::index_t;
 
-  PopAwareForkResolution(
+  PopAwareForkResolutionComparator(
       const EndorsementRepository<EndorsementT>& e,
-      const PayloadsRepository<ProtectedBlock, Payloads>& prepo,
+      const PayloadsRepository<ProtectedBlock, Payloads>& p,
       const protected_params_t& protectedParams,
       const protecting_params_t& protectingParams)
-      : tree_(protectingParams), e_(e), p_(prepo), config_(protectedParams) {
+      : tree_(protectingParams), e_(e), p_(p), config_(protectedParams) {
     assert(protectedParams.getKeystoneInterval() > 0);
   }
 
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
 
-  int comparePopScore(const Chain<protected_index_t>& chainA,
-                      const Chain<protected_index_t>& chainB) {
+  int operator()(const Chain<protected_index_t>& chainA,
+                 const Chain<protected_index_t>& chainB) {
     // chains are not empty and chains start at the same block
     assert(chainA.first() != nullptr && chainA.first() == chainB.first());
     // first block is a keystone
     assert(isKeystone(chainA.first().height, config_.getKeystoneInterval()));
 
-    auto getPayloads = [&](const BlockIndex<ProtectedBlock>& index) {
+    auto getPayloads = [this](const BlockIndex<ProtectedBlock>& index) {
       return this->p_.get(index.header.getHash());
     };
 
@@ -387,7 +401,7 @@ struct PopAwareForkResolution {
   ProtectingBlockTree tree_;
   protected_index_t* treeState_;
   const EndorsementRepository<EndorsementT>& e_;
-  const PayloadsRepository<ProtectedBlock, Payloads> p_;
+  const PayloadsRepository<ProtectedBlock, Payloads>& p_;
   const protected_params_t& config_;
 };
 
@@ -462,27 +476,26 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
     const std::function<std::vector<EndorsementType>(
         const BlockIndex<EndorsedBlockType>&)>& getValidEndorsements) {
   std::vector<ProtoKeystoneContext<EndorsementBlockType>> ret;
+
+  auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
   assert(tip != nullptr && "tip must not be nullptr");
 
   auto highestPossibleEndorsedBlockHeaderHeight = tip->height;
-  auto lastKeystone =
-      highestKeystoneAtOrBefore(tip->height, config.getKeystoneInterval());
-  auto firstKeystone =
-      firstKeystoneAfter(chain.first()->height, config.getKeystoneInterval());
+  auto lastKeystone = highestKeystoneAtOrBefore(tip->height, ki);
+  auto firstKeystone = firstKeystoneAfter(chain.first()->height, ki);
 
   // For each keystone, find the endorsements of itself and other blocks which
   // reference it, and look at the earliest Bitcoin block that any of those
   // endorsements are contained within.
   for (auto keystoneToConsider = firstKeystone;
        keystoneToConsider <= lastKeystone;
-       keystoneToConsider = firstKeystoneAfter(keystoneToConsider,
-                                               config.getKeystoneInterval())) {
+       keystoneToConsider = firstKeystoneAfter(keystoneToConsider, ki)) {
     ProtoKeystoneContext<EndorsementBlockType> pkc(
         keystoneToConsider, chain[keystoneToConsider]->height);
 
-    auto highestConnectingBlock = highestBlockWhichConnectsKeystoneToPrevious(
-        keystoneToConsider, config.getKeystoneInterval());
+    auto highestConnectingBlock =
+        highestBlockWhichConnectsKeystoneToPrevious(keystoneToConsider, ki);
     for (auto relevantEndorsedBlock = keystoneToConsider;
          relevantEndorsedBlock <= highestConnectingBlock &&
          relevantEndorsedBlock <= highestPossibleEndorsedBlockHeaderHeight;
