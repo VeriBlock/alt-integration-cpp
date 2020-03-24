@@ -28,7 +28,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     // [vbk fork point keystone ... new block]
     Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
 
-    result = this->cmp_(vbkCurrentSubchain, vbkOther);
+    result = this->comparePopScore(vbkCurrentSubchain, vbkOther);
   }
 
   if (result < 0) {

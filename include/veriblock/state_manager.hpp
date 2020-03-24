@@ -18,22 +18,25 @@ class StateChange {
   friend class StateManager<void>;
 
  public:
-  StateChange(
-      std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> payoadsAltRepo)
+  StateChange(std::shared_ptr<PayloadsRepository> payoadsAltRepo)
       : payloadsAltBatch(payoadsAltRepo->newBatch()) {}
 
   void clear() { payloadsAltBatch->clear(); }
 
   void savePayloads(const Payloads& payloads) {
-    payloadsAltBatch->put(payloads.alt.containing.getHash(), payloads);
+    auto hash = payloads.alt.containing.getHash();
+    payloadsAltBatch->put(Slice<const uint8_t>(hash.data(), hash.size()),
+                          payloads);
   }
 
   void removePayloads(const Payloads& payloads) {
-    payloadsAltBatch->removeByHash(payloads.alt.containing.getHash());
+    auto hash = payloads.alt.containing.getHash();
+    payloadsAltBatch->removeByHash(
+        Slice<const uint8_t>(hash.data(), hash.size()));
   }
 
  private:
-  std::unique_ptr<PayloadsWriteBatch<AltBlock, Payloads>> payloadsAltBatch;
+  std::unique_ptr<PayloadsWriteBatch> payloadsAltBatch;
 
   void commit() { payloadsAltBatch->commit(); }
 };
@@ -57,8 +60,7 @@ class StateManager {
   RepositoryManager database;
 
  public:
-  StateManager(const std::string& dbPath)
-      : database(dbPath) {
+  StateManager(const std::string& dbPath) : database(dbPath) {
     database.open();
   }
 
@@ -85,9 +87,7 @@ class StateManager {
     return database.getVbkRepo()->newCursor();
   }
 
-  RepositoryManager& getManager() {
-    return database;
-  }
+  RepositoryManager& getManager() { return database; }
 };
 
 }  // namespace altintegration

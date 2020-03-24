@@ -27,11 +27,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams>,
   ~VbkBlockTree() override = default;
 
   VbkBlockTree(const VbkChainParams& vbkp,
-               const BtcChainParams& btcp,
+               const BtcTree& btc,
                const EndorsementRepository<BtcEndorsement>& e,
                const PayloadsRepository& p)
-      : VbkTree(vbkp),
-        VbkPopForkResolutionComparator(*this, e, p, btcp, vbkp) {}
+      : VbkTree(vbkp), VbkPopForkResolutionComparator(*this, e, p, btc, vbkp) {}
 
   BtcTree& btc() { return this->getProtectingBlockTree(); }
   const BtcTree& btc() const { return this->getProtectingBlockTree(); }

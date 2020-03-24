@@ -415,9 +415,9 @@ struct PopAwareForkResolutionComparator {
   PopAwareForkResolutionComparator(const ProtectedBlockTree& protectedTree,
                                    const EndorsementRepository<EndorsementT>& e,
                                    const PayloadsRepository& payloadsRepository,
-                                   const protecting_params_t& protectingParams,
+                                   const ProtectingBlockTree& protectingTree,
                                    const protected_params_t& protectedParams)
-      : tree_(protectingParams),
+      : tree_(protectingTree),
         protectedTree_(protectedTree),
         config_(protectedParams),
         e_(e),

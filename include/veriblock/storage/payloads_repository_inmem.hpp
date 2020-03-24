@@ -8,20 +8,18 @@
 
 namespace altintegration {
 
-template <typename Block, typename Payloads>
 struct PayloadsCursorInmem
-    : public Cursor<typename Block::hash_t,
-                    typename PayloadsRepository<Block, Payloads>::
-                        stored_payloads_container_t> {
-  //! block type
-  using block_t = Block;
+    : public Cursor<typename PayloadsRepository::hash_t,
+                    typename PayloadsRepository::stored_payloads_container_t> {
   //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! stored payloads container
+  using stored_payloads_t = typename PayloadsRepository::stored_payloads_t;
+  //! stored payloads container type
   using stored_payloads_container_t =
-      typename PayloadsRepository<Block, Payloads>::stored_payloads_container_t;
+      typename PayloadsRepository::stored_payloads_container_t;
+  //! hash type
+  using hash_t = typename PayloadsRepository::hash_t;
+  //! iterator type
+  using cursor_t = Cursor<hash_t, stored_payloads_container_t>;
 
   using umap =
       std::unordered_map<hash_t, std::unordered_set<stored_payloads_t>>;
@@ -87,19 +85,18 @@ struct PayloadsCursorInmem
   typename std::vector<pair>::const_iterator _it;
 };
 
-template <typename Block, typename Payloads>
 struct PayloadsRepositoryInmem;
 
-template <typename Block, typename Payloads>
-struct PayloadsWriteBatchInmem : public PayloadsWriteBatch<Block, Payloads> {
-  //! block type
-  using block_t = Block;
+struct PayloadsWriteBatchInmem : public PayloadsWriteBatch {
   //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
+  using stored_payloads_t = typename PayloadsRepository::stored_payloads_t;
+  //! stored payloads container type
+  using stored_payloads_container_t =
+      typename PayloadsRepository::stored_payloads_container_t;
+  //! hash type
+  using hash_t = typename PayloadsRepository::hash_t;
+  //! iterator type
+  using cursor_t = Cursor<hash_t, stored_payloads_container_t>;
 
   using pair = std::pair<hash_t, stored_payloads_t>;
 
@@ -107,9 +104,7 @@ struct PayloadsWriteBatchInmem : public PayloadsWriteBatch<Block, Payloads> {
 
   ~PayloadsWriteBatchInmem() override = default;
 
-  PayloadsWriteBatchInmem(
-      PayloadsRepositoryInmem<block_t, stored_payloads_t>* repo)
-      : _repo(repo) {}
+  PayloadsWriteBatchInmem(PayloadsRepositoryInmem* repo) : _repo(repo) {}
 
   void put(const hash_t& hash, const stored_payloads_t& payloads) override {
     _ops.push_back(Operation::PUT);
@@ -132,14 +127,12 @@ struct PayloadsWriteBatchInmem : public PayloadsWriteBatch<Block, Payloads> {
     auto removes_begin = this->_removes.begin();
     for (const auto& op : this->_ops) {
       switch (op) {
-        case PayloadsWriteBatchInmem<block_t,
-                                     stored_payloads_t>::Operation::PUT: {
+        case PayloadsWriteBatchInmem::Operation::PUT: {
           _repo->put(puts_begin->first, puts_begin->second);
           ++puts_begin;
           break;
         }
-        case PayloadsWriteBatchInmem<block_t, stored_payloads_t>::Operation::
-            REMOVE_BY_HASH: {
+        case PayloadsWriteBatchInmem::Operation::REMOVE_BY_HASH: {
           _repo->removeByHash(*removes_begin++);
           break;
         }
@@ -152,24 +145,20 @@ struct PayloadsWriteBatchInmem : public PayloadsWriteBatch<Block, Payloads> {
   }
 
  private:
-  PayloadsRepositoryInmem<block_t, stored_payloads_t>* _repo;
+  PayloadsRepositoryInmem* _repo;
   std::vector<pair> _puts;
   std::vector<hash_t> _removes;
   std::vector<Operation> _ops;
 };
 
-template <typename Block, typename Payloads>
-struct PayloadsRepositoryInmem : public PayloadsRepository<Block, Payloads> {
-  //! block type
-  using block_t = Block;
+struct PayloadsRepositoryInmem : public PayloadsRepository {
   //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
+  using stored_payloads_t = typename PayloadsRepository::stored_payloads_t;
   //! stored payloads container type
-  using stored_payloads_container_t = std::vector<stored_payloads_t>;
+  using stored_payloads_container_t =
+      typename PayloadsRepository::stored_payloads_container_t;
+  //! hash type
+  using hash_t = typename PayloadsRepository::hash_t;
   //! iterator type
   using cursor_t = Cursor<hash_t, stored_payloads_container_t>;
 
@@ -193,20 +182,19 @@ struct PayloadsRepositoryInmem : public PayloadsRepository<Block, Payloads> {
 
   void clear() override { payloads_rep_.clear(); }
 
-  std::unique_ptr<PayloadsWriteBatch<block_t, stored_payloads_t>> newBatch()
-      override {
-    return std::unique_ptr<PayloadsWriteBatchInmem<block_t, stored_payloads_t>>(
-        new PayloadsWriteBatchInmem<block_t, stored_payloads_t>(this));
+  std::unique_ptr<PayloadsWriteBatch> newBatch() override {
+    return std::unique_ptr<PayloadsWriteBatchInmem>(
+        new PayloadsWriteBatchInmem(this));
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
-    return std::make_shared<PayloadsCursorInmem<block_t, stored_payloads_t>>(
-        payloads_rep_);
+    return std::make_shared<PayloadsCursorInmem>(payloads_rep_);
   }
 
  private:
   // [block hash] => [set payloads]
-  std::unordered_map<hash_t, std::unordered_set<stored_payloads_t>>
+  std::unordered_map<Slice<const uint8_t>,
+                     std::unordered_set<stored_payloads_t>>
       payloads_rep_;
 };
 

@@ -19,20 +19,18 @@ namespace altintegration {
 //! column family type
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
-template <typename Block, typename Payloads>
 struct PayloadsCursorRocks
-    : public Cursor<typename Block::hash_t,
-                    typename PayloadsRepository<Block, Payloads>::
-                        stored_payloads_container_t> {
-  //! block type
-  using block_t = Block;
+    : public Cursor<typename PayloadsRepository::hash_t,
+                    typename PayloadsRepository::stored_payloads_container_t> {
   //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! stored payloads container
+  using stored_payloads_t = typename PayloadsRepository::stored_payloads_t;
+  //! stored payloads container type
   using stored_payloads_container_t =
-      typename PayloadsRepository<Block, Payloads>::stored_payloads_container_t;
+      typename PayloadsRepository::stored_payloads_container_t;
+  //! hash type
+  using hash_t = typename PayloadsRepository::hash_t;
+  //! iterator type
+  using cursor_t = Cursor<hash_t, stored_payloads_container_t>;
 
   PayloadsCursorRocks(std::shared_ptr<rocksdb::DB> db,
                       const std::shared_ptr<cf_handle_t>& payloadsHandle)
@@ -88,19 +86,18 @@ struct PayloadsCursorRocks
   std::unique_ptr<rocksdb::Iterator> _iterator;
 };
 
-template <typename Block, typename Payloads>
 struct PayloadsRepositoryRocks;
 
-template <typename Block, typename Payloads>
-struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Block, Payloads> {
-  //! block type
-  using block_t = Block;
+struct PayloadsWriteBatchRocks : public PayloadsWriteBatch {
   //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
+  using stored_payloads_t = typename PayloadsRepository::stored_payloads_t;
+  //! stored payloads container type
+  using stored_payloads_container_t =
+      typename PayloadsRepository::stored_payloads_container_t;
+  //! hash type
+  using hash_t = typename PayloadsRepository::hash_t;
+  //! iterator type
+  using cursor_t = Cursor<hash_t, stored_payloads_container_t>;
 
   using pair = std::pair<hash_t, stored_payloads_t>;
 
@@ -108,9 +105,7 @@ struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Block, Payloads> {
 
   ~PayloadsWriteBatchRocks() override = default;
 
-  PayloadsWriteBatchRocks(
-      PayloadsRepositoryRocks<block_t, stored_payloads_t>* repo)
-      : _repo(repo) {}
+  PayloadsWriteBatchRocks(PayloadsRepositoryRocks* repo) : _repo(repo) {}
 
   void put(const hash_t& hash, const stored_payloads_t& payloads) override {
     _ops.push_back(Operation::PUT);
@@ -133,14 +128,12 @@ struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Block, Payloads> {
     auto removes_begin = this->_removes.begin();
     for (const auto& op : this->_ops) {
       switch (op) {
-        case PayloadsWriteBatchRocks<block_t,
-                                     stored_payloads_t>::Operation::PUT: {
+        case PayloadsWriteBatchRocks::Operation::PUT: {
           _repo->put(puts_begin->first, puts_begin->second);
           ++puts_begin;
           break;
         }
-        case PayloadsWriteBatchRocks<block_t, stored_payloads_t>::Operation::
-            REMOVE_BY_HASH: {
+        case PayloadsWriteBatchRocks::Operation::REMOVE_BY_HASH: {
           _repo->removeByHash(*removes_begin++);
           break;
         }
@@ -153,24 +146,20 @@ struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Block, Payloads> {
   }
 
  private:
-  PayloadsRepositoryRocks<block_t, stored_payloads_t>* _repo;
+  PayloadsRepositoryRocks* _repo;
   std::vector<pair> _puts;
   std::vector<hash_t> _removes;
   std::vector<Operation> _ops;
 };
 
-template <typename Block, typename Payloads>
-struct PayloadsRepositoryRocks : public PayloadsRepository<Block, Payloads> {
-  //! block type
-  using block_t = Block;
+struct PayloadsRepositoryRocks : public PayloadsRepository {
   //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
+  using stored_payloads_t = typename PayloadsRepository::stored_payloads_t;
   //! stored payloads container type
-  using stored_payloads_container_t = std::vector<stored_payloads_t>;
+  using stored_payloads_container_t =
+      typename PayloadsRepository::stored_payloads_container_t;
+  //! hash type
+  using hash_t = typename PayloadsRepository::hash_t;
   //! iterator type
   using cursor_t = Cursor<hash_t, stored_payloads_container_t>;
 
@@ -263,15 +252,13 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Block, Payloads> {
     return;
   }
 
-  std::unique_ptr<PayloadsWriteBatch<block_t, stored_payloads_t>> newBatch()
-      override {
-    return std::unique_ptr<PayloadsWriteBatchRocks<block_t, stored_payloads_t>>(
-        new PayloadsWriteBatchRocks<block_t, stored_payloads_t>(this));
+  std::unique_ptr<PayloadsWriteBatch> newBatch() override {
+    return std::unique_ptr<PayloadsWriteBatchRocks>(
+        new PayloadsWriteBatchRocks(this));
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
-    return std::make_shared<PayloadsCursorRocks<block_t, stored_payloads_t>>(
-        _db, _payloadsHandle);
+    return std::make_shared<PayloadsCursorRocks>(_db, _payloadsHandle);
   }
 
  private:

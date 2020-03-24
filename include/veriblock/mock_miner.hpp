@@ -14,6 +14,7 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
 #include "veriblock/storage/endorsement_repository_inmem.hpp"
+#include "veriblock/storage/payloads_repository_inmem.hpp"
 
 namespace altintegration {
 
@@ -47,6 +48,9 @@ class MockMiner {
 
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce_;
 
+  std::shared_ptr<PayloadsRepository> paylaodsRep =
+      std::make_shared<PayloadsRepositoryInmem>();
+
  public:
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
   ATV generateValidATV(const PublicationData& publicationData,
@@ -70,8 +74,8 @@ class MockMiner {
     btc_blockchain = std::make_shared<btc_block_tree>(*btc_params);
 
     vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(*vbk_params);
-    vbk_blockchain =
-        std::make_shared<vbk_block_tree>(*btc_blockchain, btce_, *vbk_params);
+    vbk_blockchain = std::make_shared<vbk_block_tree>(
+        *vbk_params, *btc_blockchain, *btce_, *paylaodsRep);
   }
 
   Publications mine(const PublicationData& publicationData,

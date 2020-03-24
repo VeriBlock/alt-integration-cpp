@@ -46,9 +46,8 @@ struct AltTree : private AltPopForkResolutionComparator {
   AltTree(const EndorsementRepository<VbkEndorsement>& e,
           const PayloadsRepository& p,
           const AltChainParams& altp,
-          const VbkChainParams& vbkp)
-      : AltPopForkResolutionComparator(*this, e, p, vbkp, altp),
-        config_(altp) {}
+          const VbkTree& vbk)
+      : AltPopForkResolutionComparator(*this, e, p, vbk, altp), config_(altp) {}
 
   BtcTree& btc() { return this->getProtectingBlockTree().btc(); }
   const BtcTree& btc() const { return this->getProtectingBlockTree().btc(); }
