@@ -82,7 +82,6 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
 }
 
 std::vector<PopRewardPayout> PopRewards::calculatePayouts(
-    uint32_t height,
     const AltBlock& endorsedBlock,
     PopRewardsBigDecimal popDifficulty) {
 
@@ -102,7 +101,7 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
     int relativeHeight = veriBlockHeight - bestPublication;
     assert(relativeHeight >= 0);
     auto minerReward = calculator_.calculateRewardForMiner(
-        height, relativeHeight, blockScore, popDifficulty);
+        endorsedBlock.height, relativeHeight, blockScore, popDifficulty);
 
     PopRewardPayout reward{};
     reward.reward = minerReward.getIntegerFraction();

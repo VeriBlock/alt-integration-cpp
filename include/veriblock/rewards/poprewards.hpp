@@ -30,19 +30,33 @@ struct PopRewards {
   virtual ~PopRewards(){};
 
   /**
+   * Collect all endorsements for the endorsedBlock and calculate
+   * POP score
+   * @param endorsedBlock calculate score for this block
+   * @return PopRewardsBigDecimal resulting score
    */
   virtual PopRewardsBigDecimal scoreFromEndorsements(
       const AltBlock& endorsedBlock);
 
   /**
+   * Calculate POP difficulty using a list of blocks.
+   * Should provide at least rewardSettlementInterval blocks.
+   * Will use first blocks (usually difficultyAveragingInterval blocks)
+   * to calculate their scores and average them to get difficulty.
+   * @param blocks calculate difficulty using these blocks
+   * @return PopRewardsBigDecimal resulting difficulty
    */
   virtual PopRewardsBigDecimal calculateDifficulty(
       const std::vector<AltBlock>& blocks);
 
   /**
+   * Calculate POP rewards for miners. Rewards are calculated for
+   * a given block.
+   * @param endorsedBlock altchain block for which the reward is being paid
+   * @param popDifficulty current POP difficulty. See calculateDifficulty for reference.
+   * @return std::vector<PopRewardPayout> a list of payouts
    */
   virtual std::vector<PopRewardPayout> calculatePayouts(
-      uint32_t height,
       const AltBlock& endorsedBlock,
       PopRewardsBigDecimal popDifficulty);
 
