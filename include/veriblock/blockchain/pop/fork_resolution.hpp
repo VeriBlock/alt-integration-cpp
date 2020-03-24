@@ -1,6 +1,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_FORK_RESOLUTION_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_FORK_RESOLUTION_HPP_
 
+#include <functional>
 #include <memory>
 #include <set>
 #include <vector>
@@ -181,21 +182,85 @@ int comparePopScore(const std::vector<KeystoneContext>& chainA,
 
   return chainAscore - chainBscore;
 }
+
+template <typename FIN, typename FOUT, typename Arg0>
+inline FOUT not_fn(FIN&& f) {
+  return [&](Arg0&& arg) { return !f(std::forward<Arg0>(arg)); };
+}
+
+template <typename Vector, typename Func>
+inline void filter_if(Vector& v, Func& func) {
+  v.erase(std::remove_if(v.begin(), v.end(), not_fn(std::forward<Func>(func))),
+          v.end());
+}
+
 }  // namespace
 
-template <typename ConfigType>
+template <typename ProtectedBlockTree,
+          typename ProtectingBlockTree,
+          typename EndorsementT>
 struct ComparePopScore {
-  explicit ComparePopScore(const ConfigType& config) : config_(config) {
+  using protected_params_t = typename ProtectedBlockTree::params_t;
+  using protected_block_t = typename ProtectedBlockTree::block_t;
+  using protecting_params_t = typename ProtectingBlockTree::params_t;
+  using protected_index_t = typename ProtectedBlockTree::index_t;
+  using protecting_index_t = typename ProtectingBlockTree::index_t;
+
+  explicit ComparePopScore(const ProtectedBlockTree& ed,
+                           const ProtectingBlockTree& ing,
+                           const EndorsementRepository<EndorsementT>& e,
+                           const protected_params_t& config)
+      : protecting_(ing), protected_(ed), e_(e), config_(config) {
     assert(config.getKeystoneInterval() > 0);
   }
 
-  int operator()(const std::vector<KeystoneContext>& chainA,
-                 const std::vector<KeystoneContext>& chainB) {
+  int operator()(const Chain<protected_index_t>& chainA,
+                 const Chain<protected_index_t>& chainB) {
+    assert(chainA.first() != nullptr && chainA.first() == chainB.first());
+
+    auto getValidEndorsements =
+        [&](const protected_index_t& index) -> std::vector<EndorsementT> {
+      // all endorsements of block 'index'
+      auto allEndorsements = e_.get(index->getHash());
+
+      // efficiently remove endorsements that do not belong to active
+      // protect(ing/ed) chains
+      allEndorsements.erase(std::remove_if(
+          allEndorsements.begin(),
+          allEndorsements.end(),
+          [&](const EndorsementT& e) {
+            // 1. check that containing block is on best chain.
+            auto* edindex = protected_.getBlockIndex(e.containing);
+
+            // 2. check that blockOfProof is still on best chain.
+            auto* ingindex = protected_.getBlockIndex(e.blockOfProof);
+
+            // endorsed block is guaranteed to be ancestor of containing block
+            // therefore, do not do check here
+            return (chainA.contains(edindex) || chainB.contains(edindex)) &&
+                   protecting_.getBestChain().contains(ingindex);
+          },
+          allEndorsements.end()));
+    };
+
+    /// filter chainA
+    auto pkcChain1 = getProtoKeystoneContext(
+        chainA, protecting_, config_, getValidEndorsements);
+    auto kcChain1 = getKeystoneContext(pkcChain1, protecting_);
+
+    /// filter chainB
+    auto pkcChain2 = getProtoKeystoneContext(
+        chainB, protecting_, config_, getValidEndorsements);
+    auto kcChain2 = getKeystoneContext(pkcChain2, protecting_);
+
     return comparePopScore(chainA, chainB, config_);
   }
 
  private:
-  const ConfigType& config_;
+  const ProtectingBlockTree& protecting_;
+  const ProtectedBlockTree& protected_;
+  const EndorsementRepository<EndorsementT>& e_;
+  const protected_params_t& config_;
 };
 
 template <typename ProtectingBlockT, typename ProtectingChainParams>
@@ -265,8 +330,9 @@ template <typename EndorsedBlockType,
 std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
     const Chain<BlockIndex<EndorsedBlockType>>& chain,
     const BlockTree<EndorsementBlockType, EndorsementChainParams>& tree,
-    EndorsementRepository<EndorsementType>& repo,
-    const ConfigType& config) {
+    const ConfigType& config,
+    std::function<std::vector<EndorsementType>(
+        const BlockIndex<EndorsedBlockType>&)> getEndorsements) {
   std::vector<ProtoKeystoneContext<EndorsementBlockType>> ret;
   auto* tip = chain.tip();
   if (tip == nullptr) {
@@ -300,13 +366,12 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
       // chain must contain relevantEndorsedBlock
       assert(index != nullptr);
 
-      // get all endorsements of this block
-      // TODO: get all endorsements that belong to the chain
-
-//      for (const auto& e : endorsements) {
-//        auto* ind = tree.getBlockIndex(e.blockOfProof);
-//        pkc.referencedByBlocks.insert(ind);
-//      }
+      // get all endorsements of this block that are on the same chain as that
+      // block
+      for (const auto& e : getEndorsements(*index)) {
+        auto* ind = tree.getBlockIndex(e.blockOfProof);
+        pkc.referencedByBlocks.insert(ind);
+      }
     }
 
     ret.push_back(std::move(pkc));

@@ -111,8 +111,7 @@ struct EndorsementRepositoryInmem : public EndorsementRepository<Endorsement> {
   }
 
   void put(const container_t& container) override {
-    auto e = Endorsement::fromContainer(container);
-    put(e);
+    put(Endorsement::fromContainer(container));
   }
 
   void put(const endorsement_t& e) override { e_[e.endorsedHash][e.id] = e; }

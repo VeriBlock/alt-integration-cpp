@@ -211,6 +211,12 @@ bool AltTree::unapplyAndApply(PopManager& pop,
   return apply(pop, popState, to, state);
 }
 
+int AltTree::compareTwoBranches(const Chain<BlockIndex<AltBlock>>& chain1,
+                                const Chain<BlockIndex<AltBlock>>& chain2) {
+  // TODO: find fork point, create 2 subchains and call compare_(subchain1, subchain2);
+  return 0;
+}
+
 // void AltTree::invalidateBlockByHash(const AltTree::hash_t& hash) {
 //  Chain<index_t> chain(config_.getBootstrapBlock().height, popState_);
 //  auto* index = getBlockIndex(hash);

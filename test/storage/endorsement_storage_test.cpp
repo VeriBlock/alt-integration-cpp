@@ -184,7 +184,8 @@ TYPED_TEST_P(EndorsementRepositoryTest, Basic) {
       Basic::endorsement_t::fromContainer(modifiedContainer);
 
   std::vector<typename Basic::endorsement_t> endorsements =
-      this->endorsementRepo->get(expectedEndorsement1.endorsedHash);
+      this->endorsementRepo->getByEndorsedBlockHash(
+          expectedEndorsement1.endorsedHash);
 
   EXPECT_EQ(endorsements.size(), 2);
 
@@ -205,7 +206,8 @@ TYPED_TEST_P(EndorsementRepositoryTest, Basic) {
   EXPECT_EQ(expectedEndorsement2.id, endorsements[1].id);
 
   this->endorsementRepo->remove(expectedEndorsement2.id);
-  endorsements = this->endorsementRepo->get(expectedEndorsement1.endorsedHash);
+  endorsements = this->endorsementRepo->getByEndorsedBlockHash(
+      expectedEndorsement1.endorsedHash);
 
   EXPECT_EQ(endorsements.size(), 1);
 
@@ -216,7 +218,8 @@ TYPED_TEST_P(EndorsementRepositoryTest, Basic) {
   EXPECT_EQ(expectedEndorsement1.id, endorsements[0].id);
 
   this->endorsementRepo->remove(defaultContainer);
-  endorsements = this->endorsementRepo->get(expectedEndorsement1.endorsedHash);
+  endorsements = this->endorsementRepo->getByEndorsedBlockHash(
+      expectedEndorsement1.endorsedHash);
 
   EXPECT_EQ(endorsements.size(), 0);
 }

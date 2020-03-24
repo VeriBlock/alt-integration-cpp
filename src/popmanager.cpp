@@ -131,13 +131,17 @@ bool PopManager::hasUncommittedChanges() const noexcept {
 
 int PopManager::compareTwoBranches(const Chain<BlockIndex<AltBlock>>& chain1,
                                    const Chain<BlockIndex<AltBlock>>& chain2) {
-  // TODO: change endorsement repo to VBK endorsement repo (now BTC endorsement repo)
   auto pkcChain1 = getProtoKeystoneContext(
-      chain1, vbk_, vbk_.getEndorsementRepo(), altparam_);
+      chain1,
+      vbk_,
+      altparam_,
+      [](const BlockIndex<AltBlock>& index) -> std::vector<VbkEndorsement> {
+        (void)index;
+        return {};
+      });
   auto kcChain1 = getKeystoneContext(pkcChain1, vbk_);
 
-  auto pkcChain2 = getProtoKeystoneContext(
-      chain2, vbk_, vbk_.getEndorsementRepo(), altparam_);
+  auto pkcChain2 = getProtoKeystoneContext(chain2, vbk_, altparam_, []() {});
   auto kcChain2 = getKeystoneContext(pkcChain2, vbk_);
 
   return altChainCompare_(kcChain1, kcChain2);

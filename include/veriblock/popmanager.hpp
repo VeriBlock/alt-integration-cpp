@@ -28,8 +28,7 @@ struct PopManager {
         btcparam_(btcp),
         vbkparam_(vbkp),
         btc_(btc),
-        vbk_(vbk),
-        altChainCompare_(altp) {}
+        vbk_(vbk) {}
 
   BtcTree& btc() { return btc_; }
   VbkTree& vbk() { return vbk_; }
@@ -65,18 +64,6 @@ struct PopManager {
   /// commit currently uncommitted payloads
   void commit();
 
-  /**
-   * Determine the best chain of the AltBlocks in accordance with the VeriBlock
-   * forkresolution rules
-   * @param AltBlock chain1, AltBlock chain2
-   * @return '> 0' number if chain1 is better, '< 0' number if chain2 is better,
-   * '0' if they are the same
-   * @note chain1 and chain2 are being consindered as forks not a full chains
-   * from the genesis block, they should start at the common block
-   */
-  int compareTwoBranches(const Chain<BlockIndex<AltBlock>>& chain1,
-                         const Chain<BlockIndex<AltBlock>>& chain2);
-
  private:
   // vector of payloads that have been added to current state,
   // but not committed
@@ -88,8 +75,6 @@ struct PopManager {
 
   BtcTree& btc_;
   VbkTree& vbk_;
-
-  ComparePopScore<AltChainParams> altChainCompare_;
 
   bool addVTB(const VTB& vtb, ValidationState& state);
   bool addAltProof(const AltProof& payloads, ValidationState& state);
