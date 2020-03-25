@@ -8,8 +8,7 @@
 namespace altintegration {
 
 template <typename Payloads>
-struct PayloadsCursorInmem
-    : public Cursor<typename Payloads::id_t, typename Payloads> {
+struct PayloadsCursorInmem : public Cursor<typename Payloads::id_t, Payloads> {
   //! stored payloads type
   using stored_payloads_t = Payloads;
   //! payloads id type
