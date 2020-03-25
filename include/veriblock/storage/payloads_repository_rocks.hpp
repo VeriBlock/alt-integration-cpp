@@ -12,6 +12,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/storage/db_error.hpp"
 #include "veriblock/storage/payloads_repository.hpp"
+#include "veriblock/storage/rocks_util.hpp"
 
 namespace altintegration {
 
@@ -36,8 +37,7 @@ struct PayloadsCursorRocks : public Cursor<typename Payloads::id_t, Payloads> {
 
   void seekToFirst() override { _iterator->SeekToFirst(); }
   void seek(const payloads_id& key) override {
-    std::string id(reinterpret_cast<const char*>(key.data()), key.size());
-    _iterator->Seek(id);
+    _iterator->Seek(makeRocksSlice(key));
   }
   void seekToLast() override { _iterator->SeekToLast(); }
   bool isValid() const override { return _iterator->Valid(); }
@@ -89,11 +89,9 @@ struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Payloads> {
     auto id = payloads.getId();
     auto payloadsBytes = payloads.toVbkEncoding();
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
-    rocksdb::Slice value(reinterpret_cast<const char*>(payloadsBytes.data()),
-                         payloadsBytes.size());
-
-    s = _batch.Put(_payloadsHandle.get(), key, value);
+    s = _batch.Put(_payloadsHandle.get(),
+                   makeRocksSlice(id),
+                   makeRocksSlice(payloadsBytes));
 
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
@@ -101,8 +99,8 @@ struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Payloads> {
   }
 
   void removeByHash(const payloads_id& id) override {
-    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
-    rocksdb::Status s = _batch.Delete(_payloadsHandle.get(), key);
+    rocksdb::Status s =
+        _batch.Delete(_payloadsHandle.get(), makeRocksSlice(id));
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
@@ -149,11 +147,10 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
     auto id = payloads.getId();
     auto payloadsBytes = payloads.toVbkEncoding();
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
-    rocksdb::Slice value(reinterpret_cast<const char*>(payloadsBytes.data()),
-                         payloadsBytes.size());
-
-    s = _db->Put(write_options, _payloadsHandle.get(), key, value);
+    s = _db->Put(write_options,
+                 _payloadsHandle.get(),
+                 makeRocksSlice(id),
+                 makeRocksSlice(payloadsBytes));
 
     if (!s.ok()) {
       throw db::DbError(s.ToString());
@@ -165,9 +162,10 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
 
     std::string valueOut{};
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
-
-    s = _db->Get(rocksdb::ReadOptions(), _payloadsHandle.get(), key, &valueOut);
+    s = _db->Get(rocksdb::ReadOptions(),
+                 _payloadsHandle.get(),
+                 makeRocksSlice(id),
+                 &valueOut);
 
     if (!s.ok()) {
       if (s.IsNotFound()) {
@@ -189,8 +187,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
     std::vector<std::string> valuesOut(ids.size());
 
     for (size_t i = 0; i < ids.size(); ++i) {
-      keys[i] = rocksdb::Slice(reinterpret_cast<const char*>(ids[i].data()),
-                               ids[i].size());
+      keys[i] = makeRocksSlice(ids[i]);
     }
     std::vector<cf_handle_t*> cfs(ids.size(), _payloadsHandle.get());
     std::vector<rocksdb::Status> statuses =
@@ -218,9 +215,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
     write_options.disableWAL = true;
     rocksdb::Status s;
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
-
-    s = _db->Delete(write_options, _payloadsHandle.get(), key);
+    s = _db->Delete(write_options, _payloadsHandle.get(), makeRocksSlice(id));
 
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());

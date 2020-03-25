@@ -13,12 +13,12 @@
 
 namespace altintegration {
 
-struct PaylaodsBlob;
+struct DummyPayloads;
 
 struct BtcBlock {
   using hash_t = uint256;
   using height_t = int32_t;
-  using payloads_t = PaylaodsBlob;
+  using payloads_t = DummyPayloads;
 
   //! noop type
   using endorsement_t = std::false_type;

@@ -102,7 +102,7 @@ struct AltPayloads {
   }
 };
 
-struct PaylaodsBlob {
+struct DummyPayloads {
   using id_t = bool;
 
   id_t getId() const { return true; }

@@ -9,6 +9,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/storage/block_repository.hpp"
 #include "veriblock/storage/db_error.hpp"
+#include "veriblock/storage/rocks_util.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {
@@ -33,9 +34,7 @@ struct BlockCursorRocks : public Cursor<typename Block::hash_t, Block> {
 
   void seekToFirst() override { _iterator->SeekToFirst(); }
   void seek(const hash_t& key) override {
-    std::string blockHash(reinterpret_cast<const char*>(key.data()),
-                          key.size());
-    _iterator->Seek(blockHash);
+    _iterator->Seek(makeRocksSlice(key));
   }
   void seekToLast() override { _iterator->SeekToLast(); }
   bool isValid() const override { return _iterator->Valid(); }
@@ -80,20 +79,17 @@ struct BlockWriteBatchRocks : public BlockWriteBatch<Block> {
     auto blockHash = block.getHash();
     auto blockBytes = block.toRaw();
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(blockHash.data()),
-                       blockHash.size());
-    rocksdb::Slice val(reinterpret_cast<const char*>(blockBytes.data()),
-                       blockBytes.size());
-    rocksdb::Status s = _batch.Put(_hashBlockHandle.get(), key, val);
+    rocksdb::Status s = _batch.Put(_hashBlockHandle.get(),
+                                   makeRocksSlice(blockHash),
+                                   makeRocksSlice(blockBytes));
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
   }
 
   void removeByHash(const hash_t& hash) override {
-    rocksdb::Slice blockHash(reinterpret_cast<const char*>(hash.data()),
-                             hash.size());
-    rocksdb::Status s = _batch.Delete(_hashBlockHandle.get(), blockHash);
+    rocksdb::Status s =
+        _batch.Delete(_hashBlockHandle.get(), makeRocksSlice(hash));
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
@@ -143,15 +139,12 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     auto blockHash = block.getHash();
     auto blockBytes = block.toRaw();
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(blockHash.data()),
-                       blockHash.size());
-    rocksdb::Slice val(reinterpret_cast<const char*>(blockBytes.data()),
-                       blockBytes.size());
-
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
-    rocksdb::Status s =
-        _db->Put(write_options, _hashBlockHandle.get(), key, val);
+    rocksdb::Status s = _db->Put(write_options,
+                                 _hashBlockHandle.get(),
+                                 makeRocksSlice(blockHash),
+                                 makeRocksSlice(blockBytes));
     if (!s.ok()) {
       throw db::DbError(s.ToString());
     }
@@ -159,11 +152,11 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   bool getByHash(const hash_t& hash, stored_block_t* out) const override {
-    std::string blockHash(reinterpret_cast<const char*>(hash.data()),
-                          hash.size());
     std::string dbValue{};
-    rocksdb::Status s = _db->Get(
-        rocksdb::ReadOptions(), _hashBlockHandle.get(), blockHash, &dbValue);
+    rocksdb::Status s = _db->Get(rocksdb::ReadOptions(),
+                                 _hashBlockHandle.get(),
+                                 makeRocksSlice(hash),
+                                 &dbValue);
     if (!s.ok()) {
       if (s.IsNotFound()) return false;
       throw db::DbError(s.ToString());
@@ -195,13 +188,10 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     bool existing = getByHash(hash, &outBlock);
     if (!existing) return false;
 
-    std::string blockHash(reinterpret_cast<const char*>(hash.data()),
-                          hash.size());
-
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
-    rocksdb::Status s =
-        _db->Delete(write_options, _hashBlockHandle.get(), blockHash);
+    rocksdb::Status s = _db->Delete(
+        write_options, _hashBlockHandle.get(), makeRocksSlice(hash));
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
