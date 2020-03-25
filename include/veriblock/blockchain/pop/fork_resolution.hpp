@@ -7,7 +7,7 @@
 #include <vector>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blocktree.hpp>
-#include <veriblock/blockchain/pop/state_machine.hpp>
+#include <veriblock/blockchain/pop/pop_state_machine.hpp>
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
@@ -325,7 +325,7 @@ struct PopAwareForkResolutionComparator {
   using protecting_index_t = typename ProtectingBlockTree::index_t;
   using protected_payloads_t = typename protected_index_t::payloads_t;
   using protected_payloads_id_t = typename protected_payloads_t::id_t;
-  using sm_t = BlockTreeStateMachine<ProtectingBlockTree,
+  using sm_t = PopStateMachine<ProtectingBlockTree,
                                      BlockIndex<ProtectedBlock>,
                                      protected_params_t>;
 
@@ -343,7 +343,7 @@ struct PopAwareForkResolutionComparator {
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
 
-  //! @invariant: atomic
+  //! @invariant: atomic. If returns false, does not change internal state.
   bool setState(protected_index_t& index, ValidationState& state) {
     // if previous state is unknown, set new state as current
     if (!index_) {
@@ -352,9 +352,10 @@ struct PopAwareForkResolutionComparator {
     }
 
     auto temp = tree_;
-    sm_t sm(temp, index_, protectedParams_, p_, 0);
+    sm_t sm(temp, index_, protectedParams_, p_);
     if (!sm.unapplyAndApply(index, state)) {
-      return false;
+      return state.addStackFunction(
+          "PopAwareForkResolutionComparator::setState");
     }
 
     tree_ = sm.tree();
@@ -375,7 +376,7 @@ struct PopAwareForkResolutionComparator {
 
     // make a tree copy
     auto temp = tree_;
-    sm_t sm(temp, sm.index(), protectedParams_, p_, chainA.first()->height);
+    sm_t sm(temp, index_, protectedParams_, p_, chainA.first()->height);
     // try set current state to chain A
     if (!sm.unapplyAndApply(*chainA.tip(), state)) {
       // failed - try set state to chain B
@@ -412,6 +413,8 @@ struct PopAwareForkResolutionComparator {
     /// filter chainB
     auto pkcChain2 = getProtoKeystoneContext(chainB, temp, protectedParams_);
     auto kcChain2 = getKeystoneContext(pkcChain2, temp);
+
+    // do not update current tree, just abandon 'temp' tree
 
     return comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, protectedParams_);

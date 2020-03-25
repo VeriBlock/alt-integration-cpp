@@ -350,11 +350,17 @@ struct BlockTree {
     if (currentBest.tip() == nullptr ||
         currentBest.tip()->chainWork < indexNew.chainWork) {
       auto prevTip = currentBest.tip();
-      currentBest.setTip(&indexNew);
+      setTip(currentBest, &indexNew);
       addForkCandidate(prevTip, &indexNew);
     } else {
       addForkCandidate(&indexNew, indexNew.pprev);
     }
+  }
+
+  // this method does not make sense on its own, but it is useful for derived
+  // classes - they may add additional functionality after new tip is set.
+  virtual void setTip(Chain<index_t>& currentBest, index_t& tip) {
+    currentBest.setTip(&tip);
   }
 };
 

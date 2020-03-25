@@ -32,10 +32,11 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     result = cmp_.comparePopScore(vbkCurrentSubchain, vbkOther);
   }
 
+  ValidationState state;
   if (result < 0) {
     // other chain won!
     auto prevTip = currentBest.tip();
-    currentBest.setTip(&indexNew);
+    setTip(currentBest, indexNew);
     return addForkCandidate(prevTip, &indexNew);
   } else if (result == 0) {
     // pop scores are equal. do PoW fork resolution
@@ -48,7 +49,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 }
 
 template <>
-bool BlockTreeStateMachine<VbkBlockTree::BtcTree,
+bool PopStateMachine<VbkBlockTree::BtcTree,
                            BlockIndex<VbkBlock>,
                            VbkChainParams>::addPayloads(const VTB& vtb,
                                                         ValidationState&
@@ -75,7 +76,7 @@ bool BlockTreeStateMachine<VbkBlockTree::BtcTree,
 }
 
 template <>
-void BlockTreeStateMachine<VbkBlockTree::BtcTree,
+void PopStateMachine<VbkBlockTree::BtcTree,
                            BlockIndex<VbkBlock>,
                            VbkChainParams>::removePayloads(const VTB& vtb) {
   auto& btc = tree();

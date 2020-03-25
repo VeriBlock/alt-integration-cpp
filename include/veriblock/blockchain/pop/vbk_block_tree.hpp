@@ -4,7 +4,7 @@
 #include <utility>
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/pop/fork_resolution.hpp>
-#include <veriblock/blockchain/pop/state_machine.hpp>
+#include <veriblock/blockchain/pop/pop_state_machine.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
@@ -56,16 +56,30 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
 
+  void setTip(Chain<index_t>& currentBest, index_t& tip) override {
+    currentBest.setTip(&tip);
+
+    ValidationState state;
+    bool ret = cmp_.setState(tip, state);
+    (void)ret;
+    assert(ret &&
+           "we validated payloads during fork resolution, but when we actually "
+           "changed chain, we found invalid payloads. This is logic error.");
+  }
+
   PopForkComparator cmp_;
 };
 
 template <>
-bool BlockTreeStateMachine<VbkBlockTree::BtcTree, BlockIndex<VbkBlock>, VbkChainParams>::
-    addPayloads(const VTB& payloads, ValidationState& state);
+bool PopStateMachine<VbkBlockTree::BtcTree,
+                           BlockIndex<VbkBlock>,
+                           VbkChainParams>::addPayloads(const VTB& payloads,
+                                                        ValidationState& state);
 
 template <>
-void BlockTreeStateMachine<VbkBlockTree::BtcTree, BlockIndex<VbkBlock>, VbkChainParams>::
-    removePayloads(const VTB& payloads);
+void PopStateMachine<VbkBlockTree::BtcTree,
+                           BlockIndex<VbkBlock>,
+                           VbkChainParams>::removePayloads(const VTB& payloads);
 
 }  // namespace altintegration
 

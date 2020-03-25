@@ -1,5 +1,5 @@
-#ifndef ALTINTEGRATION_STATE_MACHINE_HPP
-#define ALTINTEGRATION_STATE_MACHINE_HPP
+#ifndef ALTINTEGRATION_POP_STATE_MACHINE_HPP
+#define ALTINTEGRATION_POP_STATE_MACHINE_HPP
 
 #include <functional>
 #include <veriblock/blockchain/chain.hpp>
@@ -13,18 +13,18 @@ namespace altintegration {
 template <typename ProtectingBlockTree,
           typename ProtectedIndex,
           typename ProtectedChainParams>
-struct BlockTreeStateMachine {
+struct PopStateMachine {
   using payloads_t = typename ProtectedIndex::payloads_t;
   using height_t = typename ProtectedIndex::height_t;
   using get_payloads_f =
       std::function<std::vector<typename ProtectedIndex::payloads_t>(
           const ProtectedIndex& index)>;
 
-  BlockTreeStateMachine(ProtectingBlockTree& tree,
-                        ProtectedIndex* index,
-                        const ProtectedChainParams& protectedParams,
-                        const PayloadsRepository<payloads_t>& p,
-                        height_t startHeight = 0)
+  PopStateMachine(ProtectingBlockTree& tree,
+                  ProtectedIndex* index,
+                  const ProtectedChainParams& protectedParams,
+                  const PayloadsRepository<payloads_t>& p,
+                  height_t startHeight = 0)
       : index_(index),
         tree_(tree),
         protectedParams_(protectedParams),
@@ -70,7 +70,6 @@ struct BlockTreeStateMachine {
     // exclude fork point itself
     current = fork.next(current);
 
-    std::vector<payloads_t> applied;
     while (current) {
       for (const auto& payloads : getPayloads(*current)) {
         if (!addPayloads(tree_, payloads, state)) {
@@ -135,4 +134,4 @@ struct BlockTreeStateMachine {
 
 }  // namespace altintegration
 
-#endif  // ALTINTEGRATION_STATE_MACHINE_HPP
+#endif  // ALTINTEGRATION_POP_STATE_MACHINE_HPP
