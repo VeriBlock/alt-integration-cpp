@@ -51,7 +51,7 @@ struct PopManager {
    * @throws may throw if out of memory. In this case, payloads also will be
    * reverted.
    */
-  bool addPayloads(const Payloads& payloads,
+  bool addPayloads(const AltPayloads& payloads,
                    StateChange& stateChange,
                    ValidationState& state);
 
@@ -60,7 +60,7 @@ struct PopManager {
    * @param atv altchain to veriblock publication
    * @note does not throw in any circumstance
    */
-  void removePayloads(const Payloads& payloads,
+  void removePayloads(const AltPayloads& payloads,
                       StateChange& stateChange) noexcept;
 
   bool hasUncommittedChanges() const noexcept;
@@ -86,7 +86,7 @@ struct PopManager {
  private:
   // vector of payloads that have been added to current state,
   // but not committed
-  std::vector<Payloads> uncommitted_;
+  std::vector<AltPayloads> uncommitted_;
 
   const BtcChainParams& btcparam_;
   const VbkChainParams& vbkparam_;

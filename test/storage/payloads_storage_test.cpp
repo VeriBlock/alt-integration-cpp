@@ -23,20 +23,20 @@ template <typename Repo_type>
 std::shared_ptr<Repo_type> getRepo();
 
 template <>
-std::shared_ptr<PayloadsRepositoryInmem<AltBlock, Payloads>> getRepo() {
-  return std::make_shared<PayloadsRepositoryInmem<AltBlock, Payloads>>();
+std::shared_ptr<PayloadsRepositoryInmem<AltPayloads>> getRepo() {
+  return std::make_shared<PayloadsRepositoryInmem<AltPayloads>>();
 }
 
 template <>
-std::shared_ptr<PayloadsRepositoryRocks<AltBlock, Payloads>> getRepo() {
+std::shared_ptr<PayloadsRepositoryRocks<AltPayloads>> getRepo() {
   RepositoryRocksManager database(dbName);
   rocksdb::Status s = database.open();
   database.clear();
   return database.getAltPayloadsRepo();
 }
 
-Payloads generatePayloads() {
-  Payloads p;
+AltPayloads generatePayloads() {
+  AltPayloads p;
   p.alt.containing = {generateRandomBytesVector(32),
                       generateRandomBytesVector(32),
                       (uint32_t)(std::rand() % 1000 + 1),
@@ -60,20 +60,9 @@ Payloads generatePayloads() {
   return p;
 }
 
-AltBlock generateBlock() {
-  AltBlock b{generateRandomBytesVector(32),
-             generateRandomBytesVector(32),
-             (uint32_t)(std::rand() % 1000 + 1),
-             (int32_t)(std::rand() % 1000 + 1)};
-  return b;
-}
-
 template <typename PayloadsRepoType>
 struct PayloadsRepoTest : public ::testing::Test {
   using payloads_t = typename PayloadsRepoType::stored_payloads_t;
-  using block_t = typename PayloadsRepoType::block_t;
-  using stored_payloads_container_t =
-      typename PayloadsRepoType::stored_payloads_container_t;
   using repo_t = PayloadsRepoType;
 
   std::shared_ptr<repo_t> repo;
@@ -89,87 +78,99 @@ TYPED_TEST_SUITE_P(PayloadsRepoTest);
 TYPED_TEST_P(PayloadsRepoTest, Basic) {
   srand(0);
 
-  using block_t = typename Basic::block_t;
   using payloads_t = typename Basic::payloads_t;
 
-  block_t b1 = generateBlock();
   payloads_t p1 = generatePayloads();
   payloads_t p2 = generatePayloads();
-  this->repo->put(b1.hash, p1);
-  this->repo->put(b1.hash, p2);
+  this->repo->put(p1);
+  this->repo->put(p2);
 
-  std::vector<payloads_t> payloads = this->repo->get(b1.hash);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) !=
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) !=
-              payloads.end());
+  payloads_t stored_p;
+  EXPECT_TRUE(this->repo->get(p1.getId(), &stored_p));
+  EXPECT_EQ(stored_p, p1);
+  EXPECT_TRUE(this->repo->get(p2.getId(), &stored_p));
+  EXPECT_EQ(stored_p, p2);
 
-  this->repo->removeByHash(b1.hash);
+  this->repo->removeByHash(p2.getId());
 
-  payloads = this->repo->get(b1.hash);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) ==
-              payloads.end());
+  EXPECT_TRUE(this->repo->get(p1.getId(), &stored_p));
+  EXPECT_EQ(stored_p, p1);
+  EXPECT_FALSE(this->repo->get(p2.getId(), &stored_p));
 
-  this->repo->put(b1.hash, p1);
-  this->repo->put(b1.hash, p2);
+  this->repo->put(p1);
+  this->repo->put(p2);
 
-  block_t b2 = generateBlock();
   payloads_t p3 = generatePayloads();
   payloads_t p4 = generatePayloads();
 
-  this->repo->put(b2.hash, p3);
-  this->repo->put(b2.hash, p4);
+  this->repo->put(p3);
+  this->repo->put(p4);
 
-  payloads = this->repo->get(b1.hash);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) !=
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) !=
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p3) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p4) ==
-              payloads.end());
+  EXPECT_TRUE(this->repo->get(p1.getId(), &stored_p));
+  EXPECT_EQ(stored_p, p1);
+  EXPECT_TRUE(this->repo->get(p2.getId(), &stored_p));
+  EXPECT_EQ(stored_p, p2);
+  EXPECT_TRUE(this->repo->get(p3.getId(), &stored_p));
+  EXPECT_EQ(stored_p, p3);
+  EXPECT_TRUE(this->repo->get(p4.getId(), &stored_p));
+  EXPECT_EQ(stored_p, p4);
 
-  payloads = this->repo->get(b2.hash);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p3) !=
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p4) !=
-              payloads.end());
+  std::vector<typename payloads_t::id_t> ids = {
+      p1.getId(), p2.getId(), p3.getId(), p4.getId()};
+
+  std::vector<payloads_t> stored_ps;
+  size_t num = this->repo->get(ids, &stored_ps);
+  EXPECT_EQ(num, ids.size());
+
+  for (size_t i = 0; i < ids.size(); ++i) {
+    EXPECT_EQ(ids[i], stored_ps[i].getId());
+  }
+
+  ids = {p3.getId(), p4.getId(), p1.getId(), p2.getId()};
+
+  stored_ps.clear();
+  num = this->repo->get(ids, &stored_ps);
+  EXPECT_EQ(num, ids.size());
+
+  for (size_t i = 0; i < ids.size(); ++i) {
+    EXPECT_EQ(ids[i], stored_ps[i].getId());
+  }
+
+  this->repo->removeByHash(p2.getId());
+
+  ids = {p1.getId(), p2.getId(), p3.getId(), p4.getId()};
+  stored_ps.clear();
+  num = this->repo->get(ids, &stored_ps);
+  EXPECT_EQ(num, ids.size() - 1);
+
+  for (size_t i = 0, j = 0; i < ids.size(); ++i) {
+    if (ids[i] != p2.getId()) {
+      EXPECT_EQ(ids[i], stored_ps[j++].getId());
+    }
+  }
 }
 
 TYPED_TEST_P(PayloadsRepoTest, Cursor) {
   srand(0);
 
-  using block_t = typename Cursor::block_t;
   using payloads_t = typename Cursor::payloads_t;
-  using stored_payloads_container_t =
-      typename Cursor::stored_payloads_container_t;
 
-  block_t b1 = generateBlock();
   payloads_t p1 = generatePayloads();
   payloads_t p2 = generatePayloads();
-  this->repo->put(b1.hash, p1);
-  this->repo->put(b1.hash, p2);
+  this->repo->put(p1);
+  this->repo->put(p2);
 
-  block_t b2 = generateBlock();
   payloads_t p3 = generatePayloads();
   payloads_t p4 = generatePayloads();
-  this->repo->put(b2.hash, p3);
-  this->repo->put(b2.hash, p4);
+  this->repo->put(p3);
+  this->repo->put(p4);
 
-  block_t b3 = generateBlock();
   payloads_t p5 = generatePayloads();
   payloads_t p6 = generatePayloads();
-  this->repo->put(b3.hash, p5);
-  this->repo->put(b3.hash, p6);
+  this->repo->put(p5);
+  this->repo->put(p6);
 
-  std::vector<stored_payloads_container_t> values;
+  std::vector<payloads_t> values;
   auto cursor = this->repo->newCursor();
 
   for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
@@ -178,18 +179,16 @@ TYPED_TEST_P(PayloadsRepoTest, Cursor) {
 
   cursor->seekToFirst();
   EXPECT_TRUE(cursor->isValid());
-  EXPECT_TRUE((cursor->key() == b1.hash || cursor->key() == b2.hash ||
-               cursor->key() == b3.hash));
+  EXPECT_EQ(cursor->key(), values[0].getId());
   EXPECT_EQ(cursor->value(), values[0]);
 
   cursor->seekToLast();
   EXPECT_TRUE(cursor->isValid());
-  EXPECT_TRUE((cursor->key() == b1.hash || cursor->key() == b2.hash ||
-               cursor->key() == b3.hash));
+  EXPECT_EQ(cursor->key(), values[values.size() - 1].getId());
   EXPECT_EQ(cursor->value(), values[values.size() - 1]);
 
   // read in reversed order
-  std::vector<stored_payloads_container_t> reversedValues;
+  std::vector<payloads_t> reversedValues;
   for (cursor->seekToLast(); cursor->isValid(); cursor->prev()) {
     reversedValues.push_back(cursor->value());
   }
@@ -198,28 +197,23 @@ TYPED_TEST_P(PayloadsRepoTest, Cursor) {
   std::reverse(reversedValues.begin(), reversedValues.end());
   EXPECT_EQ(reversedValues, values);
 
-  stored_payloads_container_t cont;
+  // find some values
+  cursor->seek(p1.getId());
+  EXPECT_TRUE(cursor->isValid());  // key found
+  EXPECT_EQ(cursor->key(), p1.getId());
+  EXPECT_EQ(cursor->value(), p1);
 
   // find some values
-  cursor->seek(b1.hash);
+  cursor->seek(p2.getId());
   EXPECT_TRUE(cursor->isValid());  // key found
-  cont = cursor->value();
-  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p1) != cont.end());
-  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p2) != cont.end());
+  EXPECT_EQ(cursor->key(), p2.getId());
+  EXPECT_EQ(cursor->value(), p2);
 
   // find some values
-  cursor->seek(b2.hash);
+  cursor->seek(p3.getId());
   EXPECT_TRUE(cursor->isValid());  // key found
-  cont = cursor->value();
-  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p3) != cont.end());
-  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p4) != cont.end());
-
-  // find some values
-  cursor->seek(b3.hash);
-  EXPECT_TRUE(cursor->isValid());  // key found
-  cont = cursor->value();
-  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p5) != cont.end());
-  EXPECT_TRUE(std::find(cont.begin(), cont.end(), p6) != cont.end());
+  EXPECT_EQ(cursor->key(), p3.getId());
+  EXPECT_EQ(cursor->value(), p3);
 
   // iterate before first element
   cursor->seekToFirst();
@@ -235,80 +229,61 @@ TYPED_TEST_P(PayloadsRepoTest, Cursor) {
 TYPED_TEST_P(PayloadsRepoTest, Batch) {
   srand(0);
 
-  using block_t = typename Batch::block_t;
   using payloads_t = typename Batch::payloads_t;
 
   auto batch = this->repo->newBatch();
 
   std::vector<payloads_t> payloads;
 
-  block_t b1 = generateBlock();
   payloads_t p1 = generatePayloads();
   payloads_t p2 = generatePayloads();
-
-  block_t b2 = generateBlock();
   payloads_t p3 = generatePayloads();
   payloads_t p4 = generatePayloads();
-
-  block_t b3 = generateBlock();
   payloads_t p5 = generatePayloads();
   payloads_t p6 = generatePayloads();
 
-  batch->put(b1.hash, p1);
-  batch->put(b1.hash, p2);
+  batch->put(p1);
+  batch->put(p2);
 
-  payloads = this->repo->get(b1.hash);
-  EXPECT_EQ(payloads.size(), 0);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) ==
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) ==
-              payloads.end());
+  EXPECT_FALSE(this->repo->get(p1.getId(), nullptr));
 
   batch->commit();
 
-  payloads = this->repo->get(b1.hash);
-  EXPECT_EQ(payloads.size(), 2);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) !=
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) !=
-              payloads.end());
+  payloads_t stored_value;
+  EXPECT_TRUE(this->repo->get(p1.getId(), &stored_value));
+  EXPECT_EQ(stored_value, p1);
+  EXPECT_TRUE(this->repo->get(p2.getId(), &stored_value));
+  EXPECT_EQ(stored_value, p2);
 
-  batch->put(b1.hash, p1);
-  batch->put(b1.hash, p2);
+  batch->put(p3);
+  batch->put(p4);
 
-  batch->put(b2.hash, p3);
-  batch->put(b2.hash, p4);
+  batch->put(p5);
+  batch->put(p6);
 
-  batch->put(b3.hash, p5);
-  batch->put(b3.hash, p6);
-
-  batch->removeByHash(b2.hash);
+  batch->removeByHash(p2.getId());
 
   batch->commit();
 
-  payloads = this->repo->get(b1.hash);
-  EXPECT_EQ(payloads.size(), 2);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p1) !=
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p2) !=
-              payloads.end());
+  EXPECT_TRUE(this->repo->get(p1.getId(), &stored_value));
+  EXPECT_EQ(stored_value, p1);
+  EXPECT_TRUE(this->repo->get(p3.getId(), &stored_value));
+  EXPECT_EQ(stored_value, p3);
+  EXPECT_TRUE(this->repo->get(p4.getId(), &stored_value));
+  EXPECT_EQ(stored_value, p4);
+  EXPECT_TRUE(this->repo->get(p5.getId(), &stored_value));
+  EXPECT_EQ(stored_value, p5);
+  EXPECT_TRUE(this->repo->get(p6.getId(), &stored_value));
+  EXPECT_EQ(stored_value, p6);
 
-  payloads = this->repo->get(b2.hash);
-  EXPECT_EQ(payloads.size(), 0);
-
-  payloads = this->repo->get(b3.hash);
-  EXPECT_EQ(payloads.size(), 2);
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p5) !=
-              payloads.end());
-  EXPECT_TRUE(std::find(payloads.begin(), payloads.end(), p6) !=
-              payloads.end());
+  EXPECT_FALSE(this->repo->get(p2.getId(), &stored_value));
 }
 
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(PayloadsRepoTest, Basic, Cursor, Batch);
 
-typedef ::testing::Types<PayloadsRepositoryInmem<AltBlock, Payloads>,
-                         PayloadsRepositoryRocks<AltBlock, Payloads>>
+typedef ::testing::Types<PayloadsRepositoryInmem<AltPayloads>,
+                         PayloadsRepositoryRocks<AltPayloads>>
     TypesUnderTest;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(PayloadsRepoTestSuite,

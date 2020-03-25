@@ -5,6 +5,7 @@
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/entities/vtb.hpp>
+#include <veriblock/uint.hpp>
 
 namespace altintegration {
 
@@ -49,7 +50,9 @@ struct AltProof {
   }
 };
 
-struct Payloads {
+struct AltPayloads {
+  using id_t = uint256;
+
   AltProof alt{};
   std::vector<VTB> vtbs{};
   std::vector<BtcBlock> btccontext{};
@@ -60,7 +63,7 @@ struct Payloads {
    * @param stream data stream to read from
    * @return Payloads
    */
-  static Payloads fromVbkEncoding(ReadStream& stream);
+  static AltPayloads fromVbkEncoding(ReadStream& stream);
 
   /**
    * Read VBK data from the string raw byte representation and convert it to
@@ -68,7 +71,7 @@ struct Payloads {
    * @param string data bytes to read from
    * @return AltProof
    */
-  static Payloads fromVbkEncoding(const std::string& bytes);
+  static AltPayloads fromVbkEncoding(const std::string& bytes);
 
   /**
    * Convert Payloads to data stream using Vbk byte format
@@ -82,7 +85,14 @@ struct Payloads {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
-  friend bool operator==(const Payloads& a, const Payloads& b) {
+  /**
+   * Calculate a Payloads id that is the sha256 hash of the payloads rawBytes
+   * @return id sha256 hash
+   */
+
+  id_t getId() const;
+
+  friend bool operator==(const AltPayloads& a, const AltPayloads& b) {
     // clang-format off
     return a.alt == b.alt &&
            a.vtbs == b.vtbs &&
@@ -90,6 +100,12 @@ struct Payloads {
            a.vbkcontext == b.vbkcontext;
     // clang-format on
   }
+};
+
+struct DummyPayloads {
+  using id_t = bool;
+
+  id_t getId() const { return true; }
 };
 
 }  // namespace altintegration
@@ -105,8 +121,8 @@ struct hash<altintegration::AltProof> {
 };
 
 template <>
-struct hash<altintegration::Payloads> {
-  size_t operator()(const altintegration::Payloads& el) const {
+struct hash<altintegration::AltPayloads> {
+  size_t operator()(const altintegration::AltPayloads& el) const {
     std::hash<std::vector<uint8_t>> hasher;
     return hasher(el.toVbkEncoding());
   }
