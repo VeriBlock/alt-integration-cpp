@@ -15,7 +15,7 @@ using namespace altintegration;
 static const std::string dbName = "db_test";
 
 struct AltChainParamsTest : public AltChainParams {
-  AltBlock getGenesisBlock() const noexcept override {
+  AltBlock getBootstrapBlock() const noexcept override {
     AltBlock genesisBlock;
     genesisBlock.hash = {1, 2, 3};
     genesisBlock.previousBlock = {4, 5, 6};
@@ -30,14 +30,14 @@ struct RewardsTestFixture : ::testing::Test {
 
   std::shared_ptr<BtcChainParams> btc_params;
   std::shared_ptr<VbkChainParams> vbk_params;
-  std::shared_ptr<AltChainParams> altChainParams;
-  PopRewardsParams rewardParams{};
+  std::shared_ptr<AltChainParams> alt_params;
+  PopRewardsParams reward_params{};
 
   std::shared_ptr<BlockTree<BtcBlock, BtcChainParams>> btcTree;
   std::shared_ptr<VbkBlockTree> vbkTree;
   std::shared_ptr<BtcTree> altTree;
 
-  std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo;
+  std::shared_ptr<EndorsementRepository<BtcEndorsement>> btc_erepo;
   std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbk_erepo;
 
   std::shared_ptr<MockMiner> apm;
@@ -67,25 +67,26 @@ struct RewardsTestFixture : ::testing::Test {
   RewardsTestFixture() : stateManager(dbName) {
     btc_params = std::make_shared<BtcChainParamsRegTest>();
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
-    altChainParams = std::make_shared<AltChainParamsTest>();
+    alt_params = std::make_shared<AltChainParamsTest>();
 
-    btcTree = std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(btc_params);
-    vbkTree = std::make_shared<VbkBlockTree>(*btcTree, erepo, vbk_params);
+    btcTree = std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(*btc_params);
+    vbkTree = std::make_shared<VbkBlockTree>(*btcTree, btc_erepo, *vbk_params);
 
-    erepo = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
+    btc_erepo = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
     vbk_erepo = std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
 
     apm = std::make_shared<MockMiner>();
+    alt_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(*btc_params);
 
     rewardsCalculator =
-        std::make_shared<PopRewardsCalculator>(*altChainParams, rewardParams);
+        std::make_shared<PopRewardsCalculator>(*alt_params, reward_params);
     rewards = std::make_shared<PopRewards>(
-        *vbk_erepo, *vbkTree, rewardParams, *rewardsCalculator);
+        *vbk_erepo, apm->vbk(), reward_params, *rewardsCalculator);
 
-    altTree = std::make_shared<BtcTree>(btc_params);
+    altTree = std::make_shared<BtcTree>(*btc_params);
 
     altpop = std::make_shared<PopManager>(
-        btc_params, vbk_params, erepo, vbk_erepo, altChainParams);
+        *btc_params, *vbk_params, *alt_params, btc_erepo, vbk_erepo);
 
     setUpChains();
   }
@@ -125,9 +126,6 @@ struct RewardsTestFixture : ::testing::Test {
 };
 
 TEST_F(RewardsTestFixture, basicReward_test) {
-  PopRewardsBigDecimal popDifficulty = 1.0;
-  AltBlock endorsedBlock = {};
-
   EXPECT_TRUE(apm->mineBtcBlocks(5, state));
   EXPECT_EQ(apm->btc().getBestChain().tip()->height, 5);
 
@@ -140,8 +138,8 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   ASSERT_EQ(altTree->getBestChain().chainHeight(), 10);
 
   // get last known BTC and VBK hashes (current tips)
-  auto last_vbk = apm->vbk().getBestChain().tip()->getHash();
-  auto last_btc = apm->btc().getBestChain().tip()->getHash();
+  auto last_vbk = altpop->vbk().getBestChain().tip()->getHash();
+  auto last_btc = altpop->btc().getBestChain().tip()->getHash();
 
   // endorse ALT tip, at height 10
   auto* endorsedAltBlockIndex = altTree->getBestChain().tip();
@@ -166,6 +164,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
       << state.GetRejectReason();
 
+  PopRewardsBigDecimal popDifficulty = 1.0;
   auto payouts = rewards->calculatePayouts(altProof.endorsed, popDifficulty);
   ASSERT_TRUE(payouts.size() > 0);
 }
