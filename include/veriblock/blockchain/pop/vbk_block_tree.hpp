@@ -13,6 +13,7 @@ namespace altintegration {
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
+  using index_t = VbkTree::index_t;
 
   ~VbkBlockTree() override = default;
 
@@ -29,7 +30,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   BtcTree& btc_;
   ComparePopScore<VbkChainParams> compare_;
 
-  void determineBestChain(Chain<block_t>& currentBest,
+  void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
 };
 

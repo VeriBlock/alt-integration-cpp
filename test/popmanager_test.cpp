@@ -13,7 +13,7 @@ using namespace altintegration;
 static const std::string dbName = "db_test";
 
 struct AltChainParamsTest : public AltChainParams {
-  AltBlock getGenesisBlock() const noexcept override {
+  AltBlock getBootstrapBlock() const noexcept override {
     AltBlock genesisBlock;
     genesisBlock.hash = {1, 2, 3};
     genesisBlock.previousBlock = {4, 5, 6};
@@ -242,8 +242,8 @@ TEST_F(PopManagerTest, compareTwoBranches_test) {
   index_prev.height = 99;
   index_prev.pprev = nullptr;
 
-  Chain<AltBlock> chain1(index_prev.height, &index_prev);
-  Chain<AltBlock> chain2(index_prev.height, &index_prev);
+  Chain<BlockIndex<AltBlock>> chain1(index_prev.height, &index_prev);
+  Chain<BlockIndex<AltBlock>> chain2(index_prev.height, &index_prev);
 
   std::vector<std::unique_ptr<BlockIndex<AltBlock>>> alt1;
   for (size_t i = 100; i < altfork1.size(); i++) {

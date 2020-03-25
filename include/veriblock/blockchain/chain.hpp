@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <map>
+#include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/storage/block_repository.hpp>
 
@@ -19,11 +20,12 @@ namespace altintegration {
  *
  * @tparam Block
  */
-template <typename Block>
+template <typename BlockIndexT>
 struct Chain {
-  using block_t = Block;
-  using index_t = BlockIndex<block_t>;
-  using height_t = typename Block::height_t;
+  using index_t = BlockIndexT;
+  using block_t = typename index_t::block_t;
+  using hash_t = typename index_t::hash_t;
+  using height_t = typename block_t::height_t;
   using storage_t = std::vector<index_t*>;
 
   Chain() = default;
@@ -38,7 +40,7 @@ struct Chain {
   height_t getStartHeight() const { return startHeight_; }
 
   bool contains(const index_t* index) const {
-    return index != nullptr && (*this)[index->height] == index;
+    return index != nullptr && this->operator[](index->height) == index;
   }
 
   index_t* operator[](height_t height) const {
@@ -115,6 +117,32 @@ struct Chain {
       pindex = pindex->pprev;
     }
     return pindex;
+  }
+
+  //! same as findFork, but returns first keystone block at or before fork point
+  const index_t* findHighestKeystoneAtOrBeforeFork(const index_t* pindex,
+                                                   int ki) const {
+    auto* fork = findFork(pindex);
+    if (!fork) {
+      return nullptr;
+    }
+    auto keystoneHeight = highestKeystoneAtOrBefore(fork->height, ki);
+    return this->operator[](keystoneHeight);
+  }
+
+  //! returns an unordered set of hashes, present in current chain.
+  //! useful for small chains for further checks of "hash existence"
+  std::unordered_set<hash_t> getAllHashesInChain() const {
+    std::unordered_set<hash_t> ret;
+    ret.reserve(chain.size() - startHeight_);
+
+    auto* current = tip();
+    while (current) {
+      ret.insert(current->getHash());
+      current = current->pprev;
+    }
+
+    return ret;
   }
 
  private:

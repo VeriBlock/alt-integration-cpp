@@ -6,6 +6,8 @@
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/endorsements.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
@@ -16,6 +18,7 @@ struct VbkBlock {
   using hash_t = uint192;
   using height_t = int32_t;
   using keystone_t = uint72;
+  using endorsement_t = BtcEndorsement;
 
   int32_t height{};
   int16_t version{};

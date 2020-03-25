@@ -6,12 +6,14 @@
 #include <vector>
 
 #include "veriblock/serde.hpp"
+#include "veriblock/entities/endorsements.hpp"
 
 namespace altintegration {
 
 struct AltBlock {
   using height_t = int32_t;
   using hash_t = std::vector<uint8_t>;
+  using endorsement_t = VbkEndorsement;
 
   hash_t hash{};
   hash_t previousBlock{};
