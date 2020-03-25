@@ -184,7 +184,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
   }
 
   size_t get(const std::vector<payloads_id>& ids,
-             std::vector<stored_payloads_t>* out) const {
+             std::vector<stored_payloads_t>* out) const override {
     std::vector<rocksdb::Slice> keys(ids.size());
     std::vector<std::string> valuesOut(ids.size());
 
