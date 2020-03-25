@@ -13,6 +13,7 @@ using ::testing::StrictMock;
 struct DummyBlock {
   using hash_t = int;
   using height_t = int;
+  using endorsement_t = std::false_type;
 };
 
 struct TestCase {

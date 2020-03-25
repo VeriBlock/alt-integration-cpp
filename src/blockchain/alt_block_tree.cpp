@@ -61,7 +61,7 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Error("already bootstrapped");
   }
 
-  auto block = config_.getGenesisBlock();
+  auto block = config_.getBootstrapBlock();
   auto* index = insertBlockHeader(block);
 
   assert(index != nullptr &&

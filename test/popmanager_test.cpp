@@ -13,7 +13,7 @@ using namespace altintegration;
 static const std::string dbName = "db_test";
 
 struct AltChainParamsTest : public AltChainParams {
-  AltBlock getGenesisBlock() const noexcept override {
+  AltBlock getBootstrapBlock() const noexcept override {
     AltBlock genesisBlock;
     genesisBlock.hash = {1, 2, 3};
     genesisBlock.previousBlock = {4, 5, 6};

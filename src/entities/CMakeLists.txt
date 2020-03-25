@@ -4,7 +4,7 @@ add_library(entities OBJECT
         btcblock.cpp
         btctx.cpp
         coin.cpp
-        endorsement.cpp
+        endorsements.cpp
         merkle_path.cpp
         output.cpp
         publication_data.cpp
