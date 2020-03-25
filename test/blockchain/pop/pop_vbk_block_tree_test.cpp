@@ -79,18 +79,19 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
 
   VbkBlockTreeTestFixture() {
     btc_params = std::make_shared<BtcChainParamsRegTest>();
-    btcTree = std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(btc_params);
+    btcTree =
+        std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(*btc_params);
 
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
 
     endorsement_repo =
         std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
 
-    btc_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(btc_params);
-    vbk_miner = std::make_shared<Miner<VbkBlock, VbkChainParams>>(vbk_params);
+    btc_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(*btc_params);
+    vbk_miner = std::make_shared<Miner<VbkBlock, VbkChainParams>>(*vbk_params);
 
     vbkTest =
-        std::make_shared<VbkBlockTree>(*btcTree, endorsement_repo, vbk_params);
+        std::make_shared<VbkBlockTree>(*btcTree, endorsement_repo, *vbk_params);
 
     mock_miner = std::make_shared<MockMiner>();
 

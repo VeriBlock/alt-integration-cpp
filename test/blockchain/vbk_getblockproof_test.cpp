@@ -52,7 +52,7 @@ struct GetProofTest : public testing::Test {
 };
 
 TEST_F(GetProofTest, Blocks100Test) {
-  BlockTree<VbkBlock, VbkChainParams> tree(params);
+  BlockTree<VbkBlock, VbkChainParams> tree(*params);
   ASSERT_TRUE(tree.bootstrapWithGenesis(state));
 
   for (size_t i = 1; i < 101; i++) {
@@ -67,7 +67,7 @@ TEST_F(GetProofTest, Blocks100Test) {
 }
 
 TEST_F(GetProofTest, Blocks30kTest) {
-  BlockTree<VbkBlock, VbkChainParams> tree(params);
+  BlockTree<VbkBlock, VbkChainParams> tree(*params);
   ASSERT_TRUE(tree.bootstrapWithGenesis(state));
 
   for (size_t i = 1; i < allBlocks.size(); i++) {

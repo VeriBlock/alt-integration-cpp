@@ -50,10 +50,10 @@ struct PopManagerTest : public ::testing::Test {
     btce = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
     vbke = std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
 
-    alt = std::make_shared<BtcTree>(btcp);
-    alt_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(btcp);
+    alt = std::make_shared<BtcTree>(*btcp);
+    alt_miner = std::make_shared<Miner<BtcBlock, BtcChainParams>>(*btcp);
     altpop =
-        std::make_shared<PopManager>(btcp, vbkp, btce, vbke, altChainParams);
+        std::make_shared<PopManager>(*btcp, *vbkp, *altChainParams, btce, vbke);
 
     // our altchain stores headers of BTC, VBK and ALT blocks
     EXPECT_TRUE(altpop->btc().bootstrapWithGenesis(state));
