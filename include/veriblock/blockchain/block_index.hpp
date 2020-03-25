@@ -35,6 +35,9 @@ struct BlockIndex {
   std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
       containingEndorsements;
 
+  //! (memory only) list of containing payloads in this block
+  std::vector<payloads_id_t> containingPayloads;
+
   //! height of the entry in the chain
   height_t height = 0;
 

@@ -37,6 +37,14 @@ bool endorsementValidation(const BlockIndex<Block>& currentBlock,
                            const ChainParams& params,
                            ValidationState& state);
 
+template <typename BlockTree, typename PayloadsT>
+bool addPayloads(BlockTree& tree,
+                 const PayloadsT& payloads,
+                 ValidationState& state);
+
+template <typename BlockTree, typename PayloadsT>
+void removePayloads(BlockTree& tree, const PayloadsT& payloads);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_UTIL_HPP_

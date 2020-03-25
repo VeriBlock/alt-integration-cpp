@@ -1,4 +1,5 @@
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/finalizer.hpp>
 
 namespace altintegration {
 
@@ -9,33 +10,26 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 
-  auto* forkIndex = currentBest.findFork(&indexNew);
+  auto ki = param_.getKeystoneInterval();
+  auto* forkKeystone =
+      currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
+
   // this should never happen. if it is nullptr, it means that we passed
   // `indexNew` index which has no known prev block, which is possible only
   // after logic error, OR error in 'findFork'
-  assert(forkIndex != nullptr);
-
-  // last common keystone of two forks
-  auto ki = param_.getKeystoneInterval();
-  auto* forkKeystone =
-      forkIndex->getAncestor(highestKeystoneAtOrBefore(forkIndex->height, ki));
+  assert(forkKeystone != nullptr);
 
   int result = 0;
   auto* bestTip = currentBest.tip();
   if (isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki) &&
       isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki)) {
-    // [vbk fork point ... current tip]
+    // [vbk fork point keystone ... current tip]
     Chain<index_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
-    auto pkcCurrent =
-        getProtoKeystoneContext(vbkCurrentSubchain, btc_, erepo_, param_);
-    auto kcCurrent = getKeystoneContext(pkcCurrent, btc_);
 
-    // [vbk fork point ... new block]
+    // [vbk fork point keystone... new block]
     Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
-    auto pkcOther = getProtoKeystoneContext(vbkOther, btc_, erepo_, param_);
-    auto kcOther = getKeystoneContext(pkcOther, btc_);
 
-    result = compare_(kcCurrent, kcOther);
+    result = cmp_.comparePopScore(vbkCurrentSubchain, vbkOther);
   }
 
   if (result < 0) {
@@ -52,4 +46,44 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 }
+
+template <>
+bool BlockTreeStateMachine<VbkBlockTree::BtcTree,
+                           BlockIndex<VbkBlock>,
+                           VbkChainParams>::addPayloads(const VTB& vtb,
+                                                        ValidationState&
+                                                            state) {
+  return tryValidateWithResources(
+      [&]() -> bool {
+        auto& btc = tree();
+
+        // check VTB
+        if (!checkVTB(vtb, state, params(), btc.getParams())) {
+          return state.addStackFunction("VbkTree::addPayloads");
+        }
+
+        // and update context
+        for (const auto& block : vtb.transaction.blockOfProofContext) {
+          if (!btc.acceptBlock(block, state)) {
+            return state.addStackFunction("VbkTree::addPayloads");
+          }
+        }
+
+        return true;
+      },
+      [&]() { removePayloads(vtb); });
+}
+
+template <>
+void BlockTreeStateMachine<VbkBlockTree::BtcTree,
+                           BlockIndex<VbkBlock>,
+                           VbkChainParams>::removePayloads(const VTB& vtb) {
+  auto& btc = tree();
+
+  /// remove VTB context
+  for (const auto& b : vtb.transaction.blockOfProofContext) {
+    btc.invalidateBlockByHash(b.getHash());
+  }
+}
+
 }  // namespace altintegration
