@@ -93,7 +93,6 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
 
   this->repo->removeByHash(p2.getId());
 
-  stored_p;
   EXPECT_TRUE(this->repo->get(p1.getId(), &stored_p));
   EXPECT_EQ(stored_p, p1);
   EXPECT_FALSE(this->repo->get(p2.getId(), &stored_p));
@@ -107,7 +106,6 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
   this->repo->put(p3);
   this->repo->put(p4);
 
-  stored_p;
   EXPECT_TRUE(this->repo->get(p1.getId(), &stored_p));
   EXPECT_EQ(stored_p, p1);
   EXPECT_TRUE(this->repo->get(p2.getId(), &stored_p));
@@ -124,7 +122,7 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
   size_t num = this->repo->get(ids, &stored_ps);
   EXPECT_EQ(num, ids.size());
 
-  for (int i = 0; i < ids.size(); ++i) {
+  for (size_t i = 0; i < ids.size(); ++i) {
     EXPECT_EQ(ids[i], stored_ps[i].getId());
   }
 
@@ -134,7 +132,7 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
   num = this->repo->get(ids, &stored_ps);
   EXPECT_EQ(num, ids.size());
 
-  for (int i = 0; i < ids.size(); ++i) {
+  for (size_t i = 0; i < ids.size(); ++i) {
     EXPECT_EQ(ids[i], stored_ps[i].getId());
   }
 
@@ -145,7 +143,7 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
   num = this->repo->get(ids, &stored_ps);
   EXPECT_EQ(num, ids.size() - 1);
 
-  for (int i = 0, j = 0; i < ids.size(); ++i) {
+  for (size_t i = 0, j = 0; i < ids.size(); ++i) {
     if (ids[i] != p2.getId()) {
       EXPECT_EQ(ids[i], stored_ps[j++].getId());
     }
