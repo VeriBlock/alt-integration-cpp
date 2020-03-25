@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/blockchain/chain.hpp>
+#include <veriblock/entities/payloads.hpp>
 #include <veriblock/fmt.hpp>
 
 using namespace altintegration;
@@ -13,6 +14,7 @@ using ::testing::StrictMock;
 struct DummyBlock {
   using hash_t = int;
   using height_t = int;
+  using payloads_t = PaylaodsBlob;
 };
 
 struct TestCase {
