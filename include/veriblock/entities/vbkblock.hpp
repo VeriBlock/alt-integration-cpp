@@ -12,10 +12,13 @@
 
 namespace altintegration {
 
+struct VTB;
+
 struct VbkBlock {
   using hash_t = uint192;
   using height_t = int32_t;
   using keystone_t = uint72;
+  using payloads_t = VTB;
 
   int32_t height{};
   int16_t version{};

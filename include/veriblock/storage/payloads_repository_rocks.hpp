@@ -18,20 +18,13 @@ namespace altintegration {
 //! column family type
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
-template <typename Block, typename Payloads>
-struct PayloadsCursorRocks
-    : public Cursor<typename Block::hash_t,
-                    typename PayloadsRepository<Block, Payloads>::
-                        stored_payloads_container_t> {
-  //! block type
-  using block_t = Block;
+template <typename Payloads>
+struct PayloadsCursorRocks : public Cursor<typename Payloads::id_t, Payloads> {
   //! stored payloads type
   using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! stored payloads container
-  using stored_payloads_container_t =
-      typename PayloadsRepository<Block, Payloads>::stored_payloads_container_t;
+  //! payloads id type
+  using payloads_id = typename Payloads::id_t;
+  //! iterator type
 
   PayloadsCursorRocks(std::shared_ptr<rocksdb::DB> db,
                       std::shared_ptr<cf_handle_t> payloadsHandle)
@@ -42,44 +35,31 @@ struct PayloadsCursorRocks
   }
 
   void seekToFirst() override { _iterator->SeekToFirst(); }
-  void seek(const hash_t& key) override {
-    std::string blockHash(reinterpret_cast<const char*>(key.data()),
-                          key.size());
-    _iterator->Seek(blockHash);
+  void seek(const payloads_id& key) override {
+    std::string id(reinterpret_cast<const char*>(key.data()), key.size());
+    _iterator->Seek(id);
   }
   void seekToLast() override { _iterator->SeekToLast(); }
   bool isValid() const override { return _iterator->Valid(); }
   void next() override { _iterator->Next(); }
   void prev() override { _iterator->Prev(); }
 
-  hash_t key() const override {
+  payloads_id key() const override {
     if (!isValid()) {
       throw std::out_of_range("invalid cursor");
     }
-    auto key = _iterator->key();
-    hash_t blockHash(key.size());
-    for (size_t i = 0; i < blockHash.size(); ++i) {
-      blockHash[i] = key[i];
-    }
 
-    return blockHash;
+    return payloads_id(_iterator->key().ToString());
   }
 
-  stored_payloads_container_t value() const override {
+  stored_payloads_t value() const override {
     if (!isValid()) {
       throw std::out_of_range("invalid cursor");
     }
-    stored_payloads_container_t payloads_container;
 
     auto value = _iterator->value();
 
-    ReadStream readStream(value.data(), value.size());
-    while (readStream.remaining()) {
-      payloads_container.push_back(
-          stored_payloads_t::fromVbkEncoding(readStream));
-    }
-
-    return payloads_container;
+    return stored_payloads_t::fromVbkEncoding(value.ToString());
   }
 
  private:
@@ -87,127 +67,91 @@ struct PayloadsCursorRocks
   std::unique_ptr<rocksdb::Iterator> _iterator;
 };
 
-template <typename Block, typename Payloads>
+template <typename Payloads>
 struct PayloadsRepositoryRocks;
 
-template <typename Block, typename Payloads>
-struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Block, Payloads> {
-  //! block type
-  using block_t = Block;
+template <typename Payloads>
+struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Payloads> {
   //! stored payloads type
   using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
+  //! payloads id type
+  using payloads_id = typename Payloads::id_t;
 
-  using pair = std::pair<hash_t, stored_payloads_t>;
+  PayloadsWriteBatchRocks(std::shared_ptr<rocksdb::DB> db,
+                          std::shared_ptr<cf_handle_t> payloadsHandle)
+      : _db(std::move(db)), _payloadsHandle(std::move(payloadsHandle)) {}
 
-  enum class Operation { PUT, REMOVE_BY_HASH };
+  void put(const stored_payloads_t& payloads) override {
+    rocksdb::Status s;
 
-  ~PayloadsWriteBatchRocks() override = default;
+    std::string out{};
 
-  PayloadsWriteBatchRocks(
-      PayloadsRepositoryRocks<block_t, stored_payloads_t>* repo)
-      : _repo(repo) {}
+    auto id = payloads.getId();
+    auto payloadsBytes = payloads.toVbkEncoding();
 
-  void put(const hash_t& hash, const stored_payloads_t& payloads) override {
-    _ops.push_back(Operation::PUT);
-    _puts.push_back(pair(hash, payloads));
+    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
+    rocksdb::Slice value(reinterpret_cast<const char*>(payloadsBytes.data()),
+                         payloadsBytes.size());
+
+    s = _batch.Put(_payloadsHandle.get(), key, value);
+
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
   }
 
-  void removeByHash(const hash_t& hash) override {
-    _ops.push_back(Operation::REMOVE_BY_HASH);
-    _removes.push_back(hash);
+  void removeByHash(const payloads_id& id) override {
+    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
+    rocksdb::Status s = _batch.Delete(_payloadsHandle.get(), key);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
   }
 
-  void clear() override {
-    _ops.clear();
-    _removes.clear();
-    _puts.clear();
-  }
+  void clear() override { _batch.Clear(); }
 
   void commit() override {
-    auto puts_begin = this->_puts.begin();
-    auto removes_begin = this->_removes.begin();
-    for (const auto& op : this->_ops) {
-      switch (op) {
-        case PayloadsWriteBatchRocks<block_t,
-                                     stored_payloads_t>::Operation::PUT: {
-          _repo->put(puts_begin->first, puts_begin->second);
-          ++puts_begin;
-          break;
-        }
-        case PayloadsWriteBatchRocks<block_t, stored_payloads_t>::Operation::
-            REMOVE_BY_HASH: {
-          _repo->removeByHash(*removes_begin++);
-          break;
-        }
-        default:
-          throw std::logic_error(
-              "unknown enum value - this should never happen");
-      }
+    rocksdb::WriteOptions write_options;
+    write_options.disableWAL = true;
+    rocksdb::Status s = _db->Write(write_options, &_batch);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
     }
     clear();
   }
 
  private:
-  PayloadsRepositoryRocks<block_t, stored_payloads_t>* _repo;
-  std::vector<pair> _puts;
-  std::vector<hash_t> _removes;
-  std::vector<Operation> _ops;
+  std::shared_ptr<rocksdb::DB> _db;
+  std::shared_ptr<cf_handle_t> _payloadsHandle;
+  rocksdb::WriteBatch _batch{};
 };
 
-template <typename Block, typename Payloads>
-struct PayloadsRepositoryRocks : public PayloadsRepository<Block, Payloads> {
-  //! block type
-  using block_t = Block;
+template <typename Payloads>
+struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
   //! stored payloads type
   using stored_payloads_t = Payloads;
-  //! block hash type
-  using hash_t = typename Block::hash_t;
-  //! block height type
-  using height_t = typename Block::height_t;
-  //! stored payloads container type
-  using stored_payloads_container_t = std::vector<stored_payloads_t>;
+  //! payloads id type
+  using payloads_id = typename Payloads::id_t;
   //! iterator type
-  using cursor_t = Cursor<hash_t, stored_payloads_container_t>;
+  using cursor_t = Cursor<payloads_id, stored_payloads_t>;
 
   PayloadsRepositoryRocks(std::shared_ptr<rocksdb::DB> db,
                           std::shared_ptr<cf_handle_t> payloadsHandle)
       : _db(db), _payloadsHandle(payloadsHandle) {}
 
-  void put(const hash_t& hash, const stored_payloads_t& payloads) override {
+  void put(const stored_payloads_t& payloads) override {
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
     rocksdb::Status s;
 
     std::string out{};
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(hash.data()), hash.size());
+    auto id = payloads.getId();
+    auto payloadsBytes = payloads.toVbkEncoding();
 
-    s = _db->Get(rocksdb::ReadOptions(), _payloadsHandle.get(), key, &out);
-
-    if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
-    }
-
-    ReadStream readStream(out.data(), out.size());
-
-    while (readStream.remaining()) {
-      stored_payloads_t p = stored_payloads_t::fromVbkEncoding(readStream);
-      if (p == payloads) {
-        return;
-      }
-    }
-
-    WriteStream writeStream;
-    writeStream.write(out.data(), out.size());
-    payloads.toVbkEncoding(writeStream);
-
-    rocksdb::Slice value(
-        reinterpret_cast<const char*>(writeStream.data().data()),
-        writeStream.data().size());
+    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
+    rocksdb::Slice value(reinterpret_cast<const char*>(payloadsBytes.data()),
+                         payloadsBytes.size());
 
     s = _db->Put(write_options, _payloadsHandle.get(), key, value);
 
@@ -216,39 +160,65 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Block, Payloads> {
     }
   }
 
-  stored_payloads_container_t get(const hash_t& hash) const override {
-    stored_payloads_container_t payloads_container;
-
+  bool get(const payloads_id& id, stored_payloads_t* out) const override {
     rocksdb::Status s;
 
-    std::string out{};
+    std::string valueOut{};
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(hash.data()), hash.size());
+    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
 
-    s = _db->Get(rocksdb::ReadOptions(), _payloadsHandle.get(), key, &out);
+    s = _db->Get(rocksdb::ReadOptions(), _payloadsHandle.get(), key, &valueOut);
 
     if (!s.ok()) {
       if (s.IsNotFound()) {
-        return {};
+        return false;
       }
       throw db::DbError(s.ToString());
     }
 
-    ReadStream readStream(out.data(), out.size());
-    while (readStream.remaining()) {
-      payloads_container.push_back(
-          stored_payloads_t::fromVbkEncoding(readStream));
+    if (out != nullptr) {
+      *out = stored_payloads_t::fromVbkEncoding(valueOut);
     }
 
-    return payloads_container;
+    return true;
   }
 
-  void removeByHash(const hash_t& hash) override {
+  size_t get(const std::vector<payloads_id>& ids,
+             std::vector<stored_payloads_t>* out) const {
+    std::vector<rocksdb::Slice> keys(ids.size());
+    std::vector<std::string> valuesOut(ids.size());
+
+    for (size_t i = 0; i < ids.size(); ++i) {
+      keys[i] = rocksdb::Slice(reinterpret_cast<const char*>(ids[i].data()),
+                               ids[i].size());
+    }
+    std::vector<cf_handle_t*> cfs(ids.size(), _payloadsHandle.get());
+    std::vector<rocksdb::Status> statuses =
+        _db->MultiGet(rocksdb::ReadOptions(), cfs, keys, &valuesOut);
+
+    size_t totalFound = 0;
+    for (size_t i = 0; i < statuses.size(); ++i) {
+      if (!statuses[i].ok()) {
+        if (statuses[i].IsNotFound()) {
+          continue;
+        }
+        throw db::DbError(statuses[i].ToString());
+      }
+      ++totalFound;
+      if (out != nullptr) {
+        out->push_back(stored_payloads_t::fromVbkEncoding(valuesOut[i]));
+      }
+    }
+
+    return totalFound;
+  }
+
+  void removeByHash(const payloads_id& id) override {
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
     rocksdb::Status s;
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(hash.data()), hash.size());
+    rocksdb::Slice key(reinterpret_cast<const char*>(id.data()), id.size());
 
     s = _db->Delete(write_options, _payloadsHandle.get(), key);
 
@@ -262,21 +232,20 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Block, Payloads> {
     return;
   }
 
-  std::unique_ptr<PayloadsWriteBatch<block_t, stored_payloads_t>> newBatch()
-      override {
-    return std::unique_ptr<PayloadsWriteBatchRocks<block_t, stored_payloads_t>>(
-        new PayloadsWriteBatchRocks<block_t, stored_payloads_t>(this));
+  std::unique_ptr<PayloadsWriteBatch<stored_payloads_t>> newBatch() override {
+    return std::unique_ptr<PayloadsWriteBatchRocks<stored_payloads_t>>(
+        new PayloadsWriteBatchRocks<stored_payloads_t>(_db, _payloadsHandle));
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
-    return std::make_shared<PayloadsCursorRocks<block_t, stored_payloads_t>>(
+    return std::make_shared<PayloadsCursorRocks<stored_payloads_t>>(
         _db, _payloadsHandle);
   }
 
  private:
   std::shared_ptr<rocksdb::DB> _db;
-  // [hash_t] -> [set of payloads]
-  // endorsement is stored in the raw bytes representation
+  // [payloads id] -> [payloads]
+  // payloads is stored in the raw bytes representation
   std::shared_ptr<cf_handle_t> _payloadsHandle;
 };
 

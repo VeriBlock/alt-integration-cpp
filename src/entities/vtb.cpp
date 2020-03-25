@@ -36,3 +36,8 @@ std::vector<uint8_t> VTB::toVbkEncoding() const {
   toVbkEncoding(stream);
   return stream.data();
 }
+
+VTB::id_t VTB::getId() const {
+  auto rawBytes = toVbkEncoding();
+  return sha256(rawBytes);
+}

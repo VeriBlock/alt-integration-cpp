@@ -1,4 +1,5 @@
 #include "veriblock/entities/payloads.hpp"
+#include "veriblock/hashutil.hpp"
 
 using namespace altintegration;
 
@@ -28,8 +29,8 @@ std::vector<uint8_t> AltProof::toVbkEncoding() const {
   return stream.data();
 }
 
-Payloads Payloads::fromVbkEncoding(ReadStream& stream) {
-  Payloads p;
+AltPayloads AltPayloads::fromVbkEncoding(ReadStream& stream) {
+  AltPayloads p;
   p.alt = AltProof::fromVbkEncoding(stream);
   p.vtbs =
       readArrayOf<VTB>(stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
@@ -49,12 +50,12 @@ Payloads Payloads::fromVbkEncoding(ReadStream& stream) {
   return p;
 }
 
-Payloads Payloads::fromVbkEncoding(const std::string& bytes) {
+AltPayloads AltPayloads::fromVbkEncoding(const std::string& bytes) {
   ReadStream stream(bytes);
   return fromVbkEncoding(stream);
 }
 
-void Payloads::toVbkEncoding(WriteStream& stream) const {
+void AltPayloads::toVbkEncoding(WriteStream& stream) const {
   alt.toVbkEncoding(stream);
 
   writeSingleBEValue(stream, vtbs.size());
@@ -73,8 +74,13 @@ void Payloads::toVbkEncoding(WriteStream& stream) const {
   }
 }
 
-std::vector<uint8_t> Payloads::toVbkEncoding() const {
+std::vector<uint8_t> AltPayloads::toVbkEncoding() const {
   WriteStream stream;
   toVbkEncoding(stream);
   return stream.data();
+}
+
+AltPayloads::id_t AltPayloads::getId() const {
+  auto rawBytes = toVbkEncoding();
+  return sha256(rawBytes);
 }

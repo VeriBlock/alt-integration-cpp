@@ -31,11 +31,11 @@ struct AltTree {
 
   // accept block with a single payload from this block
   bool acceptBlock(const AltBlock& block,
-                   const Payloads& payloads,
+                   const AltPayloads& payloads,
                    ValidationState& state);
 
   bool acceptBlock(const AltBlock& block,
-                   const std::vector<Payloads>& payloads,
+                   const std::vector<AltPayloads>& payloads,
                    ValidationState& state);
 
  protected:

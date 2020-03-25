@@ -5,6 +5,7 @@
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/payloads.hpp"
 #include "veriblock/write_stream.hpp"
 
 namespace altintegration {
@@ -14,6 +15,7 @@ template <typename Block>
 struct BlockIndex {
   using hash_t = typename Block::hash_t;
   using height_t = typename Block::height_t;
+  using payloads_t = typename Block::payloads_t;
 
   //! (memory only) pointer to a previous block
   BlockIndex* pprev;
@@ -24,6 +26,8 @@ struct BlockIndex {
 
   //! height of the entry in the chain
   height_t height = 0;
+
+  std::vector<typename payloads_t::id_t> stored_payloads_ids;
 
   //! block header
   Block header{};

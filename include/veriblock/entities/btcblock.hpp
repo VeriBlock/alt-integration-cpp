@@ -13,9 +13,12 @@
 
 namespace altintegration {
 
+struct PaylaodsBlob;
+
 struct BtcBlock {
   using hash_t = uint256;
   using height_t = int32_t;
+  using payloads_t = PaylaodsBlob;
 
   uint32_t version = 0;
   uint256 previousBlock{};

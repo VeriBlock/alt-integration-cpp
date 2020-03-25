@@ -5,7 +5,7 @@
 
 namespace altintegration {
 
-bool PopManager::addPayloads(const Payloads& payloads,
+bool PopManager::addPayloads(const AltPayloads& payloads,
                              StateChange& stateChange,
                              ValidationState& state) {
   return tryValidateWithResources(
@@ -47,7 +47,7 @@ bool PopManager::addPayloads(const Payloads& payloads,
       [&]() { this->removePayloads(payloads, stateChange); });
 }
 
-void PopManager::removePayloads(const Payloads& payloads,
+void PopManager::removePayloads(const AltPayloads& payloads,
                                 StateChange& stateChange) noexcept {
   /// first, remove ATV
   removeAltProof(payloads.alt, stateChange);
@@ -147,7 +147,7 @@ void PopManager::rollback(StateChange& stateChange) noexcept {
   // rollback in reverse order
   std::for_each(uncommitted_.rbegin(),
                 uncommitted_.rend(),
-                [this, &stateChange](const Payloads& p) {
+                [this, &stateChange](const AltPayloads& p) {
                   removePayloads(p, stateChange);
                 });
 

@@ -9,9 +9,12 @@
 
 namespace altintegration {
 
+struct AltPayloads;
+
 struct AltBlock {
   using height_t = int32_t;
   using hash_t = std::vector<uint8_t>;
+  using payloads_t = AltPayloads;
 
   hash_t hash{};
   hash_t previousBlock{};

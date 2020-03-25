@@ -39,7 +39,7 @@ struct AltTreeTest : public AltTree, public testing::Test {
 };
 
 TEST_F(AltTreeTest, acceptBlock_test) {
-  Payloads temp;
+  AltPayloads temp;
 
   AltBlock block1;
   block1.hash = {1, 2, 5};
