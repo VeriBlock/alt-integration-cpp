@@ -1,7 +1,8 @@
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
 #include <veriblock/third_party/BigDecimal.h>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -28,11 +29,11 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone
-  auto diff = tip.height % params_->getKeystoneInterval();
+  auto diff = tip.height % params_.getKeystoneInterval();
 
   // we do not use previous block as a keystone
   if (diff == 0) {
-    diff += params_->getKeystoneInterval();
+    diff += params_.getKeystoneInterval();
   }
   // we reference genesis block if we are at the beginning of the chain
   if ((int32_t)diff <= tip.height) {
@@ -44,7 +45,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   }
 
   // set second previous keystone
-  diff += params_->getKeystoneInterval();
+  diff += params_.getKeystoneInterval();
   if ((int32_t)diff <= tip.height) {
     auto* secondPrevKeystoneIndex = tip.getAncestor(tip.height - diff);
     assert(secondPrevKeystoneIndex != nullptr);
@@ -54,7 +55,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   }
 
   block.timestamp = std::max(tip.getBlockTime(), currentTimestamp4());
-  block.difficulty = getNextWorkRequired(tip, block, *params_);
+  block.difficulty = getNextWorkRequired(tip, block, params_);
   return block;
 }
 

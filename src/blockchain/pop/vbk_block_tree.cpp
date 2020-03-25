@@ -16,25 +16,23 @@ void VbkBlockTree::determineBestChain(Chain<block_t>& currentBest,
   assert(forkIndex != nullptr);
 
   // last common keystone of two forks
-  auto* forkKeystone = forkIndex->getAncestor(highestKeystoneAtOrBefore(
-      forkIndex->height, param_->getKeystoneInterval()));
+  auto ki = param_.getKeystoneInterval();
+  auto* forkKeystone =
+      forkIndex->getAncestor(highestKeystoneAtOrBefore(forkIndex->height, ki));
 
   int result = 0;
-  if (isCrossedKeystoneBoundary(forkKeystone->height,
-                                indexNew.height,
-                                param_->getKeystoneInterval()) &&
-      isCrossedKeystoneBoundary(forkKeystone->height,
-                                currentBest.tip()->height,
-                                param_->getKeystoneInterval())) {
+  auto* bestTip = currentBest.tip();
+  if (isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki) &&
+      isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki)) {
     // [vbk fork point ... current tip]
     Chain<block_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
     auto pkcCurrent =
-        getProtoKeystoneContext(vbkCurrentSubchain, btc_, erepo_, *param_);
+        getProtoKeystoneContext(vbkCurrentSubchain, btc_, erepo_, param_);
     auto kcCurrent = getKeystoneContext(pkcCurrent, btc_);
 
     // [vbk fork point ... new block]
     Chain<block_t> vbkOther(forkKeystone->height, &indexNew);
-    auto pkcOther = getProtoKeystoneContext(vbkOther, btc_, erepo_, *param_);
+    auto pkcOther = getProtoKeystoneContext(vbkOther, btc_, erepo_, param_);
     auto kcOther = getKeystoneContext(pkcOther, btc_);
 
     result = compare_(kcCurrent, kcOther);

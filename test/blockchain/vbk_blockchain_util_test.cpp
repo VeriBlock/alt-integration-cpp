@@ -54,7 +54,7 @@ struct VbkBlockchainUtilTest {
 
   VbkBlockchainUtilTest() {
     chainparams = std::make_shared<VbkChainParamsMain>();
-    miner = std::make_shared<Miner<block_t, param_t>>(chainparams);
+    miner = std::make_shared<Miner<block_t, param_t>>(*chainparams);
   }
 };
 
@@ -261,9 +261,9 @@ struct BlockchainTest : public ::testing::Test {
   BlockchainTest() {
     chainparam = std::make_shared<params_t>();
     blockchain =
-        std::make_shared<BlockTree<block_t, params_base_t>>(chainparam);
+        std::make_shared<BlockTree<block_t, params_base_t>>(*chainparam);
 
-    miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
+    miner = std::make_shared<Miner<block_t, params_base_t>>(*chainparam);
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))

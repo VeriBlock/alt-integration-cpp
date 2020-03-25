@@ -113,7 +113,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap(),
       allblocks.end()};
 
-  BlockTree<BtcBlock, BtcChainParams> tree(value.params);
+  BlockTree<BtcBlock, BtcChainParams> tree(*value.params);
   ASSERT_TRUE(tree.bootstrapWithChain(value.startHeight, bootstrapChain, state))
       << state.GetDebugMessage();
   EXPECT_TRUE(state.IsValid());

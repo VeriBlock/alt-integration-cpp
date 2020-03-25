@@ -15,10 +15,10 @@ struct Miner {
   using merkle_t = decltype(Block::merkleRoot);
   using index_t = BlockIndex<Block>;
 
-  Miner(std::shared_ptr<ChainParams> params) : params_(std::move(params)) {}
+  Miner(const ChainParams& params) : params_(params) {}
 
   void createBlock(Block& block) {
-    while (!checkProofOfWork(block, *params_)) {
+    while (!checkProofOfWork(block, params_)) {
       // to guarantee that miner will not create exactly same blocks even if
       // time and merkle roots are equal for prev block and new block
       block.nonce = nonce++;
@@ -48,7 +48,7 @@ struct Miner {
   }
 
  private:
-  std::shared_ptr<ChainParams> params_;
+  const ChainParams& params_;
   uint32_t nonce = 0;
 };
 
