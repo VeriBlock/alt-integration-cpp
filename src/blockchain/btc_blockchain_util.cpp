@@ -31,7 +31,7 @@ BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
   block.previousBlock = tip.header.getHash();
   block.merkleRoot = merkle;
   block.timestamp = std::max(tip.getBlockTime(), currentTimestamp4());
-  block.bits = getNextWorkRequired(tip, block, *params_);
+  block.bits = getNextWorkRequired(tip, block, params_);
   return block;
 }
 

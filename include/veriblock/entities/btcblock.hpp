@@ -20,6 +20,9 @@ struct BtcBlock {
   using height_t = int32_t;
   using payloads_t = PaylaodsBlob;
 
+  //! noop type
+  using endorsement_t = std::false_type;
+
   uint32_t version = 0;
   uint256 previousBlock{};
   uint256 merkleRoot{};
