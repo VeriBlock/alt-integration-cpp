@@ -160,8 +160,8 @@ bool PopManager::hasUncommittedChanges() const noexcept {
   return !uncommitted_.empty();
 }
 
-int PopManager::compareTwoBranches(const Chain<AltBlock>& chain1,
-                                   const Chain<AltBlock>& chain2) {
+int PopManager::compareTwoBranches(const Chain<BlockIndex<AltBlock>>& chain1,
+                                   const Chain<BlockIndex<AltBlock>>& chain2) {
   auto pkcChain1 =
       getProtoKeystoneContext(chain1, *vbk_, vbke_, altChainParams_);
   auto kcChain1 = getKeystoneContext(pkcChain1, *vbk_);
