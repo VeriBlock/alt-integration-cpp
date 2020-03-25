@@ -27,11 +27,11 @@ struct BlockTree {
   using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
   using block_index_t =
-      std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
+      std::unordered_map<prev_block_hash_t, std::shared_ptr<index_t>>;
 
   virtual ~BlockTree() = default;
 
-  BlockTree(std::shared_ptr<ChainParams> param) : param_(std::move(param)) {}
+  BlockTree(const ChainParams& param) : param_(param) {}
 
   /**
    * Bootstrap blockchain with a single genesis block, from "chain parameters"
@@ -44,7 +44,7 @@ struct BlockTree {
    */
   bool bootstrapWithGenesis(ValidationState& state) {
     assert(block_index_.empty() && "already bootstrapped");
-    auto block = param_->getGenesisBlock();
+    auto block = param_.getGenesisBlock();
     return this->bootstrap(0, block, state);
   }
 
@@ -68,13 +68,13 @@ struct BlockTree {
                            "provided bootstrap chain is empty");
     }
 
-    if (chain.size() < param_->numBlocksForBootstrap()) {
+    if (chain.size() < param_.numBlocksForBootstrap()) {
       return state.Invalid("bootstrapWithChain()",
                            "bootstrap-small-chain",
                            format("number of blocks in the provided chain is "
                                   "too small: %d, expected at least %d",
                                   chain.size(),
-                                  param_->numBlocksForBootstrap()));
+                                  param_.numBlocksForBootstrap()));
     }
 
     // pick first block from the chain, bootstrap with a single block
@@ -172,7 +172,7 @@ struct BlockTree {
                 std::greater<typename Block::height_t>>
       fork_chains_;
   Chain<Block> activeChain_;
-  std::shared_ptr<ChainParams> param_;
+  const ChainParams& param_;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& fullHash) {
@@ -182,8 +182,8 @@ struct BlockTree {
       return it->second.get();
     }
 
-    auto* newIndex = new index_t{};
-    it = block_index_.insert({hash, std::unique_ptr<index_t>(newIndex)}).first;
+    auto newIndex = std::make_shared<index_t>();
+    it = block_index_.insert({hash, std::move(newIndex)}).first;
     return it->second.get();
   }
 
@@ -295,7 +295,7 @@ struct BlockTree {
                    ValidationState& state,
                    bool shouldContextuallyCheck,
                    index_t* blockIndex = nullptr) {
-    if (!checkBlock(block, state, *param_)) {
+    if (!checkBlock(block, state, param_)) {
       return state.addStackFunction("acceptBlock()");
     }
 
@@ -308,7 +308,7 @@ struct BlockTree {
     }
 
     if (shouldContextuallyCheck &&
-        !contextuallyCheckBlock(*prev, block, state, *param_)) {
+        !contextuallyCheckBlock(*prev, block, state, param_)) {
       return state.addStackFunction("acceptBlock");
     }
 
@@ -327,7 +327,7 @@ struct BlockTree {
   bool bootstrap(height_t height,
                  const block_t& block,
                  ValidationState& state) {
-    if (!checkBlock(block, state, *param_)) {
+    if (!checkBlock(block, state, param_)) {
       return state.addStackFunction("bootstrap()");
     }
 

@@ -2,6 +2,7 @@
 
 #include <veriblock/blockchain/blocktree.hpp>
 
+#include "util/visualize.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/btc_blockchain_util.hpp"
 #include "veriblock/blockchain/miner.hpp"
@@ -9,7 +10,6 @@
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
 #include "veriblock/time.hpp"
-#include "util/visualize.hpp"
 
 using namespace altintegration;
 
@@ -31,10 +31,10 @@ struct BlockchainTest : public ::testing::Test {
 
   BlockchainTest() {
     chainparam = std::make_shared<params_t>();
-    miner = std::make_shared<Miner<block_t, params_base_t>>(chainparam);
+    miner = std::make_shared<Miner<block_t, params_base_t>>(*chainparam);
 
     blockchain =
-        std::make_shared<BlockTree<block_t, params_base_t>>(chainparam);
+        std::make_shared<BlockTree<block_t, params_base_t>>(*chainparam);
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
@@ -194,8 +194,6 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   fork2.resize(17);
 
   this->addToFork(fork2, 2);
-
-
 
   EXPECT_EQ(fork2.size(), 19);
   EXPECT_EQ(best.blocksCount(), 20);

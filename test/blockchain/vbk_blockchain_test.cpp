@@ -107,7 +107,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap() * 2,
       allblocks.end()};
 
-  BlockTree<VbkBlock, VbkChainParams> tree(value.params);
+  BlockTree<VbkBlock, VbkChainParams> tree(*value.params);
   ASSERT_TRUE(
       tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))
       << state.GetRejectReason();
