@@ -10,6 +10,7 @@
 #include "veriblock/serde.hpp"
 #include "veriblock/storage/db_error.hpp"
 #include "veriblock/storage/endorsement_repository.hpp"
+#include "veriblock/storage/rocks_util.hpp"
 
 namespace altintegration {
 
@@ -30,10 +31,7 @@ struct EndorsementCursorRocks
   }
 
   void seekToFirst() override { _iterator->SeekToFirst(); }
-  void seek(const eid_t& key) override {
-    rocksdb::Slice eid(reinterpret_cast<const char*>(key.data()), key.size());
-    _iterator->Seek(eid);
-  }
+  void seek(const eid_t& key) override { _iterator->Seek(makeRocksSlice(key)); }
   void seekToLast() override { _iterator->SeekToLast(); }
   bool isValid() const override { return _iterator->Valid(); }
   void next() override { _iterator->Next(); }
@@ -84,11 +82,9 @@ struct EndorsementWriteBatchRocks : public EndorsementWriteBatch<Endorsement> {
     rocksdb::Status s;
 
     std::vector<uint8_t> bytes = e.toVbkEncoding();
-    rocksdb::Slice key(reinterpret_cast<const char*>(e.id.data()), e.id.size());
-    rocksdb::Slice val(reinterpret_cast<const char*>(bytes.data()),
-                       bytes.size());
 
-    s = _batch.Put(_endorsedIdHandle.get(), key, val);
+    s = _batch.Put(
+        _endorsedIdHandle.get(), makeRocksSlice(e.id), makeRocksSlice(bytes));
 
     if (!s.ok()) {
       throw db::DbError(s.ToString());
@@ -98,8 +94,7 @@ struct EndorsementWriteBatchRocks : public EndorsementWriteBatch<Endorsement> {
   void remove(const eid_t& e_id) override {
     rocksdb::Status s;
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(e_id.data()), e_id.size());
-    s = _batch.Delete(_endorsedIdHandle.get(), key);
+    s = _batch.Delete(_endorsedIdHandle.get(), makeRocksSlice(e_id));
 
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
@@ -149,8 +144,8 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
     write_options.disableWAL = true;
     rocksdb::Status s;
 
-    rocksdb::Slice key(reinterpret_cast<const char*>(e_id.data()), e_id.size());
-    s = _db->Delete(write_options, _endorsedIdHandle.get(), key);
+    s = _db->Delete(
+        write_options, _endorsedIdHandle.get(), makeRocksSlice(e_id));
 
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
@@ -173,11 +168,11 @@ class EndorsementRepositoryRocks : public EndorsementRepository<Endorsement> {
     rocksdb::Status s;
 
     std::vector<uint8_t> bytes = e.toVbkEncoding();
-    rocksdb::Slice key(reinterpret_cast<const char*>(e.id.data()), e.id.size());
-    rocksdb::Slice val(reinterpret_cast<const char*>(bytes.data()),
-                       bytes.size());
 
-    s = _db->Put(write_options, _endorsedIdHandle.get(), key, val);
+    s = _db->Put(write_options,
+                 _endorsedIdHandle.get(),
+                 makeRocksSlice(e.id),
+                 makeRocksSlice(bytes));
 
     if (!s.ok()) {
       throw db::DbError(s.ToString());
