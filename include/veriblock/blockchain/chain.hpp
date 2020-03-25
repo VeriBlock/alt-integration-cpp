@@ -123,6 +123,9 @@ struct Chain {
   const index_t* findHighestKeystoneAtOrBeforeFork(const index_t* pindex,
                                                    int ki) const {
     auto* fork = findFork(pindex);
+    if (!fork) {
+      return nullptr;
+    }
     auto keystoneHeight = highestKeystoneAtOrBefore(fork->height, ki);
     return this->operator[](keystoneHeight);
   }
