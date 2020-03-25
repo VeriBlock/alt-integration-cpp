@@ -12,8 +12,10 @@ namespace altintegration {
 //! Store block
 template <typename Block>
 struct BlockIndex {
-  using hash_t = typename Block::hash_t;
-  using height_t = typename Block::height_t;
+  using block_t = Block;
+  using hash_t = typename block_t::hash_t;
+  using height_t = typename block_t::height_t;
+  using endorsement_t = typename block_t::endorsement_t;
 
   //! (memory only) pointer to a previous block
   BlockIndex* pprev;
@@ -21,6 +23,9 @@ struct BlockIndex {
   //! (memory only) total amount of work in the chain up to and including this
   //! block
   ArithUint256 chainWork = 0;
+
+  //! (memory only) list of endorsements that containing in this block
+  std::vector<endorsement_t*> containingEndorsements;
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -73,20 +78,20 @@ struct BlockIndex {
     return stream.data();
   }
 
-  static BlockIndex<Block> fromRaw(ReadStream& stream) {
-    BlockIndex<Block> index{};
+  static BlockIndex fromRaw(ReadStream& stream) {
+    BlockIndex index{};
     index.height = stream.readBE<uint32_t>();
     index.header = Block::fromRaw(stream);
     return index;
   }
 
-  static BlockIndex<Block> fromRaw(const std::string& bytes) {
+  static BlockIndex fromRaw(const std::string& bytes) {
     ReadStream stream(bytes);
     return fromRaw(stream);
   }
 
-  friend bool operator==(const BlockIndex<Block>& a,
-                         const BlockIndex<Block>& b) {
+  friend bool operator==(const BlockIndex& a,
+                         const BlockIndex& b) {
     return a.header == b.header;
   }
 };

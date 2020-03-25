@@ -16,17 +16,17 @@ namespace altintegration {
  * @invariant does not modify any on-disk state.
  */
 struct PopManager {
-  PopManager(std::shared_ptr<BtcChainParams> btcp,
-             std::shared_ptr<VbkChainParams> vbkp,
+  PopManager(const BtcChainParams& btcp,
+             const VbkChainParams& vbkp,
+             const AltChainParams& altp,
              std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce,
-             std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke,
-             std::shared_ptr<AltChainParams> params)
-      : btcparam_(std::move(btcp)),
-        vbkparam_(std::move(vbkp)),
+             std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke)
+      : btcparam_(btcp),
+        vbkparam_(vbkp),
+        altChainParams_(altp),
         btce_(std::move(btce)),
         vbke_(std::move(vbke)),
-        altChainParams_(params),
-        altChainCompare_(*params) {
+        altChainCompare_(altp) {
     btc_ = std::make_shared<BtcTree>(btcparam_);
     vbk_ = std::make_shared<VbkTree>(*btc_, btce_, vbkparam_);
   }
@@ -80,23 +80,23 @@ struct PopManager {
    * @note chain1 and chain2 are being consindered as forks not a full chains
    * from the genesis block, they should start at the common block
    */
-  int compareTwoBranches(const Chain<AltBlock>& chain1,
-                         const Chain<AltBlock>& chain2);
+  int compareTwoBranches(const Chain<BlockIndex<AltBlock>>& chain1,
+                         const Chain<BlockIndex<AltBlock>>& chain2);
 
  private:
   // vector of payloads that have been added to current state,
   // but not committed
   std::vector<Payloads> uncommitted_;
 
-  std::shared_ptr<BtcChainParams> btcparam_;
-  std::shared_ptr<VbkChainParams> vbkparam_;
+  const BtcChainParams& btcparam_;
+  const VbkChainParams& vbkparam_;
+  const AltChainParams& altChainParams_;
 
   std::shared_ptr<BtcTree> btc_;
   std::shared_ptr<VbkTree> vbk_;
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce_;
   std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbke_;
 
-  std::shared_ptr<AltChainParams> altChainParams_;
   ComparePopScore<AltChainParams> altChainCompare_;
 
   bool addVTB(const VTB& vtb, StateChange& stateChange, ValidationState& state);

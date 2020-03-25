@@ -1,4 +1,5 @@
-#include <veriblock/entities/endorsement.hpp>
+#include <veriblock/entities/endorsements.hpp>
+#include <veriblock/entities/payloads.hpp>
 
 namespace altintegration {
 

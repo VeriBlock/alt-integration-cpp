@@ -86,7 +86,7 @@ struct RepositoryRocksManager {
     repoVbkEndorsement = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
 
-    repoPayloads = std::make_shared<payloads_repo_t<AltBlock, Payloads>>(
+    repoAltPayloads = std::make_shared<payloads_repo_t<AltBlock, Payloads>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_PAYLOADS_CONT]);
 
     return s;
@@ -129,7 +129,7 @@ struct RepositoryRocksManager {
     repoVbkEndorsement = std::make_shared<endorsement_repo_t<VbkEndorsement>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
 
-    repoPayloads = std::make_shared<payloads_repo_t<AltBlock, Payloads>>(
+    repoAltPayloads = std::make_shared<payloads_repo_t<AltBlock, Payloads>>(
         dbPtr, cfHandles[(int)CF_NAMES::HASH_BLOCK_PAYLOADS_CONT]);
     return s;
   }
@@ -157,8 +157,9 @@ struct RepositoryRocksManager {
     return repoVbkEndorsement;
   }
 
-  std::shared_ptr<payloads_repo_t<AltBlock, Payloads>> getPayloadsRepo() const {
-    return repoPayloads;
+  std::shared_ptr<payloads_repo_t<AltBlock, Payloads>> getAltPayloadsRepo()
+      const {
+    return repoAltPayloads;
   }
 
  private:
@@ -172,7 +173,7 @@ struct RepositoryRocksManager {
   std::shared_ptr<block_repo_t<VbkBlock>> repoVbk;
   std::shared_ptr<endorsement_repo_t<BtcEndorsement>> repoBtcEndorsement;
   std::shared_ptr<endorsement_repo_t<VbkEndorsement>> repoVbkEndorsement;
-  std::shared_ptr<payloads_repo_t<AltBlock, Payloads>> repoPayloads;
+  std::shared_ptr<payloads_repo_t<AltBlock, Payloads>> repoAltPayloads;
 };
 
 }  // namespace altintegration

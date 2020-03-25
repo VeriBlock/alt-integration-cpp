@@ -13,23 +13,24 @@ namespace altintegration {
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
+  using index_t = VbkTree::index_t;
 
   ~VbkBlockTree() override = default;
 
   VbkBlockTree(BtcTree& btc,
                std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo,
-               std::shared_ptr<VbkChainParams> params)
-      : VbkTree(std::move(params)),
+               const VbkChainParams& params)
+      : VbkTree(params),
         erepo_(std::move(erepo)),
         btc_(btc),
-        compare_(*this->param_) {}
+        compare_(this->param_) {}
 
  private:
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> erepo_;
   BtcTree& btc_;
   ComparePopScore<VbkChainParams> compare_;
 
-  void determineBestChain(Chain<block_t>& currentBest,
+  void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
 };
 
