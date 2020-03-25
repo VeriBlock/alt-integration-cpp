@@ -66,12 +66,12 @@ class MockMiner {
   MockMiner() {
     btce_ = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
 
-    btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(btc_params);
-    btc_blockchain = std::make_shared<btc_block_tree>(btc_params);
+    btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(*btc_params);
+    btc_blockchain = std::make_shared<btc_block_tree>(*btc_params);
 
-    vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(vbk_params);
+    vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(*vbk_params);
     vbk_blockchain =
-        std::make_shared<vbk_block_tree>(*btc_blockchain, btce_, vbk_params);
+        std::make_shared<vbk_block_tree>(*btc_blockchain, btce_, *vbk_params);
   }
 
   Publications mine(const PublicationData& publicationData,

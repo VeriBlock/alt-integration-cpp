@@ -15,6 +15,7 @@ struct DummyBlock {
   using hash_t = int;
   using height_t = int;
   using payloads_t = PaylaodsBlob;
+  using endorsement_t = std::false_type;
 };
 
 struct TestCase {
@@ -23,7 +24,7 @@ struct TestCase {
 };
 
 struct ChainTest : public ::testing::TestWithParam<TestCase> {
-  Chain<DummyBlock> chain{};
+  Chain<BlockIndex<DummyBlock>> chain{};
 
   static std::vector<BlockIndex<DummyBlock>> makeBlocks(int startHeight,
                                                         int size) {
@@ -47,7 +48,7 @@ struct ChainTest : public ::testing::TestWithParam<TestCase> {
 TEST_P(ChainTest, Full) {
   auto [start, size] = GetParam();
   auto blocks = makeBlocks(start, size);
-  chain = Chain<DummyBlock>(start, &*blocks.rbegin());
+  chain = Chain<BlockIndex<DummyBlock>>(start, &*blocks.rbegin());
   EXPECT_EQ(chain.chainHeight(), start + size - 1);
   EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
 
@@ -94,7 +95,7 @@ TEST(ChainTest, CreateFrom0) {
   // created with height 0, it is expected to see that chain will contain 110
   // elements, first 100 of which are null.
   auto blocks = ChainTest::makeBlocks(100, 10);
-  Chain<DummyBlock> c(0, &*blocks.rbegin());
+  Chain<BlockIndex<DummyBlock>> c(0, &*blocks.rbegin());
   ASSERT_EQ(c.blocksCount(), 110);
   ASSERT_EQ(c.chainHeight(), 109);
 }

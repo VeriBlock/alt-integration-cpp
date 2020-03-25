@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
-#include "veriblock/entities/endorsement.hpp"
+#include "veriblock/entities/endorsements.hpp"
 
 using namespace altintegration;
 

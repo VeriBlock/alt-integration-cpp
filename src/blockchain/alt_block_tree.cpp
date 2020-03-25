@@ -14,9 +14,8 @@ AltTree::index_t* AltTree::touchBlockIndex(const hash_t& blockHash) {
     return it->second.get();
   }
 
-  auto* newIndex = new index_t{};
-  it = block_index_.insert({blockHash, std::unique_ptr<index_t>(newIndex)})
-           .first;
+  auto newIndex = std::make_shared<index_t>();
+  it = block_index_.insert({blockHash, std::move(newIndex)}).first;
   return it->second.get();
 }
 
@@ -47,9 +46,9 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
 void AltTree::addToChains(index_t* index) {
   assert(index);
 
-  for (size_t i = 0; i < chainTips_.size(); ++i) {
-    if (chainTips_[i] == index->pprev) {
-      chainTips_[i] = index;
+  for (auto & chainTip : chainTips_) {
+    if (chainTip == index->pprev) {
+      chainTip = index;
       return;
     }
   }
@@ -62,7 +61,7 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Error("already bootstrapped");
   }
 
-  auto block = config_->getGenesisBlock();
+  auto block = config_.getBootstrapBlock();
   auto* index = insertBlockHeader(block);
 
   assert(index != nullptr &&

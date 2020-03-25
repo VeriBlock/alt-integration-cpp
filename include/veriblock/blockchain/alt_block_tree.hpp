@@ -19,11 +19,11 @@ struct AltTree {
   using config_t = AltChainParams;
   using index_t = BlockIndex<AltBlock>;
   using hash_t = typename AltBlock::hash_t;
-  using block_index_t = std::unordered_map<hash_t, std::unique_ptr<index_t>>;
+  using block_index_t = std::unordered_map<hash_t, std::shared_ptr<index_t>>;
 
   virtual ~AltTree() = default;
 
-  AltTree(std::shared_ptr<config_t> config) : config_(config) {}
+  AltTree(const config_t& config) : config_(config) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -41,7 +41,7 @@ struct AltTree {
  protected:
   std::vector<index_t*> chainTips_;
   block_index_t block_index_;
-  std::shared_ptr<config_t> config_;
+  const config_t& config_;
 
   index_t* insertBlockHeader(const AltBlock& block);
 
