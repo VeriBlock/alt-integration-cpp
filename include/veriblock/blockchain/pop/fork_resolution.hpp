@@ -265,7 +265,7 @@ template <typename EndorsedBlockType,
           typename EndorsementType,
           typename ConfigType>
 std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
-    const Chain<EndorsedBlockType>& chain,
+    const Chain<BlockIndex<EndorsedBlockType>>& chain,
     const BlockTree<EndorsementBlockType, EndorsementChainParams>&
         endorsementBlockTree,
     std::shared_ptr<EndorsementRepository<EndorsementType>> endorsementRepo,

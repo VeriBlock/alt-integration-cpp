@@ -12,8 +12,9 @@ namespace altintegration {
 //! Store block
 template <typename Block>
 struct BlockIndex {
-  using hash_t = typename Block::hash_t;
-  using height_t = typename Block::height_t;
+  using block_t = Block;
+  using hash_t = typename block_t::hash_t;
+  using height_t = typename block_t::height_t;
 
   //! (memory only) pointer to a previous block
   BlockIndex* pprev;
