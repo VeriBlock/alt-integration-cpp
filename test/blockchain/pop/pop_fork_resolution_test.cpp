@@ -18,16 +18,14 @@ struct PopForkResolutionAwins : public ::testing::TestWithParam<TestCase> {};
 
 TEST_P(PopForkResolutionEqual, Equal) {
   auto [A, B] = GetParam();
-  ComparePopScore comparePopScore(param);
-  ASSERT_EQ(comparePopScore(A, B), 0);
-  ASSERT_EQ(comparePopScore(B, A), 0);
+  ASSERT_EQ(comparePopScoreImpl(A, B, param), 0);
+  ASSERT_EQ(comparePopScoreImpl(B, A, param), 0);
 }
 
 TEST_P(PopForkResolutionAwins, Awins) {
   auto [A, B] = GetParam();
-  ComparePopScore comparePopScore(param);
-  ASSERT_GT(comparePopScore(A, B), 0);
-  ASSERT_LT(comparePopScore(B, A), 0);
+  ASSERT_GT(comparePopScoreImpl(A, B, param), 0);
+  ASSERT_LT(comparePopScoreImpl(B, A, param), 0);
 }
 
 static const std::vector<TestCase> EqualCases = {

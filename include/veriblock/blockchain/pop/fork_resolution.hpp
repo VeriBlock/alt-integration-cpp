@@ -15,7 +15,7 @@
 
 namespace altintegration {
 
-template <typename ProtectingIndex>
+template <typename ProtectingBlockT>
 struct ProtoKeystoneContext {
   int blockHeight;
   uint32_t timestampOfEndorsedBlock;
@@ -26,7 +26,7 @@ struct ProtoKeystoneContext {
   // A map of the Endorsement blocks which reference (endorse a block header
   // which is the represented block or references the represented block) to the
   // index of the earliest
-  std::set<ProtectingIndex*> referencedByBlocks;
+  std::set<BlockIndex<ProtectingBlockT>*> referencedByBlocks;
 };
 
 struct KeystoneContext {
@@ -87,8 +87,7 @@ struct KeystoneContextList {
 
 template <typename ProtectingBlockT, typename ProtectingChainParams>
 std::vector<KeystoneContext> getKeystoneContext(
-    const std::vector<ProtoKeystoneContext<BlockIndex<ProtectingBlockT>>>&
-        chain,
+    const std::vector<ProtoKeystoneContext<ProtectingBlockT>>& chain,
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree) {
   std::vector<KeystoneContext> ret;
   ret.reserve(chain.size());
@@ -145,15 +144,15 @@ std::vector<KeystoneContext> getKeystoneContext(
   return ret;
 }
 
-template <typename EndorsedBlockType,
-          typename EndorsementBlockType,
-          typename EndorsementChainParams,
-          typename ConfigType>
-std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
-    const Chain<BlockIndex<EndorsedBlockType>>& chain,
-    const BlockTree<EndorsementBlockType, EndorsementChainParams>& tree,
-    const ConfigType& config) {
-  std::vector<ProtoKeystoneContext<EndorsementBlockType>> ret;
+template <typename ProtectedBlockT,
+          typename ProtectingBlockT,
+          typename ProtectingChainParams,
+          typename ProtectedChainParams>
+std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
+    const Chain<BlockIndex<ProtectedBlockT>>& chain,
+    const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree,
+    const ProtectedChainParams& config) {
+  std::vector<ProtoKeystoneContext<ProtectingBlockT>> ret;
 
   auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
@@ -170,7 +169,7 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
   for (auto keystoneToConsider = firstKeystone;
        keystoneToConsider <= lastKeystone;
        keystoneToConsider = firstKeystoneAfter(keystoneToConsider, ki)) {
-    ProtoKeystoneContext<EndorsementBlockType> pkc(
+    ProtoKeystoneContext<ProtectingBlockT> pkc(
         keystoneToConsider, chain[keystoneToConsider]->height);
 
     auto highestConnectingBlock =
@@ -186,8 +185,8 @@ std::vector<ProtoKeystoneContext<EndorsementBlockType>> getProtoKeystoneContext(
 
       // get all endorsements of this block that are on the same chain as that
       // block
-      using EndorsementType = typename EndorsementBlockType::endorsement_t;
-      std::vector<EndorsementType*> endorsements;
+      using EndorsementType = typename ProtectedBlockT::endorsement_t;
+      std::vector<const EndorsementType*> endorsements;
       for (const EndorsementType* e : index->containingEndorsements) {
         if (!e) {
           continue;
@@ -318,16 +317,19 @@ template <typename ProtectedBlock,
           typename ProtectedParams,
           typename ProtectingBlockTree>
 struct PopAwareForkResolutionComparator {
+  using protected_block_t = ProtectedBlock;
   using protected_block_hash_t = typename ProtectedBlock::hash_t;
   using protected_params_t = ProtectedParams;
   using protecting_params_t = typename ProtectingBlockTree::params_t;
-  using protected_index_t = BlockIndex<ProtectedBlock>;
+  using protected_index_t = BlockIndex<protected_block_t>;
   using protecting_index_t = typename ProtectingBlockTree::index_t;
+  using protecting_block_t = typename protecting_index_t::block_t;
+  using endorsement_t = typename protected_block_t::endorsement_t;
   using protected_payloads_t = typename protected_index_t::payloads_t;
   using protected_payloads_id_t = typename protected_payloads_t::id_t;
   using sm_t = PopStateMachine<ProtectingBlockTree,
-                                     BlockIndex<ProtectedBlock>,
-                                     protected_params_t>;
+                               BlockIndex<protected_block_t>,
+                               protected_params_t>;
 
   PopAwareForkResolutionComparator(
       const PayloadsRepository<protected_payloads_t>& payloadsRepository,
@@ -358,7 +360,7 @@ struct PopAwareForkResolutionComparator {
           "PopAwareForkResolutionComparator::setState");
     }
 
-    tree_ = sm.tree();
+    tree_ = std::move(sm.tree());
     index_ = sm.index();
 
     return true;
@@ -407,12 +409,22 @@ struct PopAwareForkResolutionComparator {
     // now 'temp' contains payloads from both chains
 
     /// filter chainA
-    auto pkcChain1 = getProtoKeystoneContext(chainA, temp, protectedParams_);
-    auto kcChain1 = getKeystoneContext(pkcChain1, temp);
+    auto pkcChain1 = getProtoKeystoneContext<protected_block_t,
+                                             protecting_block_t,
+                                             protecting_params_t,
+                                             protected_params_t>(
+        chainA, temp, protectedParams_);
+    auto kcChain1 = getKeystoneContext<protecting_block_t, protecting_params_t>(
+        pkcChain1, temp);
 
     /// filter chainB
-    auto pkcChain2 = getProtoKeystoneContext(chainB, temp, protectedParams_);
-    auto kcChain2 = getKeystoneContext(pkcChain2, temp);
+    auto pkcChain2 = getProtoKeystoneContext<protected_block_t,
+                                             protecting_block_t,
+                                             protecting_params_t,
+                                             protected_params_t>(
+        chainB, temp, protectedParams_);
+    auto kcChain2 = getKeystoneContext<protecting_block_t, protecting_params_t>(
+        pkcChain2, temp);
 
     // do not update current tree, just abandon 'temp' tree
 

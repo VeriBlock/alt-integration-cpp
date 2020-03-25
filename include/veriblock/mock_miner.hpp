@@ -13,7 +13,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "veriblock/storage/endorsement_repository_inmem.hpp"
+#include "veriblock/storage/payloads_repository_inmem.hpp"
 
 namespace altintegration {
 
@@ -45,7 +45,8 @@ class MockMiner {
   std::shared_ptr<Miner<vbk_block_t, vbk_params_t>> vbk_miner;
   std::shared_ptr<vbk_block_tree> vbk_blockchain;
 
-  std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce_;
+  std::shared_ptr<PayloadsRepository<VTB>> vtbp_ =
+      std::make_shared<PayloadsRepositoryInmem<VTB>>();
 
  public:
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
@@ -64,14 +65,14 @@ class MockMiner {
 
  public:
   MockMiner() {
-    btce_ = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
-
     btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(*btc_params);
     btc_blockchain = std::make_shared<btc_block_tree>(*btc_params);
 
     vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(*vbk_params);
+
+    vbk_block_tree::PopForkComparator vbkcmp(*vtbp_, *btc_params, *vbk_params);
     vbk_blockchain =
-        std::make_shared<vbk_block_tree>(*btc_blockchain, btce_, *vbk_params);
+        std::make_shared<vbk_block_tree>(*vbk_params, std::move(vbkcmp));
   }
 
   Publications mine(const PublicationData& publicationData,

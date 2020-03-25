@@ -6,11 +6,10 @@ namespace altintegration {
 void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew) {
   if (currentBest.tip() == nullptr) {
-    currentBest.setTip(&indexNew);
-    return;
+    return setTip(currentBest, indexNew);
   }
 
-  auto ki = param_.getKeystoneInterval();
+  auto ki = param_->getKeystoneInterval();
   auto* forkKeystone =
       currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
 
@@ -32,7 +31,6 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     result = cmp_.comparePopScore(vbkCurrentSubchain, vbkOther);
   }
 
-  ValidationState state;
   if (result < 0) {
     // other chain won!
     auto prevTip = currentBest.tip();
@@ -48,12 +46,23 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   }
 }
 
+void VbkBlockTree::setTip(Chain<index_t>& currentBest,
+                          VbkBlockTree::index_t& tip) {
+  currentBest.setTip(&tip);
+
+  ValidationState state;
+  bool ret = cmp_.setState(tip, state);
+  (void)ret;
+  assert(ret &&
+         "we validated payloads during fork resolution, but when we actually "
+         "changed chain, we found invalid payloads. This is logic error.");
+}
+
 template <>
 bool PopStateMachine<VbkBlockTree::BtcTree,
-                           BlockIndex<VbkBlock>,
-                           VbkChainParams>::addPayloads(const VTB& vtb,
-                                                        ValidationState&
-                                                            state) {
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::addPayloads(const VTB& vtb,
+                                                  ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
         auto& btc = tree();
@@ -77,8 +86,8 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
 
 template <>
 void PopStateMachine<VbkBlockTree::BtcTree,
-                           BlockIndex<VbkBlock>,
-                           VbkChainParams>::removePayloads(const VTB& vtb) {
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::removePayloads(const VTB& vtb) {
   auto& btc = tree();
 
   /// remove VTB context
