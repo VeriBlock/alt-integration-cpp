@@ -19,7 +19,7 @@ struct PopRewardsCalculator {
   /**
    */
   virtual PopRewardsBigDecimal getScoreMultiplierFromRelativeBlock(
-      int relativeBlock);
+      int relativeBlock) const;
 
   /**
    */
@@ -27,7 +27,7 @@ struct PopRewardsCalculator {
       uint32_t height,
       uint32_t vbkRelativeHeight,
       PopRewardsBigDecimal scoreForThisBlock,
-      PopRewardsBigDecimal difficulty);
+      PopRewardsBigDecimal difficulty) const;
 
  private:
   const AltChainParams& chainParams_;

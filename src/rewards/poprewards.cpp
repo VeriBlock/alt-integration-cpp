@@ -37,7 +37,8 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
     if (block == nullptr) continue;
     int relativeHeight = block->height - bestPublication;
     assert(relativeHeight >= 0);
-    totalScore += calculator_.getScoreMultiplierFromRelativeBlock(relativeHeight);
+    totalScore +=
+        calculator_.getScoreMultiplierFromRelativeBlock(relativeHeight);
   }
   return totalScore;
 }

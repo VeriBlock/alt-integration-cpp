@@ -124,7 +124,7 @@ static PopRewardsBigDecimal calculateMinerReward(
 }
 
 PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
-    int relativeBlock) {
+    int relativeBlock) const {
   if (relativeBlock < 0 ||
       relativeBlock >= (int)rewardParams_.relativeScoreLookupTable().size()) {
     return 0.0;
@@ -138,7 +138,7 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateRewardForMiner(
     uint32_t height,
     uint32_t vbkRelativeHeight,
     PopRewardsBigDecimal scoreForThisBlock,
-    PopRewardsBigDecimal difficulty) {
+    PopRewardsBigDecimal difficulty) const {
   if (scoreForThisBlock == 0.0) {
     return 0.0;
   }

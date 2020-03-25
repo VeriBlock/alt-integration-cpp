@@ -25,7 +25,8 @@ struct PopRewards {
         vbk_tree_(vbk_tree),
         rewardParams_(rewardParams),
         calculator_(calculator) {}
-  virtual ~PopRewards(){};
+
+  virtual ~PopRewards() = default;
 
   /**
    * Collect all endorsements for the endorsedBlock and calculate
@@ -61,8 +62,8 @@ struct PopRewards {
  private:
   const EndorsementRepository<VbkEndorsement>& erepo_;
   const VbkBlockTree& vbk_tree_;
-  PopRewardsParams rewardParams_;
-  PopRewardsCalculator calculator_;
+  const PopRewardsParams& rewardParams_;
+  const PopRewardsCalculator& calculator_;
 };
 
 }  // namespace altintegration
