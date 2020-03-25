@@ -170,7 +170,7 @@ struct PayloadsRepositoryInmem : public PayloadsRepository<Payloads> {
   }
 
   size_t get(const std::vector<payloads_id>& ids,
-             std::vector<stored_payloads_t>* out) const {
+             std::vector<stored_payloads_t>* out) const override {
     size_t totalFound = 0;
     for (const auto& id : ids) {
       stored_payloads_t payloads;
