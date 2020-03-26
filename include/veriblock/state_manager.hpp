@@ -18,21 +18,30 @@ class StateChange {
   friend class StateManager<void>;
 
  public:
-  StateChange(std::shared_ptr<PayloadsRepository<AltPayloads>> payoadsAltRepo)
-      : payloadsAltBatch(payoadsAltRepo->newBatch()) {}
+  StateChange(std::shared_ptr<PayloadsRepository<AltPayloads>> payoadsAltRepo,
+              std::shared_ptr<PayloadsRepository<VTB>> payoadsVbkRepo)
+      : payloadsAltBatch(payoadsAltRepo->newBatch()),
+        payloadsVbkBatch(payoadsVbkRepo->newBatch()) {}
 
   void clear() { payloadsAltBatch->clear(); }
 
-  void savePayloads(const AltPayloads& payloads) {
+  void saveVbkPayloads(const VTB& payloads) { payloadsVbkBatch->put(payloads); }
+
+  void removeVbkPayloads(const VTB& payloads) {
+    payloadsVbkBatch->removeByHash(payloads.containingBlock.getHash());
+  }
+
+  void saveAltPayloads(const AltPayloads& payloads) {
     payloadsAltBatch->put(payloads);
   }
 
-  void removePayloads(const AltPayloads& payloads) {
+  void removeAltPayloads(const AltPayloads& payloads) {
     payloadsAltBatch->removeByHash(payloads.alt.containing.getHash());
   }
 
  private:
   std::unique_ptr<PayloadsWriteBatch<AltPayloads>> payloadsAltBatch;
+  std::unique_ptr<PayloadsWriteBatch<VTB>> payloadsVbkBatch;
 
   void commit() { payloadsAltBatch->commit(); }
 };
@@ -61,8 +70,8 @@ class StateManager {
   }
 
   std::unique_ptr<StateChange> newChange() {
-    return std::unique_ptr<StateChange>(
-        new StateChange(database.getAltPayloadsRepo()));
+    return std::unique_ptr<StateChange>(new StateChange(
+        database.getAltPayloadsRepo(), database.getVbkPayloadsRepo()));
   }
 
   status_t commit(StateChange& change) {
