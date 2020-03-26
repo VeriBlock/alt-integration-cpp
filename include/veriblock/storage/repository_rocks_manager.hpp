@@ -19,7 +19,8 @@ enum class CF_NAMES {
   HASH_BLOCK_VBK,
   HASH_BTC_ENDORSEMENT_ID,
   HASH_VBK_ENDORSEMENT_ID,
-  PAYLOADS_ID
+  ALT_PAYLOADS_ID,
+  VBK_PAYLOADS_ID
 };
 
 // column families in the DB
@@ -28,7 +29,8 @@ static const std::vector<std::string> cfNames{"default",
                                               "hash_block_vbk",
                                               "hash_btc_endorsement_id",
                                               "hash_vbk_endorsement_id",
-                                              "payloads_id_payloads"};
+                                              "alt_payloads_id",
+                                              "vbk_payloads_id"};
 
 struct RepositoryRocksManager {
   template <typename Block_t>
@@ -87,7 +89,10 @@ struct RepositoryRocksManager {
         dbPtr, cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
 
     repoAltPayloads = std::make_shared<payloads_repo_t<AltPayloads>>(
-        dbPtr, cfHandles[(int)CF_NAMES::PAYLOADS_ID]);
+        dbPtr, cfHandles[(int)CF_NAMES::ALT_PAYLOADS_ID]);
+
+    repoVbkPayloads = std::make_shared<payloads_repo_t<VTB>>(
+        dbPtr, cfHandles[(int)CF_NAMES::VBK_PAYLOADS_ID]);
 
     return s;
   }
@@ -102,7 +107,7 @@ struct RepositoryRocksManager {
 
     rocksdb::Status s = rocksdb::Status::OK();
     for (size_t i = (size_t)CF_NAMES::HASH_BLOCK_BTC;
-         i <= (size_t)CF_NAMES::PAYLOADS_ID;
+         i <= (size_t)CF_NAMES::VBK_PAYLOADS_ID;
          i++) {
       auto columnName = cfHandles[i]->GetName();
       s = dbPtr->DropColumnFamily(cfHandles[i].get());
@@ -130,7 +135,10 @@ struct RepositoryRocksManager {
         dbPtr, cfHandles[(int)CF_NAMES::HASH_VBK_ENDORSEMENT_ID]);
 
     repoAltPayloads = std::make_shared<payloads_repo_t<AltPayloads>>(
-        dbPtr, cfHandles[(int)CF_NAMES::PAYLOADS_ID]);
+        dbPtr, cfHandles[(int)CF_NAMES::ALT_PAYLOADS_ID]);
+
+    repoVbkPayloads = std::make_shared<payloads_repo_t<VTB>>(
+        dbPtr, cfHandles[(int)CF_NAMES::VBK_PAYLOADS_ID]);
     return s;
   }
 
@@ -161,6 +169,10 @@ struct RepositoryRocksManager {
     return repoAltPayloads;
   }
 
+  std::shared_ptr<payloads_repo_t<VTB>> getVbkPayloadsRepo() const {
+    return repoVbkPayloads;
+  }
+
  private:
   std::string dbName = "";
 
@@ -173,6 +185,7 @@ struct RepositoryRocksManager {
   std::shared_ptr<endorsement_repo_t<BtcEndorsement>> repoBtcEndorsement;
   std::shared_ptr<endorsement_repo_t<VbkEndorsement>> repoVbkEndorsement;
   std::shared_ptr<payloads_repo_t<AltPayloads>> repoAltPayloads;
+  std::shared_ptr<payloads_repo_t<VTB>> repoVbkPayloads;
 };
 
 }  // namespace altintegration

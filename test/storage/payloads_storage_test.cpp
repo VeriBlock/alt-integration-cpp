@@ -22,9 +22,17 @@ static const std::string dbName = "db-test";
 template <typename Repo_type>
 std::shared_ptr<Repo_type> getRepo();
 
+template <typename PayloadsType>
+PayloadsType generatePayloads();
+
 template <>
 std::shared_ptr<PayloadsRepositoryInmem<AltPayloads>> getRepo() {
   return std::make_shared<PayloadsRepositoryInmem<AltPayloads>>();
+}
+
+template <>
+std::shared_ptr<PayloadsRepositoryInmem<VTB>> getRepo() {
+  return std::make_shared<PayloadsRepositoryInmem<VTB>>();
 }
 
 template <>
@@ -35,6 +43,15 @@ std::shared_ptr<PayloadsRepositoryRocks<AltPayloads>> getRepo() {
   return database.getAltPayloadsRepo();
 }
 
+template <>
+std::shared_ptr<PayloadsRepositoryRocks<VTB>> getRepo() {
+  RepositoryRocksManager database(dbName);
+  rocksdb::Status s = database.open();
+  database.clear();
+  return database.getVbkPayloadsRepo();
+}
+
+template <>
 AltPayloads generatePayloads() {
   AltPayloads p;
   p.alt.containing = {generateRandomBytesVector(32),
@@ -60,6 +77,15 @@ AltPayloads generatePayloads() {
   return p;
 }
 
+template <>
+VTB generatePayloads() {
+  std::vector<uint8_t> bytes = ParseHex(defaultVtbEncoded);
+  auto stream = ReadStream(bytes);
+  VTB vtb{VTB::fromVbkEncoding(stream)};
+  vtb.transaction.bitcoinTransaction.tx = generateRandomBytesVector(100);
+  return vtb;
+}
+
 template <typename PayloadsRepoType>
 struct PayloadsRepoTest : public ::testing::Test {
   using payloads_t = typename PayloadsRepoType::stored_payloads_t;
@@ -80,8 +106,8 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
 
   using payloads_t = typename Basic::payloads_t;
 
-  payloads_t p1 = generatePayloads();
-  payloads_t p2 = generatePayloads();
+  payloads_t p1 = generatePayloads<payloads_t>();
+  payloads_t p2 = generatePayloads<payloads_t>();
   this->repo->put(p1);
   this->repo->put(p2);
 
@@ -100,8 +126,8 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
   this->repo->put(p1);
   this->repo->put(p2);
 
-  payloads_t p3 = generatePayloads();
-  payloads_t p4 = generatePayloads();
+  payloads_t p3 = generatePayloads<payloads_t>();
+  payloads_t p4 = generatePayloads<payloads_t>();
 
   this->repo->put(p3);
   this->repo->put(p4);
@@ -155,18 +181,18 @@ TYPED_TEST_P(PayloadsRepoTest, Cursor) {
 
   using payloads_t = typename Cursor::payloads_t;
 
-  payloads_t p1 = generatePayloads();
-  payloads_t p2 = generatePayloads();
+  payloads_t p1 = generatePayloads<payloads_t>();
+  payloads_t p2 = generatePayloads<payloads_t>();
   this->repo->put(p1);
   this->repo->put(p2);
 
-  payloads_t p3 = generatePayloads();
-  payloads_t p4 = generatePayloads();
+  payloads_t p3 = generatePayloads<payloads_t>();
+  payloads_t p4 = generatePayloads<payloads_t>();
   this->repo->put(p3);
   this->repo->put(p4);
 
-  payloads_t p5 = generatePayloads();
-  payloads_t p6 = generatePayloads();
+  payloads_t p5 = generatePayloads<payloads_t>();
+  payloads_t p6 = generatePayloads<payloads_t>();
   this->repo->put(p5);
   this->repo->put(p6);
 
@@ -235,12 +261,12 @@ TYPED_TEST_P(PayloadsRepoTest, Batch) {
 
   std::vector<payloads_t> payloads;
 
-  payloads_t p1 = generatePayloads();
-  payloads_t p2 = generatePayloads();
-  payloads_t p3 = generatePayloads();
-  payloads_t p4 = generatePayloads();
-  payloads_t p5 = generatePayloads();
-  payloads_t p6 = generatePayloads();
+  payloads_t p1 = generatePayloads<payloads_t>();
+  payloads_t p2 = generatePayloads<payloads_t>();
+  payloads_t p3 = generatePayloads<payloads_t>();
+  payloads_t p4 = generatePayloads<payloads_t>();
+  payloads_t p5 = generatePayloads<payloads_t>();
+  payloads_t p6 = generatePayloads<payloads_t>();
 
   batch->put(p1);
   batch->put(p2);
@@ -283,7 +309,9 @@ TYPED_TEST_P(PayloadsRepoTest, Batch) {
 REGISTER_TYPED_TEST_SUITE_P(PayloadsRepoTest, Basic, Cursor, Batch);
 
 typedef ::testing::Types<PayloadsRepositoryInmem<AltPayloads>,
-                         PayloadsRepositoryRocks<AltPayloads>>
+                         PayloadsRepositoryRocks<AltPayloads>,
+                         PayloadsRepositoryInmem<VTB>,
+                         PayloadsRepositoryRocks<VTB>>
     TypesUnderTest;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(PayloadsRepoTestSuite,
