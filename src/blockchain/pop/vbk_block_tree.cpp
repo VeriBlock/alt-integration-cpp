@@ -71,13 +71,13 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
 
         index->containingPayloads.push_back(vtb.getId());
 
-
         BtcEndorsement e = BtcEndorsement::fromContainer(vtb);
-        index->containingEndorsements[e.id] = std::make_shared<BtcEndorsement>(e);
+        index->containingEndorsements[e.id] =
+            std::make_shared<BtcEndorsement>(e);
 
         return true;
       },
-      [&]() { removePayloads(vtb); });
+      [&]() { removePayloads(index, vtb); });
 }
 
 template <>
@@ -93,7 +93,25 @@ void PopStateMachine<VbkBlockTree::BtcTree,
     btc.invalidateBlockByHash(b.getHash());
   }
 
+  index->containingEndorsements.erase(BtcEndorsement::getId(vtb));
+}
 
+template <>
+bool checkEndorsement(const BlockIndex<VbkBlock>& currentBlock,
+                      const BtcEndorsement& e,
+                      const VbkChainParams& params,
+                      ValidationState& state) {
+  Chain<BlockIndex<VbkBlock>> chain(0, &currentBlock);
+  auto endorsement =
+      chain.findEndorsement(e.id, params.getEndorsementSettlementInterval());
+  if (endorsement) {
+    // found duplicate
+    return state.Invalid("checkEndorsement",
+                         "bad-endorsement-duplicate",
+                         "Found duplicate endorsement on the same chain");
+  }
+
+  return true;
 }
 
 }  // namespace altintegration

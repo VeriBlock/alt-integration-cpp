@@ -9,6 +9,8 @@
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
+#include <veriblock/state_manager.hpp>
+#include <veriblock/storage/repository_rocks_manager.hpp>
 
 namespace altintegration {
 
@@ -21,8 +23,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(const VbkChainParams& params, PopForkComparator cmp)
-      : VbkTree(params), cmp_(std::move(cmp)) {}
+  VbkBlockTree(const VbkChainParams& params, PopForkComparator cmp, StateManager<RepositoryRocksManager>& mgr)
+      : VbkTree(params), cmp_(std::move(cmp)), mgr_(mgr) {}
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
@@ -64,7 +66,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
     assert(index != nullptr);
 
-    cmp_.getPayloadsRepository()
+    auto change = mgr_.newChange();
+    change->savePayloads()
+
+    cmp_.getPayloadsRepository();
     if (!cmp_.setState(*index, state)) {
       return state.addStackFunction("VbkTree::acceptBlock");
     }
@@ -77,18 +82,28 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                           index_t& indexNew) override;
 
   PopForkComparator cmp_;
+  StateManager<RepositoryRocksManager>& mgr_;
 };
 
 template <>
 bool PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::addPayloads(BlockIndex<VbkBlock>* index, const VTB& payloads,
+                     VbkChainParams>::addPayloads(BlockIndex<VbkBlock>* index,
+                                                  const VTB& payloads,
                                                   ValidationState& state);
 
 template <>
 void PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::removePayloads(BlockIndex<VbkBlock>* index, const VTB& payloads);
+                     VbkChainParams>::removePayloads(BlockIndex<VbkBlock>*
+                                                         index,
+                                                     const VTB& payloads);
+
+template <>
+bool checkEndorsement(const BlockIndex<VbkBlock>& currentBlock,
+                      const BtcEndorsement& e,
+                      const VbkChainParams& params,
+                      ValidationState& state);
 
 }  // namespace altintegration
 

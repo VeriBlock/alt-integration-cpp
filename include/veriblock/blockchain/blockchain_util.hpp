@@ -32,18 +32,11 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             ValidationState& state,
                             const ChainParams& params);
 
-template <typename Block, typename ChainParams>
-bool endorsementValidation(const BlockIndex<Block>& currentBlock,
-                           const ChainParams& params,
-                           ValidationState& state);
-
-template <typename BlockTree, typename PayloadsT>
-bool addPayloads(BlockTree& tree,
-                 const PayloadsT& payloads,
-                 ValidationState& state);
-
-template <typename BlockTree, typename PayloadsT>
-void removePayloads(BlockTree& tree, const PayloadsT& payloads);
+template <typename Block, typename ChainParams, typename EndorsementT>
+bool checkEndorsement(const BlockIndex<Block>& currentBlock,
+                      const EndorsementT& e,
+                      const ChainParams& params,
+                      ValidationState& state);
 
 }  // namespace altintegration
 
