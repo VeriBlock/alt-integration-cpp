@@ -14,6 +14,7 @@
 namespace altintegration {
 
 struct DummyPayloads;
+struct DummyEndorsement;
 
 struct BtcBlock {
   using hash_t = uint256;
@@ -21,7 +22,7 @@ struct BtcBlock {
   using payloads_t = DummyPayloads;
 
   //! noop type
-  using endorsement_t = std::false_type;
+  using endorsement_t = DummyEndorsement;
 
   uint32_t version = 0;
   uint256 previousBlock{};

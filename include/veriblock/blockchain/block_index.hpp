@@ -1,10 +1,13 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/write_stream.hpp"
 
@@ -17,7 +20,9 @@ struct BlockIndex {
   using hash_t = typename block_t::hash_t;
   using height_t = typename block_t::height_t;
   using endorsement_t = typename block_t::endorsement_t;
+  using eid_t = typename endorsement_t::id_t;
   using payloads_t = typename Block::payloads_t;
+  using pid_t = typename payloads_t::id_t;
 
   //! (memory only) pointer to a previous block
   BlockIndex* pprev;
@@ -27,12 +32,13 @@ struct BlockIndex {
   ArithUint256 chainWork = 0;
 
   //! (memory only) list of endorsements that containing in this block
-  std::vector<endorsement_t*> containingEndorsements;
+  std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
+      containingEndorsements;
 
   //! height of the entry in the chain
   height_t height = 0;
 
-  std::vector<typename payloads_t::id_t> stored_payloads_ids;
+  std::vector<pid_t> stored_payloads_ids;
 
   //! block header
   Block header{};
@@ -94,8 +100,7 @@ struct BlockIndex {
     return fromRaw(stream);
   }
 
-  friend bool operator==(const BlockIndex& a,
-                         const BlockIndex& b) {
+  friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
     return a.header == b.header;
   }
 };
