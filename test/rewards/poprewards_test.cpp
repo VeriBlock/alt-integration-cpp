@@ -12,6 +12,9 @@
 
 using namespace altintegration;
 
+///TODO: uncomment when we are ready to test rewards
+#if 0
+
 static const std::string dbName = "db_test";
 
 struct AltChainParamsTest : public AltChainParams {
@@ -158,3 +161,5 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   auto payouts = rewards->calculatePayouts(altProof.endorsed, popDifficulty);
   ASSERT_TRUE(payouts.size() == 1);
 }
+
+#endif //0
