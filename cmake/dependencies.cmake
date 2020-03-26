@@ -1,6 +1,7 @@
 if(WITH_ROCKSDB)
     if(FIND_ROCKSDB)
         find_package(RocksDB CONFIG REQUIRED)
+        find_package(ZLIB REQUIRED)
         set_target_properties(RocksDB::rocksdb PROPERTIES IMPORTED_GLOBAL TRUE)
         add_library(rocksdb ALIAS RocksDB::rocksdb)
     else()
