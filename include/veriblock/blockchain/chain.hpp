@@ -145,6 +145,25 @@ struct Chain {
     return ret;
   }
 
+  std::shared_ptr<typename index_t::endorsement_t> findEndorsement(
+      const typename index_t::eid_t& eid,
+      const uint32_t& endorsement_settlement_interval) {
+    index_t* workBlock = tip();
+
+    uint32_t count = 0;
+    while (count != endorsement_settlement_interval && workBlock &&
+           workBlock->height != startHeight_) {
+      ++count;
+      auto it = workBlock->containingEndorsements.find(eid);
+      if (it != workBlock->containingEndorsements.end()) {
+        return it->second;
+      }
+      workBlock = workBlock->pprev;
+    }
+
+    return nullptr;
+  }
+
  private:
   height_t startHeight_ = 0;
   std::vector<index_t*> chain{};
