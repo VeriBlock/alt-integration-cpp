@@ -32,10 +32,10 @@ struct PopStateMachine {
         startHeight_(startHeight) {}
 
   //! @invariant: atomic. Either all 'payloads' added or not at all.
-  bool addPayloads(const payloads_t& payloads, ValidationState& state);
+  bool addPayloads(ProtectedIndex*index, const payloads_t& payloads, ValidationState& state);
 
   //! @invariant: atomic. Does not throw under normal conditions.
-  void removePayloads(const payloads_t& payloads);
+  void removePayloads(ProtectedIndex*index, const payloads_t& payloads);
 
   void unapply(ProtectedIndex& to) {
     if (&to == index_) {

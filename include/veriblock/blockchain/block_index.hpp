@@ -25,7 +25,7 @@ struct BlockIndex {
   using pid_t = typename payloads_t::id_t;
 
   //! (memory only) pointer to a previous block
-  BlockIndex* pprev;
+  BlockIndex* pprev{};
 
   //! (memory only) total amount of work in the chain up to and including this
   //! block
@@ -33,10 +33,10 @@ struct BlockIndex {
 
   //! (memory only) list of endorsements that containing in this block
   std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
-      containingEndorsements;
+      containingEndorsements{};
 
   //! (memory only) list of containing payloads in this block
-  std::vector<payloads_id_t> containingPayloads;
+  std::vector<pid_t> containingPayloads{};
 
   //! height of the entry in the chain
   height_t height = 0;

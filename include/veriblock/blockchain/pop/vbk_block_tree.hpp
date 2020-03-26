@@ -7,6 +7,7 @@
 #include <veriblock/blockchain/pop/pop_state_machine.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
+#include <veriblock/finalizer.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
 
 namespace altintegration {
@@ -45,32 +46,49 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
       return state.addStackFunction("VbkTree::bootstrapWithGenesis");
     }
 
-    if (!cmp_.setState(*getBestChain().tip(), state)) {
+    auto* tip = getBestChain().tip();
+    if (!cmp_.setState(*tip, state)) {
       return state.addStackFunction("VbkTree::bootstrapWithGenesis");
     }
 
     return true;
   }
 
+  bool acceptBlock(const block_t& block,
+                   const std::vector<payloads_t>& payloads,
+                   ValidationState& state) {
+    index_t* index;
+    if (!validateBlock(block, state, true, &index)) {
+      return state.addStackFunction("VbkTree::acceptBlock");
+    }
+
+    assert(index != nullptr);
+
+    cmp_.getPayloadsRepository()
+    if (!cmp_.setState(*index, state)) {
+      return state.addStackFunction("VbkTree::acceptBlock");
+    }
+
+    // add payloads to block index
+  }
+
  private:
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew) override;
-
-  void setTip(Chain<index_t>& currentBest, index_t& tip) override;
 
   PopForkComparator cmp_;
 };
 
 template <>
 bool PopStateMachine<VbkBlockTree::BtcTree,
-                           BlockIndex<VbkBlock>,
-                           VbkChainParams>::addPayloads(const VTB& payloads,
-                                                        ValidationState& state);
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::addPayloads(BlockIndex<VbkBlock>* index, const VTB& payloads,
+                                                  ValidationState& state);
 
 template <>
 void PopStateMachine<VbkBlockTree::BtcTree,
-                           BlockIndex<VbkBlock>,
-                           VbkChainParams>::removePayloads(const VTB& payloads);
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::removePayloads(BlockIndex<VbkBlock>* index, const VTB& payloads);
 
 }  // namespace altintegration
 

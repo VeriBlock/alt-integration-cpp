@@ -18,11 +18,9 @@ using namespace altintegration;
 struct VbkBlockTreeTestFixture : ::testing::Test {
   std::shared_ptr<VbkBlockTree> vbkTest;
 
-  std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> btc_repo;
   std::shared_ptr<BtcChainParams> btc_params;
   std::shared_ptr<BlockTree<BtcBlock, BtcChainParams>> btcTree;
 
-  std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> vbk_repo;
   std::shared_ptr<VbkChainParams> vbk_params;
 
   std::shared_ptr<PayloadsRepository<VTB>> vtbp_ =
@@ -98,6 +96,8 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
 };
 
 TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
+  using namespace internal;
+
   uint32_t numVbkBlocks = 200;
 
   // in the mock_miner chain state will be 200 blocks + genesis block = 201
@@ -158,6 +158,7 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
 }
 
 TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
+  using namespace internal;
   uint32_t numVbkBlocks = 200;
 
   // in the mock_miner chain state will be 200 blocks + genesis block = 201

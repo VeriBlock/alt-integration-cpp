@@ -6,7 +6,8 @@ namespace altintegration {
 void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew) {
   if (currentBest.tip() == nullptr) {
-    return setTip(currentBest, indexNew);
+    currentBest.setTip(&indexNew);
+    return onTipChanged(indexNew);
   }
 
   auto ki = param_->getKeystoneInterval();
@@ -46,22 +47,11 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   }
 }
 
-void VbkBlockTree::setTip(Chain<index_t>& currentBest,
-                          VbkBlockTree::index_t& tip) {
-  currentBest.setTip(&tip);
-
-  ValidationState state;
-  bool ret = cmp_.setState(tip, state);
-  (void)ret;
-  assert(ret &&
-         "we validated payloads during fork resolution, but when we actually "
-         "changed chain, we found invalid payloads. This is logic error.");
-}
-
 template <>
 bool PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::addPayloads(const VTB& vtb,
+                     VbkChainParams>::addPayloads(BlockIndex<VbkBlock>* index,
+                                                  const VTB& vtb,
                                                   ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
@@ -79,6 +69,12 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
           }
         }
 
+        index->containingPayloads.push_back(vtb.getId());
+
+
+        BtcEndorsement e = BtcEndorsement::fromContainer(vtb);
+        index->containingEndorsements[e.id] = std::make_shared<BtcEndorsement>(e);
+
         return true;
       },
       [&]() { removePayloads(vtb); });
@@ -87,13 +83,17 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
 template <>
 void PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::removePayloads(const VTB& vtb) {
+                     VbkChainParams>::removePayloads(BlockIndex<VbkBlock>*
+                                                         index,
+                                                     const VTB& vtb) {
   auto& btc = tree();
 
   /// remove VTB context
   for (const auto& b : vtb.transaction.blockOfProofContext) {
     btc.invalidateBlockByHash(b.getHash());
   }
+
+
 }
 
 }  // namespace altintegration

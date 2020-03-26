@@ -8,7 +8,7 @@ using namespace altintegration;
 const static VbkChainParamsRegTest param;
 
 struct TestCase {
-  using V = std::vector<KeystoneContext>;
+  using V = std::vector<internal::KeystoneContext>;
   V A;
   V B;
 };

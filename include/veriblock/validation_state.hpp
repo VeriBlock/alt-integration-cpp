@@ -83,7 +83,7 @@ class ValidationState {
   std::string m_reject_reason;
   std::string m_debug_message;
   std::vector<std::string> stack_trace;
-  int index;
+  int index = -1;
 };
 
 }  // namespace altintegration

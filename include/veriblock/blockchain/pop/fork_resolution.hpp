@@ -15,6 +15,8 @@
 
 namespace altintegration {
 
+namespace internal {
+
 template <typename ProtectingBlockT>
 struct ProtoKeystoneContext {
   int blockHeight;
@@ -219,8 +221,9 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
                         const std::vector<KeystoneContext>& chainB,
                         const ProtectedChainConfig& config) {
   assert(config.getKeystoneInterval() > 0);
-  KeystoneContextList a(chainA, config.getKeystoneInterval());
-  KeystoneContextList b(chainB, config.getKeystoneInterval());
+  auto ki = config.getKeystoneInterval();
+  KeystoneContextList a(chainA, ki);
+  KeystoneContextList b(chainB, ki);
 
   if (a.empty() && b.empty()) {
     return 0;
@@ -251,7 +254,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
   int chainBscore = 0;
   for (int keystoneToCompare = earliestKeystone;
        keystoneToCompare <= latestKeystone;
-       keystoneToCompare += config.getKeystoneInterval()) {
+       keystoneToCompare += ki) {
     auto* actx = a.getKeystone(keystoneToCompare);
     auto* bctx = b.getKeystone(keystoneToCompare);
 
@@ -313,6 +316,8 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
   return chainAscore - chainBscore;
 }
 
+}  // namespace internal
+
 template <typename ProtectedBlock,
           typename ProtectedParams,
           typename ProtectingBlockTree>
@@ -332,7 +337,7 @@ struct PopAwareForkResolutionComparator {
                                protected_params_t>;
 
   PopAwareForkResolutionComparator(
-      const PayloadsRepository<protected_payloads_t>& payloadsRepository,
+      PayloadsRepository<protected_payloads_t>& payloadsRepository,
       const protecting_params_t& protectingParams,
       const protected_params_t& protectedParams)
       : tree_(protectingParams),
@@ -348,7 +353,7 @@ struct PopAwareForkResolutionComparator {
   //! @invariant: atomic. If returns false, does not change internal state.
   bool setState(protected_index_t& index, ValidationState& state) {
     // if previous state is unknown, set new state as current
-    if (!index_) {
+    if (index_ == nullptr) {
       index_ = &index;
       return true;
     }
@@ -408,37 +413,39 @@ struct PopAwareForkResolutionComparator {
 
     // now 'temp' contains payloads from both chains
 
+    // rename
+    const auto& gpkc = internal::getProtoKeystoneContext<protected_block_t,
+                                                         protecting_block_t,
+                                                         protecting_params_t,
+                                                         protected_params_t>;
+    const auto& gkc =
+        internal::getKeystoneContext<protecting_block_t, protecting_params_t>;
+
     /// filter chainA
-    auto pkcChain1 = getProtoKeystoneContext<protected_block_t,
-                                             protecting_block_t,
-                                             protecting_params_t,
-                                             protected_params_t>(
-        chainA, temp, protectedParams_);
-    auto kcChain1 = getKeystoneContext<protecting_block_t, protecting_params_t>(
-        pkcChain1, temp);
+    auto pkcChain1 = gpkc(chainA, temp, protectedParams_);
+    auto kcChain1 = gkc(pkcChain1, temp);
 
     /// filter chainB
-    auto pkcChain2 = getProtoKeystoneContext<protected_block_t,
-                                             protecting_block_t,
-                                             protecting_params_t,
-                                             protected_params_t>(
-        chainB, temp, protectedParams_);
-    auto kcChain2 = getKeystoneContext<protecting_block_t, protecting_params_t>(
-        pkcChain2, temp);
+    auto pkcChain2 = gpkc(chainB, temp, protectedParams_);
+    auto kcChain2 = gkc(pkcChain2, temp);
 
     // do not update current tree, just abandon 'temp' tree
 
-    return comparePopScoreImpl<protected_params_t>(
+    return internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, protectedParams_);
+  }
+
+  PayloadsRepository<protected_payloads_t>& getPayloadsRepository() {
+    return p_;
   }
 
  private:
   ProtectingBlockTree tree_;
-  protected_index_t* index_;
+  protected_index_t* index_ = nullptr;
 
   const protected_params_t& protectedParams_;
   const protecting_params_t& protectingParams_;
-  const PayloadsRepository<protected_payloads_t>& p_;
+  PayloadsRepository<protected_payloads_t>& p_;
 };
 
 }  // namespace altintegration
