@@ -77,7 +77,7 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
-                          const Payloads&,
+                          const AltPayloads&,
                           ValidationState& state) {
   // we must know previous block
   auto* prev = getBlockIndex(block.previousBlock);
@@ -97,7 +97,7 @@ bool AltTree::acceptBlock(const AltBlock& block,
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
-                          const std::vector<Payloads>& payloads,
+                          const std::vector<AltPayloads>& payloads,
                           ValidationState& state) {
   for (const auto& p : payloads) {
     if (!acceptBlock(block, p, state)) {

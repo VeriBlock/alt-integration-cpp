@@ -39,6 +39,10 @@ VbkEndorsement VbkEndorsement ::fromContainer(const AltProof& c);
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltProof& c);
 
+struct DummyEndorsement {
+  using id_t = bool;
+};
+
 }  // namespace altintegration
 
 namespace std {

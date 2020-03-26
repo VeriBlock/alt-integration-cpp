@@ -18,22 +18,21 @@ class StateChange {
   friend class StateManager<void>;
 
  public:
-  StateChange(
-      std::shared_ptr<PayloadsRepository<AltBlock, Payloads>> payoadsAltRepo)
+  StateChange(std::shared_ptr<PayloadsRepository<AltPayloads>> payoadsAltRepo)
       : payloadsAltBatch(payoadsAltRepo->newBatch()) {}
 
   void clear() { payloadsAltBatch->clear(); }
 
-  void savePayloads(const Payloads& payloads) {
-    payloadsAltBatch->put(payloads.alt.containing.getHash(), payloads);
+  void savePayloads(const AltPayloads& payloads) {
+    payloadsAltBatch->put(payloads);
   }
 
-  void removePayloads(const Payloads& payloads) {
+  void removePayloads(const AltPayloads& payloads) {
     payloadsAltBatch->removeByHash(payloads.alt.containing.getHash());
   }
 
  private:
-  std::unique_ptr<PayloadsWriteBatch<AltBlock, Payloads>> payloadsAltBatch;
+  std::unique_ptr<PayloadsWriteBatch<AltPayloads>> payloadsAltBatch;
 
   void commit() { payloadsAltBatch->commit(); }
 };
@@ -57,8 +56,7 @@ class StateManager {
   RepositoryManager database;
 
  public:
-  StateManager(const std::string& dbPath)
-      : database(dbPath) {
+  StateManager(const std::string& dbPath) : database(dbPath) {
     database.open();
   }
 

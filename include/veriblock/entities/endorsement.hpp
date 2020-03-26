@@ -66,7 +66,11 @@ struct Endorsement {
 
   static type::id_t getId(const Container& c);
 
-  bool operator==(const type& other) const { return id == other.id; }
+  bool operator==(const type& other) const {
+    return id == other.id && endorsedHash == other.endorsedHash &&
+           containingHash == other.containingHash &&
+           blockOfProof == other.blockOfProof;
+  }
 };
 
 }  // namespace altintegration

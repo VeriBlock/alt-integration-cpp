@@ -1,8 +1,13 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <veriblock/blockchain/alt_chain_params.hpp>
 #include <veriblock/blockchain/chain.hpp>
+#include <veriblock/entities/endorsements.hpp>
+#include <veriblock/entities/payloads.hpp>
 #include <veriblock/fmt.hpp>
+
+#include "util/test_utils.hpp"
 
 using namespace altintegration;
 using ::testing::_;
@@ -13,7 +18,8 @@ using ::testing::StrictMock;
 struct DummyBlock {
   using hash_t = int;
   using height_t = int;
-  using endorsement_t = std::false_type;
+  using payloads_t = DummyPayloads;
+  using endorsement_t = DummyEndorsement;
 };
 
 struct TestCase {
@@ -96,4 +102,119 @@ TEST(ChainTest, CreateFrom0) {
   Chain<BlockIndex<DummyBlock>> c(0, &*blocks.rbegin());
   ASSERT_EQ(c.blocksCount(), 110);
   ASSERT_EQ(c.chainHeight(), 109);
+}
+
+template <typename EndorsementType>
+EndorsementType generateEndorsement();
+
+template <typename Block>
+BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
+
+template <>
+BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
+  AltBlock block;
+  block.hash = generateRandomBytesVector(32);
+  block.height = prev->height + 1;
+  block.previousBlock = prev->getHash();
+  block.timestamp = prev->header.timestamp + 1;
+
+  BlockIndex<AltBlock> index;
+  index.header = block;
+  index.height = block.height;
+  index.pprev = prev;
+  return index;
+}
+
+template <typename Block>
+struct ChainTestFixture : public ::testing::Test {
+  using block_t = Block;
+  using hash_t = typename block_t::hash_t;
+  using height_t = typename block_t::height_t;
+  using endorsement_t = typename block_t::endorsement_t;
+  using eid_t = typename endorsement_t::id_t;
+};
+
+TYPED_TEST_SUITE_P(ChainTestFixture);
+
+TYPED_TEST_P(ChainTestFixture, findEndorsement) {}
+
+// make sure to enumerate the test cases here
+REGISTER_TYPED_TEST_SUITE_P(ChainTestFixture, findEndorsement);
+
+typedef ::testing::Types<> TypesUnderTest;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(ChainTestSuite,
+                               ChainTestFixture,
+                               TypesUnderTest);
+
+struct AltChainParamsTest : public AltChainParams {
+  AltBlock getBootstrapBlock() const noexcept override {
+    AltBlock genesisBlock;
+    genesisBlock.hash = {1, 2, 3};
+    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.height = 0;
+    genesisBlock.timestamp = 0;
+    return genesisBlock;
+  }
+};
+
+TEST(ChainTest, findEndorsement) {
+  AltBlock bootstrapBlock = AltChainParamsTest().getBootstrapBlock();
+  BlockIndex<AltBlock> bootstrapBlockIndex;
+  bootstrapBlock.height = bootstrapBlock.height;
+  bootstrapBlockIndex.header = bootstrapBlock;
+  bootstrapBlockIndex.pprev = nullptr;
+
+  std::vector<std::shared_ptr<BlockIndex<AltBlock>>> indexes{
+      std::make_shared<BlockIndex<AltBlock>>(bootstrapBlockIndex)};
+
+  Chain<BlockIndex<AltBlock>> chain(bootstrapBlockIndex.height,
+                                    &bootstrapBlockIndex);
+
+  for (int i = 0; i < 10; ++i) {
+    std::shared_ptr<BlockIndex<AltBlock>> block =
+        std::make_shared<BlockIndex<AltBlock>>(generateNextBlock(chain.tip()));
+    indexes.push_back(block);
+    chain.setTip(block.get());
+  }
+
+  VbkEndorsement endorsement1;
+  endorsement1.id = generateRandomBytesVector(32);
+  endorsement1.blockOfProof = generateRandomBytesVector(10);
+  endorsement1.containingHash = generateRandomBytesVector(10);
+
+  VbkEndorsement endorsement2;
+  endorsement2.id = generateRandomBytesVector(32);
+  endorsement2.blockOfProof = generateRandomBytesVector(10);
+  endorsement2.containingHash = generateRandomBytesVector(10);
+
+  VbkEndorsement endorsement3;
+  endorsement3.id = generateRandomBytesVector(32);
+  endorsement3.blockOfProof = generateRandomBytesVector(10);
+  endorsement3.containingHash = generateRandomBytesVector(10);
+
+  VbkEndorsement endorsement4;
+  endorsement4.id = generateRandomBytesVector(32);
+  endorsement4.blockOfProof = generateRandomBytesVector(10);
+  endorsement4.containingHash = generateRandomBytesVector(10);
+
+  BlockIndex<AltBlock> newIndex = generateNextBlock(chain.tip());
+
+  newIndex.containingEndorsements[endorsement1.id] =
+      std::make_shared<VbkEndorsement>(endorsement1);
+  newIndex.containingEndorsements[endorsement2.id] =
+      std::make_shared<VbkEndorsement>(endorsement2);
+
+  chain.setTip(&newIndex);
+
+  BlockIndex<AltBlock> newIndex2 = generateNextBlock(chain.tip());
+
+  newIndex2.containingEndorsements[endorsement3.id] =
+      std::make_shared<VbkEndorsement>(endorsement3);
+
+  chain.setTip(&newIndex2);
+  EXPECT_EQ(*chain.findEndorsement(endorsement1.id, 100), endorsement1);
+  EXPECT_EQ(*chain.findEndorsement(endorsement2.id, 100), endorsement2);
+  EXPECT_EQ(*chain.findEndorsement(endorsement3.id, 100), endorsement3);
+  EXPECT_EQ(chain.findEndorsement(endorsement4.id, 100), nullptr);
 }

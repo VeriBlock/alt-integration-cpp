@@ -20,6 +20,11 @@ VTB VTB::fromVbkEncoding(Slice<const uint8_t> bytes) {
   return fromVbkEncoding(stream);
 }
 
+VTB VTB::fromVbkEncoding(const std::string& bytes) {
+  ReadStream stream(bytes);
+  return fromVbkEncoding(stream);
+}
+
 void VTB::toVbkEncoding(WriteStream& stream) const {
   WriteStream txStream;
   transaction.toVbkEncoding(stream);
@@ -35,4 +40,9 @@ std::vector<uint8_t> VTB::toVbkEncoding() const {
   WriteStream stream;
   toVbkEncoding(stream);
   return stream.data();
+}
+
+VTB::id_t VTB::getId() const {
+  auto rawBytes = toVbkEncoding();
+  return sha256(rawBytes);
 }
