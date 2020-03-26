@@ -152,7 +152,7 @@ struct Chain {
 
     uint32_t count = 0;
     while (count != endorsement_settlement_interval && workBlock &&
-           workBlock->height != startHeight_) {
+           workBlock->height > startHeight_) {
       ++count;
       auto it = workBlock->containingEndorsements.find(eid);
       if (it != workBlock->containingEndorsements.end()) {
