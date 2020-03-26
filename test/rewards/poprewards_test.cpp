@@ -33,8 +33,7 @@ struct RewardsTestFixture : ::testing::Test {
   std::shared_ptr<AltChainParams> alt_params;
   PopRewardsParams reward_params{};
 
-  std::shared_ptr<BlockTree<BtcBlock, BtcChainParams>> btcTree;
-  std::shared_ptr<VbkBlockTree> vbkTree;
+  ///HACK: we use BTC tree to emulate AltChain tree
   std::shared_ptr<BtcTree> altTree;
 
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> btc_erepo;
@@ -68,9 +67,6 @@ struct RewardsTestFixture : ::testing::Test {
     btc_params = std::make_shared<BtcChainParamsRegTest>();
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
     alt_params = std::make_shared<AltChainParamsTest>();
-
-    btcTree = std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(*btc_params);
-    vbkTree = std::make_shared<VbkBlockTree>(*btcTree, btc_erepo, *vbk_params);
 
     btc_erepo = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
     vbk_erepo = std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
@@ -126,15 +122,9 @@ struct RewardsTestFixture : ::testing::Test {
 };
 
 TEST_F(RewardsTestFixture, basicReward_test) {
-  EXPECT_TRUE(apm->mineBtcBlocks(5, state));
-  EXPECT_EQ(apm->btc().getBestChain().tip()->height, 5);
-
-  EXPECT_TRUE(apm->mineVbkBlocks(5, state));
-  EXPECT_EQ(apm->vbk().getBestChain().tip()->height, 5);
-
-  // ALT has genesis + 10 blocks
   std::vector<BtcBlock> altfork1{btc_params->getGenesisBlock()};
   mineChain(*altTree, altfork1, 10);
+  // ALT has genesis + 10 blocks
   ASSERT_EQ(altTree->getBestChain().chainHeight(), 10);
 
   // get last known BTC and VBK hashes (current tips)
@@ -166,5 +156,5 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 
   PopRewardsBigDecimal popDifficulty = 1.0;
   auto payouts = rewards->calculatePayouts(altProof.endorsed, popDifficulty);
-  ASSERT_TRUE(payouts.size() > 0);
+  ASSERT_TRUE(payouts.size() == 1);
 }
