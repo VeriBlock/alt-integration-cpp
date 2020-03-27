@@ -27,8 +27,5 @@ target_link_libraries(arith_uint256_test ${LIB_NAME})
 addtest(signutil_test signutil_test.cpp)
 target_link_libraries(signutil_test ${LIB_NAME})
 
-addtest(mock_miner_test mock_miner_test.cpp)
-target_link_libraries(mock_miner_test ${LIB_NAME})
-
 addtest(keystone_util_test keystone_util_test.cpp)
 target_link_libraries(keystone_util_test ${LIB_NAME})

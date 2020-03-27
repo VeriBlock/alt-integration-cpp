@@ -81,12 +81,6 @@ class MockMiner {
         std::make_shared<vbk_block_tree>(*vbk_params, std::move(vbkcmp));
   }
 
-  //  Publications mine(const PublicationData& publicationData,
-  //                    const VbkBlock::hash_t& lastKnownVbkBlockHash,
-  //                    const BtcBlock::hash_t& lastKnownBtcBlockHash,
-  //                    const uint32_t& vbkBlockDelay,
-  //                    ValidationState& state);
-
   bool mineBtcBlocks(const uint32_t& n, ValidationState& state);
   bool mineVbkBlocks(const uint32_t& n, ValidationState& state);
 
