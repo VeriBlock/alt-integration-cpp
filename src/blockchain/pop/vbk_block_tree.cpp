@@ -126,6 +126,11 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
           }
         }
 
+        // add block of proof
+        if (!btc.acceptBlock(payloads.transaction.blockOfProof, state)) {
+          return state.addStackFunction("VbkTree::addPayloads");
+        }
+
         return true;
       },
       [&]() { unapplyContext(payloads); });
@@ -137,10 +142,13 @@ void PopStateMachine<VbkBlockTree::BtcTree,
                      VbkChainParams>::unapplyContext(const VTB& payloads) {
   auto& btc = tree();
 
-  /// remove VTB context
+  // remove VTB context
   for (const auto& b : payloads.transaction.blockOfProofContext) {
     btc.invalidateBlockByHash(b.getHash());
   }
+
+  // remove block of proof
+  btc.invalidateBlockByHash(payloads.transaction.blockOfProof.getHash());
 }
 
 template <>
