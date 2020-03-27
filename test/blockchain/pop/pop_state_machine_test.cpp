@@ -1,3 +1,5 @@
+#include "veriblock/blockchain/pop/pop_state_machine.hpp"
+
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -6,7 +8,6 @@
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
-#include "veriblock/blockchain/pop/pop_state_machine.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
@@ -20,9 +21,8 @@ template <typename BlockType>
 void mineChain(std::vector<std::shared_ptr<BlockIndex<BlockType>>>& chain,
                int size,
                BlockIndex<BlockType>* fromBlock) {
-  std::shared_ptr<BlockIndex<BlockType>> newBlock =
-      std::make_shared<BlockIndex<BlockType>>(
-          generateNextBlock<BlockType>(fromBlock));
+  auto newBlock = std::make_shared<BlockIndex<BlockType>>(
+      generateNextBlock<BlockType>(fromBlock));
 
   for (int i = 0; i < size; ++i) {
     chain.push_back(newBlock);
@@ -73,9 +73,8 @@ TEST(PopStateMachine, unapplyAndApply_test) {
   EXPECT_TRUE(apm.vbk().bootstrapWithGenesis(state));
   EXPECT_TRUE(apm.vbk().btc().bootstrapWithGenesis(state));
 
-  std::shared_ptr<BlockIndex<VbkBlock>> bootstrapVbkBlock =
-      std::make_shared<BlockIndex<VbkBlock>>(
-          generateNextBlock<VbkBlock>(nullptr));
+  auto bootstrapVbkBlock = std::make_shared<BlockIndex<VbkBlock>>(
+      generateNextBlock<VbkBlock>(nullptr));
 
   std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain1 = {
       bootstrapVbkBlock};
