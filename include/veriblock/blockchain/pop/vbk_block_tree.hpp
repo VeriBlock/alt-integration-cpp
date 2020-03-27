@@ -23,10 +23,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(const VbkChainParams& params,
-               PopForkComparator cmp,
-               StateManager<RepositoryRocksManager>& mgr)
-      : VbkTree(params), cmp_(std::move(cmp)), mgr_(mgr) {}
+  VbkBlockTree(const VbkChainParams& params, PopForkComparator cmp)
+      : VbkTree(params), cmp_(std::move(cmp)) {}
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
@@ -60,7 +58,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool acceptBlock(const block_t& block,
                    const std::vector<payloads_t>& payloads,
-                   ValidationState& state) {
+                   ValidationState& state,
+                   StateChange* change = nullptr) {
     index_t* index;
     if (!validateAndAddBlock(block, state, true, &index)) {
       return state.addStackFunction("VbkTree::acceptBlock");
@@ -68,17 +67,17 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
     assert(index != nullptr);
 
-    auto change = mgr_.newChange();
     if (!cmp_.addAllPayloads(*index, payloads, state)) {
       return state.Invalid("vbk-invalid-pop-" + state.GetRejectReason(),
                            state.GetDebugMessage());
     }
 
     // save payloads on disk
-    for (const auto& payload : payloads) {
-      change->saveVbkPayloads(payload);
+    if (change) {
+      for (const auto& payload : payloads) {
+        change->saveVbkPayloads(payload);
+      }
     }
-    mgr_.commit(*change);
 
     bool ret = cmp_.setState(*index, state);
     assert(ret && "this state was validated previously");
@@ -94,7 +93,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                           index_t& indexNew) override;
 
   PopForkComparator cmp_;
-  StateManager<RepositoryRocksManager>& mgr_;
 };
 
 template <>

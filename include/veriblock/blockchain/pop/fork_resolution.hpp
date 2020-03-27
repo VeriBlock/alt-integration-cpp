@@ -391,7 +391,7 @@ struct PopAwareForkResolutionComparator {
           "PopAwareForkResolutionComparator::setState");
     }
 
-    tree_ = std::move(sm.tree());
+    tree_ = std::move(temp);
     index_ = sm.index();
 
     return true;
