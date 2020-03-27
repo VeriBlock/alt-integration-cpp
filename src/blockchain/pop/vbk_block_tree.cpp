@@ -141,10 +141,6 @@ void PopStateMachine<VbkBlockTree::BtcTree,
   for (const auto& b : payloads.transaction.blockOfProofContext) {
     btc.invalidateBlockByHash(b.getHash());
   }
-
-  auto& p = index()->containingPayloads;
-  p.erase(std::remove(p.begin(), p.end(), payloads.getId()), p.end());
-  index()->containingEndorsements.erase(BtcEndorsement::getId(payloads));
 }
 
 template <>
