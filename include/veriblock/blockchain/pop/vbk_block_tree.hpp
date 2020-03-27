@@ -62,7 +62,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state) {
     index_t* index;
-    if (!validateBlock(block, state, true, &index)) {
+    if (!validateAndAddBlock(block, state, true, &index)) {
       return state.addStackFunction("VbkTree::acceptBlock");
     }
 
@@ -74,13 +74,17 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                            state.GetDebugMessage());
     }
 
+    // save payloads on disk
     for (const auto& payload : payloads) {
       change->saveVbkPayloads(payload);
     }
+    mgr_.commit(*change);
 
     bool ret = cmp_.setState(*index, state);
     assert(ret && "this state was validated previously");
     (void)ret;
+
+    determineBestChain(activeChain_, *index);
 
     return true;
   }

@@ -298,7 +298,7 @@ struct BlockTree {
                    ValidationState& state,
                    bool shouldContextuallyCheck) {
     index_t* index;
-    if (!validateBlock(block, state, shouldContextuallyCheck, &index)) {
+    if (!validateAndAddBlock(block, state, shouldContextuallyCheck, &index)) {
       return false;
     }
 
@@ -326,7 +326,7 @@ struct BlockTree {
     return true;
   }
 
-  bool validateBlock(const block_t& block,
+  bool validateAndAddBlock(const block_t& block,
                      ValidationState& state,
                      bool shouldContextuallyCheck,
                      index_t** ret) {
