@@ -178,29 +178,6 @@ VTB MockMiner::generateVTB(const VbkBlock& publishedBlock,
   return vtb;
 }
 
-// Publications MockMiner::mine(const PublicationData& publicationData,
-//                             const VbkBlock::hash_t& lastKnownVbkBlockHash,
-//                             const BtcBlock::hash_t& lastKnownBtcBlockHash,
-//                             const uint32_t& vbkBlockDelay,
-//                             ValidationState& state) {
-//  ATV atv = generateAndApplyATV(publicationData, lastKnownVbkBlockHash,
-//  state);
-//
-//  for (uint32_t i = 0; i != vbkBlockDelay; ++i) {
-//    BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
-//    assert(tip != nullptr && "VBK blockchain is not bootstrapped");
-//
-//    VbkBlock minedBlock = vbk_miner->createNextBlock(*tip);
-//    bool ret = vbk_blockchain->acceptBlock(minedBlock, {}, state);
-//    assert(ret);
-//  }
-//
-//  VTB vtb = generateAndApplyVTB(*vbk_blockchain,
-//      atv.containingBlock, state);
-//
-//  return {atv, {vtb}};
-//}
-
 bool MockMiner::mineBtcBlocks(const uint32_t& n, ValidationState& state) {
   return mineBlocks(n, *btc_miner, *btc_blockchain, state);
 }
