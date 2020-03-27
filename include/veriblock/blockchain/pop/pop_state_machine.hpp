@@ -16,9 +16,6 @@ template <typename ProtectingBlockTree,
 struct PopStateMachine {
   using payloads_t = typename ProtectedIndex::payloads_t;
   using height_t = typename ProtectedIndex::height_t;
-  using get_payloads_f =
-      std::function<std::vector<typename ProtectedIndex::payloads_t>(
-          const ProtectedIndex& index)>;
 
   PopStateMachine(ProtectingBlockTree& tree,
                   ProtectedIndex* index,

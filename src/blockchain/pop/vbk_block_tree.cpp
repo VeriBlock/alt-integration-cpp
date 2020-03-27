@@ -79,7 +79,7 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state,
                                StateChange* change) {
-  index_t* index;
+  index_t* index = nullptr;
   if (!validateAndAddBlock(block, state, true, &index)) {
     return state.addStackFunction("VbkTree::acceptBlock");
   }

@@ -356,6 +356,8 @@ struct PopAwareForkResolutionComparator {
       }
     }
 
+    assert(index_ == index.pprev);
+
     auto temp = tree_;
     // set initial state machine state = current index
     sm_t sm(temp, &index, protectedParams_, p_);

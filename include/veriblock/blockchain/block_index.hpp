@@ -110,9 +110,6 @@ struct BlockIndex {
   friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
     return a.header == b.header;
   }
-
- private:
-
 };
 
 }  // namespace altintegration
