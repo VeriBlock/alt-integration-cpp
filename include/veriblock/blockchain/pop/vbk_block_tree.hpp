@@ -33,68 +33,14 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool bootstrapWithChain(height_t startHeight,
                           const std::vector<block_t>& chain,
-                          ValidationState& state) override {
-    if (!VbkTree::bootstrapWithChain(startHeight, chain, state)) {
-      return state.addStackFunction("VbkTree::bootstrapWithChain");
-    }
+                          ValidationState& state) override;
 
-    if (!cmp_.setState(*getBestChain().tip(), state)) {
-      return state.addStackFunction("VbkTree::bootstrapWithChain");
-    }
-
-    return true;
-  }
-
-  bool bootstrapWithGenesis(ValidationState& state) override {
-    if (!VbkTree::bootstrapWithGenesis(state)) {
-      return state.addStackFunction("VbkTree::bootstrapWithGenesis");
-    }
-
-    auto* tip = getBestChain().tip();
-    if (!cmp_.setState(*tip, state)) {
-      return state.addStackFunction("VbkTree::bootstrapWithGenesis");
-    }
-
-    return true;
-  }
+  bool bootstrapWithGenesis(ValidationState& state) override;
 
   bool acceptBlock(const block_t& block,
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state,
-                   StateChange* change = nullptr) {
-    index_t* index;
-    if (!validateAndAddBlock(block, state, true, &index)) {
-      return state.addStackFunction("VbkTree::acceptBlock");
-    }
-
-    assert(index != nullptr);
-
-    if (!cmp_.addAllPayloads(*index, payloads, state)) {
-      return state.Invalid("vbk-invalid-pop-" + state.GetRejectReason(),
-                           state.GetDebugMessage());
-    }
-
-    for (const auto& p : payloads) {
-      index->containingPayloads.push_back(p.getId());
-      BtcEndorsement e = BtcEndorsement::fromContainer(p);
-      index->containingEndorsements[e.id] = std::make_shared<BtcEndorsement>(e);
-    }
-
-    // save payloads on disk
-    if (change) {
-      for (const auto& payload : payloads) {
-        change->saveVbkPayloads(payload);
-      }
-    }
-
-    bool ret = cmp_.setState(*index, state);
-    assert(ret && "this state was validated previously");
-    (void)ret;
-
-    determineBestChain(activeChain_, *index);
-
-    return true;
-  }
+                   StateChange* change = nullptr);
 
  private:
   void determineBestChain(Chain<index_t>& currentBest,
@@ -106,19 +52,19 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 template <>
 bool PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::addPayloads(const VTB& payloads,
-                                                  ValidationState& state);
+                     VbkChainParams>::applyContext(const VTB& payloads,
+                                                   ValidationState& state);
 
 template <>
 void PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::removePayloads(const VTB& payloads);
+                     VbkChainParams>::unapplyContext(const VTB& payloads);
 
 template <>
-bool checkEndorsement(BlockIndex<VbkBlock>& currentBlock,
-                      const BtcEndorsement& e,
-                      const VbkChainParams& params,
-                      ValidationState& state);
+bool addPayloadsToBlockIndex(BlockIndex<VbkBlock>& index,
+                             const typename BlockIndex<VbkBlock>::payloads_t& p,
+                             const VbkChainParams& params,
+                             ValidationState& state);
 
 }  // namespace altintegration
 

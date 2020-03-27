@@ -32,11 +32,12 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             ValidationState& state,
                             const ChainParams& params);
 
-template <typename Block, typename ChainParams, typename EndorsementT>
-bool checkEndorsement(BlockIndex<Block>& currentBlock,
-                      const EndorsementT& e,
-                      const ChainParams& params,
-                      ValidationState& state);
+template <typename Block, typename ChainParams>
+bool addPayloadsToBlockIndex(
+    BlockIndex<Block>& index,
+    const typename BlockIndex<Block>::payloads_t& payloads,
+    const ChainParams& params,
+    ValidationState& state);
 
 }  // namespace altintegration
 

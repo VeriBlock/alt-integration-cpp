@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <veriblock/validation_state.hpp>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
@@ -34,6 +35,9 @@ struct BlockIndex {
   //! (memory only) list of endorsements that containing in this block
   std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
       containingEndorsements{};
+
+  //! (memory only) list of endorsements pointing to this block
+  std::vector<endorsement_t*> endorsedBy;
 
   //! (memory only) list of containing payloads in this block
   std::vector<pid_t> containingPayloads{};
@@ -106,6 +110,9 @@ struct BlockIndex {
   friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
     return a.header == b.header;
   }
+
+ private:
+
 };
 
 }  // namespace altintegration

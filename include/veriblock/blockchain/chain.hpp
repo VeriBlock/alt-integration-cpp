@@ -152,7 +152,7 @@ struct Chain {
     index_t* workBlock = tip();
 
     for (uint32_t count = 0; count < endorsement_settlement_interval &&
-                             workBlock && workBlock->height > startHeight_ &&
+                             workBlock && workBlock->height >= startHeight_ &&
                              e.endorsedHash != workBlock->getHash();
          count++) {
       auto it = workBlock->containingEndorsements.find(e.id);

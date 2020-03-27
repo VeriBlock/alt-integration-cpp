@@ -189,17 +189,14 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
       // block
       using EndorsementType = typename ProtectedBlockT::endorsement_t;
       std::vector<const EndorsementType*> endorsements;
-      for (const auto& p : index->containingEndorsements) {
-        EndorsementType* e = p.second.get();
-        if (!e) {
-          continue;
-        }
+      for (const auto* e : index->endorsedBy) {
+        assert(e);
 
         // quick way to check that given chain contains given hash
-        if (allHashesInChain.count(e->endorsedHash)) {
+        if (allHashesInChain.count(e->containingHash)) {
           endorsements.push_back(e);
         }
-      }
+      }  // end for
 
       for (const EndorsementType* e : endorsements) {
         auto* ind = tree.getBlockIndex(e->blockOfProof);
@@ -374,8 +371,19 @@ struct PopAwareForkResolutionComparator {
     // set initial state machine state = current index
     sm_t sm(temp, &index, protectedParams_, p_);
     for (size_t i = 0, size = payloads.size(); i < size; i++) {
-      if (!sm.addPayloads(payloads[i], state)) {
+      auto& p = payloads[i];
+
+      // first, check if context is valid
+      if (!sm.applyContext(p, state)) {
         return state.setIndex(i).addStackFunction("Comparator::addPayloads");
+      }
+
+      // then, check if endorsement is valid
+      if (!addPayloadsToBlockIndex(index, p, protectedParams_, state)) {
+        return state.setIndex(i).Invalid(
+            "addAllPayloads",
+            "vbk-invalid-endorsement-" + state.GetRejectReason(),
+            state.GetDebugMessage());
       }
     }
 

@@ -32,10 +32,10 @@ struct PopStateMachine {
         startHeight_(startHeight) {}
 
   //! @invariant: atomic. Either all 'payloads' added or not at all.
-  bool addPayloads(const payloads_t& payloads, ValidationState& state);
+  bool applyContext(const payloads_t& payloads, ValidationState& state);
 
   //! @invariant: atomic. Does not throw under normal conditions.
-  void removePayloads(const payloads_t& payloads);
+  void unapplyContext(const payloads_t& payloads);
 
   void unapply(ProtectedIndex& to) {
     if (&to == index_) {
@@ -49,7 +49,7 @@ struct PopStateMachine {
     while (current && current != forkPoint) {
       // unapply payloads
       for (const auto& payloads : getPayloads(*current)) {
-        removePayloads(payloads);
+        unapplyContext(payloads);
       }
       index_ = current;
       current = current->pprev;
@@ -72,7 +72,7 @@ struct PopStateMachine {
 
     while (current) {
       for (const auto& payloads : getPayloads(*current)) {
-        if (!addPayloads(payloads, state)) {
+        if (!applyContext(payloads, state)) {
           return state.addStackFunction("PopAwareForkResolution::apply");
         }
 
@@ -98,14 +98,6 @@ struct PopStateMachine {
     }
 
     unapply(to);
-
-    Chain<ProtectedIndex> chain(startHeight_, &to);
-    if (chain.contains(index_)) {
-      // do not apply payloads as "to" is in current chain and no new payloads
-      // will be added
-      return true;
-    }
-
     return apply(to, state);
   }
 
