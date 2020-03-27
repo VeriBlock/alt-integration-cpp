@@ -69,12 +69,6 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
           }
         }
 
-        index_->containingPayloads.push_back(vtb.getId());
-
-        BtcEndorsement e = BtcEndorsement::fromContainer(vtb);
-        index_->containingEndorsements[e.id] =
-            std::make_shared<BtcEndorsement>(e);
-
         return true;
       },
       [&]() { removePayloads(vtb); });

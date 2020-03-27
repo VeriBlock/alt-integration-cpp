@@ -74,6 +74,12 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                            state.GetDebugMessage());
     }
 
+    for (const auto& p : payloads) {
+      index->containingPayloads.push_back(p.getId());
+      BtcEndorsement e = BtcEndorsement::fromContainer(p);
+      index->containingEndorsements[e.id] = std::make_shared<BtcEndorsement>(e);
+    }
+
     // save payloads on disk
     if (change) {
       for (const auto& payload : payloads) {
