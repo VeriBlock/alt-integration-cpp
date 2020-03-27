@@ -189,7 +189,8 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
       // block
       using EndorsementType = typename ProtectedBlockT::endorsement_t;
       std::vector<const EndorsementType*> endorsements;
-      for (const EndorsementType* e : index->containingEndorsements) {
+      for (const auto& p : index->containingEndorsements) {
+        EndorsementType* e = p.second.get();
         if (!e) {
           continue;
         }
@@ -350,6 +351,31 @@ struct PopAwareForkResolutionComparator {
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
 
+  bool addAllPayloads(protected_index_t& index,
+                      const std::vector<protected_payloads_t>& payloads,
+                      ValidationState& state) {
+    if (index_ != index.pprev) {
+      // set state machine to "previous state"
+      bool ret = setState(*index.pprev, state);
+      assert(ret && "previous payloads should be always valid");
+      (void)ret;
+    }
+
+    auto temp = tree_;
+    sm_t sm(temp, index_, protectedParams_, p_);
+    for (size_t i = 0, size = payloads.size(); i < size; i++) {
+      if (!sm.addPayloads(payloads[i], state)) {
+        return state.setIndex(i).addStackFunction("Comparator::addPayloads");
+      }
+    }
+
+    // update current state, since it is valid
+    tree_ = std::move(temp);
+    index_ = sm.index();
+
+    return true;
+  }
+
   //! @invariant: atomic. If returns false, does not change internal state.
   bool setState(protected_index_t& index, ValidationState& state) {
     // if previous state is unknown, set new state as current
@@ -433,10 +459,6 @@ struct PopAwareForkResolutionComparator {
 
     return internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, protectedParams_);
-  }
-
-  PayloadsRepository<protected_payloads_t>& getPayloadsRepository() {
-    return p_;
   }
 
  private:

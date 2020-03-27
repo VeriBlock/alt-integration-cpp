@@ -33,7 +33,7 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             const ChainParams& params);
 
 template <typename Block, typename ChainParams, typename EndorsementT>
-bool checkEndorsement(const BlockIndex<Block>& currentBlock,
+bool checkEndorsement(BlockIndex<Block>& currentBlock,
                       const EndorsementT& e,
                       const ChainParams& params,
                       ValidationState& state);

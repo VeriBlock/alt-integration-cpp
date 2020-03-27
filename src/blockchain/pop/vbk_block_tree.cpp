@@ -35,7 +35,8 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   if (result < 0) {
     // other chain won!
     auto prevTip = currentBest.tip();
-    setTip(currentBest, indexNew);
+    currentBest.setTip(&indexNew);
+    onTipChanged(indexNew);
     return addForkCandidate(prevTip, &indexNew);
   } else if (result == 0) {
     // pop scores are equal. do PoW fork resolution
@@ -50,8 +51,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 template <>
 bool PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::addPayloads(BlockIndex<VbkBlock>* index,
-                                                  const VTB& vtb,
+                     VbkChainParams>::addPayloads(const VTB& vtb,
                                                   ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
@@ -69,23 +69,21 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
           }
         }
 
-        index->containingPayloads.push_back(vtb.getId());
+        index()->containingPayloads.push_back(vtb.getId());
 
         BtcEndorsement e = BtcEndorsement::fromContainer(vtb);
-        index->containingEndorsements[e.id] =
+        index()->containingEndorsements[e.id] =
             std::make_shared<BtcEndorsement>(e);
 
         return true;
       },
-      [&]() { removePayloads(index, vtb); });
+      [&]() { removePayloads(vtb); });
 }
 
 template <>
 void PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::removePayloads(BlockIndex<VbkBlock>*
-                                                         index,
-                                                     const VTB& vtb) {
+                     VbkChainParams>::removePayloads(const VTB& vtb) {
   auto& btc = tree();
 
   /// remove VTB context
@@ -93,17 +91,33 @@ void PopStateMachine<VbkBlockTree::BtcTree,
     btc.invalidateBlockByHash(b.getHash());
   }
 
-  index->containingEndorsements.erase(BtcEndorsement::getId(vtb));
+  auto& p = index()->containingPayloads;
+  p.erase(std::remove(p.begin(), p.end(), vtb.getId()), p.end());
+  index()->containingEndorsements.erase(BtcEndorsement::getId(vtb));
 }
 
 template <>
-bool checkEndorsement(const BlockIndex<VbkBlock>& currentBlock,
+bool checkEndorsement(BlockIndex<VbkBlock>& currentBlock,
                       const BtcEndorsement& e,
                       const VbkChainParams& params,
                       ValidationState& state) {
   Chain<BlockIndex<VbkBlock>> chain(0, &currentBlock);
-  auto endorsement =
-      chain.findEndorsement(e.id, params.getEndorsementSettlementInterval());
+
+  auto allHashes = chain.getAllHashesInChain();
+  if (!allHashes.count(e.containingHash)) {
+    return state.Invalid("checkEndorsement",
+                         "bad-endorsement-no-containing-hash",
+                         "Current chain does not contain 'containing' block");
+  }
+
+  if (!allHashes.count(e.endorsedHash)) {
+    return state.Invalid("checkEndorsement",
+                         "bad-endorsement-no-endorsed-hash",
+                         "Current chain does not contain 'endorsed' block");
+  }
+
+  auto endorsement = chain.findBlockContainingEndorsement(
+      e, params.getEndorsementSettlementInterval());
   if (endorsement) {
     // found duplicate
     return state.Invalid("checkEndorsement",

@@ -294,9 +294,9 @@ struct BlockTree {
         newForkChain.getStartHeight(), newForkChain));
   }
 
-  virtual bool acceptBlock(const block_t& block,
-                           ValidationState& state,
-                           bool shouldContextuallyCheck) {
+  bool acceptBlock(const block_t& block,
+                   ValidationState& state,
+                   bool shouldContextuallyCheck) {
     index_t* index;
     if (!validateBlock(block, state, shouldContextuallyCheck, &index)) {
       return false;

@@ -8,8 +8,8 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/storage/endorsement_repository.hpp>
 #include <veriblock/state_manager.hpp>
+#include <veriblock/storage/endorsement_repository.hpp>
 #include <veriblock/storage/repository_rocks_manager.hpp>
 
 namespace altintegration {
@@ -23,7 +23,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(const VbkChainParams& params, PopForkComparator cmp, StateManager<RepositoryRocksManager>& mgr)
+  VbkBlockTree(const VbkChainParams& params,
+               PopForkComparator cmp,
+               StateManager<RepositoryRocksManager>& mgr)
       : VbkTree(params), cmp_(std::move(cmp)), mgr_(mgr) {}
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
@@ -67,14 +69,20 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
     assert(index != nullptr);
 
     auto change = mgr_.newChange();
-    change->savePayloads()
-
-    cmp_.getPayloadsRepository();
-    if (!cmp_.setState(*index, state)) {
-      return state.addStackFunction("VbkTree::acceptBlock");
+    if (!cmp_.addAllPayloads(*index, payloads, state)) {
+      return state.Invalid("vbk-invalid-pop-" + state.GetRejectReason(),
+                           state.GetDebugMessage());
     }
 
-    // add payloads to block index
+    for (const auto& payload : payloads) {
+      change->saveVbkPayloads(payload);
+    }
+
+    bool ret = cmp_.setState(*index, state);
+    assert(ret && "this state was validated previously");
+    (void)ret;
+
+    return true;
   }
 
  private:
@@ -88,19 +96,16 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 template <>
 bool PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::addPayloads(BlockIndex<VbkBlock>* index,
-                                                  const VTB& payloads,
+                     VbkChainParams>::addPayloads(const VTB& payloads,
                                                   ValidationState& state);
 
 template <>
 void PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
-                     VbkChainParams>::removePayloads(BlockIndex<VbkBlock>*
-                                                         index,
-                                                     const VTB& payloads);
+                     VbkChainParams>::removePayloads(const VTB& payloads);
 
 template <>
-bool checkEndorsement(const BlockIndex<VbkBlock>& currentBlock,
+bool checkEndorsement(BlockIndex<VbkBlock>& currentBlock,
                       const BtcEndorsement& e,
                       const VbkChainParams& params,
                       ValidationState& state);

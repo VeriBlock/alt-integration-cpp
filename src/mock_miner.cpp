@@ -78,7 +78,7 @@ ATV MockMiner::generateValidATV(const PublicationData& publicationData,
   atv.containingBlock =
       vbk_miner->createNextBlock(*tip, atv.merklePath.calculateMerkleRoot());
 
-  vbk_blockchain->acceptBlock(atv.containingBlock, state);
+  vbk_blockchain->acceptBlock(atv.containingBlock, {}, state);
 
   return atv;
 }
@@ -157,7 +157,7 @@ VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
   vtb.containingBlock =
       vbk_miner->createNextBlock(*tip, vtb.merklePath.calculateMerkleRoot());
 
-  vbk_blockchain->acceptBlock(vtb.containingBlock, state);
+  vbk_blockchain->acceptBlock(vtb.containingBlock, {}, state);
 
   return vtb;
 }
@@ -175,7 +175,7 @@ Publications MockMiner::mine(const PublicationData& publicationData,
     assert(tip != nullptr && "VBK blockchain is not bootstrapped");
 
     VbkBlock minedBlock = vbk_miner->createNextBlock(*tip, uint128());
-    vbk_blockchain->acceptBlock(minedBlock, state);
+    vbk_blockchain->acceptBlock(minedBlock, {}, state);
   }
 
   VTB vtb = generateValidVTB(

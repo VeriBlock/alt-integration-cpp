@@ -33,7 +33,7 @@ struct Chain {
 
   explicit Chain(height_t startHeight) : startHeight_(startHeight) {}
 
-  explicit Chain(height_t startHeight, const index_t* tip)
+  explicit Chain(height_t startHeight, index_t* tip)
       : startHeight_(startHeight) {
     setTip(tip);
   }
@@ -78,7 +78,7 @@ struct Chain {
   typename storage_t::iterator end() { return chain.end(); }
   typename storage_t::iterator end() const { return chain.end(); }
 
-  void setTip(const index_t* index) {
+  void setTip(index_t* index) {
     if (index == nullptr) {
       chain.clear();
       return;
@@ -146,7 +146,7 @@ struct Chain {
     return ret;
   }
 
-  typename index_t::endorsement_t* findEndorsement(
+  index_t* findBlockContainingEndorsement(
       const typename index_t::endorsement_t& e,
       const uint32_t& endorsement_settlement_interval) {
     index_t* workBlock = tip();
@@ -157,25 +157,7 @@ struct Chain {
          count++) {
       auto it = workBlock->containingEndorsements.find(e.id);
       if (it != workBlock->containingEndorsements.end()) {
-        return it->second;
-      }
-      workBlock = workBlock->pprev;
-    }
-
-    return nullptr;
-  }
-
-  typename index_t::endorsement_t* findEndorsement(
-      const typename index_t::endorsement_t::id_t& eid,
-      const uint32_t& endorsement_settlement_interval) {
-    index_t* workBlock = tip();
-
-    for (uint32_t count = 0; count < endorsement_settlement_interval &&
-                             workBlock && workBlock->height > startHeight_;
-         count++) {
-      auto it = workBlock->containingEndorsements.find(e.id);
-      if (it != workBlock->containingEndorsements.end()) {
-        return it->second;
+        return workBlock;
       }
       workBlock = workBlock->pprev;
     }
