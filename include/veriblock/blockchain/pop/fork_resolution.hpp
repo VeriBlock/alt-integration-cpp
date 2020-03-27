@@ -196,8 +196,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
         }
 
         // quick way to check that given chain contains given hash
-        if (allHashesInChain.count(e->endorsedHash) != 0) {
-          // found
+        if (allHashesInChain.count(e->endorsedHash)) {
           endorsements.push_back(e);
         }
       }
@@ -207,12 +206,12 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
         // include only endorsements that are on best chain of protecting chain
         if (tree.getBestChain().contains(ind)) {
           pkc.referencedByBlocks.insert(ind);
-        }
-      }
-    }
+        }  // end if
+      }    // end for
+    }      // end for
 
     ret.push_back(std::move(pkc));
-  }
+  }  // end for
 
   return ret;
 }
@@ -350,6 +349,7 @@ struct PopAwareForkResolutionComparator {
 
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
+  const protected_index_t* getIndex() const { return index_; }
 
   bool addAllPayloads(protected_index_t& index,
                       const std::vector<protected_payloads_t>& payloads,
@@ -361,17 +361,29 @@ struct PopAwareForkResolutionComparator {
       (void)ret;
     }
 
+    if (payloads.empty()) {
+      if (index_ == index.pprev) {
+        // we added a block which does not contain payloads and it is right
+        // after our current state
+        index_ = &index;
+        return true;
+      }
+    }
+
     auto temp = tree_;
-    sm_t sm(temp, index_, protectedParams_, p_);
+    // set initial state machine state = current index
+    sm_t sm(temp, &index, protectedParams_, p_);
     for (size_t i = 0, size = payloads.size(); i < size; i++) {
       if (!sm.addPayloads(payloads[i], state)) {
         return state.setIndex(i).addStackFunction("Comparator::addPayloads");
       }
     }
 
+    // no state change have been made
+    assert(&index == sm.index());
+
     // update current state, since it is valid
     tree_ = std::move(temp);
-    index_ = sm.index();
 
     return true;
   }
@@ -381,6 +393,11 @@ struct PopAwareForkResolutionComparator {
     // if previous state is unknown, set new state as current
     if (index_ == nullptr) {
       index_ = &index;
+      return true;
+    }
+
+    if (index_ == &index) {
+      // noop
       return true;
     }
 

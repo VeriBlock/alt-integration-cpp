@@ -1,5 +1,7 @@
 #include "veriblock/mock_miner.hpp"
 
+#include <stdexcept>
+
 #include "veriblock/entities/address.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
@@ -53,15 +55,11 @@ VbkTx MockMiner::generateSignedVbkTx(const PublicationData& publicationData) {
   return transaction;
 }
 
-ATV MockMiner::generateValidATV(const PublicationData& publicationData,
-                                const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                                ValidationState& state) {
-  ATV atv;
-  atv.transaction = generateSignedVbkTx(publicationData);
-  atv.merklePath.treeIndex = 1;
-  atv.merklePath.index = 0;
-  atv.merklePath.subject = atv.transaction.getHash();
-  atv.merklePath.layers = {atv.transaction.getHash()};
+ATV MockMiner::generateAndApplyATV(
+    const PublicationData& publicationData,
+    const VbkBlock::hash_t& lastKnownVbkBlockHash,
+    ValidationState& state) {
+  ATV atv = generateATV(publicationData);
 
   BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
 
@@ -80,6 +78,16 @@ ATV MockMiner::generateValidATV(const PublicationData& publicationData,
 
   vbk_blockchain->acceptBlock(atv.containingBlock, {}, state);
 
+  return atv;
+}
+
+ATV MockMiner::generateATV(const PublicationData& publicationData) {
+  ATV atv;
+  atv.transaction = generateSignedVbkTx(publicationData);
+  atv.merklePath.treeIndex = 1;
+  atv.merklePath.index = 0;
+  atv.merklePath.subject = atv.transaction.getHash();
+  atv.merklePath.layers = {atv.transaction.getHash()};
   return atv;
 }
 
@@ -105,7 +113,6 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
   popTx.merklePath.layers = {popTx.bitcoinTransaction.getHash()};
 
   BlockIndex<btc_block_t>* tip = btc_blockchain->getBestChain().tip();
-
   assert(tip != nullptr && "BTC blockchain is not bootstrapped");
 
   for (auto* walkBlock = tip;
@@ -131,10 +138,32 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
   return popTx;
 }
 
-VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
-                                const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                                const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                                ValidationState& state) {
+VTB MockMiner::generateAndApplyVTB(VbkBlockTree& tree,
+                                   const VbkBlock& publishedBlock,
+                                   ValidationState& state) {
+  auto* btctip = tree.btc().getBestChain().tip();
+  assert(btctip && "BTC blockchain is not bootstrapped");
+
+  auto lastKnownBtcBlockHash = btctip->getHash();
+
+  VTB vtb = generateVTB(publishedBlock, lastKnownBtcBlockHash, state);
+
+  auto* tip = tree.getBestChain().tip();
+  assert(tip && "VBK blockchain is not bootstrapped");
+
+  vtb.containingBlock =
+      vbk_miner->createNextBlock(*tip, vtb.merklePath.calculateMerkleRoot());
+
+  if (!tree.acceptBlock(vtb.containingBlock, {vtb}, state)) {
+    throw std::domain_error(state.GetDebugMessage());
+  }
+
+  return vtb;
+}
+
+VTB MockMiner::generateVTB(const VbkBlock& publishedBlock,
+                           const BtcBlock::hash_t& lastKnownBtcBlockHash,
+                           ValidationState& state) {
   VTB vtb;
   vtb.transaction =
       generateSignedVbkPoptx(publishedBlock, lastKnownBtcBlockHash, state);
@@ -143,46 +172,31 @@ VTB MockMiner::generateValidVTB(const VbkBlock& publishedBlock,
   vtb.merklePath.subject = vtb.transaction.getHash();
   vtb.merklePath.layers = {vtb.transaction.getHash()};
 
-  auto* tip = vbk_blockchain->getBestChain().tip();
-
-  assert(tip != nullptr && "VBK blockhain is not bootstrapped");
-
-  for (auto* walkBlock = tip;
-       walkBlock && walkBlock->getHash() != lastKnownVbkBlockHash;
-       walkBlock = walkBlock->pprev) {
-    vtb.context.push_back(walkBlock->header);
-  }
-  std::reverse(vtb.context.begin(), vtb.context.end());
-
-  vtb.containingBlock =
-      vbk_miner->createNextBlock(*tip, vtb.merklePath.calculateMerkleRoot());
-
-  vbk_blockchain->acceptBlock(vtb.containingBlock, {}, state);
-
   return vtb;
 }
 
-Publications MockMiner::mine(const PublicationData& publicationData,
-                             const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                             const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                             const uint32_t& vbkBlockDelay,
-                             ValidationState& state) {
-  ATV atv = generateValidATV(publicationData, lastKnownVbkBlockHash, state);
-
-  for (uint32_t i = 0; i != vbkBlockDelay; ++i) {
-    BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
-
-    assert(tip != nullptr && "VBK blockchain is not bootstrapped");
-
-    VbkBlock minedBlock = vbk_miner->createNextBlock(*tip, uint128());
-    vbk_blockchain->acceptBlock(minedBlock, {}, state);
-  }
-
-  VTB vtb = generateValidVTB(
-      atv.containingBlock, lastKnownVbkBlockHash, lastKnownBtcBlockHash, state);
-
-  return {atv, {vtb}};
-}
+// Publications MockMiner::mine(const PublicationData& publicationData,
+//                             const VbkBlock::hash_t& lastKnownVbkBlockHash,
+//                             const BtcBlock::hash_t& lastKnownBtcBlockHash,
+//                             const uint32_t& vbkBlockDelay,
+//                             ValidationState& state) {
+//  ATV atv = generateAndApplyATV(publicationData, lastKnownVbkBlockHash,
+//  state);
+//
+//  for (uint32_t i = 0; i != vbkBlockDelay; ++i) {
+//    BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
+//    assert(tip != nullptr && "VBK blockchain is not bootstrapped");
+//
+//    VbkBlock minedBlock = vbk_miner->createNextBlock(*tip);
+//    bool ret = vbk_blockchain->acceptBlock(minedBlock, {}, state);
+//    assert(ret);
+//  }
+//
+//  VTB vtb = generateAndApplyVTB(*vbk_blockchain,
+//      atv.containingBlock, state);
+//
+//  return {atv, {vtb}};
+//}
 
 bool MockMiner::mineBtcBlocks(const uint32_t& n, ValidationState& state) {
   return mineBlocks(n, *btc_miner, *btc_blockchain, state);

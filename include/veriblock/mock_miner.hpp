@@ -50,18 +50,24 @@ class MockMiner {
 
  public:
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
-  ATV generateValidATV(const PublicationData& publicationData,
-                       const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                       ValidationState& state);
 
   VbkPopTx generateSignedVbkPoptx(const VbkBlock& publishedBlock,
                                   const BtcBlock::hash_t& lastKnownBtcBlockHash,
                                   ValidationState& state);
 
-  VTB generateValidVTB(const VbkBlock& publishedBlock,
-                       const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                       const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                       ValidationState& state);
+  ATV generateATV(const PublicationData& publicationData);
+
+  ATV generateAndApplyATV(const PublicationData& publicationData,
+                          const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                          ValidationState& state);
+
+  VTB generateVTB(const VbkBlock& publishedBlock,
+                  const BtcBlock::hash_t& lastKnownBtcBlockHash,
+                  ValidationState& state);
+
+  VTB generateAndApplyVTB(VbkBlockTree& tree,
+                          const VbkBlock& publishedBlock,
+                          ValidationState& state);
 
  public:
   MockMiner() {
@@ -75,11 +81,11 @@ class MockMiner {
         std::make_shared<vbk_block_tree>(*vbk_params, std::move(vbkcmp));
   }
 
-  Publications mine(const PublicationData& publicationData,
-                    const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                    const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                    const uint32_t& vbkBlockDelay,
-                    ValidationState& state);
+  //  Publications mine(const PublicationData& publicationData,
+  //                    const VbkBlock::hash_t& lastKnownVbkBlockHash,
+  //                    const BtcBlock::hash_t& lastKnownBtcBlockHash,
+  //                    const uint32_t& vbkBlockDelay,
+  //                    ValidationState& state);
 
   bool mineBtcBlocks(const uint32_t& n, ValidationState& state);
   bool mineVbkBlocks(const uint32_t& n, ValidationState& state);
