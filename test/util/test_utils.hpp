@@ -83,10 +83,10 @@ inline std::vector<uint8_t> generateRandomBytesVector(size_t n) {
 }
 
 template <typename Block>
-BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
+inline BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
 
 template <>
-BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
+inline BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
   AltBlock block;
   block.hash = generateRandomBytesVector(32);
   if (prev != nullptr) {
@@ -106,7 +106,7 @@ BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
 }
 
 template <>
-BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
+inline BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
   VbkBlock block;
   if (prev != nullptr) {
     block.height = prev->height + 1;
@@ -127,7 +127,7 @@ BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
 }
 
 template <>
-BlockIndex<BtcBlock> generateNextBlock(BlockIndex<BtcBlock>* prev) {
+inline BlockIndex<BtcBlock> generateNextBlock(BlockIndex<BtcBlock>* prev) {
   BtcBlock block;
   uint32_t height = 0;
   if (prev != nullptr) {
