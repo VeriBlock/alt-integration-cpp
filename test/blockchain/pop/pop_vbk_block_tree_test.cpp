@@ -31,7 +31,10 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
     ASSERT_TRUE(publishedBlock);
 
     VTB vtb = mock_miner->generateAndApplyVTB(
-        *vbkTree, publishedBlock->header, state);
+        *vbkTree,
+        publishedBlock->header,
+        mock_miner->btc().getBestChain().tip()->getHash(),
+        state);
 
     ASSERT_TRUE(state.IsValid()) << state.GetDebugMessage();
 

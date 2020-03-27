@@ -4,6 +4,7 @@
 #include <functional>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
+#include <veriblock/validation_state.hpp>
 
 namespace altintegration {
 
@@ -52,8 +53,8 @@ struct PopStateMachine {
       for (const auto& payloads : getPayloads(*current)) {
         unapplyContext(payloads);
       }
-      index_ = current;
       current = current->pprev;
+      index_ = current;
     }
   }
 
@@ -76,9 +77,9 @@ struct PopStateMachine {
         if (!applyContext(payloads, state)) {
           return state.addStackFunction("PopAwareForkResolution::apply");
         }
-
-        index_ = current;
       }
+
+      index_ = current;
 
       if (current != &to) {
         current = fork.next(current);
@@ -99,6 +100,7 @@ struct PopStateMachine {
     }
 
     unapply(to);
+
     return apply(to, state);
   }
 

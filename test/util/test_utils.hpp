@@ -7,6 +7,8 @@
 #include <random>
 #include <vector>
 
+#include "veriblock/blockchain/block_index.hpp"
+
 namespace altintegration {
 
 static const std::string defaultAtvEncoded =
@@ -78,6 +80,71 @@ inline std::vector<uint8_t> generateRandomBytesVector(size_t n) {
   std::vector<uint8_t> bytes(n);
   generateRandomBytes(bytes.begin(), bytes.end());
   return bytes;
+}
+
+template <typename Block>
+BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
+
+template <>
+BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
+  AltBlock block;
+  block.hash = generateRandomBytesVector(32);
+  if (prev != nullptr) {
+    block.height = prev->height + 1;
+    block.previousBlock = prev->getHash();
+    block.timestamp = prev->header.timestamp + 1;
+  } else {
+    block.height = 0;
+    block.timestamp = 0;
+  }
+
+  BlockIndex<AltBlock> index;
+  index.header = block;
+  index.height = block.height;
+  index.pprev = prev;
+  return index;
+}
+
+template <>
+BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
+  VbkBlock block;
+  if (prev != nullptr) {
+    block.height = prev->height + 1;
+    block.previousBlock = prev->getHash().trimLE<uint96::size()>();
+    block.timestamp = prev->header.timestamp + 1;
+  } else {
+    block.height = 0;
+    block.timestamp = 0;
+    block.nonce = 0;
+    block.version = 0;
+  }
+
+  BlockIndex<VbkBlock> index;
+  index.header = block;
+  index.height = block.height;
+  index.pprev = prev;
+  return index;
+}
+
+template <>
+BlockIndex<BtcBlock> generateNextBlock(BlockIndex<BtcBlock>* prev) {
+  BtcBlock block;
+  uint32_t height = 0;
+  if (prev != nullptr) {
+    height = prev->height + 1;
+    block.previousBlock = prev->getHash().trimLE<uint96::size()>();
+    block.timestamp = prev->header.timestamp + 1;
+  } else {
+    block.timestamp = 0;
+    block.nonce = 0;
+    block.version = 0;
+  }
+
+  BlockIndex<BtcBlock> index;
+  index.header = block;
+  index.height = height + 1;
+  index.pprev = prev;
+  return index;
 }
 
 }  // namespace altintegration

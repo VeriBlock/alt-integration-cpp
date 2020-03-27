@@ -1,8 +1,7 @@
-#include "veriblock/mock_miner.hpp"
-
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
+#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -141,13 +140,13 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
   return popTx;
 }
 
-VTB MockMiner::generateAndApplyVTB(VbkBlockTree& tree,
-                                   const VbkBlock& publishedBlock,
-                                   ValidationState& state) {
+VTB MockMiner::generateAndApplyVTB(
+    VbkBlockTree& tree,
+    const VbkBlock& publishedBlock,
+    const BtcBlock::hash_t& lastKnownBtcBlockHash,
+    ValidationState& state) {
   auto* btctip = tree.btc().getBestChain().tip();
   assert(btctip && "BTC blockchain is not bootstrapped");
-
-  auto lastKnownBtcBlockHash = btctip->getHash();
 
   VTB vtb = generateVTB(publishedBlock, lastKnownBtcBlockHash, state);
 

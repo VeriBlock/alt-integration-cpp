@@ -67,6 +67,7 @@ class MockMiner {
 
   VTB generateAndApplyVTB(VbkBlockTree& tree,
                           const VbkBlock& publishedBlock,
+                          const BtcBlock::hash_t& lastKnownBtcBlockHash,
                           ValidationState& state);
 
  public:

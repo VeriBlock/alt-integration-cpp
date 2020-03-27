@@ -116,50 +116,6 @@ Endorsement generateEndorsement(const Block& endorsedBlock,
 }
 
 template <typename Block>
-BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
-
-template <>
-BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
-  AltBlock block;
-  block.hash = generateRandomBytesVector(32);
-  if (prev != nullptr) {
-    block.height = prev->height + 1;
-    block.previousBlock = prev->getHash();
-    block.timestamp = prev->header.timestamp + 1;
-  } else {
-    block.height = 0;
-    block.timestamp = 0;
-  }
-
-  BlockIndex<AltBlock> index;
-  index.header = block;
-  index.height = block.height;
-  index.pprev = prev;
-  return index;
-}
-
-template <>
-BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
-  VbkBlock block;
-  if (prev != nullptr) {
-    block.height = prev->height + 1;
-    block.previousBlock = prev->getHash().trimLE<uint96::size()>();
-    block.timestamp = prev->header.timestamp + 1;
-  } else {
-    block.height = 0;
-    block.timestamp = 0;
-    block.nonce = 0;
-    block.version = 0;
-  }
-
-  BlockIndex<VbkBlock> index;
-  index.header = block;
-  index.height = block.height;
-  index.pprev = prev;
-  return index;
-}
-
-template <typename Block>
 struct ChainTestFixture : public ::testing::Test {
   using block_t = Block;
   using hash_t = typename block_t::hash_t;
@@ -171,6 +127,8 @@ struct ChainTestFixture : public ::testing::Test {
 TYPED_TEST_SUITE_P(ChainTestFixture);
 
 TYPED_TEST_P(ChainTestFixture, findEndorsement) {
+  srand(0);
+
   using block_t = typename findEndorsement::block_t;
   using endorsement_t = typename findEndorsement::endorsement_t;
 
