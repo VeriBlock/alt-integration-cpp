@@ -187,25 +187,14 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
 
       // get all endorsements of this block that are on the same chain as that
       // block
-      using EndorsementType = typename ProtectedBlockT::endorsement_t;
-      std::vector<const EndorsementType*> endorsements;
       for (const auto* e : index->endorsedBy) {
-        assert(e);
-
-        // quick way to check that given chain contains given hash
-        if (allHashesInChain.count(e->containingHash)) {
-          endorsements.push_back(e);
-        }
-      }  // end for
-
-      for (const EndorsementType* e : endorsements) {
         auto* ind = tree.getBlockIndex(e->blockOfProof);
         // include only endorsements that are on best chain of protecting chain
         if (tree.getBestChain().contains(ind)) {
           pkc.referencedByBlocks.insert(ind);
-        }  // end if
-      }    // end for
-    }      // end for
+        }
+      }  // end for
+    }    // end for
 
     ret.push_back(std::move(pkc));
   }  // end for
@@ -379,7 +368,7 @@ struct PopAwareForkResolutionComparator {
       }
 
       // then, check if endorsement is valid
-      if (!addPayloadsToBlockIndex(index, p, protectedParams_, state)) {
+      if (!sm.addPayloads(p, state)) {
         return state.setIndex(i).Invalid(
             "addAllPayloads",
             "vbk-invalid-endorsement-" + state.GetRejectReason(),

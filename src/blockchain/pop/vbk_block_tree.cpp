@@ -100,10 +100,6 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
     }
   }
 
-//  bool ret = cmp_.setState(*index, state);
-//  assert(ret && "this state was validated previously");
-//  (void)ret;
-
   determineBestChain(activeChain_, *index);
 
   return true;
@@ -113,7 +109,7 @@ template <>
 bool PopStateMachine<VbkBlockTree::BtcTree,
                      BlockIndex<VbkBlock>,
                      VbkChainParams>::applyContext(const VTB& payloads,
-                                                    ValidationState& state) {
+                                                   ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
         auto& btc = tree();
@@ -152,18 +148,18 @@ void PopStateMachine<VbkBlockTree::BtcTree,
 }
 
 template <>
-bool addPayloadsToBlockIndex(BlockIndex<VbkBlock>& index,
-                             const typename BlockIndex<VbkBlock>::payloads_t& p,
-                             const VbkChainParams& params,
-                             ValidationState& state) {
+bool PopStateMachine<VbkBlockTree::BtcTree,
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::addPayloads(const VTB& p,
+                                                  ValidationState& state) {
   // endorsement validity window
-  auto window = params.getEndorsementSettlementInterval();
-  auto minHeight = index.height - window;
-  Chain<BlockIndex<VbkBlock>> chain(minHeight, &index);
+  auto window = params().getEndorsementSettlementInterval();
+  auto minHeight = index_->height - window;
+  Chain<BlockIndex<VbkBlock>> chain(minHeight, index_);
 
   auto endorsedHeight = p.transaction.publishedBlock.height;
-  assert(index.height > endorsedHeight);
-  if (index.height - endorsedHeight > window) {
+  assert(index_->height > endorsedHeight);
+  if (index_->height - endorsedHeight > window) {
     return state.Invalid(
         "addPayloadsToBlockIndex", "expired", "Endorsement expired");
   }
@@ -182,6 +178,20 @@ bool addPayloadsToBlockIndex(BlockIndex<VbkBlock>& index,
   }
 
   auto endorsement = BtcEndorsement::fromContainer(p);
+  auto* blockOfProof = tree_.getBlockIndex(endorsement.blockOfProof);
+  if (!blockOfProof) {
+    return state.Invalid("addPayloads",
+                         "block-of-proof-not-found",
+                         "Can not find block of proof in BTC");
+  }
+
+  if (!tree_.getBestChain().contains(blockOfProof)) {
+    return state.Invalid(
+        "addPayloads",
+        "block-of-proof-not-on-main-chain",
+        "Block of proof has been reorganized and no loger on a main chain");
+  }
+
   auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
   if (duplicate) {
     // found duplicate
@@ -190,9 +200,9 @@ bool addPayloadsToBlockIndex(BlockIndex<VbkBlock>& index,
                          "Found duplicate endorsement on the same chain");
   }
 
-  index.containingPayloads.push_back(p.getId());
+  index_->containingPayloads.push_back(p.getId());
 
-  auto pair = index.containingEndorsements.insert(
+  auto pair = index_->containingEndorsements.insert(
       {endorsement.id, std::make_shared<BtcEndorsement>(endorsement)});
   assert(pair.second && "there's a duplicate in endorsement map");
 

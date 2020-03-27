@@ -3,17 +3,11 @@
 #include <memory>
 #include <utility>
 
-#include "util/test_blockchain_fixture.hpp"
-#include "util/visualize.hpp"
-#include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/pop/fork_resolution.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/mock_miner.hpp"
-#include "veriblock/storage/block_repository_inmem.hpp"
-#include "veriblock/storage/endorsement_repository_inmem.hpp"
-#include "veriblock/time.hpp"
 
 using namespace altintegration;
 
@@ -69,7 +63,7 @@ struct VbkBlockTreeTestFixture : ::testing::Test {
   }
 };
 
-TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
+TEST_F(VbkBlockTreeTestFixture, FilterChainForForkResolution) {
   using namespace internal;
 
   ASSERT_EQ(vbkTree->getComparator().getIndex(), vbkTree->getBestChain().tip());
@@ -91,6 +85,8 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
   // the chain is 201)
   endorseVBKblock(0);
   ASSERT_EQ(best.tip()->containingEndorsements.size(), 1);
+  ASSERT_EQ(best[0]->endorsedBy.size(), 1);
+  ASSERT_EQ(best[0]->endorsedBy[0]->containingHash, best.tip()->getHash());
 
   ASSERT_TRUE((uint32_t)vbkTree->getBestChain().blocksCount() ==
               numVbkBlocks + 2);
@@ -108,7 +104,7 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
   endorseVBKblock(143);
   endorseVBKblock(143);
 
-  // endorse 87 block three times
+  // endorse 87 block twice
   endorseVBKblock(87);
   endorseVBKblock(87);
 
@@ -123,68 +119,22 @@ TEST_F(VbkBlockTreeTestFixture, getProtoKeystoneContext_test) {
 
   EXPECT_EQ(protoContext[0].blockHeight, 20);
   EXPECT_EQ(protoContext[0].referencedByBlocks.size(), 0);
-
-  // keystone with the height 80
-  EXPECT_EQ(protoContext[3].referencedByBlocks.size(), 4);
+  EXPECT_EQ(protoContext[1].blockHeight, 40);
+  EXPECT_EQ(protoContext[1].referencedByBlocks.size(), 0);
+  EXPECT_EQ(protoContext[2].blockHeight, 60);
+  EXPECT_EQ(protoContext[2].referencedByBlocks.size(), 0);
   EXPECT_EQ(protoContext[3].blockHeight, 80);
-  // keystone with the height 140
-  EXPECT_EQ(protoContext[6].referencedByBlocks.size(), 2);
+  EXPECT_EQ(protoContext[3].referencedByBlocks.size(), 4);
+  EXPECT_EQ(protoContext[4].blockHeight, 100);
+  EXPECT_EQ(protoContext[4].referencedByBlocks.size(), 0);
+  EXPECT_EQ(protoContext[5].blockHeight, 120);
+  EXPECT_EQ(protoContext[5].referencedByBlocks.size(), 0);
   EXPECT_EQ(protoContext[6].blockHeight, 140);
-  // keystone with the height 160
-  EXPECT_EQ(protoContext[7].referencedByBlocks.size(), 3);
+  EXPECT_EQ(protoContext[6].referencedByBlocks.size(), 2);
   EXPECT_EQ(protoContext[7].blockHeight, 160);
-}
+  EXPECT_EQ(protoContext[7].referencedByBlocks.size(), 3);
 
-TEST_F(VbkBlockTreeTestFixture, getKeystoneContext_test) {
-  using namespace internal;
-  uint32_t numVbkBlocks = 200;
-
-  ASSERT_EQ(vbkTree->getComparator().getIndex(), vbkTree->getBestChain().tip());
-
-  auto& best = vbkTree->getBestChain();
-  for (uint32_t i = 0; i < numVbkBlocks; i++) {
-    auto block = vbkMiner->createNextBlock(*best.tip());
-    ASSERT_TRUE(vbkTree->acceptBlock(block, {}, state));
-    ASSERT_EQ(vbkTree->getComparator().getIndex(),
-              vbkTree->getBestChain().tip())
-        << "iteration " << i;
-  }
-
-  // initially we have to endorse the genesis block to update the vbkTest chain
-  // with the 200 context blocks from the mock_miner state
-  // As a result vbkTest chain state will have 200 blocks + genesis block +
-  // 1 block which contains the endorsement (in sum 202 blocks, and the height
-  // of the chain is 201)
-  endorseVBKblock(0);  // btc block height 1
-
-  ASSERT_TRUE((uint32_t)vbkTree->getBestChain().blocksCount() ==
-              numVbkBlocks + 2);
-
-  // endorse 176 block
-  endorseVBKblock(176);  // btc block height 2
-
-  // endorse 166 block
-  endorseVBKblock(166);  // btc block height 3
-
-  // endorse 169 block
-  endorseVBKblock(169);  // btc block height 4
-
-  // endorse 143 block twice
-  endorseVBKblock(143);  // btc block height 5
-  endorseVBKblock(143);  // btc block height 6
-
-  // endorse 87 block three times
-  endorseVBKblock(87);  // btc block height 7
-  endorseVBKblock(87);  // btc block height 8
-
-  // endorse 91 twice
-  endorseVBKblock(91);  // btc block height 9
-  endorseVBKblock(91);  // btc block height 10
-
-  auto pkc = getProtoKeystoneContext(
-      vbkTree->getBestChain(), vbkTree->btc(), *this->vbkp);
-  auto keystoneContext = getKeystoneContext(pkc, vbkTree->btc());
-
+  auto keystoneContext = getKeystoneContext(protoContext, vbkTree->btc());
   EXPECT_EQ(keystoneContext.size(),
             numVbkBlocks / this->vbkp->getKeystoneInterval());
 

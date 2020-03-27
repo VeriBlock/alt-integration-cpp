@@ -61,11 +61,10 @@ ATV MockMiner::generateAndApplyATV(
     ValidationState& state) {
   ATV atv = generateATV(publicationData);
 
-  BlockIndex<vbk_block_t>* tip = vbk_blockchain->getBestChain().tip();
+  auto* tip = vbk_blockchain->getBestChain().tip();
+  assert(tip != nullptr && "VBK blockchain is not bootstrapped");
 
-  assert(tip != nullptr && "not bootstrapped");
-
-  for (BlockIndex<VbkBlock>* walkBlock = tip;
+  for (auto* walkBlock = tip;
        walkBlock->header.getHash() != lastKnownVbkBlockHash;
        walkBlock = walkBlock->pprev) {
     atv.context.push_back(walkBlock->header);
@@ -76,7 +75,9 @@ ATV MockMiner::generateAndApplyATV(
   atv.containingBlock =
       vbk_miner->createNextBlock(*tip, atv.merklePath.calculateMerkleRoot());
 
-  vbk_blockchain->acceptBlock(atv.containingBlock, {}, state);
+  if (!vbk_blockchain->acceptBlock(atv.containingBlock, {}, state)) {
+    throw std::logic_error(state.GetDebugMessage());
+  }
 
   return atv;
 }
@@ -112,7 +113,7 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
   popTx.merklePath.subject = popTx.bitcoinTransaction.getHash();
   popTx.merklePath.layers = {popTx.bitcoinTransaction.getHash()};
 
-  BlockIndex<btc_block_t>* tip = btc_blockchain->getBestChain().tip();
+  auto tip = btc_blockchain->getBestChain().tip();
   assert(tip != nullptr && "BTC blockchain is not bootstrapped");
 
   for (auto* walkBlock = tip;
@@ -126,7 +127,9 @@ VbkPopTx MockMiner::generateSignedVbkPoptx(
   popTx.blockOfProof = btc_miner->createNextBlock(
       *tip, popTx.merklePath.calculateMerkleRoot().reverse());
 
-  btc_blockchain->acceptBlock(popTx.blockOfProof, state);
+  if (!btc_blockchain->acceptBlock(popTx.blockOfProof, state)) {
+    throw std::domain_error(state.GetDebugMessage());
+  }
 
   popTx.publicKey = defaultPublicKeyVbk;
 

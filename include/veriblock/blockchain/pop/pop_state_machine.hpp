@@ -37,6 +37,10 @@ struct PopStateMachine {
   //! @invariant: atomic. Does not throw under normal conditions.
   void unapplyContext(const payloads_t& payloads);
 
+  //! does validation of endorsement inside payloads.
+  //! assumes context has been applied
+  bool addPayloads(const payloads_t& payloads, ValidationState& state);
+
   void unapply(ProtectedIndex& to) {
     if (&to == index_) {
       // already at this state

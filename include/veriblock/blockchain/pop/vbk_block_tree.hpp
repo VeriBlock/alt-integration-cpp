@@ -61,10 +61,10 @@ void PopStateMachine<VbkBlockTree::BtcTree,
                      VbkChainParams>::unapplyContext(const VTB& payloads);
 
 template <>
-bool addPayloadsToBlockIndex(BlockIndex<VbkBlock>& index,
-                             const typename BlockIndex<VbkBlock>::payloads_t& p,
-                             const VbkChainParams& params,
-                             ValidationState& state);
+bool PopStateMachine<VbkBlockTree::BtcTree,
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::addPayloads(const VTB& payloads,
+                                                  ValidationState& state);
 
 }  // namespace altintegration
 
