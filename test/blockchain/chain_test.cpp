@@ -214,10 +214,16 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
 
   chain.setTip(&newIndex2);
 
-  EXPECT_EQ(*chain.findEndorsement(endorsement1.id, 100), endorsement1);
-  EXPECT_EQ(*chain.findEndorsement(endorsement2.id, 100), endorsement2);
-  EXPECT_EQ(*chain.findEndorsement(endorsement3.id, 100), endorsement3);
-  EXPECT_EQ(chain.findEndorsement(endorsement4.id, 100), nullptr);
+  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement1, 100)
+                 ->containingEndorsements[endorsement1.id],
+            endorsement1);
+  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement2, 100)
+                 ->containingEndorsements[endorsement2.id],
+            endorsement2);
+  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement3, 100)
+                 ->containingEndorsements[endorsement3.id],
+            endorsement3);
+  EXPECT_EQ(chain.findBlockContainingEndorsement(endorsement4, 100), nullptr);
 }
 
 // make sure to enumerate the test cases here

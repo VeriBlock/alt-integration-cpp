@@ -13,7 +13,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "veriblock/storage/endorsement_repository_inmem.hpp"
+#include "veriblock/storage/payloads_repository_inmem.hpp"
 
 namespace altintegration {
 
@@ -45,40 +45,41 @@ class MockMiner {
   std::shared_ptr<Miner<vbk_block_t, vbk_params_t>> vbk_miner;
   std::shared_ptr<vbk_block_tree> vbk_blockchain;
 
-  std::shared_ptr<EndorsementRepository<BtcEndorsement>> btce_;
+  std::shared_ptr<PayloadsRepository<VTB>> vtbp_ =
+      std::make_shared<PayloadsRepositoryInmem<VTB>>();
 
  public:
   VbkTx generateSignedVbkTx(const PublicationData& publicationData);
-  ATV generateValidATV(const PublicationData& publicationData,
-                       const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                       ValidationState& state);
 
   VbkPopTx generateSignedVbkPoptx(const VbkBlock& publishedBlock,
                                   const BtcBlock::hash_t& lastKnownBtcBlockHash,
                                   ValidationState& state);
 
-  VTB generateValidVTB(const VbkBlock& publishedBlock,
-                       const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                       const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                       ValidationState& state);
+  ATV generateATV(const PublicationData& publicationData);
+
+  ATV generateAndApplyATV(const PublicationData& publicationData,
+                          const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                          ValidationState& state);
+
+  VTB generateVTB(const VbkBlock& publishedBlock,
+                  const BtcBlock::hash_t& lastKnownBtcBlockHash,
+                  ValidationState& state);
+
+  VTB generateAndApplyVTB(VbkBlockTree& tree,
+                          const VbkBlock& publishedBlock,
+                          ValidationState& state);
 
  public:
   MockMiner() {
-    btce_ = std::make_shared<EndorsementRepositoryInmem<BtcEndorsement>>();
-
     btc_miner = std::make_shared<Miner<btc_block_t, btc_params_t>>(*btc_params);
     btc_blockchain = std::make_shared<btc_block_tree>(*btc_params);
 
     vbk_miner = std::make_shared<Miner<vbk_block_t, vbk_params_t>>(*vbk_params);
-    vbk_blockchain =
-        std::make_shared<vbk_block_tree>(*btc_blockchain, btce_, *vbk_params);
-  }
 
-  Publications mine(const PublicationData& publicationData,
-                    const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                    const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                    const uint32_t& vbkBlockDelay,
-                    ValidationState& state);
+    vbk_block_tree::PopForkComparator vbkcmp(*vtbp_, *btc_params, *vbk_params);
+    vbk_blockchain =
+        std::make_shared<vbk_block_tree>(*vbk_params, std::move(vbkcmp));
+  }
 
   bool mineBtcBlocks(const uint32_t& n, ValidationState& state);
   bool mineVbkBlocks(const uint32_t& n, ValidationState& state);

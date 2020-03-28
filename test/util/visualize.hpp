@@ -8,6 +8,8 @@
 
 namespace altintegration {
 
+struct DummyEndorsement;
+
 //   std::ofstream f("file.txt");
 //   WriteBlockTree(f, blockTree);
 //   f.close();
@@ -15,32 +17,55 @@ namespace altintegration {
 // find file.txt and execute:
 //   $ dot -Tsvg file.txt > file.svg
 //
+// merge multiple block trees:
+//   $ cat file.txt | gvpack -u | dot -Tsvg > file.svg
+//
 // open svg file in browser or any viewer
 //
 template <typename Stream, typename BlockTree>
 void WriteBlockTree(Stream& s,
                     const BlockTree& tree,
                     std::string name = "BLOCKCHAIN") {
+  auto toNodeName = [](auto& blockIndex) {
+    return format("\"[%d] %s\"",
+                  blockIndex.height,
+                  blockIndex.getHash().toHex().substr(0, 8));
+  };
+
   s << format("digraph %s {\n", name);
+  s << "node[shape = square];\n";
 
   const auto& map = tree.getAllBlocks();
   for (auto it = map.cbegin(), end = map.cend(); it != end; ++it) {
     auto& index = it->second;
     auto prev = index->pprev;
-
-    auto thisHash = index->getHash().toHex();
-    auto to = thisHash.substr(0, 8);
-
     if (prev) {
-      auto prevHash = prev->getHash().toHex();
-      auto from = prevHash.substr(0, 8);
-
-      s << format("\"[%d] %s\"", prev->height, from);
+      s << toNodeName(*prev);
       s << "->";
     }
 
-    s << format("\"[%d] %s\"", index->height, to);
+    s << toNodeName(*index);
     s << ";\n";
+
+    if constexpr (!std::is_same<DummyEndorsement,
+                                typename BlockTree::index_t::endorsement_t>{}) {
+      if (!index->containingEndorsements.empty()) {
+        for (const auto& kv : index->containingEndorsements) {
+          auto& e = kv.second;
+          if (!e) {
+            continue;
+          }
+
+          auto* containing = tree.getBlockIndex(e->containingHash);
+          auto* endorsed = tree.getBlockIndex(e->endorsedHash);
+
+          s << toNodeName(*containing);
+          s << "->";
+          s << toNodeName(*endorsed);
+          s << " [constraint=false color=\"green\"];\n";
+        }
+      }
+    }
   }
 
   s << "}" << std::endl;
