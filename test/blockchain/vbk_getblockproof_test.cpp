@@ -10,6 +10,7 @@
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
+#include "veriblock/third_party/BigDecimal.h"
 
 using namespace altintegration;
 
@@ -71,7 +72,8 @@ TEST_F(GetProofTest, Blocks30kTest) {
   ASSERT_TRUE(tree.bootstrapWithGenesis(state));
 
   for (size_t i = 1; i < allBlocks.size(); i++) {
-    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state));
+    // 28568
+    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state)) << i;
     auto hash = allBlocks[i].getHash();
     index_t* current = tree.getBlockIndex(hash);
     ASSERT_EQ(current->chainWork, cumulativeDifficulties[i]);
