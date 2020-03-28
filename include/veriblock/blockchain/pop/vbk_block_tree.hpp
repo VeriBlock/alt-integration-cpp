@@ -10,7 +10,6 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/state_manager.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
-#include <veriblock/storage/repository_rocks_manager.hpp>
 
 namespace altintegration {
 
