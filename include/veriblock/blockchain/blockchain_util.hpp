@@ -32,11 +32,6 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             ValidationState& state,
                             const ChainParams& params);
 
-template <typename Block, typename ChainParams>
-bool endorsementValidation(const BlockIndex<Block>& currentBlock,
-                           const ChainParams& params,
-                           ValidationState& state);
-
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_UTIL_HPP_

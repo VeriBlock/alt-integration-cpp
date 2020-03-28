@@ -1,4 +1,5 @@
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/finalizer.hpp>
 
 namespace altintegration {
 
@@ -6,42 +7,36 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew) {
   if (currentBest.tip() == nullptr) {
     currentBest.setTip(&indexNew);
-    return;
+    return onTipChanged(indexNew);
   }
 
-  auto* forkIndex = currentBest.findFork(&indexNew);
+  auto ki = param_->getKeystoneInterval();
+  auto* forkKeystone =
+      currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
+
   // this should never happen. if it is nullptr, it means that we passed
   // `indexNew` index which has no known prev block, which is possible only
   // after logic error, OR error in 'findFork'
-  assert(forkIndex != nullptr);
-
-  // last common keystone of two forks
-  auto ki = param_.getKeystoneInterval();
-  auto* forkKeystone =
-      forkIndex->getAncestor(highestKeystoneAtOrBefore(forkIndex->height, ki));
+  assert(forkKeystone != nullptr);
 
   int result = 0;
   auto* bestTip = currentBest.tip();
   if (isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki) &&
       isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki)) {
-    // [vbk fork point ... current tip]
+    // [vbk fork point keystone ... current tip]
     Chain<index_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
-    auto pkcCurrent =
-        getProtoKeystoneContext(vbkCurrentSubchain, btc_, erepo_, param_);
-    auto kcCurrent = getKeystoneContext(pkcCurrent, btc_);
 
-    // [vbk fork point ... new block]
+    // [vbk fork point keystone... new block]
     Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
-    auto pkcOther = getProtoKeystoneContext(vbkOther, btc_, erepo_, param_);
-    auto kcOther = getKeystoneContext(pkcOther, btc_);
 
-    result = compare_(kcCurrent, kcOther);
+    result = cmp_.comparePopScore(vbkCurrentSubchain, vbkOther);
   }
 
   if (result < 0) {
     // other chain won!
     auto prevTip = currentBest.tip();
     currentBest.setTip(&indexNew);
+    onTipChanged(indexNew);
     return addForkCandidate(prevTip, &indexNew);
   } else if (result == 0) {
     // pop scores are equal. do PoW fork resolution
@@ -52,4 +47,173 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 }
+
+bool VbkBlockTree::bootstrapWithChain(int startHeight,
+                                      const std::vector<block_t>& chain,
+                                      ValidationState& state) {
+  if (!VbkTree::bootstrapWithChain(startHeight, chain, state)) {
+    return state.addStackFunction("VbkTree::bootstrapWithChain");
+  }
+
+  if (!cmp_.setState(*getBestChain().tip(), state)) {
+    return state.addStackFunction("VbkTree::bootstrapWithChain");
+  }
+
+  return true;
+}
+
+bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
+  if (!VbkTree::bootstrapWithGenesis(state)) {
+    return state.addStackFunction("VbkTree::bootstrapWithGenesis");
+  }
+
+  auto* tip = getBestChain().tip();
+  if (!cmp_.setState(*tip, state)) {
+    return state.addStackFunction("VbkTree::bootstrapWithGenesis");
+  }
+
+  return true;
+}
+
+bool VbkBlockTree::acceptBlock(const VbkBlock& block,
+                               const std::vector<payloads_t>& payloads,
+                               ValidationState& state,
+                               StateChange* change) {
+  index_t* index = nullptr;
+  if (!validateAndAddBlock(block, state, true, &index)) {
+    return state.addStackFunction("VbkTree::acceptBlock");
+  }
+
+  assert(index != nullptr);
+
+  if (!cmp_.addAllPayloads(*index, payloads, state)) {
+    invalidateBlockByHash(index->getHash());
+    return state.Invalid("VbkTree::acceptBlock",
+                         "vbk-invalid-pop-" + state.GetRejectReason(),
+                         state.GetDebugMessage());
+  }
+
+  // save payloads on disk
+  if (change) {
+    for (const auto& payload : payloads) {
+      change->saveVbkPayloads(payload);
+    }
+  }
+
+  determineBestChain(activeChain_, *index);
+
+  return true;
+}
+
+template <>
+bool PopStateMachine<VbkBlockTree::BtcTree,
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::applyContext(const VTB& payloads,
+                                                   ValidationState& state) {
+  return tryValidateWithResources(
+      [&]() -> bool {
+        auto& btc = tree();
+
+        // check VTB
+        if (!checkVTB(payloads, state, params(), btc.getParams())) {
+          return state.addStackFunction("VbkTree::addPayloads");
+        }
+
+        // and update context
+        for (const auto& block : payloads.transaction.blockOfProofContext) {
+          if (!btc.acceptBlock(block, state)) {
+            return state.addStackFunction("VbkTree::addPayloads");
+          }
+        }
+
+        // add block of proof
+        if (!btc.acceptBlock(payloads.transaction.blockOfProof, state)) {
+          return state.addStackFunction("VbkTree::addPayloads");
+        }
+
+        return true;
+      },
+      [&]() { unapplyContext(payloads); });
+}
+
+template <>
+void PopStateMachine<VbkBlockTree::BtcTree,
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::unapplyContext(const VTB& payloads) {
+  auto& btc = tree();
+
+  // remove VTB context
+  for (const auto& b : payloads.transaction.blockOfProofContext) {
+    btc.invalidateBlockByHash(b.getHash());
+  }
+
+  // remove block of proof
+  btc.invalidateBlockByHash(payloads.transaction.blockOfProof.getHash());
+}
+
+template <>
+bool PopStateMachine<VbkBlockTree::BtcTree,
+                     BlockIndex<VbkBlock>,
+                     VbkChainParams>::addPayloads(const VTB& p,
+                                                  ValidationState& state) {
+  // endorsement validity window
+  auto window = params().getEndorsementSettlementInterval();
+  auto minHeight = index_->height - window;
+  Chain<BlockIndex<VbkBlock>> chain(minHeight, index_);
+
+  auto endorsedHeight = p.transaction.publishedBlock.height;
+  assert(index_->height > endorsedHeight);
+  if (index_->height - endorsedHeight > window) {
+    return state.Invalid(
+        "addPayloadsToBlockIndex", "expired", "Endorsement expired");
+  }
+
+  auto* endorsed = chain[endorsedHeight];
+  if (!endorsed) {
+    return state.Invalid("addPayloadsToBlockIndex",
+                         "no-endorsed-block",
+                         "No block found on endorsed block height");
+  }
+
+  if (endorsed->getHash() != p.transaction.publishedBlock.getHash()) {
+    return state.Invalid("addPayloadsToBlockIndex",
+                         "block-differs",
+                         "Endorsed VBK block is on a different chain");
+  }
+
+  auto endorsement = BtcEndorsement::fromContainer(p);
+  auto* blockOfProof = tree_.getBlockIndex(endorsement.blockOfProof);
+  if (!blockOfProof) {
+    return state.Invalid("addPayloads",
+                         "block-of-proof-not-found",
+                         "Can not find block of proof in BTC");
+  }
+
+  if (!tree_.getBestChain().contains(blockOfProof)) {
+    return state.Invalid(
+        "addPayloads",
+        "block-of-proof-not-on-main-chain",
+        "Block of proof has been reorganized and no loger on a main chain");
+  }
+
+  auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
+  if (duplicate) {
+    // found duplicate
+    return state.Invalid("addPayloadsToBlockIndex",
+                         "duplicate",
+                         "Found duplicate endorsement on the same chain");
+  }
+
+  index_->containingPayloads.push_back(p.getId());
+
+  auto pair = index_->containingEndorsements.insert(
+      {endorsement.id, std::make_shared<BtcEndorsement>(endorsement)});
+  assert(pair.second && "there's a duplicate in endorsement map");
+
+  auto* eptr = pair.first->second.get();
+  endorsed->endorsedBy.push_back(eptr);
+
+  return true;
+}
+
 }  // namespace altintegration
