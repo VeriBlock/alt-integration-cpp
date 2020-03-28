@@ -1,3 +1,5 @@
+![CI](https://github.com/VeriBlock/alt-integration-cpp/workflows/CI/badge.svg)
+
 # alt-integration-cpp
 
 ## Dependencies
