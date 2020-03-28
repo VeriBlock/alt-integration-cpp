@@ -1,8 +1,7 @@
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
-
 #include <veriblock/third_party/BigDecimal.h>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -93,23 +92,24 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
     targetDif += ArithUint256::fromBits(workBlock->pprev->getDifficulty());
   }
 
-  BCMath::bcscale(15);
-  BCMath nextTarget = BCMath(targetDif.toString());
-  nextTarget /= (params.getRetargetPeriod() - 1);
-  nextTarget.round(8);
+  targetDif *= 1000000000;
+  targetDif /= (params.getRetargetPeriod() - 1);
+  // Half up rounding
+  targetDif += 5;
 
   if (t < (int32_t)(K / 10)) {
     t = (int32_t)(K / 10);
   }
 
-  BCMath coef = K;
-  coef /= t;
-  coef.round(8);
+  double coef2 = (double)K / t;
+  // Half up rounding
+  coef2 += 0.000000005;
 
-  nextTarget *= coef;
+  targetDif *= (uint32_t)(coef2 * 100000000);
+  targetDif /= 1000000000;
+  targetDif /= 100000000;
 
   ArithUint256 minDif = params.getMinimumDifficulty();
-  targetDif = ArithUint256::fromString(nextTarget.getIntPart());
 
   if (targetDif < minDif) {
     return minDif.toBits();
