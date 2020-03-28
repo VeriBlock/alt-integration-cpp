@@ -19,9 +19,9 @@ class MerkleTree {
 
  protected:
   uint32_t getBottomWidth(const size_t& n) {
-    int width = 1;
+    size_t width = 1;
     while (n > width) {
-      width <<= 1;
+      width <<= 1u;
     }
     return width;
   }
@@ -46,11 +46,11 @@ class MerkleTree {
     size_t bottomWidth = vHash.size();
     size_t j = 0;
     while (bottomWidth != 0) {
-      for (int i = 0; i + 1 < bottomWidth; i += 2) {
+      for (size_t i = 0; i + 1 < bottomWidth; i += 2) {
         vHash.push_back(hashWriter.hash(vHash[j + i], vHash[j + i + 1]));
       }
       j += bottomWidth;
-      bottomWidth >>= 1;
+      bottomWidth >>= 1u;
     }
   }
 
@@ -77,7 +77,7 @@ class MerkleTree {
       }
     }
     while (index != vHash.size() - 1)
-      if (index & 1) {
+      if (index & 1u) {
         merklePath.push_back(vHash[index - 1]);
         index = index / 2 + bottomWidth;
       } else {
@@ -102,7 +102,7 @@ class MerkleTree {
       }
     }
     while (index != vHash.size() - 1)
-      if (index & 1) {
+      if (index & 1u) {
         merklePath.push_back(vHash[index - 1]);
         index = index / 2 + bottomWidth;
       } else {

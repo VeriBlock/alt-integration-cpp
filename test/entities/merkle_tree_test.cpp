@@ -8,7 +8,7 @@ struct TestHasher {
   ByteArray hash(ByteArray bytes) { return bytes; }
   ByteArray hash(ByteArray bytes1, ByteArray bytes2) {
     ByteArray result(bytes1.size());
-    for (int i = 0; i < bytes1.size(); ++i) {
+    for (size_t i = 0; i < bytes1.size(); ++i) {
       result[i] = bytes1[i] + bytes2[i];
     }
     return result;
@@ -16,7 +16,7 @@ struct TestHasher {
 };
 
 struct TestMerkleTree : public MerkleTree<TestHasher> {
-  TestMerkleTree() {}
+  TestMerkleTree() = default;
 
   TestMerkleTree(const std::vector<ByteArray>& transactions)
       : MerkleTree(transactions) {}
@@ -56,53 +56,53 @@ TEST(MerkleTree, initBottomLayer_test) {
   TestMerkleTree testMerkleTree;
 
   std::vector<ByteArray> transactions;
-  transactions.push_back(ByteArray(2, 1));
-  transactions.push_back(ByteArray(2, 2));
-  transactions.push_back(ByteArray(2, 3));
-  transactions.push_back(ByteArray(2, 4));
-  transactions.push_back(ByteArray(2, 5));
+  transactions.emplace_back(2, 1);
+  transactions.emplace_back(2, 2);
+  transactions.emplace_back(2, 3);
+  transactions.emplace_back(2, 4);
+  transactions.emplace_back(2, 5);
 
   std::vector<ByteArray> expectedValue;
-  expectedValue.push_back(ByteArray(2, 1));
-  expectedValue.push_back(ByteArray(2, 2));
-  expectedValue.push_back(ByteArray(2, 3));
-  expectedValue.push_back(ByteArray(2, 4));
-  expectedValue.push_back(ByteArray(2, 5));
-  expectedValue.push_back(ByteArray(2, 5));
-  expectedValue.push_back(ByteArray(2, 5));
-  expectedValue.push_back(ByteArray(2, 5));
+  expectedValue.emplace_back(2, 1);
+  expectedValue.emplace_back(2, 2);
+  expectedValue.emplace_back(2, 3);
+  expectedValue.emplace_back(2, 4);
+  expectedValue.emplace_back(2, 5);
+  expectedValue.emplace_back(2, 5);
+  expectedValue.emplace_back(2, 5);
+  expectedValue.emplace_back(2, 5);
 
   EXPECT_EQ(expectedValue, testMerkleTree.testInitBottomLayer(transactions));
 
   transactions.clear();
-  transactions.push_back(ByteArray(2, 1));
-  transactions.push_back(ByteArray(2, 2));
-  transactions.push_back(ByteArray(2, 3));
-  transactions.push_back(ByteArray(2, 4));
-  transactions.push_back(ByteArray(2, 5));
-  transactions.push_back(ByteArray(2, 6));
-  transactions.push_back(ByteArray(2, 7));
-  transactions.push_back(ByteArray(2, 8));
-  transactions.push_back(ByteArray(2, 9));
-  transactions.push_back(ByteArray(2, 10));
+  transactions.emplace_back(2, 1);
+  transactions.emplace_back(2, 2);
+  transactions.emplace_back(2, 3);
+  transactions.emplace_back(2, 4);
+  transactions.emplace_back(2, 5);
+  transactions.emplace_back(2, 6);
+  transactions.emplace_back(2, 7);
+  transactions.emplace_back(2, 8);
+  transactions.emplace_back(2, 9);
+  transactions.emplace_back(2, 10);
 
   expectedValue.clear();
-  expectedValue.push_back(ByteArray(2, 1));
-  expectedValue.push_back(ByteArray(2, 2));
-  expectedValue.push_back(ByteArray(2, 3));
-  expectedValue.push_back(ByteArray(2, 4));
-  expectedValue.push_back(ByteArray(2, 5));
-  expectedValue.push_back(ByteArray(2, 6));
-  expectedValue.push_back(ByteArray(2, 7));
-  expectedValue.push_back(ByteArray(2, 8));
-  expectedValue.push_back(ByteArray(2, 9));
-  expectedValue.push_back(ByteArray(2, 10));
-  expectedValue.push_back(ByteArray(2, 9));
-  expectedValue.push_back(ByteArray(2, 10));
-  expectedValue.push_back(ByteArray(2, 9));
-  expectedValue.push_back(ByteArray(2, 10));
-  expectedValue.push_back(ByteArray(2, 9));
-  expectedValue.push_back(ByteArray(2, 10));
+  expectedValue.emplace_back(2, 1);
+  expectedValue.emplace_back(2, 2);
+  expectedValue.emplace_back(2, 3);
+  expectedValue.emplace_back(2, 4);
+  expectedValue.emplace_back(2, 5);
+  expectedValue.emplace_back(2, 6);
+  expectedValue.emplace_back(2, 7);
+  expectedValue.emplace_back(2, 8);
+  expectedValue.emplace_back(2, 9);
+  expectedValue.emplace_back(2, 10);
+  expectedValue.emplace_back(2, 9);
+  expectedValue.emplace_back(2, 10);
+  expectedValue.emplace_back(2, 9);
+  expectedValue.emplace_back(2, 10);
+  expectedValue.emplace_back(2, 9);
+  expectedValue.emplace_back(2, 10);
 
   EXPECT_EQ(expectedValue, testMerkleTree.testInitBottomLayer(transactions));
 }
@@ -111,52 +111,53 @@ TEST(MerkleTree, buildTree_test) {
   TestMerkleTree testMerkleTree;
 
   std::vector<ByteArray> transactions;
-  transactions.push_back(ByteArray(2, 1));
-  transactions.push_back(ByteArray(2, 2));
-  transactions.push_back(ByteArray(2, 3));
-  transactions.push_back(ByteArray(2, 4));
-  transactions.push_back(ByteArray(2, 5));
+  transactions.emplace_back(2, 1);
+  transactions.emplace_back(2, 2);
+  transactions.emplace_back(2, 3);
+  transactions.emplace_back(2, 4);
+  transactions.emplace_back(2, 5);
 
   std::vector<ByteArray> expectedValue;
-  expectedValue.push_back(ByteArray(2, 1));
-  expectedValue.push_back(ByteArray(2, 2));
-  expectedValue.push_back(ByteArray(2, 3));
-  expectedValue.push_back(ByteArray(2, 4));
-  expectedValue.push_back(ByteArray(2, 5));
-  expectedValue.push_back(ByteArray(2, 5));
-  expectedValue.push_back(ByteArray(2, 5));
-  expectedValue.push_back(ByteArray(2, 5));
+  expectedValue.emplace_back(2, 1);
+  expectedValue.emplace_back(2, 2);
+  expectedValue.emplace_back(2, 3);
+  expectedValue.emplace_back(2, 4);
+  expectedValue.emplace_back(2, 5);
+  expectedValue.emplace_back(2, 5);
+  expectedValue.emplace_back(2, 5);
+  expectedValue.emplace_back(2, 5);
 
-  expectedValue.push_back(ByteArray(2, 3));
-  expectedValue.push_back(ByteArray(2, 7));
-  expectedValue.push_back(ByteArray(2, 10));
-  expectedValue.push_back(ByteArray(2, 10));
+  expectedValue.emplace_back(2, 3);
+  expectedValue.emplace_back(2, 7);
+  expectedValue.emplace_back(2, 10);
+  expectedValue.emplace_back(2, 10);
 
-  expectedValue.push_back(ByteArray(2, 10));
-  expectedValue.push_back(ByteArray(2, 20));
+  expectedValue.emplace_back(2, 10);
+  expectedValue.emplace_back(2, 20);
 
-  expectedValue.push_back(ByteArray(2, 30));
+  expectedValue.emplace_back(2, 30);
 
   EXPECT_EQ(expectedValue, testMerkleTree.testBuildTree(transactions));
   EXPECT_EQ(ByteArray(2, 30), testMerkleTree.getMerkleRoot());
 }
 
 TEST(MerkleTree, getMerklePath_test) {
- 
-  //             30
-  //      /               \  
-  //     10               20 
-  //  /       \        /      \ 
-  //  3       7       10      10
-  // / \    /   \   /   \   /   \
-  // 1  2   3   4   5   5   5   5 
+  /**
+               30
+        /               \
+       10               20
+    /       \        /      \
+    3       7       10      10
+   / \    /   \   /   \   /   \
+   1  2   3   4   5   5   5   5
+   */
 
   std::vector<ByteArray> transactions;
-  transactions.push_back(ByteArray(2, 1));
-  transactions.push_back(ByteArray(2, 2));
-  transactions.push_back(ByteArray(2, 3));
-  transactions.push_back(ByteArray(2, 4));
-  transactions.push_back(ByteArray(2, 5));
+  transactions.emplace_back(2, 1);
+  transactions.emplace_back(2, 2);
+  transactions.emplace_back(2, 3);
+  transactions.emplace_back(2, 4);
+  transactions.emplace_back(2, 5);
 
   TestMerkleTree testMerkleTree(transactions);
 
@@ -169,36 +170,40 @@ TEST(MerkleTree, getMerklePath_test) {
   EXPECT_EQ(ByteArray(2, 7), merklePath[2]);
   EXPECT_EQ(ByteArray(2, 20), merklePath[3]);
 
-  //                                                             408
-  //                                /                                                              \
-  //                              136                                                             272
-  //               /                                \                                /                            \          
-  //              36                                100                            136                            136
-  //      /               \                 /               \                /             \                /              \
-  //     10               26              42                58              68             68              68              68
-  //  /       \        /      \        /      \         /      \         /     \        /      \        /      \        /      \
-  //  3       7       11      15      19      23       27      31      34      34      34      34      34      34      34      34    
-  // / \    /   \   /   \   /   \   /   \    / \      /  \    /  \    /  \    /  \    /  \    /  \    /  \    /  \    /  \    /  \
-  // 1  2   3   4   5   6   7   8   9   10  11  12   13  14  15  16  17  17  17  17  17  17  17  17  17  17  17  17  17  17  17  17
+  // clang-format off
+  /**
+                                                               408
+                                  /                                                              \
+                                136                                                             272
+                 /                                \                                /                            \
+                36                                100                            136                            136
+        /               \                 /               \                /             \                /              \
+       10               26              42                58              68             68              68              68
+    /       \        /      \        /      \         /      \         /     \        /      \        /      \        /      \
+    3       7       11      15      19      23       27      31      34      34      34      34      34      34      34      34
+   / \    /   \   /   \   /   \   /   \    / \      /  \    /  \    /  \    /  \    /  \    /  \    /  \    /  \    /  \    /  \
+   1  2   3   4   5   6   7   8   9   10  11  12   13  14  15  16  17  17  17  17  17  17  17  17  17  17  17  17  17  17  17  17
+   */
+  // clang-format on
 
   transactions.clear();
-  transactions.push_back(ByteArray(2, 1));
-  transactions.push_back(ByteArray(2, 2));
-  transactions.push_back(ByteArray(2, 3));
-  transactions.push_back(ByteArray(2, 4));
-  transactions.push_back(ByteArray(2, 5));
-  transactions.push_back(ByteArray(2, 6));
-  transactions.push_back(ByteArray(2, 7));
-  transactions.push_back(ByteArray(2, 8));
-  transactions.push_back(ByteArray(2, 9));
-  transactions.push_back(ByteArray(2, 10));
-  transactions.push_back(ByteArray(2, 11));
-  transactions.push_back(ByteArray(2, 12));
-  transactions.push_back(ByteArray(2, 13));
-  transactions.push_back(ByteArray(2, 14));
-  transactions.push_back(ByteArray(2, 15));
-  transactions.push_back(ByteArray(2, 16));
-  transactions.push_back(ByteArray(2, 17));
+  transactions.emplace_back(2, 1);
+  transactions.emplace_back(2, 2);
+  transactions.emplace_back(2, 3);
+  transactions.emplace_back(2, 4);
+  transactions.emplace_back(2, 5);
+  transactions.emplace_back(2, 6);
+  transactions.emplace_back(2, 7);
+  transactions.emplace_back(2, 8);
+  transactions.emplace_back(2, 9);
+  transactions.emplace_back(2, 10);
+  transactions.emplace_back(2, 11);
+  transactions.emplace_back(2, 12);
+  transactions.emplace_back(2, 13);
+  transactions.emplace_back(2, 14);
+  transactions.emplace_back(2, 15);
+  transactions.emplace_back(2, 16);
+  transactions.emplace_back(2, 17);
 
   testMerkleTree = TestMerkleTree(transactions);
 
