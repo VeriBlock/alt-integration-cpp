@@ -60,9 +60,8 @@ uint256 MerklePath::calculateMerkleRoot() const {
     return subject;
   }
 
-  uint256 cursor = subject;
+  auto cursor = subject;
   auto layerIndex = index;
-  // skip first layer, because it is == subject
   for (const auto& layer : layers) {
     auto& left = layerIndex & 1u ? layer : cursor;
     auto& right = layerIndex & 1u ? cursor : layer;

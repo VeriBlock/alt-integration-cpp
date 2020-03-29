@@ -119,7 +119,7 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
       throw std::invalid_argument("treeIndex can be either 0 or 1");
     }
 
-    // add metapackage hash (also all zeroes) to the right subtree
+    // add metapackage hash (also all zeroes) to the left subtree
     auto metapackageHash = uint256();
     return hash(metapackageHash, cursor);
   }
