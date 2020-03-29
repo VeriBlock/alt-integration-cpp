@@ -49,12 +49,16 @@ struct PopStateMachine {
     auto* current = chain.tip();
     while (current && current != forkPoint) {
       // unapply payloads
-      for (const auto& payloads : getPayloads(*current)) {
-        unapplyContext(payloads);
+      if (!current->containingPayloads.empty()) {
+        for (const auto& payloads : getPayloads(*current)) {
+          unapplyContext(payloads);
+        }
       }
-      index_ = current;
       current = current->pprev;
+      index_ = current;
     }
+
+    assert(index_ == forkPoint);
   }
 
   bool apply(ProtectedIndex& to, ValidationState& state) {
@@ -64,8 +68,7 @@ struct PopStateMachine {
     }
 
     Chain<ProtectedIndex> fork(startHeight_, &to);
-
-    auto* current = index_;
+    auto* current = const_cast<ProtectedIndex*>(fork.findFork(index_));
     // move forward from forkPoint to "to" and apply payloads in between
 
     // exclude fork point itself
@@ -76,9 +79,9 @@ struct PopStateMachine {
         if (!applyContext(payloads, state)) {
           return state.addStackFunction("PopAwareForkResolution::apply");
         }
-
-        index_ = current;
       }
+
+      index_ = current;
 
       if (current != &to) {
         current = fork.next(current);
