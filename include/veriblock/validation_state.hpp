@@ -44,6 +44,15 @@ class ValidationState {
     return false;
   }
 
+  //! during validation of arrays, additional index can be attached, meaning
+  //! position of item in this array that is not valid.
+  ValidationState &setIndex(size_t index_) {
+    this->index = (int64_t)index_;
+    return *this;
+  }
+
+  int64_t getIndex() const { return index; }
+
   /**
    * Changes this ValidationState into "ERROR" mode.
    * @param reject_reason - supply a short, unique message that identifies this
@@ -74,6 +83,7 @@ class ValidationState {
   std::string m_reject_reason;
   std::string m_debug_message;
   std::vector<std::string> stack_trace;
+  int64_t index = -1;
 };
 
 }  // namespace altintegration

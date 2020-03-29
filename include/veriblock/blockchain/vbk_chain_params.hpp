@@ -41,7 +41,7 @@ struct VbkChainParams {
     return {100, 100, 95, 89, 80, 69, 56, 40, 21};
   }
 
-  virtual uint32_t getEndorsementSettlementInterval() const noexcept {
+  virtual int32_t getEndorsementSettlementInterval() const noexcept {
     return 400;
   }
 };

@@ -26,12 +26,15 @@ struct BlockTree {
   using hash_t = typename Block::hash_t;
   using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
+  using payloads_t = typename block_t::payloads_t;
   using block_index_t =
       std::unordered_map<prev_block_hash_t, std::shared_ptr<index_t>>;
 
   virtual ~BlockTree() = default;
 
-  BlockTree(const ChainParams& param) : param_(param) {}
+  BlockTree(const ChainParams& param) : param_(&param) {}
+
+  const ChainParams& getParams() const { return *param_; }
 
   /**
    * Bootstrap blockchain with a single genesis block, from "chain parameters"
@@ -42,9 +45,9 @@ struct BlockTree {
    *
    * @return true if bootstrap was successful, false otherwise
    */
-  bool bootstrapWithGenesis(ValidationState& state) {
+  virtual bool bootstrapWithGenesis(ValidationState& state) {
     assert(block_index_.empty() && "already bootstrapped");
-    auto block = param_.getGenesisBlock();
+    auto block = param_->getGenesisBlock();
     return this->bootstrap(0, block, state);
   }
 
@@ -58,9 +61,9 @@ struct BlockTree {
    * @param chain bootstrap chain
    * @return true if bootstrap was successful, false otherwise
    */
-  bool bootstrapWithChain(height_t startHeight,
-                          const std::vector<block_t>& chain,
-                          ValidationState& state) {
+  virtual bool bootstrapWithChain(height_t startHeight,
+                                  const std::vector<block_t>& chain,
+                                  ValidationState& state) {
     assert(block_index_.empty() && "already bootstrapped");
     if (chain.empty()) {
       return state.Invalid("bootstrapWithChain()",
@@ -68,13 +71,13 @@ struct BlockTree {
                            "provided bootstrap chain is empty");
     }
 
-    if (chain.size() < param_.numBlocksForBootstrap()) {
+    if (chain.size() < param_->numBlocksForBootstrap()) {
       return state.Invalid("bootstrapWithChain()",
                            "bootstrap-small-chain",
                            format("number of blocks in the provided chain is "
                                   "too small: %d, expected at least %d",
                                   chain.size(),
-                                  param_.numBlocksForBootstrap()));
+                                  param_->numBlocksForBootstrap()));
     }
 
     // pick first block from the chain, bootstrap with a single block
@@ -105,10 +108,8 @@ struct BlockTree {
     return it == block_index_.end() ? nullptr : it->second.get();
   }
 
-  bool acceptBlock(const block_t& block,
-                   ValidationState& state,
-                   index_t* blockIndex = nullptr) {
-    return acceptBlock(block, state, true, blockIndex);
+  bool acceptBlock(const block_t& block, ValidationState& state) {
+    return acceptBlock(block, state, true);
   }
 
   void invalidateTip() {
@@ -172,7 +173,9 @@ struct BlockTree {
                 std::greater<typename Block::height_t>>
       fork_chains_;
   Chain<index_t> activeChain_;
-  const ChainParams& param_;
+
+  // to make BlockTree copyable, copy-initializable, we need to make it ptr
+  const ChainParams* param_ = nullptr;
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& fullHash) {
@@ -293,41 +296,21 @@ struct BlockTree {
 
   bool acceptBlock(const block_t& block,
                    ValidationState& state,
-                   bool shouldContextuallyCheck,
-                   index_t* blockIndex = nullptr) {
-    if (!checkBlock(block, state, param_)) {
-      return state.addStackFunction("acceptBlock()");
+                   bool shouldContextuallyCheck) {
+    index_t* index;
+    if (!validateAndAddBlock(block, state, shouldContextuallyCheck, &index)) {
+      return false;
     }
-
-    // we must know previous block
-    auto* prev = getBlockIndex(block.previousBlock);
-    if (prev == nullptr) {
-      return state.Invalid("acceptBlockHeader()",
-                           "bad-prev-block",
-                           "can not find previous block");
-    }
-
-    if (shouldContextuallyCheck &&
-        !contextuallyCheckBlock(*prev, block, state, param_)) {
-      return state.addStackFunction("acceptBlock");
-    }
-
-    auto index = insertBlockHeader(block);
 
     determineBestChain(activeChain_, *index);
 
-    assert(index != nullptr &&
-           "insertBlockHeader should have never returned nullptr");
-    if (blockIndex != nullptr) {
-      *blockIndex = *index;
-    }
     return true;
   }
 
   bool bootstrap(height_t height,
                  const block_t& block,
                  ValidationState& state) {
-    if (!checkBlock(block, state, param_)) {
+    if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("bootstrap()");
     }
 
@@ -343,17 +326,54 @@ struct BlockTree {
     return true;
   }
 
+  bool validateAndAddBlock(const block_t& block,
+                     ValidationState& state,
+                     bool shouldContextuallyCheck,
+                     index_t** ret) {
+    if (!checkBlock(block, state, *param_)) {
+      return state.addStackFunction("acceptBlock()");
+    }
+
+    // we must know previous block
+    auto* prev = getBlockIndex(block.previousBlock);
+    if (prev == nullptr) {
+      return state.Invalid("acceptBlockHeader()",
+                           "bad-prev-block",
+                           "can not find previous block");
+    }
+
+    if (shouldContextuallyCheck &&
+        !contextuallyCheckBlock(*prev, block, state, *param_)) {
+      return state.addStackFunction("acceptBlock");
+    }
+
+    auto index = insertBlockHeader(block);
+    assert(index != nullptr &&
+           "insertBlockHeader should have never returned nullptr");
+
+    if (ret) {
+      *ret = index;
+    }
+
+    return true;
+  }
+
   virtual void determineBestChain(Chain<index_t>& currentBest,
                                   index_t& indexNew) {
     if (currentBest.tip() == nullptr ||
         currentBest.tip()->chainWork < indexNew.chainWork) {
       auto prevTip = currentBest.tip();
       currentBest.setTip(&indexNew);
+      onTipChanged(indexNew);
       addForkCandidate(prevTip, &indexNew);
     } else {
       addForkCandidate(&indexNew, indexNew.pprev);
     }
   }
+
+  //! callback, executed every time when tip is changed. Useful for derived
+  //! classes.
+  virtual void onTipChanged(index_t&) {}
 };
 
 }  // namespace altintegration

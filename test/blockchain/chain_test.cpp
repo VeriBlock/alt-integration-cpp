@@ -104,8 +104,16 @@ TEST(ChainTest, CreateFrom0) {
   ASSERT_EQ(c.chainHeight(), 109);
 }
 
-template <typename EndorsementType>
-EndorsementType generateEndorsement();
+template <typename Block, typename Endorsement>
+Endorsement generateEndorsement(const Block& endorsedBlock,
+                                const Block& containingBlock) {
+  Endorsement endorsement;
+  endorsement.id = generateRandomBytesVector(32);
+  endorsement.endorsedHash = endorsedBlock.getHash();
+  endorsement.containingHash = containingBlock.getHash();
+  endorsement.blockOfProof = generateRandomBytesVector(10);
+  return endorsement;
+}
 
 template <typename Block>
 BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
@@ -114,11 +122,37 @@ template <>
 BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
   AltBlock block;
   block.hash = generateRandomBytesVector(32);
-  block.height = prev->height + 1;
-  block.previousBlock = prev->getHash();
-  block.timestamp = prev->header.timestamp + 1;
+  if (prev != nullptr) {
+    block.height = prev->height + 1;
+    block.previousBlock = prev->getHash();
+    block.timestamp = prev->header.timestamp + 1;
+  } else {
+    block.height = 0;
+    block.timestamp = 0;
+  }
 
   BlockIndex<AltBlock> index;
+  index.header = block;
+  index.height = block.height;
+  index.pprev = prev;
+  return index;
+}
+
+template <>
+BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
+  VbkBlock block;
+  if (prev != nullptr) {
+    block.height = prev->height + 1;
+    block.previousBlock = prev->getHash().trimLE<uint96::size()>();
+    block.timestamp = prev->header.timestamp + 1;
+  } else {
+    block.height = 0;
+    block.timestamp = 0;
+    block.nonce = 0;
+    block.version = 0;
+  }
+
+  BlockIndex<VbkBlock> index;
   index.header = block;
   index.height = block.height;
   index.pprev = prev;
@@ -136,85 +170,67 @@ struct ChainTestFixture : public ::testing::Test {
 
 TYPED_TEST_SUITE_P(ChainTestFixture);
 
-TYPED_TEST_P(ChainTestFixture, findEndorsement) {}
+TYPED_TEST_P(ChainTestFixture, findEndorsement) {
+  using block_t = typename findEndorsement::block_t;
+  using endorsement_t = typename findEndorsement::endorsement_t;
 
-// make sure to enumerate the test cases here
-REGISTER_TYPED_TEST_SUITE_P(ChainTestFixture, findEndorsement);
+  BlockIndex<block_t> bootstrapBlock = generateNextBlock<block_t>(nullptr);
 
-typedef ::testing::Types<> TypesUnderTest;
+  Chain<BlockIndex<block_t>> chain(bootstrapBlock.height, &bootstrapBlock);
 
-INSTANTIATE_TYPED_TEST_SUITE_P(ChainTestSuite,
-                               ChainTestFixture,
-                               TypesUnderTest);
-
-struct AltChainParamsTest : public AltChainParams {
-  AltBlock getBootstrapBlock() const noexcept override {
-    AltBlock genesisBlock;
-    genesisBlock.hash = {1, 2, 3};
-    genesisBlock.previousBlock = {4, 5, 6};
-    genesisBlock.height = 0;
-    genesisBlock.timestamp = 0;
-    return genesisBlock;
-  }
-};
-
-TEST(ChainTest, findEndorsement) {
-  AltBlock bootstrapBlock = AltChainParamsTest().getBootstrapBlock();
-  BlockIndex<AltBlock> bootstrapBlockIndex;
-  bootstrapBlock.height = bootstrapBlock.height;
-  bootstrapBlockIndex.header = bootstrapBlock;
-  bootstrapBlockIndex.pprev = nullptr;
-
-  std::vector<std::shared_ptr<BlockIndex<AltBlock>>> indexes{
-      std::make_shared<BlockIndex<AltBlock>>(bootstrapBlockIndex)};
-
-  Chain<BlockIndex<AltBlock>> chain(bootstrapBlockIndex.height,
-                                    &bootstrapBlockIndex);
+  std::vector<std::shared_ptr<BlockIndex<block_t>>> indexes{
+      std::make_shared<BlockIndex<block_t>>(bootstrapBlock)};
 
   for (int i = 0; i < 10; ++i) {
-    std::shared_ptr<BlockIndex<AltBlock>> block =
-        std::make_shared<BlockIndex<AltBlock>>(generateNextBlock(chain.tip()));
+    std::shared_ptr<BlockIndex<block_t>> block =
+        std::make_shared<BlockIndex<block_t>>(generateNextBlock(chain.tip()));
     indexes.push_back(block);
     chain.setTip(block.get());
   }
 
-  VbkEndorsement endorsement1;
-  endorsement1.id = generateRandomBytesVector(32);
-  endorsement1.blockOfProof = generateRandomBytesVector(10);
-  endorsement1.containingHash = generateRandomBytesVector(10);
+  BlockIndex<block_t> newIndex = generateNextBlock(chain.tip());
 
-  VbkEndorsement endorsement2;
-  endorsement2.id = generateRandomBytesVector(32);
-  endorsement2.blockOfProof = generateRandomBytesVector(10);
-  endorsement2.containingHash = generateRandomBytesVector(10);
-
-  VbkEndorsement endorsement3;
-  endorsement3.id = generateRandomBytesVector(32);
-  endorsement3.blockOfProof = generateRandomBytesVector(10);
-  endorsement3.containingHash = generateRandomBytesVector(10);
-
-  VbkEndorsement endorsement4;
-  endorsement4.id = generateRandomBytesVector(32);
-  endorsement4.blockOfProof = generateRandomBytesVector(10);
-  endorsement4.containingHash = generateRandomBytesVector(10);
-
-  BlockIndex<AltBlock> newIndex = generateNextBlock(chain.tip());
+  endorsement_t endorsement1 = generateEndorsement<block_t, endorsement_t>(
+      chain.tip()->header, newIndex.header);
+  endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
+      chain.tip()->pprev->header, newIndex.header);
 
   newIndex.containingEndorsements[endorsement1.id] =
-      std::make_shared<VbkEndorsement>(endorsement1);
+      std::make_shared<endorsement_t>(endorsement1);
   newIndex.containingEndorsements[endorsement2.id] =
-      std::make_shared<VbkEndorsement>(endorsement2);
+      std::make_shared<endorsement_t>(endorsement2);
 
   chain.setTip(&newIndex);
 
-  BlockIndex<AltBlock> newIndex2 = generateNextBlock(chain.tip());
+  BlockIndex<block_t> newIndex2 = generateNextBlock(chain.tip());
+
+  endorsement_t endorsement3 = generateEndorsement<block_t, endorsement_t>(
+      chain.tip()->header, newIndex2.header);
+  endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
+      chain.tip()->pprev->header, newIndex2.header);
 
   newIndex2.containingEndorsements[endorsement3.id] =
-      std::make_shared<VbkEndorsement>(endorsement3);
+      std::make_shared<endorsement_t>(endorsement3);
 
   chain.setTip(&newIndex2);
-  EXPECT_EQ(*chain.findEndorsement(endorsement1.id, 100), endorsement1);
-  EXPECT_EQ(*chain.findEndorsement(endorsement2.id, 100), endorsement2);
-  EXPECT_EQ(*chain.findEndorsement(endorsement3.id, 100), endorsement3);
-  EXPECT_EQ(chain.findEndorsement(endorsement4.id, 100), nullptr);
+
+  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement1, 100)
+                 ->containingEndorsements[endorsement1.id],
+            endorsement1);
+  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement2, 100)
+                 ->containingEndorsements[endorsement2.id],
+            endorsement2);
+  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement3, 100)
+                 ->containingEndorsements[endorsement3.id],
+            endorsement3);
+  EXPECT_EQ(chain.findBlockContainingEndorsement(endorsement4, 100), nullptr);
 }
+
+// make sure to enumerate the test cases here
+REGISTER_TYPED_TEST_SUITE_P(ChainTestFixture, findEndorsement);
+
+typedef ::testing::Types<AltBlock, VbkBlock> TypesUnderTest;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(ChainTestSuite,
+                               ChainTestFixture,
+                               TypesUnderTest);

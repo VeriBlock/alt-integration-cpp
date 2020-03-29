@@ -22,7 +22,6 @@ message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD}
         ${CMAKE_SOURCE_DIR}/include/veriblock/alt-util.hpp
-        popmanager.cpp
         checks.cpp
         serde.cpp
         keystone_util.cpp
@@ -43,11 +42,6 @@ add_library(${LIB_NAME} ${BUILD}
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
         )
-if(WITH_ROCKS)
-    target_link_libraries(${LIB_NAME} rocksdb)
-endif()
-
-# install step is only for unix, for now...
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}

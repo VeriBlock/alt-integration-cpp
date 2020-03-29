@@ -5,6 +5,7 @@
 #include <map>
 #include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/block_repository.hpp>
 
 namespace altintegration {
@@ -145,18 +146,18 @@ struct Chain {
     return ret;
   }
 
-  std::shared_ptr<typename index_t::endorsement_t> findEndorsement(
-      const typename index_t::eid_t& eid,
+  index_t* findBlockContainingEndorsement(
+      const typename index_t::endorsement_t& e,
       const uint32_t& endorsement_settlement_interval) {
     index_t* workBlock = tip();
 
-    uint32_t count = 0;
-    while (count < endorsement_settlement_interval && workBlock &&
-           workBlock->height > startHeight_) {
-      ++count;
-      auto it = workBlock->containingEndorsements.find(eid);
+    for (uint32_t count = 0; count < endorsement_settlement_interval &&
+                             workBlock && workBlock->height >= startHeight_ &&
+                             e.endorsedHash != workBlock->getHash();
+         count++) {
+      auto it = workBlock->containingEndorsements.find(e.id);
       if (it != workBlock->containingEndorsements.end()) {
-        return it->second;
+        return workBlock;
       }
       workBlock = workBlock->pprev;
     }

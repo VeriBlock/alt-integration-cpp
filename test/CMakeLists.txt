@@ -7,11 +7,6 @@ add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
 
-if(WITH_ROCKSDB)
-    addtest(popmanager_test popmanager_test.cpp)
-    target_link_libraries(popmanager_test ${LIB_NAME} rocksdb)
-endif()
-
 addtest(vblake_test vblake_test.cpp)
 target_link_libraries(vblake_test ${LIB_NAME})
 
@@ -32,9 +27,6 @@ target_link_libraries(arith_uint256_test ${LIB_NAME})
 
 addtest(signutil_test signutil_test.cpp)
 target_link_libraries(signutil_test ${LIB_NAME})
-
-addtest(mock_miner_test mock_miner_test.cpp)
-target_link_libraries(mock_miner_test ${LIB_NAME})
 
 addtest(keystone_util_test keystone_util_test.cpp)
 target_link_libraries(keystone_util_test ${LIB_NAME})

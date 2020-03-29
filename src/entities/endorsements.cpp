@@ -71,12 +71,12 @@ template <>
 void VbkEndorsement::toVbkEncoding(WriteStream& stream) const {
   stream.write(id);
   stream.writeBE<uint32_t>((uint32_t)endorsedHash.size());
-  for (size_t i = 0; i < endorsedHash.size(); ++i) {
-    stream.writeBE<uint8_t>(endorsedHash[i]);
+  for (unsigned char i : endorsedHash) {
+    stream.writeBE<uint8_t>(i);
   }
   stream.writeBE<uint32_t>((uint32_t)containingHash.size());
-  for (size_t i = 0; i < containingHash.size(); ++i) {
-    stream.writeBE<uint8_t>(containingHash[i]);
+  for (unsigned char i : containingHash) {
+    stream.writeBE<uint8_t>(i);
   }
   stream.write(blockOfProof);
 
@@ -117,12 +117,18 @@ VbkEndorsement VbkEndorsement::fromContainer(const AltProof& c) {
 
 template <>
 BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c) {
-  return c.transaction.getHash();
+  WriteStream stream;
+  c.transaction.toRaw(stream);
+  c.containingBlock.toRaw(stream);
+  return sha256(stream.data());
 }
 
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltProof& c) {
-  return c.atv.transaction.getHash();
+  WriteStream stream;
+  c.atv.transaction.toRaw(stream);
+  c.containing.toVbkEncoding(stream);
+  return sha256(stream.data());
 }
 
 }  // namespace altintegration
