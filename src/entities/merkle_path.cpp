@@ -57,7 +57,7 @@ void MerklePath::toVbkEncoding(WriteStream& stream) const {
 
 uint256 MerklePath::calculateMerkleRoot() const {
   if (layers.empty()) {
-    return subject.trim<VBK_MERKLE_ROOT_HASH_SIZE>();
+    return subject;
   }
 
   uint256 cursor = subject;
