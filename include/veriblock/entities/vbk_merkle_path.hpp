@@ -24,7 +24,7 @@ struct VbkMerklePath {
   /**
    * Read VBK data from the stream and convert it to VbkMerklePath
    * @param stream data stream to read from
-   * @return VbkMerklePathcalculateMerk
+   * @return VbkMerklePath
    */
   static VbkMerklePath fromVbkEncoding(ReadStream& stream);
 
