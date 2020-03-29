@@ -45,8 +45,6 @@ struct BlockIndex {
   //! height of the entry in the chain
   height_t height = 0;
 
-  std::vector<pid_t> stored_payloads_ids;
-
   //! block header
   Block header{};
 

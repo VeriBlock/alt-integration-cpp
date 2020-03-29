@@ -45,6 +45,8 @@ struct ATV {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
+  static ATV fromHex(const std::string& h);
+
   friend bool operator==(const ATV& a, const ATV& b) {
     // clang-format off
     return a.toVbkEncoding() == b.toVbkEncoding();

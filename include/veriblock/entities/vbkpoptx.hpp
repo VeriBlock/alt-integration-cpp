@@ -68,6 +68,12 @@ struct VbkPopTx {
   hash_t getHash() const;
 };
 
+struct VbkPopTxHasher {
+  using hash_t = VbkPopTx::hash_t;
+
+  hash_t hash(const hash_t& a, const hash_t& b) { return sha256(a, b); }
+};
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKPOPTX_HPP_

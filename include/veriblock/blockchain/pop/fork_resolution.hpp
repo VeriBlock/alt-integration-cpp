@@ -364,6 +364,11 @@ struct PopAwareForkResolutionComparator {
     for (size_t i = 0, size = payloads.size(); i < size; i++) {
       auto& p = payloads[i];
 
+      // containing block must be correct (current)
+      if (p.containingBlock != index.header) {
+        return state.setIndex(i).addStackFunction("Comparator::addPayloads");
+      }
+
       // first, check if context is valid
       if (!sm.applyContext(p, state)) {
         return state.setIndex(i).addStackFunction("Comparator::addPayloads");
