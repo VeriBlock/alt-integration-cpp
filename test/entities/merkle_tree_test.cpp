@@ -39,7 +39,7 @@ struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
     for (size_t i = 0; i < n; i++) {
       VbkMerklePath p = makePath((int)i);
       for (size_t j = 0; j < n; j++) {
-        bool ret = checkPath(p, j);
+        bool ret = checkPath(p, (int32_t)j);
         if (i == j) {
           EXPECT_TRUE(ret) << state.GetDebugMessage();
         } else {
