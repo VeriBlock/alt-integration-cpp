@@ -104,9 +104,9 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
     const BtcTx& containingTx,
     const VbkBlock& publishedBlock,
     const BtcBlock::hash_t& lastKnownBtcBlockHash) {
-  auto containingblockindex =
+  auto containingBlockIndex =
       vbktree.btc().getBlockIndex(containingBlock.getHash());
-  if (!containingblockindex) {
+  if (!containingBlockIndex) {
     throw std::domain_error(
         format("containing block with hash %s does not exist in BTC ",
                containingBlock.getHash().toHex()));
@@ -153,7 +153,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   popTx.merklePath.subject = txhashes[txindex];
   popTx.merklePath.layers = mtree.getMerklePathLayers(txhashes[txindex]);
 
-  for (auto* walkBlock = containingblockindex;
+  for (auto* walkBlock = containingBlockIndex;
        walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
     popTx.blockOfProofContext.push_back(walkBlock->header);
@@ -283,6 +283,9 @@ BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
                                                size_t amount) {
   BtcBlock::hash_t last = tip.getHash();
   if (!btcmempool.empty() && amount > 0) {
+    //! we "simulate" mempool - a vector of transactions that can be added for
+    //! "further processing". here we mine first block separately, as it should
+    //! contain all transactions from mempool
     BtcMerkleTree mtree(hashAll<BtcTx>(btcmempool));
     auto block = btc_miner.createNextBlock(tip, mtree.getMerkleRoot());
     if (!vbktree.btc().acceptBlock(block, state_)) {
@@ -312,6 +315,9 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
                                                size_t amount) {
   VbkBlock::hash_t last = tip.getHash();
   if (!vbkmempool.empty() && amount > 0) {
+    //! we "simulate" mempool - a vector of transactions that can be added for
+    //! "further processing". here we mine first block separately, as it should
+    //! contain all transactions from mempool.
     auto containing = applyVTBs(tip, vbktree, vbkmempool, state_);
     last = containing.getHash();
 
