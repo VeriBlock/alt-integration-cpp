@@ -79,6 +79,8 @@ jobs:
           path: C:/vcpkg/installed
           key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}-${{ hashFiles('CMakeLists.txt') }}
 
+      - name: install zlib
+        run: vcpkg install zlib
       - name: install dependencies
         run: vcpkg install rocksdb
 

@@ -33,6 +33,7 @@ struct Endorsement {
   EndorsedHash endorsedHash;
   EndorsedHash containingHash;
   ContainingHash blockOfProof;
+  std::vector<uint8_t> payoutInfo;
 
   /**
    * Read VBK data from the stream and convert it to Endorsement

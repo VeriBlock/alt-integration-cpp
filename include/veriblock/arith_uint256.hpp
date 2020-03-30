@@ -199,7 +199,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
 
   int compareTo(const ArithUint256& b) const;
 
-  std::string toString();
+  std::string toString() const;
 
   static ArithUint256 fromString(std::string num);
 
