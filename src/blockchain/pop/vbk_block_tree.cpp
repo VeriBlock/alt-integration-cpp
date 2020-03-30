@@ -94,6 +94,7 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
   }
 
   // save payloads on disk
+
   if (change) {
     for (const auto& payload : payloads) {
       change->saveVbkPayloads(payload);
