@@ -110,7 +110,6 @@ static const ATV validATV = {
      uint72(),
      uint72(),
      uint128("26BBFDA7D5E4462EF24AE02D67E47D78"_unhex),
-     //uint128("787DE4672DE04AF22E46E4D5A7FDBB26"_unhex),
      1553699059,
      16842752,
      1},
