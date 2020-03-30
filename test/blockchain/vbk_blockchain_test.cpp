@@ -7,8 +7,8 @@
 #include "util/literals.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
-#include "veriblock/blockchain/miner.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
+#include "veriblock/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/storage/payloads_repository_inmem.hpp"
 
 using namespace altintegration;
 
@@ -19,10 +19,11 @@ struct BlockchainFixture {
   using height_t = typename BlockTree<block_t, param_t>::height_t;
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
-  std::shared_ptr<param_t> params;
   ValidationState state;
 
-  BlockchainFixture() { params = std::make_shared<VbkChainParamsRegTest>(); }
+  PayloadsRepositoryInmem<VTB> prepo;
+  BtcChainParamsRegTest btcparam;
+  VbkChainParamsRegTest vbkparam;
 };
 
 struct VbkTestCase {
@@ -56,15 +57,7 @@ static std::vector<VbkTestCase> accept_test_cases = {
     {generated::vbk_blockheaders_mainnet_200001_230000,
      std::make_shared<VbkChainParamsMain>(),
      200001,
-     2014},
-    {generated::vbk_blockheaders_mainnet_200001_230000,
-     std::make_shared<VbkChainParamsMain>(),
-     200001,
-     2015},
-    {generated::vbk_blockheaders_mainnet_200001_230000,
-     std::make_shared<VbkChainParamsMain>(),
-     200001,
-     2016},
+     3333},
 
     /// testnet
     {generated::vbk_blockheaders_testnet_0_10000,
@@ -74,15 +67,7 @@ static std::vector<VbkTestCase> accept_test_cases = {
     {generated::vbk_blockheaders_testnet_0_10000,
      std::make_shared<VbkChainParamsTest>(),
      0,
-     99},
-    {generated::vbk_blockheaders_testnet_0_10000,
-     std::make_shared<VbkChainParamsTest>(),
-     0,
-     100},
-    {generated::vbk_blockheaders_testnet_0_10000,
-     std::make_shared<VbkChainParamsTest>(),
-     0,
-     101},
+     3333},
 };
 
 // Read Vbk_blockheaders file.
@@ -107,7 +92,9 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap() * 2,
       allblocks.end()};
 
-  BlockTree<VbkBlock, VbkChainParams> tree(*value.params);
+  VbkBlockTree::PopForkComparator cmp(prepo, btcparam, *value.params);
+  VbkBlockTree tree(*value.params, std::move(cmp));
+
   ASSERT_TRUE(
       tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))
       << state.GetRejectReason();
@@ -120,7 +107,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
             bootstrapChain[bootstrapChain.size() - 1].height);
 
   for (const auto& block : acceptChain) {
-    ASSERT_TRUE(tree.acceptBlock(block, state))
+    ASSERT_TRUE(tree.acceptBlock(block, {}, state))
         << "block #" << totalBlocks << "\n"
         << "rejection: " << state.GetRejectReason() << ", "
         << "message: " << state.GetDebugMessage();
@@ -135,6 +122,9 @@ TEST_P(AcceptTest, BootstrapWithChain) {
     EXPECT_EQ(tree.getBestChain().tip()->height, block.height);
     ++totalBlocks;
   }
+
+  //   tree should be copyable
+  auto copy = tree;
 }
 
 INSTANTIATE_TEST_SUITE_P(AcceptBlocksRegression,

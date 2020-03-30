@@ -16,6 +16,7 @@ namespace altintegration {
  * @return vector with SHA256 hash of the input data
  */
 uint256 sha256(Slice<const uint8_t> data);
+uint256 sha256(Slice<const uint8_t> a, Slice<const uint8_t> b);
 
 /**
  * Calculates SHA256 of the input data twice
@@ -23,6 +24,8 @@ uint256 sha256(Slice<const uint8_t> data);
  * @return vector with SHA256 hash of the input data
  */
 uint256 sha256twice(Slice<const uint8_t> data);
+uint256 sha256twice(Slice<const uint8_t> a, Slice<const uint8_t> b);
+
 
 /**
  * Calculates VBlake of the input data

@@ -185,14 +185,22 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
       // chain must contain relevantEndorsedBlock
       assert(index != nullptr);
 
-      // get all endorsements of this block that are on the same chain as that
-      // block
       for (const auto* e : index->endorsedBy) {
-        auto* ind = tree.getBlockIndex(e->blockOfProof);
-        // include only endorsements that are on best chain of protecting chain
-        if (tree.getBestChain().contains(ind)) {
-          pkc.referencedByBlocks.insert(ind);
+        if (!allHashesInChain.count(e->containingHash)) {
+          // do not count endorsement whose containingHash is not on the same
+          // chain as 'endorsedHash'
+          continue;
         }
+
+        auto* ind = tree.getBlockIndex(e->blockOfProof);
+        if (!tree.getBestChain().contains(ind)) {
+          continue;
+        }
+
+        // include only endorsements that are on best chain of protecting chain,
+        // and whose 'containingHash' is on the same chain as 'endorsedHash'
+        pkc.referencedByBlocks.insert(ind);
+
       }  // end for
     }    // end for
 
@@ -363,6 +371,11 @@ struct PopAwareForkResolutionComparator {
     sm_t sm(temp, &index, protectedParams_, p_);
     for (size_t i = 0, size = payloads.size(); i < size; i++) {
       auto& p = payloads[i];
+
+      // containing block must be correct (current)
+      if (p.containingBlock != index.header) {
+        return state.setIndex(i).addStackFunction("Comparator::addPayloads");
+      }
 
       // first, check if context is valid
       if (!sm.applyContext(p, state)) {

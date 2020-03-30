@@ -1,5 +1,7 @@
 #include "veriblock/entities/vbk_merkle_path.hpp"
 
+#include "veriblock/entities/vbkpoptx.hpp"
+
 using namespace altintegration;
 
 VbkMerklePath VbkMerklePath::fromVbkEncoding(ReadStream& stream) {
@@ -29,31 +31,29 @@ void VbkMerklePath::toVbkEncoding(WriteStream& stream) const {
 }
 
 uint128 VbkMerklePath::calculateMerkleRoot() const {
-  uint256 cursor = subject;
-  int layerIndex = index;
-  for (size_t i = 0; i < layers.size(); ++i) {
-    if (i == layers.size() - 1) {
-      /* The last layer is the BlockContentMetapackage hash and will always be
-         the "left" side, so set the layerIndex to 1 */
-      layerIndex = 1;
-    } else if (i == layers.size() - 2) {
-      /* The second to last layer is the joining with the opposite transaction
-         type group (normal vs pop), so use the tree index specified in the
-         compact format */
-      layerIndex = treeIndex;
-    }
-    if (layerIndex & 1) {
-      std::vector<uint8_t> data(layers[i].begin(), layers[i].end());
-      data.insert(data.end(), cursor.begin(), cursor.end());
-      cursor = sha256(data);
-    } else {
-      std::vector<uint8_t> data(cursor.begin(), cursor.end());
-      data.insert(data.end(), layers[i].begin(), layers[i].end());
-      cursor = sha256(data);
-    }
-
-    layerIndex >>= 1;
+  if (layers.empty()) {
+    return subject.trim<VBK_MERKLE_ROOT_HASH_SIZE>();
   }
 
-  return cursor.template trim<VBK_MERKLE_ROOT_HASH_SIZE>();
+  uint256 cursor = subject;
+  auto layerIndex = index;
+  for (size_t i = 0, size = layers.size(); i < size; ++i) {
+    auto& layer = layers[i];
+    auto& left = layerIndex & 1u ? layer : cursor;
+    auto& right = layerIndex & 1u ? cursor : layer;
+    cursor = sha256(left, right);
+
+    // Because a layer has processed but the index (i) hasn't progressed, these
+    // values are offset by 1
+    if (i == size - 2) {
+      // metapackage hash is on the left
+      layerIndex = 1;
+    } else if (i == size - 3) {
+      layerIndex = treeIndex;
+    } else {
+      layerIndex >>= 1u;
+    }
+  }
+
+  return cursor.trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 }

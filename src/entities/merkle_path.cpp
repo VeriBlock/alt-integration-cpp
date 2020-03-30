@@ -56,21 +56,17 @@ void MerklePath::toVbkEncoding(WriteStream& stream) const {
 }
 
 uint256 MerklePath::calculateMerkleRoot() const {
-  uint256 cursor = subject;
-  int layerIndex = index;
-  for (const auto& layer : layers) {
-    if (layerIndex & 1) {
-      std::vector<uint8_t> data(layer.begin(), layer.end());
-      data.insert(data.end(), cursor.begin(), cursor.end());
-      cursor = sha256twice(data);
-    } else {
-      std::vector<uint8_t> data(cursor.begin(), cursor.end());
-      data.insert(data.end(), layer.begin(), layer.end());
-      cursor = sha256twice(data);
-    }
-
-    layerIndex >>= 1;
+  if (layers.empty()) {
+    return subject;
   }
 
+  auto cursor = subject;
+  auto layerIndex = index;
+  for (const auto& layer : layers) {
+    auto& left = layerIndex & 1u ? layer : cursor;
+    auto& right = layerIndex & 1u ? cursor : layer;
+    cursor = sha256twice(left, right);
+    layerIndex >>= 1u;
+  }
   return cursor;
 }

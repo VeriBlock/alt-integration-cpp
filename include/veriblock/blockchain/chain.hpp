@@ -135,7 +135,7 @@ struct Chain {
   //! useful for small chains for further checks of "hash existence"
   std::unordered_set<hash_t> getAllHashesInChain() const {
     std::unordered_set<hash_t> ret;
-    ret.reserve(chain.size() - startHeight_);
+    ret.reserve(chain.size());
 
     auto* current = tip();
     while (current) {

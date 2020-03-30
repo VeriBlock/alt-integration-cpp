@@ -24,14 +24,16 @@ bool checkMerklePath(const MerklePathType& merklePath,
                      ValidationState& state) {
   if (merklePath.subject != transactionHash) {
     return state.Invalid("checkMerklePath()",
-                         "Invalid MerklePath",
+                         "invalid-merklepath",
                          "Transaction hash cannot be proven by merkle path");
   }
 
-  if (merklePath.calculateMerkleRoot() != merkleRoot) {
+  auto root = merklePath.calculateMerkleRoot();
+  if (root != merkleRoot) {
     return state.Invalid("checkMerklePath()",
-                         "Invalid MerklePath",
-                         "merkle path does not belong to block hash");
+                         "invalid-merklepath",
+                         "Wrong merkle root. Expected: " + merkleRoot.toHex() +
+                             ", got: " + root.toHex());
   }
 
   return true;

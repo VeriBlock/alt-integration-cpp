@@ -52,9 +52,11 @@ struct PopStateMachine {
       for (const auto& payloads : getPayloads(*current)) {
         unapplyContext(payloads);
       }
-      index_ = current;
       current = current->pprev;
+      index_ = current;
     }
+
+    assert(index_ == forkPoint);
   }
 
   bool apply(ProtectedIndex& to, ValidationState& state) {
@@ -64,8 +66,9 @@ struct PopStateMachine {
     }
 
     Chain<ProtectedIndex> fork(startHeight_, &to);
+    auto* current = const_cast<ProtectedIndex*>(fork.findFork(index_));
+    assert(current);
 
-    auto* current = index_;
     // move forward from forkPoint to "to" and apply payloads in between
 
     // exclude fork point itself
@@ -76,9 +79,9 @@ struct PopStateMachine {
         if (!applyContext(payloads, state)) {
           return state.addStackFunction("PopAwareForkResolution::apply");
         }
-
-        index_ = current;
       }
+
+      index_ = current;
 
       if (current != &to) {
         current = fork.next(current);
@@ -110,6 +113,9 @@ struct PopStateMachine {
 
  private:
   std::vector<payloads_t> getPayloads(const ProtectedIndex& index) {
+    if (index.containingPayloads.empty()) {
+      return {};
+    }
     std::vector<payloads_t> ret;
     ret.reserve(index.containingPayloads.size());
     p_.get(index.containingPayloads, &ret);

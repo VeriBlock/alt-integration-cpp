@@ -302,7 +302,8 @@ struct BlockTree {
       return false;
     }
 
-    determineBestChain(activeChain_, *index);
+    bool isBootstrap = !shouldContextuallyCheck;
+    determineBestChain(activeChain_, *index, isBootstrap);
 
     return true;
   }
@@ -327,9 +328,9 @@ struct BlockTree {
   }
 
   bool validateAndAddBlock(const block_t& block,
-                     ValidationState& state,
-                     bool shouldContextuallyCheck,
-                     index_t** ret) {
+                           ValidationState& state,
+                           bool shouldContextuallyCheck,
+                           index_t** ret) {
     if (!checkBlock(block, state, *param_)) {
       return state.addStackFunction("acceptBlock()");
     }
@@ -359,12 +360,13 @@ struct BlockTree {
   }
 
   virtual void determineBestChain(Chain<index_t>& currentBest,
-                                  index_t& indexNew) {
+                                  index_t& indexNew,
+                                  bool isBootstrap = false) {
     if (currentBest.tip() == nullptr ||
         currentBest.tip()->chainWork < indexNew.chainWork) {
       auto prevTip = currentBest.tip();
       currentBest.setTip(&indexNew);
-      onTipChanged(indexNew);
+      onTipChanged(indexNew, isBootstrap);
       addForkCandidate(prevTip, &indexNew);
     } else {
       addForkCandidate(&indexNew, indexNew.pprev);
@@ -373,7 +375,7 @@ struct BlockTree {
 
   //! callback, executed every time when tip is changed. Useful for derived
   //! classes.
-  virtual void onTipChanged(index_t&) {}
+  virtual void onTipChanged(index_t&, bool isBootstrap) { (void)isBootstrap; }
 };
 
 }  // namespace altintegration
