@@ -146,7 +146,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
 
   auto txhashes = hashAll<BtcTx>(txes);
   BtcMerkleTree mtree(txhashes);
-  int32_t txindex = std::distance(txes.begin(), txit);
+  int32_t txindex = (int32_t)std::distance(txes.begin(), txit);
 
   popTx.bitcoinTransaction = *txit;
   popTx.merklePath.index = txindex;
@@ -254,7 +254,7 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
   // map VbkPopTx -> VTB
   std::vector<VTB> vtbs;
   vtbs.reserve(txes.size());
-  size_t index = 0;
+  int32_t index = 0;
   std::transform(txes.begin(),
                  txes.end(),
                  std::back_inserter(vtbs),
