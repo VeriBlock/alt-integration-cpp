@@ -46,24 +46,24 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   // TODO: fix
 
   // and now endorse block 60 of chain B
-//  auto* B60 = chainBtip->getAncestor(60);
-//  auto Btx1 = popminer.createBtcTxEndorsingVbkBlock(B60->header);
-//  auto Bbtccontaining1 = popminer.mineBtcBlocks(1);
-//  ASSERT_TRUE(popminer.btc().getBestChain().contains(Bbtccontaining1));
-//
-//  auto Bpoptx1 = popminer.createVbkPopTxEndorsingVbkBlock(
-//      Bbtccontaining1->header,
-//      Btx1,
-//      chainBtip->header,
-//      popminer.btc().getBestChain().tip()->getHash());
-//
-//  popminer.mineVbkBlocks(*chainBtip, 1);
-//
-//  // chain is still at chain A, because endorsement was erlier
-//  ASSERT_EQ(popminer.vbk().getBestChain().tip(), Avbkcontaining1);
-//
-//  std::ofstream f("file.txt");
-//  WriteBlockTree(f, popminer.vbk(), "clusterVBK");
-//  WriteBlockTree(f, popminer.btc(), "clusterBTC");
-//  f.close();
+  auto* B60 = chainBtip->getAncestor(60);
+  auto Btx1 = popminer.createBtcTxEndorsingVbkBlock(B60->header);
+  auto Bbtccontaining1 = popminer.mineBtcBlocks(1);
+  ASSERT_TRUE(popminer.btc().getBestChain().contains(Bbtccontaining1));
+
+  auto Bpoptx1 = popminer.createVbkPopTxEndorsingVbkBlock(
+      Bbtccontaining1->header,
+      Btx1,
+      B60->header,
+      popminer.btc().getBestChain().tip()->getHash());
+
+  popminer.mineVbkBlocks(*B60, 1);
+
+  // chain is still at chain A, because endorsement was erlier
+  ASSERT_EQ(popminer.vbk().getBestChain().tip(), Avbkcontaining1);
+
+  std::ofstream f("file.txt");
+  WriteBlockTree(f, popminer.vbk(), "clusterVBK");
+  WriteBlockTree(f, popminer.btc(), "clusterBTC");
+  f.close();
 }
