@@ -182,11 +182,9 @@ TEST_F(StatelessValidationTest,
   ASSERT_FALSE(checkProofOfWork(block, vbk));
 }
 
-// TODO(Warchant): https://veriblock.atlassian.net/browse/BTC-323 this test does
-// not pass. Figure out why.
-//TEST_F(StatelessValidationTest, ATV_valid) {
-//  ASSERT_TRUE(checkATV(validATV, state, vbk)) << state.GetDebugMessage();
-//}
+TEST_F(StatelessValidationTest, ATV_valid) {
+  ASSERT_TRUE(checkATV(validATV, state, vbk)) << state.GetDebugMessage();
+}
 
 TEST_F(StatelessValidationTest,
        ATV_checkMerklePath_different_transaction_invalid) {
