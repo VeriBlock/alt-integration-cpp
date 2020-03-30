@@ -24,8 +24,8 @@ uint256 sha256twice(Slice<const uint8_t> a, Slice<const uint8_t> b) {
 uint256 sha256(Slice<const uint8_t> a, Slice<const uint8_t> b) {
   sha256_context ctx;
   sha256_init(&ctx);
-  sha256_update(&ctx, a.data(), a.size());
-  sha256_update(&ctx, b.data(), b.size());
+  sha256_update(&ctx, a.data(), (uint32_t)a.size());
+  sha256_update(&ctx, b.data(), (uint32_t)b.size());
 
   uint256 ret;
   sha256_finish(&ctx, ret.data());
