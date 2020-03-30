@@ -146,7 +146,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
 
   auto txhashes = hashAll<BtcTx>(txes);
   BtcMerkleTree mtree(txhashes);
-  size_t txindex = std::distance(txes.begin(), txit);
+  int32_t txindex = std::distance(txes.begin(), txit);
 
   popTx.bitcoinTransaction = *txit;
   popTx.merklePath.index = txindex;
