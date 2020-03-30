@@ -32,7 +32,7 @@ struct BlockIndex {
   //! block
   ArithUint256 chainWork = 0;
 
-  //! (memory only) list of endorsements that containing in this block
+  //! (memory only) list of containing endorsements in this block
   std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
       containingEndorsements{};
 
