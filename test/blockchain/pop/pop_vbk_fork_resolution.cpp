@@ -43,9 +43,10 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   // chain changed to chain A, because its POP score is higher
   ASSERT_EQ(popminer.vbk().getBestChain().tip(), Avbkcontaining1);
 
-  // TODO: fix
-
   // and now endorse block 60 of chain B
+  // mine 5 BtcBlocks
+  popminer.mineBtcBlocks(5);
+
   auto* B60 = chainBtip->getAncestor(60);
   auto Btx1 = popminer.createBtcTxEndorsingVbkBlock(B60->header);
   auto Bbtccontaining1 = popminer.mineBtcBlocks(1);
@@ -57,10 +58,10 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
       B60->header,
       popminer.btc().getBestChain().tip()->getHash());
 
-  popminer.mineVbkBlocks(*B60, 1);
+  popminer.mineVbkBlocks(*chainBtip, 1);
 
   // chain is still at chain A, because endorsement was erlier
-  ASSERT_EQ(popminer.vbk().getBestChain().tip(), Avbkcontaining1);
+  EXPECT_EQ(popminer.vbk().getBestChain().tip(), Avbkcontaining1);
 
   std::ofstream f("file.txt");
   WriteBlockTree(f, popminer.vbk(), "clusterVBK");
