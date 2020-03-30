@@ -185,14 +185,22 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
       // chain must contain relevantEndorsedBlock
       assert(index != nullptr);
 
-      // get all endorsements of this block that are on the same chain as that
-      // block
       for (const auto* e : index->endorsedBy) {
-        auto* ind = tree.getBlockIndex(e->blockOfProof);
-        // include only endorsements that are on best chain of protecting chain
-        if (tree.getBestChain().contains(ind)) {
-          pkc.referencedByBlocks.insert(ind);
+        if (!allHashesInChain.count(e->containingHash)) {
+          // do not count endorsement whose containingHash is not on the same
+          // chain as 'endorsedHash'
+          continue;
         }
+
+        auto* ind = tree.getBlockIndex(e->blockOfProof);
+        if (!tree.getBestChain().contains(ind)) {
+          continue;
+        }
+
+        // include only endorsements that are on best chain of protecting chain,
+        // and whose 'containingHash' is on the same chain as 'endorsedHash'
+        pkc.referencedByBlocks.insert(ind);
+
       }  // end for
     }    // end for
 
