@@ -38,21 +38,18 @@ uint128 VbkMerklePath::calculateMerkleRoot() const {
   uint256 cursor = subject;
   auto layerIndex = index;
   for (size_t i = 0, size = layers.size(); i < size; ++i) {
+    if (i == size - 1) {
+      // metapackage hash is on the left
+      layerIndex = 1;
+    } else if (i == size - 2) {
+      layerIndex = treeIndex;
+    }
+
     auto& layer = layers[i];
     auto& left = layerIndex & 1u ? layer : cursor;
     auto& right = layerIndex & 1u ? cursor : layer;
     cursor = sha256(left, right);
-
-    // Because a layer has processed but the index (i) hasn't progressed, these
-    // values are offset by 1
-    if (i == size - 2) {
-      // metapackage hash is on the left
-      layerIndex = 1;
-    } else if (i == size - 3) {
-      layerIndex = treeIndex;
-    } else {
-      layerIndex >>= 1u;
-    }
+    layerIndex >>= 1u;
   }
 
   return cursor.trim<VBK_MERKLE_ROOT_HASH_SIZE>();

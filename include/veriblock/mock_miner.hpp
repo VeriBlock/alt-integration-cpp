@@ -88,6 +88,9 @@ class MockMiner {
                      const std::vector<VbkPopTx>& txes,
                      ValidationState& state);
 
+  void getGeneratedVTBs(const BlockIndex<VbkBlock>& containingBlock,
+                        std::vector<VTB>& vtbs);
+
   btc_block_tree& btc() { return vbktree.btc(); }
   vbk_block_tree& vbk() { return vbktree; }
   const VbkChainParams& getVbkParams() const { return vbk_params; }
