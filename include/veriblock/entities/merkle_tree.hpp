@@ -10,44 +10,16 @@
 namespace altintegration {
 
 template <typename Specific>
-class MerkleTree {
+struct MerkleTree {
   using txhash_t = uint256;
 
- protected:
-  Specific& instance;
-  std::vector<std::vector<txhash_t>> layers;
-
- protected:
-  void buildTree(std::vector<txhash_t> layer) {
-    size_t n = layer.size();
-    if (n == 1) {
-      layers = {layer};
-      return;
-    }
-
-    layers.push_back(layer);
-
-    layer.resize(n % 2 == 0 ? n : n + 1);
-    while (n > 1) {
-      if (n % 2) {
-        layer[n] = layer[n - 1];
-        ++n;
-      }
-      n /= 2;
-      for (size_t i = 0; i < n; i++) {
-        layer[i] = instance.hash(layer[2 * i], layer[2 * i + 1]);
-      }
-      layers.push_back({layer.begin(), layer.begin() + n});
-    }
-  }
-
- public:
   MerkleTree(Specific& instance, const std::vector<txhash_t>& transactions)
       : instance(instance) {
     buildTree(transactions);
   }
 
   std::vector<txhash_t> getMerklePathLayers(const txhash_t& hash) {
+    assert(!layers.empty());
     auto& leafs = layers[0];
     auto it = std::find(leafs.begin(), leafs.end(), hash);
     if (it == leafs.end()) {
@@ -81,17 +53,45 @@ class MerkleTree {
   }
 
   txhash_t getMerkleRoot() { return instance.finalizeRoot(); }
+
+ protected:
+  void buildTree(std::vector<txhash_t> layer) {
+    size_t n = layer.size();
+    if (n == 1) {
+      layers = {layer};
+      return;
+    }
+
+    layers.push_back(layer);
+
+    layer.resize(n % 2 == 0 ? n : n + 1);
+    while (n > 1) {
+      if (n % 2) {
+        layer[n] = layer[n - 1];
+        ++n;
+      }
+      n /= 2;
+      for (size_t i = 0; i < n; i++) {
+        layer[i] = instance.hash(layer[2 * i], layer[2 * i + 1]);
+      }
+      layers.push_back({layer.begin(), layer.begin() + n});
+    }
+  }
+
+ protected:
+  Specific& instance;
+  std::vector<std::vector<txhash_t>> layers;
 };
 
 struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
   using base = MerkleTree<VbkMerkleTree>;
 
-  explicit VbkMerkleTree(const std::vector<uint256>& txes, int treeIndex)
+  explicit VbkMerkleTree(const std::vector<txhash_t>& txes, int treeIndex)
       : base(*this, txes), treeIndex(treeIndex) {}
 
-  uint256 hash(const uint256& a, const uint256& b) { return sha256(a, b); }
+  txhash_t hash(const txhash_t& a, const txhash_t& b) { return sha256(a, b); }
 
-  std::vector<uint256> finalizePath(std::vector<uint256> path) {
+  std::vector<txhash_t> finalizePath(std::vector<txhash_t> path) {
     // opposite tree merkle root (we don't have the opposite tree)
     path.emplace_back();
 
@@ -100,7 +100,7 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
     return path;
   }
 
-  uint256 finalizeRoot() {
+  txhash_t finalizeRoot() {
     if (layers.size() == 1) {
       // the only layer
       assert(layers[0].size() == 1);
@@ -108,7 +108,7 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
     }
 
     auto& normalMerkleRoot = layers.back()[0];
-    auto cursor = uint256();
+    auto cursor = txhash_t();
     if (treeIndex == 0) {
       // POP TXes: zeroes are on the left subtree
       cursor = hash(normalMerkleRoot, cursor);
@@ -131,12 +131,16 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
 struct BtcMerkleTree : public MerkleTree<BtcMerkleTree> {
   using base = MerkleTree<BtcMerkleTree>;
 
-  explicit BtcMerkleTree(const std::vector<uint256>& txes)
+  explicit BtcMerkleTree(const std::vector<txhash_t>& txes)
       : base(*this, txes) {}
 
-  uint256 hash(const uint256& a, const uint256& b) { return sha256twice(a, b); }
+  txhash_t hash(const txhash_t& a, const txhash_t& b) {
+    return sha256twice(a, b);
+  }
 
-  std::vector<uint256> finalizePath(const std::vector<uint256>& path) { return path; }
+  std::vector<txhash_t> finalizePath(const std::vector<txhash_t>& path) {
+    return path;
+  }
 
   uint256 finalizeRoot() {
     assert(!layers.empty());

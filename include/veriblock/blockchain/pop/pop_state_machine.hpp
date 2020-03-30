@@ -49,10 +49,8 @@ struct PopStateMachine {
     auto* current = chain.tip();
     while (current && current != forkPoint) {
       // unapply payloads
-      if (!current->containingPayloads.empty()) {
-        for (const auto& payloads : getPayloads(*current)) {
-          unapplyContext(payloads);
-        }
+      for (const auto& payloads : getPayloads(*current)) {
+        unapplyContext(payloads);
       }
       current = current->pprev;
       index_ = current;
@@ -113,6 +111,9 @@ struct PopStateMachine {
 
  private:
   std::vector<payloads_t> getPayloads(const ProtectedIndex& index) {
+    if(index.containingPayloads.empty()) {
+      return {};
+    }
     std::vector<payloads_t> ret;
     ret.reserve(index.containingPayloads.size());
     p_.get(index.containingPayloads, &ret);

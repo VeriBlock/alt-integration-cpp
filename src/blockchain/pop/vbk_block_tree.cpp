@@ -158,7 +158,7 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
                                                   ValidationState& state) {
   // endorsement validity window
   auto window = params().getEndorsementSettlementInterval();
-  auto minHeight = window > index_->height ? 0 : index_->height - window;
+  auto minHeight = index_->height >= window ? index_->height - window : 0;
   Chain<BlockIndex<VbkBlock>> chain(minHeight, index_);
 
   auto endorsedHeight = p.transaction.publishedBlock.height;
