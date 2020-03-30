@@ -43,23 +43,7 @@ VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream) {
   endorsement.id = stream.readSlice(sizeof(id_t));
   endorsement.endorsedHash = readVarLenValue(stream).asVector();
   endorsement.containingHash = readVarLenValue(stream).asVector();
-  /*uint32_t hash_size = stream.readBE<uint32_t>();
-  endorsement.endorsedHash.resize(hash_size);
-  for (uint32_t i = 0; i < hash_size; ++i) {
-    endorsement.endorsedHash[i] = stream.readBE<uint8_t>();
-  }*/
-  /*hash_size = stream.readBE<uint32_t>();
-  endorsement.containingHash.resize(hash_size);
-  for (uint32_t i = 0; i < hash_size; ++i) {
-    endorsement.containingHash[i] = stream.readBE<uint8_t>();
-  }*/
   endorsement.blockOfProof = stream.readSlice(sizeof(containing_hash_t));
-
-  /*uint32_t payout_size = stream.readBE<uint32_t>();
-  endorsement.payoutInfo.resize(payout_size);
-  for (uint32_t i = 0; i < payout_size; ++i) {
-    endorsement.payoutInfo[i] = stream.readBE<uint8_t>();
-  }*/
   endorsement.payoutInfo = readVarLenValue(stream).asVector();
 
   return endorsement;
@@ -76,20 +60,7 @@ void VbkEndorsement::toVbkEncoding(WriteStream& stream) const {
   stream.write(id);
   writeVarLenValue(stream, endorsedHash);
   writeVarLenValue(stream, containingHash);
-  /*stream.writeBE<uint32_t>((uint32_t)endorsedHash.size());
-  for (unsigned char i : endorsedHash) {
-    stream.writeBE<uint8_t>(i);
-  }*/
-  /*stream.writeBE<uint32_t>((uint32_t)containingHash.size());
-  for (unsigned char i : containingHash) {
-    stream.writeBE<uint8_t>(i);
-  }*/
   stream.write(blockOfProof);
-
-  /*stream.writeBE<uint32_t>((uint32_t)payoutInfo.size());
-  for (size_t i = 0; i < payoutInfo.size(); ++i) {
-    stream.writeBE<uint8_t>(payoutInfo[i]);
-  }*/
   writeVarLenValue(stream, payoutInfo);
 }
 
