@@ -62,9 +62,4 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
 
   // chain is still at chain A, because endorsement was erlier
   EXPECT_EQ(popminer.vbk().getBestChain().tip(), Avbkcontaining1);
-
-  std::ofstream f("file.txt");
-  WriteBlockTree(f, popminer.vbk(), "clusterVBK");
-  WriteBlockTree(f, popminer.btc(), "clusterBTC");
-  f.close();
 }
