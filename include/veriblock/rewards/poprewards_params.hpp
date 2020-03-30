@@ -126,7 +126,7 @@ struct PopRewardsParams {
   virtual uint32_t rewardSettlementInterval() const noexcept { return 400; }
 
   virtual const PopRewardsCurveParams& getCurveParams() const noexcept {
-    return std::move(PopRewardsCurveParams());
+    return curveParms;
   }
 
   // reward score table
@@ -144,6 +144,9 @@ struct PopRewardsParams {
             0.02812047, 0.02716878, 0.02627801, 0.02544253, 0.02465739,
             0.02391820, 0.02322107, 0.02256255, 0.02193952, 0.02134922};
   }
+
+ protected:
+  PopRewardsCurveParams curveParms{};
 };
 
 }  // namespace altintegration
