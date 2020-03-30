@@ -31,7 +31,7 @@ jobs:
       - name: build
         run: cmake --build build -- -j2
       - name: test
-        run: cd build && ctest -j2 -V
+        run: cd build && ctest
 
 
   coverage:

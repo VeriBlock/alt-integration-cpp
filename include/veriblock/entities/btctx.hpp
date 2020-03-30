@@ -12,12 +12,17 @@
 namespace altintegration {
 
 struct BtcTx {
+  using hash_t = uint256;
   std::vector<uint8_t> tx{};
 
   BtcTx() = default;
 
   BtcTx(const std::vector<uint8_t>& bytes) : tx(bytes) {}
   BtcTx(Slice<const uint8_t> slice) : tx(slice.begin(), slice.end()) {}
+
+  friend bool operator==(const BtcTx& a, const BtcTx& b) {
+    return a.tx == b.tx;
+  }
 
   /**
    * Read VBK data from the stream and convert it to BtcTx
@@ -36,7 +41,9 @@ struct BtcTx {
    * Calculate the hash of the btc transaction
    * @return hash transaction hash
    */
-  uint256 getHash() const;
+  hash_t getHash() const;
+
+  std::string toHex() const;
 };
 
 }  // namespace altintegration

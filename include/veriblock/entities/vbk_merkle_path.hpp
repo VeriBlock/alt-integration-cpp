@@ -12,9 +12,13 @@
 namespace altintegration {
 
 struct VbkMerklePath {
-  int32_t treeIndex{};
+  //! an indentifier of which transactions tree (pop=0, normal=1)
+  int32_t treeIndex = 0;
+  //! the index of the bottom data TxID in the block it came from
   int32_t index{};
+  //! TxID that this merkle path authenticates
   uint256 subject{};
+  //! the layers in the merkle path
   std::vector<uint256> layers{};
 
   /**
