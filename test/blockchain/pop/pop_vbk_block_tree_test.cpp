@@ -11,7 +11,7 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
   MockMiner popminer;
 
   void endorseVBK(size_t height) {
-    auto* endorsedIndex = popminer.vbk().getBestChain()[height];
+    auto* endorsedIndex = popminer.vbk().getBestChain()[(int32_t)height];
     ASSERT_TRUE(endorsedIndex);
     auto btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedIndex->header);
     auto btccontaining = popminer.mineBtcBlocks(1);
