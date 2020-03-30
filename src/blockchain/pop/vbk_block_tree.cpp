@@ -4,20 +4,20 @@
 namespace altintegration {
 
 void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
-                                      index_t& indexNew) {
+                                      index_t& indexNew,
+                                      bool isBootstrap) {
   if (currentBest.tip() == nullptr) {
     currentBest.setTip(&indexNew);
-    return onTipChanged(indexNew);
+    return onTipChanged(indexNew, isBootstrap);
   }
 
   auto ki = param_->getKeystoneInterval();
   auto* forkKeystone =
       currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
-
-  // this should never happen. if it is nullptr, it means that we passed
-  // `indexNew` index which has no known prev block, which is possible only
-  // after logic error, OR error in 'findFork'
-  assert(forkKeystone != nullptr);
+  if (!forkKeystone || isBootstrap) {
+    // we did not find fork... this can happen only during bootstrap
+    return VbkTree::determineBestChain(currentBest, indexNew, isBootstrap);
+  }
 
   int result = 0;
   auto* bestTip = currentBest.tip();
@@ -36,11 +36,11 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     // other chain won!
     auto prevTip = currentBest.tip();
     currentBest.setTip(&indexNew);
-    onTipChanged(indexNew);
+    onTipChanged(indexNew, isBootstrap);
     return addForkCandidate(prevTip, &indexNew);
   } else if (result == 0) {
     // pop scores are equal. do PoW fork resolution
-    return VbkTree::determineBestChain(currentBest, indexNew);
+    return VbkTree::determineBestChain(currentBest, indexNew, isBootstrap);
   } else {
     // existing chain is still the best
     addForkCandidate(&indexNew, indexNew.pprev);

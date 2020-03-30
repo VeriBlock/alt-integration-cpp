@@ -67,6 +67,8 @@ struct PopStateMachine {
 
     Chain<ProtectedIndex> fork(startHeight_, &to);
     auto* current = const_cast<ProtectedIndex*>(fork.findFork(index_));
+    assert(current);
+
     // move forward from forkPoint to "to" and apply payloads in between
 
     // exclude fork point itself
@@ -111,7 +113,7 @@ struct PopStateMachine {
 
  private:
   std::vector<payloads_t> getPayloads(const ProtectedIndex& index) {
-    if(index.containingPayloads.empty()) {
+    if (index.containingPayloads.empty()) {
       return {};
     }
     std::vector<payloads_t> ret;
