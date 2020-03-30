@@ -125,8 +125,8 @@ struct PopRewardsParams {
 
   virtual uint32_t rewardSettlementInterval() const noexcept { return 400; }
 
-  virtual PopRewardsCurveParams getCurveParams() const noexcept {
-    return PopRewardsCurveParams();
+  virtual const PopRewardsCurveParams& getCurveParams() const noexcept {
+    return std::move(PopRewardsCurveParams());
   }
 
   // reward score table

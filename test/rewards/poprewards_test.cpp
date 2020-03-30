@@ -3,7 +3,6 @@
 
 #include <random>
 #include <veriblock/mock_miner.hpp>
-#include <veriblock/popmanager.hpp>
 #include <veriblock/state_manager.hpp>
 #include <veriblock/storage/endorsement_repository_inmem.hpp>
 #include <veriblock/storage/repository_rocks_manager.hpp>

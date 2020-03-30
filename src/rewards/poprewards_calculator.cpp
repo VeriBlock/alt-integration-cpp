@@ -39,7 +39,7 @@ static bool isFirstRoundAfterKeystone(const AltChainParams& chainParams,
 
 static PopRewardsBigDecimal getRoundRatio(const PopRewardsParams& rewardParams,
                                           uint32_t payoutRound) {
-  return rewardParams.roundRatios()[payoutRound];
+  return rewardParams.roundRatios().at(payoutRound);
 }
 
 static PopRewardsBigDecimal getMaxScoreThreshold(
