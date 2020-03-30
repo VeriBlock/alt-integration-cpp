@@ -17,12 +17,10 @@ struct PopRewardPayout {
  * @invariant does not modify any on-disk state.
  */
 struct PopRewards {
-  PopRewards(const EndorsementRepository<VbkEndorsement>& erepo,
-             const VbkBlockTree& vbk_tree,
+  PopRewards(const VbkBlockTree& vbk_tree,
              const PopRewardsParams& rewardParams,
              const PopRewardsCalculator& calculator)
-      : erepo_(erepo),
-        vbk_tree_(vbk_tree),
+      : vbk_tree_(vbk_tree),
         rewardParams_(rewardParams),
         calculator_(calculator) {}
 
@@ -60,7 +58,6 @@ struct PopRewards {
       PopRewardsBigDecimal popDifficulty);
 
  private:
-  const EndorsementRepository<VbkEndorsement>& erepo_;
   const VbkBlockTree& vbk_tree_;
   const PopRewardsParams& rewardParams_;
   const PopRewardsCalculator& calculator_;

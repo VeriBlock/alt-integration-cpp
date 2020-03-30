@@ -1,22 +1,23 @@
 ﻿#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <random>
+/*#include <random>
 #include <veriblock/mock_miner.hpp>
 #include <veriblock/state_manager.hpp>
 #include <veriblock/storage/endorsement_repository_inmem.hpp>
-#include <veriblock/storage/repository_rocks_manager.hpp>
+#include <veriblock/storage/repository_rocks_manager.hpp>*/
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/rewards/poprewards.hpp"
+#include "util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 
 ///TODO: uncomment when we are ready to test rewards
 #if 0
 
-static const std::string dbName = "db_test";
+//static const std::string dbName = "db_test";
 
-struct AltChainParamsTest : public AltChainParams {
+/*struct AltChainParamsTest : public AltChainParams {
   AltBlock getBootstrapBlock() const noexcept override {
     AltBlock genesisBlock;
     genesisBlock.hash = {1, 2, 3};
@@ -25,18 +26,23 @@ struct AltChainParamsTest : public AltChainParams {
     genesisBlock.timestamp = 0;
     return genesisBlock;
   }
-};
+};*/
 
 struct RewardsTestFixture : ::testing::Test {
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
+  ///HACK: we use BTC tree to emulate AltChain tree
+  std::shared_ptr<BtcTree> altTree;
+
+  PopRewardsParams reward_params{};
+  std::shared_ptr<AltChainParams> alt_params;
+
+  std::shared_ptr<Miner<BtcBlock, BtcChainParams>> alt_miner;
+  /*using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
 
   std::shared_ptr<BtcChainParams> btc_params;
   std::shared_ptr<VbkChainParams> vbk_params;
   std::shared_ptr<AltChainParams> alt_params;
   PopRewardsParams reward_params{};
-
-  ///HACK: we use BTC tree to emulate AltChain tree
-  std::shared_ptr<BtcTree> altTree;
 
   std::shared_ptr<EndorsementRepository<BtcEndorsement>> btc_erepo;
   std::shared_ptr<EndorsementRepository<VbkEndorsement>> vbk_erepo;
@@ -46,14 +52,16 @@ struct RewardsTestFixture : ::testing::Test {
 
   std::shared_ptr<PopManager> altpop;
 
-  ValidationState state;
+  ValidationState state;*/
+
+  MockMiner popminer;
 
   std::shared_ptr<PopRewardsCalculator> rewardsCalculator;
   std::shared_ptr<PopRewards> rewards;
 
-  StateManager<RepositoryRocksManager> stateManager;
+  //StateManager<RepositoryRocksManager> stateManager;
 
-  void setUpChains() {
+  /*void setUpChains() {
     ASSERT_TRUE(apm->btc().bootstrapWithGenesis(state));
     ASSERT_TRUE(state.IsValid());
     ASSERT_TRUE(apm->vbk().bootstrapWithGenesis(state));
@@ -63,10 +71,10 @@ struct RewardsTestFixture : ::testing::Test {
     EXPECT_TRUE(altpop->vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(altTree->bootstrapWithGenesis(state));
     EXPECT_TRUE(state.IsValid());
-  }
+  }*/
 
-  RewardsTestFixture() : stateManager(dbName) {
-    btc_params = std::make_shared<BtcChainParamsRegTest>();
+  RewardsTestFixture() {
+    /*btc_params = std::make_shared<BtcChainParamsRegTest>();
     vbk_params = std::make_shared<VbkChainParamsRegTest>();
     alt_params = std::make_shared<AltChainParamsTest>();
 
@@ -86,7 +94,7 @@ struct RewardsTestFixture : ::testing::Test {
     altpop = std::make_shared<PopManager>(
         *btc_params, *vbk_params, *alt_params, btc_erepo, vbk_erepo);
 
-    setUpChains();
+    setUpChains();*/
   }
 
   template <typename Tree>
