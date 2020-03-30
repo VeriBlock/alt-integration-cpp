@@ -36,3 +36,9 @@ std::vector<uint8_t> ATV::toVbkEncoding() const {
   toVbkEncoding(stream);
   return stream.data();
 }
+
+ATV ATV::fromHex(const std::string& h) {
+  auto data = ParseHex(h);
+  ReadStream stream(data);
+  return ATV::fromVbkEncoding(stream);
+}

@@ -33,9 +33,16 @@ void WriteBlockTree(Stream& s,
   };
 
   s << format("digraph %s {\n", name);
-  s << "node[shape = square];\n";
 
   const auto& map = tree.getAllBlocks();
+  auto& best = tree.getBestChain();
+  auto* current = best.tip();
+  while (current) {
+    s << toNodeName(*current);
+    s << R"( [fontcolor="green"];)";
+    current = current->pprev;
+  }
+
   for (auto it = map.cbegin(), end = map.cend(); it != end; ++it) {
     auto& index = it->second;
     auto prev = index->pprev;

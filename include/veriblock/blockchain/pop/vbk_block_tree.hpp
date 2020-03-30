@@ -43,7 +43,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
  private:
   void determineBestChain(Chain<index_t>& currentBest,
-                          index_t& indexNew) override;
+                          index_t& indexNew, bool isBootstrap = false) override;
 
   PopForkComparator cmp_;
 };
