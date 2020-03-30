@@ -110,6 +110,7 @@ static const ATV validATV = {
      uint72(),
      uint72(),
      uint128("26BBFDA7D5E4462EF24AE02D67E47D78"_unhex),
+     //uint128("787DE4672DE04AF22E46E4D5A7FDBB26"_unhex),
      1553699059,
      16842752,
      1},
@@ -184,9 +185,9 @@ TEST_F(StatelessValidationTest,
 
 // TODO(Warchant): https://veriblock.atlassian.net/browse/BTC-323 this test does
 // not pass. Figure out why.
-//TEST_F(StatelessValidationTest, ATV_valid) {
-//  ASSERT_TRUE(checkATV(validATV, state, vbk)) << state.GetDebugMessage();
-//}
+TEST_F(StatelessValidationTest, ATV_valid) {
+  ASSERT_TRUE(checkATV(validATV, state, vbk)) << state.GetDebugMessage();
+}
 
 TEST_F(StatelessValidationTest,
        ATV_checkMerklePath_different_transaction_invalid) {
