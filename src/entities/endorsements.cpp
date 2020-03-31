@@ -95,13 +95,10 @@ VbkEndorsement VbkEndorsement::fromContainer(const AltProof& c) {
 
 template <>
 BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c) {
-  /*WriteStream stream;
-  c.transaction.toRaw(stream);
-  c.containingBlock.toRaw(stream);
+  WriteStream stream;
+  c.transaction.bitcoinTransaction.toVbkEncoding(stream);
+  c.transaction.blockOfProof.toRaw(stream);
   return sha256(stream.data());
-  */
-
-  return c.transaction.getHash();
 }
 
 template <>
