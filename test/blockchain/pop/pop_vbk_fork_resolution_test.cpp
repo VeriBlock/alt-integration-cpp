@@ -69,8 +69,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
 
 TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
   // We test that we have an endorsement in the Btc block that is not in the
-  // main chain. This test will validate this scenario in the two places: during
-  // the Vbk block processing (should fails in the addPayloads), and in the
+  // main chain. This test will validate this scenario in the
   // getProtoKeystoneContext() function
 
   // start with 30 BTC blocks
@@ -93,10 +92,6 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
       Atx1,
       vbkBlockTip->header,
       popminer.getBtcParams().getGenesisBlock().getHash());
-
-  // check that this case validates in the addPayloads during the VbkBlock
-  // validation in the VbkTree
-  EXPECT_THROW(popminer.mineVbkBlocks(1), std::domain_error);
 
   // Test the same case but in the getProtoKeystoneContext() function
   // make btcBlockTtip2 active chain tip

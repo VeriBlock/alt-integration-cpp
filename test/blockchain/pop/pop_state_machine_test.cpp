@@ -13,59 +13,75 @@
 
 using namespace altintegration;
 
+namespace altintegration {}  // namespace altintegration
+
 TEST(PopStateMachine, unapplyAndApply_test) {
   srand(0);
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
   ValidationState state;
 
-  PayloadsRepositoryInmem<VTB> payloadsRepo;
-
   MockMiner apm;
 
+  /// start with empty tree
   BtcTree btcTree(apm.getBtcParams());
   ASSERT_TRUE(btcTree.bootstrapWithGenesis(state));
-
   PopStateMachine<BtcTree, BlockIndex<VbkBlock>, VbkChainParams> stateMachine(
-      btcTree,
-      apm.vbk().getBestChain().tip(),
-      apm.getVbkParams(),
-      payloadsRepo);
+      btcTree, apm.vbk().getBestChain().tip(), apm.getVbkParams());
 
+  // APM BTC: 11 blocks
+  // local  : 1  block
   apm.mineBtcBlocks(10);
+  ASSERT_EQ(btcTree.getBestChain().tip()->height, 0);
+  ASSERT_EQ(apm.btc().getBestChain().tip()->height, 10);
 
-  auto* vbkForkpoint = apm.mineVbkBlocks(39);
-  ASSERT_EQ(vbkForkpoint->getHash(), apm.vbk().getBestChain().tip()->getHash());
+  // APM VBK: 40 blocks
+  auto* vbkTip = apm.mineVbkBlocks(40);
+  ASSERT_EQ(vbkTip->getHash(), apm.vbk().getBestChain().tip()->getHash());
 
-  auto* B10 = vbkForkpoint->getAncestor(10);
+  // endorse VBK block 10
+  auto* B10 = vbkTip->getAncestor(10);
   auto Btx1 = apm.createBtcTxEndorsingVbkBlock(B10->header);
+  // store endorsement in APM BTC: 11
   auto Bbtccontaining1 = apm.mineBtcBlocks(1);
   ASSERT_TRUE(apm.btc().getBestChain().contains(Bbtccontaining1));
+  ASSERT_EQ(Bbtccontaining1->height, 11);
 
+  // store endorsement in VBK
   apm.createVbkPopTxEndorsingVbkBlock(
       Bbtccontaining1->header,
       Btx1,
       B10->header,
       apm.getBtcParams().getGenesisBlock().getHash());
 
-  auto* vbkTip1 = apm.mineVbkBlocks(*vbkForkpoint, 1);
+  // in block 41
+  auto* vbkTip1 = apm.mineVbkBlocks(*vbkTip, 1);
+  ASSERT_EQ(apm.vbkpayloads.size(), 1);
+  auto it = apm.vbkpayloads.find(vbkTip1->getHash());
+  ASSERT_NE(it, apm.vbkpayloads.end());
 
-  ASSERT_EQ(vbkTip1->containingPayloads.size(), 1);
+  // HACK: manually add missing context to VBK tip
+  addContextToBlockIndex(*vbkTip1, it->second[0], btcTree);
+  ASSERT_EQ(vbkTip1->height, 41);
+  ASSERT_EQ(apm.vbk().getBestChain().tip(), vbkTip1);
+  ASSERT_TRUE(state.IsValid());
 
-  auto btcTip1 = *apm.btc().getBestChain().tip();
-
-  std::vector<VTB> vtbs;
-  apm.getGeneratedVTBs(*vbkTip1, vtbs);
-  ASSERT_EQ(vtbs.size(), vbkTip1->containingPayloads.size());
-
-  payloadsRepo.put(vtbs[0]);
-
+  // add 20 blocks on top of current vbk tip
   vbkTip1 = apm.mineVbkBlocks(*vbkTip1, 20);
+  ASSERT_EQ(apm.vbk().getBestChain().tip(), vbkTip1);
+  ASSERT_EQ(apm.vbk().getBestChain().tip()->height, 61);
 
-  EXPECT_TRUE(stateMachine.unapplyAndApply(*vbkTip1, state));
+  // change LOCAL BTC view to same as VBK TIP1.
+  // it should have 12 blocks, last is 11th
+  ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip1, state));
+  ASSERT_EQ(stateMachine.index(), vbkTip1);
 
-  EXPECT_EQ(btcTree.getBestChain().tip()->getHash(), btcTip1.getHash());
+  // LOCAL BTC and APM BTC tips are same
+  ASSERT_EQ(*btcTree.getBestChain().tip(), *apm.btc().getBestChain().tip());
 
-  // mine BtcBlocks 115
+  //
+  auto btc1tip = apm.btc().getBestChain().tip();
+  EXPECT_EQ(btcTree.getBestChain().tip()->getHash(), btc1tip->getHash());
+
   apm.mineBtcBlocks(115);
 
   auto Btx2 = apm.createBtcTxEndorsingVbkBlock(B10->header);
@@ -78,37 +94,37 @@ TEST(PopStateMachine, unapplyAndApply_test) {
       B10->header,
       apm.getBtcParams().getGenesisBlock().getHash());
 
-  auto* vbkTip2 = apm.mineVbkBlocks(*vbkForkpoint, 1);
+  auto* vbkTip2 = apm.mineVbkBlocks(*vbkTip, 1);
+  ASSERT_EQ(apm.vbkpayloads.size(), 2);
+  it = apm.vbkpayloads.find(vbkTip2->getHash());
+  ASSERT_NE(it, apm.vbkpayloads.end());
 
-  ASSERT_EQ(vbkTip2->containingPayloads.size(), 1);
+  // HACK: manually add missing context to VBK tip
+  BtcTree tempBtcTree(apm.getBtcParams());
+  ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
+  addContextToBlockIndex(*vbkTip2, it->second[0], tempBtcTree);
 
   auto btcTip2 = *apm.btc().getBestChain().tip();
-
-  vtbs.clear();
-  apm.getGeneratedVTBs(*vbkTip2, vtbs);
-  ASSERT_EQ(vtbs.size(), vbkTip2->containingPayloads.size());
-
-  payloadsRepo.put(vtbs[0]);
 
   vbkTip2 = apm.mineVbkBlocks(*vbkTip2, 20);
 
   EXPECT_TRUE(stateMachine.unapplyAndApply(*vbkTip2, state));
 
-  EXPECT_EQ(btcTree.getBestChain().tip()->getHash(), btcTip2.getHash());
+  EXPECT_EQ(*btcTree.getBestChain().tip(), btcTip2);
 
   for (auto *workBlock1 = vbkTip1, *workBlock2 = vbkTip2;
-       workBlock1 != vbkForkpoint && workBlock2 != vbkForkpoint;) {
-    if (workBlock1 != vbkForkpoint) {
+       workBlock1 != vbkTip && workBlock2 != vbkTip;) {
+    if (workBlock1 != vbkTip) {
       EXPECT_TRUE(stateMachine.unapplyAndApply(*workBlock1, state));
 
-      EXPECT_EQ(btcTip1.getHash(), btcTree.getBestChain().tip()->getHash());
+      EXPECT_EQ(*btc1tip, *btcTree.getBestChain().tip());
       workBlock1 = workBlock1->pprev;
     }
 
-    if (workBlock2 != vbkForkpoint) {
+    if (workBlock2 != vbkTip) {
       EXPECT_TRUE(stateMachine.unapplyAndApply(*workBlock2, state));
 
-      EXPECT_EQ(btcTip2.getHash(), btcTree.getBestChain().tip()->getHash());
+      EXPECT_EQ(btcTip2, *btcTree.getBestChain().tip());
       workBlock2 = workBlock2->pprev;
     }
   }

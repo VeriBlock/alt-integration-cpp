@@ -77,28 +77,27 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 
 bool VbkBlockTree::acceptBlock(const VbkBlock& block,
                                const std::vector<payloads_t>& payloads,
-                               ValidationState& state,
-                               StateChange* change) {
+                               ValidationState& state) {
   index_t* index = nullptr;
+  // first, validate and create a block
   if (!validateAndAddBlock(block, state, true, &index)) {
     return state.addStackFunction("VbkTree::acceptBlock");
   }
 
   assert(index != nullptr);
 
-  if (!cmp_.addAllPayloads(*index, payloads, state)) {
-    invalidateBlockByHash(index->getHash());
+  // second, do stateless validation of payloads
+  for (const auto& p : payloads) {
+    if (!checkPayloads(p, state, getParams(), btc().getParams())) {
+      return state.addStackFunction("VbkTree::acceptBlock");
+    }
+  }
+
+  // then, do stateful validation of payloads
+  if (!payloads.empty() && !cmp_.addAllPayloads(*index, payloads, state)) {
     return state.Invalid("VbkTree::acceptBlock",
                          "vbk-invalid-pop-" + state.GetRejectReason(),
                          state.GetDebugMessage());
-  }
-
-  // save payloads on disk
-
-  if (change) {
-    for (const auto& payload : payloads) {
-      change->saveVbkPayloads(payload);
-    }
   }
 
   determineBestChain(activeChain_, *index);
@@ -107,113 +106,78 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
 }
 
 template <>
-bool PopStateMachine<VbkBlockTree::BtcTree,
-                     BlockIndex<VbkBlock>,
-                     VbkChainParams>::applyContext(const VTB& payloads,
-                                                   ValidationState& state) {
+bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
+    const BlockIndex<VbkBlock>& index, ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
-        auto& btc = tree();
-
-        // check VTB
-        if (!checkVTB(payloads, state, params(), btc.getParams())) {
-          return state.addStackFunction("VbkTree::addPayloads");
-        }
-
-        // and update context
-        for (const auto& block : payloads.transaction.blockOfProofContext) {
-          if (!btc.acceptBlock(block, state)) {
+        for (const auto& b : index.containingContext.btc) {
+          if (!tree().acceptBlock(b, state)) {
             return state.addStackFunction("VbkTree::addPayloads");
           }
         }
 
-        // add block of proof
-        if (!btc.acceptBlock(payloads.transaction.blockOfProof, state)) {
-          return state.addStackFunction("VbkTree::addPayloads");
-        }
-
         return true;
       },
-      [&]() { unapplyContext(payloads); });
+      [&]() { unapplyContext(index); });
 }
 
 template <>
-void PopStateMachine<VbkBlockTree::BtcTree,
-                     BlockIndex<VbkBlock>,
-                     VbkChainParams>::unapplyContext(const VTB& payloads) {
-  auto& btc = tree();
-
-  // remove VTB context
-  for (const auto& b : payloads.transaction.blockOfProofContext) {
-    btc.invalidateBlockByHash(b.getHash());
+void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
+    const BlockIndex<VbkBlock>& index) {
+  // unapply in "forward" order, because result should be same, but doing this
+  // way it should be faster due to less number of calls "determineBestChain"
+  for (const auto& b : index.containingContext.btc) {
+    tree().invalidateBlockByHash(b.getHash());
   }
-
-  // remove block of proof
-  btc.invalidateBlockByHash(payloads.transaction.blockOfProof.getHash());
 }
 
 template <>
-bool PopStateMachine<VbkBlockTree::BtcTree,
-                     BlockIndex<VbkBlock>,
-                     VbkChainParams>::addPayloads(const VTB& p,
-                                                  ValidationState& state) {
-  // endorsement validity window
-  auto window = params().getEndorsementSettlementInterval();
-  auto minHeight = index_->height >= window ? index_->height - window : 0;
-  Chain<BlockIndex<VbkBlock>> chain(minHeight, index_);
+void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
+                            const typename BlockIndex<VbkBlock>::payloads_t& p,
+                            const VbkBlockTree::BtcTree& tree) {
+  auto& ctx = index.containingContext.btc;
 
-  auto endorsedHeight = p.transaction.publishedBlock.height;
-  if (index_->height - endorsedHeight > window) {
-    return state.Invalid(
-        "addPayloadsToBlockIndex", "expired", "Endorsement expired");
+  // only add blocks that are UNIQUE
+  std::unordered_set<uint256> set;
+  set.reserve(ctx.size());
+  for (auto& c : ctx) {
+    set.insert(c.getHash());
   }
 
-  auto* endorsed = chain[endorsedHeight];
-  if (!endorsed) {
-    return state.Invalid("addPayloadsToBlockIndex",
-                         "no-endorsed-block",
-                         "No block found on endorsed block height");
+  auto add = [&](const BtcBlock& b) {
+    auto hash = b.getHash();
+    // filter context: add only blocks that are unknown and not in current 'ctx'
+    if (!tree.getBlockIndex(hash) && !set.count(hash)) {
+      ctx.push_back(b);
+      set.insert(hash);
+    }
+  };
+
+  for (const auto& b : p.transaction.blockOfProofContext) {
+    add(b);
   }
 
-  if (endorsed->getHash() != p.transaction.publishedBlock.getHash()) {
-    return state.Invalid("addPayloadsToBlockIndex",
-                         "block-differs",
-                         "Endorsed VBK block is on a different chain");
+  add(p.transaction.blockOfProof);
+}
+
+template <>
+void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
+                                 const BlockIndex<VbkBlock>::payloads_t& p) {
+  auto& ctx = index.containingContext.btc;
+  auto end = ctx.end();
+  auto remove = [&](const BtcBlock& b) {
+    end = std::remove(ctx.begin(), end, b);
+  };
+
+  // update block of proof context
+  for (const auto& b : p.transaction.blockOfProofContext) {
+    remove(b);
   }
 
-  auto endorsement = BtcEndorsement::fromContainer(p);
-  auto* blockOfProof = tree_.getBlockIndex(endorsement.blockOfProof);
-  if (!blockOfProof) {
-    return state.Invalid("addPayloads",
-                         "block-of-proof-not-found",
-                         "Can not find block of proof in BTC");
-  }
+  // and finally add block of proof
+  remove(p.transaction.blockOfProof);
 
-  if (!tree_.getBestChain().contains(blockOfProof)) {
-    return state.Invalid(
-        "addPayloads",
-        "block-of-proof-not-on-main-chain",
-        "Block of proof has been reorganized and no loger on a main chain");
-  }
-
-  auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
-  if (duplicate) {
-    // found duplicate
-    return state.Invalid("addPayloadsToBlockIndex",
-                         "duplicate",
-                         "Found duplicate endorsement on the same chain");
-  }
-
-  index_->containingPayloads.push_back(p.getId());
-
-  auto pair = index_->containingEndorsements.insert(
-      {endorsement.id, std::make_shared<BtcEndorsement>(endorsement)});
-  assert(pair.second && "there's a duplicate in endorsement map");
-
-  auto* eptr = pair.first->second.get();
-  endorsed->endorsedBy.push_back(eptr);
-
-  return true;
+  ctx.erase(end, ctx.end());
 }
 
 }  // namespace altintegration

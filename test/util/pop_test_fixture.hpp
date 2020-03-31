@@ -22,8 +22,7 @@ struct PopTestFixture {
   PayloadsRepositoryInmem<VTB> vtbrepo{};
 
   // trees
-  VbkBlockTree vbktree = VbkBlockTree(
-      vbkparam, VbkBlockTree::PopForkComparator{vtbrepo, btcparam, vbkparam});
+  VbkBlockTree vbktree = VbkBlockTree(vbkparam, btcparam);
 
   ValidationState state;
 
