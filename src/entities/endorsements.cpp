@@ -106,12 +106,10 @@ BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c) {
 
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltProof& c) {
-  /*WriteStream stream;
+  WriteStream stream;
   c.atv.transaction.toRaw(stream);
-  c.containing.toVbkEncoding(stream);
-  return sha256(stream.data());*/
-
-  return c.atv.transaction.getHash();
+  c.atv.containingBlock.toRaw(stream);
+  return sha256(stream.data());
 }
 
 }  // namespace altintegration
