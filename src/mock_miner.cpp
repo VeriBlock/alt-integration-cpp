@@ -152,7 +152,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   popTx.merklePath.subject = txhashes[txindex];
   popTx.merklePath.layers = mtree.getMerklePathLayers(txhashes[txindex]);
 
-  for (auto* walkBlock = containingBlockIndex;
+  for (auto* walkBlock = containingBlockIndex->pprev;
        walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
     popTx.blockOfProofContext.push_back(walkBlock->header);
