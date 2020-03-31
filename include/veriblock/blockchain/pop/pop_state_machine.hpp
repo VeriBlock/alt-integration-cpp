@@ -70,14 +70,6 @@ struct PopStateMachine {
                            "Can not find block of proof in BTC");
     }
 
-    // TODO: figure out, if we need this check
-//    if (!tree_.getBestChain().contains(blockOfProof)) {
-//      return state.Invalid(
-//          "addPayloads",
-//          "block-of-proof-not-on-main-chain",
-//          "Block of proof has been reorganized and no longer on a main chain");
-//    }
-
     auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
     if (duplicate) {
       // found duplicate
