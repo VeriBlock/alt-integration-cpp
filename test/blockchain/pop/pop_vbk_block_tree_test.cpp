@@ -19,7 +19,7 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
         btccontaining->header,
         btctx,
         endorsedIndex->header,
-        popminer.btc().getBestChain().tip()->getHash());
+        popminer.getBtcParams().getGenesisBlock().getHash());
     popminer.mineVbkBlocks(1);
   }
 };
