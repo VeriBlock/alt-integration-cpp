@@ -163,7 +163,6 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
   Chain<BlockIndex<VbkBlock>> chain(minHeight, index_);
 
   auto endorsedHeight = p.transaction.publishedBlock.height;
-  // assert(index_->height > endorsedHeight);
   if (index_->height - endorsedHeight > window) {
     return state.Invalid(
         "addPayloadsToBlockIndex", "expired", "Endorsement expired");
