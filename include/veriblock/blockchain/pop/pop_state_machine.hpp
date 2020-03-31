@@ -14,29 +14,121 @@ template <typename ProtectingBlockTree,
           typename ProtectedIndex,
           typename ProtectedChainParams>
 struct PopStateMachine {
+  using index_t = ProtectedIndex;
   using payloads_t = typename ProtectedIndex::payloads_t;
   using height_t = typename ProtectedIndex::height_t;
+  using endorsement_t = typename ProtectedIndex::endorsement_t;
 
   PopStateMachine(ProtectingBlockTree& tree,
                   ProtectedIndex* index,
                   const ProtectedChainParams& protectedParams,
-                  const PayloadsRepository<payloads_t>& p,
                   height_t startHeight = 0)
       : index_(index),
         tree_(tree),
         protectedParams_(protectedParams),
-        p_(p),
         startHeight_(startHeight) {}
 
   //! @invariant: atomic. Either all 'payloads' added or not at all.
-  bool applyContext(const payloads_t& payloads, ValidationState& state);
+  bool applyContext(const index_t&, ValidationState&);
 
   //! @invariant: atomic. Does not throw under normal conditions.
-  void unapplyContext(const payloads_t& payloads);
+  void unapplyContext(const index_t&);
 
   //! does validation of endorsement inside payloads.
   //! assumes context has been applied
-  bool addPayloads(const payloads_t& payloads, ValidationState& state);
+  bool addPayloads(const payloads_t& p, ValidationState& state) {
+    // endorsement validity window
+    auto window = params().getEndorsementSettlementInterval();
+    auto minHeight = index_->height >= window ? index_->height - window : 0;
+    Chain<BlockIndex<VbkBlock>> chain(minHeight, index_);
+
+    auto endorsedHeight = p.transaction.publishedBlock.height;
+    assert(index_->height > endorsedHeight);
+    if (index_->height - endorsedHeight > window) {
+      return state.Invalid(
+          "addPayloadsToBlockIndex", "expired", "Endorsement expired");
+    }
+
+    auto* endorsed = chain[endorsedHeight];
+    if (!endorsed) {
+      return state.Invalid("addPayloadsToBlockIndex",
+                           "no-endorsed-block",
+                           "No block found on endorsed block height");
+    }
+
+    if (endorsed->getHash() != p.transaction.publishedBlock.getHash()) {
+      return state.Invalid("addPayloadsToBlockIndex",
+                           "block-differs",
+                           "Endorsed VBK block is on a different chain");
+    }
+
+    auto endorsement = endorsement_t::fromContainer(p);
+    auto* blockOfProof = tree_.getBlockIndex(endorsement.blockOfProof);
+    if (!blockOfProof) {
+      return state.Invalid("addPayloads",
+                           "block-of-proof-not-found",
+                           "Can not find block of proof in BTC");
+    }
+
+    // TODO: figure out, if we need this check
+//    if (!tree_.getBestChain().contains(blockOfProof)) {
+//      return state.Invalid(
+//          "addPayloads",
+//          "block-of-proof-not-on-main-chain",
+//          "Block of proof has been reorganized and no longer on a main chain");
+//    }
+
+    auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
+    if (duplicate) {
+      // found duplicate
+      return state.Invalid("addPayloadsToBlockIndex",
+                           "duplicate",
+                           "Found duplicate endorsement on the same chain");
+    }
+
+    auto pair = index_->containingEndorsements.insert(
+        {endorsement.id, std::make_shared<BtcEndorsement>(endorsement)});
+    assert(pair.second && "there's a duplicate in endorsement map");
+
+    auto* eptr = pair.first->second.get();
+    endorsed->endorsedBy.push_back(eptr);
+
+    return true;
+  }
+
+  //! the opposite function to 'addPayloads'
+  void removePayloads(const payloads_t& payloads) {
+    // here we need to remove this endorsement from 'endorsedBy',
+    // 'containingPayloads' and 'containingEndorsements'
+
+    // remove from 'containing payloads'
+    auto& p = index_->containingPayloads;
+    p.erase(std::remove(p.begin(), p.end(), payloads.getId()), p.end());
+
+    // remove from 'endorsedBy'
+    auto eid = endorsement_t::getId(payloads);
+    auto endorsedHeight = payloads.transaction.publishedBlock.height;
+    auto* endorsed = index_->getAncestor(endorsedHeight);
+    assert(endorsed);
+
+    auto endorsementit = index_->containingEndorsements.find(eid);
+    assert(endorsementit != index_->containingEndorsements.end());
+    auto& endorsement = endorsementit->second;
+
+    auto& e = endorsed->endorsedBy;
+    e.erase(std::remove_if(e.begin(),
+                           e.end(),
+                           [&endorsement](const endorsement_t* e) {
+                             // remove nullptrs and our given endorsement
+                             return !e || endorsement.get() == e;
+                           }),
+            e.end());
+
+    // remove from 'containing endorsements'
+    index_->containingEndorsements.erase(endorsementit);
+
+    removeContextFromBlockIndex(index_, p);
+  }
 
   void unapply(ProtectedIndex& to) {
     if (&to == index_) {
@@ -49,13 +141,12 @@ struct PopStateMachine {
     auto* current = chain.tip();
     while (current && current != forkPoint) {
       // unapply payloads
-      for (const auto& payloads : getPayloads(*current)) {
-        unapplyContext(payloads);
-      }
+      unapplyContext(*current);
       current = current->pprev;
       index_ = current;
     }
 
+    assert(index_);
     assert(index_ == forkPoint);
   }
 
@@ -75,10 +166,8 @@ struct PopStateMachine {
     current = fork.next(current);
 
     while (current) {
-      for (const auto& payloads : getPayloads(*current)) {
-        if (!applyContext(payloads, state)) {
-          return state.addStackFunction("PopAwareForkResolution::apply");
-        }
+      if (!applyContext(*current, state)) {
+        return state.addStackFunction("PopAwareForkResolution::apply");
       }
 
       index_ = current;
@@ -112,22 +201,10 @@ struct PopStateMachine {
   const ProtectedChainParams& params() const { return protectedParams_; }
 
  private:
-  std::vector<payloads_t> getPayloads(const ProtectedIndex& index) {
-    if (index.containingPayloads.empty()) {
-      return {};
-    }
-    std::vector<payloads_t> ret;
-    ret.reserve(index.containingPayloads.size());
-    p_.get(index.containingPayloads, &ret);
-    return ret;
-  }
-
- private:
   ProtectedIndex* index_;
   ProtectingBlockTree& tree_;
   const ProtectedChainParams& protectedParams_;
 
-  const PayloadsRepository<payloads_t>& p_;
   height_t startHeight_ = 0;
 };
 

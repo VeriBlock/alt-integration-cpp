@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "veriblock/blockchain/blocktree.hpp"
@@ -18,12 +19,12 @@
 
 namespace altintegration {
 
-template <typename Tx>
-std::vector<typename Tx::hash_t> hashAll(const std::vector<Tx>& txes) {
-  std::vector<typename Tx::hash_t> ret;
+template <typename T>
+std::vector<typename T::hash_t> hashAll(const std::vector<T>& txes) {
+  std::vector<typename T::hash_t> ret;
   ret.reserve(txes.size());
   std::transform(
-      txes.begin(), txes.end(), std::back_inserter(ret), [](const Tx& tx) {
+      txes.begin(), txes.end(), std::back_inserter(ret), [](const T& tx) {
         return tx.getHash();
       });
   return ret;
@@ -43,6 +44,7 @@ class MockMiner {
  public:
   std::vector<BtcTx> btcmempool;
   std::vector<VbkPopTx> vbkmempool;
+  std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkpayloads;
 
   // TODO: no alt tree yet
   //  VbkTx endorseAltBlock(const PublicationData& publicationData);
@@ -88,8 +90,8 @@ class MockMiner {
                      const std::vector<VbkPopTx>& txes,
                      ValidationState& state);
 
-  void getGeneratedVTBs(const BlockIndex<VbkBlock>& containingBlock,
-                        std::vector<VTB>& vtbs);
+  //  void getGeneratedVTBs(const BlockIndex<VbkBlock>& containingBlock,
+  //                        std::vector<VTB>& vtbs);
 
   btc_block_tree& btc() { return vbktree.btc(); }
   vbk_block_tree& vbk() { return vbktree; }
@@ -114,11 +116,7 @@ class MockMiner {
   Miner<VbkBlock, VbkChainParams> vbk_miner =
       Miner<VbkBlock, VbkChainParams>(vbk_params);
 
-  PayloadsRepositoryInmem<VTB> vtbp_{};
-
-  VbkBlockTree vbktree = VbkBlockTree(
-      vbk_params,
-      VbkBlockTree::PopForkComparator{vtbp_, btc_params, vbk_params});
+  VbkBlockTree vbktree = VbkBlockTree(vbk_params, btc_params);
   BlockTree<BtcBlock, BtcChainParams>& btctree = vbktree.btc();
 
   std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes;

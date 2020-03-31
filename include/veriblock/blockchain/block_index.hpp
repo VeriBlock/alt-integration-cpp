@@ -10,6 +10,7 @@
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
+#include "veriblock/fmt.hpp"
 #include "veriblock/write_stream.hpp"
 
 namespace altintegration {
@@ -22,25 +23,25 @@ struct BlockIndex {
   using height_t = typename block_t::height_t;
   using endorsement_t = typename block_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
+  using context_t = typename Block::context_t;
   using payloads_t = typename Block::payloads_t;
-  using pid_t = typename payloads_t::id_t;
 
-  //! (memory only) pointer to a previous block
+  //! pointer to a previous block
   BlockIndex* pprev{};
 
-  //! (memory only) total amount of work in the chain up to and including this
+  //! total amount of work in the chain up to and including this
   //! block
   ArithUint256 chainWork = 0;
 
-  //! (memory only) list of containing endorsements in this block
+  //! list of containing endorsements in this block
   std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
       containingEndorsements{};
 
-  //! (memory only) list of endorsements pointing to this block
+  //! list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
 
-  //! (memory only) list of containing payloads in this block
-  std::vector<pid_t> containingPayloads{};
+  //! list of containing context blocks that **change** current state
+  context_t containingContext{};
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -82,6 +83,16 @@ struct BlockIndex {
     return nullptr;
   }
 
+  std::string toPrettyString() const {
+    return format(
+        "BlockIndex{heght=%d, hash=%s, endorsedBy=%d, "
+        "containsEndorsements=%d}",
+        height,
+        getHash().toHex().substr(0, 8),
+        endorsedBy.size(),
+        containingEndorsements.size());
+  }
+
   void toRaw(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
     header.toRaw(stream);
@@ -108,7 +119,16 @@ struct BlockIndex {
   friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
     return a.header == b.header;
   }
+
+  friend bool operator!=(const BlockIndex& a, const BlockIndex& b) {
+    return !operator==(a, b);
+  }
 };
+
+template <typename Block>
+void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
+  *os << b.toPrettyString();
+}
 
 }  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_

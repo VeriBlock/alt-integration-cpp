@@ -1,8 +1,9 @@
+#include "veriblock/mock_miner.hpp"
+
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/fmt.hpp"
-#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -275,10 +276,7 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                             state.GetDebugMessage());
   }
 
-  // store VTBs into repository
-  for (const auto& vtb : vtbs) {
-    vtbp_.put(vtb);
-  }
+  vbkpayloads[containingBlock.getHash()] = vtbs;
 
   return containingBlock;
 }
@@ -355,7 +353,7 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount) {
   return mineVbkBlocks(*tip, amount);
 }
 
-void MockMiner::getGeneratedVTBs(const BlockIndex<VbkBlock>& containingBlock,
-                                 std::vector<VTB>& vtbs) {
-  vtbp_.get(containingBlock.containingPayloads, &vtbs);
-}
+// void MockMiner::getGeneratedVTBs(const BlockIndex<VbkBlock>& containingBlock,
+//                                 std::vector<VTB>& vtbs) {
+////  vtbp_.get(containingBlock.containingPayloads, &vtbs);
+//}

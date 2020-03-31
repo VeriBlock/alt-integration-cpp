@@ -92,8 +92,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap() * 2,
       allblocks.end()};
 
-  VbkBlockTree::PopForkComparator cmp(prepo, btcparam, *value.params);
-  VbkBlockTree tree(*value.params, std::move(cmp));
+  VbkBlockTree tree(*value.params, btcparam);
 
   ASSERT_TRUE(
       tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))

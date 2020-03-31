@@ -183,7 +183,7 @@ TEST_F(StatelessValidationTest,
 }
 
 TEST_F(StatelessValidationTest, ATV_valid) {
-  ASSERT_TRUE(checkATV(validATV, state, vbk)) << state.GetDebugMessage();
+  ASSERT_TRUE(checkPayloads(validATV, state, vbk)) << state.GetDebugMessage();
 }
 
 TEST_F(StatelessValidationTest,
@@ -217,7 +217,7 @@ TEST_F(StatelessValidationTest, ATV_checkVeriBlockBlocks_blocks_not_contigous) {
 }
 
 TEST_F(StatelessValidationTest, VTB_valid) {
-  ASSERT_TRUE(checkVTB(validVTB, state, vbk, btc));
+  ASSERT_TRUE(checkPayloads(validVTB, state, vbk, btc));
 }
 
 TEST_F(StatelessValidationTest,

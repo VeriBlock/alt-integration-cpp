@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "veriblock/serde.hpp"
+#include "veriblock/entities/context.hpp"
 #include "veriblock/entities/endorsements.hpp"
 
 namespace altintegration {
@@ -17,6 +18,7 @@ struct AltBlock {
   using hash_t = std::vector<uint8_t>;
   using payloads_t = AltPayloads;
   using endorsement_t = VbkEndorsement;
+  using context_t = AltContext;
 
   hash_t hash{};
   hash_t previousBlock{};
