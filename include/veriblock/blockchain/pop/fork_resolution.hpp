@@ -331,13 +331,11 @@ struct PopAwareForkResolutionComparator {
                                protected_params_t>;
 
   PopAwareForkResolutionComparator(
-      PayloadsRepository<protected_payloads_t>& payloadsRepository,
       const protecting_params_t& protectingParams,
       const protected_params_t& protectedParams)
       : tree_(protectingParams),
         protectedParams_(protectedParams),
-        protectingParams_(protectingParams),
-        p_(payloadsRepository) {
+        protectingParams_(protectingParams) {
     assert(protectedParams.getKeystoneInterval() > 0);
   }
 
@@ -368,7 +366,7 @@ struct PopAwareForkResolutionComparator {
 
     auto temp = tree_;
     // set initial state machine state = current index
-    sm_t sm(temp, &index, protectedParams_, p_);
+    sm_t sm(temp, &index, protectedParams_, index_->height);
     for (size_t i = 0, size = payloads.size(); i < size; i++) {
       auto& p = payloads[i];
 
@@ -381,22 +379,25 @@ struct PopAwareForkResolutionComparator {
             .IsValid();
       }
 
-      // first, check if context is valid
-      if (!sm.applyContext(p, state)) {
-        return state
-            .setIndex(i)
-            .setStackFunction(
-                "PopAwareForkResolutionComparator::addAllPayloads")
-            .IsValid();
+      // we need to add context blocks to current block index, before
+      // applyContext
+      addContextToBlockIndex(index, p, sm.tree());
+
+      // first, check if context is valid. if invalid, it will automatically
+      // call 'removeContextFromBlockIndex'
+      if (!sm.applyContext(index, state)) {
+        return state.setIndex(i)
+            .addStackFunction(
+                "PopAwareForkResolutionComparator::addAllPayloads");
       }
 
       // then, check if endorsement is valid
       if (!sm.addPayloads(p, state)) {
+        removeContextFromBlockIndex(index, p);
         return state.Invalid("vbk-invalid-endorsement", state.GetDebugMessage())
             .setIndex(i)
-            .setStackFunction(
-                "PopAwareForkResolutionComparator::addAllPayloads")
-            .IsValid();
+            .addStackFunction(
+                "PopAwareForkResolutionComparator::addAllPayloads");
       }
     }
 
@@ -423,7 +424,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     auto temp = tree_;
-    sm_t sm(temp, index_, protectedParams_, p_);
+    sm_t sm(temp, index_, protectedParams_);
     if (!sm.unapplyAndApply(index, state)) {
       return state.addStackFunction(
           "PopAwareForkResolutionComparator::setState");
@@ -445,9 +446,11 @@ struct PopAwareForkResolutionComparator {
 
     ValidationState state;
 
+    auto minHeight = std::min(index_->height, chainA.first()->height);
+
     // make a tree copy
     auto temp = tree_;
-    sm_t sm(temp, index_, protectedParams_, p_, chainA.first()->height);
+    sm_t sm(temp, index_, protectedParams_, minHeight);
     // try set current state to chain A
     if (!sm.unapplyAndApply(*chainA.tip(), state)) {
       // failed - try set state to chain B
@@ -505,7 +508,6 @@ struct PopAwareForkResolutionComparator {
 
   const protected_params_t& protectedParams_;
   const protecting_params_t& protectingParams_;
-  PayloadsRepository<protected_payloads_t>& p_;
 };
 
 }  // namespace altintegration

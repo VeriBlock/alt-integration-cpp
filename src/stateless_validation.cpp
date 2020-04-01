@@ -299,9 +299,9 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
   return true;
 }
 
-bool checkATV(const ATV& atv,
-              ValidationState& state,
-              const VbkChainParams& params) {
+bool checkPayloads(const ATV& atv,
+                   ValidationState& state,
+                   const VbkChainParams& params) {
   if (!checkVbkTx(atv.transaction, state)) {
     return state.addStackFunction("checkATV");
   }
@@ -319,10 +319,10 @@ bool checkATV(const ATV& atv,
   return true;
 }
 
-bool checkVTB(const VTB& vtb,
-              ValidationState& state,
-              const VbkChainParams& vbk,
-              const BtcChainParams& btc) {
+bool checkPayloads(const VTB& vtb,
+                   ValidationState& state,
+                   const VbkChainParams& vbk,
+                   const BtcChainParams& btc) {
   if (!checkVbkPopTx(vtb.transaction, state, btc)) {
     return state.addStackFunction("checkVTB");
   }
