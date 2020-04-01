@@ -93,15 +93,8 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
     }
   }
 
-  if (!payloads.empty() &&
-      !tryValidateWithResources(
-          [&]() -> bool {
-            return cmp_.addAllPayloads(*index, payloads, state);
-          },
-          [&]() { cmp_.removeAllPayloads(*index, payloads); })) {
-    return state.Invalid("VbkTree::acceptBlock",
-                         "vbk-invalid-pop-" + state.GetRejectReason(),
-                         state.GetDebugMessage());
+  if (!cmp_.proccedAllPayloads(*index, payloads, state)) {
+    return state.addStackFunction("VbkTree::acceptBlock");
   }
 
   determineBestChain(activeChain_, *index);

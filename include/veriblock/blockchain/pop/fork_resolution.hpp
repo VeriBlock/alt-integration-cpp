@@ -411,6 +411,22 @@ struct PopAwareForkResolutionComparator {
     }
   }
 
+  bool proccedAllPayloads(protected_index_t& index,
+                          const std::vector<protected_payloads_t>& payloads,
+                          ValidationState& state) {
+    if (!payloads.empty() &&
+        !tryValidateWithResources(
+            [&]() -> bool {
+              return cmp_.addAllPayloads(*index, payloads, state);
+            },
+            [&]() { cmp_.removeAllPayloads(*index, payloads); })) {
+      return state.Invalid(
+          "PopAwareForkResolutionComparator::proccedAllPayloads",
+          "vbk-invalid-pop-" + state.GetRejectReason(),
+          state.GetDebugMessage());
+    }
+  }
+
   //! @invariant: atomic. If returns false, does not change internal state.
   bool setState(protected_index_t& index, ValidationState& state) {
     // if previous state is unknown, set new state as current
