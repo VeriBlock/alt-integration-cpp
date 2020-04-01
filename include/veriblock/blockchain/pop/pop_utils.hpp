@@ -83,19 +83,21 @@ void removePayloads(ProtectedIndex& index,
 
   if (endorsed) {
     auto endorsementit = index.containingEndorsements.find(eid);
-    assert(endorsementit != index.containingEndorsements.end());
-    auto& endorsement = endorsementit->second;
+    if (endorsementit != index.containingEndorsements.end()) {
+      auto& endorsement = endorsementit->second;
 
-    auto& endorsments = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
-    std::remove_if(endorsments.begin(),
-                   endorsments.end(),
-                   [&endorsement](endorsement_t* e) -> bool {
-                     // remove nullptrs and our given endorsement
-                     return !e || endorsement.get() == e;
-                   });
+      auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
+      while (std::remove_if(endorsements.begin(),
+                            endorsements.end(),
+                            [&endorsement](endorsement_t* e) -> bool {
+                              // remove nullptrs and our given endorsement
+                              return !e || endorsement.get() == e;
+                            }) != endorsements.end())
+        ;
 
-    // remove from 'containing endorsements'
-    index.containingEndorsements.erase(endorsementit);
+      // remove from 'containing endorsements'
+      index.containingEndorsements.erase(endorsementit);
+    }
   }
 
   removeContextFromBlockIndex(index, payloads);
