@@ -8,6 +8,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/pop/pop_state_machine.hpp>
+#include <veriblock/blockchain/pop/pop_utils.hpp>
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
@@ -330,9 +331,8 @@ struct PopAwareForkResolutionComparator {
                                BlockIndex<protected_block_t>,
                                protected_params_t>;
 
-  PopAwareForkResolutionComparator(
-      const protecting_params_t& protectingParams,
-      const protected_params_t& protectedParams)
+  PopAwareForkResolutionComparator(const protecting_params_t& protectingParams,
+                                   const protected_params_t& protectedParams)
       : tree_(protectingParams),
         protectedParams_(protectedParams),
         protectingParams_(protectingParams) {
@@ -386,8 +386,7 @@ struct PopAwareForkResolutionComparator {
       }
 
       // then, check if endorsement is valid
-      if (!sm.addPayloads(p, state)) {
-        removeContextFromBlockIndex(index, p);
+      if (!endorsementValidation(index, p, temp, protectedParams_, state)) {
         return state.setIndex(i).Invalid(
             "addAllPayloads",
             "vbk-invalid-endorsement-" + state.GetRejectReason(),
@@ -402,6 +401,14 @@ struct PopAwareForkResolutionComparator {
     tree_ = std::move(temp);
 
     return true;
+  }
+
+  void removeAllPayloads(protected_index_t& index,
+                         const std::vector<protected_payloads_t>& payloads) {
+    for (size_t i = 0, size = payloads.size(); i < size; i++) {
+      auto& p = payloads[i];
+      removePayloads(index, p);
+    }
   }
 
   //! @invariant: atomic. If returns false, does not change internal state.
