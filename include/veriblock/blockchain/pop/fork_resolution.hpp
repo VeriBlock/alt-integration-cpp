@@ -374,9 +374,8 @@ struct PopAwareForkResolutionComparator {
       if (p.containingBlock != index.header) {
         return state
             .setIndex(i)
-            .setStackFunction(
-                "PopAwareForkResolutionComparator::addAllPayloads")
-            .IsValid();
+            .addStackFunction(
+                "PopAwareForkResolutionComparator::addAllPayloads");
       }
 
       // we need to add context blocks to current block index, before
