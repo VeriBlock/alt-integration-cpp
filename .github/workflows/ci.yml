@@ -80,12 +80,12 @@ jobs:
           key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}-${{ hashFiles('CMakeLists.txt') }}
 
       - name: install zlib
-        run: vcpkg install zlib
+        run: vcpkg install zlib:x64-windows-static
       - name: install dependencies
-        run: vcpkg install rocksdb
+        run: vcpkg install rocksdb:x64-windows-static
 
       - name: cmake
-        run: cmake . -Bbuild -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
+        run: cmake . -Bbuild -A x64 -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
         run: cmake --build build --parallel 2
       - name: test
