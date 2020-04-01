@@ -1,6 +1,8 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_POP_UTILS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_POP_UTILS_HPP_
 
+#include <algorithm>
+
 #include "veriblock/blockchain/chain.hpp"
 #include "veriblock/validation_state.hpp"
 
@@ -70,36 +72,33 @@ bool endorsementValidation(ProtectedIndex& index,
 template <typename ProtectedIndex>
 void removePayloads(ProtectedIndex& index,
                     const typename ProtectedIndex::payloads_t& payloads) {
+  using endorsement_t = typename ProtectedIndex::endorsement_t;
   // here we need to remove this endorsement from 'endorsedBy',
   // 'containingPayloads' and 'containingEndorsements'
-
-  // remove from 'containing payloads'
-  auto& p = index.containingPayloads;
-  p.erase(std::remove(p.begin(), p.end(), payloads.getId()), p.end());
 
   // remove from 'endorsedBy'
   auto eid = endorsement_t::getId(payloads);
   auto endorsedHeight = payloads.transaction.publishedBlock.height;
-  auto* endorsed = index.getAncestor(endorsedHeight);
-  assert(endorsed);
+  auto endorsed = index.getAncestor(endorsedHeight);
 
-  auto endorsementit = index.containingEndorsements.find(eid);
-  assert(endorsementit != index.containingEndorsements.end());
-  auto& endorsement = endorsementit->second;
+  if (endorsed) {
+    auto endorsementit = index.containingEndorsements.find(eid);
+    assert(endorsementit != index.containingEndorsements.end());
+    auto& endorsement = endorsementit->second;
 
-  auto& e = endorsed->endorsedBy;
-  e.erase(std::remove_if(e.begin(),
-                         e.end(),
-                         [&endorsement](const endorsement_t* e) {
-                           // remove nullptrs and our given endorsement
-                           return !e || endorsement.get() == e;
-                         }),
-          e.end());
+    auto& endorsments = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
+    std::remove_if(endorsments.begin(),
+                   endorsments.end(),
+                   [&endorsement](endorsement_t* e) -> bool {
+                     // remove nullptrs and our given endorsement
+                     return !e || endorsement.get() == e;
+                   });
 
-  // remove from 'containing endorsements'
-  index.containingEndorsements.erase(endorsementit);
+    // remove from 'containing endorsements'
+    index.containingEndorsements.erase(endorsementit);
+  }
 
-  removeContextFromBlockIndex(index, p);
+  removeContextFromBlockIndex(index, payloads);
 }
 
 }  // namespace altintegration

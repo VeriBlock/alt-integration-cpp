@@ -42,7 +42,7 @@ struct BlockIndex {
   std::vector<endorsement_t*> endorsedBy;
 
   //! list of containing context blocks that **change** current state
-  std::stack<context_t> containingContext{};
+  context_t containingContext{};
 
   //! height of the entry in the chain
   height_t height = 0;
