@@ -66,13 +66,13 @@ struct BlockTree {
                                   ValidationState& state) {
     assert(block_index_.empty() && "already bootstrapped");
     if (chain.empty()) {
-      return state.Invalid("bootstrapWithChain()",
+      return state.Invalid("bootstrapWithChain",
                            "bootstrap-empty-chain",
                            "provided bootstrap chain is empty");
     }
 
     if (chain.size() < param_->numBlocksForBootstrap()) {
-      return state.Invalid("bootstrapWithChain()",
+      return state.Invalid("bootstrapWithChain",
                            "bootstrap-small-chain",
                            format("number of blocks in the provided chain is "
                                   "too small: %d, expected at least %d",
@@ -83,7 +83,7 @@ struct BlockTree {
     // pick first block from the chain, bootstrap with a single block
     auto genesis = chain[0];
     if (!this->bootstrap(startHeight, genesis, state)) {
-      return state.addStackFunction("bootstrapWithChain()");
+      return state.addStackFunction("bootstrapWithChain");
     }
 
     // apply the rest of the blocks from the chain on top of our bootstrap
@@ -92,7 +92,7 @@ struct BlockTree {
     for (size_t i = 1, size = chain.size(); i < size; i++) {
       auto& block = chain[i];
       if (!this->acceptBlock(block, state, false)) {
-        return state.addStackFunction("bootstrapWithChain()");
+        return state.addStackFunction("bootstrapWithChain");
       }
     }
 
@@ -312,7 +312,7 @@ struct BlockTree {
                  const block_t& block,
                  ValidationState& state) {
     if (!checkBlock(block, state, *param_)) {
-      return state.addStackFunction("bootstrap()");
+      return state.addStackFunction("bootstrap");
     }
 
     auto* index = insertBlockHeader(block);
@@ -332,13 +332,13 @@ struct BlockTree {
                            bool shouldContextuallyCheck,
                            index_t** ret) {
     if (!checkBlock(block, state, *param_)) {
-      return state.addStackFunction("acceptBlock()");
+      return state.addStackFunction("acceptBlock");
     }
 
     // we must know previous block
     auto* prev = getBlockIndex(block.previousBlock);
     if (prev == nullptr) {
-      return state.Invalid("acceptBlockHeader()",
+      return state.Invalid("acceptBlockHeader",
                            "bad-prev-block",
                            "can not find previous block");
     }

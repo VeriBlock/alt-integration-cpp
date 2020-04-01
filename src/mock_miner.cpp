@@ -271,7 +271,7 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                  });
 
   if (!tree.acceptBlock(containingBlock, vtbs, state)) {
-    throw std::domain_error(state.GetRejectReason() + "\n" +
+    throw std::domain_error(state.GetPath() + "\n" +
                             state.GetDebugMessage());
   }
 

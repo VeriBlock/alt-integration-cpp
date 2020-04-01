@@ -211,12 +211,12 @@ TEST(Vbk, CheckBlockTime1) {
   auto& last = chain[chain.size() - 1];
   // validateMinimumTimestampWhenAboveMedian
   block.timestamp = startTime + (120 * 1000);
-  ASSERT_TRUE(checkBlockTime(*last, block, state)) << state.GetRejectReason();
+  ASSERT_TRUE(checkBlockTime(*last, block, state)) << state.GetPath();
 
   // validateMinimumTimestampWhenBelowMedian
   block.timestamp = 1527118679;
-  ASSERT_FALSE(checkBlockTime(*last, block, state)) << state.GetRejectReason();
-  ASSERT_EQ(state.GetRejectReason(), "vbk-time-too-old");
+  ASSERT_FALSE(checkBlockTime(*last, block, state)) << state.GetPath();
+  ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1], "vbk-time-too-old");
 }
 
 TEST(Vbk, CheckBlockTime2) {
@@ -241,7 +241,8 @@ TEST(Vbk, CheckBlockTime2) {
   VbkBlock block;
   block.timestamp = 1527499999;
   ASSERT_FALSE(checkBlockTime(chain[chain.size() - 1], block, state));
-  ASSERT_EQ(state.GetRejectReason(), "vbk-time-too-old");
+  ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
+            "vbk-time-too-old");
 
   block.timestamp = 1527500000;
   ASSERT_TRUE(checkBlockTime(chain[chain.size() - 1], block, state));
@@ -267,7 +268,7 @@ struct BlockchainTest : public ::testing::Test {
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
-        << "bootstrapWithGenesis: " << state.GetRejectReason() << ", "
+        << "bootstrapWithGenesis: " << state.GetPath() << ", "
         << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
   };
@@ -282,7 +283,8 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
   block.previousKeystone = badKeystone;
 
   ASSERT_FALSE(blockchain->acceptBlock(block, state));
-  ASSERT_EQ(state.GetRejectReason(), "vbk-bad-keystones");
+  ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
+            "vbk-bad-keystones");
 }
 
 TEST_F(BlockchainTest, InvalidKeystone2) {
@@ -294,5 +296,6 @@ TEST_F(BlockchainTest, InvalidKeystone2) {
   block.secondPreviousKeystone = badKeystone;
 
   ASSERT_FALSE(blockchain->acceptBlock(block, state));
-  ASSERT_EQ(state.GetRejectReason(), "vbk-bad-keystones");
+  ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
+            "vbk-bad-keystones");
 }

@@ -52,11 +52,11 @@ bool VbkBlockTree::bootstrapWithChain(int startHeight,
                                       const std::vector<block_t>& chain,
                                       ValidationState& state) {
   if (!VbkTree::bootstrapWithChain(startHeight, chain, state)) {
-    return state.addStackFunction("VbkTree::bootstrapWithChain");
+    return state.addStackFunction("VbkBlockTree::bootstrapWithChain");
   }
 
   if (!cmp_.setState(*getBestChain().tip(), state)) {
-    return state.addStackFunction("VbkTree::bootstrapWithChain");
+    return state.addStackFunction("VbkBlockTree::bootstrapWithChain");
   }
 
   return true;
@@ -64,12 +64,12 @@ bool VbkBlockTree::bootstrapWithChain(int startHeight,
 
 bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
   if (!VbkTree::bootstrapWithGenesis(state)) {
-    return state.addStackFunction("VbkTree::bootstrapWithGenesis");
+    return state.addStackFunction("VbkBlockTree::bootstrapWithGenesis");
   }
 
   auto* tip = getBestChain().tip();
   if (!cmp_.setState(*tip, state)) {
-    return state.addStackFunction("VbkTree::bootstrapWithGenesis");
+    return state.addStackFunction("VbkBlockTree::bootstrapWithGenesis");
   }
 
   return true;
@@ -81,15 +81,15 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
                                StateChange* change) {
   index_t* index = nullptr;
   if (!validateAndAddBlock(block, state, true, &index)) {
-    return state.addStackFunction("VbkTree::acceptBlock");
+    return state.addStackFunction("VbkBlockTree::acceptBlock");
   }
 
   assert(index != nullptr);
 
   if (!cmp_.addAllPayloads(*index, payloads, state)) {
     invalidateBlockByHash(index->getHash());
-    return state.Invalid("VbkTree::acceptBlock",
-                         "vbk-invalid-pop-" + state.GetRejectReason(),
+    return state.Invalid("VbkBlockTree::acceptBlock",
+                         "vbk-invalid-pop",
                          state.GetDebugMessage());
   }
 
@@ -117,19 +117,19 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
 
         // check VTB
         if (!checkVTB(payloads, state, params(), btc.getParams())) {
-          return state.addStackFunction("VbkTree::addPayloads");
+          return state.addStackFunction("PopStateMachine::applyContext");
         }
 
         // and update context
         for (const auto& block : payloads.transaction.blockOfProofContext) {
           if (!btc.acceptBlock(block, state)) {
-            return state.addStackFunction("VbkTree::addPayloads");
+            return state.addStackFunction("PopStateMachine::applyContext");
           }
         }
 
         // add block of proof
         if (!btc.acceptBlock(payloads.transaction.blockOfProof, state)) {
-          return state.addStackFunction("VbkTree::addPayloads");
+          return state.addStackFunction("PopStateMachine::applyContext");
         }
 
         return true;
@@ -166,18 +166,18 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
   assert(index_->height > endorsedHeight);
   if (index_->height - endorsedHeight > window) {
     return state.Invalid(
-        "addPayloadsToBlockIndex", "expired", "Endorsement expired");
+        "PopStateMachine::addPayloads", "expired", "Endorsement expired");
   }
 
   auto* endorsed = chain[endorsedHeight];
   if (!endorsed) {
-    return state.Invalid("addPayloadsToBlockIndex",
+    return state.Invalid("PopStateMachine::addPayloads",
                          "no-endorsed-block",
                          "No block found on endorsed block height");
   }
 
   if (endorsed->getHash() != p.transaction.publishedBlock.getHash()) {
-    return state.Invalid("addPayloadsToBlockIndex",
+    return state.Invalid("PopStateMachine::addPayloads",
                          "block-differs",
                          "Endorsed VBK block is on a different chain");
   }
@@ -185,14 +185,14 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
   auto endorsement = BtcEndorsement::fromContainer(p);
   auto* blockOfProof = tree_.getBlockIndex(endorsement.blockOfProof);
   if (!blockOfProof) {
-    return state.Invalid("addPayloads",
+    return state.Invalid("PopStateMachine::addPayloads",
                          "block-of-proof-not-found",
                          "Can not find block of proof in BTC");
   }
 
   if (!tree_.getBestChain().contains(blockOfProof)) {
     return state.Invalid(
-        "addPayloads",
+        "PopStateMachine::addPayloads",
         "block-of-proof-not-on-main-chain",
         "Block of proof has been reorganized and no loger on a main chain");
   }
@@ -200,7 +200,7 @@ bool PopStateMachine<VbkBlockTree::BtcTree,
   auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
   if (duplicate) {
     // found duplicate
-    return state.Invalid("addPayloadsToBlockIndex",
+    return state.Invalid("PopStateMachine::addPayloads",
                          "duplicate",
                          "Found duplicate endorsement on the same chain");
   }

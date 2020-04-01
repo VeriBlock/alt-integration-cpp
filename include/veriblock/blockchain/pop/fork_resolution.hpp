@@ -374,20 +374,29 @@ struct PopAwareForkResolutionComparator {
 
       // containing block must be correct (current)
       if (p.containingBlock != index.header) {
-        return state.setIndex(i).addStackFunction("Comparator::addPayloads");
+        return state
+            .setIndex(i)
+            .setStackFunction(
+                "PopAwareForkResolutionComparator::addAllPayloads")
+            .IsValid();
       }
 
       // first, check if context is valid
       if (!sm.applyContext(p, state)) {
-        return state.setIndex(i).addStackFunction("Comparator::addPayloads");
+        return state
+            .setIndex(i)
+            .setStackFunction(
+                "PopAwareForkResolutionComparator::addAllPayloads")
+            .IsValid();
       }
 
       // then, check if endorsement is valid
       if (!sm.addPayloads(p, state)) {
-        return state.setIndex(i).Invalid(
-            "addAllPayloads",
-            "vbk-invalid-endorsement-" + state.GetRejectReason(),
-            state.GetDebugMessage());
+        return state.Invalid("vbk-invalid-endorsement", state.GetDebugMessage())
+            .setIndex(i)
+            .setStackFunction(
+                "PopAwareForkResolutionComparator::addAllPayloads")
+            .IsValid();
       }
     }
 

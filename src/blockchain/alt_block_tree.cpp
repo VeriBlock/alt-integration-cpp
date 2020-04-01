@@ -83,7 +83,7 @@ bool AltTree::acceptBlock(const AltBlock& block,
   auto* prev = getBlockIndex(block.previousBlock);
   if (prev == nullptr) {
     return state.Invalid(
-        "acceptBlockHeader()", "bad-prev-block", "can not find previous block");
+        "AltTree::acceptBlock", "bad-prev-block", "can not find previous block");
   }
 
   auto index = insertBlockHeader(block);
