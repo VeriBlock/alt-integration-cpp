@@ -38,7 +38,7 @@ struct BlockchainTest : public ::testing::Test {
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
-        << "bootstrapWithGenesis: " << state.GetRejectReason() << ", "
+        << "bootstrapWithGenesis: " << state.GetPath() << ", "
         << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
   };
@@ -103,7 +103,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
     auto block = this->miner->createNextBlock(*tip);
     ASSERT_TRUE(checkProofOfWork(block, *this->chainparam));
     ASSERT_TRUE(this->blockchain->acceptBlock(block, this->state))
-        << this->state.GetRejectReason();
+        << this->state.GetPath();
   }
 
   // @then

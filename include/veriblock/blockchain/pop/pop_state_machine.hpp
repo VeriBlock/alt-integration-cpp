@@ -71,7 +71,7 @@ struct PopStateMachine {
 
     while (current) {
       if (!applyContext(*current, state)) {
-        return state.addStackFunction("PopAwareForkResolution::apply");
+        return state.Invalid("pop-state-apply-context");
       }
 
       index_ = current;

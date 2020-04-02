@@ -127,7 +127,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   for (const auto& block : acceptChain) {
     ASSERT_TRUE(tree.acceptBlock(block, state))
         << "block #" << totalBlocks << "\n"
-        << "rejection: " << state.GetRejectReason() << ", "
+        << "stack trace: " << state.GetPath() << ", "
         << "message: " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
     EXPECT_EQ(tree.getBestChain().tip()->header, block);

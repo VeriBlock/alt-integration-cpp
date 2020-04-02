@@ -99,7 +99,7 @@ TEST_F(PopContextFixture, A) {
 
   // apply remote vbk blocks to current local vbk tip
   for (const auto& b : vbkblocks) {
-    ASSERT_TRUE(local.acceptBlock(b, {}, state)) << state.GetRejectReason();
+    ASSERT_TRUE(local.acceptBlock(b, {}, state)) << state.GetPath();
   }
 
   // local and remote VBK chains are same

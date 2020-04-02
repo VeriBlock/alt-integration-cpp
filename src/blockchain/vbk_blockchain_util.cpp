@@ -1,7 +1,8 @@
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
 #include <veriblock/third_party/BigDecimal.h>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -186,15 +187,12 @@ bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
   int64_t blockTime = block.getBlockTime();
   int64_t median = getMedianTimePast(prev);
   if (blockTime < median) {
-    return state.Invalid("checkBlockTime()",
-                         "vbk-time-too-old",
-                         "block's timestamp is too early");
+    return state.Invalid("vbk-time-too-old", "block's timestamp is too early");
   }
 
   int64_t maxTime = currentTimestamp4() + VBK_MAX_FUTURE_BLOCK_TIME;
   if (blockTime > maxTime) {
-    return state.Invalid("checkBlockTime()",
-                         "vbk-time-too-new",
+    return state.Invalid("vbk-time-too-new",
                          "block timestamp too far in the future");
   }
 
@@ -228,19 +226,16 @@ bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                             ValidationState& state,
                             const VbkChainParams& params) {
   if (!checkBlockTime(prev, block, state)) {
-    return state.addStackFunction("contextuallyCheckBlock()");
+    return state.Invalid("vbk-check-block-time");
   }
 
   if (block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
-    return state.Invalid("contextuallyCheckBlock()",
-                         "vbk-bad-diffbits",
-                         "incorrect proof of work");
+    return state.Invalid("vbk-bad-diffbits", "incorrect proof of work");
   }
 
   // check keystones
   if (!validateKeystones(prev, block, params)) {
-    return state.Invalid(
-        "contextuallyCheckBlock()", "vbk-bad-keystones", "incorrect keystones");
+    return state.Invalid("vbk-bad-keystones", "incorrect keystones");
   }
 
   return true;

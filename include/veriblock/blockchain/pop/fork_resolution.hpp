@@ -374,7 +374,9 @@ struct PopAwareForkResolutionComparator {
 
       // containing block must be correct (current)
       if (p.containingBlock != index.header) {
-        return state.setIndex(i).addStackFunction("Comparator::addPayloads");
+        return state
+            .addIndex(i)
+            .Invalid("pop-comparator-bad-containing-block");
       }
 
       // we need to add context blocks to current block index, before
@@ -384,7 +386,7 @@ struct PopAwareForkResolutionComparator {
       // first, check if context is valid. if invalid, it will automatically
       // call 'removeContextFromBlockIndex'
       if (!sm.applyContext(index, state)) {
-        return state.setIndex(i).addStackFunction("Comparator::addPayloads");
+        return state.addIndex(i).Invalid("pop-comparator-apply-context");
       }
 
       // then, check if endorsement is valid
@@ -448,8 +450,7 @@ struct PopAwareForkResolutionComparator {
     auto temp = tree_;
     sm_t sm(temp, index_, protectedParams_);
     if (!sm.unapplyAndApply(index, state)) {
-      return state.addStackFunction(
-          "PopAwareForkResolutionComparator::setState");
+      return state.Invalid("pop-comparator-unapply-apply");
     }
 
     tree_ = std::move(temp);

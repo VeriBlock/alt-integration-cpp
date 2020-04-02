@@ -52,11 +52,11 @@ bool VbkBlockTree::bootstrapWithChain(int startHeight,
                                       const std::vector<block_t>& chain,
                                       ValidationState& state) {
   if (!VbkTree::bootstrapWithChain(startHeight, chain, state)) {
-    return state.addStackFunction("VbkTree::bootstrapWithChain");
+    return state.Invalid("vbk-bootstrap-chain");
   }
 
   if (!cmp_.setState(*getBestChain().tip(), state)) {
-    return state.addStackFunction("VbkTree::bootstrapWithChain");
+    return state.Invalid("vbk-set-state");
   }
 
   return true;
@@ -64,12 +64,12 @@ bool VbkBlockTree::bootstrapWithChain(int startHeight,
 
 bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
   if (!VbkTree::bootstrapWithGenesis(state)) {
-    return state.addStackFunction("VbkTree::bootstrapWithGenesis");
+    return state.Invalid("vbk-bootstrap-genesis");
   }
 
   auto* tip = getBestChain().tip();
   if (!cmp_.setState(*tip, state)) {
-    return state.addStackFunction("VbkTree::bootstrapWithGenesis");
+    return state.Invalid("vbk-set-state");
   }
 
   return true;
@@ -81,7 +81,7 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
   index_t* index = nullptr;
   // first, validate and create a block
   if (!validateAndAddBlock(block, state, true, &index)) {
-    return state.addStackFunction("VbkTree::acceptBlock");
+    return state.Invalid("vbk-validate-block");
   }
 
   assert(index != nullptr);
@@ -89,7 +89,7 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
   // second, do stateless validation of payloads
   for (const auto& p : payloads) {
     if (!checkPayloads(p, state, getParams(), btc().getParams())) {
-      return state.addStackFunction("VbkTree::acceptBlock");
+      return state.Invalid("vbk-check-payloads");
     }
   }
 
@@ -109,7 +109,7 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
       [&]() -> bool {
         for (const auto& b : index.containingContext.btc) {
           if (!tree().acceptBlock(b, state)) {
-            return state.addStackFunction("VbkTree::addPayloads");
+            return state.Invalid("vbk-accept-block");
           }
         }
         return true;
