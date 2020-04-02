@@ -93,9 +93,8 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
     }
   }
 
-  // then, do stateful validation of payloads
-  if (!payloads.empty() && !cmp_.addAllPayloads(*index, payloads, state)) {
-    return state.Invalid("vbk-invalid-pop");
+  if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
+    return state.Invalid("VbkTree::acceptBlock");
   }
 
   determineBestChain(activeChain_, *index);
@@ -113,7 +112,6 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
             return state.Invalid("vbk-accept-block");
           }
         }
-
         return true;
       },
       [&]() { unapplyContext(index); });
@@ -124,6 +122,7 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
     const BlockIndex<VbkBlock>& index) {
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
+
   for (const auto& b : index.containingContext.btc) {
     tree().invalidateBlockByHash(b.getHash());
   }
@@ -134,7 +133,6 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
                             const typename BlockIndex<VbkBlock>::payloads_t& p,
                             const VbkBlockTree::BtcTree& tree) {
   auto& ctx = index.containingContext.btc;
-
   // only add blocks that are UNIQUE
   std::unordered_set<uint256> set;
   set.reserve(ctx.size());
@@ -145,7 +143,7 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
   auto add = [&](const BtcBlock& b) {
     auto hash = b.getHash();
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!tree.getBlockIndex(hash) && !set.count(hash)) {
+    if (!tree.getBlockIndex(hash) /*&& !set.count(hash)*/) {
       ctx.push_back(b);
       set.insert(hash);
     }
