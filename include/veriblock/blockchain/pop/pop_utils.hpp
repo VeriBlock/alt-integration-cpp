@@ -11,11 +11,11 @@ namespace altintegration {
 template <typename ProtectingBlockTree,
           typename ProtectedIndex,
           typename ProtectedChainParams>
-bool endorsementValidation(ProtectedIndex& index,
-                           const typename ProtectedIndex::payloads_t& p,
-                           const ProtectingBlockTree& tree,
-                           const ProtectedChainParams& params,
-                           ValidationState& state) {
+bool checkAndAddEndorsement(ProtectedIndex& index,
+                            const typename ProtectedIndex::payloads_t& p,
+                            const ProtectingBlockTree& tree,
+                            const ProtectedChainParams& params,
+                            ValidationState& state) {
   using endorsement_t = typename ProtectedIndex::endorsement_t;
 
   // endorsement validity window
@@ -87,13 +87,15 @@ void removePayloads(ProtectedIndex& index,
       auto& endorsement = endorsementit->second;
 
       auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
-      while (std::remove_if(endorsements.begin(),
-                            endorsements.end(),
-                            [&endorsement](endorsement_t* e) -> bool {
-                              // remove nullptrs and our given endorsement
-                              return !e || endorsement.get() == e;
-                            }) != endorsements.end())
-        ;
+      auto new_end = std::remove_if(endorsements.begin(),
+                                    endorsements.end(),
+                                    [&endorsement](endorsement_t* e) -> bool {
+                                      // remove nullptrs and our given
+                                      // endorsement
+                                      return !e || endorsement.get() == e;
+                                    });
+
+      endorsements.erase(new_end, endorsements.end());
 
       // remove from 'containing endorsements'
       index.containingEndorsements.erase(endorsementit);

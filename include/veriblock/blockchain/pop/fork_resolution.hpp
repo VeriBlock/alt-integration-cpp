@@ -343,6 +343,8 @@ struct PopAwareForkResolutionComparator {
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
 
+  // this function does not clear BlokcIndex from the added payloads (it is
+  // doing by removePayloads). Better to use proccedAllPayloads() method
   bool addAllPayloads(protected_index_t& index,
                       const std::vector<protected_payloads_t>& payloads,
                       ValidationState& state) {
@@ -386,7 +388,7 @@ struct PopAwareForkResolutionComparator {
       }
 
       // then, check if endorsement is valid
-      if (!endorsementValidation(index, p, temp, protectedParams_, state)) {
+      if (!checkAndAddEndorsement(index, p, temp, protectedParams_, state)) {
         return state.setIndex(i).Invalid(
             "addAllPayloads",
             "vbk-invalid-endorsement-" + state.GetRejectReason(),
@@ -405,13 +407,12 @@ struct PopAwareForkResolutionComparator {
 
   void removeAllPayloads(protected_index_t& index,
                          const std::vector<protected_payloads_t>& payloads) {
-    for (size_t i = 0, size = payloads.size(); i < size; i++) {
-      auto& p = payloads[i];
+    for (const auto& p : payloads) {
       removePayloads(index, p);
     }
   }
 
-  bool proccedAllPayloads(protected_index_t& index,
+  bool proceedAllPayloads(protected_index_t& index,
                           const std::vector<protected_payloads_t>& payloads,
                           ValidationState& state) {
     if (!payloads.empty() && !tryValidateWithResources(

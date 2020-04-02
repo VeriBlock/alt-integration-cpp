@@ -2,7 +2,6 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
 #include <memory>
-#include <stack>
 #include <unordered_map>
 #include <vector>
 #include <veriblock/validation_state.hpp>

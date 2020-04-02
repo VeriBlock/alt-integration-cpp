@@ -93,7 +93,7 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
     }
   }
 
-  if (!cmp_.proccedAllPayloads(*index, payloads, state)) {
+  if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
     return state.addStackFunction("VbkTree::acceptBlock");
   }
 
@@ -145,7 +145,7 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
     // filter context: add only blocks that are unknown and not in current 'ctx'
     if (!tree.getBlockIndex(hash) /*&& !set.count(hash)*/) {
       ctx.push_back(b);
-      // set.insert(hash);
+      set.insert(hash);
     }
   };
 
