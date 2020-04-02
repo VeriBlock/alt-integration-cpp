@@ -23,7 +23,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   ~VbkBlockTree() override = default;
 
   VbkBlockTree(const VbkChainParams& vbkp, const BtcChainParams& btcp)
-      : VbkTree(vbkp), cmp_(btcp, vbkp) {}
+      : VbkTree(vbkp), cmp_(BtcTree(btcp), btcp, vbkp) {}
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }

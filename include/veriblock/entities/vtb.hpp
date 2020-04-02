@@ -58,6 +58,12 @@ struct VTB {
    */
   id_t getId() const;
 
+  /**
+   * Return a containing VbkBlock
+   * @return containing block
+   */
+  VbkBlock getContainingBlock() const;
+
   friend bool operator==(const VTB& a, const VTB& b) {
     // clang-format off
     return a.toVbkEncoding() == b.toVbkEncoding();

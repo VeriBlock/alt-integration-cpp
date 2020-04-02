@@ -1,4 +1,5 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/stateless_validation.hpp"
 
 using namespace altintegration;
 
@@ -46,7 +47,7 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
 void AltTree::addToChains(index_t* index) {
   assert(index);
 
-  for (auto & chainTip : chainTips_) {
+  for (auto& chainTip : chainTips_) {
     if (chainTip == index->pprev) {
       chainTip = index;
       return;
@@ -61,7 +62,7 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Error("already bootstrapped");
   }
 
-  auto block = config_.getBootstrapBlock();
+  auto block = alt_config_.getBootstrapBlock();
   auto* index = insertBlockHeader(block);
 
   assert(index != nullptr &&
@@ -77,7 +78,7 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
-                          const AltPayloads&,
+                          const std::vector<AltPayloads>& payloads,
                           ValidationState& state) {
   // we must know previous block
   auto* prev = getBlockIndex(block.previousBlock);
@@ -90,19 +91,20 @@ bool AltTree::acceptBlock(const AltBlock& block,
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  addToChains(index);
+  // do stateless validation of payloads
+  for (size_t i = 0; i < payloads.size(); ++i) {
+    if (!checkPayloads(payloads[i].alt.atv, state, vbk_config_)) {
+      return state.addIndex(i).Invalid("alt-check-payloads");
+    }
 
-  return true;
-}
-
-bool AltTree::acceptBlock(const AltBlock& block,
-                          const std::vector<AltPayloads>& payloads,
-                          ValidationState& state) {
-  for (const auto& p : payloads) {
-    if (!acceptBlock(block, p, state)) {
-      return false;
+    for (const auto& vtb : payloads[i].vtbs) {
+      if (!checkPayloads(vtb, state, vbk_config_, btc_config_)) {
+        return state.addIndex(i).Invalid("alt-check-payloads");
+      }
     }
   }
+
+  addToChains(index);
 
   return true;
 }

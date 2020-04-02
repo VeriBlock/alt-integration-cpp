@@ -46,3 +46,5 @@ VTB::id_t VTB::getId() const {
   auto rawBytes = toVbkEncoding();
   return sha256(rawBytes);
 }
+
+VbkBlock VTB::getContainingBlock() const { return this->containingBlock; }

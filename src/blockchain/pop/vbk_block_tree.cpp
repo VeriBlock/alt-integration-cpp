@@ -87,9 +87,9 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
   assert(index != nullptr);
 
   // second, do stateless validation of payloads
-  for (const auto& p : payloads) {
-    if (!checkPayloads(p, state, getParams(), btc().getParams())) {
-      return state.Invalid("vbk-check-payloads");
+  for (size_t i = 0; i < payloads.size(); ++i) {
+    if (!checkPayloads(payloads[i], state, getParams(), btc().getParams())) {
+      return state.addIndex(i).Invalid("vbk-check-payloads");
     }
   }
 

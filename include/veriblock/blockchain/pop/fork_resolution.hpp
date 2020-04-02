@@ -331,9 +331,10 @@ struct PopAwareForkResolutionComparator {
                                BlockIndex<protected_block_t>,
                                protected_params_t>;
 
-  PopAwareForkResolutionComparator(const protecting_params_t& protectingParams,
+  PopAwareForkResolutionComparator(ProtectingBlockTree tree,
+                                   const protecting_params_t& protectingParams,
                                    const protected_params_t& protectedParams)
-      : tree_(protectingParams),
+      : tree_(std::move(tree)),
         protectedParams_(protectedParams),
         protectingParams_(protectingParams) {
     assert(protectedParams.getKeystoneInterval() > 0);
@@ -373,7 +374,7 @@ struct PopAwareForkResolutionComparator {
       auto& p = payloads[i];
 
       // containing block must be correct (current)
-      if (p.containingBlock != index.header) {
+      if (p.getContainingBlock() != index.header) {
         return state.addIndex(i).Invalid("pop-comparator-bad-containing-block");
       }
 
