@@ -6,28 +6,28 @@
 
 TEST(ValidationState, BasicFormatting) {
   altintegration::ValidationState state{};
-  bool ret = state.Invalid("test", "desc", "Description");
+  bool ret = state.Invalid("test", "Description");
   ASSERT_FALSE(ret);
   EXPECT_EQ(state.GetDebugMessage(), "Description");
-  EXPECT_EQ(state.GetPath(), "test+desc");
-  EXPECT_EQ(state.GetPathParts().size(), 2);
+  EXPECT_EQ(state.GetPath(), "test");
+  EXPECT_EQ(state.GetPathParts().size(), 1);
 }
 
 TEST(ValidationState, MultipleFormatting) {
   altintegration::ValidationState state{};
-  bool ret = state.Invalid("test", "desc", "Description");
-  ret = state.Invalid("test2", "desc2", "Description2");
+  bool ret = state.Invalid("test", "Description");
+  ret = state.Invalid("test2", "Description2");
   ASSERT_FALSE(ret);
   EXPECT_EQ(state.GetDebugMessage(), "Description2");
-  EXPECT_EQ(state.GetPath(), "test2+desc2+test+desc");
-  EXPECT_EQ(state.GetPathParts().size(), 4);
+  EXPECT_EQ(state.GetPath(), "test2+test");
+  EXPECT_EQ(state.GetPathParts().size(), 2);
 }
 
 TEST(ValidationState, IndexFormatting) {
   altintegration::ValidationState state{};
-  state.Invalid("desc", "Description").setIndex(1).setStackFunction("test");
-  ASSERT_FALSE(state.IsValid());
+  bool ret = state.addIndex(1).Invalid("test", "Description");
+  ASSERT_FALSE(ret);
   EXPECT_EQ(state.GetDebugMessage(), "Description");
-  EXPECT_EQ(state.GetPath(), "test+1+desc");
-  EXPECT_EQ(state.GetPathParts().size(), 3);
+  EXPECT_EQ(state.GetPath(), "test+1");
+  EXPECT_EQ(state.GetPathParts().size(), 2);
 }

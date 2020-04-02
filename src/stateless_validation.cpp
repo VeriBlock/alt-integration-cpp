@@ -145,7 +145,6 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
 
   if (!containsSplit(stream.data(), tx.bitcoinTransaction.tx)) {
     return state.Invalid(
-        "checkBitcoinTransactionForPoPData",
         "invalid-vbk-pop-tx",
         "Bitcoin transaction does not contain PoP publication data");
   }
@@ -163,14 +162,12 @@ bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
   uint256 lastHash = btcBlock[0].getHash();
   for (size_t i = 1; i < btcBlock.size(); ++i) {
     if (!checkBlock(btcBlock[i], state, params)) {
-      return state.addStackFunction("checkBtcBlocks");
+      return state.Invalid("btc-check-block");
     }
 
     // Check that it's the next height and affirms the previous hash
     if (btcBlock[i].previousBlock != lastHash) {
-      return state.Invalid("checkBtcBlocks",
-                           "invalid-btc-block",
-                           "Blocks are not contiguous");
+      return state.Invalid("invalid-btc-block", "Blocks are not contiguous");
     }
     lastHash = btcBlock[i].getHash();
   }
@@ -189,15 +186,13 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
   for (size_t i = 1; i < vbkBlocks.size(); ++i) {
     if (!checkBlock(vbkBlocks[i], state, param)) {
-      return state.addStackFunction("checkVbkBlocks");
+      return state.Invalid("vbk-check-block");
     }
 
     if (vbkBlocks[i].height != lastHeight + 1 ||
         vbkBlocks[i].previousBlock !=
             lastHash.template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
-      return state.Invalid("checkVbkBlocks",
-                           "invalid-vbk-block",
-                           "Blocks are not contiguous");
+      return state.Invalid("invalid-vbk-block", "Blocks are not contiguous");
     }
     lastHeight = vbkBlocks[i].height;
     lastHash = vbkBlocks[i].getHash();
@@ -240,22 +235,22 @@ bool checkVbkPopTx(const VbkPopTx& tx,
                    ValidationState& state,
                    const BtcChainParams& btc) {
   if (!checkSignature(tx, state)) {
-    return state.addStackFunction("checkVbkPopTx");
+    return state.Invalid("vbk-check-signature");
   }
 
   if (!checkBitcoinTransactionForPoPData(tx, state)) {
-    return state.addStackFunction("checkVbkPopTx");
+    return state.Invalid("vbk-check-btc-tx-for-pop");
   }
 
   if (!checkMerklePath(tx.merklePath,
                        tx.bitcoinTransaction.getHash(),
                        tx.blockOfProof.merkleRoot.reverse(),
                        state)) {
-    return state.addStackFunction("checkVbkPopTx");
+    return state.Invalid("vbk-check-merkle-path");
   }
 
   if (!checkBtcBlocks(tx.blockOfProofContext, state, btc)) {
-    return state.addStackFunction("checkVbkPopTx");
+    return state.Invalid("vbk-check-btc-blocks");
   }
 
   return true;
@@ -263,22 +258,20 @@ bool checkVbkPopTx(const VbkPopTx& tx,
 
 bool checkVbkTx(const VbkTx& tx, ValidationState& state) {
   if (!checkSignature(tx, state)) {
-    return state.addStackFunction("checkVbkTx");
+    return state.Invalid("vbk-check-signature");
   }
   return true;
 }
 
 bool checkSignature(const VbkTx& tx, ValidationState& state) {
   if (!tx.sourceAddress.isDerivedFromPublicKey(tx.publicKey)) {
-    return state.Invalid("checkSignature",
-                         "invalid-vbk-tx",
+    return state.Invalid("invalid-vbk-tx",
                          "Vbk transaction contains an invalid public key");
   }
 
   auto hash = tx.getHash();
   if (!veriBlockVerify(hash, tx.signature, publicKeyFromVbk(tx.publicKey))) {
-    return state.Invalid("checkSignature",
-                         "invalid-vbk-tx",
+    return state.Invalid("invalid-vbk-tx",
                          "Vbk transaction is incorrectly signed");
   }
   return true;
@@ -286,14 +279,12 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
 
 bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
   if (!tx.address.isDerivedFromPublicKey(tx.publicKey)) {
-    return state.Invalid("checkSignature",
-                         "invalid-vbk-pop-tx",
+    return state.Invalid("invalid-vbk-pop-tx",
                          "Vbk Pop transaction contains an invalid public key");
   }
   auto hash = tx.getHash();
   if (!veriBlockVerify(hash, tx.signature, publicKeyFromVbk(tx.publicKey))) {
-    return state.Invalid("checkSignature",
-                         "invalid-vbk-pop-tx",
+    return state.Invalid("invalid-vbk-pop-tx",
                          "Vbk Pop transaction is incorrectly signed");
   }
   return true;
@@ -303,17 +294,17 @@ bool checkPayloads(const ATV& atv,
                    ValidationState& state,
                    const VbkChainParams& params) {
   if (!checkVbkTx(atv.transaction, state)) {
-    return state.addStackFunction("checkATV");
+    return state.Invalid("vbk-check-tx");
   }
   if (!checkMerklePath(atv.merklePath,
                        atv.transaction.getHash(),
                        atv.containingBlock.merkleRoot,
                        state)) {
-    return state.addStackFunction("checkATV");
+    return state.Invalid("vbk-check-merkle-path");
   }
 
   if (!checkVbkBlocks(atv.context, state, params)) {
-    return state.addStackFunction("checkATV");
+    return state.Invalid("vbk-check-vbk-blocks");
   }
 
   return true;
@@ -324,18 +315,18 @@ bool checkPayloads(const VTB& vtb,
                    const VbkChainParams& vbk,
                    const BtcChainParams& btc) {
   if (!checkVbkPopTx(vtb.transaction, state, btc)) {
-    return state.addStackFunction("checkVTB");
+    return state.Invalid("vbk-check-pop-tx");
   }
 
   if (!checkMerklePath(vtb.merklePath,
                        vtb.transaction.getHash(),
                        vtb.containingBlock.merkleRoot,
                        state)) {
-    return state.addStackFunction("checkVTB");
+    return state.Invalid("vbk-check-merkle-path");
   }
 
   if (!checkVbkBlocks(vtb.context, state, vbk)) {
-    return state.addStackFunction("checkVTB");
+    return state.Invalid("vbk-check-vbk-blocks");
   }
 
   return true;
@@ -345,8 +336,7 @@ bool checkBlock(const VbkBlock& block,
                 ValidationState& state,
                 const VbkChainParams& params) {
   if (!checkProofOfWork(block, params)) {
-    return state.Invalid(
-        "checkBlock", "vbk-bad-pow", "Invalid Block proof of work");
+    return state.Invalid("vbk-bad-pow", "Invalid Block proof of work");
   }
 
   return true;
@@ -356,8 +346,7 @@ bool checkBlock(const BtcBlock& block,
                 ValidationState& state,
                 const BtcChainParams& params) {
   if (!checkProofOfWork(block, params)) {
-    return state.Invalid(
-        "checkBlock", "btc-bad-pow", "Invalid Block proof of work");
+    return state.Invalid("btc-bad-pow", "Invalid Block proof of work");
   }
 
   return true;

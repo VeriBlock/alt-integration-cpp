@@ -132,15 +132,13 @@ bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
                     const BtcBlock& block,
                     ValidationState& state) {
   if (int64_t(block.getBlockTime()) < getMedianTimePast(prev)) {
-    return state.Invalid("checkBlockTime",
-                         "btc-time-too-old",
+    return state.Invalid("btc-time-too-old",
                          "block's timestamp is too early");
   }
 
   if (int64_t(block.getBlockTime()) >
       currentTimestamp4() + BTC_MAX_FUTURE_BLOCK_TIME) {
-    return state.Invalid("checkBlockTime",
-                         "btc-time-too-new",
+    return state.Invalid("btc-time-too-new",
                          "block timestamp too far in the future");
   }
 
@@ -153,13 +151,12 @@ bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
                             ValidationState& state,
                             const BtcChainParams& params) {
   if (block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
-    return state.Invalid("contextuallyCheckBlock",
-                         "btc-bad-diffbits",
+    return state.Invalid("btc-bad-diffbits",
                          "incorrect proof of work of BTC block");
   }
 
   if (!checkBlockTime(prev, block, state)) {
-    return state.addStackFunction("contextuallyCheckBlock");
+    return state.Invalid("btc-check-block-time");
   }
 
   return true;

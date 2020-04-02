@@ -1,9 +1,9 @@
 #ifndef ALT_INTEGRATION_VERIBLOCK_VALIDATION_STATE_HPP
 #define ALT_INTEGRATION_VERIBLOCK_VALIDATION_STATE_HPP
 
+#include <algorithm>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 namespace altintegration {
 
@@ -27,39 +27,28 @@ class ValidationState {
    * error.
    * @return always returns false
    */
-  ValidationState &Invalid(const std::string &reject_reason,
-               const std::string &debug_message) {
+  bool Invalid(const std::string &reject_reason,
+               const std::string &debug_message = "") {
     stack_trace.push_back(reject_reason);
-    m_debug_message = debug_message;
+    if (!debug_message.empty()) {
+      m_debug_message = debug_message;
+    }
     if (m_mode != MODE_ERROR) {
       m_mode = MODE_INVALID;
     }
-    return *this;
-  }
-
-  bool Invalid(const std::string &function_name,
-               const std::string &reject_reason,
-               const std::string &debug_message) {
-    Invalid(reject_reason, debug_message);
-    stack_trace.push_back(function_name);
     return false;
   }
 
   //! during validation of arrays, additional index can be attached, meaning
   //! position of item in this array that is not valid.
-  ValidationState &setIndex(size_t index_) {
+  ValidationState &addIndex(size_t index_) {
     stack_trace.push_back(std::to_string(index_));
     return *this;
   }
 
-  ValidationState &setStackFunction(const std::string &function_name) {
-    stack_trace.push_back(function_name);
+  ValidationState &addRejectReason(const std::string &reject_reason) {
+    stack_trace.push_back(reject_reason);
     return *this;
-  }
-
-  bool addStackFunction(const std::string &function_name) {
-    ValidationState newState = setStackFunction(function_name);
-    return newState.IsValid();
   }
 
   /**
