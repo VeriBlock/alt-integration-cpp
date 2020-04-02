@@ -92,6 +92,12 @@ struct AltPayloads {
 
   id_t getId() const;
 
+  /**
+   * Return a containing AltBlock
+   * @return containing block from AltProof
+   */
+  AltBlock getContainingBlock() const;
+
   friend bool operator==(const AltPayloads& a, const AltPayloads& b) {
     // clang-format off
     return a.alt == b.alt &&

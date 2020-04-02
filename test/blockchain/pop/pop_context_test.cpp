@@ -118,7 +118,10 @@ TEST_F(PopContextFixture, A) {
   // and now accept VBK tip again, with VTBs
   acceptAllVtbsFromVBKblock(vbkTip);
   auto* localB = local.getBlockIndex(vbkTip->getHash());
-  makeSureNoDuplicates(hashAll<BtcBlock>(localB->containingContext.btc));
+  if (!localB->containingContext.empty()) {
+    makeSureNoDuplicates(
+        hashAll<BtcBlock>(localB->containingContext.top().btc));
+  }
 
   // and now our local BTC tree must know all blocks from active chain B
   ASSERT_EQ(*local.btc().getBestChain().tip(),
@@ -132,7 +135,10 @@ TEST_F(PopContextFixture, A) {
   // now we add VTB from btcA
   acceptAllVtbsFromVBKblock(vbkTip->pprev);
   auto* localA = local.getBlockIndex(vbkTip->pprev->getHash());
-  makeSureNoDuplicates(hashAll<BtcBlock>(localA->containingContext.btc));
+  if (!localA->containingContext.empty()) {
+    makeSureNoDuplicates(
+        hashAll<BtcBlock>(localA->containingContext.top().btc));
+  }
 
   // our local BTC is still same as remote
   ASSERT_EQ(*local.btc().getBestChain().tip(),

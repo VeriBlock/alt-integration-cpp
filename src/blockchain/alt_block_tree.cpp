@@ -104,6 +104,10 @@ bool AltTree::acceptBlock(const AltBlock& block,
     }
   }
 
+  if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
+    return state.Invalid("VbkTree::acceptBlock");
+  }
+
   addToChains(index);
 
   return true;

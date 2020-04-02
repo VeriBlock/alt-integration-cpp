@@ -340,6 +340,12 @@ struct PopAwareForkResolutionComparator {
     assert(protectedParams.getKeystoneInterval() > 0);
   }
 
+  PopAwareForkResolutionComparator(
+      const PopAwareForkResolutionComparator& comparator) = default;
+
+  PopAwareForkResolutionComparator& operator=(
+      const PopAwareForkResolutionComparator& comparator) = default;
+
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
@@ -355,6 +361,10 @@ struct PopAwareForkResolutionComparator {
       assert(ret && "previous payloads should be always valid");
       (void)ret;
     }
+
+    // allocate new context in the stack
+    typename protected_index_t::context_t ctx;
+    index.containingContext.push(ctx);
 
     if (payloads.empty()) {
       if (index_ == index.pprev) {
@@ -407,8 +417,10 @@ struct PopAwareForkResolutionComparator {
   void removeAllPayloads(protected_index_t& index,
                          const std::vector<protected_payloads_t>& payloads) {
     for (const auto& p : payloads) {
-      removePayloads(index, p);
+      removeEndorsements(index, p);
     }
+
+    index.containingContext.pop();
   }
 
   bool proceedAllPayloads(protected_index_t& index,

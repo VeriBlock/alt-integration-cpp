@@ -25,6 +25,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   VbkBlockTree(const VbkChainParams& vbkp, const BtcChainParams& btcp)
       : VbkTree(vbkp), cmp_(BtcTree(btcp), btcp, vbkp) {}
 
+  VbkBlockTree(const VbkBlockTree& comparator) = default;
+
+  VbkBlockTree& operator=(const VbkBlockTree& comparator) = default;
+
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 
@@ -65,10 +69,11 @@ template <>
 void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
                             const typename BlockIndex<VbkBlock>::payloads_t& p,
                             const VbkBlockTree::BtcTree& tree);
-
+/*
 template <>
 void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
                                  const BlockIndex<VbkBlock>::payloads_t& p);
+                                 */
 
 }  // namespace altintegration
 
