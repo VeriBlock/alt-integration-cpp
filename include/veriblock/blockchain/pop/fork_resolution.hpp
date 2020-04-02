@@ -8,6 +8,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/pop/pop_state_machine.hpp>
+#include <veriblock/blockchain/pop/pop_utils.hpp>
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
@@ -330,9 +331,8 @@ struct PopAwareForkResolutionComparator {
                                BlockIndex<protected_block_t>,
                                protected_params_t>;
 
-  PopAwareForkResolutionComparator(
-      const protecting_params_t& protectingParams,
-      const protected_params_t& protectedParams)
+  PopAwareForkResolutionComparator(const protecting_params_t& protectingParams,
+                                   const protected_params_t& protectedParams)
       : tree_(protectingParams),
         protectedParams_(protectedParams),
         protectingParams_(protectingParams) {
@@ -343,6 +343,8 @@ struct PopAwareForkResolutionComparator {
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
 
+  // this function does not clear BlockIndex from the added payloads (it is
+  // doing by removePayloads). Better to use processAllPayloads() method
   bool addAllPayloads(protected_index_t& index,
                       const std::vector<protected_payloads_t>& payloads,
                       ValidationState& state) {
@@ -372,9 +374,7 @@ struct PopAwareForkResolutionComparator {
 
       // containing block must be correct (current)
       if (p.containingBlock != index.header) {
-        return state
-            .addIndex(i)
-            .Invalid("pop-comparator-bad-containing-block");
+        return state.addIndex(i).Invalid("pop-comparator-bad-containing-block");
       }
 
       // we need to add context blocks to current block index, before
@@ -388,9 +388,9 @@ struct PopAwareForkResolutionComparator {
       }
 
       // then, check if endorsement is valid
-      if (!sm.addPayloads(p, state)) {
-        removeContextFromBlockIndex(index, p);
-        return state.addIndex(i).Invalid("pop-comparator-add-payloads");
+      if (!checkAndAddEndorsement(index, p, temp, protectedParams_, state)) {
+        return state.addIndex(i).Invalid("addAllPayloads",
+                                         state.GetDebugMessage());
       }
     }
 
@@ -399,6 +399,32 @@ struct PopAwareForkResolutionComparator {
 
     // update current state, since it is valid
     tree_ = std::move(temp);
+
+    return true;
+  }
+
+  void removeAllPayloads(protected_index_t& index,
+                         const std::vector<protected_payloads_t>& payloads) {
+    for (const auto& p : payloads) {
+      removePayloads(index, p);
+    }
+  }
+
+  bool proceedAllPayloads(protected_index_t& index,
+                          const std::vector<protected_payloads_t>& payloads,
+                          ValidationState& state) {
+    if (!payloads.empty() && !tryValidateWithResources(
+                                 [this, &index, &payloads, &state]() -> bool {
+                                   return this->addAllPayloads(
+                                       index, payloads, state);
+                                 },
+                                 [this, &index, &payloads]() {
+                                   this->removeAllPayloads(index, payloads);
+                                 })) {
+      return state.Invalid(
+          "PopAwareForkResolutionComparator::proccedAllPayloads",
+          state.GetDebugMessage());
+    }
 
     return true;
   }

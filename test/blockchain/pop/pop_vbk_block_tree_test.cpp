@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <exception>
 #include <memory>
 
 #include "util/pop_test_fixture.hpp"
@@ -21,6 +22,16 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
         endorsedIndex->header,
         popminer.getBtcParams().getGenesisBlock().getHash());
     popminer.mineVbkBlocks(1);
+  }
+
+  VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
+    auto Btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
+    auto* btcBlockTip = popminer.mineBtcBlocks(1);
+    return popminer.createVbkPopTxEndorsingVbkBlock(
+        btcBlockTip->header,
+        Btctx,
+        endorsedBlock,
+        popminer.getBtcParams().getGenesisBlock().getHash());
   }
 };
 
@@ -92,4 +103,85 @@ TEST_F(VbkBlockTreeTestFixture, FilterChainForForkResolution) {
   EXPECT_EQ(keystoneContext[6].firstBtcBlockPublicationHeight, 4);
   EXPECT_EQ(keystoneContext[7].vbkBlockHeight, 160);
   EXPECT_EQ(keystoneContext[7].firstBtcBlockPublicationHeight, 1);
+}
+
+TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
+  // start with 30 BTC blocks
+  auto* btcBlockTip = popminer.mineBtcBlocks(30);
+
+  ASSERT_EQ(btcBlockTip->getHash(),
+            popminer.btc().getBestChain().tip()->getHash());
+
+  // start with 65 VBK blocks
+  auto* vbkBlockTip = popminer.mineVbkBlocks(65);
+
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->getHash(),
+            vbkBlockTip->getHash());
+
+  // Make 5 endorsements valid endorsements
+  auto* endorsedVbkBlock1 = vbkBlockTip->getAncestor(vbkBlockTip->height - 11);
+  ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
+  auto* endorsedVbkBlock2 = vbkBlockTip->getAncestor(vbkBlockTip->height - 12);
+  ASSERT_EQ(endorsedVbkBlock2->endorsedBy.size(), 0);
+  auto* endorsedVbkBlock3 = vbkBlockTip->getAncestor(vbkBlockTip->height - 13);
+  ASSERT_EQ(endorsedVbkBlock3->endorsedBy.size(), 0);
+  auto* endorsedVbkBlock4 = vbkBlockTip->getAncestor(vbkBlockTip->height - 14);
+  ASSERT_EQ(endorsedVbkBlock4->endorsedBy.size(), 0);
+  auto* endorsedVbkBlock5 = vbkBlockTip->getAncestor(vbkBlockTip->height - 15);
+  ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 0);
+
+  generatePopTx(endorsedVbkBlock1->header);
+  generatePopTx(endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock3->header);
+  generatePopTx(endorsedVbkBlock4->header);
+  generatePopTx(endorsedVbkBlock5->header);
+  ASSERT_EQ(popminer.vbkmempool.size(), 5);
+
+  vbkBlockTip = popminer.mineVbkBlocks(1);
+
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->getHash(),
+            vbkBlockTip->getHash());
+
+  // check that we have endorsements to the VbBlocks
+  ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 1);
+  ASSERT_EQ(endorsedVbkBlock2->endorsedBy.size(), 1);
+  ASSERT_EQ(endorsedVbkBlock3->endorsedBy.size(), 1);
+  ASSERT_EQ(endorsedVbkBlock4->endorsedBy.size(), 1);
+  ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 1);
+
+  // mine 40 Vbk blocks
+  vbkBlockTip = popminer.mineVbkBlocks(40);
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->getHash(),
+            vbkBlockTip->getHash());
+
+  // Make 5 endorsements valid endorsements
+  endorsedVbkBlock1 = vbkBlockTip->getAncestor(vbkBlockTip->height - 11);
+  ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
+  endorsedVbkBlock2 = vbkBlockTip->getAncestor(vbkBlockTip->height - 12);
+  ASSERT_EQ(endorsedVbkBlock2->endorsedBy.size(), 0);
+  endorsedVbkBlock3 = vbkBlockTip->getAncestor(vbkBlockTip->height - 13);
+  ASSERT_EQ(endorsedVbkBlock3->endorsedBy.size(), 0);
+  endorsedVbkBlock4 = vbkBlockTip->getAncestor(vbkBlockTip->height - 14);
+  ASSERT_EQ(endorsedVbkBlock4->endorsedBy.size(), 0);
+  endorsedVbkBlock5 = vbkBlockTip->getAncestor(vbkBlockTip->height - 15);
+  ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 0);
+
+  generatePopTx(endorsedVbkBlock1->header);
+  generatePopTx(endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock3->header);
+  generatePopTx(endorsedVbkBlock4->header);
+  generatePopTx(endorsedVbkBlock5->header);
+  ASSERT_EQ(popminer.vbkmempool.size(), 5);
+
+  // corrupt one of the endorsement
+  popminer.vbkmempool[0].signature = {1, 2, 3};
+
+  EXPECT_THROW(popminer.mineVbkBlocks(1), std::domain_error);
+
+  // check that all endorsement have not been applied
+  ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock2->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock3->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock4->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 0);
 }
