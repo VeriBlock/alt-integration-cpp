@@ -344,7 +344,7 @@ struct PopAwareForkResolutionComparator {
   const protected_index_t* getIndex() const { return index_; }
 
   // this function does not clear BlockIndex from the added payloads (it is
-  // doing by removePayloads). Better to use proccedAllPayloads() method
+  // doing by removePayloads). Better to use processAllPayloads() method
   bool addAllPayloads(protected_index_t& index,
                       const std::vector<protected_payloads_t>& payloads,
                       ValidationState& state) {
