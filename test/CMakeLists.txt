@@ -30,3 +30,6 @@ target_link_libraries(signutil_test ${LIB_NAME})
 
 addtest(keystone_util_test keystone_util_test.cpp)
 target_link_libraries(keystone_util_test ${LIB_NAME})
+
+addtest(validationstate_test validationstate_test.cpp)
+target_link_libraries(validationstate_test ${LIB_NAME})

@@ -23,15 +23,13 @@ bool checkMerklePath(const MerklePathType& merklePath,
                      const HashType2& merkleRoot,
                      ValidationState& state) {
   if (merklePath.subject != transactionHash) {
-    return state.Invalid("checkMerklePath()",
-                         "invalid-merklepath",
+    return state.Invalid("invalid-merklepath",
                          "Transaction hash cannot be proven by merkle path");
   }
 
   auto root = merklePath.calculateMerkleRoot();
   if (root != merkleRoot) {
-    return state.Invalid("checkMerklePath()",
-                         "invalid-merklepath",
+    return state.Invalid("invalid-merklepath",
                          "Wrong merkle root. Expected: " + merkleRoot.toHex() +
                              ", got: " + root.toHex());
   }
@@ -73,13 +71,13 @@ bool checkBlock(const VbkBlock& block,
                 const VbkChainParams& params);
 
 bool checkPayloads(const ATV& atv,
-              ValidationState& state,
-              const VbkChainParams& vbk);
+                   ValidationState& state,
+                   const VbkChainParams& vbk);
 
 bool checkPayloads(const VTB& vtb,
-              ValidationState& state,
-              const VbkChainParams& vbk,
-              const BtcChainParams& btc);
+                   ValidationState& state,
+                   const VbkChainParams& vbk,
+                   const BtcChainParams& btc);
 }  // namespace altintegration
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK_STATELESS_VALIDATION_H
