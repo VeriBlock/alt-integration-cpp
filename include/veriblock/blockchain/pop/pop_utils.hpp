@@ -25,37 +25,37 @@ bool checkAndAddEndorsement(ProtectedIndex& index,
 
   auto endorsedHeight = p.transaction.publishedBlock.height;
   if (index.height - endorsedHeight > window) {
-    return state.Invalid(
-        "addPayloadsToBlockIndex", "expired", "Endorsement expired");
+    return state.Invalid("addPayloadsToBlockIndex",
+                         "expired : Endorsement expired");
   }
 
   auto* endorsed = chain[endorsedHeight];
   if (!endorsed) {
-    return state.Invalid("addPayloadsToBlockIndex",
-                         "no-endorsed-block",
-                         "No block found on endorsed block height");
+    return state.Invalid(
+        "addPayloadsToBlockIndex",
+        "no-endorsed-block : No block found on endorsed block height");
   }
 
   if (endorsed->getHash() != p.transaction.publishedBlock.getHash()) {
-    return state.Invalid("addPayloadsToBlockIndex",
-                         "block-differs",
-                         "Endorsed VBK block is on a different chain");
+    return state.Invalid(
+        "addPayloadsToBlockIndex",
+        "block-differs : Endorsed VBK block is on a different chain");
   }
 
   auto endorsement = endorsement_t::fromContainer(p);
   auto* blockOfProof = tree.getBlockIndex(endorsement.blockOfProof);
   if (!blockOfProof) {
-    return state.Invalid("addPayloads",
-                         "block-of-proof-not-found",
-                         "Can not find block of proof in BTC");
+    return state.Invalid(
+        "addPayloads",
+        "block-of-proof-not-found : Can not find block of proof in BTC");
   }
 
   auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
   if (duplicate) {
     // found duplicate
-    return state.Invalid("addPayloadsToBlockIndex",
-                         "duplicate",
-                         "Found duplicate endorsement on the same chain");
+    return state.Invalid(
+        "addPayloadsToBlockIndex",
+        "duplicate : Found duplicate endorsement on the same chain");
   }
 
   // Add endorsement into BlockIndex

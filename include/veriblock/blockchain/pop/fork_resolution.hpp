@@ -374,9 +374,7 @@ struct PopAwareForkResolutionComparator {
 
       // containing block must be correct (current)
       if (p.containingBlock != index.header) {
-        return state
-            .addIndex(i)
-            .Invalid("pop-comparator-bad-containing-block");
+        return state.addIndex(i).Invalid("pop-comparator-bad-containing-block");
       }
 
       // we need to add context blocks to current block index, before
@@ -391,10 +389,8 @@ struct PopAwareForkResolutionComparator {
 
       // then, check if endorsement is valid
       if (!checkAndAddEndorsement(index, p, temp, protectedParams_, state)) {
-        return state.setIndex(i).Invalid(
-            "addAllPayloads",
-            "vbk-invalid-endorsement-" + state.GetRejectReason(),
-            state.GetDebugMessage());
+        return state.addIndex(i).Invalid("addAllPayloads",
+                                         state.GetDebugMessage());
       }
     }
 
@@ -427,7 +423,6 @@ struct PopAwareForkResolutionComparator {
                                  })) {
       return state.Invalid(
           "PopAwareForkResolutionComparator::proccedAllPayloads",
-          "vbk-invalid-pop-" + state.GetRejectReason(),
           state.GetDebugMessage());
     }
 

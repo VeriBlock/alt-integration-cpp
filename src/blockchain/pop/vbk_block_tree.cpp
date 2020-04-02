@@ -94,7 +94,7 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
   }
 
   if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
-    return state.addStackFunction("VbkTree::acceptBlock");
+    return state.Invalid("VbkTree::acceptBlock");
   }
 
   determineBestChain(activeChain_, *index);
