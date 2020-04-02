@@ -343,7 +343,7 @@ struct PopAwareForkResolutionComparator {
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
 
-  // this function does not clear BlokcIndex from the added payloads (it is
+  // this function does not clear BlockIndex from the added payloads (it is
   // doing by removePayloads). Better to use proccedAllPayloads() method
   bool addAllPayloads(protected_index_t& index,
                       const std::vector<protected_payloads_t>& payloads,
