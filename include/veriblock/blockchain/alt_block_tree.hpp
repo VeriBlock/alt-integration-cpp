@@ -73,10 +73,11 @@ template <>
 void addContextToBlockIndex(BlockIndex<AltBlock>& index,
                             const typename BlockIndex<AltBlock>::payloads_t& p,
                             const VbkBlockTree& tree);
-
+/*
 template <>
 void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
                                  const BlockIndex<AltBlock>::payloads_t& p);
+                                 */
 
 }  // namespace altintegration
 

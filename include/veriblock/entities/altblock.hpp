@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/serde.hpp"
 #include "veriblock/entities/context.hpp"
 #include "veriblock/entities/endorsements.hpp"
+#include "veriblock/serde.hpp"
 
 namespace altintegration {
 
@@ -61,6 +61,10 @@ struct AltBlock {
            a.previousBlock == b.previousBlock &&
            a.height == b.height;
     // clang-format on
+  }
+
+  friend bool operator!=(const AltBlock& a, const AltBlock& b) {
+    return !(a == b);
   }
 };
 

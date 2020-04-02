@@ -84,3 +84,5 @@ AltPayloads::id_t AltPayloads::getId() const {
   auto rawBytes = toVbkEncoding();
   return sha256(rawBytes);
 }
+
+AltBlock AltPayloads::getContainingBlock() const { return alt.containing; }

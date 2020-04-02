@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
 #include <memory>
+#include <stack>
 #include <unordered_map>
 #include <vector>
 #include <veriblock/validation_state.hpp>
@@ -41,7 +42,7 @@ struct BlockIndex {
   std::vector<endorsement_t*> endorsedBy;
 
   //! list of containing context blocks that **change** current state
-  context_t containingContext{};
+  std::stack<context_t> containingContext{};
 
   //! height of the entry in the chain
   height_t height = 0;

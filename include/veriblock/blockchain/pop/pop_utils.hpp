@@ -70,8 +70,8 @@ bool checkAndAddEndorsement(ProtectedIndex& index,
 }
 
 template <typename ProtectedIndex>
-void removePayloads(ProtectedIndex& index,
-                    const typename ProtectedIndex::payloads_t& payloads) {
+void removeEndorsements(ProtectedIndex& index,
+                        const typename ProtectedIndex::payloads_t& payloads) {
   using endorsement_t = typename ProtectedIndex::endorsement_t;
   // here we need to remove this endorsement from 'endorsedBy',
   // 'containingPayloads' and 'containingEndorsements'
@@ -101,8 +101,6 @@ void removePayloads(ProtectedIndex& index,
       index.containingEndorsements.erase(endorsementit);
     }
   }
-
-  removeContextFromBlockIndex(index, payloads);
 }
 
 }  // namespace altintegration
