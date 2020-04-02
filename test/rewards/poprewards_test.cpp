@@ -97,7 +97,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 
   // mine publications
   auto [atv, vtbs] = apm->mine(pub, last_vbk, last_btc, 1, state);
-  ASSERT_TRUE(state.IsValid()) << state.GetRejectReason();
+  ASSERT_TRUE(state.IsValid()) << state.GetPath();
 
   // mine alt block, which CONTAINS this alt pop tx with endorsement
   mineChain(*altTree, altfork1, 1);
@@ -112,7 +112,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   // apply payloads to our current view
   std::unique_ptr<StateChange> change = stateManager.newChange();
   ASSERT_TRUE(altpop->addPayloads({altProof, vtbs, {}, {}}, *change, state))
-      << state.GetRejectReason();
+      << state.GetPath();
 
   PopRewardsBigDecimal popDifficulty = 1.0;
   auto payouts = rewards->calculatePayouts(altProof.endorsed, popDifficulty);

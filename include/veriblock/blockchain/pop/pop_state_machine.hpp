@@ -44,36 +44,31 @@ struct PopStateMachine {
 
     auto endorsedHeight = p.transaction.publishedBlock.height;
     if (index_->height - endorsedHeight > window) {
-      return state.Invalid(
-          "addPayloadsToBlockIndex", "expired", "Endorsement expired");
+      return state.Invalid("pop-state-expired", "Endorsement expired");
     }
 
     auto* endorsed = chain[endorsedHeight];
     if (!endorsed) {
-      return state.Invalid("addPayloadsToBlockIndex",
-                           "no-endorsed-block",
+      return state.Invalid("pop-state-no-endorsed-block",
                            "No block found on endorsed block height");
     }
 
     if (endorsed->getHash() != p.transaction.publishedBlock.getHash()) {
-      return state.Invalid("addPayloadsToBlockIndex",
-                           "block-differs",
+      return state.Invalid("pop-state-block-differs",
                            "Endorsed VBK block is on a different chain");
     }
 
     auto endorsement = endorsement_t::fromContainer(p);
     auto* blockOfProof = tree_.getBlockIndex(endorsement.blockOfProof);
     if (!blockOfProof) {
-      return state.Invalid("addPayloads",
-                           "block-of-proof-not-found",
+      return state.Invalid("pop-state-block-of-proof-not-found",
                            "Can not find block of proof in BTC");
     }
 
     auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
     if (duplicate) {
       // found duplicate
-      return state.Invalid("addPayloadsToBlockIndex",
-                           "duplicate",
+      return state.Invalid("pop-state-duplicate",
                            "Found duplicate endorsement on the same chain");
     }
 
@@ -158,7 +153,7 @@ struct PopStateMachine {
 
     while (current) {
       if (!applyContext(*current, state)) {
-        return state.addStackFunction("PopAwareForkResolution::apply");
+        return state.Invalid("pop-state-apply-context");
       }
 
       index_ = current;

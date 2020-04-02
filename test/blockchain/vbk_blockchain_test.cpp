@@ -96,7 +96,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
 
   ASSERT_TRUE(
       tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))
-      << state.GetRejectReason();
+      << state.GetPath();
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
 
@@ -108,7 +108,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   for (const auto& block : acceptChain) {
     ASSERT_TRUE(tree.acceptBlock(block, {}, state))
         << "block #" << totalBlocks << "\n"
-        << "rejection: " << state.GetRejectReason() << ", "
+        << "stack trace: " << state.GetPath() << ", "
         << "message: " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
 
