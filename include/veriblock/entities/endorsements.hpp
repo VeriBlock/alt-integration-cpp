@@ -9,7 +9,7 @@ struct VTB;
 struct AltPayloads;
 
 // endorsement of VBK blocks in BTC
-using BtcEndorsement = Endorsement<uint192, uint256, VTB>;
+using BtcEndorsement = Endorsement<uint192, uint256, VTB, int32_t>;
 
 template <>
 BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream);
@@ -25,7 +25,8 @@ template <>
 BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c);
 
 // endorsement of ALT blocks in VBK
-using VbkEndorsement = Endorsement<std::vector<uint8_t>, uint192, AltPayloads>;
+using VbkEndorsement =
+    Endorsement<std::vector<uint8_t>, uint192, AltPayloads, int32_t>;
 template <>
 VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream);
 template <>

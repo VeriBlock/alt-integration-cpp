@@ -403,7 +403,8 @@ struct PopAwareForkResolutionComparator {
       }
 
       // then, check if endorsement is valid
-      if (!checkAndAddEndorsement(index, p, temp, protectedParams_, state)) {
+      auto e = endorsement_t::fromContainer(p);
+      if (!checkAndAddEndorsement(index, e, temp, protectedParams_, state)) {
         return state.addIndex(i).Invalid("addAllPayloads",
                                          state.GetDebugMessage());
       }
@@ -421,7 +422,8 @@ struct PopAwareForkResolutionComparator {
   void removeAllPayloads(protected_index_t& index,
                          const std::vector<protected_payloads_t>& payloads) {
     for (const auto& p : payloads) {
-      removeEndorsements(index, p);
+      auto e = endorsement_t::fromContainer(p);
+      removeEndorsements(index, e);
     }
 
     index.containingContext.pop();
