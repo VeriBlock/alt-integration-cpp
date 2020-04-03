@@ -11,19 +11,19 @@ namespace altintegration {
 template <typename ProtectingBlockTree,
           typename ProtectedIndex,
           typename ProtectedChainParams>
-bool checkAndAddEndorsement(ProtectedIndex& index,
-                            const typename ProtectedIndex::payloads_t& p,
-                            const ProtectingBlockTree& tree,
-                            const ProtectedChainParams& params,
-                            ValidationState& state) {
+bool checkAndAddEndorsement(
+    ProtectedIndex& index,
+    const typename ProtectedIndex::endorsement_t& endorsement,
+    const ProtectingBlockTree& tree,
+    const ProtectedChainParams& params,
+    ValidationState& state) {
   using endorsement_t = typename ProtectedIndex::endorsement_t;
-
   // endorsement validity window
   auto window = params.getEndorsementSettlementInterval();
   auto minHeight = index.height >= window ? index.height - window : 0;
   Chain<ProtectedIndex> chain(minHeight, &index);
 
-  auto endorsedHeight = p.getEndorsedBlock().height;
+  auto endorsedHeight = endorsement.endorsedHeight;
   if (index.height - endorsedHeight > window) {
     return state.Invalid("addPayloadsToBlockIndex",
                          "expired : Endorsement expired");
@@ -36,13 +36,12 @@ bool checkAndAddEndorsement(ProtectedIndex& index,
         "no-endorsed-block : No block found on endorsed block height");
   }
 
-  if (endorsed->getHash() != p.getEndorsedBlock().getHash()) {
+  if (endorsed->getHash() != endorsement.endorsedHash) {
     return state.Invalid(
         "addPayloadsToBlockIndex",
         "block-differs : Endorsed VBK block is on a different chain");
   }
 
-  auto endorsement = endorsement_t::fromContainer(p);
   auto* blockOfProof = tree.getBlockIndex(endorsement.blockOfProof);
   if (!blockOfProof) {
     return state.Invalid(
@@ -70,30 +69,28 @@ bool checkAndAddEndorsement(ProtectedIndex& index,
 }
 
 template <typename ProtectedIndex>
-void removeEndorsements(ProtectedIndex& index,
-                        const typename ProtectedIndex::payloads_t& payloads) {
+void removeEndorsements(
+    ProtectedIndex& index,
+    const typename ProtectedIndex::endorsement_t& endorsement) {
   using endorsement_t = typename ProtectedIndex::endorsement_t;
-  // here we need to remove this endorsement from 'endorsedBy',
-  // 'containingPayloads' and 'containingEndorsements'
 
   // remove from 'endorsedBy'
-  auto eid = endorsement_t::getId(payloads);
-  auto endorsedHeight = payloads.getEndorsedBlock().height;
-  auto endorsed = index.getAncestor(endorsedHeight);
+  auto endorsed = index.getAncestor(endorsement.endorsedHeight);
 
   if (endorsed) {
-    auto endorsementit = index.containingEndorsements.find(eid);
+    auto endorsementit = index.containingEndorsements.find(endorsement.id);
     if (endorsementit != index.containingEndorsements.end()) {
-      auto& endorsement = endorsementit->second;
+      auto& endorsement_ptr = endorsementit->second;
 
       auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
-      auto new_end = std::remove_if(endorsements.begin(),
-                                    endorsements.end(),
-                                    [&endorsement](endorsement_t* e) -> bool {
-                                      // remove nullptrs and our given
-                                      // endorsement
-                                      return !e || endorsement.get() == e;
-                                    });
+      auto new_end =
+          std::remove_if(endorsements.begin(),
+                         endorsements.end(),
+                         [&endorsement_ptr](endorsement_t* e) -> bool {
+                           // remove nullptrs and our given
+                           // endorsement
+                           return !e || endorsement_ptr.get() == e;
+                         });
 
       endorsements.erase(new_end, endorsements.end());
 

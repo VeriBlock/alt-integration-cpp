@@ -9,6 +9,7 @@ BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream) {
   BtcEndorsement endorsement;
   endorsement.id = stream.readSlice(sizeof(id_t));
   endorsement.endorsedHash = stream.readSlice(sizeof(endorsed_hash_t));
+  endorsement.endorsedHeight = stream.readBE<endorsed_height_t>();
   endorsement.containingHash = stream.readSlice(sizeof(endorsed_hash_t));
   endorsement.blockOfProof = stream.readSlice(sizeof(containing_hash_t));
   endorsement.payoutInfo = {};
@@ -26,6 +27,7 @@ template <>
 void BtcEndorsement::toVbkEncoding(WriteStream& stream) const {
   stream.write(id);
   stream.write(endorsedHash);
+  stream.writeBE(endorsedHeight);
   stream.write(containingHash);
   stream.write(blockOfProof);
 }
@@ -42,6 +44,7 @@ VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream) {
   VbkEndorsement endorsement;
   endorsement.id = stream.readSlice(sizeof(id_t));
   endorsement.endorsedHash = readVarLenValue(stream).asVector();
+  endorsement.endorsedHeight = stream.readBE<endorsed_height_t>();
   endorsement.containingHash = readVarLenValue(stream).asVector();
   endorsement.blockOfProof = stream.readSlice(sizeof(containing_hash_t));
   endorsement.payoutInfo = readVarLenValue(stream).asVector();
@@ -59,6 +62,7 @@ template <>
 void VbkEndorsement::toVbkEncoding(WriteStream& stream) const {
   stream.write(id);
   writeVarLenValue(stream, endorsedHash);
+  stream.writeBE(endorsedHeight);
   writeVarLenValue(stream, containingHash);
   stream.write(blockOfProof);
   writeVarLenValue(stream, payoutInfo);
@@ -78,6 +82,7 @@ BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
   e.blockOfProof = c.transaction.blockOfProof.getHash();
   e.containingHash = c.containingBlock.getHash();
   e.endorsedHash = c.transaction.publishedBlock.getHash();
+  e.endorsedHeight = c.transaction.publishedBlock.height;
   e.payoutInfo = {};
   return e;
 }
@@ -88,6 +93,7 @@ VbkEndorsement VbkEndorsement::fromContainer(const AltPayloads& c) {
   e.id = VbkEndorsement::getId(c);
   e.blockOfProof = c.alt.atv.containingBlock.getHash();
   e.endorsedHash = c.alt.endorsed.hash;
+  e.endorsedHeight = c.alt.endorsed.height;
   e.containingHash = c.alt.containing.hash;
   e.payoutInfo = c.alt.atv.transaction.publicationData.payoutInfo;
   return e;
