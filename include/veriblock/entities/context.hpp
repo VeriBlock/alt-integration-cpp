@@ -3,13 +3,19 @@
 
 #include <vector>
 
+#include "endorsements.hpp"
+
 namespace altintegration {
 
 struct BtcBlock;
 struct VbkBlock;
+struct VTB;
 
 struct VbkContext {
   std::vector<BtcBlock> btc;
+  BtcEndorsement endorsement;
+
+  static VbkContext fromContainer(const VTB& vtb);
 };
 
 struct AltContext {

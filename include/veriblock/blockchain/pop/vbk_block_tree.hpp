@@ -17,6 +17,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
   using index_t = VbkTree::index_t;
+  using endorsement_t = typename index_t::endorsement_t;
+  using context_t = typename index_t::block_t::context_t;
   using PopForkComparator =
       PopAwareForkResolutionComparator<VbkBlock, VbkChainParams, BtcTree>;
 
@@ -47,7 +49,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   bool bootstrapWithGenesis(ValidationState& state) override;
 
   bool acceptBlock(const block_t& block,
-                   const std::vector<payloads_t>& payloads,
+                   const std::vector<context_t>& context,
                    ValidationState& state);
 
  private:
@@ -72,9 +74,10 @@ void PopStateMachine<VbkBlockTree::BtcTree,
                                                          index);
 
 template <>
-void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
-                            const typename BlockIndex<VbkBlock>::payloads_t& p,
-                            const VbkBlockTree::BtcTree& tree);
+void addContextToBlockIndex(
+    BlockIndex<VbkBlock>& index,
+    const typename BlockIndex<VbkBlock>::context_t& context,
+    const VbkBlockTree::BtcTree& tree);
 /*
 template <>
 void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,

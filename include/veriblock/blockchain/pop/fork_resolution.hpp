@@ -324,6 +324,7 @@ struct PopAwareForkResolutionComparator {
   using protected_index_t = BlockIndex<protected_block_t>;
   using protecting_index_t = typename ProtectingBlockTree::index_t;
   using protecting_block_t = typename protecting_index_t::block_t;
+  using context_t = typename protected_index_t::context_t;
   using endorsement_t = typename protected_block_t::endorsement_t;
   using protected_payloads_t = typename protected_index_t::payloads_t;
   using protected_payloads_id_t = typename protected_payloads_t::id_t;
@@ -354,11 +355,12 @@ struct PopAwareForkResolutionComparator {
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
 
-  // this function does not clear BlockIndex from the added payloads (it is
-  // doing by removePayloads). Better to use processAllPayloads() method
-  bool addAllPayloads(protected_index_t& index,
-                      const std::vector<protected_payloads_t>& payloads,
-                      ValidationState& state) {
+  // this function does not clear BlockIndex from the added context blocks and
+  // endorsements (it is doing by removeEndorsement). Better to use
+  // processAllEndorsements() method
+  bool addAllEndorsements(protected_index_t& index,
+                          const std::vector<context_t>& context,
+                          ValidationState& state) {
     if (index_ != index.pprev) {
       // set state machine to "previous state"
       bool ret = setState(*index.pprev, state);
@@ -367,10 +369,10 @@ struct PopAwareForkResolutionComparator {
     }
 
     // allocate new context in the stack
-    typename protected_index_t::context_t ctx;
+    std::vector<protecting_block_t> ctx;
     index.containingContext.push(ctx);
 
-    if (payloads.empty()) {
+    if (context.empty()) {
       if (index_ == index.pprev) {
         // we added a block which does not contain payloads and it is right
         // after our current state
@@ -384,17 +386,17 @@ struct PopAwareForkResolutionComparator {
     auto temp = tree_;
     // set initial state machine state = current index
     sm_t sm(temp, &index, protectedParams_, index_->height);
-    for (size_t i = 0, size = payloads.size(); i < size; i++) {
-      auto& p = payloads[i];
+    for (size_t i = 0, size = context.size(); i < size; i++) {
+      auto& c = context[i];
 
       // containing block must be correct (current)
-      if (p.getContainingBlock() != index.header) {
+      if (c.endorsement.containingHash != index.getHash()) {
         return state.addIndex(i).Invalid("pop-comparator-bad-containing-block");
       }
 
       // we need to add context blocks to current block index, before
       // applyContext
-      addContextToBlockIndex(index, p, sm.tree());
+      addContextToBlockIndex(index, c, sm.tree());
 
       // first, check if context is valid. if invalid, it will automatically
       // call 'removeContextFromBlockIndex'
@@ -402,9 +404,8 @@ struct PopAwareForkResolutionComparator {
         return state.addIndex(i).Invalid("pop-comparator-apply-context");
       }
 
-      // then, check if endorsement is valid
-      auto e = endorsement_t::fromContainer(p);
-      if (!checkAndAddEndorsement(index, e, temp, protectedParams_, state)) {
+      if (!checkAndAddEndorsement(
+              index, c.endorsement, temp, protectedParams_, state)) {
         return state.addIndex(i).Invalid("addAllPayloads",
                                          state.GetDebugMessage());
       }
@@ -419,27 +420,26 @@ struct PopAwareForkResolutionComparator {
     return true;
   }
 
-  void removeAllPayloads(protected_index_t& index,
-                         const std::vector<protected_payloads_t>& payloads) {
-    for (const auto& p : payloads) {
-      auto e = endorsement_t::fromContainer(p);
-      removeEndorsements(index, e);
+  void removeAllEndorsements(protected_index_t& index,
+                             const std::vector<context_t>& context) {
+    for (const auto& c : context) {
+      removeEndorsements(index, c.endorsement);
     }
 
     index.containingContext.pop();
   }
 
-  bool proceedAllPayloads(protected_index_t& index,
-                          const std::vector<protected_payloads_t>& payloads,
-                          ValidationState& state) {
-    if (!payloads.empty() && !tryValidateWithResources(
-                                 [this, &index, &payloads, &state]() -> bool {
-                                   return this->addAllPayloads(
-                                       index, payloads, state);
-                                 },
-                                 [this, &index, &payloads]() {
-                                   this->removeAllPayloads(index, payloads);
-                                 })) {
+  bool proceedAllEndorsements(protected_index_t& index,
+                              const std::vector<context_t>& context,
+                              ValidationState& state) {
+    if (!context.empty() && !tryValidateWithResources(
+                                [this, &index, &context, &state]() -> bool {
+                                  return this->addAllEndorsements(
+                                      index, context, state);
+                                },
+                                [this, &index, &context]() {
+                                  this->removeAllEndorsements(index, context);
+                                })) {
       return state.Invalid(
           "PopAwareForkResolutionComparator::proccedAllPayloads",
           state.GetDebugMessage());
