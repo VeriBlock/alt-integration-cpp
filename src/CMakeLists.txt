@@ -37,11 +37,13 @@ add_library(${LIB_NAME} ${BUILD}
         $<TARGET_OBJECTS:poprewards>
         $<TARGET_OBJECTS:pop_utils>
         $<TARGET_OBJECTS:entities>
-        $<TARGET_OBJECTS:secp256k1>
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
         )
+
+target_link_libraries(${LIB_NAME}
+        PRIVATE $<TARGET_OBJECTS:secp256k1>)
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
@@ -53,6 +55,7 @@ set_property(
         APPEND PROPERTY
         COMPATIBLE_INTERFACE_STRING MAJOR_VERSION
 )
+
 install(TARGETS ${LIB_NAME}
         EXPORT ${LIB_NAME}Config
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

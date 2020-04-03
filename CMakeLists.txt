@@ -27,7 +27,6 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
 
-
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
 option(ASAN         "Enable Address Sanitizer" OFF)
 option(TSAN         "Enable Thread Sanitizer" OFF)
