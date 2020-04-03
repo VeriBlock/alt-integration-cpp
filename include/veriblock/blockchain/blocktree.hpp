@@ -295,7 +295,7 @@ struct BlockTree {
   bool acceptBlock(const block_t& block,
                    ValidationState& state,
                    bool shouldContextuallyCheck) {
-    index_t* index;
+    index_t* index = nullptr;
     if (!validateAndAddBlock(block, state, shouldContextuallyCheck, &index)) {
       return false;
     }
