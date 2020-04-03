@@ -23,7 +23,7 @@ bool checkAndAddEndorsement(ProtectedIndex& index,
   auto minHeight = index.height >= window ? index.height - window : 0;
   Chain<ProtectedIndex> chain(minHeight, &index);
 
-  auto endorsedHeight = p.transaction.publishedBlock.height;
+  auto endorsedHeight = p.getEndorsedBlock().height;
   if (index.height - endorsedHeight > window) {
     return state.Invalid("addPayloadsToBlockIndex",
                          "expired : Endorsement expired");
@@ -36,7 +36,7 @@ bool checkAndAddEndorsement(ProtectedIndex& index,
         "no-endorsed-block : No block found on endorsed block height");
   }
 
-  if (endorsed->getHash() != p.transaction.publishedBlock.getHash()) {
+  if (endorsed->getHash() != p.getEndorsedBlock().getHash()) {
     return state.Invalid(
         "addPayloadsToBlockIndex",
         "block-differs : Endorsed VBK block is on a different chain");
@@ -78,7 +78,7 @@ void removeEndorsements(ProtectedIndex& index,
 
   // remove from 'endorsedBy'
   auto eid = endorsement_t::getId(payloads);
-  auto endorsedHeight = payloads.transaction.publishedBlock.height;
+  auto endorsedHeight = payloads.getEndorsedBlock().height;
   auto endorsed = index.getAncestor(endorsedHeight);
 
   if (endorsed) {

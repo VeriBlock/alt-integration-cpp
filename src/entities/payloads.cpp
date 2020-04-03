@@ -86,3 +86,5 @@ AltPayloads::id_t AltPayloads::getId() const {
 }
 
 AltBlock AltPayloads::getContainingBlock() const { return alt.containing; }
+
+AltBlock AltPayloads::getEndorsedBlock() const { return alt.endorsed; }

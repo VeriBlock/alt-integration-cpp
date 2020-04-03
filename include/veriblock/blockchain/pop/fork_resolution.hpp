@@ -344,7 +344,11 @@ struct PopAwareForkResolutionComparator {
       const PopAwareForkResolutionComparator& comparator) = default;
 
   PopAwareForkResolutionComparator& operator=(
-      const PopAwareForkResolutionComparator& comparator) = default;
+      const PopAwareForkResolutionComparator& comparator) {
+    this->index_ = comparator.index_;
+    this->tree_ = comparator.tree_;
+    return *this;
+  }
 
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
