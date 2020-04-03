@@ -41,15 +41,13 @@ struct AltTreeTest : public AltTree, public testing::Test {
 };
 
 TEST_F(AltTreeTest, acceptBlock_test) {
-  AltPayloads temp;
-
   AltBlock block1;
   block1.hash = {1, 2, 5};
   block1.previousBlock = altconfig.getBootstrapBlock().hash;
   block1.height = altconfig.getBootstrapBlock().height + 1;
   block1.timestamp = 0;
 
-  acceptBlock(block1, {temp}, state);
+  acceptBlock(block1, {}, state);
   std::vector<AltBlock> tips = this->getTips();
   EXPECT_TRUE(state.IsValid());
   EXPECT_TRUE(std::find(tips.begin(), tips.end(), block1) != tips.end());
@@ -60,7 +58,7 @@ TEST_F(AltTreeTest, acceptBlock_test) {
   block2.height = altconfig.getBootstrapBlock().height + 1;
   block2.timestamp = 0;
 
-  acceptBlock(block2, {temp}, state);
+  acceptBlock(block2, {}, state);
 
   tips = this->getTips();
   EXPECT_TRUE(state.IsValid());
@@ -73,7 +71,7 @@ TEST_F(AltTreeTest, acceptBlock_test) {
   block3.height = block1.height + 1;
   block3.timestamp = 0;
 
-  acceptBlock(block3, {temp}, state);
+  acceptBlock(block3, {}, state);
 
   tips = this->getTips();
   EXPECT_TRUE(state.IsValid());
@@ -87,7 +85,7 @@ TEST_F(AltTreeTest, acceptBlock_test) {
   block4.height = block2.height + 1;
   block4.timestamp = 0;
 
-  acceptBlock(block4, {temp}, state);
+  acceptBlock(block4, {}, state);
 
   tips = this->getTips();
   EXPECT_TRUE(state.IsValid());

@@ -1,7 +1,7 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/stateless_validation.hpp"
 
-using namespace altintegration;
+namespace altintegration {
 
 AltTree::index_t* AltTree::getBlockIndex(
     const std::vector<uint8_t>& hash) const {
@@ -103,12 +103,31 @@ bool AltTree::acceptBlock(const AltBlock& block,
       }
     }
   }
-  /*
+
   if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
     return state.Invalid("VbkTree::acceptBlock");
-  }*/
+  }
 
   addToChains(index);
 
   return true;
 }
+
+template <>
+bool PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
+    applyContext(const BlockIndex<AltBlock>& /*index*/,
+                 ValidationState& /*state*/) {
+  return true;
+}
+
+template <>
+void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
+    unapplyContext(const BlockIndex<AltBlock>& /*index*/) {}
+
+template <>
+void addContextToBlockIndex(
+    BlockIndex<AltBlock>& /*index*/,
+    const typename BlockIndex<AltBlock>::payloads_t& /*p*/,
+    const VbkBlockTree& /*tree*/) {}
+
+}  // namespace altintegration
