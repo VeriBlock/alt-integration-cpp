@@ -10,6 +10,7 @@ namespace altintegration {
 struct BtcBlock;
 struct VbkBlock;
 struct VTB;
+struct AltPayloads;
 
 struct VbkContext {
   std::vector<BtcBlock> btc;
@@ -19,8 +20,16 @@ struct VbkContext {
 };
 
 struct AltContext {
-  std::vector<BtcBlock> btc;
+  // corresponds to the ATV
   std::vector<VbkBlock> vbk;
+  VbkEndorsement endorsement;
+  // corresponds to the VBTs
+  std::vector<VbkContext> vbkContext;
+  // corresponds to the update context fields
+  std::vector<BtcBlock> updateContextBtc;
+  std::vector<VbkBlock> updateContextVbk;
+
+  static AltContext fromContainer(const AltPayloads& altPayloads);
 };
 
 }  // namespace altintegration

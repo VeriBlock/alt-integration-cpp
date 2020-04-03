@@ -74,11 +74,15 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Error("block-index-no-genesis");
   }
 
+  if (!cmp_.setState(*index, state)) {
+    return state.Invalid("vbk-set-state");
+  }
+
   return true;
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
-                          const std::vector<AltPayloads>&,
+                          const std::vector<context_t>& context,
                           ValidationState& state) {
   // we must know previous block
   auto* prev = getBlockIndex(block.previousBlock);
@@ -91,10 +95,9 @@ bool AltTree::acceptBlock(const AltBlock& block,
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  /*
- if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
-   return state.Invalid("VbkTree::acceptBlock");
- }*/
+  if (!cmp_.proceedAllEndorsements(*index, context, state)) {
+    return state.Invalid("VbkTree::acceptBlock");
+  }
 
   addToChains(index);
 
