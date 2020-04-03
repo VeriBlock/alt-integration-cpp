@@ -369,7 +369,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     // allocate new context in the stack
-    std::vector<protecting_block_t> ctx;
+    context_t ctx;
     index.containingContext.push(ctx);
 
     if (context.empty()) {

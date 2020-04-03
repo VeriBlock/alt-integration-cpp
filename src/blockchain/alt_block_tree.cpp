@@ -113,12 +113,60 @@ bool PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
 
 template <>
 void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
-    unapplyContext(const BlockIndex<AltBlock>& /*index*/) {}
+    unapplyContext(const BlockIndex<AltBlock>& index) {
+  // unapply in "forward" order, because result should be same, but doing this
+  // way it should be faster due to less number of calls "determineBestChain"
+  if (!index.containingContext.empty()) {
+  }
+}
 
 template <>
 void addContextToBlockIndex(
-    BlockIndex<AltBlock>& /*index*/,
-    const typename BlockIndex<AltBlock>::context_t& /*p*/,
-    const VbkBlockTree& /*tree*/) {}
+    BlockIndex<AltBlock>& index,
+    const typename BlockIndex<AltBlock>::context_t& context,
+    const VbkBlockTree& tree) {
+  if (!index.containingContext.empty()) {
+    auto& ctx = index.containingContext.top();
+
+    // step 1
+    for (const auto& b : context.vbk) {
+      if (!tree.getBlockIndex(b.getHash())) {
+        ctx.vbk.push_back(b);
+      }
+    }
+    // step 2, process VTB info
+    for (const auto& vtb_info : context.vbkContext) {
+      auto* temp = tree.getBlockIndex(std::get<0>(vtb_info).getHash());
+
+      if (!temp || temp->containingEndorsements.find(
+                       std::get<1>(vtb_info).endorsement.id) !=
+                       temp->containingEndorsements.end()) {
+        ctx.vbkContext.push_back({std::get<0>(vtb_info),
+                                  std::get<1>(vtb_info),
+                                  {/* empty vector */}});
+
+        for (const auto& b : std::get<2>(vtb_info)) {
+          if (!tree.getBlockIndex(b.getHash())) {
+            std::get<2>(*ctx.vbkContext.rbegin()).push_back(b);
+          }
+        }
+      }
+    }
+
+    // step 3, process update context blocks
+
+    for (const auto& b : context.updateContextVbk) {
+      if (!tree.getBlockIndex(b.getHash())) {
+        ctx.updateContextVbk.push_back(b);
+      }
+    }
+
+    for (const auto& b : context.updateContextBtc) {
+      if (!tree.btc().getBlockIndex(b.getHash())) {
+        ctx.updateContextBtc.push_back(b);
+      }
+    }
+  }
+}
 
 }  // namespace altintegration
