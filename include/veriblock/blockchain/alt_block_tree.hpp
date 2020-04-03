@@ -23,6 +23,7 @@ struct AltTree {
   using btc_config_t = BtcChainParams;
   using index_t = BlockIndex<AltBlock>;
   using hash_t = typename AltBlock::hash_t;
+  using context_t = typename index_t::block_t::context_t;
   using block_index_t = std::unordered_map<hash_t, std::shared_ptr<index_t>>;
   using PopForkComparator =
       PopAwareForkResolutionComparator<AltBlock, AltChainParams, VbkBlockTree>;
@@ -42,7 +43,7 @@ struct AltTree {
   bool bootstrapWithGenesis(ValidationState& state);
 
   bool acceptBlock(const AltBlock& block,
-                   const std::vector<AltPayloads>& contexVbkBlocks,
+                   const std::vector<context_t>& context,
                    ValidationState& state);
 
  protected:
