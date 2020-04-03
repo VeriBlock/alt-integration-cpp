@@ -6,7 +6,7 @@
 namespace altintegration {
 
 struct VTB;
-struct AltProof;
+struct AltPayloads;
 
 // endorsement of VBK blocks in BTC
 using BtcEndorsement = Endorsement<uint192, uint256, VTB>;
@@ -25,7 +25,7 @@ template <>
 BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c);
 
 // endorsement of ALT blocks in VBK
-using VbkEndorsement = Endorsement<std::vector<uint8_t>, uint192, AltProof>;
+using VbkEndorsement = Endorsement<std::vector<uint8_t>, uint192, AltPayloads>;
 template <>
 VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream);
 template <>
@@ -35,9 +35,9 @@ void VbkEndorsement::toVbkEncoding(WriteStream& stream) const;
 template <>
 std::vector<uint8_t> VbkEndorsement::toVbkEncoding() const;
 template <>
-VbkEndorsement VbkEndorsement ::fromContainer(const AltProof& c);
+VbkEndorsement VbkEndorsement ::fromContainer(const AltPayloads& c);
 template <>
-VbkEndorsement::id_t VbkEndorsement::getId(const AltProof& c);
+VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c);
 
 struct DummyEndorsement {
   using id_t = bool;

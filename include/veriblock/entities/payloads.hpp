@@ -98,6 +98,12 @@ struct AltPayloads {
    */
   AltBlock getContainingBlock() const;
 
+  /**
+   * Return a endorsed AltBlock from the AltProof
+   * @return endorsed block
+   */
+  AltBlock getEndorsedBlock() const;
+
   friend bool operator==(const AltPayloads& a, const AltPayloads& b) {
     // clang-format off
     return a.alt == b.alt &&

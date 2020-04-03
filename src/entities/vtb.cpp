@@ -48,3 +48,7 @@ VTB::id_t VTB::getId() const {
 }
 
 VbkBlock VTB::getContainingBlock() const { return this->containingBlock; }
+
+VbkBlock VTB::getEndorsedBlock() const {
+  return this->transaction.publishedBlock;
+}
