@@ -101,7 +101,7 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
   return tryValidateWithResources(
       [&]() -> bool {
         if (!index.containingContext.empty()) {
-          for (const auto& b : index.containingContext.top()) {
+          for (const auto& b : index.containingContext.top().btc) {
             if (!tree().acceptBlock(b, state)) {
               return state.Invalid("vbk-accept-block");
             }
@@ -118,7 +118,7 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
   if (!index.containingContext.empty()) {
-    for (const auto& b : index.containingContext.top()) {
+    for (const auto& b : index.containingContext.top().btc) {
       tree().invalidateBlockByHash(b.getHash());
     }
   }
@@ -130,21 +130,13 @@ void addContextToBlockIndex(
     const typename BlockIndex<VbkBlock>::context_t& context,
     const VbkBlockTree::BtcTree& tree) {
   if (!index.containingContext.empty()) {
-    auto& ctx = index.containingContext.top();
-    // only add blocks that are UNIQUE
-    std::unordered_set<uint256> set;
-    set.reserve(ctx.size());
-    for (auto& c : ctx) {
-      set.insert(c.getHash());
-    }
+    auto& ctx = index.containingContext.top().btc;
 
     auto add = [&](const BtcBlock& b) {
-      auto hash = b.getHash();
       // filter context: add only blocks that are unknown and not in current
       // 'ctx'
-      if (!tree.getBlockIndex(hash) && !set.count(hash)) {
+      if (!tree.getBlockIndex(b.getHash())) {
         ctx.push_back(b);
-        set.insert(hash);
       }
     };
 

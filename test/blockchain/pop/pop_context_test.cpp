@@ -119,7 +119,8 @@ TEST_F(PopContextFixture, A) {
   acceptAllVtbsFromVBKblock(vbkTip);
   auto* localB = local.getBlockIndex(vbkTip->getHash());
   if (!localB->containingContext.empty()) {
-    makeSureNoDuplicates(hashAll<BtcBlock>(localB->containingContext.top()));
+    makeSureNoDuplicates(
+        hashAll<BtcBlock>(localB->containingContext.top().btc));
   }
 
   // and now our local BTC tree must know all blocks from active chain B
@@ -135,7 +136,8 @@ TEST_F(PopContextFixture, A) {
   acceptAllVtbsFromVBKblock(vbkTip->pprev);
   auto* localA = local.getBlockIndex(vbkTip->pprev->getHash());
   if (!localA->containingContext.empty()) {
-    makeSureNoDuplicates(hashAll<BtcBlock>(localA->containingContext.top()));
+    makeSureNoDuplicates(
+        hashAll<BtcBlock>(localA->containingContext.top().btc));
   }
 
   // our local BTC is still same as remote
