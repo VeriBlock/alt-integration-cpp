@@ -78,7 +78,7 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
-                          const std::vector<AltPayloads>& payloads,
+                          const std::vector<AltPayloads>&,
                           ValidationState& state) {
   // we must know previous block
   auto* prev = getBlockIndex(block.previousBlock);
@@ -91,22 +91,10 @@ bool AltTree::acceptBlock(const AltBlock& block,
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  // do stateless validation of payloads
-  for (size_t i = 0; i < payloads.size(); ++i) {
-    if (!checkPayloads(payloads[i].alt.atv, state, vbk_config_)) {
-      return state.addIndex(i).Invalid("alt-check-payloads");
-    }
-
-    for (const auto& vtb : payloads[i].vtbs) {
-      if (!checkPayloads(vtb, state, vbk_config_, btc_config_)) {
-        return state.addIndex(i).Invalid("alt-check-payloads");
-      }
-    }
-  }
-
-  if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
-    return state.Invalid("VbkTree::acceptBlock");
-  }
+  /*
+ if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
+   return state.Invalid("VbkTree::acceptBlock");
+ }*/
 
   addToChains(index);
 
@@ -127,7 +115,7 @@ void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
 template <>
 void addContextToBlockIndex(
     BlockIndex<AltBlock>& /*index*/,
-    const typename BlockIndex<AltBlock>::payloads_t& /*p*/,
+    const typename BlockIndex<AltBlock>::context_t& /*p*/,
     const VbkBlockTree& /*tree*/) {}
 
 }  // namespace altintegration

@@ -58,8 +58,8 @@ struct PopContextFixture : public ::testing::Test {
     vbkTip = remote.mineVbkBlocks(1);
 
     // we have 2 distinct VTBs
-    ASSERT_EQ(remote.vbkpayloads.at(vbkTip->pprev->getHash()).size(), 1);
-    ASSERT_EQ(remote.vbkpayloads.at(vbkTip->getHash()).size(), 1);
+    ASSERT_EQ(remote.vbkContext.at(vbkTip->pprev->getHash()).size(), 1);
+    ASSERT_EQ(remote.vbkContext.at(vbkTip->getHash()).size(), 1);
   }
 
   BtcBlock::hash_t lastKnownLocalBtcBlock() {
@@ -109,8 +109,8 @@ TEST_F(PopContextFixture, A) {
             *remote.btc().getBestChain().tip());
 
   auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
-    auto it = remote.vbkpayloads.find(containing->getHash());
-    ASSERT_NE(it, remote.vbkpayloads.end());
+    auto it = remote.vbkContext.find(containing->getHash());
+    ASSERT_NE(it, remote.vbkContext.end());
     auto& vtbs = it->second;
     ASSERT_TRUE(local.acceptBlock(containing->header, vtbs, state));
   };
@@ -119,8 +119,7 @@ TEST_F(PopContextFixture, A) {
   acceptAllVtbsFromVBKblock(vbkTip);
   auto* localB = local.getBlockIndex(vbkTip->getHash());
   if (!localB->containingContext.empty()) {
-    makeSureNoDuplicates(
-        hashAll<BtcBlock>(localB->containingContext.top().btc));
+    makeSureNoDuplicates(hashAll<BtcBlock>(localB->containingContext.top()));
   }
 
   // and now our local BTC tree must know all blocks from active chain B
@@ -136,8 +135,7 @@ TEST_F(PopContextFixture, A) {
   acceptAllVtbsFromVBKblock(vbkTip->pprev);
   auto* localA = local.getBlockIndex(vbkTip->pprev->getHash());
   if (!localA->containingContext.empty()) {
-    makeSureNoDuplicates(
-        hashAll<BtcBlock>(localA->containingContext.top().btc));
+    makeSureNoDuplicates(hashAll<BtcBlock>(localA->containingContext.top()));
   }
 
   // our local BTC is still same as remote

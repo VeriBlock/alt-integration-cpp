@@ -44,7 +44,7 @@ class MockMiner {
  public:
   std::vector<BtcTx> btcmempool;
   std::vector<VbkPopTx> vbkmempool;
-  std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkpayloads;
+  std::unordered_map<VbkBlock::hash_t, std::vector<VbkContext>> vbkContext;
 
   // TODO: no alt tree yet
   //  VbkTx endorseAltBlock(const PublicationData& publicationData);

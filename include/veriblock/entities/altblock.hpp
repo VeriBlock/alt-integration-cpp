@@ -12,6 +12,7 @@
 namespace altintegration {
 
 struct AltPayloads;
+struct VbkBlock;
 
 struct AltBlock {
   using height_t = int32_t;
@@ -19,6 +20,7 @@ struct AltBlock {
   using payloads_t = AltPayloads;
   using endorsement_t = VbkEndorsement;
   using context_t = AltContext;
+  using protecting_block_t = VbkBlock;
 
   hash_t hash{};
   hash_t previousBlock{};

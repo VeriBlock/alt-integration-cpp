@@ -21,6 +21,7 @@ struct BtcBlock {
   using height_t = int32_t;
   using payloads_t = DummyPayloads;
   using context_t = std::false_type;
+  using protecting_block_t = std::false_type;
 
   //! noop type
   using endorsement_t = DummyEndorsement;

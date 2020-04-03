@@ -55,9 +55,9 @@ TEST(PopStateMachine, unapplyAndApply_test) {
 
   // in block 41
   auto* vbkTip1 = apm.mineVbkBlocks(*vbkTip, 1);
-  ASSERT_EQ(apm.vbkpayloads.size(), 1);
-  auto it = apm.vbkpayloads.find(vbkTip1->getHash());
-  ASSERT_NE(it, apm.vbkpayloads.end());
+  ASSERT_EQ(apm.vbkContext.size(), 1);
+  auto it = apm.vbkContext.find(vbkTip1->getHash());
+  ASSERT_NE(it, apm.vbkContext.end());
 
   // HACK: manually add missing context to VBK tip
   addContextToBlockIndex(*vbkTip1, it->second[0], btcTree);
@@ -95,9 +95,9 @@ TEST(PopStateMachine, unapplyAndApply_test) {
       apm.getBtcParams().getGenesisBlock().getHash());
 
   auto* vbkTip2 = apm.mineVbkBlocks(*vbkTip, 1);
-  ASSERT_EQ(apm.vbkpayloads.size(), 2);
-  it = apm.vbkpayloads.find(vbkTip2->getHash());
-  ASSERT_NE(it, apm.vbkpayloads.end());
+  ASSERT_EQ(apm.vbkContext.size(), 2);
+  it = apm.vbkContext.find(vbkTip2->getHash());
+  ASSERT_NE(it, apm.vbkContext.end());
 
   // HACK: manually add missing context to VBK tip
   BtcTree tempBtcTree(apm.getBtcParams());

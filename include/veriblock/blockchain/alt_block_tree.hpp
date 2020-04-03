@@ -42,7 +42,7 @@ struct AltTree {
   bool bootstrapWithGenesis(ValidationState& state);
 
   bool acceptBlock(const AltBlock& block,
-                   const std::vector<AltPayloads>& payloads,
+                   const std::vector<AltPayloads>& contexVbkBlocks,
                    ValidationState& state);
 
  protected:
@@ -71,7 +71,7 @@ void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
 
 template <>
 void addContextToBlockIndex(BlockIndex<AltBlock>& index,
-                            const typename BlockIndex<AltBlock>::payloads_t& p,
+                            const typename BlockIndex<AltBlock>::context_t& p,
                             const VbkBlockTree& tree);
 /*
 template <>

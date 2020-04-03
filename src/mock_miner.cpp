@@ -1,9 +1,9 @@
-#include "veriblock/mock_miner.hpp"
-
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
+#include "veriblock/entities/context.hpp"
 #include "veriblock/fmt.hpp"
+#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -252,13 +252,13 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
       tip, mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
 
   // map VbkPopTx -> VTB
-  std::vector<VTB> vtbs;
-  vtbs.reserve(txes.size());
+  std::vector<VbkContext> context;
+  context.reserve(txes.size());
   int32_t index = 0;
   std::transform(txes.begin(),
                  txes.end(),
-                 std::back_inserter(vtbs),
-                 [&](const VbkPopTx& tx) {
+                 std::back_inserter(context),
+                 [&](const VbkPopTx& tx) -> VbkContext {
                    VTB vtb;
                    vtb.transaction = tx;
                    vtb.merklePath.treeIndex = treeIndex;
@@ -268,15 +268,15 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                        mtree.getMerklePathLayers(hashes[index]);
                    vtb.containingBlock = containingBlock;
                    index++;
-                   return vtb;
+
+                   return VbkContext::fromContainer(vtb);
                  });
 
-  if (!tree.acceptBlock(containingBlock, vtbs, state)) {
-    throw std::domain_error(state.GetPath() + "\n" +
-                            state.GetDebugMessage());
+  if (!tree.acceptBlock(containingBlock, context, state)) {
+    throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 
-  vbkpayloads[containingBlock.getHash()] = vtbs;
+  vbkContext[containingBlock.getHash()] = context;
 
   return containingBlock;
 }
