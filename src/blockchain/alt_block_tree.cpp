@@ -106,9 +106,51 @@ bool AltTree::acceptBlock(const AltBlock& block,
 
 template <>
 bool PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
-    applyContext(const BlockIndex<AltBlock>& /*index*/,
-                 ValidationState& /*state*/) {
-  return true;
+    applyContext(const BlockIndex<AltBlock>& index, ValidationState& state) {
+  auto apply = [&]() -> bool {
+    if (!index.containingContext.empty()) {
+      const auto& ctx = index.containingContext.top();
+
+      // step 1
+      for (const auto& b : ctx.vbk) {
+        if (!tree().acceptBlock(b, {}, state)) {
+          return state.Invalid("alt-accept-block");
+        }
+      }
+
+      // step 2, process VTB info
+
+      for (const auto& vtb_info : ctx.vbkContext) {
+        if (!tree().acceptBlock(
+                std::get<0>(vtb_info), {std::get<1>(vtb_info)}, state)) {
+          return state.Invalid("alt-accept-block");
+        }
+
+        for (const auto& b : std::get<2>(vtb_info)) {
+          if (!tree().acceptBlock(b, {}, state)) {
+            return state.Invalid("alt-accept-block");
+          }
+        }
+      }
+
+      // step 3, process update context blocks
+      for (const auto& b : ctx.updateContextVbk) {
+        if (!tree().acceptBlock(b, {}, state)) {
+          return state.Invalid("alt-accept-block");
+        }
+      }
+
+      for (const auto& b : ctx.updateContextBtc) {
+        if (!tree().btc().acceptBlock(b, state)) {
+          return state.Invalid("alt-accept-block");
+        }
+      }
+    }
+
+    return true;
+  };
+
+  return tryValidateWithResources(apply, [&]() { unapplyContext(index); });
 }
 
 template <>
@@ -117,6 +159,31 @@ void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
   if (!index.containingContext.empty()) {
+    const auto& ctx = index.containingContext.top();
+
+    // step 1
+    for (const auto& b : ctx.vbk) {
+      tree().invalidateBlockByHash(b.getHash());
+    }
+
+    // step 2, process VTB info
+
+    for (const auto& vtb_info : ctx.vbkContext) {
+      tree().invalidateBlockByHash(std::get<0>(vtb_info).getHash());
+
+      for (const auto& b : std::get<2>(vtb_info)) {
+        tree().invalidateBlockByHash(b.getHash());
+      }
+    }
+
+    // step 3, process update context blocks
+    for (const auto& b : ctx.updateContextVbk) {
+      tree().invalidateBlockByHash(b.getHash());
+    }
+
+    for (const auto& b : ctx.updateContextBtc) {
+      tree().btc().invalidateBlockByHash(b.getHash());
+    }
   }
 }
 
