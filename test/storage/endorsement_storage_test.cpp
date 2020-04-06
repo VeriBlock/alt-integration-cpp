@@ -110,7 +110,9 @@ VTB getDefaultContainer() {
 }
 
 template <>
-AltProof getDefaultContainer() {
+AltPayloads getDefaultContainer() {
+  AltPayloads payloads;
+
   AltProof container;
   container.endorsed = {{1, 2, 3}, {}, 123, 4125};
   container.containing = {{
@@ -123,7 +125,9 @@ AltProof getDefaultContainer() {
                           1425};
   container.atv = ATV::fromVbkEncoding(defaultAtvEncoded);
 
-  return container;
+  payloads.alt = container;
+
+  return payloads;
 }
 
 template <>
@@ -134,7 +138,8 @@ VTB getModifiedContainer() {
 }
 
 template <>
-AltProof getModifiedContainer() {
+AltPayloads getModifiedContainer() {
+  AltPayloads payloads;
   AltProof container;
   container.endorsed = {{1, 2, 3}, {}, 123, 4125};
   container.containing = {{
@@ -148,7 +153,8 @@ AltProof getModifiedContainer() {
   container.atv = ATV::fromVbkEncoding(defaultAtvEncoded);
 
   container.atv.transaction.sourceAmount = Coin(213);
-  return container;
+  payloads.alt = container;
+  return payloads;
 }
 
 template <typename EndorsementRepository_t>

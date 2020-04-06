@@ -37,16 +37,6 @@ AltPayloads AltPayloads::fromVbkEncoding(ReadStream& stream) {
         return VTB::fromVbkEncoding(stream);
       });
 
-  p.btccontext = readArrayOf<BtcBlock>(
-      stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
-        return BtcBlock::fromVbkEncoding(stream);
-      });
-
-  p.vbkcontext = readArrayOf<VbkBlock>(
-      stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
-        return VbkBlock::fromVbkEncoding(stream);
-      });
-
   return p;
 }
 
@@ -62,16 +52,6 @@ void AltPayloads::toVbkEncoding(WriteStream& stream) const {
   for (const auto& el : vtbs) {
     el.toVbkEncoding(stream);
   }
-
-  writeSingleBEValue(stream, btccontext.size());
-  for (const auto& el : btccontext) {
-    el.toVbkEncoding(stream);
-  }
-
-  writeSingleBEValue(stream, vbkcontext.size());
-  for (const auto& el : vbkcontext) {
-    el.toVbkEncoding(stream);
-  }
 }
 
 std::vector<uint8_t> AltPayloads::toVbkEncoding() const {
@@ -84,3 +64,7 @@ AltPayloads::id_t AltPayloads::getId() const {
   auto rawBytes = toVbkEncoding();
   return sha256(rawBytes);
 }
+
+AltBlock AltPayloads::getContainingBlock() const { return alt.containing; }
+
+AltBlock AltPayloads::getEndorsedBlock() const { return alt.endorsed; }

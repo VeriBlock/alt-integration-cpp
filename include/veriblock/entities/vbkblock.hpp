@@ -24,6 +24,7 @@ struct VbkBlock {
   using payloads_t = VTB;
   using context_t = VbkContext;
   using endorsement_t = BtcEndorsement;
+  using protecting_block_t = BtcBlock;
 
   int32_t height{};
   int16_t version{};
