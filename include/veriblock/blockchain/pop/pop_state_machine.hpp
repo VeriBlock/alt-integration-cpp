@@ -25,7 +25,7 @@ struct PopStateMachine {
                   height_t startHeight = 0)
       : index_(index),
         tree_(tree),
-        protectedParams_(protectedParams),
+        protectedParams_(&protectedParams),
         startHeight_(startHeight) {}
 
   //! @invariant: atomic. Either all 'payloads' added or not at all.
@@ -102,12 +102,12 @@ struct PopStateMachine {
   const ProtectedIndex* index() const { return index_; }
   ProtectingBlockTree& tree() { return tree_; }
   const ProtectingBlockTree& tree() const { return tree_; }
-  const ProtectedChainParams& params() const { return protectedParams_; }
+  const ProtectedChainParams& params() const { return *protectedParams_; }
 
  private:
   ProtectedIndex* index_;
   ProtectingBlockTree& tree_;
-  const ProtectedChainParams& protectedParams_;
+  const ProtectedChainParams* protectedParams_;
 
   height_t startHeight_ = 0;
 };

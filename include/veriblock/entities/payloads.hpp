@@ -55,8 +55,6 @@ struct AltPayloads {
 
   AltProof alt{};
   std::vector<VTB> vtbs{};
-  std::vector<BtcBlock> btccontext{};
-  std::vector<VbkBlock> vbkcontext{};
 
   /**
    * Read VBK data from the stream and convert it to Payloads
@@ -107,9 +105,7 @@ struct AltPayloads {
   friend bool operator==(const AltPayloads& a, const AltPayloads& b) {
     // clang-format off
     return a.alt == b.alt &&
-           a.vtbs == b.vtbs &&
-           a.btccontext == b.btccontext &&
-           a.vbkcontext == b.vbkcontext;
+           a.vtbs == b.vtbs;
     // clang-format on
   }
 };

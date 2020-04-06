@@ -27,9 +27,6 @@ struct AltContext {
   // corresponds to the VBTs
   std::vector<std::tuple<VbkBlock, VbkContext, std::vector<VbkBlock>>>
       vbkContext;
-  // corresponds to the update context fields
-  std::vector<BtcBlock> updateContextBtc;
-  std::vector<VbkBlock> updateContextVbk;
 
   static AltContext fromContainer(const AltPayloads& altPayloads);
 };

@@ -132,19 +132,6 @@ bool PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
           }
         }
       }
-
-      // step 3, process update context blocks
-      for (const auto& b : ctx.updateContextVbk) {
-        if (!tree().acceptBlock(b, {}, state)) {
-          return state.Invalid("alt-accept-block");
-        }
-      }
-
-      for (const auto& b : ctx.updateContextBtc) {
-        if (!tree().btc().acceptBlock(b, state)) {
-          return state.Invalid("alt-accept-block");
-        }
-      }
     }
 
     return true;
@@ -175,15 +162,6 @@ void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
         tree().invalidateBlockByHash(b.getHash());
       }
     }
-
-    // step 3, process update context blocks
-    for (const auto& b : ctx.updateContextVbk) {
-      tree().invalidateBlockByHash(b.getHash());
-    }
-
-    for (const auto& b : ctx.updateContextBtc) {
-      tree().btc().invalidateBlockByHash(b.getHash());
-    }
   }
 }
 
@@ -206,7 +184,7 @@ void addContextToBlockIndex(
       auto* temp = tree.getBlockIndex(std::get<0>(vtb_info).getHash());
 
       if (!temp || temp->containingEndorsements.find(
-                       std::get<1>(vtb_info).endorsement.id) !=
+                       std::get<1>(vtb_info).endorsement.id) ==
                        temp->containingEndorsements.end()) {
         ctx.vbkContext.push_back({std::get<0>(vtb_info),
                                   std::get<1>(vtb_info),
@@ -217,20 +195,6 @@ void addContextToBlockIndex(
             std::get<2>(*ctx.vbkContext.rbegin()).push_back(b);
           }
         }
-      }
-    }
-
-    // step 3, process update context blocks
-
-    for (const auto& b : context.updateContextVbk) {
-      if (!tree.getBlockIndex(b.getHash())) {
-        ctx.updateContextVbk.push_back(b);
-      }
-    }
-
-    for (const auto& b : context.updateContextBtc) {
-      if (!tree.btc().getBlockIndex(b.getHash())) {
-        ctx.updateContextBtc.push_back(b);
       }
     }
   }
