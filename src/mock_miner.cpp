@@ -61,8 +61,6 @@ AltPayloads MockMiner::generateAltPayloads(
     const AltBlock& containing,
     const AltBlock& endorsed,
     const VbkBlock::hash_t& lastKnownVbkBlockHash,
-    const BtcBlock::hash_t& lastKnownBtcBlockHash,
-    uint32_t number_of_vtbs,
     ValidationState& state) {
   AltPayloads altPayload;
 
@@ -103,23 +101,6 @@ AltPayloads MockMiner::generateAltPayloads(
   altPayload.alt.atv = atv;
   altPayload.alt.containing = containing;
   altPayload.alt.endorsed = endorsed;
-
-  auto* endorsedVbkBlock = vbktree.getBestChain().tip();
-  assert(containingBlock.getHash() == endorsedVbkBlock->getHash());
-
-  vbkmempool.clear();
-  for (uint32_t i = 0; i < number_of_vtbs; ++i) {
-    auto btctx = createBtcTxEndorsingVbkBlock(endorsedVbkBlock->header);
-    auto btccontaining = mineBtcBlocks(1);
-    auto vbkpoptx = createVbkPopTxEndorsingVbkBlock(btccontaining->header,
-                                                    btctx,
-                                                    endorsedVbkBlock->header,
-                                                    lastKnownBtcBlockHash);
-    tip = mineVbkBlocks(1);
-    assert(tip->getHash() == vbktree.getBestChain().tip()->getHash());
-    assert(vbkPayloads[tip->getHash()].size() == 1);
-    altPayload.vtbs.push_back(vbkPayloads[tip->getHash()][0]);
-  }
 
   return altPayload;
 }

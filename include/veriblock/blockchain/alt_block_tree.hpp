@@ -12,7 +12,9 @@
 #include "veriblock/blockchain/pop/fork_resolution.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/entities/altblock.hpp"
+#include "veriblock/entities/context.hpp"
 #include "veriblock/entities/payloads.hpp"
+#include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/validation_state.hpp"
 
 namespace altintegration {
@@ -45,6 +47,9 @@ struct AltTree {
   bool acceptBlock(const AltBlock& block,
                    const std::vector<context_t>& context,
                    ValidationState& state);
+
+  VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
+  const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
 
  protected:
   std::vector<index_t*> chainTips_;

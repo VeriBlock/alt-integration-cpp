@@ -121,15 +121,15 @@ bool PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
       // step 2, process VTB info
 
       for (const auto& vtb_info : ctx.vbkContext) {
-        if (!tree().acceptBlock(
-                std::get<0>(vtb_info), {std::get<1>(vtb_info)}, state)) {
-          return state.Invalid("alt-accept-block");
-        }
-
-        for (const auto& b : std::get<2>(vtb_info)) {
+        for (const auto& b : vtb_info.contextVbkBlocks) {
           if (!tree().acceptBlock(b, {}, state)) {
             return state.Invalid("alt-accept-block");
           }
+        }
+
+        if (!tree().acceptBlock(
+                vtb_info.containing, {vtb_info.context}, state)) {
+          return state.Invalid("alt-accept-block");
         }
       }
     }
@@ -156,9 +156,9 @@ void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
     // step 2, process VTB info
 
     for (const auto& vtb_info : ctx.vbkContext) {
-      tree().invalidateBlockByHash(std::get<0>(vtb_info).getHash());
+      tree().invalidateBlockByHash(vtb_info.containing.getHash());
 
-      for (const auto& b : std::get<2>(vtb_info)) {
+      for (const auto& b : vtb_info.contextVbkBlocks) {
         tree().invalidateBlockByHash(b.getHash());
       }
     }
@@ -181,18 +181,17 @@ void addContextToBlockIndex(
     }
     // step 2, process VTB info
     for (const auto& vtb_info : context.vbkContext) {
-      auto* temp = tree.getBlockIndex(std::get<0>(vtb_info).getHash());
+      auto* temp = tree.getBlockIndex(vtb_info.containing.getHash());
 
-      if (!temp || temp->containingEndorsements.find(
-                       std::get<1>(vtb_info).endorsement.id) ==
-                       temp->containingEndorsements.end()) {
-        ctx.vbkContext.push_back({std::get<0>(vtb_info),
-                                  std::get<1>(vtb_info),
-                                  {/* empty vector */}});
+      if (!temp ||
+          temp->containingEndorsements.find(vtb_info.context.endorsement.id) ==
+              temp->containingEndorsements.end()) {
+        ctx.vbkContext.push_back(
+            {vtb_info.containing, vtb_info.context, {/* empty vector */}});
 
-        for (const auto& b : std::get<2>(vtb_info)) {
+        for (const auto& b : vtb_info.contextVbkBlocks) {
           if (!tree.getBlockIndex(b.getHash())) {
-            std::get<2>(*ctx.vbkContext.rbegin()).push_back(b);
+            ctx.vbkContext.rbegin()->contextVbkBlocks.push_back(b);
           }
         }
       }

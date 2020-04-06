@@ -1,15 +1,14 @@
 #ifndef ALTINTEGRATION_CONTEXT_HPP
 #define ALTINTEGRATION_CONTEXT_HPP
 
-#include <tuple>
 #include <vector>
 
 #include "endorsements.hpp"
+#include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/vbkblock.hpp"
 
 namespace altintegration {
 
-struct BtcBlock;
-struct VbkBlock;
 struct VTB;
 struct AltPayloads;
 
@@ -20,13 +19,18 @@ struct VbkContext {
   static VbkContext fromContainer(const VTB& vtb);
 };
 
+struct VbkPayloads {
+  VbkBlock containing;
+  VbkContext context;
+  std::vector<VbkBlock> contextVbkBlocks;
+};
+
 struct AltContext {
   // corresponds to the ATV
   std::vector<VbkBlock> vbk;
   VbkEndorsement endorsement;
   // corresponds to the VBTs
-  std::vector<std::tuple<VbkBlock, VbkContext, std::vector<VbkBlock>>>
-      vbkContext;
+  std::vector<VbkPayloads> vbkContext;
 
   static AltContext fromContainer(const AltPayloads& altPayloads);
 };

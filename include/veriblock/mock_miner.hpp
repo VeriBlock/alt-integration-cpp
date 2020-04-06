@@ -52,8 +52,6 @@ class MockMiner {
                                   const AltBlock& containing,
                                   const AltBlock& endorsed,
                                   const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                                  const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                                  uint32_t number_of_vtbs,
                                   ValidationState& state);
 
   BlockIndex<BtcBlock>* mineBtcBlocks(const BlockIndex<BtcBlock>& tip,

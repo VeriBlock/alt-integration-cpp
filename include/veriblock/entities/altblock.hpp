@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/entities/context.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/serde.hpp"
 
@@ -13,6 +12,7 @@ namespace altintegration {
 
 struct AltPayloads;
 struct VbkBlock;
+struct AltContext;
 
 struct AltBlock {
   using height_t = int32_t;

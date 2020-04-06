@@ -416,6 +416,7 @@ struct PopAwareForkResolutionComparator {
 
     // update current state, since it is valid
     tree_ = std::move(temp);
+    index_ = &index;
 
     return true;
   }

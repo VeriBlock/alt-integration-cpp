@@ -9,6 +9,7 @@
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/context.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/fmt.hpp"
