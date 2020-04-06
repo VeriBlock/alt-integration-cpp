@@ -64,7 +64,7 @@ AltPayloads MockMiner::generateAltPayloads(
     const BtcBlock::hash_t& lastKnownBtcBlockHash,
     uint32_t number_of_vtbs,
     ValidationState& state) {
-  AltPayloads altPayloads;
+  AltPayloads altPayload;
 
   // build merkle tree
   auto hashes = hashAll<VbkTx>({transaction});
@@ -100,9 +100,9 @@ AltPayloads MockMiner::generateAltPayloads(
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 
-  altPayloads.alt.atv = atv;
-  altPayloads.alt.containing = containing;
-  altPayloads.alt.endorsed = endorsed;
+  altPayload.alt.atv = atv;
+  altPayload.alt.containing = containing;
+  altPayload.alt.endorsed = endorsed;
 
   auto* endorsedVbkBlock = vbktree.getBestChain().tip();
   assert(containingBlock.getHash() == endorsedVbkBlock->getHash());
@@ -118,10 +118,10 @@ AltPayloads MockMiner::generateAltPayloads(
     tip = mineVbkBlocks(1);
     assert(tip->getHash() == vbktree.getBestChain().tip()->getHash());
     assert(vbkPayloads[tip->getHash()].size() == 1);
-    altPayloads.vtbs.push_back(vbkPayloads[tip->getHash()][0]);
+    altPayload.vtbs.push_back(vbkPayloads[tip->getHash()][0]);
   }
 
-  return altPayloads;
+  return altPayload;
 }
 
 BtcTx MockMiner::createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock) {

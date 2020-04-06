@@ -11,3 +11,5 @@ using namespace altintegration;
 struct AltTreeTestFixture : public ::testing::Test {
   MockMiner popminer;
 };
+
+TEST_F(AltTreeTestFixture, basic_test) {}
