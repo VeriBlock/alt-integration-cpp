@@ -12,6 +12,7 @@
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/merkle_tree.hpp"
+#include "veriblock/entities/payloads.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
@@ -47,11 +48,14 @@ class MockMiner {
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkPayloads;
   std::unordered_map<AltBlock::hash_t, std::vector<AltPayloads>> altPayloads;
 
-  // TODO: no alt tree yet
-  //  VbkTx endorseAltBlock(const PublicationData& publicationData);
-  //  ATV generateAndApplyATV(const PublicationData& publicationData,
-  //                          const VbkBlock::hash_t& lastKnownVbkBlockHash,
-  //                          ValidationState& state);
+  VbkTx endorseAltBlock(const PublicationData& publicationData);
+  AltPayloads generateAltPayloads(const VbkTx& transaction,
+                                  const AltBlock& containing,
+                                  const AltBlock& endorsed,
+                                  const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                                  const BtcBlock::hash_t& lastKnownBtcBlockHash,
+                                  uint32_t number_of_vtbs,
+                                  ValidationState& state);
 
   BlockIndex<BtcBlock>* mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
                                       size_t amount);
@@ -90,9 +94,6 @@ class MockMiner {
                      VbkBlockTree& tree,
                      const std::vector<VbkPopTx>& txes,
                      ValidationState& state);
-
-  //  void getGeneratedVTBs(const BlockIndex<VbkBlock>& containingBlock,
-  //                        std::vector<VTB>& vtbs);
 
   btc_block_tree& btc() { return vbktree.btc(); }
   vbk_block_tree& vbk() { return vbktree; }
