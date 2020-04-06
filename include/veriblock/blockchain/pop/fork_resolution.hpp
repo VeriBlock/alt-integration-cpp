@@ -324,6 +324,7 @@ struct PopAwareForkResolutionComparator {
   using protected_index_t = BlockIndex<protected_block_t>;
   using protecting_index_t = typename ProtectingBlockTree::index_t;
   using protecting_block_t = typename protecting_index_t::block_t;
+  using context_t = typename protected_index_t::context_t;
   using endorsement_t = typename protected_block_t::endorsement_t;
   using protected_payloads_t = typename protected_index_t::payloads_t;
   using protected_payloads_id_t = typename protected_payloads_t::id_t;
@@ -331,23 +332,35 @@ struct PopAwareForkResolutionComparator {
                                BlockIndex<protected_block_t>,
                                protected_params_t>;
 
-  PopAwareForkResolutionComparator(const protecting_params_t& protectingParams,
+  PopAwareForkResolutionComparator(ProtectingBlockTree tree,
+                                   const protecting_params_t& protectingParams,
                                    const protected_params_t& protectedParams)
-      : tree_(protectingParams),
-        protectedParams_(protectedParams),
-        protectingParams_(protectingParams) {
+      : tree_(std::move(tree)),
+        protectedParams_(&protectedParams),
+        protectingParams_(&protectingParams) {
     assert(protectedParams.getKeystoneInterval() > 0);
+  }
+
+  PopAwareForkResolutionComparator(
+      const PopAwareForkResolutionComparator& comparator) = default;
+
+  PopAwareForkResolutionComparator& operator=(
+      const PopAwareForkResolutionComparator& comparator) {
+    this->index_ = comparator.index_;
+    this->tree_ = comparator.tree_;
+    return *this;
   }
 
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
 
-  // this function does not clear BlockIndex from the added payloads (it is
-  // doing by removePayloads). Better to use processAllPayloads() method
-  bool addAllPayloads(protected_index_t& index,
-                      const std::vector<protected_payloads_t>& payloads,
-                      ValidationState& state) {
+  // this function does not clear BlockIndex from the added context blocks and
+  // endorsements (it is doing by removeEndorsement). Better to use
+  // processAllEndorsements() method
+  bool addAllEndorsements(protected_index_t& index,
+                          const std::vector<context_t>& context,
+                          ValidationState& state) {
     if (index_ != index.pprev) {
       // set state machine to "previous state"
       bool ret = setState(*index.pprev, state);
@@ -355,7 +368,11 @@ struct PopAwareForkResolutionComparator {
       (void)ret;
     }
 
-    if (payloads.empty()) {
+    // allocate new context in the stack
+    context_t ctx;
+    index.containingContext.push(ctx);
+
+    if (context.empty()) {
       if (index_ == index.pprev) {
         // we added a block which does not contain payloads and it is right
         // after our current state
@@ -368,18 +385,18 @@ struct PopAwareForkResolutionComparator {
 
     auto temp = tree_;
     // set initial state machine state = current index
-    sm_t sm(temp, &index, protectedParams_, index_->height);
-    for (size_t i = 0, size = payloads.size(); i < size; i++) {
-      auto& p = payloads[i];
+    sm_t sm(temp, &index, *protectedParams_, index_->height);
+    for (size_t i = 0, size = context.size(); i < size; i++) {
+      auto& c = context[i];
 
       // containing block must be correct (current)
-      if (p.containingBlock != index.header) {
+      if (c.endorsement.containingHash != index.getHash()) {
         return state.addIndex(i).Invalid("pop-comparator-bad-containing-block");
       }
 
       // we need to add context blocks to current block index, before
       // applyContext
-      addContextToBlockIndex(index, p, sm.tree());
+      addContextToBlockIndex(index, c, sm.tree());
 
       // first, check if context is valid. if invalid, it will automatically
       // call 'removeContextFromBlockIndex'
@@ -387,10 +404,10 @@ struct PopAwareForkResolutionComparator {
         return state.addIndex(i).Invalid("pop-comparator-apply-context");
       }
 
-      // then, check if endorsement is valid
-      if (!checkAndAddEndorsement(index, p, temp, protectedParams_, state)) {
-        return state.addIndex(i).Invalid("addAllPayloads",
-                                         state.GetDebugMessage());
+      if (!checkAndAddEndorsement(
+              index, c.endorsement, temp, *protectedParams_, state)) {
+        return state.addIndex(i).Invalid(
+            "pop-comparator-check-add-endorsement");
       }
     }
 
@@ -403,27 +420,27 @@ struct PopAwareForkResolutionComparator {
     return true;
   }
 
-  void removeAllPayloads(protected_index_t& index,
-                         const std::vector<protected_payloads_t>& payloads) {
-    for (const auto& p : payloads) {
-      removePayloads(index, p);
+  void removeAllEndorsements(protected_index_t& index,
+                             const std::vector<context_t>& context) {
+    for (const auto& c : context) {
+      removeEndorsements(index, c.endorsement);
     }
+
+    index.containingContext.pop();
   }
 
-  bool proceedAllPayloads(protected_index_t& index,
-                          const std::vector<protected_payloads_t>& payloads,
-                          ValidationState& state) {
-    if (!payloads.empty() && !tryValidateWithResources(
-                                 [this, &index, &payloads, &state]() -> bool {
-                                   return this->addAllPayloads(
-                                       index, payloads, state);
-                                 },
-                                 [this, &index, &payloads]() {
-                                   this->removeAllPayloads(index, payloads);
-                                 })) {
-      return state.Invalid(
-          "PopAwareForkResolutionComparator::proccedAllPayloads",
-          state.GetDebugMessage());
+  bool proceedAllEndorsements(protected_index_t& index,
+                              const std::vector<context_t>& context,
+                              ValidationState& state) {
+    if (!context.empty() && !tryValidateWithResources(
+                                [this, &index, &context, &state]() -> bool {
+                                  return this->addAllEndorsements(
+                                      index, context, state);
+                                },
+                                [this, &index, &context]() {
+                                  this->removeAllEndorsements(index, context);
+                                })) {
+      return state.Invalid("pop-comparator-add-all-endorsements");
     }
 
     return true;
@@ -443,7 +460,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     auto temp = tree_;
-    sm_t sm(temp, index_, protectedParams_);
+    sm_t sm(temp, index_, *protectedParams_);
     if (!sm.unapplyAndApply(index, state)) {
       return state.Invalid("pop-comparator-unapply-apply");
     }
@@ -460,7 +477,7 @@ struct PopAwareForkResolutionComparator {
     assert(chainA.first() != nullptr && chainA.first() == chainB.first());
     // first block is a keystone
     assert(isKeystone(chainA.first()->height,
-                      protectedParams_.getKeystoneInterval()));
+                      protectedParams_->getKeystoneInterval()));
 
     ValidationState state;
 
@@ -468,7 +485,7 @@ struct PopAwareForkResolutionComparator {
 
     // make a tree copy
     auto temp = tree_;
-    sm_t sm(temp, index_, protectedParams_, minHeight);
+    sm_t sm(temp, index_, *protectedParams_, minHeight);
     // try set current state to chain A
     if (!sm.unapplyAndApply(*chainA.tip(), state)) {
       // failed - try set state to chain B
@@ -507,25 +524,25 @@ struct PopAwareForkResolutionComparator {
         internal::getKeystoneContext<protecting_block_t, protecting_params_t>;
 
     /// filter chainA
-    auto pkcChain1 = gpkc(chainA, temp, protectedParams_);
+    auto pkcChain1 = gpkc(chainA, temp, *protectedParams_);
     auto kcChain1 = gkc(pkcChain1, temp);
 
     /// filter chainB
-    auto pkcChain2 = gpkc(chainB, temp, protectedParams_);
+    auto pkcChain2 = gpkc(chainB, temp, *protectedParams_);
     auto kcChain2 = gkc(pkcChain2, temp);
 
     // do not update current tree, just abandon 'temp' tree
 
     return internal::comparePopScoreImpl<protected_params_t>(
-        kcChain1, kcChain2, protectedParams_);
+        kcChain1, kcChain2, *protectedParams_);
   }
 
  private:
   ProtectingBlockTree tree_;
   protected_index_t* index_ = nullptr;
 
-  const protected_params_t& protectedParams_;
-  const protecting_params_t& protectingParams_;
+  const protected_params_t* protectedParams_;
+  const protecting_params_t* protectingParams_;
 };
 
 }  // namespace altintegration

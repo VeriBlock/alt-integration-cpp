@@ -1,6 +1,7 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/stateless_validation.hpp"
 
-using namespace altintegration;
+namespace altintegration {
 
 AltTree::index_t* AltTree::getBlockIndex(
     const std::vector<uint8_t>& hash) const {
@@ -46,7 +47,7 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
 void AltTree::addToChains(index_t* index) {
   assert(index);
 
-  for (auto & chainTip : chainTips_) {
+  for (auto& chainTip : chainTips_) {
     if (chainTip == index->pprev) {
       chainTip = index;
       return;
@@ -61,7 +62,7 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Error("already bootstrapped");
   }
 
-  auto block = config_.getBootstrapBlock();
+  auto block = alt_config_.getBootstrapBlock();
   auto* index = insertBlockHeader(block);
 
   assert(index != nullptr &&
@@ -73,11 +74,15 @@ bool AltTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Error("block-index-no-genesis");
   }
 
+  if (!cmp_.setState(*index, state)) {
+    return state.Invalid("vbk-set-state");
+  }
+
   return true;
 }
 
 bool AltTree::acceptBlock(const AltBlock& block,
-                          const AltPayloads&,
+                          const std::vector<context_t>& context,
                           ValidationState& state) {
   // we must know previous block
   auto* prev = getBlockIndex(block.previousBlock);
@@ -90,19 +95,109 @@ bool AltTree::acceptBlock(const AltBlock& block,
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
+  if (!cmp_.proceedAllEndorsements(*index, context, state)) {
+    return state.Invalid("VbkTree::acceptBlock");
+  }
+
   addToChains(index);
 
   return true;
 }
 
-bool AltTree::acceptBlock(const AltBlock& block,
-                          const std::vector<AltPayloads>& payloads,
-                          ValidationState& state) {
-  for (const auto& p : payloads) {
-    if (!acceptBlock(block, p, state)) {
-      return false;
+template <>
+bool PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
+    applyContext(const BlockIndex<AltBlock>& index, ValidationState& state) {
+  auto apply = [&]() -> bool {
+    if (!index.containingContext.empty()) {
+      const auto& ctx = index.containingContext.top();
+
+      // step 1
+      for (const auto& b : ctx.vbk) {
+        if (!tree().acceptBlock(b, {}, state)) {
+          return state.Invalid("alt-accept-block");
+        }
+      }
+
+      // step 2, process VTB info
+
+      for (const auto& vtb_info : ctx.vbkContext) {
+        if (!tree().acceptBlock(
+                std::get<0>(vtb_info), {std::get<1>(vtb_info)}, state)) {
+          return state.Invalid("alt-accept-block");
+        }
+
+        for (const auto& b : std::get<2>(vtb_info)) {
+          if (!tree().acceptBlock(b, {}, state)) {
+            return state.Invalid("alt-accept-block");
+          }
+        }
+      }
+    }
+
+    return true;
+  };
+
+  return tryValidateWithResources(apply, [&]() { unapplyContext(index); });
+}
+
+template <>
+void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
+    unapplyContext(const BlockIndex<AltBlock>& index) {
+  // unapply in "forward" order, because result should be same, but doing this
+  // way it should be faster due to less number of calls "determineBestChain"
+  if (!index.containingContext.empty()) {
+    const auto& ctx = index.containingContext.top();
+
+    // step 1
+    for (const auto& b : ctx.vbk) {
+      tree().invalidateBlockByHash(b.getHash());
+    }
+
+    // step 2, process VTB info
+
+    for (const auto& vtb_info : ctx.vbkContext) {
+      tree().invalidateBlockByHash(std::get<0>(vtb_info).getHash());
+
+      for (const auto& b : std::get<2>(vtb_info)) {
+        tree().invalidateBlockByHash(b.getHash());
+      }
     }
   }
-
-  return true;
 }
+
+template <>
+void addContextToBlockIndex(
+    BlockIndex<AltBlock>& index,
+    const typename BlockIndex<AltBlock>::context_t& context,
+    const VbkBlockTree& tree) {
+  if (!index.containingContext.empty()) {
+    auto& ctx = index.containingContext.top();
+
+    // step 1
+    for (const auto& b : context.vbk) {
+      if (!tree.getBlockIndex(b.getHash())) {
+        ctx.vbk.push_back(b);
+      }
+    }
+    // step 2, process VTB info
+    for (const auto& vtb_info : context.vbkContext) {
+      auto* temp = tree.getBlockIndex(std::get<0>(vtb_info).getHash());
+
+      if (!temp || temp->containingEndorsements.find(
+                       std::get<1>(vtb_info).endorsement.id) ==
+                       temp->containingEndorsements.end()) {
+        ctx.vbkContext.push_back({std::get<0>(vtb_info),
+                                  std::get<1>(vtb_info),
+                                  {/* empty vector */}});
+
+        for (const auto& b : std::get<2>(vtb_info)) {
+          if (!tree.getBlockIndex(b.getHash())) {
+            std::get<2>(*ctx.vbkContext.rbegin()).push_back(b);
+          }
+        }
+      }
+    }
+  }
+}
+
+}  // namespace altintegration

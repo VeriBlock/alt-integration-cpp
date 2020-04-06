@@ -76,7 +76,7 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 bool VbkBlockTree::acceptBlock(const VbkBlock& block,
-                               const std::vector<payloads_t>& payloads,
+                               const std::vector<context_t>& context,
                                ValidationState& state) {
   index_t* index = nullptr;
   // first, validate and create a block
@@ -86,15 +86,8 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
 
   assert(index != nullptr);
 
-  // second, do stateless validation of payloads
-  for (const auto& p : payloads) {
-    if (!checkPayloads(p, state, getParams(), btc().getParams())) {
-      return state.Invalid("vbk-check-payloads");
-    }
-  }
-
-  if (!cmp_.proceedAllPayloads(*index, payloads, state)) {
-    return state.Invalid("VbkTree::acceptBlock");
+  if (!cmp_.proceedAllEndorsements(*index, context, state)) {
+    return state.Invalid("vbk-procedd-all-endorsements-block");
   }
 
   determineBestChain(activeChain_, *index);
@@ -107,9 +100,11 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
     const BlockIndex<VbkBlock>& index, ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
-        for (const auto& b : index.containingContext.btc) {
-          if (!tree().acceptBlock(b, state)) {
-            return state.Invalid("vbk-accept-block");
+        if (!index.containingContext.empty()) {
+          for (const auto& b : index.containingContext.top().btc) {
+            if (!tree().acceptBlock(b, state)) {
+              return state.Invalid("vbk-accept-block");
+            }
           }
         }
         return true;
@@ -122,44 +117,39 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
     const BlockIndex<VbkBlock>& index) {
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
-
-  for (const auto& b : index.containingContext.btc) {
-    tree().invalidateBlockByHash(b.getHash());
+  if (!index.containingContext.empty()) {
+    for (const auto& b : index.containingContext.top().btc) {
+      tree().invalidateBlockByHash(b.getHash());
+    }
   }
 }
 
 template <>
-void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
-                            const typename BlockIndex<VbkBlock>::payloads_t& p,
-                            const VbkBlockTree::BtcTree& tree) {
-  auto& ctx = index.containingContext.btc;
-  // only add blocks that are UNIQUE
-  std::unordered_set<uint256> set;
-  set.reserve(ctx.size());
-  for (auto& c : ctx) {
-    set.insert(c.getHash());
-  }
+void addContextToBlockIndex(
+    BlockIndex<VbkBlock>& index,
+    const typename BlockIndex<VbkBlock>::context_t& context,
+    const VbkBlockTree::BtcTree& tree) {
+  if (!index.containingContext.empty()) {
+    auto& ctx = index.containingContext.top().btc;
 
-  auto add = [&](const BtcBlock& b) {
-    auto hash = b.getHash();
-    // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!tree.getBlockIndex(hash) /*&& !set.count(hash)*/) {
-      ctx.push_back(b);
-      set.insert(hash);
+    auto add = [&](const BtcBlock& b) {
+      // filter context: add only blocks that are unknown and not in current
+      // 'ctx'
+      if (!tree.getBlockIndex(b.getHash())) {
+        ctx.push_back(b);
+      }
+    };
+
+    for (const auto& b : context.btc) {
+      add(b);
     }
-  };
-
-  for (const auto& b : p.transaction.blockOfProofContext) {
-    add(b);
   }
-
-  add(p.transaction.blockOfProof);
 }
-
+/*
 template <>
 void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
                                  const BlockIndex<VbkBlock>::payloads_t& p) {
-  auto& ctx = index.containingContext.btc;
+  auto& ctx = index.containingContext.top().btc;
   auto end = ctx.end();
   auto remove = [&](const BtcBlock& b) {
     end = std::remove(ctx.begin(), end, b);
@@ -174,6 +164,6 @@ void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
   remove(p.transaction.blockOfProof);
 
   ctx.erase(end, ctx.end());
-}
+}*/
 
 }  // namespace altintegration

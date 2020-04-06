@@ -174,7 +174,8 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   ASSERT_EQ(popminer.vbkmempool.size(), 5);
 
   // corrupt one of the endorsement
-  popminer.vbkmempool[0].signature = {1, 2, 3};
+  std::vector<uint8_t> new_hash = {1, 2, 3};
+  popminer.vbkmempool[0].blockOfProof.previousBlock = uint256(new_hash);
 
   EXPECT_THROW(popminer.mineVbkBlocks(1), std::domain_error);
 
