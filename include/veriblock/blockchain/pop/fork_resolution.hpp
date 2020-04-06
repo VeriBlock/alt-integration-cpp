@@ -406,8 +406,8 @@ struct PopAwareForkResolutionComparator {
 
       if (!checkAndAddEndorsement(
               index, c.endorsement, temp, *protectedParams_, state)) {
-        return state.addIndex(i).Invalid("addAllPayloads",
-                                         state.GetDebugMessage());
+        return state.addIndex(i).Invalid(
+            "pop-comparator-check-add-endorsement");
       }
     }
 
@@ -440,9 +440,7 @@ struct PopAwareForkResolutionComparator {
                                 [this, &index, &context]() {
                                   this->removeAllEndorsements(index, context);
                                 })) {
-      return state.Invalid(
-          "PopAwareForkResolutionComparator::proccedAllPayloads",
-          state.GetDebugMessage());
+      return state.Invalid("pop-comparator-add-all-endorsements");
     }
 
     return true;
