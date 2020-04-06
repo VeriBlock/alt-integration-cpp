@@ -336,8 +336,8 @@ struct PopAwareForkResolutionComparator {
                                    const protecting_params_t& protectingParams,
                                    const protected_params_t& protectedParams)
       : tree_(std::move(tree)),
-        protectedParams_(protectedParams),
-        protectingParams_(protectingParams) {
+        protectedParams_(&protectedParams),
+        protectingParams_(&protectingParams) {
     assert(protectedParams.getKeystoneInterval() > 0);
   }
 
@@ -385,7 +385,7 @@ struct PopAwareForkResolutionComparator {
 
     auto temp = tree_;
     // set initial state machine state = current index
-    sm_t sm(temp, &index, protectedParams_, index_->height);
+    sm_t sm(temp, &index, *protectedParams_, index_->height);
     for (size_t i = 0, size = context.size(); i < size; i++) {
       auto& c = context[i];
 
@@ -405,7 +405,7 @@ struct PopAwareForkResolutionComparator {
       }
 
       if (!checkAndAddEndorsement(
-              index, c.endorsement, temp, protectedParams_, state)) {
+              index, c.endorsement, temp, *protectedParams_, state)) {
         return state.addIndex(i).Invalid("addAllPayloads",
                                          state.GetDebugMessage());
       }
@@ -462,7 +462,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     auto temp = tree_;
-    sm_t sm(temp, index_, protectedParams_);
+    sm_t sm(temp, index_, *protectedParams_);
     if (!sm.unapplyAndApply(index, state)) {
       return state.Invalid("pop-comparator-unapply-apply");
     }
@@ -479,7 +479,7 @@ struct PopAwareForkResolutionComparator {
     assert(chainA.first() != nullptr && chainA.first() == chainB.first());
     // first block is a keystone
     assert(isKeystone(chainA.first()->height,
-                      protectedParams_.getKeystoneInterval()));
+                      protectedParams_->getKeystoneInterval()));
 
     ValidationState state;
 
@@ -487,7 +487,7 @@ struct PopAwareForkResolutionComparator {
 
     // make a tree copy
     auto temp = tree_;
-    sm_t sm(temp, index_, protectedParams_, minHeight);
+    sm_t sm(temp, index_, *protectedParams_, minHeight);
     // try set current state to chain A
     if (!sm.unapplyAndApply(*chainA.tip(), state)) {
       // failed - try set state to chain B
@@ -526,25 +526,25 @@ struct PopAwareForkResolutionComparator {
         internal::getKeystoneContext<protecting_block_t, protecting_params_t>;
 
     /// filter chainA
-    auto pkcChain1 = gpkc(chainA, temp, protectedParams_);
+    auto pkcChain1 = gpkc(chainA, temp, *protectedParams_);
     auto kcChain1 = gkc(pkcChain1, temp);
 
     /// filter chainB
-    auto pkcChain2 = gpkc(chainB, temp, protectedParams_);
+    auto pkcChain2 = gpkc(chainB, temp, *protectedParams_);
     auto kcChain2 = gkc(pkcChain2, temp);
 
     // do not update current tree, just abandon 'temp' tree
 
     return internal::comparePopScoreImpl<protected_params_t>(
-        kcChain1, kcChain2, protectedParams_);
+        kcChain1, kcChain2, *protectedParams_);
   }
 
  private:
   ProtectingBlockTree tree_;
   protected_index_t* index_ = nullptr;
 
-  const protected_params_t& protectedParams_;
-  const protecting_params_t& protectingParams_;
+  const protected_params_t* protectedParams_;
+  const protecting_params_t* protectingParams_;
 };
 
 }  // namespace altintegration

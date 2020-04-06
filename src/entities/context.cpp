@@ -25,9 +25,6 @@ AltContext AltContext::fromContainer(const AltPayloads& altPayloads) {
                              altPayloads.vtbs[i].context};
   }
 
-  context.updateContextVbk = altPayloads.vbkcontext;
-  context.updateContextBtc = altPayloads.btccontext;
-
   return context;
 }  // namespace altintegration
 }  // namespace altintegration

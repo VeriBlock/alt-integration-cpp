@@ -58,8 +58,8 @@ struct PopContextFixture : public ::testing::Test {
     vbkTip = remote.mineVbkBlocks(1);
 
     // we have 2 distinct VTBs
-    ASSERT_EQ(remote.vbkContext.at(vbkTip->pprev->getHash()).size(), 1);
-    ASSERT_EQ(remote.vbkContext.at(vbkTip->getHash()).size(), 1);
+    ASSERT_EQ(remote.vbkPayloads.at(vbkTip->pprev->getHash()).size(), 1);
+    ASSERT_EQ(remote.vbkPayloads.at(vbkTip->getHash()).size(), 1);
   }
 
   BtcBlock::hash_t lastKnownLocalBtcBlock() {
@@ -109,10 +109,19 @@ TEST_F(PopContextFixture, A) {
             *remote.btc().getBestChain().tip());
 
   auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
-    auto it = remote.vbkContext.find(containing->getHash());
-    ASSERT_NE(it, remote.vbkContext.end());
+    auto it = remote.vbkPayloads.find(containing->getHash());
+    ASSERT_NE(it, remote.vbkPayloads.end());
     auto& vtbs = it->second;
-    ASSERT_TRUE(local.acceptBlock(containing->header, vtbs, state));
+    std::vector<typename VbkBlock::context_t> context;
+    context.reserve(vtbs.size());
+    std::transform(vtbs.begin(),
+                   vtbs.end(),
+                   std::back_inserter(context),
+                   [&](const VTB& vtb) -> VbkContext {
+                     return VbkContext::fromContainer(vtb);
+                   });
+
+    ASSERT_TRUE(local.acceptBlock(containing->header, context, state));
   };
 
   // and now accept VBK tip again, with VTBs

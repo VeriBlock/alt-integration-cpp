@@ -253,12 +253,14 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
 
   // map VbkPopTx -> VTB
   std::vector<VbkContext> context;
+  std::vector<VTB> vtbs;
   context.reserve(txes.size());
+  vtbs.reserve(txes.size());
   int32_t index = 0;
   std::transform(txes.begin(),
                  txes.end(),
-                 std::back_inserter(context),
-                 [&](const VbkPopTx& tx) -> VbkContext {
+                 std::back_inserter(vtbs),
+                 [&](const VbkPopTx& tx) -> VTB {
                    VTB vtb;
                    vtb.transaction = tx;
                    vtb.merklePath.treeIndex = treeIndex;
@@ -269,6 +271,13 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                    vtb.containingBlock = containingBlock;
                    index++;
 
+                   return vtb;
+                 });
+
+  std::transform(vtbs.begin(),
+                 vtbs.end(),
+                 std::back_inserter(context),
+                 [&](const VTB& vtb) -> VbkContext {
                    return VbkContext::fromContainer(vtb);
                  });
 
@@ -276,7 +285,7 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 
-  vbkContext[containingBlock.getHash()] = context;
+  vbkPayloads[containingBlock.getHash()] = vtbs;
 
   return containingBlock;
 }

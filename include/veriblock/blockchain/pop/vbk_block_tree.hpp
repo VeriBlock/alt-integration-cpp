@@ -29,14 +29,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   VbkBlockTree(const VbkBlockTree& tree) = default;
 
-  VbkBlockTree& operator=(const VbkBlockTree& tree) {
-    this->activeChain_ = tree.activeChain_;
-    this->block_index_ = tree.block_index_;
-    this->fork_chains_ = tree.fork_chains_;
-    this->cmp_ = tree.cmp_;
-    return *this;
-  }
-
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 

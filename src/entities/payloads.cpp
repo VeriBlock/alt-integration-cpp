@@ -37,16 +37,6 @@ AltPayloads AltPayloads::fromVbkEncoding(ReadStream& stream) {
         return VTB::fromVbkEncoding(stream);
       });
 
-  p.btccontext = readArrayOf<BtcBlock>(
-      stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
-        return BtcBlock::fromVbkEncoding(stream);
-      });
-
-  p.vbkcontext = readArrayOf<VbkBlock>(
-      stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
-        return VbkBlock::fromVbkEncoding(stream);
-      });
-
   return p;
 }
 
@@ -60,16 +50,6 @@ void AltPayloads::toVbkEncoding(WriteStream& stream) const {
 
   writeSingleBEValue(stream, vtbs.size());
   for (const auto& el : vtbs) {
-    el.toVbkEncoding(stream);
-  }
-
-  writeSingleBEValue(stream, btccontext.size());
-  for (const auto& el : btccontext) {
-    el.toVbkEncoding(stream);
-  }
-
-  writeSingleBEValue(stream, vbkcontext.size());
-  for (const auto& el : vbkcontext) {
     el.toVbkEncoding(stream);
   }
 }
