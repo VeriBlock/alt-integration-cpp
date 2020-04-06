@@ -256,19 +256,19 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
       popminer.getBtcParams().getGenesisBlock().getHash());
   auto* vbkTip12 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(vbkTip12->height, 12);
-  ASSERT_EQ(popminer.vbkpayloads.size(), 2);
+  ASSERT_EQ(popminer.vbkPayloads.size(), 2);
 
-  auto it = popminer.vbkpayloads.find(vbkTip11->getHash());
+  auto it = popminer.vbkPayloads.find(vbkTip11->getHash());
   BtcTree tempBtcTree(popminer.getBtcParams());
   ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
-  addContextToBlockIndex(*vbkTip11, it->second[0], tempBtcTree);
+  addContextToBlockIndex(*vbkTip11, VbkContext::fromContainer(it->second[0]), tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip11, state));
   auto initialTree = stateMachine.tree();
 
-  it = popminer.vbkpayloads.find(vbkTip12->getHash());
+  it = popminer.vbkPayloads.find(vbkTip12->getHash());
   tempBtcTree = BtcTree(popminer.getBtcParams());
   ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
-  addContextToBlockIndex(*vbkTip12, it->second[0], tempBtcTree);
+  addContextToBlockIndex(*vbkTip12, VbkContext::fromContainer(it->second[0]), tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip12, state));
 
   ///TODO: assert no unapply were called
