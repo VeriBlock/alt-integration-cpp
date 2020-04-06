@@ -20,17 +20,23 @@ namespace altintegration {
 // proof. "containing hash" is a block which contains POP TX which endorses
 // "endorsed block"
 
-template <class EndorsedHash, class ContainingHash, class Container>
+template <class EndorsedHash,
+          class ContainingHash,
+          class Container,
+          class EndorsedBlockHeight>
 struct Endorsement {
-  using type = Endorsement<EndorsedHash, ContainingHash, Container>;
+  using type =
+      Endorsement<EndorsedHash, ContainingHash, Container, EndorsedBlockHeight>;
   using id_t = uint256;
   using endorsed_hash_t = EndorsedHash;
   using containing_hash_t = ContainingHash;
   using container_t = Container;
+  using endorsed_height_t = EndorsedBlockHeight;
 
   // The unique key that identifies this endorsement
   id_t id;
   EndorsedHash endorsedHash;
+  EndorsedBlockHeight endorsedHeight;
   EndorsedHash containingHash;
   ContainingHash blockOfProof;
   std::vector<uint8_t> payoutInfo;
@@ -66,9 +72,7 @@ struct Endorsement {
 
   static type::id_t getId(const Container& c);
 
-  bool operator==(const type& other) const {
-    return id == other.id;
-  }
+  bool operator==(const type& other) const { return id == other.id; }
 };
 
 }  // namespace altintegration

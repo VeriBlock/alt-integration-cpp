@@ -20,7 +20,8 @@ struct DummyBlock {
   using height_t = int;
   using payloads_t = DummyPayloads;
   using endorsement_t = DummyEndorsement;
-  using context_t = std::false_type ;
+  using context_t = std::false_type;
+  using protecting_block_t = std::false_type;
 };
 
 struct TestCase {

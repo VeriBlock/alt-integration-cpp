@@ -34,12 +34,12 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
 
 template <typename BlockTree, typename BlockIndexT>
 void addContextToBlockIndex(BlockIndexT&,
-                            const typename BlockIndexT::payloads_t&,
+                            const typename BlockIndexT::context_t&,
                             const BlockTree& tree);
-
+/*
 template <typename BlockIndexT>
 void removeContextFromBlockIndex(BlockIndexT&,
-                                 const typename BlockIndexT::payloads_t&);
+                                 const typename BlockIndexT::payloads_t&);*/
 
 }  // namespace altintegration
 
