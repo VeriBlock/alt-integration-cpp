@@ -25,36 +25,31 @@ bool checkAndAddEndorsement(
 
   auto endorsedHeight = endorsement.endorsedHeight;
   if (index.height - endorsedHeight > window) {
-    return state.Invalid("addPayloadsToBlockIndex",
-                         "expired : Endorsement expired");
+    return state.Invalid("expired", "Endorsement expired");
   }
 
   auto* endorsed = chain[endorsedHeight];
   if (!endorsed) {
-    return state.Invalid(
-        "addPayloadsToBlockIndex",
-        "no-endorsed-block : No block found on endorsed block height");
+    return state.Invalid("no-endorsed-block",
+                         "No block found on endorsed block height");
   }
 
   if (endorsed->getHash() != endorsement.endorsedHash) {
-    return state.Invalid(
-        "addPayloadsToBlockIndex",
-        "block-differs : Endorsed VBK block is on a different chain");
+    return state.Invalid("block-differs",
+                         "Endorsed VBK block is on a different chain");
   }
 
   auto* blockOfProof = tree.getBlockIndex(endorsement.blockOfProof);
   if (!blockOfProof) {
-    return state.Invalid(
-        "addPayloads",
-        "block-of-proof-not-found : Can not find block of proof in BTC");
+    return state.Invalid("block-of-proof-not-found",
+                         "Can not find block of proof in BTC");
   }
 
   auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
   if (duplicate) {
     // found duplicate
-    return state.Invalid(
-        "addPayloadsToBlockIndex",
-        "duplicate : Found duplicate endorsement on the same chain");
+    return state.Invalid("duplicate",
+                         "Found duplicate endorsement on the same chain");
   }
 
   // Add endorsement into BlockIndex

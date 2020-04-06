@@ -87,7 +87,7 @@ bool VbkBlockTree::acceptBlock(const VbkBlock& block,
   assert(index != nullptr);
 
   if (!cmp_.proceedAllEndorsements(*index, context, state)) {
-    return state.Invalid("VbkTree::acceptBlock");
+    return state.Invalid("vbk-procedd-all-endorsements-block");
   }
 
   determineBestChain(activeChain_, *index);
