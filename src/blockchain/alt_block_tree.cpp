@@ -111,6 +111,7 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
   index->containingContext.push(ctx);
 
   if (!cmp_.addPayloads(*index, payloads, state)) {
+    index->containingContext.pop();
     return state.Invalid("bad-atv-stateful");
   }
 
