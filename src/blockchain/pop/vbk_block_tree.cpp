@@ -92,11 +92,12 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
     }
   }
 
-  if (!cmp_.setState(*index, state)) {
-    return state.Error("bad-state");
-  }
+  // allocate a new element in the stack
+  context_t ctx;
+  index->containingContext.push(ctx);
 
   if (!cmp_.addPayloads(*index, payloads, state)) {
+    index->containingContext.pop();
     return state.Invalid("bad-payloads-stateful");
   }
 
@@ -106,11 +107,19 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
 }
 
 void VbkBlockTree::removePayloads(const VbkBlock& block,
-                                  std::vector<payloads_t>& payloads) {
+                                  const std::vector<payloads_t>& payloads) {
   auto* index = getBlockIndex(block.getHash());
-  assert(index);  // must exist
+  removePayloads(index, payloads);
+}
 
+void VbkBlockTree::removePayloads(index_t* index,
+                                  const std::vector<payloads_t>& payloads) {
+  assert(index);
   cmp_.removePayloads(*index, payloads);
+  if (index->containingContext.top().btc.empty()) {
+    index->containingContext.pop();
+  }
+
   determineBestChain(activeChain_, *index);
 }
 
@@ -119,30 +128,42 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
     const BlockIndex<VbkBlock>& index, ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
-        for (const auto& b : index.containingContext.btc) {
+        if (index.containingContext.empty()) {
+          return true;
+        }
+        for (const auto& b : index.containingContext.top().btc) {
           if (!tree().acceptBlock(b, state)) {
             return state.Invalid("vbk-accept-block");
           }
         }
+
         return true;
       },
       [&]() { unapplyContext(index); });
-}
+}  // namespace altintegration
 
 template <>
 void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
     const BlockIndex<VbkBlock>& index) {
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
-  for (const auto& b : index.containingContext.btc) {
+  if (index.containingContext.empty()) {
+    return;
+  }
+  for (const auto& b : index.containingContext.top().btc) {
     tree().invalidateBlockByHash(b.getHash());
   }
-}
+
+}  // namespace altintegration
 
 template <>
 void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
                                  const BlockIndex<VbkBlock>::payloads_t& p) {
-  auto& ctx = index.containingContext.btc;
+  if (index.containingContext.empty()) {
+    return;
+  }
+
+  auto& ctx = index.containingContext.top().btc;
   auto end = ctx.end();
   auto remove = [&](const BtcBlock& b) {
     end = std::remove(ctx.begin(), end, b);
@@ -163,7 +184,9 @@ template <>
 void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
                             const typename BlockIndex<VbkBlock>::payloads_t& p,
                             const BlockTree<BtcBlock, BtcChainParams>& tree) {
-  auto& ctx = index.containingContext.btc;
+  assert(!index.containingContext.empty());
+
+  auto& ctx = index.containingContext.top().btc;
 
   // only add blocks that are UNIQUE
   std::unordered_set<uint256> set;

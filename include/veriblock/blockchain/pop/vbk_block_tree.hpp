@@ -41,6 +41,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 
+  PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
 
   bool bootstrapWithChain(height_t startHeight,
@@ -53,7 +54,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state);
 
-  void removePayloads(const block_t& block, std::vector<payloads_t>& payloads);
+  void removePayloads(const block_t& block,
+                      const std::vector<payloads_t>& payloads);
+
+  void removePayloads(index_t* block, const std::vector<payloads_t>& payloads);
 
  private:
   void determineBestChain(Chain<index_t>& currentBest,
