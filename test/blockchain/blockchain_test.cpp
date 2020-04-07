@@ -38,7 +38,7 @@ struct BlockchainTest : public ::testing::Test {
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
-        << "bootstrapWithGenesis: " << state.GetPath() << ", "
+        << "bootstrap: " << state.GetPath() << ", "
         << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
   };

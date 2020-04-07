@@ -15,20 +15,10 @@ struct AltPayloads;
 
 struct VbkContext {
   std::vector<BtcBlock> btc;
-  BtcEndorsement endorsement;
-
-  static VbkContext fromContainer(const VTB& vtb);
 };
 
 struct AltContext {
-  // corresponds to the ATV
   std::vector<VbkBlock> vbk;
-  VbkEndorsement endorsement;
-  // corresponds to the VBTs
-  std::vector<std::tuple<VbkBlock, VbkContext, std::vector<VbkBlock>>>
-      vbkContext;
-
-  static AltContext fromContainer(const AltPayloads& altPayloads);
 };
 
 }  // namespace altintegration
