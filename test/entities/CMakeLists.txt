@@ -12,8 +12,6 @@ addtest(entities_serde_test
         atv_test.cpp
         vtb_test.cpp
         altblock_test.cpp
-        payloads_test.cpp
-        endorsement_test.cpp
         merkle_tree_test.cpp
         )
 target_link_libraries(entities_serde_test ${LIB_NAME})

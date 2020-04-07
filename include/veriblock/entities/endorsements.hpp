@@ -12,14 +12,6 @@ struct AltPayloads;
 using BtcEndorsement = Endorsement<uint192, uint256, VTB, int32_t>;
 
 template <>
-BtcEndorsement BtcEndorsement::fromVbkEncoding(ReadStream& stream);
-template <>
-BtcEndorsement BtcEndorsement::fromVbkEncoding(const std::string& bytes);
-template <>
-void BtcEndorsement::toVbkEncoding(WriteStream& stream) const;
-template <>
-std::vector<uint8_t> BtcEndorsement::toVbkEncoding() const;
-template <>
 BtcEndorsement BtcEndorsement ::fromContainer(const VTB& c);
 template <>
 BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c);
@@ -27,14 +19,6 @@ BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c);
 // endorsement of ALT blocks in VBK
 using VbkEndorsement =
     Endorsement<std::vector<uint8_t>, uint192, AltPayloads, int32_t>;
-template <>
-VbkEndorsement VbkEndorsement::fromVbkEncoding(ReadStream& stream);
-template <>
-VbkEndorsement VbkEndorsement::fromVbkEncoding(const std::string& bytes);
-template <>
-void VbkEndorsement::toVbkEncoding(WriteStream& stream) const;
-template <>
-std::vector<uint8_t> VbkEndorsement::toVbkEncoding() const;
 template <>
 VbkEndorsement VbkEndorsement ::fromContainer(const AltPayloads& c);
 template <>

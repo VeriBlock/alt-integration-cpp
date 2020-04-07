@@ -64,34 +64,34 @@ bool checkAndAddEndorsement(
 }
 
 template <typename ProtectedIndex>
-void removeEndorsements(
+void removeEndorsement(
     ProtectedIndex& index,
-    const typename ProtectedIndex::endorsement_t& endorsement) {
+    const typename ProtectedIndex::endorsement_t::id_t& eid) {
   using endorsement_t = typename ProtectedIndex::endorsement_t;
 
+  auto endorsementit = index.containingEndorsements.find(eid);
+  if (endorsementit == index.containingEndorsements.end()) {
+    return;
+  }
+
+  auto& endorsement_ptr = endorsementit->second;
+
+  // remove from 'containing endorsements'
+  index.containingEndorsements.erase(endorsementit);
+
   // remove from 'endorsedBy'
-  auto endorsed = index.getAncestor(endorsement.endorsedHeight);
-
+  auto endorsed = index.getAncestor(endorsement_ptr->endorsedHeight);
   if (endorsed) {
-    auto endorsementit = index.containingEndorsements.find(endorsement.id);
-    if (endorsementit != index.containingEndorsements.end()) {
-      auto& endorsement_ptr = endorsementit->second;
+    auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
+    auto new_end = std::remove_if(endorsements.begin(),
+                                  endorsements.end(),
+                                  [&endorsement_ptr](endorsement_t* e) -> bool {
+                                    // remove nullptrs and our given
+                                    // endorsement
+                                    return !e || endorsement_ptr.get() == e;
+                                  });
 
-      auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
-      auto new_end =
-          std::remove_if(endorsements.begin(),
-                         endorsements.end(),
-                         [&endorsement_ptr](endorsement_t* e) -> bool {
-                           // remove nullptrs and our given
-                           // endorsement
-                           return !e || endorsement_ptr.get() == e;
-                         });
-
-      endorsements.erase(new_end, endorsements.end());
-
-      // remove from 'containing endorsements'
-      index.containingEndorsements.erase(endorsementit);
-    }
+    endorsements.erase(new_end, endorsements.end());
   }
 }
 
