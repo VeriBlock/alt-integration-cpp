@@ -15,5 +15,4 @@ add_library(entities OBJECT
         vtb.cpp
         altblock.cpp
         payloads.cpp
-        context.cpp
         )

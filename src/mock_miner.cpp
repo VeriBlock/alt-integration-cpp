@@ -1,13 +1,14 @@
+#include "veriblock/mock_miner.hpp"
+
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/context.hpp"
 #include "veriblock/fmt.hpp"
-#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
-using namespace altintegration;
+namespace altintegration {
 
 static auto defaultPrivateKeyVbk = ParseHex(
     "303e020100301006072a8648ce3d020106052b8104000a0427302502010104203abf83fa47"
@@ -36,58 +37,65 @@ bool mineBlocks(const uint32_t& n,
   return true;
 }
 
-// TODO: no ALT tree yet
-// VbkTx MockMiner::endorseAltBlock(const PublicationData& publicationData) {
-//  VbkTx transaction;
-//  transaction.signatureIndex = 7;
-//  transaction.networkOrType.hasNetworkByte =
-//      vbk_params->getTransactionMagicByte().hasValue;
-//  transaction.networkOrType.networkByte =
-//      vbk_params->getTransactionMagicByte().value;
-//  transaction.networkOrType.typeId = (uint8_t)TxType::VBK_TX;
-//  transaction.sourceAmount = Coin(1000);
-//  transaction.sourceAddress = Address::fromPublicKey(defaultPublicKeyVbk);
-//  transaction.publicKey = defaultPublicKeyVbk;
-//  transaction.publicationData = publicationData;
-//
-//  auto hash = transaction.getHash();
-//  transaction.signature =
-//      veriBlockSign(hash, privateKeyFromVbk(defaultPrivateKeyVbk));
-//
-//  return transaction;
-//}
-//
-// ATV MockMiner::generateAndApplyATV(
-//    const PublicationData& publicationData,
-//    const VbkBlock::hash_t& lastKnownVbkBlockHash,
-//    ValidationState& state) {
-//  ATV atv;
-//  atv.transaction = endorseAltBlock(publicationData);
-//  atv.merklePath.treeIndex = 1;
-//  atv.merklePath.index = 0;
-//  atv.merklePath.subject = atv.transaction.getHash();
-//  atv.merklePath.layers = {atv.transaction.getHash()};
-//
-//  auto* tip = vbktree.getBestChain().tip();
-//  assert(tip != nullptr && "VBK blockchain is not bootstrapped");
-//
-//  for (auto* walkBlock = tip;
-//       walkBlock->header.getHash() != lastKnownVbkBlockHash;
-//       walkBlock = walkBlock->pprev) {
-//    atv.context.push_back(walkBlock->header);
-//  }
-//  // since we inserted in reverse order, we need to reverse context blocks
-//  std::reverse(atv.context.begin(), atv.context.end());
-//
-//  atv.containingBlock =
-//      vbk_miner->createNextBlock(*tip, atv.merklePath.calculateMerkleRoot());
-//
-//  if (!vbktree.acceptBlock(atv.containingBlock, {}, state)) {
-//    throw std::logic_error(state.GetDebugMessage());
-//  }
-//
-//  return atv;
-//}
+VbkTx MockMiner::endorseAltBlock(const PublicationData& publicationData) {
+  VbkTx transaction;
+  transaction.signatureIndex = 7;
+  transaction.networkOrType.hasNetworkByte =
+      vbk_params.getTransactionMagicByte().hasValue;
+  transaction.networkOrType.networkByte =
+      vbk_params.getTransactionMagicByte().value;
+  transaction.networkOrType.typeId = (uint8_t)TxType::VBK_TX;
+  transaction.sourceAmount = Coin(1000);
+  transaction.sourceAddress = Address::fromPublicKey(defaultPublicKeyVbk);
+  transaction.publicKey = defaultPublicKeyVbk;
+  transaction.publicationData = publicationData;
+
+  auto hash = transaction.getHash();
+  transaction.signature =
+      veriBlockSign(hash, privateKeyFromVbk(defaultPrivateKeyVbk));
+
+  return transaction;
+}
+
+ATV MockMiner::generateATV(
+    const VbkTx& transaction,
+    const VbkBlock::hash_t& lastKnownVbkBlockHash,
+    ValidationState& state) {
+  // build merkle tree
+  auto hashes = hashAll<VbkTx>({transaction});
+  const int32_t treeIndex = 0;  // this is POP tx
+  VbkMerkleTree mtree(hashes, treeIndex);
+
+  // create containing block
+  auto* tip = vbktree.getBestChain().tip();
+  assert(tip != nullptr && "VBK blockchain is not bootstrapped");
+
+  VbkBlock containingBlock = vbk_miner.createNextBlock(
+      *tip, mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
+
+  ATV atv;
+  atv.transaction = transaction;
+  atv.merklePath.treeIndex = treeIndex;
+  atv.merklePath.index = 0;
+  atv.merklePath.subject = hashes[0];
+  atv.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
+  atv.containingBlock = containingBlock;
+
+  for (auto* walkBlock = tip;
+       walkBlock->header.getHash() != lastKnownVbkBlockHash;
+       walkBlock = walkBlock->pprev) {
+    atv.context.push_back(walkBlock->header);
+  }
+
+  // since we inserted in reverse order, we need to reverse context blocks
+  std::reverse(atv.context.begin(), atv.context.end());
+
+  if (!vbktree.acceptBlock(containingBlock, state)) {
+    throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
+  }
+
+  return atv;
+}
 
 BtcTx MockMiner::createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock) {
   WriteStream stream;
@@ -252,9 +260,7 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
       tip, mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
 
   // map VbkPopTx -> VTB
-  std::vector<VbkContext> context;
   std::vector<VTB> vtbs;
-  context.reserve(txes.size());
   vtbs.reserve(txes.size());
   int32_t index = 0;
   std::transform(txes.begin(),
@@ -274,14 +280,10 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                    return vtb;
                  });
 
-  std::transform(vtbs.begin(),
-                 vtbs.end(),
-                 std::back_inserter(context),
-                 [&](const VTB& vtb) -> VbkContext {
-                   return VbkContext::fromContainer(vtb);
-                 });
-
-  if (!tree.acceptBlock(containingBlock, context, state)) {
+  if (!tree.acceptBlock(containingBlock, state)) {
+    throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
+  }
+  if(!tree.addPayloads(containingBlock, vtbs, state)) {
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 
@@ -341,7 +343,7 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
     auto* index = vbktree.getBlockIndex(last);
     assert(index);
     auto block = vbk_miner.createNextBlock(*index);
-    if (!vbktree.acceptBlock(block, {}, state_)) {
+    if (!vbktree.acceptBlock(block, state_)) {
       throw std::domain_error(state_.GetDebugMessage());
     }
     last = block.getHash();
@@ -351,7 +353,7 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
 }
 
 BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(size_t amount) {
-  auto* tip = btctree.getBestChain().tip();
+  auto* tip = vbktree.btc().getBestChain().tip();
   assert(tip);
   return mineBtcBlocks(*tip, amount);
 }
@@ -366,3 +368,5 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount) {
 //                                 std::vector<VTB>& vtbs) {
 ////  vtbp_.get(containingBlock.containingPayloads, &vtbs);
 //}
+
+}  // namespace altintegration

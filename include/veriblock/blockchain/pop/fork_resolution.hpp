@@ -10,6 +10,7 @@
 #include <veriblock/blockchain/pop/pop_state_machine.hpp>
 #include <veriblock/blockchain/pop/pop_utils.hpp>
 #include <veriblock/entities/payloads.hpp>
+#include <veriblock/finalizer.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/storage/endorsement_repository.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
@@ -355,95 +356,92 @@ struct PopAwareForkResolutionComparator {
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
 
-  // this function does not clear BlockIndex from the added context blocks and
-  // endorsements (it is doing by removeEndorsement). Better to use
-  // processAllEndorsements() method
-  bool addAllEndorsements(protected_index_t& index,
-                          const std::vector<context_t>& context,
-                          ValidationState& state) {
-    if (index_ != index.pprev) {
-      // set state machine to "previous state"
-      bool ret = setState(*index.pprev, state);
-      assert(ret && "previous payloads should be always valid");
-      (void)ret;
-    }
+  void removePayloads(protected_index_t& index,
+                      const std::vector<protected_payloads_t>& payloads) {
+    ValidationState state;
+    sm_t sm(tree_, index_, *protectedParams_);
+    bool ret = sm.unapplyAndApply(index, state);
+    assert(ret);
+    (void) ret; // to fix warning;
 
-    // allocate new context in the stack
-    context_t ctx;
-    index.containingContext.push(ctx);
+    // unapply all context blocks from current block index
+    sm.unapplyContext(index);
 
-    if (context.empty()) {
-      if (index_ == index.pprev) {
-        // we added a block which does not contain payloads and it is right
-        // after our current state
-        index_ = &index;
-        return true;
-      }
-    }
+    // remove all endorsements and context blocks related to given payloads, in
+    // reverse order (this should be faster)
+    std::for_each(
+        payloads.rbegin(), payloads.rend(), [&](const protected_payloads_t& p) {
+          removeEndorsement(index, endorsement_t::getId(p));
+          removeContextFromBlockIndex(index, p);
+        });
 
-    assert(index_ == index.pprev);
-
-    auto temp = tree_;
-    // set initial state machine state = current index
-    sm_t sm(temp, &index, *protectedParams_, index_->height);
-    for (size_t i = 0, size = context.size(); i < size; i++) {
-      auto& c = context[i];
-
-      // containing block must be correct (current)
-      if (c.endorsement.containingHash != index.getHash()) {
-        return state.addIndex(i).Invalid("pop-comparator-bad-containing-block");
-      }
-
-      // we need to add context blocks to current block index, before
-      // applyContext
-      addContextToBlockIndex(index, c, sm.tree());
-
-      // first, check if context is valid. if invalid, it will automatically
-      // call 'removeContextFromBlockIndex'
-      if (!sm.applyContext(index, state)) {
-        return state.addIndex(i).Invalid("pop-comparator-apply-context");
-      }
-
-      if (!checkAndAddEndorsement(
-              index, c.endorsement, temp, *protectedParams_, state)) {
-        return state.addIndex(i).Invalid(
-            "pop-comparator-check-add-endorsement");
-      }
-    }
-
-    // no state change have been made
-    assert(&index == sm.index());
-
-    // update current state, since it is valid
-    tree_ = std::move(temp);
-
-    return true;
+    // apply remaining context from this block
+    ret = sm.applyContext(index, state);
+    assert(ret);
   }
 
-  void removeAllEndorsements(protected_index_t& index,
-                             const std::vector<context_t>& context) {
-    for (const auto& c : context) {
-      removeEndorsements(index, c.endorsement);
-    }
+  bool addPayloads(protected_index_t& index,
+                   const std::vector<protected_payloads_t>& payloads,
+                   ValidationState& state) {
+    return tryValidateWithResources(
+        [&]() -> bool {
+          if (index_ != index.pprev) {
+            // set state machine to "previous state"
+            bool ret = setState(*index.pprev, state);
+            assert(ret && "previous payloads should be always valid");
+            (void)ret;
+          }
 
-    index.containingContext.pop();
-  }
+          if (payloads.empty()) {
+            if (index_ == index.pprev) {
+              // we added a block which does not contain payloads and it is
+              // right after our current state
+              index_ = &index;
+              return true;
+            }
+          }
 
-  bool proceedAllEndorsements(protected_index_t& index,
-                              const std::vector<context_t>& context,
-                              ValidationState& state) {
-    if (!context.empty() && !tryValidateWithResources(
-                                [this, &index, &context, &state]() -> bool {
-                                  return this->addAllEndorsements(
-                                      index, context, state);
-                                },
-                                [this, &index, &context]() {
-                                  this->removeAllEndorsements(index, context);
-                                })) {
-      return state.Invalid("pop-comparator-add-all-endorsements");
-    }
+          assert(index_ == index.pprev);
 
-    return true;
+          auto temp = tree_;
+          // set initial state machine state = current index
+          sm_t sm(temp, &index, *protectedParams_, index_->height);
+          for (size_t i = 0, size = payloads.size(); i < size; i++) {
+            auto& c = payloads[i];
+
+            // containing block must be correct (current)
+            if (c.getContainingBlock().getHash() != index.getHash()) {
+              return state.addIndex(i).Invalid(
+                  "pop-comparator-bad-containing-block");
+            }
+
+            // we need to add context blocks to current block index, before
+            // applyContext
+            addContextToBlockIndex(index, c, sm.tree());
+
+            // first, check if context is valid. if invalid, it will
+            // automatically call 'removeContextFromBlockIndex'
+            if (!sm.applyContext(index, state)) {
+              return state.addIndex(i).Invalid("pop-comparator-apply-context");
+            }
+
+            auto e = endorsement_t::fromContainer(c);
+            if (!checkAndAddEndorsement(
+                    index, e, temp, *protectedParams_, state)) {
+              return state.addIndex(i).Invalid(
+                  "pop-comparator-check-add-endorsement");
+            }
+          }
+
+          // no state change have been made
+          assert(&index == sm.index());
+
+          // update current state, since it is valid
+          tree_ = std::move(temp);
+
+          return true;
+        },
+        [&] { removePayloads(index, payloads); });
   }
 
   //! @invariant: atomic. If returns false, does not change internal state.
