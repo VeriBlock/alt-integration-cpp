@@ -17,6 +17,15 @@
 
 namespace altintegration {
 
+template <>
+void addContextToBlockIndex(BlockIndex<AltBlock>& index,
+                            const typename BlockIndex<AltBlock>::payloads_t& p,
+                            const VbkBlockTree& tree);
+
+template <>
+void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
+                                 const BlockIndex<AltBlock>::payloads_t& p);
+
 struct AltTree {
   using alt_config_t = AltChainParams;
   using vbk_config_t = VbkChainParams;
@@ -24,6 +33,7 @@ struct AltTree {
   using index_t = BlockIndex<AltBlock>;
   using hash_t = typename AltBlock::hash_t;
   using context_t = typename index_t::block_t::context_t;
+  using payloads_t = AltPayloads;
   using block_index_t = std::unordered_map<hash_t, std::shared_ptr<index_t>>;
   using PopForkComparator =
       PopAwareForkResolutionComparator<AltBlock, AltChainParams, VbkBlockTree>;
@@ -33,52 +43,59 @@ struct AltTree {
   AltTree(const alt_config_t& alt_config,
           const vbk_config_t& vbk_config,
           const btc_config_t& btc_config)
-      : alt_config_(alt_config),
-        vbk_config_(vbk_config),
-        btc_config_(btc_config),
+      : alt_config_(&alt_config),
+        vbk_config_(&vbk_config),
+        btc_config_(&btc_config),
         cmp_(VbkBlockTree(vbk_config, btc_config), vbk_config, alt_config) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
-  bool bootstrapWithGenesis(ValidationState& state);
+  //! before any use, bootstrap the three with ALT bootstrap block.
+  //! may return false, if bootstrap block is invalid
+  bool bootstrap(ValidationState& state);
 
-  bool acceptBlock(const AltBlock& block,
-                   const std::vector<context_t>& context,
+  //! add new block to current block tree.
+  //! may return false, if block has no connection to blockchain
+  bool acceptBlock(const AltBlock& block, ValidationState& state);
+
+  //! add payloads to any of existing blocks in block tree.
+  //! may return false, if payloads statelessly, or statefully invalid.
+  bool addPayloads(const AltBlock& containingBlock,
+                   const std::vector<payloads_t>& payloads,
                    ValidationState& state);
 
+  //! removes given payloads from given block index.
+  //! remove ALL payloads from a block, when it has to be removed
+  void removePayloads(const AltBlock& containingBlock,
+                      const std::vector<payloads_t>& payloads);
+
+  VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
+  const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
+  VbkBlockTree::BtcTree btc() { return cmp_.getProtectingBlockTree().btc(); }
+  const VbkBlockTree::BtcTree& btc() const {
+    return cmp_.getProtectingBlockTree().btc();
+  }
+
  protected:
-  std::vector<index_t*> chainTips_;
   block_index_t block_index_;
-  const alt_config_t& alt_config_;
-  const vbk_config_t& vbk_config_;
-  const btc_config_t& btc_config_;
+  const alt_config_t* alt_config_;
+  const vbk_config_t* vbk_config_;
+  const btc_config_t* btc_config_;
   PopForkComparator cmp_;
 
   index_t* insertBlockHeader(const AltBlock& block);
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& blockHash);
-
-  void addToChains(index_t* block_index);
 };
 
 template <>
-bool PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
-    applyContext(const BlockIndex<AltBlock>& index, ValidationState& state);
+bool AltTree::PopForkComparator::sm_t::applyContext(
+    const BlockIndex<AltBlock>& index, ValidationState& state);
 
 template <>
-void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
-    unapplyContext(const BlockIndex<AltBlock>& index);
-
-template <>
-void addContextToBlockIndex(BlockIndex<AltBlock>& index,
-                            const typename BlockIndex<AltBlock>::context_t& p,
-                            const VbkBlockTree& tree);
-/*
-template <>
-void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
-                                 const BlockIndex<AltBlock>::payloads_t& p);
-                                 */
+void AltTree::PopForkComparator::sm_t::unapplyContext(
+    const BlockIndex<AltBlock>& index);
 
 }  // namespace altintegration
 

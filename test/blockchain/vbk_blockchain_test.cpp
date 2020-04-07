@@ -106,7 +106,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
             bootstrapChain[bootstrapChain.size() - 1].height);
 
   for (const auto& block : acceptChain) {
-    ASSERT_TRUE(tree.acceptBlock(block, {}, state))
+    ASSERT_TRUE(tree.acceptBlock(block, state))
         << "block #" << totalBlocks << "\n"
         << "stack trace: " << state.GetPath() << ", "
         << "message: " << state.GetDebugMessage();

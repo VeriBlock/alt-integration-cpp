@@ -45,7 +45,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   auto Avbkcontaining1 = popminer.mineVbkBlocks(*chainAtip, 1);
 
   // chain changed to chain A, because its POP score is higher
-  ASSERT_EQ(popminer.vbk().getBestChain().tip(), Avbkcontaining1);
+  ASSERT_EQ(*popminer.vbk().getBestChain().tip(), *Avbkcontaining1);
 
   // and now endorse block 60 of chain B
   // mine 5 BtcBlocks

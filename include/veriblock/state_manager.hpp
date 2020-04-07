@@ -36,7 +36,7 @@ class StateChange {
   }
 
   void removeAltPayloads(const AltPayloads& payloads) {
-    payloadsAltBatch->removeByHash(payloads.alt.containing.getHash());
+    payloadsAltBatch->removeByHash(payloads.containingBlock.getHash());
   }
 
  private:
