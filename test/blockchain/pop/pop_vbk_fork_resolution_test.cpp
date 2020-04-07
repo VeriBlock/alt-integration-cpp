@@ -247,7 +247,7 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
   auto Bbtccontaining2 = popminer.mineBtcBlocks(1);
   ASSERT_EQ(Bbtccontaining2->height, 150);
 
-  // store endorsement in VBK
+  // store endorsement in VBK with BTC block 150
   auto poptx1 = popminer.createVbkPopTxEndorsingVbkBlock(
       Bbtccontaining2->header,
       Btx2,
@@ -257,7 +257,7 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
   auto* vbkTip11 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(vbkTip11->height, 11);
 
-  // store endorsement in VBK
+  // store endorsement in VBK with BTC block 100
   auto poptx2 = popminer.createVbkPopTxEndorsingVbkBlock(
       Bbtccontaining1->header,
       Btx1,
@@ -283,7 +283,6 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
   addContextToBlockIndex(*vbkTip12, it->second[0], tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip12, state));
 
-  ///TODO: assert no unapply were called
   // make sure that protecting tree did not change
   ASSERT_EQ(initialTree.getBestChain(), stateMachine.tree().getBestChain());
 }
@@ -322,7 +321,7 @@ TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
   auto Bbtccontaining2 = popminer.mineBtcBlocks(1);
   ASSERT_EQ(Bbtccontaining2->height, 150);
 
-  // store endorsement in VBK
+  // store endorsement in VBK with BTC block 100
   auto poptx1 = popminer.createVbkPopTxEndorsingVbkBlock(
       Bbtccontaining1->header,
       Btx1,
@@ -332,7 +331,7 @@ TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
   auto* vbkTip11 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(vbkTip11->height, 11);
 
-  // store endorsement in VBK
+  // store endorsement in VBK with BTC block 150
   auto poptx2 = popminer.createVbkPopTxEndorsingVbkBlock(
       Bbtccontaining2->header,
       Btx2,
