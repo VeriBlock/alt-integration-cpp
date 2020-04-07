@@ -1,5 +1,4 @@
 #include <exception>
-#include <gmock/gmock.h>
 
 #include "util/pop_test_fixture.hpp"
 #include "util/visualize.hpp"

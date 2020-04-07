@@ -105,6 +105,10 @@ struct Chain {
     return a.tip() == b.tip();
   }
 
+  friend bool operator!=(const Chain& a, const Chain& b) {
+    return !(a == b);
+  }
+
   const index_t* findFork(const index_t* pindex) const {
     if (pindex == nullptr || tip() == nullptr) {
       return nullptr;
