@@ -267,6 +267,8 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
   ASSERT_EQ(vbkTip12->height, 12);
   ASSERT_EQ(popminer.vbkPayloads.size(), 2);
 
+  auto initialProtectedChain = *stateMachine.index();
+
   // add BTC context to VBK block 11 and update local state with it
   auto it = popminer.vbkPayloads.find(vbkTip11->getHash());
   BtcTree tempBtcTree(popminer.getBtcParams());
@@ -274,6 +276,9 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
   addContextToBlockIndex(*vbkTip11, it->second[0], tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip11, state));
   auto initialTree = stateMachine.tree();
+  // make sure VBK chain was changed
+  ASSERT_NE(initialProtectedChain, *stateMachine.index());
+  initialProtectedChain = *stateMachine.index();
 
   // add BTC context to VBK block 12 and update local state with it
   it = popminer.vbkPayloads.find(vbkTip12->getHash());
@@ -284,6 +289,8 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
 
   // make sure that protecting tree did not change
   ASSERT_EQ(initialTree.getBestChain(), stateMachine.tree().getBestChain());
+  // make sure VBK chain was changed
+  ASSERT_NE(initialProtectedChain, *stateMachine.index());
 }
 
 TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
@@ -341,6 +348,8 @@ TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
   ASSERT_EQ(vbkTip12->height, 12);
   ASSERT_EQ(popminer.vbkPayloads.size(), 2);
 
+  auto initialProtectedChain = *stateMachine.index();
+
   // add BTC context to VBK block 11 and update local state with it
   auto it = popminer.vbkPayloads.find(vbkTip11->getHash());
   BtcTree tempBtcTree(popminer.getBtcParams());
@@ -348,6 +357,9 @@ TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
   addContextToBlockIndex(*vbkTip11, it->second[0], tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip11, state));
   auto initialTree = stateMachine.tree();
+  // make sure VBK chain was changed
+  ASSERT_NE(initialProtectedChain, *stateMachine.index());
+  initialProtectedChain = *stateMachine.index();
 
   // add BTC context to VBK block 12 and update local state with it
   it = popminer.vbkPayloads.find(vbkTip12->getHash());
@@ -358,4 +370,6 @@ TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
 
   // make sure that protecting tree did change
   ASSERT_NE(initialTree.getBestChain(), stateMachine.tree().getBestChain());
+  // make sure VBK chain was changed
+  ASSERT_NE(initialProtectedChain, *stateMachine.index());
 }
