@@ -362,6 +362,7 @@ struct PopAwareForkResolutionComparator {
     sm_t sm(tree_, index_, *protectedParams_);
     bool ret = sm.unapplyAndApply(index, state);
     assert(ret);
+    (void) ret; // to fix warning;
 
     // unapply all context blocks from current block index
     sm.unapplyContext(index);
