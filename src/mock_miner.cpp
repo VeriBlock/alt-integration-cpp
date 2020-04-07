@@ -334,14 +334,6 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
     auto containing = applyVTBs(tip, vbktree, vbkmempool, state_);
     last = containing.getHash();
 
-    auto it = vbkPayloads.find(last);
-    assert(it != vbkPayloads.end());
-
-    if (!vbktree.addPayloads(containing, it->second, state_)) {
-      throw std::domain_error(state_.GetPath() + "\n" +
-                              state_.GetDebugMessage());
-    }
-
     // we generated 1 block
     --amount;
     vbkmempool.clear();
