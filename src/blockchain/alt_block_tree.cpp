@@ -167,8 +167,9 @@ void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
 
       vbkStateMachine.unapplyContext(*temp);
       temp->containingContext.pop();
-      assert(vbkStateMachine.applyContext(*temp, state) &&
-             "always should be true here");
+      bool res = vbkStateMachine.applyContext(*temp, state);
+
+      assert(res && "always should be true here");
 
       if (temp->containingContext.empty()) {
         tree().invalidateBlockByHash(vtb_info.containing.getHash());

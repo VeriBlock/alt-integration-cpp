@@ -130,6 +130,8 @@ TEST_F(AltTreeTest, acceptBlock_test) {
   generatePopTx(endorsedVbkBlock2->header);
   auto* btcBlockTip2 = popminer.btc().getBestChain().tip();
 
+  ASSERT_NE(btcBlockTip1->getHash(), btcBlockTip2->getHash());
+
   vbkTip = popminer.mineVbkBlocks(1);
 
   auto vtbs = popminer.vbkPayloads[vbkTip->getHash()];
@@ -216,4 +218,30 @@ TEST_F(AltTreeTest, acceptBlock_test) {
   // check btc tree state
   EXPECT_EQ(altTree.vbk().btc().getBestChain().tip()->getHash(),
             btcBlockTip1->getHash());
+
+  containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  AltPayloads altPayloads4 =
+      popminer.generateAltPayloads(tx,
+                                   containingBlock,
+                                   endorsedBlock,
+                                   vbkconfig.getGenesisBlock().getHash(),
+                                   state);
+
+  EXPECT_TRUE(altTree.acceptBlock(
+      containingBlock, {AltContext::fromContainer(altPayloads4)}, state));
+  EXPECT_TRUE(state.IsValid());
+
+  containinVbkBlock = altTree.vbk().getBlockIndex(vbkTip->getHash());
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
+                  BtcEndorsement::fromContainer(vtbs[0]).id) !=
+              containinVbkBlock->containingEndorsements.end());
+
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
+                  BtcEndorsement::fromContainer(vtbs[1]).id) !=
+              containinVbkBlock->containingEndorsements.end());
+
+  // check btc tree state
+  EXPECT_EQ(altTree.vbk().btc().getBestChain().tip()->getHash(),
+            btcBlockTip2->getHash());
 }
