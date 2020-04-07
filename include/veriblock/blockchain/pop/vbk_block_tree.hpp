@@ -33,6 +33,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 
+  PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
 
   bool bootstrapWithChain(height_t startHeight,

@@ -143,6 +143,7 @@ bool PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
 template <>
 void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
     unapplyContext(const BlockIndex<AltBlock>& index) {
+  using vbk_state_machine_t = typename VbkBlockTree::PopForkComparator::sm_t;
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
   if (!index.containingContext.empty()) {
@@ -154,12 +155,26 @@ void PopStateMachine<VbkBlockTree, BlockIndex<AltBlock>, AltChainParams>::
     }
 
     // step 2, process VTB info
-
     for (const auto& vtb_info : ctx.vbkContext) {
-      tree().invalidateBlockByHash(vtb_info.containing.getHash());
+      auto* temp = tree().getBlockIndex(vtb_info.containing.getHash());
+      removeEndorsements(*temp, vtb_info.context.endorsement);
+      // update state
+      ValidationState state;
+      vbk_state_machine_t vbkStateMachine(
+          tree().getComparator().getProtectingBlockTree(),
+          tree().getComparator().getIndex(),
+          tree().getParams());
 
-      for (const auto& b : vtb_info.contextVbkBlocks) {
-        tree().invalidateBlockByHash(b.getHash());
+      vbkStateMachine.unapplyContext(*temp);
+      temp->containingContext.pop();
+      assert(vbkStateMachine.applyContext(*temp, state) &&
+             "always should be true here");
+
+      if (temp->containingContext.empty()) {
+        tree().invalidateBlockByHash(vtb_info.containing.getHash());
+        for (const auto& b : vtb_info.contextVbkBlocks) {
+          tree().invalidateBlockByHash(b.getHash());
+        }
       }
     }
   }

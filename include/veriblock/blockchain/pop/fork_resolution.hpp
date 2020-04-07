@@ -353,6 +353,7 @@ struct PopAwareForkResolutionComparator {
 
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
+  protected_index_t* getIndex() { return index_; }
   const protected_index_t* getIndex() const { return index_; }
 
   // this function does not clear BlockIndex from the added context blocks and
