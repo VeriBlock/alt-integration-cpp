@@ -13,6 +13,15 @@
 
 namespace altintegration {
 
+template <>
+void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
+                            const typename BlockIndex<VbkBlock>::payloads_t& p,
+                            const BlockTree<BtcBlock, BtcChainParams>& tree);
+
+template <>
+void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
+                                 const BlockIndex<VbkBlock>::payloads_t& p);
+
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
@@ -40,9 +49,11 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool bootstrapWithGenesis(ValidationState& state) override;
 
-  bool acceptBlock(const block_t& block,
-                   const std::vector<context_t>& context,
+  bool addPayloads(const block_t& block,
+                   const std::vector<payloads_t>& payloads,
                    ValidationState& state);
+
+  void removePayloads(const block_t& block, std::vector<payloads_t>& payloads);
 
  private:
   void determineBestChain(Chain<index_t>& currentBest,
@@ -53,28 +64,12 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 };
 
 template <>
-bool PopStateMachine<VbkBlockTree::BtcTree,
-                     BlockIndex<VbkBlock>,
-                     VbkChainParams>::applyContext(const BlockIndex<VbkBlock>&
-                                                       index,
-                                                   ValidationState& state);
+bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
+    const BlockIndex<VbkBlock>& index, ValidationState& state);
 
 template <>
-void PopStateMachine<VbkBlockTree::BtcTree,
-                     BlockIndex<VbkBlock>,
-                     VbkChainParams>::unapplyContext(const BlockIndex<VbkBlock>&
-                                                         index);
-
-template <>
-void addContextToBlockIndex(
-    BlockIndex<VbkBlock>& index,
-    const typename BlockIndex<VbkBlock>::context_t& context,
-    const VbkBlockTree::BtcTree& tree);
-/*
-template <>
-void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
-                                 const BlockIndex<VbkBlock>::payloads_t& p);
-                                 */
+void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
+    const BlockIndex<VbkBlock>& index);
 
 }  // namespace altintegration
 

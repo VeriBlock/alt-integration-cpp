@@ -9,51 +9,14 @@
 
 namespace altintegration {
 
-struct AltProof {
-  AltBlock endorsed;
-  AltBlock containing;
-  ATV atv;
-
-  /**
-   * Read VBK data from the stream and convert it to AltProof
-   * @param stream data stream to read from
-   * @return AltProof
-   */
-  static AltProof fromVbkEncoding(ReadStream& stream);
-
-  /**
-   * Read VBK data from the string raw byte representation and convert it to
-   * AltProof
-   * @param string data bytes to read from
-   * @return AltProof
-   */
-  static AltProof fromVbkEncoding(const std::string& bytes);
-
-  /**
-   * Convert AltProof to data stream using Vbk byte format
-   * @param stream data stream to write into
-   */
-  void toVbkEncoding(WriteStream& stream) const;
-
-  /**
-   * Convert AltProof to raw bytes data using Vbk byte format
-   * @return bytes data
-   */
-  std::vector<uint8_t> toVbkEncoding() const;
-
-  friend bool operator==(const AltProof& a, const AltProof& b) {
-    // clang-format off
-    return a.atv == b.atv &&
-           a.containing == b.containing &&
-           a.endorsed == b.endorsed;
-    // clang-format on
-  }
-};
-
 struct AltPayloads {
   using id_t = uint256;
 
-  AltProof alt{};
+  AltBlock endorsed;
+  AltBlock containingBlock;
+  uint256 containingTx;
+  bool hasAtv{false};
+  ATV atv{};
   std::vector<VTB> vtbs{};
 
   /**
@@ -88,25 +51,22 @@ struct AltPayloads {
    * @return id sha256 hash
    */
 
-  id_t getId() const;
+  id_t getId() const { return sha256(containingTx, containingBlock.hash); }
 
   /**
    * Return a containing AltBlock
    * @return containing block from AltProof
    */
-  AltBlock getContainingBlock() const;
+  AltBlock getContainingBlock() const { return containingBlock; }
 
   /**
    * Return a endorsed AltBlock from the AltProof
    * @return endorsed block
    */
-  AltBlock getEndorsedBlock() const;
+  AltBlock getEndorsedBlock() const { return endorsed; }
 
   friend bool operator==(const AltPayloads& a, const AltPayloads& b) {
-    // clang-format off
-    return a.alt == b.alt &&
-           a.vtbs == b.vtbs;
-    // clang-format on
+    return a.getId() == b.getId();
   }
 };
 
@@ -117,24 +77,5 @@ struct DummyPayloads {
 };
 
 }  // namespace altintegration
-
-namespace std {
-
-template <>
-struct hash<altintegration::AltProof> {
-  size_t operator()(const altintegration::AltProof& el) const {
-    std::hash<std::vector<uint8_t>> hasher;
-    return hasher(el.toVbkEncoding());
-  }
-};
-
-template <>
-struct hash<altintegration::AltPayloads> {
-  size_t operator()(const altintegration::AltPayloads& el) const {
-    std::hash<std::vector<uint8_t>> hasher;
-    return hasher(el.toVbkEncoding());
-  }
-};
-}  // namespace std
 
 #endif  // ALT_INTEGRATION_PAYLOADS_HPP

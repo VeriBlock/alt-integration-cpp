@@ -41,32 +41,15 @@ struct Endorsement {
   ContainingHash blockOfProof;
   std::vector<uint8_t> payoutInfo;
 
-  /**
-   * Read VBK data from the stream and convert it to Endorsement
-   * @param stream data stream to read from
-   * @return AltProof
-   */
-  static Endorsement fromVbkEncoding(ReadStream& stream);
+  static Endorsement fromVbkEncoding(std::string) {
+    // TODO: remove
+    return {};
+  }
 
-  /**
-   * Read VBK data from the string raw byte representation and convert it to
-   * Endorsement
-   * @param string data bytes to read from
-   * @return AltProof
-   */
-  static Endorsement fromVbkEncoding(const std::string& bytes);
-
-  /**
-   * Convert Endorsement to data stream using Vbk byte format
-   * @param stream data stream to write into
-   */
-  void toVbkEncoding(WriteStream& stream) const;
-
-  /**
-   * Convert Endorsement to raw bytes data using Vbk byte format
-   * @return bytes data
-   */
-  std::vector<uint8_t> toVbkEncoding() const;
+  std::vector<uint8_t> toVbkEncoding() const {
+    // TODO: remove
+    return {};
+  }
 
   static type fromContainer(const Container& c);
 
