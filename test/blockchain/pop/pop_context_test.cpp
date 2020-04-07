@@ -84,75 +84,68 @@ struct PopContextFixture : public ::testing::Test {
   }
 };
 
-//TEST_F(PopContextFixture, A) {
-//  // current REMOTE BTC chain is on chain B
-//  ASSERT_EQ(remote.btc().getBestChain().tip(), chainBtip);
-//
-//  // all blocks excluding genesis block
-//  std::vector<VbkBlock> vbkblocks;
-//  auto current = vbkTip;
-//  while (current && current->pprev) {
-//    vbkblocks.push_back(current->header);
-//    current = current->pprev;
-//  }
-//  std::reverse(vbkblocks.begin(), vbkblocks.end());
-//
-//  // apply remote vbk blocks to current local vbk tip
-//  for (const auto& b : vbkblocks) {
-//    ASSERT_TRUE(local.acceptBlock(b, state)) << state.GetPath();
-//  }
-//
-//  // local and remote VBK chains are same
-//  ASSERT_EQ(*local.getBestChain().tip(), *remote.vbk().getBestChain().tip());
-//  // local and remote BTC chains are different
-//  ASSERT_NE(*local.btc().getBestChain().tip(),
-//            *remote.btc().getBestChain().tip());
-//
-//  auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
-//    auto it = remote.vbkPayloads.find(containing->getHash());
-//    ASSERT_NE(it, remote.vbkPayloads.end());
-//    auto& vtbs = it->second;
-//    std::vector<typename VbkBlock::context_t> context;
-//    context.reserve(vtbs.size());
-//    std::transform(vtbs.begin(),
-//                   vtbs.end(),
-//                   std::back_inserter(context),
-//                   [&](const VTB& vtb) -> VbkContext {
-//                     return VbkContext::fromContainer(vtb);
-//                   });
-//
-//    ASSERT_TRUE(local.acceptBlock(containing->header, context, state));
-//  };
-//
-//  // and now accept VBK tip again, with VTBs
-//  acceptAllVtbsFromVBKblock(vbkTip);
-//  auto* localB = local.getBlockIndex(vbkTip->getHash());
-//  if (!localB->containingContext.empty()) {
-//    makeSureNoDuplicates(
-//        hashAll<BtcBlock>(localB->containingContext.top().btc));
-//  }
-//
-//  // and now our local BTC tree must know all blocks from active chain B
-//  ASSERT_EQ(*local.btc().getBestChain().tip(),
-//            *remote.btc().getBestChain().tip());
-//
-//  // local BTC tree must NOT know about blocks from chain A
-//  ASSERT_FALSE(local.btc().getBlockIndex(chainAtip->getHash()));
-//
-//  // first containing context block is BTC block #1
-//
-//  // now we add VTB from btcA
-//  acceptAllVtbsFromVBKblock(vbkTip->pprev);
-//  auto* localA = local.getBlockIndex(vbkTip->pprev->getHash());
-//  if (!localA->containingContext.empty()) {
-//    makeSureNoDuplicates(
-//        hashAll<BtcBlock>(localA->containingContext.top().btc));
-//  }
-//
-//  // our local BTC is still same as remote
-//  ASSERT_EQ(*local.btc().getBestChain().tip(),
-//            *remote.btc().getBestChain().tip());
-//
-//  // but now we know blocks from chain A
-//  ASSERT_TRUE(local.btc().getBlockIndex(chainAtip->getHash()));
-//}
+TEST_F(PopContextFixture, A) {
+  // current REMOTE BTC chain is on chain B
+  ASSERT_EQ(remote.btc().getBestChain().tip(), chainBtip);
+
+  // all blocks excluding genesis block
+  std::vector<VbkBlock> vbkblocks;
+  auto current = vbkTip;
+  while (current && current->pprev) {
+    vbkblocks.push_back(current->header);
+    current = current->pprev;
+  }
+  std::reverse(vbkblocks.begin(), vbkblocks.end());
+
+  // apply remote vbk blocks to current local vbk tip
+  for (const auto& b : vbkblocks) {
+    ASSERT_TRUE(local.acceptBlock(b, state)) << state.GetPath();
+  }
+
+  // local and remote VBK chains are same
+  ASSERT_EQ(*local.getBestChain().tip(), *remote.vbk().getBestChain().tip());
+  // local and remote BTC chains are different
+  ASSERT_NE(*local.btc().getBestChain().tip(),
+            *remote.btc().getBestChain().tip());
+
+  auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
+    auto it = remote.vbkPayloads.find(containing->getHash());
+    ASSERT_NE(it, remote.vbkPayloads.end());
+    auto& vtbs = it->second;
+
+    ASSERT_TRUE(local.acceptBlock(containing->header, state));
+    ASSERT_TRUE(local.addPayloads(containing->header, vtbs, state));
+  };
+
+  // and now accept VBK tip again, with VTBs
+  acceptAllVtbsFromVBKblock(vbkTip);
+  auto* localB = local.getBlockIndex(vbkTip->getHash());
+  if (!localB->containingContext.empty()) {
+    makeSureNoDuplicates(
+        hashAll<BtcBlock>(localB->containingContext.top().btc));
+  }
+
+  // and now our local BTC tree must know all blocks from active chain B
+  ASSERT_EQ(*local.btc().getBestChain().tip(),
+            *remote.btc().getBestChain().tip());
+
+  // local BTC tree must NOT know about blocks from chain A
+  ASSERT_FALSE(local.btc().getBlockIndex(chainAtip->getHash()));
+
+  // first containing context block is BTC block #1
+
+  // now we add VTB from btcA
+  acceptAllVtbsFromVBKblock(vbkTip->pprev);
+  auto* localA = local.getBlockIndex(vbkTip->pprev->getHash());
+  if (!localA->containingContext.empty()) {
+    makeSureNoDuplicates(
+        hashAll<BtcBlock>(localA->containingContext.top().btc));
+  }
+
+  // our local BTC is still same as remote
+  ASSERT_EQ(*local.btc().getBestChain().tip(),
+            *remote.btc().getBestChain().tip());
+
+  // but now we know blocks from chain A
+  ASSERT_TRUE(local.btc().getBlockIndex(chainAtip->getHash()));
+}
