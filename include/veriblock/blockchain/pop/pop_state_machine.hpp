@@ -61,6 +61,7 @@ struct PopStateMachine {
     }
 
     Chain<ProtectedIndex> fork(startHeight_, &to);
+
     auto* current = const_cast<ProtectedIndex*>(fork.findFork(index_));
     assert(current);
 
