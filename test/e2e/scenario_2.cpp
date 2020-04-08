@@ -56,8 +56,6 @@ TEST_F(Scenario2, scenario_2) {
   AltPayloads altPayloads1 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
-  // Generate VTB for 1 altPayloads1
-
   // mine 65 VBK blocks
   auto* vbkTip = popminer.mineVbkBlocks(65);
 
