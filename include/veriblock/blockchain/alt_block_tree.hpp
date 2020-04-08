@@ -71,10 +71,6 @@ struct AltTree {
 
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
-  VbkBlockTree::BtcTree btc() { return cmp_.getProtectingBlockTree().btc(); }
-  const VbkBlockTree::BtcTree& btc() const {
-    return cmp_.getProtectingBlockTree().btc();
-  }
 
  protected:
   block_index_t block_index_;
