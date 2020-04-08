@@ -104,10 +104,10 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
 
   // allocate a new element in the stack
   context_t ctx;
-  index->containingContext.push(ctx);
+  index->containingContext.push_back(ctx);
 
   if (!cmp_.addPayloads(*index, payloads, state)) {
-    index->containingContext.pop();
+    index->containingContext.back();
     return state.Invalid("bad-atv-stateful");
   }
 
@@ -121,9 +121,9 @@ void AltTree::removePayloads(const AltBlock& containingBlock,
 
   cmp_.removePayloads(*index, payloads);
 
-  if (index->containingContext.top().vbk.empty() &&
-      index->containingContext.top().vtbs.empty()) {
-    index->containingContext.pop();
+  if (index->containingContext.back().vbk.empty() &&
+      index->containingContext.back().vtbs.empty()) {
+    index->containingContext.pop_back();
   }
 }
 
@@ -137,14 +137,14 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
         }
 
         // step 1
-        for (const auto& b : index.containingContext.top().vbk) {
+        for (const auto& b : index.containingContext.back().vbk) {
           if (!tree().acceptBlock(b, state)) {
             return state.Invalid("alt-accept-block");
           }
         }
 
         // step 2, process VTBs
-        for (const auto& vtb : index.containingContext.top().vtbs) {
+        for (const auto& vtb : index.containingContext.back().vtbs) {
           for (const auto& b : vtb.context) {
             if (!tree().acceptBlock(b, state)) {
               return state.Invalid("alt-accept-block");
@@ -189,14 +189,14 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
   };
 
   // step 1
-  for (const auto& b : index.containingContext.top().vbk) {
+  for (const auto& b : index.containingContext.back().vbk) {
     if (check(b)) {
       tree().invalidateBlockByHash(b.getHash());
     }
   }
 
   // step 2, process VTBs
-  for (const auto& vtb : index.containingContext.top().vtbs) {
+  for (const auto& vtb : index.containingContext.back().vtbs) {
     auto* containingIndex = tree().getBlockIndex(vtb.containingBlock.getHash());
     tree().removePayloads(containingIndex, {vtb});
 
@@ -218,7 +218,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
                             const VbkBlockTree& tree) {
   assert(!index.containingContext.empty());
 
-  auto& ctx = index.containingContext.top().vbk;
+  auto& ctx = index.containingContext.back().vbk;
 
   // only add blocks that are UNIQUE
   std::unordered_set<uint256> set;
@@ -251,7 +251,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     if (!temp || temp->containingEndorsements.find(
                      BtcEndorsement::fromContainer(vtb).id) ==
                      temp->containingEndorsements.end()) {
-      index.containingContext.top().vtbs.push_back(vtb);
+      index.containingContext.back().vtbs.push_back(vtb);
     }
   }
 }
@@ -263,13 +263,13 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
     return;
   }
 
-  auto& vbk = index.containingContext.top().vbk;
+  auto& vbk = index.containingContext.back().vbk;
   auto vbk_end = vbk.end();
   auto removeBlock = [&](const VbkBlock& b) {
     vbk_end = std::remove(vbk.begin(), vbk_end, b);
   };
 
-  auto& vtbs = index.containingContext.top().vtbs;
+  auto& vtbs = index.containingContext.back().vtbs;
   auto vtbs_end = vtbs.end();
   auto removeVTB = [&](const VTB& vtb) {
     vtbs_end = std::remove(vtbs.begin(), vtbs_end, vtb);
