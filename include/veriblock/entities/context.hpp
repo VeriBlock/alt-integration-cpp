@@ -15,10 +15,17 @@ struct AltPayloads;
 
 struct VbkContext {
   std::vector<BtcBlock> btc;
+
+  bool empty() const noexcept { return btc.empty(); }
 };
 
 struct AltContext {
+  // corresponds to the ATV
   std::vector<VbkBlock> vbk;
+
+  std::vector<VTB> vtbs;
+
+  bool empty() const noexcept { return vbk.empty() && vtbs.empty(); }
 };
 
 }  // namespace altintegration
