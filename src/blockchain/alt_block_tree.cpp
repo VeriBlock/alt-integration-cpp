@@ -95,10 +95,6 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
                              HexStr(hash));
   }
 
-  if (!cmp_.setState(*index, state)) {
-    return state.Error("bad-state");
-  }
-
   for (size_t i = 0, size = payloads.size(); i < size; i++) {
     auto& p = payloads[i];
     if (p.hasAtv && !checkPayloads(p.atv, state, vbk().getParams())) {
@@ -125,7 +121,7 @@ void AltTree::removePayloads(const AltBlock& containingBlock,
 
   cmp_.removePayloads(*index, payloads);
 
-  if (index->containingContext.top().vtbs.empty() &&
+  if (index->containingContext.top().vbk.empty() &&
       index->containingContext.top().vtbs.empty()) {
     index->containingContext.pop();
   }
