@@ -280,7 +280,7 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
   };
 
   // remove ATV context
-  std::for_each(p.atv.context.rbegin(), p.atv.context.rbegin(), removeBlock);
+  std::for_each(p.atv.context.rbegin(), p.atv.context.rend(), removeBlock);
   // for every VTB, in reverse order
   std::for_each(p.vtbs.rbegin(), p.vtbs.rend(), removeVTB);
 
