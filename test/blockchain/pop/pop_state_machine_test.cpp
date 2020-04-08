@@ -1,10 +1,9 @@
-#include "veriblock/blockchain/pop/pop_state_machine.hpp"
-
 #include <gtest/gtest.h>
 
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
+#include "veriblock/blockchain/pop/pop_state_machine.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
@@ -80,8 +79,8 @@ TEST(PopStateMachine, unapplyAndApply_test) {
   ASSERT_EQ(*btcTree.getBestChain().tip(), *apm.btc().getBestChain().tip());
 
   //
-  auto btc1tip = apm.btc().getBestChain().tip();
-  EXPECT_EQ(btcTree.getBestChain().tip()->getHash(), btc1tip->getHash());
+  auto btc1tip = *apm.btc().getBestChain().tip();
+  EXPECT_EQ(btcTree.getBestChain().tip()->getHash(), btc1tip.getHash());
 
   apm.mineBtcBlocks(115);
 
@@ -118,7 +117,7 @@ TEST(PopStateMachine, unapplyAndApply_test) {
     if (workBlock1 != vbkTip) {
       EXPECT_TRUE(stateMachine.unapplyAndApply(*workBlock1, state));
 
-      EXPECT_EQ(*btc1tip, *btcTree.getBestChain().tip());
+      EXPECT_EQ(btc1tip, *btcTree.getBestChain().tip());
       workBlock1 = workBlock1->pprev;
     }
 

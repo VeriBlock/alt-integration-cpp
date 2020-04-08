@@ -35,7 +35,7 @@ struct AltTreeTest : public testing::Test {
   AltTreeTest() : altTree(altconfig, vbkconfig, btcconfig) {
     altTree.bootstrap(state);
     altTree.vbk().bootstrapWithGenesis(state);
-    altTree.btc().bootstrapWithGenesis(state);
+    altTree.vbk().btc().bootstrapWithGenesis(state);
   }
 
   void mineAltBlocks(uint32_t num, std::vector<AltBlock>& chain) {
@@ -150,6 +150,8 @@ TEST_F(AltTreeTest, acceptBlock_test) {
   auto vtbs = popminer.vbkPayloads[vbkTip->getHash()];
 
   ASSERT_EQ(vtbs.size(), 2);
+  ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
+            BtcEndorsement::fromContainer(vtbs[1]).id);
   fillVTBContext(
       vtbs[0], vbkconfig.getGenesisBlock().getHash(), popminer.vbk());
   fillVTBContext(
@@ -229,4 +231,29 @@ TEST_F(AltTreeTest, acceptBlock_test) {
   // check btc tree state
   EXPECT_EQ(altTree.vbk().btc().getBestChain().tip()->getHash(),
             btcBlockTip1->getHash());
+
+  containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  AltPayloads altPayloads4 =
+      generateAltPayloads(tx,
+                          containingBlock,
+                          endorsedBlock,
+                          vbkconfig.getGenesisBlock().getHash());
+
+  EXPECT_TRUE(altTree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(altTree.addPayloads(containingBlock, {altPayloads4}, state));
+  EXPECT_TRUE(state.IsValid());
+
+  containinVbkBlock = altTree.vbk().getBlockIndex(vbkTip->getHash());
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
+                  BtcEndorsement::fromContainer(vtbs[0]).id) !=
+              containinVbkBlock->containingEndorsements.end());
+
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
+                  BtcEndorsement::fromContainer(vtbs[1]).id) !=
+              containinVbkBlock->containingEndorsements.end());
+
+  // check btc tree state
+  EXPECT_EQ(altTree.vbk().btc().getBestChain().tip()->getHash(),
+            btcBlockTip2->getHash());
 }

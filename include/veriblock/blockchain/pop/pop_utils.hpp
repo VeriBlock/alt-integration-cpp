@@ -76,9 +76,6 @@ void removeEndorsement(
 
   auto& endorsement_ptr = endorsementit->second;
 
-  // remove from 'containing endorsements'
-  index.containingEndorsements.erase(endorsementit);
-
   // remove from 'endorsedBy'
   auto endorsed = index.getAncestor(endorsement_ptr->endorsedHeight);
   if (endorsed) {
@@ -93,6 +90,8 @@ void removeEndorsement(
 
     endorsements.erase(new_end, endorsements.end());
   }
+  // remove from 'containing endorsements'
+  index.containingEndorsements.erase(endorsementit);
 }
 
 }  // namespace altintegration
