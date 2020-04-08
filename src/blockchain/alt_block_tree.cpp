@@ -137,10 +137,6 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
         }
 
         // step 1
-        if (index.containingContext.empty()) {
-          return true;
-        }
-
         for (const auto& b : index.containingContext.top().vbk) {
           if (!tree().acceptBlock(b, state)) {
             return state.Invalid("alt-accept-block");
