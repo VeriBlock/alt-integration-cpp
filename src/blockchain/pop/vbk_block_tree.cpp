@@ -94,10 +94,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
 
   // allocate a new element in the stack
   context_t ctx;
-  index->containingContext.push(ctx);
+  index->containingContext.push_back(ctx);
 
   if (!cmp_.addPayloads(*index, payloads, state)) {
-    index->containingContext.pop();
+    index->containingContext.back();
     return state.Invalid("bad-payloads-stateful");
   }
 
@@ -116,8 +116,8 @@ void VbkBlockTree::removePayloads(index_t* index,
                                   const std::vector<payloads_t>& payloads) {
   assert(index);
   cmp_.removePayloads(*index, payloads);
-  if (index->containingContext.top().btc.empty()) {
-    index->containingContext.pop();
+  if (index->containingContext.back().btc.empty()) {
+    index->containingContext.pop_back();
   }
 
   determineBestChain(activeChain_, *index);
@@ -131,7 +131,7 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
         if (index.containingContext.empty()) {
           return true;
         }
-        for (const auto& b : index.containingContext.top().btc) {
+        for (const auto& b : index.containingContext.back().btc) {
           if (!tree().acceptBlock(b, state)) {
             return state.Invalid("vbk-accept-block");
           }
@@ -150,7 +150,7 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
   if (index.containingContext.empty()) {
     return;
   }
-  for (const auto& b : index.containingContext.top().btc) {
+  for (const auto& b : index.containingContext.back().btc) {
     tree().invalidateBlockByHash(b.getHash());
   }
 
@@ -163,7 +163,7 @@ void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
     return;
   }
 
-  auto& ctx = index.containingContext.top().btc;
+  auto& ctx = index.containingContext.back().btc;
   auto end = ctx.end();
   auto remove = [&](const BtcBlock& b) {
     end = std::remove(ctx.begin(), end, b);
@@ -186,7 +186,7 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
                             const BlockTree<BtcBlock, BtcChainParams>& tree) {
   assert(!index.containingContext.empty());
 
-  auto& ctx = index.containingContext.top().btc;
+  auto& ctx = index.containingContext.back().btc;
 
   // only add blocks that are UNIQUE
   std::unordered_set<uint256> set;

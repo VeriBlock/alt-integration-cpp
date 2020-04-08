@@ -61,8 +61,6 @@ struct PopStateMachine {
     }
 
     Chain<ProtectedIndex> fork(startHeight_, &to);
-    bool a = to.pprev->getHash() == index_->getHash();
-    (void)a;
 
     auto* current = const_cast<ProtectedIndex*>(fork.findFork(index_));
     assert(current);

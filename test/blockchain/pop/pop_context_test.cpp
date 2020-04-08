@@ -122,7 +122,7 @@ TEST_F(PopContextFixture, A) {
   auto* localB = local.getBlockIndex(vbkTip->getHash());
   if (!localB->containingContext.empty()) {
     std::vector<BtcBlock> allBtcBlocks;
-    for (const auto& el : localB->containingContext._Get_container()) {
+    for (const auto& el : localB->containingContext) {
       allBtcBlocks.insert(allBtcBlocks.begin(), el.btc.begin(), el.btc.end());
     }
     makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));
@@ -142,7 +142,7 @@ TEST_F(PopContextFixture, A) {
   auto* localA = local.getBlockIndex(vbkTip->pprev->getHash());
   if (!localA->containingContext.empty()) {
     std::vector<BtcBlock> allBtcBlocks;
-    for (const auto& el : localA->containingContext._Get_container()) {
+    for (const auto& el : localA->containingContext) {
       allBtcBlocks.insert(allBtcBlocks.begin(), el.btc.begin(), el.btc.end());
     }
 
