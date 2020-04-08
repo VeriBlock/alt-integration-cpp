@@ -121,8 +121,7 @@ void AltTree::removePayloads(const AltBlock& containingBlock,
 
   cmp_.removePayloads(*index, payloads);
 
-  if (index->containingContext.back().vbk.empty() &&
-      index->containingContext.back().vtbs.empty()) {
+  if (index->containingContext.back().empty()) {
     index->containingContext.pop_back();
   }
 }
@@ -135,16 +134,16 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
         if (index.containingContext.empty()) {
           return true;
         }
-
+        auto& ctx = index.containingContext.back();
         // step 1
-        for (const auto& b : index.containingContext.back().vbk) {
+        for (const auto& b : ctx.vbk) {
           if (!tree().acceptBlock(b, state)) {
             return state.Invalid("alt-accept-block");
           }
         }
 
         // step 2, process VTBs
-        for (const auto& vtb : index.containingContext.back().vtbs) {
+        for (const auto& vtb : ctx.vtbs) {
           for (const auto& b : vtb.context) {
             if (!tree().acceptBlock(b, state)) {
               return state.Invalid("alt-accept-block");
@@ -188,15 +187,17 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
     return !index && index->containingContext.empty();
   };
 
+  auto& ctx = index.containingContext.back();
+
   // step 1
-  for (const auto& b : index.containingContext.back().vbk) {
+  for (const auto& b : ctx.vbk) {
     if (check(b)) {
       tree().invalidateBlockByHash(b.getHash());
     }
   }
 
   // step 2, process VTBs
-  for (const auto& vtb : index.containingContext.back().vtbs) {
+  for (const auto& vtb : ctx.vtbs) {
     auto* containingIndex = tree().getBlockIndex(vtb.containingBlock.getHash());
     tree().removePayloads(containingIndex, {vtb});
 
@@ -218,12 +219,12 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
                             const VbkBlockTree& tree) {
   assert(!index.containingContext.empty());
 
-  auto& ctx = index.containingContext.back().vbk;
+  auto& ctx = index.containingContext.back();
 
   // only add blocks that are UNIQUE
   std::unordered_set<uint256> set;
-  set.reserve(ctx.size());
-  for (const auto& c : ctx) {
+  set.reserve(ctx.vbk.size());
+  for (const auto& c : ctx.vbk) {
     set.insert(c.getHash());
   }
 
@@ -231,7 +232,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     auto hash = b.getHash();
     // filter context: add only blocks that are unknown and not in current 'ctx'
     if (!set.count(hash) && !tree.getBlockIndex(hash)) {
-      ctx.push_back(b);
+      ctx.vbk.push_back(b);
       set.insert(hash);
     }
   };
@@ -251,7 +252,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     if (!temp || temp->containingEndorsements.find(
                      BtcEndorsement::fromContainer(vtb).id) ==
                      temp->containingEndorsements.end()) {
-      index.containingContext.back().vtbs.push_back(vtb);
+      ctx.vtbs.push_back(vtb);
     }
   }
 }
