@@ -17,7 +17,8 @@ std::vector<std::vector<uint8_t>> getLastKnownBlocks(const BlockTree& tree,
 
   auto* tip = tree.getBestChain().tip();
   while (tip != nullptr) {
-    ret.push_back(tip->header.toRaw());
+    ret.push_back(tip->header.getHash().asVector());
+    tip = tip->pprev;
   }
 
   // reverse them since we add them in reverse order (tip -> genesis)

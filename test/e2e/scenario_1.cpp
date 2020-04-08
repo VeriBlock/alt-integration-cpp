@@ -14,8 +14,8 @@ using namespace altintegration;
  *
  * VBK:
  *          /-o-vAe52-vAc53-o-o-o-o - 57
- * o-o-o-o-o-o-vBe52-vBc53-o-o-o-o - 55  (tip, better pop score, B is on main chain)
- *         50
+ * o-o-o-o-o-o-vBe52-vBc53-o-o-o-o - 55  (tip, better pop score, B is on main
+ * chain) 50
  *
  * vAe - endorsed block in chain A (block 52)
  * vAc - block that contains endorsement of block vAe (block 53)
@@ -36,20 +36,32 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock>* alttip;
 
   Scenario1() {
-    auto *btcFork = popminer.mineBtcBlocks(50);
+    auto* btcFork = popminer.mineBtcBlocks(50);
     btcAtip = popminer.mineBtcBlocks(*btcFork, 2);
+    btcBtip = popminer.mineBtcBlocks(*btcFork, 2);
 
     auto vbkFork = popminer.mineVbkBlocks(50);
     vbkAtip = popminer.mineVbkBlocks(*vbkFork, 2);
+    vbkBtip = popminer.mineVbkBlocks(*vbkFork, 2);
 
     auto btctxA = popminer.createBtcTxEndorsingVbkBlock(vbkAtip->header);
-    auto btcA = popminer.mineBtcBlocks(1);
-    btcAtip = popminer.mineBtcBlocks(2);
+    btcAtip = popminer.mineBtcBlocks(*btcAtip, 3);
 
-    auto vbktxA = popminer.endorseVbkBlock(vbkAtip->header, getLastKnownBlocks(alttree.btc(), 1)[0], state);
+    auto btctxB = popminer.createBtcTxEndorsingVbkBlock(vbkBtip->header);
+    btcBtip = popminer.mineBtcBlocks(*btcBtip, 5);
+
+    auto vbktxA = popminer.endorseVbkBlock(
+        vbkAtip->header, getLastKnownBlocks(alttree.vbk().btc(), 1)[0], state);
+    vbkAtip = popminer.mineVbkBlocks(*vbkAtip, 5);
+    auto vbktxB = popminer.endorseVbkBlock(
+        vbkBtip->header, getLastKnownBlocks(alttree.vbk().btc(), 1)[0], state);
+    vbkBtip = popminer.mineVbkBlocks(*vbkBtip, 5);
+
+    std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+    mineAltBlocks(100, chain);
   }
-
-
 };
 
-// TEST_F(Scenario1, )
+TEST_F(Scenario1, block101Vtb) {
+
+}
