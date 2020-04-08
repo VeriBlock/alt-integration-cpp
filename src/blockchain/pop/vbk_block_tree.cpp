@@ -116,7 +116,7 @@ void VbkBlockTree::removePayloads(index_t* index,
                                   const std::vector<payloads_t>& payloads) {
   assert(index);
   cmp_.removePayloads(*index, payloads);
-  if (index->containingContext.back().btc.empty()) {
+  if (index->containingContext.back().empty()) {
     index->containingContext.pop_back();
   }
 
