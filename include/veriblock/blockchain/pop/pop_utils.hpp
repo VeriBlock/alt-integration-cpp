@@ -36,7 +36,7 @@ bool checkAndAddEndorsement(
 
   if (endorsed->getHash() != endorsement.endorsedHash) {
     return state.Invalid("block-differs",
-                         "Endorsed VBK block is on a different chain");
+                         "Endorsed block is on a different chain");
   }
 
   auto* blockOfProof = tree.getBlockIndex(endorsement.blockOfProof);

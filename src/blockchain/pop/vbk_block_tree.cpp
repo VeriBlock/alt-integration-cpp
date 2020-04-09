@@ -6,6 +6,10 @@ namespace altintegration {
 void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew,
                                       bool isBootstrap) {
+  if (currentBest.tip() == &indexNew) {
+    return;
+  }
+
   if (currentBest.tip() == nullptr) {
     currentBest.setTip(&indexNew);
     return onTipChanged(indexNew, isBootstrap);
@@ -101,7 +105,19 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
     return state.Invalid("bad-payloads-stateful");
   }
 
-  determineBestChain(activeChain_, *index);
+  // if this index is the part of the some fork_chain set to the tip of that
+  // fork for the correct determineBestChain() processing
+  std::vector<index_t*> forkTips;
+  for (const auto& forkChain : fork_chains_) {
+    if (forkChain.second.contains(index) ||
+        forkChain.second.tip()->getAncestor(index->height) == index) {
+      forkTips.push_back(forkChain.second.tip());
+    }
+  }
+
+  for (const auto& tip : forkTips) {
+    determineBestChain(activeChain_, *tip);
+  }
 
   return true;
 }

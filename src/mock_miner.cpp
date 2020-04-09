@@ -1,10 +1,9 @@
-#include "veriblock/mock_miner.hpp"
-
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/context.hpp"
 #include "veriblock/fmt.hpp"
+#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -57,10 +56,9 @@ VbkTx MockMiner::endorseAltBlock(const PublicationData& publicationData) {
   return transaction;
 }
 
-ATV MockMiner::generateATV(
-    const VbkTx& transaction,
-    const VbkBlock::hash_t& lastKnownVbkBlockHash,
-    ValidationState& state) {
+ATV MockMiner::generateATV(const VbkTx& transaction,
+                           const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                           ValidationState& state) {
   // build merkle tree
   auto hashes = hashAll<VbkTx>({transaction});
   const int32_t treeIndex = 0;  // this is POP tx
@@ -283,7 +281,7 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
   if (!tree.acceptBlock(containingBlock, state)) {
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
-  if(!tree.addPayloads(containingBlock, vtbs, state)) {
+  if (!tree.addPayloads(containingBlock, vtbs, state)) {
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 
@@ -350,6 +348,15 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
   }
 
   return vbktree.getBlockIndex(last);
+}
+
+BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
+    const BlockIndex<VbkBlock>& tip, const std::vector<VbkPopTx>& poptxs) {
+  //! we "simulate" mempool - a vector of transactions that can be added for
+  //! "further processing". here we mine first block separately, as it
+  //! should contain all transactions from mempool.
+  auto containing = applyVTBs(tip, vbktree, poptxs, state_);
+  return vbktree.getBlockIndex(containing.getHash());
 }
 
 BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(size_t amount) {
