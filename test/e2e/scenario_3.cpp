@@ -5,37 +5,33 @@
 using namespace altintegration;
 // clang-format off
 /**
- * BTC:
- * o-o-o-o-o-o-o-o-o-o-o-o-B102 - 102 blocks (tip, longest)
- *
- *
  * VBK:
  *
- * o-o-o-o-o-o-o-o-o-o-o-o-[Height 67: 2 VTBs: Btc1 and Btc102] (tip)
- *
+ * o-o-o-o-o-o-o-o-o-o-o-o--o-o-[Height 66, popTx1 endorsement in the Btc block 1, popTx2 endorsement in the Btc block 103]-o-o-o (tip, 69 blocks)
+ *           \[Height 59, popTx3 endorsement in the Btc block 12] (59 blocks, fork)   
  *
  * ALT:
- * o-o-o-o-o-o-o-[Height 11: Payloads1 with VTB Btc1]-o-o-o-o-o-o-o-o-o-[Height 22: Payloads2 with VTB Btc102] - [Height 23: Payloads4 without VTBs]
- *                                                        \-[Height 18: Payloads3 without VTB]
+ * o-o-o-o-o-o-o-[Height 11: Payloads1 with VTB popTx2]-[Height 12: Payloads2 with VTB popTx3]-[Height 12: Payloads2 with VTB popTx3]
  *
  * alt tree has VBK+BTC bootstrapped at the genesis blocks
  *
  * Step 1
- * proccess Alt block height 11 with one VTB with the Btc block 1
- * expect that Alt block btc tree state on the Btc block 1
- * expect that Vbk block 67 has 1 endorsement
+ * proccess all Vbk endorsement/payloads, so as a result we have one fork with one endorsement,
+ * and active chain with two endorsements/payloads
  * Step 2
- * proccess Alt block height 22 with one VTB with the Btc block 102
- * expect that Alt block btc tree state on the Btc block 102
- * expect that Vbk block 67 has 2 endorsement
+ * proccess Alt block height 11 with one VTB with the popTx2
+ * expect that Vbk tree state on the Vbk 67 block
+ * expect that Vbk block 66 has 1 endorsement
  * Step 3
- * proccess Alt block height 17 without VTBs
- * expect that Alt block btc tree state on the Btc block 1
- * expect that Vbk block 67 has 1 endorsement
+ * proccess Alt block height 12 with one VTB with the popTx2 (also have been updated the tip of the highest chain with one block, because we have created one ATV)
+ * expect that Vbk tree state on the Vbk 59 block (fork chain)
+ * expect that Vbk block 66 has 1 endorsement
+ * expect that Vbk block 59 has 1 endorsement
  * Step 4
- * proccess Alt block height 23 without VTBs
- * expect that Alt block btc tree state on the Btc block 102
- * expect that Vbk block 67 has 2 endorsement
+ * proccess Alt block height 13 with one VTB with the popTx1
+ * expect that Vbk tree state on the Vbk 69 block (acive chain)
+ * expect that Vbk block 66 has 2 endorsement
+ * expect that Vbk block 59 has 1 endorsement
  */
 // clang-format on
 
