@@ -352,7 +352,6 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
     const BlockIndex<VbkBlock>& tip, const std::vector<VbkPopTx>& poptxs) {
-  VbkBlock::hash_t last = tip.getHash();
   //! we "simulate" mempool - a vector of transactions that can be added for
   //! "further processing". here we mine first block separately, as it
   //! should contain all transactions from mempool.
