@@ -65,6 +65,16 @@ struct PopTestFixture {
 
     return block;
   }
+
+  VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
+    auto btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
+    auto* btcBlockTip = popminer.mineBtcBlocks(1);
+    return popminer.createVbkPopTxEndorsingVbkBlock(
+        btcBlockTip->header,
+        btctx,
+        endorsedBlock,
+        popminer.getBtcParams().getGenesisBlock().getHash());
+  }
 };
 
 }  // namespace altintegration

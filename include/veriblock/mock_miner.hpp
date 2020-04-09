@@ -61,6 +61,9 @@ class MockMiner {
                                       size_t amount);
   BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount);
 
+  BlockIndex<VbkBlock>* mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
+                                      const std::vector<VbkPopTx>& poptxs);
+
   BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock);
 
   VbkPopTx createVbkPopTxEndorsingVbkBlock(
