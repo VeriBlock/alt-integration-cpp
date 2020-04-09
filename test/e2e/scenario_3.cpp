@@ -11,7 +11,7 @@ using namespace altintegration;
  *           \[Height 59, popTx3 endorsement in the Btc block 12] (59 blocks, fork)   
  *
  * ALT:
- * o-o-o-o-o-o-o-[Height 11: Payloads1 with VTB popTx2]-[Height 12: Payloads2 with VTB popTx3]-[Height 12: Payloads2 with VTB popTx3]
+ * o-o-o-o-o-o-o-[Height 11: Payloads1 with VTB popTx2]-[Height 12: Payloads2 with VTB popTx3]-[Height 12: Payloads3 with VTB popTx1]
  *
  * alt tree has VBK+BTC bootstrapped at the genesis blocks
  *
