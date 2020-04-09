@@ -257,7 +257,7 @@ struct BlockTree {
         isAdded = true;
       }
 
-      if (chain_it->second.tip() == newCandidate) {
+      if (chain_it->second.contains(newCandidate)) {
         isAdded = true;
       }
 
@@ -336,8 +336,7 @@ struct BlockTree {
     // we must know previous block
     auto* prev = getBlockIndex(block.previousBlock);
     if (prev == nullptr) {
-      return state.Invalid("bad-prev-block",
-                           "can not find previous block");
+      return state.Invalid("bad-prev-block", "can not find previous block");
     }
 
     if (shouldContextuallyCheck &&
@@ -359,6 +358,10 @@ struct BlockTree {
   virtual void determineBestChain(Chain<index_t>& currentBest,
                                   index_t& indexNew,
                                   bool isBootstrap = false) {
+    if (currentBest.tip() == &indexNew) {
+      return;
+    }
+
     if (currentBest.tip() == nullptr ||
         currentBest.tip()->chainWork < indexNew.chainWork) {
       auto prevTip = currentBest.tip();

@@ -109,7 +109,6 @@ TEST_F(Scenario3, scenario_3) {
   // new tip is the next block after vbkTip1
   ASSERT_EQ(popminer.vbk().getBestChain().tip()->pprev->getHash(),
             vbkTip1->getHash());
-
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
@@ -120,10 +119,27 @@ TEST_F(Scenario3, scenario_3) {
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip1->getHash());
 
+  auto* containingVbkBlock =
+      alttree.vbk().getBlockIndex(vtbs1[1].containingBlock.getHash());
+
+  // check endorsements
+  EXPECT_TRUE(containingVbkBlock->containingEndorsements.find(
+                  BtcEndorsement::fromContainer(vtbs1[0]).id) ==
+              containingVbkBlock->containingEndorsements.end());
+
+  EXPECT_TRUE(containingVbkBlock->containingEndorsements.find(
+                  BtcEndorsement::fromContainer(vtbs1[1]).id) !=
+              containingVbkBlock->containingEndorsements.end());
+
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   AltPayloads altPayloads2 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+
+  // new tip is the next block after vbkTip1
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->pprev->getHash(),
+            vbkTip1->getHash());
+  vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
   altPayloads2.vtbs = {vtbs2[0]};
@@ -138,11 +154,25 @@ TEST_F(Scenario3, scenario_3) {
   AltPayloads altPayloads3 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
+  // new tip is the next block after vbkTip1
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->pprev->getHash(),
+            vbkTip1->getHash());
+  vbkTip1 = popminer.vbk().getBestChain().tip();
+
   // store vtbs in different altPayloads
   altPayloads3.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
   EXPECT_TRUE(state.IsValid());
+
+  // check endorsements
+  EXPECT_TRUE(containingVbkBlock->containingEndorsements.find(
+                  BtcEndorsement::fromContainer(vtbs1[0]).id) !=
+              containingVbkBlock->containingEndorsements.end());
+
+  EXPECT_TRUE(containingVbkBlock->containingEndorsements.find(
+                  BtcEndorsement::fromContainer(vtbs1[1]).id) !=
+              containingVbkBlock->containingEndorsements.end());
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip1->getHash());
 }
