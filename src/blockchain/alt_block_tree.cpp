@@ -199,6 +199,8 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
   // step 2, process VTBs
   for (const auto& vtb : ctx.vtbs) {
     auto* containingIndex = tree().getBlockIndex(vtb.containingBlock.getHash());
+    if (!containingIndex) continue;
+
     tree().removePayloads(containingIndex, {vtb});
 
     if (containingIndex->containingContext.empty()) {

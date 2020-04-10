@@ -41,20 +41,24 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
   BlockIndex<VbkBlock>* vbkBtip;
   BlockIndex<AltBlock>* alttip;
 
+  std::vector<AltBlock> altchain;
+
   Scenario1() {
     auto* btcFork = popminer.mineBtcBlocks(50);
     btcAtip = popminer.mineBtcBlocks(*btcFork, 2);
     btcBtip = popminer.mineBtcBlocks(*btcFork, 2);
 
     auto* vbkFork = popminer.mineVbkBlocks(50);
-    vbkAtip = popminer.mineVbkBlocks(*vbkFork, 2);
-    vbkBtip = popminer.mineVbkBlocks(*vbkFork, 2);
+    // build up more blocks since POP fork resolution only works after
+    // keystone interval has been passed
+    auto* vbkAendorsed = popminer.mineVbkBlocks(*vbkFork, 20);
+    auto* vbkBendorsed = popminer.mineVbkBlocks(*vbkFork, 20);
 
-    auto btctxA = popminer.createBtcTxEndorsingVbkBlock(vbkAtip->header);
+    auto btctxA = popminer.createBtcTxEndorsingVbkBlock(vbkAendorsed->header);
     auto* btcAContaining = popminer.mineBtcBlocks(*btcAtip, 1);
     btcAtip = popminer.mineBtcBlocks(*btcAContaining, 2);
 
-    auto btctxB = popminer.createBtcTxEndorsingVbkBlock(vbkBtip->header);
+    auto btctxB = popminer.createBtcTxEndorsingVbkBlock(vbkBendorsed->header);
     auto* btcBContaining = popminer.mineBtcBlocks(*btcBtip, 1);
     btcBtip = popminer.mineBtcBlocks(*btcBContaining, 4);
 
@@ -64,25 +68,59 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     auto vbktxA = popminer.createVbkPopTxEndorsingVbkBlock(
         btcAContaining->header,
         btctxA,
-        vbkAtip->header,
+        vbkAendorsed->header,
         popminer.getBtcParams().getGenesisBlock().getHash());
-    //vbkAtip = popminer.mineVbkBlocks(*vbkAtip, {vbktxA});
-    vbkAtip = popminer.mineVbkBlocks(*vbkAtip, 5);
+    vbkAtip = popminer.mineVbkBlocks(*vbkAendorsed, 5);
 
     auto vbktxB = popminer.createVbkPopTxEndorsingVbkBlock(
         btcBContaining->header,
         btctxB,
-        vbkBtip->header,
+        vbkBendorsed->header,
         popminer.getBtcParams().getGenesisBlock().getHash());
-    //vbkBtip = popminer.mineVbkBlocks(*vbkBtip, {vbktxB});
-    vbkBtip = popminer.mineVbkBlocks(*vbkBtip, 5);
+    vbkBtip = popminer.mineVbkBlocks(*vbkBendorsed, 5);
 
-    std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-    mineAltBlocks(100, chain);
+    altchain = {altparam.getBootstrapBlock()};
+    mineAltBlocks(100, altchain);
   }
 };
 
+AltPayloads generateAltPayloadsEmpty(const AltBlock& containing,
+                                const AltBlock& endorsed) {
+  AltPayloads alt;
+  alt.hasAtv = false;
+  alt.containingBlock = containing;
+  alt.endorsed = endorsed;
+  return alt;
+}
+
+/*void fillVTBContextFromBlock(VTB& vtb,
+                    const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                    BlockIndex<VbkBlock> *tip) {
+  for (auto* walkBlock = tip;
+       walkBlock->header.getHash() != lastKnownVbkBlockHash;
+       walkBlock = walkBlock->pprev) {
+    vtb.context.push_back(walkBlock->header);
+  }
+
+  // since we inserted in reverse order, we need to reverse context blocks
+  std::reverse(vtb.context.begin(), vtb.context.end());
+}*/
+
 TEST_F(Scenario1, block101Vtb) {
   ASSERT_EQ(vbkAtip->height, vbkBtip->height);
-  ASSERT_EQ(vbkAtip->getHash(), popminer.vbk().getBestChain().tip()->getHash());
+  ///TODO: this expectation fails
+  EXPECT_EQ(vbkBtip->getHash(), popminer.vbk().getBestChain().tip()->getHash());
+
+  AltBlock endorsedBlock = altchain[90];
+  AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
+  altchain.push_back(containingBlock);
+
+  AltPayloads altPayloads1 = generateAltPayloadsEmpty(
+      containingBlock, endorsedBlock);
+
+  auto vtbs1 = popminer.vbkPayloads[vbkBtip->getAncestor(71)->getHash()];
+  altPayloads1.vtbs = {vtbs1[0]};
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(state.IsValid());
 }
