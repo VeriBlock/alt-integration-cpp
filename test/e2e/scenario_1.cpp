@@ -29,14 +29,20 @@ using namespace altintegration;
  *
  * Step 1
  * send VTB_vAc71 (only VTB, set flag hasAtv=false in alt payloads) in alt block
- * 101 (chain A of ALT) expect that ALTBTC tree has all blocks from BTC chain A,
- * until A53, including expect that ALTBTC tip is A53 expect that ALTVBK tree
- * has all blocks from VBK chain A, until vAc71, including expect that ALTVBK
- * tip is vAc71 Step 2 send VTB_vBc53 (only VTB) in ALT block 102 (in chain A of
- * ALT) expect that ALTBTC tree knows all blocks from both chains (A+B) until
- * containing blocks, expect that ALTVBK tree knows all blocks from both chains
- * (A+B) until containing blocks. expect that ALTBTC tip is B53 expect that
- * ALTVBK tip is vBc53 expect that ALT tip is 102
+ * 101 (chain A of ALT)
+ * expect that ALTBTC tree has all blocks from BTC chain A, until A53, including
+ * expect that ALTBTC tip is A53
+ * expect that ALTVBK tree has all blocks from VBK chain A, until vAc71, including
+ * expect that ALTVBK tip is vAc71
+ * Step 2
+ * send VTB_vBc71 (only VTB) in ALT block 102 (in chain A of ALT)
+ * expect that ALTBTC tree knows all blocks from both chains (A+B) until
+ * containing blocks,
+ * expect that ALTVBK tree knows all blocks from both chains (A+B) until
+ * containing blocks.
+ * expect that ALTBTC tip is B53
+ * expect that ALTVBK tip is vBc53
+ * expect that ALT tip is 102
  */
 struct Scenario1 : public ::testing::Test, public PopTestFixture {
   BlockIndex<BtcBlock>* btcAtip;
@@ -119,13 +125,13 @@ TEST_F(Scenario1, scenario_1) {
 
   // expect that ALTBTC tree has all blocks from BTC chain A, until A53,
   // including
-  auto altbtcMap = alttree.vbk().btc().getAllBlocks();
+  auto altbtcMap = alttree.vbk().btc();
   auto* block = btcAtip->getAncestor(53);
   size_t blockCount = 0;
   while (true) {
     if (block == nullptr) break;
-    auto it = altbtcMap.find(block->getHash());
-    EXPECT_NE(it, altbtcMap.end());
+    auto *index = altbtcMap.getBlockIndex(block->getHash());
+    EXPECT_NE(index, nullptr);
     block = block->pprev;
     blockCount++;
   }
@@ -137,13 +143,13 @@ TEST_F(Scenario1, scenario_1) {
 
   // expect that ALTVBK tree has all blocks from VBK chain A, until vAc71,
   // including
-  auto altvbkMap = alttree.vbk().getAllBlocks();
+  auto altvbkMap = alttree.vbk();
   auto* blockVbk = vbkAtip->getAncestor(71);
   blockCount = 0;
   while (true) {
     if (blockVbk == nullptr) break;
-    auto it = altvbkMap.find(blockVbk->getHash().trimLE<uint96::size()>());
-    EXPECT_NE(it, altvbkMap.end());
+    auto* index = altvbkMap.getBlockIndex(blockVbk->getHash());
+    EXPECT_NE(index, nullptr);
     blockVbk = blockVbk->pprev;
     blockCount++;
   }
@@ -154,4 +160,76 @@ TEST_F(Scenario1, scenario_1) {
             alttree.vbk().getBestChain().tip()->getHash());
 
   // Step 2
+  endorsedBlock = altchain[91];
+  containingBlock = generateNextBlock(*altchain.rbegin());
+  altchain.push_back(containingBlock);
+
+  AltPayloads altPayloads2 =
+      generateAltPayloadsEmpty(containingBlock, endorsedBlock);
+
+  // send VTB_vBc71 (only VTB) in ALT block 102 (in chain A of ALT)
+  auto vtbs2 = popminer.vbkPayloads[vbkBtip->getAncestor(71)->getHash()];
+  fillVTBContext(
+      vtbs2[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  altPayloads2.vtbs = {vtbs2[0]};
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
+  EXPECT_TRUE(state.IsValid());
+
+  // expect that ALTBTC tree knows all blocks from both chains (A+B) until
+  // containing blocks
+  altbtcMap = alttree.vbk().btc();
+  auto* blockA = btcAtip->getAncestor(53);
+  auto* blockB = btcBtip->getAncestor(53);
+  blockCount = 0;
+  ///TODO: this expectation fails for BTCA 53, 52, 51
+  while (true) {
+    if (blockA == nullptr) break;
+    auto* index = altbtcMap.getBlockIndex(blockA->getHash());
+    EXPECT_NE(index, nullptr);
+    blockA = blockA->pprev;
+    blockCount++;
+  }
+  while (true) {
+    if (blockB == nullptr) break;
+    auto* index = altbtcMap.getBlockIndex(blockB->getHash());
+    EXPECT_NE(index, nullptr);
+    blockB = blockB->pprev;
+    blockCount++;
+  }
+  EXPECT_EQ(blockCount, 54 * 2);
+
+  // expect that ALTVBK tree knows all blocks from both chains(A + B)
+  // until containing blocks.
+  altvbkMap = alttree.vbk();
+  blockVbk = vbkAtip->getAncestor(71);
+  blockCount = 0;
+  while (true) {
+    if (blockVbk == nullptr) break;
+    auto* index = altvbkMap.getBlockIndex(blockVbk->getHash());
+    EXPECT_NE(index, nullptr);
+    blockVbk = blockVbk->pprev;
+    blockCount++;
+  }
+
+  blockVbk = vbkBtip->getAncestor(71);
+  while (true) {
+    if (blockVbk == nullptr) break;
+    auto* index = altvbkMap.getBlockIndex(blockVbk->getHash());
+    EXPECT_NE(index, nullptr);
+    blockVbk = blockVbk->pprev;
+    blockCount++;
+  }
+  EXPECT_EQ(blockCount, 72 * 2);
+
+  // expect that ALTBTC tip is B53
+  EXPECT_EQ(btcBtip->getAncestor(53)->getHash(),
+            alttree.vbk().btc().getBestChain().tip()->getHash());
+  // expect that ALTVBK tip is vBc71
+  ///TODO: this expectation fails
+  EXPECT_EQ(vbkBtip->getAncestor(71)->getHash(),
+            alttree.vbk().getBestChain().tip()->getHash());
+  // expect that ALT tip is 102
+  EXPECT_EQ(altchain.size(), 103);
+  EXPECT_EQ(altchain.at(altchain.size() - 1).height, 102);
 }
