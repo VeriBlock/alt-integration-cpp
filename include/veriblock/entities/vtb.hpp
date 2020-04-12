@@ -18,6 +18,8 @@ struct VTB {
   VbkMerklePath merklePath{};
   VbkBlock containingBlock{};
   std::vector<VbkBlock> context{};
+  // for compatibility with AltPayloads
+  bool hasAtv{false};
 
   /**
    * Read VBK data from the stream and convert it to VTB
@@ -69,6 +71,12 @@ struct VTB {
    * @return endorsed block
    */
   VbkBlock getEndorsedBlock() const;
+
+    /**
+   * Return true if contains endorsement data
+   * @return true if contains endorsement data
+   */
+  bool containsEndorsements() const { return true; }
 
   friend bool operator==(const VTB& a, const VTB& b) {
     // clang-format off

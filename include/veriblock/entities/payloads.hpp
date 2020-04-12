@@ -65,6 +65,12 @@ struct AltPayloads {
    */
   AltBlock getEndorsedBlock() const { return endorsed; }
 
+  /**
+   * Return true if contains endorsement data
+   * @return true if contains endorsement data
+   */
+  bool containsEndorsements() const { return hasAtv; }
+
   friend bool operator==(const AltPayloads& a, const AltPayloads& b) {
     return a.getId() == b.getId();
   }

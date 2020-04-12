@@ -1,10 +1,9 @@
-#include "veriblock/mock_miner.hpp"
-
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/context.hpp"
 #include "veriblock/fmt.hpp"
+#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 

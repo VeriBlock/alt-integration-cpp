@@ -1,2 +1,4 @@
-addtest(alt_scenario1 scenario_1.cpp)
-target_link_libraries(alt_scenario1 ${LIB_NAME})
+addtest(e2e_test scenario_1.cpp
+                 scenario_2.cpp
+                 scenario_3.cpp)
+target_link_libraries(e2e_test ${LIB_NAME})

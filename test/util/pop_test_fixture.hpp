@@ -5,6 +5,7 @@
 
 #include "util/test_utils.hpp"
 #include <util/alt_chain_params_regtest.hpp>
+#include <util/test_utils.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
@@ -67,13 +68,41 @@ struct PopTestFixture {
   }
 
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
-    auto btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
+    auto Btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
     auto* btcBlockTip = popminer.mineBtcBlocks(1);
     return popminer.createVbkPopTxEndorsingVbkBlock(
         btcBlockTip->header,
-        btctx,
+        Btctx,
         endorsedBlock,
         popminer.getBtcParams().getGenesisBlock().getHash());
+  }
+
+  void fillVTBContext(VTB& vtb,
+                      const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                      VbkBlockTree& tree) {
+    auto* tip = tree.getBlockIndex(vtb.containingBlock.getHash())->pprev;
+
+    for (auto* walkBlock = tip;
+         walkBlock->header.getHash() != lastKnownVbkBlockHash;
+         walkBlock = walkBlock->pprev) {
+      vtb.context.push_back(walkBlock->header);
+    }
+
+    // since we inserted in reverse order, we need to reverse context blocks
+    std::reverse(vtb.context.begin(), vtb.context.end());
+  }
+
+  AltPayloads generateAltPayloads(
+      const VbkTx& transaction,
+      const AltBlock& containing,
+      const AltBlock& endorsed,
+      const VbkBlock::hash_t& lastKnownVbkBlockHash) {
+    AltPayloads alt;
+    alt.hasAtv = true;
+    alt.atv = popminer.generateATV(transaction, lastKnownVbkBlockHash, state);
+    alt.containingBlock = containing;
+    alt.endorsed = endorsed;
+    return alt;
   }
 };
 

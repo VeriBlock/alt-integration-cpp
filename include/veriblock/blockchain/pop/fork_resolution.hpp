@@ -425,11 +425,13 @@ struct PopAwareForkResolutionComparator {
               return state.addIndex(i).Invalid("pop-comparator-apply-context");
             }
 
-            auto e = endorsement_t::fromContainer(c);
-            if (!checkAndAddEndorsement(
-                    index, e, temp, *protectedParams_, state)) {
-              return state.addIndex(i).Invalid(
-                  "pop-comparator-check-add-endorsement");
+            if (c.containsEndorsements()) {
+              auto e = endorsement_t::fromContainer(c);
+              if (!checkAndAddEndorsement(
+                      index, e, temp, *protectedParams_, state)) {
+                return state.addIndex(i).Invalid(
+                    "pop-comparator-check-add-endorsement");
+              }
             }
           }
 
