@@ -212,3 +212,164 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
   // mine the second the same endorsement
   EXPECT_THROW(popminer.mineVbkBlocks(1), std::domain_error);
 }
+
+TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
+  srand(0);
+  using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
+  ValidationState state;
+
+  // prepare local state with 1 BTC block
+  BtcTree btcTree(popminer.getBtcParams());
+  ASSERT_TRUE(btcTree.bootstrapWithGenesis(state));
+  PopStateMachine stateMachine(btcTree, popminer.vbk().getBestChain().tip(), popminer.getVbkParams());
+
+  // APM VBK: 11 blocks
+  auto* vbkTip = popminer.mineVbkBlocks(10);
+  ASSERT_EQ(popminer.vbk().getBestChain().tip(), vbkTip);
+
+  // APM BTC: 100 blocks
+  popminer.mineBtcBlocks(99);
+
+  // endorse VBK block 1
+  auto* B1 = vbkTip->getAncestor(1);
+  auto Btx1 = popminer.createBtcTxEndorsingVbkBlock(B1->header);
+  // store endorsement in APM BTC: 101 block
+  auto Bbtccontaining1 = popminer.mineBtcBlocks(1);
+  ASSERT_EQ(Bbtccontaining1->height, 100);
+
+  // APM BTC: 150 blocks
+  popminer.mineBtcBlocks(49);
+
+  // endorse VBK block 1
+  auto Btx2 = popminer.createBtcTxEndorsingVbkBlock(B1->header);
+  // store endorsement in APM BTC: 151 block
+  auto Bbtccontaining2 = popminer.mineBtcBlocks(1);
+  ASSERT_EQ(Bbtccontaining2->height, 150);
+
+  // store endorsement in VBK with BTC block 150
+  auto poptx1 = popminer.createVbkPopTxEndorsingVbkBlock(
+      Bbtccontaining2->header,
+      Btx2,
+      B1->header,
+      popminer.getBtcParams().getGenesisBlock().getHash());
+  // APM VBK: 12 blocks
+  auto* vbkTip11 = popminer.mineVbkBlocks(1);
+  ASSERT_EQ(vbkTip11->height, 11);
+
+  // store endorsement in VBK with BTC block 100
+  auto poptx2 = popminer.createVbkPopTxEndorsingVbkBlock(
+      Bbtccontaining1->header,
+      Btx1,
+      B1->header,
+      popminer.getBtcParams().getGenesisBlock().getHash());
+  // APM VBK: 13 blocks
+  auto* vbkTip12 = popminer.mineVbkBlocks(1);
+  ASSERT_EQ(vbkTip12->height, 12);
+  ASSERT_EQ(popminer.vbkPayloads.size(), 2);
+
+  auto initialProtectedChain = *stateMachine.index();
+
+  // add BTC context to VBK block 11 and update local state with it
+  auto it = popminer.vbkPayloads.find(vbkTip11->getHash());
+  BtcTree tempBtcTree(popminer.getBtcParams());
+  ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
+  addContextToBlockIndex(*vbkTip11, it->second[0], tempBtcTree);
+  ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip11, state));
+  auto initialTree = stateMachine.tree();
+  // make sure VBK chain was changed
+  ASSERT_NE(initialProtectedChain, *stateMachine.index());
+  initialProtectedChain = *stateMachine.index();
+
+  // add BTC context to VBK block 12 and update local state with it
+  it = popminer.vbkPayloads.find(vbkTip12->getHash());
+  tempBtcTree = BtcTree(popminer.getBtcParams());
+  ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
+  addContextToBlockIndex(*vbkTip12, it->second[0], tempBtcTree);
+  ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip12, state));
+
+  // make sure that protecting tree did not change
+  ASSERT_EQ(initialTree.getBestChain(), stateMachine.tree().getBestChain());
+  // make sure VBK chain was changed
+  ASSERT_NE(initialProtectedChain, *stateMachine.index());
+}
+
+TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
+  srand(0);
+  using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
+  ValidationState state;
+
+  // prepare local state with 1 BTC block
+  BtcTree btcTree(popminer.getBtcParams());
+  ASSERT_TRUE(btcTree.bootstrapWithGenesis(state));
+  PopStateMachine stateMachine(
+      btcTree, popminer.vbk().getBestChain().tip(), popminer.getVbkParams());
+
+  // APM VBK: 11 blocks
+  auto* vbkTip = popminer.mineVbkBlocks(10);
+  ASSERT_EQ(popminer.vbk().getBestChain().tip(), vbkTip);
+
+  // APM BTC: 100 blocks
+  popminer.mineBtcBlocks(99);
+
+  // endorse VBK block 1
+  auto* B1 = vbkTip->getAncestor(1);
+  auto Btx1 = popminer.createBtcTxEndorsingVbkBlock(B1->header);
+  // store endorsement in APM BTC: 101 block
+  auto Bbtccontaining1 = popminer.mineBtcBlocks(1);
+  ASSERT_EQ(Bbtccontaining1->height, 100);
+
+  // APM BTC: 150 blocks
+  popminer.mineBtcBlocks(49);
+
+  // endorse VBK block 1
+  auto Btx2 = popminer.createBtcTxEndorsingVbkBlock(B1->header);
+  // store endorsement in APM BTC: 151 block
+  auto Bbtccontaining2 = popminer.mineBtcBlocks(1);
+  ASSERT_EQ(Bbtccontaining2->height, 150);
+
+  // store endorsement in VBK with BTC block 100
+  auto poptx1 = popminer.createVbkPopTxEndorsingVbkBlock(
+      Bbtccontaining1->header,
+      Btx1,
+      B1->header,
+      popminer.getBtcParams().getGenesisBlock().getHash());
+  // APM VBK: 12 blocks
+  auto* vbkTip11 = popminer.mineVbkBlocks(1);
+  ASSERT_EQ(vbkTip11->height, 11);
+
+  // store endorsement in VBK with BTC block 150
+  auto poptx2 = popminer.createVbkPopTxEndorsingVbkBlock(
+      Bbtccontaining2->header,
+      Btx2,
+      B1->header,
+      popminer.getBtcParams().getGenesisBlock().getHash());
+  // APM VBK: 13 blocks
+  auto* vbkTip12 = popminer.mineVbkBlocks(1);
+  ASSERT_EQ(vbkTip12->height, 12);
+  ASSERT_EQ(popminer.vbkPayloads.size(), 2);
+
+  auto initialProtectedChain = *stateMachine.index();
+
+  // add BTC context to VBK block 11 and update local state with it
+  auto it = popminer.vbkPayloads.find(vbkTip11->getHash());
+  BtcTree tempBtcTree(popminer.getBtcParams());
+  ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
+  addContextToBlockIndex(*vbkTip11, it->second[0], tempBtcTree);
+  ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip11, state));
+  auto initialTree = stateMachine.tree();
+  // make sure VBK chain was changed
+  ASSERT_NE(initialProtectedChain, *stateMachine.index());
+  initialProtectedChain = *stateMachine.index();
+
+  // add BTC context to VBK block 12 and update local state with it
+  it = popminer.vbkPayloads.find(vbkTip12->getHash());
+  tempBtcTree = BtcTree(popminer.getBtcParams());
+  ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
+  addContextToBlockIndex(*vbkTip12, it->second[0], tempBtcTree);
+  ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip12, state));
+
+  // make sure that protecting tree did change
+  ASSERT_NE(initialTree.getBestChain(), stateMachine.tree().getBestChain());
+  // make sure VBK chain was changed
+  ASSERT_NE(initialProtectedChain, *stateMachine.index());
+}
