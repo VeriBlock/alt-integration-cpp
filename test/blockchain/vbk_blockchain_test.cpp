@@ -124,15 +124,12 @@ TEST_P(AcceptTest, BootstrapWithChain) {
 
   //   tree should be copyable
   auto copy = tree;
+  // tree should be copy initializable
+  copy = tree;
+  // tree should be move initializable
+  copy = std::move(tree);
 }
 
 INSTANTIATE_TEST_SUITE_P(AcceptBlocksRegression,
                          AcceptTest,
-                         testing::ValuesIn(accept_test_cases),
-                         [](const testing::TestParamInfo<VbkTestCase>& info) {
-                           return format("%d_%snet_startsAt%d_offset%d",
-                                         info.index,
-                                         info.param.params->networkName(),
-                                         info.param.startHeight,
-                                         info.param.offset);
-                         });
+                         testing::ValuesIn(accept_test_cases));

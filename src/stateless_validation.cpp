@@ -9,7 +9,6 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
-#include "veriblock/fmt.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -304,9 +303,10 @@ bool checkATV(const ATV& atv,
   auto id = atv.transaction.publicationData.identifier;
   auto eid = altp.getIdentifier();
   if (eid != id) {
-    return state.Invalid(
-        "atv-bad-identifier",
-        format("Wrong chain identifier. Expected %d, got %d.", eid, id));
+    return state.Invalid("atv-bad-identifier",
+                         "Wrong chain identifier. Expected " +
+                             std::to_string(eid) + ", got " +
+                             std::to_string(id) + ".");
   }
 
   if (!checkVbkTx(atv.transaction, state)) {

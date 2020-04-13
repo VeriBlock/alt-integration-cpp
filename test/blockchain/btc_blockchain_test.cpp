@@ -139,10 +139,4 @@ TEST_P(AcceptTest, BootstrapWithChain) {
 
 INSTANTIATE_TEST_SUITE_P(AcceptBlocksRegression,
                          AcceptTest,
-                         testing::ValuesIn(accept_test_cases),
-                         [](const testing::TestParamInfo<BtcTestCase>& info) {
-                           return format("%d_%snet_startsAt%d",
-                                         info.index,
-                                         info.param.params->networkName(),
-                                         info.param.startHeight);
-                         });
+                         testing::ValuesIn(accept_test_cases));
