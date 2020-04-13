@@ -13,15 +13,7 @@ add_library(strutil OBJECT
         strutil.cpp
         )
 
-if(SHARED)
-    set(BUILD SHARED)
-else()
-    set(BUILD STATIC)
-endif()
-message(STATUS "BUILD=${BUILD}")
-
-add_library(${LIB_NAME} ${BUILD}
-        ${CMAKE_SOURCE_DIR}/include/veriblock/alt-util.hpp
+set(SOURCES
         checks.cpp
         serde.cpp
         keystone_util.cpp
@@ -43,19 +35,35 @@ add_library(${LIB_NAME} ${BUILD}
         $<TARGET_OBJECTS:secp256k1>
         )
 
-set_target_properties(${LIB_NAME} PROPERTIES
+set(LIB_SHARED ${LIB_NAME}-shared)
+set(LIB_STATIC ${LIB_NAME})
+add_library(${LIB_SHARED} SHARED ${SOURCES})
+add_library(${LIB_STATIC} STATIC ${SOURCES})
+
+set_target_properties(${LIB_SHARED} PROPERTIES
         VERSION ${VERSION}
         SOVERSION ${MAJOR_VERSION}
         INTERFACE_${LIB_NAME}_MAJOR_VERSION ${MAJOR_VERSION}
         )
 set_property(
-        TARGET ${LIB_NAME}
+        TARGET ${LIB_SHARED}
         APPEND PROPERTY
         COMPATIBLE_INTERFACE_STRING MAJOR_VERSION
 )
 
-install(TARGETS ${LIB_NAME}
+install(TARGETS ${LIB_STATIC}
         EXPORT ${LIB_NAME}Config
+        COMPONENT devel
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+        )
+install(TARGETS ${LIB_SHARED}
+        EXPORT ${LIB_NAME}Config
+        COMPONENT runtime
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -65,15 +73,17 @@ install(TARGETS ${LIB_NAME}
         )
 install(
         DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
+        COMPONENT devel
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 install(
         EXPORT ${LIB_NAME}Config
+        COMPONENT devel
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
         NAMESPACE veriblock::
 )
 export(
-        TARGETS ${LIB_NAME}
+        TARGETS ${LIB_STATIC} ${LIB_SHARED}
         FILE ${LIB_NAME}Config.cmake
 )
 target_include_directories(${LIB_NAME}
