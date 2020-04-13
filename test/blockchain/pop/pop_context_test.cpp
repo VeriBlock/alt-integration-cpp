@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 
+#include <veriblock/config.hpp>
 #include <veriblock/mock_miner.hpp>
+
+#include "veriblock/altintegration.hpp"
 
 using namespace altintegration;
 

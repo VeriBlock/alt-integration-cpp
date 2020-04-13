@@ -2,7 +2,6 @@
 #define ALT_INTEGRATION_VISUALIZE_HPP
 
 #include <fstream>
-#include <veriblock/fmt.hpp>
 
 /// Contains utils to create DOT files
 
@@ -27,12 +26,15 @@ void WriteBlockTree(Stream& s,
                     const BlockTree& tree,
                     std::string name = "BLOCKCHAIN") {
   auto toNodeName = [](auto& blockIndex) {
-    return format("\"[%d] %s\"",
-                  blockIndex.height,
-                  blockIndex.getHash().toHex().substr(0, 8));
+    std::ostringstream ss;
+    ss << "\"[";
+    ss << blockIndex.height;
+    ss << "] ";
+    ss << blockIndex;
+    ss << blockIndex.getHash().toHex().substr(0, 8) << "\"";
   };
 
-  s << format("digraph %s {\n", name);
+  s << "digraph " << name << " {\n";
 
   const auto& map = tree.getAllBlocks();
   auto& best = tree.getBestChain();

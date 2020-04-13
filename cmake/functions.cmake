@@ -107,3 +107,14 @@ function(gencpp varname infile out)
             COMMENT "Generating ${varname}.cpp..."
     )
 endfunction()
+
+
+if(UNIX)
+    message(STATUS "Adding target 'uninstall'")
+
+    add_custom_target(uninstall
+            COMMAND xargs rm < ${CMAKE_BINARY_DIR}/install_manifest.txt
+            COMMENT "Uninstalling altintegration..."
+            )
+
+endif()

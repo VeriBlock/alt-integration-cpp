@@ -1,9 +1,9 @@
+#include "veriblock/mock_miner.hpp"
+
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/context.hpp"
-#include "veriblock/fmt.hpp"
-#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -113,9 +113,9 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   auto containingBlockIndex =
       vbktree.btc().getBlockIndex(containingBlock.getHash());
   if (!containingBlockIndex) {
-    throw std::domain_error(
-        format("containing block with hash %s does not exist in BTC ",
-               containingBlock.getHash().toHex()));
+    throw std::domain_error("containing block with hash " +
+                            containingBlock.getHash().toHex() +
+                            " does not exist in BTC ");
   }
 
   VbkPopTx popTx;
@@ -132,10 +132,10 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   auto btcit = btctxes.find(containingBlock.getHash());
   if (btcit == btctxes.end()) {
     throw std::domain_error(
-        format("in attempt to create VBK pop TX endorsing VBK block %s we "
-               "tried to search for BTC block %s but were unable to find it",
-               publishedBlock.getHash().toHex(),
-               containingBlock.getHash().toHex()));
+        "in attempt to create VBK pop TX endorsing VBK block " +
+        publishedBlock.getHash().toHex() +
+        " we tried to search for BTC block " +
+        containingBlock.getHash().toHex() + " but were unable to find it");
   }
 
   // search for containing tx
@@ -143,11 +143,10 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   auto txit = std::find(txes.begin(), txes.end(), containingTx);
   if (txit == txes.end()) {
     throw std::domain_error(
-        format("in attempt to create VBK pop TX endorsing VBK block %s we "
-               "tried to search for BTC TX containing that block in BTC block "
-               "%s but were unable to find it",
-               publishedBlock.getHash().toHex(),
-               containingBlock.getHash().toHex()));
+        "in attempt to create VBK pop TX endorsing VBK block " +
+        publishedBlock.getHash().toHex() +
+        " we tried to search for BTC TX containing that block in BTC block " +
+        containingBlock.getHash().toHex() + " but were unable to find it");
   }
 
   auto txhashes = hashAll<BtcTx>(txes);

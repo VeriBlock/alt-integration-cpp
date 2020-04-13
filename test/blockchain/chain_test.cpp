@@ -5,7 +5,6 @@
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/entities/payloads.hpp>
-#include <veriblock/fmt.hpp>
 
 #include "util/test_utils.hpp"
 
@@ -86,15 +85,7 @@ static const std::vector<TestCase> cases = {
     {100, 10},
 };
 
-INSTANTIATE_TEST_SUITE_P(Chain,
-                         ChainTest,
-                         testing::ValuesIn(cases),
-                         [](const testing::TestParamInfo<TestCase>& info) {
-                           return format("%d_start%d_size%d",
-                                         info.index,
-                                         info.param.start,
-                                         info.param.size);
-                         });
+INSTANTIATE_TEST_SUITE_P(Chain, ChainTest, testing::ValuesIn(cases));
 
 TEST(ChainTest, CreateFrom0) {
   // when first block is at height 100 (no blocks behind that), and Chain is
@@ -184,7 +175,7 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
       std::make_shared<BlockIndex<block_t>>(bootstrapBlock)};
 
   for (int i = 0; i < 10; ++i) {
-    std::shared_ptr<BlockIndex<block_t>> block =
+    auto block =
         std::make_shared<BlockIndex<block_t>>(generateNextBlock(chain.tip()));
     indexes.push_back(block);
     chain.setTip(block.get());
