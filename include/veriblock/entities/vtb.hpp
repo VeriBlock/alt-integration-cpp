@@ -72,7 +72,7 @@ struct VTB {
    */
   VbkBlock getEndorsedBlock() const;
 
-    /**
+  /**
    * Return true if contains endorsement data
    * @return true if contains endorsement data
    */
@@ -80,7 +80,17 @@ struct VTB {
 
   friend bool operator==(const VTB& a, const VTB& b) {
     // clang-format off
-    return a.toVbkEncoding() == b.toVbkEncoding();
+    WriteStream a_stream, b_stream;
+
+    a.transaction.toVbkEncoding(a_stream);
+    a.merklePath.toVbkEncoding(a_stream);
+    a.containingBlock.toVbkEncoding(a_stream);
+
+    b.transaction.toVbkEncoding(b_stream);
+    b.merklePath.toVbkEncoding(b_stream);
+    b.containingBlock.toVbkEncoding(b_stream);
+    // we dont compare 'context' field
+    return a_stream.data() == b_stream.data();
     // clang-format on
   }
 };

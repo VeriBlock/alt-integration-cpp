@@ -6,7 +6,7 @@ using namespace altintegration;
 
 struct Scenario4 : public ::testing::Test, public PopTestFixture {};
 
-TEST_F(Scenario4, scenario_3) {
+TEST_F(Scenario4, scenario_4) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
