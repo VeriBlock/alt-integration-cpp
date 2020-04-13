@@ -50,6 +50,12 @@ using namespace altintegration;
  * expect that ALTBTC tip is A53
  * expect that ALTVBK tree has all blocks from VBK chain A, until vAc71, including
  * expect that ALTVBK tip is vAc71
+ * Step 4
+ * remove ALT block 101
+ * expect that VTB_vAc71 is removed
+ * expect that ALTBTC is at bootstrap
+ * expect that ALTVBK is at bootstrap
+ * expect that ALT is at 100
  */
 struct Scenario1 : public ::testing::Test, public PopTestFixture {
   BlockIndex<BtcBlock>* btcAtip;
@@ -311,4 +317,38 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(blockCount, 72);
   EXPECT_EQ(vbkAtip->getAncestor(71)->getHash(),
             alttree.vbk().getBestChain().tip()->getHash());
+
+  // Step 4
+  // remove ALT block 101
+  lastBlock = *altchain.rbegin();
+  altContext = alttree.getBlockIndex(lastBlock.getHash())->containingContext;
+  EXPECT_TRUE(altContext.size() > 0);
+  vtbFound = false;
+  for (auto c : altContext) {
+    for (auto v : c.vtbs) {
+      if (v == vtbsVBA71[0]) {
+        vtbFound = true;
+      }
+    }
+  }
+  EXPECT_TRUE(vtbFound);
+
+  alttree.removePayloads(lastBlock, {altPayloadsVBA71});
+  altchain.pop_back();
+  EXPECT_EQ(altchain.size(), 101);
+  EXPECT_EQ(altchain.at(altchain.size() - 1).height, 100);
+
+  // expect that VTB_vAc71 is removed
+  lastBlock = *altchain.rbegin();
+  altContext = alttree.getBlockIndex(lastBlock.getHash())->containingContext;
+  EXPECT_TRUE(altContext.size() > 0);
+  vtbFound = false;
+  for (auto c : altContext) {
+    for (auto v : c.vtbs) {
+      if (v == vtbsVBA71[0]) {
+        vtbFound = true;
+      }
+    }
+  }
+  EXPECT_FALSE(vtbFound);
 }
