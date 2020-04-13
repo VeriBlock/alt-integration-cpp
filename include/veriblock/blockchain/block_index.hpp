@@ -11,7 +11,6 @@
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
-#include "veriblock/fmt.hpp"
 #include "veriblock/write_stream.hpp"
 
 namespace altintegration {
@@ -86,13 +85,11 @@ struct BlockIndex {
   }
 
   std::string toPrettyString() const {
-    return format(
-        "BlockIndex{heght=%d, hash=%s, endorsedBy=%d, "
-        "containsEndorsements=%d}",
-        height,
-        getHash().toHex().substr(0, 8),
-        endorsedBy.size(),
-        containingEndorsements.size());
+    return "BlockIndex{height=" + std::to_string(height) +
+           ", hash=" + getHash().toHex().substr(0, 8) +
+           ", endorsedBy=" + std::to_string(endorsedBy.size()) +
+           ", containsEndorsements=" +
+           std::to_string(containingEndorsements.size()) + "}";
   }
 
   void toRaw(WriteStream& stream) const {

@@ -12,9 +12,11 @@ struct AltChainParamsRegTest : public AltChainParams {
     AltBlock b;
     b.hash = {1, 2, 3};
     b.height = 0;
-    b.timestamp = 0;
+    b.timestamp =0;
     return b;
   }
+
+  uint32_t getIdentifier() const noexcept override { return 0; }
 };
 
 }  // namespace altintegration

@@ -19,6 +19,9 @@ struct ATV {
   VbkBlock containingBlock{};
   std::vector<VbkBlock> context{};
 
+  //! (memory only) indicates whether we already did 'checkATV' on this ATV
+  mutable bool checked{false};
+
   /**
    * Read VBK data from the stream and convert it to ATV
    * @param stream data stream to read from

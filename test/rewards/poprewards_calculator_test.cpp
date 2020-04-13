@@ -17,6 +17,10 @@ struct AltChainParamsTest : public AltChainParams {
     genesisBlock.timestamp = 0;
     return genesisBlock;
   }
+
+  uint32_t getIdentifier() const noexcept override { return 0x7ec7; }
+
+
 };
 
 struct RewardsCalculatorTestFixture : ::testing::Test {

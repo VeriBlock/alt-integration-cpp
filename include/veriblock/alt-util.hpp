@@ -16,8 +16,9 @@ std::vector<std::vector<uint8_t>> getLastKnownBlocks(const BlockTree& tree,
   ret.reserve(size);
 
   auto* tip = tree.getBestChain().tip();
-  while (tip != nullptr) {
-    ret.push_back(tip->header.toRaw());
+  for (size_t i = 0; i < size && tip != nullptr; i++) {
+    ret.push_back(tip->getHash().asVector());
+    tip = tip->pprev;
   }
 
   // reverse them since we add them in reverse order (tip -> genesis)
@@ -34,16 +35,6 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
     if (!tree.acceptBlock(block, state)) {
       return false;
     }
-  }
-
-  return true;
-}
-
-template <typename Block, typename ChainParams>
-bool removeBlocks(BlockTree<Block, ChainParams>& tree,
-                  const std::vector<std::vector<uint8_t>>& blocks) {
-  for (const auto& b : blocks) {
-    tree.invalidateBlockByHash(sha256twice(b));
   }
 
   return true;

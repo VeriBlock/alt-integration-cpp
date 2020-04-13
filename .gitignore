@@ -1,6 +1,6 @@
 build
 *.o
-cmake-build-debug
+cmake-build-*
 .idea
 deps/
 __init__.py
