@@ -4,13 +4,15 @@
 /**
  * A facade for a third party formatting library.
  *
- * Now it is tinyfmt, but can be any.
  */
 
 namespace altintegration {
 
 /**
  * A facade for a printf-like formatting.
+ * @deprecated
+ * TODO: refactor out all format occurrences, or find a way to do more type-safe
+ * formatting, as this code is unsafe.
  */
 template <typename... Args>
 std::string format(const char* fmt, Args&&... args) {

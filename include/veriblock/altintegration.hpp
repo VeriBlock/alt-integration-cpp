@@ -9,6 +9,7 @@ namespace altintegration {
 
 struct Altintegration {
   static AltTree create(const Config& config) {
+    config.validate();
     AltTree tree(*config.alt, *config.vbk.params, *config.btc.params);
     ValidationState state;
 
