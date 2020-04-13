@@ -67,9 +67,14 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
-  // we must know previous block
+  if(getBlockIndex(block.getHash())) {
+    // duplicate
+    return true;
+  }
+
+  // we must know previous block, but not if `block` is bootstrap block
   auto* prev = getBlockIndex(block.previousBlock);
-  if (prev == nullptr) {
+  if (prev == nullptr && block_index_.size() > 1) {
     return state.Invalid("bad-prev-block", "can not find previous block");
   }
 
@@ -97,7 +102,7 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
 
   for (size_t i = 0, size = payloads.size(); i < size; i++) {
     auto& p = payloads[i];
-    if (p.hasAtv && !checkPayloads(p.atv, state, vbk().getParams())) {
+    if (p.hasAtv && !checkATV(p.atv, state, *alt_config_, vbk().getParams())) {
       return state.addIndex(i).Invalid("bad-atv-stateless");
     }
   }
@@ -124,6 +129,53 @@ void AltTree::removePayloads(const AltBlock& containingBlock,
   if (index->containingContext.back().empty()) {
     index->containingContext.pop_back();
   }
+}
+
+bool AltTree::setState(const AltBlock::hash_t& to, ValidationState& state) {
+  auto* index = getBlockIndex(to);
+  if (!index) {
+    return state.Error("Can not switch state to an unknown block");
+  }
+
+  return cmp_.setState(*index, state);
+}
+
+int AltTree::compareTwoBranches(AltTree::index_t* chain1,
+                                AltTree::index_t* chain2) {
+  if (!chain1 && !chain2) {
+    throw std::logic_error(
+        "compareTwoBranches is called on two nullptr chains");
+  }
+
+  if (!chain1) {
+    // chain2 is better
+    return -1;
+  }
+
+  if (!chain2) {
+    // chain1 is better
+    return 1;
+  }
+
+  // determine which chain is better
+  auto lowestHeight = alt_config_->getBootstrapBlock().height;
+  Chain<index_t> chainA(lowestHeight, chain1);
+  Chain<index_t> chainB(lowestHeight, chain2);
+
+  auto* forkPoint = chainA.findHighestKeystoneAtOrBeforeFork(
+      chainB.tip(), alt_config_->getKeystoneInterval());
+  assert(forkPoint != nullptr && "fork point should exist");
+
+  Chain<index_t> subchain1(forkPoint->height, chainA.tip());
+  Chain<index_t> subchain2(forkPoint->height, chainB.tip());
+
+  return cmp_.comparePopScore(subchain1, subchain2);
+}
+
+int AltTree::compareTwoBranches(const hash_t& chain1, const hash_t& chain2) {
+  auto i1 = getBlockIndex(chain1);
+  auto i2 = getBlockIndex(chain2);
+  return compareTwoBranches(i1, i2);
 }
 
 template <>

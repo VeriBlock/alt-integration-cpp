@@ -1,11 +1,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_FMT_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_FMT_HPP_
 
-// disable MSVS warnings in this file
-#pragma warning(push, 0)
-#include <veriblock/third_party/tinyfmt.hpp>
-#pragma warning(pop)
-
 /**
  * A facade for a third party formatting library.
  *
@@ -18,8 +13,11 @@ namespace altintegration {
  * A facade for a printf-like formatting.
  */
 template <typename... Args>
-std::string format(const char* fmt, const Args&... args) {
-  return tinyformat::format(fmt, args...);
+std::string format(const char* fmt, Args&&... args) {
+  auto size = std::snprintf(nullptr, 0, fmt, std::forward<Args>(args)...);
+  std::string output(size, '\0');
+  std::snprintf(&output[0], size + 1, fmt, std::forward<Args>(args)...);
+  return output;
 }
 
 }  // namespace altintegration

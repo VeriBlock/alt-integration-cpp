@@ -19,6 +19,9 @@ struct VTB {
   VbkBlock containingBlock{};
   std::vector<VbkBlock> context{};
 
+  //! (memory only) indicates whether we already did 'checkPayloads' on this VTB
+  mutable bool checked{false};
+
   /**
    * Read VBK data from the stream and convert it to VTB
    * @param stream data stream to read from

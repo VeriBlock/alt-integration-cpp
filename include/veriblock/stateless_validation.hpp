@@ -3,6 +3,7 @@
 
 #include "entities/vbkblock.hpp"
 #include "validation_state.hpp"
+#include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/atv.hpp"
@@ -70,14 +71,15 @@ bool checkBlock(const VbkBlock& block,
                 ValidationState& state,
                 const VbkChainParams& params);
 
-bool checkPayloads(const ATV& atv,
-                   ValidationState& state,
-                   const VbkChainParams& vbk);
+bool checkATV(const ATV& atv,
+              ValidationState& state,
+              const AltChainParams& alt,
+              const VbkChainParams& vbk);
 
-bool checkPayloads(const VTB& vtb,
-                   ValidationState& state,
-                   const VbkChainParams& vbk,
-                   const BtcChainParams& btc);
+bool checkVTB(const VTB& vtb,
+              ValidationState& state,
+              const VbkChainParams& vbk,
+              const BtcChainParams& btc);
 }  // namespace altintegration
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK_STATELESS_VALIDATION_H

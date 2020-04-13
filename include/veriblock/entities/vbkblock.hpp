@@ -97,12 +97,7 @@ struct VbkBlock {
   uint32_t getBlockTime() const;
 
   friend bool operator==(const VbkBlock& a, const VbkBlock& b) {
-    return a.height == b.height && a.version == b.version &&
-           a.previousBlock == b.previousBlock &&
-           a.previousKeystone == b.previousKeystone &&
-           a.secondPreviousKeystone == b.secondPreviousKeystone &&
-           a.merkleRoot == b.merkleRoot && a.timestamp == b.timestamp &&
-           a.difficulty == b.difficulty && a.nonce == b.nonce;
+    return a.getHash() == b.getHash();
   }
 
   friend bool operator!=(const VbkBlock& a, const VbkBlock& b) {
