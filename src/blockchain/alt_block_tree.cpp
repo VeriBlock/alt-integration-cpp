@@ -184,7 +184,7 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   auto check = [&](const VbkBlock& block) -> bool {
     auto* index = tree().getBlockIndex(block.getHash());
-    return !index && index->containingContext.empty();
+    return index && index->containingContext.empty();
   };
 
   auto& ctx = index.containingContext.back();
@@ -223,28 +223,20 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
 
   auto& ctx = index.containingContext.back();
 
-  // only add blocks that are UNIQUE
-  std::unordered_set<uint256> set;
-  set.reserve(ctx.vbk.size());
-  for (const auto& c : ctx.vbk) {
-    set.insert(c.getHash());
-  }
-
-  auto addBlock = [&](const VbkBlock& b) {
+  auto addBlock = [&](const VbkBlock& b, std::vector<VbkBlock>& blocks) {
     auto hash = b.getHash();
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!set.count(hash) && !tree.getBlockIndex(hash)) {
-      ctx.vbk.push_back(b);
-      set.insert(hash);
+    if (!tree.getBlockIndex(hash)) {
+      blocks.push_back(b);
     }
   };
 
   // add context from ATV
   if (p.hasAtv) {
     for (const auto& b : p.atv.context) {
-      addBlock(b);
+      addBlock(b, ctx.vbk);
     }
-    addBlock(p.atv.containingBlock);
+    addBlock(p.atv.containingBlock, ctx.vbk);
   }
 
   // step 2, process VTBs
@@ -255,6 +247,10 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
                      BtcEndorsement::fromContainer(vtb).id) ==
                      temp->containingEndorsements.end()) {
       ctx.vtbs.push_back(vtb);
+      ctx.vtbs.rbegin()->context.clear();
+      for (const auto& b : vtb.context) {
+        addBlock(b, ctx.vtbs.rbegin()->context);
+      }
     }
   }
 }

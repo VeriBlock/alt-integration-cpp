@@ -34,8 +34,8 @@ struct ProtoKeystoneContext {
 };
 
 struct KeystoneContext {
-  int vbkBlockHeight;
-  int firstBtcBlockPublicationHeight;
+  int blockHeight;
+  int firstBlockPublicationHeight;
 };
 
 template <typename ConfigType>
@@ -58,17 +58,33 @@ int getConsensusScoreFromRelativeBlockStartingAtZero(int64_t relativeBlock,
 }
 
 struct KeystoneContextList {
-  const std::vector<KeystoneContext>& ctx;
+  std::vector<KeystoneContext> ctx;
   const int keystoneInterval;
 
-  KeystoneContextList(const std::vector<KeystoneContext>& c, int keystoneInt)
-      : ctx{c}, keystoneInterval(keystoneInt) {}
+  KeystoneContextList(const std::vector<KeystoneContext>& c,
+                      int keystoneInt,
+                      int finalityDelay)
+      : keystoneInterval(keystoneInt) {
+    size_t chop_index = c.size();
+
+    if (c.size() > 1) {
+      for (size_t i = 1; i < c.size(); ++i) {
+        if ((c[i].firstBlockPublicationHeight -
+             c[i - 1].firstBlockPublicationHeight) > finalityDelay) {
+          chop_index = i;
+          break;
+        }
+      }
+    }
+
+    ctx.insert(ctx.begin(), c.begin(), c.begin() + chop_index);
+  }
 
   bool empty() const { return ctx.empty(); }
 
-  int firstKeystone() const { return ctx[0].vbkBlockHeight; }
+  int firstKeystone() const { return ctx[0].blockHeight; }
 
-  int lastKeystone() const { return ctx[ctx.size() - 1].vbkBlockHeight; }
+  int lastKeystone() const { return ctx[ctx.size() - 1].blockHeight; }
 
   const KeystoneContext* getKeystone(int blockNumber) const {
     if (!isKeystone(blockNumber, keystoneInterval)) {
@@ -218,8 +234,8 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
                         const ProtectedChainConfig& config) {
   assert(config.getKeystoneInterval() > 0);
   auto ki = config.getKeystoneInterval();
-  KeystoneContextList a(chainA, ki);
-  KeystoneContextList b(chainB, ki);
+  KeystoneContextList a(chainA, ki, config.getFinalityDelay());
+  KeystoneContextList b(chainB, ki, config.getFinalityDelay());
 
   if (a.empty() && b.empty()) {
     return 0;
@@ -283,8 +299,8 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
       continue;
     }
 
-    int earliestPublicationA = actx->firstBtcBlockPublicationHeight;
-    int earliestPublicationB = bctx->firstBtcBlockPublicationHeight;
+    int earliestPublicationA = actx->firstBlockPublicationHeight;
+    int earliestPublicationB = bctx->firstBlockPublicationHeight;
 
     int earliestPublicationOfEither =
         std::min(earliestPublicationA, earliestPublicationB);

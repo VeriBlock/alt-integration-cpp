@@ -204,19 +204,11 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
 
   auto& ctx = index.containingContext.back().btc;
 
-  // only add blocks that are UNIQUE
-  std::unordered_set<uint256> set;
-  set.reserve(ctx.size());
-  for (const auto& c : ctx) {
-    set.insert(c.getHash());
-  }
-
   auto add = [&](const BtcBlock& b) {
     auto hash = b.getHash();
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!set.count(hash) && !tree.getBlockIndex(hash)) {
+    if (!tree.getBlockIndex(hash)) {
       ctx.push_back(b);
-      set.insert(hash);
     }
   };
 
