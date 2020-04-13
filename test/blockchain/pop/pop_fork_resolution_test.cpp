@@ -157,6 +157,15 @@ static const std::vector<TestCase> AwinsCases = {
         {{20, 98},{40, 102},{60, 112}, {80, 117}, {100, 129}}, // B chain
         {{20, 98},{40, 100},{60, 112}, {80, 117}, {100, 129}} // A chain
     },
+    /**
+     * Scenario: even though chain B started ahead with publication of B60 to earlier BTC block,
+     *           A80 had better PoP publication which made its total score better
+     * Expected: chain A should be better then chain B
+     */
+    {
+        {{20, 98}, {40, 100}, {60, 103}, {80, 111}},
+        {{20, 98}, {40, 100}, {60, 102}, {80, 114}},
+    },
     // clang-format on
 };
 
