@@ -115,7 +115,7 @@ struct BlockTree {
     invalidateBlockByHash(tip->getHash());
   }
 
-  virtual void invalidateBlockByIndex(const index_t* blockIndex) {
+  virtual void invalidateBlockByIndex(index_t* blockIndex) {
     if (blockIndex == nullptr) {
       // no such block
       return;
