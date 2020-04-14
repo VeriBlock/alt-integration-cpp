@@ -63,7 +63,11 @@ VbkBlock VbkBlock::fromHex(const std::string& hex) {
 }
 
 std::string VbkBlock::toHex() const {
+  return HexStr(toRaw());
+}
+
+std::vector<uint8_t> VbkBlock::toRaw() const {
   WriteStream stream;
   toRaw(stream);
-  return HexStr(stream.data());
+  return stream.data();
 }

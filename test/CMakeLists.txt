@@ -35,3 +35,6 @@ target_link_libraries(keystone_util_test ${LIB_NAME})
 
 addtest(validationstate_test validationstate_test.cpp)
 target_link_libraries(validationstate_test ${LIB_NAME})
+
+addtest(alt-util_test alt-util_test.cpp)
+target_link_libraries(alt-util_test ${LIB_NAME})

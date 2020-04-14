@@ -6,6 +6,7 @@
 #include "util/test_utils.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
+#include "util/alt_chain_params_regtest.hpp"
 
 using namespace altintegration;
 
@@ -183,7 +184,9 @@ TEST_F(StatelessValidationTest,
 }
 
 TEST_F(StatelessValidationTest, ATV_valid) {
-  ASSERT_TRUE(checkPayloads(validATV, state, vbk)) << state.GetDebugMessage();
+  AltChainParamsRegTest altp;
+  ASSERT_TRUE(checkATV(validATV, state, altp, vbk))
+      << state.GetDebugMessage();
 }
 
 TEST_F(StatelessValidationTest,
@@ -217,7 +220,7 @@ TEST_F(StatelessValidationTest, ATV_checkVeriBlockBlocks_blocks_not_contigous) {
 }
 
 TEST_F(StatelessValidationTest, VTB_valid) {
-  ASSERT_TRUE(checkPayloads(validVTB, state, vbk, btc));
+  ASSERT_TRUE(checkVTB(validVTB, state, vbk, btc));
 }
 
 TEST_F(StatelessValidationTest,
