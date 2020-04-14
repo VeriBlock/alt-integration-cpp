@@ -74,20 +74,6 @@ struct Config {
       throw std::invalid_argument("Config: vbk params == nullptr");
     }
 
-    if (btc.blocks.empty()) {
-      throw std::invalid_argument("Config: empty BTC bootstrap context");
-    }
-
-    if (vbk.blocks.empty()) {
-      throw std::invalid_argument("Config: empty VBK bootstrap context");
-    }
-
-    if (vbk.startHeight != vbk.blocks[0].height) {
-      throw std::invalid_argument(
-          "Config: vbk startHeight does not match height of first VBK "
-          "bootstrap block");
-    }
-
     ValidationState state;
     if (!vbk.blocks.empty()) {
       if (vbk.blocks.size() < vbk.params->numBlocksForBootstrap()) {
@@ -101,6 +87,12 @@ struct Config {
         throw std::invalid_argument(
             "Config: VBK blocks are invalid: " + state.GetPath() + ", " +
             state.GetDebugMessage());
+      }
+
+      if (vbk.startHeight != vbk.blocks[0].height) {
+        throw std::invalid_argument(
+            "Config: vbk startHeight does not match height of first VBK "
+            "bootstrap block");
       }
     }
 
