@@ -29,7 +29,7 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
   }
 
   current = touchBlockIndex(hash);
-  current->header = block;
+  current->header = std::make_shared<AltBlock>(block);
   current->pprev = getBlockIndex(block.previousBlock);
 
   if (current->pprev) {
@@ -67,7 +67,7 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
-  if(getBlockIndex(block.getHash())) {
+  if (getBlockIndex(block.getHash())) {
     // duplicate
     return true;
   }
@@ -86,6 +86,26 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   (void)index;
 
   return true;
+}
+
+void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
+  index_t* blockIndex = getBlockIndex(blockHash);
+
+  if (blockIndex == nullptr) {
+    // no such block
+    return;
+  }
+
+  invalidateBlockByHash(blockIndex);
+}
+
+void AltTree::invalidateBlockByHash(const index_t* blockIndex) {
+  ValidationState state;
+  bool ret = cmp_.setState(*blockIndex->pprev, state);
+  (void)ret;
+  assert(ret);
+
+  block_index_.erase(blockIndex->getHash());
 }
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,

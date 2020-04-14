@@ -51,11 +51,11 @@ TEST_F(Scenario3, scenario_3) {
   ASSERT_TRUE(popminer.vbk().getBestChain().contains(endorsedVbkBlock1));
   ASSERT_FALSE(popminer.vbk().getBestChain().contains(endorsedVbkBlock2));
   // Step 1
-  auto popTx1 = generatePopTx(endorsedVbkBlock1->header);
+  auto popTx1 = generatePopTx(*endorsedVbkBlock1->header);
   popminer.mineBtcBlocks(10);
-  auto popTx2 = generatePopTx(endorsedVbkBlock2->header);
+  auto popTx2 = generatePopTx(*endorsedVbkBlock2->header);
   popminer.mineBtcBlocks(100);
-  auto popTx3 = generatePopTx(endorsedVbkBlock1->header);
+  auto popTx3 = generatePopTx(*endorsedVbkBlock1->header);
   popminer.vbkmempool.clear();
 
   auto* vbkTip2 = popminer.mineVbkBlocks(*endorsedVbkBlock2, {popTx2});

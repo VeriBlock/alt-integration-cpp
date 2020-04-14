@@ -38,8 +38,7 @@ struct BlockchainTest : public ::testing::Test {
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
-        << "bootstrap: " << state.GetPath() << ", "
-        << state.GetDebugMessage();
+        << "bootstrap: " << state.GetPath() << ", " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
   };
 
@@ -95,7 +94,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   EXPECT_EQ(chain.chainHeight(), 0);
   EXPECT_NE(chain[this->height], nullptr);
   EXPECT_EQ(chain[this->height]->height, this->height);
-  EXPECT_EQ(chain[this->height]->header, genesis);
+  EXPECT_EQ(*chain[this->height]->header, genesis);
 
   // mine 5000 blocks
   for (size_t i = 0; i < 5000; i++) {
@@ -110,11 +109,11 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   for (uint32_t i = 1; i <= (uint32_t)chain.chainHeight(); i++) {
     ASSERT_TRUE(chain[i]);
     ASSERT_TRUE(chain[i - 1]);
-    auto prevHash = chain[i]->header.previousBlock;
+    auto prevHash = chain[i]->header->previousBlock;
     auto index = this->blockchain->getBlockIndex(prevHash);
     EXPECT_EQ(index->getHash(), chain[i - 1]->getHash());
     // timestamp is increasing
-    EXPECT_GE(chain[i]->header.getBlockTime(), chain[i - 1]->getBlockTime());
+    EXPECT_GE(chain[i]->header->getBlockTime(), chain[i - 1]->getBlockTime());
     // bits is same for RegTest
     EXPECT_EQ(chain[i]->getDifficulty(), chain[i - 1]->getDifficulty())
         << "different at " << i;

@@ -199,7 +199,7 @@ struct BlockTree {
     }
 
     current = touchBlockIndex(hash);
-    current->header = block;
+    current->header = std::make_shared<block_t>(block);
     current->pprev = getBlockIndex(block.previousBlock);
 
     if (current->pprev) {

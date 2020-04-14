@@ -1,9 +1,8 @@
-#include "veriblock/mock_miner.hpp"
-
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/context.hpp"
+#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -80,9 +79,9 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
   atv.containingBlock = containingBlock;
 
   for (auto* walkBlock = tip;
-       walkBlock->header.getHash() != lastKnownVbkBlockHash;
+       walkBlock->header->getHash() != lastKnownVbkBlockHash;
        walkBlock = walkBlock->pprev) {
-    atv.context.push_back(walkBlock->header);
+    atv.context.push_back(*walkBlock->header);
   }
 
   // since we inserted in reverse order, we need to reverse context blocks
@@ -161,7 +160,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   for (auto* walkBlock = containingBlockIndex->pprev;
        walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
-    popTx.blockOfProofContext.push_back(walkBlock->header);
+    popTx.blockOfProofContext.push_back(*walkBlock->header);
   }
   std::reverse(popTx.blockOfProofContext.begin(),
                popTx.blockOfProofContext.end());
@@ -198,7 +197,7 @@ VbkPopTx MockMiner::endorseVbkBlock(
   for (auto* walkBlock = tip;
        walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
-    popTx.blockOfProofContext.push_back(walkBlock->header);
+    popTx.blockOfProofContext.push_back(*walkBlock->header);
   }
   std::reverse(popTx.blockOfProofContext.begin(),
                popTx.blockOfProofContext.end());
