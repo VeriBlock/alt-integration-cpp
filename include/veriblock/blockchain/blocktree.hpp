@@ -115,7 +115,7 @@ struct BlockTree {
     invalidateBlockByHash(tip->getHash());
   }
 
-  virtual void invalidateBlockByHash(const index_t* blockIndex) {
+  virtual void invalidateBlockByIndex(const index_t* blockIndex) {
     if (blockIndex == nullptr) {
       // no such block
       return;
@@ -147,7 +147,7 @@ struct BlockTree {
 
   virtual void invalidateBlockByHash(const hash_t& blockHash) {
     index_t* blockIndex = getBlockIndex(blockHash);
-    invalidateBlockByHash(blockIndex);
+    invalidateBlockByIndex(blockIndex);
   }
 
   const Chain<index_t>& getBestChain() const { return this->activeChain_; }

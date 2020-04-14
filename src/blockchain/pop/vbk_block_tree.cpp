@@ -89,7 +89,7 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
   bool ret = cmp_.setState(*blockIndex->pprev, state);
   assert(ret);
 
-  BlockTree::invalidateBlockByHash(blockIndex);
+  BlockTree::invalidateBlockByIndex(blockIndex);
 
   ret = cmp_.setState(*activeChain_.tip(), state);
   assert(ret);
