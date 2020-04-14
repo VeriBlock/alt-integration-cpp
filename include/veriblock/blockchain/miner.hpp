@@ -5,7 +5,6 @@
 #include <random>
 #include <stdexcept>
 #include <veriblock/blockchain/blocktree.hpp>
-#include <veriblock/fmt.hpp>
 #include <veriblock/stateless_validation.hpp>
 
 namespace altintegration {

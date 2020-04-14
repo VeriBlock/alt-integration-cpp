@@ -107,7 +107,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
   for (size_t i = 0, size = payloads.size(); i < size; i++) {
     auto& p = payloads[i];
 
-    if (!checkPayloads(p, state, getParams(), btc().getParams())) {
+    if (!checkVTB(p, state, getParams(), btc().getParams())) {
       return state.addIndex(i).Invalid("bad-payloads-stateless");
     }
   }

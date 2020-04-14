@@ -7,7 +7,6 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
-#include <veriblock/fmt.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
@@ -71,11 +70,11 @@ struct BlockTree {
     }
 
     if (chain.size() < param_->numBlocksForBootstrap()) {
-      return state.Invalid("bootstrap-small-chain",
-                           format("number of blocks in the provided chain is "
-                                  "too small: %d, expected at least %d",
-                                  chain.size(),
-                                  param_->numBlocksForBootstrap()));
+      return state.Invalid(
+          "bootstrap-small-chain",
+          "number of blocks in the provided chain is too small: " +
+              std::to_string(chain.size()) + ", expected at least " +
+              std::to_string(param_->numBlocksForBootstrap()));
     }
 
     // pick first block from the chain, bootstrap with a single block

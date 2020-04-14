@@ -4,6 +4,7 @@
 #include <bitset>
 #include <string>
 #include <vector>
+#include <veriblock/blockchain/alt_chain_params.hpp>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
@@ -290,12 +291,28 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
   return true;
 }
 
-bool checkPayloads(const ATV& atv,
-                   ValidationState& state,
-                   const VbkChainParams& params) {
+bool checkATV(const ATV& atv,
+              ValidationState& state,
+              const AltChainParams& altp,
+              const VbkChainParams& vbkp) {
+  if (atv.checked) {
+    // we've already checked that ATV
+    return true;
+  }
+
+  auto id = atv.transaction.publicationData.identifier;
+  auto eid = altp.getIdentifier();
+  if (eid != id) {
+    return state.Invalid("atv-bad-identifier",
+                         "Wrong chain identifier. Expected " +
+                             std::to_string(eid) + ", got " +
+                             std::to_string(id) + ".");
+  }
+
   if (!checkVbkTx(atv.transaction, state)) {
     return state.Invalid("vbk-check-tx");
   }
+
   if (!checkMerklePath(atv.merklePath,
                        atv.transaction.getHash(),
                        atv.containingBlock.merkleRoot,
@@ -303,17 +320,24 @@ bool checkPayloads(const ATV& atv,
     return state.Invalid("vbk-check-merkle-path");
   }
 
-  if (!checkVbkBlocks(atv.context, state, params)) {
+  if (!checkVbkBlocks(atv.context, state, vbkp)) {
     return state.Invalid("vbk-check-vbk-blocks");
   }
+
+  atv.checked = true;
 
   return true;
 }
 
-bool checkPayloads(const VTB& vtb,
-                   ValidationState& state,
-                   const VbkChainParams& vbk,
-                   const BtcChainParams& btc) {
+bool checkVTB(const VTB& vtb,
+              ValidationState& state,
+              const VbkChainParams& vbk,
+              const BtcChainParams& btc) {
+  if (vtb.checked) {
+    // we've already checked that VTB
+    return true;
+  }
+
   if (!checkVbkPopTx(vtb.transaction, state, btc)) {
     return state.Invalid("vbk-check-pop-tx");
   }
@@ -328,6 +352,8 @@ bool checkPayloads(const VTB& vtb,
   if (!checkVbkBlocks(vtb.context, state, vbk)) {
     return state.Invalid("vbk-check-vbk-blocks");
   }
+
+  vtb.checked = true;
 
   return true;
 }

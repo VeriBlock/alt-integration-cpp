@@ -69,8 +69,31 @@ struct AltTree {
   void removePayloads(const AltBlock& containingBlock,
                       const std::vector<payloads_t>& payloads);
 
+  //! set POP state to some known block, for example, when we remove a block or
+  bool setState(const AltBlock::hash_t& to, ValidationState& state);
+
+  /**
+   * Determine the best chain of the AltBlocks in accordance with the VeriBlock
+   * forkresolution rules.
+   * @param AltBlock chain1, AltBlock chain2
+   * @return '> 0' number if chain1 is better, '< 0' number if chain2 is better,
+   * '0' if they are the same
+   * @note chain1 and chain2 are being consindered as forks not a full chains
+   * from the genesis block, they should start at the common block
+   */
+  int compareTwoBranches(index_t* chain1, index_t* chain2);
+  int compareTwoBranches(const hash_t& chain1, const hash_t& chain2);
+
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
+  VbkBlockTree::BtcTree& btc() { return cmp_.getProtectingBlockTree().btc(); }
+  const VbkBlockTree::BtcTree& btc() const {
+    return cmp_.getProtectingBlockTree().btc();
+  }
+
+  const AltChainParams& getParams() const { return *alt_config_; }
+
+  const block_index_t& getAllBlocks() const { return block_index_; }
 
  protected:
   block_index_t block_index_;
