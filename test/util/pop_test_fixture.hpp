@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 
+#include "util/test_utils.hpp"
 #include <util/alt_chain_params_regtest.hpp>
 #include <util/test_utils.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>

@@ -387,7 +387,9 @@ struct PopAwareForkResolutionComparator {
     // reverse order (this should be faster)
     std::for_each(
         payloads.rbegin(), payloads.rend(), [&](const protected_payloads_t& p) {
-          removeEndorsement(index, endorsement_t::getId(p));
+          if (p.containsEndorsements()) {
+            removeEndorsement(index, endorsement_t::getId(p));
+          }
           removeContextFromBlockIndex(index, p);
         });
 
@@ -441,11 +443,13 @@ struct PopAwareForkResolutionComparator {
               return state.addIndex(i).Invalid("pop-comparator-apply-context");
             }
 
-            auto e = endorsement_t::fromContainer(c);
-            if (!checkAndAddEndorsement(
-                    index, e, temp, *protectedParams_, state)) {
-              return state.addIndex(i).Invalid(
-                  "pop-comparator-check-add-endorsement");
+            if (c.containsEndorsements()) {
+              auto e = endorsement_t::fromContainer(c);
+              if (!checkAndAddEndorsement(
+                      index, e, temp, *protectedParams_, state)) {
+                return state.addIndex(i).Invalid(
+                    "pop-comparator-check-add-endorsement");
+              }
             }
           }
 

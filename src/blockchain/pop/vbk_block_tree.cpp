@@ -41,14 +41,13 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     auto prevTip = currentBest.tip();
     currentBest.setTip(&indexNew);
     onTipChanged(indexNew, isBootstrap);
-    return addForkCandidate(prevTip, &indexNew);
+    addForkCandidate(prevTip, &indexNew);
   } else if (result == 0) {
     // pop scores are equal. do PoW fork resolution
-    return VbkTree::determineBestChain(currentBest, indexNew, isBootstrap);
+    VbkTree::determineBestChain(currentBest, indexNew, isBootstrap);
   } else {
     // existing chain is still the best
     addForkCandidate(&indexNew, indexNew.pprev);
-    return;
   }
 }
 
@@ -77,6 +76,23 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
   }
 
   return true;
+}
+
+void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
+  index_t* blockIndex = getBlockIndex(blockHash);
+
+  if (blockIndex == nullptr) {
+    return;
+  }
+
+  ValidationState state;
+  bool ret = cmp_.setState(*blockIndex->pprev, state);
+  assert(ret);
+
+  BlockTree::invalidateBlockByIndex(blockIndex);
+
+  ret = cmp_.setState(*activeChain_.tip(), state);
+  assert(ret);
 }
 
 bool VbkBlockTree::addPayloads(const VbkBlock& block,

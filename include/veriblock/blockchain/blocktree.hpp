@@ -115,9 +115,7 @@ struct BlockTree {
     invalidateBlockByHash(tip->getHash());
   }
 
-  void invalidateBlockByHash(const hash_t& blockHash) {
-    index_t* blockIndex = getBlockIndex(blockHash);
-
+  virtual void invalidateBlockByIndex(const index_t* blockIndex) {
     if (blockIndex == nullptr) {
       // no such block
       return;
@@ -139,12 +137,17 @@ struct BlockTree {
 
     invalidateBlockFromChain(activeChain_, blockIndex);
 
-    block_index_.erase(
-        blockIndex->getHash().template trimLE<prev_block_hash_t::size()>());
-
     for (const auto& fork_tip : fork_tips) {
       determineBestChain(activeChain_, *fork_tip);
     }
+
+    block_index_.erase(
+        blockIndex->getHash().template trimLE<prev_block_hash_t::size()>());
+  }
+
+  virtual void invalidateBlockByHash(const hash_t& blockHash) {
+    index_t* blockIndex = getBlockIndex(blockHash);
+    invalidateBlockByIndex(blockIndex);
   }
 
   const Chain<index_t>& getBestChain() const { return this->activeChain_; }
