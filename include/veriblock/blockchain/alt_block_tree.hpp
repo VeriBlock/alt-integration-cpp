@@ -58,6 +58,10 @@ struct AltTree {
   //! may return false, if block has no connection to blockchain
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
+  void invalidateBlockByHash(const hash_t& blockHash);
+
+  void invalidateBlockByHash(const index_t* blockIndex);
+
   //! add payloads to any of existing blocks in block tree.
   //! may return false, if payloads statelessly, or statefully invalid.
   bool addPayloads(const AltBlock& containingBlock,

@@ -1,11 +1,10 @@
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
-
 #include <gtest/gtest.h>
 
 #include <memory>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/block_index.hpp"
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/time.hpp"
 
@@ -18,10 +17,11 @@ static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
   assert(chainlength != 0);
 
   BlockIndex<VbkBlock> blockIndex;
-  blockIndex.header.height = 1;
-  blockIndex.header.timestamp = 10000;
-  blockIndex.header.difficulty = difficulty;
-  blockIndex.height = blockIndex.header.height;
+  blockIndex.header = std::make_shared<VbkBlock>();
+  blockIndex.header->height = 1;
+  blockIndex.header->timestamp = 10000;
+  blockIndex.header->difficulty = difficulty;
+  blockIndex.height = blockIndex.header->height;
   blockIndex.pprev = nullptr;
 
   std::vector<BlockIndex<VbkBlock>> chain(chainlength);
@@ -33,9 +33,10 @@ static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
     }
 
     BlockIndex<VbkBlock> temp;
-    temp.header.height = (int32_t)i + 1;
-    temp.header.timestamp = chain[i - 1].header.timestamp + deltaTime;
-    temp.header.difficulty = difficulty;
+    temp.header = std::make_shared<VbkBlock>();
+    temp.header->height = (int32_t)i + 1;
+    temp.header->timestamp = chain[i - 1].header->timestamp + deltaTime;
+    temp.header->difficulty = difficulty;
     temp.height = (int32_t)i + 1;
     temp.pprev = &chain[i - 1];
 
@@ -164,10 +165,12 @@ TEST_F(SingleTest, single_test) {
   int32_t deltaTime = chainparams->getTargetBlockTime();
 
   BlockIndex<VbkBlock> blockIndex;
-  blockIndex.header.height = 1;
-  blockIndex.header.timestamp = 10000;
-  blockIndex.header.difficulty = ArithUint256::fromHex("09184E72A000").toBits();
-  blockIndex.height = blockIndex.header.height;
+  blockIndex.header = std::make_shared<VbkBlock>();
+  blockIndex.header->height = 1;
+  blockIndex.header->timestamp = 10000;
+  blockIndex.header->difficulty =
+      ArithUint256::fromHex("09184E72A000").toBits();
+  blockIndex.height = blockIndex.header->height;
   blockIndex.pprev = nullptr;
 
   std::vector<BlockIndex<VbkBlock>> chain(chainlength);
@@ -179,9 +182,10 @@ TEST_F(SingleTest, single_test) {
     }
 
     BlockIndex<VbkBlock> temp;
-    temp.header.height = (int32_t)i + 1;
-    temp.header.timestamp = chain[i - 1].header.timestamp + deltaTime;
-    temp.header.difficulty = ArithUint256::fromHex("09184E72A000").toBits();
+    temp.header = std::make_shared<VbkBlock>();
+    temp.header->height = (int32_t)i + 1;
+    temp.header->timestamp = chain[i - 1].header->timestamp + deltaTime;
+    temp.header->difficulty = ArithUint256::fromHex("09184E72A000").toBits();
     temp.height = (int32_t)i + 1;
     temp.pprev = &chain[i - 1];
 
@@ -202,7 +206,8 @@ TEST(Vbk, CheckBlockTime1) {
     chain.push_back(std::make_shared<BlockIndex<VbkBlock>>());
     auto& index = chain[chain.size() - 1];
     index->height = VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT + i;
-    index->header.timestamp = startTime + (120 * i);
+    index->header = std::make_shared<VbkBlock>();
+    index->header->timestamp = startTime + (120 * i);
     index->pprev = i == 0 ? nullptr : chain[i - 1].get();
   }
 
@@ -216,14 +221,16 @@ TEST(Vbk, CheckBlockTime1) {
   // validateMinimumTimestampWhenBelowMedian
   block.timestamp = 1527118679;
   ASSERT_FALSE(checkBlockTime(*last, block, state)) << state.GetPath();
-  ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1], "vbk-time-too-old");
+  ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
+            "vbk-time-too-old");
 }
 
 TEST(Vbk, CheckBlockTime2) {
   auto makeBlock = [](int timestamp, int height) -> BlockIndex<VbkBlock> {
     BlockIndex<VbkBlock> index;
     index.height = height;
-    index.header.timestamp = timestamp;
+    index.header = std::make_shared<VbkBlock>();
+    index.header->timestamp = timestamp;
     return index;
   };
 
@@ -268,8 +275,7 @@ struct BlockchainTest : public ::testing::Test {
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
-        << "bootstrap: " << state.GetPath() << ", "
-        << state.GetDebugMessage();
+        << "bootstrap: " << state.GetPath() << ", " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
   };
 };

@@ -81,11 +81,11 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     auto* vbkAendorsed = popminer.mineVbkBlocks(*vbkFork, 20);
     auto* vbkBendorsed = popminer.mineVbkBlocks(*vbkFork, 20);
 
-    auto btctxA = popminer.createBtcTxEndorsingVbkBlock(vbkAendorsed->header);
+    auto btctxA = popminer.createBtcTxEndorsingVbkBlock(*vbkAendorsed->header);
     auto* btcAContaining = popminer.mineBtcBlocks(*btcAtip, 1);
     btcAtip = popminer.mineBtcBlocks(*btcAContaining, 2);
 
-    auto btctxB = popminer.createBtcTxEndorsingVbkBlock(vbkBendorsed->header);
+    auto btctxB = popminer.createBtcTxEndorsingVbkBlock(*vbkBendorsed->header);
     auto* btcBContaining = popminer.mineBtcBlocks(*btcBtip, 1);
     btcBtip = popminer.mineBtcBlocks(*btcBContaining, 2);
 
@@ -93,16 +93,16 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
               popminer.btc().getBestChain().tip()->getHash());
 
     auto vbktxA = popminer.createVbkPopTxEndorsingVbkBlock(
-        btcAContaining->header,
+        *btcAContaining->header,
         btctxA,
-        vbkAendorsed->header,
+        *vbkAendorsed->header,
         popminer.getBtcParams().getGenesisBlock().getHash());
     vbkAtip = popminer.mineVbkBlocks(*vbkAendorsed, 5);
 
     auto vbktxB = popminer.createVbkPopTxEndorsingVbkBlock(
-        btcBContaining->header,
+        *btcBContaining->header,
         btctxB,
-        vbkBendorsed->header,
+        *vbkBendorsed->header,
         popminer.getBtcParams().getGenesisBlock().getHash());
     vbkBtip = popminer.mineVbkBlocks(*vbkBendorsed, 5);
 

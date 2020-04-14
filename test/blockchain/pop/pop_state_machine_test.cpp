@@ -40,7 +40,7 @@ TEST(PopStateMachine, unapplyAndApply_test) {
 
   // endorse VBK block 10
   auto* B10 = vbkTip->getAncestor(10);
-  auto Btx1 = apm.createBtcTxEndorsingVbkBlock(B10->header);
+  auto Btx1 = apm.createBtcTxEndorsingVbkBlock(*B10->header);
   // store endorsement in APM BTC: 11
   auto Bbtccontaining1 = apm.mineBtcBlocks(1);
   ASSERT_TRUE(apm.btc().getBestChain().contains(Bbtccontaining1));
@@ -48,9 +48,9 @@ TEST(PopStateMachine, unapplyAndApply_test) {
 
   // store endorsement in VBK
   apm.createVbkPopTxEndorsingVbkBlock(
-      Bbtccontaining1->header,
+      *Bbtccontaining1->header,
       Btx1,
-      B10->header,
+      *B10->header,
       apm.getBtcParams().getGenesisBlock().getHash());
 
   // in block 41
@@ -84,14 +84,14 @@ TEST(PopStateMachine, unapplyAndApply_test) {
 
   apm.mineBtcBlocks(115);
 
-  auto Btx2 = apm.createBtcTxEndorsingVbkBlock(B10->header);
+  auto Btx2 = apm.createBtcTxEndorsingVbkBlock(*B10->header);
   auto Bbtccontaining2 = apm.mineBtcBlocks(1);
   ASSERT_TRUE(apm.btc().getBestChain().contains(Bbtccontaining2));
 
   apm.createVbkPopTxEndorsingVbkBlock(
-      Bbtccontaining2->header,
+      *Bbtccontaining2->header,
       Btx2,
-      B10->header,
+      *B10->header,
       apm.getBtcParams().getGenesisBlock().getHash());
 
   auto* vbkTip2 = apm.mineVbkBlocks(*vbkTip, 1);

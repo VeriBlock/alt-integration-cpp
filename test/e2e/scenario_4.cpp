@@ -15,10 +15,10 @@ TEST_F(Scenario4, scenario_4) {
   // endorse VBK blocks
   auto* endorsedVbkBlock1 = vbkTip.getAncestor(vbkTip.height - 10);
   auto* endorsedVbkBlock2 = vbkTip.getAncestor(vbkTip.height - 11);
-  generatePopTx(endorsedVbkBlock1->header);
+  generatePopTx(*endorsedVbkBlock1->header);
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   vbkTip = *popminer.mineVbkBlocks(50);
-  generatePopTx(endorsedVbkBlock2->header);
+  generatePopTx(*endorsedVbkBlock2->header);
 
   auto* containingVbkBlock2 = popminer.mineVbkBlocks(1);
   vbkTip = *containingVbkBlock2;
