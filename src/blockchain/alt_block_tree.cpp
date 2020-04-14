@@ -1,4 +1,5 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -63,6 +64,8 @@ bool AltTree::bootstrap(ValidationState& state) {
     return state.Invalid("vbk-set-state");
   }
 
+  addToChains(index);
+
   return true;
 }
 
@@ -83,9 +86,22 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  (void)index;
+  addToChains(index);
 
   return true;
+}
+
+void AltTree::addToChains(index_t* index) {
+  assert(index);
+
+  for (size_t i = 0; i < chainTips_.size(); ++i) {
+    if (chainTips_[i] == index->pprev) {
+      chainTips_[i] = index;
+      return;
+    }
+  }
+
+  chainTips_.push_back(index);
 }
 
 void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
@@ -96,14 +112,33 @@ void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
     return;
   }
 
-  invalidateBlockByHash(blockIndex);
+  invalidateBlockByIndex(blockIndex);
 }
 
-void AltTree::invalidateBlockByHash(const index_t* blockIndex) {
+void AltTree::invalidateBlockByIndex(index_t* blockIndex) {
   ValidationState state;
   bool ret = cmp_.setState(*blockIndex->pprev, state);
-  (void)ret;
   assert(ret);
+
+  // clear endorsements
+  for (const auto& el : blockIndex->containingEndorsements) {
+    removeEndorsement(*blockIndex, el.first);
+  }
+
+  bool once_added = false;
+  for (size_t i = 0; i < chainTips_.size(); ++i) {
+    if (blockIndex->height < chainTips_[i]->height) {
+      Chain<index_t> chain(blockIndex->height, chainTips_[i]);
+      invalidateBlockFromChain(chain, blockIndex);
+
+      if (chain.tip() == blockIndex && !once_added) {
+        chainTips_[i] = chain.tip()->pprev;
+        once_added = true;
+      } else if (chain.tip() == blockIndex) {
+        chainTips_.erase(chainTips_.begin() + i);
+      }
+    }
+  }
 
   block_index_.erase(blockIndex->getHash());
 }
@@ -353,6 +388,29 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
 
   vbk.erase(vbk_end, vbk.end());
   vtbs.erase(vtbs_end, vtbs.end());
+}
+
+void AltTree::invalidateBlockFromChain(Chain<index_t>& chain,
+                                       const index_t* block) {
+  if (block == nullptr) {
+    return;
+  }
+
+  if (!chain.contains(block)) {
+    return;
+  }
+
+  while (chain.tip() != nullptr && chain.tip() != block) {
+    disconnectTipFromChain(chain);
+  }
+}
+
+void AltTree::disconnectTipFromChain(Chain<index_t>& chain) {
+  BlockIndex<AltBlock>* currentTip = chain.tip();
+  hash_t tipHash = currentTip->getHash();
+
+  chain.disconnectTip();
+  block_index_.erase(tipHash);
 }
 
 }  // namespace altintegration

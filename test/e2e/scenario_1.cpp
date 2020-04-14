@@ -231,7 +231,7 @@ TEST_F(Scenario1, scenario_1) {
 
   // remove ALT block 102
   auto lastBlock = *altchain.rbegin();
-  alttree.removePayloads(lastBlock, {altPayloadsVBB71});
+  alttree.invalidateBlockByHash(lastBlock.getHash());
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 101);
@@ -261,7 +261,7 @@ TEST_F(Scenario1, scenario_1) {
   // remove ALT block 101
   EXPECT_TRUE(altTreeFindVtb(vtbsVBA71[0]));
   lastBlock = *altchain.rbegin();
-  alttree.removePayloads(lastBlock, {altPayloadsVBA71});
+  alttree.invalidateBlockByHash(lastBlock.getHash());
   altchain.pop_back();
 
   // expect that ALT is at 100

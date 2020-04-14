@@ -60,7 +60,7 @@ struct AltTree {
 
   void invalidateBlockByHash(const hash_t& blockHash);
 
-  void invalidateBlockByHash(const index_t* blockIndex);
+  void invalidateBlockByIndex(index_t* blockIndex);
 
   //! add payloads to any of existing blocks in block tree.
   //! may return false, if payloads statelessly, or statefully invalid.
@@ -100,6 +100,7 @@ struct AltTree {
   const block_index_t& getAllBlocks() const { return block_index_; }
 
  protected:
+  std::vector<index_t*> chainTips_;
   block_index_t block_index_;
   const alt_config_t* alt_config_;
   const vbk_config_t* vbk_config_;
@@ -110,6 +111,12 @@ struct AltTree {
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& blockHash);
+
+  void addToChains(index_t* block_index);
+
+  void invalidateBlockFromChain(Chain<index_t>& chain, const index_t* block);
+
+  void disconnectTipFromChain(Chain<index_t>& chain);
 };
 
 template <>
