@@ -32,14 +32,11 @@ using namespace altintegration;
  * 101 (chain A of ALT)
  * expect that ALTBTC tree has all blocks from BTC chain A, until A53, including
  * expect that ALTBTC tip is A53
- * expect that ALTVBK tree has all blocks from VBK chain A, until vAc71, including
- * expect that ALTVBK tip is vAc71
- * Step 2
- * send VTB_vBc71 (only VTB) in ALT block 102 (in chain A of ALT)
- * expect that ALTBTC tree knows all blocks from chain B until block B55
- * expect that ALTVBK tree knows all blocks from both chains (A+B) until
- * containing blocks.
- * expect that ALTBTC tip is B55
+ * expect that ALTVBK tree has all blocks from VBK chain A, until vAc71,
+ * including expect that ALTVBK tip is vAc71 Step 2 send VTB_vBc71 (only VTB) in
+ * ALT block 102 (in chain A of ALT) expect that ALTBTC tree knows all blocks
+ * from chain B until block B55 expect that ALTVBK tree knows all blocks from
+ * both chains (A+B) until containing blocks. expect that ALTBTC tip is B55
  * expect that ALTVBK tip is vBc71
  * expect that ALT tip is 102
  * Step 3
@@ -47,14 +44,10 @@ using namespace altintegration;
  * expect that VTB_vBc71 is removed
  * expect that ALTBTC tree has all blocks from BTC chain A, until A53, including
  * expect that ALTBTC tip is A53
- * expect that ALTVBK tree has all blocks from VBK chain A, until vAc71, including
- * expect that ALTVBK tip is vAc71
- * Step 4
- * remove ALT block 101
- * expect that VTB_vAc71 is removed
- * expect that ALTBTC is at bootstrap
- * expect that ALTVBK is at bootstrap
- * expect that ALT is at 100
+ * expect that ALTVBK tree has all blocks from VBK chain A, until vAc71,
+ * including expect that ALTVBK tip is vAc71 Step 4 remove ALT block 101 expect
+ * that VTB_vAc71 is removed expect that ALTBTC is at bootstrap expect that
+ * ALTVBK is at bootstrap expect that ALT is at 100
  */
 struct Scenario1 : public ::testing::Test, public PopTestFixture {
   BlockIndex<BtcBlock>* btcAtip;
@@ -227,6 +220,8 @@ TEST_F(Scenario1, scenario_1) {
   // remove ALT block 102
   auto lastBlock = *altchain.rbegin();
   alttree.removePayloads(lastBlock, {altPayloadsVBB71});
+  EXPECT_TRUE(alttree.vbk().getComparator().setState(
+      *alttree.vbk().getBestChain().tip(), state));
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 101);
@@ -234,8 +229,9 @@ TEST_F(Scenario1, scenario_1) {
   // expect that VTB_vBc71 is removed
   EXPECT_FALSE(altTreeFindVtb(vtbsVBB71[0]));
 
-  // expect that ALTBTC tree has all blocks from BTC chain A, until A53, including
-  ///TODO: this expectation fails
+  // expect that ALTBTC tree has all blocks from BTC chain A, until A53,
+  // including
+  /// TODO: this expectation fails
   blockCount =
       checkBlocksExisting(alttree.vbk().btc(), btcAtip->getAncestor(53));
   // expect that ALTBTC tip is A53
@@ -272,5 +268,5 @@ TEST_F(Scenario1, scenario_1) {
             alttree.vbk().btc().getBestChain().tip()->getHash());
   // expect that ALTVBK is at bootstrap
   EXPECT_EQ(vbkparam.getGenesisBlock().getHash(),
-            alttree.vbk().getBestChain().tip()->getHash());  
+            alttree.vbk().getBestChain().tip()->getHash());
 }
