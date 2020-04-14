@@ -87,10 +87,12 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
 
   ValidationState state;
   bool ret = cmp_.setState(*blockIndex->pprev, state);
-  (void)ret;
   assert(ret);
 
   BlockTree::invalidateBlockByHash(blockIndex);
+
+  ret = cmp_.setState(*activeChain_.tip(), state);
+  assert(ret);
 }
 
 bool VbkBlockTree::addPayloads(const VbkBlock& block,

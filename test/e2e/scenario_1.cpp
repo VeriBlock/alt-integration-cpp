@@ -220,8 +220,6 @@ TEST_F(Scenario1, scenario_1) {
   // remove ALT block 102
   auto lastBlock = *altchain.rbegin();
   alttree.removePayloads(lastBlock, {altPayloadsVBB71});
-  EXPECT_TRUE(alttree.vbk().getComparator().setState(
-      *alttree.vbk().getBestChain().tip(), state));
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 101);
