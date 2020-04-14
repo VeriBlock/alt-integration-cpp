@@ -93,6 +93,8 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
 
   ret = cmp_.setState(*activeChain_.tip(), state);
   assert(ret);
+
+  (void) ret;
 }
 
 bool VbkBlockTree::addPayloads(const VbkBlock& block,
