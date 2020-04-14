@@ -221,7 +221,8 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
   // prepare local state with 1 BTC block
   BtcTree btcTree(popminer.getBtcParams());
   ASSERT_TRUE(btcTree.bootstrapWithGenesis(state));
-  PopStateMachine stateMachine(btcTree, popminer.vbk().getBestChain().tip(), popminer.getVbkParams());
+  PopStateMachine stateMachine(
+      btcTree, popminer.vbk().getBestChain().tip(), popminer.getVbkParams());
 
   // APM VBK: 11 blocks
   auto* vbkTip = popminer.mineVbkBlocks(10);

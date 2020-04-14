@@ -50,6 +50,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool bootstrapWithGenesis(ValidationState& state) override;
 
+  void invalidateBlockByHash(const hash_t& blockHash) override;
+
   bool addPayloads(const block_t& block,
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state);
