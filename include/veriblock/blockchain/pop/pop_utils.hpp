@@ -67,8 +67,6 @@ template <typename ProtectedIndex, typename ProtectedTree>
 void removeEndorsement(ProtectedIndex& index,
                        const typename ProtectedIndex::endorsement_t::id_t& eid,
                        ProtectedTree& tree) {
-  using endorsement_t = typename ProtectedIndex::endorsement_t;
-
   auto endorsementit = index.containingEndorsements.find(eid);
   if (endorsementit == index.containingEndorsements.end()) {
     return;
