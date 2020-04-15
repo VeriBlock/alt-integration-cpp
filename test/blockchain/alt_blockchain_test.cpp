@@ -13,9 +13,13 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   mineAltBlocks(50, chain);
 
   // make fork
-  auto forkchain = chain;
-  forkchain.resize(30);
-  mineAltBlocks(15, forkchain);
+  auto forkchain1 = chain;
+  forkchain1.resize(30);
+  mineAltBlocks(15, forkchain1);
+
+  auto forkchain2 = chain;
+  forkchain2.resize(15);
+  mineAltBlocks(10, forkchain2);
 
   AltBlock endorsedBlock = chain[5];
 
@@ -43,7 +47,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   // generate endorsements
   tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
-  containingBlock = generateNextBlock(*forkchain.rbegin());
+  containingBlock = generateNextBlock(*forkchain1.rbegin());
   chain.push_back(containingBlock);
   AltPayloads altPayloads2 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
@@ -63,10 +67,36 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       containingBlockIndex2->containingEndorsements.end());
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 2);
 
+  tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  containingBlock = generateNextBlock(*forkchain2.rbegin());
+  chain.push_back(containingBlock);
+  AltPayloads altPayloads3 = generateAltPayloads(
+      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+
+  VbkEndorsement endorsement3 = VbkEndorsement::fromContainer(altPayloads3);
+
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  EXPECT_TRUE(state.IsValid());
+
+  // check endorsements
+  endorsedBlockIndex = alttree.getBlockIndex(endorsement3.endorsedHash);
+  auto* containingBlockIndex3 =
+      alttree.getBlockIndex(endorsement3.containingHash);
+  EXPECT_TRUE(
+      containingBlockIndex3->containingEndorsements.find(endorsement3.id) !=
+      containingBlockIndex3->containingEndorsements.end());
+  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 3);
+
   // remove block
-  AltBlock removeBlock = chain[10];
+  AltBlock removeBlock = chain[20];
   alttree.invalidateBlockByHash(removeBlock.getHash());
 
+  containingBlockIndex3 = alttree.getBlockIndex(endorsement3.containingHash);
+  EXPECT_TRUE(
+      containingBlockIndex3->containingEndorsements.find(endorsement3.id) !=
+      containingBlockIndex3->containingEndorsements.end());
+
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
-  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 0);
+  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 }

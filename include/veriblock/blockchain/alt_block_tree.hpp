@@ -60,7 +60,7 @@ struct AltTree {
 
   void invalidateBlockByHash(const hash_t& blockHash);
 
-  void invalidateBlockByIndex(index_t* blockIndex);
+  void invalidateBlockByIndex(index_t& blockIndex);
 
   //! add payloads to any of existing blocks in block tree.
   //! may return false, if payloads statelessly, or statefully invalid.

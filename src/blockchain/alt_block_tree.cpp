@@ -112,44 +112,40 @@ void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
     return;
   }
 
-  invalidateBlockByIndex(blockIndex);
+  invalidateBlockByIndex(*blockIndex);
 }
 
-void AltTree::invalidateBlockByIndex(index_t* blockIndex) {
-  if (blockIndex == nullptr) {
-    // no such block
-    return;
-  }
-
+void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
   ValidationState state;
-  bool ret = cmp_.setState(*blockIndex->pprev, state);
+  bool ret = cmp_.setState(*blockIndex.pprev, state);
   (void)ret;
   assert(ret);
 
-  for (auto it = blockIndex->containingEndorsements.begin();
-       it != blockIndex->containingEndorsements.end();) {
-    removeFromEndorsedBy(*blockIndex, it->second.get());
-    it = blockIndex->containingEndorsements.erase(it);
+  for (auto it = blockIndex.containingEndorsements.begin();
+       it != blockIndex.containingEndorsements.end();) {
+    removeFromEndorsedBy(it->second.get(), *this);
+    it = blockIndex.containingEndorsements.erase(it);
   }
 
-  std::vector<Chain<index_t>> chains;
   bool once_added = false;
-  for (size_t i = 0; i < chainTips_.size(); ++i) {
-    if (blockIndex->height <= chainTips_[i]->height) {
-      Chain<index_t> chain(blockIndex->height, chainTips_[i]);
-      if (chain.contains(blockIndex)) {
-        chains.push_back(chain);
+  for (auto tip = chainTips_.begin(); tip != chainTips_.end();) {
+    if (blockIndex.height <= (*tip)->height) {
+      Chain<index_t> chain(blockIndex.height, &blockIndex);
+      chain.setTip((*tip));
+      invalidateBlockFromChain(chain, &blockIndex);
+
+      if (chain.contains(&blockIndex) && !once_added) {
+        (*tip) = chain.tip()->pprev;
+        once_added = true;
+      } else if (chain.contains(&blockIndex)) {
+        tip = chainTips_.erase(tip);
+        continue;
       }
+      ++tip;
     }
   }
 
-  while (chains[0].tip() != blockIndex) {
-    for (auto& chain : chains) {
-      disconnectTipFromChain(chain);
-    }
-  }
-
-  block_index_.erase(blockIndex->getHash());
+  block_index_.erase(blockIndex.getHash());
 }
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,
@@ -175,7 +171,7 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
   context_t ctx;
   index->containingContext.push_back(ctx);
 
-  if (!cmp_.addPayloads(*index, payloads, state)) {
+  if (!cmp_.addPayloads(*index, payloads, *this, state)) {
     index->containingContext.pop_back();
     return state.Invalid("bad-atv-stateful");
   }
@@ -188,7 +184,7 @@ void AltTree::removePayloads(const AltBlock& containingBlock,
   auto* index = getBlockIndex(containingBlock.getHash());
   assert(index);
 
-  cmp_.removePayloads(*index, payloads);
+  cmp_.removePayloads(*index, payloads, *this);
 
   if (index->containingContext.back().empty()) {
     index->containingContext.pop_back();
@@ -419,7 +415,7 @@ void AltTree::disconnectTipFromChain(Chain<index_t>& chain) {
 
   for (auto it = currentTip->containingEndorsements.begin();
        it != currentTip->containingEndorsements.end();) {
-    removeFromEndorsedBy(*currentTip, it->second.get());
+    removeFromEndorsedBy(it->second.get(), *this);
     it = currentTip->containingEndorsements.erase(it);
   }
 
