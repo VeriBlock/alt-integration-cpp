@@ -42,8 +42,9 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
   PopRewardsBigDecimal difficulty = 0.0;
 
   const BlockIndex<AltBlock>* currentBlock = &tip;
+  auto rewardParams = calculator_.getAltParams().getRewardParams();
   // rewind rewardSettlementInterval blocks back in the past
-  for (size_t i = 0; i < rewardParams_.rewardSettlementInterval(); i++) {
+  for (size_t i = 0; i < rewardParams.rewardSettlementInterval(); i++) {
     currentBlock = currentBlock->pprev;
     if (currentBlock == nullptr) {
       throw std::logic_error(
@@ -52,13 +53,13 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
     }
   }
 
-  for (size_t i = 0; i < rewardParams_.difficultyAveragingInterval(); i++) {
+  for (size_t i = 0; i < rewardParams.difficultyAveragingInterval(); i++) {
     difficulty += scoreFromEndorsements(*currentBlock);
     currentBlock = currentBlock->pprev;
     if (currentBlock == nullptr) break;
   }
 
-  difficulty /= (uint64_t)rewardParams_.difficultyAveragingInterval();
+  difficulty /= (uint64_t)rewardParams.difficultyAveragingInterval();
 
   // Minimum difficulty
   if (difficulty < 1.0) {

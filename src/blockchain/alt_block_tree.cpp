@@ -150,9 +150,8 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
   }
 
   PopRewardsBigDecimal popDifficulty = 1.0;
-  PopRewardsParams reward_params{}; 
-  PopRewardsCalculator rewardsCalculator = PopRewardsCalculator(*alt_config_, reward_params);
-  PopRewards rewards = PopRewards(vbk(), reward_params, rewardsCalculator);
+  PopRewardsCalculator rewardsCalculator = PopRewardsCalculator(*alt_config_);
+  PopRewards rewards = PopRewards(vbk(), rewardsCalculator);
   std::map<std::vector<uint8_t>, int64_t> out{};
   auto payouts = rewards.calculatePayouts(*index, popDifficulty);
   for (const auto& p : payouts) {

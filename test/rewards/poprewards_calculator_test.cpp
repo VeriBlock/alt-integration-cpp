@@ -25,9 +25,7 @@ struct AltChainParamsTest : public AltChainParams {
 
 struct RewardsCalculatorTestFixture : ::testing::Test {
   AltChainParamsTest chainParams{};
-  PopRewardsParams rewardParams{};
-  PopRewardsCalculator rewardsCalculator =
-      PopRewardsCalculator(chainParams, rewardParams);
+  PopRewardsCalculator rewardsCalculator = PopRewardsCalculator(chainParams);
   PopRewardsBigDecimal defaultScore = 1.0;
   PopRewardsBigDecimal defaultDifficulty = 1.0;
 
@@ -41,7 +39,7 @@ TEST_F(RewardsCalculatorTestFixture, basicReward_test) {
   auto minerReward = rewardsCalculator.calculateRewardForMiner(
       height, 0, defaultScore, defaultDifficulty);
   ASSERT_TRUE(minerReward > 0.0);
-  ASSERT_EQ(minerReward, rewardParams.roundRatios()[height]);
+  ASSERT_EQ(minerReward, chainParams.getRewardParams().roundRatios()[height]);
 
   // score < 1.0 is on the flat reward rate
   PopRewardsBigDecimal halfScore = defaultScore / 2.0;

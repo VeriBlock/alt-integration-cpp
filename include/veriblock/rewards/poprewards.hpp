@@ -2,9 +2,8 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_HPP_
 
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
-#include <veriblock/storage/endorsement_repository.hpp>
 #include <veriblock/rewards/poprewards_calculator.hpp>
-#include <veriblock/rewards/poprewards_params.hpp>
+#include <veriblock/rewards/poprewards_bigdecimal.hpp>
 
 namespace altintegration {
 
@@ -18,10 +17,8 @@ struct PopRewardPayout {
  */
 struct PopRewards {
   PopRewards(const VbkBlockTree& vbk_tree,
-             const PopRewardsParams& rewardParams,
              const PopRewardsCalculator& calculator)
       : vbk_tree_(vbk_tree),
-        rewardParams_(rewardParams),
         calculator_(calculator) {}
 
   virtual ~PopRewards() = default;
@@ -59,7 +56,6 @@ struct PopRewards {
 
  private:
   const VbkBlockTree& vbk_tree_;
-  const PopRewardsParams& rewardParams_;
   const PopRewardsCalculator& calculator_;
 };
 

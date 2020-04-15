@@ -2,7 +2,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_HPP_
 
 #include <veriblock/blockchain/alt_chain_params.hpp>
-#include <veriblock/rewards/poprewards_params.hpp>
+#include <veriblock/rewards/poprewards_bigdecimal.hpp>
 
 namespace altintegration {
 
@@ -10,10 +10,8 @@ namespace altintegration {
  * @invariant does not modify any on-disk state.
  */
 struct PopRewardsCalculator {
-  PopRewardsCalculator(const AltChainParams& chainParams,
-                       const PopRewardsParams& rewardParams)
-      : chainParams_(chainParams),
-        rewardParams_(rewardParams) {}
+  PopRewardsCalculator(const AltChainParams& altParams)
+      : altParams_(altParams) {}
   virtual ~PopRewardsCalculator(){};
 
   /**
@@ -29,9 +27,11 @@ struct PopRewardsCalculator {
       PopRewardsBigDecimal scoreForThisBlock,
       PopRewardsBigDecimal difficulty) const;
 
- private:
-  const AltChainParams& chainParams_;
-  const PopRewardsParams& rewardParams_;
+  // getter for altchain parameters
+  virtual const AltChainParams& getAltParams() const noexcept;
+
+ protected:
+  const AltChainParams& altParams_;
 };
 
 }  // namespace altintegration

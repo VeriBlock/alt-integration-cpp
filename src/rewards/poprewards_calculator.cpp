@@ -5,20 +5,19 @@
 namespace altintegration {
 
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
-static uint32_t getRoundForBlockNumber(const AltChainParams& chainParams,
-                                       const PopRewardsParams& rewardParams,
+static uint32_t getRoundForBlockNumber(const AltChainParams& altParams,
                                        uint32_t height) {
-  if (height % chainParams.getKeystoneInterval() == 0) {
-    return rewardParams.keystoneRound();
+  if (height % altParams.getKeystoneInterval() == 0) {
+    return altParams.getRewardParams().keystoneRound();
   }
 
-  if (rewardParams.payoutRounds() <= 1) {
+  if (altParams.getRewardParams().payoutRounds() <= 1) {
     return 0;
   }
 
   assert(height > 0);
-  uint32_t round = (height % chainParams.getKeystoneInterval()) %
-                   (rewardParams.payoutRounds() - 1);
+  uint32_t round = (height % altParams.getKeystoneInterval()) %
+                   (altParams.getRewardParams().payoutRounds() - 1);
   return round;
 }
 
@@ -28,12 +27,12 @@ static bool isKeystoneRound(const PopRewardsParams& rewardParams,
 }
 
 // test if block is placed inside payout round following keystone
-static bool isFirstRoundAfterKeystone(const AltChainParams& chainParams,
-                                      const PopRewardsParams& rewardParams,
+static bool isFirstRoundAfterKeystone(const AltChainParams& altParams,
                                       uint32_t height) {
-  uint32_t blockAfterKeystone = height % chainParams.getKeystoneInterval();
-  if (rewardParams.payoutRounds() == 0) return true;
-  if (blockAfterKeystone / rewardParams.payoutRounds() == 0) return true;
+  uint32_t blockAfterKeystone = height % altParams.getKeystoneInterval();
+  if (altParams.getRewardParams().payoutRounds() == 0) return true;
+  if (blockAfterKeystone / altParams.getRewardParams().payoutRounds() == 0)
+    return true;
   return false;
 }
 
@@ -82,8 +81,7 @@ static PopRewardsBigDecimal calculateSlopeRatio(
 }
 
 static PopRewardsBigDecimal calculateMinerReward(
-    const AltChainParams& chainParams,
-    const PopRewardsParams& rewardParams,
+    const AltChainParams& altParams,
     uint32_t height,
     PopRewardsBigDecimal endorsementWeight,
     PopRewardsBigDecimal difficulty,
@@ -98,17 +96,18 @@ static PopRewardsBigDecimal calculateMinerReward(
   }
 
   uint32_t payoutRound =
-      getRoundForBlockNumber(chainParams, rewardParams, height);
+      getRoundForBlockNumber(altParams, height);
   PopRewardsBigDecimal scoreToDifficulty = score / difficulty;
-  PopRewardsCurveParams curveParams = rewardParams.getCurveParams();
-  PopRewardsBigDecimal roundRatio = getRoundRatio(rewardParams, payoutRound);
+  PopRewardsCurveParams curveParams = altParams.getRewardParams().getCurveParams();
+  PopRewardsBigDecimal roundRatio =
+      getRoundRatio(altParams.getRewardParams(), payoutRound);
 
   // penalty multiplier
   PopRewardsBigDecimal slope = 1.0;
 
   if (scoreToDifficulty > curveParams.startOfSlope()) {
     PopRewardsBigDecimal maxScoreThreshold =
-        getMaxScoreThreshold(rewardParams, payoutRound);
+        getMaxScoreThreshold(altParams.getRewardParams(), payoutRound);
     if (scoreToDifficulty > maxScoreThreshold) {
       scoreToDifficulty = maxScoreThreshold;
     }
@@ -117,7 +116,8 @@ static PopRewardsBigDecimal calculateMinerReward(
     // score to difficulty ratio is greater than the max reward threshold. Past
     // the max reward threshold, the block reward ceases to grow, but is split
     // amongst a larger number of participants.
-    slope = calculateSlopeRatio(rewardParams, scoreToDifficulty, payoutRound);
+    slope = calculateSlopeRatio(
+        altParams.getRewardParams(), scoreToDifficulty, payoutRound);
   }
 
   return slope * endorsementWeight * roundRatio / difficulty;
@@ -126,11 +126,11 @@ static PopRewardsBigDecimal calculateMinerReward(
 PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
     int relativeBlock) const {
   if (relativeBlock < 0 ||
-      relativeBlock >= (int)rewardParams_.relativeScoreLookupTable().size()) {
+      relativeBlock >= (int)altParams_.getRewardParams().relativeScoreLookupTable().size()) {
     return 0.0;
   }
 
-  return rewardParams_.relativeScoreLookupTable()[relativeBlock];
+  return altParams_.getRewardParams().relativeScoreLookupTable()[relativeBlock];
 }
 
 // we calculate the reward for a given miner
@@ -145,28 +145,27 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateRewardForMiner(
 
   // Special case for the first ROUND 3 after keystone - do not adjust for score
   // to difficulty ratio
-  uint32_t roundNumber =
-      getRoundForBlockNumber(chainParams_, rewardParams_, height);
+  uint32_t roundNumber = getRoundForBlockNumber(altParams_, height);
   auto endorsementLevelWeight =
       getScoreMultiplierFromRelativeBlock(vbkRelativeHeight);
 
-  if (rewardParams_.flatScoreRoundUse() &&
-      roundNumber == rewardParams_.flatScoreRound() &&
-      isFirstRoundAfterKeystone(chainParams_, rewardParams_, height)) {
-    return calculateMinerReward(chainParams_,
-                                rewardParams_,
-                                height,
-                                endorsementLevelWeight,
-                                1.0,
-                                1.0);
+  if (altParams_.getRewardParams().flatScoreRoundUse() &&
+      roundNumber == altParams_.getRewardParams().flatScoreRound() &&
+      isFirstRoundAfterKeystone(altParams_, height)) {
+    return calculateMinerReward(
+        altParams_, height, endorsementLevelWeight, 1.0, 1.0);
   }
 
-  return calculateMinerReward(chainParams_,
-                              rewardParams_,
+  return calculateMinerReward(altParams_,
                               height,
                               endorsementLevelWeight,
                               difficulty,
                               scoreForThisBlock);
+}
+
+// getter for altchain parameters
+const AltChainParams& PopRewardsCalculator::getAltParams() const noexcept {
+  return altParams_;
 }
 
 }  // namespace altintegration
