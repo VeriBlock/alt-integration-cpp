@@ -21,6 +21,9 @@ target_link_libraries(base58_test ${LIB_NAME})
 addtest(base59_test base59_test.cpp)
 target_link_libraries(base59_test ${LIB_NAME})
 
+addtest(config_test config_test.cpp)
+target_link_libraries(config_test ${LIB_NAME})
+
 addtest(stateless_validation_test stateless_validation_test.cpp)
 target_link_libraries(stateless_validation_test ${LIB_NAME})
 
