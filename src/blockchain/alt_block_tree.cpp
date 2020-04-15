@@ -118,6 +118,7 @@ void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
 void AltTree::invalidateBlockByIndex(index_t* blockIndex) {
   ValidationState state;
   bool ret = cmp_.setState(*blockIndex->pprev, state);
+  (void)ret;
   assert(ret);
 
   // clear endorsements
@@ -127,7 +128,7 @@ void AltTree::invalidateBlockByIndex(index_t* blockIndex) {
 
   bool once_added = false;
   for (size_t i = 0; i < chainTips_.size(); ++i) {
-    if (blockIndex->height < chainTips_[i]->height) {
+    if (blockIndex->height <= chainTips_[i]->height) {
       Chain<index_t> chain(blockIndex->height, chainTips_[i]);
       invalidateBlockFromChain(chain, blockIndex);
 
