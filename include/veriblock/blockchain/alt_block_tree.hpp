@@ -73,6 +73,12 @@ struct AltTree {
   bool setState(const AltBlock::hash_t& to, ValidationState& state);
 
   /**
+   * Calculate payouts for the given block
+   * @return map with reward recipient as a key and reward amount as a value
+   */
+  std::map<std::vector<uint8_t>, int64_t> getPopPayout(const AltBlock::hash_t& block);
+
+  /**
    * Determine the best chain of the AltBlocks in accordance with the VeriBlock
    * forkresolution rules.
    * @param AltBlock chain1, AltBlock chain2
