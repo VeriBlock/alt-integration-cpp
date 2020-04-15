@@ -63,10 +63,10 @@ bool checkAndAddEndorsement(
   return true;
 }
 
-template <typename ProtectedIndex>
-void removeEndorsement(
-    ProtectedIndex& index,
-    const typename ProtectedIndex::endorsement_t::id_t& eid) {
+template <typename ProtectedIndex, typename ProtectedTree>
+void removeEndorsement(ProtectedIndex& index,
+                       const typename ProtectedIndex::endorsement_t::id_t& eid,
+                       ProtectedTree& tree) {
   using endorsement_t = typename ProtectedIndex::endorsement_t;
 
   auto endorsementit = index.containingEndorsements.find(eid);
@@ -77,20 +77,20 @@ void removeEndorsement(
   auto& endorsement_ptr = endorsementit->second;
 
   // remove from 'endorsedBy'
-  removeFromEndorsedBy(index, endorsement_ptr.get());
+  removeFromEndorsedBy(endorsement_ptr.get(), tree);
   // remove from 'containing endorsements'
   index.containingEndorsements.erase(endorsementit);
 }
 
-template <typename ProtectedIndex>
+template <typename ProtectedTree>
 void removeFromEndorsedBy(
-    ProtectedIndex& index,
-    const typename ProtectedIndex::endorsement_t* endorsement) {
-  using endorsement_t = typename ProtectedIndex::endorsement_t;
+    const typename ProtectedTree::index_t::endorsement_t* endorsement,
+    ProtectedTree& tree) {
+  using endorsement_t = typename ProtectedTree::index_t::endorsement_t;
 
-  auto endorsed = index.getAncestor(endorsement->endorsedHeight);
+  auto endorsed = tree.getBlockIndex(endorsement->endorsedHash);
   if (endorsed) {
-    auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
+    auto& endorsements = endorsed->endorsedBy;
     auto new_end = std::remove_if(endorsements.begin(),
                                   endorsements.end(),
                                   [&endorsement](endorsement_t* e) -> bool {
