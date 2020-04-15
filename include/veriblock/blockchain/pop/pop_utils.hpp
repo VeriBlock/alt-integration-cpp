@@ -77,21 +77,30 @@ void removeEndorsement(
   auto& endorsement_ptr = endorsementit->second;
 
   // remove from 'endorsedBy'
-  auto endorsed = index.getAncestor(endorsement_ptr->endorsedHeight);
+  removeFromEndorsedBy(index, endorsement_ptr.get());
+  // remove from 'containing endorsements'
+  index.containingEndorsements.erase(endorsementit);
+}
+
+template <typename ProtectedIndex>
+void removeFromEndorsedBy(
+    ProtectedIndex& index,
+    const typename ProtectedIndex::endorsement_t* endorsement) {
+  using endorsement_t = typename ProtectedIndex::endorsement_t;
+
+  auto endorsed = index.getAncestor(endorsement->endorsedHeight);
   if (endorsed) {
     auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
     auto new_end = std::remove_if(endorsements.begin(),
                                   endorsements.end(),
-                                  [&endorsement_ptr](endorsement_t* e) -> bool {
+                                  [&endorsement](endorsement_t* e) -> bool {
                                     // remove nullptrs and our given
                                     // endorsement
-                                    return !e || endorsement_ptr.get() == e;
+                                    return !e || endorsement == e;
                                   });
 
     endorsements.erase(new_end, endorsements.end());
   }
-  // remove from 'containing endorsements'
-  index.containingEndorsements.erase(endorsementit);
 }
 
 }  // namespace altintegration
