@@ -85,11 +85,6 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
     return;
   }
 
-  // remove endorsements
-  for (const auto& el : blockIndex->containingEndorsements) {
-    removeEndorsement(*blockIndex, el.first);
-  }
-
   ValidationState state;
   bool ret = cmp_.setState(*blockIndex->pprev, state);
   assert(ret);
@@ -99,7 +94,7 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
   ret = cmp_.setState(*activeChain_.tip(), state);
   assert(ret);
 
-  (void) ret;
+  (void)ret;
 }
 
 bool VbkBlockTree::addPayloads(const VbkBlock& block,

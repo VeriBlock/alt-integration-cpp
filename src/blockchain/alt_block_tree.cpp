@@ -408,10 +408,13 @@ void AltTree::invalidateBlockFromChain(Chain<index_t>& chain,
 
 void AltTree::disconnectTipFromChain(Chain<index_t>& chain) {
   BlockIndex<AltBlock>* currentTip = chain.tip();
-  hash_t tipHash = currentTip->getHash();
+
+  for (const auto& el : currentTip->containingEndorsements) {
+    removeEndorsement(*currentTip, el.first);
+  }
 
   chain.disconnectTip();
-  block_index_.erase(tipHash);
+  block_index_.erase(currentTip->getHash());
 }
 
 }  // namespace altintegration
