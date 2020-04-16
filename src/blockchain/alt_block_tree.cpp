@@ -1,3 +1,5 @@
+#include <set>
+
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/stateless_validation.hpp"
@@ -121,28 +123,33 @@ void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
   (void)ret;
   assert(ret);
 
-  for (auto it = blockIndex.containingEndorsements.begin();
-       it != blockIndex.containingEndorsements.end();) {
-    removeFromEndorsedBy(it->second.get(), *this);
-    it = blockIndex.containingEndorsements.erase(it);
-  }
+  removeAllContainingEndorsements(blockIndex);
 
-  bool once_added = false;
+  std::set<index_t*> removeIndexes;
+
+  // clear endorsements
+  bool once_changed = false;
   for (auto tip = chainTips_.begin(); tip != chainTips_.end();) {
-    if (blockIndex.height <= (*tip)->height) {
-      Chain<index_t> chain(blockIndex.height, &blockIndex);
-      chain.setTip((*tip));
-      invalidateBlockFromChain(chain, &blockIndex);
-
-      if (chain.contains(&blockIndex) && !once_added) {
-        (*tip) = chain.tip()->pprev;
-        once_added = true;
-      } else if (chain.contains(&blockIndex)) {
+    if ((*tip)->getAncestor(blockIndex.height) == &blockIndex) {
+      for (index_t* workBlock = *tip; workBlock != &blockIndex;
+           workBlock = workBlock->pprev) {
+        removeIndexes.insert(workBlock);
+        removeAllContainingEndorsements(*workBlock);
+      }
+      if (!once_changed) {
+        (*tip) = blockIndex.pprev;
+        once_changed = true;
+      } else {
         tip = chainTips_.erase(tip);
         continue;
       }
-      ++tip;
     }
+    ++tip;
+  }
+
+  // clear indexes
+  for (auto index : removeIndexes) {
+    block_index_.erase(index->getHash());
   }
 
   block_index_.erase(blockIndex.getHash());
@@ -171,7 +178,7 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
   context_t ctx;
   index->containingContext.push_back(ctx);
 
-  if (!cmp_.addPayloads(*index, payloads, *this, state)) {
+  if (!cmp_.addPayloads(*index, payloads, state)) {
     index->containingContext.pop_back();
     return state.Invalid("bad-atv-stateful");
   }
@@ -184,7 +191,7 @@ void AltTree::removePayloads(const AltBlock& containingBlock,
   auto* index = getBlockIndex(containingBlock.getHash());
   assert(index);
 
-  cmp_.removePayloads(*index, payloads, *this);
+  cmp_.removePayloads(*index, payloads);
 
   if (index->containingContext.back().empty()) {
     index->containingContext.pop_back();
@@ -412,13 +419,6 @@ void AltTree::invalidateBlockFromChain(Chain<index_t>& chain,
 
 void AltTree::disconnectTipFromChain(Chain<index_t>& chain) {
   BlockIndex<AltBlock>* currentTip = chain.tip();
-
-  for (auto it = currentTip->containingEndorsements.begin();
-       it != currentTip->containingEndorsements.end();) {
-    removeFromEndorsedBy(it->second.get(), *this);
-    it = currentTip->containingEndorsements.erase(it);
-  }
-
   chain.disconnectTip();
   block_index_.erase(currentTip->getHash());
 }

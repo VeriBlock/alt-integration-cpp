@@ -63,10 +63,10 @@ bool checkAndAddEndorsement(
   return true;
 }
 
-template <typename ProtectedIndex, typename ProtectedTree>
-void removeEndorsement(ProtectedIndex& index,
-                       const typename ProtectedIndex::endorsement_t::id_t& eid,
-                       ProtectedTree& tree) {
+template <typename ProtectedIndex>
+void removeEndorsement(
+    ProtectedIndex& index,
+    const typename ProtectedIndex::endorsement_t::id_t& eid) {
   auto endorsementit = index.containingEndorsements.find(eid);
   if (endorsementit == index.containingEndorsements.end()) {
     return;
@@ -75,20 +75,29 @@ void removeEndorsement(ProtectedIndex& index,
   auto& endorsement_ptr = endorsementit->second;
 
   // remove from 'endorsedBy'
-  removeFromEndorsedBy(endorsement_ptr.get(), tree);
+  removeFromEndorsedBy(index, endorsement_ptr.get());
   // remove from 'containing endorsements'
   index.containingEndorsements.erase(endorsementit);
 }
 
-template <typename ProtectedTree>
-void removeFromEndorsedBy(
-    const typename ProtectedTree::index_t::endorsement_t* endorsement,
-    ProtectedTree& tree) {
-  using endorsement_t = typename ProtectedTree::index_t::endorsement_t;
+template <typename ProtectedIndex>
+void removeAllContainingEndorsements(ProtectedIndex& index) {
+  for (auto it = index.containingEndorsements.begin();
+       it != index.containingEndorsements.end();) {
+    removeFromEndorsedBy(index, it->second.get());
+    it = index.containingEndorsements.erase(it);
+  }
+}
 
-  auto endorsed = tree.getBlockIndex(endorsement->endorsedHash);
+template <typename ProtectedIndex>
+void removeFromEndorsedBy(
+    ProtectedIndex& index,
+    const typename ProtectedIndex::endorsement_t* endorsement) {
+  using endorsement_t = typename ProtectedIndex::endorsement_t;
+
+  auto endorsed = index.getAncestor(endorsement->endorsedHeight);
   if (endorsed) {
-    auto& endorsements = endorsed->endorsedBy;
+    auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
     auto new_end = std::remove_if(endorsements.begin(),
                                   endorsements.end(),
                                   [&endorsement](endorsement_t* e) -> bool {
