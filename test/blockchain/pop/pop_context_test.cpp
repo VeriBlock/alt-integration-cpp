@@ -126,7 +126,9 @@ TEST_F(PopContextFixture, A) {
   if (!localB->containingContext.empty()) {
     std::vector<BtcBlock> allBtcBlocks;
     for (const auto& el : localB->containingContext) {
-      allBtcBlocks.insert(allBtcBlocks.begin(), el.btc.begin(), el.btc.end());
+      for (const auto& b : el.btc) {
+        allBtcBlocks.push_back(*b);
+      }
     }
     makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));
   }
@@ -146,7 +148,9 @@ TEST_F(PopContextFixture, A) {
   if (!localA->containingContext.empty()) {
     std::vector<BtcBlock> allBtcBlocks;
     for (const auto& el : localA->containingContext) {
-      allBtcBlocks.insert(allBtcBlocks.begin(), el.btc.begin(), el.btc.end());
+      for (const auto& b : el.btc) {
+        allBtcBlocks.push_back(*b);
+      }
     }
 
     makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));

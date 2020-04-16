@@ -310,8 +310,8 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   // step 1
   for (const auto& b : ctx.vbk) {
-    if (check(b)) {
-      tree().invalidateBlockByHash(b.getHash());
+    if (check(*b)) {
+      tree().invalidateBlockByHash(b->getHash());
     }
   }
 
@@ -342,10 +342,17 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
 
   auto& ctx = index.containingContext.back();
 
-  auto addBlock = [&](const VbkBlock& b, std::vector<VbkBlock>& blocks) {
-    auto hash = b.getHash();
+  auto addBlock1 = [&](const VbkBlock& b,
+                       std::vector<std::shared_ptr<VbkBlock>>& blocks) {
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!tree.getBlockIndex(hash)) {
+    if (!tree.getBlockIndex(b.getHash())) {
+      blocks.push_back(std::make_shared<VbkBlock>(b));
+    }
+  };
+
+  auto addBlock2 = [&](const VbkBlock& b, std::vector<VbkBlock>& blocks) {
+    // filter context: add only blocks that are unknown and not in current 'ctx'
+    if (!tree.getBlockIndex(b.getHash())) {
       blocks.push_back(b);
     }
   };
@@ -353,9 +360,9 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   // add context from ATV
   if (p.hasAtv) {
     for (const auto& b : p.atv.context) {
-      addBlock(b, ctx.vbk);
+      addBlock1(b, ctx.vbk);
     }
-    addBlock(p.atv.containingBlock, ctx.vbk);
+    addBlock1(p.atv.containingBlock, ctx.vbk);
   }
 
   // step 2, process VTBs
@@ -368,7 +375,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
       ctx.vtbs.push_back(vtb);
       ctx.vtbs.rbegin()->context.clear();
       for (const auto& b : vtb.context) {
-        addBlock(b, ctx.vtbs.rbegin()->context);
+        addBlock2(b, ctx.vtbs.rbegin()->context);
       }
     }
   }
@@ -384,7 +391,10 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
   auto& vbk = index.containingContext.back().vbk;
   auto vbk_end = vbk.end();
   auto removeBlock = [&](const VbkBlock& b) {
-    vbk_end = std::remove(vbk.begin(), vbk_end, b);
+    vbk_end = std::remove_if(
+        vbk.begin(), vbk_end, [&b](const std::shared_ptr<VbkBlock>& ptr) {
+          return *ptr == b;
+        });
   };
 
   auto& vtbs = index.containingContext.back().vtbs;

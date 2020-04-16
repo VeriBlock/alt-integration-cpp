@@ -185,7 +185,7 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
     return;
   }
   for (const auto& b : index.containingContext.back().btc) {
-    tree().invalidateBlockByHash(b.getHash());
+    tree().invalidateBlockByHash(b->getHash());
   }
 
 }  // namespace altintegration
@@ -200,7 +200,10 @@ void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
   auto& ctx = index.containingContext.back().btc;
   auto end = ctx.end();
   auto remove = [&](const BtcBlock& b) {
-    end = std::remove(ctx.begin(), end, b);
+    end = std::remove_if(
+        ctx.begin(), end, [&b](const std::shared_ptr<BtcBlock>& ptr) {
+          return *ptr == b;
+        });
   };
 
   // update block of proof context
@@ -223,10 +226,9 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
   auto& ctx = index.containingContext.back().btc;
 
   auto add = [&](const BtcBlock& b) {
-    auto hash = b.getHash();
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!tree.getBlockIndex(hash)) {
-      ctx.push_back(b);
+    if (!tree.getBlockIndex(b.getHash())) {
+      ctx.push_back(std::make_shared<BtcBlock>(b));
     }
   };
 

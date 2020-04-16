@@ -1,7 +1,7 @@
 #ifndef ALTINTEGRATION_CONTEXT_HPP
 #define ALTINTEGRATION_CONTEXT_HPP
 
-#include <tuple>
+#include <memory>
 #include <vector>
 
 #include "endorsements.hpp"
@@ -14,14 +14,14 @@ struct VTB;
 struct AltPayloads;
 
 struct VbkContext {
-  std::vector<BtcBlock> btc;
+  std::vector<std::shared_ptr<BtcBlock>> btc;
 
   bool empty() const noexcept { return btc.empty(); }
 };
 
 struct AltContext {
   // corresponds to the ATV
-  std::vector<VbkBlock> vbk;
+  std::vector<std::shared_ptr<VbkBlock>> vbk;
 
   std::vector<VTB> vtbs;
 
