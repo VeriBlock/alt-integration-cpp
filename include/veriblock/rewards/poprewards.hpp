@@ -7,11 +7,6 @@
 
 namespace altintegration {
 
-/*struct PopRewardPayout {
-  uint64_t reward;
-  std::vector<uint8_t> miner;
-};*/
-
 /**
  * @invariant does not modify any on-disk state.
  */
