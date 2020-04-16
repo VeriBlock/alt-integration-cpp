@@ -50,7 +50,7 @@ typename BtcEndorsement::id_t PartialVTB::getEndorsementId() const {
 bool operator==(const PartialVTB& a, const PartialVTB& b) {
   bool is_equal = a.btc.size() == b.btc.size();
   for (size_t i = 0; i < a.btc.size() && is_equal; ++i) {
-    if (a.btc[i] != b.btc[i]) {
+    if (*a.btc[i] != *b.btc[i]) {
       is_equal = false;
     }
   }

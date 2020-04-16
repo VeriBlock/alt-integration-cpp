@@ -361,8 +361,9 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
                      temp->containingEndorsements.end()) {
       PartialVTB p_vtb = PartialVTB::generateFromVtb(vtb);
       for (const auto& b : vtb.context) {
-        addBlock(b, ctx.vtbs.rbegin()->context_vbk);
+        addBlock(b, p_vtb.context_vbk);
       }
+      ctx.vtbs.push_back(p_vtb);
     }
   }
 }
