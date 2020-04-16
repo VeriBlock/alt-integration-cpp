@@ -131,7 +131,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     if (altContext.size() == 0) return false;
     for (const auto& c : altContext) {
       for (const auto& v : c.vtbs) {
-        if (v == vtb) {
+        if (v == PartialVTB::generateFromVtb(vtb)) {
           return true;
         }
       }

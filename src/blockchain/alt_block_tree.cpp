@@ -167,13 +167,6 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
                              HexStr(hash));
   }
 
-  for (size_t i = 0, size = payloads.size(); i < size; i++) {
-    auto& p = payloads[i];
-    if (p.hasAtv && !checkATV(p.atv, state, *alt_config_, vbk().getParams())) {
-      return state.addIndex(i).Invalid("bad-atv-stateless");
-    }
-  }
-
   // allocate a new element in the stack
   context_t ctx;
   index->containingContext.push_back(ctx);
@@ -263,24 +256,24 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
 
         // step 2, process VTBs
         for (const auto& vtb : ctx.vtbs) {
-          for (const auto& b : vtb.context) {
+          for (const auto& b : vtb.context_vbk) {
             if (!tree().acceptBlock(b, state)) {
               return state.Invalid("alt-accept-block");
             }
           }
 
           auto* containingIndex =
-              tree().getBlockIndex(vtb.containingBlock.getHash());
+              tree().getBlockIndex(vtb.containing->getHash());
           if (!containingIndex) {
-            if (!tree().acceptBlock(vtb.containingBlock, state)) {
+            if (!tree().acceptBlock(vtb.containing, state)) {
               return state.Invalid("alt-accept-block");
             }
           }
           if (!containingIndex ||
               containingIndex->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtb).id) ==
+                  vtb.endorsement.id) ==
                   containingIndex->containingEndorsements.end()) {
-            if (!tree().addPayloads(vtb.containingBlock, {vtb}, state)) {
+            if (!tree().addPayloads(*vtb.containing, {vtb}, state)) {
               return state.Invalid("alt-accept-block");
             }
           }
@@ -317,8 +310,10 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   // step 2, process VTBs
   for (const auto& vtb : ctx.vtbs) {
-    auto* containingIndex = tree().getBlockIndex(vtb.containingBlock.getHash());
-    if (!containingIndex) continue;
+    auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
+    if (!containingIndex) {
+      continue;
+    }
 
     tree().removePayloads(containingIndex, {vtb});
 
@@ -326,9 +321,9 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
       tree().invalidateBlockByHash(containingIndex->getHash());
     }
 
-    for (const auto& b : vtb.context) {
-      if (check(b)) {
-        tree().invalidateBlockByHash(b.getHash());
+    for (const auto& b : vtb.context_vbk) {
+      if (check(*b)) {
+        tree().invalidateBlockByHash(b->getHash());
       }
     }
   }
@@ -342,40 +337,31 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
 
   auto& ctx = index.containingContext.back();
 
-  auto addBlock1 = [&](const VbkBlock& b,
-                       std::vector<std::shared_ptr<VbkBlock>>& blocks) {
+  auto addBlock = [&](const VbkBlock& b,
+                      std::vector<std::shared_ptr<VbkBlock>>& blocks) {
     // filter context: add only blocks that are unknown and not in current 'ctx'
     if (!tree.getBlockIndex(b.getHash())) {
       blocks.push_back(std::make_shared<VbkBlock>(b));
     }
   };
 
-  auto addBlock2 = [&](const VbkBlock& b, std::vector<VbkBlock>& blocks) {
-    // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!tree.getBlockIndex(b.getHash())) {
-      blocks.push_back(b);
-    }
-  };
-
   // add context from ATV
   if (p.hasAtv) {
     for (const auto& b : p.atv.context) {
-      addBlock1(b, ctx.vbk);
+      addBlock(b, ctx.vbk);
     }
-    addBlock1(p.atv.containingBlock, ctx.vbk);
+    addBlock(p.atv.containingBlock, ctx.vbk);
   }
 
   // step 2, process VTBs
   for (const auto& vtb : p.vtbs) {
     auto* temp = tree.getBlockIndex(vtb.getContainingBlock().getHash());
-
-    if (!temp || temp->containingEndorsements.find(
-                     BtcEndorsement::fromContainer(vtb).id) ==
+    BtcEndorsement e = BtcEndorsement::fromContainer(vtb);
+    if (!temp || temp->containingEndorsements.find(e.id) ==
                      temp->containingEndorsements.end()) {
-      ctx.vtbs.push_back(vtb);
-      ctx.vtbs.rbegin()->context.clear();
+      PartialVTB p_vtb = PartialVTB::generateFromVtb(vtb);
       for (const auto& b : vtb.context) {
-        addBlock2(b, ctx.vtbs.rbegin()->context);
+        addBlock(b, ctx.vtbs.rbegin()->context_vbk);
       }
     }
   }
@@ -400,7 +386,10 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
   auto& vtbs = index.containingContext.back().vtbs;
   auto vtbs_end = vtbs.end();
   auto removeVTB = [&](const VTB& vtb) {
-    vtbs_end = std::remove(vtbs.begin(), vtbs_end, vtb);
+    vtbs_end =
+        std::remove_if(vtbs.begin(), vtbs_end, [&vtb](const PartialVTB& p_vtb) {
+          return p_vtb == PartialVTB::generateFromVtb(vtb);
+        });
   };
 
   // remove ATV context

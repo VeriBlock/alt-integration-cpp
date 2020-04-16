@@ -51,25 +51,37 @@ struct AltPayloads {
    * @return id sha256 hash
    */
 
-  id_t getId() const { return sha256(containingTx, containingBlock.hash); }
+  id_t getId() const;
 
   /**
    * Return a containing AltBlock
    * @return containing block from AltProof
    */
-  AltBlock getContainingBlock() const { return containingBlock; }
+  AltBlock getContainingBlock() const;
 
   /**
    * Return a endorsed AltBlock from the AltProof
    * @return endorsed block
    */
-  AltBlock getEndorsedBlock() const { return endorsed; }
+  AltBlock getEndorsedBlock() const;
 
   /**
    * Return true if contains endorsement data
    * @return true if contains endorsement data
    */
-  bool containsEndorsements() const { return hasAtv; }
+  bool containsEndorsements() const;
+
+  /**
+   * Return VbkEndorsement which generates from AltPayloads
+   * @return endorsement VbkEndorsement
+   */
+  VbkEndorsement getEndorsement() const;
+
+  /**
+   * Return VbkEndorsement id which generates from AltPayloads
+   * @return id VbkEndorsement::id_t
+   */
+  typename VbkEndorsement::id_t getEndorsementId() const;
 
   friend bool operator==(const AltPayloads& a, const AltPayloads& b) {
     return a.getId() == b.getId();

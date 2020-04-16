@@ -106,14 +106,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
                          "AddPayloads should be executed on known blocks");
   }
 
-  for (size_t i = 0, size = payloads.size(); i < size; i++) {
-    auto& p = payloads[i];
-
-    if (!checkVTB(p, state, getParams(), btc().getParams())) {
-      return state.addIndex(i).Invalid("bad-payloads-stateless");
-    }
-  }
-
   // allocate a new element in the stack
   context_t ctx;
   index->containingContext.push_back(ctx);
@@ -199,20 +191,17 @@ void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
 
   auto& ctx = index.containingContext.back().btc;
   auto end = ctx.end();
-  auto remove = [&](const BtcBlock& b) {
+  auto remove = [&](const std::shared_ptr<BtcBlock>& b) {
     end = std::remove_if(
         ctx.begin(), end, [&b](const std::shared_ptr<BtcBlock>& ptr) {
-          return *ptr == b;
+          return *ptr == *b;
         });
   };
 
   // update block of proof context
-  for (const auto& b : p.transaction.blockOfProofContext) {
+  for (const auto& b : p.btc) {
     remove(b);
   }
-
-  // and finally add block of proof
-  remove(p.transaction.blockOfProof);
 
   ctx.erase(end, ctx.end());
 }
@@ -225,18 +214,16 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
 
   auto& ctx = index.containingContext.back().btc;
 
-  auto add = [&](const BtcBlock& b) {
+  auto add = [&](const std::shared_ptr<BtcBlock>& b) {
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!tree.getBlockIndex(b.getHash())) {
-      ctx.push_back(std::make_shared<BtcBlock>(b));
+    if (!tree.getBlockIndex(b->getHash())) {
+      ctx.push_back(b);
     }
   };
 
-  for (const auto& b : p.transaction.blockOfProofContext) {
+  for (const auto& b : p.btc) {
     add(b);
   }
-
-  add(p.transaction.blockOfProof);
 }
 
 }  // namespace altintegration

@@ -274,7 +274,8 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
   auto it = popminer.vbkPayloads.find(vbkTip11->getHash());
   BtcTree tempBtcTree(popminer.getBtcParams());
   ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
-  addContextToBlockIndex(*vbkTip11, it->second[0], tempBtcTree);
+  addContextToBlockIndex(
+      *vbkTip11, PartialVTB::generateFromVtb(it->second[0]), tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip11, state));
   auto initialTree = stateMachine.tree();
   // make sure VBK chain was changed
@@ -285,7 +286,8 @@ TEST_F(PopVbkForkResolution, applyKnownBtcContext) {
   it = popminer.vbkPayloads.find(vbkTip12->getHash());
   tempBtcTree = BtcTree(popminer.getBtcParams());
   ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
-  addContextToBlockIndex(*vbkTip12, it->second[0], tempBtcTree);
+  addContextToBlockIndex(
+      *vbkTip12, PartialVTB::generateFromVtb(it->second[0]), tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip12, state));
 
   // make sure that protecting tree did not change
@@ -355,7 +357,8 @@ TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
   auto it = popminer.vbkPayloads.find(vbkTip11->getHash());
   BtcTree tempBtcTree(popminer.getBtcParams());
   ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
-  addContextToBlockIndex(*vbkTip11, it->second[0], tempBtcTree);
+  addContextToBlockIndex(
+      *vbkTip11, PartialVTB::generateFromVtb(it->second[0]), tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip11, state));
   auto initialTree = stateMachine.tree();
   // make sure VBK chain was changed
@@ -366,7 +369,8 @@ TEST_F(PopVbkForkResolution, applyUnknownBtcContext) {
   it = popminer.vbkPayloads.find(vbkTip12->getHash());
   tempBtcTree = BtcTree(popminer.getBtcParams());
   ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
-  addContextToBlockIndex(*vbkTip12, it->second[0], tempBtcTree);
+  addContextToBlockIndex(
+      *vbkTip12, PartialVTB::generateFromVtb(it->second[0]), tempBtcTree);
   ASSERT_TRUE(stateMachine.unapplyAndApply(*vbkTip12, state));
 
   // make sure that protecting tree did change
