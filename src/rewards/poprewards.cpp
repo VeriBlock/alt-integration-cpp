@@ -67,7 +67,7 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
 
   auto blockScore = scoreFromEndorsements(block);
 
-  // we have the total reward per block in blockReward. Let's distribute it
+  // pay reward for each of the endorsements
   for (const auto& e : block.containingEndorsements) {
     auto* b = vbk_tree_.getBlockIndex(e.second->blockOfProof);
     if (!vbk_tree_.getBestChain().contains(b)) continue;
