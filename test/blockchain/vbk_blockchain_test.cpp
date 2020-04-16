@@ -100,7 +100,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
 
-  EXPECT_EQ(tree.getBestChain().tip()->header,
+  EXPECT_EQ(*tree.getBestChain().tip()->header,
             bootstrapChain[bootstrapChain.size() - 1]);
   EXPECT_EQ(tree.getBestChain().tip()->height,
             bootstrapChain[bootstrapChain.size() - 1].height);
@@ -114,7 +114,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
 
     // we are not sure that block gets to the main chain. Make sure it at least
     // exists
-    if (tree.getBestChain().tip()->header != block) {
+    if (*tree.getBestChain().tip()->header != block) {
       EXPECT_NE(tree.getBlockIndex(block.getHash()), nullptr);
     }
 

@@ -14,12 +14,12 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
   void endorseVBK(size_t height) {
     auto* endorsedIndex = popminer.vbk().getBestChain()[(int32_t)height];
     ASSERT_TRUE(endorsedIndex);
-    auto btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedIndex->header);
+    auto btctx = popminer.createBtcTxEndorsingVbkBlock(*endorsedIndex->header);
     auto btccontaining = popminer.mineBtcBlocks(1);
     auto vbkpoptx = popminer.createVbkPopTxEndorsingVbkBlock(
-        btccontaining->header,
+        *btccontaining->header,
         btctx,
-        endorsedIndex->header,
+        *endorsedIndex->header,
         popminer.getBtcParams().getGenesisBlock().getHash());
     popminer.mineVbkBlocks(1);
   }
@@ -28,7 +28,7 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
     auto Btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
     auto* btcBlockTip = popminer.mineBtcBlocks(1);
     return popminer.createVbkPopTxEndorsingVbkBlock(
-        btcBlockTip->header,
+        *btcBlockTip->header,
         Btctx,
         endorsedBlock,
         popminer.getBtcParams().getGenesisBlock().getHash());
@@ -130,11 +130,11 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   auto* endorsedVbkBlock5 = vbkBlockTip->getAncestor(vbkBlockTip->height - 15);
   ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 0);
 
-  generatePopTx(endorsedVbkBlock1->header);
-  generatePopTx(endorsedVbkBlock2->header);
-  generatePopTx(endorsedVbkBlock3->header);
-  generatePopTx(endorsedVbkBlock4->header);
-  generatePopTx(endorsedVbkBlock5->header);
+  generatePopTx(*endorsedVbkBlock1->header);
+  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(*endorsedVbkBlock3->header);
+  generatePopTx(*endorsedVbkBlock4->header);
+  generatePopTx(*endorsedVbkBlock5->header);
   ASSERT_EQ(popminer.vbkmempool.size(), 5);
 
   vbkBlockTip = popminer.mineVbkBlocks(1);
@@ -166,11 +166,11 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   endorsedVbkBlock5 = vbkBlockTip->getAncestor(vbkBlockTip->height - 15);
   ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 0);
 
-  generatePopTx(endorsedVbkBlock1->header);
-  generatePopTx(endorsedVbkBlock2->header);
-  generatePopTx(endorsedVbkBlock3->header);
-  generatePopTx(endorsedVbkBlock4->header);
-  generatePopTx(endorsedVbkBlock5->header);
+  generatePopTx(*endorsedVbkBlock1->header);
+  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(*endorsedVbkBlock3->header);
+  generatePopTx(*endorsedVbkBlock4->header);
+  generatePopTx(*endorsedVbkBlock5->header);
   ASSERT_EQ(popminer.vbkmempool.size(), 5);
 
   // corrupt one of the endorsement

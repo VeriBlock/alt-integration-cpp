@@ -1,8 +1,7 @@
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
-
 #include <veriblock/third_party/BigDecimal.h>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -23,9 +22,9 @@ template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) {
   VbkBlock block;
-  block.version = tip.header.version;
+  block.version = tip.header->version;
   block.previousBlock =
-      tip.header.getHash().template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
+      tip.header->getHash().template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
   block.merkleRoot = merkle;
   block.height = tip.height + 1;
   // set first previous keystone

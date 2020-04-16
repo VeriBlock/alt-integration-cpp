@@ -71,7 +71,7 @@ struct PopTestFixture {
     auto Btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
     auto* btcBlockTip = popminer.mineBtcBlocks(1);
     return popminer.createVbkPopTxEndorsingVbkBlock(
-        btcBlockTip->header,
+        *btcBlockTip->header,
         Btctx,
         endorsedBlock,
         popminer.getBtcParams().getGenesisBlock().getHash());
@@ -83,9 +83,9 @@ struct PopTestFixture {
     auto* tip = tree.getBlockIndex(vtb.containingBlock.getHash())->pprev;
 
     for (auto* walkBlock = tip;
-         walkBlock->header.getHash() != lastKnownVbkBlockHash;
+         walkBlock->header->getHash() != lastKnownVbkBlockHash;
          walkBlock = walkBlock->pprev) {
-      vtb.context.push_back(walkBlock->header);
+      vtb.context.push_back(*walkBlock->header);
     }
 
     // since we inserted in reverse order, we need to reverse context blocks

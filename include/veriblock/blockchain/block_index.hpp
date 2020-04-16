@@ -48,11 +48,11 @@ struct BlockIndex {
   height_t height = 0;
 
   //! block header
-  Block header{};
+  std::shared_ptr<Block> header{};
 
-  hash_t getHash() const { return header.getHash(); }
-  uint32_t getBlockTime() const { return header.getBlockTime(); }
-  uint32_t getDifficulty() const { return header.getDifficulty(); }
+  hash_t getHash() const { return header->getHash(); }
+  uint32_t getBlockTime() const { return header->getBlockTime(); }
+  uint32_t getDifficulty() const { return header->getDifficulty(); }
 
   const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
     if (steps < 0 || steps > this->height + 1) {
@@ -116,7 +116,7 @@ struct BlockIndex {
   }
 
   friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
-    return a.header == b.header;
+    return *a.header == *b.header;
   }
 
   friend bool operator!=(const BlockIndex& a, const BlockIndex& b) {
