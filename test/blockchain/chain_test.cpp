@@ -118,14 +118,14 @@ BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
   if (prev != nullptr) {
     block.height = prev->height + 1;
     block.previousBlock = prev->getHash();
-    block.timestamp = prev->header.timestamp + 1;
+    block.timestamp = prev->header->timestamp + 1;
   } else {
     block.height = 0;
     block.timestamp = 0;
   }
 
   BlockIndex<AltBlock> index;
-  index.header = block;
+  index.header = std::make_shared<AltBlock>(block);
   index.height = block.height;
   index.pprev = prev;
   return index;
@@ -137,7 +137,7 @@ BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
   if (prev != nullptr) {
     block.height = prev->height + 1;
     block.previousBlock = prev->getHash().trimLE<uint96::size()>();
-    block.timestamp = prev->header.timestamp + 1;
+    block.timestamp = prev->header->timestamp + 1;
   } else {
     block.height = 0;
     block.timestamp = 0;
@@ -146,7 +146,7 @@ BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
   }
 
   BlockIndex<VbkBlock> index;
-  index.header = block;
+  index.header = std::make_shared<VbkBlock>(block);
   index.height = block.height;
   index.pprev = prev;
   return index;
@@ -184,9 +184,9 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   BlockIndex<block_t> newIndex = generateNextBlock(chain.tip());
 
   endorsement_t endorsement1 = generateEndorsement<block_t, endorsement_t>(
-      chain.tip()->header, newIndex.header);
+      *chain.tip()->header, *newIndex.header);
   endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
-      chain.tip()->pprev->header, newIndex.header);
+      *chain.tip()->pprev->header, *newIndex.header);
 
   newIndex.containingEndorsements[endorsement1.id] =
       std::make_shared<endorsement_t>(endorsement1);
@@ -198,9 +198,9 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   BlockIndex<block_t> newIndex2 = generateNextBlock(chain.tip());
 
   endorsement_t endorsement3 = generateEndorsement<block_t, endorsement_t>(
-      chain.tip()->header, newIndex2.header);
+      *chain.tip()->header, *newIndex2.header);
   endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
-      chain.tip()->pprev->header, newIndex2.header);
+      *chain.tip()->pprev->header, *newIndex2.header);
 
   newIndex2.containingEndorsements[endorsement3.id] =
       std::make_shared<endorsement_t>(endorsement3);

@@ -1,4 +1,7 @@
+#include <set>
+
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/stateless_validation.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/rewards/poprewards.hpp"
@@ -31,7 +34,7 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
   }
 
   current = touchBlockIndex(hash);
-  current->header = block;
+  current->header = std::make_shared<AltBlock>(block);
   current->pprev = getBlockIndex(block.previousBlock);
 
   if (current->pprev) {
@@ -65,11 +68,13 @@ bool AltTree::bootstrap(ValidationState& state) {
     return state.Invalid("vbk-set-state");
   }
 
+  addToChains(index);
+
   return true;
 }
 
 bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
-  if(getBlockIndex(block.getHash())) {
+  if (getBlockIndex(block.getHash())) {
     // duplicate
     return true;
   }
@@ -85,9 +90,71 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  (void)index;
+  addToChains(index);
 
   return true;
+}
+
+void AltTree::addToChains(index_t* index) {
+  assert(index);
+
+  for (size_t i = 0; i < chainTips_.size(); ++i) {
+    if (chainTips_[i] == index->pprev) {
+      chainTips_[i] = index;
+      return;
+    }
+  }
+
+  chainTips_.push_back(index);
+}
+
+void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
+  index_t* blockIndex = getBlockIndex(blockHash);
+
+  if (blockIndex == nullptr) {
+    // no such block
+    return;
+  }
+
+  invalidateBlockByIndex(*blockIndex);
+}
+
+void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
+  ValidationState state;
+  bool ret = cmp_.setState(*blockIndex.pprev, state);
+  (void)ret;
+  assert(ret);
+
+  removeAllContainingEndorsements(blockIndex);
+
+  std::set<index_t*> removeIndexes;
+
+  // clear endorsements
+  bool once_changed = false;
+  for (auto tip = chainTips_.begin(); tip != chainTips_.end();) {
+    if ((*tip)->getAncestor(blockIndex.height) == &blockIndex) {
+      for (index_t* workBlock = *tip; workBlock != &blockIndex;
+           workBlock = workBlock->pprev) {
+        removeIndexes.insert(workBlock);
+        removeAllContainingEndorsements(*workBlock);
+      }
+      if (!once_changed) {
+        (*tip) = blockIndex.pprev;
+        once_changed = true;
+      } else {
+        tip = chainTips_.erase(tip);
+        continue;
+      }
+    }
+    ++tip;
+  }
+
+  // clear indexes
+  for (auto index : removeIndexes) {
+    block_index_.erase(index->getHash());
+  }
+
+  block_index_.erase(blockIndex.getHash());
 }
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,

@@ -81,11 +81,11 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     auto* vbkAendorsed = popminer.mineVbkBlocks(*vbkFork, 20);
     auto* vbkBendorsed = popminer.mineVbkBlocks(*vbkFork, 20);
 
-    auto btctxA = popminer.createBtcTxEndorsingVbkBlock(vbkAendorsed->header);
+    auto btctxA = popminer.createBtcTxEndorsingVbkBlock(*vbkAendorsed->header);
     auto* btcAContaining = popminer.mineBtcBlocks(*btcAtip, 1);
     btcAtip = popminer.mineBtcBlocks(*btcAContaining, 2);
 
-    auto btctxB = popminer.createBtcTxEndorsingVbkBlock(vbkBendorsed->header);
+    auto btctxB = popminer.createBtcTxEndorsingVbkBlock(*vbkBendorsed->header);
     auto* btcBContaining = popminer.mineBtcBlocks(*btcBtip, 1);
     btcBtip = popminer.mineBtcBlocks(*btcBContaining, 2);
 
@@ -93,16 +93,16 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
               popminer.btc().getBestChain().tip()->getHash());
 
     auto vbktxA = popminer.createVbkPopTxEndorsingVbkBlock(
-        btcAContaining->header,
+        *btcAContaining->header,
         btctxA,
-        vbkAendorsed->header,
+        *vbkAendorsed->header,
         popminer.getBtcParams().getGenesisBlock().getHash());
     vbkAtip = popminer.mineVbkBlocks(*vbkAendorsed, 5);
 
     auto vbktxB = popminer.createVbkPopTxEndorsingVbkBlock(
-        btcBContaining->header,
+        *btcBContaining->header,
         btctxB,
-        vbkBendorsed->header,
+        *vbkBendorsed->header,
         popminer.getBtcParams().getGenesisBlock().getHash());
     vbkBtip = popminer.mineVbkBlocks(*vbkBendorsed, 5);
 
@@ -231,7 +231,7 @@ TEST_F(Scenario1, scenario_1) {
 
   // remove ALT block 102
   auto lastBlock = *altchain.rbegin();
-  alttree.removePayloads(lastBlock, {altPayloadsVBB71});
+  alttree.invalidateBlockByHash(lastBlock.getHash());
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 101);
@@ -261,7 +261,7 @@ TEST_F(Scenario1, scenario_1) {
   // remove ALT block 101
   EXPECT_TRUE(altTreeFindVtb(vtbsVBA71[0]));
   lastBlock = *altchain.rbegin();
-  alttree.removePayloads(lastBlock, {altPayloadsVBA71});
+  alttree.invalidateBlockByHash(lastBlock.getHash());
   altchain.pop_back();
 
   // expect that ALT is at 100

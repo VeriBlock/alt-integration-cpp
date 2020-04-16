@@ -115,7 +115,7 @@ struct BlockTree {
     invalidateBlockByHash(tip->getHash());
   }
 
-  virtual void invalidateBlockByIndex(const index_t* blockIndex) {
+  virtual void invalidateBlockByIndex(index_t* blockIndex) {
     if (blockIndex == nullptr) {
       // no such block
       return;
@@ -199,7 +199,7 @@ struct BlockTree {
     }
 
     current = touchBlockIndex(hash);
-    current->header = block;
+    current->header = std::make_shared<block_t>(block);
     current->pprev = getBlockIndex(block.previousBlock);
 
     if (current->pprev) {

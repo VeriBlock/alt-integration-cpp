@@ -62,10 +62,10 @@ TEST_F(Scenario2, scenario_2) {
   // endorse VBK blocks
   auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
   auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
-  generatePopTx(endorsedVbkBlock1->header);
+  generatePopTx(*endorsedVbkBlock1->header);
   auto* btcBlockTip1 = popminer.btc().getBestChain().tip();
   popminer.mineBtcBlocks(100);
-  generatePopTx(endorsedVbkBlock2->header);
+  generatePopTx(*endorsedVbkBlock2->header);
   auto* btcBlockTip2 = popminer.btc().getBestChain().tip();
 
   vbkTip = popminer.mineVbkBlocks(1);

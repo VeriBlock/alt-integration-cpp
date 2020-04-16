@@ -61,6 +61,12 @@ struct AltTree {
   //! may return false, if block has no connection to blockchain
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
+  // set cmp_ state to the previous block of the provided block
+  void invalidateBlockByHash(const hash_t& blockHash);
+
+  // set cmp_ state to the previous block of the provided block
+  void invalidateBlockByIndex(index_t& blockIndex);
+
   //! add payloads to any of existing blocks in block tree.
   //! may return false, if payloads statelessly, or statefully invalid.
   bool addPayloads(const AltBlock& containingBlock,
@@ -105,6 +111,7 @@ struct AltTree {
   const block_index_t& getAllBlocks() const { return block_index_; }
 
  protected:
+  std::vector<index_t*> chainTips_;
   block_index_t block_index_;
   const alt_config_t* alt_config_;
   const vbk_config_t* vbk_config_;
@@ -117,6 +124,8 @@ struct AltTree {
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& blockHash);
+
+  void addToChains(index_t* block_index);
 };
 
 template <>
