@@ -48,7 +48,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   // generate endorsements
   tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
   containingBlock = generateNextBlock(*forkchain1.rbegin());
-  chain.push_back(containingBlock);
+  forkchain1.push_back(containingBlock);
   AltPayloads altPayloads2 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
@@ -69,7 +69,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
   containingBlock = generateNextBlock(*forkchain2.rbegin());
-  chain.push_back(containingBlock);
+  forkchain2.push_back(containingBlock);
   AltPayloads altPayloads3 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
@@ -99,4 +99,10 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
+
+  EXPECT_TRUE(alttree.setState(forkchain2.rbegin()->getHash(), state));
+  EXPECT_TRUE(state.IsValid());
+
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
+            popminer.vbk().getBestChain().tip()->getHash());
 }
