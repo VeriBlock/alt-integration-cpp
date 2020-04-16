@@ -2,26 +2,18 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_HPP_
 
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
-#include <veriblock/storage/endorsement_repository.hpp>
 #include <veriblock/rewards/poprewards_calculator.hpp>
-#include <veriblock/rewards/poprewards_params.hpp>
+#include <veriblock/rewards/poprewards_bigdecimal.hpp>
 
 namespace altintegration {
-
-struct PopRewardPayout {
-  uint64_t reward;
-  std::vector<uint8_t> miner;
-};
 
 /**
  * @invariant does not modify any on-disk state.
  */
 struct PopRewards {
   PopRewards(const VbkBlockTree& vbk_tree,
-             const PopRewardsParams& rewardParams,
              const PopRewardsCalculator& calculator)
       : vbk_tree_(vbk_tree),
-        rewardParams_(rewardParams),
         calculator_(calculator) {}
 
   virtual ~PopRewards() = default;
@@ -51,15 +43,15 @@ struct PopRewards {
    * a given block.
    * @param block altchain block for which the reward is being paid
    * @param popDifficulty current POP difficulty. See calculateDifficulty for reference.
-   * @return std::vector<PopRewardPayout> a list of payouts
+   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a key
+   *         and reward amount as a value
    */
-  virtual std::vector<PopRewardPayout> calculatePayouts(
+  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
       const BlockIndex<AltBlock>& block,
       PopRewardsBigDecimal popDifficulty);
 
  private:
   const VbkBlockTree& vbk_tree_;
-  const PopRewardsParams& rewardParams_;
   const PopRewardsCalculator& calculator_;
 };
 

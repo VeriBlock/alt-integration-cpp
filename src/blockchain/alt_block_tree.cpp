@@ -3,6 +3,8 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/stateless_validation.hpp"
+#include "veriblock/rewards/poprewards_calculator.hpp"
+#include "veriblock/rewards/poprewards.hpp"
 
 namespace altintegration {
 
@@ -205,6 +207,17 @@ bool AltTree::setState(const AltBlock::hash_t& to, ValidationState& state) {
   }
 
   return cmp_.setState(*index, state);
+}
+
+std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
+  const AltBlock::hash_t& block) {
+  auto* index = getBlockIndex(block);
+  if (!index) {
+    return {};
+  }
+
+  auto popDifficulty = rewards_.calculateDifficulty(*index);
+  return rewards_.calculatePayouts(*index, popDifficulty);
 }
 
 int AltTree::compareTwoBranches(AltTree::index_t* chain1,

@@ -14,6 +14,7 @@
 #include "veriblock/entities/altblock.hpp"
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/validation_state.hpp"
+#include "veriblock/rewards/poprewards.hpp"
 
 namespace altintegration {
 
@@ -46,7 +47,9 @@ struct AltTree {
       : alt_config_(&alt_config),
         vbk_config_(&vbk_config),
         btc_config_(&btc_config),
-        cmp_(VbkBlockTree(vbk_config, btc_config), vbk_config, alt_config) {}
+        cmp_(VbkBlockTree(vbk_config, btc_config), vbk_config, alt_config),
+        rewardCalculator_(alt_config),
+        rewards_(cmp_.getProtectingBlockTree(), rewardCalculator_) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
 
@@ -79,6 +82,12 @@ struct AltTree {
   bool setState(const AltBlock::hash_t& to, ValidationState& state);
 
   /**
+   * Calculate payouts for the given block
+   * @return map with reward recipient as a key and reward amount as a value
+   */
+  std::map<std::vector<uint8_t>, int64_t> getPopPayout(const AltBlock::hash_t& block);
+
+  /**
    * Determine the best chain of the AltBlocks in accordance with the VeriBlock
    * forkresolution rules.
    * @param AltBlock chain1, AltBlock chain2
@@ -108,6 +117,8 @@ struct AltTree {
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
+  PopRewardsCalculator rewardCalculator_;
+  PopRewards rewards_;
 
   index_t* insertBlockHeader(const AltBlock& block);
 
