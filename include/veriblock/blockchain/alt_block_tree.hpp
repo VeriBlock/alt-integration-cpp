@@ -58,8 +58,10 @@ struct AltTree {
   //! may return false, if block has no connection to blockchain
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
+  // set cmp_ state to the previous block of the provided block
   void invalidateBlockByHash(const hash_t& blockHash);
 
+  // set cmp_ state to the previous block of the provided block
   void invalidateBlockByIndex(index_t& blockIndex);
 
   //! add payloads to any of existing blocks in block tree.
