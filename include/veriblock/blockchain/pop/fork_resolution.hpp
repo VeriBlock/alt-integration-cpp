@@ -372,10 +372,8 @@ struct PopAwareForkResolutionComparator {
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
 
-  template <typename ProtectedTree>
   void removePayloads(protected_index_t& index,
-                      const std::vector<protected_payloads_t>& payloads,
-                      ProtectedTree& protectedTree) {
+                      const std::vector<protected_payloads_t>& payloads) {
     ValidationState state;
     sm_t sm(tree_, index_, *protectedParams_);
     bool ret = sm.unapplyAndApply(index, state);
@@ -390,7 +388,7 @@ struct PopAwareForkResolutionComparator {
     std::for_each(
         payloads.rbegin(), payloads.rend(), [&](const protected_payloads_t& p) {
           if (p.containsEndorsements()) {
-            removeEndorsement(index, endorsement_t::getId(p), protectedTree);
+            removeEndorsement(index, endorsement_t::getId(p));
           }
           removeContextFromBlockIndex(index, p);
         });
@@ -400,10 +398,8 @@ struct PopAwareForkResolutionComparator {
     assert(ret);
   }
 
-  template <typename ProtectedTree>
   bool addPayloads(protected_index_t& index,
                    const std::vector<protected_payloads_t>& payloads,
-                   ProtectedTree& protectedTree,
                    ValidationState& state) {
     return tryValidateWithResources(
         [&]() -> bool {
@@ -466,7 +462,7 @@ struct PopAwareForkResolutionComparator {
 
           return true;
         },
-        [&] { removePayloads(index, payloads, protectedTree); });
+        [&] { removePayloads(index, payloads); });
   }
 
   //! @invariant: atomic. If returns false, does not change internal state.

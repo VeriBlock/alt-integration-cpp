@@ -118,7 +118,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
   context_t ctx;
   index->containingContext.push_back(ctx);
 
-  if (!cmp_.addPayloads(*index, payloads, *this, state)) {
+  if (!cmp_.addPayloads(*index, payloads, state)) {
     index->containingContext.pop_back();
     return state.Invalid("bad-payloads-stateful");
   }
@@ -149,7 +149,7 @@ void VbkBlockTree::removePayloads(const VbkBlock& block,
 void VbkBlockTree::removePayloads(index_t* index,
                                   const std::vector<payloads_t>& payloads) {
   assert(index);
-  cmp_.removePayloads(*index, payloads, *this);
+  cmp_.removePayloads(*index, payloads);
   if (index->containingContext.back().empty()) {
     index->containingContext.pop_back();
   }
