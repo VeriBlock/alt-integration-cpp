@@ -7,10 +7,10 @@
 
 namespace altintegration {
 
-struct PopRewardPayout {
+/*struct PopRewardPayout {
   uint64_t reward;
   std::vector<uint8_t> miner;
-};
+};*/
 
 /**
  * @invariant does not modify any on-disk state.
@@ -48,9 +48,10 @@ struct PopRewards {
    * a given block.
    * @param block altchain block for which the reward is being paid
    * @param popDifficulty current POP difficulty. See calculateDifficulty for reference.
-   * @return std::vector<PopRewardPayout> a list of payouts
+   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a key
+   *         and reward amount as a value
    */
-  virtual std::vector<PopRewardPayout> calculatePayouts(
+  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
       const BlockIndex<AltBlock>& block,
       PopRewardsBigDecimal popDifficulty);
 

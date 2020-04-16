@@ -42,8 +42,13 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   EXPECT_EQ(altchain.size(), 12);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 11);
 
-  ///TODO: mine additional blocks so endorsement block passes rewardSettlement
-
   auto payouts = alttree.getPopPayout(containingBlock.getHash());
-  ASSERT_TRUE(payouts.size() > 0);
+  ASSERT_TRUE(payouts.size());
+
+  PopRewardsCalculator sampleCalculator = PopRewardsCalculator(altparam);
+  auto payoutBlockRound =
+      sampleCalculator.getRoundForBlockNumber(containingBlock.height);
+  ASSERT_EQ(payouts[tx.publicationData.payoutInfo],
+            (int64_t)PopRewardsBigDecimal::decimals *
+                altparam.getRewardParams().roundRatios()[payoutBlockRound]);
 }

@@ -4,23 +4,6 @@
 
 namespace altintegration {
 
-// rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
-static uint32_t getRoundForBlockNumber(const AltChainParams& altParams,
-                                       uint32_t height) {
-  if (height % altParams.getKeystoneInterval() == 0) {
-    return altParams.getRewardParams().keystoneRound();
-  }
-
-  if (altParams.getRewardParams().payoutRounds() <= 1) {
-    return 0;
-  }
-
-  assert(height > 0);
-  uint32_t round = (height % altParams.getKeystoneInterval()) %
-                   (altParams.getRewardParams().payoutRounds() - 1);
-  return round;
-}
-
 static bool isKeystoneRound(const PopRewardsParams& rewardParams,
                             uint32_t payoutRound) {
   return payoutRound == rewardParams.keystoneRound();
@@ -80,47 +63,20 @@ static PopRewardsBigDecimal calculateSlopeRatio(
   return (maxScoreDecrease - scoreDecrease);
 }
 
-static PopRewardsBigDecimal calculateMinerReward(
-    const AltChainParams& altParams,
-    uint32_t height,
-    PopRewardsBigDecimal endorsementWeight,
-    PopRewardsBigDecimal difficulty,
-    PopRewardsBigDecimal score) {
-  if (score == 0.0) {
-    return 0.0;
+// rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
+uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
+  if (height % altParams_.getKeystoneInterval() == 0) {
+    return altParams_.getRewardParams().keystoneRound();
   }
 
-  // Minimum difficulty
-  if (difficulty < 1.0) {
-    difficulty = 1.0;
+  if (altParams_.getRewardParams().payoutRounds() <= 1) {
+    return 0;
   }
 
-  uint32_t payoutRound =
-      getRoundForBlockNumber(altParams, height);
-  PopRewardsBigDecimal scoreToDifficulty = score / difficulty;
-  PopRewardsCurveParams curveParams = altParams.getRewardParams().getCurveParams();
-  PopRewardsBigDecimal roundRatio =
-      getRoundRatio(altParams.getRewardParams(), payoutRound);
-
-  // penalty multiplier
-  PopRewardsBigDecimal slope = 1.0;
-
-  if (scoreToDifficulty > curveParams.startOfSlope()) {
-    PopRewardsBigDecimal maxScoreThreshold =
-        getMaxScoreThreshold(altParams.getRewardParams(), payoutRound);
-    if (scoreToDifficulty > maxScoreThreshold) {
-      scoreToDifficulty = maxScoreThreshold;
-    }
-
-    // Note that this reward per point is not the true rewardWithSlope if the
-    // score to difficulty ratio is greater than the max reward threshold. Past
-    // the max reward threshold, the block reward ceases to grow, but is split
-    // amongst a larger number of participants.
-    slope = calculateSlopeRatio(
-        altParams.getRewardParams(), scoreToDifficulty, payoutRound);
-  }
-
-  return slope * endorsementWeight * roundRatio / difficulty;
+  assert(height > 0);
+  uint32_t round = (height % altParams_.getKeystoneInterval()) %
+                   (altParams_.getRewardParams().payoutRounds() - 1);
+  return round;
 }
 
 PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
@@ -133,8 +89,50 @@ PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
   return altParams_.getRewardParams().relativeScoreLookupTable()[relativeBlock];
 }
 
+PopRewardsBigDecimal PopRewardsCalculator::calculateMinerRewardWithWeight(
+    uint32_t height,
+    PopRewardsBigDecimal endorsementWeight,
+    PopRewardsBigDecimal scoreForThisBlock,
+    PopRewardsBigDecimal difficulty) const {
+  if (scoreForThisBlock == 0.0) {
+    return 0.0;
+  }
+
+  // Minimum difficulty
+  if (difficulty < 1.0) {
+    difficulty = 1.0;
+  }
+
+  uint32_t payoutRound = getRoundForBlockNumber(height);
+  PopRewardsBigDecimal scoreToDifficulty = scoreForThisBlock / difficulty;
+  PopRewardsCurveParams curveParams =
+      altParams_.getRewardParams().getCurveParams();
+  PopRewardsBigDecimal roundRatio =
+      getRoundRatio(altParams_.getRewardParams(), payoutRound);
+
+  // penalty multiplier
+  PopRewardsBigDecimal slope = 1.0;
+
+  if (scoreToDifficulty > curveParams.startOfSlope()) {
+    PopRewardsBigDecimal maxScoreThreshold =
+        getMaxScoreThreshold(altParams_.getRewardParams(), payoutRound);
+    if (scoreToDifficulty > maxScoreThreshold) {
+      scoreToDifficulty = maxScoreThreshold;
+    }
+
+    // Note that this reward per point is not the true rewardWithSlope if the
+    // score to difficulty ratio is greater than the max reward threshold. Past
+    // the max reward threshold, the block reward ceases to grow, but is split
+    // amongst a larger number of participants.
+    slope = calculateSlopeRatio(
+        altParams_.getRewardParams(), scoreToDifficulty, payoutRound);
+  }
+
+  return slope * endorsementWeight * roundRatio / difficulty;
+}
+
 // we calculate the reward for a given miner
-PopRewardsBigDecimal PopRewardsCalculator::calculateRewardForMiner(
+PopRewardsBigDecimal PopRewardsCalculator::calculateMinerReward(
     uint32_t height,
     uint32_t vbkRelativeHeight,
     PopRewardsBigDecimal scoreForThisBlock,
@@ -145,22 +143,19 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateRewardForMiner(
 
   // Special case for the first ROUND 3 after keystone - do not adjust for score
   // to difficulty ratio
-  uint32_t roundNumber = getRoundForBlockNumber(altParams_, height);
+  uint32_t roundNumber = getRoundForBlockNumber(height);
   auto endorsementLevelWeight =
       getScoreMultiplierFromRelativeBlock(vbkRelativeHeight);
 
   if (altParams_.getRewardParams().flatScoreRoundUse() &&
       roundNumber == altParams_.getRewardParams().flatScoreRound() &&
       isFirstRoundAfterKeystone(altParams_, height)) {
-    return calculateMinerReward(
-        altParams_, height, endorsementLevelWeight, 1.0, 1.0);
+    return calculateMinerRewardWithWeight(
+        height, endorsementLevelWeight, 1.0, 1.0);
   }
 
-  return calculateMinerReward(altParams_,
-                              height,
-                              endorsementLevelWeight,
-                              difficulty,
-                              scoreForThisBlock);
+  return calculateMinerRewardWithWeight(
+      height, endorsementLevelWeight, scoreForThisBlock, difficulty);
 }
 
 // getter for altchain parameters

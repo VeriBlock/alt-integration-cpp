@@ -21,7 +21,6 @@ static int getBestPublicationHeight(const BlockIndex<AltBlock>& block,
 PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
     const BlockIndex<AltBlock>& block) const {
   PopRewardsBigDecimal totalScore = 0.0;
-
   // we simply find the lowest VBK height in the endorsements
   int bestPublication = getBestPublicationHeight(block, vbk_tree_);
   if (bestPublication < 0) return totalScore;
@@ -40,23 +39,13 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
 PopRewardsBigDecimal PopRewards::calculateDifficulty(
     const BlockIndex<AltBlock>& tip) const {
   PopRewardsBigDecimal difficulty = 0.0;
-
-  const BlockIndex<AltBlock>* currentBlock = &tip;
   auto rewardParams = calculator_.getAltParams().getRewardParams();
-  // rewind rewardSettlementInterval blocks back in the past
-  for (size_t i = 0; i < rewardParams.rewardSettlementInterval(); i++) {
-    currentBlock = currentBlock->pprev;
-    if (currentBlock == nullptr) {
-      throw std::logic_error(
-          "amount of blocks must be higher or equal than "
-          "rewardSettlementInterval");
-    }
-  }
+  const BlockIndex<AltBlock>* currentBlock = tip.pprev;
 
   for (size_t i = 0; i < rewardParams.difficultyAveragingInterval(); i++) {
+    if (currentBlock == nullptr) break;
     difficulty += scoreFromEndorsements(*currentBlock);
     currentBlock = currentBlock->pprev;
-    if (currentBlock == nullptr) break;
   }
 
   difficulty /= (uint64_t)rewardParams.difficultyAveragingInterval();
@@ -68,11 +57,11 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
   return difficulty;
 }
 
-std::vector<PopRewardPayout> PopRewards::calculatePayouts(
+std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
     const BlockIndex<AltBlock>& block,
     PopRewardsBigDecimal popDifficulty) {
 
-  std::vector<PopRewardPayout> rewards{};
+  std::map<std::vector<uint8_t>, int64_t> rewards{};
   int bestPublication = getBestPublicationHeight(block, vbk_tree_);
   if (bestPublication < 0) return rewards;
 
@@ -86,13 +75,9 @@ std::vector<PopRewardPayout> PopRewards::calculatePayouts(
     int veriBlockHeight = b->height;
     int relativeHeight = veriBlockHeight - bestPublication;
     assert(relativeHeight >= 0);
-    auto minerReward = calculator_.calculateRewardForMiner(
+    auto minerReward = calculator_.calculateMinerReward(
         block.height, relativeHeight, blockScore, popDifficulty);
-
-    PopRewardPayout reward{};
-    reward.reward = minerReward.getIntegerFraction();
-    reward.miner = e.second->payoutInfo;
-    rewards.push_back(reward);
+    rewards[e.second->payoutInfo] += minerReward.value.getLow64();
   }
   return rewards;
 }
