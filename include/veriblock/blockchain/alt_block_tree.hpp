@@ -113,10 +113,6 @@ struct AltTree {
   index_t* touchBlockIndex(const hash_t& blockHash);
 
   void addToChains(index_t* block_index);
-
-  void invalidateBlockFromChain(Chain<index_t>& chain, const index_t* block);
-
-  void disconnectTipFromChain(Chain<index_t>& chain);
 };
 
 template <>

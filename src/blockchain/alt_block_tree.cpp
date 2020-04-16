@@ -402,25 +402,4 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
   vtbs.erase(vtbs_end, vtbs.end());
 }
 
-void AltTree::invalidateBlockFromChain(Chain<index_t>& chain,
-                                       const index_t* block) {
-  if (block == nullptr) {
-    return;
-  }
-
-  if (!chain.contains(block)) {
-    return;
-  }
-
-  while (chain.tip() != nullptr && chain.tip() != block) {
-    disconnectTipFromChain(chain);
-  }
-}
-
-void AltTree::disconnectTipFromChain(Chain<index_t>& chain) {
-  BlockIndex<AltBlock>* currentTip = chain.tip();
-  chain.disconnectTip();
-  block_index_.erase(currentTip->getHash());
-}
-
 }  // namespace altintegration
