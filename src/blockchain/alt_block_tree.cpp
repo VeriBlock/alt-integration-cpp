@@ -217,8 +217,7 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
   }
 
   auto popDifficulty = rewards_.calculateDifficulty(*index);
-  auto payouts = rewards_.calculatePayouts(*index, popDifficulty);
-  return payouts;
+  return rewards_.calculatePayouts(*index, popDifficulty);
 }
 
 int AltTree::compareTwoBranches(AltTree::index_t* chain1,
