@@ -27,8 +27,8 @@ template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
     const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) {
   BtcBlock block;
-  block.version = tip.header.version;
-  block.previousBlock = tip.header.getHash();
+  block.version = tip.header->version;
+  block.previousBlock = tip.header->getHash();
   block.merkleRoot = merkle;
   block.timestamp = std::max(tip.getBlockTime(), currentTimestamp4());
   block.bits = getNextWorkRequired(tip, block, params_);
@@ -132,8 +132,7 @@ bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
                     const BtcBlock& block,
                     ValidationState& state) {
   if (int64_t(block.getBlockTime()) < getMedianTimePast(prev)) {
-    return state.Invalid("btc-time-too-old",
-                         "block's timestamp is too early");
+    return state.Invalid("btc-time-too-old", "block's timestamp is too early");
   }
 
   if (int64_t(block.getBlockTime()) >
