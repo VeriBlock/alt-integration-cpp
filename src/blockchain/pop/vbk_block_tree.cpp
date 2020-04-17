@@ -16,9 +16,9 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   }
 
   auto ki = param_->getKeystoneInterval();
-  auto* forkKeystone =
+  const auto* forkKeystone =
       currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
-  if (!forkKeystone || isBootstrap) {
+  if ((forkKeystone == nullptr) || isBootstrap) {
     // we did not find fork... this can happen only during bootstrap
     return VbkTree::determineBestChain(currentBest, indexNew, isBootstrap);
   }
@@ -38,7 +38,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 
   if (result < 0) {
     // other chain won!
-    auto prevTip = currentBest.tip();
+    auto *prevTip = currentBest.tip();
     currentBest.setTip(&indexNew);
     onTipChanged(indexNew, isBootstrap);
     addForkCandidate(prevTip, &indexNew);

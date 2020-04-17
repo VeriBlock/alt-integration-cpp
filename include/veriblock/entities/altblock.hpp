@@ -57,12 +57,7 @@ struct AltBlock {
   hash_t getHash() const { return hash; }
 
   friend bool operator==(const AltBlock& a, const AltBlock& b) {
-    // clang-format off
-    return a.timestamp == b.timestamp &&
-           a.hash == b.hash &&
-           a.previousBlock == b.previousBlock &&
-           a.height == b.height;
-    // clang-format on
+    return a.hash == b.hash;
   }
 
   friend bool operator!=(const AltBlock& a, const AltBlock& b) {
