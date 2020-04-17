@@ -46,7 +46,6 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
-target_link_libraries(${LIB_NAME} PRIVATE $<TARGET_OBJECTS:secp256k1>)
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
