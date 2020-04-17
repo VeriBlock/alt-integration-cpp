@@ -29,23 +29,23 @@ using namespace altintegration;
  *
  */
 
-struct Scenario4 : public ::testing::Test, public PopTestFixture {
+struct Scenario5 : public ::testing::Test, public PopTestFixture {
     uint256 vbkContextStart;
 
-    Scenario4():
+    Scenario5():
         vbkContextStart(popminer.getBtcParams().getGenesisBlock().getHash()) {}
 
     void mineVbkFork(BlockIndex<VbkBlock> *& tip, size_t blockCount) {
         tip = popminer.mineVbkBlocks(*tip, blockCount);
     }
 
-    void popMineVbkFork(BlockIndex<VbkBlock> *& tip, size_t endorsedAncestorHeight) {
-        auto &endorsedBlock = tip->getAncestor(endorsedAncestorHeight)->header;
-        auto btcTx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
+    void popMineVbkFork(BlockIndex<VbkBlock> *& tip, int endorsedAncestorHeight) {
+        auto endorsedBlock = tip->getAncestor(endorsedAncestorHeight)->header;
+        auto btcTx = popminer.createBtcTxEndorsingVbkBlock(*endorsedBlock);
         auto* btcTip = popminer.mineBtcBlocks(1);
 
         popminer.createVbkPopTxEndorsingVbkBlock(
-            btcTip->header, btcTx, endorsedBlock, vbkContextStart);
+            *btcTip->header, btcTx, *endorsedBlock, vbkContextStart);
         mineVbkFork(tip, 1);
     }
 
@@ -55,7 +55,7 @@ struct Scenario4 : public ::testing::Test, public PopTestFixture {
     }
 };
 
-TEST_F(Scenario4, scenario_4) {
+TEST_F(Scenario5, scenario_5) {
     std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
     popminer.mineBtcBlocks(97);
@@ -75,15 +75,15 @@ TEST_F(Scenario4, scenario_4) {
         auto endorsedBlock = vbkForkPoint;
         ASSERT_EQ(20, endorsedBlock->height);
 
-        auto btcTx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock->header);
+        auto btcTx = popminer.createBtcTxEndorsingVbkBlock(*endorsedBlock->header);
         auto* btcTip = popminer.mineBtcBlocks(1);
 
         popminer.createVbkPopTxEndorsingVbkBlock(
-            btcTip->header, btcTx, endorsedBlock->header, vbkContextStart);
+            *btcTip->header, btcTx, *endorsedBlock->header, vbkContextStart);
         mineVbkFork(tipA, 1);
 
         popminer.createVbkPopTxEndorsingVbkBlock(
-            btcTip->header, btcTx, endorsedBlock->header, vbkContextStart);
+            *btcTip->header, btcTx, *endorsedBlock->header, vbkContextStart);
         mineVbkFork(tipB, 1);
     }
 
@@ -98,17 +98,17 @@ TEST_F(Scenario4, scenario_4) {
         ASSERT_EQ(49, tipB->height);
         auto &endorsedBlockB = tipB->getAncestor(40)->header;
 
-        auto btcTxA = popminer.createBtcTxEndorsingVbkBlock(endorsedBlockA);
-        auto btcTxB = popminer.createBtcTxEndorsingVbkBlock(endorsedBlockB);
+        auto btcTxA = popminer.createBtcTxEndorsingVbkBlock(*endorsedBlockA);
+        auto btcTxB = popminer.createBtcTxEndorsingVbkBlock(*endorsedBlockB);
 
         auto* btcTip = popminer.mineBtcBlocks(1);
 
         popminer.createVbkPopTxEndorsingVbkBlock(
-            btcTip->header, btcTxA, endorsedBlockA, vbkContextStart);
+            *btcTip->header, btcTxA, *endorsedBlockA, vbkContextStart);
         mineVbkFork(tipA, 1);
 
         popminer.createVbkPopTxEndorsingVbkBlock(
-            btcTip->header, btcTxB, endorsedBlockB, vbkContextStart);
+            *btcTip->header, btcTxB, *endorsedBlockB, vbkContextStart);
         mineVbkFork(tipB, 1);
     }
 
