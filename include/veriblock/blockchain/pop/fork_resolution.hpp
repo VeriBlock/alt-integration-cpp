@@ -375,12 +375,9 @@ struct PopAwareForkResolutionComparator {
                       const std::vector<protected_payloads_t>& payloads) {
     ValidationState state;
     sm_t sm(tree_, index_, *protectedParams_);
-    bool ret = sm.unapplyAndApply(index, state);
+    assert(index->pprev);
+    bool ret = sm.unapplyAndApply(index->pprev, state);
     assert(ret);
-    (void)ret;  // to fix warning;
-
-    // unapply all context blocks from current block index
-    sm.unapplyContext(index);
 
     // remove all endorsements and context blocks related to given payloads, in
     // reverse order (this should be faster)
