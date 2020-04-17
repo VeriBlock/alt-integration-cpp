@@ -48,7 +48,7 @@ jobs:
           submodules: recursive
           clean: true
       - name: cmake
-        run: cmake . -Bbuild ${{ matrix.flags }} -DCOVERAGE=ON
+        run: cmake . -Bbuild ${{ matrix.flags }} -DCOVERAGE=ON -DWITH_ROCKSDB=ON
       - name: build
         run: cmake --build build -- -j2
       - name: test
