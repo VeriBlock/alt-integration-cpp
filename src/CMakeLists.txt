@@ -32,8 +32,11 @@ set(SOURCES
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
-        $<TARGET_OBJECTS:secp256k1>
         )
+        
+if(WITH_SECP256K1)
+list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
+endif()
 
 if(SHARED)
     set(BUILD SHARED)
@@ -43,6 +46,7 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
+target_link_libraries(${LIB_NAME} PRIVATE $<TARGET_OBJECTS:secp256k1>)
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
