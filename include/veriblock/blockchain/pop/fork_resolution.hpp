@@ -448,6 +448,8 @@ struct PopAwareForkResolutionComparator {
               return state.addIndex(i).Invalid("pop-comparator-apply-context");
             }
 
+            lastApplied = static_cast<int64_t>(i);
+
             if (c.containsEndorsements()) {
               if (!checkAndAddEndorsement(index,
                                           c.getEndorsement(),
@@ -458,8 +460,6 @@ struct PopAwareForkResolutionComparator {
                     "pop-comparator-check-add-endorsement");
               }
             }
-
-            lastApplied = static_cast<int64_t>(i);
           }
 
           // no state change have been made
