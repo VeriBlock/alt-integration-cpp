@@ -88,7 +88,7 @@ struct BlockTree {
     // our store (yet) to check it correctly
     for (size_t i = 1, size = chain.size(); i < size; i++) {
       auto& block = chain[i];
-      if (!this->acceptBlock(block, state, false)) {
+      if (!this->acceptBlock(std::make_shared<block_t>(block), state, false)) {
         return state.Invalid("blocktree-accept");
       }
     }
@@ -106,6 +106,11 @@ struct BlockTree {
   }
 
   bool acceptBlock(const block_t& block, ValidationState& state) {
+    return acceptBlock(std::make_shared<block_t>(block), state, true);
+  }
+
+  bool acceptBlock(const std::shared_ptr<block_t>& block,
+                   ValidationState& state) {
     return acceptBlock(block, state, true);
   }
 
@@ -190,8 +195,8 @@ struct BlockTree {
     return it->second.get();
   }
 
-  index_t* insertBlockHeader(const block_t& block) {
-    auto hash = block.getHash();
+  index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {
+    auto hash = block->getHash();
     index_t* current = getBlockIndex(hash);
     if (current) {
       // it is a duplicate
@@ -199,16 +204,16 @@ struct BlockTree {
     }
 
     current = touchBlockIndex(hash);
-    current->header = std::make_shared<block_t>(block);
-    current->pprev = getBlockIndex(block.previousBlock);
+    current->header = block;
+    current->pprev = getBlockIndex(block->previousBlock);
 
     if (current->pprev) {
       // prev block found
       current->height = current->pprev->height + 1;
-      current->chainWork = current->pprev->chainWork + getBlockProof(block);
+      current->chainWork = current->pprev->chainWork + getBlockProof(*block);
     } else {
       current->height = 0;
-      current->chainWork = getBlockProof(block);
+      current->chainWork = getBlockProof(*block);
     }
     return current;
   }
@@ -294,7 +299,7 @@ struct BlockTree {
         newForkChain.getStartHeight(), newForkChain));
   }
 
-  bool acceptBlock(const block_t& block,
+  bool acceptBlock(const std::shared_ptr<block_t>& block,
                    ValidationState& state,
                    bool shouldContextuallyCheck) {
     index_t* index = nullptr;
@@ -311,7 +316,13 @@ struct BlockTree {
   bool bootstrap(height_t height,
                  const block_t& block,
                  ValidationState& state) {
-    if (!checkBlock(block, state, *param_)) {
+    return bootstrap(height, std::make_shared<block_t>(block), state);
+  }
+
+  bool bootstrap(height_t height,
+                 const std::shared_ptr<block_t>& block,
+                 ValidationState& state) {
+    if (!checkBlock(*block, state, *param_)) {
       return state.Invalid("bootstrap");
     }
 
@@ -320,29 +331,29 @@ struct BlockTree {
 
     activeChain_ = Chain<index_t>(height, index);
 
-    if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
+    if (!block_index_.empty() && !getBlockIndex(block->getHash())) {
       return state.Error("block-index-no-genesis");
     }
 
     return true;
   }
 
-  bool validateAndAddBlock(const block_t& block,
+  bool validateAndAddBlock(const std::shared_ptr<block_t>& block,
                            ValidationState& state,
                            bool shouldContextuallyCheck,
                            index_t** ret) {
-    if (!checkBlock(block, state, *param_)) {
+    if (!checkBlock(*block, state, *param_)) {
       return state.Invalid("check-block");
     }
 
     // we must know previous block
-    auto* prev = getBlockIndex(block.previousBlock);
+    auto* prev = getBlockIndex(block->previousBlock);
     if (prev == nullptr) {
       return state.Invalid("bad-prev-block", "can not find previous block");
     }
 
     if (shouldContextuallyCheck &&
-        !contextuallyCheckBlock(*prev, block, state, *param_)) {
+        !contextuallyCheckBlock(*prev, *block, state, *param_)) {
       return state.Invalid("contextually-check-block");
     }
 

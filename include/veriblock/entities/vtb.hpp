@@ -18,8 +18,6 @@ struct VTB {
   VbkMerklePath merklePath{};
   VbkBlock containingBlock{};
   std::vector<VbkBlock> context{};
-  // for compatibility with AltPayloads
-  bool hasAtv{false};
 
   //! (memory only) indicates whether we already did 'checkPayloads' on this VTB
   mutable bool checked{false};
@@ -82,19 +80,7 @@ struct VTB {
   bool containsEndorsements() const { return true; }
 
   friend bool operator==(const VTB& a, const VTB& b) {
-    // clang-format off
-    WriteStream a_stream, b_stream;
-
-    a.transaction.toVbkEncoding(a_stream);
-    a.merklePath.toVbkEncoding(a_stream);
-    a.containingBlock.toVbkEncoding(a_stream);
-
-    b.transaction.toVbkEncoding(b_stream);
-    b.merklePath.toVbkEncoding(b_stream);
-    b.containingBlock.toVbkEncoding(b_stream);
-    // we dont compare 'context' field
-    return a_stream.data() == b_stream.data();
-    // clang-format on
+    return a.getId() == b.getId();
   }
 };
 

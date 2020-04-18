@@ -344,7 +344,6 @@ struct PopAwareForkResolutionComparator {
   using context_t = typename protected_index_t::context_t;
   using endorsement_t = typename protected_block_t::endorsement_t;
   using protected_payloads_t = typename protected_index_t::payloads_t;
-  using protected_payloads_id_t = typename protected_payloads_t::id_t;
   using sm_t = PopStateMachine<ProtectingBlockTree,
                                BlockIndex<protected_block_t>,
                                protected_params_t>;
@@ -376,25 +375,22 @@ struct PopAwareForkResolutionComparator {
                       const std::vector<protected_payloads_t>& payloads) {
     ValidationState state;
     sm_t sm(tree_, index_, *protectedParams_);
-    bool ret = sm.unapplyAndApply(index, state);
-    assert(ret);
-    (void)ret;  // to fix warning;
+    sm.unapplyAndApply(index, state);
 
-    // unapply all context blocks from current block index
     sm.unapplyContext(index);
-
     // remove all endorsements and context blocks related to given payloads, in
     // reverse order (this should be faster)
     std::for_each(
         payloads.rbegin(), payloads.rend(), [&](const protected_payloads_t& p) {
           if (p.containsEndorsements()) {
-            removeEndorsement(index, endorsement_t::getId(p));
+            removeEndorsement(index, p.getEndorsementId());
           }
           removeContextFromBlockIndex(index, p);
         });
 
     // apply remaining context from this block
-    ret = sm.applyContext(index, state);
+    bool ret = sm.applyContext(index, state);
+    (void)ret;
     assert(ret);
   }
 
@@ -444,9 +440,11 @@ struct PopAwareForkResolutionComparator {
             }
 
             if (c.containsEndorsements()) {
-              auto e = endorsement_t::fromContainer(c);
-              if (!checkAndAddEndorsement(
-                      index, e, temp, *protectedParams_, state)) {
+              if (!checkAndAddEndorsement(index,
+                                          c.getEndorsement(),
+                                          temp,
+                                          *protectedParams_,
+                                          state)) {
                 return state.addIndex(i).Invalid(
                     "pop-comparator-check-add-endorsement");
               }
