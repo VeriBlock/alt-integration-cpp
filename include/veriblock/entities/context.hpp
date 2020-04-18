@@ -13,16 +13,16 @@ struct VbkBlock;
 struct VTB;
 
 struct VbkContext {
-  std::vector<std::shared_ptr<BtcBlock>> btc;
+  std::vector<std::shared_ptr<BtcBlock>> btc{};
 
   bool empty() const noexcept { return btc.empty(); }
 };
 
 struct PartialVTB {
-  std::vector<std::shared_ptr<BtcBlock>> btc;
-  std::vector<std::shared_ptr<VbkBlock>> context_vbk;
-  std::shared_ptr<VbkBlock> containing;
-  BtcEndorsement endorsement;
+  std::vector<std::shared_ptr<BtcBlock>> btc{};
+  std::vector<std::shared_ptr<VbkBlock>> context_vbk{};
+  std::shared_ptr<VbkBlock> containing{};
+  BtcEndorsement endorsement{};
 
   /**
    * Return a containing VbkBlock
@@ -59,9 +59,9 @@ struct PartialVTB {
 
 struct AltContext {
   // corresponds to the ATV
-  std::vector<std::shared_ptr<VbkBlock>> vbk;
+  std::vector<std::shared_ptr<VbkBlock>> vbk{};
 
-  std::vector<PartialVTB> vtbs;
+  std::vector<PartialVTB> vtbs{};
 
   bool empty() const noexcept { return vbk.empty() && vtbs.empty(); }
 };
