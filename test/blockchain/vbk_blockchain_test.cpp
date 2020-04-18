@@ -25,7 +25,7 @@ struct BlockchainFixture {
 };
 
 struct VbkTestCase {
-  std::vector<uint8_t> headers;
+  const std::string& headers;
   std::shared_ptr<VbkChainParams> params;
   uint32_t startHeight = 0;
   uint32_t offset = 0;
@@ -33,12 +33,14 @@ struct VbkTestCase {
   std::vector<VbkBlock> getBlocks() const {
     std::vector<VbkBlock> ret;
     std::string data;
-    std::string in(headers.begin(), headers.end());
-    std::istringstream file(in);
+    std::istringstream file(headers);
     EXPECT_TRUE(!file.fail());
     while (file >> data) {
-      VbkBlock block = VbkBlock::fromHex(data);
-      ret.push_back(block);
+      auto v = ParseHex(data);
+      if (v.empty()) {
+        continue;
+      }
+      ret.push_back(VbkBlock::fromRaw(v));
     }
     return ret;
   }
