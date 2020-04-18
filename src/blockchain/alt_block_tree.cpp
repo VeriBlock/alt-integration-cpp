@@ -1,7 +1,10 @@
+#include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <set>
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/pop/pop_utils.hpp"
+#include "veriblock/rewards/poprewards.hpp"
+#include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -26,7 +29,7 @@ AltTree::index_t* AltTree::touchBlockIndex(const hash_t& blockHash) {
 AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
   auto hash = block.getHash();
   index_t* current = getBlockIndex(hash);
-  if (current) {
+  if (current != nullptr) {
     // it is a duplicate
     return current;
   }
@@ -35,7 +38,7 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
   current->header = std::make_shared<AltBlock>(block);
   current->pprev = getBlockIndex(block.previousBlock);
 
-  if (current->pprev) {
+  if (current->pprev != nullptr) {
     // prev block found
     current->height = current->pprev->height + 1;
     current->chainWork = current->pprev->chainWork;
@@ -58,7 +61,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  if (!block_index_.empty() && !getBlockIndex(block.getHash())) {
+  if (!block_index_.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
     return state.Error("block-index-no-genesis");
   }
 
@@ -72,18 +75,18 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
-  if (getBlockIndex(block.getHash())) {
+  if (getBlockIndex(block.getHash()) != nullptr) {
     // duplicate
     return true;
   }
 
   // we must know previous block, but not if `block` is bootstrap block
   auto* prev = getBlockIndex(block.previousBlock);
-  if (prev == nullptr && block_index_.size() > 1) {
+  if (prev == nullptr) {
     return state.Invalid("bad-prev-block", "can not find previous block");
   }
 
-  auto index = insertBlockHeader(block);
+  auto* index = insertBlockHeader(block);
 
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
@@ -96,9 +99,9 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
 void AltTree::addToChains(index_t* index) {
   assert(index);
 
-  for (size_t i = 0; i < chainTips_.size(); ++i) {
-    if (chainTips_[i] == index->pprev) {
-      chainTips_[i] = index;
+  for (auto& chainTip : chainTips_) {
+    if (chainTip == index->pprev) {
+      chainTip = index;
       return;
     }
   }
@@ -148,7 +151,7 @@ void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
   }
 
   // clear indexes
-  for (auto index : removeIndexes) {
+  for (auto* index : removeIndexes) {
     block_index_.erase(index->getHash());
   }
 
@@ -160,7 +163,7 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
                           ValidationState& state) {
   auto hash = containingBlock.getHash();
   auto* index = getBlockIndex(hash);
-  if (!index) {
+  if (index == nullptr) {
     return state.Invalid("no-alt-block",
                          "addPayloads can be executed only on existing "
                          "blocks, can not find block " +
@@ -193,28 +196,39 @@ void AltTree::removePayloads(const AltBlock& containingBlock,
 
 bool AltTree::setState(const AltBlock::hash_t& to, ValidationState& state) {
   auto* index = getBlockIndex(to);
-  if (!index) {
+  if (index == nullptr) {
     return state.Error("Can not switch state to an unknown block");
   }
 
   return cmp_.setState(*index, state);
 }
 
+std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
+    const AltBlock::hash_t& block) {
+  auto* index = getBlockIndex(block);
+  if (index == nullptr) {
+    return {};
+  }
+
+  auto popDifficulty = rewards_.calculateDifficulty(*index);
+  return rewards_.calculatePayouts(*index, popDifficulty);
+}
+
 int AltTree::compareTwoBranches(AltTree::index_t* chain1,
                                 AltTree::index_t* chain2) {
-  if (!chain1 && !chain2) {
+  if (chain1 == nullptr) {
     throw std::logic_error(
-        "compareTwoBranches is called on two nullptr chains");
+        "compareTwoBranches: AltTree is not aware of chain1");
   }
 
-  if (!chain1) {
-    // chain2 is better
-    return -1;
+  if (chain2 == nullptr) {
+    throw std::logic_error(
+        "compareTwoBranches: AltTree is not aware of chain2");
   }
 
-  if (!chain2) {
-    // chain1 is better
-    return 1;
+  if (chain1->getHash() == chain2->getHash()) {
+    // equal chains are equal in terms of POP.
+    return 0;
   }
 
   // determine which chain is better
@@ -222,8 +236,24 @@ int AltTree::compareTwoBranches(AltTree::index_t* chain1,
   Chain<index_t> chainA(lowestHeight, chain1);
   Chain<index_t> chainB(lowestHeight, chain2);
 
-  auto* forkPoint = chainA.findHighestKeystoneAtOrBeforeFork(
+  if (chainA.contains(chain2) || chainB.contains(chain1)) {
+    // We compare 2 blocks from the same chain.
+    // In terms of POP, both chains are equal.
+    return 0;
+  }
+
+  const auto* forkPoint = chainA.findHighestKeystoneAtOrBeforeFork(
       chainB.tip(), alt_config_->getKeystoneInterval());
+  if (forkPoint == nullptr) {
+    forkPoint = chainB.findHighestKeystoneAtOrBeforeFork(
+        chainA.tip(), alt_config_->getKeystoneInterval());
+    if (forkPoint == nullptr) {
+      throw std::logic_error(
+          "compareTwoBranches: No common block between chain A " +
+          HexStr(chain1->getHash()) + " and B " + HexStr(chain2->getHash()));
+    }
+  }
+
   assert(forkPoint != nullptr && "fork point should exist");
 
   Chain<index_t> subchain1(forkPoint->height, chainA.tip());
@@ -233,8 +263,8 @@ int AltTree::compareTwoBranches(AltTree::index_t* chain1,
 }
 
 int AltTree::compareTwoBranches(const hash_t& chain1, const hash_t& chain2) {
-  auto i1 = getBlockIndex(chain1);
-  auto i2 = getBlockIndex(chain2);
+  auto* i1 = getBlockIndex(chain1);
+  auto* i2 = getBlockIndex(chain2);
   return compareTwoBranches(i1, i2);
 }
 
@@ -246,7 +276,7 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
         if (index.containingContext.empty()) {
           return true;
         }
-        auto& ctx = index.containingContext.back();
+        const auto& ctx = index.containingContext.back();
         // step 1
         for (const auto& b : ctx.vbk) {
           if (!tree().acceptBlock(b, state)) {
@@ -263,13 +293,13 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
           }
 
           auto* containingIndex =
-              tree().getBlockIndex(vtb.containing->getHash());
-          if (!containingIndex) {
-            if (!tree().acceptBlock(vtb.containing, state)) {
+              tree().getBlockIndex(vtb.containingBlock.getHash());
+          if (containingIndex == nullptr) {
+            if (!tree().acceptBlock(vtb.containingBlock, state)) {
               return state.Invalid("alt-accept-block");
             }
           }
-          if (!containingIndex ||
+          if ((containingIndex == nullptr) ||
               containingIndex->containingEndorsements.find(
                   vtb.endorsement.id) ==
                   containingIndex->containingEndorsements.end()) {
@@ -296,10 +326,10 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   auto check = [&](const VbkBlock& block) -> bool {
     auto* index = tree().getBlockIndex(block.getHash());
-    return index && index->containingContext.empty();
+    return (index != nullptr) && index->containingContext.empty();
   };
 
-  auto& ctx = index.containingContext.back();
+  const auto& ctx = index.containingContext.back();
 
   // step 1
   for (const auto& b : ctx.vbk) {
@@ -310,10 +340,8 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   // step 2, process VTBs
   for (const auto& vtb : ctx.vtbs) {
-    auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
-    if (!containingIndex) {
-      continue;
-    }
+    auto* containingIndex = tree().getBlockIndex(vtb.containingBlock.getHash());
+    if (containingIndex == nullptr) continue;
 
     tree().removePayloads(containingIndex, {vtb});
 
@@ -340,8 +368,8 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   auto addBlock = [&](const VbkBlock& b,
                       std::vector<std::shared_ptr<VbkBlock>>& blocks) {
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (!tree.getBlockIndex(b.getHash())) {
-      blocks.push_back(std::make_shared<VbkBlock>(b));
+    if (tree.getBlockIndex(hash) == nullptr) {
+      blocks.push_back(b);
     }
   };
 
@@ -356,10 +384,11 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   // step 2, process VTBs
   for (const auto& vtb : p.vtbs) {
     auto* temp = tree.getBlockIndex(vtb.getContainingBlock().getHash());
-    BtcEndorsement e = BtcEndorsement::fromContainer(vtb);
-    if (!temp || temp->containingEndorsements.find(e.id) ==
-                     temp->containingEndorsements.end()) {
-      PartialVTB p_vtb = PartialVTB::generateFromVtb(vtb);
+    if ((temp == nullptr) || temp->containingEndorsements.find(
+                                 BtcEndorsement::fromContainer(vtb).id) ==
+                                 temp->containingEndorsements.end()) {
+      ctx.vtbs.push_back(vtb);
+      ctx.vtbs.rbegin()->context.clear();
       for (const auto& b : vtb.context) {
         addBlock(b, p_vtb.context_vbk);
       }

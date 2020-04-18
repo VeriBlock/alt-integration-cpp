@@ -32,8 +32,11 @@ set(SOURCES
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
-        $<TARGET_OBJECTS:secp256k1>
         )
+        
+if(WITH_SECP256K1)
+list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
+endif()
 
 if(SHARED)
     set(BUILD SHARED)
