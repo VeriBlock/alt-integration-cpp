@@ -1,5 +1,4 @@
 #include "veriblock/entities/payloads.hpp"
-
 #include "veriblock/hashutil.hpp"
 
 namespace altintegration {
@@ -46,6 +45,24 @@ std::vector<uint8_t> AltPayloads::toVbkEncoding() const {
   WriteStream stream;
   toVbkEncoding(stream);
   return stream.data();
+}
+
+AltPayloads::id_t AltPayloads::getId() const {
+  return sha256(containingTx, containingBlock.hash);
+}
+
+AltBlock AltPayloads::getContainingBlock() const { return containingBlock; }
+
+AltBlock AltPayloads::getEndorsedBlock() const { return endorsed; }
+
+bool AltPayloads::containsEndorsements() const { return hasAtv; }
+
+VbkEndorsement AltPayloads::getEndorsement() const {
+  return VbkEndorsement::fromContainer(*this);
+}
+
+typename VbkEndorsement::id_t AltPayloads::getEndorsementId() const {
+  return VbkEndorsement::getId(*this);
 }
 
 }  // namespace altintegration

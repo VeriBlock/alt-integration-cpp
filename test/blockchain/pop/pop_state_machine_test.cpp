@@ -60,7 +60,8 @@ TEST(PopStateMachine, unapplyAndApply_test) {
   ASSERT_NE(it, apm.vbkPayloads.end());
 
   // HACK: manually add missing context to VBK tip
-  addContextToBlockIndex(*vbkTip1, it->second[0], btcTree);
+  addContextToBlockIndex(
+      *vbkTip1, PartialVTB::fromVTB(it->second[0]), btcTree);
   ASSERT_EQ(vbkTip1->height, 41);
   ASSERT_EQ(apm.vbk().getBestChain().tip(), vbkTip1);
   ASSERT_TRUE(state.IsValid());
@@ -102,7 +103,8 @@ TEST(PopStateMachine, unapplyAndApply_test) {
   // HACK: manually add missing context to VBK tip
   BtcTree tempBtcTree(apm.getBtcParams());
   ASSERT_TRUE(tempBtcTree.bootstrapWithGenesis(state));
-  addContextToBlockIndex(*vbkTip2, it->second[0], tempBtcTree);
+  addContextToBlockIndex(
+      *vbkTip2, PartialVTB::fromVTB(it->second[0]), tempBtcTree);
 
   auto btcTip2 = *apm.btc().getBestChain().tip();
 

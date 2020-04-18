@@ -117,7 +117,8 @@ TEST_F(PopContextFixture, A) {
     auto& vtbs = it->second;
 
     ASSERT_TRUE(local.acceptBlock(*containing->header, state));
-    ASSERT_TRUE(local.addPayloads(*containing->header, vtbs, state));
+    ASSERT_TRUE(local.addPayloads(
+        *containing->header, PartialVTB::fromVTB(vtbs), state));
   };
 
   // and now accept VBK tip again, with VTBs
@@ -126,7 +127,9 @@ TEST_F(PopContextFixture, A) {
   if (!localB->containingContext.empty()) {
     std::vector<BtcBlock> allBtcBlocks;
     for (const auto& el : localB->containingContext) {
-      allBtcBlocks.insert(allBtcBlocks.begin(), el.btc.begin(), el.btc.end());
+      for (const auto& b : el.btc) {
+        allBtcBlocks.push_back(*b);
+      }
     }
     makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));
   }
@@ -146,7 +149,9 @@ TEST_F(PopContextFixture, A) {
   if (!localA->containingContext.empty()) {
     std::vector<BtcBlock> allBtcBlocks;
     for (const auto& el : localA->containingContext) {
-      allBtcBlocks.insert(allBtcBlocks.begin(), el.btc.begin(), el.btc.end());
+      for (const auto& b : el.btc) {
+        allBtcBlocks.push_back(*b);
+      }
     }
 
     makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));

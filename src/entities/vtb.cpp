@@ -43,8 +43,11 @@ std::vector<uint8_t> VTB::toVbkEncoding() const {
 }
 
 VTB::id_t VTB::getId() const {
-  auto rawBytes = toVbkEncoding();
-  return sha256(rawBytes);
+  WriteStream stream;
+  transaction.toVbkEncoding(stream);
+  containingBlock.toVbkEncoding(stream);
+
+  return sha256(stream.data());
 }
 
 VbkBlock VTB::getContainingBlock() const { return this->containingBlock; }
