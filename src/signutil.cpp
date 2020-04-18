@@ -180,9 +180,13 @@ int veriBlockVerify(Slice<const uint8_t> message,
   secp256k1_ecdsa_signature_parse_der(
       ctx, &signatureDecoded, signature.data(), signature.size());
 
+  //FIXME: Fix this on the other side. We should accept the lower-S form only.
+  secp256k1_ecdsa_signature normalizedSignature;
+  secp256k1_ecdsa_signature_normalize(ctx, &normalizedSignature, &signatureDecoded);
+
   auto messageHash = sha256(message);
   return secp256k1_ecdsa_verify(
-      ctx, &signatureDecoded, messageHash.data(), &pubkey);
+      ctx, &normalizedSignature, messageHash.data(), &pubkey);
 }
 
 }  // namespace altintegration
