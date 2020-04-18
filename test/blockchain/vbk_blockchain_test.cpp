@@ -8,7 +8,6 @@
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
-#include "veriblock/storage/payloads_repository_inmem.hpp"
 
 using namespace altintegration;
 
@@ -21,13 +20,12 @@ struct BlockchainFixture {
 
   ValidationState state;
 
-  PayloadsRepositoryInmem<VTB> prepo;
   BtcChainParamsRegTest btcparam;
   VbkChainParamsRegTest vbkparam;
 };
 
 struct VbkTestCase {
-  std::string headers;
+  std::vector<uint8_t> headers;
   std::shared_ptr<VbkChainParams> params;
   uint32_t startHeight = 0;
   uint32_t offset = 0;
@@ -35,7 +33,8 @@ struct VbkTestCase {
   std::vector<VbkBlock> getBlocks() const {
     std::vector<VbkBlock> ret;
     std::string data;
-    std::istringstream file(headers);
+    std::string in(headers.begin(), headers.end());
+    std::istringstream file(in);
     EXPECT_TRUE(!file.fail());
     while (file >> data) {
       VbkBlock block = VbkBlock::fromHex(data);

@@ -49,6 +49,8 @@ struct VTB {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  static VTB fromHex(const std::string& hex);
+
   /**
    * Convert VTB to raw bytes data using Vbk byte format
    * @return bytes data

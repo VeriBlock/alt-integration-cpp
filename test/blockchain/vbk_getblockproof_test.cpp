@@ -32,8 +32,9 @@ struct GetProofTest : public testing::Test {
     parseBlocks(generated::vbk_testnet30000);
   }
 
-  void parseBlocks(const std::string& blocks) {
-    std::istringstream file(blocks);
+  void parseBlocks(const std::vector<uint8_t>& blocks) {
+    std::string in(blocks.begin(), blocks.end());
+    std::istringstream file(in);
     EXPECT_TRUE(!file.fail());
     allBlocks.clear();
     cumulativeDifficulties.clear();

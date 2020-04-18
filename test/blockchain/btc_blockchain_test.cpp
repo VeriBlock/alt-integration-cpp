@@ -31,14 +31,15 @@ struct BlockchainFixture {
 };
 
 struct BtcTestCase {
-  std::string headers;
+  std::vector<uint8_t> headers;
   std::shared_ptr<BtcChainParams> params;
   uint32_t startHeight = 0;
 
   std::vector<BtcBlock> getBlocks() const {
     std::vector<BtcBlock> ret;
     std::string data;
-    std::istringstream file(headers);
+    std::string in(headers.begin(), headers.end());
+    std::istringstream file(in);
     EXPECT_TRUE(!file.fail());
     while (file >> data) {
       BtcBlock block = BtcBlock::fromRaw(ParseHex(data));

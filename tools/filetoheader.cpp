@@ -6,8 +6,10 @@
 
 template <typename InStream, typename OutStream>
 void write(InStream& in, OutStream& out, const std::string& var) {
+  out << "#include <vector>\n";
+  out << "#include <cstdint>\n";
   out << "namespace generated {" << std::endl;
-  out << "extern const char " << var << "[] = {" << std::endl;
+  out << "extern const std::vector<uint8_t> " << var << " = {" << std::endl;
   std::string line;
   while (std::getline(in, line)) {
     for (char c : line) {
