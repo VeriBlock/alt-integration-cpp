@@ -1,16 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <fstream>
 #include <memory>
 
 #include "block_headers.hpp"
 #include "util/literals.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
-#include "veriblock/blockchain/miner.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
-#include "veriblock/storage/block_repository_inmem.hpp"
-#include "veriblock/third_party/BigDecimal.h"
 
 using namespace altintegration;
 
@@ -32,15 +27,15 @@ struct GetProofTest : public testing::Test {
     parseBlocks(generated::vbk_testnet30000);
   }
 
-  void parseBlocks(const std::vector<uint8_t>& blocks) {
-    std::string in(blocks.begin(), blocks.end());
-    std::istringstream file(in);
+  void parseBlocks(const std::string& blocks) {
+    std::istringstream file(blocks);
     EXPECT_TRUE(!file.fail());
     allBlocks.clear();
     cumulativeDifficulties.clear();
     while (true) {
       std::string blockHash;
       if (!(file >> blockHash)) break;
+      if(ParseHex(blockHash).empty()) break;
       std::string cumulDifficulty;
       EXPECT_TRUE(file >> cumulDifficulty);
       std::string blockHeader;

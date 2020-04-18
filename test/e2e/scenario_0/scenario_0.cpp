@@ -10,35 +10,29 @@
 using namespace altintegration;
 
 namespace generated {
-extern const std::vector<uint8_t> atv;
-extern const std::vector<uint8_t> vtbs;
-extern const std::vector<uint8_t> btcbootstraps;
-extern const std::vector<uint8_t> vbkbootstraps;
+extern const std::string atv;
+extern const std::string vtbs;
+extern const std::string btcbootstraps;
+extern const std::string vbkbootstraps;
 }  // namespace generated
 
-std::string dummy(std::string s) { return s; }
+static std::string dummy(std::string s) { return s; }
 
 template <typename T>
-T fromHex(const std::string& h) {
+static T fromHex(const std::string& h) {
   return T::fromHex(h);
 }
 
-// trim from end (in place)
-static inline void rtrim(std::string& c) {
-  c.erase(std::find_if(c.rbegin(), c.rend(), [](int ch) { return ch == '\n'; })
-              .base(),
-          c.end());
-}
-
 template <typename T>
-std::vector<T> parse(const std::vector<uint8_t>& in,
-                     std::function<T(std::string)> transform = dummy) {
+static std::vector<T> parse(const std::string& in,
+                            std::function<T(std::string)> transform = dummy) {
   std::vector<T> ret;
-  std::string input(in.begin(), in.end());
-  rtrim(input);
-  std::istringstream s(input);
+  std::istringstream s(in);
   std::string line;
   while (std::getline(s, line)) {
+    if (ParseHex(line).empty()) {
+      break;
+    }
     ret.push_back(transform(line));
   }
   return ret;
