@@ -293,9 +293,9 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
           }
 
           auto* containingIndex =
-              tree().getBlockIndex(vtb.containingBlock.getHash());
+              tree().getBlockIndex(vtb.containing->getHash());
           if (containingIndex == nullptr) {
-            if (!tree().acceptBlock(vtb.containingBlock, state)) {
+            if (!tree().acceptBlock(vtb.containing, state)) {
               return state.Invalid("alt-accept-block");
             }
           }
@@ -340,8 +340,8 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   // step 2, process VTBs
   for (const auto& vtb : ctx.vtbs) {
-    auto* containingIndex = tree().getBlockIndex(vtb.containingBlock.getHash());
-    if (containingIndex == nullptr) continue;
+    auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
+    if (containingIndex == nullptr) { continue; }
 
     tree().removePayloads(containingIndex, {vtb});
 
@@ -368,8 +368,8 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   auto addBlock = [&](const VbkBlock& b,
                       std::vector<std::shared_ptr<VbkBlock>>& blocks) {
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (tree.getBlockIndex(hash) == nullptr) {
-      blocks.push_back(b);
+    if (tree.getBlockIndex(b.getHash()) == nullptr) {
+      blocks.push_back(std::make_shared<VbkBlock>(b));
     }
   };
 
@@ -384,11 +384,10 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   // step 2, process VTBs
   for (const auto& vtb : p.vtbs) {
     auto* temp = tree.getBlockIndex(vtb.getContainingBlock().getHash());
+    PartialVTB p_vtb = PartialVTB::generateFromVtb(vtb);
     if ((temp == nullptr) || temp->containingEndorsements.find(
-                                 BtcEndorsement::fromContainer(vtb).id) ==
+                                 p_vtb.endorsement.id) ==
                                  temp->containingEndorsements.end()) {
-      ctx.vtbs.push_back(vtb);
-      ctx.vtbs.rbegin()->context.clear();
       for (const auto& b : vtb.context) {
         addBlock(b, p_vtb.context_vbk);
       }

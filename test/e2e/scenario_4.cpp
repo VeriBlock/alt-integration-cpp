@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <util/pop_test_fixture.hpp>
+#include <veriblock/altintegration.hpp>
 
 using namespace altintegration;
 
@@ -52,7 +53,7 @@ TEST_F(Scenario4, scenario_4) {
 
   altPayloads1.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(Altintegration::addPayloads(alttree, containingBlock, { altPayloads1 }, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
@@ -72,7 +73,7 @@ TEST_F(Scenario4, scenario_4) {
 
   altPayloads2.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
+  EXPECT_TRUE(Altintegration::addPayloads(alttree, containingBlock, { altPayloads2 }, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
@@ -93,7 +94,7 @@ TEST_F(Scenario4, scenario_4) {
   vbkTip = *popminer.vbk().getBestChain().tip();
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  EXPECT_TRUE(Altintegration::addPayloads(alttree, containingBlock, { altPayloads3 }, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
