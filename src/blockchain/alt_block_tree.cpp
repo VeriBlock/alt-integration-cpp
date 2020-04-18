@@ -384,7 +384,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   // step 2, process VTBs
   for (const auto& vtb : p.vtbs) {
     auto* temp = tree.getBlockIndex(vtb.getContainingBlock().getHash());
-    PartialVTB p_vtb = PartialVTB::generateFromVtb(vtb);
+    PartialVTB p_vtb = PartialVTB::fromVTB(vtb);
     if ((temp == nullptr) || temp->containingEndorsements.find(
                                  p_vtb.endorsement.id) ==
                                  temp->containingEndorsements.end()) {
@@ -417,7 +417,7 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
   auto removeVTB = [&](const VTB& vtb) {
     vtbs_end =
         std::remove_if(vtbs.begin(), vtbs_end, [&vtb](const PartialVTB& p_vtb) {
-          return p_vtb == PartialVTB::generateFromVtb(vtb);
+          return p_vtb == PartialVTB::fromVTB(vtb);
         });
   };
 

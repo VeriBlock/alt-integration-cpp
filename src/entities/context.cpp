@@ -4,7 +4,7 @@
 
 namespace altintegration {
 
-PartialVTB PartialVTB::generateFromVtb(const VTB& vtb) {
+PartialVTB PartialVTB::fromVTB(const VTB& vtb) {
   PartialVTB p_vtb;
   p_vtb.endorsement = BtcEndorsement::fromContainer(vtb);
 
@@ -18,7 +18,7 @@ PartialVTB PartialVTB::generateFromVtb(const VTB& vtb) {
   return p_vtb;
 }
 
-std::vector<PartialVTB> PartialVTB::generateFromVtb(
+std::vector<PartialVTB> PartialVTB::fromVTB(
     const std::vector<VTB>& vtbs) {
   std::vector<PartialVTB> p_vtbs;
   p_vtbs.reserve(vtbs.size());
@@ -27,7 +27,7 @@ std::vector<PartialVTB> PartialVTB::generateFromVtb(
                  vtbs.end(),
                  std::back_inserter(p_vtbs),
                  [&](const VTB& vtb) -> PartialVTB {
-                   PartialVTB p_vtb = PartialVTB::generateFromVtb(vtb);
+                   PartialVTB p_vtb = PartialVTB::fromVTB(vtb);
                    for (const auto& b : vtb.context) {
                      p_vtb.context_vbk.push_back(std::make_shared<VbkBlock>(b));
                    }

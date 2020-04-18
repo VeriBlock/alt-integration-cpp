@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include <util/pop_test_fixture.hpp>
-#include <veriblock/altintegration.hpp>
 
 using namespace altintegration;
 // clang-format off
@@ -112,7 +111,7 @@ TEST_F(Scenario3, scenario_3) {
   // store vtbs in different altPayloads
   altPayloads1.vtbs = {vtbs1[1]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(Altintegration::addPayloads(alttree, containingBlock, { altPayloads1 }, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
   EXPECT_TRUE(state.IsValid());
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip1->getHash());
@@ -143,7 +142,7 @@ TEST_F(Scenario3, scenario_3) {
   // store vtbs in different altPayloads
   altPayloads2.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(Altintegration::addPayloads(alttree, containingBlock, { altPayloads2 }, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
   EXPECT_TRUE(state.IsValid());
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip2->getHash());
@@ -162,7 +161,7 @@ TEST_F(Scenario3, scenario_3) {
   // store vtbs in different altPayloads
   altPayloads3.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(Altintegration::addPayloads(alttree, containingBlock, { altPayloads3 }, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements

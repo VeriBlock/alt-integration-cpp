@@ -2,7 +2,6 @@
 
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/alt-util.hpp>
-#include <veriblock/altintegration.hpp>
 
 using namespace altintegration;
 
@@ -132,7 +131,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     if (altContext.size() == 0) return false;
     for (const auto& c : altContext) {
       for (const auto& v : c.vtbs) {
-        if (v == PartialVTB::generateFromVtb(vtb)) {
+        if (v == PartialVTB::fromVTB(vtb)) {
           return true;
         }
       }
@@ -167,7 +166,7 @@ TEST_F(Scenario1, scenario_1) {
       vtbsVBA71[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
   altPayloadsVBA71.vtbs = {vtbsVBA71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(Altintegration::addPayloads(alttree, containingBlock, { altPayloadsVBA71 }, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloadsVBA71}, state));
   EXPECT_TRUE(state.IsValid());
 
   // expect that ALTBTC tree has all blocks from BTC chain A, until A53,
@@ -203,7 +202,7 @@ TEST_F(Scenario1, scenario_1) {
       vtbsVBB71[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
   altPayloadsVBB71.vtbs = {vtbsVBB71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(Altintegration::addPayloads(alttree, containingBlock, { altPayloadsVBB71 }, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloadsVBB71}, state));
   EXPECT_TRUE(state.IsValid());
 
   // expect that ALTBTC tree knows all blocks from chain B until block B55

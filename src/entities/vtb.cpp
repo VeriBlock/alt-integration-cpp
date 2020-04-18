@@ -45,7 +45,6 @@ std::vector<uint8_t> VTB::toVbkEncoding() const {
 VTB::id_t VTB::getId() const {
   WriteStream stream;
   transaction.toVbkEncoding(stream);
-  merklePath.toVbkEncoding(stream);
   containingBlock.toVbkEncoding(stream);
 
   return sha256(stream.data());

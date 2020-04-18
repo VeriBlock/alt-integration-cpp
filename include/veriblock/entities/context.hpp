@@ -50,9 +50,9 @@ struct PartialVTB {
 
   // generate without VBK context blocks, only BtcEndorsement VbkBlock
   // containing and btc blocks
-  static PartialVTB generateFromVtb(const VTB& vtb);
+  static PartialVTB fromVTB(const VTB& vtb);
 
-  static std::vector<PartialVTB> generateFromVtb(const std::vector<VTB>& vtbs);
+  static std::vector<PartialVTB> fromVTB(const std::vector<VTB>& vtbs);
 
   friend bool operator==(const PartialVTB& a, const PartialVTB& b);
 };

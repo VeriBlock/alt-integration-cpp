@@ -118,7 +118,7 @@ TEST_F(PopContextFixture, A) {
 
     ASSERT_TRUE(local.acceptBlock(*containing->header, state));
     ASSERT_TRUE(local.addPayloads(
-        *containing->header, PartialVTB::generateFromVtb(vtbs), state));
+        *containing->header, PartialVTB::fromVTB(vtbs), state));
   };
 
   // and now accept VBK tip again, with VTBs
