@@ -110,6 +110,10 @@ struct AltTree {
 
   const block_index_t& getAllBlocks() const { return block_index_; }
 
+  bool operator == (const AltTree& o) const {
+    return chainTips_ == o.chainTips_ && block_index_ == o.block_index_ && cmp_ == o.cmp_;
+  }
+
  protected:
   std::vector<index_t*> chainTips_;
   block_index_t block_index_;
