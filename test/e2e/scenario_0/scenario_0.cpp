@@ -108,9 +108,15 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(endorsedPrev, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(endorsed, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
+
+  // state of alt tree before addPayloads
+  auto copy = alt;
   ASSERT_FALSE(alt->addPayloads(containing, {payloads}, state));
   ASSERT_EQ(
       "bad-atv-stateful+pop-comparator-apply-context+0+alt-accept-block+bad-"
       "prev-block",
       state.GetPath());
+
+  // state of alt tree has not been changed after invalid addPayloads
+  ASSERT_EQ(copy, alt);
 }

@@ -372,15 +372,7 @@ struct PopAwareForkResolutionComparator {
   const protected_index_t* getIndex() const { return index_; }
 
   void removePayloads(protected_index_t& index,
-                      const std::vector<protected_payloads_t>& payloads,
-                      int64_t lastApplied = -1) {
-    assert(lastApplied < (int64_t)payloads.size());
-    if (payloads.empty() || lastApplied < 0) {
-      return;
-    }
-
-    assert(lastApplied >= 0);
-
+                      const std::vector<protected_payloads_t>& payloads) {
     ValidationState state;
     sm_t sm(tree_, index_, *protectedParams_);
     sm.unapplyAndApply(index, state);
@@ -388,24 +380,23 @@ struct PopAwareForkResolutionComparator {
     sm.unapplyContext(index);
     // remove all endorsements and context blocks related to given payloads, in
     // reverse order (this should be faster)
-    for (int64_t i = lastApplied; i >= 0; i--) {
-      auto& p = payloads[i];
-      if (p.containsEndorsements()) {
-        removeEndorsement(index, p.getEndorsementId());
-      }
-      removeContextFromBlockIndex(index, p);
-    }
+    std::for_each(
+        payloads.rbegin(), payloads.rend(), [&](const protected_payloads_t& p) {
+          if (p.containsEndorsements()) {
+            removeEndorsement(index, p.getEndorsementId());
+          }
+          removeContextFromBlockIndex(index, p);
+        });
 
     // apply remaining context from this block
     bool ret = sm.applyContext(index, state);
     (void)ret;
-    assert(ret);
+//    assert(ret);
   }
 
   bool addPayloads(protected_index_t& index,
                    const std::vector<protected_payloads_t>& payloads,
                    ValidationState& state) {
-    int64_t lastApplied = -1;
     return tryValidateWithResources(
         [&]() -> bool {
           if (index_ != index.pprev) {
@@ -448,8 +439,6 @@ struct PopAwareForkResolutionComparator {
               return state.addIndex(i).Invalid("pop-comparator-apply-context");
             }
 
-            lastApplied = static_cast<int64_t>(i);
-
             if (c.containsEndorsements()) {
               if (!checkAndAddEndorsement(index,
                                           c.getEndorsement(),
@@ -471,7 +460,7 @@ struct PopAwareForkResolutionComparator {
 
           return true;
         },
-        [&] { removePayloads(index, payloads, lastApplied); });
+        [&] { removePayloads(index, payloads); });
   }
 
   //! @invariant: atomic. If returns false, does not change internal state.
