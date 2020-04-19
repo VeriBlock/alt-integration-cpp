@@ -554,6 +554,10 @@ struct PopAwareForkResolutionComparator {
         kcChain1, kcChain2, *protectedParams_);
   }
 
+  bool operator==(const PopAwareForkResolutionComparator& o) const {
+    return index_ == o.index_ && tree_ == o.tree_;
+  }
+
  private:
   ProtectingBlockTree tree_;
   protected_index_t* index_ = nullptr;
