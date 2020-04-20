@@ -375,7 +375,7 @@ struct PopAwareForkResolutionComparator {
                       const std::vector<protected_payloads_t>& payloads) {
     ValidationState state;
     sm_t sm(tree_, index_, *protectedParams_);
-    bool ret;
+    bool ret = false;
     if (index.pprev != nullptr) {
       ret = sm.unapplyAndApply(*index.pprev, state);
       assert(ret);
@@ -397,6 +397,7 @@ struct PopAwareForkResolutionComparator {
     // apply remaining context from this block
     ret = sm.applyContext(index, state);
     assert(ret);
+    (void)ret;
   }
 
   bool addPayloads(protected_index_t& index,
@@ -422,9 +423,8 @@ struct PopAwareForkResolutionComparator {
 
           assert(index_ == index.pprev);
 
-          auto temp = tree_;
           // set initial state machine state = current index
-          sm_t sm(temp, &index, *protectedParams_, index_->height);
+          sm_t sm(tree_, &index, *protectedParams_, index_->height);
           for (size_t i = 0, size = payloads.size(); i < size; i++) {
             auto& c = payloads[i];
 
@@ -438,7 +438,7 @@ struct PopAwareForkResolutionComparator {
             // applyContext
             addContextToBlockIndex(index, c, sm.tree());
 
-            // first, check if context is valid. 
+            // first, check if context is valid.
             if (!sm.applyContext(index, state)) {
               removeContextFromBlockIndex(index, c);
               return state.addIndex(i).Invalid("pop-comparator-apply-context");
@@ -447,7 +447,7 @@ struct PopAwareForkResolutionComparator {
             if (c.containsEndorsements()) {
               if (!checkAndAddEndorsement(index,
                                           c.getEndorsement(),
-                                          temp,
+                                          sm.tree(),
                                           *protectedParams_,
                                           state)) {
                 return state.addIndex(i).Invalid(
@@ -459,8 +459,7 @@ struct PopAwareForkResolutionComparator {
           // no state change have been made
           assert(&index == sm.index());
 
-          // update current state, since it is valid
-          tree_ = std::move(temp);
+          // update current state
           index_ = &index;
 
           return true;
@@ -468,7 +467,6 @@ struct PopAwareForkResolutionComparator {
         [&] { removePayloads(index, payloads); });
   }
 
-  //! @invariant: atomic. If returns false, does not change internal state.
   bool setState(protected_index_t& index, ValidationState& state) {
     // if previous state is unknown, set new state as current
     if (index_ == nullptr) {

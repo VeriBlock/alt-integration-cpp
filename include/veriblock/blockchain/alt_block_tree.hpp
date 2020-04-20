@@ -13,8 +13,8 @@
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/entities/altblock.hpp"
 #include "veriblock/entities/payloads.hpp"
-#include "veriblock/validation_state.hpp"
 #include "veriblock/rewards/poprewards.hpp"
+#include "veriblock/validation_state.hpp"
 
 namespace altintegration {
 
@@ -69,9 +69,13 @@ struct AltTree {
 
   //! add payloads to any of existing blocks in block tree.
   //! may return false, if payloads statelessly, or statefully invalid.
+  //! @param atomic If false, may leave tree in indeterminate state for invalid
+  //! payloads. If true, guarantees that tree will remain unchanged for invalid
+  //! payloads.
   bool addPayloads(const AltBlock& containingBlock,
                    const std::vector<payloads_t>& payloads,
-                   ValidationState& state);
+                   ValidationState& state,
+                   bool atomic = true);
 
   //! removes given payloads from given block index.
   //! remove ALL payloads from a block, when it has to be removed
@@ -85,7 +89,8 @@ struct AltTree {
    * Calculate payouts for the given block
    * @return map with reward recipient as a key and reward amount as a value
    */
-  std::map<std::vector<uint8_t>, int64_t> getPopPayout(const AltBlock::hash_t& block);
+  std::map<std::vector<uint8_t>, int64_t> getPopPayout(
+      const AltBlock::hash_t& block);
 
   /**
    * Determine the best chain of the AltBlocks in accordance with the VeriBlock
@@ -110,8 +115,9 @@ struct AltTree {
 
   const block_index_t& getAllBlocks() const { return block_index_; }
 
-  bool operator == (const AltTree& o) const {
-    return chainTips_ == o.chainTips_ && block_index_ == o.block_index_ && cmp_ == o.cmp_;
+  bool operator==(const AltTree& o) const {
+    return chainTips_ == o.chainTips_ && block_index_ == o.block_index_ &&
+           cmp_ == o.cmp_;
   }
 
  protected:
@@ -130,6 +136,11 @@ struct AltTree {
   index_t* touchBlockIndex(const hash_t& blockHash);
 
   void addToChains(index_t* block_index);
+
+  bool addPayloads(PopForkComparator& cmp,
+                   const AltBlock& containingBlock,
+                   const std::vector<payloads_t>& payloads,
+                   ValidationState& state);
 };
 
 template <>
