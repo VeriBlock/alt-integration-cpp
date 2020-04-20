@@ -9,7 +9,6 @@
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/btc_blockchain_util.hpp"
 #include "veriblock/blockchain/miner.hpp"
-#include "veriblock/storage/block_repository_inmem.hpp"
 
 using namespace altintegration;
 
@@ -21,13 +20,9 @@ struct BlockchainFixture {
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
   std::shared_ptr<param_t> params;
-  std::shared_ptr<BlockRepository<index_t>> repo;
   ValidationState state;
 
-  BlockchainFixture() {
-    params = std::make_shared<BtcChainParamsRegTest>();
-    repo = std::make_shared<BlockRepositoryInmem<index_t>>();
-  }
+  BlockchainFixture() { params = std::make_shared<BtcChainParamsRegTest>(); }
 };
 
 struct BtcTestCase {
@@ -41,8 +36,11 @@ struct BtcTestCase {
     std::istringstream file(headers);
     EXPECT_TRUE(!file.fail());
     while (file >> data) {
-      BtcBlock block = BtcBlock::fromRaw(ParseHex(data));
-      ret.push_back(block);
+      auto v = ParseHex(data);
+      if (v.empty()) {
+        continue;
+      }
+      ret.push_back(BtcBlock::fromRaw(v));
     }
     return ret;
   }

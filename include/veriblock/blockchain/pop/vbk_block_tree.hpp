@@ -61,6 +61,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void removePayloads(index_t* block, const std::vector<payloads_t>& payloads);
 
+  bool operator==(const VbkBlockTree& o) const {
+    return cmp_ == o.cmp_ && VbkTree::operator==(o);
+  }
+
  private:
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew,

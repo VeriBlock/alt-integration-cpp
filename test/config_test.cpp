@@ -7,10 +7,12 @@ using namespace altintegration;
 
 std::vector<std::string> parseBlocks(const std::string& csv) {
   std::istringstream iss(csv);
-
   std::vector<std::string> ret;
   std::string line;
   while (std::getline(iss, line, ',')) {
+    if(ParseHex(line).empty()) {
+      break;
+    }
     ret.push_back(line);
   }
 
@@ -18,7 +20,6 @@ std::vector<std::string> parseBlocks(const std::string& csv) {
 }
 
 namespace generated {
-
 extern const char btcblockheaders[];
 extern const char vbkblockheaders[];
 }  // namespace generated

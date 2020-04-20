@@ -19,6 +19,10 @@ class ValidationState {
  public:
   ValidationState() : m_mode(MODE_VALID) {}
 
+  std::string toString() const {
+    return GetPath() + ", " + GetDebugMessage();
+  }
+
   /**
    * Changes this ValidationState into "INVALID" mode.
    * @param reject_reason - supply a short, unique message that identifies this

@@ -70,23 +70,23 @@ jobs:
           clean: true
           fetch-depth: 1
 
-      - name: install vcpkg
-        run: vcpkg integrate install
+#      - name: install vcpkg
+#        run: vcpkg integrate install
+#
+#      - name: cache vcpkg installed
+#        uses: actions/cache@v1
+#        with:
+#          path: C:/vcpkg/installed
+#          key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}-${{ hashFiles('CMakeLists.txt') }}
 
-      - name: cache vcpkg installed
-        uses: actions/cache@v1
-        with:
-          path: C:/vcpkg/installed
-          key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}-${{ hashFiles('CMakeLists.txt') }}
-
-      - name: install zlib
-        run: vcpkg install zlib:x64-windows-static
-      - name: install dependencies
-        run: vcpkg install rocksdb:x64-windows-static
+#      - name: install zlib
+#        run: vcpkg install zlib:x64-windows-static
+#      - name: install dependencies
+#        run: vcpkg install rocksdb:x64-windows-static
 
       - name: cmake
-        run: cmake . -Bbuild -A x64 -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
+        run: cmake . -Bbuild -A x64 -DWITH_ROCKSDB=OFF -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
-        run: cmake --build build --parallel 2
+        run: cmake --build build
       - name: test
         run: cmake --build build --target RUN_TESTS

@@ -159,6 +159,11 @@ struct BlockTree {
 
   const block_index_t& getAllBlocks() const { return block_index_; }
 
+  bool operator==(const BlockTree& o) const {
+    return block_index_ == o.block_index_ && activeChain_ == o.activeChain_ &&
+           fork_chains_ == o.fork_chains_;
+  }
+
  protected:
   block_index_t block_index_;
 
