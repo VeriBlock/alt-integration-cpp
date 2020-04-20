@@ -26,7 +26,7 @@ struct BlockchainFixture {
 };
 
 struct BtcTestCase {
-  const std::string& headers;
+  std::string headers;
   std::shared_ptr<BtcChainParams> params;
   uint32_t startHeight = 0;
 

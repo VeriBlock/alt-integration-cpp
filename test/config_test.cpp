@@ -20,15 +20,15 @@ std::vector<std::string> parseBlocks(const std::string& csv) {
 }
 
 namespace generated {
-extern const std::string btcblockheaders;
-extern const std::string vbkblockheaders;
+extern const char btcblockheaders[];
+extern const char vbkblockheaders[];
 }  // namespace generated
 
 TEST(Config, IsValid) {
   int popbtcstartheight = 1714177;
-  auto popbtcblocks = generated::btcblockheaders;
+  std::string popbtcblocks = generated::btcblockheaders;
   int popvbkstartheight = 430118;
-  auto popvbkblocks = generated::vbkblockheaders;
+  std::string popvbkblocks = generated::vbkblockheaders;
 
   altintegration::Config config;
   config.setBTC(popbtcstartheight,
