@@ -38,7 +38,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 
   if (result < 0) {
     // other chain won!
-    auto *prevTip = currentBest.tip();
+    auto* prevTip = currentBest.tip();
     currentBest.setTip(&indexNew);
     onTipChanged(indexNew, isBootstrap);
     addForkCandidate(prevTip, &indexNew);
@@ -142,7 +142,8 @@ void VbkBlockTree::removePayloads(index_t* index,
                                   const std::vector<payloads_t>& payloads) {
   assert(index);
   cmp_.removePayloads(*index, payloads);
-  if (index->containingContext.back().empty()) {
+  if (!index->containingContext.empty() &&
+      index->containingContext.back().empty()) {
     index->containingContext.pop_back();
   }
 

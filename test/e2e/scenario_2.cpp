@@ -60,8 +60,8 @@ TEST_F(Scenario2, scenario_2) {
   auto* vbkTip = popminer.mineVbkBlocks(65);
 
   // endorse VBK blocks
-  auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
   generatePopTx(*endorsedVbkBlock1->header);
   auto* btcBlockTip1 = popminer.btc().getBestChain().tip();
   popminer.mineBtcBlocks(100);
@@ -70,7 +70,7 @@ TEST_F(Scenario2, scenario_2) {
 
   vbkTip = popminer.mineVbkBlocks(1);
 
-  auto vtbs = popminer.vbkPayloads[vbkTip->getHash()];
+  auto& vtbs = popminer.vbkPayloads[vbkTip->getHash()];
 
   ASSERT_EQ(vtbs.size(), 2);
   ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
@@ -86,17 +86,14 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
   EXPECT_TRUE(state.IsValid());
   auto* containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtbs[0]).id) !=
-              containinVbkBlock->containingEndorsements.end());
 
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtbs[1]).id) ==
-              containinVbkBlock->containingEndorsements.end());
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+      BtcEndorsement::getId(vtbs[0])));
+  EXPECT_FALSE(containinVbkBlock->containingEndorsements.count(
+      BtcEndorsement::getId(vtbs[1])));
 
   // check btc tree state
-  EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
-            btcBlockTip1->getHash());
+  EXPECT_EQ(*alttree.vbk().btc().getBestChain().tip(), *btcBlockTip1);
 
   mineAltBlocks(10, chain);
   containingBlock = generateNextBlock(*chain.rbegin());
@@ -111,17 +108,13 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(state.IsValid());
 
   containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtbs[0]).id) !=
-              containinVbkBlock->containingEndorsements.end());
-
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtbs[1]).id) !=
-              containinVbkBlock->containingEndorsements.end());
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+      BtcEndorsement::getId(vtbs[0])));
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+      BtcEndorsement::getId(vtbs[1])));
 
   // check btc tree state
-  EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
-            btcBlockTip2->getHash());
+  EXPECT_EQ(*alttree.vbk().btc().getBestChain().tip(), *btcBlockTip2);
 
   // reset state of the cmp_ in the altTree
   // generate new fork with the new altPayloads
@@ -131,22 +124,19 @@ TEST_F(Scenario2, scenario_2) {
   chain2.push_back(containingBlock);
   AltPayloads altPayloads3 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+
   // Step 3
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
   EXPECT_TRUE(state.IsValid());
 
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtbs[0]).id) !=
-              containinVbkBlock->containingEndorsements.end());
-
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtbs[1]).id) ==
-              containinVbkBlock->containingEndorsements.end());
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+      BtcEndorsement::getId(vtbs[0])));
+  EXPECT_FALSE(containinVbkBlock->containingEndorsements.count(
+      BtcEndorsement::getId(vtbs[1])));
 
   // check btc tree state
-  EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
-            btcBlockTip1->getHash());
+  EXPECT_EQ(*alttree.vbk().btc().getBestChain().tip(), *btcBlockTip1);
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
@@ -158,15 +148,11 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(state.IsValid());
 
   containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtbs[0]).id) !=
-              containinVbkBlock->containingEndorsements.end());
-
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.find(
-                  BtcEndorsement::fromContainer(vtbs[1]).id) !=
-              containinVbkBlock->containingEndorsements.end());
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+      BtcEndorsement::getId(vtbs[0])));
+  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+      BtcEndorsement::getId(vtbs[1])));
 
   // check btc tree state
-  EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
-            btcBlockTip2->getHash());
+  EXPECT_EQ(*alttree.vbk().btc().getBestChain().tip(), *btcBlockTip2);
 }

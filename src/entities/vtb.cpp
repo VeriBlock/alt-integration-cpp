@@ -55,3 +55,8 @@ VbkBlock VTB::getContainingBlock() const { return this->containingBlock; }
 VbkBlock VTB::getEndorsedBlock() const {
   return this->transaction.publishedBlock;
 }
+
+VTB VTB::fromHex(const std::string& hex) {
+  auto data = ParseHex(hex);
+  return fromVbkEncoding(data);
+}

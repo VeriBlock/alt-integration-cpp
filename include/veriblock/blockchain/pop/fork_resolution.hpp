@@ -375,9 +375,15 @@ struct PopAwareForkResolutionComparator {
                       const std::vector<protected_payloads_t>& payloads) {
     ValidationState state;
     sm_t sm(tree_, index_, *protectedParams_);
-    sm.unapplyAndApply(index, state);
-
-    sm.unapplyContext(index);
+    bool ret;
+    if (index.pprev != nullptr) {
+      ret = sm.unapplyAndApply(*index.pprev, state);
+      assert(ret);
+    } else {
+      ret = sm.unapplyAndApply(index, state);
+      assert(ret);
+      sm.unapplyContext(index);
+    }
     // remove all endorsements and context blocks related to given payloads, in
     // reverse order (this should be faster)
     std::for_each(
@@ -389,8 +395,7 @@ struct PopAwareForkResolutionComparator {
         });
 
     // apply remaining context from this block
-    bool ret = sm.applyContext(index, state);
-    (void)ret;
+    ret = sm.applyContext(index, state);
     assert(ret);
   }
 
@@ -433,9 +438,9 @@ struct PopAwareForkResolutionComparator {
             // applyContext
             addContextToBlockIndex(index, c, sm.tree());
 
-            // first, check if context is valid. if invalid, it will
-            // automatically call 'removeContextFromBlockIndex'
+            // first, check if context is valid. 
             if (!sm.applyContext(index, state)) {
+              removeContextFromBlockIndex(index, c);
               return state.addIndex(i).Invalid("pop-comparator-apply-context");
             }
 
@@ -552,6 +557,10 @@ struct PopAwareForkResolutionComparator {
 
     return internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, *protectedParams_);
+  }
+
+  bool operator==(const PopAwareForkResolutionComparator& o) const {
+    return index_ == o.index_ && tree_ == o.tree_;
   }
 
  private:

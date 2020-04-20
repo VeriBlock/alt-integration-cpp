@@ -101,6 +101,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/wd4389)                  # disable warning: 'operator' : signed/unsigned mismatch
     add_flag(/wd4455)                  # disable warning: 'operator ""s': literal suffix identifiers that do not start with an underscore are reserved
     add_flag(/wd4127)                  # disable warning: conditional expression is constant
+    add_flag(/wd4505)                  # disable warning: warning C4505: 'dummy': unreferenced local function has been removed
 
     if(SHARED)
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
