@@ -10,10 +10,10 @@
 using namespace altintegration;
 
 namespace generated {
-extern const std::string atv;
-extern const std::string vtbs;
-extern const std::string btcbootstraps;
-extern const std::string vbkbootstraps;
+extern const char atv[];
+extern const char vtbs[];
+extern const char btcbootstraps[];
+extern const char vbkbootstraps[];
 }  // namespace generated
 
 static std::string dummy(std::string s) { return s; }
