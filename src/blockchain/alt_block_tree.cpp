@@ -358,9 +358,6 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   auto& ctx = index.containingContext.back();
 
   std::unordered_set<VbkBlock::hash_t> known_blocks;
-
-  index.containingContext.back();
-
   auto addBlock = [&](const VbkBlock& b,
                       std::vector<std::shared_ptr<VbkBlock>>& blocks) {
     auto hash = b.getHash();
