@@ -97,7 +97,8 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
   (void)ret;
 }
 
-bool VbkBlockTree::addPayloads(const VbkBlock& block,
+bool VbkBlockTree::addPayloads(PopForkComparator& cmp,
+                               const VbkBlock& block,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {
   auto* index = getBlockIndex(block.getHash());
@@ -110,7 +111,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
   context_t ctx;
   index->containingContext.push_back(ctx);
 
-  if (!cmp_.addPayloads(*index, payloads, state)) {
+  if (!cmp.addPayloads(*index, payloads, state)) {
     index->containingContext.pop_back();
     return state.Invalid("bad-payloads-stateful");
   }
@@ -148,6 +149,24 @@ void VbkBlockTree::removePayloads(index_t* index,
   }
 
   determineBestChain(activeChain_, *index);
+}
+
+bool VbkBlockTree::addPayloads(const VbkBlock& block,
+                               const std::vector<payloads_t>& payloads,
+                               ValidationState& state,
+                               bool atomic) {
+  if (!atomic) {
+    return addPayloads(cmp_, block, payloads, state);
+  }
+
+  // execute addPayloads on a temp copy
+  PopForkComparator cmp = cmp_;
+  bool ret = addPayloads(cmp, block, payloads, state);
+  if (ret) {
+    // if succeded, update local copy
+    cmp_ = cmp;
+  }
+  return ret;
 }
 
 template <>
