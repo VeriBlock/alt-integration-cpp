@@ -323,11 +323,6 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
     return;
   }
 
-  auto check = [&](const VbkBlock& block) -> bool {
-    auto* index = tree().getBlockIndex(block.getHash());
-    return (index != nullptr) && index->containingContext.empty();
-  };
-
   const auto& ctx = index.containingContext.back();
 
   // step 1
@@ -362,10 +357,17 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
 
   auto& ctx = index.containingContext.back();
 
+  std::unordered_set<VbkBlock::hash_t> known_blocks;
+
+  index.containingContext.back();
+
   auto addBlock = [&](const VbkBlock& b,
                       std::vector<std::shared_ptr<VbkBlock>>& blocks) {
+    auto hash = b.getHash();
+
     // filter context: add only blocks that are unknown and not in current 'ctx'
-    if (tree.getBlockIndex(b.getHash()) == nullptr) {
+    if (known_blocks.insert(hash).second &&
+        tree.getBlockIndex(hash) == nullptr) {
       blocks.push_back(std::make_shared<VbkBlock>(b));
     }
   };
