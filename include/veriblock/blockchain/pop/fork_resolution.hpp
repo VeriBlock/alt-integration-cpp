@@ -438,7 +438,7 @@ struct PopAwareForkResolutionComparator {
             // applyContext
             addContextToBlockIndex(index, c, sm.tree());
 
-            // first, check if context is valid. 
+            // first, check if context is valid.
             if (!sm.applyContext(index, state)) {
               removeContextFromBlockIndex(index, c);
               return state.addIndex(i).Invalid("pop-comparator-apply-context");

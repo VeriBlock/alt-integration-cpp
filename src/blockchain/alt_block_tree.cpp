@@ -1,7 +1,6 @@
-#include "veriblock/blockchain/alt_block_tree.hpp"
-
 #include <set>
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -333,15 +332,15 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   // step 1
   for (const auto& b : ctx.vbk) {
-    if (check(*b)) {
-      tree().invalidateBlockByHash(b->getHash());
-    }
+    tree().invalidateBlockByHash(b->getHash());
   }
 
   // step 2, process VTBs
   for (const auto& vtb : ctx.vtbs) {
     auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
-    if (containingIndex == nullptr) { continue; }
+    if (containingIndex == nullptr) {
+      continue;
+    }
 
     tree().removePayloads(containingIndex, {vtb});
 
@@ -350,9 +349,7 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
     }
 
     for (const auto& b : vtb.context_vbk) {
-      if (check(*b)) {
-        tree().invalidateBlockByHash(b->getHash());
-      }
+      tree().invalidateBlockByHash(b->getHash());
     }
   }
 }
@@ -385,9 +382,9 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   for (const auto& vtb : p.vtbs) {
     auto* temp = tree.getBlockIndex(vtb.getContainingBlock().getHash());
     PartialVTB p_vtb = PartialVTB::fromVTB(vtb);
-    if ((temp == nullptr) || temp->containingEndorsements.find(
-                                 p_vtb.endorsement.id) ==
-                                 temp->containingEndorsements.end()) {
+    if ((temp == nullptr) ||
+        temp->containingEndorsements.find(p_vtb.endorsement.id) ==
+            temp->containingEndorsements.end()) {
       for (const auto& b : vtb.context) {
         addBlock(b, p_vtb.context_vbk);
       }
