@@ -54,7 +54,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool addPayloads(const block_t& block,
                    const std::vector<payloads_t>& payloads,
-                   ValidationState& state);
+                   ValidationState& state,
+                   bool atomic = true);
 
   void removePayloads(const block_t& block,
                       const std::vector<payloads_t>& payloads);
@@ -69,6 +70,11 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew,
                           bool isBootstrap = false) override;
+
+  bool addPayloads(PopForkComparator& cmp,
+                   const block_t& block,
+                   const std::vector<payloads_t>& payloads,
+                   ValidationState& state);
 
   PopForkComparator cmp_;
 };

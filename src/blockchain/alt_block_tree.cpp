@@ -160,26 +160,21 @@ void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,
                           const std::vector<payloads_t>& payloads,
-                          ValidationState& state) {
-  auto hash = containingBlock.getHash();
-  auto* index = getBlockIndex(hash);
-  if (index == nullptr) {
-    return state.Invalid("no-alt-block",
-                         "addPayloads can be executed only on existing "
-                         "blocks, can not find block " +
-                             HexStr(hash));
+                          ValidationState& state,
+                          bool atomic) {
+  if (!atomic) {
+    return addPayloads(cmp_, containingBlock, payloads, state);
   }
 
-  // allocate a new element in the stack
-  context_t ctx;
-  index->containingContext.push_back(ctx);
-
-  if (!cmp_.addPayloads(*index, payloads, state)) {
-    index->containingContext.pop_back();
-    return state.Invalid("bad-atv-stateful");
+  // do a temp copy of comparator
+  auto copy = cmp_;
+  bool ret = addPayloads(copy, containingBlock, payloads, state);
+  if (ret) {
+    // if payloads valid, update local copy
+    cmp_ = copy;
   }
 
-  return true;
+  return ret;
 }
 
 void AltTree::removePayloads(const AltBlock& containingBlock,
@@ -268,6 +263,30 @@ int AltTree::compareTwoBranches(const hash_t& chain1, const hash_t& chain2) {
   return compareTwoBranches(i1, i2);
 }
 
+bool AltTree::addPayloads(AltTree::PopForkComparator& cmp,
+                          const AltBlock& containingBlock,
+                          const std::vector<payloads_t>& payloads,
+                          ValidationState& state) {
+  auto hash = containingBlock.getHash();
+  auto* index = getBlockIndex(hash);
+  if (index == nullptr) {
+    return state.Invalid("no-alt-block",
+                         "addPayloads can be executed only on existing "
+                         "blocks, can not find block " +
+                             HexStr(hash));
+  }
+
+  // allocate a new element in the stack
+  index->containingContext.emplace_back();
+
+  if (!cmp.addPayloads(*index, payloads, state)) {
+    index->containingContext.pop_back();
+    return state.Invalid("bad-atv-stateful");
+  }
+
+  return true;
+}
+
 template <>
 bool AltTree::PopForkComparator::sm_t::applyContext(
     const BlockIndex<AltBlock>& index, ValidationState& state) {
@@ -303,7 +322,7 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
               containingIndex->containingEndorsements.find(
                   vtb.endorsement.id) ==
                   containingIndex->containingEndorsements.end()) {
-            if (!tree().addPayloads(*vtb.containing, {vtb}, state)) {
+            if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
               return state.Invalid("alt-accept-block");
             }
           }
@@ -341,7 +360,9 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
   // step 2, process VTBs
   for (const auto& vtb : ctx.vtbs) {
     auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
-    if (containingIndex == nullptr) { continue; }
+    if (containingIndex == nullptr) {
+      continue;
+    }
 
     tree().removePayloads(containingIndex, {vtb});
 
@@ -385,9 +406,9 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   for (const auto& vtb : p.vtbs) {
     auto* temp = tree.getBlockIndex(vtb.getContainingBlock().getHash());
     PartialVTB p_vtb = PartialVTB::fromVTB(vtb);
-    if ((temp == nullptr) || temp->containingEndorsements.find(
-                                 p_vtb.endorsement.id) ==
-                                 temp->containingEndorsements.end()) {
+    if ((temp == nullptr) ||
+        temp->containingEndorsements.find(p_vtb.endorsement.id) ==
+            temp->containingEndorsements.end()) {
       for (const auto& b : vtb.context) {
         addBlock(b, p_vtb.context_vbk);
       }
