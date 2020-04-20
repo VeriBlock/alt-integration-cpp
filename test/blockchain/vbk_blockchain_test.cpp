@@ -25,7 +25,7 @@ struct BlockchainFixture {
 };
 
 struct VbkTestCase {
-  const std::string& headers;
+  std::string headers;
   std::shared_ptr<VbkChainParams> params;
   uint32_t startHeight = 0;
   uint32_t offset = 0;
