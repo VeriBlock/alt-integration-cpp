@@ -159,26 +159,21 @@ void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,
                           const std::vector<payloads_t>& payloads,
-                          ValidationState& state) {
-  auto hash = containingBlock.getHash();
-  auto* index = getBlockIndex(hash);
-  if (index == nullptr) {
-    return state.Invalid("no-alt-block",
-                         "addPayloads can be executed only on existing "
-                         "blocks, can not find block " +
-                             HexStr(hash));
+                          ValidationState& state,
+                          bool atomic) {
+  if (!atomic) {
+    return addPayloads(cmp_, containingBlock, payloads, state);
   }
 
-  // allocate a new element in the stack
-  context_t ctx;
-  index->containingContext.push_back(ctx);
-
-  if (!cmp_.addPayloads(*index, payloads, state)) {
-    index->containingContext.pop_back();
-    return state.Invalid("bad-atv-stateful");
+  // do a temp copy of comparator
+  auto copy = cmp_;
+  bool ret = addPayloads(copy, containingBlock, payloads, state);
+  if (ret) {
+    // if payloads valid, update local copy
+    cmp_ = copy;
   }
 
-  return true;
+  return ret;
 }
 
 void AltTree::removePayloads(const AltBlock& containingBlock,
@@ -265,6 +260,30 @@ int AltTree::compareTwoBranches(const hash_t& chain1, const hash_t& chain2) {
   auto* i1 = getBlockIndex(chain1);
   auto* i2 = getBlockIndex(chain2);
   return compareTwoBranches(i1, i2);
+}
+
+bool AltTree::addPayloads(AltTree::PopForkComparator& cmp,
+                          const AltBlock& containingBlock,
+                          const std::vector<payloads_t>& payloads,
+                          ValidationState& state) {
+  auto hash = containingBlock.getHash();
+  auto* index = getBlockIndex(hash);
+  if (index == nullptr) {
+    return state.Invalid("no-alt-block",
+                         "addPayloads can be executed only on existing "
+                         "blocks, can not find block " +
+                             HexStr(hash));
+  }
+
+  // allocate a new element in the stack
+  index->containingContext.emplace_back();
+
+  if (!cmp.addPayloads(*index, payloads, state)) {
+    index->containingContext.pop_back();
+    return state.Invalid("bad-atv-stateful");
+  }
+
+  return true;
 }
 
 template <>
