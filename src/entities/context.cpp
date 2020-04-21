@@ -8,6 +8,7 @@ PartialVTB PartialVTB::fromVTB(const VTB& vtb) {
   PartialVTB p_vtb;
   p_vtb.endorsement = BtcEndorsement::fromContainer(vtb);
 
+  p_vtb.btc.reserve(vtb.transaction.blockOfProofContext.size() + 1);
   for (const auto& b : vtb.transaction.blockOfProofContext) {
     p_vtb.btc.push_back(std::make_shared<BtcBlock>(b));
   }
