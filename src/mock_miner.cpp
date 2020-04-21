@@ -160,7 +160,8 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   for (auto* walkBlock = containingBlockIndex->pprev;
        walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
-    popTx.blockOfProofContext.push_back(*walkBlock->header);
+    auto header = *walkBlock->header;
+    popTx.blockOfProofContext.push_back(header);
   }
   std::reverse(popTx.blockOfProofContext.begin(),
                popTx.blockOfProofContext.end());
@@ -280,8 +281,7 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 
-  if (!tree.addPayloads(
-          containingBlock, PartialVTB::fromVTB(vtbs), state)) {
+  if (!tree.addPayloads(containingBlock, PartialVTB::fromVTB(vtbs), state)) {
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 
