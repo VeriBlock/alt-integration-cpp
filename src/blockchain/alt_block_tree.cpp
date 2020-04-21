@@ -1,6 +1,7 @@
+#include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <set>
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -295,16 +296,16 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
           return true;
         }
         const auto& ctx = index.containingContext.back();
-        // step 1
+        // apply context first
         for (const auto& b : ctx.vbk) {
           if (!tree().acceptBlock(b, state)) {
             return state.Invalid("alt-accept-block");
           }
         }
 
-        // step 2, process VTBs
+        // apply all VTBs
         for (const auto& vtb : ctx.vtbs) {
-          if (!tree().addPayloads(*vtb.containing, {vtb}, state)) {
+          if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
             return state.Invalid("alt-accept-block");
           }
         }
@@ -326,7 +327,7 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   const auto& ctx = index.containingContext.back();
 
-  // step 1
+  // process VBK context first
   for (const auto& b : ctx.vbk) {
     tree().invalidateBlockByHash(b->getHash());
   }
@@ -366,14 +367,6 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     }
   };
 
-  // process ATV
-  if (p.hasAtv) {
-    for (const auto& b : p.atv.context) {
-      addBlock(b);
-    }
-    addBlock(p.atv.containingBlock);
-  }
-
   // process VTBs
   for (const auto& vtb : p.vtbs) {
     for (const auto& b : vtb.context) {
@@ -382,6 +375,14 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     addBlock(vtb.getContainingBlock());
 
     ctx.vtbs.push_back(PartialVTB::fromVTB(vtb));
+  }
+
+  // process ATV
+  if (p.hasAtv) {
+    for (const auto& b : p.atv.context) {
+      addBlock(b);
+    }
+    addBlock(p.atv.containingBlock);
   }
 }
 
