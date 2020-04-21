@@ -2,9 +2,9 @@
 #define ALT_INTEGRATION_VERIBLOCK_VALIDATION_STATE_HPP
 
 #include <algorithm>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
 
 namespace altintegration {
 
@@ -22,6 +22,18 @@ class ValidationState {
 
   std::string toString() const { return GetPath() + ", " + GetDebugMessage(); }
 
+  bool Invalid(const std::string &reject_reason,
+               const std::string &debug_message = "") {
+    stack_trace.push_back(reject_reason);
+    if (!debug_message.empty()) {
+      m_debug_message = debug_message;
+    }
+    if (m_mode != MODE_ERROR) {
+      m_mode = MODE_INVALID;
+    }
+    return false;
+  }
+
   /**
    * Changes this ValidationState into "INVALID" mode.
    * @param reject_reason - supply a short, unique message that identifies this
@@ -31,17 +43,10 @@ class ValidationState {
    * @return always returns false
    */
   bool Invalid(const std::string &reject_reason,
-               const std::string &debug_message = "",
-               size_t index = 0) {
-    stack_trace.push_back(reject_reason);
+               const std::string &debug_message,
+               size_t index) {
     stack_trace.push_back(std::to_string(index));
-    if (!debug_message.empty()) {
-      m_debug_message = debug_message;
-    }
-    if (m_mode != MODE_ERROR) {
-      m_mode = MODE_INVALID;
-    }
-    return false;
+    return Invalid(reject_reason, debug_message);
   }
 
   bool Invalid(const std::string &reject_reason, size_t index) {

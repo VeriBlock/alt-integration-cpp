@@ -110,6 +110,6 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
   ASSERT_FALSE(alt->addPayloads(containing, {payloads}, state));
   ASSERT_EQ(
-      "0+bad-alt-payloads-stateful+0+apply-context+0+alt-accept-block+0+bad-prev-block",
+      "bad-alt-payloads-stateful+apply-context+0+alt-accept-block+0+bad-prev-block",
       state.GetPath());
 }
