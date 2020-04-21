@@ -10,4 +10,3 @@ addtest(scenario_0
         ${btcblocks}
         ${vbkblocks}
         )
-target_link_libraries(scenario_0 ${LIB_NAME})
