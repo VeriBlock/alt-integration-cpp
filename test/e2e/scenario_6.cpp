@@ -67,11 +67,11 @@ TEST_F(Scenario6, scenario_6) {
   altPayloads.vtbs.push_back(vtb);
 
   EXPECT_TRUE(test_alttree.acceptBlock(containingAltBlock, state));
-  /*EXPECT_FALSE(
+  EXPECT_FALSE(
       test_alttree.addPayloads(containingAltBlock, {altPayloads}, state));
 
   EXPECT_EQ(*test_alttree.vbk().getBestChain().tip(), *vbkTip);
   EXPECT_EQ(test_alttree.vbk().getBestChain().blocksCount(), 1);
   EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->containingContext.size(),
-            0);*/
+            0);
 }

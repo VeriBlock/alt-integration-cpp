@@ -18,21 +18,15 @@ PartialVTB PartialVTB::fromVTB(const VTB& vtb) {
   return p_vtb;
 }
 
-std::vector<PartialVTB> PartialVTB::fromVTB(
-    const std::vector<VTB>& vtbs) {
+std::vector<PartialVTB> PartialVTB::fromVTB(const std::vector<VTB>& vtbs) {
   std::vector<PartialVTB> p_vtbs;
   p_vtbs.reserve(vtbs.size());
 
-  std::transform(vtbs.begin(),
-                 vtbs.end(),
-                 std::back_inserter(p_vtbs),
-                 [&](const VTB& vtb) -> PartialVTB {
-                   PartialVTB p_vtb = PartialVTB::fromVTB(vtb);
-                   for (const auto& b : vtb.context) {
-                     p_vtb.context_vbk.push_back(std::make_shared<VbkBlock>(b));
-                   }
-                   return p_vtb;
-                 });
+  std::transform(
+      vtbs.begin(),
+      vtbs.end(),
+      std::back_inserter(p_vtbs),
+      [&](const VTB& vtb) -> PartialVTB { return PartialVTB::fromVTB(vtb); });
 
   return p_vtbs;
 }
