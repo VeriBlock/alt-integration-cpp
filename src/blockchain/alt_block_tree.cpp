@@ -1,7 +1,6 @@
-#include "veriblock/blockchain/alt_block_tree.hpp"
-
 #include <set>
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -298,7 +297,7 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
         const auto& ctx = index.containingContext.back();
         // apply context first
         size_t i = 0;
-        for (const auto& b : ctx.vbk) {
+        for (const auto& b : ctx.context) {
           if (!tree().acceptBlock(b, state)) {
             return state.Invalid("alt-accept-block", i);
           }
@@ -307,9 +306,9 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
 
         // apply all VTBs
         i = 0;
-        for (const auto& vtb : ctx.vtbs) {
-          if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
-            return state.Invalid("alt-accept-block", i);
+        for (const auto& el : ctx.vtbs) {
+          if (!tree().addPayloads(*el.first, el.second, state, false)) {
+            return state.Invalid("alt-add-payloads", i);
           }
           i++;
         }
@@ -332,18 +331,13 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
   const auto& ctx = index.containingContext.back();
 
   // process VBK context first
-  for (const auto& b : ctx.vbk) {
+  for (const auto& b : ctx.context) {
     tree().invalidateBlockByHash(b->getHash());
   }
 
   // step 2, process VTBs
-  for (const auto& vtb : ctx.vtbs) {
-    auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
-    if (containingIndex == nullptr) {
-      continue;
-    }
-
-    tree().removePayloads(containingIndex, {vtb});
+  for (const auto& el : ctx.vtbs) {
+    tree().removePayloads(*el.first, el.second);
   }
 }
 
@@ -356,7 +350,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   auto& ctx = index.containingContext.back();
 
   std::unordered_set<VbkBlock::hash_t> known_blocks;
-  for (const auto& b : ctx.vbk) {
+  for (const auto& b : ctx.context) {
     known_blocks.insert(b->getHash());
   }
 
@@ -367,7 +361,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     // if we inserted into known_blocks and tree does not know about this block
     if (known_blocks.insert(hash).second &&
         tree.getBlockIndex(hash) == nullptr) {
-      ctx.vbk.push_back(std::make_shared<VbkBlock>(b));
+      ctx.context.push_back(std::make_shared<VbkBlock>(b));
     }
   };
 
@@ -378,7 +372,17 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     }
     addBlock(vtb.getContainingBlock());
 
-    ctx.vtbs.push_back(PartialVTB::fromVTB(vtb));
+    auto p_vtb = PartialVTB::fromVTB(vtb);
+
+    auto block_ptr =
+        std::find_if(ctx.context.rbegin(),
+                     ctx.context.rend(),
+                     [&](const std::shared_ptr<VbkBlock>& ptr) -> bool {
+                       return *ptr == vtb.getContainingBlock();
+                     });
+
+    p_vtb.containing = *block_ptr;
+    ctx.vtbs[*block_ptr].push_back(p_vtb);
   }
 
   // process ATV
@@ -397,7 +401,7 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
     return;
   }
 
-  auto& vbk = index.containingContext.back().vbk;
+  auto& vbk = index.containingContext.back().context;
   auto vbk_end = vbk.end();
   auto removeBlock = [&](const VbkBlock& b) {
     vbk_end = std::remove_if(

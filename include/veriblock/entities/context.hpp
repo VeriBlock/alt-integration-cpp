@@ -2,6 +2,7 @@
 #define ALTINTEGRATION_CONTEXT_HPP
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "endorsements.hpp"
@@ -58,11 +59,10 @@ struct PartialVTB {
 
 struct AltContext {
   // corresponds to the ATV
-  std::vector<std::shared_ptr<VbkBlock>> vbk{};
+  std::vector<std::shared_ptr<VbkBlock>> context{};
+  std::unordered_map<std::shared_ptr<VbkBlock>, std::vector<PartialVTB>> vtbs{};
 
-  std::vector<PartialVTB> vtbs{};
-
-  bool empty() const noexcept { return vbk.empty() && vtbs.empty(); }
+  bool empty() const noexcept { return context.empty() && vtbs.empty(); }
 };
 
 }  // namespace altintegration
