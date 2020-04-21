@@ -108,8 +108,16 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(endorsedPrev, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(endorsed, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
+
+  AltTree temp = *alt;
+  EXPECT_EQ(temp, *alt);
+
   ASSERT_FALSE(alt->addPayloads(containing, {payloads}, state));
+
+  EXPECT_EQ(temp, *alt);
+
   ASSERT_EQ(
-      "bad-alt-payloads-stateful+apply-context+0+alt-accept-block+0+bad-prev-block",
+      "bad-alt-payloads-stateful+apply-context+0+alt-accept-block+0+bad-prev-"
+      "block",
       state.GetPath());
 }

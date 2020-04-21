@@ -3,6 +3,7 @@
 #include <util/pop_test_fixture.hpp>
 
 using namespace altintegration;
+
 /**
  *
  * VBK:
@@ -28,7 +29,6 @@ TEST_F(Scenario6, scenario_6) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
   AltTree test_alttree(altparam, vbkparam, btcparam);
 
-  // do not
   ASSERT_TRUE(test_alttree.bootstrap(state));
   ASSERT_TRUE(test_alttree.btc().bootstrapWithGenesis(state));
 

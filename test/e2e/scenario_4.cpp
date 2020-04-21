@@ -52,8 +52,14 @@ TEST_F(Scenario4, scenario_4) {
 
   altPayloads1.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+
+  AltTree temp = alttree;
+  EXPECT_EQ(temp, alttree);
+
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
   EXPECT_TRUE(state.IsValid());
+
+  EXPECT_NE(temp, alttree);
 
   // check vbk tree state
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip.getHash());

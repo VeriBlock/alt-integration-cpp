@@ -120,6 +120,8 @@ struct AltTree {
            cmp_ == o.cmp_;
   }
 
+  bool operator!=(const AltTree& o) const { return !(*this == o); }
+
  protected:
   std::vector<index_t*> chainTips_;
   block_index_t block_index_;
