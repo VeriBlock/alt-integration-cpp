@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <sstream>
 
 namespace altintegration {
 
@@ -19,9 +20,7 @@ class ValidationState {
  public:
   ValidationState() : m_mode(MODE_VALID) {}
 
-  std::string toString() const {
-    return GetPath() + ", " + GetDebugMessage();
-  }
+  std::string toString() const { return GetPath() + ", " + GetDebugMessage(); }
 
   /**
    * Changes this ValidationState into "INVALID" mode.
@@ -32,8 +31,10 @@ class ValidationState {
    * @return always returns false
    */
   bool Invalid(const std::string &reject_reason,
-               const std::string &debug_message = "") {
+               const std::string &debug_message = "",
+               size_t index = 0) {
     stack_trace.push_back(reject_reason);
+    stack_trace.push_back(std::to_string(index));
     if (!debug_message.empty()) {
       m_debug_message = debug_message;
     }
@@ -43,16 +44,8 @@ class ValidationState {
     return false;
   }
 
-  //! during validation of arrays, additional index can be attached, meaning
-  //! position of item in this array that is not valid.
-  ValidationState &addIndex(size_t index_) {
-    stack_trace.push_back(std::to_string(index_));
-    return *this;
-  }
-
-  ValidationState &addRejectReason(const std::string &reject_reason) {
-    stack_trace.push_back(reject_reason);
-    return *this;
+  bool Invalid(const std::string &reject_reason, size_t index) {
+    return Invalid(reject_reason, "", index);
   }
 
   /**
@@ -83,14 +76,16 @@ class ValidationState {
 
   std::string GetPath() const {
     auto parts = GetPathParts();
-    std::string out = "";
-    if (parts.size() == 0) return out;
-    out += parts[0];
-    for (size_t i = 1; i < parts.size(); i++) {
-      out += "+";
-      out += parts[i];
+    std::ostringstream ss;
+    if (parts.empty()) {
+      return {};
     }
-    return out;
+    ss << parts[0];
+    for (size_t i = 1; i < parts.size(); i++) {
+      ss << "+";
+      ss << parts[i];
+    }
+    return ss.str();
   }
 
  private:

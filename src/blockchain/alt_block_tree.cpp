@@ -281,7 +281,7 @@ bool AltTree::addPayloads(AltTree::PopForkComparator& cmp,
 
   if (!cmp.addPayloads(*index, payloads, state)) {
     index->containingContext.pop_back();
-    return state.Invalid("bad-atv-stateful");
+    return state.Invalid("bad-alt-payloads-stateful");
   }
 
   return true;
@@ -297,17 +297,21 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
         }
         const auto& ctx = index.containingContext.back();
         // apply context first
+        size_t i = 0;
         for (const auto& b : ctx.vbk) {
           if (!tree().acceptBlock(b, state)) {
-            return state.Invalid("alt-accept-block");
+            return state.Invalid("alt-accept-block", i);
           }
+          i++;
         }
 
         // apply all VTBs
+        i = 0;
         for (const auto& vtb : ctx.vtbs) {
           if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
-            return state.Invalid("alt-accept-block");
+            return state.Invalid("alt-accept-block", i);
           }
+          i++;
         }
 
         return true;
