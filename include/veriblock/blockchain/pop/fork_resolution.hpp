@@ -430,8 +430,7 @@ struct PopAwareForkResolutionComparator {
 
             // containing block must be correct (current)
             if (c.getContainingBlock().getHash() != index.getHash()) {
-              return state.addIndex(i).Invalid(
-                  "pop-comparator-bad-containing-block");
+              return state.Invalid("bad-containing-block", i);
             }
 
             // we need to add context blocks to current block index, before
@@ -441,7 +440,7 @@ struct PopAwareForkResolutionComparator {
             // first, check if context is valid.
             if (!sm.applyContext(index, state)) {
               removeContextFromBlockIndex(index, c);
-              return state.addIndex(i).Invalid("pop-comparator-apply-context");
+              return state.Invalid("apply-context", i);
             }
 
             if (c.containsEndorsements()) {
@@ -450,8 +449,7 @@ struct PopAwareForkResolutionComparator {
                                           sm.tree(),
                                           *protectedParams_,
                                           state)) {
-                return state.addIndex(i).Invalid(
-                    "pop-comparator-check-add-endorsement");
+                return state.Invalid("check-endorsement", i);
               }
             }
           }
