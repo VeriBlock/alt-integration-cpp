@@ -1,6 +1,6 @@
 #include "veriblock/entities/vbkpoptx.hpp"
 
-using namespace altintegration;
+namespace altintegration {
 
 VbkPopTx VbkPopTx::fromRaw(ReadStream& stream,
                            Slice<const uint8_t> _signature,
@@ -16,9 +16,7 @@ VbkPopTx VbkPopTx::fromRaw(ReadStream& stream,
   tx.blockOfProof = BtcBlock::fromVbkEncoding(stream);
 
   tx.blockOfProofContext = readArrayOf<BtcBlock>(
-      stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
-        return BtcBlock::fromVbkEncoding(stream);
-      });
+      stream, 0, MAX_CONTEXT_COUNT, BtcBlock::fromVbkEncoding);
   tx.signature = std::vector<uint8_t>(_signature.begin(), _signature.end());
   tx.publicKey = std::vector<uint8_t>(_publicKey.begin(), _publicKey.end());
 
@@ -60,3 +58,5 @@ uint256 VbkPopTx::getHash() const {
   toRaw(stream);
   return sha256(stream.data());
 }
+
+}  // namespace altintegration
