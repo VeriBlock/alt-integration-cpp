@@ -25,7 +25,7 @@ TEST(ValidationState, MultipleFormatting) {
 
 TEST(ValidationState, IndexFormatting) {
   altintegration::ValidationState state{};
-  bool ret = state.addIndex(1).Invalid("test", "Description");
+  bool ret = state.Invalid("test", "Description", 1);
   ASSERT_FALSE(ret);
   EXPECT_EQ(state.GetDebugMessage(), "Description");
   EXPECT_EQ(state.GetPath(), "test+1");

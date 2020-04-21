@@ -2,6 +2,7 @@
 #define ALT_INTEGRATION_VERIBLOCK_VALIDATION_STATE_HPP
 
 #include <algorithm>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -19,18 +20,8 @@ class ValidationState {
  public:
   ValidationState() : m_mode(MODE_VALID) {}
 
-  std::string toString() const {
-    return GetPath() + ", " + GetDebugMessage();
-  }
+  std::string toString() const { return GetPath() + ", " + GetDebugMessage(); }
 
-  /**
-   * Changes this ValidationState into "INVALID" mode.
-   * @param reject_reason - supply a short, unique message that identifies this
-   * class of validation. Example: mandatory-script-verify-flag-failed
-   * @param debug_message - supply arbitrary message that will help to debug the
-   * error.
-   * @return always returns false
-   */
   bool Invalid(const std::string &reject_reason,
                const std::string &debug_message = "") {
     stack_trace.push_back(reject_reason);
@@ -43,16 +34,23 @@ class ValidationState {
     return false;
   }
 
-  //! during validation of arrays, additional index can be attached, meaning
-  //! position of item in this array that is not valid.
-  ValidationState &addIndex(size_t index_) {
-    stack_trace.push_back(std::to_string(index_));
-    return *this;
+  /**
+   * Changes this ValidationState into "INVALID" mode.
+   * @param reject_reason - supply a short, unique message that identifies this
+   * class of validation. Example: mandatory-script-verify-flag-failed
+   * @param debug_message - supply arbitrary message that will help to debug the
+   * error.
+   * @return always returns false
+   */
+  bool Invalid(const std::string &reject_reason,
+               const std::string &debug_message,
+               size_t index) {
+    stack_trace.push_back(std::to_string(index));
+    return Invalid(reject_reason, debug_message);
   }
 
-  ValidationState &addRejectReason(const std::string &reject_reason) {
-    stack_trace.push_back(reject_reason);
-    return *this;
+  bool Invalid(const std::string &reject_reason, size_t index) {
+    return Invalid(reject_reason, "", index);
   }
 
   /**
@@ -83,14 +81,16 @@ class ValidationState {
 
   std::string GetPath() const {
     auto parts = GetPathParts();
-    std::string out = "";
-    if (parts.size() == 0) return out;
-    out += parts[0];
-    for (size_t i = 1; i < parts.size(); i++) {
-      out += "+";
-      out += parts[i];
+    std::ostringstream ss;
+    if (parts.empty()) {
+      return {};
     }
-    return out;
+    ss << parts[0];
+    for (size_t i = 1; i < parts.size(); i++) {
+      ss << "+";
+      ss << parts[i];
+    }
+    return ss.str();
   }
 
  private:

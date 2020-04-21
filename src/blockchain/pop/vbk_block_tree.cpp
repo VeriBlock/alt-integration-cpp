@@ -177,10 +177,12 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
         if (index.containingContext.empty()) {
           return true;
         }
+        size_t i = 0;
         for (const auto& b : index.containingContext.back().btc) {
           if (!tree().acceptBlock(b, state)) {
-            return state.Invalid("vbk-accept-block");
+            return state.Invalid("vbk-accept-block", i);
           }
+          i++;
         }
 
         return true;
