@@ -236,10 +236,8 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
 
   std::unordered_set<BtcBlock::hash_t> known_blocks;
 
-  for (const auto& el : index.containingContext) {
-    for (const auto& b : el.btc) {
-      known_blocks.insert(b->getHash());
-    }
+  for (const auto& b : ctx) {
+    known_blocks.insert(b->getHash());
   }
 
   auto add = [&](const std::shared_ptr<BtcBlock>& b) {

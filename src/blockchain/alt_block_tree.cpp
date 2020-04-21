@@ -351,11 +351,8 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   auto& ctx = index.containingContext.back();
 
   std::unordered_set<VbkBlock::hash_t> known_blocks;
-
-  for (const auto& el : index.containingContext) {
-    for (const auto& b : el.vbk) {
-      known_blocks.insert(b->getHash());
-    }
+  for (const auto& b : ctx.vbk) {
+    known_blocks.insert(b->getHash());
   }
 
   auto addBlock = [&](const VbkBlock& b) {
@@ -369,6 +366,14 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     }
   };
 
+  // process ATV
+  if (p.hasAtv) {
+    for (const auto& b : p.atv.context) {
+      addBlock(b);
+    }
+    addBlock(p.atv.containingBlock);
+  }
+
   // process VTBs
   for (const auto& vtb : p.vtbs) {
     for (const auto& b : vtb.context) {
@@ -377,14 +382,6 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     addBlock(vtb.getContainingBlock());
 
     ctx.vtbs.push_back(PartialVTB::fromVTB(vtb));
-  }
-
-  // process ATV
-  if (p.hasAtv) {
-    for (const auto& b : p.atv.context) {
-      addBlock(b);
-    }
-    addBlock(p.atv.containingBlock);
   }
 }
 
@@ -416,12 +413,12 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
         });
   };
 
-  // for every VTB, in reverse order
-  std::for_each(p.vtbs.rbegin(), p.vtbs.rend(), removeVTB);
   // remove ATV containing block
   removeBlock(p.atv.containingBlock);
   // remove ATV context
   std::for_each(p.atv.context.rbegin(), p.atv.context.rend(), removeBlock);
+  // for every VTB, in reverse order
+  std::for_each(p.vtbs.rbegin(), p.vtbs.rend(), removeVTB);
 
   vbk.erase(vbk_end, vbk.end());
   vtbs.erase(vtbs_end, vtbs.end());
