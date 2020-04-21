@@ -157,9 +157,7 @@ struct VbkChainParamsRegTest : public VbkChainParams {
 
   std::string networkName() const override { return "regtest"; }
 
-  uint32_t numBlocksForBootstrap() const noexcept override {
-    return getRetargetPeriod();
-  }
+  uint32_t numBlocksForBootstrap() const noexcept override { return 0; }
 
   // hex(1) = 1
   uint256 getMinimumDifficulty() const override {
