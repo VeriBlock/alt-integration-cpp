@@ -24,7 +24,7 @@ struct VbkContext {
 struct PartialVTB {
   std::vector<std::shared_ptr<BtcBlock>> btc{};
   std::shared_ptr<VbkBlock> containing{};
-  std::shared_ptr<BtcEndorsement> endorsement{};
+  BtcEndorsement endorsement{};
 
   /**
    * Return a containing VbkBlock

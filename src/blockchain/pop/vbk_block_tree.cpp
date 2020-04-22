@@ -208,7 +208,7 @@ void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
       ctx.begin(),
       end,
       [&p](const std::pair<eid_t, std::vector<std::shared_ptr<BtcBlock>>>& el) {
-        return p.endorsement->id == el.first;
+        return p.endorsement.id == el.first;
       });
 
   ctx.erase(end, ctx.end());
@@ -230,7 +230,7 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
   for (const auto& b : p.btc) {
     std::vector<std::shared_ptr<BtcBlock>> btc_vec;
     addBlockIfUnique(b, known_blocks, btc_vec, tree);
-    ctx.btc_context.push_back(std::make_pair(p.endorsement->id, btc_vec));
+    ctx.btc_context.push_back(std::make_pair(p.endorsement.id, btc_vec));
   }
 }
 
