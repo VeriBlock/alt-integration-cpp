@@ -90,3 +90,14 @@ jobs:
         run: cmake --build build
       - name: test
         run: cmake --build build --target RUN_TESTS
+
+macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+      - name: cmake
+        run: cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DTESTING=OFF -DWITH_ROCKSDB=OFF
+      - name: build
+        run: cmake --build build -- -j2
+
