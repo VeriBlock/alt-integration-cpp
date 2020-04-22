@@ -13,15 +13,18 @@ struct VbkBlock;
 struct VTB;
 
 struct VbkContext {
-  std::vector<std::shared_ptr<BtcBlock>> btc{};
+  using eid_t = typename BtcEndorsement::id_t;
 
-  bool empty() const noexcept { return btc.empty(); }
+  std::vector<std::pair<eid_t, std::vector<std::shared_ptr<BtcBlock>>>>
+      btc_context{};
+
+  bool empty() const noexcept { return btc_context.empty(); }
 };
 
 struct PartialVTB {
   std::vector<std::shared_ptr<BtcBlock>> btc{};
   std::shared_ptr<VbkBlock> containing{};
-  BtcEndorsement endorsement{};
+  std::shared_ptr<BtcEndorsement> endorsement{};
 
   /**
    * Return a containing VbkBlock

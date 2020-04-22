@@ -23,7 +23,7 @@ using namespace altintegration;
  * expect that Vbk tree state on the Vbk 67 block
  * expect that Vbk block 66 has 1 endorsement
  * Step 3
- * proccess Alt block height 12 with one VTB with the popTx2 (also have been updated the tip of the highest chain with one block, because we have created one ATV)
+ * proccess Alt block height 12 with one VTB with the popTx3 (also have been updated the tip of the highest chain with one block, because we have created one ATV)
  * expect that Vbk tree state on the Vbk 59 block (fork chain)
  * expect that Vbk block 66 has 1 endorsement
  * expect that Vbk block 59 has 1 endorsement

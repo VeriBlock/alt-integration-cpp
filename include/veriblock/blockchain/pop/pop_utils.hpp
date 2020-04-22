@@ -114,7 +114,7 @@ void removeFromEndorsedBy(
 template <typename BlockType, typename BlockTreeType>
 void addBlockIfUnique(
     const BlockType& block,
-    std::unordered_set<typename BlockType::hash_t> known_bocks,
+    std::unordered_set<typename BlockType::hash_t>& known_bocks,
     std::vector<std::shared_ptr<BlockType>>& vec,
     const BlockTreeType& tree) {
   typename BlockType::hash_t hash = block.getHash();
@@ -129,7 +129,7 @@ void addBlockIfUnique(
 template <typename BlockType, typename BlockTreeType>
 void addBlockIfUnique(
     const std::shared_ptr<BlockType>& block_ptr,
-    std::unordered_set<typename BlockType::hash_t> known_bocks,
+    std::unordered_set<typename BlockType::hash_t>& known_bocks,
     std::vector<std::shared_ptr<BlockType>>& vec,
     const BlockTreeType& tree) {
   typename BlockType::hash_t hash = block_ptr->getHash();

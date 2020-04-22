@@ -357,17 +357,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
       addBlockIfUnique(b, known_vbk_blocks, ctx.vbk, tree);
     }
     addBlockIfUnique(vtb.getContainingBlock(), known_vbk_blocks, ctx.vbk, tree);
-
-    PartialVTB p_vtb = PartialVTB::fromVTB(vtb);
-
-    // process BTC blocks
-    for (const auto& b : vtb.transaction.blockOfProofContext) {
-      addBlockIfUnique(b, known_btc_blocks, p_vtb.btc, tree.btc());
-    }
-    addBlockIfUnique(
-        vtb.transaction.blockOfProof, known_btc_blocks, p_vtb.btc, tree.btc());
-
-    ctx.vtbs.push_back(p_vtb);
+    ctx.vtbs.push_back(PartialVTB::fromVTB(vtb));
   }
 
   // process ATV

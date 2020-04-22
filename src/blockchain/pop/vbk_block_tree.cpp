@@ -169,11 +169,13 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
   return tryValidateWithResources(
       [&]() -> bool {
         size_t i = 0;
-        for (const auto& b : index.containingContext.btc) {
-          if (!tree().acceptBlock(b, state)) {
-            return state.Invalid("vbk-accept-block", i);
+        for (const auto& el : index.containingContext.btc_context) {
+          for (const auto& b : el.second) {
+            if (!tree().acceptBlock(b, state)) {
+              return state.Invalid("vbk-accept-block", i);
+            }
+            i++;
           }
-          i++;
         }
 
         return true;
@@ -186,8 +188,10 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
     const BlockIndex<VbkBlock>& index) {
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
-  for (const auto& b : index.containingContext.btc) {
-    tree().invalidateBlockByHash(b->getHash());
+  for (const auto& el : index.containingContext.btc_context) {
+    for (const auto& b : el.second) {
+      tree().invalidateBlockByHash(b->getHash());
+    }
   }
 
 }  // namespace altintegration
@@ -195,19 +199,17 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
 template <>
 void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
                                  const BlockIndex<VbkBlock>::payloads_t& p) {
-  auto& ctx = index.containingContext.btc;
-  auto end = ctx.end();
-  auto remove = [&](const std::shared_ptr<BtcBlock>& b) {
-    end = std::remove_if(
-        ctx.begin(), end, [&b](const std::shared_ptr<BtcBlock>& ptr) {
-          return *ptr == *b;
-        });
-  };
+  using eid_t = typename BlockIndex<VbkBlock>::eid_t;
 
-  // update block of proof context
-  for (const auto& b : p.btc) {
-    remove(b);
-  }
+  auto& ctx = index.containingContext.btc_context;
+  auto end = ctx.end();
+
+  end = std::remove_if(
+      ctx.begin(),
+      end,
+      [&p](const std::pair<eid_t, std::vector<std::shared_ptr<BtcBlock>>>& el) {
+        return p.endorsement->id == el.first;
+      });
 
   ctx.erase(end, ctx.end());
 }
@@ -216,15 +218,21 @@ template <>
 void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
                             const typename BlockIndex<VbkBlock>::payloads_t& p,
                             const BlockTree<BtcBlock, BtcChainParams>& tree) {
-  auto& ctx = index.containingContext.btc;
+  using eid_t = typename BlockIndex<VbkBlock>::eid_t;
+
+  auto& ctx = index.containingContext;
 
   std::unordered_set<BtcBlock::hash_t> known_blocks;
-  for (const auto& b : ctx) {
-    known_blocks.insert(b->getHash());
+  for (const auto& e : ctx.btc_context) {
+    for (const auto& b : e.second) {
+      known_blocks.insert(b->getHash());
+    }
   }
 
   for (const auto& b : p.btc) {
-    addBlockIfUnique(b, known_blocks, ctx, tree);
+    std::vector<std::shared_ptr<BtcBlock>> btc_vec;
+    addBlockIfUnique(b, known_blocks, btc_vec, tree);
+    ctx.btc_context.push_back(std::make_pair(p.endorsement->id, btc_vec));
   }
 }
 
