@@ -1,7 +1,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
-#include <deque>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -42,7 +41,7 @@ struct BlockIndex {
   std::vector<endorsement_t*> endorsedBy;
 
   //! list of containing context blocks that **change** current state
-  std::deque<context_t> containingContext{};
+  context_t containingContext{};
 
   //! height of the entry in the chain
   height_t height = 0;

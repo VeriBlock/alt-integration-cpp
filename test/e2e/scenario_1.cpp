@@ -128,12 +128,9 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     auto* index = alttree.getBlockIndex(lastBlock.getHash());
     EXPECT_NE(index, nullptr);
     auto altContext = index->containingContext;
-    if (altContext.size() == 0) return false;
-    for (const auto& c : altContext) {
-      for (const auto& v : c.vtbs) {
-        if (v == PartialVTB::fromVTB(vtb)) {
-          return true;
-        }
+    for (const auto& v : altContext.vtbs) {
+      if (v == PartialVTB::fromVTB(vtb)) {
+        return true;
       }
     }
     return false;
