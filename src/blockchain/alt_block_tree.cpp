@@ -428,7 +428,6 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
   };
 
   auto& vtbs = index.containingContext.back().vtbs;
-  auto vtbs_end = vtbs.end();
   auto removeVTB = [&](const VTB& vtb) {
     removeBlock(vtb.containingBlock);
     std::for_each(vtb.context.rbegin(), vtb.context.rend(), removeBlock);
