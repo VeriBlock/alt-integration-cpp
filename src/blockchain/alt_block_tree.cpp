@@ -447,6 +447,7 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
 
       if (pair_it->second.empty()) {
         pair_it = vtbs.erase(pair_it);
+        continue;
       }
       ++pair_it;
     }
