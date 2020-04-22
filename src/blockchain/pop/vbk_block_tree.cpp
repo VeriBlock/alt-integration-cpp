@@ -1,3 +1,4 @@
+#include <veriblock/blockchain/pop/pop_utils.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
 
@@ -218,22 +219,12 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
   auto& ctx = index.containingContext.btc;
 
   std::unordered_set<BtcBlock::hash_t> known_blocks;
-
   for (const auto& b : ctx) {
     known_blocks.insert(b->getHash());
   }
 
-  auto add = [&](const std::shared_ptr<BtcBlock>& b) {
-    auto hash = b->getHash();
-    // filter context: add only blocks that are unknown and not in current 'ctx'
-    // if we inserted into known_blocks and tree does not know about this block
-    if (known_blocks.insert(hash).second && !tree.getBlockIndex(hash)) {
-      ctx.push_back(b);
-    }
-  };
-
   for (const auto& b : p.btc) {
-    add(b);
+    addBlockIfUnique(b, known_blocks, ctx, tree);
   }
 }
 

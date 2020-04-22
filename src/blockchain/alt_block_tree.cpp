@@ -1,7 +1,5 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
 
-#include <set>
-
 #include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -338,28 +336,17 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
                             const VbkBlockTree& tree) {
   auto& ctx = index.containingContext;
 
-  std::unordered_set<VbkBlock::hash_t> known_blocks;
+  std::unordered_set<VbkBlock::hash_t> known_vbk_blocks;
   for (const auto& b : ctx.vbk) {
-    known_blocks.insert(b->getHash());
+    known_vbk_blocks.insert(b->getHash());
   }
-
-  auto addBlock = [&](const VbkBlock& b) {
-    auto hash = b.getHash();
-
-    // filter context: add only blocks that are unknown and not in current 'ctx'
-    // if we inserted into known_blocks and tree does not know about this block
-    if (known_blocks.insert(hash).second &&
-        tree.getBlockIndex(hash) == nullptr) {
-      ctx.vbk.push_back(std::make_shared<VbkBlock>(b));
-    }
-  };
 
   // process VTBs
   for (const auto& vtb : p.vtbs) {
     for (const auto& b : vtb.context) {
-      addBlock(b);
+      addBlockIfUnique(b, known_vbk_blocks, ctx.vbk, tree);
     }
-    addBlock(vtb.getContainingBlock());
+    addBlockIfUnique(vtb.getContainingBlock(), known_vbk_blocks, ctx.vbk, tree);
 
     ctx.vtbs.push_back(PartialVTB::fromVTB(vtb));
   }
@@ -367,9 +354,9 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   // process ATV
   if (p.hasAtv) {
     for (const auto& b : p.atv.context) {
-      addBlock(b);
+      addBlockIfUnique(b, known_vbk_blocks, ctx.vbk, tree);
     }
-    addBlock(p.atv.containingBlock);
+    addBlockIfUnique(p.atv.containingBlock, known_vbk_blocks, ctx.vbk, tree);
   }
 }
 
