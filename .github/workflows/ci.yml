@@ -93,11 +93,24 @@ jobs:
 
   macos:
     runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DCMAKE_BUILD_TYPE=Release"]
+    env:
+      CC: clang
+      CXX: clang++
+      CTEST_OUTPUT_ON_FAILURE: 1
     steps:
       - uses: actions/checkout@v1
         name: checkout
+        with:
+          submodules: recursive
+          clean: true
       - name: cmake
-        run: cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DTESTING=OFF -DWITH_ROCKSDB=OFF
+        run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
         run: cmake --build build -- -j2
+      - name: test
+        run: cd build && ctest
 
