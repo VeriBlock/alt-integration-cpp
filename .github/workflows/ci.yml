@@ -91,7 +91,7 @@ jobs:
       - name: test
         run: cmake --build build --target RUN_TESTS
 
-macos:
+  macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
