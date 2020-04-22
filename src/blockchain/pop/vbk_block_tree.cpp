@@ -218,8 +218,6 @@ template <>
 void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
                             const typename BlockIndex<VbkBlock>::payloads_t& p,
                             const BlockTree<BtcBlock, BtcChainParams>& tree) {
-  using eid_t = typename BlockIndex<VbkBlock>::eid_t;
-
   auto& ctx = index.containingContext;
 
   std::unordered_set<BtcBlock::hash_t> known_blocks;
