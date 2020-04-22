@@ -107,12 +107,7 @@ bool VbkBlockTree::addPayloads(PopForkComparator& cmp,
                          "AddPayloads should be executed on known blocks");
   }
 
-  // allocate a new element in the stack
-  context_t ctx;
-  index->containingContext.push_back(ctx);
-
   if (!cmp.addPayloads(*index, payloads, state)) {
-    index->containingContext.pop_back();
     return state.Invalid("bad-payloads-stateful");
   }
 
@@ -136,17 +131,15 @@ bool VbkBlockTree::addPayloads(PopForkComparator& cmp,
 void VbkBlockTree::removePayloads(const VbkBlock& block,
                                   const std::vector<payloads_t>& payloads) {
   auto* index = getBlockIndex(block.getHash());
-  removePayloads(index, payloads);
+  if (index != nullptr) {
+    removePayloads(index, payloads);
+  }
 }
 
 void VbkBlockTree::removePayloads(index_t* index,
                                   const std::vector<payloads_t>& payloads) {
   assert(index);
   cmp_.removePayloads(*index, payloads);
-  if (!index->containingContext.empty() &&
-      index->containingContext.back().empty()) {
-    index->containingContext.pop_back();
-  }
 
   determineBestChain(activeChain_, *index);
 }
@@ -174,11 +167,8 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
     const BlockIndex<VbkBlock>& index, ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
-        if (index.containingContext.empty()) {
-          return true;
-        }
         size_t i = 0;
-        for (const auto& b : index.containingContext.back().btc) {
+        for (const auto& b : index.containingContext.btc) {
           if (!tree().acceptBlock(b, state)) {
             return state.Invalid("vbk-accept-block", i);
           }
@@ -195,10 +185,7 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
     const BlockIndex<VbkBlock>& index) {
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
-  if (index.containingContext.empty()) {
-    return;
-  }
-  for (const auto& b : index.containingContext.back().btc) {
+  for (const auto& b : index.containingContext.btc) {
     tree().invalidateBlockByHash(b->getHash());
   }
 
@@ -207,11 +194,7 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
 template <>
 void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
                                  const BlockIndex<VbkBlock>::payloads_t& p) {
-  if (index.containingContext.empty()) {
-    return;
-  }
-
-  auto& ctx = index.containingContext.back().btc;
+  auto& ctx = index.containingContext.btc;
   auto end = ctx.end();
   auto remove = [&](const std::shared_ptr<BtcBlock>& b) {
     end = std::remove_if(
@@ -232,9 +215,7 @@ template <>
 void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
                             const typename BlockIndex<VbkBlock>::payloads_t& p,
                             const BlockTree<BtcBlock, BtcChainParams>& tree) {
-  assert(!index.containingContext.empty());
-
-  auto& ctx = index.containingContext.back().btc;
+  auto& ctx = index.containingContext.btc;
 
   std::unordered_set<BtcBlock::hash_t> known_blocks;
 

@@ -72,6 +72,6 @@ TEST_F(Scenario6, scenario_6) {
 
   EXPECT_EQ(*test_alttree.vbk().getBestChain().tip(), *vbkTip);
   EXPECT_EQ(test_alttree.vbk().getBestChain().blocksCount(), 1);
-  EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->containingContext.size(),
-            0);
+  EXPECT_EQ(
+      test_alttree.vbk().getBestChain().tip()->containingContext.btc.size(), 0);
 }
