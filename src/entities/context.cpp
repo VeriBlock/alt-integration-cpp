@@ -7,13 +7,6 @@ namespace altintegration {
 PartialVTB PartialVTB::fromVTB(const VTB& vtb) {
   PartialVTB p_vtb;
   p_vtb.endorsement = BtcEndorsement::fromContainer(vtb);
-
-  p_vtb.btc.reserve(vtb.transaction.blockOfProofContext.size() + 1);
-  for (const auto& b : vtb.transaction.blockOfProofContext) {
-    p_vtb.btc.push_back(std::make_shared<BtcBlock>(b));
-  }
-  p_vtb.btc.push_back(std::make_shared<BtcBlock>(vtb.transaction.blockOfProof));
-
   p_vtb.containing = std::make_shared<VbkBlock>(vtb.containingBlock);
 
   return p_vtb;
@@ -43,14 +36,7 @@ typename BtcEndorsement::id_t PartialVTB::getEndorsementId() const {
 }
 
 bool operator==(const PartialVTB& a, const PartialVTB& b) {
-  bool is_equal = a.btc.size() == b.btc.size();
-  for (size_t i = 0; i < a.btc.size() && is_equal; ++i) {
-    if (*a.btc[i] != *b.btc[i]) {
-      is_equal = false;
-    }
-  }
-  return is_equal && a.endorsement == b.endorsement &&
-         *a.containing == *b.containing;
+  return a.endorsement == b.endorsement && *a.containing == *b.containing;
 }
 
 }  // namespace altintegration
