@@ -60,7 +60,7 @@ struct PartialVTB {
 struct AltContext {
   // corresponds to the ATV
   std::vector<std::shared_ptr<VbkBlock>> context{};
-  std::unordered_map<std::shared_ptr<VbkBlock>, std::vector<PartialVTB>> vtbs{};
+  std::vector<std::pair<std::shared_ptr<VbkBlock>, std::vector<PartialVTB>>> vtbs{};
 
   bool empty() const noexcept { return context.empty() && vtbs.empty(); }
 };

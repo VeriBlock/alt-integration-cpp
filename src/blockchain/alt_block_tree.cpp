@@ -1,6 +1,7 @@
+#include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <set>
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -354,15 +355,17 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     known_blocks.insert(b->getHash());
   }
 
-  auto addBlock = [&](const VbkBlock& b) {
+  auto addBlock = [&](const VbkBlock& b) -> std::shared_ptr<VbkBlock> {
     auto hash = b.getHash();
+    auto* index = tree.getBlockIndex(hash);
 
     // filter context: add only blocks that are unknown and not in current 'ctx'
     // if we inserted into known_blocks and tree does not know about this block
-    if (known_blocks.insert(hash).second &&
-        tree.getBlockIndex(hash) == nullptr) {
+    if (known_blocks.insert(hash).second && index == nullptr) {
       ctx.context.push_back(std::make_shared<VbkBlock>(b));
+      return *ctx.context.rbegin();
     }
+    return index != nullptr ? index->header : nullptr;
   };
 
   // process VTBs
@@ -370,19 +373,33 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     for (const auto& b : vtb.context) {
       addBlock(b);
     }
-    addBlock(vtb.getContainingBlock());
+    auto block_ptr = addBlock(vtb.getContainingBlock());
 
     auto p_vtb = PartialVTB::fromVTB(vtb);
 
-    auto block_ptr =
-        std::find_if(ctx.context.rbegin(),
-                     ctx.context.rend(),
-                     [&](const std::shared_ptr<VbkBlock>& ptr) -> bool {
-                       return *ptr == vtb.getContainingBlock();
-                     });
+    if (block_ptr == nullptr) {
+      block_ptr =
+          *std::find_if(ctx.context.rbegin(),
+                        ctx.context.rend(),
+                        [&](const std::shared_ptr<VbkBlock>& ptr) -> bool {
+                          return *ptr == vtb.getContainingBlock();
+                        });
+    }
+    p_vtb.containing = block_ptr;
 
-    p_vtb.containing = *block_ptr;
-    ctx.vtbs[*block_ptr].push_back(p_vtb);
+    auto it = std::find_if(
+        ctx.vtbs.begin(),
+        ctx.vtbs.end(),
+        [&block_ptr](
+            const std::pair<std::shared_ptr<VbkBlock>, std::vector<PartialVTB>>&
+                el) -> bool { return el.first == block_ptr; });
+
+    if (it != ctx.vtbs.end()) {
+      it->second.push_back(p_vtb);
+    } else {
+      ctx.vtbs.push_back(
+          std::make_pair(block_ptr, std::vector<PartialVTB>{p_vtb}));
+    }
   }
 
   // process ATV
@@ -416,10 +433,24 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
     removeBlock(vtb.containingBlock);
     std::for_each(vtb.context.rbegin(), vtb.context.rend(), removeBlock);
 
-    vtbs_end =
-        std::remove_if(vtbs.begin(), vtbs_end, [&vtb](const PartialVTB& p_vtb) {
-          return p_vtb == PartialVTB::fromVTB(vtb);
-        });
+    PartialVTB p_vtb = PartialVTB::fromVTB(vtb);
+
+    for (auto pair_it = vtbs.begin(); pair_it != vtbs.end();) {
+      if (*pair_it->first == *p_vtb.containing) {
+        for (auto it = pair_it->second.begin(); it != pair_it->second.end();) {
+          if (*it == p_vtb) {
+            it == pair_it->second.erase(it);
+            continue;
+          }
+          ++it;
+        }
+      }
+
+      if (pair_it->second.empty()) {
+        pair_it = vtbs.erase(pair_it);
+      }
+      ++pair_it;
+    }
   };
 
   // remove ATV containing block
@@ -430,7 +461,6 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
   std::for_each(p.vtbs.rbegin(), p.vtbs.rend(), removeVTB);
 
   vbk.erase(vbk_end, vbk.end());
-  vtbs.erase(vtbs_end, vtbs.end());
 }
 
 }  // namespace altintegration
