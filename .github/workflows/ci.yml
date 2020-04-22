@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DASAN=ON", "-DCMAKE_BUILD_TYPE=Release"]
+        flags: ["-DCMAKE_BUILD_TYPE=Release"]
     env:
       CC: clang
       CXX: clang++
