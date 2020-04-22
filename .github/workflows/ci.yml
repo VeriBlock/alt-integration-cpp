@@ -90,3 +90,27 @@ jobs:
         run: cmake --build build
       - name: test
         run: cmake --build build --target RUN_TESTS
+
+  macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flags: ["-DCMAKE_BUILD_TYPE=Release"]
+    env:
+      CC: clang
+      CXX: clang++
+      CTEST_OUTPUT_ON_FAILURE: 1
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: recursive
+          clean: true
+      - name: cmake
+        run: cmake . -Bbuild ${{ matrix.flags }}
+      - name: build
+        run: cmake --build build -- -j2
+      - name: test
+        run: cd build && ctest
+
