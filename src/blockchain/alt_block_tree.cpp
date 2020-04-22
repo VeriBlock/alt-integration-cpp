@@ -439,7 +439,7 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
       if (*pair_it->first == *p_vtb.containing) {
         for (auto it = pair_it->second.begin(); it != pair_it->second.end();) {
           if (*it == p_vtb) {
-            it == pair_it->second.erase(it);
+            it = pair_it->second.erase(it);
             continue;
           }
           ++it;

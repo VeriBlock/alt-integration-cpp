@@ -130,9 +130,11 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     auto altContext = index->containingContext;
     if (altContext.size() == 0) return false;
     for (const auto& c : altContext) {
-      for (const auto& v : c.vtbs) {
-        if (v == PartialVTB::fromVTB(vtb)) {
-          return true;
+      for (const auto& el : c.vtbs) {
+        for (const auto& v : el.second) {
+          if (v == PartialVTB::fromVTB(vtb)) {
+            return true;
+          }
         }
       }
     }
