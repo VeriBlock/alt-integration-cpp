@@ -95,6 +95,9 @@ void removeFromEndorsedBy(
     const typename ProtectedIndex::endorsement_t* endorsement) {
   using endorsement_t = typename ProtectedIndex::endorsement_t;
 
+  if (endorsement == nullptr) {
+    return;
+  }
   auto endorsed = index.getAncestor(endorsement->endorsedHeight);
   if (endorsed) {
     auto& endorsements = const_cast<ProtectedIndex*>(endorsed)->endorsedBy;
