@@ -293,7 +293,6 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
           }
 
           // apply all VTBs
-
           for (const auto& vtb : ctx.second.vtbs) {
             if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
               return state.Invalid("alt-accept-block");
@@ -340,8 +339,13 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
       known_vbk_blocks.insert(b->getHash());
     }
   }
+  // default value
+  uint256 e_id{};
+  if (p.containsEndorsements()) {
+    e_id = VbkEndorsement::getId(p);
+  }
 
-  auto& ctx = index.containingContext[VbkEndorsement::getId(p)];
+  auto& ctx = index.containingContext[e_id];
   // process VTBs
   for (const auto& vtb : p.vtbs) {
     // process VBK blocks
