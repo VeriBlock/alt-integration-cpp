@@ -13,7 +13,7 @@ struct Command {
   virtual void UnExecute() = 0;
 
   //! debug method. returns a string describing this command
-  virtual std::string describe() const = 0;
+  virtual std::string toPrettyString() const = 0;
 };
 
 using CommandPtr = std::shared_ptr<Command>;

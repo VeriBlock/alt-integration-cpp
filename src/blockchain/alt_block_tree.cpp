@@ -271,6 +271,8 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
     }
   }
 
+  history.save(index->commands);
+
   return true;
 }
 
@@ -290,7 +292,7 @@ bool processPayloads<AltTree>(AltTree& tree,
   // start with VTBs
   size_t i = 0;
   for (const auto& vtb : p.vtbs) {
-    if (!processPayloads<VbkBlockTree>(
+    if (!processPayloads(
             tree.vbk(), vtb.containingBlock.getHash(), vtb, state, history)) {
       return state.Invalid("vtb-process-payloads", i);
     }
@@ -328,7 +330,7 @@ bool processPayloads<AltTree>(AltTree& tree,
 }
 
 template <>
-std::string AddVbkEndorsement::describe() const {
+std::string AddVbkEndorsement::toPrettyString() const {
   auto vbkbest = tree_->getBestChain().tip()->toPrettyString();
   auto btcbest = tree_->btc().getBestChain().tip()->toPrettyString();
   return "AddVbkEndorsement{endorsement=" + e_->toPrettyString() +

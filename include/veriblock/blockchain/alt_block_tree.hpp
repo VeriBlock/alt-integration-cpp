@@ -142,7 +142,7 @@ bool processPayloads<AltTree>(AltTree& tree,
                               CommandHistory& history);
 
 template <>
-std::string AddVbkEndorsement::describe() const;
+std::string AddVbkEndorsement::toPrettyString() const;
 
 }  // namespace altintegration
 

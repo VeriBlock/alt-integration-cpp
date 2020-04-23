@@ -70,7 +70,7 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
                                    CommandHistory& history);
 
 template <>
-std::string AddBtcEndorsement::describe() const;
+std::string AddBtcEndorsement::toPrettyString() const;
 
 }  // namespace altintegration
 

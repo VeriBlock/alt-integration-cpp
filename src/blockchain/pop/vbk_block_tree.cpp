@@ -135,6 +135,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
     }
   }
 
+  history.save(index->commands);
+
   // if this index is the part of the some fork_chain set to the tip of that
   // fork for the correct determineBestChain() processing
   std::vector<index_t*> forkTips;
@@ -199,7 +201,7 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
 }
 
 template <>
-std::string AddBtcEndorsement::describe() const {
+std::string AddBtcEndorsement::toPrettyString() const {
   auto btcbest = tree_->getBestChain().tip()->toPrettyString();
   return "AddVbkEndorsement{endorsement=" + e_->toPrettyString() +
          ", btcBest=" + btcbest + "}";

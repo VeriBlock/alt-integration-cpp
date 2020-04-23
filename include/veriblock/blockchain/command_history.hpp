@@ -1,9 +1,9 @@
 #ifndef ALTINTEGRATION_COMMAND_HISTORY_HPP
 #define ALTINTEGRATION_COMMAND_HISTORY_HPP
 
+#include <deque>
 #include <memory>
 #include <sstream>
-#include <deque>
 #include <veriblock/blockchain/command.hpp>
 
 namespace altintegration {
@@ -16,38 +16,42 @@ struct CommandHistory {
     return cmd->Execute(state);
   }
 
+  void save(std::vector<CommandPtr>& out) const {
+    out.reserve(out.size() + undo_.size());
+    for (const auto& cmd : undo_) {
+      out.push_back(cmd);
+    }
+  }
+
   void undoAll() {
     while (hasUndo()) {
       undo();
     }
   }
 
+  //! prior to calling this function, check if `undo` queue is empty
   void undo() {
     auto cmd = undo_.back();
     cmd->UnExecute();
     undo_.pop_back();
-    redo_.push_back(cmd);
-  }
-
-  bool redo(ValidationState& state) {
-    auto cmd = redo_.back();
-    bool ret = cmd->Execute(state);
-    redo_.pop_back();
-    undo_.push_back(cmd);
-    return ret;
   }
 
   bool hasUndo() const noexcept { return !undo_.empty(); }
-  bool hasRedo() const noexcept { return !redo_.empty(); }
 
-  void clear() {
-    undo_.clear();
-    redo_.clear();
+  void clear() { undo_.clear(); }
+
+  std::string toPrettyString() const {
+    std::ostringstream ss;
+    ss << "History{size=" << undo_.size() << "}\n";
+    for (const auto& cmd : undo_) {
+      ss << cmd->toPrettyString() << "\n";
+    }
+    ss << "}\n";
+    return ss.str();
   }
 
  private:
   storage_t undo_;
-  storage_t redo_;
 };
 
 }  // namespace altintegration
