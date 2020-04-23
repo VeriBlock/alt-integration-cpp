@@ -188,10 +188,10 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
       *chain.tip()->pprev->header, *newIndex.header);
 
-  newIndex.containingContext[endorsement1.id].setEndorsement(
-      std::make_shared<endorsement_t>(endorsement1));
-  newIndex.containingContext[endorsement2.id].setEndorsement(
-      std::make_shared<endorsement_t>(endorsement2));
+  newIndex.getContext(endorsement1.id)
+      .setEndorsement(std::make_shared<endorsement_t>(endorsement1));
+  newIndex.getContext(endorsement2.id)
+      .setEndorsement(std::make_shared<endorsement_t>(endorsement2));
 
   chain.setTip(&newIndex);
 
@@ -202,21 +202,21 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
       *chain.tip()->pprev->header, *newIndex2.header);
 
-  newIndex2.containingContext[endorsement3.id].setEndorsement(
-      std::make_shared<endorsement_t>(endorsement3));
+  newIndex2.getContext(endorsement3.id)
+      .setEndorsement(std::make_shared<endorsement_t>(endorsement3));
 
   chain.setTip(&newIndex2);
 
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement1, 100)
-                 ->containingContext[endorsement1.id]
+                 ->getContext(endorsement1.id)
                  .getEndorsement(),
             endorsement1);
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement2, 100)
-                 ->containingContext[endorsement2.id]
+                 ->getContext(endorsement1.id)
                  .getEndorsement(),
             endorsement2);
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement3, 100)
-                 ->containingContext[endorsement3.id]
+                 ->getContext(endorsement1.id)
                  .getEndorsement(),
             endorsement3);
   EXPECT_EQ(chain.findBlockContainingEndorsement(endorsement4, 100), nullptr);

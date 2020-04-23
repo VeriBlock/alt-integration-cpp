@@ -2,7 +2,6 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
 #include <memory>
-#include <unordered_map>
 #include <vector>
 #include <veriblock/validation_state.hpp>
 
@@ -35,7 +34,7 @@ struct BlockIndex {
 
   //! list of endorsements and containing context blocks that **change** current
   //! state
-  std::unordered_map<eid_t, context_t> containingContext{};
+  std::vector<std::pair<eid_t, context_t>> containingContext{};
 
   //! list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
@@ -97,6 +96,33 @@ struct BlockIndex {
     WriteStream stream;
     toRaw(stream);
     return stream.data();
+  }
+
+  context_t& getContext(const eid_t& id) {
+    auto it =
+        std::find_if(containingContext.begin(),
+                     containingContext.end(),
+                     [&id](const std::pair<eid_t, context_t>& pair) -> bool {
+                       return pair.first == id;
+                     });
+    if (it != containingContext.end()) {
+      return it->second;
+    }
+    containingContext.push_back(std::make_pair(id, context_t()));
+
+    return containingContext.rbegin()->second;
+  }
+
+  void removeContext(const eid_t& id) {
+    auto it =
+        std::find_if(containingContext.begin(),
+                     containingContext.end(),
+                     [&id](const std::pair<eid_t, context_t>& pair) -> bool {
+                       return pair.first == id;
+                     });
+    if (it != containingContext.end()) {
+      containingContext.erase(it);
+    }
   }
 
   static BlockIndex fromRaw(ReadStream& stream) {

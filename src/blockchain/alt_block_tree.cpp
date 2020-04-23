@@ -295,7 +295,7 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
           // apply all VTBs
           for (const auto& vtb : ctx.second.vtbs) {
             if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
-              return state.Invalid("alt-accept-block");
+              return state.Invalid("alt-add-payloads");
             }
           }
         }
@@ -345,7 +345,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     e_id = VbkEndorsement::getId(p);
   }
 
-  auto& ctx = index.containingContext[e_id];
+  auto& ctx = index.getContext(e_id);
   // process VTBs
   for (const auto& vtb : p.vtbs) {
     // process VBK blocks
@@ -368,11 +368,9 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
 template <>
 void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
                                  const BlockIndex<AltBlock>::payloads_t& p) {
-  auto it = index.containingContext.find(VbkEndorsement::getId(p));
-  if (it != index.containingContext.end()) {
-    it->second.vbk.clear();
-    it->second.vtbs.clear();
-  }
+  auto& ctx = index.getContext(VbkEndorsement::getId(p));
+  ctx.vbk.clear();
+  ctx.vtbs.clear();
 }
 
 }  // namespace altintegration

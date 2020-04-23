@@ -388,10 +388,10 @@ struct PopAwareForkResolutionComparator {
     // reverse order (this should be faster)
     std::for_each(
         payloads.rbegin(), payloads.rend(), [&](const protected_payloads_t& p) {
+          removeContextFromBlockIndex(index, p);
           if (p.containsEndorsements()) {
             removeEndorsement(index, p.getEndorsementId());
           }
-          removeContextFromBlockIndex(index, p);
         });
 
     // apply remaining context from this block

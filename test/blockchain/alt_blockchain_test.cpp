@@ -40,8 +40,8 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   auto* endorsedBlockIndex = alttree.getBlockIndex(endorsement1.endorsedHash);
   auto* containingBlockIndex1 =
       alttree.getBlockIndex(endorsement1.containingHash);
-  EXPECT_TRUE(containingBlockIndex1->containingContext.find(endorsement1.id) !=
-              containingBlockIndex1->containingContext.end());
+  EXPECT_NE(containingBlockIndex1->getContext(endorsement1.id).getEndorsement(),
+            nullptr);
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   // generate endorsements
@@ -61,8 +61,8 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   auto* containingBlockIndex2 =
       alttree.getBlockIndex(endorsement2.containingHash);
-  EXPECT_TRUE(containingBlockIndex2->containingContext.find(endorsement2.id) !=
-              containingBlockIndex2->containingContext.end());
+  EXPECT_NE(containingBlockIndex2->getContext(endorsement2.id).getEndorsement(),
+            nullptr);
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 2);
 
   tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
@@ -81,8 +81,8 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   endorsedBlockIndex = alttree.getBlockIndex(endorsement3.endorsedHash);
   auto* containingBlockIndex3 =
       alttree.getBlockIndex(endorsement3.containingHash);
-  EXPECT_TRUE(containingBlockIndex3->containingContext.find(endorsement3.id) !=
-              containingBlockIndex3->containingContext.end());
+  EXPECT_NE(containingBlockIndex3->getContext(endorsement3.id).getEndorsement(),
+            nullptr);
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 3);
 
   // remove block
@@ -90,9 +90,9 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   alttree.invalidateBlockByHash(removeBlock.getHash());
 
   containingBlockIndex3 = alttree.getBlockIndex(endorsement3.containingHash);
-  EXPECT_TRUE(containingBlockIndex3->containingContext.find(endorsement3.id) !=
-              containingBlockIndex3->containingContext.end());
 
+  EXPECT_NE(containingBlockIndex3->getContext(endorsement3.id).getEndorsement(),
+            nullptr);
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 

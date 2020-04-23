@@ -54,7 +54,7 @@ bool checkAndAddEndorsement(
   }
 
   // Add endorsement into BlockIndex
-  auto& ctx = index.containingContext[endorsement.id];
+  auto& ctx = index.getContext(endorsement.id);
   ctx.setEndorsement(std::make_shared<endorsement_t>(endorsement));
 
   auto* eptr = ctx.getEndorsement().get();
@@ -67,17 +67,12 @@ template <typename ProtectedIndex>
 void removeEndorsement(
     ProtectedIndex& index,
     const typename ProtectedIndex::endorsement_t::id_t& eid) {
-  auto endorsementit = index.containingContext.find(eid);
-  if (endorsementit == index.containingContext.end()) {
-    return;
-  }
-
-  auto& endorsement_ptr = endorsementit->second;
+  auto& ctx = index.getContext(eid);
 
   // remove from 'endorsedBy'
-  removeFromEndorsedBy(index, endorsement_ptr.getEndorsement().get());
+  removeFromEndorsedBy(index, ctx.getEndorsement().get());
   // remove from 'containing endorsements'
-  index.containingContext.erase(endorsementit);
+  index.removeContext(eid);
 }
 
 template <typename ProtectedIndex>

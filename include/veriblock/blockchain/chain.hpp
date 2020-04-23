@@ -151,13 +151,21 @@ struct Chain {
   index_t* findBlockContainingEndorsement(
       const typename index_t::endorsement_t& e,
       const uint32_t& endorsement_settlement_interval) {
+    using eid_t = typename index_t::eid_t;
+    using context_t = typename index_t::context_t;
+
     index_t* workBlock = tip();
 
     for (uint32_t count = 0; count < endorsement_settlement_interval &&
                              workBlock && workBlock->height >= startHeight_ &&
                              e.endorsedHash != workBlock->getHash();
          count++) {
-      auto it = workBlock->containingContext.find(e.id);
+      auto it =
+          std::find_if(workBlock->containingContext.begin(),
+                       workBlock->containingContext.end(),
+                       [&e](const std::pair<eid_t, context_t>& pair) -> bool {
+                         return pair.first == e.id;
+                       });
       if (it != workBlock->containingContext.end() &&
           it->second.getEndorsement() != nullptr) {
         return workBlock;
