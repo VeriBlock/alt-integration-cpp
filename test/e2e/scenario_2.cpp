@@ -106,6 +106,7 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
   EXPECT_TRUE(state.IsValid());
+  EXPECT_EQ(state.GetPath(), "");
 
   containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
   EXPECT_TRUE(containinVbkBlock->containingContext.count(
