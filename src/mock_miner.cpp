@@ -284,12 +284,11 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                  });
 
   if (!tree.acceptBlock(containingBlock, state)) {
-    throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
+    throw std::domain_error(state.toString());
   }
 
-  CommandHistory history;
-  if (!tree.addPayloads(containingBlock.getHash(), vtbs, state, history)) {
-    throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
+  if (!tree.addPayloads(containingBlock.getHash(), vtbs, state)) {
+    throw std::domain_error(state.toString());
   }
 
   vbkPayloads[containingBlock.getHash()] = vtbs;

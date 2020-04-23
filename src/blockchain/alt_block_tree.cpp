@@ -241,8 +241,7 @@ int AltTree::compareTwoBranches(const hash_t& chain1, const hash_t& chain2) {
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,
                           const std::vector<payloads_t>& payloads,
-                          ValidationState& state,
-                          CommandHistory& history) {
+                          ValidationState& state) {
   auto hash = containingBlock.getHash();
   auto* index = getBlockIndex(hash);
   if (index == nullptr) {
@@ -255,6 +254,8 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
   bool ret = cmp_.setState(*index, state);
   assert(ret);
   (void)ret;
+
+  CommandHistory history;
 
   // set initial state machine state = current index
   for (size_t i = 0, size = payloads.size(); i < size; i++) {
@@ -283,7 +284,7 @@ bool processPayloads<AltTree>(AltTree& tree,
                               ValidationState& state,
                               CommandHistory& history) {
   auto* containing = tree.getBlockIndex(containingHash);
-  if (!containing) {
+  if (containing == nullptr) {
     return state.Invalid(
         "alt-no-containing-block",
         "Can't find containing block in ALT tree: " + HexStr(containingHash));
@@ -299,11 +300,6 @@ bool processPayloads<AltTree>(AltTree& tree,
     i++;
   }
 
-  // process ATV
-  if (!p.hasAtv) {
-    return true;
-  }
-
   // start with context
   i = 0;
   for (const auto& b : p.atv.context) {
@@ -311,6 +307,11 @@ bool processPayloads<AltTree>(AltTree& tree,
       return state.Invalid("bad-atvcontext-vbk-block", i);
     }
     i++;
+  }
+
+  // process ATV
+  if (!p.hasAtv) {
+    return true;
   }
 
   // add block of proof

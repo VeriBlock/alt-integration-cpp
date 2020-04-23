@@ -73,8 +73,7 @@ struct AltTree {
   //! payloads.
   bool addPayloads(const AltBlock& containingBlock,
                    const std::vector<payloads_t>& payloads,
-                   ValidationState& state,
-                   CommandHistory& history);
+                   ValidationState& state);
 
   //! set POP state to some known block, for example, when we remove a block or
   bool setState(const AltBlock::hash_t& to, ValidationState& state);

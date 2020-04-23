@@ -107,10 +107,9 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
 
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
                                const std::vector<payloads_t>& payloads,
-                               ValidationState& state,
-                               CommandHistory& history) {
+                               ValidationState& state) {
   auto* index = getBlockIndex(block);
-  if (!index) {
+  if (index == nullptr) {
     return state.Invalid("unknown-block",
                          "AddPayloads should be executed on known blocks");
   }
@@ -118,6 +117,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
   bool ret = cmp_.setState(*index, state);
   assert(ret);
   (void)ret;
+
+  CommandHistory history;
 
   // set initial state machine state = current index
   for (size_t i = 0, size = payloads.size(); i < size; i++) {
@@ -159,12 +160,14 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
                                    const VTB& p,
                                    ValidationState& state,
                                    CommandHistory& history) {
-  auto* containing = tree.getBlockIndex(containingHash);
-  if (!containing) {
-    return state.Invalid(
-        "vbk-no-containing-block",
-        "Can't find VTB's containing block in VBK: " + containingHash.toHex());
-  }
+  (void)containingHash;
+  //  auto* containing = tree.getBlockIndex(containingHash);
+  //  if (containing == nullptr) {
+  //    return state.Invalid(
+  //        "vbk-no-containing-block",
+  //        "Can't find VTB's containing block in VBK: " +
+  //        containingHash.toHex());
+  //  }
 
   size_t i = 0;
   // process BTC blocks first
@@ -190,9 +193,10 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
   }
 
   // add endorsement
+  auto* containingBlock = tree.getBlockIndex(p.containingBlock.getHash());
   auto e = BtcEndorsement::fromContainerPtr(p);
   auto cmd = std::make_shared<AddBtcEndorsement>(
-      tree.btc(), tree.getParams(), *containing, std::move(e));
+      tree.btc(), tree.getParams(), *containingBlock, std::move(e));
   if (!history.exec(cmd, state)) {
     return state.Invalid("vtb-bad-endorsement");
   }
@@ -202,8 +206,8 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
 template <>
 std::string AddBtcEndorsement::toPrettyString() const {
   auto btcbest = tree_->getBestChain().tip()->toPrettyString();
-  return "AddVbkEndorsement{endorsement=" + e_->toPrettyString() +
-         ", btcBest=" + btcbest + "}";
+  return "AddVbkEndorsement{" + e_->toPrettyString() + ", btcBest=" + btcbest +
+         "}";
 }
 
 }  // namespace altintegration

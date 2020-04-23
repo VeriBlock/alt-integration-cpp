@@ -20,8 +20,7 @@ std::string BtcEndorsement::toPrettyString() const {
   ss << "blockOfProof=" << hash(blockOfProof.toHex()) << ", ";
   ss << "containingHash=" << hash(containingHash.toHex()) << ", ";
   ss << "endorsedHash=" << hash(endorsedHash.toHex()) << ", ";
-  ss << "endorsedHeight=" << endorsedHeight << ", ";
-  ss << "payoutInfo=" << hash(HexStr(payoutInfo)) << "}";
+  ss << "endorsedHeight=" << endorsedHeight << "}";
   return ss.str();
 }
 
@@ -45,8 +44,7 @@ std::string VbkEndorsement::toPrettyString() const {
   ss << "blockOfProof=" << hash(blockOfProof.toHex()) << ", ";
   ss << "containingHash=" << hash(HexStr(containingHash)) << ", ";
   ss << "endorsedHash=" << hash(HexStr(endorsedHash)) << ", ";
-  ss << "endorsedHeight=" << endorsedHeight << ", ";
-  ss << "payoutInfo=" << hash(HexStr(payoutInfo)) << "}";
+  ss << "endorsedHeight=" << endorsedHeight << "}";
   return ss.str();
 }
 

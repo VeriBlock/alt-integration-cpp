@@ -11,6 +11,7 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
 
+#include <iostream>
 namespace altintegration {
 
 /// @invariant NOT atomic - given a block tree, if any of functions fail, state
@@ -37,16 +38,16 @@ struct PopStateMachine {
   //! @invariant: atomic. Either whole block is added or not at all.
   bool applyBlock(const index_t& index, ValidationState& state) {
     CommandHistory history;
-    return tryValidateWithResources(
-        [&]() {
-          for (const auto& cmd : index.commands) {
-            if (!history.exec(cmd, state)) {
-              return false;
-            }
-          }
-          return true;
-        },
-        [&]() { history.undoAll(); });
+    size_t i = 0;
+    for (const auto& cmd : index.commands) {
+      if (!history.exec(cmd, state)) {
+        std::cout << history.toPrettyString() << "\n\n";
+        history.undoAll();
+        return state.Invalid("bad-command", i);
+      }
+      i++;
+    }
+    return true;
   }
 
   //! @invariant: atomic. Does not throw under normal conditions.
@@ -94,7 +95,7 @@ struct PopStateMachine {
 
     while (current) {
       if (!applyBlock(*current, state)) {
-        return state.Invalid("pop-apply");
+        return state.Invalid("pop-apply", current->height);
       }
 
       index_ = current;

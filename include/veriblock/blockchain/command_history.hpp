@@ -11,16 +11,24 @@ namespace altintegration {
 struct CommandHistory {
   using storage_t = std::deque<CommandPtr>;
 
+  CommandHistory() = default;
+  explicit CommandHistory(const std::vector<CommandPtr>& in) {
+    for (const auto& cmd : in) {
+      undo_.push_back(cmd);
+    }
+  }
+
   bool exec(const CommandPtr& cmd, ValidationState& state) {
     undo_.push_back(cmd);
     return cmd->Execute(state);
   }
 
-  void save(std::vector<CommandPtr>& out) const {
+  void save(std::vector<CommandPtr>& out) {
     out.reserve(out.size() + undo_.size());
     for (const auto& cmd : undo_) {
       out.push_back(cmd);
     }
+    undo_.clear();
   }
 
   void undoAll() {
@@ -42,7 +50,7 @@ struct CommandHistory {
 
   std::string toPrettyString() const {
     std::ostringstream ss;
-    ss << "History{size=" << undo_.size() << "}\n";
+    ss << "History{size=" << undo_.size() << "\n";
     for (const auto& cmd : undo_) {
       ss << cmd->toPrettyString() << "\n";
     }

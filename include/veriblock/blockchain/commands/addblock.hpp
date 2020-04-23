@@ -35,16 +35,13 @@ using AddVbkBlock = AddBlock<VbkBlock, VbkChainParams>;
 
 template <>
 inline std::string AddBtcBlock::toPrettyString() const {
-  return "AddBtcBlock{prevBest=" +
-         tree_->getBestChain().tip()->toPrettyString() +
-         ", block=" + block_->getHash().toHex() + "}";
+  return "AddBtcBlock{block=" + block_->getHash().toHex().substr(0, 8) + "}";
 }
 
 template <>
 inline std::string AddVbkBlock::toPrettyString() const {
-  return "AddVbkBlock{prevBest=" +
-         tree_->getBestChain().tip()->toPrettyString() +
-         ", block=" + block_->getHash().toHex() + "}";
+  return "AddVbkBlock{block=" + block_->getHash().toHex().substr(0, 8) +
+         ", height=" + std::to_string(block_->height) + "}";
 }
 
 template <typename BlockTree>

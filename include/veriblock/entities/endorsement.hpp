@@ -7,6 +7,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
 
 #include <memory>
+
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
@@ -67,7 +68,12 @@ struct Endorsement {
     return std::make_shared<type>(type::fromContainer(c));
   }
 
-  bool operator==(const type& other) const { return id == other.id; }
+  bool operator==(const type& other) const {
+    return id == other.id && endorsedHash == other.endorsedHash &&
+           endorsedHeight == other.endorsedHeight &&
+           containingHash == other.containingHash &&
+           blockOfProof == other.blockOfProof && payoutInfo == other.payoutInfo;
+  }
 };
 
 }  // namespace altintegration

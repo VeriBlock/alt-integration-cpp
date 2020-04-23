@@ -48,6 +48,8 @@ struct Scenario0 : public ::testing::Test {
   ATV atv;
   std::vector<VTB> vtbs;
 
+  CommandHistory history;
+
   BtcBlock endorsedBlock = BtcBlock::fromHex(
       "00000020d9f80b499e1b51117a231981efbdb1b7237034a142526977614e4ccf06000000"
       "283ce1250d90fa23e476060c5e212813592f5c82066793807e73b15bc8fd4e82e4da995e"
@@ -109,7 +111,7 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(endorsed, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
   auto copy = *alt;
-  ASSERT_FALSE(alt->addPayloads(containing, {payloads}, state, true));
+  ASSERT_FALSE(alt->addPayloads(containing, {payloads}, state, history));
   ASSERT_EQ(
       "bad-alt-payloads-stateful+apply-context+0+alt-accept-block+0+bad-prev-block",
       state.GetPath());

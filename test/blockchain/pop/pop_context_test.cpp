@@ -117,22 +117,22 @@ TEST_F(PopContextFixture, A) {
     auto& vtbs = it->second;
 
     ASSERT_TRUE(local.acceptBlock(*containing->header, state));
-    ASSERT_TRUE(local.addPayloads(
-        *containing->header, PartialVTB::fromVTB(vtbs), state));
+    ASSERT_TRUE(local.addPayloads(containing->getHash(), vtbs, state));
   };
 
   // and now accept VBK tip again, with VTBs
   acceptAllVtbsFromVBKblock(vbkTip);
   auto* localB = local.getBlockIndex(vbkTip->getHash());
-  if (!localB->containingContext.empty()) {
-    std::vector<BtcBlock> allBtcBlocks;
-    for (const auto& el : localB->containingContext.btc_context) {
-      for (const auto& b : el.second) {
-        allBtcBlocks.push_back(*b);
-      }
-    }
-    makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));
-  }
+//
+//  if (!localB->containingContext.empty()) {
+//    std::vector<BtcBlock> allBtcBlocks;
+//    for (const auto& el : localB->containingContext.btc_context) {
+//      for (const auto& b : el.second) {
+//        allBtcBlocks.push_back(*b);
+//      }
+//    }
+//    makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));
+//  }
 
   // and now our local BTC tree must know all blocks from active chain B
   ASSERT_EQ(*local.btc().getBestChain().tip(),

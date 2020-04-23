@@ -47,8 +47,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool addPayloads(const hash_t& containing,
                    const std::vector<payloads_t>& payloads,
-                   ValidationState& state,
-                   CommandHistory& history);
+                   ValidationState& state);
 
   bool operator==(const VbkBlockTree& o) const {
     return cmp_ == o.cmp_ && VbkTree::operator==(o);
