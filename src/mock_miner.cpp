@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mock_miner.hpp"
+
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/context.hpp"
-#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -286,7 +287,8 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 
-  if (!tree.addPayloads(containingBlock, PartialVTB::fromVTB(vtbs), state)) {
+  CommandHistory history;
+  if (!tree.addPayloads(containingBlock.getHash(), vtbs, state, history)) {
     throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
   }
 

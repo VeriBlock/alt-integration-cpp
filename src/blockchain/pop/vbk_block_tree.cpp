@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include <veriblock/blockchain/command_history.hpp>
+#include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/pop_utils.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
@@ -103,18 +105,34 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
   (void)ret;
 }
 
-bool VbkBlockTree::addPayloads(PopForkComparator& cmp,
-                               const VbkBlock& block,
+bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
                                const std::vector<payloads_t>& payloads,
-                               ValidationState& state) {
-  auto* index = getBlockIndex(block.getHash());
+                               ValidationState& state,
+                               CommandHistory& history) {
+  auto* index = getBlockIndex(block);
   if (!index) {
     return state.Invalid("unknown-block",
                          "AddPayloads should be executed on known blocks");
   }
 
-  if (!cmp.addPayloads(*index, payloads, state)) {
-    return state.Invalid("bad-payloads-stateful");
+  bool ret = cmp_.setState(*index, state);
+  assert(ret);
+  (void)ret;
+
+  // set initial state machine state = current index
+  for (size_t i = 0, size = payloads.size(); i < size; i++) {
+    const auto& c = payloads[i];
+
+    // containing block must be correct (current)
+    auto containingHash = index->getHash();
+    if (c.getContainingBlock().getHash() != containingHash) {
+      return state.Invalid("vtb-bad-containing-block", i);
+    }
+    (void)history;
+
+    if (!processPayloads(*this, containingHash, c, state, history)) {
+      return state.Invalid("bad-vtb", i);
+    }
   }
 
   // if this index is the part of the some fork_chain set to the tip of that
@@ -134,109 +152,57 @@ bool VbkBlockTree::addPayloads(PopForkComparator& cmp,
   return true;
 }
 
-void VbkBlockTree::removePayloads(const VbkBlock& block,
-                                  const std::vector<payloads_t>& payloads) {
-  auto* index = getBlockIndex(block.getHash());
-  if (index != nullptr) {
-    removePayloads(index, payloads);
-  }
-}
-
-void VbkBlockTree::removePayloads(index_t* index,
-                                  const std::vector<payloads_t>& payloads) {
-  assert(index);
-  cmp_.removePayloads(*index, payloads);
-
-  determineBestChain(activeChain_, *index);
-}
-
-bool VbkBlockTree::addPayloads(const VbkBlock& block,
-                               const std::vector<payloads_t>& payloads,
-                               ValidationState& state,
-                               bool atomic) {
-  if (!atomic) {
-    return addPayloads(cmp_, block, payloads, state);
-  }
-
-  // execute addPayloads on a temp copy
-  PopForkComparator cmp = cmp_;
-  bool ret = addPayloads(cmp, block, payloads, state);
-  if (ret) {
-    // if succeded, update local copy
-    cmp_ = cmp;
-  }
-  return ret;
-}
-
 template <>
-bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
-    const BlockIndex<VbkBlock>& index, ValidationState& state) {
-  return tryValidateWithResources(
-      [&]() -> bool {
-        size_t i = 0;
-        for (const auto& el : index.containingContext.btc_context) {
-          for (const auto& b : el.second) {
-            if (!tree().acceptBlock(b, state)) {
-              return state.Invalid("vbk-accept-block", i);
-            }
-            i++;
-          }
-        }
+bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
+                                   const VbkBlock::hash_t& containingHash,
+                                   const VTB& p,
+                                   ValidationState& state,
+                                   CommandHistory& history) {
+  auto* containing = tree.getBlockIndex(containingHash);
+  if (!containing) {
+    return state.Invalid(
+        "vbk-no-containing-block",
+        "Can't find VTB's containing block in VBK: " + containingHash.toHex());
+  }
 
-        return true;
-      },
-      [&]() { unapplyContext(index); });
-}  // namespace altintegration
+  size_t i = 0;
+  // process BTC blocks first
+  for (const auto& b : p.transaction.blockOfProofContext) {
+    if (!addBlock(tree.btc(), b, state, history)) {
+      return state.Invalid("btc-accept-context-block", i);
+    }
+    i++;
+  }
+  if (!addBlock(tree.btc(), p.transaction.blockOfProof, state, history)) {
+    return state.Invalid("btc-accept-blockofproof-block");
+  }
 
-template <>
-void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
-    const BlockIndex<VbkBlock>& index) {
-  // unapply in "forward" order, because result should be same, but doing this
-  // way it should be faster due to less number of calls "determineBestChain"
-  for (const auto& el : index.containingContext.btc_context) {
-    for (const auto& b : el.second) {
-      tree().invalidateBlockByHash(b->getHash());
+  // process VBK blocks
+  i = 0;
+  for (const auto& b : p.context) {
+    if (!addBlock(tree, b, state, history)) {
+      return state.Invalid("vbk-accept-context-block", i);
     }
   }
+  if (!addBlock(tree, p.containingBlock, state, history)) {
+    return state.Invalid("vbk-accept-containing-block");
+  }
 
-}  // namespace altintegration
-
-template <>
-void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
-                                 const BlockIndex<VbkBlock>::payloads_t& p) {
-  using eid_t = typename BlockIndex<VbkBlock>::eid_t;
-
-  auto& ctx = index.containingContext.btc_context;
-  auto end = ctx.end();
-
-  end = std::remove_if(
-      ctx.begin(),
-      end,
-      [&p](const std::pair<eid_t, std::vector<std::shared_ptr<BtcBlock>>>& el) {
-        return p.endorsement.id == el.first;
-      });
-
-  ctx.erase(end, ctx.end());
+  // add endorsement
+  auto e = BtcEndorsement::fromContainerPtr(p);
+  auto cmd = std::make_shared<AddBtcEndorsement>(
+      tree.btc(), tree.getParams(), *containing, std::move(e));
+  if (!history.exec(cmd, state)) {
+    return state.Invalid("vtb-bad-endorsement");
+  }
+  return true;
 }
 
 template <>
-void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
-                            const typename BlockIndex<VbkBlock>::payloads_t& p,
-                            const BlockTree<BtcBlock, BtcChainParams>& tree) {
-  auto& ctx = index.containingContext;
-
-  std::unordered_set<BtcBlock::hash_t> known_blocks;
-  for (const auto& e : ctx.btc_context) {
-    for (const auto& b : e.second) {
-      known_blocks.insert(b->getHash());
-    }
-  }
-
-  for (const auto& b : p.btc) {
-    std::vector<std::shared_ptr<BtcBlock>> btc_vec;
-    addBlockIfUnique(b, known_blocks, btc_vec, tree);
-    ctx.btc_context.push_back(std::make_pair(p.endorsement.id, btc_vec));
-  }
+std::string AddBtcEndorsement::describe() const {
+  auto btcbest = tree_->getBestChain().tip()->toPrettyString();
+  return "AddVbkEndorsement{endorsement=" + e_->toPrettyString() +
+         ", btcBest=" + btcbest + "}";
 }
 
 }  // namespace altintegration

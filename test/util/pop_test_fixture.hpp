@@ -3,14 +3,16 @@
 
 #include <gtest/gtest.h>
 
-#include "util/test_utils.hpp"
 #include <util/alt_chain_params_regtest.hpp>
 #include <util/test_utils.hpp>
+#include <veriblock/alt-util.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/mock_miner.hpp>
+
+#include "util/test_utils.hpp"
 
 namespace altintegration {
 
@@ -103,6 +105,70 @@ struct PopTestFixture {
     alt.containingBlock = containing;
     alt.endorsed = endorsed;
     return alt;
+  }
+
+  BtcBlock::hash_t getLastKnownBtcBlock() {
+    auto* tip = alttree.btc().getBestChain().tip();
+    EXPECT_TRUE(tip);
+    return tip->getHash();
+  }
+
+  VbkBlock::hash_t getLastKnownVbkBlock() {
+    auto* tip = alttree.vbk().getBestChain().tip();
+    EXPECT_TRUE(tip);
+    return tip->getHash();
+  }
+
+  VTB endorseVbkBlock(const BlockIndex<VbkBlock>& endorsed) {
+    auto btctx = popminer.createBtcTxEndorsingVbkBlock(*endorsed.header);
+    auto* btcContaining = popminer.mineBtcBlocks(1);
+    auto vbktx =
+        popminer.createVbkPopTxEndorsingVbkBlock(*btcContaining->header,
+                                                 btctx,
+                                                 *endorsed.header,
+                                                 getLastKnownBtcBlock());
+    auto* vbkContaining = popminer.mineVbkBlocks(1);
+
+    auto& vtbs = popminer.vbkPayloads[vbkContaining->getHash()];
+    EXPECT_FALSE(vtbs.empty());
+
+    auto& lastVtb = *vtbs.rbegin();
+    fillVTBContext(lastVtb, getLastKnownVbkBlock(), alttree.vbk());
+
+    return lastVtb;
+  }
+
+  VTB endorseVbkBlock(int height) {
+    auto* endorsed = popminer.vbk().getBestChain()[height];
+    if (!endorsed) {
+      throw std::logic_error("can't find endorsed block at height " +
+                             std::to_string(height));
+    }
+
+    return endorseVbkBlock(*endorsed);
+  }
+
+  AltPayloads endorseAltBlock(const AltBlock& endorsed,
+                              const AltBlock& containing) {
+    return endorseAltBlock(endorsed.hash, containing);
+  }
+
+  AltPayloads endorseAltBlock(const AltBlock::hash_t& endorsed,
+                              const AltBlock& containing) {
+    auto* endorsedIndex = alttree.getBlockIndex(endorsed);
+    if (!endorsedIndex) {
+      throw std::logic_error("can't find alt endorsed hash: " +
+                             HexStr(endorsed));
+    }
+
+    return endorseAltBlock(*endorsedIndex, containing);
+  }
+  AltPayloads endorseAltBlock(const BlockIndex<AltBlock>& endorsed,
+                              const AltBlock& containing) {
+    auto pub = generatePublicationData(*endorsed.header);
+    auto vbktx = popminer.endorseAltBlock(pub);
+    return generateAltPayloads(
+        vbktx, containing, *endorsed.header, getLastKnownVbkBlock());
   }
 };
 

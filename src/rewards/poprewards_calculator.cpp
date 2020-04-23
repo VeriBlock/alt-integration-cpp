@@ -4,6 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <cassert>
+#include <utility>
 #include <vector>
 #include <veriblock/rewards/poprewards_calculator.hpp>
 
@@ -19,9 +20,7 @@ static bool isFirstRoundAfterKeystone(const AltChainParams& altParams,
                                       uint32_t height) {
   uint32_t blockAfterKeystone = height % altParams.getKeystoneInterval();
   if (altParams.getRewardParams().payoutRounds() == 0) return true;
-  if (blockAfterKeystone / altParams.getRewardParams().payoutRounds() == 0)
-    return true;
-  return false;
+  return blockAfterKeystone / altParams.getRewardParams().payoutRounds() == 0;
 }
 
 static PopRewardsBigDecimal getRoundRatio(const PopRewardsParams& rewardParams,
@@ -70,28 +69,30 @@ static PopRewardsBigDecimal calculateSlopeRatio(
 
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
 uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
-  if (height % altParams_.getKeystoneInterval() == 0) {
-    return altParams_.getRewardParams().keystoneRound();
+  if (height % altParams_->getKeystoneInterval() == 0) {
+    return altParams_->getRewardParams().keystoneRound();
   }
 
-  if (altParams_.getRewardParams().payoutRounds() <= 1) {
+  if (altParams_->getRewardParams().payoutRounds() <= 1) {
     return 0;
   }
 
   assert(height > 0);
-  uint32_t round = (height % altParams_.getKeystoneInterval()) %
-                   (altParams_.getRewardParams().payoutRounds() - 1);
+  uint32_t round = (height % altParams_->getKeystoneInterval()) %
+                   (altParams_->getRewardParams().payoutRounds() - 1);
   return round;
 }
 
 PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
     int relativeBlock) const {
-  if (relativeBlock < 0 ||
-      relativeBlock >= (int)altParams_.getRewardParams().relativeScoreLookupTable().size()) {
+  if (relativeBlock < 0 || relativeBlock >= (int)altParams_->getRewardParams()
+                                                .relativeScoreLookupTable()
+                                                .size()) {
     return 0.0;
   }
 
-  return altParams_.getRewardParams().relativeScoreLookupTable()[relativeBlock];
+  return altParams_->getRewardParams()
+      .relativeScoreLookupTable()[relativeBlock];
 }
 
 PopRewardsBigDecimal PopRewardsCalculator::calculateMinerRewardWithWeight(
@@ -111,16 +112,16 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateMinerRewardWithWeight(
   uint32_t payoutRound = getRoundForBlockNumber(height);
   PopRewardsBigDecimal scoreToDifficulty = scoreForThisBlock / difficulty;
   PopRewardsCurveParams curveParams =
-      altParams_.getRewardParams().getCurveParams();
+      altParams_->getRewardParams().getCurveParams();
   PopRewardsBigDecimal roundRatio =
-      getRoundRatio(altParams_.getRewardParams(), payoutRound);
+      getRoundRatio(altParams_->getRewardParams(), payoutRound);
 
   // penalty multiplier
   PopRewardsBigDecimal slope = 1.0;
 
   if (scoreToDifficulty > curveParams.startOfSlope()) {
     PopRewardsBigDecimal maxScoreThreshold =
-        getMaxScoreThreshold(altParams_.getRewardParams(), payoutRound);
+        getMaxScoreThreshold(altParams_->getRewardParams(), payoutRound);
     if (scoreToDifficulty > maxScoreThreshold) {
       scoreToDifficulty = maxScoreThreshold;
     }
@@ -130,7 +131,7 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateMinerRewardWithWeight(
     // the max reward threshold, the block reward ceases to grow, but is split
     // amongst a larger number of participants.
     slope = calculateSlopeRatio(
-        altParams_.getRewardParams(), scoreToDifficulty, payoutRound);
+        altParams_->getRewardParams(), scoreToDifficulty, payoutRound);
   }
 
   return slope * endorsementWeight * roundRatio / difficulty;
@@ -152,20 +153,20 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateMinerReward(
   auto endorsementLevelWeight =
       getScoreMultiplierFromRelativeBlock(vbkRelativeHeight);
 
-  if (altParams_.getRewardParams().flatScoreRoundUse() &&
-      roundNumber == altParams_.getRewardParams().flatScoreRound() &&
-      isFirstRoundAfterKeystone(altParams_, height)) {
+  if (altParams_->getRewardParams().flatScoreRoundUse() &&
+      roundNumber == altParams_->getRewardParams().flatScoreRound() &&
+      isFirstRoundAfterKeystone(*altParams_, height)) {
     return calculateMinerRewardWithWeight(
         height, endorsementLevelWeight, 1.0, 1.0);
   }
 
   return calculateMinerRewardWithWeight(
-      height, endorsementLevelWeight, scoreForThisBlock, difficulty);
+      height, endorsementLevelWeight, std::move(scoreForThisBlock), std::move(difficulty));
 }
 
 // getter for altchain parameters
 const AltChainParams& PopRewardsCalculator::getAltParams() const noexcept {
-  return altParams_;
+  return *altParams_;
 }
 
 }  // namespace altintegration

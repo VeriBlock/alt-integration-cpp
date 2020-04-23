@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <veriblock/blockchain/chain.hpp>
+#include <veriblock/finalizer.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
 
 namespace altintegration {
@@ -33,11 +34,27 @@ struct PopStateMachine {
         protectedParams_(&protectedParams),
         startHeight_(startHeight) {}
 
-  //! @invariant: atomic. Either all 'payloads' added or not at all.
-  bool applyContext(const index_t&, ValidationState&);
+  //! @invariant: atomic. Either whole block is added or not at all.
+  bool applyBlock(const index_t& index, ValidationState& state) {
+    CommandHistory history;
+    return tryValidateWithResources(
+        [&]() {
+          for (const auto& cmd : index.commands) {
+            if (!history.exec(cmd, state)) {
+              return false;
+            }
+          }
+          return true;
+        },
+        [&]() { history.undoAll(); });
+  }
 
   //! @invariant: atomic. Does not throw under normal conditions.
-  void unapplyContext(const index_t&);
+  void unapplyBlock(const index_t& index) {
+    auto& v = index.commands;
+    std::for_each(
+        v.rbegin(), v.rend(), [](const CommandPtr& cmd) { cmd->UnExecute(); });
+  }
 
   void unapply(ProtectedIndex& to) {
     if (&to == index_) {
@@ -50,7 +67,7 @@ struct PopStateMachine {
     auto* current = chain.tip();
     while (current && current != forkPoint) {
       // unapply payloads
-      unapplyContext(*current);
+      unapplyBlock(*current);
       current = current->pprev;
       index_ = current;
     }
@@ -67,7 +84,7 @@ struct PopStateMachine {
 
     Chain<ProtectedIndex> fork(startHeight_, &to);
 
-    auto* current = const_cast<ProtectedIndex*>(fork.findFork(index_));
+    auto* current = const_cast<index_t*>(fork.findFork(index_));
     assert(current);
 
     // move forward from forkPoint to "to" and apply payloads in between
@@ -76,8 +93,8 @@ struct PopStateMachine {
     current = fork.next(current);
 
     while (current) {
-      if (!applyContext(*current, state)) {
-        return state.Invalid("pop-state-apply-context");
+      if (!applyBlock(*current, state)) {
+        return state.Invalid("pop-apply");
       }
 
       index_ = current;

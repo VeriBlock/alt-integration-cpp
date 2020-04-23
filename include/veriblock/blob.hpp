@@ -118,22 +118,22 @@ struct Blob {
     return 0;
   }
 
-  friend inline bool operator==(const Blob<N>& a, const Blob<N>& b) {
+  friend bool operator==(const Blob<N>& a, const Blob<N>& b) {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) == 0;
   }
-  friend inline bool operator!=(const Blob<N>& a, const Blob<N>& b) {
+  friend bool operator!=(const Blob<N>& a, const Blob<N>& b) {
     return memcmp(a.data_.data(), b.data_.data(), a.size()) != 0;
   }
-  friend inline bool operator>(const Blob<N>& a, const Blob<N>& b) {
+  friend bool operator>(const Blob<N>& a, const Blob<N>& b) {
     return a.compareTo(b) > 0;
   }
-  friend inline bool operator<(const Blob<N>& a, const Blob<N>& b) {
+  friend bool operator<(const Blob<N>& a, const Blob<N>& b) {
     return a.compareTo(b) < 0;
   }
-  friend inline bool operator>=(const Blob<N>& a, const Blob<N>& b) {
+  friend bool operator>=(const Blob<N>& a, const Blob<N>& b) {
     return a.compareTo(b) >= 0;
   }
-  friend inline bool operator<=(const Blob<N>& a, const Blob<N>& b) {
+  friend bool operator<=(const Blob<N>& a, const Blob<N>& b) {
     return a.compareTo(b) <= 0;
   }
 

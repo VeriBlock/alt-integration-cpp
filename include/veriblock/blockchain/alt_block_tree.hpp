@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_BLOCK_TREE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_BLOCK_TREE_HPP_
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -14,6 +15,8 @@
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/chain.hpp"
+#include "veriblock/blockchain/command_history.hpp"
+#include "veriblock/blockchain/commands/commands.hpp"
 #include "veriblock/blockchain/pop/fork_resolution.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/entities/altblock.hpp"
@@ -23,17 +26,8 @@
 
 namespace altintegration {
 
-template <>
-void addContextToBlockIndex(BlockIndex<AltBlock>& index,
-                            const typename BlockIndex<AltBlock>::payloads_t& p,
-                            const VbkBlockTree& tree);
-
-template <>
-void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
-                                 const BlockIndex<AltBlock>::payloads_t& p);
-
 struct AltTree {
-  using alt_config_t = AltChainParams;
+  using params_t = AltChainParams;
   using vbk_config_t = VbkChainParams;
   using btc_config_t = BtcChainParams;
   using index_t = BlockIndex<AltBlock>;
@@ -46,7 +40,7 @@ struct AltTree {
 
   virtual ~AltTree() = default;
 
-  AltTree(const alt_config_t& alt_config,
+  AltTree(const params_t& alt_config,
           const vbk_config_t& vbk_config,
           const btc_config_t& btc_config)
       : alt_config_(&alt_config),
@@ -80,12 +74,7 @@ struct AltTree {
   bool addPayloads(const AltBlock& containingBlock,
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state,
-                   bool atomic = true);
-
-  //! removes given payloads from given block index.
-  //! remove ALL payloads from a block, when it has to be removed
-  void removePayloads(const AltBlock& containingBlock,
-                      const std::vector<payloads_t>& payloads);
+                   CommandHistory& history);
 
   //! set POP state to some known block, for example, when we remove a block or
   bool setState(const AltBlock::hash_t& to, ValidationState& state);
@@ -125,10 +114,12 @@ struct AltTree {
            cmp_ == o.cmp_;
   }
 
+  bool operator!=(const AltTree& o) const { return !operator==(o); }
+
  protected:
   std::vector<index_t*> chainTips_;
   block_index_t block_index_;
-  const alt_config_t* alt_config_;
+  const params_t* alt_config_;
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
@@ -141,20 +132,17 @@ struct AltTree {
   index_t* touchBlockIndex(const hash_t& blockHash);
 
   void addToChains(index_t* block_index);
-
-  bool addPayloads(PopForkComparator& cmp,
-                   const AltBlock& containingBlock,
-                   const std::vector<payloads_t>& payloads,
-                   ValidationState& state);
 };
 
 template <>
-bool AltTree::PopForkComparator::sm_t::applyContext(
-    const BlockIndex<AltBlock>& index, ValidationState& state);
+bool processPayloads<AltTree>(AltTree& tree,
+                              const AltBlock::hash_t& containingHash,
+                              const typename AltTree::payloads_t& p,
+                              ValidationState& state,
+                              CommandHistory& history);
 
 template <>
-void AltTree::PopForkComparator::sm_t::unapplyContext(
-    const BlockIndex<AltBlock>& index);
+std::string AddVbkEndorsement::describe() const;
 
 }  // namespace altintegration
 

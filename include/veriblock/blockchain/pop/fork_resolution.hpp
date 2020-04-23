@@ -362,113 +362,50 @@ struct PopAwareForkResolutionComparator {
     assert(protectedParams.getKeystoneInterval() > 0);
   }
 
-  PopAwareForkResolutionComparator(
-      const PopAwareForkResolutionComparator& comparator) = default;
-
-  PopAwareForkResolutionComparator& operator=(
-      const PopAwareForkResolutionComparator& comparator) {
-    this->index_ = comparator.index_;
-    this->tree_ = comparator.tree_;
-    return *this;
-  }
-
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
   const protected_index_t* getIndex() const { return index_; }
 
-  void removePayloads(protected_index_t& index,
-                      const std::vector<protected_payloads_t>& payloads) {
-    ValidationState state;
-    sm_t sm(tree_, index_, *protectedParams_);
-    bool ret = false;
-    if (index.pprev != nullptr) {
-      ret = sm.unapplyAndApply(*index.pprev, state);
-      assert(ret);
-    } else {
-      ret = sm.unapplyAndApply(index, state);
-      assert(ret);
-      sm.unapplyContext(index);
-    }
-    // remove all endorsements and context blocks related to given payloads, in
-    // reverse order (this should be faster)
-    std::for_each(
-        payloads.rbegin(), payloads.rend(), [&](const protected_payloads_t& p) {
-          if (p.containsEndorsements()) {
-            removeEndorsement(index, p.getEndorsementId());
-          }
-          removeContextFromBlockIndex(index, p);
-        });
-
-    // apply remaining context from this block
-    ret = sm.applyContext(index, state);
-    assert(ret);
-    (void)ret;
-  }
-
-  bool addPayloads(protected_index_t& index,
-                   const std::vector<protected_payloads_t>& payloads,
-                   ValidationState& state) {
-    return tryValidateWithResources(
-        [&]() -> bool {
-          if (index_ != index.pprev) {
-            // set state machine to "previous state"
-            bool ret = setState(*index.pprev, state);
-            assert(ret && "previous payloads should be always valid");
-            (void)ret;
-          }
-
-          if (payloads.empty()) {
-            if (index_ == index.pprev) {
-              // we added a block which does not contain payloads and it is
-              // right after our current state
-              index_ = &index;
-              return true;
-            }
-          }
-
-          assert(index_ == index.pprev);
-
-          // set initial state machine state = current index
-          sm_t sm(tree_, &index, *protectedParams_, index_->height);
-          for (size_t i = 0, size = payloads.size(); i < size; i++) {
-            auto& c = payloads[i];
-
-            // containing block must be correct (current)
-            if (c.getContainingBlock().getHash() != index.getHash()) {
-              return state.Invalid("bad-containing-block", i);
-            }
-
-            // we need to add context blocks to current block index, before
-            // applyContext
-            addContextToBlockIndex(index, c, sm.tree());
-
-            // first, check if context is valid.
-            if (!sm.applyContext(index, state)) {
-              removeContextFromBlockIndex(index, c);
-              return state.Invalid("apply-context", i);
-            }
-
-            if (c.containsEndorsements()) {
-              if (!checkAndAddEndorsement(index,
-                                          c.getEndorsement(),
-                                          sm.tree(),
-                                          *protectedParams_,
-                                          state)) {
-                return state.Invalid("check-endorsement", i);
-              }
-            }
-          }
-
-          // no state change have been made
-          assert(&index == sm.index());
-
-          // update current state
-          index_ = &index;
-
-          return true;
-        },
-        [&] { removePayloads(index, payloads); });
-  }
+//  bool addPayloads(protected_index_t& index,
+//                   const std::vector<protected_payloads_t>& payloads,
+//                   ValidationState& state,
+//                   CommandHistory& history) {
+//    // set state machine to "previous state"
+//    bool ret = setState(*index.pprev, state);
+//    assert(ret && "previous payloads should be always valid");
+//    (void)ret;
+//
+//    if (payloads.empty()) {
+//      if (index_ == index.pprev) {
+//        // we added a block which does not contain payloads and it is
+//        // right after our current state
+//        index_ = &index;
+//        return true;
+//      }
+//    }
+//
+//    assert(index_ == index.pprev);
+//
+//    // set initial state machine state = current index
+//    for (size_t i = 0, size = payloads.size(); i < size; i++) {
+//      const auto& c = payloads[i];
+//
+//      // containing block must be correct (current)
+//      auto containingHash = index.getHash();
+//      if (c.getContainingBlock().getHash() != containingHash) {
+//        return state.Invalid("bad-containing-block", i);
+//      }
+//
+//      if (!processPayloads(tree_, containingHash, c, state, history)) {
+//        return state.Invalid("bad-payloads", i);
+//      }
+//    }
+//
+////    // update current state
+////    index_ = &index;
+//
+//    return true;
+//  }
 
   bool setState(protected_index_t& index, ValidationState& state) {
     // if previous state is unknown, set new state as current
@@ -482,13 +419,12 @@ struct PopAwareForkResolutionComparator {
       return true;
     }
 
-    auto temp = tree_;
-    sm_t sm(temp, index_, *protectedParams_);
+    sm_t sm(tree_, index_, *protectedParams_);
     if (!sm.unapplyAndApply(index, state)) {
-      return state.Invalid("pop-comparator-unapply-apply");
+      index_ = sm.index();
+      return state.Invalid("pop-set-state");
     }
 
-    tree_ = std::move(temp);
     index_ = sm.index();
 
     return true;
@@ -505,10 +441,10 @@ struct PopAwareForkResolutionComparator {
     ValidationState state;
 
     auto minHeight = std::min(index_->height, chainA.first()->height);
+    CommandHistory history;
+    auto f = Finalizer([&]() { history.undoAll(); });
 
-    // make a tree copy
-    auto temp = tree_;
-    sm_t sm(temp, index_, *protectedParams_, minHeight);
+    sm_t sm(tree_, index_, *protectedParams_, minHeight);
     // try set current state to chain A
     if (!sm.unapplyAndApply(*chainA.tip(), state)) {
       // failed - try set state to chain B
@@ -536,7 +472,7 @@ struct PopAwareForkResolutionComparator {
       return 1;
     }
 
-    // now 'temp' contains payloads from both chains
+    // now 'tree_' contains payloads from both chains
 
     // rename
     const auto& gpkc = internal::getProtoKeystoneContext<protected_block_t,
@@ -547,14 +483,12 @@ struct PopAwareForkResolutionComparator {
         internal::getKeystoneContext<protecting_block_t, protecting_params_t>;
 
     /// filter chainA
-    auto pkcChain1 = gpkc(chainA, temp, *protectedParams_);
-    auto kcChain1 = gkc(pkcChain1, temp);
+    auto pkcChain1 = gpkc(chainA, tree_, *protectedParams_);
+    auto kcChain1 = gkc(pkcChain1, tree_);
 
     /// filter chainB
-    auto pkcChain2 = gpkc(chainB, temp, *protectedParams_);
-    auto kcChain2 = gkc(pkcChain2, temp);
-
-    // do not update current tree, just abandon 'temp' tree
+    auto pkcChain2 = gpkc(chainB, tree_, *protectedParams_);
+    auto kcChain2 = gkc(pkcChain2, tree_);
 
     return internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, *protectedParams_);

@@ -6,12 +6,15 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
+#include <deque>
 #include <memory>
 #include <unordered_map>
 #include <vector>
 #include <veriblock/validation_state.hpp>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/command.hpp"
+#include "veriblock/blockchain/command_history.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
@@ -43,10 +46,10 @@ struct BlockIndex {
       containingEndorsements{};
 
   //! list of endorsements pointing to this block
-  std::vector<endorsement_t*> endorsedBy;
+  std::vector<endorsement_t*> endorsedBy{};
 
-  //! list of containing context blocks that **change** current state
-  context_t containingContext{};
+  //! changelist that this block introduces
+  std::vector<CommandPtr> commands{};
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -66,7 +69,7 @@ struct BlockIndex {
     return this->getAncestor(this->height + 1 - steps);
   }
 
-  const BlockIndex* getAncestor(height_t _height) const {
+  BlockIndex* getAncestor(height_t _height) const {
     if (_height < 0 || _height > this->height) {
       return nullptr;
     }
@@ -74,7 +77,7 @@ struct BlockIndex {
     // TODO: this algorithm is not optimal. for O(n) seek backwards until we hit
     // valid height. also it assumes whole blockchain is in memory (pprev is
     // valid until given height)
-    const BlockIndex* index = this;
+    BlockIndex* index = const_cast<BlockIndex*>(this);
     while (index != nullptr) {
       if (index->height > _height) {
         index = index->pprev;
@@ -90,7 +93,7 @@ struct BlockIndex {
 
   std::string toPrettyString() const {
     return "BlockIndex{height=" + std::to_string(height) +
-           ", hash=" + getHash().toHex().substr(0, 8) +
+           ", hash=" + HexStr(getHash()).substr(0, 8) +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
            ", containsEndorsements=" +
            std::to_string(containingEndorsements.size()) + "}";

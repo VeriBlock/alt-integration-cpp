@@ -37,16 +37,14 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             ValidationState& state,
                             const ChainParams& params);
 
-template <typename BlockTree, typename BlockIndexT>
-void addContextToBlockIndex(BlockIndexT&,
-                            const typename BlockIndexT::payloads_t&,
-                            const BlockTree& tree);
+struct CommandHistory;
 
-template <typename BlockIndexT>
-void removeContextFromBlockIndex(BlockIndexT&,
-                                 const typename BlockIndexT::payloads_t&);
-
-
+template <typename ProtectedBlockTree>
+bool processPayloads(ProtectedBlockTree& tree,
+                     const typename ProtectedBlockTree::hash_t& containing,
+                     const typename ProtectedBlockTree::payloads_t& p,
+                     ValidationState& state,
+                     CommandHistory& history);
 
 }  // namespace altintegration
 

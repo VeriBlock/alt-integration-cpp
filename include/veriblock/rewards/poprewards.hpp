@@ -18,8 +18,8 @@ namespace altintegration {
 struct PopRewards {
   PopRewards(const VbkBlockTree& vbk_tree,
              const PopRewardsCalculator& calculator)
-      : vbk_tree_(vbk_tree),
-        calculator_(calculator) {}
+      : vbk_tree_(&vbk_tree),
+        calculator_(&calculator) {}
 
   virtual ~PopRewards() = default;
 
@@ -56,8 +56,8 @@ struct PopRewards {
       PopRewardsBigDecimal popDifficulty);
 
  private:
-  const VbkBlockTree& vbk_tree_;
-  const PopRewardsCalculator& calculator_;
+  const VbkBlockTree* vbk_tree_;
+  const PopRewardsCalculator* calculator_;
 };
 
 }  // namespace altintegration

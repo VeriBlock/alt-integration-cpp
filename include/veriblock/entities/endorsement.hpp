@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
 
+#include <memory>
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
@@ -46,6 +47,8 @@ struct Endorsement {
   ContainingHash blockOfProof;
   std::vector<uint8_t> payoutInfo;
 
+  std::string toPrettyString() const;
+
   static Endorsement fromVbkEncoding(std::string) {
     // TODO: remove
     return {};
@@ -59,6 +62,10 @@ struct Endorsement {
   static type fromContainer(const Container& c);
 
   static type::id_t getId(const Container& c);
+
+  static std::shared_ptr<type> fromContainerPtr(const Container& c) {
+    return std::make_shared<type>(type::fromContainer(c));
+  }
 
   bool operator==(const type& other) const { return id == other.id; }
 };

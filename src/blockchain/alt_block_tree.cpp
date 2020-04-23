@@ -7,6 +7,8 @@
 
 #include <unordered_set>
 
+#include "veriblock/blockchain/commands/addblock.hpp"
+#include "veriblock/blockchain/commands/addendorsement.hpp"
 #include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -163,33 +165,6 @@ void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
   block_index_.erase(blockIndex.getHash());
 }
 
-bool AltTree::addPayloads(const AltBlock& containingBlock,
-                          const std::vector<payloads_t>& payloads,
-                          ValidationState& state,
-                          bool atomic) {
-  if (!atomic) {
-    return addPayloads(cmp_, containingBlock, payloads, state);
-  }
-
-  // do a temp copy of comparator
-  auto copy = cmp_;
-  bool ret = addPayloads(copy, containingBlock, payloads, state);
-  if (ret) {
-    // if payloads valid, update local copy
-    cmp_ = copy;
-  }
-
-  return ret;
-}
-
-void AltTree::removePayloads(const AltBlock& containingBlock,
-                             const std::vector<payloads_t>& payloads) {
-  auto* index = getBlockIndex(containingBlock.getHash());
-  if (index != nullptr) {
-    cmp_.removePayloads(*index, payloads);
-  }
-}
-
 bool AltTree::setState(const AltBlock::hash_t& to, ValidationState& state) {
   auto* index = getBlockIndex(to);
   if (index == nullptr) {
@@ -264,10 +239,10 @@ int AltTree::compareTwoBranches(const hash_t& chain1, const hash_t& chain2) {
   return compareTwoBranches(i1, i2);
 }
 
-bool AltTree::addPayloads(AltTree::PopForkComparator& cmp,
-                          const AltBlock& containingBlock,
+bool AltTree::addPayloads(const AltBlock& containingBlock,
                           const std::vector<payloads_t>& payloads,
-                          ValidationState& state) {
+                          ValidationState& state,
+                          CommandHistory& history) {
   auto hash = containingBlock.getHash();
   auto* index = getBlockIndex(hash);
   if (index == nullptr) {
@@ -277,136 +252,87 @@ bool AltTree::addPayloads(AltTree::PopForkComparator& cmp,
                              HexStr(hash));
   }
 
-  if (!cmp.addPayloads(*index, payloads, state)) {
-    return state.Invalid("bad-alt-payloads-stateful");
+  bool ret = cmp_.setState(*index, state);
+  assert(ret);
+  (void)ret;
+
+  // set initial state machine state = current index
+  for (size_t i = 0, size = payloads.size(); i < size; i++) {
+    const auto& c = payloads[i];
+
+    // containing block must be correct (current)
+    auto containingHash = index->getHash();
+    if (c.getContainingBlock().getHash() != containingHash) {
+      return state.Invalid("altpayloads-bad-containing-block", i);
+    }
+
+    if (!processPayloads(*this, containingHash, c, state, history)) {
+      return state.Invalid("bad-altpayloads", i);
+    }
   }
 
   return true;
 }
 
 template <>
-bool AltTree::PopForkComparator::sm_t::applyContext(
-    const BlockIndex<AltBlock>& index, ValidationState& state) {
-  return tryValidateWithResources(
-      [&]() -> bool {
-        const auto& ctx = index.containingContext;
-        // apply context first
-        size_t i = 0;
-        for (const auto& b : ctx.vbk) {
-          if (!tree().acceptBlock(b, state)) {
-            return state.Invalid("alt-accept-block", i);
-          }
-          i++;
-        }
-
-        // apply all VTBs
-        i = 0;
-        for (const auto& vtb : ctx.vtbs) {
-          if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
-            return state.Invalid("alt-accept-block", i);
-          }
-          i++;
-        }
-
-        return true;
-      },
-      [&] { unapplyContext(index); });
-}
-
-template <>
-void AltTree::PopForkComparator::sm_t::unapplyContext(
-    const BlockIndex<AltBlock>& index) {
-  // unapply in "forward" order, because result should be same, but doing this
-  // way it should be faster due to less number of calls "determineBestChain"
-
-  const auto& ctx = index.containingContext;
-
-  // process VBK context first
-  for (const auto& b : ctx.vbk) {
-    tree().invalidateBlockByHash(b->getHash());
+bool processPayloads<AltTree>(AltTree& tree,
+                              const AltBlock::hash_t& containingHash,
+                              const AltTree::payloads_t& p,
+                              ValidationState& state,
+                              CommandHistory& history) {
+  auto* containing = tree.getBlockIndex(containingHash);
+  if (!containing) {
+    return state.Invalid(
+        "alt-no-containing-block",
+        "Can't find containing block in ALT tree: " + HexStr(containingHash));
   }
 
-  // step 2, process VTBs
-  for (const auto& vtb : ctx.vtbs) {
-    auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
-    if (containingIndex == nullptr) {
-      continue;
-    }
-
-    tree().removePayloads(containingIndex, {vtb});
-  }
-}
-
-template <>
-void addContextToBlockIndex(BlockIndex<AltBlock>& index,
-                            const typename BlockIndex<AltBlock>::payloads_t& p,
-                            const VbkBlockTree& tree) {
-  auto& ctx = index.containingContext;
-
-  std::unordered_set<VbkBlock::hash_t> known_vbk_blocks;
-  for (const auto& b : ctx.vbk) {
-    known_vbk_blocks.insert(b->getHash());
-  }
-
-  std::unordered_set<BtcBlock::hash_t> known_btc_blocks;
-  for (const auto& vtb : ctx.vtbs) {
-    for (const auto& b : vtb.btc) {
-      known_btc_blocks.insert(b->getHash());
-    }
-  }
-
-  // process VTBs
+  // start with VTBs
+  size_t i = 0;
   for (const auto& vtb : p.vtbs) {
-    // process VBK blocks
-    for (const auto& b : vtb.context) {
-      addBlockIfUnique(b, known_vbk_blocks, ctx.vbk, tree);
+    if (!processPayloads<VbkBlockTree>(
+            tree.vbk(), vtb.containingBlock.getHash(), vtb, state, history)) {
+      return state.Invalid("vtb-process-payloads", i);
     }
-    addBlockIfUnique(vtb.getContainingBlock(), known_vbk_blocks, ctx.vbk, tree);
-    ctx.vtbs.push_back(PartialVTB::fromVTB(vtb));
+    i++;
   }
 
   // process ATV
-  if (p.hasAtv) {
-    for (const auto& b : p.atv.context) {
-      addBlockIfUnique(b, known_vbk_blocks, ctx.vbk, tree);
-    }
-    addBlockIfUnique(p.atv.containingBlock, known_vbk_blocks, ctx.vbk, tree);
+  if (!p.hasAtv) {
+    return true;
   }
+
+  // start with context
+  i = 0;
+  for (const auto& b : p.atv.context) {
+    if (!addBlock(tree.vbk(), b, state, history)) {
+      return state.Invalid("bad-atvcontext-vbk-block", i);
+    }
+    i++;
+  }
+
+  // add block of proof
+  if (!addBlock(tree.vbk(), p.atv.containingBlock, state, history)) {
+    return state.Invalid("bad-atv-containing-block");
+  }
+
+  // add endorsement
+  auto e = VbkEndorsement::fromContainerPtr(p);
+  auto cmd = std::make_shared<AddVbkEndorsement>(
+      tree.vbk(), tree.getParams(), *containing, e);
+  if (!history.exec(cmd, state)) {
+    return state.Invalid("bad-atv-endorsement");
+  }
+
+  return true;
 }
 
 template <>
-void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
-                                 const BlockIndex<AltBlock>::payloads_t& p) {
-  auto& vbk = index.containingContext.vbk;
-  auto vbk_end = vbk.end();
-  auto removeBlock = [&](const VbkBlock& b) {
-    vbk_end = std::remove_if(
-        vbk.begin(), vbk_end, [&b](const std::shared_ptr<VbkBlock>& ptr) {
-          return *ptr == b;
-        });
-  };
-
-  auto& vtbs = index.containingContext.vtbs;
-  auto vtbs_end = vtbs.end();
-  auto removeVTB = [&](const VTB& vtb) {
-    removeBlock(vtb.containingBlock);
-    std::for_each(vtb.context.rbegin(), vtb.context.rend(), removeBlock);
-
-    vtbs_end =
-        std::remove_if(vtbs.begin(), vtbs_end, [&vtb](const PartialVTB& p_vtb) {
-          return p_vtb == PartialVTB::fromVTB(vtb);
-        });
-  };
-
-  // remove ATV containing block
-  removeBlock(p.atv.containingBlock);
-  // remove ATV context
-  std::for_each(p.atv.context.rbegin(), p.atv.context.rend(), removeBlock);
-  // for every VTB, in reverse order
-  std::for_each(p.vtbs.rbegin(), p.vtbs.rend(), removeVTB);
-
-  vbk.erase(vbk_end, vbk.end());
-  vtbs.erase(vtbs_end, vtbs.end());
+std::string AddVbkEndorsement::describe() const {
+  auto vbkbest = tree_->getBestChain().tip()->toPrettyString();
+  auto btcbest = tree_->btc().getBestChain().tip()->toPrettyString();
+  return "AddVbkEndorsement{endorsement=" + e_->toPrettyString() +
+         ", btcBest=" + btcbest + ", vbkBest=" + vbkbest + "}";
 }
 
 }  // namespace altintegration
