@@ -128,7 +128,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
     if (c.getContainingBlock().getHash() != containingHash) {
       return state.Invalid("vtb-bad-containing-block", i);
     }
-    (void)history;
 
     if (!processPayloads(*this, containingHash, c, state, history)) {
       return state.Invalid("bad-vtb", i);
