@@ -1,4 +1,5 @@
 #include "veriblock/entities/payloads.hpp"
+
 #include "veriblock/hashutil.hpp"
 
 namespace altintegration {

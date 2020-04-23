@@ -33,15 +33,12 @@ struct BlockIndex {
   //! block
   ArithUint256 chainWork = 0;
 
-  //! list of containing endorsements in this block
-  std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
-      containingEndorsements{};
+  //! list of endorsements and containing context blocks that **change** current
+  //! state
+  std::unordered_map<eid_t, context_t> containingContext{};
 
   //! list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
-
-  //! list of containing context blocks that **change** current state
-  context_t containingContext{};
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -87,8 +84,8 @@ struct BlockIndex {
     return "BlockIndex{height=" + std::to_string(height) +
            ", hash=" + getHash().toHex().substr(0, 8) +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
-           ", containsEndorsements=" +
-           std::to_string(containingEndorsements.size()) + "}";
+           ", containingContext=" + std::to_string(containingContext.size()) +
+           "}";
   }
 
   void toRaw(WriteStream& stream) const {

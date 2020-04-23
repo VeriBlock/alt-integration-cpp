@@ -105,9 +105,7 @@ struct Chain {
     return a.tip() == b.tip();
   }
 
-  friend bool operator!=(const Chain& a, const Chain& b) {
-    return !(a == b);
-  }
+  friend bool operator!=(const Chain& a, const Chain& b) { return !(a == b); }
 
   const index_t* findFork(const index_t* pindex) const {
     if (pindex == nullptr || tip() == nullptr) {
@@ -159,8 +157,9 @@ struct Chain {
                              workBlock && workBlock->height >= startHeight_ &&
                              e.endorsedHash != workBlock->getHash();
          count++) {
-      auto it = workBlock->containingEndorsements.find(e.id);
-      if (it != workBlock->containingEndorsements.end()) {
+      auto it = workBlock->containingContext.find(e.id);
+      if (it != workBlock->containingContext.end() &&
+          it->second.getEndorsement() != nullptr) {
         return workBlock;
       }
       workBlock = workBlock->pprev;

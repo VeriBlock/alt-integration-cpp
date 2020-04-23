@@ -168,13 +168,11 @@ bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
     const BlockIndex<VbkBlock>& index, ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
-        size_t i = 0;
-        for (const auto& el : index.containingContext.btc_context) {
-          for (const auto& b : el.second) {
+        for (const auto& ctx : index.containingContext) {
+          for (const auto& b : ctx.second.btc) {
             if (!tree().acceptBlock(b, state)) {
-              return state.Invalid("vbk-accept-block", i);
+              return state.Invalid("vbk-accept-block");
             }
-            i++;
           }
         }
 
@@ -188,8 +186,8 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
     const BlockIndex<VbkBlock>& index) {
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
-  for (const auto& el : index.containingContext.btc_context) {
-    for (const auto& b : el.second) {
+  for (const auto& ctx : index.containingContext) {
+    for (const auto& b : ctx.second.btc) {
       tree().invalidateBlockByHash(b->getHash());
     }
   }
@@ -201,36 +199,25 @@ void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
                                  const BlockIndex<VbkBlock>::payloads_t& p) {
   using eid_t = typename BlockIndex<VbkBlock>::eid_t;
 
-  auto& ctx = index.containingContext.btc_context;
-  auto end = ctx.end();
-
-  end = std::remove_if(
-      ctx.begin(),
-      end,
-      [&p](const std::pair<eid_t, std::vector<std::shared_ptr<BtcBlock>>>& el) {
-        return p.endorsement.id == el.first;
-      });
-
-  ctx.erase(end, ctx.end());
+  auto it = index.containingContext.find(p.endorsement.id);
+  if (it != index.containingContext.end()) {
+    it->second.btc.clear();
+  }
 }
 
 template <>
 void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
                             const typename BlockIndex<VbkBlock>::payloads_t& p,
                             const BlockTree<BtcBlock, BtcChainParams>& tree) {
-  auto& ctx = index.containingContext;
-
   std::unordered_set<BtcBlock::hash_t> known_blocks;
-  for (const auto& e : ctx.btc_context) {
-    for (const auto& b : e.second) {
+  for (const auto& ctx : index.containingContext) {
+    for (const auto& b : ctx.second.btc) {
       known_blocks.insert(b->getHash());
     }
   }
-
+  auto ctx = index.containingContext[p.endorsement.id];
   for (const auto& b : p.btc) {
-    std::vector<std::shared_ptr<BtcBlock>> btc_vec;
-    addBlockIfUnique(b, known_blocks, btc_vec, tree);
-    ctx.btc_context.push_back(std::make_pair(p.endorsement.id, btc_vec));
+    addBlockIfUnique(b, known_blocks, ctx.btc, tree);
   }
 }
 

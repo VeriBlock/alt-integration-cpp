@@ -87,9 +87,9 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(state.IsValid());
   auto* containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
 
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containinVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs[0])));
-  EXPECT_FALSE(containinVbkBlock->containingEndorsements.count(
+  EXPECT_FALSE(containinVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs[1])));
 
   // check btc tree state
@@ -108,9 +108,9 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(state.IsValid());
 
   containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containinVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs[0])));
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containinVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs[1])));
 
   // check btc tree state
@@ -130,9 +130,9 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
   EXPECT_TRUE(state.IsValid());
 
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containinVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs[0])));
-  EXPECT_FALSE(containinVbkBlock->containingEndorsements.count(
+  EXPECT_FALSE(containinVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs[1])));
 
   // check btc tree state
@@ -148,9 +148,9 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(state.IsValid());
 
   containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containinVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs[0])));
-  EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containinVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs[1])));
 
   // check btc tree state

@@ -13,12 +13,16 @@ struct VbkBlock;
 struct VTB;
 
 struct VbkContext {
-  using eid_t = typename BtcEndorsement::id_t;
+  std::shared_ptr<BtcEndorsement> endorsement{nullptr};
 
-  std::vector<std::pair<eid_t, std::vector<std::shared_ptr<BtcBlock>>>>
-      btc_context{};
+  std::vector<std::shared_ptr<BtcBlock>> btc{};
 
-  bool empty() const noexcept { return btc_context.empty(); }
+  void setEndorsement(const std::shared_ptr<BtcEndorsement>& e) {
+    this->endorsement = e;
+  }
+  std::shared_ptr<BtcEndorsement> getEndorsement() const { return endorsement; }
+
+  bool empty() const noexcept { return btc.empty(); }
 };
 
 struct PartialVTB {
@@ -60,10 +64,17 @@ struct PartialVTB {
 };
 
 struct AltContext {
+  std::shared_ptr<VbkEndorsement> endorsement{nullptr};
+
   // corresponds to the ATV
   std::vector<std::shared_ptr<VbkBlock>> vbk{};
 
   std::vector<PartialVTB> vtbs{};
+
+  void setEndorsement(const std::shared_ptr<VbkEndorsement>& e) {
+    this->endorsement = e;
+  }
+  std::shared_ptr<VbkEndorsement> getEndorsement() const { return endorsement; }
 
   bool empty() const noexcept { return vbk.empty() && vtbs.empty(); }
 };

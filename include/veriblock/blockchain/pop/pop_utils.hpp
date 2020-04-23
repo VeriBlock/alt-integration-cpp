@@ -54,11 +54,10 @@ bool checkAndAddEndorsement(
   }
 
   // Add endorsement into BlockIndex
-  auto pair = index.containingEndorsements.insert(
-      {endorsement.id, std::make_shared<endorsement_t>(endorsement)});
-  assert(pair.second && "there's a duplicate in endorsement map");
+  auto ctx = index.containingContext[endorsement.id];
+  ctx.setEndorsement(std::make_shared<endorsement_t>(endorsement));
 
-  auto* eptr = pair.first->second.get();
+  auto* eptr = ctx.getEndorsement().get();
   endorsed->endorsedBy.push_back(eptr);
 
   return true;
@@ -68,25 +67,25 @@ template <typename ProtectedIndex>
 void removeEndorsement(
     ProtectedIndex& index,
     const typename ProtectedIndex::endorsement_t::id_t& eid) {
-  auto endorsementit = index.containingEndorsements.find(eid);
-  if (endorsementit == index.containingEndorsements.end()) {
+  auto endorsementit = index.containingContext.find(eid);
+  if (endorsementit == index.containingContext.end()) {
     return;
   }
 
   auto& endorsement_ptr = endorsementit->second;
 
   // remove from 'endorsedBy'
-  removeFromEndorsedBy(index, endorsement_ptr.get());
+  removeFromEndorsedBy(index, endorsement_ptr.getEndorsement().get());
   // remove from 'containing endorsements'
-  index.containingEndorsements.erase(endorsementit);
+  index.containingContext.erase(endorsementit);
 }
 
 template <typename ProtectedIndex>
 void removeAllContainingEndorsements(ProtectedIndex& index) {
-  for (auto it = index.containingEndorsements.begin();
-       it != index.containingEndorsements.end();) {
-    removeFromEndorsedBy(index, it->second.get());
-    it = index.containingEndorsements.erase(it);
+  for (auto it = index.containingContext.begin();
+       it != index.containingContext.end();) {
+    removeFromEndorsedBy(index, it->second.getEndorsement().get());
+    it = index.containingContext.erase(it);
   }
 }
 

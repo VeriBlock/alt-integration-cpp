@@ -119,9 +119,9 @@ TEST_F(Scenario3, scenario_3) {
       alttree.vbk().getBlockIndex(vtbs1[1].containingBlock.getHash());
 
   // check endorsements
-  EXPECT_FALSE(containingVbkBlock->containingEndorsements.count(
+  EXPECT_FALSE(containingVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs1[0])));
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containingVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs1[1])));
 
   // Step 3
@@ -160,9 +160,9 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containingVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs1[0])));
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containingVbkBlock->containingContext.count(
       BtcEndorsement::getId(vtbs1[1])));
 
   EXPECT_EQ(*alttree.vbk().getBestChain().tip(), *vbkTip1);

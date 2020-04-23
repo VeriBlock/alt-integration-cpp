@@ -284,23 +284,21 @@ bool AltTree::PopForkComparator::sm_t::applyContext(
     const BlockIndex<AltBlock>& index, ValidationState& state) {
   return tryValidateWithResources(
       [&]() -> bool {
-        const auto& ctx = index.containingContext;
         // apply context first
-        size_t i = 0;
-        for (const auto& b : ctx.vbk) {
-          if (!tree().acceptBlock(b, state)) {
-            return state.Invalid("alt-accept-block", i);
+        for (const auto& ctx : index.containingContext) {
+          for (const auto& b : ctx.second.vbk) {
+            if (!tree().acceptBlock(b, state)) {
+              return state.Invalid("alt-accept-block");
+            }
           }
-          i++;
-        }
 
-        // apply all VTBs
-        i = 0;
-        for (const auto& vtb : ctx.vtbs) {
-          if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
-            return state.Invalid("alt-accept-block", i);
+          // apply all VTBs
+
+          for (const auto& vtb : ctx.second.vtbs) {
+            if (!tree().addPayloads(*vtb.containing, {vtb}, state, false)) {
+              return state.Invalid("alt-accept-block");
+            }
           }
-          i++;
         }
 
         return true;
@@ -314,21 +312,21 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
   // unapply in "forward" order, because result should be same, but doing this
   // way it should be faster due to less number of calls "determineBestChain"
 
-  const auto& ctx = index.containingContext;
-
-  // process VBK context first
-  for (const auto& b : ctx.vbk) {
-    tree().invalidateBlockByHash(b->getHash());
-  }
-
-  // step 2, process VTBs
-  for (const auto& vtb : ctx.vtbs) {
-    auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
-    if (containingIndex == nullptr) {
-      continue;
+  for (const auto& ctx : index.containingContext) {
+    // process VBK context first
+    for (const auto& b : ctx.second.vbk) {
+      tree().invalidateBlockByHash(b->getHash());
     }
 
-    tree().removePayloads(containingIndex, {vtb});
+    // step 2, process VTBs
+    for (const auto& vtb : ctx.second.vtbs) {
+      auto* containingIndex = tree().getBlockIndex(vtb.containing->getHash());
+      if (containingIndex == nullptr) {
+        continue;
+      }
+
+      tree().removePayloads(containingIndex, {vtb});
+    }
   }
 }
 
@@ -336,20 +334,14 @@ template <>
 void addContextToBlockIndex(BlockIndex<AltBlock>& index,
                             const typename BlockIndex<AltBlock>::payloads_t& p,
                             const VbkBlockTree& tree) {
-  auto& ctx = index.containingContext;
-
   std::unordered_set<VbkBlock::hash_t> known_vbk_blocks;
-  for (const auto& b : ctx.vbk) {
-    known_vbk_blocks.insert(b->getHash());
-  }
-
-  std::unordered_set<BtcBlock::hash_t> known_btc_blocks;
-  for (const auto& vtb : ctx.vtbs) {
-    for (const auto& b : vtb.btc) {
-      known_btc_blocks.insert(b->getHash());
+  for (const auto& ctx : index.containingContext) {
+    for (const auto& b : ctx.second.vbk) {
+      known_vbk_blocks.insert(b->getHash());
     }
   }
 
+  auto ctx = index.containingContext[VbkEndorsement::getId(p)];
   // process VTBs
   for (const auto& vtb : p.vtbs) {
     // process VBK blocks
@@ -372,36 +364,11 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
 template <>
 void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
                                  const BlockIndex<AltBlock>::payloads_t& p) {
-  auto& vbk = index.containingContext.vbk;
-  auto vbk_end = vbk.end();
-  auto removeBlock = [&](const VbkBlock& b) {
-    vbk_end = std::remove_if(
-        vbk.begin(), vbk_end, [&b](const std::shared_ptr<VbkBlock>& ptr) {
-          return *ptr == b;
-        });
-  };
-
-  auto& vtbs = index.containingContext.vtbs;
-  auto vtbs_end = vtbs.end();
-  auto removeVTB = [&](const VTB& vtb) {
-    removeBlock(vtb.containingBlock);
-    std::for_each(vtb.context.rbegin(), vtb.context.rend(), removeBlock);
-
-    vtbs_end =
-        std::remove_if(vtbs.begin(), vtbs_end, [&vtb](const PartialVTB& p_vtb) {
-          return p_vtb == PartialVTB::fromVTB(vtb);
-        });
-  };
-
-  // remove ATV containing block
-  removeBlock(p.atv.containingBlock);
-  // remove ATV context
-  std::for_each(p.atv.context.rbegin(), p.atv.context.rend(), removeBlock);
-  // for every VTB, in reverse order
-  std::for_each(p.vtbs.rbegin(), p.vtbs.rend(), removeVTB);
-
-  vbk.erase(vbk_end, vbk.end());
-  vtbs.erase(vtbs_end, vtbs.end());
+  auto it = index.containingContext.find(VbkEndorsement::getId(p));
+  if (it != index.containingContext.end()) {
+    it->second.vbk.clear();
+    it->second.vtbs.clear();
+  }
 }
 
 }  // namespace altintegration
