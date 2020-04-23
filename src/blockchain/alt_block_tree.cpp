@@ -341,7 +341,7 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     }
   }
 
-  auto ctx = index.containingContext[VbkEndorsement::getId(p)];
+  auto& ctx = index.containingContext[VbkEndorsement::getId(p)];
   // process VTBs
   for (const auto& vtb : p.vtbs) {
     // process VBK blocks

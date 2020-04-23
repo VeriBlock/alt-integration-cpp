@@ -197,8 +197,6 @@ void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
 template <>
 void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
                                  const BlockIndex<VbkBlock>::payloads_t& p) {
-  using eid_t = typename BlockIndex<VbkBlock>::eid_t;
-
   auto it = index.containingContext.find(p.endorsement.id);
   if (it != index.containingContext.end()) {
     it->second.btc.clear();
@@ -215,7 +213,7 @@ void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
       known_blocks.insert(b->getHash());
     }
   }
-  auto ctx = index.containingContext[p.endorsement.id];
+  auto& ctx = index.containingContext[p.endorsement.id];
   for (const auto& b : p.btc) {
     addBlockIfUnique(b, known_blocks, ctx.btc, tree);
   }

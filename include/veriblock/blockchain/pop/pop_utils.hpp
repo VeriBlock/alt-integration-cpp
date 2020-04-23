@@ -54,7 +54,7 @@ bool checkAndAddEndorsement(
   }
 
   // Add endorsement into BlockIndex
-  auto ctx = index.containingContext[endorsement.id];
+  auto& ctx = index.containingContext[endorsement.id];
   ctx.setEndorsement(std::make_shared<endorsement_t>(endorsement));
 
   auto* eptr = ctx.getEndorsement().get();
