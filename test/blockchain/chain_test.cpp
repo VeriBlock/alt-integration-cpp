@@ -212,11 +212,11 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
                  .getEndorsement(),
             endorsement1);
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement2, 100)
-                 ->getContext(endorsement1.id)
+                 ->getContext(endorsement2.id)
                  .getEndorsement(),
             endorsement2);
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement3, 100)
-                 ->getContext(endorsement1.id)
+                 ->getContext(endorsement3.id)
                  .getEndorsement(),
             endorsement3);
   EXPECT_EQ(chain.findBlockContainingEndorsement(endorsement4, 100), nullptr);
