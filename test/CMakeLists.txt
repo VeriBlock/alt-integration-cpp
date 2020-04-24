@@ -45,3 +45,5 @@ addtest(keystone_util_test keystone_util_test.cpp)
 addtest(validationstate_test validationstate_test.cpp)
 
 addtest(alt-util_test alt-util_test.cpp)
+
+addtest(mempool_test mempool_test.cpp)
