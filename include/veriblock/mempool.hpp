@@ -38,7 +38,7 @@ struct MemPool {
  private:
   std::vector<ATV> stored_atvs;
 
-  std::multimap<decltype(VbkBlock::previousBlock), VTB> stored_vtbs;
+  std::vector<VTB> stored_vtbs;
 
   Hash_Function hasher;
 };
