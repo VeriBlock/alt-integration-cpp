@@ -19,6 +19,9 @@ TEST_F(MemPoolFixture, getPop_basic) {
   MemPool mempool(&hash_function);
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+  AltTree test_tree(alttree.getParams(),
+                    alttree.vbk().getParams(),
+                    alttree.btc().getParams());
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer.mineVbkBlocks(65);
@@ -53,4 +56,6 @@ TEST_F(MemPoolFixture, getPop_basic) {
 
   AltPopTx popTx;
   EXPECT_TRUE(mempool.getPop(*chain.rbegin(), alttree, &popTx, state));
+
+  EXPECT_NE(popTx.vtbs.size(), 0);
 }
