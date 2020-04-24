@@ -40,7 +40,7 @@ struct MemPool {
 
   std::vector<VTB> stored_vtbs;
 
-  Hash_Function hasher;
+  // Hash_Function hasher;
 };
 
 }  // namespace altintegration
