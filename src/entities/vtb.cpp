@@ -26,7 +26,6 @@ VTB VTB::fromVbkEncoding(const std::string& bytes) {
 }
 
 void VTB::toVbkEncoding(WriteStream& stream) const {
-  WriteStream txStream;
   transaction.toVbkEncoding(stream);
   merklePath.toVbkEncoding(stream);
   containingBlock.toVbkEncoding(stream);

@@ -29,8 +29,11 @@ struct PublicationData {
    */
   static PublicationData fromRaw(ReadStream& stream);
 
+  static PublicationData generatePublicationData();
+
   /**
-   * Convert PublicationData to data stream using PublicationData byte format
+   * Convert PublicationData to data stream using PublicationData byte
+   * format
    * @param stream data stream to write into
    */
   void toRaw(WriteStream& stream) const;
