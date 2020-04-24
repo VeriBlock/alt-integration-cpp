@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <unordered_map>
+#include <iostream>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
@@ -408,7 +409,7 @@ struct BlockTree {
         currentBest.tip()->chainWork < indexNew.chainWork) {
       auto prevTip = currentBest.tip();
       currentBest.setTip(&indexNew);
-      onTipChanged(indexNew, isBootstrap);
+      onTipChanged(prevTip, indexNew, isBootstrap);
       addForkCandidate(prevTip, &indexNew);
     } else {
       addForkCandidate(&indexNew, indexNew.pprev);
@@ -417,7 +418,9 @@ struct BlockTree {
 
   //! callback, executed every time when tip is changed. Useful for derived
   //! classes.
-  virtual void onTipChanged(index_t&, bool isBootstrap) { (void)isBootstrap; }
+  virtual void onTipChanged(index_t* prev, index_t& tip, bool isBootstrap) { (void)isBootstrap;
+    std::cout << "\ttip changed from: " << (prev ? prev->toPrettyString() : "<nullptr>") << " to " << tip.toPrettyString() << "\n";
+  }
 };
 
 }  // namespace altintegration

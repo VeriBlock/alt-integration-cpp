@@ -9,7 +9,7 @@ struct AltPayloadsAtomic : public ::testing::Test, public PopTestFixture {
   BlockIndex<BtcBlock>* btcTip = popminer.mineBtcBlocks(100);
   BlockIndex<VbkBlock>* vbkTip = popminer.mineVbkBlocks(100);
 
-  AltTree copy = makeEmptyAltTree();
+  AltTree other = makeEmptyAltTree();
 };
 
 namespace altintegration {
@@ -29,7 +29,7 @@ TEST_F(AltPayloadsAtomic, AddPayloads) {
   mineAltBlocks(3, chain);
   // duplicate blocks in 'copy' tree
   for (auto& b : chain) {
-    ASSERT_TRUE(copy.acceptBlock(b, state));
+    ASSERT_TRUE(other.acceptBlock(b, state));
   }
 
   auto& endorsed = chain[chain.size() - 2];
@@ -49,6 +49,7 @@ TEST_F(AltPayloadsAtomic, AddPayloads) {
     ASSERT_FALSE(alttree.addPayloads(containing, {pv1, pv2, pv3, pinv}, state));
     ASSERT_EQ(state.GetPath(),
               "bad-altpayloads+3+bad-atv-containing-block+bad-prev-block");
+    EXPECT_EQ(alttree, other);
   }
 
   // expect exactly same error for same inputs
@@ -57,18 +58,18 @@ TEST_F(AltPayloadsAtomic, AddPayloads) {
     ASSERT_FALSE(alttree.addPayloads(containing, {pv1, pv2, pv3, pinv}, state));
     ASSERT_EQ(state.GetPath(),
               "bad-altpayloads+3+bad-atv-containing-block+bad-prev-block");
+    EXPECT_EQ(alttree, other);
   }
 
   // if we remove invalid payloads, expect to successfully add payloads
   ASSERT_TRUE(alttree.addPayloads(containing, {pv1, pv2, pv3}, state));
 
-  // add same payloads to a `copy`
-  ASSERT_TRUE(copy.addPayloads(containing, {pv1, pv2, pv3}, state));
+  // add same payloads to a `other`
+  ASSERT_TRUE(other.addPayloads(containing, {pv1, pv2, pv3}, state));
 
   // expect that trees are equal
-  EXPECT_EQ(alttree.toPrettyString(), copy.toPrettyString());
-  EXPECT_EQ(alttree.btc(), copy.btc());
-  EXPECT_EQ(alttree.vbk(), copy.vbk());
-  EXPECT_EQ(alttree.getComparator(), copy.getComparator());
-  EXPECT_EQ(alttree, copy);
+  EXPECT_EQ(alttree.btc(), other.btc());
+  EXPECT_EQ(alttree.vbk(), other.vbk());
+  EXPECT_EQ(alttree.getComparator(), other.getComparator());
+  EXPECT_EQ(alttree, other);
 }

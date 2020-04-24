@@ -221,6 +221,7 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(btcBtip->getAncestor(55)->getHash(),
             alttree.vbk().btc().getBestChain().tip()->getHash());
   // expect that ALTVBK tip is vBc71
+  std::cout << alttree.toPrettyString() << std::endl;
   EXPECT_EQ(*vbkBtip->getAncestor(71), *alttree.vbk().getBestChain().tip());
   // expect that ALT tip is 102
   EXPECT_EQ(altchain.size(), 103);

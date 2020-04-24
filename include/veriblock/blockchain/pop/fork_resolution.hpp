@@ -401,9 +401,6 @@ struct PopAwareForkResolutionComparator {
     ValidationState state;
 
     auto minHeight = std::min(index_->height, chainA.first()->height);
-    CommandHistory history;
-    auto f = Finalizer([&]() { history.undoAll(); });
-
     sm_t sm(tree_, index_, *protectedParams_, minHeight);
     // try set current state to chain A
     if (!sm.unapplyAndApply(*chainA.tip(), state)) {

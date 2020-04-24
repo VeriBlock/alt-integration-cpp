@@ -259,7 +259,6 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
           return state.Error("Set state failed");
         }
 
-
         // set initial state machine state = current index
         for (size_t i = 0, size = payloads.size(); i < size; i++) {
           const auto& c = payloads[i];
@@ -294,7 +293,7 @@ std::string AltTree::toPrettyString() const {
   ss << "AltTree{blocks=" << block_index_.size() << "\n";
   ss << "Comparator state: " << cmp_.getIndex()->toPrettyString() << "\n";
   for (const auto& b : block_index_) {
-    ss << "AltBlock=" << b.second->toPrettyString() << "\n";
+    ss << "AltBlock=" << b.second->toPrettyString() << "\t";
     CommandHistory history(b.second->commands);
     ss << history.toPrettyString() << "\n";
   }
@@ -368,10 +367,7 @@ bool processPayloads<AltTree>(AltTree& tree,
 
 template <>
 std::string AddVbkEndorsement::toPrettyString() const {
-  auto vbkbest = tree_->getBestChain().tip()->toPrettyString();
-  auto btcbest = tree_->btc().getBestChain().tip()->toPrettyString();
-  return "AddVbkEndorsement{endorsement=" + e_->toPrettyString() +
-         ", btcBest=" + btcbest + ", vbkBest=" + vbkbest + "}";
+  return "AddVbkEndorsement{" + e_->toPrettyString() + "}";
 }
 
 }  // namespace altintegration

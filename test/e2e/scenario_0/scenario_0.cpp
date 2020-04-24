@@ -108,19 +108,7 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(endorsedPrev, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(endorsed, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
-  auto copy = *alt;
   ASSERT_FALSE(alt->addPayloads(containing, {payloads}, state));
   ASSERT_EQ("bad-altpayloads+0+vbk-bad-context-block+0+bad-prev-block",
             state.GetPath());
-
-  std::cout << "ALT\n" << alt->toPrettyString();
-  std::cout << "COPY\n" << alt->toPrettyString();
-
-  EXPECT_EQ(copy.btc(), alt->btc());
-  EXPECT_EQ(copy.vbk(), alt->vbk());
-  EXPECT_EQ(copy.getChainTips(), alt->getChainTips());
-  EXPECT_EQ(&copy.getParams(), &alt->getParams());
-  EXPECT_EQ(*copy.getComparator().getIndex(), *alt->getComparator().getIndex());
-  EXPECT_EQ(copy.getComparator(), alt->getComparator());
-  ASSERT_EQ(copy, *alt) << "addPayloads is not atomic!";
 }

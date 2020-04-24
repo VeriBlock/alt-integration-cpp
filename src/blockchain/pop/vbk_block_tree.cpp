@@ -20,7 +20,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 
   if (currentBest.tip() == nullptr) {
     currentBest.setTip(&indexNew);
-    return onTipChanged(indexNew, isBootstrap);
+    return onTipChanged(nullptr, indexNew, isBootstrap);
   }
 
   auto ki = param_->getKeystoneInterval();
@@ -48,7 +48,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     // other chain won!
     auto* prevTip = currentBest.tip();
     currentBest.setTip(&indexNew);
-    onTipChanged(indexNew, isBootstrap);
+    onTipChanged(prevTip, indexNew, isBootstrap);
     addForkCandidate(prevTip, &indexNew);
   } else if (result == 0) {
     // pop scores are equal. do PoW fork resolution
@@ -117,6 +117,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
   auto* prevIndex = cmp_.getIndex();
   return tryValidateWithResources(
       [&]() -> bool {
+        if (!cmp_.setState(*index, state)) {
+          return state.Error("Set state failed");
+        }
+
         // set initial state machine state = current index
         for (size_t i = 0, size = payloads.size(); i < size; i++) {
           const auto& c = payloads[i];
@@ -196,9 +200,7 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
 
 template <>
 std::string AddBtcEndorsement::toPrettyString() const {
-  auto btcbest = tree_->getBestChain().tip()->toPrettyString();
-  return "AddVbkEndorsement{" + e_->toPrettyString() + ", btcBest=" + btcbest +
-         "}";
+  return "AddBtcEndorsement{" + e_->toPrettyString() + "}";
 }
 
 }  // namespace altintegration

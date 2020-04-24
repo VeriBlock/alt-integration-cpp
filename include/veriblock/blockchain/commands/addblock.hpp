@@ -35,12 +35,14 @@ using AddVbkBlock = AddBlock<VbkBlock, VbkChainParams>;
 
 template <>
 inline std::string AddBtcBlock::toPrettyString() const {
-  return "AddBtcBlock{block=" + block_->getHash().toHex().substr(0, 8) + "}";
+  return "AddBtcBlock{prev=" + block_->previousBlock.toHex().substr(0, 8) +
+         ", block=" + block_->getHash().toHex().substr(0, 8) + "}";
 }
 
 template <>
 inline std::string AddVbkBlock::toPrettyString() const {
-  return "AddVbkBlock{block=" + block_->getHash().toHex().substr(0, 8) +
+  return "AddVbkBlock{prev=" + block_->previousBlock.toHex().substr(0, 8) +
+         ", block=" + block_->getHash().toHex().substr(0, 8) +
          ", height=" + std::to_string(block_->height) + "}";
 }
 

@@ -39,8 +39,7 @@ struct CommandHistory {
 
   //! prior to calling this function, check if `undo` queue is empty
   void undo() {
-    auto cmd = undo_.back();
-    cmd->UnExecute();
+    undo_.back()->UnExecute();
     undo_.pop_back();
   }
 

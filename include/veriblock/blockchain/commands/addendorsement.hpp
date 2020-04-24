@@ -70,11 +70,12 @@ struct AddEndorsement : public Command {
 
   void UnExecute() override {
     auto* endorsed = index_->getAncestor(e_->endorsedHeight);
-    assert(endorsed);
-    auto& v = endorsed->endorsedBy;
-    // TODO: reverse iteration may be faster, as items "to be removed" are
-    // likely exist at the end of vector
-    v.erase(std::remove(v.begin(), v.end(), e_.get()), v.end());
+    if (endorsed) {
+      auto& v = endorsed->endorsedBy;
+      // TODO: reverse iteration may be faster, as items "to be removed" are
+      // likely exist at the end of vector
+      v.erase(std::remove(v.begin(), v.end(), e_.get()), v.end());
+    }
     index_->containingEndorsements.erase(e_->id);
   }
 

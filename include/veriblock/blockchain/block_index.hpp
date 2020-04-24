@@ -92,11 +92,11 @@ struct BlockIndex {
   }
 
   std::string toPrettyString() const {
-    return "BlockIndex{height=" + std::to_string(height) +
+    return block_t::name() + "BlockIndex{height=" + std::to_string(height) +
            ", hash=" + HexStr(getHash()).substr(0, 8) +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
-           ", containsEndorsements=" +
-           std::to_string(containingEndorsements.size()) + "}";
+           ", endorsements=" + std::to_string(containingEndorsements.size()) +
+           ", commands=" + std::to_string(commands.size()) + "}";
   }
 
   void toRaw(WriteStream& stream) const {
