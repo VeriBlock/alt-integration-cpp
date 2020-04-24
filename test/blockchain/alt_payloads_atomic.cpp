@@ -44,16 +44,20 @@ TEST_F(AltPayloadsAtomic, AddPayloads) {
   pinv.atv.containingBlock.previousBlock = std::vector<uint8_t>{1, 1, 1, 1};
 
   // do addPayloads
-  ASSERT_FALSE(alttree.addPayloads(containing, {pv1, pv2, pv3, pinv}, state));
-  ASSERT_EQ(state.GetPath(),
-            "bad-altpayloads+3+bad-atv-containing-block+bad-prev-block");
-  state.clear();
+  {
+    ValidationState state;
+    ASSERT_FALSE(alttree.addPayloads(containing, {pv1, pv2, pv3, pinv}, state));
+    ASSERT_EQ(state.GetPath(),
+              "bad-altpayloads+3+bad-atv-containing-block+bad-prev-block");
+  }
 
   // expect exactly same error for same inputs
-  ASSERT_FALSE(alttree.addPayloads(containing, {pv1, pv2, pv3, pinv}, state));
-  ASSERT_EQ(state.GetPath(),
-            "bad-altpayloads+3+bad-atv-containing-block+bad-prev-block");
-  state.clear();
+  {
+    ValidationState state;
+    ASSERT_FALSE(alttree.addPayloads(containing, {pv1, pv2, pv3, pinv}, state));
+    ASSERT_EQ(state.GetPath(),
+              "bad-altpayloads+3+bad-atv-containing-block+bad-prev-block");
+  }
 
   // if we remove invalid payloads, expect to successfully add payloads
   ASSERT_TRUE(alttree.addPayloads(containing, {pv1, pv2, pv3}, state));
