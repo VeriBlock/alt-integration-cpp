@@ -21,7 +21,7 @@ struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
 
   ~MemPool() = default;
-  MemPool(Hash_Function function) : hasher(function) {}
+  MemPool(Hash_Function /*function*/) {}
 
   bool submitVTB(const std::vector<VTB>& vtb,
                  const AltTree& tree,
