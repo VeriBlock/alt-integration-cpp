@@ -12,6 +12,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
+#include <veriblock/ptrbyvaluecomparator.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
@@ -165,8 +166,26 @@ struct BlockTree {
   const block_index_t& getAllBlocks() const { return block_index_; }
 
   bool operator==(const BlockTree& o) const {
-    return block_index_ == o.block_index_ && activeChain_ == o.activeChain_ &&
-           fork_chains_ == o.fork_chains_;
+    if (activeChain_ != o.activeChain_) {
+      return false;
+    }
+
+    if (fork_chains_ != o.fork_chains_) {
+      return false;
+    }
+
+    return PtrByValueComparator{}(block_index_, o.block_index_);
+  }
+
+  std::string toPrettyString() const {
+    std::ostringstream ss;
+    ss << "BlockTree{blocks=" << block_index_.size() << "\n";
+    ss << "tip=" << getBestChain().tip()->toPrettyString() << "\n";
+    for (const auto& b : block_index_) {
+      ss << "block=" << b.second->toPrettyString() << "\n";
+    }
+    ss << "}\n";
+    return ss.str();
   }
 
  protected:

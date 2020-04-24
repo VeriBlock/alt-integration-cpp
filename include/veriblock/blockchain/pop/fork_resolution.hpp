@@ -7,6 +7,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_FORK_RESOLUTION_HPP_
 
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <set>
 #include <vector>
@@ -364,48 +365,7 @@ struct PopAwareForkResolutionComparator {
 
   ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
-  const protected_index_t* getIndex() const { return index_; }
-
-//  bool addPayloads(protected_index_t& index,
-//                   const std::vector<protected_payloads_t>& payloads,
-//                   ValidationState& state,
-//                   CommandHistory& history) {
-//    // set state machine to "previous state"
-//    bool ret = setState(*index.pprev, state);
-//    assert(ret && "previous payloads should be always valid");
-//    (void)ret;
-//
-//    if (payloads.empty()) {
-//      if (index_ == index.pprev) {
-//        // we added a block which does not contain payloads and it is
-//        // right after our current state
-//        index_ = &index;
-//        return true;
-//      }
-//    }
-//
-//    assert(index_ == index.pprev);
-//
-//    // set initial state machine state = current index
-//    for (size_t i = 0, size = payloads.size(); i < size; i++) {
-//      const auto& c = payloads[i];
-//
-//      // containing block must be correct (current)
-//      auto containingHash = index.getHash();
-//      if (c.getContainingBlock().getHash() != containingHash) {
-//        return state.Invalid("bad-containing-block", i);
-//      }
-//
-//      if (!processPayloads(tree_, containingHash, c, state, history)) {
-//        return state.Invalid("bad-payloads", i);
-//      }
-//    }
-//
-////    // update current state
-////    index_ = &index;
-//
-//    return true;
-//  }
+  protected_index_t* getIndex() const { return index_; }
 
   bool setState(protected_index_t& index, ValidationState& state) {
     // if previous state is unknown, set new state as current
@@ -495,7 +455,15 @@ struct PopAwareForkResolutionComparator {
   }
 
   bool operator==(const PopAwareForkResolutionComparator& o) const {
-    return index_ == o.index_ && tree_ == o.tree_;
+    if ((index_ == nullptr || o.index_ == nullptr) && index_ != o.index_) {
+      return false;
+    }
+
+    return tree_ == o.tree_;
+  }
+
+  bool operator!=(const PopAwareForkResolutionComparator& o) const {
+    return !operator==(o);
   }
 
  private:

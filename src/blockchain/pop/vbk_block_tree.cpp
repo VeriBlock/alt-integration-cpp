@@ -101,7 +101,6 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
 
   ret = cmp_.setState(*activeChain_.tip(), state);
   assert(ret);
-
   (void)ret;
 }
 
@@ -114,44 +113,50 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
                          "AddPayloads should be executed on known blocks");
   }
 
-  bool ret = cmp_.setState(*index, state);
-  assert(ret);
-  (void)ret;
-
   CommandHistory history;
+  auto* prevIndex = cmp_.getIndex();
+  return tryValidateWithResources(
+      [&]() -> bool {
+        // set initial state machine state = current index
+        for (size_t i = 0, size = payloads.size(); i < size; i++) {
+          const auto& c = payloads[i];
 
-  // set initial state machine state = current index
-  for (size_t i = 0, size = payloads.size(); i < size; i++) {
-    const auto& c = payloads[i];
+          // containing block must be correct (current)
+          auto containingHash = index->getHash();
+          if (c.getContainingBlock().getHash() != containingHash) {
+            return state.Invalid("vtb-bad-containing-block", i);
+          }
 
-    // containing block must be correct (current)
-    auto containingHash = index->getHash();
-    if (c.getContainingBlock().getHash() != containingHash) {
-      return state.Invalid("vtb-bad-containing-block", i);
-    }
+          if (!processPayloads(*this, containingHash, c, state, history)) {
+            return state.Invalid("bad-vtb", i);
+          }
+        }
 
-    if (!processPayloads(*this, containingHash, c, state, history)) {
-      return state.Invalid("bad-vtb", i);
-    }
-  }
+        history.save(index->commands);
 
-  history.save(index->commands);
+        // if this index is the part of the some fork_chain set to the tip of
+        // that fork for the correct determineBestChain() processing
+        std::vector<index_t*> forkTips;
+        for (const auto& forkChain : fork_chains_) {
+          if (forkChain.second.contains(index) ||
+              forkChain.second.tip()->getAncestor(index->height) == index) {
+            forkTips.push_back(forkChain.second.tip());
+          }
+        }
 
-  // if this index is the part of the some fork_chain set to the tip of that
-  // fork for the correct determineBestChain() processing
-  std::vector<index_t*> forkTips;
-  for (const auto& forkChain : fork_chains_) {
-    if (forkChain.second.contains(index) ||
-        forkChain.second.tip()->getAncestor(index->height) == index) {
-      forkTips.push_back(forkChain.second.tip());
-    }
-  }
+        for (const auto& tip : forkTips) {
+          determineBestChain(activeChain_, *tip);
+        }
 
-  for (const auto& tip : forkTips) {
-    determineBestChain(activeChain_, *tip);
-  }
+        return true;
+      },
+      [&]() {
+        history.undoAll();
 
-  return true;
+        bool ret = cmp_.setState(*prevIndex, state);
+        assert(ret);
+        (void)ret;
+      });
 }
 
 template <>
@@ -160,14 +165,12 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
                                    const VTB& p,
                                    ValidationState& state,
                                    CommandHistory& history) {
-  (void)containingHash;
-  //  auto* containing = tree.getBlockIndex(containingHash);
-  //  if (containing == nullptr) {
-  //    return state.Invalid(
-  //        "vbk-no-containing-block",
-  //        "Can't find VTB's containing block in VBK: " +
-  //        containingHash.toHex());
-  //  }
+  auto* containing = tree.getBlockIndex(containingHash);
+  if (containing == nullptr) {
+    return state.Invalid(
+        "vbk-no-containing-block",
+        "Can't find VTB's containing block in VBK: " + containingHash.toHex());
+  }
 
   size_t i = 0;
   // process BTC blocks first
@@ -181,22 +184,10 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
     return state.Invalid("btc-accept-blockofproof-block");
   }
 
-  // process VBK blocks
-  i = 0;
-  for (const auto& b : p.context) {
-    if (!addBlock(tree, b, state, history)) {
-      return state.Invalid("vbk-accept-context-block", i);
-    }
-  }
-  if (!addBlock(tree, p.containingBlock, state, history)) {
-    return state.Invalid("vbk-accept-containing-block");
-  }
-
   // add endorsement
-  auto* containingBlock = tree.getBlockIndex(p.containingBlock.getHash());
   auto e = BtcEndorsement::fromContainerPtr(p);
   auto cmd = std::make_shared<AddBtcEndorsement>(
-      tree.btc(), tree.getParams(), *containingBlock, std::move(e));
+      tree.btc(), tree.getParams(), *containing, std::move(e));
   if (!history.exec(cmd, state)) {
     return state.Invalid("vtb-bad-endorsement");
   }

@@ -72,4 +72,4 @@ addtest(chainparams_test chainparams_test.cpp)
 
 addtest(alt_blockchain_test alt_blockchain_test.cpp)
 
-addtest(alt_crosstree_atomicity_test alt_crosstree_atomicity_test.cpp)
+addtest(alt_crosstree_atomicity_test alt_payloads_atomic.cpp)

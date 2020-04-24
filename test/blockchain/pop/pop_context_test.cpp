@@ -122,7 +122,7 @@ TEST_F(PopContextFixture, A) {
 
   // and now accept VBK tip again, with VTBs
   acceptAllVtbsFromVBKblock(vbkTip);
-  auto* localB = local.getBlockIndex(vbkTip->getHash());
+//  auto* localB = local.getBlockIndex(vbkTip->getHash());
 //
 //  if (!localB->containingContext.empty()) {
 //    std::vector<BtcBlock> allBtcBlocks;
@@ -145,17 +145,17 @@ TEST_F(PopContextFixture, A) {
 
   // now we add VTB from btcA
   acceptAllVtbsFromVBKblock(vbkTip->pprev);
-  auto* localA = local.getBlockIndex(vbkTip->pprev->getHash());
-  if (!localA->containingContext.empty()) {
-    std::vector<BtcBlock> allBtcBlocks;
-    for (const auto& el : localA->containingContext.btc_context) {
-      for (const auto& b : el.second) {
-        allBtcBlocks.push_back(*b);
-      }
-    }
-
-    makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));
-  }
+//  auto* localA = local.getBlockIndex(vbkTip->pprev->getHash());
+//  if (!localA->containingContext.empty()) {
+//    std::vector<BtcBlock> allBtcBlocks;
+//    for (const auto& el : localA->containingContext.btc_context) {
+//      for (const auto& b : el.second) {
+//        allBtcBlocks.push_back(*b);
+//      }
+//    }
+//
+//    makeSureNoDuplicates(hashAll<BtcBlock>(allBtcBlocks));
+//  }
 
   auto* localVbkTip = local.getBlockIndex(vbkTip->getHash());
   local.getComparator().setState(*localVbkTip, state);

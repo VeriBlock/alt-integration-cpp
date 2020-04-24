@@ -11,7 +11,6 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
 
-#include <iostream>
 namespace altintegration {
 
 /// @invariant NOT atomic - given a block tree, if any of functions fail, state
@@ -41,7 +40,6 @@ struct PopStateMachine {
     size_t i = 0;
     for (const auto& cmd : index.commands) {
       if (!history.exec(cmd, state)) {
-        std::cout << history.toPrettyString() << "\n\n";
         history.undoAll();
         return state.Invalid("bad-command", i);
       }

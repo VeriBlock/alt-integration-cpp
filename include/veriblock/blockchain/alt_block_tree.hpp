@@ -6,7 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_BLOCK_TREE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_BLOCK_TREE_HPP_
 
-#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -108,12 +107,34 @@ struct AltTree {
 
   const block_index_t& getAllBlocks() const { return block_index_; }
 
+  const std::vector<index_t*> getChainTips() const { return chainTips_; }
+
+  const PopForkComparator& getComparator() const { return cmp_; }
+
   bool operator==(const AltTree& o) const {
-    return chainTips_ == o.chainTips_ && block_index_ == o.block_index_ &&
-           cmp_ == o.cmp_;
+    PtrByValueComparator comp{};
+    if (!comp(chainTips_, o.chainTips_)) {
+      return false;
+    }
+
+    if (!comp(block_index_, o.block_index_)) {
+      return false;
+    }
+
+    // ignore values of params and pop calc
+    return cmp_ == o.cmp_;
   }
 
   bool operator!=(const AltTree& o) const { return !operator==(o); }
+
+  std::string toPrettyString() const;
+
+  // tree is not copyable
+  AltTree(const AltTree& o) = delete;
+  AltTree& operator=(const AltTree& o) = delete;
+  // tree is movable
+  AltTree(AltTree&& o) = default;
+  AltTree& operator=(AltTree&& o) = default;
 
  protected:
   std::vector<index_t*> chainTips_;

@@ -50,11 +50,11 @@ struct CommandHistory {
 
   std::string toPrettyString() const {
     std::ostringstream ss;
-    ss << "History{size=" << undo_.size() << "\n";
+    ss << "History{size=" << undo_.size();
     for (const auto& cmd : undo_) {
-      ss << cmd->toPrettyString() << "\n";
+      ss << "\n" << cmd->toPrettyString();
     }
-    ss << "}\n";
+    ss << "}";
     return ss.str();
   }
 

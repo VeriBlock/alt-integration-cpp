@@ -50,7 +50,11 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                    ValidationState& state);
 
   bool operator==(const VbkBlockTree& o) const {
-    return cmp_ == o.cmp_ && VbkTree::operator==(o);
+    if(cmp_ != o.cmp_) {
+      return false;
+    }
+
+    return VbkTree::operator==(o);
   }
 
  private:

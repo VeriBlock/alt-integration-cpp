@@ -39,6 +39,10 @@ class ValidationState {
     return false;
   }
 
+  void clear() {
+    stack_trace.clear();
+  }
+
   /**
    * Changes this ValidationState into "INVALID" mode.
    * @param reject_reason - supply a short, unique message that identifies this
@@ -56,6 +60,11 @@ class ValidationState {
 
   bool Invalid(const std::string &reject_reason, size_t index) {
     return Invalid(reject_reason, "", index);
+  }
+
+  ValidationState& addIndex(size_t index) {
+    stack_trace.push_back(std::to_string(index));
+    return *this;
   }
 
   /**

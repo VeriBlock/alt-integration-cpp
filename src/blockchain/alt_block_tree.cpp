@@ -251,30 +251,55 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
                              HexStr(hash));
   }
 
-  bool ret = cmp_.setState(*index, state);
-  assert(ret);
-  (void)ret;
-
   CommandHistory history;
+  auto* prevIndex = cmp_.getIndex();
+  return tryValidateWithResources(
+      [&]() -> bool {
+        if (!cmp_.setState(*index, state)) {
+          return state.Error("Set state failed");
+        }
 
-  // set initial state machine state = current index
-  for (size_t i = 0, size = payloads.size(); i < size; i++) {
-    const auto& c = payloads[i];
 
-    // containing block must be correct (current)
-    auto containingHash = index->getHash();
-    if (c.getContainingBlock().getHash() != containingHash) {
-      return state.Invalid("altpayloads-bad-containing-block", i);
-    }
+        // set initial state machine state = current index
+        for (size_t i = 0, size = payloads.size(); i < size; i++) {
+          const auto& c = payloads[i];
 
-    if (!processPayloads(*this, containingHash, c, state, history)) {
-      return state.Invalid("bad-altpayloads", i);
-    }
+          // containing block must be correct (current)
+          auto containingHash = index->getHash();
+          if (c.getContainingBlock().getHash() != containingHash) {
+            return state.Invalid("altpayloads-bad-containing-block", i);
+          }
+
+          if (!processPayloads(*this, containingHash, c, state, history)) {
+            return state.Invalid("bad-altpayloads", i);
+          }
+        }
+
+        history.save(index->commands);
+
+        return true;
+      },
+      [&]() {
+        history.undoAll();
+
+        // rollback to last valid state
+        bool ret = cmp_.setState(*prevIndex, state);
+        assert(ret);
+        (void)ret;
+      });
+}
+
+std::string AltTree::toPrettyString() const {
+  std::ostringstream ss;
+  ss << "AltTree{blocks=" << block_index_.size() << "\n";
+  ss << "Comparator state: " << cmp_.getIndex()->toPrettyString() << "\n";
+  for (const auto& b : block_index_) {
+    ss << "AltBlock=" << b.second->toPrettyString() << "\n";
+    CommandHistory history(b.second->commands);
+    ss << history.toPrettyString() << "\n";
   }
-
-  history.save(index->commands);
-
-  return true;
+  ss << "}\n";
+  return ss.str();
 }
 
 template <>
@@ -293,9 +318,20 @@ bool processPayloads<AltTree>(AltTree& tree,
   // start with VTBs
   size_t i = 0;
   for (const auto& vtb : p.vtbs) {
+    // process VBK blocks
+    for (const auto& b : vtb.context) {
+      if (!addBlock(tree.vbk(), b, state, history)) {
+        return state.Invalid("vbk-bad-context-block", i);
+      }
+    }
+    if (!addBlock(tree.vbk(), vtb.containingBlock, state, history)) {
+      return state.Invalid("vbk-bad-containing-block", i);
+    }
+
+    // process VTB content
     if (!processPayloads(
             tree.vbk(), vtb.containingBlock.getHash(), vtb, state, history)) {
-      return state.Invalid("vtb-process-payloads", i);
+      return state.Invalid("vtb-bad-payloads", i);
     }
     i++;
   }

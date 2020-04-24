@@ -25,14 +25,18 @@ struct PopTestFixture {
   MockMiner popminer{};
 
   // trees
-  AltTree alttree = AltTree(altparam, vbkparam, btcparam);
+  AltTree alttree;
 
   ValidationState state;
 
-  PopTestFixture() {
-    EXPECT_TRUE(alttree.bootstrap(state));
-    EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
-    EXPECT_TRUE(alttree.vbk().btc().bootstrapWithGenesis(state));
+  PopTestFixture() : alttree(makeEmptyAltTree()) {}
+
+  AltTree makeEmptyAltTree() {
+    auto t = AltTree(altparam, vbkparam, btcparam);
+    EXPECT_TRUE(t.bootstrap(state));
+    EXPECT_TRUE(t.vbk().bootstrapWithGenesis(state));
+    EXPECT_TRUE(t.vbk().btc().bootstrapWithGenesis(state));
+    return t;
   }
 
   void mineAltBlocks(uint32_t num, std::vector<AltBlock>& chain) {

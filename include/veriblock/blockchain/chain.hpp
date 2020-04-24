@@ -106,8 +106,16 @@ struct Chain {
   void disconnectTip() { chain.pop_back(); }
 
   friend bool operator==(const Chain& a, const Chain& b) {
-    // sizes may vary, so compare tips
-    return a.tip() == b.tip();
+    auto* atip = a.tip();
+    auto* btip = b.tip();
+    if (atip == nullptr && btip == nullptr) {
+      return true;
+    }
+    if (atip == nullptr || btip == nullptr) {
+      return false;
+    }
+
+    return *atip == *btip;
   }
 
   friend bool operator!=(const Chain& a, const Chain& b) { return !(a == b); }
@@ -169,6 +177,20 @@ struct Chain {
     }
 
     return nullptr;
+  }
+
+  std::string toPrettyString() const {
+    std::ostringstream ss;
+    ss << "Chain{startHeight=" << startHeight_ << "size=" << chain.size();
+    if (chain.empty()) {
+      ss << ", chain=<empty>}";
+    } else {
+      for (const auto& item : chain) {
+        ss << item->toPrettyString() << "\n";
+      }
+      ss << "}";
+    }
+    return ss.str();
   }
 
  private:
