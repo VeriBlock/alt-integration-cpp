@@ -43,6 +43,12 @@ struct AltPopTx {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  friend bool operator==(const AltPopTx& a, const AltPopTx& b) {
+    // clang-format off
+    return a.toVbkEncoding() == b.toVbkEncoding();
+    // clang-format on
+  }
 };
 
 }  // namespace altintegration

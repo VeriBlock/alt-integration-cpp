@@ -29,11 +29,13 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs,
     auto hash = vtbs[i].containingBlock.getHash().trimLE<vbk_hash_t::size()>();
     stored_vtbs.insert(std::make_pair(hash, vtbs[i]));
   }
+
+  return true;
 }
 
 bool MemPool::getPop(const AltBlock& current_block,
                      AltTree& tree,
-                     AltPopTx* out_data,
+                     AltPopTx* /*out_data*/,
                      ValidationState& state) {
   if (!tree.setState(current_block.getHash(), state)) {
     return state.Invalid("mempool-get-pop");
@@ -42,8 +44,9 @@ bool MemPool::getPop(const AltBlock& current_block,
   for (const auto& atv : stored_atvs) {
     VbkBlock first_block =
         atv.context.size() != 0 ? atv.context[0] : atv.containingBlock;
-
-    auto range = stored_vtbs.equal_range(first_block.previousBlock);
   }
+
+  return true;
+}
 
 }  // namespace altintegration

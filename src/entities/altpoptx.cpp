@@ -17,7 +17,7 @@ AltPopTx AltPopTx::fromVbkEncoding(ReadStream& stream) {
 
 AltPopTx AltPopTx::fromVbkEncoding(Slice<const uint8_t> raw_bytes) {
   ReadStream stream(raw_bytes);
-  return fromVbkEncoding(raw_bytes);
+  return fromVbkEncoding(stream);
 }
 
 void AltPopTx::toVbkEncoding(WriteStream& stream) const {
