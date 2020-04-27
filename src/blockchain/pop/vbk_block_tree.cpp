@@ -106,14 +106,14 @@ void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
 
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
                                const std::vector<payloads_t>& payloads,
-                               ValidationState& state) {
+                               ValidationState& state, CommandHistory& history) {
   auto* index = getBlockIndex(block);
   if (index == nullptr) {
     return state.Invalid("unknown-block",
                          "AddPayloads should be executed on known blocks");
   }
 
-  CommandHistory history;
+  CommandHistory internal;
   auto* prevIndex = cmp_.getIndex();
   return tryValidateWithResources(
       [&]() -> bool {
@@ -131,12 +131,14 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
             return state.Invalid("vtb-bad-containing-block", i);
           }
 
-          if (!processPayloads(*this, containingHash, c, state, history)) {
+          if (!processPayloads(*this, containingHash, c, state, internal)) {
             return state.Invalid("bad-vtb", i);
           }
         }
 
-        history.save(index->commands);
+        history.addFrom(internal);
+        // save clears 'internal'
+        internal.save(index->commands);
 
         // if this index is the part of the some fork_chain set to the tip of
         // that fork for the correct determineBestChain() processing
@@ -155,7 +157,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& block,
         return true;
       },
       [&]() {
-        history.undoAll();
+        internal.undoAll();
 
         bool ret = cmp_.setState(*prevIndex, state);
         assert(ret);

@@ -180,11 +180,11 @@ struct BlockTree {
 
   std::string toPrettyString(size_t level = 0) const {
     std::ostringstream ss;
-    auto pad = std::string(level, ' ');
+    auto pad = std::string(level + 2, ' ');
     ss << pad << "BlockTree{blocks=" << block_index_.size() << "\n";
-    ss << pad << "tip=" << getBestChain().tip()->toPrettyString(level + 2) << "\n";
+    ss << pad << "tip=" << getBestChain().tip()->toPrettyString() << "\n";
     for (const auto& b : block_index_) {
-      ss << pad << "block=" << b.second->toPrettyString(level + 2) << "\n";
+      ss << pad << "block=" << b.second->toPrettyString() << "\n";
     }
     ss << pad << "}\n";
     return ss.str();

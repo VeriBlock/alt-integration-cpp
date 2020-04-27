@@ -331,9 +331,9 @@ bool processPayloads<AltTree>(AltTree& tree,
     }
 
     // process VTB content
-    if (!processPayloads(
-            tree.vbk(), vtb.containingBlock.getHash(), vtb, state, history)) {
-      return state.Invalid("vtb-bad-payloads", i);
+    if (!tree.vbk().addPayloads(
+            vtb.containingBlock.getHash(), {vtb}, state, history)) {
+      return state.Invalid("vbk-bad-vtb", i);
     }
     i++;
   }

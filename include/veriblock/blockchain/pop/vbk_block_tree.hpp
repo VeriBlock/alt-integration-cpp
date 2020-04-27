@@ -47,10 +47,18 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool addPayloads(const hash_t& containing,
                    const std::vector<payloads_t>& payloads,
-                   ValidationState& state);
+                   ValidationState& state) {
+    CommandHistory history;
+    return addPayloads(containing, payloads, state, history);
+  }
+
+  bool addPayloads(const hash_t& containing,
+                   const std::vector<payloads_t>& payloads,
+                   ValidationState& state,
+                   CommandHistory& history);
 
   bool operator==(const VbkBlockTree& o) const {
-    if(cmp_ != o.cmp_) {
+    if (cmp_ != o.cmp_) {
       return false;
     }
 

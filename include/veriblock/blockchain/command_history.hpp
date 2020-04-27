@@ -18,6 +18,12 @@ struct CommandHistory {
     }
   }
 
+  void addFrom(const CommandHistory& other) {
+    for(const auto& c : other.undo_) {
+      undo_.push_back(c);
+    }
+  }
+
   bool exec(const CommandPtr& cmd, ValidationState& state) {
     undo_.push_back(cmd);
     return cmd->Execute(state);
