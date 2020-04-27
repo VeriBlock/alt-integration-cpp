@@ -53,8 +53,8 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
   ASSERT_TRUE(alttree.addPayloads(containing, {payloads}, state));
 
   // endorsed.height=0, containing.height=1
-  payout = alttree.getPopPayout(chain[1].getHash());
-  ASSERT_FALSE(payout.empty()) << payout;
+  payout = alttree.getPopPayout(chain[0].getHash());
+  ASSERT_FALSE(payout.empty());
   ASSERT_TRUE(payout.count(getPayoutInfo()));
   ASSERT_GT(payout[getPayoutInfo()], 0);
 }

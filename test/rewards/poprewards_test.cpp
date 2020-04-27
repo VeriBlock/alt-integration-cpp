@@ -42,12 +42,12 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   EXPECT_EQ(altchain.size(), 12);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 11);
 
-  auto payouts = alttree.getPopPayout(containingBlock.getHash());
+  auto payouts = alttree.getPopPayout(endorsedBlock.getHash());
   ASSERT_TRUE(payouts.size());
 
   PopRewardsCalculator sampleCalculator = PopRewardsCalculator(altparam);
   auto payoutBlockRound =
-      sampleCalculator.getRoundForBlockNumber(containingBlock.height);
+      sampleCalculator.getRoundForBlockNumber(endorsedBlock.height);
   ASSERT_EQ(payouts[tx.publicationData.payoutInfo],
             (int64_t)PopRewardsBigDecimal::decimals *
                 altparam.getRewardParams().roundRatios()[payoutBlockRound]);
