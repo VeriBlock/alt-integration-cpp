@@ -46,7 +46,7 @@ struct PopRewards {
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
    * the endorsed block.
-   * @param endorsedBlock altchain block for which the reward is being paid
+   * @param endorsedBlock endorsed altchain block which we are paying reward for.
    * @param popDifficulty current POP difficulty. See calculateDifficulty for reference.
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a key
    *         and reward amount as a value

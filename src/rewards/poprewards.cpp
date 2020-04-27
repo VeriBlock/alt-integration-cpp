@@ -68,7 +68,9 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
     const PopRewardsBigDecimal& popDifficulty) {
   std::map<std::vector<uint8_t>, int64_t> rewards{};
   int bestPublication = getBestPublicationHeight(endorsedBlock, vbk_tree_);
-  if (bestPublication < 0) return rewards;
+  if (bestPublication < 0) {
+    return rewards;
+  }
 
   auto blockScore = scoreFromEndorsements(endorsedBlock);
 

@@ -26,7 +26,7 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
 
   for (size_t i = 0; i < 10000; i++) {
     std::map<std::vector<uint8_t>, int64_t> payout;
-    ASSERT_NO_FATAL_FAILURE(payout = alttree.getPopPayout(chain[i].getHash()));
+    ASSERT_NO_FATAL_FAILURE(payout = alttree.getPopPayout(chain[i].getHash(), state));
     // no endorsements = no payouts
     ASSERT_TRUE(payout.empty());
 
@@ -47,13 +47,18 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
   auto payloads =
       generateAltPayloads(vbktx, containing, endorsed, getLastKnownVbkBlock());
 
-  auto payout = alttree.getPopPayout(chain[0].getHash());
+  auto payout = alttree.getPopPayout(chain.back().getHash(), state);
   ASSERT_TRUE(payout.empty());
+  ASSERT_TRUE(state.IsError());
+
+  state = ValidationState();
   ASSERT_TRUE(alttree.acceptBlock(containing, state));
   ASSERT_TRUE(alttree.addPayloads(containing, {payloads}, state));
 
-  // endorsed.height=0, containing.height=1
-  payout = alttree.getPopPayout(chain[0].getHash());
+  mineAltBlocks(altparam.getRewardParams().rewardSettlementInterval() - 2,
+                chain);
+
+  payout = alttree.getPopPayout(chain.back().getHash(), state);
   ASSERT_FALSE(payout.empty());
   ASSERT_TRUE(payout.count(getPayoutInfo()));
   ASSERT_GT(payout[getPayoutInfo()], 0);

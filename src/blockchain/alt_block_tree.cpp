@@ -200,14 +200,21 @@ bool AltTree::setState(const AltBlock::hash_t& to, ValidationState& state) {
 }
 
 std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
-    const AltBlock::hash_t& block) {
-  auto* index = getBlockIndex(block);
+    const AltBlock::hash_t& tip, ValidationState& state) {
+  auto* index = getBlockIndex(tip);
   if (index == nullptr) {
+    state.Error("Block not found");
     return {};
   }
 
-  auto popDifficulty = rewards_.calculateDifficulty(*index);
-  return rewards_.calculatePayouts(*index, popDifficulty);
+  auto *endorsedBlock = index->getAncestorBlocksBehind(alt_config_->getRewardParams().rewardSettlementInterval());
+  if (endorsedBlock == nullptr) {
+    state.Error("Not enough blocks to get the endorsed block");
+    return {};
+  }
+
+  auto popDifficulty = rewards_.calculateDifficulty(*endorsedBlock);
+  return rewards_.calculatePayouts(*endorsedBlock, popDifficulty);
 }
 
 int AltTree::compareTwoBranches(AltTree::index_t* chain1,
