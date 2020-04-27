@@ -72,9 +72,6 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
                                    ValidationState& state,
                                    CommandHistory& history);
 
-template <>
-std::string AddBtcEndorsement::toPrettyString() const;
-
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_

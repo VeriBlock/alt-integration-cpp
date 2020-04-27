@@ -198,9 +198,4 @@ bool processPayloads<VbkBlockTree>(VbkBlockTree& tree,
   return true;
 }
 
-template <>
-std::string AddBtcEndorsement::toPrettyString() const {
-  return "AddBtcEndorsement{" + e_->toPrettyString() + "}";
-}
-
 }  // namespace altintegration

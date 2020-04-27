@@ -23,7 +23,7 @@ struct AddBlock : public Command {
 
   void UnExecute() override { tree_->invalidateBlockByHash(block_->getHash()); }
 
-  std::string toPrettyString() const override;
+  std::string toPrettyString(size_t level = 0) const override;
 
  private:
   Tree* tree_;
@@ -34,14 +34,16 @@ using AddBtcBlock = AddBlock<BtcBlock, BtcChainParams>;
 using AddVbkBlock = AddBlock<VbkBlock, VbkChainParams>;
 
 template <>
-inline std::string AddBtcBlock::toPrettyString() const {
-  return "AddBtcBlock{prev=" + block_->previousBlock.toHex().substr(0, 8) +
+inline std::string AddBtcBlock::toPrettyString(size_t level) const {
+  return std::string(level, ' ') +
+         "AddBtcBlock{prev=" + block_->previousBlock.toHex().substr(0, 8) +
          ", block=" + block_->getHash().toHex().substr(0, 8) + "}";
 }
 
 template <>
-inline std::string AddVbkBlock::toPrettyString() const {
-  return "AddVbkBlock{prev=" + block_->previousBlock.toHex().substr(0, 8) +
+inline std::string AddVbkBlock::toPrettyString(size_t level) const {
+  return std::string(level, ' ') +
+         "AddVbkBlock{prev=" + block_->previousBlock.toHex().substr(0, 8) +
          ", block=" + block_->getHash().toHex().substr(0, 8) +
          ", height=" + std::to_string(block_->height) + "}";
 }

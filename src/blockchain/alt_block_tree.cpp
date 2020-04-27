@@ -288,16 +288,19 @@ bool AltTree::addPayloads(const AltBlock& containingBlock,
       });
 }
 
-std::string AltTree::toPrettyString() const {
+std::string AltTree::toPrettyString(size_t level) const {
   std::ostringstream ss;
-  ss << "AltTree{blocks=" << block_index_.size() << "\n";
-  ss << "Comparator state: " << cmp_.getIndex()->toPrettyString() << "\n";
+  auto pad = std::string(level, ' ');
+  ss << pad << "AltTree{blocks=" << block_index_.size() << "\n";
+  ss << pad << "  Comparator state: " << cmp_.getIndex()->toPrettyString();
   for (const auto& b : block_index_) {
-    ss << "AltBlock=" << b.second->toPrettyString() << "\t";
+    ss << '\n' << pad << "  AltBlock=" << b.second->toPrettyString();
     CommandHistory history(b.second->commands);
-    ss << history.toPrettyString() << "\n";
+    if (history.hasUndo()) {
+      ss << '\n' << history.toPrettyString(level + 2);
+    }
   }
-  ss << "}\n";
+  ss << pad << "}\n";
   return ss.str();
 }
 
@@ -363,11 +366,6 @@ bool processPayloads<AltTree>(AltTree& tree,
   }
 
   return true;
-}
-
-template <>
-std::string AddVbkEndorsement::toPrettyString() const {
-  return "AddVbkEndorsement{" + e_->toPrettyString() + "}";
 }
 
 }  // namespace altintegration

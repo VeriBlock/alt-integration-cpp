@@ -47,13 +47,14 @@ struct CommandHistory {
 
   void clear() { undo_.clear(); }
 
-  std::string toPrettyString() const {
+  std::string toPrettyString(size_t level = 0) const {
     std::ostringstream ss;
-    ss << "History{size=" << undo_.size();
-    for (const auto& cmd : undo_) {
-      ss << "\n" << cmd->toPrettyString();
+    auto pad = std::string(level, ' ');
+    for (size_t i = 0, size = undo_.size(); i < size; i++) {
+      const auto & cmd = undo_[i];
+      ss << cmd->toPrettyString(level + 2);
+      ss << ((i < size - 1) ? "\n" : "}");
     }
-    ss << "}";
     return ss.str();
   }
 

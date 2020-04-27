@@ -7,9 +7,9 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_
 
 #include <algorithm>
+#include <iostream>
 #include <memory>
 #include <unordered_map>
-#include <iostream>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
@@ -178,14 +178,15 @@ struct BlockTree {
     return PtrByValueComparator{}(block_index_, o.block_index_);
   }
 
-  std::string toPrettyString() const {
+  std::string toPrettyString(size_t level = 0) const {
     std::ostringstream ss;
-    ss << "BlockTree{blocks=" << block_index_.size() << "\n";
-    ss << "tip=" << getBestChain().tip()->toPrettyString() << "\n";
+    auto pad = std::string(level, ' ');
+    ss << pad << "BlockTree{blocks=" << block_index_.size() << "\n";
+    ss << pad << "tip=" << getBestChain().tip()->toPrettyString(level + 2) << "\n";
     for (const auto& b : block_index_) {
-      ss << "block=" << b.second->toPrettyString() << "\n";
+      ss << pad << "block=" << b.second->toPrettyString(level + 2) << "\n";
     }
-    ss << "}\n";
+    ss << pad << "}\n";
     return ss.str();
   }
 
@@ -418,8 +419,10 @@ struct BlockTree {
 
   //! callback, executed every time when tip is changed. Useful for derived
   //! classes.
-  virtual void onTipChanged(index_t* prev, index_t& tip, bool isBootstrap) { (void)isBootstrap;
-    std::cout << "\ttip changed from: " << (prev ? prev->toPrettyString() : "<nullptr>") << " to " << tip.toPrettyString() << "\n";
+  virtual void onTipChanged(index_t* prev, index_t& tip, bool isBootstrap) {
+    (void)isBootstrap;
+    (void)prev;
+    (void)tip;
   }
 };
 

@@ -127,7 +127,7 @@ struct AltTree {
 
   bool operator!=(const AltTree& o) const { return !operator==(o); }
 
-  std::string toPrettyString() const;
+  std::string toPrettyString(size_t level = 0) const;
 
   // tree is not copyable
   AltTree(const AltTree& o) = delete;
@@ -160,9 +160,6 @@ bool processPayloads<AltTree>(AltTree& tree,
                               const typename AltTree::payloads_t& p,
                               ValidationState& state,
                               CommandHistory& history);
-
-template <>
-std::string AddVbkEndorsement::toPrettyString() const;
 
 }  // namespace altintegration
 

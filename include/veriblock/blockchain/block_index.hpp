@@ -91,8 +91,9 @@ struct BlockIndex {
     return nullptr;
   }
 
-  std::string toPrettyString() const {
-    return block_t::name() + "BlockIndex{height=" + std::to_string(height) +
+  std::string toPrettyString(size_t level = 0) const {
+    return std::string(level, ' ') + block_t::name() +
+           "BlockIndex{height=" + std::to_string(height) +
            ", hash=" + HexStr(getHash()).substr(0, 8) +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
            ", endorsements=" + std::to_string(containingEndorsements.size()) +

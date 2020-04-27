@@ -36,6 +36,10 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
   EXPECT_TRUE(state.IsValid());
 
+  std::cout << "1)\n";
+  std::cout << alttree.toPrettyString() << "\n";
+
+
   // check endorsements
   auto* endorsedBlockIndex = alttree.getBlockIndex(endorsement1.endorsedHash);
   auto* containingBlockIndex1 =
@@ -58,13 +62,15 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
   EXPECT_TRUE(state.IsValid());
 
+  std::cout << "2)\n";
+  std::cout << alttree.toPrettyString() << "\n";
+
   // check endorsements
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   auto* containingBlockIndex2 =
       alttree.getBlockIndex(endorsement2.containingHash);
   EXPECT_TRUE(
-      containingBlockIndex2->containingEndorsements.find(endorsement2.id) !=
-      containingBlockIndex2->containingEndorsements.end());
+      containingBlockIndex2->containingEndorsements.count(endorsement2.id));
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 2);
 
   tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
@@ -78,6 +84,9 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
   EXPECT_TRUE(state.IsValid());
+
+  std::cout << "3)\n";
+  std::cout << alttree.toPrettyString() << "\n";
 
   // check endorsements
   endorsedBlockIndex = alttree.getBlockIndex(endorsement3.endorsedHash);

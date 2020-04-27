@@ -79,7 +79,9 @@ struct AddEndorsement : public Command {
     index_->containingEndorsements.erase(e_->id);
   }
 
-  std::string toPrettyString() const override;
+  std::string toPrettyString(size_t level = 0) const override {
+    return std::string(level, ' ') + "Add" + e_->toPrettyString();
+  }
 
  private:
   ProtectingBlockTree* tree_;
