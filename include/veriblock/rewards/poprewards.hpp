@@ -53,7 +53,7 @@ struct PopRewards {
    */
   virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
       const BlockIndex<AltBlock>& block,
-      PopRewardsBigDecimal popDifficulty);
+      const PopRewardsBigDecimal& popDifficulty);
 
  private:
   const VbkBlockTree& vbk_tree_;

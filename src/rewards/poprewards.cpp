@@ -53,7 +53,8 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
     currentBlock = currentBlock->pprev;
   }
 
-  difficulty /= (uint64_t)rewardParams.difficultyAveragingInterval();
+  difficulty /=
+      static_cast<uint64_t>(rewardParams.difficultyAveragingInterval());
 
   // Minimum difficulty
   if (difficulty < 1.0) {
@@ -64,8 +65,7 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
 
 std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
     const BlockIndex<AltBlock>& block,
-    PopRewardsBigDecimal popDifficulty) {
-
+    const PopRewardsBigDecimal& popDifficulty) {
   std::map<std::vector<uint8_t>, int64_t> rewards{};
   int bestPublication = getBestPublicationHeight(block, vbk_tree_);
   if (bestPublication < 0) return rewards;
