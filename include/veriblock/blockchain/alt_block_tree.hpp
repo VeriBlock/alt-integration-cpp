@@ -91,11 +91,11 @@ struct AltTree {
   bool setState(const AltBlock::hash_t& to, ValidationState& state);
 
   /**
-   * Calculate payouts for the given block
+   * Calculate payouts for the altchain tip
    * @return map with reward recipient as a key and reward amount as a value
    */
   std::map<std::vector<uint8_t>, int64_t> getPopPayout(
-      const AltBlock::hash_t& block);
+      const AltBlock::hash_t& tip, ValidationState& state);
 
   /**
    * Determine the best chain of the AltBlocks in accordance with the VeriBlock

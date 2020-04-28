@@ -3,7 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include "util/test_utils.hpp"
 #include <util/alt_chain_params_regtest.hpp>
 #include <util/test_utils.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
@@ -12,9 +11,15 @@
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/mock_miner.hpp>
 
+#include "util/test_utils.hpp"
+
 namespace altintegration {
 
 struct PopTestFixture {
+  const static std::vector<uint8_t> getPayoutInfo() {
+    return {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  }
+
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
@@ -45,11 +50,8 @@ struct PopTestFixture {
   }
 
   PublicationData generatePublicationData(const AltBlock& block) {
-    const static std::vector<uint8_t> payout_info = {
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-
     PublicationData pubData;
-    pubData.payoutInfo = payout_info;
+    pubData.payoutInfo = getPayoutInfo();
     pubData.identifier = 0;
     pubData.contextInfo = {1, 2, 3, 4, 5};
     pubData.header = block.toVbkEncoding();
@@ -103,6 +105,10 @@ struct PopTestFixture {
     alt.containingBlock = containing;
     alt.endorsed = endorsed;
     return alt;
+  }
+
+  VbkBlock::hash_t getLastKnownVbkBlock() {
+    return alttree.vbk().getBestChain().tip()->getHash();
   }
 };
 
