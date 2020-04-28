@@ -126,15 +126,15 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
 std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
                                       AltTree& tree,
                                       ValidationState& state) {
-  auto hash = current_block.getHash();
-  bool ret = tree.setState(hash, state);
+  bool ret = tree.setState(current_block.getHash(), state);
   (void)ret;
   assert(ret);
 
-  AltBlock tempBlock{{0, 0, 0, 0, 0, 0, 0, 1},
-                     hash,
-                     current_block.timestamp,
-                     current_block.height + 1};
+  AltBlock tempBlock;
+  tempBlock.hash = {0, 0, 0, 0, 0, 0, 0, 1};
+  tempBlock.previousBlock = current_block.getHash();
+  tempBlock.timestamp = current_block.timestamp + 1;
+  tempBlock.height = current_block.height + 1;
 
   auto applyPayloads = [&](const AltPopTx& popTx) -> bool {
     AltPayloads payloads;
