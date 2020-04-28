@@ -28,10 +28,11 @@ struct MemPool {
   MemPool(const AltChainParams& alt_param,
           const VbkChainParams& vbk_params,
           const BtcChainParams& btc_params,
-          Hash_Function /*function*/)
+          Hash_Function function)
       : alt_chain_params_(&alt_param),
         vbk_chain_params_(&vbk_params),
-        btc_chain_params_(&btc_params) {}
+        btc_chain_params_(&btc_params),
+        hasher(function) {}
 
   bool submitVTB(const std::vector<VTB>& vtb, ValidationState& state);
   bool submitATV(const std::vector<ATV>& atv, ValidationState& state);
@@ -46,7 +47,7 @@ struct MemPool {
   std::vector<ATV> stored_atvs_;
   std::vector<VTB> stored_vtbs_;
 
-  // Hash_Function hasher;
+  Hash_Function hasher;
 
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
