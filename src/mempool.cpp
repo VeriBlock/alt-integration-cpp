@@ -112,7 +112,7 @@ bool MemPool::submitATV(const std::vector<ATV>& atvs, ValidationState& state) {
 bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
   for (size_t i = 0; i < vtbs.size(); ++i) {
     if (!checkVTB(vtbs[i], state, *vbk_chain_params_, *btc_chain_params_)) {
-      state.Invalid("mempool-submit-vtb", i);
+      return state.Invalid("mempool-submit-vtb", i);
     }
 
     uploadVbkContext(vtbs[i]);
