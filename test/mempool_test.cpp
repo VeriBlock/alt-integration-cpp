@@ -10,7 +10,9 @@
 using namespace altintegration;
 
 std::vector<uint8_t> hash_function(const std::vector<uint8_t>& bytes) {
-  return sha256(bytes).asVector();
+  ReadStream stream(bytes);
+  AltBlock altBlock = AltBlock::fromVbkEncoding(stream);
+  return altBlock.getHash();
 }
 
 struct MemPoolFixture : public PopTestFixture, public ::testing::Test {};

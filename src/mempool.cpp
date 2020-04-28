@@ -126,13 +126,38 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
 std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
                                       AltTree& tree,
                                       ValidationState& state) {
-  bool ret = tree.setState(current_block.getHash(), state);
+  auto hash = current_block.getHash();
+  bool ret = tree.setState(hash, state);
   (void)ret;
   assert(ret);
 
-  std::vector<AltPopTx> popTxs;
+  AltBlock tempBlock = {{0, 0, 0, 0, 0, 0, 0, 1},
+                        hash,
+                        current_block.timestamp,
+                        current_block.height + 1};
 
-  for (const auto& atv : stored_atvs_) {
+  auto applyPayloads = [&](const AltPopTx& popTx) -> bool {
+    AltPayloads payloads;
+    payloads.altPopTx = popTx;
+    payloads.containingBlock = tempBlock;
+
+    // find endorsed block
+    auto endorsed_hash = hasher(popTx.atv.transaction.publicationData.header);
+    auto endorsed_block_index = tree.getBlockIndex(endorsed_hash);
+    if (!endorsed_block_index) {
+      return false;
+    }
+    payloads.endorsed = *endorsed_block_index->header;
+
+    bool ret = tree.acceptBlock(tempBlock, state);
+    assert(ret);
+
+    return tree.addPayloads(tempBlock, {payloads}, state);
+  };
+
+  std::vector<AltPopTx> popTxs;
+  for (auto atv_it = stored_atvs_.begin(); atv_it != stored_atvs_.end();) {
+    auto& atv = *atv_it;
     AltPopTx popTx;
     VbkBlock first_block =
         !atv.context.empty() ? atv.context[0] : atv.containingBlock;
@@ -141,17 +166,26 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
       if (fillContext(first_block, popTx.vbk_context, tree)) {
         fillVTBs(popTx.vtbs, popTx.vbk_context);
         popTx.atv = atv;
-        popTxs.push_back(popTx);
-        break;
-      } else {
+        if (applyPayloads(popTx)) {
+          popTxs.push_back(popTx);
+        }
+        atv_it = stored_atvs_.erase(atv_it);
         continue;
       }
     } else {
       popTx.atv = atv;
-      popTxs.push_back(popTx);
-      break;
+      if (applyPayloads(popTx)) {
+        popTxs.push_back(popTx);
+      }
+      atv_it = stored_atvs_.erase(atv_it);
+      continue;
     }
+
+    ++atv_it;
   }
+
+  // clear tree from temp endorsement
+  tree.invalidateBlockByHash(tempBlock.getHash());
 
   return popTxs;
 }
