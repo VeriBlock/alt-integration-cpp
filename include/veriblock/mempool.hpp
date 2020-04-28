@@ -47,11 +47,11 @@ struct MemPool {
   std::vector<ATV> stored_atvs_;
   std::vector<VTB> stored_vtbs_;
 
-  Hash_Function hasher;
-
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
   const BtcChainParams* btc_chain_params_{nullptr};
+
+  Hash_Function hasher;
 
   void uploadVbkContext(const VTB&);
   void uploadVbkContext(const ATV&);
