@@ -99,10 +99,7 @@ struct BlockIndex {
 
   void setFlag(enum BlockStatus s) { this->status |= s; }
 
-  void unsetFlag(enum BlockStatus s) {
-    this->status |= s;
-    this->status ^= s;
-  }
+  void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
 
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }
