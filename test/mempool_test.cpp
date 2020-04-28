@@ -62,6 +62,15 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
 
   EXPECT_EQ(popTxs.size(), 1);
   EXPECT_EQ(popTxs[0].vtbs.size(), 2);
+
+  auto containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  AltPayloads payloads =
+      generateAltPayloads(popTxs[0], containingBlock, endorsedBlock);
+
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(state.IsValid());
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_2) {
@@ -117,6 +126,15 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
 
   EXPECT_EQ(popTxs.size(), 1);
   EXPECT_EQ(popTxs[0].vtbs.size(), 2);
+
+  auto containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  AltPayloads payloads =
+      generateAltPayloads(popTxs[0], containingBlock, endorsedBlock);
+
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(state.IsValid());
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_3) {
@@ -179,4 +197,13 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
 
   EXPECT_EQ(popTxs.size(), 1);
   EXPECT_EQ(popTxs[0].vtbs.size(), 0);
+
+  auto containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  AltPayloads payloads =
+      generateAltPayloads(popTxs[0], containingBlock, endorsedBlock);
+
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(state.IsValid());
 }

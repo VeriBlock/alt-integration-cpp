@@ -109,6 +109,17 @@ struct PopTestFixture {
     alt.endorsed = endorsed;
     return alt;
   }
+
+  AltPayloads generateAltPayloads(const AltPopTx& popTx,
+                                  const AltBlock& containing,
+                                  const AltBlock& endorsed) {
+    AltPayloads alt;
+    alt.altPopTx = popTx;
+    alt.containingBlock = containing;
+    alt.endorsed = endorsed;
+
+    return alt;
+  }
 };
 
 }  // namespace altintegration
