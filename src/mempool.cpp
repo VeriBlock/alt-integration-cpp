@@ -150,6 +150,7 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
     payloads.endorsed = *endorsed_block_index->header;
 
     bool ret = tree.acceptBlock(tempBlock, state);
+    (void)ret;
     assert(ret);
 
     return tree.addPayloads(tempBlock, {payloads}, state);
