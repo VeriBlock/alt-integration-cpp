@@ -97,9 +97,9 @@ TEST_F(Scenario0, Scenario0) {
   containing.hash = std::vector<uint8_t>{1, 3, 3, 10};
 
   AltPayloads payloads;
-  payloads.hasAtv = true;
-  payloads.atv = atv;
-  payloads.vtbs = vtbs;
+  payloads.altPopTx.hasAtv = true;
+  payloads.altPopTx.atv = atv;
+  payloads.altPopTx.vtbs = vtbs;
   payloads.containingBlock = containing;
   payloads.containingTx = uint256();
   payloads.endorsed = endorsed;
@@ -110,6 +110,7 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
   ASSERT_FALSE(alt->addPayloads(containing, {payloads}, state));
   ASSERT_EQ(
-      "bad-alt-payloads-stateful+apply-context+0+alt-accept-block+0+bad-prev-block",
+      "bad-alt-payloads-stateful+apply-context+0+alt-accept-block+0+bad-prev-"
+      "block",
       state.GetPath());
 }

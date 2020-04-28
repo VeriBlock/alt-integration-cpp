@@ -23,6 +23,7 @@ set(SOURCES
         stateless_validation.cpp
         arith_uint256.cpp
         signutil.cpp
+        mempool.cpp
         mock_miner.cpp
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:blockchain>

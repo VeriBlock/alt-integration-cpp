@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <veriblock/entities/altblock.hpp>
+#include <veriblock/entities/altpoptx.hpp>
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/entities/vtb.hpp>
 #include <veriblock/uint.hpp>
@@ -20,9 +21,7 @@ struct AltPayloads {
   AltBlock endorsed;
   AltBlock containingBlock;
   uint256 containingTx;
-  bool hasAtv{false};
-  ATV atv{};
-  std::vector<VTB> vtbs{};
+  AltPopTx altPopTx;
 
   /**
    * Read VBK data from the stream and convert it to Payloads

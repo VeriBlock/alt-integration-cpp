@@ -362,8 +362,13 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
     }
   }
 
+  // process Vbk context
+  for (const auto& b : p.altPopTx.vbk_context) {
+    addBlockIfUnique(b, known_vbk_blocks, ctx.vbk, tree);
+  }
+
   // process VTBs
-  for (const auto& vtb : p.vtbs) {
+  for (const auto& vtb : p.altPopTx.vtbs) {
     // process VBK blocks
     for (const auto& b : vtb.context) {
       addBlockIfUnique(b, known_vbk_blocks, ctx.vbk, tree);
@@ -373,11 +378,12 @@ void addContextToBlockIndex(BlockIndex<AltBlock>& index,
   }
 
   // process ATV
-  if (p.hasAtv) {
-    for (const auto& b : p.atv.context) {
+  if (p.containsEndorsements()) {
+    for (const auto& b : p.altPopTx.atv.context) {
       addBlockIfUnique(b, known_vbk_blocks, ctx.vbk, tree);
     }
-    addBlockIfUnique(p.atv.containingBlock, known_vbk_blocks, ctx.vbk, tree);
+    addBlockIfUnique(
+        p.altPopTx.atv.containingBlock, known_vbk_blocks, ctx.vbk, tree);
   }
 }
 
@@ -405,12 +411,19 @@ void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
         });
   };
 
+  // remove vbk_context
+  std::for_each(p.altPopTx.vbk_context.rbegin(),
+                p.altPopTx.vbk_context.rend(),
+                removeBlock);
+
   // remove ATV containing block
-  removeBlock(p.atv.containingBlock);
+  removeBlock(p.altPopTx.atv.containingBlock);
   // remove ATV context
-  std::for_each(p.atv.context.rbegin(), p.atv.context.rend(), removeBlock);
+  std::for_each(p.altPopTx.atv.context.rbegin(),
+                p.altPopTx.atv.context.rend(),
+                removeBlock);
   // for every VTB, in reverse order
-  std::for_each(p.vtbs.rbegin(), p.vtbs.rend(), removeVTB);
+  std::for_each(p.altPopTx.vtbs.rbegin(), p.altPopTx.vtbs.rend(), removeVTB);
 
   vbk.erase(vbk_end, vbk.end());
   vtbs.erase(vtbs_end, vtbs.end());

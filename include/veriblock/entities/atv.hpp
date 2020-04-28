@@ -35,7 +35,7 @@ struct ATV {
   static ATV fromVbkEncoding(ReadStream& stream);
 
   /**
-   * Read VBK data from the string raw byte representation and convert it to ATV
+   * Read VBK data from the raw byte representation and convert it to ATV
    * @param string data bytes to read from
    * @return ATV
    */
