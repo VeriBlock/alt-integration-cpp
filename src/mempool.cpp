@@ -62,6 +62,9 @@ bool MemPool::fillContext(VbkBlock first_block,
     block_index_.erase(b.getHash().trimLE<vbk_prev_block_hash_size>());
   }
 
+  // reverse context
+  std::reverse(context.begin(), context.end());
+
   return true;
 }
 
