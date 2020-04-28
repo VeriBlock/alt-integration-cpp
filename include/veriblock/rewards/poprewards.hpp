@@ -26,11 +26,11 @@ struct PopRewards {
   /**
    * Collect all endorsements for the endorsed block and calculate
    * POP score
-   * @param block calculate score for this block
+   * @param endorsedBlock calculate score for this block
    * @return PopRewardsBigDecimal resulting score
    */
   virtual PopRewardsBigDecimal scoreFromEndorsements(
-      const BlockIndex<AltBlock>& block) const;
+      const BlockIndex<AltBlock>& endorsedBlock) const;
 
   /**
    * Calculate POP difficulty using a list of blocks.
@@ -45,15 +45,15 @@ struct PopRewards {
 
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
-   * a given block.
-   * @param block altchain block for which the reward is being paid
+   * the endorsed block.
+   * @param endorsedBlock endorsed altchain block which we are paying reward for.
    * @param popDifficulty current POP difficulty. See calculateDifficulty for reference.
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a key
    *         and reward amount as a value
    */
   virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
-      const BlockIndex<AltBlock>& block,
-      PopRewardsBigDecimal popDifficulty);
+      const BlockIndex<AltBlock>& endorsedBlock,
+      const PopRewardsBigDecimal& popDifficulty);
 
  private:
   const VbkBlockTree& vbk_tree_;

@@ -46,8 +46,8 @@ struct PopRewardsCalculator {
   virtual PopRewardsBigDecimal calculateMinerReward(
       uint32_t height,
       uint32_t vbkRelativeHeight,
-      PopRewardsBigDecimal scoreForThisBlock,
-      PopRewardsBigDecimal difficulty) const;
+      const PopRewardsBigDecimal& scoreForThisBlock,
+      const PopRewardsBigDecimal& difficulty) const;
 
   // getter for altchain parameters
   virtual const AltChainParams& getAltParams() const noexcept;
@@ -57,8 +57,8 @@ struct PopRewardsCalculator {
 
   virtual PopRewardsBigDecimal calculateMinerRewardWithWeight(
       uint32_t height,
-      PopRewardsBigDecimal endorsementWeight,
-      PopRewardsBigDecimal scoreForThisBlock,
+      const PopRewardsBigDecimal& endorsementWeight,
+      const PopRewardsBigDecimal& scoreForThisBlock,
       PopRewardsBigDecimal difficulty) const;
 };
 
