@@ -3,7 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include "util/test_utils.hpp"
 #include <util/alt_chain_params_regtest.hpp>
 #include <util/test_utils.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
@@ -11,6 +10,8 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/mock_miner.hpp>
+
+#include "util/test_utils.hpp"
 
 namespace altintegration {
 
@@ -97,9 +98,13 @@ struct PopTestFixture {
       const AltBlock& containing,
       const AltBlock& endorsed,
       const VbkBlock::hash_t& lastKnownVbkBlockHash) {
+    AltPopTx altPopTx;
+    altPopTx.hasAtv = true;
+    altPopTx.atv =
+        popminer.generateATV(transaction, lastKnownVbkBlockHash, state);
+
     AltPayloads alt;
-    alt.hasAtv = true;
-    alt.atv = popminer.generateATV(transaction, lastKnownVbkBlockHash, state);
+    alt.altPopTx = altPopTx;
     alt.containingBlock = containing;
     alt.endorsed = endorsed;
     return alt;

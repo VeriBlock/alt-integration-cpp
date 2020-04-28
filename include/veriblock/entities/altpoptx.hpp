@@ -16,6 +16,7 @@ struct AltPopTx {
   int32_t version{};
 
   std::vector<VbkBlock> vbk_context;
+  bool hasAtv{false};
   ATV atv{};
   std::vector<VTB> vtbs{};
 
@@ -44,6 +45,12 @@ struct AltPopTx {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  /**
+   * Return true if contains endorsement data
+   * @return true if contains endorsement data
+   */
+  bool containsEndorsements() const;
 
   friend bool operator==(const AltPopTx& a, const AltPopTx& b) {
     // clang-format off

@@ -11,7 +11,10 @@ AltPopTx AltPopTx::fromVbkEncoding(ReadStream& stream) {
       MAX_CONTEXT_COUNT_ALT_PUBLICATION,
       (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding);
 
-  alt_pop_tx.atv = ATV::fromVbkEncoding(stream);
+  alt_pop_tx.hasAtv = stream.readBE<uint8_t>();
+  if (alt_pop_tx.hasAtv) {
+    alt_pop_tx.atv = ATV::fromVbkEncoding(stream);
+  }
   alt_pop_tx.vtbs = readArrayOf<VTB>(stream,
                                      0,
                                      MAX_CONTEXT_COUNT_ALT_PUBLICATION,
@@ -31,7 +34,10 @@ void AltPopTx::toVbkEncoding(WriteStream& stream) const {
   for (const auto& b : vbk_context) {
     b.toVbkEncoding(stream);
   }
-  atv.toVbkEncoding(stream);
+  stream.writeBE<uint8_t>(hasAtv);
+  if (hasAtv) {
+    atv.toVbkEncoding(stream);
+  }
   writeSingleBEValue(stream, vtbs.size());
   for (const auto& vtb : vtbs) {
     vtb.toVbkEncoding(stream);
@@ -43,5 +49,7 @@ std::vector<uint8_t> AltPopTx::toVbkEncoding() const {
   toVbkEncoding(stream);
   return stream.data();
 }
+
+bool AltPopTx::containsEndorsements() const { return hasAtv; }
 
 }  // namespace altintegration

@@ -139,8 +139,11 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 
 AltPayloads generateAltPayloadsEmpty(const AltBlock& containing,
                                      const AltBlock& endorsed) {
+  AltPopTx altPopTx;
+  altPopTx.hasAtv = false;
+
   AltPayloads alt;
-  alt.hasAtv = false;
+  alt.altPopTx = altPopTx;
   alt.containingBlock = containing;
   alt.endorsed = endorsed;
   return alt;
@@ -161,7 +164,7 @@ TEST_F(Scenario1, scenario_1) {
   auto vtbsVBA71 = popminer.vbkPayloads[vbkAtip->getAncestor(71)->getHash()];
   fillVTBContext(
       vtbsVBA71[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  altPayloadsVBA71.vtbs = {vtbsVBA71[0]};
+  altPayloadsVBA71.altPopTx.vtbs = {vtbsVBA71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloadsVBA71}, state));
   EXPECT_TRUE(state.IsValid());
@@ -197,7 +200,7 @@ TEST_F(Scenario1, scenario_1) {
   auto vtbsVBB71 = popminer.vbkPayloads[vbkBtip->getAncestor(71)->getHash()];
   fillVTBContext(
       vtbsVBB71[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  altPayloadsVBB71.vtbs = {vtbsVBB71[0]};
+  altPayloadsVBB71.altPopTx.vtbs = {vtbsVBB71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloadsVBB71}, state));
   EXPECT_TRUE(state.IsValid());
