@@ -12,10 +12,13 @@ ATV ATV::fromVbkEncoding(ReadStream& stream) {
   atv.transaction = VbkTx::fromVbkEncoding(stream);
   atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
   atv.containingBlock = VbkBlock::fromVbkEncoding(stream);
-  atv.context = readArrayOf<VbkBlock>(
-      stream, 0, MAX_CONTEXT_COUNT_ALT_PUBLICATION, [](ReadStream& stream) {
-        return VbkBlock::fromVbkEncoding(stream);
-      });
+  atv.context =
+      readArrayOf<VbkBlock>(stream,
+                            0,
+                            MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                            (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding
+
+      );
 
   return atv;
 }
@@ -26,7 +29,6 @@ ATV ATV::fromVbkEncoding(Slice<const uint8_t> bytes) {
 }
 
 void ATV::toVbkEncoding(WriteStream& stream) const {
-  WriteStream txStream;
   transaction.toVbkEncoding(stream);
   merklePath.toVbkEncoding(stream);
   containingBlock.toVbkEncoding(stream);

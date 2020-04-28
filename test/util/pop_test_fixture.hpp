@@ -99,14 +99,29 @@ struct PopTestFixture {
       const AltBlock& containing,
       const AltBlock& endorsed,
       const VbkBlock::hash_t& lastKnownVbkBlockHash) {
+    AltPopTx altPopTx;
+    altPopTx.hasAtv = true;
+    altPopTx.atv =
+        popminer.generateATV(transaction, lastKnownVbkBlockHash, state);
+
     AltPayloads alt;
-    alt.hasAtv = true;
-    alt.atv = popminer.generateATV(transaction, lastKnownVbkBlockHash, state);
+    alt.altPopTx = altPopTx;
     alt.containingBlock = containing;
     alt.endorsed = endorsed;
     return alt;
   }
 
+  AltPayloads generateAltPayloads(const AltPopTx& popTx,
+                                  const AltBlock& containing,
+                                  const AltBlock& endorsed) {
+    AltPayloads alt;
+    alt.altPopTx = popTx;
+    alt.containingBlock = containing;
+    alt.endorsed = endorsed;
+
+    return alt;
+  }
+  
   VbkBlock::hash_t getLastKnownVbkBlock() {
     return alttree.vbk().getBestChain().tip()->getHash();
   }

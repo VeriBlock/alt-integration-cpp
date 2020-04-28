@@ -108,7 +108,7 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads1.vtbs = {vtbs1[1]};
+  altPayloads1.altPopTx.vtbs = {vtbs1[1]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
   EXPECT_TRUE(state.IsValid());
@@ -136,7 +136,7 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads2.vtbs = {vtbs2[0]};
+  altPayloads2.altPopTx.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
   EXPECT_TRUE(state.IsValid());
@@ -154,7 +154,7 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads3.vtbs = {vtbs1[0]};
+  altPayloads3.altPopTx.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
   EXPECT_TRUE(state.IsValid());
