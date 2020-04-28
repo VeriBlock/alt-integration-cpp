@@ -8,9 +8,10 @@ VTB VTB::fromVbkEncoding(ReadStream& stream) {
   vtb.merklePath = VbkMerklePath::fromVbkEncoding(stream);
   vtb.containingBlock = VbkBlock::fromVbkEncoding(stream);
   vtb.context = readArrayOf<VbkBlock>(
-      stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) {
-        return VbkBlock::fromVbkEncoding(stream);
-      });
+      stream,
+      0,
+      MAX_CONTEXT_COUNT,
+      (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding);
 
   return vtb;
 }

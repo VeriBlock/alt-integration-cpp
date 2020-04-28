@@ -11,9 +11,9 @@ ATV ATV::fromVbkEncoding(ReadStream& stream) {
       readArrayOf<VbkBlock>(stream,
                             0,
                             MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                            [](ReadStream& stream) -> VbkBlock {
-                              return VbkBlock::fromVbkEncoding(stream);
-                            });
+                            (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding
+
+      );
 
   return atv;
 }

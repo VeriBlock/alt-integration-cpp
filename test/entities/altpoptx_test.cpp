@@ -16,7 +16,7 @@ TEST(AltPopTx, Deserialize) {
   stream = ReadStream(vtbBytes);
   VTB vtb = VTB::fromVbkEncoding(stream);
 
-  AltPopTx expectedAltPopTx = {2, atv, {vtb}};
+  AltPopTx expectedAltPopTx = {2, {}, atv, {vtb}};
   std::vector<uint8_t> bytes = expectedAltPopTx.toVbkEncoding();
 
   AltPopTx encodedAltPopTx = AltPopTx::fromVbkEncoding(bytes);
