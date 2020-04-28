@@ -131,7 +131,7 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   (void)ret;
   assert(ret);
 
-  AltBlock tempBlock = {{0, 0, 0, 0, 0, 0, 0, 1},
+  AltBlock tempBlock = {std::vector<uint8_t>{0, 0, 0, 0, 0, 0, 0, 1},
                         hash,
                         current_block.timestamp,
                         current_block.height + 1};
