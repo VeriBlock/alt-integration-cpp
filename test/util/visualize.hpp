@@ -30,13 +30,12 @@ void WriteBlockTree(Stream& s,
     ss << "\"[";
     ss << blockIndex.height;
     ss << "] ";
-    ss << blockIndex;
     ss << blockIndex.getHash().toHex().substr(0, 8) << "\"";
   };
 
   s << "digraph " << name << " {\n";
 
-  const auto& map = tree.getAllBlocks();
+  const auto& map = tree.getValidBlocks();
   auto& best = tree.getBestChain();
   auto* current = best.tip();
   while (current) {

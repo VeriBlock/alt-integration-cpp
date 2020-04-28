@@ -33,6 +33,9 @@ struct BlockTree {
   using payloads_t = typename block_t::payloads_t;
   using block_index_t =
       std::unordered_map<prev_block_hash_t, std::shared_ptr<index_t>>;
+  using fork_chains_t = std::multimap<typename Block::height_t,
+                                      Chain<index_t>,
+                                      std::greater<typename Block::height_t>>;
 
   virtual ~BlockTree() = default;
 
@@ -50,7 +53,7 @@ struct BlockTree {
    * @return true if bootstrap was successful, false otherwise
    */
   virtual bool bootstrapWithGenesis(ValidationState& state) {
-    assert(block_index_.empty() && "already bootstrapped");
+    assert(valid_blocks.empty() && "already bootstrapped");
     auto block = param_->getGenesisBlock();
     return this->bootstrap(0, block, state);
   }
@@ -68,7 +71,7 @@ struct BlockTree {
   virtual bool bootstrapWithChain(height_t startHeight,
                                   const std::vector<block_t>& chain,
                                   ValidationState& state) {
-    assert(block_index_.empty() && "already bootstrapped");
+    assert(valid_blocks.empty() && "already bootstrapped");
     if (chain.empty()) {
       return state.Invalid("bootstrap-empty-chain",
                            "provided bootstrap chain is empty");
@@ -106,8 +109,17 @@ struct BlockTree {
                                                N == hash_t::size()>::type>
   index_t* getBlockIndex(const Blob<N>& hash) const {
     auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
-    auto it = block_index_.find(shortHash);
-    return it == block_index_.end() ? nullptr : it->second.get();
+    auto it = valid_blocks.find(shortHash);
+    return it == valid_blocks.end() ? nullptr : it->second.get();
+  }
+
+  template <size_t N,
+            typename = typename std::enable_if<N == prev_block_hash_t::size() ||
+                                               N == hash_t::size()>::type>
+  index_t* getBlockIndexFailed(const Blob<N>& hash) const {
+    auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
+    auto it = failed_blocks.find(shortHash);
+    return it == failed_blocks.end() ? nullptr : it->second.get();
   }
 
   bool acceptBlock(const block_t& block, ValidationState& state) {
@@ -122,7 +134,7 @@ struct BlockTree {
   void invalidateTip() {
     auto* tip = getBestChain().tip();
     assert(tip != nullptr && "not bootstrapped...");
-    invalidateBlockByHash(tip->getHash());
+    invalidateBlockByIndex(tip);
   }
 
   virtual void invalidateBlockByIndex(index_t* blockIndex) {
@@ -131,28 +143,37 @@ struct BlockTree {
       return;
     }
 
+    std::vector<index_t*> affectedBlocks;
     std::vector<index_t*> fork_tips;
 
-    for (auto chain_it = fork_chains_.begin();
-         chain_it != fork_chains_.end();) {
-      invalidateBlockFromChain(chain_it->second, blockIndex);
+    for (auto it = fork_chains_.begin(); it != fork_chains_.end();) {
+      invalidateBlockFromChain(it->second, blockIndex, affectedBlocks);
 
-      if (chain_it->second.tip() == nullptr) {
-        chain_it = fork_chains_.erase(chain_it);
-        continue;
+      if (it->second.tip() == nullptr) {
+        it = fork_chains_.erase(it);
+      } else {
+        fork_tips.push_back(it->second.tip());
+        ++it;
       }
-      fork_tips.push_back(chain_it->second.tip());
-      ++chain_it;
     }
 
-    invalidateBlockFromChain(activeChain_, blockIndex);
+    invalidateBlockFromChain(activeChain_, blockIndex, affectedBlocks);
 
+    // invalidate block itself
+    blockIndex->setFlag(BLOCK_FAILED_BLOCK);
+
+    // invalidate all child blocks
+    for (const auto& a : affectedBlocks) {
+      a->setFlag(BLOCK_FAILED_CHILD);
+      doInvalidateBlock(a->getHash());
+    }
+
+    // find new best chain among all forks
     for (const auto& fork_tip : fork_tips) {
       determineBestChain(activeChain_, *fork_tip);
     }
 
-    block_index_.erase(
-        blockIndex->getHash().template trimLE<prev_block_hash_t::size()>());
+    doInvalidateBlock(blockIndex->getHash());
   }
 
   virtual void invalidateBlockByHash(const hash_t& blockHash) {
@@ -162,15 +183,18 @@ struct BlockTree {
 
   const Chain<index_t>& getBestChain() const { return this->activeChain_; }
 
-  const block_index_t& getAllBlocks() const { return block_index_; }
+  const block_index_t& getValidBlocks() const { return valid_blocks; }
+  const block_index_t& getFailedBlocks() const { return failed_blocks; }
+  const fork_chains_t& getForkChains() const { return fork_chains_; }
 
   bool operator==(const BlockTree& o) const {
-    return block_index_ == o.block_index_ && activeChain_ == o.activeChain_ &&
+    return valid_blocks == o.valid_blocks && activeChain_ == o.activeChain_ &&
            fork_chains_ == o.fork_chains_;
   }
 
  protected:
-  block_index_t block_index_;
+  block_index_t valid_blocks;
+  block_index_t failed_blocks;
 
   // first we have to analyze the highest forks, to avoid the removing blocks
   // that can be proceed by another fork chain like in the situation described
@@ -183,25 +207,32 @@ struct BlockTree {
   // processed firstly, we will remove block 'G' which is needed for the
   // another chain, so that chain must be processed firstly
 
-  std::multimap<typename Block::height_t,
-                Chain<index_t>,
-                std::greater<typename Block::height_t>>
-      fork_chains_;
+  fork_chains_t fork_chains_;
   Chain<index_t> activeChain_;
 
-  // to make BlockTree copyable, copy-initializable, we need to make it ptr
   const ChainParams* param_ = nullptr;
+
+  void doInvalidateBlock(const hash_t& hash) {
+    auto shortHash = hash.template trimLE<prev_block_hash_t::size()>();
+    auto it = valid_blocks.find(shortHash);
+    if (it == valid_blocks.end()) {
+      return;
+    }
+
+    failed_blocks[shortHash] = it->second;
+    valid_blocks.erase(it);
+  }
 
   //! same as unix `touch`: create-and-get if not exists, get otherwise
   index_t* touchBlockIndex(const hash_t& fullHash) {
     auto hash = fullHash.template trimLE<prev_block_hash_t::size()>();
-    auto it = block_index_.find(hash);
-    if (it != block_index_.end()) {
+    auto it = valid_blocks.find(hash);
+    if (it != valid_blocks.end()) {
       return it->second.get();
     }
 
     auto newIndex = std::make_shared<index_t>();
-    it = block_index_.insert({hash, std::move(newIndex)}).first;
+    it = valid_blocks.insert({hash, std::move(newIndex)}).first;
     return it->second.get();
   }
 
@@ -225,10 +256,15 @@ struct BlockTree {
       current->height = 0;
       current->chainWork = getBlockProof(*block);
     }
+
+    current->raiseValidity(BLOCK_VALID_TREE);
+
     return current;
   }
 
-  void invalidateBlockFromChain(Chain<index_t>& chain, const index_t* block) {
+  void invalidateBlockFromChain(Chain<index_t>& chain,
+                                const index_t* block,
+                                std::vector<index_t*>& affectedBlocks) {
     if (block == nullptr) {
       return;
     }
@@ -241,6 +277,7 @@ struct BlockTree {
     }
 
     while (chain.tip() != nullptr && chain.tip() != block) {
+      affectedBlocks.push_back(chain.tip());
       disconnectTipFromChain(chain);
     }
 
@@ -256,7 +293,7 @@ struct BlockTree {
     hash_t tipHash = currentTip->getHash();
 
     chain.disconnectTip();
-    block_index_.erase(tipHash.template trimLE<prev_block_hash_t::size()>());
+    doInvalidateBlock(tipHash);
   }
 
   void addForkCandidate(BlockIndex<Block>* newCandidate,
@@ -341,7 +378,7 @@ struct BlockTree {
 
     activeChain_ = Chain<index_t>(height, index);
 
-    if (!block_index_.empty() && !getBlockIndex(block->getHash())) {
+    if (!valid_blocks.empty() && !getBlockIndex(block->getHash())) {
       return state.Error("block-index-no-genesis");
     }
 
@@ -359,7 +396,11 @@ struct BlockTree {
     // we must know previous block
     auto* prev = getBlockIndex(block->previousBlock);
     if (prev == nullptr) {
-      return state.Invalid("bad-prev-block", "can not find previous block");
+      // search for previously invalid blocks
+      prev = getBlockIndexFailed(block->previousBlock);
+      if (prev == nullptr) {
+        return state.Invalid("bad-prev-block", "can not find previous block");
+      }
     }
 
     if (shouldContextuallyCheck &&
@@ -373,6 +414,14 @@ struct BlockTree {
 
     if (ret) {
       *ret = index;
+    }
+
+    // if prev block is invalid, mark this block as invalid
+    if (!prev->isValid(BLOCK_VALID_TREE)) {
+      index->setFlag(BLOCK_FAILED_CHILD);
+      // this block has to be moved to 'failed_blocks' map
+      doInvalidateBlock(index->getHash());
+      return state.Invalid("bad-chain", "One of previous blocks is invalid");
     }
 
     return true;
