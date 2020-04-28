@@ -3,7 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include "util/test_utils.hpp"
 #include <util/alt_chain_params_regtest.hpp>
 #include <util/test_utils.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
@@ -11,6 +10,8 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/mock_miner.hpp>
+
+#include "util/test_utils.hpp"
 
 namespace altintegration {
 
@@ -31,6 +32,18 @@ struct PopTestFixture {
     EXPECT_TRUE(alttree.bootstrap(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().btc().bootstrapWithGenesis(state));
+  }
+
+  BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
+                                      size_t num) {
+    const BlockIndex<AltBlock>* index = &prev;
+    for (size_t i = 0; i < num; i++) {
+      auto next = generateNextBlock(*index->header);
+      EXPECT_TRUE(alttree.acceptBlock(next, state));
+      index = alttree.getBlockIndex(next.getHash());
+    }
+
+    return const_cast<BlockIndex<AltBlock>*>(index);
   }
 
   void mineAltBlocks(uint32_t num, std::vector<AltBlock>& chain) {

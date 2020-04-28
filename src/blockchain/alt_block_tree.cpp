@@ -14,20 +14,26 @@
 
 namespace altintegration {
 
+AltTree::index_t* AltTree::getBlockIndexFailed(
+    const std::vector<uint8_t>& hash) const {
+  auto it = failed_blocks.find(hash);
+  return it == failed_blocks.end() ? nullptr : it->second.get();
+}
+
 AltTree::index_t* AltTree::getBlockIndex(
     const std::vector<uint8_t>& hash) const {
-  auto it = block_index_.find(hash);
-  return it == block_index_.end() ? nullptr : it->second.get();
+  auto it = valid_blocks.find(hash);
+  return it == valid_blocks.end() ? nullptr : it->second.get();
 }
 
 AltTree::index_t* AltTree::touchBlockIndex(const hash_t& blockHash) {
-  auto it = block_index_.find(blockHash);
-  if (it != block_index_.end()) {
+  auto it = valid_blocks.find(blockHash);
+  if (it != valid_blocks.end()) {
     return it->second.get();
   }
 
   auto newIndex = std::make_shared<index_t>();
-  it = block_index_.insert({blockHash, std::move(newIndex)}).first;
+  it = valid_blocks.insert({blockHash, std::move(newIndex)}).first;
   return it->second.get();
 }
 
@@ -56,7 +62,7 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
 }
 
 bool AltTree::bootstrap(ValidationState& state) {
-  if (!block_index_.empty()) {
+  if (!valid_blocks.empty()) {
     return state.Error("already bootstrapped");
   }
 
@@ -66,7 +72,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  if (!block_index_.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
+  if (!valid_blocks.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
     return state.Error("block-index-no-genesis");
   }
 
@@ -157,10 +163,12 @@ void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
 
   // clear indexes
   for (auto* index : removeIndexes) {
-    block_index_.erase(index->getHash());
+    index->setFlag(BLOCK_FAILED_CHILD);
+    doInvalidateBlock(index->getHash());
   }
 
-  block_index_.erase(blockIndex.getHash());
+  blockIndex.setFlag(BLOCK_FAILED_BLOCK);
+  doInvalidateBlock(blockIndex.getHash());
 }
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,
@@ -282,6 +290,16 @@ bool AltTree::addPayloads(AltTree::PopForkComparator& cmp,
   }
 
   return true;
+}
+
+void AltTree::doInvalidateBlock(const AltTree::hash_t& hash) {
+  auto it = valid_blocks.find(hash);
+  if (it == valid_blocks.end()) {
+    return;
+  }
+
+  failed_blocks[hash] = it->second;
+  valid_blocks.erase(it);
 }
 
 template <>
