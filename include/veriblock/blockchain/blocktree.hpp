@@ -188,8 +188,8 @@ struct BlockTree {
   const fork_chains_t& getForkChains() const { return fork_chains_; }
 
   bool operator==(const BlockTree& o) const {
-    return valid_blocks == o.valid_blocks && activeChain_ == o.activeChain_ &&
-           fork_chains_ == o.fork_chains_;
+    return valid_blocks == o.valid_blocks && failed_blocks == o.failed_blocks &&
+           activeChain_ == o.activeChain_ && fork_chains_ == o.fork_chains_;
   }
 
  protected:
