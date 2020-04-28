@@ -15,6 +15,7 @@ namespace altintegration {
 struct AltPopTx {
   int32_t version{};
 
+  std::vector<VbkBlock> vbk_context;
   ATV atv{};
   std::vector<VTB> vtbs{};
 
