@@ -1,3 +1,8 @@
+// Copyright (c) 2019-2020 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_HPP_
 
@@ -41,8 +46,8 @@ struct PopRewardsCalculator {
   virtual PopRewardsBigDecimal calculateMinerReward(
       uint32_t height,
       uint32_t vbkRelativeHeight,
-      PopRewardsBigDecimal scoreForThisBlock,
-      PopRewardsBigDecimal difficulty) const;
+      const PopRewardsBigDecimal& scoreForThisBlock,
+      const PopRewardsBigDecimal& difficulty) const;
 
   // getter for altchain parameters
   virtual const AltChainParams& getAltParams() const noexcept;
@@ -52,8 +57,8 @@ struct PopRewardsCalculator {
 
   virtual PopRewardsBigDecimal calculateMinerRewardWithWeight(
       uint32_t height,
-      PopRewardsBigDecimal endorsementWeight,
-      PopRewardsBigDecimal scoreForThisBlock,
+      const PopRewardsBigDecimal& endorsementWeight,
+      const PopRewardsBigDecimal& scoreForThisBlock,
       PopRewardsBigDecimal difficulty) const;
 };
 

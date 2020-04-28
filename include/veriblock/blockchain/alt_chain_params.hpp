@@ -1,3 +1,8 @@
+// Copyright (c) 2019-2020 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_CHAIN_PARAMS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_CHAIN_PARAMS_HPP_
 
@@ -30,7 +35,8 @@ struct PopRewardsParams {
   // we have this number of rounds eg rounds 0, 1, 2, 3
   virtual uint32_t payoutRounds() const noexcept { return 4; }
 
-  // we use this round number to pay flat reward (does not depend on pop difficulty)
+  // we use this round number to pay flat reward (does not depend on pop
+  // difficulty)
   virtual uint32_t flatScoreRound() const noexcept { return 2; }
 
   // should we use flat rewards at all
@@ -61,22 +67,22 @@ struct PopRewardsParams {
 
   // reward score table
   // we score each VeriBlock and lower the reward for late blocks
-  virtual std::vector<double> relativeScoreLookupTable() const
-      noexcept {
-    return {1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
-            1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
-            1.00000000, 1.00000000, 0.48296816, 0.31551694, 0.23325824,
-            0.18453616, 0.15238463, 0.12961255, 0.11265630, 0.09955094,
-            0.08912509, 0.08063761, 0.07359692, 0.06766428, 0.06259873,
-            0.05822428, 0.05440941, 0.05105386, 0.04807993, 0.04542644,
-            0.04304458, 0.04089495, 0.03894540, 0.03716941, 0.03554497,
-            0.03405359, 0.03267969, 0.03141000, 0.03023319, 0.02913950,
-            0.02812047, 0.02716878, 0.02627801, 0.02544253, 0.02465739,
-            0.02391820, 0.02322107, 0.02256255, 0.02193952, 0.02134922};
+  virtual const std::vector<double>& relativeScoreLookupTable() const noexcept {
+    return lookupTable_;
   }
 
  protected:
   PopRewardsCurveParams curveParams{};
+  std::vector<double> lookupTable_{
+      1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
+      1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
+      0.48296816, 0.31551694, 0.23325824, 0.18453616, 0.15238463, 0.12961255,
+      0.11265630, 0.09955094, 0.08912509, 0.08063761, 0.07359692, 0.06766428,
+      0.06259873, 0.05822428, 0.05440941, 0.05105386, 0.04807993, 0.04542644,
+      0.04304458, 0.04089495, 0.03894540, 0.03716941, 0.03554497, 0.03405359,
+      0.03267969, 0.03141000, 0.03023319, 0.02913950, 0.02812047, 0.02716878,
+      0.02627801, 0.02544253, 0.02465739, 0.02391820, 0.02322107, 0.02256255,
+      0.02193952, 0.02134922};
 };
 
 struct AltChainParams {
@@ -106,8 +112,8 @@ struct AltChainParams {
     return rewardParams;
   }
 
-  protected:
-   PopRewardsParams rewardParams{};
+ protected:
+  PopRewardsParams rewardParams{};
 };
 
 }  // namespace altintegration
