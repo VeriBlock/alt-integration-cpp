@@ -131,10 +131,10 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   (void)ret;
   assert(ret);
 
-  AltBlock tempBlock = {std::vector<uint8_t>{0, 0, 0, 0, 0, 0, 0, 1},
-                        hash,
-                        current_block.timestamp,
-                        current_block.height + 1};
+  AltBlock tempBlock{{0, 0, 0, 0, 0, 0, 0, 1},
+                     hash,
+                     current_block.timestamp,
+                     current_block.height + 1};
 
   auto applyPayloads = [&](const AltPopTx& popTx) -> bool {
     AltPayloads payloads;
