@@ -79,7 +79,7 @@ TEST_F(Scenario2, scenario_2) {
   fillVTBContext(vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   // store vtbs in different altPayloads
-  altPayloads1.vtbs = {vtbs[0]};
+  altPayloads1.altPopTx.vtbs = {vtbs[0]};
 
   // Step 1
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
@@ -101,7 +101,7 @@ TEST_F(Scenario2, scenario_2) {
   AltPayloads altPayloads2 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
-  altPayloads2.vtbs = {vtbs[1]};
+  altPayloads2.altPopTx.vtbs = {vtbs[1]};
   // Step 2
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));

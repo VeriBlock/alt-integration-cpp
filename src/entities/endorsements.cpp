@@ -20,11 +20,11 @@ template <>
 VbkEndorsement VbkEndorsement::fromContainer(const AltPayloads& c) {
   VbkEndorsement e;
   e.id = VbkEndorsement::getId(c);
-  e.blockOfProof = c.atv.containingBlock.getHash();
+  e.blockOfProof = c.altPopTx.atv.containingBlock.getHash();
   e.endorsedHash = c.endorsed.hash;
   e.endorsedHeight = c.endorsed.height;
   e.containingHash = c.containingBlock.hash;
-  e.payoutInfo = c.atv.transaction.publicationData.payoutInfo;
+  e.payoutInfo = c.altPopTx.atv.transaction.publicationData.payoutInfo;
   return e;
 }
 
@@ -39,8 +39,8 @@ BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c) {
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c) {
   WriteStream stream;
-  c.atv.transaction.toRaw(stream);
-  c.atv.containingBlock.toRaw(stream);
+  c.altPopTx.atv.transaction.toRaw(stream);
+  c.altPopTx.atv.containingBlock.toRaw(stream);
   return sha256(stream.data());
 }
 
