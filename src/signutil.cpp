@@ -4,6 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <cassert>
+#include <utility>
 
 #include "veriblock/hashutil.hpp"
 #include "veriblock/signutil.hpp"
@@ -134,7 +135,7 @@ PublicKey publicKeyFromVbk(PublicKeyVbk key) {
 }
 
 PublicKeyVbk publicKeyToVbk(PublicKey key) {
-  return publicKeyUncompressedToAsn1(key);
+  return publicKeyUncompressedToAsn1(std::move(key));
 }
 
 PublicKey derivePublicKey(PrivateKey privateKey) {
