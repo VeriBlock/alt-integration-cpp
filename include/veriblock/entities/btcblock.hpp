@@ -110,6 +110,10 @@ struct BtcBlock {
    * @return hash block hash
    */
   uint256 getHash() const;
+
+  static std::string name() {
+    return "Btc";
+  }
 };
 
 }  // namespace altintegration

@@ -68,6 +68,10 @@ struct AltBlock {
   friend bool operator!=(const AltBlock& a, const AltBlock& b) {
     return !(a == b);
   }
+
+  static std::string name() {
+    return "Alt";
+  }
 };
 
 }  // namespace altintegration
