@@ -97,6 +97,7 @@ struct PopTestFixture {
     auto* tip = tree.getBlockIndex(vtb.containingBlock.getHash())->pprev;
 
     for (auto* walkBlock = tip;
+         walkBlock != nullptr &&
          walkBlock->header->getHash() != lastKnownVbkBlockHash;
          walkBlock = walkBlock->pprev) {
       vtb.context.push_back(*walkBlock->header);
@@ -133,7 +134,7 @@ struct PopTestFixture {
 
     return alt;
   }
-  
+
   VbkBlock::hash_t getLastKnownVbkBlock() {
     return alttree.vbk().getBestChain().tip()->getHash();
   }

@@ -167,18 +167,22 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
       if (fillContext(first_block, popTx.vbk_context, tree)) {
         fillVTBs(popTx.vtbs, popTx.vbk_context);
         popTx.atv = atv;
+        popTx.hasAtv = true;
         if (applyPayloads(popTx)) {
           popTxs.push_back(popTx);
         }
-        atv_it = stored_atvs_.erase(atv_it);
+        stored_atvs_.erase(atv_it);
+        atv_it = stored_atvs_.begin();
         continue;
       }
     } else {
       popTx.atv = atv;
+      popTx.hasAtv = true;
       if (applyPayloads(popTx)) {
         popTxs.push_back(popTx);
       }
-      atv_it = stored_atvs_.erase(atv_it);
+      stored_atvs_.erase(atv_it);
+      atv_it = stored_atvs_.begin();
       continue;
     }
 
