@@ -24,9 +24,6 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
                   &hash_function);
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  AltTree test_tree(alttree.getParams(),
-                    alttree.vbk().getParams(),
-                    alttree.btc().getParams());
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer.mineVbkBlocks(65);
@@ -82,9 +79,6 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
                   &hash_function);
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  AltTree test_tree(alttree.getParams(),
-                    alttree.vbk().getParams(),
-                    alttree.btc().getParams());
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer.mineVbkBlocks(65);
@@ -111,6 +105,8 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
 
   ASSERT_NE(BtcEndorsement::fromContainer(vtb1).id,
             BtcEndorsement::fromContainer(vtb2).id);
+
+  vbkTip = popminer.vbk().getBestChain().tip();
 
   // mine 10 blocks
   mineAltBlocks(10, chain);
@@ -146,9 +142,6 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
                   &hash_function);
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  AltTree test_tree(alttree.getParams(),
-                    alttree.vbk().getParams(),
-                    alttree.btc().getParams());
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer.mineVbkBlocks(65);
@@ -176,9 +169,6 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
                   &hash_function);
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  AltTree test_tree(alttree.getParams(),
-                    alttree.vbk().getParams(),
-                    alttree.btc().getParams());
 
   // mine 65 VBK blocks
   popminer.mineVbkBlocks(65);
@@ -208,4 +198,34 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
   EXPECT_TRUE(state.IsValid());
+}
+
+TEST_F(MemPoolFixture, getPop_scenario_5) {
+  MemPool mempool(alttree.getParams(),
+                  alttree.vbk().getParams(),
+                  alttree.btc().getParams(),
+                  &hash_function);
+
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+  AltTree test_tree(alttree.getParams(),
+                    alttree.vbk().getParams(),
+                    alttree.btc().getParams());
+
+  // mine 65 VBK blocks
+  auto* vbkTip = popminer.mineVbkBlocks(65);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  generatePopTx(*endorsedVbkBlock1->header);
+
+  auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
+  ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
+  VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
+  fillVTBContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+
+  AltBlock endorsedBlock = chain[5];
+
+  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  ATV atv = popminer.generateATV(tx, containingVbkBlock1->getHash(), state);
 }
