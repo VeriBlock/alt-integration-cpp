@@ -6,6 +6,11 @@
 
 - (optional) gtest/gmock - https://github.com/google/googletest/releases/tag/release-1.10.0
 
+Run
+```
+git submodule update --init
+```
+
 - (optional) RocksDB - https://github.com/facebook/rocksdb
 
 ## Linux
