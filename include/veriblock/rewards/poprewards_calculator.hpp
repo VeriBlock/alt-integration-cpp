@@ -16,7 +16,7 @@ namespace altintegration {
  */
 struct PopRewardsCalculator {
   PopRewardsCalculator(const AltChainParams& altParams)
-      : altParams_(altParams) {}
+      : altParams_(&altParams) {}
   virtual ~PopRewardsCalculator(){};
 
   /**
@@ -53,7 +53,7 @@ struct PopRewardsCalculator {
   virtual const AltChainParams& getAltParams() const noexcept;
 
  protected:
-  const AltChainParams& altParams_;
+  const AltChainParams *altParams_;
 
   virtual PopRewardsBigDecimal calculateMinerRewardWithWeight(
       uint32_t height,

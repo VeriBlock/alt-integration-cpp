@@ -53,8 +53,7 @@ struct AltTree {
         vbk_config_(&vbk_config),
         btc_config_(&btc_config),
         cmp_(VbkBlockTree(vbk_config, btc_config), vbk_config, alt_config),
-        rewardCalculator_(alt_config),
-        rewards_(cmp_.getProtectingBlockTree(), rewardCalculator_) {}
+        rewards_(alt_config, cmp_.getProtectingBlockTree()) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
   index_t* getBlockIndexFailed(const std::vector<uint8_t>& hash) const;
@@ -135,7 +134,6 @@ struct AltTree {
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
-  PopRewardsCalculator rewardCalculator_;
   PopRewards rewards_;
 
   index_t* insertBlockHeader(const AltBlock& block);
