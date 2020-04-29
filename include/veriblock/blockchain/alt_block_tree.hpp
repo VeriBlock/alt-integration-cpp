@@ -117,7 +117,9 @@ struct AltTree {
     return cmp_.getProtectingBlockTree().btc();
   }
 
-  const std::unordered_set<index_t*>& getForkChains() const { return chainTips_; }
+  const std::unordered_set<index_t*>& getForkChains() const {
+    return chainTips_;
+  }
   const AltChainParams& getParams() const { return *alt_config_; }
   const block_index_t& getValidBlocks() const { return valid_blocks; }
   const block_index_t& getFailedBlocks() const { return failed_blocks; }
@@ -125,6 +127,32 @@ struct AltTree {
   bool operator==(const AltTree& o) const {
     return chainTips_ == o.chainTips_ && valid_blocks == o.valid_blocks &&
            failed_blocks == o.failed_blocks && cmp_ == o.cmp_;
+  }
+
+  std::string toPrettyString(size_t level = 0) const {
+    std::ostringstream ss;
+    std::string pad(level, ' ');
+    ss << pad << "AltTree{valid=" << valid_blocks.size()
+       << ", failed=" << failed_blocks.size() << "\n";
+    ss << pad << "{valid=\n";
+    for (const auto& b : valid_blocks) {
+      ss << b.second->toPrettyString(level + 2) << "\n";
+    }
+    ss << pad << "}\n";
+    ss << pad << "{failed=\n";
+    for (const auto& b : failed_blocks) {
+      ss << b.second->toPrettyString(level + 2) << "\n";
+    }
+    ss << pad << "}\n";
+    ss << pad << "{tips=\n";
+    for (const auto& b : chainTips_) {
+      ss << b->toPrettyString(level + 2) << "\n";
+    }
+    ss << pad << "}\n";
+    ss << pad << "{comparator=\n";
+    ss << cmp_.toPrettyString(level + 2) << "\n";
+    ss << pad << "}\n";
+    return ss.str();
   }
 
  protected:

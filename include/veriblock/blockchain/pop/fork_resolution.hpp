@@ -564,6 +564,18 @@ struct PopAwareForkResolutionComparator {
     return index_ == o.index_ && tree_ == o.tree_;
   }
 
+  std::string toPrettyString(size_t level = 0) const {
+    std::ostringstream ss;
+    std::string pad(level, ' ');
+    ss << pad << "Comparator{\n";
+    ss << pad << "{index=\n";
+    ss << pad << (index_ ? index_->toPrettyString(2) : "  <empty>") << "}\n";
+    ss << pad << "{tree=\n";
+    ss << tree_.toPrettyString(level + 2);
+    ss << "}";
+    return ss.str();
+  }
+
  private:
   ProtectingBlockTree tree_;
   protected_index_t* index_ = nullptr;

@@ -168,6 +168,15 @@ bool VbkBlockTree::addPayloads(const VbkBlock& block,
   return ret;
 }
 
+std::string VbkBlockTree::toPrettyString(size_t level) const {
+  std::ostringstream ss;
+  std::string pad(level, ' ');
+  ss << VbkTree::toPrettyString(level) << "\n";
+  ss << pad << "{comparator=\n" << cmp_.toPrettyString(level + 2);
+  ss << "}";
+  return ss.str();
+}
+
 template <>
 bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
     const BlockIndex<VbkBlock>& index, ValidationState& state) {

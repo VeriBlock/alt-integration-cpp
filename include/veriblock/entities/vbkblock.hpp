@@ -112,6 +112,10 @@ struct VbkBlock {
    * @return hash block hash
    */
   hash_t getHash() const;
+
+  static std::string name() {
+    return "Vbk";
+  }
 };
 
 }  // namespace altintegration
