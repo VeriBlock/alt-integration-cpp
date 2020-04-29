@@ -192,6 +192,29 @@ struct BlockTree {
            activeChain_ == o.activeChain_ && fork_chains_ == o.fork_chains_;
   }
 
+  std::string toPrettyString(size_t level = 0) const {
+    std::ostringstream s;
+    std::string pad(level, ' ');
+    s << pad << Block::name() << "BlockTree{valid=" << valid_blocks.size()
+      << ", failed=" << failed_blocks.size() << "\n";
+    s << pad << "{tip=\n";
+    s << activeChain_.tip()->toPrettyString(level + 2) << "\n";
+    s << pad << "{valid=\n";
+    for (const auto& b : valid_blocks) {
+      s << b.second->toPrettyString(level + 2) << "\n";
+    }
+    s << pad << "}\n" << pad << "{failed=\n";
+    for (const auto& b : failed_blocks) {
+      s << b.second->toPrettyString(level + 2) << "\n";
+    }
+    s << pad << "}\n" << pad << "{forktips=\n";
+    for (const auto& f : fork_chains_) {
+      s << f.second.tip()->toPrettyString(level + 2) << "\n";
+    }
+    s << pad << "}";
+    return s.str();
+  }
+
  protected:
   block_index_t valid_blocks;
   block_index_t failed_blocks;

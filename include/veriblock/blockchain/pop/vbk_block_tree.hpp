@@ -71,6 +71,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
     return cmp_ == o.cmp_ && VbkTree::operator==(o);
   }
 
+  std::string toPrettyString(size_t level = 0) const;
+
  private:
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew,
