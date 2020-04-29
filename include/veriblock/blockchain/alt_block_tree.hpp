@@ -57,6 +57,7 @@ struct AltTree {
         rewards_(cmp_.getProtectingBlockTree(), rewardCalculator_) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
+  index_t* getBlockIndexFailed(const std::vector<uint8_t>& hash) const;
 
   //! before any use, bootstrap the three with ALT bootstrap block.
   //! may return false, if bootstrap block is invalid
@@ -116,18 +117,20 @@ struct AltTree {
     return cmp_.getProtectingBlockTree().btc();
   }
 
+  const std::unordered_set<index_t*>& getForkChains() const { return chainTips_; }
   const AltChainParams& getParams() const { return *alt_config_; }
-
-  const block_index_t& getAllBlocks() const { return block_index_; }
+  const block_index_t& getValidBlocks() const { return valid_blocks; }
+  const block_index_t& getFailedBlocks() const { return failed_blocks; }
 
   bool operator==(const AltTree& o) const {
-    return chainTips_ == o.chainTips_ && block_index_ == o.block_index_ &&
-           cmp_ == o.cmp_;
+    return chainTips_ == o.chainTips_ && valid_blocks == o.valid_blocks &&
+           failed_blocks == o.failed_blocks && cmp_ == o.cmp_;
   }
 
  protected:
-  std::vector<index_t*> chainTips_;
-  block_index_t block_index_;
+  std::unordered_set<index_t*> chainTips_{};
+  block_index_t valid_blocks{};
+  block_index_t failed_blocks{};
   const alt_config_t* alt_config_;
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
@@ -141,6 +144,8 @@ struct AltTree {
   index_t* touchBlockIndex(const hash_t& blockHash);
 
   void addToChains(index_t* block_index);
+
+  void doInvalidateBlock(const hash_t& hash);
 
   bool addPayloads(PopForkComparator& cmp,
                    const AltBlock& containingBlock,

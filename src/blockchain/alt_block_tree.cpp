@@ -14,20 +14,26 @@
 
 namespace altintegration {
 
+AltTree::index_t* AltTree::getBlockIndexFailed(
+    const std::vector<uint8_t>& hash) const {
+  auto it = failed_blocks.find(hash);
+  return it == failed_blocks.end() ? nullptr : it->second.get();
+}
+
 AltTree::index_t* AltTree::getBlockIndex(
     const std::vector<uint8_t>& hash) const {
-  auto it = block_index_.find(hash);
-  return it == block_index_.end() ? nullptr : it->second.get();
+  auto it = valid_blocks.find(hash);
+  return it == valid_blocks.end() ? nullptr : it->second.get();
 }
 
 AltTree::index_t* AltTree::touchBlockIndex(const hash_t& blockHash) {
-  auto it = block_index_.find(blockHash);
-  if (it != block_index_.end()) {
+  auto it = valid_blocks.find(blockHash);
+  if (it != valid_blocks.end()) {
     return it->second.get();
   }
 
   auto newIndex = std::make_shared<index_t>();
-  it = block_index_.insert({blockHash, std::move(newIndex)}).first;
+  it = valid_blocks.insert({blockHash, std::move(newIndex)}).first;
   return it->second.get();
 }
 
@@ -52,11 +58,13 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
     current->chainWork = 0;
   }
 
+  current->raiseValidity(BLOCK_VALID_TREE);
+
   return current;
 }
 
 bool AltTree::bootstrap(ValidationState& state) {
-  if (!block_index_.empty()) {
+  if (!valid_blocks.empty()) {
     return state.Error("already bootstrapped");
   }
 
@@ -66,7 +74,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  if (!block_index_.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
+  if (!valid_blocks.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
     return state.Error("block-index-no-genesis");
   }
 
@@ -104,14 +112,13 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
 void AltTree::addToChains(index_t* index) {
   assert(index);
 
-  for (auto& chainTip : chainTips_) {
-    if (chainTip == index->pprev) {
-      chainTip = index;
-      return;
-    }
+  auto it = chainTips_.find(index->pprev);
+  if (it != chainTips_.end()) {
+    // we found prev block in chainTips
+    chainTips_.erase(it);
   }
 
-  chainTips_.push_back(index);
+  chainTips_.insert(index);
 }
 
 void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
@@ -131,36 +138,45 @@ void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
   (void)ret;
   assert(ret);
 
+  addToChains(blockIndex.pprev);
   removeAllContainingEndorsements(blockIndex);
 
-  std::set<index_t*> removeIndexes;
+  for (auto it = chainTips_.begin(); it != chainTips_.end();) {
+    auto* index = *it;
+    Chain<BlockIndex<AltBlock>> chain(blockIndex.height, index);
+    if (chain.empty() || !chain.contains(&blockIndex)) {
+      // this chain does not contain deleted block
+      ++it;
+      continue;
+    }
 
-  // clear endorsements
-  bool once_changed = false;
-  for (auto tip = chainTips_.begin(); tip != chainTips_.end();) {
-    if ((*tip)->getAncestor(blockIndex.height) == &blockIndex) {
-      for (index_t* workBlock = *tip; workBlock != &blockIndex;
-           workBlock = workBlock->pprev) {
-        removeIndexes.insert(workBlock);
-        removeAllContainingEndorsements(*workBlock);
-      }
-      if (!once_changed) {
-        (*tip) = blockIndex.pprev;
-        once_changed = true;
-      } else {
-        tip = chainTips_.erase(tip);
+    if (chain.blocksCount() == 1 && *chain.tip() == blockIndex) {
+      // this chain contains exactly 1 block = block index
+      it = chainTips_.erase(it);
+      continue;
+    }
+
+    // chain contains deleted block and block num > 1
+    for (const auto& c : chain) {
+      // skip deleted block
+      if (*c == blockIndex) {
         continue;
       }
+
+      // mark this block as 'invalid child', because this block is after deleted
+      // block
+      removeAllContainingEndorsements(*c);
+      c->setFlag(BLOCK_FAILED_CHILD);
+      doInvalidateBlock(c->getHash());
     }
-    ++tip;
+
+    // remove this tip
+    it = chainTips_.erase(it);
   }
 
-  // clear indexes
-  for (auto* index : removeIndexes) {
-    block_index_.erase(index->getHash());
-  }
-
-  block_index_.erase(blockIndex.getHash());
+  // mark removed block as invalid
+  blockIndex.setFlag(BLOCK_FAILED_BLOCK);
+  doInvalidateBlock(blockIndex.getHash());
 }
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,
@@ -289,6 +305,16 @@ bool AltTree::addPayloads(AltTree::PopForkComparator& cmp,
   }
 
   return true;
+}
+
+void AltTree::doInvalidateBlock(const AltTree::hash_t& hash) {
+  auto it = valid_blocks.find(hash);
+  if (it == valid_blocks.end()) {
+    return;
+  }
+
+  failed_blocks[hash] = it->second;
+  valid_blocks.erase(it);
 }
 
 template <>
