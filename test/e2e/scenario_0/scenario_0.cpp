@@ -67,8 +67,7 @@ struct Scenario0 : public ::testing::Test {
     config->vbk.blocks =
         parse<VbkBlock>(generated::vbkbootstraps, fromHex<VbkBlock>);
 
-    auto t = Altintegration::create(*config);
-    alt = std::make_shared<AltTree>(std::move(t));
+    alt = Altintegration::create(*config);
 
     atv = parse<ATV>(generated::atv, fromHex<ATV>)[0];
     vtbs = parse<VTB>(generated::vtbs, fromHex<VTB>);
