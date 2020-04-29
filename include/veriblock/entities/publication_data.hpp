@@ -25,7 +25,7 @@ struct PublicationData {
    * @param stream data stream to read from
    * @return PublicationData
    */
-  static PublicationData fromRaw(const std::vector<uint8_t> bytes);
+  static PublicationData fromRaw(const std::vector<uint8_t>& bytes);
 
   /**
    * Read data from the stream and convert it to PublicationData

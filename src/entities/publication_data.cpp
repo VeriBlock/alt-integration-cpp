@@ -7,7 +7,7 @@
 
 using namespace altintegration;
 
-PublicationData PublicationData::fromRaw(const std::vector<uint8_t> bytes) {
+PublicationData PublicationData::fromRaw(const std::vector<uint8_t>& bytes) {
   ReadStream stream(bytes);
   return fromRaw(stream);
 }

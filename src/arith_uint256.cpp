@@ -47,7 +47,7 @@ std::string ArithUint256::toString() const {
   return out;
 }
 
-ArithUint256 ArithUint256::fromString(std::string num) {
+ArithUint256 ArithUint256::fromString(const std::string& num) {
   ArithUint256 tmp = 0; 
   for (char sym : num) {
     tmp *= 10;
