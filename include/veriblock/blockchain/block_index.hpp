@@ -137,7 +137,8 @@ struct BlockIndex {
 
   std::string toPrettyString() const {
     return "BlockIndex{height=" + std::to_string(height) +
-           ", hash=" + getHash().toHex().substr(0, 8) +
+           ", hash=" + HexStr(getHash()) +
+           ", prev=" + (pprev ? HexStr(pprev->getHash()) : "<empty>") +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
            ", containsEndorsements=" +
            std::to_string(containingEndorsements.size()) + "}";

@@ -74,53 +74,47 @@ TEST_F(BlockchainFixture, InvalidateBlockInTheMiddleOfChain) {
 TEST_F(BlockchainFixture, InvalidBlockAsBaseOfMultipleForks) {
   //          /5-6-7-8-9      (a)
   // 0-1-2-3-4-5-6-7-8-9-10   (b)
-  //           |\6-7-8-9      (c)
-  //           |  \7-8        (d)
-  //           |    \8        (e)
-  //           |
-  //           |\6-7-8        (f)
-  //           |\6-7          (g)
-  //            \6            (h)
+  //             |\7-8-9      (c)
+  //             |  \8        (d)
+  //             |\7-8        (e)
+  //              \7          (f)
   // best chain is (b)
-  // invalidate block 5 at (b)
+  // invalidate block 6 at (b)
   // expect chain  (a) to become new best
-  // expect chains (c-h) are completely invalid
-  // expect chain  (b) blocks 5-10 to be invalidated
+  // expect chains (c-f) are completely invalid
+  // expect chain  (b) blocks 6-10 to be invalidated
+  // expect block 5 from (b) to be added to forkChains as new candidate fork
 
   auto& btc = popminer.btc();
   auto* fourth = btc.getBestChain().tip()->getAncestor(4);
-  auto* fifth = btc.getBestChain().tip()->getAncestor(5);
+  auto* sixth = btc.getBestChain().tip()->getAncestor(6);
   auto* Atip = popminer.mineBtcBlocks(*fourth, 5);
   auto* Btip = btc.getBestChain().tip();
-  auto* Ctip = popminer.mineBtcBlocks(*fifth, 4);
-  auto* Dtip = popminer.mineBtcBlocks(*Ctip->getAncestor(6), 2);
-  auto* Etip = popminer.mineBtcBlocks(*Dtip->getAncestor(7), 1);
-  auto* Ftip = popminer.mineBtcBlocks(*fifth, 3);  // 6-7-8
-  auto* Gtip = popminer.mineBtcBlocks(*fifth, 2);  // 6-7
-  auto* Htip = popminer.mineBtcBlocks(*fifth, 1);  // 6
+  auto* Ctip = popminer.mineBtcBlocks(*sixth, 3);
+  auto* Dtip = popminer.mineBtcBlocks(*Ctip->getAncestor(7), 1);
+  auto* Etip = popminer.mineBtcBlocks(*sixth, 2);  // 7-8
+  auto* Ftip = popminer.mineBtcBlocks(*sixth, 1);  // 9
 
-  ASSERT_EQ(btc.getValidBlocks().size(), 11 + 5 + 4 + 2 + 1 + 3 + 2 + 1);
+  ASSERT_EQ(btc.getValidBlocks().size(), 11 + 5 + 3 + 1 + 2 + 1);
 
   // current best is B
   ASSERT_EQ(*best->tip(), *Btip);
 
   // invalidate block (5) on the main chain
-  btc.invalidateBlockByIndex(fifth);
+  btc.invalidateBlockByIndex(sixth);
 
   // chain A is now best
   ASSERT_EQ(*best, btc.getBestChain());
   ASSERT_EQ(*best->tip(), *btc.getBestChain().tip());
 
   Chain<BlockIndex<BtcBlock>> Achain(0, Atip);
-  Chain<BlockIndex<BtcBlock>> Bchain(5, Btip);
-  Chain<BlockIndex<BtcBlock>> Cchain(6, Ctip);
-  Chain<BlockIndex<BtcBlock>> Dchain(7, Dtip);
-  Chain<BlockIndex<BtcBlock>> Echain(8, Etip);
-  Chain<BlockIndex<BtcBlock>> Fchain(6, Ftip);
-  Chain<BlockIndex<BtcBlock>> Gchain(6, Gtip);
-  Chain<BlockIndex<BtcBlock>> Hchain(6, Htip);
+  Chain<BlockIndex<BtcBlock>> Bchain(6, Btip);
+  Chain<BlockIndex<BtcBlock>> Cchain(7, Ctip);
+  Chain<BlockIndex<BtcBlock>> Dchain(8, Dtip);
+  Chain<BlockIndex<BtcBlock>> Echain(7, Etip);
+  Chain<BlockIndex<BtcBlock>> Fchain(7, Ftip);
 
-  ASSERT_EQ(btc.getFailedBlocks().size(), 6 + 4 + 2 + 1 + 3 + 2 + 1);
+  ASSERT_EQ(btc.getFailedBlocks().size(), 5 + 3 + 1 + 2 + 1);
 
   auto getValidBlockIndex = [&](auto&& hash) {
     auto index = btc.getBlockIndex(hash);
@@ -144,10 +138,10 @@ TEST_F(BlockchainFixture, InvalidBlockAsBaseOfMultipleForks) {
   forEach(Dchain, getFailedBlockIndex);
   forEach(Echain, getFailedBlockIndex);
   forEach(Fchain, getFailedBlockIndex);
-  forEach(Gchain, getFailedBlockIndex);
-  forEach(Hchain, getFailedBlockIndex);
 
   // there's only one chain (no known forks)
   const auto& forkChains = btc.getForkChains();
-  ASSERT_TRUE(forkChains.empty());
+  ASSERT_EQ(forkChains.size(), 1);
+  // block 5 at (b) should become new fork chain
+  ASSERT_EQ(*forkChains.begin()->second.tip(), *Btip->getAncestor(5));
 }

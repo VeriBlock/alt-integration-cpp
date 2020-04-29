@@ -117,7 +117,7 @@ struct AltTree {
     return cmp_.getProtectingBlockTree().btc();
   }
 
-  const std::vector<index_t*>& getForkChains() const { return chainTips_; }
+  const std::unordered_set<index_t*>& getForkChains() const { return chainTips_; }
   const AltChainParams& getParams() const { return *alt_config_; }
   const block_index_t& getValidBlocks() const { return valid_blocks; }
   const block_index_t& getFailedBlocks() const { return failed_blocks; }
@@ -128,7 +128,7 @@ struct AltTree {
   }
 
  protected:
-  std::vector<index_t*> chainTips_{};
+  std::unordered_set<index_t*> chainTips_{};
   block_index_t valid_blocks{};
   block_index_t failed_blocks{};
   const alt_config_t* alt_config_;

@@ -70,6 +70,8 @@ struct Chain {
     return (height_t)chain.size() + startHeight_ - 1;
   }
 
+  bool empty() const { return chain.empty(); }
+
   size_t blocksCount() const { return chain.size(); }
 
   index_t* tip() const {
@@ -84,7 +86,7 @@ struct Chain {
   typename storage_t::const_iterator end() const { return chain.end(); }
 
   void setTip(index_t* index) {
-    if (index == nullptr) {
+    if (index == nullptr || index->height < startHeight_) {
       chain.clear();
       return;
     }
@@ -110,9 +112,7 @@ struct Chain {
     return a.tip() == b.tip();
   }
 
-  friend bool operator!=(const Chain& a, const Chain& b) {
-    return !(a == b);
-  }
+  friend bool operator!=(const Chain& a, const Chain& b) { return !(a == b); }
 
   const index_t* findFork(const index_t* pindex) const {
     if (pindex == nullptr || tip() == nullptr) {

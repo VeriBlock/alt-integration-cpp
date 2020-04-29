@@ -87,6 +87,12 @@ static const std::vector<TestCase> cases = {
 
 INSTANTIATE_TEST_SUITE_P(Chain, ChainTest, testing::ValuesIn(cases));
 
+TEST(ChainTest, ChainStartHeightAboveTip) {
+  auto blocks = ChainTest::makeBlocks(0, 10);
+  Chain<BlockIndex<DummyBlock>> chain(100, &*blocks.rbegin());
+  ASSERT_TRUE(chain.empty());
+}
+
 TEST(ChainTest, CreateFrom0) {
   // when first block is at height 100 (no blocks behind that), and Chain is
   // created with height 0, it is expected to see that chain will contain 110
