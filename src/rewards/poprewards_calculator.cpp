@@ -70,8 +70,8 @@ static PopRewardsBigDecimal calculateSlopeRatio(
 
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
 uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
-  const auto& params = altParams_.getRewardParams();
-  if (height % altParams_.getKeystoneInterval() == 0) {
+  const auto& params = altParams_->getRewardParams();
+  if (height % altParams_->getKeystoneInterval() == 0) {
     return params.keystoneRound();
   }
 
@@ -80,14 +80,14 @@ uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
   }
 
   assert(height > 0);
-  uint32_t round =
-      (height % altParams_.getKeystoneInterval()) % (params.payoutRounds() - 1);
+  uint32_t round = (height % altParams_->getKeystoneInterval()) %
+                   (params.payoutRounds() - 1);
   return round;
 }
 
 PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
     int relativeBlock) const {
-  auto table = altParams_.getRewardParams().relativeScoreLookupTable();
+  auto table = altParams_->getRewardParams().relativeScoreLookupTable();
   if (relativeBlock < 0 || relativeBlock >= static_cast<int>(table.size())) {
     return 0.0;
   }
@@ -109,7 +109,7 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateMinerRewardWithWeight(
     difficulty = 1.0;
   }
 
-  const auto& params = altParams_.getRewardParams();
+  const auto& params = altParams_->getRewardParams();
   uint32_t payoutRound = getRoundForBlockNumber(height);
   auto scoreToDifficulty = scoreForThisBlock / difficulty;
   const auto& curveParams = params.getCurveParams();
@@ -150,9 +150,9 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateMinerReward(
   auto endorsementLevelWeight =
       getScoreMultiplierFromRelativeBlock(vbkRelativeHeight);
 
-  const auto& params = altParams_.getRewardParams();
+  const auto& params = altParams_->getRewardParams();
   if (params.flatScoreRoundUse() && roundNumber == params.flatScoreRound() &&
-      isFirstRoundAfterKeystone(altParams_, height)) {
+      isFirstRoundAfterKeystone(*altParams_, height)) {
     return calculateMinerRewardWithWeight(
         height, endorsementLevelWeight, 1.0, 1.0);
   }
@@ -163,7 +163,7 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateMinerReward(
 
 // getter for altchain parameters
 const AltChainParams& PopRewardsCalculator::getAltParams() const noexcept {
-  return altParams_;
+  return *altParams_;
 }
 
 }  // namespace altintegration

@@ -13,33 +13,33 @@
 namespace altintegration {
 
 struct Altintegration {
-  static AltTree create(const Config& config) {
+  static std::shared_ptr<AltTree> create(const Config& config) {
     config.validate();
-    AltTree tree(*config.alt, *config.vbk.params, *config.btc.params);
+    auto tree = std::make_shared<altintegration::AltTree>(
+        *config.alt, *config.vbk.params, *config.btc.params);
     ValidationState state;
 
     // first, bootstrap BTC
     if (config.btc.blocks.empty()) {
-      tree.btc().bootstrapWithGenesis(state);
+      tree->btc().bootstrapWithGenesis(state);
       assert(state.IsValid());
     } else {
-      tree.btc().bootstrapWithChain(
+      tree->btc().bootstrapWithChain(
           config.btc.startHeight, config.btc.blocks, state);
       assert(state.IsValid());
     }
 
     // then, bootstrap VBK
     if (config.vbk.blocks.empty()) {
-      tree.vbk().bootstrapWithGenesis(state);
+      tree->vbk().bootstrapWithGenesis(state);
       assert(state.IsValid());
     } else {
-      tree.vbk().bootstrapWithChain(
+      tree->vbk().bootstrapWithChain(
           config.vbk.startHeight, config.vbk.blocks, state);
       assert(state.IsValid());
     }
 
-    tree.bootstrap(state);
-
+    tree->bootstrap(state);
     return tree;
   }
 };
