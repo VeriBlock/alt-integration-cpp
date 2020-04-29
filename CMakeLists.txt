@@ -113,13 +113,9 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     endif()
 endif()
 
-include_directories(include)
-add_subdirectory(src)
-
 if(CLANG_TIDY)
     include(cmake/clang-tidy.cmake)
 endif()
-
 if(ASAN)
     include(cmake/asan.cmake)
 elseif(TSAN)
@@ -129,6 +125,9 @@ elseif(UBSAN)
 elseif(COVERAGE)
     include(cmake/coverage.cmake)
 endif()
+
+include_directories(include)
+add_subdirectory(src)
 
 add_subdirectory(tools EXCLUDE_FROM_ALL)
 
