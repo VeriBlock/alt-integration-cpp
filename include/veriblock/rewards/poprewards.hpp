@@ -16,8 +16,8 @@ namespace altintegration {
  * @invariant does not modify any on-disk state.
  */
 struct PopRewards {
-  PopRewards(const AltChainParams& altParams, const VbkBlockTree& vbk_tree)
-      : vbk_tree_(vbk_tree), calculator_(altParams) {}
+  PopRewards(const AltChainParams& altParams, const VbkBlockTree &vbk_tree)
+      : vbk_tree_(&vbk_tree), calculator_(altParams) {}
 
   virtual ~PopRewards() = default;
 
@@ -54,7 +54,7 @@ struct PopRewards {
       const PopRewardsBigDecimal& popDifficulty);
 
  private:
-  const VbkBlockTree& vbk_tree_;
+  const VbkBlockTree *vbk_tree_;
   PopRewardsCalculator calculator_;
 };
 
