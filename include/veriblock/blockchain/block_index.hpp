@@ -19,6 +19,25 @@
 
 namespace altintegration {
 
+enum BlockStatus : uint8_t {
+  //! default state for validity - validity state is unknown
+  BLOCK_VALID_UNKNOWN = 0,
+  //! acceptBlock succeded. All parents are at least at this state.
+  BLOCK_VALID_TREE = 1,
+  //! addPayloads succeded. All parents are at least BLOCK_VALID_TREE
+  BLOCK_VALID_PAYLOADS = 2,
+  //! all validity flags
+  BLOCK_VALID_MASK = BLOCK_VALID_TREE | BLOCK_VALID_PAYLOADS,
+  //! block is statelessly valid, but we marked it as failed
+  BLOCK_FAILED_BLOCK = 4,
+  //! block failed POP validation
+  BLOCK_FAILED_POP = 8,
+  //! block is state{lessly,fully} valid, but some of previous blocks is invalid
+  BLOCK_FAILED_CHILD = 16,
+  //! all invalidity flags
+  BLOCK_FAILED_MASK = BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK
+};
+
 //! Store block
 template <typename Block>
 struct BlockIndex {
@@ -54,6 +73,34 @@ struct BlockIndex {
   //! block header
   std::shared_ptr<Block> header{};
 
+  //! contains status flags
+  uint8_t status = 0;  // unknown validity
+
+  bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) {
+    assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+    if ((status & BLOCK_FAILED_MASK) != 0u) {
+      // block failed
+      return false;
+    }
+    return ((status & BLOCK_VALID_MASK) >= upTo);
+  }
+
+  bool raiseValidity(enum BlockStatus upTo) {
+    assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+    if ((status & BLOCK_FAILED_MASK) != 0u) {
+      return false;
+    }
+    if ((status & BLOCK_VALID_MASK) < upTo) {
+      status = (status & ~BLOCK_VALID_MASK) | upTo;
+      return true;
+    }
+    return false;
+  }
+
+  void setFlag(enum BlockStatus s) { this->status |= s; }
+
+  void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
+
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }
   uint32_t getDifficulty() const { return header->getDifficulty(); }
@@ -66,7 +113,7 @@ struct BlockIndex {
     return this->getAncestor(this->height + 1 - steps);
   }
 
-  const BlockIndex* getAncestor(height_t _height) const {
+  BlockIndex* getAncestor(height_t _height) const {
     if (_height < 0 || _height > this->height) {
       return nullptr;
     }
@@ -74,7 +121,7 @@ struct BlockIndex {
     // TODO: this algorithm is not optimal. for O(n) seek backwards until we hit
     // valid height. also it assumes whole blockchain is in memory (pprev is
     // valid until given height)
-    const BlockIndex* index = this;
+    BlockIndex* index = const_cast<BlockIndex*>(this);
     while (index != nullptr) {
       if (index->height > _height) {
         index = index->pprev;
@@ -90,7 +137,8 @@ struct BlockIndex {
 
   std::string toPrettyString() const {
     return "BlockIndex{height=" + std::to_string(height) +
-           ", hash=" + getHash().toHex().substr(0, 8) +
+           ", hash=" + HexStr(getHash()) +
+           ", prev=" + (pprev ? HexStr(pprev->getHash()) : "<empty>") +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
            ", containsEndorsements=" +
            std::to_string(containingEndorsements.size()) + "}";

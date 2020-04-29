@@ -38,6 +38,18 @@ struct PopTestFixture {
     EXPECT_TRUE(alttree.vbk().btc().bootstrapWithGenesis(state));
   }
 
+  BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
+                                      size_t num) {
+    const BlockIndex<AltBlock>* index = &prev;
+    for (size_t i = 0; i < num; i++) {
+      auto next = generateNextBlock(*index->header);
+      EXPECT_TRUE(alttree.acceptBlock(next, state));
+      index = alttree.getBlockIndex(next.getHash());
+    }
+
+    return const_cast<BlockIndex<AltBlock>*>(index);
+  }
+
   void mineAltBlocks(uint32_t num, std::vector<AltBlock>& chain) {
     ASSERT_NE(chain.size(), 0);
 
