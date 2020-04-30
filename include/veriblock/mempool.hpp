@@ -28,6 +28,8 @@ typedef std::vector<uint8_t> (*Hash_Function)(
 struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
   using block_index_t = std::unordered_map<vbk_hash_t, VbkBlock>;
+  static constexpr size_t vbk_prev_block_hash_size =
+      decltype(VbkBlock::previousBlock)::size();
 
   ~MemPool() = default;
   MemPool(const AltChainParams& alt_param,
@@ -45,6 +47,8 @@ struct MemPool {
   std::vector<AltPopTx> getPop(const AltBlock& current_block,
                                AltTree& tree,
                                ValidationState& state);
+
+  void removePayloads(const std::vector<AltPopTx>& altPopTxs);
 
  private:
   block_index_t block_index_;

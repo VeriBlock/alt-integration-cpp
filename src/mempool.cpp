@@ -30,9 +30,6 @@ bool checkConnectivityWithTree(const VbkBlock& check_block,
 }  // namespace
 
 void MemPool::uploadVbkContext(const VTB& vtb) {
-  static constexpr size_t vbk_prev_block_hash_size =
-      decltype(VbkBlock::previousBlock)::size();
-
   block_index_[vtb.containingBlock.getHash()
                    .trimLE<vbk_prev_block_hash_size>()] = vtb.containingBlock;
 
@@ -41,12 +38,18 @@ void MemPool::uploadVbkContext(const VTB& vtb) {
   }
 }
 
+void MemPool::uploadVbkContext(const ATV& atv) {
+  block_index_[atv.containingBlock.getHash()
+                   .trimLE<vbk_prev_block_hash_size>()] = atv.containingBlock;
+
+  for (const auto& b : atv.context) {
+    block_index_[b.getHash().trimLE<vbk_prev_block_hash_size>()] = b;
+  }
+}
+
 bool MemPool::fillContext(VbkBlock first_block,
                           std::vector<VbkBlock>& context,
                           AltTree& tree) {
-  static constexpr size_t vbk_prev_block_hash_size =
-      decltype(VbkBlock::previousBlock)::size();
-
   while (!checkConnectivityWithTree(first_block, tree.vbk())) {
     auto el = block_index_.find(first_block.previousBlock);
     if (el != block_index_.end()) {
@@ -72,18 +75,6 @@ void MemPool::fillVTBs(std::vector<VTB>& vtbs,
         vtbs.push_back(vtb_it->second);
       }
     }
-  }
-}
-
-void MemPool::uploadVbkContext(const ATV& atv) {
-  static constexpr size_t vbk_prev_block_hash_size =
-      decltype(VbkBlock::previousBlock)::size();
-
-  block_index_[atv.containingBlock.getHash()
-                   .trimLE<vbk_prev_block_hash_size>()] = atv.containingBlock;
-
-  for (const auto& b : atv.context) {
-    block_index_[b.getHash().trimLE<vbk_prev_block_hash_size>()] = b;
   }
 }
 
@@ -199,6 +190,23 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   tree.invalidateBlockByHash(hack_block.getHash());
 
   return popTxs;
+}
+
+void MemPool::removePayloads(const std::vector<AltPopTx>& altPopTxs) {
+  for (const auto& tx : altPopTxs) {
+    // clear context
+    for (const auto& b : tx.vbk_context) {
+      block_index_.erase(b.getHash().trimLE<vbk_prev_block_hash_size>());
+    }
+
+    // clear atv
+    stored_atvs_.erase(tx.atv.getId());
+
+    // clear vtbs
+    for (const auto& vtb : tx.vtbs) {
+      stored_vtbs_.erase(vtb.getId());
+    }
+  }
 }
 
 }  // namespace altintegration
