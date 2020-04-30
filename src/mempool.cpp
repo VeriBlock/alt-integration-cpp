@@ -79,7 +79,7 @@ void MemPool::fillVTBs(std::vector<VTB>& vtbs,
 }
 
 bool MemPool::applyPayloads(const AltBlock& hack_block,
-                            const AltPopTx& altPopTx,
+                            AltPopTx& altPopTx,
                             AltTree& tree,
                             ValidationState& state) {
   AltPayloads payloads;
@@ -95,8 +95,43 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
   payloads.endorsed = *endorsed_block_index->header;
 
   bool ret = tree.acceptBlock(hack_block, state);
-  (void)ret;
   assert(ret);
+
+  // apply vbk_context
+  for (const auto& b : altPopTx.vbk_context) {
+    ret = tree.vbk().acceptBlock(b, state);
+    assert(ret);
+  }
+
+  auto genesis_height = tree.vbk().getParams().getGenesisBlock().height;
+  auto settlement_interval =
+      tree.vbk().getParams().getEndorsementSettlementInterval();
+  // check VTB endorsements
+  for (auto it = altPopTx.vtbs.begin(); it != altPopTx.vtbs.end();) {
+    auto& vtb = *it;
+    auto* containing_block_index =
+        tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
+
+    auto start_height =
+        genesis_height > (containing_block_index->height - settlement_interval)
+            ? genesis_height
+            : (containing_block_index->height - settlement_interval);
+
+    auto endorsement = BtcEndorsement::fromContainer(vtb);
+    Chain<BlockIndex<VbkBlock>> chain(start_height, containing_block_index);
+    auto duplicate =
+        chain.findBlockContainingEndorsement(endorsement, settlement_interval);
+
+    // invalid vtb
+    if (duplicate) {
+      // remove from storage
+      stored_vtbs_.erase(vtb.getId());
+
+      it = altPopTx.vtbs.erase(it);
+      continue;
+    }
+    ++it;
+  }
 
   return tree.addPayloads(hack_block, {payloads}, state);
 }
@@ -109,7 +144,7 @@ bool MemPool::submitATV(const std::vector<ATV>& atvs, ValidationState& state) {
 
     uploadVbkContext(atvs[i]);
     auto pair = std::make_pair(atvs[i].getId(), atvs[i]);
-    // clear contex
+    // clear context
     pair.second.context.clear();
 
     stored_atvs_.insert(pair);

@@ -402,7 +402,6 @@ struct PopAwareForkResolutionComparator {
     // apply remaining context from this block
     ret = sm.applyContext(index, state);
     assert(ret);
-    (void)ret;
   }
 
   bool addPayloads(protected_index_t& index,

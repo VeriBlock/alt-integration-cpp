@@ -72,7 +72,7 @@ struct MemPool {
                 const std::vector<VbkBlock>& vbk_contex);
 
   bool applyPayloads(const AltBlock& hack_block,
-                     const AltPopTx& popTx,
+                     AltPopTx& popTx,
                      AltTree& tree,
                      ValidationState& state);
 };
