@@ -259,8 +259,10 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
 
   EXPECT_EQ(popTxs.size(), 2);
   EXPECT_EQ(popTxs[0].vtbs.size(), 1);
+  EXPECT_EQ(popTxs[0].atv, atv1);
   EXPECT_EQ(popTxs[0].vtbs[0], vtb1);
   EXPECT_EQ(popTxs[1].vtbs.size(), 1);
+  EXPECT_EQ(popTxs[1].atv, atv2);
   EXPECT_EQ(popTxs[1].vtbs[0], vtb2);
 
   // TODO: uncomment affter fixing bug with the payloads
@@ -337,10 +339,12 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
       mempool.getPop(*chain.rbegin(), alttree, state);
 
   EXPECT_EQ(popTxs.size(), 2);
-  EXPECT_EQ(popTxs[0].vtbs.size(), 2);
+  EXPECT_EQ(popTxs[0].vtbs.size(), 1);
   EXPECT_EQ(popTxs[0].vtbs[0], vtb1);
-  EXPECT_EQ(popTxs[0].vtbs[1], vtb2);
-  EXPECT_EQ(popTxs[1].vtbs.size(), 0);
+  EXPECT_EQ(popTxs[0].atv, atv1);
+  EXPECT_EQ(popTxs[1].vtbs.size(), 1);
+  EXPECT_EQ(popTxs[1].atv, atv2);
+  EXPECT_EQ(popTxs[1].vtbs[0], vtb2);
 
   // TODO: uncomment affter fixing bug with the payloads
   /*

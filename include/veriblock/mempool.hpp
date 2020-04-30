@@ -1,3 +1,8 @@
+// Copyright (c) 2019-2020 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef ALT_INTEGRATION_VERIBLOCK_MEMPOOL_HPP
 #define ALT_INTEGRATION_VERIBLOCK_MEMPOOL_HPP
 
@@ -44,8 +49,8 @@ struct MemPool {
  private:
   block_index_t block_index_;
 
-  std::vector<ATV> stored_atvs_;
-  std::vector<VTB> stored_vtbs_;
+  std::unordered_map<ATV::id_t, ATV> stored_atvs_;
+  std::unordered_map<VTB::id_t, VTB> stored_vtbs_;
 
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
@@ -61,6 +66,11 @@ struct MemPool {
                    AltTree& tree);
   void fillVTBs(std::vector<VTB>& vtbs,
                 const std::vector<VbkBlock>& vbk_contex);
+
+  bool applyPayloads(const AltBlock& hack_block,
+                     const AltPopTx& popTx,
+                     AltTree& tree,
+                     ValidationState& state);
 };
 
 }  // namespace altintegration

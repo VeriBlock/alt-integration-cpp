@@ -5,6 +5,8 @@
 
 #include "veriblock/entities/atv.hpp"
 
+#include "veriblock/hashutil.hpp"
+
 using namespace altintegration;
 
 ATV ATV::fromVbkEncoding(ReadStream& stream) {
@@ -48,4 +50,12 @@ ATV ATV::fromHex(const std::string& h) {
   auto data = ParseHex(h);
   ReadStream stream(data);
   return ATV::fromVbkEncoding(stream);
+}
+
+ATV::id_t ATV::getId() const {
+  WriteStream stream;
+  auto left = transaction.getHash();
+  containingBlock.toVbkEncoding(stream);
+
+  return sha256(left, stream.data());
 }

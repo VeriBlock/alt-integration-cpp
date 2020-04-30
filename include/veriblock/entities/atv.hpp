@@ -15,10 +15,13 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/uint.hpp"
 
 namespace altintegration {
 
 struct ATV {
+  using id_t = uint256;
+
   VbkTx transaction{};
   VbkMerklePath merklePath{};
   VbkBlock containingBlock{};
@@ -53,11 +56,17 @@ struct ATV {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
+  /**
+   * Calculate a ATV id that is the sha256 hash of the ATV rawBytes
+   * @return id sha256 hash
+   */
+  id_t getId() const;
+
   static ATV fromHex(const std::string& h);
 
   friend bool operator==(const ATV& a, const ATV& b) {
     // clang-format off
-    return a.toVbkEncoding() == b.toVbkEncoding();
+    return a.getId() == b.getId();
     // clang-format on
   }
 };
