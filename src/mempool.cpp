@@ -108,7 +108,7 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
       tree.vbk().getParams().getEndorsementSettlementInterval();
   // check VTB endorsements
   for (auto it = altPopTx.vtbs.begin(); it != altPopTx.vtbs.end();) {
-    auto& vtb = *it;
+    VTB& vtb = *it;
     auto* containing_block_index =
         tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
 
@@ -131,6 +131,10 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
       continue;
     }
     ++it;
+  }
+
+  for (const auto& b : altPopTx.vbk_context) {
+    tree.vbk().invalidateBlockByHash(b.getHash());
   }
 
   return tree.addPayloads(hack_block, {payloads}, state);
