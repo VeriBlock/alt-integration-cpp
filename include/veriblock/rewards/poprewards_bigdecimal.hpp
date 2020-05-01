@@ -18,7 +18,7 @@ struct PopRewardsBigDecimal {
   PopRewardsBigDecimal() = default;
 
   PopRewardsBigDecimal(uint64_t b) : value(ArithUint256(b) * decimals) {}
-  PopRewardsBigDecimal(ArithUint256 b) : value(b * decimals) {}
+  PopRewardsBigDecimal(const ArithUint256& b) : value(b * decimals) {}
   PopRewardsBigDecimal(double b) : value((uint64_t)(b * decimals)) {}
 
   PopRewardsBigDecimal& operator+=(const PopRewardsBigDecimal& b) {

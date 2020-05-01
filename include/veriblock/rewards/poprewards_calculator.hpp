@@ -17,7 +17,7 @@ namespace altintegration {
 struct PopRewardsCalculator {
   PopRewardsCalculator(const AltChainParams& altParams)
       : altParams_(&altParams) {}
-  virtual ~PopRewardsCalculator(){};
+  virtual ~PopRewardsCalculator() = default;
 
   /**
    * Calculate payout round from the given block height.
