@@ -223,14 +223,15 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
     return {};
   }
 
-  auto *endorsedBlock = index->getAncestorBlocksBehind(alt_config_->getRewardParams().rewardSettlementInterval());
+  auto* endorsedBlock = index->getAncestorBlocksBehind(
+      alt_config_->getRewardParams().rewardSettlementInterval());
   if (endorsedBlock == nullptr) {
     state.Error("Not enough blocks to get the endorsed block");
     return {};
   }
 
-  auto popDifficulty = rewards_.calculateDifficulty(*endorsedBlock);
-  return rewards_.calculatePayouts(*endorsedBlock, popDifficulty);
+  auto popDifficulty = rewards_.calculateDifficulty(vbk(), *endorsedBlock);
+  return rewards_.calculatePayouts(vbk(), *endorsedBlock, popDifficulty);
 }
 
 int AltTree::compareTwoBranches(AltTree::index_t* chain1,

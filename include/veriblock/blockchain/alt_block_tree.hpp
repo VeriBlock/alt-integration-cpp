@@ -53,7 +53,7 @@ struct AltTree {
         vbk_config_(&vbk_config),
         btc_config_(&btc_config),
         cmp_(VbkBlockTree(vbk_config, btc_config), vbk_config, alt_config),
-        rewards_(alt_config, cmp_.getProtectingBlockTree()) {}
+        rewards_(alt_config) {}
 
   index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
   index_t* getBlockIndexFailed(const std::vector<uint8_t>& hash) const;

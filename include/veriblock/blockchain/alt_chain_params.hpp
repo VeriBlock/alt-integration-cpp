@@ -45,7 +45,7 @@ struct PopRewardsParams {
   // we have these payout modifiers for different rounds. Keystone round has
   // the highest multiplier
   virtual std::vector<double> roundRatios() const noexcept {
-    return {0.97, 1.03, 1.07, 3.00};
+    return roundRatios_;
   }
 
   // limit block score to this value
@@ -62,7 +62,7 @@ struct PopRewardsParams {
 
   // getter for reward curve parameters
   virtual const PopRewardsCurveParams& getCurveParams() const noexcept {
-    return curveParams;
+    return *curveParams;
   }
 
   // reward score table
@@ -72,7 +72,11 @@ struct PopRewardsParams {
   }
 
  protected:
-  PopRewardsCurveParams curveParams{};
+  std::shared_ptr<PopRewardsCurveParams> curveParams =
+      std::make_shared<PopRewardsCurveParams>();
+
+  std::vector<double> roundRatios_{0.97, 1.03, 1.07, 3.00};
+
   std::vector<double> lookupTable_{
       1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
       1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
@@ -109,11 +113,12 @@ struct AltChainParams {
 
   // getter for reward parameters
   virtual const PopRewardsParams& getRewardParams() const noexcept {
-    return rewardParams;
+    return *popRewardsParams;
   }
 
- protected:
-  PopRewardsParams rewardParams{};
+ private:
+  std::shared_ptr<PopRewardsParams> popRewardsParams =
+      std::make_shared<PopRewardsParams>();
 };
 
 }  // namespace altintegration

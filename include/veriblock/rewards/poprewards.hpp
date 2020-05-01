@@ -7,8 +7,8 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_HPP_
 
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
-#include <veriblock/rewards/poprewards_calculator.hpp>
 #include <veriblock/rewards/poprewards_bigdecimal.hpp>
+#include <veriblock/rewards/poprewards_calculator.hpp>
 
 namespace altintegration {
 
@@ -16,8 +16,7 @@ namespace altintegration {
  * @invariant does not modify any on-disk state.
  */
 struct PopRewards {
-  PopRewards(const AltChainParams& altParams, const VbkBlockTree &vbk_tree)
-      : vbk_tree_(&vbk_tree), calculator_(altParams) {}
+  PopRewards(const AltChainParams& altParams) : calculator_(altParams) {}
 
   virtual ~PopRewards() = default;
 
@@ -28,6 +27,7 @@ struct PopRewards {
    * @return PopRewardsBigDecimal resulting score
    */
   virtual PopRewardsBigDecimal scoreFromEndorsements(
+      const VbkBlockTree& vbk_tree,
       const BlockIndex<AltBlock>& endorsedBlock) const;
 
   /**
@@ -39,22 +39,24 @@ struct PopRewards {
    * @return PopRewardsBigDecimal resulting difficulty
    */
   virtual PopRewardsBigDecimal calculateDifficulty(
-      const BlockIndex<AltBlock>& tip) const;
+      const VbkBlockTree& vbk_tree, const BlockIndex<AltBlock>& tip) const;
 
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
    * the endorsed block.
-   * @param endorsedBlock endorsed altchain block which we are paying reward for.
-   * @param popDifficulty current POP difficulty. See calculateDifficulty for reference.
-   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a key
-   *         and reward amount as a value
+   * @param endorsedBlock endorsed altchain block which we are paying reward
+   * for.
+   * @param popDifficulty current POP difficulty. See calculateDifficulty for
+   * reference.
+   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
+   * key and reward amount as a value
    */
   virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
+      const VbkBlockTree& vbk_tree,
       const BlockIndex<AltBlock>& endorsedBlock,
       const PopRewardsBigDecimal& popDifficulty);
 
  private:
-  const VbkBlockTree *vbk_tree_;
   PopRewardsCalculator calculator_;
 };
 
