@@ -183,10 +183,19 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   hack_block.timestamp = current_block.timestamp + 1;
   hack_block.height = current_block.height + 1;
 
-  std::vector<AltPopTx> popTxs;
-  for (const auto& el : stored_atvs_) {
-    auto& atv = el.second;
+  std::vector<std::pair<ATV::id_t, ATV>> sorted_atvs(stored_atvs_.size());
+  std::copy(stored_atvs_.begin(), stored_atvs_.end(), sorted_atvs.begin());
 
+  auto atv_comparator = [](const std::pair<ATV::id_t, ATV>& el1,
+                           const std::pair<ATV::id_t, ATV>& el2) -> bool {
+    return el1.second.containingBlock.height <
+           el2.second.containingBlock.height;
+  };
+  std::sort(sorted_atvs.begin(), sorted_atvs.end(), atv_comparator);
+
+  std::vector<AltPopTx> popTxs;
+  for (const auto& el : sorted_atvs) {
+    auto& atv = el.second;
     AltPopTx popTx;
     VbkBlock first_block =
         !atv.context.empty() ? atv.context[0] : atv.containingBlock;
