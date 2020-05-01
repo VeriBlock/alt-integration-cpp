@@ -22,6 +22,7 @@ namespace altintegration {
 
 struct VbkBlock {
   using hash_t = uint192;
+  using short_hash_t = uint96;
   using height_t = int32_t;
   using keystone_t = uint72;
   using payloads_t = PartialVTB;
@@ -113,9 +114,13 @@ struct VbkBlock {
    */
   hash_t getHash() const;
 
-  static std::string name() {
-    return "Vbk";
-  }
+  /**
+   * Calculate the hash of the vbk block
+   * @return hash block hash
+   */
+  short_hash_t getShortHash() const;
+
+  static std::string name() { return "Vbk"; }
 };
 
 }  // namespace altintegration

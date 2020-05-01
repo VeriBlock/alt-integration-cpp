@@ -15,11 +15,7 @@ namespace {
 
 bool checkConnectivityWithBlock(const VbkBlock& check_block,
                                 const VbkBlock& current_block) {
-  static constexpr size_t vbk_prev_block_hash_size =
-      decltype(VbkBlock::previousBlock)::size();
-
-  return check_block.previousBlock ==
-         current_block.getHash().trimLE<vbk_prev_block_hash_size>();
+  return check_block.previousBlock == current_block.getShortHash();
 }
 
 bool checkConnectivityWithTree(const VbkBlock& check_block,
@@ -30,20 +26,18 @@ bool checkConnectivityWithTree(const VbkBlock& check_block,
 }  // namespace
 
 void MemPool::uploadVbkContext(const VTB& vtb) {
-  block_index_[vtb.containingBlock.getHash()
-                   .trimLE<vbk_prev_block_hash_size>()] = vtb.containingBlock;
+  block_index_[vtb.containingBlock.getShortHash()] = vtb.containingBlock;
 
   for (const auto& b : vtb.context) {
-    block_index_[b.getHash().trimLE<vbk_prev_block_hash_size>()] = b;
+    block_index_[b.getShortHash()] = b;
   }
 }
 
 void MemPool::uploadVbkContext(const ATV& atv) {
-  block_index_[atv.containingBlock.getHash()
-                   .trimLE<vbk_prev_block_hash_size>()] = atv.containingBlock;
+  block_index_[atv.containingBlock.getShortHash()] = atv.containingBlock;
 
   for (const auto& b : atv.context) {
-    block_index_[b.getHash().trimLE<vbk_prev_block_hash_size>()] = b;
+    block_index_[b.getShortHash()] = b;
   }
 }
 
@@ -112,10 +106,8 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
     auto* containing_block_index =
         tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
 
-    auto start_height =
-        genesis_height > (containing_block_index->height - settlement_interval)
-            ? genesis_height
-            : (containing_block_index->height - settlement_interval);
+    auto start_height = std::max(
+        genesis_height, containing_block_index->height - settlement_interval);
 
     auto endorsement = BtcEndorsement::fromContainer(vtb);
     Chain<BlockIndex<VbkBlock>> chain(start_height, containing_block_index);
@@ -164,7 +156,7 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
     }
 
     uploadVbkContext(vtbs[i]);
-    auto pair = std::make_pair(vtbs[i].getId(), vtbs[i]);
+    auto pair = std::make_pair(BtcEndorsement::getId(vtbs[i]), vtbs[i]);
     // clear contex
     pair.second.context.clear();
 
@@ -235,7 +227,7 @@ void MemPool::removePayloads(const std::vector<AltPopTx>& altPopTxs) {
   for (const auto& tx : altPopTxs) {
     // clear context
     for (const auto& b : tx.vbk_context) {
-      block_index_.erase(b.getHash().trimLE<vbk_prev_block_hash_size>());
+      block_index_.erase(b.getShortHash());
     }
 
     // clear atv

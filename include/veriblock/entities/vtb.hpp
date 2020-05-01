@@ -89,6 +89,10 @@ struct VTB {
   friend bool operator==(const VTB& a, const VTB& b) {
     return a.getId() == b.getId();
   }
+
+  friend bool operator!=(const VTB& a, const VTB& b) {
+    return !(a.getId() == b.getId());
+  }
 };
 
 }  // namespace altintegration

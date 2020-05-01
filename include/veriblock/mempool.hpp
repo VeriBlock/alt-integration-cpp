@@ -28,8 +28,6 @@ typedef std::vector<uint8_t> (*Hash_Function)(
 struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
   using block_index_t = std::unordered_map<vbk_hash_t, VbkBlock>;
-  static constexpr size_t vbk_prev_block_hash_size =
-      decltype(VbkBlock::previousBlock)::size();
 
   ~MemPool() = default;
   MemPool(const AltChainParams& alt_param,
@@ -54,7 +52,7 @@ struct MemPool {
   block_index_t block_index_;
 
   std::unordered_map<ATV::id_t, ATV> stored_atvs_;
-  std::unordered_map<VTB::id_t, VTB> stored_vtbs_;
+  std::unordered_map<BtcEndorsement::id_t, VTB> stored_vtbs_;
 
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
