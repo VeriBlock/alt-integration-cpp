@@ -177,11 +177,10 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   (void)ret;
   assert(ret);
 
-  AltBlock hack_block;
-  hack_block.hash = {0, 0, 0, 0, 0, 0, 0, 1};
-  hack_block.previousBlock = current_block.getHash();
-  hack_block.timestamp = current_block.timestamp + 1;
-  hack_block.height = current_block.height + 1;
+  AltBlock hack_block{{},
+                      current_block.getHash(),
+                      (current_block.timestamp + 1),
+                      (current_block.height + 1)};
 
   std::vector<std::pair<ATV::id_t, ATV>> sorted_atvs(stored_atvs_.size());
   std::copy(stored_atvs_.begin(), stored_atvs_.end(), sorted_atvs.begin());
