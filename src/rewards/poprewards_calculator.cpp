@@ -59,8 +59,7 @@ static PopRewardsBigDecimal calculateSlopeRatio(
 
   assert(score >= curveParams.startOfSlope());
 
-  PopRewardsBigDecimal scoreDecrease =
-      slope * (score - curveParams.startOfSlope());
+  auto scoreDecrease = slope * (score - curveParams.startOfSlope());
   PopRewardsBigDecimal maxScoreDecrease = 1.0;
   if (scoreDecrease > maxScoreDecrease) {
     scoreDecrease = maxScoreDecrease;
@@ -70,7 +69,7 @@ static PopRewardsBigDecimal calculateSlopeRatio(
 
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
 uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
-  const auto& params = altParams_->getRewardParams();
+  const PopRewardsParams& params = altParams_->getRewardParams();
   if (height % altParams_->getKeystoneInterval() == 0) {
     return params.keystoneRound();
   }
