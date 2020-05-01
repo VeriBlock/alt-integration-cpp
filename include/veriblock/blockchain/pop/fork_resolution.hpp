@@ -408,6 +408,11 @@ struct PopAwareForkResolutionComparator {
   bool addPayloads(protected_index_t& index,
                    const std::vector<protected_payloads_t>& payloads,
                    ValidationState& state) {
+    if (!index.isValid()) {
+      return state.Invalid("bad-chain",
+                           "This or one of previous blocks is invalid");
+    }
+
     return tryValidateWithResources(
         [&]() -> bool {
           if (index_ != index.pprev) {

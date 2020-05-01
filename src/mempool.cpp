@@ -190,7 +190,7 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   }
 
   // clear tree from temp endorsement
-  tree.invalidateBlockByHash(tempBlock.getHash());
+  tree.removeSubtree(tempBlock.getHash());
 
   return popTxs;
 }

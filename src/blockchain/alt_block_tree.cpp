@@ -14,57 +14,21 @@
 
 namespace altintegration {
 
-AltTree::index_t* AltTree::getBlockIndexFailed(
-    const std::vector<uint8_t>& hash) const {
-  auto it = failed_blocks.find(hash);
-  return it == failed_blocks.end() ? nullptr : it->second.get();
-}
-
-AltTree::index_t* AltTree::getBlockIndex(
-    const std::vector<uint8_t>& hash) const {
-  auto it = valid_blocks.find(hash);
-  return it == valid_blocks.end() ? nullptr : it->second.get();
-}
-
-AltTree::index_t* AltTree::touchBlockIndex(const hash_t& blockHash) {
-  auto it = valid_blocks.find(blockHash);
-  if (it != valid_blocks.end()) {
-    return it->second.get();
-  }
-
-  auto newIndex = std::make_shared<index_t>();
-  it = valid_blocks.insert({blockHash, std::move(newIndex)}).first;
-  return it->second.get();
-}
-
 AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
   auto hash = block.getHash();
-  index_t* current = getBlockIndex(hash);
+  index_t* current = base::getBlockIndex(hash);
   if (current != nullptr) {
     // it is a duplicate
     return current;
   }
 
-  current = touchBlockIndex(hash);
-  current->header = std::make_shared<AltBlock>(block);
-  current->pprev = getBlockIndex(block.previousBlock);
-
-  if (current->pprev != nullptr) {
-    // prev block found
-    current->height = current->pprev->height + 1;
-    current->chainWork = current->pprev->chainWork;
-  } else {
-    current->height = 0;
-    current->chainWork = 0;
-  }
-
+  current = doInsertBlockHeader(std::make_shared<AltBlock>(block));
   current->raiseValidity(BLOCK_VALID_TREE);
-
   return current;
 }
 
 bool AltTree::bootstrap(ValidationState& state) {
-  if (!valid_blocks.empty()) {
+  if (!base::blocks_.empty()) {
     return state.Error("already bootstrapped");
   }
 
@@ -74,7 +38,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  if (!valid_blocks.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
+  if (!base::blocks_.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
     return state.Error("block-index-no-genesis");
   }
 
@@ -82,7 +46,7 @@ bool AltTree::bootstrap(ValidationState& state) {
     return state.Invalid("vbk-set-state");
   }
 
-  addToChains(index);
+  tryAddTip(index);
 
   return true;
 }
@@ -104,24 +68,13 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   assert(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
-  addToChains(index);
+  tryAddTip(index);
 
   return true;
 }
 
-void AltTree::addToChains(index_t* index) {
-  assert(index);
-
-  auto it = chainTips_.find(index->pprev);
-  if (it != chainTips_.end()) {
-    // we found prev block in chainTips
-    chainTips_.erase(it);
-  }
-
-  chainTips_.insert(index);
-}
-
-void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
+void AltTree::invalidateBlock(const hash_t& blockHash,
+                              enum BlockStatus reason) {
   index_t* blockIndex = getBlockIndex(blockHash);
 
   if (blockIndex == nullptr) {
@@ -129,54 +82,25 @@ void AltTree::invalidateBlockByHash(const hash_t& blockHash) {
     return;
   }
 
-  invalidateBlockByIndex(*blockIndex);
+  invalidateBlock(*blockIndex, reason);
 }
 
-void AltTree::invalidateBlockByIndex(index_t& blockIndex) {
+void AltTree::invalidateBlock(index_t& blockIndex, enum BlockStatus reason) {
   ValidationState state;
-  bool ret = cmp_.setState(*blockIndex.pprev, state);
-  (void)ret;
-  assert(ret);
 
-  addToChains(blockIndex.pprev);
-  removeAllContainingEndorsements(blockIndex);
-
-  for (auto it = chainTips_.begin(); it != chainTips_.end();) {
-    auto* index = *it;
-    Chain<BlockIndex<AltBlock>> chain(blockIndex.height, index);
-    if (chain.empty() || !chain.contains(&blockIndex)) {
-      // this chain does not contain deleted block
-      ++it;
-      continue;
-    }
-
-    if (chain.blocksCount() == 1 && *chain.tip() == blockIndex) {
-      // this chain contains exactly 1 block = block index
-      it = chainTips_.erase(it);
-      continue;
-    }
-
-    // chain contains deleted block and block num > 1
-    for (const auto& c : chain) {
-      // skip deleted block
-      if (*c == blockIndex) {
-        continue;
-      }
-
-      // mark this block as 'invalid child', because this block is after deleted
-      // block
-      removeAllContainingEndorsements(*c);
-      c->setFlag(BLOCK_FAILED_CHILD);
-      doInvalidateBlock(c->getHash());
-    }
-
-    // remove this tip
-    it = chainTips_.erase(it);
+  bool isInSameChain =
+      cmp_.getIndex()->getAncestor(blockIndex.height) == &blockIndex;
+  if (isInSameChain) {
+    bool ret = cmp_.setState(*blockIndex.pprev, state);
+    (void)ret;
+    assert(ret);
   }
 
-  // mark removed block as invalid
-  blockIndex.setFlag(BLOCK_FAILED_BLOCK);
-  doInvalidateBlock(blockIndex.getHash());
+  base::invalidateBlock(blockIndex, reason, [&](index_t& index) -> bool {
+    removeAllContainingEndorsements(index);
+    // always visit all subtrees
+    return true;
+  });
 }
 
 bool AltTree::addPayloads(const AltBlock& containingBlock,
@@ -307,15 +231,34 @@ bool AltTree::addPayloads(AltTree::PopForkComparator& cmp,
 
   return true;
 }
-
-void AltTree::doInvalidateBlock(const AltTree::hash_t& hash) {
-  auto it = valid_blocks.find(hash);
-  if (it == valid_blocks.end()) {
-    return;
+void AltTree::removeSubtree(index_t& toRemove) {
+  bool ret = false;
+  ValidationState state;
+  auto isInState = cmp_.getIndex()->getAncestor(toRemove.height) == &toRemove;
+  if (isInState) {
+    ret = cmp_.setState(*toRemove.pprev, state);
+    assert(ret);
   }
 
-  failed_blocks[hash] = it->second;
-  valid_blocks.erase(it);
+  base::removeSubtree(toRemove, [](index_t&) {
+    /* do nothing */
+  });
+}
+void AltTree::removeSubtree(const hash_t& hash) {
+  auto* index = base::getBlockIndex(hash);
+  if (!index) {
+    return;
+  }
+  return removeSubtree(*index);
+}
+
+std::string AltTree::toPrettyString(size_t level) const {
+  std::ostringstream ss;
+  std::string pad(level, ' ');
+  ss << pad << "AltTree{blocks=" << base::blocks_.size() << "\n";
+  ss << base::toPrettyString(level + 2) << "\n";
+  ss << cmp_.toPrettyString(level + 2) << "\n";
+  return ss.str();
 }
 
 template <>
@@ -357,7 +300,7 @@ void AltTree::PopForkComparator::sm_t::unapplyContext(
 
   // process VBK context first
   for (const auto& b : ctx.vbk) {
-    tree().invalidateBlockByHash(b->getHash());
+    tree().removeSubtree(b->getHash());
   }
 
   // step 2, process VTBs

@@ -112,7 +112,8 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
   EXPECT_TRUE(state.IsValid());
-
+  ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
+  ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
   EXPECT_EQ(*alttree.vbk().getBestChain().tip(), *vbkTip1);
 
   auto* containingVbkBlock =
@@ -140,8 +141,10 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
   EXPECT_TRUE(state.IsValid());
-
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip2->getHash());
+  ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
+  ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
+
 
   // Step 4
   containingBlock = generateNextBlock(*chain.rbegin());
