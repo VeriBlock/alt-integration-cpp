@@ -76,18 +76,6 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
                             AltPopTx& altPopTx,
                             AltTree& tree,
                             ValidationState& state) {
-  AltPayloads payloads;
-  payloads.altPopTx = altPopTx;
-  payloads.containingBlock = hack_block;
-
-  // find endorsed block
-  auto endorsed_hash = hasher(altPopTx.atv.transaction.publicationData.header);
-  auto endorsed_block_index = tree.getBlockIndex(endorsed_hash);
-  if (!endorsed_block_index) {
-    return false;
-  }
-  payloads.endorsed = *endorsed_block_index->header;
-
   bool ret = tree.acceptBlock(hack_block, state);
   assert(ret);
 
@@ -129,7 +117,23 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
     tree.vbk().invalidateBlockByHash(b.getHash());
   }
 
-  return tree.addPayloads(hack_block, {payloads}, state);
+  AltPayloads payloads;
+  payloads.altPopTx = altPopTx;
+  payloads.containingBlock = hack_block;
+
+  // find endorsed block
+  auto endorsed_hash = hasher(altPopTx.atv.transaction.publicationData.header);
+  auto endorsed_block_index = tree.getBlockIndex(endorsed_hash);
+  if (!endorsed_block_index) {
+    return false;
+  }
+  payloads.endorsed = *endorsed_block_index->header;
+
+  if (!tree.addPayloads(hack_block, {payloads}, state)) {
+    stored_atvs_.erase(altPopTx.atv.getId());
+    return false;
+  }
+  return true;
 }
 
 bool MemPool::submitATV(const std::vector<ATV>& atvs, ValidationState& state) {
@@ -179,19 +183,10 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   hack_block.timestamp = current_block.timestamp + 1;
   hack_block.height = current_block.height + 1;
 
-  std::deque<ATV> atvs;
-  for (auto it = stored_atvs_.begin(); it != stored_atvs_.end(); ++it) {
-    atvs.push_back(it->second);
-  }
-
-  auto atv_comparator = [](const ATV& el1, const ATV& el2) -> bool {
-    return el1.containingBlock.height > el2.containingBlock.height;
-  };
-  std::make_heap(atvs.begin(), atvs.end(), atv_comparator);
-
   std::vector<AltPopTx> popTxs;
-  while (!atvs.empty()) {
-    auto& atv = atvs.front();
+  for (const auto& el : stored_atvs_) {
+    auto& atv = el.second;
+
     AltPopTx popTx;
     VbkBlock first_block =
         !atv.context.empty() ? atv.context[0] : atv.containingBlock;
@@ -212,9 +207,6 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
         popTxs.push_back(popTx);
       }
     }
-
-    atvs.pop_front();
-    std::make_heap(atvs.begin(), atvs.end(), atv_comparator);
   }
 
   // clear tree from temp endorsement
@@ -231,11 +223,13 @@ void MemPool::removePayloads(const std::vector<AltPopTx>& altPopTxs) {
     }
 
     // clear atv
-    stored_atvs_.erase(tx.atv.getId());
+    if (tx.hasAtv) {
+      stored_atvs_.erase(tx.atv.getId());
+    }
 
     // clear vtbs
     for (const auto& vtb : tx.vtbs) {
-      stored_vtbs_.erase(vtb.getId());
+      stored_vtbs_.erase(BtcEndorsement::getId(vtb));
     }
   }
 }

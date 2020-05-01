@@ -65,10 +65,10 @@ struct ATV {
   static ATV fromHex(const std::string& h);
 
   friend bool operator==(const ATV& a, const ATV& b) {
-    // clang-format off
     return a.getId() == b.getId();
-    // clang-format on
   }
+
+  friend bool operator!=(const ATV& a, const ATV& b) { return !(a == b); }
 };
 
 }  // namespace altintegration

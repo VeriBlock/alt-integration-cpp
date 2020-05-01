@@ -25,6 +25,12 @@ namespace altintegration {
 typedef std::vector<uint8_t> (*Hash_Function)(
     const std::vector<uint8_t>& bytes);
 
+struct MemPoolAtvComparator {
+  bool operator()(const ATV& atv1, const ATV& atv2) {
+    return atv1.containingBlock.height < atv2.containingBlock.height;
+  }
+};
+
 struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
   using block_index_t = std::unordered_map<vbk_hash_t, VbkBlock>;
@@ -51,7 +57,7 @@ struct MemPool {
  private:
   block_index_t block_index_;
 
-  std::unordered_map<ATV::id_t, ATV> stored_atvs_;
+  std::map<ATV::id_t, ATV, MemPoolAtvComparator> stored_atvs_;
   std::unordered_map<BtcEndorsement::id_t, VTB> stored_vtbs_;
 
   const AltChainParams* alt_chain_params_{nullptr};
