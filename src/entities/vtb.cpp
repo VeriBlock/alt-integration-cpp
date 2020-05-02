@@ -5,6 +5,8 @@
 
 #include "veriblock/entities/vtb.hpp"
 
+#include "veriblock/hashutil.hpp"
+
 using namespace altintegration;
 
 VTB VTB::fromVbkEncoding(ReadStream& stream) {

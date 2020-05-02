@@ -56,10 +56,14 @@ uint32_t VbkBlock::getDifficulty() const { return difficulty; }
 
 uint32_t VbkBlock::getBlockTime() const { return timestamp; }
 
-uint192 VbkBlock::getHash() const {
+VbkBlock::hash_t VbkBlock::getHash() const {
   WriteStream stream;
   toRaw(stream);
   return vblake(stream.data());
+}
+
+VbkBlock::short_hash_t VbkBlock::getShortHash() const {
+  return getHash().trimLE<VbkBlock::short_hash_t::size()>();
 }
 
 VbkBlock VbkBlock::fromHex(const std::string& hex) {
@@ -67,9 +71,7 @@ VbkBlock VbkBlock::fromHex(const std::string& hex) {
   return VbkBlock::fromRaw(v);
 }
 
-std::string VbkBlock::toHex() const {
-  return HexStr(toRaw());
-}
+std::string VbkBlock::toHex() const { return HexStr(toRaw()); }
 
 std::vector<uint8_t> VbkBlock::toRaw() const {
   WriteStream stream;
