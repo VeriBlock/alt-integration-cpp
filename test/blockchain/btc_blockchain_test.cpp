@@ -12,7 +12,7 @@
 
 using namespace altintegration;
 
-struct BlockchainFixture {
+struct BtcInvalidationTest {
   using block_t = BtcBlock;
   using param_t = BtcChainParams;
   using index_t = typename BlockTree<block_t, param_t>::index_t;
@@ -22,7 +22,7 @@ struct BlockchainFixture {
   std::shared_ptr<param_t> params;
   ValidationState state;
 
-  BlockchainFixture() { params = std::make_shared<BtcChainParamsRegTest>(); }
+  BtcInvalidationTest() { params = std::make_shared<BtcChainParamsRegTest>(); }
 };
 
 struct BtcTestCase {
@@ -47,7 +47,7 @@ struct BtcTestCase {
 };
 
 struct AcceptTest : public testing::TestWithParam<BtcTestCase>,
-                    public BlockchainFixture {};
+                    public BtcInvalidationTest {};
 
 static std::vector<BtcTestCase> accept_test_cases = {
     /// mainnet
