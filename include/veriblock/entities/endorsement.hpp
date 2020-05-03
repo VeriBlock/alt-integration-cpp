@@ -56,6 +56,9 @@ struct Endorsement {
     return {};
   }
 
+  // TODO(Bogdan): temporary used to disable duplicate check
+  static bool checkForDuplicates;
+
   static type fromContainer(const Container& c);
 
   static type::id_t getId(const Container& c);

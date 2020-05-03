@@ -18,6 +18,9 @@ namespace altintegration {
 struct AltPayloads {
   using id_t = uint256;
 
+  // TODO(Bogdan): temporary used to disable duplicate check for VTBs
+  static bool checkForDuplicates() { return true; };
+
   AltBlock endorsed;
   AltBlock containingBlock;
   uint256 containingTx;
