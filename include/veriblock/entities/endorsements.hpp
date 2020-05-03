@@ -30,6 +30,12 @@ VbkEndorsement VbkEndorsement ::fromContainer(const AltPayloads& c);
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c);
 
+template <>
+bool BtcEndorsement::checkForDuplicates;
+
+template <>
+bool VbkEndorsement::checkForDuplicates;
+
 struct DummyEndorsement {
   using id_t = bool;
 };

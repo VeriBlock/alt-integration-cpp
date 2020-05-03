@@ -51,20 +51,22 @@ bool checkAndAddEndorsement(
                          "Can not find block of proof in BTC");
   }
 
-  auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
-  if (duplicate) {
-    // found duplicate
-    return state.Invalid("duplicate",
-                         "Found duplicate endorsement on the same chain");
+  if (endorsement_t::checkForDuplicates) {
+    auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
+    if (duplicate) {
+      // found duplicate
+      return state.Invalid("duplicate",
+                           "Found duplicate endorsement on the same chain");
+    }
   }
 
   // Add endorsement into BlockIndex
   auto pair = index.containingEndorsements.insert(
       {endorsement.id, std::make_shared<endorsement_t>(endorsement)});
-  assert(pair.second && "there's a duplicate in endorsement map");
-
-  auto* eptr = pair.first->second.get();
-  endorsed->endorsedBy.push_back(eptr);
+  if (pair.second) {
+    auto* eptr = pair.first->second.get();
+    endorsed->endorsedBy.push_back(eptr);
+  }
 
   return true;
 }
