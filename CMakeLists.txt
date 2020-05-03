@@ -6,7 +6,7 @@ if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-set(LIB_NAME altintegration)
+set(LIB_NAME veriblock-pop-cpp)
 set(MAJOR_VERSION 1 CACHE STRING "Major version")
 set(MINOR_VERSION 0 CACHE STRING "Minor version")
 set(PATCH_VERSION 0 CACHE STRING "Patch version")
