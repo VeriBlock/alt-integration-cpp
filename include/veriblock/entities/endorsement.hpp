@@ -66,6 +66,9 @@ struct Endorsement {
   bool operator==(const type& other) const { return id == other.id; }
 };
 
+template <class A1, class A2, class A3, class A4>
+bool Endorsement<A1, A2, A3, A4>::checkForDuplicates;
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
