@@ -56,18 +56,12 @@ struct Endorsement {
     return {};
   }
 
-  // TODO(Bogdan): temporary used to disable duplicate check
-  static bool checkForDuplicates;
-
   static type fromContainer(const Container& c);
 
   static type::id_t getId(const Container& c);
 
   bool operator==(const type& other) const { return id == other.id; }
 };
-
-template <class A1, class A2, class A3, class A4>
-bool Endorsement<A1, A2, A3, A4>::checkForDuplicates;
 
 }  // namespace altintegration
 

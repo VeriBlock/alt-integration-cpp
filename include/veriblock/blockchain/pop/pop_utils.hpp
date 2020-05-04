@@ -51,13 +51,11 @@ bool checkAndAddEndorsement(
                          "Can not find block of proof in BTC");
   }
 
-  if (endorsement_t::checkForDuplicates) {
-    auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
-    if (duplicate) {
-      // found duplicate
-      return state.Invalid("duplicate",
-                           "Found duplicate endorsement on the same chain");
-    }
+  auto* duplicate = chain.findBlockContainingEndorsement(endorsement, window);
+  if (duplicate) {
+    // found duplicate
+    return state.Invalid("duplicate",
+                         "Found duplicate endorsement on the same chain");
   }
 
   // Add endorsement into BlockIndex

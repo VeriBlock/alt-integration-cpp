@@ -9,13 +9,6 @@
 
 namespace altintegration {
 
-// TODO(Bogdan): used temporarily to disable duplication validation of VTBs
-template <>
-bool BtcEndorsement::checkForDuplicates = false;
-
-template <>
-bool VbkEndorsement::checkForDuplicates = true;
-
 template <>
 BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
   BtcEndorsement e;
