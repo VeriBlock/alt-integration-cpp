@@ -13,5 +13,5 @@ addtest(entities_serde_test
         vtb_test.cpp
         altblock_test.cpp
         merkle_tree_test.cpp
-        altpoptx_test.cpp
+        popdata_test.cpp
         )
