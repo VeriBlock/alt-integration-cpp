@@ -50,7 +50,7 @@ TEST_F(Scenario4, scenario_4) {
             vbkTip.getHash());
   vbkTip = *popminer.vbk().getBestChain().tip();
 
-  altPayloads1.altPopTx.vtbs = {vtbs1[0]};
+  altPayloads1.popData.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
   EXPECT_TRUE(state.IsValid());
@@ -70,7 +70,7 @@ TEST_F(Scenario4, scenario_4) {
             vbkTip.getHash());
   vbkTip = *popminer.vbk().getBestChain().tip();
 
-  altPayloads2.altPopTx.vtbs = {vtbs2[0]};
+  altPayloads2.popData.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
   EXPECT_TRUE(state.IsValid());

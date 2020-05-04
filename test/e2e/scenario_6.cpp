@@ -64,7 +64,7 @@ TEST_F(Scenario6, scenario_6) {
       tx, containingAltBlock, chain[0], vbkparam.getGenesisBlock().getHash());
 
   // put corrupted VTB
-  altPayloads.altPopTx.vtbs.push_back(vtb);
+  altPayloads.popData.vtbs.push_back(vtb);
 
   EXPECT_TRUE(test_alttree.acceptBlock(containingAltBlock, state));
   EXPECT_FALSE(

@@ -16,5 +16,5 @@ add_library(entities OBJECT
         vtb.cpp
         altblock.cpp
         payloads.cpp
-        altpoptx.cpp
+        popdata.cpp
         )

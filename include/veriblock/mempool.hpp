@@ -15,9 +15,9 @@
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
-#include "veriblock/entities/altpoptx.hpp"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/payloads.hpp"
+#include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vtb.hpp"
 
 namespace altintegration {
@@ -42,11 +42,11 @@ struct MemPool {
   bool submitVTB(const std::vector<VTB>& vtb, ValidationState& state);
   bool submitATV(const std::vector<ATV>& atv, ValidationState& state);
 
-  std::vector<AltPopTx> getPop(const AltBlock& current_block,
-                               AltTree& tree,
-                               ValidationState& state);
+  std::vector<PopData> getPop(const AltBlock& current_block,
+                              AltTree& tree,
+                              ValidationState& state);
 
-  void removePayloads(const std::vector<AltPopTx>& altPopTxs);
+  void removePayloads(const std::vector<PopData>& v_popData);
 
  private:
   block_index_t block_index_;
@@ -70,7 +70,7 @@ struct MemPool {
                 const std::vector<VbkBlock>& vbk_contex);
 
   bool applyPayloads(const AltBlock& hack_block,
-                     AltPopTx& popTx,
+                     PopData& popData,
                      AltTree& tree,
                      ValidationState& state);
 };
