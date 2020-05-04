@@ -30,6 +30,13 @@ VbkEndorsement VbkEndorsement ::fromContainer(const AltPayloads& c);
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c);
 
+// TODO(Bogdan): used temporarily to disable duplication validation of VTBs
+template <>
+bool BtcEndorsement::checkForDuplicates = false;
+
+template <>
+bool VbkEndorsement::checkForDuplicates = true;
+
 struct DummyEndorsement {
   using id_t = bool;
 };
