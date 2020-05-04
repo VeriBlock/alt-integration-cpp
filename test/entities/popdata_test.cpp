@@ -1,6 +1,6 @@
-#include "veriblock/entities/altpoptx.hpp"
-
 #include <gtest/gtest.h>
+
+#include <veriblock/entities/popdata.hpp>
 
 #include "util/literals.hpp"
 #include "util/test_utils.hpp"
@@ -16,10 +16,10 @@ TEST(AltPopTx, Deserialize) {
   stream = ReadStream(vtbBytes);
   VTB vtb = VTB::fromVbkEncoding(stream);
 
-  AltPopTx expectedAltPopTx = {2, {}, true, atv, {vtb}};
-  std::vector<uint8_t> bytes = expectedAltPopTx.toVbkEncoding();
+  PopData expectedPopData = {2, {}, true, atv, {vtb}};
+  std::vector<uint8_t> bytes = expectedPopData.toVbkEncoding();
 
-  AltPopTx encodedAltPopTx = AltPopTx::fromVbkEncoding(bytes);
+  PopData encodedPopData = PopData::fromVbkEncoding(bytes);
 
-  EXPECT_EQ(encodedAltPopTx, expectedAltPopTx);
+  EXPECT_EQ(encodedPopData, expectedPopData);
 }

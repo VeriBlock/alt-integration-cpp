@@ -17,7 +17,7 @@
 
 namespace altintegration {
 
-struct AltPopTx {
+struct PopData {
   int32_t version{};
 
   std::vector<VbkBlock> vbk_context;
@@ -26,27 +26,27 @@ struct AltPopTx {
   std::vector<VTB> vtbs{};
 
   /**
-   * Read VBK data from the stream and convert it to AltPopTx
+   * Read VBK data from the stream and convert it to PopData
    * @param stream data stream to read from
-   * @return AltPopTx
+   * @return PopData
    */
-  static AltPopTx fromVbkEncoding(ReadStream& stream);
+  static PopData fromVbkEncoding(ReadStream& stream);
 
   /**
-   * Read VBK data from the raw byte representation and convert it to AltPopTx
+   * Read VBK data from the raw byte representation and convert it to PopData
    * @param string data bytes to read from
-   * @return AltPopTx
+   * @return PopData
    */
-  static AltPopTx fromVbkEncoding(Slice<const uint8_t> bytes);
+  static PopData fromVbkEncoding(Slice<const uint8_t> bytes);
 
   /**
-   * Convert AltPopTx to data stream using Vbk byte format
+   * Convert PopData to data stream using Vbk byte format
    * @param stream data stream to write into
    */
   void toVbkEncoding(WriteStream& stream) const;
 
   /**
-   * Convert AltPopTx to raw bytes data using Vbk byte format
+   * Convert PopData to raw bytes data using Vbk byte format
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
@@ -57,7 +57,7 @@ struct AltPopTx {
    */
   bool containsEndorsements() const;
 
-  friend bool operator==(const AltPopTx& a, const AltPopTx& b) {
+  friend bool operator==(const PopData& a, const PopData& b) {
     // clang-format off
     return a.toVbkEncoding() == b.toVbkEncoding();
     // clang-format on

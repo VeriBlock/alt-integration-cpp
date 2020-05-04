@@ -3,12 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/altpoptx.hpp"
+#include <veriblock/entities/popdata.hpp>
 
 namespace altintegration {
 
-AltPopTx AltPopTx::fromVbkEncoding(ReadStream& stream) {
-  AltPopTx alt_pop_tx;
+PopData PopData::fromVbkEncoding(ReadStream& stream) {
+  PopData alt_pop_tx;
   alt_pop_tx.version = stream.readBE<int32_t>();
   alt_pop_tx.vbk_context = readArrayOf<VbkBlock>(
       stream,
@@ -28,12 +28,12 @@ AltPopTx AltPopTx::fromVbkEncoding(ReadStream& stream) {
   return alt_pop_tx;
 }
 
-AltPopTx AltPopTx::fromVbkEncoding(Slice<const uint8_t> raw_bytes) {
+PopData PopData::fromVbkEncoding(Slice<const uint8_t> raw_bytes) {
   ReadStream stream(raw_bytes);
   return fromVbkEncoding(stream);
 }
 
-void AltPopTx::toVbkEncoding(WriteStream& stream) const {
+void PopData::toVbkEncoding(WriteStream& stream) const {
   stream.writeBE<int32_t>(version);
   writeSingleBEValue(stream, vbk_context.size());
   for (const auto& b : vbk_context) {
@@ -49,12 +49,12 @@ void AltPopTx::toVbkEncoding(WriteStream& stream) const {
   }
 }
 
-std::vector<uint8_t> AltPopTx::toVbkEncoding() const {
+std::vector<uint8_t> PopData::toVbkEncoding() const {
   WriteStream stream;
   toVbkEncoding(stream);
   return stream.data();
 }
 
-bool AltPopTx::containsEndorsements() const { return hasAtv; }
+bool PopData::containsEndorsements() const { return hasAtv; }
 
 }  // namespace altintegration

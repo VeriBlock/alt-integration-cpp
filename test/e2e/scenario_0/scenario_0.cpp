@@ -96,9 +96,9 @@ TEST_F(Scenario0, Scenario0) {
   containing.hash = std::vector<uint8_t>{1, 3, 3, 10};
 
   AltPayloads payloads;
-  payloads.altPopTx.hasAtv = true;
-  payloads.altPopTx.atv = atv;
-  payloads.altPopTx.vtbs = vtbs;
+  payloads.popData.hasAtv = true;
+  payloads.popData.atv = atv;
+  payloads.popData.vtbs = vtbs;
   payloads.containingBlock = containing;
   payloads.containingTx = uint256();
   payloads.endorsed = endorsed;
