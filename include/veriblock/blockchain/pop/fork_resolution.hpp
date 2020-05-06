@@ -439,15 +439,6 @@ struct PopAwareForkResolutionComparator {
 
     sm_t sm(ed, ing_, chainA.first()->height);
 
-    auto applyWinner = [&](const Chain<protected_index_t>& winner) -> bool {
-      // TEMP HACK: we have to unapply both chains currently, because both
-      // chains may potentially add same block via AddBlock, and when one of
-      // chains is unapplied, current state can be broken.
-      sm.unapply(*chainB.tip(), *chainB.first());
-      sm.unapply(*chainA.tip(), *chainA.first());
-      return sm.apply(*winner.first(), *winner.tip(), state);
-    };
-
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - fork
     // point at keystone, so exclude it during 'apply')
@@ -455,10 +446,8 @@ struct PopAwareForkResolutionComparator {
       // chain A has valid payloads, and chain B has invalid payloads
       // chain A is better
 
-      bool res = applyWinner(chainA);
-      assert(res);
-      (void)res;
-
+      // chain B has been unapplied already
+      // invalid block in chain B has been invalidated already
       return 1;
     }
 
@@ -483,20 +472,13 @@ struct PopAwareForkResolutionComparator {
     // current tree contains both chains.
     int result = internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, *protectedParams_);
-
-    bool res = false;
     if (result >= 0) {
-      // chain A remains best
-      res = applyWinner(chainA);
+      // chain A remains best. unapply B. A remains applied
+      sm.unapply(*chainB.tip(), *chainB.first());
     } else {
-      // chain B is better
-      res = applyWinner(chainB);
+      // chain B is better. unapply A. B remains applied
+      sm.unapply(*chainA.tip(), *chainA.first());
     }
-
-    // this should NEVER fail, because previously we've been on valid chain,
-    // and we return back to valid chain
-    assert(res);
-    (void)res;
 
     return result;
   }
