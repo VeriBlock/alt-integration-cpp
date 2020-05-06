@@ -58,6 +58,7 @@ TEST_F(Scenario4, scenario_4) {
   altPayloads1.popData.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
@@ -78,6 +79,7 @@ TEST_F(Scenario4, scenario_4) {
   altPayloads2.popData.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads2}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
@@ -99,6 +101,7 @@ TEST_F(Scenario4, scenario_4) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads3}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
