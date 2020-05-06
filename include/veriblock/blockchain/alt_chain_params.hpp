@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "veriblock/entities/altblock.hpp"
+#include "veriblock/blockchain/block_index.hpp"
 
 namespace altintegration {
 

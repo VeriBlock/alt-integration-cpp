@@ -111,93 +111,11 @@ struct BlockTree : public BaseBlockTree<Block> {
     return acceptBlock(block, state, true);
   }
 
-  void removeSubtree(const hash_t& hash) {
-    auto* index = base::getBlockIndex(hash);
-    if (!index) {
-      return;
-    }
-    return removeSubtree(*index);
-  }
-
-  void removeSubtree(index_t& blockIndex) {
-    bool isOnMainChain = activeChain_.contains(&blockIndex);
-    if (isOnMainChain) {
-      activeChain_.setTip(blockIndex.pprev);
-    }
-
-    base::removeSubtree(blockIndex, [](index_t&) {
-      /* do nothing */
-    });
-
-    if (isOnMainChain) {
-      // find new best chain among remaining forks
-      for (auto it = base::tips_.begin(); it != base::tips_.end();) {
-        index_t* index = *it;
-        if (!index->isValid()) {
-          it = base::tips_.erase(it);
-        } else {
-          determineBestChain(activeChain_, *index);
-          ++it;
-        }
-      }
-    }
-  }
-
-  void invalidateTip(enum BlockStatus reason = BLOCK_FAILED_BLOCK) {
-    auto* tip = getBestChain().tip();
-    if (tip == nullptr) {
-      // trying to invalidate a tip on empty tree
-      return;
-    }
-
-    invalidateSubtree(*tip, reason);
-  }
-
-  void invalidateSubtree(index_t& blockIndex,
-                         enum BlockStatus reason = BLOCK_FAILED_BLOCK) {
-    bool isOnMainChain = activeChain_.contains(&blockIndex);
-    if (isOnMainChain) {
-      activeChain_.setTip(blockIndex.pprev);
-    }
-
-    base::invalidateBlock(blockIndex, reason, [](index_t& index) {
-      // when we encounter an invalid block, we can stop
-      // traversal, as any future blocks in that subtree will have
-      // at least BLOCK_FAILED_CHILD
-      return index.isValid();
-    });
-
-    // find new best chain among remaining forks
-    for (auto it = base::tips_.begin(); it != base::tips_.end();) {
-      index_t* index = *it;
-      if (!index->isValid()) {
-        it = base::tips_.erase(it);
-      } else {
-        determineBestChain(activeChain_, *index);
-        ++it;
-      }
-    }
-  }
-
-  void invalidateBlock(const hash_t& blockHash,
-                       enum BlockStatus reason = BLOCK_FAILED_BLOCK) {
-    index_t* blockIndex = base::getBlockIndex(blockHash);
-    if (blockIndex == nullptr) {
-      return;
-    }
-
-    invalidateSubtree(*blockIndex, reason);
-  }
-
-  const Chain<index_t>& getBestChain() const { return this->activeChain_; }
-
   std::string toPrettyString(size_t level = 0) const {
     std::ostringstream s;
     std::string pad(level, ' ');
     s << pad << Block::name() << "BlockTree{blocks=" << base::blocks_.size()
       << "\n";
-    s << pad << "{tip=\n";
-    s << activeChain_.tip()->toPrettyString(level + 2) << "\n";
     s << base::toPrettyString(level + 2) << "\n";
     s << pad << "}";
     return s.str();
@@ -208,8 +126,6 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
  protected:
-  Chain<index_t> activeChain_;
-  //! a set of tips among all blocks
   const ChainParams* param_ = nullptr;
 
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {
@@ -241,7 +157,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     bool isBootstrap = !shouldContextuallyCheck;
-    determineBestChain(activeChain_, *index, isBootstrap);
+    determineBestChain(base::activeChain_, *index, state, isBootstrap);
 
     return true;
   }
@@ -262,7 +178,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     auto* index = insertBlockHeader(block);
     index->height = height;
 
-    activeChain_ = Chain<index_t>(height, index);
+    base::activeChain_ = Chain<index_t>(height, index);
 
     if (!base::blocks_.empty() && !base::getBlockIndex(block->getHash())) {
       return state.Error("block-index-no-genesis");
@@ -307,9 +223,12 @@ struct BlockTree : public BaseBlockTree<Block> {
     return true;
   }
 
-  virtual void determineBestChain(Chain<index_t>& currentBest,
-                                  index_t& indexNew,
-                                  bool isBootstrap = false) {
+  void determineBestChain(Chain<index_t>& currentBest,
+                          index_t& indexNew,
+                          ValidationState& state,
+                          bool isBootstrap = false) override {
+    (void)state;
+
     if (currentBest.tip() == &indexNew) {
       return;
     }
@@ -319,16 +238,12 @@ struct BlockTree : public BaseBlockTree<Block> {
       return;
     }
 
-    if (currentBest.tip() == nullptr ||
-        currentBest.tip()->chainWork < indexNew.chainWork) {
-      currentBest.setTip(&indexNew);
-      onTipChanged(indexNew, isBootstrap);
+    auto* prev = currentBest.tip();
+    if (prev == nullptr || prev->chainWork < indexNew.chainWork) {
+      //! important to use this->setTip for proper vtable resolution
+      this->setTip(indexNew, state, isBootstrap);
     }
   }
-
-  //! callback, executed every time when tip is changed. Useful for derived
-  //! classes.
-  virtual void onTipChanged(index_t&, bool isBootstrap) { (void)isBootstrap; }
 };
 
 }  // namespace altintegration

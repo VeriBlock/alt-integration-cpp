@@ -43,8 +43,11 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using context_t = typename index_t::block_t::context_t;
   using payloads_t = AltPayloads;
   using block_index_t = std::unordered_map<hash_t, std::shared_ptr<index_t>>;
-  using PopForkComparator =
-      PopAwareForkResolutionComparator<AltBlock, AltChainParams, VbkBlockTree>;
+  using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
+                                                             AltChainParams,
+                                                             VbkBlockTree,
+                                                             AltTree>;
+  using determine_best_chain_f = std::function<int(index_t&, index_t&)>;
 
   virtual ~AltTree() = default;
 
@@ -61,33 +64,20 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   //! may return false, if bootstrap block is invalid
   bool bootstrap(ValidationState& state);
 
-  //! add new block to current block tree.
-  //! may return false, if block has no connection to blockchain
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
-  // set cmp_ state to the previous block of the provided block
-  void invalidateBlock(const hash_t& blockHash, enum BlockStatus reason = BLOCK_FAILED_BLOCK);
-
-  // set cmp_ state to the previous block of the provided block
-  void invalidateBlock(index_t& blockIndex, enum BlockStatus reason = BLOCK_FAILED_BLOCK);
-
-  //! add payloads to any of existing blocks in block tree.
-  //! may return false, if payloads statelessly, or statefully invalid.
-  //! @param atomic If false, may leave tree in indeterminate state for invalid
-  //! payloads. If true, guarantees that tree will remain unchanged for invalid
-  //! payloads.
-  bool addPayloads(const AltBlock& containingBlock,
+  bool addPayloads(const AltBlock::hash_t& containing,
                    const std::vector<payloads_t>& payloads,
-                   ValidationState& state,
-                   bool atomic = true);
+                   ValidationState& state);
 
-  //! removes given payloads from given block index.
-  //! remove ALL payloads from a block, when it has to be removed
-  void removePayloads(const AltBlock& containingBlock,
-                      const std::vector<payloads_t>& payloads);
+  bool addPayloads(const AltBlock& containing,
+                   const std::vector<payloads_t>& payloads,
+                   ValidationState& state) {
+    return addPayloads(containing.hash, payloads, state);
+  }
 
-  //! set POP state to some known block, for example, when we remove a block or
-  bool setState(const AltBlock::hash_t& to, ValidationState& state);
+  int comparePopScore(const AltBlock::hash_t& current,
+                      const AltBlock::hash_t& other);
 
   /**
    * Calculate payouts for the altchain tip
@@ -96,17 +86,13 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   std::map<std::vector<uint8_t>, int64_t> getPopPayout(
       const AltBlock::hash_t& tip, ValidationState& state);
 
-  /**
-   * Determine the best chain of the AltBlocks in accordance with the VeriBlock
-   * forkresolution rules.
-   * @param AltBlock chain1, AltBlock chain2
-   * @return '> 0' number if chain1 is better, '< 0' number if chain2 is better,
-   * '0' if they are the same
-   * @note chain1 and chain2 are being consindered as forks not a full chains
-   * from the genesis block, they should start at the common block
-   */
-  int compareTwoBranches(index_t* chain1, index_t* chain2);
-  int compareTwoBranches(const hash_t& chain1, const hash_t& chain2);
+  bool setState(const AltBlock::hash_t& block, ValidationState& state) {
+    auto* index = getBlockIndex(block);
+    if (!index) {
+      return false;
+    }
+    return this->setTip(*index, state);
+  }
 
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
@@ -115,6 +101,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     return cmp_.getProtectingBlockTree().btc();
   }
 
+  const PopForkComparator& getComparator() const { return cmp_; }
+
   const AltChainParams& getParams() const { return *alt_config_; }
 
   bool operator==(const AltTree&) const {
@@ -122,9 +110,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   }
 
   std::string toPrettyString(size_t level = 0) const;
-
-  void removeSubtree(index_t&);
-  void removeSubtree(const hash_t&);
 
  protected:
   const alt_config_t* alt_config_;
@@ -135,19 +120,36 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   index_t* insertBlockHeader(const AltBlock& block);
 
-  bool addPayloads(PopForkComparator& cmp,
-                   const AltBlock& containingBlock,
-                   const std::vector<payloads_t>& payloads,
-                   ValidationState& state);
+  void determineBestChain(Chain<index_t>& currentBest,
+                          index_t& indexNew,
+                          ValidationState& state,
+                          bool isBootstrap = false) override;
+
+  bool setTip(index_t& to,
+              ValidationState& state,
+              bool skipSetState = false) override {
+    bool changeTip = true;
+    if (!skipSetState) {
+      changeTip = cmp_.setState(*this, to, state);
+    }
+
+    // edge case: if changeTip is false, then new block arrived on top of
+    // current active chain, and this block has invalid commands
+    if (changeTip) {
+      activeChain_.setTip(&to);
+    } else {
+      assert(!to.isValid());
+    }
+
+    // true if tip has been changed
+    return changeTip;
+  }
 };
 
 template <>
-bool AltTree::PopForkComparator::sm_t::applyContext(
-    const BlockIndex<AltBlock>& index, ValidationState& state);
-
-template <>
-void AltTree::PopForkComparator::sm_t::unapplyContext(
-    const BlockIndex<AltBlock>& index);
+void payloadsToCommands<AltTree>(AltTree& tree,
+                                 const typename AltTree::payloads_t& p,
+                                 std::vector<CommandPtr>& commands);
 
 }  // namespace altintegration
 

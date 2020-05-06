@@ -30,15 +30,20 @@ TEST_F(Scenario4, scenario_4) {
   ASSERT_EQ(vtbs2.size(), 1);
   ASSERT_NE(BtcEndorsement::fromContainer(vtbs1[0]).id,
             BtcEndorsement::fromContainer(vtbs2[0]).id);
-  fillVTBContext(
-      vtbs1[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVTBContext(
-      vtbs2[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtbs1[0].context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs1[0].containingBlock.getHash(),
+                 popminer.vbk());
+  fillVbkContext(vtbs2[0].context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs2[0].containingBlock.getHash(),
+                 popminer.vbk());
 
   // mine 10 blocks
   mineAltBlocks(10, chain);
   AltBlock endorsedBlock = chain[5];
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
 
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
@@ -52,7 +57,7 @@ TEST_F(Scenario4, scenario_4) {
 
   altPayloads1.popData.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads1}, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
@@ -72,7 +77,7 @@ TEST_F(Scenario4, scenario_4) {
 
   altPayloads2.popData.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads2}, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
@@ -93,7 +98,7 @@ TEST_F(Scenario4, scenario_4) {
   vbkTip = *popminer.vbk().getBestChain().tip();
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads3}, state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state

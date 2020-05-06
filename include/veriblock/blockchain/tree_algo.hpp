@@ -77,10 +77,9 @@ std::vector<BlockIndex<Block>*> findValidTips(BlockIndex<Block>& index) {
     }
 
     // this is valid subtree
-    if (next.pnext.empty()) {
-      // this is valid tip
+    if (next.isValidTip()) {
       ret.push_back(&next);
-      // do not continue, as there are no next blocks
+      // do not continue, as there are no valid next blocks
       return false;
     }
 

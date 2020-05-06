@@ -77,11 +77,11 @@ TEST_F(Scenario3, scenario_3) {
   ASSERT_EQ(vtbs1.size(), 2);
   ASSERT_EQ(vtbs2.size(), 1);
 
-  fillVTBContext(
+  fillVbkContext(
       vtbs1[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVTBContext(
+  fillVbkContext(
       vtbs1[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVTBContext(
+  fillVbkContext(
       vtbs2[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   auto* btcContaininBlock1 =
@@ -144,7 +144,6 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip2->getHash());
   ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
   ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
-
 
   // Step 4
   containingBlock = generateNextBlock(*chain.rbegin());

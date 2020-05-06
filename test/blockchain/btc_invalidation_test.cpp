@@ -30,7 +30,8 @@ struct BtcInvalidationTest : public ::testing::Test, public PopTestFixture {
 };
 
 TEST_F(BtcInvalidationTest, InvalidateTip) {
-  popminer.btc().invalidateTip();
+  popminer.btc().invalidateSubtree(
+      popminer.btc().getBestChain().tip()->getHash(), BLOCK_FAILED_BLOCK);
 
   // block is not removed
   ASSERT_NE(tip, nullptr);
@@ -50,7 +51,7 @@ TEST_F(BtcInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
 
   // invalidate block #5
   auto& btc = popminer.btc();
-  btc.invalidateSubtree(*toBeInvalidated);
+  btc.invalidateSubtree(*toBeInvalidated, BLOCK_FAILED_BLOCK);
 
   size_t totalValid = 0;
   size_t totalInvalid = 0;
@@ -114,7 +115,7 @@ TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   ASSERT_EQ(*best->tip(), *Btip);
 
   // invalidate block (5) on the main chain
-  btc.invalidateSubtree(*sixth);
+  btc.invalidateSubtree(*sixth, BLOCK_FAILED_BLOCK);
 
   // chain A is now best
   ASSERT_EQ(*best, btc.getBestChain());

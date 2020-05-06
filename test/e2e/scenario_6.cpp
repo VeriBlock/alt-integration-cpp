@@ -57,7 +57,8 @@ TEST_F(Scenario6, scenario_6) {
   EXPECT_TRUE(test_alttree.vbk().bootstrapWithChain(
       vbkTip->height, {*vbkTip->header}, state));
 
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(chain[0]));
+  VbkTx tx =
+      popminer.createVbkTxEndorsingAltBlock(generatePublicationData(chain[0]));
   AltBlock containingAltBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingAltBlock);
   AltPayloads altPayloads = generateAltPayloads(
@@ -67,14 +68,10 @@ TEST_F(Scenario6, scenario_6) {
   altPayloads.popData.vtbs.push_back(vtb);
 
   EXPECT_TRUE(test_alttree.acceptBlock(containingAltBlock, state));
-  EXPECT_FALSE(
-      test_alttree.addPayloads(containingAltBlock, {altPayloads}, state));
+  EXPECT_FALSE(test_alttree.addPayloads(
+      containingAltBlock.getHash(), {altPayloads}, state));
 
   EXPECT_EQ(*test_alttree.vbk().getBestChain().tip(), *vbkTip);
   EXPECT_EQ(test_alttree.vbk().getBestChain().blocksCount(), 1);
-  EXPECT_EQ(test_alttree.vbk()
-                .getBestChain()
-                .tip()
-                ->containingContext.btc_context.size(),
-            0);
+  EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->commands.size(), 0);
 }

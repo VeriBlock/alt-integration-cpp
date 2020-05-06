@@ -49,7 +49,8 @@ TEST_F(Scenario2, scenario_2) {
 
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
@@ -75,8 +76,8 @@ TEST_F(Scenario2, scenario_2) {
   ASSERT_EQ(vtbs.size(), 2);
   ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
             BtcEndorsement::fromContainer(vtbs[1]).id);
-  fillVTBContext(vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVTBContext(vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   // store vtbs in different altPayloads
   altPayloads1.popData.vtbs = {vtbs[0]};

@@ -46,7 +46,7 @@ TEST_F(AltInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
   Chain<BlockIndex<AltBlock>> chain(0, tip);
 
   // invalidate block #5
-  alttree.invalidateBlock(*toBeInvalidated);
+  alttree.invalidateSubtree(*toBeInvalidated, BLOCK_FAILED_BLOCK);
 
   size_t validBlocks = 0;
   size_t invalidBlocks = 0;
@@ -109,7 +109,7 @@ TEST_F(AltInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   ASSERT_EQ(alttree.getBlocks().size(), 11 + 5 + 3 + 2 + 1 + 3 + 2 + 1);
 
   // invalidate block (5) on the main chain
-  alttree.invalidateBlock(*sixth);
+  alttree.invalidateSubtree(*sixth, BLOCK_FAILED_BLOCK);
 
   // chain A is now best
   Chain<BlockIndex<AltBlock>> Achain(0, Atip);

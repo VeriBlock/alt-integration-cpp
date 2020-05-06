@@ -42,15 +42,16 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   ASSERT_EQ(vtbs.size(), 2);
   ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
             BtcEndorsement::fromContainer(vtbs[1]).id);
-  fillVTBContext(vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVTBContext(vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   // mine 10 blocks
   mineAltBlocks(10, chain);
 
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   ATV atv = popminer.generateATV(tx, vbkTip->getHash(), state);
 
   EXPECT_TRUE(mempool.submitATV({atv}, state));
@@ -102,15 +103,22 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   ASSERT_EQ(vtbs.size(), 2);
   ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
             BtcEndorsement::fromContainer(vtbs[1]).id);
-  fillVTBContext(vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVTBContext(vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtbs[0].context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs[0].containingBlock.getHash(),
+                 popminer.vbk());
+  fillVbkContext(vtbs[1].context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs[1].containingBlock.getHash(),
+                 popminer.vbk());
 
   // mine 10 blocks
   mineAltBlocks(10, chain);
 
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   ATV atv = popminer.generateATV(tx, vbkTip->getHash(), state);
 
   EXPECT_TRUE(mempool.submitATV({atv}, state));
@@ -128,7 +136,8 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
       generateAltPayloads(v_popData[0], containingBlock, endorsedBlock);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), {payloads}, state));
   EXPECT_TRUE(state.IsValid());
 }
 
@@ -151,7 +160,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVTBContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb1.context, vbkparam.getGenesisBlock().getHash(), vtb1.containingBlock.getHash(), popminer.vbk());
 
   popminer.mineBtcBlocks(100);
   popminer.mineVbkBlocks(54);
@@ -161,7 +170,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   auto* containingVbkBlock2 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
   VTB vtb2 = popminer.vbkPayloads[containingVbkBlock2->getHash()][0];
-  fillVTBContext(vtb2, containingVbkBlock1->getHash(), popminer.vbk());
+  fillVbkContext(vtb2, containingVbkBlock1->getHash(), popminer.vbk());
 
   ASSERT_NE(BtcEndorsement::fromContainer(vtb1).id,
             BtcEndorsement::fromContainer(vtb2).id);
@@ -173,7 +182,8 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
 
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   ATV atv = popminer.generateATV(tx, vbkTip->getHash(), state);
 
   EXPECT_TRUE(mempool.submitATV({atv}, state));
@@ -211,7 +221,8 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
 
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   ATV atv = popminer.generateATV(tx, vbkTip->getHash(), state);
 
   EXPECT_TRUE(mempool.submitATV({atv}, state));
@@ -238,7 +249,8 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
 
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   ATV atv = popminer.generateATV(
       tx, popminer.vbk().getParams().getGenesisBlock().getHash(), state);
 
@@ -283,13 +295,14 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVTBContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   popminer.mineBtcBlocks(100);
   popminer.mineVbkBlocks(54);
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock1));
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
   ATV atv1 = popminer.generateATV(tx1, containingVbkBlock1->getHash(), state);
 
   vbkTip = popminer.vbk().getBestChain().tip();
@@ -302,10 +315,11 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   auto* containingVbkBlock2 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
   VTB vtb2 = popminer.vbkPayloads[containingVbkBlock2->getHash()][0];
-  fillVTBContext(vtb2, vbkTip->getHash(), popminer.vbk());
+  fillVbkContext(vtb2, vbkTip->getHash(), popminer.vbk());
 
   AltBlock endorsedBlock2 = chain[5];
-  VbkTx tx2 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock2));
+  VbkTx tx2 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer.generateATV(tx2, containingVbkBlock2->getHash(), state);
 
   EXPECT_TRUE(mempool.submitATV({atv1, atv2}, state));
@@ -361,13 +375,14 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVTBContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   popminer.mineBtcBlocks(100);
   popminer.mineVbkBlocks(54);
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock1));
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
   ATV atv1 = popminer.generateATV(tx1, containingVbkBlock1->getHash(), state);
 
   vbkTip = popminer.vbk().getBestChain().tip();
@@ -380,10 +395,11 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   auto* containingVbkBlock2 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
   VTB vtb2 = popminer.vbkPayloads[containingVbkBlock2->getHash()][0];
-  fillVTBContext(vtb2, vbkTip->getHash(), popminer.vbk());
+  fillVbkContext(vtb2, vbkTip->getHash(), popminer.vbk());
 
   AltBlock endorsedBlock2 = chain[5];
-  VbkTx tx2 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock2));
+  VbkTx tx2 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer.generateATV(tx2, containingVbkBlock2->getHash(), state);
 
   EXPECT_TRUE(mempool.submitATV({atv2, atv1}, state));
@@ -439,13 +455,14 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVTBContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   popminer.mineBtcBlocks(100);
   popminer.mineVbkBlocks(54);
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock1));
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
   ATV atv1 = popminer.generateATV(tx1, containingVbkBlock1->getHash(), state);
 
   vbkTip = popminer.vbk().getBestChain().tip();
@@ -458,10 +475,11 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   auto* containingVbkBlock2 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
   VTB vtb2 = popminer.vbkPayloads[containingVbkBlock2->getHash()][0];
-  fillVTBContext(vtb2, containingVbkBlock2->pprev->getHash(), popminer.vbk());
+  fillVbkContext(vtb2, containingVbkBlock2->pprev->getHash(), popminer.vbk());
 
   AltBlock endorsedBlock2 = chain[5];
-  VbkTx tx2 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock2));
+  VbkTx tx2 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer.generateATV(tx2, containingVbkBlock2->getHash(), state);
 
   EXPECT_TRUE(mempool.submitATV({atv2, atv1}, state));
@@ -508,7 +526,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVTBContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   popminer.mineBtcBlocks(100);
   popminer.mineVbkBlocks(54);
@@ -543,10 +561,11 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   EXPECT_EQ(BtcEndorsement::fromContainer(vtb1),
             BtcEndorsement::fromContainer(vtb2));
 
-  fillVTBContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock1));
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
   ATV atv1 =
       popminer.generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
@@ -587,7 +606,8 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   mineAltBlocks(10, chain);
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock1));
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
   ATV atv1 =
       popminer.generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
@@ -641,10 +661,11 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVTBContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock1));
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
   ATV atv1 =
       popminer.generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
@@ -703,10 +724,11 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   EXPECT_EQ(BtcEndorsement::fromContainer(vtb1),
             BtcEndorsement::fromContainer(vtb2));
 
-  fillVTBContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   AltBlock endorsedBlock2 = chain[5];
-  VbkTx tx2 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock2));
+  VbkTx tx2 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock2));
   ATV atv2 =
       popminer.generateATV(tx2, vbkparam.getGenesisBlock().getHash(), state);
 
