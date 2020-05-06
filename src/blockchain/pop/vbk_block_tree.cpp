@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/pop_utils.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
@@ -11,53 +12,66 @@ namespace altintegration {
 
 void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew,
+                                      ValidationState& state,
                                       bool isBootstrap) {
   if (currentBest.tip() == &indexNew) {
     return;
   }
 
-  // do not even consider invalid indices
+  // do not even try to do fork resolution with an invalid chain
   if (!indexNew.isValid()) {
     return;
   }
 
-  if (currentBest.tip() == nullptr) {
-    currentBest.setTip(&indexNew);
-    return onTipChanged(indexNew, isBootstrap);
+  bool ret = false;
+  auto currentTip = currentBest.tip();
+  if (currentTip == nullptr) {
+    ret = setTip(indexNew, state, isBootstrap);
+    assert(ret);
+    return;
   }
 
-  auto ki = param_->getKeystoneInterval();
-  const auto* forkKeystone =
-      currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
-  if ((forkKeystone == nullptr) || isBootstrap) {
-    // we did not find fork... this can happen only during bootstrap
-    return VbkTree::determineBestChain(currentBest, indexNew, isBootstrap);
+  // edge case: connected block is one of 'next' blocks after our current best
+  if (indexNew.getAncestor(currentTip->height) == currentTip) {
+    // an attempt to connect a NEXT block
+    this->setTip(indexNew, state, false);
+    return;
   }
 
-  int result = 0;
-  auto* bestTip = currentBest.tip();
-  if (isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki) &&
-      isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki)) {
-    // [vbk fork point keystone ... current tip]
-    Chain<index_t> vbkCurrentSubchain(forkKeystone->height, currentBest.tip());
-
-    // [vbk fork point keystone... new block]
-    Chain<index_t> vbkOther(forkKeystone->height, &indexNew);
-
-    result = cmp_.comparePopScore(vbkCurrentSubchain, vbkOther);
-  }
-
-  if (result < 0) {
-    // other chain won!
-    //    auto* prevTip = currentBest.tip();
-    currentBest.setTip(&indexNew);
-    onTipChanged(indexNew, isBootstrap);
-  } else if (result == 0) {
+  int result = cmp_.comparePopScore(*this, indexNew, state);
+  // pop state is already at "best chain"
+  if (result == 0) {
     // pop scores are equal. do PoW fork resolution
-    VbkTree::determineBestChain(currentBest, indexNew, isBootstrap);
+    VbkTree::determineBestChain(
+        currentBest, indexNew, state, /* skipSetState=*/false);
+  } else if (result < 0) {
+    // other chain won! we already set
+    ret = this->setTip(indexNew, state, /* skipSetState=*/true);
+    assert(ret);
+  } else {
+    // current chain is better
   }
 
-  // existing chain is still best
+  (void)ret;
+}
+
+bool VbkBlockTree::setTip(index_t& to,
+                          ValidationState& state,
+                          bool skipSetState) {
+  bool changeTip = true;
+  if (!skipSetState) {
+    changeTip = cmp_.setState(*this, to, state);
+  }
+
+  // edge case: if changeTip is false, then new block arrived on top of current
+  // active chain, and this block has invalid commands
+  if (changeTip) {
+    activeChain_.setTip(&to);
+  } else {
+    assert(!to.isValid());
+  }
+
+  return changeTip;
 }
 
 bool VbkBlockTree::bootstrapWithChain(int startHeight,
@@ -65,10 +79,6 @@ bool VbkBlockTree::bootstrapWithChain(int startHeight,
                                       ValidationState& state) {
   if (!VbkTree::bootstrapWithChain(startHeight, chain, state)) {
     return state.Invalid("vbk-bootstrap-chain");
-  }
-
-  if (!cmp_.setState(*getBestChain().tip(), state)) {
-    return state.Invalid("vbk-set-state");
   }
 
   return true;
@@ -79,217 +89,139 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
     return state.Invalid("vbk-bootstrap-genesis");
   }
 
-  auto* tip = getBestChain().tip();
-  if (!cmp_.setState(*tip, state)) {
-    return state.Invalid("vbk-set-state");
-  }
-
   return true;
 }
 
-// void VbkBlockTree::invalidateBlockByHash(const hash_t& blockHash) {
-//  index_t* blockIndex = getBlockIndex(blockHash);
-//  if (blockIndex == nullptr) {
-//    return;
-//  }
-//
-//  ValidationState state;
-//  bool ret = cmp_.setState(*blockIndex->pprev, state);
-//  assert(ret);
-//
-//  BlockTree::invalidateBlockByIndex(*blockIndex);
-//
-//  ret = cmp_.setState(*activeChain_.tip(), state);
-//  assert(ret);
-//
-//  (void)ret;
-//}
+void VbkBlockTree::removePayloads(const block_t& block,
+                                  const std::vector<payloads_t>& payloads) {
+  auto hash = block.getHash();
+  auto* index = VbkTree::getBlockIndex(hash);
+  if (!index) {
+    throw std::logic_error("addPayloads is called on unknown VBK block: " +
+                           hash.toHex());
+  }
 
-bool VbkBlockTree::addPayloads(PopForkComparator& cmp,
-                               const VbkBlock& block,
+  if (!index->isValid()) {
+    // adding payloads to an invalid block will not result in a state change
+    return;
+  }
+
+  bool isOnActiveChain = activeChain_.contains(index);
+  if (isOnActiveChain) {
+    ValidationState dummy;
+    bool ret = setTip(*index->pprev, dummy, false);
+    assert(ret);
+    (void)ret;
+  }
+
+  // remove all matched command groups
+  auto& c = index->commands;
+  c.erase(
+      std::remove_if(c.begin(), c.end(), [&payloads](const CommandGroup& g) {
+        for (const auto& p : payloads) {
+          if (g == p.getId()) {
+            return true;
+          }
+        }
+
+        return false;
+      }));
+
+  if (isOnActiveChain) {
+    // find all affected tips and do a fork resolution
+    auto tips = findValidTips<VbkBlock>(*index);
+    for (auto* tip : tips) {
+      ValidationState state;
+      determineBestChain(activeChain_, *tip, state);
+    }
+  }
+}
+
+bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {
-  auto* index = VbkTree::getBlockIndex(block.getHash());
+  auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
-    return state.Invalid("unknown-block",
-                         "AddPayloads should be executed on known blocks");
+    return state.Invalid("bad-containing",
+                         "Can not find VTB containing block: " + hash.toHex());
   }
 
-  if (!cmp.addPayloads(*index, payloads, state)) {
-    return state.Invalid("bad-payloads-stateful");
+  if (!index->isValid()) {
+    // adding payloads to an invalid block will not result in a state change
+    return state.Invalid("bad-chain",
+                         "Current block is added on top of invalid chain");
   }
 
-  for (auto* tip : findValidTips<VbkBlock>(*index)) {
-    determineBestChain(activeChain_, *tip);
+  bool isOnActiveChain = activeChain_.contains(index);
+  if (isOnActiveChain) {
+    ValidationState dummy;
+    bool ret = setTip(*index->pprev, dummy, false);
+    assert(ret);
+    (void)ret;
   }
 
-  return true;
-}
-
-void VbkBlockTree::removePayloads(const VbkBlock& block,
-                                  const std::vector<payloads_t>& payloads) {
-  auto* index = getBlockIndex(block.getHash());
-  if (index != nullptr) {
-    removePayloads(index, payloads);
-  }
-}
-
-void VbkBlockTree::removePayloads(index_t* index,
-                                  const std::vector<payloads_t>& payloads) {
-  assert(index);
-  cmp_.removePayloads(*index, payloads);
-
-  determineBestChain(activeChain_, *index);
-}
-
-bool VbkBlockTree::addPayloads(const VbkBlock& block,
-                               const std::vector<payloads_t>& payloads,
-                               ValidationState& state,
-                               bool atomic) {
-  if (!atomic) {
-    return addPayloads(cmp_, block, payloads, state);
+  for (const auto& p : payloads) {
+    index->commands.emplace_back();
+    auto& g = index->commands.back();
+    g.id = p.getId();
+    payloadsToCommands(*this, p, g.commands);
   }
 
-  // execute addPayloads on a temp copy
-  PopForkComparator cmp = cmp_;
-  bool ret = addPayloads(cmp, block, payloads, state);
-  if (ret) {
-    // if succeded, update local copy
-    cmp_ = cmp;
+  // find all affected tips and do a fork resolution
+  auto tips = findValidTips<VbkBlock>(*index);
+  for (auto* tip : tips) {
+    determineBestChain(activeChain_, *tip, state);
   }
-  return ret;
+
+  return index->isValid();
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
   std::ostringstream ss;
   std::string pad(level, ' ');
   ss << VbkTree::toPrettyString(level) << "\n";
-  ss << pad << "{comparator=\n" << cmp_.toPrettyString(level + 2);
-  ss << "}";
+  ss << cmp_.toPrettyString(level + 2);
+  ss << pad << "}";
   return ss.str();
 }
 
-void VbkBlockTree::removeSubtree(index_t& toRemove) {
-  ValidationState state;
-  bool ret = false;
-
-  bool isStateSubset =
-      cmp_.getIndex()->getAncestor(toRemove.height) == &toRemove;
-  if (isStateSubset) {
-    ret = cmp_.setState(*toRemove.pprev, state);
-    assert(ret);
-  }
-
-  bool isOnActiveChain = activeChain_.contains(&toRemove);
-  if (isOnActiveChain) {
-    activeChain_.setTip(toRemove.pprev);
-  }
-
-  base::removeSubtree(
-      toRemove, [](index_t& next) { removeAllContainingEndorsements(next); });
-
-  if (isOnActiveChain) {
-    // do a fork resolution
-    // find new best chain among remaining forks
-    for (auto it = base::tips_.begin(); it != base::tips_.end();) {
-      index_t* index = *it;
-      if (!index->isValid()) {
-        it = base::tips_.erase(it);
-      } else {
-        determineBestChain(activeChain_, *index);
-        ++it;
-      }
-    }
-  }
-
-  ret = cmp_.setState(*activeChain_.tip(), state);
-  assert(ret);
-  (void)ret;
-}
-
-void VbkBlockTree::removeSubtree(const hash_t& hash) {
-  auto* index = VbkTree::getBlockIndex(hash);
+bool VbkBlockTree::setState(const VbkBlock::hash_t& block,
+                            ValidationState& state) {
+  auto* index = getBlockIndex(block);
   if (!index) {
-    return;
+    return false;
   }
-
-  return removeSubtree(*index);
+  return this->setTip(*index, state);
 }
 
-template <>
-bool VbkBlockTree::PopForkComparator::sm_t::applyContext(
-    const BlockIndex<VbkBlock>& index, ValidationState& state) {
-  return tryValidateWithResources(
-      [&]() -> bool {
-        size_t i = 0;
-        for (const auto& el : index.containingContext.btc_context) {
-          for (const auto& b : el.second) {
-            if (!tree().acceptBlock(b, state)) {
-              return state.Invalid("vbk-accept-block", i);
-            }
-            i++;
-          }
-        }
-
-        return true;
-      },
-      [&]() { unapplyContext(index); });
-}  // namespace altintegration
+// void VbkBlockTree::removeSubtree(index_t& toRemove) {
+//  VbkTree::removeSubtree(toRemove);
+//}
+//
+// void VbkBlockTree::removeSubtree(const hash_t& hash) {
+//  auto* index = VbkTree::getBlockIndex(hash);
+//  if (!index) {
+//    return;
+//  }
+//
+//  return removeSubtree(*index);
+//}
 
 template <>
-void VbkBlockTree::PopForkComparator::sm_t::unapplyContext(
-    const BlockIndex<VbkBlock>& index) {
-  auto& c = index.containingContext.btc_context;
-  std::for_each(
-      c.rbegin(),
-      c.rend(),
-      [&](const std::pair<VbkContext::eid_t,
-                          std::vector<std::shared_ptr<BtcBlock>>>& ctx) {
-        std::for_each(ctx.second.rbegin(),
-                      ctx.second.rend(),
-                      [&](const std::shared_ptr<BtcBlock>& b) {
-                        tree().removeSubtree(b->getHash());
-                      });
-      });
-
-}  // namespace altintegration
-
-template <>
-void removeContextFromBlockIndex(BlockIndex<VbkBlock>& index,
-                                 const BlockIndex<VbkBlock>::payloads_t& p) {
-  using eid_t = typename BlockIndex<VbkBlock>::eid_t;
-
-  auto& ctx = index.containingContext.btc_context;
-  auto end = ctx.end();
-
-  end = std::remove_if(
-      ctx.begin(),
-      end,
-      [&p](const std::pair<eid_t, std::vector<std::shared_ptr<BtcBlock>>>& el) {
-        return p.endorsement.id == el.first;
-      });
-
-  ctx.erase(end, ctx.end());
-}
-
-template <>
-void addContextToBlockIndex(BlockIndex<VbkBlock>& index,
-                            const typename BlockIndex<VbkBlock>::payloads_t& p,
-                            const BlockTree<BtcBlock, BtcChainParams>& tree) {
-  auto& ctx = index.containingContext;
-
-  std::unordered_set<BtcBlock::hash_t> known_blocks;
-  for (const auto& e : ctx.btc_context) {
-    for (const auto& b : e.second) {
-      known_blocks.insert(b->getHash());
-    }
+void payloadsToCommands<VbkBlockTree>(VbkBlockTree& tree,
+                                      const VTB& p,
+                                      std::vector<CommandPtr>& commands) {
+  // process BTC context blocks
+  for (const auto& b : p.transaction.blockOfProofContext) {
+    addBlock(tree.btc(), b, commands);
   }
+  // process block of proof
+  addBlock(tree.btc(), p.transaction.blockOfProof, commands);
 
-  for (const auto& b : p.btc) {
-    std::vector<std::shared_ptr<BtcBlock>> btc_vec;
-    addBlockIfUnique(b, known_blocks, btc_vec, tree);
-    ctx.btc_context.push_back(std::make_pair(p.endorsement.id, btc_vec));
-  }
+  // add endorsement
+  auto e = BtcEndorsement::fromContainerPtr(p);
+  auto cmd =
+      std::make_shared<AddBtcEndorsement>(tree.btc(), tree, std::move(e));
+  commands.push_back(std::move(cmd));
 }
-
 }  // namespace altintegration

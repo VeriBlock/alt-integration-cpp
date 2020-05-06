@@ -80,6 +80,15 @@ struct Chain {
 
   index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
 
+  typename storage_t::reverse_iterator rbegin() { return chain.rbegin(); }
+  typename storage_t::const_reverse_iterator rbegin() const {
+    return chain.rbegin();
+  }
+  typename storage_t::reverse_iterator rend() { return chain.rend(); }
+  typename storage_t::const_reverse_iterator rend() const {
+    return chain.rend();
+  }
+
   typename storage_t::iterator begin() { return chain.begin(); }
   typename storage_t::const_iterator begin() const { return chain.begin(); }
   typename storage_t::iterator end() { return chain.end(); }
@@ -114,7 +123,7 @@ struct Chain {
 
   friend bool operator!=(const Chain& a, const Chain& b) { return !(a == b); }
 
-  const index_t* findFork(const index_t* pindex) const {
+  index_t* findFork(const index_t* pindex) const {
     if (pindex == nullptr || tip() == nullptr) {
       return nullptr;
     }
@@ -126,7 +135,7 @@ struct Chain {
     while (pindex && !contains(pindex)) {
       pindex = pindex->pprev;
     }
-    return pindex;
+    return const_cast<index_t*>(pindex);
   }
 
   //! same as findFork, but returns first keystone block at or before fork point

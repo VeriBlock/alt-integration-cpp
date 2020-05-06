@@ -40,7 +40,7 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
   auto endorsed = chain.back();
   auto data = generatePublicationData(endorsed);
-  auto vbktx = popminer.endorseAltBlock(data);
+  auto vbktx = popminer.createVbkTxEndorsingAltBlock(data);
   popminer.mineVbkBlocks(1);
   auto containing = generateNextBlock(chain.back());
   chain.push_back(containing);

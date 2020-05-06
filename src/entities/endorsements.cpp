@@ -35,18 +35,16 @@ VbkEndorsement VbkEndorsement::fromContainer(const AltPayloads& c) {
 
 template <>
 BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c) {
-  WriteStream stream;
-  c.transaction.bitcoinTransaction.toVbkEncoding(stream);
-  c.transaction.blockOfProof.toRaw(stream);
-  return sha256(stream.data());
+  auto left = c.transaction.bitcoinTransaction.getHash();
+  auto right = c.transaction.blockOfProof.getHash();
+  return sha256(left, right);
 }
 
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c) {
-  WriteStream stream;
-  c.altPopTx.atv.transaction.toRaw(stream);
-  c.altPopTx.atv.containingBlock.toRaw(stream);
-  return sha256(stream.data());
+  auto left = c.altPopTx.atv.transaction.getHash();
+  auto right = c.altPopTx.atv.containingBlock.getHash();
+  return sha256(left, right);
 }
 
 }  // namespace altintegration

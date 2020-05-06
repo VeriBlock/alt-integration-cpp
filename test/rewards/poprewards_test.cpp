@@ -28,7 +28,8 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 
   // endorse ALT block, at height 10
   AltBlock endorsedBlock = altchain[10];
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
   altchain.push_back(containingBlock);
 

@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mock_miner.hpp"
+
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/context.hpp"
-#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -40,7 +41,8 @@ bool mineBlocks(const uint32_t& n,
   return true;
 }
 
-VbkTx MockMiner::endorseAltBlock(const PublicationData& publicationData) {
+VbkTx MockMiner::createVbkTxEndorsingAltBlock(
+    const PublicationData& publicationData) {
   VbkTx transaction;
   transaction.signatureIndex = 7;
   transaction.networkOrType.hasNetworkByte =
@@ -93,7 +95,7 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
   std::reverse(atv.context.begin(), atv.context.end());
 
   if (!vbktree.acceptBlock(containingBlock, state)) {
-    throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
+    throw std::domain_error(state.toString());
   }
 
   return atv;
@@ -114,8 +116,8 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
     const BtcTx& containingTx,
     const VbkBlock& publishedBlock,
     const BtcBlock::hash_t& lastKnownBtcBlockHash) {
-  auto containingBlockIndex =
-      vbktree.btc().getBlockIndex(containingBlock.getHash());
+  const auto& btc = vbktree.btc();
+  auto containingBlockIndex = btc.getBlockIndex(containingBlock.getHash());
   if (!containingBlockIndex) {
     throw std::domain_error("containing block with hash " +
                             containingBlock.getHash().toHex() +
@@ -283,13 +285,11 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                  });
 
   if (!tree.acceptBlock(containingBlock, state)) {
-    throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
+    throw std::domain_error(state.toString());
   }
-
-  if (!tree.addPayloads(containingBlock, PartialVTB::fromVTB(vtbs), state)) {
-    throw std::domain_error(state.GetPath() + "\n" + state.GetDebugMessage());
+  if (!tree.addPayloads(containingBlock.getHash(), vtbs, state)) {
+    throw std::domain_error(state.toString());
   }
-
   vbkPayloads[containingBlock.getHash()] = vtbs;
 
   return containingBlock;

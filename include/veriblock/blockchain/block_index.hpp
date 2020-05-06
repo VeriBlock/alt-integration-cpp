@@ -12,10 +12,12 @@
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/command.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/validation_state.hpp"
 #include "veriblock/write_stream.hpp"
+#include "veriblock/blockchain/command_group.hpp"
 
 namespace altintegration {
 
@@ -67,8 +69,8 @@ struct BlockIndex {
   //! list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
 
-  //! list of containing context blocks that **change** current state
-  context_t containingContext{};
+  //! list of changes introduced in this block
+  std::vector<CommandGroup> commands{};
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -110,6 +112,15 @@ struct BlockIndex {
   uint32_t getBlockTime() const { return header->getBlockTime(); }
   uint32_t getDifficulty() const { return header->getDifficulty(); }
 
+  bool isValidTip() const {
+    // can be a valid tip iff there're no next blocks or all next blocks are
+    // invalid
+    return pnext.empty() ||
+           std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+             return !index->isValid();
+           });
+  }
+
   const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
     if (steps < 0 || steps > this->height + 1) {
       return nullptr;
@@ -147,6 +158,7 @@ struct BlockIndex {
            ", prev=" + (pprev ? HexStr(pprev->getHash()) : "<empty>") +
            ", next=" + std::to_string(pnext.size()) +
            ", status=" + std::to_string(status) +
+           ", cgroups=" + std::to_string(commands.size()) +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
            ", containsEndorsements=" +
            std::to_string(containingEndorsements.size()) + "}";

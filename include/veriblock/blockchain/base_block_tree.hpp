@@ -9,10 +9,16 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
 
 namespace altintegration {
 
+/**
+ * A base block tree that stores all blocks, maintains tree tips, maintains
+ * active chain.
+ * @tparam Block
+ */
 template <typename Block>
 struct BaseBlockTree {
   using block_t = Block;
@@ -27,6 +33,8 @@ struct BaseBlockTree {
 
   virtual ~BaseBlockTree() = default;
 
+  const Chain<index_t>& getBestChain() const { return this->activeChain_; }
+
   template <typename T,
             typename = typename std::enable_if<
                 std::is_same<T, hash_t>::value ||
@@ -37,57 +45,87 @@ struct BaseBlockTree {
     return it == blocks_.end() ? nullptr : it->second.get();
   }
 
- protected:
-  void removeSingleBlock(index_t& block) {
-    // if it is a tip, we also remove it
-    tips_.erase(&block);
-    block.pnext.clear();
-
-    auto shortHash = makePrevHash(block.getHash());
-    blocks_.erase(shortHash);
+  void removeSubtree(const hash_t& toRemove,
+                     bool shouldDetermineBestChain = true) {
+    auto* index = getBlockIndex(toRemove);
+    if (!index) {
+      return;
+    }
+    return removeSubtree(*index, shouldDetermineBestChain);
   }
 
-  void removeSubtree(index_t& index,
-                     const std::function<void(index_t&)>& onBlock) {
+  void removeSubtree(index_t& toRemove, bool shouldDetermineBestChain = true) {
     // save ptr to a previous block
-    auto* prev = index.pprev;
+    auto* prev = toRemove.pprev;
+    assert(prev);
+
+    bool isOnMainChain = activeChain_.contains(&toRemove);
+    if (isOnMainChain) {
+      ValidationState dummy;
+      this->setTip(*toRemove.pprev, dummy, false);
+    }
 
     // remove this block from 'pnext' set of previous block
     if (prev) {
-      prev->pnext.erase(&index);
+      prev->pnext.erase(&toRemove);
     }
 
-    forEachNodePostorder<block_t>(index, [&](index_t& next) {
-      onBlock(next);
-      removeSingleBlock(next);
-    });
+    forEachNodePostorder<block_t>(
+        toRemove, [&](index_t& next) { removeSingleBlock(next); });
 
     // after removal, try to add tip
     tryAddTip(prev);
-  }
 
-  void invalidateBlock(index_t& toBeInvalidated,
-                       enum BlockStatus reason,
-                       const std::function<bool(index_t&)>& onBlock) {
-    toBeInvalidated.setFlag(reason);
-    tryAddTip(toBeInvalidated.pprev);
-
-    forEachNextNodePreorder<block_t>(toBeInvalidated,
-                                     [&](index_t& index) -> bool {
-                                       bool ret = onBlock(index);
-                                       index.setFlag(BLOCK_FAILED_CHILD);
-                                       return ret;
-                                     });
-
-    for (auto it = tips_.begin(); it != tips_.end();) {
-      index_t* index = *it;
-      if (!index->isValid()) {
-        it = tips_.erase(it);
-      } else {
-        ++it;
-      }
+    if (isOnMainChain) {
+      updateTips(shouldDetermineBestChain);
     }
   }
+
+  void invalidateSubtree(const hash_t& toBeInvalidated,
+                         enum BlockStatus reason,
+                         bool shouldDetermineBestChain = true) {
+    auto* index = getBlockIndex(toBeInvalidated);
+    if (!index) {
+      return;
+    }
+    return invalidateSubtree(*index, reason, shouldDetermineBestChain);
+  }
+
+  void invalidateSubtree(index_t& toBeInvalidated,
+                         enum BlockStatus reason,
+                         bool shouldDetermineBestChain = true) {
+    assert(toBeInvalidated.pprev);
+    bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
+    if (isOnMainChain) {
+      ValidationState dummy;
+      bool ret = this->setTip(*toBeInvalidated.pprev, dummy, false);
+      assert(ret);
+      (void)ret;
+    }
+
+    toBeInvalidated.setFlag(reason);
+
+    // flag next subtrees (excluding current block)  as BLOCK_FAILED_CHILD
+    forEachNextNodePreorder<block_t>(toBeInvalidated,
+                                     [&](index_t& index) -> bool {
+                                       bool shouldContinue = index.isValid();
+                                       index.setFlag(BLOCK_FAILED_CHILD);
+                                       return shouldContinue;
+                                     });
+
+    // after invalidation, try to add tip
+    tryAddTip(toBeInvalidated.pprev);
+
+    if (isOnMainChain) {
+      updateTips(shouldDetermineBestChain);
+    }
+  }
+
+ protected:
+  virtual void determineBestChain(Chain<index_t>& currentBest,
+                                  index_t& indexNew,
+                                  ValidationState& state,
+                                  bool isBootstrap) = 0;
 
   void tryAddTip(index_t* index) {
     assert(index);
@@ -98,12 +136,7 @@ struct BaseBlockTree {
       tips_.erase(it);
     }
 
-    // this can be a tip ONLY if pnext is empty OR all items in pnext are
-    // invalid
-    auto& pn = index->pnext;
-    if (pn.empty() || std::all_of(pn.begin(), pn.end(), [](index_t* n) {
-          return !n->isValid();
-        })) {
+    if (index->isValidTip()) {
       tips_.insert(index);
     }
   }
@@ -115,7 +148,15 @@ struct BaseBlockTree {
       return it->second.get();
     }
 
-    auto newIndex = std::make_shared<index_t>();
+    std::shared_ptr<index_t> newIndex;
+    auto itr = removed_.find(shortHash);
+    if (itr != removed_.end()) {
+      newIndex = itr->second;
+      removed_.erase(itr);
+    } else {
+      newIndex = std::make_shared<index_t>();
+    }
+
     it = blocks_.insert({shortHash, std::move(newIndex)}).first;
     return it->second.get();
   }
@@ -131,6 +172,10 @@ struct BaseBlockTree {
       // prev block found
       current->height = current->pprev->height + 1;
       current->pprev->pnext.insert(current);
+
+      if (!current->pprev->isValid()) {
+        current->setFlag(BLOCK_FAILED_CHILD);
+      }
     } else {
       current->height = 0;
     }
@@ -140,9 +185,17 @@ struct BaseBlockTree {
     return current;
   }
 
+  //! updates tree tip
+  virtual bool setTip(index_t& to, ValidationState&, bool) {
+    activeChain_.setTip(&to);
+    return true;
+  }
+
   std::string toPrettyString(size_t level = 0) const {
+    auto tip = activeChain_.tip();
     std::ostringstream ss;
     std::string pad(level, ' ');
+    ss << pad << "{tip=" << (tip ? tip->toPrettyString() : "<empty>") << "}\n";
     ss << pad << "{blocks=\n";
     // sort blocks by height
     std::vector<std::pair<int, index_t*>> byheight;
@@ -156,14 +209,30 @@ struct BaseBlockTree {
     }
     ss << pad << "}\n";
     ss << pad << "{tips=\n";
-    for(const auto* tip: tips_) {
-      ss << tip->toPrettyString(level + 2) << "\n";
+    for (const auto* _tip : tips_) {
+      ss << _tip->toPrettyString(level + 2) << "\n";
     }
     ss << pad << "}";
     return ss.str();
   }
 
  private:
+  void updateTips(bool shouldDetermineBestChain = true) {
+    for (auto it = tips_.begin(); it != tips_.end();) {
+      index_t* index = *it;
+      if (!index->isValid()) {
+        it = tips_.erase(it);
+      } else {
+        if (shouldDetermineBestChain) {
+          ValidationState state;
+          determineBestChain(
+              activeChain_, *index, state, /*isBootstrap=*/false);
+        }
+        ++it;
+      }
+    }
+  }
+
   // HACK: see comment below.
   template <typename T>
   inline prev_block_hash_t makePrevHash(const T& h) const {
@@ -171,11 +240,27 @@ struct BaseBlockTree {
     return h;
   }
 
+  void removeSingleBlock(index_t& block) {
+    // if it is a tip, we also remove it
+    tips_.erase(&block);
+    block.pnext.clear();
+
+    auto shortHash = makePrevHash(block.getHash());
+    auto it = blocks_.at(shortHash);
+    removed_[shortHash] = it;
+    blocks_.erase(shortHash);
+  }
+
  protected:
   //! stores ALL blocks, including valid and invalid
   block_index_t blocks_;
+  //! stores all removed blocks, to ensure pointers to blocks remain stable
+  // TODO(bogdan): remove for future releases
+  block_index_t removed_;
   //! stores ONLY VALID tips
   std::unordered_set<index_t*> tips_;
+  //! currently applied chain
+  Chain<index_t> activeChain_;
 };
 
 // HACK: getBlockIndex accepts either hash_t or prev_block_hash_t
