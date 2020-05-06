@@ -342,8 +342,6 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   EXPECT_EQ(popTxs[1].atv, atv2);
   EXPECT_EQ(popTxs[1].vtbs[0], vtb2);
 
-  // TODO: uncomment affter fixing bug with the payloads
-  /*
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   AltPayloads payloads1 =
@@ -356,7 +354,6 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
       alttree.addPayloads(containingBlock, {payloads1, payloads2}, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
-  */
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_6) {
@@ -423,8 +420,6 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   EXPECT_EQ(popTxs[1].atv, atv2);
   EXPECT_EQ(popTxs[1].vtbs[0], vtb2);
 
-  // TODO: uncomment affter fixing bug with the payloads
-  /*
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   AltPayloads payloads1 =
@@ -437,7 +432,6 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
       alttree.addPayloads(containingBlock, {payloads1, payloads2}, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
-  */
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_7) {

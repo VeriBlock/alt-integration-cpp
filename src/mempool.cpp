@@ -146,12 +146,10 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
   ret = tree.addPayloads(hack_block, {payloads}, state);
   assert(ret);
 
-  /*
-  if (!tree.addPayloads(hack_block, {payloads}, state) ||
-      !tree.setState(hack_block.getHash(), state)) {
+  if (!tree.setState(hack_block.getHash(), state)) {
     stored_atvs_.erase(altPopTx.atv.getId());
     return false;
-  } */
+  }
 
   return true;
 }

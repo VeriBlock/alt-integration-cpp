@@ -93,6 +93,18 @@ struct BlockIndex {
     return ((status & BLOCK_VALID_MASK) >= upTo);
   }
 
+  void setNull() {
+    this->pprev = nullptr;
+    this->pnext.clear();
+    this->chainWork = 0;
+    this->containingEndorsements.clear();
+    this->endorsedBy.clear();
+    this->commands.clear();
+    this->height = 0;
+    this->status = 0;
+    this->refCounter = 0;
+  }
+
   bool raiseValidity(enum BlockStatus upTo) {
     assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
