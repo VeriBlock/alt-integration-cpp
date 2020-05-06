@@ -13,11 +13,11 @@
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/command.hpp"
+#include "veriblock/blockchain/command_group.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/validation_state.hpp"
 #include "veriblock/write_stream.hpp"
-#include "veriblock/blockchain/command_group.hpp"
 
 namespace altintegration {
 
@@ -80,6 +80,9 @@ struct BlockIndex {
 
   //! contains status flags
   uint8_t status = 0;  // unknown validity
+
+  //! reference counter for fork resolution
+  uint32_t refCounter = 0;
 
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) {
     assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
@@ -160,8 +163,8 @@ struct BlockIndex {
            ", status=" + std::to_string(status) +
            ", cgroups=" + std::to_string(commands.size()) +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
-           ", containsEndorsements=" +
-           std::to_string(containingEndorsements.size()) + "}";
+           ", endorsements=" + std::to_string(containingEndorsements.size()) +
+           ", ref=" + std::to_string(refCounter) + "}";
   }
 
   void toRaw(WriteStream& stream) const {

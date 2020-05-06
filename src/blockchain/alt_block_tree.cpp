@@ -8,7 +8,6 @@
 #include <unordered_set>
 #include <veriblock/blockchain/commands/commands.hpp>
 
-#include "veriblock/blockchain/pop/pop_utils.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
