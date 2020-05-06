@@ -58,6 +58,7 @@ struct PopTestFixture {
       chain.push_back(generateNextBlock(*chain.rbegin()));
 
       ASSERT_TRUE(alttree.acceptBlock(*chain.rbegin(), state));
+      ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
       ASSERT_TRUE(state.IsValid());
     }
   }

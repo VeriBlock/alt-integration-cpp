@@ -370,7 +370,7 @@ struct PopAwareForkResolutionComparator {
                 protected_index_t& to,
                 ValidationState& state) {
     auto* currentActive = ed.getBestChain().tip();
-    assert(currentActive);
+    assert(currentActive && "should be bootstrapped");
 
     sm_t sm(ed, ing_);
     if (to.pprev && to.pprev == currentActive) {

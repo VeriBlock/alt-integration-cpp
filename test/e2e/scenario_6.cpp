@@ -24,11 +24,11 @@ using namespace altintegration;
 
 struct Scenario6 : public ::testing::Test, public PopTestFixture {};
 
-TEST_F(Scenario6, scenario_6) {
+TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
   AltTree test_alttree(altparam, vbkparam, btcparam);
 
-  // do not
+  // do not bootstrap VBK
   ASSERT_TRUE(test_alttree.bootstrap(state));
   ASSERT_TRUE(test_alttree.btc().bootstrapWithGenesis(state));
 
@@ -48,8 +48,9 @@ TEST_F(Scenario6, scenario_6) {
   ASSERT_EQ(it->second.size(), 1);
 
   auto vtb = it->second[0];
+
   // corrupt vtb
-  std::vector<uint8_t> new_hash = {1, 2, 3};
+  std::vector<uint8_t> new_hash = {1, 2, 3, 9, 8, 2};
   vtb.transaction.blockOfProof.previousBlock = uint256(new_hash);
 
   // Step 2
@@ -68,8 +69,10 @@ TEST_F(Scenario6, scenario_6) {
   altPayloads.popData.vtbs.push_back(vtb);
 
   EXPECT_TRUE(test_alttree.acceptBlock(containingAltBlock, state));
-  EXPECT_FALSE(test_alttree.addPayloads(
+  ASSERT_TRUE(test_alttree.addPayloads(
       containingAltBlock.getHash(), {altPayloads}, state));
+  ASSERT_THROW(test_alttree.setState(containingAltBlock.getHash(), state),
+               std::logic_error);
 
   EXPECT_EQ(*test_alttree.vbk().getBestChain().tip(), *vbkTip);
   EXPECT_EQ(test_alttree.vbk().getBestChain().blocksCount(), 1);
