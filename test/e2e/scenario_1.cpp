@@ -164,6 +164,7 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   ASSERT_TRUE(alttree.addPayloads(
       containingBlock.getHash(), {altPayloadsVBA71}, state));
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   ASSERT_NE(btcAtip, nullptr);
   ASSERT_GE(btcAtip->height, 53);
@@ -207,6 +208,7 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   ASSERT_TRUE(alttree.addPayloads(
       containingBlock.getHash(), {altPayloadsVBB71}, state));
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(),
             altchain.rbegin()->getHash());
   EXPECT_TRUE(state.IsValid());
