@@ -193,19 +193,6 @@ bool VbkBlockTree::setState(const VbkBlock::hash_t& block,
   return this->setTip(*index, state);
 }
 
-// void VbkBlockTree::removeSubtree(index_t& toRemove) {
-//  VbkTree::removeSubtree(toRemove);
-//}
-//
-// void VbkBlockTree::removeSubtree(const hash_t& hash) {
-//  auto* index = VbkTree::getBlockIndex(hash);
-//  if (!index) {
-//    return;
-//  }
-//
-//  return removeSubtree(*index);
-//}
-
 template <>
 void payloadsToCommands<VbkBlockTree>(VbkBlockTree& tree,
                                       const VTB& p,
