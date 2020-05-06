@@ -58,7 +58,7 @@ struct Endorsement {
   }
 
   // TODO(Bogdan): temporary used to disable duplicate check
-  static bool checkForDuplicates;
+  static inline bool checkForDuplicates();
 
   static type fromContainer(const Container& c);
 

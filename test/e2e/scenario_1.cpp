@@ -133,11 +133,11 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 
 AltPayloads generateAltPayloadsEmpty(const AltBlock& containing,
                                      const AltBlock& endorsed) {
-  AltPopTx altPopTx;
+  PopData altPopTx;
   altPopTx.hasAtv = false;
 
   AltPayloads alt;
-  alt.altPopTx = altPopTx;
+  alt.popData = altPopTx;
   alt.containingBlock = containing;
   alt.endorsed = endorsed;
   return alt;
@@ -156,11 +156,11 @@ TEST_F(Scenario1, scenario_1) {
       generateAltPayloadsEmpty(containingBlock, endorsedBlock);
 
   auto vtbsVBA71 = popminer.vbkPayloads[vbkAtip->getAncestor(71)->getHash()];
-  fillVbkContext(altPayloadsVBA71.altPopTx.vbk_context,
+  fillVbkContext(altPayloadsVBA71.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbsVBA71[0].containingBlock.getHash(),
                  popminer.vbk());
-  altPayloadsVBA71.altPopTx.vtbs = {vtbsVBA71[0]};
+  altPayloadsVBA71.popData.vtbs = {vtbsVBA71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   ASSERT_TRUE(alttree.addPayloads(
       containingBlock.getHash(), {altPayloadsVBA71}, state));
@@ -200,11 +200,11 @@ TEST_F(Scenario1, scenario_1) {
 
   // send VTB_vBc71 (only VTB) in ALT block 102 (in chain A of ALT)
   auto vtbsVBB71 = popminer.vbkPayloads[vbkBtip->getAncestor(71)->getHash()];
-  fillVbkContext(altPayloadsVBB71.altPopTx.vbk_context,
+  fillVbkContext(altPayloadsVBB71.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbsVBB71[0].containingBlock.getHash(),
                  popminer.vbk());
-  altPayloadsVBB71.altPopTx.vtbs = {vtbsVBB71[0]};
+  altPayloadsVBB71.popData.vtbs = {vtbsVBB71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   ASSERT_TRUE(alttree.addPayloads(
       containingBlock.getHash(), {altPayloadsVBB71}, state));

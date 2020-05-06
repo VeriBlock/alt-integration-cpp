@@ -25,11 +25,11 @@ template <>
 VbkEndorsement VbkEndorsement::fromContainer(const AltPayloads& c) {
   VbkEndorsement e;
   e.id = VbkEndorsement::getId(c);
-  e.blockOfProof = c.altPopTx.atv.containingBlock.getHash();
+  e.blockOfProof = c.popData.atv.containingBlock.getHash();
   e.endorsedHash = c.endorsed.hash;
   e.endorsedHeight = c.endorsed.height;
   e.containingHash = c.containingBlock.hash;
-  e.payoutInfo = c.altPopTx.atv.transaction.publicationData.payoutInfo;
+  e.payoutInfo = c.popData.atv.transaction.publicationData.payoutInfo;
   return e;
 }
 

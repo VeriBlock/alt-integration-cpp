@@ -87,14 +87,14 @@ void MemPool::fillVTBs(std::vector<VTB>& vtbs,
 }
 
 bool MemPool::applyPayloads(const AltBlock& hack_block,
-                            AltPopTx& altPopTx,
+                            PopData& popdata,
                             AltTree& tree,
                             ValidationState& state) {
   bool ret = tree.acceptBlock(hack_block, state);
   assert(ret);
 
   // apply vbk_context
-  for (const auto& b : altPopTx.vbk_context) {
+  for (const auto& b : popdata.vbk_context) {
     ret = tree.vbk().acceptBlock(b, state);
     assert(ret);
   }
@@ -103,7 +103,7 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
   auto settlement_interval =
       tree.vbk().getParams().getEndorsementSettlementInterval();
   // check VTB endorsements
-  for (auto it = altPopTx.vtbs.begin(); it != altPopTx.vtbs.end();) {
+  for (auto it = popdata.vtbs.begin(); it != popdata.vtbs.end();) {
     VTB& vtb = *it;
     auto* containing_block_index =
         tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
@@ -121,22 +121,22 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
       // remove from storage
       stored_vtbs_.erase(vtb.getId());
 
-      it = altPopTx.vtbs.erase(it);
+      it = popdata.vtbs.erase(it);
       continue;
     }
     ++it;
   }
 
-  for (const auto& b : altPopTx.vbk_context) {
+  for (const auto& b : popdata.vbk_context) {
     tree.vbk().removeSubtree(b.getHash());
   }
 
   AltPayloads payloads;
-  payloads.altPopTx = altPopTx;
+  payloads.popData = popdata;
   payloads.containingBlock = hack_block;
 
   // find endorsed block
-  auto endorsed_hash = hasher(altPopTx.atv.transaction.publicationData.header);
+  auto endorsed_hash = hasher(popdata.atv.transaction.publicationData.header);
   auto endorsed_block_index = tree.getBlockIndex(endorsed_hash);
   if (!endorsed_block_index) {
     return false;
@@ -147,7 +147,7 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
   assert(ret);
 
   if (!tree.setState(hack_block.getHash(), state)) {
-    stored_atvs_.erase(altPopTx.atv.getId());
+    stored_atvs_.erase(popdata.atv.getId());
     return false;
   }
 
@@ -188,7 +188,7 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
   return true;
 }
 
-std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
+std::vector<PopData> MemPool::getPop(const AltBlock& current_block,
                                       AltTree& tree,
                                       ValidationState& state) {
   bool ret = tree.setState(current_block.getHash(), state);
@@ -203,10 +203,10 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   std::vector<std::pair<ATV::id_t, ATV>> sorted_atvs =
       getSortedATVs(stored_atvs_);
 
-  std::vector<AltPopTx> popTxs;
+  std::vector<PopData> popTxs;
   for (const auto& el : sorted_atvs) {
     auto& atv = el.second;
-    AltPopTx popTx;
+    PopData popTx;
     VbkBlock first_block =
         !atv.context.empty() ? atv.context[0] : atv.containingBlock;
 
@@ -234,8 +234,8 @@ std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
   return popTxs;
 }
 
-void MemPool::removePayloads(const std::vector<AltPopTx>& altPopTxs) {
-  for (const auto& tx : altPopTxs) {
+void MemPool::removePayloads(const std::vector<PopData>& PopDatas) {
+  for (const auto& tx : PopDatas) {
     // clear context
     for (const auto& b : tx.vbk_context) {
       block_index_.erase(b.getShortHash());

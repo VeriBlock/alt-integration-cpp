@@ -31,10 +31,15 @@ template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c);
 
 template <>
-bool BtcEndorsement::checkForDuplicates;
+inline bool VbkEndorsement::checkForDuplicates() {
+  return true;
+}
 
+// TODO: once mempool is integrated, remove this hacky thing
 template <>
-bool VbkEndorsement::checkForDuplicates;
+inline bool BtcEndorsement::checkForDuplicates() {
+  return false;
+}
 
 struct DummyEndorsement {
   using id_t = bool;

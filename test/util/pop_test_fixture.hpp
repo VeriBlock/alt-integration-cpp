@@ -134,25 +134,25 @@ struct PopTestFixture {
                                   const AltBlock& endorsed,
                                   const VbkBlock::hash_t& lastVbk,
                                   int VTBs = 0) {
-    AltPopTx altPopTx;
+    PopData popData;
 
     for (auto i = 0; i < VTBs; i++) {
       auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
       auto vbkcontaining = popminer.applyVTB(popminer.vbk(), vbkpoptx, state);
       auto newvtb = popminer.vbkPayloads.at(vbkcontaining.getHash()).back();
-      altPopTx.vtbs.push_back(newvtb);
+      popData.vtbs.push_back(newvtb);
     }
 
-    altPopTx.hasAtv = true;
-    altPopTx.atv = popminer.generateATV(transaction, lastVbk, state);
+    popData.hasAtv = true;
+    popData.atv = popminer.generateATV(transaction, lastVbk, state);
 
-    fillVbkContext(altPopTx.vbk_context,
+    fillVbkContext(popData.vbk_context,
                    lastVbk,
-                   altPopTx.atv.containingBlock.getHash(),
+                   popData.atv.containingBlock.getHash(),
                    popminer.vbk());
 
     AltPayloads alt;
-    alt.altPopTx = altPopTx;
+    alt.popData = popData;
     alt.containingBlock = containing;
     alt.endorsed = endorsed;
 
@@ -168,11 +168,11 @@ struct PopTestFixture {
         vbktx, containing, endorsed, getLastKnownVbkBlock(), VTBs);
   }
 
-  AltPayloads generateAltPayloads(const AltPopTx& popTx,
+  AltPayloads generateAltPayloads(const PopData& popTx,
                                   const AltBlock& containing,
                                   const AltBlock& endorsed) {
     AltPayloads alt;
-    alt.altPopTx = popTx;
+    alt.popData = popTx;
     alt.containingBlock = containing;
     alt.endorsed = endorsed;
 

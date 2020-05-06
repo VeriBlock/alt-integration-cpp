@@ -102,8 +102,8 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads1.altPopTx.vtbs = {vtbs1[1]};
-  fillVbkContext(altPayloads1.altPopTx.vbk_context,
+  altPayloads1.popData.vtbs = {vtbs1[1]};
+  fillVbkContext(altPayloads1.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs1[1].containingBlock.getHash(),
                  popminer.vbk());
@@ -137,8 +137,8 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads2.altPopTx.vtbs = {vtbs2[0]};
-  fillVbkContext(altPayloads2.altPopTx.vbk_context,
+  altPayloads2.popData.vtbs = {vtbs2[0]};
+  fillVbkContext(altPayloads2.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs2[0].containingBlock.getHash(),
                  popminer.vbk());
@@ -161,8 +161,8 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads3.altPopTx.vtbs = {vtbs1[0]};
-  fillVbkContext(altPayloads3.altPopTx.vbk_context,
+  altPayloads3.popData.vtbs = {vtbs1[0]};
+  fillVbkContext(altPayloads3.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs1[0].containingBlock.getHash(),
                  popminer.vbk());

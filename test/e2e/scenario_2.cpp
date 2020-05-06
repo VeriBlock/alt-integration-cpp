@@ -78,8 +78,8 @@ TEST_F(Scenario2, scenario_2) {
             BtcEndorsement::fromContainer(vtbs[1]).id);
 
   // store vtbs in different altPayloads
-  altPayloads1.altPopTx.vtbs = {vtbs[0]};
-  fillVbkContext(altPayloads1.altPopTx.vbk_context,
+  altPayloads1.popData.vtbs = {vtbs[0]};
+  fillVbkContext(altPayloads1.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs[0].containingBlock.getHash(),
                  popminer.vbk());
@@ -105,8 +105,8 @@ TEST_F(Scenario2, scenario_2) {
   AltPayloads altPayloads2 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
-  altPayloads2.altPopTx.vtbs = {vtbs[1]};
-  fillVbkContext(altPayloads2.altPopTx.vbk_context,
+  altPayloads2.popData.vtbs = {vtbs[1]};
+  fillVbkContext(altPayloads2.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs[1].containingBlock.getHash(),
                  popminer.vbk());

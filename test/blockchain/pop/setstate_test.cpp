@@ -37,10 +37,11 @@ TEST_F(SetStateTest, SetStateGenesis) {
 TEST_F(SetStateTest, AddPayloadsInvalid) {
   mineAltBlocks(100, chain);
   const int VTBs = 1;
+  ASSERT_TRUE(alttree.setState(chain[0].hash, state));
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
   auto e90c100 = endorseAltBlock(chain[90], chain[100], VTBs);
   // break ATV
-  e90c100.altPopTx.atv.containingBlock.previousBlock = uint96();
+  e90c100.popData.atv.containingBlock.previousBlock = uint96();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
   ASSERT_TRUE(alttree.getBlockIndex(chain[100].hash));
   ASSERT_TRUE(alttree.addPayloads(chain[100].hash, {e90c100}, state));
@@ -49,7 +50,8 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
   ASSERT_EQ(alttree.btc().getBestChain().tip()->height, 0);
   ASSERT_EQ(alttree.vbk().getBestChain().tip()->height, 0);
-  ASSERT_EQ(alttree.getBlockIndex(chain[100].hash)->status, BLOCK_VALID_TREE | BLOCK_FAILED_POP);
+  ASSERT_EQ(alttree.getBlockIndex(chain[100].hash)->status,
+            BLOCK_VALID_TREE | BLOCK_FAILED_POP);
 
   auto next = generateNextBlock(chain[100]);
   ValidationState state2;
@@ -62,6 +64,8 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
 
 TEST_F(SetStateTest, SetStateNextChainBlockNoPayloads) {
   mineAltBlocks(100, chain);
+  ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[100].hash);
+  ASSERT_TRUE(alttree.setState(chain[0].hash, state));
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
 }
 

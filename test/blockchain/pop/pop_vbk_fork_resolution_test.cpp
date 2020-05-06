@@ -9,16 +9,6 @@ using namespace altintegration;
 
 struct PopVbkForkResolution : public ::testing::Test {
   MockMiner popminer;
-
-  void SetUp() override {
-    BtcEndorsement::checkForDuplicates = true;
-    VbkEndorsement::checkForDuplicates = true;
-  }
-
-  void TearDown() override {
-    BtcEndorsement::checkForDuplicates = false;
-    VbkEndorsement::checkForDuplicates = true;
-  }
 };
 
 TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
