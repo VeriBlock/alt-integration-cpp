@@ -15,6 +15,7 @@ struct SetStateTest : public ::testing::Test, public PopTestFixture {
   void gen(int VTBs = 3) {
     mineAltBlocks(100, chain);
     const int ATVs = 1;
+    ASSERT_TRUE(alttree.setState(chain[0].hash, state));
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
     auto e90c100 = endorseAltBlock(chain[90], chain[100], VTBs);
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
