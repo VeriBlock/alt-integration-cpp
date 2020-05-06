@@ -28,7 +28,8 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 
   // endorse ALT block, at height 10
   AltBlock endorsedBlock = altchain[10];
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
   altchain.push_back(containingBlock);
 
@@ -37,6 +38,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
   // ALT has 11 blocks + endorsement block
   EXPECT_EQ(altchain.size(), 12);

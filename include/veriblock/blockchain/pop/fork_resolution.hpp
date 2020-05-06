@@ -13,12 +13,9 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/pop/pop_state_machine.hpp>
-#include <veriblock/blockchain/pop/pop_utils.hpp>
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/keystone_util.hpp>
-#include <veriblock/storage/endorsement_repository.hpp>
-#include <veriblock/storage/payloads_repository.hpp>
 
 namespace altintegration {
 
@@ -337,7 +334,8 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
 template <typename ProtectedBlock,
           typename ProtectedParams,
-          typename ProtectingBlockTree>
+          typename ProtectingBlockTree,
+          typename ProtectedBlockTree>
 struct PopAwareForkResolutionComparator {
   using protected_block_t = ProtectedBlock;
   using protected_block_hash_t = typename ProtectedBlock::hash_t;
@@ -350,234 +348,157 @@ struct PopAwareForkResolutionComparator {
   using endorsement_t = typename protected_block_t::endorsement_t;
   using protected_payloads_t = typename protected_index_t::payloads_t;
   using sm_t = PopStateMachine<ProtectingBlockTree,
+                               ProtectedBlockTree,
                                BlockIndex<protected_block_t>,
                                protected_params_t>;
 
   PopAwareForkResolutionComparator(ProtectingBlockTree tree,
                                    const protecting_params_t& protectingParams,
                                    const protected_params_t& protectedParams)
-      : tree_(std::move(tree)),
+      : ing_(std::move(tree)),
         protectedParams_(&protectedParams),
         protectingParams_(&protectingParams) {
     assert(protectedParams.getKeystoneInterval() > 0);
   }
 
-  PopAwareForkResolutionComparator(
-      const PopAwareForkResolutionComparator& comparator) = default;
+  ProtectingBlockTree& getProtectingBlockTree() { return ing_; }
+  const ProtectingBlockTree& getProtectingBlockTree() const { return ing_; }
 
-  PopAwareForkResolutionComparator& operator=(
-      const PopAwareForkResolutionComparator& comparator) {
-    this->index_ = comparator.index_;
-    this->tree_ = comparator.tree_;
-    return *this;
-  }
+  //! finds a path between current ed's best chain and 'to', and applies all
+  //! commands in between
+  bool setState(ProtectedBlockTree& ed,
+                protected_index_t& to,
+                ValidationState& state) {
+    auto* currentActive = ed.getBestChain().tip();
+    assert(currentActive && "should be bootstrapped");
 
-  ProtectingBlockTree& getProtectingBlockTree() { return tree_; }
-  const ProtectingBlockTree& getProtectingBlockTree() const { return tree_; }
-  const protected_index_t* getIndex() const { return index_; }
-
-  void removePayloads(protected_index_t& index,
-                      const std::vector<protected_payloads_t>& payloads) {
-    ValidationState state;
-    sm_t sm(tree_, index_, *protectedParams_);
-    bool ret = false;
-    if (index.pprev != nullptr) {
-      ret = sm.unapplyAndApply(*index.pprev, state);
-      assert(ret);
-    } else {
-      ret = sm.unapplyAndApply(index, state);
-      assert(ret);
-      sm.unapplyContext(index);
-    }
-    // remove all endorsements and context blocks related to given payloads, in
-    // reverse order (this should be faster)
-    std::for_each(
-        payloads.rbegin(), payloads.rend(), [&](const protected_payloads_t& p) {
-          if (p.containsEndorsements()) {
-            removeEndorsement(index, p.getEndorsementId());
-          }
-          removeContextFromBlockIndex(index, p);
-        });
-
-    // apply remaining context from this block
-    ret = sm.applyContext(index, state);
-    assert(ret);
-  }
-
-  bool addPayloads(protected_index_t& index,
-                   const std::vector<protected_payloads_t>& payloads,
-                   ValidationState& state) {
-    return tryValidateWithResources(
-        [&]() -> bool {
-          if (index_ != index.pprev) {
-            // set state machine to "previous state"
-            bool ret = setState(*index.pprev, state);
-            assert(ret && "previous payloads should be always valid");
-            (void)ret;
-          }
-
-          if (payloads.empty()) {
-            if (index_ == index.pprev) {
-              // we added a block which does not contain payloads and it is
-              // right after our current state
-              index_ = &index;
-              return true;
-            }
-          }
-
-          assert(index_ == index.pprev);
-
-          // set initial state machine state = current index
-          sm_t sm(tree_, &index, *protectedParams_, index_->height);
-          for (size_t i = 0, size = payloads.size(); i < size; i++) {
-            auto& c = payloads[i];
-
-            // containing block must be correct (current)
-            if (c.getContainingBlock().getHash() != index.getHash()) {
-              return state.Invalid("bad-containing-block", i);
-            }
-
-            // we need to add context blocks to current block index, before
-            // applyContext
-            addContextToBlockIndex(index, c, sm.tree());
-
-            // first, check if context is valid.
-            if (!sm.applyContext(index, state)) {
-              removeContextFromBlockIndex(index, c);
-              return state.Invalid("apply-context", i);
-            }
-
-            if (c.containsEndorsements()) {
-              if (!checkAndAddEndorsement(index,
-                                          c.getEndorsement(),
-                                          sm.tree(),
-                                          *protectedParams_,
-                                          state)) {
-                return state.Invalid("check-endorsement", i);
-              }
-            }
-          }
-
-          // no state change have been made
-          assert(&index == sm.index());
-
-          // update current state
-          index_ = &index;
-
-          return true;
-        },
-        [&] { removePayloads(index, payloads); });
-  }
-
-  bool setState(protected_index_t& index, ValidationState& state) {
-    // if previous state is unknown, set new state as current
-    if (index_ == nullptr) {
-      index_ = &index;
-      return true;
+    sm_t sm(ed, ing_);
+    if (to.pprev && to.pprev == currentActive) {
+      return sm.apply(*currentActive, to, state);
     }
 
-    if (index_ == &index) {
-      // noop
-      return true;
+    Chain<protected_index_t> chain(0, currentActive);
+    auto* forkBlock = chain.findFork(&to);
+    if (!forkBlock) {
+      // we can't find 'to' in fork. maybe it is one of 'next' blocks?
+      if (to.getAncestor(currentActive->height) != currentActive) {
+        // can not find path to that block...
+        return false;
+      }
+
+      return sm.apply(*currentActive, to, state);
     }
 
-    auto temp = tree_;
-    sm_t sm(temp, index_, *protectedParams_);
-    if (!sm.unapplyAndApply(index, state)) {
-      return state.Invalid("pop-comparator-unapply-apply");
-    }
-
-    tree_ = std::move(temp);
-    index_ = sm.index();
-
-    return true;
+    sm.unapply(*currentActive, *forkBlock);
+    return sm.apply(*forkBlock, to, state);
   }
 
-  int comparePopScore(const Chain<protected_index_t>& chainA,
-                      const Chain<protected_index_t>& chainB) {
+  int comparePopScore(ProtectedBlockTree& ed,
+                      protected_index_t& indexNew,
+                      ValidationState& state) {
+    assert(indexNew.isValid());
+
+    auto currentBest = ed.getBestChain();
+    auto bestTip = currentBest.tip();
+    assert(bestTip);
+
+    // this function is ALWAYS called on FORKS
+    assert(indexNew.getAncestor(bestTip->height) != bestTip);
+
+    auto ki = ed.getParams().getKeystoneInterval();
+    const auto* forkKeystone =
+        currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
+    if (!forkKeystone) {
+      // no fork keystone found. this can happen during bootstrap
+      return 0;
+    }
+
+    bool AcrossedKeystoneBoundary =
+        isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki);
+    bool BcrossedKeystoneBoundary =
+        isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
+    if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
+      // chans are equal in terms of POP
+      return 0;
+    }
+
+    // [vbk fork point keystone ... current tip]
+    Chain<protected_index_t> chainA(forkKeystone->height, currentBest.tip());
+    // [vbk fork point keystone... new block]
+    Chain<protected_index_t> chainB(forkKeystone->height, &indexNew);
+
     // chains are not empty and chains start at the same block
     assert(chainA.first() != nullptr && chainA.first() == chainB.first());
     // first block is a keystone
     assert(isKeystone(chainA.first()->height,
                       protectedParams_->getKeystoneInterval()));
 
-    ValidationState state;
+    // we ALWAYS compare currently applied chain (chainA) and other chain
+    // (chainB)
+    assert(chainA.tip() == bestTip);
 
-    auto minHeight = std::min(index_->height, chainA.first()->height);
+    sm_t sm(ed, ing_, chainA.first()->height);
 
-    // make a tree copy
-    auto temp = tree_;
-    sm_t sm(temp, index_, *protectedParams_, minHeight);
-    // try set current state to chain A
-    if (!sm.unapplyAndApply(*chainA.tip(), state)) {
-      // failed - try set state to chain B
-      if (!sm.unapplyAndApply(*chainB.tip(), state)) {
-        // failed - this should never happen.
-        // during fork resolution we should always compare one valid chain to
-        // another potentially valid (may be invalid, we'll find out this during
-        // fork resolution).
-        throw std::logic_error(
-            "PopAwareForkResolution::comparePopScore both chains have invalid "
-            "payloads");
-      }
-
-      // chain B is better, because chain A contains bad payloads, and chain B
-      // doesn't
-      return -1;
-    }
-
-    // 'temp' now corresponds to chain A.
+    // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - fork
-    // point at keystone)
-    if (!sm.apply(*chainB.tip(), state)) {
+    // point at keystone, so exclude it during 'apply')
+    if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
       // chain A has valid payloads, and chain B has invalid payloads
       // chain A is better
+
+      // chain B has been unapplied already
+      // invalid block in chain B has been invalidated already
       return 1;
     }
 
-    // now 'temp' contains payloads from both chains
+    // now tree contains payloads from both chains
 
     // rename
-    const auto& gpkc = internal::getProtoKeystoneContext<protected_block_t,
-                                                         protecting_block_t,
-                                                         protecting_params_t,
-                                                         protected_params_t>;
-    const auto& gkc =
+    const auto& filter1 = internal::getProtoKeystoneContext<protected_block_t,
+                                                            protecting_block_t,
+                                                            protecting_params_t,
+                                                            protected_params_t>;
+    const auto& filter2 =
         internal::getKeystoneContext<protecting_block_t, protecting_params_t>;
 
-    /// filter chainA
-    auto pkcChain1 = gpkc(chainA, temp, *protectedParams_);
-    auto kcChain1 = gkc(pkcChain1, temp);
+    // filter chainA
+    auto pkcChain1 = filter1(chainA, ing_, *protectedParams_);
+    auto kcChain1 = filter2(pkcChain1, ing_);
 
-    /// filter chainB
-    auto pkcChain2 = gpkc(chainB, temp, *protectedParams_);
-    auto kcChain2 = gkc(pkcChain2, temp);
+    // filter chainB
+    auto pkcChain2 = filter1(chainB, ing_, *protectedParams_);
+    auto kcChain2 = filter2(pkcChain2, ing_);
 
-    // do not update current tree, just abandon 'temp' tree
-
-    return internal::comparePopScoreImpl<protected_params_t>(
+    // current tree contains both chains.
+    int result = internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, *protectedParams_);
+    if (result >= 0) {
+      // chain A remains best. unapply B. A remains applied
+      sm.unapply(*chainB.tip(), *chainB.first());
+    } else {
+      // chain B is better. unapply A. B remains applied
+      sm.unapply(*chainA.tip(), *chainA.first());
+    }
+
+    return result;
   }
 
   bool operator==(const PopAwareForkResolutionComparator& o) const {
-    return index_ == o.index_ && tree_ == o.tree_;
+    return ing_ == o.ing_;
   }
 
   std::string toPrettyString(size_t level = 0) const {
     std::ostringstream ss;
     std::string pad(level, ' ');
     ss << pad << "Comparator{\n";
-    ss << pad << "{index=\n";
-    ss << pad << (index_ ? index_->toPrettyString(2) : "  <empty>") << "}\n";
     ss << pad << "{tree=\n";
-    ss << tree_.toPrettyString(level + 2);
+    ss << ing_.toPrettyString(level + 2);
     ss << "}";
     return ss.str();
   }
 
  private:
-  ProtectingBlockTree tree_;
-  protected_index_t* index_ = nullptr;
+  ProtectingBlockTree ing_;
 
   const protected_params_t* protectedParams_;
   const protecting_params_t* protectingParams_;

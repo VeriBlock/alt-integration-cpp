@@ -34,13 +34,14 @@ TEST_F(Scenario7, scenario_7) {
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVTBContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   popminer.mineBtcBlocks(100);
   popminer.mineVbkBlocks(54);
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock1));
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
   ATV atv1 = popminer.generateATV(tx1, containingVbkBlock1->getHash(), state);
 
   vbkTip = popminer.vbk().getBestChain().tip();
@@ -53,10 +54,11 @@ TEST_F(Scenario7, scenario_7) {
   auto* containingVbkBlock2 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
   VTB vtb2 = popminer.vbkPayloads[containingVbkBlock2->getHash()][0];
-  fillVTBContext(vtb2, vbkTip->getHash(), popminer.vbk());
+  fillVbkContext(vtb2, vbkTip->getHash(), popminer.vbk());
 
   AltBlock endorsedBlock2 = chain[5];
-  VbkTx tx2 = popminer.endorseAltBlock(generatePublicationData(endorsedBlock2));
+  VbkTx tx2 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer.generateATV(tx2, containingVbkBlock2->getHash(), state);
 
   PopData popData1{0, {}, true, atv1, {vtb1}};

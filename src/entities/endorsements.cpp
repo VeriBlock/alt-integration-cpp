@@ -9,13 +9,6 @@
 
 namespace altintegration {
 
-// TODO(Bogdan): used temporarily to disable duplication validation of VTBs
-template <>
-bool BtcEndorsement::checkForDuplicates = false;
-
-template <>
-bool VbkEndorsement::checkForDuplicates = true;
-
 template <>
 BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
   BtcEndorsement e;
@@ -42,18 +35,16 @@ VbkEndorsement VbkEndorsement::fromContainer(const AltPayloads& c) {
 
 template <>
 BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c) {
-  WriteStream stream;
-  c.transaction.bitcoinTransaction.toVbkEncoding(stream);
-  c.transaction.blockOfProof.toRaw(stream);
-  return sha256(stream.data());
+  auto left = c.transaction.bitcoinTransaction.getHash();
+  auto right = c.transaction.blockOfProof.getHash();
+  return sha256(left, right);
 }
 
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c) {
-  WriteStream stream;
-  c.popData.atv.transaction.toRaw(stream);
-  c.popData.atv.containingBlock.toRaw(stream);
-  return sha256(stream.data());
+  auto left = c.popData.atv.transaction.getHash();
+  auto right = c.popData.atv.containingBlock.getHash();
+  return sha256(left, right);
 }
 
 }  // namespace altintegration

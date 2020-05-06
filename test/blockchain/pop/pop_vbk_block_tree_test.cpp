@@ -39,8 +39,6 @@ TEST_F(VbkBlockTreeTestFixture, FilterChainForForkResolution) {
   using namespace internal;
 
   size_t numVbkBlocks = 200ull;
-  ASSERT_EQ(popminer.vbk().getComparator().getIndex(),
-            popminer.vbk().getBestChain().tip());
   popminer.mineVbkBlocks(numVbkBlocks);
 
   auto& best = popminer.vbk().getBestChain();

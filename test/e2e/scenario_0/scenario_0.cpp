@@ -107,9 +107,7 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(endorsedPrev, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(endorsed, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
-  ASSERT_FALSE(alt->addPayloads(containing, {payloads}, state));
-  ASSERT_EQ(
-      "bad-alt-payloads-stateful+apply-context+0+alt-accept-block+0+bad-prev-"
-      "block",
-      state.GetPath());
+  ASSERT_TRUE(alt->addPayloads(containing.hash, {payloads}, state));
+  ASSERT_FALSE(alt->setState(containing.hash, state));
+  ASSERT_EQ("bad-containing", state.GetPath());
 }
