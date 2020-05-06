@@ -100,6 +100,12 @@ void VbkBlockTree::removePayloads(const block_t& block,
                            hash.toHex());
   }
 
+  if (!index->pprev) {
+    // we do not add payloads to genesis block, therefore we do not have to
+    // remove them
+    return;
+  }
+
   if (!index->isValid()) {
     // adding payloads to an invalid block will not result in a state change
     return;
@@ -107,6 +113,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   bool isOnActiveChain = activeChain_.contains(index);
   if (isOnActiveChain) {
+    assert(index->pprev && "can not remove payloads from genesis block");
     ValidationState dummy;
     bool ret = setTip(*index->pprev, dummy, false);
     assert(ret);
@@ -145,6 +152,11 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   if (!index) {
     return state.Invalid("bad-containing",
                          "Can not find VTB containing block: " + hash.toHex());
+  }
+
+  if (!index->pprev) {
+    return state.Invalid("bad-containing-prev",
+                         "It is forbidden to add payloads to bootstrap block");
   }
 
   if (!index->isValid()) {

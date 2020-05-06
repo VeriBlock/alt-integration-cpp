@@ -57,6 +57,11 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
     return state.Invalid("bad-block", "Can't find containing block");
   }
 
+  if (!index->pprev) {
+    return state.Invalid("bad-containing-prev",
+                         "It is forbidden to add payloads to bootstrap block");
+  }
+
   if (!index->isValid()) {
     return state.Invalid("bad-chain",
                          "Containing block has been marked as invalid");
@@ -188,7 +193,11 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hcurrent,
   ValidationState state;
   // set current state to match 'hcurrent'
   bool ret = setTip(*index, state, false);
-  assert(ret);
+  if (!ret) {
+    throw std::logic_error(
+        "AltTree: setState(hcurrent) failed. This means that current active "
+        "chain failed. Most likely caller made a mistake.");
+  }
 
   // compare current active chain to other chain
   int result = cmp_.comparePopScore(*this, *other, state);
