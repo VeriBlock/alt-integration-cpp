@@ -153,7 +153,7 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
   }
 
   // edge case: connected block is one of 'next' blocks after our current best
-  if(indexNew.getAncestor(currentTip->height) == currentTip) {
+  if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
     this->setTip(indexNew, state, false);
     return;
