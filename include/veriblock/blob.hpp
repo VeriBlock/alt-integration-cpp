@@ -46,7 +46,7 @@ struct Blob {
     assign(str);
   }
   template <size_t M>
-  Blob(const Blob<M>& other) {
+  explicit Blob(const Blob<M>& other) {
     data_.fill(0);
     assign(other);
   }
@@ -157,6 +157,12 @@ struct Blob {
     return m;
   }
 
+  uint64_t getLow64() const {
+    const uint32_t* p1 = (uint32_t*)(&data_[0]);
+    const uint32_t* p2 = (uint32_t*)(&data_[4]);
+    return *p1 | (uint64_t)*p2 << 32;
+  }
+
  protected:
   inline void assign(Slice<const uint8_t> slice) {
     if (slice.size() > N) {
@@ -195,8 +201,19 @@ namespace std {
 
 template <size_t N>
 struct hash<altintegration::Blob<N>> {
+  size_t operator()(std::true_type, const altintegration::Blob<N>& x) const {
+    return x.getLow64();
+  }
+
+  size_t operator()(std::false_type, const altintegration::Blob<N>& x) const {
+    return std::hash<std::string>{}(std::string(x.begin(), x.end()));
+  }
+
   size_t operator()(const altintegration::Blob<N>& x) const {
-    return std::hash<std::string>{}(std::string{x.begin(), x.end()});
+    // if N >= 8, use getLow64 impl
+    // else use std::string hasher
+    typename std::conditional<N >= 8, std::true_type, std::false_type>::type f;
+    return operator()(f, x);
   }
 };
 }  // namespace std

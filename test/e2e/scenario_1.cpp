@@ -220,8 +220,8 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(btcBtip->getAncestor(55)->getHash(),
             alttree.vbk().btc().getBestChain().tip()->getHash());
   // expect that ALTVBK tip is vBc71
-  EXPECT_EQ(vbkBtip->getAncestor(71)->getHash(),
-            alttree.vbk().getBestChain().tip()->getHash());
+  EXPECT_EQ(*vbkBtip->getAncestor(71),
+            *alttree.vbk().getBestChain().tip());
   // expect that ALT tip is 102
   EXPECT_EQ(altchain.size(), 103);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 102);
@@ -231,7 +231,7 @@ TEST_F(Scenario1, scenario_1) {
 
   // remove ALT block 102
   auto lastBlock = *altchain.rbegin();
-  alttree.invalidateBlockByHash(lastBlock.getHash());
+  alttree.removeSubtree(lastBlock.getHash());
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 101);
@@ -245,8 +245,8 @@ TEST_F(Scenario1, scenario_1) {
       checkBlocksExisting(alttree.vbk().btc(), btcAtip->getAncestor(53));
   // expect that ALTBTC tip is A53
   EXPECT_EQ(blockCount, 54);
-  EXPECT_EQ(btcAtip->getAncestor(53)->getHash(),
-            alttree.vbk().btc().getBestChain().tip()->getHash());
+  EXPECT_EQ(*btcAtip->getAncestor(53),
+            *alttree.vbk().btc().getBestChain().tip());
 
   // expect that ALTVBK tree has all blocks from VBK chain A, until vAc71,
   // including
@@ -261,7 +261,7 @@ TEST_F(Scenario1, scenario_1) {
   // remove ALT block 101
   EXPECT_TRUE(altTreeFindVtb(vtbsVBA71[0]));
   lastBlock = *altchain.rbegin();
-  alttree.invalidateBlockByHash(lastBlock.getHash());
+  alttree.invalidateBlock(lastBlock.getHash());
   altchain.pop_back();
 
   // expect that ALT is at 100

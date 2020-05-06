@@ -55,7 +55,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   VbkEndorsement endorsement2 = VbkEndorsement::fromContainer(altPayloads2);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state)) << state.toString();
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
@@ -90,7 +90,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   // remove block
   AltBlock removeBlock = chain[20];
-  alttree.invalidateBlockByHash(removeBlock.getHash());
+  alttree.invalidateBlock(removeBlock.getHash());
 
   containingBlockIndex3 = alttree.getBlockIndex(endorsement3.containingHash);
   EXPECT_TRUE(

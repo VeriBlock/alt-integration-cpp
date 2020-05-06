@@ -7,14 +7,14 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
 #include <memory>
+#include <set>
 #include <unordered_map>
 #include <vector>
-#include <veriblock/validation_state.hpp>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
+#include "veriblock/validation_state.hpp"
 #include "veriblock/write_stream.hpp"
 
 namespace altintegration {
@@ -51,7 +51,10 @@ struct BlockIndex {
   using protecting_block_t = typename Block::protecting_block_t;
 
   //! pointer to a previous block
-  BlockIndex* pprev{};
+  BlockIndex* pprev = nullptr;
+
+  //! a set of pointers for forward iteration
+  std::set<BlockIndex*> pnext{};
 
   //! total amount of work in the chain up to and including this
   //! block
@@ -101,6 +104,8 @@ struct BlockIndex {
 
   void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
 
+  bool hasFlags(enum BlockStatus s) { return this->status & s; }
+
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }
   uint32_t getDifficulty() const { return header->getDifficulty(); }
@@ -140,6 +145,8 @@ struct BlockIndex {
            "BlockIndex{height=" + std::to_string(height) +
            ", hash=" + HexStr(getHash()) +
            ", prev=" + (pprev ? HexStr(pprev->getHash()) : "<empty>") +
+           ", next=" + std::to_string(pnext.size()) +
+           ", status=" + std::to_string(status) +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
            ", containsEndorsements=" +
            std::to_string(containingEndorsements.size()) + "}";

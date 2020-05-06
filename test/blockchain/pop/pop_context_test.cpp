@@ -66,7 +66,7 @@ struct PopContextFixture : public ::testing::Test {
   }
 
   BtcBlock::hash_t lastKnownLocalBtcBlock() {
-    auto tip = local.getBestChain().tip();
+    auto tip = local.btc().getBestChain().tip();
     EXPECT_TRUE(tip);
     return tip->getHash();
   }

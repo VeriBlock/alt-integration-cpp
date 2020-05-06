@@ -41,21 +41,20 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   VbkBlockTree(const VbkChainParams& vbkp, const BtcChainParams& btcp)
       : VbkTree(vbkp), cmp_(BtcTree(btcp), btcp, vbkp) {}
 
-  VbkBlockTree(const VbkBlockTree& tree) = default;
-
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
 
+  void removeSubtree(const hash_t& h);
+  void removeSubtree(index_t&);
+
   bool bootstrapWithChain(height_t startHeight,
                           const std::vector<block_t>& chain,
                           ValidationState& state) override;
 
   bool bootstrapWithGenesis(ValidationState& state) override;
-
-  void invalidateBlockByHash(const hash_t& blockHash) override;
 
   bool addPayloads(const block_t& block,
                    const std::vector<payloads_t>& payloads,

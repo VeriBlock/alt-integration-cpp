@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "veriblock/blockchain/alt_chain_params.hpp"
+#include "veriblock/blockchain/base_block_tree.hpp"
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/chain.hpp"
 #include "veriblock/blockchain/pop/fork_resolution.hpp"
@@ -32,7 +33,8 @@ template <>
 void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
                                  const BlockIndex<AltBlock>::payloads_t& p);
 
-struct AltTree {
+struct AltTree : public BaseBlockTree<AltBlock> {
+  using base = BaseBlockTree<AltBlock>;
   using alt_config_t = AltChainParams;
   using vbk_config_t = VbkChainParams;
   using btc_config_t = BtcChainParams;
@@ -55,9 +57,6 @@ struct AltTree {
         cmp_(VbkBlockTree(vbk_config, btc_config), vbk_config, alt_config),
         rewards_(alt_config) {}
 
-  index_t* getBlockIndex(const std::vector<uint8_t>& hash) const;
-  index_t* getBlockIndexFailed(const std::vector<uint8_t>& hash) const;
-
   //! before any use, bootstrap the three with ALT bootstrap block.
   //! may return false, if bootstrap block is invalid
   bool bootstrap(ValidationState& state);
@@ -67,10 +66,10 @@ struct AltTree {
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
   // set cmp_ state to the previous block of the provided block
-  void invalidateBlockByHash(const hash_t& blockHash);
+  void invalidateBlock(const hash_t& blockHash, enum BlockStatus reason = BLOCK_FAILED_BLOCK);
 
   // set cmp_ state to the previous block of the provided block
-  void invalidateBlockByIndex(index_t& blockIndex);
+  void invalidateBlock(index_t& blockIndex, enum BlockStatus reason = BLOCK_FAILED_BLOCK);
 
   //! add payloads to any of existing blocks in block tree.
   //! may return false, if payloads statelessly, or statefully invalid.
@@ -116,48 +115,18 @@ struct AltTree {
     return cmp_.getProtectingBlockTree().btc();
   }
 
-  const std::unordered_set<index_t*>& getForkChains() const {
-    return chainTips_;
-  }
   const AltChainParams& getParams() const { return *alt_config_; }
-  const block_index_t& getValidBlocks() const { return valid_blocks; }
-  const block_index_t& getFailedBlocks() const { return failed_blocks; }
 
-  bool operator==(const AltTree& o) const {
-    return chainTips_ == o.chainTips_ && valid_blocks == o.valid_blocks &&
-           failed_blocks == o.failed_blocks && cmp_ == o.cmp_;
+  bool operator==(const AltTree&) const {
+    return false;  // TODO
   }
 
-  std::string toPrettyString(size_t level = 0) const {
-    std::ostringstream ss;
-    std::string pad(level, ' ');
-    ss << pad << "AltTree{valid=" << valid_blocks.size()
-       << ", failed=" << failed_blocks.size() << "\n";
-    ss << pad << "{valid=\n";
-    for (const auto& b : valid_blocks) {
-      ss << b.second->toPrettyString(level + 2) << "\n";
-    }
-    ss << pad << "}\n";
-    ss << pad << "{failed=\n";
-    for (const auto& b : failed_blocks) {
-      ss << b.second->toPrettyString(level + 2) << "\n";
-    }
-    ss << pad << "}\n";
-    ss << pad << "{tips=\n";
-    for (const auto& b : chainTips_) {
-      ss << b->toPrettyString(level + 2) << "\n";
-    }
-    ss << pad << "}\n";
-    ss << pad << "{comparator=\n";
-    ss << cmp_.toPrettyString(level + 2) << "\n";
-    ss << pad << "}\n";
-    return ss.str();
-  }
+  std::string toPrettyString(size_t level = 0) const;
+
+  void removeSubtree(index_t&);
+  void removeSubtree(const hash_t&);
 
  protected:
-  std::unordered_set<index_t*> chainTips_{};
-  block_index_t valid_blocks{};
-  block_index_t failed_blocks{};
   const alt_config_t* alt_config_;
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
@@ -165,13 +134,6 @@ struct AltTree {
   PopRewards rewards_;
 
   index_t* insertBlockHeader(const AltBlock& block);
-
-  //! same as unix `touch`: create-and-get if not exists, get otherwise
-  index_t* touchBlockIndex(const hash_t& blockHash);
-
-  void addToChains(index_t* block_index);
-
-  void doInvalidateBlock(const hash_t& hash);
 
   bool addPayloads(PopForkComparator& cmp,
                    const AltBlock& containingBlock,

@@ -76,6 +76,10 @@ struct PopStateMachine {
     current = fork.next(current);
 
     while (current) {
+      if(!current->isValid()) {
+        return false;
+      }
+
       if (!applyContext(*current, state)) {
         return state.Invalid("pop-state-apply-context");
       }
