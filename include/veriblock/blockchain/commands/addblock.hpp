@@ -39,7 +39,7 @@ struct AddBlock : public Command {
     }
 
     if (index->refCounter == 0) {
-      return tree_->removeSubtree(block_->getHash());
+      return tree_->removeSubtree(hash);
     }
 
     --index->refCounter;
