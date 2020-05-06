@@ -116,9 +116,7 @@ struct BaseBlockTree {
     // after invalidation, try to add tip
     tryAddTip(toBeInvalidated.pprev);
 
-    if (isOnMainChain) {
-      updateTips(shouldDetermineBestChain);
-    }
+    updateTips(shouldDetermineBestChain);
   }
 
  protected:
