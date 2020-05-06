@@ -90,72 +90,66 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
                             AltPopTx& altPopTx,
                             AltTree& tree,
                             ValidationState& state) {
-  (void)hack_block;
-  (void)altPopTx;
-  (void)tree;
-  (void)state;
-  (void)hasher;
+  bool ret = tree.acceptBlock(hack_block, state);
+  assert(ret);
 
-  //  bool ret = tree.acceptBlock(hack_block, state);
-  //  assert(ret);
-  //
-  //  // apply vbk_context
-  //  for (const auto& b : altPopTx.vbk_context) {
-  //    ret = tree.vbk().acceptBlock(b, state);
-  //    assert(ret);
-  //  }
-  //
-  //  auto genesis_height = tree.vbk().getParams().getGenesisBlock().height;
-  //  auto settlement_interval =
-  //      tree.vbk().getParams().getEndorsementSettlementInterval();
-  //  // check VTB endorsements
-  //  for (auto it = altPopTx.vtbs.begin(); it != altPopTx.vtbs.end();) {
-  //    VTB& vtb = *it;
-  //    auto* containing_block_index =
-  //        tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
-  //
-  //    auto start_height = std::max(
-  //        genesis_height, containing_block_index->height -
-  //        settlement_interval);
-  //
-  //    auto endorsement = BtcEndorsement::fromContainer(vtb);
-  //    Chain<BlockIndex<VbkBlock>> chain(start_height, containing_block_index);
-  //    auto duplicate =
-  //        chain.findBlockContainingEndorsement(endorsement,
-  //        settlement_interval);
-  //
-  //    // invalid vtb
-  //    if (duplicate) {
-  //      // remove from storage
-  //      stored_vtbs_.erase(vtb.getId());
-  //
-  //      it = altPopTx.vtbs.erase(it);
-  //      continue;
-  //    }
-  //    ++it;
-  //  }
-  //
-  //  for (const auto& b : altPopTx.vbk_context) {
-  //    tree.vbk().removeSubtree(b.getHash());
-  //  }
-  //
-  //  AltPayloads payloads;
-  //  payloads.altPopTx = altPopTx;
-  //  payloads.containingBlock = hack_block;
-  //
-  //  // find endorsed block
-  //  auto endorsed_hash =
-  //  hasher(altPopTx.atv.transaction.publicationData.header); auto
-  //  endorsed_block_index = tree.getBlockIndex(endorsed_hash); if
-  //  (!endorsed_block_index) {
-  //    return false;
-  //  }
-  //  payloads.endorsed = *endorsed_block_index->header;
-  //
-  ////  if (!tree.addPayloads(hack_block, {payloads}, state)) {
-  ////    stored_atvs_.erase(altPopTx.atv.getId());
-  ////    return false;
-  ////  }
+  // apply vbk_context
+  for (const auto& b : altPopTx.vbk_context) {
+    ret = tree.vbk().acceptBlock(b, state);
+    assert(ret);
+  }
+
+  auto genesis_height = tree.vbk().getParams().getGenesisBlock().height;
+  auto settlement_interval =
+      tree.vbk().getParams().getEndorsementSettlementInterval();
+  // check VTB endorsements
+  for (auto it = altPopTx.vtbs.begin(); it != altPopTx.vtbs.end();) {
+    VTB& vtb = *it;
+    auto* containing_block_index =
+        tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
+
+    auto start_height = std::max(
+        genesis_height, containing_block_index->height - settlement_interval);
+
+    auto endorsement = BtcEndorsement::fromContainer(vtb);
+    Chain<BlockIndex<VbkBlock>> chain(start_height, containing_block_index);
+    auto duplicate =
+        chain.findBlockContainingEndorsement(endorsement, settlement_interval);
+
+    // invalid vtb
+    if (duplicate) {
+      // remove from storage
+      stored_vtbs_.erase(vtb.getId());
+
+      it = altPopTx.vtbs.erase(it);
+      continue;
+    }
+    ++it;
+  }
+
+  for (const auto& b : altPopTx.vbk_context) {
+    tree.vbk().removeSubtree(b.getHash());
+  }
+
+  AltPayloads payloads;
+  payloads.altPopTx = altPopTx;
+  payloads.containingBlock = hack_block;
+
+  // find endorsed block
+  auto endorsed_hash = hasher(altPopTx.atv.transaction.publicationData.header);
+  auto endorsed_block_index = tree.getBlockIndex(endorsed_hash);
+  if (!endorsed_block_index) {
+    return false;
+  }
+  payloads.endorsed = *endorsed_block_index->header;
+
+  ret = tree.addPayloads(hack_block, {payloads}, state);
+  assert(ret);
+
+  if (!tree.setState(hack_block.getHash(), state)) {
+    stored_atvs_.erase(altPopTx.atv.getId());
+    return false;
+  }
 
   return true;
 }
@@ -197,9 +191,9 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
 std::vector<AltPopTx> MemPool::getPop(const AltBlock& current_block,
                                       AltTree& tree,
                                       ValidationState& state) {
-  //  bool ret = tree.setState(current_block.getHash(), state);
-  //  (void)ret;
-  //  assert(ret);
+  bool ret = tree.setState(current_block.getHash(), state);
+  (void)ret;
+  assert(ret);
 
   AltBlock hack_block;
   hack_block.previousBlock = current_block.getHash();

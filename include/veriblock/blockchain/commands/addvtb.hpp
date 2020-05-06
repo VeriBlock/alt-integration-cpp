@@ -20,10 +20,6 @@ struct AddVTB : public Command {
   }
 
   bool Execute(ValidationState& state) override {
-    if (!tree_->vbk().getBlockIndex(vtb_.containingBlock.getHash())) {
-      return state.Invalid("unknown-containing");
-    }
-
     // add commands to VBK containing block
     return tree_->vbk().addPayloads(
         vtb_.containingBlock.getHash(), {vtb_}, state);

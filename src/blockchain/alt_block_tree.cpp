@@ -230,6 +230,8 @@ void payloadsToCommands<AltTree>(AltTree& tree,
 
   // third, add ATV endorsement
   if (p.altPopTx.hasAtv) {
+    addBlock(tree.vbk(), p.altPopTx.atv.containingBlock, commands);
+
     auto e = VbkEndorsement::fromContainerPtr(p);
     auto cmd =
         std::make_shared<AddVbkEndorsement>(tree.vbk(), tree, std::move(e));

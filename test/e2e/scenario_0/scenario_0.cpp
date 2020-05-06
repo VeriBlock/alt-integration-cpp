@@ -109,5 +109,5 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
   ASSERT_TRUE(alt->addPayloads(containing.hash, {payloads}, state));
   ASSERT_FALSE(alt->setState(containing.hash, state));
-  ASSERT_EQ("unknown-containing", state.GetPath());
+  ASSERT_EQ("bad-containing", state.GetPath());
 }

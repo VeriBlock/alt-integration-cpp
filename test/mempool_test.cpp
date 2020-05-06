@@ -138,6 +138,7 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(
       alttree.addPayloads(containingBlock.getHash(), {payloads}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
 
@@ -160,7 +161,10 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   auto* containingVbkBlock1 = popminer.mineVbkBlocks(1);
   ASSERT_EQ(popminer.vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer.vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVbkContext(vtb1.context, vbkparam.getGenesisBlock().getHash(), vtb1.containingBlock.getHash(), popminer.vbk());
+  fillVbkContext(vtb1.context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtb1.containingBlock.getHash(),
+                 popminer.vbk());
 
   popminer.mineBtcBlocks(100);
   popminer.mineVbkBlocks(54);
@@ -202,6 +206,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
 
@@ -269,6 +274,7 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
 
@@ -336,8 +342,6 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   EXPECT_EQ(v_popData[1].atv, atv2);
   EXPECT_EQ(v_popData[1].vtbs[0], vtb2);
 
-  // TODO: uncomment affter fixing bug with the payloads
-  /*
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   AltPayloads payloads1 =
@@ -348,8 +352,8 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(
       alttree.addPayloads(containingBlock, {payloads1, payloads2}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
-  */
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_6) {
@@ -416,8 +420,6 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   EXPECT_EQ(v_popData[1].atv, atv2);
   EXPECT_EQ(v_popData[1].vtbs[0], vtb2);
 
-  // TODO: uncomment affter fixing bug with the payloads
-  /*
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   AltPayloads payloads1 =
@@ -428,8 +430,8 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(
       alttree.addPayloads(containingBlock, {payloads1, payloads2}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
-  */
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_7) {
@@ -499,6 +501,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
 
@@ -586,6 +589,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
 
@@ -626,6 +630,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   mempool.removePayloads(v_popData);
@@ -686,6 +691,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads1}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // remove payloads from the mempool

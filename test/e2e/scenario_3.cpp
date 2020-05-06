@@ -77,13 +77,6 @@ TEST_F(Scenario3, scenario_3) {
   ASSERT_EQ(vtbs1.size(), 2);
   ASSERT_EQ(vtbs2.size(), 1);
 
-  fillVbkContext(
-      vtbs1[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVbkContext(
-      vtbs1[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVbkContext(
-      vtbs2[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-
   auto* btcContaininBlock1 =
       popminer.btc().getBlockIndex(vtbs1[0].transaction.blockOfProof.getHash());
   auto* btcContaininBlock2 =
@@ -97,7 +90,8 @@ TEST_F(Scenario3, scenario_3) {
   AltBlock endorsedBlock = chain[5];
 
   // Step 2
-  VbkTx tx = popminer.endorseAltBlock(generatePublicationData(endorsedBlock));
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   AltPayloads altPayloads1 = generateAltPayloads(
@@ -108,9 +102,15 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads1.popData.vtbs = {vtbs1[1]};
+  altPayloads1.altPopTx.vtbs = {vtbs1[1]};
+  fillVbkContext(altPayloads1.altPopTx.vbk_context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs1[1].containingBlock.getHash(),
+                 popminer.vbk());
+
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
   ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
   ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
@@ -137,9 +137,14 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads2.popData.vtbs = {vtbs2[0]};
+  altPayloads2.altPopTx.vtbs = {vtbs2[0]};
+  fillVbkContext(altPayloads2.altPopTx.vbk_context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs2[0].containingBlock.getHash(),
+                 popminer.vbk());
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip2->getHash());
   ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
@@ -156,9 +161,14 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer.vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads3.popData.vtbs = {vtbs1[0]};
+  altPayloads3.altPopTx.vtbs = {vtbs1[0]};
+  fillVbkContext(altPayloads3.altPopTx.vbk_context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs1[0].containingBlock.getHash(),
+                 popminer.vbk());
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
