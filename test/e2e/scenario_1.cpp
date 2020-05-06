@@ -129,22 +129,6 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     }
     return blockCount;
   }
-
-  bool altTreeFindVtb(const VTB& vtb) {
-    return altTreeFindVtb(vtb.containingBlock.getHash(), vtb);
-  }
-
-  bool altTreeFindVtb(const VbkBlock::hash_t& hash, const VTB& vtb) {
-    auto* index = alttree.vbk().getBlockIndex(hash);
-    EXPECT_NE(index, nullptr);
-    auto es = index->containingEndorsements;
-    for (const auto& e : es) {
-      if (e.second->id == BtcEndorsement::getId(vtb)) {
-        return true;
-      }
-    }
-    return false;
-  }
 };
 
 AltPayloads generateAltPayloadsEmpty(const AltBlock& containing,
@@ -248,17 +232,12 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 102);
 
   // Step 3
-  EXPECT_TRUE(altTreeFindVtb(vtbsVBB71[0]));
-
   // remove ALT block 102
   auto lastBlock = *altchain.rbegin();
-  std::cout << "A" << alttree.toPrettyString() << std::endl;
   alttree.removeSubtree(lastBlock.getHash());
-  std::cout << "B" << alttree.toPrettyString() << std::endl;
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 101);
-  EXPECT_FALSE(altTreeFindVtb(vtbsVBB71[0]));
 
   // expect that ALTBTC tree has all blocks from BTC chain A, until A53,
   // including
@@ -279,7 +258,6 @@ TEST_F(Scenario1, scenario_1) {
 
   // Step 4
   // remove ALT block 101
-  EXPECT_TRUE(altTreeFindVtb(vtbsVBA71[0]));
   lastBlock = *altchain.rbegin();
   alttree.removeSubtree(lastBlock.getHash());
   altchain.pop_back();
@@ -287,9 +265,6 @@ TEST_F(Scenario1, scenario_1) {
   // expect that ALT is at 100
   EXPECT_EQ(altchain.size(), 101);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 100);
-
-  // expect that VTB_vAc71 is removed
-  EXPECT_FALSE(altTreeFindVtb(vtbsVBA71[0]));
 
   // expect that ALTBTC is at bootstrap
   EXPECT_EQ(btcparam.getGenesisBlock().getHash(),

@@ -28,7 +28,6 @@ struct PopStateMachine {
       : ed_(ed), ing_(ing), startHeight_(startHeight) {}
 
   bool applyBlock(const index_t& index, ValidationState& state) {
-    printf("apply block   %s\n", index.toPrettyString().c_str());
     for (const auto& group : index.commands) {
       for (const auto& cmd : group) {
         if (!cmd->Execute(state)) {
@@ -40,7 +39,6 @@ struct PopStateMachine {
   }
 
   void unapplyBlock(const index_t& index) {
-    printf("unapply block %s\n", index.toPrettyString().c_str());
     auto& v = index.commands;
     std::for_each(v.rbegin(), v.rend(), [](const CommandGroup& group) {
       std::for_each(group.rbegin(), group.rend(), [](const CommandPtr& cmd) {
