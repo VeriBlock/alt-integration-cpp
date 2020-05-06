@@ -65,7 +65,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   popminer.mineVbkBlocks(*chainBtip, 1);
 
   // chain is still at chain A, because endorsement was erlier
-  EXPECT_EQ(popminer.vbk().getBestChain().tip(), Avbkcontaining1);
+  EXPECT_EQ(*popminer.vbk().getBestChain().tip(), *Avbkcontaining1);
 }
 
 TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
@@ -165,11 +165,10 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
       popminer.getBtcParams().getGenesisBlock().getHash());
 
   auto vbktip1 = popminer.vbk().getBestChain().tip();
-  auto vbktip2 = popminer.mineVbkBlocks(*vbkBlockTip2, 1);
+  ASSERT_THROW(popminer.mineVbkBlocks(*vbkBlockTip2, 1), std::domain_error);
   auto vbktip3 = popminer.vbk().getBestChain().tip();
 
   ASSERT_EQ(*vbktip1, *vbktip3) << "tip has been changed wrongly";
-  ASSERT_NE(*vbktip3, *vbktip2) << "tip has been changed wrongly";
 }
 
 TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
@@ -215,9 +214,8 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
 
   // mine the second the same endorsement
   auto vbktip1 = popminer.vbk().getBestChain().tip();
-  auto vbktip2 = popminer.mineVbkBlocks(1);
+  ASSERT_THROW(popminer.mineVbkBlocks(1), std::domain_error);
   auto vbktip3 = popminer.vbk().getBestChain().tip();
 
   ASSERT_EQ(*vbktip1, *vbktip3);
-  ASSERT_NE(*vbktip3, *vbktip2);
 }

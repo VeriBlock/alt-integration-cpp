@@ -44,6 +44,7 @@ struct PopTestFixture {
     for (size_t i = 0; i < num; i++) {
       auto next = generateNextBlock(*index->header);
       EXPECT_TRUE(alttree.acceptBlock(next, state));
+      EXPECT_TRUE(alttree.setState(next.getHash(), state));
       index = alttree.getBlockIndex(next.getHash());
     }
 

@@ -20,6 +20,7 @@ struct SetStateTest : public ::testing::Test, public PopTestFixture {
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
     ASSERT_TRUE(alttree.getBlockIndex(chain[100].hash));
     ASSERT_TRUE(alttree.addPayloads(chain[100].hash, {e90c100}, state));
+    ASSERT_TRUE(alttree.setState(chain[100].hash, state));
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[100].hash);
     ASSERT_EQ(alttree.btc().getBestChain().tip()->height, VTBs);
     ASSERT_EQ(alttree.vbk().getBestChain().tip()->height, VTBs + ATVs);
@@ -41,7 +42,8 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
   e90c100.altPopTx.atv.containingBlock.previousBlock = uint96();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
   ASSERT_TRUE(alttree.getBlockIndex(chain[100].hash));
-  ASSERT_FALSE(alttree.addPayloads(chain[100].hash, {e90c100}, state));
+  ASSERT_TRUE(alttree.addPayloads(chain[100].hash, {e90c100}, state));
+  ASSERT_FALSE(alttree.setState(chain[100].hash, state));
   // state has not been changed
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
   ASSERT_EQ(alttree.btc().getBestChain().tip()->height, 0);
