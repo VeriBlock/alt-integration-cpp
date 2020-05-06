@@ -76,8 +76,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     return addPayloads(containing.hash, payloads, state);
   }
 
-  int comparePopScore(const AltBlock::hash_t& current,
-                      const AltBlock::hash_t& other);
+  int comparePopScore(const AltBlock::hash_t& hleft,
+                      const AltBlock::hash_t& hright);
 
   /**
    * Calculate payouts for the altchain tip

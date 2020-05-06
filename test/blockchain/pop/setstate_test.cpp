@@ -74,10 +74,13 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
   const int ATVs = 1;
   gen(VTBs);
 
-  ASSERT_TRUE(alttree.setState(chain[99].hash, state));
-  ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[99].hash);
+  ASSERT_TRUE(alttree.setState(chain[60].hash, state));
+  ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[60].hash);
   ASSERT_EQ(alttree.btc().getBestChain().tip()->height, 0);
   ASSERT_EQ(alttree.vbk().getBestChain().tip()->height, 0);
+  ASSERT_EQ(alttree.comparePopScore(chain[60].hash, chain[100].hash), -1);
+  ASSERT_TRUE(alttree.setState(chain[60].hash, state)) << state.toString();
+  ASSERT_EQ(alttree.comparePopScore(chain[100].hash, chain[60].hash), 1);
 
   ASSERT_TRUE(alttree.setState(chain[100].hash, state)) << state.toString();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[100].hash);
