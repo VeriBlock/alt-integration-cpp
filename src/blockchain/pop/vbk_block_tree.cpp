@@ -4,7 +4,6 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/blockchain/commands/commands.hpp>
-#include <veriblock/blockchain/pop/pop_utils.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
 

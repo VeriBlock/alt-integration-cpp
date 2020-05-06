@@ -23,10 +23,27 @@ struct AddBlock : public Command {
       : tree_(&tree), block_(std::move(block)) {}
 
   bool Execute(ValidationState& state) override {
+    auto* index = tree_->getBlockIndex(block_->getHash());
+    if (index) {
+      index->refCounter++;
+      return true;
+    }
     return tree_->acceptBlock(block_, state);
   }
 
-  void UnExecute() override { tree_->removeSubtree(block_->getHash()); }
+  void UnExecute() override {
+    auto hash = block_->getHash();
+    auto* index = tree_->getBlockIndex(hash);
+    if (!index) {
+      return;
+    }
+
+    if (index->refCounter == 0) {
+      return tree_->removeSubtree(hash);
+    }
+
+    --index->refCounter;
+  }
 
   size_t getId() const override { return block_->getHash().getLow64(); }
 
