@@ -57,7 +57,9 @@ struct BaseBlockTree {
   void removeSubtree(index_t& toRemove, bool shouldDetermineBestChain = true) {
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
-    assert(prev);
+    if (!prev) {
+      throw std::logic_error("can not remove genesis block");
+    }
 
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
@@ -66,10 +68,7 @@ struct BaseBlockTree {
     }
 
     // remove this block from 'pnext' set of previous block
-    if (prev) {
-      prev->pnext.erase(&toRemove);
-    }
-
+    prev->pnext.erase(&toRemove);
     forEachNodePostorder<block_t>(
         toRemove, [&](index_t& next) { removeSingleBlock(next); });
 
