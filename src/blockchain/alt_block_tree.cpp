@@ -62,6 +62,14 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
                          "Containing block has been marked as invalid");
   }
 
+  bool isOnActiveChain = activeChain_.contains(index);
+  if (isOnActiveChain) {
+    ValidationState dummy;
+    bool ret = setTip(*index->pprev, dummy, false);
+    assert(ret);
+    (void)ret;
+  }
+
   for (const auto& p : payloads) {
     index->commands.emplace_back();
     auto& g = index->commands.back();
@@ -69,14 +77,7 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
     payloadsToCommands(*this, p, g.commands);
   }
 
-  auto tips = findValidTips(*index);
-  for (auto* tip : tips) {
-    // this will set 'state'
-    determineBestChain(base::activeChain_, *tip, state);
-  }
-
-  // this will report the block validation status
-  return index->isValid();
+  return true;
 }
 
 bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
@@ -153,7 +154,7 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
   }
 
   // edge case: connected block is one of 'next' blocks after our current best
-  if(indexNew.getAncestor(currentTip->height) == currentTip) {
+  if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
     this->setTip(indexNew, state, false);
     return;

@@ -76,15 +76,18 @@ TEST_F(Scenario2, scenario_2) {
   ASSERT_EQ(vtbs.size(), 2);
   ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
             BtcEndorsement::fromContainer(vtbs[1]).id);
-  fillVbkContext(vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVbkContext(vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer.vbk());
 
   // store vtbs in different altPayloads
   altPayloads1.altPopTx.vtbs = {vtbs[0]};
+  fillVbkContext(altPayloads1.altPopTx.vbk_context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs[0].containingBlock.getHash(),
+                 popminer.vbk());
 
   // Step 1
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   auto* containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
 
@@ -103,9 +106,15 @@ TEST_F(Scenario2, scenario_2) {
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
   altPayloads2.altPopTx.vtbs = {vtbs[1]};
+  fillVbkContext(altPayloads2.altPopTx.vbk_context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs[1].containingBlock.getHash(),
+                 popminer.vbk());
+
   // Step 2
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
@@ -129,6 +138,7 @@ TEST_F(Scenario2, scenario_2) {
   // Step 3
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   EXPECT_TRUE(containinVbkBlock->containingEndorsements.count(
@@ -144,8 +154,10 @@ TEST_F(Scenario2, scenario_2) {
   AltPayloads altPayloads4 = generateAltPayloads(
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
+  // Step 4
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads4}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
