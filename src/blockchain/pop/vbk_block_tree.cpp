@@ -115,16 +115,18 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   // remove all matched command groups
   auto& c = index->commands;
-  c.erase(
-      std::remove_if(c.begin(), c.end(), [&payloads](const CommandGroup& g) {
-        for (const auto& p : payloads) {
-          if (g == p.getId()) {
-            return true;
-          }
-        }
+  c.erase(std::remove_if(c.begin(),
+                         c.end(),
+                         [&payloads](const CommandGroup& g) {
+                           for (const auto& p : payloads) {
+                             if (g == p.getId()) {
+                               return true;
+                             }
+                           }
 
-        return false;
-      }));
+                           return false;
+                         }),
+          c.end());
 
   if (isOnActiveChain) {
     // find all affected tips and do a fork resolution
