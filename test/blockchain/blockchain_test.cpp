@@ -171,7 +171,7 @@ TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
+TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_1) {
   // In this test is considered such case
   //                / D - E - Z (tip)
   //  ... - A - B - C
@@ -187,7 +187,9 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   this->addToFork(fork1, 20 - 1 /*genesis*/);
 
   EXPECT_EQ(best.blocksCount(), 20);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 20);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
+  EXPECT_EQ(fork1.size(), best.blocksCount());
 
   std::vector<block_t> fork2 = fork1;
   fork2.resize(17);
@@ -196,51 +198,63 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
 
   EXPECT_EQ(fork2.size(), 19);
   EXPECT_EQ(best.blocksCount(), 20);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 22);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'Z'
   //                / D - E (tip)
   //  ... - A - B - C
   //                \ F - G
-  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
 
+  this->blockchain->removeSubtree(*best.tip());
+
+  EXPECT_EQ(this->blockchain->getTips().size(), 2);
   EXPECT_EQ(best.blocksCount(), 19);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 21);
   EXPECT_EQ(best.tip()->getHash(), fork1[18].getHash());
 
   // remove block 'E'
   //                / D
   //  ... - A - B - C
   //                \ F - G (tip)
-  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
+  this->blockchain->removeSubtree(*best.tip());
 
   EXPECT_EQ(best.blocksCount(), 19);
+  EXPECT_EQ(this->blockchain->getTips().size(), 2);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 20);
   EXPECT_EQ(best.tip()->getHash(), fork2[18].getHash());
 
   // remove block 'G'
   //                / D
   //  ... - A - B - C
   //                \ F (tip)
-  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
+  this->blockchain->removeSubtree(*best.tip());
 
   EXPECT_EQ(best.blocksCount(), 18);
+  EXPECT_EQ(this->blockchain->getTips().size(), 2);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
 
   // remove block 'F'
   //                / D (tip)
   //  ... - A - B - C
   //
-  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
+  this->blockchain->removeSubtree(best.tip()->getHash());
 
   EXPECT_EQ(best.blocksCount(), 18);
+  EXPECT_EQ(this->blockchain->getTips().size(), 1);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork1[17].getHash());
 
   // remove block 'D'
   //
   //  ... - A - B - C (tip)
   //
-  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
+  this->blockchain->removeSubtree(best.tip()->getHash());
 
   EXPECT_EQ(best.blocksCount(), 17);
+  EXPECT_EQ(this->blockchain->getTips().size(), 1);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 17);
   EXPECT_EQ(best.tip()->getHash(), fork1[16].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[16].getHash());
 
@@ -248,14 +262,16 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_1) {
   //
   //  ... - A - B (tip)
   //
-  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
+  this->blockchain->removeSubtree(*best.tip());
 
   EXPECT_EQ(best.blocksCount(), 16);
+  EXPECT_EQ(this->blockchain->getTips().size(), 1);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 16);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[15].getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_2) {
+TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_2) {
   // In this test considered this case
   //                / D - E - Z (tip)
   //  ... - A - B - C
@@ -282,14 +298,14 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_2) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'C' and chain above this block
-  this->blockchain->invalidateBlockByHash(best[16]->getHash());
+  this->blockchain->removeSubtree(best[16]->getHash());
 
   EXPECT_EQ(best.blocksCount(), 16);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[15].getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_3) {
+TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_3) {
   // In this test considered this case
   //                / D - E - Z (tip)
   //  ... - A - B - C
@@ -316,19 +332,19 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_3) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'F' and chain above this block
-  this->blockchain->invalidateBlockByHash(fork2[fork2.size() - 2].getHash());
+  this->blockchain->removeSubtree(fork2[fork2.size() - 2].getHash());
 
   EXPECT_EQ(best.blocksCount(), 20);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'Z'
-  this->blockchain->invalidateBlockByHash(best.tip()->getHash());
+  this->blockchain->removeSubtree(*best.tip());
 
   EXPECT_EQ(best.blocksCount(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork1[18].getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_4) {
+TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_4) {
   // In this test considered this case
   //                      / H - I
   //                / D - E - Z - P - R (tip)
@@ -361,7 +377,7 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_4) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'C' and chain above this block
-  this->blockchain->invalidateBlockByHash(best[16]->getHash());
+  this->blockchain->removeSubtree(best[16]->getHash());
 
   EXPECT_EQ(best.blocksCount(), 16);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
@@ -369,7 +385,7 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_4) {
   EXPECT_EQ(best.tip()->getHash(), fork3[15].getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_5) {
+TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_5) {
   // In this test considered this case
   //                / D - E - Z - P - R (tip)
   //  ... - A - B - C
@@ -402,7 +418,7 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_5) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'C' and chain above this block
-  this->blockchain->invalidateBlockByHash(best[16]->getHash());
+  this->blockchain->removeSubtree(best[16]->getHash());
 
   EXPECT_EQ(best.blocksCount(), 16);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
@@ -410,7 +426,7 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_5) {
   EXPECT_EQ(best.tip()->getHash(), fork3[15].getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_6) {
+TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_6) {
   // In this test considered this case
   //                / D - E - Z - P - R (tip)
   //  ... - A - B - C
@@ -451,19 +467,19 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_6) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'G' and chain above this block
-  this->blockchain->invalidateBlockByHash(fork2[18].getHash());
+  this->blockchain->removeSubtree(fork2[18].getHash());
 
   EXPECT_EQ(best.blocksCount(), 22);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'D' and chain above this block
-  this->blockchain->invalidateBlockByHash(fork1[17].getHash());
+  this->blockchain->removeSubtree(fork1[17].getHash());
 
   EXPECT_EQ(best.blocksCount(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_7) {
+TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_7) {
   // In this test considered this case
   //                / D - E - Z - P - R (tip)
   //  ... - A - B - C
@@ -503,19 +519,19 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_7) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'F' and chain above this block
-  this->blockchain->invalidateBlockByHash(fork2[17].getHash());
+  this->blockchain->removeSubtree(fork2[17].getHash());
 
   EXPECT_EQ(best.blocksCount(), 22);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'D' and chain above this block
-  this->blockchain->invalidateBlockByHash(fork1[17].getHash());
+  this->blockchain->removeSubtree(fork1[17].getHash());
 
   EXPECT_EQ(best.blocksCount(), 17);
   EXPECT_EQ(best.tip()->getHash(), fork1[16].getHash());
 }
 
-TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_8) {
+TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_8) {
   // In this test considered this case
   //                / Q - S - Y (fork2)
   //  ... - A - B - C - D - E - Z - P - R (tip)
@@ -551,7 +567,7 @@ TYPED_TEST_P(BlockchainTest, invalidateTip_test_scenario_8) {
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
 
   // remove block 'B' and chain above this block
-  this->blockchain->invalidateBlockByHash(fork1[16].getHash());
+  this->blockchain->removeSubtree(fork1[16].getHash());
 
   EXPECT_EQ(best.blocksCount(), 16);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
@@ -603,7 +619,7 @@ TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_1) {
 
   // step 3
   // remove block 'F'
-  this->blockchain->invalidateBlockByHash(fork2[17].getHash());
+  this->blockchain->removeSubtree(fork2[17].getHash());
 
   EXPECT_EQ(best.blocksCount(), 20);
   EXPECT_EQ(best.tip()->getHash(), fork1.rbegin()->getHash());
@@ -665,13 +681,13 @@ TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_2) {
   EXPECT_EQ(best.tip()->getHash(), fork3.rbegin()->getHash());
 
   // remove block D
-  this->blockchain->invalidateBlockByHash(fork1[17].getHash());
+  this->blockchain->removeSubtree(fork1[17].getHash());
 
   EXPECT_EQ(best.blocksCount(), 24);
   EXPECT_EQ(best.tip()->getHash(), fork3.rbegin()->getHash());
 
   // remove block Q
-  this->blockchain->invalidateBlockByHash(fork3[19].getHash());
+  this->blockchain->removeSubtree(fork3[19].getHash());
 
   EXPECT_EQ(best.blocksCount(), 21);
   EXPECT_EQ(best.tip()->getHash(), fork2.rbegin()->getHash());
@@ -681,14 +697,14 @@ TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_2) {
 REGISTER_TYPED_TEST_SUITE_P(BlockchainTest,
                             Scenario1,
                             ForkResolutionWorks,
-                            invalidateTip_test_scenario_1,
-                            invalidateTip_test_scenario_2,
-                            invalidateTip_test_scenario_3,
-                            invalidateTip_test_scenario_4,
-                            invalidateTip_test_scenario_5,
-                            invalidateTip_test_scenario_6,
-                            invalidateTip_test_scenario_7,
-                            invalidateTip_test_scenario_8,
+                            removeTip_test_scenario_1,
+                            removeTip_test_scenario_2,
+                            removeTip_test_scenario_3,
+                            removeTip_test_scenario_4,
+                            removeTip_test_scenario_5,
+                            removeTip_test_scenario_6,
+                            removeTip_test_scenario_7,
+                            removeTip_test_scenario_8,
                             acceptBlock_test_scenario_1,
                             acceptBlock_test_scenario_2);
 

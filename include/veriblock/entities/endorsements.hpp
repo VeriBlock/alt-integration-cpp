@@ -31,14 +31,37 @@ template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c);
 
 template <>
-bool BtcEndorsement::checkForDuplicates;
+inline bool VbkEndorsement::checkForDuplicates() {
+  return true;
+}
 
+// TODO: once mempool is integrated, remove this hacky thing
 template <>
-bool VbkEndorsement::checkForDuplicates;
+inline bool BtcEndorsement::checkForDuplicates() {
+  return false;
+}
 
 struct DummyEndorsement {
   using id_t = bool;
 };
+
+template <>
+inline std::string BtcEndorsement::toPrettyString(size_t level) const {
+  return std::string(level, ' ') +
+         "BtcEndorsement{containing=" + HexStr(containingHash) +
+         ", endorsed=" + HexStr(endorsedHash) +
+         ", endorsedHeight=" + std::to_string(endorsedHeight) +
+         ", blockOfProof" + HexStr(blockOfProof) + "}";
+}
+
+template <>
+inline std::string VbkEndorsement::toPrettyString(size_t level) const {
+  return std::string(level, ' ') +
+         "VbkEndorsement{containing=" + HexStr(containingHash) +
+         ", endorsed=" + HexStr(endorsedHash) +
+         ", endorsedHeight=" + std::to_string(endorsedHeight) +
+         ", blockOfProof" + HexStr(blockOfProof) + "}";
+}
 
 }  // namespace altintegration
 

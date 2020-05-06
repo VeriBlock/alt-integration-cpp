@@ -11,7 +11,7 @@
 
 using namespace altintegration;
 
-struct BlockchainFixture {
+struct BtcInvalidationTest {
   using block_t = VbkBlock;
   using param_t = VbkChainParams;
   using index_t = typename BlockTree<block_t, param_t>::index_t;
@@ -47,7 +47,7 @@ struct VbkTestCase {
 };
 
 struct AcceptTest : public testing::TestWithParam<VbkTestCase>,
-                    public BlockchainFixture {};
+                    public BtcInvalidationTest {};
 
 static std::vector<VbkTestCase> accept_test_cases = {
     /// mainnet
@@ -101,6 +101,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
 
+  ASSERT_TRUE(tree.getBestChain().tip());
   EXPECT_EQ(*tree.getBestChain().tip()->header,
             bootstrapChain[bootstrapChain.size() - 1]);
   EXPECT_EQ(tree.getBestChain().tip()->height,

@@ -21,7 +21,6 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "veriblock/storage/payloads_repository_inmem.hpp"
 
 namespace altintegration {
 
@@ -53,7 +52,7 @@ class MockMiner {
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkPayloads;
   std::unordered_map<AltBlock::hash_t, std::vector<AltPayloads>> altPayloads;
 
-  VbkTx endorseAltBlock(const PublicationData& publicationData);
+  VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData);
   ATV generateATV(const VbkTx& transaction,
                   const VbkBlock::hash_t& lastKnownVbkBlockHash,
                   ValidationState& state);

@@ -7,14 +7,16 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
 #include <memory>
+#include <set>
 #include <unordered_map>
 #include <vector>
-#include <veriblock/validation_state.hpp>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/entities/btcblock.hpp"
+#include "veriblock/blockchain/command.hpp"
+#include "veriblock/blockchain/command_group.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/entities/payloads.hpp"
+#include "veriblock/validation_state.hpp"
 #include "veriblock/write_stream.hpp"
 
 namespace altintegration {
@@ -51,7 +53,10 @@ struct BlockIndex {
   using protecting_block_t = typename Block::protecting_block_t;
 
   //! pointer to a previous block
-  BlockIndex* pprev{};
+  BlockIndex* pprev = nullptr;
+
+  //! a set of pointers for forward iteration
+  std::set<BlockIndex*> pnext{};
 
   //! total amount of work in the chain up to and including this
   //! block
@@ -64,8 +69,8 @@ struct BlockIndex {
   //! list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
 
-  //! list of containing context blocks that **change** current state
-  context_t containingContext{};
+  //! list of changes introduced in this block
+  std::vector<CommandGroup> commands{};
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -76,6 +81,9 @@ struct BlockIndex {
   //! contains status flags
   uint8_t status = 0;  // unknown validity
 
+  //! reference counter for fork resolution
+  uint32_t refCounter = 0;
+
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) {
     assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
@@ -83,6 +91,18 @@ struct BlockIndex {
       return false;
     }
     return ((status & BLOCK_VALID_MASK) >= upTo);
+  }
+
+  void setNull() {
+    this->pprev = nullptr;
+    this->pnext.clear();
+    this->chainWork = 0;
+    this->containingEndorsements.clear();
+    this->endorsedBy.clear();
+    this->commands.clear();
+    this->height = 0;
+    this->status = 0;
+    this->refCounter = 0;
   }
 
   bool raiseValidity(enum BlockStatus upTo) {
@@ -101,9 +121,20 @@ struct BlockIndex {
 
   void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
 
+  bool hasFlags(enum BlockStatus s) { return this->status & s; }
+
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }
   uint32_t getDifficulty() const { return header->getDifficulty(); }
+
+  bool isValidTip() const {
+    // can be a valid tip iff there're no next blocks or all next blocks are
+    // invalid
+    return pnext.empty() ||
+           std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+             return !index->isValid();
+           });
+  }
 
   const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
     if (steps < 0 || steps > this->height + 1) {
@@ -140,9 +171,12 @@ struct BlockIndex {
            "BlockIndex{height=" + std::to_string(height) +
            ", hash=" + HexStr(getHash()) +
            ", prev=" + (pprev ? HexStr(pprev->getHash()) : "<empty>") +
+           ", next=" + std::to_string(pnext.size()) +
+           ", status=" + std::to_string(status) +
+           ", cgroups=" + std::to_string(commands.size()) +
            ", endorsedBy=" + std::to_string(endorsedBy.size()) +
-           ", containsEndorsements=" +
-           std::to_string(containingEndorsements.size()) + "}";
+           ", endorsements=" + std::to_string(containingEndorsements.size()) +
+           ", ref=" + std::to_string(refCounter) + "}";
   }
 
   void toRaw(WriteStream& stream) const {

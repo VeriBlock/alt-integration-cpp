@@ -33,7 +33,7 @@ class StateChange {
   void saveVbkPayloads(const VTB& payloads) { payloadsVbkBatch->put(payloads); }
 
   void removeVbkPayloads(const VTB& payloads) {
-    payloadsVbkBatch->removeByHash(payloads.containingBlock.getHash());
+    payloadsVbkBatch->removeByHash(Blob<32>(payloads.containingBlock.getHash()));
   }
 
   void saveAltPayloads(const AltPayloads& payloads) {
