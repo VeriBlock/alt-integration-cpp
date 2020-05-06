@@ -70,7 +70,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(
       containingBlockIndex2->containingEndorsements.find(endorsement2.id) !=
       containingBlockIndex2->containingEndorsements.end());
-  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 2);
+  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
@@ -93,7 +93,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(
       containingBlockIndex3->containingEndorsements.find(endorsement3.id) !=
       containingBlockIndex3->containingEndorsements.end());
-  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 3);
+  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   // remove block
   AltBlock removeBlock = chain[20];

@@ -244,6 +244,9 @@ struct BaseBlockTree {
 
     auto shortHash = makePrevHash(block.getHash());
     auto it = blocks_.at(shortHash);
+    // TODO: it is a hack because we do not erase blocks and just move it to the
+    // remove_ container
+    it->setNull();
     removed_[shortHash] = it;
     blocks_.erase(shortHash);
   }

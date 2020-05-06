@@ -62,7 +62,7 @@ struct AddEndorsement : public Command {
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
     if (!blockOfProof) {
       return state.Invalid("block-of-proof-not-found",
-                           "Can not find block of proof in BTC");
+                           "Can not find block of proof in tree");
     }
 
     auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
