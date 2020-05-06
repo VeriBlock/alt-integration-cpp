@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - feature/add-sonar
   pull_request:
     branches:
       - master
