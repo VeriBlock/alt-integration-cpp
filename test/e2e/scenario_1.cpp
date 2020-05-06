@@ -66,7 +66,6 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
   BlockIndex<BtcBlock>* btcBtip;
   BlockIndex<VbkBlock>* vbkAtip;
   BlockIndex<VbkBlock>* vbkBtip;
-  BlockIndex<AltBlock>* alttip;
 
   std::vector<AltBlock> altchain;
 
@@ -132,8 +131,11 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
   }
 
   bool altTreeFindVtb(const VTB& vtb) {
-    auto lastBlock = *altchain.rbegin();
-    auto* index = alttree.getBlockIndex(lastBlock.getHash());
+    return altTreeFindVtb(vtb.containingBlock.getHash(), vtb);
+  }
+
+  bool altTreeFindVtb(const VbkBlock::hash_t& hash, const VTB& vtb) {
+    auto* index = alttree.vbk().getBlockIndex(hash);
     EXPECT_NE(index, nullptr);
     auto es = index->containingEndorsements;
     for (const auto& e : es) {
@@ -176,7 +178,8 @@ TEST_F(Scenario1, scenario_1) {
                  popminer.vbk());
   altPayloadsVBA71.altPopTx.vtbs = {vtbsVBA71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  alttree.addPayloads(containingBlock.getHash(), {altPayloadsVBA71}, state);
+  ASSERT_TRUE(alttree.addPayloads(
+      containingBlock.getHash(), {altPayloadsVBA71}, state));
   EXPECT_TRUE(state.IsValid());
   ASSERT_NE(btcAtip, nullptr);
   ASSERT_GE(btcAtip->height, 53);
@@ -189,7 +192,7 @@ TEST_F(Scenario1, scenario_1) {
 
   // expect that ALTBTC tip is A53
   ASSERT_EQ(blockCount, 54);
-  EXPECT_EQ(*btcAtip->getAncestor(53), *alttree.vbk().btc().getBestChain().tip());
+  EXPECT_EQ(*btcA53, *alttree.vbk().btc().getBestChain().tip());
 
   // expect that ALTVBK tree has all blocks from VBK chain A, until vAc71,
   // including
@@ -199,6 +202,8 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_EQ(blockCount, 72);
   EXPECT_EQ(vbkAtip->getAncestor(71)->getHash(),
             alttree.vbk().getBestChain().tip()->getHash());
+  ASSERT_EQ(alttree.getBestChain().tip()->getHash(),
+            altchain.rbegin()->getHash());
 
   // Step 2
   endorsedBlock = altchain[90];
@@ -216,7 +221,10 @@ TEST_F(Scenario1, scenario_1) {
                  popminer.vbk());
   altPayloadsVBB71.altPopTx.vtbs = {vtbsVBB71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  alttree.addPayloads(containingBlock.getHash(), {altPayloadsVBB71}, state);
+  ASSERT_TRUE(alttree.addPayloads(
+      containingBlock.getHash(), {altPayloadsVBB71}, state));
+  ASSERT_EQ(alttree.getBestChain().tip()->getHash(),
+            altchain.rbegin()->getHash());
   EXPECT_TRUE(state.IsValid());
 
   // expect that ALTBTC tree knows all blocks from chain B until block B55
@@ -244,7 +252,9 @@ TEST_F(Scenario1, scenario_1) {
 
   // remove ALT block 102
   auto lastBlock = *altchain.rbegin();
+  std::cout << "A" << alttree.toPrettyString() << std::endl;
   alttree.removeSubtree(lastBlock.getHash());
+  std::cout << "B" << alttree.toPrettyString() << std::endl;
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 101);
