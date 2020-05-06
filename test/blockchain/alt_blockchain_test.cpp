@@ -35,6 +35,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
@@ -59,6 +60,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state))
       << state.toString();
+  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
@@ -81,6 +83,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
