@@ -57,6 +57,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
+  void removePayloads(const AltBlock::hash_t& containing,
+                   const std::vector<payloads_t>& payloads);
+
   bool addPayloads(const AltBlock::hash_t& containing,
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state);

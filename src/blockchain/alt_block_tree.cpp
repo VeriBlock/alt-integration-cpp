@@ -272,6 +272,45 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
   return coefficient * result;
 }
 
+void AltTree::removePayloads(const AltBlock::hash_t& hash,
+                             const std::vector<payloads_t>& payloads) {
+  auto* index = base::getBlockIndex(hash);
+  if (!index) {
+    throw std::logic_error("removePayloads is called on unknown ALT block: " +
+                           HexStr(hash));
+  }
+
+  if (!index->pprev) {
+    // we do not add payloads to genesis block, therefore we do not have to
+    // remove them
+    return;
+  }
+
+  bool isOnActiveChain = activeChain_.contains(index);
+  if (isOnActiveChain) {
+    assert(index->pprev && "can not remove payloads from genesis block");
+    ValidationState dummy;
+    bool ret = setTip(*index->pprev, dummy, false);
+    assert(ret);
+    (void)ret;
+  }
+
+  // remove all matched command groups
+  auto& c = index->commands;
+  c.erase(std::remove_if(c.begin(),
+                         c.end(),
+                         [&payloads](const CommandGroup& g) {
+                           for (const auto& p : payloads) {
+                             if (g == p.getId()) {
+                               return true;
+                             }
+                           }
+
+                           return false;
+                         }),
+          c.end());
+}
+
 template <>
 void payloadsToCommands<AltTree>(AltTree& tree,
                                  const typename AltTree::payloads_t& p,
