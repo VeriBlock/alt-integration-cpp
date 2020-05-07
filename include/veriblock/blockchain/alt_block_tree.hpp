@@ -24,15 +24,6 @@
 
 namespace altintegration {
 
-template <>
-void addContextToBlockIndex(BlockIndex<AltBlock>& index,
-                            const typename BlockIndex<AltBlock>::payloads_t& p,
-                            const VbkBlockTree& tree);
-
-template <>
-void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
-                                 const BlockIndex<AltBlock>::payloads_t& p);
-
 struct AltTree : public BaseBlockTree<AltBlock> {
   using base = BaseBlockTree<AltBlock>;
   using alt_config_t = AltChainParams;
@@ -76,8 +67,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     return addPayloads(containing.hash, payloads, state);
   }
 
-  int comparePopScore(const AltBlock::hash_t& current,
-                      const AltBlock::hash_t& other);
+  int comparePopScore(const AltBlock::hash_t& hleft,
+                      const AltBlock::hash_t& hright);
 
   /**
    * Calculate payouts for the altchain tip

@@ -45,7 +45,7 @@ struct PopRewardsParams {
 
   // we have these payout modifiers for different rounds. Keystone round has
   // the highest multiplier
-  virtual std::vector<double> roundRatios() const noexcept {
+  virtual const std::vector<double>& roundRatios() const noexcept {
     return roundRatios_;
   }
 
