@@ -37,11 +37,6 @@ option(TESTING      "Build tests" ON)
 option(SHARED       "Build shared lib" OFF)
 option(WITH_ROCKSDB "Build rocksdb" OFF)
 option(WITH_SECP256K1 "Include secp256k1" ON)
-option(WITH_LOGGER  "Build logger" ON)
-
-if(WITH_LOGGER)
-    add_compile_definitions(ALTINTCPP_WITH_LOGGER=1)
-endif()
 
 if (WIN32)
     set(FIND_ROCKSDB_DEFAULT TRUE)
