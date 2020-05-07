@@ -372,21 +372,21 @@ struct PopAwareForkResolutionComparator {
     auto* currentActive = ed.getBestChain().tip();
     assert(currentActive && "should be bootstrapped");
 
+    if(*currentActive == to) {
+      // already at this state
+      return true;
+    }
+
     sm_t sm(ed, ing_);
-    if (to.pprev && to.pprev == currentActive) {
+    if (to.getAncestor(currentActive->height) == currentActive) {
       return sm.apply(*currentActive, to, state);
     }
 
     Chain<protected_index_t> chain(0, currentActive);
     auto* forkBlock = chain.findFork(&to);
     if (!forkBlock) {
-      // we can't find 'to' in fork. maybe it is one of 'next' blocks?
-      if (to.getAncestor(currentActive->height) != currentActive) {
-        // can not find path to that block...
-        return false;
-      }
-
-      return sm.apply(*currentActive, to, state);
+      // we can't find 'to' in fork.
+      return false;
     }
 
     sm.unapply(*currentActive, *forkBlock);
@@ -402,8 +402,21 @@ struct PopAwareForkResolutionComparator {
     auto bestTip = currentBest.tip();
     assert(bestTip);
 
-    // this function is ALWAYS called on FORKS
-    assert(indexNew.getAncestor(bestTip->height) != bestTip);
+    if (*bestTip == indexNew) {
+      return 0;
+    }
+
+    // indexNew is on top of our best tip
+    if (indexNew.getAncestor(bestTip->height) == bestTip) {
+      sm_t sm(ed, ing_, bestTip->height);
+      if (sm.apply(*bestTip, indexNew, state)) {
+        // if indexNew is valid, then switch to new chain
+        return -1;
+      }
+
+      // new chain is invalid. our current chain is definitely better.
+      return 1;
+    }
 
     auto ki = ed.getParams().getKeystoneInterval();
     const auto* forkKeystone =

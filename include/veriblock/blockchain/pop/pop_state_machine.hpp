@@ -83,13 +83,7 @@ struct PopStateMachine {
     assert(chain.first()->pprev == &from);
 
     for (auto* index : chain) {
-      assert(index->isValid());
-
-      if (index->commands.empty()) {
-        continue;
-      }
-
-      if (!applyBlock(*index, state)) {
+      if (!index->isValid() || !applyBlock(*index, state)) {
         unapply(*index, from);
         // don't do fork resolution, as it
         ed_.invalidateSubtree(

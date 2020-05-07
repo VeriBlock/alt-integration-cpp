@@ -36,7 +36,7 @@ set(SOURCES
         )
         
 if(WITH_SECP256K1)
-list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
+    list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
 endif()
 
 if(SHARED)
