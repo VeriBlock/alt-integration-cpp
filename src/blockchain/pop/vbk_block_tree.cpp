@@ -96,18 +96,13 @@ void VbkBlockTree::removePayloads(const block_t& block,
   auto hash = block.getHash();
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
-    throw std::logic_error("addPayloads is called on unknown VBK block: " +
+    throw std::logic_error("removePayloads is called on unknown VBK block: " +
                            hash.toHex());
   }
 
   if (!index->pprev) {
     // we do not add payloads to genesis block, therefore we do not have to
     // remove them
-    return;
-  }
-
-  if (!index->isValid()) {
-    // adding payloads to an invalid block will not result in a state change
     return;
   }
 
