@@ -122,10 +122,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     bool changeTip = true;
     if (!skipSetState) {
       changeTip = cmp_.setState(*this, to, state);
-      VBK_LOG_DEBUG("alt",
-                    "setState=%s, result=%d\n",
-                    to.toPrettyString(),
-                    changeTip);
     }
 
     // edge case: if changeTip is false, then new block arrived on top of
