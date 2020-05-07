@@ -66,10 +66,15 @@ struct AddEndorsement : public Command {
     }
 
     auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
+
     if (duplicate) {
-      // found duplicate
-      return state.Invalid("duplicate",
-                           "Found duplicate endorsement on the same chain");
+      if (endorsement_t::checkForDuplicates()) {
+        // found duplicate
+        return state.Invalid("duplicate",
+                             "Found duplicate endorsement on the same chain");
+      } else {
+        return true;
+      }
     }
 
     containing->containingEndorsements[e_->id] = e_;
