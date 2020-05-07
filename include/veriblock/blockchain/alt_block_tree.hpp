@@ -24,15 +24,6 @@
 
 namespace altintegration {
 
-template <>
-void addContextToBlockIndex(BlockIndex<AltBlock>& index,
-                            const typename BlockIndex<AltBlock>::payloads_t& p,
-                            const VbkBlockTree& tree);
-
-template <>
-void removeContextFromBlockIndex(BlockIndex<AltBlock>& index,
-                                 const BlockIndex<AltBlock>::payloads_t& p);
-
 struct AltTree : public BaseBlockTree<AltBlock> {
   using base = BaseBlockTree<AltBlock>;
   using alt_config_t = AltChainParams;
@@ -131,6 +122,10 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     bool changeTip = true;
     if (!skipSetState) {
       changeTip = cmp_.setState(*this, to, state);
+      VBK_LOG_DEBUG("alt",
+                    "setState=%s, result=%d\n",
+                    to.toPrettyString(),
+                    changeTip);
     }
 
     // edge case: if changeTip is false, then new block arrived on top of

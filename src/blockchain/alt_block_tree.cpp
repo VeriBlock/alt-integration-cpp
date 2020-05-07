@@ -11,6 +11,8 @@
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
+#include "veriblock/logger.hpp"
+#include <iostream>
 
 namespace altintegration {
 

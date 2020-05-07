@@ -372,6 +372,11 @@ struct PopAwareForkResolutionComparator {
     auto* currentActive = ed.getBestChain().tip();
     assert(currentActive && "should be bootstrapped");
 
+    if(*currentActive == to) {
+      // already at this state
+      return true;
+    }
+
     sm_t sm(ed, ing_);
     if (to.getAncestor(currentActive->height) == currentActive) {
       return sm.apply(*currentActive, to, state);
