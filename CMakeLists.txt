@@ -35,20 +35,11 @@ option(COVERAGE     "Enable coverage" OFF)
 option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 option(SHARED       "Build shared lib" OFF)
-option(WITH_ROCKSDB "Build rocksdb" OFF)
 option(WITH_SECP256K1 "Include secp256k1" ON)
-
-if (WIN32)
-    set(FIND_ROCKSDB_DEFAULT TRUE)
-else()
-    set(FIND_ROCKSDB_DEFAULT FALSE)
-endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-option(FIND_ROCKSDB "Use \"ON\" to search for RocksDB in installed packages" ${FIND_ROCKSDB_DEFAULT})
 
 include(cmake/dependencies.cmake)
 

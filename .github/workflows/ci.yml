@@ -49,7 +49,7 @@ jobs:
           submodules: recursive
           clean: true
       - name: cmake
-        run: cmake . -Bbuild ${{ matrix.flags }} -DCOVERAGE=ON -DWITH_ROCKSDB=ON
+        run: cmake . -Bbuild ${{ matrix.flags }} -DCOVERAGE=ON
       - name: build
         run: cmake --build build -- -j2
       - name: test
@@ -93,7 +93,7 @@ jobs:
 #        run: vcpkg install rocksdb:x64-windows-static
 
       - name: cmake
-        run: cmake . -Bbuild -A x64 -DWITH_ROCKSDB=OFF -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
+        run: cmake . -Bbuild -A x64 -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
         run: cmake --build build
       - name: test
