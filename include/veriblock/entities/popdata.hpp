@@ -18,6 +18,8 @@
 namespace altintegration {
 
 struct PopData {
+  using id_t = uint256;
+
   int32_t version{};
 
   std::vector<VbkBlock> vbk_context;
@@ -56,6 +58,13 @@ struct PopData {
    * @return true if contains endorsement data
    */
   bool containsEndorsements() const;
+
+  /**
+   * Calculate a Payloads id that is the sha256 hash of the payloads rawBytes
+   * @return id sha256 hash
+   */
+
+  id_t getHash() const;
 
   friend bool operator==(const PopData& a, const PopData& b) {
     // clang-format off
