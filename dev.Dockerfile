@@ -70,16 +70,6 @@ RUN update-alternatives --install /usr/bin/gcov         gcov         /usr/bin/gc
 
 WORKDIR /tmp
 
-RUN git clone --progress -b v6.6.4 https://github.com/facebook/rocksdb.git && \
-    ( \
-      cd rocksdb; \
-      mkdir build; \
-      cd build; \
-      cmake .. -DCMAKE_BUILD_TYPE=Release; \
-      make -j4 install; \
-    ) && \
-    rm -rf rocksdb
-
 RUN ldconfig
 
 ENV SONAR_CLI_VERSION=4.2.0.1873

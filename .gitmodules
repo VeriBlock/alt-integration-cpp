@@ -1,6 +1,0 @@
-[submodule "gtest"]
-	path = deps/googletest
-	url = https://github.com/google/googletest
-[submodule "rocksdb"]
-	path = deps/rocksdb
-	url = https://github.com/facebook/rocksdb

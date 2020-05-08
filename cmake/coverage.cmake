@@ -9,6 +9,8 @@ append_coverage_compiler_flags()
 
 set(COVERAGE_EXCLUDES
         '${CMAKE_SOURCE_DIR}/deps/*'
+        '${CMAKE_SOURCE_DIR}/googletest-src/*'
+        '${CMAKE_SOURCE_DIR}/googletest-build/*'
         '${CMAKE_SOURCE_DIR}/build/*'
         '${CMAKE_SOURCE_DIR}/cmake-build-*/*'
         '/usr/include/*'
