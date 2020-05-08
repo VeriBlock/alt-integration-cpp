@@ -128,13 +128,6 @@ TEST_P(AcceptTest, BootstrapWithChain) {
     EXPECT_EQ(tree.getBestChain().tip()->height, block.height);
     ++totalBlocks;
   }
-
-  //   tree should be copyable
-  auto copy = tree;
-  // tree should be copy initializable
-  copy = tree;
-  // tree should be move initializable
-  copy = std::move(tree);
 }
 
 INSTANTIATE_TEST_SUITE_P(AcceptBlocksRegression,

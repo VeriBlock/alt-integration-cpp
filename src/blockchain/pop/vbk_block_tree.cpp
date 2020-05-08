@@ -172,7 +172,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     index->commands.emplace_back();
     auto& g = index->commands.back();
     g.id = p.getId();
-    payloadsToCommands(*this, p, g.commands);
+    payloadsToCommands(p, g.commands);
   }
 
   // find all affected tips and do a fork resolution
@@ -182,6 +182,22 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   return index->isValid();
+}
+
+void VbkBlockTree::payloadsToCommands(const VTB& p,
+                                      std::vector<CommandPtr>& commands) {
+  // process BTC context blocks
+  for (const auto& b : p.transaction.blockOfProofContext) {
+    addBlock(btc(), b, commands);
+  }
+  // process block of proof
+  addBlock(btc(), p.transaction.blockOfProof, commands);
+
+  // add endorsement
+  auto e = BtcEndorsement::fromContainerPtr(p);
+  auto cmd =
+      std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e));
+  commands.push_back(std::move(cmd));
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
@@ -202,21 +218,4 @@ bool VbkBlockTree::setState(const VbkBlock::hash_t& block,
   return this->setTip(*index, state);
 }
 
-template <>
-void payloadsToCommands<VbkBlockTree>(VbkBlockTree& tree,
-                                      const VTB& p,
-                                      std::vector<CommandPtr>& commands) {
-  // process BTC context blocks
-  for (const auto& b : p.transaction.blockOfProofContext) {
-    addBlock(tree.btc(), b, commands);
-  }
-  // process block of proof
-  addBlock(tree.btc(), p.transaction.blockOfProof, commands);
-
-  // add endorsement
-  auto e = BtcEndorsement::fromContainerPtr(p);
-  auto cmd =
-      std::make_shared<AddBtcEndorsement>(tree.btc(), tree, std::move(e));
-  commands.push_back(std::move(cmd));
-}
 }  // namespace altintegration

@@ -118,7 +118,10 @@ struct Chain {
 
   friend bool operator==(const Chain& a, const Chain& b) {
     // sizes may vary, so compare tips
-    return a.tip() == b.tip();
+    if (a.tip() == nullptr && b.tip() == nullptr) return true;
+    if (a.tip() == nullptr) return false;
+    if (b.tip() == nullptr) return false;
+    return a.tip()->getHash() == b.tip()->getHash();
   }
 
   friend bool operator!=(const Chain& a, const Chain& b) { return !(a == b); }
