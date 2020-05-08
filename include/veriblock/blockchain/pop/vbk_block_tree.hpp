@@ -32,7 +32,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   ~VbkBlockTree() override = default;
 
   VbkBlockTree(const VbkChainParams& vbkp, const BtcChainParams& btcp)
-      : VbkTree(vbkp), cmp_(BtcTree(btcp), btcp, vbkp) {}
+      : VbkTree(vbkp), cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp) {}
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
@@ -53,6 +53,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void removePayloads(const block_t& block,
                    const std::vector<payloads_t>& payloads);
 
+  void payloadsToCommands(const typename VbkBlockTree::payloads_t& p,
+                          std::vector<CommandPtr>& commands);
+
   bool operator==(const VbkBlockTree& o) const {
     return cmp_ == o.cmp_ && VbkTree::operator==(o);
   }
@@ -71,12 +74,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   PopForkComparator cmp_;
 };
-
-template <>
-void payloadsToCommands<VbkBlockTree>(
-    VbkBlockTree& tree,
-    const typename VbkBlockTree::payloads_t& p,
-    std::vector<CommandPtr>& commands);
 
 }  // namespace altintegration
 

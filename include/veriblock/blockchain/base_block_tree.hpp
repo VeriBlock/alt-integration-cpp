@@ -33,6 +33,10 @@ struct BaseBlockTree {
 
   virtual ~BaseBlockTree() = default;
 
+  BaseBlockTree() = default;
+  BaseBlockTree(const BaseBlockTree&) = delete;
+  BaseBlockTree& operator=(const BaseBlockTree&) = delete;
+
   const Chain<index_t>& getBestChain() const { return this->activeChain_; }
 
   template <typename T,
@@ -116,6 +120,12 @@ struct BaseBlockTree {
     tryAddTip(toBeInvalidated.pprev);
 
     updateTips(shouldDetermineBestChain);
+  }
+
+  bool operator==(const BaseBlockTree& o) const {
+    TreeFieldsComparator cmp{};
+    return cmp(blocks_, o.blocks_) && cmp(removed_, o.removed_) &&
+           cmp(tips_, o.tips_) && (activeChain_ == o.activeChain_);
   }
 
  protected:
@@ -261,6 +271,42 @@ struct BaseBlockTree {
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
   Chain<index_t> activeChain_;
+
+  struct TreeFieldsComparator {
+    bool operator()(const block_index_t& a, const block_index_t& b) {
+      if (a.size() != b.size()) return false;
+      for (const auto& k : a) {
+        auto key = k.first;
+        auto value = k.second;
+        auto expectedValue = b.find(key);
+        // key exists in map A but does not exist in map B
+        if (expectedValue == b.end()) return false;
+        // pointers are equal - comparison is true
+        if (expectedValue->second == value) continue;
+        if (expectedValue->second == nullptr) return false;
+        if (value == nullptr) return false;
+        if (*value != *expectedValue->second) return false;
+      }
+      return true;
+    }
+
+    bool operator()(const std::unordered_set<index_t*>& a,
+                    const std::unordered_set<index_t*>& b) {
+      if (a.size() != b.size()) return false;
+
+      std::set<hash_t> aHashes;
+      std::transform(a.cbegin(),
+                     a.cend(),
+                     std::inserter(aHashes, aHashes.begin()),
+                     [](const index_t* v) { return v->getHash(); });
+      std::set<hash_t> bHashes;
+      std::transform(b.cbegin(),
+                     b.cend(),
+                     std::inserter(bHashes, bHashes.begin()),
+                     [](const index_t* v) { return v->getHash(); });
+      return aHashes == bHashes;
+    }
+  };
 };
 
 // HACK: getBlockIndex accepts either hash_t or prev_block_hash_t

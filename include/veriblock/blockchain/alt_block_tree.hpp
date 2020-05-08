@@ -48,7 +48,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
       : alt_config_(&alt_config),
         vbk_config_(&vbk_config),
         btc_config_(&btc_config),
-        cmp_(VbkBlockTree(vbk_config, btc_config), vbk_config, alt_config),
+        cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config), vbk_config, alt_config),
         rewards_(alt_config) {}
 
   //! before any use, bootstrap the three with ALT bootstrap block.
@@ -72,6 +72,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   int comparePopScore(const AltBlock::hash_t& hleft,
                       const AltBlock::hash_t& hright);
+
+  void payloadsToCommands(const payloads_t& p,
+                          std::vector<CommandPtr>& commands);
 
   /**
    * Calculate payouts for the altchain tip
@@ -139,11 +142,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     return changeTip;
   }
 };
-
-template <>
-void payloadsToCommands<AltTree>(AltTree& tree,
-                                 const typename AltTree::payloads_t& p,
-                                 std::vector<CommandPtr>& commands);
 
 }  // namespace altintegration
 
