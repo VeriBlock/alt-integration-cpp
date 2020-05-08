@@ -166,7 +166,7 @@ jobs:
       - name: fetch clang+llvm
         if: steps.toolchain-cache.outputs.cache-hit != 'true'
         run: |
-          wget https://releases.llvm.org/${PKG_CLANG_VERSION}/clang+llvm-${PKG_CLANG_VERSION}-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+          wget https://mirror2.veriblock.org/vbtc-sources/clang+llvm-${PKG_CLANG_VERSION}-x86_64-linux-gnu-ubuntu-14.04.tar.xz
       - name: extract clang+llvm
         if: steps.toolchain-cache.outputs.cache-hit != 'true'
         run: |
