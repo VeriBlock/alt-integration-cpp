@@ -105,7 +105,6 @@ TEST_F(Scenario0, Scenario0) {
   payloads.popData.atv = atv;
   payloads.popData.vtbs = vtbs;
   payloads.containingBlock = containing;
-  payloads.containingTx = uint256();
   payloads.endorsed = endorsed;
 
   ValidationState state;

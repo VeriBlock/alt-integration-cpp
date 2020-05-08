@@ -13,7 +13,6 @@ AltPayloads AltPayloads::fromVbkEncoding(ReadStream& stream) {
   AltPayloads p;
   p.endorsed = AltBlock::fromVbkEncoding(stream);
   p.containingBlock = AltBlock::fromVbkEncoding(stream);
-  p.containingTx = stream.readSlice(uint256::size());
   p.popData = PopData::fromVbkEncoding(stream);
 
   return p;
@@ -27,7 +26,6 @@ AltPayloads AltPayloads::fromVbkEncoding(const std::string& bytes) {
 void AltPayloads::toVbkEncoding(WriteStream& stream) const {
   endorsed.toVbkEncoding(stream);
   containingBlock.toVbkEncoding(stream);
-  stream.write(containingTx);
   popData.toVbkEncoding(stream);
 }
 
@@ -38,7 +36,8 @@ std::vector<uint8_t> AltPayloads::toVbkEncoding() const {
 }
 
 AltPayloads::id_t AltPayloads::getId() const {
-  return sha256(containingTx, containingBlock.hash);
+  auto hash = popData.getHash();
+  return sha256(hash, containingBlock.hash);
 }
 
 AltBlock AltPayloads::getContainingBlock() const { return containingBlock; }
