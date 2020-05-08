@@ -56,30 +56,63 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
   if (!index) {
     return state.Invalid("bad-block", "Can't find containing block");
   }
+  return addPayloads(*index, payloads, state);
+}
 
-  if (!index->pprev) {
+bool AltTree::addPayloads(index_t& index,
+                          const std::vector<payloads_t>& payloads,
+                          ValidationState& state) {
+  if (!index.pprev) {
     return state.Invalid("bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
   }
 
-  if (!index->isValid()) {
+  if (!index.isValid()) {
     return state.Invalid("bad-chain",
                          "Containing block has been marked as invalid");
   }
 
-  bool isOnActiveChain = activeChain_.contains(index);
+  bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool ret = setTip(*index->pprev, dummy, false);
+    bool ret = setTip(*index.pprev, dummy, false);
     assert(ret);
     (void)ret;
   }
 
   for (const auto& p : payloads) {
-    index->commands.emplace_back();
-    auto& g = index->commands.back();
+    index.commands.emplace_back();
+    auto& g = index.commands.back();
     g.id = p.getId();
     payloadsToCommands(p, g.commands);
+  }
+
+  return true;
+}
+
+bool AltTree::validatePayloads(const AltBlock& block,
+                               const payloads_t& p,
+                               ValidationState state) {
+  return validatePayloads(block.getHash(), p, state);
+}
+
+bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
+                               const payloads_t& p,
+                               ValidationState state) {
+  auto* index = getBlockIndex(block_hash);
+
+  if (!index) {
+    return state.Invalid("bad-block", "Can't find containing block");
+  }
+
+  if (!addPayloads(*index, {p}, state)) {
+    return state.Invalid("addPayloadsTemporarily");
+  }
+
+  if (!setState(*index, state)) {
+    removePayloads(*index, {p});
+    index->unsetFlag(BlockStatus::BLOCK_FAILED_POP);
+    return state.Invalid("addPayloadsTemporarily");
   }
 
   return true;
@@ -280,23 +313,28 @@ void AltTree::removePayloads(const AltBlock::hash_t& hash,
                            HexStr(hash));
   }
 
-  if (!index->pprev) {
+  return removePayloads(*index, payloads);
+}
+
+void AltTree::removePayloads(index_t& index,
+                             const std::vector<payloads_t>& payloads) {
+  if (!index.pprev) {
     // we do not add payloads to genesis block, therefore we do not have to
     // remove them
     return;
   }
 
-  bool isOnActiveChain = activeChain_.contains(index);
+  bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
-    assert(index->pprev && "can not remove payloads from genesis block");
+    assert(index.pprev && "can not remove payloads from genesis block");
     ValidationState dummy;
-    bool ret = setTip(*index->pprev, dummy, false);
+    bool ret = setTip(*index.pprev, dummy, false);
     assert(ret);
     (void)ret;
   }
 
   // remove all matched command groups
-  auto& c = index->commands;
+  auto& c = index.commands;
   c.erase(std::remove_if(c.begin(),
                          c.end(),
                          [&payloads](const CommandGroup& g) {
@@ -329,8 +367,7 @@ void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
     addBlock(vbk(), p.popData.atv.containingBlock, commands);
 
     auto e = VbkEndorsement::fromContainerPtr(p);
-    auto cmd =
-        std::make_shared<AddVbkEndorsement>(vbk(), *this, std::move(e));
+    auto cmd = std::make_shared<AddVbkEndorsement>(vbk(), *this, std::move(e));
     commands.push_back(std::move(cmd));
   }
 }
