@@ -2,8 +2,6 @@ link_libraries(${LIB_NAME})
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_BINARY_DIR}/include)
 
-# TODO: remove storage tests, as we are not using them now
-#add_subdirectory(storage)
 add_subdirectory(e2e)
 add_subdirectory(blockchain)
 add_subdirectory(rewards)
