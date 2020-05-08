@@ -128,6 +128,8 @@ struct BaseBlockTree {
            cmp(tips_, o.tips_) && (activeChain_ == o.activeChain_);
   }
 
+  bool operator!=(const BaseBlockTree& o) const { return !operator==(o); }
+
  protected:
   virtual void determineBestChain(Chain<index_t>& currentBest,
                                   index_t& indexNew,

@@ -121,10 +121,6 @@ struct BlockTree : public BaseBlockTree<Block> {
     return s.str();
   }
 
-  bool operator==(const BlockTree&) const {
-    return false;  // TODO
-  }
-
  protected:
   const ChainParams* param_ = nullptr;
 

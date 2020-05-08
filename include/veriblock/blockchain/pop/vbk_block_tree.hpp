@@ -60,6 +60,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
     return cmp_ == o.cmp_ && VbkTree::operator==(o);
   }
 
+  bool operator!=(const VbkBlockTree& o) const {
+    return !operator==(o);
+  }
+
   bool setState(const VbkBlock::hash_t& block, ValidationState& state);
 
   std::string toPrettyString(size_t level = 0) const;

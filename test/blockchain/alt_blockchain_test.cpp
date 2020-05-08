@@ -113,3 +113,21 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
             popminer.vbk().getBestChain().tip()->getHash());
 }
+
+TEST_F(AltTreeFixture, compareTrees) {
+  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam);
+  EXPECT_TRUE(alttree2.bootstrap(state));
+  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
+  EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
+  EXPECT_EQ(alttree, alttree2);
+  EXPECT_EQ(alttree.vbk(), alttree2.vbk());
+  EXPECT_EQ(alttree.vbk().btc(), alttree2.vbk().btc());
+
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+
+  // mine 1 blocks
+  mineAltBlocks(1, chain);
+  EXPECT_NE(alttree, alttree2);
+  EXPECT_EQ(alttree.vbk(), alttree2.vbk());
+  EXPECT_EQ(alttree.vbk().btc(), alttree2.vbk().btc());
+}

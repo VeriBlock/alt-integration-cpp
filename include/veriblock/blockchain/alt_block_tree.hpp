@@ -102,10 +102,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   const AltChainParams& getParams() const { return *alt_config_; }
 
-  bool operator==(const AltTree&) const {
-    return false;  // TODO
-  }
-
   std::string toPrettyString(size_t level = 0) const;
 
  protected:

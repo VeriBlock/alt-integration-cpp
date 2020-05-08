@@ -355,7 +355,7 @@ struct PopAwareForkResolutionComparator {
   PopAwareForkResolutionComparator(std::shared_ptr<ProtectingBlockTree> tree,
                                    const protecting_params_t& protectingParams,
                                    const protected_params_t& protectedParams)
-      : ing_(tree),
+      : ing_(std::move(tree)),
         protectedParams_(&protectedParams),
         protectingParams_(&protectingParams) {
     assert(protectedParams.getKeystoneInterval() > 0);
