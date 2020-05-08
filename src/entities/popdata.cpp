@@ -5,6 +5,8 @@
 
 #include <veriblock/entities/popdata.hpp>
 
+#include "veriblock/hashutil.hpp"
+
 namespace altintegration {
 
 PopData PopData::fromVbkEncoding(ReadStream& stream) {
@@ -53,6 +55,11 @@ std::vector<uint8_t> PopData::toVbkEncoding() const {
   WriteStream stream;
   toVbkEncoding(stream);
   return stream.data();
+}
+
+PopData::id_t PopData::getHash() const {
+  auto bytes = toVbkEncoding();
+  return sha256(bytes);
 }
 
 bool PopData::containsEndorsements() const { return hasAtv; }

@@ -23,7 +23,6 @@ struct AltPayloads {
 
   AltBlock endorsed;
   AltBlock containingBlock;
-  uint256 containingTx;
   PopData popData;
 
   /**
