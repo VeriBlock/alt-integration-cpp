@@ -79,7 +79,7 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
     index->commands.emplace_back();
     auto& g = index->commands.back();
     g.id = p.getId();
-    payloadsToCommands(*this, p, g.commands);
+    payloadsToCommands(p, g.commands);
   }
 
   return true;
@@ -311,28 +311,26 @@ void AltTree::removePayloads(const AltBlock::hash_t& hash,
           c.end());
 }
 
-template <>
-void payloadsToCommands<AltTree>(AltTree& tree,
-                                 const typename AltTree::payloads_t& p,
+void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
                                  std::vector<CommandPtr>& commands) {
   // first, add vbk context
   for (const auto& b : p.popData.vbk_context) {
-    addBlock(tree.vbk(), b, commands);
+    addBlock(vbk(), b, commands);
   }
 
   // second, add all VTBs
   for (const auto& vtb : p.popData.vtbs) {
-    auto cmd = std::make_shared<AddVTB>(tree, vtb);
+    auto cmd = std::make_shared<AddVTB>(*this, vtb);
     commands.push_back(std::move(cmd));
   }
 
   // third, add ATV endorsement
   if (p.popData.hasAtv) {
-    addBlock(tree.vbk(), p.popData.atv.containingBlock, commands);
+    addBlock(vbk(), p.popData.atv.containingBlock, commands);
 
     auto e = VbkEndorsement::fromContainerPtr(p);
     auto cmd =
-        std::make_shared<AddVbkEndorsement>(tree.vbk(), tree, std::move(e));
+        std::make_shared<AddVbkEndorsement>(vbk(), *this, std::move(e));
     commands.push_back(std::move(cmd));
   }
 }

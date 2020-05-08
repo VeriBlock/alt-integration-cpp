@@ -352,7 +352,7 @@ struct PopAwareForkResolutionComparator {
                                BlockIndex<protected_block_t>,
                                protected_params_t>;
 
-  PopAwareForkResolutionComparator(ProtectingBlockTree tree,
+  PopAwareForkResolutionComparator(std::shared_ptr<ProtectingBlockTree> tree,
                                    const protecting_params_t& protectingParams,
                                    const protected_params_t& protectedParams)
       : ing_(std::move(tree)),
@@ -361,8 +361,8 @@ struct PopAwareForkResolutionComparator {
     assert(protectedParams.getKeystoneInterval() > 0);
   }
 
-  ProtectingBlockTree& getProtectingBlockTree() { return ing_; }
-  const ProtectingBlockTree& getProtectingBlockTree() const { return ing_; }
+  ProtectingBlockTree& getProtectingBlockTree() { return *ing_; }
+  const ProtectingBlockTree& getProtectingBlockTree() const { return *ing_; }
 
   //! finds a path between current ed's best chain and 'to', and applies all
   //! commands in between
@@ -377,7 +377,7 @@ struct PopAwareForkResolutionComparator {
       return true;
     }
 
-    sm_t sm(ed, ing_);
+    sm_t sm(ed, *ing_);
     if (to.getAncestor(currentActive->height) == currentActive) {
       return sm.apply(*currentActive, to, state);
     }
@@ -408,7 +408,7 @@ struct PopAwareForkResolutionComparator {
 
     // indexNew is on top of our best tip
     if (indexNew.getAncestor(bestTip->height) == bestTip) {
-      sm_t sm(ed, ing_, bestTip->height);
+      sm_t sm(ed, *ing_, bestTip->height);
       if (sm.apply(*bestTip, indexNew, state)) {
         // if indexNew is valid, then switch to new chain
         return -1;
@@ -450,7 +450,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     assert(chainA.tip() == bestTip);
 
-    sm_t sm(ed, ing_, chainA.first()->height);
+    sm_t sm(ed, *ing_, chainA.first()->height);
 
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - fork
@@ -475,12 +475,12 @@ struct PopAwareForkResolutionComparator {
         internal::getKeystoneContext<protecting_block_t, protecting_params_t>;
 
     // filter chainA
-    auto pkcChain1 = filter1(chainA, ing_, *protectedParams_);
-    auto kcChain1 = filter2(pkcChain1, ing_);
+    auto pkcChain1 = filter1(chainA, *ing_, *protectedParams_);
+    auto kcChain1 = filter2(pkcChain1, *ing_);
 
     // filter chainB
-    auto pkcChain2 = filter1(chainB, ing_, *protectedParams_);
-    auto kcChain2 = filter2(pkcChain2, ing_);
+    auto pkcChain2 = filter1(chainB, *ing_, *protectedParams_);
+    auto kcChain2 = filter2(pkcChain2, *ing_);
 
     // current tree contains both chains.
     int result = internal::comparePopScoreImpl<protected_params_t>(
@@ -497,7 +497,7 @@ struct PopAwareForkResolutionComparator {
   }
 
   bool operator==(const PopAwareForkResolutionComparator& o) const {
-    return ing_ == o.ing_;
+    return *ing_ == *o.ing_;
   }
 
   std::string toPrettyString(size_t level = 0) const {
@@ -505,13 +505,13 @@ struct PopAwareForkResolutionComparator {
     std::string pad(level, ' ');
     ss << pad << "Comparator{\n";
     ss << pad << "{tree=\n";
-    ss << ing_.toPrettyString(level + 2);
+    ss << ing_->toPrettyString(level + 2);
     ss << "}";
     return ss.str();
   }
 
  private:
-  ProtectingBlockTree ing_;
+  std::shared_ptr<ProtectingBlockTree> ing_;
 
   const protected_params_t* protectedParams_;
   const protecting_params_t* protectingParams_;
