@@ -92,13 +92,13 @@ bool AltTree::addPayloads(index_t& index,
 
 bool AltTree::validatePayloads(const AltBlock& block,
                                const payloads_t& p,
-                               ValidationState state) {
+                               ValidationState& state) {
   return validatePayloads(block.getHash(), p, std::move(state));
 }
 
 bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
                                const payloads_t& p,
-                               ValidationState state) {
+                               ValidationState& state) {
   auto* index = getBlockIndex(block_hash);
 
   if (!index) {

@@ -136,3 +136,42 @@ TEST_F(AltTreeFixture, compareTrees) {
   EXPECT_EQ(alttree.vbk(), alttree2.vbk());
   EXPECT_EQ(alttree.vbk().btc(), alttree2.vbk().btc());
 }
+
+TEST_F(AltTreeFixture, validatePayloads_test) {
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+
+  // mine 65 VBK blocks
+  popminer.mineVbkBlocks(65);
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  AltBlock endorsedBlock1 = chain[5];
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
+  auto containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  AltPayloads payloads1 =
+      generateAltPayloads(tx1,
+                          containingBlock,
+                          endorsedBlock1,
+                          vbkparam.getGenesisBlock().getHash(),
+                          0);
+
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+
+  EXPECT_TRUE(
+      alttree.validatePayloads(containingBlock.getHash(), payloads1, state));
+  EXPECT_TRUE(state.IsValid());
+
+  auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
+  EXPECT_TRUE(containingIndex->isValid());
+  EXPECT_EQ(*alttree.vbk().getBestChain().tip(),
+            *popminer.vbk().getBestChain().tip());
+
+  EXPECT_FALSE(
+      alttree.validatePayloads(containingBlock.getHash(), payloads1, state));
+  EXPECT_FALSE(state.IsValid());
+  containingIndex = alttree.getBlockIndex(containingBlock.getHash());
+  EXPECT_TRUE(containingIndex->isValid());
+}
