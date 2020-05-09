@@ -102,11 +102,11 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool validatePayloads(const AltBlock& block,
                         const payloads_t& p,
-                        ValidationState state);
+                        ValidationState& state);
 
   bool validatePayloads(const AltBlock::hash_t& block_hash,
                         const payloads_t& p,
-                        ValidationState state);
+                        ValidationState& state);
 
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
