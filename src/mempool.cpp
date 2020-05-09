@@ -143,10 +143,7 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
   }
   payloads.endorsed = *endorsed_block_index->header;
 
-  ret = tree.addPayloads(hack_block, {payloads}, state);
-  assert(ret);
-
-  if (!tree.setState(hack_block.getHash(), state)) {
+  if (!tree.validatePayloads(hack_block.getHash(), payloads, state)) {
     stored_atvs_.erase(popdata.atv.getId());
     return false;
   }
@@ -189,8 +186,8 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
 }
 
 std::vector<PopData> MemPool::getPop(const AltBlock& current_block,
-                                      AltTree& tree,
-                                      ValidationState& state) {
+                                     AltTree& tree) {
+  ValidationState state;
   bool ret = tree.setState(current_block.getHash(), state);
   (void)ret;
   assert(ret);

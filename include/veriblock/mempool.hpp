@@ -42,9 +42,7 @@ struct MemPool {
   bool submitVTB(const std::vector<VTB>& vtb, ValidationState& state);
   bool submitATV(const std::vector<ATV>& atv, ValidationState& state);
 
-  std::vector<PopData> getPop(const AltBlock& current_block,
-                              AltTree& tree,
-                              ValidationState& state);
+  std::vector<PopData> getPop(const AltBlock& current_block, AltTree& tree);
 
   void removePayloads(const std::vector<PopData>& v_popData);
 
