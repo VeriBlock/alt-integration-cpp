@@ -186,8 +186,8 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
 }
 
 std::vector<PopData> MemPool::getPop(const AltBlock& current_block,
-                                     AltTree& tree,
-                                     ValidationState& state) {
+                                     AltTree& tree) {
+  ValidationState state;
   bool ret = tree.setState(current_block.getHash(), state);
   (void)ret;
   assert(ret);

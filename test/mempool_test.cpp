@@ -62,15 +62,14 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   EXPECT_TRUE(mempool.submitATV({atv}, state));
   EXPECT_TRUE(mempool.submitVTB(vtbs, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 2);
   EXPECT_EQ(v_popData[0].atv, atv);
 
   // do the same to show that from mempool do not remove payloads
-  v_popData = mempool.getPop(*chain.rbegin(), alttree, state);
+  v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 2);
@@ -79,7 +78,7 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   // remove from mempool
   mempool.removePayloads(v_popData);
 
-  v_popData = mempool.getPop(*chain.rbegin(), alttree, state);
+  v_popData = mempool.getPop(*chain.rbegin(), alttree);
   EXPECT_EQ(v_popData.size(), 0);
 }
 
@@ -129,8 +128,7 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   EXPECT_TRUE(mempool.submitATV({atv}, state));
   EXPECT_TRUE(mempool.submitVTB(vtbs, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 2);
@@ -198,8 +196,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   EXPECT_TRUE(mempool.submitATV({atv}, state));
   EXPECT_TRUE(mempool.submitVTB({vtb1, vtb2}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 2);
@@ -237,8 +234,7 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
 
   EXPECT_TRUE(mempool.submitATV({atv}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 0);
 }
@@ -266,8 +262,7 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
 
   EXPECT_TRUE(mempool.submitATV({atv}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 0);
@@ -336,8 +331,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   EXPECT_TRUE(mempool.submitATV({atv1, atv2}, state));
   EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 2);
   EXPECT_EQ(v_popData[0].vtbs.size(), 1);
@@ -414,8 +408,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   EXPECT_TRUE(mempool.submitATV({atv2, atv1}, state));
   EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 2);
   EXPECT_EQ(v_popData[0].vtbs.size(), 1);
@@ -492,8 +485,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   EXPECT_TRUE(mempool.submitATV({atv2, atv1}, state));
   EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 1);
@@ -580,8 +572,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   EXPECT_TRUE(mempool.submitATV({atv1}, state));
   EXPECT_TRUE(mempool.submitVTB({vtb1, vtb2}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 1);
@@ -622,8 +613,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
 
   EXPECT_TRUE(mempool.submitATV({atv1}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].atv, atv1);
@@ -642,7 +632,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
 
   EXPECT_TRUE(mempool.submitATV({atv1}, state));
 
-  v_popData = mempool.getPop(*chain.rbegin(), alttree, state);
+  v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 0);
 }
@@ -682,8 +672,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   EXPECT_TRUE(mempool.submitATV({atv1}, state));
   EXPECT_TRUE(mempool.submitVTB({vtb1}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 1);
@@ -746,7 +735,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   EXPECT_TRUE(mempool.submitATV({atv2}, state));
   EXPECT_TRUE(mempool.submitVTB({vtb2}, state));
 
-  v_popData = mempool.getPop(*chain.rbegin(), alttree, state);
+  v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].vtbs.size(), 0);
@@ -776,8 +765,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
 
   EXPECT_TRUE(mempool.submitATV({atv1}, state));
 
-  std::vector<PopData> v_popData =
-      mempool.getPop(*chain.rbegin(), alttree, state);
+  std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].atv, atv1);
@@ -799,7 +787,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
 
   EXPECT_TRUE(mempool.submitATV({atv2}, state));
 
-  v_popData = mempool.getPop(*chain.rbegin(), alttree, state);
+  v_popData = mempool.getPop(*chain.rbegin(), alttree);
 
   EXPECT_EQ(v_popData.size(), 1);
   EXPECT_EQ(v_popData[0].atv, atv2);
