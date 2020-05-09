@@ -93,7 +93,7 @@ bool AltTree::addPayloads(index_t& index,
 bool AltTree::validatePayloads(const AltBlock& block,
                                const payloads_t& p,
                                ValidationState& state) {
-  return validatePayloads(block.getHash(), p, std::move(state));
+  return validatePayloads(block.getHash(), p, state);
 }
 
 bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
