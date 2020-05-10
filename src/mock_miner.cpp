@@ -8,7 +8,6 @@
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
-#include "veriblock/entities/context.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
