@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/entities/context.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/serde.hpp"
 
@@ -24,7 +23,6 @@ struct AltBlock {
   using hash_t = std::vector<uint8_t>;
   using payloads_t = AltPayloads;
   using endorsement_t = VbkEndorsement;
-  using context_t = AltContext;
   using protecting_block_t = VbkBlock;
 
   hash_t hash{};

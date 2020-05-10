@@ -11,6 +11,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
+#include <veriblock/signals.hpp>
 
 namespace altintegration {
 
@@ -25,6 +26,7 @@ struct BaseBlockTree {
   using hash_t = typename Block::hash_t;
   using prev_block_hash_t = decltype(Block::previousBlock);
   using index_t = BlockIndex<Block>;
+  using on_invalidate_t = void(const index_t&);
   using block_index_t =
       std::unordered_map<prev_block_hash_t, std::shared_ptr<index_t>>;
 
@@ -106,20 +108,31 @@ struct BaseBlockTree {
       (void)ret;
     }
 
-    toBeInvalidated.setFlag(reason);
+    doInvalidate(toBeInvalidated, reason);
 
     // flag next subtrees (excluding current block)  as BLOCK_FAILED_CHILD
-    forEachNextNodePreorder<block_t>(toBeInvalidated,
-                                     [&](index_t& index) -> bool {
-                                       bool shouldContinue = index.isValid();
-                                       index.setFlag(BLOCK_FAILED_CHILD);
-                                       return shouldContinue;
-                                     });
+    for (auto* pnext : toBeInvalidated.pnext) {
+      forEachNodePostorder<block_t>(*pnext, [&](index_t& index) -> bool {
+        bool shouldContinue = index.isValid();
+        doInvalidate(index, BLOCK_FAILED_CHILD);
+        return shouldContinue;
+      });
+    }
 
     // after invalidation, try to add tip
     tryAddTip(toBeInvalidated.pprev);
 
     updateTips(shouldDetermineBestChain);
+  }
+
+  //! connects a handler to a signal 'On Invalidate Block'
+  size_t connectOnInvalidateBlock(const std::function<on_invalidate_t>& f) {
+    return invalidate_sig_.connect(f);
+  }
+
+  //! disconnects a handler to a signal 'On Invalidate Block'
+  bool disconnectOnInvalidateBlock(size_t id) {
+    return invalidate_sig_.disconnect(id);
   }
 
   bool operator==(const BaseBlockTree& o) const {
@@ -263,6 +276,11 @@ struct BaseBlockTree {
     blocks_.erase(shortHash);
   }
 
+  void doInvalidate(index_t& block, enum BlockStatus reason) {
+    block.setFlag(reason);
+    invalidate_sig_.emit(block);
+  }
+
  protected:
   //! stores ALL blocks, including valid and invalid
   block_index_t blocks_;
@@ -273,6 +291,8 @@ struct BaseBlockTree {
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
   Chain<index_t> activeChain_;
+  //! signals to the end user that block have been invalidated
+  signals::Signal<on_invalidate_t> invalidate_sig_;
 
   struct TreeFieldsComparator {
     bool operator()(const block_index_t& a, const block_index_t& b) {
