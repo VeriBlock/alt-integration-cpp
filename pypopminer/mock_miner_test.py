@@ -15,16 +15,12 @@ class MockMinerTestCase(unittest.TestCase):
 
         endorsed = m.mineVbkBlocks(100)
         self.assertEqual(endorsed.height, 100)
-
-        btctx = m.createBtcTxEndorsingVbkBlock(endorsed)
-        btccontaining = m.mineBtcBlocks(1)
-        vbkpoptx = m.createVbkPopTxEndorsingVbkBlock(btccontaining, btctx, endorsed, str(m.vbkTip.getHash()))
-        vbkcontaining = m.mineVbkBlocks(1)
+        m.endorseVbkBlock(endorsed, m.btcTip.getHash(), 10)
 
         p = makePublicationData(1337, "0011223344", "0014aaddff")
         payloads = m.endorseAltBlock(p, m.vbkTip.getHash())
-        self.assertEqual(len(payloads.vtbs), 1)
-        print(payloads)
+        print(repr(payloads))
+        self.assertEqual(len(payloads.vtbs), 10)
 
 
 if __name__ == '__main__':
