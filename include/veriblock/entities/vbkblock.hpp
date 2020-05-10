@@ -12,7 +12,6 @@
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
-#include "veriblock/entities/context.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
