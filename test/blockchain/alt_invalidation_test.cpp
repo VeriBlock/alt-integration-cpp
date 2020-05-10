@@ -30,9 +30,8 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
     EXPECT_EQ(tip->status, BLOCK_VALID_TREE);
     EXPECT_TRUE(tip->isValid());
 
-    connId = alttree.connectOnValidate([&](const BlockIndex<AltBlock>&){
-      totalInvalidations++;
-    });
+    connId = alttree.connectOnInvalidateBlock(
+        [&](const BlockIndex<AltBlock>&) { totalInvalidations++; });
   }
 
   template <typename Block, typename F>
