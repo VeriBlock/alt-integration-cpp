@@ -31,9 +31,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using btc_config_t = BtcChainParams;
   using index_t = BlockIndex<AltBlock>;
   using hash_t = typename AltBlock::hash_t;
-  using context_t = typename index_t::block_t::context_t;
   using payloads_t = AltPayloads;
-  using block_index_t = std::unordered_map<hash_t, std::shared_ptr<index_t>>;
+
+
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
                                                              VbkBlockTree,

@@ -22,11 +22,17 @@ std::string ToString(const std::unordered_set<BlockIndex<AltBlock>*>& chains) {
 
 struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock>* tip;
+  size_t connId = 0;
+  size_t totalInvalidations = 0;
 
   AltInvalidationTest() {
     tip = mineAltBlocks(*alttree.getBlocks().begin()->second, 10);
     EXPECT_EQ(tip->status, BLOCK_VALID_TREE);
     EXPECT_TRUE(tip->isValid());
+
+    connId = alttree.connectOnValidate([&](const BlockIndex<AltBlock>&){
+      totalInvalidations++;
+    });
   }
 
   template <typename Block, typename F>
@@ -76,6 +82,8 @@ TEST_F(AltInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
     ASSERT_TRUE(current->status & BLOCK_FAILED_CHILD);
     current = chain.next(current);
   } while (current != nullptr);
+
+  ASSERT_EQ(totalInvalidations, 6);
 }
 
 TEST_F(AltInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
@@ -163,4 +171,6 @@ TEST_F(AltInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   ASSERT_EQ(forkChains.size(), 2);
   ASSERT_TRUE(forkChains.count(B5));
   ASSERT_TRUE(forkChains.count(Achain[9]));
+
+  ASSERT_EQ(totalInvalidations, 5 + 3 + 2 + 1 + 3 + 2 + 1);
 }

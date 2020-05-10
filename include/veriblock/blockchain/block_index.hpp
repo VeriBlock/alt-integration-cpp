@@ -48,7 +48,6 @@ struct BlockIndex {
   using height_t = typename block_t::height_t;
   using endorsement_t = typename block_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
-  using context_t = typename Block::context_t;
   using payloads_t = typename Block::payloads_t;
   using protecting_block_t = typename Block::protecting_block_t;
 
