@@ -10,22 +10,30 @@
 #include <veriblock/mock_miner.hpp>
 #include <veriblock/uint.hpp>
 
+using namespace boost::python;
+using namespace altintegration;
+
 BOOST_PYTHON_MODULE(_entities) {
-  using namespace boost::python;
-  using namespace altintegration;
+  class_<BtcTx>("BtcTx")
+      .def("__str__", &BtcTx::toHex)
+      .def("__repr__", &BtcTx::toHex)
+      .def("getHash", &BtcTx::getHash)
+      .def_readwrite("tx", &BtcTx::tx);
 
-  def("uint256_fromHex", &uint256::fromHex);
-  class_<BtcTx>("BtcTx").def_readwrite("tx", &BtcTx::tx);
+  class_<uint256>("uint256", no_init)
+      .def("__str__", &uint256::toHex)
+      .def("__repr__", &uint256::toHex)
+      .def("__len__", &uint256::size)
+      .def("toHex", &uint256::toHex);
 
-  class_<uint256>("uint256").def("toHex", &uint256::toHex);
-
-  def("BtcBlock_fromHex", &BtcBlock::fromHex);
   class_<BtcBlock>("BtcBlock")
+      .def("__str__", &BtcBlock::toHex)
+      .def("__repr__", &BtcBlock::toHex)
+      .def("toHex", &BtcBlock::toHex)
       .def_readwrite("version", &BtcBlock::version)
       .def_readwrite("previousBlock", &BtcBlock::previousBlock)
       .def_readwrite("merkleRoot", &BtcBlock::merkleRoot)
       .def_readwrite("timestamp", &BtcBlock::timestamp)
       .def_readwrite("bits", &BtcBlock::bits)
-      .def_readwrite("nonce", &BtcBlock::nonce)
-      .def("toHex", &BtcBlock::toHex);
+      .def_readwrite("nonce", &BtcBlock::nonce);
 }

@@ -116,12 +116,12 @@ elseif(COVERAGE)
     include(cmake/coverage.cmake)
 endif()
 
+include_directories(include)
+add_subdirectory(src)
+
 if(WITH_PYPOPMINER)
     add_subdirectory(pypopminer EXCLUDE_FROM_ALL)
 endif()
-
-include_directories(include)
-add_subdirectory(src)
 
 add_subdirectory(tools EXCLUDE_FROM_ALL)
 
