@@ -164,17 +164,25 @@ struct Blob {
     return *p1 | (uint64_t)*p2 << 32;
   }
 
+  std::string toPrettyString() const {
+    return "Blob<" + std::to_string(N) + ">(" + toHex() + ")";
+  }
+
  protected:
   inline void assign(Slice<const uint8_t> slice) {
     if (slice.size() > N) {
-      throw std::invalid_argument("Blob(): invalid slice size");
+      throw std::invalid_argument(
+          "Blob(): invalid data size: " + std::to_string(slice.size()) + " > " +
+          std::to_string(N));
     }
     std::copy(slice.begin(), slice.end(), data_.begin());
   }
 
   inline void assign(const std::string& str) {
     if (str.size() > N) {
-      throw std::invalid_argument("Blob(): invalid slice size");
+      throw std::invalid_argument(
+          "Blob(): invalid data size: " + std::to_string(str.size()) + " > " +
+          std::to_string(N));
     }
     std::copy(str.begin(), str.end(), data_.begin());
   }

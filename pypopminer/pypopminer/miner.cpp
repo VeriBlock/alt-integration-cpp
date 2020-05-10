@@ -5,28 +5,25 @@
 
 #include <boost/noncopyable.hpp>
 #include <boost/python.hpp>
+#include <boost/python/to_python_converter.hpp>
 #include <iostream>
 #include <veriblock/mock_miner.hpp>
+
+#include "converters.hpp"
 
 using namespace boost::python;
 using namespace altintegration;
 
-template <class T>
-list std_vector_to_py_list(const std::vector<T>& v) {
-  object get_iter = iterator<std::vector<T>>();
-  object iter = get_iter(v);
-  list l(iter);
-  return l;
-}
-
 struct Payloads {
+  bool hasAtv = false;
   ATV atv;
   list vtbs;
 
   std::string toPrettyString() const {
     std::ostringstream os;
     os << "Payloads{";
-    os << "ATV=" << atv.containingBlock.getHash().toHex();
+    os << "ATV="
+       << (hasAtv ? atv.containingBlock.getHash().toHex() : "<empty>");
     os << ", VTBs=" << len(vtbs) << "}";
     return os.str();
   }
@@ -123,6 +120,7 @@ struct MockMinerProxy : private MockMiner {
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
     payloads.atv = base::generateATV(vbktx, lastVbkBlock, state);
+    payloads.hasAtv = true;
     if (!state.IsValid()) {
       throw std::logic_error("MockMiner: can't create ATV: " +
                              state.toString());
@@ -172,34 +170,33 @@ boost::shared_ptr<Blob<N>> makeBlob(const object& obj) {
 template <size_t N>
 void blob(std::string name) {
   using blob_t = Blob<N>;
-  class_<blob_t, boost::shared_ptr<blob_t>>(name.c_str(), no_init)
-      .def("__init__", make_constructor(makeBlob<N>))
-      .def("__repr__", &Blob<N>::toHex)
-      .def("__str__", &Blob<N>::toHex)
-      .def("toHex", &Blob<N>::toHex);
+  class_<blob_t, boost::noncopyable, boost::shared_ptr<blob_t>>(name.c_str(),
+                                                                no_init)
+      .def("__str__", &blob_t::toHex)
+      .def("__len__", &blob_t::size)
+      .def("__repr__", &blob_t::toHex)
+      .def("toHex", &blob_t::toHex);
+
+  pystring_converter().reg<blob_t>();
 }
 
-boost::shared_ptr<std::vector<uint8_t>> vecFromHex(const str& s) {
-  std::string hex = extract<std::string>(s);
-  auto data = ParseHex(hex);
-  return boost::shared_ptr<std::vector<uint8_t>>(
-      new std::vector<uint8_t>(std::move(data)));
-}
-
-std::string vecToHex(const std::vector<uint8_t>& v) { return HexStr(v); }
+std::string vecToHex(std::vector<uint8_t>& v) { return HexStr(v); }
 
 BOOST_PYTHON_MODULE(_pypopminer) {
+  class_<std::vector<uint8_t>,
+         boost::noncopyable,
+         boost::shared_ptr<std::vector<uint8_t>>>("ByteVector", no_init)
+      .def("__str__", &vecToHex)
+      .def("toHex", &vecToHex)
+      .def("__len__", &std::vector<uint8_t>::size)
+      .def("__repr__", &vecToHex);
   blob<256 / 8>("uint256");
   blob<192 / 8>("uint192");
   blob<128 / 8>("uint128");
   blob<96 / 8>("uint96");
   blob<72 / 8>("uint72");
 
-  class_<std::vector<uint8_t>, boost::shared_ptr<std::vector<uint8_t>>>(
-      "ByteVector", no_init)
-      .def("__init__", make_constructor(vecFromHex))
-      .def("__str__", make_function(vecFromHex))
-      .def("__repr__", make_function(vecToHex));
+  pystring_converter().reg<std::vector<uint8_t>>();
 
   class_<PublicationData>("PublicationData")
       .def("__repr__", &PublicationData::toPrettyString)
