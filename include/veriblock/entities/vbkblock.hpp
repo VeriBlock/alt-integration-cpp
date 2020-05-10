@@ -12,7 +12,6 @@
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
-#include "veriblock/entities/context.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
@@ -26,7 +25,6 @@ struct VbkBlock {
   using height_t = int32_t;
   using keystone_t = uint72;
   using payloads_t = VTB;
-  using context_t = VbkContext;
   using endorsement_t = BtcEndorsement;
   using protecting_block_t = BtcBlock;
 
