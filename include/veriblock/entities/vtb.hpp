@@ -27,6 +27,13 @@ struct VTB {
   //! (memory only) indicates whether we already did 'checkPayloads' on this VTB
   mutable bool checked{false};
 
+  std::string toHex() const { return HexStr(toVbkEncoding()); }
+
+  std::string toPrettyString() const {
+    return "VTB{containingTx" + transaction.getHash().toHex() +
+           ", containingBlock=" + containingBlock.getHash().toHex() + "}";
+  }
+
   /**
    * Read VBK data from the stream and convert it to VTB
    * @param stream data stream to read from

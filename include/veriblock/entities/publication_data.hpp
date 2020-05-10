@@ -7,9 +7,11 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_PUBLICATION_DATA_HPP_
 
 #include <cstdint>
+#include <sstream>
 #include <vector>
 
 #include "veriblock/serde.hpp"
+#include "veriblock/strutil.hpp"
 
 namespace altintegration {
 
@@ -18,6 +20,13 @@ struct PublicationData {
   std::vector<uint8_t> header{};
   std::vector<uint8_t> payoutInfo{};
   std::vector<uint8_t> contextInfo{};
+
+  std::string toPrettyString() const {
+    std::ostringstream ss;
+    ss << "PublicationData{id=" << identifier << ", header=" << HexStr(header)
+       << ", payoutInfo=" << HexStr(payoutInfo) << "}";
+    return ss.str();
+  }
 
   /**
    * Read data from the vector of bytes and convert it to

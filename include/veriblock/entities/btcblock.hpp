@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -111,8 +112,14 @@ struct BtcBlock {
    */
   uint256 getHash() const;
 
-  static std::string name() {
-    return "Btc";
+  static std::string name() { return "Btc"; }
+
+  std::string toPrettyString() const {
+    std::ostringstream ss;
+    ss << "BtcBlock{version=" << version << ", prev=" << previousBlock.toHex()
+       << ", merkleRoot=" << merkleRoot.toHex() << ", timestamp=" << timestamp
+       << ", bits=" << bits << ", nonce=" << nonce << "}";
+    return ss.str();
   }
 };
 

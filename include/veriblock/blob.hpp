@@ -41,11 +41,12 @@ struct Blob {
     data_.fill(0);
     assign(v);
   }
-  Blob(const std::string& str) {
+  explicit Blob(const std::string& hex) {
     data_.fill(0);
-    assign(str);
+    auto data = ParseHex(hex);
+    assign(data);
   }
-  template <size_t M>
+  template <size_t M, typename = typename std::enable_if<M <= N>::type>
   explicit Blob(const Blob<M>& other) {
     data_.fill(0);
     assign(other);
