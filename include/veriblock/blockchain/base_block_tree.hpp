@@ -111,12 +111,13 @@ struct BaseBlockTree {
     doInvalidate(toBeInvalidated, reason);
 
     // flag next subtrees (excluding current block)  as BLOCK_FAILED_CHILD
-    forEachNextNodePreorder<block_t>(toBeInvalidated,
-                                     [&](index_t& index) -> bool {
-                                       bool shouldContinue = index.isValid();
-                                       doInvalidate(index, BLOCK_FAILED_CHILD);
-                                       return shouldContinue;
-                                     });
+    for (auto* pnext : toBeInvalidated.pnext) {
+      forEachNodePostorder<block_t>(*pnext, [&](index_t& index) -> bool {
+        bool shouldContinue = index.isValid();
+        doInvalidate(index, BLOCK_FAILED_CHILD);
+        return shouldContinue;
+      });
+    }
 
     // after invalidation, try to add tip
     tryAddTip(toBeInvalidated.pprev);
