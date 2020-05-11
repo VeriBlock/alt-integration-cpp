@@ -30,7 +30,7 @@ class MockMinerTestCase(unittest.TestCase):
         payloads = m.endorseAltBlock(p, m.vbkTip.getHash())
         print(repr(payloads))
         self.assertEqual(len(payloads.vtbs), 10)
-        self.assertEqual(m.vbkTip.height, 101)
+        self.assertEqual(m.vbkTip.height, 102)
 
     def test_uints_handle_both_bytes_and_uint8(self):
         from pypopminer import PublicationData, BtcBlock
