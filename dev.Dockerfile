@@ -70,6 +70,17 @@ RUN update-alternatives --install /usr/bin/gcov         gcov         /usr/bin/gc
 
 WORKDIR /tmp
 
+RUN mkdir -p boost && \
+    ( \
+      cd boost; \
+      wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz; \
+      tar -zxf boost_1_65_1.tar.gz; \
+      cd boost_1_65_1/; \
+      ./bootstrap.sh; \
+	  ./bjam cxxflags=-fPIC -a --with-system install; \
+    ) && \
+    rm -rf boost
+
 RUN ldconfig
 
 ENV SONAR_CLI_VERSION=4.2.0.1873

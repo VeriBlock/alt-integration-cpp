@@ -27,14 +27,6 @@ jobs:
         with:
           submodules: recursive
           clean: true
-      - name: install depends for pypopminer
-        if: ${{ matrix.flags }} == '-DWITH_PYPOPMINER=ON'
-        run: |
-          wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz
-          tar -zxf boost_1_65_1.tar.gz
-          cd boost_1_65_1/
-          ./bootstrap.sh
-          sudo ./bjam cxxflags=-fPIC -a --with-system install
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
