@@ -75,10 +75,10 @@ RUN mkdir -p boost && \
 	  export PYTHON_VERSION=3.6; \
 	  export PYTHON_ROOT=/usr; \
 	  cd libs/python/build; \
-	  sudo ./bjam cxxflags=-fPIC; \
-	  sudo cp -df bin-stage/libboost_python.so* /usr/local/lib; \
+	  ./bjam cxxflags=-fPIC; \
+	  cp -df bin-stage/libboost_python.so* /usr/local/lib; \
       cd ../../..; \
-	  sudo cp -rf boost /usr/local/include; \
+	  cp -rf boost /usr/local/include; \
     ) && \
     rm -rf boost
 
