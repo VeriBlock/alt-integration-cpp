@@ -25,6 +25,8 @@ std::string LevelToString(LogLevel level) {
       return "warn";
     case LogLevel::LOG_ERROR:
       return "error";
+    default:
+      return;
   }
   return "";
 }

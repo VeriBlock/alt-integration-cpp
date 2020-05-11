@@ -63,6 +63,8 @@ inline void LogMessage(std::string cat,
     case LogLevel::LOG_ERROR:
       logger->error(msg);
       return;
+    default:
+      return;
   }
 }
 #else  // !VERIBLOCK_POP_LOGGER_ENABLED
