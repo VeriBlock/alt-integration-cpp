@@ -203,7 +203,7 @@ std::vector<PopData> MemPool::getPop(const AltBlock& current_block,
       getSortedATVs(stored_atvs_);
 
   std::vector<PopData> popTxs;
-  for(size_t i = 0; i < sorted_atvs.size() && i < tree.getParams().getMaxPopDataAmount(); ++i) {
+  for(size_t i = 0; i < sorted_atvs.size() && i < tree.getParams().getMaxPopDataPerBlock(); ++i) {
     auto& atv = sorted_atvs[i].second;
     PopData popTx;
     VbkBlock first_block =
