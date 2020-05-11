@@ -72,7 +72,7 @@ RUN mkdir -p cmake && \
       wget https://github.com/Kitware/CMake/releases/download/v3.11.4/cmake-3.11.4.tar.gz; \
       tar -zxf cmake-3.11.4.tar.gz; \
       cd cmake-3.11.4/; \
-      ./bootstrap.sh; \
+      ./bootstrap; \
 	  make -j2; \
 	  make install; \
     ) && \
