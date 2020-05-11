@@ -112,6 +112,9 @@ struct AltChainParams {
 
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
+  /// The maximum allowed number of PoP data in a block
+  virtual uint32_t getMaxPopDataPerBlock() const noexcept = 0;
+
   // getter for reward parameters
   virtual const PopRewardsParams& getRewardParams() const noexcept {
     return *popRewardsParams;
