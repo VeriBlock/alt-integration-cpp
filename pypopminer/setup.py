@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) 2019-2020 Xenios SEZC
 # https://www.veriblock.org
 # Distributed under the MIT software license, see the accompanying
@@ -10,7 +11,7 @@ pypopminer_module = Extension('pypopminer',
                         include_dirs=['/usr/local/include', '../include'],
                         library_dirs=['/usr/local/lib/boost', '/usr/local/lib'],
                         runtime_library_dirs=['/usr/local/lib/boost'],
-                        libraries=['boost_python', 'veriblock-pop-cpp'])
+                        libraries=['boost_python3', 'veriblock-pop-cpp'])
 
 setup(name='pypopminer',
       version='0.1',
