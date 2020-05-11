@@ -7,6 +7,7 @@
 
 #include <util/alt_chain_params_regtest.hpp>
 #include <veriblock/altintegration.hpp>
+#include <veriblock/logger/logger.hpp>
 
 using namespace altintegration;
 
@@ -45,4 +46,14 @@ TEST(Config, IsValid) {
   config.alt = std::make_shared<AltChainParamsRegTest>();
 
   ASSERT_NO_THROW(config.validate());
+}
+
+class MyLogger : public Logger {
+ public:
+  void info(std::string msg) { fprintf(stderr, "%s\r\n", msg.c_str()); }
+};
+
+TEST(Config, TryLogger) {
+  NewLogger<MyLogger>();
+  VBK_LOG_INFO("alt", "hello %s", "world");
 }
