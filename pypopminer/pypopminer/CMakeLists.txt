@@ -6,7 +6,7 @@ add_library(_pypopminer SHARED
         )
 target_link_libraries(_pypopminer
         Boost::boost
-        Boost::python
+        Boost::python3
         ${PYTHON_LIBRARIES}
         ${LIB_NAME}
         )
