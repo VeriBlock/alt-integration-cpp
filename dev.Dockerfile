@@ -73,7 +73,8 @@ RUN mkdir -p cmake && \
       tar -zxf cmake-3.11.4.tar.gz; \
       cd cmake-3.11.4/; \
       ./bootstrap.sh; \
-	  make -j2 install; \
+	  make -j2; \
+	  make install; \
     ) && \
     rm -rf cmake
 
