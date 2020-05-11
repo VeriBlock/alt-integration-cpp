@@ -12,7 +12,7 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev:feature-pypopminer
+    container: veriblock/alt-integration-cpp-dev
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +30,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build -- -j2 install
       - name: test
         run: cd build && ctest
 
