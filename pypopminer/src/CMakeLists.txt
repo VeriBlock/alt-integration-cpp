@@ -1,19 +1,19 @@
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
-add_library(pyPopMiner SHARED
+add_library(pypopminer SHARED
         miner.cpp
         )
 
-target_link_libraries(pyPopMiner
+target_link_libraries(pypopminer
         ${Boost_LIBRARIES}
         ${PYTHON_LIBRARIES}
         ${LIB_NAME}
         )
 
-set_target_properties(pyPopMiner PROPERTIES
+set_target_properties(pypopminer PROPERTIES
         PREFIX ""
         )
 
@@ -24,5 +24,5 @@ execute_process(
         OUTPUT_VARIABLE PYTHON_SITE
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-install(TARGETS pyPopMiner DESTINATION "${PYTHON_SITE}/pyPopMiner")
-install(FILES __init__.py DESTINATION "${PYTHON_SITE}/pyPopMiner")
+install(TARGETS pypopminer DESTINATION "${PYTHON_SITE}/pypopminer")
+install(FILES __init__.py DESTINATION "${PYTHON_SITE}/pypopminer")
