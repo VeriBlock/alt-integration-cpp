@@ -38,6 +38,17 @@ struct VbkBlock {
   int32_t difficulty{};
   int32_t nonce{};
 
+  std::string toPrettyString() const {
+    std::ostringstream ss;
+    ss << "VbkBlock{height=" << height << ", version=" << version
+       << ", prev=" << previousBlock.toHex()
+       << ", prevKeystone=" << previousKeystone.toHex()
+       << ", secondPrevKeystone=" << secondPreviousKeystone.toHex()
+       << ", merkleRoot=" << merkleRoot.toHex() << ", timestamp=" << timestamp
+       << ", difficulty=" << difficulty << ", nonce=" << nonce << "}";
+    return ss.str();
+  }
+
   static VbkBlock fromHex(const std::string& hex);
 
   /**

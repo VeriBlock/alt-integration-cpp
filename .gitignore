@@ -4,3 +4,6 @@ cmake-build-*
 .idea
 deps/
 __init__.py
+venv
+*.pyd
+__pycache__
