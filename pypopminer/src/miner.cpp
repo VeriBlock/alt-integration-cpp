@@ -182,7 +182,7 @@ void blob(std::string name) {
 
 std::string vecToHex(std::vector<uint8_t>& v) { return HexStr(v); }
 
-BOOST_PYTHON_MODULE(pypopminer) {
+BOOST_PYTHON_MODULE(pyPopMiner) {
   class_<std::vector<uint8_t>,
          boost::noncopyable,
          boost::shared_ptr<std::vector<uint8_t>>>("ByteVector", no_init)

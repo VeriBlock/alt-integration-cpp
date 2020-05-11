@@ -12,19 +12,20 @@ if(NOT ${Boost_FOUND})
 endif()
 find_package(PythonInterp 3)
 find_package(PythonLibs 3)
-add_custom_target(pypopminer COMMENT "Building pypopminer")
+add_custom_target(src COMMENT "Building pyPopMiner")
 
-add_subdirectory(pypopminer)
+add_subdirectory(src)
 
 function(pytest _name _py)
-    add_custom_target(pypopminer_${_name}
+    add_custom_target(pyPopMiner_${_name}
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${_py}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            DEPENDS pyPopMiner
             )
-    add_dependencies(pypopminer_${_name} pypopminer)
+    add_dependencies(pyPopMiner_${_name} pyPopMiner)
     add_test(
-            NAME pypopminer_${_name}
-            COMMAND pypopminer_${_name}
+            NAME pyPopMiner_${_name}
+            COMMAND pyPopMiner_${_name}
     )
 endfunction()
 
