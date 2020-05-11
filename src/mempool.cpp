@@ -193,16 +193,18 @@ std::vector<PopData> MemPool::getPop(const AltBlock& current_block,
   assert(ret);
 
   AltBlock hack_block;
+  hack_block.hash = std::vector<uint8_t>(32, 0);
   hack_block.previousBlock = current_block.getHash();
   hack_block.timestamp = current_block.timestamp + 1;
   hack_block.height = current_block.height + 1;
+
 
   std::vector<std::pair<ATV::id_t, ATV>> sorted_atvs =
       getSortedATVs(stored_atvs_);
 
   std::vector<PopData> popTxs;
-  for (const auto& el : sorted_atvs) {
-    auto& atv = el.second;
+  for(size_t i = 0; i < sorted_atvs.size() && i < tree.getParams().getMaxPopDataAmount(); ++i) {
+    auto& atv = sorted_atvs[i].second;
     PopData popTx;
     VbkBlock first_block =
         !atv.context.empty() ? atv.context[0] : atv.containingBlock;

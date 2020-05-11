@@ -25,6 +25,7 @@ struct AltChainParamsTest : public AltChainParams {
 
   uint32_t getIdentifier() const noexcept override { return 0x7ec7; }
 
+  uint32_t getMaxPopDataAmount() const noexcept override { return 50; }
 
 };
 
