@@ -121,6 +121,10 @@ add_subdirectory(src)
 
 add_subdirectory(tools EXCLUDE_FROM_ALL)
 
+if(WITH_PYPOPMINER)
+    add_subdirectory(pypopminer)
+endif()
+
 if(TESTING)
     include(cmake/gtest.cmake)
     enable_testing()

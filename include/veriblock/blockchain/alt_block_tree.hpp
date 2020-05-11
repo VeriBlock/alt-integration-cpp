@@ -31,9 +31,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using btc_config_t = BtcChainParams;
   using index_t = BlockIndex<AltBlock>;
   using hash_t = typename AltBlock::hash_t;
-  using context_t = typename index_t::block_t::context_t;
   using payloads_t = AltPayloads;
-  using block_index_t = std::unordered_map<hash_t, std::shared_ptr<index_t>>;
+
+
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
                                                              VbkBlockTree,
@@ -48,7 +48,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
       : alt_config_(&alt_config),
         vbk_config_(&vbk_config),
         btc_config_(&btc_config),
-        cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config), vbk_config, alt_config),
+        cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config),
+             vbk_config,
+             alt_config),
         rewards_(alt_config) {}
 
   //! before any use, bootstrap the three with ALT bootstrap block.
@@ -57,8 +59,14 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
+  void removePayloads(index_t& index, const std::vector<payloads_t>& payloads);
+
   void removePayloads(const AltBlock::hash_t& containing,
-                   const std::vector<payloads_t>& payloads);
+                      const std::vector<payloads_t>& payloads);
+
+  bool addPayloads(index_t& index,
+                   const std::vector<payloads_t>& payloads,
+                   ValidationState& state);
 
   bool addPayloads(const AltBlock::hash_t& containing,
                    const std::vector<payloads_t>& payloads,
@@ -73,9 +81,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   int comparePopScore(const AltBlock::hash_t& hleft,
                       const AltBlock::hash_t& hright);
 
-  void payloadsToCommands(const payloads_t& p,
-                          std::vector<CommandPtr>& commands);
-
   /**
    * Calculate payouts for the altchain tip
    * @return map with reward recipient as a key and reward amount as a value
@@ -88,8 +93,20 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     if (!index) {
       return false;
     }
-    return this->setTip(*index, state);
+    return setState(*index, state);
   }
+
+  bool setState(index_t& index, ValidationState& state) {
+    return this->setTip(index, state);
+  }
+
+  bool validatePayloads(const AltBlock& block,
+                        const payloads_t& p,
+                        ValidationState& state);
+
+  bool validatePayloads(const AltBlock::hash_t& block_hash,
+                        const payloads_t& p,
+                        ValidationState& state);
 
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
@@ -112,6 +129,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   PopRewards rewards_;
 
   index_t* insertBlockHeader(const AltBlock& block);
+
+  void payloadsToCommands(const payloads_t& p,
+                          std::vector<CommandPtr>& commands);
 
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew,
