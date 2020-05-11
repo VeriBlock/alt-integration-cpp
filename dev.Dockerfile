@@ -52,7 +52,6 @@ RUN apt-get install --no-install-recommends -y \
         lcov \
         vim \
         unzip \
-        cmake \
     && rm -rf /var/lib/apt/lists/*
 
 # set default compilers and tools
@@ -66,6 +65,17 @@ RUN update-alternatives --install /usr/bin/gcov         gcov         /usr/bin/gc
     update-alternatives --install /usr/bin/python       python       /usr/bin/python3              90
 
 WORKDIR /tmp
+
+RUN mkdir -p cmake && \
+    ( \
+      cd cmake; \
+      wget https://github.com/Kitware/CMake/releases/download/v3.11.4/cmake-3.11.4.tar.gz; \
+      tar -zxf cmake-3.11.4.tar.gz; \
+      cd cmake-3.11.4/; \
+      ./bootstrap.sh; \
+	  make -j2 install; \
+    ) && \
+    rm -rf cmake
 
 RUN mkdir -p boost && \
     ( \
