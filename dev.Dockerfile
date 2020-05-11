@@ -9,6 +9,8 @@ RUN apt-get update && \
         python3 \
         python3-pip \
         python3-setuptools \
+        python3-dev \
+
     && wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main" && \
     apt-add-repository -y ppa:bitcoin/bitcoin && \
@@ -33,11 +35,6 @@ RUN apt-get update && apt-get upgrade -y && \
         libssl-dev \
         libevent-dev \
         bsdmainutils \
-        libboost-system-dev \
-        libboost-filesystem-dev \
-        libboost-chrono-dev \
-        libboost-test-dev \
-        libboost-thread-dev \
         libb2-dev
 
 # install tools
@@ -55,7 +52,6 @@ RUN apt-get install --no-install-recommends -y \
         lcov \
         vim \
         unzip \
-        cmake \
     && rm -rf /var/lib/apt/lists/*
 
 # set default compilers and tools
@@ -69,6 +65,29 @@ RUN update-alternatives --install /usr/bin/gcov         gcov         /usr/bin/gc
     update-alternatives --install /usr/bin/python       python       /usr/bin/python3              90
 
 WORKDIR /tmp
+
+RUN mkdir -p cmake && \
+    ( \
+      cd cmake; \
+      wget https://github.com/Kitware/CMake/releases/download/v3.11.4/cmake-3.11.4.tar.gz; \
+      tar -zxf cmake-3.11.4.tar.gz; \
+      cd cmake-3.11.4/; \
+      ./bootstrap; \
+	  make -j2; \
+	  make install; \
+    ) && \
+    rm -rf cmake
+
+RUN mkdir -p boost && \
+    ( \
+      cd boost; \
+      wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz; \
+      tar -zxf boost_1_65_1.tar.gz; \
+      cd boost_1_65_1/; \
+      ./bootstrap.sh; \
+	  ./b2 cxxflags=-fPIC -j6 install; \
+    ) && \
+    rm -rf boost
 
 RUN ldconfig
 

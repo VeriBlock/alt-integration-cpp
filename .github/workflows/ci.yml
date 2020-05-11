@@ -12,11 +12,11 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev
+    container: veriblock/alt-integration-cpp-dev:feature-pypopminer
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DCMAKE_BUILD_TYPE=Release"]
+        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DCMAKE_BUILD_TYPE=Release", "-DWITH_PYPOPMINER=ON"]
     env:
       CC: clang
       CXX: clang++

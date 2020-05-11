@@ -36,6 +36,7 @@ option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 option(SHARED       "Build shared lib" OFF)
 option(WITH_SECP256K1 "Include secp256k1" ON)
+option(WITH_PYPOPMINER "Build libpypopminer" OFF)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -119,6 +120,10 @@ include_directories(include)
 add_subdirectory(src)
 
 add_subdirectory(tools EXCLUDE_FROM_ALL)
+
+if(WITH_PYPOPMINER)
+    add_subdirectory(pypopminer)
+endif()
 
 if(TESTING)
     include(cmake/gtest.cmake)
