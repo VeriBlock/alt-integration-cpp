@@ -12,7 +12,7 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev
+    container: veriblock/alt-integration-cpp-dev:feature-pypopminer
     strategy:
       fail-fast: false
       matrix:
