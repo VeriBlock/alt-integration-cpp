@@ -5,14 +5,15 @@ set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 
 find_package(Boost REQUIRED COMPONENTS python)
-find_package(Python3 REQUIRED COMPONENTS Development Interpreter)
+find_package(PythonInterp 3)
+find_package(PythonLibs 3)
 add_custom_target(pypopminer COMMENT "Building pypopminer")
 
 add_subdirectory(pypopminer)
 
 function(pytest _name _py)
     add_custom_target(pypopminer_${_name}
-            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${_py}
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${_py}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             )
     add_dependencies(pypopminer_${_name} pypopminer)

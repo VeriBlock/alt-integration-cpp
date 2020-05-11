@@ -1,4 +1,5 @@
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${PYTHON_INCLUDE_DIRS})
 
 add_library(_pypopminer SHARED
         miner.cpp
@@ -6,7 +7,7 @@ add_library(_pypopminer SHARED
 target_link_libraries(_pypopminer
         Boost::boost
         Boost::python
-        Python3::Python
+        ${PYTHON_LIBRARIES}
         ${LIB_NAME}
         )
 set_target_properties(_pypopminer PROPERTIES

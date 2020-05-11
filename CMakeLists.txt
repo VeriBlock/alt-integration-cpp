@@ -121,14 +121,14 @@ add_subdirectory(src)
 
 add_subdirectory(tools EXCLUDE_FROM_ALL)
 
+if(WITH_PYPOPMINER)
+    add_subdirectory(pypopminer)
+endif()
+
 if(TESTING)
     include(cmake/gtest.cmake)
     enable_testing()
     add_subdirectory(test)
-endif()
-
-if(WITH_PYPOPMINER)
-    add_subdirectory(pypopminer EXCLUDE_FROM_ALL)
 endif()
 
 message(STATUS "CLANG_TIDY=${CLANG_TIDY}")
