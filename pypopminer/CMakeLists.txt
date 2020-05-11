@@ -25,7 +25,8 @@ function(pytest _name _py)
     add_dependencies(pyPopMiner_${_name} pyPopMiner)
     add_test(
             NAME pyPopMiner_${_name}
-            COMMAND pyPopMiner_${_name}
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${_name}.py
+            WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
     )
 endfunction()
 
