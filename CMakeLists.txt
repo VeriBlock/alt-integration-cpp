@@ -105,8 +105,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 if(VERIBLOCK_POP_LOGGER_ENABLED)
-  add_compile_definitions(VERIBLOCK_POP_LOGGER_ENABLED=1)
-  add_compile_definitions(FMT_HEADER_ONLY=1)
+  add_definitions(-DVERIBLOCK_POP_LOGGER_ENABLED=1)
 endif()
 
 if(CLANG_TIDY)
