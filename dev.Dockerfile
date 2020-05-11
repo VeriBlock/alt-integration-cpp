@@ -9,6 +9,8 @@ RUN apt-get update && \
         python3 \
         python3-pip \
         python3-setuptools \
+        python3-dev \
+
     && wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main" && \
     apt-add-repository -y ppa:bitcoin/bitcoin && \
@@ -72,8 +74,6 @@ RUN mkdir -p boost && \
       tar -zxf boost_1_65_1.tar.gz; \
       cd boost_1_65_1/; \
       ./bootstrap.sh; \
-	  export PYTHON_VERSION=3.6; \
-	  export PYTHON_ROOT=/usr; \
 	  ./b2 cxxflags=-fPIC -j6 install; \
     ) && \
     rm -rf boost
