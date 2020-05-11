@@ -37,6 +37,7 @@ option(TESTING      "Build tests" ON)
 option(SHARED       "Build shared lib" OFF)
 option(WITH_SECP256K1 "Include secp256k1" ON)
 option(VERIBLOCK_POP_LOGGER_ENABLED "Use logger" ON)
+option(WITH_PYPOPMINER "Build libpypopminer" OFF)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -130,6 +131,10 @@ if(TESTING)
     include(cmake/gtest.cmake)
     enable_testing()
     add_subdirectory(test)
+endif()
+
+if(WITH_PYPOPMINER)
+    add_subdirectory(pypopminer)
 endif()
 
 message(STATUS "CLANG_TIDY=${CLANG_TIDY}")

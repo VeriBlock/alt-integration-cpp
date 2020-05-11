@@ -30,6 +30,13 @@ struct ATV {
   //! (memory only) indicates whether we already did 'checkATV' on this ATV
   mutable bool checked{false};
 
+  std::string toHex() const { return HexStr(toVbkEncoding()); }
+
+  std::string toPrettyString() const {
+    return "ATV{containingTx" + transaction.getHash().toHex() +
+           ", containingBlock=" + containingBlock.getHash().toHex() + "}";
+  }
+
   /**
    * Read VBK data from the stream and convert it to ATV
    * @param stream data stream to read from

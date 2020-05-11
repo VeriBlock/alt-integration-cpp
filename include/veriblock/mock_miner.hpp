@@ -100,6 +100,8 @@ class MockMiner {
 
   btc_block_tree& btc() { return vbktree.btc(); }
   vbk_block_tree& vbk() { return vbktree; }
+  const btc_block_tree& btc() const { return vbktree.btc(); }
+  const vbk_block_tree& vbk() const { return vbktree; }
   const VbkChainParams& getVbkParams() const { return vbk_params; }
   const BtcChainParams& getBtcParams() const { return btc_params; }
 
