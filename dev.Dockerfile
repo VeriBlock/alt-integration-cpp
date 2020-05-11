@@ -74,7 +74,7 @@ RUN mkdir -p boost && \
       ./bootstrap.sh; \
 	  export PYTHON_VERSION=3.6; \
 	  export PYTHON_ROOT=/usr; \
-	  ./b2 cxxflags=-fPIC -j6 install;
+	  ./b2 cxxflags=-fPIC -j6 install; \
     ) && \
     rm -rf boost
 
