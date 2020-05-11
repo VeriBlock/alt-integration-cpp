@@ -33,11 +33,6 @@ RUN apt-get update && apt-get upgrade -y && \
         libssl-dev \
         libevent-dev \
         bsdmainutils \
-        libboost-system-dev \
-        libboost-filesystem-dev \
-        libboost-chrono-dev \
-        libboost-test-dev \
-        libboost-thread-dev \
         libb2-dev
 
 # install tools
@@ -77,7 +72,13 @@ RUN mkdir -p boost && \
       tar -zxf boost_1_65_1.tar.gz; \
       cd boost_1_65_1/; \
       ./bootstrap.sh; \
-	  ./bjam cxxflags=-fPIC -a --with-system install; \
+	  export PYTHON_VERSION=3.6; \
+	  export PYTHON_ROOT=/usr; \
+	  cd libs/python/build; \
+	  sudo ./bjam cxxflags=-fPIC; \
+	  sudo cp -df bin-stage/libboost_python.so* /usr/local/lib; \
+      cd ../../..; \
+	  sudo cp -rf boost /usr/local/include; \
     ) && \
     rm -rf boost
 
