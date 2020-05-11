@@ -802,3 +802,35 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
+
+TEST_F(MemPoolFixture, getPop_scenario_12) {
+    MemPool mempool(alttree.getParams(),
+        alttree.vbk().getParams(),
+        alttree.btc().getParams(),
+        &hash_function);
+
+    Miner<VbkBlock, VbkChainParams> vbk_miner(popminer.vbk().getParams());
+
+    std::vector<AltBlock> chain = { altparam.getBootstrapBlock() };
+
+    // mine 65 VBK blocks
+    popminer.mineVbkBlocks(65);
+
+    // mine 10 blocks
+    mineAltBlocks(10, chain);
+
+    AltBlock endorsedBlock1 = chain[5];
+
+    for (size_t i = 0; i < alttree.getParams().getMaxPopDataPerBlock() + 50; ++i) {
+        VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+            generatePublicationData(endorsedBlock1));
+        ATV atv =
+            popminer.generateATV(tx, vbkparam.getGenesisBlock().getHash(), state);
+
+        EXPECT_TRUE(mempool.submitATV({ atv }, state));
+    }
+
+    std::vector<PopData> v_popData = mempool.getPop(*chain.rbegin(), alttree);
+
+    EXPECT_EQ(v_popData.size(), alttree.getParams().getMaxPopDataPerBlock());
+}
