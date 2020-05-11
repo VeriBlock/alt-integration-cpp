@@ -74,11 +74,7 @@ RUN mkdir -p boost && \
       ./bootstrap.sh; \
 	  export PYTHON_VERSION=3.6; \
 	  export PYTHON_ROOT=/usr; \
-	  cd libs/python/build; \
-	  ./bjam cxxflags=-fPIC; \
-	  cp -df bin-stage/libboost_python.so* /usr/local/lib; \
-      cd ../../..; \
-	  cp -rf boost /usr/local/include; \
+	  ./bj2 cxxflags=-fPIC -j6 install;
     ) && \
     rm -rf boost
 
