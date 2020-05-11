@@ -15,8 +15,6 @@ std::shared_ptr<Logger> GetLogger() { return logger_; }
 
 std::string LevelToString(LogLevel level) {
   switch (level) {
-    case LogLevel::LOG_NONE:
-      return "";
     case LogLevel::LOG_DEBUG:
       return "debug";
     case LogLevel::LOG_INFO:
@@ -26,7 +24,7 @@ std::string LevelToString(LogLevel level) {
     case LogLevel::LOG_ERROR:
       return "error";
     default:
-      return;
+      break;
   }
   return "";
 }
