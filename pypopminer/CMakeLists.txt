@@ -6,7 +6,10 @@ set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 
-find_package(Boost REQUIRED COMPONENTS python3)
+find_package(Boost COMPONENTS python3)
+if(NOT ${Boost_FOUND})
+    find_package(Boost REQUIRED COMPONENTS python)
+endif()
 find_package(PythonInterp 3)
 find_package(PythonLibs 3)
 add_custom_target(pypopminer COMMENT "Building pypopminer")
