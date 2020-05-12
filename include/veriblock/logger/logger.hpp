@@ -21,9 +21,9 @@ class Logger {
  public:
   virtual ~Logger() = default;
   virtual void debug(const std::string&) {}
-  virtual void info(const std::string &) {}
-  virtual void warn(const std::string &) {}
-  virtual void error(const std::string &) {}
+  virtual void info(const std::string&) {}
+  virtual void warn(const std::string&) {}
+  virtual void error(const std::string&) {}
 };
 
 enum class LogLevel { LOG_NONE = 0, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR };
