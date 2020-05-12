@@ -36,6 +36,7 @@ option(WERROR       "Treat warnings as errors" ON)
 option(TESTING      "Build tests" ON)
 option(SHARED       "Build shared lib" OFF)
 option(WITH_SECP256K1 "Include secp256k1" ON)
+option(VERIBLOCK_POP_LOGGER_ENABLED "Use logger" ON)
 option(WITH_PYPOPMINER "Build libpypopminer" OFF)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -101,6 +102,10 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
     endif()
+endif()
+
+if(VERIBLOCK_POP_LOGGER_ENABLED)
+  add_definitions(-DVERIBLOCK_POP_LOGGER_ENABLED=1)
 endif()
 
 if(CLANG_TIDY)
