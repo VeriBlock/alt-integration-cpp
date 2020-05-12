@@ -24,7 +24,13 @@ struct AltChainParamsRegTest : public AltChainParams {
 
   uint32_t getIdentifier() const noexcept override { return id; }
 
-  uint32_t getMaxPopDataPerBlock() const noexcept override { return 50;  }
+  uint32_t getMaxPopDataPerBlock() const noexcept override { return 50; }
+
+  uint32_t getMaxPopDataWeight() const noexcept override { return 1000000; }
+
+  uint32_t getSuperMaxPopDataWeight() const noexcept override {
+    return 5 * getMaxPopDataWeight();
+  }
 
   uint32_t id = 0;
 };
