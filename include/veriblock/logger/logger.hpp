@@ -6,7 +6,9 @@
 #ifndef ALT_INTEGRATION_LOGGER_LOGGER_HPP
 #define ALT_INTEGRATION_LOGGER_LOGGER_HPP
 
-#define FMT_HEADER_ONLY 1
+#ifndef FMT_HEADER_ONLY
+#define FMT_HEADER_ONLY
+#endif //FMT_HEADER_ONLY
 
 #include <veriblock/third_party/fmt/printf.h>
 
@@ -18,15 +20,16 @@ namespace altintegration {
 class Logger {
  public:
   virtual ~Logger() = default;
-  virtual void debug(std::string msg) = 0;
-  virtual void info(std::string msg) = 0;
-  virtual void warn(std::string msg) = 0;
-  virtual void error(std::string msg) = 0;
+  virtual void debug(const std::string&) {}
+  virtual void info(const std::string &) {}
+  virtual void warn(const std::string &) {}
+  virtual void error(const std::string &) {}
 };
 
 enum class LogLevel { LOG_NONE = 0, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR };
 
 #ifdef VERIBLOCK_POP_LOGGER_ENABLED
+
 template <typename LoggerType>
 void NewLogger() {
   SetLogger(std::make_shared<LoggerType>());
@@ -47,8 +50,7 @@ inline void LogMessage(std::string cat,
   if (logger == nullptr) return;
 
   std::string formatted = fmt::sprintf(format, args...);
-  std::string msg =
-      fmt::sprintf("(%s) %s", cat, formatted);
+  std::string msg = fmt::sprintf("(%s) %s", cat, formatted);
 
   switch (level) {
     case LogLevel::LOG_DEBUG:
@@ -67,6 +69,16 @@ inline void LogMessage(std::string cat,
       return;
   }
 }
+
+#define VBK_LOG_DEBUG(cat, format, ...) \
+  LogMessage(cat, LogLevel::LOG_DEBUG, format, __VA_ARGS__)
+#define VBK_LOG_INFO(cat, format, ...) \
+  LogMessage(cat, LogLevel::LOG_INFO, format, __VA_ARGS__)
+#define VBK_LOG_WARN(cat, format, ...) \
+  LogMessage(cat, LogLevel::LOG_WARN, format, __VA_ARGS__)
+#define VBK_LOG_ERROR(cat, format, ...) \
+  LogMessage(cat, LogLevel::LOG_ERROR, format, __VA_ARGS__)
+
 #else  // !VERIBLOCK_POP_LOGGER_ENABLED
 
 template <typename LoggerType>
@@ -84,30 +96,11 @@ inline void LogMessage(std::string,
                        std::string,
                        const Args &...) {}
 
-#endif  // VERIBLOCK_POP_LOGGER_ENABLED
+#define VBK_LOG_DEBUG(cat, format, ...)
+#define VBK_LOG_INFO(cat, format, ...)
+#define VBK_LOG_WARN(cat, format, ...)
+#define VBK_LOG_ERROR(cat, format, ...)
 
-#ifdef VERIBLOCK_POP_LOGGER_ENABLED
-#define VBK_LOG_DEBUG(cat, format, ...) \
-  LogMessage(cat, LogLevel::LOG_DEBUG, format, __VA_ARGS__)
-#define VBK_LOG_INFO(cat, format, ...) \
-  LogMessage(cat, LogLevel::LOG_INFO, format, __VA_ARGS__)
-#define VBK_LOG_WARN(cat, format, ...) \
-  LogMessage(cat, LogLevel::LOG_WARN, format, __VA_ARGS__)
-#define VBK_LOG_ERROR(cat, format, ...) \
-  LogMessage(cat, LogLevel::LOG_ERROR, format, __VA_ARGS__)
-#else  // !VERIBLOCK_POP_LOGGER_ENABLED
-#define VBK_LOG_DEBUG(cat, format, ...) \
-  do {                                  \
-  } while (0)
-#define VBK_LOG_INFO(cat, format, ...) \
-  do {                                 \
-  } while (0)
-#define VBK_LOG_WARN(cat, format, ...) \
-  do {                                 \
-  } while (0)
-#define VBK_LOG_ERROR(cat, format, ...) \
-  do {                                  \
-  } while (0)
 #endif  // VERIBLOCK_POP_LOGGER_ENABLED
 
 }  // namespace altintegration

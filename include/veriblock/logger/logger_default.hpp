@@ -12,10 +12,10 @@ namespace altintegration {
 
 class LoggerDefault : public Logger {
  public:
-  void debug(std::string msg);
-  void info(std::string msg);
-  void warn(std::string msg);
-  void error(std::string msg);
+  void debug(const std::string& msg);
+  void info(const std::string& msg);
+  void warn(const std::string& msg);
+  void error(const std::string& msg);
 };
 
 }  // namespace altintegration
