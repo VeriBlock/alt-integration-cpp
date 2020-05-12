@@ -53,4 +53,5 @@ TEST(Config, TryLogger) {
   NewLogger<LoggerDefault>();
   VBK_LOG_INFO("alt", "hello %s", "world");
   VBK_LOG_WARN("alt", "hello %d", 100);
+  VBK_LOG_WARN("alt", "simple text");
 }

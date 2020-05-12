@@ -45,11 +45,11 @@ template <typename... Args>
 inline void LogMessage(std::string cat,
                 LogLevel level,
                 std::string format,
-                const Args &... args) {
+                Args&&... args) {
   auto logger = GetLogger();
   if (logger == nullptr) return;
 
-  std::string formatted = fmt::sprintf(format, args...);
+  std::string formatted = fmt::sprintf(format, std::forward<Args>(args)...);
   std::string msg = fmt::sprintf("(%s) %s", cat, formatted);
 
   switch (level) {
@@ -70,14 +70,14 @@ inline void LogMessage(std::string cat,
   }
 }
 
-#define VBK_LOG_DEBUG(cat, format, ...) \
-  LogMessage(cat, LogLevel::LOG_DEBUG, format, __VA_ARGS__)
-#define VBK_LOG_INFO(cat, format, ...) \
-  LogMessage(cat, LogLevel::LOG_INFO, format, __VA_ARGS__)
-#define VBK_LOG_WARN(cat, format, ...) \
-  LogMessage(cat, LogLevel::LOG_WARN, format, __VA_ARGS__)
-#define VBK_LOG_ERROR(cat, format, ...) \
-  LogMessage(cat, LogLevel::LOG_ERROR, format, __VA_ARGS__)
+#define VBK_LOG_DEBUG(cat, ...) \
+  LogMessage(cat, LogLevel::LOG_DEBUG, __VA_ARGS__)
+#define VBK_LOG_INFO(cat, ...) \
+  LogMessage(cat, LogLevel::LOG_INFO, __VA_ARGS__)
+#define VBK_LOG_WARN(cat, ...) \
+  LogMessage(cat, LogLevel::LOG_WARN, __VA_ARGS__)
+#define VBK_LOG_ERROR(cat, ...) \
+  LogMessage(cat, LogLevel::LOG_ERROR, __VA_ARGS__)
 
 #else  // !VERIBLOCK_POP_LOGGER_ENABLED
 
@@ -94,12 +94,12 @@ template <typename... Args>
 inline void LogMessage(std::string,
                        LogLevel,
                        std::string,
-                       const Args &...) {}
+                       Args&&...) {}
 
-#define VBK_LOG_DEBUG(cat, format, ...)
-#define VBK_LOG_INFO(cat, format, ...)
-#define VBK_LOG_WARN(cat, format, ...)
-#define VBK_LOG_ERROR(cat, format, ...)
+#define VBK_LOG_DEBUG(cat, ...)
+#define VBK_LOG_INFO(cat, ...)
+#define VBK_LOG_WARN(cat, ...)
+#define VBK_LOG_ERROR(cat, ...)
 
 #endif  // VERIBLOCK_POP_LOGGER_ENABLED
 
