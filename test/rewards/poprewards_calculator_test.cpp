@@ -3,13 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/rewards/poprewards_calculator.hpp"
-
 #include <gtest/gtest.h>
 
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/mock_miner.hpp"
+#include "veriblock/rewards/poprewards_calculator.hpp"
 
 using namespace altintegration;
 
@@ -27,6 +26,11 @@ struct AltChainParamsTest : public AltChainParams {
 
   uint32_t getMaxPopDataPerBlock() const noexcept override { return 50; }
 
+  uint32_t getMaxPopDataWeight() const noexcept override { return 1000000; }
+
+  uint32_t getSuperMaxPopDataWeight() const noexcept override {
+    return 5 * getMaxPopDataWeight();
+  }
 };
 
 struct RewardsCalculatorTestFixture : ::testing::Test {
