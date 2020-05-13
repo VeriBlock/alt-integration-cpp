@@ -16,7 +16,7 @@
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/keystone_util.hpp>
-#include <veriblock/logger/logger.hpp>
+#include <veriblock/logger.hpp>
 
 namespace altintegration {
 
@@ -82,6 +82,8 @@ struct KeystoneContextList {
 
     ctx.insert(ctx.begin(), c.begin(), c.begin() + chop_index);
   }
+
+  size_t size() const { return ctx.size(); }
 
   bool empty() const { return ctx.empty(); }
 
@@ -256,10 +258,17 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
   assert(!chainA.empty());
   assert(!chainB.empty());
-  VBK_LOG_DEBUG("Comparing chains A(%d) and B(%d) starting at %d",
-                chainA.back().blockHeight,
-                chainB.back().blockHeight,
-                chainA.front().blockHeight);
+  VBK_LOG_INFO(
+      "Comparing POP scores of chains A(first={}, tip={}, size={}, pub={}) "
+      "and B(first={}, tip={}, "
+      "size={}, pub={}) starting at {}",
+      a.lastKeystone(),
+      a.size(),
+      chainA[a.lastKeystone()].firstBlockPublicationHeight,
+      b.lastKeystone(),
+      b.size(),
+      chainB[b.lastKeystone()].firstBlockPublicationHeight,
+      a.firstKeystone());
 
   int earliestKeystone = a.firstKeystone();
   if (earliestKeystone != b.firstKeystone()) {
@@ -322,13 +331,13 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
     if (publicationViolatesFinality(
             earliestPublicationA, earliestPublicationB, config)) {
-      VBK_LOG_DEBUG("Chain A is outside finality");
+      VBK_LOG_INFO("Chain A is outside finality");
       aOutsideFinality = true;
     }
 
     if (publicationViolatesFinality(
             earliestPublicationB, earliestPublicationA, config)) {
-      VBK_LOG_DEBUG("Chain B is outside finality");
+      VBK_LOG_INFO("Chain B is outside finality");
       bOutsideFinality = true;
     }
 
@@ -337,7 +346,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
     }
   }
 
-  VBK_LOG_DEBUG("ChainA score=%d, ChainB score=%d", chainAscore, chainBscore);
+  VBK_LOG_INFO("ChainA score={}, ChainB score={}", chainAscore, chainBscore);
   return chainAscore - chainBscore;
 }
 
@@ -412,27 +421,28 @@ struct PopAwareForkResolutionComparator {
     auto bestTip = currentBest.tip();
     assert(bestTip);
 
-    VBK_LOG_DEBUG("Best=%s, Candidate=%s",
-                  bestTip->toPrettyString(),
-                  indexNew.toPrettyString());
+    VBK_LOG_INFO("Doing POP fork resolution. Best={}, Candidate={}",
+                 bestTip->toPrettyString(),
+                 indexNew.toPrettyString());
     if (*bestTip == indexNew) {
-      VBK_LOG_DEBUG("Equal");
+      VBK_LOG_INFO("Equal");
       return 0;
     }
 
     // indexNew is on top of our best tip
     if (indexNew.getAncestor(bestTip->height) == bestTip) {
-      VBK_LOG_DEBUG("Candidate is ahead %d blocks",
-                    indexNew.height - bestTip->height);
+      VBK_LOG_INFO("Candidate is ahead {} blocks",
+                   indexNew.height - bestTip->height);
       sm_t sm(ed, *ing_, bestTip->height);
       if (sm.apply(*bestTip, indexNew, state)) {
         // if indexNew is valid, then switch to new chain
-        VBK_LOG_DEBUG("Candidate contains VALID commands, candidate wins");
+        VBK_LOG_INFO("Candidate contains VALID commands, candidate wins");
         return -1;
       }
 
       // new chain is invalid. our current chain is definitely better.
-      VBK_LOG_DEBUG("Candidate contains INVALID command(s): %s", state.toString());
+      VBK_LOG_INFO("Candidate contains INVALID command(s): {}",
+                   state.toString());
       return 1;
     }
 
@@ -441,7 +451,7 @@ struct PopAwareForkResolutionComparator {
         currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
     if (!forkKeystone) {
       // no fork keystone found. this can happen during bootstrap
-      VBK_LOG_DEBUG("Can not find fork keystone");
+      VBK_LOG_INFO("Can not find fork keystone");
       return 0;
     }
 
@@ -451,9 +461,9 @@ struct PopAwareForkResolutionComparator {
         isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
     if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
       // chans are equal in terms of POP
-      VBK_LOG_DEBUG("Chain A is crossed keystone boundary: %d", (int)AcrossedKeystoneBoundary);
-      VBK_LOG_DEBUG("Chain B is crossed keystone boundary: %d", (int)BcrossedKeystoneBoundary);
-      VBK_LOG_DEBUG("Chains are equal");
+      VBK_LOG_INFO("Chains crossed keystone boundary: A={} B={}",
+                   (AcrossedKeystoneBoundary ? "true" : "false"),
+                   (BcrossedKeystoneBoundary ? "true" : "false"));
       return 0;
     }
 
@@ -483,7 +493,8 @@ struct PopAwareForkResolutionComparator {
 
       // chain B has been unapplied already
       // invalid block in chain B has been invalidated already
-      VBK_LOG_DEBUG("Chain B contains invalid payloads, Chain A wins (%s)", state.toString());
+      VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins ({})",
+                   state.toString());
       return 1;
     }
 
@@ -511,11 +522,11 @@ struct PopAwareForkResolutionComparator {
     if (result >= 0) {
       // chain A remains best. unapply B. A remains applied
       sm.unapply(*chainB.tip(), *chainB.first());
-      VBK_LOG_DEBUG("Chain A remains best chain");
+      VBK_LOG_INFO("Chain A remains best chain");
     } else {
       // chain B is better. unapply A. B remains applied
       sm.unapply(*chainA.tip(), *chainA.first());
-      VBK_LOG_DEBUG("Chain B wins");
+      VBK_LOG_INFO("Chain B wins");
     }
 
     return result;

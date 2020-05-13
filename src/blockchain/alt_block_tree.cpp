@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <unordered_set>
 #include <veriblock/blockchain/commands/commands.hpp>
 
@@ -10,7 +12,6 @@
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
-#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -63,7 +64,7 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
 bool AltTree::addPayloads(index_t& index,
                           const std::vector<payloads_t>& payloads,
                           ValidationState& state) {
-  VBK_LOG_DEBUG("%s add %d payloads to block %s",
+  VBK_LOG_DEBUG("{} add {} payloads to block {}",
                 block_t::name(),
                 payloads.size(),
                 index.toPrettyString());
@@ -113,12 +114,12 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
 
   if (!addPayloads(*index, {p}, state)) {
     VBK_LOG_DEBUG(
-        "%s Can not add payloads: %s", block_t::name(), state.toString());
+        "{} Can not add payloads: {}", block_t::name(), state.toString());
     return state.Invalid(block_t::name() + "addPayloadsTemporarily");
   }
 
   if (!setState(*index, state)) {
-    VBK_LOG_DEBUG("%s Statefully invalid payloads: %s",
+    VBK_LOG_DEBUG("{} Statefully invalid payloads: {}",
                   block_t::name(),
                   state.toString());
     removePayloads(*index, {p});
@@ -176,10 +177,10 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
 
   auto popDifficulty = rewards_.calculateDifficulty(vbk(), *endorsedBlock);
   auto ret = rewards_.calculatePayouts(vbk(), *endorsedBlock, popDifficulty);
-  VBK_LOG_DEBUG("Pop Difficulty=%s for block %s",
+  VBK_LOG_DEBUG("Pop Difficulty={} for block {}",
                 popDifficulty.toPrettyString(),
                 index->toPrettyString());
-  VBK_LOG_DEBUG("Paying to %d addresses", ret.size());
+  VBK_LOG_DEBUG("Paying to {} addresses", ret.size());
   return ret;
 }
 
@@ -214,14 +215,10 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 
-  VBK_LOG_DEBUG("Active: %s, Candidate: %s",
-                currentTip->toPrettyString(),
-                indexNew.toPrettyString());
-
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks",
+    VBK_LOG_DEBUG("{} Candidate is ahead {} blocks, applying them",
                   block_t::name(),
                   indexNew.height - currentTip->height);
     this->setTip(indexNew, state, false);
@@ -232,8 +229,6 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
   if (result < 0) {
     // activeChain in AltTree reflects currently applied POP state.
     // setState has already been executed
-    VBK_LOG_DEBUG(
-        "%s Candidate wins=%s", block_t::name(), indexNew.toPrettyString());
     bool ret = this->setTip(indexNew, state, true);
     assert(ret);
     (void)ret;
@@ -348,6 +343,10 @@ void AltTree::removePayloads(const AltBlock::hash_t& hash,
 
 void AltTree::removePayloads(index_t& index,
                              const std::vector<payloads_t>& payloads) {
+  VBK_LOG_INFO("{} remove {} payloads from {}",
+               block_t::name(),
+               payloads.size(),
+               index.toPrettyString());
   if (!index.pprev) {
     // we do not add payloads to genesis block, therefore we do not have to
     // remove them
@@ -405,6 +404,27 @@ void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
     auto cmd = std::make_shared<AddVbkEndorsement>(vbk(), *this, std::move(e));
     commands.push_back(std::move(cmd));
   }
+}
+
+bool AltTree::setTip(AltTree::index_t& to,
+                     ValidationState& state,
+                     bool skipSetState) {
+  bool changeTip = true;
+  if (!skipSetState) {
+    changeTip = cmp_.setState(*this, to, state);
+  }
+
+  // edge case: if changeTip is false, then new block arrived on top of
+  // current active chain, and this block has invalid commands
+  if (changeTip) {
+    VBK_LOG_INFO("SetTip=%s", to.toPrettyString());
+    activeChain_.setTip(&to);
+  } else {
+    assert(!to.isValid());
+  }
+
+  // true if tip has been changed
+  return changeTip;
 }
 
 }  // namespace altintegration

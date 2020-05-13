@@ -6,7 +6,7 @@
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/logger/logger.hpp>
+#include <veriblock/logger.hpp>
 
 namespace altintegration {
 
@@ -14,11 +14,6 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew,
                                       ValidationState& state,
                                       bool isBootstrap) {
-  VBK_LOG_DEBUG(
-      "Active: %s, Other : %s",
-      (currentBest.tip() ? currentBest.tip()->toPrettyString() : "<nullptr>"),
-      indexNew.toPrettyString());
-
   if (currentBest.tip() == &indexNew) {
     return;
   }
@@ -39,7 +34,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("Candidate is ahead %d blocks",
+    VBK_LOG_DEBUG("{} Candidate is ahead {} blocks, applying them", block_t::name(),
                   indexNew.height - currentTip->height);
     this->setTip(indexNew, state, false);
     return;
@@ -76,7 +71,7 @@ bool VbkBlockTree::setTip(index_t& to,
   // edge case: if changeTip is false, then new block arrived on top of current
   // active chain, and this block has invalid commands
   if (changeTip) {
-    VBK_LOG_INFO("SetTip=%s", to.toPrettyString());
+    VBK_LOG_DEBUG("SetTip={}", to.toPrettyString());
     activeChain_.setTip(&to);
   } else {
     assert(!to.isValid());
@@ -105,6 +100,8 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 
 void VbkBlockTree::removePayloads(const block_t& block,
                                   const std::vector<payloads_t>& payloads) {
+  VBK_LOG_INFO(
+      "remove {} payloads from {}", payloads.size(), block.toPrettyString());
   auto hash = block.getHash();
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
@@ -159,7 +156,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {
-  VBK_LOG_DEBUG("%s add %d payloads to block %s",
+  VBK_LOG_DEBUG("{} add {} payloads to block {}",
                 block_t::name(),
                 payloads.size(),
                 HexStr(hash));

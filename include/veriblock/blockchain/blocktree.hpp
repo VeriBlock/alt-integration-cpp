@@ -150,6 +150,9 @@ struct BlockTree : public BaseBlockTree<Block> {
                    bool shouldContextuallyCheck) {
     index_t* index = nullptr;
     if (!validateAndAddBlock(block, state, shouldContextuallyCheck, &index)) {
+      VBK_LOG_WARN("Found invalid block {} {}",
+                   state.toString(),
+                   block->toPrettyString());
       return false;
     }
 
@@ -217,7 +220,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     if (!prev->isValid()) {
       index->setFlag(BLOCK_FAILED_CHILD);
       return state.Invalid(block_t::name() + "bad-chain",
-                           "One of previous blocks is invalid");
+                           "One of previous blocks is invalid. Status=" +
+                               std::to_string(prev->status));
     }
 
     return true;
@@ -240,9 +244,9 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     auto* prev = currentBest.tip();
     if (prev == nullptr || prev->chainWork < indexNew.chainWork) {
-      VBK_LOG_INFO("Doing POW fork resolution Active=%s, Candidate=%s",
-                   (prev ? prev->toPrettyString() : "<nullptr>"),
-                   indexNew.toPrettyString());
+      VBK_LOG_DEBUG("Doing POW fork resolution Active={}, Candidate={}",
+                    (prev ? prev->toPrettyString() : "<nullptr>"),
+                    indexNew.toPrettyString());
       //! important to use this->setTip for proper vtable resolution
       this->setTip(indexNew, state, isBootstrap);
     }

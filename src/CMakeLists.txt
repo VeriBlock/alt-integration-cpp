@@ -4,7 +4,6 @@ add_subdirectory(blockchain)
 add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
-add_subdirectory(logger)
 
 add_library(vblake OBJECT vblake.cpp)
 
@@ -41,7 +40,7 @@ if(WITH_SECP256K1)
 endif()
 
 if(VERIBLOCK_POP_LOGGER_ENABLED)
-    list(APPEND SOURCES $<TARGET_OBJECTS:logger>)
+    list(APPEND SOURCES logger.cpp)
 endif()
 
 if(SHARED)
@@ -78,6 +77,12 @@ install(
         DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
+if(INSTALL_FMT)
+    install(
+            DIRECTORY ${CMAKE_SOURCE_DIR}/include/fmt
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+endif()
 install(
         EXPORT ${LIB_NAME}Config
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
