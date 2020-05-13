@@ -11,6 +11,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
+#include <veriblock/logger/logger.hpp>
 #include <veriblock/signals.hpp>
 #include <veriblock/third_party/fmt/printf.h>
 
@@ -62,6 +63,8 @@ struct BaseBlockTree {
   }
 
   void removeSubtree(index_t& toRemove, bool shouldDetermineBestChain = true) {
+    VBK_LOG_DEBUG("Removing subtree %s", toRemove.toPrettyString());
+
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
     if (!prev) {
@@ -100,6 +103,7 @@ struct BaseBlockTree {
   void invalidateSubtree(index_t& toBeInvalidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
+    VBK_LOG_DEBUG("Invalidating subtree %s", toBeInvalidated.toPrettyString());
     assert(toBeInvalidated.pprev);
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
@@ -241,6 +245,7 @@ struct BaseBlockTree {
   //! updates tree tip
   virtual bool setTip(index_t& to, ValidationState&, bool) {
     activeChain_.setTip(&to);
+    VBK_LOG_INFO("%s SetTip=%s", block_t::name(), to.toPrettyString());
     return true;
   }
 

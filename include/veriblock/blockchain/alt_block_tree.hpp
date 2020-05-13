@@ -148,6 +148,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     // edge case: if changeTip is false, then new block arrived on top of
     // current active chain, and this block has invalid commands
     if (changeTip) {
+      VBK_LOG_INFO("%s SetTip=%s", block_t::name(), to.toPrettyString());
       activeChain_.setTip(&to);
     } else {
       assert(!to.isValid());

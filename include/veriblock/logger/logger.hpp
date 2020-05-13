@@ -38,15 +38,15 @@ std::shared_ptr<Logger> GetLogger();
 std::string LevelToString(LogLevel level);
 
 template <typename... Args>
-inline void LogMessage(std::string cat,
-                LogLevel level,
-                std::string format,
-                Args&&... args) {
+inline void LogMessage(const std::string& func,
+                       LogLevel level,
+                       std::string format,
+                       Args&&... args) {
   auto logger = GetLogger();
   if (logger == nullptr) return;
 
   std::string formatted = fmt::sprintf(format, std::forward<Args>(args)...);
-  std::string msg = fmt::sprintf("(%s) %s", cat, formatted);
+  std::string msg = fmt::sprintf("[POP] %s: %s", func, formatted);
 
   switch (level) {
     case LogLevel::LOG_DEBUG:
@@ -66,14 +66,12 @@ inline void LogMessage(std::string cat,
   }
 }
 
-#define VBK_LOG_DEBUG(cat, ...) \
-  LogMessage(cat, LogLevel::LOG_DEBUG, __VA_ARGS__)
-#define VBK_LOG_INFO(cat, ...) \
-  LogMessage(cat, LogLevel::LOG_INFO, __VA_ARGS__)
-#define VBK_LOG_WARN(cat, ...) \
-  LogMessage(cat, LogLevel::LOG_WARN, __VA_ARGS__)
-#define VBK_LOG_ERROR(cat, ...) \
-  LogMessage(cat, LogLevel::LOG_ERROR, __VA_ARGS__)
+#define VBK_LOG_DEBUG(...) \
+  LogMessage(__func__, LogLevel::LOG_DEBUG, __VA_ARGS__)
+#define VBK_LOG_INFO(...) LogMessage(__func__, LogLevel::LOG_INFO, __VA_ARGS__)
+#define VBK_LOG_WARN(...) LogMessage(__func__, LogLevel::LOG_WARN, __VA_ARGS__)
+#define VBK_LOG_ERROR(...) \
+  LogMessage(__func__, LogLevel::LOG_ERROR, __VA_ARGS__)
 
 #else  // !VERIBLOCK_POP_LOGGER_ENABLED
 
@@ -87,15 +85,12 @@ std::shared_ptr<Logger> GetLogger() { return nullptr; }
 std::string LevelToString(LogLevel) { return ""; }
 
 template <typename... Args>
-inline void LogMessage(std::string,
-                       LogLevel,
-                       std::string,
-                       Args&&...) {}
+inline void LogMessage(std::string, LogLevel, std::string, Args&&...) {}
 
-#define VBK_LOG_DEBUG(cat, ...)
-#define VBK_LOG_INFO(cat, ...)
-#define VBK_LOG_WARN(cat, ...)
-#define VBK_LOG_ERROR(cat, ...)
+#define VBK_LOG_DEBUG(...)
+#define VBK_LOG_INFO(...)
+#define VBK_LOG_WARN(...)
+#define VBK_LOG_ERROR(...)
 
 #endif  // VERIBLOCK_POP_LOGGER_ENABLED
 

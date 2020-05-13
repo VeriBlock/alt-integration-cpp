@@ -6,7 +6,7 @@
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/third_party/fmt/printf.h>
+#include <veriblock/logger/logger.hpp>
 
 namespace altintegration {
 
@@ -14,6 +14,12 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew,
                                       ValidationState& state,
                                       bool isBootstrap) {
+  VBK_LOG_INFO(
+      "VbkBlockTree",
+      "Determine best chain. \nActive: %s\nOther : %s",
+      (currentBest.tip() ? currentBest.tip()->toPrettyString() : "<nullptr>"),
+      indexNew.toPrettyString());
+
   if (currentBest.tip() == &indexNew) {
     return;
   }
@@ -34,6 +40,8 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
+    VBK_LOG_DEBUG("Candidate is ahead %d blocks",
+                  indexNew.height - currentTip->height);
     this->setTip(indexNew, state, false);
     return;
   }
@@ -41,14 +49,17 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   int result = cmp_.comparePopScore(*this, indexNew, state);
   // pop state is already at "best chain"
   if (result == 0) {
+    VBK_LOG_DEBUG("Pop scores are equal");
     // pop scores are equal. do PoW fork resolution
     VbkTree::determineBestChain(
         currentBest, indexNew, state, /* skipSetState=*/false);
   } else if (result < 0) {
+    VBK_LOG_DEBUG("Candidate chain won");
     // other chain won! we already set
     ret = this->setTip(indexNew, state, /* skipSetState=*/true);
     assert(ret);
   } else {
+    VBK_LOG_DEBUG("Active chain won");
     // current chain is better
   }
 
@@ -66,6 +77,7 @@ bool VbkBlockTree::setTip(index_t& to,
   // edge case: if changeTip is false, then new block arrived on top of current
   // active chain, and this block has invalid commands
   if (changeTip) {
+    VBK_LOG_INFO("VBK SetTip to %s", to.toPrettyString());
     activeChain_.setTip(&to);
   } else {
     assert(!to.isValid());
@@ -148,20 +160,25 @@ void VbkBlockTree::removePayloads(const block_t& block,
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {
+  VBK_LOG_DEBUG("%s add %d payloads to block %s",
+                block_t::name(),
+                payloads.size(),
+                HexStr(hash));
+
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
-    return state.Invalid("bad-containing",
+    return state.Invalid(block_t::name() + "bad-containing",
                          "Can not find VTB containing block: " + hash.toHex());
   }
 
   if (!index->pprev) {
-    return state.Invalid("bad-containing-prev",
+    return state.Invalid(block_t::name() + "bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
   }
 
   if (!index->isValid()) {
     // adding payloads to an invalid block will not result in a state change
-    return state.Invalid("bad-chain",
+    return state.Invalid(block_t::name() + "bad-chain",
                          "Current block is added on top of invalid chain");
   }
 

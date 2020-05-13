@@ -189,20 +189,20 @@ struct BlockTree : public BaseBlockTree<Block> {
                            bool shouldContextuallyCheck,
                            index_t** ret) {
     if (!checkBlock(*block, state, *param_)) {
-      return state.Invalid("check-block");
+      return state.Invalid(block_t::name() + "check-block");
     }
 
     // we must know previous block
     auto* prev = base::getBlockIndex(block->previousBlock);
     if (prev == nullptr) {
       return state.Invalid(
-          "bad-prev-block",
+          block_t::name() + "bad-prev-block",
           "can not find previous block: " + HexStr(block->previousBlock));
     }
 
     if (shouldContextuallyCheck &&
         !contextuallyCheckBlock(*prev, *block, state, *param_)) {
-      return state.Invalid("contextually-check-block");
+      return state.Invalid(block_t::name() + "contextually-check-block");
     }
 
     auto index = this->insertBlockHeader(block);
@@ -216,7 +216,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     // if prev block is invalid, mark this block as invalid
     if (!prev->isValid()) {
       index->setFlag(BLOCK_FAILED_CHILD);
-      return state.Invalid("bad-chain", "One of previous blocks is invalid");
+      return state.Invalid(block_t::name() + "bad-chain",
+                           "One of previous blocks is invalid");
     }
 
     return true;
@@ -239,6 +240,10 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     auto* prev = currentBest.tip();
     if (prev == nullptr || prev->chainWork < indexNew.chainWork) {
+      VBK_LOG_INFO("%s doing POW fork resolution Active=%s, Candidate=%s",
+                   block_t::name(),
+                   (prev ? prev->toPrettyString() : "<nullptr>"),
+                   indexNew.toPrettyString());
       //! important to use this->setTip for proper vtable resolution
       this->setTip(indexNew, state, isBootstrap);
     }

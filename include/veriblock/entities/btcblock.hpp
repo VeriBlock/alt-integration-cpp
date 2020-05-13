@@ -112,7 +112,7 @@ struct BtcBlock {
    */
   uint256 getHash() const;
 
-  static std::string name() { return "Btc"; }
+  static std::string name() { return "BTC"; }
 
   std::string toPrettyString() const {
     return fmt::sprintf(

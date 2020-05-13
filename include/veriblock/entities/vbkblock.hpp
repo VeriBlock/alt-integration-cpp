@@ -134,7 +134,7 @@ struct VbkBlock {
    */
   short_hash_t getShortHash() const;
 
-  static std::string name() { return "Vbk"; }
+  static std::string name() { return "VBK"; }
 };
 
 }  // namespace altintegration
