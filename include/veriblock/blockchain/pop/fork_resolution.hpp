@@ -256,7 +256,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
   assert(!chainA.empty());
   assert(!chainB.empty());
-  VBK_LOG_DEBUG("Comparing chains A(%s) and B(%s) starting at %s",
+  VBK_LOG_DEBUG("Comparing chains A(%d) and B(%d) starting at %d",
                 chainA.back().blockHeight,
                 chainB.back().blockHeight,
                 chainA.front().blockHeight);
@@ -451,8 +451,8 @@ struct PopAwareForkResolutionComparator {
         isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
     if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
       // chans are equal in terms of POP
-      VBK_LOG_DEBUG("Chain A is crossed keystone boundary: %d", AcrossedKeystoneBoundary);
-      VBK_LOG_DEBUG("Chain B is crossed keystone boundary: %d", BcrossedKeystoneBoundary);
+      VBK_LOG_DEBUG("Chain A is crossed keystone boundary: %d", (int)AcrossedKeystoneBoundary);
+      VBK_LOG_DEBUG("Chain B is crossed keystone boundary: %d", (int)BcrossedKeystoneBoundary);
       VBK_LOG_DEBUG("Chains are equal");
       return 0;
     }

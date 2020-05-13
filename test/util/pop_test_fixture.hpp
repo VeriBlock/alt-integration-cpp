@@ -15,6 +15,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/mock_miner.hpp>
+#include <veriblock/logger/logger_default.hpp>
 
 #include "util/test_utils.hpp"
 
@@ -38,6 +39,7 @@ struct PopTestFixture {
   ValidationState state;
 
   PopTestFixture() {
+    SetLogger(std::make_shared<LoggerDefault>());
     EXPECT_TRUE(alttree.bootstrap(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().btc().bootstrapWithGenesis(state));

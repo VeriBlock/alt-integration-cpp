@@ -214,6 +214,10 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 
+  VBK_LOG_DEBUG("Active: %s, Candidate: %s",
+                currentTip->toPrettyString(),
+                indexNew.toPrettyString());
+
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block

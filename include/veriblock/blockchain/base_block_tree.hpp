@@ -245,7 +245,7 @@ struct BaseBlockTree {
   //! updates tree tip
   virtual bool setTip(index_t& to, ValidationState&, bool) {
     activeChain_.setTip(&to);
-    VBK_LOG_INFO("%s SetTip=%s", block_t::name(), to.toPrettyString());
+    VBK_LOG_INFO("SetTip=%s", to.toPrettyString());
     return true;
   }
 

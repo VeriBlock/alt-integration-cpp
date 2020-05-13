@@ -18,7 +18,6 @@
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/validation_state.hpp"
 #include "veriblock/write_stream.hpp"
-#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 

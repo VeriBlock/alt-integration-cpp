@@ -14,9 +14,8 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew,
                                       ValidationState& state,
                                       bool isBootstrap) {
-  VBK_LOG_INFO(
-      "VbkBlockTree",
-      "Determine best chain. \nActive: %s\nOther : %s",
+  VBK_LOG_DEBUG(
+      "Active: %s, Other : %s",
       (currentBest.tip() ? currentBest.tip()->toPrettyString() : "<nullptr>"),
       indexNew.toPrettyString());
 
@@ -77,7 +76,7 @@ bool VbkBlockTree::setTip(index_t& to,
   // edge case: if changeTip is false, then new block arrived on top of current
   // active chain, and this block has invalid commands
   if (changeTip) {
-    VBK_LOG_INFO("VBK SetTip to %s", to.toPrettyString());
+    VBK_LOG_INFO("SetTip=%s", to.toPrettyString());
     activeChain_.setTip(&to);
   } else {
     assert(!to.isValid());

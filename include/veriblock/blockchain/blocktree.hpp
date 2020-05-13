@@ -240,8 +240,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     auto* prev = currentBest.tip();
     if (prev == nullptr || prev->chainWork < indexNew.chainWork) {
-      VBK_LOG_INFO("%s doing POW fork resolution Active=%s, Candidate=%s",
-                   block_t::name(),
+      VBK_LOG_INFO("Doing POW fork resolution Active=%s, Candidate=%s",
                    (prev ? prev->toPrettyString() : "<nullptr>"),
                    indexNew.toPrettyString());
       //! important to use this->setTip for proper vtable resolution
