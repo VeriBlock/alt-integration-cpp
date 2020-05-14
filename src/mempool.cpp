@@ -108,7 +108,7 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
     auto* containing_block_index =
         tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
 
-    auto start_height = std::max(
+    auto start_height = (std::max)(
         genesis_height, containing_block_index->height - settlement_interval);
 
     auto endorsement = BtcEndorsement::fromContainer(vtb);

@@ -120,7 +120,7 @@ std::vector<KeystoneContext> getKeystoneContext(
       chain.end(),
       std::back_inserter(ret),
       [&tree](const ProtoKeystoneContext<ProtectingBlockT>& pkc) {
-        int earliestEndorsementIndex = std::numeric_limits<int32_t>::max();
+        int earliestEndorsementIndex = (std::numeric_limits<int32_t>::max)();
         for (const auto* btcIndex : pkc.referencedByBlocks) {
           if (btcIndex == nullptr) {
             continue;
@@ -261,7 +261,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
         "start at the same keystone index");
   }
 
-  int latestKeystone = std::max(a.lastKeystone(), b.lastKeystone());
+  int latestKeystone = (std::max)(a.lastKeystone(), b.lastKeystone());
 
   bool aOutsideFinality = false;
   bool bOutsideFinality = false;
@@ -306,7 +306,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
     int earliestPublicationB = bctx->firstBlockPublicationHeight;
 
     int earliestPublicationOfEither =
-        std::min(earliestPublicationA, earliestPublicationB);
+        (std::min)(earliestPublicationA, earliestPublicationB);
 
     chainAscore += getConsensusScoreFromRelativeBlockStartingAtZero(
         earliestPublicationA - earliestPublicationOfEither, config);

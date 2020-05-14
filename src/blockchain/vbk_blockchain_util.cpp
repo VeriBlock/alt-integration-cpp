@@ -58,7 +58,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
 
-  block.timestamp = std::max(tip.getBlockTime(), currentTimestamp4());
+  block.timestamp = (std::max)(tip.getBlockTime(), currentTimestamp4());
   block.difficulty = getNextWorkRequired(tip, block, params_);
   return block;
 }

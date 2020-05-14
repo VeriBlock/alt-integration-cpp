@@ -183,7 +183,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
   ArithUint256& operator--() {
     // prefix operator
     for (int i = 0; i < SHA256_HASH_SIZE &&
-                    --data_[i] == std::numeric_limits<uint8_t>::max();
+                    --data_[i] == (std::numeric_limits<uint8_t>::max)();
          ++i) {
     }
     return *this;

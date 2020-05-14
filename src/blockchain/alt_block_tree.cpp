@@ -245,7 +245,7 @@ size_t calculateStateChangeCost(Chain<BlockIndex<AltBlock>>& chain,
   auto* forkBlock = chain.findFork(&index);
   if (!forkBlock) {
     // unreachable node
-    return std::numeric_limits<size_t>::max();
+    return (std::numeric_limits<size_t>::max)();
   }
 
   unapplyCost = tip->height - forkBlock->height;

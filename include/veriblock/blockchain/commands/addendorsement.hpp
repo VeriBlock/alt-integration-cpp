@@ -41,7 +41,7 @@ struct AddEndorsement : public Command {
 
     // endorsement validity window
     auto window = ed_->getParams().getEndorsementSettlementInterval();
-    auto minHeight = std::max(containing->height - window, 0);
+    auto minHeight = (std::max)(containing->height - window, 0);
     Chain<protected_index_t> chain(minHeight, containing);
 
     auto endorsedHeight = e_->endorsedHeight;
