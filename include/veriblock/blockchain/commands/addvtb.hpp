@@ -9,6 +9,7 @@
 #include <vector>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/entities/altblock.hpp>
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -39,10 +40,7 @@ struct AddVTB : public Command {
 
   //! debug method. returns a string describing this command
   std::string toPrettyString(size_t level = 0) const override {
-    std::ostringstream ss;
-    std::string pad(level, ' ');
-    ss << pad << "AddVTB";
-    return ss.str();
+    return fmt::sprintf("%sAddVTB", std::string(level, ' '));
   };
 
  private:

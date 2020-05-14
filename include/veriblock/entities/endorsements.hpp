@@ -48,7 +48,9 @@ struct DummyEndorsement {
 
 template <>
 inline std::string BtcEndorsement::toPrettyString(size_t level) const {
-  return fmt::sprintf("%sBtcEndorsement{containing=%s, endorsed=%s, endorsedHeight=%ld, blockOfProof=%s}",
+  return fmt::sprintf(
+      "%sBtcEndorsement{containing=%s, endorsed=%s, endorsedHeight=%ld, "
+      "blockOfProof=%s}",
       std::string(level, ' '),
       HexStr(containingHash),
       HexStr(endorsedHash),

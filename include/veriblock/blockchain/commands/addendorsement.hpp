@@ -14,6 +14,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/endorsements.hpp>
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -107,7 +108,8 @@ struct AddEndorsement : public Command {
   size_t getId() const override { return e_->id.getLow64(); }
 
   std::string toPrettyString(size_t level = 0) const override {
-    return std::string(level, ' ') + "Add" + e_->toPrettyString();
+    return fmt::sprintf(
+        "%sAdd%s", std::string(level, ' '), e_->toPrettyString());
   }
 
  private:

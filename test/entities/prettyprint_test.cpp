@@ -20,6 +20,12 @@
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/entities/altblock.hpp>
+#include <veriblock/blockchain/commands/addblock.hpp>
+#include <veriblock/blockchain/commands/addvtb.hpp>
+#include <veriblock/blockchain/commands/addendorsement.hpp>
+#include <util/alt_chain_params_regtest.hpp>
+#include <veriblock/blockchain/pop/fork_resolution.hpp>
+#include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 
 using namespace altintegration;
 
@@ -57,7 +63,7 @@ static const VbkPopTx defaultPoPTx{
     defaultSignature,
     defaultPublicKey};
 
-TEST(PrettyPrint, TryPrettyPrint) {
+TEST(PrettyPrint, PrintEntities) {
   auto blob = Blob<16>("010203");
   EXPECT_EQ(blob.toPrettyString(),
             "Blob<16>(01020300000000000000000000000000)");
@@ -136,4 +142,97 @@ TEST(PrettyPrint, TryPrettyPrint) {
       vbkEndorsement.toPrettyString(),
       "VbkEndorsement{containing=010203, endorsed=010203, endorsedHeight=100, "
       "blockOfProof=a288e74fe0c2e0a6afb0c39808e2aae9a5e19569b1a68624}");
+}
+
+TEST(PrettyPrint, PrintCommands) {
+  BtcChainParamsRegTest btcparam{};
+  VbkChainParamsRegTest vbkparam{};
+  AltChainParamsRegTest altparam{};
+  BlockTree<BtcBlock, BtcChainParams> btcTree =
+      BlockTree<BtcBlock, BtcChainParams>(btcparam);
+  BlockTree<VbkBlock, VbkChainParams> vbkTree =
+      BlockTree<VbkBlock, VbkChainParams>(vbkparam);
+  AltTree alttree = AltTree(altparam, vbkparam, btcparam);
+
+  auto btcBlock = BtcBlock{
+      536870912u,
+      "f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000"_unhex,
+      "f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"_unhex,
+      1555501858u,
+      436279940u,
+      (uint32_t)-1695416274};
+  auto btcBlockPtr = std::make_shared<BtcBlock>(std::move(btcBlock));
+  auto addBtcBlock = AddBtcBlock(btcTree, btcBlockPtr);
+  EXPECT_EQ(
+      addBtcBlock.toPrettyString(),
+      "AddBtcBlock{prev="
+      "f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000, "
+      "block="
+      "ebaa22c5ffd827e96c4450ad5dd35dbec2aa45e15cdb5ce9928f543f4cebf10e}");
+
+  auto vbkBlock = VbkBlock{5000,
+                           2,
+                           "449c60619294546ad825af03"_unhex,
+                           "b0935637860679ddd5"_unhex,
+                           "5ee4fd21082e18686e"_unhex,
+                           "26bbfda7d5e4462ef24ae02d67e47d78"_unhex,
+                           1553699059,
+                           16842752,
+                           1};
+  auto vbkBlockPtr = std::make_shared<VbkBlock>(std::move(vbkBlock));
+  auto addVbkBlock = AddVbkBlock(vbkTree, vbkBlockPtr);
+  EXPECT_EQ(
+      addVbkBlock.toPrettyString(),
+      "AddVbkBlock{prev=449c60619294546ad825af03, "
+      "block=a288e74fe0c2e0a6afb0c39808e2aae9a5e19569b1a68624, height=5000}");
+
+  auto vtb = VTB{defaultPoPTx, {}, vbkBlock, {}};
+  auto addVtb = AddVTB(alttree, vtb);
+  EXPECT_EQ(addVtb.toPrettyString(), "AddVTB");
+
+  auto atv = ATV{defaultTx, {}, vbkBlock, {}};
+  auto endorsedBlock = AltBlock{{1, 2, 3}, {4, 5, 6}, 1, 100};
+  auto containingBlock = AltBlock{{1, 2, 3}, {4, 5, 6}, 2, 101};
+  auto popData = PopData{1, {}, true, atv, {}};
+  auto payloads = AltPayloads{endorsedBlock, containingBlock, popData};
+  auto vbkEndorsement = VbkEndorsement::fromContainer(payloads);
+  auto vbkEndorsementPtr =
+      std::make_shared<VbkEndorsement>(std::move(vbkEndorsement));
+  auto addEndorsement =
+      AddEndorsement<BlockTree<VbkBlock, VbkChainParams>, AltTree>(
+          vbkTree, alttree, vbkEndorsementPtr);
+  EXPECT_EQ(addEndorsement.toPrettyString(),
+            "AddVbkEndorsement{containing=010203, endorsed=010203, "
+            "endorsedHeight=100, "
+            "blockOfProof=a288e74fe0c2e0a6afb0c39808e2aae9a5e19569b1a68624}");
+}
+
+TEST(PrettyPrint, PrintPop) {
+  BtcChainParamsRegTest btcparam{};
+  VbkChainParamsRegTest vbkparam{};
+  AltChainParamsRegTest altparam{};
+  auto btcTreePtr =
+      std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(btcparam);
+  VbkBlockTree vbkTree = VbkBlockTree(vbkparam, btcparam);
+  AltTree alttree = AltTree(altparam, vbkparam, btcparam);
+
+  auto comparator =
+      PopAwareForkResolutionComparator<VbkBlock,
+                                       VbkChainParams,
+                                       BlockTree<BtcBlock, BtcChainParams>,
+                                       BtcChainParams>(
+          btcTreePtr, btcparam, vbkparam);
+
+  EXPECT_EQ(comparator.toPrettyString(),
+            "Comparator{\n{tree=\n  BtcBlockTree{blocks=0\n    {tip=<empty>}\n "
+            "   {blocks=\n    }\n    {tips=\n    }\n  }}");
+
+  EXPECT_EQ(
+      vbkTree.toPrettyString(),
+      "VbkBlockTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  {tips=\n  "
+      "}\n}\n  Comparator{\n  {tree=\n    BtcBlockTree{blocks=0\n      "
+      "{tip=<empty>}\n      {blocks=\n      }\n      {tips=\n      }\n    }}}");
+  EXPECT_EQ(btcTreePtr->toPrettyString(),
+            "BtcBlockTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  "
+            "{tips=\n  }\n}}");
 }

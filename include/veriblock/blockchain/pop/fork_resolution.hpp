@@ -16,6 +16,7 @@
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/keystone_util.hpp>
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -500,13 +501,11 @@ struct PopAwareForkResolutionComparator {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    std::ostringstream ss;
     std::string pad(level, ' ');
-    ss << pad << "Comparator{\n";
-    ss << pad << "{tree=\n";
-    ss << ing_->toPrettyString(level + 2);
-    ss << "}";
-    return ss.str();
+    return fmt::sprintf("%sComparator{\n%s{tree=\n%s}",
+                        pad,
+                        pad,
+                        ing_->toPrettyString(level + 2));
   }
 
  private:
