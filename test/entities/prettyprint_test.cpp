@@ -26,6 +26,7 @@
 #include <util/alt_chain_params_regtest.hpp>
 #include <veriblock/blockchain/pop/fork_resolution.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/blockchain/block_index.hpp>
 
 using namespace altintegration;
 
@@ -225,7 +226,7 @@ TEST(PrettyPrint, PrintPop) {
 
   EXPECT_EQ(comparator.toPrettyString(),
             "Comparator{\n{tree=\n  BtcBlockTree{blocks=0\n    {tip=<empty>}\n "
-            "   {blocks=\n    }\n    {tips=\n    }\n  }}");
+            "   {blocks=\n    }\n    {tips=\n    }\n  }}}");
 
   EXPECT_EQ(
       vbkTree.toPrettyString(),
@@ -234,5 +235,44 @@ TEST(PrettyPrint, PrintPop) {
       "{tip=<empty>}\n      {blocks=\n      }\n      {tips=\n      }\n    }}}");
   EXPECT_EQ(btcTreePtr->toPrettyString(),
             "BtcBlockTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  "
-            "{tips=\n  }\n}}");
+            "{tips=\n  }\n}");
+}
+
+TEST(PrettyPrint, Blockchain) {
+  BtcChainParamsRegTest btcparam{};
+  VbkChainParamsRegTest vbkparam{};
+  AltChainParamsRegTest altparam{};
+  auto btcTreePtr =
+      std::make_shared<BlockTree<BtcBlock, BtcChainParams>>(btcparam);
+  VbkBlockTree vbkTree = VbkBlockTree(vbkparam, btcparam);
+  AltTree alttree = AltTree(altparam, vbkparam, btcparam);
+
+  auto btcBlock = BtcBlock{
+      536870912u,
+      "f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000"_unhex,
+      "f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"_unhex,
+      1555501858u,
+      436279940u,
+      (uint32_t)-1695416274};
+  auto btcBlockPtr = std::make_shared<BtcBlock>(std::move(btcBlock));
+  BlockIndex<BtcBlock> index{};
+  index.height = 100;
+  index.header = btcBlockPtr;
+  index.pprev = nullptr;
+
+  EXPECT_EQ(
+      index.toPrettyString(),
+      "BtcBlockIndex{height=100, "
+      "hash=ebaa22c5ffd827e96c4450ad5dd35dbec2aa45e15cdb5ce9928f543f4cebf10e, "
+      "prev=<empty>, next=0, status=0, cgroups=0, endorsedBy=0, "
+      "endorsements=0, ref=0}");
+
+  EXPECT_EQ(
+      alttree.toPrettyString(),
+      "AltTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  {tips=\n  }\n  "
+      "Comparator{\n  {tree=\n    VbkBlockTree{blocks=0\n      {tip=<empty>}\n "
+      "     {blocks=\n      }\n      {tips=\n      }\n    }\n      "
+      "Comparator{\n      {tree=\n        BtcBlockTree{blocks=0\n          "
+      "{tip=<empty>}\n          {blocks=\n          }\n          {tips=\n      "
+      "    }\n        }}}    }}\n}");
 }

@@ -202,7 +202,7 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
-  return fmt::sprintf("%s\n%s%s}",
+  return fmt::sprintf("%s\n%s%s",
                       VbkTree::toPrettyString(level),
                       cmp_.toPrettyString(level + 2),
                       std::string(level, ' '));
