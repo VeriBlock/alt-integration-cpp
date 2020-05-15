@@ -83,6 +83,9 @@ struct BlockIndex {
   //! reference counter for fork resolution
   uint32_t refCounter = 0;
 
+  //! counter for the number of set BLOCK_FAILED_CHILD flag
+  uint32_t failChildCounter = 0;
+
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
     assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
@@ -102,6 +105,7 @@ struct BlockIndex {
     this->height = 0;
     this->status = 0;
     this->refCounter = 0;
+    this->failChildCounter = 0;
   }
 
   bool raiseValidity(enum BlockStatus upTo) {
@@ -116,9 +120,23 @@ struct BlockIndex {
     return false;
   }
 
-  void setFlag(enum BlockStatus s) { this->status |= s; }
+  void setFlag(enum BlockStatus s) {
+    if (s == BlockStatus::BLOCK_FAILED_CHILD) {
+      ++this->failChildCounter;
+    }
+    this->status |= s;
+  }
 
-  void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
+  void unsetFlag(enum BlockStatus s) {
+    if (s == BlockStatus::BLOCK_FAILED_CHILD) {
+      --(this->failChildCounter);
+      if (this->failChildCounter == 0) {
+        this->status &= ~s;
+      }
+    } else {
+      this->status &= ~s;
+    }
+  }
 
   bool hasFlags(enum BlockStatus s) const { return this->status & s; }
 

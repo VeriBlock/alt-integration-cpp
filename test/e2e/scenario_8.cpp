@@ -129,6 +129,7 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_NE(vbkBlock, nullptr);
   validityFlagCheck(*vbkBlock, false);
 
+  alttree.removePayloads(containingBlock.getHash(), {payloads2});
   alttree.removeSubtree(containingBlock.getHash(), true);
 
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());

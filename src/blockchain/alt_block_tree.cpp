@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
-
 #include <unordered_set>
 #include <veriblock/blockchain/commands/commands.hpp>
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
