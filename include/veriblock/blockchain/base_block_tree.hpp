@@ -123,14 +123,26 @@ struct BaseBlockTree {
     updateTips(shouldDetermineBestChain);
   }
 
+  void validateSubtree(const hash_t& hash,
+                       enum BlockStatus reason,
+                       bool shouldDetermineBestChain = true) {
+    auto* index = this->getBlockIndex(hash);
+    if (index == nullptr) {
+      return;
+    }
+    validateSubtree(*index, reason, shouldDetermineBestChain);
+  }
+
   void validateSubtree(index_t& toBeValidated,
                        enum BlockStatus reason,
                        bool shouldDetermineBestChain = true) {
     doValidate(toBeValidated, reason);
+    tryAddTip(&toBeValidated);
 
     for (auto* pnext : toBeValidated.pnext) {
       forEachNodePostorder<block_t>(*pnext, [&](index_t& index) {
         doValidate(index, BLOCK_FAILED_CHILD);
+        tryAddTip(&toBeValidated);
       });
     }
 
