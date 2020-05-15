@@ -83,7 +83,7 @@ struct BlockIndex {
   //! reference counter for fork resolution
   uint32_t refCounter = 0;
 
-  bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) {
+  bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
     assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
       // block failed
@@ -120,7 +120,7 @@ struct BlockIndex {
 
   void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
 
-  bool hasFlags(enum BlockStatus s) { return this->status & s; }
+  bool hasFlags(enum BlockStatus s) const { return this->status & s; }
 
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }

@@ -134,6 +134,33 @@ struct PopTestFixture {
     out.insert(out.end(), ctx.begin(), ctx.end());
   }
 
+  PopData createPopData(int32_t version,
+                        const ATV& atv,
+                        std::vector<VTB> vtbs) {
+    PopData popData;
+    popData.version = version;
+
+    // fill vbk context
+    for (auto& vtb : vtbs) {
+      for (const auto& block : vtb.context) {
+        popData.vbk_context.push_back(block);
+      }
+      popData.vbk_context.push_back(vtb.containingBlock);
+      vtb.context.clear();
+    }
+
+    for (const auto& block : atv.context) {
+      popData.vbk_context.push_back(block);
+    }
+
+    popData.atv = atv;
+    popData.atv.context.clear();
+    popData.hasAtv = true;
+    popData.vtbs = vtbs;
+
+    return popData;
+  }
+
   AltPayloads generateAltPayloads(const VbkTx& transaction,
                                   const AltBlock& containing,
                                   const AltBlock& endorsed,
