@@ -103,6 +103,11 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
+  EXPECT_EQ(*alttree.vbk().getBestChain().tip(),
+            *popminer.vbk().getBestChain().tip());
+
+  auto altStateVbkTip = *alttree.vbk().getBestChain().tip();
+
   auto* vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   EXPECT_NE(vbkBlock, nullptr);
   validityFlagCheck(*vbkBlock, true);
@@ -125,6 +130,9 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetDebugMessage(), "Endorsement expired");
 
+  EXPECT_NE(*alttree.vbk().getBestChain().tip(),
+            *popminer.vbk().getBestChain().tip());
+
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   EXPECT_NE(vbkBlock, nullptr);
   validityFlagCheck(*vbkBlock, false);
@@ -135,4 +143,6 @@ TEST_F(Scenario8, scenario_8) {
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   EXPECT_NE(vbkBlock, nullptr);
   validityFlagCheck(*vbkBlock, true);
+
+  EXPECT_EQ(altStateVbkTip, *popminer.vbk().getBestChain().tip());
 }

@@ -112,15 +112,27 @@ struct BaseBlockTree {
 
     // flag next subtrees (excluding current block)  as BLOCK_FAILED_CHILD
     for (auto* pnext : toBeInvalidated.pnext) {
-      forEachNodePostorder<block_t>(*pnext, [&](index_t& index) -> bool {
-        bool shouldContinue = index.isValid();
+      forEachNodePostorder<block_t>(*pnext, [&](index_t& index) {
         doInvalidate(index, BLOCK_FAILED_CHILD);
-        return shouldContinue;
       });
     }
 
     // after invalidation, try to add tip
     tryAddTip(toBeInvalidated.pprev);
+
+    updateTips(shouldDetermineBestChain);
+  }
+
+  void validateSubtree(index_t& toBeValidated,
+                       enum BlockStatus reason,
+                       bool shouldDetermineBestChain = true) {
+    doValidate(toBeValidated, reason);
+
+    for (auto* pnext : toBeValidated.pnext) {
+      forEachNodePostorder<block_t>(*pnext, [&](index_t& index) {
+        doValidate(index, BLOCK_FAILED_CHILD);
+      });
+    }
 
     updateTips(shouldDetermineBestChain);
   }
@@ -278,6 +290,11 @@ struct BaseBlockTree {
 
   void doInvalidate(index_t& block, enum BlockStatus reason) {
     block.setFlag(reason);
+    invalidate_sig_.emit(block);
+  }
+
+  void doValidate(index_t& block, enum BlockStatus reason) {
+    block.unsetFlag(reason);
     invalidate_sig_.emit(block);
   }
 

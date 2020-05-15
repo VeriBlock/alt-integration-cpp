@@ -122,7 +122,7 @@ struct BlockIndex {
 
   void setFlag(enum BlockStatus s) {
     if (s == BlockStatus::BLOCK_FAILED_CHILD) {
-      ++this->failChildCounter;
+      ++(this->failChildCounter);
     }
     this->status |= s;
   }
