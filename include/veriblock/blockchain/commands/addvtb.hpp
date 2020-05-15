@@ -40,7 +40,7 @@ struct AddVTB : public Command {
 
   //! debug method. returns a string describing this command
   std::string toPrettyString(size_t level = 0) const override {
-    return fmt::sprintf("%sAddVTB", std::string(level, ' '));
+    return fmt::sprintf("%sAddVTB{id=%llu}", std::string(level, ' '), id_);
   };
 
  private:

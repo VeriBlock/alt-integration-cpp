@@ -189,7 +189,7 @@ TEST(PrettyPrint, PrintCommands) {
 
   auto vtb = VTB{defaultPoPTx, {}, vbkBlock, {}};
   auto addVtb = AddVTB(alttree, vtb);
-  EXPECT_EQ(addVtb.toPrettyString(), "AddVTB");
+  EXPECT_EQ(addVtb.toPrettyString(), "AddVTB{id=15816616244246527767}");
 
   auto atv = ATV{defaultTx, {}, vbkBlock, {}};
   auto endorsedBlock = AltBlock{{1, 2, 3}, {4, 5, 6}, 1, 100};
@@ -274,5 +274,5 @@ TEST(PrettyPrint, Blockchain) {
       "     {blocks=\n      }\n      {tips=\n      }\n    }\n      "
       "Comparator{\n      {tree=\n        BtcBlockTree{blocks=0\n          "
       "{tip=<empty>}\n          {blocks=\n          }\n          {tips=\n      "
-      "    }\n        }}}    }}\n}");
+      "    }\n        }}}}}\n}");
 }
