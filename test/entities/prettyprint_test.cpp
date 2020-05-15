@@ -27,6 +27,7 @@
 #include <veriblock/blockchain/pop/fork_resolution.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/rewards/poprewards_bigdecimal.hpp>
 
 using namespace altintegration;
 
@@ -143,6 +144,9 @@ TEST(PrettyPrint, PrintEntities) {
       vbkEndorsement.toPrettyString(),
       "VbkEndorsement{containing=010203, endorsed=010203, endorsedHeight=100, "
       "blockOfProof=a288e74fe0c2e0a6afb0c39808e2aae9a5e19569b1a68624}");
+
+  auto bigDecimal = PopRewardsBigDecimal(100.0);
+  EXPECT_EQ(bigDecimal.toPrettyString(), "BigDecimal{100.0}");
 }
 
 TEST(PrettyPrint, PrintCommands) {
