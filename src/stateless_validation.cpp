@@ -99,7 +99,7 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
       for (int i = chunks - 1; i >= 0; --i) {
         uint32_t chunkOffset = waste + (i * (offsetLength + sectionLength));
         uint32_t limit =
-            std::min(chunkDescriptorLength, chunkOffset + offsetLength);
+            (std::min)(chunkDescriptorLength, chunkOffset + offsetLength);
         int sectionOffsetValue =
             ::getIntFromBits(chunkDescriptor, chunkOffset, limit);
 

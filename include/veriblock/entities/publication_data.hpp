@@ -10,6 +10,7 @@
 #include <sstream>
 #include <vector>
 
+#include <veriblock/third_party/fmt/printf.h>
 #include "veriblock/serde.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -22,10 +23,10 @@ struct PublicationData {
   std::vector<uint8_t> contextInfo{};
 
   std::string toPrettyString() const {
-    std::ostringstream ss;
-    ss << "PublicationData{id=" << identifier << ", header=" << HexStr(header)
-       << ", payoutInfo=" << HexStr(payoutInfo) << "}";
-    return ss.str();
+    return fmt::sprintf("PublicationData{id=%lld, header=%s, payoutInfo=%s}",
+                        identifier,
+                        HexStr(header),
+                        HexStr(payoutInfo));
   }
 
   /**

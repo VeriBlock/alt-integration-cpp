@@ -6,10 +6,6 @@
 #ifndef ALT_INTEGRATION_LOGGER_LOGGER_HPP
 #define ALT_INTEGRATION_LOGGER_LOGGER_HPP
 
-#ifndef FMT_HEADER_ONLY
-#define FMT_HEADER_ONLY
-#endif //FMT_HEADER_ONLY
-
 #include <veriblock/third_party/fmt/printf.h>
 
 #include <memory>

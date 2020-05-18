@@ -14,4 +14,5 @@ addtest(entities_serde_test
         altblock_test.cpp
         merkle_tree_test.cpp
         popdata_test.cpp
+        prettyprint_test.cpp
         )

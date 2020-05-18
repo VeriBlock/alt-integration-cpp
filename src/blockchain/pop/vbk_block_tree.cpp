@@ -6,6 +6,7 @@
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -201,12 +202,9 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
-  std::ostringstream ss;
-  std::string pad(level, ' ');
-  ss << VbkTree::toPrettyString(level) << "\n";
-  ss << cmp_.toPrettyString(level + 2);
-  ss << pad << "}";
-  return ss.str();
+  return fmt::sprintf("%s\n%s",
+                      VbkTree::toPrettyString(level),
+                      cmp_.toPrettyString(level + 2));
 }
 
 bool VbkBlockTree::setState(const VbkBlock::hash_t& block,
