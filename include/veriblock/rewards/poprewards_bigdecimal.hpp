@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <veriblock/arith_uint256.hpp>
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -20,6 +21,11 @@ struct PopRewardsBigDecimal {
   PopRewardsBigDecimal(uint64_t b) : value(ArithUint256(b) * decimals) {}
   PopRewardsBigDecimal(const ArithUint256& b) : value(b * decimals) {}
   PopRewardsBigDecimal(double b) : value((uint64_t)(b * decimals)) {}
+
+  std::string toPrettyString() const {
+    return fmt::sprintf(
+        "BigDecimal{%llu.%llu}", getIntegerFraction(), getDecimalFraction());
+  }
 
   PopRewardsBigDecimal& operator+=(const PopRewardsBigDecimal& b) {
     value += b.value;
@@ -43,8 +49,8 @@ struct PopRewardsBigDecimal {
     return *this;
   }
 
-  uint64_t getIntegerFraction() { return (value / decimals).getLow64(); }
-  uint64_t getDecimalFraction() {
+  uint64_t getIntegerFraction() const { return (value / decimals).getLow64(); }
+  uint64_t getDecimalFraction() const {
     ArithUint256 integerFraction = getIntegerFraction();
     integerFraction *= decimals;
     return ((value - integerFraction) * decimals).getLow64();

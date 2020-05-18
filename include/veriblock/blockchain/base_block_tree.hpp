@@ -12,6 +12,7 @@
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/signals.hpp>
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -245,10 +246,9 @@ struct BaseBlockTree {
 
   std::string toPrettyString(size_t level = 0) const {
     auto tip = activeChain_.tip();
-    std::ostringstream ss;
     std::string pad(level, ' ');
-    ss << pad << "{tip=" << (tip ? tip->toPrettyString() : "<empty>") << "}\n";
-    ss << pad << "{blocks=\n";
+
+    std::string blocksStr{};
     // sort blocks by height
     std::vector<std::pair<int, index_t*>> byheight;
     byheight.reserve(blocks_.size());
@@ -257,15 +257,23 @@ struct BaseBlockTree {
     }
     std::sort(byheight.rbegin(), byheight.rend());
     for (const auto& p : byheight) {
-      ss << p.second->toPrettyString(level + 2) << "\n";
+      blocksStr += (p.second->toPrettyString(level + 2) + "\n");
     }
-    ss << pad << "}\n";
-    ss << pad << "{tips=\n";
+
+    std::string tipsStr{};
     for (const auto* _tip : tips_) {
-      ss << _tip->toPrettyString(level + 2) << "\n";
+      tipsStr += (_tip->toPrettyString(level + 2) + "\n");
     }
-    ss << pad << "}";
-    return ss.str();
+
+    return fmt::sprintf("%s{tip=%s}\n%s{blocks=\n%s%s}\n%s{tips=\n%s%s}",
+                        pad,
+                        (tip ? tip->toPrettyString() : "<empty>"),
+                        pad,
+                        blocksStr,
+                        pad,
+                        pad,
+                        tipsStr,
+                        pad);
   }
 
  private:

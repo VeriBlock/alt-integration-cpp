@@ -6,6 +6,7 @@
 #ifndef ALTINTEGRATION_ENDORSEMENTS_HPP
 #define ALTINTEGRATION_ENDORSEMENTS_HPP
 
+#include <veriblock/third_party/fmt/printf.h>
 #include "veriblock/entities/endorsement.hpp"
 
 namespace altintegration {
@@ -47,20 +48,26 @@ struct DummyEndorsement {
 
 template <>
 inline std::string BtcEndorsement::toPrettyString(size_t level) const {
-  return std::string(level, ' ') +
-         "BtcEndorsement{containing=" + HexStr(containingHash) +
-         ", endorsed=" + HexStr(endorsedHash) +
-         ", endorsedHeight=" + std::to_string(endorsedHeight) +
-         ", blockOfProof" + HexStr(blockOfProof) + "}";
+  return fmt::sprintf(
+      "%sBtcEndorsement{containing=%s, endorsed=%s, endorsedHeight=%ld, "
+      "blockOfProof=%s}",
+      std::string(level, ' '),
+      HexStr(containingHash),
+      HexStr(endorsedHash),
+      endorsedHeight,
+      HexStr(blockOfProof));
 }
 
 template <>
 inline std::string VbkEndorsement::toPrettyString(size_t level) const {
-  return std::string(level, ' ') +
-         "VbkEndorsement{containing=" + HexStr(containingHash) +
-         ", endorsed=" + HexStr(endorsedHash) +
-         ", endorsedHeight=" + std::to_string(endorsedHeight) +
-         ", blockOfProof" + HexStr(blockOfProof) + "}";
+  return fmt::sprintf(
+      "%sVbkEndorsement{containing=%s, endorsed=%s, endorsedHeight=%ld, "
+      "blockOfProof=%s}",
+      std::string(level, ' '),
+      HexStr(containingHash),
+      HexStr(endorsedHash),
+      endorsedHeight,
+      HexStr(blockOfProof));
 }
 
 }  // namespace altintegration

@@ -77,7 +77,7 @@ std::vector<uint8_t> pad(const T& v, size_t size) {
 Slice<const uint8_t> readVarLenValue(
     ReadStream& stream,
     int32_t minLen = 0,
-    int32_t maxLen = std::numeric_limits<int32_t>::max());
+    int32_t maxLen = (std::numeric_limits<int32_t>::max)());
 
 /**
  * Read variable length value, which consists of
@@ -92,7 +92,7 @@ Slice<const uint8_t> readVarLenValue(
 Slice<const uint8_t> readSingleByteLenValue(
     ReadStream& stream,
     int32_t minLen = 0,
-    int32_t maxLen = std::numeric_limits<int32_t>::max());
+    int32_t maxLen = (std::numeric_limits<int32_t>::max)());
 
 /**
  * Read single Big-Endian value from a stream.

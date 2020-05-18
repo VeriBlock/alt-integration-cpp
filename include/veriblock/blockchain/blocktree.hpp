@@ -17,6 +17,7 @@
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -112,13 +113,13 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    std::ostringstream s;
     std::string pad(level, ' ');
-    s << pad << Block::name() << "BlockTree{blocks=" << base::blocks_.size()
-      << "\n";
-    s << base::toPrettyString(level + 2) << "\n";
-    s << pad << "}";
-    return s.str();
+    return fmt::sprintf("%s%sBlockTree{blocks=%llu\n%s\n%s}",
+                        pad,
+                        Block::name(),
+                        base::blocks_.size(),
+                        base::toPrettyString(level + 2),
+                        pad);
   }
 
  protected:

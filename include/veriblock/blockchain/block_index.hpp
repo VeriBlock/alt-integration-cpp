@@ -18,6 +18,7 @@
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/validation_state.hpp"
 #include "veriblock/write_stream.hpp"
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -166,16 +167,20 @@ struct BlockIndex {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    return std::string(level, ' ') + Block::name() +
-           "BlockIndex{height=" + std::to_string(height) +
-           ", hash=" + HexStr(getHash()) +
-           ", prev=" + (pprev ? HexStr(pprev->getHash()) : "<empty>") +
-           ", next=" + std::to_string(pnext.size()) +
-           ", status=" + std::to_string(status) +
-           ", cgroups=" + std::to_string(commands.size()) +
-           ", endorsedBy=" + std::to_string(endorsedBy.size()) +
-           ", endorsements=" + std::to_string(containingEndorsements.size()) +
-           ", ref=" + std::to_string(refCounter) + "}";
+    return fmt::sprintf(
+        "%s%sBlockIndex{height=%lld, hash=%s, prev=%s, next=%llu, status=%u, "
+        "cgroups=%llu, endorsedBy=%llu, endorsements=%llu, ref=%lu}",
+        std::string(level, ' '),
+        Block::name(),
+        height,
+        HexStr(getHash()),
+        (pprev ? HexStr(pprev->getHash()) : "<empty>"),
+        pnext.size(),
+        status,
+        commands.size(),
+        endorsedBy.size(),
+        containingEndorsements.size(),
+        refCounter);
   }
 
   void toRaw(WriteStream& stream) const {
