@@ -9,7 +9,7 @@
 #include <vector>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/entities/altblock.hpp>
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 
 namespace altintegration {
 

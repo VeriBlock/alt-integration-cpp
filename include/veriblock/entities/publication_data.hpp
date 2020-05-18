@@ -10,7 +10,7 @@
 #include <sstream>
 #include <vector>
 
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/strutil.hpp"
 

@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/endorsements.hpp"
@@ -134,7 +134,7 @@ struct VbkBlock {
    */
   short_hash_t getShortHash() const;
 
-  static std::string name() { return "Vbk"; }
+  static std::string name() { return "VBK"; }
 };
 
 }  // namespace altintegration

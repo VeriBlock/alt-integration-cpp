@@ -31,8 +31,12 @@ struct PopStateMachine {
     for (auto& group : index.commands) {
       for (const auto& cmd : group) {
         if (!cmd->Execute(state)) {
+          VBK_LOG_WARN("Invalid %s command %s in block %s",
+                       index_t::block_t::name(),
+                       cmd->toPrettyString(),
+                       index.toPrettyString());
           group.valid = false;
-          return false;
+          return state.Invalid(index_t::block_t::name() + "-bad-command");
         }
       }
     }
@@ -53,6 +57,9 @@ struct PopStateMachine {
     if (&from == &to) {
       return;
     }
+
+    VBK_LOG_DEBUG(
+        "Unapply from=%s, to=%s", from.toPrettyString(), to.toPrettyString());
 
     assert(from.height > to.height);
     // exclude 'to' by adding 1
@@ -76,6 +83,10 @@ struct PopStateMachine {
       // already applied this block
       return true;
     }
+
+    VBK_LOG_DEBUG("Apply commands from=%s, to=%s",
+                  from.toPrettyString(),
+                  to.toPrettyString());
 
     assert(from.height < to.height);
     // exclude 'from' by adding 1
