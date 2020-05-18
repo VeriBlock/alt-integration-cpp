@@ -229,16 +229,16 @@ TEST(PrettyPrint, PrintPop) {
           btcTreePtr, btcparam, vbkparam);
 
   EXPECT_EQ(comparator.toPrettyString(),
-            "Comparator{\n{tree=\n  BtcBlockTree{blocks=0\n    {tip=<empty>}\n "
+            "Comparator{\n{tree=\n  BTCBlockTree{blocks=0\n    {tip=<empty>}\n "
             "   {blocks=\n    }\n    {tips=\n    }\n  }}}");
 
   EXPECT_EQ(
       vbkTree.toPrettyString(),
-      "VbkBlockTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  {tips=\n  "
-      "}\n}\n  Comparator{\n  {tree=\n    BtcBlockTree{blocks=0\n      "
+      "VBKBlockTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  {tips=\n  "
+      "}\n}\n  Comparator{\n  {tree=\n    BTCBlockTree{blocks=0\n      "
       "{tip=<empty>}\n      {blocks=\n      }\n      {tips=\n      }\n    }}}");
   EXPECT_EQ(btcTreePtr->toPrettyString(),
-            "BtcBlockTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  "
+            "BTCBlockTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  "
             "{tips=\n  }\n}");
 }
 
@@ -266,17 +266,16 @@ TEST(PrettyPrint, Blockchain) {
 
   EXPECT_EQ(
       index.toPrettyString(),
-      "BtcBlockIndex{height=100, "
+      "BTCBlockIndex{height=100, "
       "hash=ebaa22c5ffd827e96c4450ad5dd35dbec2aa45e15cdb5ce9928f543f4cebf10e, "
-      "prev=<empty>, next=0, status=0, cgroups=0, endorsedBy=0, "
-      "endorsements=0, ref=0}");
+      "status=0}");
 
   EXPECT_EQ(
       alttree.toPrettyString(),
       "AltTree{blocks=0\n  {tip=<empty>}\n  {blocks=\n  }\n  {tips=\n  }\n  "
-      "Comparator{\n  {tree=\n    VbkBlockTree{blocks=0\n      {tip=<empty>}\n "
+      "Comparator{\n  {tree=\n    VBKBlockTree{blocks=0\n      {tip=<empty>}\n "
       "     {blocks=\n      }\n      {tips=\n      }\n    }\n      "
-      "Comparator{\n      {tree=\n        BtcBlockTree{blocks=0\n          "
+      "Comparator{\n      {tree=\n        BTCBlockTree{blocks=0\n          "
       "{tip=<empty>}\n          {blocks=\n          }\n          {tips=\n      "
       "    }\n        }}}}}\n}");
 }
