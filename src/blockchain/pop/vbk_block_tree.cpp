@@ -34,7 +34,8 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them", block_t::name(),
+    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them",
+                  block_t::name(),
                   indexNew.height - currentTip->height);
     this->setTip(indexNew, state, false);
     return;
@@ -163,18 +164,18 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
-    return state.Invalid(block_t::name() + "bad-containing",
+    return state.Invalid(block_t::name() + "-bad-containing",
                          "Can not find VTB containing block: " + hash.toHex());
   }
 
   if (!index->pprev) {
-    return state.Invalid(block_t::name() + "bad-containing-prev",
+    return state.Invalid(block_t::name() + "-bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
   }
 
   if (!index->isValid()) {
     // adding payloads to an invalid block will not result in a state change
-    return state.Invalid(block_t::name() + "bad-chain",
+    return state.Invalid(block_t::name() + "-bad-chain",
                          "Current block is added on top of invalid chain");
   }
 
@@ -218,9 +219,8 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
-  return fmt::sprintf("%s\n%s",
-                      VbkTree::toPrettyString(level),
-                      cmp_.toPrettyString(level + 2));
+  return fmt::sprintf(
+      "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
 bool VbkBlockTree::setState(const VbkBlock::hash_t& block,

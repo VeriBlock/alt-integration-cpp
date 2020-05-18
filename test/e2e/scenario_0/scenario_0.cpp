@@ -113,5 +113,5 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
   ASSERT_TRUE(alt->addPayloads(containing.hash, {payloads}, state));
   ASSERT_FALSE(alt->setState(containing.hash, state));
-  ASSERT_EQ("ALTbad-command+VBKbad-containing", state.GetPath());
+  ASSERT_EQ("ALT-bad-command+VBK-bad-containing", state.GetPath());
 }
