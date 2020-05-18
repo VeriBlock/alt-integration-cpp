@@ -192,20 +192,20 @@ struct BlockTree : public BaseBlockTree<Block> {
                            bool shouldContextuallyCheck,
                            index_t** ret) {
     if (!checkBlock(*block, state, *param_)) {
-      return state.Invalid(block_t::name() + "check-block");
+      return state.Invalid(block_t::name() + "-check-block");
     }
 
     // we must know previous block
     auto* prev = base::getBlockIndex(block->previousBlock);
     if (prev == nullptr) {
       return state.Invalid(
-          block_t::name() + "bad-prev-block",
+          block_t::name() + "-bad-prev-block",
           "can not find previous block: " + HexStr(block->previousBlock));
     }
 
     if (shouldContextuallyCheck &&
         !contextuallyCheckBlock(*prev, *block, state, *param_)) {
-      return state.Invalid(block_t::name() + "contextually-check-block");
+      return state.Invalid(block_t::name() + "-contextually-check-block");
     }
 
     auto index = this->insertBlockHeader(block);
@@ -219,7 +219,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     // if prev block is invalid, mark this block as invalid
     if (!prev->isValid()) {
       index->setFlag(BLOCK_FAILED_CHILD);
-      return state.Invalid(block_t::name() + "bad-chain",
+      return state.Invalid(block_t::name() + "-bad-chain",
                            "One of previous blocks is invalid. Status=" +
                                std::to_string(prev->status));
     }
