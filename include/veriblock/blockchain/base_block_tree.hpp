@@ -157,12 +157,12 @@ struct BaseBlockTree {
   }
 
   //! connects a handler to a signal 'On Invalidate Block'
-  size_t connectOnInvalidateBlock(const std::function<on_invalidate_t>& f) {
+  size_t connectOnValidityBlockChanged(const std::function<on_invalidate_t>& f) {
     return validity_sig_.connect(f);
   }
 
   //! disconnects a handler to a signal 'On Invalidate Block'
-  bool disconnectOnInvalidateBlock(size_t id) {
+  bool disconnectOnValidityBlockChanged(size_t id) {
     return validity_sig_.disconnect(id);
   }
 
