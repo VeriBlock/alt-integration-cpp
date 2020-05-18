@@ -102,7 +102,6 @@ struct BlockIndex {
     this->height = 0;
     this->status = 0;
     this->refCounter = 0;
-    this->failChildCounter = 0;
   }
 
   bool raiseValidity(enum BlockStatus upTo) {
