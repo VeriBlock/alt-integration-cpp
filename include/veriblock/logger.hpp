@@ -50,10 +50,12 @@ std::string LevelToString(LogLevel l);
     }                                                              \
   } while (0)
 
-#define VBK_LOG_DEBUG(...) VBK_LOG(LogLevel::DEBUG, ##__VA_ARGS__)
-#define VBK_LOG_INFO(...) VBK_LOG(LogLevel::INFO, ##__VA_ARGS__)
-#define VBK_LOG_WARN(...) VBK_LOG(LogLevel::WARN, ##__VA_ARGS__)
-#define VBK_LOG_ERROR(...) VBK_LOG(LogLevel::ERROR, ##__VA_ARGS__)
+// clang-format off
+#define VBK_LOG_DEBUG(format, ...) VBK_LOG(LogLevel::DEBUG, format, ##__VA_ARGS__)
+#define VBK_LOG_INFO(format, ...)  VBK_LOG(LogLevel::INFO, format, ##__VA_ARGS__)
+#define VBK_LOG_WARN(format, ...)  VBK_LOG(LogLevel::WARN, format, ##__VA_ARGS__)
+#define VBK_LOG_ERROR(format, ...) VBK_LOG(LogLevel::ERROR, format, ##__VA_ARGS__)
+// clang-format on
 
 #else  // !VERIBLOCK_POP_LOGGER_ENABLED
 
