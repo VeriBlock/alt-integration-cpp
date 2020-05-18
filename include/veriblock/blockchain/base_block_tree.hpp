@@ -157,12 +157,12 @@ struct BaseBlockTree {
 
   //! connects a handler to a signal 'On Invalidate Block'
   size_t connectOnInvalidateBlock(const std::function<on_invalidate_t>& f) {
-    return invalidate_sig_.connect(f);
+    return validity_sig_.connect(f);
   }
 
   //! disconnects a handler to a signal 'On Invalidate Block'
   bool disconnectOnInvalidateBlock(size_t id) {
-    return invalidate_sig_.disconnect(id);
+    return validity_sig_.disconnect(id);
   }
 
   bool operator==(const BaseBlockTree& o) const {
@@ -308,12 +308,12 @@ struct BaseBlockTree {
 
   void doInvalidate(index_t& block, enum BlockStatus reason) {
     block.setFlag(reason);
-    invalidate_sig_.emit(block);
+    validity_sig_.emit(block);
   }
 
   void doReValidate(index_t& block, enum BlockStatus reason) {
     block.unsetFlag(reason);
-    invalidate_sig_.emit(block);
+    validity_sig_.emit(block);
   }
 
  protected:
