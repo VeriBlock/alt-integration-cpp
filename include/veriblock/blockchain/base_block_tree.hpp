@@ -112,8 +112,10 @@ struct BaseBlockTree {
 
     // flag next subtrees (excluding current block)  as BLOCK_FAILED_CHILD
     for (auto* pnext : toBeInvalidated.pnext) {
-      forEachNodePostorder<block_t>(*pnext, [&](index_t& index) {
+      forEachNodePreorder<block_t>(*pnext, [&](index_t& index) {
+        bool valid = index.isValid();
         doInvalidate(index, BLOCK_FAILED_CHILD);
+        return valid;
       });
     }
 
@@ -325,7 +327,7 @@ struct BaseBlockTree {
   //! currently applied chain
   Chain<index_t> activeChain_;
   //! signals to the end user that block have been invalidated
-  signals::Signal<on_invalidate_t> invalidate_sig_;
+  signals::Signal<on_invalidate_t> validity_sig_;
 
   struct TreeFieldsComparator {
     bool operator()(const block_index_t& a, const block_index_t& b) {
