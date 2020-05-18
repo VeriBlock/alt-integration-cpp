@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include <veriblock/third_party/fmt/printf.h>
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/endorsements.hpp"
@@ -39,14 +40,18 @@ struct VbkBlock {
   int32_t nonce{};
 
   std::string toPrettyString() const {
-    std::ostringstream ss;
-    ss << "VbkBlock{height=" << height << ", version=" << version
-       << ", prev=" << previousBlock.toHex()
-       << ", prevKeystone=" << previousKeystone.toHex()
-       << ", secondPrevKeystone=" << secondPreviousKeystone.toHex()
-       << ", merkleRoot=" << merkleRoot.toHex() << ", timestamp=" << timestamp
-       << ", difficulty=" << difficulty << ", nonce=" << nonce << "}";
-    return ss.str();
+    return fmt::sprintf(
+        "VbkBlock{height=%ld, version=%d, prev=%s, prevKeystone=%s, secondPrevKeystone=%s, merkleRoot=%s, timestamp=%ld, "
+        "difficulty=%ld, nonce=%ld}",
+        height,
+        version,
+        previousBlock.toHex(),
+        previousKeystone.toHex(),
+        secondPreviousKeystone.toHex(),
+        merkleRoot.toHex(),
+        timestamp,
+        difficulty,
+        nonce);
   }
 
   static VbkBlock fromHex(const std::string& hex);

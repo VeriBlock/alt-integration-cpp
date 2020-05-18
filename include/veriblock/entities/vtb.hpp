@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include <veriblock/third_party/fmt/printf.h>
 #include "veriblock/entities/vbk_merkle_path.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbkpoptx.hpp"
@@ -30,8 +31,9 @@ struct VTB {
   std::string toHex() const { return HexStr(toVbkEncoding()); }
 
   std::string toPrettyString() const {
-    return "VTB{containingTx" + transaction.getHash().toHex() +
-           ", containingBlock=" + containingBlock.getHash().toHex() + "}";
+    return fmt::sprintf("VTB{containingTx=%s, containingBlock=%s}",
+                        transaction.getHash().toHex(),
+                        containingBlock.getHash().toHex());
   }
 
   /**

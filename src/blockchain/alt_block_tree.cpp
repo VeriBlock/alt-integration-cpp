@@ -11,6 +11,7 @@
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -164,12 +165,13 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
 }
 
 std::string AltTree::toPrettyString(size_t level) const {
-  std::ostringstream ss;
   std::string pad(level, ' ');
-  ss << pad << "AltTree{blocks=" << base::blocks_.size() << "\n";
-  ss << base::toPrettyString(level + 2) << "\n";
-  ss << cmp_.toPrettyString(level + 2) << "\n";
-  return ss.str();
+  return fmt::sprintf("%sAltTree{blocks=%llu\n%s\n%s\n%s}",
+                      pad,
+                      base::blocks_.size(),
+                      base::toPrettyString(level + 2),
+                      cmp_.toPrettyString(level + 2),
+                      pad);
 }
 
 void AltTree::determineBestChain(Chain<index_t>& currentBest,
@@ -243,7 +245,7 @@ size_t calculateStateChangeCost(Chain<BlockIndex<AltBlock>>& chain,
   auto* forkBlock = chain.findFork(&index);
   if (!forkBlock) {
     // unreachable node
-    return std::numeric_limits<size_t>::max();
+    return (std::numeric_limits<size_t>::max)();
   }
 
   unapplyCost = tip->height - forkBlock->height;

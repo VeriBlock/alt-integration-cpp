@@ -107,6 +107,7 @@ endif()
 if(VERIBLOCK_POP_LOGGER_ENABLED)
   add_definitions(-DVERIBLOCK_POP_LOGGER_ENABLED=1)
 endif()
+add_definitions(-DFMT_HEADER_ONLY)
 
 if(CLANG_TIDY)
     include(cmake/clang-tidy.cmake)
