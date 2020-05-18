@@ -23,13 +23,13 @@ void SetLogger(std::unique_ptr<Logger> lgr) {
 
 std::string LevelToString(LogLevel l) {
   switch (l) {
-    case LogLevel::DEBUG:
+    case LogLevel::debug:
       return "debug";
-    case LogLevel::INFO:
+    case LogLevel::info:
       return "info";
-    case LogLevel::WARN:
+    case LogLevel::warn:
       return "warn";
-    case LogLevel::ERROR:
+    case LogLevel::error:
       return "error";
     default:
       return "";
