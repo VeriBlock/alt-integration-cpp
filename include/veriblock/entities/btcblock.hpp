@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"

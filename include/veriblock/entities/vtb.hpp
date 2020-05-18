@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 #include "veriblock/entities/vbk_merkle_path.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbkpoptx.hpp"

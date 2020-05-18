@@ -5,6 +5,8 @@
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
 
+#include "veriblock/fmt.hpp"
+
 #include <unordered_set>
 #include <veriblock/blockchain/commands/commands.hpp>
 

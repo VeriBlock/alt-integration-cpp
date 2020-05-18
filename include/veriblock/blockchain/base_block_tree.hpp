@@ -13,7 +13,7 @@
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/signals.hpp>
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 
 namespace altintegration {
 

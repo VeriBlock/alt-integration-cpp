@@ -41,7 +41,7 @@ struct PopTestFixture {
 
   PopTestFixture() {
     SetLogger<FmtLogger>();
-    GetLogger().level = LogLevel::DEBUG;
+    GetLogger().level = LogLevel::OFF;
 
     EXPECT_TRUE(alttree.bootstrap(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));

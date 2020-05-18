@@ -6,11 +6,10 @@
 #ifndef ALT_INTEGRATION_LOGGER_LOGGER_HPP
 #define ALT_INTEGRATION_LOGGER_LOGGER_HPP
 
-#include <fmt/format.h>
-#include <fmt/printf.h>
-
 #include <memory>
 #include <string>
+
+#include "veriblock/fmt.hpp"
 
 namespace altintegration {
 

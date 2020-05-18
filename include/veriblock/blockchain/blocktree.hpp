@@ -17,7 +17,7 @@
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 
 namespace altintegration {
 

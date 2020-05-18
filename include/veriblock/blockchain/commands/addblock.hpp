@@ -13,7 +13,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 
 namespace altintegration {
 

@@ -8,7 +8,6 @@
 #include <util/alt_chain_params_regtest.hpp>
 #include <veriblock/altintegration.hpp>
 #include <veriblock/logger.hpp>
-#include <veriblock/logger/logger_default.hpp>
 
 using namespace altintegration;
 
