@@ -136,13 +136,17 @@ struct BaseBlockTree {
   void revalidateSubtree(index_t& toBeValidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
-    doValidate(toBeValidated, reason);
+    doReValidate(toBeValidated, reason);
     tryAddTip(&toBeValidated);
 
     for (auto* pnext : toBeValidated.pnext) {
-      forEachNodePostorder<block_t>(*pnext, [&](index_t& index) {
-        doValidate(index, BLOCK_FAILED_CHILD);
-        tryAddTip(&toBeValidated);
+      forEachNodePreorder<block_t>(*pnext, [&](index_t& index) -> bool {
+        doReValidate(index, BLOCK_FAILED_CHILD);
+        bool valid = index.isValid();
+        if (valid) {
+          tryAddTip(index);
+        }
+        return valid;
       });
     }
 
@@ -305,7 +309,7 @@ struct BaseBlockTree {
     invalidate_sig_.emit(block);
   }
 
-  void doValidate(index_t& block, enum BlockStatus reason) {
+  void doReValidate(index_t& block, enum BlockStatus reason) {
     block.unsetFlag(reason);
     invalidate_sig_.emit(block);
   }
