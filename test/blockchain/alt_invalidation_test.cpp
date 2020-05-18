@@ -30,7 +30,7 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
     EXPECT_EQ(tip->status, BLOCK_VALID_TREE);
     EXPECT_TRUE(tip->isValid());
 
-    connId = alttree.connectOnInvalidateBlock(
+    connId = alttree.connectOnValidityBlockChanged(
         [&](const BlockIndex<AltBlock>&) { totalInvalidations++; });
   }
 
