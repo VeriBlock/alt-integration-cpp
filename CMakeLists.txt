@@ -124,7 +124,7 @@ elseif(COVERAGE)
 endif()
 
 include_directories(SYSTEM third_party)
-add_subdirectory(third_party EXCLUDE_FROM_ALL)
+add_subdirectory(third_party)
 include_directories(include)
 add_subdirectory(src)
 
