@@ -139,23 +139,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool setTip(index_t& to,
               ValidationState& state,
-              bool skipSetState = false) override {
-    bool changeTip = true;
-    if (!skipSetState) {
-      changeTip = cmp_.setState(*this, to, state);
-    }
-
-    // edge case: if changeTip is false, then new block arrived on top of
-    // current active chain, and this block has invalid commands
-    if (changeTip) {
-      activeChain_.setTip(&to);
-    } else {
-      assert(!to.isValid());
-    }
-
-    // true if tip has been changed
-    return changeTip;
-  }
+              bool skipSetState = false) override;
 };
 
 }  // namespace altintegration

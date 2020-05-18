@@ -8,7 +8,6 @@
 
 #include <vector>
 #include <veriblock/arith_uint256.hpp>
-#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 

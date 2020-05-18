@@ -56,7 +56,7 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
   auto next = generateNextBlock(chain[100]);
   ValidationState state2;
   ASSERT_FALSE(alttree.acceptBlock(next, state2));
-  ASSERT_EQ(state2.GetPath(), "bad-chain");
+  ASSERT_EQ(state2.GetPath(), "ALT-bad-chain");
   auto index = alttree.getBlockIndex(next.getHash());
   ASSERT_TRUE(index);
   ASSERT_EQ(index->status, BLOCK_VALID_TREE | BLOCK_FAILED_CHILD);
