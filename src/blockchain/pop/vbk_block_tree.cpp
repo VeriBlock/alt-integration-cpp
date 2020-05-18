@@ -128,13 +128,11 @@ void VbkBlockTree::removePayloads(const block_t& block,
                          }),
           c.end());
 
-  if (isOnActiveChain) {
-    // find all affected tips and do a fork resolution
-    auto tips = findValidTips<VbkBlock>(*index);
-    for (auto* tip : tips) {
-      ValidationState state;
-      determineBestChain(activeChain_, *tip, state);
-    }
+  // find all affected tips and do a fork resolution
+  auto tips = findValidTips<VbkBlock>(*index);
+  for (auto* tip : tips) {
+    ValidationState state;
+    determineBestChain(activeChain_, *tip, state);
   }
 }
 
