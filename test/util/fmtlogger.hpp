@@ -14,7 +14,7 @@ struct FmtLogger : public Logger {
   ~FmtLogger() override = default;
 
   void log(LogLevel lvl, const std::string& msg) override {
-    fmt::printf("[%s] %s \n", LevelToString(lvl), msg);
+    fmt::printf("[POP] [%s]\t%s \n", LevelToString(lvl), msg);
   }
 };
 

@@ -13,7 +13,7 @@
 
 namespace altintegration {
 
-enum class LogLevel { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3, OFF = 4 };
+enum class LogLevel { OFF = 0, DEBUG = 1, INFO = 2, WARN = 3, ERROR = 4 };
 
 struct Logger {
   virtual ~Logger() = default;
@@ -39,7 +39,7 @@ std::string LevelToString(LogLevel l);
 #ifdef VERIBLOCK_POP_LOGGER_ENABLED
 
 #define VBK_LOG_FORMAT(format, ...) \
-  fmt::sprintf(std::string("[POP] %s: ") + format, __func__, ##__VA_ARGS__)
+  fmt::sprintf(std::string("%s: ") + format, __func__, ##__VA_ARGS__)
 
 #define VBK_LOG(lvl, format, ...)                                  \
   do {                                                             \

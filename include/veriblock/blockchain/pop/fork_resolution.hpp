@@ -259,16 +259,12 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
   assert(!chainA.empty());
   assert(!chainB.empty());
   VBK_LOG_INFO(
-      "Comparing POP scores of chains A(first=%d, tip=%d, size=%d, pub=%d) "
-      "and B(first=%d, tip=%d, "
-      "size=%d, pub=%d) starting at %d",
+      "Comparing POP scores of chains A(first=%d, tip=%d) "
+      "and B(first=%d, tip=%d)",
+      a.firstKeystone(),
       a.lastKeystone(),
-      a.size(),
-      chainA[a.lastKeystone()].firstBlockPublicationHeight,
-      b.lastKeystone(),
-      b.size(),
-      chainB[b.lastKeystone()].firstBlockPublicationHeight,
-      a.firstKeystone());
+      b.firstKeystone(),
+      b.lastKeystone());
 
   int earliestKeystone = a.firstKeystone();
   if (earliestKeystone != b.firstKeystone()) {
@@ -421,7 +417,7 @@ struct PopAwareForkResolutionComparator {
     auto bestTip = currentBest.tip();
     assert(bestTip);
 
-    VBK_LOG_INFO("Doing POP fork resolution. Best=%d, Candidate=%d",
+    VBK_LOG_INFO("Doing POP fork resolution. Best=%s, Candidate=%s",
                  bestTip->toPrettyString(),
                  indexNew.toPrettyString());
     if (*bestTip == indexNew) {
