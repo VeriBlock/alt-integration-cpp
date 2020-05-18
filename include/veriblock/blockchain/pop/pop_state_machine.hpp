@@ -27,10 +27,11 @@ struct PopStateMachine {
                   height_t startHeight = 0)
       : ed_(ed), ing_(ing), startHeight_(startHeight) {}
 
-  bool applyBlock(const index_t& index, ValidationState& state) {
-    for (const auto& group : index.commands) {
+  bool applyBlock(index_t& index, ValidationState& state) {
+    for (auto& group : index.commands) {
       for (const auto& cmd : group) {
         if (!cmd->Execute(state)) {
+          group.valid = false;
           return false;
         }
       }

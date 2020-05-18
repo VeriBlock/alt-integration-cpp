@@ -20,9 +20,6 @@ struct Scenario7 : public ::testing::Test, public PopTestFixture {};
 
 TEST_F(Scenario7, scenario_7) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  AltTree test_tree(alttree.getParams(),
-                    alttree.vbk().getParams(),
-                    alttree.btc().getParams());
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer.mineVbkBlocks(65);
@@ -66,8 +63,8 @@ TEST_F(Scenario7, scenario_7) {
       generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer.generateATV(tx2, containingVbkBlock2->getHash(), state);
 
-  PopData popData1{0, {}, true, atv1, {vtb1}};
-  PopData popData2{0, {}, true, atv2, {vtb2}};
+  PopData popData1 = createPopData(0, atv1, {vtb1});
+  PopData popData2 = createPopData(0, atv2, {vtb2});
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
@@ -79,5 +76,6 @@ TEST_F(Scenario7, scenario_7) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(
       alttree.addPayloads(containingBlock, {payloads1, payloads2}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }

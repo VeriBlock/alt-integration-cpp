@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
-
 #include <unordered_set>
 #include <veriblock/blockchain/commands/commands.hpp>
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
@@ -337,18 +336,23 @@ void AltTree::removePayloads(index_t& index,
 
   // remove all matched command groups
   auto& c = index.commands;
-  c.erase(std::remove_if(c.begin(),
-                         c.end(),
-                         [&payloads](const CommandGroup& g) {
-                           for (const auto& p : payloads) {
-                             if (g == p.getId()) {
-                               return true;
-                             }
+  c.erase(
+      std::remove_if(c.begin(),
+                     c.end(),
+                     [&](const CommandGroup& g) {
+                       for (const auto& p : payloads) {
+                         if (g == p.getId()) {
+                           if (!g.valid) {
+                             base::revalidateSubtree(
+                                 index, BlockStatus::BLOCK_FAILED_POP, false);
                            }
+                           return true;
+                         }
+                       }
 
-                           return false;
-                         }),
-          c.end());
+                       return false;
+                     }),
+      c.end());
 }
 
 void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,

@@ -33,7 +33,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using hash_t = typename AltBlock::hash_t;
   using payloads_t = AltPayloads;
 
-
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
                                                              VbkBlockTree,
