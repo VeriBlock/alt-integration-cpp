@@ -29,18 +29,24 @@ struct Logger {
 };
 
 Logger& GetLogger();
+void SetLogger(std::unique_ptr<Logger> lgr);
+
+template <typename L>
+void SetLogger() {
+  SetLogger(std::unique_ptr<L>(new L()));
+}
 
 std::string LevelToString(LogLevel l);
 
 #ifdef VERIBLOCK_POP_LOGGER_ENABLED
 
 #define VBK_LOG_FORMAT(format, ...) \
-  fmt::sprintf(std::string("[POP] %s:") + format, __func__, ##__VA_ARGS__)
+  fmt::sprintf(std::string("[POP] %s: ") + format, __func__, ##__VA_ARGS__)
 
-#define VBK_LOG(level, format, ...)                                \
+#define VBK_LOG(lvl, format, ...)                                  \
   do {                                                             \
-    if (GetLogger().level >= level) {                              \
-      GetLogger().log(level, VBK_LOG_FORMAT(format, __VA_ARGS__)); \
+    if (GetLogger().level >= lvl) {                                \
+      GetLogger().log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
     }                                                              \
   } while (0)
 

@@ -17,6 +17,7 @@
 #include <veriblock/logger.hpp>
 #include <veriblock/mock_miner.hpp>
 
+#include "util/fmtlogger.hpp"
 #include "util/test_utils.hpp"
 
 namespace altintegration {
@@ -39,7 +40,9 @@ struct PopTestFixture {
   ValidationState state;
 
   PopTestFixture() {
-    SetLogLevel(LogLevel::DEBUG);
+    SetLogger<FmtLogger>();
+    GetLogger().level = LogLevel::DEBUG;
+
     EXPECT_TRUE(alttree.bootstrap(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().btc().bootstrapWithGenesis(state));

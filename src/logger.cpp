@@ -12,7 +12,13 @@ namespace altintegration {
 static std::unique_ptr<Logger> logger = std::unique_ptr<Logger>(new Logger());
 
 Logger& GetLogger() {
+  assert(logger != nullptr);
   return *logger;
+}
+
+void SetLogger(std::unique_ptr<Logger> lgr) {
+  assert(lgr != nullptr);
+  logger = std::move(lgr);
 }
 
 std::string LevelToString(LogLevel l) {

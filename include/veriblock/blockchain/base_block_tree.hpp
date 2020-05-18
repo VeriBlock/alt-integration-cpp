@@ -63,7 +63,7 @@ struct BaseBlockTree {
   }
 
   void removeSubtree(index_t& toRemove, bool shouldDetermineBestChain = true) {
-    VBK_LOG_DEBUG("Removing subtree {}", toRemove.toPrettyString());
+    VBK_LOG_DEBUG("Removing subtree %s", toRemove.toPrettyString());
 
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
@@ -103,7 +103,7 @@ struct BaseBlockTree {
   void invalidateSubtree(index_t& toBeInvalidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
-    VBK_LOG_INFO("Invalidating subtree {}", toBeInvalidated.toPrettyString());
+    VBK_LOG_INFO("Invalidating subtree %s", toBeInvalidated.toPrettyString());
     assert(toBeInvalidated.pprev);
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
@@ -245,7 +245,7 @@ struct BaseBlockTree {
   //! updates tree tip
   virtual bool setTip(index_t& to, ValidationState&, bool) {
     activeChain_.setTip(&to);
-    VBK_LOG_DEBUG("SetTip={}", to.toPrettyString());
+    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     return true;
   }
 

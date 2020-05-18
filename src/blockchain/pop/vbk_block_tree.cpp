@@ -34,7 +34,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("{} Candidate is ahead {} blocks, applying them", block_t::name(),
+    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them", block_t::name(),
                   indexNew.height - currentTip->height);
     this->setTip(indexNew, state, false);
     return;
@@ -71,7 +71,7 @@ bool VbkBlockTree::setTip(index_t& to,
   // edge case: if changeTip is false, then new block arrived on top of current
   // active chain, and this block has invalid commands
   if (changeTip) {
-    VBK_LOG_DEBUG("SetTip={}", to.toPrettyString());
+    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     activeChain_.setTip(&to);
   } else {
     assert(!to.isValid());
@@ -156,7 +156,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {
-  VBK_LOG_DEBUG("{} add {} payloads to block {}",
+  VBK_LOG_DEBUG("%s add %d payloads to block %s",
                 block_t::name(),
                 payloads.size(),
                 HexStr(hash));

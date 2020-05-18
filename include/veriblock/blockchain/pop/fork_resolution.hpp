@@ -259,9 +259,9 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
   assert(!chainA.empty());
   assert(!chainB.empty());
   VBK_LOG_INFO(
-      "Comparing POP scores of chains A(first={}, tip={}, size={}, pub={}) "
-      "and B(first={}, tip={}, "
-      "size={}, pub={}) starting at {}",
+      "Comparing POP scores of chains A(first=%d, tip=%d, size=%d, pub=%d) "
+      "and B(first=%d, tip=%d, "
+      "size=%d, pub=%d) starting at %d",
       a.lastKeystone(),
       a.size(),
       chainA[a.lastKeystone()].firstBlockPublicationHeight,
@@ -346,7 +346,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
     }
   }
 
-  VBK_LOG_INFO("ChainA score={}, ChainB score={}", chainAscore, chainBscore);
+  VBK_LOG_INFO("ChainA score=%d, ChainB score=%d", chainAscore, chainBscore);
   return chainAscore - chainBscore;
 }
 
@@ -421,7 +421,7 @@ struct PopAwareForkResolutionComparator {
     auto bestTip = currentBest.tip();
     assert(bestTip);
 
-    VBK_LOG_INFO("Doing POP fork resolution. Best={}, Candidate={}",
+    VBK_LOG_INFO("Doing POP fork resolution. Best=%d, Candidate=%d",
                  bestTip->toPrettyString(),
                  indexNew.toPrettyString());
     if (*bestTip == indexNew) {
@@ -431,7 +431,7 @@ struct PopAwareForkResolutionComparator {
 
     // indexNew is on top of our best tip
     if (indexNew.getAncestor(bestTip->height) == bestTip) {
-      VBK_LOG_INFO("Candidate is ahead {} blocks",
+      VBK_LOG_INFO("Candidate is ahead %d blocks",
                    indexNew.height - bestTip->height);
       sm_t sm(ed, *ing_, bestTip->height);
       if (sm.apply(*bestTip, indexNew, state)) {
@@ -441,7 +441,7 @@ struct PopAwareForkResolutionComparator {
       }
 
       // new chain is invalid. our current chain is definitely better.
-      VBK_LOG_INFO("Candidate contains INVALID command(s): {}",
+      VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
                    state.toString());
       return 1;
     }
@@ -461,7 +461,7 @@ struct PopAwareForkResolutionComparator {
         isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
     if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
       // chans are equal in terms of POP
-      VBK_LOG_INFO("Chains crossed keystone boundary: A={} B={}",
+      VBK_LOG_INFO("Chains crossed keystone boundary: A=%s B=%s",
                    (AcrossedKeystoneBoundary ? "true" : "false"),
                    (BcrossedKeystoneBoundary ? "true" : "false"));
       return 0;
@@ -493,7 +493,7 @@ struct PopAwareForkResolutionComparator {
 
       // chain B has been unapplied already
       // invalid block in chain B has been invalidated already
-      VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins ({})",
+      VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                    state.toString());
       return 1;
     }

@@ -64,7 +64,7 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
 bool AltTree::addPayloads(index_t& index,
                           const std::vector<payloads_t>& payloads,
                           ValidationState& state) {
-  VBK_LOG_DEBUG("{} add {} payloads to block {}",
+  VBK_LOG_DEBUG("%s add %d payloads to block %s",
                 block_t::name(),
                 payloads.size(),
                 index.toPrettyString());
@@ -114,12 +114,12 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
 
   if (!addPayloads(*index, {p}, state)) {
     VBK_LOG_DEBUG(
-        "{} Can not add payloads: {}", block_t::name(), state.toString());
+        "%s Can not add payloads: %s", block_t::name(), state.toString());
     return state.Invalid(block_t::name() + "addPayloadsTemporarily");
   }
 
   if (!setState(*index, state)) {
-    VBK_LOG_DEBUG("{} Statefully invalid payloads: {}",
+    VBK_LOG_DEBUG("%s Statefully invalid payloads: %s",
                   block_t::name(),
                   state.toString());
     removePayloads(*index, {p});
@@ -177,10 +177,10 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
 
   auto popDifficulty = rewards_.calculateDifficulty(vbk(), *endorsedBlock);
   auto ret = rewards_.calculatePayouts(vbk(), *endorsedBlock, popDifficulty);
-  VBK_LOG_DEBUG("Pop Difficulty={} for block {}",
+  VBK_LOG_DEBUG("Pop Difficulty=%s for block %s",
                 popDifficulty.toPrettyString(),
                 index->toPrettyString());
-  VBK_LOG_DEBUG("Paying to {} addresses", ret.size());
+  VBK_LOG_DEBUG("Paying to %d addresses", ret.size());
   return ret;
 }
 
@@ -218,7 +218,7 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("{} Candidate is ahead {} blocks, applying them",
+    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them",
                   block_t::name(),
                   indexNew.height - currentTip->height);
     this->setTip(indexNew, state, false);
@@ -343,7 +343,7 @@ void AltTree::removePayloads(const AltBlock::hash_t& hash,
 
 void AltTree::removePayloads(index_t& index,
                              const std::vector<payloads_t>& payloads) {
-  VBK_LOG_INFO("{} remove {} payloads from {}",
+  VBK_LOG_INFO("%s remove %d payloads from %s",
                block_t::name(),
                payloads.size(),
                index.toPrettyString());
