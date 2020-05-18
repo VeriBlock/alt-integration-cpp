@@ -77,12 +77,6 @@ install(
         DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
-if(INSTALL_FMT)
-    install(
-            DIRECTORY ${CMAKE_SOURCE_DIR}/include/fmt
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
-endif()
 install(
         EXPORT ${LIB_NAME}Config
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}

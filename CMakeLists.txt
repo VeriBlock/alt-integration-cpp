@@ -123,6 +123,7 @@ elseif(COVERAGE)
     include(cmake/coverage.cmake)
 endif()
 
+include_directories(SYSTEM third_party)
 include_directories(include)
 add_subdirectory(src)
 
