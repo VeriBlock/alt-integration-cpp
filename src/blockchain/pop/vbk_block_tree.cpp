@@ -66,6 +66,8 @@ bool VbkBlockTree::setTip(index_t& to,
   // active chain, and this block has invalid commands
   if (changeTip) {
     activeChain_.setTip(&to);
+  } else {
+    assert(!to.isValid());
   }
 
   return changeTip;
@@ -115,18 +117,24 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   // remove all matched command groups
   auto& c = index->commands;
-  c.erase(std::remove_if(c.begin(),
-                         c.end(),
-                         [&](const CommandGroup& g) {
-                           for (const auto& p : payloads) {
-                             if (g == p.getId()) {
-                               return true;
-                             }
+  c.erase(
+      std::remove_if(c.begin(),
+                     c.end(),
+                     [&](const CommandGroup& g) {
+                       for (const auto& p : payloads) {
+                         if (g == p.getId()) {
+                           if (!g.valid) {
+                             base::revalidateSubtree(
+                                 *index, BlockStatus::BLOCK_FAILED_POP, false);
                            }
 
-                           return false;
-                         }),
-          c.end());
+                           return true;
+                         }
+                       }
+
+                       return false;
+                     }),
+      c.end());
 
   // find all affected tips and do a fork resolution
   auto tips = findValidTips<VbkBlock>(*index);
@@ -171,15 +179,13 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     payloadsToCommands(p, g.commands);
   }
 
-  bool res = setTip(*index, state);
-
   // find all affected tips and do a fork resolution
   auto tips = findValidTips<VbkBlock>(*index);
   for (auto* tip : tips) {
     determineBestChain(activeChain_, *tip, state);
   }
 
-  return res;
+  return index->isValid();
 }
 
 void VbkBlockTree::payloadsToCommands(const VTB& p,

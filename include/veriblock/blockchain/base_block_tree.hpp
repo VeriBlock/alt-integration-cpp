@@ -144,7 +144,7 @@ struct BaseBlockTree {
         doReValidate(index, BLOCK_FAILED_CHILD);
         bool valid = index.isValid();
         if (valid) {
-          tryAddTip(index);
+          tryAddTip(&index);
         }
         return valid;
       });

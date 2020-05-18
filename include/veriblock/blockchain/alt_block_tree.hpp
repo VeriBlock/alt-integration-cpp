@@ -149,6 +149,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     // current active chain, and this block has invalid commands
     if (changeTip) {
       activeChain_.setTip(&to);
+    } else {
+      assert(!to.isValid());
     }
 
     // true if tip has been changed

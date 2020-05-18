@@ -334,18 +334,23 @@ void AltTree::removePayloads(index_t& index,
 
   // remove all matched command groups
   auto& c = index.commands;
-  c.erase(std::remove_if(c.begin(),
-                         c.end(),
-                         [&](const CommandGroup& g) {
-                           for (const auto& p : payloads) {
-                             if (g == p.getId()) {
-                               return true;
-                             }
+  c.erase(
+      std::remove_if(c.begin(),
+                     c.end(),
+                     [&](const CommandGroup& g) {
+                       for (const auto& p : payloads) {
+                         if (g == p.getId()) {
+                           if (!g.valid) {
+                             base::revalidateSubtree(
+                                 index, BlockStatus::BLOCK_FAILED_POP, false);
                            }
+                           return true;
+                         }
+                       }
 
-                           return false;
-                         }),
-          c.end());
+                       return false;
+                     }),
+      c.end());
 }
 
 void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,

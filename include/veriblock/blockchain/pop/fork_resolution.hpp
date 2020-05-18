@@ -412,7 +412,7 @@ struct PopAwareForkResolutionComparator {
         // if indexNew is valid, then switch to new chain
         return -1;
       }
-      // TODO add invalidate
+
       // new chain is invalid. our current chain is definitely better.
       return 1;
     }
