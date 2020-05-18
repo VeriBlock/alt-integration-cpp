@@ -5,12 +5,10 @@
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
 
-#include "veriblock/fmt.hpp"
-
 #include <unordered_set>
 #include <veriblock/blockchain/commands/commands.hpp>
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/fmt.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
@@ -142,7 +140,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   auto* prev = getBlockIndex(block.previousBlock);
   if (prev == nullptr) {
     return state.Invalid(
-        block_t::name() + "bad-prev-block",
+        block_t::name() + "-bad-prev-block",
         "can not find previous block: " + HexStr(block.previousBlock));
   }
 
@@ -152,7 +150,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
          "insertBlockHeader should have never returned nullptr");
 
   if (!index->isValid()) {
-    return state.Invalid(block_t::name() + "bad-chain",
+    return state.Invalid(block_t::name() + "-bad-chain",
                          "One of previous blocks is invalid. Status=(" +
                              std::to_string(index->status) + ")");
   }
