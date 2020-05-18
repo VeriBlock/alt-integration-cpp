@@ -372,7 +372,7 @@ struct PopAwareForkResolutionComparator {
     auto* currentActive = ed.getBestChain().tip();
     assert(currentActive && "should be bootstrapped");
 
-    if(*currentActive == to) {
+    if (*currentActive == to) {
       // already at this state
       return true;
     }
