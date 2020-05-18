@@ -13,6 +13,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
+#include <veriblock/third_party/fmt/printf.h>
 
 namespace altintegration {
 
@@ -59,17 +60,19 @@ using AddVbkBlock = AddBlock<VbkBlock, VbkChainParams>;
 
 template <>
 inline std::string AddBtcBlock::toPrettyString(size_t level) const {
-  return std::string(level, ' ') +
-         "AddBtcBlock{prev=" + block_->previousBlock.toHex() +
-         ", block=" + block_->getHash().toHex() + "}";
+  return fmt::sprintf("%sAddBtcBlock{prev=%s, block=%s}",
+                      std::string(level, ' '),
+                      block_->previousBlock.toHex(),
+                      block_->getHash().toHex());
 }
 
 template <>
 inline std::string AddVbkBlock::toPrettyString(size_t level) const {
-  return std::string(level, ' ') +
-         "AddVbkBlock{prev=" + block_->previousBlock.toHex() +
-         ", block=" + block_->getHash().toHex() +
-         ", height=" + std::to_string(block_->height) + "}";
+  return fmt::sprintf("%sAddVbkBlock{prev=%s, block=%s, height=%ld}",
+                      std::string(level, ' '),
+                      block_->previousBlock.toHex(),
+                      block_->getHash().toHex(),
+                      block_->height);
 }
 
 template <typename BlockTree>

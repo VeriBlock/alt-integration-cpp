@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+#include <veriblock/third_party/fmt/printf.h>
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
@@ -114,11 +115,15 @@ struct BtcBlock {
   static std::string name() { return "Btc"; }
 
   std::string toPrettyString() const {
-    std::ostringstream ss;
-    ss << "BtcBlock{version=" << version << ", prev=" << previousBlock.toHex()
-       << ", merkleRoot=" << merkleRoot.toHex() << ", timestamp=" << timestamp
-       << ", bits=" << bits << ", nonce=" << nonce << "}";
-    return ss.str();
+    return fmt::sprintf(
+        "BtcBlock{version=%lu, prev=%s, merkleRoot=%s, timestamp=%lu, "
+        "bits=%lu, nonce=%lu}",
+        version,
+        previousBlock.toHex(),
+        merkleRoot.toHex(),
+        timestamp,
+        bits,
+        nonce);
   }
 };
 

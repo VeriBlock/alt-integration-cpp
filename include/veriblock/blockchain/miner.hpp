@@ -26,7 +26,7 @@ struct Miner {
       // to guarantee that miner will not create exactly same blocks even if
       // time and merkle roots are equal for prev block and new block
       block.nonce = nonce++;
-      if (block.nonce >= std::numeric_limits<decltype(block.nonce)>::max()) {
+      if (block.nonce >= (std::numeric_limits<decltype(block.nonce)>::max)()) {
         ++block.timestamp;
         nonce = 0;
       }

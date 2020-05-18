@@ -89,7 +89,7 @@ TEST_F(VbkBlockTreeTestFixture, FilterChainForForkResolution) {
   EXPECT_EQ(keystoneContext.size(),
             numVbkBlocks / popminer.getVbkParams().getKeystoneInterval());
 
-  auto max = std::numeric_limits<int32_t>::max();
+  auto max = (std::numeric_limits<int32_t>::max)();
   EXPECT_EQ(keystoneContext[0].blockHeight, 20);
   EXPECT_EQ(keystoneContext[0].firstBlockPublicationHeight, max);
   EXPECT_EQ(keystoneContext[1].blockHeight, 40);
