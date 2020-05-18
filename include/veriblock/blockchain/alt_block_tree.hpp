@@ -33,7 +33,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using hash_t = typename AltBlock::hash_t;
   using payloads_t = AltPayloads;
 
-
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
                                                              VbkBlockTree,
@@ -150,8 +149,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     // current active chain, and this block has invalid commands
     if (changeTip) {
       activeChain_.setTip(&to);
-    } else {
-      assert(!to.isValid());
     }
 
     // true if tip has been changed

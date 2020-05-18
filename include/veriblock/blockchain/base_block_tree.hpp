@@ -123,19 +123,19 @@ struct BaseBlockTree {
     updateTips(shouldDetermineBestChain);
   }
 
-  void validateSubtree(const hash_t& hash,
-                       enum BlockStatus reason,
-                       bool shouldDetermineBestChain = true) {
+  void revalidateSubtree(const hash_t& hash,
+                         enum BlockStatus reason,
+                         bool shouldDetermineBestChain = true) {
     auto* index = this->getBlockIndex(hash);
     if (index == nullptr) {
       return;
     }
-    validateSubtree(*index, reason, shouldDetermineBestChain);
+    revalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
 
-  void validateSubtree(index_t& toBeValidated,
-                       enum BlockStatus reason,
-                       bool shouldDetermineBestChain = true) {
+  void revalidateSubtree(index_t& toBeValidated,
+                         enum BlockStatus reason,
+                         bool shouldDetermineBestChain = true) {
     doValidate(toBeValidated, reason);
     tryAddTip(&toBeValidated);
 

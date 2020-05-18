@@ -66,8 +66,6 @@ bool VbkBlockTree::setTip(index_t& to,
   // active chain, and this block has invalid commands
   if (changeTip) {
     activeChain_.setTip(&to);
-  } else {
-    assert(!to.isValid());
   }
 
   return changeTip;
@@ -119,7 +117,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
   auto& c = index->commands;
   c.erase(std::remove_if(c.begin(),
                          c.end(),
-                         [&payloads](const CommandGroup& g) {
+                         [&](const CommandGroup& g) {
                            for (const auto& p : payloads) {
                              if (g == p.getId()) {
                                return true;
@@ -175,13 +173,15 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     payloadsToCommands(p, g.commands);
   }
 
+  bool res = setTip(*index, state);
+
   // find all affected tips and do a fork resolution
   auto tips = findValidTips<VbkBlock>(*index);
   for (auto* tip : tips) {
     determineBestChain(activeChain_, *tip, state);
   }
 
-  return index->isValid();
+  return res;
 }
 
 void VbkBlockTree::payloadsToCommands(const VTB& p,
@@ -195,8 +195,7 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
 
   // add endorsement
   auto e = BtcEndorsement::fromContainerPtr(p);
-  auto cmd =
-      std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e));
+  auto cmd = std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e));
   commands.push_back(std::move(cmd));
 }
 

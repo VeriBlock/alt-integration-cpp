@@ -135,14 +135,10 @@ TEST_F(Scenario8, scenario_8) {
 
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   EXPECT_NE(vbkBlock, nullptr);
-  validityFlagCheck(*vbkBlock, false);
-
-  alttree.removePayloads(containingBlock.getHash(), {payloads2});
-  alttree.removeSubtree(containingBlock.getHash(), true);
+  validityFlagCheck(*vbkBlock, true);
 
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   EXPECT_NE(vbkBlock, nullptr);
-  validityFlagCheck(*vbkBlock, true);
 
-  EXPECT_EQ(altStateVbkTip, *popminer.vbk().getBestChain().tip());
+  EXPECT_EQ(altStateVbkTip, *alttree.vbk().getBestChain().tip());
 }

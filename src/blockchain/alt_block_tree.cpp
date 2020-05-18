@@ -336,7 +336,7 @@ void AltTree::removePayloads(index_t& index,
   auto& c = index.commands;
   c.erase(std::remove_if(c.begin(),
                          c.end(),
-                         [&payloads](const CommandGroup& g) {
+                         [&](const CommandGroup& g) {
                            for (const auto& p : payloads) {
                              if (g == p.getId()) {
                                return true;

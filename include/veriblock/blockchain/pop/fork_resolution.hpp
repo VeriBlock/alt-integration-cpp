@@ -371,7 +371,7 @@ struct PopAwareForkResolutionComparator {
     auto* currentActive = ed.getBestChain().tip();
     assert(currentActive && "should be bootstrapped");
 
-    if(*currentActive == to) {
+    if (*currentActive == to) {
       // already at this state
       return true;
     }
@@ -412,7 +412,7 @@ struct PopAwareForkResolutionComparator {
         // if indexNew is valid, then switch to new chain
         return -1;
       }
-
+      // TODO add invalidate
       // new chain is invalid. our current chain is definitely better.
       return 1;
     }
