@@ -8,8 +8,8 @@
 
 #include <vector>
 
-#include "veriblock/entities/altblock.hpp"
 #include "veriblock/blockchain/block_index.hpp"
+#include "veriblock/entities/altblock.hpp"
 
 namespace altintegration {
 
@@ -107,23 +107,26 @@ struct AltChainParams {
     return 500;
   }
 
-  // unique POP id for the chain
-  virtual uint32_t getIdentifier() const noexcept = 0;
-
-  virtual AltBlock getBootstrapBlock() const noexcept = 0;
-
   /// The maximum allowed number of PoP data in a block
-  virtual uint32_t getMaxPopDataPerBlock() const noexcept = 0;
+  virtual uint32_t getMaxPopDataPerBlock() const noexcept { return 50; };
 
   /** The maximum allowed weight for a PopData */
-  virtual uint32_t getMaxPopDataWeight() const noexcept = 0;
+  virtual uint32_t getMaxPopDataWeight() const noexcept { return 1024 * 1024; };
 
-  virtual uint32_t getSuperMaxPopDataWeight() const noexcept = 0;
+  // maximum possible size for a single PopData
+  virtual uint32_t getSuperMaxPopDataWeight() const noexcept {
+    return 1024 * 1024 * 1024;  // TODO: figure out amount
+  };
 
   // getter for reward parameters
   virtual const PopRewardsParams& getRewardParams() const noexcept {
     return *popRewardsParams;
   }
+
+  // unique POP id for the chain
+  virtual uint32_t getIdentifier() const noexcept = 0;
+
+  virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
  private:
   std::shared_ptr<PopRewardsParams> popRewardsParams =
