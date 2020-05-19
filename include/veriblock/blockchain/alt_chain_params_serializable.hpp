@@ -47,24 +47,25 @@ struct PopRewardsParamsSerializable : public PopRewardsParams {
     return roundRatios_;
   }
 
-  double maxScoreThresholdNormal() const noexcept override { return 2.0; }
+  double maxScoreThresholdNormal() const noexcept override {
+    return maxScoreThresholdNormal_;
+  }
 
-  // limit block with keystones score to this value
-  double maxScoreThresholdKeystone() const noexcept override { return 3.0; }
+  double maxScoreThresholdKeystone() const noexcept override {
+    return maxScoreThresholdKeystone_;
+  }
 
-  // collect this amount of blocks BEFORE the block to calculate pop difficulty
-  uint32_t difficultyAveragingInterval() const noexcept override { return 50; }
+  uint32_t difficultyAveragingInterval() const noexcept override {
+    return difficultyAveragingInterval_;
+  }
 
-  // wait for this number of blocks before calculating and paying pop reward
-  uint32_t rewardSettlementInterval() const noexcept override { return 400; }
+  uint32_t rewardSettlementInterval() const noexcept override {
+    return rewardSettlementInterval_;
+  }
 
-  // getter for reward curve parameters
   const PopRewardsCurveParams& getCurveParams() const noexcept override {
     return *curveParams;
   }
-
-  // reward score table
-  // we score each VeriBlock and lower the reward for late blocks
   const std::vector<double>& relativeScoreLookupTable()
       const noexcept override {
     return lookupTable_;
@@ -85,7 +86,61 @@ struct PopRewardsParamsSerializable : public PopRewardsParams {
   double maxScoreThresholdKeystone_;
   uint32_t difficultyAveragingInterval_;
   uint32_t rewardSettlementInterval_;
-  std::vector<double> relativeScoreLookupTable_;
+  std::vector<double> lookupTable_;
+};
+
+struct AltChainParamsSerializable : public AltChainParams {
+  ~AltChainParamsSerializable() override = default;
+
+  uint32_t getKeystoneInterval() const noexcept override {
+    return keystoneInterval_;
+  }
+
+  uint32_t getFinalityDelay() const noexcept override { return finalityDelay_; }
+
+  const std::vector<uint32_t>& getForkResolutionLookUpTable()
+      const noexcept override {
+    return forkResolutionLookUpTable_;
+  }
+
+  int32_t getEndorsementSettlementInterval() const noexcept override {
+    return endorsementSettlementInterval_;
+  }
+
+  uint32_t getMaxPopDataPerBlock() const noexcept override {
+    return maxPopDataPerBlock_;
+  };
+
+  uint32_t getMaxPopDataWeight() const noexcept { return maxPopDataWeight_; };
+
+  uint32_t getSuperMaxPopDataWeight() const noexcept {
+    return superMaxPopDataWeight_;
+  };
+
+  const PopRewardsParams& getRewardParams() const noexcept override {
+    return *popRewardsParams;
+  }
+
+  uint32_t getIdentifier() const noexcept override { return indentifier_; };
+
+  AltBlock getBootstrapBlock() const noexcept override {
+    return bootstrapBlock_;
+  };
+
+  static AltChainParamsSerializable fromRaw(ReadStream& stream);
+
+  static AltChainParamsSerializable fromRaw(const std::vector<uint8_t>& bytes);
+
+ private:
+  uint32_t keystoneInterval_;
+  uint32_t finalityDelay_;
+  std::vector<uint32_t> forkResolutionLookUpTable_;
+  int32_t endorsementSettlementInterval_;
+  uint32_t maxPopDataPerBlock_;
+  uint32_t maxPopDataWeight_;
+  uint32_t superMaxPopDataWeight_;
+  uint32_t indentifier_;
+  AltBlock bootstrapBlock_;
 };
 
 }  // namespace altintegration
