@@ -62,4 +62,6 @@ TEST(Config, deserialization_test) {
                 parseBlocks(popvbkblocks),
                 std::make_shared<VbkChainParamsTest>());
   config.alt = std::make_shared<AltChainParamsRegTest>();
+
+  std::vector<uint8_t> serialized = config.toRaw();
 }

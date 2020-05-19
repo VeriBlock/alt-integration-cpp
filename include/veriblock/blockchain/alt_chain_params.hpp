@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_CHAIN_PARAMS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_CHAIN_PARAMS_HPP_
 
+#include <string>
 #include <vector>
 
 #include "veriblock/blockchain/block_index.hpp"
@@ -26,6 +27,34 @@ struct PopRewardsCurveParams {
 
   // slope for keystone rounds
   virtual double slopeKeystone() const noexcept { return 0.21325; }
+
+  std::vector<uint8_t> toRaw() const {
+    WriteStream stream;
+    toRaw(stream);
+    return stream.data();
+  }
+
+  void toRaw(WriteStream& stream) const {
+    std::string temp;
+
+    temp = std::to_string(this->startOfSlope());
+    writeSingleBEValue(stream, temp.size());
+    for (const char& el : temp) {
+      stream.writeBE<char>(el);
+    }
+
+    temp = std::to_string(this->slopeNormal());
+    writeSingleBEValue(stream, temp.size());
+    for (const char& el : temp) {
+      stream.writeBE<char>(el);
+    }
+
+    temp = std::to_string(this->slopeKeystone());
+    writeSingleBEValue(stream, temp.size());
+    for (const char& el : temp) {
+      stream.writeBE<char>(el);
+    }
+  }
 };
 
 struct PopRewardsParams {
@@ -71,6 +100,56 @@ struct PopRewardsParams {
   // we score each VeriBlock and lower the reward for late blocks
   virtual const std::vector<double>& relativeScoreLookupTable() const noexcept {
     return lookupTable_;
+  }
+
+  std::vector<uint8_t> toRaw() const {
+    WriteStream stream;
+    toRaw(stream);
+    return stream.data();
+  }
+
+  void toRaw(WriteStream& stream) const {
+    std::string temp;
+
+    stream.writeBE<uint32_t>(this->keystoneRound());
+    stream.writeBE<uint32_t>(this->payoutRounds());
+    stream.writeBE<uint32_t>(this->flatScoreRound());
+    stream.writeBE<bool>(this->flatScoreRoundUse());
+
+    writeSingleBEValue(stream, this->roundRatios().size());
+    for (const auto& el : this->roundRatios()) {
+      temp = std::to_string(el);
+      writeSingleBEValue(stream, temp.size());
+      for (const char& el1 : temp) {
+        stream.writeBE<char>(el1);
+      }
+    }
+
+    temp = std::to_string(this->maxScoreThresholdNormal());
+    writeSingleBEValue(stream, temp.size());
+    for (const char& el : temp) {
+      stream.writeBE<char>(el);
+    }
+
+    temp = std::to_string(this->maxScoreThresholdKeystone());
+    writeSingleBEValue(stream, temp.size());
+    for (const char& el : temp) {
+      stream.writeBE<char>(el);
+    }
+
+    stream.writeBE<uint32_t>(this->difficultyAveragingInterval());
+    stream.writeBE<uint32_t>(this->rewardSettlementInterval());
+
+    writeSingleBEValue(stream, this->relativeScoreLookupTable().size());
+    for (const auto& el : this->relativeScoreLookupTable()) {
+      temp = std::to_string(el);
+      writeSingleBEValue(stream, temp.size());
+      for (const char& el1 : temp) {
+        stream.writeBE<char>(el1);
+      }
+    }
+
+    this->getCurveParams().toRaw(stream);
   }
 
  protected:
@@ -139,9 +218,8 @@ struct AltChainParams {
     stream.writeBE<uint32_t>(this->getKeystoneInterval());
     stream.writeBE<uint32_t>(this->getFinalityDelay());
 
-    auto table = this->getForkResolutionLookUpTable();
-    writeSingleBEValue(stream, table.size());
-    for (const auto& val : table) {
+    writeSingleBEValue(stream, this->getForkResolutionLookUpTable().size());
+    for (const auto& val : this->getForkResolutionLookUpTable()) {
       stream.writeBE<uint32_t>(val);
     }
 
@@ -150,6 +228,9 @@ struct AltChainParams {
     stream.writeBE<uint32_t>(this->getMaxPopDataWeight());
     stream.writeBE<uint32_t>(this->getSuperMaxPopDataWeight());
     stream.writeBE<uint32_t>(this->getIdentifier());
+
+    this->getBootstrapBlock().toVbkEncoding(stream);
+    this->getRewardParams().toRaw(stream);
   }
 
  private:

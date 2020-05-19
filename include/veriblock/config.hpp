@@ -73,7 +73,7 @@ struct Config {
       stream.writeBE<int32_t>(startHeight);
       writeSingleBEValue(stream, blocks.size());
       for (const auto& b : blocks) {
-        b.toVbkEncoding();
+        b.toVbkEncoding(stream);
       }
     }
   };
