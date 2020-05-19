@@ -16,7 +16,7 @@ std::vector<std::string> parseBlocks(const std::string& csv) {
   std::vector<std::string> ret;
   std::string line;
   while (std::getline(iss, line, ',')) {
-    if(ParseHex(line).empty()) {
+    if (ParseHex(line).empty()) {
       break;
     }
     ret.push_back(line);
@@ -46,4 +46,20 @@ TEST(Config, IsValid) {
   config.alt = std::make_shared<AltChainParamsRegTest>();
 
   ASSERT_NO_THROW(config.validate());
+}
+
+TEST(Config, deserialization_test) {
+  int popbtcstartheight = 1714177;
+  std::string popbtcblocks = generated::btcblockheaders;
+  int popvbkstartheight = 430118;
+  std::string popvbkblocks = generated::vbkblockheaders;
+
+  altintegration::Config config;
+  config.setBTC(popbtcstartheight,
+                parseBlocks(popbtcblocks),
+                std::make_shared<BtcChainParamsTest>());
+  config.setVBK(popvbkstartheight,
+                parseBlocks(popvbkblocks),
+                std::make_shared<VbkChainParamsTest>());
+  config.alt = std::make_shared<AltChainParamsRegTest>();
 }

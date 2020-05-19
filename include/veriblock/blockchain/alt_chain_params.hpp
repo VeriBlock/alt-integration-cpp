@@ -10,6 +10,7 @@
 
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/entities/altblock.hpp"
+#include "veriblock/serde.hpp"
 
 namespace altintegration {
 
@@ -127,6 +128,29 @@ struct AltChainParams {
   virtual uint32_t getIdentifier() const noexcept = 0;
 
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
+
+  std::vector<uint8_t> toRaw() const {
+    WriteStream stream;
+    toRaw(stream);
+    return stream.data();
+  }
+
+  void toRaw(WriteStream& stream) const {
+    stream.writeBE<uint32_t>(this->getKeystoneInterval());
+    stream.writeBE<uint32_t>(this->getFinalityDelay());
+
+    auto table = this->getForkResolutionLookUpTable();
+    writeSingleBEValue(stream, table.size());
+    for (const auto& val : table) {
+      stream.writeBE<uint32_t>(val);
+    }
+
+    stream.writeBE<int32_t>(this->getEndorsementSettlementInterval());
+    stream.writeBE<uint32_t>(this->getMaxPopDataPerBlock());
+    stream.writeBE<uint32_t>(this->getMaxPopDataWeight());
+    stream.writeBE<uint32_t>(this->getSuperMaxPopDataWeight());
+    stream.writeBE<uint32_t>(this->getIdentifier());
+  }
 
  private:
   std::shared_ptr<PopRewardsParams> popRewardsParams =
