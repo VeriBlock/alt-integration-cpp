@@ -74,8 +74,6 @@ bool VbkBlockTree::setTip(index_t& to,
   if (changeTip) {
     VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     activeChain_.setTip(&to);
-  } else {
-    assert(!to.isValid());
   }
 
   return changeTip;
@@ -175,8 +173,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   if (!index->isValid()) {
     // adding payloads to an invalid block will not result in a state change
-    return state.Invalid(block_t::name() + "-bad-chain",
-                         "Current block is added on top of invalid chain");
+    return state.Invalid(
+        block_t::name() + "-bad-chain",
+        fmt::sprintf("Current block=%s is added on top of invalid chain",
+                     index->toPrettyString()));
   }
 
   bool isOnActiveChain = activeChain_.contains(index);
@@ -200,6 +200,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     determineBestChain(activeChain_, *tip, state);
   }
 
+  // TODO(warchant): determine best chain used to set invalid block as
+  // 'invalid'. Now for some blocks we may return 'true'
   return index->isValid();
 }
 

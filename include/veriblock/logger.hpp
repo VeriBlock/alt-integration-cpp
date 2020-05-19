@@ -35,6 +35,7 @@ void SetLogger() {
 }
 
 std::string LevelToString(LogLevel l);
+LogLevel StringToLevel(const std::string&);
 
 #ifdef VERIBLOCK_POP_LOGGER_ENABLED
 

@@ -393,10 +393,12 @@ struct PopAwareForkResolutionComparator {
     }
 
     sm_t sm(ed, *ing_);
+    // is 'to' a successor?
     if (to.getAncestor(currentActive->height) == currentActive) {
       return sm.apply(*currentActive, to, state);
     }
 
+    // 'to' is a predecessor
     Chain<protected_index_t> chain(0, currentActive);
     auto* forkBlock = chain.findFork(&to);
     if (!forkBlock) {
@@ -483,15 +485,23 @@ struct PopAwareForkResolutionComparator {
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - fork
     // point at keystone, so exclude it during 'apply')
-    if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
-      // chain A has valid payloads, and chain B has invalid payloads
-      // chain A is better
+    for (auto* index : chainB) {
+      if (!index->isValid() || !sm.applyBlock(*index, state)) {
+        // chain A has valid payloads, and chain B has invalid payloads
+        // chain A is better
 
-      // chain B has been unapplied already
-      // invalid block in chain B has been invalidated already
-      VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
-                   state.toString());
-      return 1;
+        // unapply applied subchain
+        sm.unapply(*index, *chainB.first());
+
+        // don't do fork resolution, as it is not gonna improve current chain
+        ed.invalidateSubtree(*index, BLOCK_FAILED_POP, /* do FR= */ false);
+
+        // chain B has been unapplied already
+        // invalid block in chain B has been invalidated already
+        VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
+                     state.toString());
+        return 1;
+      }
     }
 
     // now tree contains payloads from both chains

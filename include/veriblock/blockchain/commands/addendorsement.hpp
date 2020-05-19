@@ -14,6 +14,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/endorsements.hpp>
+
 #include "veriblock/fmt.hpp"
 
 namespace altintegration {
@@ -35,8 +36,10 @@ struct AddEndorsement : public Command {
   bool Execute(ValidationState& state) override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
     if (!containing) {
-      return state.Invalid("no-containing",
-                           "Can not find containing block " + HexStr(index_));
+      return state.Invalid(
+          block_t::name() + "-no-containing",
+          fmt::sprintf("Can not find containing block in endorsement=%s",
+                       e_->toPrettyString()));
     }
 
     // endorsement validity window
@@ -46,33 +49,39 @@ struct AddEndorsement : public Command {
 
     auto endorsedHeight = e_->endorsedHeight;
     if (containing->height - endorsedHeight > window) {
-      return state.Invalid("expired", "Endorsement expired");
+      return state.Invalid(block_t::name() + "-expired", "Endorsement expired");
     }
 
     auto* endorsed = chain[endorsedHeight];
     if (!endorsed) {
-      return state.Invalid("no-endorsed-block",
+      return state.Invalid(block_t::name() + "-no-endorsed-block",
                            "No block found on endorsed block height");
     }
 
     if (endorsed->getHash() != e_->endorsedHash) {
-      return state.Invalid("block-differs",
+      return state.Invalid(block_t::name() + "-block-differs",
                            "Endorsed block is on a different chain");
     }
 
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
     if (!blockOfProof) {
-      return state.Invalid("block-of-proof-not-found",
-                           "Can not find block of proof in tree");
+      return state.Invalid(
+          block_t::name() + "-block-of-proof-not-found",
+          fmt::sprintf("Can not find block of proof in SP Chain (%s)",
+                       HexStr(e_->blockOfProof)));
     }
 
     auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
-
     if (duplicate) {
       if (endorsement_t::checkForDuplicates()) {
         // found duplicate
-        return state.Invalid("duplicate",
-                             "Found duplicate endorsement on the same chain");
+        return state.Invalid(
+            block_t ::name() + "-duplicate",
+            fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+                         "found its duplicate in block %s",
+                         e_->toPrettyString(),
+                         containing->toPrettyString(),
+                         duplicate->toPrettyString()));
       } else {
         return true;
       }
@@ -115,7 +124,6 @@ struct AddEndorsement : public Command {
  private:
   ProtectingTree* ing_;
   ProtectedTree* ed_;
-  const hash_t index_;
   std::shared_ptr<endorsement_t> e_;
 };
 
