@@ -6,6 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_FMT_HPP
 #define VERIBLOCK_POP_CPP_FMT_HPP
 
+#define FMT_HEADER_ONLY 1
+
 #include <fmt/format.h>
 #include <fmt/printf.h>
 

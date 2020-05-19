@@ -97,9 +97,6 @@ struct PopStateMachine {
     for (auto* index : chain) {
       if (!index->isValid() || !applyBlock(*index, state)) {
         unapply(*index, from);
-        // don't do fork resolution, as it
-        ed_.invalidateSubtree(
-            *index, BLOCK_FAILED_POP, /* do fork resolution= */ false);
         return false;
       }
     }

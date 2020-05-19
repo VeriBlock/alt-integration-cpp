@@ -17,6 +17,7 @@
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
+
 #include "veriblock/fmt.hpp"
 
 namespace altintegration {
@@ -219,9 +220,9 @@ struct BlockTree : public BaseBlockTree<Block> {
     // if prev block is invalid, mark this block as invalid
     if (!prev->isValid()) {
       index->setFlag(BLOCK_FAILED_CHILD);
-      return state.Invalid(block_t::name() + "-bad-chain",
-                           "One of previous blocks is invalid. Status=" +
-                               std::to_string(prev->status));
+      return state.Invalid(
+          block_t::name() + "-bad-chain",
+          fmt::sprintf("Previous block is invalid=%s", prev->toPrettyString()));
     }
 
     return true;

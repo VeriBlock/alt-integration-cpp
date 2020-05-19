@@ -14,7 +14,6 @@
 #include <veriblock/stateless_validation.hpp>
 
 namespace altintegration {
-
 struct Config {
   template <typename Block, typename ChainParams>
   struct Bootstrap {

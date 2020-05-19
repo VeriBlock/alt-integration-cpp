@@ -36,4 +36,22 @@ std::string LevelToString(LogLevel l) {
   }
 }
 
+LogLevel StringToLevel(const std::string& str) {
+  if (str == "debug") {
+    return LogLevel::debug;
+  } else if (str == "info") {
+    return LogLevel::info;
+  } else if (str == "warn") {
+    return LogLevel::warn;
+  } else if (str == "error") {
+    return LogLevel::error;
+  } else if (str == "off") {
+    return LogLevel::off;
+  } else {
+    throw std::invalid_argument(
+        fmt::sprintf("%s is not valid log level. Expected one of "
+                     "debug/info/warn/error/off"));
+  }
+}
+
 }  // namespace altintegration

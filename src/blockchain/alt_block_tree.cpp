@@ -55,7 +55,7 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
                           ValidationState& state) {
   auto* index = getBlockIndex(containing);
   if (!index) {
-    return state.Invalid(block_t::name() + "bad-block",
+    return state.Invalid(block_t::name() + "-bad-block",
                          "Can't find containing block");
   }
   return addPayloads(*index, payloads, state);
@@ -69,12 +69,12 @@ bool AltTree::addPayloads(index_t& index,
                 payloads.size(),
                 index.toPrettyString());
   if (!index.pprev) {
-    return state.Invalid(block_t::name() + "bad-containing-prev",
+    return state.Invalid(block_t::name() + "-bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
   }
 
   if (!index.isValid()) {
-    return state.Invalid(block_t::name() + "bad-chain",
+    return state.Invalid(block_t::name() + "-bad-chain",
                          "Containing block has been marked as invalid");
   }
 
@@ -115,7 +115,7 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
   if (!addPayloads(*index, {p}, state)) {
     VBK_LOG_DEBUG(
         "%s Can not add payloads: %s", block_t::name(), state.toString());
-    return state.Invalid(block_t::name() + "addPayloadsTemporarily");
+    return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
   }
 
   if (!setState(*index, state)) {
@@ -123,8 +123,7 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
                   block_t::name(),
                   state.toString());
     removePayloads(*index, {p});
-    index->unsetFlag(BlockStatus::BLOCK_FAILED_POP);
-    return state.Invalid(block_t::name() + "addPayloadsTemporarily");
+    return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
   }
 
   return true;
@@ -419,8 +418,6 @@ bool AltTree::setTip(AltTree::index_t& to,
   if (changeTip) {
     VBK_LOG_INFO("SetTip=%s", to.toPrettyString());
     activeChain_.setTip(&to);
-  } else {
-    assert(!to.isValid());
   }
 
   // true if tip has been changed
