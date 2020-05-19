@@ -64,4 +64,68 @@ TEST(Config, deserialization_test) {
   config.alt = std::make_shared<AltChainParamsRegTest>();
 
   std::vector<uint8_t> serialized = config.toRaw();
+
+  Config deserialized = Config::fromRaw(serialized);
+
+  // check bootstrap btc
+  EXPECT_EQ(deserialized.btc.blocks.size(), config.btc.blocks.size());
+  for (size_t i = 0; i < config.btc.blocks.size(); ++i) {
+    EXPECT_EQ(deserialized.btc.blocks[i], config.btc.blocks[i]);
+  }
+  EXPECT_EQ(deserialized.btc.startHeight, config.btc.startHeight);
+
+  // check bootstrap vbk
+  EXPECT_EQ(deserialized.vbk.blocks.size(), config.vbk.blocks.size());
+  for (size_t i = 0; i < config.vbk.blocks.size(); ++i) {
+    EXPECT_EQ(deserialized.vbk.blocks[i], config.vbk.blocks[i]);
+  }
+  EXPECT_EQ(deserialized.vbk.startHeight, config.vbk.startHeight);
+
+  // check alt config
+  EXPECT_EQ(deserialized.alt->getBootstrapBlock(),
+            config.alt->getBootstrapBlock());
+  EXPECT_EQ(deserialized.alt->getEndorsementSettlementInterval(),
+            config.alt->getEndorsementSettlementInterval());
+  EXPECT_EQ(deserialized.alt->getFinalityDelay(),
+            config.alt->getFinalityDelay());
+  EXPECT_EQ(deserialized.alt->getForkResolutionLookUpTable(),
+            config.alt->getForkResolutionLookUpTable());
+  EXPECT_EQ(deserialized.alt->getIdentifier(), config.alt->getIdentifier());
+  EXPECT_EQ(deserialized.alt->getKeystoneInterval(),
+            config.alt->getKeystoneInterval());
+  EXPECT_EQ(deserialized.alt->getMaxPopDataPerBlock(),
+            config.alt->getMaxPopDataPerBlock());
+  EXPECT_EQ(deserialized.alt->getMaxPopDataWeight(),
+            config.alt->getMaxPopDataWeight());
+  EXPECT_EQ(deserialized.alt->getSuperMaxPopDataWeight(),
+            config.alt->getSuperMaxPopDataWeight());
+
+  EXPECT_EQ(deserialized.alt->getRewardParams().difficultyAveragingInterval(),
+            config.alt->getRewardParams().difficultyAveragingInterval());
+  EXPECT_EQ(deserialized.alt->getRewardParams().flatScoreRound(),
+            config.alt->getRewardParams().flatScoreRound());
+  EXPECT_EQ(deserialized.alt->getRewardParams().flatScoreRoundUse(),
+            config.alt->getRewardParams().flatScoreRoundUse());
+  EXPECT_EQ(deserialized.alt->getRewardParams().keystoneRound(),
+            config.alt->getRewardParams().keystoneRound());
+  EXPECT_EQ(deserialized.alt->getRewardParams().maxScoreThresholdKeystone(),
+            config.alt->getRewardParams().maxScoreThresholdKeystone());
+  EXPECT_EQ(deserialized.alt->getRewardParams().maxScoreThresholdNormal(),
+            config.alt->getRewardParams().maxScoreThresholdNormal());
+  EXPECT_EQ(deserialized.alt->getRewardParams().payoutRounds(),
+            config.alt->getRewardParams().payoutRounds());
+  EXPECT_EQ(deserialized.alt->getRewardParams().relativeScoreLookupTable(),
+            config.alt->getRewardParams().relativeScoreLookupTable());
+  EXPECT_EQ(deserialized.alt->getRewardParams().rewardSettlementInterval(),
+            config.alt->getRewardParams().rewardSettlementInterval());
+  EXPECT_EQ(deserialized.alt->getRewardParams().roundRatios(),
+            config.alt->getRewardParams().roundRatios());
+
+  EXPECT_EQ(
+      deserialized.alt->getRewardParams().getCurveParams().slopeKeystone(),
+      config.alt->getRewardParams().getCurveParams().slopeKeystone());
+  EXPECT_EQ(deserialized.alt->getRewardParams().getCurveParams().slopeNormal(),
+            config.alt->getRewardParams().getCurveParams().slopeNormal());
+  EXPECT_EQ(deserialized.alt->getRewardParams().getCurveParams().startOfSlope(),
+            config.alt->getRewardParams().getCurveParams().startOfSlope());
 }
