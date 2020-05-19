@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <veriblock/blockchain/alt_chain_params_serializable.hpp>
 #include <veriblock/config.hpp>
 
 namespace altintegration {
@@ -70,7 +71,11 @@ void Config::validate() const {
   }
 }
 
-Config Config::fromRaw(ReadStream& stream) {}
+Config Config::fromRaw(ReadStream& /*stream*/) {
+  Config conf;
+
+  return conf;
+}
 
 Config Config::fromRaw(const std::vector<uint8_t>& bytes) {
   ReadStream stream(bytes);
