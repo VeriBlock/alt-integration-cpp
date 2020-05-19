@@ -11,8 +11,9 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
+#include <veriblock/logger.hpp>
 #include <veriblock/signals.hpp>
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 
 namespace altintegration {
 
@@ -62,6 +63,8 @@ struct BaseBlockTree {
   }
 
   void removeSubtree(index_t& toRemove, bool shouldDetermineBestChain = true) {
+    VBK_LOG_DEBUG("Removing subtree %s", toRemove.toPrettyString());
+
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
     if (!prev) {
@@ -100,6 +103,7 @@ struct BaseBlockTree {
   void invalidateSubtree(index_t& toBeInvalidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
+    VBK_LOG_INFO("Invalidating subtree %s", toBeInvalidated.toPrettyString());
     assert(toBeInvalidated.pprev);
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
@@ -113,10 +117,10 @@ struct BaseBlockTree {
 
     // flag next subtrees (excluding current block)  as BLOCK_FAILED_CHILD
     for (auto* pnext : toBeInvalidated.pnext) {
-      forEachNodePostorder<block_t>(*pnext, [&](index_t& index) -> bool {
-        bool shouldContinue = index.isValid();
+      forEachNodePreorder<block_t>(*pnext, [&](index_t& index) {
+        bool valid = index.isValid();
         doInvalidate(index, BLOCK_FAILED_CHILD);
-        return shouldContinue;
+        return valid;
       });
     }
 
@@ -126,14 +130,44 @@ struct BaseBlockTree {
     updateTips(shouldDetermineBestChain);
   }
 
+  void revalidateSubtree(const hash_t& hash,
+                         enum BlockStatus reason,
+                         bool shouldDetermineBestChain = true) {
+    auto* index = this->getBlockIndex(hash);
+    if (index == nullptr) {
+      return;
+    }
+    revalidateSubtree(*index, reason, shouldDetermineBestChain);
+  }
+
+  void revalidateSubtree(index_t& toBeValidated,
+                         enum BlockStatus reason,
+                         bool shouldDetermineBestChain = true) {
+    doReValidate(toBeValidated, reason);
+    tryAddTip(&toBeValidated);
+
+    for (auto* pnext : toBeValidated.pnext) {
+      forEachNodePreorder<block_t>(*pnext, [&](index_t& index) -> bool {
+        doReValidate(index, BLOCK_FAILED_CHILD);
+        bool valid = index.isValid();
+        if (valid) {
+          tryAddTip(&index);
+        }
+        return valid;
+      });
+    }
+
+    updateTips(shouldDetermineBestChain);
+  }
+
   //! connects a handler to a signal 'On Invalidate Block'
-  size_t connectOnInvalidateBlock(const std::function<on_invalidate_t>& f) {
-    return invalidate_sig_.connect(f);
+  size_t connectOnValidityBlockChanged(const std::function<on_invalidate_t>& f) {
+    return validity_sig_.connect(f);
   }
 
   //! disconnects a handler to a signal 'On Invalidate Block'
-  bool disconnectOnInvalidateBlock(size_t id) {
-    return invalidate_sig_.disconnect(id);
+  bool disconnectOnValidityBlockChanged(size_t id) {
+    return validity_sig_.disconnect(id);
   }
 
   bool operator==(const BaseBlockTree& o) const {
@@ -211,6 +245,7 @@ struct BaseBlockTree {
   //! updates tree tip
   virtual bool setTip(index_t& to, ValidationState&, bool) {
     activeChain_.setTip(&to);
+    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     return true;
   }
 
@@ -286,7 +321,12 @@ struct BaseBlockTree {
 
   void doInvalidate(index_t& block, enum BlockStatus reason) {
     block.setFlag(reason);
-    invalidate_sig_.emit(block);
+    validity_sig_.emit(block);
+  }
+
+  void doReValidate(index_t& block, enum BlockStatus reason) {
+    block.unsetFlag(reason);
+    validity_sig_.emit(block);
   }
 
  protected:
@@ -300,7 +340,7 @@ struct BaseBlockTree {
   //! currently applied chain
   Chain<index_t> activeChain_;
   //! signals to the end user that block have been invalidated
-  signals::Signal<on_invalidate_t> invalidate_sig_;
+  signals::Signal<on_invalidate_t> validity_sig_;
 
   struct TreeFieldsComparator {
     bool operator()(const block_index_t& a, const block_index_t& b) {

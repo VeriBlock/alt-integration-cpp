@@ -4,7 +4,6 @@ add_subdirectory(blockchain)
 add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
-add_subdirectory(logger)
 
 add_library(vblake OBJECT vblake.cpp)
 
@@ -41,7 +40,7 @@ if(WITH_SECP256K1)
 endif()
 
 if(VERIBLOCK_POP_LOGGER_ENABLED)
-    list(APPEND SOURCES $<TARGET_OBJECTS:logger>)
+    list(APPEND SOURCES logger.cpp)
 endif()
 
 if(SHARED)

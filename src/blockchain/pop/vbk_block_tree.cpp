@@ -6,7 +6,7 @@
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/third_party/fmt/printf.h>
+#include <veriblock/logger.hpp>
 
 namespace altintegration {
 
@@ -34,6 +34,9 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
+    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them",
+                  block_t::name(),
+                  indexNew.height - currentTip->height);
     this->setTip(indexNew, state, false);
     return;
   }
@@ -41,14 +44,17 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   int result = cmp_.comparePopScore(*this, indexNew, state);
   // pop state is already at "best chain"
   if (result == 0) {
+    VBK_LOG_DEBUG("Pop scores are equal");
     // pop scores are equal. do PoW fork resolution
     VbkTree::determineBestChain(
         currentBest, indexNew, state, /* skipSetState=*/false);
   } else if (result < 0) {
+    VBK_LOG_DEBUG("Candidate chain won");
     // other chain won! we already set
     ret = this->setTip(indexNew, state, /* skipSetState=*/true);
     assert(ret);
   } else {
+    VBK_LOG_DEBUG("Active chain won");
     // current chain is better
   }
 
@@ -66,6 +72,7 @@ bool VbkBlockTree::setTip(index_t& to,
   // edge case: if changeTip is false, then new block arrived on top of current
   // active chain, and this block has invalid commands
   if (changeTip) {
+    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     activeChain_.setTip(&to);
   } else {
     assert(!to.isValid());
@@ -94,6 +101,8 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 
 void VbkBlockTree::removePayloads(const block_t& block,
                                   const std::vector<payloads_t>& payloads) {
+  VBK_LOG_INFO(
+      "remove {} payloads from {}", payloads.size(), block.toPrettyString());
   auto hash = block.getHash();
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
@@ -118,46 +127,55 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   // remove all matched command groups
   auto& c = index->commands;
-  c.erase(std::remove_if(c.begin(),
-                         c.end(),
-                         [&payloads](const CommandGroup& g) {
-                           for (const auto& p : payloads) {
-                             if (g == p.getId()) {
-                               return true;
-                             }
+  c.erase(
+      std::remove_if(c.begin(),
+                     c.end(),
+                     [&](const CommandGroup& g) {
+                       for (const auto& p : payloads) {
+                         if (g == p.getId()) {
+                           if (!g.valid) {
+                             base::revalidateSubtree(
+                                 *index, BlockStatus::BLOCK_FAILED_POP, false);
                            }
 
-                           return false;
-                         }),
-          c.end());
+                           return true;
+                         }
+                       }
 
-  if (isOnActiveChain) {
-    // find all affected tips and do a fork resolution
-    auto tips = findValidTips<VbkBlock>(*index);
-    for (auto* tip : tips) {
-      ValidationState state;
-      determineBestChain(activeChain_, *tip, state);
-    }
+                       return false;
+                     }),
+      c.end());
+
+  // find all affected tips and do a fork resolution
+  auto tips = findValidTips<VbkBlock>(*index);
+  for (auto* tip : tips) {
+    ValidationState state;
+    determineBestChain(activeChain_, *tip, state);
   }
 }
 
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {
+  VBK_LOG_DEBUG("%s add %d payloads to block %s",
+                block_t::name(),
+                payloads.size(),
+                HexStr(hash));
+
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
-    return state.Invalid("bad-containing",
+    return state.Invalid(block_t::name() + "-bad-containing",
                          "Can not find VTB containing block: " + hash.toHex());
   }
 
   if (!index->pprev) {
-    return state.Invalid("bad-containing-prev",
+    return state.Invalid(block_t::name() + "-bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
   }
 
   if (!index->isValid()) {
     // adding payloads to an invalid block will not result in a state change
-    return state.Invalid("bad-chain",
+    return state.Invalid(block_t::name() + "-bad-chain",
                          "Current block is added on top of invalid chain");
   }
 
@@ -196,15 +214,13 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
 
   // add endorsement
   auto e = BtcEndorsement::fromContainerPtr(p);
-  auto cmd =
-      std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e));
+  auto cmd = std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e));
   commands.push_back(std::move(cmd));
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
-  return fmt::sprintf("%s\n%s",
-                      VbkTree::toPrettyString(level),
-                      cmp_.toPrettyString(level + 2));
+  return fmt::sprintf(
+      "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
 bool VbkBlockTree::setState(const VbkBlock::hash_t& block,

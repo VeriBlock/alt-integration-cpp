@@ -67,9 +67,7 @@ struct AltBlock {
     return !(a == b);
   }
 
-  static std::string name() {
-    return "Alt";
-  }
+  static std::string name() { return "ALT"; }
 };
 
 }  // namespace altintegration

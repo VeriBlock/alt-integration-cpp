@@ -11,7 +11,7 @@
 #include <cstring>
 #include <string>
 
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
 

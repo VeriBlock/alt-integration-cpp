@@ -14,8 +14,10 @@
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/merkle_tree.hpp>
+#include <veriblock/logger.hpp>
 #include <veriblock/mock_miner.hpp>
 
+#include "util/fmtlogger.hpp"
 #include "util/test_utils.hpp"
 
 namespace altintegration {
@@ -38,6 +40,9 @@ struct PopTestFixture {
   ValidationState state;
 
   PopTestFixture() {
+    SetLogger<FmtLogger>();
+    GetLogger().level = LogLevel::off;
+
     EXPECT_TRUE(alttree.bootstrap(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().btc().bootstrapWithGenesis(state));
@@ -132,6 +137,33 @@ struct PopTestFixture {
     std::reverse(ctx.begin(), ctx.end());
 
     out.insert(out.end(), ctx.begin(), ctx.end());
+  }
+
+  PopData createPopData(int32_t version,
+                        const ATV& atv,
+                        std::vector<VTB> vtbs) {
+    PopData popData;
+    popData.version = version;
+
+    // fill vbk context
+    for (auto& vtb : vtbs) {
+      for (const auto& block : vtb.context) {
+        popData.vbk_context.push_back(block);
+      }
+      popData.vbk_context.push_back(vtb.containingBlock);
+      vtb.context.clear();
+    }
+
+    for (const auto& block : atv.context) {
+      popData.vbk_context.push_back(block);
+    }
+
+    popData.atv = atv;
+    popData.atv.context.clear();
+    popData.hasAtv = true;
+    popData.vtbs = vtbs;
+
+    return popData;
   }
 
   AltPayloads generateAltPayloads(const VbkTx& transaction,

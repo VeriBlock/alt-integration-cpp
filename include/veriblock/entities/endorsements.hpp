@@ -6,7 +6,7 @@
 #ifndef ALTINTEGRATION_ENDORSEMENTS_HPP
 #define ALTINTEGRATION_ENDORSEMENTS_HPP
 
-#include <veriblock/third_party/fmt/printf.h>
+#include "veriblock/fmt.hpp"
 #include "veriblock/entities/endorsement.hpp"
 
 namespace altintegration {
