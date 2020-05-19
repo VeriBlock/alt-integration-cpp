@@ -35,7 +35,7 @@ void PopRewardsParams::toRaw(WriteStream& stream) const {
   stream.writeBE<uint32_t>(this->keystoneRound());
   stream.writeBE<uint32_t>(this->payoutRounds());
   stream.writeBE<uint32_t>(this->flatScoreRound());
-  stream.writeBE<bool>(this->flatScoreRoundUse());
+  stream.writeBE<char>(this->flatScoreRoundUse());
 
   writeSingleBEValue(stream, this->roundRatios().size());
   for (const auto& el : this->roundRatios()) {
@@ -69,7 +69,7 @@ PopRewardsParamsSerializable PopRewardsParamsSerializable::fromRaw(
   param.keystoneRound_ = stream.readBE<uint32_t>();
   param.payoutRounds_ = stream.readBE<uint32_t>();
   param.flatScoreRound_ = stream.readBE<uint32_t>();
-  param.flatScoreRoundUse_ = stream.readBE<bool>();
+  param.flatScoreRoundUse_ = (bool)stream.readBE<char>();
 
   param.roundRatios_ =
       readArrayOf<double>(stream, 0, MAX_CONTEXT_COUNT, readDouble);
@@ -79,7 +79,7 @@ PopRewardsParamsSerializable PopRewardsParamsSerializable::fromRaw(
   param.difficultyAveragingInterval_ = stream.readBE<uint32_t>();
   param.rewardSettlementInterval_ = stream.readBE<uint32_t>();
 
-  param.relativeScoreLookupTable =
+  param.lookupTable_ =
       readArrayOf<double>(stream, 0, MAX_CONTEXT_COUNT, readDouble);
 
   param.curveParams = std::make_shared<PopRewardsCurveParamsSerializable>(
@@ -117,6 +117,36 @@ void AltChainParams::toRaw(WriteStream& stream) const {
 
   this->getBootstrapBlock().toVbkEncoding(stream);
   this->getRewardParams().toRaw(stream);
+}
+
+AltChainParamsSerializable AltChainParamsSerializable::fromRaw(
+    ReadStream& stream) {
+  AltChainParamsSerializable param;
+  param.keystoneInterval_ = stream.readBE<uint32_t>();
+  param.finalityDelay_ = stream.readBE<uint32_t>();
+
+  param.forkResolutionLookUpTable_ = readArrayOf<uint32_t>(
+      stream, 0, MAX_CONTEXT_COUNT, [](ReadStream& stream) -> uint32_t {
+        return stream.readBE<uint32_t>();
+      });
+
+  param.endorsementSettlementInterval_ = stream.readBE<int32_t>();
+  param.maxPopDataPerBlock_ = stream.readBE<uint32_t>();
+  param.maxPopDataWeight_ = stream.readBE<uint32_t>();
+  param.superMaxPopDataWeight_ = stream.readBE<uint32_t>();
+  param.indentifier_ = stream.readBE<uint32_t>();
+
+  param.bootstrapBlock_ = AltBlock::fromVbkEncoding(stream);
+  param.popRewardsParams = std::make_shared<PopRewardsParamsSerializable>(
+      PopRewardsParamsSerializable::fromRaw(stream));
+
+  return param;
+}
+
+AltChainParamsSerializable AltChainParamsSerializable::fromRaw(
+    const std::vector<uint8_t>& bytes) {
+  ReadStream stream(bytes);
+  return fromRaw(stream);
 }
 
 }  // namespace altintegration

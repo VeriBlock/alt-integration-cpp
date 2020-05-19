@@ -101,6 +101,8 @@ void writeDouble(WriteStream& stream, const double& val) {
   }
 }
 
-double readDouble(ReadStream& stream) { std::atof(readString(stream).data()); }
+double readDouble(ReadStream& stream) {
+  return std::atof(readString(stream).data());
+}
 
 }  // namespace altintegration

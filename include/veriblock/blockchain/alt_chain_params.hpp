@@ -143,7 +143,7 @@ struct AltChainParams {
 
   void toRaw(WriteStream& stream) const;
 
- private:
+ protected:
   std::shared_ptr<PopRewardsParams> popRewardsParams =
       std::make_shared<PopRewardsParams>();
 
