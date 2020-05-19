@@ -28,33 +28,9 @@ struct PopRewardsCurveParams {
   // slope for keystone rounds
   virtual double slopeKeystone() const noexcept { return 0.21325; }
 
-  std::vector<uint8_t> toRaw() const {
-    WriteStream stream;
-    toRaw(stream);
-    return stream.data();
-  }
+  std::vector<uint8_t> toRaw() const;
 
-  void toRaw(WriteStream& stream) const {
-    std::string temp;
-
-    temp = std::to_string(this->startOfSlope());
-    writeSingleBEValue(stream, temp.size());
-    for (const char& el : temp) {
-      stream.writeBE<char>(el);
-    }
-
-    temp = std::to_string(this->slopeNormal());
-    writeSingleBEValue(stream, temp.size());
-    for (const char& el : temp) {
-      stream.writeBE<char>(el);
-    }
-
-    temp = std::to_string(this->slopeKeystone());
-    writeSingleBEValue(stream, temp.size());
-    for (const char& el : temp) {
-      stream.writeBE<char>(el);
-    }
-  }
+  void toRaw(WriteStream& stream) const;
 };
 
 struct PopRewardsParams {
@@ -102,55 +78,9 @@ struct PopRewardsParams {
     return lookupTable_;
   }
 
-  std::vector<uint8_t> toRaw() const {
-    WriteStream stream;
-    toRaw(stream);
-    return stream.data();
-  }
+  std::vector<uint8_t> toRaw() const;
 
-  void toRaw(WriteStream& stream) const {
-    std::string temp;
-
-    stream.writeBE<uint32_t>(this->keystoneRound());
-    stream.writeBE<uint32_t>(this->payoutRounds());
-    stream.writeBE<uint32_t>(this->flatScoreRound());
-    stream.writeBE<bool>(this->flatScoreRoundUse());
-
-    writeSingleBEValue(stream, this->roundRatios().size());
-    for (const auto& el : this->roundRatios()) {
-      temp = std::to_string(el);
-      writeSingleBEValue(stream, temp.size());
-      for (const char& el1 : temp) {
-        stream.writeBE<char>(el1);
-      }
-    }
-
-    temp = std::to_string(this->maxScoreThresholdNormal());
-    writeSingleBEValue(stream, temp.size());
-    for (const char& el : temp) {
-      stream.writeBE<char>(el);
-    }
-
-    temp = std::to_string(this->maxScoreThresholdKeystone());
-    writeSingleBEValue(stream, temp.size());
-    for (const char& el : temp) {
-      stream.writeBE<char>(el);
-    }
-
-    stream.writeBE<uint32_t>(this->difficultyAveragingInterval());
-    stream.writeBE<uint32_t>(this->rewardSettlementInterval());
-
-    writeSingleBEValue(stream, this->relativeScoreLookupTable().size());
-    for (const auto& el : this->relativeScoreLookupTable()) {
-      temp = std::to_string(el);
-      writeSingleBEValue(stream, temp.size());
-      for (const char& el1 : temp) {
-        stream.writeBE<char>(el1);
-      }
-    }
-
-    this->getCurveParams().toRaw(stream);
-  }
+  void toRaw(WriteStream& stream) const;
 
  protected:
   std::shared_ptr<PopRewardsCurveParams> curveParams =
@@ -178,9 +108,10 @@ struct AltChainParams {
   ///! number of blocks in VBK for finalization
   virtual uint32_t getFinalityDelay() const noexcept { return 100; }
 
-  virtual std::vector<uint32_t> getForkResolutionLookUpTable() const noexcept {
+  virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
+      const noexcept {
     // TODO(warchant): this should be recalculated. see paper.
-    return {100, 100, 95, 89, 80, 69, 56, 40, 21};
+    return forkResolutionLookUpTable_;
   }
 
   virtual int32_t getEndorsementSettlementInterval() const noexcept {
@@ -208,34 +139,16 @@ struct AltChainParams {
 
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
-  std::vector<uint8_t> toRaw() const {
-    WriteStream stream;
-    toRaw(stream);
-    return stream.data();
-  }
+  std::vector<uint8_t> toRaw() const;
 
-  void toRaw(WriteStream& stream) const {
-    stream.writeBE<uint32_t>(this->getKeystoneInterval());
-    stream.writeBE<uint32_t>(this->getFinalityDelay());
-
-    writeSingleBEValue(stream, this->getForkResolutionLookUpTable().size());
-    for (const auto& val : this->getForkResolutionLookUpTable()) {
-      stream.writeBE<uint32_t>(val);
-    }
-
-    stream.writeBE<int32_t>(this->getEndorsementSettlementInterval());
-    stream.writeBE<uint32_t>(this->getMaxPopDataPerBlock());
-    stream.writeBE<uint32_t>(this->getMaxPopDataWeight());
-    stream.writeBE<uint32_t>(this->getSuperMaxPopDataWeight());
-    stream.writeBE<uint32_t>(this->getIdentifier());
-
-    this->getBootstrapBlock().toVbkEncoding(stream);
-    this->getRewardParams().toRaw(stream);
-  }
+  void toRaw(WriteStream& stream) const;
 
  private:
   std::shared_ptr<PopRewardsParams> popRewardsParams =
       std::make_shared<PopRewardsParams>();
+
+  std::vector<uint32_t> forkResolutionLookUpTable_{
+      100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
 
 }  // namespace altintegration

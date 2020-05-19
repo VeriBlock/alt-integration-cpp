@@ -211,6 +211,10 @@ std::vector<T> readArrayOf(ReadStream& stream,
 
 std::string readString(ReadStream& stream);
 
+void writeDouble(WriteStream& stream, const double& val);
+
+double readDouble(ReadStream& stream);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_SERDE_HPP
