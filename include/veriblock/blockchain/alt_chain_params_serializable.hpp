@@ -111,9 +111,11 @@ struct AltChainParamsSerializable : public AltChainParams {
     return maxPopDataPerBlock_;
   };
 
-  uint32_t getMaxPopDataWeight() const noexcept { return maxPopDataWeight_; };
+  uint32_t getMaxPopDataWeight() const noexcept override {
+    return maxPopDataWeight_;
+  };
 
-  uint32_t getSuperMaxPopDataWeight() const noexcept {
+  uint32_t getSuperMaxPopDataWeight() const noexcept override {
     return superMaxPopDataWeight_;
   };
 
