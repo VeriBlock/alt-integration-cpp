@@ -30,9 +30,10 @@ BtcBlock BtcBlock::fromVbkEncoding(ReadStream& stream) {
 }
 
 void BtcBlock::toRaw(WriteStream& stream) const {
+  stream.reserve(BTC_HEADER_SIZE);
   stream.writeLE<uint32_t>(version);
-  stream.write(previousBlock.reverse());
-  stream.write(merkleRoot.reverse());
+  stream.writeReversed(previousBlock);
+  stream.writeReversed(merkleRoot);
   stream.writeLE<uint32_t>(timestamp);
   stream.writeLE<uint32_t>(bits);
   stream.writeLE<uint32_t>(nonce);
@@ -61,4 +62,16 @@ std::vector<uint8_t> BtcBlock::toRaw() const {
   WriteStream stream;
   this->toRaw(stream);
   return stream.data();
+}
+
+std::string BtcBlock::toPrettyString() const {
+  return fmt::sprintf(
+      "BtcBlock{version=%lu, prev=%s, merkleRoot=%s, timestamp=%lu, "
+      "bits=%lu, nonce=%lu}",
+      version,
+      previousBlock.toHex(),
+      merkleRoot.toHex(),
+      timestamp,
+      bits,
+      nonce);
 }

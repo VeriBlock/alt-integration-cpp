@@ -41,11 +41,11 @@ struct PopTestFixture {
 
   PopTestFixture() {
     SetLogger<FmtLogger>();
-    GetLogger().level = LogLevel::off;
+    GetLogger().level = LogLevel::info;
 
-    EXPECT_TRUE(alttree.bootstrap(state));
+    EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
-    EXPECT_TRUE(alttree.vbk().btc().bootstrapWithGenesis(state));
+    EXPECT_TRUE(alttree.bootstrap(state));
   }
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,

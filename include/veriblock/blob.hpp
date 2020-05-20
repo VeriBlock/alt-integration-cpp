@@ -58,12 +58,13 @@ struct Blob {
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 
   iterator begin() noexcept { return data_.begin(); }
-
   const_iterator begin() const noexcept { return data_.begin(); }
-
   iterator end() noexcept { return data_.end(); }
-
   const_iterator end() const noexcept { return data_.end(); }
+  reverse_iterator rbegin() noexcept { return data_.rbegin(); }
+  const_reverse_iterator rbegin() const noexcept { return data_.rbegin(); }
+  reverse_iterator rend() noexcept { return data_.rend(); }
+  const_reverse_iterator rend() const noexcept { return data_.rend(); }
 
   static constexpr size_type size() noexcept { return N; }
 

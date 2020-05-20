@@ -114,17 +114,7 @@ struct BtcBlock {
 
   static std::string name() { return "BTC"; }
 
-  std::string toPrettyString() const {
-    return fmt::sprintf(
-        "BtcBlock{version=%lu, prev=%s, merkleRoot=%s, timestamp=%lu, "
-        "bits=%lu, nonce=%lu}",
-        version,
-        previousBlock.toHex(),
-        merkleRoot.toHex(),
-        timestamp,
-        bits,
-        nonce);
-  }
+  std::string toPrettyString() const;
 };
 
 }  // namespace altintegration
