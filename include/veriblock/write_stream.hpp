@@ -32,6 +32,13 @@ class WriteStream {
     write(t.data(), t.size());
   }
 
+  template <typename T,
+      typename = typename std::enable_if<sizeof(typename T::value_type) ==
+                                         1>::type>
+  void writeReversed(const T &t) {
+    m_data.insert(m_data.end(), t.rbegin(), t.rend());
+  }
+
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
