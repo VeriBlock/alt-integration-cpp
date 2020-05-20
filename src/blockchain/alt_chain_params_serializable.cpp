@@ -35,7 +35,7 @@ void PopRewardsParams::toRaw(WriteStream& stream) const {
   stream.writeBE<uint32_t>(this->keystoneRound());
   stream.writeBE<uint32_t>(this->payoutRounds());
   stream.writeBE<uint32_t>(this->flatScoreRound());
-  stream.writeBE<char>(this->flatScoreRoundUse());
+  stream.writeBE<uint8_t>(this->flatScoreRoundUse());
 
   writeSingleBEValue(stream, this->roundRatios().size());
   for (const auto& el : this->roundRatios()) {
@@ -69,7 +69,7 @@ PopRewardsParamsSerializable PopRewardsParamsSerializable::fromRaw(
   param.keystoneRound_ = stream.readBE<uint32_t>();
   param.payoutRounds_ = stream.readBE<uint32_t>();
   param.flatScoreRound_ = stream.readBE<uint32_t>();
-  param.flatScoreRoundUse_ = (bool)stream.readBE<char>();
+  param.flatScoreRoundUse_ = (bool)stream.readBE<uint8_t>();
 
   param.roundRatios_ =
       readArrayOf<double>(stream, 0, MAX_CONTEXT_COUNT, readDouble);

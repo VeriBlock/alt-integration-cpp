@@ -94,15 +94,13 @@ std::string readString(ReadStream& stream) {
 }
 
 void writeDouble(WriteStream& stream, const double& val) {
-  std::string temp = std::to_string(val);
-  writeSingleBEValue(stream, temp.size());
-  for (const char& el : temp) {
-    stream.writeBE<char>(el);
-  }
+  uint64_t* temp = reinterpret_cast<uint64_t*>(&const_cast<double&>(val));
+  stream.writeBE<uint64_t>(*temp);
 }
 
 double readDouble(ReadStream& stream) {
-  return std::atof(readString(stream).data());
+  uint64_t temp = stream.readBE<uint64_t>();
+  return *reinterpret_cast<double*>(&temp);
 }
 
 }  // namespace altintegration
