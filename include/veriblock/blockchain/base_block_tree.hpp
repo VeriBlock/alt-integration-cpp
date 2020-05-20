@@ -13,6 +13,7 @@
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/signals.hpp>
+
 #include "veriblock/fmt.hpp"
 
 namespace altintegration {
@@ -63,6 +64,9 @@ struct BaseBlockTree {
   }
 
   void removeSubtree(index_t& toRemove, bool shouldDetermineBestChain = true) {
+    VBK_LOG_DEBUG("remove subtree %s, do fork resolution=%s",
+                  toRemove.toPrettyString(),
+                  (shouldDetermineBestChain ? "true" : "false"));
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
     if (!prev) {
@@ -159,7 +163,8 @@ struct BaseBlockTree {
   }
 
   //! connects a handler to a signal 'On Invalidate Block'
-  size_t connectOnValidityBlockChanged(const std::function<on_invalidate_t>& f) {
+  size_t connectOnValidityBlockChanged(
+      const std::function<on_invalidate_t>& f) {
     return validity_sig_.connect(f);
   }
 
