@@ -50,7 +50,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 11);
 
   // mine rewardSettlementInterval blocks - endorsed block - endorsement block
-  mineAltBlocks(altparam.getRewardParams().rewardSettlementInterval() - 2, altchain);
+  mineAltBlocks(altparam.getEndorsementSettlementInterval() - 2, altchain);
 
   auto payouts = alttree.getPopPayout(altchain.back().getHash(), state);
   ASSERT_TRUE(payouts.size());
