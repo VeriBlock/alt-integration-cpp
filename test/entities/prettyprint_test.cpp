@@ -99,10 +99,9 @@ TEST(PrettyPrint, PrintEntities) {
             "prev=449c60619294546ad825af03, "
             "ks1=b0935637860679ddd5, "
             "ks2=5ee4fd21082e18686e, "
-            "mroot="
-            "26bbfda7d5e4462ef24ae02d67e47d78, "
+            "mroot=26bbfda7d5e4462ef24ae02d67e47d78, "
             "timestamp=1553699059, "
-            "difficulty=16842752, nonce=1}");
+            "diff=16842752, nonce=1}");
 
   auto atv = ATV{defaultTx, {}, vbkBlock, {}};
   EXPECT_EQ(
