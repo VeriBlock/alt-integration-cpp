@@ -58,14 +58,16 @@ struct PopStateMachine {
       return;
     }
 
-    VBK_LOG_DEBUG(
-        "Unapply from=%s, to=%s", from.toPrettyString(), to.toPrettyString());
-
     assert(from.height > to.height);
     // exclude 'to' by adding 1
     Chain<ProtectedIndex> chain(to.height + 1, &from);
     assert(chain.first());
     assert(chain.first()->pprev == &to);
+
+    VBK_LOG_DEBUG("Unapply %d blocks from=%s, to=%s",
+                  chain.blocksCount(),
+                  from.toPrettyString(),
+                  to.toPrettyString());
 
     std::for_each(
         chain.rbegin(), chain.rend(), [&](const ProtectedIndex* current) {
@@ -84,15 +86,16 @@ struct PopStateMachine {
       return true;
     }
 
-    VBK_LOG_DEBUG("Apply commands from=%s, to=%s",
-                  from.toPrettyString(),
-                  to.toPrettyString());
-
     assert(from.height < to.height);
     // exclude 'from' by adding 1
     Chain<ProtectedIndex> chain(from.height + 1, &to);
     assert(chain.first());
     assert(chain.first()->pprev == &from);
+
+    VBK_LOG_DEBUG("Applying %d blocks from=%s, to=%s",
+                  chain.blocksCount(),
+                  from.toPrettyString(),
+                  to.toPrettyString());
 
     for (auto* index : chain) {
       if (!index->isValid() || !applyBlock(*index, state)) {

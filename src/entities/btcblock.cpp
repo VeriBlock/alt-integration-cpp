@@ -62,3 +62,15 @@ std::vector<uint8_t> BtcBlock::toRaw() const {
   this->toRaw(stream);
   return stream.data();
 }
+
+std::string BtcBlock::toPrettyString() const {
+  return fmt::sprintf(
+      "BtcBlock{version=%lu, prev=%s, merkleRoot=%s, timestamp=%lu, "
+      "bits=%lu, nonce=%lu}",
+      version,
+      previousBlock.toHex(),
+      merkleRoot.toHex(),
+      timestamp,
+      bits,
+      nonce);
+}

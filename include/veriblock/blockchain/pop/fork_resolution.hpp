@@ -258,7 +258,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
   assert(!chainA.empty());
   assert(!chainB.empty());
-  VBK_LOG_INFO(
+  VBK_LOG_DEBUG(
       "Comparing POP scores of chains A(first=%d, tip=%d) "
       "and B(first=%d, tip=%d)",
       a.firstKeystone(),
@@ -327,13 +327,13 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
     if (publicationViolatesFinality(
             earliestPublicationA, earliestPublicationB, config)) {
-      VBK_LOG_INFO("Chain A is outside finality");
+      VBK_LOG_DEBUG("Chain A is outside finality");
       aOutsideFinality = true;
     }
 
     if (publicationViolatesFinality(
             earliestPublicationB, earliestPublicationA, config)) {
-      VBK_LOG_INFO("Chain B is outside finality");
+      VBK_LOG_DEBUG("Chain B is outside finality");
       bOutsideFinality = true;
     }
 
@@ -419,7 +419,8 @@ struct PopAwareForkResolutionComparator {
     auto bestTip = currentBest.tip();
     assert(bestTip);
 
-    VBK_LOG_INFO("Doing POP fork resolution. Best=%s, Candidate=%s",
+    VBK_LOG_INFO("Doing POP fork resolution in %s. Best=%s, Candidate=%s",
+                 protected_block_t::name(),
                  bestTip->toPrettyString(),
                  indexNew.toPrettyString());
     if (*bestTip == indexNew) {
@@ -459,9 +460,10 @@ struct PopAwareForkResolutionComparator {
         isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
     if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
       // chans are equal in terms of POP
-      VBK_LOG_INFO("Chains crossed keystone boundary: A=%s B=%s",
-                   (AcrossedKeystoneBoundary ? "true" : "false"),
-                   (BcrossedKeystoneBoundary ? "true" : "false"));
+      VBK_LOG_INFO(
+          "Chains crossed keystone boundary: A=%s B=%s, chains are equal",
+          (AcrossedKeystoneBoundary ? "true" : "false"),
+          (BcrossedKeystoneBoundary ? "true" : "false"));
       return 0;
     }
 

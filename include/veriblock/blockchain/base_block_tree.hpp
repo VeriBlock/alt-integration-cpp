@@ -63,8 +63,6 @@ struct BaseBlockTree {
   }
 
   void removeSubtree(index_t& toRemove, bool shouldDetermineBestChain = true) {
-    VBK_LOG_DEBUG("Removing subtree %s", toRemove.toPrettyString());
-
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
     if (!prev) {

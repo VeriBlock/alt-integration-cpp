@@ -78,3 +78,19 @@ std::vector<uint8_t> VbkBlock::toRaw() const {
   toRaw(stream);
   return stream.data();
 }
+
+std::string VbkBlock::toPrettyString() const {
+  return fmt::sprintf(
+      "VbkBlock{height=%ld, version=%d, prev=%s, ks1=%s, "
+      "ks2=%s, mroot=%s, timestamp=%ld, "
+      "diff=%ld, nonce=%ld}",
+      height,
+      version,
+      previousBlock.toHex(),
+      previousKeystone.toHex(),
+      secondPreviousKeystone.toHex(),
+      merkleRoot.toHex(),
+      timestamp,
+      difficulty,
+      nonce);
+}
