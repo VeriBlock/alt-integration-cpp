@@ -30,6 +30,7 @@ BtcBlock BtcBlock::fromVbkEncoding(ReadStream& stream) {
 }
 
 void BtcBlock::toRaw(WriteStream& stream) const {
+  stream.reserve(80); // BTC block size
   stream.writeLE<uint32_t>(version);
   stream.write(previousBlock.reverse());
   stream.write(merkleRoot.reverse());

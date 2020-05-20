@@ -21,6 +21,8 @@ class WriteStream {
 
   explicit WriteStream(size_t size);
 
+  void reserve(size_t size) { m_data.reserve(size); }
+
   void write(const void *buf, size_t size);
 
   template <typename T,

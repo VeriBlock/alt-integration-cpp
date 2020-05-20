@@ -35,6 +35,7 @@ VbkBlock VbkBlock::fromVbkEncoding(ReadStream& stream) {
 }
 
 void VbkBlock::toRaw(WriteStream& stream) const {
+  stream.reserve(64);  // VBK block size
   stream.writeBE<int32_t>(height);
   stream.writeBE<int16_t>(version);
   stream.write(previousBlock);
