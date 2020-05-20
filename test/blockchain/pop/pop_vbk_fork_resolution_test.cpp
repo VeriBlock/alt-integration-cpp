@@ -170,7 +170,8 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
       popminer.getBtcParams().getGenesisBlock().getHash());
 
   auto vbktip1 = popminer.vbk().getBestChain().tip();
-  ASSERT_THROW(popminer.mineVbkBlocks(*vbkBlockTip2, 1), std::domain_error);
+  // should not throw, as we removed call to 'invalidateSubtree'
+  ASSERT_NO_THROW(popminer.mineVbkBlocks(*vbkBlockTip2, 1));
   auto vbktip3 = popminer.vbk().getBestChain().tip();
 
   ASSERT_EQ(*vbktip1, *vbktip3) << "tip has been changed wrongly";
