@@ -11,10 +11,10 @@
 #include <stdexcept>
 #include <vector>
 
-#include "consts.hpp"
-#include "slice.hpp"
 #include "checks.hpp"
+#include "consts.hpp"
 #include "read_stream.hpp"
+#include "slice.hpp"
 #include "write_stream.hpp"
 
 /**
@@ -208,6 +208,12 @@ std::vector<T> readArrayOf(ReadStream& stream,
 
   return items;
 }
+
+std::string readString(ReadStream& stream);
+
+void writeDouble(WriteStream& stream, const double& val);
+
+double readDouble(ReadStream& stream);
 
 }  // namespace altintegration
 

@@ -16,4 +16,5 @@ add_library(entities OBJECT
         altblock.cpp
         payloads.cpp
         popdata.cpp
+        test_case_entity.cpp
         )

@@ -13,6 +13,8 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/stateless_validation.hpp>
 
+#include "veriblock/serde.hpp"
+
 namespace altintegration {
 struct Config {
   template <typename Block, typename ChainParams>
@@ -43,6 +45,39 @@ struct Config {
 
       return b;
     }
+
+    static Bootstrap<Block, ChainParams> fromRaw(ReadStream& stream) {
+      Bootstrap<Block, ChainParams> bootstrap;
+      bootstrap.startHeight = stream.readBE<int32_t>();
+      bootstrap.blocks =
+          readArrayOf<Block>(stream,
+                             0,
+                             MAX_CONTEXT_COUNT,
+                             (Block(*)(ReadStream&))Block::fromVbkEncoding);
+      return bootstrap;
+    }
+
+    static Bootstrap<Block, ChainParams> fromRaw(
+        const std::vector<uint8_t>& bytes) {
+      ReadStream stream(bytes);
+      return fromRaw(stream);
+    }
+
+    std::vector<uint8_t> toRaw() const {
+      WriteStream stream;
+      toRaw(stream);
+      return stream.data();
+    }
+
+    void toRaw(WriteStream& stream) const {
+      stream.writeBE<int32_t>(startHeight);
+      writeSingleBEValue(stream, blocks.size());
+      for (const auto& b : blocks) {
+        b.toVbkEncoding(stream);
+      }
+
+      this->params->toRaw(stream);
+    }
   };
 
   std::shared_ptr<AltChainParams> alt;
@@ -52,69 +87,24 @@ struct Config {
   //! helper, which converts array of hexstrings (blocks) into "Bootstrap" type
   void setBTC(int32_t start,
               const std::vector<std::string>& hexblocks,
-              std::shared_ptr<BtcChainParams> params) {
-    this->btc = decltype(btc)::create(start, hexblocks, std::move(params));
-  }
+              std::shared_ptr<BtcChainParams> params);
 
   //! helper, which converts array of hexstrings (blocks) into "Bootstrap" type
   void setVBK(int32_t start,
               const std::vector<std::string>& hexblocks,
-              std::shared_ptr<VbkChainParams> params) {
-    this->vbk = decltype(vbk)::create(start, hexblocks, std::move(params));
-  }
+              std::shared_ptr<VbkChainParams> params);
 
   //! small helper to check whether config is valid
   //! @throws std::invalid_argument with a message, if something is wrong.
-  void validate() const {
-    if (!alt) {
-      throw std::invalid_argument("Config: altchain == nullptr");
-    }
+  void validate() const;
 
-    if (!btc.params) {
-      throw std::invalid_argument("Config: btc params == nullptr");
-    }
+  static Config fromRaw(ReadStream& stream);
 
-    if (!vbk.params) {
-      throw std::invalid_argument("Config: vbk params == nullptr");
-    }
+  static Config fromRaw(const std::vector<uint8_t>& bytes);
 
-    ValidationState state;
-    if (!vbk.blocks.empty()) {
-      if (vbk.blocks.size() < vbk.params->numBlocksForBootstrap()) {
-        throw std::invalid_argument(
-            "Config: you have to specify at least " +
-            std::to_string(vbk.params->numBlocksForBootstrap()) +
-            " VBK blocks to bootstrap.");
-      }
+  std::vector<uint8_t> toRaw() const;
 
-      if (!checkVbkBlocks(vbk.blocks, state, *vbk.params)) {
-        throw std::invalid_argument(
-            "Config: VBK blocks are invalid: " + state.GetPath() + ", " +
-            state.GetDebugMessage());
-      }
-
-      if (vbk.startHeight != vbk.blocks[0].height) {
-        throw std::invalid_argument(
-            "Config: vbk startHeight does not match height of first VBK "
-            "bootstrap block");
-      }
-    }
-
-    if (!btc.blocks.empty()) {
-      if (btc.blocks.size() < btc.params->numBlocksForBootstrap()) {
-        throw std::invalid_argument(
-            "Config: you have to specify at least " +
-            std::to_string(btc.params->numBlocksForBootstrap()) +
-            " BTC blocks to bootstrap.");
-      }
-
-      if (!checkBtcBlocks(btc.blocks, state, *btc.params)) {
-        throw std::invalid_argument(
-            "Config: BTC blocks are invalid: " + state.GetPath() + ", " +
-            state.GetDebugMessage());
-      }
-    }
-  }
+  void toRaw(WriteStream& stream) const;
 };
 
 }  // namespace altintegration
