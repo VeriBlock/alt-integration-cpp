@@ -46,8 +46,6 @@ void PopRewardsParams::toRaw(WriteStream& stream) const {
   writeDouble(stream, this->maxScoreThresholdKeystone());
 
   stream.writeBE<uint32_t>(this->difficultyAveragingInterval());
-  stream.writeBE<uint32_t>(this->rewardSettlementInterval());
-
   writeSingleBEValue(stream, this->relativeScoreLookupTable().size());
   for (const auto& el : this->relativeScoreLookupTable()) {
     writeDouble(stream, el);
@@ -77,7 +75,6 @@ PopRewardsParamsSerializable PopRewardsParamsSerializable::fromRaw(
   param.maxScoreThresholdNormal_ = readDouble(stream);
   param.maxScoreThresholdKeystone_ = readDouble(stream);
   param.difficultyAveragingInterval_ = stream.readBE<uint32_t>();
-  param.rewardSettlementInterval_ = stream.readBE<uint32_t>();
 
   param.lookupTable_ =
       readArrayOf<double>(stream, 0, MAX_CONTEXT_COUNT, readDouble);

@@ -107,9 +107,7 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
   ASSERT_TRUE(alttree.setState(containing.hash, state));
 
   mineAltBlocksWithTree(
-      alttree,
-      altparam.getRewardParams().rewardSettlementInterval() - 2,
-      chain);
+      alttree, altparam.getEndorsementSettlementInterval() - 2, chain);
 
   payout = alttree.getPopPayout(chain.back().getHash(), state);
   ASSERT_FALSE(payout.empty());
@@ -148,9 +146,7 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
 
   state = ValidationState();
   mineAltBlocksWithTree(
-      alttree,
-      altparam.getRewardParams().rewardSettlementInterval() - 3,
-      chain);
+      alttree, altparam.getEndorsementSettlementInterval() - 3, chain);
 
   payout = alttree.getPopPayout(chain.back().getHash(), state);
   ASSERT_EQ(payout.size(), 2);
@@ -170,7 +166,7 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
 TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
   for (size_t i = 0;
-       i < (altparam.getRewardParams().rewardSettlementInterval() + 102);
+       i < ((size_t)altparam.getEndorsementSettlementInterval() + 102);
        i++) {
     auto endorsed = chain.back();
     auto data = generatePublicationData(endorsed);
@@ -190,14 +186,13 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
 
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree, altparam.getRewardParams().rewardSettlementInterval() - 2, chain);
+      alttree, altparam.getEndorsementSettlementInterval() - 2, chain);
 
   // this is a regular payout - each block is endorsed by the next one
   auto payout = alttree.getPopPayout(chain.back().getHash(), state);
-  auto firstBlock =
-      alttree.getBlockIndex(chain.back().getHash())
-          ->getAncestorBlocksBehind(
-              altparam.getRewardParams().rewardSettlementInterval());
+  auto firstBlock = alttree.getBlockIndex(chain.back().getHash())
+                        ->getAncestorBlocksBehind(
+                            altparam.getEndorsementSettlementInterval());
 
   state = ValidationState();
   MockMiner popminer2{};
@@ -207,8 +202,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
 
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  for (size_t i = 0;
-       i < altparam.getRewardParams().rewardSettlementInterval();
+  for (size_t i = 0; i < (size_t)altparam.getEndorsementSettlementInterval();
        i++) {
     auto endorsed = chain2.back();
     auto data = generatePublicationData(endorsed);
@@ -219,7 +213,8 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
     popminer2.mineVbkBlocks(1);
     auto containing = generateNextBlock(chain2.back());
     chain2.push_back(containing);
-    auto payloads = generateAltPayloads2(popminer2,
+    auto payloads =
+        generateAltPayloads2(popminer2,
                              vbktx,
                              containing,
                              endorsed,
@@ -239,7 +234,8 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   popminer2.mineVbkBlocks(1);
   auto containing = generateNextBlock(chain2.back());
   chain2.push_back(containing);
-  auto payloads = generateAltPayloads2(popminer2,
+  auto payloads =
+      generateAltPayloads2(popminer2,
                            vbktx,
                            containing,
                            endorsedBlock,
@@ -250,14 +246,11 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   ASSERT_TRUE(alttree2.setState(containing.hash, state));
 
   mineAltBlocksWithTree(
-      alttree2,
-      altparam.getRewardParams().rewardSettlementInterval() - 2,
-      chain2);
+      alttree2, altparam.getEndorsementSettlementInterval() - 2, chain2);
   auto payout2 = alttree2.getPopPayout(chain2.back().getHash(), state);
-  auto secondBlock =
-      alttree2.getBlockIndex(chain2.back().getHash())
-          ->getAncestorBlocksBehind(
-              altparam.getRewardParams().rewardSettlementInterval());
+  auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
+                         ->getAncestorBlocksBehind(
+                             altparam.getEndorsementSettlementInterval());
 
   // make sure this endorsed block is at the same height as previous
   // endorsed block
@@ -277,10 +270,10 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
  */
 TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
-  
+
   // prepare chain where each block is endorsed by two miners
   for (size_t i = 0;
-       i < altparam.getRewardParams().rewardSettlementInterval() + 1;
+       i < (size_t)altparam.getEndorsementSettlementInterval() + 1;
        i++) {
     auto endorsed = chain.back();
     auto data = generatePublicationData(endorsed);
@@ -315,33 +308,33 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   popminer.mineVbkBlocks(1);
   auto containing1 = generateNextBlock(chain.back());
   chain.push_back(containing1);
-  auto payloads1 =
-      generateAltPayloads(vbktx1, containing1, endorsed1, getLastKnownVbkBlock());
+  auto payloads1 = generateAltPayloads(
+      vbktx1, containing1, endorsed1, getLastKnownVbkBlock());
   ASSERT_TRUE(alttree.acceptBlock(containing1, state));
   ASSERT_TRUE(alttree.addPayloads(containing1, {payloads1}, state));
   ASSERT_TRUE(alttree.setState(containing1.hash, state));
 
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree, altparam.getRewardParams().rewardSettlementInterval() - 2, chain);
+      alttree, altparam.getEndorsementSettlementInterval() - 2, chain);
 
   // each block is endorsed by the next one but we have higher difficulty
   // since before each block was endorsed by two miners
   auto payout = alttree.getPopPayout(chain.back().getHash(), state);
-  auto firstBlock =
-      alttree.getBlockIndex(chain.back().getHash())
-          ->getAncestorBlocksBehind(
-              altparam.getRewardParams().rewardSettlementInterval());
+  auto firstBlock = alttree.getBlockIndex(chain.back().getHash())
+                        ->getAncestorBlocksBehind(
+                            altparam.getEndorsementSettlementInterval());
 
   state = ValidationState();
   MockMiner popminer2{};
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam);
-  EXPECT_TRUE(alttree2.bootstrap(state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
+  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
+  EXPECT_TRUE(alttree2.bootstrap(state));
 
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  for (size_t i = 0; i < altparam.getRewardParams().rewardSettlementInterval() + 2;
+  for (size_t i = 0;
+       i < (size_t)altparam.getEndorsementSettlementInterval() + 2;
        i++) {
     auto endorsed = chain2.back();
     auto data = generatePublicationData(endorsed);
@@ -365,15 +358,12 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
 
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree2,
-      altparam.getRewardParams().rewardSettlementInterval() - 2,
-      chain2);
+      alttree2, altparam.getEndorsementSettlementInterval() - 2, chain2);
 
   auto payout2 = alttree2.getPopPayout(chain2.back().getHash(), state);
-  auto secondBlock =
-      alttree2.getBlockIndex(chain2.back().getHash())
-          ->getAncestorBlocksBehind(
-              altparam.getRewardParams().rewardSettlementInterval());
+  auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
+                         ->getAncestorBlocksBehind(
+                             altparam.getEndorsementSettlementInterval());
 
   // make sure this endorsed block is at the same height as previous
   // endorsed block

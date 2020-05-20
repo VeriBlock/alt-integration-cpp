@@ -167,8 +167,9 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
     return {};
   }
 
-  auto* endorsedBlock = index->getAncestorBlocksBehind(
-      alt_config_->getRewardParams().rewardSettlementInterval());
+  auto* endorsedBlock =
+      index->getAncestorBlocksBehind(
+      alt_config_->getEndorsementSettlementInterval());
   if (endorsedBlock == nullptr) {
     state.Error("Not enough blocks to get the endorsed block");
     return {};

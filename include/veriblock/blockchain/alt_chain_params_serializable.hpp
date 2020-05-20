@@ -59,10 +59,6 @@ struct PopRewardsParamsSerializable : public PopRewardsParams {
     return difficultyAveragingInterval_;
   }
 
-  uint32_t rewardSettlementInterval() const noexcept override {
-    return rewardSettlementInterval_;
-  }
-
   const PopRewardsCurveParams& getCurveParams() const noexcept override {
     return *curveParams;
   }
@@ -85,7 +81,6 @@ struct PopRewardsParamsSerializable : public PopRewardsParams {
   double maxScoreThresholdNormal_;
   double maxScoreThresholdKeystone_;
   uint32_t difficultyAveragingInterval_;
-  uint32_t rewardSettlementInterval_;
   std::vector<double> lookupTable_;
 };
 

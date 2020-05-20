@@ -187,11 +187,20 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     (void)ret;
   }
 
+  // TODO: once duplicates of VTBs are removed, remove duplicate checks
+  std::unordered_set<uint256> existing;
+  for (auto& group : index->commands) {
+    existing.insert(group.id);
+  }
+
   for (const auto& p : payloads) {
-    index->commands.emplace_back();
-    auto& g = index->commands.back();
-    g.id = p.getId();
-    payloadsToCommands(p, g.commands);
+    // if payloads being added are UNIQUE
+    if (existing.insert(p.getId()).second) {
+      index->commands.emplace_back();
+      auto& g = index->commands.back();
+      g.id = p.getId();
+      payloadsToCommands(p, g.commands);
+    }
   }
 
   // find all affected tips and do a fork resolution
