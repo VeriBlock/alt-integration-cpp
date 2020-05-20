@@ -117,8 +117,9 @@ struct AltChainParams {
     return forkResolutionLookUpTable_;
   }
 
-  virtual int32_t getEndorsementSettlementInterval() const noexcept {
-    return 500;
+  /// endorsement validity window
+  virtual int32_t getPopPayoutInterval() const noexcept {
+    return 50;
   }
 
   /// The maximum allowed number of PoP data in a block
