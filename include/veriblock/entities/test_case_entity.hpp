@@ -24,8 +24,7 @@ struct TestCase {
       std::pair<AltBlock, std::vector<AltPayloads>>;
 
   std::vector<alt_block_with_payloads_t> alt_tree;
-  Config::Bootstrap<BtcBlock, BtcChainParams> btc;
-  Config::Bootstrap<VbkBlock, VbkChainParams> vbk;
+  Config config;
 
   static TestCase fromRaw(ReadStream& stream);
 

@@ -128,4 +128,44 @@ TEST(Config, deserialization_test) {
             config.alt->getRewardParams().getCurveParams().slopeNormal());
   EXPECT_EQ(deserialized.alt->getRewardParams().getCurveParams().startOfSlope(),
             config.alt->getRewardParams().getCurveParams().startOfSlope());
+
+  // check btc config
+  EXPECT_EQ(deserialized.btc.params->getAllowMinDifficultyBlocks(),
+            config.btc.params->getAllowMinDifficultyBlocks());
+  EXPECT_EQ(deserialized.btc.params->getDifficultyAdjustmentInterval(),
+            config.btc.params->getDifficultyAdjustmentInterval());
+  EXPECT_EQ(deserialized.btc.params->getGenesisBlock(),
+            config.btc.params->getGenesisBlock());
+  EXPECT_EQ(deserialized.btc.params->getPowLimit(),
+            config.btc.params->getPowLimit());
+  EXPECT_EQ(deserialized.btc.params->getPowNoRetargeting(),
+            config.btc.params->getPowNoRetargeting());
+  EXPECT_EQ(deserialized.btc.params->getPowTargetSpacing(),
+            config.btc.params->getPowTargetSpacing());
+  EXPECT_EQ(deserialized.btc.params->getPowTargetTimespan(),
+            config.btc.params->getPowTargetTimespan());
+
+  // check vbk config
+  EXPECT_EQ(deserialized.vbk.params->getEndorsementSettlementInterval(),
+            config.vbk.params->getEndorsementSettlementInterval());
+  EXPECT_EQ(deserialized.vbk.params->getFinalityDelay(),
+            config.vbk.params->getFinalityDelay());
+  EXPECT_EQ(deserialized.vbk.params->getForkResolutionLookUpTable(),
+            config.vbk.params->getForkResolutionLookUpTable());
+  EXPECT_EQ(deserialized.vbk.params->getGenesisBlock(),
+            config.vbk.params->getGenesisBlock());
+  EXPECT_EQ(deserialized.vbk.params->getKeystoneInterval(),
+            config.vbk.params->getKeystoneInterval());
+  EXPECT_EQ(deserialized.vbk.params->getMinimumDifficulty(),
+            config.vbk.params->getMinimumDifficulty());
+  EXPECT_EQ(deserialized.vbk.params->getPowNoRetargeting(),
+            config.vbk.params->getPowNoRetargeting());
+  EXPECT_EQ(deserialized.vbk.params->getRetargetPeriod(),
+            config.vbk.params->getRetargetPeriod());
+  EXPECT_EQ(deserialized.vbk.params->getTargetBlockTime(),
+            config.vbk.params->getTargetBlockTime());
+  EXPECT_EQ(deserialized.vbk.params->getTransactionMagicByte().hasValue,
+            config.vbk.params->getTransactionMagicByte().hasValue);
+  EXPECT_EQ(deserialized.vbk.params->getTransactionMagicByte().value,
+            config.vbk.params->getTransactionMagicByte().value);
 }
