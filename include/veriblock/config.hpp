@@ -55,6 +55,7 @@ struct Config {
                              0,
                              MAX_CONTEXT_COUNT,
                              (Block(*)(ReadStream&))Block::fromVbkEncoding);
+      return bootstrap;
     }
 
     static Bootstrap<Block, ChainParams> fromRaw(
@@ -75,6 +76,8 @@ struct Config {
       for (const auto& b : blocks) {
         b.toVbkEncoding(stream);
       }
+
+      this->params->toRaw(stream);
     }
   };
 

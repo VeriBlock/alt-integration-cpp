@@ -86,7 +86,10 @@ struct PopRewardsParams {
   std::shared_ptr<PopRewardsCurveParams> curveParams =
       std::make_shared<PopRewardsCurveParams>();
 
-  std::vector<double> roundRatios_{0.97, 1.03, 1.07, 3.00};
+  std::vector<double> roundRatios_{std::atof("0.97"),
+                                   std::atof("1.03"),
+                                   std::atof("1.07"),
+                                   std::atof("3.00")};
 
   std::vector<double> lookupTable_{
       1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,

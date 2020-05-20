@@ -9,6 +9,7 @@
 #include <cassert>
 #include <memory>
 #include <veriblock/entities/vbkblock.hpp>
+#include <veriblock/serde.hpp>
 #include <veriblock/uint.hpp>
 
 namespace altintegration {
@@ -22,6 +23,14 @@ struct VbkNetworkType {
   bool hasValue = false;
   //! otherwise, use value for network ID
   uint8_t value = 0;
+
+  std::vector<uint8_t> toRaw() const;
+
+  void toRaw(WriteStream& stream) const;
+
+  static VbkNetworkType fromRaw(const std::vector<uint8_t>& bytes);
+
+  static VbkNetworkType fromRaw(ReadStream& stream);
 };
 
 /**
@@ -42,13 +51,22 @@ struct VbkChainParams {
 
   virtual uint32_t getFinalityDelay() const noexcept { return 11; }
 
-  virtual std::vector<uint32_t> getForkResolutionLookUpTable() const noexcept {
-    return {100, 100, 95, 89, 80, 69, 56, 40, 21};
+  virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
+      const noexcept {
+    return forkResolutionLookUpTable_;
   }
 
   virtual int32_t getEndorsementSettlementInterval() const noexcept {
     return 400;
   }
+
+  std::vector<uint8_t> toRaw() const;
+
+  void toRaw(WriteStream& stream) const;
+
+ private:
+  std::vector<uint32_t> forkResolutionLookUpTable_{
+      100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
 
 /**
