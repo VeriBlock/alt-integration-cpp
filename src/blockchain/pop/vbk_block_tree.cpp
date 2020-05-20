@@ -99,7 +99,7 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 
 void VbkBlockTree::removePayloads(const block_t& block,
                                   const std::vector<payloads_t>& payloads) {
-  VBK_LOG_INFO(
+  VBK_LOG_DEBUG(
       "remove %d payloads from %s", payloads.size(), block.toPrettyString());
   auto hash = block.getHash();
   auto* index = VbkTree::getBlockIndex(hash);

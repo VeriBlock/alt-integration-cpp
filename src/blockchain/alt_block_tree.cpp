@@ -64,10 +64,10 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
 bool AltTree::addPayloads(index_t& index,
                           const std::vector<payloads_t>& payloads,
                           ValidationState& state) {
-  VBK_LOG_DEBUG("%s add %d payloads to block %s",
-                block_t::name(),
-                payloads.size(),
-                index.toPrettyString());
+  VBK_LOG_INFO("%s add %d payloads to block %s",
+               block_t::name(),
+               payloads.size(),
+               index.toPrettyString());
   if (!index.pprev) {
     return state.Invalid(block_t::name() + "-bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
