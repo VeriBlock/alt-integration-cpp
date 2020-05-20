@@ -455,9 +455,9 @@ struct PopAwareForkResolutionComparator {
     }
 
     bool AcrossedKeystoneBoundary =
-        isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki);
-    bool BcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
+    bool BcrossedKeystoneBoundary =
+        isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki);
     if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
       // chans are equal in terms of POP
       VBK_LOG_INFO(
