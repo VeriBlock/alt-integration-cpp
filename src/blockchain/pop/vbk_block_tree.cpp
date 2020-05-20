@@ -131,11 +131,6 @@ void VbkBlockTree::removePayloads(const block_t& block,
                      [&](const CommandGroup& g) {
                        for (const auto& p : payloads) {
                          if (g == p.getId()) {
-                           if (!g.valid) {
-                             base::revalidateSubtree(
-                                 *index, BlockStatus::BLOCK_FAILED_POP, false);
-                           }
-
                            return true;
                          }
                        }
