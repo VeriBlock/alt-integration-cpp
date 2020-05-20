@@ -39,20 +39,7 @@ struct VbkBlock {
   int32_t difficulty{};
   int32_t nonce{};
 
-  std::string toPrettyString() const {
-    return fmt::sprintf(
-        "VbkBlock{height=%ld, version=%d, prev=%s, prevKeystone=%s, secondPrevKeystone=%s, merkleRoot=%s, timestamp=%ld, "
-        "difficulty=%ld, nonce=%ld}",
-        height,
-        version,
-        previousBlock.toHex(),
-        previousKeystone.toHex(),
-        secondPreviousKeystone.toHex(),
-        merkleRoot.toHex(),
-        timestamp,
-        difficulty,
-        nonce);
-  }
+  std::string toPrettyString() const;
 
   static VbkBlock fromHex(const std::string& hex);
 

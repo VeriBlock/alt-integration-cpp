@@ -10,7 +10,7 @@
 #include <vector>
 #include <veriblock/altintegration.hpp>
 #include <veriblock/config.hpp>
-#include <veriblock/mock_miner.hpp>
+#include <veriblock/logger.hpp>
 
 using namespace altintegration;
 
@@ -59,6 +59,9 @@ struct Scenario0 : public ::testing::Test {
       "ffff7f1d4b107a00");
 
   Scenario0() {
+    SetLogger<FmtLogger>();
+    GetLogger().level = LogLevel::info;
+
     config = std::make_shared<Config>();
     config->alt = std::make_shared<AltChainParamsRegTest>(chainId);
 

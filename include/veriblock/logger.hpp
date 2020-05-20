@@ -13,7 +13,7 @@
 
 namespace altintegration {
 
-enum class LogLevel { off = 0, debug = 1, info = 2, warn = 3, error = 4 };
+enum class LogLevel { debug, info, warn, error, off };
 
 struct Logger {
   virtual ~Logger() = default;
@@ -46,7 +46,7 @@ LogLevel StringToLevel(const std::string&);
 
 #define VBK_LOG(lvl, format, ...)                                  \
   do {                                                             \
-    if (GetLogger().level >= lvl) {                                \
+    if (GetLogger().level <= lvl) {                                \
       GetLogger().log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
     }                                                              \
   } while (0)

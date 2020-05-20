@@ -64,10 +64,10 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
 bool AltTree::addPayloads(index_t& index,
                           const std::vector<payloads_t>& payloads,
                           ValidationState& state) {
-  VBK_LOG_DEBUG("%s add %d payloads to block %s",
-                block_t::name(),
-                payloads.size(),
-                index.toPrettyString());
+  VBK_LOG_INFO("%s add %d payloads to block %s",
+               block_t::name(),
+               payloads.size(),
+               index.toPrettyString());
   if (!index.pprev) {
     return state.Invalid(block_t::name() + "-bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
@@ -416,7 +416,14 @@ bool AltTree::setTip(AltTree::index_t& to,
   // edge case: if changeTip is false, then new block arrived on top of
   // current active chain, and this block has invalid commands
   if (changeTip) {
-    VBK_LOG_INFO("SetTip=%s", to.toPrettyString());
+    VBK_LOG_INFO("ALT tip=%s, VBK tip=%s, BTC tip=%s",
+                 to.toPrettyString(),
+                 (vbk().getBestChain().tip()
+                      ? vbk().getBestChain().tip()->toPrettyString()
+                      : "<empty>"),
+                 (btc().getBestChain().tip()
+                      ? btc().getBestChain().tip()->toPrettyString()
+                      : "<empty>"));
     activeChain_.setTip(&to);
   }
 
