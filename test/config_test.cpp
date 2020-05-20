@@ -116,8 +116,6 @@ TEST(Config, deserialization_test) {
             config.alt->getRewardParams().payoutRounds());
   EXPECT_EQ(deserialized.alt->getRewardParams().relativeScoreLookupTable(),
             config.alt->getRewardParams().relativeScoreLookupTable());
-  EXPECT_EQ(deserialized.alt->getRewardParams().rewardSettlementInterval(),
-            config.alt->getRewardParams().rewardSettlementInterval());
   EXPECT_EQ(deserialized.alt->getRewardParams().roundRatios(),
             config.alt->getRewardParams().roundRatios());
 
