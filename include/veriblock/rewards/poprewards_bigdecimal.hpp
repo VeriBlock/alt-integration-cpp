@@ -52,7 +52,7 @@ struct PopRewardsBigDecimal {
   uint64_t getDecimalFraction() const {
     ArithUint256 integerFraction = getIntegerFraction();
     integerFraction *= decimals;
-    return ((value - integerFraction) * decimals).getLow64();
+    return (value - integerFraction).getLow64();
   }
 
   friend inline const PopRewardsBigDecimal operator+(
