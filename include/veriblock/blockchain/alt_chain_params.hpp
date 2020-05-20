@@ -6,10 +6,12 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_CHAIN_PARAMS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_CHAIN_PARAMS_HPP_
 
+#include <string>
 #include <vector>
 
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/entities/altblock.hpp"
+#include "veriblock/serde.hpp"
 
 namespace altintegration {
 
@@ -25,6 +27,10 @@ struct PopRewardsCurveParams {
 
   // slope for keystone rounds
   virtual double slopeKeystone() const noexcept { return 0.21325; }
+
+  std::vector<uint8_t> toRaw() const;
+
+  void toRaw(WriteStream& stream) const;
 };
 
 struct PopRewardsParams {
@@ -72,11 +78,18 @@ struct PopRewardsParams {
     return lookupTable_;
   }
 
+  std::vector<uint8_t> toRaw() const;
+
+  void toRaw(WriteStream& stream) const;
+
  protected:
   std::shared_ptr<PopRewardsCurveParams> curveParams =
       std::make_shared<PopRewardsCurveParams>();
 
-  std::vector<double> roundRatios_{0.97, 1.03, 1.07, 3.00};
+  std::vector<double> roundRatios_{std::atof("0.97"),
+                                   std::atof("1.03"),
+                                   std::atof("1.07"),
+                                   std::atof("3.00")};
 
   std::vector<double> lookupTable_{
       1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
@@ -98,9 +111,10 @@ struct AltChainParams {
   ///! number of blocks in VBK for finalization
   virtual uint32_t getFinalityDelay() const noexcept { return 100; }
 
-  virtual std::vector<uint32_t> getForkResolutionLookUpTable() const noexcept {
+  virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
+      const noexcept {
     // TODO(warchant): this should be recalculated. see paper.
-    return {100, 100, 95, 89, 80, 69, 56, 40, 21};
+    return forkResolutionLookUpTable_;
   }
 
   virtual int32_t getEndorsementSettlementInterval() const noexcept {
@@ -128,9 +142,16 @@ struct AltChainParams {
 
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
- private:
+  std::vector<uint8_t> toRaw() const;
+
+  void toRaw(WriteStream& stream) const;
+
+ protected:
   std::shared_ptr<PopRewardsParams> popRewardsParams =
       std::make_shared<PopRewardsParams>();
+
+  std::vector<uint32_t> forkResolutionLookUpTable_{
+      100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
 
 }  // namespace altintegration

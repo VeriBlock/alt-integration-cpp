@@ -25,6 +25,7 @@ set(SOURCES
         signutil.cpp
         mempool.cpp
         mock_miner.cpp
+        config.cpp
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:blockchain>
         $<TARGET_OBJECTS:poprewards>

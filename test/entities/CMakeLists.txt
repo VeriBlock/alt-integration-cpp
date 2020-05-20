@@ -15,4 +15,5 @@ addtest(entities_serde_test
         merkle_tree_test.cpp
         popdata_test.cpp
         prettyprint_test.cpp
+        test_case_entity_test.cpp
         )

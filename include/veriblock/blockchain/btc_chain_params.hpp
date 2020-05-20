@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <veriblock/entities/btcblock.hpp>
+#include <veriblock/serde.hpp>
 #include <veriblock/strutil.hpp>
 #include <veriblock/uint.hpp>
 #include <veriblock/validation_state.hpp>
@@ -27,14 +28,15 @@ struct BtcChainParams {
   }
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
   virtual std::string networkName() const noexcept = 0;
+
+  std::vector<uint8_t> toRaw() const;
+  void toRaw(WriteStream& stream) const;
 };
 
 struct BtcChainParamsMain : public BtcChainParams {
   ~BtcChainParamsMain() override = default;
 
-  std::string networkName() const noexcept override {
-    return "main";
-  }
+  std::string networkName() const noexcept override { return "main"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
     return getDifficultyAdjustmentInterval();
@@ -71,9 +73,7 @@ struct BtcChainParamsMain : public BtcChainParams {
 struct BtcChainParamsTest : public BtcChainParams {
   ~BtcChainParamsTest() override = default;
 
-  std::string networkName() const noexcept override {
-    return "test";
-  }
+  std::string networkName() const noexcept override { return "test"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
     return getDifficultyAdjustmentInterval();
@@ -110,9 +110,7 @@ struct BtcChainParamsTest : public BtcChainParams {
 struct BtcChainParamsRegTest : public BtcChainParams {
   ~BtcChainParamsRegTest() override = default;
 
-  std::string networkName() const noexcept override {
-    return "regtest";
-  }
+  std::string networkName() const noexcept override { return "regtest"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
     return getDifficultyAdjustmentInterval();

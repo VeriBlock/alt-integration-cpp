@@ -80,4 +80,27 @@ void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
   stream.writeBE<uint8_t>(networkOrType.typeId);
 }
 
+std::string readString(ReadStream& stream) {
+  const auto count = readSingleBEValue<int32_t>(stream);
+
+  std::string result;
+  result.reserve(count);
+
+  for (int32_t i = 0; i < count; ++i) {
+    result.push_back(stream.readBE<char>());
+  }
+
+  return result;
+}
+
+void writeDouble(WriteStream& stream, const double& val) {
+  uint64_t* temp = reinterpret_cast<uint64_t*>(&const_cast<double&>(val));
+  stream.writeBE<uint64_t>(*temp);
+}
+
+double readDouble(ReadStream& stream) {
+  uint64_t temp = stream.readBE<uint64_t>();
+  return *reinterpret_cast<double*>(&temp);
+}
+
 }  // namespace altintegration
