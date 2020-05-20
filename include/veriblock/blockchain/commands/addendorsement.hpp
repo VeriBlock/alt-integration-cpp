@@ -101,15 +101,10 @@ struct AddEndorsement : public Command {
     }
 
     auto* endorsed = containing->getAncestor(e_->endorsedHeight);
-    if (endorsed) {
+    if (endorsed != nullptr) {
       auto& v = endorsed->endorsedBy;
-      // find last occurrence of e_
-      auto it = std::find(v.rbegin(), v.rend(), e_.get());
-      if (it != v.rend()) {
-        // remove single item
-        auto toRemove = --(it.base());
-        v.erase(toRemove);
-      }
+      // erase all occurrences of e_
+      v.erase(std::remove(v.begin(), v.end(), e_.get()), v.end());
     }
     containing->containingEndorsements.erase(e_->id);
   }
