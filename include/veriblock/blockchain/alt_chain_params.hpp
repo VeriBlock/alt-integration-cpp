@@ -64,9 +64,6 @@ struct PopRewardsParams {
   // collect this amount of blocks BEFORE the block to calculate pop difficulty
   virtual uint32_t difficultyAveragingInterval() const noexcept { return 50; }
 
-  // wait for this number of blocks before calculating and paying pop reward
-  virtual uint32_t rewardSettlementInterval() const noexcept { return 400; }
-
   // getter for reward curve parameters
   virtual const PopRewardsCurveParams& getCurveParams() const noexcept {
     return *curveParams;
@@ -117,8 +114,8 @@ struct AltChainParams {
     return forkResolutionLookUpTable_;
   }
 
-  /// endorsement validity window
-  virtual int32_t getPopPayoutInterval() const noexcept {
+  /// endorsement validity window, pop payout delay
+  virtual int32_t getEndorsementSettlementInterval() const noexcept {
     return 50;
   }
 
