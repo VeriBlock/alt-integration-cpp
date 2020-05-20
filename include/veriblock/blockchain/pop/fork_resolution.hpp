@@ -418,15 +418,15 @@ struct PopAwareForkResolutionComparator {
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
     assert(bestTip);
+    if (currentBest.contains(&indexNew)) {
+      VBK_LOG_INFO("Candidate is in active chain, A remains best");
+      return 1;
+    }
 
     VBK_LOG_INFO("Doing POP fork resolution in %s. Best=%s, Candidate=%s",
                  protected_block_t::name(),
                  bestTip->toPrettyString(),
                  indexNew.toPrettyString());
-    if (*bestTip == indexNew) {
-      VBK_LOG_INFO("Equal");
-      return 0;
-    }
 
     // indexNew is on top of our best tip
     if (indexNew.getAncestor(bestTip->height) == bestTip) {
@@ -455,9 +455,9 @@ struct PopAwareForkResolutionComparator {
     }
 
     bool AcrossedKeystoneBoundary =
-        isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki);
-    bool BcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
+    bool BcrossedKeystoneBoundary =
+        isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki);
     if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
       // chans are equal in terms of POP
       VBK_LOG_INFO(
@@ -487,23 +487,11 @@ struct PopAwareForkResolutionComparator {
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - fork
     // point at keystone, so exclude it during 'apply')
-    for (auto* index : chainB) {
-      if (!index->isValid() || !sm.applyBlock(*index, state)) {
-        // chain A has valid payloads, and chain B has invalid payloads
-        // chain A is better
-
-        // unapply applied subchain
-        sm.unapply(*index, *chainB.first());
-
-        // don't do fork resolution, as it is not gonna improve current chain
-        ed.invalidateSubtree(*index, BLOCK_FAILED_POP, /* do FR= */ false);
-
-        // chain B has been unapplied already
-        // invalid block in chain B has been invalidated already
-        VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
-                     state.toString());
-        return 1;
-      }
+    if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
+      // chain B has been unapplied already
+      VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
+                   state.toString());
+      return 1;
     }
 
     // now tree contains payloads from both chains
