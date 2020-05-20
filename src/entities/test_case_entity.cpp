@@ -30,6 +30,8 @@ TestCase TestCase::fromRaw(ReadStream& stream) {
         return std::make_pair(std::move(block), std::move(payloads_vec));
       });
 
+  result.config = Config::fromRaw(stream);
+
   return result;
 }
 
@@ -48,6 +50,8 @@ void TestCase::toRaw(WriteStream& stream) const {
       p.toVbkEncoding(stream);
     }
   }
+
+  config.toRaw(stream);
 }
 
 }  // namespace altintegration
