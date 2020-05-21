@@ -18,8 +18,8 @@ struct RewardsTestFixture : public ::testing::Test, public PopTestFixture {
   ValidationState state;
 
   RewardsTestFixture() {
-    btctip = popminer.mineBtcBlocks(10);
-    vbktip = popminer.mineVbkBlocks(10);
+    btctip = popminer->mineBtcBlocks(10);
+    vbktip = popminer->mineVbkBlocks(10);
 
     altchain = {altparam.getBootstrapBlock()};
     mineAltBlocks(10, altchain);
@@ -33,7 +33,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 
   // endorse ALT block, at height 10
   AltBlock endorsedBlock = altchain[10];
-  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
   altchain.push_back(containingBlock);

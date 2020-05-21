@@ -32,7 +32,7 @@ struct PopTestFixture {
   AltChainParamsRegTest altparam{};
 
   // miners
-  MockMiner popminer{};
+  std::shared_ptr<MockMiner> popminer;
 
   // trees
   AltTree alttree = AltTree(altparam, vbkparam, btcparam);
@@ -46,6 +46,8 @@ struct PopTestFixture {
     EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.bootstrap(state));
+
+    popminer = std::make_shared<MockMiner>();
   }
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
@@ -94,7 +96,7 @@ struct PopTestFixture {
   }
 
   VbkPopTx generatePopTx(const VbkBlock::hash_t& endorsedBlock) {
-    auto index = popminer.vbk().getBlockIndex(endorsedBlock);
+    auto index = popminer->vbk().getBlockIndex(endorsedBlock);
     if (!index) {
       throw std::logic_error("can't find endorsed block");
     }
@@ -103,9 +105,9 @@ struct PopTestFixture {
   }
 
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
-    auto Btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
-    auto* btcBlockTip = popminer.mineBtcBlocks(1);
-    return popminer.createVbkPopTxEndorsingVbkBlock(
+    auto Btctx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
+    auto* btcBlockTip = popminer->mineBtcBlocks(1);
+    return popminer->createVbkPopTxEndorsingVbkBlock(
         *btcBlockTip->header, Btctx, endorsedBlock, getLastKnownBtcBlock());
   }
 
@@ -175,18 +177,18 @@ struct PopTestFixture {
 
     for (auto i = 0; i < VTBs; i++) {
       auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
-      auto vbkcontaining = popminer.applyVTB(popminer.vbk(), vbkpoptx, state);
-      auto newvtb = popminer.vbkPayloads.at(vbkcontaining.getHash()).back();
+      auto vbkcontaining = popminer->applyVTB(popminer->vbk(), vbkpoptx, state);
+      auto newvtb = popminer->vbkPayloads.at(vbkcontaining.getHash()).back();
       popData.vtbs.push_back(newvtb);
     }
 
     popData.hasAtv = true;
-    popData.atv = popminer.generateATV(transaction, lastVbk, state);
+    popData.atv = popminer->generateATV(transaction, lastVbk, state);
 
     fillVbkContext(popData.vbk_context,
                    lastVbk,
                    popData.atv.containingBlock.getHash(),
-                   popminer.vbk());
+                   popminer->vbk());
 
     AltPayloads alt;
     alt.popData = popData;
@@ -200,7 +202,7 @@ struct PopTestFixture {
                               const AltBlock& containing,
                               int VTBs = 0) {
     auto data = generatePublicationData(endorsed);
-    auto vbktx = popminer.createVbkTxEndorsingAltBlock(data);
+    auto vbktx = popminer->createVbkTxEndorsingAltBlock(data);
     return generateAltPayloads(
         vbktx, containing, endorsed, getLastKnownVbkBlock(), VTBs);
   }
