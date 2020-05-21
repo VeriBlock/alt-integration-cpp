@@ -18,7 +18,6 @@ struct CommandGroup {
   // ATV id or VTB id
   uint256 id;
   storage_t commands;
-  bool valid{true};
 
   // clang-format off
   typename storage_t::iterator begin() { return commands.begin(); }

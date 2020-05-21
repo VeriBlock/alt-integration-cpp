@@ -418,9 +418,9 @@ struct PopAwareForkResolutionComparator {
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
     assert(bestTip);
-    if (currentBest.contains(&indexNew)) {
-      VBK_LOG_INFO("Candidate is in active chain, A remains best");
-      return 1;
+    if (*bestTip == indexNew) {
+      VBK_LOG_INFO("Equal");
+      return 0;
     }
 
     VBK_LOG_INFO("Doing POP fork resolution in %s. Best=%s, Candidate=%s",
@@ -488,6 +488,7 @@ struct PopAwareForkResolutionComparator {
     // apply all payloads from chain B (both chains have same first block - fork
     // point at keystone, so exclude it during 'apply')
     if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
+      // chain A is better
       // chain B has been unapplied already
       VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                    state.toString());

@@ -40,7 +40,6 @@ struct PopStateMachine {
                        index_t::block_t::name(),
                        cmd->toPrettyString(),
                        index.toPrettyString());
-          group.valid = false;
           success = false;
 
           // roll back the slice of the group that has already been executed
