@@ -214,27 +214,8 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 
-  // edge case: connected block is one of 'next' blocks after our current best
-  if (indexNew.getAncestor(currentTip->height) == currentTip) {
-    // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them",
-                  block_t::name(),
-                  indexNew.height - currentTip->height);
-    this->setTip(indexNew, state, false);
-    return;
-  }
-
-  int result = cmp_.comparePopScore(*this, indexNew, state);
-  if (result < 0) {
-    // activeChain in AltTree reflects currently applied POP state.
-    // setState has already been executed
-    bool ret = this->setTip(indexNew, state, true);
-    assert(ret);
-    (void)ret;
-  }
-
-  // for other cases, we don't update pop score of active chain, so it remains
-  // as is, even though there are regular alt blocks on top of current tip.
+  // if tip==nullptr, then update tip.
+  // else - do nothing. AltTree does not (yet) do fork resolution
 }
 
 namespace {
