@@ -39,8 +39,7 @@ struct AddBlock : public Command {
            && "failed to roll back AddBlock: the block does not exist");
 
     if (index->refCounter == 0) {
-      // FIXME: ensure that we aren't removing any blocks besides block_
-      return tree_->removeSubtree(*index);
+      return tree_->removeTip(*index);
     }
 
     --index->refCounter;
