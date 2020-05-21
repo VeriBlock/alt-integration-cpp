@@ -117,6 +117,7 @@ struct AddEndorsement : public Command {
     auto erasedCount = containing->containingEndorsements.erase(e_->id);
     assert(erasedCount == 1
            && "failed to roll back AddEndorsement: the containing block does not contain the endorsement in containingEndorsements");
+    (void)erasedCount;
   }
 
   size_t getId() const override { return e_->id.getLow64(); }
