@@ -75,46 +75,46 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
   std::vector<AltBlock> altchain;
 
   Scenario1() {
-    auto* btcFork = popminer.mineBtcBlocks(50);
-    btcAtip = popminer.mineBtcBlocks(*btcFork, 2);
-    btcBtip = popminer.mineBtcBlocks(*btcFork, 4);
+    auto* btcFork = popminer->mineBtcBlocks(50);
+    btcAtip = popminer->mineBtcBlocks(*btcFork, 2);
+    btcBtip = popminer->mineBtcBlocks(*btcFork, 4);
 
-    auto* vbkFork = popminer.mineVbkBlocks(50);
+    auto* vbkFork = popminer->mineVbkBlocks(50);
     // build up more blocks since POP fork resolution only works after
     // keystone interval has been passed
-    auto* vbkAendorsed = popminer.mineVbkBlocks(*vbkFork, 20);
-    auto* vbkBendorsed = popminer.mineVbkBlocks(*vbkFork, 20);
+    auto* vbkAendorsed = popminer->mineVbkBlocks(*vbkFork, 20);
+    auto* vbkBendorsed = popminer->mineVbkBlocks(*vbkFork, 20);
 
-    auto btctxA = popminer.createBtcTxEndorsingVbkBlock(*vbkAendorsed->header);
-    auto* btcAContaining = popminer.mineBtcBlocks(*btcAtip, 1);
-    btcAtip = popminer.mineBtcBlocks(*btcAContaining, 2);
+    auto btctxA = popminer->createBtcTxEndorsingVbkBlock(*vbkAendorsed->header);
+    auto* btcAContaining = popminer->mineBtcBlocks(*btcAtip, 1);
+    btcAtip = popminer->mineBtcBlocks(*btcAContaining, 2);
 
-    auto btctxB = popminer.createBtcTxEndorsingVbkBlock(*vbkBendorsed->header);
-    auto* btcBContaining = popminer.mineBtcBlocks(*btcBtip, 1);
-    btcBtip = popminer.mineBtcBlocks(*btcBContaining, 2);
+    auto btctxB = popminer->createBtcTxEndorsingVbkBlock(*vbkBendorsed->header);
+    auto* btcBContaining = popminer->mineBtcBlocks(*btcBtip, 1);
+    btcBtip = popminer->mineBtcBlocks(*btcBContaining, 2);
 
     EXPECT_EQ(btcBtip->getHash(),
-              popminer.btc().getBestChain().tip()->getHash());
+              popminer->btc().getBestChain().tip()->getHash());
     EXPECT_EQ(btcAtip->height, 55);
     EXPECT_EQ(btcBtip->height, 57);
 
-    auto vbktxA = popminer.createVbkPopTxEndorsingVbkBlock(
+    auto vbktxA = popminer->createVbkPopTxEndorsingVbkBlock(
         *btcAContaining->header,
         btctxA,
         *vbkAendorsed->header,
-        popminer.getBtcParams().getGenesisBlock().getHash());
-    vbkAtip = popminer.mineVbkBlocks(*vbkAendorsed, 5);
+        popminer->getBtcParams().getGenesisBlock().getHash());
+    vbkAtip = popminer->mineVbkBlocks(*vbkAendorsed, 5);
     EXPECT_EQ(btcAtip->height, 55);
     EXPECT_EQ(btcBtip->height, 57);
 
-    auto vbktxB = popminer.createVbkPopTxEndorsingVbkBlock(
+    auto vbktxB = popminer->createVbkPopTxEndorsingVbkBlock(
         *btcBContaining->header,
         btctxB,
         *vbkBendorsed->header,
-        popminer.getBtcParams().getGenesisBlock().getHash());
+        popminer->getBtcParams().getGenesisBlock().getHash());
     EXPECT_EQ(btcAtip->height, 55);
     EXPECT_EQ(btcBtip->height, 57);
-    vbkBtip = popminer.mineVbkBlocks(*vbkBendorsed, 5);
+    vbkBtip = popminer->mineVbkBlocks(*vbkBendorsed, 5);
     EXPECT_EQ(btcAtip->height, 55);
     EXPECT_EQ(btcBtip->height, 57);
 
@@ -151,7 +151,8 @@ AltPayloads generateAltPayloadsEmpty(const AltBlock& containing,
 TEST_F(Scenario1, scenario_1) {
   // Step 1
   ASSERT_EQ(vbkAtip->height, vbkBtip->height);
-  EXPECT_EQ(vbkBtip->getHash(), popminer.vbk().getBestChain().tip()->getHash());
+  EXPECT_EQ(vbkBtip->getHash(),
+            popminer->vbk().getBestChain().tip()->getHash());
 
   AltBlock endorsedBlock = altchain[90];
   AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
@@ -160,11 +161,11 @@ TEST_F(Scenario1, scenario_1) {
   AltPayloads altPayloadsVBA71 =
       generateAltPayloadsEmpty(containingBlock, endorsedBlock);
 
-  auto vtbsVBA71 = popminer.vbkPayloads[vbkAtip->getAncestor(71)->getHash()];
+  auto vtbsVBA71 = popminer->vbkPayloads[vbkAtip->getAncestor(71)->getHash()];
   fillVbkContext(altPayloadsVBA71.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbsVBA71[0].containingBlock.getHash(),
-                 popminer.vbk());
+                 popminer->vbk());
   altPayloadsVBA71.popData.vtbs = {vtbsVBA71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   ASSERT_TRUE(alttree.addPayloads(
@@ -204,11 +205,11 @@ TEST_F(Scenario1, scenario_1) {
       generateAltPayloadsEmpty(containingBlock, endorsedBlock);
 
   // send VTB_vBc71 (only VTB) in ALT block 102 (in chain A of ALT)
-  auto vtbsVBB71 = popminer.vbkPayloads[vbkBtip->getAncestor(71)->getHash()];
+  auto vtbsVBB71 = popminer->vbkPayloads[vbkBtip->getAncestor(71)->getHash()];
   fillVbkContext(altPayloadsVBB71.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbsVBB71[0].containingBlock.getHash(),
-                 popminer.vbk());
+                 popminer->vbk());
   altPayloadsVBB71.popData.vtbs = {vtbsVBB71[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   ASSERT_TRUE(alttree.addPayloads(

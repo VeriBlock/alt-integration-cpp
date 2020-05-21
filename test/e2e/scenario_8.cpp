@@ -37,11 +37,11 @@ void validityFlagCheck(const BlockIndex<VbkBlock>& blockIndex, bool expected) {
 TEST_F(Scenario8, scenario_8) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
-  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer.vbk().getParams());
+  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   // mine 500 vbk blocks
-  auto* vbkTip =
-      popminer.mineVbkBlocks(vbkparam.getEndorsementSettlementInterval() + 100);
+  auto* vbkTip = popminer->mineVbkBlocks(
+      vbkparam.getEndorsementSettlementInterval() + 100);
 
   // endorse block 490
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
@@ -51,13 +51,13 @@ TEST_F(Scenario8, scenario_8) {
 
   VbkPopTx popTx1 = generatePopTx(*endorsedVbkBlock1->header);
   // remove this popTx from the mempool, so vbk blocks can mine correctly
-  ASSERT_EQ(popminer.vbkmempool.size(), 1);
-  popminer.vbkmempool.erase(popminer.vbkmempool.begin());
+  ASSERT_EQ(popminer->vbkmempool.size(), 1);
+  popminer->vbkmempool.erase(popminer->vbkmempool.begin());
 
   VbkPopTx popTx2 = generatePopTx(*endorsedVbkBlock2->header);
   // remove this popTx from the mempool, so vbk blocks can mine correctly
-  ASSERT_EQ(popminer.vbkmempool.size(), 1);
-  popminer.vbkmempool.erase(popminer.vbkmempool.begin());
+  ASSERT_EQ(popminer->vbkmempool.size(), 1);
+  popminer->vbkmempool.erase(popminer->vbkmempool.begin());
 
   // generate invalid VTB
   // build merkle tree
@@ -67,7 +67,7 @@ TEST_F(Scenario8, scenario_8) {
 
   // create containing block
   auto containingVbkBlock = vbk_miner.createNextBlock(
-      *popminer.vbk().getBestChain().tip(),
+      *popminer->vbk().getBestChain().tip(),
       mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
 
   // Create VTV
@@ -80,7 +80,7 @@ TEST_F(Scenario8, scenario_8) {
   vtb1.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
-      vtb1, state, popminer.vbk().getParams(), popminer.btc().getParams()));
+      vtb1, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
   // Create VTV
   VTB vtb2;
@@ -92,21 +92,21 @@ TEST_F(Scenario8, scenario_8) {
   vtb2.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer.vbk().getParams(), popminer.btc().getParams()));
+      vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
-  EXPECT_TRUE(popminer.vbk().acceptBlock(containingVbkBlock, state));
+  EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
 
-  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
-  fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer.vbk());
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+  fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   // mine 10 blocks
   mineAltBlocks(10, chain);
 
   AltBlock endorsedBlock = chain[5];
-  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
+  VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   ATV atv1 =
-      popminer.generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
+      popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
   PopData popData1 = createPopData(0, atv1, {vtb1});
 
@@ -122,7 +122,7 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_TRUE(state.IsValid());
 
   EXPECT_EQ(*alttree.vbk().getBestChain().tip(),
-            *popminer.vbk().getBestChain().tip());
+            *popminer->vbk().getBestChain().tip());
 
   auto altStateVbkTip = *alttree.vbk().getBestChain().tip();
 
@@ -130,10 +130,10 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_NE(vbkBlock, nullptr);
   validityFlagCheck(*vbkBlock, true);
 
-  VbkTx tx2 = popminer.createVbkTxEndorsingAltBlock(
+  VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   ATV atv2 =
-      popminer.generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
+      popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
   PopData popData2 = createPopData(0, atv2, {vtb2});
 
@@ -151,7 +151,7 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_EQ(state.GetDebugMessage(), "Endorsement expired");
 
   EXPECT_NE(*alttree.vbk().getBestChain().tip(),
-            *popminer.vbk().getBestChain().tip());
+            *popminer->vbk().getBestChain().tip());
 
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   EXPECT_NE(vbkBlock, nullptr);
