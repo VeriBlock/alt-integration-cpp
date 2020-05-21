@@ -104,15 +104,15 @@ struct AddEndorsement : public Command {
            && "failed to roll back AddEndorsement: the endorsed block does not exist");
 
     auto& v = endorsed->endorsedBy;
-    // find last occurrence of e_
-    auto it = std::find(v.rbegin(), v.rend(), e_.get());
 
-    assert(it != v.rend()
+    // find and erase the last occurrence of e_
+    auto endorsed_it = std::find(v.rbegin(), v.rend(), e_.get());
+
+    assert(endorsed_it != v.rend()
            && "failed to roll back AddEndorsement: the endorsed block does not contain the endorsement in endorsedBy");
 
-    // FIXME: this breaks the second rollback if the endorsement is added twice
-    // erase all occurrences of e_
-    v.erase(std::remove(v.begin(), v.end(), e_.get()), v.end());
+    auto toRemove = --(endorsed_it.base());
+    v.erase(toRemove);
 
     auto erasedCount = containing->containingEndorsements.erase(e_->id);
     assert(erasedCount == 1
