@@ -23,7 +23,7 @@ using namespace altintegration;
  * - boostrap test_alttree with the vbk block which contains endorsement
  * - endorse an alt block
  * - put corrupted VTB to the altPayloads
- * - addPayloads for the alt block with invalid VTB which contains in the
+ * - addPayloads for the alt block with invalid VTB which is contained in the
  * bootstrap vbk block
  */
 
@@ -76,8 +76,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   EXPECT_TRUE(test_alttree.acceptBlock(containingAltBlock, state));
   ASSERT_TRUE(test_alttree.addPayloads(
       containingAltBlock.getHash(), {altPayloads}, state));
-  ASSERT_THROW(test_alttree.setState(containingAltBlock.getHash(), state),
-               std::logic_error);
+  EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));
 
   EXPECT_EQ(*test_alttree.vbk().getBestChain().tip(), *vbkTip);
   EXPECT_EQ(test_alttree.vbk().getBestChain().blocksCount(), 1);

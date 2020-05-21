@@ -95,18 +95,29 @@ struct AddEndorsement : public Command {
 
   void UnExecute() override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
-    if (!containing) {
-      // can't find containing block
-      return;
-    }
+    assert(containing != nullptr
+           && "failed to roll back AddEndorsement: the containing block does not exist");
 
     auto* endorsed = containing->getAncestor(e_->endorsedHeight);
-    if (endorsed != nullptr) {
-      auto& v = endorsed->endorsedBy;
-      // erase all occurrences of e_
-      v.erase(std::remove(v.begin(), v.end(), e_.get()), v.end());
-    }
-    containing->containingEndorsements.erase(e_->id);
+
+    assert(endorsed != nullptr
+           && "failed to roll back AddEndorsement: the endorsed block does not exist");
+
+    auto& v = endorsed->endorsedBy;
+
+    // find and erase the last occurrence of e_
+    auto endorsed_it = std::find(v.rbegin(), v.rend(), e_.get());
+
+    assert(endorsed_it != v.rend()
+           && "failed to roll back AddEndorsement: the endorsed block does not contain the endorsement in endorsedBy");
+
+    auto toRemove = --(endorsed_it.base());
+    v.erase(toRemove);
+
+    auto erasedCount = containing->containingEndorsements.erase(e_->id);
+    assert(erasedCount == 1
+           && "failed to roll back AddEndorsement: the containing block does not contain the endorsement in containingEndorsements");
+    (void)erasedCount;
   }
 
   size_t getId() const override { return e_->id.getLow64(); }
