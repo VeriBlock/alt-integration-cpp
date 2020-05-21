@@ -21,8 +21,6 @@ class WriteStream {
 
   explicit WriteStream(size_t size);
 
-  void reserve(size_t size) { m_data.reserve(size); }
-
   void write(const void *buf, size_t size);
 
   template <typename T,
@@ -30,13 +28,6 @@ class WriteStream {
                                                1>::type>
   void write(const T &t) {
     write(t.data(), t.size());
-  }
-
-  template <typename T,
-      typename = typename std::enable_if<sizeof(typename T::value_type) ==
-                                         1>::type>
-  void writeReversed(const T &t) {
-    m_data.insert(m_data.end(), t.rbegin(), t.rend());
   }
 
   template <
