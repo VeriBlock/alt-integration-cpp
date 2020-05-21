@@ -14,8 +14,8 @@ struct BtcInvalidationTest : public ::testing::Test, public PopTestFixture {
   const Chain<BlockIndex<BtcBlock>>* best;
 
   BtcInvalidationTest() {
-    tip = popminer.mineBtcBlocks(10);
-    best = &popminer.btc().getBestChain();
+    tip = popminer->mineBtcBlocks(10);
+    best = &popminer->btc().getBestChain();
     EXPECT_EQ(*best->tip(), *tip);
     EXPECT_EQ(tip->status, BLOCK_VALID_TREE);
     EXPECT_TRUE(tip->isValid());
@@ -30,8 +30,8 @@ struct BtcInvalidationTest : public ::testing::Test, public PopTestFixture {
 };
 
 TEST_F(BtcInvalidationTest, InvalidateTip) {
-  popminer.btc().invalidateSubtree(
-      popminer.btc().getBestChain().tip()->getHash(), BLOCK_FAILED_BLOCK);
+  popminer->btc().invalidateSubtree(
+      popminer->btc().getBestChain().tip()->getHash(), BLOCK_FAILED_BLOCK);
 
   // block is not removed
   ASSERT_NE(tip, nullptr);
@@ -50,7 +50,7 @@ TEST_F(BtcInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
   Chain<BlockIndex<BtcBlock>> chain(0, tip);
 
   // invalidate block #5
-  auto& btc = popminer.btc();
+  auto& btc = popminer->btc();
   btc.invalidateSubtree(*toBeInvalidated, BLOCK_FAILED_BLOCK);
 
   size_t totalValid = 0;
@@ -98,16 +98,16 @@ TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   // expect chain  (b) blocks 6-10 to be invalidated
   // expect block 5 from (b) to be added to forkChains as new candidate fork
 
-  auto& btc = popminer.btc();
+  auto& btc = popminer->btc();
   auto* fourth = btc.getBestChain().tip()->getAncestor(4);
   auto* sixth = btc.getBestChain().tip()->getAncestor(6);
-  auto* Atip = popminer.mineBtcBlocks(*fourth, 5);
+  auto* Atip = popminer->mineBtcBlocks(*fourth, 5);
   auto* Btip = btc.getBestChain().tip();
   auto* B5 = Btip->getAncestor(5);
-  auto* Ctip = popminer.mineBtcBlocks(*sixth, 3);
-  auto* Dtip = popminer.mineBtcBlocks(*Ctip->getAncestor(7), 1);
-  auto* Etip = popminer.mineBtcBlocks(*sixth, 2);  // 7-8
-  auto* Ftip = popminer.mineBtcBlocks(*sixth, 1);  // 9
+  auto* Ctip = popminer->mineBtcBlocks(*sixth, 3);
+  auto* Dtip = popminer->mineBtcBlocks(*Ctip->getAncestor(7), 1);
+  auto* Etip = popminer->mineBtcBlocks(*sixth, 2);  // 7-8
+  auto* Ftip = popminer->mineBtcBlocks(*sixth, 1);  // 9
 
   ASSERT_EQ(btc.getBlocks().size(), 11 + 5 + 3 + 1 + 2 + 1);
 
@@ -159,9 +159,9 @@ TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   ASSERT_TRUE(forkChains.count(Achain.tip()));
 
   // remove subtree at (b) 6
-  popminer.btc().removeSubtree(*Bchain[6]);
+  popminer->btc().removeSubtree(*Bchain[6]);
 
-  ASSERT_EQ(popminer.btc().getBlocks().size(), 6 + 5);
+  ASSERT_EQ(popminer->btc().getBlocks().size(), 6 + 5);
   forEach(Achain, checkBlock(true));
   ASSERT_EQ(forkChains.size(), 2);
   ASSERT_TRUE(forkChains.count(B5));

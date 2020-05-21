@@ -54,7 +54,7 @@ TEST_F(Scenario2, scenario_2) {
 
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
@@ -63,20 +63,20 @@ TEST_F(Scenario2, scenario_2) {
       tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
 
   // mine 65 VBK blocks
-  auto* vbkTip = popminer.mineVbkBlocks(65);
+  auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
   generatePopTx(*endorsedVbkBlock1->header);
-  auto* btcBlockTip1 = popminer.btc().getBestChain().tip();
-  popminer.mineBtcBlocks(100);
+  auto* btcBlockTip1 = popminer->btc().getBestChain().tip();
+  popminer->mineBtcBlocks(100);
   generatePopTx(*endorsedVbkBlock2->header);
-  auto* btcBlockTip2 = popminer.btc().getBestChain().tip();
+  auto* btcBlockTip2 = popminer->btc().getBestChain().tip();
 
-  vbkTip = popminer.mineVbkBlocks(1);
+  vbkTip = popminer->mineVbkBlocks(1);
 
-  auto& vtbs = popminer.vbkPayloads[vbkTip->getHash()];
+  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
 
   ASSERT_EQ(vtbs.size(), 2);
   ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
@@ -87,7 +87,7 @@ TEST_F(Scenario2, scenario_2) {
   fillVbkContext(altPayloads1.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs[0].containingBlock.getHash(),
-                 popminer.vbk());
+                 popminer->vbk());
 
   // Step 1
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
@@ -114,7 +114,7 @@ TEST_F(Scenario2, scenario_2) {
   fillVbkContext(altPayloads2.popData.vbk_context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs[1].containingBlock.getHash(),
-                 popminer.vbk());
+                 popminer->vbk());
 
   // Step 2
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));

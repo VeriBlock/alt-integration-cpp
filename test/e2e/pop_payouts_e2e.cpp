@@ -22,37 +22,6 @@ std::basic_stringstream<char>& operator<<(
 struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
   PopPayoutsE2Etest() : PopTestFixture(), rewards_(altparam) {}
 
-  AltPayloads generateAltPayloads2(MockMiner& miner,
-                                   const VbkTx& transaction,
-                                   const AltBlock& containing,
-                                   const AltBlock& endorsed,
-                                   const VbkBlock::hash_t& lastVbk,
-                                   int VTBs = 0) {
-    PopData popData;
-
-    for (auto i = 0; i < VTBs; i++) {
-      auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
-      auto vbkcontaining = miner.applyVTB(miner.vbk(), vbkpoptx, state);
-      auto newvtb = miner.vbkPayloads.at(vbkcontaining.getHash()).back();
-      popData.vtbs.push_back(newvtb);
-    }
-
-    popData.hasAtv = true;
-    popData.atv = miner.generateATV(transaction, lastVbk, state);
-
-    fillVbkContext(popData.vbk_context,
-                   lastVbk,
-                   popData.atv.containingBlock.getHash(),
-                   miner.vbk());
-
-    AltPayloads alt;
-    alt.popData = popData;
-    alt.containingBlock = containing;
-    alt.endorsed = endorsed;
-
-    return alt;
-  }
-
   void mineAltBlocksWithTree(AltTree& tree,
                              uint32_t num,
                              std::vector<AltBlock>& chain) {
@@ -64,6 +33,70 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
       ASSERT_TRUE(tree.acceptBlock(*chain.rbegin(), state));
       ASSERT_TRUE(tree.setState(chain.rbegin()->getHash(), state));
       ASSERT_TRUE(state.IsValid());
+    }
+  }
+
+  void mineSingleEndorsement(AltTree& tree,
+                             AltBlock& endorsed,
+                             size_t num,
+                             std::vector<AltBlock>& chain) {
+    auto data = generatePublicationData(endorsed);
+    // change reward recipient so we can get distinct rewards
+    data.payoutInfo.push_back((uint8_t)(num >> 8));
+    data.payoutInfo.push_back((uint8_t)num);
+    auto vbktx = popminer->createVbkTxEndorsingAltBlock(data);
+    popminer->mineVbkBlocks(1);
+    auto containing = generateNextBlock(chain.back());
+    chain.push_back(containing);
+    auto payloads = generateAltPayloads(vbktx,
+                            containing,
+                            endorsed,
+                            tree.vbk().getBestChain().tip()->getHash());
+    ASSERT_TRUE(tree.acceptBlock(containing, state));
+    ASSERT_TRUE(tree.addPayloads(containing, {payloads}, state));
+    ASSERT_TRUE(tree.setState(containing.hash, state));
+  }
+
+  void mineEndorsements(AltTree& tree,
+                        size_t num,
+                        std::vector<AltBlock>& chain) {
+    for (size_t i = 0; i < num; i++) {
+      auto endorsed = chain.back();
+      mineSingleEndorsement(tree, endorsed, i, chain);
+    }
+  }
+
+  void mineTwoEndorsements(AltTree& tree,
+                           size_t num,
+                           std::vector<AltBlock>& chain) {
+    for (size_t i = 0; i < num; i++) {
+      auto endorsed = chain.back();
+      auto data = generatePublicationData(endorsed);
+      // change reward recipient so we can get distinct rewards
+      data.payoutInfo.push_back((uint8_t)(i >> 8));
+      data.payoutInfo.push_back((uint8_t)i);
+      auto vbktx1 = popminer->createVbkTxEndorsingAltBlock(data);
+
+      data = generatePublicationData(endorsed);
+      // change reward recipient so we can get distinct rewards
+      data.payoutInfo.push_back((uint8_t)(i >> 8) + 10);
+      data.payoutInfo.push_back((uint8_t)i);
+      auto vbktx2 = popminer->createVbkTxEndorsingAltBlock(data);
+
+      popminer->mineVbkBlocks(1);
+      auto containing = generateNextBlock(chain.back());
+      chain.push_back(containing);
+      auto payloads1 = generateAltPayloads(vbktx1,
+                              containing,
+                              endorsed,
+                              tree.vbk().getBestChain().tip()->getHash());
+      auto payloads2 = generateAltPayloads(vbktx2,
+                              containing,
+                              endorsed,
+                              tree.vbk().getBestChain().tip()->getHash());
+      ASSERT_TRUE(tree.acceptBlock(containing, state));
+      ASSERT_TRUE(tree.addPayloads(containing, {payloads1, payloads2}, state));
+      ASSERT_TRUE(tree.setState(containing.hash, state));
     }
   }
 
@@ -89,30 +122,24 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
 TEST_F(PopPayoutsE2Etest, OnePayout) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
   auto endorsed = chain.back();
-  auto data = generatePublicationData(endorsed);
-  auto vbktx = popminer.createVbkTxEndorsingAltBlock(data);
-  popminer.mineVbkBlocks(1);
-  auto containing = generateNextBlock(chain.back());
-  chain.push_back(containing);
-  auto payloads =
-      generateAltPayloads(vbktx, containing, endorsed, getLastKnownVbkBlock());
+  mineSingleEndorsement(alttree, endorsed, 1, chain);
 
   auto payout = alttree.getPopPayout(chain.back().getHash(), state);
   ASSERT_TRUE(payout.empty());
   ASSERT_TRUE(state.IsError());
 
   state = ValidationState();
-  ASSERT_TRUE(alttree.acceptBlock(containing, state));
-  ASSERT_TRUE(alttree.addPayloads(containing, {payloads}, state));
-  ASSERT_TRUE(alttree.setState(containing.hash, state));
-
   mineAltBlocksWithTree(
       alttree, altparam.getEndorsementSettlementInterval() - 2, chain);
 
   payout = alttree.getPopPayout(chain.back().getHash(), state);
   ASSERT_FALSE(payout.empty());
-  ASSERT_TRUE(payout.count(getPayoutInfo()));
-  ASSERT_GT(payout[getPayoutInfo()], 0);
+
+  auto miner1 = getPayoutInfo();
+  miner1.push_back(0);
+  miner1.push_back(1);
+  ASSERT_TRUE(payout.count(miner1));
+  ASSERT_GT(payout[miner1], 0);
 }
 
 /*
@@ -122,22 +149,8 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
 TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
   auto endorsed = chain.back();
-
   for (int i = 0; i < 2; i++) {
-    auto data = generatePublicationData(endorsed);
-    // change reward recipient so we can get distinct rewards
-    data.payoutInfo.push_back((uint8_t)i);
-    auto vbktx = popminer.createVbkTxEndorsingAltBlock(data);
-    popminer.mineVbkBlocks(1);
-    auto containing = generateNextBlock(chain.back());
-    chain.push_back(containing);
-    auto payloads = generateAltPayloads(
-        vbktx, containing, endorsed, getLastKnownVbkBlock());
-
-    state = ValidationState();
-    ASSERT_TRUE(alttree.acceptBlock(containing, state));
-    ASSERT_TRUE(alttree.addPayloads(containing, {payloads}, state));
-    ASSERT_TRUE(alttree.setState(containing.hash, state));
+    mineSingleEndorsement(alttree, endorsed, i, chain);
   }
 
   auto payout = alttree.getPopPayout(chain.back().getHash(), state);
@@ -152,7 +165,9 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
   ASSERT_EQ(payout.size(), 2);
   auto miner1 = getPayoutInfo();
   miner1.push_back(0);
+  miner1.push_back(0);
   auto miner2 = getPayoutInfo();
+  miner2.push_back(0);
   miner2.push_back(1);
   ASSERT_NE(miner1, miner2);
   ASSERT_EQ(payout[miner1], payout[miner2]);
@@ -165,24 +180,8 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
  */
 TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
-  for (size_t i = 0;
-       i < ((size_t)altparam.getEndorsementSettlementInterval() + 102);
-       i++) {
-    auto endorsed = chain.back();
-    auto data = generatePublicationData(endorsed);
-    // change reward recipient so we can get distinct rewards
-    data.payoutInfo.push_back((uint8_t)(i >> 8));
-    data.payoutInfo.push_back((uint8_t)i);
-    auto vbktx = popminer.createVbkTxEndorsingAltBlock(data);
-    popminer.mineVbkBlocks(1);
-    auto containing = generateNextBlock(chain.back());
-    chain.push_back(containing);
-    auto payloads = generateAltPayloads(
-        vbktx, containing, endorsed, getLastKnownVbkBlock());
-    ASSERT_TRUE(alttree.acceptBlock(containing, state));
-    ASSERT_TRUE(alttree.addPayloads(containing, {payloads}, state));
-    ASSERT_TRUE(alttree.setState(containing.hash, state));
-  }
+  mineEndorsements(
+      alttree, altparam.getEndorsementSettlementInterval() + 102, chain);
 
   // wait for the reward
   mineAltBlocksWithTree(
@@ -195,58 +194,22 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
                             altparam.getEndorsementSettlementInterval());
 
   state = ValidationState();
-  MockMiner popminer2{};
+  popminer = std::make_shared<MockMiner>();
+  std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam);
   EXPECT_TRUE(alttree2.bootstrap(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
 
-  std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  for (size_t i = 0; i < (size_t)altparam.getEndorsementSettlementInterval();
-       i++) {
-    auto endorsed = chain2.back();
-    auto data = generatePublicationData(endorsed);
-    // change reward recipient so we can get distinct rewards
-    data.payoutInfo.push_back((uint8_t)(i >> 8));
-    data.payoutInfo.push_back((uint8_t)i);
-    auto vbktx = popminer2.createVbkTxEndorsingAltBlock(data);
-    popminer2.mineVbkBlocks(1);
-    auto containing = generateNextBlock(chain2.back());
-    chain2.push_back(containing);
-    auto payloads =
-        generateAltPayloads2(popminer2,
-                             vbktx,
-                             containing,
-                             endorsed,
-                             alttree2.vbk().getBestChain().tip()->getHash());
-    ASSERT_TRUE(alttree2.acceptBlock(containing, state));
-    ASSERT_TRUE(alttree2.addPayloads(containing, {payloads}, state));
-    ASSERT_TRUE(alttree2.setState(containing.hash, state));
-  }
-
+  mineEndorsements(
+      alttree2, altparam.getEndorsementSettlementInterval(), chain2);
   mineAltBlocksWithTree(alttree2, 101, chain2);
+
   auto endorsedBlock = chain2.back();
-
-  auto data = generatePublicationData(endorsedBlock);
-  data.payoutInfo.push_back(10);
-  data.payoutInfo.push_back(100);
-  auto vbktx = popminer2.createVbkTxEndorsingAltBlock(data);
-  popminer2.mineVbkBlocks(1);
-  auto containing = generateNextBlock(chain2.back());
-  chain2.push_back(containing);
-  auto payloads =
-      generateAltPayloads2(popminer2,
-                           vbktx,
-                           containing,
-                           endorsedBlock,
-                           alttree2.vbk().getBestChain().tip()->getHash());
-
-  ASSERT_TRUE(alttree2.acceptBlock(containing, state));
-  ASSERT_TRUE(alttree2.addPayloads(containing, {payloads}, state));
-  ASSERT_TRUE(alttree2.setState(containing.hash, state));
-
+  mineSingleEndorsement(alttree2, endorsedBlock, 10000, chain2);
   mineAltBlocksWithTree(
       alttree2, altparam.getEndorsementSettlementInterval() - 2, chain2);
+
   auto payout2 = alttree2.getPopPayout(chain2.back().getHash(), state);
   auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
                          ->getAncestorBlocksBehind(
@@ -272,47 +235,10 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
 
   // prepare chain where each block is endorsed by two miners
-  for (size_t i = 0;
-       i < (size_t)altparam.getEndorsementSettlementInterval() + 1;
-       i++) {
-    auto endorsed = chain.back();
-    auto data = generatePublicationData(endorsed);
-    // change reward recipient so we can get distinct rewards
-    data.payoutInfo.push_back((uint8_t)(i >> 8));
-    data.payoutInfo.push_back((uint8_t)i);
-    auto vbktx1 = popminer.createVbkTxEndorsingAltBlock(data);
-    popminer.mineVbkBlocks(1);
-    data = generatePublicationData(endorsed);
-    // change reward recipient so we can get distinct rewards
-    data.payoutInfo.push_back((uint8_t)(i >> 8) + 10);
-    data.payoutInfo.push_back((uint8_t)i);
-    auto vbktx2 = popminer.createVbkTxEndorsingAltBlock(data);
-    popminer.mineVbkBlocks(1);
-    auto containing = generateNextBlock(chain.back());
-    chain.push_back(containing);
-    auto payloads1 = generateAltPayloads(
-        vbktx1, containing, endorsed, getLastKnownVbkBlock());
-    auto payloads2 = generateAltPayloads(
-        vbktx2, containing, endorsed, getLastKnownVbkBlock());
-    ASSERT_TRUE(alttree.acceptBlock(containing, state));
-    ASSERT_TRUE(alttree.addPayloads(containing, {payloads1, payloads2}, state));
-    ASSERT_TRUE(alttree.setState(containing.hash, state));
-  }
-
+  mineTwoEndorsements(
+      alttree, altparam.getEndorsementSettlementInterval() + 1, chain);
   auto endorsed1 = chain.back();
-  auto data1 = generatePublicationData(endorsed1);
-  // change reward recipient so we can get distinct rewards
-  data1.payoutInfo.push_back(10);
-  data1.payoutInfo.push_back(1);
-  auto vbktx1 = popminer.createVbkTxEndorsingAltBlock(data1);
-  popminer.mineVbkBlocks(1);
-  auto containing1 = generateNextBlock(chain.back());
-  chain.push_back(containing1);
-  auto payloads1 = generateAltPayloads(
-      vbktx1, containing1, endorsed1, getLastKnownVbkBlock());
-  ASSERT_TRUE(alttree.acceptBlock(containing1, state));
-  ASSERT_TRUE(alttree.addPayloads(containing1, {payloads1}, state));
-  ASSERT_TRUE(alttree.setState(containing1.hash, state));
+  mineSingleEndorsement(alttree, endorsed1, 10000, chain);
 
   // wait for the reward
   mineAltBlocksWithTree(
@@ -326,36 +252,15 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
                             altparam.getEndorsementSettlementInterval());
 
   state = ValidationState();
-  MockMiner popminer2{};
+  popminer = std::make_shared<MockMiner>();
+  std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam);
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.bootstrap(state));
 
-  std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  for (size_t i = 0;
-       i < (size_t)altparam.getEndorsementSettlementInterval() + 2;
-       i++) {
-    auto endorsed = chain2.back();
-    auto data = generatePublicationData(endorsed);
-    // change reward recipient so we can get distinct rewards
-    data.payoutInfo.push_back((uint8_t)(i >> 8));
-    data.payoutInfo.push_back((uint8_t)i);
-    auto vbktx = popminer2.createVbkTxEndorsingAltBlock(data);
-    popminer2.mineVbkBlocks(1);
-    auto containing = generateNextBlock(chain2.back());
-    chain2.push_back(containing);
-    auto payloads =
-        generateAltPayloads2(popminer2,
-                             vbktx,
-                             containing,
-                             endorsed,
-                             alttree2.vbk().getBestChain().tip()->getHash());
-    ASSERT_TRUE(alttree2.acceptBlock(containing, state));
-    ASSERT_TRUE(alttree2.addPayloads(containing, {payloads}, state));
-    ASSERT_TRUE(alttree2.setState(containing.hash, state));
-  }
-
+  mineEndorsements(
+      alttree2, altparam.getEndorsementSettlementInterval() + 2, chain2);
   // wait for the reward
   mineAltBlocksWithTree(
       alttree2, altparam.getEndorsementSettlementInterval() - 2, chain2);
