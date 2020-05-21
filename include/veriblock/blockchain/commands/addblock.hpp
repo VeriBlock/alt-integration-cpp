@@ -35,12 +35,11 @@ struct AddBlock : public Command {
   void UnExecute() override {
     auto hash = block_->getHash();
     auto* index = tree_->getBlockIndex(hash);
-    if (!index) {
-      return;
-    }
+    assert(index != nullptr
+           && "failed to roll back AddBlock: the block does not exist");
 
     if (index->refCounter == 0) {
-      return tree_->removeSubtree(hash);
+      return tree_->removeTip(*index);
     }
 
     --index->refCounter;

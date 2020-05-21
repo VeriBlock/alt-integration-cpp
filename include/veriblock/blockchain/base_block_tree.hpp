@@ -92,6 +92,13 @@ struct BaseBlockTree {
     }
   }
 
+  void removeTip(index_t& toRemove, bool shouldDetermineBestChain = true) {
+    if (!toRemove.pnext.empty()) {
+      throw std::logic_error("not a tip block");
+    }
+    return removeSubtree(toRemove, shouldDetermineBestChain);
+  }
+
   void invalidateSubtree(const hash_t& toBeInvalidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {

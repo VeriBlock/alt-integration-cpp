@@ -28,19 +28,45 @@ struct PopStateMachine {
       : ed_(ed), ing_(ing), startHeight_(startHeight) {}
 
   bool applyBlock(index_t& index, ValidationState& state) {
-    for (auto& group : index.commands) {
-      for (const auto& cmd : group) {
+    bool success = true;
+    for (size_t groupIndex = 0; groupIndex < index.commands.size(); groupIndex++) {
+      auto& group = index.commands[groupIndex];
+
+      for (size_t cmdIndex = 0; cmdIndex < group.commands.size(); cmdIndex++) {
+        const auto& cmd = group.commands[cmdIndex];
+
         if (!cmd->Execute(state)) {
           VBK_LOG_WARN("Invalid %s command %s in block %s",
                        index_t::block_t::name(),
                        cmd->toPrettyString(),
                        index.toPrettyString());
           group.valid = false;
-          return state.Invalid(index_t::block_t::name() + "-bad-command");
+          success = false;
+
+          // roll back the slice of the group that has already been executed
+          for (size_t rollbackCmdIndex = cmdIndex; rollbackCmdIndex > 0; rollbackCmdIndex--) {
+              group.commands[rollbackCmdIndex - 1]->UnExecute();
+          }
+          break;
         }
       }
+
+      if (!success) {
+        // roll back the groups that have already been executed
+        for (size_t rollbackGroupIndex = groupIndex; rollbackGroupIndex > 0; rollbackGroupIndex--) {
+          const auto& rollbackGroup = index.commands[rollbackGroupIndex - 1];
+          std::for_each(rollbackGroup.rbegin(), rollbackGroup.rend(), [](const CommandPtr& cmd) {
+            cmd->UnExecute();
+          });
+        }
+        break;
+      }
     }
-    return true;
+
+    if (!success) {
+      state.Invalid(index_t::block_t::name() + "-bad-command");
+    }
+    return success;
   }
 
   void unapplyBlock(const index_t& index) {
@@ -99,7 +125,7 @@ struct PopStateMachine {
 
     for (auto* index : chain) {
       if (!index->isValid() || !applyBlock(*index, state)) {
-        unapply(*index, from);
+        unapply(*index->pprev, from);
         return false;
       }
     }
