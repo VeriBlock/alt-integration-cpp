@@ -276,3 +276,37 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   ASSERT_EQ(payout2.size(), payout.size());
   ASSERT_GT(payout2.begin()->second, payout.begin()->second);
 }
+
+/*
+ * Scenario 4. Wait for payout blocks and make sure keystone block has
+ * the highest reward.
+ */
+TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
+  std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
+  mineEndorsements(alttree, altparam.getKeystoneInterval() * 2, chain);
+
+  // wait for the reward
+  mineAltBlocksWithTree(alttree,
+                        altparam.getEndorsementSettlementInterval() - 2,
+                        chain);
+
+  int64_t highestReward = 0;
+  int blockNumber = 0;
+  auto initialBlock = alttree.getBlockIndex(chain.back().getHash());
+  
+  // find maximum reward and store it together with endorsed block height
+  for (size_t i = 0; i < altparam.getKeystoneInterval(); i++) {
+    auto payout = alttree.getPopPayout(initialBlock->getHash(), state);
+    if (payout.begin()->second > highestReward) {
+      highestReward = payout.begin()->second;
+      auto endorsedBlock = initialBlock->getAncestorBlocksBehind(
+          altparam.getEndorsementSettlementInterval());
+      blockNumber = endorsedBlock->height;
+    }
+    initialBlock = initialBlock->pprev;
+  }
+
+  auto roundNumber = rewards_.getRoundForBlockNumber(blockNumber);
+  ASSERT_EQ(roundNumber, rewards_.getAltParams().getRewardParams().keystoneRound());
+  ASSERT_GT(highestReward, 0);
+}
