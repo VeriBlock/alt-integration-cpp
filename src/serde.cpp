@@ -92,15 +92,22 @@ std::string readString(ReadStream& stream) {
 
   return result;
 }
+}  // namespace altintegration
+
+#include <veriblock/fmt.hpp>
+
+namespace altintegration {
 
 void writeDouble(WriteStream& stream, const double& val) {
-  uint64_t* temp = reinterpret_cast<uint64_t*>(&const_cast<double&>(val));
-  stream.writeBE<uint64_t>(*temp);
+  std::string temp = fmt::format("{}", val);
+  writeSingleBEValue(stream, temp.size());
+  for (const auto& ch : temp) {
+    stream.writeBE<char>(ch);
+  }
 }
 
 double readDouble(ReadStream& stream) {
-  uint64_t temp = stream.readBE<uint64_t>();
-  return *reinterpret_cast<double*>(&temp);
+  std::string temp = readString(stream);
+  return std::atof(temp.data());
 }
-
 }  // namespace altintegration
