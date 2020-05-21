@@ -167,8 +167,7 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
     return {};
   }
 
-  auto* endorsedBlock =
-      index->getAncestorBlocksBehind(
+  auto* endorsedBlock = index->getAncestorBlocksBehind(
       alt_config_->getEndorsementSettlementInterval());
   if (endorsedBlock == nullptr) {
     state.Error("Not enough blocks to get the endorsed block");
@@ -364,23 +363,18 @@ void AltTree::removePayloads(index_t& index,
 
   // remove all matched command groups
   auto& c = index.commands;
-  c.erase(
-      std::remove_if(c.begin(),
-                     c.end(),
-                     [&](const CommandGroup& g) {
-                       for (const auto& p : payloads) {
-                         if (g == p.getId()) {
-                           if (!g.valid) {
-                             base::revalidateSubtree(
-                                 index, BlockStatus::BLOCK_FAILED_POP, false);
+  c.erase(std::remove_if(c.begin(),
+                         c.end(),
+                         [&](const CommandGroup& g) {
+                           for (const auto& p : payloads) {
+                             if (g == p.getId()) {
+                               return true;
+                             }
                            }
-                           return true;
-                         }
-                       }
 
-                       return false;
-                     }),
-      c.end());
+                           return false;
+                         }),
+          c.end());
 }
 
 void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
