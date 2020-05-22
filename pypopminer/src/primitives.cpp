@@ -50,4 +50,12 @@ void init_primitives() {
   blob<72 / 8>("uint72");
 
   pystring_converter().reg<std::vector<uint8_t>>();
+  // clang-format off
+  iterable_converter()
+          .reg<std::vector<uint256>>()
+          .reg<std::vector<Coin>>()
+          .reg<std::vector<Output>>()
+          .reg<std::vector<BtcBlock>>()
+          .reg<std::vector<VbkBlock>>();
+  // clang-format on
 }

@@ -64,4 +64,13 @@ uint256 VbkPopTx::getHash() const {
   return sha256(stream.data());
 }
 
+std::string VbkPopTx::toPrettyString() const {
+  return fmt::sprintf(
+      "VbkPopTx{address=%s, publishedBlock=%s, blockOfProof=%s, "
+      "contextsize=%d}",
+      address.toString(),
+      publishedBlock.toPrettyString(),
+      blockOfProof.toPrettyString());
+}
+
 }  // namespace altintegration

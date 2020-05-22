@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <veriblock/fmt.hpp>
 #include <veriblock/serde.hpp>
 
 namespace altintegration {
@@ -92,9 +93,14 @@ std::string readString(ReadStream& stream) {
 
   return result;
 }
-}  // namespace altintegration
 
-#include <veriblock/fmt.hpp>
+std::string NetworkBytePair::toPrettyString() const {
+  return fmt::sprintf(
+      "NetworkBytePair{%s}",
+      (hasNetworkByte ? fmt::sprintf("byte=%d, type=%d", networkByte, typeId)
+                      : fmt::sprintf("type=%d", typeId)));
+}
+}  // namespace altintegration
 
 namespace altintegration {
 

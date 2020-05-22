@@ -77,23 +77,6 @@ struct VTB {
    */
   id_t getId() const;
 
-  /**
-   * Return a containing VbkBlock
-   * @return containing block
-   */
-  VbkBlock getContainingBlock() const;
-
-  /**
-   * Return a endorsed VbkBlock from the VbkPopTx
-   * @return endorsed block
-   */
-  VbkBlock getEndorsedBlock() const;
-
-  /**
-   * Return true if contains endorsement data
-   * @return true if contains endorsement data
-   */
-  bool containsEndorsements() const { return true; }
 
   friend bool operator==(const VTB& a, const VTB& b) {
     return a.getId() == b.getId();

@@ -161,6 +161,8 @@ struct NetworkBytePair {
   bool hasNetworkByte = false;
   uint8_t networkByte = 0;
   uint8_t typeId = 0;
+
+  std::string toPrettyString() const;
 };
 
 /**

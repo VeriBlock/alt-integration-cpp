@@ -34,6 +34,8 @@ struct VbkPopTx {
   std::vector<uint8_t> signature{};
   std::vector<uint8_t> publicKey{};
 
+  std::string toPrettyString() const;
+
   /**
    * Read basic data from the stream, signature, publicKey and convert it to
    * VbkPopTx
