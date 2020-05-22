@@ -2,6 +2,8 @@
 
 ### Install
 
+Make sure boost-python is installed, and python3 is installed.
+
 ```bash
 # clone this repo and cd inside
 mkdir build && cd build
