@@ -34,6 +34,24 @@ struct MockMinerProxy : private MockMiner {
   VbkBlock getVbkTip() { return *vbk().getBestChain().tip()->header; }
   BtcBlock getBtcTip() { return *btc().getBestChain().tip()->header; }
 
+  VbkBlock getVbkBlock(const std::string& hash) {
+    auto index = vbk().getBlockIndex(VbkBlock::hash_t::fromHex(hash));
+    if(!index) {
+      throw std::invalid_argument("Can not find VbkBlock " + hash);
+    }
+
+    return *index->header;
+  }
+
+  BtcBlock getBtcBlock(const std::string& hash) {
+    auto index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(hash));
+    if(!index) {
+      throw std::invalid_argument("Can not find BtcBlock " + hash);
+    }
+
+    return *index->header;
+  }
+
   VbkBlock mineVbkBlocks(const std::string& prevHash, size_t num) {
     auto* index = vbk().getBlockIndex(VbkBlock::hash_t::fromHex(prevHash));
     if (!index) {
@@ -192,8 +210,10 @@ BOOST_PYTHON_MODULE(pypopminer) {
       "MockMiner", no_init)
       .def("__init__", make_constructor(makeMiner))
       .def("__repr__", &MockMinerProxy::toPrettyString)
-      .def_readonly("vbkTip", &MockMinerProxy::getVbkTip)
-      .def_readonly("btcTip", &MockMinerProxy::getBtcTip)
+      .def_readonly("vbkTip", &MockMinerProxy::getVbkTip, "Current BtcTip in MockMiner")
+      .def_readonly("btcTip", &MockMinerProxy::getBtcTip, "Current VbkTip in MockMiner")
+      .def("getBtcBlock", &MockMinerProxy::getBtcBlock, "Given block hash, returns BtcBlock if it exists, throws otherwise")
+      .def("getVbkBlock", &MockMinerProxy::getVbkBlock, "Given block hash, returns VbkBlock if it exists, throws otherwise")
       .def("mineBtcBlocks", fx1)
       .def("mineBtcBlocks", fx2)
       .def("mineVbkBlocks", fx3)
