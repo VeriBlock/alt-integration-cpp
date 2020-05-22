@@ -12,17 +12,11 @@ using namespace boost::python;
 using namespace altintegration;
 
 struct Payloads {
-  ATV atv;
-  std::vector<VTB> vtbs;
+  std::string atv;
+  list vtbs;
 
-  std::string getAtv() const { return atv.toHex(); }
-
-  list getVtbs() const {
-    list l;
-    for (auto& v : vtbs) {
-      l.append(v.toHex());
-    }
-    return l;
+  std::string toPrettyString() const {
+    return fmt::sprintf("Payloads{atv, vtbs}");
   }
 };
 
@@ -123,7 +117,7 @@ struct MockMinerProxy : private MockMiner {
           lastVbkBlock);
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    payloads.atv = base::generateATV(vbktx, vbkindex->getHash(), state);
+    payloads.atv = base::generateATV(vbktx, vbkindex->getHash(), state).toHex();
     if (!state.IsValid()) {
       throw std::logic_error("MockMiner: can't create ATV: " +
                              state.toString());
@@ -135,23 +129,27 @@ struct MockMinerProxy : private MockMiner {
     auto vbktip = vbk().getBestChain().tip();
     auto last =
         vbkindex->pprev ? vbkindex->pprev->getHash() : vbkindex->getHash();
+    std::vector<VTB> vtbs;
     while (vbktip->getHash() != last) {
       auto it = vbkPayloads.find(vbktip->getHash());
       if (it != vbkPayloads.end()) {
         // insert in reverse order
         std::for_each(it->second.rbegin(),
                       it->second.rend(),
-                      [&](const VTB& vtb) { payloads.vtbs.push_back(vtb); });
+                      [&](const VTB& vtb) { vtbs.push_back(vtb); });
       }
       context.push_back(*vbktip->header);
       vbktip = vbktip->pprev;
     }
-    std::reverse(payloads.vtbs.begin(), payloads.vtbs.end());
+    std::reverse(vtbs.begin(), vtbs.end());
 
     std::reverse(context.begin(), context.end());
-    if (payloads.vtbs.size() > 0) {
+    if (vtbs.size() > 0) {
       // supply all vbk context into first VTB
-      payloads.vtbs[0].context = context;
+      vtbs[0].context = context;
+    }
+    for (auto& vtb : vtbs) {
+      payloads.vtbs.append(vtb.toHex());
     }
     return payloads;
   }
@@ -169,8 +167,9 @@ BOOST_PYTHON_MODULE(pypopminer) {
   init_entities();
 
   class_<Payloads>("Payloads")
-      .add_property("atv", &Payloads::atv, &Payloads::getAtv)
-      .add_property("vtbs", &Payloads::vtbs, &Payloads::getVtbs);
+      .def("__repr__", &Payloads::toPrettyString)
+      .def_readonly("atv", &Payloads::atv)
+      .def_readonly("vtbs", &Payloads::vtbs);
 
   // required to deal with function overloading
   BtcBlock (MockMinerProxy::*fx1)(const std::string&, size_t) =
