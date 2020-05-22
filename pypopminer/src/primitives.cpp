@@ -23,7 +23,7 @@ boost::shared_ptr<Blob<N>> makeBlob(const object& obj) {
 template <size_t N>
 void blob(std::string name) {
   using blob_t = Blob<N>;
-  class_<blob_t, boost::shared_ptr<blob_t>>(name.c_str())
+  class_<blob_t, boost::noncopyable, boost::shared_ptr<blob_t>>(name.c_str())
       .def("__init__", make_constructor(&makeBlob<N>))
       .def("__str__", &blob_t::toHex)
       .def("__len__", &blob_t::size)
@@ -36,8 +36,9 @@ void blob(std::string name) {
 std::string vecToHex(std::vector<uint8_t>& v) { return HexStr(v); }
 
 void init_primitives() {
-  class_<std::vector<uint8_t>, boost::shared_ptr<std::vector<uint8_t>>>(
-      "ByteVector", no_init)
+  class_<std::vector<uint8_t>,
+         boost::noncopyable,
+         boost::shared_ptr<std::vector<uint8_t>>>("ByteVector", no_init)
       .def("__str__", &vecToHex)
       .def("toHex", &vecToHex)
       .def("__len__", &std::vector<uint8_t>::size)
