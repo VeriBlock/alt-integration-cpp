@@ -43,7 +43,7 @@ struct MockMinerProxy : private MockMiner {
     return *index->header;
   }
 
-  VbkBlock getBtcBlock(const std::string& hash) {
+  BtcBlock getBtcBlock(const std::string& hash) {
     auto index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(hash));
     if(!index) {
       throw std::invalid_argument("Can not find BtcBlock " + hash);
