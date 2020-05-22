@@ -51,8 +51,6 @@ Endorse ALT block:
 >>> p.identifier = 0x3ae6ca
 # endorsed header in hex
 >>> p.header = '0011223344'
-
-# 
 >>> p.payoutInfo = '55667788'
 >>> p
 PublicationData{id=3860170, header=0011223344, payoutInfo=55667788}
