@@ -52,17 +52,17 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
   ASSERT_EQ(alttree.vbk().getBestChain().tip()->height, 0);
   // TODO: fix that
   //  ASSERT_EQ(alttree.getBlockIndex(chain[100].hash)->status,
-//            BLOCK_VALID_TREE | BLOCK_FAILED_POP);
+  //            BLOCK_VALID_TREE | BLOCK_FAILED_POP);
 
   auto next = generateNextBlock(chain[100]);
   ValidationState state2;
   // TODO: fix that
   //  ASSERT_FALSE(alttree.acceptBlock(next, state2));
   /* this should fail=*/alttree.acceptBlock(next, state2);
-//  ASSERT_EQ(state2.GetPath(), "ALT-bad-chain");
-//  auto index = alttree.getBlockIndex(next.getHash());
-//  ASSERT_TRUE(index);
-//  ASSERT_EQ(index->status, BLOCK_VALID_TREE | BLOCK_FAILED_CHILD);
+  //  ASSERT_EQ(state2.GetPath(), "ALT-bad-chain");
+  //  auto index = alttree.getBlockIndex(next.getHash());
+  //  ASSERT_TRUE(index);
+  //  ASSERT_EQ(index->status, BLOCK_VALID_TREE | BLOCK_FAILED_CHILD);
 }
 
 TEST_F(SetStateTest, SetStateNextChainBlockNoPayloads) {
@@ -83,6 +83,10 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
   ASSERT_EQ(alttree.vbk().getBestChain().tip()->height, 0);
   ASSERT_EQ(alttree.comparePopScore(chain[60].hash, chain[100].hash), -1);
   ASSERT_TRUE(alttree.setState(chain[60].hash, state)) << state.toString();
+  // we applied block 60, but pass 100 as left fork. expect logic_error
+  ASSERT_THROW(alttree.comparePopScore(chain[100].hash, chain[60].hash),
+               std::logic_error);
+  ASSERT_TRUE(alttree.setState(chain[100].hash, state));
   ASSERT_EQ(alttree.comparePopScore(chain[100].hash, chain[60].hash), 1);
 
   ASSERT_TRUE(alttree.setState(chain[100].hash, state)) << state.toString();
