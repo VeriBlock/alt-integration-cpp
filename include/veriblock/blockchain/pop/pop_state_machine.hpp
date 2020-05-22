@@ -29,22 +29,24 @@ struct PopStateMachine {
 
   bool applyBlock(index_t& index, ValidationState& state) {
     bool success = true;
-    for (size_t groupIndex = 0; groupIndex < index.commands.size(); groupIndex++) {
+    for (size_t groupIndex = 0; groupIndex < index.commands.size();
+         groupIndex++) {
       auto& group = index.commands[groupIndex];
 
       for (size_t cmdIndex = 0; cmdIndex < group.commands.size(); cmdIndex++) {
         const auto& cmd = group.commands[cmdIndex];
 
         if (!cmd->Execute(state)) {
-          VBK_LOG_WARN("Invalid %s command %s in block %s",
-                       index_t::block_t::name(),
-                       cmd->toPrettyString(),
-                       index.toPrettyString());
+          VBK_LOG_ERROR("Invalid %s command %s in block %s",
+                        index_t::block_t::name(),
+                        cmd->toPrettyString(),
+                        index.toPrettyString());
           success = false;
 
           // roll back the slice of the group that has already been executed
-          for (size_t rollbackCmdIndex = cmdIndex; rollbackCmdIndex > 0; rollbackCmdIndex--) {
-              group.commands[rollbackCmdIndex - 1]->UnExecute();
+          for (size_t rollbackCmdIndex = cmdIndex; rollbackCmdIndex > 0;
+               rollbackCmdIndex--) {
+            group.commands[rollbackCmdIndex - 1]->UnExecute();
           }
           break;
         }
@@ -52,11 +54,12 @@ struct PopStateMachine {
 
       if (!success) {
         // roll back the groups that have already been executed
-        for (size_t rollbackGroupIndex = groupIndex; rollbackGroupIndex > 0; rollbackGroupIndex--) {
+        for (size_t rollbackGroupIndex = groupIndex; rollbackGroupIndex > 0;
+             rollbackGroupIndex--) {
           const auto& rollbackGroup = index.commands[rollbackGroupIndex - 1];
-          std::for_each(rollbackGroup.rbegin(), rollbackGroup.rend(), [](const CommandPtr& cmd) {
-            cmd->UnExecute();
-          });
+          std::for_each(rollbackGroup.rbegin(),
+                        rollbackGroup.rend(),
+                        [](const CommandPtr& cmd) { cmd->UnExecute(); });
         }
         break;
       }

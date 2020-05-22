@@ -214,69 +214,9 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 
-  // edge case: connected block is one of 'next' blocks after our current best
-  if (indexNew.getAncestor(currentTip->height) == currentTip) {
-    // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them",
-                  block_t::name(),
-                  indexNew.height - currentTip->height);
-    this->setTip(indexNew, state, false);
-    return;
-  }
-
-  int result = cmp_.comparePopScore(*this, indexNew, state);
-  if (result < 0) {
-    // activeChain in AltTree reflects currently applied POP state.
-    // setState has already been executed
-    bool ret = this->setTip(indexNew, state, true);
-    assert(ret);
-    (void)ret;
-  }
-
-  // for other cases, we don't update pop score of active chain, so it remains
-  // as is, even though there are regular alt blocks on top of current tip.
+  // if tip==nullptr, then update tip.
+  // else - do nothing. AltTree does not (yet) do fork resolution
 }
-
-namespace {
-
-//! cost is a number of blocks that we have to unapply and apply to change state
-//! from 'chain' to 'index'
-size_t calculateStateChangeCost(Chain<BlockIndex<AltBlock>>& chain,
-                                BlockIndex<AltBlock>& index) {
-  auto tip = chain.tip();
-
-  // already at this state, so cost is 0
-  if (!tip || *tip == index) {
-    return 0;
-  }
-
-  // case: index is a subchain
-  if (chain.contains(&index)) {
-    return 1;
-  }
-
-  // index is one of 'next' blocks
-  if (index.getAncestor(tip->height) == tip) {
-    return 2;
-  }
-
-  // index is on a fork
-  size_t unapplyCost = 0;
-  size_t applyCost = 0;
-
-  auto* forkBlock = chain.findFork(&index);
-  if (!forkBlock) {
-    // unreachable node
-    return (std::numeric_limits<size_t>::max)();
-  }
-
-  unapplyCost = tip->height - forkBlock->height;
-  applyCost = index.height - forkBlock->height;
-
-  return unapplyCost + applyCost;
-}
-
-}  // namespace
 
 int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
                              const AltBlock::hash_t& hright) {
@@ -290,43 +230,22 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
     throw std::logic_error("AltTree: unknown 'other' block");
   }
 
-  // if 1, then ACTIVE=left, OTHER=right
-  // if -1, then ACTIVE=right, OTHER=left
-  int coefficient = 1;
-  auto leftCost = calculateStateChangeCost(activeChain_, *left);
-  auto rightCost = calculateStateChangeCost(activeChain_, *right);
-  if (leftCost > rightCost) {
-    // make 'right' to be the 'current' fork, and 'left' as 'other fork'
-    std::swap(left, right);
-    coefficient *= -1;
+  if (activeChain_.tip() != left) {
+    throw std::logic_error(
+        "AltTree: left fork must be applied. Call SetState(left) before fork "
+        "resolution.");
   }
 
   ValidationState state;
-  // set current state to match 'hcurrent'
-  bool ret = setTip(*left, state, false);
-  if (!ret) {
-    ret = setTip(*right, state, false);
-    if (!ret) {
-      throw std::logic_error("AltTree: both chains are invalid");
-    }
-    // left is invalid, right is valid
-
-    // swap direction again
-    std::swap(left, right);
-    coefficient *= -1;
-  }
-
   // compare current active chain to other chain
   int result = cmp_.comparePopScore(*this, *right, state);
   if (result < 0) {
-    // other chain is better, change current state to 'other'
+    // other chain is better, and we already changed 'cmp' state to winner, so
+    // just update active chain tip
     activeChain_.setTip(right);
   }
 
-  (void)ret;
-
-  // our pop best chain has not changed, so do nothing here
-  return coefficient * result;
+  return result;
 }
 
 void AltTree::removePayloads(const AltBlock::hash_t& hash,
@@ -411,7 +330,7 @@ bool AltTree::setTip(AltTree::index_t& to,
   // edge case: if changeTip is false, then new block arrived on top of
   // current active chain, and this block has invalid commands
   if (changeTip) {
-    VBK_LOG_INFO("ALT tip=%s, VBK tip=%s, BTC tip=%s",
+    VBK_LOG_INFO("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
                  to.toPrettyString(),
                  (vbk().getBestChain().tip()
                       ? vbk().getBestChain().tip()->toPrettyString()

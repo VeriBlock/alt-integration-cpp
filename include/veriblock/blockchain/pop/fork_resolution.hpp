@@ -418,9 +418,9 @@ struct PopAwareForkResolutionComparator {
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
     assert(bestTip);
-    if (*bestTip == indexNew) {
-      VBK_LOG_INFO("Equal");
-      return 0;
+    if (currentBest.contains(&indexNew)) {
+      VBK_LOG_INFO("Candidate is on active chain, current chain wins");
+      return 1;
     }
 
     VBK_LOG_INFO("Doing POP fork resolution in %s. Best=%s, Candidate=%s",

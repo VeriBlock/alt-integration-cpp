@@ -4,6 +4,8 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 add_library(pypopminer SHARED
         miner.cpp
+        entities.cpp
+        primitives.cpp
         )
 
 target_link_libraries(pypopminer
