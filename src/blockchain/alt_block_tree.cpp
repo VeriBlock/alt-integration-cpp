@@ -271,43 +271,22 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
     throw std::logic_error("AltTree: unknown 'other' block");
   }
 
-  // if 1, then ACTIVE=left, OTHER=right
-  // if -1, then ACTIVE=right, OTHER=left
-  int coefficient = 1;
-  auto leftCost = calculateStateChangeCost(activeChain_, *left);
-  auto rightCost = calculateStateChangeCost(activeChain_, *right);
-  if (leftCost > rightCost) {
-    // make 'right' to be the 'current' fork, and 'left' as 'other fork'
-    std::swap(left, right);
-    coefficient *= -1;
+  if (activeChain_.tip() != left) {
+    throw std::logic_error(
+        "AltTree: left fork must be applied. Call SetState(left) before fork "
+        "resolution.");
   }
 
   ValidationState state;
-  // set current state to match 'hcurrent'
-  bool ret = setTip(*left, state, false);
-  if (!ret) {
-    ret = setTip(*right, state, false);
-    if (!ret) {
-      throw std::logic_error("AltTree: both chains are invalid");
-    }
-    // left is invalid, right is valid
-
-    // swap direction again
-    std::swap(left, right);
-    coefficient *= -1;
-  }
-
   // compare current active chain to other chain
   int result = cmp_.comparePopScore(*this, *right, state);
   if (result < 0) {
-    // other chain is better, change current state to 'other'
+    // other chain is better, and we already changed 'cmp' state to winner, so
+    // just update active chain tip
     activeChain_.setTip(right);
   }
 
-  (void)ret;
-
-  // our pop best chain has not changed, so do nothing here
-  return coefficient * result;
+  return result;
 }
 
 void AltTree::removePayloads(const AltBlock::hash_t& hash,
