@@ -56,6 +56,7 @@ void init_primitives() {
           .reg<std::vector<Coin>>()
           .reg<std::vector<Output>>()
           .reg<std::vector<BtcBlock>>()
-          .reg<std::vector<VbkBlock>>();
+          .reg<std::vector<VbkBlock>>()
+          .reg<std::vector<VTB>>();
   // clang-format on
 }
