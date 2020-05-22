@@ -10,8 +10,8 @@ find_package(Boost COMPONENTS python3)
 if(NOT ${Boost_FOUND})
     find_package(Boost REQUIRED COMPONENTS python)
 endif()
-find_package(PythonInterp 3)
-find_package(PythonLibs 3)
+find_package(PythonInterp 3 REQUIRED)
+find_package(PythonLibs 3 REQUIRED)
 
 add_subdirectory(src)
 
