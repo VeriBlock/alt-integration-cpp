@@ -33,6 +33,19 @@ void blob(std::string name) {
   pystring_converter().reg<blob_t>();
 }
 
+template <typename T>
+T getItem(std::vector<T>& _self, int index) {
+  return _self.at(index);
+}
+
+template <typename T>
+void vector(std::string name) {
+    using vec = std::vector<T>;
+  class_<vec, boost::noncopyable>(name.c_str(), no_init)
+      .def("__getitem__", &getItem<T>)
+      .def("__setitem__", &setItem<T>)
+}
+
 std::string vecToHex(std::vector<uint8_t>& v) { return HexStr(v); }
 
 void init_primitives() {
@@ -50,6 +63,8 @@ void init_primitives() {
   blob<72 / 8>("uint72");
 
   pystring_converter().reg<std::vector<uint8_t>>();
+
+  vector<uint256>("VectorUint256");
   // clang-format off
   iterable_converter()
           .reg<std::vector<uint256>>()

@@ -24,6 +24,7 @@ enum class AddressType {
 
 struct Address {
   Address() = default;
+  explicit Address(const std::string& addr);
 
   bool operator==(const Address& other) const noexcept {
     return m_Address == other.m_Address;
@@ -70,7 +71,7 @@ struct Address {
    * Convert VBK address to text representation
    * @return string with VBK address
    */
-  const std::string& toString() const noexcept;
+  std::string toString() const noexcept;
 
   /**
    * Read data from the stream and convert it to VBK address

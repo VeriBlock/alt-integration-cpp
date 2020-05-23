@@ -5,25 +5,36 @@
 
 #include <boost/python.hpp>
 #include <veriblock/mock_miner.hpp>
+#include "converters.hpp"
 
 using namespace altintegration;
 using namespace boost::python;
 
+boost::shared_ptr<Address> makeAddress(const std::string& addr) {
+  auto a = Address::fromString(addr);
+  return boost::shared_ptr<Address>(new Address(std::move(a)));
+}
+
+template <typename Self, typename T>
+list getList(Self&, const std::vector<T> Self::*vec) {
+  return toPythonList<T>(*vec);
+}
+
 void init_entities() {
-  class_<PublicationData>("PublicationData")
+  class_<PublicationData, boost::shared_ptr<PublicationData>>("PublicationData")
       .def("__repr__", &PublicationData::toPrettyString)
       .def_readwrite("identifier", &PublicationData::identifier)
       .def_readwrite("header", &PublicationData::header)
       .def_readwrite("payoutInfo", &PublicationData::payoutInfo)
       .def_readwrite("contextInfo", &PublicationData::contextInfo);
 
-  class_<BtcTx>("BtcTx")
+  class_<BtcTx, boost::shared_ptr<BtcTx>>("BtcTx")
       .def("__str__", &BtcTx::toHex)
       .def("__repr__", &BtcTx::toHex)
       .def("getHash", &BtcTx::getHash)
       .def_readwrite("tx", &BtcTx::tx);
 
-  class_<BtcBlock>("BtcBlock")
+  class_<BtcBlock, boost::shared_ptr<BtcBlock>>("BtcBlock")
       .def("__str__", &BtcBlock::toHex)
       .def("__repr__", &BtcBlock::toPrettyString)
       .def("toHex", &BtcBlock::toHex)
@@ -35,7 +46,7 @@ void init_entities() {
       .def_readwrite("bits", &BtcBlock::bits)
       .def_readwrite("nonce", &BtcBlock::nonce);
 
-  class_<VbkBlock>("VbkBlock")
+  class_<VbkBlock, boost::shared_ptr<VbkBlock>>("VbkBlock")
       .def("__str__", &VbkBlock::toHex)
       .def("__repr__", &VbkBlock::toPrettyString)
       .def("toHex", &VbkBlock::toHex)
@@ -51,8 +62,7 @@ void init_entities() {
       .def_readwrite("difficulty", &VbkBlock::difficulty)
       .def_readwrite("nonce", &VbkBlock::nonce);
 
-  class_<Address>("Address")
-      .def("__init__", make_constructor(&Address::fromString))
+  class_<Address>("Address", init<std::string>())
       .def("__repr__", &Address::toString)
       .def("__str__", &Address::toString);
 
@@ -67,7 +77,7 @@ void init_entities() {
       .def_readwrite("subject", &VbkMerklePath::subject)
       .def_readwrite("layers", &VbkMerklePath::layers);
 
-  class_<VbkPopTx>("VbkPopTx")
+  class_<VbkPopTx, boost::shared_ptr<VbkPopTx>>("VbkPopTx")
       .def("__repr__", &VbkPopTx::toPrettyString)
       .def("getHash", &VbkPopTx::getHash)
       .def_readwrite("networkOrType", &VbkPopTx::networkOrType)
@@ -80,14 +90,14 @@ void init_entities() {
       .def_readwrite("signature", &VbkPopTx::signature)
       .def_readwrite("publicKey", &VbkPopTx::publicKey);
 
-  class_<Coin>("Coin")
+  class_<Coin, boost::shared_ptr<Coin>>("Coin")
       .def_readwrite("units", &Coin::units);
 
-  class_<Output>("Output")
+  class_<Output, boost::shared_ptr<Output>>("Output")
       .def_readwrite("address", &Output::address)
       .def_readwrite("coin", &Output::coin);
 
-  class_<VbkTx>("VbkTx")
+  class_<VbkTx, boost::shared_ptr<VbkTx>>("VbkTx")
       .def("getHash", &VbkTx::getHash)
       .def_readwrite("networkOrType", &VbkTx::networkOrType)
       .def_readwrite("sourceAddress", &VbkTx::sourceAddress)
@@ -98,7 +108,7 @@ void init_entities() {
       .def_readwrite("signature", &VbkTx::signature)
       .def_readwrite("publicKey", &VbkTx::publicKey);
 
-  class_<VTB>("VTB")
+  class_<VTB, boost::shared_ptr<VTB>>("VTB")
       .def("__str__", &VTB::toHex)
       .def("__repr__", &VTB::toPrettyString)
       .def("toHex", &VTB::toHex)
@@ -108,7 +118,7 @@ void init_entities() {
       .def_readwrite("containingBlock", &VTB::containingBlock)
       .def_readwrite("context", &VTB::context);
 
-  class_<ATV>("ATV")
+  class_<ATV, boost::shared_ptr<ATV>>("ATV")
       .def("__str__", &ATV::toHex)
       .def("__repr__", &ATV::toPrettyString)
       .def("toHex", &ATV::toHex)

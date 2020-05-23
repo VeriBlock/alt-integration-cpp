@@ -13,6 +13,24 @@
 using namespace boost::python;
 using namespace altintegration;
 
+// Converts a C++ vector to a python list
+template <class T>
+boost::python::list toPythonList(std::vector<T> vector) {
+  typename std::vector<T>::iterator iter;
+  boost::python::list list;
+  for (iter = vector.begin(); iter != vector.end(); ++iter) {
+    list.append(*iter);
+  }
+  return list;
+}
+
+template <typename Container>
+struct container_to_list {
+  static PyObject* convert(Container const& s) {
+    return boost::python::incref(boost::python::object(toPythonList(s)).ptr());
+  }
+};
+
 /// @brief Type that allows for registration of conversions from
 ///        python iterable types.
 struct iterable_converter {
@@ -24,6 +42,9 @@ struct iterable_converter {
         &iterable_converter::convertible,
         &iterable_converter::construct<Container>,
         boost::python::type_id<Container>());
+
+    boost::python::to_python_converter<Container,
+                                       container_to_list<Container>>();
 
     // Support chaining.
     return *this;
