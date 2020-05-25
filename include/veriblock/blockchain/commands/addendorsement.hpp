@@ -71,9 +71,9 @@ struct AddEndorsement : public Command {
                        HexStr(e_->blockOfProof)));
     }
 
-    auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
-    if (duplicate) {
-      if (endorsement_t::checkForDuplicates()) {
+    if (endorsement_t::checkForDuplicates()) {
+      auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
+      if (duplicate) {
         // found duplicate
         return state.Invalid(
             block_t ::name() + "-duplicate",
@@ -82,12 +82,10 @@ struct AddEndorsement : public Command {
                          e_->toPrettyString(),
                          containing->toPrettyString(),
                          duplicate->toPrettyString()));
-      } else {
-        return true;
       }
     }
 
-    containing->containingEndorsements[e_->id] = e_;
+    containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
     endorsed->endorsedBy.push_back(e_.get());
 
     return true;
@@ -95,29 +93,38 @@ struct AddEndorsement : public Command {
 
   void UnExecute() override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
-    assert(containing != nullptr
-           && "failed to roll back AddEndorsement: the containing block does not exist");
+    assert(containing != nullptr &&
+           "failed to roll back AddEndorsement: the containing block does not "
+           "exist");
 
     auto* endorsed = containing->getAncestor(e_->endorsedHeight);
 
-    assert(endorsed != nullptr
-           && "failed to roll back AddEndorsement: the endorsed block does not exist");
+    assert(endorsed != nullptr &&
+           "failed to roll back AddEndorsement: the endorsed block does not "
+           "exist");
 
-    auto& v = endorsed->endorsedBy;
+    {
+      auto& v = endorsed->endorsedBy;
 
-    // find and erase the last occurrence of e_
-    auto endorsed_it = std::find(v.rbegin(), v.rend(), e_.get());
+      // find and erase the last occurrence of e_
+      auto endorsed_it = std::find(v.rbegin(), v.rend(), e_.get());
 
-    assert(endorsed_it != v.rend()
-           && "failed to roll back AddEndorsement: the endorsed block does not contain the endorsement in endorsedBy");
+      assert(endorsed_it != v.rend() &&
+             "failed to roll back AddEndorsement: the endorsed block does not "
+             "contain the endorsement in endorsedBy");
 
-    auto toRemove = --(endorsed_it.base());
-    v.erase(toRemove);
+      auto toRemove = --(endorsed_it.base());
+      v.erase(toRemove);
+    }
 
-    auto erasedCount = containing->containingEndorsements.erase(e_->id);
-    assert(erasedCount == 1
-           && "failed to roll back AddEndorsement: the containing block does not contain the endorsement in containingEndorsements");
-    (void)erasedCount;
+    {
+      auto containing_it = containing->containingEndorsements.find(e_->id);
+      assert(containing_it != containing->containingEndorsements.end() &&
+             "failed to roll back AddEndorsement: the containing block does "
+             "not contain the endorsement in containingEndorsements");
+
+      containing->containingEndorsements.erase(containing_it);
+    }
   }
 
   size_t getId() const override { return e_->id.getLow64(); }
