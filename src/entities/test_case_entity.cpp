@@ -5,6 +5,8 @@
 
 #include <veriblock/entities/test_case_entity.hpp>
 
+#include <veriblock/hashutil.hpp>
+
 namespace altintegration {
 
 TestCase TestCase::fromRaw(const std::vector<uint8_t>& bytes) {
@@ -13,6 +15,16 @@ TestCase TestCase::fromRaw(const std::vector<uint8_t>& bytes) {
 }
 
 TestCase TestCase::fromRaw(ReadStream& stream) {
+  uint256 expectedHashSum = stream.read(SHA256_HASH_SIZE);
+  
+  size_t savedPosition = stream.position();
+  Slice<const uint8_t> data = stream.readSlice(stream.remaining());
+  uint256 storedHashSum = sha256(data);
+  if (storedHashSum != expectedHashSum) {
+      throw std::invalid_argument("stream: hashSum is invalid");
+  }
+  stream.setPosition(savedPosition);
+
   TestCase result;
   result.alt_tree = readArrayOf<alt_block_with_payloads_t>(
       stream,
@@ -42,16 +54,21 @@ std::vector<uint8_t> TestCase::toRaw() const {
 }
 
 void TestCase::toRaw(WriteStream& stream) const {
-  writeSingleBEValue(stream, alt_tree.size());
+
+  WriteStream temp;
+  writeSingleBEValue(temp, alt_tree.size());
   for (const auto& el : alt_tree) {
-    el.first.toVbkEncoding(stream);
-    writeSingleBEValue(stream, el.second.size());
+    el.first.toVbkEncoding(temp);
+    writeSingleBEValue(temp, el.second.size());
     for (const auto& p : el.second) {
-      p.toVbkEncoding(stream);
+      p.toVbkEncoding(temp);
     }
   }
+  config.toRaw(temp);
 
-  config.toRaw(stream);
+  uint256 hashSum = sha256(temp.data());
+  stream.write(hashSum.data(), SHA256_HASH_SIZE);
+  stream.write(temp.data().data(), temp.data().size());
 }
 
 }  // namespace altintegration
