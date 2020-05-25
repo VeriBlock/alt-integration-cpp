@@ -199,10 +199,10 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
       *chain.tip()->pprev->header, *newIndex.header);
 
-  newIndex.containingEndorsements[endorsement1.id] =
-      std::make_shared<endorsement_t>(endorsement1);
-  newIndex.containingEndorsements[endorsement2.id] =
-      std::make_shared<endorsement_t>(endorsement2);
+  newIndex.containingEndorsements.insert(std::make_pair(
+      endorsement1.id, std::make_shared<endorsement_t>(endorsement1)));
+  newIndex.containingEndorsements.insert(std::make_pair(
+      endorsement2.id, std::make_shared<endorsement_t>(endorsement2)));
 
   chain.setTip(&newIndex);
 
@@ -213,19 +213,22 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
       *chain.tip()->pprev->header, *newIndex2.header);
 
-  newIndex2.containingEndorsements[endorsement3.id] =
-      std::make_shared<endorsement_t>(endorsement3);
+  newIndex2.containingEndorsements.insert(std::make_pair(
+      endorsement3.id, std::make_shared<endorsement_t>(endorsement3)));
 
   chain.setTip(&newIndex2);
 
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement1, 100)
-                 ->containingEndorsements[endorsement1.id],
+                 ->containingEndorsements.find(endorsement1.id)
+                 ->second,
             endorsement1);
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement2, 100)
-                 ->containingEndorsements[endorsement2.id],
+                 ->containingEndorsements.find(endorsement2.id)
+                 ->second,
             endorsement2);
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement3, 100)
-                 ->containingEndorsements[endorsement3.id],
+                 ->containingEndorsements.find(endorsement3.id)
+                 ->second,
             endorsement3);
   EXPECT_EQ(chain.findBlockContainingEndorsement(endorsement4, 100), nullptr);
 }
