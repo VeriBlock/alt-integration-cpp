@@ -35,6 +35,12 @@ RUN apt-get update && apt-get upgrade -y && \
         libssl-dev \
         libevent-dev \
         bsdmainutils \
+        libboost-system-dev \
+        libboost-filesystem-dev \
+        libboost-chrono-dev \
+        libboost-test-dev \
+        libboost-thread-dev \
+        libboost-python-dev \
         libb2-dev
 
 # install tools
@@ -77,17 +83,6 @@ RUN mkdir -p cmake && \
 	  make install; \
     ) && \
     rm -rf cmake
-
-RUN mkdir -p boost && \
-    ( \
-      cd boost; \
-      wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz; \
-      tar -zxf boost_1_65_1.tar.gz; \
-      cd boost_1_65_1/; \
-      ./bootstrap.sh; \
-	  ./b2 cxxflags=-fPIC -j6 install; \
-    ) && \
-    rm -rf boost
 
 RUN ldconfig
 
