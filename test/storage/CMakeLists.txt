@@ -1,3 +1,5 @@
+addtest(alttree_storage_test alttree_storage_test.cpp)
+
 if(WITH_ROCKSDB)
     include_directories(${CMAKE_BINARY_DIR}/rocksdb-src/include)
 
