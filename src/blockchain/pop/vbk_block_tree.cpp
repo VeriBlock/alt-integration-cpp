@@ -3,10 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <veriblock/algorithm.hpp>
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/logger.hpp>
+#include <veriblock/reversed_range.hpp>
 
 namespace altintegration {
 
@@ -37,7 +39,9 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them",
                   block_t::name(),
                   indexNew.height - currentTip->height);
-    this->setTip(indexNew, state, false);
+    if (!this->setTip(indexNew, state, false)) {
+      assert(!indexNew.isValid());
+    }
     return;
   }
 
@@ -74,6 +78,9 @@ bool VbkBlockTree::setTip(index_t& to,
   if (changeTip) {
     VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     activeChain_.setTip(&to);
+    tryAddTip(&to);
+  } else {
+    assert(!to.isValid());
   }
 
   return changeTip;
@@ -114,6 +121,10 @@ void VbkBlockTree::removePayloads(const block_t& block,
     return;
   }
 
+  if (payloads.empty()) {
+    return;
+  }
+
   bool isOnActiveChain = activeChain_.contains(index);
   if (isOnActiveChain) {
     assert(index->pprev && "can not remove payloads from genesis block");
@@ -123,21 +134,34 @@ void VbkBlockTree::removePayloads(const block_t& block,
     (void)ret;
   }
 
-  // remove all matched command groups
-  auto& c = index->commands;
-  c.erase(
-      std::remove_if(c.begin(),
-                     c.end(),
-                     [&](const CommandGroup& g) {
-                       for (const auto& p : payloads) {
-                         if (g == p.getId()) {
-                           return true;
-                         }
-                       }
+  // we need only ids, so save some cpu cycles by calculating ids once
+  std::vector<uint256> pids = map_vector<payloads_t, uint256>(
+      payloads, [](const payloads_t& p) { return p.getId(); });
 
-                       return false;
-                     }),
-      c.end());
+  auto& c = index->commands;
+  // iterate over payloads backwards
+  for (const auto& p : make_reversed(pids.begin(), pids.end())) {
+    // find every payloads in command group (search backwards, as it is likely
+    // to be faster)
+    auto it = std::find_if(c.rbegin(), c.rend(), [&p](const CommandGroup& g) {
+      return g.id == p;
+    });
+
+    if (it == c.rend()) {
+      // not found
+      continue;
+    }
+
+    // if this payloads invalidated subtree, we have to re-validate it again
+    if (!it->valid) {
+      revalidateSubtree(*index, BLOCK_FAILED_POP, true);
+    }
+
+    // TODO(warchant): fix inefficient erase (does reallocation for every
+    // payloads item)
+    auto toRemove = --(it.base());
+    c.erase(toRemove);
+  }
 
   // find all affected tips and do a fork resolution
   auto tips = findValidTips<VbkBlock>(*index);
@@ -154,6 +178,9 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                 block_t::name(),
                 payloads.size(),
                 HexStr(hash));
+  if (payloads.empty()) {
+    return true;
+  }
 
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
@@ -182,20 +209,12 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     (void)ret;
   }
 
-  // TODO: once duplicates of VTBs are removed, remove duplicate checks
-  std::unordered_set<uint256> existing;
-  for (auto& group : index->commands) {
-    existing.insert(group.id);
-  }
-
+  auto& c = index->commands;
   for (const auto& p : payloads) {
-    // if payloads being added are UNIQUE
-    if (existing.insert(p.getId()).second) {
-      index->commands.emplace_back();
-      auto& g = index->commands.back();
-      g.id = p.getId();
-      payloadsToCommands(p, g.commands);
-    }
+    c.emplace_back();
+    auto& g = c.back();
+    g.id = p.getId();
+    payloadsToCommands(p, g.commands);
   }
 
   // find all affected tips and do a fork resolution
@@ -204,8 +223,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     determineBestChain(activeChain_, *tip, state);
   }
 
-  // TODO(warchant): determine best chain used to set invalid block as
-  // 'invalid'. Now for some blocks we may return 'true'
   return index->isValid();
 }
 

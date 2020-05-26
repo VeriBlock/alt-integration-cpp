@@ -160,6 +160,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     bool isBootstrap = !shouldContextuallyCheck;
     determineBestChain(base::activeChain_, *index, state, isBootstrap);
 
+    base::tryAddTip(index);
+
     return true;
   }
 

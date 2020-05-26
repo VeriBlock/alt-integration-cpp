@@ -144,22 +144,22 @@ TEST_F(Scenario8, scenario_8) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads2}, state));
-  // TODO: fix this
-  //  EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state));
-  //  EXPECT_FALSE(state.IsValid());
-  /* should fail=*/alttree.setState(containingBlock.getHash(), state);
+  EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetDebugMessage(), "Endorsement expired");
 
-  EXPECT_NE(*alttree.vbk().getBestChain().tip(),
-            *popminer->vbk().getBestChain().tip());
+  // VBK subtree 501 (contains expired VTB) is invalid
+  validityFlagCheck(*vbkBlock, false);
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->height, 500);
 
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
-  EXPECT_NE(vbkBlock, nullptr);
+  ASSERT_NE(vbkBlock, nullptr);
+
+  // remove payloads from alt
+  alttree.removePayloads(containingBlock.hash, {payloads2});
+  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
+
+  // now vbk block 501 (that contains invalid VTB) is valid
   validityFlagCheck(*vbkBlock, true);
-
-  vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
-  EXPECT_NE(vbkBlock, nullptr);
-
-  // TODO: should pass
-  //  EXPECT_EQ(altStateVbkTip, *alttree.vbk().getBestChain().tip());
+  std::cout << alttree.toPrettyString();
 }

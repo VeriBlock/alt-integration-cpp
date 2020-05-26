@@ -171,16 +171,17 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
 
   auto vbktip1 = popminer.vbk().getBestChain().tip();
   // should not throw, as we removed call to 'invalidateSubtree'
-  ASSERT_NO_THROW(popminer.mineVbkBlocks(*vbkBlockTip2, 1));
+  ASSERT_THROW(popminer.mineVbkBlocks(*vbkBlockTip2, 1), std::domain_error);
   auto vbktip3 = popminer.vbk().getBestChain().tip();
 
   ASSERT_EQ(*vbktip1, *vbktip3) << "tip has been changed wrongly";
 }
 
 // TODO: uncomment when duplication of VTB is disabled
-//TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
+// TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
 //  // We test that we have a duplicate endorsement in the same VeriBlock chain
-//  // ... - [] - []- [endorsement_1] - []- [endorsement_1 (the same endorsement)]
+//  // ... - [] - []- [endorsement_1] - []- [endorsement_1 (the same
+//  endorsement)]
 //
 //  // start with 30 BTC blocks
 //  auto* btcBlockTip1 = popminer.mineBtcBlocks(30);
@@ -197,7 +198,8 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
 //  auto* endorsedVbkBlock = vbkBlockTip->getAncestor(vbkBlockTip->height - 10);
 //
 //  // create 1 endorsement and put it into
-//  auto Atx1 = popminer.createBtcTxEndorsingVbkBlock(*endorsedVbkBlock->header);
+//  auto Atx1 =
+//  popminer.createBtcTxEndorsingVbkBlock(*endorsedVbkBlock->header);
 //
 //  btcBlockTip1 = popminer.mineBtcBlocks(1);
 //  ASSERT_EQ(btcBlockTip1->getHash(),
