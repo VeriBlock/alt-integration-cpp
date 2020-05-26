@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/update-cd
   pull_request:
     branches:
       - master
@@ -12,7 +13,7 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev
+    container: veriblock/alt-integration-cpp-dev:feature-update-cd
     strategy:
       fail-fast: false
       matrix:
