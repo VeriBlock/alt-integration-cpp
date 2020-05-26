@@ -25,49 +25,59 @@ Config setupConfig() {
   return config;
 }
 
+TestCase setupTestCase() {
+    const auto atvBytes = ParseHex(defaultAtvEncoded);
+    auto stream = ReadStream(atvBytes);
+    ATV atv = ATV::fromVbkEncoding(stream);
+
+    const auto vtbBytes = ParseHex(defaultVtbEncoded);
+    stream = ReadStream(vtbBytes);
+    VTB vtb = VTB::fromVbkEncoding(stream);
+
+    AltBlock block1;
+    block1.hash = generateRandomBytesVector(32);
+    block1.height = 1;
+    block1.previousBlock = generateRandomBytesVector(32);
+    block1.timestamp = 124;
+
+    AltBlock block2;
+    block2.hash = generateRandomBytesVector(32);
+    block2.height = 2;
+    block2.previousBlock = generateRandomBytesVector(32);
+    block2.timestamp = 256;
+
+    AltPayloads payloads;
+    payloads.containingBlock.hash = generateRandomBytesVector(32);
+    payloads.containingBlock.height = 123;
+    payloads.containingBlock.previousBlock = generateRandomBytesVector(32);
+    payloads.containingBlock.timestamp = 1234;
+    payloads.endorsed.hash = generateRandomBytesVector(32);
+    payloads.endorsed.height = 142;
+    payloads.endorsed.previousBlock = generateRandomBytesVector(32);
+    payloads.endorsed.timestamp = 3214;
+    payloads.popData.hasAtv = true;
+    payloads.popData.atv = atv;
+    payloads.popData.version = 2;
+    payloads.popData.vtbs = { vtb };
+
+    std::vector<AltPayloads> vec_payloads1(4, payloads);
+    std::vector<AltPayloads> vec_payloads2(8, payloads);
+
+    TestCase expected;
+    expected.alt_tree = { std::make_pair(block1, vec_payloads1),
+                         std::make_pair(block2, vec_payloads2) };
+    expected.config = setupConfig();
+
+    expected.alt_tree = { std::make_pair(block1, vec_payloads1),
+                     std::make_pair(block2, vec_payloads2) };
+    expected.config = setupConfig();
+
+    return expected;
+}
+
 TEST(TestCase_entity, deserialize_test) {
-  const auto atvBytes = ParseHex(defaultAtvEncoded);
-  auto stream = ReadStream(atvBytes);
-  ATV atv = ATV::fromVbkEncoding(stream);
-
-  const auto vtbBytes = ParseHex(defaultVtbEncoded);
-  stream = ReadStream(vtbBytes);
-  VTB vtb = VTB::fromVbkEncoding(stream);
-
-  AltBlock block1;
-  block1.hash = generateRandomBytesVector(32);
-  block1.height = 1;
-  block1.previousBlock = generateRandomBytesVector(32);
-  block1.timestamp = 124;
-
-  AltBlock block2;
-  block2.hash = generateRandomBytesVector(32);
-  block2.height = 2;
-  block2.previousBlock = generateRandomBytesVector(32);
-  block2.timestamp = 256;
-
-  AltPayloads payloads;
-  payloads.containingBlock.hash = generateRandomBytesVector(32);
-  payloads.containingBlock.height = 123;
-  payloads.containingBlock.previousBlock = generateRandomBytesVector(32);
-  payloads.containingBlock.timestamp = 1234;
-  payloads.endorsed.hash = generateRandomBytesVector(32);
-  payloads.endorsed.height = 142;
-  payloads.endorsed.previousBlock = generateRandomBytesVector(32);
-  payloads.endorsed.timestamp = 3214;
-  payloads.popData.hasAtv = true;
-  payloads.popData.atv = atv;
-  payloads.popData.version = 2;
-  payloads.popData.vtbs = {vtb};
-
-  std::vector<AltPayloads> vec_payloads1(4, payloads);
-  std::vector<AltPayloads> vec_payloads2(8, payloads);
-
-  TestCase expected;
-  expected.alt_tree = {std::make_pair(block1, vec_payloads1),
-                       std::make_pair(block2, vec_payloads2)};
-  expected.config = setupConfig();
-  ASSERT_NO_THROW(expected.config.validate());
+  TestCase expected = setupTestCase();
+  auto payloads = expected.alt_tree[0].second[0];
 
   std::vector<uint8_t> serialized_bytes = expected.toRaw();
 
@@ -86,4 +96,16 @@ TEST(TestCase_entity, deserialize_test) {
   }
 
   ASSERT_NO_THROW(deserialized.config.validate());
+}
+
+TEST(TestCase_entity, hashSum_test) {
+    TestCase expected = setupTestCase();
+
+    std::vector<uint8_t> serialized_bytes = expected.toRaw();
+    // corrupt hash 
+    serialized_bytes[0] = 0;
+    serialized_bytes[1] = 0;
+    serialized_bytes[2] = 0;
+
+    ASSERT_THROW(TestCase::fromRaw(serialized_bytes), std::invalid_argument);
 }
