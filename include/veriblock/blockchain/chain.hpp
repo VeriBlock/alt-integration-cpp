@@ -141,17 +141,6 @@ struct Chain {
     return const_cast<index_t*>(pindex);
   }
 
-  //! same as findFork, but returns first keystone block at or before fork point
-  const index_t* findHighestKeystoneAtOrBeforeFork(const index_t* pindex,
-                                                   int ki) const {
-    auto* fork = findFork(pindex);
-    if (!fork) {
-      return nullptr;
-    }
-    auto keystoneHeight = highestKeystoneAtOrBefore(fork->height, ki);
-    return this->operator[](keystoneHeight);
-  }
-
   //! returns an unordered set of hashes, present in current chain.
   //! useful for small chains for further checks of "hash existence"
   std::unordered_set<hash_t> getAllHashesInChain() const {
