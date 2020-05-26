@@ -70,13 +70,11 @@ struct KeystoneContextList {
       : keystoneInterval(keystoneInt) {
     size_t chop_index = c.size();
 
-    if (c.size() > 1) {
-      for (size_t i = 1; i < c.size(); ++i) {
-        if ((c[i].firstBlockPublicationHeight -
-             c[i - 1].firstBlockPublicationHeight) > finalityDelay) {
-          chop_index = i;
-          break;
-        }
+    for (size_t i = 1; i < c.size(); ++i) {
+      if ((c[i].firstBlockPublicationHeight -
+           c[i - 1].firstBlockPublicationHeight) > finalityDelay) {
+        chop_index = i;
+        break;
       }
     }
 
@@ -446,37 +444,29 @@ struct PopAwareForkResolutionComparator {
     }
 
     auto ki = ed.getParams().getKeystoneInterval();
-    const auto* forkKeystone =
-        currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
-    if (!forkKeystone) {
-      // no fork keystone found. this can happen during bootstrap
-      VBK_LOG_INFO("Can not find fork keystone");
-      return 0;
-    }
+    const auto* fork = currentBest.findFork(&indexNew);
+    assert(fork != nullptr &&
+           "all blocks in a blocktree must form a tree, thus all pairs of "
+           "chains must have a fork point");
 
     bool AcrossedKeystoneBoundary =
-        isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
+        isCrossedKeystoneBoundary(fork->height, bestTip->height, ki);
     bool BcrossedKeystoneBoundary =
-        isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki);
-    if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
+        isCrossedKeystoneBoundary(fork->height, indexNew.height, ki);
+    if (!AcrossedKeystoneBoundary && !BcrossedKeystoneBoundary) {
       // chans are equal in terms of POP
       VBK_LOG_INFO(
-          "Chains crossed keystone boundary: A=%s B=%s, chains are equal",
-          (AcrossedKeystoneBoundary ? "true" : "false"),
-          (BcrossedKeystoneBoundary ? "true" : "false"));
+          "Neither chain crossed a keystone boundary: chains are equal");
       return 0;
     }
 
-    // [vbk fork point keystone ... current tip]
-    Chain<protected_index_t> chainA(forkKeystone->height, currentBest.tip());
-    // [vbk fork point keystone... new block]
-    Chain<protected_index_t> chainB(forkKeystone->height, &indexNew);
+    // [vbk fork point ... current tip]
+    Chain<protected_index_t> chainA(fork->height, currentBest.tip());
+    // [vbk fork point ... new block]
+    Chain<protected_index_t> chainB(fork->height, &indexNew);
 
     // chains are not empty and chains start at the same block
     assert(chainA.first() != nullptr && chainA.first() == chainB.first());
-    // first block is a keystone
-    assert(isKeystone(chainA.first()->height,
-                      protectedParams_->getKeystoneInterval()));
 
     // we ALWAYS compare currently applied chain (chainA) and other chain
     // (chainB)
@@ -485,17 +475,16 @@ struct PopAwareForkResolutionComparator {
     sm_t sm(ed, *ing_, chainA.first()->height);
 
     // we are at chainA.
-    // apply all payloads from chain B (both chains have same first block - fork
-    // point at keystone, so exclude it during 'apply')
+    // apply all payloads from chain B (both chains have same first block - the
+    // fork point, so exclude it during 'apply')
     if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
-      // chain A is better
       // chain B has been unapplied already
       VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                    state.toString());
       return 1;
     }
 
-    // now tree contains payloads from both chains
+    // now the tree contains payloads from both chains
 
     // rename
     const auto& filter1 = internal::getProtoKeystoneContext<protected_block_t,
@@ -517,9 +506,9 @@ struct PopAwareForkResolutionComparator {
     int result = internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, *protectedParams_);
     if (result >= 0) {
-      // chain A remains best. unapply B. A remains applied
+      // chain A remains the best. unapply B. A remains applied
       sm.unapply(*chainB.tip(), *chainB.first());
-      VBK_LOG_INFO("Chain A remains best chain");
+      VBK_LOG_INFO("Chain A remains the best chain");
     } else {
       // chain B is better. unapply A. B remains applied
       sm.unapply(*chainA.tip(), *chainA.first());
