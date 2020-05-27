@@ -148,18 +148,16 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetDebugMessage(), "Endorsement expired");
 
-  // VBK subtree 501 (contains expired VTB) is invalid
-  validityFlagCheck(*vbkBlock, false);
-  EXPECT_EQ(alttree.vbk().getBestChain().tip()->height, 500);
+  // VBK subtree 501 (contains expired VTB) is VALID - because we tried to add
+  // VTB, it was invalid, so we immediately removed it
+  validityFlagCheck(*vbkBlock, true);
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->height, 502);
 
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   ASSERT_NE(vbkBlock, nullptr);
 
-  // remove payloads from alt
+  // remove payloads from alt, vbk state is still valid
   alttree.removePayloads(containingBlock.hash, {payloads2});
   ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
-
-  // now vbk block 501 (that contains invalid VTB) is valid
   validityFlagCheck(*vbkBlock, true);
-  std::cout << alttree.toPrettyString();
 }

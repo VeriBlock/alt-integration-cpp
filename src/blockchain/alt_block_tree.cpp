@@ -304,7 +304,7 @@ void AltTree::removePayloads(index_t& index,
 
     // if this payloads invalidated subtree, we have to re-validate it again
     if (!it->valid) {
-      revalidateSubtree(index, BLOCK_FAILED_POP, true);
+      revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
     }
 
     // TODO(warchant): fix inefficient erase (does reallocation for every

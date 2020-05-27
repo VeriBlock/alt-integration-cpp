@@ -154,7 +154,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
     // if this payloads invalidated subtree, we have to re-validate it again
     if (!it->valid) {
-      revalidateSubtree(*index, BLOCK_FAILED_POP, true);
+      revalidateSubtree(*index, BLOCK_FAILED_POP, /*do fr=*/false);
     }
 
     // TODO(warchant): fix inefficient erase (does reallocation for every
@@ -253,6 +253,17 @@ bool VbkBlockTree::setState(const VbkBlock::hash_t& block,
     return false;
   }
   return this->setTip(*index, state);
+}
+
+void VbkBlockTree::removePayloads(const Blob<24>& hash,
+                                  const std::vector<payloads_t>& payloads) {
+  auto index = base::getBlockIndex(hash);
+  if (!index) {
+    // silently ignore
+    return;
+  }
+
+  removePayloads(*index->header, payloads);
 }
 
 }  // namespace altintegration
