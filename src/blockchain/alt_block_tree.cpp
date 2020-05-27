@@ -7,7 +7,9 @@
 
 #include <unordered_set>
 #include <veriblock/blockchain/commands/commands.hpp>
+#include <veriblock/reversed_range.hpp>
 
+#include "veriblock/algorithm.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -86,9 +88,10 @@ bool AltTree::addPayloads(index_t& index,
     (void)ret;
   }
 
+  auto& c = index.commands;
   for (const auto& p : payloads) {
-    index.commands.emplace_back();
-    auto& g = index.commands.back();
+    c.emplace_back();
+    auto& g = c.back();
     g.id = p.getId();
     payloadsToCommands(p, g.commands);
   }
@@ -280,20 +283,35 @@ void AltTree::removePayloads(index_t& index,
     (void)ret;
   }
 
-  // remove all matched command groups
   auto& c = index.commands;
-  c.erase(std::remove_if(c.begin(),
-                         c.end(),
-                         [&](const CommandGroup& g) {
-                           for (const auto& p : payloads) {
-                             if (g == p.getId()) {
-                               return true;
-                             }
-                           }
 
-                           return false;
-                         }),
-          c.end());
+  // we need only ids, so save some cpu cycles by calculating ids once
+  std::vector<uint256> pids = map_vector<payloads_t, uint256>(
+      payloads, [](const payloads_t& p) { return p.getId(); });
+
+  // iterate over payloads backwards
+  for (const auto& pid : make_reversed(pids.begin(), pids.end())) {
+    // find every payloads in command group (search backwards, as it is likely
+    // to be faster)
+    auto it = std::find_if(c.rbegin(), c.rend(), [&pid](const CommandGroup& g) {
+      return g.id == pid;
+    });
+
+    if (it == c.rend()) {
+      // not found
+      continue;
+    }
+
+    // if this payloads invalidated subtree, we have to re-validate it again
+    if (!it->valid) {
+      revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+    }
+
+    // TODO(warchant): fix inefficient erase (does reallocation for every
+    // payloads item)
+    auto toRemove = --(it.base());
+    c.erase(toRemove);
+  }
 }
 
 void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
@@ -339,6 +357,9 @@ bool AltTree::setTip(AltTree::index_t& to,
                       ? btc().getBestChain().tip()->toPrettyString()
                       : "<empty>"));
     activeChain_.setTip(&to);
+    tryAddTip(&to);
+  } else {
+    assert(!to.isValid());
   }
 
   // true if tip has been changed

@@ -59,8 +59,12 @@ struct AddEndorsement : public Command {
     }
 
     if (endorsed->getHash() != e_->endorsedHash) {
-      return state.Invalid(block_t::name() + "-block-differs",
-                           "Endorsed block is on a different chain");
+      return state.Invalid(
+          block_t::name() + "-block-differs",
+          fmt::sprintf(
+              "Endorsed block is on a different chain. Expected: %s, got %s",
+              endorsed->toPrettyString(),
+              HexStr(e_->endorsedHash)));
     }
 
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);

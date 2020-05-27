@@ -85,7 +85,7 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
   atv.containingBlock = containingBlock;
 
   for (auto* walkBlock = tip;
-       walkBlock->header->getHash() != lastKnownVbkBlockHash;
+       walkBlock && walkBlock->header->getHash() != lastKnownVbkBlockHash;
        walkBlock = walkBlock->pprev) {
     atv.context.push_back(*walkBlock->header);
   }

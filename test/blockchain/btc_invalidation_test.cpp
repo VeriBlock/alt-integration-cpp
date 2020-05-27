@@ -82,6 +82,17 @@ TEST_F(BtcInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
     ASSERT_TRUE(current->status & BLOCK_FAILED_CHILD);
     current = chain.next(current);
   } while (current != nullptr);
+
+  // revalidate block 5
+  popminer->btc().revalidateSubtree(toBeInvalidated->getHash(),
+                                    BLOCK_FAILED_BLOCK);
+
+  // all next blocks are valid
+  current = chain.next(toBeInvalidated);
+  do {
+    ASSERT_TRUE(current->isValid());
+    current = chain.next(current);
+  } while (current != nullptr);
 }
 
 TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
@@ -110,6 +121,7 @@ TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   auto* Ftip = popminer->mineBtcBlocks(*sixth, 1);  // 9
 
   ASSERT_EQ(btc.getBlocks().size(), 11 + 5 + 3 + 1 + 2 + 1);
+  ASSERT_EQ(btc.getTips().size(), 6);
 
   // current best is B
   ASSERT_EQ(*best->tip(), *Btip);
@@ -154,16 +166,22 @@ TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
 
   // there's only one chain (no known forks)
   const auto& forkChains = btc.getTips();
+  // active + b[5]
   ASSERT_EQ(forkChains.size(), 2);
   ASSERT_TRUE(forkChains.count(Btip->getAncestor(5)));
   ASSERT_TRUE(forkChains.count(Achain.tip()));
 
-  // remove subtree at (b) 6
-  popminer->btc().removeSubtree(*Bchain[6]);
+  // revalidate subtree at (b) 6
+  btc.revalidateSubtree(*Bchain[6], BLOCK_FAILED_BLOCK);
+  // all blocks after 6 are valid again
+  ASSERT_EQ(btc.getBlocks().size(), 11 + 5 + 3 + 1 + 2 + 1);
+  ASSERT_EQ(btc.getTips().size(), 6);
 
-  ASSERT_EQ(popminer->btc().getBlocks().size(), 6 + 5);
+  // remove subtree at (b) 6
+  btc.removeSubtree(*Bchain[6]);
+  ASSERT_EQ(btc.getBlocks().size(), 6 + 5);
   forEach(Achain, checkBlock(true));
-  ASSERT_EQ(forkChains.size(), 2);
+  ASSERT_EQ(btc.getTips().size(), 2);
   ASSERT_TRUE(forkChains.count(B5));
   ASSERT_TRUE(forkChains.count(Achain[9]));
 }

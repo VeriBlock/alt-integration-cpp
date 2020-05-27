@@ -417,7 +417,8 @@ struct PopAwareForkResolutionComparator {
     auto bestTip = currentBest.tip();
     assert(bestTip);
     if (currentBest.contains(&indexNew)) {
-      VBK_LOG_INFO("Candidate is on active chain, current chain wins");
+      VBK_LOG_INFO("Candidate %s is on active chain, current chain wins",
+                   indexNew.toPrettyString());
       return 1;
     }
 
@@ -431,16 +432,15 @@ struct PopAwareForkResolutionComparator {
       VBK_LOG_INFO("Candidate is ahead %d blocks",
                    indexNew.height - bestTip->height);
       sm_t sm(ed, *ing_, bestTip->height);
-      if (sm.apply(*bestTip, indexNew, state)) {
-        // if indexNew is valid, then switch to new chain
-        VBK_LOG_INFO("Candidate contains VALID commands, candidate wins");
-        return -1;
+      if (!sm.apply(*bestTip, indexNew, state)) {
+        // new chain is invalid. our current chain is definitely better.
+        VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
+                     state.toString());
+        return 1;
       }
 
-      // new chain is invalid. our current chain is definitely better.
-      VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
-                   state.toString());
-      return 1;
+      VBK_LOG_INFO("Candidate contains VALID commands, chain B wins");
+      return -1;
     }
 
     auto ki = ed.getParams().getKeystoneInterval();
@@ -479,6 +479,7 @@ struct PopAwareForkResolutionComparator {
     // fork point, so exclude it during 'apply')
     if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
       // chain B has been unapplied already
+      // chain B has been invalidated already
       VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                    state.toString());
       return 1;

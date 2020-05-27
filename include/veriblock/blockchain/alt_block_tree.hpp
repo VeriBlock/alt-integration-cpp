@@ -24,6 +24,10 @@
 
 namespace altintegration {
 
+/**
+ * @warning POP Fork Resolution is NOT transitive. If A is better than B, and B
+ * is better than C, then A may NOT be better than C.
+ */
 struct AltTree : public BaseBlockTree<AltBlock> {
   using base = BaseBlockTree<AltBlock>;
   using alt_config_t = AltChainParams;

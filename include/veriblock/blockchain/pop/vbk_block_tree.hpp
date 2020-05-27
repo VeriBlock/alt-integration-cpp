@@ -49,8 +49,11 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state);
 
+  void removePayloads(const hash_t& hash,
+                      const std::vector<payloads_t>& payloads);
+
   void removePayloads(const block_t& block,
-                   const std::vector<payloads_t>& payloads);
+                      const std::vector<payloads_t>& payloads);
 
   void payloadsToCommands(const typename VbkBlockTree::payloads_t& p,
                           std::vector<CommandPtr>& commands);
@@ -59,16 +62,16 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
     return cmp_ == o.cmp_ && VbkTree::operator==(o);
   }
 
-  bool operator!=(const VbkBlockTree& o) const {
-    return !operator==(o);
-  }
+  bool operator!=(const VbkBlockTree& o) const { return !operator==(o); }
 
   bool setState(const VbkBlock::hash_t& block, ValidationState& state);
 
   std::string toPrettyString(size_t level = 0) const;
 
  private:
-  bool setTip(index_t& to, ValidationState& state, bool isBootstrap = false) override;
+  bool setTip(index_t& to,
+              ValidationState& state,
+              bool isBootstrap = false) override;
 
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew,

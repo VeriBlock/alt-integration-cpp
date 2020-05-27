@@ -68,7 +68,16 @@ struct AltBlock {
   }
 
   static std::string name() { return "ALT"; }
+
+  std::string toPrettyString() const {
+    return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
+  }
 };
+
+/// custom gtest printer
+inline void PrintTo(const AltBlock& block, ::std::ostream* os) {
+  *os << block.toPrettyString();
+}
 
 }  // namespace altintegration
 
