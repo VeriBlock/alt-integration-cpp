@@ -439,6 +439,7 @@ struct PopAwareForkResolutionComparator {
         return 1;
       }
 
+      VBK_LOG_INFO("Candidate contains VALID commands, chain B wins");
       return -1;
     }
 
