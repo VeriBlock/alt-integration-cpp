@@ -41,7 +41,7 @@ struct PopTestFixture {
 
   PopTestFixture() {
     SetLogger<FmtLogger>();
-    GetLogger().level = LogLevel::debug;
+    GetLogger().level = LogLevel::off;
 
     EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
@@ -159,6 +159,12 @@ struct PopTestFixture {
     for (const auto& block : atv.context) {
       popData.vbk_context.push_back(block);
     }
+
+    std::sort(popData.vbk_context.begin(),
+              popData.vbk_context.end(),
+              [](const VbkBlock& a, const VbkBlock& b) {
+                return a.height < b.height;
+              });
 
     popData.atv = atv;
     popData.atv.context.clear();
