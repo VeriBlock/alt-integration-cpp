@@ -259,7 +259,11 @@ void VbkBlockTree::removePayloads(const Blob<24>& hash,
                                   const std::vector<payloads_t>& payloads) {
   auto index = base::getBlockIndex(hash);
   if (!index) {
-    // silently ignore
+    // silently ignore...
+    // there's a case when we legitimately can't throw:
+    // in command AddVTB we may add a VTB whose containing block is
+    // invalid/unknown. removePayloads will immediately be called right after
+    // addPayloads, and if we throw here - will break the state.
     return;
   }
 
