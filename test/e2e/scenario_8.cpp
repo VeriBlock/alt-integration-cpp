@@ -144,22 +144,20 @@ TEST_F(Scenario8, scenario_8) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads2}, state));
-  // TODO: fix this
-  //  EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state));
-  //  EXPECT_FALSE(state.IsValid());
-  /* should fail=*/alttree.setState(containingBlock.getHash(), state);
+  EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetDebugMessage(), "Endorsement expired");
 
-  EXPECT_NE(*alttree.vbk().getBestChain().tip(),
-            *popminer->vbk().getBestChain().tip());
-
-  vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
-  EXPECT_NE(vbkBlock, nullptr);
+  // VBK subtree 501 (contains expired VTB) is VALID - because we tried to add
+  // VTB, it was invalid, so we immediately removed it
   validityFlagCheck(*vbkBlock, true);
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->height, 502);
 
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
-  EXPECT_NE(vbkBlock, nullptr);
+  ASSERT_NE(vbkBlock, nullptr);
 
-  // TODO: should pass
-  //  EXPECT_EQ(altStateVbkTip, *alttree.vbk().getBestChain().tip());
+  // remove payloads from alt, vbk state is still valid
+  alttree.removePayloads(containingBlock.hash, {payloads2});
+  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
+  validityFlagCheck(*vbkBlock, true);
 }

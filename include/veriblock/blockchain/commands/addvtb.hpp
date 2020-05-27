@@ -9,6 +9,7 @@
 #include <vector>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/entities/altblock.hpp>
+
 #include "veriblock/fmt.hpp"
 
 namespace altintegration {
@@ -22,15 +23,24 @@ struct AddVTB : public Command {
 
   bool Execute(ValidationState& state) override {
     // add commands to VBK containing block
-    return tree_->vbk().addPayloads(
-        vtb_.containingBlock.getHash(), {vtb_}, state);
+    auto containing = vtb_.containingBlock.getHash();
+    auto& vbk = tree_->vbk();
+
+    // addPayloads changes state. if we can't add payloads, immediately clear
+    // all side effects
+    if (!vbk.addPayloads(containing, {vtb_}, state)) {
+      vbk.removePayloads(containing, {vtb_});
+      return false;
+    }
+
+    return true;
   }
   void UnExecute() override {
     auto hash = vtb_.containingBlock.getHash();
 
     auto* index = tree_->vbk().getBlockIndex(hash);
-    assert(index != nullptr
-           && "failed to roll back addVTB: the containing block does not exist");
+    assert(index != nullptr &&
+           "failed to roll back addVTB: the containing block does not exist");
     (void)index;
 
     tree_->vbk().removePayloads(vtb_.containingBlock, {vtb_});

@@ -8,6 +8,7 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <veriblock/algorithm.hpp>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
@@ -112,7 +113,10 @@ struct BaseBlockTree {
   void invalidateSubtree(index_t& toBeInvalidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
-    VBK_LOG_INFO("Invalidating subtree %s", toBeInvalidated.toPrettyString());
+    VBK_LOG_INFO("Invalidating %s subtree: reason=%d block=%s",
+                 block_t::name(),
+                 (int)reason,
+                 toBeInvalidated.toPrettyString());
     assert(toBeInvalidated.pprev);
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
@@ -152,6 +156,10 @@ struct BaseBlockTree {
   void revalidateSubtree(index_t& toBeValidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
+    VBK_LOG_INFO("Revalidating %s subtree: reason=%d block=%s",
+                 block_t::name(),
+                 (int)reason,
+                 toBeValidated.toPrettyString());
     doReValidate(toBeValidated, reason);
     tryAddTip(&toBeValidated);
 
@@ -159,9 +167,7 @@ struct BaseBlockTree {
       forEachNodePreorder<block_t>(*pnext, [&](index_t& index) -> bool {
         doReValidate(index, BLOCK_FAILED_CHILD);
         bool valid = index.isValid();
-        if (valid) {
-          tryAddTip(&index);
-        }
+        tryAddTip(&index);
         return valid;
       });
     }
@@ -196,6 +202,10 @@ struct BaseBlockTree {
 
   void tryAddTip(index_t* index) {
     assert(index);
+
+    if (!index->isValid()) {
+      return;
+    }
 
     auto it = tips_.find(index->pprev);
     if (it != tips_.end()) {
@@ -255,6 +265,7 @@ struct BaseBlockTree {
   //! updates tree tip
   virtual bool setTip(index_t& to, ValidationState&, bool) {
     activeChain_.setTip(&to);
+    tryAddTip(&to);
     VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     return true;
   }
@@ -345,7 +356,7 @@ struct BaseBlockTree {
   //! stores all removed blocks, to ensure pointers to blocks remain stable
   // TODO(bogdan): remove for future releases
   block_index_t removed_;
-  //! stores ONLY VALID tips
+  //! stores ONLY VALID tips, including currently active tip
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
   Chain<index_t> activeChain_;
