@@ -1,3 +1,9 @@
+CHECK_CXX_SOURCE_COMPILES("int main(void) { return __builtin_expect(0, 1); }"
+        HAVE_BUILTIN_EXPECT)
+if(HAVE_BUILTIN_EXPECT)
+    add_compile_definitions(VBK_HAVE_BUILTIN_EXPECT)
+endif()
+
 function(disable_clang_tidy target)
     set_target_properties(${target} PROPERTIES
             C_CLANG_TIDY ""
