@@ -103,8 +103,6 @@ TEST_F(Scenario0, Scenario0) {
   containing.timestamp = 10002;
   containing.hash = std::vector<uint8_t>{1, 3, 3, 10};
 
-  assert(5 > 6);
-
   AltPayloads payloads;
   payloads.popData.hasAtv = true;
   payloads.popData.atv = atv;
