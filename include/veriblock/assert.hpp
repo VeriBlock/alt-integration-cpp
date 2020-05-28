@@ -10,7 +10,7 @@
 // tell branch predictor that condition is always true
 #define VBK_LIKELY(condition) __builtin_expect(static_cast<bool>(condition), 1)
 #else
-#define VBK_LIKELY(condition) (x)
+#define VBK_LIKELY(condition) (condition)
 #endif
 
 #ifdef NDEBUG
