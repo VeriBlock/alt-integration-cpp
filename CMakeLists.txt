@@ -73,6 +73,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
 
     # disable errors
     add_flag(-Wno-unused-function)
+    add_flag(-Wno-error=null-dereference)
     add_flag(-Wno-nonnull-compare)
     add_flag(-Wno-unknown-pragmas)
     add_cxx_flag(-Wno-literal-suffix)
