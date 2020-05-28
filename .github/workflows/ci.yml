@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DCMAKE_BUILD_TYPE=Release", "-DWITH_PYPOPMINER=ON"]
+        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"]
     env:
       CC: clang
       CXX: clang++
@@ -93,7 +93,12 @@ jobs:
 #        run: vcpkg install rocksdb:x64-windows-static
 
       - name: cmake
-        run: cmake . -Bbuild -A x64 -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
+        run: cmake . -Bbuild -A x64
+          -DCMAKE_BUILD_TYPE=Release
+          -DSHARED=OFF
+          -DVCPKG_TARGET_TRIPLET=x64-windows-static
+          -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
         run: cmake --build build
       - name: test
@@ -116,7 +121,7 @@ jobs:
           submodules: recursive
           clean: true
       - name: cmake
-        run: cmake . -Bbuild ${{ matrix.flags }}
+        run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
         run: cmake --build build -- -j2
       - name: test
