@@ -107,6 +107,10 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
     VTB& vtb = *it;
     auto* containing_block_index =
         tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
+    if (!containing_block_index) {
+      throw std::logic_error("Mempool: containing block is not found: " +
+                             HexStr(vtb.containingBlock.getHash()));
+    }
 
     auto start_height = (std::max)(
         genesis_height, containing_block_index->height - settlement_interval);
@@ -197,12 +201,13 @@ std::vector<PopData> MemPool::getPop(const AltBlock& current_block,
   hack_block.timestamp = current_block.timestamp + 1;
   hack_block.height = current_block.height + 1;
 
-
   std::vector<std::pair<ATV::id_t, ATV>> sorted_atvs =
       getSortedATVs(stored_atvs_);
 
   std::vector<PopData> popTxs;
-  for(size_t i = 0; i < sorted_atvs.size() && i < tree.getParams().getMaxPopDataPerBlock(); ++i) {
+  for (size_t i = 0;
+       i < sorted_atvs.size() && i < tree.getParams().getMaxPopDataPerBlock();
+       ++i) {
     auto& atv = sorted_atvs[i].second;
     PopData popTx;
     VbkBlock first_block =
