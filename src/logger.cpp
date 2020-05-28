@@ -5,6 +5,7 @@
 
 #include <fmt/format.h>
 
+#include <veriblock/assert.hpp>
 #include <veriblock/logger.hpp>
 
 namespace altintegration {
@@ -12,12 +13,12 @@ namespace altintegration {
 static std::unique_ptr<Logger> logger = std::unique_ptr<Logger>(new Logger());
 
 Logger& GetLogger() {
-  assert(logger != nullptr);
+  VBK_ASSERT(logger != nullptr);
   return *logger;
 }
 
 void SetLogger(std::unique_ptr<Logger> lgr) {
-  assert(lgr != nullptr);
+  VBK_ASSERT(lgr != nullptr);
   logger = std::move(lgr);
 }
 

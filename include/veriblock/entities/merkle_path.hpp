@@ -6,7 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 
-#include <cassert>
 #include <cstdint>
 #include <stdexcept>
 #include <vector>

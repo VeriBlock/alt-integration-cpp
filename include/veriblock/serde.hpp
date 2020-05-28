@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_VERIBLOCK_SERDE_HPP
 #define ALT_INTEGRATION_VERIBLOCK_SERDE_HPP
 
+#include <veriblock/assert.hpp>
 #include <functional>
 #include <limits>
 #include <stdexcept>

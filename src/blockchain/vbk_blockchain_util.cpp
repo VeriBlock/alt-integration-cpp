@@ -42,7 +42,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   // we reference genesis block if we are at the beginning of the chain
   if ((int32_t)diff <= tip.height) {
     auto* prevKeystoneIndex = tip.getAncestor(tip.height - diff);
-    assert(prevKeystoneIndex != nullptr);
+    VBK_ASSERT(prevKeystoneIndex != nullptr);
     block.previousKeystone =
         prevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
@@ -52,7 +52,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   diff += params_.getKeystoneInterval();
   if ((int32_t)diff <= tip.height) {
     auto* secondPrevKeystoneIndex = tip.getAncestor(tip.height - diff);
-    assert(secondPrevKeystoneIndex != nullptr);
+    VBK_ASSERT(secondPrevKeystoneIndex != nullptr);
     block.secondPreviousKeystone =
         secondPrevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
@@ -217,8 +217,8 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
     pmedian.push_back(pindex->getBlockTime());
   }
 
-  assert(i > 0);
-  assert(!pmedian.empty());
+  VBK_ASSERT(i > 0);
+  VBK_ASSERT(!pmedian.empty());
   std::sort(pmedian.begin(), pmedian.end());
   size_t index = i % 2 == 0 ? (i / 2) - 1 : (i / 2);
   return pmedian.at(index);

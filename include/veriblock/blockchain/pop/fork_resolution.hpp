@@ -145,7 +145,7 @@ std::vector<KeystoneContext> getKeystoneContext(
             // Ensure that the keystone's block time isn't later than the
             // block time of the Bitcoin block it's endorsed in
             auto* index = best[adjustedEndorsementIndex];
-            assert(index != nullptr);
+            VBK_ASSERT(index != nullptr);
             if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
               // Timestamp of VeriBlock block is lower than Bitcoin block,
               // set this as the adjusted index if another lower index has
@@ -179,7 +179,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
 
   auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
-  assert(tip != nullptr && "tip must not be nullptr");
+  VBK_ASSERT(tip != nullptr && "tip must not be nullptr");
 
   auto highestPossibleEndorsedBlockHeaderHeight = tip->height;
   auto lastKeystone = highestKeystoneAtOrBefore(tip->height, ki);
@@ -204,7 +204,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
       auto* index = chain[relevantEndorsedBlock];
 
       // chain must contain relevantEndorsedBlock
-      assert(index != nullptr);
+      VBK_ASSERT(index != nullptr);
 
       for (const auto* e : index->endorsedBy) {
         if (!allHashesInChain.count(e->containingHash)) {
@@ -235,7 +235,7 @@ template <typename ProtectedChainConfig>
 int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
                         const std::vector<KeystoneContext>& chainB,
                         const ProtectedChainConfig& config) {
-  assert(config.getKeystoneInterval() > 0);
+  VBK_ASSERT(config.getKeystoneInterval() > 0);
   auto ki = config.getKeystoneInterval();
   KeystoneContextList a(chainA, ki, config.getFinalityDelay());
   KeystoneContextList b(chainB, ki, config.getFinalityDelay());
@@ -254,8 +254,8 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
     return 1;
   }
 
-  assert(!chainA.empty());
-  assert(!chainB.empty());
+  VBK_ASSERT(!chainA.empty());
+  VBK_ASSERT(!chainB.empty());
   VBK_LOG_DEBUG(
       "Comparing POP scores of chains A(first=%d, tip=%d) "
       "and B(first=%d, tip=%d)",
@@ -371,7 +371,7 @@ struct PopAwareForkResolutionComparator {
       : ing_(std::move(tree)),
         protectedParams_(&protectedParams),
         protectingParams_(&protectingParams) {
-    assert(protectedParams.getKeystoneInterval() > 0);
+    VBK_ASSERT(protectedParams.getKeystoneInterval() > 0);
   }
 
   ProtectingBlockTree& getProtectingBlockTree() { return *ing_; }
@@ -383,7 +383,7 @@ struct PopAwareForkResolutionComparator {
                 protected_index_t& to,
                 ValidationState& state) {
     auto* currentActive = ed.getBestChain().tip();
-    assert(currentActive && "should be bootstrapped");
+    VBK_ASSERT(currentActive && "should be bootstrapped");
 
     if (*currentActive == to) {
       // already at this state
@@ -411,11 +411,11 @@ struct PopAwareForkResolutionComparator {
   int comparePopScore(ProtectedBlockTree& ed,
                       protected_index_t& indexNew,
                       ValidationState& state) {
-    assert(indexNew.isValid());
+    VBK_ASSERT(indexNew.isValid());
 
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
-    assert(bestTip);
+    VBK_ASSERT(bestTip);
     if (currentBest.contains(&indexNew)) {
       VBK_LOG_INFO("Candidate %s is on active chain, current chain wins",
                    indexNew.toPrettyString());
@@ -445,7 +445,7 @@ struct PopAwareForkResolutionComparator {
 
     auto ki = ed.getParams().getKeystoneInterval();
     const auto* fork = currentBest.findFork(&indexNew);
-    assert(fork != nullptr &&
+    VBK_ASSERT(fork != nullptr &&
            "all blocks in a blocktree must form a tree, thus all pairs of "
            "chains must have a fork point");
 
@@ -466,11 +466,11 @@ struct PopAwareForkResolutionComparator {
     Chain<protected_index_t> chainB(fork->height, &indexNew);
 
     // chains are not empty and chains start at the same block
-    assert(chainA.first() != nullptr && chainA.first() == chainB.first());
+    VBK_ASSERT(chainA.first() != nullptr && chainA.first() == chainB.first());
 
     // we ALWAYS compare currently applied chain (chainA) and other chain
     // (chainB)
-    assert(chainA.tip() == bestTip);
+    VBK_ASSERT(chainA.tip() == bestTip);
 
     sm_t sm(ed, *ing_, chainA.first()->height);
 

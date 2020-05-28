@@ -29,7 +29,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
   auto currentTip = currentBest.tip();
   if (currentTip == nullptr) {
     ret = setTip(indexNew, state, isBootstrap);
-    assert(ret);
+    VBK_ASSERT(ret);
     return;
   }
 
@@ -40,7 +40,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                   block_t::name(),
                   indexNew.height - currentTip->height);
     if (!this->setTip(indexNew, state, false)) {
-      assert(!indexNew.isValid());
+      VBK_ASSERT(!indexNew.isValid());
     }
     return;
   }
@@ -56,7 +56,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     VBK_LOG_DEBUG("Candidate chain won");
     // other chain won! we already set
     ret = this->setTip(indexNew, state, /* skipSetState=*/true);
-    assert(ret);
+    VBK_ASSERT(ret);
   } else {
     VBK_LOG_DEBUG("Active chain won");
     // current chain is better
@@ -80,7 +80,7 @@ bool VbkBlockTree::setTip(index_t& to,
     activeChain_.setTip(&to);
     tryAddTip(&to);
   } else {
-    assert(!to.isValid());
+    VBK_ASSERT(!to.isValid());
   }
 
   return changeTip;
@@ -127,11 +127,10 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   bool isOnActiveChain = activeChain_.contains(index);
   if (isOnActiveChain) {
-    assert(index->pprev && "can not remove payloads from genesis block");
+    VBK_ASSERT(index->pprev && "can not remove payloads from genesis block");
     ValidationState dummy;
     bool ret = setTip(*index->pprev, dummy, false);
-    assert(ret);
-    (void)ret;
+    VBK_ASSERT(ret);
   }
 
   // we need only ids, so save some cpu cycles by calculating ids once
@@ -205,8 +204,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   if (isOnActiveChain) {
     ValidationState dummy;
     bool ret = setTip(*index->pprev, dummy, false);
-    assert(ret);
-    (void)ret;
+    VBK_ASSERT(ret);
   }
 
   auto& c = index->commands;
