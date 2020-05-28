@@ -13,6 +13,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
+
 #include "veriblock/fmt.hpp"
 
 namespace altintegration {
@@ -25,7 +26,7 @@ struct AddBlock : public Command {
 
   bool Execute(ValidationState& state) override {
     auto* index = tree_->getBlockIndex(block_->getHash());
-    if (index) {
+    if (index != nullptr) {
       index->refCounter++;
       return true;
     }
@@ -35,8 +36,8 @@ struct AddBlock : public Command {
   void UnExecute() override {
     auto hash = block_->getHash();
     auto* index = tree_->getBlockIndex(hash);
-    assert(index != nullptr
-           && "failed to roll back AddBlock: the block does not exist");
+    VBK_ASSERT(index != nullptr &&
+           "failed to roll back AddBlock: the block does not exist");
 
     if (index->refCounter == 0) {
       return tree_->removeTip(*index);

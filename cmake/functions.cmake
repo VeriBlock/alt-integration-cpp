@@ -26,6 +26,10 @@ function(addtest test_name)
             CXX_STANDARD_REQUIRED TRUE
             )
     disable_clang_tidy(${test_name})
+    target_compile_options(${test_name} PUBLIC
+            # we don't care about potential null dereferences in tests
+            -Wno-null-dereference
+            )
 endfunction()
 
 function(addtest_part test_name)

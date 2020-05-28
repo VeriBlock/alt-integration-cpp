@@ -73,11 +73,11 @@ struct PopStateMachine {
       return;
     }
 
-    assert(from.height > to.height);
+    VBK_ASSERT(from.height > to.height);
     // exclude 'to' by adding 1
     Chain<ProtectedIndex> chain(to.height + 1, &from);
-    assert(chain.first());
-    assert(chain.first()->pprev == &to);
+    VBK_ASSERT(chain.first());
+    VBK_ASSERT(chain.first()->pprev == &to);
 
     VBK_LOG_DEBUG("Unapply %d blocks from=%s, to=%s",
                   chain.blocksCount(),
@@ -101,11 +101,11 @@ struct PopStateMachine {
       return true;
     }
 
-    assert(from.height < to.height);
+    VBK_ASSERT(from.height < to.height);
     // exclude 'from' by adding 1
     Chain<ProtectedIndex> chain(from.height + 1, &to);
-    assert(chain.first());
-    assert(chain.first()->pprev == &from);
+    VBK_ASSERT(chain.first());
+    VBK_ASSERT(chain.first()->pprev == &from);
 
     VBK_LOG_DEBUG("Applying %d blocks from=%s, to=%s",
                   chain.blocksCount(),

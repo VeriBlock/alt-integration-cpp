@@ -3,7 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <cassert>
+#include <veriblock/assert.hpp>
 #include <utility>
 
 #include "veriblock/hashutil.hpp"
@@ -53,13 +53,13 @@ static void checkLength(size_t num,
 }
 
 static PrivateKey getPrivateKeyFromAsn1(Slice<const uint8_t> keyEncoded) {
-  assert(keyEncoded.size() == PRIVATE_KEY_ASN1_SIZE);
+  VBK_ASSERT(keyEncoded.size() == PRIVATE_KEY_ASN1_SIZE);
   return std::vector<uint8_t>(
       keyEncoded.begin() + ASN1_PREFIX_PRIVKEY_BYTES.size(), keyEncoded.end());
 }
 
 static PublicKey publicKeyUncompress(Slice<const uint8_t> publicKey) {
-  assert(publicKey.size() == PUBLIC_KEY_COMPRESSED_SIZE);
+  VBK_ASSERT(publicKey.size() == PUBLIC_KEY_COMPRESSED_SIZE);
   Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
   secp256k1_pubkey pubkey;
   if (!secp256k1_ec_pubkey_parse(
@@ -78,7 +78,7 @@ static PublicKey publicKeyUncompress(Slice<const uint8_t> publicKey) {
 }
 
 static std::vector<uint8_t> publicKeyUncompressedToAsn1(PublicKey publicKey) {
-  assert(publicKey.size() == PUBLIC_KEY_UNCOMPRESSED_SIZE);
+  VBK_ASSERT(publicKey.size() == PUBLIC_KEY_UNCOMPRESSED_SIZE);
   std::vector<uint8_t> result{};
   result.reserve(ASN1_PREFIX_PUBKEY_BYTES.size() + publicKey.size());
   result.insert(result.end(),
@@ -89,7 +89,7 @@ static std::vector<uint8_t> publicKeyUncompressedToAsn1(PublicKey publicKey) {
 }
 
 static PublicKey publicKeyAsn1ToUncompressed(Slice<const uint8_t> publicKey) {
-  assert(publicKey.size() == PUBLIC_KEY_ASN1_SIZE);
+  VBK_ASSERT(publicKey.size() == PUBLIC_KEY_ASN1_SIZE);
   std::vector<uint8_t> result{};
   result.reserve(PUBLIC_KEY_UNCOMPRESSED_SIZE);
   result.insert(result.end(),
@@ -143,8 +143,7 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
   secp256k1_pubkey pubkey;
   int pubCreated = secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
   // should be always 1
-  assert(pubCreated == 1);
-  (void)pubCreated;
+  VBK_ASSERT(pubCreated == 1);
 
   size_t outputlen = PUBLIC_KEY_UNCOMPRESSED_SIZE;
   std::vector<uint8_t> output(outputlen);

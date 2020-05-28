@@ -6,7 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_CHAIN_PARAMS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_CHAIN_PARAMS_HPP_
 
-#include <cassert>
 #include <memory>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/serde.hpp>
@@ -109,7 +108,7 @@ struct VbkChainParamsMain : public VbkChainParams {
     block.difficulty = 100722900;
     block.nonce = 289244493;
 
-    assert(block.getHash().toHex() ==
+    VBK_ASSERT(block.getHash().toHex() ==
            "0000000000f4fd66b91f0649bb3fcb137823c5ce317c105c");
 
     return block;
@@ -161,7 +160,7 @@ struct VbkChainParamsTest : public VbkChainParams {
     block.difficulty = 67499489;
     block.nonce = 14304633;
 
-    assert(block.getHash().toHex() ==
+    VBK_ASSERT(block.getHash().toHex() ==
            "00000017eb579ec7d0cdd63379a0615dc3d68032ce248823");
 
     return block;
@@ -211,7 +210,7 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     block.difficulty = 16842752;
     block.nonce = 0;
 
-    assert(block.getHash().toHex() ==
+    VBK_ASSERT(block.getHash().toHex() ==
            "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
 
     return block;
@@ -262,7 +261,7 @@ struct VbkChainParamsAlpha : public VbkChainParams {
     block.difficulty = 67147926;
     block.nonce = 45543957;
 
-    assert(block.getHash().toHex() ==
+    VBK_ASSERT(block.getHash().toHex() ==
            "000000701198864f3c19fb552ef9c3c10620ba8128dace8e");
     return block;
   }

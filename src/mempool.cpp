@@ -91,12 +91,12 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
                             AltTree& tree,
                             ValidationState& state) {
   bool ret = tree.acceptBlock(hack_block, state);
-  assert(ret);
+  VBK_ASSERT(ret);
 
   // apply vbk_context
   for (const auto& b : popdata.vbk_context) {
     ret = tree.vbk().acceptBlock(b, state);
-    assert(ret);
+    VBK_ASSERT(ret);
   }
 
   auto genesis_height = tree.vbk().getParams().getGenesisBlock().height;
@@ -189,8 +189,7 @@ std::vector<PopData> MemPool::getPop(const AltBlock& current_block,
                                      AltTree& tree) {
   ValidationState state;
   bool ret = tree.setState(current_block.getHash(), state);
-  (void)ret;
-  assert(ret);
+  VBK_ASSERT(ret);
 
   AltBlock hack_block;
   hack_block.hash = std::vector<uint8_t>(32, 0);

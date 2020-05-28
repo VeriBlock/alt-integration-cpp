@@ -5,12 +5,12 @@
 
 #include "veriblock/hashutil.hpp"
 
-#include <cassert>
+#include "veriblock/assert.hpp"
 
 namespace altintegration {
 
 uint256 sha256(Slice<const uint8_t> data) {
-  assert(data.size() <= (std::numeric_limits<uint32_t>::max)());
+  VBK_ASSERT(data.size() <= (std::numeric_limits<uint32_t>::max)());
   uint256 btctxHash{};
   sha256(btctxHash.data(), data.data(), (uint32_t)data.size());
   return btctxHash;
@@ -39,7 +39,7 @@ uint256 sha256(Slice<const uint8_t> a, Slice<const uint8_t> b) {
 }
 
 uint192 vblake(Slice<const uint8_t> data) {
-  assert(data.size() <= (std::numeric_limits<uint32_t>::max)());
+  VBK_ASSERT(data.size() <= (std::numeric_limits<uint32_t>::max)());
   uint192 hash{};
   vblake(hash.data(), data.data(), (uint32_t)data.size());
   return hash;
