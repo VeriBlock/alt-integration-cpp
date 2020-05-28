@@ -107,6 +107,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
                         const payloads_t& p,
                         ValidationState& state);
 
+  void payloadsToCommands(const payloads_t& p,
+                          std::vector<CommandPtr>& commands);
+
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
   VbkBlockTree::BtcTree& btc() { return cmp_.getProtectingBlockTree().btc(); }
@@ -128,9 +131,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   PopRewards rewards_;
 
   index_t* insertBlockHeader(const AltBlock& block);
-
-  void payloadsToCommands(const payloads_t& p,
-                          std::vector<CommandPtr>& commands);
 
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew,

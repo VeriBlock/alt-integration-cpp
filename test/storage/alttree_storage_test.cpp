@@ -1,10 +1,12 @@
 #include <gtest/gtest.h>
 
+#include "util/literals.hpp"
 #include "veriblock/storage/endorsement_repository_inmem.hpp"
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/block_repository_inmem.hpp>
 
 using namespace altintegration;
 
@@ -105,5 +107,22 @@ TEST_F(AltTreeRepositoryTest, Basic) {
   auto endorsements = endorsementRepo->get(endorsement1.endorsedHash);
   EXPECT_EQ(endorsements.size(), 2);
 
-  PopStorage storage{};
+  auto storageAtv = EndorsementStorage<AltPayloads, AltTree>();
+  AltPayloads payloads;
+  storageAtv.getPayloads(getDefaultContainer().getId(), payloads);
+  PopStorage storage = PopStorage();
+  auto vbkBlock = VbkBlock{
+      5000,
+      2,
+      uint96("94E7DC3E3BE21A96ECCF0FBD"_unhex),
+      uint72("F5F62A3331DC995C36"_unhex),
+      uint72("B0935637860679DDD5"_unhex),
+      uint128("DB0F135312B2C27867C9A83EF1B99B98"_unhex),
+      1553699987,
+      117586646,
+      1924857207};
+  storage.vbkIndex().put(vbkBlock);
+  auto cursor = storage.vbkIndex().newCursor();
+  cursor->seekToFirst();
+  auto val = cursor->value();
 }
