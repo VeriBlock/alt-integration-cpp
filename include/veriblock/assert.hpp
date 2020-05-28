@@ -16,17 +16,17 @@
 #ifdef NDEBUG
 
 #include <veriblock/fmt.hpp>
-#define VBK_ASSERT(x)                                       \
-  if (VBK_LIKELY(x)) {                                      \
-    (void)(x);                                              \
-  } else {                                                  \
-    fmt::print(stderr,                                      \
-               "Assertion failed at {}:{} inside {}: \n{}", \
-               __FILE__,                                    \
-               __LINE__,                                    \
-               __FUNCTION__,                                \
-               #x);                                         \
-    std::abort();                                           \
+#define VBK_ASSERT(x)                                         \
+  if (VBK_LIKELY(x)) {                                        \
+    (void)(x);                                                \
+  } else {                                                    \
+    fmt::print(stderr,                                        \
+               "Assertion failed at {}:{} inside {}: \n{}\n", \
+               __FILE__,                                      \
+               __LINE__,                                      \
+               __FUNCTION__,                                  \
+               #x);                                           \
+    std::abort();                                             \
   }
 
 #else
