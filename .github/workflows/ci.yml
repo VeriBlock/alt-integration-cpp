@@ -16,7 +16,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DCLANG_TIDY=ON", "-DASAN=ON", "-DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"]
+        flags: [
+          "-DCLANG_TIDY=ON",
+          "-DASAN=ON",
+          "-DUBSAN=ON",
+          "-DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"
+        ]
     env:
       CC: clang
       CXX: clang++
