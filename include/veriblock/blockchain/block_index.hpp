@@ -84,7 +84,7 @@ struct BlockIndex {
   uint32_t refCounter = 0;
 
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
-    assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+    VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
       // block failed
       return false;
@@ -105,7 +105,7 @@ struct BlockIndex {
   }
 
   bool raiseValidity(enum BlockStatus upTo) {
-    assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+    VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
       return false;
     }

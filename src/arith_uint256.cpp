@@ -3,8 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <cassert>
-
+#include "veriblock/assert.hpp"
 #include "veriblock/arith_uint256.hpp"
 
 using namespace altintegration;
@@ -185,8 +184,8 @@ uint32_t ArithUint256::toBits(bool negative) const {
     nCompact >>= 8;
     nSize++;
   }
-  assert((nCompact & ~0x007fffff) == 0);
-  assert(nSize < 256);
+  VBK_ASSERT((nCompact & ~0x007fffff) == 0);
+  VBK_ASSERT(nSize < 256);
   nCompact |= nSize << 24;
   nCompact |= (negative && (nCompact & 0x007fffff) ? 0x00800000 : 0);
   return nCompact;

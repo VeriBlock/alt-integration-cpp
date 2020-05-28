@@ -6,7 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_CHAIN_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_CHAIN_HPP_
 
-#include <cassert>
 #include <map>
 #include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
@@ -179,7 +178,7 @@ struct Chain {
   std::vector<index_t*> chain{};
 
   height_t toInnerHeight(height_t in) const {
-    assert(in >= startHeight_);
+    VBK_ASSERT(in >= startHeight_);
     return in - startHeight_;
   }
 };

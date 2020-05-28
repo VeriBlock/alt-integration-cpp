@@ -38,7 +38,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   auto block = alt_config_->getBootstrapBlock();
   auto* index = insertBlockHeader(block);
 
-  assert(index != nullptr &&
+  VBK_ASSERT(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
   if (!base::blocks_.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
@@ -84,8 +84,7 @@ bool AltTree::addPayloads(index_t& index,
   if (isOnActiveChain) {
     ValidationState dummy;
     bool ret = setTip(*index.pprev, dummy, false);
-    assert(ret);
-    (void)ret;
+    VBK_ASSERT(ret);
   }
 
   auto& c = index.commands;
@@ -148,7 +147,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
 
   auto* index = insertBlockHeader(block);
 
-  assert(index != nullptr &&
+  VBK_ASSERT(index != nullptr &&
          "insertBlockHeader should have never returned nullptr");
 
   if (!index->isValid()) {
@@ -212,8 +211,7 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
   auto currentTip = currentBest.tip();
   if (currentTip == nullptr) {
     bool ret = setTip(indexNew, state, isBootstrap);
-    assert(ret);
-    (void)ret;
+    VBK_ASSERT(ret);
     return;
   }
 
@@ -276,11 +274,10 @@ void AltTree::removePayloads(index_t& index,
 
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
-    assert(index.pprev && "can not remove payloads from genesis block");
+    VBK_ASSERT(index.pprev && "can not remove payloads from genesis block");
     ValidationState dummy;
     bool ret = setTip(*index.pprev, dummy, false);
-    assert(ret);
-    (void)ret;
+    VBK_ASSERT(ret);
   }
 
   auto& c = index.commands;
@@ -359,7 +356,7 @@ bool AltTree::setTip(AltTree::index_t& to,
     activeChain_.setTip(&to);
     tryAddTip(&to);
   } else {
-    assert(!to.isValid());
+    VBK_ASSERT(!to.isValid());
   }
 
   // true if tip has been changed

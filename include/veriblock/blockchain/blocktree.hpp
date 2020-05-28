@@ -53,7 +53,7 @@ struct BlockTree : public BaseBlockTree<Block> {
    * @return true if bootstrap was successful, false otherwise
    */
   virtual bool bootstrapWithGenesis(ValidationState& state) {
-    assert(base::blocks_.empty() && "already bootstrapped");
+    VBK_ASSERT(base::blocks_.empty() && "already bootstrapped");
     auto block = param_->getGenesisBlock();
     return this->bootstrap(0, block, state);
   }
@@ -71,7 +71,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   virtual bool bootstrapWithChain(height_t startHeight,
                                   const std::vector<block_t>& chain,
                                   ValidationState& state) {
-    assert(base::blocks_.empty() && "already bootstrapped");
+    VBK_ASSERT(base::blocks_.empty() && "already bootstrapped");
     if (chain.empty()) {
       return state.Invalid("bootstrap-empty-chain",
                            "provided bootstrap chain is empty");
@@ -212,7 +212,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     auto index = this->insertBlockHeader(block);
-    assert(index != nullptr &&
+    VBK_ASSERT(index != nullptr &&
            "insertBlockHeader should have never returned nullptr");
 
     if (ret) {

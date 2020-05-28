@@ -97,13 +97,13 @@ struct AddEndorsement : public Command {
 
   void UnExecute() override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
-    assert(containing != nullptr &&
+    VBK_ASSERT(containing != nullptr &&
            "failed to roll back AddEndorsement: the containing block does not "
            "exist");
 
     auto* endorsed = containing->getAncestor(e_->endorsedHeight);
 
-    assert(endorsed != nullptr &&
+    VBK_ASSERT(endorsed != nullptr &&
            "failed to roll back AddEndorsement: the endorsed block does not "
            "exist");
 
@@ -113,7 +113,7 @@ struct AddEndorsement : public Command {
       // find and erase the last occurrence of e_
       auto endorsed_it = std::find(v.rbegin(), v.rend(), e_.get());
 
-      assert(endorsed_it != v.rend() &&
+      VBK_ASSERT(endorsed_it != v.rend() &&
              "failed to roll back AddEndorsement: the endorsed block does not "
              "contain the endorsement in endorsedBy");
 
@@ -123,7 +123,7 @@ struct AddEndorsement : public Command {
 
     {
       auto containing_it = containing->containingEndorsements.find(e_->id);
-      assert(containing_it != containing->containingEndorsements.end() &&
+      VBK_ASSERT(containing_it != containing->containingEndorsements.end() &&
              "failed to roll back AddEndorsement: the containing block does "
              "not contain the endorsement in containingEndorsements");
 

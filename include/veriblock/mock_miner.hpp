@@ -6,7 +6,6 @@
 #ifndef ALT_INTEGRATION_VERIBLOCK_MOCK_MINER_HPP
 #define ALT_INTEGRATION_VERIBLOCK_MOCK_MINER_HPP
 
-#include <cassert>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -108,10 +107,9 @@ class MockMiner {
   MockMiner() {
     bool ret = false;
     ret = vbktree.btc().bootstrapWithGenesis(state_);
-    assert(ret);
+    VBK_ASSERT(ret);
     ret = vbktree.bootstrapWithGenesis(state_);
-    assert(ret);
-    (void)ret;
+    VBK_ASSERT(ret);
   }
 
  private:

@@ -117,13 +117,12 @@ struct BaseBlockTree {
                  block_t::name(),
                  (int)reason,
                  toBeInvalidated.toPrettyString());
-    assert(toBeInvalidated.pprev);
+    VBK_ASSERT(toBeInvalidated.pprev);
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
       ValidationState dummy;
       bool ret = this->setTip(*toBeInvalidated.pprev, dummy, false);
-      assert(ret);
-      (void)ret;
+      VBK_ASSERT(ret);
     }
 
     doInvalidate(toBeInvalidated, reason);
@@ -201,7 +200,7 @@ struct BaseBlockTree {
                                   bool isBootstrap) = 0;
 
   void tryAddTip(index_t* index) {
-    assert(index);
+    VBK_ASSERT(index);
 
     if (!index->isValid()) {
       return;
@@ -239,7 +238,7 @@ struct BaseBlockTree {
   }
 
   index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header) {
-    assert(header != nullptr);
+    VBK_ASSERT(header != nullptr);
 
     index_t* current = touchBlockIndex(header->getHash());
     current->header = header;

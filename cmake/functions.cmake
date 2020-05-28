@@ -1,3 +1,9 @@
+CHECK_CXX_SOURCE_COMPILES("int main(void) { return __builtin_expect(0, 1); }"
+        HAVE_BUILTIN_EXPECT)
+if(HAVE_BUILTIN_EXPECT)
+    add_definitions(-DVBK_HAVE_BUILTIN_EXPECT)
+endif()
+
 function(disable_clang_tidy target)
     set_target_properties(${target} PROPERTIES
             C_CLANG_TIDY ""
@@ -26,6 +32,13 @@ function(addtest test_name)
             CXX_STANDARD_REQUIRED TRUE
             )
     disable_clang_tidy(${test_name})
+    if(UNIX)
+        # works only on UNIX systems
+        target_compile_options(${test_name} PUBLIC
+                # we don't care about potential null dereferences in tests
+                -Wno-null-dereference
+                )
+    endif()
 endfunction()
 
 function(addtest_part test_name)
