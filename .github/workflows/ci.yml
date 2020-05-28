@@ -100,7 +100,7 @@ jobs:
           -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
           -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
-        run: cmake --build build
+        run: cmake --build build --parallel 2
       - name: test
         run: cmake --build build --target RUN_TESTS
 
