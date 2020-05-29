@@ -13,8 +13,7 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/state_manager.hpp>
-#include <veriblock/storage/endorsement_repository.hpp>
+//#include <veriblock/storage/endorsement_repository.hpp>
 
 namespace altintegration {
 

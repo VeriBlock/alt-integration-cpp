@@ -8,7 +8,7 @@
 
 #include <functional>
 #include <veriblock/blockchain/chain.hpp>
-#include <veriblock/storage/payloads_repository.hpp>
+//#include <veriblock/storage/payloads_repository.hpp>
 
 namespace altintegration {
 

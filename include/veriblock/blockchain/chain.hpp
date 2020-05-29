@@ -11,7 +11,7 @@
 #include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/keystone_util.hpp>
-#include <veriblock/storage/block_repository.hpp>
+//#include <veriblock/storage/block_repository.hpp>
 
 namespace altintegration {
 

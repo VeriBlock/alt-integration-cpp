@@ -15,7 +15,7 @@
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/stateless_validation.hpp>
-#include <veriblock/storage/block_repository.hpp>
+//#include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
 #include "veriblock/fmt.hpp"

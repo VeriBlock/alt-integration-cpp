@@ -6,9 +6,15 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_HPP_
 
-#include <memory>
+#include <functional>
+#include <string>
 #include <vector>
 
+#include "veriblock/entities/altblock.hpp"
+#include "veriblock/entities/endorsement.hpp"
+#include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/entities/vbkpoptx.hpp"
+#include "veriblock/entities/vbktx.hpp"
 #include "veriblock/storage/cursor.hpp"
 
 namespace altintegration {
@@ -23,25 +29,14 @@ namespace altintegration {
  */
 template <typename Payloads>
 struct PayloadsWriteBatch {
-  //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! payloads id type
-  using payloads_id = typename Payloads::id_t;
+  using payloads_t = Payloads;
+  using eid_t = typename Payloads::id_t;
 
   virtual ~PayloadsWriteBatch() = default;
 
-  /**
-   * Write a single payload. If payload with such referenced block hash exists,
-   *db will add new payload to the stored collection of payloads
-   * @param block to be written in a batch
-   */
-  virtual void put(const stored_payloads_t& payloads) = 0;
+  virtual void put(const payloads_t& payload) = 0;
 
-  /**
-   * Remove a single block from storage identified by its hash.
-   * @param hash block hash
-   */
-  virtual void removeByHash(const payloads_id& hash) = 0;
+  virtual void remove(const eid_t& id) = 0;
 
   /**
    * Clear batch from any modifying operations.
@@ -56,42 +51,33 @@ struct PayloadsWriteBatch {
 
 template <typename Payloads>
 struct PayloadsRepository {
-  //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! payloads id type
-  using payloads_id = typename Payloads::id_t;
-  //! iterator type
-  using cursor_t = Cursor<payloads_id, stored_payloads_t>;
+  using payloads_t = Payloads;
+  using eid_t = typename Payloads::id_t;
+  using cursor_t = Cursor<eid_t, Payloads>;
 
   virtual ~PayloadsRepository() = default;
 
-  virtual bool get(const payloads_id& id, stored_payloads_t* out) const = 0;
+  virtual bool remove(const eid_t& id) = 0;
 
-  virtual size_t get(const std::vector<payloads_id>& ids,
-                     std::vector<stored_payloads_t>* out) const = 0;
+  virtual bool put(const payloads_t& payload) = 0;
 
-  virtual void put(const stored_payloads_t& payloads) = 0;
+  virtual bool get(const eid_t& id, payloads_t* payload = 0) const = 0;
 
-  virtual void removeByHash(const payloads_id& id) = 0;
+  virtual std::unique_ptr<PayloadsWriteBatch<Payloads>> newBatch() = 0;
 
-  /**
-   * Clear the entire payloads data.
-   */
-  virtual void clear() = 0;
-
-  /**
-   * Create new WriteBatch, to perform BULK modify operations.
-   * @return a pointer to new WriteBatch instance.
-   */
-  virtual std::unique_ptr<PayloadsWriteBatch<stored_payloads_t>> newBatch() = 0;
-
-  /**
-   * Returns iterator, that is used for iteration over storage.
-   * @return
-   */
-  virtual std::shared_ptr<cursor_t> newCursor() = 0;
+  virtual std::shared_ptr<cursor_t> newCursor() const = 0;
 };
+
+template <typename Payloads>
+void payloadsRepositoryCopy(const PayloadsRepository<Payloads>& copy_from,
+                            PayloadsRepository<Payloads>& copy_to) {
+  auto cursor = copy_from.newCursor();
+
+  for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
+    copy_to.put(cursor->value());
+  }
+}
 
 }  // namespace altintegration
 
-#endif
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_HPP_

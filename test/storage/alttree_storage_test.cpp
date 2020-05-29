@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
-#include "veriblock/storage/endorsement_repository_inmem.hpp"
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/endorsement_storage.hpp>
 #include <veriblock/storage/block_repository_inmem.hpp>
 
 using namespace altintegration;
@@ -71,11 +71,10 @@ static const std::vector<uint8_t> defaultAtvEncoded = ParseHex(
     "462ef24ae02d67e47d785c9b90f301010000000000010100");
 
 struct AltTreeRepositoryTest : public ::testing::Test {
-  std::shared_ptr<EndorsementRepository<VbkEndorsement>> endorsementRepo;
+  std::shared_ptr<PayloadsRepository<AltPayloads>> payloadsRepo;
 
   AltTreeRepositoryTest() {
-    endorsementRepo =
-        std::make_shared<EndorsementRepositoryInmem<VbkEndorsement>>();
+    payloadsRepo = std::make_shared<PayloadsRepositoryInmem<AltPayloads>>();
   }
 };
 
@@ -101,15 +100,16 @@ AltPayloads getModifiedContainer() {
 }
 
 TEST_F(AltTreeRepositoryTest, Basic) {
-  endorsementRepo->put(getDefaultContainer());
-  endorsementRepo->put(getModifiedContainer());
+  payloadsRepo->put(getDefaultContainer());
+  payloadsRepo->put(getModifiedContainer());
   auto endorsement1 = VbkEndorsement::fromContainer(getDefaultContainer());
-  auto endorsements = endorsementRepo->get(endorsement1.endorsedHash);
-  EXPECT_EQ(endorsements.size(), 2);
+  AltPayloads payloads{};
+  bool ret = payloadsRepo->get(getDefaultContainer().getId(), &payloads);
+  EXPECT_TRUE(ret);
 
   auto storageAtv = EndorsementStorage<AltPayloads, AltTree>();
-  AltPayloads payloads;
-  storageAtv.getPayloads(getDefaultContainer().getId(), payloads);
+  //payloads.clear();
+  storageAtv.payloads().get(getDefaultContainer().getId(), &payloads);
   PopStorage storage = PopStorage();
   auto vbkBlock = VbkBlock{
       5000,
