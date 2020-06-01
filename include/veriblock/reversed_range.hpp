@@ -27,7 +27,7 @@ struct ReversedRange {
 };
 
 template <typename T>
-ReversedRange<T> make_reversed(T begin, T end) {
+ReversedRange<T> reverse_iterate(T begin, T end) {
   return ReversedRange<T>(begin, end);
 }
 

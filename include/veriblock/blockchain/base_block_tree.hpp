@@ -116,7 +116,7 @@ struct BaseBlockTree {
     VBK_LOG_INFO("Invalidating %s subtree: reason=%d block=%s",
                  block_t::name(),
                  (int)reason,
-                 toBeInvalidated.toPrettyString());
+                 toBeInvalidated.toShortPrettyString());
     VBK_ASSERT(toBeInvalidated.pprev);
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
@@ -158,7 +158,7 @@ struct BaseBlockTree {
     VBK_LOG_INFO("Revalidating %s subtree: reason=%d block=%s",
                  block_t::name(),
                  (int)reason,
-                 toBeValidated.toPrettyString());
+                 toBeValidated.toShortPrettyString());
     doReValidate(toBeValidated, reason);
     tryAddTip(&toBeValidated);
 
@@ -265,7 +265,7 @@ struct BaseBlockTree {
   virtual bool setTip(index_t& to, ValidationState&, bool) {
     activeChain_.setTip(&to);
     tryAddTip(&to);
-    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
+    VBK_LOG_DEBUG("SetTip=%s", to.toShortPrettyString());
     return true;
   }
 

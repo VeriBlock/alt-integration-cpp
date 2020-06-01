@@ -234,8 +234,6 @@ struct BlockTree : public BaseBlockTree<Block> {
                           index_t& indexNew,
                           ValidationState& state,
                           bool isBootstrap = false) override {
-    (void)state;
-
     if (currentBest.tip() == &indexNew) {
       return;
     }

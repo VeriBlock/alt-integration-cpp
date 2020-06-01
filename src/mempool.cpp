@@ -115,7 +115,7 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
     auto start_height = (std::max)(
         genesis_height, containing_block_index->height - settlement_interval);
 
-    auto endorsement = BtcEndorsement::fromContainer(vtb);
+    auto endorsement = VbkEndorsement::fromContainer(vtb);
     Chain<BlockIndex<VbkBlock>> chain(start_height, containing_block_index);
     auto duplicate =
         chain.findBlockContainingEndorsement(endorsement, settlement_interval);
@@ -179,7 +179,7 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
     }
 
     uploadVbkContext(vtbs[i]);
-    auto pair = std::make_pair(BtcEndorsement::getId(vtbs[i]), vtbs[i]);
+    auto pair = std::make_pair(VbkEndorsement::getId(vtbs[i]), vtbs[i]);
     // clear contex
     pair.second.context.clear();
 
@@ -251,7 +251,7 @@ void MemPool::removePayloads(const std::vector<PopData>& PopDatas) {
 
     // clear vtbs
     for (const auto& vtb : tx.vtbs) {
-      stored_vtbs_.erase(BtcEndorsement::getId(vtb));
+      stored_vtbs_.erase(VbkEndorsement::getId(vtb));
     }
   }
 }
