@@ -48,12 +48,12 @@ bool AltPayloads::containsEndorsements() const {
   return popData.containsEndorsements();
 }
 
-VbkEndorsement AltPayloads::getEndorsement() const {
-  return VbkEndorsement::fromContainer(*this);
+AltEndorsement AltPayloads::getEndorsement() const {
+  return AltEndorsement::fromContainer(*this);
 }
 
-typename VbkEndorsement::id_t AltPayloads::getEndorsementId() const {
-  return VbkEndorsement::getId(*this);
+typename AltEndorsement::id_t AltPayloads::getEndorsementId() const {
+  return AltEndorsement::getId(*this);
 }
 
 }  // namespace altintegration

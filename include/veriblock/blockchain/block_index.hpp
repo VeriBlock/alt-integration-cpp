@@ -6,9 +6,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
-#include <map>
 #include <memory>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
@@ -63,7 +63,8 @@ struct BlockIndex {
   ArithUint256 chainWork = 0;
 
   //! list of containing endorsements in this block
-  std::multimap<eid_t, std::shared_ptr<endorsement_t>> containingEndorsements{};
+  std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
+      containingEndorsements{};
 
   //! list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
@@ -174,6 +175,10 @@ struct BlockIndex {
         HexStr(getHash()),
         status,
         endorsedBy.size());
+  }
+
+  std::string toShortPrettyString() const {
+    return fmt::sprintf("%s:%d:%s", Block::name(), height, HexStr(getHash()));
   }
 
   void toRaw(WriteStream& stream) const {

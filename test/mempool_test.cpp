@@ -45,8 +45,8 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
 
   ASSERT_EQ(vtbs.size(), 2);
-  ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
-            BtcEndorsement::fromContainer(vtbs[1]).id);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
+            VbkEndorsement::fromContainer(vtbs[1]).id);
   fillVbkContext(vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
   fillVbkContext(vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
@@ -105,8 +105,8 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
 
   ASSERT_EQ(vtbs.size(), 2);
-  ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
-            BtcEndorsement::fromContainer(vtbs[1]).id);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
+            VbkEndorsement::fromContainer(vtbs[1]).id);
   fillVbkContext(vtbs[0].context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs[0].containingBlock.getHash(),
@@ -179,8 +179,8 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   VTB vtb2 = popminer->vbkPayloads[containingVbkBlock2->getHash()][0];
   fillVbkContext(vtb2, containingVbkBlock1->getHash(), popminer->vbk());
 
-  ASSERT_NE(BtcEndorsement::fromContainer(vtb1).id,
-            BtcEndorsement::fromContainer(vtb2).id);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtb1).id,
+            VbkEndorsement::fromContainer(vtb2).id);
 
   vbkTip = popminer->vbk().getBestChain().tip();
 
@@ -558,8 +558,8 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
       vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
   EXPECT_NE(vtb1, vtb2);
-  EXPECT_EQ(BtcEndorsement::fromContainer(vtb1),
-            BtcEndorsement::fromContainer(vtb2));
+  EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
+            VbkEndorsement::fromContainer(vtb2));
 
   fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
@@ -721,8 +721,8 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
       vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
   EXPECT_NE(vtb1, vtb2);
-  EXPECT_EQ(BtcEndorsement::fromContainer(vtb1),
-            BtcEndorsement::fromContainer(vtb2));
+  EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
+            VbkEndorsement::fromContainer(vtb2));
 
   fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 

@@ -50,7 +50,7 @@ struct MemPool {
   block_index_t block_index_;
 
   std::unordered_map<ATV::id_t, ATV> stored_atvs_;
-  std::unordered_map<BtcEndorsement::id_t, VTB> stored_vtbs_;
+  std::unordered_map<VbkEndorsement::id_t, VTB> stored_vtbs_;
 
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};

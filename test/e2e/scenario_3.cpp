@@ -126,9 +126,9 @@ TEST_F(Scenario3, scenario_3) {
 
   // check endorsements
   EXPECT_FALSE(containingVbkBlock->containingEndorsements.count(
-      BtcEndorsement::getId(vtbs1[0])));
+      VbkEndorsement::getId(vtbs1[0])));
   EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
-      BtcEndorsement::getId(vtbs1[1])));
+      VbkEndorsement::getId(vtbs1[1])));
 
   // Step 3
   containingBlock = generateNextBlock(*chain.rbegin());
@@ -178,9 +178,9 @@ TEST_F(Scenario3, scenario_3) {
 
   // check endorsements
   EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
-      BtcEndorsement::getId(vtbs1[0])));
+      VbkEndorsement::getId(vtbs1[0])));
   EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
-      BtcEndorsement::getId(vtbs1[1])));
+      VbkEndorsement::getId(vtbs1[1])));
 
   EXPECT_EQ(*alttree.vbk().getBestChain().tip(), *vbkTip1);
 }

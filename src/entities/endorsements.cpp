@@ -10,9 +10,9 @@
 namespace altintegration {
 
 template <>
-BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
-  BtcEndorsement e;
-  e.id = BtcEndorsement::getId(c);
+VbkEndorsement VbkEndorsement::fromContainer(const VTB& c) {
+  VbkEndorsement e;
+  e.id = VbkEndorsement::getId(c);
   e.blockOfProof = c.transaction.blockOfProof.getHash();
   e.containingHash = c.containingBlock.getHash();
   e.endorsedHash = c.transaction.publishedBlock.getHash();
@@ -22,9 +22,9 @@ BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
 }
 
 template <>
-VbkEndorsement VbkEndorsement::fromContainer(const AltPayloads& c) {
-  VbkEndorsement e;
-  e.id = VbkEndorsement::getId(c);
+AltEndorsement AltEndorsement::fromContainer(const AltPayloads& c) {
+  AltEndorsement e;
+  e.id = AltEndorsement::getId(c);
   e.blockOfProof = c.popData.atv.containingBlock.getHash();
   e.endorsedHash = c.endorsed.hash;
   e.endorsedHeight = c.endorsed.height;
@@ -34,14 +34,14 @@ VbkEndorsement VbkEndorsement::fromContainer(const AltPayloads& c) {
 }
 
 template <>
-BtcEndorsement::id_t BtcEndorsement::getId(const VTB& c) {
+VbkEndorsement::id_t VbkEndorsement::getId(const VTB& c) {
   auto left = c.transaction.bitcoinTransaction.getHash();
   auto right = c.transaction.blockOfProof.getHash();
   return sha256(left, right);
 }
 
 template <>
-VbkEndorsement::id_t VbkEndorsement::getId(const AltPayloads& c) {
+AltEndorsement::id_t AltEndorsement::getId(const AltPayloads& c) {
   auto left = c.popData.atv.transaction.getHash();
   auto right = c.popData.atv.containingBlock.getHash();
   return sha256(left, right);
