@@ -78,8 +78,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wno-unknown-pragmas)
     add_cxx_flag(-Wno-literal-suffix)
 
-    add_flag(-flto)
-
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
         # Release flags
         add_flag(-Ofast)
