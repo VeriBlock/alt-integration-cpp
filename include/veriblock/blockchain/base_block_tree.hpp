@@ -188,7 +188,7 @@ struct BaseBlockTree {
 
   bool operator!=(const BaseBlockTree& o) const { return !operator==(o); }
 
- protected:
+ public:
   virtual void determineBestChain(Chain<index_t>& currentBest,
                                   index_t& indexNew,
                                   ValidationState& state,
@@ -339,7 +339,8 @@ struct BaseBlockTree {
     validity_sig_.emit(block);
   }
 
- protected:
+ //protected:
+ public:
   //! stores ALL blocks, including valid and invalid
   block_index_t blocks_;
   //! stores all removed blocks, to ensure pointers to blocks remain stable

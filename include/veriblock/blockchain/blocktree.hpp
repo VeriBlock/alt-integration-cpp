@@ -123,7 +123,7 @@ struct BlockTree : public BaseBlockTree<Block> {
                         pad);
   }
 
- protected:
+ public:
   const ChainParams* param_ = nullptr;
 
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {

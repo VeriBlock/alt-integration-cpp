@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "util/literals.hpp"
+#include <util/alt_chain_params_regtest.hpp>
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/popdata.hpp>
@@ -100,29 +101,27 @@ AltPayloads getModifiedContainer() {
 }
 
 TEST_F(AltTreeRepositoryTest, Basic) {
-  payloadsRepo->put(getDefaultContainer());
-  payloadsRepo->put(getModifiedContainer());
-  auto endorsement1 = VbkEndorsement::fromContainer(getDefaultContainer());
-  AltPayloads payloads{};
-  bool ret = payloadsRepo->get(getDefaultContainer().getId(), &payloads);
-  EXPECT_TRUE(ret);
+  PopStorage storage{};
+  BtcChainParamsRegTest btcparam{};
+  VbkChainParamsRegTest vbkparam{};
+  AltChainParamsRegTest altparam{};
 
-  auto storageAtv = EndorsementStorage<AltPayloads, AltTree>();
-  //payloads.clear();
-  storageAtv.payloads().get(getDefaultContainer().getId(), &payloads);
-  PopStorage storage = PopStorage();
-  auto vbkBlock = VbkBlock{
-      5000,
-      2,
-      uint96("94E7DC3E3BE21A96ECCF0FBD"_unhex),
-      uint72("F5F62A3331DC995C36"_unhex),
-      uint72("B0935637860679DDD5"_unhex),
-      uint128("DB0F135312B2C27867C9A83EF1B99B98"_unhex),
-      1553699987,
-      117586646,
-      1924857207};
-  storage.vbkIndex().put(vbkBlock);
-  auto cursor = storage.vbkIndex().newCursor();
-  cursor->seekToFirst();
-  auto val = cursor->value();
+  // trees
+  AltTree alttree = AltTree(altparam, vbkparam, btcparam);
+
+  ValidationState state;
+  EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(state));
+  EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
+  EXPECT_TRUE(alttree.bootstrap(state));
+
+  storage.saveBtcTree(alttree.btc());
+  storage.saveVbkTree(alttree.vbk());
+
+  BlockTree<BtcBlock, BtcChainParams> reloadedBtcTree{btcparam};
+  storage.loadBtcTree(reloadedBtcTree);
+
+  VbkBlockTree reloadedTree{vbkparam, btcparam};
+  storage.loadVbkTree(reloadedTree);
+
+  EXPECT_TRUE(reloadedBtcTree == alttree.btc());
 }

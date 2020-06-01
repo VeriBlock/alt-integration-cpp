@@ -200,7 +200,7 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
-    return std::make_shared<BlockCursorInmem<Block>>(_hash);
+    return std::make_shared<BlockCursorInmem<stored_block_t>>(_hash);
   }
 
  private:
