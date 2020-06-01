@@ -24,7 +24,7 @@ struct MerkleTree {
   }
 
   std::vector<txhash_t> getMerklePathLayers(const txhash_t& hash) {
-    assert(!layers.empty());
+    VBK_ASSERT(!layers.empty());
     auto& leafs = layers[0];
     auto it = std::find(leafs.begin(), leafs.end(), hash);
     if (it == leafs.end()) {
@@ -37,7 +37,7 @@ struct MerkleTree {
     }
 
     size_t index = std::distance(leafs.begin(), it);
-    assert(index < leafs.size());
+    VBK_ASSERT(index < leafs.size());
     std::vector<txhash_t> merklePath{};
     for (size_t i = 0; i < layers.size() - 1; i++) {
       auto& layer = layers[i];
@@ -108,7 +108,7 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
   txhash_t finalizeRoot() {
     if (layers.size() == 1) {
       // the only layer
-      assert(layers[0].size() == 1);
+      VBK_ASSERT(layers[0].size() == 1);
       return layers[0][0];
     }
 
@@ -148,7 +148,7 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree> {
   }
 
   uint256 finalizeRoot() {
-    assert(!layers.empty());
+    VBK_ASSERT(!layers.empty());
     return layers.back()[0].reverse();
   }
 };

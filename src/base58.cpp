@@ -6,7 +6,7 @@
 
 #include "veriblock/base58.hpp"
 
-#include <cassert>
+#include <veriblock/assert.hpp>
 #include <cstring>
 #include <stdexcept>
 #include <vector>
@@ -88,7 +88,7 @@ static bool DecodeBase58(const char *psz,
       *it = carry % 256;
       carry /= 256;
     }
-    assert(carry == 0);
+    VBK_ASSERT(carry == 0);
     length = i;
     if (length + zeroes > max_ret_len) return false;
     psz++;
@@ -131,7 +131,7 @@ std::string EncodeBase58(const unsigned char *pbegin,
       carry /= 58;
     }
 
-    assert(carry == 0);
+    VBK_ASSERT(carry == 0);
     length = i;
     pbegin++;
   }

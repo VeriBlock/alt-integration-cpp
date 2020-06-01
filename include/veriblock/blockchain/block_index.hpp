@@ -6,9 +6,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
+#include <map>
 #include <memory>
 #include <set>
-#include <unordered_map>
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
@@ -63,8 +63,7 @@ struct BlockIndex {
   ArithUint256 chainWork = 0;
 
   //! list of containing endorsements in this block
-  std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
-      containingEndorsements{};
+  std::multimap<eid_t, std::shared_ptr<endorsement_t>> containingEndorsements{};
 
   //! list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
@@ -85,7 +84,7 @@ struct BlockIndex {
   uint32_t refCounter = 0;
 
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
-    assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+    VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
       // block failed
       return false;
@@ -106,7 +105,7 @@ struct BlockIndex {
   }
 
   bool raiseValidity(enum BlockStatus upTo) {
-    assert(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+    VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
       return false;
     }

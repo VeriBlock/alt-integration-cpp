@@ -8,7 +8,7 @@
 
 #include <functional>
 #include <veriblock/blockchain/chain.hpp>
-//#include <veriblock/storage/payloads_repository.hpp>
+#include <veriblock/reversed_range.hpp>
 
 namespace altintegration {
 
@@ -28,47 +28,33 @@ struct PopStateMachine {
       : ed_(ed), ing_(ing), startHeight_(startHeight) {}
 
   bool applyBlock(index_t& index, ValidationState& state) {
-    bool success = true;
-    for (size_t groupIndex = 0; groupIndex < index.commands.size();
-         groupIndex++) {
-      auto& group = index.commands[groupIndex];
-
-      for (size_t cmdIndex = 0; cmdIndex < group.commands.size(); cmdIndex++) {
-        const auto& cmd = group.commands[cmdIndex];
-
+    std::vector<CommandPtr> executed;
+    for (auto& cg : index.commands) {
+      for (auto& cmd : cg) {
         if (!cmd->Execute(state)) {
-          VBK_LOG_ERROR("Invalid %s command %s in block %s",
+          // invalidate command group
+          cg.valid = false;
+          VBK_LOG_ERROR("Invalid %s command in block %s: %s",
                         index_t::block_t::name(),
-                        cmd->toPrettyString(),
-                        index.toPrettyString());
-          success = false;
+                        index.toPrettyString(),
+                        state.toString());
 
-          // roll back the slice of the group that has already been executed
-          for (size_t rollbackCmdIndex = cmdIndex; rollbackCmdIndex > 0;
-               rollbackCmdIndex--) {
-            group.commands[rollbackCmdIndex - 1]->UnExecute();
-          }
-          break;
-        }
-      }
+          // unexecute executed commands in reverse order
+          std::for_each(executed.rbegin(),
+                        executed.rend(),
+                        [](const CommandPtr& c) { c->UnExecute(); });
 
-      if (!success) {
-        // roll back the groups that have already been executed
-        for (size_t rollbackGroupIndex = groupIndex; rollbackGroupIndex > 0;
-             rollbackGroupIndex--) {
-          const auto& rollbackGroup = index.commands[rollbackGroupIndex - 1];
-          std::for_each(rollbackGroup.rbegin(),
-                        rollbackGroup.rend(),
-                        [](const CommandPtr& cmd) { cmd->UnExecute(); });
-        }
-        break;
-      }
-    }
+          return state.Invalid(index_t::block_t::name() + "-bad-command");
+        }  // end if
 
-    if (!success) {
-      state.Invalid(index_t::block_t::name() + "-bad-command");
-    }
-    return success;
+        // command is valid
+        executed.push_back(cmd);
+      }  // end for
+
+      // re-validate command group
+      cg.valid = true;
+    }  // end for
+    return true;
   }
 
   void unapplyBlock(const index_t& index) {
@@ -86,11 +72,11 @@ struct PopStateMachine {
       return;
     }
 
-    assert(from.height > to.height);
+    VBK_ASSERT(from.height > to.height);
     // exclude 'to' by adding 1
     Chain<ProtectedIndex> chain(to.height + 1, &from);
-    assert(chain.first());
-    assert(chain.first()->pprev == &to);
+    VBK_ASSERT(chain.first());
+    VBK_ASSERT(chain.first()->pprev == &to);
 
     VBK_LOG_DEBUG("Unapply %d blocks from=%s, to=%s",
                   chain.blocksCount(),
@@ -114,11 +100,11 @@ struct PopStateMachine {
       return true;
     }
 
-    assert(from.height < to.height);
+    VBK_ASSERT(from.height < to.height);
     // exclude 'from' by adding 1
     Chain<ProtectedIndex> chain(from.height + 1, &to);
-    assert(chain.first());
-    assert(chain.first()->pprev == &from);
+    VBK_ASSERT(chain.first());
+    VBK_ASSERT(chain.first()->pprev == &from);
 
     VBK_LOG_DEBUG("Applying %d blocks from=%s, to=%s",
                   chain.blocksCount(),
@@ -126,9 +112,22 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* index : chain) {
-      if (!index->isValid() || !applyBlock(*index, state)) {
+      // even if block is invalid, still try to apply it
+      if (!applyBlock(*index, state)) {
         unapply(*index->pprev, from);
+        // if block is valid, then invalidate it
+        if (index->isValid()) {
+          ed_.invalidateSubtree(*index, BLOCK_FAILED_POP, /*do fr=*/false);
+        }
         return false;
+      }
+
+      // we successfully applied block
+
+      // if block is marked as invalid, but were able to successfully apply
+      // it, revalidate its subtree
+      if (!index->isValid()) {
+        ed_.revalidateSubtree(*index, BLOCK_FAILED_POP, /*do fr=*/false);
       }
     }
 
@@ -144,7 +143,7 @@ struct PopStateMachine {
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
   height_t startHeight_ = 0;
-};
+};  // namespace altintegration
 
 }  // namespace altintegration
 

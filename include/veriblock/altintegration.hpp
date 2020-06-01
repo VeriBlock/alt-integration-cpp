@@ -22,21 +22,21 @@ struct Altintegration {
     // first, bootstrap BTC
     if (config.btc.blocks.empty()) {
       tree->btc().bootstrapWithGenesis(state);
-      assert(state.IsValid());
+      VBK_ASSERT(state.IsValid());
     } else {
       tree->btc().bootstrapWithChain(
           config.btc.startHeight, config.btc.blocks, state);
-      assert(state.IsValid());
+      VBK_ASSERT(state.IsValid());
     }
 
     // then, bootstrap VBK
     if (config.vbk.blocks.empty()) {
       tree->vbk().bootstrapWithGenesis(state);
-      assert(state.IsValid());
+      VBK_ASSERT(state.IsValid());
     } else {
       tree->vbk().bootstrapWithChain(
           config.vbk.startHeight, config.vbk.blocks, state);
-      assert(state.IsValid());
+      VBK_ASSERT(state.IsValid());
     }
 
     tree->bootstrap(state);

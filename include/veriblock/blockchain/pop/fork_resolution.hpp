@@ -70,13 +70,11 @@ struct KeystoneContextList {
       : keystoneInterval(keystoneInt) {
     size_t chop_index = c.size();
 
-    if (c.size() > 1) {
-      for (size_t i = 1; i < c.size(); ++i) {
-        if ((c[i].firstBlockPublicationHeight -
-             c[i - 1].firstBlockPublicationHeight) > finalityDelay) {
-          chop_index = i;
-          break;
-        }
+    for (size_t i = 1; i < c.size(); ++i) {
+      if ((c[i].firstBlockPublicationHeight -
+           c[i - 1].firstBlockPublicationHeight) > finalityDelay) {
+        chop_index = i;
+        break;
       }
     }
 
@@ -147,7 +145,7 @@ std::vector<KeystoneContext> getKeystoneContext(
             // Ensure that the keystone's block time isn't later than the
             // block time of the Bitcoin block it's endorsed in
             auto* index = best[adjustedEndorsementIndex];
-            assert(index != nullptr);
+            VBK_ASSERT(index != nullptr);
             if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
               // Timestamp of VeriBlock block is lower than Bitcoin block,
               // set this as the adjusted index if another lower index has
@@ -181,7 +179,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
 
   auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
-  assert(tip != nullptr && "tip must not be nullptr");
+  VBK_ASSERT(tip != nullptr && "tip must not be nullptr");
 
   auto highestPossibleEndorsedBlockHeaderHeight = tip->height;
   auto lastKeystone = highestKeystoneAtOrBefore(tip->height, ki);
@@ -206,7 +204,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
       auto* index = chain[relevantEndorsedBlock];
 
       // chain must contain relevantEndorsedBlock
-      assert(index != nullptr);
+      VBK_ASSERT(index != nullptr);
 
       for (const auto* e : index->endorsedBy) {
         if (!allHashesInChain.count(e->containingHash)) {
@@ -237,7 +235,7 @@ template <typename ProtectedChainConfig>
 int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
                         const std::vector<KeystoneContext>& chainB,
                         const ProtectedChainConfig& config) {
-  assert(config.getKeystoneInterval() > 0);
+  VBK_ASSERT(config.getKeystoneInterval() > 0);
   auto ki = config.getKeystoneInterval();
   KeystoneContextList a(chainA, ki, config.getFinalityDelay());
   KeystoneContextList b(chainB, ki, config.getFinalityDelay());
@@ -256,8 +254,8 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
     return 1;
   }
 
-  assert(!chainA.empty());
-  assert(!chainB.empty());
+  VBK_ASSERT(!chainA.empty());
+  VBK_ASSERT(!chainB.empty());
   VBK_LOG_DEBUG(
       "Comparing POP scores of chains A(first=%d, tip=%d) "
       "and B(first=%d, tip=%d)",
@@ -373,7 +371,7 @@ struct PopAwareForkResolutionComparator {
       : ing_(std::move(tree)),
         protectedParams_(&protectedParams),
         protectingParams_(&protectingParams) {
-    assert(protectedParams.getKeystoneInterval() > 0);
+    VBK_ASSERT(protectedParams.getKeystoneInterval() > 0);
   }
 
   ProtectingBlockTree& getProtectingBlockTree() { return *ing_; }
@@ -385,7 +383,7 @@ struct PopAwareForkResolutionComparator {
                 protected_index_t& to,
                 ValidationState& state) {
     auto* currentActive = ed.getBestChain().tip();
-    assert(currentActive && "should be bootstrapped");
+    VBK_ASSERT(currentActive && "should be bootstrapped");
 
     if (*currentActive == to) {
       // already at this state
@@ -413,13 +411,14 @@ struct PopAwareForkResolutionComparator {
   int comparePopScore(ProtectedBlockTree& ed,
                       protected_index_t& indexNew,
                       ValidationState& state) {
-    assert(indexNew.isValid());
+    VBK_ASSERT(indexNew.isValid());
 
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
-    assert(bestTip);
+    VBK_ASSERT(bestTip);
     if (currentBest.contains(&indexNew)) {
-      VBK_LOG_INFO("Candidate is on active chain, current chain wins");
+      VBK_LOG_INFO("Candidate %s is on active chain, current chain wins",
+                   indexNew.toPrettyString());
       return 1;
     }
 
@@ -433,69 +432,60 @@ struct PopAwareForkResolutionComparator {
       VBK_LOG_INFO("Candidate is ahead %d blocks",
                    indexNew.height - bestTip->height);
       sm_t sm(ed, *ing_, bestTip->height);
-      if (sm.apply(*bestTip, indexNew, state)) {
-        // if indexNew is valid, then switch to new chain
-        VBK_LOG_INFO("Candidate contains VALID commands, candidate wins");
-        return -1;
+      if (!sm.apply(*bestTip, indexNew, state)) {
+        // new chain is invalid. our current chain is definitely better.
+        VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
+                     state.toString());
+        return 1;
       }
 
-      // new chain is invalid. our current chain is definitely better.
-      VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
-                   state.toString());
-      return 1;
+      VBK_LOG_INFO("Candidate contains VALID commands, chain B wins");
+      return -1;
     }
 
     auto ki = ed.getParams().getKeystoneInterval();
-    const auto* forkKeystone =
-        currentBest.findHighestKeystoneAtOrBeforeFork(&indexNew, ki);
-    if (!forkKeystone) {
-      // no fork keystone found. this can happen during bootstrap
-      VBK_LOG_INFO("Can not find fork keystone");
-      return 0;
-    }
+    const auto* fork = currentBest.findFork(&indexNew);
+    VBK_ASSERT(fork != nullptr &&
+           "all blocks in a blocktree must form a tree, thus all pairs of "
+           "chains must have a fork point");
 
     bool AcrossedKeystoneBoundary =
-        isCrossedKeystoneBoundary(forkKeystone->height, bestTip->height, ki);
+        isCrossedKeystoneBoundary(fork->height, bestTip->height, ki);
     bool BcrossedKeystoneBoundary =
-        isCrossedKeystoneBoundary(forkKeystone->height, indexNew.height, ki);
-    if (!AcrossedKeystoneBoundary || !BcrossedKeystoneBoundary) {
+        isCrossedKeystoneBoundary(fork->height, indexNew.height, ki);
+    if (!AcrossedKeystoneBoundary && !BcrossedKeystoneBoundary) {
       // chans are equal in terms of POP
       VBK_LOG_INFO(
-          "Chains crossed keystone boundary: A=%s B=%s, chains are equal",
-          (AcrossedKeystoneBoundary ? "true" : "false"),
-          (BcrossedKeystoneBoundary ? "true" : "false"));
+          "Neither chain crossed a keystone boundary: chains are equal");
       return 0;
     }
 
-    // [vbk fork point keystone ... current tip]
-    Chain<protected_index_t> chainA(forkKeystone->height, currentBest.tip());
-    // [vbk fork point keystone... new block]
-    Chain<protected_index_t> chainB(forkKeystone->height, &indexNew);
+    // [vbk fork point ... current tip]
+    Chain<protected_index_t> chainA(fork->height, currentBest.tip());
+    // [vbk fork point ... new block]
+    Chain<protected_index_t> chainB(fork->height, &indexNew);
 
     // chains are not empty and chains start at the same block
-    assert(chainA.first() != nullptr && chainA.first() == chainB.first());
-    // first block is a keystone
-    assert(isKeystone(chainA.first()->height,
-                      protectedParams_->getKeystoneInterval()));
+    VBK_ASSERT(chainA.first() != nullptr && chainA.first() == chainB.first());
 
     // we ALWAYS compare currently applied chain (chainA) and other chain
     // (chainB)
-    assert(chainA.tip() == bestTip);
+    VBK_ASSERT(chainA.tip() == bestTip);
 
     sm_t sm(ed, *ing_, chainA.first()->height);
 
     // we are at chainA.
-    // apply all payloads from chain B (both chains have same first block - fork
-    // point at keystone, so exclude it during 'apply')
+    // apply all payloads from chain B (both chains have same first block - the
+    // fork point, so exclude it during 'apply')
     if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
-      // chain A is better
       // chain B has been unapplied already
+      // chain B has been invalidated already
       VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                    state.toString());
       return 1;
     }
 
-    // now tree contains payloads from both chains
+    // now the tree contains payloads from both chains
 
     // rename
     const auto& filter1 = internal::getProtoKeystoneContext<protected_block_t,
@@ -517,9 +507,9 @@ struct PopAwareForkResolutionComparator {
     int result = internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, *protectedParams_);
     if (result >= 0) {
-      // chain A remains best. unapply B. A remains applied
+      // chain A remains the best. unapply B. A remains applied
       sm.unapply(*chainB.tip(), *chainB.first());
-      VBK_LOG_INFO("Chain A remains best chain");
+      VBK_LOG_INFO("Chain A remains the best chain");
     } else {
       // chain B is better. unapply A. B remains applied
       sm.unapply(*chainA.tip(), *chainA.first());

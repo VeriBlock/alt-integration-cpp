@@ -3,8 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <cassert>
-
+#include "veriblock/assert.hpp"
 #include "veriblock/base58.hpp"
 #include "veriblock/base59.hpp"
 #include "veriblock/consts.hpp"
@@ -26,18 +25,18 @@ constexpr const auto MULTISIG_ADDRESS_DATA_END = 24;
 constexpr const auto MULTISIG_ADDRESS_CHECKSUM_END = 28;
 
 static std::string getDataPortionFromAddress(const std::string& address) {
-  assert(address.length() == ADDRESS_SIZE);
+  VBK_ASSERT(address.length() == ADDRESS_SIZE);
   return address.substr(0, MULTISIG_ADDRESS_DATA_END + 1);
 }
 
 static bool isMultisig(const std::string& address) {
-  assert(address.length() == ADDRESS_SIZE);
+  VBK_ASSERT(address.length() == ADDRESS_SIZE);
   return (address[ADDRESS_SIZE - 1] == MULTISIG_ENDING_CHAR);
 }
 
 static std::string getChecksumPortionFromAddress(const std::string& address,
                                                  bool multisig) {
-  assert(address.length() == ADDRESS_SIZE);
+  VBK_ASSERT(address.length() == ADDRESS_SIZE);
   if (multisig) {
     return address.substr(
         MULTISIG_ADDRESS_DATA_END + 1,

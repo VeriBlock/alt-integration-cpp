@@ -6,7 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_CHAIN_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_CHAIN_HPP_
 
-#include <cassert>
 #include <map>
 #include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
@@ -141,17 +140,6 @@ struct Chain {
     return const_cast<index_t*>(pindex);
   }
 
-  //! same as findFork, but returns first keystone block at or before fork point
-  const index_t* findHighestKeystoneAtOrBeforeFork(const index_t* pindex,
-                                                   int ki) const {
-    auto* fork = findFork(pindex);
-    if (!fork) {
-      return nullptr;
-    }
-    auto keystoneHeight = highestKeystoneAtOrBefore(fork->height, ki);
-    return this->operator[](keystoneHeight);
-  }
-
   //! returns an unordered set of hashes, present in current chain.
   //! useful for small chains for further checks of "hash existence"
   std::unordered_set<hash_t> getAllHashesInChain() const {
@@ -190,7 +178,7 @@ struct Chain {
   std::vector<index_t*> chain{};
 
   height_t toInnerHeight(height_t in) const {
-    assert(in >= startHeight_);
+    VBK_ASSERT(in >= startHeight_);
     return in - startHeight_;
   }
 };
