@@ -22,7 +22,7 @@ struct AltBlock {
   using height_t = int32_t;
   using hash_t = std::vector<uint8_t>;
   using payloads_t = AltPayloads;
-  using endorsement_t = VbkEndorsement;
+  using endorsement_t = AltEndorsement;
   using protecting_block_t = VbkBlock;
 
   hash_t hash{};

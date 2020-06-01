@@ -81,13 +81,13 @@ struct AltPayloads {
    * Return VbkEndorsement which generates from AltPayloads
    * @return endorsement VbkEndorsement
    */
-  VbkEndorsement getEndorsement() const;
+  AltEndorsement getEndorsement() const;
 
   /**
    * Return VbkEndorsement id which generates from AltPayloads
    * @return id VbkEndorsement::id_t
    */
-  typename VbkEndorsement::id_t getEndorsementId() const;
+  typename AltEndorsement::id_t getEndorsementId() const;
 
   friend bool operator==(const AltPayloads& a, const AltPayloads& b) {
     return a.getId() == b.getId();

@@ -61,8 +61,6 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     VBK_LOG_DEBUG("Active chain won");
     // current chain is better
   }
-
-  (void)ret;
 }
 
 bool VbkBlockTree::setTip(index_t& to,
@@ -139,7 +137,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   auto& c = index->commands;
   // iterate over payloads backwards
-  for (const auto& p : make_reversed(pids.begin(), pids.end())) {
+  for (const auto& p : reverse_iterate(pids.begin(), pids.end())) {
     // find every payloads in command group (search backwards, as it is likely
     // to be faster)
     auto it = std::find_if(c.rbegin(), c.rend(), [&p](const CommandGroup& g) {
@@ -234,8 +232,8 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
   addBlock(btc(), p.transaction.blockOfProof, commands);
 
   // add endorsement
-  auto e = BtcEndorsement::fromContainerPtr(p);
-  auto cmd = std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e));
+  auto e = VbkEndorsement::fromContainerPtr(p);
+  auto cmd = std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
   commands.push_back(std::move(cmd));
 }
 

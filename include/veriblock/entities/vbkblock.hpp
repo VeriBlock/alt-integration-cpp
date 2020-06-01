@@ -26,7 +26,7 @@ struct VbkBlock {
   using height_t = int32_t;
   using keystone_t = uint72;
   using payloads_t = VTB;
-  using endorsement_t = BtcEndorsement;
+  using endorsement_t = VbkEndorsement;
   using protecting_block_t = BtcBlock;
 
   int32_t height{};

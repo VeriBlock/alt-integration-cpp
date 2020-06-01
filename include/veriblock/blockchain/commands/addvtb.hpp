@@ -35,6 +35,7 @@ struct AddVTB : public Command {
 
     return true;
   }
+
   void UnExecute() override {
     auto hash = vtb_.containingBlock.getHash();
 
