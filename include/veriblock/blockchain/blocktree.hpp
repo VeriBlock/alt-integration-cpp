@@ -16,7 +16,6 @@
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/validation_state.hpp>
-#include <veriblock/storage/pop_storage.hpp>
 
 #include "veriblock/fmt.hpp"
 
@@ -113,6 +112,14 @@ struct BlockTree : public BaseBlockTree<Block> {
     return acceptBlock(block, state, true);
   }
 
+  index_t* insertBlock(const block_t& block) {
+    return insertBlock(std::make_shared<block_t>(block));
+  }
+
+  index_t* insertBlock(const std::shared_ptr<block_t>& block) {
+    return insertBlockHeader(block);
+  }
+
   std::string toPrettyString(size_t level = 0) const {
     std::string pad(level, ' ');
     return fmt::sprintf("%s%sBlockTree{blocks=%llu\n%s\n%s}",
@@ -123,7 +130,7 @@ struct BlockTree : public BaseBlockTree<Block> {
                         pad);
   }
 
- public:
+ protected:
   const ChainParams* param_ = nullptr;
 
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {
@@ -253,10 +260,6 @@ struct BlockTree : public BaseBlockTree<Block> {
       //! important to use this->setTip for proper vtable resolution
       this->setTip(indexNew, state, isBootstrap);
     }
-  }
-
-  void toStorage(PopStorage storage) {
-
   }
 };
 

@@ -62,11 +62,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool operator!=(const VbkBlockTree& o) const { return !operator==(o); }
 
-  bool setState(const VbkBlock::hash_t& block, ValidationState& state);
-
   std::string toPrettyString(size_t level = 0) const;
 
- public:
+ private:
   bool setTip(index_t& to,
               ValidationState& state,
               bool isBootstrap = false) override;

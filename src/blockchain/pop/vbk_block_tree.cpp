@@ -244,15 +244,6 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
-bool VbkBlockTree::setState(const VbkBlock::hash_t& block,
-                            ValidationState& state) {
-  auto* index = getBlockIndex(block);
-  if (!index) {
-    return false;
-  }
-  return this->setTip(*index, state);
-}
-
 void VbkBlockTree::removePayloads(const Blob<24>& hash,
                                   const std::vector<payloads_t>& payloads) {
   auto index = base::getBlockIndex(hash);

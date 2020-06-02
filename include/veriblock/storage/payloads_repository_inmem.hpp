@@ -63,7 +63,7 @@ struct PayloadsCursorInmem : public Cursor<typename Payloads::id_t, Payloads> {
 
     return _it->first;
   }
-  typename Payloads value() const override {
+  Payloads value() const override {
     if (!isValid()) {
       throw std::out_of_range("invalid cursor");
     }

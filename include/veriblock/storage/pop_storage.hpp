@@ -2,9 +2,8 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_POP_STORAGE_HPP_
 
 #include <map>
-#include <veriblock/entities/payloads.hpp>
-#include <veriblock/entities/vtb.hpp>
-#include <veriblock/storage/block_repository.hpp>
+#include <veriblock/blockchain/alt_block_tree.hpp>
+#include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/storage/block_repository_inmem.hpp>
 #include <veriblock/storage/endorsement_storage.hpp>
 
@@ -17,13 +16,12 @@ class PopStorage {
  public:
   virtual ~PopStorage() = default;
   PopStorage()
-      : repoVbk_(
-            std::move(std::make_shared<BlockRepositoryInmem<block_vbk_t>>())),
-        repoBtc_(std::move(std::make_shared<BlockRepositoryInmem<block_btc_t>>())),
+      : repoVbk_(std::make_shared<BlockRepositoryInmem<block_vbk_t>>()),
+        repoBtc_(std::make_shared<BlockRepositoryInmem<block_btc_t>>()),
         endorsementsAtv_(
-            std::move(std::make_shared<EndorsementStorage<AltPayloads, AltTree>>())),
+            std::make_shared<EndorsementStorage<AltPayloads, AltTree>>()),
         endorsementsVtb_(
-            std::move(std::make_shared<EndorsementStorage<VTB, VbkBlockTree>>())) {}
+            std::make_shared<EndorsementStorage<VTB, VbkBlockTree>>()) {}
 
   BlockRepository<block_vbk_t>& vbkIndex() { return *repoVbk_; }
   const BlockRepository<block_vbk_t>& vbkIndex() const { return *repoVbk_; }
@@ -68,17 +66,12 @@ class PopStorage {
     }
 
     for (const auto& blockPair : blocks) {
-      tree.doInsertBlockHeader(blockPair.second->header);
+      tree.insertBlock(blockPair.second->header);
     }
 
     ValidationState state{};
     auto* tip = tree.getBlockIndex(vbkTipHash_);
-    tree.setTip(*tip, state, true);
-
-    auto tips = findValidTips(*(tree.getBestChain().first()));
-    for (auto* tipAlt : tips) {
-      tree.tips_.insert(tipAlt);
-    }
+    tree.setState(*tip, state);
   }
 
   void loadBtcTree(BlockTree<BtcBlock, BtcChainParams>& tree) {
@@ -92,17 +85,12 @@ class PopStorage {
     }
 
     for (const auto& blockPair : blocks) {
-      tree.doInsertBlockHeader(blockPair.second->header);
+      tree.insertBlock(blockPair.second->header);
     }
 
     ValidationState state{};
     auto* tip = tree.getBlockIndex(btcTipHash_);
-    tree.setTip(*tip, state, false);
-
-    auto tips = findValidTips(*(tree.getBestChain().first()));
-    for (auto* tipAlt : tips) {
-      tree.tips_.insert(tipAlt);
-    }
+    tree.setState(*tip, state);
   }
 
  private:

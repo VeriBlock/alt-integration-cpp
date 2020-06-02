@@ -91,18 +91,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   std::map<std::vector<uint8_t>, int64_t> getPopPayout(
       const AltBlock::hash_t& tip, ValidationState& state);
 
-  bool setState(const AltBlock::hash_t& block, ValidationState& state) {
-    auto* index = getBlockIndex(block);
-    if (!index) {
-      return false;
-    }
-    return setState(*index, state);
-  }
-
-  bool setState(index_t& index, ValidationState& state) {
-    return this->setTip(index, state);
-  }
-
   bool validatePayloads(const AltBlock& block,
                         const payloads_t& p,
                         ValidationState& state);
