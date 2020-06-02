@@ -13,7 +13,6 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
-//#include <veriblock/storage/endorsement_repository.hpp>
 
 namespace altintegration {
 
@@ -67,7 +66,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   std::string toPrettyString(size_t level = 0) const;
 
- private:
+ public:
   bool setTip(index_t& to,
               ValidationState& state,
               bool isBootstrap = false) override;

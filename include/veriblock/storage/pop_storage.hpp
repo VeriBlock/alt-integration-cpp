@@ -56,6 +56,8 @@ class PopStorage {
   }
 
   void loadVbkTree(VbkBlockTree& tree) {
+    loadBtcTree(tree.btc());
+
     auto cursor = repoVbk_->newCursor();
     cursor->seekToFirst();
     std::multimap<int32_t, std::shared_ptr<block_vbk_t>> blocks;
@@ -66,12 +68,16 @@ class PopStorage {
     }
 
     for (const auto& blockPair : blocks) {
-      block_vbk_t bi;
-      bi.header = blockPair.second->header;
-      bi.height = blockPair.first;
-      bi.pprev = tree.getBlockIndex(bi.header->previousBlock);
-      tree.blocks_[blockPair.second->header->getShortHash()] =
-          std::make_shared<block_vbk_t>(std::move(bi));
+      tree.doInsertBlockHeader(blockPair.second->header);
+    }
+
+    ValidationState state{};
+    auto* tip = tree.getBlockIndex(vbkTipHash_);
+    tree.setTip(*tip, state, true);
+
+    auto tips = findValidTips(*(tree.getBestChain().first()));
+    for (auto* tipAlt : tips) {
+      tree.tips_.insert(tipAlt);
     }
   }
 

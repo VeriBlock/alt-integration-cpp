@@ -15,8 +15,8 @@
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/stateless_validation.hpp>
-//#include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
+#include <veriblock/storage/pop_storage.hpp>
 
 #include "veriblock/fmt.hpp"
 
@@ -253,6 +253,10 @@ struct BlockTree : public BaseBlockTree<Block> {
       //! important to use this->setTip for proper vtable resolution
       this->setTip(indexNew, state, isBootstrap);
     }
+  }
+
+  void toStorage(PopStorage storage) {
+
   }
 };
 

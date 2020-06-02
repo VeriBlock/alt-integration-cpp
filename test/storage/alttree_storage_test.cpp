@@ -16,14 +16,16 @@ TEST_F(AltTreeRepositoryTest, Basic) {
   PopStorage storage{};
 
   popminer->mineBtcBlocks(2);
+  popminer->mineVbkBlocks(2);
   storage.saveBtcTree(popminer->btc());
   storage.saveVbkTree(popminer->vbk());
 
   BlockTree<BtcBlock, BtcChainParams> reloadedBtcTree{btcparam};
   storage.loadBtcTree(reloadedBtcTree);
 
-  VbkBlockTree reloadedTree{vbkparam, btcparam};
-  storage.loadVbkTree(reloadedTree);
+  VbkBlockTree reloadedVbkTree{vbkparam, btcparam};
+  storage.loadVbkTree(reloadedVbkTree);
 
   EXPECT_TRUE(reloadedBtcTree == popminer->btc());
+  EXPECT_TRUE(reloadedVbkTree == popminer->vbk());
 }
