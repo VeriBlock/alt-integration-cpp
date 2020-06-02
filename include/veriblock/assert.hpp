@@ -17,7 +17,7 @@
 
 #include <veriblock/fmt.hpp>
 #define VBK_ASSERT(x)                                         \
-  if (VBK_LIKELY(x)) {                                        \
+  if (VBK_LIKELY((x))) {                                        \
     (void)(x);                                                \
   } else {                                                    \
     fmt::print(stderr,                                        \
