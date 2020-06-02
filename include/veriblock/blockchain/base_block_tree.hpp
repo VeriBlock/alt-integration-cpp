@@ -174,16 +174,20 @@ struct BaseBlockTree {
     updateTips(shouldDetermineBestChain);
   }
 
-  virtual bool setState(const hash_t& block, ValidationState& state) {
+  virtual bool setState(const hash_t& block,
+                        ValidationState& state,
+                        bool skipSetState = false) {
     auto* index = getBlockIndex(block);
     if (!index) {
       return false;
     }
-    return setState(*index, state);
+    return setState(*index, state, skipSetState);
   }
 
-  virtual bool setState(index_t& index, ValidationState& state) {
-    return setTip(index, state, true);
+  virtual bool setState(index_t& index,
+                        ValidationState& state,
+                        bool skipSetState = false) {
+    return setTip(index, state, skipSetState);
   }
 
   //! connects a handler to a signal 'On Invalidate Block'

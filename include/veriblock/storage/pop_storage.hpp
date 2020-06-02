@@ -71,7 +71,7 @@ class PopStorage {
 
     ValidationState state{};
     auto* tip = tree.getBlockIndex(vbkTipHash_);
-    tree.setState(*tip, state);
+    tree.setState(*tip, state, true);
   }
 
   void loadBtcTree(BlockTree<BtcBlock, BtcChainParams>& tree) {
