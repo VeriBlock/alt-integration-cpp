@@ -231,6 +231,7 @@ struct BaseBlockTree {
       removed_.erase(itr);
     } else {
       newIndex = std::make_shared<index_t>();
+      newIndex->setFlag(BLOCK_VALID_TREE);
     }
 
     it = blocks_.insert({shortHash, std::move(newIndex)}).first;
