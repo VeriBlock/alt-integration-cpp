@@ -42,7 +42,7 @@ Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
 }
 
 void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value) {
-  checkRange(value.size(), 0, std::numeric_limits<uint8_t>::max());
+  checkRange(value.size(), 0, (std::numeric_limits<uint8_t>::max)());
   stream.writeBE<uint8_t>((uint8_t)value.size());
   stream.write(value);
 }
