@@ -108,6 +108,9 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/wd4127)                  # disable warning: conditional expression is constant
     add_flag(/wd4505)                  # disable warning: warning C4505: 'dummy': unreferenced local function has been removed
 
+    # https://stackoverflow.com/questions/5004858/why-is-stdmin-failing-when-windows-h-is-included
+    add_flag(/DNOMINMAX)
+
     if(SHARED)
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd") 
@@ -121,10 +124,6 @@ if(VERIBLOCK_POP_LOGGER_ENABLED)
     vbk_define(VERIBLOCK_POP_LOGGER_ENABLED=1)
 endif()
 vbk_define(FMT_HEADER_ONLY=1)
-if(WIN32)
-    # https://stackoverflow.com/questions/5004858/why-is-stdmin-failing-when-windows-h-is-included
-    vbk_define(NOMINMAX)
-endif()
 
 if(CLANG_TIDY)
     include(cmake/clang-tidy.cmake)
