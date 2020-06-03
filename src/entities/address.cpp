@@ -198,8 +198,8 @@ void Address::toVbkEncoding(WriteStream& stream) const {
       decoded = DecodeBase59(toString());
       break;
     default:
-      throw std::invalid_argument(
-          "addressToVbkEncoding(): unexpected address type to encode");
+      // if we don't know address type, do not encode anything
+      return;
   }
 
   writeSingleByteLenValue(stream, decoded);

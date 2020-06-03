@@ -108,6 +108,9 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/wd4127)                  # disable warning: conditional expression is constant
     add_flag(/wd4505)                  # disable warning: warning C4505: 'dummy': unreferenced local function has been removed
 
+    # https://stackoverflow.com/questions/5004858/why-is-stdmin-failing-when-windows-h-is-included
+    add_flag(/DNOMINMAX)
+
     if(SHARED)
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd") 
