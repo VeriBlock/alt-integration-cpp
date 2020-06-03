@@ -123,7 +123,7 @@ class MockMiner {
 
   VbkBlockTree vbktree{vbk_params, btc_params};
 
-  std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes;
+  std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes{};
 
   ValidationState state_;
 };

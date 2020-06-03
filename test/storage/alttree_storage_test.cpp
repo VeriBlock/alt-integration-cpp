@@ -12,11 +12,33 @@ struct AltTreeRepositoryTest : public ::testing::Test, public PopTestFixture {
   }
 };
 
+BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
+  auto tip = miner.btc().getBestChain().tip();
+  EXPECT_TRUE(tip);
+  return tip->getHash();
+}
+
 TEST_F(AltTreeRepositoryTest, Basic) {
   PopStorage storage{};
 
-  popminer->mineBtcBlocks(2);
-  popminer->mineVbkBlocks(2);
+  auto* vbkTip = popminer->mineVbkBlocks(1);
+  // create endorsement of VBKTIP in BTC_1
+  auto btctx = popminer->createBtcTxEndorsingVbkBlock(*vbkTip->header);
+  // add BTC tx endorsing VBKTIP into next block
+  auto* chainAtip = popminer->mineBtcBlocks(1);
+
+  // create VBK pop tx that has 'block of proof=CHAIN A'
+  auto txa = popminer->createVbkPopTxEndorsingVbkBlock(
+      *chainAtip->header,
+      btctx,
+      *vbkTip->header,
+      lastKnownLocalBtcBlock(*popminer));
+  // erase part of BTC - it will be restored from payloads anyway
+  popminer->btc().removeTip(*popminer->btc().getBestChain().tip(), true);
+
+  // mine txA into VBK 2nd block
+  vbkTip = popminer->mineVbkBlocks(1);
+
   storage.saveBtcTree(popminer->btc());
   storage.saveVbkTree(popminer->vbk());
 
@@ -28,4 +50,12 @@ TEST_F(AltTreeRepositoryTest, Basic) {
 
   EXPECT_TRUE(reloadedBtcTree == popminer->btc());
   EXPECT_TRUE(reloadedVbkTree == popminer->vbk());
+
+  popminer->vbk().removeTip(*popminer->vbk().getBestChain().tip(), true);
+  EXPECT_FALSE(reloadedVbkTree == popminer->vbk());
+
+  // commands should be properly restored to make it pass
+  reloadedVbkTree.removeTip(*reloadedVbkTree.getBestChain().tip(), true);
+  EXPECT_TRUE(reloadedVbkTree == popminer->vbk());
+  EXPECT_TRUE(reloadedBtcTree == popminer->btc());
 }

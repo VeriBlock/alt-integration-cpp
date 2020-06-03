@@ -207,6 +207,13 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     VBK_ASSERT(ret);
   }
 
+  /*for (const auto& p : payloads) {
+    storage_.payloads().put(p);
+    auto pid = p.getId();
+    (void)pid;
+    ///TODO: add pid in the block index
+  }*/
+
   auto& c = index->commands;
   for (const auto& p : payloads) {
     c.emplace_back();
