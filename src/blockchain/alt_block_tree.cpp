@@ -26,7 +26,8 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
   }
 
   current = doInsertBlockHeader(std::make_shared<AltBlock>(block));
-  current->setFlag(BLOCK_VALID_TREE);
+  // raise validity will return false on invalid blocks
+  current->raiseValidity(BLOCK_VALID_TREE);
   return current;
 }
 
