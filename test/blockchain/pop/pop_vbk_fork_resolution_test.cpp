@@ -15,7 +15,7 @@ using namespace altintegration;
 struct PopVbkForkResolution : public ::testing::Test, public PopTestFixture {};
 
 TEST_F(PopVbkForkResolution, TooLateToAddPayloads) {
-  auto vbktip = popminer->mineVbkBlocks(2);
+  popminer->mineVbkBlocks(2);
   auto vbkpoptx =
       popminer->endorseVbkBlock(*popminer->vbk().getBestChain()[1]->header,
                                 getLastKnownBtcBlock(),
@@ -25,7 +25,7 @@ TEST_F(PopVbkForkResolution, TooLateToAddPayloads) {
   // try to add payloads to block pre latest allowed to overwrite
   auto limit = popminer->getVbkParams().getHistoryOverwriteLimit();
   auto vbkcontaining = popminer->mineVbkBlocks(1);
-  vbktip = popminer->mineVbkBlocks(limit);
+  popminer->mineVbkBlocks(limit);
 
   auto& vtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
 
