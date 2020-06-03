@@ -193,7 +193,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
        keystoneToConsider <= lastKeystone;
        keystoneToConsider = firstKeystoneAfter(keystoneToConsider, ki)) {
     ProtoKeystoneContext<ProtectingBlockT> pkc(
-        keystoneToConsider, chain[keystoneToConsider]->height);
+        keystoneToConsider, chain[keystoneToConsider]->getBlockTime());
 
     auto highestConnectingBlock =
         highestBlockWhichConnectsKeystoneToPrevious(keystoneToConsider, ki);
@@ -446,8 +446,8 @@ struct PopAwareForkResolutionComparator {
     auto ki = ed.getParams().getKeystoneInterval();
     const auto* fork = currentBest.findFork(&indexNew);
     VBK_ASSERT(fork != nullptr &&
-           "all blocks in a blocktree must form a tree, thus all pairs of "
-           "chains must have a fork point");
+               "all blocks in a blocktree must form a tree, thus all pairs of "
+               "chains must have a fork point");
 
     bool AcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(fork->height, bestTip->height, ki);
