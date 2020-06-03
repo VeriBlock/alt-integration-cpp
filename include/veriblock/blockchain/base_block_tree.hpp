@@ -77,7 +77,8 @@ struct BaseBlockTree {
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
       ValidationState dummy;
-      this->setTip(*toRemove.pprev, dummy, false);
+      bool ret = this->setTip(*prev, dummy, false);
+      VBK_ASSERT(ret);
     }
 
     // remove this block from 'pnext' set of previous block
@@ -117,7 +118,9 @@ struct BaseBlockTree {
                  block_t::name(),
                  (int)reason,
                  toBeInvalidated.toShortPrettyString());
-    VBK_ASSERT(toBeInvalidated.pprev);
+    if (!toBeInvalidated.pprev) {
+      throw std::logic_error("Can not invalidate genesis block");
+    }
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
       ValidationState dummy;
@@ -127,7 +130,7 @@ struct BaseBlockTree {
 
     doInvalidate(toBeInvalidated, reason);
 
-    // flag next subtrees (excluding current block)  as BLOCK_FAILED_CHILD
+    // flag next subtrees (excluding current block) as BLOCK_FAILED_CHILD
     for (auto* pnext : toBeInvalidated.pnext) {
       forEachNodePreorder<block_t>(*pnext, [&](index_t& index) {
         bool valid = index.isValid();
@@ -233,6 +236,8 @@ struct BaseBlockTree {
       newIndex = std::make_shared<index_t>();
     }
 
+    newIndex->setFlag(BLOCK_VALID_TREE);
+
     it = blocks_.insert({shortHash, std::move(newIndex)}).first;
     return it->second.get();
   }
@@ -330,10 +335,14 @@ struct BaseBlockTree {
     tips_.erase(&block);
     block.pnext.clear();
 
+    if (block.pprev != nullptr) {
+      block.pprev->pnext.erase(&block);
+    }
+
     auto shortHash = makePrevHash(block.getHash());
     auto it = blocks_.at(shortHash);
-    // TODO: it is a hack because we do not erase blocks and just move it to the
-    // remove_ container
+    // TODO: it is a hack because we do not erase blocks and just move them to
+    // the remove_ container
     it->setNull();
     removed_[shortHash] = it;
     blocks_.erase(shortHash);
