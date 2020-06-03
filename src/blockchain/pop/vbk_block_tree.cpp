@@ -202,7 +202,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   if (isOnActiveChain) {
     auto tip = activeChain_.tip();
     VBK_ASSERT(tip != nullptr);
-    auto window = std::max(0, tip->height - index->height);
+    auto window = (std::max)(0, tip->height - index->height);
     if (window >= param_->getHistoryOverwriteLimit()) {
       return state.Invalid(
           block_t::name() + "-too-late",
