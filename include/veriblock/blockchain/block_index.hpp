@@ -130,10 +130,11 @@ struct BlockIndex {
   bool isValidTip() const {
     // can be a valid tip iff there're no next blocks or all next blocks are
     // invalid
-    return pnext.empty() ||
-           std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
-             return !index->isValid();
-           });
+    return isValid() &&
+           (pnext.empty() ||
+            std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+              return !index->isValid();
+            }));
   }
 
   const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
