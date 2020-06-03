@@ -36,7 +36,10 @@ void forEachNodePreorder(BlockIndex<Block>& index,
     return;
   }
 
-  for (auto* pnext : index.pnext) {
+  // because pnext can be modified while iterating, we make a copy and iterate
+  // over a copy
+  auto copy = index.pnext;
+  for (auto* pnext : copy) {
     VBK_ASSERT(pnext != nullptr);
     forEachNodePreorder(*pnext, visit);
   }

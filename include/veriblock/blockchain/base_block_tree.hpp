@@ -227,7 +227,7 @@ struct BaseBlockTree {
       return it->second.get();
     }
 
-    std::shared_ptr<index_t> newIndex;
+    std::shared_ptr<index_t> newIndex = nullptr;
     auto itr = removed_.find(shortHash);
     if (itr != removed_.end()) {
       newIndex = itr->second;
@@ -236,8 +236,7 @@ struct BaseBlockTree {
       newIndex = std::make_shared<index_t>();
     }
 
-    newIndex->setFlag(BLOCK_VALID_TREE);
-
+    newIndex->setNull();
     it = blocks_.insert({shortHash, std::move(newIndex)}).first;
     return it->second.get();
   }
@@ -252,7 +251,8 @@ struct BaseBlockTree {
     if (current->pprev != nullptr) {
       // prev block found
       current->height = current->pprev->height + 1;
-      current->pprev->pnext.insert(current);
+      auto pair = current->pprev->pnext.insert(current);
+      VBK_ASSERT(pair.second && "block already existed in prev");
 
       if (!current->pprev->isValid()) {
         current->setFlag(BLOCK_FAILED_CHILD);
@@ -333,7 +333,6 @@ struct BaseBlockTree {
   void removeSingleBlock(index_t& block) {
     // if it is a tip, we also remove it
     tips_.erase(&block);
-    block.pnext.clear();
 
     if (block.pprev != nullptr) {
       block.pprev->pnext.erase(&block);
