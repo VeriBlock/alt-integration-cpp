@@ -16,10 +16,11 @@ template <typename Block>
 void forEachNodePostorder(
     BlockIndex<Block>& index,
     const std::function<void(BlockIndex<Block>&)>& visit) {
-  for (auto* pnext : index.pnext) {
-    if (!pnext) {
-      continue;
-    }
+  // because pnext can be modified while iterating, we make a copy and iterate
+  // over a copy
+  auto copy = index.pnext;
+  for (auto* pnext : copy) {
+    VBK_ASSERT(pnext != nullptr);
     forEachNodePostorder(*pnext, visit);
   }
 
@@ -36,11 +37,7 @@ void forEachNodePreorder(BlockIndex<Block>& index,
   }
 
   for (auto* pnext : index.pnext) {
-    if (!pnext) {
-      // skip nullptrs, if any
-      continue;
-    }
-
+    VBK_ASSERT(pnext != nullptr);
     forEachNodePreorder(*pnext, visit);
   }
 }
@@ -51,11 +48,7 @@ void forEachNextNodePreorder(
     BlockIndex<Block>& index,
     const std::function<bool(BlockIndex<Block>&)>& shouldContinue) {
   for (auto* pnext : index.pnext) {
-    if (!pnext) {
-      // skip nullptrs, if any
-      continue;
-    }
-
+    VBK_ASSERT(pnext != nullptr);
     if (shouldContinue(*pnext)) {
       forEachNextNodePreorder(*pnext, shouldContinue);
     }
@@ -69,7 +62,7 @@ void forEachNextNodePreorder(
 template <typename Block>
 std::vector<BlockIndex<Block>*> findValidTips(BlockIndex<Block>& index) {
   using index_t = BlockIndex<Block>;
-  std::vector<index_t*> ret;
+  std::vector<index_t*> ret{};
   forEachNodePreorder<Block>(index, [&ret](index_t& next) -> bool {
     if (!next.isValid()) {
       // this is invalid subtree
