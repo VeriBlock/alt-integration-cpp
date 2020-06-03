@@ -121,6 +121,10 @@ if(VERIBLOCK_POP_LOGGER_ENABLED)
     vbk_define(VERIBLOCK_POP_LOGGER_ENABLED=1)
 endif()
 vbk_define(FMT_HEADER_ONLY=1)
+if(WIN32)
+    # https://stackoverflow.com/questions/5004858/why-is-stdmin-failing-when-windows-h-is-included
+    vbk_define(NOMINMAX)
+endif()
 
 if(CLANG_TIDY)
     include(cmake/clang-tidy.cmake)
