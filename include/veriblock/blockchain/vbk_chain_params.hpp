@@ -50,6 +50,13 @@ struct VbkChainParams {
 
   virtual uint32_t getFinalityDelay() const noexcept { return 11; }
 
+  /// addPayloads in VBK tree will reject all payloads that are added this
+  /// number of blocks behind of current tip in active chain
+  virtual int32_t getHistoryOverwriteLimit() const noexcept {
+    /* roughly 12h worth of VBK block production */
+    return 1500;
+  }
+
   virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
       const noexcept {
     return forkResolutionLookUpTable_;

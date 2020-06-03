@@ -194,8 +194,21 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     // adding payloads to an invalid block will not result in a state change
     return state.Invalid(
         block_t::name() + "-bad-chain",
-        fmt::sprintf("Current block=%s is added on top of invalid chain",
+        fmt::sprintf("Containing block=%s is added on top of invalid chain",
                      index->toPrettyString()));
+  }
+
+  auto tip = activeChain_.tip();
+  auto window = std::max(0, tip->height - index->height);
+  if (window >= param_->getHistoryOverwriteLimit()) {
+    return state.Invalid(
+        block_t::name() + "-too-late",
+        fmt::sprintf(
+            "Containing block=%s is too much behind "
+            "of active chain tip. Diff %d is more than allowed %d blocks.",
+            index->toShortPrettyString(),
+            window,
+            param_->getHistoryOverwriteLimit()));
   }
 
   bool isOnActiveChain = activeChain_.contains(index);
