@@ -87,6 +87,12 @@ struct AltBlock {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
+  /*
+   * Getter for timestamp
+   * @return block timestamp
+   */
+  uint32_t getBlockTime() const;
+
   hash_t getHash() const { return hash; }
 
   friend bool operator==(const AltBlock& a, const AltBlock& b) {
