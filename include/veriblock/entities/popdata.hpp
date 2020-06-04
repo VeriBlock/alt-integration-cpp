@@ -73,6 +73,20 @@ struct PopData {
   }
 };
 
+template <typename JsonObject>
+JsonObject ToJSON(const PopData& p) {
+  JsonObject obj;
+  json::putIntKV(obj, "version", p.version);
+  json::putArrayKV(obj, "vbk_context", p.vbk_context);
+  if (p.hasAtv) {
+    json::putObjectKV(obj, "atv", ToJSON<JsonObject>(p.atv));
+  } else {
+    json::putNullKV(obj, "atv");
+  }
+  json::putArrayKV(obj, "vtbs", p.vtbs);
+  return obj;
+}
+
 }  // namespace altintegration
 
 #endif

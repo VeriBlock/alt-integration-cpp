@@ -54,6 +54,16 @@ struct PublicationData {
   void toRaw(WriteStream& stream) const;
 };
 
+template <typename JsonObject>
+JsonObject ToJSON(const PublicationData& p) {
+  JsonObject obj;
+  json::putIntKV(obj, "identifier", p.identifier);
+  json::putStringKV(obj, "header", HexStr(p.header));
+  json::putStringKV(obj, "payoutInfo", HexStr(p.payoutInfo));
+  json::putStringKV(obj, "contextInfo", HexStr(p.contextInfo));
+  return obj;
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_PUBLICATION_DATA_HPP_

@@ -32,8 +32,8 @@ inline void putStringKV<picojson::object>(picojson::object& object,
 template <>
 inline void putIntKV<picojson::object>(picojson::object& object,
                                        const std::string& key,
-                                       int32_t value) {
-  object[key] = picojson::value((int64_t)value);
+                                       int64_t value) {
+  object[key] = picojson::value(value);
 }
 
 template <>

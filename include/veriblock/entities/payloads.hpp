@@ -94,6 +94,16 @@ struct AltPayloads {
   }
 };
 
+template <typename JsonObject>
+JsonObject ToJSON(const AltPayloads& p) {
+  JsonObject obj;
+  json::putObjectKV(obj, "endorsed", ToJSON<JsonObject>(p.endorsed));
+  json::putObjectKV(
+      obj, "containingBlock", ToJSON<JsonObject>(p.containingBlock));
+  json::putObjectKV(obj, "popData", ToJSON<JsonObject>(p.popData));
+  return obj;
+}
+
 struct DummyPayloads {
   using id_t = bool;
 

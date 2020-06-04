@@ -55,6 +55,15 @@ struct MerklePath {
   uint256 calculateMerkleRoot() const;
 };
 
+template <typename JsonObject>
+JsonObject ToJSON(const MerklePath& m) {
+  JsonObject obj;
+  json::putIntKV(obj, "index", m.index);
+  json::putStringKV(obj, "subject", HexStr(m.subject));
+  json::putArrayKV(obj, "layers", m.layers);
+  return obj;
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_

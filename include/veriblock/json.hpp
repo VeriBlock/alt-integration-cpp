@@ -16,7 +16,7 @@ template <typename Object>
 void putStringKV(Object& object, const std::string& key, const std::string& value);
 
 template <typename Object>
-void putIntKV(Object& object, const std::string& key, int32_t value);
+void putIntKV(Object& object, const std::string& key, int64_t value);
 
 template <typename Object>
 void putDoubleKV(Object& object, const std::string& key, double value);
