@@ -31,6 +31,9 @@ struct PopStateMachine {
   bool applyBlock(index_t& index, ValidationState& state) {
     std::vector<CommandPtr> executed;
     for (auto& cg : index.commands) {
+      VBK_LOG_DEBUG("Applying payload %s from block %s",
+                    cg.id.toHex(),
+                    index.toShortPrettyString());
       for (auto& cmd : cg) {
         if (!cmd->Execute(state)) {
           // invalidate command group
@@ -60,7 +63,10 @@ struct PopStateMachine {
 
   void unapplyBlock(const index_t& index) {
     auto& v = index.commands;
-    std::for_each(v.rbegin(), v.rend(), [](const CommandGroup& group) {
+    std::for_each(v.rbegin(), v.rend(), [&](const CommandGroup& group) {
+      VBK_LOG_DEBUG("Unapplying payload %s from block %s",
+                    group.id.toHex(),
+                    index.toShortPrettyString());
       std::for_each(group.rbegin(), group.rend(), [](const CommandPtr& cmd) {
         cmd->UnExecute();
       });
