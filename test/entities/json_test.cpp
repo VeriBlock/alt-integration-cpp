@@ -7,6 +7,7 @@
 
 #include <veriblock/adapters/picojson.hpp>
 #include <veriblock/entities/btcblock.hpp>
+#include <util/pop_test_fixture.hpp>
 
 using namespace altintegration;
 
@@ -33,4 +34,15 @@ TEST(ToJson, BtcBlock) {
 )";
 
   ASSERT_EQ(obj.serialize(true), expected);
+}
+
+TEST(ToJson, VTB) {
+  PopTestFixture pop;
+  auto tx = pop.popminer->endorseVbkBlock(*pop.popminer->vbk().getBestChain()[0]->header, pop.getLastKnownBtcBlock(), pop.state);
+  pop.popminer->vbkmempool.push_back(tx);
+  auto block = pop.popminer->mineVbkBlocks(1);
+  auto& vtb = pop.popminer->vbkPayloads.at(block->getHash()).at(0);
+
+  picojson::value val(ToJSON<picojson::object>(vtb));
+  std::cout << val.serialize(true);
 }

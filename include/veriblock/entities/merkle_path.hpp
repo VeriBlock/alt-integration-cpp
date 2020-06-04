@@ -60,7 +60,7 @@ JsonObject ToJSON(const MerklePath& m) {
   JsonObject obj;
   json::putIntKV(obj, "index", m.index);
   json::putStringKV(obj, "subject", HexStr(m.subject));
-  json::putArrayKV(obj, "layers", m.layers);
+  json::putArrayKV<std::string, std::vector<uint256>>(obj, "layers", m.layers);
   return obj;
 }
 

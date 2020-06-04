@@ -52,7 +52,7 @@ JsonObject ToJSON(const VbkMerklePath& mp) {
   json::putIntKV(obj, "treeIndex", mp.treeIndex);
   json::putIntKV(obj, "index", mp.index);
   json::putStringKV(obj, "subject", mp.subject.toHex());
-  json::putArrayKV(obj, "layers", mp.layers);
+  json::putArrayKV<std::string, std::vector<uint256>>(obj, "layers", mp.layers);
   return obj;
 }
 

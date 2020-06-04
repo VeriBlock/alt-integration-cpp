@@ -88,7 +88,8 @@ JsonObject ToJSON(const VbkPopTx& tx) {
   json::putStringKV(obj, "bitcoinTransaction", tx.bitcoinTransaction.toHex());
   json::putObjectKV(obj, "merklePath", ToJSON<JsonObject>(tx.merklePath));
   json::putObjectKV(obj, "blockOfProof", ToJSON<JsonObject>(tx.blockOfProof));
-  json::putArrayKV(obj, "blockOfProofContext", tx.blockOfProofContext);
+  json::putArrayKV<JsonObject, std::vector<BtcBlock>>(
+      obj, "blockOfProofContext", tx.blockOfProofContext);
   json::putStringKV(obj, "signature", HexStr(tx.signature));
   json::putStringKV(obj, "publicKey", HexStr(tx.publicKey));
   return obj;

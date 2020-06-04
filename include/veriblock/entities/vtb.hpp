@@ -109,7 +109,8 @@ JsonObject ToJSON(const VTB& v) {
   json::putObjectKV(obj, "merklePath", ToJSON<JsonObject>(v.merklePath));
   json::putObjectKV(
       obj, "containingBlock", ToJSON<JsonObject>(v.containingBlock));
-  json::putArrayKV(obj, "context", v.context);
+  json::putArrayKV<JsonObject, std::vector<VbkBlock>>(
+      obj, "context", v.context);
   return obj;
 }
 

@@ -49,13 +49,13 @@ inline void putNullKV<picojson::object>(picojson::object& object,
   object[key] = picojson::value();
 }
 
-template <>
+template <typename T, typename Array>
 inline void putArrayKV(picojson::object& object,
                        const std::string& key,
-                       const picojson::array& array) {
+                       const Array& array) {
   picojson::array arr;
   for (auto& v : array) {
-    arr.push_back(ToJSON(v));
+    arr.push_back(picojson::value(ToJSON<T>(v)));
   }
 
   object[key] = picojson::value(arr);
