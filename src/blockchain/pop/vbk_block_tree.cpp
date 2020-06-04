@@ -22,12 +22,16 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 
   // do not even try to do fork resolution with an invalid chain
   if (!indexNew.isValid()) {
+    VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
+                  indexNew.toPrettyString());
     return;
   }
 
   bool ret = false;
   auto currentTip = currentBest.tip();
   if (currentTip == nullptr) {
+    VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
+                  indexNew.toShortPrettyString());
     ret = setTip(indexNew, state, isBootstrap);
     VBK_ASSERT(ret);
     return;
@@ -54,7 +58,7 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
         currentBest, indexNew, state, /* skipSetState=*/false);
   } else if (result < 0) {
     VBK_LOG_DEBUG("Candidate chain won");
-    // other chain won! we already set
+    // other chain won! we already set pop state, so only update tip
     ret = this->setTip(indexNew, state, /* skipSetState=*/true);
     VBK_ASSERT(ret);
   } else {
@@ -229,8 +233,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   // find all affected tips and do a fork resolution
   auto tips = findValidTips<VbkBlock>(*index);
+  VBK_LOG_DEBUG(
+      "Found %d affected valid tips in %s", tips.size(), block_t::name());
   for (auto* tip : tips) {
-    determineBestChain(activeChain_, *tip, state);
+    this->determineBestChain(activeChain_, *tip, state);
   }
 
   return index->isValid();
