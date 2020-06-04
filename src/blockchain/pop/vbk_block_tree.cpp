@@ -22,12 +22,16 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 
   // do not even try to do fork resolution with an invalid chain
   if (!indexNew.isValid()) {
+    VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
+                  indexNew.toPrettyString());
     return;
   }
 
   bool ret = false;
   auto currentTip = currentBest.tip();
   if (currentTip == nullptr) {
+    VBK_LOG_DEBUG("Current tip is nullptr, candidate %s is new tip",
+                  indexNew.toShortPrettyString());
     ret = setTip(indexNew, state, isBootstrap);
     VBK_ASSERT(ret);
     return;
