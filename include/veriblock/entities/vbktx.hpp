@@ -72,6 +72,15 @@ struct VbkTx {
   uint256 getHash() const;
 };
 
+template <typename JsonObject>
+JsonObject ToJSON(const VbkTx& tx) {
+  JsonObject obj;
+
+  // TODO
+  json::putStringKV(obj, "sourceAddress", tx.sourceAddress.toString());
+  return obj;
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKTX_HPP_

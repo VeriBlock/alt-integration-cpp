@@ -10,10 +10,10 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/fmt.hpp"
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/endorsements.hpp"
+#include "veriblock/fmt.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
@@ -123,6 +123,23 @@ struct VbkBlock {
 
   static std::string name() { return "VBK"; }
 };
+
+template <typename JsonObject>
+JsonObject ToJSON(const VbkBlock& b) {
+  JsonObject obj;
+  json::putStringKV(obj, "hash", HexStr(b.getHash()));
+  json::putIntKV(obj, "height", b.height);
+  json::putIntKV(obj, "version", b.version);
+  json::putStringKV(obj, "previousBlock", HexStr(b.previousBlock));
+  json::putStringKV(obj, "previousKeystone", HexStr(b.previousKeystone));
+  json::putStringKV(
+      obj, "secondPreviousKeystone", HexStr(b.secondPreviousKeystone));
+  json::putStringKV(obj, "merkleRoot", HexStr(b.merkleRoot));
+  json::putIntKV(obj, "timestamp", b.timestamp);
+  json::putIntKV(obj, "difficulty", b.difficulty);
+  json::putIntKV(obj, "nonce", b.nonce);
+  return obj;
+}
 
 }  // namespace altintegration
 

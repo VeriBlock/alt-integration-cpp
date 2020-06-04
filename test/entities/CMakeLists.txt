@@ -16,3 +16,5 @@ addtest(entities_serde_test
         popdata_test.cpp
         test_case_entity_test.cpp
         )
+
+addtest(json_test json_test.cpp)

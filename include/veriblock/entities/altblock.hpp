@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "veriblock/entities/endorsements.hpp"
+#include "veriblock/json.hpp"
 #include "veriblock/serde.hpp"
 
 namespace altintegration {
@@ -73,6 +74,16 @@ struct AltBlock {
     return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
   }
 };
+
+template <typename JsonObject>
+JsonObject ToJSON(const AltBlock& alt) {
+  JsonObject object;
+  json::putStringKV(object, "hash", HexStr(alt.hash));
+  json::putStringKV(object, "previousBlock", HexStr(alt.previousBlock));
+  json::putIntKV(object, "timestamp", alt.timestamp);
+  json::putIntKV(object, "height", alt.height);
+  return object;
+}
 
 /// custom gtest printer
 inline void PrintTo(const AltBlock& block, ::std::ostream* os) {
