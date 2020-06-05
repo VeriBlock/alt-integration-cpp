@@ -33,6 +33,13 @@ class PopStorage {
     return *endorsementsAtv_;
   }
 
+    EndorsementStorage<VTB>& vbkEndorsements() {
+    return *endorsementsVtb_;
+  }
+  const EndorsementStorage<VTB>& vbkEndorsements() const {
+      return *endorsementsVtb_;
+  }
+
   void saveVbkTree(const VbkBlockTree& tree) {
     vbkTipHeight_ = tree.getBestChain().tip()->height;
     vbkTipHash_ = tree.getBestChain().tip()->getHash();
@@ -41,6 +48,8 @@ class PopStorage {
     for (const auto& block : blocks) {
       repoVbk_->put(*(block.second));
     }
+
+    endorsementsVtb_ = std::make_shared<EndorsementStorage<VTB>>(tree.getStorage());
   }
 
   void saveBtcTree(const BlockTree<BtcBlock, BtcChainParams>& tree) {
@@ -55,7 +64,6 @@ class PopStorage {
 
   void loadVbkTree(VbkBlockTree& tree) {
     loadBtcTree(tree.btc());
-
     auto cursor = repoVbk_->newCursor();
     cursor->seekToFirst();
     std::multimap<int32_t, std::shared_ptr<block_vbk_t>> blocks;
@@ -66,7 +74,22 @@ class PopStorage {
     }
 
     for (const auto& blockPair : blocks) {
-      tree.insertBlock(blockPair.second->header);
+      auto *bi = tree.insertBlock(blockPair.second->header);
+      bi->payloadIds = blockPair.second->payloadIds;
+      bi->containingEndorsementIds = blockPair.second->containingEndorsementIds;
+      bi->refCounter = blockPair.second->refCounter;
+
+      for (const auto& eid : bi->containingEndorsementIds) {
+        VTB payloads{};
+        bool ret = endorsementsVtb_->payloads().get(eid, &payloads);
+        if (!ret) continue;
+
+        auto e = std::make_shared<BtcEndorsement>(
+            BtcEndorsement::fromContainer(payloads));
+        bi->containingEndorsements.insert(std::make_pair(e->id, e));
+        auto *endorsed = tree.getBlockIndex(payloads.getEndorsedBlock().getHash());
+        endorsed->endorsedBy.push_back(e.get());
+      }
     }
 
     ValidationState state{};
@@ -85,7 +108,10 @@ class PopStorage {
     }
 
     for (const auto& blockPair : blocks) {
-      tree.insertBlock(blockPair.second->header);
+      auto* bi = tree.insertBlock(blockPair.second->header);
+      bi->payloadIds = blockPair.second->payloadIds;
+      bi->containingEndorsementIds = blockPair.second->containingEndorsementIds;
+      bi->refCounter = blockPair.second->refCounter;
     }
 
     ValidationState state{};

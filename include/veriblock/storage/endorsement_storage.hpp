@@ -13,6 +13,7 @@ namespace altintegration {
 template <typename Payloads>
 class EndorsementStorage {
   using payloads_t = Payloads;
+  //using endorsement_t = typename decltype(Payloads::containingBlock)::endorsement_t;
   using eid_t = typename Payloads::id_t;
 
  public:
@@ -24,6 +25,14 @@ class EndorsementStorage {
 
   PayloadsRepository<Payloads>& payloads() { return *prepo_; }
   const PayloadsRepository<Payloads>& payloads() const { return *prepo_; }
+
+  /*bool getPayloadsById(const eid_t& id, payloads_t *payloads = 0) {
+    return prepo_->get(id);
+  }*/
+
+  /*std::vector<endorsement_t> containingEndorsements(const eid_t& id) {
+    return {};
+  }*/
 
  private:
   std::shared_ptr<PayloadsRepository<Payloads>> prepo_;

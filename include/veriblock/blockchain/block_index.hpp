@@ -64,6 +64,7 @@ struct BlockIndex {
 
   //! list of containing endorsements in this block
   std::multimap<eid_t, std::shared_ptr<endorsement_t>> containingEndorsements{};
+  std::set<eid_t> containingEndorsementIds{};
 
   //! list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
@@ -98,6 +99,7 @@ struct BlockIndex {
     this->pnext.clear();
     this->chainWork = 0;
     this->containingEndorsements.clear();
+    this->containingEndorsementIds.clear();
     this->endorsedBy.clear();
     this->payloadIds.clear();
     this->height = 0;

@@ -32,7 +32,16 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   ~VbkBlockTree() override = default;
 
   VbkBlockTree(const VbkChainParams& vbkp, const BtcChainParams& btcp)
-      : VbkTree(vbkp), cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp), storage_() {}
+      : VbkTree(vbkp),
+        cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp),
+        storage_() {}
+
+  VbkBlockTree(const VbkChainParams& vbkp,
+               const BtcChainParams& btcp,
+               const EndorsementStorage<payloads_t>& storage)
+      : VbkTree(vbkp),
+        cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp),
+        storage_(storage) {}
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }

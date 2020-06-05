@@ -45,7 +45,7 @@ TEST_F(AltTreeRepositoryTest, Basic) {
   BlockTree<BtcBlock, BtcChainParams> reloadedBtcTree{btcparam};
   storage.loadBtcTree(reloadedBtcTree);
 
-  VbkBlockTree reloadedVbkTree{vbkparam, btcparam};
+  VbkBlockTree reloadedVbkTree{vbkparam, btcparam, storage.vbkEndorsements()};
   storage.loadVbkTree(reloadedVbkTree);
 
   EXPECT_TRUE(reloadedBtcTree == popminer->btc());
@@ -57,5 +57,5 @@ TEST_F(AltTreeRepositoryTest, Basic) {
   // commands should be properly restored to make it pass
   reloadedVbkTree.removeTip(*reloadedVbkTree.getBestChain().tip(), true);
   EXPECT_TRUE(reloadedVbkTree == popminer->vbk());
-  EXPECT_TRUE(reloadedBtcTree == popminer->btc());
+  EXPECT_TRUE(reloadedVbkTree.btc() == popminer->btc());
 }

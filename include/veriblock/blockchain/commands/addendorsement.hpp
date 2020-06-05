@@ -24,14 +24,16 @@ struct AddEndorsement : public Command {
   using hash_t = typename ProtectedTree::hash_t;
   using block_t = typename ProtectingTree::block_t;
   using endorsement_t = typename ProtectedTree::block_t::endorsement_t;
+  using eid_t = typename endorsement_t::id_t;
   using protected_index_t = typename ProtectedTree::index_t;
 
   ~AddEndorsement() override = default;
 
   explicit AddEndorsement(ProtectingTree& ing,
                           ProtectedTree& ed,
-                          std::shared_ptr<endorsement_t> e)
-      : ing_(&ing), ed_(&ed), e_(std::move(e)) {}
+                          std::shared_ptr<endorsement_t> e,
+                          const eid_t& payloadId)
+      : ing_(&ing), ed_(&ed), e_(std::move(e)), pid_(payloadId) {}
 
   bool Execute(ValidationState& state) override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
@@ -90,6 +92,7 @@ struct AddEndorsement : public Command {
     }
 
     containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
+    containing->containingEndorsementIds.insert(pid_);
     endorsed->endorsedBy.push_back(e_.get());
 
     return true;
@@ -112,6 +115,11 @@ struct AddEndorsement : public Command {
                "failed to roll back AddEndorsement: the containing block does "
                "not contain the endorsement in containingEndorsements");
 
+    auto containing_id_it = containing->containingEndorsementIds.find(pid_);
+    VBK_ASSERT(containing_id_it != containing->containingEndorsementIds.end() &&
+               "failed to roll back AddEndorsement: the containing block does "
+               "not contain the endorsement in containingEndorsementIds");
+
     {
       auto& v = endorsed->endorsedBy;
 
@@ -126,9 +134,8 @@ struct AddEndorsement : public Command {
       v.erase(toRemove);
     }
 
-    {
-      containing->containingEndorsements.erase(containing_it);
-    }
+    containing->containingEndorsements.erase(containing_it);
+    containing->containingEndorsementIds.erase(containing_id_it);
   }
 
   size_t getId() const override { return e_->id.getLow64(); }
@@ -142,6 +149,7 @@ struct AddEndorsement : public Command {
   ProtectingTree* ing_;
   ProtectedTree* ed_;
   std::shared_ptr<endorsement_t> e_;
+  eid_t pid_;
 };
 
 struct AltTree;
