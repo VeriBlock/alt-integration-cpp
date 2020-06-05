@@ -40,8 +40,9 @@ struct AddVTB : public Command {
     auto hash = vtb_.containingBlock.getHash();
 
     auto* index = tree_->vbk().getBlockIndex(hash);
-    VBK_ASSERT(index != nullptr &&
-           "failed to roll back addVTB: the containing block does not exist");
+    VBK_ASSERT(
+        index != nullptr &&
+        "failed to roll back addVTB: the containing block does not exist");
 
     tree_->vbk().removePayloads(vtb_.containingBlock, {vtb_});
   }

@@ -131,6 +131,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   PopForkComparator cmp_;
   PopRewards rewards_;
 
+  // TODO: remove this once VTB duplication is disabled
+  std::set<uint256> vtbs_;
+
   index_t* insertBlockHeader(const AltBlock& block);
 
   void payloadsToCommands(const payloads_t& p,

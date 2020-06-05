@@ -325,6 +325,16 @@ void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
 
   // second, add all VTBs
   for (const auto& vtb : p.popData.vtbs) {
+    // TODO: remove this once VTB duplication is disabled
+    auto containingHash = vtb.containingBlock.getHash();
+    auto index = vbk().getBlockIndex(containingHash);
+    if (index) {
+      if (index->containingEndorsements.count(vtb.getId()) > 0) {
+        // this is a duplicate VTB, skip it
+        continue;
+      }
+    }
+
     auto cmd = std::make_shared<AddVTB>(*this, vtb);
     commands.push_back(std::move(cmd));
   }
