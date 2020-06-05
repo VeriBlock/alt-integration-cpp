@@ -52,10 +52,10 @@ struct BlockIndex {
   using payloads_t = typename Block::payloads_t;
   using protecting_block_t = typename Block::protecting_block_t;
 
-  //! pointer to a previous block
+  //! (memory only) pointer to a previous block
   BlockIndex* pprev = nullptr;
 
-  //! a set of pointers for forward iteration
+  //! (memory only) a set of pointers for forward iteration
   std::set<BlockIndex*> pnext{};
 
   //! total amount of work in the chain up to and including this
@@ -217,6 +217,31 @@ struct BlockIndex {
 template <typename Block>
 void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
   *os << b.toPrettyString();
+}
+
+template <typename JsonValue, typename Block>
+JsonValue ToJSON(const BlockIndex<Block>& i) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+  json::putStringKV(obj, "chainWork", i.chainWork.toHex());
+
+  std::vector<uint256> endorsements;
+  for (auto& e : i.containingEndorsements) {
+    endorsements.push_back(e.first);
+  }
+  json::putArrayKV(obj, "containingEndorsements", endorsements);
+
+  std::vector<uint256> endorsedBy;
+  for (auto* e : i.endorsedBy) {
+    endorsements.push_back(e->id);
+  }
+  json::putArrayKV(obj, "endorsedBy", endorsedBy);
+
+  json::putIntKV(obj, "height", i.height);
+  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
+  json::putIntKV(obj, "status", i.status);
+  json::putIntKV(obj, "ref", i.refCounter);
+
+  return obj;
 }
 
 }  // namespace altintegration

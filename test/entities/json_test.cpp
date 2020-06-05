@@ -7,6 +7,7 @@
 
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/entities/btcblock.hpp>
+#include <veriblock/mock_miner.hpp>
 
 #include "util/literals.hpp"
 
@@ -352,15 +353,16 @@ TEST(ToJson, ATV) {
           uint256(
               "0000000000000000000000000000000000000000000000000000000000000000"_unhex)}};
 
-  static const VbkBlock defaultVbkBlock{5000,
-                                        2,
-                                        "449c60619294546ad825af03"_unhex,
-                                        "b0935637860679ddd5"_unhex,
-                                        "5ee4fd21082e18686e"_unhex,
-                                        "26bbfda7d5e4462ef24ae02d67e47d78"_unhex,
-                                        1553699059,
-                                        16842752,
-                                        1};
+  static const VbkBlock defaultVbkBlock{
+      5000,
+      2,
+      "449c60619294546ad825af03"_unhex,
+      "b0935637860679ddd5"_unhex,
+      "5ee4fd21082e18686e"_unhex,
+      "26bbfda7d5e4462ef24ae02d67e47d78"_unhex,
+      1553699059,
+      16842752,
+      1};
 
   static const ATV defaultAtv{
       defaultTx, defaultPath, defaultVbkBlock, std::vector<VbkBlock>{}};
@@ -407,6 +409,37 @@ TEST(ToJson, ATV) {
     "sourceAmount": 1000,
     "type": 1
   }
+}
+)";
+
+  ASSERT_EQ(expected, actual);
+}
+
+TEST(ToJson, BlockIndex) {
+  MockMiner m;
+  picojson::value block =
+      ToJSON<picojson::value>(*m.vbk().getBestChain().tip());
+  std::string actual = block.serialize(true);
+
+  std::string expected = R"({
+  "chainWork": "0000000000000000000000000000000000000000000000000000000000000001",
+  "containingEndorsements": [],
+  "endorsedBy": [],
+  "header": {
+    "difficulty": 16842752,
+    "hash": "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c",
+    "height": 0,
+    "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
+    "nonce": 0,
+    "previousBlock": "000000000000000000000000",
+    "previousKeystone": "000000000000000000",
+    "secondPreviousKeystone": "000000000000000000",
+    "timestamp": 1553699987,
+    "version": 2
+  },
+  "height": 0,
+  "ref": 0,
+  "status": 1
 }
 )";
 
