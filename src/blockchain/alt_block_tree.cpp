@@ -87,12 +87,10 @@ bool AltTree::addPayloads(index_t& index,
     VBK_ASSERT(ret);
   }
 
-  auto& c = index.commands;
   for (const auto& p : payloads) {
-    c.emplace_back();
-    auto& g = c.back();
-    g.id = p.getId();
-    payloadsToCommands(p, g.commands);
+    storage_.payloads().put(p);
+    auto pid = p.getId();
+    index.payloadIds.push_back(pid);
   }
 
   return true;
@@ -124,7 +122,7 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
     VBK_LOG_DEBUG("%s Statefully invalid payloads: %s",
                   block_t::name(),
                   state.toString());
-    removePayloads(*index, {p});
+    removePayloads(*index, {p.getId()});
     return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
   }
 
@@ -250,7 +248,7 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
 }
 
 void AltTree::removePayloads(const AltBlock::hash_t& hash,
-                             const std::vector<payloads_t>& payloads) {
+                             const std::vector<eid_t>& payloads) {
   auto* index = base::getBlockIndex(hash);
   if (!index) {
     throw std::logic_error("removePayloads is called on unknown ALT block: " +
@@ -261,7 +259,7 @@ void AltTree::removePayloads(const AltBlock::hash_t& hash,
 }
 
 void AltTree::removePayloads(index_t& index,
-                             const std::vector<payloads_t>& payloads) {
+                             const std::vector<eid_t>& payloads) {
   VBK_LOG_INFO("%s remove %d payloads from %s",
                block_t::name(),
                payloads.size(),
@@ -280,34 +278,11 @@ void AltTree::removePayloads(index_t& index,
     VBK_ASSERT(ret);
   }
 
-  auto& c = index.commands;
-
-  // we need only ids, so save some cpu cycles by calculating ids once
-  std::vector<uint256> pids = map_vector<payloads_t, uint256>(
-      payloads, [](const payloads_t& p) { return p.getId(); });
-
-  // iterate over payloads backwards
-  for (const auto& pid : make_reversed(pids.begin(), pids.end())) {
-    // find every payloads in command group (search backwards, as it is likely
-    // to be faster)
-    auto it = std::find_if(c.rbegin(), c.rend(), [&pid](const CommandGroup& g) {
-      return g.id == pid;
-    });
-
-    if (it == c.rend()) {
-      // not found
-      continue;
+  for (const auto& p : make_reversed(payloads.begin(), payloads.end())) {
+    auto it = std::find(index.payloadIds.begin(), index.payloadIds.end(), p);
+    if (it != index.payloadIds.end()) {
+      index.payloadIds.erase(it);
     }
-
-    // if this payloads invalidated subtree, we have to re-validate it again
-    if (!it->valid) {
-      revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-    }
-
-    // TODO(warchant): fix inefficient erase (does reallocation for every
-    // payloads item)
-    auto toRemove = --(it.base());
-    c.erase(toRemove);
   }
 }
 

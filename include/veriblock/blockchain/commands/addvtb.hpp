@@ -29,7 +29,7 @@ struct AddVTB : public Command {
     // addPayloads changes state. if we can't add payloads, immediately clear
     // all side effects
     if (!vbk.addPayloads(containing, {vtb_}, state)) {
-      vbk.removePayloads(containing, {vtb_});
+      vbk.removePayloads(containing, {vtb_.getId()});
       return false;
     }
 
@@ -42,7 +42,7 @@ struct AddVTB : public Command {
     VBK_ASSERT(index != nullptr &&
            "failed to roll back addVTB: the containing block does not exist");
 
-    tree_->vbk().removePayloads(vtb_.containingBlock, {vtb_});
+    tree_->vbk().removePayloads(vtb_.containingBlock, {vtb_.getId()});
   }
 
   size_t getId() const override { return id_; }

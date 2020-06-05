@@ -22,6 +22,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
   using index_t = VbkTree::index_t;
   using endorsement_t = typename index_t::endorsement_t;
+  using eid_t = typename endorsement_t::id_t;
   using payloads_t = typename index_t::payloads_t;
   using PopForkComparator = PopAwareForkResolutionComparator<VbkBlock,
                                                              VbkChainParams,
@@ -39,6 +40,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
 
+  EndorsementStorage<payloads_t>& getStorage() { return storage_; }
+  const EndorsementStorage<payloads_t>& getStorage() const { return storage_; }
+
   bool bootstrapWithChain(height_t startHeight,
                           const std::vector<block_t>& chain,
                           ValidationState& state) override;
@@ -49,11 +53,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state);
 
-  void removePayloads(const hash_t& hash,
-                      const std::vector<payloads_t>& payloads);
+  void removePayloads(const hash_t& hash, const std::vector<eid_t>& payloads);
 
-  void removePayloads(const block_t& block,
-                      const std::vector<payloads_t>& payloads);
+  void removePayloads(const block_t& block, const std::vector<eid_t>& payloads);
 
   void payloadsToCommands(const typename VbkBlockTree::payloads_t& p,
                           std::vector<CommandPtr>& commands);

@@ -69,7 +69,8 @@ struct BlockIndex {
   std::vector<endorsement_t*> endorsedBy;
 
   //! list of changes introduced in this block
-  std::vector<CommandGroup> commands{};
+  //std::vector<CommandGroup> commands{};
+  std::vector<eid_t> payloadIds;
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -98,7 +99,7 @@ struct BlockIndex {
     this->chainWork = 0;
     this->containingEndorsements.clear();
     this->endorsedBy.clear();
-    this->commands.clear();
+    this->payloadIds.clear();
     this->height = 0;
     this->status = 0;
     this->refCounter = 0;

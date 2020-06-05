@@ -105,7 +105,7 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 void VbkBlockTree::removePayloads(const block_t& block,
-                                  const std::vector<payloads_t>& payloads) {
+                                  const std::vector<eid_t>& payloads) {
   VBK_LOG_DEBUG(
       "remove %d payloads from %s", payloads.size(), block.toPrettyString());
   auto hash = block.getHash();
@@ -133,33 +133,11 @@ void VbkBlockTree::removePayloads(const block_t& block,
     VBK_ASSERT(ret);
   }
 
-  // we need only ids, so save some cpu cycles by calculating ids once
-  std::vector<uint256> pids = map_vector<payloads_t, uint256>(
-      payloads, [](const payloads_t& p) { return p.getId(); });
-
-  auto& c = index->commands;
-  // iterate over payloads backwards
-  for (const auto& p : make_reversed(pids.begin(), pids.end())) {
-    // find every payloads in command group (search backwards, as it is likely
-    // to be faster)
-    auto it = std::find_if(c.rbegin(), c.rend(), [&p](const CommandGroup& g) {
-      return g.id == p;
-    });
-
-    if (it == c.rend()) {
-      // not found
-      continue;
+  for (const auto& p : make_reversed(payloads.begin(), payloads.end())) {
+    auto it = std::find(index->payloadIds.begin(), index->payloadIds.end(), p);
+    if (it != index->payloadIds.end()) {
+      index->payloadIds.erase(it);
     }
-
-    // if this payloads invalidated subtree, we have to re-validate it again
-    if (!it->valid) {
-      revalidateSubtree(*index, BLOCK_FAILED_POP, /*do fr=*/false);
-    }
-
-    // TODO(warchant): fix inefficient erase (does reallocation for every
-    // payloads item)
-    auto toRemove = --(it.base());
-    c.erase(toRemove);
   }
 
   // find all affected tips and do a fork resolution
@@ -207,19 +185,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     VBK_ASSERT(ret);
   }
 
-  /*for (const auto& p : payloads) {
+  for (const auto& p : payloads) {
     storage_.payloads().put(p);
     auto pid = p.getId();
-    (void)pid;
-    ///TODO: add pid in the block index
-  }*/
-
-  auto& c = index->commands;
-  for (const auto& p : payloads) {
-    c.emplace_back();
-    auto& g = c.back();
-    g.id = p.getId();
-    payloadsToCommands(p, g.commands);
+    index->payloadIds.push_back(pid);
   }
 
   // find all affected tips and do a fork resolution
@@ -252,7 +221,7 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
 }
 
 void VbkBlockTree::removePayloads(const Blob<24>& hash,
-                                  const std::vector<payloads_t>& payloads) {
+                                  const std::vector<eid_t>& payloads) {
   auto index = base::getBlockIndex(hash);
   if (!index) {
     // silently ignore...

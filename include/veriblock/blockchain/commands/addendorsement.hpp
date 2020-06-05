@@ -107,11 +107,16 @@ struct AddEndorsement : public Command {
            "failed to roll back AddEndorsement: the endorsed block does not "
            "exist");
 
+    auto containing_it = containing->containingEndorsements.find(e_->id);
+    VBK_ASSERT(containing_it != containing->containingEndorsements.end() &&
+               "failed to roll back AddEndorsement: the containing block does "
+               "not contain the endorsement in containingEndorsements");
+
     {
       auto& v = endorsed->endorsedBy;
 
       // find and erase the last occurrence of e_
-      auto endorsed_it = std::find(v.rbegin(), v.rend(), e_.get());
+      auto endorsed_it = std::find(v.rbegin(), v.rend(), containing_it->second.get());
 
       VBK_ASSERT(endorsed_it != v.rend() &&
              "failed to roll back AddEndorsement: the endorsed block does not "
@@ -122,11 +127,6 @@ struct AddEndorsement : public Command {
     }
 
     {
-      auto containing_it = containing->containingEndorsements.find(e_->id);
-      VBK_ASSERT(containing_it != containing->containingEndorsements.end() &&
-             "failed to roll back AddEndorsement: the containing block does "
-             "not contain the endorsement in containingEndorsements");
-
       containing->containingEndorsements.erase(containing_it);
     }
   }

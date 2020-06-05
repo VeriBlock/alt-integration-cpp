@@ -19,17 +19,17 @@ class PopStorage {
       : repoVbk_(std::make_shared<BlockRepositoryInmem<block_vbk_t>>()),
         repoBtc_(std::make_shared<BlockRepositoryInmem<block_btc_t>>()),
         endorsementsAtv_(
-            std::make_shared<EndorsementStorage<AltPayloads/*, AltTree*/>>()),
+            std::make_shared<EndorsementStorage<AltPayloads>>()),
         endorsementsVtb_(
-            std::make_shared<EndorsementStorage<VTB/*, VbkBlockTree*/>>()) {}
+            std::make_shared<EndorsementStorage<VTB>>()) {}
 
   BlockRepository<block_vbk_t>& vbkIndex() { return *repoVbk_; }
   const BlockRepository<block_vbk_t>& vbkIndex() const { return *repoVbk_; }
 
-  EndorsementStorage<AltPayloads/*, AltTree*/>& altEndorsements() {
+  EndorsementStorage<AltPayloads>& altEndorsements() {
     return *endorsementsAtv_;
   }
-  const EndorsementStorage<AltPayloads/*, AltTree*/>& altEndorsements() const {
+  const EndorsementStorage<AltPayloads>& altEndorsements() const {
     return *endorsementsAtv_;
   }
 
@@ -100,8 +100,8 @@ class PopStorage {
   std::shared_ptr<BlockRepository<block_btc_t>> repoBtc_;
   int btcTipHeight_;
   typename BtcBlock::hash_t btcTipHash_;
-  std::shared_ptr<EndorsementStorage<AltPayloads/*, AltTree*/>> endorsementsAtv_;
-  std::shared_ptr<EndorsementStorage<VTB/*, VbkBlockTree*/>> endorsementsVtb_;
+  std::shared_ptr<EndorsementStorage<AltPayloads>> endorsementsAtv_;
+  std::shared_ptr<EndorsementStorage<VTB>> endorsementsVtb_;
 };
 
 }  // namespace altintegration

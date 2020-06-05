@@ -21,6 +21,7 @@
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/validation_state.hpp"
+#include <veriblock/storage/endorsement_storage.hpp>
 
 namespace altintegration {
 
@@ -34,6 +35,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using vbk_config_t = VbkChainParams;
   using btc_config_t = BtcChainParams;
   using index_t = BlockIndex<AltBlock>;
+  using endorsement_t = typename index_t::endorsement_t;
+  using eid_t = typename endorsement_t::id_t;
   using hash_t = typename AltBlock::hash_t;
   using payloads_t = AltPayloads;
 
@@ -54,7 +57,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
         cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config),
              vbk_config,
              alt_config),
-        rewards_(alt_config) {}
+        rewards_(alt_config),
+        storage_() {}
 
   //! before any use, bootstrap the three with ALT bootstrap block.
   //! may return false, if bootstrap block is invalid
@@ -62,10 +66,10 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
-  void removePayloads(index_t& index, const std::vector<payloads_t>& payloads);
+  void removePayloads(index_t& index, const std::vector<eid_t>& payloads);
 
   void removePayloads(const AltBlock::hash_t& containing,
-                      const std::vector<payloads_t>& payloads);
+                      const std::vector<eid_t>& payloads);
 
   bool addPayloads(index_t& index,
                    const std::vector<payloads_t>& payloads,
@@ -111,6 +115,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   const PopForkComparator& getComparator() const { return cmp_; }
 
+  EndorsementStorage<payloads_t>& getStorage() { return storage_; }
+  const EndorsementStorage<payloads_t>& getStorage() const { return storage_; }
+
   const AltChainParams& getParams() const { return *alt_config_; }
 
   std::string toPrettyString(size_t level = 0) const;
@@ -121,6 +128,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
   PopRewards rewards_;
+  EndorsementStorage<payloads_t> storage_;
 
   index_t* insertBlockHeader(const AltBlock& block);
 

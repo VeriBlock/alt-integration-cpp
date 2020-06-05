@@ -29,11 +29,18 @@ struct PopStateMachine {
 
   bool applyBlock(index_t& index, ValidationState& state) {
     std::vector<CommandPtr> executed;
-    for (auto& cg : index.commands) {
-      for (auto& cmd : cg) {
+    for (auto it = index.payloadIds.rbegin(); it != index.payloadIds.rend();
+         ++it) {
+      payloads_t payload{};
+      bool ret = ed_.getStorage().payloads().get(*it, &payload);
+      if (!ret) continue;
+      std::vector<CommandPtr> commands{};
+      ed_.payloadsToCommands(payload, commands);
+
+      for (auto& cmd : commands) {
         if (!cmd->Execute(state)) {
           // invalidate command group
-          cg.valid = false;
+          // cg.valid = false;
           VBK_LOG_ERROR("Invalid %s command in block %s: %s",
                         index_t::block_t::name(),
                         index.toPrettyString(),
@@ -49,21 +56,24 @@ struct PopStateMachine {
 
         // command is valid
         executed.push_back(cmd);
-      }  // end for
-
-      // re-validate command group
-      cg.valid = true;
-    }  // end for
+      }
+    }
     return true;
   }
 
   void unapplyBlock(const index_t& index) {
-    auto& v = index.commands;
-    std::for_each(v.rbegin(), v.rend(), [](const CommandGroup& group) {
-      std::for_each(group.rbegin(), group.rend(), [](const CommandPtr& cmd) {
-        cmd->UnExecute();
-      });
-    });
+    for (auto it = index.payloadIds.rbegin(); it != index.payloadIds.rend();
+         ++it) {
+      payloads_t payload{};
+      bool ret = ed_.getStorage().payloads().get(*it, &payload);
+      if (!ret) continue;
+      std::vector<CommandPtr> commands{};
+      ed_.payloadsToCommands(payload, commands);
+
+      std::for_each(commands.rbegin(),
+                    commands.rend(),
+                    [](const CommandPtr& cmd) { cmd->UnExecute(); });
+    }
   }
 
   // unapplies commands in range [from; to)
@@ -85,7 +95,7 @@ struct PopStateMachine {
 
     std::for_each(
         chain.rbegin(), chain.rend(), [&](const ProtectedIndex* current) {
-          if (current->commands.empty()) {
+          if (current->payloadIds.empty()) {
             return;
           }
 
