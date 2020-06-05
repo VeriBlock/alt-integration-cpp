@@ -42,11 +42,11 @@ struct Output {
   void toVbkEncoding(WriteStream& stream) const;
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const Output& o) {
-  JsonObject obj;
+template <typename JsonValue>
+JsonValue ToJSON(const Output& o) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "address", o.address.toString());
-  json::putIntKV(obj, "coin", o.coin);
+  json::putIntKV(obj, "coin", o.coin.units);
   return obj;
 }
 

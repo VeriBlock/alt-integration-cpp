@@ -124,9 +124,9 @@ struct VbkBlock {
   static std::string name() { return "VBK"; }
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const VbkBlock& b) {
-  JsonObject obj;
+template <typename JsonValue>
+JsonValue ToJSON(const VbkBlock& b) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "hash", HexStr(b.getHash()));
   json::putIntKV(obj, "height", b.height);
   json::putIntKV(obj, "version", b.version);

@@ -117,9 +117,9 @@ struct BtcBlock {
   std::string toPrettyString() const;
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const BtcBlock& b) {
-  JsonObject object;
+template <typename JsonValue>
+JsonValue ToJSON(const BtcBlock& b) {
+  JsonValue object = json::makeEmptyObject<JsonValue>();
   json::putStringKV(object, "hash", HexStr(b.getHash()));
   json::putIntKV(object, "version", b.version);
   json::putStringKV(object, "previousBlock", HexStr(b.previousBlock));

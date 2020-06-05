@@ -73,17 +73,17 @@ struct PopData {
   }
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const PopData& p) {
-  JsonObject obj;
+template <typename JsonValue>
+JsonValue ToJSON(const PopData& p) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putIntKV(obj, "version", p.version);
   json::putArrayKV(obj, "vbk_context", p.vbk_context);
+  json::putArrayKV(obj, "vtbs", p.vtbs);
   if (p.hasAtv) {
-    json::putObjectKV(obj, "atv", ToJSON<JsonObject>(p.atv));
+    json::putObjectKV(obj, "atv", ToJSON<JsonValue>(p.atv));
   } else {
     json::putNullKV(obj, "atv");
   }
-  json::putArrayKV(obj, "vtbs", p.vtbs);
   return obj;
 }
 

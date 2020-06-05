@@ -55,12 +55,12 @@ struct MerklePath {
   uint256 calculateMerkleRoot() const;
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const MerklePath& m) {
-  JsonObject obj;
+template <typename JsonValue>
+JsonValue ToJSON(const MerklePath& m) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putIntKV(obj, "index", m.index);
   json::putStringKV(obj, "subject", HexStr(m.subject));
-  json::putArrayKV<std::string, std::vector<uint256>>(obj, "layers", m.layers);
+  json::putArrayKV(obj, "layers", m.layers);
   return obj;
 }
 

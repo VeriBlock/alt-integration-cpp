@@ -17,55 +17,64 @@
 namespace altintegration {
 namespace json {
 
-template <typename T>
-inline picojson::value ToJSON(const T& t) {
+template <>
+inline picojson::value makeEmptyObject() {
+  return picojson::value(picojson::object_type, true);
+}
+
+template <>
+inline picojson::value makeEmptyArray() {
+  return picojson::value(picojson::array_type, true);
+}
+
+template <>
+inline picojson::value ToJSON(const std::string& t) {
   return picojson::value(t);
 }
 
 template <>
-inline void putStringKV<picojson::object>(picojson::object& object,
-                                          const std::string& key,
-                                          const std::string& value) {
-  object[key] = picojson::value(value);
+inline void putKV(picojson::value& object,
+                  const std::string& key,
+                  const picojson::value& val) {
+  object.get<picojson::object>()[key] = val;
 }
 
 template <>
-inline void putIntKV<picojson::object>(picojson::object& object,
-                                       const std::string& key,
-                                       int64_t value) {
-  object[key] = picojson::value(value);
+inline void putStringKV(picojson::value& object,
+                        const std::string& key,
+                        const std::string& value) {
+  object.get<picojson::object>()[key] = picojson::value(value);
 }
 
 template <>
-inline void putObjectKV<picojson::object>(picojson::object& object,
-                                          const std::string& key,
-                                          const picojson::object& value) {
-  object[key] = picojson::value(value);
+inline void putIntKV(picojson::value& object,
+                     const std::string& key,
+                     int64_t value) {
+  object.get<picojson::object>()[key] = picojson::value(value);
 }
 
 template <>
-inline void putNullKV<picojson::object>(picojson::object& object,
-                                        const std::string& key) {
-  object[key] = picojson::value();
-}
-
-template <typename T, typename Array>
-inline void putArrayKV(picojson::object& object,
-                       const std::string& key,
-                       const Array& array) {
-  picojson::array arr;
-  for (auto& v : array) {
-    arr.push_back(picojson::value(ToJSON<T>(v)));
-  }
-
-  object[key] = picojson::value(arr);
+inline void putObjectKV(picojson::value& object,
+                        const std::string& key,
+                        const picojson::value& value) {
+  object.get<picojson::object>()[key] = value;
 }
 
 template <>
-inline void putBoolKV(picojson::object& object,
+inline void putNullKV(picojson::value& object, const std::string& key) {
+  object.get<picojson::object>()[key] = picojson::value();
+}
+
+template <>
+inline void arrayPushBack(picojson::value& array, const picojson::value& val) {
+  array.get<picojson::array>().push_back(val);
+}
+
+template <>
+inline void putBoolKV(picojson::value& object,
                       const std::string& key,
                       bool value) {
-  object[key] = picojson::value(value);
+  object.get<picojson::object>()[key] = picojson::value(value);
 }
 
 }  // namespace json

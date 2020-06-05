@@ -80,13 +80,13 @@ struct ATV {
   friend bool operator!=(const ATV& a, const ATV& b) { return !(a == b); }
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const ATV& atv) {
-  JsonObject obj;
-  json::putObjectKV(obj, "transaction", ToJSON<JsonObject>(atv.transaction));
-  json::putObjectKV(obj, "merklePath", ToJSON<JsonObject>(atv.merklePath));
+template <typename JsonValue>
+JsonValue ToJSON(const ATV& atv) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putObjectKV(obj, "transaction", ToJSON<JsonValue>(atv.transaction));
+  json::putObjectKV(obj, "merklePath", ToJSON<JsonValue>(atv.merklePath));
   json::putObjectKV(
-      obj, "containingBlock", ToJSON<JsonObject>(atv.containingBlock));
+      obj, "containingBlock", ToJSON<JsonValue>(atv.containingBlock));
   json::putArrayKV(obj, "context", atv.context);
   return obj;
 }

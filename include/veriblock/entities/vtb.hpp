@@ -102,15 +102,14 @@ struct VTB {
   friend bool operator!=(const VTB& a, const VTB& b) { return !(a == b); }
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const VTB& v) {
-  JsonObject obj;
-  json::putObjectKV(obj, "transaction", ToJSON<JsonObject>(v.transaction));
-  json::putObjectKV(obj, "merklePath", ToJSON<JsonObject>(v.merklePath));
+template <typename JsonValue>
+JsonValue ToJSON(const VTB& v) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putObjectKV(obj, "transaction", ToJSON<JsonValue>(v.transaction));
+  json::putObjectKV(obj, "merklePath", ToJSON<JsonValue>(v.merklePath));
   json::putObjectKV(
-      obj, "containingBlock", ToJSON<JsonObject>(v.containingBlock));
-  json::putArrayKV<JsonObject, std::vector<VbkBlock>>(
-      obj, "context", v.context);
+      obj, "containingBlock", ToJSON<JsonValue>(v.containingBlock));
+  json::putArrayKV(obj, "context", v.context);
   return obj;
 }
 

@@ -72,22 +72,21 @@ struct VbkTx {
   uint256 getHash() const;
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const VbkTx& tx) {
-  JsonObject obj;
-
+template <typename JsonValue>
+JsonValue ToJSON(const VbkTx& tx) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
   if (tx.networkOrType.hasNetworkByte) {
     json::putIntKV(obj, "networkByte", tx.networkOrType.networkByte);
   } else {
     json::putNullKV(obj, "networkByte");
   }
-  json::putIntKV(obj, "typeId", tx.networkOrType.typeId);
+  json::putIntKV(obj, "type", tx.networkOrType.typeId);
   json::putStringKV(obj, "sourceAddress", tx.sourceAddress.toString());
   json::putIntKV(obj, "sourceAmount", tx.sourceAmount.units);
   json::putArrayKV(obj, "outputs", tx.outputs);
   json::putIntKV(obj, "signatureIndex", tx.signatureIndex);
   json::putObjectKV(
-      obj, "publicationData", ToJSON<JsonObject>(tx.publicationData));
+      obj, "publicationData", ToJSON<JsonValue>(tx.publicationData));
   json::putStringKV(obj, "signature", HexStr(tx.signature));
   json::putStringKV(obj, "publicKey", HexStr(tx.publicKey));
   return obj;

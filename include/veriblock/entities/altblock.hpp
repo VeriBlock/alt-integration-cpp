@@ -75,9 +75,9 @@ struct AltBlock {
   }
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const AltBlock& alt) {
-  JsonObject object;
+template <typename JsonValue>
+JsonValue ToJSON(const AltBlock& alt) {
+  JsonValue object = json::makeEmptyObject<JsonValue>();
   json::putStringKV(object, "hash", HexStr(alt.hash));
   json::putStringKV(object, "previousBlock", HexStr(alt.previousBlock));
   json::putIntKV(object, "timestamp", alt.timestamp);

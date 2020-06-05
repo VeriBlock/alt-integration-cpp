@@ -206,9 +206,9 @@ void PrintTo(const Blob<size>& blob, ::std::ostream* os) {
   *os << blob.toHex();
 }
 
-template <size_t N>
-std::string ToJSON(const Blob<N>& blob) {
-  return blob.toHex();
+template <typename Value, size_t N>
+inline Value ToJSON(const Blob<N>& blob) {
+  return json::ToJSON<Value>(blob.toHex());
 }
 
 }  // namespace altintegration

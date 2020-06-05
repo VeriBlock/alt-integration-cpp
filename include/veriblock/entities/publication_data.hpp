@@ -54,9 +54,9 @@ struct PublicationData {
   void toRaw(WriteStream& stream) const;
 };
 
-template <typename JsonObject>
-JsonObject ToJSON(const PublicationData& p) {
-  JsonObject obj;
+template <typename JsonValue>
+JsonValue ToJSON(const PublicationData& p) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putIntKV(obj, "identifier", p.identifier);
   json::putStringKV(obj, "header", HexStr(p.header));
   json::putStringKV(obj, "payoutInfo", HexStr(p.payoutInfo));
