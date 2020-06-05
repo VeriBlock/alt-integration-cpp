@@ -105,10 +105,9 @@ struct VTB {
 template <typename JsonValue>
 JsonValue ToJSON(const VTB& v) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
-  json::putObjectKV(obj, "transaction", ToJSON<JsonValue>(v.transaction));
-  json::putObjectKV(obj, "merklePath", ToJSON<JsonValue>(v.merklePath));
-  json::putObjectKV(
-      obj, "containingBlock", ToJSON<JsonValue>(v.containingBlock));
+  json::putKV(obj, "transaction", ToJSON<JsonValue>(v.transaction));
+  json::putKV(obj, "merklePath", ToJSON<JsonValue>(v.merklePath));
+  json::putKV(obj, "containingBlock", ToJSON<JsonValue>(v.containingBlock));
   json::putArrayKV(obj, "context", v.context);
   return obj;
 }

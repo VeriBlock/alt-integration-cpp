@@ -30,12 +30,6 @@ template <typename Object>
 void putIntKV(Object& object, const std::string& key, int64_t value);
 
 template <typename Object>
-void putDoubleKV(Object& object, const std::string& key, double value);
-
-template <typename Object>
-void putObjectKV(Object& object, const std::string& key, const Object& value);
-
-template <typename Object>
 void putNullKV(Object& object, const std::string& key);
 
 template <typename Value>

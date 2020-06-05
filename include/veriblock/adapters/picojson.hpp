@@ -54,13 +54,6 @@ inline void putIntKV(picojson::value& object,
 }
 
 template <>
-inline void putObjectKV(picojson::value& object,
-                        const std::string& key,
-                        const picojson::value& value) {
-  object.get<picojson::object>()[key] = value;
-}
-
-template <>
 inline void putNullKV(picojson::value& object, const std::string& key) {
   object.get<picojson::object>()[key] = picojson::value();
 }

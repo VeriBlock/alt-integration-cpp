@@ -85,8 +85,7 @@ JsonValue ToJSON(const VbkTx& tx) {
   json::putIntKV(obj, "sourceAmount", tx.sourceAmount.units);
   json::putArrayKV(obj, "outputs", tx.outputs);
   json::putIntKV(obj, "signatureIndex", tx.signatureIndex);
-  json::putObjectKV(
-      obj, "publicationData", ToJSON<JsonValue>(tx.publicationData));
+  json::putKV(obj, "publicationData", ToJSON<JsonValue>(tx.publicationData));
   json::putStringKV(obj, "signature", HexStr(tx.signature));
   json::putStringKV(obj, "publicKey", HexStr(tx.publicKey));
   return obj;

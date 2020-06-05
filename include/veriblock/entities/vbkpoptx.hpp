@@ -83,11 +83,10 @@ JsonValue ToJSON(const VbkPopTx& tx) {
   }
   json::putIntKV(obj, "type", tx.networkOrType.typeId);
   json::putStringKV(obj, "address", tx.address.toString());
-  json::putObjectKV(
-      obj, "publishedBlock", ToJSON<JsonValue>(tx.publishedBlock));
+  json::putKV(obj, "publishedBlock", ToJSON<JsonValue>(tx.publishedBlock));
   json::putStringKV(obj, "bitcoinTransaction", tx.bitcoinTransaction.toHex());
-  json::putObjectKV(obj, "merklePath", ToJSON<JsonValue>(tx.merklePath));
-  json::putObjectKV(obj, "blockOfProof", ToJSON<JsonValue>(tx.blockOfProof));
+  json::putKV(obj, "merklePath", ToJSON<JsonValue>(tx.merklePath));
+  json::putKV(obj, "blockOfProof", ToJSON<JsonValue>(tx.blockOfProof));
   json::putArrayKV(obj, "blockOfProofContext", tx.blockOfProofContext);
   json::putStringKV(obj, "signature", HexStr(tx.signature));
   json::putStringKV(obj, "publicKey", HexStr(tx.publicKey));

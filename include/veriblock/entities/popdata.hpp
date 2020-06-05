@@ -80,7 +80,7 @@ JsonValue ToJSON(const PopData& p) {
   json::putArrayKV(obj, "vbk_context", p.vbk_context);
   json::putArrayKV(obj, "vtbs", p.vtbs);
   if (p.hasAtv) {
-    json::putObjectKV(obj, "atv", ToJSON<JsonValue>(p.atv));
+    json::putKV(obj, "atv", ToJSON<JsonValue>(p.atv));
   } else {
     json::putNullKV(obj, "atv");
   }
