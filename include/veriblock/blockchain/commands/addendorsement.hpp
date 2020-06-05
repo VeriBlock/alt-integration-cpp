@@ -75,10 +75,10 @@ struct AddEndorsement : public Command {
                        HexStr(e_->blockOfProof)));
     }
 
-    auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
-    if (duplicate) {
-      // found duplicate
-      if (endorsement_t::checkForDuplicates()) {
+    if (endorsement_t::checkForDuplicates()) {
+      auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
+      if (duplicate) {
+        // found duplicate
         return state.Invalid(
             block_t ::name() + "-duplicate",
             fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
@@ -86,13 +86,6 @@ struct AddEndorsement : public Command {
                          e_->toPrettyString(),
                          containing->toShortPrettyString(),
                          duplicate->toShortPrettyString()));
-      } else {
-        // this is a VTB duplicate
-        auto it = duplicate->containingEndorsements.find(e_->id);
-        VBK_ASSERT(it != duplicate->containingEndorsements.end());
-
-        it->second->refs++;
-        return true;
       }
     }
 
@@ -115,18 +108,7 @@ struct AddEndorsement : public Command {
         "failed to roll back AddEndorsement: the endorsed block does not "
         "exist");
 
-    auto endorsement_it = containing->containingEndorsements.find(e_->id);
-    VBK_ASSERT(endorsement_it != containing->containingEndorsements.end());
-
-    auto& refs = endorsement_it->second->refs;
-    if (refs > 0) {
-      refs--;
-      return;
-    }
-
-    VBK_ASSERT(refs == 0);
-
-    // erase endorsedBy
+    // erase from endorsedBy
     {
       auto& v = endorsed->endorsedBy;
 
@@ -142,8 +124,16 @@ struct AddEndorsement : public Command {
       v.erase(toRemove);
     }
 
-    // erase endorsement
-    containing->containingEndorsements.erase(endorsement_it);
+    // erase from containingEndorsements
+    {
+      auto containing_it = containing->containingEndorsements.find(e_->id);
+      VBK_ASSERT(
+          containing_it != containing->containingEndorsements.end() &&
+          "failed to roll back AddEndorsement: the containing block does "
+          "not contain the endorsement in containingEndorsements");
+
+      containing->containingEndorsements.erase(containing_it);
+    }
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

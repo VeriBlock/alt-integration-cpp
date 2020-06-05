@@ -7,6 +7,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
 
 #include <memory>
+
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
@@ -46,9 +47,6 @@ struct Endorsement {
   EndorsedHash containingHash;
   ContainingHash blockOfProof;
   std::vector<uint8_t> payoutInfo;
-
-  // TODO: remove ref counter when VTB duplication is disabled
-  uint32_t refs = 0;
 
   static Endorsement fromVbkEncoding(std::string) {
     // TODO: remove

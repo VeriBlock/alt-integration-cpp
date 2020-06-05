@@ -47,7 +47,6 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
   ASSERT_EQ(vbk5->endorsedBy.size(), 1);
   ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
-  ASSERT_EQ(e->refs, 0);
 
   {
     // TODO: remove second cmd Exec/ after VTB duplication is disabled
@@ -55,21 +54,19 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
     // execute command second time
     ASSERT_TRUE(cmd->Execute(state));
 
-    // verify that state has been changed
+    // verify that state has been changed, a duplicate has been added
     ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
-    ASSERT_EQ(vbk5->endorsedBy.size(), 1);
-    ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
+    ASSERT_EQ(vbk5->endorsedBy.size(), 2);
+    ASSERT_EQ(vbk10->containingEndorsements.size(), 2);
     ASSERT_EQ(vbk10->endorsedBy.size(), 0);
-    ASSERT_EQ(e->refs, 1);
 
-    // unexecute command first time (removes duplicate)
+    // unexecute command first time (removes the duplicate)
     ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
     ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
     ASSERT_EQ(vbk5->endorsedBy.size(), 1);
     ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
     ASSERT_EQ(vbk10->endorsedBy.size(), 0);
-    ASSERT_EQ(e->refs, 0);  // now refs == 0
   }
 
   // unexecute command
@@ -123,9 +120,8 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
   ASSERT_EQ(alt10->containingEndorsements.size(), 1);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
-  ASSERT_EQ(e->refs, 0);
 
-  // execute command second time
+  // execute command second time, it should fail
   ASSERT_FALSE(cmd->Execute(state));
 
   // verify that state has NOT been changed
@@ -133,7 +129,6 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
   ASSERT_EQ(alt10->containingEndorsements.size(), 1);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
-  ASSERT_EQ(e->refs, 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
