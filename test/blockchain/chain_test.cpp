@@ -113,6 +113,7 @@ Endorsement generateEndorsement(const Block& endorsedBlock,
                                 const Block& containingBlock) {
   Endorsement endorsement;
   endorsement.id = generateRandomBytesVector(32);
+  endorsement.parentId = generateRandomBytesVector(32);
   endorsement.endorsedHash = endorsedBlock.getHash();
   endorsement.containingHash = containingBlock.getHash();
   endorsement.blockOfProof = generateRandomBytesVector(10);
@@ -199,10 +200,8 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
       *chain.tip()->pprev->header, *newIndex.header);
 
-  newIndex.containingEndorsements.insert(std::make_pair(
-      endorsement1.id, std::make_shared<endorsement_t>(endorsement1)));
-  newIndex.containingEndorsements.insert(std::make_pair(
-      endorsement2.id, std::make_shared<endorsement_t>(endorsement2)));
+  newIndex.payloadIds.push_back(endorsement1.parentId);
+  newIndex.payloadIds.push_back(endorsement2.parentId);
 
   chain.setTip(&newIndex);
 
@@ -213,23 +212,19 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
       *chain.tip()->pprev->header, *newIndex2.header);
 
-  newIndex2.containingEndorsements.insert(std::make_pair(
-      endorsement3.id, std::make_shared<endorsement_t>(endorsement3)));
+  newIndex2.payloadIds.push_back(endorsement3.parentId);
 
   chain.setTip(&newIndex2);
 
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement1, 100)
-                 ->containingEndorsements.find(endorsement1.id)
-                 ->second,
-            endorsement1);
+                 ->payloadIds.find(endorsement1.parentId),
+            endorsement1.parentId);
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement2, 100)
-                 ->containingEndorsements.find(endorsement2.id)
-                 ->second,
-            endorsement2);
+                 ->payloadIds.find(endorsement2.parentId),
+            endorsement2.parentId);
   EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement3, 100)
-                 ->containingEndorsements.find(endorsement3.id)
-                 ->second,
-            endorsement3);
+                 ->payloadIds.find(endorsement3.parentId),
+            endorsement3.parentId);
   EXPECT_EQ(chain.findBlockContainingEndorsement(endorsement4, 100), nullptr);
 }
 

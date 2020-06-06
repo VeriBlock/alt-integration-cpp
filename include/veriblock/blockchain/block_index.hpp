@@ -50,6 +50,7 @@ struct BlockIndex {
   using endorsement_t = typename block_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
   using payloads_t = typename Block::payloads_t;
+  using pid_t = typename payloads_t::id_t;
   using protecting_block_t = typename Block::protecting_block_t;
 
   //! pointer to a previous block
@@ -62,16 +63,11 @@ struct BlockIndex {
   //! block
   ArithUint256 chainWork = 0;
 
-  //! list of containing endorsements in this block
-  std::multimap<eid_t, std::shared_ptr<endorsement_t>> containingEndorsements{};
-  std::set<eid_t> containingEndorsementIds{};
-
   //! list of endorsements pointing to this block
-  std::vector<endorsement_t*> endorsedBy;
+  std::vector<std::shared_ptr<endorsement_t>> endorsedBy;
 
   //! list of changes introduced in this block
-  //std::vector<CommandGroup> commands{};
-  std::vector<eid_t> payloadIds;
+  std::vector<pid_t> payloadIds;
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -98,8 +94,6 @@ struct BlockIndex {
     this->pprev = nullptr;
     this->pnext.clear();
     this->chainWork = 0;
-    this->containingEndorsements.clear();
-    this->containingEndorsementIds.clear();
     this->endorsedBy.clear();
     this->payloadIds.clear();
     this->height = 0;

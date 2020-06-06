@@ -304,10 +304,8 @@ void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
     addBlock(vbk(), p.popData.atv.containingBlock, commands);
 
     auto e = VbkEndorsement::fromContainerPtr(p);
-    // auto cmd = std::make_shared<AddVbkEndorsement>(vbk(), *this,
-    // std::move(e));
     auto cmd = std::make_shared<AddVbkEndorsement>(
-        vbk(), *this, std::move(e), p.getId());
+        vbk(), *this, std::move(e));
     commands.push_back(std::move(cmd));
   }
 }

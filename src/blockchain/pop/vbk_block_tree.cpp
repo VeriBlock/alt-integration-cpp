@@ -211,7 +211,7 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
 
   // add endorsement
   auto e = BtcEndorsement::fromContainerPtr(p);
-  auto cmd = std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e), p.getId());
+  auto cmd = std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e));
   commands.push_back(std::move(cmd));
 }
 

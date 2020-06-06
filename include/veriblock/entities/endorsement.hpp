@@ -31,9 +31,12 @@ template <class EndorsedHash,
           class Container,
           class EndorsedBlockHeight>
 struct Endorsement {
-  using type =
-      Endorsement<EndorsedHash, ContainingHash, Container, EndorsedBlockHeight>;
+  using type = Endorsement<EndorsedHash,
+                           ContainingHash,
+                           Container,
+                           EndorsedBlockHeight>;
   using id_t = uint256;
+  using pid_t = uint256;
   using endorsed_hash_t = EndorsedHash;
   using containing_hash_t = ContainingHash;
   using container_t = Container;
@@ -41,6 +44,8 @@ struct Endorsement {
 
   // The unique key that identifies this endorsement
   id_t id;
+  // Containing payloads id
+  pid_t parentId;
   EndorsedHash endorsedHash;
   EndorsedBlockHeight endorsedHeight;
   EndorsedHash containingHash;

@@ -25,7 +25,7 @@ struct VbkBlock {
   using short_hash_t = uint96;
   using height_t = int32_t;
   using keystone_t = uint72;
-  using payloads_t = VTB;
+  using payloads_t = typename VTB;
   using endorsement_t = BtcEndorsement;
   using protecting_block_t = BtcBlock;
 

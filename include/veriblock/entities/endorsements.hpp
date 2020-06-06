@@ -13,7 +13,6 @@ namespace altintegration {
 
 struct VTB;
 struct AltPayloads;
-struct PartialVTB;
 
 // endorsement of VBK blocks in BTC
 using BtcEndorsement = Endorsement<uint192, uint256, VTB, int32_t>;

@@ -13,6 +13,7 @@ template <>
 BtcEndorsement BtcEndorsement::fromContainer(const VTB& c) {
   BtcEndorsement e;
   e.id = BtcEndorsement::getId(c);
+  e.parentId = c.getId();
   e.blockOfProof = c.transaction.blockOfProof.getHash();
   e.containingHash = c.containingBlock.getHash();
   e.endorsedHash = c.transaction.publishedBlock.getHash();
@@ -25,6 +26,7 @@ template <>
 VbkEndorsement VbkEndorsement::fromContainer(const AltPayloads& c) {
   VbkEndorsement e;
   e.id = VbkEndorsement::getId(c);
+  e.parentId = c.getId();
   e.blockOfProof = c.popData.atv.containingBlock.getHash();
   e.endorsedHash = c.endorsed.hash;
   e.endorsedHeight = c.endorsed.height;

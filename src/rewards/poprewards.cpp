@@ -14,7 +14,7 @@ namespace altintegration {
 static int getBestPublicationHeight(const BlockIndex<AltBlock>& endorsedBlock,
                                     const VbkBlockTree& vbk_tree) {
   int bestPublication = -1;
-  for (const auto* e : endorsedBlock.endorsedBy) {
+  for (const auto e : endorsedBlock.endorsedBy) {
     auto* b = vbk_tree.getBlockIndex(e->blockOfProof);
     if (!vbk_tree.getBestChain().contains(b)) continue;
     if (b->height < bestPublication || bestPublication < 0)
@@ -31,7 +31,7 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
   int bestPublication = getBestPublicationHeight(endorsedBlock, vbk_tree);
   if (bestPublication < 0) return totalScore;
 
-  for (const auto* e : endorsedBlock.endorsedBy) {
+  for (const auto e : endorsedBlock.endorsedBy) {
     auto* b = vbk_tree.getBlockIndex(e->blockOfProof);
     if (!vbk_tree.getBestChain().contains(b)) continue;
     int relativeHeight = b->height - bestPublication;
@@ -77,7 +77,7 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
   auto blockScore = scoreFromEndorsements(vbk_tree, endorsedBlock);
 
   // pay reward for each of the endorsements
-  for (const auto* e : endorsedBlock.endorsedBy) {
+  for (const auto e : endorsedBlock.endorsedBy) {
     auto* b = vbk_tree.getBlockIndex(e->blockOfProof);
     if (!vbk_tree.getBestChain().contains(b)) continue;
 

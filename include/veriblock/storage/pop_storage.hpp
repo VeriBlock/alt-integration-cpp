@@ -76,19 +76,17 @@ class PopStorage {
     for (const auto& blockPair : blocks) {
       auto *bi = tree.insertBlock(blockPair.second->header);
       bi->payloadIds = blockPair.second->payloadIds;
-      bi->containingEndorsementIds = blockPair.second->containingEndorsementIds;
       bi->refCounter = blockPair.second->refCounter;
 
-      for (const auto& eid : bi->containingEndorsementIds) {
+      // restore endorsedBy pointers
+      for (const auto& pid : bi->payloadIds) {
         VTB payloads{};
-        bool ret = endorsementsVtb_->payloads().get(eid, &payloads);
+        bool ret = endorsementsVtb_->payloads().get(pid, &payloads);
         if (!ret) continue;
 
-        auto e = std::make_shared<BtcEndorsement>(
-            BtcEndorsement::fromContainer(payloads));
-        bi->containingEndorsements.insert(std::make_pair(e->id, e));
+        auto e = BtcEndorsement::fromContainerPtr(payloads);
         auto *endorsed = tree.getBlockIndex(payloads.getEndorsedBlock().getHash());
-        endorsed->endorsedBy.push_back(e.get());
+        endorsed->endorsedBy.push_back(e);
       }
     }
 
@@ -110,7 +108,6 @@ class PopStorage {
     for (const auto& blockPair : blocks) {
       auto* bi = tree.insertBlock(blockPair.second->header);
       bi->payloadIds = blockPair.second->payloadIds;
-      bi->containingEndorsementIds = blockPair.second->containingEndorsementIds;
       bi->refCounter = blockPair.second->refCounter;
     }
 

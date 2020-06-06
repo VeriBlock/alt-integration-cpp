@@ -24,16 +24,14 @@ struct AddEndorsement : public Command {
   using hash_t = typename ProtectedTree::hash_t;
   using block_t = typename ProtectingTree::block_t;
   using endorsement_t = typename ProtectedTree::block_t::endorsement_t;
-  using eid_t = typename endorsement_t::id_t;
   using protected_index_t = typename ProtectedTree::index_t;
 
   ~AddEndorsement() override = default;
 
   explicit AddEndorsement(ProtectingTree& ing,
                           ProtectedTree& ed,
-                          std::shared_ptr<endorsement_t> e,
-                          const eid_t& payloadId)
-      : ing_(&ing), ed_(&ed), e_(std::move(e)), pid_(payloadId) {}
+                          std::shared_ptr<endorsement_t> e)
+      : ing_(&ing), ed_(&ed), e_(std::move(e)) {}
 
   bool Execute(ValidationState& state) override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
@@ -91,9 +89,8 @@ struct AddEndorsement : public Command {
       }
     }
 
-    containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
-    containing->containingEndorsementIds.insert(pid_);
-    endorsed->endorsedBy.push_back(e_.get());
+    containing->payloadIds.push_back(e_->parentId);
+    endorsed->endorsedBy.push_back(e_);
 
     return true;
   }
@@ -110,21 +107,26 @@ struct AddEndorsement : public Command {
            "failed to roll back AddEndorsement: the endorsed block does not "
            "exist");
 
-    auto containing_it = containing->containingEndorsements.find(e_->id);
-    VBK_ASSERT(containing_it != containing->containingEndorsements.end() &&
-               "failed to roll back AddEndorsement: the containing block does "
-               "not contain the endorsement in containingEndorsements");
-
-    auto containing_id_it = containing->containingEndorsementIds.find(pid_);
-    VBK_ASSERT(containing_id_it != containing->containingEndorsementIds.end() &&
-               "failed to roll back AddEndorsement: the containing block does "
-               "not contain the endorsement in containingEndorsementIds");
+    {
+      auto containing_it = std::find(containing->payloadIds.cbegin(),
+                                     containing->payloadIds.cend(),
+                                     e_->parentId);
+      VBK_ASSERT(
+          containing_it != containing->payloadIds.cend() &&
+          "failed to roll back AddEndorsement: the containing block does "
+          "not contain the endorsement in payloadIds");
+      containing->payloadIds.erase(containing_it);
+    }
 
     {
       auto& v = endorsed->endorsedBy;
-
+      auto& id = e_->id;
       // find and erase the last occurrence of e_
-      auto endorsed_it = std::find(v.rbegin(), v.rend(), containing_it->second.get());
+
+      auto endorsed_it = std::find_if(
+          v.rbegin(), v.rend(), [&id](std::shared_ptr<endorsement_t> p) {
+            return p->id == id;
+      });
 
       VBK_ASSERT(endorsed_it != v.rend() &&
              "failed to roll back AddEndorsement: the endorsed block does not "
@@ -133,9 +135,6 @@ struct AddEndorsement : public Command {
       auto toRemove = --(endorsed_it.base());
       v.erase(toRemove);
     }
-
-    containing->containingEndorsements.erase(containing_it);
-    containing->containingEndorsementIds.erase(containing_id_it);
   }
 
   size_t getId() const override { return e_->id.getLow64(); }
@@ -149,7 +148,6 @@ struct AddEndorsement : public Command {
   ProtectingTree* ing_;
   ProtectedTree* ed_;
   std::shared_ptr<endorsement_t> e_;
-  eid_t pid_;
 };
 
 struct AltTree;

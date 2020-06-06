@@ -164,7 +164,9 @@ struct Chain {
                              workBlock && workBlock->height >= startHeight_ &&
                              e.endorsedHash != workBlock->getHash();
          count++) {
-      if (workBlock->containingEndorsements.count(e.id)) {
+      if (std::find(workBlock->payloadIds.begin(),
+                    workBlock->payloadIds.end(),
+                    e.parentId) != workBlock->payloadIds.end()) {
         return workBlock;
       }
       workBlock = workBlock->pprev;
