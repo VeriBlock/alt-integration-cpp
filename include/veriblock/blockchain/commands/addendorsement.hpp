@@ -89,9 +89,7 @@ struct AddEndorsement : public Command {
       }
     }
 
-    containing->payloadIds.push_back(e_->parentId);
     endorsed->endorsedBy.push_back(e_);
-
     return true;
   }
 
@@ -106,17 +104,6 @@ struct AddEndorsement : public Command {
     VBK_ASSERT(endorsed != nullptr &&
            "failed to roll back AddEndorsement: the endorsed block does not "
            "exist");
-
-    {
-      auto containing_it = std::find(containing->payloadIds.cbegin(),
-                                     containing->payloadIds.cend(),
-                                     e_->parentId);
-      VBK_ASSERT(
-          containing_it != containing->payloadIds.cend() &&
-          "failed to roll back AddEndorsement: the containing block does "
-          "not contain the endorsement in payloadIds");
-      containing->payloadIds.erase(containing_it);
-    }
 
     {
       auto& v = endorsed->endorsedBy;
