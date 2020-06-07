@@ -79,8 +79,8 @@ TEST_F(Scenario2, scenario_2) {
   auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
 
   ASSERT_EQ(vtbs.size(), 2);
-  ASSERT_NE(BtcEndorsement::fromContainer(vtbs[0]).id,
-            BtcEndorsement::fromContainer(vtbs[1]).id);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
+            VbkEndorsement::fromContainer(vtbs[1]).id);
 
   // store vtbs in different altPayloads
   altPayloads1.popData.vtbs = {vtbs[0]};

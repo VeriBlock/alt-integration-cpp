@@ -58,6 +58,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool bootstrapWithGenesis(ValidationState& state) override;
 
+  /**
+   * @invariant NOT atomic. When addPayloads is called and fails -
+   * removePayloads have to be called on same payloads.
+   */
   bool addPayloads(const VbkBlock::hash_t& hash,
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state);

@@ -63,7 +63,7 @@ struct AddEndorsement : public Command {
           block_t::name() + "-block-differs",
           fmt::sprintf(
               "Endorsed block is on a different chain. Expected: %s, got %s",
-              endorsed->toPrettyString(),
+              endorsed->toShortPrettyString(),
               HexStr(e_->endorsedHash)));
     }
 
@@ -75,17 +75,24 @@ struct AddEndorsement : public Command {
                        HexStr(e_->blockOfProof)));
     }
 
-    if (endorsement_t::checkForDuplicates()) {
-      auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
-      if (duplicate) {
-        // found duplicate
+    auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
+    if (duplicate) {
+      // found duplicate
+      if (endorsement_t::checkForDuplicates()) {
         return state.Invalid(
             block_t ::name() + "-duplicate",
             fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
                          "found its duplicate in block %s",
                          e_->toPrettyString(),
-                         containing->toPrettyString(),
-                         duplicate->toPrettyString()));
+                         containing->toShortPrettyString(),
+                         duplicate->toShortPrettyString()));
+      } else {
+        // this is a VTB duplicate
+        auto it = duplicate->containingEndorsements.find(e_->id);
+        VBK_ASSERT(it != duplicate->containingEndorsements.end());
+
+        it->second->refs++;
+        return true;
       }
     }
 
@@ -95,16 +102,29 @@ struct AddEndorsement : public Command {
 
   void UnExecute() override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
-    VBK_ASSERT(containing != nullptr &&
-           "failed to roll back AddEndorsement: the containing block does not "
-           "exist");
+    VBK_ASSERT(
+        containing != nullptr &&
+        "failed to roll back AddEndorsement: the containing block does not "
+        "exist");
 
     auto* endorsed = containing->getAncestor(e_->endorsedHeight);
+    VBK_ASSERT(
+        endorsed != nullptr &&
+        "failed to roll back AddEndorsement: the endorsed block does not "
+        "exist");
 
-    VBK_ASSERT(endorsed != nullptr &&
-           "failed to roll back AddEndorsement: the endorsed block does not "
-           "exist");
+    auto endorsement_it = containing->containingEndorsements.find(e_->id);
+    VBK_ASSERT(endorsement_it != containing->containingEndorsements.end());
 
+    auto& refs = endorsement_it->second->refs;
+    if (refs > 0) {
+      refs--;
+      return;
+    }
+
+    VBK_ASSERT(refs == 0);
+
+    // erase endorsedBy
     {
       auto& v = endorsed->endorsedBy;
       auto& id = e_->id;
@@ -115,9 +135,10 @@ struct AddEndorsement : public Command {
             return p->id == id;
       });
 
-      VBK_ASSERT(endorsed_it != v.rend() &&
-             "failed to roll back AddEndorsement: the endorsed block does not "
-             "contain the endorsement in endorsedBy");
+      VBK_ASSERT(
+          endorsed_it != v.rend() &&
+          "failed to roll back AddEndorsement: the endorsed block does not "
+          "contain the endorsement in endorsedBy");
 
       auto toRemove = --(endorsed_it.base());
       v.erase(toRemove);
@@ -142,10 +163,10 @@ struct VbkBlockTree;
 template <typename Block, typename ChainParams>
 struct BlockTree;
 
-using AddBtcEndorsement =
+using AddVbkEndorsement =
     AddEndorsement<BlockTree<BtcBlock, BtcChainParams>, VbkBlockTree>;
 
-using AddVbkEndorsement = AddEndorsement<VbkBlockTree, AltTree>;
+using AddAltEndorsement = AddEndorsement<VbkBlockTree, AltTree>;
 
 }  // namespace altintegration
 

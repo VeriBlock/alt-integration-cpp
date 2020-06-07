@@ -51,7 +51,6 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
-target_compile_definitions(${LIB_NAME} PUBLIC FMT_HEADER_ONLY=1)
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}

@@ -411,21 +411,26 @@ struct PopAwareForkResolutionComparator {
   int comparePopScore(ProtectedBlockTree& ed,
                       protected_index_t& indexNew,
                       ValidationState& state) {
-    VBK_ASSERT(indexNew.isValid());
+    if (!indexNew.isValid()) {
+      // if new block is known to be invalid, we always return "A is better"
+      VBK_LOG_INFO("Candidate %s is invalid, current chain wins",
+                   indexNew.toShortPrettyString());
+      return 1;
+    }
 
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
     VBK_ASSERT(bestTip);
     if (currentBest.contains(&indexNew)) {
       VBK_LOG_INFO("Candidate %s is on active chain, current chain wins",
-                   indexNew.toPrettyString());
+                   indexNew.toShortPrettyString());
       return 1;
     }
 
     VBK_LOG_INFO("Doing POP fork resolution in %s. Best=%s, Candidate=%s",
                  protected_block_t::name(),
-                 bestTip->toPrettyString(),
-                 indexNew.toPrettyString());
+                 bestTip->toShortPrettyString(),
+                 indexNew.toShortPrettyString());
 
     // indexNew is on top of our best tip
     if (indexNew.getAncestor(bestTip->height) == bestTip) {
@@ -446,8 +451,8 @@ struct PopAwareForkResolutionComparator {
     auto ki = ed.getParams().getKeystoneInterval();
     const auto* fork = currentBest.findFork(&indexNew);
     VBK_ASSERT(fork != nullptr &&
-           "all blocks in a blocktree must form a tree, thus all pairs of "
-           "chains must have a fork point");
+               "all blocks in a blocktree must form a tree, thus all pairs of "
+               "chains must have a fork point");
 
     bool AcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(fork->height, bestTip->height, ki);

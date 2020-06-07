@@ -26,7 +26,8 @@ AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
   }
 
   current = doInsertBlockHeader(std::make_shared<AltBlock>(block));
-  current->setFlag(BLOCK_VALID_TREE);
+  // raise validity will return false on invalid blocks
+  current->raiseValidity(BLOCK_VALID_TREE);
   return current;
 }
 
@@ -39,7 +40,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   auto* index = insertBlockHeader(block);
 
   VBK_ASSERT(index != nullptr &&
-         "insertBlockHeader should have never returned nullptr");
+             "insertBlockHeader should have never returned nullptr");
 
   if (!base::blocks_.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
     return state.Error("block-index-no-genesis");
@@ -69,7 +70,7 @@ bool AltTree::addPayloads(index_t& index,
   VBK_LOG_INFO("%s add %d payloads to block %s",
                block_t::name(),
                payloads.size(),
-               index.toPrettyString());
+               index.toShortPrettyString());
   if (!index.pprev) {
     return state.Invalid(block_t::name() + "-bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
@@ -146,7 +147,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   auto* index = insertBlockHeader(block);
 
   VBK_ASSERT(index != nullptr &&
-         "insertBlockHeader should have never returned nullptr");
+             "insertBlockHeader should have never returned nullptr");
 
   if (!index->isValid()) {
     return state.Invalid(block_t::name() + "-bad-chain",
@@ -176,10 +177,10 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
 
   auto popDifficulty = rewards_.calculateDifficulty(vbk(), *endorsedBlock);
   auto ret = rewards_.calculatePayouts(vbk(), *endorsedBlock, popDifficulty);
-  VBK_LOG_DEBUG("Pop Difficulty=%s for block %s",
+  VBK_LOG_DEBUG("Pop Difficulty=%s for block %s, paying to %d addresses",
                 popDifficulty.toPrettyString(),
-                index->toPrettyString());
-  VBK_LOG_DEBUG("Paying to %d addresses", ret.size());
+                index->toShortPrettyString(),
+                ret.size());
   return ret;
 }
 
@@ -203,11 +204,15 @@ void AltTree::determineBestChain(Chain<index_t>& currentBest,
 
   // do not even try to do fork resolution with an invalid chain
   if (!indexNew.isValid()) {
+    VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
+                  indexNew.toPrettyString());
     return;
   }
 
   auto currentTip = currentBest.tip();
   if (currentTip == nullptr) {
+    VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
+                  indexNew.toShortPrettyString());
     bool ret = setTip(indexNew, state, isBootstrap);
     VBK_ASSERT(ret);
     return;
@@ -263,7 +268,7 @@ void AltTree::removePayloads(index_t& index,
   VBK_LOG_INFO("%s remove %d payloads from %s",
                block_t::name(),
                payloads.size(),
-               index.toPrettyString());
+               index.toShortPrettyString());
   if (!index.pprev) {
     // we do not add payloads to genesis block, therefore we do not have to
     // remove them
@@ -303,8 +308,8 @@ void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
   if (p.popData.hasAtv) {
     addBlock(vbk(), p.popData.atv.containingBlock, commands);
 
-    auto e = VbkEndorsement::fromContainerPtr(p);
-    auto cmd = std::make_shared<AddVbkEndorsement>(
+    auto e = AltEndorsement::fromContainerPtr(p);
+    auto cmd = std::make_shared<AddAltEndorsement>(
         vbk(), *this, std::move(e));
     commands.push_back(std::move(cmd));
   }
@@ -322,12 +327,12 @@ bool AltTree::setTip(AltTree::index_t& to,
   // current active chain, and this block has invalid commands
   if (changeTip) {
     VBK_LOG_INFO("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
-                 to.toPrettyString(),
+                 to.toShortPrettyString(),
                  (vbk().getBestChain().tip()
-                      ? vbk().getBestChain().tip()->toPrettyString()
+                      ? vbk().getBestChain().tip()->toShortPrettyString()
                       : "<empty>"),
                  (btc().getBestChain().tip()
-                      ? btc().getBestChain().tip()->toPrettyString()
+                      ? btc().getBestChain().tip()->toShortPrettyString()
                       : "<empty>"));
     activeChain_.setTip(&to);
     tryAddTip(&to);

@@ -1,7 +1,15 @@
+function(vbk_define def)
+    if(UNIX)
+        add_definitions(-D${def})
+    else()
+        add_definitions(/D${def})
+    endif()
+endfunction()
+
 CHECK_CXX_SOURCE_COMPILES("int main(void) { return __builtin_expect(0, 1); }"
-        HAVE_BUILTIN_EXPECT)
-if(HAVE_BUILTIN_EXPECT)
-    add_definitions(-DVBK_HAVE_BUILTIN_EXPECT)
+        VBK_HAVE_BUILTIN_EXPECT)
+if(VBK_HAVE_BUILTIN_EXPECT)
+    vbk_define(VBK_HAVE_BUILTIN_EXPECT)
 endif()
 
 function(disable_clang_tidy target)

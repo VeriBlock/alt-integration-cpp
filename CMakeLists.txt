@@ -77,6 +77,15 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wno-nonnull-compare)
     add_flag(-Wno-unknown-pragmas)
     add_cxx_flag(-Wno-literal-suffix)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        # Release flags
+        add_flag(-Ofast)
+    else()
+        # Debug flags
+        add_flag(-Og)
+        add_flag(-g)
+    endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     if(WERROR)
         add_compile_options(/WX)                      # treats all compiler warnings as errors.
@@ -99,6 +108,9 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/wd4127)                  # disable warning: conditional expression is constant
     add_flag(/wd4505)                  # disable warning: warning C4505: 'dummy': unreferenced local function has been removed
 
+    # https://stackoverflow.com/questions/5004858/why-is-stdmin-failing-when-windows-h-is-included
+    add_flag(/DNOMINMAX)
+
     if(SHARED)
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd") 
@@ -109,8 +121,9 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 if(VERIBLOCK_POP_LOGGER_ENABLED)
-  add_definitions(-DVERIBLOCK_POP_LOGGER_ENABLED=1)
+    vbk_define(VERIBLOCK_POP_LOGGER_ENABLED=1)
 endif()
+vbk_define(FMT_HEADER_ONLY=1)
 
 if(CLANG_TIDY)
     include(cmake/clang-tidy.cmake)

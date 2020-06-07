@@ -77,7 +77,8 @@ struct BaseBlockTree {
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
       ValidationState dummy;
-      this->setTip(*toRemove.pprev, dummy, false);
+      bool ret = this->setTip(*prev, dummy, false);
+      VBK_ASSERT(ret);
     }
 
     // remove this block from 'pnext' set of previous block
@@ -116,8 +117,10 @@ struct BaseBlockTree {
     VBK_LOG_INFO("Invalidating %s subtree: reason=%d block=%s",
                  block_t::name(),
                  (int)reason,
-                 toBeInvalidated.toPrettyString());
-    VBK_ASSERT(toBeInvalidated.pprev);
+                 toBeInvalidated.toShortPrettyString());
+    if (!toBeInvalidated.pprev) {
+      throw std::logic_error("Can not invalidate genesis block");
+    }
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
       ValidationState dummy;
@@ -127,7 +130,7 @@ struct BaseBlockTree {
 
     doInvalidate(toBeInvalidated, reason);
 
-    // flag next subtrees (excluding current block)  as BLOCK_FAILED_CHILD
+    // flag next subtrees (excluding current block) as BLOCK_FAILED_CHILD
     for (auto* pnext : toBeInvalidated.pnext) {
       forEachNodePreorder<block_t>(*pnext, [&](index_t& index) {
         bool valid = index.isValid();
@@ -158,7 +161,7 @@ struct BaseBlockTree {
     VBK_LOG_INFO("Revalidating %s subtree: reason=%d block=%s",
                  block_t::name(),
                  (int)reason,
-                 toBeValidated.toPrettyString());
+                 toBeValidated.toShortPrettyString());
     doReValidate(toBeValidated, reason);
     tryAddTip(&toBeValidated);
 
@@ -240,7 +243,7 @@ struct BaseBlockTree {
       return it->second.get();
     }
 
-    std::shared_ptr<index_t> newIndex;
+    std::shared_ptr<index_t> newIndex = nullptr;
     auto itr = removed_.find(shortHash);
     if (itr != removed_.end()) {
       newIndex = itr->second;
@@ -250,6 +253,7 @@ struct BaseBlockTree {
       newIndex->setFlag(BLOCK_VALID_TREE);
     }
 
+    newIndex->setNull();
     it = blocks_.insert({shortHash, std::move(newIndex)}).first;
     return it->second.get();
   }
@@ -264,7 +268,8 @@ struct BaseBlockTree {
     if (current->pprev != nullptr) {
       // prev block found
       current->height = current->pprev->height + 1;
-      current->pprev->pnext.insert(current);
+      auto pair = current->pprev->pnext.insert(current);
+      VBK_ASSERT(pair.second && "block already existed in prev");
 
       if (!current->pprev->isValid()) {
         current->setFlag(BLOCK_FAILED_CHILD);
@@ -282,7 +287,7 @@ struct BaseBlockTree {
   virtual bool setTip(index_t& to, ValidationState&, bool) {
     activeChain_.setTip(&to);
     tryAddTip(&to);
-    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
+    VBK_LOG_DEBUG("SetTip=%s", to.toShortPrettyString());
     return true;
   }
 
@@ -345,12 +350,15 @@ struct BaseBlockTree {
   void removeSingleBlock(index_t& block) {
     // if it is a tip, we also remove it
     tips_.erase(&block);
-    block.pnext.clear();
+
+    if (block.pprev != nullptr) {
+      block.pprev->pnext.erase(&block);
+    }
 
     auto shortHash = makePrevHash(block.getHash());
     auto it = blocks_.at(shortHash);
-    // TODO: it is a hack because we do not erase blocks and just move it to the
-    // remove_ container
+    // TODO: it is a hack because we do not erase blocks and just move them to
+    // the remove_ container
     it->setNull();
     removed_[shortHash] = it;
     blocks_.erase(shortHash);

@@ -8,13 +8,11 @@ add_subdirectory(blockchain)
 add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
+add_subdirectory(commands)
 
 addtest(vblake_test vblake_test.cpp)
-
 addtest(streamutils_test streamutils_test.cpp)
-
 addtest(base58_test base58_test.cpp)
-
 addtest(base59_test base59_test.cpp)
 
 

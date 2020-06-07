@@ -6,9 +6,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
 
-#include <map>
 #include <memory>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
@@ -126,10 +126,11 @@ struct BlockIndex {
   bool isValidTip() const {
     // can be a valid tip iff there're no next blocks or all next blocks are
     // invalid
-    return pnext.empty() ||
-           std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
-             return !index->isValid();
-           });
+    return isValid() &&
+           (pnext.empty() ||
+            std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+              return !index->isValid();
+            }));
   }
 
   const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
@@ -171,6 +172,10 @@ struct BlockIndex {
         HexStr(getHash()),
         status,
         endorsedBy.size());
+  }
+
+  std::string toShortPrettyString() const {
+    return fmt::sprintf("%s:%d:%s", Block::name(), height, HexStr(getHash()));
   }
 
   void toRaw(WriteStream& stream) const {

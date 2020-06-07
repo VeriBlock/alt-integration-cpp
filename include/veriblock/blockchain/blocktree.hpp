@@ -148,8 +148,8 @@ struct BlockTree : public BaseBlockTree<Block> {
       current->chainWork = getBlockProof(*block);
     }
 
+    // raise validity may return false if block is invalid
     current->raiseValidity(BLOCK_VALID_TREE);
-
     return current;
   }
 
@@ -220,7 +220,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     auto index = this->insertBlockHeader(block);
     VBK_ASSERT(index != nullptr &&
-           "insertBlockHeader should have never returned nullptr");
+               "insertBlockHeader should have never returned nullptr");
 
     if (ret) {
       *ret = index;
@@ -241,8 +241,6 @@ struct BlockTree : public BaseBlockTree<Block> {
                           index_t& indexNew,
                           ValidationState& state,
                           bool isBootstrap = false) override {
-    (void)state;
-
     if (currentBest.tip() == &indexNew) {
       return;
     }

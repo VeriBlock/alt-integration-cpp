@@ -22,12 +22,16 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
 
   // do not even try to do fork resolution with an invalid chain
   if (!indexNew.isValid()) {
+    VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
+                  indexNew.toPrettyString());
     return;
   }
 
   bool ret = false;
   auto currentTip = currentBest.tip();
   if (currentTip == nullptr) {
+    VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
+                  indexNew.toShortPrettyString());
     ret = setTip(indexNew, state, isBootstrap);
     VBK_ASSERT(ret);
     return;
@@ -54,15 +58,13 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
         currentBest, indexNew, state, /* skipSetState=*/false);
   } else if (result < 0) {
     VBK_LOG_DEBUG("Candidate chain won");
-    // other chain won! we already set
+    // other chain won! we already set pop state, so only update tip
     ret = this->setTip(indexNew, state, /* skipSetState=*/true);
     VBK_ASSERT(ret);
   } else {
     VBK_LOG_DEBUG("Active chain won");
     // current chain is better
   }
-
-  (void)ret;
 }
 
 bool VbkBlockTree::setTip(index_t& to,
@@ -174,12 +176,26 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     // adding payloads to an invalid block will not result in a state change
     return state.Invalid(
         block_t::name() + "-bad-chain",
-        fmt::sprintf("Current block=%s is added on top of invalid chain",
+        fmt::sprintf("Containing block=%s is added on top of invalid chain",
                      index->toPrettyString()));
   }
 
   bool isOnActiveChain = activeChain_.contains(index);
   if (isOnActiveChain) {
+    auto tip = activeChain_.tip();
+    VBK_ASSERT(tip != nullptr);
+    auto window = (std::max)(0, tip->height - index->height);
+    if (window >= param_->getHistoryOverwriteLimit()) {
+      return state.Invalid(
+          block_t::name() + "-too-late",
+          fmt::sprintf(
+              "Containing block=%s is too much behind "
+              "of active chain tip. Diff %d is more than allowed %d blocks.",
+              index->toShortPrettyString(),
+              window,
+              param_->getHistoryOverwriteLimit()));
+    }
+
     ValidationState dummy;
     bool ret = setTip(*index->pprev, dummy, false);
     VBK_ASSERT(ret);
@@ -193,8 +209,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   // find all affected tips and do a fork resolution
   auto tips = findValidTips<VbkBlock>(*index);
+  VBK_LOG_DEBUG(
+      "Found %d affected valid tips in %s", tips.size(), block_t::name());
   for (auto* tip : tips) {
-    determineBestChain(activeChain_, *tip, state);
+    this->determineBestChain(activeChain_, *tip, state);
   }
 
   return index->isValid();
@@ -210,8 +228,8 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
   addBlock(btc(), p.transaction.blockOfProof, commands);
 
   // add endorsement
-  auto e = BtcEndorsement::fromContainerPtr(p);
-  auto cmd = std::make_shared<AddBtcEndorsement>(btc(), *this, std::move(e));
+  auto e = VbkEndorsement::fromContainerPtr(p);
+  auto cmd = std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
   commands.push_back(std::move(cmd));
 }
 
