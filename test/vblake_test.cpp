@@ -8,7 +8,9 @@
 
 #include <vector>
 
-#include "util/literals.hpp"
+#include "veriblock/literals.hpp"
+
+using namespace altintegration;
 
 struct TestCase {
   std::vector<uint8_t> message;

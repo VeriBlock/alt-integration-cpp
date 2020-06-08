@@ -3,12 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/entities/output.hpp"
+
 #include <gtest/gtest.h>
 
 #include <string>
 
-#include "util/literals.hpp"
-#include "veriblock/entities/output.hpp"
+#include "veriblock/literals.hpp"
 
 using namespace altintegration;
 

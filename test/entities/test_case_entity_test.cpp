@@ -8,8 +8,8 @@
 #include <veriblock/entities/test_case_entity.hpp>
 
 #include "util/alt_chain_params_regtest.hpp"
-#include "util/literals.hpp"
 #include "util/test_utils.hpp"
+#include "veriblock/literals.hpp"
 
 using namespace altintegration;
 

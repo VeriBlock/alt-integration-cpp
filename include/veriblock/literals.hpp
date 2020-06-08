@@ -7,8 +7,9 @@
 #define ALT_INTEGRATION_LITERAPS_HPP
 
 #include <vector>
-
 #include <veriblock/strutil.hpp>
+
+namespace altintegration {
 
 inline std::vector<uint8_t> operator""_unhex(const char *str, size_t size) {
   std::string hex{str, str + size};
@@ -18,5 +19,7 @@ inline std::vector<uint8_t> operator""_unhex(const char *str, size_t size) {
 inline std::vector<uint8_t> operator""_v(const char *str, size_t size) {
   return std::vector<uint8_t>{str, str + size};
 }
+
+}  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_LITERAPS_HPP
