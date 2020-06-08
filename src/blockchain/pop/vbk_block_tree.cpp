@@ -135,7 +135,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
     VBK_ASSERT(ret);
   }
 
-  for (const auto& p : make_reversed(payloads.begin(), payloads.end())) {
+  for (const auto& p : reverse_iterate(payloads.begin(), payloads.end())) {
     auto it = std::find(index->payloadIds.begin(), index->payloadIds.end(), p);
     if (it != index->payloadIds.end()) {
       index->payloadIds.erase(it);
@@ -202,8 +202,16 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   for (const auto& p : payloads) {
-    storage_.payloads().put(p);
     auto pid = p.getId();
+    if (std::find(index->payloadIds.begin(), index->payloadIds.end(), pid) !=
+        index->payloadIds.end()) {
+      return state.Invalid(
+          block_t::name() + "-duplicate-payloads",
+          fmt::sprintf("Containing block=%s already contains payload %s.",
+                       index->toPrettyString(),
+                       pid.toHex()));
+    }
+    storage_.payloads().put(p);
     index->payloadIds.push_back(pid);
   }
 

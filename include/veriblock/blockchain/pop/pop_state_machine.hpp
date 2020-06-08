@@ -71,7 +71,7 @@ struct PopStateMachine {
       ed_.payloadsToCommands(payload, commands);
 
       VBK_LOG_DEBUG("Unapplying payload %s from block %s",
-                    payload.id.toHex(),
+                    payload.getId().toHex(),
                     index.toShortPrettyString());
       std::for_each(commands.rbegin(),
                     commands.rend(),

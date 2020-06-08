@@ -47,9 +47,10 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   auto* endorsedBlockIndex = alttree.getBlockIndex(endorsement1.endorsedHash);
   auto* containingBlockIndex1 =
       alttree.getBlockIndex(endorsement1.containingHash);
-  EXPECT_TRUE(
-      containingBlockIndex1->containingEndorsements.find(endorsement1.id) !=
-      containingBlockIndex1->containingEndorsements.end());
+  EXPECT_TRUE(std::find(containingBlockIndex1->payloadIds.begin(),
+                        containingBlockIndex1->payloadIds.end(),
+                        endorsement1.parentId) !=
+              containingBlockIndex1->payloadIds.end());
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   // generate endorsements
@@ -72,9 +73,11 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   auto* containingBlockIndex2 =
       alttree.getBlockIndex(endorsement2.containingHash);
-  EXPECT_TRUE(
-      containingBlockIndex2->containingEndorsements.find(endorsement2.id) !=
-      containingBlockIndex2->containingEndorsements.end());
+
+  EXPECT_TRUE(std::find(containingBlockIndex2->payloadIds.begin(),
+                        containingBlockIndex2->payloadIds.end(),
+                        endorsement2.parentId) !=
+              containingBlockIndex2->payloadIds.end());
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   tx = popminer->createVbkTxEndorsingAltBlock(
@@ -95,9 +98,10 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   endorsedBlockIndex = alttree.getBlockIndex(endorsement3.endorsedHash);
   auto* containingBlockIndex3 =
       alttree.getBlockIndex(endorsement3.containingHash);
-  EXPECT_TRUE(
-      containingBlockIndex3->containingEndorsements.find(endorsement3.id) !=
-      containingBlockIndex3->containingEndorsements.end());
+  EXPECT_TRUE(std::find(containingBlockIndex3->payloadIds.begin(),
+                        containingBlockIndex3->payloadIds.end(),
+                        endorsement3.parentId) !=
+              containingBlockIndex3->payloadIds.end());
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   // remove block
@@ -105,9 +109,10 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   alttree.removeSubtree(removeBlock.getHash());
 
   containingBlockIndex3 = alttree.getBlockIndex(endorsement3.containingHash);
-  EXPECT_TRUE(
-      containingBlockIndex3->containingEndorsements.find(endorsement3.id) !=
-      containingBlockIndex3->containingEndorsements.end());
+  EXPECT_TRUE(std::find(containingBlockIndex3->payloadIds.begin(),
+                        containingBlockIndex3->payloadIds.end(),
+                        endorsement3.parentId) !=
+              containingBlockIndex3->payloadIds.end());
 
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);

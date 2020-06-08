@@ -84,7 +84,7 @@ class PopStorage {
         bool ret = endorsementsVtb_->payloads().get(pid, &payloads);
         if (!ret) continue;
 
-        auto e = BtcEndorsement::fromContainerPtr(payloads);
+        auto e = VbkEndorsement::fromContainerPtr(payloads);
         auto *endorsed = tree.getBlockIndex(payloads.getEndorsedBlock().getHash());
         endorsed->endorsedBy.push_back(e);
       }

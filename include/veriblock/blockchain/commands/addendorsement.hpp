@@ -75,7 +75,7 @@ struct AddEndorsement : public Command {
                        HexStr(e_->blockOfProof)));
     }
 
-    auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
+    /*auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
     if (duplicate) {
       // found duplicate
       if (endorsement_t::checkForDuplicates()) {
@@ -88,13 +88,10 @@ struct AddEndorsement : public Command {
                          duplicate->toShortPrettyString()));
       } else {
         // this is a VTB duplicate
-        auto it = duplicate->containingEndorsements.find(e_->id);
-        VBK_ASSERT(it != duplicate->containingEndorsements.end());
-
-        it->second->refs++;
+        e_->refs++;
         return true;
       }
-    }
+    }*/
 
     endorsed->endorsedBy.push_back(e_);
     return true;
@@ -113,16 +110,12 @@ struct AddEndorsement : public Command {
         "failed to roll back AddEndorsement: the endorsed block does not "
         "exist");
 
-    auto endorsement_it = containing->containingEndorsements.find(e_->id);
-    VBK_ASSERT(endorsement_it != containing->containingEndorsements.end());
-
-    auto& refs = endorsement_it->second->refs;
-    if (refs > 0) {
-      refs--;
+    /*if (e_->refs > 0) {
+      e_->refs--;
       return;
-    }
+    }*/
 
-    VBK_ASSERT(refs == 0);
+    VBK_ASSERT(e_->refs == 0);
 
     // erase endorsedBy
     {
