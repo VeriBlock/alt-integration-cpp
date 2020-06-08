@@ -170,6 +170,9 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
     return {};
   }
 
+  bool res = setState(*index, state);
+  VBK_ASSERT(res);
+
   auto* endorsedBlock = index->getAncestorBlocksBehind(
       alt_config_->getEndorsementSettlementInterval());
   if (endorsedBlock == nullptr) {
