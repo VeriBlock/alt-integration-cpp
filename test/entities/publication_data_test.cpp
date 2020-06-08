@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include "util/literals.hpp"
+#include "veriblock/literals.hpp"
 
 using namespace altintegration;
 

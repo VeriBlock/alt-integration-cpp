@@ -7,11 +7,11 @@
 
 #include <gtest/gtest.h>
 
-#include "util/literals.hpp"
+#include "util/alt_chain_params_regtest.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
-#include "util/alt_chain_params_regtest.hpp"
+#include "veriblock/literals.hpp"
 
 using namespace altintegration;
 

@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "util/literals.hpp"
+#include "veriblock/literals.hpp"
 
 struct TestCase {
   std::vector<uint8_t> message;

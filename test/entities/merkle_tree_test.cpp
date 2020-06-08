@@ -8,7 +8,7 @@
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/stateless_validation.hpp>
 
-#include "util/literals.hpp"
+#include "veriblock/literals.hpp"
 
 using namespace altintegration;
 

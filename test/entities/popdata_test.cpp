@@ -7,8 +7,8 @@
 
 #include <veriblock/entities/popdata.hpp>
 
-#include "util/literals.hpp"
 #include "util/test_utils.hpp"
+#include "veriblock/literals.hpp"
 
 using namespace altintegration;
 
