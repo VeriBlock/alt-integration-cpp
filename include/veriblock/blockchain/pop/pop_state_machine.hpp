@@ -29,7 +29,7 @@ struct PopStateMachine {
 
   bool applyBlock(index_t& index, ValidationState& state) {
     std::vector<CommandPtr> executed;
-    for (auto it = index.payloadIds.rbegin(); it != index.payloadIds.rend();
+    for (auto it = index.payloadIds.begin(); it != index.payloadIds.end();
          ++it) {
       payloads_t payload{};
       bool ret = ed_.getStorage().payloads().get(*it, &payload);
