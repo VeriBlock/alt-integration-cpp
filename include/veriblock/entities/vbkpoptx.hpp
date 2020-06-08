@@ -73,6 +73,26 @@ struct VbkPopTx {
   hash_t getHash() const;
 };
 
+template <typename JsonValue>
+JsonValue ToJSON(const VbkPopTx& tx) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
+  if (tx.networkOrType.hasNetworkByte) {
+    json::putIntKV(obj, "networkByte", tx.networkOrType.networkByte);
+  } else {
+    json::putNullKV(obj, "networkByte");
+  }
+  json::putIntKV(obj, "type", tx.networkOrType.typeId);
+  json::putStringKV(obj, "address", tx.address.toString());
+  json::putKV(obj, "publishedBlock", ToJSON<JsonValue>(tx.publishedBlock));
+  json::putStringKV(obj, "bitcoinTransaction", tx.bitcoinTransaction.toHex());
+  json::putKV(obj, "merklePath", ToJSON<JsonValue>(tx.merklePath));
+  json::putKV(obj, "blockOfProof", ToJSON<JsonValue>(tx.blockOfProof));
+  json::putArrayKV(obj, "blockOfProofContext", tx.blockOfProofContext);
+  json::putStringKV(obj, "signature", HexStr(tx.signature));
+  json::putStringKV(obj, "publicKey", HexStr(tx.publicKey));
+  return obj;
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKPOPTX_HPP_

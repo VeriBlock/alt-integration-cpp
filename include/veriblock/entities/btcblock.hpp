@@ -12,8 +12,8 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/fmt.hpp"
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/fmt.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
@@ -116,6 +116,19 @@ struct BtcBlock {
 
   std::string toPrettyString() const;
 };
+
+template <typename JsonValue>
+JsonValue ToJSON(const BtcBlock& b) {
+  JsonValue object = json::makeEmptyObject<JsonValue>();
+  json::putStringKV(object, "hash", HexStr(b.getHash()));
+  json::putIntKV(object, "version", b.version);
+  json::putStringKV(object, "previousBlock", HexStr(b.previousBlock));
+  json::putStringKV(object, "merkleRoot", HexStr(b.merkleRoot));
+  json::putIntKV(object, "timestamp", b.timestamp);
+  json::putIntKV(object, "bits", b.bits);
+  json::putIntKV(object, "nonce", b.nonce);
+  return object;
+}
 
 }  // namespace altintegration
 

@@ -46,6 +46,16 @@ struct VbkMerklePath {
   uint128 calculateMerkleRoot() const;
 };
 
+template <typename JsonValue>
+JsonValue ToJSON(const VbkMerklePath& mp) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putIntKV(obj, "treeIndex", mp.treeIndex);
+  json::putIntKV(obj, "index", mp.index);
+  json::putStringKV(obj, "subject", mp.subject.toHex());
+  json::putArrayKV(obj, "layers", mp.layers);
+  return obj;
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBK_MERKLE_PATH_HPP_

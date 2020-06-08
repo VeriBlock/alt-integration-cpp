@@ -10,11 +10,11 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/fmt.hpp"
 #include "veriblock/consts.hpp"
 #include "veriblock/entities/vbk_merkle_path.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
+#include "veriblock/fmt.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
@@ -79,6 +79,16 @@ struct ATV {
 
   friend bool operator!=(const ATV& a, const ATV& b) { return !(a == b); }
 };
+
+template <typename JsonValue>
+JsonValue ToJSON(const ATV& atv) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putKV(obj, "transaction", ToJSON<JsonValue>(atv.transaction));
+  json::putKV(obj, "merklePath", ToJSON<JsonValue>(atv.merklePath));
+  json::putKV(obj, "containingBlock", ToJSON<JsonValue>(atv.containingBlock));
+  json::putArrayKV(obj, "context", atv.context);
+  return obj;
+}
 
 }  // namespace altintegration
 

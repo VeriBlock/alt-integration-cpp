@@ -94,6 +94,15 @@ struct AltPayloads {
   }
 };
 
+template <typename JsonValue>
+JsonValue ToJSON(const AltPayloads& p) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putKV(obj, "endorsed", ToJSON<JsonValue>(p.endorsed));
+  json::putKV(obj, "containingBlock", ToJSON<JsonValue>(p.containingBlock));
+  json::putKV(obj, "popData", ToJSON<JsonValue>(p.popData));
+  return obj;
+}
+
 struct DummyPayloads {
   using id_t = bool;
 
