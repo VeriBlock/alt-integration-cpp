@@ -10,6 +10,8 @@
 
 #include "veriblock/literals.hpp"
 
+using namespace altintegration;
+
 struct TestCase {
   std::vector<uint8_t> message;
   std::vector<uint8_t> hash;

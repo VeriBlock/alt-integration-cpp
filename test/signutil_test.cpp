@@ -9,6 +9,8 @@
 
 #include "veriblock/literals.hpp"
 
+using namespace altintegration;
+
 static auto defaultPrivateKeyVbk =
     "303e020100301006072a8648ce3d020106052b8104000a0427302502010104203abf83fa470423d4788a760ef6b7aae1dacf98784b0646057a0adca24e522acb"_unhex;
 

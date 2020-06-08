@@ -13,6 +13,8 @@
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
 
+using namespace altintegration;
+
 static const auto defaultPrivateKey =
     "aa4eca67cf7573eaedab283fb5f7c638ec0a9e99583a27288a07e5533b4d6d75"_unhex;
 static const auto defaultMessage =
