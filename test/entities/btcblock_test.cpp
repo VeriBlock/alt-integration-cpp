@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/entities/btcblock.hpp"
+
 #include <gtest/gtest.h>
 
-#include "util/literals.hpp"
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/entities/btcblock.hpp"
+#include "veriblock/literals.hpp"
 
 using namespace altintegration;
 
