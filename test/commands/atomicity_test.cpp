@@ -34,18 +34,18 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
       std::make_shared<AddVbkEndorsement>(popminer->btc(), popminer->vbk(), e);
 
   // before cmd execution we have 0 endorsements
-  ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk5->payloadIds.size(), 0);
   ASSERT_EQ(vbk5->endorsedBy.size(), 0);
-  ASSERT_EQ(vbk10->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk10->payloadIds.size(), 0);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
 
   // execute command
   ASSERT_TRUE(cmd->Execute(state)) << state.toString();
 
   // verify that state has been changed
-  ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk5->payloadIds.size(), 0);
   ASSERT_EQ(vbk5->endorsedBy.size(), 1);
-  ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
+  ASSERT_EQ(vbk10->payloadIds.size(), 1);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
   ASSERT_EQ(e->refs, 0);
 
@@ -56,18 +56,18 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
     ASSERT_TRUE(cmd->Execute(state));
 
     // verify that state has been changed
-    ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+    ASSERT_EQ(vbk5->payloadIds.size(), 0);
     ASSERT_EQ(vbk5->endorsedBy.size(), 1);
-    ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
+    ASSERT_EQ(vbk10->payloadIds.size(), 1);
     ASSERT_EQ(vbk10->endorsedBy.size(), 0);
     ASSERT_EQ(e->refs, 1);
 
     // unexecute command first time (removes duplicate)
     ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
-    ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+    ASSERT_EQ(vbk5->payloadIds.size(), 0);
     ASSERT_EQ(vbk5->endorsedBy.size(), 1);
-    ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
+    ASSERT_EQ(vbk10->payloadIds.size(), 1);
     ASSERT_EQ(vbk10->endorsedBy.size(), 0);
     ASSERT_EQ(e->refs, 0);  // now refs == 0
   }
@@ -76,9 +76,9 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
   // endorsement is removed
-  ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk5->payloadIds.size(), 0);
   ASSERT_EQ(vbk5->endorsedBy.size(), 0);
-  ASSERT_EQ(vbk10->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk10->payloadIds.size(), 0);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
 
   ASSERT_DEATH(cmd->UnExecute(), "");
@@ -110,18 +110,18 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   auto cmd = std::make_shared<AddAltEndorsement>(popminer->vbk(), alttree, e);
 
   // before cmd execution we have 0 endorsements
-  ASSERT_EQ(alt5->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt5->payloadIds.size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 0);
-  ASSERT_EQ(alt10->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt10->payloadIds.size(), 0);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
 
   // execute command
   ASSERT_TRUE(cmd->Execute(state)) << state.toString();
 
   // verify that state has been changed
-  ASSERT_EQ(alt5->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt5->payloadIds.size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
-  ASSERT_EQ(alt10->containingEndorsements.size(), 1);
+  ASSERT_EQ(alt10->payloadIds.size(), 1);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
   ASSERT_EQ(e->refs, 0);
 
@@ -129,9 +129,9 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   ASSERT_FALSE(cmd->Execute(state));
 
   // verify that state has NOT been changed
-  ASSERT_EQ(alt5->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt5->payloadIds.size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
-  ASSERT_EQ(alt10->containingEndorsements.size(), 1);
+  ASSERT_EQ(alt10->payloadIds.size(), 1);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
   ASSERT_EQ(e->refs, 0);
 
@@ -139,9 +139,10 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
   // endorsement is removed
-  ASSERT_EQ(alt5->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt5->payloadIds.size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 0);
-  ASSERT_EQ(alt10->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt10->payloadIds
+    .size(), 0);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
 
   ASSERT_DEATH(cmd->UnExecute(), "");
@@ -186,11 +187,14 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   auto altvbkcontaining = alttree.vbk().getBlockIndex(vtb1.containingBlock.getHash());
   ASSERT_TRUE(altvbkcontaining);
 
-  ASSERT_EQ(altvbkcontaining->commands.size(), 0);
+  std::vector<CommandPtr> commands{};
+  alttree.vbk().payloadsToCommands(vtb1, commands);
+  ASSERT_EQ(commands.size(), 0);
 
   // execute that AddVTB1
   ASSERT_TRUE(cmd1->Execute(state)) << state.toString();
 
+  alttree.vbk().payloadsToCommands(vtb1, commands);
   ASSERT_EQ(altvbkcontaining->commands.size(), 1);
   ASSERT_EQ(altvbkcontaining->commands.at(0).id, vtb1.getId());
 

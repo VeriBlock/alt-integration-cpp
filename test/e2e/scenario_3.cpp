@@ -125,10 +125,13 @@ TEST_F(Scenario3, scenario_3) {
       alttree.vbk().getBlockIndex(vtbs1[1].containingBlock.getHash());
 
   // check endorsements
-  EXPECT_FALSE(containingVbkBlock->containingEndorsements.count(
-      VbkEndorsement::getId(vtbs1[0])));
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
-      VbkEndorsement::getId(vtbs1[1])));
+  EXPECT_FALSE(std::find(containingVbkBlock->payloadIds.begin(),
+            containingVbkBlock->payloadIds.end(),
+            vtbs1[0].getId()) != containingVbkBlock->payloadIds.end());
+  EXPECT_TRUE(std::find(containingVbkBlock->payloadIds.begin(),
+                         containingVbkBlock->payloadIds.end(),
+                         vtbs1[1].getId()) !=
+               containingVbkBlock->payloadIds.end());
 
   // Step 3
   containingBlock = generateNextBlock(*chain.rbegin());
@@ -177,10 +180,14 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
-      VbkEndorsement::getId(vtbs1[0])));
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
-      VbkEndorsement::getId(vtbs1[1])));
+  EXPECT_TRUE(std::find(containingVbkBlock->payloadIds.begin(),
+                         containingVbkBlock->payloadIds.end(),
+                         vtbs1[0].getId()) !=
+               containingVbkBlock->payloadIds.end());
+  EXPECT_TRUE(std::find(containingVbkBlock->payloadIds.begin(),
+                        containingVbkBlock->payloadIds.end(),
+                        vtbs1[1].getId()) !=
+              containingVbkBlock->payloadIds.end());
 
   EXPECT_EQ(*alttree.vbk().getBestChain().tip(), *vbkTip1);
 }
