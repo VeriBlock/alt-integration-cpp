@@ -8,6 +8,7 @@
 
 #include "veriblock/entities/address.hpp"
 #include "veriblock/entities/coin.hpp"
+#include "veriblock/json.hpp"
 
 namespace altintegration {
 
@@ -40,6 +41,14 @@ struct Output {
    */
   void toVbkEncoding(WriteStream& stream) const;
 };
+
+template <typename JsonValue>
+JsonValue ToJSON(const Output& o) {
+  JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putStringKV(obj, "address", o.address.toString());
+  json::putIntKV(obj, "coin", o.coin.units);
+  return obj;
+}
 
 }  // namespace altintegration
 

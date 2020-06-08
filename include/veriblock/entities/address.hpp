@@ -96,6 +96,11 @@ struct Address {
   std::string m_Address{};
 };
 
+template <typename Value>
+inline Value ToJSON(const Address& addr) {
+  return ToJSON<Value>(addr.toString());
+}
+
 }  // namespace altintegration
 
 #endif

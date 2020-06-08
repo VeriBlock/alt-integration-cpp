@@ -11,4 +11,6 @@
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
+#include <veriblock/json.hpp>
+
 #endif  // VERIBLOCK_POP_CPP_FMT_HPP
