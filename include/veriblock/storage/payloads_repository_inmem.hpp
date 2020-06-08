@@ -6,21 +6,16 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_INMEM_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_INMEM_HPP_
 
+#include <string>
 #include <unordered_map>
-
 #include "veriblock/storage/payloads_repository.hpp"
 
 namespace altintegration {
 
 template <typename Payloads>
 struct PayloadsCursorInmem : public Cursor<typename Payloads::id_t, Payloads> {
-  //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! payloads id type
-  using payloads_id = typename Payloads::id_t;
-
-  using umap = std::unordered_map<payloads_id, stored_payloads_t>;
-  using pair = std::pair<payloads_id, stored_payloads_t>;
+  using umap = std::unordered_map<typename Payloads::id_t, Payloads>;
+  using pair = std::pair<typename Payloads::id_t, Payloads>;
 
   PayloadsCursorInmem(const umap& map) {
     for (const pair& m : map) {
@@ -37,8 +32,8 @@ struct PayloadsCursorInmem : public Cursor<typename Payloads::id_t, Payloads> {
       _it = _etl.cbegin();
     }
   }
-  void seek(const payloads_id& key) override {
-    _it = std::find_if(_etl.cbegin(), _etl.cend(), [&key](const pair& p) {
+  void seek(const typename Payloads::id_t& key) override {
+   _it = std::find_if(_etl.cbegin(), _etl.cend(), [&key](const pair& p) {
       return p.first == key;
     });
   }
@@ -61,14 +56,14 @@ struct PayloadsCursorInmem : public Cursor<typename Payloads::id_t, Payloads> {
       --_it;
     }
   }
-  payloads_id key() const override {
+  typename Payloads::id_t key() const override {
     if (!isValid()) {
       throw std::out_of_range("invalid cursor");
     }
 
     return _it->first;
   }
-  stored_payloads_t value() const override {
+  Payloads value() const override {
     if (!isValid()) {
       throw std::out_of_range("invalid cursor");
     }
@@ -82,131 +77,46 @@ struct PayloadsCursorInmem : public Cursor<typename Payloads::id_t, Payloads> {
 };
 
 template <typename Payloads>
-struct PayloadsRepositoryInmem;
-
-template <typename Payloads>
-struct PayloadsWriteBatchInmem : public PayloadsWriteBatch<Payloads> {
-  //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! payloads id type
-  using payloads_id = typename Payloads::id_t;
-
-  using pair = std::pair<payloads_id, stored_payloads_t>;
-
-  enum class Operation { PUT, REMOVE_BY_HASH };
-
-  ~PayloadsWriteBatchInmem() override = default;
-
-  PayloadsWriteBatchInmem(PayloadsRepositoryInmem<stored_payloads_t>* repo)
-      : _repo(repo) {}
-
-  void put(const stored_payloads_t& payloads) override {
-    _ops.push_back(Operation::PUT);
-    _puts.push_back(pair(payloads.getId(), payloads));
-  }
-
-  void removeByHash(const payloads_id& id) override {
-    _ops.push_back(Operation::REMOVE_BY_HASH);
-    _removes.push_back(id);
-  }
-
-  void clear() override {
-    _ops.clear();
-    _removes.clear();
-    _puts.clear();
-  }
-
-  void commit() override {
-    auto puts_begin = this->_puts.begin();
-    auto removes_begin = this->_removes.begin();
-    for (const auto& op : this->_ops) {
-      switch (op) {
-        case PayloadsWriteBatchInmem<stored_payloads_t>::Operation::PUT: {
-          _repo->put(puts_begin->second);
-          ++puts_begin;
-          break;
-        }
-        case PayloadsWriteBatchInmem<
-            stored_payloads_t>::Operation::REMOVE_BY_HASH: {
-          _repo->removeByHash(*removes_begin++);
-          break;
-        }
-        default:
-          throw std::logic_error(
-              "unknown enum value - this should never happen");
-      }
-    }
-    clear();
-  }
-
- private:
-  PayloadsRepositoryInmem<stored_payloads_t>* _repo;
-  std::vector<pair> _puts;
-  std::vector<payloads_id> _removes;
-  std::vector<Operation> _ops;
-};
-
-template <typename Payloads>
 struct PayloadsRepositoryInmem : public PayloadsRepository<Payloads> {
-  //! stored payloads type
-  using stored_payloads_t = Payloads;
-  //! payloads id type
-  using payloads_id = typename Payloads::id_t;
-  //! iterator type
-  using cursor_t = Cursor<payloads_id, stored_payloads_t>;
+  using payloads_t = Payloads;
+  using eid_t = typename Payloads::id_t;
+  using cursor_t = Cursor<eid_t, Payloads>;
 
   ~PayloadsRepositoryInmem() override = default;
 
-  void put(const stored_payloads_t& payloads) override {
-    payloads_rep_[payloads.getId()] = payloads;
+  bool remove(const eid_t& id) override { return p_.erase(id) == 1; }
+
+  bool put(const payloads_t& payload) override {
+    auto id = payload.getId();
+    bool res = p_.find(id) != p_.end();
+    p_[id] = payload;
+    return res;
   }
 
-  bool get(const payloads_id& id, stored_payloads_t* out) const override {
-    auto it = payloads_rep_.find(id);
-    if (it == payloads_rep_.end()) {
-      return {};
+  bool get(const eid_t& id, payloads_t* payload) const override {
+    auto it = p_.find(id);
+    if (it == p_.end()) {
+      return false;
     }
-
-    if (out != nullptr) {
-      *out = it->second;
+    if (payload != nullptr) {
+      *payload = p_.at(id);
     }
-
     return true;
   }
 
-  size_t get(const std::vector<payloads_id>& ids,
-             std::vector<stored_payloads_t>* out) const override {
-    size_t totalFound = 0;
-    for (const auto& id : ids) {
-      stored_payloads_t payloads;
-      if (get(id, &payloads)) {
-        ++totalFound;
-        out->push_back(payloads);
-      }
-    }
-
-    return totalFound;
+  std::unique_ptr<PayloadsWriteBatch<Payloads>> newBatch() override {
+    return nullptr;
   }
 
-  void removeByHash(const payloads_id& id) override { payloads_rep_.erase(id); }
-
-  void clear() override { payloads_rep_.clear(); }
-
-  std::unique_ptr<PayloadsWriteBatch<stored_payloads_t>> newBatch() override {
-    return std::unique_ptr<PayloadsWriteBatchInmem<stored_payloads_t>>(
-        new PayloadsWriteBatchInmem<stored_payloads_t>(this));
-  }
-
-  std::shared_ptr<cursor_t> newCursor() override {
-    return std::make_shared<PayloadsCursorInmem<stored_payloads_t>>(
-        payloads_rep_);
+  std::shared_ptr<cursor_t> newCursor() const override {
+    return std::make_shared<PayloadsCursorInmem<Payloads>>(p_);
   }
 
  private:
-  // [payloads id] => [payloads]
-  std::unordered_map<payloads_id, stored_payloads_t> payloads_rep_;
+  // [endorsement id] => payload
+  std::unordered_map<eid_t, payloads_t> p_;
 };
 
 }  // namespace altintegration
 
-#endif
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_INMEM_HPP_

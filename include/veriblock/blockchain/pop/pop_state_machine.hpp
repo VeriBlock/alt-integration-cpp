@@ -32,17 +32,15 @@ struct PopStateMachine {
   // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
     std::vector<CommandPtr> executed;
-
     // even if the block is marked as invalid, we still try to apply it
-
     for (auto& cg : index.commands) {
       VBK_LOG_DEBUG("Applying payload %s from block %s",
-                    cg.id.toHex(),
+                    it->getId().toHex(),
                     index.toShortPrettyString());
-      for (auto& cmd : cg) {
+      for (auto& cmd : commands) {
         if (!cmd->Execute(state)) {
           // invalidate command group
-          cg.valid = false;
+          ed_.setPayloadValidity(it->getId(), false);
           VBK_LOG_ERROR("Invalid %s command in block %s: %s",
                         index_t::block_t::name(),
                         index.toPrettyString(),
@@ -66,7 +64,7 @@ struct PopStateMachine {
       }  // end for
 
       // re-validate command group
-      cg.valid = true;
+      ed_.setPayloadValidity(it->getId(), true);
     }  // end for
 
     // we successfully applied the block
@@ -84,7 +82,7 @@ struct PopStateMachine {
 
     for (auto& group : reverse_iterate(v)) {
       VBK_LOG_DEBUG("Unapplying payload %s from block %s",
-                    group.id.toHex(),
+                    it->getId().toHex(),
                     index.toShortPrettyString());
       for (auto& cmd : reverse_iterate(group)) {
         cmd->UnExecute();

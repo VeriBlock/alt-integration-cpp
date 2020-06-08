@@ -16,7 +16,6 @@
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/context.hpp>
 #include <veriblock/stateless_validation.hpp>
-#include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
 #include "veriblock/fmt.hpp"
@@ -112,6 +111,14 @@ struct BlockTree : public BaseBlockTree<Block> {
   bool acceptBlock(const std::shared_ptr<block_t>& block,
                    ValidationState& state) {
     return acceptBlock(block, state, true);
+  }
+
+  index_t* insertBlock(const block_t& block) {
+    return insertBlock(std::make_shared<block_t>(block));
+  }
+
+  index_t* insertBlock(const std::shared_ptr<block_t>& block) {
+    return insertBlockHeader(block);
   }
 
   std::string toPrettyString(size_t level = 0) const {

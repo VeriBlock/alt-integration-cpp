@@ -10,7 +10,6 @@
 #include <unordered_set>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/keystone_util.hpp>
-#include <veriblock/storage/block_repository.hpp>
 
 namespace altintegration {
 
@@ -164,7 +163,7 @@ struct Chain {
                              workBlock && workBlock->height >= startHeight_ &&
                              e.endorsedHash != workBlock->getHash();
          count++) {
-      if (workBlock->containingEndorsements.count(e.id)) {
+      if (workBlock->endorsementIds.count(e.id)) {
         return workBlock;
       }
       workBlock = workBlock->pprev;

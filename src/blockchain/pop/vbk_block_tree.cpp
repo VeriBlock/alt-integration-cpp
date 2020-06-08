@@ -120,9 +120,9 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 void VbkBlockTree::removePayloads(const block_t& block,
-                                  const std::vector<payloads_t>& payloads) {
+                                  const std::vector<pid_t>& pids) {
   VBK_LOG_DEBUG(
-      "remove %d payloads from %s", payloads.size(), block.toPrettyString());
+      "remove %d payloads from %s", pids.size(), block.toPrettyString());
   auto hash = block.getHash();
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
@@ -136,7 +136,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
     return;
   }
 
-  if (payloads.empty()) {
+  if (pids.empty()) {
     return;
   }
 
@@ -165,16 +165,11 @@ void VbkBlockTree::removePayloads(const block_t& block,
       // not found
       continue;
     }
-
-    // if this payloads invalidated subtree, we have to re-validate it again
-    if (!it->valid) {
-      revalidateSubtree(*index, BLOCK_FAILED_POP, /*do fr=*/false);
+    auto it = std::find(
+        index->payloadIds.begin(), index->payloadIds.end(), p.getId());
+    if (it != index->payloadIds.end()) {
+      index->payloadIds.erase(it);
     }
-
-    // TODO(warchant): fix inefficient erase (does reallocation for every
-    // payloads item)
-    auto toRemove = --(it.base());
-    c.erase(toRemove);
   }
 
   // find all affected tips and do a fork resolution
@@ -236,12 +231,16 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     VBK_ASSERT(ret);
   }
 
-  auto& c = index->commands;
   for (const auto& p : payloads) {
-    c.emplace_back();
-    auto& g = c.back();
-    g.id = p.getId();
-    payloadsToCommands(p, g.commands);
+    auto pid = p.getId();
+    if (isExistingPid(*index, pid)) {
+      return state.Invalid(
+          block_t::name() + "-duplicate-payloads",
+          fmt::sprintf("Containing block=%s already contains payload %s.",
+                       index->toPrettyString(),
+                       pid.toHex()));
+    }
+    addPayloadToStorage(*index, p);
   }
 
   // find all affected tips and do a fork resolution
@@ -275,17 +274,42 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
-bool VbkBlockTree::setState(const VbkBlock::hash_t& block,
-                            ValidationState& state) {
-  auto* index = getBlockIndex(block);
-  if (!index) {
-    return false;
+std::vector<VbkBlockTree::payloads_t> VbkBlockTree::getPayloadsByIndex(
+    const index_t& blockIndex, const std::vector<pid_t>& pids) {
+  std::vector<VbkBlockTree::payloads_t> out{};
+  for (const auto& pid : pids) {
+    if (!isExistingPid(blockIndex, pid)) continue;
+    payloads_t payloadsVal;
+    bool ret = storage_.getPayloadsById(pid, &payloadsVal);
+    if (!ret) continue;
+    out.push_back(payloadsVal);
   }
-  return this->setTip(*index, state);
+  return out;
+}
+
+void VbkBlockTree::addPayloadToStorage(index_t& blockIndex,
+                                       const payloads_t& payload) {
+  storage_.payloads().put(payload);
+  if (isExistingPid(blockIndex, payload.getId())) return;
+  blockIndex.payloadIds.push_back(payload.getId());
+}
+
+bool VbkBlockTree::isExistingPid(const index_t& blockIndex, const pid_t& pid) {
+  return std::find(blockIndex.payloadIds.begin(),
+                   blockIndex.payloadIds.end(),
+                   pid) != blockIndex.payloadIds.end();
+}
+
+void VbkBlockTree::setPayloadValidity(const pid_t& pid, bool valid) {
+  payloads_t payloadsVal;
+  bool ret = storage_.getPayloadsById(pid, &payloadsVal);
+  if (!ret) return;
+  payloadsVal.valid = valid;
+  storage_.payloads().put(payloadsVal);
 }
 
 void VbkBlockTree::removePayloads(const Blob<24>& hash,
-                                  const std::vector<payloads_t>& payloads) {
+                                  const std::vector<pid_t>& pids) {
   auto index = base::getBlockIndex(hash);
   if (!index) {
     // silently ignore...
@@ -296,7 +320,7 @@ void VbkBlockTree::removePayloads(const Blob<24>& hash,
     return;
   }
 
-  removePayloads(*index->header, payloads);
+  removePayloads(*index->header, pids);
 }
 
 }  // namespace altintegration

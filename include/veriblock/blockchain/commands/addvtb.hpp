@@ -15,6 +15,7 @@
 namespace altintegration {
 
 struct AddVTB : public Command {
+  using block_t = VbkBlock;
   ~AddVTB() override = default;
 
   AddVTB(AltTree& tree, const VTB& vtb) : tree_(&tree), vtb_(vtb) {
@@ -25,11 +26,28 @@ struct AddVTB : public Command {
     // add commands to VBK containing block
     auto containing = vtb_.containingBlock.getHash();
     auto& vbk = tree_->vbk();
+    auto* index = vbk.getBlockIndex(containing);
+    if (!index) {
+      return state.Invalid(
+          block_t::name() + "-bad-containing",
+          "Can not find VTB containing block: " + containing.toHex());
+    }
+
+    // duplicates not allowed
+    if (std::find(index->payloadIds.begin(),
+                  index->payloadIds.end(),
+                  vtb_.getId()) != index->payloadIds.end()) {
+      return state.Invalid(
+          block_t::name() + "-duplicate-payloads",
+          fmt::sprintf("Containing block=%s already contains payload %s.",
+                       index->toPrettyString(),
+                       vtb_.getId().toHex()));
+    }
 
     // addPayloads changes state. if we can't add payloads, immediately clear
     // all side effects
     if (!vbk.addPayloads(containing, {vtb_}, state)) {
-      vbk.removePayloads(containing, {vtb_});
+      vbk.removePayloads(containing, {vtb_.getId()});
       return false;
     }
 
@@ -43,7 +61,7 @@ struct AddVTB : public Command {
     VBK_ASSERT(index != nullptr &&
            "failed to roll back addVTB: the containing block does not exist");
 
-    tree_->vbk().removePayloads(vtb_.containingBlock, {vtb_});
+    tree_->vbk().removePayloads(vtb_.containingBlock, {vtb_.getId()});
   }
 
   size_t getId() const override { return id_; }

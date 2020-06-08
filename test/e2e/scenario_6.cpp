@@ -80,5 +80,5 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   EXPECT_EQ(*test_alttree.vbk().getBestChain().tip(), *vbkTip);
   EXPECT_EQ(test_alttree.vbk().getBestChain().blocksCount(), 1);
-  EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->commands.size(), 0);
+  EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->payloadIds.size(), 0);
 }

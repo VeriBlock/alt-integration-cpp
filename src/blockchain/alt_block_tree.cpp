@@ -88,12 +88,16 @@ bool AltTree::addPayloads(index_t& index,
     VBK_ASSERT(ret);
   }
 
-  auto& c = index.commands;
   for (const auto& p : payloads) {
-    c.emplace_back();
-    auto& g = c.back();
-    g.id = p.getId();
-    payloadsToCommands(p, g.commands);
+    auto pid = p.getId();
+    if (isExistingPid(index, pid)) {
+      return state.Invalid(
+          block_t::name() + "-duplicate-payloads",
+          fmt::sprintf("Containing block=%s already contains payload %s.",
+                       index.toPrettyString(),
+                       pid.toHex()));
+    }
+    addPayloadToStorage(index, p);
   }
 
   return true;
@@ -125,7 +129,7 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
     VBK_LOG_DEBUG("%s Statefully invalid payloads: %s",
                   block_t::name(),
                   state.toString());
-    removePayloads(*index, {p});
+    removePayloads(*index, {p.getId()});
     return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
   }
 
@@ -255,21 +259,20 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
 }
 
 void AltTree::removePayloads(const AltBlock::hash_t& hash,
-                             const std::vector<payloads_t>& payloads) {
+                             const std::vector<pid_t>& pids) {
   auto* index = base::getBlockIndex(hash);
   if (!index) {
     throw std::logic_error("removePayloads is called on unknown ALT block: " +
                            HexStr(hash));
   }
 
-  return removePayloads(*index, payloads);
+  return removePayloads(*index, pids);
 }
 
-void AltTree::removePayloads(index_t& index,
-                             const std::vector<payloads_t>& payloads) {
+void AltTree::removePayloads(index_t& index, const std::vector<pid_t>& pids) {
   VBK_LOG_INFO("%s remove %d payloads from %s",
                block_t::name(),
-               payloads.size(),
+               pids.size(),
                index.toShortPrettyString());
   if (!index.pprev) {
     // we do not add payloads to genesis block, therefore we do not have to
@@ -303,16 +306,11 @@ void AltTree::removePayloads(index_t& index,
       // not found
       continue;
     }
-
-    // if this payloads invalidated subtree, we have to re-validate it again
-    if (!it->valid) {
-      revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+    auto it = std::find(
+        index.payloadIds.begin(), index.payloadIds.end(), p.getId());
+    if (it != index.payloadIds.end()) {
+      index.payloadIds.erase(it);
     }
-
-    // TODO(warchant): fix inefficient erase (does reallocation for every
-    // payloads item)
-    auto toRemove = --(it.base());
-    c.erase(toRemove);
   }
 }
 
@@ -337,6 +335,40 @@ void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
     auto cmd = std::make_shared<AddAltEndorsement>(vbk(), *this, std::move(e));
     commands.push_back(std::move(cmd));
   }
+}
+
+std::vector<AltTree::payloads_t> AltTree::getPayloadsByIndex(
+    const index_t& blockIndex, const std::vector<pid_t>& pids) {
+  std::vector<AltTree::payloads_t> out{};
+  for (const auto& pid : pids) {
+    if (!isExistingPid(blockIndex, pid)) continue;
+    payloads_t payloadsVal;
+    bool ret = storage_.getPayloadsById(pid, &payloadsVal);
+    if (!ret) continue;
+    out.push_back(payloadsVal);
+  }
+  return out;
+}
+
+void AltTree::addPayloadToStorage(index_t& blockIndex,
+                                       const payloads_t& payload) {
+  storage_.payloads().put(payload);
+  if (isExistingPid(blockIndex, payload.getId())) return;
+  blockIndex.payloadIds.push_back(payload.getId());
+}
+
+bool AltTree::isExistingPid(const index_t& blockIndex, const pid_t& pid) {
+  return std::find(blockIndex.payloadIds.begin(),
+                   blockIndex.payloadIds.end(),
+                   pid) != blockIndex.payloadIds.end();
+}
+
+void AltTree::setPayloadValidity(const pid_t& pid, bool valid) {
+  payloads_t payloadsVal;
+  bool ret = storage_.getPayloadsById(pid, &payloadsVal);
+  if (!ret) return;
+  payloadsVal.valid = valid;
+  storage_.payloads().put(payloadsVal);
 }
 
 bool AltTree::setTip(AltTree::index_t& to,

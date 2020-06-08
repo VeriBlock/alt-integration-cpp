@@ -21,6 +21,7 @@ struct AltPayloads {
   AltBlock endorsed;
   AltBlock containingBlock;
   PopData popData;
+  bool valid{};
 
   /**
    * Read VBK data from the stream and convert it to Payloads

@@ -24,6 +24,7 @@ struct VTB {
   VbkMerklePath merklePath{};
   VbkBlock containingBlock{};
   std::vector<VbkBlock> context{};
+  bool valid{};
 
   //! (memory only) indicates whether we already did 'checkPayloads' on this VTB
   mutable bool checked{false};

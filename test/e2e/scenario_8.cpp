@@ -157,7 +157,7 @@ TEST_F(Scenario8, scenario_8) {
   ASSERT_NE(vbkBlock, nullptr);
 
   // remove payloads from alt, vbk state is still valid
-  alttree.removePayloads(containingBlock.hash, {payloads2});
+  alttree.removePayloads(containingBlock.hash, {payloads2.getId()});
   ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
   validityFlagCheck(*vbkBlock, true);
 }
