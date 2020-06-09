@@ -165,7 +165,6 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   payloads.containingBlock = chain[100];
   ASSERT_FALSE(
       alttree.addPayloads(chain[100].hash, {payloads, payloads}, state));
-  ASSERT_FALSE(alttree.setState(chain[100].hash, state));
   ASSERT_EQ(state.GetPath(), "ALT-duplicate-payloads");
 
   auto index100 = alttree.getBlockIndex(chain[100].hash);

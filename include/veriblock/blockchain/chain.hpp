@@ -163,7 +163,7 @@ struct Chain {
                              workBlock && workBlock->height >= startHeight_ &&
                              e.endorsedHash != workBlock->getHash();
          count++) {
-      if (workBlock->endorsementIds.count(e.id)) {
+      if (workBlock->containingEndorsements.count(e.id)) {
         return workBlock;
       }
       workBlock = workBlock->pprev;

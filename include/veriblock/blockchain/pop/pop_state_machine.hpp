@@ -10,7 +10,7 @@
 #include <veriblock/assert.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/reversed_range.hpp>
-#include <veriblock/storage/payloads_repository.hpp>
+#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
@@ -26,21 +26,24 @@ struct PopStateMachine {
 
   PopStateMachine(ProtectedTree& ed,
                   ProtectingBlockTree& ing,
+                  PayloadsStorage& storage,
                   height_t startHeight = 0)
-      : ed_(ed), ing_(ing), startHeight_(startHeight) {}
+      : ed_(ed), ing_(ing), storage_(storage), startHeight_(startHeight) {}
 
   // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
     std::vector<CommandPtr> executed;
-    // even if the block is marked as invalid, we still try to apply it
-    for (auto& cg : index.commands) {
+    auto cgs =
+        storage_.loadCommands<payloads_t, ProtectedTree>(index.payloadIds, ed_);
+    for (const auto& cg : cgs) {
       VBK_LOG_DEBUG("Applying payload %s from block %s",
-                    it->getId().toHex(),
+                    cg.id.toHex(),
                     index.toShortPrettyString());
-      for (auto& cmd : commands) {
+
+      for (auto& cmd : cg.commands) {
         if (!cmd->Execute(state)) {
           // invalidate command group
-          ed_.setPayloadValidity(it->getId(), false);
+          storage_.setValidity<payloads_t>(cg.id, false);
           VBK_LOG_ERROR("Invalid %s command in block %s: %s",
                         index_t::block_t::name(),
                         index.toPrettyString(),
@@ -64,7 +67,7 @@ struct PopStateMachine {
       }  // end for
 
       // re-validate command group
-      ed_.setPayloadValidity(it->getId(), true);
+      storage_.setValidity<payloads_t>(cg.id, true);
     }  // end for
 
     // we successfully applied the block
@@ -72,19 +75,18 @@ struct PopStateMachine {
     if (!index.isValid()) {
       ed_.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
     }
-
     return true;
   }
 
   // atomic: applies either all of the block's commands or fails on an assert
   void unapplyBlock(const index_t& index) {
-    auto& v = index.commands;
-
-    for (auto& group : reverse_iterate(v)) {
+    auto cgs =
+        storage_.loadCommands<payloads_t, ProtectedTree>(index.payloadIds, ed_);
+    for (const auto& cg : reverse_iterate(cgs)) {
       VBK_LOG_DEBUG("Unapplying payload %s from block %s",
-                    it->getId().toHex(),
+                    cg.id.toHex(),
                     index.toShortPrettyString());
-      for (auto& cmd : reverse_iterate(group)) {
+      for (auto& cmd : reverse_iterate(cg.commands)) {
         cmd->UnExecute();
       }
     }
@@ -197,8 +199,9 @@ struct PopStateMachine {
  private:
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
-  height_t startHeight_;
-};  // namespace altintegration
+  PayloadsStorage& storage_;
+  height_t startHeight_ = 0;
+};
 
 }  // namespace altintegration
 

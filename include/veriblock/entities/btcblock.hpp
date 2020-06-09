@@ -25,6 +25,7 @@ struct DummyEndorsement;
 
 struct BtcBlock {
   using hash_t = uint256;
+  using prev_hash_t = uint256;
   using height_t = int32_t;
   using payloads_t = DummyPayloads;
   using protecting_block_t = std::false_type;

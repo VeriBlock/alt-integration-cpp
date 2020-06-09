@@ -8,6 +8,7 @@
 #include <deque>
 
 #include "veriblock/stateless_validation.hpp"
+#include <veriblock/reversed_range.hpp>
 
 namespace altintegration {
 
@@ -116,7 +117,8 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
     ++it;
   }
 
-  for (const auto& b : popdata.vbk_context) {
+  for (const auto& b :
+       reverse_iterate(popdata.vbk_context.begin(), popdata.vbk_context.end())) {
     tree.vbk().removeSubtree(b.getHash());
   }
 

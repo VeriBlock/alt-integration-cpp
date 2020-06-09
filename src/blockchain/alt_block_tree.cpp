@@ -17,32 +17,18 @@
 
 namespace altintegration {
 
-AltTree::index_t* AltTree::insertBlockHeader(const AltBlock& block) {
-  auto hash = block.getHash();
-  index_t* current = base::getBlockIndex(hash);
-  if (current != nullptr) {
-    // it is a duplicate
-    return current;
-  }
-
-  current = doInsertBlockHeader(std::make_shared<AltBlock>(block));
-  // raise validity will return false on invalid blocks
-  current->raiseValidity(BLOCK_VALID_TREE);
-  return current;
-}
-
 bool AltTree::bootstrap(ValidationState& state) {
   if (!base::blocks_.empty()) {
     return state.Error("already bootstrapped");
   }
 
   auto block = alt_config_->getBootstrapBlock();
-  auto* index = insertBlockHeader(block);
+  auto* index = insertBlockHeader(std::make_shared<AltBlock>(std::move(block)));
 
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  if (!base::blocks_.empty() && (getBlockIndex(block.getHash()) == nullptr)) {
+  if (!base::blocks_.empty() && (getBlockIndex(index->getHash()) == nullptr)) {
     return state.Error("block-index-no-genesis");
   }
 
@@ -88,16 +74,19 @@ bool AltTree::addPayloads(index_t& index,
     VBK_ASSERT(ret);
   }
 
+  std::set<pid_t> existingPids(index.payloadIds.begin(),
+                               index.payloadIds.end());
   for (const auto& p : payloads) {
     auto pid = p.getId();
-    if (isExistingPid(index, pid)) {
+    if (!existingPids.insert(pid).second) {
       return state.Invalid(
           block_t::name() + "-duplicate-payloads",
           fmt::sprintf("Containing block=%s already contains payload %s.",
                        index.toPrettyString(),
                        pid.toHex()));
     }
-    addPayloadToStorage(index, p);
+    index.payloadIds.push_back(pid);
+    storagePayloads_.savePayloads(p);
   }
 
   return true;
@@ -150,7 +139,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
         "can not find previous block: " + HexStr(block.previousBlock));
   }
 
-  auto* index = insertBlockHeader(block);
+  auto* index = insertBlockHeader(std::make_shared<AltBlock>(block));
 
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
@@ -188,6 +177,115 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
                 index->toShortPrettyString(),
                 ret.size());
   return ret;
+}
+
+void AltTree::payloadsToCommands(const payloads_t& p,
+                                 std::vector<CommandPtr>& commands) {
+  // first, add vbk context
+  for (const auto& b : p.popData.vbk_context) {
+    addBlock(vbk(), b, commands);
+  }
+
+  // second, add all VTBs
+  for (const auto& vtb : p.popData.vtbs) {
+    auto cmd = std::make_shared<AddVTB>(*this, vtb);
+    commands.push_back(std::move(cmd));
+  }
+
+  // third, add ATV endorsement
+  if (p.popData.hasAtv) {
+    addBlock(vbk(), p.popData.atv.containingBlock, commands);
+
+    auto e = AltEndorsement::fromContainerPtr(p);
+    auto cmd = std::make_shared<AddAltEndorsement>(vbk(), *this, std::move(e));
+    commands.push_back(std::move(cmd));
+  }
+}
+
+bool AltTree::saveToStorage(PopStorage& storage) {
+  storage.saveBlocks(vbk().btc().getBlocks());
+  storage.saveTip(*vbk().btc().getBestChain().tip());
+  storage.saveBlocks(vbk().getBlocks());
+  storage.saveTip(*vbk().getBestChain().tip());
+  storage.saveBlocks(getBlocks());
+  storage.saveTip(*getBestChain().tip());
+  return true;
+}
+
+bool AltTree::loadFromStorage(const PopStorage& storage) {
+  auto blocksBtc = storage.loadBlocks<BlockIndex<BtcBlock>>();
+  auto tipStoredBtc = storage.loadTip<BlockIndex<BtcBlock>>();
+  for (const auto& blockPair : blocksBtc) {
+    auto* bi = vbk().btc().insertBlock(blockPair.second->header);
+    bi->refCounter = blockPair.second->refCounter;
+  }
+
+  ValidationState state{};
+  auto* tipBtc = vbk().btc().getBlockIndex(tipStoredBtc.second);
+  if (tipBtc == nullptr) return false;
+  if (tipBtc->height != tipStoredBtc.first) return false;
+  bool ret = vbk().btc().setState(*tipBtc, state);
+  if (!ret) return false;
+
+  auto blocksVbk = storage.loadBlocks<BlockIndex<VbkBlock>>();
+  auto tipStoredVbk = storage.loadTip<BlockIndex<VbkBlock>>();
+  for (const auto& blockPair : blocksVbk) {
+    auto* bi = vbk().insertBlock(blockPair.second->header);
+    bi->payloadIds = blockPair.second->payloadIds;
+    bi->refCounter = blockPair.second->refCounter;
+
+    // load VBK endorsements
+    for (const auto& e : blockPair.second->containingEndorsements) {
+      auto endorsement = storage.loadEndorsements<VbkEndorsement>(e.first);
+      auto* endorsed = vbk().getBlockIndex(endorsement.endorsedHash);
+      if (endorsed == nullptr) {
+        return state.Invalid(VbkBlockTree::block_t::name() + "-bad-endorsed",
+                             "Can not find VTB endorsed block: " +
+                                 endorsement.endorsedHash.toHex());
+      }
+      auto endorsementPtr =
+          std::make_shared<VbkEndorsement>(std::move(endorsement));
+      bi->containingEndorsements.insert(
+          std::make_pair(endorsementPtr->id, endorsementPtr));
+      endorsed->endorsedBy.push_back(endorsementPtr.get());
+    }
+  }
+
+  auto* tipVbk = vbk().getBlockIndex(tipStoredVbk.second);
+  if (tipVbk == nullptr) return false;
+  if (tipVbk->height != tipStoredVbk.first) return false;
+  ret = vbk().setState(*tipVbk, state, true);
+  if (!ret) return false;
+
+  auto blocksAlt = storage.loadBlocks<BlockIndex<AltBlock>>();
+  auto tipStoredsAlt = storage.loadTip<BlockIndex<AltBlock>>();
+
+  for (const auto& blockPair : blocksAlt) {
+    auto* bi = insertBlock(blockPair.second->header);
+    bi->payloadIds = blockPair.second->payloadIds;
+    bi->refCounter = blockPair.second->refCounter;
+
+    // load ALT endorsements
+    for (const auto& e : blockPair.second->containingEndorsements) {
+      auto endorsement = storage.loadEndorsements<AltEndorsement>(e.first);
+      auto* endorsed = getBlockIndex(endorsement.endorsedHash);
+      if (endorsed == nullptr) {
+        return state.Invalid(block_t::name() + "-bad-endorsed",
+                             "Can not find ALT endorsed block: " +
+                                 HexStr(endorsement.endorsedHash));
+      }
+      auto endorsementPtr =
+          std::make_shared<AltEndorsement>(std::move(endorsement));
+      bi->containingEndorsements.insert(
+          std::make_pair(endorsementPtr->id, endorsementPtr));
+      endorsed->endorsedBy.push_back(endorsementPtr.get());
+    }
+  }
+
+  auto* tipAlt = getBlockIndex(tipStoredsAlt.second);
+  if (tipAlt == nullptr) return false;
+  if (tipAlt->height != tipStoredsAlt.first) return false;
+  return setState(*tipAlt, state, true);
 }
 
 std::string AltTree::toPrettyString(size_t level) const {
@@ -288,87 +386,22 @@ void AltTree::removePayloads(index_t& index, const std::vector<pid_t>& pids) {
     VBK_ASSERT(ret);
   }
 
-  auto& c = index.commands;
-
-  // we need only ids, so save some cpu cycles by calculating ids once
-  std::vector<uint256> pids = map_vector<payloads_t, uint256>(
-      payloads, [](const payloads_t& p) { return p.getId(); });
-
-  // iterate over payloads backwards
-  for (const auto& pid : reverse_iterate(pids)) {
-    // find every payloads in command group (search backwards, as it is likely
-    // to be faster)
-    auto it = std::find_if(c.rbegin(), c.rend(), [&pid](const CommandGroup& g) {
-      return g.id == pid;
-    });
-
-    if (it == c.rend()) {
-      // not found
+  for (const auto& pid : pids) {
+    auto it =
+        std::find(index.payloadIds.begin(), index.payloadIds.end(), pid);
+    if (it == index.payloadIds.end()) {
+      // TODO: error message
       continue;
     }
-    auto it = std::find(
-        index.payloadIds.begin(), index.payloadIds.end(), p.getId());
-    if (it != index.payloadIds.end()) {
-      index.payloadIds.erase(it);
+
+    auto payloads = storagePayloads_.loadPayloads<payloads_t>(pid);
+    if (!payloads.valid) {
+      revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
+
+    index.payloadIds.erase(it);
+    //TODO: do we want to erase payloads from repository?
   }
-}
-
-void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
-                                 std::vector<CommandPtr>& commands) {
-  // first, add vbk context
-  for (const auto& b : p.popData.vbk_context) {
-    addBlock(vbk(), b, commands);
-  }
-
-  // second, add all VTBs
-  for (const auto& vtb : p.popData.vtbs) {
-    auto cmd = std::make_shared<AddVTB>(*this, vtb);
-    commands.push_back(std::move(cmd));
-  }
-
-  // third, add ATV endorsement
-  if (p.popData.hasAtv) {
-    addBlock(vbk(), p.popData.atv.containingBlock, commands);
-
-    auto e = AltEndorsement::fromContainerPtr(p);
-    auto cmd = std::make_shared<AddAltEndorsement>(vbk(), *this, std::move(e));
-    commands.push_back(std::move(cmd));
-  }
-}
-
-std::vector<AltTree::payloads_t> AltTree::getPayloadsByIndex(
-    const index_t& blockIndex, const std::vector<pid_t>& pids) {
-  std::vector<AltTree::payloads_t> out{};
-  for (const auto& pid : pids) {
-    if (!isExistingPid(blockIndex, pid)) continue;
-    payloads_t payloadsVal;
-    bool ret = storage_.getPayloadsById(pid, &payloadsVal);
-    if (!ret) continue;
-    out.push_back(payloadsVal);
-  }
-  return out;
-}
-
-void AltTree::addPayloadToStorage(index_t& blockIndex,
-                                       const payloads_t& payload) {
-  storage_.payloads().put(payload);
-  if (isExistingPid(blockIndex, payload.getId())) return;
-  blockIndex.payloadIds.push_back(payload.getId());
-}
-
-bool AltTree::isExistingPid(const index_t& blockIndex, const pid_t& pid) {
-  return std::find(blockIndex.payloadIds.begin(),
-                   blockIndex.payloadIds.end(),
-                   pid) != blockIndex.payloadIds.end();
-}
-
-void AltTree::setPayloadValidity(const pid_t& pid, bool valid) {
-  payloads_t payloadsVal;
-  bool ret = storage_.getPayloadsById(pid, &payloadsVal);
-  if (!ret) return;
-  payloadsVal.valid = valid;
-  storage_.payloads().put(payloadsVal);
 }
 
 bool AltTree::setTip(AltTree::index_t& to,
@@ -398,6 +431,11 @@ bool AltTree::setTip(AltTree::index_t& to,
 
   // true if tip has been changed
   return changeTip;
+}
+
+template <>
+ArithUint256 getBlockProof(const AltBlock&) {
+  return 0;
 }
 
 }  // namespace altintegration

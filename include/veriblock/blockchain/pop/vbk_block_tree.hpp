@@ -13,7 +13,8 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/storage/endorsement_storage.hpp>
+#include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
@@ -31,17 +32,12 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(const VbkChainParams& vbkp, const BtcChainParams& btcp)
-      : VbkTree(vbkp),
-        cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp),
-        storage_() {}
-
   VbkBlockTree(const VbkChainParams& vbkp,
                const BtcChainParams& btcp,
-               const EndorsementStorage<payloads_t>& storage)
+               PayloadsStorage& storagePayloads)
       : VbkTree(vbkp),
-        cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp),
-        storage_(storage) {}
+        cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp, storagePayloads),
+        storagePayloads_(storagePayloads) {}
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
@@ -49,8 +45,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
 
-  EndorsementStorage<payloads_t>& getStorage() { return storage_; }
-  const EndorsementStorage<payloads_t>& getStorage() const { return storage_; }
+  PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
+  const PayloadsStorage getStoragePayloads() const { return storagePayloads_; }
 
   bool bootstrapWithChain(height_t startHeight,
                           const std::vector<block_t>& chain,
@@ -70,17 +66,12 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void removePayloads(const block_t& block, const std::vector<pid_t>& pids);
 
-  void payloadsToCommands(const typename VbkBlockTree::payloads_t& p,
+  void payloadsToCommands(const payloads_t& p,
                           std::vector<CommandPtr>& commands);
 
-  std::vector<payloads_t> getPayloadsByIndex(const index_t& blockIndex,
-                                             const std::vector<pid_t>& pids);
+  bool saveToStorage(PopStorage& storage);
 
-  bool isExistingPid(const index_t& blockIndex, const pid_t& pid);
-
-  void addPayloadToStorage(index_t& blockIndex, const payloads_t& payload);
-
-  void setPayloadValidity(const pid_t& pid, bool valid);
+  bool loadFromStorage(const PopStorage& storage);
 
   bool operator==(const VbkBlockTree& o) const {
     return cmp_ == o.cmp_ && VbkTree::operator==(o);
@@ -101,7 +92,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                           bool isBootstrap = false) override;
 
   PopForkComparator cmp_;
-  EndorsementStorage<payloads_t> storage_;
+  PayloadsStorage& storagePayloads_;
 };
 
 template <typename JsonValue>
@@ -110,14 +101,14 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putStringKV(obj, "chainWork", i.chainWork.toHex());
 
   std::vector<uint256> endorsements;
-  for (auto& e : i.containingEndorsements) {
+  for (const auto& e : i.containingEndorsements) {
     endorsements.push_back(e.first);
   }
   json::putArrayKV(obj, "containingEndorsements", endorsements);
 
   std::vector<uint256> endorsedBy;
-  for (auto* e : i.endorsedBy) {
-    endorsements.push_back(e->id);
+  for (const auto* e : i.endorsedBy) {
+    endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
 

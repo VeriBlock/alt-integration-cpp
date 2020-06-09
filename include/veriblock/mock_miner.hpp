@@ -20,6 +20,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
+#include "veriblock/storage/payloads_storage.hpp"
 
 namespace altintegration {
 
@@ -115,13 +116,14 @@ class MockMiner {
  private:
   BtcChainParamsRegTest btc_params{};
   VbkChainParamsRegTest vbk_params{};
+  PayloadsStorage storage{};
 
   Miner<BtcBlock, BtcChainParams> btc_miner =
       Miner<BtcBlock, BtcChainParams>(btc_params);
   Miner<VbkBlock, VbkChainParams> vbk_miner =
       Miner<VbkBlock, VbkChainParams>(vbk_params);
 
-  VbkBlockTree vbktree{vbk_params, btc_params};
+  VbkBlockTree vbktree{vbk_params, btc_params, storage};
 
   std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes;
 

@@ -8,15 +8,16 @@
 
 #include "veriblock/alt-util.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/storage/pop_storage.hpp"
 #include "veriblock/config.hpp"
 
 namespace altintegration {
 
 struct Altintegration {
-  static std::shared_ptr<AltTree> create(const Config& config) {
+  static std::shared_ptr<AltTree> create(const Config& config, PayloadsStorage& storage) {
     config.validate();
     auto tree = std::make_shared<altintegration::AltTree>(
-        *config.alt, *config.vbk.params, *config.btc.params);
+        *config.alt, *config.vbk.params, *config.btc.params, storage);
     ValidationState state;
 
     // first, bootstrap BTC

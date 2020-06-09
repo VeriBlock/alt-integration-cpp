@@ -46,6 +46,7 @@ template <typename Block>
 struct BlockIndex {
   using block_t = Block;
   using hash_t = typename block_t::hash_t;
+  using prev_hash_t = typename block_t::prev_hash_t;
   using height_t = typename block_t::height_t;
   using endorsement_t = typename block_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
@@ -63,15 +64,12 @@ struct BlockIndex {
   //! block
   ArithUint256 chainWork = 0;
 
-  //! list of applied containing endorsement ids in this block
-  std::set<eid_t> endorsementIds{};
-
   //! list of containing endorsements in this block
   std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
       containingEndorsements{};
 
   //! list of endorsements pointing to this block
-  std::vector<std::shared_ptr<endorsement_t>> endorsedBy;
+  std::vector<endorsement_t *> endorsedBy;
 
   //! list of changes introduced in this block
   std::vector<pid_t> payloadIds;
@@ -102,7 +100,6 @@ struct BlockIndex {
     this->pnext.clear();
     this->chainWork = 0;
     this->containingEndorsements.clear();
-    this->endorsementIds.clear();
     this->endorsedBy.clear();
     this->payloadIds.clear();
     this->height = 0;

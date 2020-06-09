@@ -21,6 +21,8 @@
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/validation_state.hpp"
+#include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
@@ -50,15 +52,17 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   AltTree(const alt_config_t& alt_config,
           const vbk_config_t& vbk_config,
-          const btc_config_t& btc_config)
+          const btc_config_t& btc_config,
+          PayloadsStorage& storagePayloads)
       : alt_config_(&alt_config),
         vbk_config_(&vbk_config),
         btc_config_(&btc_config),
-        cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config),
+        cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config, storagePayloads),
              vbk_config,
-             alt_config),
+             alt_config,
+             storagePayloads),
         rewards_(alt_config),
-        storage_() {}
+        storagePayloads_(storagePayloads) {}
 
   //! before any use, bootstrap the three with ALT bootstrap block.
   //! may return false, if bootstrap block is invalid
@@ -85,6 +89,19 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     return addPayloads(containing.hash, payloads, state);
   }
 
+  void payloadsToCommands(const payloads_t& p,
+                          std::vector<CommandPtr>& commands);
+
+  bool saveToStorage(PopStorage& storage);
+
+  bool loadFromStorage(const PopStorage& storage);
+
+  bool operator==(const AltTree& o) const {
+    return cmp_ == o.cmp_ && base::operator==(o);
+  }
+
+  bool operator!=(const AltTree& o) const { return !operator==(o); }
+
   int comparePopScore(const AltBlock::hash_t& hleft,
                       const AltBlock::hash_t& hright);
 
@@ -103,18 +120,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
                         const payloads_t& p,
                         ValidationState& state);
 
-  void payloadsToCommands(const payloads_t& p,
-                          std::vector<CommandPtr>& commands);
-
-  std::vector<payloads_t> getPayloadsByIndex(const index_t& blockIndex,
-                                             const std::vector<pid_t>& pids);
-
-  bool isExistingPid(const index_t& blockIndex, const pid_t& pid);
-
-  void addPayloadToStorage(index_t& blockIndex, const payloads_t& payload);
-
-  void setPayloadValidity(const pid_t& pid, bool valid);
-
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
   VbkBlockTree::BtcTree& btc() { return cmp_.getProtectingBlockTree().btc(); }
@@ -124,10 +129,10 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   const PopForkComparator& getComparator() const { return cmp_; }
 
-  EndorsementStorage<payloads_t>& getStorage() { return storage_; }
-  const EndorsementStorage<payloads_t>& getStorage() const { return storage_; }
-
   const AltChainParams& getParams() const { return *alt_config_; }
+
+  PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
+  const PayloadsStorage getStoragePayloads() const { return storagePayloads_; }
 
   std::string toPrettyString(size_t level = 0) const;
 
@@ -137,9 +142,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
   PopRewards rewards_;
-  EndorsementStorage<payloads_t> storage_;
-
-  index_t* insertBlockHeader(const AltBlock& block);
+  PayloadsStorage& storagePayloads_;
 
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew,
@@ -155,14 +158,14 @@ template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
   std::vector<uint256> endorsements;
-  for (auto& e : i.containingEndorsements) {
+  for (const auto& e : i.containingEndorsements) {
     endorsements.push_back(e.first);
   }
   json::putArrayKV(obj, "containingEndorsements", endorsements);
 
   std::vector<uint256> endorsedBy;
-  for (auto* e : i.endorsedBy) {
-    endorsements.push_back(e->id);
+  for (const auto* e : i.endorsedBy) {
+    endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
 
@@ -170,6 +173,9 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
 
   return obj;
 }
+
+template <>
+ArithUint256 getBlockProof(const AltBlock&);
 
 }  // namespace altintegration
 

@@ -55,6 +55,14 @@ struct BaseBlockTree {
     return it == blocks_.end() ? nullptr : it->second.get();
   }
 
+  index_t* insertBlock(const block_t& block) {
+    return insertBlock(std::make_shared<block_t>(block));
+  }
+
+  index_t* insertBlock(const std::shared_ptr<block_t>& block) {
+    return insertBlockHeader(block);
+  }
+
   void removeSubtree(const hash_t& toRemove,
                      bool shouldDetermineBestChain = true) {
     auto* index = getBlockIndex(toRemove);
@@ -279,6 +287,26 @@ struct BaseBlockTree {
 
     tryAddTip(current);
 
+    return current;
+  }
+
+  index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {
+    auto hash = block->getHash();
+    index_t* current = getBlockIndex(hash);
+    if (current != nullptr) {
+      // it is a duplicate
+      return current;
+    }
+
+    current = doInsertBlockHeader(block);
+    if (current->pprev) {
+      current->chainWork = current->pprev->chainWork + getBlockProof(*block);
+    } else {
+      current->chainWork = getBlockProof(*block);
+    }
+
+    // raise validity may return false if block is invalid
+    current->raiseValidity(BLOCK_VALID_TREE);
     return current;
   }
 

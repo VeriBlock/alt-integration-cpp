@@ -113,14 +113,6 @@ struct BlockTree : public BaseBlockTree<Block> {
     return acceptBlock(block, state, true);
   }
 
-  index_t* insertBlock(const block_t& block) {
-    return insertBlock(std::make_shared<block_t>(block));
-  }
-
-  index_t* insertBlock(const std::shared_ptr<block_t>& block) {
-    return insertBlockHeader(block);
-  }
-
   std::string toPrettyString(size_t level = 0) const {
     std::string pad(level, ' ');
     return fmt::sprintf("%s%sBlockTree{blocks=%llu\n%s\n%s}",
@@ -133,26 +125,6 @@ struct BlockTree : public BaseBlockTree<Block> {
 
  protected:
   const ChainParams* param_ = nullptr;
-
-  index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {
-    auto hash = block->getHash();
-    index_t* current = base::getBlockIndex(hash);
-    if (current != nullptr) {
-      // it is a duplicate
-      return current;
-    }
-
-    current = base::doInsertBlockHeader(block);
-    if (current->pprev) {
-      current->chainWork = current->pprev->chainWork + getBlockProof(*block);
-    } else {
-      current->chainWork = getBlockProof(*block);
-    }
-
-    // raise validity may return false if block is invalid
-    current->raiseValidity(BLOCK_VALID_TREE);
-    return current;
-  }
 
   bool acceptBlock(const std::shared_ptr<block_t>& block,
                    ValidationState& state,
@@ -186,7 +158,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Invalid("bootstrap");
     }
 
-    auto* index = insertBlockHeader(block);
+    auto* index = base::insertBlockHeader(block);
     index->height = height;
 
     base::activeChain_ = Chain<index_t>(height, index);
@@ -195,7 +167,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Error("block-index-no-genesis");
     }
 
-    return true;
+    return this->setTip(*index, state, true);
   }
 
   bool validateAndAddBlock(const std::shared_ptr<block_t>& block,
@@ -219,7 +191,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Invalid(block_t::name() + "-contextually-check-block");
     }
 
-    auto index = this->insertBlockHeader(block);
+    auto index = base::insertBlockHeader(block);
     VBK_ASSERT(index != nullptr &&
                "insertBlockHeader should have never returned nullptr");
 

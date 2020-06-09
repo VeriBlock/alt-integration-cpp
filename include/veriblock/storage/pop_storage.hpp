@@ -2,135 +2,96 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_POP_STORAGE_HPP_
 
 #include <map>
-#include <veriblock/blockchain/alt_block_tree.hpp>
+#include <veriblock/entities/payloads.hpp>
+#include <veriblock/entities/vtb.hpp>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/storage/block_repository_inmem.hpp>
 #include <veriblock/storage/endorsement_storage.hpp>
+#include <veriblock/storage/blocks_storage.hpp>
+#include <veriblock/storage/storage_exceptions.hpp>
 
 namespace altintegration {
 
-class PopStorage {
-  using block_btc_t = BlockIndex<BtcBlock>;
-  using block_vbk_t = BlockIndex<VbkBlock>;
-
+class PopStorage : public EndorsementStorage<AltEndorsement>,
+                   public EndorsementStorage<VbkEndorsement>,
+                   public EndorsementStorage<DummyEndorsement>,
+                   public BlocksStorage<BlockIndex<BtcBlock>>,
+                   public BlocksStorage<BlockIndex<VbkBlock>>,
+                   public BlocksStorage<BlockIndex<AltBlock>> {
  public:
   virtual ~PopStorage() = default;
-  PopStorage()
-      : repoVbk_(std::make_shared<BlockRepositoryInmem<block_vbk_t>>()),
-        repoBtc_(std::make_shared<BlockRepositoryInmem<block_btc_t>>()),
-        endorsementsAtv_(
-            std::make_shared<EndorsementStorage<AltPayloads>>()),
-        endorsementsVtb_(
-            std::make_shared<EndorsementStorage<VTB>>()) {}
+  PopStorage() {}
 
-  BlockRepository<block_vbk_t>& vbkIndex() { return *repoVbk_; }
-  const BlockRepository<block_vbk_t>& vbkIndex() const { return *repoVbk_; }
-
-  EndorsementStorage<AltPayloads>& altEndorsements() {
-    return *endorsementsAtv_;
-  }
-  const EndorsementStorage<AltPayloads>& altEndorsements() const {
-    return *endorsementsAtv_;
-  }
-
-  EndorsementStorage<VTB>& vbkEndorsements() { return *endorsementsVtb_;
-  }
-  const EndorsementStorage<VTB>& vbkEndorsements() const {
-    return *endorsementsVtb_;
-  }
-
-  void saveVbkTree(const VbkBlockTree& tree) {
-    vbkTipHeight_ = tree.getBestChain().tip()->height;
-    vbkTipHash_ = tree.getBestChain().tip()->getHash();
-
-    auto blocks = tree.getBlocks();
-    for (const auto& block : blocks) {
-      repoVbk_->put(*(block.second));
+  template <typename Endorsements>
+  Endorsements loadEndorsements(const typename Endorsements::id_t& eid) const {
+    Endorsements endorsements;
+    bool ret =
+        EndorsementStorage<Endorsements>::erepo_->get(eid, &endorsements);
+    if (!ret) {
+      throw StateCorruptedException(
+          fmt::sprintf("Failed to read endorsements id={%s}", eid.toHex()));
     }
-
-    endorsementsVtb_ =
-        std::make_shared<EndorsementStorage<VTB>>(tree.getStorage());
+    return endorsements;
   }
 
-  void saveBtcTree(const BlockTree<BtcBlock, BtcChainParams>& tree) {
-    btcTipHeight_ = tree.getBestChain().tip()->height;
-    btcTipHash_ = tree.getBestChain().tip()->getHash();
-
-    auto blocks = tree.getBlocks();
-    for (const auto& block : blocks) {
-      repoBtc_->put(*(block.second));
+  template <typename Endorsements>
+  void saveEndorsements(const Endorsements&
+          endorsements) {
+    bool ret = EndorsementStorage<Endorsements>::erepo_->put(endorsements);
+    if (!ret) {
+      throw BadIOException(fmt::sprintf("Failed to write endorsements: %s",
+                                        endorsements.toPrettyString(0)));
     }
   }
 
-  void loadVbkTree(VbkBlockTree& tree) {
-    loadBtcTree(tree.btc());
-    auto cursor = repoVbk_->newCursor();
+  template <typename StoredBlock>
+  std::multimap<typename StoredBlock::height_t, std::shared_ptr<StoredBlock>> loadBlocks() const {
+    auto cursor = BlocksStorage<StoredBlock>::brepo_->newCursor();
+    if (cursor == nullptr) {
+      throw BadIOException("Cannot create BlockRepository cursor");
+    }
     cursor->seekToFirst();
-    std::multimap<int32_t, std::shared_ptr<block_vbk_t>> blocks;
+    std::multimap<typename StoredBlock::height_t, std::shared_ptr<StoredBlock>>
+        blocks{};
     while (cursor->isValid()) {
       auto block = cursor->value();
-      blocks.insert({block.height, std::make_shared<block_vbk_t>(block)});
+      blocks.insert({block.height, std::make_shared<StoredBlock>(block)});
       cursor->next();
     }
+    return blocks;
+  }
 
-    for (const auto& blockPair : blocks) {
-      auto *bi = tree.insertBlock(blockPair.second->header);
-      bi->payloadIds = blockPair.second->payloadIds;
-      bi->endorsementIds = blockPair.second->endorsementIds;
-      bi->refCounter = blockPair.second->refCounter;
+  template <typename StoredBlock>
+  void saveBlocks(
+      const std::unordered_map<typename StoredBlock::prev_hash_t,
+                               std::shared_ptr<StoredBlock>>& blocks) {
 
-      // restore payloads
-      for (const auto& eid : bi->endorsementIds) {
-        VbkEndorsement endorsement{};
-        bool ret = endorsementsVtb_->endorsements().get(eid, &endorsement);
-        if (!ret) continue;
-        auto endorsementPtr = std::make_shared<VbkEndorsement>(std::move(endorsement));
-        bi->containingEndorsements.insert({eid, endorsementPtr});
+    auto batch = BlocksStorage<StoredBlock>::brepo_->newBatch();
+    if (batch == nullptr) {
+      throw BadIOException("Cannot create BlockRepository write batch");
+    }
 
-        auto* endorsed = tree.getBlockIndex(endorsementPtr->endorsedHash);
-        if (endorsed == nullptr) {
-          //TODO: invalid state
-          continue;
-        }
-        endorsed->endorsedBy.push_back(endorsementPtr);
+    for (const auto& block : blocks) {
+      auto& index = *(block.second);
+      batch->put(index);
+
+      for (const auto& e : index.containingEndorsements) {
+        saveEndorsements<typename StoredBlock::endorsement_t>(*e.second);
       }
     }
-
-    ValidationState state{};
-    auto* tip = tree.getBlockIndex(vbkTipHash_);
-    tree.setState(*tip, state, true);
+    batch->commit();
   }
 
-  void loadBtcTree(BlockTree<BtcBlock, BtcChainParams>& tree) {
-    auto cursor = repoBtc_->newCursor();
-    cursor->seekToFirst();
-    std::multimap<int32_t, std::shared_ptr<block_btc_t>> blocks;
-    while (cursor->isValid()) {
-      auto block = cursor->value();
-      blocks.insert({block.height, std::make_shared<block_btc_t>(block)});
-      cursor->next();
-    }
-
-    for (const auto& blockPair : blocks) {
-      auto* bi = tree.insertBlock(blockPair.second->header);
-      bi->payloadIds = blockPair.second->payloadIds;
-      bi->refCounter = blockPair.second->refCounter;
-    }
-
-    ValidationState state{};
-    auto* tip = tree.getBlockIndex(btcTipHash_);
-    tree.setState(*tip, state);
+  template <typename StoredBlock>
+  std::pair<typename StoredBlock::height_t, typename StoredBlock::hash_t>
+  loadTip() const {
+    return BlocksStorage<StoredBlock>::loadTip();
   }
 
- private:
-  std::shared_ptr<BlockRepository<block_vbk_t>> repoVbk_;
-  int vbkTipHeight_;
-  typename VbkBlock::hash_t vbkTipHash_;
-  std::shared_ptr<BlockRepository<block_btc_t>> repoBtc_;
-  int btcTipHeight_;
-  typename BtcBlock::hash_t btcTipHash_;
-  std::shared_ptr<EndorsementStorage<AltPayloads>> endorsementsAtv_;
-  std::shared_ptr<EndorsementStorage<VTB>> endorsementsVtb_;
+  template <typename StoredBlock>
+  void saveTip(const StoredBlock& tip) {
+    BlocksStorage<StoredBlock>::saveTip(tip);
+  }
 };
 
 }  // namespace altintegration

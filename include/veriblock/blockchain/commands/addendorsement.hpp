@@ -69,6 +69,22 @@ struct AddEndorsement : public Command {
               HexStr(e_->endorsedHash)));
     }
 
+    auto& id = e_->id;
+    auto endorsed_it =
+        std::find_if(endorsed->endorsedBy.rbegin(),
+                     endorsed->endorsedBy.rend(),
+                     [&id](endorsement_t* p) { return p->id == id; });
+    if (endorsed_it != endorsed->endorsedBy.rend()) {
+      // found duplicate
+      return state.Invalid(
+          protected_block_t ::name() + "-duplicate",
+          fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+                       "found block endorsed by it in %s",
+                       e_->toPrettyString(),
+                       containing->toShortPrettyString(),
+                       endorsed->toShortPrettyString()));
+    }
+
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
     if (!blockOfProof) {
       return state.Invalid(
@@ -89,10 +105,8 @@ struct AddEndorsement : public Command {
                        duplicate->toShortPrettyString()));
     }
 
-    containing->endorsementIds.insert(e_->id);
-    ed_->getStorage().endorsements().put(*e_);
     containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
-    endorsed->endorsedBy.push_back(e_);
+    endorsed->endorsedBy.push_back(e_.get());
 
     return true;
   }
@@ -110,9 +124,8 @@ struct AddEndorsement : public Command {
         "failed to roll back AddEndorsement: the endorsed block does not "
         "exist");
 
-    auto endorsement_id_it = containing->endorsementIds.find(e_->id);
-    VBK_ASSERT(endorsement_id_it != containing->endorsementIds.end());
     auto endorsement_it = containing->containingEndorsements.find(e_->id);
+    VBK_ASSERT(endorsement_it != containing->containingEndorsements.end());
 
     // erase endorsedBy
     {
@@ -121,7 +134,7 @@ struct AddEndorsement : public Command {
 
       // find and erase the last occurrence of e_
       auto endorsed_it = std::find_if(
-          v.rbegin(), v.rend(), [&id](std::shared_ptr<endorsement_t> p) {
+          v.rbegin(), v.rend(), [&id](endorsement_t* p) {
             return p->id == id;
           });
 
@@ -135,9 +148,6 @@ struct AddEndorsement : public Command {
     }
 
     // erase endorsement
-    containing->endorsementIds.erase(endorsement_id_it);
-    ed_->getStorage().endorsements().remove(e_->id);
-
     containing->containingEndorsements.erase(endorsement_it);
   }
 

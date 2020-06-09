@@ -88,9 +88,8 @@ struct PayloadsRepositoryInmem : public PayloadsRepository<Payloads> {
 
   bool put(const payloads_t& payload) override {
     auto id = payload.getId();
-    bool res = p_.find(id) != p_.end();
     p_[id] = payload;
-    return res;
+    return true;
   }
 
   bool get(const eid_t& id, payloads_t* payload) const override {

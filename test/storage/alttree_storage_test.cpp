@@ -23,8 +23,6 @@ BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
 }
 
 TEST_F(AltTreeRepositoryTest, Basic) {
-  PopStorage storage{};
-
   auto* vbkTip = popminer->mineVbkBlocks(1);
   // create endorsement of VBKTIP in BTC_1
   auto btctx = popminer->createBtcTxEndorsingVbkBlock(*vbkTip->header);
@@ -43,16 +41,13 @@ TEST_F(AltTreeRepositoryTest, Basic) {
   // mine txA into VBK 2nd block
   vbkTip = popminer->mineVbkBlocks(1);
 
-  storage.saveBtcTree(popminer->btc());
-  storage.saveVbkTree(popminer->vbk());
+  PopStorage storage;
+  EXPECT_TRUE(popminer->vbk().saveToStorage(storage));
 
-  BlockTree<BtcBlock, BtcChainParams> reloadedBtcTree{btcparam};
-  storage.loadBtcTree(reloadedBtcTree);
+  VbkBlockTree reloadedVbkTree{vbkparam, btcparam, popminer->vbk().getStoragePayloads()};
+  EXPECT_TRUE(reloadedVbkTree.loadFromStorage(storage));
 
-  VbkBlockTree reloadedVbkTree{vbkparam, btcparam, storage.vbkEndorsements()};
-  storage.loadVbkTree(reloadedVbkTree);
-
-  EXPECT_TRUE(reloadedBtcTree == popminer->btc());
+  EXPECT_TRUE(reloadedVbkTree.btc() == popminer->btc());
   EXPECT_TRUE(reloadedVbkTree == popminer->vbk());
 
   popminer->vbk().removeTip(*popminer->vbk().getBestChain().tip(), true);
@@ -62,4 +57,46 @@ TEST_F(AltTreeRepositoryTest, Basic) {
   reloadedVbkTree.removeTip(*reloadedVbkTree.getBestChain().tip(), true);
   EXPECT_TRUE(reloadedVbkTree == popminer->vbk());
   EXPECT_TRUE(reloadedVbkTree.btc() == popminer->btc());
+}
+
+TEST_F(AltTreeRepositoryTest, Altchain) {
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+
+  // mine 2 blocks
+  mineAltBlocks(2, chain);
+
+  AltBlock endorsedBlock = chain[2];
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+
+  AltPayloads altPayloads1 = generateAltPayloads(
+      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+
+  // mine 1 VBK blocks
+  popminer->mineVbkBlocks(1);
+  popminer->mineBtcBlocks(1);
+
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(state.IsValid());
+
+  PopStorage storage;
+  EXPECT_TRUE(alttree.saveToStorage(storage));
+
+  AltTree reloadedAltTree{altparam, vbkparam, btcparam, alttree.getStoragePayloads()};
+  EXPECT_TRUE(reloadedAltTree.loadFromStorage(storage));
+
+  EXPECT_TRUE(reloadedAltTree.vbk().btc() == alttree.vbk().btc());
+  EXPECT_TRUE(reloadedAltTree.vbk() == alttree.vbk());
+  EXPECT_TRUE(reloadedAltTree == alttree);
+
+  alttree.removeTip(*alttree.getBestChain().tip(), true);
+  EXPECT_FALSE(reloadedAltTree == alttree);
+
+  reloadedAltTree.removeTip(*reloadedAltTree.getBestChain().tip(), true);
+  EXPECT_TRUE(reloadedAltTree == alttree);
 }

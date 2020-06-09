@@ -17,6 +17,7 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/logger.hpp>
+#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
@@ -206,7 +207,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
       // chain must contain relevantEndorsedBlock
       VBK_ASSERT(index != nullptr);
 
-      for (const auto e : index->endorsedBy) {
+      for (const auto* e : index->endorsedBy) {
         if (!allHashesInChain.count(e->containingHash)) {
           // do not count endorsement whose containingHash is not on the same
           // chain as 'endorsedHash'
@@ -367,10 +368,12 @@ struct PopAwareForkResolutionComparator {
 
   PopAwareForkResolutionComparator(std::shared_ptr<ProtectingBlockTree> tree,
                                    const protecting_params_t& protectingParams,
-                                   const protected_params_t& protectedParams)
+                                   const protected_params_t& protectedParams,
+                                   PayloadsStorage& storage)
       : ing_(std::move(tree)),
         protectedParams_(&protectedParams),
-        protectingParams_(&protectingParams) {
+        protectingParams_(&protectingParams),
+        storage_(storage) {
     VBK_ASSERT(protectedParams.getKeystoneInterval() > 0);
   }
 
@@ -391,8 +394,22 @@ struct PopAwareForkResolutionComparator {
       return true;
     }
 
-    sm_t sm(ed, *ing_);
-    return sm.setState(*currentActive, to, state);
+    sm_t sm(ed, *ing_, storage_);
+    // is 'to' a successor?
+    if (to.getAncestor(currentActive->height) == currentActive) {
+      return sm.apply(*currentActive, to, state);
+    }
+
+    // 'to' is a predecessor
+    Chain<protected_index_t> chain(0, currentActive);
+    auto* forkBlock = chain.findFork(&to);
+    if (!forkBlock) {
+      // we can't find 'to' in fork.
+      return false;
+    }
+
+    sm.unapply(*currentActive, *forkBlock);
+    return sm.apply(*forkBlock, to, state);
   }
 
   int comparePopScore(ProtectedBlockTree& ed,
@@ -427,7 +444,7 @@ struct PopAwareForkResolutionComparator {
     if (indexNew.getAncestor(bestTip->height) == bestTip) {
       VBK_LOG_INFO("Candidate is ahead %d blocks",
                    indexNew.height - bestTip->height);
-      sm_t sm(ed, *ing_, bestTip->height);
+      sm_t sm(ed, *ing_, storage_, bestTip->height);
       if (!sm.apply(*bestTip, indexNew, state)) {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
@@ -468,7 +485,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed, *ing_, chainA.first()->height);
+    sm_t sm(ed, *ing_, storage_, chainA.first()->height);
 
     if (VBK_UNLIKELY(IsShutdownRequested())) {
       return 1;
@@ -536,6 +553,7 @@ struct PopAwareForkResolutionComparator {
 
   const protected_params_t* protectedParams_;
   const protecting_params_t* protectingParams_;
+  PayloadsStorage& storage_;
 };
 
 }  // namespace altintegration

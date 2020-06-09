@@ -148,28 +148,21 @@ void VbkBlockTree::removePayloads(const block_t& block,
     VBK_ASSERT(ret);
   }
 
-  // we need only ids, so save some cpu cycles by calculating ids once
-  std::vector<uint256> pids = map_vector<payloads_t, uint256>(
-      payloads, [](const payloads_t& p) { return p.getId(); });
-
-  auto& c = index->commands;
-  // iterate over payloads backwards
-  for (const auto& p : reverse_iterate(pids)) {
-    // find every payloads in command group (search backwards, as it is likely
-    // to be faster)
-    auto it = std::find_if(c.rbegin(), c.rend(), [&p](const CommandGroup& g) {
-      return g.id == p;
-    });
-
-    if (it == c.rend()) {
-      // not found
+  for (const auto& pid : pids) {
+    auto it =
+        std::find(index->payloadIds.begin(), index->payloadIds.end(), pid);
+    // silently ignore wrong payload ids to remove
+    if (it == index->payloadIds.end()) {
       continue;
     }
-    auto it = std::find(
-        index->payloadIds.begin(), index->payloadIds.end(), p.getId());
-    if (it != index->payloadIds.end()) {
-      index->payloadIds.erase(it);
+
+    auto payloads = storagePayloads_.loadPayloads<payloads_t>(pid);
+
+    if (!payloads.valid) {
+      revalidateSubtree(*index, BLOCK_FAILED_POP, false);
     }
+
+    index->payloadIds.erase(it);
   }
 
   // find all affected tips and do a fork resolution
@@ -231,16 +224,19 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     VBK_ASSERT(ret);
   }
 
+  std::set<pid_t> existingPids(index->payloadIds.begin(),
+                               index->payloadIds.end());
   for (const auto& p : payloads) {
     auto pid = p.getId();
-    if (isExistingPid(*index, pid)) {
+    if (!existingPids.insert(pid).second) {
       return state.Invalid(
           block_t::name() + "-duplicate-payloads",
           fmt::sprintf("Containing block=%s already contains payload %s.",
                        index->toPrettyString(),
                        pid.toHex()));
     }
-    addPayloadToStorage(*index, p);
+    index->payloadIds.push_back(pid);
+    storagePayloads_.savePayloads(p);
   }
 
   // find all affected tips and do a fork resolution
@@ -254,9 +250,9 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   return index->isValid();
 }
 
-void VbkBlockTree::payloadsToCommands(const VTB& p,
+void VbkBlockTree::payloadsToCommands(const payloads_t& p,
                                       std::vector<CommandPtr>& commands) {
-  // process BTC context blocks
+  // process context blocks
   for (const auto& b : p.transaction.blockOfProofContext) {
     addBlock(btc(), b, commands);
   }
@@ -265,47 +261,67 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
 
   // add endorsement
   auto e = VbkEndorsement::fromContainerPtr(p);
-  auto cmd = std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
+  auto cmd =
+      std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
   commands.push_back(std::move(cmd));
+}
+
+bool VbkBlockTree::saveToStorage(PopStorage& storage) {
+  storage.saveBlocks(btc().getBlocks());
+  storage.saveTip(*btc().getBestChain().tip());
+  storage.saveBlocks(getBlocks());
+  storage.saveTip(*getBestChain().tip());
+  return true;
+}
+
+bool VbkBlockTree::loadFromStorage(const PopStorage& storage) {
+  auto blocksBtc = storage.loadBlocks<typename BtcTree::index_t>();
+  auto tipStoredBtc = storage.loadTip<typename BtcTree::index_t>();
+  for (const auto& blockPair : blocksBtc) {
+    auto* bi = btc().insertBlock(blockPair.second->header);
+    bi->refCounter = blockPair.second->refCounter;
+  }
+
+  ValidationState state{};
+  auto* tipBtc = btc().getBlockIndex(tipStoredBtc.second);
+  if (tipBtc == nullptr) return false;
+  if (tipBtc->height != tipStoredBtc.first) return false;
+  bool ret = btc().setState(*tipBtc, state);
+  if (!ret) return false;
+
+  auto blocksVbk = storage.loadBlocks<typename VbkTree::index_t>();
+  auto tipStoredVbk = storage.loadTip<typename VbkTree::index_t>();
+  for (const auto& blockPair : blocksVbk) {
+    auto* bi = insertBlock(blockPair.second->header);
+    bi->payloadIds = blockPair.second->payloadIds;
+    bi->refCounter = blockPair.second->refCounter;
+
+    // load VBK endorsements
+    for (const auto& e : blockPair.second->containingEndorsements) {
+      auto endorsement = storage.loadEndorsements<VbkEndorsement>(e.first);
+      auto* endorsed = getBlockIndex(endorsement.endorsedHash);
+      if (endorsed == nullptr) {
+        return state.Invalid(block_t::name() + "-bad-endorsed",
+                             "Can not find VTB endorsed block: " +
+                                 endorsement.endorsedHash.toHex());
+      }
+      auto endorsementPtr =
+          std::make_shared<VbkEndorsement>(std::move(endorsement));
+      bi->containingEndorsements.insert(
+          std::make_pair(endorsementPtr->id, endorsementPtr));
+      endorsed->endorsedBy.push_back(endorsementPtr.get());
+    }
+  }
+
+  auto* tipVbk = getBlockIndex(tipStoredVbk.second);
+  if (tipVbk == nullptr) return false;
+  if (tipVbk->height != tipStoredVbk.first) return false;
+  return setState(*tipVbk, state, true);
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
   return fmt::sprintf(
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
-}
-
-std::vector<VbkBlockTree::payloads_t> VbkBlockTree::getPayloadsByIndex(
-    const index_t& blockIndex, const std::vector<pid_t>& pids) {
-  std::vector<VbkBlockTree::payloads_t> out{};
-  for (const auto& pid : pids) {
-    if (!isExistingPid(blockIndex, pid)) continue;
-    payloads_t payloadsVal;
-    bool ret = storage_.getPayloadsById(pid, &payloadsVal);
-    if (!ret) continue;
-    out.push_back(payloadsVal);
-  }
-  return out;
-}
-
-void VbkBlockTree::addPayloadToStorage(index_t& blockIndex,
-                                       const payloads_t& payload) {
-  storage_.payloads().put(payload);
-  if (isExistingPid(blockIndex, payload.getId())) return;
-  blockIndex.payloadIds.push_back(payload.getId());
-}
-
-bool VbkBlockTree::isExistingPid(const index_t& blockIndex, const pid_t& pid) {
-  return std::find(blockIndex.payloadIds.begin(),
-                   blockIndex.payloadIds.end(),
-                   pid) != blockIndex.payloadIds.end();
-}
-
-void VbkBlockTree::setPayloadValidity(const pid_t& pid, bool valid) {
-  payloads_t payloadsVal;
-  bool ret = storage_.getPayloadsById(pid, &payloadsVal);
-  if (!ret) return;
-  payloadsVal.valid = valid;
-  storage_.payloads().put(payloadsVal);
 }
 
 void VbkBlockTree::removePayloads(const Blob<24>& hash,
