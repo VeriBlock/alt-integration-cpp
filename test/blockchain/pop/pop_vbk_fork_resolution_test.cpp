@@ -14,26 +14,25 @@ using namespace altintegration;
 
 struct PopVbkForkResolution : public ::testing::Test, public PopTestFixture {};
 
-// TODO: temporary disable
-// TEST_F(PopVbkForkResolution, TooLateToAddPayloads) {
-//  popminer->mineVbkBlocks(2);
-//  auto vbkpoptx =
-//      popminer->endorseVbkBlock(*popminer->vbk().getBestChain()[1]->header,
-//                                getLastKnownBtcBlock(),
-//                                state);
-//  popminer->vbkmempool.push_back(vbkpoptx);
-//
-//  // try to add payloads to block pre latest allowed to overwrite
-//  auto limit = popminer->getVbkParams().getHistoryOverwriteLimit();
-//  auto vbkcontaining = popminer->mineVbkBlocks(1);
-//  popminer->mineVbkBlocks(limit);
-//
-//  auto& vtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
-//
-//  ASSERT_FALSE(
-//      popminer->vbk().addPayloads(vbkcontaining->getHash(), {vtb}, state));
-//  ASSERT_EQ(state.GetPath(), "VBK-too-late");
-//}
+TEST_F(PopVbkForkResolution, TooLateToAddPayloads) {
+  popminer->mineVbkBlocks(2);
+  auto vbkpoptx =
+      popminer->endorseVbkBlock(*popminer->vbk().getBestChain()[1]->header,
+                                getLastKnownBtcBlock(),
+                                state);
+  popminer->vbkmempool.push_back(vbkpoptx);
+
+  // try to add payloads to block pre latest allowed to overwrite
+  auto limit = popminer->getVbkParams().getHistoryOverwriteLimit();
+  auto vbkcontaining = popminer->mineVbkBlocks(1);
+  popminer->mineVbkBlocks(limit);
+
+  auto& vtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
+
+  ASSERT_FALSE(
+      popminer->vbk().addPayloads(vbkcontaining->getHash(), {vtb}, state));
+  ASSERT_EQ(state.GetPath(), "VBK-too-late");
+}
 
 TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   // start with 10 BTC blocks
