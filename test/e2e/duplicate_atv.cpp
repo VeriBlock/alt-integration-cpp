@@ -34,7 +34,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
   payloads.containingBlock = chain[100];
   ASSERT_TRUE(alttree.addPayloads(chain[100].hash, {payloads}, state));
   ASSERT_FALSE(alttree.setState(chain[100].hash, state));
-  ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-duplicate");
+  ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-bad-command+VBK-duplicate");
 
   // we are at chain[99]
   ASSERT_EQ(*alttree.getBestChain().tip()->header, chain[99]);
@@ -82,7 +82,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeA) {
   ASSERT_TRUE(alttree.setState(chain[99].hash, state));
   // but not to 100, because 100 duplicates 99
   ASSERT_FALSE(alttree.setState(chain[100].hash, state));
-  ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-duplicate");
+  ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-bad-command+VBK-duplicate");
   ASSERT_EQ(index99->commands.size(), 1);
   ASSERT_EQ(index99->commands.begin()->id, p2id);
   ASSERT_TRUE(index99->isValid());
@@ -124,7 +124,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   ASSERT_TRUE(alttree.setState(chain[99].hash, state));
   // but not to 100, because 100 duplicates 99
   ASSERT_FALSE(alttree.setState(chain[100].hash, state));
-  ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-duplicate");
+  ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-bad-command+VBK-duplicate");
   ASSERT_EQ(index99->commands.size(), 1);
   ASSERT_EQ(index99->commands.begin()->id, p2id);
   ASSERT_TRUE(index99->isValid());
@@ -154,7 +154,8 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
 
   ASSERT_FALSE(alttree.validatePayloads(chain[100].hash, payloads, state));
   ASSERT_EQ(state.GetPath(),
-            "ALT-addPayloadsTemporarily+ALT-bad-command+VBK-duplicate");
+            "ALT-addPayloadsTemporarily+ALT-bad-command+VBK-bad-command+VBK-"
+            "duplicate");
   ASSERT_EQ(index100->commands.size(), 1);
   ASSERT_TRUE(index100->isValid());
   ASSERT_EQ(index100->commands.begin()->id, payloads.getId());
@@ -165,7 +166,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   ASSERT_TRUE(
       alttree.addPayloads(chain[100].hash, {payloads, payloads}, state));
   ASSERT_FALSE(alttree.setState(chain[100].hash, state));
-  ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-duplicate");
+  ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-bad-command+VBK-duplicate");
 
   auto index100 = alttree.getBlockIndex(chain[100].hash);
   ASSERT_TRUE(index100);

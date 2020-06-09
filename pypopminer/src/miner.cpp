@@ -109,15 +109,17 @@ struct MockMinerProxy : private MockMiner {
           prevBtc);
     }
 
+    auto lastBtc = prevBtcIndex->getHash().toHex();
     for (size_t i = 0; i < vtbs; i++) {
       auto btctx = createBtcTxEndorsingVbkBlock(block);
       auto btccontaining =
-          this->mineBtcBlocks(prevBtcIndex->getHash().toHex(), 1);
+          this->mineBtcBlocks(lastBtc, 1);
       auto vbkpoptx = createVbkPopTxEndorsingVbkBlock(
           btccontaining,
           btctx,
           block,
           BtcBlock::hash_t::fromHex(lastKnownBtcHash));
+      lastBtc = btccontaining.getHash().toHex();
     }
 
     this->mineVbkBlocks(prevVbkIndex->getHash().toHex(), 1);
