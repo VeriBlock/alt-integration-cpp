@@ -13,7 +13,6 @@ namespace altintegration {
 
 struct VTB;
 struct AltPayloads;
-struct PartialVTB;
 
 // endorsement of VBK blocks in BTC
 using VbkEndorsement = Endorsement<uint192, uint256, VTB, int32_t>;
@@ -30,17 +29,6 @@ template <>
 AltEndorsement AltEndorsement ::fromContainer(const AltPayloads& c);
 template <>
 AltEndorsement::id_t AltEndorsement::getId(const AltPayloads& c);
-
-template <>
-inline bool AltEndorsement::checkForDuplicates() {
-  return true;
-}
-
-// TODO: once mempool is integrated, remove this hacky thing
-template <>
-inline bool VbkEndorsement::checkForDuplicates() {
-  return false;
-}
 
 struct DummyEndorsement {
   using id_t = bool;

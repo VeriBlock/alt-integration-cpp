@@ -180,8 +180,7 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   std::vector<uint8_t> new_hash = {1, 2, 3};
   popminer.vbkmempool[0].blockOfProof.previousBlock = uint256(new_hash);
 
-  // TODO: fix this. should throw
-//  EXPECT_THROW(popminer.mineVbkBlocks(1), std::domain_error);
+  EXPECT_THROW(popminer.mineVbkBlocks(1), std::domain_error);
 
   // check that all endorsement have not been applied
   ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);

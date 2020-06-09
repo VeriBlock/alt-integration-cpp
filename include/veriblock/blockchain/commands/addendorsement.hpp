@@ -22,7 +22,8 @@ namespace altintegration {
 template <typename ProtectingTree, typename ProtectedTree>
 struct AddEndorsement : public Command {
   using hash_t = typename ProtectedTree::hash_t;
-  using block_t = typename ProtectingTree::block_t;
+  using protected_block_t = typename ProtectedTree::block_t;
+  using protecting_block_t = typename ProtectingTree::block_t;
   using endorsement_t = typename ProtectedTree::block_t::endorsement_t;
   using protected_index_t = typename ProtectedTree::index_t;
 
@@ -37,7 +38,7 @@ struct AddEndorsement : public Command {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
     if (!containing) {
       return state.Invalid(
-          block_t::name() + "-no-containing",
+          protected_block_t::name() + "-no-containing",
           fmt::sprintf("Can not find containing block in endorsement=%s",
                        e_->toPrettyString()));
     }
@@ -49,18 +50,19 @@ struct AddEndorsement : public Command {
 
     auto endorsedHeight = e_->endorsedHeight;
     if (containing->height - endorsedHeight > window) {
-      return state.Invalid(block_t::name() + "-expired", "Endorsement expired");
+      return state.Invalid(protected_block_t::name() + "-expired",
+                           "Endorsement expired");
     }
 
     auto* endorsed = chain[endorsedHeight];
     if (!endorsed) {
-      return state.Invalid(block_t::name() + "-no-endorsed-block",
+      return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
                            "No block found on endorsed block height");
     }
 
     if (endorsed->getHash() != e_->endorsedHash) {
       return state.Invalid(
-          block_t::name() + "-block-differs",
+          protected_block_t::name() + "-block-differs",
           fmt::sprintf(
               "Endorsed block is on a different chain. Expected: %s, got %s",
               endorsed->toShortPrettyString(),
@@ -70,7 +72,7 @@ struct AddEndorsement : public Command {
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
     if (!blockOfProof) {
       return state.Invalid(
-          block_t::name() + "-block-of-proof-not-found",
+          protected_block_t::name() + "-block-of-proof-not-found",
           fmt::sprintf("Can not find block of proof in SP Chain (%s)",
                        HexStr(e_->blockOfProof)));
     }
@@ -78,22 +80,13 @@ struct AddEndorsement : public Command {
     auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
     if (duplicate) {
       // found duplicate
-      if (endorsement_t::checkForDuplicates()) {
-        return state.Invalid(
-            block_t ::name() + "-duplicate",
-            fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
-                         "found its duplicate in block %s",
-                         e_->toPrettyString(),
-                         containing->toShortPrettyString(),
-                         duplicate->toShortPrettyString()));
-      } else {
-        // this is a VTB duplicate
-        auto it = duplicate->containingEndorsements.find(e_->id);
-        VBK_ASSERT(it != duplicate->containingEndorsements.end());
-
-        it->second->refs++;
-        return true;
-      }
+      return state.Invalid(
+          protected_block_t ::name() + "-duplicate",
+          fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+                       "found its duplicate in block %s",
+                       e_->toPrettyString(),
+                       containing->toShortPrettyString(),
+                       duplicate->toShortPrettyString()));
     }
 
     containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
@@ -117,14 +110,6 @@ struct AddEndorsement : public Command {
 
     auto endorsement_it = containing->containingEndorsements.find(e_->id);
     VBK_ASSERT(endorsement_it != containing->containingEndorsements.end());
-
-    auto& refs = endorsement_it->second->refs;
-    if (refs > 0) {
-      refs--;
-      return;
-    }
-
-    VBK_ASSERT(refs == 0);
 
     // erase endorsedBy
     {
