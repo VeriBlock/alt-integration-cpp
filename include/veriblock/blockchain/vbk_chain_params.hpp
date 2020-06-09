@@ -53,11 +53,8 @@ struct VbkChainParams {
   /// addPayloads in VBK tree will reject all payloads that are added this
   /// number of blocks behind of current tip in active chain
   virtual int32_t getHistoryOverwriteLimit() const noexcept {
-//    /* roughly 4h worth of VBK block production */
-//    return 360;
-
-    // temporarily disable
-    return (std::numeric_limits<int32_t>::max());
+    /* roughly 100h worth of VBK block production */
+    return 12000;
   }
 
   virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
@@ -119,7 +116,7 @@ struct VbkChainParamsMain : public VbkChainParams {
     block.nonce = 289244493;
 
     VBK_ASSERT(block.getHash().toHex() ==
-           "0000000000f4fd66b91f0649bb3fcb137823c5ce317c105c");
+               "0000000000f4fd66b91f0649bb3fcb137823c5ce317c105c");
 
     return block;
   }
@@ -171,7 +168,7 @@ struct VbkChainParamsTest : public VbkChainParams {
     block.nonce = 14304633;
 
     VBK_ASSERT(block.getHash().toHex() ==
-           "00000017eb579ec7d0cdd63379a0615dc3d68032ce248823");
+               "00000017eb579ec7d0cdd63379a0615dc3d68032ce248823");
 
     return block;
   }
@@ -221,7 +218,7 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     block.nonce = 0;
 
     VBK_ASSERT(block.getHash().toHex() ==
-           "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
+               "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
 
     return block;
   }
@@ -272,7 +269,7 @@ struct VbkChainParamsAlpha : public VbkChainParams {
     block.nonce = 45543957;
 
     VBK_ASSERT(block.getHash().toHex() ==
-           "000000701198864f3c19fb552ef9c3c10620ba8128dace8e");
+               "000000701198864f3c19fb552ef9c3c10620ba8128dace8e");
     return block;
   }
 

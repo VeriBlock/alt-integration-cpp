@@ -47,9 +47,6 @@ struct Endorsement {
   ContainingHash blockOfProof;
   std::vector<uint8_t> payoutInfo;
 
-  // TODO: remove ref counter when VTB duplication is disabled
-  uint32_t refs = 0;
-
   static Endorsement fromVbkEncoding(std::string) {
     // TODO: remove
     return {};
@@ -59,9 +56,6 @@ struct Endorsement {
     // TODO: remove
     return {};
   }
-
-  // TODO(Bogdan): temporary used to disable duplicate check
-  static inline bool checkForDuplicates();
 
   static type fromContainer(const Container& c);
 

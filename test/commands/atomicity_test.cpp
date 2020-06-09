@@ -47,30 +47,14 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
   ASSERT_EQ(vbk5->endorsedBy.size(), 1);
   ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
-  ASSERT_EQ(e->refs, 0);
 
-  {
-    // TODO: remove second cmd Exec/ after VTB duplication is disabled
-
-    // execute command second time
-    ASSERT_TRUE(cmd->Execute(state));
-
-    // verify that state has been changed
-    ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
-    ASSERT_EQ(vbk5->endorsedBy.size(), 1);
-    ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
-    ASSERT_EQ(vbk10->endorsedBy.size(), 0);
-    ASSERT_EQ(e->refs, 1);
-
-    // unexecute command first time (removes duplicate)
-    ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
-
-    ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
-    ASSERT_EQ(vbk5->endorsedBy.size(), 1);
-    ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
-    ASSERT_EQ(vbk10->endorsedBy.size(), 0);
-    ASSERT_EQ(e->refs, 0);  // now refs == 0
-  }
+  // execute again
+  ASSERT_FALSE(cmd->Execute(state));
+  // verify that state has not been changed
+  ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk5->endorsedBy.size(), 1);
+  ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
+  ASSERT_EQ(vbk10->endorsedBy.size(), 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
@@ -123,7 +107,6 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
   ASSERT_EQ(alt10->containingEndorsements.size(), 1);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
-  ASSERT_EQ(e->refs, 0);
 
   // execute command second time
   ASSERT_FALSE(cmd->Execute(state));
@@ -133,7 +116,6 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
   ASSERT_EQ(alt10->containingEndorsements.size(), 1);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
-  ASSERT_EQ(e->refs, 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
@@ -194,38 +176,21 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   ASSERT_EQ(altvbkcontaining->commands.size(), 1);
   ASSERT_EQ(altvbkcontaining->commands.at(0).id, vtb1.getId());
 
-  {
-    // TODO: remove this when VTB duplication check is added
-    // run execute second time on same VTB
-    ASSERT_TRUE(cmd1->Execute(state));
-
-    ASSERT_EQ(altvbkcontaining->commands.size(), 2);
-    ASSERT_EQ(altvbkcontaining->commands.at(0).id, vtb1.getId());
-    ASSERT_EQ(altvbkcontaining->commands.at(1).id, vtb1.getId());
-  }
-
   // add vtb2
   auto cmd2 = std::make_shared<AddVTB>(alttree, vtb2);
   ASSERT_TRUE(cmd2->Execute(state));
 
-  ASSERT_EQ(altvbkcontaining->commands.size(), 3);
+  ASSERT_EQ(altvbkcontaining->commands.size(), 2);
   ASSERT_EQ(altvbkcontaining->commands.at(0).id, vtb1.getId());
-  ASSERT_EQ(altvbkcontaining->commands.at(1).id, vtb1.getId());
-  ASSERT_EQ(altvbkcontaining->commands.at(2).id, vtb2.getId());
+  ASSERT_EQ(altvbkcontaining->commands.at(1).id, vtb2.getId());
 
   // unexecute VTB2
   ASSERT_NO_FATAL_FAILURE(cmd2->UnExecute());
 
-  ASSERT_EQ(altvbkcontaining->commands.size(), 2);
-  ASSERT_EQ(altvbkcontaining->commands.at(0).id, vtb1.getId());
-  ASSERT_EQ(altvbkcontaining->commands.at(1).id, vtb1.getId());
-
-  // unexecute first VTB1
-  ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
   ASSERT_EQ(altvbkcontaining->commands.size(), 1);
   ASSERT_EQ(altvbkcontaining->commands.at(0).id, vtb1.getId());
 
-  // unexecute second VTB1
+  // unexecute VTB1
   ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
   ASSERT_EQ(altvbkcontaining->commands.size(), 0);
 }
