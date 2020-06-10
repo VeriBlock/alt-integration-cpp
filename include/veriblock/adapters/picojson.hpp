@@ -8,9 +8,15 @@
 
 #define PICOJSON_USE_INT64
 
+#ifdef WIN32
 #pragma warning(push, 0)
+#endif
+
 #include <veriblock/third_party/picojson.h>
+
+#ifdef WIN32
 #pragma warning(pop)
+#endif
 
 #include <veriblock/json.hpp>
 
