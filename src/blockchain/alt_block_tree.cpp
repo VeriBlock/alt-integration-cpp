@@ -54,18 +54,22 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 bool AltTree::addPayloads(const AltBlock::hash_t& containing,
-                          const std::vector<payloads_t>& payloads,
+                          const std::vector<alt_payloads_t>& alt_payloads,
+                          const std::vector<vbk_payloads_t>& vbk_payloads,
+                          const std::vector<VbkBlock>& context,
                           ValidationState& state) {
   auto* index = getBlockIndex(containing);
   if (!index) {
     return state.Invalid(block_t::name() + "-bad-block",
                          "Can't find containing block");
   }
-  return addPayloads(*index, payloads, state);
+  return addPayloads(*index, alt_payloads, vbk_payloads, context, state);
 }
 
 bool AltTree::addPayloads(index_t& index,
-                          const std::vector<payloads_t>& payloads,
+                          const std::vector<alt_payloads_t>& payloads,
+                          const std::vector<vbk_payloads_t>& vbk_payloads,
+                          const std::vector<VbkBlock>& context,
                           ValidationState& state) {
   VBK_LOG_INFO("%s add %d payloads to block %s",
                block_t::name(),
@@ -100,13 +104,15 @@ bool AltTree::addPayloads(index_t& index,
 }
 
 bool AltTree::validatePayloads(const AltBlock& block,
-                               const payloads_t& p,
+                               const alt_payloads_t& p,
+                               const std::vector<VbkBlock>& context,
                                ValidationState& state) {
-  return validatePayloads(block.getHash(), p, state);
+  return validatePayloads(block.getHash(), p, context, state);
 }
 
 bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
-                               const payloads_t& p,
+                               const alt_payloads_t& p,
+                               const std::vector<VbkBlock>& context,
                                ValidationState& state) {
   auto* index = getBlockIndex(block_hash);
 
@@ -115,7 +121,7 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
                          "Can't find containing block");
   }
 
-  if (!addPayloads(*index, {p}, state)) {
+  if (!addPayloads(*index, {p}, {}, context, state)) {
     VBK_LOG_DEBUG(
         "%s Can not add payloads: %s", block_t::name(), state.toString());
     return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
@@ -125,7 +131,7 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
     VBK_LOG_DEBUG("%s Statefully invalid payloads: %s",
                   block_t::name(),
                   state.toString());
-    removePayloads(*index, {p});
+    removePayloads(*index, {p}, {}, context);
     return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
   }
 
@@ -288,8 +294,8 @@ void AltTree::removePayloads(index_t& index,
   auto& c = index.commands;
 
   // we need only ids, so save some cpu cycles by calculating ids once
-  std::vector<uint256> pids = map_vector<payloads_t, uint256>(
-      payloads, [](const payloads_t& p) { return p.getId(); });
+  std::vector<uint256> pids = map_vector<alt_payloads_t, uint256>(
+      payloads, [](const alt_payloads_t& p) { return p.getId(); });
 
   // iterate over payloads backwards
   for (const auto& pid : reverse_iterate(pids.begin(), pids.end())) {
@@ -316,22 +322,25 @@ void AltTree::removePayloads(index_t& index,
   }
 }
 
-void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,
-                                 std::vector<CommandPtr>& commands) {
+void AltTree::payloadsToCommands(
+    const std::vector<alt_payloads_t>& alt_payloads,
+    const std::vector<vbk_payloads_t>& vbk_payloads,
+    const std::vector<VbkBlock>& context,
+    std::vector<CommandPtr>& commands) {
   // first, add vbk context
-  for (const auto& b : p.popData.vbk_context) {
+  for (const auto& b : context) {
     addBlock(vbk(), b, commands);
   }
 
   // second, add all VTBs
-  for (const auto& vtb : p.popData.vtbs) {
+  for (const auto& vtb : vbk_payloads) {
     auto cmd = std::make_shared<AddVTB>(*this, vtb);
     commands.push_back(std::move(cmd));
   }
 
-  // third, add ATV endorsement
-  if (p.popData.hasAtv) {
-    addBlock(vbk(), p.popData.atv.containingBlock, commands);
+  // third, add ATV endorsements
+  for (const auto& p : alt_payloads) {
+    addBlock(vbk(), p.atv.containingBlock, commands);
 
     auto e = AltEndorsement::fromContainerPtr(p);
     auto cmd = std::make_shared<AddAltEndorsement>(vbk(), *this, std::move(e));

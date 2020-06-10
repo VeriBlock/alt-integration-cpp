@@ -35,7 +35,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using btc_config_t = BtcChainParams;
   using index_t = BlockIndex<AltBlock>;
   using hash_t = typename AltBlock::hash_t;
-  using payloads_t = AltPayloads;
+  using alt_payloads_t = AltPayloads;
+  using vbk_payloads_t = VTB;
 
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
@@ -62,23 +63,34 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
-  void removePayloads(index_t& index, const std::vector<payloads_t>& payloads);
+  void removePayloads(index_t& index,
+                      const std::vector<alt_payloads_t>& payloads,
+                      const std::vector<vbk_payloads_t>& vbk_payloads,
+                      const std::vector<VbkBlock>& context);
 
   void removePayloads(const AltBlock::hash_t& containing,
-                      const std::vector<payloads_t>& payloads);
+                      const std::vector<alt_payloads_t>& payloads);
 
   bool addPayloads(index_t& index,
-                   const std::vector<payloads_t>& payloads,
+                   const std::vector<alt_payloads_t>& alt_payloads,
+                   const std::vector<vbk_payloads_t>& vbk_payloads,
+                   const std::vector<VbkBlock>& context,
                    ValidationState& state);
 
   bool addPayloads(const AltBlock::hash_t& containing,
-                   const std::vector<payloads_t>& payloads,
+                   const std::vector<alt_payloads_t>& alt_payloads,
+                   const std::vector<vbk_payloads_t>& vbk_payloads,
+                   const std::vector<VbkBlock>& context,
                    ValidationState& state);
 
   bool addPayloads(const AltBlock& containing,
-                   const std::vector<payloads_t>& payloads,
+                   const std::vector<alt_payloads_t>& payloads,
+                   const std::vector<alt_payloads_t>& alt_payloads,
+                   const std::vector<vbk_payloads_t>& vbk_payloads,
+                   const std::vector<VbkBlock>& context,
                    ValidationState& state) {
-    return addPayloads(containing.hash, payloads, state);
+    return addPayloads(
+        containing.hash, alt_payloads, vbk_payloads, context, state);
   }
 
   int comparePopScore(const AltBlock::hash_t& hleft,
@@ -104,11 +116,13 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   }
 
   bool validatePayloads(const AltBlock& block,
-                        const payloads_t& p,
+                        const alt_payloads_t& p,
+                        const std::vector<VbkBlock>& context,
                         ValidationState& state);
 
   bool validatePayloads(const AltBlock::hash_t& block_hash,
-                        const payloads_t& p,
+                        const alt_payloads_t& p,
+                        const std::vector<VbkBlock>& context,
                         ValidationState& state);
 
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
@@ -133,7 +147,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   index_t* insertBlockHeader(const AltBlock& block);
 
-  void payloadsToCommands(const payloads_t& p,
+  void payloadsToCommands(const std::vector<alt_payloads_t>& alt_payloads,
+                          const std::vector<vbk_payloads_t>& vbk_payloads,
+                          const std::vector<VbkBlock>& context,
                           std::vector<CommandPtr>& commands);
 
   void determineBestChain(Chain<index_t>& currentBest,

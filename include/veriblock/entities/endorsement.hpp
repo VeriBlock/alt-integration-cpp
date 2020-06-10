@@ -7,6 +7,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
 
 #include <memory>
+
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 

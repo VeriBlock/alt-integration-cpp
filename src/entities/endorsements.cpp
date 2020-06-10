@@ -25,11 +25,11 @@ template <>
 AltEndorsement AltEndorsement::fromContainer(const AltPayloads& c) {
   AltEndorsement e;
   e.id = AltEndorsement::getId(c);
-  e.blockOfProof = c.popData.atv.containingBlock.getHash();
+  e.blockOfProof = c.atv.containingBlock.getHash();
   e.endorsedHash = c.endorsed.hash;
   e.endorsedHeight = c.endorsed.height;
   e.containingHash = c.containingBlock.hash;
-  e.payoutInfo = c.popData.atv.transaction.publicationData.payoutInfo;
+  e.payoutInfo = c.atv.transaction.publicationData.payoutInfo;
   return e;
 }
 
@@ -42,8 +42,8 @@ VbkEndorsement::id_t VbkEndorsement::getId(const VTB& c) {
 
 template <>
 AltEndorsement::id_t AltEndorsement::getId(const AltPayloads& c) {
-  auto left = c.popData.atv.transaction.getHash();
-  auto right = c.popData.atv.containingBlock.getHash();
+  auto left = c.atv.transaction.getHash();
+  auto right = c.atv.containingBlock.getHash();
   return sha256(left, right);
 }
 

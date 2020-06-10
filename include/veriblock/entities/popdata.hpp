@@ -22,9 +22,8 @@ struct PopData {
 
   int32_t version{};
 
-  std::vector<VbkBlock> vbk_context;
-  bool hasAtv{false};
-  ATV atv{};
+  std::vector<VbkBlock> context;
+  std::vector<ATV> atvs{};
   std::vector<VTB> vtbs{};
 
   /**
@@ -54,12 +53,6 @@ struct PopData {
   std::vector<uint8_t> toVbkEncoding() const;
 
   /**
-   * Return true if contains endorsement data
-   * @return true if contains endorsement data
-   */
-  bool containsEndorsements() const;
-
-  /**
    * Calculate a Payloads id that is the sha256 hash of the payloads rawBytes
    * @return id sha256 hash
    */
@@ -77,13 +70,9 @@ template <typename JsonValue>
 JsonValue ToJSON(const PopData& p) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putIntKV(obj, "version", p.version);
-  json::putArrayKV(obj, "vbk_context", p.vbk_context);
+  json::putArrayKV(obj, "vbk_context", p.context);
   json::putArrayKV(obj, "vtbs", p.vtbs);
-  if (p.hasAtv) {
-    json::putKV(obj, "atv", ToJSON<JsonValue>(p.atv));
-  } else {
-    json::putNullKV(obj, "atv");
-  }
+  json::putArrayKV(obj, "atvs", p.atvs);
   return obj;
 }
 
