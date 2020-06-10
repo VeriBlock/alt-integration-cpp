@@ -95,7 +95,7 @@ JsonValue ToJSON(const AltPayloads& p) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putKV(obj, "endorsed", ToJSON<JsonValue>(p.endorsed));
   json::putKV(obj, "containingBlock", ToJSON<JsonValue>(p.containingBlock));
-  json::putKV(obj, "popData", ToJSON<JsonValue>(p.popData));
+  json::putKV(obj, "atv", ToJSON<JsonValue>(p.atv));
   return obj;
 }
 

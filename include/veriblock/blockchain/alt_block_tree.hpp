@@ -64,12 +64,14 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
   void removePayloads(index_t& index,
-                      const std::vector<alt_payloads_t>& payloads,
+                      const std::vector<alt_payloads_t>& alt_payloads,
                       const std::vector<vbk_payloads_t>& vbk_payloads,
                       const std::vector<VbkBlock>& context);
 
   void removePayloads(const AltBlock::hash_t& containing,
-                      const std::vector<alt_payloads_t>& payloads);
+                      const std::vector<alt_payloads_t>& alt_payloads,
+                      const std::vector<vbk_payloads_t>& vbk_payloads,
+                      const std::vector<VbkBlock>& context);
 
   bool addPayloads(index_t& index,
                    const std::vector<alt_payloads_t>& alt_payloads,
@@ -84,7 +86,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
                    ValidationState& state);
 
   bool addPayloads(const AltBlock& containing,
-                   const std::vector<alt_payloads_t>& payloads,
                    const std::vector<alt_payloads_t>& alt_payloads,
                    const std::vector<vbk_payloads_t>& vbk_payloads,
                    const std::vector<VbkBlock>& context,

@@ -67,13 +67,13 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
 }
 
 bool AltTree::addPayloads(index_t& index,
-                          const std::vector<alt_payloads_t>& payloads,
+                          const std::vector<alt_payloads_t>& alt_payloads,
                           const std::vector<vbk_payloads_t>& vbk_payloads,
                           const std::vector<VbkBlock>& context,
                           ValidationState& state) {
   VBK_LOG_INFO("%s add %d payloads to block %s",
                block_t::name(),
-               payloads.size(),
+               alt_payloads.size(),
                index.toShortPrettyString());
   if (!index.pprev) {
     return state.Invalid(block_t::name() + "-bad-containing-prev",
@@ -93,7 +93,7 @@ bool AltTree::addPayloads(index_t& index,
   }
 
   auto& c = index.commands;
-  for (const auto& p : payloads) {
+  for (const auto& p : alt_payloads) {
     c.emplace_back();
     auto& g = c.back();
     g.id = p.getId();
@@ -261,18 +261,23 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
 }
 
 void AltTree::removePayloads(const AltBlock::hash_t& hash,
-                             const std::vector<payloads_t>& payloads) {
+                             const std::vector<alt_payloads_t>& alt_payloads,
+                             const std::vector<vbk_payloads_t>& vbk_payloads,
+                             const std::vector<VbkBlock>& context) {
   auto* index = base::getBlockIndex(hash);
   if (!index) {
     throw std::logic_error("removePayloads is called on unknown ALT block: " +
                            HexStr(hash));
   }
 
-  return removePayloads(*index, payloads);
+  return removePayloads(*index, alt_payloads, vbk_payloads, context);
 }
 
 void AltTree::removePayloads(index_t& index,
-                             const std::vector<payloads_t>& payloads) {
+                             const std::vector<alt_payloads_t>& payloads,
+                             const std::vector<vbk_payloads_t>& vbk_payloads,
+                             const std::vector<VbkBlock>& context) {
+  /// TODO update removing payloads
   VBK_LOG_INFO("%s remove %d payloads from %s",
                block_t::name(),
                payloads.size(),
