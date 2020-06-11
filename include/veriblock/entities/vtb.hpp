@@ -77,6 +77,8 @@ struct VTB {
    */
   id_t getId() const;
 
+  static std::string name() { return "VTB"; }
+
   friend bool operator==(const VTB& a, const VTB& b) {
     return a.getId() == b.getId();
   }
