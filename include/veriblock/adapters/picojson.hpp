@@ -21,6 +21,12 @@
 #include <veriblock/json.hpp>
 
 namespace altintegration {
+
+template <>
+inline picojson::value ToJSON(const std::string& t) {
+  return picojson::value(t);
+}
+
 namespace json {
 
 template <>
@@ -31,11 +37,6 @@ inline picojson::value makeEmptyObject() {
 template <>
 inline picojson::value makeEmptyArray() {
   return picojson::value(picojson::array_type, true);
-}
-
-template <>
-inline picojson::value ToJSON(const std::string& t) {
-  return picojson::value(t);
 }
 
 template <>
