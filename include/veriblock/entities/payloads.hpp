@@ -108,6 +108,7 @@ struct DummyPayloads {
 
 template <typename JsonValue>
 JsonValue ToJSON(const DummyPayloads& p) {
+  (void) p;
   return json::makeEmptyObject<JsonValue>();
 }
 
