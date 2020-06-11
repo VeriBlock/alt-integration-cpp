@@ -71,6 +71,8 @@ struct VbkPopTx {
    * @return hash vbk pop transaction hash
    */
   hash_t getHash() const;
+
+  std::string toPrettyString() const;
 };
 
 template <typename JsonValue>

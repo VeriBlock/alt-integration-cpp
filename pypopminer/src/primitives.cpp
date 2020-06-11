@@ -9,6 +9,7 @@
 #include <veriblock/mock_miner.hpp>
 
 #include "converters.hpp"
+#include "vector.hpp"
 
 using namespace boost::python;
 using namespace altintegration;
@@ -50,4 +51,11 @@ void init_primitives() {
   blob<72 / 8>("uint72");
 
   pystring_converter().reg<std::vector<uint8_t>>();
+
+  reg_vector<uint256>("std_vector_uint256");
+  reg_vector<BtcBlock>("std_vector_BtcBlock");
+  reg_vector<VbkBlock>("std_vector_VbkBlock");
+  reg_vector<VTB>("std_vector_VTB");
+  reg_vector<Coin>("std_vector_Coin");
+  reg_vector<Output>("std_vector_Output");
 }

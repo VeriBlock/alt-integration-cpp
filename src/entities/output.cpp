@@ -21,3 +21,8 @@ void Output::toVbkEncoding(WriteStream& stream) const {
   address.toVbkEncoding(stream);
   coin.toVbkEncoding(stream);
 }
+
+std::string Output::toPrettyString() const {
+  return fmt::sprintf(
+      "Output{address=%s, coin=%lld}", address.toString(), coin.units);
+}
