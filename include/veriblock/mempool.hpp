@@ -27,7 +27,22 @@ typedef std::vector<uint8_t> (*Hash_Function)(
 
 struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
-  using block_index_t = std::unordered_map<vbk_hash_t, VbkBlock>;
+
+  struct VbkBlockPayloads {
+    using id_t = VbkBlock::id_t;
+
+    VbkBlock block;
+    std::unordered_set<ATV::id_t> atvs;
+    std::unordered_set<VTB::id_t> vtbs;
+  };
+
+  template <typename Payload>
+  using payload_map =
+      std::unordered_map<typename Payload::id_t, std::shared_ptr<Payload>>;
+
+  using vbkblock_map_t = payload_map<VbkBlockPayloads>;
+  using atv_map_t = payload_map<ATV>;
+  using vtb_map_t = payload_map<VTB>;
 
   ~MemPool() = default;
   MemPool(const AltChainParams& alt_param,
@@ -42,23 +57,20 @@ struct MemPool {
   bool submitVTB(const std::vector<VTB>& vtb, ValidationState& state);
   bool submitATV(const std::vector<ATV>& atv, ValidationState& state);
 
-  std::vector<PopData> getPop(const AltBlock& current_block, AltTree& tree);
+  std::vector<PopData> getPop(AltTree& tree);
 
   void removePayloads(const std::vector<PopData>& v_popData);
 
-  const block_index_t& getVbkBlocks() const { return block_index_; }
-  const std::unordered_map<ATV::id_t, ATV>& getATVs() const {
-    return stored_atvs_;
-  }
-  const std::unordered_map<VTB::id_t, VTB>& getVTBs() const {
-    return stored_vtbs_;
-  }
+  const atv_map_t& getATVs() const { return stored_atvs_; }
+
+  const vtb_map_t& getVTBs() const { return stored_vtbs_; }
+
+  const vbkblock_map_t& getVbkBlocks() const { return vbkblocks_; }
 
  private:
-  block_index_t block_index_;
-
-  std::unordered_map<ATV::id_t, ATV> stored_atvs_;
-  std::unordered_map<VTB::id_t, VTB> stored_vtbs_;
+  vbkblock_map_t vbkblocks_;
+  atv_map_t stored_atvs_;
+  vtb_map_t stored_vtbs_;
 
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
@@ -66,14 +78,14 @@ struct MemPool {
 
   Hash_Function hasher;
 
-  void uploadVbkContext(const VTB&);
-  void uploadVbkContext(const ATV&);
+  // create and return VbkBlockPayloads if not exist, or return existing
+  VbkBlockPayloads& touchVbkBlock(const VbkBlock& block);
 
   bool fillContext(VbkBlock first_block,
                    std::vector<VbkBlock>& context,
                    AltTree& tree);
   void fillVTBs(std::vector<VTB>& vtbs,
-                const std::vector<VbkBlock>& vbk_contex);
+                const std::vector<VbkBlock>& vbk_context);
 
   bool applyPayloads(const AltBlock& hack_block,
                      PopData& popdata,
@@ -89,7 +101,7 @@ Value ToJSON(const MemPool& mp) {
   for (auto& p : mp.getVbkBlocks()) {
     json::arrayPushBack(vbk, ToJSON<Value>(p.first));
   }
-  json::putKV(obj, "vbk_blocks", vbk);
+  json::putKV(obj, "vbkblocks", vbk);
 
   auto vtbs = json::makeEmptyArray<Value>();
   for (auto& p : mp.getVTBs()) {

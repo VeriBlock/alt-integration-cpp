@@ -23,6 +23,7 @@ namespace altintegration {
 struct VbkBlock {
   using hash_t = uint192;
   using short_hash_t = uint96;
+  using id_t = short_hash_t;
   using height_t = int32_t;
   using keystone_t = uint72;
   using payloads_t = VTB;
