@@ -7,6 +7,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ENDORSEMENT_HPP_
 
 #include <memory>
+
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
@@ -69,6 +70,18 @@ struct Endorsement {
 
   std::string toPrettyString(size_t level = 0) const;
 };
+
+template <typename Value, class A, class B, class C, class D>
+Value ToJSON(const Endorsement<A, B, C, D>& e) {
+  auto obj = json::makeEmptyObject<Value>();
+  json::putStringKV(obj, "id", HexStr(e.id));
+  json::putStringKV(obj, "endorsedHash", HexStr(e.endorsedHash));
+  json::putStringKV(obj, "endorsedHeight", e.endorsedHeight);
+  json::putStringKV(obj, "containingHash", e.containingHash);
+  json::putStringKV(obj, "blockOfProof", e.blockOfProof);
+  json::putStringKV(obj, "payoutInfo", e.payoutInfo);
+  return obj;
+}
 
 }  // namespace altintegration
 
