@@ -149,8 +149,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
-  json::putStringKV(obj, "chainWork", i.chainWork.toHex());
-
   std::vector<uint256> endorsements;
   for (auto& e : i.containingEndorsements) {
     endorsements.push_back(e.first);
@@ -163,10 +161,7 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
 
-  json::putIntKV(obj, "height", i.height);
-  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
   json::putIntKV(obj, "status", i.status);
-  json::putIntKV(obj, "ref", i.refCounter);
 
   return obj;
 }
