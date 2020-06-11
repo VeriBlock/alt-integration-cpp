@@ -106,6 +106,12 @@ struct DummyPayloads {
   id_t getId() const { return true; }
 };
 
+template <typename JsonValue>
+JsonValue ToJSON(const DummyPayloads& p) {
+  (void) p;
+  return json::makeEmptyObject<JsonValue>();
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_PAYLOADS_HPP

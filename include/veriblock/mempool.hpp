@@ -46,11 +46,19 @@ struct MemPool {
 
   void removePayloads(const std::vector<PopData>& v_popData);
 
+  const block_index_t& getVbkBlocks() const { return block_index_; }
+  const std::unordered_map<ATV::id_t, ATV>& getATVs() const {
+    return stored_atvs_;
+  }
+  const std::unordered_map<VTB::id_t, VTB>& getVTBs() const {
+    return stored_vtbs_;
+  }
+
  private:
   block_index_t block_index_;
 
   std::unordered_map<ATV::id_t, ATV> stored_atvs_;
-  std::unordered_map<VbkEndorsement::id_t, VTB> stored_vtbs_;
+  std::unordered_map<VTB::id_t, VTB> stored_vtbs_;
 
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
@@ -72,6 +80,31 @@ struct MemPool {
                      AltTree& tree,
                      ValidationState& state);
 };
+
+template <typename Value>
+Value ToJSON(const MemPool& mp) {
+  auto obj = json::makeEmptyObject<Value>();
+
+  auto vbk = json::makeEmptyArray<Value>();
+  for (auto& p : mp.getVbkBlocks()) {
+    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
+  }
+  json::putKV(obj, "vbk_blocks", vbk);
+
+  auto vtbs = json::makeEmptyArray<Value>();
+  for (auto& p : mp.getVTBs()) {
+    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
+  }
+  json::putKV(obj, "vtbs", vbk);
+
+  auto atvs = json::makeEmptyArray<Value>();
+  for (auto& p : mp.getATVs()) {
+    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
+  }
+  json::putKV(obj, "atvs", vbk);
+
+  return obj;
+}
 
 }  // namespace altintegration
 

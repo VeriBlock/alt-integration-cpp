@@ -85,6 +85,31 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator cmp_;
 };
 
+template <typename JsonValue>
+JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+  json::putStringKV(obj, "chainWork", i.chainWork.toHex());
+
+  std::vector<uint256> endorsements;
+  for (auto& e : i.containingEndorsements) {
+    endorsements.push_back(e.first);
+  }
+  json::putArrayKV(obj, "containingEndorsements", endorsements);
+
+  std::vector<uint256> endorsedBy;
+  for (auto* e : i.endorsedBy) {
+    endorsements.push_back(e->id);
+  }
+  json::putArrayKV(obj, "endorsedBy", endorsedBy);
+
+  json::putIntKV(obj, "height", i.height);
+  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
+  json::putIntKV(obj, "status", i.status);
+  json::putIntKV(obj, "ref", i.refCounter);
+
+  return obj;
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_
