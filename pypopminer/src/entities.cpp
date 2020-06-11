@@ -7,6 +7,7 @@
 #include <boost/python.hpp>
 #include <boost/python/to_python_converter.hpp>
 #include <veriblock/mock_miner.hpp>
+
 #include "vector.hpp"
 
 using namespace altintegration;
@@ -60,6 +61,7 @@ void init_entities() {
       .def_readwrite("units", &Coin::units);
 
   class_<Output, boost::shared_ptr<Output>>("Output")
+      .def("__repr__", &Output::toPrettyString)
       .def_readwrite("address", &Output::address)
       .def_readwrite("coin", &Output::coin);
 
