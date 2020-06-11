@@ -18,3 +18,7 @@ void Coin::toVbkEncoding(WriteStream& stream) const {
 bool Coin::operator==(const Coin& other) const noexcept {
   return units == other.units;
 }
+
+std::string Coin::toPrettyString() const {
+  return fmt::sprintf("Coin{%lld}", units);
+}

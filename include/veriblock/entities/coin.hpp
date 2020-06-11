@@ -9,6 +9,7 @@
 #include <cstdint>
 
 #include "veriblock/serde.hpp"
+#include "veriblock/fmt.hpp"
 
 namespace altintegration {
 
@@ -16,6 +17,8 @@ struct Coin {
   int64_t units{};
 
   Coin() = default;
+
+  std::string toPrettyString() const;
 
   explicit Coin(int64_t atomicUnits) : units(atomicUnits) {}
 
@@ -38,7 +41,6 @@ struct Coin {
    * @result comparing result
    */
   bool operator==(const Coin& other) const noexcept;
-
 };
 
 }  // namespace altintegration
