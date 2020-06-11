@@ -12,11 +12,11 @@ using namespace boost::python;
 using namespace altintegration;
 
 struct Payloads {
-  std::string atv;
-  list vtbs;
+  ATV atv;
+  std::vector<VTB> vtbs;
 
   std::string toPrettyString() const {
-    return fmt::sprintf("Payloads{atv, vtbs}");
+    return fmt::sprintf("Payloads{atv, vtbs=%d}", vtbs.size());
   }
 };
 
@@ -36,7 +36,7 @@ struct MockMinerProxy : private MockMiner {
 
   VbkBlock getVbkBlock(const std::string& hash) {
     auto index = vbk().getBlockIndex(VbkBlock::hash_t::fromHex(hash));
-    if(!index) {
+    if (!index) {
       throw std::invalid_argument("Can not find VbkBlock " + hash);
     }
 
@@ -45,7 +45,7 @@ struct MockMinerProxy : private MockMiner {
 
   BtcBlock getBtcBlock(const std::string& hash) {
     auto index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(hash));
-    if(!index) {
+    if (!index) {
       throw std::invalid_argument("Can not find BtcBlock " + hash);
     }
 
@@ -112,8 +112,7 @@ struct MockMinerProxy : private MockMiner {
     auto lastBtc = prevBtcIndex->getHash().toHex();
     for (size_t i = 0; i < vtbs; i++) {
       auto btctx = createBtcTxEndorsingVbkBlock(block);
-      auto btccontaining =
-          this->mineBtcBlocks(lastBtc, 1);
+      auto btccontaining = this->mineBtcBlocks(lastBtc, 1);
       auto vbkpoptx = createVbkPopTxEndorsingVbkBlock(
           btccontaining,
           btctx,
@@ -137,7 +136,7 @@ struct MockMinerProxy : private MockMiner {
           lastVbkBlock);
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    payloads.atv = base::generateATV(vbktx, vbkindex->getHash(), state).toHex();
+    payloads.atv = base::generateATV(vbktx, vbkindex->getHash(), state);
     if (!state.IsValid()) {
       throw std::logic_error("MockMiner: can't create ATV: " +
                              state.toString());
@@ -149,7 +148,7 @@ struct MockMinerProxy : private MockMiner {
     auto vbktip = vbk().getBestChain().tip();
     auto last =
         vbkindex->pprev ? vbkindex->pprev->getHash() : vbkindex->getHash();
-    std::vector<VTB> vtbs;
+    auto& vtbs = payloads.vtbs;
     while (vbktip->getHash() != last) {
       auto it = vbkPayloads.find(vbktip->getHash());
       if (it != vbkPayloads.end()) {
@@ -168,9 +167,7 @@ struct MockMinerProxy : private MockMiner {
       // supply all vbk context into first VTB
       vtbs[0].context = context;
     }
-    for (auto& vtb : vtbs) {
-      payloads.vtbs.append(vtb.toHex());
-    }
+
     return payloads;
   }
 };
@@ -212,10 +209,16 @@ BOOST_PYTHON_MODULE(pypopminer) {
       "MockMiner", no_init)
       .def("__init__", make_constructor(makeMiner))
       .def("__repr__", &MockMinerProxy::toPrettyString)
-      .def_readonly("vbkTip", &MockMinerProxy::getVbkTip, "Current BtcTip in MockMiner")
-      .def_readonly("btcTip", &MockMinerProxy::getBtcTip, "Current VbkTip in MockMiner")
-      .def("getBtcBlock", &MockMinerProxy::getBtcBlock, "Given block hash, returns BtcBlock if it exists, throws otherwise")
-      .def("getVbkBlock", &MockMinerProxy::getVbkBlock, "Given block hash, returns VbkBlock if it exists, throws otherwise")
+      .def_readonly(
+          "vbkTip", &MockMinerProxy::getVbkTip, "Current BtcTip in MockMiner")
+      .def_readonly(
+          "btcTip", &MockMinerProxy::getBtcTip, "Current VbkTip in MockMiner")
+      .def("getBtcBlock",
+           &MockMinerProxy::getBtcBlock,
+           "Given block hash, returns BtcBlock if it exists, throws otherwise")
+      .def("getVbkBlock",
+           &MockMinerProxy::getVbkBlock,
+           "Given block hash, returns VbkBlock if it exists, throws otherwise")
       .def("mineBtcBlocks", fx1)
       .def("mineBtcBlocks", fx2)
       .def("mineVbkBlocks", fx3)

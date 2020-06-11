@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/entities/address.hpp"
+
 #include "veriblock/assert.hpp"
 #include "veriblock/base58.hpp"
 #include "veriblock/base59.hpp"
 #include "veriblock/consts.hpp"
-#include "veriblock/entities/address.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
 
@@ -101,7 +102,56 @@ bool Address::isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const {
   return true;
 }
 
-Address Address::fromString(const std::string& input) {
+Address Address::fromString(const std::string& input) { return Address(input); }
+
+std::string Address::toString() const noexcept { return m_Address; }
+
+Address Address::fromVbkEncoding(ReadStream& stream) {
+  auto addressType = (AddressType)stream.readLE<uint8_t>();
+  auto addressBytes =
+      readSingleByteLenValue(stream, 0, altintegration::ADDRESS_SIZE);
+
+  std::string address;
+  switch (addressType) {
+    case AddressType::STANDARD:
+      address = EncodeBase58(addressBytes);
+      break;
+    case AddressType::MULTISIG:
+      address = EncodeBase59(addressBytes);
+      break;
+    default:
+      throw std::invalid_argument(
+          "addressFromVbkEncoding(): invalid address type: neither standard, "
+          "nor multisig");
+  }
+
+  return fromString(address);
+}
+
+void Address::toVbkEncoding(WriteStream& stream) const {
+  stream.writeBE<uint8_t>((uint8_t)getType());
+  std::vector<uint8_t> decoded;
+  switch (getType()) {
+    case AddressType::STANDARD:
+      decoded = DecodeBase58(toString());
+      break;
+    case AddressType ::MULTISIG:
+      decoded = DecodeBase59(toString());
+      break;
+    default:
+      // if we don't know address type, do not encode anything
+      return;
+  }
+
+  writeSingleByteLenValue(stream, decoded);
+}
+
+void Address::getPopBytes(WriteStream& stream) const {
+  std::vector<uint8_t> bytes = DecodeBase58(m_Address.substr(1));
+  stream.write(std::vector<uint8_t>(bytes.begin(), bytes.begin() + 16));
+}
+
+Address::Address(const std::string& input) {
   if (input.size() != ADDRESS_SIZE) {
     throw std::invalid_argument("isValidAddress(): invalid address length");
   }
@@ -159,55 +209,8 @@ Address Address::fromString(const std::string& input) {
     throw std::invalid_argument("isValidAddress(): checksum does not match");
   }
 
-  return Address(multisig ? AddressType::MULTISIG : AddressType::STANDARD,
-                 input);
-}
-
-const std::string& Address::toString() const noexcept { return m_Address; }
-
-Address Address::fromVbkEncoding(ReadStream& stream) {
-  auto addressType = (AddressType)stream.readLE<uint8_t>();
-  auto addressBytes =
-      readSingleByteLenValue(stream, 0, altintegration::ADDRESS_SIZE);
-
-  std::string address;
-  switch (addressType) {
-    case AddressType::STANDARD:
-      address = EncodeBase58(addressBytes);
-      break;
-    case AddressType::MULTISIG:
-      address = EncodeBase59(addressBytes);
-      break;
-    default:
-      throw std::invalid_argument(
-          "addressFromVbkEncoding(): invalid address type: neither standard, "
-          "nor multisig");
-  }
-
-  return fromString(address);
-}
-
-void Address::toVbkEncoding(WriteStream& stream) const {
-  stream.writeBE<uint8_t>((uint8_t)getType());
-  std::vector<uint8_t> decoded;
-  switch (getType()) {
-    case AddressType::STANDARD:
-      decoded = DecodeBase58(toString());
-      break;
-    case AddressType ::MULTISIG:
-      decoded = DecodeBase59(toString());
-      break;
-    default:
-      // if we don't know address type, do not encode anything
-      return;
-  }
-
-  writeSingleByteLenValue(stream, decoded);
-}
-
-void Address::getPopBytes(WriteStream& stream) const {
-  std::vector<uint8_t> bytes = DecodeBase58(m_Address.substr(1));
-  stream.write(std::vector<uint8_t>(bytes.begin(), bytes.begin() + 16));
+  m_Type = multisig ? AddressType::MULTISIG : AddressType::STANDARD;
+  m_Address = input;
 }
 
 }  // namespace altintegration

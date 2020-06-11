@@ -40,6 +40,8 @@ struct Output {
    * @param stream data stream to write into
    */
   void toVbkEncoding(WriteStream& stream) const;
+
+  std::string toPrettyString() const;
 };
 
 template <typename JsonValue>
