@@ -7,33 +7,50 @@
 #define VERIBLOCK_POP_CPP_JSON_HPP
 
 namespace altintegration {
+
+template <typename Value, typename T>
+Value ToJSON(const T& t) {
+  static_assert(sizeof(T) == 0, "Undefined function for this type");
+}
+
 namespace json {
 
 template <typename Object>
-Object makeEmptyObject();
+Object makeEmptyObject() {
+  static_assert(sizeof(Object) == 0, "Undefined function for this type");
+}
 
 template <typename Array>
-Array makeEmptyArray();
-
-template <typename Value, typename T>
-Value ToJSON(const T& t);
+Array makeEmptyArray() {
+  static_assert(sizeof(Array) == 0, "Undefined function for this type");
+}
 
 template <typename Value>
-void putKV(Value& object, const std::string& key, const Value& val);
+void putKV(Value& object, const std::string& key, const Value& val) {
+  static_assert(sizeof(Value) == 0, "Undefined function for this type");
+}
 
 template <typename Object>
 void putStringKV(Object& object,
                  const std::string& key,
-                 const std::string& value);
+                 const std::string& value) {
+  static_assert(sizeof(Object) == 0, "Undefined function for this type");
+}
 
 template <typename Object>
-void putIntKV(Object& object, const std::string& key, int64_t value);
+void putIntKV(Object& object, const std::string& key, int64_t value) {
+  static_assert(sizeof(Object) == 0, "Undefined function for this type");
+}
 
 template <typename Object>
-void putNullKV(Object& object, const std::string& key);
+void putNullKV(Object& object, const std::string& key) {
+  static_assert(sizeof(Object) == 0, "Undefined function for this type");
+}
 
 template <typename Value>
-void arrayPushBack(Value& array, const Value& el);
+void arrayPushBack(Value& array, const Value& el) {
+  static_assert(sizeof(Value) == 0, "Undefined function for this type");
+}
 
 template <typename Value, typename Iterable>
 void putArrayKV(Value& object, const std::string& key, const Iterable& val) {
@@ -45,7 +62,9 @@ void putArrayKV(Value& object, const std::string& key, const Iterable& val) {
 }
 
 template <typename Object>
-void putBoolKV(Object& object, const std::string& key, bool value);
+void putBoolKV(Object& object, const std::string& key, bool value) {
+  static_assert(sizeof(Object) == 0, "Undefined function for this type");
+}
 
 }  // namespace json
 }  // namespace altintegration

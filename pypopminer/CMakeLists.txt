@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 
-find_package(Boost COMPONENTS python3)
+find_package(Boost QUIET COMPONENTS python3)
 if(NOT ${Boost_FOUND})
     find_package(Boost REQUIRED COMPONENTS python)
 endif()
