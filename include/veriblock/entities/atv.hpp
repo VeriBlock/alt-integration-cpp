@@ -71,6 +71,8 @@ struct ATV {
    */
   id_t getId() const;
 
+  static std::string name() { return "ATV"; }
+
   static ATV fromHex(const std::string& h);
 
   friend bool operator==(const ATV& a, const ATV& b) {
