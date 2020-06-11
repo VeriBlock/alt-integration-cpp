@@ -76,7 +76,7 @@ Value ToJSON(const Endorsement<A, B, C, D>& e) {
   auto obj = json::makeEmptyObject<Value>();
   json::putStringKV(obj, "id", HexStr(e.id));
   json::putStringKV(obj, "endorsedHash", HexStr(e.endorsedHash));
-  json::putStringKV(obj, "endorsedHeight", e.endorsedHeight);
+  json::putIntKV(obj, "endorsedHeight", e.endorsedHeight);
   json::putStringKV(obj, "containingHash", e.containingHash);
   json::putStringKV(obj, "blockOfProof", e.blockOfProof);
   json::putStringKV(obj, "payoutInfo", e.payoutInfo);
