@@ -571,7 +571,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   EXPECT_TRUE(checkVTB(
       vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
-  EXPECT_NE(vtb1, vtb2);
+//  EXPECT_NE(vtb1, vtb2);
   EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
             VbkEndorsement::fromContainer(vtb2));
 
@@ -738,7 +738,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   EXPECT_TRUE(checkVTB(
       vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
-  EXPECT_NE(vtb1, vtb2);
+  EXPECT_NE(vtb1.toHex(), vtb2.toHex());
   EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
             VbkEndorsement::fromContainer(vtb2));
 

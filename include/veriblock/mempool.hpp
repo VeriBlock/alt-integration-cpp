@@ -30,8 +30,6 @@ struct MemPool {
 
   struct VbkBlockPayloads {
     using id_t = VbkBlock::id_t;
-
-    VbkBlock block;
     std::unordered_set<ATV::id_t> atvs;
     std::unordered_set<VTB::id_t> vtbs;
   };
@@ -40,7 +38,8 @@ struct MemPool {
   using payload_map =
       std::unordered_map<typename Payload::id_t, std::shared_ptr<Payload>>;
 
-  using vbkblock_map_t = payload_map<VbkBlockPayloads>;
+  using vbkblock_map_t = payload_map<VbkBlock>;
+  using vbkblockpayloads_map_t = payload_map<VbkBlockPayloads>;
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
 
@@ -54,21 +53,31 @@ struct MemPool {
         btc_chain_params_(&btc_params),
         hasher(function) {}
 
+  // @deprecated - use submit<VTB>
   bool submitVTB(const std::vector<VTB>& vtb, ValidationState& state);
+  // @deprecated - use submit<ATV>
   bool submitATV(const std::vector<ATV>& atv, ValidationState& state);
+
+  template <typename T>
+  bool submit(const T& pl, ValidationState& state) {
+    (void)pl;
+    (void)state;
+    static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
+    return true;
+  }
+
+  template <typename T>
+  const payload_map<T>& getMap() const {
+    static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getMap");
+  }
 
   std::vector<PopData> getPop(AltTree& tree);
 
   void removePayloads(const std::vector<PopData>& v_popData);
 
-  const atv_map_t& getATVs() const { return stored_atvs_; }
-
-  const vtb_map_t& getVTBs() const { return stored_vtbs_; }
-
-  const vbkblock_map_t& getVbkBlocks() const { return vbkblocks_; }
-
  private:
   vbkblock_map_t vbkblocks_;
+  vbkblockpayloads_map_t vbkplds_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
@@ -93,27 +102,55 @@ struct MemPool {
                      ValidationState& state);
 };
 
+template <>
+bool MemPool::submit(const ATV& atv, ValidationState& state);
+
+template <>
+bool MemPool::submit(const VTB& vtb, ValidationState& state);
+
+template <>
+bool MemPool::submit(const VbkBlock& block, ValidationState& state);
+
+template <>
+inline const MemPool::payload_map<VbkBlock>& MemPool::getMap() const {
+  return vbkblocks_;
+}
+
+template <>
+inline const MemPool::payload_map<ATV>& MemPool::getMap() const {
+  return stored_atvs_;
+}
+
+template <>
+inline const MemPool::payload_map<VTB>& MemPool::getMap() const {
+  return stored_vtbs_;
+}
+
+template <>
+inline const MemPool::payload_map<MemPool::VbkBlockPayloads>& MemPool::getMap()
+    const {
+  return this->vbkplds_;
+}
+
+namespace detail {
+
+template <typename Value, typename T>
+inline void mapToJson(Value& obj, MemPool& mp, const std::string& key) {
+  auto arr = json::makeEmptyArray<Value>();
+  for (auto& p : mp.getMap<T>()) {
+    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+  }
+  json::putKV(obj, key, arr);
+}
+}  // namespace detail
+
 template <typename Value>
 Value ToJSON(const MemPool& mp) {
   auto obj = json::makeEmptyObject<Value>();
 
-  auto vbk = json::makeEmptyArray<Value>();
-  for (auto& p : mp.getVbkBlocks()) {
-    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
-  }
-  json::putKV(obj, "vbkblocks", vbk);
-
-  auto vtbs = json::makeEmptyArray<Value>();
-  for (auto& p : mp.getVTBs()) {
-    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
-  }
-  json::putKV(obj, "vtbs", vbk);
-
-  auto atvs = json::makeEmptyArray<Value>();
-  for (auto& p : mp.getATVs()) {
-    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
-  }
-  json::putKV(obj, "atvs", vbk);
+  detail::mapToJson<Value, VbkBlock>(obj, mp, "vbkblocks");
+  detail::mapToJson<Value, ATV>(obj, mp, "atvs");
+  detail::mapToJson<Value, VTB>(obj, mp, "vtbs");
 
   return obj;
 }

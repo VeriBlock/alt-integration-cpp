@@ -50,10 +50,9 @@ std::vector<uint8_t> VTB::toVbkEncoding() const {
 }
 
 VTB::id_t VTB::getId() const {
-  WriteStream stream;
-  auto left = transaction.getHash();
-  containingBlock.toVbkEncoding(stream);
-  return sha256(left, stream.data());
+  auto left = transaction.bitcoinTransaction.getHash();
+  auto right = transaction.blockOfProof.getHash();
+  return sha256(left, right);
 }
 
 VTB VTB::fromHex(const std::string& hex) {

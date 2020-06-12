@@ -47,7 +47,7 @@ bool MemPool::fillContext(VbkBlock first_block,
   while (!checkConnectivityWithTree(first_block, tree.vbk())) {
     auto el = vbkblocks_.find(first_block.previousBlock);
     if (el != vbkblocks_.end()) {
-      first_block = el->second->block;
+      first_block = *el->second;
       context.push_back(first_block);
     } else {
       return false;
@@ -142,25 +142,9 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
 
 bool MemPool::submitATV(const std::vector<ATV>& atvs, ValidationState& state) {
   for (size_t i = 0; i < atvs.size(); ++i) {
-    auto& atv = atvs[i];
-    if (!checkATV(atv, state, *alt_chain_params_, *vbk_chain_params_)) {
-      return state.Invalid("mempool-submit-atv", i);
+    if (!submit<ATV>(atvs[i], state)) {
+      return false;
     }
-
-    for (const auto& b : atv.context) {
-      touchVbkBlock(b);
-    }
-
-    auto& pl = touchVbkBlock(atv.containingBlock);
-
-    auto atvid = atv.getId();
-    auto pair = std::make_pair(atvid, std::make_shared<ATV>(atvs[i]));
-    // clear context
-    pair.second->context.clear();
-
-    // store atv id in containing block index
-    pl.atvs.insert(atvid);
-    stored_atvs_.insert(pair);
   }
 
   return true;
@@ -168,25 +152,9 @@ bool MemPool::submitATV(const std::vector<ATV>& atvs, ValidationState& state) {
 
 bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
   for (size_t i = 0; i < vtbs.size(); ++i) {
-    auto& vtb = vtbs[i];
-    if (!checkVTB(vtb, state, *vbk_chain_params_, *btc_chain_params_)) {
-      return state.Invalid("mempool-submit-vtb", i);
+    if (!submit<VTB>(vtbs[i], state)) {
+      return false;
     }
-
-    for (const auto& b : vtb.context) {
-      touchVbkBlock(b);
-    }
-
-    auto& pl = touchVbkBlock(vtb.containingBlock);
-
-    auto vtbid = VbkEndorsement::getId(vtb);
-    auto pair = std::make_pair(VbkEndorsement::getId(vtb), std::make_shared<VTB>(vtb));
-
-    // clear context
-    pair.second->context.clear();
-
-    pl.vtbs.insert(vtbid);
-    stored_vtbs_.insert(pair);
   }
 
   return true;
@@ -258,16 +226,65 @@ void MemPool::removePayloads(const std::vector<PopData>& PopDatas) {
 
 MemPool::VbkBlockPayloads& MemPool::touchVbkBlock(const VbkBlock& block) {
   auto hash = block.getShortHash();
-  auto it = vbkblocks_.find(hash);
-  if (it != vbkblocks_.end()) {
+  auto it = vbkplds_.find(hash);
+  if (it != vbkplds_.end()) {
     return *it->second;
   }
 
   auto pl = std::make_shared<VbkBlockPayloads>();
-  pl->block = block;
-  vbkblocks_[hash] = pl;
+  vbkplds_[hash] = pl;
+
+  vbkblocks_[hash] = std::make_shared<VbkBlock>(block);
 
   return *pl;
+}
+
+template <>
+bool MemPool::submit(const ATV& atv, ValidationState& state) {
+  if (!checkATV(atv, state, *alt_chain_params_, *vbk_chain_params_)) {
+    return state.Invalid("pop-mempool-submit-atv");
+  }
+
+  for (const auto& b : atv.context) {
+    touchVbkBlock(b);
+  }
+
+  auto& pl = touchVbkBlock(atv.containingBlock);
+
+  auto atvid = atv.getId();
+  auto pair = std::make_pair(atvid, std::make_shared<ATV>(atv));
+  // clear context
+  pair.second->context.clear();
+
+  // store atv id in containing block index
+  pl.atvs.insert(atvid);
+  stored_atvs_.insert(pair);
+
+  return true;
+}
+
+template <>
+bool MemPool::submit(const VTB& vtb, ValidationState& state) {
+  if (!checkVTB(vtb, state, *vbk_chain_params_, *btc_chain_params_)) {
+    return state.Invalid("pop-mempool-submit-vtb");
+  }
+
+  for (const auto& b : vtb.context) {
+    touchVbkBlock(b);
+  }
+
+  auto& pl = touchVbkBlock(vtb.containingBlock);
+
+  auto vtbid = vtb.getId();
+  auto pair = std::make_pair(vtbid, std::make_shared<VTB>(vtb));
+
+  // clear context
+  pair.second->context.clear();
+
+  pl.vtbs.insert(vtbid);
+  stored_vtbs_.insert(pair);
+
+  return true;
 }
 
 }  // namespace altintegration
