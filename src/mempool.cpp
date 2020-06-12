@@ -179,8 +179,8 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
 
     auto& pl = touchVbkBlock(vtb.containingBlock);
 
-    auto vtbid = vtb.getId();
-    auto pair = std::make_pair(vtbid, std::make_shared<VTB>(vtb));
+    auto vtbid = VbkEndorsement::getId(vtb);
+    auto pair = std::make_pair(VbkEndorsement::getId(vtb), std::make_shared<VTB>(vtb));
 
     // clear context
     pair.second->context.clear();

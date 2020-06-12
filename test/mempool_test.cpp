@@ -516,93 +516,93 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
 
 // TODO: review this test and fix accordingly. Note: VTB duplidates are
 // forbidden now.
-// TEST_F(MemPoolFixture, getPop_scenario_8) {
-//  MemPool mempool(alttree.getParams(),
-//                  alttree.vbk().getParams(),
-//                  alttree.btc().getParams(),
-//                  &hash_function);
-//
-//  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
-//
-//  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-//
-//  // mine 65 VBK blocks
-//  auto* vbkTip = popminer->mineVbkBlocks(65);
-//
-//  // mine 10 blocks
-//  mineAltBlocks(10, chain);
-//
-//  // endorse VBK blocks
-//  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-//
-//  auto vbkPopTx = generatePopTx(*endorsedVbkBlock1->header);
-//
-//  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
-//  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
-//  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
-//  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
-//
-//  popminer->mineBtcBlocks(100);
-//  popminer->mineVbkBlocks(54);
-//
-//  // generate VTB with the duplicate
-//  // build merkle tree
-//  auto hashes = hashAll<VbkPopTx>({vbkPopTx});
-//  const int32_t treeIndex = 0;  // this is POP tx
-//  VbkMerkleTree mtree(hashes, treeIndex);
-//
-//  // create containing block
-//  auto containingVbkBlock = vbk_miner.createNextBlock(
-//      *popminer->vbk().getBestChain().tip(),
-//      mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
-//
-//  // add containing block without payloads into vbk tree
-//  EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
-//
-//  // Create VTB
-//  VTB vtb2;
-//  vtb2.transaction = vbkPopTx;
-//  vtb2.merklePath.treeIndex = treeIndex;
-//  vtb2.merklePath.index = 0;
-//  vtb2.merklePath.subject = hashes[0];
-//  vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
-//  vtb2.containingBlock = containingVbkBlock;
-//
-//  EXPECT_TRUE(checkVTB(
-//      vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
-//
-//  EXPECT_NE(vtb1, vtb2);
-//  EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
-//            VbkEndorsement::fromContainer(vtb2));
-//
-//  fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
-//
-//  AltBlock endorsedBlock1 = chain[5];
-//  VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
-//      generatePublicationData(endorsedBlock1));
-//  ATV atv1 =
-//      popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
-//
-//  EXPECT_TRUE(mempool.submitATV({atv1}, state));
-//  EXPECT_TRUE(mempool.submitVTB({vtb1, vtb2}, state));
-//
-//  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-//  std::vector<PopData> v_popData = mempool.getPop(alttree);
-//
-//  ASSERT_EQ(v_popData.size(), 1);
-//  EXPECT_EQ(v_popData.at(0).vtbs.size(), 1);
-//  EXPECT_EQ(v_popData.at(0).vtbs.at(0), vtb1);
-//
-//  auto containingBlock = generateNextBlock(*chain.rbegin());
-//  chain.push_back(containingBlock);
-//  AltPayloads payloads =
-//      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
-//
-//  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-//  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
-//  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-//  EXPECT_TRUE(state.IsValid());
-//}
+TEST_F(MemPoolFixture, getPop_scenario_8) {
+  MemPool mempool(alttree.getParams(),
+                  alttree.vbk().getParams(),
+                  alttree.btc().getParams(),
+                  &hash_function);
+
+  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
+
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+
+  // mine 65 VBK blocks
+  auto* vbkTip = popminer->mineVbkBlocks(65);
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+
+  auto vbkPopTx = generatePopTx(*endorsedVbkBlock1->header);
+
+  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
+  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
+  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+
+  popminer->mineBtcBlocks(100);
+  popminer->mineVbkBlocks(54);
+
+  // generate VTB with the duplicate
+  // build merkle tree
+  auto hashes = hashAll<VbkPopTx>({vbkPopTx});
+  const int32_t treeIndex = 0;  // this is POP tx
+  VbkMerkleTree mtree(hashes, treeIndex);
+
+  // create containing block
+  auto containingVbkBlock = vbk_miner.createNextBlock(
+      *popminer->vbk().getBestChain().tip(),
+      mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
+
+  // add containing block without payloads into vbk tree
+  EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
+
+  // Create VTB
+  VTB vtb2;
+  vtb2.transaction = vbkPopTx;
+  vtb2.merklePath.treeIndex = treeIndex;
+  vtb2.merklePath.index = 0;
+  vtb2.merklePath.subject = hashes[0];
+  vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
+  vtb2.containingBlock = containingVbkBlock;
+
+  EXPECT_TRUE(checkVTB(
+      vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
+
+  EXPECT_NE(vtb1, vtb2);
+  EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
+            VbkEndorsement::fromContainer(vtb2));
+
+  fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+
+  AltBlock endorsedBlock1 = chain[5];
+  VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock1));
+  ATV atv1 =
+      popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
+
+  EXPECT_TRUE(mempool.submitATV({atv1}, state));
+  EXPECT_TRUE(mempool.submitVTB({vtb1, vtb2}, state));
+
+  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  std::vector<PopData> v_popData = mempool.getPop(alttree);
+
+  ASSERT_EQ(v_popData.size(), 1);
+  EXPECT_EQ(v_popData.at(0).vtbs.size(), 1);
+  EXPECT_EQ(v_popData.at(0).vtbs.at(0), vtb1);
+
+  auto containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  AltPayloads payloads =
+      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
+
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(state.IsValid());
+}
 
 TEST_F(MemPoolFixture, getPop_scenario_9) {
   MemPool mempool(alttree.getParams(),
