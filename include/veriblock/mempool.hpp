@@ -27,7 +27,14 @@ typedef std::vector<uint8_t> (*Hash_Function)(
 
 struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
-  using block_index_t = std::unordered_map<vbk_hash_t, VbkBlock>;
+
+  template <typename Payload>
+  using payload_map =
+      std::unordered_map<typename Payload::id_t, std::shared_ptr<Payload>>;
+
+  using vbkblock_map_t = payload_map<VbkBlock>;
+  using atv_map_t = payload_map<ATV>;
+  using vtb_map_t = payload_map<VTB>;
 
   ~MemPool() = default;
   MemPool(const AltChainParams& alt_param,
@@ -39,26 +46,32 @@ struct MemPool {
         btc_chain_params_(&btc_params),
         hasher(function) {}
 
+  // @deprecated - use submit<VTB>
   bool submitVTB(const std::vector<VTB>& vtb, ValidationState& state);
+  // @deprecated - use submit<ATV>
   bool submitATV(const std::vector<ATV>& atv, ValidationState& state);
 
-  std::vector<PopData> getPop(const AltBlock& current_block, AltTree& tree);
+  template <typename T>
+  bool submit(const T& pl, ValidationState& state) {
+    (void)pl;
+    (void)state;
+    static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
+    return true;
+  }
+
+  template <typename T>
+  const payload_map<T>& getMap() const {
+    static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getMap");
+  }
+
+  std::vector<PopData> getPop(AltTree& tree);
 
   void removePayloads(const std::vector<PopData>& v_popData);
 
-  const block_index_t& getVbkBlocks() const { return block_index_; }
-  const std::unordered_map<ATV::id_t, ATV>& getATVs() const {
-    return stored_atvs_;
-  }
-  const std::unordered_map<VTB::id_t, VTB>& getVTBs() const {
-    return stored_vtbs_;
-  }
-
  private:
-  block_index_t block_index_;
-
-  std::unordered_map<ATV::id_t, ATV> stored_atvs_;
-  std::unordered_map<VTB::id_t, VTB> stored_vtbs_;
+  vbkblock_map_t vbkblocks_;
+  atv_map_t stored_atvs_;
+  vtb_map_t stored_vtbs_;
 
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
@@ -66,14 +79,11 @@ struct MemPool {
 
   Hash_Function hasher;
 
-  void uploadVbkContext(const VTB&);
-  void uploadVbkContext(const ATV&);
-
   bool fillContext(VbkBlock first_block,
                    std::vector<VbkBlock>& context,
                    AltTree& tree);
   void fillVTBs(std::vector<VTB>& vtbs,
-                const std::vector<VbkBlock>& vbk_contex);
+                const std::vector<VbkBlock>& vbk_context);
 
   bool applyPayloads(const AltBlock& hack_block,
                      PopData& popdata,
@@ -81,27 +91,49 @@ struct MemPool {
                      ValidationState& state);
 };
 
+template <>
+bool MemPool::submit(const ATV& atv, ValidationState& state);
+
+template <>
+bool MemPool::submit(const VTB& vtb, ValidationState& state);
+
+template <>
+bool MemPool::submit(const VbkBlock& block, ValidationState& state);
+
+template <>
+inline const MemPool::payload_map<VbkBlock>& MemPool::getMap() const {
+  return vbkblocks_;
+}
+
+template <>
+inline const MemPool::payload_map<ATV>& MemPool::getMap() const {
+  return stored_atvs_;
+}
+
+template <>
+inline const MemPool::payload_map<VTB>& MemPool::getMap() const {
+  return stored_vtbs_;
+}
+
+namespace detail {
+
+template <typename Value, typename T>
+inline void mapToJson(Value& obj, MemPool& mp, const std::string& key) {
+  auto arr = json::makeEmptyArray<Value>();
+  for (auto& p : mp.getMap<T>()) {
+    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+  }
+  json::putKV(obj, key, arr);
+}
+}  // namespace detail
+
 template <typename Value>
 Value ToJSON(const MemPool& mp) {
   auto obj = json::makeEmptyObject<Value>();
 
-  auto vbk = json::makeEmptyArray<Value>();
-  for (auto& p : mp.getVbkBlocks()) {
-    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
-  }
-  json::putKV(obj, "vbk_blocks", vbk);
-
-  auto vtbs = json::makeEmptyArray<Value>();
-  for (auto& p : mp.getVTBs()) {
-    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
-  }
-  json::putKV(obj, "vtbs", vbk);
-
-  auto atvs = json::makeEmptyArray<Value>();
-  for (auto& p : mp.getATVs()) {
-    json::arrayPushBack(vbk, ToJSON<Value>(p.first));
-  }
-  json::putKV(obj, "atvs", vbk);
+  detail::mapToJson<Value, VbkBlock>(obj, mp, "vbkblocks");
+  detail::mapToJson<Value, ATV>(obj, mp, "atvs");
+  detail::mapToJson<Value, VTB>(obj, mp, "vtbs");
 
   return obj;
 }
