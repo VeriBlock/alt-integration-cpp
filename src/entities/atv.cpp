@@ -53,9 +53,7 @@ ATV ATV::fromHex(const std::string& h) {
 }
 
 ATV::id_t ATV::getId() const {
-  WriteStream stream;
   auto left = transaction.getHash();
-  containingBlock.toVbkEncoding(stream);
-
-  return sha256(left, stream.data());
+  auto right = containingBlock.getHash();
+  return sha256(left, right);
 }

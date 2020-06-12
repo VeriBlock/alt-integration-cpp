@@ -35,16 +35,12 @@ AltEndorsement AltEndorsement::fromContainer(const AltPayloads& c) {
 
 template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const VTB& c) {
-  auto left = c.transaction.bitcoinTransaction.getHash();
-  auto right = c.transaction.blockOfProof.getHash();
-  return sha256(left, right);
+  return c.getId();
 }
 
 template <>
 AltEndorsement::id_t AltEndorsement::getId(const AltPayloads& c) {
-  auto left = c.popData.atv.transaction.getHash();
-  auto right = c.popData.atv.containingBlock.getHash();
-  return sha256(left, right);
+  return c.popData.atv.getId();
 }
 
 }  // namespace altintegration

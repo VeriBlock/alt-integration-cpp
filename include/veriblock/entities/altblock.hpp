@@ -31,6 +31,8 @@ struct AltBlock {
   uint32_t timestamp{};
   height_t height{};
 
+  uint32_t getBlockTime() const noexcept { return timestamp; }
+
   /**
    * Read VBK data from the stream and convert it to AltBlock
    * @param stream data stream to read from
