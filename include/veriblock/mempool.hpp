@@ -28,18 +28,11 @@ typedef std::vector<uint8_t> (*Hash_Function)(
 struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
 
-  struct VbkBlockPayloads {
-    using id_t = VbkBlock::id_t;
-    std::unordered_set<ATV::id_t> atvs;
-    std::unordered_set<VTB::id_t> vtbs;
-  };
-
   template <typename Payload>
   using payload_map =
       std::unordered_map<typename Payload::id_t, std::shared_ptr<Payload>>;
 
   using vbkblock_map_t = payload_map<VbkBlock>;
-  using vbkblockpayloads_map_t = payload_map<VbkBlockPayloads>;
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
 
@@ -77,7 +70,6 @@ struct MemPool {
 
  private:
   vbkblock_map_t vbkblocks_;
-  vbkblockpayloads_map_t vbkplds_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
@@ -86,9 +78,6 @@ struct MemPool {
   const BtcChainParams* btc_chain_params_{nullptr};
 
   Hash_Function hasher;
-
-  // create and return VbkBlockPayloads if not exist, or return existing
-  VbkBlockPayloads& touchVbkBlock(const VbkBlock& block);
 
   bool fillContext(VbkBlock first_block,
                    std::vector<VbkBlock>& context,
@@ -124,12 +113,6 @@ inline const MemPool::payload_map<ATV>& MemPool::getMap() const {
 template <>
 inline const MemPool::payload_map<VTB>& MemPool::getMap() const {
   return stored_vtbs_;
-}
-
-template <>
-inline const MemPool::payload_map<MemPool::VbkBlockPayloads>& MemPool::getMap()
-    const {
-  return this->vbkplds_;
 }
 
 namespace detail {

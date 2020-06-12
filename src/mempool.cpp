@@ -224,21 +224,6 @@ void MemPool::removePayloads(const std::vector<PopData>& PopDatas) {
   }
 }
 
-MemPool::VbkBlockPayloads& MemPool::touchVbkBlock(const VbkBlock& block) {
-  auto hash = block.getShortHash();
-  auto it = vbkplds_.find(hash);
-  if (it != vbkplds_.end()) {
-    return *it->second;
-  }
-
-  auto pl = std::make_shared<VbkBlockPayloads>();
-  vbkplds_[hash] = pl;
-
-  vbkblocks_[hash] = std::make_shared<VbkBlock>(block);
-
-  return *pl;
-}
-
 template <>
 bool MemPool::submit(const ATV& atv, ValidationState& state) {
   if (!checkATV(atv, state, *alt_chain_params_, *vbk_chain_params_)) {
@@ -246,10 +231,11 @@ bool MemPool::submit(const ATV& atv, ValidationState& state) {
   }
 
   for (const auto& b : atv.context) {
-    touchVbkBlock(b);
+    vbkblocks_[b.getShortHash()] = std::make_shared<VbkBlock>(b);
   }
 
-  auto& pl = touchVbkBlock(atv.containingBlock);
+  vbkblocks_[atv.containingBlock.getShortHash()] =
+      std::make_shared<VbkBlock>(atv.containingBlock);
 
   auto atvid = atv.getId();
   auto pair = std::make_pair(atvid, std::make_shared<ATV>(atv));
@@ -257,7 +243,6 @@ bool MemPool::submit(const ATV& atv, ValidationState& state) {
   pair.second->context.clear();
 
   // store atv id in containing block index
-  pl.atvs.insert(atvid);
   stored_atvs_.insert(pair);
 
   return true;
@@ -270,10 +255,11 @@ bool MemPool::submit(const VTB& vtb, ValidationState& state) {
   }
 
   for (const auto& b : vtb.context) {
-    touchVbkBlock(b);
+    vbkblocks_[b.getShortHash()] = std::make_shared<VbkBlock>(b);
   }
 
-  auto& pl = touchVbkBlock(vtb.containingBlock);
+  vbkblocks_[vtb.containingBlock.getShortHash()] =
+      std::make_shared<VbkBlock>(vtb.containingBlock);
 
   auto vtbid = vtb.getId();
   auto pair = std::make_pair(vtbid, std::make_shared<VTB>(vtb));
@@ -281,7 +267,6 @@ bool MemPool::submit(const VTB& vtb, ValidationState& state) {
   // clear context
   pair.second->context.clear();
 
-  pl.vtbs.insert(vtbid);
   stored_vtbs_.insert(pair);
 
   return true;
