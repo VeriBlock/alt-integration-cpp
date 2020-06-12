@@ -46,6 +46,7 @@ struct VbkChainParams {
   virtual uint32_t getTargetBlockTime() const noexcept = 0;
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
 
+  virtual int32_t getMaxReorgBlocks() const noexcept { return 2000; }
   virtual uint32_t getKeystoneInterval() const noexcept { return 20; }
 
   virtual uint32_t getFinalityDelay() const noexcept { return 11; }
@@ -54,7 +55,7 @@ struct VbkChainParams {
   /// number of blocks behind of current tip in active chain
   virtual int32_t getHistoryOverwriteLimit() const noexcept {
     /* roughly 100h worth of VBK block production */
-    return 12000;
+        return 12000;
   }
 
   virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
