@@ -405,7 +405,14 @@ struct PopAwareForkResolutionComparator {
     }
 
     sm.unapply(*currentActive, *forkBlock);
-    return sm.apply(*forkBlock, to, state);
+    if (!sm.apply(*forkBlock, to, state)) {
+      // attempted to switch to an invalid block, rollback
+      bool ret = sm.apply(*forkBlock, *currentActive, state);
+      VBK_ASSERT(ret);
+
+      return false;
+    }
+    return true;
   }
 
   int comparePopScore(ProtectedBlockTree& ed,
