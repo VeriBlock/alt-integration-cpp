@@ -118,7 +118,7 @@ inline const MemPool::payload_map<VTB>& MemPool::getMap() const {
 namespace detail {
 
 template <typename Value, typename T>
-inline void mapToJson(Value& obj, MemPool& mp, const std::string& key) {
+inline void mapToJson(Value& obj, const MemPool& mp, const std::string& key) {
   auto arr = json::makeEmptyArray<Value>();
   for (auto& p : mp.getMap<T>()) {
     json::arrayPushBack(arr, ToJSON<Value>(p.first));
