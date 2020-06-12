@@ -52,6 +52,17 @@ struct MemPool {
   bool submitATV(const std::vector<ATV>& atv, ValidationState& state);
 
   template <typename T>
+  const T* get(const typename T::id_t& id) const {
+    const auto& map = getMap<T>();
+    auto it = map.find(id);
+    if (it != map.end()) {
+      return it->second.get();
+    }
+
+    return nullptr;
+  }
+
+  template <typename T>
   bool submit(const T& pl, ValidationState& state) {
     (void)pl;
     (void)state;

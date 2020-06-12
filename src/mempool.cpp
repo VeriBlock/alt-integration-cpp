@@ -272,4 +272,15 @@ bool MemPool::submit(const VTB& vtb, ValidationState& state) {
   return true;
 }
 
+template <>
+bool MemPool::submit(const VbkBlock& blk, ValidationState& state) {
+  if (!checkBlock(blk, state, *vbk_chain_params_)) {
+    return state.Invalid("pop-mempool-submit-vbkblock");
+  }
+
+  vbkblocks_[blk.getShortHash()] = std::make_shared<VbkBlock>(blk);
+
+  return true;
+}
+
 }  // namespace altintegration
