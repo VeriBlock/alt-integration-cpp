@@ -382,6 +382,10 @@ struct PopAwareForkResolutionComparator {
   bool setState(ProtectedBlockTree& ed,
                 protected_index_t& to,
                 ValidationState& state) {
+    if (VBK_UNLIKELY(IsShutdownRequested())) {
+      return true;
+    }
+
     auto* currentActive = ed.getBestChain().tip();
     VBK_ASSERT(currentActive && "should be bootstrapped");
 
@@ -418,6 +422,10 @@ struct PopAwareForkResolutionComparator {
   int comparePopScore(ProtectedBlockTree& ed,
                       protected_index_t& indexNew,
                       ValidationState& state) {
+    if (VBK_UNLIKELY(IsShutdownRequested())) {
+      return 1;
+    }
+
     if (!indexNew.isValid()) {
       // if new block is known to be invalid, we always return "A is better"
       VBK_LOG_INFO("Candidate %s is invalid, current chain wins",
@@ -485,6 +493,10 @@ struct PopAwareForkResolutionComparator {
     VBK_ASSERT(chainA.tip() == bestTip);
 
     sm_t sm(ed, *ing_, chainA.first()->height);
+
+    if (VBK_UNLIKELY(IsShutdownRequested())) {
+      return 1;
+    }
 
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the

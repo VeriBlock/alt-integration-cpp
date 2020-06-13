@@ -14,6 +14,7 @@
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
+#include <veriblock/context.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
@@ -234,6 +235,10 @@ struct BlockTree : public BaseBlockTree<Block> {
                           index_t& indexNew,
                           ValidationState& state,
                           bool isBootstrap = false) override {
+    if (VBK_UNLIKELY(IsShutdownRequested())) {
+      return;
+    }
+
     if (currentBest.tip() == &indexNew) {
       return;
     }
