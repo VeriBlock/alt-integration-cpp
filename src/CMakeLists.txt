@@ -14,6 +14,7 @@ add_library(strutil OBJECT
         )
 
 set(SOURCES
+        context.cpp
         checks.cpp
         serde.cpp
         keystone_util.cpp
