@@ -37,6 +37,14 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 
+  if (currentTip->height > indexNew.height + param_->getMaxReorgBlocks()) {
+    VBK_LOG_DEBUG("%s Candidate is behind tip more than %d blocks",
+                  block_t::name(),
+                  indexNew.toShortPrettyString(),
+                  param_->getMaxReorgBlocks());
+    return;
+  }
+
   // edge case: connected block is one of 'next' blocks after our current best
   if (indexNew.getAncestor(currentTip->height) == currentTip) {
     // an attempt to connect a NEXT block
