@@ -75,13 +75,17 @@ struct Blob {
   std::string toHex() const { return HexStr(data_.begin(), data_.end()); }
 
   static Blob<N> fromHex(const std::string& hex) {
+    auto data = ParseHex(hex);
+    // Blob should set parsed hex in normal order
+    return Blob<N>(data);
+  }
+
+  static Blob<N> fromHexStrict(const std::string& hex) {
     if (hex.size() / 2 != N) {
       throw std::invalid_argument(
           fmt::sprintf("bad hex length %d, expected %d", hex.size(), N * 2));
     }
-    auto data = ParseHex(hex);
-    // Blob should set parsed hex in normal order
-    return Blob<N>(data);
+    return fromHex(hex);
   }
 
   Blob<N>& operator=(const Blob<N>& other) {
