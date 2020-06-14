@@ -7,6 +7,7 @@
 #define ALTINTEGRATION_POP_STATE_MACHINE_HPP
 
 #include <functional>
+#include <veriblock/assert.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
@@ -44,9 +45,9 @@ struct PopStateMachine {
                         state.toString());
 
           // unexecute executed commands in reverse order
-          std::for_each(executed.rbegin(),
-                        executed.rend(),
-                        [](const CommandPtr& c) { c->UnExecute(); });
+          for (auto& c : reverse_iterate(executed)) {
+            c->UnExecute();
+          }
 
           return state.Invalid(index_t::block_t::name() + "-bad-command");
         }  // end if
@@ -63,14 +64,15 @@ struct PopStateMachine {
 
   void unapplyBlock(const index_t& index) {
     auto& v = index.commands;
-    std::for_each(v.rbegin(), v.rend(), [&](const CommandGroup& group) {
+
+    for (auto& group : reverse_iterate(v)) {
       VBK_LOG_DEBUG("Unapplying payload %s from block %s",
                     group.id.toHex(),
                     index.toShortPrettyString());
-      std::for_each(group.rbegin(), group.rend(), [](const CommandPtr& cmd) {
+      for (auto& cmd : reverse_iterate(group)) {
         cmd->UnExecute();
-      });
-    });
+      }
+    }
   }
 
   // unapplies commands in range [from; to)
@@ -90,14 +92,13 @@ struct PopStateMachine {
                   from.toPrettyString(),
                   to.toPrettyString());
 
-    std::for_each(
-        chain.rbegin(), chain.rend(), [&](const ProtectedIndex* current) {
-          if (current->commands.empty()) {
-            return;
-          }
+    for (auto* current : reverse_iterate(chain)) {
+      if (current->commands.empty()) {
+        continue;
+      }
 
-          unapplyBlock(*current);
-        });
+      unapplyBlock(*current);
+    }
   }
 
   // applies commands in range (from; to].
@@ -119,6 +120,10 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* index : chain) {
+      if (VBK_UNLIKELY(IsShutdownRequested())) {
+        return true;
+      }
+
       // even if block is invalid, still try to apply it
       if (!applyBlock(*index, state)) {
         unapply(*index->pprev, from);

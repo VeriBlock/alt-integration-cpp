@@ -12,23 +12,21 @@ namespace altintegration {
 
 /// translates a pair of forward iterators to a range whose regular iteration
 /// order is "backward"
-template <typename It>
-struct ReversedRange {
-  using Rit = std::reverse_iterator<It>;
+template <typename T>
+class reverse_range {
+  T &m_x;
 
-  ReversedRange(It begin, It end) : begin_(end), end_(begin) {}
+ public:
+  explicit reverse_range(T &x) : m_x(x) {}
 
-  Rit begin() { return begin_; }
-  Rit end() { return end_; }
+  auto begin() const -> decltype(this->m_x.rbegin()) { return m_x.rbegin(); }
 
- private:
-  Rit begin_;
-  Rit end_;
+  auto end() const -> decltype(this->m_x.rend()) { return m_x.rend(); }
 };
 
 template <typename T>
-ReversedRange<T> reverse_iterate(T begin, T end) {
-  return ReversedRange<T>(begin, end);
+reverse_range<T> reverse_iterate(T &x) {
+  return reverse_range<T>(x);
 }
 
 }  // namespace altintegration

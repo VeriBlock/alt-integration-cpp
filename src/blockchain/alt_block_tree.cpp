@@ -292,7 +292,7 @@ void AltTree::removePayloads(index_t& index,
       payloads, [](const payloads_t& p) { return p.getId(); });
 
   // iterate over payloads backwards
-  for (const auto& pid : reverse_iterate(pids.begin(), pids.end())) {
+  for (const auto& pid : reverse_iterate(pids)) {
     // find every payloads in command group (search backwards, as it is likely
     // to be faster)
     auto it = std::find_if(c.rbegin(), c.rend(), [&pid](const CommandGroup& g) {

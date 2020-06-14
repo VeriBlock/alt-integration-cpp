@@ -9,15 +9,18 @@
 #ifdef VBK_HAVE_BUILTIN_EXPECT
 // tell branch predictor that condition is always true
 #define VBK_LIKELY(condition) __builtin_expect(static_cast<bool>(condition), 1)
+#define VBK_UNLIKELY(condition) \
+  __builtin_expect(static_cast<bool>(condition), 0)
 #else
 #define VBK_LIKELY(condition) (condition)
+#define VBK_UNLIKELY(condition) (condition)
 #endif
 
 #ifdef NDEBUG
 
 #include <veriblock/fmt.hpp>
 #define VBK_ASSERT(x)                                         \
-  if (VBK_LIKELY((x))) {                                        \
+  if (VBK_LIKELY((x))) {                                      \
     (void)(x);                                                \
   } else {                                                    \
     fmt::print(stderr,                                        \
