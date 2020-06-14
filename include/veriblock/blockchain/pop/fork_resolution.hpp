@@ -18,6 +18,8 @@
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/logger.hpp>
 
+#include "fr_cache.hpp"
+
 namespace altintegration {
 
 namespace internal {
@@ -456,11 +458,32 @@ struct PopAwareForkResolutionComparator {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
                      state.toString());
-        return 1;
+
+        return cache_.store(*bestTip, indexNew, 1);
       }
 
       VBK_LOG_INFO("Candidate contains VALID commands, chain B wins");
-      return -1;
+      return cache_.store(*bestTip, indexNew, -1);
+    }
+
+    switch (cache_.compare(*bestTip, indexNew)) {
+      case PopComparisonResult::A_better:
+      case PopComparisonResult::A_transitively_better:
+        VBK_LOG_INFO("Cache hit: Current chain wins");
+        return 1;
+      case PopComparisonResult::B_better:
+      case PopComparisonResult::B_transitively_better: {
+        VBK_LOG_INFO("Cache hit: Candidate chain wins");
+        bool ret = this->setState(ed, indexNew, state);
+        // TODO: can B be invalid here?
+        VBK_ASSERT(ret && "cache determined B to be better, but it is invalid");
+        return -1;
+      }
+      case PopComparisonResult::equal:
+        VBK_LOG_INFO("Cache hit: chains are equal");
+        return 0;
+      case PopComparisonResult::unknown:
+        break;
     }
 
     auto ki = ed.getParams().getKeystoneInterval();
@@ -477,7 +500,7 @@ struct PopAwareForkResolutionComparator {
       // chans are equal in terms of POP
       VBK_LOG_INFO(
           "Neither chain crossed a keystone boundary: chains are equal");
-      return 0;
+      return cache_.store(*bestTip, indexNew, 0);
     }
 
     // [vbk fork point ... current tip]
@@ -506,7 +529,7 @@ struct PopAwareForkResolutionComparator {
       // chain B has been invalidated already
       VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                    state.toString());
-      return 1;
+      return cache_.store(*bestTip, indexNew, 1);
     }
 
     // now the tree contains payloads from both chains
@@ -530,6 +553,7 @@ struct PopAwareForkResolutionComparator {
     // current tree contains both chains.
     int result = internal::comparePopScoreImpl<protected_params_t>(
         kcChain1, kcChain2, *protectedParams_);
+    cache_.store(*bestTip, indexNew, result);
     if (result >= 0) {
       // chain A remains the best. unapply B. A remains applied
       sm.unapply(*chainB.tip(), *chainB.first());
@@ -555,11 +579,15 @@ struct PopAwareForkResolutionComparator {
                         ing_->toPrettyString(level + 2));
   }
 
+  FrCache<protected_index_t>& getCache() { return cache_; }
+
  private:
   std::shared_ptr<ProtectingBlockTree> ing_;
 
   const protected_params_t* protectedParams_;
   const protecting_params_t* protectingParams_;
+
+  FrCache<protected_index_t> cache_;
 };
 
 }  // namespace altintegration

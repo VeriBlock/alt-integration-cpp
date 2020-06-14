@@ -96,6 +96,9 @@ bool AltTree::addPayloads(index_t& index,
     payloadsToCommands(p, g.commands);
   }
 
+  // evict current block from fork resolution cache, because it has been changed
+  cmp_.getCache().evict(index);
+
   return true;
 }
 
@@ -314,6 +317,9 @@ void AltTree::removePayloads(index_t& index,
     auto toRemove = --(it.base());
     c.erase(toRemove);
   }
+
+  // evict current block from fork resolution cache, because it has been changed
+  cmp_.getCache().evict(index);
 }
 
 void AltTree::payloadsToCommands(const typename AltTree::payloads_t& p,

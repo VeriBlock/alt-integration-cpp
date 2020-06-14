@@ -42,6 +42,11 @@ struct Chain {
     setTip(tip);
   }
 
+  explicit Chain(height_t startHeight, const index_t* tip)
+      : startHeight_(startHeight) {
+    setTip(const_cast<index_t*>(tip));
+  }
+
   height_t getStartHeight() const { return startHeight_; }
 
   bool contains(const index_t* index) const {

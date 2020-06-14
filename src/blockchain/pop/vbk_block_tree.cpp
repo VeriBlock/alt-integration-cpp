@@ -177,6 +177,9 @@ void VbkBlockTree::removePayloads(const block_t& block,
     c.erase(toRemove);
   }
 
+  // evict current block from fork resolution cache, because it has been changed
+  cmp_.getCache().evict(*index);
+
   // find all affected tips and do a fork resolution
   auto tips = findValidTips<VbkBlock>(*index);
   for (auto* tip : tips) {
@@ -243,6 +246,9 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     g.id = p.getId();
     payloadsToCommands(p, g.commands);
   }
+
+  // evict current block from fork resolution cache, because it has been changed
+  cmp_.getCache().evict(*index);
 
   // find all affected tips and do a fork resolution
   auto tips = findValidTips<VbkBlock>(*index);
