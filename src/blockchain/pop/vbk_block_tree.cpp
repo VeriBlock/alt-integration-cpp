@@ -6,6 +6,7 @@
 #include <veriblock/algorithm.hpp>
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/context.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/reversed_range.hpp>
@@ -16,6 +17,10 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
                                       index_t& indexNew,
                                       ValidationState& state,
                                       bool isBootstrap) {
+  if (VBK_UNLIKELY(IsShutdownRequested())) {
+    return;
+  }
+
   if (currentBest.tip() == &indexNew) {
     return;
   }
@@ -149,7 +154,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   auto& c = index->commands;
   // iterate over payloads backwards
-  for (const auto& p : reverse_iterate(pids.begin(), pids.end())) {
+  for (const auto& p : reverse_iterate(pids)) {
     // find every payloads in command group (search backwards, as it is likely
     // to be faster)
     auto it = std::find_if(c.rbegin(), c.rend(), [&p](const CommandGroup& g) {
