@@ -215,9 +215,8 @@ struct FrCache {
   // returns nullptr if no prev block cached
   const index_t* findCachedPrevBlock(map& m, const index_t* index) {
     const Chain<index_t> chain(minHeight_, index);
-    for (auto& p : m) {
-      const index_t* i = p.first;
-      if (chain.contains(i)) {
+    for (auto* i : reverse_iterate(chain)) {
+      if (m.count(i) > 0) {
         return i;
       }
     }
