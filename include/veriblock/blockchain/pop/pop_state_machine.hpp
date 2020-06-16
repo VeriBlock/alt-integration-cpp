@@ -176,10 +176,9 @@ struct PopStateMachine {
     // 'to' is a predecessor or another fork
     Chain<index_t> chain(0, &from);
     auto* forkBlock = chain.findFork(&to);
-    if (!forkBlock) {
-      // we can't find 'to' in fork.
-      return false;
-    }
+
+    VBK_ASSERT(forkBlock &&
+               "state corruption: from and to must be part of the same tree");
 
     unapply(from, *forkBlock);
     if (!apply(*forkBlock, to, state)) {
