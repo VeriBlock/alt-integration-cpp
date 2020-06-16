@@ -169,9 +169,9 @@ struct Blob {
   }
 
   uint64_t getLow64() const {
-    const uint32_t* p1 = (uint32_t*)(&data_[0]);
-    const uint32_t* p2 = (uint32_t*)(&data_[4]);
-    return *p1 | (uint64_t)*p2 << 32;
+    uint64_t ret = 0;
+    memcpy(&ret, &data_[0], sizeof(uint64_t));
+    return ret;
   }
 
   std::string toPrettyString() const {
