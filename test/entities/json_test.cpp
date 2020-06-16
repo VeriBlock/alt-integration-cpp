@@ -214,6 +214,7 @@ TEST(ToJson, VTB) {
     "difficulty": 117576138,
     "hash": "00000000000033a3892576d7b861eb7fcd721c3b9f1f66df",
     "height": 4976,
+    "id": "b861eb7fcd721c3b9f1f66df",
     "merkleRoot": "b53c1f4e259e6a0df23721a0b3b4b7ab",
     "nonce": -266584319,
     "previousBlock": "449c60619294546ad825af03",
@@ -223,6 +224,7 @@ TEST(ToJson, VTB) {
     "version": 2
   },
   "context": [],
+  "id": "c33c58fec631de387990e1df60ff757675d6fe258c4e719543dca9b1230475ac",
   "merklePath": {
     "index": 13,
     "layers": [
@@ -301,6 +303,7 @@ TEST(ToJson, VTB) {
       "difficulty": 117556515,
       "hash": "00000000000012a56c7e232950cba2e2cd99084a1b5b3e59",
       "height": 4917,
+      "id": "50cba2e2cd99084a1b5b3e59",
       "merkleRoot": "9f95f0a15628b06ba3b44c0190b5c049",
       "nonce": 1589362332,
       "previousBlock": "a793c872d6f6460e90bed623",
@@ -375,6 +378,7 @@ TEST(ToJson, ATV) {
     "difficulty": 16842752,
     "hash": "a288e74fe0c2e0a6afb0c39808e2aae9a5e19569b1a68624",
     "height": 5000,
+    "id": "08e2aae9a5e19569b1a68624",
     "merkleRoot": "26bbfda7d5e4462ef24ae02d67e47d78",
     "nonce": 1,
     "previousBlock": "449c60619294546ad825af03",
@@ -384,6 +388,7 @@ TEST(ToJson, ATV) {
     "version": 2
   },
   "context": [],
+  "id": "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d",
   "merklePath": {
     "index": 0,
     "layers": [
@@ -429,6 +434,7 @@ TEST(ToJson, BlockIndex) {
     "difficulty": 16842752,
     "hash": "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c",
     "height": 0,
+    "id": "6ad38f8a5995053b4b04d16c",
     "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
     "nonce": 0,
     "previousBlock": "000000000000000000000000",

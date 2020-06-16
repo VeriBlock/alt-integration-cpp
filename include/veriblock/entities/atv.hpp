@@ -85,6 +85,7 @@ struct ATV {
 template <typename JsonValue>
 JsonValue ToJSON(const ATV& atv) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putStringKV(obj, "id", atv.getId().toHex());
   json::putKV(obj, "transaction", ToJSON<JsonValue>(atv.transaction));
   json::putKV(obj, "merklePath", ToJSON<JsonValue>(atv.merklePath));
   json::putKV(obj, "containingBlock", ToJSON<JsonValue>(atv.containingBlock));
