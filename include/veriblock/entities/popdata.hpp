@@ -73,17 +73,45 @@ struct PopData {
   }
 };
 
+namespace detail {
+
+template <typename JsonValue, typename T>
+inline void putArrayOfIds(JsonValue& obj,
+                          std::string key,
+                          const std::vector<T>& t) {
+  JsonValue arr = json::makeEmptyArray<JsonValue>();
+  for (const auto& b : t) {
+    json::arrayPushBack(arr, ToJSON<JsonValue>(b.getId()));
+  }
+
+  json::putKV(obj, key, arr);
+}
+
+}  // namespace detail
+
 template <typename JsonValue>
-JsonValue ToJSON(const PopData& p) {
+JsonValue ToJSON(const PopData& p, bool verbose) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putIntKV(obj, "version", p.version);
-  json::putArrayKV(obj, "vbk_context", p.vbk_context);
-  json::putArrayKV(obj, "vtbs", p.vtbs);
-  if (p.hasAtv) {
-    json::putKV(obj, "atv", ToJSON<JsonValue>(p.atv));
+
+  if (verbose) {
+    json::putArrayKV(obj, "vbkblocks", p.vbk_context);
+    json::putArrayKV(obj, "vtbs", p.vtbs);
+    if (p.hasAtv) {
+      json::putKV(obj, "atv", ToJSON<JsonValue>(p.atv));
+    } else {
+      json::putNullKV(obj, "atv");
+    }
   } else {
-    json::putNullKV(obj, "atv");
+    detail::putArrayOfIds(obj, "vbkblocks", p.vbk_context);
+    detail::putArrayOfIds(obj, "vtbs", p.vtbs);
+    if (p.hasAtv) {
+      json::putKV(obj, "atv", ToJSON<JsonValue>(p.atv.getId()));
+    } else {
+      json::putNullKV(obj, "atv");
+    }
   }
+
   return obj;
 }
 
