@@ -29,8 +29,12 @@ struct PopStateMachine {
                   height_t startHeight = 0)
       : ed_(ed), ing_(ing), startHeight_(startHeight) {}
 
+  // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
     std::vector<CommandPtr> executed;
+
+    // even if the block is marked as invalid, we still try to apply it
+
     for (auto& cg : index.commands) {
       VBK_LOG_DEBUG("Applying payload %s from block %s",
                     cg.id.toHex(),
@@ -49,6 +53,11 @@ struct PopStateMachine {
             c->UnExecute();
           }
 
+          // if the block is marked as valid, invalidate its subtree
+          if (index.isValid()) {
+            ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+          }
+
           return state.Invalid(index_t::block_t::name() + "-bad-command");
         }  // end if
 
@@ -59,9 +68,17 @@ struct PopStateMachine {
       // re-validate command group
       cg.valid = true;
     }  // end for
+
+    // we successfully applied the block
+    // if the block is marked as invalid, revalidate its subtree
+    if (!index.isValid()) {
+      ed_.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+    }
+
     return true;
   }
 
+  // atomic: applies either all of the block's commands or fails on an assert
   void unapplyBlock(const index_t& index) {
     auto& v = index.commands;
 
@@ -75,7 +92,8 @@ struct PopStateMachine {
     }
   }
 
-  // unapplies commands in range [from; to)
+  // unapplies all commands commands from blocks in the range of [from; to)
+  // atomic: either applies all of the requested blocks or fails on an assert
   void unapply(ProtectedIndex& from, ProtectedIndex& to) {
     if (&from == &to) {
       return;
@@ -101,7 +119,8 @@ struct PopStateMachine {
     }
   }
 
-  // applies commands in range (from; to].
+  // applies all commands from blocks in the range of (from; to].
+  // atomic: applies either all or none of the requested blocks
   bool apply(ProtectedIndex& from, ProtectedIndex& to, ValidationState& state) {
     if (from == to) {
       // already applied this block
@@ -124,22 +143,10 @@ struct PopStateMachine {
         return true;
       }
 
-      // even if block is invalid, still try to apply it
       if (!applyBlock(*index, state)) {
+        // rollback the previously appled slice of the chain
         unapply(*index->pprev, from);
-        // if block is valid, then invalidate it
-        if (index->isValid()) {
-          ed_.invalidateSubtree(*index, BLOCK_FAILED_POP, /*do fr=*/false);
-        }
         return false;
-      }
-
-      // we successfully applied block
-
-      // if block is marked as invalid, but were able to successfully apply
-      // it, revalidate its subtree
-      if (!index->isValid()) {
-        ed_.revalidateSubtree(*index, BLOCK_FAILED_POP, /*do fr=*/false);
       }
     }
 
