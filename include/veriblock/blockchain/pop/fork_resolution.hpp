@@ -379,13 +379,10 @@ struct PopAwareForkResolutionComparator {
 
   //! finds a path between current ed's best chain and 'to', and applies all
   //! commands in between
+  // atomic: either changes the state to 'to' or leaves it unchanged
   bool setState(ProtectedBlockTree& ed,
                 protected_index_t& to,
                 ValidationState& state) {
-    if (VBK_UNLIKELY(IsShutdownRequested())) {
-      return true;
-    }
-
     auto* currentActive = ed.getBestChain().tip();
     VBK_ASSERT(currentActive && "should be bootstrapped");
 
@@ -395,28 +392,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     sm_t sm(ed, *ing_);
-    // is 'to' a successor?
-    if (to.getAncestor(currentActive->height) == currentActive) {
-      return sm.apply(*currentActive, to, state);
-    }
-
-    // 'to' is a predecessor
-    Chain<protected_index_t> chain(0, currentActive);
-    auto* forkBlock = chain.findFork(&to);
-    if (!forkBlock) {
-      // we can't find 'to' in fork.
-      return false;
-    }
-
-    sm.unapply(*currentActive, *forkBlock);
-    if (!sm.apply(*forkBlock, to, state)) {
-      // attempted to switch to an invalid block, rollback
-      bool ret = sm.apply(*forkBlock, *currentActive, state);
-      VBK_ASSERT(ret);
-
-      return false;
-    }
-    return true;
+    return sm.setState(*currentActive, to, state);
   }
 
   int comparePopScore(ProtectedBlockTree& ed,
