@@ -117,8 +117,7 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
     ++it;
   }
 
-  for (const auto& b :
-       reverse_iterate(popdata.vbk_context.begin(), popdata.vbk_context.end())) {
+  for (const auto& b : reverse_iterate(popdata.vbk_context)) {
     tree.vbk().removeSubtree(b.getHash());
   }
 
