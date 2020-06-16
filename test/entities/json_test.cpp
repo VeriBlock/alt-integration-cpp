@@ -214,6 +214,7 @@ TEST(ToJson, VTB) {
     "difficulty": 117576138,
     "hash": "00000000000033a3892576d7b861eb7fcd721c3b9f1f66df",
     "height": 4976,
+    "id": "b861eb7fcd721c3b9f1f66df",
     "merkleRoot": "b53c1f4e259e6a0df23721a0b3b4b7ab",
     "nonce": -266584319,
     "previousBlock": "449c60619294546ad825af03",
@@ -223,6 +224,7 @@ TEST(ToJson, VTB) {
     "version": 2
   },
   "context": [],
+  "id": "c33c58fec631de387990e1df60ff757675d6fe258c4e719543dca9b1230475ac",
   "merklePath": {
     "index": 13,
     "layers": [
@@ -301,6 +303,7 @@ TEST(ToJson, VTB) {
       "difficulty": 117556515,
       "hash": "00000000000012a56c7e232950cba2e2cd99084a1b5b3e59",
       "height": 4917,
+      "id": "50cba2e2cd99084a1b5b3e59",
       "merkleRoot": "9f95f0a15628b06ba3b44c0190b5c049",
       "nonce": 1589362332,
       "previousBlock": "a793c872d6f6460e90bed623",
