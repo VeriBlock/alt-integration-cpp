@@ -8,7 +8,7 @@
 
 #include "veriblock/alt-util.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
-#include "veriblock/storage/pop_storage.hpp"
+#include "veriblock/storage/payloads_storage.hpp"
 #include "veriblock/config.hpp"
 
 namespace altintegration {

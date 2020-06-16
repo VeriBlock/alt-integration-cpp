@@ -200,7 +200,7 @@ struct PopStateMachine {
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
   PayloadsStorage& storage_;
-  height_t startHeight_ = 0;
+  height_t startHeight_;
 };
 
 }  // namespace altintegration
