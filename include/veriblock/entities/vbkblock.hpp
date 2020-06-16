@@ -122,12 +122,15 @@ struct VbkBlock {
    */
   short_hash_t getShortHash() const;
 
+  short_hash_t getId() const { return getShortHash(); }
+
   static std::string name() { return "VBK"; }
 };
 
 template <typename JsonValue>
 JsonValue ToJSON(const VbkBlock& b) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putStringKV(obj, "id", HexStr(b.getId()));
   json::putStringKV(obj, "hash", HexStr(b.getHash()));
   json::putIntKV(obj, "height", b.height);
   json::putIntKV(obj, "version", b.version);
