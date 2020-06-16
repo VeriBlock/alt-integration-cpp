@@ -378,6 +378,7 @@ TEST(ToJson, ATV) {
     "difficulty": 16842752,
     "hash": "a288e74fe0c2e0a6afb0c39808e2aae9a5e19569b1a68624",
     "height": 5000,
+    "id": "08e2aae9a5e19569b1a68624",
     "merkleRoot": "26bbfda7d5e4462ef24ae02d67e47d78",
     "nonce": 1,
     "previousBlock": "449c60619294546ad825af03",
@@ -387,6 +388,7 @@ TEST(ToJson, ATV) {
     "version": 2
   },
   "context": [],
+  "id": "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d",
   "merklePath": {
     "index": 0,
     "layers": [
