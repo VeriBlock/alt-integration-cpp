@@ -434,6 +434,7 @@ TEST(ToJson, BlockIndex) {
     "difficulty": 16842752,
     "hash": "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c",
     "height": 0,
+    "id": "6ad38f8a5995053b4b04d16c",
     "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
     "nonce": 0,
     "previousBlock": "000000000000000000000000",
