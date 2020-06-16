@@ -395,21 +395,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     sm_t sm(ed, *ing_, storage_);
-    // is 'to' a successor?
-    if (to.getAncestor(currentActive->height) == currentActive) {
-      return sm.apply(*currentActive, to, state);
-    }
-
-    // 'to' is a predecessor
-    Chain<protected_index_t> chain(0, currentActive);
-    auto* forkBlock = chain.findFork(&to);
-    if (!forkBlock) {
-      // we can't find 'to' in fork.
-      return false;
-    }
-
-    sm.unapply(*currentActive, *forkBlock);
-    return sm.apply(*forkBlock, to, state);
+    return sm.setState(*currentActive, to, state);
   }
 
   int comparePopScore(ProtectedBlockTree& ed,
