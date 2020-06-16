@@ -157,7 +157,7 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
 
   std::vector<uint256> endorsedBy;
   for (auto* e : i.endorsedBy) {
-    endorsements.push_back(e->id);
+    endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
 
