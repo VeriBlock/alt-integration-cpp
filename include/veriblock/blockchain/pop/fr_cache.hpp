@@ -35,6 +35,7 @@ enum class PopComparisonResult {
  * do POP FR of block A+k and B, A+k is transitively better (cache hit).
  * If A is better than B, comparison is stored in cache; and A is active, and we
  * compare block A and B+k, this comparison is a cache miss.
+ * If A is better than B, and B is on a fork, A is better than all blocks in a B
  *
  * @tparam BlockIndexT
  */
@@ -105,10 +106,10 @@ struct FrCache {
   }
 
   int store(const index_t& a, const index_t& b, int result) {
-    if (result == 1) {
+    if (result > 0) {
       // a > b
       winners_[&a].insert(&b);
-    } else if (result == -1) {
+    } else if (result < 0) {
       // b > a
       winners_[&b].insert(&a);
     } else {
@@ -125,21 +126,27 @@ struct FrCache {
     PopComparisonResult r = compareImpl(a, b);
     switch (r) {
       case PopComparisonResult::unknown:
+        VBK_LOG_DEBUG("Cache miss %s vs %s", a.toShortPrettyString(), b.toShortPrettyString());
         misses_++;
         break;
       case PopComparisonResult::equal:
+        VBK_LOG_DEBUG("Cache hit %s == %s", a.toShortPrettyString(), b.toShortPrettyString());
         hitsEqual_++;
         break;
       case PopComparisonResult::A_better:
+        VBK_LOG_DEBUG("Cache hit %s > %s", a.toShortPrettyString(), b.toShortPrettyString());
         hitsAbetter_++;
         break;
       case PopComparisonResult::B_better:
+        VBK_LOG_DEBUG("Cache hit %s < %s", a.toShortPrettyString(), b.toShortPrettyString());
         hitsBbetter_++;
         break;
       case PopComparisonResult::A_transitively_better:
+        VBK_LOG_DEBUG("Cache hit (transitive) %s > %s", a.toShortPrettyString(), b.toShortPrettyString());
         hitsAtrbetter_++;
         break;
       case PopComparisonResult::B_transitively_better:
+        VBK_LOG_DEBUG("Cache hit (transitive) %s < %s", a.toShortPrettyString(), b.toShortPrettyString());
         hitsBtrbetter_++;
         break;
     }
@@ -165,24 +172,25 @@ struct FrCache {
       return PopComparisonResult::equal;
     }
 
-    // optimization: equality is commutative, so test only once (if(A==B))
+    // optimization: equality is commutative, so test only once (if(A==B), and
+    // not B==A)
 
-    auto* aprev = findCachedPrevBlock(winners_, &a);
+    const Chain<index_t> achain(minHeight_, &a);
+    auto* aprev = findCachedPrevBlock(achain, winners_);
     if (aprev != nullptr) {
       // is previous of A known to be better than B?
       if (test(winners_, aprev, &b)) {
         // A is transitively better than B
-        saveTransitive(winners_, aprev, &a);
         return PopComparisonResult::A_transitively_better;
       }
     }
 
-    auto* bprev = findCachedPrevBlock(winners_, &b);
+    const Chain<index_t> bchain(minHeight_, &b);
+    auto* bprev = findCachedPrevBlock(bchain, winners_);
     if (bprev != nullptr) {
       // is previous of B known to be better than A?
       if (test(winners_, bprev, &a)) {
         // B is transitively better than A
-        saveTransitive(winners_, bprev, &b);
         return PopComparisonResult::B_transitively_better;
       }
     }
@@ -203,18 +211,8 @@ struct FrCache {
     return false;
   }
 
-  void saveTransitive(map& m, const index_t* prev, const index_t* index) {
-    auto it = m.find(prev);
-    if (it == m.end()) {
-      return;
-    }
-
-    m[index] = it->second;
-  }
-
   // returns nullptr if no prev block cached
-  const index_t* findCachedPrevBlock(map& m, const index_t* index) {
-    const Chain<index_t> chain(minHeight_, index);
+  const index_t* findCachedPrevBlock(const Chain<index_t>& chain, map& m) {
     for (auto* i : reverse_iterate(chain)) {
       if (m.count(i) > 0) {
         return i;

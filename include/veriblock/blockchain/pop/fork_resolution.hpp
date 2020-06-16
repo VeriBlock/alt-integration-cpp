@@ -580,6 +580,7 @@ struct PopAwareForkResolutionComparator {
   }
 
   FrCache<protected_index_t>& getCache() { return cache_; }
+  const FrCache<protected_index_t>& getCache() const { return cache_; }
 
  private:
   std::shared_ptr<ProtectingBlockTree> ing_;

@@ -41,13 +41,20 @@ struct PopTestFixture {
 
   PopTestFixture() {
     SetLogger<FmtLogger>();
-    GetLogger().level = LogLevel::off;
+    GetLogger().level = LogLevel::warn;
 
     EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.bootstrap(state));
 
     popminer = std::make_shared<MockMiner>();
+  }
+
+  ~PopTestFixture() {
+    fmt::printf("ALT POP FR cache hit: %f\n",
+                alttree.getComparator().getCache().hitRate());
+    fmt::printf("VBK POP FR cache hit: %f\n",
+                alttree.vbk().getComparator().getCache().hitRate());
   }
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,

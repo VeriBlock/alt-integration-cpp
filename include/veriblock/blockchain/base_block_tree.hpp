@@ -111,9 +111,9 @@ struct BaseBlockTree {
     return invalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
 
-  void invalidateSubtree(index_t& toBeInvalidated,
-                         enum BlockStatus reason,
-                         bool shouldDetermineBestChain = true) {
+  virtual void invalidateSubtree(index_t& toBeInvalidated,
+                                 enum BlockStatus reason,
+                                 bool shouldDetermineBestChain = true) {
     VBK_LOG_INFO("Invalidating %s subtree: reason=%d block=%s",
                  block_t::name(),
                  (int)reason,
@@ -155,9 +155,9 @@ struct BaseBlockTree {
     revalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
 
-  void revalidateSubtree(index_t& toBeValidated,
-                         enum BlockStatus reason,
-                         bool shouldDetermineBestChain = true) {
+  virtual void revalidateSubtree(index_t& toBeValidated,
+                                 enum BlockStatus reason,
+                                 bool shouldDetermineBestChain = true) {
     VBK_LOG_INFO("Revalidating %s subtree: reason=%d block=%s",
                  block_t::name(),
                  (int)reason,
