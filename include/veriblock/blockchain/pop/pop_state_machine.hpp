@@ -94,14 +94,14 @@ struct PopStateMachine {
 
   // unapplies all commands commands from blocks in the range of [from; to)
   // atomic: either applies all of the requested blocks or fails on an assert
-  void unapply(ProtectedIndex& from, ProtectedIndex& to) {
+  void unapply(index_t& from, index_t& to) {
     if (&from == &to) {
       return;
     }
 
     VBK_ASSERT(from.height > to.height);
     // exclude 'to' by adding 1
-    Chain<ProtectedIndex> chain(to.height + 1, &from);
+    Chain<index_t> chain(to.height + 1, &from);
     VBK_ASSERT(chain.first());
     VBK_ASSERT(chain.first()->pprev == &to);
 
@@ -121,7 +121,7 @@ struct PopStateMachine {
 
   // applies all commands from blocks in the range of (from; to].
   // atomic: applies either all or none of the requested blocks
-  bool apply(ProtectedIndex& from, ProtectedIndex& to, ValidationState& state) {
+  bool apply(index_t& from, index_t& to, ValidationState& state) {
     if (from == to) {
       // already applied this block
       return true;
@@ -129,7 +129,7 @@ struct PopStateMachine {
 
     VBK_ASSERT(from.height < to.height);
     // exclude 'from' by adding 1
-    Chain<ProtectedIndex> chain(from.height + 1, &to);
+    Chain<index_t> chain(from.height + 1, &to);
     VBK_ASSERT(chain.first());
     VBK_ASSERT(chain.first()->pprev == &from);
 
@@ -154,6 +154,45 @@ struct PopStateMachine {
     return true;
   }
 
+  // effectively unapplies [from; genesis) and applies (genesis; to]
+  // assumes and requires that [from; genesis) is applied
+  // optimization: avoids applying/unapplying (genesis; last_common_block(from,
+  // to)] atomic: either changes the state to 'to' or leaves it unchanged
+  bool setState(index_t& from, index_t& to, ValidationState& state) {
+    if (VBK_UNLIKELY(IsShutdownRequested())) {
+      return true;
+    }
+
+    if (from == to) {
+      // already at this state
+      return true;
+    }
+
+    // is 'to' a successor?
+    if (to.getAncestor(from.height) == &from) {
+      return apply(from, to, state);
+    }
+
+    // 'to' is a predecessor or another fork
+    Chain<index_t> chain(0, &from);
+    auto* forkBlock = chain.findFork(&to);
+    if (!forkBlock) {
+      // we can't find 'to' in fork.
+      return false;
+    }
+
+    unapply(from, *forkBlock);
+    if (!apply(*forkBlock, to, state)) {
+      // attempted to switch to an invalid block, rollback
+      bool ret = apply(*forkBlock, from, state);
+      VBK_ASSERT(ret);
+
+      return false;
+    }
+
+    return true;
+  }
+
   ProtectingBlockTree& tree() { return ing_; }
   const ProtectingBlockTree& tree() const { return ing_; }
   const ProtectedChainParams& params() const { return ed_.getParams(); }
@@ -161,7 +200,7 @@ struct PopStateMachine {
  private:
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
-  height_t startHeight_ = 0;
+  height_t startHeight_;
 };  // namespace altintegration
 
 }  // namespace altintegration
