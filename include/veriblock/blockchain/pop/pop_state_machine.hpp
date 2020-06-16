@@ -174,7 +174,7 @@ struct PopStateMachine {
     }
 
     // 'to' is a predecessor or another fork
-    Chain<index_t> chain(0, &from);
+    Chain<index_t> chain(startHeight_, &from);
     auto* forkBlock = chain.findFork(&to);
 
     VBK_ASSERT(forkBlock &&
