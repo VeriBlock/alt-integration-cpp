@@ -17,6 +17,7 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/logger.hpp>
+#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
@@ -367,10 +368,12 @@ struct PopAwareForkResolutionComparator {
 
   PopAwareForkResolutionComparator(std::shared_ptr<ProtectingBlockTree> tree,
                                    const protecting_params_t& protectingParams,
-                                   const protected_params_t& protectedParams)
+                                   const protected_params_t& protectedParams,
+                                   PayloadsStorage& storage)
       : ing_(std::move(tree)),
         protectedParams_(&protectedParams),
-        protectingParams_(&protectingParams) {
+        protectingParams_(&protectingParams),
+        storage_(storage) {
     VBK_ASSERT(protectedParams.getKeystoneInterval() > 0);
   }
 
@@ -391,7 +394,7 @@ struct PopAwareForkResolutionComparator {
       return true;
     }
 
-    sm_t sm(ed, *ing_);
+    sm_t sm(ed, *ing_, storage_);
     return sm.setState(*currentActive, to, state);
   }
 
@@ -427,7 +430,7 @@ struct PopAwareForkResolutionComparator {
     if (indexNew.getAncestor(bestTip->height) == bestTip) {
       VBK_LOG_INFO("Candidate is ahead %d blocks",
                    indexNew.height - bestTip->height);
-      sm_t sm(ed, *ing_, bestTip->height);
+      sm_t sm(ed, *ing_, storage_, bestTip->height);
       if (!sm.apply(*bestTip, indexNew, state)) {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
@@ -468,7 +471,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed, *ing_, chainA.first()->height);
+    sm_t sm(ed, *ing_, storage_, chainA.first()->height);
 
     if (VBK_UNLIKELY(IsShutdownRequested())) {
       return 1;
@@ -536,6 +539,7 @@ struct PopAwareForkResolutionComparator {
 
   const protected_params_t* protectedParams_;
   const protecting_params_t* protectingParams_;
+  PayloadsStorage& storage_;
 };
 
 }  // namespace altintegration

@@ -183,9 +183,8 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
 
   bool put(const stored_block_t& block) override {
     auto bHash = block.getHash();
-    bool res = _hash.find(bHash) != _hash.end();
     _hash[bHash] = std::make_shared<stored_block_t>(block);
-    return res;
+    return true;
   }
 
   bool removeByHash(const hash_t& hash) override {
@@ -200,7 +199,7 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   }
 
   std::shared_ptr<cursor_t> newCursor() override {
-    return std::make_shared<BlockCursorInmem<Block>>(_hash);
+    return std::make_shared<BlockCursorInmem<stored_block_t>>(_hash);
   }
 
  private:

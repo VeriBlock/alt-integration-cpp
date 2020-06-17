@@ -12,6 +12,7 @@
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/storage/pop_storage.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -27,6 +28,7 @@ struct BtcInvalidationTest {
 
   BtcChainParamsRegTest btcparam;
   VbkChainParamsRegTest vbkparam;
+  PayloadsStorage storage;
 };
 
 struct VbkTestCase {
@@ -98,7 +100,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap() * 2,
       allblocks.end()};
 
-  VbkBlockTree tree(*value.params, btcparam);
+  VbkBlockTree tree(*value.params, btcparam, storage);
 
   ASSERT_TRUE(
       tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))

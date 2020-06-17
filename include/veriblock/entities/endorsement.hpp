@@ -66,6 +66,8 @@ struct Endorsement {
 
   static type::id_t getId(const Container& c);
 
+  type::id_t getId() const { return id; }
+
   bool operator==(const type& other) const { return id == other.id; }
 
   std::string toPrettyString(size_t level = 0) const;

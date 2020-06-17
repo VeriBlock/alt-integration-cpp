@@ -13,11 +13,14 @@ using namespace altintegration;
  * BTC:
  * o-o-o-98-[...]-100-[...]-102-103-[...]-110-111-112-113 (tip, longest)
  *
- * 98 = contains endorsement of 20, present in A40 and B40
- * 100 = contains endorsement of A40 and B40, present in A50 and B50
- * respectively 102 = contains endorsement of A60, present in A70 103 = contains
- * endorsement of B60, present in B61 111 = contains endorsement of B80, present
- * in B85 114 = contains endorsement of A80, present in A92
+ * 98 = contains endorsement of 20, present in A40
+ * 99 = contains endorsement of 20, present in B40
+ * 100 = contains endorsement of A40 present in A50
+ * 101 = contains endorsement of B40 present in B50
+ * 102 = contains endorsement of A60, present in A70
+ * 103 = contains endorsement of B60, present in B61
+ * 111 = contains endorsement of B80, present in B85
+ * 114 = contains endorsement of A80, present in A92
  *
  * VBK:
  *           /-A40-[...]-A60-[...]-A80-[...]-A100
@@ -86,17 +89,18 @@ TEST_F(Scenario5, scenario_5) {
         *btcTip->header, btcTx, *endorsedBlock->header, vbkContextStart);
     mineVbkFork(tipA, 1);
 
+    btcTx = popminer->createBtcTxEndorsingVbkBlock(*endorsedBlock->header);
+    btcTip = popminer->mineBtcBlocks(1);
     popminer->createVbkPopTxEndorsingVbkBlock(
         *btcTip->header, btcTx, *endorsedBlock->header, vbkContextStart);
     mineVbkFork(tipB, 1);
   }
 
-  popminer->mineBtcBlocks(1);
   mineVbkFork(tipA, 9);
   mineVbkFork(tipB, 9);
 
-  {  // 100 = contains endorsement of A40 and B40, present in A50 and B50
-     // respectively
+  {
+    //100 = contains endorsement of A40 present in A50
     ASSERT_EQ(99, popminer->btc().getBestChain().tip()->height);
     ASSERT_EQ(49, tipA->height);
     auto& endorsedBlockA = tipA->getAncestor(40)->header;
@@ -104,20 +108,21 @@ TEST_F(Scenario5, scenario_5) {
     auto& endorsedBlockB = tipB->getAncestor(40)->header;
 
     auto btcTxA = popminer->createBtcTxEndorsingVbkBlock(*endorsedBlockA);
-    auto btcTxB = popminer->createBtcTxEndorsingVbkBlock(*endorsedBlockB);
-
     auto* btcTip = popminer->mineBtcBlocks(1);
 
     popminer->createVbkPopTxEndorsingVbkBlock(
         *btcTip->header, btcTxA, *endorsedBlockA, vbkContextStart);
     mineVbkFork(tipA, 1);
 
+    // 101 = contains endorsement of B40 present in B50
+    auto btcTxB = popminer->createBtcTxEndorsingVbkBlock(*endorsedBlockB);
+    btcTip = popminer->mineBtcBlocks(1);
+
     popminer->createVbkPopTxEndorsingVbkBlock(
         *btcTip->header, btcTxB, *endorsedBlockB, vbkContextStart);
     mineVbkFork(tipB, 1);
   }
 
-  popminer->mineBtcBlocks(1);
   mineVbkFork(tipA, 19);
 
   // 102 = contains endorsement of A60, present in A70

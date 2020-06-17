@@ -19,8 +19,9 @@ using ::testing::Field;
 using ::testing::Return;
 using ::testing::StrictMock;
 
-struct DummyBlock {
+struct MyDummyBlock {
   using hash_t = int;
+  using prev_hash_t = int;
   using height_t = int;
   using payloads_t = DummyPayloads;
   using endorsement_t = DummyEndorsement;
@@ -34,13 +35,13 @@ struct TestCase {
 };
 
 struct ChainTest : public ::testing::TestWithParam<TestCase> {
-  Chain<BlockIndex<DummyBlock>> chain{};
+  Chain<BlockIndex<MyDummyBlock>> chain{};
 
-  static std::vector<BlockIndex<DummyBlock>> makeBlocks(int startHeight,
+  static std::vector<BlockIndex<MyDummyBlock>> makeBlocks(int startHeight,
                                                         int size) {
-    std::vector<BlockIndex<DummyBlock>> blocks;
+    std::vector<BlockIndex<MyDummyBlock>> blocks;
     for (int i = 0; i < size; i++) {
-      BlockIndex<DummyBlock> index{};
+      BlockIndex<MyDummyBlock> index{};
       index.height = i + startHeight;
       index.pprev = nullptr;
       blocks.push_back(index);
@@ -58,7 +59,7 @@ struct ChainTest : public ::testing::TestWithParam<TestCase> {
 TEST_P(ChainTest, Full) {
   auto [start, size] = GetParam();
   auto blocks = makeBlocks(start, size);
-  chain = Chain<BlockIndex<DummyBlock>>(start, &*blocks.rbegin());
+  chain = Chain<BlockIndex<MyDummyBlock>>(start, &*blocks.rbegin());
   EXPECT_EQ(chain.chainHeight(), start + size - 1);
   EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
 
@@ -94,7 +95,7 @@ INSTANTIATE_TEST_SUITE_P(Chain, ChainTest, testing::ValuesIn(cases));
 
 TEST(ChainTest, ChainStartHeightAboveTip) {
   auto blocks = ChainTest::makeBlocks(0, 10);
-  Chain<BlockIndex<DummyBlock>> chain(100, &*blocks.rbegin());
+  Chain<BlockIndex<MyDummyBlock>> chain(100, &*blocks.rbegin());
   ASSERT_TRUE(chain.empty());
 }
 
@@ -103,7 +104,7 @@ TEST(ChainTest, CreateFrom0) {
   // created with height 0, it is expected to see that chain will contain 110
   // elements, first 100 of which are null.
   auto blocks = ChainTest::makeBlocks(100, 10);
-  Chain<BlockIndex<DummyBlock>> c(0, &*blocks.rbegin());
+  Chain<BlockIndex<MyDummyBlock>> c(0, &*blocks.rbegin());
   ASSERT_EQ(c.blocksCount(), 110);
   ASSERT_EQ(c.chainHeight(), 109);
 }

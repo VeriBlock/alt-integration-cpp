@@ -46,10 +46,12 @@ template <typename Block>
 struct BlockIndex {
   using block_t = Block;
   using hash_t = typename block_t::hash_t;
+  using prev_hash_t = typename block_t::prev_hash_t;
   using height_t = typename block_t::height_t;
   using endorsement_t = typename block_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
   using payloads_t = typename Block::payloads_t;
+  using pid_t = typename payloads_t::id_t;
   using protecting_block_t = typename Block::protecting_block_t;
 
   //! (memory only) pointer to a previous block
@@ -67,10 +69,10 @@ struct BlockIndex {
       containingEndorsements{};
 
   //! list of endorsements pointing to this block
-  std::vector<endorsement_t*> endorsedBy;
+  std::vector<endorsement_t *> endorsedBy;
 
   //! list of changes introduced in this block
-  std::vector<CommandGroup> commands{};
+  std::vector<pid_t> payloadIds;
 
   //! height of the entry in the chain
   height_t height = 0;
@@ -99,7 +101,7 @@ struct BlockIndex {
     this->chainWork = 0;
     this->containingEndorsements.clear();
     this->endorsedBy.clear();
-    this->commands.clear();
+    this->payloadIds.clear();
     this->height = 0;
     this->status = 0;
     this->refCounter = 0;

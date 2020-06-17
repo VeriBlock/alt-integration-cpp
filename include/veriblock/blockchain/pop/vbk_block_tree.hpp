@@ -13,8 +13,8 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/state_manager.hpp>
-#include <veriblock/storage/endorsement_repository.hpp>
+#include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
@@ -22,6 +22,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
   using index_t = VbkTree::index_t;
+  using payloads_t = typename VbkBlock::payloads_t;
+  using pid_t = typename payloads_t::id_t;
   using endorsement_t = typename index_t::endorsement_t;
   using PopForkComparator = PopAwareForkResolutionComparator<VbkBlock,
                                                              VbkChainParams,
@@ -30,14 +32,21 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   ~VbkBlockTree() override = default;
 
-  VbkBlockTree(const VbkChainParams& vbkp, const BtcChainParams& btcp)
-      : VbkTree(vbkp), cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp) {}
+  VbkBlockTree(const VbkChainParams& vbkp,
+               const BtcChainParams& btcp,
+               PayloadsStorage& storagePayloads)
+      : VbkTree(vbkp),
+        cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp, storagePayloads),
+        storagePayloads_(storagePayloads) {}
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
+
+  PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
+  const PayloadsStorage getStoragePayloads() const { return storagePayloads_; }
 
   bool bootstrapWithChain(height_t startHeight,
                           const std::vector<block_t>& chain,
@@ -53,22 +62,22 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                    const std::vector<payloads_t>& payloads,
                    ValidationState& state);
 
-  void removePayloads(const hash_t& hash,
-                      const std::vector<payloads_t>& payloads);
+  void removePayloads(const hash_t& hash, const std::vector<pid_t>& pids);
 
-  void removePayloads(const block_t& block,
-                      const std::vector<payloads_t>& payloads);
+  void removePayloads(const block_t& block, const std::vector<pid_t>& pids);
 
-  void payloadsToCommands(const typename VbkBlockTree::payloads_t& p,
+  void payloadsToCommands(const payloads_t& p,
                           std::vector<CommandPtr>& commands);
+
+  bool saveToStorage(PopStorage& storage, ValidationState& state);
+
+  bool loadFromStorage(const PopStorage& storage, ValidationState& state);
 
   bool operator==(const VbkBlockTree& o) const {
     return cmp_ == o.cmp_ && VbkTree::operator==(o);
   }
 
   bool operator!=(const VbkBlockTree& o) const { return !operator==(o); }
-
-  bool setState(const VbkBlock::hash_t& block, ValidationState& state);
 
   std::string toPrettyString(size_t level = 0) const;
 
@@ -83,6 +92,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                           bool isBootstrap = false) override;
 
   PopForkComparator cmp_;
+  PayloadsStorage& storagePayloads_;
 };
 
 template <typename JsonValue>
@@ -91,13 +101,13 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putStringKV(obj, "chainWork", i.chainWork.toHex());
 
   std::vector<uint256> endorsements;
-  for (auto& e : i.containingEndorsements) {
+  for (const auto& e : i.containingEndorsements) {
     endorsements.push_back(e.first);
   }
   json::putArrayKV(obj, "containingEndorsements", endorsements);
 
   std::vector<uint256> endorsedBy;
-  for (auto* e : i.endorsedBy) {
+  for (const auto* e : i.endorsedBy) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);

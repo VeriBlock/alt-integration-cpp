@@ -16,7 +16,6 @@
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/context.hpp>
 #include <veriblock/stateless_validation.hpp>
-#include <veriblock/storage/block_repository.hpp>
 #include <veriblock/validation_state.hpp>
 
 #include "veriblock/fmt.hpp"
@@ -127,26 +126,6 @@ struct BlockTree : public BaseBlockTree<Block> {
  protected:
   const ChainParams* param_ = nullptr;
 
-  index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {
-    auto hash = block->getHash();
-    index_t* current = base::getBlockIndex(hash);
-    if (current != nullptr) {
-      // it is a duplicate
-      return current;
-    }
-
-    current = base::doInsertBlockHeader(block);
-    if (current->pprev) {
-      current->chainWork = current->pprev->chainWork + getBlockProof(*block);
-    } else {
-      current->chainWork = getBlockProof(*block);
-    }
-
-    // raise validity may return false if block is invalid
-    current->raiseValidity(BLOCK_VALID_TREE);
-    return current;
-  }
-
   bool acceptBlock(const std::shared_ptr<block_t>& block,
                    ValidationState& state,
                    bool shouldContextuallyCheck) {
@@ -179,7 +158,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Invalid("bootstrap");
     }
 
-    auto* index = insertBlockHeader(block);
+    auto* index = base::insertBlockHeader(block);
     index->height = height;
 
     base::activeChain_ = Chain<index_t>(height, index);
@@ -188,7 +167,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Error("block-index-no-genesis");
     }
 
-    return true;
+    return this->setTip(*index, state, true);
   }
 
   bool validateAndAddBlock(const std::shared_ptr<block_t>& block,
@@ -212,7 +191,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Invalid(block_t::name() + "-contextually-check-block");
     }
 
-    auto index = this->insertBlockHeader(block);
+    auto index = base::insertBlockHeader(block);
     VBK_ASSERT(index != nullptr &&
                "insertBlockHeader should have never returned nullptr");
 

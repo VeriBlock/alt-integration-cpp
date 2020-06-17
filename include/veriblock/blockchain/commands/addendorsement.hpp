@@ -69,6 +69,22 @@ struct AddEndorsement : public Command {
               HexStr(e_->endorsedHash)));
     }
 
+    auto& id = e_->id;
+    auto endorsed_it =
+        std::find_if(endorsed->endorsedBy.rbegin(),
+                     endorsed->endorsedBy.rend(),
+                     [&id](endorsement_t* p) { return p->id == id; });
+    if (endorsed_it != endorsed->endorsedBy.rend()) {
+      // found duplicate
+      return state.Invalid(
+          protected_block_t ::name() + "-duplicate",
+          fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+                       "found block endorsed by it in %s",
+                       e_->toPrettyString(),
+                       containing->toShortPrettyString(),
+                       endorsed->toShortPrettyString()));
+    }
+
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
     if (!blockOfProof) {
       return state.Invalid(
@@ -114,9 +130,13 @@ struct AddEndorsement : public Command {
     // erase endorsedBy
     {
       auto& v = endorsed->endorsedBy;
+      auto& id = e_->id;
 
       // find and erase the last occurrence of e_
-      auto endorsed_it = std::find(v.rbegin(), v.rend(), e_.get());
+      auto endorsed_it = std::find_if(
+          v.rbegin(), v.rend(), [&id](endorsement_t* p) {
+            return p->id == id;
+          });
 
       VBK_ASSERT(
           endorsed_it != v.rend() &&
