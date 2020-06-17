@@ -23,6 +23,14 @@ class PopStorage : public EndorsementStorage<AltEndorsement>,
   PopStorage() {}
 
   template <typename Endorsements>
+  DummyEndorsement loadEndorsements(
+      const typename DummyEndorsement::id_t&) const {
+    return {};
+  }
+
+  template <typename Endorsements,
+            typename = typename std::enable_if<
+                !std::is_same<Endorsements, DummyEndorsement>::value>::type>
   Endorsements loadEndorsements(const typename Endorsements::id_t& eid) const {
     Endorsements endorsements;
     bool ret =

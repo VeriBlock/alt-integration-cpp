@@ -10,6 +10,7 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/reversed_range.hpp>
+#include <veriblock/blockchain/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -266,57 +267,17 @@ void VbkBlockTree::payloadsToCommands(const payloads_t& p,
   commands.push_back(std::move(cmd));
 }
 
-bool VbkBlockTree::saveToStorage(PopStorage& storage) {
-  storage.saveBlocks(btc().getBlocks());
-  storage.saveTip(*btc().getBestChain().tip());
-  storage.saveBlocks(getBlocks());
-  storage.saveTip(*getBestChain().tip());
-  return true;
+bool VbkBlockTree::saveToStorage(PopStorage& storage, ValidationState& state) {
+  saveBlocks(storage, btc());
+  saveBlocks(storage, *this);
+  return state.IsValid();
 }
 
-bool VbkBlockTree::loadFromStorage(const PopStorage& storage) {
-  auto blocksBtc = storage.loadBlocks<typename BtcTree::index_t>();
-  auto tipStoredBtc = storage.loadTip<typename BtcTree::index_t>();
-  for (const auto& blockPair : blocksBtc) {
-    auto* bi = btc().insertBlock(blockPair.second->header);
-    bi->refCounter = blockPair.second->refCounter;
-  }
-
-  ValidationState state{};
-  auto* tipBtc = btc().getBlockIndex(tipStoredBtc.second);
-  if (tipBtc == nullptr) return false;
-  if (tipBtc->height != tipStoredBtc.first) return false;
-  bool ret = btc().setState(*tipBtc, state);
-  if (!ret) return false;
-
-  auto blocksVbk = storage.loadBlocks<typename VbkTree::index_t>();
-  auto tipStoredVbk = storage.loadTip<typename VbkTree::index_t>();
-  for (const auto& blockPair : blocksVbk) {
-    auto* bi = insertBlock(blockPair.second->header);
-    bi->payloadIds = blockPair.second->payloadIds;
-    bi->refCounter = blockPair.second->refCounter;
-
-    // load VBK endorsements
-    for (const auto& e : blockPair.second->containingEndorsements) {
-      auto endorsement = storage.loadEndorsements<VbkEndorsement>(e.first);
-      auto* endorsed = getBlockIndex(endorsement.endorsedHash);
-      if (endorsed == nullptr) {
-        return state.Invalid(block_t::name() + "-bad-endorsed",
-                             "Can not find VTB endorsed block: " +
-                                 endorsement.endorsedHash.toHex());
-      }
-      auto endorsementPtr =
-          std::make_shared<VbkEndorsement>(std::move(endorsement));
-      bi->containingEndorsements.insert(
-          std::make_pair(endorsementPtr->id, endorsementPtr));
-      endorsed->endorsedBy.push_back(endorsementPtr.get());
-    }
-  }
-
-  auto* tipVbk = getBlockIndex(tipStoredVbk.second);
-  if (tipVbk == nullptr) return false;
-  if (tipVbk->height != tipStoredVbk.first) return false;
-  return setState(*tipVbk, state, true);
+bool VbkBlockTree::loadFromStorage(const PopStorage& storage,
+                              ValidationState& state) {
+  bool ret = loadBlocks(storage, btc(), state);
+  if (!ret) return state.IsValid();
+  return loadBlocks(storage, *this, state);
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {

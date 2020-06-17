@@ -14,6 +14,7 @@
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
+#include <veriblock/blockchain/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -202,90 +203,20 @@ void AltTree::payloadsToCommands(const payloads_t& p,
   }
 }
 
-bool AltTree::saveToStorage(PopStorage& storage) {
-  storage.saveBlocks(vbk().btc().getBlocks());
-  storage.saveTip(*vbk().btc().getBestChain().tip());
-  storage.saveBlocks(vbk().getBlocks());
-  storage.saveTip(*vbk().getBestChain().tip());
-  storage.saveBlocks(getBlocks());
-  storage.saveTip(*getBestChain().tip());
-  return true;
+bool AltTree::saveToStorage(PopStorage& storage, ValidationState& state) {
+  saveBlocks(storage, vbk().btc());
+  saveBlocks(storage, vbk());
+  saveBlocks(storage, *this);
+  return state.IsValid();
 }
 
-bool AltTree::loadFromStorage(const PopStorage& storage) {
-  auto blocksBtc = storage.loadBlocks<BlockIndex<BtcBlock>>();
-  auto tipStoredBtc = storage.loadTip<BlockIndex<BtcBlock>>();
-  for (const auto& blockPair : blocksBtc) {
-    auto* bi = vbk().btc().insertBlock(blockPair.second->header);
-    bi->refCounter = blockPair.second->refCounter;
-  }
-
-  ValidationState state{};
-  auto* tipBtc = vbk().btc().getBlockIndex(tipStoredBtc.second);
-  if (tipBtc == nullptr) return false;
-  if (tipBtc->height != tipStoredBtc.first) return false;
-  bool ret = vbk().btc().setState(*tipBtc, state);
-  if (!ret) return false;
-
-  auto blocksVbk = storage.loadBlocks<BlockIndex<VbkBlock>>();
-  auto tipStoredVbk = storage.loadTip<BlockIndex<VbkBlock>>();
-  for (const auto& blockPair : blocksVbk) {
-    auto* bi = vbk().insertBlock(blockPair.second->header);
-    bi->payloadIds = blockPair.second->payloadIds;
-    bi->refCounter = blockPair.second->refCounter;
-
-    // load VBK endorsements
-    for (const auto& e : blockPair.second->containingEndorsements) {
-      auto endorsement = storage.loadEndorsements<VbkEndorsement>(e.first);
-      auto* endorsed = vbk().getBlockIndex(endorsement.endorsedHash);
-      if (endorsed == nullptr) {
-        return state.Invalid(VbkBlockTree::block_t::name() + "-bad-endorsed",
-                             "Can not find VTB endorsed block: " +
-                                 endorsement.endorsedHash.toHex());
-      }
-      auto endorsementPtr =
-          std::make_shared<VbkEndorsement>(std::move(endorsement));
-      bi->containingEndorsements.insert(
-          std::make_pair(endorsementPtr->id, endorsementPtr));
-      endorsed->endorsedBy.push_back(endorsementPtr.get());
-    }
-  }
-
-  auto* tipVbk = vbk().getBlockIndex(tipStoredVbk.second);
-  if (tipVbk == nullptr) return false;
-  if (tipVbk->height != tipStoredVbk.first) return false;
-  ret = vbk().setState(*tipVbk, state, true);
-  if (!ret) return false;
-
-  auto blocksAlt = storage.loadBlocks<BlockIndex<AltBlock>>();
-  auto tipStoredsAlt = storage.loadTip<BlockIndex<AltBlock>>();
-
-  for (const auto& blockPair : blocksAlt) {
-    auto* bi = insertBlock(blockPair.second->header);
-    bi->payloadIds = blockPair.second->payloadIds;
-    bi->refCounter = blockPair.second->refCounter;
-
-    // load ALT endorsements
-    for (const auto& e : blockPair.second->containingEndorsements) {
-      auto endorsement = storage.loadEndorsements<AltEndorsement>(e.first);
-      auto* endorsed = getBlockIndex(endorsement.endorsedHash);
-      if (endorsed == nullptr) {
-        return state.Invalid(block_t::name() + "-bad-endorsed",
-                             "Can not find ALT endorsed block: " +
-                                 HexStr(endorsement.endorsedHash));
-      }
-      auto endorsementPtr =
-          std::make_shared<AltEndorsement>(std::move(endorsement));
-      bi->containingEndorsements.insert(
-          std::make_pair(endorsementPtr->id, endorsementPtr));
-      endorsed->endorsedBy.push_back(endorsementPtr.get());
-    }
-  }
-
-  auto* tipAlt = getBlockIndex(tipStoredsAlt.second);
-  if (tipAlt == nullptr) return false;
-  if (tipAlt->height != tipStoredsAlt.first) return false;
-  return setState(*tipAlt, state, true);
+bool AltTree::loadFromStorage(const PopStorage& storage,
+                              ValidationState& state) {
+  bool ret = loadBlocks(storage, vbk().btc(), state);
+  if (!ret) return state.IsValid();
+  ret = loadBlocks(storage, vbk(), state);
+  if (!ret) return state.IsValid();
+  return loadBlocks(storage, *this, state);
 }
 
 std::string AltTree::toPrettyString(size_t level) const {

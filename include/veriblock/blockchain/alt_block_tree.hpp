@@ -92,9 +92,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   void payloadsToCommands(const payloads_t& p,
                           std::vector<CommandPtr>& commands);
 
-  bool saveToStorage(PopStorage& storage);
+  bool saveToStorage(PopStorage& storage, ValidationState& state);
 
-  bool loadFromStorage(const PopStorage& storage);
+  bool loadFromStorage(const PopStorage& storage, ValidationState& state);
 
   bool operator==(const AltTree& o) const {
     return cmp_ == o.cmp_ && base::operator==(o);

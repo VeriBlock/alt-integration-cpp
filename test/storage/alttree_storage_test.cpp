@@ -42,10 +42,10 @@ TEST_F(AltTreeRepositoryTest, Basic) {
   vbkTip = popminer->mineVbkBlocks(1);
 
   PopStorage storage;
-  EXPECT_TRUE(popminer->vbk().saveToStorage(storage));
+  EXPECT_TRUE(popminer->vbk().saveToStorage(storage, state));
 
   VbkBlockTree reloadedVbkTree{vbkparam, btcparam, popminer->vbk().getStoragePayloads()};
-  EXPECT_TRUE(reloadedVbkTree.loadFromStorage(storage));
+  EXPECT_TRUE(reloadedVbkTree.loadFromStorage(storage, state));
 
   EXPECT_TRUE(reloadedVbkTree.btc() == popminer->btc());
   EXPECT_TRUE(reloadedVbkTree == popminer->vbk());
@@ -85,10 +85,10 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(state.IsValid());
 
   PopStorage storage;
-  EXPECT_TRUE(alttree.saveToStorage(storage));
+  EXPECT_TRUE(alttree.saveToStorage(storage, state));
 
   AltTree reloadedAltTree{altparam, vbkparam, btcparam, alttree.getStoragePayloads()};
-  EXPECT_TRUE(reloadedAltTree.loadFromStorage(storage));
+  EXPECT_TRUE(reloadedAltTree.loadFromStorage(storage, state));
 
   EXPECT_TRUE(reloadedAltTree.vbk().btc() == alttree.vbk().btc());
   EXPECT_TRUE(reloadedAltTree.vbk() == alttree.vbk());
