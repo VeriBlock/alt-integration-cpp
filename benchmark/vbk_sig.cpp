@@ -8,6 +8,8 @@
 #include <veriblock/literals.hpp>
 #include <veriblock/stateless_validation.hpp>
 
+using namespace altintegration;
+
 static auto defaultPrivateKeyVbk =
     "303e020100301006072a8648ce3d020106052b8104000a0427302502010104203abf83fa470423d4788a760ef6b7aae1dacf98784b0646057a0adca24e522acb"_unhex;
 
@@ -18,8 +20,6 @@ static auto defaultMsg = "Hello world"_v;
 
 static auto defaultSignatureVbk =
     "3044022008d07afee77324d0bced6f3bce19892d0413981e83e68401cd83d1e1ed3bc37c022005273429062dcf623ccd04c8d9c9e601e7fc45b5db32900c9b0ffda2dbc8f452"_unhex;
-
-using namespace altintegration;
 
 static void VerifySecp256k1Sig(benchmark::State& state) {
   auto privateKey = altintegration::privateKeyFromVbk(defaultPrivateKeyVbk);

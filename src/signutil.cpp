@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/assert.hpp>
+#include "veriblock/signutil.hpp"
+
 #include <utility>
+#include <veriblock/assert.hpp>
 
 #include "veriblock/hashutil.hpp"
-#include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 #include "veriblock/third_party/secp256k1.h"
 
@@ -27,8 +28,16 @@ struct Secp256k1Context {
     }
   }
 
-  operator secp256k1_context*() const { return ctx; }
+  operator secp256k1_context*() { return ctx; }
+  operator const secp256k1_context*() const { return ctx; }
 };
+
+// according to Secp256k1 API doc, functions that take
+// a const pointer to the context are thread-safe
+static const Secp256k1Context ctx_SECP256K1_CONTEXT_VERIFY(
+    SECP256K1_CONTEXT_VERIFY);
+static const Secp256k1Context ctx_SECP256K1_CONTEXT_SIGN(
+    SECP256K1_CONTEXT_SIGN);
 
 static const std::string ASN1_PREFIX_PRIVKEY =
     "303E020100301006072A8648CE3D020106052B8104000A042730250201010420";
@@ -59,8 +68,9 @@ static PrivateKey getPrivateKeyFromAsn1(Slice<const uint8_t> keyEncoded) {
 }
 
 static PublicKey publicKeyUncompress(Slice<const uint8_t> publicKey) {
+  auto& ctx = ctx_SECP256K1_CONTEXT_SIGN;
+
   VBK_ASSERT(publicKey.size() == PUBLIC_KEY_COMPRESSED_SIZE);
-  Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
   secp256k1_pubkey pubkey;
   if (!secp256k1_ec_pubkey_parse(
           ctx, &pubkey, publicKey.data(), publicKey.size())) {
@@ -139,7 +149,8 @@ PublicKeyVbk publicKeyToVbk(PublicKey key) {
 }
 
 PublicKey derivePublicKey(PrivateKey privateKey) {
-  Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
+  auto& ctx = ctx_SECP256K1_CONTEXT_SIGN;
+
   secp256k1_pubkey pubkey;
   int pubCreated = secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
   // should be always 1
@@ -156,7 +167,8 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
 }
 
 Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
-  Secp256k1Context ctx(SECP256K1_CONTEXT_SIGN);
+  auto& ctx = ctx_SECP256K1_CONTEXT_SIGN;
+
   auto messageHash = sha256(message);
 
   secp256k1_ecdsa_signature signature;
@@ -174,7 +186,8 @@ Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
 int veriBlockVerify(Slice<const uint8_t> message,
                     Signature signature,
                     PublicKey publicKey) {
-  Secp256k1Context ctx(SECP256K1_CONTEXT_VERIFY);
+  auto& ctx = ctx_SECP256K1_CONTEXT_VERIFY;
+
   secp256k1_pubkey pubkey;
   if (!secp256k1_ec_pubkey_parse(
           ctx, &pubkey, publicKey.data(), publicKey.size())) {
@@ -185,9 +198,10 @@ int veriBlockVerify(Slice<const uint8_t> message,
   secp256k1_ecdsa_signature_parse_der(
       ctx, &signatureDecoded, signature.data(), signature.size());
 
-  //FIXME: Fix this on the other side. We should accept the lower-S form only.
+  // FIXME: Fix this on the other side. We should accept the lower-S form only.
   secp256k1_ecdsa_signature normalizedSignature;
-  secp256k1_ecdsa_signature_normalize(ctx, &normalizedSignature, &signatureDecoded);
+  secp256k1_ecdsa_signature_normalize(
+      ctx, &normalizedSignature, &signatureDecoded);
 
   auto messageHash = sha256(message);
   return secp256k1_ecdsa_verify(
