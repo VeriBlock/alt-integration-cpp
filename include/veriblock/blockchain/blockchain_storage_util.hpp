@@ -32,7 +32,7 @@ bool loadBlocks(const PopStorage& storage,
     // load endorsements
     for (const auto& e : blockPair.second->containingEndorsements) {
       auto endorsement = storage.loadEndorsements<endorsement_t>(e.first);
-      auto* endorsed = tree.getBlockIndex<typename block_t::hash_t>(
+      auto* endorsed = tree.template getBlockIndex<typename block_t::hash_t>(
           endorsement.endorsedHash);
       if (endorsed == nullptr) {
         return state.Invalid(
