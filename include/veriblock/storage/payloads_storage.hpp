@@ -42,7 +42,7 @@ class PayloadsStorage : public PayloadsBaseStorage<AltPayloads>,
 
   template <typename BlockTree>
   std::vector<CommandGroup> loadCommands(
-      const std::vector<typename DummyPayloads::id_t>& pids, BlockTree& tree) {
+      const std::vector<typename DummyPayloads::id_t>&, BlockTree&) {
     return {};
   }
 
