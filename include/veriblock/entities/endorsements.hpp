@@ -32,6 +32,13 @@ AltEndorsement::id_t AltEndorsement::getId(const AltPayloads& c);
 
 struct DummyEndorsement {
   using id_t = bool;
+  std::vector<uint8_t> endorsedHash;
+
+  id_t getId() const { return true; }
+
+  std::string toPrettyString(size_t level) const {
+    return fmt::sprintf("%sDummyEndorsement{}", std::string(level, ' '));
+  }
 };
 
 template <>

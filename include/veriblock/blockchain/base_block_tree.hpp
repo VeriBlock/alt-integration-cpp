@@ -55,6 +55,14 @@ struct BaseBlockTree {
     return it == blocks_.end() ? nullptr : it->second.get();
   }
 
+  index_t* insertBlock(const block_t& block) {
+    return insertBlock(std::make_shared<block_t>(block));
+  }
+
+  index_t* insertBlock(const std::shared_ptr<block_t>& block) {
+    return insertBlockHeader(block);
+  }
+
   void removeSubtree(const hash_t& toRemove,
                      bool shouldDetermineBestChain = true) {
     auto* index = getBlockIndex(toRemove);
@@ -177,6 +185,22 @@ struct BaseBlockTree {
     updateTips(shouldDetermineBestChain);
   }
 
+  virtual bool setState(const hash_t& block,
+                        ValidationState& state,
+                        bool skipSetState = false) {
+    auto* index = getBlockIndex(block);
+    if (!index) {
+      return false;
+    }
+    return setState(*index, state, skipSetState);
+  }
+
+  virtual bool setState(index_t& index,
+                        ValidationState& state,
+                        bool skipSetState = false) {
+    return setTip(index, state, skipSetState);
+  }
+
   //! connects a handler to a signal 'On Invalidate Block'
   size_t connectOnValidityBlockChanged(
       const std::function<on_invalidate_t>& f) {
@@ -190,7 +214,7 @@ struct BaseBlockTree {
 
   bool operator==(const BaseBlockTree& o) const {
     TreeFieldsComparator cmp{};
-    return cmp(blocks_, o.blocks_) && cmp(removed_, o.removed_) &&
+    return cmp(blocks_, o.blocks_) &&
            cmp(tips_, o.tips_) && (activeChain_ == o.activeChain_);
   }
 
@@ -263,6 +287,26 @@ struct BaseBlockTree {
 
     tryAddTip(current);
 
+    return current;
+  }
+
+  index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {
+    auto hash = block->getHash();
+    index_t* current = getBlockIndex(hash);
+    if (current != nullptr) {
+      // it is a duplicate
+      return current;
+    }
+
+    current = doInsertBlockHeader(block);
+    if (current->pprev) {
+      current->chainWork = current->pprev->chainWork + getBlockProof(*block);
+    } else {
+      current->chainWork = getBlockProof(*block);
+    }
+
+    // raise validity may return false if block is invalid
+    current->raiseValidity(BLOCK_VALID_TREE);
     return current;
   }
 

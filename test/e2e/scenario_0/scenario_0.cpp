@@ -49,6 +49,7 @@ struct Scenario0 : public ::testing::Test {
   const int chainId = 3860170;
   std::shared_ptr<Config> config;
   std::shared_ptr<AltTree> alt;
+  PayloadsStorage storage{};
 
   ATV atv;
   std::vector<VTB> vtbs;
@@ -75,7 +76,7 @@ struct Scenario0 : public ::testing::Test {
     config->vbk.blocks =
         parse<VbkBlock>(generated::vbkbootstraps, fromHex<VbkBlock>);
 
-    alt = Altintegration::create(*config);
+    alt = Altintegration::create(*config, storage);
 
     atv = parse<ATV>(generated::atv, fromHex<ATV>)[0];
     vtbs = parse<VTB>(generated::vtbs, fromHex<VTB>);

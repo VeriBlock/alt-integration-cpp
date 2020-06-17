@@ -30,12 +30,13 @@ struct PopTestFixture {
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
+  PayloadsStorage storagePayloads{};
 
   // miners
   std::shared_ptr<MockMiner> popminer;
 
   // trees
-  AltTree alttree = AltTree(altparam, vbkparam, btcparam);
+  AltTree alttree = AltTree(altparam, vbkparam, btcparam, storagePayloads);
 
   ValidationState state;
 

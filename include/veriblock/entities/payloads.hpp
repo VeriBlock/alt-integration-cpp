@@ -17,10 +17,14 @@ namespace altintegration {
 
 struct AltPayloads {
   using id_t = uint256;
+  using containing_block_t = AltBlock;
 
   AltBlock endorsed;
-  AltBlock containingBlock;
+  containing_block_t containingBlock;
   PopData popData;
+  // TODO: remove on command group cache implemented
+  // flag to mark invalid command groups.
+  bool valid{};
 
   /**
    * Read VBK data from the stream and convert it to Payloads
@@ -100,8 +104,13 @@ JsonValue ToJSON(const AltPayloads& p) {
   return obj;
 }
 
+struct DummyBlock {
+  using endorsement_t = DummyEndorsement;
+};
+
 struct DummyPayloads {
   using id_t = bool;
+  using containing_block_t = DummyBlock;
 
   id_t getId() const { return true; }
 };

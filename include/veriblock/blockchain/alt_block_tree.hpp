@@ -21,6 +21,8 @@
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/validation_state.hpp"
+#include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
@@ -34,8 +36,11 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using vbk_config_t = VbkChainParams;
   using btc_config_t = BtcChainParams;
   using index_t = BlockIndex<AltBlock>;
+  using endorsement_t = typename index_t::endorsement_t;
+  using eid_t = typename endorsement_t::id_t;
+  using payloads_t = typename AltBlock::payloads_t;
+  using pid_t = typename payloads_t::id_t;
   using hash_t = typename AltBlock::hash_t;
-  using payloads_t = AltPayloads;
 
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
@@ -47,14 +52,17 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   AltTree(const alt_config_t& alt_config,
           const vbk_config_t& vbk_config,
-          const btc_config_t& btc_config)
+          const btc_config_t& btc_config,
+          PayloadsStorage& storagePayloads)
       : alt_config_(&alt_config),
         vbk_config_(&vbk_config),
         btc_config_(&btc_config),
-        cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config),
+        cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config, storagePayloads),
              vbk_config,
-             alt_config),
-        rewards_(alt_config) {}
+             alt_config,
+             storagePayloads),
+        rewards_(alt_config),
+        storagePayloads_(storagePayloads) {}
 
   //! before any use, bootstrap the three with ALT bootstrap block.
   //! may return false, if bootstrap block is invalid
@@ -62,10 +70,10 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
-  void removePayloads(index_t& index, const std::vector<payloads_t>& payloads);
+  void removePayloads(index_t& index, const std::vector<pid_t>& pids);
 
   void removePayloads(const AltBlock::hash_t& containing,
-                      const std::vector<payloads_t>& payloads);
+                      const std::vector<pid_t>& pids);
 
   bool addPayloads(index_t& index,
                    const std::vector<payloads_t>& payloads,
@@ -81,6 +89,19 @@ struct AltTree : public BaseBlockTree<AltBlock> {
     return addPayloads(containing.hash, payloads, state);
   }
 
+  void payloadsToCommands(const payloads_t& p,
+                          std::vector<CommandPtr>& commands);
+
+  bool saveToStorage(PopStorage& storage, ValidationState& state);
+
+  bool loadFromStorage(const PopStorage& storage, ValidationState& state);
+
+  bool operator==(const AltTree& o) const {
+    return cmp_ == o.cmp_ && base::operator==(o);
+  }
+
+  bool operator!=(const AltTree& o) const { return !operator==(o); }
+
   int comparePopScore(const AltBlock::hash_t& hleft,
                       const AltBlock::hash_t& hright);
 
@@ -90,18 +111,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
    */
   std::map<std::vector<uint8_t>, int64_t> getPopPayout(
       const AltBlock::hash_t& tip, ValidationState& state);
-
-  bool setState(const AltBlock::hash_t& block, ValidationState& state) {
-    auto* index = getBlockIndex(block);
-    if (!index) {
-      return false;
-    }
-    return setState(*index, state);
-  }
-
-  bool setState(index_t& index, ValidationState& state) {
-    return this->setTip(index, state);
-  }
 
   bool validatePayloads(const AltBlock& block,
                         const payloads_t& p,
@@ -122,6 +131,9 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   const AltChainParams& getParams() const { return *alt_config_; }
 
+  PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
+  const PayloadsStorage getStoragePayloads() const { return storagePayloads_; }
+
   std::string toPrettyString(size_t level = 0) const;
 
  protected:
@@ -130,11 +142,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
   PopRewards rewards_;
-
-  index_t* insertBlockHeader(const AltBlock& block);
-
-  void payloadsToCommands(const payloads_t& p,
-                          std::vector<CommandPtr>& commands);
+  PayloadsStorage& storagePayloads_;
 
   void determineBestChain(Chain<index_t>& currentBest,
                           index_t& indexNew,
@@ -150,13 +158,13 @@ template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
   std::vector<uint256> endorsements;
-  for (auto& e : i.containingEndorsements) {
+  for (const auto& e : i.containingEndorsements) {
     endorsements.push_back(e.first);
   }
   json::putArrayKV(obj, "containingEndorsements", endorsements);
 
   std::vector<uint256> endorsedBy;
-  for (auto* e : i.endorsedBy) {
+  for (const auto* e : i.endorsedBy) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
@@ -165,6 +173,9 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
 
   return obj;
 }
+
+template <>
+ArithUint256 getBlockProof(const AltBlock&);
 
 }  // namespace altintegration
 

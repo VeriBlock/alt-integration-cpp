@@ -10,6 +10,7 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/reversed_range.hpp>
+#include <veriblock/blockchain/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -120,9 +121,9 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 }
 
 void VbkBlockTree::removePayloads(const block_t& block,
-                                  const std::vector<payloads_t>& payloads) {
+                                  const std::vector<pid_t>& pids) {
   VBK_LOG_DEBUG(
-      "remove %d payloads from %s", payloads.size(), block.toPrettyString());
+      "remove %d payloads from %s", pids.size(), block.toPrettyString());
   auto hash = block.getHash();
   auto* index = VbkTree::getBlockIndex(hash);
   if (!index) {
@@ -136,7 +137,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
     return;
   }
 
-  if (payloads.empty()) {
+  if (pids.empty()) {
     return;
   }
 
@@ -148,33 +149,21 @@ void VbkBlockTree::removePayloads(const block_t& block,
     VBK_ASSERT(ret);
   }
 
-  // we need only ids, so save some cpu cycles by calculating ids once
-  std::vector<uint256> pids = map_vector<payloads_t, uint256>(
-      payloads, [](const payloads_t& p) { return p.getId(); });
-
-  auto& c = index->commands;
-  // iterate over payloads backwards
-  for (const auto& p : reverse_iterate(pids)) {
-    // find every payloads in command group (search backwards, as it is likely
-    // to be faster)
-    auto it = std::find_if(c.rbegin(), c.rend(), [&p](const CommandGroup& g) {
-      return g.id == p;
-    });
-
-    if (it == c.rend()) {
-      // not found
+  for (const auto& pid : pids) {
+    auto it =
+        std::find(index->payloadIds.begin(), index->payloadIds.end(), pid);
+    // silently ignore wrong payload ids to remove
+    if (it == index->payloadIds.end()) {
       continue;
     }
 
-    // if this payloads invalidated subtree, we have to re-validate it again
-    if (!it->valid) {
-      revalidateSubtree(*index, BLOCK_FAILED_POP, /*do fr=*/false);
+    auto payloads = storagePayloads_.loadPayloads<payloads_t>(pid);
+
+    if (!payloads.valid) {
+      revalidateSubtree(*index, BLOCK_FAILED_POP, false);
     }
 
-    // TODO(warchant): fix inefficient erase (does reallocation for every
-    // payloads item)
-    auto toRemove = --(it.base());
-    c.erase(toRemove);
+    index->payloadIds.erase(it);
   }
 
   // find all affected tips and do a fork resolution
@@ -236,12 +225,19 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     VBK_ASSERT(ret);
   }
 
-  auto& c = index->commands;
+  std::set<pid_t> existingPids(index->payloadIds.begin(),
+                               index->payloadIds.end());
   for (const auto& p : payloads) {
-    c.emplace_back();
-    auto& g = c.back();
-    g.id = p.getId();
-    payloadsToCommands(p, g.commands);
+    auto pid = p.getId();
+    if (!existingPids.insert(pid).second) {
+      return state.Invalid(
+          block_t::name() + "-duplicate-payloads",
+          fmt::sprintf("Containing block=%s already contains payload %s.",
+                       index->toPrettyString(),
+                       pid.toHex()));
+    }
+    index->payloadIds.push_back(pid);
+    storagePayloads_.savePayloads(p);
   }
 
   // find all affected tips and do a fork resolution
@@ -255,9 +251,9 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   return index->isValid();
 }
 
-void VbkBlockTree::payloadsToCommands(const VTB& p,
+void VbkBlockTree::payloadsToCommands(const payloads_t& p,
                                       std::vector<CommandPtr>& commands) {
-  // process BTC context blocks
+  // process context blocks
   for (const auto& b : p.transaction.blockOfProofContext) {
     addBlock(btc(), b, commands);
   }
@@ -266,8 +262,22 @@ void VbkBlockTree::payloadsToCommands(const VTB& p,
 
   // add endorsement
   auto e = VbkEndorsement::fromContainerPtr(p);
-  auto cmd = std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
+  auto cmd =
+      std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
   commands.push_back(std::move(cmd));
+}
+
+bool VbkBlockTree::saveToStorage(PopStorage& storage, ValidationState& state) {
+  saveBlocks(storage, btc());
+  saveBlocks(storage, *this);
+  return state.IsValid();
+}
+
+bool VbkBlockTree::loadFromStorage(const PopStorage& storage,
+                              ValidationState& state) {
+  bool ret = loadBlocks(storage, btc(), state);
+  if (!ret) return state.IsValid();
+  return loadBlocks(storage, *this, state);
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
@@ -275,17 +285,8 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
-bool VbkBlockTree::setState(const VbkBlock::hash_t& block,
-                            ValidationState& state) {
-  auto* index = getBlockIndex(block);
-  if (!index) {
-    return false;
-  }
-  return this->setTip(*index, state);
-}
-
 void VbkBlockTree::removePayloads(const Blob<24>& hash,
-                                  const std::vector<payloads_t>& payloads) {
+                                  const std::vector<pid_t>& pids) {
   auto index = base::getBlockIndex(hash);
   if (!index) {
     // silently ignore...
@@ -296,7 +297,7 @@ void VbkBlockTree::removePayloads(const Blob<24>& hash,
     return;
   }
 
-  removePayloads(*index->header, payloads);
+  removePayloads(*index->header, pids);
 }
 
 }  // namespace altintegration
