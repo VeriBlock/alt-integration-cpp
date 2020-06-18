@@ -6,6 +6,7 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
 
 #include <unordered_set>
+#include <veriblock/blockchain/blockchain_storage_util.hpp>
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 
@@ -14,7 +15,6 @@
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
-#include <veriblock/blockchain/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -145,10 +145,11 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  if (!index->isValid()) {
-    return state.Invalid(block_t::name() + "-bad-chain",
-                         "One of previous blocks is invalid. Status=(" +
-                             std::to_string(index->status) + ")");
+  if (!prev->isValid()) {
+    index->setFlag(BLOCK_FAILED_CHILD);
+    return state.Invalid(
+        block_t::name() + "-bad-chain",
+        fmt::sprintf("Previous block is invalid=%s", prev->toPrettyString()));
   }
 
   tryAddTip(index);
@@ -318,8 +319,7 @@ void AltTree::removePayloads(index_t& index, const std::vector<pid_t>& pids) {
   }
 
   for (const auto& pid : pids) {
-    auto it =
-        std::find(index.payloadIds.begin(), index.payloadIds.end(), pid);
+    auto it = std::find(index.payloadIds.begin(), index.payloadIds.end(), pid);
     if (it == index.payloadIds.end()) {
       // TODO: error message
       continue;
@@ -331,7 +331,7 @@ void AltTree::removePayloads(index_t& index, const std::vector<pid_t>& pids) {
     }
 
     index.payloadIds.erase(it);
-    //TODO: do we want to erase payloads from repository?
+    // TODO: do we want to erase payloads from repository?
   }
 }
 
