@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_STORAGE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_STORAGE_HPP_
 
+#include <veriblock/blockchain/command_group.hpp>
 #include <veriblock/entities/payloads.hpp>
 #include <veriblock/entities/vtb.hpp>
 #include <veriblock/storage/storage_exceptions.hpp>
