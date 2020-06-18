@@ -34,10 +34,8 @@ struct Secp256k1Context {
 
 // according to Secp256k1 API doc, functions that take
 // a const pointer to the context are thread-safe
-static const Secp256k1Context ctx_SECP256K1_CONTEXT_VERIFY(
-    SECP256K1_CONTEXT_VERIFY);
-static const Secp256k1Context ctx_SECP256K1_CONTEXT_SIGN(
-    SECP256K1_CONTEXT_SIGN);
+static const Secp256k1Context ctx(SECP256K1_CONTEXT_VERIFY |
+                                  SECP256K1_CONTEXT_SIGN);
 
 static const std::string ASN1_PREFIX_PRIVKEY =
     "303E020100301006072A8648CE3D020106052B8104000A042730250201010420";
@@ -68,8 +66,6 @@ static PrivateKey getPrivateKeyFromAsn1(Slice<const uint8_t> keyEncoded) {
 }
 
 static PublicKey publicKeyUncompress(Slice<const uint8_t> publicKey) {
-  auto& ctx = ctx_SECP256K1_CONTEXT_SIGN;
-
   VBK_ASSERT(publicKey.size() == PUBLIC_KEY_COMPRESSED_SIZE);
   secp256k1_pubkey pubkey;
   if (!secp256k1_ec_pubkey_parse(
@@ -149,8 +145,6 @@ PublicKeyVbk publicKeyToVbk(PublicKey key) {
 }
 
 PublicKey derivePublicKey(PrivateKey privateKey) {
-  auto& ctx = ctx_SECP256K1_CONTEXT_SIGN;
-
   secp256k1_pubkey pubkey;
   int pubCreated = secp256k1_ec_pubkey_create(ctx, &pubkey, privateKey.data());
   // should be always 1
@@ -167,8 +161,6 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
 }
 
 Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
-  auto& ctx = ctx_SECP256K1_CONTEXT_SIGN;
-
   auto messageHash = sha256(message);
 
   secp256k1_ecdsa_signature signature;
@@ -186,8 +178,6 @@ Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
 int veriBlockVerify(Slice<const uint8_t> message,
                     Signature signature,
                     PublicKey publicKey) {
-  auto& ctx = ctx_SECP256K1_CONTEXT_VERIFY;
-
   secp256k1_pubkey pubkey;
   if (!secp256k1_ec_pubkey_parse(
           ctx, &pubkey, publicKey.data(), publicKey.size())) {
