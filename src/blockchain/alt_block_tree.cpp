@@ -6,6 +6,7 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
 
 #include <unordered_set>
+#include <veriblock/blockchain/blockchain_storage_util.hpp>
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 
@@ -14,7 +15,6 @@
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
 #include "veriblock/stateless_validation.hpp"
-#include <veriblock/blockchain/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -303,23 +303,19 @@ void AltTree::removePayloads(index_t& index, const std::vector<pid_t>& pids) {
                block_t::name(),
                pids.size(),
                index.toShortPrettyString());
-  if (!index.pprev) {
-    // we do not add payloads to genesis block, therefore we do not have to
-    // remove them
-    return;
-  }
+
+  // we do not allow adding payloads to the genesis block
+  VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
 
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
-    VBK_ASSERT(index.pprev && "can not remove payloads from genesis block");
     ValidationState dummy;
     bool ret = setTip(*index.pprev, dummy, false);
     VBK_ASSERT(ret);
   }
 
   for (const auto& pid : pids) {
-    auto it =
-        std::find(index.payloadIds.begin(), index.payloadIds.end(), pid);
+    auto it = std::find(index.payloadIds.begin(), index.payloadIds.end(), pid);
     if (it == index.payloadIds.end()) {
       // TODO: error message
       continue;
@@ -331,7 +327,7 @@ void AltTree::removePayloads(index_t& index, const std::vector<pid_t>& pids) {
     }
 
     index.payloadIds.erase(it);
-    //TODO: do we want to erase payloads from repository?
+    // TODO: do we want to erase payloads from repository?
   }
 }
 
