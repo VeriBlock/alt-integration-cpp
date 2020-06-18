@@ -131,11 +131,8 @@ void VbkBlockTree::removePayloads(const block_t& block,
                            hash.toHex());
   }
 
-  if (!index->pprev) {
-    // we do not add payloads to genesis block, therefore we do not have to
-    // remove them
-    return;
-  }
+  // we do not allow adding payloads to the genesis block
+  VBK_ASSERT(index->pprev && "can not remove payloads from the genesis block");
 
   if (pids.empty()) {
     return;
@@ -143,7 +140,6 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   bool isOnActiveChain = activeChain_.contains(index);
   if (isOnActiveChain) {
-    VBK_ASSERT(index->pprev && "can not remove payloads from genesis block");
     ValidationState dummy;
     bool ret = setTip(*index->pprev, dummy, false);
     VBK_ASSERT(ret);
