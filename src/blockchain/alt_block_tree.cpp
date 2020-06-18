@@ -145,10 +145,11 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  if (!index->isValid()) {
-    return state.Invalid(block_t::name() + "-bad-chain",
-                         "One of previous blocks is invalid. Status=(" +
-                             std::to_string(index->status) + ")");
+  if (!prev->isValid()) {
+    index->setFlag(BLOCK_FAILED_CHILD);
+    return state.Invalid(
+        block_t::name() + "-bad-chain",
+        fmt::sprintf("Previous block is invalid=%s", prev->toPrettyString()));
   }
 
   tryAddTip(index);
