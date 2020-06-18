@@ -10,6 +10,8 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <veriblock/storage/payloads_storage.hpp>
+#include <veriblock/storage/pop_storage.hpp>
 
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/base_block_tree.hpp"
@@ -21,8 +23,6 @@
 #include "veriblock/entities/payloads.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/validation_state.hpp"
-#include <veriblock/storage/pop_storage.hpp>
-#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
@@ -57,7 +57,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
       : alt_config_(&alt_config),
         vbk_config_(&vbk_config),
         btc_config_(&btc_config),
-        cmp_(std::make_shared<VbkBlockTree>(vbk_config, btc_config, storagePayloads),
+        cmp_(std::make_shared<VbkBlockTree>(
+                 vbk_config, btc_config, storagePayloads),
              vbk_config,
              alt_config,
              storagePayloads),
@@ -132,7 +133,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   const AltChainParams& getParams() const { return *alt_config_; }
 
   PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
-  const PayloadsStorage getStoragePayloads() const { return storagePayloads_; }
+  const PayloadsStorage& getStoragePayloads() const { return storagePayloads_; }
 
   std::string toPrettyString(size_t level = 0) const;
 

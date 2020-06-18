@@ -13,8 +13,8 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/storage/pop_storage.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
+#include <veriblock/storage/pop_storage.hpp>
 
 namespace altintegration {
 
@@ -46,7 +46,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   const PopForkComparator& getComparator() const { return cmp_; }
 
   PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
-  const PayloadsStorage getStoragePayloads() const { return storagePayloads_; }
+  const PayloadsStorage& getStoragePayloads() const { return storagePayloads_; }
 
   bool bootstrapWithChain(height_t startHeight,
                           const std::vector<block_t>& chain,
