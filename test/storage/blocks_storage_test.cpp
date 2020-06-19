@@ -1,14 +1,24 @@
+// Copyright (c) 2019-2020 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+
 #include <gtest/gtest.h>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/storage/block_repository_inmem.hpp"
+#include "veriblock/storage/block_repository_rocks.hpp"
 #include "veriblock/storage/repository_rocks_manager.hpp"
 #include "veriblock/uint.hpp"
+#include "veriblock/write_stream.hpp"
+#include "veriblock/read_stream.hpp"
+#include "veriblock/blockchain/block_index.hpp"
 
 using namespace altintegration;
 
 struct BlockBasic {
   using hash_t = uint256;
+  using prev_hash_t = hash_t;
   using height_t = int;
 
   hash_t getHash() const { return std::move(ArithUint256(hashValue)); }
@@ -40,30 +50,6 @@ struct BlockBasic {
 // DB name
 static const std::string dbName = "db-test";
 
-template <typename Repo_type>
-std::shared_ptr<Repo_type> getRepo();
-
-template <>
-std::shared_ptr<BlockRepositoryInmem<BlockBasic>> getRepo() {
-  return std::make_shared<BlockRepositoryInmem<BlockBasic>>();
-}
-
-template <>
-std::shared_ptr<BlockRepositoryRocks<BlockIndex<BtcBlock>>> getRepo() {
-  RepositoryRocksManager database(dbName);
-  rocksdb::Status s = database.open();
-  database.clear();
-  return database.getBtcRepo();
-}
-
-template <>
-std::shared_ptr<BlockRepositoryRocks<BlockIndex<VbkBlock>>> getRepo() {
-  RepositoryRocksManager database(dbName);
-  rocksdb::Status s = database.open();
-  database.clear();
-  return database.getVbkRepo();
-}
-
 template <typename Block_t>
 Block_t generateBlock(int a, int b);
 
@@ -74,40 +60,99 @@ BlockBasic generateBlock(int a, int b) {
 
 template <>
 BlockIndex<BtcBlock> generateBlock(int a, int b) {
-  BlockIndex<BtcBlock> block;
+  BlockIndex<BtcBlock> blockIndex;
   // fill arbitrary fields
-  block.height = b;
-  block.header.timestamp = a;
-  return block;
+  blockIndex.height = b;
+  blockIndex.header = std::make_shared<BtcBlock>();
+  blockIndex.header->timestamp = a; 
+  return blockIndex;
 }
 
 template <>
 BlockIndex<VbkBlock> generateBlock(int a, int b) {
-  BlockIndex<VbkBlock> block;
+  BlockIndex<VbkBlock> blockIndex;
   // fill arbitrary fields
-  block.height = b;
-  block.header.timestamp = a;
-  return block;
+  blockIndex.height = b;
+  blockIndex.header = std::make_shared<VbkBlock>();
+  blockIndex.header->timestamp = a; 
+  return blockIndex;
+}
+
+template <>
+BlockIndex<AltBlock> generateBlock(int a, int b) {
+  BlockIndex<AltBlock> blockIndex;
+  // fill arbitrary fields
+  blockIndex.height = b;
+  blockIndex.header = std::make_shared<AltBlock>();
+  blockIndex.header->hash = ArithUint256(a).asVector();
+  blockIndex.header->timestamp = a;
+  return blockIndex;
+}
+
+template <typename Repo_type>
+std::shared_ptr<Repo_type> getRepo(RepositoryRocksManager*);
+
+template <>
+std::shared_ptr<BlockRepositoryInmem<BlockBasic>> getRepo(
+    RepositoryRocksManager*) {
+  return std::make_shared<BlockRepositoryInmem<BlockBasic>>();
+}
+
+template <>
+std::shared_ptr<BlockRepositoryRocks<BlockIndex<BtcBlock>>> getRepo(
+    RepositoryRocksManager* database) {
+  auto* column = database->getColumn("btc_blocks");
+  auto* db = database->getDB();
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<BtcBlock>>>(db,
+                                                                      column);
+}
+
+template <>
+std::shared_ptr<BlockRepositoryRocks<BlockIndex<VbkBlock>>> getRepo(
+    RepositoryRocksManager* database) {
+  auto* column = database->getColumn("vbk_blocks");
+  auto* db = database->getDB();
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<VbkBlock>>>(db,
+                                                                      column);
+}
+
+template <>
+std::shared_ptr<BlockRepositoryRocks<BlockIndex<AltBlock>>> getRepo(
+    RepositoryRocksManager* database) {
+  auto* column = database->getColumn("alt_blocks");
+  auto* db = database->getDB();
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<AltBlock>>>(db,
+                                                                      column);
 }
 
 template <typename BlockRepoType>
-struct StorageTest : public ::testing::Test {
+struct BlocksStorageTest : public ::testing::Test {
   using block_t = typename BlockRepoType::stored_block_t;
   using repo_t = BlockRepoType;
 
+  std::shared_ptr<RepositoryRocksManager> database;
   std::shared_ptr<repo_t> repo;
 
-  StorageTest() {
-    repo = getRepo<repo_t>();
+  BlocksStorageTest() {
+    database = std::make_shared<RepositoryRocksManager>(dbName);
+    database->attachColumn("btc_blocks");
+    database->attachColumn("vbk_blocks");
+    database->attachColumn("alt_blocks");
+    database->attachColumn("tips");
+    database->attachColumn("vbk_endorsements");
+    database->attachColumn("alt_endorsements");
+    EXPECT_EQ(database->open(), rocksdb::Status::OK());
+    EXPECT_EQ(database->clear(), rocksdb::Status::OK());
+
+    repo = getRepo<repo_t>(database.get());
     repo->clear();
   }
 };
 
-TYPED_TEST_SUITE_P(StorageTest);
+TYPED_TEST_SUITE_P(BlocksStorageTest);
 
-TYPED_TEST_P(StorageTest, Basic) {
+TYPED_TEST_P(BlocksStorageTest, Basic) {
   using block_t = typename Basic::block_t;
-
   block_t b;
   EXPECT_FALSE(this->repo->put(generateBlock<block_t>(1, 1)));
   EXPECT_TRUE(
@@ -171,7 +216,7 @@ void checkContents(BlockRepoType& repo, const std::vector<BlockType>& blocks) {
   EXPECT_EQ(read, blocks) << "blocks are not equal";
 }
 
-TYPED_TEST_P(StorageTest, Batch) {
+TYPED_TEST_P(BlocksStorageTest, Batch) {
   using block_t = typename Batch::block_t;
 
   EXPECT_FALSE(this->repo->put(generateBlock<block_t>(1, 1)));
@@ -219,7 +264,7 @@ TYPED_TEST_P(StorageTest, Batch) {
       });
 }
 
-TYPED_TEST_P(StorageTest, Cursor) {
+TYPED_TEST_P(BlocksStorageTest, Cursor) {
   using block_t = typename Cursor::block_t;
 
   EXPECT_FALSE(this->repo->put(generateBlock<block_t>(1, 10)));
@@ -287,11 +332,14 @@ TYPED_TEST_P(StorageTest, Cursor) {
 }
 
 // make sure to enumerate the test cases here
-REGISTER_TYPED_TEST_SUITE_P(StorageTest, Basic, Batch, Cursor);
+REGISTER_TYPED_TEST_SUITE_P(BlocksStorageTest, Basic, Batch, Cursor);
 
 typedef ::testing::Types<BlockRepositoryInmem<BlockBasic>,
                          BlockRepositoryRocks<BlockIndex<BtcBlock>>,
-                         BlockRepositoryRocks<BlockIndex<VbkBlock>>>
+                         BlockRepositoryRocks<BlockIndex<VbkBlock>>,
+                         BlockRepositoryRocks<BlockIndex<AltBlock>>>
     TypesUnderTest;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(StorageTestSuite, StorageTest, TypesUnderTest);
+INSTANTIATE_TYPED_TEST_SUITE_P(BlocksStorageTestSuite,
+                               BlocksStorageTest,
+                               TypesUnderTest);

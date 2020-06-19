@@ -34,18 +34,6 @@ VbkBlock VbkBlock::fromVbkEncoding(ReadStream& stream) {
   return VbkBlock::fromRaw(blockStream);
 }
 
-void VbkBlock::toRaw(WriteStream& stream) const {
-  stream.writeBE<int32_t>(height);
-  stream.writeBE<int16_t>(version);
-  stream.write(previousBlock);
-  stream.write(previousKeystone);
-  stream.write(secondPreviousKeystone);
-  stream.write(merkleRoot);
-  stream.writeBE<int32_t>(timestamp);
-  stream.writeBE<int32_t>(difficulty);
-  stream.writeBE<int32_t>(nonce);
-}
-
 void VbkBlock::toVbkEncoding(WriteStream& stream) const {
   WriteStream blockStream;
   toRaw(blockStream);
@@ -72,6 +60,18 @@ VbkBlock VbkBlock::fromHex(const std::string& hex) {
 }
 
 std::string VbkBlock::toHex() const { return HexStr(toRaw()); }
+
+void VbkBlock::toRaw(WriteStream& stream) const {
+  stream.writeBE<int32_t>(height);
+  stream.writeBE<int16_t>(version);
+  stream.write(previousBlock);
+  stream.write(previousKeystone);
+  stream.write(secondPreviousKeystone);
+  stream.write(merkleRoot);
+  stream.writeBE<int32_t>(timestamp);
+  stream.writeBE<int32_t>(difficulty);
+  stream.writeBE<int32_t>(nonce);
+}
 
 std::vector<uint8_t> VbkBlock::toRaw() const {
   WriteStream stream;

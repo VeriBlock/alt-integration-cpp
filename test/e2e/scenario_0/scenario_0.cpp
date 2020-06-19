@@ -60,7 +60,13 @@ struct Scenario0 : public ::testing::Test {
   const int chainId = 3860170;
   std::shared_ptr<Config> config;
   std::shared_ptr<AltTree> alt;
-  PayloadsStorage storage{};
+  std::shared_ptr<PayloadsRepository<ATV>> prepoAtv =
+      std::make_shared<PayloadsRepositoryInmem<ATV>>();
+  std::shared_ptr<PayloadsRepository<VTB>> prepoVtb =
+      std::make_shared<PayloadsRepositoryInmem<VTB>>();
+  std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks =
+      std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
+  PayloadsStorage storage{prepoAtv, prepoVtb, prepoBlocks};
 
   ATV atv;
   std::vector<VTB> vtbs;

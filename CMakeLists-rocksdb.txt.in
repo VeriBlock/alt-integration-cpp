@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(rocksdb-download NONE)
+
+include(ExternalProject)
+ExternalProject_Add(rocksdb
+  GIT_REPOSITORY    https://github.com/facebook/rocksdb.git
+  GIT_TAG           515a27941a42018531354414eca661113da92957
+  SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/rocksdb-src"
+  BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/rocksdb-build"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+)

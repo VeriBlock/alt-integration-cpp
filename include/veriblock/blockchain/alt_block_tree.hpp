@@ -100,7 +100,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool saveToStorage(PopStorage& storage, ValidationState& state);
 
-  bool loadFromStorage(const PopStorage& storage, ValidationState& state);
+  bool loadFromStorage(PopStorage& storage, ValidationState& state);
 
   bool operator==(const AltTree& o) const {
     return cmp_ == o.cmp_ && base::operator==(o);
@@ -180,11 +180,6 @@ void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
 template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands<AltTree>(
     const typename AltTree::index_t& index, AltTree& tree);
-
-template <>
-void PopStorage::saveBlocks(
-    const std::unordered_map<typename AltBlock::prev_hash_t,
-                             std::shared_ptr<BlockIndex<AltBlock>>>& blocks);
 
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<AltBlock>& i) {

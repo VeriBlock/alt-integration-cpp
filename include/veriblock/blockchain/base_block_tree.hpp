@@ -28,7 +28,7 @@ template <typename Block>
 struct BaseBlockTree {
   using block_t = Block;
   using hash_t = typename Block::hash_t;
-  using prev_block_hash_t = decltype(Block::previousBlock);
+  using prev_block_hash_t = typename Block::prev_hash_t;
   using index_t = BlockIndex<Block>;
   using on_invalidate_t = void(const index_t&);
   using block_index_t =

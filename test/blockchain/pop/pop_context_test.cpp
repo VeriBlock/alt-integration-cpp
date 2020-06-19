@@ -16,7 +16,13 @@ using namespace altintegration;
 struct PopContextFixture : public ::testing::Test {
   VbkChainParamsRegTest vbkp;
   BtcChainParamsRegTest btcp;
-  PayloadsStorage storage;
+  std::shared_ptr<PayloadsRepository<ATV>> prepoAtv =
+      std::make_shared<PayloadsRepositoryInmem<ATV>>();
+  std::shared_ptr<PayloadsRepository<VTB>> prepoVtb =
+      std::make_shared<PayloadsRepositoryInmem<VTB>>();
+  std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks =
+      std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
+  PayloadsStorage storage{prepoAtv, prepoVtb, prepoBlocks};
   VbkBlockTree local = VbkBlockTree(vbkp, btcp, storage);
   MockMiner remote;
 

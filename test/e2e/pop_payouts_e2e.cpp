@@ -188,7 +188,13 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  PayloadsStorage storage2{};
+  std::shared_ptr<PayloadsRepository<ATV>> prepoAtv2 =
+      std::make_shared<PayloadsRepositoryInmem<ATV>>();
+  std::shared_ptr<PayloadsRepository<VTB>> prepoVtb2 =
+      std::make_shared<PayloadsRepositoryInmem<VTB>>();
+  std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks2 =
+      std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
+  PayloadsStorage storage2{prepoAtv2, prepoVtb2, prepoBlocks2};
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storage2);
   EXPECT_TRUE(alttree2.bootstrap(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
@@ -241,13 +247,19 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   // since before each block was endorsed by two miners
   auto payout = alttree.getPopPayout(chain.back().getHash(), state);
   auto firstBlock = alttree.getBlockIndex(chain.back().getHash())
-                        ->getAncestorBlocksBehind(
+                        ->gtorBlocksBehind(
                             altparam.getEndorsementSettlementInterval());
 
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  PayloadsStorage storage2{};
+  std::shared_ptr<PayloadsRepository<ATV>> prepoAtv2 =
+      std::make_shared<PayloadsRepositoryInmem<ATV>>();
+  std::shared_ptr<PayloadsRepository<VTB>> prepoVtb2 =
+      std::make_shared<PayloadsRepositoryInmem<VTB>>();
+  std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks2 =
+      std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
+  PayloadsStorage storage2{prepoAtv2, prepoVtb2, prepoBlocks2};
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storage2);
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));

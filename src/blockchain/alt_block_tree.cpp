@@ -4,14 +4,13 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
-
-#include <veriblock/blockchain/blockchain_storage_util.hpp>
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
-
 #include "veriblock/algorithm.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
+#include "veriblock/stateless_validation.hpp"
+#include <veriblock/storage/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -22,8 +21,7 @@ bool AltTree::bootstrap(ValidationState& state) {
 
   auto block = alt_config_->getBootstrapBlock();
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(std::move(block)));
-
-  VBK_ASSERT(index != nullptr &&
+    VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
   if (!base::blocks_.empty() && (getBlockIndex(index->getHash()) == nullptr)) {
@@ -243,19 +241,19 @@ void AltTree::payloadsToCommands(const VbkBlock& block,
 }
 
 bool AltTree::saveToStorage(PopStorage& storage, ValidationState& state) {
-  saveBlocks(storage, vbk().btc());
-  saveBlocks(storage, vbk());
-  saveBlocks(storage, *this);
+  saveBlocksAndTip(storage, vbk().btc());
+  saveBlocksAndTip(storage, vbk());
+  saveBlocksAndTip(storage, *this);
   return state.IsValid();
 }
 
-bool AltTree::loadFromStorage(const PopStorage& storage,
+bool AltTree::loadFromStorage(PopStorage& storage,
                               ValidationState& state) {
-  bool ret = loadBlocks(storage, vbk().btc(), state);
+  bool ret = loadAndApplyBlocks(storage, vbk().btc(), state);
   if (!ret) return state.IsValid();
-  ret = loadBlocks(storage, vbk(), state);
+  ret = loadAndApplyBlocks(storage, vbk(), state);
   if (!ret) return state.IsValid();
-  return loadBlocks(storage, *this, state);
+  return loadAndApplyBlocks(storage, *this, state);
 }
 
 std::string AltTree::toPrettyString(size_t level) const {
@@ -502,12 +500,12 @@ template <typename pop_t>
 std::vector<CommandGroup> loadCommands_(
     const typename AltTree::index_t& index,
     AltTree& tree,
-    const std::shared_ptr<PayloadsRepository<pop_t>>& prep) {
+    const PayloadsRepository<pop_t>& prep) {
   auto& pids = index.getPayloadIds<pop_t, typename pop_t::id_t>();
   std::vector<CommandGroup> out{};
   for (const auto& pid : pids) {
     pop_t payloads;
-    if (!prep->get(pid, &payloads)) {
+    if (!prep.get(pid, &payloads)) {
       throw StateCorruptedException(
           fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
     }
@@ -522,12 +520,12 @@ template <>
 std::vector<CommandGroup> loadCommands_(
     const typename AltTree::index_t& index,
     AltTree& tree,
-    const std::shared_ptr<PayloadsRepository<ATV>>& prep) {
+    const PayloadsRepository<ATV>& prep) {
   auto& pids = index.getPayloadIds<ATV, typename ATV::id_t>();
   std::vector<CommandGroup> out{};
   for (const auto& pid : pids) {
     ATV payloads;
-    if (!prep->get(pid, &payloads)) {
+    if (!prep.get(pid, &payloads)) {
       throw StateCorruptedException(
           fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
     }
@@ -543,40 +541,16 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands<AltTree>(
     const typename AltTree::index_t& index, AltTree& tree) {
   std::vector<CommandGroup> out{};
   std::vector<CommandGroup> payloads_out;
-
-  payloads_out = loadCommands_<VbkBlock>(
-      index, tree, PayloadsBaseStorage<VbkBlock>::prepo_);
+  payloads_out = loadCommands_<VbkBlock>(index, tree, getRepo<VbkBlock>());
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
 
-  payloads_out =
-      loadCommands_<VTB>(index, tree, PayloadsBaseStorage<VTB>::prepo_);
+  payloads_out = loadCommands_<VTB>(index, tree, getRepo<VTB>());
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
 
-  payloads_out =
-      loadCommands_<ATV>(index, tree, PayloadsBaseStorage<ATV>::prepo_);
+  payloads_out = loadCommands_<ATV>(index, tree, getRepo<ATV>());
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
 
   return out;
-}
-
-template <>
-void PopStorage::saveBlocks(
-    const std::unordered_map<typename AltBlock::prev_hash_t,
-                             std::shared_ptr<BlockIndex<AltBlock>>>& blocks) {
-  auto batch = BlocksStorage<BlockIndex<AltBlock>>::brepo_->newBatch();
-  if (batch == nullptr) {
-    throw BadIOException("Cannot create BlockRepository write batch");
-  }
-
-  for (const auto& block : blocks) {
-    auto& index = *(block.second);
-    batch->put(index);
-
-    for (const auto& e : index.containingEndorsements) {
-      saveEndorsements<typename BlockIndex<AltBlock>::endorsement_t>(*e.second);
-    }
-  }
-  batch->commit();
 }
 
 namespace {
@@ -628,5 +602,7 @@ void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
     return;
   }
 }
+
+uint8_t getBlockProof(const AltBlock&) { return 0; }
 
 }  // namespace altintegration

@@ -33,6 +33,21 @@ struct AltBlock {
 
   uint32_t getBlockTime() const noexcept { return timestamp; }
 
+   /**
+   * Read basic blockheader data from the vector of bytes and convert it to
+   * AltBlock
+   * @param bytes data to read fromm
+   * @return AltBlock
+   */
+  static AltBlock fromRaw(Slice<const uint8_t> bytes);
+
+  /**
+   * Read basic blockheader data from the stream and convert it to AltBlock
+   * @param stream data stream to read from
+   * @return AltBlock
+   */
+  static AltBlock fromRaw(ReadStream& stream);
+
   /**
    * Read VBK data from the stream and convert it to AltBlock
    * @param stream data stream to read from
@@ -47,6 +62,18 @@ struct AltBlock {
    * @return AltBlock
    */
   static AltBlock fromVbkEncoding(const std::string& bytes);
+
+  /**
+   * Convert AltBlock to data stream using AltBlock basic byte format
+   * @param stream data stream to write into
+   */
+  void toRaw(WriteStream& stream) const;
+
+  /**
+   * Convert AltBlock to bytes data using AltBlock basic byte format
+   * @return string represantation of the data
+   */
+  std::vector<uint8_t> toRaw() const;
 
   /**
    * Convert AltBlock to data stream using Vbk byte format
