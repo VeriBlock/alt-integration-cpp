@@ -10,12 +10,12 @@
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/pop/fork_resolution.hpp>
 #include <veriblock/blockchain/pop/pop_state_machine.hpp>
+#include <veriblock/blockchain/vbk_block_addon.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
 #include <veriblock/storage/pop_storage.hpp>
-#include <veriblock/blockchain/vbk_block_addon.hpp>
 
 namespace altintegration {
 
@@ -100,24 +100,32 @@ template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "chainWork", i.chainWork.toHex());
-
   std::vector<uint256> endorsements;
   for (const auto& e : i.containingEndorsements) {
     endorsements.push_back(e.first);
   }
   json::putArrayKV(obj, "containingEndorsements", endorsements);
-
   std::vector<uint256> endorsedBy;
   for (const auto* e : i.endorsedBy) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
-
   json::putIntKV(obj, "height", i.height);
   json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
   json::putIntKV(obj, "status", i.status);
   json::putIntKV(obj, "ref", i.refCounter);
 
+  return obj;
+}
+
+template <typename JsonValue>
+JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+  json::putStringKV(obj, "chainWork", i.chainWork.toHex());
+  json::putIntKV(obj, "height", i.height);
+  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
+  json::putIntKV(obj, "status", i.status);
+  json::putIntKV(obj, "ref", i.refCounter);
   return obj;
 }
 

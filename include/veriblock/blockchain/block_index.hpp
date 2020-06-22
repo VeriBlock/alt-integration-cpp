@@ -193,16 +193,14 @@ void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
   *os << b.toPrettyString();
 }
 
-// template <typename JsonValue, typename Block>
-// JsonValue ToJSON(const BlockIndex<Block>& i) {
-//  auto obj = json::makeEmptyObject<JsonValue>();
-//  json::putStringKV(obj, "chainWork", i.chainWork.toHex());
-//  json::putIntKV(obj, "height", i.height);
-//  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
-//  json::putIntKV(obj, "status", i.status);
-//  json::putIntKV(obj, "ref", i.refCounter);
-//  return obj;
-//}
+template <typename JsonValue, typename Block>
+JsonValue ToJSON(const BlockIndex<Block>& i) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+  json::putIntKV(obj, "height", i.height);
+  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
+  json::putIntKV(obj, "status", i.status);
+  return obj;
+}
 
 }  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
