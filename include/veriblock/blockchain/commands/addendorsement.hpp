@@ -93,7 +93,7 @@ struct AddEndorsement : public Command {
                        HexStr(e_->blockOfProof)));
     }
 
-    auto* duplicate = chain.findBlockContainingEndorsement(*e_, window);
+    auto* duplicate = findBlockContainingEndorsement(chain, *e_, window);
     if (duplicate) {
       // found duplicate
       return state.Invalid(
@@ -133,8 +133,8 @@ struct AddEndorsement : public Command {
       auto& id = e_->id;
 
       // find and erase the last occurrence of e_
-      auto endorsed_it = std::find_if(
-          v.rbegin(), v.rend(), [&id](endorsement_t* p) {
+      auto endorsed_it =
+          std::find_if(v.rbegin(), v.rend(), [&id](endorsement_t* p) {
             return p->id == id;
           });
 

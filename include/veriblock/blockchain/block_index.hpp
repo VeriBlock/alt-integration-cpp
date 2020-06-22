@@ -48,11 +48,6 @@ struct BlockIndex : public Block::addon_t {
   using hash_t = typename block_t::hash_t;
   using prev_hash_t = typename block_t::prev_hash_t;
   using height_t = typename block_t::height_t;
-  using endorsement_t = typename block_t::endorsement_t;
-  using eid_t = typename endorsement_t::id_t;
-  using payloads_t = typename block_t::payloads_t;
-  using pid_t = typename payloads_t::id_t;
-  using protecting_block_t = typename block_t::protecting_block_t;
 
   //! (memory only) pointer to a previous block
   BlockIndex* pprev = nullptr;

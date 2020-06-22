@@ -20,9 +20,10 @@ template <typename ProtectingBlockTree,
           typename ProtectedChainParams>
 struct PopStateMachine {
   using index_t = ProtectedIndex;
-  using payloads_t = typename ProtectedIndex::payloads_t;
+  using block_t = typename index_t::block_t;
+  using payloads_t = typename block_t::payloads_t;
+  using endorsement_t = typename block_t::endorsement_t;
   using height_t = typename ProtectedIndex::height_t;
-  using endorsement_t = typename ProtectedIndex::endorsement_t;
 
   PopStateMachine(ProtectedTree& ed,
                   ProtectingBlockTree& ing,

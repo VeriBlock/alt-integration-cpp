@@ -154,24 +154,6 @@ struct Chain {
     return ret;
   }
 
-  index_t* findBlockContainingEndorsement(
-      const typename index_t::endorsement_t& e,
-      const uint32_t& endorsement_settlement_interval) {
-    index_t* workBlock = tip();
-
-    for (uint32_t count = 0; count < endorsement_settlement_interval &&
-                             workBlock && workBlock->height >= startHeight_ &&
-                             e.endorsedHash != workBlock->getHash();
-         count++) {
-      if (workBlock->containingEndorsements.count(e.id)) {
-        return workBlock;
-      }
-      workBlock = workBlock->pprev;
-    }
-
-    return nullptr;
-  }
-
  private:
   height_t startHeight_ = 0;
   std::vector<index_t*> chain{};
@@ -181,6 +163,28 @@ struct Chain {
     return in - startHeight_;
   }
 };
+
+template <typename Block>
+BlockIndex<Block>* findBlockContainingEndorsement(
+    Chain<BlockIndex<Block>>& chain,
+    const typename Block::endorsement_t& e,
+    const uint32_t& endorsement_settlement_interval) {
+  using index_t = BlockIndex<Block>;
+  index_t* workBlock = chain.tip();
+
+  for (uint32_t count = 0;
+       count < endorsement_settlement_interval && workBlock &&
+       workBlock->height >= chain.getStartHeight() &&
+       e.endorsedHash != workBlock->getHash();
+       count++) {
+    if (workBlock->containingEndorsements.count(e.id)) {
+      return workBlock;
+    }
+    workBlock = workBlock->pprev;
+  }
+
+  return nullptr;
+}
 
 }  // namespace altintegration
 
