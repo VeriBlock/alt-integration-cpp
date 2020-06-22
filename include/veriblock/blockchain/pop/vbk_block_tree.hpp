@@ -15,6 +15,7 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
 #include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/blockchain/vbk_block_addon.hpp>
 
 namespace altintegration {
 

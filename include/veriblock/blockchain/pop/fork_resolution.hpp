@@ -360,7 +360,7 @@ struct PopAwareForkResolutionComparator {
   using protecting_index_t = typename ProtectingBlockTree::index_t;
   using protecting_block_t = typename protecting_index_t::block_t;
   using endorsement_t = typename protected_block_t::endorsement_t;
-  using protected_payloads_t = typename protected_index_t::payloads_t;
+  using protected_payloads_t = typename protected_block_t::payloads_t;
   using sm_t = PopStateMachine<ProtectingBlockTree,
                                ProtectedBlockTree,
                                BlockIndex<protected_block_t>,

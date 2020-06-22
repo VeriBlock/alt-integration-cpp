@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/btc_block_addon.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
@@ -20,18 +21,11 @@
 
 namespace altintegration {
 
-struct DummyPayloads;
-struct DummyEndorsement;
-
 struct BtcBlock {
   using hash_t = uint256;
   using prev_hash_t = uint256;
   using height_t = int32_t;
-  using payloads_t = DummyPayloads;
-  using protecting_block_t = std::false_type;
-
-  //! noop type
-  using endorsement_t = DummyEndorsement;
+  using addon_t = BtcBlockAddon;
 
   uint32_t version = 0;
   uint256 previousBlock{};

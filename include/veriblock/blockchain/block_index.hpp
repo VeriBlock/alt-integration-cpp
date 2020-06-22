@@ -43,16 +43,11 @@ enum BlockStatus : uint8_t {
 
 //! Store block
 template <typename Block>
-struct BlockIndex {
+struct BlockIndex : public Block::addon_t {
   using block_t = Block;
   using hash_t = typename block_t::hash_t;
   using prev_hash_t = typename block_t::prev_hash_t;
   using height_t = typename block_t::height_t;
-  using endorsement_t = typename block_t::endorsement_t;
-  using eid_t = typename endorsement_t::id_t;
-  using payloads_t = typename Block::payloads_t;
-  using pid_t = typename payloads_t::id_t;
-  using protecting_block_t = typename Block::protecting_block_t;
 
   //! (memory only) pointer to a previous block
   BlockIndex* pprev = nullptr;
@@ -60,31 +55,14 @@ struct BlockIndex {
   //! (memory only) a set of pointers for forward iteration
   std::set<BlockIndex*> pnext{};
 
-  //! total amount of work in the chain up to and including this
-  //! block
-  ArithUint256 chainWork = 0;
-
-  //! list of containing endorsements in this block
-  std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
-      containingEndorsements{};
-
-  //! list of endorsements pointing to this block
-  std::vector<endorsement_t *> endorsedBy;
-
-  //! list of changes introduced in this block
-  std::vector<pid_t> payloadIds;
-
   //! height of the entry in the chain
   height_t height = 0;
 
   //! block header
-  std::shared_ptr<Block> header{};
+  std::shared_ptr<block_t> header{};
 
   //! contains status flags
   uint8_t status = 0;  // unknown validity
-
-  //! reference counter for fork resolution
-  uint32_t refCounter = 0;
 
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
     VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
@@ -96,15 +74,11 @@ struct BlockIndex {
   }
 
   void setNull() {
+    Block::addon_t::setNull();
     this->pprev = nullptr;
     this->pnext.clear();
-    this->chainWork = 0;
-    this->containingEndorsements.clear();
-    this->endorsedBy.clear();
-    this->payloadIds.clear();
     this->height = 0;
     this->status = 0;
-    this->refCounter = 0;
   }
 
   bool raiseValidity(enum BlockStatus upTo) {
@@ -170,14 +144,12 @@ struct BlockIndex {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    return fmt::sprintf(
-        "%s%sBlockIndex{height=%d, hash=%s, status=%d, endorsedBy=%d}",
-        std::string(level, ' '),
-        Block::name(),
-        height,
-        HexStr(getHash()),
-        status,
-        endorsedBy.size());
+    return fmt::sprintf("%s%sBlockIndex{height=%d, hash=%s, status=%d}",
+                        std::string(level, ' '),
+                        Block::name(),
+                        height,
+                        HexStr(getHash()),
+                        status);
   }
 
   std::string toShortPrettyString() const {
@@ -221,16 +193,16 @@ void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
   *os << b.toPrettyString();
 }
 
-template <typename JsonValue, typename Block>
-JsonValue ToJSON(const BlockIndex<Block>& i) {
-  auto obj = json::makeEmptyObject<JsonValue>();
-  json::putStringKV(obj, "chainWork", i.chainWork.toHex());
-  json::putIntKV(obj, "height", i.height);
-  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
-  json::putIntKV(obj, "status", i.status);
-  json::putIntKV(obj, "ref", i.refCounter);
-  return obj;
-}
+// template <typename JsonValue, typename Block>
+// JsonValue ToJSON(const BlockIndex<Block>& i) {
+//  auto obj = json::makeEmptyObject<JsonValue>();
+//  json::putStringKV(obj, "chainWork", i.chainWork.toHex());
+//  json::putIntKV(obj, "height", i.height);
+//  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
+//  json::putIntKV(obj, "status", i.status);
+//  json::putIntKV(obj, "ref", i.refCounter);
+//  return obj;
+//}
 
 }  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
