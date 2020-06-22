@@ -19,7 +19,10 @@ using ::testing::Field;
 using ::testing::Return;
 using ::testing::StrictMock;
 
+struct DummyAddon {};
+
 struct MyDummyBlock {
+  using addon_t = DummyAddon;
   using hash_t = int;
   using prev_hash_t = int;
   using height_t = int;

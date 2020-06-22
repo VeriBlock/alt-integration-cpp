@@ -361,8 +361,7 @@ bool AltTree::setTip(AltTree::index_t& to,
   return changeTip;
 }
 
-template <>
-ArithUint256 getBlockProof(const AltBlock&) {
+uint8_t getBlockProof(const AltBlock&) {
   return 0;
 }
 

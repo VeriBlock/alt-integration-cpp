@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/btc_block_addon.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/serde.hpp"
@@ -29,6 +30,7 @@ struct BtcBlock {
   using height_t = int32_t;
   using payloads_t = DummyPayloads;
   using protecting_block_t = std::false_type;
+  using addon_t = BtcBlockAddon;
 
   //! noop type
   using endorsement_t = DummyEndorsement;

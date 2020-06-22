@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "veriblock/blockchain/alt_block_addon.hpp"
 #include "veriblock/entities/endorsements.hpp"
 #include "veriblock/json.hpp"
 #include "veriblock/serde.hpp"
@@ -26,6 +27,7 @@ struct AltBlock {
   using payloads_t = AltPayloads;
   using endorsement_t = AltEndorsement;
   using protecting_block_t = VbkBlock;
+  using addon_t = AltBlockAddon;
 
   hash_t hash{};
   hash_t previousBlock{};
