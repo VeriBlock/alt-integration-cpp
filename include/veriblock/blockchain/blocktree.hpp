@@ -35,7 +35,6 @@ struct BlockTree : public BaseBlockTree<Block> {
   using hash_t = typename Block::hash_t;
   using prev_block_hash_t = decltype(Block::previousBlock);
   using height_t = typename Block::height_t;
-  using payloads_t = typename block_t::payloads_t;
 
   ~BlockTree() override = default;
 

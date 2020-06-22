@@ -10,6 +10,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <veriblock/blockchain/alt_block_addon.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
 #include <veriblock/storage/pop_storage.hpp>
 
@@ -175,8 +176,7 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   return obj;
 }
 
-template <>
-ArithUint256 getBlockProof(const AltBlock&);
+uint8_t getBlockProof(const AltBlock&);
 
 }  // namespace altintegration
 

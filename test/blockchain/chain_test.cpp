@@ -19,13 +19,13 @@ using ::testing::Field;
 using ::testing::Return;
 using ::testing::StrictMock;
 
+struct DummyAddon {};
+
 struct MyDummyBlock {
+  using addon_t = DummyAddon;
   using hash_t = int;
   using prev_hash_t = int;
   using height_t = int;
-  using payloads_t = DummyPayloads;
-  using endorsement_t = DummyEndorsement;
-  using context_t = std::false_type;
   using protecting_block_t = std::false_type;
 };
 
@@ -38,7 +38,7 @@ struct ChainTest : public ::testing::TestWithParam<TestCase> {
   Chain<BlockIndex<MyDummyBlock>> chain{};
 
   static std::vector<BlockIndex<MyDummyBlock>> makeBlocks(int startHeight,
-                                                        int size) {
+                                                          int size) {
     std::vector<BlockIndex<MyDummyBlock>> blocks;
     for (int i = 0; i < size; i++) {
       BlockIndex<MyDummyBlock> index{};
@@ -219,19 +219,19 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
 
   chain.setTip(&newIndex2);
 
-  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement1, 100)
+  EXPECT_EQ(*findBlockContainingEndorsement(chain, endorsement1, 100)
                  ->containingEndorsements.find(endorsement1.id)
                  ->second,
             endorsement1);
-  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement2, 100)
+  EXPECT_EQ(*findBlockContainingEndorsement(chain, endorsement2, 100)
                  ->containingEndorsements.find(endorsement2.id)
                  ->second,
             endorsement2);
-  EXPECT_EQ(*chain.findBlockContainingEndorsement(endorsement3, 100)
+  EXPECT_EQ(*findBlockContainingEndorsement(chain, endorsement3, 100)
                  ->containingEndorsements.find(endorsement3.id)
                  ->second,
             endorsement3);
-  EXPECT_EQ(chain.findBlockContainingEndorsement(endorsement4, 100), nullptr);
+  EXPECT_EQ(findBlockContainingEndorsement(chain, endorsement4, 100), nullptr);
 }
 
 // make sure to enumerate the test cases here

@@ -6,9 +6,9 @@
 #include "veriblock/mempool.hpp"
 
 #include <deque>
+#include <veriblock/reversed_range.hpp>
 
 #include "veriblock/stateless_validation.hpp"
-#include <veriblock/reversed_range.hpp>
 
 namespace altintegration {
 
@@ -104,7 +104,7 @@ bool MemPool::applyPayloads(const AltBlock& hack_block,
     auto endorsement = VbkEndorsement::fromContainer(vtb);
     Chain<BlockIndex<VbkBlock>> chain(start_height, containing_block_index);
     auto duplicate =
-        chain.findBlockContainingEndorsement(endorsement, settlement_interval);
+        findBlockContainingEndorsement(chain, endorsement, settlement_interval);
 
     // invalid vtb
     if (duplicate) {
