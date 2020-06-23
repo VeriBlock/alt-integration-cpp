@@ -17,7 +17,7 @@ struct SetStateTest : public ::testing::Test, public PopTestFixture {
     const int ATVs = 1;
     ASSERT_TRUE(alttree.setState(chain[0].hash, state));
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
-    auto e90c100 = endorseAltBlock(chain[90], chain[100], VTBs);
+    auto e90c100 = endorseAltBlock({chain[90]}, VTBs);
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
     ASSERT_TRUE(alttree.getBlockIndex(chain[100].hash));
     ASSERT_TRUE(alttree.addPayloads(chain[100].hash, {e90c100}, state));
@@ -39,9 +39,9 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
   const int VTBs = 1;
   ASSERT_TRUE(alttree.setState(chain[0].hash, state));
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
-  auto e90c100 = endorseAltBlock(chain[90], chain[100], VTBs);
+  auto e90c100 = endorseAltBlock({chain[90]}, VTBs);
   // break ATV
-  e90c100.popData.atv.containingBlock.previousBlock = uint96();
+  e90c100.atvs.at(0).containingBlock.previousBlock = uint96();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].hash);
   ASSERT_TRUE(alttree.getBlockIndex(chain[100].hash));
   ASSERT_TRUE(alttree.addPayloads(chain[100].hash, {e90c100}, state));

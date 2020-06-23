@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/entities/test_case_entity.hpp>
-
 #include <veriblock/hashutil.hpp>
 
 namespace altintegration {
@@ -16,12 +15,12 @@ TestCase TestCase::fromRaw(const std::vector<uint8_t>& bytes) {
 
 TestCase TestCase::fromRaw(ReadStream& stream) {
   uint256 expectedHashSum = stream.read(SHA256_HASH_SIZE);
-  
+
   size_t savedPosition = stream.position();
   Slice<const uint8_t> data = stream.readSlice(stream.remaining());
   uint256 storedHashSum = sha256(data);
   if (storedHashSum != expectedHashSum) {
-      throw std::invalid_argument("stream: hashSum is invalid");
+    throw std::invalid_argument("stream: hashSum is invalid");
   }
   stream.setPosition(savedPosition);
 
@@ -33,13 +32,9 @@ TestCase TestCase::fromRaw(ReadStream& stream) {
       [&](ReadStream& stream) -> alt_block_with_payloads_t {
         AltBlock block = AltBlock::fromVbkEncoding(stream);
 
-        std::vector<AltPayloads> payloads_vec = readArrayOf<AltPayloads>(
-            stream,
-            0,
-            MAX_CONTEXT_COUNT,
-            (AltPayloads(*)(ReadStream&))AltPayloads::fromVbkEncoding);
+        PopData popdata = PopData::fromVbkEncoding(stream);
 
-        return std::make_pair(std::move(block), std::move(payloads_vec));
+        return std::make_pair(std::move(block), std::move(popdata));
       });
 
   result.config = Config::fromRaw(stream);
@@ -54,15 +49,11 @@ std::vector<uint8_t> TestCase::toRaw() const {
 }
 
 void TestCase::toRaw(WriteStream& stream) const {
-
   WriteStream temp;
   writeSingleBEValue(temp, alt_tree.size());
   for (const auto& el : alt_tree) {
     el.first.toVbkEncoding(temp);
-    writeSingleBEValue(temp, el.second.size());
-    for (const auto& p : el.second) {
-      p.toVbkEncoding(temp);
-    }
+    el.second.toVbkEncoding(temp);
   }
   config.toRaw(temp);
 

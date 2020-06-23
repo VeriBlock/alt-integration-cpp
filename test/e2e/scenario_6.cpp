@@ -67,15 +67,15 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[0]));
   AltBlock containingAltBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingAltBlock);
-  AltPayloads altPayloads = generateAltPayloads(
-      tx, containingAltBlock, chain[0], vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
   // put corrupted VTB
-  altPayloads.popData.vtbs.push_back(vtb);
+  altPayloads.vtbs.push_back(vtb);
 
   EXPECT_TRUE(test_alttree.acceptBlock(containingAltBlock, state));
   ASSERT_TRUE(test_alttree.addPayloads(
-      containingAltBlock.getHash(), {altPayloads}, state));
+      containingAltBlock.getHash(), altPayloads, state));
   EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));
 
   EXPECT_EQ(*test_alttree.vbk().getBestChain().tip(), *vbkTip);

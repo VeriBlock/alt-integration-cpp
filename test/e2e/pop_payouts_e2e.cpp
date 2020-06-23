@@ -48,12 +48,10 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     popminer->mineVbkBlocks(1);
     auto containing = generateNextBlock(chain.back());
     chain.push_back(containing);
-    auto payloads = generateAltPayloads(vbktx,
-                            containing,
-                            endorsed,
-                            tree.vbk().getBestChain().tip()->getHash());
+    auto payloads = generateAltPayloads(
+        {vbktx}, tree.vbk().getBestChain().tip()->getHash());
     ASSERT_TRUE(tree.acceptBlock(containing, state));
-    ASSERT_TRUE(tree.addPayloads(containing, {payloads}, state));
+    ASSERT_TRUE(tree.addPayloads(containing, payloads, state));
     ASSERT_TRUE(tree.setState(containing.hash, state));
   }
 
@@ -86,16 +84,10 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
       popminer->mineVbkBlocks(1);
       auto containing = generateNextBlock(chain.back());
       chain.push_back(containing);
-      auto payloads1 = generateAltPayloads(vbktx1,
-                              containing,
-                              endorsed,
-                              tree.vbk().getBestChain().tip()->getHash());
-      auto payloads2 = generateAltPayloads(vbktx2,
-                              containing,
-                              endorsed,
-                              tree.vbk().getBestChain().tip()->getHash());
+      auto payloads1 = generateAltPayloads(
+          {vbktx1, vbktx2}, tree.vbk().getBestChain().tip()->getHash());
       ASSERT_TRUE(tree.acceptBlock(containing, state));
-      ASSERT_TRUE(tree.addPayloads(containing, {payloads1, payloads2}, state));
+      ASSERT_TRUE(tree.addPayloads(containing, payloads1, state));
       ASSERT_TRUE(tree.setState(containing.hash, state));
     }
   }
@@ -288,14 +280,13 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
   mineEndorsements(alttree, altparam.getKeystoneInterval() * 2, chain);
 
   // wait for the reward
-  mineAltBlocksWithTree(alttree,
-                        altparam.getEndorsementSettlementInterval() - 2,
-                        chain);
+  mineAltBlocksWithTree(
+      alttree, altparam.getEndorsementSettlementInterval() - 2, chain);
 
   int64_t highestReward = 0;
   int blockNumber = 0;
   auto initialBlock = alttree.getBlockIndex(chain.back().getHash());
-  
+
   // find maximum reward and store it together with endorsed block height
   for (size_t i = 0; i < altparam.getKeystoneInterval(); i++) {
     auto payout = alttree.getPopPayout(initialBlock->getHash(), state);
@@ -309,6 +300,7 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
   }
 
   auto roundNumber = rewards_.getRoundForBlockNumber(blockNumber);
-  ASSERT_EQ(roundNumber, rewards_.getAltParams().getRewardParams().keystoneRound());
+  ASSERT_EQ(roundNumber,
+            rewards_.getAltParams().getRewardParams().keystoneRound());
   ASSERT_GT(highestReward, 0);
 }

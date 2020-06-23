@@ -21,6 +21,8 @@
 
 namespace altintegration {
 
+struct BtcBlockAddon;
+
 struct BtcBlock {
   using hash_t = uint256;
   using prev_hash_t = uint256;

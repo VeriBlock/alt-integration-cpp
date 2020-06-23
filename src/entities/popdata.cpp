@@ -12,16 +12,17 @@ namespace altintegration {
 PopData PopData::fromVbkEncoding(ReadStream& stream) {
   PopData alt_pop_tx;
   alt_pop_tx.version = stream.readBE<int32_t>();
-  alt_pop_tx.vbk_context = readArrayOf<VbkBlock>(
+  alt_pop_tx.context = readArrayOf<VbkBlock>(
       stream,
       0,
       MAX_CONTEXT_COUNT_ALT_PUBLICATION,
       (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding);
 
-  alt_pop_tx.hasAtv = stream.readBE<uint8_t>();
-  if (alt_pop_tx.hasAtv) {
-    alt_pop_tx.atv = ATV::fromVbkEncoding(stream);
-  }
+  alt_pop_tx.atvs = readArrayOf<ATV>(stream,
+                                     0,
+                                     MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                                     (ATV(*)(ReadStream&))ATV::fromVbkEncoding);
+
   alt_pop_tx.vtbs = readArrayOf<VTB>(stream,
                                      0,
                                      MAX_CONTEXT_COUNT_ALT_PUBLICATION,
@@ -37,14 +38,16 @@ PopData PopData::fromVbkEncoding(Slice<const uint8_t> raw_bytes) {
 
 void PopData::toVbkEncoding(WriteStream& stream) const {
   stream.writeBE<int32_t>(version);
-  writeSingleBEValue(stream, vbk_context.size());
-  for (const auto& b : vbk_context) {
+  writeSingleBEValue(stream, context.size());
+  for (const auto& b : context) {
     b.toVbkEncoding(stream);
   }
-  stream.writeBE<uint8_t>(hasAtv);
-  if (hasAtv) {
+
+  writeSingleBEValue(stream, atvs.size());
+  for (const auto& atv : atvs) {
     atv.toVbkEncoding(stream);
   }
+
   writeSingleBEValue(stream, vtbs.size());
   for (const auto& vtb : vtbs) {
     vtb.toVbkEncoding(stream);
@@ -61,7 +64,5 @@ PopData::id_t PopData::getHash() const {
   auto bytes = toVbkEncoding();
   return sha256(bytes);
 }
-
-bool PopData::containsEndorsements() const { return hasAtv; }
 
 }  // namespace altintegration

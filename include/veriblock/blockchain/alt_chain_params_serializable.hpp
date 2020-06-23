@@ -124,6 +124,11 @@ struct AltChainParamsSerializable : public AltChainParams {
     return bootstrapBlock_;
   };
 
+  std::vector<uint8_t> getHash(
+      const std::vector<uint8_t>&) const noexcept override {
+    return std::vector<uint8_t>();
+  }
+
   static AltChainParamsSerializable fromRaw(ReadStream& stream);
 
   static AltChainParamsSerializable fromRaw(const std::vector<uint8_t>& bytes);

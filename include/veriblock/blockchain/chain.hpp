@@ -164,12 +164,11 @@ struct Chain {
   }
 };
 
-template <typename Block>
-BlockIndex<Block>* findBlockContainingEndorsement(
-    Chain<BlockIndex<Block>>& chain,
-    const typename Block::endorsement_t& e,
+template <typename index_t>
+index_t* findBlockContainingEndorsement(
+    const Chain<index_t>& chain,
+    const typename index_t::endorsement_t& e,
     const uint32_t& endorsement_settlement_interval) {
-  using index_t = BlockIndex<Block>;
   index_t* workBlock = chain.tip();
 
   for (uint32_t count = 0;
