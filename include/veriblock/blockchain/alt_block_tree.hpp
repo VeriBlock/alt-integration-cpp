@@ -7,21 +7,21 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_BLOCK_TREE_HPP_
 
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <veriblock/blockchain/alt_block_addon.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
 #include <veriblock/storage/pop_storage.hpp>
 
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/base_block_tree.hpp"
-#include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/chain.hpp"
 #include "veriblock/blockchain/pop/fork_resolution.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/entities/altblock.hpp"
-#include "veriblock/entities/payloads.hpp"
+#include "veriblock/entities/popdata.hpp"
+#include "veriblock/fmt.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/validation_state.hpp"
 
@@ -39,8 +39,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using index_t = BlockIndex<AltBlock>;
   using endorsement_t = typename index_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
-  using payloads_t = typename AltBlock::payloads_t;
-  using pid_t = typename payloads_t::id_t;
   using hash_t = typename AltBlock::hash_t;
 
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
@@ -72,26 +70,135 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
-  void removePayloads(index_t& index, const std::vector<pid_t>& pids);
+  void removePayloads(index_t& index, const PopData& popData);
 
   void removePayloads(const AltBlock::hash_t& containing,
-                      const std::vector<pid_t>& pids);
+                      const PopData& popData);
+
+  template <typename pop_t>
+  void removePayloads(index_t& index,
+                      const std::vector<pop_t>& payloads,
+                      bool set_state = true) {
+    VBK_LOG_INFO("%s remove %d %s payloads from %s",
+                 block_t::name(),
+                 payloads.size(),
+                 pop_t::name(),
+                 index.toShortPrettyString());
+
+    if (set_state) {
+      if (!index.pprev) {
+        // we do not add payloads to genesis block, therefore we do not have to
+        // remove them
+        return;
+      }
+
+      bool isOnActiveChain = activeChain_.contains(&index);
+      if (isOnActiveChain) {
+        VBK_ASSERT(index.pprev && "can not remove payloads from genesis block");
+        ValidationState dummy;
+        bool ret = setTip(*index.pprev, dummy, false);
+        VBK_ASSERT(ret);
+      }
+    }
+
+    std::vector<typename pop_t::id_t> pids(payloads.size());
+    for (size_t i = 0; i < payloads.size(); ++i) {
+      pids[i] = payloads[i].getId();
+    }
+
+    auto& payloadIds = index.getPayloadIds<pop_t, typename pop_t::id_t>();
+
+    for (const auto& pid : pids) {
+      auto it = std::find(payloadIds.begin(), payloadIds.end(), pid);
+      if (it == payloadIds.end()) {
+        // TODO: error message
+        continue;
+      }
+
+      auto stored_payload = storagePayloads_.loadPayloads<pop_t>(pid);
+      if (!stored_payload.valid) {
+        revalidateSubtree(index, BLOCK_FAILED_POP, false);
+      }
+
+      payloadIds.erase(it);
+      // TODO: do we want to erase payloads from repository?
+    }
+  }
 
   bool addPayloads(index_t& index,
-                   const std::vector<payloads_t>& payloads,
+                   const PopData& popData,
                    ValidationState& state);
 
+  template <
+      typename pop_t,
+      typename = typename std::enable_if<
+          std::is_same<pop_t, ATV>::value || std::is_same<pop_t, VTB>::value ||
+          std::is_same<pop_t, VbkBlock>::value>::type>
+  bool addPayloads(index_t& index,
+                   const std::vector<pop_t>& payloads,
+                   ValidationState& state) {
+    VBK_LOG_INFO("%s add %d alt payloads to block %s",
+                 block_t::name(),
+                 payloads.size(),
+                 index.toShortPrettyString());
+
+    if (!index.pprev) {
+      return state.Invalid(
+          block_t::name() + "-bad-containing-prev",
+          "It is forbidden to add payloads to bootstrap block");
+    }
+
+    if (!index.isValid()) {
+      return state.Invalid(block_t::name() + "-bad-chain",
+                           "Containing block has been marked as invalid");
+    }
+
+    bool isOnActiveChain = activeChain_.contains(&index);
+    if (isOnActiveChain) {
+      ValidationState dummy;
+      bool ret = setTip(*index.pprev, dummy, false);
+      VBK_ASSERT(ret);
+    }
+
+    auto& payloadIds = index.getPayloadIds<pop_t, typename pop_t::id_t>();
+
+    std::set<typename pop_t::id_t> existingPids(payloadIds.begin(),
+                                                payloadIds.end());
+
+    for (const auto& p : payloads) {
+      auto pid = p.getId();
+      if (!existingPids.insert(pid).second) {
+        return state.Invalid(
+            block_t::name() + "-duplicate-payloads",
+            fmt::sprintf("Containing block=%s already contains payload %s.",
+                         index.toPrettyString(),
+                         pid.toHex()));
+      }
+
+      payloadIds.push_back(pid);
+      storagePayloads_.savePayloads(p);
+    }
+
+    return true;
+  }
+
   bool addPayloads(const AltBlock::hash_t& containing,
-                   const std::vector<payloads_t>& payloads,
+                   const PopData& popData,
                    ValidationState& state);
 
   bool addPayloads(const AltBlock& containing,
-                   const std::vector<payloads_t>& payloads,
+                   const PopData& popData,
                    ValidationState& state) {
-    return addPayloads(containing.hash, payloads, state);
+    return addPayloads(containing.hash, popData, state);
   }
 
-  void payloadsToCommands(const payloads_t& p,
+  void payloadsToCommands(const ATV& atv,
+                          const AltBlock& containing,
+                          std::vector<CommandPtr>& commands);
+
+  void payloadsToCommands(const VTB& vtb, std::vector<CommandPtr>& commands);
+
+  void payloadsToCommands(const VbkBlock& block,
                           std::vector<CommandPtr>& commands);
 
   bool saveToStorage(PopStorage& storage, ValidationState& state);
@@ -115,11 +222,11 @@ struct AltTree : public BaseBlockTree<AltBlock> {
       const AltBlock::hash_t& tip, ValidationState& state);
 
   bool validatePayloads(const AltBlock& block,
-                        const payloads_t& p,
+                        const PopData& popData,
                         ValidationState& state);
 
   bool validatePayloads(const AltBlock::hash_t& block_hash,
-                        const payloads_t& p,
+                        const PopData& popData,
                         ValidationState& state);
 
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
@@ -134,7 +241,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   const AltChainParams& getParams() const { return *alt_config_; }
 
   PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
-  const PayloadsStorage& getStoragePayloads() const { return storagePayloads_; }
+  const PayloadsStorage getStoragePayloads() const { return storagePayloads_; }
 
   std::string toPrettyString(size_t level = 0) const;
 
@@ -155,6 +262,15 @@ struct AltTree : public BaseBlockTree<AltBlock> {
               ValidationState& state,
               bool skipSetState = false) override;
 };
+
+template <>
+std::vector<CommandGroup> PayloadsStorage::loadCommands<AltTree>(
+    const typename AltTree::index_t& index, AltTree& tree);
+
+template <>
+void PopStorage::saveBlocks(
+    const std::unordered_map<typename AltBlock::prev_hash_t,
+                             std::shared_ptr<BlockIndex<AltBlock>>>& blocks);
 
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<AltBlock>& i) {

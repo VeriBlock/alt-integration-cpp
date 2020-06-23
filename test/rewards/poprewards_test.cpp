@@ -38,11 +38,11 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
   altchain.push_back(containingBlock);
 
-  AltPayloads altPayloads1 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads1 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
   // ALT has 11 blocks + endorsement block

@@ -13,12 +13,19 @@
 
 namespace altintegration {
 
+struct VTB;
+
 struct VbkBlockAddon :
     // for endorsement map
     public PopState<VbkEndorsement>,
     // for chainwork + ref
     public BtcBlockAddon {
+  using payloads_t = VTB;
+
+  // VTB::id_t
   std::vector<uint256> payloadIds;
+
+  bool payloadsIdsEmpty() const { return payloadIds.empty(); }
 
   void setNull() {
     BtcBlockAddon::setNull();

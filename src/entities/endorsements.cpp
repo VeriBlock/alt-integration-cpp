@@ -3,9 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/entities/endorsements.hpp>
-#include <veriblock/entities/payloads.hpp>
-#include <veriblock/serde.hpp>
+#include "veriblock/entities/endorsements.hpp"
+
+#include "veriblock/entities/atv.hpp"
+#include "veriblock/entities/vtb.hpp"
+#include "veriblock/serde.hpp"
 
 namespace altintegration {
 
@@ -22,14 +24,18 @@ VbkEndorsement VbkEndorsement::fromContainer(const VTB& c) {
 }
 
 template <>
-AltEndorsement AltEndorsement::fromContainer(const AltPayloads& c) {
+AltEndorsement AltEndorsement::fromContainer(
+    const ATV& c,
+    const std::vector<uint8_t>& containingHash,
+    const std::vector<uint8_t>& endorsedHash,
+    const int32_t& endorsedHeight) {
   AltEndorsement e;
   e.id = AltEndorsement::getId(c);
-  e.blockOfProof = c.popData.atv.containingBlock.getHash();
-  e.endorsedHash = c.endorsed.hash;
-  e.endorsedHeight = c.endorsed.height;
-  e.containingHash = c.containingBlock.hash;
-  e.payoutInfo = c.popData.atv.transaction.publicationData.payoutInfo;
+  e.blockOfProof = c.containingBlock.getHash();
+  e.endorsedHash = endorsedHash;
+  e.endorsedHeight = endorsedHeight;
+  e.containingHash = containingHash;
+  e.payoutInfo = c.transaction.publicationData.payoutInfo;
   return e;
 }
 
@@ -39,8 +45,8 @@ VbkEndorsement::id_t VbkEndorsement::getId(const VTB& c) {
 }
 
 template <>
-AltEndorsement::id_t AltEndorsement::getId(const AltPayloads& c) {
-  return c.popData.atv.getId();
+AltEndorsement::id_t AltEndorsement::getId(const ATV& c) {
+  return c.getId();
 }
 
 }  // namespace altintegration

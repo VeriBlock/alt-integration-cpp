@@ -108,16 +108,14 @@ TEST_F(Scenario8, scenario_8) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  PopData popData1 = createPopData(0, atv1, {vtb1});
+  PopData popData1 = createPopData(0, {atv1}, {vtb1});
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads1 =
-      generateAltPayloads(popData1, containingBlock, endorsedBlock);
 
   // add alt payloads
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
@@ -135,15 +133,13 @@ TEST_F(Scenario8, scenario_8) {
   ATV atv2 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  PopData popData2 = createPopData(0, atv2, {vtb2});
+  PopData popData2 = createPopData(0, {atv2}, {vtb2});
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads2 =
-      generateAltPayloads(popData2, containingBlock, endorsedBlock);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData2, state));
   EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetDebugMessage(), "Endorsement expired");
@@ -157,7 +153,7 @@ TEST_F(Scenario8, scenario_8) {
   ASSERT_NE(vbkBlock, nullptr);
 
   // remove payloads from alt, vbk state is still valid
-  alttree.removePayloads(containingBlock.hash, {payloads2.getId()});
+  alttree.removePayloads(containingBlock.hash, popData2);
   ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
   validityFlagCheck(*vbkBlock, true);
 }

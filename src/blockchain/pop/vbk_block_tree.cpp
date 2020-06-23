@@ -4,13 +4,13 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/algorithm.hpp>
+#include <veriblock/blockchain/blockchain_storage_util.hpp>
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/context.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/reversed_range.hpp>
-#include <veriblock/blockchain/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -258,8 +258,7 @@ void VbkBlockTree::payloadsToCommands(const payloads_t& p,
 
   // add endorsement
   auto e = VbkEndorsement::fromContainerPtr(p);
-  auto cmd =
-      std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
+  auto cmd = std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
   commands.push_back(std::move(cmd));
 }
 
@@ -270,7 +269,7 @@ bool VbkBlockTree::saveToStorage(PopStorage& storage, ValidationState& state) {
 }
 
 bool VbkBlockTree::loadFromStorage(const PopStorage& storage,
-                              ValidationState& state) {
+                                   ValidationState& state) {
   bool ret = loadBlocks(storage, btc(), state);
   if (!ret) return state.IsValid();
   return loadBlocks(storage, *this, state);
@@ -294,6 +293,61 @@ void VbkBlockTree::removePayloads(const Blob<24>& hash,
   }
 
   removePayloads(*index->header, pids);
+}
+
+template <>
+std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
+    const typename VbkBlockTree::index_t& index, VbkBlockTree& tree) {
+  using pop_t = typename VbkBlockTree::index_t::payloads_t;
+
+  std::vector<CommandGroup> out{};
+  for (const auto& pid : index.payloadIds) {
+    pop_t payloads;
+    if (!PayloadsBaseStorage<pop_t>::prepo_->get(pid, &payloads)) {
+      throw StateCorruptedException(
+          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
+    }
+    CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());
+    tree.payloadsToCommands(payloads, cg.commands);
+    out.push_back(cg);
+  }
+  return out;
+}
+
+template <>
+void PopStorage::saveBlocks(
+    const std::unordered_map<typename BtcBlock::prev_hash_t,
+                             std::shared_ptr<BlockIndex<BtcBlock>>>& blocks) {
+  auto batch = BlocksStorage<BlockIndex<BtcBlock>>::brepo_->newBatch();
+  if (batch == nullptr) {
+    throw BadIOException("Cannot create BlockRepository write batch");
+  }
+
+  for (const auto& block : blocks) {
+    auto& index = *(block.second);
+    batch->put(index);
+  }
+  batch->commit();
+}
+
+template <>
+void PopStorage::saveBlocks(
+    const std::unordered_map<typename VbkBlock::prev_hash_t,
+                             std::shared_ptr<BlockIndex<VbkBlock>>>& blocks) {
+  auto batch = BlocksStorage<BlockIndex<VbkBlock>>::brepo_->newBatch();
+  if (batch == nullptr) {
+    throw BadIOException("Cannot create BlockRepository write batch");
+  }
+
+  for (const auto& block : blocks) {
+    auto& index = *(block.second);
+    batch->put(index);
+
+    for (const auto& e : index.containingEndorsements) {
+      saveEndorsements<typename BlockIndex<VbkBlock>::endorsement_t>(*e.second);
+    }
+  }
+  batch->commit();
 }
 
 }  // namespace altintegration

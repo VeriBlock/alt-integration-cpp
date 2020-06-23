@@ -7,4 +7,5 @@ add_library(blockchain OBJECT
         alt_chain_params_serializable.cpp
         btc_chain_params_serializable.cpp
         vbk_chain_params_serializable.cpp
+	blockchain_storage_util.cpp
         )

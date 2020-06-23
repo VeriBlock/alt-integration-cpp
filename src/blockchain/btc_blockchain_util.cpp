@@ -3,9 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/blockchain/btc_blockchain_util.hpp"
+
 #include <chrono>
 #include <thread>
-#include <veriblock/blockchain/btc_blockchain_util.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 

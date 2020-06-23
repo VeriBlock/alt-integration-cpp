@@ -129,11 +129,18 @@ struct PopTestFixture {
 
     std::vector<VbkBlock> ctx;
 
+    std::set<typename VbkBlock::hash_t> known_blocks;
+    for (const auto& b : out) {
+      known_blocks.insert(b.getHash());
+    }
+
     for (auto* walkBlock = tip;
          walkBlock != nullptr &&
          walkBlock->header->getHash() != lastKnownVbkBlockHash;
          walkBlock = walkBlock->pprev) {
-      ctx.push_back(*walkBlock->header);
+      if (known_blocks.count(walkBlock->header->getHash()) == 0) {
+        ctx.push_back(*walkBlock->header);
+      }
     }
 
     // since we inserted in reverse order, we need to reverse context blocks
@@ -143,43 +150,61 @@ struct PopTestFixture {
   }
 
   PopData createPopData(int32_t version,
-                        const ATV& atv,
+                        std::vector<ATV> atvs,
                         std::vector<VTB> vtbs) {
     PopData popData;
     popData.version = version;
 
+    std::set<typename VbkBlock::hash_t> known_blocks;
+
     // fill vbk context
     for (auto& vtb : vtbs) {
       for (const auto& block : vtb.context) {
-        popData.vbk_context.push_back(block);
+        if (known_blocks.count(block.getHash()) == 0) {
+          popData.context.push_back(block);
+          known_blocks.insert(block.getHash());
+        }
       }
-      popData.vbk_context.push_back(vtb.containingBlock);
+
+      if (known_blocks.count(vtb.containingBlock.getHash()) == 0) {
+        popData.context.push_back(vtb.containingBlock);
+        known_blocks.insert(vtb.containingBlock.getHash());
+      }
+
       vtb.context.clear();
     }
 
-    for (const auto& block : atv.context) {
-      popData.vbk_context.push_back(block);
+    for (auto& atv : atvs) {
+      for (const auto& block : atv.context) {
+        if (known_blocks.count(block.getHash()) == 0) {
+          popData.context.push_back(block);
+          known_blocks.insert(block.getHash());
+        }
+      }
+
+      if (known_blocks.count(atv.containingBlock.getHash()) == 0) {
+          popData.context.push_back(atv.containingBlock);
+          known_blocks.insert(atv.containingBlock.getHash());
+      }
+
+      atv.context.clear();
     }
 
-    std::sort(popData.vbk_context.begin(),
-              popData.vbk_context.end(),
+    std::sort(popData.context.begin(),
+              popData.context.end(),
               [](const VbkBlock& a, const VbkBlock& b) {
                 return a.height < b.height;
               });
 
-    popData.atv = atv;
-    popData.atv.context.clear();
-    popData.hasAtv = true;
+    popData.atvs = atvs;
     popData.vtbs = vtbs;
 
     return popData;
   }
 
-  AltPayloads generateAltPayloads(const VbkTx& transaction,
-                                  const AltBlock& containing,
-                                  const AltBlock& endorsed,
-                                  const VbkBlock::hash_t& lastVbk,
-                                  int VTBs = 0) {
+  PopData generateAltPayloads(const std::vector<VbkTx>& transactions,
+                              const VbkBlock::hash_t& lastVbk,
+                              int VTBs = 0) {
     PopData popData;
 
     for (auto i = 0; i < VTBs; i++) {
@@ -189,40 +214,27 @@ struct PopTestFixture {
       popData.vtbs.push_back(newvtb);
     }
 
-    popData.hasAtv = true;
-    popData.atv = popminer->generateATV(transaction, lastVbk, state);
+    for (const auto& t : transactions) {
+      popData.atvs.push_back(popminer->generateATV(t, lastVbk, state));
+    }
 
-    fillVbkContext(popData.vbk_context,
-                   lastVbk,
-                   popData.atv.containingBlock.getHash(),
-                   popminer->vbk());
+    for (const auto& atv : popData.atvs) {
+      fillVbkContext(popData.context,
+                     lastVbk,
+                     atv.containingBlock.getHash(),
+                     popminer->vbk());
+    }
 
-    AltPayloads alt;
-    alt.popData = popData;
-    alt.containingBlock = containing;
-    alt.endorsed = endorsed;
-
-    return alt;
+    return popData;
   }
 
-  AltPayloads endorseAltBlock(const AltBlock& endorsed,
-                              const AltBlock& containing,
-                              int VTBs = 0) {
-    auto data = generatePublicationData(endorsed);
-    auto vbktx = popminer->createVbkTxEndorsingAltBlock(data);
-    return generateAltPayloads(
-        vbktx, containing, endorsed, getLastKnownVbkBlock(), VTBs);
-  }
-
-  AltPayloads generateAltPayloads(const PopData& popTx,
-                                  const AltBlock& containing,
-                                  const AltBlock& endorsed) {
-    AltPayloads alt;
-    alt.popData = popTx;
-    alt.containingBlock = containing;
-    alt.endorsed = endorsed;
-
-    return alt;
+  PopData endorseAltBlock(const std::vector<AltBlock>& endorsed, int VTBs = 0) {
+    std::vector<VbkTx> transactions(endorsed.size());
+    for (size_t i = 0; i < endorsed.size(); ++i) {
+      auto data = generatePublicationData(endorsed[i]);
+      transactions[i] = popminer->createVbkTxEndorsingAltBlock(data);
+    }
+    return generateAltPayloads(transactions, getLastKnownVbkBlock(), VTBs);
   }
 
   VbkBlock::hash_t getLastKnownVbkBlock() {

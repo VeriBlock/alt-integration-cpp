@@ -24,7 +24,7 @@ struct AddEndorsement : public Command {
   using hash_t = typename ProtectedTree::hash_t;
   using protected_block_t = typename ProtectedTree::block_t;
   using protecting_block_t = typename ProtectingTree::block_t;
-  using endorsement_t = typename ProtectedTree::block_t::endorsement_t;
+  using endorsement_t = typename ProtectedTree::index_t::endorsement_t;
   using protected_index_t = typename ProtectedTree::index_t;
 
   ~AddEndorsement() override = default;

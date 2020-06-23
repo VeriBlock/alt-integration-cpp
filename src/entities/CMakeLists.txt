@@ -14,7 +14,6 @@ add_library(entities OBJECT
         vbktx.cpp
         vtb.cpp
         altblock.cpp
-        payloads.cpp
         popdata.cpp
         test_case_entity.cpp
         )

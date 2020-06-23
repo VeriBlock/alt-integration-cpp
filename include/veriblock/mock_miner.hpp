@@ -16,7 +16,6 @@
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/merkle_tree.hpp"
-#include "veriblock/entities/payloads.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
@@ -50,7 +49,6 @@ class MockMiner {
   std::vector<BtcTx> btcmempool;
   std::vector<VbkPopTx> vbkmempool;
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkPayloads;
-  std::unordered_map<AltBlock::hash_t, std::vector<AltPayloads>> altPayloads;
 
   VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData);
   ATV generateATV(const VbkTx& transaction,

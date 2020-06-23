@@ -3,7 +3,6 @@
 
 #include <map>
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/entities/payloads.hpp>
 #include <veriblock/entities/vtb.hpp>
 #include <veriblock/storage/block_repository_inmem.hpp>
 #include <veriblock/storage/blocks_storage.hpp>
@@ -14,7 +13,6 @@ namespace altintegration {
 
 class PopStorage : public EndorsementStorage<AltEndorsement>,
                    public EndorsementStorage<VbkEndorsement>,
-                   public EndorsementStorage<DummyEndorsement>,
                    public BlocksStorage<BlockIndex<BtcBlock>>,
                    public BlocksStorage<BlockIndex<VbkBlock>>,
                    public BlocksStorage<BlockIndex<AltBlock>> {
@@ -23,14 +21,6 @@ class PopStorage : public EndorsementStorage<AltEndorsement>,
   PopStorage() {}
 
   template <typename Endorsements>
-  DummyEndorsement loadEndorsements(
-      const typename DummyEndorsement::id_t&) const {
-    return {};
-  }
-
-  template <typename Endorsements,
-            typename = typename std::enable_if<
-                !std::is_same<Endorsements, DummyEndorsement>::value>::type>
   Endorsements loadEndorsements(const typename Endorsements::id_t& eid) const {
     Endorsements endorsements;
     bool ret =
@@ -69,25 +59,11 @@ class PopStorage : public EndorsementStorage<AltEndorsement>,
     return blocks;
   }
 
+  // realisation in the alt_block_tree, vbk_block_tree
   template <typename StoredBlock>
   void saveBlocks(
       const std::unordered_map<typename StoredBlock::prev_hash_t,
-                               std::shared_ptr<StoredBlock>>& blocks) {
-    auto batch = BlocksStorage<StoredBlock>::brepo_->newBatch();
-    if (batch == nullptr) {
-      throw BadIOException("Cannot create BlockRepository write batch");
-    }
-
-    for (const auto& block : blocks) {
-      auto& index = *(block.second);
-      batch->put(index);
-
-      for (const auto& e : index.containingEndorsements) {
-        saveEndorsements<typename StoredBlock::endorsement_t>(*e.second);
-      }
-    }
-    batch->commit();
-  }
+                               std::shared_ptr<StoredBlock>>& blocks);
 
   template <typename StoredBlock>
   std::pair<typename StoredBlock::height_t, typename StoredBlock::hash_t>
@@ -100,23 +76,6 @@ class PopStorage : public EndorsementStorage<AltEndorsement>,
     BlocksStorage<StoredBlock>::saveTip(tip);
   }
 };
-
-// TODO: move to cpp
-template <>
-inline void PopStorage::saveBlocks(
-    const std::unordered_map<typename BlockIndex<BtcBlock>::prev_hash_t,
-                             std::shared_ptr<BlockIndex<BtcBlock>>>& blocks) {
-  auto batch = BlocksStorage<BlockIndex<BtcBlock>>::brepo_->newBatch();
-  if (batch == nullptr) {
-    throw BadIOException("Cannot create BlockRepository write batch");
-  }
-
-  for (const auto& block : blocks) {
-    auto& index = *(block.second);
-    batch->put(index);
-  }
-  batch->commit();
-}
 
 }  // namespace altintegration
 

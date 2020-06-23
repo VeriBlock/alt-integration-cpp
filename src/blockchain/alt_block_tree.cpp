@@ -5,16 +5,13 @@
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
 
-#include <unordered_set>
 #include <veriblock/blockchain/blockchain_storage_util.hpp>
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/algorithm.hpp"
-#include "veriblock/fmt.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
-#include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
 
@@ -41,66 +38,41 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 bool AltTree::addPayloads(const AltBlock::hash_t& containing,
-                          const std::vector<payloads_t>& payloads,
+                          const PopData& popData,
                           ValidationState& state) {
   auto* index = getBlockIndex(containing);
   if (!index) {
     return state.Invalid(block_t::name() + "-bad-block",
                          "Can't find containing block");
   }
-  return addPayloads(*index, payloads, state);
+  return addPayloads(*index, popData, state);
 }
 
 bool AltTree::addPayloads(index_t& index,
-                          const std::vector<payloads_t>& payloads,
+                          const PopData& popData,
                           ValidationState& state) {
-  VBK_LOG_INFO("%s add %d payloads to block %s",
-               block_t::name(),
-               payloads.size(),
-               index.toShortPrettyString());
-  if (!index.pprev) {
-    return state.Invalid(block_t::name() + "-bad-containing-prev",
-                         "It is forbidden to add payloads to bootstrap block");
+  if (!addPayloads(index, popData.context, state)) {
+    return false;
   }
 
-  if (!index.isValid()) {
-    return state.Invalid(block_t::name() + "-bad-chain",
-                         "Containing block has been marked as invalid");
+  if (!addPayloads(index, popData.vtbs, state)) {
+    return false;
   }
-
-  bool isOnActiveChain = activeChain_.contains(&index);
-  if (isOnActiveChain) {
-    ValidationState dummy;
-    bool ret = setTip(*index.pprev, dummy, false);
-    VBK_ASSERT(ret);
-  }
-
-  std::set<pid_t> existingPids(index.payloadIds.begin(),
-                               index.payloadIds.end());
-  for (const auto& p : payloads) {
-    auto pid = p.getId();
-    if (!existingPids.insert(pid).second) {
-      return state.Invalid(
-          block_t::name() + "-duplicate-payloads",
-          fmt::sprintf("Containing block=%s already contains payload %s.",
-                       index.toPrettyString(),
-                       pid.toHex()));
-    }
-    index.payloadIds.push_back(pid);
-    storagePayloads_.savePayloads(p);
+  if (!addPayloads(index, popData.atvs, state)) {
+    return false;
   }
 
   return true;
 }
 
 bool AltTree::validatePayloads(const AltBlock& block,
-                               const payloads_t& p,
+                               const PopData& popData,
                                ValidationState& state) {
-  return validatePayloads(block.getHash(), p, state);
+  return validatePayloads(block.getHash(), popData, state);
 }
 
 bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
-                               const payloads_t& p,
+                               const PopData& popData,
                                ValidationState& state) {
   auto* index = getBlockIndex(block_hash);
 
@@ -109,7 +81,7 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
                          "Can't find containing block");
   }
 
-  if (!addPayloads(*index, {p}, state)) {
+  if (!addPayloads(*index, popData, state)) {
     VBK_LOG_DEBUG(
         "%s Can not add payloads: %s", block_t::name(), state.toString());
     return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
@@ -119,7 +91,8 @@ bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
     VBK_LOG_DEBUG("%s Statefully invalid payloads: %s",
                   block_t::name(),
                   state.toString());
-    removePayloads(*index, {p.getId()});
+
+    removePayloads(*index, popData);
     return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
   }
 
@@ -145,11 +118,10 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  if (!prev->isValid()) {
-    index->setFlag(BLOCK_FAILED_CHILD);
-    return state.Invalid(
-        block_t::name() + "-bad-chain",
-        fmt::sprintf("Previous block is invalid=%s", prev->toPrettyString()));
+  if (!index->isValid()) {
+    return state.Invalid(block_t::name() + "-bad-chain",
+                         "One of previous blocks is invalid. Status=(" +
+                             std::to_string(index->status) + ")");
   }
 
   tryAddTip(index);
@@ -181,27 +153,32 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
   return ret;
 }
 
-void AltTree::payloadsToCommands(const payloads_t& p,
+void AltTree::payloadsToCommands(const ATV& atv,
+                                 const AltBlock& containing,
                                  std::vector<CommandPtr>& commands) {
-  // first, add vbk context
-  for (const auto& b : p.popData.vbk_context) {
-    addBlock(vbk(), b, commands);
-  }
+  addBlock(vbk(), atv.containingBlock, commands);
 
-  // second, add all VTBs
-  for (const auto& vtb : p.popData.vtbs) {
-    auto cmd = std::make_shared<AddVTB>(*this, vtb);
-    commands.push_back(std::move(cmd));
-  }
+  std::vector<uint8_t> endorsed_hash =
+      alt_config_->getHash(atv.transaction.publicationData.header);
+  auto* endorsed_index = getBlockIndex(endorsed_hash);
+  VBK_ASSERT(endorsed_index);
 
-  // third, add ATV endorsement
-  if (p.popData.hasAtv) {
-    addBlock(vbk(), p.popData.atv.containingBlock, commands);
+  auto e = AltEndorsement::fromContainerPtr(
+      atv, containing.getHash(), endorsed_hash, endorsed_index->height);
 
-    auto e = AltEndorsement::fromContainerPtr(p);
-    auto cmd = std::make_shared<AddAltEndorsement>(vbk(), *this, std::move(e));
-    commands.push_back(std::move(cmd));
-  }
+  auto cmd = std::make_shared<AddAltEndorsement>(vbk(), *this, std::move(e));
+  commands.push_back(std::move(cmd));
+}
+
+void AltTree::payloadsToCommands(const VTB& vtb,
+                                 std::vector<CommandPtr>& commands) {
+  auto cmd = std::make_shared<AddVTB>(*this, vtb);
+  commands.push_back(std::move(cmd));
+}
+
+void AltTree::payloadsToCommands(const VbkBlock& block,
+                                 std::vector<CommandPtr>& commands) {
+  addBlock(vbk(), block, commands);
 }
 
 bool AltTree::saveToStorage(PopStorage& storage, ValidationState& state) {
@@ -289,47 +266,34 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
 }
 
 void AltTree::removePayloads(const AltBlock::hash_t& hash,
-                             const std::vector<pid_t>& pids) {
+                             const PopData& popData) {
   auto* index = base::getBlockIndex(hash);
   if (!index) {
     throw std::logic_error("removePayloads is called on unknown ALT block: " +
                            HexStr(hash));
   }
 
-  return removePayloads(*index, pids);
+  removePayloads(*index, popData);
 }
 
-void AltTree::removePayloads(index_t& index, const std::vector<pid_t>& pids) {
-  VBK_LOG_INFO("%s remove %d payloads from %s",
-               block_t::name(),
-               pids.size(),
-               index.toShortPrettyString());
-
-  // we do not allow adding payloads to the genesis block
-  VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
+void AltTree::removePayloads(index_t& index, const PopData& popData) {
+  if (!index.pprev) {
+    // we do not add payloads to genesis block, therefore we do not have to
+    // remove them
+    return;
+  }
 
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
+    VBK_ASSERT(index.pprev && "can not remove payloads from genesis block");
     ValidationState dummy;
     bool ret = setTip(*index.pprev, dummy, false);
     VBK_ASSERT(ret);
   }
 
-  for (const auto& pid : pids) {
-    auto it = std::find(index.payloadIds.begin(), index.payloadIds.end(), pid);
-    if (it == index.payloadIds.end()) {
-      // TODO: error message
-      continue;
-    }
-
-    auto payloads = storagePayloads_.loadPayloads<payloads_t>(pid);
-    if (!payloads.valid) {
-      revalidateSubtree(index, BLOCK_FAILED_POP, false);
-    }
-
-    index.payloadIds.erase(it);
-    // TODO: do we want to erase payloads from repository?
-  }
+  removePayloads(index, popData.context, false);
+  removePayloads(index, popData.vtbs, false);
+  removePayloads(index, popData.atvs, false);
 }
 
 bool AltTree::setTip(AltTree::index_t& to,
@@ -361,8 +325,87 @@ bool AltTree::setTip(AltTree::index_t& to,
   return changeTip;
 }
 
-uint8_t getBlockProof(const AltBlock&) {
-  return 0;
+template <typename pop_t>
+std::vector<CommandGroup> loadCommands_(
+    const typename AltTree::index_t& index,
+    AltTree& tree,
+    const std::shared_ptr<PayloadsRepository<pop_t>>& prep) {
+  auto& pids = index.getPayloadIds<pop_t, typename pop_t::id_t>();
+  std::vector<CommandGroup> out{};
+  for (const auto& pid : pids) {
+    pop_t payloads;
+    if (!prep->get(pid, &payloads)) {
+      throw StateCorruptedException(
+          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
+    }
+    CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());
+    tree.payloadsToCommands(payloads, cg.commands);
+    out.push_back(cg);
+  }
+  return out;
 }
+
+template <>
+std::vector<CommandGroup> loadCommands_(
+    const typename AltTree::index_t& index,
+    AltTree& tree,
+    const std::shared_ptr<PayloadsRepository<ATV>>& prep) {
+  auto& pids = index.getPayloadIds<ATV, typename ATV::id_t>();
+  std::vector<CommandGroup> out{};
+  for (const auto& pid : pids) {
+    ATV payloads;
+    if (!prep->get(pid, &payloads)) {
+      throw StateCorruptedException(
+          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
+    }
+    CommandGroup cg(pid.asVector(), payloads.valid, ATV::name());
+    tree.payloadsToCommands(payloads, *index.header, cg.commands);
+    out.push_back(cg);
+  }
+  return out;
+}
+
+template <>
+std::vector<CommandGroup> PayloadsStorage::loadCommands<AltTree>(
+    const typename AltTree::index_t& index, AltTree& tree) {
+  std::vector<CommandGroup> out{};
+  std::vector<CommandGroup> payloads_out;
+
+  payloads_out = loadCommands_<VbkBlock>(
+      index, tree, PayloadsBaseStorage<VbkBlock>::prepo_);
+  out.insert(out.end(), payloads_out.begin(), payloads_out.end());
+
+  payloads_out =
+      loadCommands_<VTB>(index, tree, PayloadsBaseStorage<VTB>::prepo_);
+  out.insert(out.end(), payloads_out.begin(), payloads_out.end());
+
+  payloads_out =
+      loadCommands_<ATV>(index, tree, PayloadsBaseStorage<ATV>::prepo_);
+  out.insert(out.end(), payloads_out.begin(), payloads_out.end());
+
+  return out;
+}
+
+template <>
+void PopStorage::saveBlocks(
+    const std::unordered_map<typename AltBlock::prev_hash_t,
+                             std::shared_ptr<BlockIndex<AltBlock>>>& blocks) {
+  auto batch = BlocksStorage<BlockIndex<AltBlock>>::brepo_->newBatch();
+  if (batch == nullptr) {
+    throw BadIOException("Cannot create BlockRepository write batch");
+  }
+
+  for (const auto& block : blocks) {
+    auto& index = *(block.second);
+    batch->put(index);
+
+    for (const auto& e : index.containingEndorsements) {
+      saveEndorsements<typename BlockIndex<AltBlock>::endorsement_t>(*e.second);
+    }
+  }
+  batch->commit();
+}
+
+uint8_t getBlockProof(const AltBlock&) { return 0; }
 
 }  // namespace altintegration

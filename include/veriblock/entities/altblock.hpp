@@ -17,15 +17,12 @@
 
 namespace altintegration {
 
-struct AltPayloads;
 struct VbkBlock;
 
 struct AltBlock {
   using height_t = int32_t;
   using hash_t = std::vector<uint8_t>;
   using prev_hash_t = std::vector<uint8_t>;
-  using payloads_t = AltPayloads;
-  using endorsement_t = AltEndorsement;
   using protecting_block_t = VbkBlock;
   using addon_t = AltBlockAddon;
 

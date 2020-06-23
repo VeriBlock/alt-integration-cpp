@@ -23,7 +23,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
   using index_t = VbkTree::index_t;
-  using payloads_t = typename VbkBlock::payloads_t;
+  using payloads_t = typename index_t::payloads_t;
   using pid_t = typename payloads_t::id_t;
   using endorsement_t = typename index_t::endorsement_t;
   using PopForkComparator = PopAwareForkResolutionComparator<VbkBlock,
@@ -96,15 +96,31 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PayloadsStorage& storagePayloads_;
 };
 
+template <>
+std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
+    const typename VbkBlockTree::index_t& index, VbkBlockTree& tree);
+
+template <>
+void PopStorage::saveBlocks(
+    const std::unordered_map<typename BtcBlock::prev_hash_t,
+                             std::shared_ptr<BlockIndex<BtcBlock>>>& blocks);
+
+template <>
+void PopStorage::saveBlocks(
+    const std::unordered_map<typename VbkBlock::prev_hash_t,
+                             std::shared_ptr<BlockIndex<VbkBlock>>>& blocks);
+
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "chainWork", i.chainWork.toHex());
+
   std::vector<uint256> endorsements;
   for (const auto& e : i.containingEndorsements) {
     endorsements.push_back(e.first);
   }
   json::putArrayKV(obj, "containingEndorsements", endorsements);
+
   std::vector<uint256> endorsedBy;
   for (const auto* e : i.endorsedBy) {
     endorsedBy.push_back(e->id);
@@ -126,7 +142,27 @@ JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
   json::putIntKV(obj, "status", i.status);
   json::putIntKV(obj, "ref", i.refCounter);
+
   return obj;
+}
+
+// HACK: getBlockIndex accepts either hash_t or prev_block_hash_t
+// then, depending on what it received, it should do trim LE on full hash to
+// receive short hash, which is stored inside a map. In this weird case, when
+// Block=VbkBlock, we may call `getBlockIndex(block->previousBlock)`, it is a
+// call `getBlockIndex(Blob<12>). But when `getBlockIndex` accepts it, it does
+// an implicit cast to full hash (hash_t), adding zeroes in the end. Then,
+// .trimLE returns 12 zeroes.
+//
+// This hack allows us to inject explicit conversion hash_t (Blob<24>) ->
+// prev_block_hash_t (Blob<12>).
+template <>
+template <>
+inline BaseBlockTree<VbkBlock>::prev_block_hash_t
+BaseBlockTree<VbkBlock>::makePrevHash<BaseBlockTree<VbkBlock>::hash_t>(
+    const hash_t& h) const {
+  // do an explicit cast from hash_t -> prev_block_hash_t
+  return h.template trimLE<prev_block_hash_t::size()>();
 }
 
 }  // namespace altintegration

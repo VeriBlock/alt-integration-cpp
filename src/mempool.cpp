@@ -45,96 +45,64 @@ std::vector<std::pair<ATV::id_t, std::shared_ptr<ATV>>> getSortedATVs(
 bool MemPool::fillContext(VbkBlock first_block,
                           std::vector<VbkBlock>& context,
                           AltTree& tree) {
+  std::vector<VbkBlock> temp;
+  temp.push_back(first_block);
+
   while (!checkConnectivityWithTree(first_block, tree.vbk())) {
     auto el = vbkblocks_.find(first_block.previousBlock);
     if (el != vbkblocks_.end()) {
       first_block = *el->second;
-      context.push_back(first_block);
+      temp.push_back(first_block);
     } else {
       return false;
     }
   }
 
   // reverse context
-  std::reverse(context.begin(), context.end());
+  std::reverse(temp.begin(), temp.end());
+
+  // apply blocks to the tree
+  ValidationState state;
+  for (const auto& b : temp) {
+    if (!tree.vbk().acceptBlock(b, state)) {
+      return false;
+    }
+  }
+
+  // add to the context vector
+  context.insert(context.end(), temp.begin(), temp.end());
 
   return true;
 }
 
-void MemPool::fillVTBs(std::vector<VTB>& vtbs,
-                       const std::vector<VbkBlock>& vbk_context) {
-  for (const auto& b : vbk_context) {
-    for (auto& vtb : stored_vtbs_) {
-      if (vtb.second->containingBlock == b) {
-        vtbs.push_back(*vtb.second);
-      }
-    }
-  }
-}
-
-bool MemPool::applyPayloads(const AltBlock& hack_block,
-                            PopData& popdata,
-                            AltTree& tree,
-                            ValidationState& state) {
+bool MemPool::applyATV(const ATV& atv,
+                       const AltBlock& hack_block,
+                       AltTree& tree,
+                       ValidationState& state) {
   bool ret = tree.acceptBlock(hack_block, state);
   VBK_ASSERT(ret);
 
-  // apply vbk_context
-  for (const auto& b : popdata.vbk_context) {
-    ret = tree.vbk().acceptBlock(b, state);
-    VBK_ASSERT(ret);
-  }
+  PopData temp;
+  temp.atvs = {atv};
 
-  auto genesis_height = tree.vbk().getParams().getGenesisBlock().height;
-  auto settlement_interval =
-      tree.vbk().getParams().getEndorsementSettlementInterval();
-  // check VTB endorsements
-  for (auto it = popdata.vtbs.begin(); it != popdata.vtbs.end();) {
-    VTB& vtb = *it;
-    auto* containing_block_index =
-        tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
-    if (!containing_block_index) {
-      throw std::logic_error("Mempool: containing block is not found: " +
-                             HexStr(vtb.containingBlock.getHash()));
-    }
-
-    auto start_height = (std::max)(
-        genesis_height, containing_block_index->height - settlement_interval);
-
-    auto endorsement = VbkEndorsement::fromContainer(vtb);
-    Chain<BlockIndex<VbkBlock>> chain(start_height, containing_block_index);
-    auto duplicate =
-        findBlockContainingEndorsement(chain, endorsement, settlement_interval);
-
-    // invalid vtb
-    if (duplicate) {
-      // remove from storage
-      stored_vtbs_.erase(vtb.getId());
-
-      it = popdata.vtbs.erase(it);
-      continue;
-    }
-    ++it;
-  }
-
-  for (const auto& b : reverse_iterate(popdata.vbk_context)) {
-    tree.vbk().removeSubtree(b.getHash());
-  }
-
-  AltPayloads payloads;
-  payloads.popData = popdata;
-  payloads.containingBlock = hack_block;
-
-  // find endorsed block
-  auto endorsed_hash = hasher(popdata.atv.transaction.publicationData.header);
-  auto endorsed_block_index = tree.getBlockIndex(endorsed_hash);
-  if (!endorsed_block_index) {
+  if (!tree.validatePayloads(hack_block.getHash(), temp, state)) {
     return false;
   }
-  payloads.endorsed = *endorsed_block_index->header;
 
-  if (!tree.validatePayloads(hack_block.getHash(), payloads, state)) {
-    stored_atvs_.erase(popdata.atv.getId());
+  return true;
+}
+
+bool MemPool::applyVTB(const VTB& vtb,
+                       const AltBlock& hack_block,
+                       AltTree& tree,
+                       ValidationState& state) {
+  bool ret = tree.acceptBlock(hack_block, state);
+  VBK_ASSERT(ret);
+
+  PopData temp;
+  temp.vtbs = {vtb};
+
+  if (!tree.validatePayloads(hack_block.getHash(), temp, state)) {
     return false;
   }
 
@@ -161,7 +129,7 @@ bool MemPool::submitVTB(const std::vector<VTB>& vtbs, ValidationState& state) {
   return true;
 }
 
-std::vector<PopData> MemPool::getPop(AltTree& tree) {
+PopData MemPool::getPop(AltTree& tree) {
   ValidationState state;
 
   auto& tip = *tree.getBestChain().tip();
@@ -173,55 +141,63 @@ std::vector<PopData> MemPool::getPop(AltTree& tree) {
 
   auto sorted_atvs = getSortedATVs(stored_atvs_);
 
-  std::vector<PopData> popTxs;
+  PopData popData;
+
+  // fill atvs
   for (size_t i = 0;
        i < sorted_atvs.size() && i < tree.getParams().getMaxPopDataPerBlock();
        ++i) {
     auto& atv = sorted_atvs[i].second;
-    PopData popTx;
-    VbkBlock first_block =
-        !atv->context.empty() ? atv->context[0] : atv->containingBlock;
+    VbkBlock first_block = atv->containingBlock;
 
-    if (!checkConnectivityWithTree(first_block, tree.vbk())) {
-      if (fillContext(first_block, popTx.vbk_context, tree)) {
-        fillVTBs(popTx.vtbs, popTx.vbk_context);
-        popTx.atv = *atv;
-        popTx.hasAtv = true;
-        if (applyPayloads(hack_block, popTx, tree, state)) {
-          popTxs.push_back(popTx);
+    if (fillContext(first_block, popData.context, tree)) {
+      if (applyATV(*atv, hack_block, tree, state)) {
+        popData.atvs.push_back(*atv);
+      } else {
+        stored_atvs_.erase(atv->getId());
+      }
+    }
+  }
+
+  // fill vtbs
+  for (const auto& b : popData.context) {
+    for (auto it = stored_vtbs_.begin(); it != stored_vtbs_.end();) {
+      if (it->second->containingBlock == b) {
+        if (applyVTB(*it->second, hack_block, tree, state)) {
+          popData.vtbs.push_back(*it->second);
+        } else {
+          it = stored_vtbs_.erase(it);
+          continue;
         }
       }
-    } else {
-      popTx.atv = *atv;
-      popTx.hasAtv = true;
-      if (applyPayloads(hack_block, popTx, tree, state)) {
-        popTxs.push_back(popTx);
-      }
+      ++it;
     }
   }
 
   // clear tree from temp endorsement
   tree.removeSubtree(hack_block.getHash());
+  // clear from the context blocks
+  for (const auto& b : popData.context) {
+    tree.vbk().removeSubtree(b.getHash());
+  }
 
-  return popTxs;
+  return popData;
 }
 
-void MemPool::removePayloads(const std::vector<PopData>& PopDatas) {
-  for (const auto& tx : PopDatas) {
-    // clear context
-    for (const auto& b : tx.vbk_context) {
-      vbkblocks_.erase(b.getShortHash());
-    }
+void MemPool::removePayloads(const PopData& popData) {
+  // clear context
+  for (const auto& b : popData.context) {
+    vbkblocks_.erase(b.getShortHash());
+  }
 
-    // clear atv
-    if (tx.hasAtv) {
-      stored_atvs_.erase(tx.atv.getId());
-    }
+  // clear atvs
+  for (const auto& atv : popData.atvs) {
+    stored_vtbs_.erase(atv.getId());
+  }
 
-    // clear vtbs
-    for (const auto& vtb : tx.vtbs) {
-      stored_vtbs_.erase(vtb.getId());
-    }
+  // clear vtbs
+  for (const auto& vtb : popData.vtbs) {
+    stored_vtbs_.erase(vtb.getId());
   }
 }
 

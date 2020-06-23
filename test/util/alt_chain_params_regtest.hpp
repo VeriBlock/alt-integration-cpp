@@ -32,6 +32,13 @@ struct AltChainParamsRegTest : public AltChainParams {
     return 5 * getMaxPopDataWeight();
   }
 
+  std::vector<uint8_t> getHash(
+      const std::vector<uint8_t>& bytes) const noexcept override {
+    ReadStream stream(bytes);
+    AltBlock altBlock = AltBlock::fromVbkEncoding(stream);
+    return altBlock.getHash();
+  }
+
   uint32_t id = 0;
 };
 

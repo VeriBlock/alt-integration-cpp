@@ -63,19 +63,13 @@ TEST_F(Scenario7, scenario_7) {
       generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer->generateATV(tx2, containingVbkBlock2->getHash(), state);
 
-  PopData popData1 = createPopData(0, atv1, {vtb1});
-  PopData popData2 = createPopData(0, atv2, {vtb2});
+  PopData popData = createPopData(0, {atv1, atv2}, {vtb1, vtb2});
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads1 =
-      generateAltPayloads(popData1, containingBlock, endorsedBlock1);
-  AltPayloads payloads2 =
-      generateAltPayloads(popData2, containingBlock, endorsedBlock2);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock, {payloads1, payloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
