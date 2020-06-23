@@ -30,6 +30,8 @@ void setValidity(const altintegration::CommandGroup& cm,
     storage.setValidity<altintegration::VbkBlock>(
         altintegration::VbkBlock::id_t(cm.id), valid);
   }
+
+  VBK_ASSERT(false && "should not get here");
 }
 
 }  // namespace
