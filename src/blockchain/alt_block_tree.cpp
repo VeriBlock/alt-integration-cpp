@@ -37,6 +37,32 @@ bool AltTree::bootstrap(ValidationState& state) {
   return true;
 }
 
+template <typename Index, typename Pop, typename Storage>
+bool handlePayloads(Index& index,
+                    const std::vector<Pop>& payloads,
+                    ValidationState& state,
+                    Storage& storage) {
+  auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  std::set<typename Pop::id_t> existingPids(payloadIds.begin(),
+                                            payloadIds.end());
+
+  for (const auto& p : payloads) {
+    auto pid = p.getId();
+    if (!existingPids.insert(pid).second) {
+      return state.Invalid(
+          "ALT-duplicate-payloads",
+          fmt::sprintf("Containing block=%s already contains payload %s.",
+                       index.toPrettyString(),
+                       pid.toHex()));
+    }
+
+    payloadIds.push_back(pid);
+    storage.savePayloads(p);
+  }
+
+  return true;
+}
+
 bool AltTree::addPayloads(const AltBlock::hash_t& containing,
                           const PopData& popData,
                           ValidationState& state) {
@@ -49,20 +75,41 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
 }
 
 bool AltTree::addPayloads(index_t& index,
-                          const PopData& popData,
+                          const PopData& payloads,
                           ValidationState& state) {
-  if (!addPayloads(index, popData.context, state)) {
+  VBK_LOG_INFO("%s add %d VBK, %d VTB, %d ATV payloads to block %s",
+               block_t::name(),
+               payloads.context.size(),
+               payloads.vtbs.size(),
+               payloads.atvs.size(),
+               index.toShortPrettyString());
+
+  if (!index.pprev) {
+    return state.Invalid(block_t::name() + "-bad-containing-prev",
+                         "It is forbidden to add payloads to bootstrap block");
+  }
+
+  if (!index.isValid()) {
+    return state.Invalid(block_t::name() + "-bad-chain",
+                         "Containing block has been marked as invalid");
+  }
+
+  bool isOnActiveChain = activeChain_.contains(&index);
+  if (isOnActiveChain) {
+    ValidationState dummy;
+    bool ret = setTip(*index.pprev, dummy, false);
+    VBK_ASSERT(ret);
+  }
+
+  if (!handlePayloads(index, payloads.context, state, storagePayloads_)) {
     return false;
   }
 
-  if (!addPayloads(index, popData.vtbs, state)) {
-    return false;
-  }
-  if (!addPayloads(index, popData.atvs, state)) {
+  if (!handlePayloads(index, payloads.vtbs, state, storagePayloads_)) {
     return false;
   }
 
-  return true;
+  return handlePayloads(index, payloads.atvs, state, storagePayloads_);
 }
 
 bool AltTree::validatePayloads(const AltBlock& block,

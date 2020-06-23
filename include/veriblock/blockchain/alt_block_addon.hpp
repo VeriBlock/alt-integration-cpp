@@ -41,38 +41,8 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   template <typename pop_t, typename pop_id_t>
   std::vector<pop_id_t>& getPayloadIds();
 
-  template <>
-  std::vector<uint256>& getPayloadIds<ATV, uint256>() {
-    return alt_payloadIds;
-  }
-
-  template <>
-  std::vector<uint256>& getPayloadIds<VTB, uint256>() {
-    return vbk_payloadIds;
-  }
-
-  template <>
-  std::vector<uint96>& getPayloadIds<VbkBlock, uint96>() {
-    return vbk_blockIds;
-  }
-
   template <typename pop_t, typename pop_id_t>
   const std::vector<pop_id_t>& getPayloadIds() const;
-
-  template <>
-  const std::vector<uint256>& getPayloadIds<ATV, uint256>() const {
-    return alt_payloadIds;
-  }
-
-  template <>
-  const std::vector<uint256>& getPayloadIds<VTB, uint256>() const {
-    return vbk_payloadIds;
-  }
-
-  template <>
-  const std::vector<uint96>& getPayloadIds<VbkBlock, uint96>() const {
-    return vbk_blockIds;
-  }
 
   void setNull() {
     PopState<AltEndorsement>::setNull();
@@ -82,6 +52,39 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     vbk_blockIds.clear();
   }
 };
+
+template <>
+inline std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>() {
+  return alt_payloadIds;
+}
+
+template <>
+inline std::vector<uint256>& AltBlockAddon::getPayloadIds<VTB, uint256>() {
+  return vbk_payloadIds;
+}
+
+template <>
+inline std::vector<uint96>& AltBlockAddon::getPayloadIds<VbkBlock, uint96>() {
+  return vbk_blockIds;
+}
+
+template <>
+inline const std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>()
+    const {
+  return alt_payloadIds;
+}
+
+template <>
+inline const std::vector<uint256>& AltBlockAddon::getPayloadIds<VTB, uint256>()
+    const {
+  return vbk_payloadIds;
+}
+
+template <>
+inline const std::vector<uint96>&
+AltBlockAddon::getPayloadIds<VbkBlock, uint96>() const {
+  return vbk_blockIds;
+}
 
 }  // namespace altintegration
 

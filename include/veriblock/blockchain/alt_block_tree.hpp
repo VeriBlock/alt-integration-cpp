@@ -129,58 +129,58 @@ struct AltTree : public BaseBlockTree<AltBlock> {
                    const PopData& popData,
                    ValidationState& state);
 
-  template <
-      typename pop_t,
-      typename = typename std::enable_if<
-          std::is_same<pop_t, ATV>::value || std::is_same<pop_t, VTB>::value ||
-          std::is_same<pop_t, VbkBlock>::value>::type>
-  bool addPayloads(index_t& index,
-                   const std::vector<pop_t>& payloads,
-                   ValidationState& state) {
-    VBK_LOG_INFO("%s add %d alt payloads to block %s",
-                 block_t::name(),
-                 payloads.size(),
-                 index.toShortPrettyString());
-
-    if (!index.pprev) {
-      return state.Invalid(
-          block_t::name() + "-bad-containing-prev",
-          "It is forbidden to add payloads to bootstrap block");
-    }
-
-    if (!index.isValid()) {
-      return state.Invalid(block_t::name() + "-bad-chain",
-                           "Containing block has been marked as invalid");
-    }
-
-    bool isOnActiveChain = activeChain_.contains(&index);
-    if (isOnActiveChain) {
-      ValidationState dummy;
-      bool ret = setTip(*index.pprev, dummy, false);
-      VBK_ASSERT(ret);
-    }
-
-    auto& payloadIds = index.getPayloadIds<pop_t, typename pop_t::id_t>();
-
-    std::set<typename pop_t::id_t> existingPids(payloadIds.begin(),
-                                                payloadIds.end());
-
-    for (const auto& p : payloads) {
-      auto pid = p.getId();
-      if (!existingPids.insert(pid).second) {
-        return state.Invalid(
-            block_t::name() + "-duplicate-payloads",
-            fmt::sprintf("Containing block=%s already contains payload %s.",
-                         index.toPrettyString(),
-                         pid.toHex()));
-      }
-
-      payloadIds.push_back(pid);
-      storagePayloads_.savePayloads(p);
-    }
-
-    return true;
-  }
+//  template <
+//      typename pop_t,
+//      typename = typename std::enable_if<
+//          std::is_same<pop_t, ATV>::value || std::is_same<pop_t, VTB>::value ||
+//          std::is_same<pop_t, VbkBlock>::value>::type>
+//  bool addPayloads(index_t& index,
+//                   const std::vector<pop_t>& payloads,
+//                   ValidationState& state) {
+//    VBK_LOG_INFO("%s add %d alt payloads to block %s",
+//                 block_t::name(),
+//                 payloads.size(),
+//                 index.toShortPrettyString());
+//
+//    if (!index.pprev) {
+//      return state.Invalid(
+//          block_t::name() + "-bad-containing-prev",
+//          "It is forbidden to add payloads to bootstrap block");
+//    }
+//
+//    if (!index.isValid()) {
+//      return state.Invalid(block_t::name() + "-bad-chain",
+//                           "Containing block has been marked as invalid");
+//    }
+//
+//    bool isOnActiveChain = activeChain_.contains(&index);
+//    if (isOnActiveChain) {
+//      ValidationState dummy;
+//      bool ret = setTip(*index.pprev, dummy, false);
+//      VBK_ASSERT(ret);
+//    }
+//
+//    auto& payloadIds = index.getPayloadIds<pop_t, typename pop_t::id_t>();
+//
+//    std::set<typename pop_t::id_t> existingPids(payloadIds.begin(),
+//                                                payloadIds.end());
+//
+//    for (const auto& p : payloads) {
+//      auto pid = p.getId();
+//      if (!existingPids.insert(pid).second) {
+//        return state.Invalid(
+//            block_t::name() + "-duplicate-payloads",
+//            fmt::sprintf("Containing block=%s already contains payload %s.",
+//                         index.toPrettyString(),
+//                         pid.toHex()));
+//      }
+//
+//      payloadIds.push_back(pid);
+//      storagePayloads_.savePayloads(p);
+//    }
+//
+//    return true;
+//  }
 
   bool addPayloads(const AltBlock::hash_t& containing,
                    const PopData& popData,
