@@ -38,10 +38,10 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 template <typename Index, typename Pop, typename Storage>
-bool handlePayloads(Index& index,
-                    const std::vector<Pop>& payloads,
-                    ValidationState& state,
-                    Storage& storage) {
+bool handleAddPayloads(Index& index,
+                       const std::vector<Pop>& payloads,
+                       ValidationState& state,
+                       Storage& storage) {
   auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
   std::set<typename Pop::id_t> existingPids(payloadIds.begin(),
                                             payloadIds.end());
@@ -101,15 +101,15 @@ bool AltTree::addPayloads(index_t& index,
     VBK_ASSERT(ret);
   }
 
-  if (!handlePayloads(index, payloads.context, state, storagePayloads_)) {
+  if (!handleAddPayloads(index, payloads.context, state, storagePayloads_)) {
     return false;
   }
 
-  if (!handlePayloads(index, payloads.vtbs, state, storagePayloads_)) {
+  if (!handleAddPayloads(index, payloads.vtbs, state, storagePayloads_)) {
     return false;
   }
 
-  return handlePayloads(index, payloads.atvs, state, storagePayloads_);
+  return handleAddPayloads(index, payloads.atvs, state, storagePayloads_);
 }
 
 bool AltTree::validatePayloads(const AltBlock& block,
@@ -323,7 +323,41 @@ void AltTree::removePayloads(const AltBlock::hash_t& hash,
   removePayloads(*index, popData);
 }
 
-void AltTree::removePayloads(index_t& index, const PopData& popData) {
+template <typename Tree, typename Index, typename Pop, typename Storage>
+void handleRemovePayloads(Tree& tree,
+                          Index& index,
+                          const std::vector<Pop>& payloads,
+                          Storage& storage) {
+  std::vector<typename Pop::id_t> pids = map_vector<Pop, typename Pop::id_t>(
+      payloads, [](const Pop& p) { return p.getId(); });
+
+  auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
+
+  for (const auto& pid : pids) {
+    auto it = std::find(payloadIds.begin(), payloadIds.end(), pid);
+    if (it == payloadIds.end()) {
+      // TODO: error message
+      continue;
+    }
+
+    auto stored_payload = storage.template loadPayloads<Pop>(pid);
+    if (!stored_payload.valid) {
+      tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
+    }
+
+    payloadIds.erase(it);
+    // TODO: do we want to erase payloads from repository?
+  }
+}
+
+void AltTree::removePayloads(index_t& index, const PopData& payloads) {
+  VBK_LOG_INFO("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
+               block_t::name(),
+               payloads.context.size(),
+               payloads.vtbs.size(),
+               payloads.atvs.size(),
+               index.toShortPrettyString());
+
   if (!index.pprev) {
     // we do not add payloads to genesis block, therefore we do not have to
     // remove them
@@ -338,9 +372,9 @@ void AltTree::removePayloads(index_t& index, const PopData& popData) {
     VBK_ASSERT(ret);
   }
 
-  removePayloads(index, popData.context, false);
-  removePayloads(index, popData.vtbs, false);
-  removePayloads(index, popData.atvs, false);
+  handleRemovePayloads(*this, index, payloads.atvs, storagePayloads_);
+  handleRemovePayloads(*this, index, payloads.vtbs, storagePayloads_);
+  handleRemovePayloads(*this, index, payloads.context, storagePayloads_);
 }
 
 bool AltTree::setTip(AltTree::index_t& to,
