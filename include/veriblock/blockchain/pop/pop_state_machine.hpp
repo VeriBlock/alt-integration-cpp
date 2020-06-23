@@ -17,17 +17,17 @@ void setValidity(const altintegration::CommandGroup& cm,
                  bool valid,
                  altintegration::PayloadsStorage& storage) {
   if (cm.getPayloadsTypeName() == altintegration::ATV::name()) {
-    storage.setValidity<altintegration::ATV>(altintegration::ATV::id_t(cm.id),
-                                             valid);
+    return storage.setValidity<altintegration::ATV>(
+        altintegration::ATV::id_t(cm.id), valid);
   }
 
   if (cm.getPayloadsTypeName() == altintegration::VTB::name()) {
-    storage.setValidity<altintegration::VTB>(altintegration::VTB::id_t(cm.id),
-                                             valid);
+    return storage.setValidity<altintegration::VTB>(
+        altintegration::VTB::id_t(cm.id), valid);
   }
 
   if (cm.getPayloadsTypeName() == altintegration::VbkBlock::name()) {
-    storage.setValidity<altintegration::VbkBlock>(
+    return storage.setValidity<altintegration::VbkBlock>(
         altintegration::VbkBlock::id_t(cm.id), valid);
   }
 

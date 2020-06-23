@@ -22,9 +22,9 @@ bool loadBlocks(const PopStorage& storage,
 
   for (const auto& blockPair : blocks) {
     auto* bi = tree.insertBlock(blockPair.second->header);
-    bi->alt_payloadIds = blockPair.second->alt_payloadIds;
-    bi->vbk_payloadIds = blockPair.second->vbk_payloadIds;
-    bi->vbk_blockIds = blockPair.second->vbk_blockIds;
+    bi->atvids = blockPair.second->atvids;
+    bi->vtbids = blockPair.second->vtbids;
+    bi->vbkblockids = blockPair.second->vbkblockids;
 
     // load endorsements
     for (const auto& e : blockPair.second->containingEndorsements) {
@@ -62,7 +62,7 @@ bool loadBlocks(const PopStorage& storage,
 
   for (const auto& blockPair : blocks) {
     auto* bi = tree.insertBlock(blockPair.second->header);
-    bi->payloadIds = blockPair.second->payloadIds;
+    bi->vtbids = blockPair.second->vtbids;
     bi->refCounter = blockPair.second->refCounter;
 
     // load endorsements

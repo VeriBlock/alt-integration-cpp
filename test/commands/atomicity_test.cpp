@@ -168,35 +168,35 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   auto altvbkcontaining = alttree.vbk().getBlockIndex(vtb1.containingBlock.getHash());
   ASSERT_TRUE(altvbkcontaining);
 
-  ASSERT_EQ(altvbkcontaining->payloadIds.size(), 0);
+  ASSERT_EQ(altvbkcontaining->vtbids.size(), 0);
 
   // execute that AddVTB1
   ASSERT_TRUE(cmd1->Execute(state)) << state.toString();
 
-  ASSERT_EQ(altvbkcontaining->payloadIds.size(), 1);
-  ASSERT_EQ(altvbkcontaining->payloadIds.at(0), vtb1.getId());
+  ASSERT_EQ(altvbkcontaining->vtbids.size(), 1);
+  ASSERT_EQ(altvbkcontaining->vtbids.at(0), vtb1.getId());
 
   // run execute second time on same VTB
   ASSERT_FALSE(cmd1->Execute(state));
 
-  ASSERT_EQ(altvbkcontaining->payloadIds.size(), 1);
-  ASSERT_EQ(altvbkcontaining->payloadIds.at(0), vtb1.getId());
+  ASSERT_EQ(altvbkcontaining->vtbids.size(), 1);
+  ASSERT_EQ(altvbkcontaining->vtbids.at(0), vtb1.getId());
 
   // add vtb2
   auto cmd2 = std::make_shared<AddVTB>(alttree, vtb2);
   ASSERT_TRUE(cmd2->Execute(state));
 
-  ASSERT_EQ(altvbkcontaining->payloadIds.size(), 2);
-  ASSERT_EQ(altvbkcontaining->payloadIds.at(0), vtb1.getId());
-  ASSERT_EQ(altvbkcontaining->payloadIds.at(1), vtb2.getId());
+  ASSERT_EQ(altvbkcontaining->vtbids.size(), 2);
+  ASSERT_EQ(altvbkcontaining->vtbids.at(0), vtb1.getId());
+  ASSERT_EQ(altvbkcontaining->vtbids.at(1), vtb2.getId());
 
   // unexecute VTB2
   ASSERT_NO_FATAL_FAILURE(cmd2->UnExecute());
 
-  ASSERT_EQ(altvbkcontaining->payloadIds.size(), 1);
-  ASSERT_EQ(altvbkcontaining->payloadIds.at(0), vtb1.getId());
+  ASSERT_EQ(altvbkcontaining->vtbids.size(), 1);
+  ASSERT_EQ(altvbkcontaining->vtbids.at(0), vtb1.getId());
 
   // unexecute VTB1
   ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
-  ASSERT_EQ(altvbkcontaining->payloadIds.size(), 0);
+  ASSERT_EQ(altvbkcontaining->vtbids.size(), 0);
 }

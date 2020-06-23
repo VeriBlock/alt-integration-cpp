@@ -36,9 +36,9 @@ struct AddVTB : public Command {
     // duplicates not allowed
     // we make a check before addPayloads because previously
     // added payload will be erased when addPayloads returns false
-    if (std::find(index->payloadIds.begin(),
-                  index->payloadIds.end(),
-                  vtb_.getId()) != index->payloadIds.end()) {
+    if (std::find(index->vtbids.begin(),
+                  index->vtbids.end(),
+                  vtb_.getId()) != index->vtbids.end()) {
       return state.Invalid(
           block_t::name() + "-duplicate-payloads",
           fmt::sprintf("Containing block=%s already contains payload %s.",
