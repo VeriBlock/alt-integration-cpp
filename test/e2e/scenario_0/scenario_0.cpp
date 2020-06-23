@@ -43,6 +43,17 @@ static std::vector<T> parse(const std::string& in,
   return ret;
 }
 
+struct Scenario0AltChainParams : public AltChainParamsRegTest {
+  ~Scenario0AltChainParams() override = default;
+  Scenario0AltChainParams(int id = 0) : AltChainParamsRegTest(id) {}
+
+  std::vector<uint8_t> getHash(
+      const std::vector<uint8_t>& bytes) const noexcept override {
+    BtcBlock block = BtcBlock::fromRaw(bytes);
+    return block.getHash().asVector();
+  }
+};
+
 struct Scenario0 : public ::testing::Test {
   const int btcStart = 1717746;
   const int vbkStart = 438198;
@@ -64,7 +75,7 @@ struct Scenario0 : public ::testing::Test {
     GetLogger().level = LogLevel::info;
 
     config = std::make_shared<Config>();
-    config->alt = std::make_shared<AltChainParamsRegTest>(chainId);
+    config->alt = std::make_shared<Scenario0AltChainParams>(chainId);
 
     config->btc.params = std::make_shared<BtcChainParamsTest>();
     config->btc.startHeight = btcStart;
@@ -104,18 +115,16 @@ TEST_F(Scenario0, Scenario0) {
   containing.timestamp = 10002;
   containing.hash = std::vector<uint8_t>{1, 3, 3, 10};
 
-  AltPayloads payloads;
-  payloads.popData.hasAtv = true;
-  payloads.popData.atv = atv;
-  payloads.popData.vtbs = vtbs;
-  payloads.containingBlock = containing;
-  payloads.endorsed = endorsed;
+  // TODO correctly generate popData
+  PopData popData;
+  popData.atvs = {atv};
+  popData.vtbs = vtbs;
 
   ValidationState state;
   ASSERT_TRUE(alt->acceptBlock(endorsedPrev, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(endorsed, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
-  ASSERT_TRUE(alt->addPayloads(containing.hash, {payloads}, state));
+  ASSERT_TRUE(alt->addPayloads(containing.hash, popData, state));
   ASSERT_FALSE(alt->setState(containing.hash, state));
   ASSERT_EQ("ALT-bad-command+VBK-bad-containing", state.GetPath());
 }

@@ -25,15 +25,15 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   auto altForkPoint = chainA;
 
   chainA = generateNextBlock(chainA);
-  auto payloads = endorseAltBlock(altForkPoint, chainA, 1);
+  auto payloads = endorseAltBlock({altForkPoint}, 1);
   ASSERT_TRUE(alttree.acceptBlock(chainA, state));
   ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), {payloads}, state));
 
   // make a copy that we will use later to create corrupted payloads
-  VTB corruptedVtb = payloads.popData.vtbs.at(0);
+  VTB corruptedVtb = payloads.vtbs.at(0);
 
   chainA = generateNextBlock(chainA);
-  payloads = endorseAltBlock(altForkPoint, chainA, 1);
+  payloads = endorseAltBlock({altForkPoint}, 1);
   ASSERT_TRUE(alttree.acceptBlock(chainA, state));
   ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), {payloads}, state));
 
@@ -44,17 +44,14 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(altForkPoint));
   AltBlock corruptedAltBlock = generateNextBlock(altForkPoint);
-  AltPayloads corruptedPayloads =
-      generateAltPayloads(tx,
-                          corruptedAltBlock,
-                          altForkPoint,
-                          vbkparam.getGenesisBlock().getHash());
+  PopData corruptedPayloads =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  corruptedPayloads.popData.vtbs.push_back(corruptedVtb);
+  corruptedPayloads.vtbs.push_back(corruptedVtb);
 
   ASSERT_TRUE(alttree.acceptBlock(corruptedAltBlock, state));
   ASSERT_TRUE(alttree.addPayloads(
-      corruptedAltBlock.getHash(), {corruptedPayloads}, state));
+      corruptedAltBlock.getHash(), corruptedPayloads, state));
 
   auto chainB = corruptedAltBlock;
 

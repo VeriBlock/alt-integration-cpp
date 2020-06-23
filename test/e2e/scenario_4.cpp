@@ -52,17 +52,17 @@ TEST_F(Scenario4, scenario_4) {
 
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads altPayloads1 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads1 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
   // new tip is the next block after vbkTip
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
             vbkTip.getHash());
   vbkTip = *popminer->vbk().getBestChain().tip();
 
-  altPayloads1.popData.vtbs = {vtbs1[0]};
+  altPayloads1.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
@@ -73,17 +73,17 @@ TEST_F(Scenario4, scenario_4) {
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads altPayloads2 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads2 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
   // new tip is the next block after vbkTip
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
             vbkTip.getHash());
   vbkTip = *popminer->vbk().getBestChain().tip();
 
-  altPayloads2.popData.vtbs = {vtbs2[0]};
+  altPayloads2.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
@@ -96,8 +96,8 @@ TEST_F(Scenario4, scenario_4) {
   chain2.resize(chain.size() - 5);
   containingBlock = generateNextBlock(*chain2.rbegin());
   chain2.push_back(containingBlock);
-  AltPayloads altPayloads3 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, containingVbkBlock1->getHash());
+  PopData altPayloads3 =
+      generateAltPayloads({tx}, containingVbkBlock1->getHash());
 
   // new tip is the next block after vbkTip
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
@@ -105,7 +105,7 @@ TEST_F(Scenario4, scenario_4) {
   vbkTip = *popminer->vbk().getBestChain().tip();
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, {altPayloads3}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, altPayloads3, state));
   EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 

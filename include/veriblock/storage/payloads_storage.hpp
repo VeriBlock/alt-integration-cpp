@@ -7,15 +7,18 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_STORAGE_HPP_
 
 #include <veriblock/blockchain/command_group.hpp>
-#include <veriblock/entities/payloads.hpp>
+#include <veriblock/entities/atv.hpp>
+#include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/entities/vtb.hpp>
 #include <veriblock/storage/storage_exceptions.hpp>
 #include <veriblock/storage/payloads_base_storage.hpp>
+#include <veriblock/storage/storage_exceptions.hpp>
 
 namespace altintegration {
 
-class PayloadsStorage : public PayloadsBaseStorage<AltPayloads>,
-                        public PayloadsBaseStorage<VTB> {
+class PayloadsStorage : public PayloadsBaseStorage<ATV>,
+                        public PayloadsBaseStorage<VTB>,
+                        public PayloadsBaseStorage<VbkBlock> {
  public:
   virtual ~PayloadsStorage() = default;
 
@@ -41,27 +44,14 @@ class PayloadsStorage : public PayloadsBaseStorage<AltPayloads>,
     }
   }
 
-  template <typename Payloads, typename BlockTree>
+
+  // realisation in the alt_block_tree, vbK_block_tree
+  template <typename BlockTree>
   std::vector<CommandGroup> loadCommands(
-      const std::vector<typename Payloads::id_t>& pids, BlockTree& tree) {
-    std::vector<CommandGroup> out{};
-    for (const auto& pid : pids) {
-      Payloads payloads;
-      if (!PayloadsBaseStorage<Payloads>::prepo_->get(pid, &payloads)) {
-        throw StateCorruptedException(
-            fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
-      }
-      CommandGroup cg;
-      cg.id = pid;
-      cg.valid = payloads.valid;
-      tree.payloadsToCommands(payloads, cg.commands);
-      out.push_back(cg);
-    }
-    return out;
-  }
+      const typename BlockTree::index_t& index, BlockTree& tree);
 
   template <typename Payloads>
-  void setValidity(const typename Payloads::id_t &pid, bool valid) {
+  void setValidity(const typename Payloads::id_t& pid, bool valid) {
     auto payloads = loadPayloads<Payloads>(pid);
     payloads.valid = valid;
     savePayloads(payloads);

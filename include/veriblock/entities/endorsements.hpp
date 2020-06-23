@@ -12,7 +12,7 @@
 namespace altintegration {
 
 struct VTB;
-struct AltPayloads;
+struct ATV;
 
 // endorsement of VBK blocks in BTC
 using VbkEndorsement = Endorsement<uint192, uint256, VTB, int32_t>;
@@ -23,24 +23,15 @@ template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const VTB& c);
 
 // endorsement of ALT blocks in VBK
-using AltEndorsement =
-    Endorsement<std::vector<uint8_t>, uint192, AltPayloads, int32_t>;
+using AltEndorsement = Endorsement<std::vector<uint8_t>, uint192, ATV, int32_t>;
+
 template <>
-AltEndorsement AltEndorsement ::fromContainer(const AltPayloads& c);
+AltEndorsement AltEndorsement ::fromContainer(const ATV& c,
+                                              const std::vector<uint8_t>& containingHash,
+                                              const std::vector<uint8_t>& endorsedHash,
+                                              const int32_t& endorsedHeight);
 template <>
-AltEndorsement::id_t AltEndorsement::getId(const AltPayloads& c);
-
-struct DummyEndorsement {
-  using id_t = bool;
-  std::vector<uint8_t> endorsedHash;
-
-  id_t getId() const { return true; }
-
-  std::string toPrettyString(size_t level) const {
-    return fmt::sprintf("%sDummyEndorsement{}", std::string(level, ' '));
-  }
-};
-
+AltEndorsement::id_t AltEndorsement::getId(const ATV& c);
 template <>
 inline std::string VbkEndorsement::toPrettyString(size_t level) const {
   return fmt::sprintf(
@@ -68,7 +59,6 @@ inline std::string AltEndorsement::toPrettyString(size_t level) const {
 }  // namespace altintegration
 
 namespace std {
-
 template <>
 struct hash<altintegration::VbkEndorsement> {
   size_t operator()(const altintegration::VbkEndorsement& e) const {

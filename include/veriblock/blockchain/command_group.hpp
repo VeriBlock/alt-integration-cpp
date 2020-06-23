@@ -15,8 +15,16 @@ namespace altintegration {
 struct CommandGroup {
   using storage_t = std::vector<CommandPtr>;
 
-  // ATV id or VTB id
-  uint256 id;
+  CommandGroup(const std::vector<uint8_t> id,
+               bool valid,
+               const std::string& payload_type_name)
+      : payload_type_name(payload_type_name), id(id), valid(valid) {}
+
+  // HACK, store the payload type name
+  std::string payload_type_name{};
+
+  // ATV id or VTB id or VBK block id
+  std::vector<uint8_t> id;
   storage_t commands;
   bool valid{true};
 
@@ -30,6 +38,8 @@ struct CommandGroup {
   typename storage_t::reverse_iterator rend() { return commands.rend(); }
   typename storage_t::const_reverse_iterator rend() const { return commands.rend(); }
   // clang-format on
+
+  std::string getPayloadsTypeName() const { return payload_type_name; }
 
   bool operator==(const CommandGroup& o) const { return id == o.id; }
 

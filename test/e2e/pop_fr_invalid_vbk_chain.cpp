@@ -63,18 +63,15 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   //! act: add ATV1, VTB1 to ALT9. should be valid.
   auto vtb1 = popminer->vbkPayloads[vtbcontaining.getHash()][0];
-  AltPayloads p1;
-  p1.endorsed = chain[5];
-  p1.containingBlock = chain[9];
-  p1.popData.hasAtv = true;
-  p1.popData.atv = atv1;
-  p1.popData.vtbs = {vtb1};
-  fillVbkContext(p1.popData.vbk_context,
+  PopData p1;
+  p1.atvs = {atv1};
+  p1.vtbs = {vtb1};
+  fillVbkContext(p1.context,
                  getLastKnownVbkBlock(),
                  atv1.containingBlock.getHash(),
                  popminer->vbk());
 
-  ASSERT_TRUE(alttree.addPayloads(chain[9], {p1}, state));
+  ASSERT_TRUE(alttree.addPayloads(chain[9], p1, state));
   ASSERT_TRUE(alttree.setState(chain[9].hash, state)) << state.toString();
 
   //! act: add ATV2, VTB2 to ALT10
@@ -85,23 +82,20 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   ASSERT_EQ(atv1.containingBlock.height, 42);
 
   auto vtb2 = popminer->vbkPayloads[vtbcontaining.getHash()][1];
-  AltPayloads p2;
-  p2.endorsed = chain[5];
-  p2.containingBlock = chain[10];
-  p2.popData.hasAtv = true;
-  p2.popData.atv = atv2;
+  PopData p2;
+  p2.atvs = {atv2};
   // break VTB2: break hash of containing block
   vtb2.containingBlock.previousBlock = uint96::fromHex("abcdef");
-  p2.popData.vtbs = {vtb2};
+  p2.vtbs = {vtb2};
 
-  ASSERT_TRUE(alttree.addPayloads(chain[10], {p2}, state));
+  ASSERT_TRUE(alttree.addPayloads(chain[10], p2, state));
   ASSERT_FALSE(alttree.setState(chain[10].hash, state));
 }
 
 TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
   popminer->mineBtcBlocks(97);
 
-  auto* vbkForkPoint = popminer->mineVbkBlocks(20);
+  auto *vbkForkPoint = popminer->mineVbkBlocks(20);
 
   auto *tipA = popminer->mineVbkBlocks(*vbkForkPoint, 19);
   auto *tipB = popminer->mineVbkBlocks(*vbkForkPoint, 19);
@@ -117,7 +111,7 @@ TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
   ASSERT_EQ(20, endorsedBlock->height);
 
   auto btcTx = popminer->createBtcTxEndorsingVbkBlock(*endorsedBlock->header);
-  auto* btcTip = popminer->mineBtcBlocks(1);
+  auto *btcTip = popminer->mineBtcBlocks(1);
 
   popminer->createVbkPopTxEndorsingVbkBlock(
       *btcTip->header,

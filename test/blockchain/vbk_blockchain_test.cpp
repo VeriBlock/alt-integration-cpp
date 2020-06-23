@@ -5,15 +5,13 @@
 
 #include <gtest/gtest.h>
 
-#include <fstream>
 #include <memory>
 
 #include "block_headers.hpp"
-#include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
-#include "veriblock/storage/pop_storage.hpp"
 #include "veriblock/literals.hpp"
+#include "veriblock/storage/pop_storage.hpp"
 
 using namespace altintegration;
 

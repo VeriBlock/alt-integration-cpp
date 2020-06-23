@@ -13,15 +13,14 @@
 #include "veriblock/config.hpp"
 #include "veriblock/entities/altblock.hpp"
 #include "veriblock/entities/btcblock.hpp"
-#include "veriblock/entities/payloads.hpp"
+#include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/serde.hpp"
 
 namespace altintegration {
 
 struct TestCase {
-  using alt_block_with_payloads_t =
-      std::pair<AltBlock, std::vector<AltPayloads>>;
+  using alt_block_with_payloads_t = std::pair<AltBlock, PopData>;
 
   std::vector<alt_block_with_payloads_t> alt_tree;
   Config config;

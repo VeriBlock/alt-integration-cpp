@@ -33,13 +33,17 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads altPayloads1 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads1 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  AltEndorsement endorsement1 = AltEndorsement::fromContainer(altPayloads1);
+  AltEndorsement endorsement1 =
+      AltEndorsement::fromContainer(altPayloads1.atvs[0],
+                                    containingBlock.getHash(),
+                                    endorsedBlock.getHash(),
+                                    endorsedBlock.height);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
   ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
@@ -57,10 +61,14 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       generatePublicationData(endorsedBlock));
   containingBlock = generateNextBlock(*forkchain1.rbegin());
   forkchain1.push_back(containingBlock);
-  AltPayloads altPayloads2 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads2 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  AltEndorsement endorsement2 = AltEndorsement::fromContainer(altPayloads2);
+  AltEndorsement endorsement2 =
+      AltEndorsement::fromContainer(altPayloads2.atvs[0],
+                                    containingBlock.getHash(),
+                                    endorsedBlock.getHash(),
+                                    endorsedBlock.height);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state))
@@ -81,13 +89,17 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       generatePublicationData(endorsedBlock));
   containingBlock = generateNextBlock(*forkchain2.rbegin());
   forkchain2.push_back(containingBlock);
-  AltPayloads altPayloads3 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads3 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  AltEndorsement endorsement3 = AltEndorsement::fromContainer(altPayloads3);
+  AltEndorsement endorsement3 =
+      AltEndorsement::fromContainer(altPayloads3.atvs[0],
+                                    containingBlock.getHash(),
+                                    endorsedBlock.getHash(),
+                                    endorsedBlock.height);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads3, state));
   ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
   EXPECT_TRUE(state.IsValid());
 
@@ -151,12 +163,8 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
       generatePublicationData(endorsedBlock1));
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads1 =
-      generateAltPayloads(tx1,
-                          containingBlock,
-                          endorsedBlock1,
-                          vbkparam.getGenesisBlock().getHash(),
-                          0);
+  PopData payloads1 =
+      generateAltPayloads({tx1}, vbkparam.getGenesisBlock().getHash(), 0);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
 

@@ -13,6 +13,8 @@
 namespace altintegration {
 
 struct Command {
+  using payload_t = bool;
+
   virtual ~Command() = default;
 
   virtual bool Execute(ValidationState& state) = 0;

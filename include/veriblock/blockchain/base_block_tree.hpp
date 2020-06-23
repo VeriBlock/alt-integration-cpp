@@ -139,7 +139,8 @@ struct BaseBlockTree {
     doInvalidate(toBeInvalidated, reason);
 
     // flag next subtrees (excluding current block) as BLOCK_FAILED_CHILD
-    for (auto* pnext : toBeInvalidated.pnext) {
+    for (auto* ptr : toBeInvalidated.pnext) {
+      auto* pnext = ptr;
       forEachNodePreorder<block_t>(*pnext, [&](index_t& index) {
         bool valid = index.isValid();
         doInvalidate(index, BLOCK_FAILED_CHILD);
@@ -214,8 +215,8 @@ struct BaseBlockTree {
 
   bool operator==(const BaseBlockTree& o) const {
     TreeFieldsComparator cmp{};
-    return cmp(blocks_, o.blocks_) &&
-           cmp(tips_, o.tips_) && (activeChain_ == o.activeChain_);
+    return cmp(blocks_, o.blocks_) && cmp(tips_, o.tips_) &&
+           (activeChain_ == o.activeChain_);
   }
 
   bool operator!=(const BaseBlockTree& o) const { return !operator==(o); }
@@ -451,25 +452,5 @@ struct BaseBlockTree {
   };
 };
 
-// HACK: getBlockIndex accepts either hash_t or prev_block_hash_t
-// then, depending on what it received, it should do trim LE on full hash to
-// receive short hash, which is stored inside a map. In this weird case, when
-// Block=VbkBlock, we may call `getBlockIndex(block->previousBlock)`, it is a
-// call `getBlockIndex(Blob<12>). But when `getBlockIndex` accepts it, it does
-// an implicit cast to full hash (hash_t), adding zeroes in the end. Then,
-// .trimLE returns 12 zeroes.
-//
-// This hack allows us to inject explicit conversion hash_t (Blob<24>) ->
-// prev_block_hash_t (Blob<12>).
-template <>
-template <>
-inline BaseBlockTree<VbkBlock>::prev_block_hash_t
-BaseBlockTree<VbkBlock>::makePrevHash<BaseBlockTree<VbkBlock>::hash_t>(
-    const hash_t& h) const {
-  // do an explicit cast from hash_t -> prev_block_hash_t
-  return h.template trimLE<prev_block_hash_t::size()>();
-}
-
 }  // namespace altintegration
-
 #endif  // ALTINTEGRATION_BASE_BLOCK_TREE_HPP

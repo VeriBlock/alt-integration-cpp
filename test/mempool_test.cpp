@@ -14,19 +14,12 @@
 
 using namespace altintegration;
 
-std::vector<uint8_t> hash_function(const std::vector<uint8_t>& bytes) {
-  ReadStream stream(bytes);
-  AltBlock altBlock = AltBlock::fromVbkEncoding(stream);
-  return altBlock.getHash();
-}
-
 struct MemPoolFixture : public PopTestFixture, public ::testing::Test {};
 
 TEST_F(MemPoolFixture, removePayloads_test) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
@@ -65,33 +58,34 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   EXPECT_TRUE(mempool.submitVTB(vtbs, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 2);
-  EXPECT_EQ(v_popData[0].atv, atv);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv);
 
   // do the same to show that from mempool do not remove payloads
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = mempool.getPop(alttree);
+  popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 2);
-  EXPECT_EQ(v_popData[0].atv, atv);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv);
 
   // remove from mempool
-  mempool.removePayloads(v_popData);
+  mempool.removePayloads(popData);
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = mempool.getPop(alttree);
-  EXPECT_EQ(v_popData.size(), 0);
+  popData = mempool.getPop(alttree);
+  EXPECT_EQ(popData.atvs.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 0);
+  EXPECT_EQ(popData.context.size(), 0);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_1) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
@@ -134,19 +128,15 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   EXPECT_TRUE(mempool.submitVTB(vtbs, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 2);
+  EXPECT_EQ(popData.vtbs.size(), 2);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), {payloads}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
@@ -154,8 +144,7 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
 TEST_F(MemPoolFixture, getPop_scenario_2) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
@@ -203,18 +192,15 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   EXPECT_TRUE(mempool.submitVTB({vtb1, vtb2}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 2);
+  EXPECT_EQ(popData.vtbs.size(), 2);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
@@ -222,8 +208,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
 TEST_F(MemPoolFixture, getPop_scenario_3) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
@@ -242,16 +227,17 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
   EXPECT_TRUE(mempool.submitATV({atv}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 0);
+  EXPECT_EQ(popData.atvs.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 0);
+  EXPECT_EQ(popData.context.size(), 0);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_4) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
@@ -271,18 +257,15 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
   EXPECT_TRUE(mempool.submitATV({atv}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 0);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
@@ -290,8 +273,7 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
 TEST_F(MemPoolFixture, getPop_scenario_5) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
@@ -341,26 +323,22 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 2);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 1);
-  EXPECT_EQ(v_popData[0].atv, atv1);
-  EXPECT_EQ(v_popData[0].vtbs[0], vtb1);
-  EXPECT_EQ(v_popData[1].vtbs.size(), 1);
-  EXPECT_EQ(v_popData[1].atv, atv2);
-  EXPECT_EQ(v_popData[1].vtbs[0], vtb2);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 2);
+
+  EXPECT_EQ(popData.vtbs.at(0), vtb1);
+  EXPECT_EQ(popData.atvs.at(0), atv1);
+
+  EXPECT_EQ(popData.atvs.at(1), atv2);
+  EXPECT_EQ(popData.vtbs.at(1), vtb2);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads1 =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
-  AltPayloads payloads2 =
-      generateAltPayloads(v_popData[1], containingBlock, endorsedBlock2);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock, {payloads1, payloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
@@ -368,8 +346,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
 TEST_F(MemPoolFixture, getPop_scenario_6) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
@@ -419,26 +396,19 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 2);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs[0], vtb1);
-  EXPECT_EQ(v_popData[0].atv, atv1);
-  EXPECT_EQ(v_popData[1].vtbs.size(), 1);
-  EXPECT_EQ(v_popData[1].atv, atv2);
-  EXPECT_EQ(v_popData[1].vtbs[0], vtb2);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.vtbs.at(0), vtb1);
+  EXPECT_EQ(popData.vtbs.at(1), vtb2);
+  EXPECT_EQ(popData.atvs.at(0), atv1);
+  EXPECT_EQ(popData.atvs.at(1), atv2);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads1 =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
-  AltPayloads payloads2 =
-      generateAltPayloads(v_popData[1], containingBlock, endorsedBlock2);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock, {payloads1, payloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
@@ -446,8 +416,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
 TEST_F(MemPoolFixture, getPop_scenario_7) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
@@ -497,30 +466,26 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs[0], vtb1);
+  EXPECT_EQ(popData.vtbs.size(), 1);
+  EXPECT_EQ(popData.vtbs.at(0), vtb1);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv1);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
 
-// TODO: review this test and fix accordingly. Note: VTB duplidates are
-// forbidden now.
 TEST_F(MemPoolFixture, getPop_scenario_8) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
@@ -571,7 +536,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   EXPECT_TRUE(checkVTB(
       vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
-//  EXPECT_NE(vtb1, vtb2);
+  //  EXPECT_NE(vtb1, vtb2);
   EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
             VbkEndorsement::fromContainer(vtb2));
 
@@ -587,19 +552,16 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   EXPECT_TRUE(mempool.submitVTB({vtb1, vtb2}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  ASSERT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData.at(0).vtbs.size(), 1);
-  EXPECT_EQ(v_popData.at(0).vtbs.at(0), vtb1);
+  EXPECT_EQ(popData.vtbs.size(), 1);
+  EXPECT_EQ(popData.vtbs.at(0), vtb1);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
@@ -607,8 +569,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
 TEST_F(MemPoolFixture, getPop_scenario_9) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
@@ -629,36 +590,33 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   EXPECT_TRUE(mempool.submitATV({atv1}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].atv, atv1);
+  EXPECT_EQ(popData.atvs.at(0), atv1);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
-  mempool.removePayloads(v_popData);
+  mempool.removePayloads(popData);
 
   EXPECT_TRUE(mempool.submitATV({atv1}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = mempool.getPop(alttree);
+  popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 0);
+  EXPECT_EQ(popData.atvs.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 0);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_10) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
@@ -690,24 +648,21 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   EXPECT_TRUE(mempool.submitVTB({vtb1}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs[0], vtb1);
+  EXPECT_EQ(popData.vtbs.size(), 1);
+  EXPECT_EQ(popData.vtbs.at(0), vtb1);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads1 =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // remove payloads from the mempool
-  mempool.removePayloads(v_popData);
+  mempool.removePayloads(popData);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -754,17 +709,16 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   EXPECT_TRUE(mempool.submitVTB({vtb2}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = mempool.getPop(alttree);
+  popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].vtbs.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 0);
+  EXPECT_EQ(popData.atvs.size(), 1);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_11) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
@@ -785,18 +739,16 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   EXPECT_TRUE(mempool.submitATV({atv1}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].atv, atv1);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv1);
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads1 =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
@@ -808,18 +760,16 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   EXPECT_TRUE(mempool.submitATV({atv2}, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = mempool.getPop(alttree);
+  popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), 1);
-  EXPECT_EQ(v_popData[0].atv, atv2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv2);
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads payloads2 =
-      generateAltPayloads(v_popData[0], containingBlock, endorsedBlock1);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {payloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 }
@@ -827,8 +777,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
 TEST_F(MemPoolFixture, getPop_scenario_12) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
-                  alttree.btc().getParams(),
-                  &hash_function);
+                  alttree.btc().getParams());
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
@@ -853,7 +802,7 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
   }
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  std::vector<PopData> v_popData = mempool.getPop(alttree);
+  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(v_popData.size(), alttree.getParams().getMaxPopDataPerBlock());
+  EXPECT_EQ(popData.atvs.size(), alttree.getParams().getMaxPopDataPerBlock());
 }

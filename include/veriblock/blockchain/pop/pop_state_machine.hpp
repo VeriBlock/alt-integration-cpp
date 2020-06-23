@@ -12,6 +12,28 @@
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
 
+namespace {
+void setValidity(const altintegration::CommandGroup& cm,
+                 bool valid,
+                 altintegration::PayloadsStorage& storage) {
+  if (cm.getPayloadsTypeName() == altintegration::ATV::name()) {
+    storage.setValidity<altintegration::ATV>(altintegration::ATV::id_t(cm.id),
+                                             valid);
+  }
+
+  if (cm.getPayloadsTypeName() == altintegration::VTB::name()) {
+    storage.setValidity<altintegration::VTB>(altintegration::VTB::id_t(cm.id),
+                                             valid);
+  }
+
+  if (cm.getPayloadsTypeName() == altintegration::VbkBlock::name()) {
+    storage.setValidity<altintegration::VbkBlock>(
+        altintegration::VbkBlock::id_t(cm.id), valid);
+  }
+}
+
+}  // namespace
+
 namespace altintegration {
 
 template <typename ProtectingBlockTree,
@@ -21,8 +43,7 @@ template <typename ProtectingBlockTree,
 struct PopStateMachine {
   using index_t = ProtectedIndex;
   using block_t = typename index_t::block_t;
-  using payloads_t = typename block_t::payloads_t;
-  using endorsement_t = typename block_t::endorsement_t;
+  using endorsement_t = typename index_t::endorsement_t;
   using height_t = typename ProtectedIndex::height_t;
 
   PopStateMachine(ProtectedTree& ed,
@@ -34,18 +55,17 @@ struct PopStateMachine {
   // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
     std::vector<CommandPtr> executed;
-    auto cgs =
-        storage_.loadCommands<payloads_t, ProtectedTree>(index.payloadIds, ed_);
+    auto cgs = storage_.loadCommands<ProtectedTree>(index, ed_);
     // even if the block is marked as invalid, we still try to apply it
     for (const auto& cg : cgs) {
       VBK_LOG_DEBUG("Applying payload %s from block %s",
-                    cg.id.toHex(),
+                    HexStr(cg.id),
                     index.toShortPrettyString());
 
       for (auto& cmd : cg.commands) {
         if (!cmd->Execute(state)) {
           // invalidate command group
-          storage_.setValidity<payloads_t>(cg.id, false);
+          ::setValidity(cg, false, storage_);
           VBK_LOG_ERROR("Invalid %s command in block %s: %s",
                         index_t::block_t::name(),
                         index.toPrettyString(),
@@ -69,7 +89,7 @@ struct PopStateMachine {
       }  // end for
 
       // re-validate command group
-      storage_.setValidity<payloads_t>(cg.id, true);
+      ::setValidity(cg, true, storage_);
     }  // end for
 
     // we successfully applied the block
@@ -82,11 +102,10 @@ struct PopStateMachine {
 
   // atomic: applies either all of the block's commands or fails on an assert
   void unapplyBlock(const index_t& index) {
-    auto cgs =
-        storage_.loadCommands<payloads_t, ProtectedTree>(index.payloadIds, ed_);
+    auto cgs = storage_.loadCommands<ProtectedTree>(index, ed_);
     for (const auto& cg : reverse_iterate(cgs)) {
       VBK_LOG_DEBUG("Unapplying payload %s from block %s",
-                    cg.id.toHex(),
+                    HexStr(cg.id),
                     index.toShortPrettyString());
       for (auto& cmd : reverse_iterate(cg.commands)) {
         cmd->UnExecute();
@@ -113,7 +132,7 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* current : reverse_iterate(chain)) {
-      if (current->payloadIds.empty()) {
+      if (current->payloadsIdsEmpty()) {
         continue;
       }
 

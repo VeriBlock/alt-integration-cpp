@@ -5,15 +5,14 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/storage/pop_storage.hpp>
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/alt-util.hpp>
+#include <veriblock/storage/pop_storage.hpp>
 
 using namespace altintegration;
 
 struct AltTreeRepositoryTest : public ::testing::Test, public PopTestFixture {
-  AltTreeRepositoryTest() {
-  }
+  AltTreeRepositoryTest() {}
 };
 
 BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
@@ -44,7 +43,8 @@ TEST_F(AltTreeRepositoryTest, Basic) {
   PopStorage storage;
   EXPECT_TRUE(popminer->vbk().saveToStorage(storage, state));
 
-  VbkBlockTree reloadedVbkTree{vbkparam, btcparam, popminer->vbk().getStoragePayloads()};
+  VbkBlockTree reloadedVbkTree{
+      vbkparam, btcparam, popminer->vbk().getStoragePayloads()};
   EXPECT_TRUE(reloadedVbkTree.loadFromStorage(storage, state));
 
   EXPECT_TRUE(reloadedVbkTree.btc() == popminer->btc());
@@ -72,22 +72,23 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
-  AltPayloads altPayloads1 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads1 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
   // mine 1 VBK blocks
   popminer->mineVbkBlocks(1);
   popminer->mineBtcBlocks(1);
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   PopStorage storage;
   EXPECT_TRUE(alttree.saveToStorage(storage, state));
 
-  AltTree reloadedAltTree{altparam, vbkparam, btcparam, alttree.getStoragePayloads()};
+  AltTree reloadedAltTree{
+      altparam, vbkparam, btcparam, alttree.getStoragePayloads()};
   EXPECT_TRUE(reloadedAltTree.loadFromStorage(storage, state));
 
   EXPECT_TRUE(reloadedAltTree.vbk().btc() == alttree.vbk().btc());

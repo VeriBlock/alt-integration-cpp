@@ -9,7 +9,7 @@
 #include <veriblock/blockchain/alt_chain_params.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/entities/endorsements.hpp>
-#include <veriblock/entities/payloads.hpp>
+#include <veriblock/entities/vbkblock.hpp>
 
 #include "util/test_utils.hpp"
 
@@ -167,10 +167,10 @@ BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
 template <typename Block>
 struct ChainTestFixture : public ::testing::Test {
   using block_t = Block;
+  using index_t = BlockIndex<Block>;
   using hash_t = typename block_t::hash_t;
   using height_t = typename block_t::height_t;
-  using endorsement_t = typename block_t::endorsement_t;
-  using eid_t = typename endorsement_t::id_t;
+  using endorsement_t = typename index_t::endorsement_t;
 };
 
 TYPED_TEST_SUITE_P(ChainTestFixture);

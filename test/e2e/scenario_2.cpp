@@ -59,8 +59,8 @@ TEST_F(Scenario2, scenario_2) {
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
-  AltPayloads altPayloads1 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads1 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
@@ -83,15 +83,15 @@ TEST_F(Scenario2, scenario_2) {
             VbkEndorsement::fromContainer(vtbs[1]).id);
 
   // store vtbs in different altPayloads
-  altPayloads1.popData.vtbs = {vtbs[0]};
-  fillVbkContext(altPayloads1.popData.vbk_context,
+  altPayloads1.vtbs = {vtbs[0]};
+  fillVbkContext(altPayloads1.context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs[0].containingBlock.getHash(),
                  popminer->vbk());
 
   // Step 1
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads1}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   auto* containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
@@ -107,18 +107,18 @@ TEST_F(Scenario2, scenario_2) {
   mineAltBlocks(10, chain);
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads altPayloads2 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads2 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  altPayloads2.popData.vtbs = {vtbs[1]};
-  fillVbkContext(altPayloads2.popData.vbk_context,
+  altPayloads2.vtbs = {vtbs[1]};
+  fillVbkContext(altPayloads2.context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs[1].containingBlock.getHash(),
                  popminer->vbk());
 
   // Step 2
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
@@ -137,12 +137,12 @@ TEST_F(Scenario2, scenario_2) {
   chain2.resize(chain.size() - 5);
   containingBlock = generateNextBlock(*chain2.rbegin());
   chain2.push_back(containingBlock);
-  AltPayloads altPayloads3 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads3 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
   // Step 3
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads3, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
@@ -156,12 +156,12 @@ TEST_F(Scenario2, scenario_2) {
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
-  AltPayloads altPayloads4 = generateAltPayloads(
-      tx, containingBlock, endorsedBlock, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads4 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
   // Step 4
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads4}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads4, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 

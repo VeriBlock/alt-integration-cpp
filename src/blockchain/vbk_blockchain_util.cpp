@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
 #include <veriblock/third_party/BigDecimal.h>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 
@@ -210,7 +211,8 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
   size_t i = 0;
   std::vector<int64_t> pmedian;
   const BlockIndex<VbkBlock>* pindex = &prev;
-  for (i = 0; i < HISTORY_FOR_TIMESTAMP_AVERAGE; i++, pindex = pindex->pprev) {
+  for (i = 0; i < HISTORY_FOR_TIMESTAMP_AVERAGE;
+       i++, pindex = pindex->pprev) {
     if (pindex == nullptr) {
       break;
     }

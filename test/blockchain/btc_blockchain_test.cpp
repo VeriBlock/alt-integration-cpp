@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "block_headers.hpp"
-#include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/btc_blockchain_util.hpp"
 #include "veriblock/blockchain/miner.hpp"
