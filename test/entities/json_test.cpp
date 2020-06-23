@@ -318,7 +318,7 @@ TEST(ToJson, VTB) {
 }
 )";
 
-  ASSERT_EQ(expected, actual);
+  ASSERT_EQ(expected, actual) << actual;
 }
 
 TEST(ToJson, ATV) {
@@ -417,7 +417,7 @@ TEST(ToJson, ATV) {
 }
 )";
 
-  ASSERT_EQ(expected, actual);
+  ASSERT_EQ(expected, actual) << actual;
 }
 
 TEST(ToJson, BlockIndex) {
@@ -445,9 +445,12 @@ TEST(ToJson, BlockIndex) {
   },
   "height": 0,
   "ref": 0,
-  "status": 1
+  "status": 1,
+  "stored": {
+    "vtbids": []
+  }
 }
 )";
 
-  ASSERT_EQ(expected, actual);
+  ASSERT_EQ(expected, actual) << actual;
 }

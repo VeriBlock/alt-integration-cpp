@@ -131,6 +131,11 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putIntKV(obj, "status", i.status);
   json::putIntKV(obj, "ref", i.refCounter);
 
+  auto stored = json::makeEmptyObject<JsonValue>();
+  json::putArrayKV(stored, "vtbids", i.vtbids);
+
+  json::putKV(obj, "stored", stored);
+
   return obj;
 }
 

@@ -147,9 +147,9 @@ void VbkBlockTree::removePayloads(const block_t& block,
 
   for (const auto& pid : pids) {
     auto it =
-        std::find(index->payloadIds.begin(), index->payloadIds.end(), pid);
+        std::find(index->vtbids.begin(), index->vtbids.end(), pid);
     // silently ignore wrong payload ids to remove
-    if (it == index->payloadIds.end()) {
+    if (it == index->vtbids.end()) {
       continue;
     }
 
@@ -159,7 +159,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
       revalidateSubtree(*index, BLOCK_FAILED_POP, false);
     }
 
-    index->payloadIds.erase(it);
+    index->vtbids.erase(it);
   }
 
   // find all affected tips and do a fork resolution
@@ -221,8 +221,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     VBK_ASSERT(ret);
   }
 
-  std::set<pid_t> existingPids(index->payloadIds.begin(),
-                               index->payloadIds.end());
+  std::set<pid_t> existingPids(index->vtbids.begin(),
+                               index->vtbids.end());
   for (const auto& p : payloads) {
     auto pid = p.getId();
     if (!existingPids.insert(pid).second) {
@@ -232,7 +232,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                        index->toPrettyString(),
                        pid.toHex()));
     }
-    index->payloadIds.push_back(pid);
+    index->vtbids.push_back(pid);
     storagePayloads_.savePayloads(p);
   }
 
@@ -301,7 +301,7 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
   using pop_t = typename VbkBlockTree::index_t::payloads_t;
 
   std::vector<CommandGroup> out{};
-  for (const auto& pid : index.payloadIds) {
+  for (const auto& pid : index.vtbids) {
     pop_t payloads;
     if (!PayloadsBaseStorage<pop_t>::prepo_->get(pid, &payloads)) {
       throw StateCorruptedException(

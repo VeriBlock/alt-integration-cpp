@@ -23,14 +23,14 @@ struct VbkBlockAddon :
   using payloads_t = VTB;
 
   // VTB::id_t
-  std::vector<uint256> payloadIds;
+  std::vector<uint256> vtbids;
 
-  bool payloadsIdsEmpty() const { return payloadIds.empty(); }
+  bool payloadsIdsEmpty() const { return vtbids.empty(); }
 
   void setNull() {
     BtcBlockAddon::setNull();
     PopState<VbkEndorsement>::setNull();
-    payloadIds.clear();
+    vtbids.clear();
   }
 };
 
