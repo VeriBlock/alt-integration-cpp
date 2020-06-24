@@ -26,42 +26,17 @@ struct AddVTB : public Command {
     // add commands to VBK containing block
     auto containing = vtb_.containingBlock.getHash();
     auto& vbk = tree_->vbk();
-    auto* index = vbk.getBlockIndex(containing);
-    if (!index) {
-      return state.Invalid(
-          block_t::name() + "-bad-containing",
-          "Can not find VTB containing block: " + containing.toHex());
-    }
 
-    // duplicates not allowed
-    // we make a check before addPayloads because previously
-    // added payload will be erased when addPayloads returns false
-    if (std::find(index->vtbids.begin(),
-                  index->vtbids.end(),
-                  vtb_.getId()) != index->vtbids.end()) {
-      return state.Invalid(
-          block_t::name() + "-duplicate-payloads",
-          fmt::sprintf("Containing block=%s already contains payload %s.",
-                       index->toPrettyString(),
-                       vtb_.getId().toHex()));
-    }
-
-    // addPayloads changes state. if we can't add payloads, immediately clear
-    // all side effects
-    if (!vbk.addPayloads(containing, {vtb_}, state)) {
-      vbk.removePayloads(containing, {vtb_.getId()});
-      return false;
-    }
-
-    return true;
+    return vbk.addPayloads(containing, {vtb_}, state);
   }
 
   void UnExecute() override {
     auto hash = vtb_.containingBlock.getHash();
 
     auto* index = tree_->vbk().getBlockIndex(hash);
-    VBK_ASSERT(index != nullptr &&
-           "failed to roll back addVTB: the containing block does not exist");
+    VBK_ASSERT(
+        index != nullptr &&
+        "failed to roll back addVTB: the containing block does not exist");
 
     tree_->vbk().removePayloads(vtb_.containingBlock, {vtb_.getId()});
   }
