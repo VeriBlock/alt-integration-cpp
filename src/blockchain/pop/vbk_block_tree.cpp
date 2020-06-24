@@ -146,8 +146,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
   }
 
   for (const auto& pid : pids) {
-    auto it =
-        std::find(index->vtbids.begin(), index->vtbids.end(), pid);
+    auto it = std::find(index->vtbids.begin(), index->vtbids.end(), pid);
     // silently ignore wrong payload ids to remove
     if (it == index->vtbids.end()) {
       continue;
@@ -221,10 +220,11 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     VBK_ASSERT(ret);
   }
 
-  std::set<pid_t> existingPids(index->vtbids.begin(),
-                               index->vtbids.end());
-  for (const auto& p : payloads) {
-    auto pid = p.getId();
+  std::set<pid_t> existingPids(index->vtbids.begin(), index->vtbids.end());
+
+  // check that we can add all payloads
+  for (const auto& payload : payloads) {
+    auto pid = payload.getId();
     if (!existingPids.insert(pid).second) {
       return state.Invalid(
           block_t::name() + "-duplicate-payloads",
@@ -232,8 +232,13 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                        index->toPrettyString(),
                        pid.toHex()));
     }
+  }
+
+  for (const auto& payload : payloads) {
+    auto pid = payload.getId();
+
     index->vtbids.push_back(pid);
-    storagePayloads_.savePayloads(p);
+    storagePayloads_.savePayloads(payload);
   }
 
   // find all affected tips and do a fork resolution
@@ -244,7 +249,17 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     this->determineBestChain(activeChain_, *tip, state);
   }
 
-  return index->isValid();
+  if (!index->isValid()) {
+    std::vector<pid_t> pids;
+    pids.reserve(payloads.size());
+    for (const auto& payload : payloads) {
+      pids.emplace_back(payload.getId());
+    }
+
+    removePayloads(*index->header, pids);
+    return false;
+  }
+  return true;
 }
 
 void VbkBlockTree::payloadsToCommands(const payloads_t& p,
