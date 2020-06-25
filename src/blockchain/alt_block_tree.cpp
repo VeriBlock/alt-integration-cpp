@@ -472,7 +472,9 @@ bool AltTree::setTip(AltTree::index_t& to,
   bool changeTip = true;
   if (!skipSetState) {
     changeTip = cmp_.setState(*this, to, state, continueOnInvalid);
-    if (continueOnInvalid) VBK_ASSERT(changeTip);
+    if (continueOnInvalid) {
+      VBK_ASSERT(changeTip);
+    }
   }
 
   // edge case: if changeTip is false, then new block arrived on top of
