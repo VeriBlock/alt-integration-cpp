@@ -8,9 +8,9 @@
 
 #include <veriblock/blockchain/command_group.hpp>
 #include <veriblock/entities/atv.hpp>
+#include <veriblock/entities/popdata.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/entities/vtb.hpp>
-#include <veriblock/storage/storage_exceptions.hpp>
 #include <veriblock/storage/payloads_base_storage.hpp>
 #include <veriblock/storage/storage_exceptions.hpp>
 
@@ -44,6 +44,18 @@ class PayloadsStorage : public PayloadsBaseStorage<ATV>,
     }
   }
 
+  void savePayloads(const PopData& pop) {
+    // TODO: add bulk insert
+    for (auto& b : pop.context) {
+      savePayloads(b);
+    }
+    for (auto& b : pop.vtbs) {
+      savePayloads(b);
+    }
+    for (auto& b : pop.atvs) {
+      savePayloads(b);
+    }
+  }
 
   // realisation in the alt_block_tree, vbK_block_tree
   template <typename BlockTree>
@@ -55,6 +67,31 @@ class PayloadsStorage : public PayloadsBaseStorage<ATV>,
     auto payloads = loadPayloads<Payloads>(pid);
     payloads.valid = valid;
     savePayloads(payloads);
+  }
+
+  template <typename Payloads>
+  bool getValidity(const typename Payloads::id_t& pid) {
+    auto payloads = loadPayloads<Payloads>(pid);
+    return payloads.valid;
+  }
+
+  void setValidity(const CommandGroup& cg, bool valid) {
+    if (cg.getPayloadsTypeName() == altintegration::VbkBlock::name()) {
+      return setValidity<altintegration::VbkBlock>(
+          altintegration::VbkBlock::id_t(cg.id), valid);
+    }
+
+    if (cg.getPayloadsTypeName() == altintegration::VTB::name()) {
+      return setValidity<altintegration::VTB>(altintegration::VTB::id_t(cg.id),
+                                              valid);
+    }
+
+    if (cg.getPayloadsTypeName() == altintegration::ATV::name()) {
+      return setValidity<altintegration::ATV>(altintegration::ATV::id_t(cg.id),
+                                              valid);
+    }
+
+    VBK_ASSERT(false && "should not get here");
   }
 };
 

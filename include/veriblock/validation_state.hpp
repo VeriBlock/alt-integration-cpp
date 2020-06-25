@@ -27,6 +27,12 @@ class ValidationState {
 
   std::string toString() const { return GetPath() + ", " + GetDebugMessage(); }
 
+  void clear() {
+    stack_trace.clear();
+    m_debug_message.clear();
+    m_mode = MODE_VALID;
+  }
+
   bool Invalid(const std::string &reject_reason,
                const std::string &debug_message = "") {
     stack_trace.push_back(reject_reason);

@@ -37,27 +37,34 @@ bool AltTree::bootstrap(ValidationState& state) {
   return true;
 }
 
-template <typename Index, typename Pop, typename Storage>
+template <typename Index, typename Pop>
 bool handleAddPayloads(Index& index,
-                       const std::vector<Pop>& payloads,
+                       std::vector<Pop>& payloads,
                        ValidationState& state,
-                       Storage& storage) {
+                       bool continueOnInvalid = false) {
   auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
   std::set<typename Pop::id_t> existingPids(payloadIds.begin(),
                                             payloadIds.end());
 
-  for (const auto& p : payloads) {
-    auto pid = p.getId();
+  for (auto it = payloads.begin(); it != payloads.end();) {
+    auto pid = it->getId();
     if (!existingPids.insert(pid).second) {
+      if (continueOnInvalid) {
+        // remove duplicate id
+        it = payloads.erase(it);
+        continue;
+      }
+
       return state.Invalid(
           "ALT-duplicate-payloads",
-          fmt::sprintf("Containing block=%s already contains payload %s.",
+          fmt::sprintf("Containing block=%s already contains payload %s=%s.",
                        index.toPrettyString(),
+                       Pop::name(),
                        pid.toHex()));
     }
 
     payloadIds.push_back(pid);
-    storage.savePayloads(p);
+    ++it;
   }
 
   return true;
@@ -75,8 +82,9 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
 }
 
 bool AltTree::addPayloads(index_t& index,
-                          const PopData& payloads,
-                          ValidationState& state) {
+                          PopData& payloads,
+                          ValidationState& state,
+                          bool continueOnInvalid) {
   VBK_LOG_INFO("%s add %d VBK, %d VTB, %d ATV payloads to block %s",
                block_t::name(),
                payloads.context.size(),
@@ -101,15 +109,21 @@ bool AltTree::addPayloads(index_t& index,
     VBK_ASSERT(ret);
   }
 
-  if (!handleAddPayloads(index, payloads.context, state, storagePayloads_)) {
+  if (!handleAddPayloads(index, payloads.context, state, continueOnInvalid)) {
     return false;
   }
 
-  if (!handleAddPayloads(index, payloads.vtbs, state, storagePayloads_)) {
+  if (!handleAddPayloads(index, payloads.vtbs, state, continueOnInvalid)) {
     return false;
   }
 
-  return handleAddPayloads(index, payloads.atvs, state, storagePayloads_);
+  if (!handleAddPayloads(index, payloads.atvs, state, continueOnInvalid)) {
+    return false;
+  }
+
+  storagePayloads_.savePayloads(payloads);
+
+  return true;
 }
 
 bool AltTree::validatePayloads(const AltBlock& block,
@@ -336,7 +350,6 @@ void handleRemovePayloads(Tree& tree,
   for (const auto& pid : pids) {
     auto it = std::find(payloadIds.begin(), payloadIds.end(), pid);
     if (it == payloadIds.end()) {
-      // TODO: error message
       continue;
     }
 
@@ -380,9 +393,86 @@ void AltTree::removePayloads(index_t& index, const PopData& payloads) {
 bool AltTree::setTip(AltTree::index_t& to,
                      ValidationState& state,
                      bool skipSetState) {
+  return setTip(to, state, skipSetState, false);
+}
+
+template <typename Payloads, typename Storage>
+void removePayloadsIfInvalid(std::vector<Payloads>& p, Storage& storage) {
+  auto it = std::remove_if(p.begin(), p.end(), [&](const Payloads& payloads) {
+    auto id = payloads.getId();
+    auto isValid = storage.template getValidity<Payloads>(id);
+    return !isValid;
+  });
+  p.erase(it, p.end());
+}
+
+void AltTree::filterInvalidPayloads(PopData& pop) {
+  // return early
+  if (pop.context.empty() && pop.vtbs.empty() && pop.atvs.empty()) {
+    return;
+  }
+
+  VBK_LOG_INFO("Called with VBK=%d VTB=%d ATV=%d",
+               pop.context.size(),
+               pop.vtbs.size(),
+               pop.atvs.size());
+
+  // first, create tmp alt block
+  AltBlock tmp;
+  ValidationState state;
+  {
+    auto& tip = *getBestChain().tip();
+    tmp.hash = std::vector<uint8_t>(32, 2);
+    tmp.previousBlock = tip.getHash();
+    tmp.timestamp = tip.getBlockTime() + 1;
+    tmp.height = tip.height + 1;
+    bool ret = acceptBlock(tmp, state);
+    VBK_ASSERT(ret);
+  }
+
+  auto* tmpindex = getBlockIndex(tmp.hash);
+  VBK_ASSERT(tmpindex != nullptr);
+
+  // add all payloads in `continueOnInvalid` mode
+  bool ret = addPayloads(*tmpindex, pop, state, true);
+  VBK_ASSERT(ret);
+
+  // setState in 'continueOnInvalid' mode
+  ret = setTip(*tmpindex, state, false, true);
+  VBK_ASSERT(ret);
+
+  removePayloadsIfInvalid(pop.atvs, storagePayloads_);
+  removePayloadsIfInvalid(pop.vtbs, storagePayloads_);
+  removePayloadsIfInvalid(pop.context, storagePayloads_);
+
+  VBK_LOG_INFO("After filter VBK=%d VTB=%d ATV=%d",
+               pop.context.size(),
+               pop.vtbs.size(),
+               pop.atvs.size());
+
+  // at this point `pop` contains only valid payloads
+
+  // TODO: flush payloads db on disk here (do not write on disk until this
+  // point)
+
+  removeSubtree(*tmpindex);
+}
+
+bool AltTree::addPayloads(AltTree::index_t& index,
+                          const PopData& popData,
+                          ValidationState& state) {
+  auto copy = popData;
+  return addPayloads(index, copy, state, false);
+}
+
+bool AltTree::setTip(AltTree::index_t& to,
+                     ValidationState& state,
+                     bool skipSetState,
+                     bool continueOnInvalid) {
   bool changeTip = true;
   if (!skipSetState) {
-    changeTip = cmp_.setState(*this, to, state);
+    changeTip = cmp_.setState(*this, to, state, continueOnInvalid);
+    if (continueOnInvalid) VBK_ASSERT(changeTip);
   }
 
   // edge case: if changeTip is false, then new block arrived on top of
@@ -487,6 +577,54 @@ void PopStorage::saveBlocks(
   batch->commit();
 }
 
-uint8_t getBlockProof(const AltBlock&) { return 0; }
+namespace {
+bool removeId(std::vector<uint256>& pop, const uint256& id) {
+  auto it = std::find(pop.rbegin(), pop.rend(), id);
+  if (it == pop.rend()) {
+    return false;
+  }
+
+  auto toRemove = --(it.base());
+  pop.erase(toRemove);
+  return true;
+}
+
+bool removeId(std::vector<VbkBlock::id_t>& pop, const uint256& id) {
+  auto it = std::find_if(pop.rbegin(), pop.rend(), [&](const uint96& a) {
+    return uint256(a) == id;
+  });
+  if (it == pop.rend()) {
+    return false;
+  }
+
+  auto toRemove = --(it.base());
+  pop.erase(toRemove);
+  return true;
+}
+}  // namespace
+
+template <>
+void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
+                             const CommandGroup& cg) {
+  // TODO: can we do better?
+
+  if (cg.payload_type_name == VTB::name()) {
+    bool ret = removeId(index.vtbids, cg.id);
+    VBK_ASSERT(ret);
+    return;
+  }
+
+  if (cg.payload_type_name == ATV::name()) {
+    bool ret = removeId(index.atvids, cg.id);
+    VBK_ASSERT(ret);
+    return;
+  }
+
+  if (cg.payload_type_name == VbkBlock::name()) {
+    bool ret = removeId(index.vbkblockids, cg.id);
+    VBK_ASSERT(ret);
+    return;
+  }
+}
 
 }  // namespace altintegration

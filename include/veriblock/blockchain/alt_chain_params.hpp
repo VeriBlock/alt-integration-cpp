@@ -119,16 +119,9 @@ struct AltChainParams {
     return 50;
   }
 
-  /// The maximum allowed number of PoP data in a block
-  virtual uint32_t getMaxPopDataPerBlock() const noexcept { return 50; };
-
-  /** The maximum allowed weight for a PopData */
-  virtual uint32_t getMaxPopDataWeight() const noexcept { return 1024 * 1024; };
-
-  // maximum possible size for a single PopData
-  virtual uint32_t getSuperMaxPopDataWeight() const noexcept {
-    return 1024 * 1024 * 1024;  // TODO: figure out amount
-  };
+  virtual size_t getMaxPopDataSize() const noexcept {
+    return 1 * 1024 * 1024; // 1 MB
+  }
 
   // getter for reward parameters
   virtual const PopRewardsParams& getRewardParams() const noexcept {

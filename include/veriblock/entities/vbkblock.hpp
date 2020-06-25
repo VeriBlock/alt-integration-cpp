@@ -45,7 +45,7 @@ struct VbkBlock {
 
   // TODO: remove on command group cache implemented
   // flag to mark invalid command groups.
-  bool valid{};
+  mutable bool valid = true;
 
   std::string toPrettyString() const;
 

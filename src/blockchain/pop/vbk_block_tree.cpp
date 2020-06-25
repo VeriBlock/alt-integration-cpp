@@ -324,6 +324,25 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
   return out;
 }
 
+bool removeId(std::vector<uint256>& pop, const uint256& id) {
+  auto it = std::find(pop.rbegin(), pop.rend(), id);
+  if (it == pop.rend()) {
+    return false;
+  }
+
+  auto toRemove = --(it.base());
+  pop.erase(toRemove);
+  return true;
+}
+
+template <>
+void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
+                             const CommandGroup& cg) {
+  VBK_ASSERT(cg.payload_type_name == VTB::name());
+  bool ret = removeId(index.vtbids, cg.id);
+  VBK_ASSERT(ret);
+}
+
 template <>
 void PopStorage::saveBlocks(
     const std::unordered_map<typename BtcBlock::prev_hash_t,
