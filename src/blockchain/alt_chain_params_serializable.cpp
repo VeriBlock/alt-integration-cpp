@@ -107,7 +107,7 @@ void AltChainParams::toRaw(WriteStream& stream) const {
   }
 
   stream.writeBE<int32_t>(this->getEndorsementSettlementInterval());
-  stream.writeBE<uint32_t>(this->getMaxPopDataSize());
+  stream.writeBE<size_t>(this->getMaxPopDataSize());
   stream.writeBE<uint32_t>(this->getIdentifier());
 
   this->getBootstrapBlock().toVbkEncoding(stream);
@@ -126,7 +126,7 @@ AltChainParamsSerializable AltChainParamsSerializable::fromRaw(
       });
 
   param.endorsementSettlementInterval_ = stream.readBE<int32_t>();
-  param.maxPopDataSize = stream.readBE<uint32_t>();
+  param.maxPopDataSize = stream.readBE<size_t>();
   param.indentifier_ = stream.readBE<uint32_t>();
 
   param.bootstrapBlock_ = AltBlock::fromVbkEncoding(stream);
