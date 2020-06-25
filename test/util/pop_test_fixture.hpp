@@ -15,19 +15,13 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/logger.hpp>
-#include <veriblock/mock_miner.hpp>
 #include <veriblock/mempool.hpp>
+#include <veriblock/mock_miner.hpp>
 
 #include "util/fmtlogger.hpp"
 #include "util/test_utils.hpp"
 
 namespace altintegration {
-
-std::vector<uint8_t> alttesthashfunc(const std::vector<uint8_t>& bytes) {
-  ReadStream stream(bytes);
-  AltBlock altBlock = AltBlock::fromVbkEncoding(stream);
-  return altBlock.getHash();
-}
 
 struct PopTestFixture {
   const static std::vector<uint8_t> getPayoutInfo() {
@@ -59,8 +53,7 @@ struct PopTestFixture {
 
     popminer = std::make_shared<MockMiner>();
 
-    mempool = std::make_shared<MemPool>(
-        altparam, vbkparam, btcparam, &alttesthashfunc);
+    mempool = std::make_shared<MemPool>(altparam, vbkparam, btcparam);
   }
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,

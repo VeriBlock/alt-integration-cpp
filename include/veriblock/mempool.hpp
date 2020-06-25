@@ -67,13 +67,10 @@ struct MemPool {
   ~MemPool() = default;
   MemPool(const AltChainParams& alt_param,
           const VbkChainParams& vbk_params,
-          const BtcChainParams& btc_params,
-          Hash_Function function)
+          const BtcChainParams& btc_params)
       : alt_chain_params_(&alt_param),
         vbk_chain_params_(&vbk_params),
-        btc_chain_params_(&btc_params),
-        hasher(function) {
-    (void)hasher;
+        btc_chain_params_(&btc_params){
   }
 
   template <typename T>
@@ -118,15 +115,9 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  std::set<typename ATV::id_t> removed_atvs;
-  std::set<typename VTB::id_t> removed_vtbs;
-  std::set<typename VbkBlock::id_t> removed_vbk_blocks;
-
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
   const BtcChainParams* btc_chain_params_{nullptr};
-
-  Hash_Function hasher;
 
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block);
 };
