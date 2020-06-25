@@ -19,12 +19,17 @@ namespace altintegration {
 
 struct PopData {
   using id_t = uint256;
-
-  int32_t version{};
-
   std::vector<VbkBlock> context;
-  std::vector<ATV> atvs{};
   std::vector<VTB> vtbs{};
+  std::vector<ATV> atvs{};
+
+  void mergeFrom(const PopData& p) {
+    context.insert(context.end(), p.context.begin(), p.context.end());
+    vtbs.insert(vtbs.end(), p.vtbs.begin(), p.vtbs.end());
+    atvs.insert(atvs.end(), p.atvs.begin(), p.atvs.end());
+  }
+
+  size_t estimateSize() const { return toVbkEncoding().size(); }
 
   /**
    * Read VBK data from the stream and convert it to PopData
@@ -87,8 +92,6 @@ inline void putArrayOfIds(JsonValue& obj,
 template <typename JsonValue>
 JsonValue ToJSON(const PopData& p, bool verbose) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
-  json::putIntKV(obj, "version", p.version);
-
   if (verbose) {
     json::putArrayKV(obj, "vbkblocks", p.context);
     json::putArrayKV(obj, "vtbs", p.vtbs);

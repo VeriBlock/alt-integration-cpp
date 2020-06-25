@@ -32,6 +32,10 @@ struct VbkBlockAddon :
     PopState<VbkEndorsement>::setNull();
     vtbids.clear();
   }
+
+  std::string toPrettyString() const {
+    return fmt::sprintf("VTB=%d", vtbids.size());
+  }
 };
 
 }  // namespace altintegration

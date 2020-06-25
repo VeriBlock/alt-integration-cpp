@@ -16,16 +16,25 @@
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/mock_miner.hpp>
+#include <veriblock/mempool.hpp>
 
 #include "util/fmtlogger.hpp"
 #include "util/test_utils.hpp"
 
 namespace altintegration {
 
+std::vector<uint8_t> alttesthashfunc(const std::vector<uint8_t>& bytes) {
+  ReadStream stream(bytes);
+  AltBlock altBlock = AltBlock::fromVbkEncoding(stream);
+  return altBlock.getHash();
+}
+
 struct PopTestFixture {
   const static std::vector<uint8_t> getPayoutInfo() {
     return {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   }
+
+  std::shared_ptr<MemPool> mempool;
 
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
@@ -49,6 +58,9 @@ struct PopTestFixture {
     EXPECT_TRUE(alttree.bootstrap(state));
 
     popminer = std::make_shared<MockMiner>();
+
+    mempool = std::make_shared<MemPool>(
+        altparam, vbkparam, btcparam, &alttesthashfunc);
   }
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
@@ -94,6 +106,14 @@ struct PopTestFixture {
     block.timestamp = prev.timestamp + 1;
 
     return block;
+  }
+
+  PopData mergePopData(const std::vector<PopData>& all) {
+    PopData out;
+    for (auto& p : all) {
+      out.mergeFrom(p);
+    }
+    return out;
   }
 
   VbkPopTx generatePopTx(const VbkBlock::hash_t& endorsedBlock) {
@@ -149,11 +169,8 @@ struct PopTestFixture {
     out.insert(out.end(), ctx.begin(), ctx.end());
   }
 
-  PopData createPopData(int32_t version,
-                        std::vector<ATV> atvs,
-                        std::vector<VTB> vtbs) {
+  PopData createPopData(std::vector<ATV> atvs, std::vector<VTB> vtbs) {
     PopData popData;
-    popData.version = version;
 
     std::set<typename VbkBlock::hash_t> known_blocks;
 
@@ -183,8 +200,8 @@ struct PopTestFixture {
       }
 
       if (known_blocks.count(atv.containingBlock.getHash()) == 0) {
-          popData.context.push_back(atv.containingBlock);
-          known_blocks.insert(atv.containingBlock.getHash());
+        popData.context.push_back(atv.containingBlock);
+        known_blocks.insert(atv.containingBlock.getHash());
       }
 
       atv.context.clear();

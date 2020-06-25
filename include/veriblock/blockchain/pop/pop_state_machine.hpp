@@ -12,30 +12,6 @@
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
 
-namespace {
-void setValidity(const altintegration::CommandGroup& cm,
-                 bool valid,
-                 altintegration::PayloadsStorage& storage) {
-  if (cm.getPayloadsTypeName() == altintegration::ATV::name()) {
-    return storage.setValidity<altintegration::ATV>(
-        altintegration::ATV::id_t(cm.id), valid);
-  }
-
-  if (cm.getPayloadsTypeName() == altintegration::VTB::name()) {
-    return storage.setValidity<altintegration::VTB>(
-        altintegration::VTB::id_t(cm.id), valid);
-  }
-
-  if (cm.getPayloadsTypeName() == altintegration::VbkBlock::name()) {
-    return storage.setValidity<altintegration::VbkBlock>(
-        altintegration::VbkBlock::id_t(cm.id), valid);
-  }
-
-  VBK_ASSERT(false && "should not get here");
-}
-
-}  // namespace
-
 namespace altintegration {
 
 template <typename ProtectingBlockTree,
@@ -51,32 +27,42 @@ struct PopStateMachine {
   PopStateMachine(ProtectedTree& ed,
                   ProtectingBlockTree& ing,
                   PayloadsStorage& storage,
-                  height_t startHeight = 0)
-      : ed_(ed), ing_(ing), storage_(storage), startHeight_(startHeight) {}
+                  height_t startHeight = 0,
+                  bool continueOnInvalid = false)
+      : ed_(ed),
+        ing_(ing),
+        storage_(storage),
+        startHeight_(startHeight),
+        continueOnInvalid_(continueOnInvalid) {}
 
   // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
-    std::vector<CommandPtr> executed;
+    std::vector<std::vector<CommandPtr>> executed;
     auto cgs = storage_.loadCommands<ProtectedTree>(index, ed_);
     // even if the block is marked as invalid, we still try to apply it
     for (const auto& cg : cgs) {
+      // alloc new vector<CommandPtr> for this command group
+      executed.emplace_back();
       VBK_LOG_DEBUG("Applying payload %s from block %s",
                     HexStr(cg.id),
                     index.toShortPrettyString());
 
+      // execute commands in this command group
       for (auto& cmd : cg.commands) {
-        if (!cmd->Execute(state)) {
-          // invalidate command group
-          ::setValidity(cg, false, storage_);
-          VBK_LOG_ERROR("Invalid %s command in block %s: %s",
-                        index_t::block_t::name(),
-                        index.toPrettyString(),
-                        state.toString());
+        if (cmd->Execute(state)) {
+          // command is valid
+          executed.back().push_back(cmd);
+          continue;
+        }
 
-          // unexecute executed commands in reverse order
-          for (auto& c : reverse_iterate(executed)) {
-            c->UnExecute();
-          }
+        // command is invalid
+        storage_.setValidity(cg, false);
+        if (continueOnInvalid_) {
+          cleanupLast(index, executed, cg);
+          state.clear();
+          break;  // end cmd loop, start from next group
+        } else {
+          cleanupAll(index, executed, state);
 
           // if the block is marked as valid, invalidate its subtree
           if (index.isValid()) {
@@ -84,14 +70,15 @@ struct PopStateMachine {
           }
 
           return state.Invalid(index_t::block_t::name() + "-bad-command");
-        }  // end if
-
-        // command is valid
-        executed.push_back(cmd);
+        }
       }  // end for
 
-      // re-validate command group
-      ::setValidity(cg, true, storage_);
+      // in 'continueOnInvalid' mode, we don't re-validate payloads
+      if (!continueOnInvalid_) {
+        // continueOnInvalid=false and we were able to apply given CommandGroup.
+        // It means that it is valid, so update its validity.
+        storage_.setValidity(cg, true);
+      }
     }  // end for
 
     // we successfully applied the block
@@ -220,10 +207,44 @@ struct PopStateMachine {
   const ProtectedChainParams& params() const { return ed_.getParams(); }
 
  private:
+  void cleanupLast(index_t& index,
+                   std::vector<std::vector<CommandPtr>>& executed,
+                   const CommandGroup& cg) {
+    VBK_ASSERT(!executed.empty());
+    // this command group is invalid, unapply commands from this command
+    // group
+    for (auto& c : reverse_iterate(executed.back())) {
+      c->UnExecute();
+    }
+
+    // we don't want to unapply same commands twice
+    executed.pop_back();
+
+    removePayloadsFromIndex<block_t>(index, cg);
+  }
+
+  void cleanupAll(index_t& index,
+                  const std::vector<std::vector<CommandPtr>>& executed,
+                  ValidationState& state) {
+    VBK_LOG_ERROR("Invalid %s command in block %s: %s",
+                  index_t::block_t::name(),
+                  index.toPrettyString(),
+                  state.toString());
+
+    // unexecute executed commands in reverse order
+    for (auto& group : reverse_iterate(executed)) {
+      for (auto& c : reverse_iterate(group)) {
+        c->UnExecute();
+      }
+    }
+  }
+
+ private:
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
   PayloadsStorage& storage_;
   height_t startHeight_;
+  bool continueOnInvalid_ = false;
 };
 
 }  // namespace altintegration

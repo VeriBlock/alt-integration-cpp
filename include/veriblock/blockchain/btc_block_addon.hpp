@@ -22,8 +22,10 @@ struct BtcBlockAddon {
     refCounter = 0;
     chainWork = 0;
   }
+
+  std::string toPrettyString() const { return ""; }
 };
 
-}
+}  // namespace altintegration
 
 #endif  // VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
