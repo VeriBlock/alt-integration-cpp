@@ -187,12 +187,12 @@ PopData MemPool::getPop(AltTree& tree) {
 void MemPool::removePayloads(const PopData& popData) {
   // clear context
   for (const auto& b : popData.context) {
-    vbkblocks_.erase(b.getShortHash());
+    vbkblocks_.erase(b.getId());
   }
 
   // clear atvs
   for (const auto& atv : popData.atvs) {
-    stored_vtbs_.erase(atv.getId());
+    stored_atvs_.erase(atv.getId());
   }
 
   // clear vtbs
@@ -208,10 +208,10 @@ bool MemPool::submit(const ATV& atv, ValidationState& state) {
   }
 
   for (const auto& b : atv.context) {
-    vbkblocks_[b.getShortHash()] = std::make_shared<VbkBlock>(b);
+    vbkblocks_[b.getId()] = std::make_shared<VbkBlock>(b);
   }
 
-  vbkblocks_[atv.containingBlock.getShortHash()] =
+  vbkblocks_[atv.containingBlock.getId()] =
       std::make_shared<VbkBlock>(atv.containingBlock);
 
   auto atvid = atv.getId();
@@ -232,10 +232,10 @@ bool MemPool::submit(const VTB& vtb, ValidationState& state) {
   }
 
   for (const auto& b : vtb.context) {
-    vbkblocks_[b.getShortHash()] = std::make_shared<VbkBlock>(b);
+    vbkblocks_[b.getId()] = std::make_shared<VbkBlock>(b);
   }
 
-  vbkblocks_[vtb.containingBlock.getShortHash()] =
+  vbkblocks_[vtb.containingBlock.getId()] =
       std::make_shared<VbkBlock>(vtb.containingBlock);
 
   auto vtbid = vtb.getId();
