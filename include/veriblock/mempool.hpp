@@ -78,6 +78,10 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
+  std::set<typename ATV::id_t> removed_atvs;
+  std::set<typename VTB::id_t> removed_vtbs;
+  std::set<typename VbkBlock::id_t> removed_vbk_blocks;
+
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
   const BtcChainParams* btc_chain_params_{nullptr};
