@@ -23,15 +23,14 @@ struct AddVTB : public Command {
   }
 
   bool Execute(ValidationState& state) override {
-    // add commands to VBK containing block
-    auto containing = vtb_.containingBlock.getHash();
-    auto& vbk = tree_->vbk();
-
-    return vbk.addPayloads(containing, {vtb_}, state);
+    // add commands to the containing VBK block
+    return tree_->vbk().addPayloads(
+        vtb_.containingBlock.getHash(), {vtb_}, state);
   }
 
   void UnExecute() override {
-    tree_->vbk().removePayloads(vtb_.containingBlock, {vtb_.getId()});
+    return tree_->vbk().unsafelyRemovePayload(vtb_.containingBlock,
+                                              vtb_.getId());
   }
 
   size_t getId() const override { return id_; }
