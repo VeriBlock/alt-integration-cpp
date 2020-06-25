@@ -179,6 +179,70 @@ void VbkBlockTree::removePayloads(index_t& index,
   }
 }
 
+void VbkBlockTree::unsafelyRemovePayload(const block_t& block,
+                                         const pid_t& pid) {
+  return unsafelyRemovePayload(block.getHash(), pid);
+}
+
+void VbkBlockTree::unsafelyRemovePayload(const Blob<24>& hash,
+                                         const pid_t& pid) {
+  auto index = VbkTree::getBlockIndex(hash);
+  VBK_ASSERT(index != nullptr &&
+             "state corruption: the containing block is not found");
+
+  return unsafelyRemovePayload(*index, pid);
+}
+
+void VbkBlockTree::unsafelyRemovePayload(index_t& index, const pid_t& pid) {
+  VBK_LOG_DEBUG("unsafely removing %d payload from %s",
+                pid.toPrettyString(),
+                index.toPrettyString());
+
+  auto vtbid_it = std::find(index.vtbids.begin(), index.vtbids.end(), pid);
+  VBK_ASSERT(vtbid_it != index.vtbids.end() &&
+             "state corruption: the block does not contain the payload");
+
+  auto payload = storagePayloads_.loadPayloads<payloads_t>(pid);
+
+  // removing an invalid payload might render the block valid
+  if (!payload.valid) {
+    revalidateSubtree(index, BLOCK_FAILED_POP, false);
+  }
+
+  bool isApplied = activeChain_.contains(&index);
+
+  if (isApplied) {
+    auto cmdGroups = storagePayloads_.loadCommands<VbkBlockTree>(index, *this);
+
+    auto group_it = std::find_if(
+        cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
+          return group.id == pid;
+        });
+
+    VBK_ASSERT(group_it != cmdGroups.end() &&
+               "state corruption: could not find the supposedly applied "
+               "command group");
+    auto group = *group_it;
+
+    VBK_LOG_DEBUG("Unapplying payload %s in block %s",
+                  HexStr(group.id),
+                  index.toShortPrettyString());
+
+    for (auto& cmd : reverse_iterate(group.commands)) {
+      cmd->UnExecute();
+    }
+  }
+
+  index.vtbids.erase(vtbid_it);
+
+  // find all affected tips and do a fork resolution
+  auto tips = findValidTips<VbkBlock>(index);
+  for (auto* tip : tips) {
+    ValidationState state;
+    determineBestChain(activeChain_, *tip, state);
+  }
+}
+
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {

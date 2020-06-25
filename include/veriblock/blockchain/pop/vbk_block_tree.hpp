@@ -63,10 +63,24 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                    ValidationState& state);
 
   void removePayloads(const hash_t& hash, const std::vector<pid_t>& pids);
-
   void removePayloads(const block_t& block, const std::vector<pid_t>& pids);
-
   void removePayloads(index_t& index, const std::vector<pid_t>& pids);
+
+  /**
+   * If we add payloads to the VBK tree in the following order: A1, B2, A3.
+   *
+   * Ending up with the tree looking like this:
+   * A(1,3)-o-o-o-B(2)
+   *
+   * It is only safe to use this function to remove them in the opposite order:
+   * A3, B2, A1; or A3, B2.
+   *
+   * It is unsafe to use this function to remove them in any other order eg:
+   * B2, A3, A1; or just B2.
+   */
+  void unsafelyRemovePayload(const Blob<24>& hash, const pid_t& pid);
+  void unsafelyRemovePayload(const block_t& block, const pid_t& pid);
+  void unsafelyRemovePayload(index_t& index, const pid_t& pid);
 
   void payloadsToCommands(const payloads_t& p,
                           std::vector<CommandPtr>& commands);
