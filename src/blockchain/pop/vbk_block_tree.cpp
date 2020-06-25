@@ -122,47 +122,57 @@ bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
 
 void VbkBlockTree::removePayloads(const block_t& block,
                                   const std::vector<pid_t>& pids) {
-  VBK_LOG_DEBUG(
-      "remove %d payloads from %s", pids.size(), block.toPrettyString());
-  auto hash = block.getHash();
-  auto* index = VbkTree::getBlockIndex(hash);
+  return removePayloads(block.getHash(), pids);
+}
+
+void VbkBlockTree::removePayloads(const Blob<24>& hash,
+                                  const std::vector<pid_t>& pids) {
+  auto index = VbkTree::getBlockIndex(hash);
   if (!index) {
     throw std::logic_error("removePayloads is called on unknown VBK block: " +
                            hash.toHex());
   }
 
+  return removePayloads(*index, pids);
+}
+
+void VbkBlockTree::removePayloads(index_t& index,
+                                  const std::vector<pid_t>& pids) {
+  VBK_LOG_DEBUG(
+      "remove %d payloads from %s", pids.size(), index.toPrettyString());
+
   // we do not allow adding payloads to the genesis block
-  VBK_ASSERT(index->pprev && "can not remove payloads from the genesis block");
+  VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
 
   if (pids.empty()) {
     return;
   }
 
-  bool isOnActiveChain = activeChain_.contains(index);
+  bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool ret = setTip(*index->pprev, dummy, false);
+    bool ret = setTip(*index.pprev, dummy, false);
     VBK_ASSERT(ret);
   }
 
   for (const auto& pid : pids) {
-    auto it = std::find(index->vtbids.begin(), index->vtbids.end(), pid);
+    auto it = std::find(index.vtbids.begin(), index.vtbids.end(), pid);
     // silently ignore wrong payload ids to remove
-    if (it == index->vtbids.end()) {
+    if (it == index.vtbids.end()) {
       continue;
     }
 
     auto payloads = storagePayloads_.loadPayloads<payloads_t>(pid);
 
     if (!payloads.valid) {
-      revalidateSubtree(*index, BLOCK_FAILED_POP, false);
+      revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    index->vtbids.erase(it);
+    index.vtbids.erase(it);
   }
 
   // find all affected tips and do a fork resolution
-  auto tips = findValidTips<VbkBlock>(*index);
+  auto tips = findValidTips<VbkBlock>(index);
   for (auto* tip : tips) {
     ValidationState state;
     determineBestChain(activeChain_, *tip, state);
@@ -256,7 +266,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
       pids.emplace_back(payload.getId());
     }
 
-    removePayloads(*index->header, pids);
+    removePayloads(*index, pids);
     return false;
   }
   return true;
@@ -293,21 +303,6 @@ bool VbkBlockTree::loadFromStorage(const PopStorage& storage,
 std::string VbkBlockTree::toPrettyString(size_t level) const {
   return fmt::sprintf(
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
-}
-
-void VbkBlockTree::removePayloads(const Blob<24>& hash,
-                                  const std::vector<pid_t>& pids) {
-  auto index = base::getBlockIndex(hash);
-  if (!index) {
-    // silently ignore...
-    // there's a case when we legitimately can't throw:
-    // in command AddVTB we may add a VTB whose containing block is
-    // invalid/unknown. removePayloads will immediately be called right after
-    // addPayloads, and if we throw here - will break the state.
-    return;
-  }
-
-  removePayloads(*index->header, pids);
 }
 
 template <>

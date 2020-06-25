@@ -66,6 +66,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void removePayloads(const block_t& block, const std::vector<pid_t>& pids);
 
+  void removePayloads(index_t& index, const std::vector<pid_t>& pids);
+
   void payloadsToCommands(const payloads_t& p,
                           std::vector<CommandPtr>& commands);
 
