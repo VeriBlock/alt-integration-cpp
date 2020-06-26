@@ -74,6 +74,29 @@ MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block) {
   return *val;
 }
 
+MempoolResult MemPool::submitAll(const PopData& pop) {
+  MempoolResult r;
+  for (const VbkBlock& block : pop.context) {
+    ValidationState state;
+    submit<VbkBlock>(block, state);
+    r.context.emplace_back(block.getId(), state);
+  }
+
+  for (const VTB& vtb : pop.vtbs) {
+    ValidationState state;
+    submit<VTB>(vtb, state);
+    r.vtbs.emplace_back(vtb.getId(), state);
+  }
+
+  for (const ATV& atv : pop.atvs) {
+    ValidationState state;
+    submit<ATV>(atv, state);
+    r.atvs.emplace_back(atv.getId(), state);
+  }
+
+  return r;
+}
+
 template <>
 bool MemPool::submit(const ATV& atv, ValidationState& state) {
   if (!checkATV(atv, state, *alt_chain_params_, *vbk_chain_params_)) {
