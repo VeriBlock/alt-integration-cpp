@@ -6,9 +6,8 @@
 #ifndef ALTINTEGRATION_ADDVTB_HPP
 #define ALTINTEGRATION_ADDVTB_HPP
 
-#include <vector>
 #include <veriblock/blockchain/alt_block_tree.hpp>
-#include <veriblock/entities/altblock.hpp>
+#include <veriblock/entities/vtb.hpp>
 
 #include "veriblock/fmt.hpp"
 
@@ -18,32 +17,31 @@ struct AddVTB : public Command {
   using block_t = VbkBlock;
   ~AddVTB() override = default;
 
-  AddVTB(AltTree& tree, const VTB& vtb) : tree_(&tree), vtb_(vtb) {
-    id_ = vtb.getId().getLow64();
-  }
+  template <class VTB_t>
+  AddVTB(AltTree& tree, VTB_t&& vtb)
+      : tree_(tree), vtb_(std::forward<VTB_t>(vtb)) {}
 
   bool Execute(ValidationState& state) override {
     // add commands to the containing VBK block
-    return tree_->vbk().addPayloads(
+    return tree_.vbk().addPayloads(
         vtb_.containingBlock.getHash(), {vtb_}, state);
   }
 
   void UnExecute() override {
-    return tree_->vbk().unsafelyRemovePayload(vtb_.containingBlock,
-                                              vtb_.getId());
+    return tree_.vbk().unsafelyRemovePayload(vtb_.containingBlock,
+                                             vtb_.getId());
   }
 
-  size_t getId() const override { return id_; }
+  size_t getId() const override { return vtb_.getId().getLow64(); }
 
   //! debug method. returns a string describing this command
   std::string toPrettyString(size_t level = 0) const override {
-    return fmt::sprintf("%sAddVTB{id=%llu}", std::string(level, ' '), id_);
+    return fmt::sprintf("%sAddVTB{id=%llu}", std::string(level, ' '), getId());
   };
 
  private:
-  AltTree* tree_;
+  AltTree& tree_;
   VTB vtb_;
-  size_t id_;
 };
 
 }  // namespace altintegration
