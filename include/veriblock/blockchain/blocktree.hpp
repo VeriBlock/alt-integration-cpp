@@ -130,9 +130,6 @@ struct BlockTree : public BaseBlockTree<Block> {
                    bool shouldContextuallyCheck) {
     index_t* index = nullptr;
     if (!validateAndAddBlock(block, state, shouldContextuallyCheck, &index)) {
-      VBK_LOG_WARN("Found invalid block %s %s",
-                   state.toString(),
-                   block->toPrettyString());
       return false;
     }
 
@@ -228,9 +225,6 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     auto* prev = currentBest.tip();
     if (prev == nullptr || prev->chainWork < indexNew.chainWork) {
-      VBK_LOG_DEBUG("Doing POW fork resolution Active=%s, Candidate=%s",
-                    (prev ? prev->toPrettyString() : "<nullptr>"),
-                    indexNew.toPrettyString());
       //! important to use this->setTip for proper vtable resolution
       this->setTip(indexNew, state, isBootstrap);
     }

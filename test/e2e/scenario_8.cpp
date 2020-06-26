@@ -108,7 +108,7 @@ TEST_F(Scenario8, scenario_8) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  PopData popData1 = createPopData(0, {atv1}, {vtb1});
+  PopData popData1 = createPopData({atv1}, {vtb1});
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
@@ -133,7 +133,7 @@ TEST_F(Scenario8, scenario_8) {
   ATV atv2 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  PopData popData2 = createPopData(0, {atv2}, {vtb2});
+  PopData popData2 = createPopData({atv2}, {vtb2});
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);

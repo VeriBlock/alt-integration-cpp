@@ -34,8 +34,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   std::vector<uint96> vbkblockids;
 
   bool payloadsIdsEmpty() const {
-    return atvids.empty() && vtbids.empty() &&
-           vbkblockids.empty();
+    return atvids.empty() && vtbids.empty() && vbkblockids.empty();
   }
 
   template <typename pop_t, typename pop_id_t>
@@ -50,6 +49,13 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     atvids.clear();
     vtbids.clear();
     vbkblockids.clear();
+  }
+
+  std::string toPrettyString() const {
+    return fmt::sprintf("ATV=%d, VTB=%d, VBK=%d",
+                        atvids.size(),
+                        vtbids.size(),
+                        vbkblockids.size());
   }
 };
 

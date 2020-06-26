@@ -48,7 +48,6 @@ TestCase setupTestCase() {
 
   PopData payloads;
   payloads.atvs = std::vector<ATV>(4, atv);
-  payloads.version = 2;
   payloads.vtbs = std::vector<VTB>(6, vtb);
 
   TestCase expected;

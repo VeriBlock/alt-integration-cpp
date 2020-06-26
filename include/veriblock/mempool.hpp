@@ -18,11 +18,40 @@
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vtb.hpp"
+#include "veriblock/mempool_result.hpp"
 
 namespace altintegration {
 
 struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
+
+  struct VbkPayloadsRelations {
+    using id_t = VbkBlock::id_t;
+
+    VbkPayloadsRelations(const VbkBlock& b) : header(b) {}
+
+    VbkBlock header;
+    std::vector<std::shared_ptr<VTB>> vtbs;
+    std::vector<std::shared_ptr<ATV>> atvs;
+
+    PopData toPopData() const {
+      PopData pop;
+      pop.context.push_back(header);
+      for (const auto& vtb : vtbs) {
+        pop.vtbs.push_back(*vtb);
+      }
+
+      for (const auto& atv : atvs) {
+        pop.atvs.push_back(*atv);
+      }
+
+      // TODO: we might want to sort VTBs in ascending order of their
+      // blockOfProofs to guarantee that within a single block they all are
+      // connected.
+
+      return pop;
+    }
+  };
 
   template <typename Payload>
   using payload_map =
@@ -31,6 +60,7 @@ struct MemPool {
   using vbkblock_map_t = payload_map<VbkBlock>;
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
+  using relations_map_t = payload_map<VbkPayloadsRelations>;
 
   ~MemPool() = default;
   MemPool(const AltChainParams& alt_param,
@@ -39,11 +69,6 @@ struct MemPool {
       : alt_chain_params_(&alt_param),
         vbk_chain_params_(&vbk_params),
         btc_chain_params_(&btc_params) {}
-
-  // @deprecated - use submit<VTB>
-  bool submitVTB(const std::vector<VTB>& vtb, ValidationState& state);
-  // @deprecated - use submit<ATV>
-  bool submitATV(const std::vector<ATV>& atv, ValidationState& state);
 
   template <typename T>
   const T* get(const typename T::id_t& id) const {
@@ -64,6 +89,8 @@ struct MemPool {
     return true;
   }
 
+  MempoolResult submitAll(const PopData& pop);
+
   template <typename T>
   const payload_map<T>& getMap() const {
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getMap");
@@ -71,34 +98,32 @@ struct MemPool {
 
   PopData getPop(AltTree& tree);
 
-  void removePayloads(const PopData& popData);
+  void removePayloads(const PopData& v_popData);
+
+  void clear() {
+    relations_.clear();
+    vbkblocks_.clear();
+    stored_vtbs_.clear();
+    stored_atvs_.clear();
+  }
 
  private:
+  // relations between VBK block and payloads
+  relations_map_t relations_;
   vbkblock_map_t vbkblocks_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  std::set<typename ATV::id_t> removed_atvs;
-  std::set<typename VTB::id_t> removed_vtbs;
-  std::set<typename VbkBlock::id_t> removed_vbk_blocks;
+  std::set<VbkBlock::id_t> removed_vbk_blocks;
+  std::set<ATV::id_t> removed_atvs;
+  std::set<VTB::id_t> removed_vtbs;
 
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
   const BtcChainParams* btc_chain_params_{nullptr};
 
-  bool fillContext(VbkBlock first_block,
-                   std::vector<VbkBlock>& context,
-                   AltTree& tree);
-
-  bool applyVTB(const VTB& vtb,
-                const AltBlock& hack_block,
-                AltTree& tree,
-                ValidationState& state);
-
-  bool applyATV(const ATV& atv,
-                const AltBlock& hack_block,
-                AltTree& tree,
-                ValidationState& state);
+  VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
+                                      VbkBlock::id_t id = VbkBlock::id_t());
 };
 
 template <>

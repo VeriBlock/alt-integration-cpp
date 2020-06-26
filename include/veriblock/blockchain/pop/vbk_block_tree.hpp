@@ -112,6 +112,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 };
 
 template <>
+void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
+                             const CommandGroup& cg);
+
+template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
     const typename VbkBlockTree::index_t& index, VbkBlockTree& tree);
 
