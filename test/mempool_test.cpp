@@ -82,6 +82,77 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   EXPECT_EQ(popData.context.size(), 0);
 }
 
+TEST_F(MemPoolFixture, removed_payloads_cache_test) {
+  MemPool mempool(alttree.getParams(),
+                  alttree.vbk().getParams(),
+                  alttree.btc().getParams());
+
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+
+  // mine 65 VBK blocks
+  auto* vbkTip = popminer->mineVbkBlocks(65);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  generatePopTx(*endorsedVbkBlock1->header);
+  popminer->mineBtcBlocks(100);
+  generatePopTx(*endorsedVbkBlock2->header);
+
+  vbkTip = popminer->mineVbkBlocks(1);
+
+  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+
+  ASSERT_EQ(vtbs.size(), 2);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
+            VbkEndorsement::fromContainer(vtbs[1]).id);
+  fillVbkContext(
+      vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+  fillVbkContext(
+      vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  AltBlock endorsedBlock = chain[5];
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
+
+  EXPECT_TRUE(mempool.submit(atv, state));
+  for (const auto& vtb : vtbs) {
+    EXPECT_TRUE(mempool.submit(vtb, state));
+  }
+
+  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  PopData popData = mempool.getPop(alttree);
+
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_FALSE(popData.context.empty());
+  EXPECT_EQ(popData.atvs.at(0), atv);
+
+  mempool.removePayloads(popData);
+
+  popData = mempool.getPop(alttree);
+
+  EXPECT_TRUE(popData.vtbs.empty());
+  EXPECT_TRUE(popData.atvs.empty());
+  EXPECT_TRUE(popData.context.empty());
+
+  // insert the same payloads into the mempool
+  EXPECT_TRUE(mempool.submit(atv, state));
+  for (const auto& vtb : vtbs) {
+    EXPECT_TRUE(mempool.submit(vtb, state));
+  }
+
+  popData = mempool.getPop(alttree);
+  EXPECT_TRUE(popData.vtbs.empty());
+  EXPECT_TRUE(popData.atvs.empty());
+  EXPECT_TRUE(popData.context.empty());
+}
+
 TEST_F(MemPoolFixture, getPop_scenario_1) {
   MemPool mempool(alttree.getParams(),
                   alttree.vbk().getParams(),
