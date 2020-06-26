@@ -130,7 +130,7 @@ struct AltChainParamsSerializable : public AltChainParams {
   uint32_t finalityDelay_;
   std::vector<uint32_t> forkResolutionLookUpTable_;
   int32_t endorsementSettlementInterval_;
-  uint32_t maxPopDataSize;
+  size_t maxPopDataSize;
   uint32_t indentifier_;
   AltBlock bootstrapBlock_;
 };
