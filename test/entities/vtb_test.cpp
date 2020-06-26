@@ -198,3 +198,11 @@ TEST(VTB, RoundTrip) {
   auto txReEncoded = HexStr(txBytes);
   EXPECT_EQ(txReEncoded, defaultVtbEncoded);
 }
+
+TEST(VTB, getId_test) {
+  auto atvBytes = ParseHex(defaultVtbEncoded);
+  auto stream = ReadStream(atvBytes);
+  auto vtb = VTB::fromVbkEncoding(stream);
+
+  EXPECT_EQ(vtb.getId().toHex(), "c33c58fec631de387990e1df60ff757675d6fe258c4e719543dca9b1230475ac");
+}

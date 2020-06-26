@@ -89,3 +89,11 @@ TEST(ATV, RoundTrip) {
   auto txReEncoded = HexStr(txBytes);
   EXPECT_EQ(txReEncoded, defaultAtvEncoded);
 }
+
+TEST(ATV, getId_test) {
+  auto atvBytes = ParseHex(defaultAtvEncoded);
+  auto stream = ReadStream(atvBytes);
+  auto atv = ATV::fromVbkEncoding(stream);
+
+  EXPECT_EQ(atv.getId().toHex(), "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d");
+}
