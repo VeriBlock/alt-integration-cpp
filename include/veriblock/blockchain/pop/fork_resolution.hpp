@@ -384,6 +384,27 @@ struct PopAwareForkResolutionComparator {
   // atomic: either changes the state to 'to' or leaves it unchanged
   bool setState(ProtectedBlockTree& ed,
                 protected_index_t& to,
+                ValidationState& state,
+                // if true, setState will be in "validation mode"
+                // if invalid payloads found, mark it as invalid and continue
+                bool continueOnInvalid = false) {
+    auto* currentActive = ed.getBestChain().tip();
+    VBK_ASSERT(currentActive && "should be bootstrapped");
+
+    if (*currentActive == to) {
+      // already at this state
+      return true;
+    }
+
+    sm_t sm(ed, *ing_, storage_, 0, continueOnInvalid);
+    return sm.setState(*currentActive, to, state);
+  }
+
+  //! finds a path between current ed's best chain and 'to', and applies all
+  //! commands in between
+  // atomic: either changes the state to 'to' or leaves it unchanged
+  bool validate(ProtectedBlockTree& ed,
+                protected_index_t& to,
                 ValidationState& state) {
     auto* currentActive = ed.getBestChain().tip();
     VBK_ASSERT(currentActive && "should be bootstrapped");

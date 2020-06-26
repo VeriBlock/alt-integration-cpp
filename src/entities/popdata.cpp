@@ -11,7 +11,6 @@ namespace altintegration {
 
 PopData PopData::fromVbkEncoding(ReadStream& stream) {
   PopData alt_pop_tx;
-  alt_pop_tx.version = stream.readBE<int32_t>();
   alt_pop_tx.context = readArrayOf<VbkBlock>(
       stream,
       0,
@@ -37,7 +36,6 @@ PopData PopData::fromVbkEncoding(Slice<const uint8_t> raw_bytes) {
 }
 
 void PopData::toVbkEncoding(WriteStream& stream) const {
-  stream.writeBE<int32_t>(version);
   writeSingleBEValue(stream, context.size());
   for (const auto& b : context) {
     b.toVbkEncoding(stream);

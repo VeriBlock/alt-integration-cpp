@@ -24,14 +24,6 @@ struct AltChainParamsTest : public AltChainParams {
 
   uint32_t getIdentifier() const noexcept override { return 0x7ec7; }
 
-  uint32_t getMaxPopDataPerBlock() const noexcept override { return 50; }
-
-  uint32_t getMaxPopDataWeight() const noexcept override { return 1000000; }
-
-  uint32_t getSuperMaxPopDataWeight() const noexcept override {
-    return 5 * getMaxPopDataWeight();
-  }
-
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
     ReadStream stream(bytes);

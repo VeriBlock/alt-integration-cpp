@@ -93,12 +93,8 @@ TEST(Config, deserialization_test) {
   EXPECT_EQ(deserialized.alt->getIdentifier(), config.alt->getIdentifier());
   EXPECT_EQ(deserialized.alt->getKeystoneInterval(),
             config.alt->getKeystoneInterval());
-  EXPECT_EQ(deserialized.alt->getMaxPopDataPerBlock(),
-            config.alt->getMaxPopDataPerBlock());
-  EXPECT_EQ(deserialized.alt->getMaxPopDataWeight(),
-            config.alt->getMaxPopDataWeight());
-  EXPECT_EQ(deserialized.alt->getSuperMaxPopDataWeight(),
-            config.alt->getSuperMaxPopDataWeight());
+  EXPECT_EQ(deserialized.alt->getMaxPopDataSize(),
+            config.alt->getMaxPopDataSize());
 
   EXPECT_EQ(deserialized.alt->getRewardParams().difficultyAveragingInterval(),
             config.alt->getRewardParams().difficultyAveragingInterval());

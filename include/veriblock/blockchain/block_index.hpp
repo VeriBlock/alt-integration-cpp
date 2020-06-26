@@ -44,6 +44,7 @@ enum BlockStatus : uint8_t {
 template <typename Block>
 struct BlockIndex : public Block::addon_t {
   using block_t = Block;
+  using addon_t = typename Block::addon_t;
   using hash_t = typename block_t::hash_t;
   using prev_hash_t = typename block_t::prev_hash_t;
   using height_t = typename block_t::height_t;
@@ -143,12 +144,14 @@ struct BlockIndex : public Block::addon_t {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    return fmt::sprintf("%s%sBlockIndex{height=%d, hash=%s, status=%d}",
+    return fmt::sprintf("%s%sBlockIndex{height=%d, hash=%s, status=%d, %s}",
                         std::string(level, ' '),
                         Block::name(),
                         height,
                         HexStr(getHash()),
-                        status);
+                        status,
+                        addon_t::toPrettyString()
+                        );
   }
 
   std::string toShortPrettyString() const {

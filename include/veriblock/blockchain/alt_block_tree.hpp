@@ -126,6 +126,10 @@ struct AltTree : public BaseBlockTree<AltBlock> {
                         const PopData& popData,
                         ValidationState& state);
 
+  // use this method for stateful validation of pop data. invalid pop data will
+  // be removed from `pop`
+  void filterInvalidPayloads(PopData& pop);
+
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
   VbkBlockTree::BtcTree& btc() { return cmp_.getProtectingBlockTree().btc(); }
@@ -158,7 +162,20 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   bool setTip(index_t& to,
               ValidationState& state,
               bool skipSetState = false) override;
+
+  bool addPayloads(index_t& index,
+                   PopData& payloads,
+                   ValidationState& state,
+                   bool continueOnInvalid = false);
+
+  bool setTip(index_t& to,
+              ValidationState& state,
+              bool skipSetState, bool continueOnInvalid);
 };
+
+template <>
+void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
+                             const CommandGroup& cg);
 
 template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands<AltTree>(
@@ -195,7 +212,7 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   return obj;
 }
 
-uint8_t getBlockProof(const AltBlock&);
+inline uint8_t getBlockProof(const AltBlock&) { return 0; }
 
 }  // namespace altintegration
 

@@ -102,16 +102,8 @@ struct AltChainParamsSerializable : public AltChainParams {
     return endorsementSettlementInterval_;
   }
 
-  uint32_t getMaxPopDataPerBlock() const noexcept override {
-    return maxPopDataPerBlock_;
-  };
-
-  uint32_t getMaxPopDataWeight() const noexcept override {
-    return maxPopDataWeight_;
-  };
-
-  uint32_t getSuperMaxPopDataWeight() const noexcept override {
-    return superMaxPopDataWeight_;
+  size_t getMaxPopDataSize() const noexcept override {
+    return maxPopDataSize;
   };
 
   const PopRewardsParams& getRewardParams() const noexcept override {
@@ -138,9 +130,7 @@ struct AltChainParamsSerializable : public AltChainParams {
   uint32_t finalityDelay_;
   std::vector<uint32_t> forkResolutionLookUpTable_;
   int32_t endorsementSettlementInterval_;
-  uint32_t maxPopDataPerBlock_;
-  uint32_t maxPopDataWeight_;
-  uint32_t superMaxPopDataWeight_;
+  size_t maxPopDataSize;
   uint32_t indentifier_;
   AltBlock bootstrapBlock_;
 };

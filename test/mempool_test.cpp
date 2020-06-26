@@ -14,15 +14,37 @@
 
 using namespace altintegration;
 
-struct MemPoolFixture : public PopTestFixture, public ::testing::Test {};
-
-TEST_F(MemPoolFixture, removePayloads_test) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
+struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
+  MemPoolFixture() { GetLogger().level = altintegration::LogLevel::info; }
+
+  void applyInNextBlock(const PopData& pop) {
+    auto containingBlock = generateNextBlock(*chain.rbegin());
+    chain.push_back(containingBlock);
+    ASSERT_TRUE(alttree.acceptBlock(containingBlock, state));
+    ASSERT_TRUE(alttree.addPayloads(containingBlock.getHash(), pop, state));
+    ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
+    ASSERT_TRUE(state.IsValid());
+  }
+
+  PopData checkedGetPop() {
+    auto before = alttree.toPrettyString();
+    auto ret = mempool->getPop(alttree);
+    auto after = alttree.toPrettyString();
+    EXPECT_EQ(before, after);
+    return ret;
+  }
+
+  void removeLastAltBlock() {
+    alttree.removeSubtree(chain.rbegin()->hash);
+    chain.pop_back();
+    ValidationState dummy;
+    alttree.setState(chain.rbegin()->hash, dummy);
+  }
+};
+
+TEST_F(MemPoolFixture, removePayloads_test) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -54,40 +76,40 @@ TEST_F(MemPoolFixture, removePayloads_test) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv}, state));
-  EXPECT_TRUE(mempool.submitVTB(vtbs, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(0), state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.vtbs.size(), 2);
-  EXPECT_EQ(popData.atvs.size(), 1);
-  EXPECT_EQ(popData.atvs.at(0), atv);
+  EXPECT_EQ(v_popData.vtbs.size(), 2);
+  EXPECT_EQ(v_popData.atvs.size(), 1);
+  EXPECT_EQ(v_popData.atvs.at(0), atv);
 
   // do the same to show that from mempool do not remove payloads
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  popData = mempool.getPop(alttree);
+  v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.vtbs.size(), 2);
-  EXPECT_EQ(popData.atvs.size(), 1);
-  EXPECT_EQ(popData.atvs.at(0), atv);
+  EXPECT_EQ(v_popData.vtbs.size(), 2);
+  EXPECT_EQ(v_popData.atvs.at(0), atv);
 
   // remove from mempool
-  mempool.removePayloads(popData);
+  mempool->removePayloads(v_popData);
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  popData = mempool.getPop(alttree);
-  EXPECT_EQ(popData.atvs.size(), 0);
-  EXPECT_EQ(popData.vtbs.size(), 0);
-  EXPECT_EQ(popData.context.size(), 0);
+
+  ASSERT_TRUE(mempool->getMap<ATV>().empty());
+  ASSERT_TRUE(mempool->getMap<VTB>().empty());
+  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
+
+  v_popData = checkedGetPop();
+  EXPECT_EQ(v_popData.context.size(), 0);
+  EXPECT_EQ(v_popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.atvs.size(), 0);
 }
 
 TEST_F(MemPoolFixture, removed_payloads_cache_test) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
@@ -120,46 +142,40 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool.submit(atv, state));
+  EXPECT_TRUE(mempool->submit(atv, state));
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool.submit(vtb, state));
+    EXPECT_TRUE(mempool->submit(vtb, state));
   }
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData popData = mempool->getPop(alttree);
 
   EXPECT_EQ(popData.vtbs.size(), 2);
   EXPECT_EQ(popData.atvs.size(), 1);
   EXPECT_FALSE(popData.context.empty());
   EXPECT_EQ(popData.atvs.at(0), atv);
 
-  mempool.removePayloads(popData);
+  mempool->removePayloads(popData);
 
-  popData = mempool.getPop(alttree);
+  popData = mempool->getPop(alttree);
 
   EXPECT_TRUE(popData.vtbs.empty());
   EXPECT_TRUE(popData.atvs.empty());
   EXPECT_TRUE(popData.context.empty());
 
   // insert the same payloads into the mempool
-  EXPECT_TRUE(mempool.submit(atv, state));
+  EXPECT_TRUE(mempool->submit(atv, state));
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool.submit(vtb, state));
+    EXPECT_TRUE(mempool->submit(vtb, state));
   }
 
-  popData = mempool.getPop(alttree);
+  popData = mempool->getPop(alttree);
   EXPECT_TRUE(popData.vtbs.empty());
   EXPECT_TRUE(popData.atvs.empty());
   EXPECT_TRUE(popData.context.empty());
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_1) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -177,6 +193,8 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   ASSERT_EQ(vtbs.size(), 2);
   ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
             VbkEndorsement::fromContainer(vtbs[1]).id);
+  ASSERT_NE(vtbs[0].getId(), vtbs[1].getId());
+
   fillVbkContext(vtbs[0].context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtbs[0].containingBlock.getHash(),
@@ -195,30 +213,18 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv}, state));
-  EXPECT_TRUE(mempool.submitVTB(vtbs, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs[0], state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs[1], state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
-
-  EXPECT_EQ(popData.vtbs.size(), 2);
-
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
+  ASSERT_EQ(alttree.getBestChain().tip()->height, 10);
+  PopData pop = checkedGetPop();
+  EXPECT_EQ(pop.vtbs.size(), 2);
+  applyInNextBlock(pop);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_2) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -228,8 +234,8 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   generatePopTx(*endorsedVbkBlock1->header);
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
+  ASSERT_EQ(popminer->vbkPayloads.at(containingVbkBlock1->getHash()).size(), 1);
+  VTB vtb1 = popminer->vbkPayloads.at(containingVbkBlock1->getHash()).at(0);
   fillVbkContext(vtb1.context,
                  vbkparam.getGenesisBlock().getHash(),
                  vtb1.containingBlock.getHash(),
@@ -259,30 +265,19 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv}, state));
-  EXPECT_TRUE(mempool.submitVTB({vtb1, vtb2}, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(v_popData.vtbs.size(), 2);
 
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
+  applyInNextBlock(v_popData);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_3) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -295,23 +290,17 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv}, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.atvs.size(), 0);
-  EXPECT_EQ(popData.vtbs.size(), 0);
-  EXPECT_EQ(popData.context.size(), 0);
+  EXPECT_EQ(v_popData.context.size(), 0);
+  EXPECT_EQ(v_popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.atvs.size(), 0);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_4) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-
   // mine 65 VBK blocks
   popminer->mineVbkBlocks(65);
 
@@ -325,29 +314,17 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
   ATV atv = popminer->generateATV(
       tx, popminer->vbk().getParams().getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv}, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.vtbs.size(), 0);
 
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
+  applyInNextBlock(v_popData);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_5) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -390,177 +367,78 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
       generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer->generateATV(tx2, containingVbkBlock2->getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv1, atv2}, state));
-  EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
+  {
+    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv2, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+    ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+    PopData v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.vtbs.size(), 2);
-  EXPECT_EQ(popData.atvs.size(), 2);
+    ASSERT_EQ(v_popData.context.size(), 177);
+    ASSERT_EQ(v_popData.vtbs.size(), 2);
+    ASSERT_EQ(v_popData.atvs.size(), 2);
 
-  EXPECT_EQ(popData.vtbs.at(0), vtb1);
-  EXPECT_EQ(popData.atvs.at(0), atv1);
+    EXPECT_EQ(v_popData.atvs.at(0), atv1);
+    EXPECT_EQ(v_popData.atvs.at(1), atv2);
+    EXPECT_EQ(v_popData.vtbs.at(0), vtb1);
+    EXPECT_EQ(v_popData.vtbs.at(1), vtb2);
 
-  EXPECT_EQ(popData.atvs.at(1), atv2);
-  EXPECT_EQ(popData.vtbs.at(1), vtb2);
+    applyInNextBlock(v_popData);
+  }
 
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
+  mempool->clear();
+  removeLastAltBlock();
 
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
-}
+  {
+    // different order
+    EXPECT_TRUE(mempool->submit<ATV>(atv2, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
 
-TEST_F(MemPoolFixture, getPop_scenario_6) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
+    ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+    PopData v_popData = checkedGetPop();
 
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+    ASSERT_EQ(v_popData.context.size(), 177);
+    ASSERT_EQ(v_popData.vtbs.size(), 2);
+    ASSERT_EQ(v_popData.atvs.size(), 2);
 
-  // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
+    EXPECT_EQ(v_popData.atvs.at(0), atv1);
+    EXPECT_EQ(v_popData.atvs.at(1), atv2);
+    EXPECT_EQ(v_popData.vtbs.at(0), vtb1);
+    EXPECT_EQ(v_popData.vtbs.at(1), vtb2);
 
-  // mine 10 blocks
-  mineAltBlocks(10, chain);
+    applyInNextBlock(v_popData);
+  }
 
-  // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  mempool->clear();
+  removeLastAltBlock();
 
-  generatePopTx(*endorsedVbkBlock1->header);
+  {
+    // No ATV2
+    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
 
-  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+    ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+    PopData v_popData = checkedGetPop();
 
-  popminer->mineBtcBlocks(100);
-  popminer->mineVbkBlocks(54);
+    ASSERT_EQ(v_popData.context.size(), 176);
+    ASSERT_EQ(v_popData.vtbs.size(), 2);
+    ASSERT_EQ(v_popData.atvs.size(), 1);
 
-  AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
-      generatePublicationData(endorsedBlock1));
-  ATV atv1 = popminer->generateATV(tx1, containingVbkBlock1->getHash(), state);
+    EXPECT_EQ(v_popData.atvs.at(0), atv1);
+    EXPECT_EQ(v_popData.vtbs.at(0), vtb1);
+    EXPECT_EQ(v_popData.vtbs.at(1), vtb2);
 
-  vbkTip = popminer->vbk().getBestChain().tip();
-
-  popminer->mineBtcBlocks(100);
-  popminer->mineVbkBlocks(54);
-
-  generatePopTx(*endorsedVbkBlock2->header);
-
-  auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
-  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock2->getHash()][0];
-  fillVbkContext(vtb2, vbkTip->getHash(), popminer->vbk());
-
-  AltBlock endorsedBlock2 = chain[5];
-  VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
-      generatePublicationData(endorsedBlock2));
-  ATV atv2 = popminer->generateATV(tx2, containingVbkBlock2->getHash(), state);
-
-  EXPECT_TRUE(mempool.submitATV({atv2, atv1}, state));
-  EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
-
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
-
-  EXPECT_EQ(popData.vtbs.size(), 2);
-  EXPECT_EQ(popData.vtbs.at(0), vtb1);
-  EXPECT_EQ(popData.vtbs.at(1), vtb2);
-  EXPECT_EQ(popData.atvs.at(0), atv1);
-  EXPECT_EQ(popData.atvs.at(1), atv2);
-
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
-}
-
-TEST_F(MemPoolFixture, getPop_scenario_7) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-
-  // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
-
-  // mine 10 blocks
-  mineAltBlocks(10, chain);
-
-  // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
-
-  generatePopTx(*endorsedVbkBlock1->header);
-
-  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
-
-  popminer->mineBtcBlocks(100);
-  popminer->mineVbkBlocks(54);
-
-  AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
-      generatePublicationData(endorsedBlock1));
-  ATV atv1 = popminer->generateATV(tx1, containingVbkBlock1->getHash(), state);
-
-  vbkTip = popminer->vbk().getBestChain().tip();
-
-  popminer->mineBtcBlocks(100);
-  popminer->mineVbkBlocks(54);
-
-  generatePopTx(*endorsedVbkBlock2->header);
-
-  auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
-  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock2->getHash()][0];
-  fillVbkContext(vtb2, containingVbkBlock2->pprev->getHash(), popminer->vbk());
-
-  AltBlock endorsedBlock2 = chain[5];
-  VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
-      generatePublicationData(endorsedBlock2));
-  ATV atv2 = popminer->generateATV(tx2, containingVbkBlock2->getHash(), state);
-
-  EXPECT_TRUE(mempool.submitATV({atv2, atv1}, state));
-  EXPECT_TRUE(mempool.submitVTB({vtb2, vtb1}, state));
-
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
-
-  EXPECT_EQ(popData.vtbs.size(), 1);
-  EXPECT_EQ(popData.vtbs.at(0), vtb1);
-  EXPECT_EQ(popData.atvs.size(), 1);
-  EXPECT_EQ(popData.atvs.at(0), atv1);
-
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
+    applyInNextBlock(v_popData);
+  }
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_8) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
@@ -619,32 +497,24 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv1}, state));
-  EXPECT_TRUE(mempool.submitVTB({vtb1, vtb2}, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.vtbs.size(), 1);
-  EXPECT_EQ(popData.vtbs.at(0), vtb1);
+  EXPECT_EQ(v_popData.context.size(), 122);
+  EXPECT_EQ(v_popData.vtbs.size(), 1);
+  EXPECT_EQ(v_popData.atvs.size(), 1);
+  EXPECT_EQ(v_popData.vtbs.at(0), vtb1);
 
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
+  applyInNextBlock(v_popData);
 }
 
+// We expect that ATV duplicate will not be added
 TEST_F(MemPoolFixture, getPop_scenario_9) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
   popminer->mineVbkBlocks(65);
@@ -658,40 +528,26 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv1}, state));
-
+  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData v_popData = checkedGetPop();
+  EXPECT_EQ(v_popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.atvs.size(), 1);
+  EXPECT_EQ(v_popData.atvs.at(0), atv1);
+  applyInNextBlock(v_popData);
 
-  EXPECT_EQ(popData.atvs.at(0), atv1);
-
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
-
-  mempool.removePayloads(popData);
-
-  EXPECT_TRUE(mempool.submitATV({atv1}, state));
-
+  mempool->removePayloads(v_popData);
+  EXPECT_TRUE(mempool->submit(atv1, state));
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  popData = mempool.getPop(alttree);
+  v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.atvs.size(), 0);
-  EXPECT_EQ(popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.context.size(), 0);
+  EXPECT_EQ(v_popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.atvs.size(), 0);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_10) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
@@ -715,25 +571,19 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv1}, state));
-  EXPECT_TRUE(mempool.submitVTB({vtb1}, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.vtbs.size(), 1);
-  EXPECT_EQ(popData.vtbs.at(0), vtb1);
+  EXPECT_EQ(v_popData.vtbs.size(), 1);
+  EXPECT_EQ(v_popData.vtbs.at(0), vtb1);
 
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
+  applyInNextBlock(v_popData);
 
   // remove payloads from the mempool
-  mempool.removePayloads(popData);
+  mempool->removePayloads(v_popData);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -776,24 +626,19 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   ATV atv2 =
       popminer->generateATV(tx2, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv2}, state));
-  EXPECT_TRUE(mempool.submitVTB({vtb2}, state));
+  EXPECT_TRUE(mempool->submit(atv2, state));
+  EXPECT_TRUE(mempool->submit(vtb2, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  popData = mempool.getPop(alttree);
+  v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.vtbs.size(), 0);
-  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(v_popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.atvs.size(), 1);
+  EXPECT_EQ(v_popData.context.size(), 56);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_11) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
-
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
   popminer->mineVbkBlocks(65);
@@ -807,73 +652,86 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv1}, state));
+  EXPECT_TRUE(mempool->submit(atv1, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
+  PopData v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.atvs.size(), 1);
-  EXPECT_EQ(popData.atvs.at(0), atv1);
+  EXPECT_EQ(v_popData.context.size(), 66);
+  EXPECT_EQ(v_popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.atvs.size(), 1);
+  EXPECT_EQ(v_popData.atvs.at(0), atv1);
 
-  auto containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
+  applyInNextBlock(v_popData);
 
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   ATV atv2 =
       popminer->generateATV(tx2, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool.submitATV({atv2}, state));
+  EXPECT_TRUE(mempool->submit(atv2, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  popData = mempool.getPop(alttree);
+  v_popData = checkedGetPop();
 
-  EXPECT_EQ(popData.atvs.size(), 1);
-  EXPECT_EQ(popData.atvs.at(0), atv2);
+  EXPECT_EQ(v_popData.atvs.at(0), atv2);
 
-  containingBlock = generateNextBlock(*chain.rbegin());
-  chain.push_back(containingBlock);
-
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  EXPECT_TRUE(state.IsValid());
+  applyInNextBlock(v_popData);
 }
 
+// in this test we have a context gap in VBK which is bigger than
+// maxPopDataSize() in bytes.
+// we expect that first getPop returns PopData which contains around 15k VBK
+// blocks (maxPopDataSize / 71 = 14768), 0 VTBs, and 0 ATVs
 TEST_F(MemPoolFixture, getPop_scenario_12) {
-  MemPool mempool(alttree.getParams(),
-                  alttree.vbk().getParams(),
-                  alttree.btc().getParams());
+  const auto estimatePopDataWithVbkSize = []() {
+    PopData p;
+    p.context.emplace_back();
+    return p.estimateSize();
+  };
+  // PopData with 1 VBK block is 71 bytes
+  const auto popDataWith1VBK = estimatePopDataWithVbkSize();
+  const auto max = alttree.getParams().getMaxPopDataSize();
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
-
-  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-
-  // mine 65 VBK blocks
-  popminer->mineVbkBlocks(65);
-
-  // mine 10 blocks
+  popminer->mineVbkBlocks(max / popDataWith1VBK + 10);
   mineAltBlocks(10, chain);
-
   AltBlock endorsedBlock1 = chain[5];
 
-  for (size_t i = 0; i < alttree.getParams().getMaxPopDataPerBlock() + 50;
-       ++i) {
+  for (size_t i = 0; i < 5; ++i) {
     VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
         generatePublicationData(endorsedBlock1));
     ATV atv =
         popminer->generateATV(tx, vbkparam.getGenesisBlock().getHash(), state);
 
-    EXPECT_TRUE(mempool.submitATV({atv}, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv, state));
   }
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData popData = mempool.getPop(alttree);
 
-  EXPECT_EQ(popData.atvs.size(), alttree.getParams().getMaxPopDataPerBlock());
+  {
+    PopData v_popData = checkedGetPop();
+    ASSERT_LE(v_popData.estimateSize(), max);
+    ASSERT_EQ(v_popData.context.size(), max / popDataWith1VBK);
+    ASSERT_EQ(v_popData.vtbs.size(), 0);
+    ASSERT_EQ(v_popData.atvs.size(), 0);
+  }
+  {
+    // second getPop should return same data
+    PopData v_popData = checkedGetPop();
+    ASSERT_LE(v_popData.estimateSize(), max);
+    ASSERT_EQ(v_popData.context.size(), max / popDataWith1VBK);
+    ASSERT_EQ(v_popData.vtbs.size(), 0);
+    ASSERT_EQ(v_popData.atvs.size(), 0);
+    // lets remove it
+    mempool->removePayloads(v_popData);
+  }
+  {
+    // third getPop returns 0, as we removed popData but not added it to
+    // blockchain, so remaining data is not connected to blockchain
+    PopData v_popData = checkedGetPop();
+    ASSERT_EQ(v_popData.context.size(), 0);
+    ASSERT_EQ(v_popData.vtbs.size(), 0);
+    ASSERT_EQ(v_popData.atvs.size(), 0);
+  }
 }

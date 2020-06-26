@@ -63,7 +63,7 @@ TEST_F(Scenario7, scenario_7) {
       generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer->generateATV(tx2, containingVbkBlock2->getHash(), state);
 
-  PopData popData = createPopData(0, {atv1, atv2}, {vtb1, vtb2});
+  PopData popData = createPopData({atv1, atv2}, {vtb1, vtb2});
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);

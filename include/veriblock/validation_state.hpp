@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <veriblock/json.hpp>
 
 namespace altintegration {
 
@@ -26,6 +27,12 @@ class ValidationState {
   ValidationState() : m_mode(MODE_VALID) {}
 
   std::string toString() const { return GetPath() + ", " + GetDebugMessage(); }
+
+  void clear() {
+    stack_trace.clear();
+    m_debug_message.clear();
+    m_mode = MODE_VALID;
+  }
 
   bool Invalid(const std::string &reject_reason,
                const std::string &debug_message = "") {
@@ -107,6 +114,25 @@ class ValidationState {
   std::string m_debug_message;
   std::vector<std::string> stack_trace;
 };
+
+template <typename JsonValue>
+JsonValue ToJSON(const ValidationState &s) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+
+  if (s.IsValid()) {
+    json::putStringKV(obj, "state", "valid");
+    return obj;
+  } else if (s.IsInvalid()) {
+    json::putStringKV(obj, "state", "invalid");
+  } else if (s.IsError()) {
+    json::putStringKV(obj, "state", "error");
+  }
+
+  json::putStringKV(obj, "code", s.GetPath());
+  json::putStringKV(obj, "message", s.GetDebugMessage());
+
+  return obj;
+}
 
 }  // namespace altintegration
 
