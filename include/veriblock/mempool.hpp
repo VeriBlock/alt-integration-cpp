@@ -18,7 +18,7 @@
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "mempool_result.hpp"
+#include "veriblock/mempool_result.hpp"
 
 namespace altintegration {
 
@@ -114,11 +114,16 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
+  std::set<VbkBlock::id_t> removed_vbk_blocks;
+  std::set<ATV::id_t> removed_atvs;
+  std::set<VTB::id_t> removed_vtbs;
+
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
   const BtcChainParams* btc_chain_params_{nullptr};
 
-  VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block);
+  VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
+                                      VbkBlock::id_t id = VbkBlock::id_t());
 };
 
 template <>

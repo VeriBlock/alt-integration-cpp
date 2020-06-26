@@ -6,6 +6,11 @@
 #ifndef VERIBLOCK_POP_CPP_MEMPOOL_RESULT_HPP
 #define VERIBLOCK_POP_CPP_MEMPOOL_RESULT_HPP
 
+#include "veriblock/entities/atv.hpp"
+#include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/entities/vtb.hpp"
+#include "veriblock/validation_state.hpp"
+
 namespace altintegration {
 
 struct MempoolResult {
