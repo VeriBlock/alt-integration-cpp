@@ -18,11 +18,9 @@
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vtb.hpp"
+#include "mempool_result.hpp"
 
 namespace altintegration {
-
-typedef std::vector<uint8_t> (*Hash_Function)(
-    const std::vector<uint8_t>& bytes);
 
 struct MemPool {
   using vbk_hash_t = decltype(VbkBlock::previousBlock);
@@ -70,8 +68,7 @@ struct MemPool {
           const BtcChainParams& btc_params)
       : alt_chain_params_(&alt_param),
         vbk_chain_params_(&vbk_params),
-        btc_chain_params_(&btc_params){
-  }
+        btc_chain_params_(&btc_params) {}
 
   template <typename T>
   const T* get(const typename T::id_t& id) const {
@@ -91,6 +88,8 @@ struct MemPool {
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return true;
   }
+
+  MempoolResult submitAll(const PopData& pop);
 
   template <typename T>
   const payload_map<T>& getMap() const {
