@@ -82,3 +82,11 @@ TEST(VbkBlock, getBlockHash_test) {
       ArithUint256::fromHex(
           "0000000000000000000000000000480D8196D5B0B41861D032377F5165BB4452"));
 }
+
+TEST(VbkBlock, getId_test) {
+  auto atvBytes = ParseHex(defaultBlockEncoded);
+  auto stream = ReadStream(atvBytes);
+  auto vbkblock = VbkBlock::fromVbkEncoding(stream);
+
+  EXPECT_EQ(vbkblock.getId().toHex(), "08e2aae9a5e19569b1a68624");
+}
