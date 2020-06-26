@@ -477,9 +477,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   v_popData = checkedGetPop();
 
-  // TODO: these 66 VBK blocks already exist in VBK Tree, should we remove them
-  // from mempool?
-  EXPECT_EQ(v_popData.context.size(), 66);
+  EXPECT_EQ(v_popData.context.size(), 0);
   EXPECT_EQ(v_popData.vtbs.size(), 0);
   EXPECT_EQ(v_popData.atvs.size(), 0);
 }
@@ -572,7 +570,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
 
   EXPECT_EQ(v_popData.vtbs.size(), 0);
   EXPECT_EQ(v_popData.atvs.size(), 1);
-  EXPECT_EQ(v_popData.context.size(), 123);
+  EXPECT_EQ(v_popData.context.size(), 56);
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_11) {

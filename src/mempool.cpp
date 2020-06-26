@@ -49,24 +49,33 @@ void MemPool::removePayloads(const PopData& pop) {
     auto hash = b.getId();
     vbkblocks_.erase(hash);
     relations_.erase(hash);
+    removed_vbk_blocks.insert(hash);
   }
 
   // clear vtbs
   for (const auto& vtb : pop.vtbs) {
-    stored_vtbs_.erase(vtb.getId());
+    auto vtb_id = vtb.getId();
+    stored_vtbs_.erase(vtb_id);
+    removed_vtbs.insert(vtb_id);
   }
 
   // clear atvs
   for (const auto& atv : pop.atvs) {
-    stored_atvs_.erase(atv.getId());
+    auto atv_id = atv.getId();
+    stored_atvs_.erase(atv_id);
+    removed_atvs.insert(atv_id);
   }
 }
 
-MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block) {
-  auto sh = block.getId();
-  vbkblocks_[sh] = std::make_shared<VbkBlock>(block);
+MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
+                                                      VbkBlock::id_t block_id) {
+  if (block_id == VbkBlock::id_t()) {
+    block_id = block.getId();
+  }
 
-  auto& val = relations_[sh];
+  vbkblocks_[block_id] = std::make_shared<VbkBlock>(block);
+
+  auto& val = relations_[block_id];
   if (val == nullptr) {
     val = std::make_shared<VbkPayloadsRelations>(block);
   }
@@ -104,21 +113,25 @@ bool MemPool::submit(const ATV& atv, ValidationState& state) {
   }
 
   for (const auto& b : atv.context) {
-    touchVbkBlock(b);
+    auto b_id = b.getId();
+    if (removed_vbk_blocks.count(b_id) == 0) {
+      touchVbkBlock(b, b_id);
+    }
   }
 
-  auto& rel = touchVbkBlock(atv.containingBlock);
+  auto atv_id = atv.getId();
+  if (removed_atvs.count(atv_id) == 0) {
+    auto& rel = touchVbkBlock(atv.containingBlock);
+    auto atvptr = std::make_shared<ATV>(atv);
+    auto pair = std::make_pair(atv_id, atvptr);
+    rel.atvs.push_back(atvptr);
 
-  auto atvid = atv.getId();
-  auto atvptr = std::make_shared<ATV>(atv);
-  auto pair = std::make_pair(atvid, atvptr);
-  rel.atvs.push_back(atvptr);
+    // clear context
+    pair.second->context.clear();
 
-  // clear context
-  pair.second->context.clear();
-
-  // store atv id in containing block index
-  stored_atvs_.insert(pair);
+    // store atv id in containing block index
+    stored_atvs_.insert(pair);
+  }
 
   return true;
 }
@@ -130,19 +143,24 @@ bool MemPool::submit(const VTB& vtb, ValidationState& state) {
   }
 
   for (const auto& b : vtb.context) {
-    touchVbkBlock(b);
+    auto b_id = b.getId();
+    if (removed_vbk_blocks.count(b_id) == 0) {
+      touchVbkBlock(b, b_id);
+    }
   }
 
-  auto& rel = touchVbkBlock(vtb.containingBlock);
-  auto vtbid = vtb.getId();
-  auto vtbptr = std::make_shared<VTB>(vtb);
-  auto pair = std::make_pair(vtbid, vtbptr);
-  rel.vtbs.push_back(vtbptr);
+  auto vtb_id = vtb.getId();
+  if (removed_vtbs.count(vtb_id) == 0) {
+    auto& rel = touchVbkBlock(vtb.containingBlock);
+    auto vtbptr = std::make_shared<VTB>(vtb);
+    auto pair = std::make_pair(vtb_id, vtbptr);
+    rel.vtbs.push_back(vtbptr);
 
-  // clear context
-  pair.second->context.clear();
+    // clear context
+    pair.second->context.clear();
 
-  stored_vtbs_.insert(pair);
+    stored_vtbs_.insert(pair);
+  }
 
   return true;
 }
@@ -153,7 +171,10 @@ bool MemPool::submit(const VbkBlock& blk, ValidationState& state) {
     return state.Invalid("pop-mempool-submit-vbkblock");
   }
 
-  touchVbkBlock(blk);
+  auto blk_id = blk.getId();
+  if (removed_vbk_blocks.count(blk_id) == 0) {
+    touchVbkBlock(blk, blk_id);
+  }
 
   return true;
 }
