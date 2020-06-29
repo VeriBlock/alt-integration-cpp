@@ -351,12 +351,48 @@ struct BaseBlockTree {
                         pad);
   }
 
+ public:
+  class DeferForkResolutionGuard {
+    BaseBlockTree<Block>& tree_;
+
+   public:
+    DeferForkResolutionGuard(BaseBlockTree<Block>& tree) : tree_(tree) {
+      tree_.deferForkResolution();
+    }
+
+    ~DeferForkResolutionGuard() { tree_.continueForkResolution(); }
+  };
+
+  DeferForkResolutionGuard deferForkResolutionGuard() {
+    return DeferForkResolutionGuard(*this);
+  }
+
  protected:
   /**
-   * Find all tips affected by block modification and do fork resolution
+   * Find all tips affected by a block modification and schedule or do fork
+   * resolution
    */
   void updateAffectedTips(index_t& modifiedBlock,
                           bool shouldDetermineBestChain = true) {
+    if (deferForkResolutionDepth == 0) {
+      return doUpdateAffectedTips(modifiedBlock, shouldDetermineBestChain);
+    }
+
+    if (!isUpdateTipsDeferred) {
+      if (lastModifiedBlock == nullptr) {
+        lastModifiedBlock = &modifiedBlock;
+      } else {
+        isUpdateTipsDeferred = true;
+        lastModifiedBlock = nullptr;
+      }
+    }
+  }
+
+  /**
+   * Find all tips affected by a block modification and do fork resolution
+   */
+  void doUpdateAffectedTips(index_t& modifiedBlock,
+                            bool shouldDetermineBestChain = true) {
     auto tips = findValidTips<block_t>(modifiedBlock);
     VBK_LOG_DEBUG(
         "Found %d affected valid tips in %s", tips.size(), block_t::name());
@@ -368,7 +404,19 @@ struct BaseBlockTree {
   }
 
  private:
+  int deferForkResolutionDepth = 0;
+  bool isUpdateTipsDeferred = false;
+  index_t* lastModifiedBlock = nullptr;
+
   void updateTips(bool shouldDetermineBestChain = true) {
+    if (deferForkResolutionDepth == 0) {
+      return doUpdateTips(shouldDetermineBestChain);
+    }
+    isUpdateTipsDeferred = true;
+    lastModifiedBlock = nullptr;
+  }
+
+  void doUpdateTips(bool shouldDetermineBestChain = true) {
     for (auto it = tips_.begin(); it != tips_.end();) {
       index_t* index = *it;
       if (!index->isValid()) {
@@ -381,6 +429,28 @@ struct BaseBlockTree {
         }
         ++it;
       }
+    }
+  }
+
+  void deferForkResolution() { ++deferForkResolutionDepth; }
+
+  void continueForkResolution() {
+    VBK_ASSERT(deferForkResolutionDepth > 0);
+    --deferForkResolutionDepth;
+
+    if (deferForkResolutionDepth > 0) {
+      return;
+    }
+
+    if (lastModifiedBlock != nullptr) {
+      VBK_ASSERT(!isUpdateTipsDeferred);
+      doUpdateAffectedTips(*lastModifiedBlock);
+      lastModifiedBlock = nullptr;
+    }
+
+    if (isUpdateTipsDeferred) {
+      doUpdateTips();
+      isUpdateTipsDeferred = false;
     }
   }
 
