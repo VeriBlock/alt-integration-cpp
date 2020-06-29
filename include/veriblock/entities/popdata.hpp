@@ -17,16 +17,7 @@
 
 namespace altintegration {
 
-struct 
-
-
-
-
-
-
-
-
-
+struct PopData {
   using id_t = uint256;
   std::vector<VbkBlock> context;
   std::vector<VTB> vtbs{};

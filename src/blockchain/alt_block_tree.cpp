@@ -603,6 +603,4 @@ void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
   }
 }
 
-uint8_t getBlockProof(const AltBlock&) { return 0; }
-
 }  // namespace altintegration
