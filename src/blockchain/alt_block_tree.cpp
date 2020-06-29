@@ -9,7 +9,6 @@
 #include "veriblock/algorithm.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
-#include "veriblock/stateless_validation.hpp"
 #include <veriblock/storage/blockchain_storage_util.hpp>
 
 namespace altintegration {

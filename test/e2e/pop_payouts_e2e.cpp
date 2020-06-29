@@ -247,7 +247,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   // since before each block was endorsed by two miners
   auto payout = alttree.getPopPayout(chain.back().getHash(), state);
   auto firstBlock = alttree.getBlockIndex(chain.back().getHash())
-                        ->gtorBlocksBehind(
+                        ->getAncestorBlocksBehind(
                             altparam.getEndorsementSettlementInterval());
 
   state = ValidationState();
