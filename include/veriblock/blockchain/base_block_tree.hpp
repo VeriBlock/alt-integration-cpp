@@ -375,7 +375,9 @@ struct BaseBlockTree {
   void updateAffectedTips(index_t& modifiedBlock,
                           bool shouldDetermineBestChain = true) {
     if (deferForkResolutionDepth == 0) {
-      return doUpdateAffectedTips(modifiedBlock, shouldDetermineBestChain);
+      ValidationState dummy;
+      return doUpdateAffectedTips(
+          modifiedBlock, dummy, shouldDetermineBestChain);
     }
 
     if (!isUpdateTipsDeferred) {
@@ -392,12 +394,12 @@ struct BaseBlockTree {
    * Find all tips affected by a block modification and do fork resolution
    */
   void doUpdateAffectedTips(index_t& modifiedBlock,
+                            ValidationState& state,
                             bool shouldDetermineBestChain = true) {
     auto tips = findValidTips<block_t>(modifiedBlock);
     VBK_LOG_DEBUG(
         "Found %d affected valid tips in %s", tips.size(), block_t::name());
     for (auto* tip : tips) {
-      ValidationState state;
       bool isBootstrap = !shouldDetermineBestChain;
       determineBestChain(activeChain_, *tip, state, isBootstrap);
     }
@@ -444,7 +446,8 @@ struct BaseBlockTree {
 
     if (lastModifiedBlock != nullptr) {
       VBK_ASSERT(!isUpdateTipsDeferred);
-      doUpdateAffectedTips(*lastModifiedBlock);
+      ValidationState dummy;
+      doUpdateAffectedTips(*lastModifiedBlock, dummy);
       lastModifiedBlock = nullptr;
     }
 

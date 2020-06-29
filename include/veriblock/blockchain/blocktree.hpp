@@ -133,7 +133,10 @@ struct BlockTree : public BaseBlockTree<Block> {
       return false;
     }
 
-    base::updateAffectedTips(*index, shouldContextuallyCheck);
+    // don't defer fork resolution in the acceptBlock+addPayloads flow until the
+    // validation hole is plugged
+    bool isBootstrap = !shouldContextuallyCheck;
+    determineBestChain(base::activeChain_, *index, state, isBootstrap);
 
     base::tryAddTip(index);
 

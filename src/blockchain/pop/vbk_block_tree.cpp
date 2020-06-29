@@ -305,7 +305,9 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     storagePayloads_.savePayloads(payload);
   }
 
-  updateAffectedTips(*index);
+  // don't defer fork resolution in the acceptBlock+addPayloads flow until the
+  // validation hole is plugged
+  doUpdateAffectedTips(*index, state);
 
   if (!index->isValid()) {
     std::vector<pid_t> pids;
