@@ -36,6 +36,7 @@ JsonValue putArrayOfPairs(
   }
 
   json::putKV(obj, key, arr);
+  return obj;
 }
 
 }  // namespace detail
