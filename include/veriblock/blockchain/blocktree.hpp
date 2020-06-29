@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <memory>
 #include <unordered_map>
-#include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/base_block_tree.hpp>
+#include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
@@ -133,6 +133,8 @@ struct BlockTree : public BaseBlockTree<Block> {
       return false;
     }
 
+    // don't defer fork resolution in the acceptBlock+addPayloads flow until the
+    // validation hole is plugged
     bool isBootstrap = !shouldContextuallyCheck;
     determineBestChain(base::activeChain_, *index, state, isBootstrap);
 
