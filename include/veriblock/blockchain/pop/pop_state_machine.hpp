@@ -120,6 +120,8 @@ struct PopStateMachine {
                   from.toPrettyString(),
                   to.toPrettyString());
 
+    auto forkResolutionGuard = ing_.deferForkResolutionGuard();
+
     for (auto* current : reverse_iterate(chain)) {
       if (current->payloadsIdsEmpty()) {
         continue;
@@ -147,6 +149,8 @@ struct PopStateMachine {
                   chain.blocksCount(),
                   from.toPrettyString(),
                   to.toPrettyString());
+
+    auto forkResolutionGuard = ing_.deferForkResolutionGuard();
 
     for (auto* index : chain) {
       if (VBK_UNLIKELY(IsShutdownRequested())) {
@@ -189,6 +193,8 @@ struct PopStateMachine {
 
     VBK_ASSERT(forkBlock &&
                "state corruption: from and to must be part of the same tree");
+
+    auto forkResolutionGuard = ing_.deferForkResolutionGuard();
 
     unapply(from, *forkBlock);
     if (!apply(*forkBlock, to, state)) {
