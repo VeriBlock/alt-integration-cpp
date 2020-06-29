@@ -80,15 +80,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wno-unknown-pragmas)
     add_cxx_flag(-Wno-literal-suffix)
 
-    # rocksdb errors
-    if(WITH_ROCKSDB)
-        add_flag(-Wno-format-y2k)
-        add_flag(-Wno-double-promotion)
-        add_flag(-Wno-format-nonliteral)
-        add_flag(-Wno-unused-const-variable)
-        add_flag(-Wno-unused-parameter)
-    endif()
-
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
         # Release flags
         add_flag(-Ofast)
@@ -120,8 +111,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/wd4455)                  # disable warning: 'operator ""s': literal suffix identifiers that do not start with an underscore are reserved
     add_flag(/wd4127)                  # disable warning: conditional expression is constant
     add_flag(/wd4505)                  # disable warning: warning C4505: 'dummy': unreferenced local function has been removed
-    # appears in the rocksdb library
-    add_flag(/wd4242)                  # disable warning: '=': conversion from 'uint32_t' to 'unsigned char', possible loss of data
 
     # https://stackoverflow.com/questions/5004858/why-is-stdmin-failing-when-windows-h-is-included
     add_flag(/DNOMINMAX)
