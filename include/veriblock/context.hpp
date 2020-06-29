@@ -6,11 +6,14 @@
 #ifndef VERIBLOCK_POP_CPP_CONTEXT_HPP
 #define VERIBLOCK_POP_CPP_CONTEXT_HPP
 
-
 namespace altintegration {
 
 extern bool IsShutdownRequested();
 extern void RequestShutdown();
+
+//! warning!!! should be used in tests ONLY. It is NOT guaranteed that state
+//! will be correct when shutdown is aborted.
+extern void AbortShutdown();
 
 }  // namespace altintegration
 
