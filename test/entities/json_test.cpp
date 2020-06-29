@@ -13,6 +13,50 @@
 
 using namespace altintegration;
 
+TEST(ToJson, MempoolResult) {
+  MempoolResult r;
+  r.context.emplace_back();
+  r.context.back().second.Invalid("bad-vbk", "Bad VBK!!!");
+  r.atvs.emplace_back();
+  r.vtbs.emplace_back();
+
+  auto json = ToJSON<picojson::value>(r);
+  auto actual = json.serialize(true);
+
+  std::string expected = R"({
+  "atvs": [
+    {
+      "id": "0000000000000000000000000000000000000000000000000000000000000000",
+      "validity": {
+        "state": "valid"
+      }
+    }
+  ],
+  "vbkblocks": [
+    {
+      "id": "000000000000000000000000",
+      "validity": {
+        "code": "bad-vbk",
+        "message": "Bad VBK!!!",
+        "state": "invalid"
+      }
+    }
+  ],
+  "vtbs": [
+    {
+      "id": "0000000000000000000000000000000000000000000000000000000000000000",
+      "validity": {
+        "state": "valid"
+      }
+    }
+  ]
+}
+)";
+
+  std::cout << actual;
+  ASSERT_EQ(actual, expected);
+}
+
 TEST(ToJson, BtcBlock) {
   BtcBlock block;
   block.version = 1;
