@@ -171,12 +171,7 @@ void VbkBlockTree::removePayloads(index_t& index,
     index.vtbids.erase(it);
   }
 
-  // find all affected tips and do a fork resolution
-  auto tips = findValidTips<VbkBlock>(index);
-  for (auto* tip : tips) {
-    ValidationState state;
-    determineBestChain(activeChain_, *tip, state);
-  }
+  updateAffectedTips(index);
 }
 
 void VbkBlockTree::unsafelyRemovePayload(const block_t& block,
@@ -235,12 +230,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index, const pid_t& pid) {
 
   index.vtbids.erase(vtbid_it);
 
-  // find all affected tips and do a fork resolution
-  auto tips = findValidTips<VbkBlock>(index);
-  for (auto* tip : tips) {
-    ValidationState state;
-    determineBestChain(activeChain_, *tip, state);
-  }
+  updateAffectedTips(index);
 }
 
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
@@ -315,13 +305,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     storagePayloads_.savePayloads(payload);
   }
 
-  // find all affected tips and do a fork resolution
-  auto tips = findValidTips<VbkBlock>(*index);
-  VBK_LOG_DEBUG(
-      "Found %d affected valid tips in %s", tips.size(), block_t::name());
-  for (auto* tip : tips) {
-    this->determineBestChain(activeChain_, *tip, state);
-  }
+  updateAffectedTips(*index);
 
   if (!index->isValid()) {
     std::vector<pid_t> pids;

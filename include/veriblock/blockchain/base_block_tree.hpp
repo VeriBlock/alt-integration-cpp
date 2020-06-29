@@ -351,6 +351,22 @@ struct BaseBlockTree {
                         pad);
   }
 
+ protected:
+  /**
+   * Find all tips affected by block modification and do fork resolution
+   */
+  void updateAffectedTips(index_t& modifiedBlock,
+                          bool shouldDetermineBestChain = true) {
+    auto tips = findValidTips<block_t>(modifiedBlock);
+    VBK_LOG_DEBUG(
+        "Found %d affected valid tips in %s", tips.size(), block_t::name());
+    for (auto* tip : tips) {
+      ValidationState state;
+      bool isBootstrap = !shouldDetermineBestChain;
+      determineBestChain(activeChain_, *tip, state, isBootstrap);
+    }
+  }
+
  private:
   void updateTips(bool shouldDetermineBestChain = true) {
     for (auto it = tips_.begin(); it != tips_.end();) {
