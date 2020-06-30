@@ -35,6 +35,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
         -Wno-double-promotion
         -Wno-format-nonliteral
         -Wno-unused-const-variable
+        -Wno-maybe-uninitialized
         -Wno-unused-parameter)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_compile_options(rocksdb PUBLIC
