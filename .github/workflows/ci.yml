@@ -34,12 +34,19 @@ jobs:
         with:
           submodules: recursive
           clean: true
+      - name: Prepare ccache timestamp
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        id: ccache_cache_timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+          message("::set-output name=timestamp::${current_date}")
       - name: ccache cache files
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         uses: actions/cache@v1.1.0
         with:
           path: ~/.ccache
-          key: linux-ccache-${{ matrix.flags }}-${{ steps.cache_timestamp.outputs.timestamp }}
+          key: linux-ccache-${{ matrix.flags }}-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
           restore-keys: |
             linux-ccache-${{ matrix.flags }}-
             linux-ccache-
@@ -64,12 +71,19 @@ jobs:
         with:
           submodules: recursive
           clean: true
+      - name: Prepare ccache timestamp
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        id: ccache_cache_timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+          message("::set-output name=timestamp::${current_date}")
       - name: ccache cache files
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         uses: actions/cache@v1.1.0
         with:
           path: ~/.ccache
-          key: linux-ccache-coverage-${{ steps.cache_timestamp.outputs.timestamp }}
+          key: linux-ccache-coverage-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
           restore-keys: |
             linux-ccache-coverage-
       - name: cmake
