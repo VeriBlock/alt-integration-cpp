@@ -35,7 +35,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     target_add_flag(rocksdb -Wno-unused-const-variable)
     target_add_flag(rocksdb -Wno-maybe-uninitialized)
     target_add_flag(rocksdb -Wno-unused-parameter)
-    target_add_flag(rocksdb -Wno-error=loop-range-construct)
+    target_add_flag(rocksdb -Wno-range-loop-construct)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     # disable warning: '=': conversion from 'uint32_t' to 'unsigned char', possible loss of data
     target_add_flag(rocksdb /wd4242)
