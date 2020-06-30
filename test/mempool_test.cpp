@@ -76,9 +76,9 @@ TEST_F(MemPoolFixture, removePayloads_test) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(0), state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(0), alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -110,7 +110,6 @@ TEST_F(MemPoolFixture, removePayloads_test) {
 }
 
 TEST_F(MemPoolFixture, removed_payloads_cache_test) {
-
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -142,9 +141,9 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool->submit(atv, state));
+  EXPECT_TRUE(mempool->submit(atv, alttree, state));
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit(vtb, state));
+    EXPECT_TRUE(mempool->submit(vtb, alttree, state));
   }
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
@@ -164,9 +163,9 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   EXPECT_TRUE(popData.context.empty());
 
   // insert the same payloads into the mempool
-  EXPECT_TRUE(mempool->submit(atv, state));
+  EXPECT_TRUE(mempool->submit(atv, alttree, state));
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit(vtb, state));
+    EXPECT_TRUE(mempool->submit(vtb, alttree, state));
   }
 
   popData = mempool->getPop(alttree);
@@ -213,9 +212,11 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtbs[0], state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtbs[1], state));
+  ASSERT_TRUE(mempool->submit<ATV>(atv, alttree, state)) << state.toString();
+  ASSERT_TRUE(mempool->submit<VTB>(vtbs[0], alttree, state))
+      << state.toString();
+  ASSERT_TRUE(mempool->submit<VTB>(vtbs[1], alttree, state))
+      << state.toString();
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   ASSERT_EQ(alttree.getBestChain().tip()->height, 10);
@@ -265,9 +266,9 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb1, alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb2, alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -290,7 +291,7 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
       generatePublicationData(endorsedBlock));
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -314,7 +315,7 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
   ATV atv = popminer->generateATV(
       tx, popminer->vbk().getParams().getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv, alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -368,10 +369,10 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   ATV atv2 = popminer->generateATV(tx2, containingVbkBlock2->getHash(), state);
 
   {
-    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-    EXPECT_TRUE(mempool->submit<ATV>(atv2, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv1, alttree, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv2, alttree, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb2, alttree, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb1, alttree, state));
 
     ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
     PopData v_popData = checkedGetPop();
@@ -393,10 +394,10 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
 
   {
     // different order
-    EXPECT_TRUE(mempool->submit<ATV>(atv2, state));
-    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv2, alttree, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv1, alttree, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb2, alttree, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb1, alttree, state));
 
     ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
     PopData v_popData = checkedGetPop();
@@ -418,9 +419,9 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
 
   {
     // No ATV2
-    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv1, alttree, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb1, alttree, state));
+    EXPECT_TRUE(mempool->submit<VTB>(vtb2, alttree, state));
 
     ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
     PopData v_popData = checkedGetPop();
@@ -497,9 +498,9 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv1, alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb1, alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb2, alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -528,7 +529,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv1, alttree, state));
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData v_popData = checkedGetPop();
   EXPECT_EQ(v_popData.vtbs.size(), 0);
@@ -537,13 +538,8 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   applyInNextBlock(v_popData);
 
   mempool->removePayloads(v_popData);
-  EXPECT_TRUE(mempool->submit(atv1, state));
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = checkedGetPop();
-
-  EXPECT_EQ(v_popData.context.size(), 0);
-  EXPECT_EQ(v_popData.vtbs.size(), 0);
-  EXPECT_EQ(v_popData.atvs.size(), 0);
+  ASSERT_FALSE(mempool->submit(atv1, alttree, state)) << state.toString();
+  ASSERT_EQ(state.GetPath(), "pop-mempool-submit-atv-duplicate");
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_10) {
@@ -571,8 +567,8 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+  EXPECT_TRUE(mempool->submit<ATV>(atv1, alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtb1, alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -626,8 +622,8 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   ATV atv2 =
       popminer->generateATV(tx2, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool->submit(atv2, state));
-  EXPECT_TRUE(mempool->submit(vtb2, state));
+  EXPECT_TRUE(mempool->submit(atv2, alttree, state));
+  EXPECT_FALSE(mempool->submit(vtb2, alttree, state)) << state.toString();
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   v_popData = checkedGetPop();
@@ -652,7 +648,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   ATV atv1 =
       popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool->submit(atv1, state));
+  EXPECT_TRUE(mempool->submit(atv1, alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -669,7 +665,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   ATV atv2 =
       popminer->generateATV(tx2, vbkparam.getGenesisBlock().getHash(), state);
 
-  EXPECT_TRUE(mempool->submit(atv2, state));
+  EXPECT_TRUE(mempool->submit(atv2, alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   v_popData = checkedGetPop();
@@ -704,7 +700,7 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
     ATV atv =
         popminer->generateATV(tx, vbkparam.getGenesisBlock().getHash(), state);
 
-    EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+    EXPECT_TRUE(mempool->submit<ATV>(atv, alttree, state));
   }
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));

@@ -82,14 +82,15 @@ struct MemPool {
   }
 
   template <typename T>
-  bool submit(const T& pl, ValidationState& state) {
+  bool submit(const T& pl, const AltTree& tree, ValidationState& state) {
     (void)pl;
+    (void)tree;
     (void)state;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return true;
   }
 
-  MempoolResult submitAll(const PopData& pop);
+  MempoolResult submitAll(const PopData& pop, const AltTree& tree);
 
   template <typename T>
   const payload_map<T>& getMap() const {
@@ -127,13 +128,13 @@ struct MemPool {
 };
 
 template <>
-bool MemPool::submit(const ATV& atv, ValidationState& state);
+bool MemPool::submit(const ATV& atv, const AltTree& tree, ValidationState& state);
 
 template <>
-bool MemPool::submit(const VTB& vtb, ValidationState& state);
+bool MemPool::submit(const VTB& vtb, const AltTree& tree, ValidationState& state);
 
 template <>
-bool MemPool::submit(const VbkBlock& block, ValidationState& state);
+bool MemPool::submit(const VbkBlock& block, const AltTree& tree, ValidationState& state);
 
 template <>
 inline const MemPool::payload_map<VbkBlock>& MemPool::getMap() const {
