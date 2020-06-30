@@ -37,10 +37,8 @@ jobs:
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
-        shell: cmake -P {0}
         run: |
-          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-          message("::set-output name=timestamp::${current_date}")
+          echo "::set-output name=timestamp::`date +%s`}"
       - name: ccache cache files
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         uses: actions/cache@v1.1.0
@@ -74,10 +72,8 @@ jobs:
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
-        shell: cmake -P {0}
         run: |
-          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-          message("::set-output name=timestamp::${current_date}")
+          echo "::set-output name=timestamp::`date +%s`}"
       - name: ccache cache files
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         uses: actions/cache@v1.1.0
