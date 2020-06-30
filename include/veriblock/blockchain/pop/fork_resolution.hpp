@@ -114,55 +114,50 @@ std::vector<KeystoneContext> getKeystoneContext(
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree) {
   std::vector<KeystoneContext> ret;
   ret.reserve(chain.size());
+  for (const auto& pkc : chain) {
+    int earliestEndorsementIndex = (std::numeric_limits<int32_t>::max)();
+    for (const auto* btcIndex : pkc.referencedByBlocks) {
+      if (btcIndex == nullptr) {
+        continue;
+      }
 
-  std::transform(
-      chain.begin(),
-      chain.end(),
-      std::back_inserter(ret),
-      [&tree](const ProtoKeystoneContext<ProtectingBlockT>& pkc) {
-        int earliestEndorsementIndex = (std::numeric_limits<int32_t>::max)();
-        for (const auto* btcIndex : pkc.referencedByBlocks) {
-          if (btcIndex == nullptr) {
-            continue;
+      auto endorsementIndex = btcIndex->height;
+      if (endorsementIndex >= earliestEndorsementIndex) {
+        continue;
+      }
+
+      if (pkc.timestampOfEndorsedBlock < btcIndex->getBlockTime()) {
+        earliestEndorsementIndex = endorsementIndex;
+        continue;
+      }
+
+      // look at the future BTC blocks and set the--0
+      // earliestEndorsementIndex to a future Bitcoin block
+      auto best = tree.getBestChain();
+      for (int adjustedEndorsementIndex = endorsementIndex + 1;
+           adjustedEndorsementIndex <= best.chainHeight();
+           adjustedEndorsementIndex++) {
+        // Ensure that the keystone's block time isn't later than the
+        // block time of the Bitcoin block it's endorsed in
+        auto* index = best[adjustedEndorsementIndex];
+        VBK_ASSERT(index != nullptr);
+        if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
+          // Timestamp of VeriBlock block is lower than Bitcoin block,
+          // set this as the adjusted index if another lower index has
+          // not already been set
+          if (adjustedEndorsementIndex < earliestEndorsementIndex) {
+            earliestEndorsementIndex = adjustedEndorsementIndex;
           }
 
-          auto endorsementIndex = btcIndex->height;
-          if (endorsementIndex >= earliestEndorsementIndex) {
-            continue;
-          }
+          // Always break; we found a valid Bitcoin index and any
+          // future adjustedEndorsementIndex is going to be higher
+          break;
+        }  // end if
+      }    // end for
+    }      // end for
 
-          if (pkc.timestampOfEndorsedBlock < btcIndex->getBlockTime()) {
-            earliestEndorsementIndex = endorsementIndex;
-            continue;
-          }
-
-          // look at the future BTC blocks and set the--0
-          // earliestEndorsementIndex to a future Bitcoin block
-          auto best = tree.getBestChain();
-          for (int adjustedEndorsementIndex = endorsementIndex + 1;
-               adjustedEndorsementIndex <= best.chainHeight();
-               adjustedEndorsementIndex++) {
-            // Ensure that the keystone's block time isn't later than the
-            // block time of the Bitcoin block it's endorsed in
-            auto* index = best[adjustedEndorsementIndex];
-            VBK_ASSERT(index != nullptr);
-            if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
-              // Timestamp of VeriBlock block is lower than Bitcoin block,
-              // set this as the adjusted index if another lower index has
-              // not already been set
-              if (adjustedEndorsementIndex < earliestEndorsementIndex) {
-                earliestEndorsementIndex = adjustedEndorsementIndex;
-              }
-
-              // Always break; we found a valid Bitcoin index and any
-              // future adjustedEndorsementIndex is going to be higher
-              break;
-            }  // end if
-          }    // end for
-        }      // end for
-
-        return KeystoneContext{pkc.blockHeight, earliestEndorsementIndex};
-      });
+    ret.push_back(KeystoneContext{pkc.blockHeight, earliestEndorsementIndex});
+  }
 
   return ret;
 }

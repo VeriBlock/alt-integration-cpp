@@ -67,5 +67,3 @@ std::vector<uint8_t> AltBlock::toVbkEncoding() const {
   toVbkEncoding(stream);
   return stream.data();
 }
-
-uint32_t AltBlock::getBlockTime() const { return timestamp; }
