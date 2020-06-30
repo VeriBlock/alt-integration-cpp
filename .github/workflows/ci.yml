@@ -39,25 +39,10 @@ jobs:
         uses: actions/cache@v1.1.0
         with:
           path: ~/.ccache
-          key: linux-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
+          key: linux-ccache-${{ matrix.flags }}-${{ steps.cache_timestamp.outputs.timestamp }}
           restore-keys: |
+            linux-ccache-${{ matrix.flags }}-
             linux-ccache-
-      - name: ccache rocksdb
-        if: github.event_name == 'push' || github.event_name == 'pull_request'
-        uses: actions/cache@v1.1.0
-        with:
-          path: |
-            build/rocksdb-src
-            build/rocksdb-build
-          key: linux-rocksdb-${{ hashFiles('**/CMakeLists-rocksdb.txt.in') }}
-      - name: ccache googletest
-        if: github.event_name == 'push' || github.event_name == 'pull_request'
-        uses: actions/cache@v1.1.0
-        with:
-          path: |
-            build/googletest-src
-            build/googletest-build
-          key: linux-googletest-${{ hashFiles('**/CMakeLists-googletest.txt.in') }}
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
@@ -84,25 +69,9 @@ jobs:
         uses: actions/cache@v1.1.0
         with:
           path: ~/.ccache
-          key: linux-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
+          key: linux-ccache-coverage-${{ steps.cache_timestamp.outputs.timestamp }}
           restore-keys: |
-            linux-ccache-
-      - name: ccache rocksdb
-        if: github.event_name == 'push' || github.event_name == 'pull_request'
-        uses: actions/cache@v1.1.0
-        with:
-          path: |
-            build/rocksdb-src
-            build/rocksdb-build
-          key: linux-rocksdb-${{ hashFiles('**/CMakeLists-rocksdb.txt.in') }}
-      - name: ccache googletest
-        if: github.event_name == 'push' || github.event_name == 'pull_request'
-        uses: actions/cache@v1.1.0
-        with:
-          path: |
-            build/googletest-src
-            build/googletest-build
-          key: linux-googletest-${{ hashFiles('**/CMakeLists-googletest.txt.in') }}
+            linux-ccache-coverage-
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCOVERAGE=ON
       - name: build
