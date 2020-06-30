@@ -58,6 +58,13 @@ function(addtest_part test_name)
             )
 endfunction()
 
+function(target_add_flag target flag)
+    check_cxx_compiler_flag(${flag} CXXFLAG_${flag})
+    if (CXXFLAG_${flag} EQUAL 1)
+        target_compile_options(${target} PRIVATE ${flag})
+    endif ()
+endfunction()
+
 # conditionally applies flag. If flag is supported by current compiler, it will be added to compile options.
 function(add_flag flag)
     check_cxx_compiler_flag(${flag} CXXFLAG_${flag})

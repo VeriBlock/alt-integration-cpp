@@ -30,15 +30,13 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/rocksdb-src
         EXCLUDE_FROM_ALL)
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
-    target_compile_options(rocksdb PUBLIC
-        -Wno-format-y2k
-        -Wno-double-promotion
-        -Wno-format-nonliteral
-        -Wno-unused-const-variable
-        -Wno-maybe-uninitialized
-        -Wno-unused-parameter)
+    target_add_flag(rocksdb -Wno-format-y2k)
+    target_add_flag(rocksdb -Wno-double-promotion)
+    target_add_flag(rocksdb -Wno-format-nonliteral)
+    target_add_flag(rocksdb -Wno-unused-const-variable)
+    target_add_flag(rocksdb -Wno-maybe-uninitialized)
+    target_add_flag(rocksdb -Wno-unused-parameter)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    target_compile_options(rocksdb PUBLIC
-        /wd4242 # disable warning: '=': conversion from 'uint32_t' to 'unsigned char', possible loss of data
-    )
+    # disable warning: '=': conversion from 'uint32_t' to 'unsigned char', possible loss of data
+    target_add_flag(rocksdb /wd4242)
 endif()
