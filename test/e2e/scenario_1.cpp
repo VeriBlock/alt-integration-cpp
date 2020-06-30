@@ -139,8 +139,8 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 TEST_F(Scenario1, scenario_1) {
   // Step 1
   ASSERT_EQ(vbkAtip->height, vbkBtip->height);
-  EXPECT_EQ(vbkBtip->getHash(),
-            popminer->vbk().getBestChain().tip()->getHash());
+  ASSERT_EQ(*vbkBtip,
+            *popminer->vbk().getBestChain().tip());
 
   AltBlock endorsedBlock = altchain[90];
   AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
