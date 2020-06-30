@@ -18,10 +18,6 @@ namespace altintegration {
  *
  * Every chain has exactly one block at every height.
  *
- * @note v1 implementation stores whole chain in memory. v2 will store a subset
- * of blocks in memory, to reduce memory footprint.
- * @version v1
- *
  * @tparam Block
  */
 template <typename BlockIndexT>
@@ -165,18 +161,44 @@ struct Chain {
 };
 
 template <typename index_t>
-index_t* findBlockContainingEndorsement(
+const index_t* findBlockContainingEndorsement(
     const Chain<index_t>& chain,
+    const index_t* workBlock,
     const typename index_t::endorsement_t& e,
     const uint32_t& endorsement_settlement_interval) {
-  index_t* workBlock = chain.tip();
-
   for (uint32_t count = 0;
        count < endorsement_settlement_interval && workBlock &&
        workBlock->height >= chain.getStartHeight() &&
        e.endorsedHash != workBlock->getHash();
        count++) {
     if (workBlock->containingEndorsements.count(e.id)) {
+      return workBlock;
+    }
+    workBlock = workBlock->pprev;
+  }
+
+  return nullptr;
+}
+
+template <typename index_t>
+inline const index_t* findBlockContainingEndorsement(
+    const Chain<index_t>& chain,
+    const typename index_t::endorsement_t& e,
+    const uint32_t& endorsement_settlement_interval) {
+  return findBlockContainingEndorsement<index_t>(
+      chain, chain.tip(), e, endorsement_settlement_interval);
+}
+
+template <typename index_t>
+const index_t* findBlockContainingEndorsement(
+    const Chain<index_t>& chain,
+    const index_t* workBlock,
+    const typename index_t::endorsement_t::id_t& id,
+    const uint32_t& window) {
+  for (uint32_t count = 0; count < window && workBlock &&
+                           workBlock->height >= chain.getStartHeight();
+       count++) {
+    if (workBlock->containingEndorsements.count(id)) {
       return workBlock;
     }
     workBlock = workBlock->pprev;
