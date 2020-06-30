@@ -161,12 +161,15 @@ bool MemPool::submit(const VTB& vtb,
   }
 
   // stateful validation
+  auto* containing = tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
   auto window = vbk_chain_params_->getEndorsementSettlementInterval();
-  auto duplicate =
-      findBlockContainingEndorsement(tree.vbk().getBestChain(),
-                                     tree.vbk().getBestChain().tip(),
-                                     vtb.getId(),
-                                     window);
+  auto duplicate = findBlockContainingEndorsement(
+      tree.vbk().getBestChain(),
+      // if containing exists on chain, then search for duplicates starting from
+      // containing, else search starting from tip
+      (containing ? containing : tree.vbk().getBestChain().tip()),
+      vtb.getId(),
+      window);
   if (duplicate) {
     return state.Invalid(
         "pop-mempool-submit-vtb-duplicate",
