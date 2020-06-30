@@ -248,9 +248,14 @@ bool AltTree::saveToStorage(PopStorage& storage, ValidationState& state) {
 
 bool AltTree::loadFromStorage(PopStorage& storage,
                               ValidationState& state) {
-  if (!loadAndApplyBlocks(storage, vbk().btc(), state)) return false;
-  if (!loadAndApplyBlocks(storage, vbk(), state)) return false;
-  return loadAndApplyBlocks(storage, *this, state);
+  if (!loadAndApplyBlocks(storage, vbk().btc(), state))
+    return state.Invalid("BTC-load-and-apply-blocks");
+  if (!loadAndApplyBlocks(storage, vbk(), state))
+    return state.Invalid("VBK-load-and-apply-blocks");
+  if (!loadAndApplyBlocks(storage, *this, state)) {
+    return state.Invalid("ALT-load-and-apply-blocks");
+  }
+  return state.IsValid();
 }
 
 std::string AltTree::toPrettyString(size_t level) const {

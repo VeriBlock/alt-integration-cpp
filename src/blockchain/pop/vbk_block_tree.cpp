@@ -345,8 +345,12 @@ bool VbkBlockTree::saveToStorage(PopStorage& storage, ValidationState& state) {
 
 bool VbkBlockTree::loadFromStorage(PopStorage& storage,
                                    ValidationState& state) {
-  if (!loadAndApplyBlocks(storage, btc(), state)) return false;
-  return loadAndApplyBlocks(storage, *this, state);
+  if (!loadAndApplyBlocks(storage, btc(), state))
+    return state.Invalid("BTC-load-and-apply-blocks");
+  if (!loadAndApplyBlocks(storage, *this, state)) {
+    return state.Invalid("VBK-load-and-apply-blocks");
+  }
+  return state.IsValid();
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
