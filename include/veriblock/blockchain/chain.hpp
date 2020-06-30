@@ -181,6 +181,15 @@ const index_t* findBlockContainingEndorsement(
 }
 
 template <typename index_t>
+inline const index_t* findBlockContainingEndorsement(
+    const Chain<index_t>& chain,
+    const typename index_t::endorsement_t& e,
+    const uint32_t& endorsement_settlement_interval) {
+  return findBlockContainingEndorsement<index_t>(
+      chain, chain.tip(), e, endorsement_settlement_interval);
+}
+
+template <typename index_t>
 const index_t* findBlockContainingEndorsement(
     const Chain<index_t>& chain,
     const index_t* workBlock,

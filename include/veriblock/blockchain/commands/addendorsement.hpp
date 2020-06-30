@@ -35,12 +35,12 @@ struct AddEndorsement : public Command {
       : ing_(&ing), ed_(&ed), e_(std::move(e)) {}
 
   bool Execute(ValidationState& state) override {
-    auto* containing = ed_->getBlockIndex(e_.containingHash);
+    auto* containing = ed_->getBlockIndex(e_->containingHash);
     if (!containing) {
       return state.Invalid(
           protected_block_t::name() + "-no-containing",
           fmt::sprintf("Can not find containing block in endorsement=%s",
-                       e_.toPrettyString()));
+                       e_->toPrettyString()));
     }
 
     // endorsement validity window
@@ -60,16 +60,16 @@ struct AddEndorsement : public Command {
                            "No block found on endorsed block height");
     }
 
-    if (endorsed->getHash() != e_.endorsedHash) {
+    if (endorsed->getHash() != e_->endorsedHash) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
               "Endorsed block is on a different chain. Expected: %s, got %s",
               endorsed->toShortPrettyString(),
-              HexStr(e_.endorsedHash)));
+              HexStr(e_->endorsedHash)));
     }
 
-    auto& id = e_.id;
+    auto& id = e_->id;
     auto endorsed_it =
         std::find_if(endorsed->endorsedBy.rbegin(),
                      endorsed->endorsedBy.rend(),
@@ -80,7 +80,7 @@ struct AddEndorsement : public Command {
           protected_block_t ::name() + "-duplicate",
           fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
                        "found block endorsed by it in %s",
-                       e_.toPrettyString(),
+                       e_->toPrettyString(),
                        containing->toShortPrettyString(),
                        endorsed->toShortPrettyString()));
     }
@@ -101,7 +101,7 @@ struct AddEndorsement : public Command {
           protected_block_t ::name() + "-duplicate",
           fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
                        "found its duplicate in block %s",
-                       e_.toPrettyString(),
+                       e_->toPrettyString(),
                        containing->toShortPrettyString(),
                        duplicate->toShortPrettyString()));
     }
