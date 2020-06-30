@@ -44,10 +44,10 @@ jobs:
         uses: actions/cache@v1.1.0
         with:
           path: ~/.ccache
-          key: linux-ccache-${{ matrix.flags }}-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          key: linux-ccache-matrix-${{ matrix.flags }}-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
           restore-keys: |
-            linux-ccache-${{ matrix.flags }}-
-            linux-ccache-
+            linux-ccache-matrix-${{ matrix.flags }}-
+            linux-ccache-matrix-
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
