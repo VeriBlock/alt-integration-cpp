@@ -11,23 +11,41 @@
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/entities/vtb.hpp>
-#include <veriblock/storage/payloads_base_storage.hpp>
+#include <veriblock/storage/payloads_repository.hpp>
+#include <veriblock/storage/payloads_repository_inmem.hpp>
 #include <veriblock/storage/storage_exceptions.hpp>
 
 namespace altintegration {
 
-class PayloadsStorage : public PayloadsBaseStorage<ATV>,
-                        public PayloadsBaseStorage<VTB>,
-                        public PayloadsBaseStorage<VbkBlock> {
+class PayloadsStorage {
  public:
   virtual ~PayloadsStorage() = default;
+  PayloadsStorage(std::shared_ptr<PayloadsRepository<ATV>> repoAtv,
+                  std::shared_ptr<PayloadsRepository<VTB>> repoVtb,
+                  std::shared_ptr<PayloadsRepository<VbkBlock>> repoBlocks)
+      : _repoAtv(repoAtv), _repoVtb(repoVtb), _repoBlocks(repoBlocks) {}
 
-  PayloadsStorage() {}
+  static PayloadsStorage newStorageInmem() {
+    std::shared_ptr<PayloadsRepository<ATV>> prepoAtv =
+        std::make_shared<PayloadsRepositoryInmem<ATV>>();
+    std::shared_ptr<PayloadsRepository<VTB>> prepoVtb =
+        std::make_shared<PayloadsRepositoryInmem<VTB>>();
+    std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks =
+        std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
+    return PayloadsStorage{prepoAtv, prepoVtb, prepoBlocks};
+  }
+
+  template <typename Payloads>
+  PayloadsRepository<Payloads>& getRepo();
+
+  template <typename Payloads>
+  const PayloadsRepository<Payloads>& getRepo() const;
 
   template <typename Payloads>
   Payloads loadPayloads(const typename Payloads::id_t& pid) {
     Payloads payloads;
-    bool ret = PayloadsBaseStorage<Payloads>::prepo_->get(pid, &payloads);
+    auto& repo = getRepo<Payloads>();
+    bool ret = repo.get(pid, &payloads);
     if (!ret) {
       throw StateCorruptedException(
           fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
@@ -37,24 +55,24 @@ class PayloadsStorage : public PayloadsBaseStorage<ATV>,
 
   template <typename Payloads>
   void savePayloads(const Payloads& payloads) {
-    bool ret = PayloadsBaseStorage<Payloads>::prepo_->put(payloads);
-    if (!ret) {
-      throw BadIOException(fmt::sprintf("Failed to write payloads id={%s}",
-                                        payloads.getId().toHex()));
+    auto& repo = getRepo<Payloads>();
+    repo.put(payloads);
+  }
+
+  template <typename Payloads>
+  void savePayloadsMany(const std::vector<Payloads>& payloads) {
+    auto& repo = getRepo<Payloads>();
+    auto batch = repo.newBatch();
+    for (const auto& p : payloads) {
+      batch->put(p);
     }
+    batch->commit();
   }
 
   void savePayloads(const PopData& pop) {
-    // TODO: add bulk insert
-    for (auto& b : pop.context) {
-      savePayloads(b);
-    }
-    for (auto& b : pop.vtbs) {
-      savePayloads(b);
-    }
-    for (auto& b : pop.atvs) {
-      savePayloads(b);
-    }
+    savePayloadsMany(pop.context);
+    savePayloadsMany(pop.vtbs);
+    savePayloadsMany(pop.atvs);
   }
 
   // realisation in the alt_block_tree, vbK_block_tree
@@ -93,6 +111,11 @@ class PayloadsStorage : public PayloadsBaseStorage<ATV>,
 
     VBK_ASSERT(false && "should not get here");
   }
+
+ protected:
+  std::shared_ptr<PayloadsRepository<ATV>> _repoAtv;
+  std::shared_ptr<PayloadsRepository<VTB>> _repoVtb;
+  std::shared_ptr<PayloadsRepository<VbkBlock>> _repoBlocks;
 };
 
 }  // namespace altintegration

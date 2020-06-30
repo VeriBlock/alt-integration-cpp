@@ -87,7 +87,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool saveToStorage(PopStorage& storage, ValidationState& state);
 
-  bool loadFromStorage(const PopStorage& storage, ValidationState& state);
+  bool loadFromStorage(PopStorage& storage, ValidationState& state);
 
   bool operator==(const VbkBlockTree& o) const {
     return cmp_ == o.cmp_ && VbkTree::operator==(o);
@@ -118,16 +118,6 @@ void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
 template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
     const typename VbkBlockTree::index_t& index, VbkBlockTree& tree);
-
-template <>
-void PopStorage::saveBlocks(
-    const std::unordered_map<typename BtcBlock::prev_hash_t,
-                             std::shared_ptr<BlockIndex<BtcBlock>>>& blocks);
-
-template <>
-void PopStorage::saveBlocks(
-    const std::unordered_map<typename VbkBlock::prev_hash_t,
-                             std::shared_ptr<BlockIndex<VbkBlock>>>& blocks);
 
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {

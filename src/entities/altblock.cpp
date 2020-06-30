@@ -7,6 +7,15 @@
 
 using namespace altintegration;
 
+AltBlock AltBlock::fromRaw(Slice<const uint8_t> bytes) {
+  ReadStream stream(bytes);
+  return fromRaw(stream);
+}
+
+AltBlock AltBlock::fromRaw(ReadStream& stream) {
+  return fromVbkEncoding(stream);
+}
+
 AltBlock AltBlock::fromVbkEncoding(ReadStream& stream) {
   AltBlock block;
   uint32_t hash_size = stream.readBE<uint32_t>();
@@ -28,6 +37,16 @@ AltBlock AltBlock::fromVbkEncoding(ReadStream& stream) {
 AltBlock AltBlock::fromVbkEncoding(const std::string& bytes) {
   ReadStream stream(bytes);
   return fromVbkEncoding(stream);
+}
+
+void AltBlock::toRaw(WriteStream& stream) const {
+  return toVbkEncoding(stream);
+}
+
+std::vector<uint8_t> AltBlock::toRaw() const {
+  WriteStream stream;
+  toRaw(stream);
+  return stream.data();
 }
 
 void AltBlock::toVbkEncoding(WriteStream& stream) const {

@@ -94,8 +94,6 @@ struct BlockWriteBatch {
  *
  * @tparam Block Stored Block type
  *
- * @invariant any instance is in valid state - database is opened when valid
- * instance of BlockRepository created. To close database, delete the instance.
  */
 template <typename Block>
 struct BlockRepository {
@@ -132,7 +130,7 @@ struct BlockRepository {
   /**
    * Write a single block. If block with such hash exists, db will overwrite
    * it.
-   * @param block to be written in a batch
+   * @param block to be written
    * @return true if block already existed in db and we overwrote it. False
    * otherwise.
    */
