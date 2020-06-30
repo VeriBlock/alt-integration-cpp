@@ -22,7 +22,6 @@ set(ROCKSDB_BUILD_SHARED FALSE CACHE BOOL "build shared library alongside with s
 set(WITH_MD_LIBRARY OFF CACHE BOOL "build with MD runtime")
 set(PORTABLE ON CACHE BOOL "build portable")
 set(CMAKE_DISABLE_FIND_PACKAGE_NUMA TRUE CACHE BOOL "disable find NUMA package")
-set(CMAKE_CXX_CLANG_TIDY "")
 
 # Add RocksDB directly to our build.
 add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/rocksdb-src
@@ -36,7 +35,10 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     target_add_flag(rocksdb -Wno-unused-const-variable)
     target_add_flag(rocksdb -Wno-maybe-uninitialized)
     target_add_flag(rocksdb -Wno-unused-parameter)
+    target_add_flag(rocksdb -Wno-error=loop-range-construct)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     # disable warning: '=': conversion from 'uint32_t' to 'unsigned char', possible loss of data
     target_add_flag(rocksdb /wd4242)
 endif()
+
+disable_clang_tidy(rocksdb)
