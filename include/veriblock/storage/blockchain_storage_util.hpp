@@ -34,9 +34,8 @@ bool loadAndApplyBlocks(PopStorage& storage,
   for (const auto& blockPair : blocks) {
     auto* bi = tree.insertBlock(blockPair.second->header);
     bi->status = blockPair.second->status;
-    bool ret =
-        loadBlockEndorsements(storage, *blockPair.second, *bi, tree, state);
-    if (!ret) return state.IsValid();
+    if (!loadBlockEndorsements(storage, *blockPair.second, *bi, tree, state))
+      return false;
   }
 
   auto* tip = tree.getBlockIndex(tipStored.second);

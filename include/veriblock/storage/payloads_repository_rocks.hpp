@@ -129,24 +129,27 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
       : _db(db), _columnHandle(columnHandle) {}
 
   bool remove(const pid_t& pid) override {
-    payloads_t outBlock{};
-    bool existing = get(pid, &outBlock);
+    std::string value;
+    bool existing = _db->KeyMayExist(
+        rocksdb::ReadOptions(), _columnHandle, makeRocksSlice(pid), &value);
     if (!existing) return false;
 
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
     rocksdb::Status s =
         _db->Delete(write_options, _columnHandle, makeRocksSlice(pid));
-    if (!s.ok() && !s.IsNotFound()) {
+    if (!s.ok()) {
+      if (s.IsNotFound()) return false;
       throw db::DbError(s.ToString());
     }
     return true;
   }
 
   bool put(const payloads_t& payload) override {
-    payloads_t outPayloads{};
     auto pid = payload.getId();
-    bool existing = get(pid, &outPayloads);
+    std::string value;
+    bool existing = _db->KeyMayExist(
+        rocksdb::ReadOptions(), _columnHandle, makeRocksSlice(pid), &value);
     auto payloadsBytes = serializePayloadsToRocks(payload);
 
     rocksdb::WriteOptions write_options;
@@ -177,8 +180,17 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
   }
 
   void clear() override {
-    // call BlockRepositoryRocksManager.clear() instead
-    return;
+    auto cursor = newCursor();
+    if (cursor == nullptr) {
+      throw db::DbError("Cannot create PayloadsRepository cursor");
+    }
+    cursor->seekToFirst();
+    while (cursor->isValid()) {
+      auto key = cursor->key();
+      remove(key);
+      cursor->next();
+    }
+    // call BlockRepositoryRocksManager.clear() for faster table drop
   }
 
   std::unique_ptr<PayloadsWriteBatch<Payloads>> newBatch() override {

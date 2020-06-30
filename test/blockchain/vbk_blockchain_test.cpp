@@ -13,7 +13,6 @@
 #include "veriblock/literals.hpp"
 #include "veriblock/storage/pop_storage.hpp"
 #include "veriblock/storage/payloads_storage.hpp"
-#include "veriblock/storage/payloads_repository_inmem.hpp"
 
 using namespace altintegration;
 
@@ -28,13 +27,7 @@ struct BtcInvalidationTest {
 
   BtcChainParamsRegTest btcparam;
   VbkChainParamsRegTest vbkparam;
-  std::shared_ptr<PayloadsRepository<ATV>> prepoAtv =
-      std::make_shared<PayloadsRepositoryInmem<ATV>>();
-  std::shared_ptr<PayloadsRepository<VTB>> prepoVtb =
-      std::make_shared<PayloadsRepositoryInmem<VTB>>();
-  std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks =
-      std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
-  PayloadsStorage storage{prepoAtv, prepoVtb, prepoBlocks};
+  PayloadsStorage storage = PayloadsStorage::newStorageInmem();
 };
 
 struct VbkTestCase {

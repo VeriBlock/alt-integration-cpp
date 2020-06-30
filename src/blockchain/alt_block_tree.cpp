@@ -248,10 +248,8 @@ bool AltTree::saveToStorage(PopStorage& storage, ValidationState& state) {
 
 bool AltTree::loadFromStorage(PopStorage& storage,
                               ValidationState& state) {
-  bool ret = loadAndApplyBlocks(storage, vbk().btc(), state);
-  if (!ret) return state.IsValid();
-  ret = loadAndApplyBlocks(storage, vbk(), state);
-  if (!ret) return state.IsValid();
+  if (!loadAndApplyBlocks(storage, vbk().btc(), state)) return false;
+  if (!loadAndApplyBlocks(storage, vbk(), state)) return false;
   return loadAndApplyBlocks(storage, *this, state);
 }
 

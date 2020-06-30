@@ -250,17 +250,19 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
       : _db(db), _columnHandle(columnHandle) {}
 
   bool put(const stored_block_t& block) override {
-    stored_block_t outBlock{};
-    bool existing = getByHash(block.getHash(), &outBlock);
+    auto hash = block.getHash();
+    auto hashSlice = Slice<uint8_t>(hash.data(), hash.size());
+    auto key = makeRocksSlice(hashSlice);
+    std::string value;
+    bool existing = _db->KeyMayExist(rocksdb::ReadOptions(),
+                                     _columnHandle, key, &value);
 
-    auto blockHash = block.getHash();
     auto blockBytes = serializeBlockToRocks(block);
 
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
     rocksdb::Status s = _db->Put(write_options,
-                                 _columnHandle,
-                                 makeRocksSlice(blockHash),
+                                 _columnHandle, key,
                                  makeRocksSlice(blockBytes));
     if (!s.ok()) {
       throw db::DbError(s.ToString());
@@ -283,29 +285,44 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
   size_t getManyByHash(Slice<const hash_t> hashes,
                        std::vector<stored_block_t>* out) const override {
+    size_t numKeys = hashes.size();
+    std::vector<rocksdb::Slice> keys(numKeys);
+    size_t i = 0;
+    for (const auto& h : hashes) {
+      keys[i++] = makeRocksSlice(h);
+    }
+    std::vector<rocksdb::PinnableSlice> values(numKeys);
+    std::vector<rocksdb::Status> statuses(numKeys);
+    _db->MultiGet(rocksdb::ReadOptions(),
+                  _columnHandle,
+                  numKeys,
+                  keys.data(),
+                  values.data(),
+                  statuses.data());
+
     size_t found = 0;
-    for (const hash_t& hash : hashes) {
-      stored_block_t outBlock{};
-      if (!getByHash(hash, &outBlock)) {
-        /// TODO: some information about non-existing block
+    for (i = 0; i < numKeys; i++) {
+      auto& status = statuses[i];
+      if (status.ok()) {
+        out->push_back(deserializeBlockFromRocks<stored_block_t>(values[i].ToString()));
+        found++;
         continue;
       }
-      found++;
-      if (out) {
-        out->push_back(outBlock);
-      }
+      if (status.IsNotFound()) continue;
+      throw db::DbError(status.ToString());
     }
     return found;
   }
 
   bool removeByHash(const hash_t& hash) override {
-    stored_block_t outBlock{};
-    bool existing = getByHash(hash, &outBlock);
+    auto key = makeRocksSlice(hash);
+    std::string value;
+    bool existing = _db->KeyMayExist(rocksdb::ReadOptions(), _columnHandle, key, &value);
     if (!existing) return false;
 
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
-    rocksdb::Status s = _db->Delete(write_options, _columnHandle, makeRocksSlice(hash));
+    rocksdb::Status s = _db->Delete(write_options, _columnHandle, key);
     if (!s.ok() && !s.IsNotFound()) {
       throw db::DbError(s.ToString());
     }
@@ -313,8 +330,17 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   }
 
   void clear() override {
-    // call BlockRepositoryRocksManager.clear() instead
-    return;
+    auto cursor = newCursor();
+    if (cursor == nullptr) {
+      throw db::DbError("Cannot create BlockRepository cursor");
+    }
+    cursor->seekToFirst();
+    while (cursor->isValid()) {
+      auto key = cursor->key();
+      removeByHash(key);
+      cursor->next();
+    }
+    // call BlockRepositoryRocksManager.clear() for faster table drop
   }
 
   std::unique_ptr<BlockWriteBatch<stored_block_t>> newBatch() override {

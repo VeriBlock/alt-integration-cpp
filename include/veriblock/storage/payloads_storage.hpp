@@ -12,6 +12,7 @@
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/entities/vtb.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
+#include <veriblock/storage/payloads_repository_inmem.hpp>
 #include <veriblock/storage/storage_exceptions.hpp>
 
 namespace altintegration {
@@ -23,6 +24,16 @@ class PayloadsStorage {
                   std::shared_ptr<PayloadsRepository<VTB>> repoVtb,
                   std::shared_ptr<PayloadsRepository<VbkBlock>> repoBlocks)
       : _repoAtv(repoAtv), _repoVtb(repoVtb), _repoBlocks(repoBlocks) {}
+
+  static PayloadsStorage newStorageInmem() {
+    std::shared_ptr<PayloadsRepository<ATV>> prepoAtv =
+        std::make_shared<PayloadsRepositoryInmem<ATV>>();
+    std::shared_ptr<PayloadsRepository<VTB>> prepoVtb =
+        std::make_shared<PayloadsRepositoryInmem<VTB>>();
+    std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks =
+        std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
+    return PayloadsStorage{prepoAtv, prepoVtb, prepoBlocks};
+  }
 
   template <typename Payloads>
   PayloadsRepository<Payloads>& getRepo();

@@ -188,13 +188,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  std::shared_ptr<PayloadsRepository<ATV>> prepoAtv2 =
-      std::make_shared<PayloadsRepositoryInmem<ATV>>();
-  std::shared_ptr<PayloadsRepository<VTB>> prepoVtb2 =
-      std::make_shared<PayloadsRepositoryInmem<VTB>>();
-  std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks2 =
-      std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
-  PayloadsStorage storage2{prepoAtv2, prepoVtb2, prepoBlocks2};
+  PayloadsStorage storage2 = PayloadsStorage::newStorageInmem();
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storage2);
   EXPECT_TRUE(alttree2.bootstrap(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
@@ -253,13 +247,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  std::shared_ptr<PayloadsRepository<ATV>> prepoAtv2 =
-      std::make_shared<PayloadsRepositoryInmem<ATV>>();
-  std::shared_ptr<PayloadsRepository<VTB>> prepoVtb2 =
-      std::make_shared<PayloadsRepositoryInmem<VTB>>();
-  std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks2 =
-      std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
-  PayloadsStorage storage2{prepoAtv2, prepoVtb2, prepoBlocks2};
+  PayloadsStorage storage2 = PayloadsStorage::newStorageInmem();
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storage2);
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));

@@ -20,7 +20,6 @@
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
 #include "veriblock/storage/payloads_storage.hpp"
-#include "veriblock/storage/payloads_repository_inmem.hpp"
 
 namespace altintegration {
 
@@ -115,20 +114,14 @@ class MockMiner {
  private:
   BtcChainParamsRegTest btc_params{};
   VbkChainParamsRegTest vbk_params{};
-  std::shared_ptr<PayloadsRepository<ATV>> prepoAtv =
-      std::make_shared<PayloadsRepositoryInmem<ATV>>();
-  std::shared_ptr<PayloadsRepository<VTB>> prepoVtb =
-      std::make_shared<PayloadsRepositoryInmem<VTB>>();
-  std::shared_ptr<PayloadsRepository<VbkBlock>> prepoBlocks =
-      std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
-  PayloadsStorage storage{prepoAtv, prepoVtb, prepoBlocks};
+  PayloadsStorage storagePayloads = PayloadsStorage::newStorageInmem();
 
   Miner<BtcBlock, BtcChainParams> btc_miner =
       Miner<BtcBlock, BtcChainParams>(btc_params);
   Miner<VbkBlock, VbkChainParams> vbk_miner =
       Miner<VbkBlock, VbkChainParams>(vbk_params);
 
-  VbkBlockTree vbktree{vbk_params, btc_params, storage};
+  VbkBlockTree vbktree{vbk_params, btc_params, storagePayloads};
 
   std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes;
 

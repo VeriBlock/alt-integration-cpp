@@ -359,8 +359,7 @@ bool VbkBlockTree::saveToStorage(PopStorage& storage, ValidationState& state) {
 
 bool VbkBlockTree::loadFromStorage(PopStorage& storage,
                                    ValidationState& state) {
-  bool ret = loadAndApplyBlocks(storage, btc(), state);
-  if (!ret) return state.IsValid();
+  if (!loadAndApplyBlocks(storage, btc(), state)) return false;
   return loadAndApplyBlocks(storage, *this, state);
 }
 
