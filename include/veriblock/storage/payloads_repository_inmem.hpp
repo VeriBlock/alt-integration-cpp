@@ -77,6 +77,60 @@ struct PayloadsCursorInmem : public Cursor<typename Payloads::id_t, Payloads> {
 };
 
 template <typename Payloads>
+struct PayloadsRepositoryInmem;
+
+template <typename Payloads>
+struct PayloadsWriteBatchInmem : public PayloadsWriteBatch<Payloads> {
+  enum class Operation { PUT, REMOVE };
+
+  PayloadsWriteBatchInmem(PayloadsRepositoryInmem<Payloads>* repo)
+      : _repo(repo) {}
+
+  void put(const Payloads& payloads) override {
+    _ops.push_back(Operation::PUT);
+    _puts.push_back(payloads);
+  };
+
+  void remove(const typename Payloads::id_t& pid) override {
+    _ops.push_back(Operation::REMOVE);
+    _removes.push_back(pid);
+  };
+
+  void clear() override {
+    _ops.clear();
+    _removes.clear();
+    _puts.clear();
+  };
+
+  void commit() override {
+    auto puts_begin = this->_puts.begin();
+    auto removes_begin = this->_removes.begin();
+    for (const auto& op : this->_ops) {
+      switch (op) {
+        case PayloadsWriteBatchInmem<Payloads>::Operation::PUT: {
+          _repo->put(*puts_begin++);
+          break;
+        }
+        case PayloadsWriteBatchInmem<Payloads>::Operation::REMOVE: {
+          _repo->remove(*removes_begin++);
+          break;
+        }
+        default:
+          throw std::logic_error(
+              "unknown enum value - this should never happen");
+      }
+    }
+    clear();
+  }
+
+ private:
+  PayloadsRepositoryInmem<Payloads>* _repo;
+  std::vector<Payloads> _puts;
+  std::vector<typename Payloads::id_t> _removes;
+  std::vector<Operation> _ops;
+};
+
+template <typename Payloads>
 struct PayloadsRepositoryInmem : public PayloadsRepository<Payloads> {
   using payloads_t = Payloads;
   using eid_t = typename Payloads::id_t;
@@ -84,36 +138,39 @@ struct PayloadsRepositoryInmem : public PayloadsRepository<Payloads> {
 
   ~PayloadsRepositoryInmem() override = default;
 
-  bool remove(const eid_t& id) override { return p_.erase(id) == 1; }
+  bool remove(const eid_t& id) override { return _p.erase(id) == 1; }
 
   bool put(const payloads_t& payload) override {
     auto id = payload.getId();
-    p_[id] = payload;
+    _p[id] = payload;
     return true;
   }
 
   bool get(const eid_t& id, payloads_t* payload) const override {
-    auto it = p_.find(id);
-    if (it == p_.end()) {
+    auto it = _p.find(id);
+    if (it == _p.end()) {
       return false;
     }
     if (payload != nullptr) {
-      *payload = p_.at(id);
+      *payload = _p.at(id);
     }
     return true;
   }
 
+  void clear() override { _p.clear(); }
+
   std::unique_ptr<PayloadsWriteBatch<Payloads>> newBatch() override {
-    return nullptr;
+    return std::unique_ptr<PayloadsWriteBatchInmem<Payloads>>(
+        new PayloadsWriteBatchInmem<Payloads>(this));
   }
 
   std::shared_ptr<cursor_t> newCursor() const override {
-    return std::make_shared<PayloadsCursorInmem<Payloads>>(p_);
+    return std::make_shared<PayloadsCursorInmem<Payloads>>(_p);
   }
 
  private:
   // [endorsement id] => payload
-  std::unordered_map<eid_t, payloads_t> p_;
+  std::unordered_map<eid_t, payloads_t> _p;
 };
 
 }  // namespace altintegration

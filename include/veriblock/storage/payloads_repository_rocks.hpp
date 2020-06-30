@@ -1,0 +1,212 @@
+// Copyright (c) 2019-2020 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_ROCKS_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_ROCKS_HPP_
+
+#include <rocksdb/db.h>
+
+#include <set>
+
+#include "veriblock/blob.hpp"
+#include "veriblock/serde.hpp"
+#include "veriblock/storage/payloads_repository.hpp"
+#include "veriblock/storage/db_error.hpp"
+#include "veriblock/storage/rocks_util.hpp"
+#include "veriblock/storage/blockchain_storage_util.hpp"
+#include "veriblock/strutil.hpp"
+
+namespace altintegration {
+
+template <typename Payloads>
+std::vector<uint8_t> serializePayloadsToRocks(Payloads from) {
+  return from.toVbkEncoding();
+}
+
+template <typename Payloads>
+Payloads deserializePayloadsFromRocks(const std::string& from,
+                                      const typename Payloads::id_t& pid) {
+  return Payloads::fromVbkEncoding(from, pid);
+}
+
+//! column family type
+using cf_handle_t = rocksdb::ColumnFamilyHandle;
+
+template <typename Payloads>
+struct PayloadsCursorRocks : public Cursor<typename Payloads::id_t, Payloads> {
+  PayloadsCursorRocks(rocksdb::DB* db, cf_handle_t* columnHandle) : _db(db) {
+    auto iterator = _db->NewIterator(rocksdb::ReadOptions(), columnHandle);
+    _iterator = std::unique_ptr<rocksdb::Iterator>(iterator);
+  }
+
+  void seekToFirst() override { _iterator->SeekToFirst(); }
+  void seek(const typename Payloads::id_t& key) override {
+    _iterator->Seek(makeRocksSlice(key));
+  }
+
+  void seekToLast() override { _iterator->SeekToLast(); }
+  bool isValid() const override { return _iterator->Valid(); }
+  void next() override { _iterator->Next(); }
+  void prev() override { _iterator->Prev(); }
+
+  typename Payloads::id_t key() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+    auto key = _iterator->key().ToString();
+    auto keyBytes = std::vector<uint8_t>(key.begin(), key.end());
+    return keyBytes;
+  }
+
+  Payloads value() const override {
+    if (!isValid()) {
+      throw std::out_of_range("invalid cursor");
+    }
+    auto value = _iterator->value();
+    return deserializePayloadsFromRocks<Payloads>(value.ToString(), key());
+  }
+
+ private:
+  rocksdb::DB* _db;
+  std::unique_ptr<rocksdb::Iterator> _iterator;
+};
+
+template <typename Payloads>
+struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Payloads> {
+  PayloadsWriteBatchRocks(rocksdb::DB* db, cf_handle_t* columnHandle)
+      : _db(db), _columnHandle(columnHandle) {}
+
+  void put(const Payloads& payloads) override {
+    auto pid = payloads.getId();
+    auto payloadsBytes = serializePayloadsToRocks(payloads);
+
+    rocksdb::Status s = _batch.Put(_columnHandle,
+                                   makeRocksSlice(pid),
+                                   makeRocksSlice(payloadsBytes));
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+  }
+
+  void remove(const typename Payloads::id_t& pid) override {
+    rocksdb::Status s = _batch.Delete(_columnHandle, makeRocksSlice(pid));
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+  }
+
+  void clear() override { _batch.Clear(); }
+
+  void commit() override {
+    rocksdb::WriteOptions write_options;
+    write_options.disableWAL = true;
+    rocksdb::Status s = _db->Write(write_options, &_batch);
+    if (!s.ok() && !s.IsNotFound()) {
+      throw db::DbError(s.ToString());
+    }
+    clear();
+  }
+
+ private:
+  rocksdb::DB* _db;
+  cf_handle_t* _columnHandle;
+  rocksdb::WriteBatch _batch{};
+};
+
+template <typename Payloads>
+struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
+  using payloads_t = Payloads;
+  using pid_t = typename Payloads::id_t;
+  using cursor_t = Cursor<pid_t, Payloads>;
+
+  ~PayloadsRepositoryRocks() override = default;
+
+  PayloadsRepositoryRocks() = default;
+
+  PayloadsRepositoryRocks(rocksdb::DB* db, cf_handle_t* columnHandle)
+      : _db(db), _columnHandle(columnHandle) {}
+
+  bool remove(const pid_t& pid) override {
+    std::string value;
+    bool existing = _db->KeyMayExist(
+        rocksdb::ReadOptions(), _columnHandle, makeRocksSlice(pid), &value);
+    if (!existing) return false;
+
+    rocksdb::WriteOptions write_options;
+    write_options.disableWAL = true;
+    rocksdb::Status s =
+        _db->Delete(write_options, _columnHandle, makeRocksSlice(pid));
+    if (!s.ok()) {
+      if (s.IsNotFound()) return false;
+      throw db::DbError(s.ToString());
+    }
+    return true;
+  }
+
+  bool put(const payloads_t& payload) override {
+    auto pid = payload.getId();
+    std::string value;
+    bool existing = _db->KeyMayExist(
+        rocksdb::ReadOptions(), _columnHandle, makeRocksSlice(pid), &value);
+    auto payloadsBytes = serializePayloadsToRocks(payload);
+
+    rocksdb::WriteOptions write_options;
+    write_options.disableWAL = true;
+    rocksdb::Status s = _db->Put(write_options,
+                                 _columnHandle,
+                                 makeRocksSlice(pid),
+                                 makeRocksSlice(payloadsBytes));
+    if (!s.ok()) {
+      throw db::DbError(s.ToString());
+    }
+    return existing;
+  }
+
+  bool get(const pid_t& pid, payloads_t* out) const override {
+    std::string dbValue{};
+    rocksdb::Status s = _db->Get(rocksdb::ReadOptions(),
+                                 _columnHandle,
+                                 makeRocksSlice(pid),
+                                 &dbValue);
+    if (!s.ok()) {
+      if (s.IsNotFound()) return false;
+      throw db::DbError(s.ToString());
+    }
+
+    *out = deserializePayloadsFromRocks<payloads_t>(dbValue, pid);
+    return true;
+  }
+
+  void clear() override {
+    auto cursor = newCursor();
+    if (cursor == nullptr) {
+      throw db::DbError("Cannot create PayloadsRepository cursor");
+    }
+    cursor->seekToFirst();
+    while (cursor->isValid()) {
+      auto key = cursor->key();
+      remove(key);
+      cursor->next();
+    }
+    // call BlockRepositoryRocksManager.clear() for faster table drop
+  }
+
+  std::unique_ptr<PayloadsWriteBatch<Payloads>> newBatch() override {
+    return std::unique_ptr<PayloadsWriteBatchRocks<Payloads>>(
+        new PayloadsWriteBatchRocks<Payloads>(_db, _columnHandle));
+  }
+
+  std::shared_ptr<cursor_t> newCursor() const override {
+    return std::make_shared<PayloadsCursorRocks<Payloads>>(_db, _columnHandle);
+  }
+
+ private:
+  rocksdb::DB* _db;
+  cf_handle_t* _columnHandle;
+};
+
+}  // namespace altintegration
+
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_ROCKS_HPP_

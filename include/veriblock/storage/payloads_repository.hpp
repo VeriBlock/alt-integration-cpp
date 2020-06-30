@@ -63,20 +63,15 @@ struct PayloadsRepository {
 
   virtual bool get(const eid_t& id, payloads_t* payload = 0) const = 0;
 
+  /**
+   * Clear the entire payloads data.
+   */
+  virtual void clear() = 0;
+
   virtual std::unique_ptr<PayloadsWriteBatch<Payloads>> newBatch() = 0;
 
   virtual std::shared_ptr<cursor_t> newCursor() const = 0;
 };
-
-template <typename Payloads>
-void payloadsRepositoryCopy(const PayloadsRepository<Payloads>& copy_from,
-                            PayloadsRepository<Payloads>& copy_to) {
-  auto cursor = copy_from.newCursor();
-
-  for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
-    copy_to.put(cursor->value());
-  }
-}
 
 }  // namespace altintegration
 

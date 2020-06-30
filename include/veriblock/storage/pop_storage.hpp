@@ -3,48 +3,70 @@
 
 #include <map>
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/entities/vtb.hpp>
-#include <veriblock/storage/block_repository_inmem.hpp>
-#include <veriblock/storage/blocks_storage.hpp>
-#include <veriblock/storage/endorsement_storage.hpp>
+#include <veriblock/storage/block_repository.hpp>
+#include <veriblock/storage/payloads_repository.hpp>
 #include <veriblock/storage/storage_exceptions.hpp>
+#include <veriblock/storage/tips_repository.hpp>
 
 namespace altintegration {
 
-class PopStorage : public EndorsementStorage<AltEndorsement>,
-                   public EndorsementStorage<VbkEndorsement>,
-                   public BlocksStorage<BlockIndex<BtcBlock>>,
-                   public BlocksStorage<BlockIndex<VbkBlock>>,
-                   public BlocksStorage<BlockIndex<AltBlock>> {
+class PopStorage {
  public:
   virtual ~PopStorage() = default;
-  PopStorage() {}
+  PopStorage(std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> brepoBtc,
+             std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> brepoVbk,
+             std::shared_ptr<BlockRepository<BlockIndex<AltBlock>>> brepoAlt,
+             std::shared_ptr<TipsRepository<BlockIndex<BtcBlock>>> trepoBtc,
+             std::shared_ptr<TipsRepository<BlockIndex<VbkBlock>>> trepoVbk,
+             std::shared_ptr<TipsRepository<BlockIndex<AltBlock>>> trepoAlt,
+             std::shared_ptr<PayloadsRepository<VbkEndorsement>> erepoVbk,
+             std::shared_ptr<PayloadsRepository<AltEndorsement>> erepoAlt)
+      : _brepoBtc(brepoBtc),
+        _brepoVbk(brepoVbk),
+        _brepoAlt(brepoAlt),
+        _trepoBtc(trepoBtc),
+        _trepoVbk(trepoVbk),
+        _trepoAlt(trepoAlt),
+        _erepoVbk(erepoVbk),
+        _erepoAlt(erepoAlt) {}
+
+  template <typename Block>
+  BlockRepository<Block>& getBlockRepo();
+
+  template <typename Block>
+  const BlockRepository<Block>& getBlockRepo() const;
+
+  template <typename Block>
+  TipsRepository<Block>& getTipsRepo();
+
+  template <typename Block>
+  const TipsRepository<Block>& getTipsRepo() const;
+
+  template <typename Endorsements>
+  PayloadsRepository<Endorsements>& getEndorsementsRepo();
+
+  template <typename Endorsements>
+  const PayloadsRepository<Endorsements>& getEndorsementsRepo() const;
 
   template <typename Endorsements>
   Endorsements loadEndorsements(const typename Endorsements::id_t& eid) const {
     Endorsements endorsements;
-    bool ret =
-        EndorsementStorage<Endorsements>::erepo_->get(eid, &endorsements);
-    if (!ret) {
-      throw StateCorruptedException(
-          fmt::sprintf("Failed to read endorsements id={%s}", eid.toHex()));
-    }
+    auto& repo = getEndorsementsRepo<Endorsements>();
+    repo.get(eid, &endorsements);
     return endorsements;
   }
 
   template <typename Endorsements>
   void saveEndorsements(const Endorsements& endorsements) {
-    bool ret = EndorsementStorage<Endorsements>::erepo_->put(endorsements);
-    if (!ret) {
-      throw BadIOException(fmt::sprintf("Failed to write endorsements: %s",
-                                        endorsements.toPrettyString(0)));
-    }
+    auto& repo = getEndorsementsRepo<Endorsements>();
+    repo.put(endorsements);
   }
 
   template <typename StoredBlock>
   std::multimap<typename StoredBlock::height_t, std::shared_ptr<StoredBlock>>
-  loadBlocks() const {
-    auto cursor = BlocksStorage<StoredBlock>::brepo_->newCursor();
+  loadBlocks() {
+    auto& repo = getBlockRepo<StoredBlock>();
+    auto cursor = repo.newCursor();
     if (cursor == nullptr) {
       throw BadIOException("Cannot create BlockRepository cursor");
     }
@@ -59,22 +81,51 @@ class PopStorage : public EndorsementStorage<AltEndorsement>,
     return blocks;
   }
 
-  // realisation in the alt_block_tree, vbk_block_tree
+  template <typename StoredBlock>
+  void processSaveBlock(const StoredBlock&);
+
   template <typename StoredBlock>
   void saveBlocks(
       const std::unordered_map<typename StoredBlock::prev_hash_t,
-                               std::shared_ptr<StoredBlock>>& blocks);
+                               std::shared_ptr<StoredBlock>>& blocks) {
+    auto& repo = getBlockRepo<StoredBlock>();
+    auto batch = repo.newBatch();
+    if (batch == nullptr) {
+      throw BadIOException("Cannot create BlockRepository write batch");
+    }
+
+    for (const auto& block : blocks) {
+      auto& index = *(block.second);
+      batch->put(index);
+      processSaveBlock(index);
+    }
+    batch->commit();
+  }
 
   template <typename StoredBlock>
   std::pair<typename StoredBlock::height_t, typename StoredBlock::hash_t>
   loadTip() const {
-    return BlocksStorage<StoredBlock>::loadTip();
+    auto& repo = getTipsRepo<StoredBlock>();
+    std::pair<typename StoredBlock::height_t, typename StoredBlock::hash_t> out;
+    repo.get(&out);
+    return out;
   }
 
   template <typename StoredBlock>
   void saveTip(const StoredBlock& tip) {
-    BlocksStorage<StoredBlock>::saveTip(tip);
+    auto& repo = getTipsRepo<StoredBlock>();
+    repo.put(tip);
   }
+
+ protected:
+  std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> _brepoBtc;
+  std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> _brepoVbk;
+  std::shared_ptr<BlockRepository<BlockIndex<AltBlock>>> _brepoAlt;
+  std::shared_ptr<TipsRepository<BlockIndex<BtcBlock>>> _trepoBtc;
+  std::shared_ptr<TipsRepository<BlockIndex<VbkBlock>>> _trepoVbk;
+  std::shared_ptr<TipsRepository<BlockIndex<AltBlock>>> _trepoAlt;
+  std::shared_ptr<PayloadsRepository<VbkEndorsement>> _erepoVbk;
+  std::shared_ptr<PayloadsRepository<AltEndorsement>> _erepoAlt;
 };
 
 }  // namespace altintegration

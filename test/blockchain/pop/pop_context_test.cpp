@@ -16,7 +16,7 @@ using namespace altintegration;
 struct PopContextFixture : public ::testing::Test {
   VbkChainParamsRegTest vbkp;
   BtcChainParamsRegTest btcp;
-  PayloadsStorage storage;
+  PayloadsStorage storage = PayloadsStorage::newStorageInmem();
   VbkBlockTree local = VbkBlockTree(vbkp, btcp, storage);
   MockMiner remote;
 

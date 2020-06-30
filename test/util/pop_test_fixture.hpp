@@ -33,7 +33,7 @@ struct PopTestFixture {
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
-  PayloadsStorage storagePayloads{};
+  PayloadsStorage storagePayloads = PayloadsStorage::newStorageInmem();
 
   // miners
   std::shared_ptr<MockMiner> popminer;

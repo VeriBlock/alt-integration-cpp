@@ -114,14 +114,14 @@ class MockMiner {
  private:
   BtcChainParamsRegTest btc_params{};
   VbkChainParamsRegTest vbk_params{};
-  PayloadsStorage storage{};
+  PayloadsStorage storagePayloads = PayloadsStorage::newStorageInmem();
 
   Miner<BtcBlock, BtcChainParams> btc_miner =
       Miner<BtcBlock, BtcChainParams>(btc_params);
   Miner<VbkBlock, VbkChainParams> vbk_miner =
       Miner<VbkBlock, VbkChainParams>(vbk_params);
 
-  VbkBlockTree vbktree{vbk_params, btc_params, storage};
+  VbkBlockTree vbktree{vbk_params, btc_params, storagePayloads};
 
   std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes;
 
