@@ -34,6 +34,14 @@ jobs:
         with:
           submodules: recursive
           clean: true
+      - name: ccache cache files
+          if: github.event_name == 'push' || github.event_name == 'pull_request'
+          uses: actions/cache@v1.1.0
+          with:
+            path: ~/.ccache
+            key: linux-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
+            restore-keys: |
+              linux-ccache-
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
