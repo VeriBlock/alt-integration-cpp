@@ -331,8 +331,30 @@ TYPED_TEST_P(BlocksStorageTest, Cursor) {
   EXPECT_THROW(c->value(), std::out_of_range);*/
 }
 
+TYPED_TEST_P(BlocksStorageTest, Clear) {
+  using block_t = typename Clear::block_t;
+  block_t b;
+
+  EXPECT_FALSE(this->repo->put(generateBlock<block_t>(1, 10)));
+  EXPECT_FALSE(this->repo->put(generateBlock<block_t>(2, 2)));
+  EXPECT_FALSE(this->repo->put(generateBlock<block_t>(3, 3)));
+  EXPECT_FALSE(this->repo->put(generateBlock<block_t>(4, 4)));
+
+  EXPECT_TRUE(
+      this->repo->getByHash(generateBlock<block_t>(1, 10).getHash(), &b));
+  this->repo->clear();
+  EXPECT_FALSE(
+      this->repo->getByHash(generateBlock<block_t>(1, 10).getHash(), &b));
+  EXPECT_FALSE(
+      this->repo->getByHash(generateBlock<block_t>(2, 2).getHash(), &b));
+  EXPECT_FALSE(
+      this->repo->getByHash(generateBlock<block_t>(3, 3).getHash(), &b));
+  EXPECT_FALSE(
+      this->repo->getByHash(generateBlock<block_t>(4, 4).getHash(), &b));
+}
+
 // make sure to enumerate the test cases here
-REGISTER_TYPED_TEST_SUITE_P(BlocksStorageTest, Basic, Batch, Cursor);
+REGISTER_TYPED_TEST_SUITE_P(BlocksStorageTest, Basic, Batch, Cursor, Clear);
 
 typedef ::testing::Types<BlockRepositoryInmem<BlockBasic>,
                          BlockRepositoryRocks<BlockIndex<BtcBlock>>,
