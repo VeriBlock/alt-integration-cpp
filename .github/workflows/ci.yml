@@ -51,13 +51,13 @@ jobs:
             build/rocksdb-build
           key: linux-rocksdb-${{ hashFiles('**/CMakeLists-rocksdb.txt.in') }}
       - name: ccache googletest
-          if: github.event_name == 'push' || github.event_name == 'pull_request'
-          uses: actions/cache@v1.1.0
-          with:
-            path: |
-              build/googletest-src
-              build/googletest-build
-            key: linux-googletest-${{ hashFiles('**/CMakeLists-googletest.txt.in') }}
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        uses: actions/cache@v1.1.0
+        with:
+          path: |
+            build/googletest-src
+            build/googletest-build
+          key: linux-googletest-${{ hashFiles('**/CMakeLists-googletest.txt.in') }}
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
