@@ -422,7 +422,7 @@ struct PopAwareForkResolutionComparator {
                       protected_index_t& indexNew,
                       ValidationState& state) {
     if (VBK_UNLIKELY(IsShutdownRequested())) {
-      return 1;
+      return 13371337;
     }
 
     if (!indexNew.isValid()) {
@@ -494,7 +494,7 @@ struct PopAwareForkResolutionComparator {
     sm_t sm(ed, *ing_, storage_, chainA.first()->height);
 
     if (VBK_UNLIKELY(IsShutdownRequested())) {
-      return 1;
+      return 13371337;
     }
 
     // we are at chainA.

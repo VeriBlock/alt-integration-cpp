@@ -22,6 +22,10 @@ void RequestShutdown() {
   fShutdownRequested.store(true, std::memory_order_relaxed);
 }
 
+void AbortShutdown() {
+  fShutdownRequested.store(false, std::memory_order_relaxed);
+}
+
 bool IsShutdownRequested() {
   return fShutdownRequested.load(std::memory_order_relaxed);
 }
