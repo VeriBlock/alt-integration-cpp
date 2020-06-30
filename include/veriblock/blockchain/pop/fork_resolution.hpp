@@ -156,6 +156,15 @@ std::vector<KeystoneContext> getKeystoneContext(
       }    // end for
     }      // end for
 
+    // if there's no suitable endorsement for the current keystone
+    // the fork loses continuity
+    //
+    // duplicated logic for "cropping" is inside KeystoneContextList
+    // constructor. Saves CPU a little.
+    if (earliestEndorsementIndex == std::numeric_limits<int>::max()) {
+      break;
+    }
+
     ret.push_back(KeystoneContext{pkc.blockHeight, earliestEndorsementIndex});
   }
 
