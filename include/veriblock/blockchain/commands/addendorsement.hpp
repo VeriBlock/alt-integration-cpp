@@ -35,17 +35,79 @@ struct AddEndorsement : public Command {
       : ing_(&ing), ed_(&ed), e_(std::move(e)) {}
 
   bool Execute(ValidationState& state) override {
-    auto result =
-        contextuallyCheckEndorsement<endorsement_t,
-                                     ProtectedTree,
-                                     ProtectingTree>(*e_, *ed_, *ing_, state);
-    if (!result.valid) {
-      return false;
+    auto* containing = ed_->getBlockIndex(e_.containingHash);
+    if (!containing) {
+      return state.Invalid(
+          protected_block_t::name() + "-no-containing",
+          fmt::sprintf("Can not find containing block in endorsement=%s",
+                       e_.toPrettyString()));
     }
 
-    result.containing->containingEndorsements.insert(
-        std::make_pair(e_->id, e_));
-    result.endorsed->endorsedBy.push_back(e_.get());
+    // endorsement validity window
+    auto window = ed_->getParams().getEndorsementSettlementInterval();
+    auto minHeight = (std::max)(containing->height - window, 0);
+    Chain<protected_index_t> chain(minHeight, containing);
+
+    auto endorsedHeight = e_->endorsedHeight;
+    if (containing->height - endorsedHeight > window) {
+      return state.Invalid(protected_block_t::name() + "-expired",
+                           "Endorsement expired");
+    }
+
+    auto* endorsed = chain[endorsedHeight];
+    if (!endorsed) {
+      return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
+                           "No block found on endorsed block height");
+    }
+
+    if (endorsed->getHash() != e_.endorsedHash) {
+      return state.Invalid(
+          protected_block_t::name() + "-block-differs",
+          fmt::sprintf(
+              "Endorsed block is on a different chain. Expected: %s, got %s",
+              endorsed->toShortPrettyString(),
+              HexStr(e_.endorsedHash)));
+    }
+
+    auto& id = e_.id;
+    auto endorsed_it =
+        std::find_if(endorsed->endorsedBy.rbegin(),
+                     endorsed->endorsedBy.rend(),
+                     [&id](endorsement_t* p) { return p->id == id; });
+    if (endorsed_it != endorsed->endorsedBy.rend()) {
+      // found duplicate
+      return state.Invalid(
+          protected_block_t ::name() + "-duplicate",
+          fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+                       "found block endorsed by it in %s",
+                       e_.toPrettyString(),
+                       containing->toShortPrettyString(),
+                       endorsed->toShortPrettyString()));
+    }
+
+    auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
+    if (!blockOfProof) {
+      return state.Invalid(
+          protected_block_t::name() + "-block-of-proof-not-found",
+          fmt::sprintf("Can not find block of proof in SP Chain (%s)",
+                       HexStr(e_->blockOfProof)));
+    }
+
+    auto* duplicate =
+        findBlockContainingEndorsement(chain, containing, *e_, window);
+    if (duplicate) {
+      // found duplicate
+      return state.Invalid(
+          protected_block_t ::name() + "-duplicate",
+          fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+                       "found its duplicate in block %s",
+                       e_.toPrettyString(),
+                       containing->toShortPrettyString(),
+                       duplicate->toShortPrettyString()));
+    }
+
+    containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
+    endorsed->endorsedBy.push_back(e_.get());
 
     return true;
   }
