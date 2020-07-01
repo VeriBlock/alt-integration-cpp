@@ -188,7 +188,9 @@ void VbkBlockTree::unsafelyRemovePayload(const Blob<24>& hash,
   return unsafelyRemovePayload(*index, pid);
 }
 
-void VbkBlockTree::unsafelyRemovePayload(index_t& index, const pid_t& pid) {
+void VbkBlockTree::unsafelyRemovePayload(index_t& index,
+                                         const pid_t& pid,
+                                         bool shouldDetermineBestChain) {
   VBK_LOG_DEBUG("unsafely removing %d payload from %s",
                 pid.toPrettyString(),
                 index.toPrettyString());
@@ -230,7 +232,9 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index, const pid_t& pid) {
 
   index.vtbids.erase(vtbid_it);
 
-  updateTips();
+  if (shouldDetermineBestChain) {
+    updateTips();
+  }
 }
 
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
@@ -263,9 +267,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                      index->toPrettyString()));
   }
 
+  auto tip = activeChain_.tip();
+
   bool isOnActiveChain = activeChain_.contains(index);
   if (isOnActiveChain) {
-    auto tip = activeChain_.tip();
     VBK_ASSERT(tip != nullptr);
     auto window = (std::max)(0, tip->height - index->height);
     if (window >= param_->getHistoryOverwriteLimit()) {
@@ -280,13 +285,14 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     }
 
     ValidationState dummy;
-    bool ret = setTip(*index->pprev, dummy, false);
-    VBK_ASSERT(ret);
+    bool success = setTip(*index->pprev, dummy, false);
+    VBK_ASSERT(success &&
+               "state corruption: failed to roll back the best chain tip");
   }
 
   std::set<pid_t> existingPids(index->vtbids.begin(), index->vtbids.end());
 
-  // check that we can add all payloads
+  // check that we can add all payloads at once to guarantee atomicity
   for (const auto& payload : payloads) {
     auto pid = payload.getId();
     if (!existingPids.insert(pid).second) {
@@ -309,17 +315,25 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   // validation hole is plugged
   doUpdateAffectedTips(*index, state);
 
-  if (!index->isValid()) {
-    std::vector<pid_t> pids;
-    pids.reserve(payloads.size());
-    for (const auto& payload : payloads) {
-      pids.emplace_back(payload.getId());
-    }
-
-    removePayloads(*index, pids);
-    return false;
+  if (index->isValid()) {
+    return true;
   }
-  return true;
+
+  // roll back our attempted changes
+  for (const auto& payload : payloads) {
+    unsafelyRemovePayload(
+        *index, payload.getId(), /*shouldDetermineBestChain =*/false);
+  }
+
+  // restore the tip
+  if (isOnActiveChain) {
+    ValidationState dummy;
+    bool success = setTip(*tip, dummy, false);
+    VBK_ASSERT(success &&
+               "state corruption: failed to restore the best chain tip");
+  }
+
+  return false;
 }
 
 void VbkBlockTree::payloadsToCommands(const payloads_t& p,
