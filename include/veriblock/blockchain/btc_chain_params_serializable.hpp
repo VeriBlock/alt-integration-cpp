@@ -13,6 +13,10 @@ namespace altintegration {
 struct BtcChainParamsSerializable : public BtcChainParams {
   ~BtcChainParamsSerializable() override = default;
 
+  bool EnableTimeAdjustment() const noexcept override {
+      return EnableTimeAdjustment_;
+  };
+
   uint256 getPowLimit() const override { return powLimit_; }
   uint32_t getPowTargetTimespan() const noexcept override {
     return powTargetTimespan_;
@@ -42,6 +46,7 @@ struct BtcChainParamsSerializable : public BtcChainParams {
   uint32_t powTargetSpacing_;
   bool allowMinDifficultyBlocks_;
   bool powNoRetargeting_;
+  bool EnableTimeAdjustment_;
   BtcBlock genesisBlock_;
   uint32_t numBlocksForBootstrap_;
   std::string networkName_;

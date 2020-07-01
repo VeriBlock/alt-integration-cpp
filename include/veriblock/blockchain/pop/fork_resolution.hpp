@@ -127,6 +127,7 @@ std::vector<KeystoneContext> getKeystoneContext(
         continue;
       }
 
+      bool EnableTimeAdjustment = tree.getParams().EnableTimeAdjustment();
       if (!EnableTimeAdjustment ||
           pkc.timestampOfEndorsedBlock < btcIndex->getBlockTime()) {
         earliestEndorsementIndex = endorsementIndex;

@@ -13,6 +13,10 @@ namespace altintegration {
 struct VbkChainParamsSerializable : public VbkChainParams {
   ~VbkChainParamsSerializable() override = default;
 
+  bool EnableTimeAdjustment() const noexcept override {
+    return EnableTimeAdjustment_;
+  }
+
   std::string networkName() const override { return networkName_; }
   uint256 getMinimumDifficulty() const override { return minimumDifficulty_; }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
@@ -53,6 +57,7 @@ struct VbkChainParamsSerializable : public VbkChainParams {
 
  private:
   std::string networkName_;
+  bool EnableTimeAdjustment_;
   uint256 minimumDifficulty_;
   VbkNetworkType transactionMagicByte_{false, 0};
   bool powNoRetargeting_;

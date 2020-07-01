@@ -15,11 +15,6 @@ extern void RequestShutdown();
 //! will be correct when shutdown is aborted.
 extern void AbortShutdown();
 
-// true => use in real environment, production
-// false => use in test environment
-// default is true
-extern bool EnableTimeAdjustment;
-
 }  // namespace altintegration
 
 #endif  // VERIBLOCK_POP_CPP_CONTEXT_HPP

@@ -21,6 +21,7 @@ void BtcChainParams::toRaw(WriteStream& stream) const {
   stream.writeBE<uint32_t>(this->getPowTargetSpacing());
   stream.writeBE<uint8_t>((uint8_t)this->getAllowMinDifficultyBlocks());
   stream.writeBE<uint8_t>((uint8_t)this->getPowNoRetargeting());
+  stream.writeBE<uint8_t>((uint8_t)this->EnableTimeAdjustment());
   this->getGenesisBlock().toVbkEncoding(stream);
   stream.writeBE<uint32_t>(this->numBlocksForBootstrap());
 
@@ -44,6 +45,7 @@ BtcChainParamsSerializable BtcChainParamsSerializable::fromRaw(
   param.powTargetSpacing_ = stream.readBE<uint32_t>();
   param.allowMinDifficultyBlocks_ = (bool)stream.readBE<uint8_t>();
   param.powNoRetargeting_ = (bool)stream.readBE<uint8_t>();
+  param.EnableTimeAdjustment_ = (bool)stream.readBE<uint8_t>();
   param.genesisBlock_ = BtcBlock::fromVbkEncoding(stream);
   param.numBlocksForBootstrap_ = stream.readBE<uint32_t>();
 

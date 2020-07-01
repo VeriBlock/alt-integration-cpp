@@ -9,11 +9,6 @@
 
 namespace altintegration {
 
-// If true, enables time-adjustment algorithm in POP Fork Resolution.
-// False is used in tests, as we can not reliably reproduce block times for
-// BTC/VBK.
-bool EnableTimeAdjustment = true;
-
 // If set to true, we should abandon any further work and exit ASAP.
 // POP state may remain invalid if shutdown has been requested in a middle of
 // huge POP fork resolution.

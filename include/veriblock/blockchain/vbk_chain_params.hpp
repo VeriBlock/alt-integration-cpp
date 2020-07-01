@@ -46,6 +46,11 @@ struct VbkChainParams {
   virtual uint32_t getTargetBlockTime() const noexcept = 0;
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
 
+  //! In miner it is hard to simulate correct timestamps, so this flag disables
+  //! Time Adjustment Algorithm in POP Fork Resolution. Set it to TRUE in
+  //! production, and to FALSE in tests.
+  virtual bool EnableTimeAdjustment() const noexcept = 0;
+
   virtual int32_t getMaxReorgBlocks() const noexcept { return 2000; }
   virtual uint32_t getKeystoneInterval() const noexcept { return 20; }
 
@@ -55,7 +60,7 @@ struct VbkChainParams {
   /// number of blocks behind of current tip in active chain
   virtual int32_t getHistoryOverwriteLimit() const noexcept {
     /* roughly 100h worth of VBK block production */
-        return 12000;
+    return 12000;
   }
 
   virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
@@ -122,6 +127,8 @@ struct VbkChainParamsMain : public VbkChainParams {
     return block;
   }
 
+  bool EnableTimeAdjustment() const noexcept override { return true; }
+
   uint32_t getRetargetPeriod() const noexcept override { return 100; }
 
   uint32_t getTargetBlockTime() const noexcept override { return 30; }
@@ -174,6 +181,8 @@ struct VbkChainParamsTest : public VbkChainParams {
     return block;
   }
 
+  bool EnableTimeAdjustment() const noexcept override { return true; }
+
   uint32_t getRetargetPeriod() const noexcept override { return 100; }
 
   uint32_t getTargetBlockTime() const noexcept override { return 30; }
@@ -196,6 +205,8 @@ struct VbkChainParamsRegTest : public VbkChainParams {
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     return VbkNetworkType(true, 0xBB);
   }
+  bool EnableTimeAdjustment() const noexcept override { return false; }
+
   bool getPowNoRetargeting() const noexcept override { return true; }
   VbkBlock getGenesisBlock() const noexcept override {
     //{
@@ -239,6 +250,8 @@ struct VbkChainParamsAlpha : public VbkChainParams {
   uint32_t numBlocksForBootstrap() const noexcept override {
     return getRetargetPeriod();
   }
+
+  bool EnableTimeAdjustment() const noexcept override { return false; }
 
   // hex(9999872) = 989600
   uint256 getMinimumDifficulty() const override {
