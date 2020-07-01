@@ -34,10 +34,21 @@ VbkBlock VbkBlock::fromVbkEncoding(ReadStream& stream) {
   return VbkBlock::fromRaw(blockStream);
 }
 
+VbkBlock VbkBlock::fromVbkEncoding(const std::string& bytes) {
+  ReadStream stream(bytes);
+  return fromVbkEncoding(stream);
+}
+
 void VbkBlock::toVbkEncoding(WriteStream& stream) const {
   WriteStream blockStream;
   toRaw(blockStream);
   writeSingleByteLenValue(stream, blockStream.data());
+}
+
+std::vector<uint8_t> VbkBlock::toVbkEncoding() const {
+  WriteStream stream;
+  toVbkEncoding(stream);
+  return stream.data();
 }
 
 uint32_t VbkBlock::getDifficulty() const { return difficulty; }

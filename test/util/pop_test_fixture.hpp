@@ -17,6 +17,7 @@
 #include <veriblock/logger.hpp>
 #include <veriblock/mempool.hpp>
 #include <veriblock/mock_miner.hpp>
+#include <veriblock/storage/storage_manager.hpp>
 
 #include "util/fmtlogger.hpp"
 #include "util/test_utils.hpp"
@@ -33,7 +34,8 @@ struct PopTestFixture {
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
-  PayloadsStorage storagePayloads = PayloadsStorage::newStorageInmem();
+  StorageManager storageManager{};
+  PayloadsStorage storagePayloads = storageManager.newPayloadsStorageInmem();
 
   // miners
   std::shared_ptr<MockMiner> popminer;

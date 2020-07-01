@@ -188,7 +188,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  PayloadsStorage storage2 = PayloadsStorage::newStorageInmem();
+  PayloadsStorage storage2 = storageManager.newPayloadsStorageInmem();
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storage2);
   EXPECT_TRUE(alttree2.bootstrap(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
@@ -247,7 +247,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  PayloadsStorage storage2 = PayloadsStorage::newStorageInmem();
+  PayloadsStorage storage2 = storageManager.newPayloadsStorageInmem();
   AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storage2);
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));

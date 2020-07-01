@@ -7,7 +7,7 @@
 
 #include <veriblock/config.hpp>
 #include <veriblock/mock_miner.hpp>
-#include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/storage_manager.hpp>
 
 #include "veriblock/altintegration.hpp"
 
@@ -16,7 +16,8 @@ using namespace altintegration;
 struct PopContextFixture : public ::testing::Test {
   VbkChainParamsRegTest vbkp;
   BtcChainParamsRegTest btcp;
-  PayloadsStorage storage = PayloadsStorage::newStorageInmem();
+  StorageManager storageManager{};
+  PayloadsStorage storage = storageManager.newPayloadsStorageInmem();
   VbkBlockTree local = VbkBlockTree(vbkp, btcp, storage);
   MockMiner remote;
 
