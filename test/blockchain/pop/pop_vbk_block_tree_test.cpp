@@ -86,7 +86,26 @@ TEST_F(VbkBlockTreeTestFixture, FilterChainForForkResolution) {
   EXPECT_EQ(protoContext[7].referencedByBlocks.size(), 3);
 
   auto keystoneContext = getKeystoneContext(protoContext, popminer.btc());
-  ASSERT_TRUE(keystoneContext.empty()); // because of publication gap
+  EXPECT_EQ(keystoneContext.size(),
+            numVbkBlocks / popminer.getVbkParams().getKeystoneInterval());
+
+  auto max = (std::numeric_limits<int32_t>::max)();
+  EXPECT_EQ(keystoneContext[0].blockHeight, 20);
+  EXPECT_EQ(keystoneContext[0].firstBlockPublicationHeight, max);
+  EXPECT_EQ(keystoneContext[1].blockHeight, 40);
+  EXPECT_EQ(keystoneContext[1].firstBlockPublicationHeight, max);
+  EXPECT_EQ(keystoneContext[2].blockHeight, 60);
+  EXPECT_EQ(keystoneContext[2].firstBlockPublicationHeight, max);
+  EXPECT_EQ(keystoneContext[3].blockHeight, 80);
+  EXPECT_EQ(keystoneContext[3].firstBlockPublicationHeight, 6);
+  EXPECT_EQ(keystoneContext[4].blockHeight, 100);
+  EXPECT_EQ(keystoneContext[4].firstBlockPublicationHeight, max);
+  EXPECT_EQ(keystoneContext[5].blockHeight, 120);
+  EXPECT_EQ(keystoneContext[5].firstBlockPublicationHeight, max);
+  EXPECT_EQ(keystoneContext[6].blockHeight, 140);
+  EXPECT_EQ(keystoneContext[6].firstBlockPublicationHeight, 4);
+  EXPECT_EQ(keystoneContext[7].blockHeight, 160);
+  EXPECT_EQ(keystoneContext[7].firstBlockPublicationHeight, 1);
 }
 
 TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
