@@ -37,10 +37,10 @@ struct AddBlock : public Command {
     auto hash = block_->getHash();
     auto* index = tree_->getBlockIndex(hash);
     VBK_ASSERT(index != nullptr &&
-           "failed to roll back AddBlock: the block does not exist");
+               "failed to roll back AddBlock: the block does not exist");
 
     if (index->refCounter == 0) {
-      return tree_->removeTip(*index);
+      return tree_->removeLeaf(*index);
     }
 
     --index->refCounter;

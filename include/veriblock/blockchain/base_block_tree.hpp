@@ -102,9 +102,9 @@ struct BaseBlockTree {
     }
   }
 
-  void removeTip(index_t& toRemove, bool shouldDetermineBestChain = true) {
+  void removeLeaf(index_t& toRemove, bool shouldDetermineBestChain = true) {
     if (!toRemove.pnext.empty()) {
-      throw std::logic_error("not a tip block");
+      throw std::logic_error("not a leaf block");
     }
     return removeSubtree(toRemove, shouldDetermineBestChain);
   }
