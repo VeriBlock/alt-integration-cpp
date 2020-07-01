@@ -7,17 +7,17 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_STORAGE_MANAGER_HPP_
 
 #include <veriblock/storage/block_repository_inmem.hpp>
-#include <veriblock/storage/tips_repository_inmem.hpp>
 #include <veriblock/storage/payloads_repository_inmem.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
 #include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/tips_repository_inmem.hpp>
 
 #ifdef VERIBLOCK_WITH_ROCKSDB
-#include <veriblock/storage/repository_rocks_manager.hpp>
 #include <veriblock/storage/block_repository_rocks.hpp>
-#include <veriblock/storage/tips_repository_rocks.hpp>
 #include <veriblock/storage/payloads_repository_rocks.hpp>
-#endif //VERIBLOCK_WITH_ROCKSDB
+#include <veriblock/storage/repository_rocks_manager.hpp>
+#include <veriblock/storage/tips_repository_rocks.hpp>
+#endif  // VERIBLOCK_WITH_ROCKSDB
 
 namespace altintegration {
 
@@ -25,9 +25,9 @@ struct StorageManager {
 #ifdef VERIBLOCK_WITH_ROCKSDB
   StorageManager(const std::string &name = "")
       : rocksManager(std::make_shared<RepositoryRocksManager>(name)) {}
-#else //!VERIBLOCK_WITH_ROCKSDB
-  StorageManager(const std::string &) {}
-#endif //VERIBLOCK_WITH_ROCKSDB
+#else   //! VERIBLOCK_WITH_ROCKSDB
+  StorageManager(const std::string &/*name*/ = "") {}
+#endif  // VERIBLOCK_WITH_ROCKSDB
 
 #ifdef VERIBLOCK_WITH_ROCKSDB
   void openRocks() {
@@ -139,7 +139,7 @@ struct StorageManager {
  private:
 #ifdef VERIBLOCK_WITH_ROCKSDB
   std::shared_ptr<RepositoryRocksManager> rocksManager;
-#endif //VERIBLOCK_WITH_ROCKSDB
+#endif  // VERIBLOCK_WITH_ROCKSDB
 };
 
 }  // namespace altintegration
