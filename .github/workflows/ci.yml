@@ -106,8 +106,7 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: x64-windows
       BUILDCACHE_DIR: ~\.cache
       BUILDCACHE_DEBUG: 1
-      CC: buildcache
-      CXX: buildcache
+      BUILDCACHE_VARS: "CC=buildcache.exe && CXX=buildcache.exe"
     steps:
       - uses: actions/checkout@v1
         name: checkout
@@ -145,6 +144,7 @@ jobs:
       - name: cmake
         run: |
           $env:Path += ";c:\buildcache"
+          eval "${{ env.BUILDCACHE_VARS }}"
           cmake . -Bbuild -A x64 -DCMAKE_BUILD_TYPE=Release -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
         run: |
