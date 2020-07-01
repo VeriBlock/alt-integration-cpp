@@ -22,7 +22,7 @@ jobs:
           "-DCLANG_TIDY=ON",
           "-DASAN=ON",
           "-DUBSAN=ON",
-          "-DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"
+          "-DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release -DWITH_ROCKSDB=OFF"
         ]
     env:
       CC: clang
