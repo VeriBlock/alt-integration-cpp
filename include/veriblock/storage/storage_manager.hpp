@@ -20,9 +20,7 @@ namespace altintegration {
 
 struct StorageManager {
   StorageManager(const std::string &name = "")
-      : rocksManager(
-            std::move(std::make_shared<RepositoryRocksManager>(name))) {
-  }
+      : rocksManager(std::make_shared<RepositoryRocksManager>(name)) {}
 
   void openRocks() {
     // database schema
