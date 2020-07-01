@@ -34,6 +34,20 @@ jobs:
         with:
           submodules: recursive
           clean: true
+      - name: Prepare ccache timestamp
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        id: ccache_cache_timestamp
+        run: |
+          echo "::set-output name=timestamp::`date +%s`}"
+      - name: ccache cache files
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: linux-ccache-matrix-${{ matrix.flags }}-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            linux-ccache-matrix-${{ matrix.flags }}-
+            linux-ccache-matrix-
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
@@ -55,6 +69,19 @@ jobs:
         with:
           submodules: recursive
           clean: true
+      - name: Prepare ccache timestamp
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        id: ccache_cache_timestamp
+        run: |
+          echo "::set-output name=timestamp::`date +%s`}"
+      - name: ccache cache files
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: linux-ccache-coverage-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            linux-ccache-coverage-
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCOVERAGE=ON
       - name: build
