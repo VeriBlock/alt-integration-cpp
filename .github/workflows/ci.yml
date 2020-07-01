@@ -143,15 +143,13 @@ jobs:
       - name: cmake
         run: |
           $env:Path += ";c:\buildcache"
-          set CC=buildcache.exe
-          set CXX=buildcache.exe
           cmake . -Bbuild -A x64 -DCMAKE_BUILD_TYPE=Release -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
         run: |
           $env:Path += ";c:\buildcache"
           cmake --build build --parallel 2
-      - name: test
-        run: cmake --build build --target RUN_TESTS
+#      - name: test
+#        run: cmake --build build --target RUN_TESTS
 
   macos:
     runs-on: macos-latest
