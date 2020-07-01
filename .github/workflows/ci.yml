@@ -104,6 +104,8 @@ jobs:
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
       VCPKG_DEFAULT_TRIPLET: x64-windows
+      BUILDCACHE_DIR: ~\.cache
+      BUILDCACHE_DEBUG: 1
     steps:
       - uses: actions/checkout@v1
         name: checkout
@@ -111,30 +113,41 @@ jobs:
           submodules: recursive
           clean: true
           fetch-depth: 1
-
-#      - name: install vcpkg
-#        run: vcpkg integrate install
-#
-#      - name: cache vcpkg installed
-#        uses: actions/cache@v1
-#        with:
-#          path: C:/vcpkg/installed
-#          key: ${{ runner.os }}-install-${{ hashFiles('**/*.cmake') }}-${{ hashFiles('CMakeLists.txt') }}
-
-#      - name: install zlib
-#        run: vcpkg install zlib:x64-windows-static
-#      - name: install dependencies
-#        run: vcpkg install rocksdb:x64-windows-static
-
+      - name: Prepare ccache timestamp
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        id: cache_timestamp
+        run: |
+          echo "::set-output name=timestamp::$(Get-Date -Format o | ForEach-Object { $_ -replace ":", "." })"
+      - name: cache files
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~\.cache
+          key: windows-buildcache-${{ steps.cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            windows-buildcache-
+      - name: install buildcache
+        shell: powershell
+        run: |
+          wget https://github.com/mbitsnbites/buildcache/releases/download/v0.18.0/buildcache-win-msvc.zip -outfile buildcache-win-msvc.zip
+          Expand-Archive .\buildcache-win-msvc.zip
+          mkdir C:\buildcache\
+          mv .\buildcache-win-msvc\bin\buildcache.exe C:\buildcache\
+          $oldPath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
+          $newPath = "$oldPath;c:\buildcache"
+          Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
+      - name: show buildcache config
+        run: |
+          $env:Path += ";c:\buildcache"
+          buildcache -s
       - name: cmake
-        run: cmake . -Bbuild -A x64
-          -DCMAKE_BUILD_TYPE=Release
-          -DSHARED=OFF
-          -DVCPKG_TARGET_TRIPLET=x64-windows-static
-          -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
-          -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
+        run: |
+          $env:Path += ";c:\buildcache"
+          cmake . -Bbuild -A x64 -DCMAKE_BUILD_TYPE=Release -DSHARED=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
-        run: cmake --build build --parallel 2
+        run: |
+          $env:Path += ";c:\buildcache"
+          cmake --build build --parallel 2
       - name: test
         run: cmake --build build --target RUN_TESTS
 
@@ -154,6 +167,23 @@ jobs:
         with:
           submodules: recursive
           clean: true
+      - name: Prepare ccache timestamp
+        id: cache_timestamp
+        run: |
+          current_date=`date +%Y%m%d_%H%M%SZ`
+          echo "::set-output name=timestamp::${current_date}"
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: macos-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            macos-ccache-
+      - name: install homebrew
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      - name: install ccache
+        run: |
+          brew install ccache
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
@@ -176,6 +206,18 @@ jobs:
         with:
           submodules: recursive
           clean: true
+      - name: Prepare ccache timestamp
+        id: cache_timestamp
+        run: |
+          current_date=`date +%Y%m%d_%H%M%SZ`
+          echo "::set-output name=timestamp::${current_date}"
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: darwin-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            darwin-ccache-
       - name: toolchain cache files
         id: toolchain-cache
         uses: actions/cache@v1.1.0
