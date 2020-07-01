@@ -8,8 +8,6 @@
 
 #include <rocksdb/db.h>
 
-#include <set>
-
 #include "veriblock/blob.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/storage/block_repository.hpp"
@@ -24,7 +22,7 @@ template <typename Block>
 std::vector<uint8_t> serializeBlockToRocks(const Block&);
 
 template <>
-std::vector<uint8_t> serializeBlockToRocks(const BlockIndex<BtcBlock>& from) {
+inline std::vector<uint8_t> serializeBlockToRocks(const BlockIndex<BtcBlock>& from) {
   WriteStream s;
   from.toRaw(s);
   s.writeBE<uint32_t>((uint32_t)from.refCounter);
@@ -33,7 +31,8 @@ std::vector<uint8_t> serializeBlockToRocks(const BlockIndex<BtcBlock>& from) {
 }
 
 template <>
-std::vector<uint8_t> serializeBlockToRocks(const BlockIndex<VbkBlock>& from) {
+inline std::vector<uint8_t> serializeBlockToRocks(
+    const BlockIndex<VbkBlock>& from) {
   WriteStream s;
   from.toRaw(s);
   s.writeBE<uint32_t>((uint32_t)from.containingEndorsements.size());
@@ -50,7 +49,8 @@ std::vector<uint8_t> serializeBlockToRocks(const BlockIndex<VbkBlock>& from) {
 }
 
 template <>
-std::vector<uint8_t> serializeBlockToRocks(const BlockIndex<AltBlock>& from) {
+inline std::vector<uint8_t> serializeBlockToRocks(
+    const BlockIndex<AltBlock>& from) {
   WriteStream s;
   from.toRaw(s);
   s.writeBE<uint32_t>((uint32_t)from.containingEndorsements.size());
@@ -77,7 +77,7 @@ template <typename Block>
 Block deserializeBlockFromRocks(const std::string&);
 
 template <>
-BlockIndex<BtcBlock> deserializeBlockFromRocks(const std::string& from) {
+inline BlockIndex<BtcBlock> deserializeBlockFromRocks(const std::string& from) {
   ReadStream stream(from);
   auto block = BlockIndex<BtcBlock>::fromRaw(stream);
   block.refCounter = stream.readBE<uint32_t>();
@@ -86,7 +86,7 @@ BlockIndex<BtcBlock> deserializeBlockFromRocks(const std::string& from) {
 }
 
 template <>
-BlockIndex<VbkBlock> deserializeBlockFromRocks(const std::string& from) {
+inline BlockIndex<VbkBlock> deserializeBlockFromRocks(const std::string& from) {
   ReadStream stream(from);
   auto block = BlockIndex<VbkBlock>::fromRaw(stream);
   auto endorsementSize = stream.readBE<uint32_t>();
@@ -106,7 +106,7 @@ BlockIndex<VbkBlock> deserializeBlockFromRocks(const std::string& from) {
 }
 
 template <>
-BlockIndex<AltBlock> deserializeBlockFromRocks(const std::string& from) {
+inline BlockIndex<AltBlock> deserializeBlockFromRocks(const std::string& from) {
   ReadStream stream(from);
   auto block = BlockIndex<AltBlock>::fromRaw(stream);
   auto endorsementSize = stream.readBE<uint32_t>();

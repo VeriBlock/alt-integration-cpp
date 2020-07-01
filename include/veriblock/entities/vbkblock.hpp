@@ -74,10 +74,23 @@ struct VbkBlock {
   static VbkBlock fromVbkEncoding(ReadStream& stream);
 
   /**
+   * Read VBK data from the string raw byte representation and convert it to VbkBlock
+   * @param string data bytes to read from
+   * @return VbkBlock
+   */
+  static VbkBlock fromVbkEncoding(const std::string& bytes);
+
+  /**
    * Convert VbkBlock to data stream using VbkBlock basic byte format
    * @param stream data stream to write into
    */
   void toRaw(WriteStream& stream) const;
+
+    /**
+   * Convert VbkBlock to raw bytes data using VbkBlock byte format
+   * @return bytes data
+   */
+  std::vector<uint8_t> toVbkEncoding() const;
 
   /**
    * Convert VbkBlock to bytes data using VbkBlock basic byte format

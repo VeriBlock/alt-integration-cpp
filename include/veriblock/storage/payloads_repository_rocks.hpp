@@ -31,6 +31,24 @@ Payloads deserializePayloadsFromRocks(const std::string& from,
   return Payloads::fromVbkEncoding(from, pid);
 }
 
+template <>
+inline VbkBlock deserializePayloadsFromRocks(const std::string& from,
+                                      const typename VbkBlock::id_t&) {
+  return VbkBlock::fromVbkEncoding(from);
+}
+
+template <>
+inline VTB deserializePayloadsFromRocks(const std::string& from,
+                                             const typename VTB::id_t&) {
+  return VTB::fromVbkEncoding(from);
+}
+
+template <>
+inline ATV deserializePayloadsFromRocks(const std::string& from,
+                                        const typename ATV::id_t&) {
+  return ATV::fromVbkEncoding(from);
+}
+
 //! column family type
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
