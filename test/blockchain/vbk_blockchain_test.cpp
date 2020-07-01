@@ -12,7 +12,7 @@
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/literals.hpp"
 #include "veriblock/storage/pop_storage.hpp"
-#include "veriblock/storage/payloads_storage.hpp"
+#include "veriblock/storage/storage_manager.hpp"
 
 using namespace altintegration;
 
@@ -27,7 +27,8 @@ struct BtcInvalidationTest {
 
   BtcChainParamsRegTest btcparam;
   VbkChainParamsRegTest vbkparam;
-  PayloadsStorage storage = PayloadsStorage::newStorageInmem();
+  StorageManager storageManager{};
+  PayloadsStorage storage = storageManager.newPayloadsStorageInmem();
 };
 
 struct VbkTestCase {

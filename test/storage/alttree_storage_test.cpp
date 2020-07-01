@@ -5,18 +5,10 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/storage/pop_storage.hpp>
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/storage/block_repository_inmem.hpp>
-#include <veriblock/storage/block_repository_rocks.hpp>
-#include <veriblock/storage/tips_repository_inmem.hpp>
-#include <veriblock/storage/tips_repository_rocks.hpp>
-#include <veriblock/storage/payloads_repository_inmem.hpp>
-#include <veriblock/storage/payloads_repository_rocks.hpp>
-#include <veriblock/storage/repository_rocks_manager.hpp>
+#include <veriblock/storage/storage_manager.hpp>
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/alt-util.hpp>
-#include <veriblock/storage/pop_storage.hpp>
 
 using namespace altintegration;
 
@@ -24,34 +16,8 @@ static const std::string dbName = "db-test";
 
 struct PopStorageInmem {
   PopStorageInmem() {
-    auto repoBtc =
-        std::make_shared<BlockRepositoryInmem<BlockIndex<BtcBlock>>>();
-    auto repoVbk =
-        std::make_shared<BlockRepositoryInmem<BlockIndex<VbkBlock>>>();
-    auto repoAlt =
-        std::make_shared<BlockRepositoryInmem<BlockIndex<AltBlock>>>();
-    auto repoTipsBtc =
-        std::make_shared<TipsRepositoryInmem<BlockIndex<BtcBlock>>>();
-    auto repoTipsVbk =
-        std::make_shared<TipsRepositoryInmem<BlockIndex<VbkBlock>>>();
-    auto repoTipsAlt =
-        std::make_shared<TipsRepositoryInmem<BlockIndex<AltBlock>>>();
-    auto erepoVbk = std::make_shared<PayloadsRepositoryInmem<VbkEndorsement>>();
-    auto erepoAlt = std::make_shared<PayloadsRepositoryInmem<AltEndorsement>>();
-
-    storage = std::make_shared<PopStorage>(repoBtc,
-                                           repoVbk,
-                                           repoAlt,
-                                           repoTipsBtc,
-                                           repoTipsVbk,
-                                           repoTipsAlt,
-                                           erepoVbk,
-                                           erepoAlt);
-    storage->getBlockRepo<BlockIndex<BtcBlock>>().clear();
-    storage->getBlockRepo<BlockIndex<VbkBlock>>().clear();
-    storage->getBlockRepo<BlockIndex<AltBlock>>().clear();
-    storage->getEndorsementsRepo<VbkEndorsement>().clear();
-    storage->getEndorsementsRepo<AltEndorsement>().clear();
+    StorageManager storageManager{};
+    storage = std::make_shared<PopStorage>(storageManager.newPopStorageInmem());
   }
 
   std::shared_ptr<PopStorage> storage;
@@ -59,48 +25,12 @@ struct PopStorageInmem {
 
 struct PopStorageRocks {
   PopStorageRocks() {
-    database = std::make_shared<RepositoryRocksManager>(dbName);
-    database->attachColumn("btc_blocks");
-    database->attachColumn("vbk_blocks");
-    database->attachColumn("alt_blocks");
-    database->attachColumn("tips");
-    database->attachColumn("vbk_endorsements");
-    database->attachColumn("alt_endorsements");
-    EXPECT_EQ(database->open(), rocksdb::Status::OK());
-    EXPECT_EQ(database->clear(), rocksdb::Status::OK());
+    storageManager = std::make_shared<StorageManager>(dbName);
+    storageManager->openRocks();
+    storageManager->clearRocks();
+    storage =
+        std::make_shared<PopStorage>(storageManager->newPopStorageRocks());
 
-    auto* db = database->getDB();
-    auto* column = database->getColumn("btc_blocks");
-    auto repoBtc = std::make_shared<BlockRepositoryRocks<BlockIndex<BtcBlock>>>(
-        db, column);
-    column = database->getColumn("vbk_blocks");
-    auto repoVbk = std::make_shared<BlockRepositoryRocks<BlockIndex<VbkBlock>>>(
-        db, column);
-    column = database->getColumn("alt_blocks");
-    auto repoAlt = std::make_shared<BlockRepositoryRocks<BlockIndex<AltBlock>>>(
-        db, column);
-    column = database->getColumn("tips");
-    auto repoTipsBtc =
-        std::make_shared<TipsRepositoryRocks<BlockIndex<BtcBlock>>>(db, column);
-    auto repoTipsVbk =
-        std::make_shared<TipsRepositoryRocks<BlockIndex<VbkBlock>>>(db, column);
-    auto repoTipsAlt =
-        std::make_shared<TipsRepositoryRocks<BlockIndex<AltBlock>>>(db, column);
-    column = database->getColumn("vbk_endorsements");
-    auto erepoVbk =
-        std::make_shared<PayloadsRepositoryRocks<VbkEndorsement>>(db, column);
-    column = database->getColumn("alt_endorsements");
-    auto erepoAlt =
-        std::make_shared<PayloadsRepositoryRocks<AltEndorsement>>(db, column);
-
-    storage = std::make_shared<PopStorage>(repoBtc,
-                                           repoVbk,
-                                           repoAlt,
-                                           repoTipsBtc,
-                                           repoTipsVbk,
-                                           repoTipsAlt,
-                                           erepoVbk,
-                                           erepoAlt);
     storage->getBlockRepo<BlockIndex<BtcBlock>>().clear();
     storage->getBlockRepo<BlockIndex<VbkBlock>>().clear();
     storage->getBlockRepo<BlockIndex<AltBlock>>().clear();
@@ -109,7 +39,7 @@ struct PopStorageRocks {
   }
 
   std::shared_ptr<PopStorage> storage;
-  std::shared_ptr<RepositoryRocksManager> database;
+  std::shared_ptr<StorageManager> storageManager;
 };
 
 template <typename Storage>

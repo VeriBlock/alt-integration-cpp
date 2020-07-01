@@ -3,13 +3,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_MANAGER_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_MANAGER_HPP_
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_REPOSITORY_ROCKS_MANAGER_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_REPOSITORY_ROCKS_MANAGER_HPP_
+
+#include <rocksdb/db.h>
+#include <veriblock/storage/db_error.hpp>
 
 namespace altintegration {
 
 struct RepositoryRocksManager {
   using status_t = rocksdb::Status;
+  //! column family type
+  using cf_handle_t = rocksdb::ColumnFamilyHandle;
 
   RepositoryRocksManager(const std::string &name) : dbName(name) {}
 
@@ -19,11 +24,11 @@ struct RepositoryRocksManager {
     columnFamilies.push_back(descriptor);
   }
 
-  rocksdb::ColumnFamilyHandle* getColumn(const std::string &name) {
+  cf_handle_t *getColumn(const std::string &name) {
     auto it =
         std::find_if(columnHandles.begin(),
                      columnHandles.end(),
-                     [&name](std::shared_ptr<rocksdb::ColumnFamilyHandle> p) {
+                           [&name](std::shared_ptr<cf_handle_t> p) {
                        return p->GetName() == name;
                      });
     if (it == columnHandles.end())
@@ -36,7 +41,7 @@ struct RepositoryRocksManager {
 
   rocksdb::Status open() {
     rocksdb::DB *dbInstance = nullptr;
-    std::vector<rocksdb::ColumnFamilyHandle *> cfHandlesData;
+    std::vector<cf_handle_t *> cfHandlesData;
     rocksdb::Options options{};
     options.create_if_missing = true;
     options.create_missing_column_families = true;
@@ -51,8 +56,8 @@ struct RepositoryRocksManager {
     // prepare smart pointers to keep the DB state
     dbPtr = std::shared_ptr<rocksdb::DB>(dbInstance);
     columnHandles.clear();
-    for (rocksdb::ColumnFamilyHandle *cfHandle : cfHandlesData) {
-      auto cfHandlePtr = std::shared_ptr<rocksdb::ColumnFamilyHandle>(cfHandle);
+    for (cf_handle_t *cfHandle : cfHandlesData) {
+      auto cfHandlePtr = std::shared_ptr<cf_handle_t>(cfHandle);
       columnHandles.push_back(cfHandlePtr);
     }
     return s;
@@ -82,7 +87,7 @@ struct RepositoryRocksManager {
   }
 
   rocksdb::Status flush() {
-    std::vector<rocksdb::ColumnFamilyHandle *> cfs(columnHandles.size());
+    std::vector<cf_handle_t *> cfs(columnHandles.size());
     for (size_t i = 0; i < cfs.size(); ++i) {
       cfs[i] = columnHandles[i].get();
     }
@@ -95,10 +100,10 @@ struct RepositoryRocksManager {
 
   // smart pointers for handling DB management
   std::shared_ptr<rocksdb::DB> dbPtr;
-  std::vector<std::shared_ptr<rocksdb::ColumnFamilyHandle>> columnHandles{};
+  std::vector<std::shared_ptr<cf_handle_t>> columnHandles{};
   std::vector<rocksdb::ColumnFamilyDescriptor> columnFamilies{};
 };
 
 }  // namespace altintegration
 
-#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_MANAGER_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_REPOSITORY_ROCKS_MANAGER_HPP_
