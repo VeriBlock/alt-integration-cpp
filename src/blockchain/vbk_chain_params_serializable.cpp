@@ -44,7 +44,7 @@ void VbkChainParams::toRaw(WriteStream& stream) const {
   for (const auto& el : this->networkName()) {
     stream.writeBE<char>(el);
   }
-  stream.writeBE<uint8_t>((uint8_t)this->getPowNoRetargeting());
+  stream.writeBE<uint8_t>((uint8_t)this->EnableTimeAdjustment());
 
   writeVarLenValue(stream,
                    Slice<const uint8_t>(this->getMinimumDifficulty().data(),
