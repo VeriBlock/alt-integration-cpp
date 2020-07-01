@@ -171,7 +171,7 @@ void VbkBlockTree::removePayloads(index_t& index,
     index.vtbids.erase(it);
   }
 
-  updateAffectedTips(index);
+  updateTips();
 }
 
 void VbkBlockTree::unsafelyRemovePayload(const block_t& block,
@@ -230,7 +230,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index, const pid_t& pid) {
 
   index.vtbids.erase(vtbid_it);
 
-  updateAffectedTips(index);
+  updateTips();
 }
 
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
