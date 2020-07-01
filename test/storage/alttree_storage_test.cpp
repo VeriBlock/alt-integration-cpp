@@ -17,8 +17,7 @@ static const std::string dbName = "db-test";
 struct PopStorageInmem {
   PopStorageInmem() {
     StorageManager storageManager{};
-    storage = std::make_shared<PopStorage>(
-        std::move(storageManager.newPopStorageInmem()));
+    storage = std::make_shared<PopStorage>(storageManager.newPopStorageInmem());
   }
 
   std::shared_ptr<PopStorage> storage;
@@ -30,7 +29,7 @@ struct PopStorageRocks {
     storageManager->openRocks();
     storageManager->clearRocks();
     storage =
-        std::make_shared<PopStorage>(std::move(storageManager->newPopStorageRocks()));
+        std::make_shared<PopStorage>(storageManager->newPopStorageRocks());
 
     storage->getBlockRepo<BlockIndex<BtcBlock>>().clear();
     storage->getBlockRepo<BlockIndex<VbkBlock>>().clear();
