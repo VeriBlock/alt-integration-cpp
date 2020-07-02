@@ -7,6 +7,7 @@
 #include <veriblock/storage/payloads_repository.hpp>
 #include <veriblock/storage/storage_exceptions.hpp>
 #include <veriblock/storage/tips_repository.hpp>
+#include <utility>
 
 namespace altintegration {
 
