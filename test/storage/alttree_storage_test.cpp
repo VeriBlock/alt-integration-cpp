@@ -72,7 +72,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
       *vbkTip->header,
       lastKnownLocalBtcBlock(*this->popminer));
   // erase part of BTC - it will be restored from payloads anyway
-  this->popminer->btc().removeTip(*this->popminer->btc().getBestChain().tip(),
+  this->popminer->btc().removeLeaf(*this->popminer->btc().getBestChain().tip(),
                                   true);
 
   // mine txA into VBK 2nd block
@@ -88,12 +88,12 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   EXPECT_TRUE(reloadedVbkTree.btc() == this->popminer->btc());
   EXPECT_TRUE(reloadedVbkTree == this->popminer->vbk());
 
-  this->popminer->vbk().removeTip(*this->popminer->vbk().getBestChain().tip(),
+  this->popminer->vbk().removeLeaf(*this->popminer->vbk().getBestChain().tip(),
                                   true);
   EXPECT_FALSE(reloadedVbkTree == this->popminer->vbk());
 
   // commands should be properly restored to make it pass
-  reloadedVbkTree.removeTip(*reloadedVbkTree.getBestChain().tip(), true);
+  reloadedVbkTree.removeLeaf(*reloadedVbkTree.getBestChain().tip(), true);
   EXPECT_TRUE(reloadedVbkTree == this->popminer->vbk());
   EXPECT_TRUE(reloadedVbkTree.btc() == this->popminer->btc());
 }
@@ -136,10 +136,10 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(reloadedAltTree.vbk() == this->alttree.vbk());
   EXPECT_TRUE(reloadedAltTree == this->alttree);
 
-  this->alttree.removeTip(*this->alttree.getBestChain().tip(), true);
+  this->alttree.removeLeaf(*this->alttree.getBestChain().tip(), true);
   EXPECT_FALSE(reloadedAltTree == this->alttree);
 
-  reloadedAltTree.removeTip(*reloadedAltTree.getBestChain().tip(), true);
+  reloadedAltTree.removeLeaf(*reloadedAltTree.getBestChain().tip(), true);
   EXPECT_TRUE(reloadedAltTree == this->alttree);
 }
 
