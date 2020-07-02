@@ -67,7 +67,7 @@ struct BaseBlockTree {
                      bool shouldDetermineBestChain = true) {
     auto* index = getBlockIndex(toRemove);
     if (!index) {
-      return;
+      throw std::logic_error("could not find the subtree to remove");
     }
     return removeSubtree(*index, shouldDetermineBestChain);
   }
@@ -102,9 +102,9 @@ struct BaseBlockTree {
     }
   }
 
-  void removeTip(index_t& toRemove, bool shouldDetermineBestChain = true) {
+  void removeLeaf(index_t& toRemove, bool shouldDetermineBestChain = true) {
     if (!toRemove.pnext.empty()) {
-      throw std::logic_error("not a tip block");
+      throw std::logic_error("not a leaf block");
     }
     return removeSubtree(toRemove, shouldDetermineBestChain);
   }
@@ -114,7 +114,7 @@ struct BaseBlockTree {
                          bool shouldDetermineBestChain = true) {
     auto* index = getBlockIndex(toBeInvalidated);
     if (!index) {
-      return;
+      throw std::logic_error("could not find the subtree to invalidate");
     }
     return invalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
@@ -159,7 +159,7 @@ struct BaseBlockTree {
                          bool shouldDetermineBestChain = true) {
     auto* index = this->getBlockIndex(hash);
     if (index == nullptr) {
-      return;
+      throw std::logic_error("could not find the subtree to revalidate");
     }
     revalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
@@ -191,7 +191,8 @@ struct BaseBlockTree {
                         bool skipSetState = false) {
     auto* index = getBlockIndex(block);
     if (!index) {
-      return false;
+      return state.Invalid(block_t::name() + "-setstate-unknown-block",
+                           "could not find the block to set the state to");
     }
     return setState(*index, state, skipSetState);
   }
