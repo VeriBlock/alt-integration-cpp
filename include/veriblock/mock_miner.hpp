@@ -114,7 +114,7 @@ class MockMiner {
  private:
   BtcChainParamsRegTest btc_params{};
   VbkChainParamsRegTest vbk_params{};
-  StorageManager storageManager{};
+  StorageManager storageManager;
   PayloadsStorage storagePayloads = storageManager.newPayloadsStorageInmem();
 
   Miner<BtcBlock, BtcChainParams> btc_miner =
