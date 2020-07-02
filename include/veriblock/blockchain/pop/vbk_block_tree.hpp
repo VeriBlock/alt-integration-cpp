@@ -80,7 +80,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
    */
   void unsafelyRemovePayload(const Blob<24>& hash, const pid_t& pid);
   void unsafelyRemovePayload(const block_t& block, const pid_t& pid);
-  void unsafelyRemovePayload(index_t& index, const pid_t& pid);
+  void unsafelyRemovePayload(index_t& index,
+                             const pid_t& pid,
+                             bool shouldDetermineBestChain = true);
 
   void payloadsToCommands(const payloads_t& p,
                           std::vector<CommandPtr>& commands);
