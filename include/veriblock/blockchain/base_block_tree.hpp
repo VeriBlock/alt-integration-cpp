@@ -406,11 +406,6 @@ struct BaseBlockTree {
     }
   }
 
- private:
-  int deferForkResolutionDepth = 0;
-  bool isUpdateTipsDeferred = false;
-  index_t* lastModifiedBlock = nullptr;
-
   void updateTips(bool shouldDetermineBestChain = true) {
     if (deferForkResolutionDepth == 0) {
       return doUpdateTips(shouldDetermineBestChain);
@@ -418,6 +413,11 @@ struct BaseBlockTree {
     isUpdateTipsDeferred = true;
     lastModifiedBlock = nullptr;
   }
+
+ private:
+  int deferForkResolutionDepth = 0;
+  bool isUpdateTipsDeferred = false;
+  index_t* lastModifiedBlock = nullptr;
 
   void doUpdateTips(bool shouldDetermineBestChain = true) {
     for (auto it = tips_.begin(); it != tips_.end();) {
