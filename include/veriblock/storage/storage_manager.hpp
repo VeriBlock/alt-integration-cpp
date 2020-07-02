@@ -23,10 +23,12 @@ namespace altintegration {
 
 struct StorageManager {
 #ifdef VERIBLOCK_WITH_ROCKSDB
-  StorageManager(const std::string &name = "")
+  StorageManager(const std::string &name = "alt-cpp-db")
       : rocksManager(std::make_shared<RepositoryRocksManager>(name)) {}
 #else   //! VERIBLOCK_WITH_ROCKSDB
-  StorageManager(const std::string &/*name*/ = "") {}
+  StorageManager(const std::string name = "alt-cpp-db") {
+    (void) name; // ignore
+  }
 #endif  // VERIBLOCK_WITH_ROCKSDB
 
 #ifdef VERIBLOCK_WITH_ROCKSDB
