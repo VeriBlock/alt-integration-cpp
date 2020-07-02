@@ -31,9 +31,7 @@ struct RepositoryRocksManager {
                            [&name](std::shared_ptr<cf_handle_t> p) {
                        return p->GetName() == name;
                      });
-    if (it == columnHandles.end())
-      throw db::DbError(std::string("Column handle with name ") + name +
-                        std::string(" not found"));
+    if (it == columnHandles.end()) return nullptr;
     return it->get();
   }
 

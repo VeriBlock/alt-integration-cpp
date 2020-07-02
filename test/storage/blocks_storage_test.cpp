@@ -101,28 +101,21 @@ std::shared_ptr<BlockRepositoryInmem<BlockBasic>> getRepo(
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<BtcBlock>>> getRepo(
     RepositoryRocksManager* database) {
-  auto* column = database->getColumn("btc_blocks");
-  auto* db = database->getDB();
-  return std::make_shared<BlockRepositoryRocks<BlockIndex<BtcBlock>>>(db,
-                                                                      column);
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<BtcBlock>>>(*database, "btc_blocks");
 }
 
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<VbkBlock>>> getRepo(
     RepositoryRocksManager* database) {
-  auto* column = database->getColumn("vbk_blocks");
-  auto* db = database->getDB();
-  return std::make_shared<BlockRepositoryRocks<BlockIndex<VbkBlock>>>(db,
-                                                                      column);
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<VbkBlock>>>(
+      *database, "vbk_blocks");
 }
 
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<AltBlock>>> getRepo(
     RepositoryRocksManager* database) {
-  auto* column = database->getColumn("alt_blocks");
-  auto* db = database->getDB();
-  return std::make_shared<BlockRepositoryRocks<BlockIndex<AltBlock>>>(db,
-                                                                      column);
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<AltBlock>>>(
+      *database, "alt_blocks");
 }
 
 template <typename BlockRepoType>

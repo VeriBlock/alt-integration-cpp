@@ -15,7 +15,6 @@
 #include "veriblock/storage/tips_repository.hpp"
 #include "veriblock/storage/db_error.hpp"
 #include "veriblock/storage/rocks_util.hpp"
-#include "veriblock/storage/blockchain_storage_util.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {
@@ -73,8 +72,11 @@ class TipsRepositoryRocks : public TipsRepository<Block> {
  public:
   TipsRepositoryRocks() = default;
 
-  TipsRepositoryRocks(rocksdb::DB* db, cf_handle_t* columnHandle)
-      : _db(db), _columnHandle(columnHandle) {}
+  TipsRepositoryRocks(RepositoryRocksManager& manager,
+                      const std::string& name) {
+    _columnHandle = manager.getColumn(name);
+    _db = manager.getDB();
+  }
 
   bool put(const stored_block_t& tip) override {
     auto blockBytes = serializeTipsToRocks(tip);

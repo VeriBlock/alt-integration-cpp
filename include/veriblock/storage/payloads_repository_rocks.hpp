@@ -15,7 +15,6 @@
 #include "veriblock/storage/payloads_repository.hpp"
 #include "veriblock/storage/db_error.hpp"
 #include "veriblock/storage/rocks_util.hpp"
-#include "veriblock/storage/blockchain_storage_util.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {
@@ -143,8 +142,11 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
 
   PayloadsRepositoryRocks() = default;
 
-  PayloadsRepositoryRocks(rocksdb::DB* db, cf_handle_t* columnHandle)
-      : _db(db), _columnHandle(columnHandle) {}
+  PayloadsRepositoryRocks(RepositoryRocksManager& manager,
+                          const std::string& name) {
+    _columnHandle = manager.getColumn(name);
+    _db = manager.getDB();
+  }
 
   bool remove(const pid_t& pid) override {
     std::string value;
@@ -208,7 +210,6 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
       remove(key);
       cursor->next();
     }
-    // call BlockRepositoryRocksManager.clear() for faster table drop
   }
 
   std::unique_ptr<PayloadsWriteBatch<Payloads>> newBatch() override {

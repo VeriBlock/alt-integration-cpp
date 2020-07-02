@@ -13,8 +13,12 @@
 #include "veriblock/storage/block_repository.hpp"
 #include "veriblock/storage/db_error.hpp"
 #include "veriblock/storage/rocks_util.hpp"
-#include "veriblock/storage/blockchain_storage_util.hpp"
+#include "veriblock/blockchain/block_index.hpp"
+#include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/entities/altblock.hpp"
 #include "veriblock/strutil.hpp"
+#include "veriblock/storage/repository_rocks_manager.hpp"
 
 namespace altintegration {
 
@@ -246,8 +250,10 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
  public:
   BlockRepositoryRocks() = default;
 
-  BlockRepositoryRocks(rocksdb::DB* db, cf_handle_t* columnHandle)
-      : _db(db), _columnHandle(columnHandle) {}
+  BlockRepositoryRocks(RepositoryRocksManager& manager, const std::string& name) {
+    _columnHandle = manager.getColumn(name);
+    _db = manager.getDB();
+  }
 
   bool put(const stored_block_t& block) override {
     auto hash = block.getHash();
@@ -340,7 +346,6 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
       removeByHash(key);
       cursor->next();
     }
-    // call BlockRepositoryRocksManager.clear() for faster table drop
   }
 
   std::unique_ptr<BlockWriteBatch<stored_block_t>> newBatch() override {
