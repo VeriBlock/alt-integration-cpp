@@ -34,7 +34,7 @@ struct PopTestFixture {
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
-  StorageManager storageManager{};
+  StorageManager storageManager;
   PayloadsStorage storagePayloads = storageManager.newPayloadsStorageInmem();
 
   // miners
