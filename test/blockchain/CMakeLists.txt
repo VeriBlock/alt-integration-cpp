@@ -47,7 +47,7 @@ addtest(vbk_blockchain_test
         ${vbk_gen_1}
         ${vbk_gen_2}
         )
-set_target_properties(vbk_blockchain_test PROPERTIES
+set_tests_properties(vbk_blockchain_test PROPERTIES
         COST 300000  # many sec
         )
 
@@ -55,7 +55,7 @@ addtest(vbk_getblockproof_test
         vbk_getblockproof_test.cpp
         ${vbk_blocks_gen_1}
         )
-set_target_properties(vbk_getblockproof_test PROPERTIES
+set_tests_properties(vbk_getblockproof_test PROPERTIES
         COST 30000 # 30 sec
         )
 
@@ -63,7 +63,7 @@ addtest(blockchain_test
         chain_test.cpp
         blockchain_test.cpp
         )
-set_target_properties(blockchain_test PROPERTIES
+set_tests_properties(blockchain_test PROPERTIES
         COST 10000  # 10 sec
         )
 
