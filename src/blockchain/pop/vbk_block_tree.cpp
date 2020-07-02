@@ -157,10 +157,10 @@ void VbkBlockTree::removePayloads(index_t& index,
 
   for (const auto& pid : pids) {
     auto it = std::find(index.vtbids.begin(), index.vtbids.end(), pid);
-    // silently ignore wrong payload ids to remove
-    if (it == index.vtbids.end()) {
-      continue;
-    }
+    // using an assert because throwing breaks atomicity
+    // if there are multiple pids
+    VBK_ASSERT(it != index.vtbids.end() &&
+               "could not find the payload to remove");
 
     auto payloads = storagePayloads_.loadPayloads<payloads_t>(pid);
 
