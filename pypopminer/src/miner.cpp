@@ -18,6 +18,27 @@ struct Payloads {
   std::string toPrettyString() const {
     return fmt::sprintf("Payloads{atv, vtbs=%d}", vtbs.size());
   }
+
+  list prepare() const {
+    list args;
+
+    list listctx;
+    list listvtbs;
+    for (const auto& vtb : vtbs) {
+      for (auto& block : vtb.context) {
+        listctx.append(HexStr(block.toVbkEncoding()));
+      }
+      listvtbs.append(HexStr(vtb.toVbkEncoding()));
+    }
+
+    list listatvs;
+    listatvs.append(HexStr(atv.toVbkEncoding()));
+
+    args.append(listctx);
+    args.append(listvtbs);
+    args.append(listatvs);
+    return args;
+  }
 };
 
 struct MockMinerProxy : private MockMiner {
@@ -185,6 +206,7 @@ BOOST_PYTHON_MODULE(pypopminer) {
 
   class_<Payloads>("Payloads")
       .def("__repr__", &Payloads::toPrettyString)
+      .def("prepare", &Payloads::prepare)
       .def_readonly("atv", &Payloads::atv)
       .def_readonly("vtbs", &Payloads::vtbs);
 

@@ -13,6 +13,13 @@
 using namespace altintegration;
 using namespace boost::python;
 
+template <typename E>
+std::string toVbkEncodingHex(E& self) {
+  WriteStream w;
+  self.toVbkEncoding(w);
+  return HexStr(w.data());
+}
+
 void init_entities() {
   class_<PublicationData, boost::shared_ptr<PublicationData>>("PublicationData")
       .def("__repr__", &PublicationData::toPrettyString)
@@ -45,6 +52,7 @@ void init_entities() {
 
   class_<VbkPopTx, boost::shared_ptr<VbkPopTx>>("VbkPopTx")
       .def("__repr__", &VbkPopTx::toPrettyString)
+      .def("toVbkEncodingHex", &toVbkEncodingHex<VbkPopTx>)
       .def("getHash", &VbkPopTx::getHash)
       .def_readwrite("networkOrType", &VbkPopTx::networkOrType)
       .def_readwrite("address", &VbkPopTx::address)
@@ -67,6 +75,7 @@ void init_entities() {
 
   class_<VbkTx, boost::shared_ptr<VbkTx>>("VbkTx")
       .def("getHash", &VbkTx::getHash)
+      .def("toVbkEncodingHex", &toVbkEncodingHex<VbkTx>)
       .def_readwrite("networkOrType", &VbkTx::networkOrType)
       .def_readwrite("sourceAddress", &VbkTx::sourceAddress)
       .def_readwrite("sourceAmount", &VbkTx::sourceAmount)
@@ -80,6 +89,7 @@ void init_entities() {
       .def("__str__", &VTB::toHex)
       .def("__repr__", &VTB::toPrettyString)
       .def("toHex", &VTB::toHex)
+      .def("toVbkEncodingHex", &toVbkEncodingHex<VTB>)
       .def("getId", &VTB::getId)
       .def_readwrite("transaction", &VTB::transaction)
       .def_readwrite("merklePath", &VTB::merklePath)
@@ -90,6 +100,7 @@ void init_entities() {
       .def("__str__", &ATV::toHex)
       .def("__repr__", &ATV::toPrettyString)
       .def("toHex", &ATV::toHex)
+      .def("toVbkEncodingHex", &toVbkEncodingHex<ATV>)
       .def("getId", &ATV::getId)
       .def_readwrite("transaction", &ATV::transaction)
       .def_readwrite("merklePath", &ATV::merklePath)
@@ -106,6 +117,7 @@ void init_entities() {
       .def("__str__", &BtcBlock::toHex)
       .def("__repr__", &BtcBlock::toPrettyString)
       .def("toHex", &BtcBlock::toHex)
+      .def("toVbkEncodingHex", &toVbkEncodingHex<BtcBlock>)
       .def("getHash", &BtcBlock::getHash)
       .def_readwrite("version", &BtcBlock::version)
       .def_readwrite("previousBlock", &BtcBlock::previousBlock)
@@ -118,6 +130,7 @@ void init_entities() {
       .def("__str__", &VbkBlock::toHex)
       .def("__repr__", &VbkBlock::toPrettyString)
       .def("toHex", &VbkBlock::toHex)
+      .def("toVbkEncodingHex", &toVbkEncodingHex<VbkBlock>)
       .def("getHash", &VbkBlock::getHash)
       .def_readwrite("height", &VbkBlock::height)
       .def_readwrite("version", &VbkBlock::version)
