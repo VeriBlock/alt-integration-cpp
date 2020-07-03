@@ -3,12 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_INMEM_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_INMEM_HPP_
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_INMEM_PAYLOADS_REPOSITORY_INMEM_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_INMEM_PAYLOADS_REPOSITORY_INMEM_HPP_
 
 #include <string>
 #include <unordered_map>
-#include "veriblock/storage/payloads_repository.hpp"
+#include <veriblock/storage/payloads_repository.hpp>
 
 namespace altintegration {
 
@@ -175,4 +175,4 @@ struct PayloadsRepositoryInmem : public PayloadsRepository<Payloads> {
 
 }  // namespace altintegration
 
-#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_INMEM_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_INMEM_PAYLOADS_REPOSITORY_INMEM_HPP_

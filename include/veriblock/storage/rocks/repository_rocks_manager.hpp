@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_REPOSITORY_ROCKS_MANAGER_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_REPOSITORY_ROCKS_MANAGER_HPP_
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_REPOSITORY_ROCKS_MANAGER_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_REPOSITORY_ROCKS_MANAGER_HPP_
 
 #include <rocksdb/db.h>
 #include <veriblock/storage/db_error.hpp>
@@ -104,4 +104,4 @@ struct RepositoryRocksManager {
 
 }  // namespace altintegration
 
-#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_REPOSITORY_ROCKS_MANAGER_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_REPOSITORY_ROCKS_MANAGER_HPP_

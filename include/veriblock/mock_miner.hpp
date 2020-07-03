@@ -19,7 +19,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "veriblock/storage/storage_manager_inmem.hpp"
+#include "veriblock/storage/inmem/storage_manager_inmem.hpp"
 
 namespace altintegration {
 
@@ -115,7 +115,7 @@ class MockMiner {
   BtcChainParamsRegTest btc_params{};
   VbkChainParamsRegTest vbk_params{};
   StorageManagerInmem storageManager{};
-  PayloadsStorage storagePayloads = storageManager.newPayloadsStorage();
+  PayloadsStorage& storagePayloads = storageManager.getPayloadsStorage();
 
   Miner<BtcBlock, BtcChainParams> btc_miner =
       Miner<BtcBlock, BtcChainParams>(btc_params);

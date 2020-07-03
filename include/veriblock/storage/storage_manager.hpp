@@ -14,9 +14,21 @@ namespace altintegration {
 struct StorageManager {
   virtual ~StorageManager() = default;
 
-  virtual void flush() = 0;
-  virtual PayloadsStorage newPayloadsStorage() = 0;
-  virtual PopStorage newPopStorage() = 0;
+  virtual void flush() {}
+
+  PopStorage& getPopStorage() { return *_storagePop; }
+
+  const PopStorage& getPopStorage() const { return *_storagePop; }
+
+  PayloadsStorage& getPayloadsStorage() { return *_storagePayloads; }
+
+  const PayloadsStorage& getPayloadsStorage() const {
+    return *_storagePayloads;
+  }
+
+ protected:
+  std::shared_ptr<PopStorage> _storagePop;
+  std::shared_ptr<PayloadsStorage> _storagePayloads;
 };
 
 }  // namespace altintegration

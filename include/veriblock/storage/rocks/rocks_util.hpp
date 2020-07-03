@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_UTIL_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_UTIL_HPP_
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_ROCKS_UTIL_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_ROCKS_UTIL_HPP_
 
 #include <rocksdb/slice.h>
 
@@ -25,4 +25,4 @@ inline rocksdb::Slice makeRocksSlice(const Slice<const uint8_t>& slice) {
 
 }  // namespace altintegration
 
-#endif
+#endif // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_ROCKS_UTIL_HPP_

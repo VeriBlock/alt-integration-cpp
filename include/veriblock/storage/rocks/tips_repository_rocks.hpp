@@ -3,19 +3,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_TIPS_REPOSITORY_ROCKS_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_TIPS_REPOSITORY_ROCKS_HPP_
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_TIPS_REPOSITORY_ROCKS_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_TIPS_REPOSITORY_ROCKS_HPP_
 
 #include <rocksdb/db.h>
-
-#include <set>
-
-#include "veriblock/blob.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/storage/tips_repository.hpp"
-#include "veriblock/storage/db_error.hpp"
-#include "veriblock/storage/rocks_util.hpp"
-#include "veriblock/strutil.hpp"
+#include <veriblock/serde.hpp>
+#include <veriblock/storage/tips_repository.hpp>
+#include <veriblock/storage/db_error.hpp>
+#include <veriblock/storage/rocks/rocks_util.hpp>
+#include <veriblock/storage/rocks/repository_rocks_manager.hpp>
 
 namespace altintegration {
 
@@ -115,4 +111,4 @@ class TipsRepositoryRocks : public TipsRepository<Block> {
 
 }  // namespace altintegration
 
-#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_TIPS_REPOSITORY_ROCKS_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_TIPS_REPOSITORY_ROCKS_HPP_

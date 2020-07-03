@@ -61,7 +61,7 @@ struct Scenario0 : public ::testing::Test {
   std::shared_ptr<Config> config;
   std::shared_ptr<AltTree> alt;
   StorageManagerInmem storageManager{};
-  PayloadsStorage storage = storageManager.newPayloadsStorage();
+  PayloadsStorage& storage = storageManager.getPayloadsStorage();
 
   ATV atv;
   std::vector<VTB> vtbs;

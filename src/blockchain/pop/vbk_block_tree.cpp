@@ -381,7 +381,7 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
   for (const auto& pid : index.vtbids) {
     pop_t payloads;
     if (!getRepo<pop_t>().get(pid, &payloads)) {
-      throw StateCorruptedException(
+      throw db::StateCorruptedException(
           fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
     }
     CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());

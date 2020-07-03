@@ -508,7 +508,7 @@ std::vector<CommandGroup> loadCommands_(
   for (const auto& pid : pids) {
     pop_t payloads;
     if (!prep.get(pid, &payloads)) {
-      throw StateCorruptedException(
+      throw db::StateCorruptedException(
           fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
     }
     CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());
@@ -528,7 +528,7 @@ std::vector<CommandGroup> loadCommands_(
   for (const auto& pid : pids) {
     ATV payloads;
     if (!prep.get(pid, &payloads)) {
-      throw StateCorruptedException(
+      throw db::StateCorruptedException(
           fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
     }
     CommandGroup cg(pid.asVector(), payloads.valid, ATV::name());

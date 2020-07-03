@@ -11,18 +11,14 @@
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/entities/vtb.hpp>
+#include <veriblock/storage/db_error.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
-#include <veriblock/storage/storage_exceptions.hpp>
 
 namespace altintegration {
 
 class PayloadsStorage {
  public:
   virtual ~PayloadsStorage() = default;
-  PayloadsStorage(std::shared_ptr<PayloadsRepository<ATV>> repoAtv,
-                  std::shared_ptr<PayloadsRepository<VTB>> repoVtb,
-                  std::shared_ptr<PayloadsRepository<VbkBlock>> repoBlocks)
-      : _repoAtv(repoAtv), _repoVtb(repoVtb), _repoBlocks(repoBlocks) {}
 
   template <typename Payloads>
   PayloadsRepository<Payloads>& getRepo();
@@ -36,7 +32,7 @@ class PayloadsStorage {
     auto& repo = getRepo<Payloads>();
     bool ret = repo.get(pid, &payloads);
     if (!ret) {
-      throw StateCorruptedException(
+      throw db::StateCorruptedException(
           fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
     }
     return payloads;
