@@ -731,3 +731,78 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
     ASSERT_EQ(v_popData.atvs.size(), 0);
   }
 }
+
+TEST_F(MemPoolFixture, getPop_scenario_13) {
+  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
+
+  size_t vbkblocks_count = 100;
+
+  std::vector<VbkBlock> vbk_blocks;
+  for (size_t i = 0; i < vbkblocks_count; ++i) {
+    VbkBlock block =
+        vbk_miner.createNextBlock(*popminer->vbk().getBestChain().tip());
+    // add containing block without payloads into vbk tree
+    EXPECT_TRUE(popminer->vbk().acceptBlock(block, state));
+    vbk_blocks.push_back(block);
+  }
+
+  EXPECT_EQ(vbk_blocks.size(), vbkblocks_count);
+  EXPECT_TRUE(vbk_blocks.rbegin()->getHash() ==
+              popminer->vbk().getBestChain().tip()->getHash());
+
+  for (size_t i = 0; i < vbk_blocks.size(); ++i) {
+    EXPECT_TRUE(mempool->submit<VbkBlock>(vbk_blocks[i], alttree, state));
+    EXPECT_TRUE(state.IsValid());
+  }
+
+  PopData popData = checkedGetPop();
+
+  EXPECT_EQ(popData.context.size(), vbkblocks_count);
+  EXPECT_EQ(popData.vtbs.size(), 0);
+  EXPECT_EQ(popData.atvs.size(), 0);
+}
+
+TEST_F(MemPoolFixture, getPop_scenario_14) {
+  popminer->mineBtcBlocks(100);
+  auto* vbkTip = popminer->mineVbkBlocks(54);
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+
+  generatePopTx(*endorsedVbkBlock1->header);
+  generatePopTx(*endorsedVbkBlock2->header);
+
+  auto* containingVbkBlock = popminer->mineVbkBlocks(1);
+  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock->getHash()].size(), 2);
+  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock->getHash()][0];
+  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock->getHash()][1];
+  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+  fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+
+  EXPECT_EQ(vtb1.containingBlock, vtb2.containingBlock);
+
+  mempool->submit<VTB>(vtb1, alttree, state);
+
+  PopData popData = checkedGetPop();
+
+  EXPECT_EQ(popData.atvs.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 1);
+  EXPECT_TRUE(!popData.context.empty());
+
+  applyInNextBlock(popData);
+  mempool->removePayloads(popData);
+
+  mempool->submit<VTB>(vtb2, alttree, state);
+
+  popData = checkedGetPop();
+
+  EXPECT_EQ(popData.atvs.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 1);
+  EXPECT_TRUE(!popData.context.empty());
+
+  applyInNextBlock(popData);
+}
