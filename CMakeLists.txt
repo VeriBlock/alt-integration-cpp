@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.11)
 
 if(WIN32)
     find_program(buildcache_program buildcache)
@@ -131,6 +131,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     endif()
 endif()
 
+include(FetchContent)
 if(VERIBLOCK_POP_LOGGER_ENABLED)
     vbk_define(VERIBLOCK_POP_LOGGER_ENABLED=1)
 endif()
@@ -154,7 +155,7 @@ add_subdirectory(third_party)
 
 if(WITH_ROCKSDB)
     include(cmake/rocksdb.cmake)
-    include_directories(${CMAKE_BINARY_DIR}/rocksdb-src/include)
+    include_directories(${rocksdb_SOURCE_DIR}/include)
     vbk_define(VERIBLOCK_WITH_ROCKSDB=1)
 endif()
 
