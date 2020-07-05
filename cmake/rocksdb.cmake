@@ -19,6 +19,7 @@ FetchContent_GetProperties(rocksdb)
 if(NOT rocksdb_POPULATED)
     message(STATUS "Downloading rocksdb...")
     FetchContent_Populate(rocksdb)
+    # note no EXCLUDE_FROM_ALL. This is required, so we can install rocksdb alongside with our library.
     add_subdirectory(${rocksdb_SOURCE_DIR} ${rocksdb_BINARY_DIR})
 endif()
 
