@@ -22,7 +22,8 @@ jobs:
           "-DCLANG_TIDY=ON",
           "-DASAN=ON",
           "-DUBSAN=ON",
-          "-DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"
+          # release build with all dependencies
+          "-DWITH_PYPOPMINER=ON -DWITH_ROCKSDB=ON -DCMAKE_BUILD_TYPE=Release"
         ]
     env:
       CC: clang
