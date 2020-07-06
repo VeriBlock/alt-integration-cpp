@@ -267,6 +267,19 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                      index->toPrettyString()));
   }
 
+  // check that we can add all payloads at once to guarantee atomicity
+  std::set<pid_t> existingPids(index->vtbids.begin(), index->vtbids.end());
+  for (const auto& payload : payloads) {
+    auto pid = payload.getId();
+    if (!existingPids.insert(pid).second) {
+      return state.Invalid(
+          block_t::name() + "-duplicate-payloads",
+          fmt::sprintf("Containing block=%s already contains payload %s.",
+                       index->toPrettyString(),
+                       pid.toHex()));
+    }
+  }
+
   auto tip = activeChain_.tip();
 
   bool isOnActiveChain = activeChain_.contains(index);
@@ -288,20 +301,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     bool success = setTip(*index->pprev, dummy, false);
     VBK_ASSERT(success &&
                "state corruption: failed to roll back the best chain tip");
-  }
-
-  std::set<pid_t> existingPids(index->vtbids.begin(), index->vtbids.end());
-
-  // check that we can add all payloads at once to guarantee atomicity
-  for (const auto& payload : payloads) {
-    auto pid = payload.getId();
-    if (!existingPids.insert(pid).second) {
-      return state.Invalid(
-          block_t::name() + "-duplicate-payloads",
-          fmt::sprintf("Containing block=%s already contains payload %s.",
-                       index->toPrettyString(),
-                       pid.toHex()));
-    }
   }
 
   for (const auto& payload : payloads) {

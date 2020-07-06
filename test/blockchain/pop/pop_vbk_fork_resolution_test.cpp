@@ -16,18 +16,25 @@ struct PopVbkForkResolution : public ::testing::Test, public PopTestFixture {};
 
 TEST_F(PopVbkForkResolution, TooLateToAddPayloads) {
   popminer->mineVbkBlocks(2);
+
+  // generate a VTB
   auto vbkpoptx =
       popminer->endorseVbkBlock(*popminer->vbk().getBestChain()[1]->header,
                                 getLastKnownBtcBlock(),
                                 state);
   popminer->vbkmempool.push_back(vbkpoptx);
 
-  // try to add payloads to block pre latest allowed to overwrite
   auto limit = popminer->getVbkParams().getHistoryOverwriteLimit();
   auto vbkcontaining = popminer->mineVbkBlocks(1);
-  popminer->mineVbkBlocks(limit);
 
-  auto& vtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
+  // save the generated VTB and remove it from its containing block
+  // to avoid triggering the duplicate check
+  VTB vtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
+  popminer->vbk().removePayloads(vbkcontaining->getHash(), {vtb.getId()});
+
+  // try adding the VTB to the block preceeding
+  // the earliest one we are allowed to modify
+  popminer->mineVbkBlocks(limit);
 
   ASSERT_FALSE(
       popminer->vbk().addPayloads(vbkcontaining->getHash(), {vtb}, state));
