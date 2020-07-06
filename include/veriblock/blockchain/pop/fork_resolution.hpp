@@ -156,15 +156,14 @@ std::vector<KeystoneContext> getKeystoneContext(
       }    // end for
     }      // end for
 
-
-//    // if there's no suitable endorsement for the current keystone
-//    // the fork loses continuity
-//    //
-//    // duplicated logic for "cropping" is inside KeystoneContextList
-//    // constructor. Saves CPU a little.
-//    if (earliestEndorsementIndex == std::numeric_limits<int>::max()) {
-//      break;
-//    }
+    //    // if there's no suitable endorsement for the current keystone
+    //    // the fork loses continuity
+    //    //
+    //    // duplicated logic for "cropping" is inside KeystoneContextList
+    //    // constructor. Saves CPU a little.
+    //    if (earliestEndorsementIndex == std::numeric_limits<int>::max()) {
+    //      break;
+    //    }
 
     ret.push_back(KeystoneContext{pkc.blockHeight, earliestEndorsementIndex});
   }
@@ -401,8 +400,16 @@ struct PopAwareForkResolutionComparator {
       return true;
     }
 
+    auto guard = ing_->deferForkResolutionGuard();
+    auto originalTip = ing_->getBestChain().tip();
+
     sm_t sm(ed, *ing_, storage_, 0, continueOnInvalid);
-    return sm.setState(*currentActive, to, state);
+    if (sm.setState(*currentActive, to, state)) {
+      return true;
+    }
+
+    guard.overrideDeferredForkResolution(originalTip);
+    return false;
   }
 
   //! finds a path between current ed's best chain and 'to', and applies all
@@ -419,8 +426,16 @@ struct PopAwareForkResolutionComparator {
       return true;
     }
 
+    auto guard = ing_->deferForkResolutionGuard();
+    auto originalTip = ing_->getBestChain().tip();
+
     sm_t sm(ed, *ing_, storage_);
-    return sm.setState(*currentActive, to, state);
+    if (sm.setState(*currentActive, to, state)) {
+      return true;
+    }
+
+    guard.overrideDeferredForkResolution(originalTip);
+    return false;
   }
 
   int comparePopScore(ProtectedBlockTree& ed,
@@ -451,15 +466,21 @@ struct PopAwareForkResolutionComparator {
                  bestTip->toShortPrettyString(),
                  indexNew.toShortPrettyString());
 
+    auto originalProtectingTip = ing_->getBestChain().tip();
+
     // indexNew is on top of our best tip
     if (indexNew.getAncestor(bestTip->height) == bestTip) {
       VBK_LOG_INFO("Candidate is ahead %d blocks",
                    indexNew.height - bestTip->height);
+
+      auto guard = ing_->deferForkResolutionGuard();
+
       sm_t sm(ed, *ing_, storage_, bestTip->height);
       if (!sm.apply(*bestTip, indexNew, state)) {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
                      state.toString());
+        guard.overrideDeferredForkResolution(originalProtectingTip);
         return 1;
       }
 
@@ -505,12 +526,17 @@ struct PopAwareForkResolutionComparator {
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the
     // fork point, so exclude it during 'apply')
-    if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
-      // chain B has been unapplied already
-      // chain B has been invalidated already
-      VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
-                   state.toString());
-      return 1;
+    {
+      auto guard = ing_->deferForkResolutionGuard();
+
+      if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
+        // chain B has been unapplied already
+        // chain B has been invalidated already
+        VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
+                     state.toString());
+        guard.overrideDeferredForkResolution(originalProtectingTip);
+        return 1;
+      }
     }
 
     // now the tree contains payloads from both chains
@@ -536,10 +562,13 @@ struct PopAwareForkResolutionComparator {
         kcChain1, kcChain2, *protectedParams_);
     if (result >= 0) {
       // chain A remains the best. unapply B. A remains applied
+      auto guard = ing_->deferForkResolutionGuard();
       sm.unapply(*chainB.tip(), *chainB.first());
+      guard.overrideDeferredForkResolution(originalProtectingTip);
       VBK_LOG_INFO("Chain A remains the best chain");
     } else {
       // chain B is better. unapply A. B remains applied
+      auto guard = ing_->deferForkResolutionGuard();
       sm.unapply(*chainA.tip(), *chainA.first());
       VBK_LOG_INFO("Chain B wins");
     }

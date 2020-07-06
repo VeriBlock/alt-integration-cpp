@@ -361,6 +361,14 @@ struct BaseBlockTree {
       tree_.deferForkResolution();
     }
 
+    void overrideDeferredForkResolution(index_t* bestChain) {
+      // there's no obvious way to go back to having no best chain, so we
+      // just have to let fork resolution run its course
+      if (bestChain != nullptr) {
+        return tree_.overrideDeferredForkResolution(*bestChain);
+      }
+    }
+
     ~DeferForkResolutionGuard() { tree_.continueForkResolution(); }
   };
 
@@ -433,6 +441,21 @@ struct BaseBlockTree {
         ++it;
       }
     }
+  }
+
+  /**
+   * cancel pending fork resolution requests and revert
+   * the best chain to a known state
+   */
+  void overrideDeferredForkResolution(index_t& bestChain) {
+    lastModifiedBlock = nullptr;
+    isUpdateTipsDeferred = false;
+
+    ValidationState dummy;
+    bool success = setState(bestChain, dummy);
+    VBK_ASSERT(
+        success &&
+        "state corruption: could not revert to the saved best chain tip");
   }
 
   void deferForkResolution() { ++deferForkResolutionDepth; }
