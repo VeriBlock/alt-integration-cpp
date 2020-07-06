@@ -191,7 +191,7 @@ void VbkBlockTree::unsafelyRemovePayload(const Blob<24>& hash,
 void VbkBlockTree::unsafelyRemovePayload(index_t& index,
                                          const pid_t& pid,
                                          bool shouldDetermineBestChain) {
-  VBK_LOG_DEBUG("unsafely removing %d payload from %s",
+  VBK_LOG_DEBUG("unsafely removing %s payload from %s",
                 pid.toPrettyString(),
                 index.toPrettyString());
 
