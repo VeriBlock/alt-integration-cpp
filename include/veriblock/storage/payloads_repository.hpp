@@ -6,15 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_HPP_
 
-#include <functional>
-#include <string>
-#include <vector>
-
-#include "veriblock/entities/altblock.hpp"
-#include "veriblock/entities/endorsement.hpp"
-#include "veriblock/entities/vbkblock.hpp"
-#include "veriblock/entities/vbkpoptx.hpp"
-#include "veriblock/entities/vbktx.hpp"
 #include "veriblock/storage/cursor.hpp"
 
 namespace altintegration {

@@ -1,35 +1,20 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_POP_STORAGE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_POP_STORAGE_HPP_
 
-#include <map>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/entities/altblock.hpp>
+#include <veriblock/entities/btcblock.hpp>
+#include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
-#include <veriblock/storage/storage_exceptions.hpp>
 #include <veriblock/storage/tips_repository.hpp>
-#include <utility>
+#include <veriblock/storage/db_error.hpp>
 
 namespace altintegration {
 
 class PopStorage {
  public:
   virtual ~PopStorage() = default;
-  PopStorage(std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> brepoBtc,
-             std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> brepoVbk,
-             std::shared_ptr<BlockRepository<BlockIndex<AltBlock>>> brepoAlt,
-             std::shared_ptr<TipsRepository<BlockIndex<BtcBlock>>> trepoBtc,
-             std::shared_ptr<TipsRepository<BlockIndex<VbkBlock>>> trepoVbk,
-             std::shared_ptr<TipsRepository<BlockIndex<AltBlock>>> trepoAlt,
-             std::shared_ptr<PayloadsRepository<VbkEndorsement>> erepoVbk,
-             std::shared_ptr<PayloadsRepository<AltEndorsement>> erepoAlt)
-      : _brepoBtc(brepoBtc),
-        _brepoVbk(brepoVbk),
-        _brepoAlt(brepoAlt),
-        _trepoBtc(trepoBtc),
-        _trepoVbk(trepoVbk),
-        _trepoAlt(trepoAlt),
-        _erepoVbk(erepoVbk),
-        _erepoAlt(erepoAlt) {}
 
   template <typename Block>
   BlockRepository<Block>& getBlockRepo();
@@ -69,7 +54,7 @@ class PopStorage {
     auto& repo = getBlockRepo<StoredBlock>();
     auto cursor = repo.newCursor();
     if (cursor == nullptr) {
-      throw BadIOException("Cannot create BlockRepository cursor");
+      throw db::BadIOException("Cannot create BlockRepository cursor");
     }
     cursor->seekToFirst();
     std::multimap<typename StoredBlock::height_t, std::shared_ptr<StoredBlock>>
@@ -92,7 +77,7 @@ class PopStorage {
     auto& repo = getBlockRepo<StoredBlock>();
     auto batch = repo.newBatch();
     if (batch == nullptr) {
-      throw BadIOException("Cannot create BlockRepository write batch");
+      throw db::BadIOException("Cannot create BlockRepository write batch");
     }
 
     for (const auto& block : blocks) {

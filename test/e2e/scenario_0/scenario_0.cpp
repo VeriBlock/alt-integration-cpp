@@ -60,8 +60,8 @@ struct Scenario0 : public ::testing::Test {
   const int chainId = 3860170;
   std::shared_ptr<Config> config;
   std::shared_ptr<AltTree> alt;
-  StorageManager storageManager{};
-  PayloadsStorage storage = storageManager.newPayloadsStorageInmem();
+  StorageManagerInmem storageManager{};
+  PayloadsStorage& storage = storageManager.getPayloadsStorage();
 
   ATV atv;
   std::vector<VTB> vtbs;

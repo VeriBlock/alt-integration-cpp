@@ -5,14 +5,15 @@
 
 #include <gtest/gtest.h>
 
-#include "veriblock/arith_uint256.hpp"
-#include "veriblock/storage/block_repository_inmem.hpp"
-#include "veriblock/storage/block_repository_rocks.hpp"
-#include "veriblock/storage/repository_rocks_manager.hpp"
-#include "veriblock/uint.hpp"
-#include "veriblock/write_stream.hpp"
-#include "veriblock/read_stream.hpp"
-#include "veriblock/blockchain/block_index.hpp"
+#include <veriblock/arith_uint256.hpp>
+#include <veriblock/uint.hpp>
+#include <veriblock/write_stream.hpp>
+#include <veriblock/read_stream.hpp>
+#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/storage/inmem/block_repository_inmem.hpp>
+#include <veriblock/storage/rocks/block_repository_rocks.hpp>
+#include <veriblock/storage/rocks/repository_rocks_manager.hpp>
+#include <veriblock/storage/rocks/storage_manager_rocks.hpp>
 
 using namespace altintegration;
 
@@ -90,39 +91,32 @@ BlockIndex<AltBlock> generateBlock(int a, int b) {
 }
 
 template <typename Repo_type>
-std::shared_ptr<Repo_type> getRepo(RepositoryRocksManager*);
+std::shared_ptr<Repo_type> getRepo(RepositoryRocksManager&);
 
 template <>
 std::shared_ptr<BlockRepositoryInmem<BlockBasic>> getRepo(
-    RepositoryRocksManager*) {
+    RepositoryRocksManager&) {
   return std::make_shared<BlockRepositoryInmem<BlockBasic>>();
 }
 
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<BtcBlock>>> getRepo(
-    RepositoryRocksManager* database) {
-  auto* column = database->getColumn("btc_blocks");
-  auto* db = database->getDB();
-  return std::make_shared<BlockRepositoryRocks<BlockIndex<BtcBlock>>>(db,
-                                                                      column);
+    RepositoryRocksManager& database) {
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<BtcBlock>>>(database, "btc_blocks");
 }
 
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<VbkBlock>>> getRepo(
-    RepositoryRocksManager* database) {
-  auto* column = database->getColumn("vbk_blocks");
-  auto* db = database->getDB();
-  return std::make_shared<BlockRepositoryRocks<BlockIndex<VbkBlock>>>(db,
-                                                                      column);
+    RepositoryRocksManager& database) {
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<VbkBlock>>>(
+      database, "vbk_blocks");
 }
 
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<AltBlock>>> getRepo(
-    RepositoryRocksManager* database) {
-  auto* column = database->getColumn("alt_blocks");
-  auto* db = database->getDB();
-  return std::make_shared<BlockRepositoryRocks<BlockIndex<AltBlock>>>(db,
-                                                                      column);
+    RepositoryRocksManager& database) {
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<AltBlock>>>(
+      database, "alt_blocks");
 }
 
 template <typename BlockRepoType>
@@ -130,21 +124,13 @@ struct BlocksStorageTest : public ::testing::Test {
   using block_t = typename BlockRepoType::stored_block_t;
   using repo_t = BlockRepoType;
 
+  std::shared_ptr<StorageManagerRocks> manager;
   std::shared_ptr<RepositoryRocksManager> database;
   std::shared_ptr<repo_t> repo;
 
   BlocksStorageTest() {
-    database = std::make_shared<RepositoryRocksManager>(dbName);
-    database->attachColumn("btc_blocks");
-    database->attachColumn("vbk_blocks");
-    database->attachColumn("alt_blocks");
-    database->attachColumn("tips");
-    database->attachColumn("vbk_endorsements");
-    database->attachColumn("alt_endorsements");
-    EXPECT_EQ(database->open(), rocksdb::Status::OK());
-    EXPECT_EQ(database->clear(), rocksdb::Status::OK());
-
-    repo = getRepo<repo_t>(database.get());
+    manager = std::make_shared<StorageManagerRocks>(dbName);
+    repo = getRepo<repo_t>(manager->getDbManager());
     repo->clear();
   }
 };

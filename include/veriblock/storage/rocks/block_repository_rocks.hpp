@@ -3,18 +3,19 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_BLOCK_REPOSITORY_ROCKS_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_BLOCK_REPOSITORY_ROCKS_HPP_
 
 #include <rocksdb/db.h>
-
-#include "veriblock/blob.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/storage/block_repository.hpp"
-#include "veriblock/storage/db_error.hpp"
-#include "veriblock/storage/rocks_util.hpp"
-#include "veriblock/storage/blockchain_storage_util.hpp"
-#include "veriblock/strutil.hpp"
+#include <veriblock/serde.hpp>
+#include <veriblock/storage/block_repository.hpp>
+#include <veriblock/storage/db_error.hpp>
+#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/entities/btcblock.hpp>
+#include <veriblock/entities/vbkblock.hpp>
+#include <veriblock/entities/altblock.hpp>
+#include <veriblock/storage/rocks/rocks_util.hpp>
+#include <veriblock/storage/rocks/repository_rocks_manager.hpp>
 
 namespace altintegration {
 
@@ -246,8 +247,10 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
  public:
   BlockRepositoryRocks() = default;
 
-  BlockRepositoryRocks(rocksdb::DB* db, cf_handle_t* columnHandle)
-      : _db(db), _columnHandle(columnHandle) {}
+  BlockRepositoryRocks(RepositoryRocksManager& manager, const std::string& name) {
+    _columnHandle = manager.getColumn(name);
+    _db = manager.getDB();
+  }
 
   bool put(const stored_block_t& block) override {
     auto hash = block.getHash();
@@ -340,7 +343,6 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
       removeByHash(key);
       cursor->next();
     }
-    // call BlockRepositoryRocksManager.clear() for faster table drop
   }
 
   std::unique_ptr<BlockWriteBatch<stored_block_t>> newBatch() override {
@@ -359,4 +361,4 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
 
 }  // namespace altintegration
 
-#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCK_REPOSITORY_ROCKS_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_BLOCK_REPOSITORY_ROCKS_HPP_
