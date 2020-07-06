@@ -6,7 +6,8 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/storage/storage_manager.hpp>
+#include <veriblock/storage/inmem/storage_manager_inmem.hpp>
+#include <veriblock/storage/rocks/storage_manager_rocks.hpp>
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/alt-util.hpp>
 
@@ -14,22 +15,20 @@ using namespace altintegration;
 
 static const std::string dbName = "db-test";
 
-struct PopStorageInmem {
-  PopStorageInmem() {
-    StorageManager storageManager{};
-    storage = std::make_shared<PopStorage>(storageManager.newPopStorageInmem());
+struct TestStorageInmem {
+  TestStorageInmem() {
+    StorageManagerInmem storageManager{};
+    storage = std::make_shared<PopStorage>(storageManager.getPopStorage());
   }
 
   std::shared_ptr<PopStorage> storage;
 };
 
-struct PopStorageRocks {
-  PopStorageRocks() {
-    storageManager = std::make_shared<StorageManager>(dbName);
-    storageManager->openRocks();
-    storageManager->clearRocks();
+struct TestStorageRocks {
+  TestStorageRocks() {
+    storageManager = std::make_shared<StorageManagerRocks>(dbName);
     storage =
-        std::make_shared<PopStorage>(storageManager->newPopStorageRocks());
+        std::make_shared<PopStorage>(storageManager->getPopStorage());
 
     storage->getBlockRepo<BlockIndex<BtcBlock>>().clear();
     storage->getBlockRepo<BlockIndex<VbkBlock>>().clear();
@@ -146,7 +145,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, Basic, Altchain);
 
-typedef ::testing::Types<PopStorageInmem, PopStorageRocks>
+typedef ::testing::Types<TestStorageInmem, TestStorageRocks>
     TypesUnderTest;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(AltTreeRepositoryTestSuite,

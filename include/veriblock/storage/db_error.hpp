@@ -6,11 +6,30 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_DB_ERROR_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_DB_ERROR_HPP_
 
-#include "veriblock/storage/block_repository.hpp"
-
 namespace altintegration {
 
 namespace db {
+
+/**
+ * @class UnrecoverableError
+ * @brief Application is not able to recover from the error occurred in the
+ * storage.
+ *
+ * Example: database is corrupted and can not be opened.
+ *
+ * It is up to implementation to decide a full list of such error types.
+ */
+struct UnrecoverableError : public std::exception {};
+
+/**
+ * @class Error
+ * @brief Application in normal condition can recover from this type of error.
+ *
+ * Example: out of disk space, IO error.
+ *
+ * It is up to implementation to decide a full list of such error types.
+ */
+struct Error : public std::exception {};
 
 class DbError : public Error {
  public:
@@ -50,8 +69,18 @@ class DbError : public Error {
   std::string msg_;
 };
 
+struct StateCorruptedException : public std::domain_error {
+  using base = std::domain_error;
+  using base::base;  // to inherit constructors
+};
+
+struct BadIOException : public std::domain_error {
+  using base = std::domain_error;
+  using base::base;  // to inherit constructors
+};
+
 }  // namespace db
 
 }  // namespace altintegration
 
-#endif  //ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_DB_ERROR_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_DB_ERROR_HPP_

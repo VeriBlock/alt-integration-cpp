@@ -6,10 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_TIPS_REPOSITORY_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_TIPS_REPOSITORY_HPP_
 
-#include <cstdint>
 #include <memory>
-#include <vector>
-#include <veriblock/slice.hpp>
 #include <veriblock/storage/cursor.hpp>
 
 namespace altintegration {

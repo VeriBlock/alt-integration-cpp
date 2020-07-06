@@ -13,7 +13,6 @@
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
-#include "veriblock/storage/block_repository_inmem.hpp"
 #include "veriblock/time.hpp"
 
 using namespace altintegration;
