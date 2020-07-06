@@ -156,7 +156,6 @@ add_subdirectory(third_party)
 if(WITH_ROCKSDB)
     include(cmake/rocksdb.cmake)
     include_directories(${rocksdb_SOURCE_DIR}/include)
-    vbk_define(VERIBLOCK_WITH_ROCKSDB=1)
 endif()
 
 include_directories(include)

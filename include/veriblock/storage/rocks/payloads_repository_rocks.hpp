@@ -64,18 +64,14 @@ struct PayloadsCursorRocks : public Cursor<typename Payloads::id_t, Payloads> {
   void prev() override { _iterator->Prev(); }
 
   typename Payloads::id_t key() const override {
-    if (!isValid()) {
-      throw std::out_of_range("invalid cursor");
-    }
+    VBK_ASSERT(isValid() && "cursor points to an invalid item");
     auto key = _iterator->key().ToString();
     auto keyBytes = std::vector<uint8_t>(key.begin(), key.end());
     return keyBytes;
   }
 
   Payloads value() const override {
-    if (!isValid()) {
-      throw std::out_of_range("invalid cursor");
-    }
+    VBK_ASSERT(isValid()&&"cursor points to an invalid item");
     auto value = _iterator->value();
     return deserializePayloadsFromRocks<Payloads>(value.ToString(), key());
   }
@@ -98,14 +94,14 @@ struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Payloads> {
                                    makeRocksSlice(pid),
                                    makeRocksSlice(payloadsBytes));
     if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
   }
 
   void remove(const typename Payloads::id_t& pid) override {
     rocksdb::Status s = _batch.Delete(_columnHandle, makeRocksSlice(pid));
     if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
   }
 
@@ -116,7 +112,7 @@ struct PayloadsWriteBatchRocks : public PayloadsWriteBatch<Payloads> {
     write_options.disableWAL = true;
     rocksdb::Status s = _db->Write(write_options, &_batch);
     if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
     clear();
   }
@@ -155,7 +151,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
         _db->Delete(write_options, _columnHandle, makeRocksSlice(pid));
     if (!s.ok()) {
       if (s.IsNotFound()) return false;
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
     return true;
   }
@@ -174,7 +170,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
                                  makeRocksSlice(pid),
                                  makeRocksSlice(payloadsBytes));
     if (!s.ok()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
     return existing;
   }
@@ -187,7 +183,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
                                  &dbValue);
     if (!s.ok()) {
       if (s.IsNotFound()) return false;
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
 
     *out = deserializePayloadsFromRocks<payloads_t>(dbValue, pid);
@@ -196,9 +192,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
 
   void clear() override {
     auto cursor = newCursor();
-    if (cursor == nullptr) {
-      throw db::DbError("Cannot create PayloadsRepository cursor");
-    }
+    VBK_ASSERT(cursor && "can not create cursor");
     cursor->seekToFirst();
     while (cursor->isValid()) {
       auto key = cursor->key();

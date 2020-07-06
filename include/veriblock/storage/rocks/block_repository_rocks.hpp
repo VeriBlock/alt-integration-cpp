@@ -7,15 +7,16 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_BLOCK_REPOSITORY_ROCKS_HPP_
 
 #include <rocksdb/db.h>
+
+#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/entities/altblock.hpp>
+#include <veriblock/entities/btcblock.hpp>
+#include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/serde.hpp>
 #include <veriblock/storage/block_repository.hpp>
 #include <veriblock/storage/db_error.hpp>
-#include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/entities/btcblock.hpp>
-#include <veriblock/entities/vbkblock.hpp>
-#include <veriblock/entities/altblock.hpp>
-#include <veriblock/storage/rocks/rocks_util.hpp>
 #include <veriblock/storage/rocks/repository_rocks_manager.hpp>
+#include <veriblock/storage/rocks/rocks_util.hpp>
 
 namespace altintegration {
 
@@ -23,7 +24,8 @@ template <typename Block>
 std::vector<uint8_t> serializeBlockToRocks(const Block&);
 
 template <>
-inline std::vector<uint8_t> serializeBlockToRocks(const BlockIndex<BtcBlock>& from) {
+inline std::vector<uint8_t> serializeBlockToRocks(
+    const BlockIndex<BtcBlock>& from) {
   WriteStream s;
   from.toRaw(s);
   s.writeBE<uint32_t>((uint32_t)from.refCounter);
@@ -147,8 +149,7 @@ struct BlockCursorRocks : public Cursor<typename Block::hash_t, Block> {
   //! block has type
   using hash_t = typename Block::hash_t;
 
-  BlockCursorRocks(rocksdb::DB* db, cf_handle_t* columnHandle)
-      : _db(db) {
+  BlockCursorRocks(rocksdb::DB* db, cf_handle_t* columnHandle) : _db(db) {
     auto iterator = _db->NewIterator(rocksdb::ReadOptions(), columnHandle);
     _iterator = std::unique_ptr<rocksdb::Iterator>(iterator);
   }
@@ -163,18 +164,14 @@ struct BlockCursorRocks : public Cursor<typename Block::hash_t, Block> {
   void prev() override { _iterator->Prev(); }
 
   hash_t key() const override {
-    if (!isValid()) {
-      throw std::out_of_range("invalid cursor");
-    }
+    VBK_ASSERT(isValid() && "cursor is invalid");
     auto key = _iterator->key().ToString();
     auto keyBytes = std::vector<uint8_t>(key.begin(), key.end());
     return keyBytes;
   }
 
   stored_block_t value() const override {
-    if (!isValid()) {
-      throw std::out_of_range("invalid cursor");
-    }
+    VBK_ASSERT(isValid() && "cursor is invalid");
     auto value = _iterator->value();
     return deserializeBlockFromRocks<stored_block_t>(value.ToString());
   }
@@ -203,14 +200,14 @@ struct BlockWriteBatchRocks : public BlockWriteBatch<Block> {
     rocksdb::Status s = _batch.Put(
         _columnHandle, makeRocksSlice(blockHash), makeRocksSlice(blockBytes));
     if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
   }
 
   void removeByHash(const hash_t& hash) override {
     rocksdb::Status s = _batch.Delete(_columnHandle, makeRocksSlice(hash));
     if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
   }
 
@@ -221,7 +218,7 @@ struct BlockWriteBatchRocks : public BlockWriteBatch<Block> {
     write_options.disableWAL = true;
     rocksdb::Status s = _db->Write(write_options, &_batch);
     if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
     clear();
   }
@@ -247,7 +244,8 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
  public:
   BlockRepositoryRocks() = default;
 
-  BlockRepositoryRocks(RepositoryRocksManager& manager, const std::string& name) {
+  BlockRepositoryRocks(RepositoryRocksManager& manager,
+                       const std::string& name) {
     _columnHandle = manager.getColumn(name);
     _db = manager.getDB();
   }
@@ -257,18 +255,17 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     auto hashSlice = Slice<uint8_t>(hash.data(), hash.size());
     auto key = makeRocksSlice(hashSlice);
     std::string value;
-    bool existing = _db->KeyMayExist(rocksdb::ReadOptions(),
-                                     _columnHandle, key, &value);
+    bool existing =
+        _db->KeyMayExist(rocksdb::ReadOptions(), _columnHandle, key, &value);
 
     auto blockBytes = serializeBlockToRocks(block);
 
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
-    rocksdb::Status s = _db->Put(write_options,
-                                 _columnHandle, key,
-                                 makeRocksSlice(blockBytes));
+    rocksdb::Status s =
+        _db->Put(write_options, _columnHandle, key, makeRocksSlice(blockBytes));
     if (!s.ok()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
     return existing;
   }
@@ -279,7 +276,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
         rocksdb::ReadOptions(), _columnHandle, makeRocksSlice(hash), &dbValue);
     if (!s.ok()) {
       if (s.IsNotFound()) return false;
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
 
     *out = deserializeBlockFromRocks<stored_block_t>(dbValue);
@@ -307,12 +304,13 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
     for (i = 0; i < numKeys; i++) {
       auto& status = statuses[i];
       if (status.ok()) {
-        out->push_back(deserializeBlockFromRocks<stored_block_t>(values[i].ToString()));
+        out->push_back(
+            deserializeBlockFromRocks<stored_block_t>(values[i].ToString()));
         found++;
         continue;
       }
       if (status.IsNotFound()) continue;
-      throw db::DbError(status.ToString());
+      throw db::StateCorruptedException(status.ToString());
     }
     return found;
   }
@@ -320,14 +318,15 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   bool removeByHash(const hash_t& hash) override {
     auto key = makeRocksSlice(hash);
     std::string value;
-    bool existing = _db->KeyMayExist(rocksdb::ReadOptions(), _columnHandle, key, &value);
+    bool existing =
+        _db->KeyMayExist(rocksdb::ReadOptions(), _columnHandle, key, &value);
     if (!existing) return false;
 
     rocksdb::WriteOptions write_options;
     write_options.disableWAL = true;
     rocksdb::Status s = _db->Delete(write_options, _columnHandle, key);
     if (!s.ok() && !s.IsNotFound()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
     return true;
   }
@@ -335,7 +334,7 @@ class BlockRepositoryRocks : public BlockRepository<Block> {
   void clear() override {
     auto cursor = newCursor();
     if (cursor == nullptr) {
-      throw db::DbError("Cannot create BlockRepository cursor");
+      throw db::StateCorruptedException("Cannot create BlockRepository cursor");
     }
     cursor->seekToFirst();
     while (cursor->isValid()) {
