@@ -9,7 +9,6 @@
 #include <iterator>
 #include <memory>
 #include <unordered_map>
-
 #include <veriblock/storage/block_repository.hpp>
 
 namespace altintegration {
@@ -62,17 +61,11 @@ struct BlockCursorInmem : public Cursor<typename Block::hash_t, Block> {
     }
   }
   hash_t key() const override {
-    if (!isValid()) {
-      throw std::out_of_range("invalid cursor");
-    }
-
+    VBK_ASSERT(isValid() && "invalid cursor");
     return _it->first;
   }
   stored_block_t value() const override {
-    if (!isValid()) {
-      throw std::out_of_range("invalid cursor");
-    }
-
+    VBK_ASSERT(isValid() && "invalid cursor");
     return *_it->second;
   }
 
@@ -128,8 +121,7 @@ struct BlockWriteBatchInmem : public BlockWriteBatch<Block> {
           break;
         }
         default:
-          throw std::logic_error(
-              "unknown enum value - this should never happen");
+          VBK_ASSERT(false && "unknown enum value - this should never happen");
       }
     }
     clear();

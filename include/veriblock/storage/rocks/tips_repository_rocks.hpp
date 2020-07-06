@@ -7,11 +7,12 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_ROCKS_TIPS_REPOSITORY_ROCKS_HPP_
 
 #include <rocksdb/db.h>
+
 #include <veriblock/serde.hpp>
-#include <veriblock/storage/tips_repository.hpp>
 #include <veriblock/storage/db_error.hpp>
-#include <veriblock/storage/rocks/rocks_util.hpp>
 #include <veriblock/storage/rocks/repository_rocks_manager.hpp>
+#include <veriblock/storage/rocks/rocks_util.hpp>
+#include <veriblock/storage/tips_repository.hpp>
 
 namespace altintegration {
 
@@ -84,12 +85,13 @@ class TipsRepositoryRocks : public TipsRepository<Block> {
                                  tipsName<stored_block_t>(),
                                  makeRocksSlice(blockBytes));
     if (!s.ok()) {
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
     return true;
   }
 
-  bool get(std::pair<typename Block::height_t, typename Block::hash_t> *out) const override {
+  bool get(std::pair<typename Block::height_t, typename Block::hash_t>* out)
+      const override {
     std::string dbValue{};
     rocksdb::Status s = _db->Get(rocksdb::ReadOptions(),
                                  _columnHandle,
@@ -97,7 +99,7 @@ class TipsRepositoryRocks : public TipsRepository<Block> {
                                  &dbValue);
     if (!s.ok()) {
       if (s.IsNotFound()) return false;
-      throw db::DbError(s.ToString());
+      throw db::StateCorruptedException(s.ToString());
     }
 
     *out = deserializeTipsFromRocks<stored_block_t>(dbValue);
