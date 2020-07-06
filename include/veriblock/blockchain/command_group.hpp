@@ -14,8 +14,9 @@ namespace altintegration {
 
 struct CommandGroup {
   using storage_t = std::vector<CommandPtr>;
+  using id_t = std::vector<uint8_t>;
 
-  CommandGroup(const std::vector<uint8_t> id,
+  CommandGroup(const id_t id,
                bool valid,
                const std::string& payload_type_name)
       : payload_type_name(payload_type_name), id(id), valid(valid) {}
@@ -24,7 +25,7 @@ struct CommandGroup {
   std::string payload_type_name{};
 
   // ATV id or VTB id or VBK block id
-  std::vector<uint8_t> id;
+  id_t id;
   storage_t commands;
   bool valid{true};
 

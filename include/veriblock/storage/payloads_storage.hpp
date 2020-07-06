@@ -13,6 +13,7 @@
 #include <veriblock/entities/vtb.hpp>
 #include <veriblock/storage/db_error.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
+#include <veriblock/command_group_cache.hpp>
 
 namespace altintegration {
 
@@ -101,6 +102,7 @@ class PayloadsStorage {
   std::shared_ptr<PayloadsRepository<ATV>> _repoAtv;
   std::shared_ptr<PayloadsRepository<VTB>> _repoVtb;
   std::shared_ptr<PayloadsRepository<VbkBlock>> _repoBlocks;
+  CommandGroupCache _cache;
 };
 
 }  // namespace altintegration

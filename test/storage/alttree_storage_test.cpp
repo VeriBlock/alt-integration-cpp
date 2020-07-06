@@ -10,6 +10,7 @@
 #include <veriblock/storage/rocks/storage_manager_rocks.hpp>
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/alt-util.hpp>
+#include <veriblock/command_group_cache.hpp>
 
 using namespace altintegration;
 
@@ -19,6 +20,8 @@ struct TestStorageInmem {
   TestStorageInmem() {
     StorageManagerInmem storageManager{};
     storage = std::make_shared<PopStorage>(storageManager.getPopStorage());
+
+    CommandGroupCache cache(100);
   }
 
   std::shared_ptr<PopStorage> storage;

@@ -502,7 +502,8 @@ template <typename pop_t>
 std::vector<CommandGroup> loadCommands_(
     const typename AltTree::index_t& index,
     AltTree& tree,
-    const PayloadsRepository<pop_t>& prep) {
+    const PayloadsRepository<pop_t>& prep,
+    CommandGroupCache& cache) {
   auto& pids = index.getPayloadIds<pop_t, typename pop_t::id_t>();
   std::vector<CommandGroup> out{};
   for (const auto& pid : pids) {
@@ -522,7 +523,8 @@ template <>
 std::vector<CommandGroup> loadCommands_(
     const typename AltTree::index_t& index,
     AltTree& tree,
-    const PayloadsRepository<ATV>& prep) {
+    const PayloadsRepository<ATV>& prep,
+    CommandGroupCache& cache) {
   auto& pids = index.getPayloadIds<ATV, typename ATV::id_t>();
   std::vector<CommandGroup> out{};
   for (const auto& pid : pids) {
@@ -543,13 +545,13 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands<AltTree>(
     const typename AltTree::index_t& index, AltTree& tree) {
   std::vector<CommandGroup> out{};
   std::vector<CommandGroup> payloads_out;
-  payloads_out = loadCommands_<VbkBlock>(index, tree, getRepo<VbkBlock>());
+  payloads_out = loadCommands_<VbkBlock>(index, tree, getRepo<VbkBlock>(), _cache);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
 
-  payloads_out = loadCommands_<VTB>(index, tree, getRepo<VTB>());
+  payloads_out = loadCommands_<VTB>(index, tree, getRepo<VTB>(), _cache);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
 
-  payloads_out = loadCommands_<ATV>(index, tree, getRepo<ATV>());
+  payloads_out = loadCommands_<ATV>(index, tree, getRepo<ATV>(), _cache);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
 
   return out;
