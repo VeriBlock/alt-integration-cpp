@@ -13,8 +13,8 @@
 
 namespace altintegration {
 
-struct StorageManagerRocks  : public StorageManager {
-  StorageManagerRocks(const std::string &name) {
+struct StorageManagerRocks : public StorageManager {
+  StorageManagerRocks(const std::string& name) {
     _rocksManager = std::make_shared<RepositoryRocksManager>(name);
     // database schema
     _rocksManager->attachColumn("btc_blocks");
@@ -35,9 +35,19 @@ struct StorageManagerRocks  : public StorageManager {
   }
 
   void flush() override {
-    if (_rocksManager == nullptr) return;
+    VBK_ASSERT(_rocksManager);
     auto s = _rocksManager->flush();
-    if (!s.ok()) throw db::StateCorruptedException(s.ToString());
+    if (!s.ok()) {
+      throw db::StateCorruptedException(s.ToString());
+    }
+  }
+
+  void clear() override {
+    VBK_ASSERT(_rocksManager);
+    auto s = _rocksManager->clear();
+    if (!s.ok()) {
+      throw db::StateCorruptedException(s.ToString());
+    }
   }
 
   RepositoryRocksManager& getDbManager() { return *_rocksManager; }

@@ -14,7 +14,9 @@ namespace altintegration {
 struct StorageManager {
   virtual ~StorageManager() = default;
 
-  virtual void flush() {}
+  virtual void flush() = 0;
+
+  virtual void clear() = 0;
 
   PopStorage& getPopStorage() { return *_storagePop; }
 
