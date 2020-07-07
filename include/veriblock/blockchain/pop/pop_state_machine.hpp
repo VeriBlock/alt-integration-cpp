@@ -37,69 +37,103 @@ struct PopStateMachine {
 
   // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
-    std::vector<std::vector<CommandPtr>> executed;
-    auto cgs = storage_.loadCommands<ProtectedTree>(index, ed_);
-    // even if the block is marked as invalid, we still try to apply it
-    for (const auto& cg : cgs) {
-      // alloc new vector<CommandPtr> for this command group
-      executed.emplace_back();
-      VBK_LOG_DEBUG("Applying payload %s from block %s",
-                    HexStr(cg.id),
-                    index.toShortPrettyString());
+    VBK_ASSERT(index.pprev && "cannot apply the genesis block");
+    VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
+               "state corruption: tried to apply a block that follows an "
+               "unapplied block");
+    VBK_ASSERT(!index.hasFlags(BLOCK_APPLIED) &&
+               "state corruption: tried to apply an already applied block");
 
-      // execute commands in this command group
-      for (auto& cmd : cg.commands) {
-        if (cmd->Execute(state)) {
-          // command is valid
-          executed.back().push_back(cmd);
-          continue;
-        }
+    if (!index.payloadsIdsEmpty()) {
+      std::vector<std::vector<CommandPtr>> executed;
+      auto cgs = storage_.loadCommands<ProtectedTree>(index, ed_);
+      // even if the block is marked as invalid, we still try to apply it
+      for (const auto& cg : cgs) {
+        // alloc new vector<CommandPtr> for this command group
+        executed.emplace_back();
+        VBK_LOG_DEBUG("Applying payload %s from block %s",
+                      HexStr(cg.id),
+                      index.toShortPrettyString());
 
-        // command is invalid
-        storage_.setValidity(cg, false);
-        if (continueOnInvalid_) {
-          cleanupLast(index, executed, cg);
-          state.clear();
-          break;  // end cmd loop, start from next group
-        } else {
-          cleanupAll(index, executed, state);
-
-          // if the block is marked as valid, invalidate its subtree
-          if (index.isValid()) {
-            ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+        // execute commands in this command group
+        for (auto& cmd : cg.commands) {
+          if (cmd->Execute(state)) {
+            // command is valid
+            executed.back().push_back(cmd);
+            continue;
           }
 
-          return state.Invalid(index_t::block_t::name() + "-bad-command");
+          // command is invalid
+          storage_.setValidity(cg, false);
+          if (continueOnInvalid_) {
+            cleanupLast(index, executed, cg);
+            state.clear();
+            break;  // end cmd loop, start from next group
+          } else {
+            cleanupAll(index, executed, state);
+
+            // if the block is marked as valid, invalidate its subtree
+            if (index.isValid()) {
+              ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+            }
+
+            return state.Invalid(index_t::block_t::name() + "-bad-command");
+          }
+        }  // end for
+
+        // in 'continueOnInvalid' mode, we don't re-validate payloads
+        if (!continueOnInvalid_) {
+          // continueOnInvalid=false and we were able to apply given
+          // CommandGroup. It means that it is valid, so update its validity.
+          storage_.setValidity(cg, true);
         }
       }  // end for
 
-      // in 'continueOnInvalid' mode, we don't re-validate payloads
-      if (!continueOnInvalid_) {
-        // continueOnInvalid=false and we were able to apply given CommandGroup.
-        // It means that it is valid, so update its validity.
-        storage_.setValidity(cg, true);
+      // we successfully applied the block
+      // if the block is marked as invalid, revalidate its subtree
+      if (!index.isValid()) {
+        ed_.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
       }
-    }  // end for
-
-    // we successfully applied the block
-    // if the block is marked as invalid, revalidate its subtree
-    if (!index.isValid()) {
-      ed_.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+    } else {
+      // an empty block must be valid
+      VBK_ASSERT(index.isValid());
     }
+
+    index.setFlag(BLOCK_APPLIED);
     return true;
   }
 
   // atomic: applies either all of the block's commands or fails on an assert
-  void unapplyBlock(const index_t& index) {
-    auto cgs = storage_.loadCommands<ProtectedTree>(index, ed_);
-    for (const auto& cg : reverse_iterate(cgs)) {
-      VBK_LOG_DEBUG("Unapplying payload %s from block %s",
-                    HexStr(cg.id),
-                    index.toShortPrettyString());
-      for (auto& cmd : reverse_iterate(cg.commands)) {
-        cmd->UnExecute();
+  void unapplyBlock(index_t& index) {
+    // this check is expensive; might want to eventually disable it
+    bool allLeavesUnapplied =
+        std::all_of(index.pnext.begin(), index.pnext.end(), [](index_t* index) {
+          return !index->hasFlags(BLOCK_APPLIED);
+        });
+    VBK_ASSERT(allLeavesUnapplied &&
+               "state corruption: tried to unapply a block before unapplying "
+               "its applied leaves");
+
+    VBK_ASSERT(index.hasFlags(BLOCK_APPLIED) &&
+               "state corruption: tried to unapply an already unapplied block");
+    VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
+    VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
+               "state corruption: tried to unapply a block that follows an "
+               "unapplied block");
+
+    if (!index.payloadsIdsEmpty()) {
+      auto cgs = storage_.loadCommands<ProtectedTree>(index, ed_);
+      for (const auto& cg : reverse_iterate(cgs)) {
+        VBK_LOG_DEBUG("Unapplying payload %s from block %s",
+                      HexStr(cg.id),
+                      index.toShortPrettyString());
+        for (auto& cmd : reverse_iterate(cg.commands)) {
+          cmd->UnExecute();
+        }
       }
     }
+
+    index.unsetFlag(BLOCK_APPLIED);
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)
@@ -121,10 +155,6 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* current : reverse_iterate(chain)) {
-      if (current->payloadsIdsEmpty()) {
-        continue;
-      }
-
       unapplyBlock(*current);
     }
   }
@@ -166,8 +196,8 @@ struct PopStateMachine {
 
   // effectively unapplies [from; genesis) and applies (genesis; to]
   // assumes and requires that [from; genesis) is applied
-  // optimization: avoids applying/unapplying (genesis; last_common_block(from,
-  // to)] atomic: either changes the state to 'to' or leaves it unchanged
+  // optimization: avoids applying/unapplying (genesis; fork_point(from, to)]
+  // atomic: either changes the state to 'to' or leaves it unchanged
   bool setState(index_t& from, index_t& to, ValidationState& state) {
     if (VBK_UNLIKELY(IsShutdownRequested())) {
       return true;

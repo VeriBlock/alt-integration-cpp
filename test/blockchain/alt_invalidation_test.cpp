@@ -27,7 +27,7 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
 
   AltInvalidationTest() {
     tip = mineAltBlocks(*alttree.getBlocks().begin()->second, 10);
-    EXPECT_EQ(tip->status, BLOCK_VALID_TREE);
+    EXPECT_EQ(tip->status, BLOCK_VALID_TREE | BLOCK_APPLIED);
     EXPECT_TRUE(tip->isValid());
 
     connId = alttree.connectOnValidityBlockChanged(

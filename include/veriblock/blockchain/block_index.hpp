@@ -37,7 +37,10 @@ enum BlockStatus : uint8_t {
   //! block is state{lessly,fully} valid, but some of previous blocks is invalid
   BLOCK_FAILED_CHILD = 16,
   //! all invalidity flags
-  BLOCK_FAILED_MASK = BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK
+  BLOCK_FAILED_MASK =
+      BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
+  //! the block has been applied via PopStateMachine
+  BLOCK_APPLIED = 32
 };
 
 //! Store block
@@ -150,8 +153,7 @@ struct BlockIndex : public Block::addon_t {
                         height,
                         HexStr(getHash()),
                         status,
-                        addon_t::toPrettyString()
-                        );
+                        addon_t::toPrettyString());
   }
 
   std::string toShortPrettyString() const {
