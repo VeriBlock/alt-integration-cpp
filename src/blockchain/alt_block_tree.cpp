@@ -4,12 +4,14 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
+#include <veriblock/storage/blockchain_storage_util.hpp>
+
 #include "veriblock/algorithm.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
-#include <veriblock/storage/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -20,13 +22,14 @@ bool AltTree::bootstrap(ValidationState& state) {
 
   auto block = alt_config_->getBootstrapBlock();
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(std::move(block)));
-    VBK_ASSERT(index != nullptr &&
+  VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
   if (!base::blocks_.empty() && (getBlockIndex(index->getHash()) == nullptr)) {
     return state.Error("block-index-no-genesis");
   }
 
+  index->setFlag(BLOCK_APPLIED);
   determineBestChain(base::activeChain_, *index, state, true);
 
   tryAddTip(index);
@@ -246,8 +249,7 @@ bool AltTree::saveToStorage(PopStorage& storage, ValidationState& state) {
   return state.IsValid();
 }
 
-bool AltTree::loadFromStorage(PopStorage& storage,
-                              ValidationState& state) {
+bool AltTree::loadFromStorage(PopStorage& storage, ValidationState& state) {
   if (!loadAndApplyBlocks(storage, vbk().btc(), state))
     return state.Invalid("BTC-load-and-apply-blocks");
   if (!loadAndApplyBlocks(storage, vbk(), state))
@@ -499,10 +501,9 @@ bool AltTree::setTip(AltTree::index_t& to,
 }
 
 template <typename pop_t>
-std::vector<CommandGroup> loadCommands_(
-    const typename AltTree::index_t& index,
-    AltTree& tree,
-    const PayloadsRepository<pop_t>& prep) {
+std::vector<CommandGroup> loadCommands_(const typename AltTree::index_t& index,
+                                        AltTree& tree,
+                                        const PayloadsRepository<pop_t>& prep) {
   auto& pids = index.getPayloadIds<pop_t, typename pop_t::id_t>();
   std::vector<CommandGroup> out{};
   for (const auto& pid : pids) {
@@ -519,10 +520,9 @@ std::vector<CommandGroup> loadCommands_(
 }
 
 template <>
-std::vector<CommandGroup> loadCommands_(
-    const typename AltTree::index_t& index,
-    AltTree& tree,
-    const PayloadsRepository<ATV>& prep) {
+std::vector<CommandGroup> loadCommands_(const typename AltTree::index_t& index,
+                                        AltTree& tree,
+                                        const PayloadsRepository<ATV>& prep) {
   auto& pids = index.getPayloadIds<ATV, typename ATV::id_t>();
   std::vector<CommandGroup> out{};
   for (const auto& pid : pids) {
