@@ -117,7 +117,7 @@ class PayloadsStorage {
   template <typename Tree, typename Payloads>
   std::vector<CommandGroup> loadCommandsStorage(
       const typename Tree::index_t& index, Tree& tree) {
-    auto& pids = index.getPayloadIds<Payloads, typename Payloads::id_t>();
+    auto& pids = index.template getPayloadIds<Payloads, typename Payloads::id_t>();
     std::vector<CommandGroup> out{};
     for (const auto& pid : pids) {
       CommandGroup cg(pid.asVector(), true, Payloads::name());
