@@ -51,18 +51,6 @@ void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
     return;
   }
 
-  // edge case: connected block is one of 'next' blocks after our current best
-  if (indexNew.getAncestor(currentTip->height) == currentTip) {
-    // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them",
-                  block_t::name(),
-                  indexNew.height - currentTip->height);
-    if (!this->setTip(indexNew, state, false)) {
-      VBK_ASSERT(!indexNew.isValid());
-    }
-    return;
-  }
-
   int result = cmp_.comparePopScore(*this, indexNew, state);
   // pop state is already at "best chain"
   if (result == 0) {
