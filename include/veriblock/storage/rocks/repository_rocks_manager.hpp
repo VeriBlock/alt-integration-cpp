@@ -90,11 +90,12 @@ struct RepositoryRocksManager {
       cfs[i] = columnHandles[i].get();
     }
 
-    return dbPtr->Flush(rocksdb::FlushOptions(), cfs);
+    rocksdb::FlushOptions opts;
+    return dbPtr->Flush(opts, cfs);
   }
 
  private:
-  std::string dbName = "";
+  std::string dbName = "db";
 
   // smart pointers for handling DB management
   std::shared_ptr<rocksdb::DB> dbPtr;
