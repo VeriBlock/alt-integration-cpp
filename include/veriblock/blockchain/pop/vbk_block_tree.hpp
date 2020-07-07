@@ -118,7 +118,7 @@ void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg);
 
 template <>
-std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
+std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename VbkBlockTree::index_t& index, VbkBlockTree& tree);
 
 template <typename JsonValue>

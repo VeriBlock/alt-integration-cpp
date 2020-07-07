@@ -372,22 +372,9 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
 }
 
 template <>
-std::vector<CommandGroup> PayloadsStorage::loadCommands<VbkBlockTree>(
+std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename VbkBlockTree::index_t& index, VbkBlockTree& tree) {
-  using pop_t = typename VbkBlockTree::index_t::payloads_t;
-
-  std::vector<CommandGroup> out{};
-  for (const auto& pid : index.vtbids) {
-    pop_t payloads;
-    if (!getRepo<pop_t>().get(pid, &payloads)) {
-      throw db::StateCorruptedException(
-          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
-    }
-    CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());
-    tree.payloadsToCommands(payloads, cg.commands);
-    out.push_back(cg);
-  }
-  return out;
+  return loadCommandsStorage<VbkBlockTree, VTB>(index, tree);
 }
 
 bool removeId(std::vector<uint256>& pop, const uint256& id) {

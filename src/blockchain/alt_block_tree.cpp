@@ -4,12 +4,14 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
+#include <veriblock/storage/blockchain_storage_util.hpp>
 #include "veriblock/algorithm.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
-#include <veriblock/storage/blockchain_storage_util.hpp>
+#include "veriblock/command_group_cache.hpp"
 
 namespace altintegration {
 
@@ -20,7 +22,7 @@ bool AltTree::bootstrap(ValidationState& state) {
 
   auto block = alt_config_->getBootstrapBlock();
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(std::move(block)));
-    VBK_ASSERT(index != nullptr &&
+  VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
   if (!base::blocks_.empty() && (getBlockIndex(index->getHash()) == nullptr)) {
@@ -246,8 +248,7 @@ bool AltTree::saveToStorage(PopStorage& storage, ValidationState& state) {
   return state.IsValid();
 }
 
-bool AltTree::loadFromStorage(PopStorage& storage,
-                              ValidationState& state) {
+bool AltTree::loadFromStorage(PopStorage& storage, ValidationState& state) {
   if (!loadAndApplyBlocks(storage, vbk().btc(), state))
     return state.Invalid("BTC-load-and-apply-blocks");
   if (!loadAndApplyBlocks(storage, vbk(), state))
@@ -498,62 +499,17 @@ bool AltTree::setTip(AltTree::index_t& to,
   return changeTip;
 }
 
-template <typename pop_t>
-std::vector<CommandGroup> loadCommands_(
-    const typename AltTree::index_t& index,
-    AltTree& tree,
-    const PayloadsRepository<pop_t>& prep,
-    CommandGroupCache& cache) {
-  auto& pids = index.getPayloadIds<pop_t, typename pop_t::id_t>();
-  std::vector<CommandGroup> out{};
-  for (const auto& pid : pids) {
-    pop_t payloads;
-    if (!prep.get(pid, &payloads)) {
-      throw db::StateCorruptedException(
-          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
-    }
-    CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());
-    tree.payloadsToCommands(payloads, cg.commands);
-    out.push_back(cg);
-  }
-  return out;
-}
-
 template <>
-std::vector<CommandGroup> loadCommands_(
-    const typename AltTree::index_t& index,
-    AltTree& tree,
-    const PayloadsRepository<ATV>& prep,
-    CommandGroupCache& cache) {
-  auto& pids = index.getPayloadIds<ATV, typename ATV::id_t>();
-  std::vector<CommandGroup> out{};
-  for (const auto& pid : pids) {
-    ATV payloads;
-    if (!prep.get(pid, &payloads)) {
-      throw db::StateCorruptedException(
-          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
-    }
-    CommandGroup cg(pid.asVector(), payloads.valid, ATV::name());
-    tree.payloadsToCommands(payloads, *index.header, cg.commands);
-    out.push_back(cg);
-  }
-  return out;
-}
-
-template <>
-std::vector<CommandGroup> PayloadsStorage::loadCommands<AltTree>(
+std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename AltTree::index_t& index, AltTree& tree) {
   std::vector<CommandGroup> out{};
   std::vector<CommandGroup> payloads_out;
-  payloads_out = loadCommands_<VbkBlock>(index, tree, getRepo<VbkBlock>(), _cache);
+  payloads_out = loadCommandsStorage<AltTree, VbkBlock>(index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
-
-  payloads_out = loadCommands_<VTB>(index, tree, getRepo<VTB>(), _cache);
+  payloads_out = loadCommandsStorage<AltTree, VTB>(index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
-
-  payloads_out = loadCommands_<ATV>(index, tree, getRepo<ATV>(), _cache);
+  payloads_out = loadCommandsStorage<AltTree, ATV>(index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
-
   return out;
 }
 

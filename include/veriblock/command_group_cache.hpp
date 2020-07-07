@@ -6,7 +6,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_COMMAND_GROUP_CACHE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_COMMAND_GROUP_CACHE_HPP_
 
-#include <queue>
+#include <deque>
+// important to include this since it contains hasher for the vector as a key
+#include <veriblock/entities/altblock.hpp>
 #include <veriblock/blockchain/command_group.hpp>
 
 namespace altintegration {
@@ -23,36 +25,57 @@ struct CommandGroupCache {
   virtual bool put(const CommandGroup& cg) {
     auto& id = cg.id;
     bool res = _cache.find(id) != _cache.end();
-    if (!res) {
-      // add new element - apply cache size limit
-      if (_cache.size() >= _maxsize) {
-        // cache size is over the limit - erase the oldest element
-        auto& lastid = _history.front();
-        _cache.erase(lastid);
-        _history.pop();
-      }
-      _history.push(id);
-    }
     _cache.insert({id, std::make_shared<CommandGroup>(cg)});
+    truncate();
     return res;
   }
 
-  virtual bool get(const id_t& cid, CommandGroup* out) const {
+  virtual bool get(const id_t& cid, CommandGroup* out) {
     auto it = _cache.find(cid);
     if (it == _cache.end()) {
       return false;
-    }
-
-    if (out) {
-      *out = *it->second;
+    } else {
+      refer(cid);
+      if (out) {
+        *out = *it->second;
+      }
     }
     return true;
   }
 
+  virtual void clear() {
+    _cache.clear();
+    _keys.clear();
+    _priority.clear();
+  }
+
  protected:
   size_t _maxsize;
-  std::queue<id_t> _history;
+  std::deque<id_t> _priority;
+  std::unordered_map<id_t, std::deque<id_t>::iterator> _keys;
   std::unordered_map<id_t, std::shared_ptr<CommandGroup>> _cache;
+
+  virtual void truncate() {
+    if ((_priority.size() < _maxsize) && (_cache.size() < _maxsize)) return;
+
+    // cache size is over the limit - erase the oldest element
+    auto lastid = _priority.back();
+    _priority.pop_back();
+    _keys.erase(lastid);
+    _cache.erase(lastid);
+  }
+
+  virtual bool refer(const id_t& cid) {
+    bool res = _keys.find(cid) != _keys.end();
+    if (res) {
+      _priority.erase(_keys[cid]);
+    } else {
+      truncate();
+    }
+    _priority.push_front(cid);
+    _keys.insert({cid, _priority.begin()});
+    return res;
+  }
 };
 
 }  // namespace altintegration

@@ -98,6 +98,46 @@ class PayloadsStorage {
     VBK_ASSERT(false && "should not get here");
   }
 
+  template <typename Tree, typename Payloads>
+  void payloadsToCommands_(Tree& tree,
+                           const Payloads& payloads,
+                           const typename Tree::block_t&,
+                           std::vector<CommandPtr>& commands) {
+    tree.payloadsToCommands(payloads, commands);
+  }
+
+  template <typename Tree>
+  void payloadsToCommands_(Tree& tree,
+                           const ATV& payloads,
+                           const typename Tree::block_t& containing,
+                           std::vector<CommandPtr>& commands) {
+    tree.payloadsToCommands(payloads, containing, commands);
+  }
+
+  template <typename Tree, typename Payloads>
+  std::vector<CommandGroup> loadCommandsStorage(
+      const typename Tree::index_t& index, Tree& tree) {
+    auto& pids = index.getPayloadIds<Payloads, typename Payloads::id_t>();
+    std::vector<CommandGroup> out{};
+    for (const auto& pid : pids) {
+      CommandGroup cg(pid.asVector(), true, Payloads::name());
+      if (!_cache.get(pid.asVector(), &cg)) {
+        Payloads payloads;
+        if (!getRepo<Payloads>().get(pid, &payloads)) {
+          throw db::StateCorruptedException(
+              fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
+        }
+        cg.valid = payloads.valid;
+        payloadsToCommands_(tree, payloads, *index.header, cg.commands);
+        _cache.put(cg);
+      }
+      out.push_back(cg);
+    }
+    return out;
+  }
+
+  void invalidateCache() { _cache.clear(); }
+
  protected:
   std::shared_ptr<PayloadsRepository<ATV>> _repoAtv;
   std::shared_ptr<PayloadsRepository<VTB>> _repoVtb;
