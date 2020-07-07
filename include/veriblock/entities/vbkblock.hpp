@@ -52,8 +52,9 @@ struct VbkBlock {
   static VbkBlock fromHex(const std::string& hex);
 
   /**
-   * Read basic blockheader data from the vector of bytes and convert it to
-   * VbkBlock
+   * Read basic blockheader data from the vector of bytes
+   * and convert it to VbkBlock
+   *
    * @param bytes data to read fromm
    * @return VbkBlock
    */
@@ -74,7 +75,8 @@ struct VbkBlock {
   static VbkBlock fromVbkEncoding(ReadStream& stream);
 
   /**
-   * Read VBK data from the string raw byte representation and convert it to VbkBlock
+   * Read VBK data from the string raw byte representation
+   * and convert it to VbkBlock
    * @param string data bytes to read from
    * @return VbkBlock
    */
@@ -86,7 +88,7 @@ struct VbkBlock {
    */
   void toRaw(WriteStream& stream) const;
 
-    /**
+  /**
    * Convert VbkBlock to raw bytes data using VbkBlock byte format
    * @return bytes data
    */

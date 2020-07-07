@@ -165,6 +165,8 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Error("block-index-no-genesis");
     }
 
+    index->setFlag(BLOCK_APPLIED);
+
     return this->setTip(*index, state, true);
   }
 
