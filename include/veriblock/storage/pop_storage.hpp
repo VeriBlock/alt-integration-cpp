@@ -6,9 +6,9 @@
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/storage/block_repository.hpp>
+#include <veriblock/storage/db_error.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
 #include <veriblock/storage/tips_repository.hpp>
-#include <veriblock/storage/db_error.hpp>
 
 namespace altintegration {
 
@@ -53,9 +53,7 @@ class PopStorage {
   loadBlocks() {
     auto& repo = getBlockRepo<StoredBlock>();
     auto cursor = repo.newCursor();
-    if (cursor == nullptr) {
-      throw db::BadIOException("Cannot create BlockRepository cursor");
-    }
+    VBK_ASSERT(cursor && "can not create cursor");
     cursor->seekToFirst();
     std::multimap<typename StoredBlock::height_t, std::shared_ptr<StoredBlock>>
         blocks{};
@@ -76,9 +74,7 @@ class PopStorage {
                                std::shared_ptr<StoredBlock>>& blocks) {
     auto& repo = getBlockRepo<StoredBlock>();
     auto batch = repo.newBatch();
-    if (batch == nullptr) {
-      throw db::BadIOException("Cannot create BlockRepository write batch");
-    }
+    VBK_ASSERT(batch && "can not create batch");
 
     for (const auto& block : blocks) {
       auto& index = *(block.second);

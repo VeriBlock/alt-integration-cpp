@@ -33,7 +33,7 @@ struct AltBlock {
 
   uint32_t getBlockTime() const noexcept { return timestamp; }
 
-   /**
+  /**
    * Read basic blockheader data from the vector of bytes and convert it to
    * AltBlock
    * @param bytes data to read fromm

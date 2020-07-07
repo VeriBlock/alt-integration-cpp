@@ -29,6 +29,7 @@ bool AltTree::bootstrap(ValidationState& state) {
     return state.Error("block-index-no-genesis");
   }
 
+  index->setFlag(BLOCK_APPLIED);
   determineBestChain(base::activeChain_, *index, state, true);
 
   tryAddTip(index);
