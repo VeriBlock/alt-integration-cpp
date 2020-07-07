@@ -223,8 +223,7 @@ struct BaseBlockTree {
   bool operator!=(const BaseBlockTree& o) const { return !operator==(o); }
 
  protected:
-  virtual void determineBestChain(Chain<index_t>& currentBest,
-                                  index_t& indexNew,
+  virtual void determineBestChain(index_t& candidate,
                                   ValidationState& state,
                                   bool isBootstrap) = 0;
 
@@ -410,7 +409,7 @@ struct BaseBlockTree {
         "Found %d affected valid tips in %s", tips.size(), block_t::name());
     for (auto* tip : tips) {
       bool isBootstrap = !shouldDetermineBestChain;
-      determineBestChain(activeChain_, *tip, state, isBootstrap);
+      determineBestChain(*tip, state, isBootstrap);
     }
   }
 
@@ -429,14 +428,13 @@ struct BaseBlockTree {
 
   void doUpdateTips(bool shouldDetermineBestChain = true) {
     for (auto it = tips_.begin(); it != tips_.end();) {
-      index_t* index = *it;
-      if (!index->isValid()) {
+      index_t* tip = *it;
+      if (!tip->isValid()) {
         it = tips_.erase(it);
       } else {
         if (shouldDetermineBestChain) {
           ValidationState state;
-          determineBestChain(
-              activeChain_, *index, state, /*isBootstrap=*/false);
+          determineBestChain(*tip, state, /*isBootstrap=*/false);
         }
         ++it;
       }

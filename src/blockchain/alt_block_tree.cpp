@@ -30,7 +30,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   }
 
   index->setFlag(BLOCK_APPLIED);
-  determineBestChain(base::activeChain_, *index, state, true);
+  determineBestChain(*index, state, true);
 
   tryAddTip(index);
 
@@ -270,27 +270,27 @@ std::string AltTree::toPrettyString(size_t level) const {
                       pad);
 }
 
-void AltTree::determineBestChain(Chain<index_t>& currentBest,
-                                 index_t& indexNew,
+void AltTree::determineBestChain(index_t& candidate,
                                  ValidationState& state,
                                  bool isBootstrap) {
-  if (currentBest.tip() == &indexNew) {
+  auto bestTip = getBestChain().tip();
+
+  if (bestTip == &candidate) {
     return;
   }
 
   // do not even try to do fork resolution with an invalid chain
-  if (!indexNew.isValid()) {
+  if (!candidate.isValid()) {
     VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
-                  indexNew.toPrettyString());
+                  candidate.toPrettyString());
     return;
   }
 
-  auto currentTip = currentBest.tip();
-  if (currentTip == nullptr) {
+  if (bestTip == nullptr) {
     VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
-                  indexNew.toShortPrettyString());
-    bool ret = setTip(indexNew, state, isBootstrap);
-    VBK_ASSERT(ret);
+                  candidate.toShortPrettyString());
+    bool success = setTip(candidate, state, isBootstrap);
+    VBK_ASSERT(success);
     return;
   }
 
@@ -336,7 +336,7 @@ void AltTree::removePayloads(const AltBlock::hash_t& hash,
                            HexStr(hash));
   }
 
-  removePayloads(*index, popData);
+  return removePayloads(*index, popData);
 }
 
 template <typename Tree, typename Index, typename Pop, typename Storage>
