@@ -23,7 +23,9 @@ struct StorageManagerInmem : public StorageManager {
   }
 
   void clear() override {
-
+    // just re-create repos
+    _storagePop = std::make_shared<PopStorageInmem>();
+    _storagePayloads = std::make_shared<PayloadsStorageInmem>();
   }
 };
 
