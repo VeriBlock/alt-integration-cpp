@@ -136,8 +136,8 @@ void VbkBlockTree::removePayloads(index_t& index,
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool ret = setTip(*index.pprev, dummy, false);
-    VBK_ASSERT(ret);
+    bool success = setTip(*index.pprev, dummy, false);
+    VBK_ASSERT(success);
   }
 
   for (const auto& pid : pids) {
@@ -390,8 +390,8 @@ template <>
 void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
   VBK_ASSERT(cg.payload_type_name == VTB::name());
-  bool ret = removeId(index.vtbids, cg.id);
-  VBK_ASSERT(ret);
+  bool success = removeId(index.vtbids, cg.id);
+  VBK_ASSERT(success);
 }
 
 }  // namespace altintegration

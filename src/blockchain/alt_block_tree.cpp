@@ -105,8 +105,8 @@ bool AltTree::addPayloads(index_t& index,
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool ret = setTip(*index.pprev, dummy, false);
-    VBK_ASSERT(ret);
+    bool success = setTip(*index.pprev, dummy, false);
+    VBK_ASSERT(success);
   }
 
   if (!handleAddPayloads(index, payloads.context, state, continueOnInvalid)) {
@@ -373,18 +373,14 @@ void AltTree::removePayloads(index_t& index, const PopData& payloads) {
                payloads.atvs.size(),
                index.toShortPrettyString());
 
-  if (!index.pprev) {
-    // we do not add payloads to genesis block, therefore we do not have to
-    // remove them
-    return;
-  }
+  // we do not allow adding payloads to the genesis block
+  VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
 
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
-    VBK_ASSERT(index.pprev && "can not remove payloads from genesis block");
     ValidationState dummy;
-    bool ret = setTip(*index.pprev, dummy, false);
-    VBK_ASSERT(ret);
+    bool success = setTip(*index.pprev, dummy, false);
+    VBK_ASSERT(success);
   }
 
   handleRemovePayloads(*this, index, payloads.atvs, storagePayloads_);
