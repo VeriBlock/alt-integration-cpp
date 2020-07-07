@@ -6,8 +6,8 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_INMEM_STORAGE_MANAGER_INMEM_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_INMEM_STORAGE_MANAGER_INMEM_HPP_
 
-#include <veriblock/storage/inmem/pop_storage_inmem.hpp>
 #include <veriblock/storage/inmem/payloads_storage_inmem.hpp>
+#include <veriblock/storage/inmem/pop_storage_inmem.hpp>
 #include <veriblock/storage/storage_manager.hpp>
 
 namespace altintegration {
@@ -16,6 +16,14 @@ struct StorageManagerInmem : public StorageManager {
   StorageManagerInmem() {
     _storagePop = std::make_shared<PopStorageInmem>();
     _storagePayloads = std::make_shared<PayloadsStorageInmem>();
+  }
+
+  void flush() override {
+    // noop
+  }
+
+  void clear() override {
+
   }
 };
 
