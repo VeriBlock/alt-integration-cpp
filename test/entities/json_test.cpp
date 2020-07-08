@@ -323,6 +323,7 @@ TEST(ToJson, VTB) {
         "version": 536870912
       }
     ],
+    "hash": "64b2bb5ac056f3255b3ca8e54bb72139132a1b0239ae6a67162abec50de9d152",
     "merklePath": {
       "index": 1659,
       "layers": [
@@ -443,6 +444,7 @@ TEST(ToJson, ATV) {
     "treeIndex": 1
   },
   "transaction": {
+    "hash": "1fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c",
     "networkByte": null,
     "outputs": [],
     "publicKey": "3056301006072a8648ce3d020106052b8104000a03420004de4ee8300c3cd99e913536cf53c4add179f048f8fe90e5adf3ed19668dd1dbf6c2d8e692b1d36eac7187950620a28838da60a8c9dd60190c14c59b82cb90319e",

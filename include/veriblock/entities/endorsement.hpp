@@ -48,9 +48,9 @@ struct Endorsement {
   ContainingHash blockOfProof;
   std::vector<uint8_t> payoutInfo;
 
-  static Endorsement fromVbkEncoding(ReadStream& stream, const id_t& id) {
+  static Endorsement fromVbkEncoding(ReadStream& stream) {
     Endorsement out;
-    out.id = id;
+    out.id = readSingleByteLenValue(stream);
     out.endorsedHash = readSingleByteLenValue(stream).asVector();
     out.endorsedHeight = stream.readBE<endorsed_height_t>();
     out.containingHash = readSingleByteLenValue(stream).asVector();
@@ -59,12 +59,13 @@ struct Endorsement {
     return out;
   }
 
-  static Endorsement fromVbkEncoding(const std::string& bytes, const id_t& id) {
+  static Endorsement fromVbkEncoding(const std::string& bytes) {
     ReadStream stream(bytes);
-    return fromVbkEncoding(stream, id);
+    return fromVbkEncoding(stream);
   }
 
   void toVbkEncoding(WriteStream& stream) const {
+    writeSingleByteLenValue(stream, id);
     writeSingleByteLenValue(stream, endorsedHash);
     stream.writeBE(endorsedHeight);
     writeSingleByteLenValue(stream, containingHash);
