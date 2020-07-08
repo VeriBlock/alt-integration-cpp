@@ -17,6 +17,8 @@
 
 namespace altintegration {
 
+struct VbkBlockTree;
+
 class PayloadsStorage {
  public:
   virtual ~PayloadsStorage() = default;
@@ -121,7 +123,8 @@ class PayloadsStorage {
     std::vector<CommandGroup> out{};
     for (const auto& pid : pids) {
       CommandGroup cg(pid.asVector(), true, Payloads::name());
-      if (!_cache.get(pid.asVector(), &cg)) {
+      auto& cache = getCache<Tree, Payloads>();
+      if (!cache.get(pid.asVector(), &cg)) {
         Payloads payloads;
         if (!getRepo<Payloads>().get(pid, &payloads)) {
           throw db::StateCorruptedException(
@@ -129,20 +132,29 @@ class PayloadsStorage {
         }
         cg.valid = payloads.valid;
         payloadsToCommands_(tree, payloads, *index.header, cg.commands);
-        _cache.put(cg);
+        cache.put(cg);
       }
       out.push_back(cg);
     }
     return out;
   }
 
-  void invalidateCache() { _cache.clear(); }
-
  protected:
   std::shared_ptr<PayloadsRepository<ATV>> _repoAtv;
   std::shared_ptr<PayloadsRepository<VTB>> _repoVtb;
   std::shared_ptr<PayloadsRepository<VbkBlock>> _repoBlocks;
-  CommandGroupCache _cache;
+  CommandGroupCache _cacheAlt;
+  CommandGroupCache _cacheVbk;
+
+  template <typename Tree, typename Payloads>
+  inline CommandGroupCache& getCache() {
+    return _cacheAlt;
+  }
+
+  template <>
+  inline CommandGroupCache& getCache<VbkBlockTree, VTB>() {
+    return _cacheVbk;
+  }
 };
 
 }  // namespace altintegration

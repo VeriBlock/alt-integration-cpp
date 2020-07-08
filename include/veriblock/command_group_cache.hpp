@@ -6,7 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_COMMAND_GROUP_CACHE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_COMMAND_GROUP_CACHE_HPP_
 
-#include <deque>
+#include <list>
 // important to include this since it contains hasher for the vector as a key
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/blockchain/command_group.hpp>
@@ -43,6 +43,16 @@ struct CommandGroupCache {
     return true;
   }
 
+  virtual bool remove(const id_t& cid) {
+    bool res = _keys.find(cid) != _keys.end();
+    _cache.erase(cid);
+    if (res) {
+      _priority.erase(_keys[cid]);
+      _keys.erase(cid);
+    }
+    return res;
+  }
+
   virtual void clear() {
     _cache.clear();
     _keys.clear();
@@ -51,8 +61,8 @@ struct CommandGroupCache {
 
  protected:
   size_t _maxsize;
-  std::deque<id_t> _priority;
-  std::unordered_map<id_t, std::deque<id_t>::iterator> _keys;
+  std::list<id_t> _priority;
+  std::unordered_map<id_t, std::list<id_t>::iterator> _keys;
   std::unordered_map<id_t, std::shared_ptr<CommandGroup>> _cache;
 
   virtual void truncate() {
@@ -73,7 +83,7 @@ struct CommandGroupCache {
       truncate();
     }
     _priority.push_front(cid);
-    _keys.insert({cid, _priority.begin()});
+    _keys[cid] = _priority.begin();
     return res;
   }
 };
