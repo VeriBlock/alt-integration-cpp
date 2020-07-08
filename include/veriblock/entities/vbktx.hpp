@@ -80,6 +80,7 @@ JsonValue ToJSON(const VbkTx& tx) {
   } else {
     json::putNullKV(obj, "networkByte");
   }
+  json::putStringKV(obj, "hash", tx.getHash().toHex());
   json::putIntKV(obj, "type", tx.networkOrType.typeId);
   json::putStringKV(obj, "sourceAddress", tx.sourceAddress.toString());
   json::putIntKV(obj, "sourceAmount", tx.sourceAmount.units);

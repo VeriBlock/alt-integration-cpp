@@ -45,14 +45,12 @@ inline std::vector<uint8_t> serializePayloadsToRocks(const VbkBlock& from) {
 }
 
 template <typename Payloads>
-Payloads deserializePayloadsFromRocks(const std::string& from,
-                                      const typename Payloads::id_t& pid) {
-  return Payloads::fromVbkEncoding(from, pid);
+Payloads deserializePayloadsFromRocks(const std::string& from) {
+  return Payloads::fromVbkEncoding(from);
 }
 
 template <>
-inline VbkBlock deserializePayloadsFromRocks(const std::string& from,
-                                             const typename VbkBlock::id_t&) {
+inline VbkBlock deserializePayloadsFromRocks(const std::string& from) {
   ReadStream stream(from);
   VbkBlock ret = VbkBlock::fromVbkEncoding(stream);
   ret.valid = stream.readBE<uint8_t>();
@@ -60,8 +58,7 @@ inline VbkBlock deserializePayloadsFromRocks(const std::string& from,
 }
 
 template <>
-inline VTB deserializePayloadsFromRocks(const std::string& from,
-                                        const typename VTB::id_t&) {
+inline VTB deserializePayloadsFromRocks(const std::string& from) {
   ReadStream stream(from);
   VTB ret = VTB::fromVbkEncoding(stream);
   ret.valid = stream.readBE<uint8_t>();
@@ -69,8 +66,7 @@ inline VTB deserializePayloadsFromRocks(const std::string& from,
 }
 
 template <>
-inline ATV deserializePayloadsFromRocks(const std::string& from,
-                                        const typename ATV::id_t&) {
+inline ATV deserializePayloadsFromRocks(const std::string& from) {
   ReadStream stream(from);
   ATV ret = ATV::fromVbkEncoding(stream);
   ret.valid = stream.readBE<uint8_t>();
@@ -107,7 +103,7 @@ struct PayloadsCursorRocks : public Cursor<typename Payloads::id_t, Payloads> {
   Payloads value() const override {
     VBK_ASSERT(isValid() && "cursor points to an invalid item");
     auto value = _iterator->value();
-    return deserializePayloadsFromRocks<Payloads>(value.ToString(), key());
+    return deserializePayloadsFromRocks<Payloads>(value.ToString());
   }
 
  private:
@@ -217,7 +213,7 @@ struct PayloadsRepositoryRocks : public PayloadsRepository<Payloads> {
       throw db::StateCorruptedException(s.ToString());
     }
 
-    *out = deserializePayloadsFromRocks<payloads_t>(dbValue, pid);
+    *out = deserializePayloadsFromRocks<payloads_t>(dbValue);
     return true;
   }
 

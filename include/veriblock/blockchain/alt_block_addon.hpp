@@ -57,6 +57,23 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
                         vtbids.size(),
                         vbkblockids.size());
   }
+
+  void toRaw(WriteStream& w) const {
+    PopState<AltEndorsement>::toRaw(w);
+    writeArrayOf<uint256>(w, atvids, writeSingleByteLenValue);
+    writeArrayOf<uint256>(w, vtbids, writeSingleByteLenValue);
+    writeArrayOf<uint96>(w, vbkblockids, writeSingleByteLenValue);
+  }
+
+  void initFromRaw(ReadStream& r) {
+    PopState<AltEndorsement>::initFromRaw(r);
+    atvids = readArrayOf<uint256>(
+        r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
+    vtbids = readArrayOf<uint256>(
+        r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
+    vbkblockids = readArrayOf<uint96>(
+        r, [](ReadStream& s) -> uint96 { return readSingleByteLenValue(s); });
+  }
 };
 
 template <>

@@ -83,6 +83,7 @@ JsonValue ToJSON(const VbkPopTx& tx) {
   } else {
     json::putNullKV(obj, "networkByte");
   }
+  json::putStringKV(obj, "hash", tx.getHash().toHex());
   json::putIntKV(obj, "type", tx.networkOrType.typeId);
   json::putStringKV(obj, "address", tx.address.toString());
   json::putKV(obj, "publishedBlock", ToJSON<JsonValue>(tx.publishedBlock));
