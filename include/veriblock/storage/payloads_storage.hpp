@@ -147,14 +147,7 @@ class PayloadsStorage {
   CommandGroupCache _cacheVbk;
 
   template <typename Tree, typename Payloads>
-  inline CommandGroupCache& getCache() {
-    return _cacheAlt;
-  }
-
-  template <>
-  inline CommandGroupCache& getCache<VbkBlockTree, VTB>() {
-    return _cacheVbk;
-  }
+  CommandGroupCache& getCache();
 };
 
 }  // namespace altintegration
