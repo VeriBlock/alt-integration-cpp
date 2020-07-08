@@ -117,6 +117,16 @@ class PayloadsStorage {
   }
 
   template <typename Tree, typename Payloads>
+  CommandGroupCache& getCache() {
+    return _cacheAlt;
+  }
+
+  template <>
+  inline CommandGroupCache& getCache<VbkBlockTree, VTB>() {
+    return _cacheVbk;
+  }
+
+  template <typename Tree, typename Payloads>
   std::vector<CommandGroup> loadCommandsStorage(
       const typename Tree::index_t& index, Tree& tree) {
     auto& pids = index.template getPayloadIds<Payloads, typename Payloads::id_t>();
@@ -145,9 +155,6 @@ class PayloadsStorage {
   std::shared_ptr<PayloadsRepository<VbkBlock>> _repoBlocks;
   CommandGroupCache _cacheAlt;
   CommandGroupCache _cacheVbk;
-
-  template <typename Tree, typename Payloads>
-  CommandGroupCache& getCache();
 };
 
 }  // namespace altintegration

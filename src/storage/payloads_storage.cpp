@@ -34,14 +34,4 @@ const PayloadsRepository<VbkBlock>& PayloadsStorage::getRepo() const {
   return *_repoBlocks;
 }
 
-template <typename Tree, typename Payloads>
-CommandGroupCache& PayloadsStorage::getCache() {
-  return _cacheAlt;
-}
-
-template <>
-CommandGroupCache& PayloadsStorage::getCache<VbkBlockTree, VTB>() {
-  return _cacheVbk;
-}
-
 }  // namespace altintegration
