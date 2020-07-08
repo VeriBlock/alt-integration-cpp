@@ -14,4 +14,8 @@ if(NOT googletest_POPULATED)
 
     FetchContent_Populate(googletest)
     add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
+    disable_clang_tidy(gtest)
+    disable_clang_tidy(gtest_main)
+    disable_clang_tidy(gmock)
+    disable_clang_tidy(gmock_main)
 endif()

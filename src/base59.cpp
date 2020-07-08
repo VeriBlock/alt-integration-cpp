@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <array>
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -10,12 +11,12 @@
 
 namespace altintegration {
 
-static std::string g_Base59Alphabet =
+static const char *g_Base59Alphabet =
     "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0";
 static const uint32_t g_kBase_256 = 256;
-static const size_t g_kBase59 = g_Base59Alphabet.size();
+static const size_t g_kBase59 = 59;  // strlen(g_Base59Alphabet)
 
-static const std::vector<int8_t> g_Indexes = {
+static const std::array<int8_t, 128> g_Indexes = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 58, 0,  1,  2,  3,  4,  5,  6,  7,
@@ -74,7 +75,7 @@ std::string EncodeBase59(const uint8_t *buf, size_t nSize) {
   };
 
   // Strip extra '1' if any
-  while (j < temp.size() && temp[j] == g_Base59Alphabet.c_str()[0]) {
+  while (j < temp.size() && temp[j] == g_Base59Alphabet[0]) {
     ++j;
   }
 

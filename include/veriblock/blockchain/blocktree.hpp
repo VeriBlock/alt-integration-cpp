@@ -133,6 +133,8 @@ struct BlockTree : public BaseBlockTree<Block> {
       return false;
     }
 
+    VBK_ASSERT(index);
+
     // don't defer fork resolution in the acceptBlock+addPayloads flow until the
     // validation hole is plugged
     bool isBootstrap = !shouldContextuallyCheck;
