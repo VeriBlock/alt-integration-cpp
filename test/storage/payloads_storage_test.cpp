@@ -108,14 +108,17 @@ TYPED_TEST_P(PayloadsRepoTest, Basic) {
 
   payloads_t p1 = generatePayloads<payloads_t>();
   payloads_t p2 = generatePayloads<payloads_t>();
+  p1.valid = false;
+  p2.valid = false;
   this->repo->put(p1);
   this->repo->put(p2);
 
   payloads_t stored_p;
   EXPECT_TRUE(this->repo->get(p1.getId(), &stored_p));
   EXPECT_EQ(stored_p, p1);
+  EXPECT_EQ(stored_p.valid, p1.valid);
   EXPECT_TRUE(this->repo->get(p2.getId(), &stored_p));
-  EXPECT_EQ(stored_p, p2);
+  EXPECT_EQ(stored_p.valid, p2.valid);
 
   this->repo->removeByHash(p2.getId());
 

@@ -454,9 +454,6 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
 
   // at this point `pop` contains only valid payloads
 
-  // TODO: flush payloads db on disk here (do not write on disk until this
-  // point)
-
   removeSubtree(*tmpindex);
 }
 
