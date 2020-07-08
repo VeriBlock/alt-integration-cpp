@@ -17,20 +17,61 @@ namespace altintegration {
 
 template <typename Payloads>
 std::vector<uint8_t> serializePayloadsToRocks(const Payloads& from) {
-  WriteStream w;
-  from.toVbkEncoding(w);
-  w.writeBE<uint8_t>(from.valid);
   return from.toVbkEncoding();
+}
+
+template <>
+inline std::vector<uint8_t> serializePayloadsToRocks(const ATV& from) {
+  WriteStream stream;
+  from.toVbkEncoding(stream);
+  stream.writeBE<uint8_t>(from.valid);
+  return stream.data();
+}
+
+template <>
+inline std::vector<uint8_t> serializePayloadsToRocks(const VTB& from) {
+  WriteStream stream;
+  from.toVbkEncoding(stream);
+  stream.writeBE<uint8_t>(from.valid);
+  return stream.data();
+}
+
+template <>
+inline std::vector<uint8_t> serializePayloadsToRocks(const VbkBlock& from) {
+  WriteStream stream;
+  from.toVbkEncoding(stream);
+  stream.writeBE<uint8_t>(from.valid);
+  return stream.data();
 }
 
 template <typename Payloads>
 Payloads deserializePayloadsFromRocks(const std::string& from) {
-  ReadStream r(from);
-  Payloads pl = Payloads::fromVbkEncoding(r);
-  pl.valid = stream.readBE<uint8_t>();
-  return pl;
+  return Payloads::fromVbkEncoding(from);
 }
 
+template <>
+inline VbkBlock deserializePayloadsFromRocks(const std::string& from) {
+  ReadStream stream(from);
+  VbkBlock ret = VbkBlock::fromVbkEncoding(stream);
+  ret.valid = stream.readBE<uint8_t>();
+  return ret;
+}
+
+template <>
+inline VTB deserializePayloadsFromRocks(const std::string& from) {
+  ReadStream stream(from);
+  VTB ret = VTB::fromVbkEncoding(stream);
+  ret.valid = stream.readBE<uint8_t>();
+  return ret;
+}
+
+template <>
+inline ATV deserializePayloadsFromRocks(const std::string& from) {
+  ReadStream stream(from);
+  ATV ret = ATV::fromVbkEncoding(stream);
+  ret.valid = stream.readBE<uint8_t>();
+  return ret;
+}
 
 //! column family type
 using cf_handle_t = rocksdb::ColumnFamilyHandle;
