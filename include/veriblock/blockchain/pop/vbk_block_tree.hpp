@@ -104,8 +104,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
               ValidationState& state,
               bool isBootstrap = false) override;
 
-  void determineBestChain(Chain<index_t>& currentBest,
-                          index_t& indexNew,
+  void determineBestChain(index_t& candidate,
                           ValidationState& state,
                           bool isBootstrap = false) override;
 

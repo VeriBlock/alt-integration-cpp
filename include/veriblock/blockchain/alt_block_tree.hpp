@@ -154,8 +154,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   PopRewards rewards_;
   PayloadsStorage& storagePayloads_;
 
-  void determineBestChain(Chain<index_t>& currentBest,
-                          index_t& indexNew,
+  void determineBestChain(index_t& candidate,
                           ValidationState& state,
                           bool isBootstrap = false) override;
 
@@ -170,7 +169,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool setTip(index_t& to,
               ValidationState& state,
-              bool skipSetState, bool continueOnInvalid);
+              bool skipSetState,
+              bool continueOnInvalid);
 };
 
 template <>

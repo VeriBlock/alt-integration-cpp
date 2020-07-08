@@ -14,67 +14,52 @@
 
 namespace altintegration {
 
-void VbkBlockTree::determineBestChain(Chain<index_t>& currentBest,
-                                      index_t& indexNew,
+void VbkBlockTree::determineBestChain(index_t& candidate,
                                       ValidationState& state,
                                       bool isBootstrap) {
   if (VBK_UNLIKELY(IsShutdownRequested())) {
     return;
   }
 
-  if (currentBest.tip() == &indexNew) {
+  auto bestTip = getBestChain().tip();
+  if (bestTip == &candidate) {
     return;
   }
 
   // do not even try to do fork resolution with an invalid chain
-  if (!indexNew.isValid()) {
+  if (!candidate.isValid()) {
     VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
-                  indexNew.toPrettyString());
+                  candidate.toPrettyString());
     return;
   }
 
-  bool ret = false;
-  auto currentTip = currentBest.tip();
-  if (currentTip == nullptr) {
+  if (bestTip == nullptr) {
     VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
-                  indexNew.toShortPrettyString());
-    ret = setTip(indexNew, state, isBootstrap);
-    VBK_ASSERT(ret);
+                  candidate.toShortPrettyString());
+    bool success = setTip(candidate, state, isBootstrap);
+    VBK_ASSERT(success);
     return;
   }
 
-  if (currentTip->height > indexNew.height + param_->getMaxReorgBlocks()) {
+  if (bestTip->height > candidate.height + param_->getMaxReorgBlocks()) {
     VBK_LOG_DEBUG("%s Candidate is behind tip more than %d blocks",
                   block_t::name(),
-                  indexNew.toShortPrettyString(),
+                  candidate.toShortPrettyString(),
                   param_->getMaxReorgBlocks());
     return;
   }
 
-  // edge case: connected block is one of 'next' blocks after our current best
-  if (indexNew.getAncestor(currentTip->height) == currentTip) {
-    // an attempt to connect a NEXT block
-    VBK_LOG_DEBUG("%s Candidate is ahead %d blocks, applying them",
-                  block_t::name(),
-                  indexNew.height - currentTip->height);
-    if (!this->setTip(indexNew, state, false)) {
-      VBK_ASSERT(!indexNew.isValid());
-    }
-    return;
-  }
-
-  int result = cmp_.comparePopScore(*this, indexNew, state);
+  int result = cmp_.comparePopScore(*this, candidate, state);
   // pop state is already at "best chain"
   if (result == 0) {
     VBK_LOG_DEBUG("Pop scores are equal");
     // pop scores are equal. do PoW fork resolution
-    VbkTree::determineBestChain(
-        currentBest, indexNew, state, /* skipSetState=*/false);
+    VbkTree::determineBestChain(candidate, state, /* skipSetState=*/false);
   } else if (result < 0) {
     VBK_LOG_DEBUG("Candidate chain won");
     // other chain won! we already set pop state, so only update tip
-    ret = this->setTip(indexNew, state, /* skipSetState=*/true);
-    VBK_ASSERT(ret);
+    bool success = this->setTip(candidate, state, /* skipSetState=*/true);
+    VBK_ASSERT(success);
   } else {
     VBK_LOG_DEBUG("Active chain won");
     // current chain is better
@@ -151,8 +136,8 @@ void VbkBlockTree::removePayloads(index_t& index,
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool ret = setTip(*index.pprev, dummy, false);
-    VBK_ASSERT(ret);
+    bool success = setTip(*index.pprev, dummy, false);
+    VBK_ASSERT(success);
   }
 
   for (const auto& pid : pids) {
@@ -405,8 +390,8 @@ template <>
 void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
   VBK_ASSERT(cg.payload_type_name == VTB::name());
-  bool ret = removeId(index.vtbids, cg.id);
-  VBK_ASSERT(ret);
+  bool success = removeId(index.vtbids, cg.id);
+  VBK_ASSERT(success);
 }
 
 }  // namespace altintegration
