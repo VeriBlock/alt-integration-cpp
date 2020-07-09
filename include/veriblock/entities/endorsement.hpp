@@ -98,7 +98,7 @@ struct Endorsement {
   std::string toPrettyString(size_t level = 0) const;
 };
 
-template <typename Value, class A, class B, class C, class D>
+template <typename Value, class A, class B, class C>
 Value ToJSON(const Endorsement<A, B, C>& e) {
   auto obj = json::makeEmptyObject<Value>();
   json::putStringKV(obj, "id", HexStr(e.id));

@@ -35,8 +35,7 @@ AltEndorsement::id_t AltEndorsement::getId(const ATV& c);
 template <>
 inline std::string VbkEndorsement::toPrettyString(size_t level) const {
   return fmt::sprintf(
-      "%sVbkEndorsement{containing=%s, endorsed=%s, endorsedHeight=%ld, "
-      "blockOfProof=%s}",
+      "%sVbkEndorsement{containing=%s, endorsed=%s, blockOfProof=%s}",
       std::string(level, ' '),
       HexStr(containingHash),
       HexStr(endorsedHash),
@@ -46,8 +45,7 @@ inline std::string VbkEndorsement::toPrettyString(size_t level) const {
 template <>
 inline std::string AltEndorsement::toPrettyString(size_t level) const {
   return fmt::sprintf(
-      "%sAltEndorsement{containing=%s, endorsed=%s, endorsedHeight=%ld, "
-      "blockOfProof=%s}",
+      "%sAltEndorsement{containing=%s, endorsed=%s, blockOfProof=%s}",
       std::string(level, ' '),
       HexStr(containingHash),
       HexStr(endorsedHash),

@@ -147,7 +147,7 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   // now we have 2 valid VTBs endorsing VBK5
   VTB& vtb1 = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
   VTB& vtb2 = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(1);
-  (void) vtb2;
+  (void)vtb2;
 
   auto cmd1 = std::make_shared<AddVTB>(alttree, vtb1);
 
@@ -163,7 +163,8 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   }
 
   // verify VBK tree does not know about this VTB
-  auto altvbkcontaining = alttree.vbk().getBlockIndex(vtb1.containingBlock.getHash());
+  auto altvbkcontaining =
+      alttree.vbk().getBlockIndex(vtb1.containingBlock.getHash());
   ASSERT_TRUE(altvbkcontaining);
 
   ASSERT_EQ(altvbkcontaining->vtbids.size(), 0);
