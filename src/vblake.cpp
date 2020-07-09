@@ -11,7 +11,7 @@
 #include <cstring>
 
 #ifndef _countof
-#define _countof(x) (sizeof(x) / sizeof(x[0]))
+#define _countof(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
 namespace altintegration {
@@ -20,14 +20,14 @@ namespace altintegration {
 //==========================================================================================
 
 static const uint64_t cnt_vblake_iv = 8;
-static const uint64_t vblake_iv[cnt_vblake_iv] = {0x4BBF42C1F006AD9Dl,
-                                                  0x5D11A8C3B5AEB12El,
-                                                  0xA64AB78DC2774652l,
-                                                  0xC67595724658F253l,
-                                                  0xB8864E79CB891E56l,
-                                                  0x12ED593E29FB41A1l,
-                                                  0xB1DA3AB63C60BAA8l,
-                                                  0x6D20E50C1F954DEDl};
+static const uint64_t vblake_iv[cnt_vblake_iv] = {0x4BBF42C1F006AD9DL,
+                                                  0x5D11A8C3B5AEB12EL,
+                                                  0xA64AB78DC2774652L,
+                                                  0xC67595724658F253L,
+                                                  0xB8864E79CB891E56L,
+                                                  0x12ED593E29FB41A1L,
+                                                  0xB1DA3AB63C60BAA8L,
+                                                  0x6D20E50C1F954DEDL};
 
 static const uint8_t sigma[16][16] = {
     {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},

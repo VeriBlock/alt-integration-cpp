@@ -7,11 +7,12 @@
 #define VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
 
 #include <veriblock/arith_uint256.hpp>
+#include <veriblock/serde.hpp>
 
 namespace altintegration {
 
 struct BtcBlockAddon {
-  //! total amount of work in the chain up to and including this
+  //! (memory only) total amount of work in the chain up to and including this
   //! block
   ArithUint256 chainWork = 0;
 
@@ -24,6 +25,16 @@ struct BtcBlockAddon {
   }
 
   std::string toPrettyString() const { return ""; }
+
+  void toRaw(WriteStream& w) const {
+    // save only refCounter
+    w.writeBE<uint32_t>(refCounter);
+  }
+
+  // not static, on purpose
+  void initFromRaw(ReadStream& r) {
+    refCounter = r.readBE<uint32_t>();
+  }
 };
 
 }  // namespace altintegration

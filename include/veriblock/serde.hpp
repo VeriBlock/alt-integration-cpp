@@ -6,11 +6,11 @@
 #ifndef ALT_INTEGRATION_VERIBLOCK_SERDE_HPP
 #define ALT_INTEGRATION_VERIBLOCK_SERDE_HPP
 
-#include <veriblock/assert.hpp>
 #include <functional>
 #include <limits>
 #include <stdexcept>
 #include <vector>
+#include <veriblock/assert.hpp>
 
 #include "checks.hpp"
 #include "consts.hpp"
@@ -210,11 +210,40 @@ std::vector<T> readArrayOf(ReadStream& stream,
   return items;
 }
 
+template <typename T>
+std::vector<T> readArrayOf(ReadStream& stream,
+                           std::function<T(ReadStream&)> readFunc) {
+  int32_t max = std::numeric_limits<int32_t>::max();
+  return readArrayOf<T>(stream, 0, max, readFunc);
+}
+
 std::string readString(ReadStream& stream);
 
 void writeDouble(WriteStream& stream, const double& val);
 
 double readDouble(ReadStream& stream);
+
+template <typename T>
+void writeArrayOf(WriteStream& w,
+                  const std::vector<T>& t,
+                  std::function<void(WriteStream& w, const T& t)> f) {
+  writeSingleBEValue(w, (int64_t)t.size());
+  for (auto& v : t) {
+    f(w, v);
+  }
+}
+
+template <typename Container>
+void writeContainer(
+    WriteStream& w,
+    const Container& t,
+    std::function<void(WriteStream& w, const typename Container::value_type& t)>
+        f) {
+  writeSingleBEValue(w, (int64_t)t.size());
+  for (auto& v : t) {
+    f(w, v);
+  }
+}
 
 }  // namespace altintegration
 

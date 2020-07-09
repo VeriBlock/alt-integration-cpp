@@ -14,6 +14,7 @@ addtest(vblake_test vblake_test.cpp)
 addtest(streamutils_test streamutils_test.cpp)
 addtest(base58_test base58_test.cpp)
 addtest(base59_test base59_test.cpp)
+addtest(serde_test serde_test.cpp)
 
 
 gencpp(

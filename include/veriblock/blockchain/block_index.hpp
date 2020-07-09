@@ -163,6 +163,13 @@ struct BlockIndex : public Block::addon_t {
   void toRaw(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
     header->toRaw(stream);
+    addon_t::toRaw(stream);
+  }
+
+  void initFromRaw(ReadStream& stream) {
+    height = stream.readBE<uint32_t>();
+    header = std::make_shared<Block>(Block::fromRaw(stream));
+    addon_t::initFromRaw(stream);
   }
 
   std::vector<uint8_t> toRaw() const {
@@ -173,8 +180,7 @@ struct BlockIndex : public Block::addon_t {
 
   static BlockIndex fromRaw(ReadStream& stream) {
     BlockIndex index{};
-    index.height = stream.readBE<uint32_t>();
-    index.header = std::make_shared<Block>(Block::fromRaw(stream));
+    index.initFromRaw(stream);
     return index;
   }
 

@@ -42,6 +42,20 @@ struct VbkBlockAddon :
   std::string toPrettyString() const {
     return fmt::sprintf("VTB=%d", vtbids.size());
   }
+
+  void toRaw(WriteStream& w) const {
+    BtcBlockAddon::toRaw(w);
+    PopState<VbkEndorsement>::toRaw(w);
+    writeArrayOf<uint256>(w, vtbids, writeSingleByteLenValue);
+  }
+
+  void initFromRaw(ReadStream& r) {
+    BtcBlockAddon::initFromRaw(r);
+    PopState<VbkEndorsement>::initFromRaw(r);
+
+    vtbids = readArrayOf<uint256>(
+        r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
+  }
 };
 
 template <>
