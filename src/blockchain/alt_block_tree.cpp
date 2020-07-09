@@ -290,6 +290,7 @@ std::string AltTree::toPrettyString(size_t level) const {
 
 void AltTree::determineBestChain(index_t& candidate, ValidationState& state) {
   auto bestTip = getBestChain().tip();
+  VBK_ASSERT(bestTip && "must be bootstrapped");
 
   if (bestTip == &candidate) {
     return;
@@ -299,14 +300,6 @@ void AltTree::determineBestChain(index_t& candidate, ValidationState& state) {
   if (!candidate.isValid()) {
     VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
                   candidate.toPrettyString());
-    return;
-  }
-
-  if (bestTip == nullptr) {
-    VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
-                  candidate.toShortPrettyString());
-    bool success = setState(candidate, state);
-    VBK_ASSERT(success);
     return;
   }
 

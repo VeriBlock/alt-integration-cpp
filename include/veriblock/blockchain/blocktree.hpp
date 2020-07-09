@@ -241,6 +241,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     auto bestTip = base::getBestChain().tip();
+    VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
+
     if (bestTip == &candidate) {
       return;
     }
@@ -250,7 +252,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       return;
     }
 
-    if (bestTip == nullptr || bestTip->chainWork < candidate.chainWork) {
+    if (bestTip->chainWork < candidate.chainWork) {
       //! important to use this->setState for proper vtable resolution
       this->setState(candidate, state);
     }

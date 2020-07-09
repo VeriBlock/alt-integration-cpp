@@ -16,29 +16,8 @@ namespace altintegration {
 
 void VbkBlockTree::determineBestChain(index_t& candidate,
                                       ValidationState& state) {
-  if (VBK_UNLIKELY(IsShutdownRequested())) {
-    return;
-  }
-
   auto bestTip = getBestChain().tip();
-  if (bestTip == &candidate) {
-    return;
-  }
-
-  // do not even try to do fork resolution with an invalid chain
-  if (!candidate.isValid()) {
-    VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
-                  candidate.toPrettyString());
-    return;
-  }
-
-  if (bestTip == nullptr) {
-    VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
-                  candidate.toShortPrettyString());
-    bool success = setState(candidate, state);
-    VBK_ASSERT(success);
-    return;
-  }
+  VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
 
   if (bestTip->height > candidate.height + param_->getMaxReorgBlocks()) {
     VBK_LOG_DEBUG("%s Candidate is behind tip more than %d blocks",

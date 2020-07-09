@@ -460,7 +460,13 @@ struct PopAwareForkResolutionComparator {
 
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
-    VBK_ASSERT(bestTip);
+    VBK_ASSERT(bestTip && "must be bootstrapped");
+
+    if (bestTip == &candidate) {
+      // we are comparing the best chain to itself
+      return 1;
+    }
+
     if (currentBest.contains(&candidate)) {
       VBK_LOG_INFO(
           "Candidate %s is part of the active chain, the current chain wins",
