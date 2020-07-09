@@ -51,7 +51,7 @@ struct AddEndorsement : public Command {
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     if (!endorsed) {
       return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
-                           "No block found in the tree");
+                           "Endorsed block not found in the tree");
     }
 
     if (containing->height - endorsed->height > window) {
