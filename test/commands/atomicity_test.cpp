@@ -26,7 +26,6 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
   auto e = std::make_shared<VbkEndorsement>();
   e->id = uint256::fromHex("1");
   e->blockOfProof = popminer->btc().getBestChain().tip()->getHash();
-  e->endorsedHeight = vbk5->height;
   e->endorsedHash = vbk5->getHash();
   e->containingHash = vbk10->getHash();
 
@@ -87,7 +86,6 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   auto e = std::make_shared<AltEndorsement>();
   e->id = uint256::fromHex("1");
   e->blockOfProof = popminer->vbk().getBestChain().tip()->getHash();
-  e->endorsedHeight = alt5->height;
   e->endorsedHash = alt5->getHash();
   e->containingHash = alt10->getHash();
 

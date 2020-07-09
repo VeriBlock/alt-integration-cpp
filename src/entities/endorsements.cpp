@@ -18,7 +18,6 @@ VbkEndorsement VbkEndorsement::fromContainer(const VTB& c) {
   e.blockOfProof = c.transaction.blockOfProof.getHash();
   e.containingHash = c.containingBlock.getHash();
   e.endorsedHash = c.transaction.publishedBlock.getHash();
-  e.endorsedHeight = c.transaction.publishedBlock.height;
   e.payoutInfo = {};
   return e;
 }
@@ -27,13 +26,11 @@ template <>
 AltEndorsement AltEndorsement::fromContainer(
     const ATV& c,
     const std::vector<uint8_t>& containingHash,
-    const std::vector<uint8_t>& endorsedHash,
-    const int32_t& endorsedHeight) {
+    const std::vector<uint8_t>& endorsedHash) {
   AltEndorsement e;
   e.id = AltEndorsement::getId(c);
   e.blockOfProof = c.containingBlock.getHash();
   e.endorsedHash = endorsedHash;
-  e.endorsedHeight = endorsedHeight;
   e.containingHash = containingHash;
   e.payoutInfo = c.transaction.publicationData.payoutInfo;
   return e;

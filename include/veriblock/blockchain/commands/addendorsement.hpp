@@ -48,25 +48,24 @@ struct AddEndorsement : public Command {
     auto minHeight = (std::max)(containing->height - window, 0);
     Chain<protected_index_t> chain(minHeight, containing);
 
-    auto endorsedHeight = e_->endorsedHeight;
-    if (containing->height - endorsedHeight > window) {
-      return state.Invalid(protected_block_t::name() + "-expired",
-                           "Endorsement expired");
-    }
-
-    auto* endorsed = chain[endorsedHeight];
+    auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     if (!endorsed) {
       return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
-                           "No block found on endorsed block height");
+                           "No block found the tree");
     }
 
-    if (endorsed->getHash() != e_->endorsedHash) {
+    if (endorsed->getHash() != chain[endorsed->height]->getHash()) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
               "Endorsed block is on a different chain. Expected: %s, got %s",
               endorsed->toShortPrettyString(),
               HexStr(e_->endorsedHash)));
+    }
+
+    if (containing->height - endorsed->height > window) {
+      return state.Invalid(protected_block_t::name() + "-expired",
+                           "Endorsement expired");
     }
 
     auto& id = e_->id;
@@ -119,7 +118,7 @@ struct AddEndorsement : public Command {
         "failed to roll back AddEndorsement: the containing block does not "
         "exist");
 
-    auto* endorsed = containing->getAncestor(e_->endorsedHeight);
+    auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     VBK_ASSERT(
         endorsed != nullptr &&
         "failed to roll back AddEndorsement: the endorsed block does not "

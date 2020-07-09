@@ -225,7 +225,7 @@ void AltTree::payloadsToCommands(const ATV& atv,
   VBK_ASSERT(endorsed_index);
 
   auto e = AltEndorsement::fromContainerPtr(
-      atv, containing.getHash(), endorsed_hash, endorsed_index->height);
+      atv, containing.getHash(), endorsed_hash);
 
   auto cmd = std::make_shared<AddAltEndorsement>(vbk(), *this, std::move(e));
   commands.push_back(std::move(cmd));
