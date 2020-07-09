@@ -221,8 +221,6 @@ void AltTree::payloadsToCommands(const ATV& atv,
 
   std::vector<uint8_t> endorsed_hash =
       alt_config_->getHash(atv.transaction.publicationData.header);
-  auto* endorsed_index = getBlockIndex(endorsed_hash);
-  VBK_ASSERT(endorsed_index);
 
   auto e = AltEndorsement::fromContainerPtr(
       atv, containing.getHash(), endorsed_hash);
