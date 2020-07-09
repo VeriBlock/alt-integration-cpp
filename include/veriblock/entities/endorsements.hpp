@@ -15,7 +15,7 @@ struct VTB;
 struct ATV;
 
 // endorsement of VBK blocks in BTC
-using VbkEndorsement = Endorsement<uint192, uint256, VTB, int32_t>;
+using VbkEndorsement = Endorsement<uint192, uint256, VTB>;
 
 template <>
 VbkEndorsement VbkEndorsement ::fromContainer(const VTB& c);
@@ -23,13 +23,13 @@ template <>
 VbkEndorsement::id_t VbkEndorsement::getId(const VTB& c);
 
 // endorsement of ALT blocks in VBK
-using AltEndorsement = Endorsement<std::vector<uint8_t>, uint192, ATV, int32_t>;
+using AltEndorsement = Endorsement<std::vector<uint8_t>, uint192, ATV>;
 
 template <>
-AltEndorsement AltEndorsement ::fromContainer(const ATV& c,
-                                              const std::vector<uint8_t>& containingHash,
-                                              const std::vector<uint8_t>& endorsedHash,
-                                              const int32_t& endorsedHeight);
+AltEndorsement AltEndorsement ::fromContainer(
+    const ATV& c,
+    const std::vector<uint8_t>& containingHash,
+    const std::vector<uint8_t>& endorsedHash);
 template <>
 AltEndorsement::id_t AltEndorsement::getId(const ATV& c);
 template <>
@@ -40,7 +40,6 @@ inline std::string VbkEndorsement::toPrettyString(size_t level) const {
       std::string(level, ' '),
       HexStr(containingHash),
       HexStr(endorsedHash),
-      endorsedHeight,
       HexStr(blockOfProof));
 }
 
@@ -52,7 +51,6 @@ inline std::string AltEndorsement::toPrettyString(size_t level) const {
       std::string(level, ' '),
       HexStr(containingHash),
       HexStr(endorsedHash),
-      endorsedHeight,
       HexStr(blockOfProof));
 }
 

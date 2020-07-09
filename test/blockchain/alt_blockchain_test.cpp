@@ -36,11 +36,8 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   PopData altPayloads1 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  AltEndorsement endorsement1 =
-      AltEndorsement::fromContainer(altPayloads1.atvs[0],
-                                    containingBlock.getHash(),
-                                    endorsedBlock.getHash(),
-                                    endorsedBlock.height);
+  AltEndorsement endorsement1 = AltEndorsement::fromContainer(
+      altPayloads1.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
@@ -64,11 +61,8 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   PopData altPayloads2 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  AltEndorsement endorsement2 =
-      AltEndorsement::fromContainer(altPayloads2.atvs[0],
-                                    containingBlock.getHash(),
-                                    endorsedBlock.getHash(),
-                                    endorsedBlock.height);
+  AltEndorsement endorsement2 = AltEndorsement::fromContainer(
+      altPayloads2.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state))
@@ -92,11 +86,8 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   PopData altPayloads3 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  AltEndorsement endorsement3 =
-      AltEndorsement::fromContainer(altPayloads3.atvs[0],
-                                    containingBlock.getHash(),
-                                    endorsedBlock.getHash(),
-                                    endorsedBlock.height);
+  AltEndorsement endorsement3 = AltEndorsement::fromContainer(
+      altPayloads3.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads3, state));
