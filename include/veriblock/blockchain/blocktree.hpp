@@ -52,7 +52,7 @@ struct BlockTree : public BaseBlockTree<Block> {
    * @return true if bootstrap was successful, false otherwise
    */
   virtual bool bootstrapWithGenesis(ValidationState& state) {
-    VBK_ASSERT(base::blocks_.empty() && "already bootstrapped");
+    VBK_ASSERT(!isBootstrapped() && "already bootstrapped");
     auto block = param_->getGenesisBlock();
     return this->bootstrap(0, block, state);
   }
@@ -70,7 +70,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   virtual bool bootstrapWithChain(height_t startHeight,
                                   const std::vector<block_t>& chain,
                                   ValidationState& state) {
-    VBK_ASSERT(base::blocks_.empty() && "already bootstrapped");
+    VBK_ASSERT(!isBootstrapped() && "already bootstrapped");
     if (chain.empty()) {
       return state.Invalid("bootstrap-empty-chain",
                            "provided bootstrap chain is empty");
@@ -101,6 +101,25 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     return true;
+  }
+
+  /**
+   * Check if the blockchain is bootstrapped
+   *
+   * @return true if the blockchain is bootstrapped, false otherwise
+   */
+  bool isBootstrapped() {
+    if (!base::blocks_.empty() && base::getBestChain().tip() != nullptr) {
+      return true;
+    }
+
+    if (base::blocks_.empty() && base::getBestChain().tip() == nullptr) {
+      return false;
+    }
+
+    VBK_ASSERT(
+        false &&
+        "state corruption: the blockchain is neither bootstrapped nor empty");
   }
 
   bool acceptBlock(const block_t& block, ValidationState& state) {
@@ -150,24 +169,30 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   bool bootstrap(height_t height,
-                 const std::shared_ptr<block_t>& block,
+                 std::shared_ptr<block_t> block,
                  ValidationState& state) {
     if (!checkBlock(*block, state, *param_)) {
       return state.Invalid("bootstrap");
     }
 
     auto* index = base::insertBlockHeader(block);
+    VBK_ASSERT(index != nullptr &&
+               "insertBlockHeader should have never returned nullptr");
+
     index->height = height;
 
     base::activeChain_ = Chain<index_t>(height, index);
 
-    if (!base::blocks_.empty() && !base::getBlockIndex(block->getHash())) {
-      return state.Error("block-index-no-genesis");
-    }
+    VBK_ASSERT(isBootstrapped());
+    VBK_ASSERT(base::getBlockIndex(index->getHash()) != nullptr &&
+               "getBlockIndex must be able to find the block added by "
+               "insertBlockHeader");
+
+    base::tryAddTip(index);
 
     index->setFlag(BLOCK_APPLIED);
 
-    return this->overrideTip(*index, state);
+    return true;
   }
 
   bool validateAndAddBlock(const std::shared_ptr<block_t>& block,

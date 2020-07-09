@@ -15,8 +15,22 @@
 
 namespace altintegration {
 
+bool AltTree::isBootstrapped() {
+  if (!base::blocks_.empty() && base::getBestChain().tip() != nullptr) {
+    return true;
+  }
+
+  if (base::blocks_.empty() && base::getBestChain().tip() == nullptr) {
+    return false;
+  }
+
+  VBK_ASSERT(
+      false &&
+      "state corruption: the blockchain is neither bootstrapped nor empty");
+}
+
 bool AltTree::bootstrap(ValidationState& state) {
-  if (!base::blocks_.empty()) {
+  if (isBootstrapped()) {
     return state.Error("already bootstrapped");
   }
 
@@ -25,18 +39,18 @@ bool AltTree::bootstrap(ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  if (!base::blocks_.empty() && (getBlockIndex(index->getHash()) == nullptr)) {
-    return state.Error("block-index-no-genesis");
-  }
+  auto height = block.height;
 
   index->setFlag(BLOCK_APPLIED);
-  determineBestChain(*index, state, true);
+  base::activeChain_ = Chain<index_t>(height, index);
+
+  VBK_ASSERT(isBootstrapped());
+
+  VBK_ASSERT(getBlockIndex(index->getHash()) != nullptr &&
+             "getBlockIndex must be able to find the block added by "
+             "insertBlockHeader");
 
   tryAddTip(index);
-
-  // we consider the first block applied as there's no way to add payloads to it
-  bool success = overrideTip(*index, state);
-  VBK_ASSERT(success);
 
   return true;
 }
