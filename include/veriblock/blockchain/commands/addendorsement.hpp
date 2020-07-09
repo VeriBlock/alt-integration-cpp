@@ -48,19 +48,19 @@ struct AddEndorsement : public Command {
     auto minHeight = (std::max)(containing->height - window, 0);
     Chain<protected_index_t> chain(minHeight, containing);
 
-    auto endorsedHeight = e_->endorsedHeight;
-    if (containing->height - endorsedHeight > window) {
+    auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
+    if (!endorsed) {
+      return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
+                           "Endorsed block not found in the tree");
+    }
+
+    if (containing->height - endorsed->height > window) {
       return state.Invalid(protected_block_t::name() + "-expired",
                            "Endorsement expired");
     }
 
-    auto* endorsed = chain[endorsedHeight];
-    if (!endorsed) {
-      return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
-                           "No block found on endorsed block height");
-    }
-
-    if (endorsed->getHash() != e_->endorsedHash) {
+    if (chain[endorsed->height] == nullptr ||
+        endorsed->getHash() != chain[endorsed->height]->getHash()) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
@@ -99,7 +99,7 @@ struct AddEndorsement : public Command {
       // found duplicate
       return state.Invalid(
           protected_block_t ::name() + "-duplicate",
-          fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+          fmt::sprintf("Can not add endorsement=%s to block=%s, because we"
                        "found its duplicate in block %s",
                        e_->toPrettyString(),
                        containing->toShortPrettyString(),
@@ -119,7 +119,7 @@ struct AddEndorsement : public Command {
         "failed to roll back AddEndorsement: the containing block does not "
         "exist");
 
-    auto* endorsed = containing->getAncestor(e_->endorsedHeight);
+    auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     VBK_ASSERT(
         endorsed != nullptr &&
         "failed to roll back AddEndorsement: the endorsed block does not "

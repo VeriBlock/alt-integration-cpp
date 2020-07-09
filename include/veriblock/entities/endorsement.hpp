@@ -27,23 +27,17 @@ namespace altintegration {
 // proof. "containing hash" is a block which contains POP TX which endorses
 // "endorsed block"
 
-template <class EndorsedHash,
-          class ContainingHash,
-          class Container,
-          class EndorsedBlockHeight>
+template <class EndorsedHash, class ContainingHash, class Container>
 struct Endorsement {
-  using type =
-      Endorsement<EndorsedHash, ContainingHash, Container, EndorsedBlockHeight>;
+  using type = Endorsement<EndorsedHash, ContainingHash, Container>;
   using id_t = uint256;
   using endorsed_hash_t = EndorsedHash;
   using containing_hash_t = ContainingHash;
   using container_t = Container;
-  using endorsed_height_t = EndorsedBlockHeight;
 
   // The unique key that identifies this endorsement
   id_t id;
   EndorsedHash endorsedHash;
-  EndorsedBlockHeight endorsedHeight;
   EndorsedHash containingHash;
   ContainingHash blockOfProof;
   std::vector<uint8_t> payoutInfo;
@@ -52,7 +46,6 @@ struct Endorsement {
     Endorsement out;
     out.id = readSingleByteLenValue(stream);
     out.endorsedHash = readSingleByteLenValue(stream).asVector();
-    out.endorsedHeight = stream.readBE<endorsed_height_t>();
     out.containingHash = readSingleByteLenValue(stream).asVector();
     out.blockOfProof = readSingleByteLenValue(stream).asVector();
     out.payoutInfo = readSingleByteLenValue(stream).asVector();
@@ -67,7 +60,6 @@ struct Endorsement {
   void toVbkEncoding(WriteStream& stream) const {
     writeSingleByteLenValue(stream, id);
     writeSingleByteLenValue(stream, endorsedHash);
-    stream.writeBE(endorsedHeight);
     writeSingleByteLenValue(stream, containingHash);
     writeSingleByteLenValue(stream, blockOfProof);
     writeSingleByteLenValue(stream, payoutInfo);
@@ -83,16 +75,14 @@ struct Endorsement {
 
   static type fromContainer(const Container& c,
                             const EndorsedHash& containingHash,
-                            const EndorsedHash& endorsedHash,
-                            const EndorsedBlockHeight& endorsedHeight);
+                            const EndorsedHash& endorsedHash);
 
   static std::shared_ptr<type> fromContainerPtr(
       const Container& c,
       const EndorsedHash& containingHash,
-      const EndorsedHash& endorsedHash,
-      const EndorsedBlockHeight& endorsedHeight) {
+      const EndorsedHash& endorsedHash) {
     return std::make_shared<type>(
-        fromContainer(c, containingHash, endorsedHash, endorsedHeight));
+        fromContainer(c, containingHash, endorsedHash));
   }
 
   static std::shared_ptr<type> fromContainerPtr(const Container& c) {
@@ -108,12 +98,11 @@ struct Endorsement {
   std::string toPrettyString(size_t level = 0) const;
 };
 
-template <typename Value, class A, class B, class C, class D>
-Value ToJSON(const Endorsement<A, B, C, D>& e) {
+template <typename Value, class A, class B, class C>
+Value ToJSON(const Endorsement<A, B, C>& e) {
   auto obj = json::makeEmptyObject<Value>();
   json::putStringKV(obj, "id", HexStr(e.id));
   json::putStringKV(obj, "endorsedHash", HexStr(e.endorsedHash));
-  json::putIntKV(obj, "endorsedHeight", e.endorsedHeight);
   json::putStringKV(obj, "containingHash", e.containingHash);
   json::putStringKV(obj, "blockOfProof", e.blockOfProof);
   json::putStringKV(obj, "payoutInfo", e.payoutInfo);
