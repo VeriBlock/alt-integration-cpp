@@ -45,6 +45,8 @@ class PayloadsStorage {
   void savePayloads(const Payloads& payloads) {
     auto& repo = getRepo<Payloads>();
     repo.put(payloads);
+    _cacheAlt.remove(payloads.getId().asVector());
+    _cacheVbk.remove(payloads.getId().asVector());
   }
 
   template <typename Payloads>
@@ -53,6 +55,8 @@ class PayloadsStorage {
     auto batch = repo.newBatch();
     for (const auto& p : payloads) {
       batch->put(p);
+      _cacheAlt.remove(p.getId().asVector());
+      _cacheVbk.remove(p.getId().asVector());
     }
     batch->commit();
   }
@@ -139,15 +143,15 @@ class PayloadsStorage {
     return out;
   }
 
+  template <typename Tree, typename Payloads>
+  CommandGroupCache& getCache();
+
  protected:
   std::shared_ptr<PayloadsRepository<ATV>> _repoAtv;
   std::shared_ptr<PayloadsRepository<VTB>> _repoVtb;
   std::shared_ptr<PayloadsRepository<VbkBlock>> _repoBlocks;
   CommandGroupCache _cacheAlt;
   CommandGroupCache _cacheVbk;
-
-  template <typename Tree, typename Payloads>
-  CommandGroupCache& getCache();
 };
 
 template <typename Tree, typename Payloads>
