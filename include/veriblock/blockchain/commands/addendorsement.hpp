@@ -51,21 +51,22 @@ struct AddEndorsement : public Command {
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     if (!endorsed) {
       return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
-                           "No block found the tree");
+                           "No block found in the tree");
     }
 
-    if (endorsed->getHash() != chain[endorsed->height]->getHash()) {
+    if (containing->height - endorsed->height > window) {
+      return state.Invalid(protected_block_t::name() + "-expired",
+                           "Endorsement expired");
+    }
+
+    if (chain[endorsed->height] == nullptr ||
+        endorsed->getHash() != chain[endorsed->height]->getHash()) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
               "Endorsed block is on a different chain. Expected: %s, got %s",
               endorsed->toShortPrettyString(),
               HexStr(e_->endorsedHash)));
-    }
-
-    if (containing->height - endorsed->height > window) {
-      return state.Invalid(protected_block_t::name() + "-expired",
-                           "Endorsement expired");
     }
 
     auto& id = e_->id;
@@ -98,7 +99,7 @@ struct AddEndorsement : public Command {
       // found duplicate
       return state.Invalid(
           protected_block_t ::name() + "-duplicate",
-          fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+          fmt::sprintf("Can not add endorsement=%s to block=%s, because we"
                        "found its duplicate in block %s",
                        e_->toPrettyString(),
                        containing->toShortPrettyString(),
