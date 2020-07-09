@@ -7,17 +7,26 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_STORAGE_HPP_
 
 #include <veriblock/blockchain/command_group.hpp>
+#include <veriblock/command_group_cache.hpp>
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/entities/vtb.hpp>
 #include <veriblock/storage/db_error.hpp>
 #include <veriblock/storage/payloads_repository.hpp>
-#include <veriblock/command_group_cache.hpp>
 
 namespace altintegration {
 
 struct VbkBlockTree;
+
+template <typename BlockIndex, typename Payloads>
+CommandGroup::id_t getCommandGroupId(const BlockIndex& index,
+                                     const typename Payloads::id_t& pid) {
+  std::vector<uint8_t> out = pid.asVector();
+  auto hash = index.getHash();
+  out.insert(out.end(), hash.begin(), hash.end());
+  return out;
+}
 
 class PayloadsStorage {
  public:
@@ -45,8 +54,6 @@ class PayloadsStorage {
   void savePayloads(const Payloads& payloads) {
     auto& repo = getRepo<Payloads>();
     repo.put(payloads);
-    _cacheAlt.remove(payloads.getId().asVector());
-    _cacheVbk.remove(payloads.getId().asVector());
   }
 
   template <typename Payloads>
@@ -55,8 +62,6 @@ class PayloadsStorage {
     auto batch = repo.newBatch();
     for (const auto& p : payloads) {
       batch->put(p);
-      _cacheAlt.remove(p.getId().asVector());
-      _cacheVbk.remove(p.getId().asVector());
     }
     batch->commit();
   }
@@ -123,12 +128,14 @@ class PayloadsStorage {
   template <typename Tree, typename Payloads>
   std::vector<CommandGroup> loadCommandsStorage(
       const typename Tree::index_t& index, Tree& tree) {
-    auto& pids = index.template getPayloadIds<Payloads, typename Payloads::id_t>();
+    auto& pids =
+        index.template getPayloadIds<Payloads, typename Payloads::id_t>();
     std::vector<CommandGroup> out{};
     for (const auto& pid : pids) {
-      CommandGroup cg(pid.asVector(), true, Payloads::name());
       auto& cache = getCache<Tree, Payloads>();
-      if (!cache.get(pid.asVector(), &cg)) {
+      auto cid = getCommandGroupId<typename Tree::index_t, Payloads>(index, pid);
+      CommandGroup cg(pid.asVector(), true, Payloads::name());
+      if (!cache.get(cid, &cg)) {
         Payloads payloads;
         if (!getRepo<Payloads>().get(pid, &payloads)) {
           throw db::StateCorruptedException(
@@ -136,15 +143,12 @@ class PayloadsStorage {
         }
         cg.valid = payloads.valid;
         payloadsToCommands_(tree, payloads, *index.header, cg.commands);
-        cache.put(cg);
+        cache.put(cid, cg);
       }
       out.push_back(cg);
     }
     return out;
   }
-
-  template <typename Tree, typename Payloads>
-  CommandGroupCache& getCache();
 
  protected:
   std::shared_ptr<PayloadsRepository<ATV>> _repoAtv;
@@ -152,6 +156,9 @@ class PayloadsStorage {
   std::shared_ptr<PayloadsRepository<VbkBlock>> _repoBlocks;
   CommandGroupCache _cacheAlt;
   CommandGroupCache _cacheVbk;
+
+  template <typename Tree, typename Payloads>
+  CommandGroupCache& getCache();
 };
 
 template <typename Tree, typename Payloads>

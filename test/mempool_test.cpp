@@ -17,7 +17,7 @@ using namespace altintegration;
 struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
-  MemPoolFixture() { GetLogger().level = altintegration::LogLevel::warn; }
+  MemPoolFixture() { GetLogger().level = altintegration::LogLevel::info; }
 
   void applyInNextBlock(const PopData& pop) {
     auto containingBlock = generateNextBlock(*chain.rbegin());

@@ -22,10 +22,9 @@ struct CommandGroupCache {
 
   virtual ~CommandGroupCache() = default;
 
-  virtual bool put(const CommandGroup& cg) {
-    auto& id = cg.id;
-    bool res = _cache.find(id) != _cache.end();
-    _cache.insert({id, std::make_shared<CommandGroup>(cg)});
+  virtual bool put(const id_t& cid, const CommandGroup& cg) {
+    bool res = _cache.find(cid) != _cache.end();
+    _cache.insert({cid, std::make_shared<CommandGroup>(cg)});
     truncate();
     return res;
   }
@@ -69,10 +68,14 @@ struct CommandGroupCache {
     if ((_priority.size() < _maxsize) && (_cache.size() < _maxsize)) return;
 
     // cache size is over the limit - erase the oldest element
-    auto lastid = _priority.back();
-    _priority.pop_back();
-    _keys.erase(lastid);
-    _cache.erase(lastid);
+    if (_priority.empty()) {
+      _cache.erase(_cache.begin());
+    } else {
+      auto lastid = _priority.back();
+      _priority.pop_back();
+      _keys.erase(lastid);
+      _cache.erase(lastid);
+    }
   }
 
   virtual bool refer(const id_t& cid) {
