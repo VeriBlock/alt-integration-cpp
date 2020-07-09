@@ -187,6 +187,25 @@ struct BaseBlockTree {
     }
   }
 
+  /**
+   * Check if the blockchain is bootstrapped
+   *
+   * @return true if the blockchain is bootstrapped, false otherwise
+   */
+  bool isBootstrapped() {
+    if (!blocks_.empty() && activeChain_.tip() != nullptr) {
+      return true;
+    }
+
+    if (blocks_.empty() && activeChain_.tip() == nullptr) {
+      return false;
+    }
+
+    VBK_ASSERT(
+        false &&
+        "state corruption: the blockchain is neither bootstrapped nor empty");
+  }
+
   virtual bool setState(const hash_t& block, ValidationState& state) {
     auto* index = getBlockIndex(block);
     if (!index) {

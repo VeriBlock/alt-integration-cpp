@@ -15,22 +15,8 @@
 
 namespace altintegration {
 
-bool AltTree::isBootstrapped() {
-  if (!base::blocks_.empty() && base::getBestChain().tip() != nullptr) {
-    return true;
-  }
-
-  if (base::blocks_.empty() && base::getBestChain().tip() == nullptr) {
-    return false;
-  }
-
-  VBK_ASSERT(
-      false &&
-      "state corruption: the blockchain is neither bootstrapped nor empty");
-}
-
 bool AltTree::bootstrap(ValidationState& state) {
-  if (isBootstrapped()) {
+  if (base::isBootstrapped()) {
     return state.Error("already bootstrapped");
   }
 
@@ -44,7 +30,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   index->setFlag(BLOCK_APPLIED);
   base::activeChain_ = Chain<index_t>(height, index);
 
-  VBK_ASSERT(isBootstrapped());
+  VBK_ASSERT(base::isBootstrapped());
 
   VBK_ASSERT(getBlockIndex(index->getHash()) != nullptr &&
              "getBlockIndex must be able to find the block added by "

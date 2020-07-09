@@ -68,13 +68,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   //! may return false, if bootstrap block is invalid
   bool bootstrap(ValidationState& state);
 
-  /**
-   * Check if the blockchain is bootstrapped
-   *
-   * @return true if the blockchain is bootstrapped, false otherwise
-   */
-  bool isBootstrapped();
-
   bool acceptBlock(const AltBlock& block, ValidationState& state);
 
   void removePayloads(index_t& index, const PopData& popData);
