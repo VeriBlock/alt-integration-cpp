@@ -146,6 +146,11 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   std::string toPrettyString(size_t level = 0) const;
 
+  using base::setState;
+  bool setState(index_t& to, ValidationState& state) override;
+
+  bool overrideTip(index_t& to, ValidationState& state) override;
+
  protected:
   const alt_config_t* alt_config_;
   const vbk_config_t* vbk_config_;
@@ -154,23 +159,14 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   PopRewards rewards_;
   PayloadsStorage& storagePayloads_;
 
-  void determineBestChain(index_t& candidate,
-                          ValidationState& state,
-                          bool isBootstrap = false) override;
-
-  bool setTip(index_t& to,
-              ValidationState& state,
-              bool skipSetState = false) override;
+  void determineBestChain(index_t& candidate, ValidationState& state) override;
 
   bool addPayloads(index_t& index,
                    PopData& payloads,
                    ValidationState& state,
                    bool continueOnInvalid = false);
 
-  bool setTip(index_t& to,
-              ValidationState& state,
-              bool skipSetState,
-              bool continueOnInvalid);
+  bool setTipContinueOnInvalid(index_t& to, ValidationState& state);
 };
 
 template <>

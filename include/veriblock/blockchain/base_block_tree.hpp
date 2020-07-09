@@ -63,19 +63,16 @@ struct BaseBlockTree {
     return insertBlockHeader(block);
   }
 
-  void removeSubtree(const hash_t& toRemove,
-                     bool shouldDetermineBestChain = true) {
+  void removeSubtree(const hash_t& toRemove) {
     auto* index = getBlockIndex(toRemove);
     if (!index) {
       throw std::logic_error("could not find the subtree to remove");
     }
-    return removeSubtree(*index, shouldDetermineBestChain);
+    return removeSubtree(*index);
   }
 
-  void removeSubtree(index_t& toRemove, bool shouldDetermineBestChain = true) {
-    VBK_LOG_DEBUG("remove subtree %s, do fork resolution=%s",
-                  toRemove.toPrettyString(),
-                  (shouldDetermineBestChain ? "true" : "false"));
+  void removeSubtree(index_t& toRemove) {
+    VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
     if (!prev) {
@@ -85,8 +82,8 @@ struct BaseBlockTree {
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
       ValidationState dummy;
-      bool ret = this->setTip(*prev, dummy, false);
-      VBK_ASSERT(ret);
+      bool success = this->setState(*prev, dummy);
+      VBK_ASSERT(success);
     }
 
     // remove this block from 'pnext' set of previous block
@@ -98,15 +95,15 @@ struct BaseBlockTree {
     tryAddTip(prev);
 
     if (isOnMainChain) {
-      updateTips(shouldDetermineBestChain);
+      updateTips();
     }
   }
 
-  void removeLeaf(index_t& toRemove, bool shouldDetermineBestChain = true) {
+  void removeLeaf(index_t& toRemove) {
     if (!toRemove.pnext.empty()) {
       throw std::logic_error("not a leaf block");
     }
-    return removeSubtree(toRemove, shouldDetermineBestChain);
+    return removeSubtree(toRemove);
   }
 
   void invalidateSubtree(const hash_t& toBeInvalidated,
@@ -132,8 +129,8 @@ struct BaseBlockTree {
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
       ValidationState dummy;
-      bool ret = this->setTip(*toBeInvalidated.pprev, dummy, false);
-      VBK_ASSERT(ret);
+      bool success = this->setState(*toBeInvalidated.pprev, dummy);
+      VBK_ASSERT(success);
     }
 
     doInvalidate(toBeInvalidated, reason);
@@ -151,7 +148,9 @@ struct BaseBlockTree {
     // after invalidation, try to add tip
     tryAddTip(toBeInvalidated.pprev);
 
-    updateTips(shouldDetermineBestChain);
+    if (shouldDetermineBestChain) {
+      updateTips();
+    }
   }
 
   void revalidateSubtree(const hash_t& hash,
@@ -183,24 +182,29 @@ struct BaseBlockTree {
       });
     }
 
-    updateTips(shouldDetermineBestChain);
+    if (shouldDetermineBestChain) {
+      updateTips();
+    }
   }
 
-  virtual bool setState(const hash_t& block,
-                        ValidationState& state,
-                        bool skipSetState = false) {
+  virtual bool setState(const hash_t& block, ValidationState& state) {
     auto* index = getBlockIndex(block);
     if (!index) {
       return state.Invalid(block_t::name() + "-setstate-unknown-block",
                            "could not find the block to set the state to");
     }
-    return setState(*index, state, skipSetState);
+    return setState(*index, state);
   }
 
-  virtual bool setState(index_t& index,
-                        ValidationState& state,
-                        bool skipSetState = false) {
-    return setTip(index, state, skipSetState);
+  virtual bool setState(index_t& index, ValidationState& state) {
+    return overrideTip(index, state);
+  }
+
+  virtual bool overrideTip(index_t& to, ValidationState& state) {
+    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
+    activeChain_.setTip(&to);
+    tryAddTip(&to);
+    return true;
   }
 
   //! connects a handler to a signal 'On Invalidate Block'
@@ -224,8 +228,7 @@ struct BaseBlockTree {
 
  protected:
   virtual void determineBestChain(index_t& candidate,
-                                  ValidationState& state,
-                                  bool isBootstrap) = 0;
+                                  ValidationState& state) = 0;
 
   void tryAddTip(index_t* index) {
     VBK_ASSERT(index);
@@ -311,14 +314,6 @@ struct BaseBlockTree {
     return current;
   }
 
-  //! updates tree tip
-  virtual bool setTip(index_t& to, ValidationState&, bool) {
-    activeChain_.setTip(&to);
-    tryAddTip(&to);
-    VBK_LOG_DEBUG("SetTip=%s", to.toShortPrettyString());
-    return true;
-  }
-
   std::string toPrettyString(size_t level = 0) const {
     auto tip = activeChain_.tip();
     std::string pad(level, ' ');
@@ -380,12 +375,10 @@ struct BaseBlockTree {
    * Find all tips affected by a block modification and schedule or do fork
    * resolution
    */
-  void updateAffectedTips(index_t& modifiedBlock,
-                          bool shouldDetermineBestChain = true) {
+  void updateAffectedTips(index_t& modifiedBlock) {
     if (deferForkResolutionDepth == 0) {
       ValidationState dummy;
-      return doUpdateAffectedTips(
-          modifiedBlock, dummy, shouldDetermineBestChain);
+      return doUpdateAffectedTips(modifiedBlock, dummy);
     }
 
     if (!isUpdateTipsDeferred) {
@@ -401,21 +394,18 @@ struct BaseBlockTree {
   /**
    * Find all tips affected by a block modification and do fork resolution
    */
-  void doUpdateAffectedTips(index_t& modifiedBlock,
-                            ValidationState& state,
-                            bool shouldDetermineBestChain = true) {
+  void doUpdateAffectedTips(index_t& modifiedBlock, ValidationState& state) {
     auto tips = findValidTips<block_t>(modifiedBlock);
     VBK_LOG_DEBUG(
         "Found %d affected valid tips in %s", tips.size(), block_t::name());
     for (auto* tip : tips) {
-      bool isBootstrap = !shouldDetermineBestChain;
-      determineBestChain(*tip, state, isBootstrap);
+      determineBestChain(*tip, state);
     }
   }
 
-  void updateTips(bool shouldDetermineBestChain = true) {
+  void updateTips() {
     if (deferForkResolutionDepth == 0) {
-      return doUpdateTips(shouldDetermineBestChain);
+      return doUpdateTips();
     }
     isUpdateTipsDeferred = true;
     lastModifiedBlock = nullptr;
@@ -426,16 +416,14 @@ struct BaseBlockTree {
   bool isUpdateTipsDeferred = false;
   index_t* lastModifiedBlock = nullptr;
 
-  void doUpdateTips(bool shouldDetermineBestChain = true) {
+  void doUpdateTips() {
     for (auto it = tips_.begin(); it != tips_.end();) {
       index_t* tip = *it;
       if (!tip->isValid()) {
         it = tips_.erase(it);
       } else {
-        if (shouldDetermineBestChain) {
-          ValidationState state;
-          determineBestChain(*tip, state, /*isBootstrap=*/false);
-        }
+        ValidationState state;
+        determineBestChain(*tip, state);
         ++it;
       }
     }

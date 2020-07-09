@@ -134,13 +134,11 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     VBK_ASSERT(index);
+    base::tryAddTip(index);
 
     // don't defer fork resolution in the acceptBlock+addPayloads flow until the
     // validation hole is plugged
-    bool isBootstrap = !shouldContextuallyCheck;
-    determineBestChain(*index, state, isBootstrap);
-
-    base::tryAddTip(index);
+    determineBestChain(*index, state);
 
     return true;
   }
@@ -169,7 +167,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     index->setFlag(BLOCK_APPLIED);
 
-    return this->setTip(*index, state, true);
+    return this->overrideTip(*index, state);
   }
 
   bool validateAndAddBlock(const std::shared_ptr<block_t>& block,
@@ -212,9 +210,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     return true;
   }
 
-  void determineBestChain(index_t& candidate,
-                          ValidationState& state,
-                          bool isBootstrap = false) override {
+  void determineBestChain(index_t& candidate, ValidationState& state) override {
     if (VBK_UNLIKELY(IsShutdownRequested())) {
       return;
     }
@@ -230,8 +226,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     if (bestTip == nullptr || bestTip->chainWork < candidate.chainWork) {
-      //! important to use this->setTip for proper vtable resolution
-      this->setTip(candidate, state, isBootstrap);
+      //! important to use this->setState for proper vtable resolution
+      this->setState(candidate, state);
     }
   }
 };
