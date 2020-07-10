@@ -6,9 +6,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCKCHAIN_STORAGE_UTIL_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_BLOCKCHAIN_STORAGE_UTIL_HPP_
 
-#include <veriblock/storage/pop_storage.hpp>
-#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
+#include <veriblock/blockchain/blocktree.hpp>
+#include <veriblock/storage/pop_storage.hpp>
 
 namespace altintegration {
 
@@ -41,7 +41,8 @@ bool loadAndApplyBlocks(PopStorage& storage,
   auto* tip = tree.getBlockIndex(tipStored.second);
   if (tip == nullptr) return false;
   if (tip->height != tipStored.first) return false;
-  return tree.setState(*tip, state, true);
+  tree.overrideTip(*tip);
+  return true;
 }
 
 }  // namespace altintegration

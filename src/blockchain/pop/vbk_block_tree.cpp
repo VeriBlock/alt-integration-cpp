@@ -15,31 +15,9 @@
 namespace altintegration {
 
 void VbkBlockTree::determineBestChain(index_t& candidate,
-                                      ValidationState& state,
-                                      bool isBootstrap) {
-  if (VBK_UNLIKELY(IsShutdownRequested())) {
-    return;
-  }
-
+                                      ValidationState& state) {
   auto bestTip = getBestChain().tip();
-  if (bestTip == &candidate) {
-    return;
-  }
-
-  // do not even try to do fork resolution with an invalid chain
-  if (!candidate.isValid()) {
-    VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
-                  candidate.toPrettyString());
-    return;
-  }
-
-  if (bestTip == nullptr) {
-    VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
-                  candidate.toShortPrettyString());
-    bool success = setTip(candidate, state, isBootstrap);
-    VBK_ASSERT(success);
-    return;
-  }
+  VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
 
   if (bestTip->height > candidate.height + param_->getMaxReorgBlocks()) {
     VBK_LOG_DEBUG("%s Candidate is behind tip more than %d blocks",
@@ -54,55 +32,26 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   if (result == 0) {
     VBK_LOG_DEBUG("Pop scores are equal");
     // pop scores are equal. do PoW fork resolution
-    VbkTree::determineBestChain(candidate, state, /* skipSetState=*/false);
+    VbkTree::determineBestChain(candidate, state);
   } else if (result < 0) {
     VBK_LOG_DEBUG("Candidate chain won");
     // other chain won! we already set pop state, so only update tip
-    bool success = this->setTip(candidate, state, /* skipSetState=*/true);
-    VBK_ASSERT(success);
+    this->overrideTip(candidate);
   } else {
     VBK_LOG_DEBUG("Active chain won");
     // current chain is better
   }
 }
 
-bool VbkBlockTree::setTip(index_t& to,
-                          ValidationState& state,
-                          bool skipSetState) {
-  bool changeTip = true;
-  if (!skipSetState) {
-    changeTip = cmp_.setState(*this, to, state);
-  }
-
-  // edge case: if changeTip is false, then new block arrived on top of current
-  // active chain, and this block has invalid commands
-  if (changeTip) {
-    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
-    activeChain_.setTip(&to);
-    tryAddTip(&to);
+bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
+  bool success = cmp_.setState(*this, to, state);
+  if (success) {
+    overrideTip(to);
   } else {
+    // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
   }
-
-  return changeTip;
-}
-
-bool VbkBlockTree::bootstrapWithChain(int startHeight,
-                                      const std::vector<block_t>& chain,
-                                      ValidationState& state) {
-  if (!VbkTree::bootstrapWithChain(startHeight, chain, state)) {
-    return state.Invalid("vbk-bootstrap-chain");
-  }
-
-  return true;
-}
-
-bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
-  if (!VbkTree::bootstrapWithGenesis(state)) {
-    return state.Invalid("vbk-bootstrap-genesis");
-  }
-
-  return true;
+  return success;
 }
 
 void VbkBlockTree::removePayloads(const block_t& block,
@@ -136,7 +85,7 @@ void VbkBlockTree::removePayloads(index_t& index,
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool success = setTip(*index.pprev, dummy, false);
+    bool success = setState(*index.pprev, dummy);
     VBK_ASSERT(success);
   }
 
@@ -283,7 +232,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     }
 
     ValidationState dummy;
-    bool success = setTip(*index->pprev, dummy, false);
+    bool success = setState(*index->pprev, dummy);
     VBK_ASSERT(success &&
                "state corruption: failed to roll back the best chain tip");
   }
@@ -312,7 +261,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   // restore the tip
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool success = setTip(*tip, dummy, false);
+    bool success = setState(*tip, dummy);
     VBK_ASSERT(success &&
                "state corruption: failed to restore the best chain tip");
   }
