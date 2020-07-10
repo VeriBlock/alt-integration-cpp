@@ -204,6 +204,7 @@ struct BaseBlockTree {
     VBK_ASSERT(
         false &&
         "state corruption: the blockchain is neither bootstrapped nor empty");
+    return false;
   }
 
   virtual bool setState(const hash_t& block, ValidationState& state) {
