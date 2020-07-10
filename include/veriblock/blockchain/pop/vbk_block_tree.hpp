@@ -49,12 +49,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
   const PayloadsStorage& getStoragePayloads() const { return storagePayloads_; }
 
-  bool bootstrapWithChain(height_t startHeight,
-                          const std::vector<block_t>& chain,
-                          ValidationState& state) override;
-
-  bool bootstrapWithGenesis(ValidationState& state) override;
-
   /**
    * @invariant atomic: adds either all or none of the payloads
    */
@@ -99,14 +93,11 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   std::string toPrettyString(size_t level = 0) const;
 
- private:
-  bool setTip(index_t& to,
-              ValidationState& state,
-              bool isBootstrap = false) override;
+  using base::setState;
+  bool setState(index_t& to, ValidationState& state) override;
 
-  void determineBestChain(index_t& candidate,
-                          ValidationState& state,
-                          bool isBootstrap = false) override;
+ private:
+  void determineBestChain(index_t& candidate, ValidationState& state) override;
 
   PopForkComparator cmp_;
   PayloadsStorage& storagePayloads_;
