@@ -96,8 +96,6 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(it != index.vtbids.end() &&
                "could not find the payload to remove");
 
-    //auto payloads = storagePayloads_.loadPayloads<payloads_t>(pid);
-
     if (!storagePayloads_.isValid<VTB, index_t>(pid, index)) {
       revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
