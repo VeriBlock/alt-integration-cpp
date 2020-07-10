@@ -226,7 +226,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, Basic, Altchain);
 
-typedef ::testing::Types<TestStorageInmem /*TestStorageRocks*/> TypesUnderTest;
+typedef ::testing::Types<TestStorageInmem, TestStorageRocks> TypesUnderTest;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(AltTreeRepositoryTestSuite,
                                AltTreeRepositoryTest,
