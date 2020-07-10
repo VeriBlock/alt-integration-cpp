@@ -160,14 +160,14 @@ struct BlockIndex : public Block::addon_t {
 
   void toRaw(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
-    stream.writeBE<uint32_t>(status);
+    stream.writeBE<uint8_t>(status);
     header->toRaw(stream);
     addon_t::toRaw(stream);
   }
 
   void initFromRaw(ReadStream& stream) {
     height = stream.readBE<uint32_t>();
-    status = stream.readBE<uint32_t>();
+    status = stream.readBE<uint8_t>();
     header = std::make_shared<Block>(Block::fromRaw(stream));
     addon_t::initAddonFromRaw(stream);
   }
