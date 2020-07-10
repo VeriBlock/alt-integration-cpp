@@ -8,8 +8,8 @@
 
 #include <list>
 // important to include this since it contains hasher for the vector as a key
-#include <veriblock/entities/altblock.hpp>
 #include <veriblock/blockchain/command_group.hpp>
+#include <veriblock/entities/altblock.hpp>
 
 namespace altintegration {
 

@@ -355,8 +355,7 @@ void handleRemovePayloads(Tree& tree,
       continue;
     }
 
-    auto stored_payload = storage.template loadPayloads<Pop>(pid);
-    if (!stored_payload.valid) {
+    if (!storage.isValid<Pop, Index>(pid, index)) {
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
@@ -394,11 +393,11 @@ bool AltTree::setTip(AltTree::index_t& to,
   return setTip(to, state, skipSetState, false);
 }
 
-template <typename Payloads, typename Storage>
-void removePayloadsIfInvalid(std::vector<Payloads>& p, Storage& storage) {
+template <typename Payloads, typename Storage, typename BlockIndex>
+void removePayloadsIfInvalid(std::vector<Payloads>& p, Storage& storage, BlockIndex& index) {
   auto it = std::remove_if(p.begin(), p.end(), [&](const Payloads& payloads) {
-    auto id = payloads.getId();
-    auto isValid = storage.template getValidity<Payloads>(id);
+    auto isValid =
+        storage.isValid<Payloads, BlockIndex>(payloads.getId(), index);
     return !isValid;
   });
   p.erase(it, p.end());
@@ -439,9 +438,9 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
   ret = setTip(*tmpindex, state, false, true);
   VBK_ASSERT(ret);
 
-  removePayloadsIfInvalid(pop.atvs, storagePayloads_);
-  removePayloadsIfInvalid(pop.vtbs, storagePayloads_);
-  removePayloadsIfInvalid(pop.context, storagePayloads_);
+  removePayloadsIfInvalid(pop.atvs, storagePayloads_, *tmpindex);
+  removePayloadsIfInvalid(pop.vtbs, storagePayloads_, *tmpindex);
+  removePayloadsIfInvalid(pop.context, storagePayloads_, *tmpindex);
 
   VBK_LOG_INFO("After filter VBK=%d VTB=%d ATV=%d",
                pop.context.size(),

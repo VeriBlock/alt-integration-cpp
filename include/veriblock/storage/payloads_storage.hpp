@@ -77,38 +77,6 @@ class PayloadsStorage {
   std::vector<CommandGroup> loadCommands(
       const typename BlockTree::index_t& index, BlockTree& tree);
 
-  template <typename Payloads>
-  void setValidity(const typename Payloads::id_t& pid, bool valid) {
-    auto payloads = loadPayloads<Payloads>(pid);
-    payloads.valid = valid;
-    savePayloads(payloads);
-  }
-
-  template <typename Payloads>
-  bool getValidity(const typename Payloads::id_t& pid) {
-    auto payloads = loadPayloads<Payloads>(pid);
-    return payloads.valid;
-  }
-
-  void setValidity(const CommandGroup& cg, bool valid) {
-    if (cg.getPayloadsTypeName() == altintegration::VbkBlock::name()) {
-      return setValidity<altintegration::VbkBlock>(
-          altintegration::VbkBlock::id_t(cg.id), valid);
-    }
-
-    if (cg.getPayloadsTypeName() == altintegration::VTB::name()) {
-      return setValidity<altintegration::VTB>(altintegration::VTB::id_t(cg.id),
-                                              valid);
-    }
-
-    if (cg.getPayloadsTypeName() == altintegration::ATV::name()) {
-      return setValidity<altintegration::ATV>(altintegration::ATV::id_t(cg.id),
-                                              valid);
-    }
-
-    VBK_ASSERT(false && "should not get here");
-  }
-
   template <typename Tree, typename Payloads>
   void payloadsToCommands_(Tree& tree,
                            const Payloads& payloads,
@@ -141,13 +109,64 @@ class PayloadsStorage {
           throw db::StateCorruptedException(
               fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
         }
-        cg.valid = payloads.valid;
         payloadsToCommands_(tree, payloads, *index.header, cg.commands);
         cache.put(cid, cg);
       }
+      // create new validity record if does not exist
+      if (!isExisting<Payloads, typename Tree::index_t>(pid, index)) {
+        setValidity<Payloads, typename Tree::index_t>(pid, index, true);
+      }
+      cg.valid = isValid<Payloads, typename Tree::index_t>(pid, index);
       out.push_back(cg);
     }
     return out;
+  }
+
+  template <typename BlockIndex>
+  void setValidity(const CommandGroup& cg,
+                   const BlockIndex& index,
+                   bool valid) {
+    if (cg.getPayloadsTypeName() == altintegration::VbkBlock::name()) {
+      return setValidity<altintegration::VbkBlock, BlockIndex>(
+          altintegration::VbkBlock::id_t(cg.id), index, valid);
+    }
+
+    if (cg.getPayloadsTypeName() == altintegration::VTB::name()) {
+      return setValidity<altintegration::VTB, BlockIndex>(
+          altintegration::VTB::id_t(cg.id), index, valid);
+    }
+
+    if (cg.getPayloadsTypeName() == altintegration::ATV::name()) {
+      return setValidity<altintegration::ATV, BlockIndex>(
+          altintegration::ATV::id_t(cg.id), index, valid);
+    }
+
+    VBK_ASSERT(false && "should not get here");
+  }
+
+  template <typename Payloads, typename BlockIndex>
+  void setValidity(const typename Payloads::id_t& pid,
+                   const BlockIndex& index,
+                   bool valid) {
+    auto cid = getCommandGroupId<BlockIndex, Payloads>(index, pid);
+    _cgValidity[cid] = valid;
+  }
+
+  template <typename Payloads, typename BlockIndex>
+  bool isValid(const typename Payloads::id_t& pid, const BlockIndex& index) {
+    auto cid = getCommandGroupId<BlockIndex, Payloads>(index, pid);
+    auto it = _cgValidity.find(cid);
+    if (it == _cgValidity.end()) {
+      throw db::StateCorruptedException(fmt::sprintf(
+          "CommandGroup id={%s} validity is not set", HexStr(cid)));
+    }
+    return it->second;
+  }
+
+  template <typename Payloads, typename BlockIndex>
+  bool isExisting(const typename Payloads::id_t& pid, const BlockIndex& index) {
+    auto cid = getCommandGroupId<BlockIndex, Payloads>(index, pid);
+    return _cgValidity.find(cid) != _cgValidity.end();
   }
 
  protected:
@@ -156,6 +175,7 @@ class PayloadsStorage {
   std::shared_ptr<PayloadsRepository<VbkBlock>> _repoBlocks;
   CommandGroupCache _cacheAlt;
   CommandGroupCache _cacheVbk;
+  std::unordered_map<CommandGroup::id_t, bool> _cgValidity;
 
   template <typename Tree, typename Payloads>
   CommandGroupCache& getCache();
