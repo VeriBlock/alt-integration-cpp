@@ -480,13 +480,8 @@ bool AltTree::setTipContinueOnInvalid(AltTree::index_t& to,
   bool success = cmp_.setState(*this, to, state, /*continueOnInvalid=*/true);
   VBK_ASSERT(success);
 
-  if (success) {
-    bool success = overrideTip(to, state);
-    VBK_ASSERT(success);
-  } else {
-    // if setState failed, then 'to' must be invalid
-    VBK_ASSERT(!to.isValid());
-  }
+  success = overrideTip(to, state);
+  VBK_ASSERT(success);
 
   // true if tip has been changed
   return success;
