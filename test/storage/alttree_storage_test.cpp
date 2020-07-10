@@ -133,7 +133,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   auto* chainAtip = this->popminer->mineBtcBlocks(1);
 
   // create VBK pop tx that has 'block of proof=CHAIN A'
-  auto txa = this->popminer->createVbkPopTxEndorsingVbkBlock(
+  this->popminer->createVbkPopTxEndorsingVbkBlock(
       *chainAtip->header,
       btctx,
       *vbkTip->header,
@@ -145,7 +145,6 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   vbkTip = this->popminer->mineVbkBlocks(1);
 
   auto adaptor = RepoBatchAdaptor(*this->storage);
-
   SaveTree(this->popminer->btc(), adaptor);
   SaveTree(this->popminer->vbk(), adaptor);
   this->saveToPayloadsStorageVbk(this->popminer->vbk().getStoragePayloads(),
@@ -156,16 +155,13 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   newvbk.btc().bootstrapWithGenesis(this->state);
   newvbk.bootstrapWithGenesis(this->state);
 
-  GetLogger().level = LogLevel::info;
-
   ASSERT_TRUE(LoadTreeWrapper(newvbk.btc(), *this->storage, this->state))
       << this->state.toString();
   ASSERT_TRUE(LoadTreeWrapper(newvbk, *this->storage, this->state))
       << this->state.toString();
 
-  ASSERT_TRUE(newvbk.btc() == this->popminer->btc());
-  ASSERT_TRUE(newvbk == this->popminer->vbk());
-
+  ASSERT_EQ(newvbk.btc(), this->popminer->btc());
+  ASSERT_EQ(newvbk,  this->popminer->vbk());
   this->popminer->vbk().removeLeaf(*this->popminer->vbk().getBestChain().tip());
   ASSERT_FALSE(newvbk == this->popminer->vbk());
 
@@ -175,7 +171,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   ASSERT_TRUE(newvbk.btc() == this->popminer->btc());
 }
 
-TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
+ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
 
   // mine 2 blocks
@@ -201,18 +197,24 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  EXPECT_TRUE(this->alttree.saveToStorage(*this->storage, this->state));
-  this->saveToPayloadsStorageVbk(this->alttree.vbk().getStoragePayloads(),
-                                 *this->storagePayloads2);
-  this->saveToPayloadsStorageAlt(this->alttree.getStoragePayloads(),
-                                 *this->storagePayloads2);
+  auto adaptor = RepoBatchAdaptor(*this->storage);
+  SaveAllTrees(this->alttree, adaptor);
 
-  AltTree reloadedAltTree{this->altparam, this->vbkparam, this->btcparam, *this->storagePayloads2};
-  EXPECT_TRUE(reloadedAltTree.loadFromStorage(*this->storage, this->state));
+  AltTree reloadedAltTree{this->altparam,
+                          this->vbkparam,
+                          this->btcparam,
+                          this->alttree.getStoragePayloads()};
+  reloadedAltTree.btc().bootstrapWithGenesis(this->state);
+  reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
+  reloadedAltTree.bootstrap(this->state);
 
-  EXPECT_TRUE(reloadedAltTree.vbk().btc() == this->alttree.vbk().btc());
-  EXPECT_TRUE(reloadedAltTree.vbk() == this->alttree.vbk());
-  EXPECT_TRUE(reloadedAltTree == this->alttree);
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
+
+  ASSERT_EQ(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc());
+  ASSERT_EQ(reloadedAltTree.vbk(), this->alttree.vbk());
+  ASSERT_EQ(reloadedAltTree, this->alttree);
 
   this->alttree.removeLeaf(*this->alttree.getBestChain().tip());
   EXPECT_FALSE(reloadedAltTree == this->alttree);
@@ -222,9 +224,9 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
 }
 
 // make sure to enumerate the test cases here
-REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, Basic);
+REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, Basic, Altchain);
 
-typedef ::testing::Types</*TestStorageInmem,*/ TestStorageRocks> TypesUnderTest;
+typedef ::testing::Types<TestStorageInmem /*TestStorageRocks*/> TypesUnderTest;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(AltTreeRepositoryTestSuite,
                                AltTreeRepositoryTest,

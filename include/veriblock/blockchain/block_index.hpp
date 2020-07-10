@@ -97,9 +97,7 @@ struct BlockIndex : public Block::addon_t {
   }
 
   void setFlag(enum BlockStatus s) { this->status |= s; }
-
   void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
-
   bool hasFlags(enum BlockStatus s) const { return this->status & s; }
 
   hash_t getHash() const { return header->getHash(); }

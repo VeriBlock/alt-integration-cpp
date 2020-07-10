@@ -64,13 +64,21 @@ struct BaseBlockTree {
           fmt::format("Can not find tip with hash {}", HexStr(hash)));
     }
 
-    return this->setTip(*tip, state, /*skipSetState=*/true);
+    this->overrideTip(*tip);
+    return true;
   }
 
   //! @invariant NOT atomic.
   virtual bool loadBlock(const index_t& index, ValidationState& state) {
     auto currentHash = index.getHash();
     auto* current = getBlockIndex(currentHash);
+    // we can not load a block, which already exists on chain and is not a
+    // bootstrap block
+    if (current && !current->hasFlags(BLOCK_BOOTSTRAP)) {
+      return state.Invalid("block-exists",
+                           "Trying to load a block, which already exists on "
+                           "chain and is not a bootstrap block.");
+    }
 
     // if current block is not known, and previous also not known
     if (!current && !getBlockIndex(index.header->previousBlock)) {
@@ -81,15 +89,9 @@ struct BaseBlockTree {
                       HexStr(index.header->previousBlock)));
     }
 
-    // we can not load a block, which already exists on chain and is not a
-    // bootstrap block
-    if (!current->hasFlags(BLOCK_BOOTSTRAP)) {
-      return state.Invalid("block-exists",
-                           "Trying to load a block, which already exists on "
-                           "chain and is not a bootstrap block.");
-    }
-
     current = touchBlockIndex(currentHash);
+    VBK_ASSERT(current);
+
     // touchBlockIndex may return existing block (one of bootstrap blocks), so
     // backup its 'pnext'
     auto next = current->pnext;

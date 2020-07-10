@@ -299,8 +299,6 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
       std::max(0, index.height - param_->getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
-    // we already inserted block, so remove it
-    removeLeaf(*current, false);
     return state.Invalid("load-block");
   }
 

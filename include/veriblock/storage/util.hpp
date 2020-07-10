@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_STORAGE_UTIL_HPP
 
 #include <vector>
+#include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/storage/batch.hpp>
 #include <veriblock/validation_state.hpp>
@@ -23,11 +24,12 @@ bool LoadTree(
     const typename BlockTreeT::hash_t& tiphash,
     ValidationState& state) {
   VBK_LOG_WARN("Loading %d blocks with tip %s", blocks.size(), HexStr(tiphash));
+  VBK_ASSERT(tree.isBootstrapped() && "tree must be bootstrapped");
 
   for (auto& block : blocks) {
     // load blocks one by one
     if (!tree.loadBlock(block.second, state)) {
-      return state.Invalid("load-blocks");
+      return state.Invalid("load-tree");
     }
   }
 
@@ -44,7 +46,6 @@ void SaveTree(const BlockTreeT& tree, Batch& batch) {
 
   batch.writeTip(*tree.getBestChain().tip());
 }
-
 
 struct AltTree;
 
