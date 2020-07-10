@@ -16,7 +16,7 @@
 namespace altintegration {
 
 bool AltTree::bootstrap(ValidationState& state) {
-  if (!base::blocks_.empty()) {
+  if (base::isBootstrapped()) {
     return state.Error("already bootstrapped");
   }
 
@@ -25,12 +25,16 @@ bool AltTree::bootstrap(ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  if (!base::blocks_.empty() && (getBlockIndex(index->getHash()) == nullptr)) {
-    return state.Error("block-index-no-genesis");
-  }
+  auto height = block.height;
 
   index->setFlag(BLOCK_APPLIED);
-  determineBestChain(*index, state, true);
+  base::activeChain_ = Chain<index_t>(height, index);
+
+  VBK_ASSERT(base::isBootstrapped());
+
+  VBK_ASSERT(getBlockIndex(index->getHash()) != nullptr &&
+             "getBlockIndex must be able to find the block added by "
+             "insertBlockHeader");
 
   tryAddTip(index);
 
@@ -105,7 +109,7 @@ bool AltTree::addPayloads(index_t& index,
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool success = setTip(*index.pprev, dummy, false);
+    bool success = setState(*index.pprev, dummy);
     VBK_ASSERT(success);
   }
 
@@ -221,11 +225,9 @@ void AltTree::payloadsToCommands(const ATV& atv,
 
   std::vector<uint8_t> endorsed_hash =
       alt_config_->getHash(atv.transaction.publicationData.header);
-  auto* endorsed_index = getBlockIndex(endorsed_hash);
-  VBK_ASSERT(endorsed_index);
 
   auto e = AltEndorsement::fromContainerPtr(
-      atv, containing.getHash(), endorsed_hash, endorsed_index->height);
+      atv, containing.getHash(), endorsed_hash);
 
   auto cmd = std::make_shared<AddAltEndorsement>(vbk(), *this, std::move(e));
   commands.push_back(std::move(cmd));
@@ -270,10 +272,9 @@ std::string AltTree::toPrettyString(size_t level) const {
                       pad);
 }
 
-void AltTree::determineBestChain(index_t& candidate,
-                                 ValidationState& state,
-                                 bool isBootstrap) {
+void AltTree::determineBestChain(index_t& candidate, ValidationState&) {
   auto bestTip = getBestChain().tip();
+  VBK_ASSERT(bestTip && "must be bootstrapped");
 
   if (bestTip == &candidate) {
     return;
@@ -283,14 +284,6 @@ void AltTree::determineBestChain(index_t& candidate,
   if (!candidate.isValid()) {
     VBK_LOG_DEBUG("Candidate %s is invalid, skipping FR",
                   candidate.toPrettyString());
-    return;
-  }
-
-  if (bestTip == nullptr) {
-    VBK_LOG_DEBUG("Current tip is nullptr, candidate %s becomes new tip",
-                  candidate.toShortPrettyString());
-    bool success = setTip(candidate, state, isBootstrap);
-    VBK_ASSERT(success);
     return;
   }
 
@@ -378,19 +371,13 @@ void AltTree::removePayloads(index_t& index, const PopData& payloads) {
   bool isOnActiveChain = activeChain_.contains(&index);
   if (isOnActiveChain) {
     ValidationState dummy;
-    bool success = setTip(*index.pprev, dummy, false);
+    bool success = setState(*index.pprev, dummy);
     VBK_ASSERT(success);
   }
 
   handleRemovePayloads(*this, index, payloads.atvs, storagePayloads_);
   handleRemovePayloads(*this, index, payloads.vtbs, storagePayloads_);
   handleRemovePayloads(*this, index, payloads.context, storagePayloads_);
-}
-
-bool AltTree::setTip(AltTree::index_t& to,
-                     ValidationState& state,
-                     bool skipSetState) {
-  return setTip(to, state, skipSetState, false);
 }
 
 template <typename Payloads, typename Storage, typename BlockIndex>
@@ -431,12 +418,12 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
   VBK_ASSERT(tmpindex != nullptr);
 
   // add all payloads in `continueOnInvalid` mode
-  bool ret = addPayloads(*tmpindex, pop, state, true);
-  VBK_ASSERT(ret);
+  bool success = addPayloads(*tmpindex, pop, state, true);
+  VBK_ASSERT(success);
 
   // setState in 'continueOnInvalid' mode
-  ret = setTip(*tmpindex, state, false, true);
-  VBK_ASSERT(ret);
+  success = setTipContinueOnInvalid(*tmpindex, state);
+  VBK_ASSERT(success);
 
   removePayloadsIfInvalid(pop.atvs, storagePayloads_, *tmpindex);
   removePayloadsIfInvalid(pop.vtbs, storagePayloads_, *tmpindex);
@@ -459,37 +446,39 @@ bool AltTree::addPayloads(AltTree::index_t& index,
   return addPayloads(index, copy, state, false);
 }
 
-bool AltTree::setTip(AltTree::index_t& to,
-                     ValidationState& state,
-                     bool skipSetState,
-                     bool continueOnInvalid) {
-  bool changeTip = true;
-  if (!skipSetState) {
-    changeTip = cmp_.setState(*this, to, state, continueOnInvalid);
-    if (continueOnInvalid) {
-      VBK_ASSERT(changeTip);
-    }
-  }
-
-  // edge case: if changeTip is false, then new block arrived on top of
-  // current active chain, and this block has invalid commands
-  if (changeTip) {
-    VBK_LOG_INFO("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
-                 to.toShortPrettyString(),
-                 (vbk().getBestChain().tip()
-                      ? vbk().getBestChain().tip()->toShortPrettyString()
-                      : "<empty>"),
-                 (btc().getBestChain().tip()
-                      ? btc().getBestChain().tip()->toShortPrettyString()
-                      : "<empty>"));
-    activeChain_.setTip(&to);
-    tryAddTip(&to);
+bool AltTree::setState(index_t& to, ValidationState& state) {
+  bool success = cmp_.setState(*this, to, state);
+  if (success) {
+    overrideTip(to);
   } else {
+    // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
   }
+  return success;
+}
+
+void AltTree::overrideTip(index_t& to) {
+  VBK_LOG_INFO("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
+               to.toShortPrettyString(),
+               (vbk().getBestChain().tip()
+                    ? vbk().getBestChain().tip()->toShortPrettyString()
+                    : "<empty>"),
+               (btc().getBestChain().tip()
+                    ? btc().getBestChain().tip()->toShortPrettyString()
+                    : "<empty>"));
+  activeChain_.setTip(&to);
+  tryAddTip(&to);
+}
+
+bool AltTree::setTipContinueOnInvalid(AltTree::index_t& to,
+                                      ValidationState& state) {
+  bool success = cmp_.setState(*this, to, state, /*continueOnInvalid=*/true);
+  VBK_ASSERT(success);
+
+  overrideTip(to);
 
   // true if tip has been changed
-  return changeTip;
+  return success;
 }
 
 template <>

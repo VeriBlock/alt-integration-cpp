@@ -442,7 +442,7 @@ struct PopAwareForkResolutionComparator {
    * Compare the currently applied(best) and candidate chains
    * @return 0 if the chains are equal,
    *         positive if the current chain is better
-   *        negative if the candidate chain is better
+   *         negative if the candidate chain is better
    */
   int comparePopScore(ProtectedBlockTree& ed,
                       protected_index_t& candidate,
@@ -460,7 +460,13 @@ struct PopAwareForkResolutionComparator {
 
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
-    VBK_ASSERT(bestTip);
+    VBK_ASSERT(bestTip && "must be bootstrapped");
+
+    if (bestTip == &candidate) {
+      // we are comparing the best chain to itself
+      return 1;
+    }
+
     if (currentBest.contains(&candidate)) {
       VBK_LOG_INFO(
           "Candidate %s is part of the active chain, the current chain wins",
