@@ -64,10 +64,12 @@ struct CollectionOfPtrComparator {
     return true;
   }
 
-  template <typename T, typename H>
+  template <typename T>
   bool operator()(const std::unordered_set<T*>& a,
                   const std::unordered_set<T*>& b) {
     if (a.size() != b.size()) return false;
+
+    using H = typename T::hash_t;
 
     std::set<H> aHashes;
     std::transform(a.cbegin(),

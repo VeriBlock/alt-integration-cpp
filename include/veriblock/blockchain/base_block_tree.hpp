@@ -301,7 +301,7 @@ struct BaseBlockTree {
   bool operator==(const BaseBlockTree& o) const {
     CollectionOfPtrComparator cmp{};
     bool a = cmp(blocks_, o.blocks_);
-    bool b = cmp.operator()<index_t, typename index_t::hash_t>(tips_, o.tips_);
+    bool b = cmp(tips_, o.tips_);
     bool c = (activeChain_ == o.activeChain_);
     return a && b && c;
   }
