@@ -149,7 +149,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using base::setState;
   bool setState(index_t& to, ValidationState& state) override;
 
-  bool overrideTip(index_t& to, ValidationState& state) override;
+  void overrideTip(index_t& to) override;
 
  protected:
   const alt_config_t* alt_config_;

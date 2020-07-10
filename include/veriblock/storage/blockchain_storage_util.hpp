@@ -41,7 +41,8 @@ bool loadAndApplyBlocks(PopStorage& storage,
   auto* tip = tree.getBlockIndex(tipStored.second);
   if (tip == nullptr) return false;
   if (tip->height != tipStored.first) return false;
-  return tree.overrideTip(*tip, state);
+  tree.overrideTip(*tip);
+  return true;
 }
 
 }  // namespace altintegration

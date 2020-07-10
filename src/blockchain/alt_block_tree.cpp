@@ -274,7 +274,7 @@ std::string AltTree::toPrettyString(size_t level) const {
                       pad);
 }
 
-void AltTree::determineBestChain(index_t& candidate, ValidationState& state) {
+void AltTree::determineBestChain(index_t& candidate, ValidationState&) {
   auto bestTip = getBestChain().tip();
   VBK_ASSERT(bestTip && "must be bootstrapped");
 
@@ -452,8 +452,7 @@ bool AltTree::addPayloads(AltTree::index_t& index,
 bool AltTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(*this, to, state);
   if (success) {
-    bool success = overrideTip(to, state);
-    VBK_ASSERT(success);
+    overrideTip(to);
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
@@ -461,7 +460,7 @@ bool AltTree::setState(index_t& to, ValidationState& state) {
   return success;
 }
 
-bool AltTree::overrideTip(index_t& to, ValidationState& state) {
+void AltTree::overrideTip(index_t& to) {
   VBK_LOG_INFO("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
                to.toShortPrettyString(),
                (vbk().getBestChain().tip()
@@ -472,7 +471,6 @@ bool AltTree::overrideTip(index_t& to, ValidationState& state) {
                     : "<empty>"));
   activeChain_.setTip(&to);
   tryAddTip(&to);
-  return true;
 }
 
 bool AltTree::setTipContinueOnInvalid(AltTree::index_t& to,
@@ -480,8 +478,7 @@ bool AltTree::setTipContinueOnInvalid(AltTree::index_t& to,
   bool success = cmp_.setState(*this, to, state, /*continueOnInvalid=*/true);
   VBK_ASSERT(success);
 
-  success = overrideTip(to, state);
-  VBK_ASSERT(success);
+  overrideTip(to);
 
   // true if tip has been changed
   return success;

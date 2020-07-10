@@ -215,15 +215,15 @@ struct BaseBlockTree {
     return setState(*index, state);
   }
 
-  virtual bool setState(index_t& index, ValidationState& state) {
-    return overrideTip(index, state);
+  virtual bool setState(index_t& index, ValidationState&) {
+    overrideTip(index);
+    return true;
   }
 
-  virtual bool overrideTip(index_t& to, ValidationState& state) {
+  virtual void overrideTip(index_t& to) {
     VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     activeChain_.setTip(&to);
     tryAddTip(&to);
-    return true;
   }
 
   //! connects a handler to a signal 'On Invalidate Block'

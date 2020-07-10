@@ -36,8 +36,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   } else if (result < 0) {
     VBK_LOG_DEBUG("Candidate chain won");
     // other chain won! we already set pop state, so only update tip
-    bool success = this->overrideTip(candidate, state);
-    VBK_ASSERT(success);
+    this->overrideTip(candidate);
   } else {
     VBK_LOG_DEBUG("Active chain won");
     // current chain is better
@@ -47,8 +46,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(*this, to, state);
   if (success) {
-    bool success = overrideTip(to, state);
-    VBK_ASSERT(success);
+    overrideTip(to);
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
