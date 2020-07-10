@@ -348,7 +348,7 @@ void handleRemovePayloads(Tree& tree,
       continue;
     }
 
-    if (!storage.isValid<Pop, Index>(pid, index)) {
+    if (!storage.template isValid<Pop, Index>(pid, index)) {
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
@@ -384,7 +384,7 @@ template <typename Payloads, typename Storage, typename BlockIndex>
 void removePayloadsIfInvalid(std::vector<Payloads>& p, Storage& storage, BlockIndex& index) {
   auto it = std::remove_if(p.begin(), p.end(), [&](const Payloads& payloads) {
     auto isValid =
-        storage.isValid<Payloads, BlockIndex>(payloads.getId(), index);
+        storage.template isValid<Payloads, BlockIndex>(payloads.getId(), index);
     return !isValid;
   });
   p.erase(it, p.end());
