@@ -53,8 +53,10 @@ struct BlockTree : public BaseBlockTree<Block> {
    */
   virtual bool bootstrapWithGenesis(ValidationState& state) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    auto block = param_->getGenesisBlock();
-    return this->bootstrap(0, block, state);
+    auto genesisBlock = param_->getGenesisBlock();
+    return ! this->bootstrap(0, genesisBlock, state)
+           ? state.Invalid(block_t::name() + "-bootstrap-genesis")
+           : true;
   }
 
   /**
@@ -72,13 +74,13 @@ struct BlockTree : public BaseBlockTree<Block> {
                                   ValidationState& state) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
     if (chain.empty()) {
-      return state.Invalid("bootstrap-empty-chain",
+      return state.Invalid(block_t::name() + "-bootstrap-empty-chain",
                            "provided bootstrap chain is empty");
     }
 
     if (chain.size() < param_->numBlocksForBootstrap()) {
       return state.Invalid(
-          "bootstrap-small-chain",
+          block_t::name() + "-bootstrap-small-chain",
           "number of blocks in the provided chain is too small: " +
               std::to_string(chain.size()) + ", expected at least " +
               std::to_string(param_->numBlocksForBootstrap()));
@@ -87,7 +89,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     // pick first block from the chain, bootstrap with a single block
     auto genesis = chain[0];
     if (!this->bootstrap(startHeight, genesis, state)) {
-      return state.Invalid("blocktree-bootstrap");
+      return state.Invalid(block_t::name() + "-blocktree-bootstrap");
     }
 
     // apply the rest of the blocks from the chain on top of our bootstrap
@@ -96,7 +98,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     for (size_t i = 1, size = chain.size(); i < size; i++) {
       auto& block = chain[i];
       if (!this->acceptBlock(std::make_shared<block_t>(block), state, false)) {
-        return state.Invalid("blocktree-accept");
+        return state.Invalid(block_t::name() + "-blocktree-accept");
       }
     }
 
@@ -153,7 +155,7 @@ struct BlockTree : public BaseBlockTree<Block> {
                  std::shared_ptr<block_t> block,
                  ValidationState& state) {
     if (!checkBlock(*block, state, *param_)) {
-      return state.Invalid("bootstrap");
+      return state.Invalid(block_t::name() + "-bootstrap");
     }
 
     auto* index = base::insertBlockHeader(block);

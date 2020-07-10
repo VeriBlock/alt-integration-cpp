@@ -54,24 +54,6 @@ bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   return success;
 }
 
-bool VbkBlockTree::bootstrapWithChain(int startHeight,
-                                      const std::vector<block_t>& chain,
-                                      ValidationState& state) {
-  if (!VbkTree::bootstrapWithChain(startHeight, chain, state)) {
-    return state.Invalid("vbk-bootstrap-chain");
-  }
-
-  return true;
-}
-
-bool VbkBlockTree::bootstrapWithGenesis(ValidationState& state) {
-  if (!VbkTree::bootstrapWithGenesis(state)) {
-    return state.Invalid("vbk-bootstrap-genesis");
-  }
-
-  return true;
-}
-
 void VbkBlockTree::removePayloads(const block_t& block,
                                   const std::vector<pid_t>& pids) {
   return removePayloads(block.getHash(), pids);

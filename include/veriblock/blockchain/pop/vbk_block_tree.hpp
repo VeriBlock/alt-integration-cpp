@@ -49,12 +49,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
   const PayloadsStorage& getStoragePayloads() const { return storagePayloads_; }
 
-  bool bootstrapWithChain(height_t startHeight,
-                          const std::vector<block_t>& chain,
-                          ValidationState& state) override;
-
-  bool bootstrapWithGenesis(ValidationState& state) override;
-
   /**
    * @invariant atomic: adds either all or none of the payloads
    */
