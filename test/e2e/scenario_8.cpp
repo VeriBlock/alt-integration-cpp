@@ -119,8 +119,8 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
-  EXPECT_EQ(*alttree.vbk().getBestChain().tip(),
-            *popminer->vbk().getBestChain().tip());
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
+            popminer->vbk().getBestChain().tip()->getHash());
 
   auto altStateVbkTip = *alttree.vbk().getBestChain().tip();
 

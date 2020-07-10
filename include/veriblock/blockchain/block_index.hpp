@@ -25,22 +25,22 @@ enum BlockStatus : uint8_t {
   //! default state for validity - validity state is unknown
   BLOCK_VALID_UNKNOWN = 0,
   //! acceptBlock succeded. All parents are at least at this state.
-  BLOCK_VALID_TREE = 1,
-  //! addPayloads succeded. All parents are at least BLOCK_VALID_TREE
-  BLOCK_VALID_PAYLOADS = 2,
+  BLOCK_VALID_TREE = 1 << 0,
   //! all validity flags
-  BLOCK_VALID_MASK = BLOCK_VALID_TREE | BLOCK_VALID_PAYLOADS,
+  BLOCK_VALID_MASK = BLOCK_VALID_TREE,
+  //! this is bootstrap block
+  BLOCK_BOOTSTRAP = 1 << 1,
   //! block is statelessly valid, but we marked it as failed
-  BLOCK_FAILED_BLOCK = 4,
+  BLOCK_FAILED_BLOCK = 1 << 2,
   //! block failed POP validation
-  BLOCK_FAILED_POP = 8,
+  BLOCK_FAILED_POP = 1 << 3,
   //! block is state{lessly,fully} valid, but some of previous blocks is invalid
-  BLOCK_FAILED_CHILD = 16,
+  BLOCK_FAILED_CHILD = 1 << 4,
   //! all invalidity flags
   BLOCK_FAILED_MASK =
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
   //! the block has been applied via PopStateMachine
-  BLOCK_APPLIED = 32
+  BLOCK_APPLIED = 1 << 5,
 };
 
 //! Store block
@@ -77,7 +77,7 @@ struct BlockIndex : public Block::addon_t {
   }
 
   void setNull() {
-    Block::addon_t::setNull();
+    addon_t::setNull();
     this->pprev = nullptr;
     this->pnext.clear();
     this->height = 0;
@@ -162,14 +162,16 @@ struct BlockIndex : public Block::addon_t {
 
   void toRaw(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
+    stream.writeBE<uint32_t>(status);
     header->toRaw(stream);
     addon_t::toRaw(stream);
   }
 
   void initFromRaw(ReadStream& stream) {
     height = stream.readBE<uint32_t>();
+    status = stream.readBE<uint32_t>();
     header = std::make_shared<Block>(Block::fromRaw(stream));
-    addon_t::initFromRaw(stream);
+    addon_t::initAddonFromRaw(stream);
   }
 
   std::vector<uint8_t> toRaw() const {
@@ -189,13 +191,14 @@ struct BlockIndex : public Block::addon_t {
     return fromRaw(stream);
   }
 
-  friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
-    return *a.header == *b.header;
+  bool operator==(const BlockIndex& o) const {
+    bool a = *header == *o.header;
+    bool b = status == o.status;
+    bool c = addon_t::operator==(o);
+    return a && b && c;
   }
 
-  friend bool operator!=(const BlockIndex& a, const BlockIndex& b) {
-    return !operator==(a, b);
-  }
+  bool operator!=(const BlockIndex& b) const { return !operator==(b); }
 };
 
 template <typename Block>

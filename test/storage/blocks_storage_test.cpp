@@ -6,14 +6,15 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/arith_uint256.hpp>
-#include <veriblock/uint.hpp>
-#include <veriblock/write_stream.hpp>
-#include <veriblock/read_stream.hpp>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/entities/altblock.hpp>
+#include <veriblock/read_stream.hpp>
 #include <veriblock/storage/inmem/block_repository_inmem.hpp>
 #include <veriblock/storage/rocks/block_repository_rocks.hpp>
 #include <veriblock/storage/rocks/repository_rocks_manager.hpp>
 #include <veriblock/storage/rocks/storage_manager_rocks.hpp>
+#include <veriblock/uint.hpp>
+#include <veriblock/write_stream.hpp>
 
 using namespace altintegration;
 
@@ -21,6 +22,9 @@ struct BlockBasic {
   using hash_t = uint256;
   using prev_hash_t = hash_t;
   using height_t = int;
+  int* pprev = nullptr;
+  std::set<int> pnext;
+  std::set<int> endorsedBy;
 
   hash_t getHash() const { return std::move(ArithUint256(hashValue)); }
 
@@ -56,7 +60,10 @@ Block_t generateBlock(int a, int b);
 
 template <>
 BlockBasic generateBlock(int a, int b) {
-  return {a, b};
+  BlockBasic block;
+  block.hashValue = a;
+  block.content = b;
+  return block;
 }
 
 template <>
@@ -65,7 +72,7 @@ BlockIndex<BtcBlock> generateBlock(int a, int b) {
   // fill arbitrary fields
   blockIndex.height = b;
   blockIndex.header = std::make_shared<BtcBlock>();
-  blockIndex.header->timestamp = a; 
+  blockIndex.header->timestamp = a;
   return blockIndex;
 }
 
@@ -75,7 +82,7 @@ BlockIndex<VbkBlock> generateBlock(int a, int b) {
   // fill arbitrary fields
   blockIndex.height = b;
   blockIndex.header = std::make_shared<VbkBlock>();
-  blockIndex.header->timestamp = a; 
+  blockIndex.header->timestamp = a;
   return blockIndex;
 }
 
@@ -102,7 +109,8 @@ std::shared_ptr<BlockRepositoryInmem<BlockBasic>> getRepo(
 template <>
 std::shared_ptr<BlockRepositoryRocks<BlockIndex<BtcBlock>>> getRepo(
     RepositoryRocksManager& database) {
-  return std::make_shared<BlockRepositoryRocks<BlockIndex<BtcBlock>>>(database, "btc_blocks");
+  return std::make_shared<BlockRepositoryRocks<BlockIndex<BtcBlock>>>(
+      database, "btc_blocks");
 }
 
 template <>

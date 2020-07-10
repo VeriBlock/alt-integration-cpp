@@ -61,41 +61,5 @@ const TipsRepository<BlockIndex<AltBlock>>& PopStorage::getTipsRepo() const {
   return *_trepoAlt;
 }
 
-template <>
-PayloadsRepository<VbkEndorsement>& PopStorage::getEndorsementsRepo() {
-  return *_erepoVbk;
-}
-template <>
-const PayloadsRepository<VbkEndorsement>& PopStorage::getEndorsementsRepo()
-    const {
-  return *_erepoVbk;
-}
-
-template <>
-PayloadsRepository<AltEndorsement>& PopStorage::getEndorsementsRepo() {
-  return *_erepoAlt;
-}
-template <>
-const PayloadsRepository<AltEndorsement>& PopStorage::getEndorsementsRepo()
-    const {
-  return *_erepoAlt;
-}
-
-template <>
-void PopStorage::processSaveBlock(const BlockIndex<BtcBlock>&) {}
-
-template <>
-void PopStorage::processSaveBlock(const BlockIndex<VbkBlock>& b) {
-  for (const auto& e : b.containingEndorsements) {
-    saveEndorsements<typename BlockIndex<VbkBlock>::endorsement_t>(*e.second);
-  }
-}
-
-template <>
-void PopStorage::processSaveBlock(const BlockIndex<AltBlock>& b) {
-  for (const auto& e : b.containingEndorsements) {
-    saveEndorsements<typename BlockIndex<AltBlock>::endorsement_t>(*e.second);
-  }
-}
 
 }  // namespace altintegration

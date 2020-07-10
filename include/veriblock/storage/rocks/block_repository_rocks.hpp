@@ -21,122 +21,13 @@
 namespace altintegration {
 
 template <typename Block>
-std::vector<uint8_t> serializeBlockToRocks(const Block&);
-
-template <>
-inline std::vector<uint8_t> serializeBlockToRocks(
-    const BlockIndex<BtcBlock>& from) {
-  WriteStream s;
-  from.toRaw(s);
-  s.writeBE<uint32_t>((uint32_t)from.refCounter);
-  s.writeBE<uint8_t>((uint8_t)from.status);
-  return s.data();
-}
-
-template <>
-inline std::vector<uint8_t> serializeBlockToRocks(
-    const BlockIndex<VbkBlock>& from) {
-  WriteStream s;
-  from.toRaw(s);
-  s.writeBE<uint32_t>((uint32_t)from.containingEndorsements.size());
-  for (const auto& e : from.containingEndorsements) {
-    writeSingleByteLenValue(s, e.first);
-  }
-  s.writeBE<uint32_t>((uint32_t)from.vtbids.size());
-  for (const auto& p : from.vtbids) {
-    writeSingleByteLenValue(s, p);
-  }
-  s.writeBE<uint32_t>((uint32_t)from.refCounter);
-  s.writeBE<uint8_t>((uint8_t)from.status);
-  return s.data();
-}
-
-template <>
-inline std::vector<uint8_t> serializeBlockToRocks(
-    const BlockIndex<AltBlock>& from) {
-  WriteStream s;
-  from.toRaw(s);
-  s.writeBE<uint32_t>((uint32_t)from.containingEndorsements.size());
-  for (const auto& e : from.containingEndorsements) {
-    writeSingleByteLenValue(s, e.first);
-  }
-  s.writeBE<uint32_t>((uint32_t)from.atvids.size());
-  for (const auto& p : from.atvids) {
-    writeSingleByteLenValue(s, p);
-  }
-  s.writeBE<uint32_t>((uint32_t)from.vtbids.size());
-  for (const auto& p : from.vtbids) {
-    writeSingleByteLenValue(s, p);
-  }
-  s.writeBE<uint32_t>((uint32_t)from.vbkblockids.size());
-  for (const auto& p : from.vbkblockids) {
-    writeSingleByteLenValue(s, p);
-  }
-  s.writeBE<uint8_t>((uint8_t)from.status);
-  return s.data();
+std::vector<uint8_t> serializeBlockToRocks(const Block& from) {
+  return from.toRaw();
 }
 
 template <typename Block>
-Block deserializeBlockFromRocks(const std::string&);
-
-template <>
-inline BlockIndex<BtcBlock> deserializeBlockFromRocks(const std::string& from) {
-  ReadStream stream(from);
-  auto block = BlockIndex<BtcBlock>::fromRaw(stream);
-  block.refCounter = stream.readBE<uint32_t>();
-  block.status = stream.readBE<uint8_t>();
-  return block;
-}
-
-template <>
-inline BlockIndex<VbkBlock> deserializeBlockFromRocks(const std::string& from) {
-  ReadStream stream(from);
-  auto block = BlockIndex<VbkBlock>::fromRaw(stream);
-  auto endorsementSize = stream.readBE<uint32_t>();
-  for (uint32_t i = 0; i < endorsementSize; ++i) {
-    auto eid = readSingleByteLenValue(stream);
-    block.containingEndorsements.insert({eid, {}});
-  }
-  auto payloadSize = stream.readBE<uint32_t>();
-  block.vtbids.resize(payloadSize);
-  for (uint32_t i = 0; i < payloadSize; ++i) {
-    auto pid = readSingleByteLenValue(stream);
-    block.vtbids[i] = pid;
-  }
-  block.refCounter = stream.readBE<uint32_t>();
-  block.status = stream.readBE<uint8_t>();
-  return block;
-}
-
-template <>
-inline BlockIndex<AltBlock> deserializeBlockFromRocks(const std::string& from) {
-  ReadStream stream(from);
-  auto block = BlockIndex<AltBlock>::fromRaw(stream);
-  auto endorsementSize = stream.readBE<uint32_t>();
-  for (uint32_t i = 0; i < endorsementSize; ++i) {
-    auto eid = readSingleByteLenValue(stream);
-    block.containingEndorsements.insert({eid, {}});
-  }
-  auto payloadSize = stream.readBE<uint32_t>();
-  block.atvids.resize(payloadSize);
-  for (uint32_t i = 0; i < payloadSize; ++i) {
-    auto pid = readSingleByteLenValue(stream);
-    block.atvids[i] = pid;
-  }
-  payloadSize = stream.readBE<uint32_t>();
-  block.vtbids.resize(payloadSize);
-  for (uint32_t i = 0; i < payloadSize; ++i) {
-    auto pid = readSingleByteLenValue(stream);
-    block.vtbids[i] = pid;
-  }
-  payloadSize = stream.readBE<uint32_t>();
-  block.vbkblockids.resize(payloadSize);
-  for (uint32_t i = 0; i < payloadSize; ++i) {
-    auto pid = readSingleByteLenValue(stream);
-    block.vbkblockids[i] = pid;
-  }
-  block.status = stream.readBE<uint8_t>();
-  return block;
+Block deserializeBlockFromRocks(const std::string& data) {
+  return Block::fromRaw(data);
 }
 
 //! column family type

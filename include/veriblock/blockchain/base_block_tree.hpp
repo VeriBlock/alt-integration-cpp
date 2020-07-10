@@ -12,6 +12,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
+#include <veriblock/comparator.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/signals.hpp>
 
@@ -55,12 +56,69 @@ struct BaseBlockTree {
     return it == blocks_.end() ? nullptr : it->second.get();
   }
 
-  index_t* insertBlock(const block_t& block) {
-    return insertBlock(std::make_shared<block_t>(block));
+  virtual bool loadTip(const hash_t& hash, ValidationState& state) {
+    auto* tip = getBlockIndex(hash);
+    if (!tip) {
+      return state.Invalid(
+          block_t::name() + "-no-tip",
+          fmt::format("Can not find tip with hash {}", HexStr(hash)));
+    }
+
+    return this->setTip(*tip, state, /*skipSetState=*/true);
   }
 
-  index_t* insertBlock(const std::shared_ptr<block_t>& block) {
-    return insertBlockHeader(block);
+  //! @invariant NOT atomic.
+  virtual bool loadBlock(const index_t& index, ValidationState& state) {
+    auto currentHash = index.getHash();
+    auto* current = getBlockIndex(currentHash);
+
+    // if current block is not known, and previous also not known
+    if (!current && !getBlockIndex(index.header->previousBlock)) {
+      return state.Invalid(
+          "bad-prev",
+          fmt::format("Can not load block {}, no previous block {}",
+                      index.toPrettyString(),
+                      HexStr(index.header->previousBlock)));
+    }
+
+    // we can not load a block, which already exists on chain and is not a
+    // bootstrap block
+    if (!current->hasFlags(BLOCK_BOOTSTRAP)) {
+      return state.Invalid("block-exists",
+                           "Trying to load a block, which already exists on "
+                           "chain and is not a bootstrap block.");
+    }
+
+    current = touchBlockIndex(currentHash);
+    // touchBlockIndex may return existing block (one of bootstrap blocks), so
+    // backup its 'pnext'
+    auto next = current->pnext;
+
+    // copy all fields
+    *current = index;
+    // recover pnext
+    current->pnext = next;
+    // recover pprev
+    current->pprev = getBlockIndex(index.header->previousBlock);
+
+    if (current->pprev != nullptr) {
+      // prev block found
+      auto expectedHeight = current->pprev->height + 1;
+      if (current->height != expectedHeight) {
+        return state.Invalid(
+            "bad-height",
+            fmt::format("Block {} expected height={}, actual={}",
+                        current->toShortPrettyString(),
+                        expectedHeight,
+                        current->height));
+      }
+
+      current->pprev->pnext.insert(current);
+    }
+
+    tryAddTip(current);
+
+    return true;
   }
 
   void removeSubtree(const hash_t& toRemove) {
@@ -239,9 +297,11 @@ struct BaseBlockTree {
   }
 
   bool operator==(const BaseBlockTree& o) const {
-    TreeFieldsComparator cmp{};
-    return cmp(blocks_, o.blocks_) && cmp(tips_, o.tips_) &&
-           (activeChain_ == o.activeChain_);
+    CollectionOfPtrComparator cmp{};
+    bool a = cmp(blocks_, o.blocks_);
+    bool b = cmp.operator()<index_t, typename index_t::hash_t>(tips_, o.tips_);
+    bool c = (activeChain_ == o.activeChain_);
+    return a && b && c;
   }
 
   bool operator!=(const BaseBlockTree& o) const { return !operator==(o); }
@@ -533,42 +593,6 @@ struct BaseBlockTree {
   Chain<index_t> activeChain_;
   //! signals to the end user that block have been invalidated
   signals::Signal<on_invalidate_t> validity_sig_;
-
-  struct TreeFieldsComparator {
-    bool operator()(const block_index_t& a, const block_index_t& b) {
-      if (a.size() != b.size()) return false;
-      for (const auto& k : a) {
-        auto key = k.first;
-        auto value = k.second;
-        auto expectedValue = b.find(key);
-        // key exists in map A but does not exist in map B
-        if (expectedValue == b.end()) return false;
-        // pointers are equal - comparison is true
-        if (expectedValue->second == value) continue;
-        if (expectedValue->second == nullptr) return false;
-        if (value == nullptr) return false;
-        if (*value != *expectedValue->second) return false;
-      }
-      return true;
-    }
-
-    bool operator()(const std::unordered_set<index_t*>& a,
-                    const std::unordered_set<index_t*>& b) {
-      if (a.size() != b.size()) return false;
-
-      std::set<hash_t> aHashes;
-      std::transform(a.cbegin(),
-                     a.cend(),
-                     std::inserter(aHashes, aHashes.begin()),
-                     [](const index_t* v) { return v->getHash(); });
-      std::set<hash_t> bHashes;
-      std::transform(b.cbegin(),
-                     b.cend(),
-                     std::inserter(bHashes, bHashes.begin()),
-                     [](const index_t* v) { return v->getHash(); });
-      return aHashes == bHashes;
-    }
-  };
 };
 
 }  // namespace altintegration

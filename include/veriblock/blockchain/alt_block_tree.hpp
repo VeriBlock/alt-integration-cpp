@@ -52,17 +52,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   AltTree(const alt_config_t& alt_config,
           const vbk_config_t& vbk_config,
           const btc_config_t& btc_config,
-          PayloadsStorage& storagePayloads)
-      : alt_config_(&alt_config),
-        vbk_config_(&vbk_config),
-        btc_config_(&btc_config),
-        cmp_(std::make_shared<VbkBlockTree>(
-                 vbk_config, btc_config, storagePayloads),
-             vbk_config,
-             alt_config,
-             storagePayloads),
-        rewards_(alt_config),
-        storagePayloads_(storagePayloads) {}
+          PayloadsStorage& storagePayloads);
 
   //! before any use, bootstrap the three with ALT bootstrap block.
   //! may return false, if bootstrap block is invalid
@@ -85,9 +75,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool addPayloads(const AltBlock& containing,
                    const PopData& popData,
-                   ValidationState& state) {
-    return addPayloads(containing.hash, popData, state);
-  }
+                   ValidationState& state);
 
   void payloadsToCommands(const ATV& atv,
                           const AltBlock& containing,
@@ -98,9 +86,12 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   void payloadsToCommands(const VbkBlock& block,
                           std::vector<CommandPtr>& commands);
 
-  bool saveToStorage(PopStorage& storage, ValidationState& state);
-
-  bool loadFromStorage(PopStorage& storage, ValidationState& state);
+  //! efficiently connect `index` to current tree, loaded from disk
+  //! - recovers all pointers (pprev, pnext, endorsedBy)
+  //! - does validation of endorsements
+  //! - recovers tips array
+  //! @invariant NOT atomic.
+  bool loadBlock(const index_t& index, ValidationState& state) override;
 
   bool operator==(const AltTree& o) const {
     return cmp_ == o.cmp_ && base::operator==(o);
