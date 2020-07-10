@@ -152,6 +152,39 @@ jobs:
 #      - name: test
 #        run: cmake --build build --target RUN_TESTS
 
+  x86_64-w64-mingw32:
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        flags: ["-DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ -DCMAKE_SYSTEM_NAME=Windows -DWITH_ROCKSDB=ON -DTESTING=OFF"]
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: recursive
+          clean: true
+      - name: Prepare ccache timestamp
+        id: cache_timestamp
+        run: |
+          current_date=`date +%Y%m%d_%H%M%SZ`
+          echo "::set-output name=timestamp::${current_date}"
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: mingw-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            mingw-ccache-
+      - name: install build requirements
+        run: sudo apt-get install build-essential libtool autotools-dev automake pkg-config bsdmainutils curl git g++-mingw-w64-x86-64 ccache
+      - name: set the default mingw32 g++ compiler option to posix
+        run: sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+      - name: cmake
+        run: cmake . -Bbuild ${{ matrix.flags }}
+      - name: build
+        run: cmake --build build -- -j2
+
   macos:
     runs-on: macos-latest
     strategy:
