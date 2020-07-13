@@ -19,16 +19,9 @@ namespace altintegration {
 
 struct VbkBlockTree;
 
-template <typename BlockIndex, typename Payloads>
-CommandGroup::id_t getCommandGroupId(const BlockIndex& index,
-                                     const typename Payloads::id_t& pid) {
-  std::vector<uint8_t> out = pid.asVector();
-  auto hash = index.getHash();
-  out.insert(out.end(), hash.begin(), hash.end());
-  return out;
-}
-
 class PayloadsStorage {
+  using id_t = typename CommandGroupCache::id_t;
+
  public:
   virtual ~PayloadsStorage() = default;
 
@@ -96,12 +89,13 @@ class PayloadsStorage {
   template <typename Tree, typename Payloads>
   std::vector<CommandGroup> loadCommandsStorage(
       const typename Tree::index_t& index, Tree& tree) {
+    using index_t = typename Tree::index_t;
     auto& pids =
         index.template getPayloadIds<Payloads, typename Payloads::id_t>();
     std::vector<CommandGroup> out{};
     for (const auto& pid : pids) {
       auto& cache = getCache<Tree, Payloads>();
-      auto cid = getCommandGroupId<typename Tree::index_t, Payloads>(index, pid);
+      auto cid = getCommandGroupId<index_t, Payloads>(index, pid);
       CommandGroup cg(pid.asVector(), true, Payloads::name());
       if (!cache.get(cid, &cg)) {
         Payloads payloads;
@@ -113,10 +107,10 @@ class PayloadsStorage {
         cache.put(cid, cg);
       }
       // create new validity record if does not exist
-      if (!isExisting<Payloads, typename Tree::index_t>(pid, index)) {
-        setValidity<Payloads, typename Tree::index_t>(pid, index, true);
+      if (!isExisting<Payloads, index_t>(pid, index)) {
+        setValidity<Payloads, index_t>(pid, index, true);
       }
-      cg.valid = isValid<Payloads, typename Tree::index_t>(pid, index);
+      cg.valid = isValid<Payloads, index_t>(pid, index);
       out.push_back(cg);
     }
     return out;
@@ -175,7 +169,16 @@ class PayloadsStorage {
   std::shared_ptr<PayloadsRepository<VbkBlock>> _repoBlocks;
   CommandGroupCache _cacheAlt;
   CommandGroupCache _cacheVbk;
-  std::unordered_map<CommandGroup::id_t, bool> _cgValidity;
+  std::unordered_map<id_t, bool> _cgValidity;
+
+  template <typename BlockIndex, typename Payloads>
+  id_t getCommandGroupId(const BlockIndex& index,
+                         const typename Payloads::id_t& pid) {
+    auto out = pid.asVector();
+    auto hash = index.getHash();
+    out.insert(out.end(), hash.begin(), hash.end());
+    return id_t(out);
+  }
 
   template <typename Tree, typename Payloads>
   CommandGroupCache& getCache();
