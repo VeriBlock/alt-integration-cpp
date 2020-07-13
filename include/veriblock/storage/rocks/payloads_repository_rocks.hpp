@@ -24,7 +24,6 @@ template <>
 inline std::vector<uint8_t> serializePayloadsToRocks(const ATV& from) {
   WriteStream stream;
   from.toVbkEncoding(stream);
-  stream.writeBE<uint8_t>(from.valid);
   return stream.data();
 }
 
@@ -32,7 +31,6 @@ template <>
 inline std::vector<uint8_t> serializePayloadsToRocks(const VTB& from) {
   WriteStream stream;
   from.toVbkEncoding(stream);
-  stream.writeBE<uint8_t>(from.valid);
   return stream.data();
 }
 
@@ -40,7 +38,6 @@ template <>
 inline std::vector<uint8_t> serializePayloadsToRocks(const VbkBlock& from) {
   WriteStream stream;
   from.toVbkEncoding(stream);
-  stream.writeBE<uint8_t>(from.valid);
   return stream.data();
 }
 
@@ -52,25 +49,19 @@ Payloads deserializePayloadsFromRocks(const std::string& from) {
 template <>
 inline VbkBlock deserializePayloadsFromRocks(const std::string& from) {
   ReadStream stream(from);
-  VbkBlock ret = VbkBlock::fromVbkEncoding(stream);
-  ret.valid = stream.readBE<uint8_t>();
-  return ret;
+  return VbkBlock::fromVbkEncoding(stream);
 }
 
 template <>
 inline VTB deserializePayloadsFromRocks(const std::string& from) {
   ReadStream stream(from);
-  VTB ret = VTB::fromVbkEncoding(stream);
-  ret.valid = stream.readBE<uint8_t>();
-  return ret;
+  return VTB::fromVbkEncoding(stream);
 }
 
 template <>
 inline ATV deserializePayloadsFromRocks(const std::string& from) {
   ReadStream stream(from);
-  ATV ret = ATV::fromVbkEncoding(stream);
-  ret.valid = stream.readBE<uint8_t>();
-  return ret;
+  return ATV::fromVbkEncoding(stream);
 }
 
 //! column family type

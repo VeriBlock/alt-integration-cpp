@@ -27,9 +27,6 @@ struct ATV {
   VbkMerklePath merklePath{};
   VbkBlock containingBlock{};
   std::vector<VbkBlock> context{};
-  //TODO: remove on command group cache implemented
-  // flag to mark invalid command groups.
-  mutable bool valid = true;
 
   //! (memory only) indicates whether we already did 'checkATV' on this ATV
   mutable bool checked{false};

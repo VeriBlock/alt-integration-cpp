@@ -64,6 +64,15 @@ struct PayloadsRepository {
   virtual std::shared_ptr<cursor_t> newCursor() const = 0;
 };
 
+template <typename Payloads>
+void payloadsRepositoryCopy(const PayloadsRepository<Payloads>& copyFrom,
+                            PayloadsRepository<Payloads>& copyTo) {
+  auto cursor = copyFrom.newCursor();
+  for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
+    copyTo.put(cursor->value());
+  }
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_PAYLOADS_REPOSITORY_HPP_
