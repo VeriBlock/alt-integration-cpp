@@ -100,8 +100,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         add_compile_options(/WX)                      # treats all compiler warnings as errors.
     endif()
 
-    add_compile_options(/bigobj)
-
     # using Visual Studio C++
     add_flag(/W4)                      # displays level 1, level 2, and level 3 warnings, and all level 4 (informational) warnings that are not turned off by default.
     add_flag(/permissive-)             # enforces standards conformance

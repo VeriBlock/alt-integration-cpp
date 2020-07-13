@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 
 #include <util/pop_test_fixture.hpp>
-#include <veriblock/alt-util.hpp>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/storage/inmem/storage_manager_inmem.hpp>
 #include <veriblock/storage/repo_batch_adaptor.hpp>
@@ -25,13 +24,13 @@ struct TestStorageInmem {
     storagePayloads2 = std::make_shared<PayloadsStorageInmem>();
   }
 
-  void saveToPayloadsStorageVbk(
-      const PayloadsStorage& from, PayloadsStorage& to) {
+  void saveToPayloadsStorageVbk(const PayloadsStorage& from,
+                                PayloadsStorage& to) {
     payloadsRepositoryCopy(from.getRepo<VTB>(), to.getRepo<VTB>());
   }
 
-  void saveToPayloadsStorageAlt(
-      const PayloadsStorage& from, PayloadsStorage& to) {
+  void saveToPayloadsStorageAlt(const PayloadsStorage& from,
+                                PayloadsStorage& to) {
     payloadsRepositoryCopy(from.getRepo<ATV>(), to.getRepo<ATV>());
     payloadsRepositoryCopy(from.getRepo<VTB>(), to.getRepo<VTB>());
     payloadsRepositoryCopy(from.getRepo<VbkBlock>(), to.getRepo<VbkBlock>());
@@ -50,25 +49,23 @@ struct TestStorageRocks {
     storage->getBlockRepo<BlockIndex<BtcBlock>>().clear();
     storage->getBlockRepo<BlockIndex<VbkBlock>>().clear();
     storage->getBlockRepo<BlockIndex<AltBlock>>().clear();
-    storage->getEndorsementsRepo<VbkEndorsement>().clear();
-    storage->getEndorsementsRepo<AltEndorsement>().clear();
 
     storageManager2 = std::make_shared<StorageManagerRocks>(dbName2);
-    storagePayloads2 =
-        std::make_shared<PayloadsStorage>(storageManager->getPayloadsStorage());
+    storagePayloads2 = std::make_shared<PayloadsStorage>(
+        storageManager_->getPayloadsStorage());
 
     storagePayloads2->getRepo<ATV>().clear();
     storagePayloads2->getRepo<VTB>().clear();
     storagePayloads2->getRepo<VbkBlock>().clear();
   }
 
-  void saveToPayloadsStorageVbk(
-      const PayloadsStorage& from, PayloadsStorage& to) {
+  void saveToPayloadsStorageVbk(const PayloadsStorage& from,
+                                PayloadsStorage& to) {
     payloadsRepositoryCopy(from.getRepo<VTB>(), to.getRepo<VTB>());
   }
 
-  void saveToPayloadsStorageAlt(
-      const PayloadsStorage& from, PayloadsStorage& to) {
+  void saveToPayloadsStorageAlt(const PayloadsStorage& from,
+                                PayloadsStorage& to) {
     payloadsRepositoryCopy(from.getRepo<ATV>(), to.getRepo<ATV>());
     payloadsRepositoryCopy(from.getRepo<VTB>(), to.getRepo<VTB>());
     payloadsRepositoryCopy(from.getRepo<VbkBlock>(), to.getRepo<VbkBlock>());
@@ -149,9 +146,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   SaveTree(this->popminer->vbk(), adaptor);
   this->saveToPayloadsStorageVbk(this->popminer->vbk().getStoragePayloads(),
                                  *this->storagePayloads2);
-  VbkBlockTree newvbk{this->vbkparam,
-                      this->btcparam,
-                      *this->storagePayloads2};
+  VbkBlockTree newvbk{this->vbkparam, this->btcparam, *this->storagePayloads2};
   newvbk.btc().bootstrapWithGenesis(this->state);
   newvbk.bootstrapWithGenesis(this->state);
 
@@ -161,7 +156,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
       << this->state.toString();
 
   ASSERT_EQ(newvbk.btc(), this->popminer->btc());
-  ASSERT_EQ(newvbk,  this->popminer->vbk());
+  ASSERT_EQ(newvbk, this->popminer->vbk());
   this->popminer->vbk().removeLeaf(*this->popminer->vbk().getBestChain().tip());
   ASSERT_FALSE(newvbk == this->popminer->vbk());
 
@@ -171,7 +166,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   ASSERT_TRUE(newvbk.btc() == this->popminer->btc());
 }
 
- TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
+TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
 
   // mine 2 blocks
@@ -208,8 +203,10 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
   reloadedAltTree.bootstrap(this->state);
 
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
+  ASSERT_TRUE(
+      LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
+  ASSERT_TRUE(
+      LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
 
   ASSERT_EQ(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc());
