@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <vector>
 #include <veriblock/serde.hpp>
+#include <veriblock/comparator.hpp>
 
 namespace altintegration {
 
@@ -24,6 +25,13 @@ struct PopState {
 
   //! (memory-only) list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
+
+  bool operator==(const PopState& o) const {
+    CollectionOfPtrComparator cmp;
+    bool a = cmp(containingEndorsements,o.containingEndorsements);
+    bool b = cmp(endorsedBy, o.endorsedBy);
+    return a && b;
+  }
 
   void setNull() {
     containingEndorsements.clear();
@@ -41,7 +49,7 @@ struct PopState {
         });
   }
 
-  void initFromRaw(ReadStream& r) {
+  void initAddonFromRaw(ReadStream& r) {
     // read containingEndorsements as vector
     auto v = readArrayOf<endorsement_t>(
         r, [](ReadStream& r) { return endorsement_t::fromVbkEncoding(r); });
@@ -53,6 +61,11 @@ struct PopState {
     }
 
     // do not restore 'endorsedBy', it will be done later
+  }
+
+  void initAddonFromOther(const PopState& other) {
+    containingEndorsements = other.containingEndorsements;
+    endorsedBy = other.endorsedBy;
   }
 };
 

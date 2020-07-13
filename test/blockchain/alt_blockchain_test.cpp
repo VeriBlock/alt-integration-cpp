@@ -165,8 +165,8 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
 
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   EXPECT_TRUE(containingIndex->isValid());
-  EXPECT_EQ(*alttree.vbk().getBestChain().tip(),
-            *popminer->vbk().getBestChain().tip());
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
+            popminer->vbk().getBestChain().tip()->getHash());
 
   EXPECT_FALSE(
       alttree.validatePayloads(containingBlock.getHash(), payloads1, state));

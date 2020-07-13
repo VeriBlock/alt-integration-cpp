@@ -98,6 +98,10 @@ JsonValue ToJSON(const VTB& v) {
   return obj;
 }
 
+inline void PrintTo(const VTB& v, std::ostream* os) {
+  *os << ToJSON<picojson::value>(v).serialize(false);
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VTB_HPP_

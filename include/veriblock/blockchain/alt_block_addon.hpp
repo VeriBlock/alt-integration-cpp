@@ -37,6 +37,12 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     return atvids.empty() && vtbids.empty() && vbkblockids.empty();
   }
 
+  bool operator==(const AltBlockAddon& o) const {
+    return atvids == o.atvids && vtbids == o.vtbids &&
+           vbkblockids == o.vbkblockids &&
+           PopState<AltEndorsement>::operator==(o);
+  }
+
   template <typename pop_t, typename pop_id_t>
   std::vector<pop_id_t>& getPayloadIds();
 
@@ -65,8 +71,8 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     writeArrayOf<uint96>(w, vbkblockids, writeSingleByteLenValue);
   }
 
-  void initFromRaw(ReadStream& r) {
-    PopState<AltEndorsement>::initFromRaw(r);
+  void initAddonFromRaw(ReadStream& r) {
+    PopState<AltEndorsement>::initAddonFromRaw(r);
     atvids = readArrayOf<uint256>(
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
     vtbids = readArrayOf<uint256>(

@@ -124,6 +124,30 @@ struct BlockTree : public BaseBlockTree<Block> {
                         pad);
   }
 
+  //! @invariant NOT atomic.
+  bool loadBlock(const index_t& index, ValidationState& state) override {
+    if (!checkBlock(*index.header, state, *param_)) {
+      return state.Invalid("bad-header");
+    }
+
+    if (!base::loadBlock(index, state)) {
+      return state.Invalid("load-block");
+    }
+
+    auto* current = base::getBlockIndex(index.getHash());
+    VBK_ASSERT(current);
+
+    // recover chainwork
+    if (current->pprev) {
+      current->chainWork =
+          current->pprev->chainWork + getBlockProof(*current->header);
+    } else {
+      current->chainWork = getBlockProof(*current->header);
+    }
+
+    return true;
+  }
+
  protected:
   const ChainParams* param_ = nullptr;
 
@@ -174,6 +198,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     base::tryAddTip(index);
 
     index->setFlag(BLOCK_APPLIED);
+    index->setFlag(BLOCK_BOOTSTRAP);
 
     return true;
   }

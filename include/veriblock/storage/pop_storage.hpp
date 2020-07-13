@@ -28,26 +28,6 @@ class PopStorage {
   template <typename Block>
   const TipsRepository<Block>& getTipsRepo() const;
 
-  template <typename Endorsements>
-  PayloadsRepository<Endorsements>& getEndorsementsRepo();
-
-  template <typename Endorsements>
-  const PayloadsRepository<Endorsements>& getEndorsementsRepo() const;
-
-  template <typename Endorsements>
-  Endorsements loadEndorsements(const typename Endorsements::id_t& eid) const {
-    Endorsements endorsements;
-    auto& repo = getEndorsementsRepo<Endorsements>();
-    repo.get(eid, &endorsements);
-    return endorsements;
-  }
-
-  template <typename Endorsements>
-  void saveEndorsements(const Endorsements& endorsements) {
-    auto& repo = getEndorsementsRepo<Endorsements>();
-    repo.put(endorsements);
-  }
-
   template <typename StoredBlock>
   std::multimap<typename StoredBlock::height_t, std::shared_ptr<StoredBlock>>
   loadBlocks() {
@@ -66,9 +46,6 @@ class PopStorage {
   }
 
   template <typename StoredBlock>
-  void processSaveBlock(const StoredBlock&);
-
-  template <typename StoredBlock>
   void saveBlocks(
       const std::unordered_map<typename StoredBlock::prev_hash_t,
                                std::shared_ptr<StoredBlock>>& blocks) {
@@ -79,7 +56,6 @@ class PopStorage {
     for (const auto& block : blocks) {
       auto& index = *(block.second);
       batch->put(index);
-      processSaveBlock(index);
     }
     batch->commit();
   }
