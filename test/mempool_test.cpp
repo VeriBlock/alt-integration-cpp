@@ -486,9 +486,14 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   EXPECT_TRUE(checkVTB(
       vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
-  //  EXPECT_NE(vtb1, vtb2);
-  EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
-            VbkEndorsement::fromContainer(vtb2));
+  EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
+  auto E1 = VbkEndorsement::fromContainer(vtb1);
+  auto E2 = VbkEndorsement::fromContainer(vtb2);
+  EXPECT_EQ(E1.payoutInfo, E2.payoutInfo);
+  EXPECT_EQ(E1.blockOfProof, E2.blockOfProof);
+  EXPECT_EQ(E1.endorsedHash, E2.endorsedHash);
+  EXPECT_NE(E1.containingHash, E2.containingHash);
+  EXPECT_EQ(E1.id, E2.id);
 
   fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
@@ -610,9 +615,14 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   EXPECT_TRUE(checkVTB(
       vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
 
-  EXPECT_NE(vtb1.toHex(), vtb2.toHex());
-  EXPECT_EQ(VbkEndorsement::fromContainer(vtb1),
-            VbkEndorsement::fromContainer(vtb2));
+  EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
+  auto E1 = VbkEndorsement::fromContainer(vtb1);
+  auto E2 = VbkEndorsement::fromContainer(vtb2);
+  EXPECT_EQ(E1.payoutInfo, E2.payoutInfo);
+  EXPECT_EQ(E1.blockOfProof, E2.blockOfProof);
+  EXPECT_EQ(E1.endorsedHash, E2.endorsedHash);
+  EXPECT_NE(E1.containingHash, E2.containingHash);
+  EXPECT_EQ(E1.id, E2.id);
 
   fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 

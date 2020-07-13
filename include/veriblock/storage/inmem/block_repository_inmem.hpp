@@ -9,6 +9,7 @@
 #include <iterator>
 #include <memory>
 #include <unordered_map>
+#include <veriblock/entities/btcblock.hpp>
 #include <veriblock/storage/block_repository.hpp>
 
 namespace altintegration {
@@ -134,6 +135,20 @@ struct BlockWriteBatchInmem : public BlockWriteBatch<Block> {
   std::vector<Operation> _ops;
 };
 
+// when block is stored on disk, its inmem fields get cleared. simulate this by
+// removing them
+template <typename index_t>
+inline void RemoveInmemFields(index_t& block) {
+  block.pprev = nullptr;
+  block.pnext.clear();
+  block.endorsedBy.clear();
+}
+template <>
+inline void RemoveInmemFields(BlockIndex<BtcBlock>& block) {
+  block.pprev = nullptr;
+  block.pnext.clear();
+}
+
 template <typename Block>
 struct BlockRepositoryInmem : public BlockRepository<Block> {
   //! stored block type
@@ -176,7 +191,9 @@ struct BlockRepositoryInmem : public BlockRepository<Block> {
   bool put(const stored_block_t& block) override {
     auto bHash = block.getHash();
     bool res = _hash.find(bHash) != _hash.end();
-    _hash[bHash] = std::make_shared<stored_block_t>(block);
+    auto ins = std::make_shared<stored_block_t>(block);
+    _hash[bHash] = ins;
+    RemoveInmemFields(*ins);
     return res;
   }
 

@@ -280,25 +280,29 @@ void VbkBlockTree::payloadsToCommands(const payloads_t& p,
   commands.push_back(std::move(cmd));
 }
 
-bool VbkBlockTree::saveToStorage(PopStorage& storage, ValidationState& state) {
-  saveBlocksAndTip(storage, btc());
-  saveBlocksAndTip(storage, *this);
-  return state.IsValid();
-}
-
-bool VbkBlockTree::loadFromStorage(PopStorage& storage,
-                                   ValidationState& state) {
-  if (!loadAndApplyBlocks(storage, btc(), state))
-    return state.Invalid("BTC-load-and-apply-blocks");
-  if (!loadAndApplyBlocks(storage, *this, state)) {
-    return state.Invalid("VBK-load-and-apply-blocks");
-  }
-  return state.IsValid();
-}
-
 std::string VbkBlockTree::toPrettyString(size_t level) const {
   return fmt::sprintf(
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
+}
+
+bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
+                             ValidationState& state) {
+  if (!VbkTree::loadBlock(index, state)) {
+    return false;  // already set
+  }
+
+  auto* current = getBlockIndex(index.getHash());
+  VBK_ASSERT(current);
+
+  // recover `endorsedBy`
+  auto window =
+      std::max(0, index.height - param_->getEndorsementSettlementInterval());
+  Chain<index_t> chain(window, current);
+  if (!recoverEndorsedBy(*this, chain, *current, state)) {
+    return state.Invalid("load-block");
+  }
+
+  return true;
 }
 
 template <>

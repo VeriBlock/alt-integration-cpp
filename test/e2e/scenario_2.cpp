@@ -102,7 +102,8 @@ TEST_F(Scenario2, scenario_2) {
       VbkEndorsement::getId(vtbs[1])));
 
   // check btc tree state
-  EXPECT_EQ(*alttree.vbk().btc().getBestChain().tip(), *btcBlockTip1);
+  EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
+            btcBlockTip1->getHash());
 
   mineAltBlocks(10, chain);
   containingBlock = generateNextBlock(*chain.rbegin());
@@ -129,7 +130,8 @@ TEST_F(Scenario2, scenario_2) {
       VbkEndorsement::getId(vtbs[1])));
 
   // check btc tree state
-  EXPECT_EQ(*alttree.vbk().btc().getBestChain().tip(), *btcBlockTip2);
+  EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
+            btcBlockTip2->getHash());
 
   // reset state of the cmp_ in the altTree
   // generate new fork with the new altPayloads
@@ -152,7 +154,8 @@ TEST_F(Scenario2, scenario_2) {
       VbkEndorsement::getId(vtbs[1])));
 
   // check btc tree state
-  EXPECT_EQ(*alttree.vbk().btc().getBestChain().tip(), *btcBlockTip1);
+  EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
+            btcBlockTip1->getHash());
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
@@ -172,5 +175,6 @@ TEST_F(Scenario2, scenario_2) {
       VbkEndorsement::getId(vtbs[1])));
 
   // check btc tree state
-  EXPECT_EQ(*alttree.vbk().btc().getBestChain().tip(), *btcBlockTip2);
+  EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
+            btcBlockTip2->getHash());
 }

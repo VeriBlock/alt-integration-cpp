@@ -93,7 +93,16 @@ struct Endorsement {
 
   type::id_t getId() const { return id; }
 
-  bool operator==(const type& other) const { return id == other.id; }
+  bool operator==(const type& other) const {
+    bool a = id == other.id;
+    bool b = endorsedHash == other.endorsedHash;
+    bool c = containingHash == other.containingHash;
+    bool d = blockOfProof == other.blockOfProof;
+    bool e = payoutInfo == other.payoutInfo;
+    return a && b && c && d && e;
+  }
+
+  bool operator!=(const type& other) const { return !operator==(other); }
 
   std::string toPrettyString(size_t level = 0) const;
 };
@@ -107,6 +116,11 @@ Value ToJSON(const Endorsement<A, B, C>& e) {
   json::putStringKV(obj, "blockOfProof", e.blockOfProof);
   json::putStringKV(obj, "payoutInfo", e.payoutInfo);
   return obj;
+}
+
+template <typename A, typename B, typename C>
+void PrintTo(const Endorsement<A, B, C>& e, std::ostream* os) {
+  *os << e.toPrettyString();
 }
 
 }  // namespace altintegration

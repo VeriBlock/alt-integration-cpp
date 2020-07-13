@@ -7,6 +7,7 @@
 
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
+#include <veriblock/storage/batch.hpp>
 #include <veriblock/storage/blockchain_storage_util.hpp>
 #include "veriblock/algorithm.hpp"
 #include "veriblock/rewards/poprewards.hpp"
@@ -28,6 +29,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   auto height = block.height;
 
   index->setFlag(BLOCK_APPLIED);
+  index->setFlag(BLOCK_BOOTSTRAP);
   base::activeChain_ = Chain<index_t>(height, index);
 
   VBK_ASSERT(base::isBootstrapped());
@@ -242,24 +244,6 @@ void AltTree::payloadsToCommands(const VTB& vtb,
 void AltTree::payloadsToCommands(const VbkBlock& block,
                                  std::vector<CommandPtr>& commands) {
   addBlock(vbk(), block, commands);
-}
-
-bool AltTree::saveToStorage(PopStorage& storage, ValidationState& state) {
-  saveBlocksAndTip(storage, vbk().btc());
-  saveBlocksAndTip(storage, vbk());
-  saveBlocksAndTip(storage, *this);
-  return state.IsValid();
-}
-
-bool AltTree::loadFromStorage(PopStorage& storage, ValidationState& state) {
-  if (!loadAndApplyBlocks(storage, vbk().btc(), state))
-    return state.Invalid("BTC-load-and-apply-blocks");
-  if (!loadAndApplyBlocks(storage, vbk(), state))
-    return state.Invalid("VBK-load-and-apply-blocks");
-  if (!loadAndApplyBlocks(storage, *this, state)) {
-    return state.Invalid("ALT-load-and-apply-blocks");
-  }
-  return state.IsValid();
 }
 
 std::string AltTree::toPrettyString(size_t level) const {
@@ -481,6 +465,66 @@ bool AltTree::setTipContinueOnInvalid(AltTree::index_t& to,
   return success;
 }
 
+bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
+  if (!base::loadBlock(index, state)) {
+    return false;  // already set
+  }
+
+  // load endorsements
+  auto* current = getBlockIndex(index.getHash());
+  VBK_ASSERT(current);
+
+  // recover `endorsedBy`
+  auto window = std::max(
+      0, index.height - getParams().getEndorsementSettlementInterval());
+  Chain<index_t> chain(window, current);
+  if (!recoverEndorsedBy(*this, chain, *current, state)) {
+    return state.Invalid("load-block");
+  }
+
+  return true;
+}
+
+bool AltTree::addPayloads(const AltBlock& containing,
+                          const PopData& popData,
+                          ValidationState& state) {
+  return addPayloads(containing.hash, popData, state);
+}
+
+AltTree::AltTree(const AltTree::alt_config_t& alt_config,
+                 const AltTree::vbk_config_t& vbk_config,
+                 const AltTree::btc_config_t& btc_config,
+                 PayloadsStorage& storagePayloads)
+    : alt_config_(&alt_config),
+      vbk_config_(&vbk_config),
+      btc_config_(&btc_config),
+      cmp_(std::make_shared<VbkBlockTree>(
+               vbk_config, btc_config, storagePayloads),
+           vbk_config,
+           alt_config,
+           storagePayloads),
+      rewards_(alt_config),
+      storagePayloads_(storagePayloads) {}
+
+template <typename pop_t>
+std::vector<CommandGroup> loadCommands_(const typename AltTree::index_t& index,
+                                        AltTree& tree,
+                                        const PayloadsRepository<pop_t>& prep) {
+  auto& pids = index.getPayloadIds<pop_t, typename pop_t::id_t>();
+  std::vector<CommandGroup> out{};
+  for (const auto& pid : pids) {
+    pop_t payloads;
+    if (!prep.get(pid, &payloads)) {
+      throw db::StateCorruptedException(
+          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
+    }
+    CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());
+    tree.payloadsToCommands(payloads, cg.commands);
+    out.push_back(cg);
+  }
+  return out;
+}
+
 template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename AltTree::index_t& index, AltTree& tree) {
@@ -543,6 +587,8 @@ void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
     VBK_ASSERT(ret);
     return;
   }
+
+  VBK_ASSERT(false && "should not reach here");
 }
 
 }  // namespace altintegration

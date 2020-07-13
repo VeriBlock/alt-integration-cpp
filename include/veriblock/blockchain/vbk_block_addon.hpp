@@ -9,6 +9,7 @@
 #include <veriblock/blockchain/btc_block_addon.hpp>
 #include <veriblock/blockchain/pop/pop_state.hpp>
 #include <veriblock/entities/endorsements.hpp>
+#include <veriblock/logger.hpp>
 #include <veriblock/uint.hpp>
 
 namespace altintegration {
@@ -33,6 +34,13 @@ struct VbkBlockAddon :
   template <typename pop_t, typename pop_id_t>
   const std::vector<pop_id_t>& getPayloadIds() const;
 
+  bool operator==(const VbkBlockAddon& o) const {
+    bool a = vtbids == o.vtbids;
+    bool b = BtcBlockAddon::operator==(o);
+    bool c = PopState<VbkEndorsement>::operator==(o);
+    return a && b && c;
+  }
+
   void setNull() {
     BtcBlockAddon::setNull();
     PopState<VbkEndorsement>::setNull();
@@ -49,9 +57,9 @@ struct VbkBlockAddon :
     writeArrayOf<uint256>(w, vtbids, writeSingleByteLenValue);
   }
 
-  void initFromRaw(ReadStream& r) {
-    BtcBlockAddon::initFromRaw(r);
-    PopState<VbkEndorsement>::initFromRaw(r);
+  void initAddonFromRaw(ReadStream& r) {
+    BtcBlockAddon::initAddonFromRaw(r);
+    PopState<VbkEndorsement>::initAddonFromRaw(r);
 
     vtbids = readArrayOf<uint256>(
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });

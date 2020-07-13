@@ -474,16 +474,11 @@ struct PopAwareForkResolutionComparator {
       return 1;
     }
 
-    VBK_LOG_INFO("Doing %s POP fork resolution. Best=%s, Candidate=%s",
-                 protected_block_t::name(),
-                 bestTip->toShortPrettyString(),
-                 candidate.toShortPrettyString());
-
     auto originalProtectingTip = ing_->getBestChain().tip();
 
     // candidate is on top of our best tip
     if (candidate.getAncestor(bestTip->height) == bestTip) {
-      VBK_LOG_INFO("Candidate is %d blocks ahead",
+      VBK_LOG_DEBUG("Candidate is %d blocks ahead",
                    candidate.height - bestTip->height);
 
       auto guard = ing_->deferForkResolutionGuard();
@@ -497,9 +492,14 @@ struct PopAwareForkResolutionComparator {
         return 1;
       }
 
-      VBK_LOG_INFO("Candidate contains VALID commands, chain B wins");
+      VBK_LOG_DEBUG("Candidate contains VALID commands, chain B wins");
       return -1;
     }
+
+    VBK_LOG_INFO("Doing %s POP fork resolution. Best=%s, Candidate=%s",
+                 protected_block_t::name(),
+                 bestTip->toShortPrettyString(),
+                 candidate.toShortPrettyString());
 
     auto ki = ed.getParams().getKeystoneInterval();
     const auto* fork = currentBest.findFork(&candidate);

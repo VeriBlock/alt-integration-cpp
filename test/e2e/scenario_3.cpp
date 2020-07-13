@@ -119,7 +119,7 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_TRUE(state.IsValid());
   ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
   ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
-  EXPECT_EQ(*alttree.vbk().getBestChain().tip(), *vbkTip1);
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip1->getHash());
 
   auto* containingVbkBlock =
       alttree.vbk().getBlockIndex(vtbs1[1].containingBlock.getHash());
@@ -182,5 +182,5 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
       VbkEndorsement::getId(vtbs1[1])));
 
-  EXPECT_EQ(*alttree.vbk().getBestChain().tip(), *vbkTip1);
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip1->getHash());
 }

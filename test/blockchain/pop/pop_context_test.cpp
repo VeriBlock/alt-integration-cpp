@@ -114,10 +114,11 @@ TEST_F(PopContextFixture, A) {
   }
 
   // local and remote VBK chains are same
-  ASSERT_EQ(*local.getBestChain().tip(), *remote.vbk().getBestChain().tip());
+  ASSERT_EQ(local.getBestChain().tip()->getHash(),
+            remote.vbk().getBestChain().tip()->getHash());
   // local and remote BTC chains are different
-  ASSERT_NE(*local.btc().getBestChain().tip(),
-            *remote.btc().getBestChain().tip());
+  ASSERT_NE(local.btc().getBestChain().tip()->getHash(),
+            remote.btc().getBestChain().tip()->getHash());
 
   auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
     auto it = remote.vbkPayloads.find(containing->getHash());
@@ -125,16 +126,16 @@ TEST_F(PopContextFixture, A) {
     auto& vtbs = it->second;
 
     ASSERT_TRUE(local.acceptBlock(*containing->header, state));
-    ASSERT_TRUE(local.addPayloads(
-        containing->header->getHash(), {vtbs}, state));
+    ASSERT_TRUE(
+        local.addPayloads(containing->header->getHash(), {vtbs}, state));
   };
 
   // and now accept VBK tip again, with VTBs
   acceptAllVtbsFromVBKblock(vbkTip);
 
   // and now our local BTC tree must know all blocks from active chain B
-  ASSERT_EQ(*local.btc().getBestChain().tip(),
-            *remote.btc().getBestChain().tip());
+  ASSERT_EQ(local.btc().getBestChain().tip()->getHash(),
+            remote.btc().getBestChain().tip()->getHash());
 
   // local BTC tree must NOT know about blocks from chain A
   ASSERT_FALSE(local.btc().getBlockIndex(chainAtip->getHash()));
@@ -148,8 +149,8 @@ TEST_F(PopContextFixture, A) {
   ASSERT_TRUE(local.setState(localVbkTip->getHash(), state));
 
   // our local BTC is still same as remote
-  ASSERT_EQ(*local.btc().getBestChain().tip(),
-            *remote.btc().getBestChain().tip());
+  ASSERT_EQ(local.btc().getBestChain().tip()->getHash(),
+            remote.btc().getBestChain().tip()->getHash());
 
   // but now we know blocks from chain A
   ASSERT_TRUE(local.btc().getBlockIndex(chainAtip->getHash()));

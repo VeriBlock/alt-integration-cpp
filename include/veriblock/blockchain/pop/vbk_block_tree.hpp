@@ -40,6 +40,14 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
         cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp, storagePayloads),
         storagePayloads_(storagePayloads) {}
 
+  //! efficiently connect `index` to current tree, loaded from disk
+  //! - recovers all pointers (pprev, pnext, endorsedBy)
+  //! - recalculates chainWork
+  //! - does validation of endorsements
+  //! - recovers tips array
+  //! @invariant NOT atomic.
+  bool loadBlock(const index_t& index, ValidationState& state) override;
+
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 
@@ -86,7 +94,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   bool loadFromStorage(PopStorage& storage, ValidationState& state);
 
   bool operator==(const VbkBlockTree& o) const {
-    return cmp_ == o.cmp_ && VbkTree::operator==(o);
+    bool a = cmp_ == o.cmp_;
+    bool b = VbkTree::operator==(o);
+    return a && b;
   }
 
   bool operator!=(const VbkBlockTree& o) const { return !operator==(o); }
