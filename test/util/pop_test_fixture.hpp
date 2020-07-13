@@ -62,7 +62,7 @@ struct PopTestFixture {
                                       size_t num) {
     const BlockIndex<AltBlock>* index = &prev;
     for (size_t i = 0; i < num; i++) {
-      auto next = generateNextBlock(*index->header);
+      auto next = generateNextBlock(index->getHeader());
       EXPECT_TRUE(alttree.acceptBlock(next, state));
       EXPECT_TRUE(alttree.setState(next.getHash(), state));
       index = alttree.getBlockIndex(next.getHash());
@@ -94,12 +94,8 @@ struct PopTestFixture {
   }
 
   AltBlock generateNextBlock(const AltBlock& prev) {
-    AltBlock block;
-    block.hash = generateRandomBytesVector(32);
-    block.height = prev.height + 1;
-    block.previousBlock = prev.getHash();
-    block.timestamp = prev.timestamp + 1;
-
+    AltBlock block(
+        generateRandomBytesVector(32), prev.getHash(), prev.getBlockTime() + 1, prev.getHeight() + 1);
     return block;
   }
 
@@ -117,14 +113,16 @@ struct PopTestFixture {
       throw std::logic_error("can't find endorsed block");
     }
 
-    return generatePopTx(*index->header);
+    return generatePopTx(index->getHeader());
   }
 
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
     auto Btctx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
     auto* btcBlockTip = popminer->mineBtcBlocks(1);
-    return popminer->createVbkPopTxEndorsingVbkBlock(
-        *btcBlockTip->header, Btctx, endorsedBlock, getLastKnownBtcBlock());
+    return popminer->createVbkPopTxEndorsingVbkBlock(btcBlockTip->getHeader(),
+                                                     Btctx,
+                                                     endorsedBlock,
+                                                     getLastKnownBtcBlock());
   }
 
   void fillVbkContext(VTB& vtb,
@@ -151,10 +149,10 @@ struct PopTestFixture {
 
     for (auto* walkBlock = tip;
          walkBlock != nullptr &&
-         walkBlock->header->getHash() != lastKnownVbkBlockHash;
+         walkBlock->getHeader().getHash() != lastKnownVbkBlockHash;
          walkBlock = walkBlock->pprev) {
-      if (known_blocks.count(walkBlock->header->getHash()) == 0) {
-        ctx.push_back(*walkBlock->header);
+      if (known_blocks.count(walkBlock->getHeader().getHash()) == 0) {
+        ctx.push_back(walkBlock->getHeader());
       }
     }
 
@@ -205,7 +203,7 @@ struct PopTestFixture {
     std::sort(popData.context.begin(),
               popData.context.end(),
               [](const VbkBlock& a, const VbkBlock& b) {
-                return a.height < b.height;
+                return a.getHeight() < b.getHeight();
               });
 
     popData.atvs = atvs;

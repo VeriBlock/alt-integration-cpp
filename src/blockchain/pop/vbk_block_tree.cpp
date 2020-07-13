@@ -19,7 +19,8 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   auto bestTip = getBestChain().tip();
   VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
 
-  if (bestTip->height > candidate.height + param_->getMaxReorgBlocks()) {
+  if (bestTip->getHeight() >
+      candidate.getHeight() + param_->getMaxReorgBlocks()) {
     VBK_LOG_DEBUG("%s Candidate is behind tip more than %d blocks",
                   block_t::name(),
                   candidate.toShortPrettyString(),
@@ -89,18 +90,20 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(success);
   }
 
+  auto& vtbids = index.getPayloadIds<VTB, typename VTB::id_t>();
   for (const auto& pid : pids) {
-    auto it = std::find(index.vtbids.begin(), index.vtbids.end(), pid);
+    auto it = std::find(vtbids.begin(), vtbids.end(), pid);
     // using an assert because throwing breaks atomicity
     // if there are multiple pids
-    VBK_ASSERT(it != index.vtbids.end() &&
+    VBK_ASSERT(it != vtbids.end() &&
                "could not find the payload to remove");
 
     if (!storagePayloads_.isValid<VTB, index_t>(pid, index)) {
       revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    index.vtbids.erase(it);
+    // TODO: erase VTB ID
+    //index.vtbids.erase(it);
   }
 
   updateTips();
@@ -127,8 +130,9 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
                 pid.toPrettyString(),
                 index.toPrettyString());
 
-  auto vtbid_it = std::find(index.vtbids.begin(), index.vtbids.end(), pid);
-  VBK_ASSERT(vtbid_it != index.vtbids.end() &&
+  auto& vtbids = index.getPayloadIds<VTB, typename VTB::id_t>();
+  auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
+  VBK_ASSERT(vtbid_it != vtbids.end() &&
              "state corruption: the block does not contain the payload");
 
   // removing an invalid payload might render the block valid
@@ -160,7 +164,8 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
     }
   }
 
-  index.vtbids.erase(vtbid_it);
+  // TODO: erase VTB ID
+  //index.vtbids.erase(vtbid_it);
 
   if (shouldDetermineBestChain) {
     updateTips();
@@ -198,7 +203,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   // check that we can add all payloads at once to guarantee atomicity
-  std::set<pid_t> existingPids(index->vtbids.begin(), index->vtbids.end());
+  auto& vtbids = index->getPayloadIds<VTB, typename VTB::id_t>();
+  std::set<pid_t> existingPids(vtbids.begin(), vtbids.end());
   for (const auto& payload : payloads) {
     auto pid = payload.getId();
     if (!existingPids.insert(pid).second) {
@@ -215,7 +221,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   bool isOnActiveChain = activeChain_.contains(index);
   if (isOnActiveChain) {
     VBK_ASSERT(tip != nullptr);
-    auto window = (std::max)(0, tip->height - index->height);
+    auto window = (std::max)(0, tip->getHeight() - index->getHeight());
     if (window >= param_->getHistoryOverwriteLimit()) {
       return state.Invalid(
           block_t::name() + "-too-late",
@@ -236,7 +242,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   for (const auto& payload : payloads) {
     auto pid = payload.getId();
 
-    index->vtbids.push_back(pid);
+    // TODO: insert VTB ID
+    //index->vtbids.push_back(pid);
     storagePayloads_.savePayloads(payload);
   }
 
@@ -295,8 +302,8 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
   VBK_ASSERT(current);
 
   // recover `endorsedBy`
-  auto window =
-      std::max(0, index.height - param_->getEndorsementSettlementInterval());
+  auto window = std::max(
+      0, index.getHeight() - param_->getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
     return state.Invalid("load-block");
@@ -326,7 +333,10 @@ template <>
 void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
   VBK_ASSERT(cg.payload_type_name == VTB::name());
-  bool success = removeId(index.vtbids, cg.id);
+  //bool success = removeId(index.vtbids, cg.id);
+  // TODO: erase CG ID
+  (void)index;
+  bool success = true;
   VBK_ASSERT(success);
 }
 

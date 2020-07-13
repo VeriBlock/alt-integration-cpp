@@ -39,7 +39,7 @@ class PopStorage {
         blocks{};
     while (cursor->isValid()) {
       auto block = cursor->value();
-      blocks.insert({block.height, std::make_shared<StoredBlock>(block)});
+      blocks.insert({block.getHeight(), std::make_shared<StoredBlock>(block)});
       cursor->next();
     }
     return blocks;

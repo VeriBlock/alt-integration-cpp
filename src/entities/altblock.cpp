@@ -19,17 +19,17 @@ AltBlock AltBlock::fromRaw(ReadStream& stream) {
 AltBlock AltBlock::fromVbkEncoding(ReadStream& stream) {
   AltBlock block;
   uint32_t hash_size = stream.readBE<uint32_t>();
-  block.hash.resize(hash_size);
+  block._hash.resize(hash_size);
   for (uint32_t i = 0; i < hash_size; ++i) {
-    block.hash[i] = stream.readBE<uint8_t>();
+    block._hash[i] = stream.readBE<uint8_t>();
   }
   hash_size = stream.readBE<uint32_t>();
-  block.previousBlock.resize(hash_size);
+  block._previousBlock.resize(hash_size);
   for (uint32_t i = 0; i < hash_size; ++i) {
-    block.previousBlock[i] = stream.readBE<uint8_t>();
+    block._previousBlock[i] = stream.readBE<uint8_t>();
   }
-  block.height = stream.readBE<int32_t>();
-  block.timestamp = stream.readBE<uint32_t>();
+  block._height = stream.readBE<int32_t>();
+  block._timestamp = stream.readBE<uint32_t>();
 
   return block;
 }
@@ -50,16 +50,16 @@ std::vector<uint8_t> AltBlock::toRaw() const {
 }
 
 void AltBlock::toVbkEncoding(WriteStream& stream) const {
-  stream.writeBE<uint32_t>((uint32_t)hash.size());
-  for (size_t i = 0; i < hash.size(); ++i) {
-    stream.writeBE<uint8_t>(hash[i]);
+  stream.writeBE<uint32_t>((uint32_t)_hash.size());
+  for (size_t i = 0; i < _hash.size(); ++i) {
+    stream.writeBE<uint8_t>(_hash[i]);
   }
-  stream.writeBE<uint32_t>((uint32_t)previousBlock.size());
-  for (size_t i = 0; i < previousBlock.size(); ++i) {
-    stream.writeBE<uint8_t>(previousBlock[i]);
+  stream.writeBE<uint32_t>((uint32_t)_previousBlock.size());
+  for (size_t i = 0; i < _previousBlock.size(); ++i) {
+    stream.writeBE<uint8_t>(_previousBlock[i]);
   }
-  stream.writeBE<int32_t>(height);
-  stream.writeBE<uint32_t>(timestamp);
+  stream.writeBE<int32_t>(_height);
+  stream.writeBE<uint32_t>(_timestamp);
 }
 
 std::vector<uint8_t> AltBlock::toVbkEncoding() const {

@@ -23,10 +23,7 @@ struct VbkBlockAddon :
     public BtcBlockAddon {
   using payloads_t = VTB;
 
-  // VTB::id_t
-  std::vector<uint256> vtbids;
-
-  bool payloadsIdsEmpty() const { return vtbids.empty(); }
+  bool payloadsIdsEmpty() const { return _vtbids.empty(); }
 
   template <typename pop_t, typename pop_id_t>
   std::vector<pop_id_t>& getPayloadIds();
@@ -35,46 +32,50 @@ struct VbkBlockAddon :
   const std::vector<pop_id_t>& getPayloadIds() const;
 
   bool operator==(const VbkBlockAddon& o) const {
-    bool a = vtbids == o.vtbids;
+    bool a = _vtbids == o._vtbids;
     bool b = BtcBlockAddon::operator==(o);
     bool c = PopState<VbkEndorsement>::operator==(o);
     return a && b && c;
   }
 
-  void setNull() {
-    BtcBlockAddon::setNull();
-    PopState<VbkEndorsement>::setNull();
-    vtbids.clear();
-  }
-
   std::string toPrettyString() const {
-    return fmt::sprintf("VTB=%d", vtbids.size());
+    return fmt::sprintf("VTB=%d", _vtbids.size());
   }
 
   void toRaw(WriteStream& w) const {
     BtcBlockAddon::toRaw(w);
     PopState<VbkEndorsement>::toRaw(w);
-    writeArrayOf<uint256>(w, vtbids, writeSingleByteLenValue);
+    writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
+  }
+
+ protected:
+  // VTB::id_t
+  std::vector<uint256> _vtbids;
+
+  void setNull() {
+    BtcBlockAddon::setNull();
+    PopState<VbkEndorsement>::setNull();
+    _vtbids.clear();
   }
 
   void initAddonFromRaw(ReadStream& r) {
     BtcBlockAddon::initAddonFromRaw(r);
     PopState<VbkEndorsement>::initAddonFromRaw(r);
 
-    vtbids = readArrayOf<uint256>(
+    _vtbids = readArrayOf<uint256>(
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
   }
 };
 
 template <>
 inline std::vector<uint256>& VbkBlockAddon::getPayloadIds<VTB, uint256>() {
-  return vtbids;
+  return _vtbids;
 }
 
 template <>
 inline const std::vector<uint256>& VbkBlockAddon::getPayloadIds<VTB, uint256>()
     const {
-  return vtbids;
+  return _vtbids;
 }
 
 }  // namespace altintegration

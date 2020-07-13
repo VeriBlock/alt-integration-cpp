@@ -98,23 +98,16 @@ struct Scenario0 : public ::testing::Test {
 TEST_F(Scenario0, Scenario0) {
   ASSERT_NO_THROW(config->validate());
 
-  AltBlock endorsedPrev;
-  endorsedPrev.hash = endorsedBlock.previousBlock.asVector();
-  endorsedPrev.height = 1;
-  endorsedPrev.timestamp = 10000;
-  endorsedPrev.previousBlock = config->alt->getBootstrapBlock().hash;
+  AltBlock endorsedPrev(endorsedBlock.getPreviousBlock().asVector(),
+                        config->alt->getBootstrapBlock().getHash(),
+                        10000,
+                        1);
 
-  AltBlock endorsed;
-  endorsed.hash = endorsedBlock.getHash().asVector();
-  endorsed.previousBlock = endorsedPrev.hash;
-  endorsed.timestamp = 10001;
-  endorsed.height = 2;
+  AltBlock endorsed(
+      endorsedBlock.getHash().asVector(), endorsedPrev.getHash(), 10001, 2);
 
-  AltBlock containing;
-  containing.height = 3;
-  containing.previousBlock = endorsed.hash;
-  containing.timestamp = 10002;
-  containing.hash = std::vector<uint8_t>{1, 3, 3, 10};
+  AltBlock containing(
+      std::vector<uint8_t>{1, 3, 3, 10}, endorsed.getHash(), 10002, 3);
 
   // TODO correctly generate popData
   PopData popData;
@@ -125,7 +118,7 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlock(endorsedPrev, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(endorsed, state)) << state.toString();
   ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
-  ASSERT_TRUE(alt->addPayloads(containing.hash, popData, state));
-  ASSERT_FALSE(alt->setState(containing.hash, state));
+  ASSERT_TRUE(alt->addPayloads(containing.getHash(), popData, state));
+  ASSERT_FALSE(alt->setState(containing.getHash(), state));
   ASSERT_EQ("ALT-bad-command+VBK-bad-containing", state.GetPath());
 }

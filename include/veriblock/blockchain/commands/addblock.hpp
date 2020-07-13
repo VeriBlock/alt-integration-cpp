@@ -27,7 +27,7 @@ struct AddBlock : public Command {
   bool Execute(ValidationState& state) override {
     auto* index = tree_->getBlockIndex(block_->getHash());
     if (index != nullptr) {
-      index->refCounter++;
+      //index->refCounter++;
       return true;
     }
     return tree_->acceptBlock(block_, state);
@@ -39,11 +39,11 @@ struct AddBlock : public Command {
     VBK_ASSERT(index != nullptr &&
                "failed to roll back AddBlock: the block does not exist");
 
-    if (index->refCounter == 0) {
+    if (index->getRefCounter() == 0) {
       return tree_->removeLeaf(*index);
     }
 
-    --index->refCounter;
+    //--index->refCounter;
   }
 
   size_t getId() const override { return block_->getHash().getLow64(); }
@@ -62,7 +62,7 @@ template <>
 inline std::string AddBtcBlock::toPrettyString(size_t level) const {
   return fmt::sprintf("%sAddBtcBlock{prev=%s, block=%s}",
                       std::string(level, ' '),
-                      block_->previousBlock.toHex(),
+                      block_->getPreviousBlock().toHex(),
                       block_->getHash().toHex());
 }
 
@@ -70,9 +70,9 @@ template <>
 inline std::string AddVbkBlock::toPrettyString(size_t level) const {
   return fmt::sprintf("%sAddVbkBlock{prev=%s, block=%s, height=%ld}",
                       std::string(level, ' '),
-                      block_->previousBlock.toHex(),
+                      block_->getPreviousBlock().toHex(),
                       block_->getHash().toHex(),
-                      block_->height);
+                      block_->getHeight());
 }
 
 template <typename BlockTree>

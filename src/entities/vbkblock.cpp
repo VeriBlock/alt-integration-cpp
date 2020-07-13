@@ -14,16 +14,16 @@ VbkBlock VbkBlock::fromRaw(Slice<const uint8_t> bytes) {
 
 VbkBlock VbkBlock::fromRaw(ReadStream& stream) {
   VbkBlock block{};
-  block.height = stream.readBE<int32_t>();
-  block.version = stream.readBE<int16_t>();
-  block.previousBlock = stream.readSlice(VBLAKE_PREVIOUS_BLOCK_HASH_SIZE);
-  block.previousKeystone = stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
-  block.secondPreviousKeystone =
+  block._height = stream.readBE<int32_t>();
+  block._version = stream.readBE<int16_t>();
+  block._previousBlock = stream.readSlice(VBLAKE_PREVIOUS_BLOCK_HASH_SIZE);
+  block._previousKeystone = stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
+  block._secondPreviousKeystone =
       stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
-  block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE);
-  block.timestamp = stream.readBE<int32_t>();
-  block.difficulty = stream.readBE<int32_t>();
-  block.nonce = stream.readBE<int32_t>();
+  block._merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE);
+  block._timestamp = stream.readBE<int32_t>();
+  block._difficulty = stream.readBE<int32_t>();
+  block._nonce = stream.readBE<int32_t>();
   return block;
 }
 
@@ -51,9 +51,9 @@ std::vector<uint8_t> VbkBlock::toVbkEncoding() const {
   return stream.data();
 }
 
-uint32_t VbkBlock::getDifficulty() const { return difficulty; }
+uint32_t VbkBlock::getDifficulty() const { return _difficulty; }
 
-uint32_t VbkBlock::getBlockTime() const { return timestamp; }
+uint32_t VbkBlock::getBlockTime() const { return _timestamp; }
 
 VbkBlock::hash_t VbkBlock::getHash() const {
   WriteStream stream;
@@ -73,15 +73,15 @@ VbkBlock VbkBlock::fromHex(const std::string& hex) {
 std::string VbkBlock::toHex() const { return HexStr(toRaw()); }
 
 void VbkBlock::toRaw(WriteStream& stream) const {
-  stream.writeBE<int32_t>(height);
-  stream.writeBE<int16_t>(version);
-  stream.write(previousBlock);
-  stream.write(previousKeystone);
-  stream.write(secondPreviousKeystone);
-  stream.write(merkleRoot);
-  stream.writeBE<int32_t>(timestamp);
-  stream.writeBE<int32_t>(difficulty);
-  stream.writeBE<int32_t>(nonce);
+  stream.writeBE<int32_t>(_height);
+  stream.writeBE<int16_t>(_version);
+  stream.write(_previousBlock);
+  stream.write(_previousKeystone);
+  stream.write(_secondPreviousKeystone);
+  stream.write(_merkleRoot);
+  stream.writeBE<int32_t>(_timestamp);
+  stream.writeBE<int32_t>(_difficulty);
+  stream.writeBE<int32_t>(_nonce);
 }
 
 std::vector<uint8_t> VbkBlock::toRaw() const {
@@ -95,13 +95,13 @@ std::string VbkBlock::toPrettyString() const {
       "VbkBlock{height=%ld, version=%d, prev=%s, ks1=%s, "
       "ks2=%s, mroot=%s, timestamp=%ld, "
       "diff=%ld, nonce=%ld}",
-      height,
-      version,
-      previousBlock.toHex(),
-      previousKeystone.toHex(),
-      secondPreviousKeystone.toHex(),
-      merkleRoot.toHex(),
-      timestamp,
-      difficulty,
-      nonce);
+      _height,
+      _version,
+      _previousBlock.toHex(),
+      _previousKeystone.toHex(),
+      _secondPreviousKeystone.toHex(),
+      _merkleRoot.toHex(),
+      _timestamp,
+      _difficulty,
+      _nonce);
 }

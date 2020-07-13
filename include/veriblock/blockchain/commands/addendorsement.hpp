@@ -45,7 +45,7 @@ struct AddEndorsement : public Command {
 
     // endorsement validity window
     auto window = ed_->getParams().getEndorsementSettlementInterval();
-    auto minHeight = (std::max)(containing->height - window, 0);
+    auto minHeight = (std::max)(containing->getHeight() - window, 0);
     Chain<protected_index_t> chain(minHeight, containing);
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
@@ -54,13 +54,13 @@ struct AddEndorsement : public Command {
                            "Endorsed block not found in the tree");
     }
 
-    if (containing->height - endorsed->height > window) {
+    if (containing->getHeight() - endorsed->getHeight() > window) {
       return state.Invalid(protected_block_t::name() + "-expired",
                            "Endorsement expired");
     }
 
-    if (chain[endorsed->height] == nullptr ||
-        endorsed->getHash() != chain[endorsed->height]->getHash()) {
+    if (chain[endorsed->getHeight()] == nullptr ||
+        endorsed->getHash() != chain[endorsed->getHeight()]->getHash()) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
@@ -69,8 +69,10 @@ struct AddEndorsement : public Command {
               HexStr(e_->endorsedHash)));
     }
 
-    auto& id = e_->id;
-    auto endorsed_it =
+    //auto& id = e_->id;
+
+    // TODO: check endorsedBy
+    /*auto endorsed_it =
         std::find_if(endorsed->endorsedBy.rbegin(),
                      endorsed->endorsedBy.rend(),
                      [&id](endorsement_t* p) { return p->id == id; });
@@ -83,7 +85,7 @@ struct AddEndorsement : public Command {
                        e_->toPrettyString(),
                        containing->toShortPrettyString(),
                        endorsed->toShortPrettyString()));
-    }
+    }*/
 
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
     if (!blockOfProof) {
@@ -106,8 +108,9 @@ struct AddEndorsement : public Command {
                        duplicate->toShortPrettyString()));
     }
 
-    containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
+    //containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
     endorsed->endorsedBy.push_back(e_.get());
+    containing->setDirty();
 
     return true;
   }
@@ -125,11 +128,13 @@ struct AddEndorsement : public Command {
         "failed to roll back AddEndorsement: the endorsed block does not "
         "exist");
 
-    auto endorsement_it = containing->containingEndorsements.find(e_->id);
-    VBK_ASSERT(endorsement_it != containing->containingEndorsements.end());
+    // TODO: check endorsements and endorsedBy
+
+    //auto endorsement_it = containing->containingEndorsements.find(e_->id);
+    //VBK_ASSERT(endorsement_it != containing->containingEndorsements.end());
 
     // erase endorsedBy
-    {
+   /* {
       auto& v = endorsed->endorsedBy;
       auto& id = e_->id;
 
@@ -146,10 +151,11 @@ struct AddEndorsement : public Command {
 
       auto toRemove = --(endorsed_it.base());
       v.erase(toRemove);
-    }
+    }*/
 
     // erase endorsement
-    containing->containingEndorsements.erase(endorsement_it);
+    //containing->containingEndorsements.erase(endorsement_it);
+    containing->setDirty();
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

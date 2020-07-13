@@ -103,7 +103,7 @@ class PayloadsStorage {
           throw db::StateCorruptedException(
               fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
         }
-        payloadsToCommands_(tree, payloads, *index.header, cg.commands);
+        payloadsToCommands_(tree, payloads, index.getHeader(), cg.commands);
         cache.put(cid, cg);
       }
       // create new validity record if does not exist

@@ -26,12 +26,18 @@ struct AltBlock {
   using protecting_block_t = VbkBlock;
   using addon_t = AltBlockAddon;
 
-  hash_t hash{};
-  hash_t previousBlock{};
-  uint32_t timestamp{};
-  height_t height{};
+  AltBlock() = default;
 
-  uint32_t getBlockTime() const noexcept { return timestamp; }
+  AltBlock(hash_t hash,
+           hash_t previousBlock,
+           uint32_t timestamp,
+           height_t height)
+      : _hash(hash),
+        _previousBlock(previousBlock),
+        _timestamp(timestamp),
+        _height(height) {}
+
+  uint32_t getBlockTime() const noexcept { return _timestamp; }
 
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
@@ -87,10 +93,12 @@ struct AltBlock {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
-  hash_t getHash() const { return hash; }
+  hash_t getHash() const { return _hash; }
+  hash_t getPreviousBlock() const { return _previousBlock; }
+  height_t getHeight() const { return _height; }
 
   friend bool operator==(const AltBlock& a, const AltBlock& b) {
-    return a.hash == b.hash;
+    return a._hash == b._hash;
   }
 
   friend bool operator!=(const AltBlock& a, const AltBlock& b) {
@@ -100,17 +108,23 @@ struct AltBlock {
   static std::string name() { return "ALT"; }
 
   std::string toPrettyString() const {
-    return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
+    return fmt::sprintf("AltBlock{height=%d, hash=%s}", _height, HexStr(_hash));
   }
+
+ protected:
+  hash_t _hash{};
+  hash_t _previousBlock{};
+  uint32_t _timestamp{};
+  height_t _height{};
 };
 
 template <typename JsonValue>
 JsonValue ToJSON(const AltBlock& alt) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
-  json::putStringKV(object, "hash", HexStr(alt.hash));
-  json::putStringKV(object, "previousBlock", HexStr(alt.previousBlock));
-  json::putIntKV(object, "timestamp", alt.timestamp);
-  json::putIntKV(object, "height", alt.height);
+  json::putStringKV(object, "hash", HexStr(alt.getHash()));
+  json::putStringKV(object, "previousBlock", HexStr(alt.getPreviousBlock()));
+  json::putIntKV(object, "timestamp", alt.getBlockTime());
+  json::putIntKV(object, "height", alt.getHeight());
   return object;
 }
 

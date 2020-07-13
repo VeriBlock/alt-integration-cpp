@@ -46,9 +46,13 @@ bool recoverEndorsedBy(ProtectedBlockTree& ed_,
                        typename ProtectedBlockTree::index_t& toRecover,
                        ValidationState& state) {
   std::vector<std::function<void()>> actions;
-  actions.reserve(toRecover.containingEndorsements.size());
+  (void)state;
+  (void)chain;
+  (void)ed_;
+  (void)toRecover;
+  //actions.reserve(toRecover.containingEndorsements.size());
 
-  for (const auto& p : toRecover.containingEndorsements) {
+  /*for (const auto& p : toRecover.containingEndorsements) {
     auto& id = p.first;
     auto& e = *p.second;
 
@@ -86,7 +90,7 @@ bool recoverEndorsedBy(ProtectedBlockTree& ed_,
                  "same endorsement is added to endorsedBy second time");
       by.push_back(&e);
     });
-  }
+  }*/
 
   // all actions have been validated
   // commit changes

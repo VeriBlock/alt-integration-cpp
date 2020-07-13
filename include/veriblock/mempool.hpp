@@ -23,7 +23,7 @@
 namespace altintegration {
 
 struct MemPool {
-  using vbk_hash_t = decltype(VbkBlock::previousBlock);
+  using vbk_hash_t = typename VbkBlock::prev_hash_t;
 
   struct VbkPayloadsRelations {
     using id_t = VbkBlock::id_t;

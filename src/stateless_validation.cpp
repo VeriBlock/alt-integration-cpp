@@ -172,7 +172,7 @@ bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
     }
 
     // Check that it's the next height and affirms the previous hash
-    if (btcBlock[i].previousBlock != lastHash) {
+    if (btcBlock[i].getPreviousBlock() != lastHash) {
       return state.Invalid("invalid-btc-block", "Blocks are not contiguous");
     }
     lastHash = btcBlock[i].getHash();
@@ -187,7 +187,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
     return true;
   }
 
-  int32_t lastHeight = vbkBlocks[0].height;
+  int32_t lastHeight = vbkBlocks[0].getHeight();
   auto lastHash = vbkBlocks[0].getHash();
 
   for (size_t i = 1; i < vbkBlocks.size(); ++i) {
@@ -195,12 +195,12 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
       return state.Invalid("vbk-check-block");
     }
 
-    if (vbkBlocks[i].height != lastHeight + 1 ||
-        vbkBlocks[i].previousBlock !=
+    if (vbkBlocks[i].getHeight() != lastHeight + 1 ||
+        vbkBlocks[i].getPreviousBlock() !=
             lastHash.template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
       return state.Invalid("invalid-vbk-block", "Blocks are not contiguous");
     }
-    lastHeight = vbkBlocks[i].height;
+    lastHeight = vbkBlocks[i].getHeight();
     lastHash = vbkBlocks[i].getHash();
   }
   return true;
@@ -211,7 +211,7 @@ bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param) {
   auto powLimit = ArithUint256(param.getPowLimit());
   bool negative = false;
   bool overflow = false;
-  auto target = ArithUint256::fromBits(block.bits, &negative, &overflow);
+  auto target = ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
 
   if (negative || overflow || target == 0 || target > powLimit) {
     return false;
@@ -226,7 +226,7 @@ bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
   auto minDiff = ArithUint256(param.getMinimumDifficulty());
   bool negative = false;
   bool overflow = false;
-  auto target = ArithUint256::fromBits(block.difficulty, &negative, &overflow);
+  auto target = ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
 
   if (negative || overflow || target == 0 || target < minDiff) {
     return false;
@@ -250,7 +250,7 @@ bool checkVbkPopTx(const VbkPopTx& tx,
 
   if (!checkMerklePath(tx.merklePath,
                        tx.bitcoinTransaction.getHash(),
-                       tx.blockOfProof.merkleRoot.reverse(),
+                       tx.blockOfProof.getMerkleRoot().reverse(),
                        state)) {
     return state.Invalid("vbk-check-merkle-path");
   }
@@ -320,7 +320,7 @@ bool checkATV(const ATV& atv,
 
   if (!checkMerklePath(atv.merklePath,
                        atv.transaction.getHash(),
-                       atv.containingBlock.merkleRoot,
+                       atv.containingBlock.getMerkleRoot(),
                        state)) {
     return state.Invalid("vbk-check-merkle-path");
   }
@@ -349,7 +349,7 @@ bool checkVTB(const VTB& vtb,
 
   if (!checkMerklePath(vtb.merklePath,
                        vtb.transaction.getHash(),
-                       vtb.containingBlock.merkleRoot,
+                       vtb.containingBlock.getMerkleRoot(),
                        state)) {
     return state.Invalid("vbk-check-merkle-path");
   }

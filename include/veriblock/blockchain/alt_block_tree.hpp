@@ -174,7 +174,7 @@ template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
   std::vector<uint256> endorsements;
-  for (const auto& e : i.containingEndorsements) {
+  for (const auto& e : i.getContainingEndorsements()) {
     endorsements.push_back(e.first);
   }
   json::putArrayKV(obj, "containingEndorsements", endorsements);
@@ -187,9 +187,9 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   json::putIntKV(obj, "status", i.status);
 
   auto stored = json::makeEmptyObject<JsonValue>();
-  json::putArrayKV(stored, "vbkblocks", i.vbkblockids);
-  json::putArrayKV(stored, "vtbs", i.vtbids);
-  json::putArrayKV(stored, "atvs", i.atvids);
+  json::putArrayKV(stored, "vbkblocks", i.getPayloadIds<VbkBlock>());
+  json::putArrayKV(stored, "vtbs", i.getPayloadIds<VTB>());
+  json::putArrayKV(stored, "atvs", i.getPayloadIds<ATV>());
 
   json::putKV(obj, "stored", stored);
 

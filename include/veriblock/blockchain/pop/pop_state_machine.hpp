@@ -99,7 +99,7 @@ struct PopStateMachine {
       VBK_ASSERT(index.isValid());
     }
 
-    index.setFlag(BLOCK_APPLIED);
+    index.setFlagSetDirty(BLOCK_APPLIED);
     return true;
   }
 
@@ -133,7 +133,7 @@ struct PopStateMachine {
       }
     }
 
-    index.unsetFlag(BLOCK_APPLIED);
+    index.unsetFlagSetDirty(BLOCK_APPLIED);
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)
@@ -143,9 +143,9 @@ struct PopStateMachine {
       return;
     }
 
-    VBK_ASSERT(from.height > to.height);
+    VBK_ASSERT(from.getHeight() > to.getHeight());
     // exclude 'to' by adding 1
-    Chain<index_t> chain(to.height + 1, &from);
+    Chain<index_t> chain(to.getHeight() + 1, &from);
     VBK_ASSERT(chain.first());
     VBK_ASSERT(chain.first()->pprev == &to);
 
@@ -167,9 +167,9 @@ struct PopStateMachine {
       return true;
     }
 
-    VBK_ASSERT(from.height < to.height);
+    VBK_ASSERT(from.getHeight() < to.getHeight());
     // exclude 'from' by adding 1
-    Chain<index_t> chain(from.height + 1, &to);
+    Chain<index_t> chain(from.getHeight() + 1, &to);
     VBK_ASSERT(chain.first());
     VBK_ASSERT(chain.first()->pprev == &from);
 
@@ -209,7 +209,7 @@ struct PopStateMachine {
     }
 
     // is 'to' a successor?
-    if (to.getAncestor(from.height) == &from) {
+    if (to.getAncestor(from.getHeight()) == &from) {
       return apply(from, to, state);
     }
 

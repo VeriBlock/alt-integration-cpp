@@ -26,10 +26,10 @@ bool AltTree::bootstrap(ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  auto height = block.height;
+  auto height = block.getHeight();
 
-  index->setFlag(BLOCK_APPLIED);
-  index->setFlag(BLOCK_BOOTSTRAP);
+  index->setFlagSetDirty(BLOCK_APPLIED);
+  index->setFlagSetDirty(BLOCK_BOOTSTRAP);
   base::activeChain_ = Chain<index_t>(height, index);
 
   VBK_ASSERT(base::isBootstrapped());
@@ -173,11 +173,11 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   }
 
   // we must know previous block, but not if `block` is bootstrap block
-  auto* prev = getBlockIndex(block.previousBlock);
+  auto* prev = getBlockIndex(block.getPreviousBlock());
   if (prev == nullptr) {
     return state.Invalid(
         block_t::name() + "-bad-prev-block",
-        "can not find previous block: " + HexStr(block.previousBlock));
+        "can not find previous block: " + HexStr(block.getPreviousBlock()));
   }
 
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(block));
@@ -188,7 +188,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   if (!index->isValid()) {
     return state.Invalid(block_t::name() + "-bad-chain",
                          "One of previous blocks is invalid. Status=(" +
-                             std::to_string(index->status) + ")");
+                             std::to_string(index->getStatus()) + ")");
   }
 
   tryAddTip(index);
@@ -386,19 +386,16 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
                pop.atvs.size());
 
   // first, create tmp alt block
-  AltBlock tmp;
   ValidationState state;
-  {
-    auto& tip = *getBestChain().tip();
-    tmp.hash = std::vector<uint8_t>(32, 2);
-    tmp.previousBlock = tip.getHash();
-    tmp.timestamp = tip.getBlockTime() + 1;
-    tmp.height = tip.height + 1;
-    bool ret = acceptBlock(tmp, state);
-    VBK_ASSERT(ret);
-  }
+  auto& tip = *getBestChain().tip();
+  AltBlock tmp(std::vector<uint8_t>(32, 2),
+               tip.getHash(),
+               tip.getBlockTime() + 1,
+               tip.getHeight() + 1);
+  bool ret = acceptBlock(tmp, state);
+  VBK_ASSERT(ret);
 
-  auto* tmpindex = getBlockIndex(tmp.hash);
+  auto* tmpindex = getBlockIndex(tmp.getHash());
   VBK_ASSERT(tmpindex != nullptr);
 
   // add all payloads in `continueOnInvalid` mode
@@ -476,7 +473,7 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
 
   // recover `endorsedBy`
   auto window = std::max(
-      0, index.height - getParams().getEndorsementSettlementInterval());
+      0, index.getHeight() - getParams().getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
     return state.Invalid("load-block");
@@ -488,7 +485,7 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
 bool AltTree::addPayloads(const AltBlock& containing,
                           const PopData& popData,
                           ValidationState& state) {
-  return addPayloads(containing.hash, popData, state);
+  return addPayloads(containing.getHash(), popData, state);
 }
 
 AltTree::AltTree(const AltTree::alt_config_t& alt_config,
@@ -570,7 +567,8 @@ void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
                              const CommandGroup& cg) {
   // TODO: can we do better?
 
-  if (cg.payload_type_name == VTB::name()) {
+  // TODO: remove CG ID from payload ids
+  /*if (cg.payload_type_name == VTB::name()) {
     bool ret = removeId(index.vtbids, cg.id);
     VBK_ASSERT(ret);
     return;
@@ -586,7 +584,9 @@ void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
     bool ret = removeId(index.vbkblockids, cg.id);
     VBK_ASSERT(ret);
     return;
-  }
+  }*/
+  (void)index;
+  (void)cg;
 
   VBK_ASSERT(false && "should not reach here");
 }

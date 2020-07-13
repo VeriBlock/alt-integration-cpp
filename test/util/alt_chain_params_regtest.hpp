@@ -15,10 +15,7 @@ struct AltChainParamsRegTest : public AltChainParams {
   ~AltChainParamsRegTest() override = default;
 
   AltBlock getBootstrapBlock() const noexcept override {
-    AltBlock b;
-    b.hash = {1, 2, 3};
-    b.height = 0;
-    b.timestamp = 0;
+    AltBlock b({1, 2, 3}, {}, 0, 0);
     return b;
   }
 

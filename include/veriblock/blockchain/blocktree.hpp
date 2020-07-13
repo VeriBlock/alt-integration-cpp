@@ -33,7 +33,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   using params_t = ChainParams;
   using index_t = BlockIndex<block_t>;
   using hash_t = typename Block::hash_t;
-  using prev_block_hash_t = decltype(Block::previousBlock);
+  using prev_block_hash_t = typename Block::prev_hash_t;
   using height_t = typename Block::height_t;
 
   ~BlockTree() override = default;
@@ -126,7 +126,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
   //! @invariant NOT atomic.
   bool loadBlock(const index_t& index, ValidationState& state) override {
-    if (!checkBlock(*index.header, state, *param_)) {
+    if (!checkBlock(index.getHeader(), state, *param_)) {
       return state.Invalid("bad-header");
     }
 
@@ -140,9 +140,9 @@ struct BlockTree : public BaseBlockTree<Block> {
     // recover chainwork
     if (current->pprev) {
       current->chainWork =
-          current->pprev->chainWork + getBlockProof(*current->header);
+          current->pprev->chainWork + getBlockProof(current->getHeader());
     } else {
-      current->chainWork = getBlockProof(*current->header);
+      current->chainWork = getBlockProof(current->getHeader());
     }
 
     return true;
@@ -186,7 +186,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     VBK_ASSERT(index != nullptr &&
                "insertBlockHeader should have never returned nullptr");
 
-    index->height = height;
+    index->setHeight(height);
 
     base::activeChain_ = Chain<index_t>(height, index);
 
@@ -197,8 +197,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     base::tryAddTip(index);
 
-    index->setFlag(BLOCK_APPLIED);
-    index->setFlag(BLOCK_BOOTSTRAP);
+    index->setFlagSetDirty(BLOCK_APPLIED);
+    index->setFlagSetDirty(BLOCK_BOOTSTRAP);
 
     return true;
   }
@@ -212,11 +212,11 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     // we must know previous block
-    auto* prev = base::getBlockIndex(block->previousBlock);
+    auto* prev = base::getBlockIndex(block->getPreviousBlock());
     if (prev == nullptr) {
       return state.Invalid(
           block_t::name() + "-bad-prev-block",
-          "can not find previous block: " + HexStr(block->previousBlock));
+          "can not find previous block: " + HexStr(block->getPreviousBlock()));
     }
 
     if (shouldContextuallyCheck &&
@@ -234,7 +234,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     // if prev block is invalid, mark this block as invalid
     if (!prev->isValid()) {
-      index->setFlag(BLOCK_FAILED_CHILD);
+      index->setFlagSetDirty(BLOCK_FAILED_CHILD);
       return state.Invalid(
           block_t::name() + "-bad-chain",
           fmt::sprintf("Previous block is invalid=%s", prev->toPrettyString()));

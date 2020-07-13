@@ -81,12 +81,12 @@ struct BaseBlockTree {
     }
 
     // if current block is not known, and previous also not known
-    if (!current && !getBlockIndex(index.header->previousBlock)) {
+    if (!current && !getBlockIndex(index.getHeader().getPreviousBlock())) {
       return state.Invalid(
           "bad-prev",
           fmt::format("Can not load block {}, no previous block {}",
                       index.toPrettyString(),
-                      HexStr(index.header->previousBlock)));
+                      HexStr(index.getHeader().getPreviousBlock())));
     }
 
     current = touchBlockIndex(currentHash);
@@ -101,18 +101,18 @@ struct BaseBlockTree {
     // recover pnext
     current->pnext = next;
     // recover pprev
-    current->pprev = getBlockIndex(index.header->previousBlock);
+    current->pprev = getBlockIndex(index.getHeader().getPreviousBlock());
 
     if (current->pprev != nullptr) {
       // prev block found
-      auto expectedHeight = current->pprev->height + 1;
-      if (current->height != expectedHeight) {
+      auto expectedHeight = current->pprev->getHeight() + 1;
+      if (current->getHeight() != expectedHeight) {
         return state.Invalid(
             "bad-height",
             fmt::format("Block {} expected height={}, actual={}",
                         current->toShortPrettyString(),
                         expectedHeight,
-                        current->height));
+                        current->getHeight()));
       }
 
       current->pprev->pnext.insert(current);
@@ -355,20 +355,20 @@ struct BaseBlockTree {
     VBK_ASSERT(header != nullptr);
 
     index_t* current = touchBlockIndex(header->getHash());
-    current->header = header;
-    current->pprev = getBlockIndex(header->previousBlock);
+    current->setHeader(*header);
+    current->pprev = getBlockIndex(header->getPreviousBlock());
 
     if (current->pprev != nullptr) {
       // prev block found
-      current->height = current->pprev->height + 1;
+      current->setHeight(current->pprev->getHeight() + 1);
       auto pair = current->pprev->pnext.insert(current);
       VBK_ASSERT(pair.second && "block already existed in prev");
 
       if (!current->pprev->isValid()) {
-        current->setFlag(BLOCK_FAILED_CHILD);
+        current->setFlagSetDirty(BLOCK_FAILED_CHILD);
       }
     } else {
-      current->height = 0;
+      current->setHeight(0);
     }
 
     tryAddTip(current);
@@ -405,7 +405,7 @@ struct BaseBlockTree {
     std::vector<std::pair<int, index_t*>> byheight;
     byheight.reserve(blocks_.size());
     for (const auto& p : blocks_) {
-      byheight.push_back({p.second->height, p.second.get()});
+      byheight.push_back({p.second->getHeight(), p.second.get()});
     }
     std::sort(byheight.rbegin(), byheight.rend());
     for (const auto& p : byheight) {
@@ -574,12 +574,12 @@ struct BaseBlockTree {
   }
 
   void doInvalidate(index_t& block, enum BlockStatus reason) {
-    block.setFlag(reason);
+    block.setFlagSetDirty(reason);
     validity_sig_.emit(block);
   }
 
   void doReValidate(index_t& block, enum BlockStatus reason) {
-    block.unsetFlag(reason);
+    block.unsetFlagSetDirty(reason);
     validity_sig_.emit(block);
   }
 

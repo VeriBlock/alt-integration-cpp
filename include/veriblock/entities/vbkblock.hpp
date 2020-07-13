@@ -29,19 +29,32 @@ struct VbkBlock {
   using id_t = short_hash_t;
   using prev_hash_t = short_hash_t;
   using height_t = int32_t;
+  using nonce_t = int32_t;
   using keystone_t = uint72;
+  using merkle_t = uint128;
   using protecting_block_t = BtcBlock;
   using addon_t = VbkBlockAddon;
 
-  int32_t height{};
-  int16_t version{};
-  uint96 previousBlock{};
-  keystone_t previousKeystone{};
-  keystone_t secondPreviousKeystone{};
-  uint128 merkleRoot{};
-  int32_t timestamp{};
-  int32_t difficulty{};
-  int32_t nonce{};
+  VbkBlock() = default;
+
+  VbkBlock(int32_t height,
+           int16_t version,
+           uint96 previousBlock,
+           keystone_t previousKeystone,
+           keystone_t secondPreviousKeystone,
+           uint128 merkleRoot,
+           int32_t timestamp,
+           int32_t difficulty,
+           int32_t nonce)
+      : _height(height),
+        _version(version),
+        _previousBlock(previousBlock),
+        _previousKeystone(previousKeystone),
+        _secondPreviousKeystone(secondPreviousKeystone),
+        _merkleRoot(merkleRoot),
+        _timestamp(timestamp),
+        _difficulty(difficulty),
+        _nonce(nonce) {}
 
   std::string toPrettyString() const;
 
@@ -119,6 +132,7 @@ struct VbkBlock {
    * @return block timestamp
    */
   uint32_t getBlockTime() const;
+  void setBlockTime(const int32_t timestamp) { _timestamp = timestamp; }
 
   friend bool operator==(const VbkBlock& a, const VbkBlock& b) {
     return a.getHash() == b.getHash();
@@ -127,6 +141,23 @@ struct VbkBlock {
   friend bool operator!=(const VbkBlock& a, const VbkBlock& b) {
     return !(a == b);
   }
+
+  uint96 getPreviousBlock() const { return _previousBlock; }
+
+  keystone_t getPreviousKeystone() const { return _previousKeystone; }
+
+  keystone_t getSecondPreviousKeystone() const {
+    return _secondPreviousKeystone;
+  }
+
+  int16_t getVersion() const { return _version; }
+
+  uint128 getMerkleRoot() const { return _merkleRoot; }
+
+  int32_t getNonce() const { return _nonce; }
+  void setNonce(const int32_t nonce) { _nonce = nonce; }
+
+  int32_t getHeight() const { return _height; }
 
   /**
    * Calculate the hash of the vbk block
@@ -143,6 +174,17 @@ struct VbkBlock {
   short_hash_t getId() const { return getShortHash(); }
 
   static std::string name() { return "VBK"; }
+
+ protected:
+  int32_t _height{};
+  int16_t _version{};
+  uint96 _previousBlock{};
+  keystone_t _previousKeystone{};
+  keystone_t _secondPreviousKeystone{};
+  uint128 _merkleRoot{};
+  int32_t _timestamp{};
+  int32_t _difficulty{};
+  int32_t _nonce{};
 };
 
 template <typename JsonValue>
@@ -150,16 +192,16 @@ JsonValue ToJSON(const VbkBlock& b) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "id", HexStr(b.getId()));
   json::putStringKV(obj, "hash", HexStr(b.getHash()));
-  json::putIntKV(obj, "height", b.height);
-  json::putIntKV(obj, "version", b.version);
-  json::putStringKV(obj, "previousBlock", HexStr(b.previousBlock));
-  json::putStringKV(obj, "previousKeystone", HexStr(b.previousKeystone));
+  json::putIntKV(obj, "height", b.getHeight());
+  json::putIntKV(obj, "version", b.getVersion());
+  json::putStringKV(obj, "previousBlock", HexStr(b.getPreviousBlock()));
+  json::putStringKV(obj, "previousKeystone", HexStr(b.getPreviousKeystone()));
   json::putStringKV(
-      obj, "secondPreviousKeystone", HexStr(b.secondPreviousKeystone));
-  json::putStringKV(obj, "merkleRoot", HexStr(b.merkleRoot));
-  json::putIntKV(obj, "timestamp", b.timestamp);
-  json::putIntKV(obj, "difficulty", b.difficulty);
-  json::putIntKV(obj, "nonce", b.nonce);
+      obj, "secondPreviousKeystone", HexStr(b.getSecondPreviousKeystone()));
+  json::putStringKV(obj, "merkleRoot", HexStr(b.getMerkleRoot()));
+  json::putIntKV(obj, "timestamp", b.getBlockTime());
+  json::putIntKV(obj, "difficulty", b.getDifficulty());
+  json::putIntKV(obj, "nonce", b.getNonce());
   return obj;
 }
 

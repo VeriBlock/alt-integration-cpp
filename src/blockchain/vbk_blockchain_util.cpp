@@ -17,7 +17,8 @@ template <>
 ArithUint256 getBlockProof(const VbkBlock& block) {
   bool negative = false;
   bool overflow = false;
-  auto target = ArithUint256::fromBits(block.difficulty, &negative, &overflow);
+  auto target =
+      ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
   if (negative || overflow || target == 0) {
     return 0;
   }
@@ -27,40 +28,56 @@ ArithUint256 getBlockProof(const VbkBlock& block) {
 template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) {
-  VbkBlock block;
-  block.version = tip.header->version;
-  block.previousBlock =
-      tip.header->getHash().template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
-  block.merkleRoot = merkle;
-  block.height = tip.height + 1;
   // set first previous keystone
-  auto diff = tip.height % params_.getKeystoneInterval();
+  auto diff = tip.getHeight() % params_.getKeystoneInterval();
 
   // we do not use previous block as a keystone
   if (diff == 0) {
     diff += params_.getKeystoneInterval();
   }
+
+  typename VbkBlock::keystone_t previousKeystone{};
+  typename VbkBlock::keystone_t secondPreviousKeystone{};
   // we reference genesis block if we are at the beginning of the chain
-  if ((int32_t)diff <= tip.height) {
-    auto* prevKeystoneIndex = tip.getAncestor(tip.height - diff);
+  if ((int32_t)diff <= tip.getHeight()) {
+    auto* prevKeystoneIndex = tip.getAncestor(tip.getHeight() - diff);
     VBK_ASSERT(prevKeystoneIndex != nullptr);
-    block.previousKeystone =
+    previousKeystone =
         prevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
 
   // set second previous keystone
   diff += params_.getKeystoneInterval();
-  if ((int32_t)diff <= tip.height) {
-    auto* secondPrevKeystoneIndex = tip.getAncestor(tip.height - diff);
+  if ((int32_t)diff <= tip.getHeight()) {
+    auto* secondPrevKeystoneIndex = tip.getAncestor(tip.getHeight() - diff);
     VBK_ASSERT(secondPrevKeystoneIndex != nullptr);
-    block.secondPreviousKeystone =
+    secondPreviousKeystone =
         secondPrevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
 
-  block.timestamp = (std::max)(tip.getBlockTime(), currentTimestamp4());
-  block.difficulty = getNextWorkRequired(tip, block, params_);
+  VbkBlock blockTmp(tip.getHeight() + 1,
+                    tip.getHeader().getVersion(),
+                    tip.getHeader()
+                        .getHash()
+                        .template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>(),
+                    previousKeystone,
+                    secondPreviousKeystone,
+                    merkle,
+                    (std::max)(tip.getBlockTime(), currentTimestamp4()),
+                    0,
+                    0);
+  auto work = getNextWorkRequired(tip, blockTmp, params_);
+  VbkBlock block(blockTmp.getHeight(),
+                 blockTmp.getVersion(),
+                 blockTmp.getPreviousBlock(),
+                 blockTmp.getPreviousKeystone(),
+                 blockTmp.getSecondPreviousKeystone(),
+                 blockTmp.getMerkleRoot(),
+                 blockTmp.getBlockTime(),
+                 work,
+                 blockTmp.getNonce());
   return block;
 }
 
@@ -73,7 +90,7 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
                             params.getTargetBlockTime() / 2;
 
   if (params.getPowNoRetargeting() ||
-      (uint32_t)prevBlock.height < params.getRetargetPeriod()) {
+      (uint32_t)prevBlock.getHeight() < params.getRetargetPeriod()) {
     return prevBlock.getDifficulty();
   }
 
@@ -127,7 +144,7 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
 bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
                        const VbkBlock& block,
                        const VbkChainParams& params) {
-  auto tipHeight = prevBlock.height;
+  auto tipHeight = prevBlock.getHeight();
   auto diff = tipHeight % params.getKeystoneInterval();
 
   // we do not use previous block as a keystone
@@ -142,12 +159,12 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
 
     if (prevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
-        block.previousKeystone) {
+        block.getPreviousKeystone()) {
       return false;
     }
   } else {
     // should contain zeroes
-    if (block.previousKeystone != VbkBlock::keystone_t()) {
+    if (block.getPreviousKeystone() != VbkBlock::keystone_t()) {
       return false;
     }
   }
@@ -162,12 +179,12 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
 
     if (secondPrevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
-        block.secondPreviousKeystone) {
+        block.getSecondPreviousKeystone()) {
       return false;
     }
   } else {
     // should contain zeroes
-    if (block.secondPreviousKeystone != VbkBlock::keystone_t()) {
+    if (block.getSecondPreviousKeystone() != VbkBlock::keystone_t()) {
       return false;
     }
   }
@@ -211,8 +228,7 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
   size_t i = 0;
   std::vector<int64_t> pmedian;
   const BlockIndex<VbkBlock>* pindex = &prev;
-  for (i = 0; i < HISTORY_FOR_TIMESTAMP_AVERAGE;
-       i++, pindex = pindex->pprev) {
+  for (i = 0; i < HISTORY_FOR_TIMESTAMP_AVERAGE; i++, pindex = pindex->pprev) {
     if (pindex == nullptr) {
       break;
     }

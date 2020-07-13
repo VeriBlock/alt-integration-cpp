@@ -85,9 +85,9 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
   atv.containingBlock = containingBlock;
 
   for (auto* walkBlock = tip;
-       walkBlock && walkBlock->header->getHash() != lastKnownVbkBlockHash;
+       walkBlock && walkBlock->getHeader().getHash() != lastKnownVbkBlockHash;
        walkBlock = walkBlock->pprev) {
-    atv.context.push_back(*walkBlock->header);
+    atv.context.push_back(walkBlock->getHeader());
   }
 
   // since we inserted in reverse order, we need to reverse context blocks
@@ -166,7 +166,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   for (auto* walkBlock = containingBlockIndex->pprev;
        walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
-    auto header = *walkBlock->header;
+    auto header = walkBlock->getHeader();
     popTx.blockOfProofContext.push_back(header);
   }
   std::reverse(popTx.blockOfProofContext.begin(),
@@ -204,7 +204,7 @@ VbkPopTx MockMiner::endorseVbkBlock(
   for (auto* walkBlock = tip;
        walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
-    popTx.blockOfProofContext.push_back(*walkBlock->header);
+    popTx.blockOfProofContext.push_back(walkBlock->getHeader());
   }
   std::reverse(popTx.blockOfProofContext.begin(),
                popTx.blockOfProofContext.end());

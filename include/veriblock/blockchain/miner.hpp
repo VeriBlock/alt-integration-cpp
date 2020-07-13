@@ -16,7 +16,7 @@ namespace altintegration {
 
 template <typename Block, typename ChainParams>
 struct Miner {
-  using merkle_t = decltype(Block::merkleRoot);
+  using merkle_t = typename Block::merkle_t;
   using index_t = BlockIndex<Block>;
 
   Miner(const ChainParams& params) : params_(params) {}
@@ -25,9 +25,11 @@ struct Miner {
     while (!checkProofOfWork(block, params_)) {
       // to guarantee that miner will not create exactly same blocks even if
       // time and merkle roots are equal for prev block and new block
-      block.nonce = nonce++;
-      if (block.nonce >= (std::numeric_limits<decltype(block.nonce)>::max)()) {
-        ++block.timestamp;
+      block.setNonce(nonce++);
+      if (block.getNonce() >=
+          (std::numeric_limits<typename Block::nonce_t>::max)()) {
+        auto ts = block.getBlockTime();
+        block.setBlockTime(ts + 1);
         nonce = 0;
       }
     }
