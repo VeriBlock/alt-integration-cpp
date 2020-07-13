@@ -27,7 +27,8 @@ struct AddBlock : public Command {
   bool Execute(ValidationState& state) override {
     auto* index = tree_->getBlockIndex(block_->getHash());
     if (index != nullptr) {
-      //index->refCounter++;
+      index->incRefCounter();
+      index->setDirty();
       return true;
     }
     return tree_->acceptBlock(block_, state);
@@ -43,7 +44,8 @@ struct AddBlock : public Command {
       return tree_->removeLeaf(*index);
     }
 
-    //--index->refCounter;
+    index->decRefCounter();
+    index->setDirty();
   }
 
   size_t getId() const override { return block_->getHash().getLow64(); }

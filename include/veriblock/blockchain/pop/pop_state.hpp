@@ -27,6 +27,14 @@ struct PopState {
     return _containingEndorsements;
   }
 
+  void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
+    _containingEndorsements.insert(std::make_pair(e->id, e));
+  }
+
+  void removeContainingEndorsement(const eid_t& eid) {
+    _containingEndorsements.erase(eid);
+  }
+
   bool operator==(const PopState& o) const {
     CollectionOfPtrComparator cmp;
     bool a = cmp(_containingEndorsements, o._containingEndorsements);

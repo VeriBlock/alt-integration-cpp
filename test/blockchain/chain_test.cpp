@@ -42,7 +42,7 @@ struct ChainTest : public ::testing::TestWithParam<TestCase> {
     std::vector<BlockIndex<MyDummyBlock>> blocks;
     for (int i = 0; i < size; i++) {
       BlockIndex<MyDummyBlock> index{};
-      index.height = i + startHeight;
+      index.setHeight(i + startHeight);
       index.pprev = nullptr;
       blocks.push_back(index);
     }
@@ -126,19 +126,15 @@ BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
 template <>
 BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
   AltBlock block;
-  block.hash = generateRandomBytesVector(32);
   if (prev != nullptr) {
-    block.height = prev->height + 1;
-    block.previousBlock = prev->getHash();
-    block.timestamp = prev->header->timestamp + 1;
-  } else {
-    block.height = 0;
-    block.timestamp = 0;
+    block = AltBlock(generateRandomBytesVector(32),
+                     prev->getHash(),
+                     prev->getHeader().getBlockTime() + 1,
+                     prev->getHeight() + 1);
   }
-
   BlockIndex<AltBlock> index;
-  index.header = std::make_shared<AltBlock>(block);
-  index.height = block.height;
+  index.setHeader(block);
+  index.setHeight(block.getHeight());
   index.pprev = prev;
   return index;
 }
@@ -147,19 +143,19 @@ template <>
 BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
   VbkBlock block;
   if (prev != nullptr) {
-    block.height = prev->height + 1;
-    block.previousBlock = prev->getHash().trimLE<uint96::size()>();
-    block.timestamp = prev->header->timestamp + 1;
-  } else {
-    block.height = 0;
-    block.timestamp = 0;
-    block.nonce = 0;
-    block.version = 0;
+    block = VbkBlock(prev->getHeight() + 1,
+                     0,
+                     prev->getHash().trimLE<uint96::size()>(),
+                     {},
+                     {},
+                     {},
+                     prev->getHeader().getBlockTime() + 1,
+                     0,
+                     0);
   }
-
   BlockIndex<VbkBlock> index;
-  index.header = std::make_shared<VbkBlock>(block);
-  index.height = block.height;
+  index.setHeader(block);
+  index.setHeight(block.getHeight());
   index.pprev = prev;
   return index;
 }
@@ -181,7 +177,7 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
 
   BlockIndex<block_t> bootstrapBlock = generateNextBlock<block_t>(nullptr);
 
-  Chain<BlockIndex<block_t>> chain(bootstrapBlock.height, &bootstrapBlock);
+  Chain<BlockIndex<block_t>> chain(bootstrapBlock.getHeight(), &bootstrapBlock);
 
   std::vector<std::shared_ptr<BlockIndex<block_t>>> indexes{
       std::make_shared<BlockIndex<block_t>>(bootstrapBlock)};
@@ -196,9 +192,9 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   BlockIndex<block_t> newIndex = generateNextBlock(chain.tip());
 
   endorsement_t endorsement1 = generateEndorsement<block_t, endorsement_t>(
-      *chain.tip()->header, *newIndex.header);
+      chain.tip()->getHeader(), newIndex.getHeader());
   endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
-      *chain.tip()->pprev->header, *newIndex.header);
+      chain.tip()->pprev->getHeader(), newIndex.getHeader());
 
   newIndex.containingEndorsements.insert(std::make_pair(
       endorsement1.id, std::make_shared<endorsement_t>(endorsement1)));
@@ -210,9 +206,9 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   BlockIndex<block_t> newIndex2 = generateNextBlock(chain.tip());
 
   endorsement_t endorsement3 = generateEndorsement<block_t, endorsement_t>(
-      *chain.tip()->header, *newIndex2.header);
+      chain.tip()->getHeader(), newIndex2.getHeader());
   endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
-      *chain.tip()->pprev->header, *newIndex2.header);
+      chain.tip()->pprev->getHeader(), *newIndex2.getHeader());
 
   newIndex2.containingEndorsements.insert(std::make_pair(
       endorsement3.id, std::make_shared<endorsement_t>(endorsement3)));

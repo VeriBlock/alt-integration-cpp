@@ -35,8 +35,8 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
            PopState<AltEndorsement>::operator==(o);
   }
 
-  template <typename pop_t, typename pop_id_t>
-  std::vector<pop_id_t>& getPayloadIds();
+  /*template <typename pop_t, typename pop_id_t>
+  std::vector<pop_id_t>& getPayloadIds();*/
 
   template <typename pop_t, typename pop_id_t>
   const std::vector<pop_id_t>& getPayloadIds() const;
@@ -83,7 +83,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   }
 };
 
-template <>
+/*template <>
 inline std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>() {
   return _atvids;
 }
@@ -96,7 +96,7 @@ inline std::vector<uint256>& AltBlockAddon::getPayloadIds<VTB, uint256>() {
 template <>
 inline std::vector<uint96>& AltBlockAddon::getPayloadIds<VbkBlock, uint96>() {
   return _vbkblockids;
-}
+}*/
 
 template <>
 inline const std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>()

@@ -32,12 +32,19 @@ ArithUint256 getBlockProof(const BtcBlock& block) {
 template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
     const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) {
-  BtcBlock block;
-  block.version = tip.getHeader().version;
-  block.previousBlock = tip.getHeader().getHash();
-  block.merkleRoot = merkle;
-  block.timestamp = (std::max)(tip.getBlockTime(), currentTimestamp4());
-  block.bits = getNextWorkRequired(tip, block, params_);
+  BtcBlock blockTmp(tip.getHeader().getVersion(),
+                    tip.getHeader().getHash(),
+                    merkle,
+                    (std::max)(tip.getBlockTime(), currentTimestamp4()),
+                    0,
+                    0);
+  auto work = getNextWorkRequired(tip, blockTmp, params_);
+  BtcBlock block(blockTmp.getVersion(),
+                 blockTmp.getPreviousBlock(),
+                 blockTmp.getMerkleRoot(),
+                 blockTmp.getBlockTime(),
+                 work,
+                 blockTmp.getNonce());
   return block;
 }
 
@@ -88,7 +95,7 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
       // Special difficulty rule for testnet:
       // If the new block's timestamp is more than 2* 10 minutes
       // then allow mining of a min-difficulty block.
-      if (block.timestamp >
+      if (block.getBlockTime() >
           prevBlock.getBlockTime() + params.getPowTargetSpacing() * 2) {
         return nProofOfWorkLimit;
       } else {

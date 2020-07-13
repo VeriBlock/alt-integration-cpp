@@ -137,13 +137,13 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
-  json::putIntKV(obj, "height", i.height);
-  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
-  json::putIntKV(obj, "status", i.status);
+  json::putIntKV(obj, "height", i.getHeight());
+  json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
+  json::putIntKV(obj, "status", i.getStatus());
   json::putIntKV(obj, "ref", i.getRefCounter());
 
   auto stored = json::makeEmptyObject<JsonValue>();
-  json::putArrayKV(stored, "vtbids", i.getPayloadIds());
+  json::putArrayKV(stored, "vtbids", i.getPayloadIds<VTB, typename VTB::id_t>());
 
   json::putKV(obj, "stored", stored);
 
@@ -154,9 +154,9 @@ template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "chainWork", i.chainWork.toHex());
-  json::putIntKV(obj, "height", i.height);
-  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
-  json::putIntKV(obj, "status", i.status);
+  json::putIntKV(obj, "height", i.getHeight());
+  json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
+  json::putIntKV(obj, "status", i.getStatus());
   json::putIntKV(obj, "ref", i.getRefCounter());
 
   return obj;

@@ -25,11 +25,23 @@ struct VbkBlockAddon :
 
   bool payloadsIdsEmpty() const { return _vtbids.empty(); }
 
-  template <typename pop_t, typename pop_id_t>
-  std::vector<pop_id_t>& getPayloadIds();
+  /*template <typename pop_t, typename pop_id_t>
+  std::vector<pop_id_t>& getPayloadIds();*/
 
   template <typename pop_t, typename pop_id_t>
   const std::vector<pop_id_t>& getPayloadIds() const;
+
+  template <typename pop_id_t>
+  void removePayloadIds(const pop_id_t& pid) {
+    auto it = std::find(_vtbids.begin(), _vtbids.end(), pid);
+    VBK_ASSERT(it != _vtbids.end());
+    _vtbids.erase(it);
+  }
+
+  template <typename pop_t, typename pop_id_t>
+  void insertPayloadIds(const pop_id_t& pid) {
+    _vtbids.push_back(pid);
+  }
 
   bool operator==(const VbkBlockAddon& o) const {
     bool a = _vtbids == o._vtbids;
@@ -67,10 +79,10 @@ struct VbkBlockAddon :
   }
 };
 
-template <>
+/*template <>
 inline std::vector<uint256>& VbkBlockAddon::getPayloadIds<VTB, uint256>() {
   return _vtbids;
-}
+}*/
 
 template <>
 inline const std::vector<uint256>& VbkBlockAddon::getPayloadIds<VTB, uint256>()

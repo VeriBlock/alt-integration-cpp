@@ -102,8 +102,8 @@ void VbkBlockTree::removePayloads(index_t& index,
       revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    // TODO: erase VTB ID
-    //index.vtbids.erase(it);
+    index.removePayloadIds<typename VTB::id_t>(pid);
+    index.setDirty();
   }
 
   updateTips();
@@ -164,8 +164,8 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
     }
   }
 
-  // TODO: erase VTB ID
-  //index.vtbids.erase(vtbid_it);
+  index.removePayloadIds<typename VTB::id_t>(pid);
+  index.setDirty();
 
   if (shouldDetermineBestChain) {
     updateTips();
@@ -241,9 +241,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   for (const auto& payload : payloads) {
     auto pid = payload.getId();
-
-    // TODO: insert VTB ID
-    //index->vtbids.push_back(pid);
+    index->insertPayloadIds<VTB, typename VTB::id_t>(pid);
+    index->setDirty();
     storagePayloads_.savePayloads(payload);
   }
 

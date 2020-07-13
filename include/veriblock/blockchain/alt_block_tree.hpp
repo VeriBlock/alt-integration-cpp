@@ -184,12 +184,13 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
-  json::putIntKV(obj, "status", i.status);
+  json::putIntKV(obj, "status", i.getStatus());
 
   auto stored = json::makeEmptyObject<JsonValue>();
-  json::putArrayKV(stored, "vbkblocks", i.getPayloadIds<VbkBlock>());
-  json::putArrayKV(stored, "vtbs", i.getPayloadIds<VTB>());
-  json::putArrayKV(stored, "atvs", i.getPayloadIds<ATV>());
+  json::putArrayKV(
+      stored, "vbkblocks", i.getPayloadIds<VbkBlock, typename VbkBlock::id_t>());
+  json::putArrayKV(stored, "vtbs", i.getPayloadIds<VTB, typename VTB::id_t>());
+  json::putArrayKV(stored, "atvs", i.getPayloadIds<ATV, typename ATV::id_t>());
 
   json::putKV(obj, "stored", stored);
 

@@ -18,6 +18,8 @@ struct BtcBlockAddon {
   ArithUint256 chainWork = 0;
 
   uint32_t getRefCounter() const { return _refCounter; }
+  void incRefCounter() { _refCounter++; }
+  void decRefCounter() { _refCounter--; }
 
   bool operator==(const BtcBlockAddon& o) const {
     bool a = _refCounter == o._refCounter;
