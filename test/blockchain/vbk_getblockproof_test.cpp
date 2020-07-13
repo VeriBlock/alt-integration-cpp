@@ -61,7 +61,7 @@ TEST_F(GetProofTest, Blocks100Test) {
     ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state));
     auto hash = allBlocks[i].getHash();
     index_t* current = tree.getBlockIndex(hash);
-    ASSERT_EQ(current->chainWork, cumulativeDifficulties[i]);
+    EXPECT_EQ(current->chainWork, cumulativeDifficulties[i]);
   }
 
   bool ret = tree.acceptBlock(allBlocks[101], state);

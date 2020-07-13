@@ -207,6 +207,22 @@ const index_t* findBlockContainingEndorsement(
   return nullptr;
 }
 
+template <typename T>
+void PrintTo(const Chain<T>& c, std::ostream* os) {
+  auto* tip = c.tip();
+  if (!tip) {
+    *os << fmt::format("Chain(height={} tip=empty)", c.getStartHeight());
+    return;
+  }
+
+  *os << "Chain(height=" << c.getStartHeight() << "\n";
+  while (tip != nullptr) {
+    *os << tip->toPrettyString() << "\n";
+    tip = tip->pprev;
+  }
+  *os << ")\n";
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_CHAIN_HPP_
