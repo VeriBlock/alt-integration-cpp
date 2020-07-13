@@ -107,10 +107,11 @@ class PayloadsStorage {
         cache.put(cid, cg);
       }
       // create new validity record if does not exist
-      if (!isExisting<Payloads, index_t>(pid, index)) {
-        setValidity<Payloads, index_t>(pid, index, true);
+      auto it = _cgValidity.find(cid);
+      if (it == _cgValidity.end()) {
+        _cgValidity[cid] = true;
       }
-      cg.valid = isValid<Payloads, index_t>(pid, index);
+      cg.valid = _cgValidity[cid];
       out.push_back(cg);
     }
     return out;
