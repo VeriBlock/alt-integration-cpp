@@ -64,7 +64,7 @@ struct PopStateMachine {
           }
 
           // command is invalid
-          storage_.setValidity(cg, false);
+          storage_.setValidity(cg, index, false);
           if (continueOnInvalid_) {
             cleanupLast(index, executed, cg);
             state.clear();
@@ -85,7 +85,7 @@ struct PopStateMachine {
         if (!continueOnInvalid_) {
           // continueOnInvalid=false and we were able to apply given
           // CommandGroup. It means that it is valid, so update its validity.
-          storage_.setValidity(cg, true);
+          storage_.setValidity(cg, index, true);
         }
       }  // end for
 

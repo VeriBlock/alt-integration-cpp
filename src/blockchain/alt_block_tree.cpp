@@ -8,10 +8,10 @@
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/blockchain_storage_util.hpp>
-
 #include "veriblock/algorithm.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
+#include "veriblock/command_group_cache.hpp"
 
 namespace altintegration {
 
@@ -348,8 +348,7 @@ void handleRemovePayloads(Tree& tree,
       continue;
     }
 
-    auto stored_payload = storage.template loadPayloads<Pop>(pid);
-    if (!stored_payload.valid) {
+    if (!storage.template isValid<Pop, Index>(pid, index)) {
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
@@ -381,11 +380,11 @@ void AltTree::removePayloads(index_t& index, const PopData& payloads) {
   handleRemovePayloads(*this, index, payloads.context, storagePayloads_);
 }
 
-template <typename Payloads, typename Storage>
-void removePayloadsIfInvalid(std::vector<Payloads>& p, Storage& storage) {
+template <typename Payloads, typename Storage, typename BlockIndex>
+void removePayloadsIfInvalid(std::vector<Payloads>& p, Storage& storage, BlockIndex& index) {
   auto it = std::remove_if(p.begin(), p.end(), [&](const Payloads& payloads) {
-    auto id = payloads.getId();
-    auto isValid = storage.template getValidity<Payloads>(id);
+    auto isValid =
+        storage.template isValid<Payloads, BlockIndex>(payloads.getId(), index);
     return !isValid;
   });
   p.erase(it, p.end());
@@ -426,9 +425,9 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
   success = setTipContinueOnInvalid(*tmpindex, state);
   VBK_ASSERT(success);
 
-  removePayloadsIfInvalid(pop.atvs, storagePayloads_);
-  removePayloadsIfInvalid(pop.vtbs, storagePayloads_);
-  removePayloadsIfInvalid(pop.context, storagePayloads_);
+  removePayloadsIfInvalid(pop.atvs, storagePayloads_, *tmpindex);
+  removePayloadsIfInvalid(pop.vtbs, storagePayloads_, *tmpindex);
+  removePayloadsIfInvalid(pop.context, storagePayloads_, *tmpindex);
 
   VBK_LOG_INFO("After filter VBK=%d VTB=%d ATV=%d",
                pop.context.size(),
@@ -482,58 +481,17 @@ bool AltTree::setTipContinueOnInvalid(AltTree::index_t& to,
   return success;
 }
 
-template <typename pop_t>
-std::vector<CommandGroup> loadCommands_(const typename AltTree::index_t& index,
-                                        AltTree& tree,
-                                        const PayloadsRepository<pop_t>& prep) {
-  auto& pids = index.getPayloadIds<pop_t, typename pop_t::id_t>();
-  std::vector<CommandGroup> out{};
-  for (const auto& pid : pids) {
-    pop_t payloads;
-    if (!prep.get(pid, &payloads)) {
-      throw db::StateCorruptedException(
-          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
-    }
-    CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());
-    tree.payloadsToCommands(payloads, cg.commands);
-    out.push_back(cg);
-  }
-  return out;
-}
-
 template <>
-std::vector<CommandGroup> loadCommands_(const typename AltTree::index_t& index,
-                                        AltTree& tree,
-                                        const PayloadsRepository<ATV>& prep) {
-  auto& pids = index.getPayloadIds<ATV, typename ATV::id_t>();
-  std::vector<CommandGroup> out{};
-  for (const auto& pid : pids) {
-    ATV payloads;
-    if (!prep.get(pid, &payloads)) {
-      throw db::StateCorruptedException(
-          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
-    }
-    CommandGroup cg(pid.asVector(), payloads.valid, ATV::name());
-    tree.payloadsToCommands(payloads, *index.header, cg.commands);
-    out.push_back(cg);
-  }
-  return out;
-}
-
-template <>
-std::vector<CommandGroup> PayloadsStorage::loadCommands<AltTree>(
+std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename AltTree::index_t& index, AltTree& tree) {
   std::vector<CommandGroup> out{};
   std::vector<CommandGroup> payloads_out;
-  payloads_out = loadCommands_<VbkBlock>(index, tree, getRepo<VbkBlock>());
+  payloads_out = loadCommandsStorage<AltTree, VbkBlock>(index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
-
-  payloads_out = loadCommands_<VTB>(index, tree, getRepo<VTB>());
+  payloads_out = loadCommandsStorage<AltTree, VTB>(index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
-
-  payloads_out = loadCommands_<ATV>(index, tree, getRepo<ATV>());
+  payloads_out = loadCommandsStorage<AltTree, ATV>(index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
-
   return out;
 }
 
