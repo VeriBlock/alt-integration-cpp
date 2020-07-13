@@ -194,11 +194,14 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
 
   auto adaptor = RepoBatchAdaptor(*this->storage);
   SaveAllTrees(this->alttree, adaptor);
+  this->saveToPayloadsStorageVbk(this->alttree.vbk().getStoragePayloads(),
+                                 *this->storagePayloads2);
+  this->saveToPayloadsStorageAlt(this->alttree.getStoragePayloads(),
+                                 *this->storagePayloads2);
 
-  AltTree reloadedAltTree{this->altparam,
-                          this->vbkparam,
-                          this->btcparam,
-                          this->alttree.getStoragePayloads()};
+  AltTree reloadedAltTree{
+      this->altparam, this->vbkparam, this->btcparam, *this->storagePayloads2};
+
   reloadedAltTree.btc().bootstrapWithGenesis(this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
   reloadedAltTree.bootstrap(this->state);
