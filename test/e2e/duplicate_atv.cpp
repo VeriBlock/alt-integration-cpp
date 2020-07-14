@@ -162,5 +162,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
 
   auto index100 = alttree.getBlockIndex(chain[100].hash);
   ASSERT_TRUE(index100);
-  ASSERT_EQ(index100->atvids.size(), 1);
+  ASSERT_EQ(index100->atvids.size(), 0);
+  ASSERT_EQ(index100->vtbids.size(), 0);
+  ASSERT_EQ(index100->vbkblockids.size(), 0);
 }
