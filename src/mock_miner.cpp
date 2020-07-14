@@ -35,6 +35,7 @@ bool mineBlocks(const uint32_t& n,
     if (!blockChain.acceptBlock(block, state)) {
       return false;
     }
+    blockChain.getBlockIndex(block)->addRef(0);
   }
 
   return true;
@@ -71,7 +72,7 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
 
   // create containing block
   auto* tip = vbktree.getBestChain().tip();
-  assert(tip != nullptr && "VBK blockchain is not bootstrapped");
+  assert(vbktree.isBootstrapped() && "VBK blockchain is not bootstrapped");
 
   VbkBlock containingBlock = vbk_miner.createNextBlock(
       *tip, mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
@@ -96,6 +97,8 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
   if (!vbktree.acceptBlock(containingBlock, state)) {
     throw std::domain_error(state.toString());
   }
+  // a hack to prevent the block from being deleted
+  vbktree.getBlockIndex(containingBlock.getHash())->addRef(0);
 
   return atv;
 }
@@ -215,6 +218,8 @@ VbkPopTx MockMiner::endorseVbkBlock(
   if (!vbktree.btc().acceptBlock(popTx.blockOfProof, state)) {
     throw std::domain_error(state.GetDebugMessage());
   }
+  // a hack to prevent the block from being deleted
+  vbktree.btc().getBlockIndex(popTx.blockOfProof.getHash())->addRef(0);
 
   popTx.publicKey = defaultPublicKeyVbk;
 
@@ -287,9 +292,13 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
   if (!tree.acceptBlock(containingBlock, state)) {
     throw std::domain_error(state.toString());
   }
+  // a hack to prevent the block from being deleted
+  tree.getBlockIndex(containingBlock.getHash())->addRef(0);
+
   if (!tree.addPayloads(containingHash, vtbs, state)) {
     auto* containingIndex = tree.getBlockIndex(containingHash);
     VBK_ASSERT(containingIndex != nullptr);
+    containingIndex->removeRef(0);
     tree.removeLeaf(*containingIndex);
     throw std::domain_error(state.toString());
   }
@@ -310,6 +319,8 @@ BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
     if (!vbktree.btc().acceptBlock(block, state_)) {
       throw std::domain_error(state_.GetDebugMessage());
     }
+    // a hack to prevent the block from being deleted
+    vbktree.btc().getBlockIndex(block.getHash())->addRef(0);
 
     btctxes[block.getHash()] = btcmempool;
 
@@ -324,6 +335,8 @@ BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
     if (!vbktree.btc().acceptBlock(block, state_)) {
       throw std::domain_error(state_.GetDebugMessage());
     }
+    // a hack to prevent the block from being deleted
+    vbktree.btc().getBlockIndex(block.getHash())->addRef(0);
     last = block.getHash();
   }
 
@@ -352,6 +365,8 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
     if (!vbktree.acceptBlock(block, state_)) {
       throw std::domain_error(state_.GetDebugMessage());
     }
+    // a hack to prevent the block from being deleted
+    vbktree.getBlockIndex(block.getHash())->addRef(0);
     last = block.getHash();
   }
 
