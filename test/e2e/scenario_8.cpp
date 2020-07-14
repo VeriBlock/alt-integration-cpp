@@ -142,7 +142,8 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, popData2, state));
   EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetDebugMessage(), "Endorsement expired");
+  EXPECT_EQ(state.GetPath(),
+            "ALT-bad-command+VBK-invalid-payloads+VBK-expired");
 
   // VBK subtree 501 (contains expired VTB) is VALID - because we tried to add
   // VTB, it was invalid, so we immediately removed it
