@@ -26,7 +26,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  auto height = block.getHeight();
+  auto height = index->getHeight();
 
   index->setFlagSetDirty(BLOCK_APPLIED);
   index->setFlagSetDirty(BLOCK_BOOTSTRAP);

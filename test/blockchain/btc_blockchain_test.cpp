@@ -121,9 +121,9 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
 
-  EXPECT_EQ(*tree.getBestChain().tip()->header,
+  EXPECT_EQ(tree.getBestChain().tip()->getHeader(),
             bootstrapChain[bootstrapChain.size() - 1]);
-  EXPECT_EQ(tree.getBestChain().tip()->height,
+  EXPECT_EQ(tree.getBestChain().tip()->getHeight(),
             value.startHeight + bootstrapChain.size() - 1);
 
   for (const auto& block : acceptChain) {
@@ -132,8 +132,8 @@ TEST_P(AcceptTest, BootstrapWithChain) {
         << "stack trace: " << state.GetPath() << ", "
         << "message: " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
-    EXPECT_EQ(*tree.getBestChain().tip()->header, block);
-    EXPECT_EQ(tree.getBestChain().tip()->height,
+    EXPECT_EQ(tree.getBestChain().tip()->getHeader(), block);
+    EXPECT_EQ(tree.getBestChain().tip()->getHeight(),
               totalBlocks + value.startHeight);
     ++totalBlocks;
   }

@@ -167,44 +167,48 @@ TEST_F(AtomicityTestFixture, AddVTB) {
       alttree.vbk().getBlockIndex(vtb1.containingBlock.getHash());
   ASSERT_TRUE(altvbkcontaining);
 
-  auto& vtbids =
+  auto& vtbids1 =
       altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
-  ASSERT_EQ(vtbids.size(), 0);
+  ASSERT_EQ(vtbids1.size(), 0);
 
   // execute that AddVTB1
   ASSERT_TRUE(cmd1->Execute(state)) << state.toString();
 
-  vtbids =
+  auto& vtbids2 =
       altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
-  ASSERT_EQ(vtbids.size(), 1);
-  ASSERT_EQ(vtbids.at(0), vtb1.getId());
+  ASSERT_EQ(vtbids2.size(), 1);
+  ASSERT_EQ(vtbids2.at(0), vtb1.getId());
 
   // run execute second time on same VTB
   ASSERT_FALSE(cmd1->Execute(state));
-  vtbids = altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids3 =
+      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
 
-  ASSERT_EQ(vtbids.size(), 1);
-  ASSERT_EQ(vtbids.at(0), vtb1.getId());
+  ASSERT_EQ(vtbids3.size(), 1);
+  ASSERT_EQ(vtbids3.at(0), vtb1.getId());
 
   // add vtb2
   auto cmd2 = std::make_shared<AddVTB>(alttree, vtb2);
   ASSERT_TRUE(cmd2->Execute(state));
-  vtbids = altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids4 =
+      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
 
-  ASSERT_EQ(vtbids.size(), 2);
-  ASSERT_EQ(vtbids.at(0), vtb1.getId());
-  ASSERT_EQ(vtbids.at(1), vtb2.getId());
+  ASSERT_EQ(vtbids4.size(), 2);
+  ASSERT_EQ(vtbids4.at(0), vtb1.getId());
+  ASSERT_EQ(vtbids4.at(1), vtb2.getId());
 
   // unexecute VTB2
   ASSERT_NO_FATAL_FAILURE(cmd2->UnExecute());
-  vtbids = altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids5 =
+      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
 
-  ASSERT_EQ(vtbids.size(), 1);
-  ASSERT_EQ(vtbids.at(0), vtb1.getId());
+  ASSERT_EQ(vtbids5.size(), 1);
+  ASSERT_EQ(vtbids5.at(0), vtb1.getId());
 
   // unexecute VTB1
   ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
-  vtbids = altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids6 =
+      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
 
-  ASSERT_EQ(vtbids.size(), 0);
+  ASSERT_EQ(vtbids6.size(), 0);
 }

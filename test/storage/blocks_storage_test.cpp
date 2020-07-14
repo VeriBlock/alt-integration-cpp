@@ -68,32 +68,33 @@ BlockBasic generateBlock(int a, int b) {
 
 template <>
 BlockIndex<BtcBlock> generateBlock(int a, int b) {
+  BtcBlock block{};
+  block.setBlockTime(a);
   BlockIndex<BtcBlock> blockIndex;
   // fill arbitrary fields
-  blockIndex.height = b;
-  blockIndex.header = std::make_shared<BtcBlock>();
-  blockIndex.header->timestamp = a;
+  blockIndex.setHeight(b);
+  blockIndex.setHeader(block);
   return blockIndex;
 }
 
 template <>
 BlockIndex<VbkBlock> generateBlock(int a, int b) {
+  VbkBlock block{};
+  block.setBlockTime(a);
   BlockIndex<VbkBlock> blockIndex;
   // fill arbitrary fields
-  blockIndex.height = b;
-  blockIndex.header = std::make_shared<VbkBlock>();
-  blockIndex.header->timestamp = a;
+  blockIndex.setHeight(b);
+  blockIndex.setHeader(block);
   return blockIndex;
 }
 
 template <>
 BlockIndex<AltBlock> generateBlock(int a, int b) {
+  AltBlock block(ArithUint256(a).asVector(), {}, a, b);
   BlockIndex<AltBlock> blockIndex;
   // fill arbitrary fields
-  blockIndex.height = b;
-  blockIndex.header = std::make_shared<AltBlock>();
-  blockIndex.header->hash = ArithUint256(a).asVector();
-  blockIndex.header->timestamp = a;
+  blockIndex.setHeight(b);
+  blockIndex.setHeader(block);
   return blockIndex;
 }
 

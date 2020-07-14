@@ -17,7 +17,7 @@ struct BtcInvalidationTest : public ::testing::Test, public PopTestFixture {
     tip = popminer->mineBtcBlocks(10);
     best = &popminer->btc().getBestChain();
     EXPECT_EQ(*best->tip(), *tip);
-    EXPECT_EQ(tip->status, BLOCK_VALID_TREE);
+    EXPECT_TRUE(tip->hasFlags(BLOCK_VALID_TREE));
     EXPECT_TRUE(tip->isValid());
   }
 
@@ -38,7 +38,8 @@ TEST_F(BtcInvalidationTest, InvalidateTip) {
   // block is not valid
   ASSERT_FALSE(tip->isValid());
   // has tree validity, but we marked it as invalid
-  ASSERT_EQ(tip->status, BLOCK_VALID_TREE | BLOCK_FAILED_BLOCK);
+  EXPECT_TRUE(tip->hasFlags(BLOCK_VALID_TREE));
+  EXPECT_TRUE(tip->hasFlags(BLOCK_FAILED_BLOCK));
 }
 
 TEST_F(BtcInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
@@ -74,12 +75,12 @@ TEST_F(BtcInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
   ASSERT_EQ(totalInvalid, 6);
 
   // block #5 is marked as BLOCK_FAILED_BLOCK
-  ASSERT_TRUE(chain[5]->status & BLOCK_FAILED_BLOCK);
+  ASSERT_TRUE(chain[5]->getStatus() & BLOCK_FAILED_BLOCK);
 
   // all next blocks are marked as BLOCK_FAILED_CHILD
   BlockIndex<BtcBlock>* current = chain.next(toBeInvalidated);
   do {
-    ASSERT_TRUE(current->status & BLOCK_FAILED_CHILD);
+    ASSERT_TRUE(current->getStatus() & BLOCK_FAILED_CHILD);
     current = chain.next(current);
   } while (current != nullptr);
 
