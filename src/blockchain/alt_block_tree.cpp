@@ -9,10 +9,11 @@
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/batch.hpp>
 #include <veriblock/storage/blockchain_storage_util.hpp>
+
 #include "veriblock/algorithm.hpp"
+#include "veriblock/command_group_cache.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
-#include "veriblock/command_group_cache.hpp"
 
 namespace altintegration {
 
@@ -44,14 +45,12 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 template <typename Index, typename Pop>
-bool handleAddPayloads(Index& index,
-                       std::vector<Pop>& payloads,
-                       ValidationState& state,
-                       bool continueOnInvalid = false) {
-  auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
-  std::set<typename Pop::id_t> existingPids(payloadIds.begin(),
-                                            payloadIds.end());
-
+bool payloadsCheckDuplicates(Index& index,
+                             std::vector<Pop>& payloads,
+                             ValidationState& state,
+                             bool continueOnInvalid = false) {
+  auto& v = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
   for (auto it = payloads.begin(); it != payloads.end();) {
     auto pid = it->getId();
     if (!existingPids.insert(pid).second) {
@@ -69,11 +68,19 @@ bool handleAddPayloads(Index& index,
                        pid.toHex()));
     }
 
-    payloadIds.push_back(pid);
     ++it;
   }
 
   return true;
+}
+
+template <typename Index, typename Pop>
+void commitPayloadsIds(Index& index, const std::vector<Pop>& pop) {
+  auto& v = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  std::transform(
+      pop.begin(), pop.end(), std::back_inserter(v), [](const Pop& p) {
+        return p.getId();
+      });
 }
 
 bool AltTree::addPayloads(const AltBlock::hash_t& containing,
@@ -115,17 +122,20 @@ bool AltTree::addPayloads(index_t& index,
     VBK_ASSERT(success);
   }
 
-  if (!handleAddPayloads(index, payloads.context, state, continueOnInvalid)) {
+  if (!payloadsCheckDuplicates(
+          index, payloads.context, state, continueOnInvalid) ||
+      !payloadsCheckDuplicates(
+          index, payloads.vtbs, state, continueOnInvalid) ||
+      !payloadsCheckDuplicates(
+          index, payloads.atvs, state, continueOnInvalid)) {
     return false;
   }
 
-  if (!handleAddPayloads(index, payloads.vtbs, state, continueOnInvalid)) {
-    return false;
-  }
-
-  if (!handleAddPayloads(index, payloads.atvs, state, continueOnInvalid)) {
-    return false;
-  }
+  // all payloads checked, they do not contain duplicates. to ensure atomic
+  // change, we commit payloads after all 3 vectors have been validated
+  commitPayloadsIds<decltype(index), VbkBlock>(index, payloads.context);
+  commitPayloadsIds<decltype(index), VTB>(index, payloads.vtbs);
+  commitPayloadsIds<decltype(index), ATV>(index, payloads.atvs);
 
   storagePayloads_.savePayloads(payloads);
 
@@ -365,7 +375,9 @@ void AltTree::removePayloads(index_t& index, const PopData& payloads) {
 }
 
 template <typename Payloads, typename Storage, typename BlockIndex>
-void removePayloadsIfInvalid(std::vector<Payloads>& p, Storage& storage, BlockIndex& index) {
+void removePayloadsIfInvalid(std::vector<Payloads>& p,
+                             Storage& storage,
+                             BlockIndex& index) {
   auto it = std::remove_if(p.begin(), p.end(), [&](const Payloads& payloads) {
     auto isValid =
         storage.template isValid<Payloads, BlockIndex>(payloads.getId(), index);

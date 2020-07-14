@@ -235,10 +235,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   for (const auto& payload : payloads) {
     auto pid = payload.getId();
-
     index->vtbids.push_back(pid);
-    storagePayloads_.savePayloads(payload);
   }
+
+  storagePayloads_.savePayloadsMany(payloads);
 
   // don't defer fork resolution in the acceptBlock+addPayloads flow until the
   // validation hole is plugged
