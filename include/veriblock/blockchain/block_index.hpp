@@ -204,7 +204,7 @@ struct BlockIndex : public Block::addon_t {
     return index;
   }
 
-  static BlockIndex fromRaw(const std::string& bytes) {
+  static BlockIndex fromRaw(Slice<const uint8_t> bytes) {
     ReadStream stream(bytes);
     return fromRaw(stream);
   }
