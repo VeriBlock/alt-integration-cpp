@@ -223,7 +223,7 @@ std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
 void AltTree::payloadsToCommands(const ATV& atv,
                                  const AltBlock& containing,
                                  std::vector<CommandPtr>& commands) {
-  addBlock(vbk(), atv.containingBlock, commands);
+  addBlock(vbk(), atv.blockOfProof, commands);
 
   std::vector<uint8_t> endorsed_hash =
       alt_config_->getHash(atv.transaction.publicationData.header);
