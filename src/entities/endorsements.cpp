@@ -29,7 +29,7 @@ AltEndorsement AltEndorsement::fromContainer(
     const std::vector<uint8_t>& endorsedHash) {
   AltEndorsement e;
   e.id = AltEndorsement::getId(c);
-  e.blockOfProof = c.containingBlock.getHash();
+  e.blockOfProof = c.blockOfProof.getHash();
   e.endorsedHash = endorsedHash;
   e.containingHash = containingHash;
   e.payoutInfo = c.transaction.publicationData.payoutInfo;

@@ -129,11 +129,11 @@ bool MemPool::submit(const ATV& atv,
   auto* endorsed_index = tree.getBlockIndex(endorsed_hash);
 
   if (endorsed_index != nullptr &&
-      atv.containingBlock.height - endorsed_index->height > window) {
+      tree.getBestChain().tip()->height - endorsed_index->height + 1 > window) {
     return state.Invalid("pop-mempool-submit-atv-expired",
                          fmt::sprintf("ATV=%s expired %s",
                                       atv.getId().toHex(),
-                                      duplicate->toShortPrettyString()));
+                                      endorsed_index->toShortPrettyString()));
   }
 
   for (const auto& b : atv.context) {
@@ -143,7 +143,7 @@ bool MemPool::submit(const ATV& atv,
     }
   }
 
-  auto& rel = touchVbkBlock(atv.containingBlock);
+  auto& rel = touchVbkBlock(atv.blockOfProof);
   auto atvptr = std::make_shared<ATV>(atv);
   auto pair = std::make_pair(atv.getId(), atvptr);
   rel.atvs.push_back(atvptr);
@@ -186,10 +186,11 @@ bool MemPool::submit(const VTB& vtb,
 
   if (vtb.containingBlock.height - vtb.transaction.publishedBlock.height >
       window) {
-    return state.Invalid("pop-mempool-submit-vtb-expired",
-                         fmt::sprintf("VTB=%s expired %s",
-                                      vtb.getId().toHex(),
-                                      duplicate->toShortPrettyString()));
+    return state.Invalid(
+        "pop-mempool-submit-vtb-expired",
+        fmt::sprintf("VTB=%s expired %s",
+                     vtb.getId().toHex(),
+                     vtb.transaction.publishedBlock.toPrettyString()));
   }
 
   for (const auto& b : vtb.context) {

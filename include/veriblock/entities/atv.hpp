@@ -25,7 +25,7 @@ struct ATV {
 
   VbkTx transaction{};
   VbkMerklePath merklePath{};
-  VbkBlock containingBlock{};
+  VbkBlock blockOfProof{};
   std::vector<VbkBlock> context{};
 
   //! (memory only) indicates whether we already did 'checkATV' on this ATV
@@ -36,7 +36,7 @@ struct ATV {
   std::string toPrettyString() const {
     return fmt::sprintf("ATV{containingTx=%s, containingBlock=%s}",
                         transaction.getHash().toHex(),
-                        containingBlock.getHash().toHex());
+                        blockOfProof.getHash().toHex());
   }
 
   /**
@@ -88,7 +88,7 @@ JsonValue ToJSON(const ATV& atv) {
   json::putStringKV(obj, "id", atv.getId().toHex());
   json::putKV(obj, "transaction", ToJSON<JsonValue>(atv.transaction));
   json::putKV(obj, "merklePath", ToJSON<JsonValue>(atv.merklePath));
-  json::putKV(obj, "containingBlock", ToJSON<JsonValue>(atv.containingBlock));
+  json::putKV(obj, "blockOfProof", ToJSON<JsonValue>(atv.blockOfProof));
   json::putArrayKV(obj, "context", atv.context);
   return obj;
 }
