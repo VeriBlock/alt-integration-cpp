@@ -48,7 +48,7 @@ bool handleAddPayloads(Index& index,
                        std::vector<Pop>& payloads,
                        ValidationState& state,
                        bool continueOnInvalid = false) {
-  auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  const auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
   std::set<typename Pop::id_t> existingPids(payloadIds.begin(),
                                             payloadIds.end());
 
@@ -69,7 +69,8 @@ bool handleAddPayloads(Index& index,
                        pid.toHex()));
     }
 
-    payloadIds.push_back(pid);
+    index.insertPayloadIds<Pop, typename Pop::id_t>(pid);
+    index.setDirty();
     ++it;
   }
 
@@ -336,7 +337,8 @@ void handleRemovePayloads(Tree& tree,
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    payloadIds.erase(it);
+    index.removePayloadIds<Pop, typename Pop::id_t>(pid);
+    index.setDirty();
     // TODO: do we want to erase payloads from repository?
   }
 }
@@ -536,57 +538,35 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
   return out;
 }
 
-namespace {
-bool removeId(std::vector<uint256>& pop, const uint256& id) {
-  auto it = std::find(pop.rbegin(), pop.rend(), id);
-  if (it == pop.rend()) {
-    return false;
-  }
-
-  auto toRemove = --(it.base());
-  pop.erase(toRemove);
-  return true;
+template <typename Payloads>
+void removeId(BlockIndex<AltBlock>& index,
+              const typename Payloads::id_t& pid) {
+  auto& payloads =
+      index.template getPayloadIds<Payloads, typename Payloads::id_t>();
+  auto it = std::find(payloads.rbegin(), payloads.rend(), pid);
+  VBK_ASSERT(it != payloads.rend());
+  index.removePayloadIds<Payloads, typename Payloads::id_t>(pid);
+  index.setDirty();
 }
-
-bool removeId(std::vector<VbkBlock::id_t>& pop, const uint256& id) {
-  auto it = std::find_if(pop.rbegin(), pop.rend(), [&](const uint96& a) {
-    return uint256(a) == id;
-  });
-  if (it == pop.rend()) {
-    return false;
-  }
-
-  auto toRemove = --(it.base());
-  pop.erase(toRemove);
-  return true;
-}
-}  // namespace
 
 template <>
 void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
                              const CommandGroup& cg) {
   // TODO: can we do better?
-
-  // TODO: remove CG ID from payload ids
-  /*if (cg.payload_type_name == VTB::name()) {
-    bool ret = removeId(index.vtbids, cg.id);
-    VBK_ASSERT(ret);
+  if (cg.payload_type_name == VTB::name()) {
+    removeId<VTB>(index, cg.id);
     return;
   }
 
   if (cg.payload_type_name == ATV::name()) {
-    bool ret = removeId(index.atvids, cg.id);
-    VBK_ASSERT(ret);
+    removeId<ATV>(index, cg.id);
     return;
   }
 
   if (cg.payload_type_name == VbkBlock::name()) {
-    bool ret = removeId(index.vbkblockids, cg.id);
-    VBK_ASSERT(ret);
+    removeId<VbkBlock>(index, cg.id);
     return;
-  }*/
-  (void)index;
-  (void)cg;
+  }
 
   VBK_ASSERT(false && "should not reach here");
 }

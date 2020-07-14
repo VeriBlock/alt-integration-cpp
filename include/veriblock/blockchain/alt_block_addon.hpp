@@ -35,11 +35,22 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
            PopState<AltEndorsement>::operator==(o);
   }
 
-  /*template <typename pop_t, typename pop_id_t>
-  std::vector<pop_id_t>& getPayloadIds();*/
-
   template <typename pop_t, typename pop_id_t>
   const std::vector<pop_id_t>& getPayloadIds() const;
+
+  template <typename pop_t, typename pop_id_t>
+  void removePayloadIds(const pop_id_t& pid) {
+    auto& payloads = getPayloadIdsInner<pop_t, pop_id_t>();
+    auto it = std::find(payloads.begin(), payloads.end(), pid);
+    VBK_ASSERT(it != payloads.end());
+    payloads.erase(it);
+  }
+
+  template <typename pop_t, typename pop_id_t>
+  void insertPayloadIds(const pop_id_t& pid) {
+    auto& payloads = getPayloadIdsInner<pop_t, pop_id_t>();
+    payloads.push_back(pid);
+  }
 
   std::string toPrettyString() const {
     return fmt::sprintf("ATV=%d, VTB=%d, VBK=%d",
@@ -81,22 +92,26 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     _vbkblockids = readArrayOf<uint96>(
         r, [](ReadStream& s) -> uint96 { return readSingleByteLenValue(s); });
   }
+
+  template <typename pop_t, typename pop_id_t>
+  std::vector<pop_id_t>& getPayloadIdsInner();
 };
 
-/*template <>
-inline std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>() {
+template <>
+inline std::vector<uint256>& AltBlockAddon::getPayloadIdsInner<ATV, uint256>() {
   return _atvids;
 }
 
 template <>
-inline std::vector<uint256>& AltBlockAddon::getPayloadIds<VTB, uint256>() {
+inline std::vector<uint256>& AltBlockAddon::getPayloadIdsInner<VTB, uint256>() {
   return _vtbids;
 }
 
 template <>
-inline std::vector<uint96>& AltBlockAddon::getPayloadIds<VbkBlock, uint96>() {
+inline std::vector<uint96>&
+AltBlockAddon::getPayloadIdsInner<VbkBlock, uint96>() {
   return _vbkblockids;
-}*/
+}
 
 template <>
 inline const std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>()

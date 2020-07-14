@@ -31,7 +31,7 @@ struct VbkBlockAddon :
   template <typename pop_t, typename pop_id_t>
   const std::vector<pop_id_t>& getPayloadIds() const;
 
-  template <typename pop_id_t>
+  template <typename pop_t, typename pop_id_t>
   void removePayloadIds(const pop_id_t& pid) {
     auto it = std::find(_vtbids.begin(), _vtbids.end(), pid);
     VBK_ASSERT(it != _vtbids.end());

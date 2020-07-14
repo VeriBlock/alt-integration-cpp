@@ -102,7 +102,7 @@ void VbkBlockTree::removePayloads(index_t& index,
       revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    index.removePayloadIds<typename VTB::id_t>(pid);
+    index.removePayloadIds<VTB, typename VTB::id_t>(pid);
     index.setDirty();
   }
 
@@ -317,26 +317,15 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
   return loadCommandsStorage<VbkBlockTree, VTB>(index, tree);
 }
 
-bool removeId(std::vector<uint256>& pop, const uint256& id) {
-  auto it = std::find(pop.rbegin(), pop.rend(), id);
-  if (it == pop.rend()) {
-    return false;
-  }
-
-  auto toRemove = --(it.base());
-  pop.erase(toRemove);
-  return true;
-}
-
 template <>
 void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
   VBK_ASSERT(cg.payload_type_name == VTB::name());
-  //bool success = removeId(index.vtbids, cg.id);
-  // TODO: erase CG ID
-  (void)index;
-  bool success = true;
-  VBK_ASSERT(success);
+  auto& payloads = index.template getPayloadIds<VTB, typename VTB::id_t>();
+  auto it = std::find(payloads.rbegin(), payloads.rend(), cg.id);
+  VBK_ASSERT(it != payloads.rend());
+  index.removePayloadIds<VTB, typename VTB::id_t>(cg.id);
+  index.setDirty();
 }
 
 }  // namespace altintegration
