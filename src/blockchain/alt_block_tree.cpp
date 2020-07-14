@@ -48,7 +48,7 @@ bool handleAddPayloads(Index& index,
                        std::vector<Pop>& payloads,
                        ValidationState& state,
                        bool continueOnInvalid = false) {
-  const auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
   std::set<typename Pop::id_t> existingPids(payloadIds.begin(),
                                             payloadIds.end());
 
@@ -69,7 +69,7 @@ bool handleAddPayloads(Index& index,
                        pid.toHex()));
     }
 
-    index.insertPayloadIds<Pop, typename Pop::id_t>(pid);
+    index.template insertPayloadIds<Pop, typename Pop::id_t>(pid);
     index.setDirty();
     ++it;
   }
@@ -337,7 +337,7 @@ void handleRemovePayloads(Tree& tree,
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    index.removePayloadIds<Pop, typename Pop::id_t>(pid);
+    index.template removePayloadIds<Pop, typename Pop::id_t>(pid);
     index.setDirty();
     // TODO: do we want to erase payloads from repository?
   }

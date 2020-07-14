@@ -90,8 +90,8 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(success);
   }
 
-  auto& vtbids = index.getPayloadIds<VTB, typename VTB::id_t>();
   for (const auto& pid : pids) {
+    auto& vtbids = index.getPayloadIds<VTB, typename VTB::id_t>();
     auto it = std::find(vtbids.begin(), vtbids.end(), pid);
     // using an assert because throwing breaks atomicity
     // if there are multiple pids

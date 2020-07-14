@@ -42,7 +42,7 @@ struct BtcBlockAddon {
     chainWork = 0;
   }
 
-    // not static, on purpose
+  // not static, on purpose
   void initAddonFromRaw(ReadStream& r) { _refCounter = r.readBE<uint32_t>(); }
 };
 

@@ -25,9 +25,6 @@ struct VbkBlockAddon :
 
   bool payloadsIdsEmpty() const { return _vtbids.empty(); }
 
-  /*template <typename pop_t, typename pop_id_t>
-  std::vector<pop_id_t>& getPayloadIds();*/
-
   template <typename pop_t, typename pop_id_t>
   const std::vector<pop_id_t>& getPayloadIds() const;
 
@@ -78,11 +75,6 @@ struct VbkBlockAddon :
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
   }
 };
-
-/*template <>
-inline std::vector<uint256>& VbkBlockAddon::getPayloadIds<VTB, uint256>() {
-  return _vtbids;
-}*/
 
 template <>
 inline const std::vector<uint256>& VbkBlockAddon::getPayloadIds<VTB, uint256>()
