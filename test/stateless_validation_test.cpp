@@ -190,8 +190,7 @@ TEST_F(StatelessValidationTest,
 
 TEST_F(StatelessValidationTest, ATV_valid) {
   AltChainParamsRegTest altp;
-  ASSERT_TRUE(checkATV(validATV, state, altp, vbk))
-      << state.GetDebugMessage();
+  ASSERT_TRUE(checkATV(validATV, state, altp, vbk)) << state.GetDebugMessage();
 }
 
 TEST_F(StatelessValidationTest,
@@ -202,19 +201,19 @@ TEST_F(StatelessValidationTest,
 
   ASSERT_FALSE(checkMerklePath(atv.merklePath,
                                atv.transaction.getHash(),
-                               atv.containingBlock.merkleRoot,
+                               atv.blockOfProof.merkleRoot,
                                state));
 }
 
 TEST_F(StatelessValidationTest,
        ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
   ATV atv = validATV;
-  atv.containingBlock.merkleRoot =
+  atv.blockOfProof.merkleRoot =
       uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
 
   ASSERT_FALSE(checkMerklePath(atv.merklePath,
                                atv.transaction.getHash(),
-                               atv.containingBlock.merkleRoot,
+                               atv.blockOfProof.merkleRoot,
                                state));
 }
 
