@@ -419,7 +419,7 @@ TEST(ToJson, ATV) {
   auto actual = val.serialize(true);
 
   auto expected = R"({
-  "containingBlock": {
+  "blockOfProof": {
     "difficulty": 16842752,
     "hash": "a288e74fe0c2e0a6afb0c39808e2aae9a5e19569b1a68624",
     "height": 5000,
