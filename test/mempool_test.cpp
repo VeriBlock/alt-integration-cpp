@@ -181,16 +181,16 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
 
   popminer->mineVbkBlocks(
       popminer->vbk().getParams().getEndorsementSettlementInterval());
 
   std::vector<VbkPopTx> txes;
-  txes.push_back(generatePopTx(*endorsedVbkBlock1->header));
+  txes.push_back(generatePopTx(endorsedVbkBlock1->getHeader()));
   popminer->mineBtcBlocks(100);
-  txes.push_back(generatePopTx(*endorsedVbkBlock2->header));
+  txes.push_back(generatePopTx(endorsedVbkBlock2->getHeader()));
 
   // remove invalid vbk_poptxes
   popminer->vbkmempool.clear();

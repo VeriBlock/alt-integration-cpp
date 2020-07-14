@@ -129,7 +129,8 @@ bool MemPool::submit(const ATV& atv,
   auto* endorsed_index = tree.getBlockIndex(endorsed_hash);
 
   if (endorsed_index != nullptr &&
-      tree.getBestChain().tip()->height - endorsed_index->height + 1 > window) {
+      tree.getBestChain().tip()->getHeight() - endorsed_index->getHeight() + 1 >
+          window) {
     return state.Invalid("pop-mempool-submit-atv-expired",
                          fmt::sprintf("ATV=%s expired %s",
                                       atv.getId().toHex(),
@@ -184,7 +185,8 @@ bool MemPool::submit(const VTB& vtb,
                      duplicate->toShortPrettyString()));
   }
 
-  if (vtb.containingBlock.height - vtb.transaction.publishedBlock.height >
+  if (vtb.containingBlock.getHeight() -
+          vtb.transaction.publishedBlock.getHeight() >
       window) {
     return state.Invalid(
         "pop-mempool-submit-vtb-expired",
