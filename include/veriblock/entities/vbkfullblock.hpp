@@ -21,7 +21,7 @@ struct VbkFullBlock {
   VbkFullBlock(VbkBlock h) : header(std::move(h)) {}
 
   void addATV(const ATV& atv) {
-    VBK_ASSERT(atv.containingBlock == header);
+    VBK_ASSERT(atv.blockOfProof == header);
     atvs.push_back(atv);
   }
 

@@ -320,7 +320,7 @@ bool checkATV(const ATV& atv,
 
   if (!checkMerklePath(atv.merklePath,
                        atv.transaction.getHash(),
-                       atv.containingBlock.getMerkleRoot(),
+                       atv.blockOfProof.getMerkleRoot(),
                        state)) {
     return state.Invalid("vbk-check-merkle-path");
   }

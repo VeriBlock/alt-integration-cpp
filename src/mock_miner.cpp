@@ -82,7 +82,7 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
   atv.merklePath.index = 0;
   atv.merklePath.subject = hashes[0];
   atv.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
-  atv.containingBlock = containingBlock;
+  atv.blockOfProof = containingBlock;
 
   for (auto* walkBlock = tip;
        walkBlock && walkBlock->getHeader().getHash() != lastKnownVbkBlockHash;

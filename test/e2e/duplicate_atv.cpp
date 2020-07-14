@@ -179,5 +179,9 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100);
   auto& atvids = index100->getPayloadIds<ATV, typename ATV::id_t>();
-  ASSERT_EQ(atvids.size(), 1);
+  ASSERT_EQ(atvids.size(), 0);
+  auto& vtbids = index100->getPayloadIds<VTB, typename VTB::id_t>();
+  ASSERT_EQ(vtbids.size(), 0);
+  auto& blockids = index100->getPayloadIds<VbkBlock, typename VbkBlock::id_t>();
+  ASSERT_EQ(blockids.size(), 0);
 }

@@ -192,9 +192,9 @@ struct PopTestFixture {
         }
       }
 
-      if (known_blocks.count(atv.containingBlock.getHash()) == 0) {
-        popData.context.push_back(atv.containingBlock);
-        known_blocks.insert(atv.containingBlock.getHash());
+      if (known_blocks.count(atv.blockOfProof.getHash()) == 0) {
+        popData.context.push_back(atv.blockOfProof);
+        known_blocks.insert(atv.blockOfProof.getHash());
       }
 
       atv.context.clear();
@@ -231,7 +231,7 @@ struct PopTestFixture {
     for (const auto& atv : popData.atvs) {
       fillVbkContext(popData.context,
                      lastVbk,
-                     atv.containingBlock.getHash(),
+                     atv.blockOfProof.getHash(),
                      popminer->vbk());
     }
 

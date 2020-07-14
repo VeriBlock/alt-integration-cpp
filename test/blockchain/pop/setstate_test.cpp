@@ -41,7 +41,7 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());
   auto e90c100 = endorseAltBlock({chain[90]}, VTBs);
   // break ATV
-  e90c100.atvs.at(0).containingBlock._previousBlock = uint96();
+  e90c100.atvs.at(0).blockOfProof._previousBlock = uint96();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());
   ASSERT_TRUE(alttree.getBlockIndex(chain[100].getHash()));
   ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), {e90c100}, state));

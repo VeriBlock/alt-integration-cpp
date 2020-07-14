@@ -243,8 +243,9 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     auto pid = payload.getId();
     index->insertPayloadIds<VTB, typename VTB::id_t>(pid);
     index->setDirty();
-    storagePayloads_.savePayloads(payload);
   }
+
+  storagePayloads_.savePayloadsMany(payloads);
 
   // don't defer fork resolution in the acceptBlock+addPayloads flow until the
   // validation hole is plugged

@@ -115,10 +115,6 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  std::set<VbkBlock::id_t> removed_vbk_blocks;
-  std::set<ATV::id_t> removed_atvs;
-  std::set<VTB::id_t> removed_vtbs;
-
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
   const BtcChainParams* btc_chain_params_{nullptr};
@@ -128,13 +124,19 @@ struct MemPool {
 };
 
 template <>
-bool MemPool::submit(const ATV& atv, const AltTree& tree, ValidationState& state);
+bool MemPool::submit(const ATV& atv,
+                     const AltTree& tree,
+                     ValidationState& state);
 
 template <>
-bool MemPool::submit(const VTB& vtb, const AltTree& tree, ValidationState& state);
+bool MemPool::submit(const VTB& vtb,
+                     const AltTree& tree,
+                     ValidationState& state);
 
 template <>
-bool MemPool::submit(const VbkBlock& block, const AltTree& tree, ValidationState& state);
+bool MemPool::submit(const VbkBlock& block,
+                     const AltTree& tree,
+                     ValidationState& state);
 
 template <>
 inline const MemPool::payload_map<VbkBlock>& MemPool::getMap() const {
