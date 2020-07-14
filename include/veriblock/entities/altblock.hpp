@@ -111,11 +111,16 @@ struct AltBlock {
     return fmt::sprintf("AltBlock{height=%d, hash=%s}", _height, HexStr(_hash));
   }
 
- protected:
   hash_t _hash{};
   hash_t _previousBlock{};
   uint32_t _timestamp{};
   height_t _height{};
+
+ /*protected:
+  hash_t _hash{};
+  hash_t _previousBlock{};
+  uint32_t _timestamp{};
+  height_t _height{};*/
 };
 
 template <typename JsonValue>

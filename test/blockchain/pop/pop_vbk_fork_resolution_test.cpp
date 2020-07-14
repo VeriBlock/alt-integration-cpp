@@ -19,7 +19,7 @@ TEST_F(PopVbkForkResolution, TooLateToAddPayloads) {
 
   // generate a VTB
   auto vbkpoptx =
-      popminer->endorseVbkBlock(*popminer->vbk().getBestChain()[1]->header,
+      popminer->endorseVbkBlock(popminer->vbk().getBestChain()[1]->getHeader(),
                                 getLastKnownBtcBlock(),
                                 state);
   popminer->vbkmempool.push_back(vbkpoptx);
@@ -57,14 +57,14 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   ASSERT_EQ(popminer->vbk().getBestChain().tip(), chainBtip);
 
   // create 1 endorsement and put it into
-  auto Atx1 = popminer->createBtcTxEndorsingVbkBlock(*chainAtip->header);
+  auto Atx1 = popminer->createBtcTxEndorsingVbkBlock(chainAtip->getHeader());
   auto Abtccontaining1 = popminer->mineBtcBlocks(1);
   ASSERT_TRUE(popminer->btc().getBestChain().contains(Abtccontaining1));
 
   auto Apoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      *Abtccontaining1->header,
+      Abtccontaining1->getHeader(),
       Atx1,
-      *chainAtip->header,
+      chainAtip->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
 
   // state is still at chain B
@@ -82,14 +82,14 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   popminer->mineBtcBlocks(5);
 
   auto* B60 = chainBtip->getAncestor(60);
-  auto Btx1 = popminer->createBtcTxEndorsingVbkBlock(*B60->header);
+  auto Btx1 = popminer->createBtcTxEndorsingVbkBlock(B60->getHeader());
   auto Bbtccontaining1 = popminer->mineBtcBlocks(1);
   ASSERT_TRUE(popminer->btc().getBestChain().contains(Bbtccontaining1));
 
   auto Bpoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      *Bbtccontaining1->header,
+      Bbtccontaining1->getHeader(),
       Btx1,
-      *B60->header,
+      B60->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
 
   popminer->mineVbkBlocks(*chainBtip, 1);
@@ -114,14 +114,14 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
   auto* btcForkPoint = btcBlockTip1->getAncestor(15);
 
   // create 1 endorsement and put it into
-  auto Atx1 = popminer->createBtcTxEndorsingVbkBlock(*vbkBlockTip->header);
+  auto Atx1 = popminer->createBtcTxEndorsingVbkBlock(vbkBlockTip->getHeader());
 
   auto* btcBlockTip2 = popminer->mineBtcBlocks(*btcForkPoint, 1);
 
   popminer->createVbkPopTxEndorsingVbkBlock(
-      *btcBlockTip2->header,
+      btcBlockTip2->getHeader(),
       Atx1,
-      *vbkBlockTip->header,
+      vbkBlockTip->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
 
   // Test the same case but in the getProtoKeystoneContext() function
@@ -177,21 +177,23 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
 
   ASSERT_FALSE(popminer->vbk().getBestChain().contains(vbkBlockTip2));
 
-  auto* endorsedVbkBlock = vbkBlockTip1->getAncestor(vbkBlockTip1->height - 10);
+  auto* endorsedVbkBlock =
+      vbkBlockTip1->getAncestor(vbkBlockTip1->getHeight() - 10);
 
   Chain<BlockIndex<VbkBlock>> forkChain(0, vbkBlockTip2);
   ASSERT_FALSE(forkChain.contains(endorsedVbkBlock));
 
   // create 1 endorsement and put it into
-  auto Atx1 = popminer->createBtcTxEndorsingVbkBlock(*endorsedVbkBlock->header);
+  auto Atx1 =
+      popminer->createBtcTxEndorsingVbkBlock(endorsedVbkBlock->getHeader());
 
   btcBlockTip1 = popminer->mineBtcBlocks(1);
   EXPECT_EQ(*btcBlockTip1, *popminer->btc().getBestChain().tip());
 
   popminer->createVbkPopTxEndorsingVbkBlock(
-      *btcBlockTip1->header,
+      btcBlockTip1->getHeader(),
       Atx1,
-      *endorsedVbkBlock->header,
+      endorsedVbkBlock->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
 
   auto vbktip1 = popminer->vbk().getBestChain().tip();
@@ -219,19 +221,20 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->getHash(),
             vbkBlockTip->getHash());
 
-  auto* endorsedVbkBlock = vbkBlockTip->getAncestor(vbkBlockTip->height - 10);
+  auto* endorsedVbkBlock = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 10);
 
   // create 1 endorsement and put it into
-  auto Atx1 = popminer->createBtcTxEndorsingVbkBlock(*endorsedVbkBlock->header);
+  auto Atx1 =
+      popminer->createBtcTxEndorsingVbkBlock(endorsedVbkBlock->getHeader());
 
   btcBlockTip1 = popminer->mineBtcBlocks(1);
   ASSERT_EQ(btcBlockTip1->getHash(),
             popminer->btc().getBestChain().tip()->getHash());
 
   popminer->createVbkPopTxEndorsingVbkBlock(
-      *btcBlockTip1->header,
+      btcBlockTip1->getHeader(),
       Atx1,
-      *endorsedVbkBlock->header,
+      endorsedVbkBlock->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
 
   // mine the first endorsement
@@ -239,9 +242,9 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
   ASSERT_EQ(endorsedVbkBlock->endorsedBy.size(), 1);
 
   popminer->createVbkPopTxEndorsingVbkBlock(
-      *btcBlockTip1->header,
+      btcBlockTip1->getHeader(),
       Atx1,
-      *endorsedVbkBlock->header,
+      endorsedVbkBlock->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
 
   // mine the second the same endorsement

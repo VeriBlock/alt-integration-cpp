@@ -52,7 +52,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
         {vbktx}, tree.vbk().getBestChain().tip()->getHash());
     ASSERT_TRUE(tree.acceptBlock(containing, state));
     ASSERT_TRUE(tree.addPayloads(containing, payloads, state));
-    ASSERT_TRUE(tree.setState(containing.hash, state));
+    ASSERT_TRUE(tree.setState(containing.getHash(), state));
   }
 
   void mineEndorsements(AltTree& tree,
@@ -88,7 +88,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
           {vbktx1, vbktx2}, tree.vbk().getBestChain().tip()->getHash());
       ASSERT_TRUE(tree.acceptBlock(containing, state));
       ASSERT_TRUE(tree.addPayloads(containing, payloads1, state));
-      ASSERT_TRUE(tree.setState(containing.hash, state));
+      ASSERT_TRUE(tree.setState(containing.getHash(), state));
     }
   }
 
@@ -210,7 +210,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
 
   // make sure this endorsed block is at the same height as previous
   // endorsed block
-  ASSERT_EQ(firstBlock->height, secondBlock->height);
+  ASSERT_EQ(firstBlock->getHeight(), secondBlock->getHeight());
 
   // we can see that despite we had 101 block without endorsements,
   // rewards stays the same
@@ -266,7 +266,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
 
   // make sure this endorsed block is at the same height as previous
   // endorsed block
-  ASSERT_EQ(firstBlock->height, secondBlock->height);
+  ASSERT_EQ(firstBlock->getHeight(), secondBlock->getHeight());
   ASSERT_EQ(payout2.size(), payout.size());
   ASSERT_GT(payout2.begin()->second, payout.begin()->second);
 }
@@ -294,7 +294,7 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
       highestReward = payout.begin()->second;
       auto endorsedBlock = initialBlock->getAncestorBlocksBehind(
           altparam.getEndorsementSettlementInterval());
-      blockNumber = endorsedBlock->height;
+      blockNumber = endorsedBlock->getHeight();
     }
     initialBlock = initialBlock->pprev;
   }

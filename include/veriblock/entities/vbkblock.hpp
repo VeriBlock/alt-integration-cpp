@@ -175,7 +175,6 @@ struct VbkBlock {
 
   static std::string name() { return "VBK"; }
 
- protected:
   int32_t _height{};
   int16_t _version{};
   uint96 _previousBlock{};
@@ -185,6 +184,17 @@ struct VbkBlock {
   int32_t _timestamp{};
   int32_t _difficulty{};
   int32_t _nonce{};
+
+ /*protected:
+  int32_t _height{};
+  int16_t _version{};
+  uint96 _previousBlock{};
+  keystone_t _previousKeystone{};
+  keystone_t _secondPreviousKeystone{};
+  uint128 _merkleRoot{};
+  int32_t _timestamp{};
+  int32_t _difficulty{};
+  int32_t _nonce{};*/
 };
 
 template <typename JsonValue>

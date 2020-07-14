@@ -30,12 +30,14 @@ TEST(BtcBlock, Deserialize) {
   auto stream = ReadStream(blockEncoded);
   auto decoded = BtcBlock::fromRaw(stream);
 
-  EXPECT_EQ(decoded.version, defaultBlock.version);
-  EXPECT_EQ(decoded.previousBlock.toHex(), defaultBlock.previousBlock.toHex());
-  EXPECT_EQ(decoded.merkleRoot.toHex(), defaultBlock.merkleRoot.toHex());
-  EXPECT_EQ(decoded.timestamp, defaultBlock.timestamp);
-  EXPECT_EQ(decoded.bits, defaultBlock.bits);
-  EXPECT_EQ(decoded.nonce, defaultBlock.nonce);
+  EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
+  EXPECT_EQ(decoded.getPreviousBlock().toHex(),
+            defaultBlock.getPreviousBlock().toHex());
+  EXPECT_EQ(decoded.getMerkleRoot().toHex(),
+            defaultBlock.getMerkleRoot().toHex());
+  EXPECT_EQ(decoded.getBlockTime(), defaultBlock.getBlockTime());
+  EXPECT_EQ(decoded.getDifficulty(), defaultBlock.getDifficulty());
+  EXPECT_EQ(decoded.getNonce(), defaultBlock.getNonce());
 
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
@@ -52,7 +54,7 @@ TEST(BtcBlock, RoundTrip) {
   auto blockDecoded = ParseHex(defaultBlockEncoded);
   auto stream = ReadStream(blockDecoded);
   auto decoded = BtcBlock::fromRaw(stream);
-  EXPECT_EQ(decoded.version, defaultBlock.version);
+  EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
 
   WriteStream outputStream;
   decoded.toRaw(outputStream);
@@ -62,15 +64,15 @@ TEST(BtcBlock, RoundTrip) {
 }
 
 TEST(BtcBlock, getBlockHash_test) {
-  BtcBlock block;
-  block.version = 536870912;
-  block.previousBlock = uint256(
-      "00000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def7"_unhex);
-  block.merkleRoot = uint256(
-      "5e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f8"_unhex);
-  block.timestamp = 1555501858;
-  block.bits = 436279940;
-  block.nonce = 2599551022;
+  BtcBlock block(
+      536870912,
+      uint256(
+          "00000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def7"_unhex),
+      uint256(
+          "5e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f8"_unhex),
+      1555501858,
+      436279940,
+      2599551022);
 
   EXPECT_EQ(
       ArithUint256::fromLEBytes(block.getHash()),

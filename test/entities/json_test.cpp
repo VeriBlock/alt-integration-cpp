@@ -58,13 +58,12 @@ TEST(ToJson, MempoolResult) {
 }
 
 TEST(ToJson, BtcBlock) {
-  BtcBlock block;
-  block.version = 1;
-  block.previousBlock = uint256::fromHex("123123123123123");
-  block.merkleRoot = uint256::fromHex("abcabc");
-  block.bits = 1337;
-  block.timestamp = 9999;
-  block.nonce = 9379992;
+  BtcBlock block(1,
+                 uint256::fromHex("123123123123123"),
+                 uint256::fromHex("abcabc"),
+                 9999,
+                 1337,
+                 9379992);
 
   picojson::value obj = ToJSON<picojson::value>(block);
 
@@ -491,7 +490,7 @@ TEST(ToJson, BlockIndex) {
   },
   "height": 0,
   "ref": 0,
-  "status": 35,
+  "status": 99,
   "stored": {
     "vtbids": []
   }
