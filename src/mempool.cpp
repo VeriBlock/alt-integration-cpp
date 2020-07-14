@@ -49,21 +49,18 @@ void MemPool::removePayloads(const PopData& pop) {
     auto hash = b.getId();
     vbkblocks_.erase(hash);
     relations_.erase(hash);
-    removed_vbk_blocks.insert(hash);
   }
 
   // clear vtbs
   for (const auto& vtb : pop.vtbs) {
     auto vtb_id = vtb.getId();
     stored_vtbs_.erase(vtb_id);
-    removed_vtbs.insert(vtb_id);
   }
 
   // clear atvs
   for (const auto& atv : pop.atvs) {
     auto atv_id = atv.getId();
     stored_atvs_.erase(atv_id);
-    removed_atvs.insert(atv_id);
   }
 }
 
@@ -116,7 +113,7 @@ bool MemPool::submit(const ATV& atv,
   }
 
   // stateful validation
-  auto window = alt_chain_params_->getEndorsementSettlementInterval();
+  int32_t window = alt_chain_params_->getEndorsementSettlementInterval();
   auto duplicate = findBlockContainingEndorsement(
       tree.getBestChain(), tree.getBestChain().tip(), atv.getId(), window);
   if (duplicate) {
@@ -127,26 +124,35 @@ bool MemPool::submit(const ATV& atv,
                      duplicate->toShortPrettyString()));
   }
 
+  std::vector<uint8_t> endorsed_hash =
+      tree.getParams().getHash(atv.transaction.publicationData.header);
+  auto* endorsed_index = tree.getBlockIndex(endorsed_hash);
+
+  if (endorsed_index != nullptr &&
+      atv.containingBlock.height - endorsed_index->height > window) {
+    return state.Invalid("pop-mempool-submit-atv-expired",
+                         fmt::sprintf("ATV=%s expired %s",
+                                      atv.getId().toHex(),
+                                      duplicate->toShortPrettyString()));
+  }
+
   for (const auto& b : atv.context) {
-    auto b_id = b.getId();
-    if (removed_vbk_blocks.count(b_id) == 0) {
-      touchVbkBlock(b, b_id);
+    // stateful validation
+    if (!tree.vbk().getBlockIndex(b.getHash())) {
+      touchVbkBlock(b, b.getId());
     }
   }
 
-  auto atv_id = atv.getId();
-  if (removed_atvs.count(atv_id) == 0) {
-    auto& rel = touchVbkBlock(atv.containingBlock);
-    auto atvptr = std::make_shared<ATV>(atv);
-    auto pair = std::make_pair(atv_id, atvptr);
-    rel.atvs.push_back(atvptr);
+  auto& rel = touchVbkBlock(atv.containingBlock);
+  auto atvptr = std::make_shared<ATV>(atv);
+  auto pair = std::make_pair(atv.getId(), atvptr);
+  rel.atvs.push_back(atvptr);
 
-    // clear context
-    pair.second->context.clear();
+  // clear context
+  pair.second->context.clear();
 
-    // store atv id in containing block index
-    stored_atvs_.insert(pair);
-  }
+  // store atv id in containing block index
+  stored_atvs_.insert(pair);
 
   return true;
 }
@@ -162,7 +168,7 @@ bool MemPool::submit(const VTB& vtb,
 
   // stateful validation
   auto* containing = tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
-  auto window = vbk_chain_params_->getEndorsementSettlementInterval();
+  int32_t window = vbk_chain_params_->getEndorsementSettlementInterval();
   auto duplicate = findBlockContainingEndorsement(
       tree.vbk().getBestChain(),
       // if containing exists on chain, then search for duplicates starting from
@@ -178,25 +184,30 @@ bool MemPool::submit(const VTB& vtb,
                      duplicate->toShortPrettyString()));
   }
 
+  if (vtb.containingBlock.height - vtb.transaction.publishedBlock.height >
+      window) {
+    return state.Invalid("pop-mempool-submit-vtb-expired",
+                         fmt::sprintf("VTB=%s expired %s",
+                                      vtb.getId().toHex(),
+                                      duplicate->toShortPrettyString()));
+  }
+
   for (const auto& b : vtb.context) {
-    auto b_id = b.getId();
-    if (removed_vbk_blocks.count(b_id) == 0) {
-      touchVbkBlock(b, b_id);
+    // stateful validation
+    if (!tree.vbk().getBlockIndex(b.getHash())) {
+      touchVbkBlock(b, b.getId());
     }
   }
 
-  auto vtb_id = vtb.getId();
-  if (removed_vtbs.count(vtb_id) == 0) {
-    auto& rel = touchVbkBlock(vtb.containingBlock);
-    auto vtbptr = std::make_shared<VTB>(vtb);
-    auto pair = std::make_pair(vtb_id, vtbptr);
-    rel.vtbs.push_back(vtbptr);
+  auto& rel = touchVbkBlock(vtb.containingBlock);
+  auto vtbptr = std::make_shared<VTB>(vtb);
+  auto pair = std::make_pair(vtb.getId(), vtbptr);
+  rel.vtbs.push_back(vtbptr);
 
-    // clear context
-    pair.second->context.clear();
+  // clear context
+  pair.second->context.clear();
 
-    stored_vtbs_.insert(pair);
-  }
+  stored_vtbs_.insert(pair);
 
   return true;
 }
@@ -216,10 +227,7 @@ bool MemPool::submit(const VbkBlock& blk,
     return state.Invalid("pop-mempool-submit-vbkblock-stateful");
   }
 
-  auto blk_id = blk.getId();
-  if (removed_vbk_blocks.count(blk_id) == 0) {
-    touchVbkBlock(blk, blk_id);
-  }
+  touchVbkBlock(blk, blk.getId());
 
   return true;
 }

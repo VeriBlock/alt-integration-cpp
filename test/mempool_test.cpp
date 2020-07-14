@@ -154,6 +154,7 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   EXPECT_FALSE(popData.context.empty());
   EXPECT_EQ(popData.atvs.at(0), atv);
 
+  applyInNextBlock(popData);
   mempool->removePayloads(popData);
 
   popData = mempool->getPop(alttree);
@@ -163,15 +164,92 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   EXPECT_TRUE(popData.context.empty());
 
   // insert the same payloads into the mempool
-  EXPECT_TRUE(mempool->submit(atv, alttree, state));
+  EXPECT_FALSE(mempool->submit(atv, alttree, state));
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit(vtb, alttree, state));
+    EXPECT_FALSE(mempool->submit(vtb, alttree, state));
   }
 
   popData = mempool->getPop(alttree);
   EXPECT_TRUE(popData.vtbs.empty());
   EXPECT_TRUE(popData.atvs.empty());
   EXPECT_TRUE(popData.context.empty());
+}
+
+TEST_F(MemPoolFixture, submit_deprecated_payloads) {
+  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
+  // mine 65 VBK blocks
+  auto* vbkTip = popminer->mineVbkBlocks(65);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+
+  popminer->mineVbkBlocks(
+      popminer->vbk().getParams().getEndorsementSettlementInterval());
+
+  std::vector<VbkPopTx> txes;
+  txes.push_back(generatePopTx(*endorsedVbkBlock1->header));
+  popminer->mineBtcBlocks(100);
+  txes.push_back(generatePopTx(*endorsedVbkBlock2->header));
+
+  // remove invalid vbk_poptxes
+  popminer->vbkmempool.clear();
+
+  // generate vtbs with the deprecated endorsements
+  // build merkle tree
+  auto hashes = hashAll<VbkPopTx>(txes);
+  const int32_t treeIndex = 0;  // this is POP tx
+  VbkMerkleTree mtree(hashes, treeIndex);
+
+  // create containing block
+  auto containingBlock = vbk_miner.createNextBlock(
+      *popminer->vbk().getBestChain().tip(),
+      mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
+  EXPECT_TRUE(popminer->vbk().acceptBlock(containingBlock, state));
+
+  // map VbkPopTx -> VTB
+  std::vector<VTB> vtbs;
+  vtbs.reserve(txes.size());
+  int32_t index = 0;
+  std::transform(txes.begin(),
+                 txes.end(),
+                 std::back_inserter(vtbs),
+                 [&](const VbkPopTx& tx) -> VTB {
+                   VTB vtb;
+                   vtb.transaction = tx;
+                   vtb.merklePath.treeIndex = treeIndex;
+                   vtb.merklePath.index = index;
+                   vtb.merklePath.subject = hashes[index];
+                   vtb.merklePath.layers =
+                       mtree.getMerklePathLayers(hashes[index]);
+                   vtb.containingBlock = containingBlock;
+                   index++;
+
+                   return vtb;
+                 });
+
+  ASSERT_EQ(vtbs.size(), 2);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
+            VbkEndorsement::fromContainer(vtbs[1]).id);
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  AltBlock endorsedBlock = chain[5];
+
+  mineAltBlocks(alttree.getParams().getEndorsementSettlementInterval(), chain);
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
+
+  // insert the same payloads into the mempool
+  EXPECT_FALSE(mempool->submit(atv, alttree, state));
+  for (const auto& vtb : vtbs) {
+    EXPECT_TRUE(checkVTB(
+        vtb, state, popminer->getVbkParams(), popminer->getBtcParams()));
+    EXPECT_FALSE(mempool->submit(vtb, alttree, state));
+  }
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_1) {
