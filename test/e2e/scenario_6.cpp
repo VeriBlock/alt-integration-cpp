@@ -56,7 +56,14 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   // corrupt vtb
   std::vector<uint8_t> new_hash = {1, 2, 3, 9, 8, 2};
-  vtb.transaction.blockOfProof._previousBlock = uint256(new_hash);
+  const auto& block = vtb.transaction.blockOfProof;
+  BtcBlock blockBad(block.getVersion(),
+                    uint256(new_hash),
+                    block.getMerkleRoot(),
+                    block.getBlockTime(),
+                    block.getDifficulty(),
+                    block.getNonce());
+  vtb.transaction.blockOfProof = blockBad;
 
   // Step 2
   // bootsrap with the non genesis block

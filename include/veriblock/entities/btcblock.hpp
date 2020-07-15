@@ -134,20 +134,13 @@ struct BtcBlock {
 
   std::string toPrettyString() const;
 
+ protected:
   uint32_t _version = 0;
   uint256 _previousBlock{};
   uint256 _merkleRoot{};
   uint32_t _timestamp = 0;
   uint32_t _bits = 0;
   uint32_t _nonce = 0;
-
- /*protected:
-  uint32_t _version = 0;
-  uint256 _previousBlock{};
-  uint256 _merkleRoot{};
-  uint32_t _timestamp = 0;
-  uint32_t _bits = 0;
-  uint32_t _nonce = 0;*/
 };
 
 template <typename JsonValue>

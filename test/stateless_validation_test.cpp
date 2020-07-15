@@ -208,8 +208,7 @@ TEST_F(StatelessValidationTest,
 TEST_F(StatelessValidationTest,
        ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
   ATV atv = validATV;
-  atv.blockOfProof._merkleRoot =
-      uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
+  atv.blockOfProof.setMerkleRoot(uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex));
 
   ASSERT_FALSE(checkMerklePath(atv.merklePath,
                                atv.transaction.getHash(),
@@ -242,8 +241,7 @@ TEST_F(StatelessValidationTest,
 TEST_F(StatelessValidationTest,
        VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
   VTB vtb = validVTB;
-  vtb.containingBlock._merkleRoot =
-      uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
+  vtb.containingBlock.setMerkleRoot(uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex));
   ASSERT_FALSE(checkMerklePath(vtb.merklePath,
                                vtb.transaction.getHash(),
                                vtb.containingBlock.getMerkleRoot(),

@@ -16,7 +16,7 @@ class MockMinerTestCase(unittest.TestCase):
     def test_mock_miner_can_produce_publications(self):
         from pypopminer import MockMiner, PublicationData
         m = MockMiner()
-        self.assertEqual(m.vbkTip.getPreviousBlock().toHex(), "000000000000000000000000")
+        self.assertEqual(m.vbkTip.getPreviousBlock(), "000000000000000000000000")
         self.assertEqual(m.vbkTip.getHeight(), 0)
 
         endorsed = m.mineVbkBlocks(100)
@@ -42,11 +42,11 @@ class MockMinerTestCase(unittest.TestCase):
         self.assertEqual(p.payoutInfo.toHex(), '22')
 
         b = BtcBlock()
-        self.assertEqual(b.getMerkleRoot().toHex(), "0000000000000000000000000000000000000000000000000000000000000000")
+        self.assertEqual(b.getMerkleRoot(), "0000000000000000000000000000000000000000000000000000000000000000")
         b.setMerkleRoot('1111111111111111111111111111111111111111111111111111111111111111')
-        self.assertEqual(b.getMerkleRoot().toHex(), "1111111111111111111111111111111111111111111111111111111111111111")
+        self.assertEqual(b.getMerkleRoot(), "1111111111111111111111111111111111111111111111111111111111111111")
         b.setMerkleRoot(b'2222222222222222222222222222222222222222222222222222222222222222')
-        self.assertEqual(b.getMerkleRoot().toHex(), "2222222222222222222222222222222222222222222222222222222222222222")
+        self.assertEqual(b.getMerkleRoot(), "2222222222222222222222222222222222222222222222222222222222222222")
 
 if __name__ == '__main__':
     unittest.main()

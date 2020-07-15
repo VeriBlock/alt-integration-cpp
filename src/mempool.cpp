@@ -132,7 +132,7 @@ bool MemPool::submit(const ATV& atv,
     auto* tip = tree.getBestChain().tip();
     assert(tip != nullptr && "block tree is not bootstrapped");
 
-    if (tip->getHeight() - endorsed_index->getHeight() + 1 > window) {
+    if (tip && (tip->getHeight() - endorsed_index->getHeight() + 1 > window)) {
       return state.Invalid("pop-mempool-submit-atv-expired",
                            fmt::sprintf("ATV=%s expired %s",
                                         atv.getId().toHex(),

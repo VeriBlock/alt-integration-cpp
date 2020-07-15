@@ -308,9 +308,17 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
   auto badKeystone = ArithUint256::fromHex("01")
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
-  block._previousKeystone = badKeystone;
+  VbkBlock blockBad(block.getHeight(),
+                    block.getVersion(),
+                    block.getPreviousBlock(),
+                    badKeystone,
+                    block.getSecondPreviousKeystone(),
+                    block.getMerkleRoot(),
+                    block.getBlockTime(),
+                    block.getDifficulty(),
+                    block.getNonce());
 
-  ASSERT_FALSE(blockchain->acceptBlock(block, state));
+  ASSERT_FALSE(blockchain->acceptBlock(blockBad, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-bad-keystones");
 }
@@ -321,9 +329,17 @@ TEST_F(BlockchainTest, InvalidKeystone2) {
   auto badKeystone = ArithUint256::fromHex("01")
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
-  block._secondPreviousKeystone = badKeystone;
+  VbkBlock blockBad(block.getHeight(),
+                    block.getVersion(),
+                    block.getPreviousBlock(),
+                    block.getPreviousKeystone(),
+                    badKeystone,
+                    block.getMerkleRoot(),
+                    block.getBlockTime(),
+                    block.getDifficulty(),
+                    block.getNonce());
 
-  ASSERT_FALSE(blockchain->acceptBlock(block, state));
+  ASSERT_FALSE(blockchain->acceptBlock(blockBad, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-bad-keystones");
 }
