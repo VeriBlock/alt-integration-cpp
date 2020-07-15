@@ -128,13 +128,16 @@ bool MemPool::submit(const ATV& atv,
       tree.getParams().getHash(atv.transaction.publicationData.header);
   auto* endorsed_index = tree.getBlockIndex(endorsed_hash);
 
-  if (endorsed_index != nullptr &&
-      tree.getBestChain().tip()->getHeight() - endorsed_index->getHeight() + 1 >
-          window) {
-    return state.Invalid("pop-mempool-submit-atv-expired",
-                         fmt::sprintf("ATV=%s expired %s",
-                                      atv.getId().toHex(),
-                                      endorsed_index->toShortPrettyString()));
+  if (endorsed_index != nullptr) {
+    auto* tip = tree.getBestChain().tip();
+    assert(tip != nullptr && "block tree is not bootstrapped");
+
+    if (tip->getHeight() - endorsed_index->getHeight() + 1 > window) {
+      return state.Invalid("pop-mempool-submit-atv-expired",
+                           fmt::sprintf("ATV=%s expired %s",
+                                        atv.getId().toHex(),
+                                        endorsed_index->toShortPrettyString()));
+    }
   }
 
   for (const auto& b : atv.context) {

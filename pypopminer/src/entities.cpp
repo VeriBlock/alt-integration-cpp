@@ -122,7 +122,7 @@ void init_entities() {
       .def("getVersion", &BtcBlock::getVersion)
       .def("getPreviousBlock", &BtcBlock::getPreviousBlock)
       .def("getMerkleRoot", &BtcBlock::getMerkleRoot)
-      .def_write("setMerkleRoot", &BtcBlock::setMerkleRoot)
+      .def("setMerkleRoot", &BtcBlock::setMerkleRoot)
       .def("getBlockTime", &BtcBlock::getBlockTime)
       .def("getDifficulty", &BtcBlock::getDifficulty)
       .def("getNonce", &BtcBlock::getNonce);
@@ -139,7 +139,7 @@ void init_entities() {
       .def("getPreviousKeystone", &VbkBlock::getPreviousKeystone)
       .def("getSecondPreviousKeystone", &VbkBlock::getSecondPreviousKeystone)
       .def("getMerkleRoot", &VbkBlock::getMerkleRoot)
-      .def_write("setMerkleRoot", &VbkBlock::setMerkleRoot)
+      .def("setMerkleRoot", &VbkBlock::setMerkleRoot)
       .def("getBlockTime", &VbkBlock::getBlockTime)
       .def("getDifficulty", &VbkBlock::getDifficulty)
       .def("getNonce", &VbkBlock::getNonce);
