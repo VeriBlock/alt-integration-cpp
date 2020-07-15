@@ -104,6 +104,7 @@ struct BtcBlock {
   uint32_t getVersion() const { return _version; }
 
   uint256 getMerkleRoot() const { return _merkleRoot; }
+  void setMerkleRoot(const uint256 merkleRoot) { _merkleRoot = merkleRoot; }
 
   uint32_t getNonce() const { return _nonce; }
   void setNonce(const uint32_t nonce) { _nonce = nonce; }

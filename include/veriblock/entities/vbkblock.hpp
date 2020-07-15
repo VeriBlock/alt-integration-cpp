@@ -153,6 +153,7 @@ struct VbkBlock {
   int16_t getVersion() const { return _version; }
 
   uint128 getMerkleRoot() const { return _merkleRoot; }
+  void setMerkleRoot(const uint128 merkleRoot) { _merkleRoot = merkleRoot; }
 
   int32_t getNonce() const { return _nonce; }
   void setNonce(const int32_t nonce) { _nonce = nonce; }

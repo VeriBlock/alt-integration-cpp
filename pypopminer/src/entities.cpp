@@ -119,12 +119,13 @@ void init_entities() {
       .def("toHex", &BtcBlock::toHex)
       .def("toVbkEncodingHex", &toVbkEncodingHex<BtcBlock>)
       .def("getHash", &BtcBlock::getHash)
-      .def_readwrite("version", &BtcBlock::version)
-      .def_readwrite("previousBlock", &BtcBlock::previousBlock)
-      .def_readwrite("merkleRoot", &BtcBlock::merkleRoot)
-      .def_readwrite("timestamp", &BtcBlock::timestamp)
-      .def_readwrite("bits", &BtcBlock::bits)
-      .def_readwrite("nonce", &BtcBlock::nonce);
+      .def("getVersion", &BtcBlock::getVersion)
+      .def("getPreviousBlock", &BtcBlock::getPreviousBlock)
+      .def("getMerkleRoot", &BtcBlock::getMerkleRoot)
+      .def_write("setMerkleRoot", &BtcBlock::setMerkleRoot)
+      .def("getBlockTime", &BtcBlock::getBlockTime)
+      .def("getDifficulty", &BtcBlock::getDifficulty)
+      .def("getNonce", &BtcBlock::getNonce);
 
   class_<VbkBlock, boost::shared_ptr<VbkBlock>>("VbkBlock")
       .def("__str__", &VbkBlock::toHex)
@@ -132,14 +133,14 @@ void init_entities() {
       .def("toHex", &VbkBlock::toHex)
       .def("toVbkEncodingHex", &toVbkEncodingHex<VbkBlock>)
       .def("getHash", &VbkBlock::getHash)
-      .def_readwrite("height", &VbkBlock::height)
-      .def_readwrite("version", &VbkBlock::version)
-      .def_readwrite("previousBlock", &VbkBlock::previousBlock)
-      .def_readwrite("previousKeystone", &VbkBlock::previousKeystone)
-      .def_readwrite("secondPreviousKeystone",
-                     &VbkBlock::secondPreviousKeystone)
-      .def_readwrite("merkleRoot", &VbkBlock::merkleRoot)
-      .def_readwrite("timestamp", &VbkBlock::timestamp)
-      .def_readwrite("difficulty", &VbkBlock::difficulty)
-      .def_readwrite("nonce", &VbkBlock::nonce);
+      .def("getHeight", &VbkBlock::getHeight)
+      .def("getVersion", &VbkBlock::getVersion)
+      .def("getPreviousBlock", &VbkBlock::getPreviousBlock)
+      .def("getPreviousKeystone", &VbkBlock::getPreviousKeystone)
+      .def("getSecondPreviousKeystone", &VbkBlock::getSecondPreviousKeystone)
+      .def("getMerkleRoot", &VbkBlock::getMerkleRoot)
+      .def_write("setMerkleRoot", &VbkBlock::setMerkleRoot)
+      .def("getBlockTime", &VbkBlock::getBlockTime)
+      .def("getDifficulty", &VbkBlock::getDifficulty)
+      .def("getNonce", &VbkBlock::getNonce);
 }

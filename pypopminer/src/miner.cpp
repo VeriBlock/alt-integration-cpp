@@ -52,8 +52,8 @@ struct MockMinerProxy : private MockMiner {
     return ss.str();
   }
 
-  VbkBlock getVbkTip() { return *vbk().getBestChain().tip()->header; }
-  BtcBlock getBtcTip() { return *btc().getBestChain().tip()->header; }
+  VbkBlock getVbkTip() { return vbk().getBestChain().tip()->getHeader(); }
+  BtcBlock getBtcTip() { return btc().getBestChain().tip()->getHeader(); }
 
   VbkBlock getVbkBlock(const std::string& hash) {
     auto index = vbk().getBlockIndex(VbkBlock::hash_t::fromHex(hash));
@@ -61,7 +61,7 @@ struct MockMinerProxy : private MockMiner {
       throw std::invalid_argument("Can not find VbkBlock " + hash);
     }
 
-    return *index->header;
+    return index->getHeader();
   }
 
   BtcBlock getBtcBlock(const std::string& hash) {
@@ -70,7 +70,7 @@ struct MockMinerProxy : private MockMiner {
       throw std::invalid_argument("Can not find BtcBlock " + hash);
     }
 
-    return *index->header;
+    return index->getHeader();
   }
 
   VbkBlock mineVbkBlocks(const std::string& prevHash, size_t num) {
@@ -80,7 +80,7 @@ struct MockMinerProxy : private MockMiner {
                              prevHash);
     }
 
-    return *base::mineVbkBlocks(*index, num)->header;
+    return base::mineVbkBlocks(*index, num)->getHeader();
   }
   BtcBlock mineBtcBlocks(const std::string& prevHash, size_t num) {
     auto* index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(prevHash));
@@ -89,15 +89,15 @@ struct MockMinerProxy : private MockMiner {
                              prevHash);
     }
 
-    return *base::mineBtcBlocks(*index, num)->header;
+    return base::mineBtcBlocks(*index, num)->getHeader();
   }
   VbkBlock mineVbkBlocks(size_t num) {
     auto* index = vbk().getBestChain().tip();
-    return *base::mineVbkBlocks(*index, num)->header;
+    return base::mineVbkBlocks(*index, num)->getHeader();
   }
   BtcBlock mineBtcBlocks(size_t num) {
     auto* index = btc().getBestChain().tip();
-    return *base::mineBtcBlocks(*index, num)->header;
+    return base::mineBtcBlocks(*index, num)->getHeader();
   }
 
   void endorseVbkBlock(const VbkBlock& block,
@@ -178,7 +178,7 @@ struct MockMinerProxy : private MockMiner {
                       it->second.rend(),
                       [&](const VTB& vtb) { vtbs.push_back(vtb); });
       }
-      context.push_back(*vbktip->header);
+      context.push_back(vbktip->getHeader());
       vbktip = vbktip->pprev;
     }
     std::reverse(vtbs.begin(), vtbs.end());

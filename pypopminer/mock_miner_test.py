@@ -16,11 +16,11 @@ class MockMinerTestCase(unittest.TestCase):
     def test_mock_miner_can_produce_publications(self):
         from pypopminer import MockMiner, PublicationData
         m = MockMiner()
-        self.assertEqual(m.vbkTip.previousBlock.toHex(), "000000000000000000000000")
-        self.assertEqual(m.vbkTip.height, 0)
+        self.assertEqual(m.vbkTip.getPreviousBlock().toHex(), "000000000000000000000000")
+        self.assertEqual(m.vbkTip.getHeight(), 0)
 
         endorsed = m.mineVbkBlocks(100)
-        self.assertEqual(endorsed.height, 100)
+        self.assertEqual(endorsed.getHeight(), 100)
         m.endorseVbkBlock(endorsed, m.btcTip.getHash(), 10)
 
         p = PublicationData()
@@ -30,7 +30,7 @@ class MockMinerTestCase(unittest.TestCase):
         payloads = m.endorseAltBlock(p, m.vbkTip.getHash())
         print(repr(payloads))
         self.assertEqual(len(payloads.vtbs), 10)
-        self.assertEqual(m.vbkTip.height, 102)
+        self.assertEqual(m.vbkTip.getHeight(), 102)
 
     def test_uints_handle_both_bytes_and_uint8(self):
         from pypopminer import PublicationData, BtcBlock
@@ -42,11 +42,11 @@ class MockMinerTestCase(unittest.TestCase):
         self.assertEqual(p.payoutInfo.toHex(), '22')
 
         b = BtcBlock()
-        self.assertEqual(b.merkleRoot.toHex(), "0000000000000000000000000000000000000000000000000000000000000000")
-        b.merkleRoot = '1111111111111111111111111111111111111111111111111111111111111111'
-        self.assertEqual(b.merkleRoot.toHex(), "1111111111111111111111111111111111111111111111111111111111111111")
-        b.merkleRoot = b'2222222222222222222222222222222222222222222222222222222222222222'
-        self.assertEqual(b.merkleRoot.toHex(), "2222222222222222222222222222222222222222222222222222222222222222")
+        self.assertEqual(b.getMerkleRoot().toHex(), "0000000000000000000000000000000000000000000000000000000000000000")
+        b.setMerkleRoot('1111111111111111111111111111111111111111111111111111111111111111')
+        self.assertEqual(b.getMerkleRoot().toHex(), "1111111111111111111111111111111111111111111111111111111111111111")
+        b.setMerkleRoot(b'2222222222222222222222222222222222222222222222222222222222222222')
+        self.assertEqual(b.getMerkleRoot().toHex(), "2222222222222222222222222222222222222222222222222222222222222222")
 
 if __name__ == '__main__':
     unittest.main()

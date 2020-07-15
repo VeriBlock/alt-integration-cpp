@@ -166,7 +166,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   for (auto* walkBlock = containingBlockIndex->pprev;
        walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
-    auto header = walkBlock->getHeader();
+    const auto& header = walkBlock->getHeader();
     popTx.blockOfProofContext.push_back(header);
   }
   std::reverse(popTx.blockOfProofContext.begin(),
