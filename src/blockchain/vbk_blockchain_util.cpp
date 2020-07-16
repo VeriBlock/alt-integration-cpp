@@ -28,6 +28,13 @@ ArithUint256 getBlockProof(const VbkBlock& block) {
 template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) {
+  VbkBlock block;
+  block.version = tip.getHeader().version;
+  block.previousBlock = tip.getHeader()
+                            .getHash()
+                            .template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
+  block.merkleRoot = merkle;
+  block.height = tip.getHeight() + 1;
   // set first previous keystone
   auto diff = tip.getHeight() % params_.getKeystoneInterval();
 
@@ -35,14 +42,11 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   if (diff == 0) {
     diff += params_.getKeystoneInterval();
   }
-
-  typename VbkBlock::keystone_t previousKeystone{};
-  typename VbkBlock::keystone_t secondPreviousKeystone{};
   // we reference genesis block if we are at the beginning of the chain
   if ((int32_t)diff <= tip.getHeight()) {
     auto* prevKeystoneIndex = tip.getAncestor(tip.getHeight() - diff);
     VBK_ASSERT(prevKeystoneIndex != nullptr);
-    previousKeystone =
+    block.previousKeystone =
         prevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
@@ -52,32 +56,13 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   if ((int32_t)diff <= tip.getHeight()) {
     auto* secondPrevKeystoneIndex = tip.getAncestor(tip.getHeight() - diff);
     VBK_ASSERT(secondPrevKeystoneIndex != nullptr);
-    secondPreviousKeystone =
+    block.secondPreviousKeystone =
         secondPrevKeystoneIndex->getHash()
             .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
   }
 
-  VbkBlock blockTmp(tip.getHeight() + 1,
-                    tip.getHeader().getVersion(),
-                    tip.getHeader()
-                        .getHash()
-                        .template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>(),
-                    previousKeystone,
-                    secondPreviousKeystone,
-                    merkle,
-                    (std::max)(tip.getBlockTime(), currentTimestamp4()),
-                    0,
-                    0);
-  auto work = getNextWorkRequired(tip, blockTmp, params_);
-  VbkBlock block(blockTmp.getHeight(),
-                 blockTmp.getVersion(),
-                 blockTmp.getPreviousBlock(),
-                 blockTmp.getPreviousKeystone(),
-                 blockTmp.getSecondPreviousKeystone(),
-                 blockTmp.getMerkleRoot(),
-                 blockTmp.getBlockTime(),
-                 work,
-                 blockTmp.getNonce());
+  block.timestamp = (std::max)(tip.getBlockTime(), currentTimestamp4());
+  block.difficulty = getNextWorkRequired(tip, block, params_);
   return block;
 }
 
@@ -159,12 +144,12 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
 
     if (prevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
-        block.getPreviousKeystone()) {
+        block.previousKeystone) {
       return false;
     }
   } else {
     // should contain zeroes
-    if (block.getPreviousKeystone() != VbkBlock::keystone_t()) {
+    if (block.previousKeystone != VbkBlock::keystone_t()) {
       return false;
     }
   }
@@ -179,12 +164,12 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
 
     if (secondPrevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
-        block.getSecondPreviousKeystone()) {
+        block.secondPreviousKeystone) {
       return false;
     }
   } else {
     // should contain zeroes
-    if (block.getSecondPreviousKeystone() != VbkBlock::keystone_t()) {
+    if (block.secondPreviousKeystone != VbkBlock::keystone_t()) {
       return false;
     }
   }

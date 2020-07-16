@@ -34,11 +34,17 @@ TestCase setupTestCase() {
   stream = ReadStream(vtbBytes);
   VTB vtb = VTB::fromVbkEncoding(stream);
 
-  AltBlock block1(
-      generateRandomBytesVector(32), generateRandomBytesVector(32), 124, 1);
+  AltBlock block1;
+  block1.hash = generateRandomBytesVector(32);
+  block1.height = 1;
+  block1.previousBlock = generateRandomBytesVector(32);
+  block1.timestamp = 124;
 
-  AltBlock block2(
-      generateRandomBytesVector(32), generateRandomBytesVector(32), 256, 2);
+  AltBlock block2;
+  block2.hash = generateRandomBytesVector(32);
+  block2.height = 2;
+  block2.previousBlock = generateRandomBytesVector(32);
+  block2.timestamp = 256;
 
   PopData payloads;
   payloads.atvs = std::vector<ATV>(4, atv);

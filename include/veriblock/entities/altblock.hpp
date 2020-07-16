@@ -26,19 +26,6 @@ struct AltBlock {
   using protecting_block_t = VbkBlock;
   using addon_t = AltBlockAddon;
 
-  AltBlock() = default;
-
-  AltBlock(hash_t hash,
-           hash_t previousBlock,
-           uint32_t timestamp,
-           height_t height)
-      : _hash(hash),
-        _previousBlock(previousBlock),
-        _timestamp(timestamp),
-        _height(height) {}
-
-  uint32_t getBlockTime() const noexcept { return _timestamp; }
-
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
    * AltBlock
@@ -93,12 +80,12 @@ struct AltBlock {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
-  hash_t getHash() const { return _hash; }
-  hash_t getPreviousBlock() const { return _previousBlock; }
-  height_t getHeight() const { return _height; }
+  uint32_t getBlockTime() const noexcept;
+
+  hash_t getHash() const;
 
   friend bool operator==(const AltBlock& a, const AltBlock& b) {
-    return a._hash == b._hash;
+    return a.hash == b.hash;
   }
 
   friend bool operator!=(const AltBlock& a, const AltBlock& b) {
@@ -108,23 +95,22 @@ struct AltBlock {
   static std::string name() { return "ALT"; }
 
   std::string toPrettyString() const {
-    return fmt::sprintf("AltBlock{height=%d, hash=%s}", _height, HexStr(_hash));
+    return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
   }
 
- protected:
-  hash_t _hash{};
-  hash_t _previousBlock{};
-  uint32_t _timestamp{};
-  height_t _height{};
+  hash_t hash{};
+  hash_t previousBlock{};
+  uint32_t timestamp{};
+  height_t height{};
 };
 
 template <typename JsonValue>
 JsonValue ToJSON(const AltBlock& alt) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
   json::putStringKV(object, "hash", HexStr(alt.getHash()));
-  json::putStringKV(object, "previousBlock", HexStr(alt.getPreviousBlock()));
+  json::putStringKV(object, "previousBlock", HexStr(alt.previousBlock));
   json::putIntKV(object, "timestamp", alt.getBlockTime());
-  json::putIntKV(object, "height", alt.getHeight());
+  json::putIntKV(object, "height", alt.height);
   return object;
 }
 

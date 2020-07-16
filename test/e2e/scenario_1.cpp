@@ -224,7 +224,7 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(*vbkBtip->getAncestor(71), *alttree.vbk().getBestChain().tip());
   // expect that ALT tip is 102
   EXPECT_EQ(altchain.size(), 103);
-  EXPECT_EQ(altchain.at(altchain.size() - 1).getHeight(), 102);
+  EXPECT_EQ(altchain.at(altchain.size() - 1).height, 102);
 
   // Step 3
   // remove ALT block 102
@@ -232,7 +232,7 @@ TEST_F(Scenario1, scenario_1) {
   alttree.removeSubtree(lastBlock.getHash());
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
-  EXPECT_EQ(altchain.at(altchain.size() - 1).getHeight(), 101);
+  EXPECT_EQ(altchain.at(altchain.size() - 1).height, 101);
 
   // expect that ALTBTC tree has all blocks from BTC chain A, until A53,
   // including
@@ -259,7 +259,7 @@ TEST_F(Scenario1, scenario_1) {
 
   // expect that ALT is at 100
   EXPECT_EQ(altchain.size(), 101);
-  EXPECT_EQ(altchain.at(altchain.size() - 1).getHeight(), 100);
+  EXPECT_EQ(altchain.at(altchain.size() - 1).height, 100);
 
   // expect that ALTBTC is at bootstrap
   EXPECT_EQ(btcparam.getGenesisBlock().getHash(),

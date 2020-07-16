@@ -180,11 +180,11 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   }
 
   // we must know previous block, but not if `block` is bootstrap block
-  auto* prev = getBlockIndex(block.getPreviousBlock());
+  auto* prev = getBlockIndex(block.previousBlock);
   if (prev == nullptr) {
     return state.Invalid(
         block_t::name() + "-bad-prev-block",
-        "can not find previous block: " + HexStr(block.getPreviousBlock()));
+        "can not find previous block: " + HexStr(block.previousBlock));
   }
 
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(block));
@@ -396,14 +396,17 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
                pop.atvs.size());
 
   // first, create tmp alt block
+  AltBlock tmp;
   ValidationState state;
-  auto& tip = *getBestChain().tip();
-  AltBlock tmp(std::vector<uint8_t>(32, 2),
-               tip.getHash(),
-               tip.getBlockTime() + 1,
-               tip.getHeight() + 1);
-  bool ret = acceptBlock(tmp, state);
-  VBK_ASSERT(ret);
+  {
+    auto& tip = *getBestChain().tip();
+    tmp.hash = std::vector<uint8_t>(32, 2);
+    tmp.previousBlock = tip.getHash();
+    tmp.timestamp = tip.getBlockTime() + 1;
+    tmp.height = tip.getHeight() + 1;
+    bool ret = acceptBlock(tmp, state);
+    VBK_ASSERT(ret);
+  }
 
   auto* tmpindex = getBlockIndex(tmp.getHash());
   VBK_ASSERT(tmpindex != nullptr);

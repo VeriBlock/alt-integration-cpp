@@ -176,15 +176,13 @@ TEST(VbkPopTx, Deserialize) {
 
   EXPECT_EQ(decoded.networkOrType.typeId, defaultTx.networkOrType.typeId);
   EXPECT_EQ(decoded.address, defaultTx.address);
-  EXPECT_EQ(decoded.publishedBlock.getHeight(),
-            defaultTx.publishedBlock.getHeight());
+  EXPECT_EQ(decoded.publishedBlock.height, defaultTx.publishedBlock.height);
   EXPECT_EQ(decoded.bitcoinTransaction.tx, defaultTx.bitcoinTransaction.tx);
-  EXPECT_EQ(decoded.blockOfProof.getVersion(),
-            defaultTx.blockOfProof.getVersion());
+  EXPECT_EQ(decoded.blockOfProof.version, defaultTx.blockOfProof.version);
   EXPECT_EQ(decoded.blockOfProofContext.size(),
             defaultTx.blockOfProofContext.size());
-  EXPECT_EQ(decoded.blockOfProofContext[0].getVersion(),
-            defaultTx.blockOfProofContext[0].getVersion());
+  EXPECT_EQ(decoded.blockOfProofContext[0].version,
+            defaultTx.blockOfProofContext[0].version);
   EXPECT_EQ(decoded.merklePath.index, defaultTx.merklePath.index);
   EXPECT_EQ(decoded.signature, defaultTx.signature);
   EXPECT_EQ(decoded.publicKey, defaultTx.publicKey);

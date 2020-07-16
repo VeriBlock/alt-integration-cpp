@@ -81,12 +81,12 @@ struct BaseBlockTree {
     }
 
     // if current block is not known, and previous also not known
-    if (!current && !getBlockIndex(index.getHeader().getPreviousBlock())) {
+    if (!current && !getBlockIndex(index.getHeader().previousBlock)) {
       return state.Invalid(
           "bad-prev",
           fmt::format("Can not load block {}, no previous block {}",
                       index.toPrettyString(),
-                      HexStr(index.getHeader().getPreviousBlock())));
+                      HexStr(index.getHeader().previousBlock)));
     }
 
     current = touchBlockIndex(currentHash);
@@ -101,7 +101,7 @@ struct BaseBlockTree {
     // recover pnext
     current->pnext = next;
     // recover pprev
-    current->pprev = getBlockIndex(index.getHeader().getPreviousBlock());
+    current->pprev = getBlockIndex(index.getHeader().previousBlock);
 
     if (current->pprev != nullptr) {
       // prev block found
@@ -356,7 +356,7 @@ struct BaseBlockTree {
 
     index_t* current = touchBlockIndex(header->getHash());
     current->setHeader(*header);
-    current->pprev = getBlockIndex(header->getPreviousBlock());
+    current->pprev = getBlockIndex(header->previousBlock);
 
     if (current->pprev != nullptr) {
       // prev block found

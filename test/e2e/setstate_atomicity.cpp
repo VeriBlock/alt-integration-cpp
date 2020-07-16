@@ -39,15 +39,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
 
   // corrupted payloads
   std::vector<uint8_t> invalid_hash = {1, 2, 3, 9, 8, 2};
-
-  const auto& block = corruptedVtb.transaction.blockOfProof;
-  BtcBlock blockBad(block.getVersion(),
-                    uint256(invalid_hash),
-                    block.getMerkleRoot(),
-                    block.getBlockTime(),
-                    block.getDifficulty(),
-                    block.getNonce());
-  corruptedVtb.transaction.blockOfProof = blockBad;
+  corruptedVtb.transaction.blockOfProof.previousBlock = uint256(invalid_hash);
 
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(altForkPoint));

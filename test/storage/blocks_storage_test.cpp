@@ -69,7 +69,7 @@ BlockBasic generateBlock(int a, int b) {
 template <>
 BlockIndex<BtcBlock> generateBlock(int a, int b) {
   BtcBlock block{};
-  block.setBlockTime(a);
+  block.timestamp = a;
   BlockIndex<BtcBlock> blockIndex;
   // fill arbitrary fields
   blockIndex.setHeight(b);
@@ -80,7 +80,7 @@ BlockIndex<BtcBlock> generateBlock(int a, int b) {
 template <>
 BlockIndex<VbkBlock> generateBlock(int a, int b) {
   VbkBlock block{};
-  block.setBlockTime(a);
+  block.timestamp = a;
   BlockIndex<VbkBlock> blockIndex;
   // fill arbitrary fields
   blockIndex.setHeight(b);
@@ -90,7 +90,10 @@ BlockIndex<VbkBlock> generateBlock(int a, int b) {
 
 template <>
 BlockIndex<AltBlock> generateBlock(int a, int b) {
-  AltBlock block(ArithUint256(a).asVector(), {}, a, b);
+  AltBlock block{};
+  block.hash = ArithUint256(a).asVector();
+  block.timestamp = a; 
+  block.height = b;
   BlockIndex<AltBlock> blockIndex;
   // fill arbitrary fields
   blockIndex.setHeight(b);

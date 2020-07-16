@@ -94,8 +94,12 @@ struct PopTestFixture {
   }
 
   AltBlock generateNextBlock(const AltBlock& prev) {
-    AltBlock block(
-        generateRandomBytesVector(32), prev.getHash(), prev.getBlockTime() + 1, prev.getHeight() + 1);
+    AltBlock block;
+    block.hash = generateRandomBytesVector(32);
+    block.height = prev.height + 1;
+    block.previousBlock = prev.getHash();
+    block.timestamp = prev.timestamp + 1;
+
     return block;
   }
 
@@ -203,7 +207,7 @@ struct PopTestFixture {
     std::sort(popData.context.begin(),
               popData.context.end(),
               [](const VbkBlock& a, const VbkBlock& b) {
-                return a.getHeight() < b.getHeight();
+                return a.height < b.height;
               });
 
     popData.atvs = atvs;

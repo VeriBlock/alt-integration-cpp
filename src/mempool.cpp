@@ -22,7 +22,7 @@ PopData MemPool::getPop(AltTree& tree) {
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
   std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
-    return a.second->header.getHeight() < b.second->header.getHeight();
+    return a.second->header.height < b.second->header.height;
   });
 
   for (const P& block : blocks) {
@@ -188,8 +188,7 @@ bool MemPool::submit(const VTB& vtb,
                      duplicate->toShortPrettyString()));
   }
 
-  if (vtb.containingBlock.getHeight() -
-          vtb.transaction.publishedBlock.getHeight() >
+  if (vtb.containingBlock.height - vtb.transaction.publishedBlock.height >
       window) {
     return state.Invalid(
         "pop-mempool-submit-vtb-expired",

@@ -183,14 +183,7 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
 
   // corrupt one of the endorsement
   std::vector<uint8_t> new_hash = {1, 2, 3};
-  const auto& block = popminer.vbkmempool[0].blockOfProof;
-  BtcBlock blockBad(block.getVersion(),
-                    uint256(new_hash),
-                    block.getMerkleRoot(),
-                    block.getBlockTime(),
-                    block.getDifficulty(),
-                    block.getNonce());
-  popminer.vbkmempool[0].blockOfProof = blockBad;
+  popminer.vbkmempool[0].blockOfProof.previousBlock = uint256(new_hash);
 
   EXPECT_THROW(popminer.mineVbkBlocks(1), std::domain_error);
 

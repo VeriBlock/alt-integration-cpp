@@ -14,12 +14,12 @@ BtcBlock BtcBlock::fromRaw(const std::vector<uint8_t>& bytes) {
 
 BtcBlock BtcBlock::fromRaw(ReadStream& stream) {
   BtcBlock block{};
-  block._version = stream.readLE<uint32_t>();
-  block._previousBlock = stream.readSlice(SHA256_HASH_SIZE).reverse();
-  block._merkleRoot = stream.readSlice(SHA256_HASH_SIZE).reverse();
-  block._timestamp = stream.readLE<uint32_t>();
-  block._bits = stream.readLE<uint32_t>();
-  block._nonce = stream.readLE<uint32_t>();
+  block.version = stream.readLE<uint32_t>();
+  block.previousBlock = stream.readSlice(SHA256_HASH_SIZE).reverse();
+  block.merkleRoot = stream.readSlice(SHA256_HASH_SIZE).reverse();
+  block.timestamp = stream.readLE<uint32_t>();
+  block.bits = stream.readLE<uint32_t>();
+  block.nonce = stream.readLE<uint32_t>();
   return block;
 }
 
@@ -30,12 +30,12 @@ BtcBlock BtcBlock::fromVbkEncoding(ReadStream& stream) {
 }
 
 void BtcBlock::toRaw(WriteStream& stream) const {
-  stream.writeLE<uint32_t>(_version);
-  stream.write(_previousBlock.reverse());
-  stream.write(_merkleRoot.reverse());
-  stream.writeLE<uint32_t>(_timestamp);
-  stream.writeLE<uint32_t>(_bits);
-  stream.writeLE<uint32_t>(_nonce);
+  stream.writeLE<uint32_t>(version);
+  stream.write(previousBlock.reverse());
+  stream.write(merkleRoot.reverse());
+  stream.writeLE<uint32_t>(timestamp);
+  stream.writeLE<uint32_t>(bits);
+  stream.writeLE<uint32_t>(nonce);
 }
 
 void BtcBlock::toVbkEncoding(WriteStream& stream) const {
@@ -43,6 +43,10 @@ void BtcBlock::toVbkEncoding(WriteStream& stream) const {
   toRaw(blockStream);
   writeSingleByteLenValue(stream, blockStream.data());
 }
+
+uint32_t BtcBlock::getDifficulty() const { return bits; }
+
+uint32_t BtcBlock::getBlockTime() const { return timestamp; }
 
 uint256 BtcBlock::getHash() const {
   WriteStream stream;
@@ -67,10 +71,10 @@ std::string BtcBlock::toPrettyString() const {
   return fmt::sprintf(
       "BtcBlock{version=%lu, prev=%s, merkleRoot=%s, timestamp=%lu, "
       "bits=%lu, nonce=%lu}",
-      _version,
-      _previousBlock.toHex(),
-      _merkleRoot.toHex(),
-      _timestamp,
-      _bits,
-      _nonce);
+      version,
+      previousBlock.toHex(),
+      merkleRoot.toHex(),
+      timestamp,
+      bits,
+      nonce);
 }

@@ -56,7 +56,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbktx1 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
   auto atv1 = popminer->generateATV(vbktx1, getLastKnownVbkBlock(), state);
-  ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
+  ASSERT_EQ(atv1.blockOfProof.height, 42);
 
   // mine 10 more blocks on top of tipB
   tipB = popminer->mineVbkBlocks(*tipB, 10);
@@ -79,13 +79,13 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbktx2 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
   auto atv2 = popminer->generateATV(vbktx1, getLastKnownVbkBlock(), state);
-  ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
+  ASSERT_EQ(atv1.blockOfProof.height, 42);
 
   auto vtb2 = popminer->vbkPayloads[vtbcontaining.getHash()][1];
   PopData p2;
   p2.atvs = {atv2};
   // break VTB2: break hash of containing block
-  vtb2.containingBlock.getPreviousBlock() = uint96::fromHex("abcdef");
+  vtb2.containingBlock.previousBlock = uint96::fromHex("abcdef");
   p2.vtbs = {vtb2};
 
   ASSERT_TRUE(alttree.addPayloads(chain[10], p2, state));

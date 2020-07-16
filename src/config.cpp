@@ -50,7 +50,7 @@ void Config::validate() const {
           state.GetDebugMessage());
     }
 
-    if (vbk.startHeight != vbk.blocks[0].getHeight()) {
+    if (vbk.startHeight != vbk.blocks[0].height) {
       throw std::invalid_argument(
           "Config: vbk startHeight does not match height of first VBK "
           "bootstrap block");

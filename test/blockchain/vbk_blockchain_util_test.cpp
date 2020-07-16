@@ -21,10 +21,13 @@ static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
                                                   uint32_t chainlength) {
   assert(chainlength != 0);
 
+  VbkBlock block{};
+  block.height = 1;
+  block.timestamp = 10000;
+  block.difficulty = difficulty;
   BlockIndex<VbkBlock> blockIndex;
-  VbkBlock block(1, 0, {}, {}, {}, {}, 10000, difficulty, 0);
   blockIndex.setHeader(block);
-  blockIndex.setHeight(block.getHeight());
+  blockIndex.setHeight(block.height);
   blockIndex.pprev = nullptr;
 
   std::vector<BlockIndex<VbkBlock>> chain(chainlength);
@@ -35,18 +38,13 @@ static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
       deltaTime -= deltaTime_change;
     }
 
+    VbkBlock blockTmp{};
+    blockTmp.height = (int32_t)i + 1;
+    blockTmp.timestamp = chain[i - 1].getHeader().getBlockTime() + deltaTime;
+    blockTmp.difficulty = difficulty;
     BlockIndex<VbkBlock> temp;
-    VbkBlock blockTmp((int32_t)i + 1,
-                   0,
-                   {},
-                   {},
-                   {},
-                   {},
-                   chain[i - 1].getHeader().getBlockTime() + deltaTime,
-                   difficulty,
-                   0);
     temp.setHeader(blockTmp);
-    temp.setHeight(blockTmp.getHeight());
+    temp.setHeight(blockTmp.height);
     temp.pprev = &chain[i - 1];
 
     chain[i] = temp;
@@ -173,18 +171,13 @@ TEST_F(SingleTest, single_test) {
 
   int32_t deltaTime = chainparams->getTargetBlockTime();
 
+  VbkBlock block{};
+  block.height = 1;
+  block.timestamp = 10000;
+  block.difficulty = ArithUint256::fromHex("09184E72A000").toBits();
   BlockIndex<VbkBlock> blockIndex;
-  VbkBlock block(1,
-                 0,
-                 {},
-                 {},
-                 {},
-                 {},
-                 10000,
-                 ArithUint256::fromHex("09184E72A000").toBits(),
-                 0);
   blockIndex.setHeader(block);
-  blockIndex.setHeight(block.getHeight());
+  blockIndex.setHeight(block.height);
   blockIndex.pprev = nullptr;
 
   std::vector<BlockIndex<VbkBlock>> chain(chainlength);
@@ -195,18 +188,13 @@ TEST_F(SingleTest, single_test) {
       deltaTime = 300;
     }
 
+    VbkBlock blockTmp{};
+    block.height = (int32_t)i + 1;
+    block.timestamp = chain[i - 1].getHeader().getBlockTime() + deltaTime;
+    block.difficulty = ArithUint256::fromHex("09184E72A000").toBits();
     BlockIndex<VbkBlock> temp;
-    VbkBlock blockTmp((int32_t)i + 1,
-                      0,
-                      {},
-                      {},
-                      {},
-                      {},
-                      chain[i - 1].getHeader().getBlockTime() + deltaTime,
-                      ArithUint256::fromHex("09184E72A000").toBits(),
-                      0);
     temp.setHeader(blockTmp);
-    temp.setHeight(blockTmp.getHeight());
+    temp.setHeight(blockTmp.height);
     temp.pprev = &chain[i - 1];
 
     chain[i] = temp;
@@ -226,7 +214,7 @@ TEST(Vbk, CheckBlockTime1) {
     chain.push_back(std::make_shared<BlockIndex<VbkBlock>>());
     auto& index = chain[chain.size() - 1];
     VbkBlock blockTmp{};
-    blockTmp.setBlockTime(startTime + (120 * i));
+    blockTmp.timestamp = startTime + (120 * i);
     index->setHeight(VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT + i);
     index->setHeader(blockTmp);
     index->pprev = i == 0 ? nullptr : chain[i - 1].get();
@@ -236,11 +224,11 @@ TEST(Vbk, CheckBlockTime1) {
 
   auto& last = chain[chain.size() - 1];
   // validateMinimumTimestampWhenAboveMedian
-  block.setBlockTime(startTime + (120 * 1000));
+  block.timestamp = startTime + (120 * 1000);
   ASSERT_TRUE(checkBlockTime(*last, block, state)) << state.GetPath();
 
   // validateMinimumTimestampWhenBelowMedian
-  block.setBlockTime(1527118679);
+  block.timestamp = 1527118679;
   ASSERT_FALSE(checkBlockTime(*last, block, state)) << state.GetPath();
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-time-too-old");
@@ -250,7 +238,7 @@ TEST(Vbk, CheckBlockTime2) {
   auto makeBlock = [](int timestamp, int height) -> BlockIndex<VbkBlock> {
     BlockIndex<VbkBlock> index;
     VbkBlock blockTmp{};
-    blockTmp.setBlockTime(timestamp);
+    blockTmp.timestamp = timestamp;
     index.setHeight(height);
     index.setHeader(blockTmp);
     return index;
@@ -268,12 +256,12 @@ TEST(Vbk, CheckBlockTime2) {
   }
 
   VbkBlock block;
-  block.setBlockTime(1527499999);
+  block.timestamp = 1527499999;
   ASSERT_FALSE(checkBlockTime(chain[chain.size() - 1], block, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-time-too-old");
 
-  block.setBlockTime(1527500000);
+  block.timestamp = 1527500000;
   ASSERT_TRUE(checkBlockTime(chain[chain.size() - 1], block, state));
 }
 
@@ -308,17 +296,8 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
   auto badKeystone = ArithUint256::fromHex("01")
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
-  VbkBlock blockBad(block.getHeight(),
-                    block.getVersion(),
-                    block.getPreviousBlock(),
-                    badKeystone,
-                    block.getSecondPreviousKeystone(),
-                    block.getMerkleRoot(),
-                    block.getBlockTime(),
-                    block.getDifficulty(),
-                    block.getNonce());
-
-  ASSERT_FALSE(blockchain->acceptBlock(blockBad, state));
+  block.previousKeystone = badKeystone;
+  ASSERT_FALSE(blockchain->acceptBlock(block, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-bad-keystones");
 }
@@ -329,17 +308,8 @@ TEST_F(BlockchainTest, InvalidKeystone2) {
   auto badKeystone = ArithUint256::fromHex("01")
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
-  VbkBlock blockBad(block.getHeight(),
-                    block.getVersion(),
-                    block.getPreviousBlock(),
-                    block.getPreviousKeystone(),
-                    badKeystone,
-                    block.getMerkleRoot(),
-                    block.getBlockTime(),
-                    block.getDifficulty(),
-                    block.getNonce());
-
-  ASSERT_FALSE(blockchain->acceptBlock(blockBad, state));
+  block.secondPreviousKeystone = badKeystone;
+  ASSERT_FALSE(blockchain->acceptBlock(block, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-bad-keystones");
 }

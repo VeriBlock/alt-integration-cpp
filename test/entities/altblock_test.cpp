@@ -23,6 +23,6 @@ TEST(AltBlock, RoundTrip) {
       AltBlock::fromVbkEncoding(std::string(bytes.begin(), bytes.end()));
 
   EXPECT_EQ(deserializedBlock.getHash(), defaultBlock.getHash());
-  EXPECT_EQ(deserializedBlock.getHeight(), defaultBlock.getHeight());
+  EXPECT_EQ(deserializedBlock.height, defaultBlock.height);
   EXPECT_EQ(deserializedBlock.getBlockTime(), defaultBlock.getBlockTime());
 }

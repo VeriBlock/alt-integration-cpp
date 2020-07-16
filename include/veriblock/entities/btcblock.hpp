@@ -31,21 +31,6 @@ struct BtcBlock {
   using merkle_t = uint256;
   using addon_t = BtcBlockAddon;
 
-  BtcBlock() = default;
-
-  BtcBlock(uint32_t version,
-           uint256 previousBlock,
-           uint256 merkleRoot,
-           uint32_t timestamp,
-           uint32_t bits,
-           uint32_t nonce)
-      : _version(version),
-        _previousBlock(previousBlock),
-        _merkleRoot(merkleRoot),
-        _timestamp(timestamp),
-        _bits(bits),
-        _nonce(nonce) {}
-
   static BtcBlock fromHex(const std::string& hex);
 
   /**
@@ -94,29 +79,18 @@ struct BtcBlock {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
-  uint32_t getDifficulty() const { return _bits; }
+  uint32_t getDifficulty() const;
 
-  uint32_t getBlockTime() const { return _timestamp; }
-  void setBlockTime(const uint32_t timestamp) { _timestamp = timestamp; }
-
-  hash_t getPreviousBlock() const { return _previousBlock; }
-
-  uint32_t getVersion() const { return _version; }
-
-  uint256 getMerkleRoot() const { return _merkleRoot; }
-  void setMerkleRoot(const uint256 merkleRoot) { _merkleRoot = merkleRoot; }
-
-  uint32_t getNonce() const { return _nonce; }
-  void setNonce(const uint32_t nonce) { _nonce = nonce; }
+  uint32_t getBlockTime() const;
 
   friend bool operator==(const BtcBlock& a, const BtcBlock& b) {
     // clang-format off
-    return a._bits == b._bits &&
-           a._version == b._version &&
-           a._timestamp == b._timestamp &&
-           a._nonce == b._nonce &&
-           a._merkleRoot == b._merkleRoot &&
-           a._previousBlock == b._previousBlock;
+    return a.bits == b.bits &&
+           a.version == b.version &&
+           a.timestamp == b.timestamp &&
+           a.nonce == b.nonce &&
+           a.merkleRoot == b.merkleRoot &&
+           a.previousBlock == b.previousBlock;
     // clang-format on
   }
 
@@ -134,25 +108,24 @@ struct BtcBlock {
 
   std::string toPrettyString() const;
 
- protected:
-  uint32_t _version = 0;
-  uint256 _previousBlock{};
-  uint256 _merkleRoot{};
-  uint32_t _timestamp = 0;
-  uint32_t _bits = 0;
-  uint32_t _nonce = 0;
+  uint32_t version = 0;
+  uint256 previousBlock{};
+  uint256 merkleRoot{};
+  uint32_t timestamp = 0;
+  uint32_t bits = 0;
+  uint32_t nonce = 0;
 };
 
 template <typename JsonValue>
 JsonValue ToJSON(const BtcBlock& b) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
   json::putStringKV(object, "hash", HexStr(b.getHash()));
-  json::putIntKV(object, "version", b.getVersion());
-  json::putStringKV(object, "previousBlock", HexStr(b.getPreviousBlock()));
-  json::putStringKV(object, "merkleRoot", HexStr(b.getMerkleRoot()));
+  json::putIntKV(object, "version", b.version);
+  json::putStringKV(object, "previousBlock", HexStr(b.previousBlock));
+  json::putStringKV(object, "merkleRoot", HexStr(b.merkleRoot));
   json::putIntKV(object, "timestamp", b.getBlockTime());
   json::putIntKV(object, "bits", b.getDifficulty());
-  json::putIntKV(object, "nonce", b.getNonce());
+  json::putIntKV(object, "nonce", b.nonce);
   return object;
 }
 

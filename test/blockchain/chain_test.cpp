@@ -126,15 +126,18 @@ BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
 template <>
 BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
   AltBlock block;
+  block.hash = generateRandomBytesVector(32);
   if (prev != nullptr) {
-    block = AltBlock(generateRandomBytesVector(32),
-                     prev->getHash(),
-                     prev->getHeader().getBlockTime() + 1,
-                     prev->getHeight() + 1);
+    block.height = prev->getHeight() + 1;
+    block.previousBlock = prev->getHash();
+    block.timestamp = prev->getHeader().getBlockTime() + 1;
+  } else {
+    block.height = 0;
+    block.timestamp = 0;
   }
   BlockIndex<AltBlock> index;
   index.setHeader(block);
-  index.setHeight(block.getHeight());
+  index.setHeight(block.height);
   index.pprev = prev;
   return index;
 }
@@ -143,19 +146,18 @@ template <>
 BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
   VbkBlock block;
   if (prev != nullptr) {
-    block = VbkBlock(prev->getHeight() + 1,
-                     0,
-                     prev->getHash().trimLE<uint96::size()>(),
-                     {},
-                     {},
-                     {},
-                     prev->getHeader().getBlockTime() + 1,
-                     0,
-                     0);
+    block.height = prev->getHeight() + 1;
+    block.previousBlock = prev->getHash().trimLE<uint96::size()>();
+    block.timestamp = prev->getHeader().getBlockTime() + 1;
+  } else {
+    block.height = 0;
+    block.timestamp = 0;
+    block.nonce = 0;
+    block.version = 0;
   }
   BlockIndex<VbkBlock> index;
   index.setHeader(block);
-  index.setHeight(block.getHeight());
+  index.setHeight(block.height);
   index.pprev = prev;
   return index;
 }

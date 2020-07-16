@@ -108,16 +108,13 @@ struct VbkChainParamsMain : public VbkChainParams {
     //  "difficulty": 100722900,
     //  "nonce": 289244493
     //}
-
-    VbkBlock block(0,
-                   2,
-                   {},
-                   {},
-                   {},
-                   uint128::fromHex("a7e5f2b7ec94291767b4d67b4a33682d"),
-                   1553497611,
-                   100722900,
-                   289244493);
+    VbkBlock block;
+    block.height = 0;
+    block.version = 2;
+    block.merkleRoot = uint128::fromHex("a7e5f2b7ec94291767b4d67b4a33682d");
+    block.timestamp = 1553497611;
+    block.difficulty = 100722900;
+    block.nonce = 289244493;
 
     VBK_ASSERT(block.getHash().toHex() ==
                "0000000000f4fd66b91f0649bb3fcb137823c5ce317c105c");
@@ -163,16 +160,13 @@ struct VbkChainParamsTest : public VbkChainParams {
     //  "difficulty": 67499489,
     //  "nonce": 14304633
     //}
-
-    VbkBlock block(0,
-                   2,
-                   {},
-                   {},
-                   {},
-                   uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617"),
-                   1570649416,
-                   67499489,
-                   14304633);
+    VbkBlock block;
+    block.height = 0;
+    block.version = 2;
+    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
+    block.timestamp = 1570649416;
+    block.difficulty = 67499489;
+    block.nonce = 14304633;
 
     VBK_ASSERT(block.getHash().toHex() ==
                "00000017eb579ec7d0cdd63379a0615dc3d68032ce248823");
@@ -215,16 +209,13 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     //  "difficulty": 117586646,
     //  "nonce": 1924857207
     //}
-
-    VbkBlock block(0,
-                   2,
-                   {},
-                   {},
-                   {},
-                   uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617"),
-                   1553699987,
-                   16842752,
-                   0);
+    VbkBlock block;
+    block.height = 0;
+    block.version = 2;
+    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
+    block.timestamp = 1553699987;
+    block.difficulty = 16842752;
+    block.nonce = 0;
 
     VBK_ASSERT(block.getHash().toHex() ==
                "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
@@ -269,16 +260,13 @@ struct VbkChainParamsAlpha : public VbkChainParams {
     //  "difficulty": 67147926,
     //  "nonce": 45543957
     //}
-
-    VbkBlock block(0,
-                   2,
-                   {},
-                   {},
-                   {},
-                   uint128::fromHex("b34a487a6b3a386689f59d8d2e586363"),
-                   1555416021,
-                   67147926,
-                   45543957);
+    VbkBlock block;
+    block.height = 0;
+    block.version = 2;
+    block.merkleRoot = uint128::fromHex("b34a487a6b3a386689f59d8d2e586363");
+    block.timestamp = 1555416021;
+    block.difficulty = 67147926;
+    block.nonce = 45543957;
 
     VBK_ASSERT(block.getHash().toHex() ==
                "000000701198864f3c19fb552ef9c3c10620ba8128dace8e");

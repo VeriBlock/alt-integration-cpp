@@ -31,19 +31,17 @@ TEST(VbkBlock, Deserialize) {
   auto stream = ReadStream(vbkblock);
   auto block = VbkBlock::fromVbkEncoding(stream);
 
-  EXPECT_EQ(block.getHeight(), defaultBlock.getHeight());
-  EXPECT_EQ(block.getVersion(), defaultBlock.getVersion());
-  EXPECT_EQ(block.getPreviousBlock().toHex(),
-            defaultBlock.getPreviousBlock().toHex());
-  EXPECT_EQ(block.getPreviousKeystone().toHex(),
-            defaultBlock.getPreviousKeystone().toHex());
-  EXPECT_EQ(block.getSecondPreviousKeystone().toHex(),
-            defaultBlock.getSecondPreviousKeystone().toHex());
-  EXPECT_EQ(block.getMerkleRoot().toHex(),
-            defaultBlock.getMerkleRoot().toHex());
+  EXPECT_EQ(block.height, defaultBlock.height);
+  EXPECT_EQ(block.version, defaultBlock.version);
+  EXPECT_EQ(block.previousBlock.toHex(), defaultBlock.previousBlock.toHex());
+  EXPECT_EQ(block.previousKeystone.toHex(),
+            defaultBlock.previousKeystone.toHex());
+  EXPECT_EQ(block.secondPreviousKeystone.toHex(),
+            defaultBlock.secondPreviousKeystone.toHex());
+  EXPECT_EQ(block.merkleRoot.toHex(), defaultBlock.merkleRoot.toHex());
   EXPECT_EQ(block.getBlockTime(), defaultBlock.getBlockTime());
   EXPECT_EQ(block.getDifficulty(), defaultBlock.getDifficulty());
-  EXPECT_EQ(block.getNonce(), defaultBlock.getNonce());
+  EXPECT_EQ(block.nonce, defaultBlock.nonce);
 }
 
 TEST(VbkBlock, Serialize) {
@@ -58,7 +56,7 @@ TEST(VbkBlock, RoundTrip) {
   auto blockDecoded = ParseHex(defaultBlockEncoded);
   auto stream = ReadStream(blockDecoded);
   auto decoded = VbkBlock::fromVbkEncoding(stream);
-  EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
+  EXPECT_EQ(decoded.version, defaultBlock.version);
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -68,15 +66,17 @@ TEST(VbkBlock, RoundTrip) {
 }
 
 TEST(VbkBlock, getBlockHash_test) {
-  VbkBlock block(5000,
-                 2,
-                 uint96("94E7DC3E3BE21A96ECCF0FBD"_unhex),
-                 uint72("F5F62A3331DC995C36"_unhex),
-                 uint72("B0935637860679DDD5"_unhex),
-                 uint128("DB0F135312B2C27867C9A83EF1B99B98"_unhex),
-                 1553699987,
-                 117586646,
-                 1924857207);
+  VbkBlock block;
+  block.height = 5000;
+  block.version = 2;
+  block.previousBlock = uint96("94E7DC3E3BE21A96ECCF0FBD"_unhex);
+  block.previousKeystone = uint72("F5F62A3331DC995C36"_unhex);
+  block.secondPreviousKeystone = uint72("B0935637860679DDD5"_unhex);
+  block.merkleRoot = uint128("DB0F135312B2C27867C9A83EF1B99B98"_unhex);
+  block.timestamp = 1553699987;
+  block.difficulty = 117586646;
+  block.nonce = 1924857207;
+
   EXPECT_EQ(
       ArithUint256::fromLEBytes(block.getHash()),
       ArithUint256::fromHex(

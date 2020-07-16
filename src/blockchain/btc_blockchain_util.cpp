@@ -32,19 +32,12 @@ ArithUint256 getBlockProof(const BtcBlock& block) {
 template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
     const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) {
-  BtcBlock blockTmp(tip.getHeader().getVersion(),
-                    tip.getHeader().getHash(),
-                    merkle,
-                    (std::max)(tip.getBlockTime(), currentTimestamp4()),
-                    0,
-                    0);
-  auto work = getNextWorkRequired(tip, blockTmp, params_);
-  BtcBlock block(blockTmp.getVersion(),
-                 blockTmp.getPreviousBlock(),
-                 blockTmp.getMerkleRoot(),
-                 blockTmp.getBlockTime(),
-                 work,
-                 blockTmp.getNonce());
+  BtcBlock block;
+  block.version = tip.getHeader().version;
+  block.previousBlock = tip.getHeader().getHash();
+  block.merkleRoot = merkle;
+  block.timestamp = (std::max)(tip.getBlockTime(), currentTimestamp4());
+  block.bits = getNextWorkRequired(tip, block, params_);
   return block;
 }
 

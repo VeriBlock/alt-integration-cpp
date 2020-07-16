@@ -113,7 +113,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
   for (uint32_t i = 1; i <= (uint32_t)chain.chainHeight(); i++) {
     ASSERT_TRUE(chain[i]);
     ASSERT_TRUE(chain[i - 1]);
-    auto prevHash = chain[i]->getHeader().getPreviousBlock();
+    auto prevHash = chain[i]->getHeader().previousBlock;
     auto index = this->blockchain->getBlockIndex(prevHash);
     EXPECT_EQ(index->getHash(), chain[i - 1]->getHash());
     // timestamp is increasing
