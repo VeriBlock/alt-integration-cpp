@@ -188,9 +188,9 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
 
   auto stored = json::makeEmptyObject<JsonValue>();
   json::putArrayKV(
-      stored, "vbkblocks", i.getPayloadIds<VbkBlock, typename VbkBlock::id_t>());
-  json::putArrayKV(stored, "vtbs", i.getPayloadIds<VTB, typename VTB::id_t>());
-  json::putArrayKV(stored, "atvs", i.getPayloadIds<ATV, typename ATV::id_t>());
+      stored, "vbkblocks", i.getPayloadIds<VbkBlock>());
+  json::putArrayKV(stored, "vtbs", i.getPayloadIds<VTB>());
+  json::putArrayKV(stored, "atvs", i.getPayloadIds<ATV>());
 
   json::putKV(obj, "stored", stored);
 
