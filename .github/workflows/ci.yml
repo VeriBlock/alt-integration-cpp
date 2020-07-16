@@ -23,7 +23,7 @@ jobs:
           "-DASAN=ON",
           "-DUBSAN=ON",
           # release build with all dependencies
-          "-DWITH_PYPOPMINER=ON -DWITH_ROCKSDB=ON -DCMAKE_BUILD_TYPE=Release"
+          "-DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"
         ]
     env:
       CC: clang
@@ -157,7 +157,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flags: ["-DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ -DCMAKE_SYSTEM_NAME=Windows -DWITH_ROCKSDB=ON -DTESTING=OFF"]
+        flags: ["-DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ -DCMAKE_SYSTEM_NAME=Windows -DTESTING=OFF"]
     steps:
       - uses: actions/checkout@v1
         name: checkout
