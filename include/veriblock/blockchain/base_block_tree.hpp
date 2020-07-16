@@ -355,7 +355,7 @@ struct BaseBlockTree {
     VBK_ASSERT(header != nullptr);
 
     index_t* current = touchBlockIndex(header->getHash());
-    current->setHeader(*header);
+    current->setHeader(std::move(header));
     current->pprev = getBlockIndex(header->previousBlock);
 
     if (current->pprev != nullptr) {

@@ -49,6 +49,12 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     payloads.push_back(pid);
   }
 
+  template <typename pop_t>
+  void insertPayloadIds(const std::vector<typename pop_t::id_t>& pids) {
+    auto& payloads = getPayloadIdsInner<pop_t>();
+    payloads.insert(payloads.end(), pids.begin(), pids.end());
+  }
+
   std::string toPrettyString() const {
     return fmt::sprintf("ATV=%d, VTB=%d, VBK=%d",
                         _atvids.size(),

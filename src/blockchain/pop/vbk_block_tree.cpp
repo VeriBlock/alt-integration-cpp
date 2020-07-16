@@ -202,11 +202,12 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                      index->toPrettyString()));
   }
 
+  auto pids = map_get_id(payloads);
+
   // check that we can add all payloads at once to guarantee atomicity
   auto& vtbids = index->getPayloadIds<VTB>();
   std::set<pid_t> existingPids(vtbids.begin(), vtbids.end());
-  for (const auto& payload : payloads) {
-    auto pid = payload.getId();
+  for (const auto& pid : pids) {
     if (!existingPids.insert(pid).second) {
       return state.Invalid(
           block_t::name() + "-duplicate-payloads",
@@ -239,11 +240,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                "state corruption: failed to roll back the best chain tip");
   }
 
-  for (const auto& payload : payloads) {
-    auto pid = payload.getId();
-    index->insertPayloadId<VTB>(pid);
-    index->setDirty();
-  }
+  index->insertPayloadIds<VTB>(pids);
+  index->setDirty();
 
   storagePayloads_.savePayloadsMany(payloads);
 
@@ -256,9 +254,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   // roll back our attempted changes
-  for (const auto& payload : payloads) {
-    unsafelyRemovePayload(
-        *index, payload.getId(), /*shouldDetermineBestChain =*/false);
+  for (const auto& pid : pids) {
+    unsafelyRemovePayload(*index, pid, /*shouldDetermineBestChain =*/false);
   }
 
   // restore the tip

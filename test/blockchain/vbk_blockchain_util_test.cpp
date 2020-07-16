@@ -189,9 +189,9 @@ TEST_F(SingleTest, single_test) {
     }
 
     VbkBlock blockTmp{};
-    block.height = (int32_t)i + 1;
-    block.timestamp = chain[i - 1].getHeader().getBlockTime() + deltaTime;
-    block.difficulty = ArithUint256::fromHex("09184E72A000").toBits();
+    blockTmp.height = (int32_t)i + 1;
+    blockTmp.timestamp = chain[i - 1].getHeader().getBlockTime() + deltaTime;
+    blockTmp.difficulty = ArithUint256::fromHex("09184E72A000").toBits();
     BlockIndex<VbkBlock> temp;
     temp.setHeader(blockTmp);
     temp.setHeight(blockTmp.height);

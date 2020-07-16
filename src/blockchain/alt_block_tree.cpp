@@ -75,9 +75,8 @@ bool payloadsCheckDuplicates(Index& index,
 
 template <typename Index, typename Pop>
 void commitPayloadsIds(Index& index, const std::vector<Pop>& pop) {
-  for (const auto& p : pop) {
-    index.template insertPayloadId<Pop>(p.getId());
-  }
+  auto pids = map_get_id(pop);
+  index.template insertPayloadIds<Pop>(pids);
 }
 
 bool AltTree::addPayloads(const AltBlock::hash_t& containing,

@@ -40,6 +40,11 @@ struct VbkBlockAddon :
     _vtbids.push_back(pid);
   }
 
+  template <typename pop_t>
+  void insertPayloadIds(const std::vector<typename pop_t::id_t>& pids) {
+    _vtbids.insert(_vtbids.end(), pids.begin(), pids.end());
+  }
+
   bool operator==(const VbkBlockAddon& o) const {
     bool a = _vtbids == o._vtbids;
     bool b = BtcBlockAddon::operator==(o);

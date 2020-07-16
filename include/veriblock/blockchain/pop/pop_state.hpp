@@ -28,7 +28,7 @@ struct PopState {
   }
 
   void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
-    _containingEndorsements.insert(std::make_pair(e->id, e));
+    _containingEndorsements.insert(std::make_pair(e->id, std::move(e)));
   }
 
   void removeContainingEndorsement(const eid_t& eid) {
