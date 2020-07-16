@@ -12,16 +12,15 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/btc_block_addon.hpp"
-#include "veriblock/fmt.hpp"
-#include "veriblock/hashutil.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/uint.hpp"
+#include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/btc_block_addon.hpp>
+#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/fmt.hpp>
+#include <veriblock/hashutil.hpp>
+#include <veriblock/serde.hpp>
+#include <veriblock/uint.hpp>
 
 namespace altintegration {
-
-struct BtcBlockAddon;
 
 struct BtcBlock {
   using hash_t = uint256;
@@ -29,7 +28,7 @@ struct BtcBlock {
   using height_t = int32_t;
   using nonce_t = uint32_t;
   using merkle_t = uint256;
-  using addon_t = BtcBlockAddon;
+  using addon_t = BtcBlockAddon<BlockIndex<BtcBlock>>;
 
   static BtcBlock fromHex(const std::string& hex);
 

@@ -12,14 +12,23 @@
 
 namespace altintegration {
 
+template <typename BlockIndexT>
 struct BtcBlockAddon {
   //! (memory only) total amount of work in the chain up to and including this
   //! block
   ArithUint256 chainWork = 0;
 
   uint32_t getRefCounter() const { return _refCounter; }
-  void incRefCounter() { _refCounter++; }
-  void decRefCounter() { _refCounter--; }
+
+  void incRefCounter() {
+    _refCounter++;
+    static_cast<BlockIndexT*>(this)->setDirty();
+  }
+
+  void decRefCounter() {
+    _refCounter--;
+    static_cast<BlockIndexT*>(this)->setDirty();
+  }
 
   bool operator==(const BtcBlockAddon& o) const {
     bool a = _refCounter == o._refCounter;

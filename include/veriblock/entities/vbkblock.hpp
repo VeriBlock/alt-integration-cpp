@@ -10,18 +10,17 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/vbk_block_addon.hpp"
-#include "veriblock/entities/btcblock.hpp"
-#include "veriblock/entities/endorsements.hpp"
-#include "veriblock/fmt.hpp"
-#include "veriblock/hashutil.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/uint.hpp"
+#include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/vbk_block_addon.hpp>
+#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/entities/btcblock.hpp>
+#include <veriblock/entities/endorsements.hpp>
+#include <veriblock/fmt.hpp>
+#include <veriblock/hashutil.hpp>
+#include <veriblock/serde.hpp>
+#include <veriblock/uint.hpp>
 
 namespace altintegration {
-
-struct VbkBlockAddon;
 
 struct VbkBlock {
   using hash_t = uint192;
@@ -33,7 +32,7 @@ struct VbkBlock {
   using keystone_t = uint72;
   using merkle_t = uint128;
   using protecting_block_t = BtcBlock;
-  using addon_t = VbkBlockAddon;
+  using addon_t = VbkBlockAddon<BlockIndex<VbkBlock>>;
 
   std::string toPrettyString() const;
 

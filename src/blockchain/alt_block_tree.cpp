@@ -343,7 +343,6 @@ void handleRemovePayloads(Tree& tree,
     }
 
     index.template removePayloadId<Pop>(pid);
-    index.setDirty();
     // TODO: do we want to erase payloads from repository?
   }
 }
@@ -555,7 +554,6 @@ void removeId(BlockIndex<AltBlock>& index,
   auto it = std::find(payloads.rbegin(), payloads.rend(), pid);
   VBK_ASSERT(it != payloads.rend());
   index.removePayloadId<Payloads>(pid);
-  index.setDirty();
 }
 
 template <>

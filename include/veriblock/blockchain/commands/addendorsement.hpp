@@ -108,8 +108,6 @@ struct AddEndorsement : public Command {
 
     containing->insertContainingEndorsement(e_);
     endorsed->endorsedBy.push_back(e_.get());
-    containing->setDirty();
-
     return true;
   }
 
@@ -152,7 +150,6 @@ struct AddEndorsement : public Command {
 
     // erase endorsement
     containing->removeContainingEndorsement(e_->id);
-    containing->setDirty();
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

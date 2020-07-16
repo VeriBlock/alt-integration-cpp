@@ -197,6 +197,7 @@ struct BlockIndex : public Block::addon_t {
     status = stream.readBE<uint8_t>();
     header = std::make_shared<Block>(Block::fromRaw(stream));
     addon_t::initAddonFromRaw(stream);
+    setDirty();
   }
 
   std::vector<uint8_t> toRaw() const {

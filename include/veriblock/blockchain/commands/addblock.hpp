@@ -28,7 +28,6 @@ struct AddBlock : public Command {
     auto* index = tree_->getBlockIndex(block_->getHash());
     if (index != nullptr) {
       index->incRefCounter();
-      index->setDirty();
       return true;
     }
     return tree_->acceptBlock(block_, state);
@@ -45,7 +44,6 @@ struct AddBlock : public Command {
     }
 
     index->decRefCounter();
-    index->setDirty();
   }
 
   size_t getId() const override { return block_->getHash().getLow64(); }

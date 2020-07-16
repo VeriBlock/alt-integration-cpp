@@ -103,7 +103,6 @@ void VbkBlockTree::removePayloads(index_t& index,
     }
 
     index.removePayloadId<VTB>(pid);
-    index.setDirty();
   }
 
   updateTips();
@@ -165,7 +164,6 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   }
 
   index.removePayloadId<VTB>(pid);
-  index.setDirty();
 
   if (shouldDetermineBestChain) {
     updateTips();
@@ -241,8 +239,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   index->insertPayloadIds<VTB>(pids);
-  index->setDirty();
-
   storagePayloads_.savePayloadsMany(payloads);
 
   // don't defer fork resolution in the acceptBlock+addPayloads flow until the
@@ -323,7 +319,6 @@ void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
   auto it = std::find(payloads.rbegin(), payloads.rend(), cg.id);
   VBK_ASSERT(it != payloads.rend());
   index.removePayloadId<VTB>(cg.id);
-  index.setDirty();
 }
 
 }  // namespace altintegration
