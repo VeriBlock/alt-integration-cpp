@@ -28,15 +28,19 @@ struct MemPool {
   struct VbkPayloadsRelations {
     using id_t = VbkBlock::id_t;
 
-    VbkPayloadsRelations(const VbkBlock& b) : header(b) {}
+    VbkPayloadsRelations(const VbkBlock& b)
+        : header(std::make_shared<VbkBlock>(b)) {}
 
-    VbkBlock header;
+    VbkPayloadsRelations(const std::shared_ptr<VbkBlock>& ptr_b)
+        : header(ptr_b) {}
+
+    std::shared_ptr<VbkBlock> header;
     std::vector<std::shared_ptr<VTB>> vtbs;
     std::vector<std::shared_ptr<ATV>> atvs;
 
     PopData toPopData() const {
       PopData pop;
-      pop.context.push_back(header);
+      pop.context.push_back(*header);
       for (const auto& vtb : vtbs) {
         pop.vtbs.push_back(*vtb);
       }
@@ -121,6 +125,8 @@ struct MemPool {
 
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
                                       VbkBlock::id_t id = VbkBlock::id_t());
+
+  bool filterVbkBlock(const VbkBlock& block, ValidationState& state);
 };
 
 template <>

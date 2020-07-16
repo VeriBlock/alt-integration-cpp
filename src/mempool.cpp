@@ -22,7 +22,7 @@ PopData MemPool::getPop(AltTree& tree) {
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
   std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
-    return a.second->header.height < b.second->header.height;
+    return a.second->header->height < b.second->header->height;
   });
 
   for (const P& block : blocks) {
@@ -70,11 +70,13 @@ MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
     block_id = block.getId();
   }
 
-  vbkblocks_[block_id] = std::make_shared<VbkBlock>(block);
+  std::shared_ptr<VbkBlock> vbk_block = std::make_shared<VbkBlock>(block);
+
+  vbkblocks_[block_id] = vbk_block;
 
   auto& val = relations_[block_id];
   if (val == nullptr) {
-    val = std::make_shared<VbkPayloadsRelations>(block);
+    val = std::make_shared<VbkPayloadsRelations>(vbk_block);
   }
 
   return *val;
