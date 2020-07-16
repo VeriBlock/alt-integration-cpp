@@ -14,9 +14,6 @@
 namespace altintegration {
 
 struct PopData;
-struct ATV;
-struct VTB;
-struct VbkBlock;
 
 struct AltBlockAddon : public PopState<AltEndorsement> {
   using payloads_t = PopData;
@@ -35,20 +32,20 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
            PopState<AltEndorsement>::operator==(o);
   }
 
-  template <typename pop_t, typename pop_id_t>
-  const std::vector<pop_id_t>& getPayloadIds() const;
+  template <typename pop_t>
+  const std::vector<typename pop_t::id_t>& getPayloadIds() const;
 
-  template <typename pop_t, typename pop_id_t>
-  void removePayloadIds(const pop_id_t& pid) {
-    auto& payloads = getPayloadIdsInner<pop_t, pop_id_t>();
+  template <typename pop_t>
+  void removePayloadId(const typename pop_t::id_t& pid) {
+    auto& payloads = getPayloadIdsInner<pop_t>();
     auto it = std::find(payloads.begin(), payloads.end(), pid);
     VBK_ASSERT(it != payloads.end());
     payloads.erase(it);
   }
 
-  template <typename pop_t, typename pop_id_t>
-  void insertPayloadIds(const pop_id_t& pid) {
-    auto& payloads = getPayloadIdsInner<pop_t, pop_id_t>();
+  template <typename pop_t>
+  void insertPayloadId(const typename pop_t::id_t& pid) {
+    auto& payloads = getPayloadIdsInner<pop_t>();
     payloads.push_back(pid);
   }
 
@@ -93,43 +90,9 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
         r, [](ReadStream& s) -> uint96 { return readSingleByteLenValue(s); });
   }
 
-  template <typename pop_t, typename pop_id_t>
-  std::vector<pop_id_t>& getPayloadIdsInner();
+  template <typename pop_t>
+  std::vector<typename pop_t::id_t>& getPayloadIdsInner();
 };
-
-template <>
-inline std::vector<uint256>& AltBlockAddon::getPayloadIdsInner<ATV, uint256>() {
-  return _atvids;
-}
-
-template <>
-inline std::vector<uint256>& AltBlockAddon::getPayloadIdsInner<VTB, uint256>() {
-  return _vtbids;
-}
-
-template <>
-inline std::vector<uint96>&
-AltBlockAddon::getPayloadIdsInner<VbkBlock, uint96>() {
-  return _vbkblockids;
-}
-
-template <>
-inline const std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>()
-    const {
-  return _atvids;
-}
-
-template <>
-inline const std::vector<uint256>& AltBlockAddon::getPayloadIds<VTB, uint256>()
-    const {
-  return _vtbids;
-}
-
-template <>
-inline const std::vector<uint96>&
-AltBlockAddon::getPayloadIds<VbkBlock, uint96>() const {
-  return _vbkblockids;
-}
 
 }  // namespace altintegration
 

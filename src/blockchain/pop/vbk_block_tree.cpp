@@ -91,7 +91,7 @@ void VbkBlockTree::removePayloads(index_t& index,
   }
 
   for (const auto& pid : pids) {
-    auto& vtbids = index.getPayloadIds<VTB, typename VTB::id_t>();
+    auto& vtbids = index.getPayloadIds<VTB>();
     auto it = std::find(vtbids.begin(), vtbids.end(), pid);
     // using an assert because throwing breaks atomicity
     // if there are multiple pids
@@ -102,7 +102,7 @@ void VbkBlockTree::removePayloads(index_t& index,
       revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    index.removePayloadIds<VTB, typename VTB::id_t>(pid);
+    index.removePayloadId<VTB>(pid);
     index.setDirty();
   }
 
@@ -130,7 +130,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
                 pid.toPrettyString(),
                 index.toPrettyString());
 
-  auto& vtbids = index.getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids = index.getPayloadIds<VTB>();
   auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
   VBK_ASSERT(vtbid_it != vtbids.end() &&
              "state corruption: the block does not contain the payload");
@@ -164,7 +164,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
     }
   }
 
-  index.removePayloadIds<typename VTB::id_t>(pid);
+  index.removePayloadId<VTB>(pid);
   index.setDirty();
 
   if (shouldDetermineBestChain) {
@@ -203,7 +203,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   // check that we can add all payloads at once to guarantee atomicity
-  auto& vtbids = index->getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids = index->getPayloadIds<VTB>();
   std::set<pid_t> existingPids(vtbids.begin(), vtbids.end());
   for (const auto& payload : payloads) {
     auto pid = payload.getId();
@@ -241,7 +241,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   for (const auto& payload : payloads) {
     auto pid = payload.getId();
-    index->insertPayloadIds<VTB, typename VTB::id_t>(pid);
+    index->insertPayloadId<VTB>(pid);
     index->setDirty();
   }
 
@@ -322,10 +322,10 @@ template <>
 void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
   VBK_ASSERT(cg.payload_type_name == VTB::name());
-  auto& payloads = index.template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& payloads = index.template getPayloadIds<VTB>();
   auto it = std::find(payloads.rbegin(), payloads.rend(), cg.id);
   VBK_ASSERT(it != payloads.rend());
-  index.removePayloadIds<VTB, typename VTB::id_t>(cg.id);
+  index.removePayloadId<VTB>(cg.id);
   index.setDirty();
 }
 

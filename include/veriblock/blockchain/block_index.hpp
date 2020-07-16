@@ -8,16 +8,15 @@
 
 #include <memory>
 #include <set>
-#include <unordered_map>
 #include <vector>
 
-#include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/command.hpp"
-#include "veriblock/blockchain/command_group.hpp"
-#include "veriblock/entities/endorsements.hpp"
-#include "veriblock/logger.hpp"
-#include "veriblock/validation_state.hpp"
-#include "veriblock/write_stream.hpp"
+#include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/command.hpp>
+#include <veriblock/blockchain/command_group.hpp>
+#include <veriblock/entities/endorsements.hpp>
+#include <veriblock/logger.hpp>
+#include <veriblock/validation_state.hpp>
+#include <veriblock/write_stream.hpp>
 
 namespace altintegration {
 
@@ -41,7 +40,7 @@ enum BlockStatus : uint8_t {
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
   //! the block has been applied via PopStateMachine
   BLOCK_APPLIED = 1 << 5,
-  //! the block has been modified, added or removed
+  //! the block has been modified, and should be written on disk
   BLOCK_DIRTY = 1 << 6
 };
 
@@ -86,22 +85,24 @@ struct BlockIndex : public Block::addon_t {
     }
     if ((status & BLOCK_VALID_MASK) < upTo) {
       status = (status & ~BLOCK_VALID_MASK) | upTo;
-      setFlag(BLOCK_DIRTY);
+      setDirty();
       return true;
     }
     return false;
   }
 
-  void setDirty() { setFlag(BLOCK_DIRTY); }
-  void unsetDirty() { unsetFlag(BLOCK_DIRTY); }
+  void setDirty() { this->status |= BLOCK_DIRTY; }
+  void unsetDirty() { this->status &= ~BLOCK_DIRTY; }
 
-  void setFlagSetDirty(enum BlockStatus s) {
-    setFlag(s);
-    setDirty();
+  void setFlag(enum BlockStatus s) {
+    this->status |= (s | BLOCK_DIRTY);
   }
-  void unsetFlagSetDirty(enum BlockStatus s) {
-    unsetFlag(s);
-    setDirty();
+  void unsetFlag(enum BlockStatus s) {
+    this->status &= ~s;
+    // set DIRTY unless we explicitly want to unset DIRTY
+    if ((s & BLOCK_DIRTY) != BLOCK_DIRTY) {
+      this->status |= BLOCK_DIRTY;
+    }
   }
 
   bool hasFlags(enum BlockStatus s) const { return this->status & s; }
@@ -117,8 +118,14 @@ struct BlockIndex : public Block::addon_t {
   }
 
   const block_t& getHeader() const { return *header; }
+  
   void setHeader(const block_t& newHeader) {
     header = std::make_shared<block_t>(newHeader);
+    setDirty();
+  }
+
+  void setHeader(std::shared_ptr<block_t> newHeader) {
+    header = std::move(newHeader);
     setDirty();
   }
 
@@ -227,9 +234,6 @@ struct BlockIndex : public Block::addon_t {
 
   //! contains status flags
   uint8_t status = 0;  // unknown validity
-
-  void setFlag(enum BlockStatus s) { this->status |= s; }
-  void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
 };
 
 template <typename Block>

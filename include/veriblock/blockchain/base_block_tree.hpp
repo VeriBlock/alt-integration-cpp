@@ -365,7 +365,7 @@ struct BaseBlockTree {
       VBK_ASSERT(pair.second && "block already existed in prev");
 
       if (!current->pprev->isValid()) {
-        current->setFlagSetDirty(BLOCK_FAILED_CHILD);
+        current->setFlag(BLOCK_FAILED_CHILD);
       }
     } else {
       current->setHeight(0);
@@ -574,12 +574,12 @@ struct BaseBlockTree {
   }
 
   void doInvalidate(index_t& block, enum BlockStatus reason) {
-    block.setFlagSetDirty(reason);
+    block.setFlag(reason);
     validity_sig_.emit(block);
   }
 
   void doReValidate(index_t& block, enum BlockStatus reason) {
-    block.unsetFlagSetDirty(reason);
+    block.unsetFlag(reason);
     validity_sig_.emit(block);
   }
 

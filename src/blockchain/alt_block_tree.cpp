@@ -29,8 +29,8 @@ bool AltTree::bootstrap(ValidationState& state) {
 
   auto height = index->getHeight();
 
-  index->setFlagSetDirty(BLOCK_APPLIED);
-  index->setFlagSetDirty(BLOCK_BOOTSTRAP);
+  index->setFlag(BLOCK_APPLIED);
+  index->setFlag(BLOCK_BOOTSTRAP);
   base::activeChain_ = Chain<index_t>(height, index);
 
   VBK_ASSERT(base::isBootstrapped());
@@ -49,7 +49,7 @@ bool payloadsCheckDuplicates(Index& index,
                              std::vector<Pop>& payloads,
                              ValidationState& state,
                              bool continueOnInvalid = false) {
-  auto& v = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  auto& v = index.template getPayloadIds<Pop>();
   std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
   for (auto it = payloads.begin(); it != payloads.end();) {
     auto pid = it->getId();
@@ -76,7 +76,7 @@ bool payloadsCheckDuplicates(Index& index,
 template <typename Index, typename Pop>
 void commitPayloadsIds(Index& index, const std::vector<Pop>& pop) {
   for (const auto& p : pop) {
-    index.template insertPayloadIds<Pop, typename Pop::id_t>(p.getId());
+    index.template insertPayloadId<Pop>(p.getId());
   }
 }
 
@@ -331,7 +331,7 @@ void handleRemovePayloads(Tree& tree,
   std::vector<typename Pop::id_t> pids = map_vector<Pop, typename Pop::id_t>(
       payloads, [](const Pop& p) { return p.getId(); });
 
-  auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  auto& payloadIds = index.template getPayloadIds<Pop>();
 
   for (const auto& pid : pids) {
     auto it = std::find(payloadIds.begin(), payloadIds.end(), pid);
@@ -343,7 +343,7 @@ void handleRemovePayloads(Tree& tree,
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    index.template removePayloadIds<Pop, typename Pop::id_t>(pid);
+    index.template removePayloadId<Pop>(pid);
     index.setDirty();
     // TODO: do we want to erase payloads from repository?
   }
@@ -549,11 +549,10 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
 template <typename Payloads>
 void removeId(BlockIndex<AltBlock>& index,
               const typename Payloads::id_t& pid) {
-  auto& payloads =
-      index.template getPayloadIds<Payloads, typename Payloads::id_t>();
+  auto& payloads = index.template getPayloadIds<Payloads>();
   auto it = std::find(payloads.rbegin(), payloads.rend(), pid);
   VBK_ASSERT(it != payloads.rend());
-  index.removePayloadIds<Payloads, typename Payloads::id_t>(pid);
+  index.removePayloadId<Payloads>(pid);
   index.setDirty();
 }
 

@@ -197,8 +197,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     base::tryAddTip(index);
 
-    index->setFlagSetDirty(BLOCK_APPLIED);
-    index->setFlagSetDirty(BLOCK_BOOTSTRAP);
+    index->setFlag(BLOCK_APPLIED);
+    index->setFlag(BLOCK_BOOTSTRAP);
 
     return true;
   }
@@ -234,7 +234,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     // if prev block is invalid, mark this block as invalid
     if (!prev->isValid()) {
-      index->setFlagSetDirty(BLOCK_FAILED_CHILD);
+      index->setFlag(BLOCK_FAILED_CHILD);
       return state.Invalid(
           block_t::name() + "-bad-chain",
           fmt::sprintf("Previous block is invalid=%s", prev->toPrettyString()));

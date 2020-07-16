@@ -99,7 +99,7 @@ struct PopStateMachine {
       VBK_ASSERT(index.isValid());
     }
 
-    index.setFlagSetDirty(BLOCK_APPLIED);
+    index.setFlag(BLOCK_APPLIED);
     return true;
   }
 
@@ -133,7 +133,7 @@ struct PopStateMachine {
       }
     }
 
-    index.unsetFlagSetDirty(BLOCK_APPLIED);
+    index.unsetFlag(BLOCK_APPLIED);
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)

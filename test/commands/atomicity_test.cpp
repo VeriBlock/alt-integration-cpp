@@ -135,8 +135,8 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   // endorsed
   auto vbk5 = popminer->vbk().getBestChain().tip()->getAncestor(5);
   ASSERT_TRUE(vbk5);
-  auto vbkpoptx1 =
-      popminer->endorseVbkBlock(vbk5->getHeader(), getLastKnownBtcBlock(), state);
+  auto vbkpoptx1 = popminer->endorseVbkBlock(
+      vbk5->getHeader(), getLastKnownBtcBlock(), state);
   auto vbkpoptx2 = popminer->endorseVbkBlock(
       vbk5->getHeader(), getLastKnownBtcBlock(), state);
   popminer->vbkmempool.push_back(vbkpoptx1);
@@ -167,22 +167,19 @@ TEST_F(AtomicityTestFixture, AddVTB) {
       alttree.vbk().getBlockIndex(vtb1.containingBlock.getHash());
   ASSERT_TRUE(altvbkcontaining);
 
-  auto& vtbids1 =
-      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids1 = altvbkcontaining->template getPayloadIds<VTB>();
   ASSERT_EQ(vtbids1.size(), 0);
 
   // execute that AddVTB1
   ASSERT_TRUE(cmd1->Execute(state)) << state.toString();
 
-  auto& vtbids2 =
-      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids2 = altvbkcontaining->template getPayloadIds<VTB>();
   ASSERT_EQ(vtbids2.size(), 1);
   ASSERT_EQ(vtbids2.at(0), vtb1.getId());
 
   // run execute second time on same VTB
   ASSERT_FALSE(cmd1->Execute(state));
-  auto& vtbids3 =
-      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids3 = altvbkcontaining->template getPayloadIds<VTB>();
 
   ASSERT_EQ(vtbids3.size(), 1);
   ASSERT_EQ(vtbids3.at(0), vtb1.getId());
@@ -190,8 +187,7 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   // add vtb2
   auto cmd2 = std::make_shared<AddVTB>(alttree, vtb2);
   ASSERT_TRUE(cmd2->Execute(state));
-  auto& vtbids4 =
-      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids4 = altvbkcontaining->template getPayloadIds<VTB>();
 
   ASSERT_EQ(vtbids4.size(), 2);
   ASSERT_EQ(vtbids4.at(0), vtb1.getId());
@@ -199,16 +195,14 @@ TEST_F(AtomicityTestFixture, AddVTB) {
 
   // unexecute VTB2
   ASSERT_NO_FATAL_FAILURE(cmd2->UnExecute());
-  auto& vtbids5 =
-      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids5 = altvbkcontaining->template getPayloadIds<VTB>();
 
   ASSERT_EQ(vtbids5.size(), 1);
   ASSERT_EQ(vtbids5.at(0), vtb1.getId());
 
   // unexecute VTB1
   ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
-  auto& vtbids6 =
-      altvbkcontaining->template getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids6 = altvbkcontaining->template getPayloadIds<VTB>();
 
   ASSERT_EQ(vtbids6.size(), 0);
 }

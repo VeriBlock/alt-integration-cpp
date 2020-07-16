@@ -25,18 +25,18 @@ struct VbkBlockAddon :
 
   bool payloadsIdsEmpty() const { return _vtbids.empty(); }
 
-  template <typename pop_t, typename pop_id_t>
-  const std::vector<pop_id_t>& getPayloadIds() const;
+  template <typename pop_t>
+  const std::vector<typename pop_t::id_t>& getPayloadIds() const;
 
-  template <typename pop_t, typename pop_id_t>
-  void removePayloadIds(const pop_id_t& pid) {
+  template <typename pop_t>
+  void removePayloadId(const typename pop_t::id_t& pid) {
     auto it = std::find(_vtbids.begin(), _vtbids.end(), pid);
     VBK_ASSERT(it != _vtbids.end());
     _vtbids.erase(it);
   }
 
-  template <typename pop_t, typename pop_id_t>
-  void insertPayloadIds(const pop_id_t& pid) {
+  template <typename pop_t>
+  void insertPayloadId(const typename pop_t::id_t& pid) {
     _vtbids.push_back(pid);
   }
 
@@ -75,12 +75,6 @@ struct VbkBlockAddon :
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
   }
 };
-
-template <>
-inline const std::vector<uint256>& VbkBlockAddon::getPayloadIds<VTB, uint256>()
-    const {
-  return _vtbids;
-}
 
 }  // namespace altintegration
 

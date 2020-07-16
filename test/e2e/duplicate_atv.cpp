@@ -42,7 +42,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
   ASSERT_TRUE(index100);
   ASSERT_FALSE(index100->isValid());
   // chain100 contains 1 command group
-  auto& atvids = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids.size(), 1);
   // with id == payloads.id
   ASSERT_EQ(*atvids.begin(), payloads.atvs[0].getId());
@@ -53,7 +53,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
   // index100 is now valid
   ASSERT_TRUE(index100->isValid());
   // chain100 contains 0 command groups
-  auto& atvids2 = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids2 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids2.size(), 0);
   // we can switch back to chain 100
   ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
@@ -69,13 +69,13 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeA) {
   auto p2id = payloads.atvs[0].getId();
 
   auto index99 = alttree.getBlockIndex(chain[99].getHash());
-  auto& atvids = index99->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids = index99->getPayloadIds<ATV>();
   ASSERT_EQ(atvids.size(), 1);
   ASSERT_EQ(*atvids.begin(), p2id);
   ASSERT_TRUE(index99->isValid());
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100->isValid());
-  auto& atvids2 = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids2 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids2.size(), 1);
   ASSERT_EQ(*atvids2.begin(), p1id);
 
@@ -84,13 +84,13 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeA) {
   // but not to 100, because 100 duplicates 99
   ASSERT_FALSE(alttree.setState(chain[100].getHash(), state));
   ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-duplicate-payloads");
-  auto& atvids3 = index99->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids3 = index99->getPayloadIds<ATV>();
   ASSERT_EQ(atvids3.size(), 1);
   ASSERT_EQ(*atvids3.begin(), p2id);
 
   ASSERT_TRUE(index99->isValid());
   ASSERT_FALSE(index100->isValid());
-  auto& atvids4 = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids4 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids4.size(), 1);
   ASSERT_EQ(*atvids4.begin(), p1id);
 
@@ -98,7 +98,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeA) {
   ASSERT_NO_FATAL_FAILURE(alttree.removePayloads(chain[100].getHash(), p1));
   // index100 is now valid
   ASSERT_TRUE(index100->isValid());
-  auto& atvids5 = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids5 = index100->getPayloadIds<ATV>();
   // chain100 contains 0 command groups
   ASSERT_EQ(atvids5.size(), 0);
   // we can switch back to chain 100
@@ -115,13 +115,13 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), p1, state));
 
   auto index99 = alttree.getBlockIndex(chain[99].getHash());
-  auto& atvids = index99->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids = index99->getPayloadIds<ATV>();
   ASSERT_EQ(atvids.size(), 1);
   ASSERT_EQ(*atvids.begin(), p2.atvs.at(0).getId());
   ASSERT_TRUE(index99->isValid());
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100->isValid());
-  auto& atvids2 = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids2 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids2.size(), 1);
   ASSERT_EQ(*atvids2.begin(), p1.atvs.at(0).getId());
 
@@ -130,12 +130,12 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   // but not to 100, because 100 duplicates 99
   ASSERT_FALSE(alttree.setState(chain[100].getHash(), state));
   ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-duplicate-payloads");
-  auto& atvids3 = index99->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids3 = index99->getPayloadIds<ATV>();
   ASSERT_EQ(atvids3.size(), 1);
   ASSERT_EQ(*atvids3.begin(), p2id);
   ASSERT_TRUE(index99->isValid());
   ASSERT_FALSE(index100->isValid());
-  auto& atvids4 = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids4 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids4.size(), 1);
   ASSERT_EQ(*atvids4.begin(), p1.atvs.at(0).getId());
 
@@ -145,8 +145,8 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   // both indices are now valid
   ASSERT_TRUE(index99->isValid());
   ASSERT_TRUE(index100->isValid());
-  auto& atvids5 = index99->getPayloadIds<ATV, typename ATV::id_t>();
-  auto& atvids6 = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids5 = index99->getPayloadIds<ATV>();
+  auto& atvids6 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids5.size(), 0);
   ASSERT_EQ(atvids6.size(), 1);
   ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
@@ -157,7 +157,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
   ASSERT_TRUE(index100);
 
   ASSERT_TRUE(alttree.validatePayloads(chain[100].getHash(), payloads, state));
-  auto& atvids = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids.size(), 1);
   ASSERT_TRUE(index100->isValid());
 
@@ -165,7 +165,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
   ASSERT_EQ(state.GetPath(),
             "ALT-addPayloadsTemporarily+ALT-duplicate-payloads");
   ASSERT_TRUE(index100->isValid());
-  auto& atvids2 = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids2 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids2.size(), 1);
   ASSERT_EQ(*atvids2.begin(), payloads.atvs.at(0).getId());
 }
@@ -178,10 +178,10 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
 
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100);
-  auto& atvids = index100->getPayloadIds<ATV, typename ATV::id_t>();
+  auto& atvids = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids.size(), 0);
-  auto& vtbids = index100->getPayloadIds<VTB, typename VTB::id_t>();
+  auto& vtbids = index100->getPayloadIds<VTB>();
   ASSERT_EQ(vtbids.size(), 0);
-  auto& blockids = index100->getPayloadIds<VbkBlock, typename VbkBlock::id_t>();
+  auto& blockids = index100->getPayloadIds<VbkBlock>();
   ASSERT_EQ(blockids.size(), 0);
 }

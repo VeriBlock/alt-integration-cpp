@@ -143,7 +143,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putIntKV(obj, "ref", i.getRefCounter());
 
   auto stored = json::makeEmptyObject<JsonValue>();
-  json::putArrayKV(stored, "vtbids", i.getPayloadIds<VTB, typename VTB::id_t>());
+  json::putArrayKV(stored, "vtbids", i.getPayloadIds<VTB>());
 
   json::putKV(obj, "stored", stored);
 

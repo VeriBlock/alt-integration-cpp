@@ -91,6 +91,6 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   auto& vtbids = test_alttree.vbk()
                      .getBestChain()
                      .tip()
-                     ->getPayloadIds<VTB, typename VTB::id_t>();
+                     ->getPayloadIds<VTB>();
   EXPECT_EQ(vtbids.size(), 0);
 }

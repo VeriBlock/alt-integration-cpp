@@ -90,8 +90,7 @@ class PayloadsStorage {
   std::vector<CommandGroup> loadCommandsStorage(
       const typename Tree::index_t& index, Tree& tree) {
     using index_t = typename Tree::index_t;
-    auto& pids =
-        index.template getPayloadIds<Payloads, typename Payloads::id_t>();
+    auto& pids = index.template getPayloadIds<Payloads>();
     std::vector<CommandGroup> out{};
     for (const auto& pid : pids) {
       auto& cache = getCache<Tree, Payloads>();
