@@ -44,17 +44,17 @@ TEST_F(Scenario8, scenario_8) {
       vbkparam.getEndorsementSettlementInterval() + 100);
 
   // endorse block 490
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   // endorse block 90
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(
-      vbkTip->height - 10 - vbkparam.getEndorsementSettlementInterval());
+      vbkTip->getHeight() - 10 - vbkparam.getEndorsementSettlementInterval());
 
-  VbkPopTx popTx1 = generatePopTx(*endorsedVbkBlock1->header);
+  VbkPopTx popTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   // remove this popTx from the mempool, so vbk blocks can mine correctly
   ASSERT_EQ(popminer->vbkmempool.size(), 1);
   popminer->vbkmempool.erase(popminer->vbkmempool.begin());
 
-  VbkPopTx popTx2 = generatePopTx(*endorsedVbkBlock2->header);
+  VbkPopTx popTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
   // remove this popTx from the mempool, so vbk blocks can mine correctly
   ASSERT_EQ(popminer->vbkmempool.size(), 1);
   popminer->vbkmempool.erase(popminer->vbkmempool.begin());
@@ -147,13 +147,13 @@ TEST_F(Scenario8, scenario_8) {
   // VBK subtree 501 (contains expired VTB) is VALID - because we tried to add
   // VTB, it was invalid, so we immediately removed it
   validityFlagCheck(*vbkBlock, true);
-  EXPECT_EQ(alttree.vbk().getBestChain().tip()->height, 502);
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHeight(), 502);
 
   vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   ASSERT_NE(vbkBlock, nullptr);
 
   // remove payloads from alt, vbk state is still valid
-  alttree.removePayloads(containingBlock.hash, popData2);
-  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
+  alttree.removePayloads(containingBlock.getHash(), popData2);
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   validityFlagCheck(*vbkBlock, true);
 }

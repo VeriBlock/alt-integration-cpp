@@ -14,9 +14,6 @@
 namespace altintegration {
 
 struct PopData;
-struct ATV;
-struct VTB;
-struct VbkBlock;
 
 struct AltBlockAddon : public PopState<AltEndorsement> {
   using payloads_t = PopData;
@@ -25,95 +22,90 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   // remove this
   uint8_t chainWork;
 
-  //! list of changes introduced in this block
-  // ATV::id_t
-  std::vector<uint256> atvids;
-  // VTB::id_t
-  std::vector<uint256> vtbids;
-  // VbkBlock::id_t
-  std::vector<uint96> vbkblockids;
-
   bool payloadsIdsEmpty() const {
-    return atvids.empty() && vtbids.empty() && vbkblockids.empty();
+    return _atvids.empty() && _vtbids.empty() && _vbkblockids.empty();
   }
 
   bool operator==(const AltBlockAddon& o) const {
-    return atvids == o.atvids && vtbids == o.vtbids &&
-           vbkblockids == o.vbkblockids &&
-           PopState<AltEndorsement>::operator==(o);
+    bool a = _atvids == o._atvids;
+    bool b = _vtbids == o._vtbids;
+    bool c = _vbkblockids == o._vbkblockids;
+    bool d = PopState<AltEndorsement>::operator==(o);
+    return a && b && c && d;
   }
 
-  template <typename pop_t, typename pop_id_t>
-  std::vector<pop_id_t>& getPayloadIds();
+  template <typename pop_t>
+  const std::vector<typename pop_t::id_t>& getPayloadIds() const;
 
-  template <typename pop_t, typename pop_id_t>
-  const std::vector<pop_id_t>& getPayloadIds() const;
+  template <typename pop_t>
+  void removePayloadId(const typename pop_t::id_t& pid) {
+    auto& payloads = getPayloadIdsInner<pop_t>();
+    auto it = std::find(payloads.begin(), payloads.end(), pid);
+    VBK_ASSERT(it != payloads.end());
+    payloads.erase(it);
+    setDirty();
+  }
 
-  void setNull() {
-    PopState<AltEndorsement>::setNull();
-    chainWork = 0;
-    atvids.clear();
-    vtbids.clear();
-    vbkblockids.clear();
+  template <typename pop_t>
+  void insertPayloadId(const typename pop_t::id_t& pid) {
+    auto& payloads = getPayloadIdsInner<pop_t>();
+    payloads.push_back(pid);
+    setDirty();
+  }
+
+  template <typename pop_t>
+  void insertPayloadIds(const std::vector<typename pop_t::id_t>& pids) {
+    auto& payloads = getPayloadIdsInner<pop_t>();
+    payloads.insert(payloads.end(), pids.begin(), pids.end());
+    setDirty();
   }
 
   std::string toPrettyString() const {
     return fmt::sprintf("ATV=%d, VTB=%d, VBK=%d",
-                        atvids.size(),
-                        vtbids.size(),
-                        vbkblockids.size());
+                        _atvids.size(),
+                        _vtbids.size(),
+                        _vbkblockids.size());
   }
 
   void toRaw(WriteStream& w) const {
     PopState<AltEndorsement>::toRaw(w);
-    writeArrayOf<uint256>(w, atvids, writeSingleByteLenValue);
-    writeArrayOf<uint256>(w, vtbids, writeSingleByteLenValue);
-    writeArrayOf<uint96>(w, vbkblockids, writeSingleByteLenValue);
+    writeArrayOf<uint256>(w, _atvids, writeSingleByteLenValue);
+    writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
+    writeArrayOf<uint96>(w, _vbkblockids, writeSingleByteLenValue);
+  }
+
+ protected:
+  //! list of changes introduced in this block
+  // ATV::id_t
+  std::vector<uint256> _atvids;
+  // VTB::id_t
+  std::vector<uint256> _vtbids;
+  // VbkBlock::id_t
+  std::vector<uint96> _vbkblockids;
+
+  void setDirty();
+
+  void setNull() {
+    PopState<AltEndorsement>::setNull();
+    chainWork = 0;
+    _atvids.clear();
+    _vtbids.clear();
+    _vbkblockids.clear();
   }
 
   void initAddonFromRaw(ReadStream& r) {
     PopState<AltEndorsement>::initAddonFromRaw(r);
-    atvids = readArrayOf<uint256>(
+    _atvids = readArrayOf<uint256>(
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
-    vtbids = readArrayOf<uint256>(
+    _vtbids = readArrayOf<uint256>(
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
-    vbkblockids = readArrayOf<uint96>(
+    _vbkblockids = readArrayOf<uint96>(
         r, [](ReadStream& s) -> uint96 { return readSingleByteLenValue(s); });
   }
+
+  template <typename pop_t>
+  std::vector<typename pop_t::id_t>& getPayloadIdsInner();
 };
-
-template <>
-inline std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>() {
-  return atvids;
-}
-
-template <>
-inline std::vector<uint256>& AltBlockAddon::getPayloadIds<VTB, uint256>() {
-  return vtbids;
-}
-
-template <>
-inline std::vector<uint96>& AltBlockAddon::getPayloadIds<VbkBlock, uint96>() {
-  return vbkblockids;
-}
-
-template <>
-inline const std::vector<uint256>& AltBlockAddon::getPayloadIds<ATV, uint256>()
-    const {
-  return atvids;
-}
-
-template <>
-inline const std::vector<uint256>& AltBlockAddon::getPayloadIds<VTB, uint256>()
-    const {
-  return vtbids;
-}
-
-template <>
-inline const std::vector<uint96>&
-AltBlockAddon::getPayloadIds<VbkBlock, uint96>() const {
-  return vbkblockids;
-}
 
 }  // namespace altintegration
 

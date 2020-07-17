@@ -9,8 +9,8 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include <veriblock/serde.hpp>
 #include <veriblock/comparator.hpp>
+#include <veriblock/serde.hpp>
 
 namespace altintegration {
 
@@ -19,34 +19,53 @@ struct PopState {
   using endorsement_t = EndorsementT;
   using eid_t = typename endorsement_t::id_t;
 
-  //! (stored as vector) list of containing endorsements in this block
-  std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
-      containingEndorsements{};
-
   //! (memory-only) list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
 
+  const std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>&
+    getContainingEndorsements() const {
+    return _containingEndorsements;
+  }
+
+  void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
+    _containingEndorsements.insert(std::make_pair(e->id, std::move(e)));
+    setDirty();
+  }
+
+  void removeContainingEndorsement(const eid_t& eid) {
+    _containingEndorsements.erase(eid);
+    setDirty();
+  }
+
   bool operator==(const PopState& o) const {
     CollectionOfPtrComparator cmp;
-    bool a = cmp(containingEndorsements,o.containingEndorsements);
+    bool a = cmp(_containingEndorsements, o._containingEndorsements);
     bool b = cmp(endorsedBy, o.endorsedBy);
     return a && b;
   }
 
-  void setNull() {
-    containingEndorsements.clear();
-    endorsedBy.clear();
-  }
-
   void toRaw(WriteStream& w) const {
     // write containingEndorsements as vector
-    writeContainer<decltype(containingEndorsements)>(
+    writeContainer<decltype(_containingEndorsements)>(
         w,
-        containingEndorsements,
+        _containingEndorsements,
         [](WriteStream& W,
-           const typename decltype(containingEndorsements)::value_type& e) {
+           const typename decltype(_containingEndorsements)::value_type& e) {
           e.second->toVbkEncoding(W);
         });
+  }
+
+ // hide setters from public usage
+ protected:
+  //! (stored as vector) list of containing endorsements in this block
+  std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
+      _containingEndorsements{};
+
+  void setDirty();
+
+  void setNull() {
+    _containingEndorsements.clear();
+    endorsedBy.clear();
   }
 
   void initAddonFromRaw(ReadStream& r) {
@@ -55,7 +74,7 @@ struct PopState {
         r, [](ReadStream& r) { return endorsement_t::fromVbkEncoding(r); });
 
     for (auto& e : v) {
-      auto pair = containingEndorsements.insert(
+      auto pair = _containingEndorsements.insert(
           {e.getId(), std::make_shared<endorsement_t>(e)});
       VBK_ASSERT(pair.second);
     }
@@ -64,7 +83,7 @@ struct PopState {
   }
 
   void initAddonFromOther(const PopState& other) {
-    containingEndorsements = other.containingEndorsements;
+    _containingEndorsements = other._containingEndorsements;
     endorsedBy = other.endorsedBy;
   }
 };

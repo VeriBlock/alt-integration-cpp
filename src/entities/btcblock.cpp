@@ -44,6 +44,10 @@ void BtcBlock::toVbkEncoding(WriteStream& stream) const {
   writeSingleByteLenValue(stream, blockStream.data());
 }
 
+uint32_t BtcBlock::getDifficulty() const { return bits; }
+
+uint32_t BtcBlock::getBlockTime() const { return timestamp; }
+
 uint256 BtcBlock::getHash() const {
   WriteStream stream;
   toRaw(stream);

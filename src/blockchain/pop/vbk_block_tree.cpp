@@ -19,7 +19,8 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   auto bestTip = getBestChain().tip();
   VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
 
-  if (bestTip->height > candidate.height + param_->getMaxReorgBlocks()) {
+  if (bestTip->getHeight() >
+      candidate.getHeight() + param_->getMaxReorgBlocks()) {
     VBK_LOG_DEBUG("%s Candidate is behind tip more than %d blocks",
                   block_t::name(),
                   candidate.toShortPrettyString(),
@@ -90,17 +91,18 @@ void VbkBlockTree::removePayloads(index_t& index,
   }
 
   for (const auto& pid : pids) {
-    auto it = std::find(index.vtbids.begin(), index.vtbids.end(), pid);
+    auto& vtbids = index.getPayloadIds<VTB>();
+    auto it = std::find(vtbids.begin(), vtbids.end(), pid);
     // using an assert because throwing breaks atomicity
     // if there are multiple pids
-    VBK_ASSERT(it != index.vtbids.end() &&
+    VBK_ASSERT(it != vtbids.end() &&
                "could not find the payload to remove");
 
     if (!storagePayloads_.isValid<VTB, index_t>(pid, index)) {
       revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    index.vtbids.erase(it);
+    index.removePayloadId<VTB>(pid);
   }
 
   updateTips();
@@ -127,8 +129,9 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
                 pid.toPrettyString(),
                 index.toPrettyString());
 
-  auto vtbid_it = std::find(index.vtbids.begin(), index.vtbids.end(), pid);
-  VBK_ASSERT(vtbid_it != index.vtbids.end() &&
+  auto& vtbids = index.getPayloadIds<VTB>();
+  auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
+  VBK_ASSERT(vtbid_it != vtbids.end() &&
              "state corruption: the block does not contain the payload");
 
   // removing an invalid payload might render the block valid
@@ -160,7 +163,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
     }
   }
 
-  index.vtbids.erase(vtbid_it);
+  index.removePayloadId<VTB>(pid);
 
   if (shouldDetermineBestChain) {
     updateTips();
@@ -197,10 +200,12 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                      index->toPrettyString()));
   }
 
+  auto pids = map_get_id(payloads);
+
   // check that we can add all payloads at once to guarantee atomicity
-  std::set<pid_t> existingPids(index->vtbids.begin(), index->vtbids.end());
-  for (const auto& payload : payloads) {
-    auto pid = payload.getId();
+  auto& vtbids = index->getPayloadIds<VTB>();
+  std::set<pid_t> existingPids(vtbids.begin(), vtbids.end());
+  for (const auto& pid : pids) {
     if (!existingPids.insert(pid).second) {
       return state.Invalid(
           block_t::name() + "-duplicate-payloads",
@@ -215,7 +220,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   bool isOnActiveChain = activeChain_.contains(index);
   if (isOnActiveChain) {
     VBK_ASSERT(tip != nullptr);
-    auto window = (std::max)(0, tip->height - index->height);
+    auto window = (std::max)(0, tip->getHeight() - index->getHeight());
     if (window >= param_->getHistoryOverwriteLimit()) {
       return state.Invalid(
           block_t::name() + "-too-late",
@@ -233,11 +238,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                "state corruption: failed to roll back the best chain tip");
   }
 
-  for (const auto& payload : payloads) {
-    auto pid = payload.getId();
-    index->vtbids.push_back(pid);
-  }
-
+  index->insertPayloadIds<VTB>(pids);
   storagePayloads_.savePayloadsMany(payloads);
 
   // don't defer fork resolution in the acceptBlock+addPayloads flow until the
@@ -249,9 +250,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   // roll back our attempted changes
-  for (const auto& payload : payloads) {
-    unsafelyRemovePayload(
-        *index, payload.getId(), /*shouldDetermineBestChain =*/false);
+  for (const auto& pid : pids) {
+    unsafelyRemovePayload(*index, pid, /*shouldDetermineBestChain =*/false);
   }
 
   // restore the tip
@@ -295,8 +295,8 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
   VBK_ASSERT(current);
 
   // recover `endorsedBy`
-  auto window =
-      std::max(0, index.height - param_->getEndorsementSettlementInterval());
+  auto window = std::max(
+      0, index.getHeight() - param_->getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
     return state.Invalid("load-block");
@@ -311,23 +311,14 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
   return loadCommandsStorage<VbkBlockTree, VTB>(index, tree);
 }
 
-bool removeId(std::vector<uint256>& pop, const uint256& id) {
-  auto it = std::find(pop.rbegin(), pop.rend(), id);
-  if (it == pop.rend()) {
-    return false;
-  }
-
-  auto toRemove = --(it.base());
-  pop.erase(toRemove);
-  return true;
-}
-
 template <>
 void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
   VBK_ASSERT(cg.payload_type_name == VTB::name());
-  bool success = removeId(index.vtbids, cg.id);
-  VBK_ASSERT(success);
+  auto& payloads = index.template getPayloadIds<VTB>();
+  auto it = std::find(payloads.rbegin(), payloads.rend(), cg.id);
+  VBK_ASSERT(it != payloads.rend());
+  index.removePayloadId<VTB>(cg.id);
 }
 
 }  // namespace altintegration

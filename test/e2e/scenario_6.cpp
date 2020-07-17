@@ -45,8 +45,8 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   ASSERT_EQ(*popminer->btc().getBestChain().tip(), *btcTip);
 
   // endorsed vbk block
-  auto* endorsedBlock = vbkTip->getAncestor(vbkTip->height - 5);
-  generatePopTx(*endorsedBlock->header);
+  auto* endorsedBlock = vbkTip->getAncestor(vbkTip->getHeight() - 5);
+  generatePopTx(endorsedBlock->getHeader());
   vbkTip = popminer->mineVbkBlocks(1);
   auto it = popminer->vbkPayloads.find(vbkTip->getHash());
   ASSERT_TRUE(it != popminer->vbkPayloads.end());
@@ -61,7 +61,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   // Step 2
   // bootsrap with the non genesis block
   EXPECT_TRUE(test_alttree.vbk().bootstrapWithChain(
-      vbkTip->height, {*vbkTip->header}, state));
+      vbkTip->getHeight(), {vbkTip->getHeader()}, state));
 
   VbkTx tx =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[0]));
@@ -81,5 +81,9 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->getHash(),
             vbkTip->getHash());
   EXPECT_EQ(test_alttree.vbk().getBestChain().blocksCount(), 1);
-  EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->vtbids.size(), 0);
+  auto& vtbids = test_alttree.vbk()
+                     .getBestChain()
+                     .tip()
+                     ->getPayloadIds<VTB>();
+  EXPECT_EQ(vtbids.size(), 0);
 }

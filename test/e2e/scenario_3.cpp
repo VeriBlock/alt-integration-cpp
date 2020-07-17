@@ -49,31 +49,31 @@ TEST_F(Scenario3, scenario_3) {
   auto* vbkTip1 = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  auto* endorsedVbkBlock1 = vbkTip1->getAncestor(vbkTip1->height - 10);
-  auto* vbkForkPoint = vbkTip1->getAncestor(vbkTip1->height - 30);
+  auto* endorsedVbkBlock1 = vbkTip1->getAncestor(vbkTip1->getHeight() - 10);
+  auto* vbkForkPoint = vbkTip1->getAncestor(vbkTip1->getHeight() - 30);
   auto endorsedVbkBlock2 = popminer->mineVbkBlocks(*vbkForkPoint, 23);
 
   ASSERT_TRUE(popminer->vbk().getBestChain().contains(endorsedVbkBlock1));
   ASSERT_FALSE(popminer->vbk().getBestChain().contains(endorsedVbkBlock2));
   // Step 1
-  auto popTx1 = generatePopTx(*endorsedVbkBlock1->header);
+  auto popTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   popminer->mineBtcBlocks(10);
-  auto popTx2 = generatePopTx(*endorsedVbkBlock2->header);
+  auto popTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
   popminer->mineBtcBlocks(100);
-  auto popTx3 = generatePopTx(*endorsedVbkBlock1->header);
+  auto popTx3 = generatePopTx(endorsedVbkBlock1->getHeader());
   popminer->vbkmempool.clear();
 
   auto* vbkTip2 = popminer->mineVbkBlocks(*endorsedVbkBlock2, {popTx2});
 
   // vbkTip1 heigher than vbkTip2
-  ASSERT_GT(vbkTip1->height, vbkTip2->height);
+  ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());
   // but active chain on the vbkTip2 because this chain has endorsements
   ASSERT_EQ(*vbkTip2, *popminer->vbk().getBestChain().tip());
 
   vbkTip1 = popminer->mineVbkBlocks(*vbkTip1, {popTx1, popTx3});
 
   // now we switch active chain to the better endorsements
-  ASSERT_GT(vbkTip1->height, vbkTip2->height);
+  ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());
   ASSERT_EQ(*vbkTip1, *popminer->vbk().getBestChain().tip());
 
   auto vtbs1 = popminer->vbkPayloads[vbkTip1->getHash()];
@@ -88,7 +88,7 @@ TEST_F(Scenario3, scenario_3) {
       vtbs1[1].transaction.blockOfProof.getHash());
 
   // check vtbs1[0] is better for scorring than vtbs1[1]
-  ASSERT_LT(btcContaininBlock1->height, btcContaininBlock2->height);
+  ASSERT_LT(btcContaininBlock1->getHeight(), btcContaininBlock2->getHeight());
 
   // mine 10 Alt blocks
   mineAltBlocks(10, chain);
@@ -115,7 +115,7 @@ TEST_F(Scenario3, scenario_3) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
   ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
@@ -125,9 +125,9 @@ TEST_F(Scenario3, scenario_3) {
       alttree.vbk().getBlockIndex(vtbs1[1].containingBlock.getHash());
 
   // check endorsements
-  EXPECT_FALSE(containingVbkBlock->containingEndorsements.count(
+  EXPECT_FALSE(containingVbkBlock->getContainingEndorsements().count(
       VbkEndorsement::getId(vtbs1[0])));
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containingVbkBlock->getContainingEndorsements().count(
       VbkEndorsement::getId(vtbs1[1])));
 
   // Step 3
@@ -149,7 +149,7 @@ TEST_F(Scenario3, scenario_3) {
                  popminer->vbk());
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads2, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip2->getHash());
   ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
@@ -173,13 +173,13 @@ TEST_F(Scenario3, scenario_3) {
                  popminer->vbk());
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containingVbkBlock->getContainingEndorsements().count(
       VbkEndorsement::getId(vtbs1[0])));
-  EXPECT_TRUE(containingVbkBlock->containingEndorsements.count(
+  EXPECT_TRUE(containingVbkBlock->getContainingEndorsements().count(
       VbkEndorsement::getId(vtbs1[1])));
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip1->getHash());

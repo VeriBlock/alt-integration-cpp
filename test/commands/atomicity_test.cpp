@@ -33,35 +33,35 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
       std::make_shared<AddVbkEndorsement>(popminer->btc(), popminer->vbk(), e);
 
   // before cmd execution we have 0 endorsements
-  ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(vbk5->endorsedBy.size(), 0);
-  ASSERT_EQ(vbk10->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk10->getContainingEndorsements().size(), 0);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
 
   // execute command
   ASSERT_TRUE(cmd->Execute(state)) << state.toString();
 
   // verify that state has been changed
-  ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(vbk5->endorsedBy.size(), 1);
-  ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
+  ASSERT_EQ(vbk10->getContainingEndorsements().size(), 1);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
 
   // execute again
   ASSERT_FALSE(cmd->Execute(state));
   // verify that state has not been changed
-  ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(vbk5->endorsedBy.size(), 1);
-  ASSERT_EQ(vbk10->containingEndorsements.size(), 1);
+  ASSERT_EQ(vbk10->getContainingEndorsements().size(), 1);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
   // endorsement is removed
-  ASSERT_EQ(vbk5->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(vbk5->endorsedBy.size(), 0);
-  ASSERT_EQ(vbk10->containingEndorsements.size(), 0);
+  ASSERT_EQ(vbk10->getContainingEndorsements().size(), 0);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
 
   ASSERT_DEATH(cmd->UnExecute(), "");
@@ -92,36 +92,36 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   auto cmd = std::make_shared<AddAltEndorsement>(popminer->vbk(), alttree, e);
 
   // before cmd execution we have 0 endorsements
-  ASSERT_EQ(alt5->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 0);
-  ASSERT_EQ(alt10->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt10->getContainingEndorsements().size(), 0);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
 
   // execute command
   ASSERT_TRUE(cmd->Execute(state)) << state.toString();
 
   // verify that state has been changed
-  ASSERT_EQ(alt5->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
-  ASSERT_EQ(alt10->containingEndorsements.size(), 1);
+  ASSERT_EQ(alt10->getContainingEndorsements().size(), 1);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
 
   // execute command second time
   ASSERT_FALSE(cmd->Execute(state));
 
   // verify that state has NOT been changed
-  ASSERT_EQ(alt5->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
-  ASSERT_EQ(alt10->containingEndorsements.size(), 1);
+  ASSERT_EQ(alt10->getContainingEndorsements().size(), 1);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
   // endorsement is removed
-  ASSERT_EQ(alt5->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 0);
-  ASSERT_EQ(alt10->containingEndorsements.size(), 0);
+  ASSERT_EQ(alt10->getContainingEndorsements().size(), 0);
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
 
   ASSERT_DEATH(cmd->UnExecute(), "");
@@ -135,10 +135,10 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   // endorsed
   auto vbk5 = popminer->vbk().getBestChain().tip()->getAncestor(5);
   ASSERT_TRUE(vbk5);
-  auto vbkpoptx1 =
-      popminer->endorseVbkBlock(*vbk5->header, getLastKnownBtcBlock(), state);
-  auto vbkpoptx2 =
-      popminer->endorseVbkBlock(*vbk5->header, getLastKnownBtcBlock(), state);
+  auto vbkpoptx1 = popminer->endorseVbkBlock(
+      vbk5->getHeader(), getLastKnownBtcBlock(), state);
+  auto vbkpoptx2 = popminer->endorseVbkBlock(
+      vbk5->getHeader(), getLastKnownBtcBlock(), state);
   popminer->vbkmempool.push_back(vbkpoptx1);
   popminer->vbkmempool.push_back(vbkpoptx2);
   auto vbkcontaining = popminer->mineVbkBlocks(1);
@@ -159,7 +159,7 @@ TEST_F(AtomicityTestFixture, AddVTB) {
       continue;
     }
 
-    ASSERT_TRUE(alttree.vbk().acceptBlock(block->header, state));
+    ASSERT_TRUE(alttree.vbk().acceptBlock(block->getHeader(), state));
   }
 
   // verify VBK tree does not know about this VTB
@@ -167,35 +167,42 @@ TEST_F(AtomicityTestFixture, AddVTB) {
       alttree.vbk().getBlockIndex(vtb1.containingBlock.getHash());
   ASSERT_TRUE(altvbkcontaining);
 
-  ASSERT_EQ(altvbkcontaining->vtbids.size(), 0);
+  auto& vtbids1 = altvbkcontaining->template getPayloadIds<VTB>();
+  ASSERT_EQ(vtbids1.size(), 0);
 
   // execute that AddVTB1
   ASSERT_TRUE(cmd1->Execute(state)) << state.toString();
 
-  ASSERT_EQ(altvbkcontaining->vtbids.size(), 1);
-  ASSERT_EQ(altvbkcontaining->vtbids.at(0), vtb1.getId());
+  auto& vtbids2 = altvbkcontaining->template getPayloadIds<VTB>();
+  ASSERT_EQ(vtbids2.size(), 1);
+  ASSERT_EQ(vtbids2.at(0), vtb1.getId());
 
   // run execute second time on same VTB
   ASSERT_FALSE(cmd1->Execute(state));
+  auto& vtbids3 = altvbkcontaining->template getPayloadIds<VTB>();
 
-  ASSERT_EQ(altvbkcontaining->vtbids.size(), 1);
-  ASSERT_EQ(altvbkcontaining->vtbids.at(0), vtb1.getId());
+  ASSERT_EQ(vtbids3.size(), 1);
+  ASSERT_EQ(vtbids3.at(0), vtb1.getId());
 
   // add vtb2
   auto cmd2 = std::make_shared<AddVTB>(alttree, vtb2);
   ASSERT_TRUE(cmd2->Execute(state));
+  auto& vtbids4 = altvbkcontaining->template getPayloadIds<VTB>();
 
-  ASSERT_EQ(altvbkcontaining->vtbids.size(), 2);
-  ASSERT_EQ(altvbkcontaining->vtbids.at(0), vtb1.getId());
-  ASSERT_EQ(altvbkcontaining->vtbids.at(1), vtb2.getId());
+  ASSERT_EQ(vtbids4.size(), 2);
+  ASSERT_EQ(vtbids4.at(0), vtb1.getId());
+  ASSERT_EQ(vtbids4.at(1), vtb2.getId());
 
   // unexecute VTB2
   ASSERT_NO_FATAL_FAILURE(cmd2->UnExecute());
+  auto& vtbids5 = altvbkcontaining->template getPayloadIds<VTB>();
 
-  ASSERT_EQ(altvbkcontaining->vtbids.size(), 1);
-  ASSERT_EQ(altvbkcontaining->vtbids.at(0), vtb1.getId());
+  ASSERT_EQ(vtbids5.size(), 1);
+  ASSERT_EQ(vtbids5.at(0), vtb1.getId());
 
   // unexecute VTB1
   ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
-  ASSERT_EQ(altvbkcontaining->vtbids.size(), 0);
+  auto& vtbids6 = altvbkcontaining->template getPayloadIds<VTB>();
+
+  ASSERT_EQ(vtbids6.size(), 0);
 }

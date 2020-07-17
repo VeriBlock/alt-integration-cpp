@@ -211,7 +211,7 @@ bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param) {
   auto powLimit = ArithUint256(param.getPowLimit());
   bool negative = false;
   bool overflow = false;
-  auto target = ArithUint256::fromBits(block.bits, &negative, &overflow);
+  auto target = ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
 
   if (negative || overflow || target == 0 || target > powLimit) {
     return false;
@@ -226,7 +226,7 @@ bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
   auto minDiff = ArithUint256(param.getMinimumDifficulty());
   bool negative = false;
   bool overflow = false;
-  auto target = ArithUint256::fromBits(block.difficulty, &negative, &overflow);
+  auto target = ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
 
   if (negative || overflow || target == 0 || target < minDiff) {
     return false;

@@ -44,7 +44,7 @@ struct PopContextFixture : public ::testing::Test {
 
     // create endorsement of VBKTIP in BTC_A_51, and same endorsement in
     // BTC_B_101
-    auto btctx = remote.createBtcTxEndorsingVbkBlock(*vbkTip->header);
+    auto btctx = remote.createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
     // add BTC tx endorsing VBKTIP into next block after chain A tip
     chainAtip = remote.mineBtcBlocks(*chainAtip, 1);
     // add same btctx to mempool again
@@ -53,17 +53,20 @@ struct PopContextFixture : public ::testing::Test {
     chainBtip = remote.mineBtcBlocks(*chainBtip, 1);
 
     // create VBK pop tx that has 'block of proof=CHAIN A'
-    auto txa = remote.createVbkPopTxEndorsingVbkBlock(
-        *chainAtip->header, btctx, *vbkTip->header, lastKnownLocalBtcBlock());
+    auto txa = remote.createVbkPopTxEndorsingVbkBlock(chainAtip->getHeader(),
+                                                      btctx,
+                                                      vbkTip->getHeader(),
+                                                      lastKnownLocalBtcBlock());
 
     // mine txA into VBK 101-th block
     vbkTip = remote.mineVbkBlocks(1);
 
     // create VBK pop tx that has 'block of proof=CHAIN B'
-    auto txb = remote.createVbkPopTxEndorsingVbkBlock(*chainBtip->header,
-                                                      btctx,
-                                                      *vbkTip->pprev->header,
-                                                      lastKnownLocalBtcBlock());
+    auto txb =
+        remote.createVbkPopTxEndorsingVbkBlock(chainBtip->getHeader(),
+                                               btctx,
+                                               vbkTip->pprev->getHeader(),
+                                               lastKnownLocalBtcBlock());
 
     // mine this tx into 102-th block
     vbkTip = remote.mineVbkBlocks(1);
@@ -103,7 +106,7 @@ TEST_F(PopContextFixture, A) {
   std::vector<VbkBlock> vbkblocks;
   auto current = vbkTip;
   while (current && current->pprev) {
-    vbkblocks.push_back(*current->header);
+    vbkblocks.push_back(current->getHeader());
     current = current->pprev;
   }
   std::reverse(vbkblocks.begin(), vbkblocks.end());
@@ -125,9 +128,9 @@ TEST_F(PopContextFixture, A) {
     ASSERT_NE(it, remote.vbkPayloads.end());
     auto& vtbs = it->second;
 
-    ASSERT_TRUE(local.acceptBlock(*containing->header, state));
+    ASSERT_TRUE(local.acceptBlock(containing->getHeader(), state));
     ASSERT_TRUE(
-        local.addPayloads(containing->header->getHash(), {vtbs}, state));
+        local.addPayloads(containing->getHeader().getHash(), {vtbs}, state));
   };
 
   // and now accept VBK tip again, with VTBs

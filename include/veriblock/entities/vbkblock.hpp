@@ -10,18 +10,17 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/vbk_block_addon.hpp"
-#include "veriblock/entities/btcblock.hpp"
-#include "veriblock/entities/endorsements.hpp"
-#include "veriblock/fmt.hpp"
-#include "veriblock/hashutil.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/uint.hpp"
+#include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/vbk_block_addon.hpp>
+#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/entities/btcblock.hpp>
+#include <veriblock/entities/endorsements.hpp>
+#include <veriblock/fmt.hpp>
+#include <veriblock/hashutil.hpp>
+#include <veriblock/serde.hpp>
+#include <veriblock/uint.hpp>
 
 namespace altintegration {
-
-struct VbkBlockAddon;
 
 struct VbkBlock {
   using hash_t = uint192;
@@ -29,19 +28,11 @@ struct VbkBlock {
   using id_t = short_hash_t;
   using prev_hash_t = short_hash_t;
   using height_t = int32_t;
+  using nonce_t = int32_t;
   using keystone_t = uint72;
+  using merkle_t = uint128;
   using protecting_block_t = BtcBlock;
   using addon_t = VbkBlockAddon;
-
-  int32_t height{};
-  int16_t version{};
-  uint96 previousBlock{};
-  keystone_t previousKeystone{};
-  keystone_t secondPreviousKeystone{};
-  uint128 merkleRoot{};
-  int32_t timestamp{};
-  int32_t difficulty{};
-  int32_t nonce{};
 
   std::string toPrettyString() const;
 
@@ -143,6 +134,16 @@ struct VbkBlock {
   short_hash_t getId() const { return getShortHash(); }
 
   static std::string name() { return "VBK"; }
+
+  int32_t height{};
+  int16_t version{};
+  uint96 previousBlock{};
+  keystone_t previousKeystone{};
+  keystone_t secondPreviousKeystone{};
+  uint128 merkleRoot{};
+  int32_t timestamp{};
+  int32_t difficulty{};
+  int32_t nonce{};
 };
 
 template <typename JsonValue>
@@ -157,8 +158,8 @@ JsonValue ToJSON(const VbkBlock& b) {
   json::putStringKV(
       obj, "secondPreviousKeystone", HexStr(b.secondPreviousKeystone));
   json::putStringKV(obj, "merkleRoot", HexStr(b.merkleRoot));
-  json::putIntKV(obj, "timestamp", b.timestamp);
-  json::putIntKV(obj, "difficulty", b.difficulty);
+  json::putIntKV(obj, "timestamp", b.getBlockTime());
+  json::putIntKV(obj, "difficulty", b.getDifficulty());
   json::putIntKV(obj, "nonce", b.nonce);
   return obj;
 }

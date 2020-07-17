@@ -10,10 +10,11 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/blockchain/alt_block_addon.hpp"
-#include "veriblock/entities/endorsements.hpp"
-#include "veriblock/json.hpp"
-#include "veriblock/serde.hpp"
+#include <veriblock/blockchain/alt_block_addon.hpp>
+#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/entities/endorsements.hpp>
+#include <veriblock/json.hpp>
+#include <veriblock/serde.hpp>
 
 namespace altintegration {
 
@@ -25,13 +26,6 @@ struct AltBlock {
   using prev_hash_t = std::vector<uint8_t>;
   using protecting_block_t = VbkBlock;
   using addon_t = AltBlockAddon;
-
-  hash_t hash{};
-  hash_t previousBlock{};
-  uint32_t timestamp{};
-  height_t height{};
-
-  uint32_t getBlockTime() const noexcept { return timestamp; }
 
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
@@ -87,7 +81,9 @@ struct AltBlock {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
-  hash_t getHash() const { return hash; }
+  uint32_t getBlockTime() const noexcept;
+
+  hash_t getHash() const;
 
   friend bool operator==(const AltBlock& a, const AltBlock& b) {
     return a.hash == b.hash;
@@ -102,14 +98,19 @@ struct AltBlock {
   std::string toPrettyString() const {
     return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
   }
+
+  hash_t hash{};
+  hash_t previousBlock{};
+  uint32_t timestamp{};
+  height_t height{};
 };
 
 template <typename JsonValue>
 JsonValue ToJSON(const AltBlock& alt) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
-  json::putStringKV(object, "hash", HexStr(alt.hash));
+  json::putStringKV(object, "hash", HexStr(alt.getHash()));
   json::putStringKV(object, "previousBlock", HexStr(alt.previousBlock));
-  json::putIntKV(object, "timestamp", alt.timestamp);
+  json::putIntKV(object, "timestamp", alt.getBlockTime());
   json::putIntKV(object, "height", alt.height);
   return object;
 }

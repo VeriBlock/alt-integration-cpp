@@ -28,10 +28,10 @@ TEST_F(Scenario7, scenario_7) {
   mineAltBlocks(10, chain);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
 
-  generatePopTx(*endorsedVbkBlock1->header);
+  generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
@@ -51,7 +51,7 @@ TEST_F(Scenario7, scenario_7) {
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
 
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);

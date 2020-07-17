@@ -45,7 +45,7 @@ struct AddEndorsement : public Command {
 
     // endorsement validity window
     auto window = ed_->getParams().getEndorsementSettlementInterval();
-    auto minHeight = (std::max)(containing->height - window, 0);
+    auto minHeight = (std::max)(containing->getHeight() - window, 0);
     Chain<protected_index_t> chain(minHeight, containing);
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
@@ -54,13 +54,13 @@ struct AddEndorsement : public Command {
                            "Endorsed block not found in the tree");
     }
 
-    if (containing->height - endorsed->height > window) {
+    if (containing->getHeight() - endorsed->getHeight() > window) {
       return state.Invalid(protected_block_t::name() + "-expired",
                            "Endorsement expired");
     }
 
-    if (chain[endorsed->height] == nullptr ||
-        endorsed->getHash() != chain[endorsed->height]->getHash()) {
+    if (chain[endorsed->getHeight()] == nullptr ||
+        endorsed->getHash() != chain[endorsed->getHeight()]->getHash()) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
@@ -106,9 +106,8 @@ struct AddEndorsement : public Command {
                        duplicate->toShortPrettyString()));
     }
 
-    containing->containingEndorsements.insert(std::make_pair(e_->id, e_));
+    containing->insertContainingEndorsement(e_);
     endorsed->endorsedBy.push_back(e_.get());
-
     return true;
   }
 
@@ -125,8 +124,9 @@ struct AddEndorsement : public Command {
         "failed to roll back AddEndorsement: the endorsed block does not "
         "exist");
 
-    auto endorsement_it = containing->containingEndorsements.find(e_->id);
-    VBK_ASSERT(endorsement_it != containing->containingEndorsements.end());
+    auto& containingEndorsements = containing->getContainingEndorsements();
+    auto endorsement_it = containingEndorsements.find(e_->id);
+    VBK_ASSERT(endorsement_it != containingEndorsements.end());
 
     // erase endorsedBy
     {
@@ -149,7 +149,7 @@ struct AddEndorsement : public Command {
     }
 
     // erase endorsement
-    containing->containingEndorsements.erase(endorsement_it);
+    containing->removeContainingEndorsement(e_->id);
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

@@ -18,12 +18,12 @@ TEST_F(Scenario4, scenario_4) {
   auto vbkTip = *popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  auto* endorsedVbkBlock1 = vbkTip.getAncestor(vbkTip.height - 10);
-  auto* endorsedVbkBlock2 = vbkTip.getAncestor(vbkTip.height - 11);
-  generatePopTx(*endorsedVbkBlock1->header);
+  auto* endorsedVbkBlock1 = vbkTip.getAncestor(vbkTip.getHeight() - 10);
+  auto* endorsedVbkBlock2 = vbkTip.getAncestor(vbkTip.getHeight() - 11);
+  generatePopTx(endorsedVbkBlock1->getHeader());
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
   vbkTip = *popminer->mineVbkBlocks(50);
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
   vbkTip = *containingVbkBlock2;
@@ -62,8 +62,9 @@ TEST_F(Scenario4, scenario_4) {
 
   altPayloads1.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, altPayloads1, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
+  EXPECT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloads1, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
@@ -83,8 +84,9 @@ TEST_F(Scenario4, scenario_4) {
 
   altPayloads2.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, altPayloads2, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
+  EXPECT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloads2, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state
@@ -105,8 +107,8 @@ TEST_F(Scenario4, scenario_4) {
   vbkTip = *popminer->vbk().getBestChain().tip();
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.hash, altPayloads3, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), altPayloads3, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // check vbk tree state

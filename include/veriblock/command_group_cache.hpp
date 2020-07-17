@@ -16,7 +16,7 @@ namespace altintegration {
 static const size_t DEFAULT_CACHE_SIZE = 10000;
 
 struct CommandGroupCache {
-  using id_t = typename CommandGroup::id_t;
+  using id_t = std::vector<uint8_t>;
   CommandGroupCache(const size_t maxsize = DEFAULT_CACHE_SIZE)
       : _maxsize(maxsize) {}
 

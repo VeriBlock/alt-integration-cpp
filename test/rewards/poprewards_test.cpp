@@ -43,7 +43,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.hash, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   // ALT has 11 blocks + endorsement block
   EXPECT_EQ(altchain.size(), 12);

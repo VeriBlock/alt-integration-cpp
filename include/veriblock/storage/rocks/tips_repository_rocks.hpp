@@ -39,7 +39,7 @@ std::vector<uint8_t> serializeTipsToRocks(Block from) {
   WriteStream s;
   auto hash = from.getHash();
   writeSingleByteLenValue(s, hash);
-  s.writeBE<uint32_t>((uint32_t)from.height);
+  s.writeBE<uint32_t>((uint32_t)from.getHeight());
   return s.data();
 }
 

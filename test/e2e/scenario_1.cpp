@@ -85,38 +85,39 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     auto* vbkAendorsed = popminer->mineVbkBlocks(*vbkFork, 20);
     auto* vbkBendorsed = popminer->mineVbkBlocks(*vbkFork, 20);
 
-    auto btctxA = popminer->createBtcTxEndorsingVbkBlock(*vbkAendorsed->header);
+    auto btctxA = popminer->createBtcTxEndorsingVbkBlock(vbkAendorsed->getHeader());
     auto* btcAContaining = popminer->mineBtcBlocks(*btcAtip, 1);
     btcAtip = popminer->mineBtcBlocks(*btcAContaining, 2);
 
-    auto btctxB = popminer->createBtcTxEndorsingVbkBlock(*vbkBendorsed->header);
+    auto btctxB =
+        popminer->createBtcTxEndorsingVbkBlock(vbkBendorsed->getHeader());
     auto* btcBContaining = popminer->mineBtcBlocks(*btcBtip, 1);
     btcBtip = popminer->mineBtcBlocks(*btcBContaining, 2);
 
     EXPECT_EQ(btcBtip->getHash(),
               popminer->btc().getBestChain().tip()->getHash());
-    EXPECT_EQ(btcAtip->height, 55);
-    EXPECT_EQ(btcBtip->height, 57);
+    EXPECT_EQ(btcAtip->getHeight(), 55);
+    EXPECT_EQ(btcBtip->getHeight(), 57);
 
     auto vbktxA = popminer->createVbkPopTxEndorsingVbkBlock(
-        *btcAContaining->header,
+        btcAContaining->getHeader(),
         btctxA,
-        *vbkAendorsed->header,
+        vbkAendorsed->getHeader(),
         popminer->getBtcParams().getGenesisBlock().getHash());
     vbkAtip = popminer->mineVbkBlocks(*vbkAendorsed, 5);
-    EXPECT_EQ(btcAtip->height, 55);
-    EXPECT_EQ(btcBtip->height, 57);
+    EXPECT_EQ(btcAtip->getHeight(), 55);
+    EXPECT_EQ(btcBtip->getHeight(), 57);
 
     auto vbktxB = popminer->createVbkPopTxEndorsingVbkBlock(
-        *btcBContaining->header,
+        btcBContaining->getHeader(),
         btctxB,
-        *vbkBendorsed->header,
+        vbkBendorsed->getHeader(),
         popminer->getBtcParams().getGenesisBlock().getHash());
-    EXPECT_EQ(btcAtip->height, 55);
-    EXPECT_EQ(btcBtip->height, 57);
+    EXPECT_EQ(btcAtip->getHeight(), 55);
+    EXPECT_EQ(btcBtip->getHeight(), 57);
     vbkBtip = popminer->mineVbkBlocks(*vbkBendorsed, 5);
-    EXPECT_EQ(btcAtip->height, 55);
-    EXPECT_EQ(btcBtip->height, 57);
+    EXPECT_EQ(btcAtip->getHeight(), 55);
+    EXPECT_EQ(btcBtip->getHeight(), 57);
 
     altchain = {altparam.getBootstrapBlock()};
     mineAltBlocks(100, altchain);
@@ -138,7 +139,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 
 TEST_F(Scenario1, scenario_1) {
   // Step 1
-  ASSERT_EQ(vbkAtip->height, vbkBtip->height);
+  ASSERT_EQ(vbkAtip->getHeight(), vbkBtip->getHeight());
   ASSERT_EQ(*vbkBtip,
             *popminer->vbk().getBestChain().tip());
 
@@ -160,7 +161,7 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   ASSERT_NE(btcAtip, nullptr);
-  ASSERT_GE(btcAtip->height, 53);
+  ASSERT_GE(btcAtip->getHeight(), 53);
 
   // expect that ALTBTC tree has all blocks from BTC chain A, until A53,
   // including

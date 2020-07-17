@@ -39,8 +39,8 @@ TEST(VbkBlock, Deserialize) {
   EXPECT_EQ(block.secondPreviousKeystone.toHex(),
             defaultBlock.secondPreviousKeystone.toHex());
   EXPECT_EQ(block.merkleRoot.toHex(), defaultBlock.merkleRoot.toHex());
-  EXPECT_EQ(block.timestamp, defaultBlock.timestamp);
-  EXPECT_EQ(block.difficulty, defaultBlock.difficulty);
+  EXPECT_EQ(block.getBlockTime(), defaultBlock.getBlockTime());
+  EXPECT_EQ(block.getDifficulty(), defaultBlock.getDifficulty());
   EXPECT_EQ(block.nonce, defaultBlock.nonce);
 }
 
