@@ -49,11 +49,11 @@ TEST_F(MemPoolFixture, removePayloads_test1) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
-  generatePopTx(*endorsedVbkBlock1->header);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+  generatePopTx(endorsedVbkBlock1->getHeader());
   popminer->mineBtcBlocks(100);
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   vbkTip = popminer->mineVbkBlocks(1);
 
