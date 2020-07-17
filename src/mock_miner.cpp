@@ -41,6 +41,23 @@ bool mineBlocks(const uint32_t& n,
   return true;
 }
 
+// wrappers that prevent the block from being deleted
+template <typename BlockTree, typename Block>
+bool acceptBlock(BlockTree & tree, const Block & block, ValidationState & state) {
+    if (!tree.acceptBlock(block, state)) {
+        return false;
+    }
+    auto * index = tree.getBlockIndex(block.getHash());
+    VBK_ASSERT(index != nullptr && "could not find the block we have just added");
+    index->addRef(0);
+    return true;
+}
+template <typename BlockTree, typename BlockIndex>
+void removeLeaf(BlockTree & tree, BlockIndex & index) {
+    index.removeRef(0);
+    return tree.removeLeaf(index);
+}
+
 VbkTx MockMiner::createVbkTxEndorsingAltBlock(
     const PublicationData& publicationData) {
   VbkTx transaction;
@@ -94,11 +111,9 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
   // since we inserted in reverse order, we need to reverse context blocks
   std::reverse(atv.context.begin(), atv.context.end());
 
-  if (!vbktree.acceptBlock(containingBlock, state)) {
+  if (!acceptBlock(vbktree, containingBlock, state)) {
     throw std::domain_error(state.toString());
   }
-  // a hack to prevent the block from being deleted
-  vbktree.getBlockIndex(containingBlock.getHash())->addRef(0);
 
   return atv;
 }
@@ -289,17 +304,14 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                  });
 
   auto containingHash = containingBlock.getHash();
-  if (!tree.acceptBlock(containingBlock, state)) {
+  if (!acceptBlock(tree, containingBlock, state)) {
     throw std::domain_error(state.toString());
   }
-  // a hack to prevent the block from being deleted
-  tree.getBlockIndex(containingBlock.getHash())->addRef(0);
 
   if (!tree.addPayloads(containingHash, vtbs, state)) {
     auto* containingIndex = tree.getBlockIndex(containingHash);
     VBK_ASSERT(containingIndex != nullptr);
-    containingIndex->removeRef(0);
-    tree.removeLeaf(*containingIndex);
+    removeLeaf(tree, *containingIndex);
     throw std::domain_error(state.toString());
   }
   vbkPayloads[containingHash] = vtbs;
@@ -316,11 +328,9 @@ BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
     //! contain all transactions from mempool
     BtcMerkleTree mtree(hashAll<BtcTx>(btcmempool));
     auto block = btc_miner.createNextBlock(tip, mtree.getMerkleRoot());
-    if (!vbktree.btc().acceptBlock(block, state_)) {
+    if (!acceptBlock(vbktree.btc(), block, state_)) {
       throw std::domain_error(state_.GetDebugMessage());
     }
-    // a hack to prevent the block from being deleted
-    vbktree.btc().getBlockIndex(block.getHash())->addRef(0);
 
     btctxes[block.getHash()] = btcmempool;
 
@@ -332,11 +342,9 @@ BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
     auto* index = vbktree.btc().getBlockIndex(last);
     assert(index);
     auto block = btc_miner.createNextBlock(*index);
-    if (!vbktree.btc().acceptBlock(block, state_)) {
+    if (!acceptBlock(vbktree.btc(), block, state_)) {
       throw std::domain_error(state_.GetDebugMessage());
     }
-    // a hack to prevent the block from being deleted
-    vbktree.btc().getBlockIndex(block.getHash())->addRef(0);
     last = block.getHash();
   }
 
@@ -362,11 +370,9 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
     auto* index = vbktree.getBlockIndex(last);
     assert(index);
     auto block = vbk_miner.createNextBlock(*index);
-    if (!vbktree.acceptBlock(block, state_)) {
+    if (!acceptBlock(vbktree, block, state_)) {
       throw std::domain_error(state_.GetDebugMessage());
     }
-    // a hack to prevent the block from being deleted
-    vbktree.getBlockIndex(block.getHash())->addRef(0);
     last = block.getHash();
   }
 
