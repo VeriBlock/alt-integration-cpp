@@ -283,7 +283,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                          "It is forbidden to add payloads to bootstrap block");
   }
 
-  // once we plug the validation hole, we want this to be an assert
+  // TODO: once we plug the validation hole, we want this to be an assert
   if (!index->isValid()) {
     // adding payloads to an invalid block will not result in a state change
     return state.Invalid(
