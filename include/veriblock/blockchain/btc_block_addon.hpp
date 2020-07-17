@@ -44,29 +44,18 @@ struct BtcBlockAddon {
     setDirty();
   }
 
-  void serializeRefs(WriteStream& w) const {
-    w.writeBE<uint32_t>(refs.size());
-    for (auto ref : refs) {
-      w.writeBE<ref_height_t>(ref);
-    }
-  }
-
   void toRaw(WriteStream& w) const {
     // save only refs
-    return serializeRefs(w);
+    writeArrayOf<ref_height_t>(
+        w, refs, [](WriteStream& stream, ref_height_t value) {
+          stream.writeBE<ref_height_t>(value);
+        });
   }
 
-  // not static, on purpose
-  void deserializeRefs(ReadStream& r) {
-    auto refCount = r.readBE<uint32_t>();
-    refs.clear();
-    refs.reserve(refCount);
-    for (uint32_t i = 0; i < refCount; i++) {
-      refs.push_back(r.readBE<uint32_t>());
-    }
+  void initAddonFromRaw(ReadStream& r) {
+    refs = readArrayOf<ref_height_t>(
+        r, [](ReadStream& stream) { return stream.readBE<ref_height_t>(); });
   }
-
-  void initAddonFromRaw(ReadStream& r) { return deserializeRefs(r); }
 
   bool operator==(const BtcBlockAddon& o) const {
     // comparing reference counts does not seem like a good idea
