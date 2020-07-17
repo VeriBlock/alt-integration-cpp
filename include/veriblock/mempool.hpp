@@ -40,7 +40,7 @@ struct MemPool {
 
     PopData toPopData() const;
 
-    bool emptyConnectedPayloads() const { return atvs.empty() && vtbs.empty(); }
+    bool empty() const { return atvs.empty() && vtbs.empty(); }
 
     void removeVTB(const VTB::id_t& vtb_id);
     void removeATV(const ATV::id_t& atv_id);
