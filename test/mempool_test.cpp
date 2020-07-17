@@ -81,21 +81,21 @@ TEST_F(MemPoolFixture, removePayloads_test1) {
   EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData v_popData = checkedGetPop();
+  PopData popData = checkedGetPop();
 
-  EXPECT_EQ(v_popData.vtbs.size(), 2);
-  EXPECT_EQ(v_popData.atvs.size(), 1);
-  EXPECT_EQ(v_popData.atvs.at(0), atv);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv);
 
   // do the same to show that from mempool do not remove payloads
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = checkedGetPop();
+  popData = checkedGetPop();
 
-  EXPECT_EQ(v_popData.vtbs.size(), 2);
-  EXPECT_EQ(v_popData.atvs.at(0), atv);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.at(0), atv);
 
   // remove from mempool
-  mempool->removePayloads(v_popData);
+  mempool->removePayloads(popData);
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
 
@@ -103,10 +103,10 @@ TEST_F(MemPoolFixture, removePayloads_test1) {
   ASSERT_TRUE(mempool->getMap<VTB>().empty());
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 
-  v_popData = checkedGetPop();
-  EXPECT_EQ(v_popData.context.size(), 0);
-  EXPECT_EQ(v_popData.vtbs.size(), 0);
-  EXPECT_EQ(v_popData.atvs.size(), 0);
+  popData = checkedGetPop();
+  EXPECT_EQ(popData.context.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 0);
+  EXPECT_EQ(popData.atvs.size(), 0);
 }
 
 TEST_F(MemPoolFixture, removePayloads_test2) {
@@ -146,32 +146,26 @@ TEST_F(MemPoolFixture, removePayloads_test2) {
   EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData v_popData = checkedGetPop();
+  PopData popData = checkedGetPop();
 
-  EXPECT_EQ(v_popData.vtbs.size(), 2);
-  EXPECT_EQ(v_popData.atvs.size(), 1);
-  EXPECT_EQ(v_popData.atvs.at(0), atv);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv);
 
-  // do the same to show that from mempool do not remove payloads
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = checkedGetPop();
+  // modify popData to not remove all payloads
+  popData.atvs.clear();
 
-  EXPECT_EQ(v_popData.vtbs.size(), 2);
-  EXPECT_EQ(v_popData.atvs.at(0), atv);
-
-  // remove from mempool
-  mempool->removePayloads(v_popData);
+  mempool->removePayloads(popData);
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
 
-  ASSERT_TRUE(mempool->getMap<ATV>().empty());
+  ASSERT_FALSE(mempool->getMap<ATV>().empty());
   ASSERT_TRUE(mempool->getMap<VTB>().empty());
-  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
-
-  v_popData = checkedGetPop();
-  EXPECT_EQ(v_popData.context.size(), 0);
-  EXPECT_EQ(v_popData.vtbs.size(), 0);
-  EXPECT_EQ(v_popData.atvs.size(), 0);
+  ASSERT_FALSE(mempool->getMap<VbkBlock>().empty());
+  ASSERT_EQ(mempool->getMap<VbkBlock>().size(), 1);
+  ASSERT_EQ(mempool->getMap<ATV>().size(), 1);
+  ASSERT_EQ(mempool->getMap<VbkBlock>().begin()->second->getHash(),
+            mempool->getMap<ATV>().begin()->second->blockOfProof.getHash());
 }
 
 TEST_F(MemPoolFixture, removed_payloads_cache_test) {
