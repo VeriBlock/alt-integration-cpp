@@ -18,10 +18,6 @@ struct StorageManager {
 
   virtual void clear() = 0;
 
-  PopStorage& getPopStorage() { return *_storagePop; }
-
-  const PopStorage& getPopStorage() const { return *_storagePop; }
-
   PayloadsStorage& getPayloadsStorage() { return *_storagePayloads; }
 
   const PayloadsStorage& getPayloadsStorage() const {
@@ -29,7 +25,6 @@ struct StorageManager {
   }
 
  protected:
-  std::shared_ptr<PopStorage> _storagePop;
   std::shared_ptr<PayloadsStorage> _storagePayloads;
 };
 

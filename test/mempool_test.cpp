@@ -23,7 +23,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
     auto containingBlock = generateNextBlock(*chain.rbegin());
     chain.push_back(containingBlock);
     ASSERT_TRUE(alttree.acceptBlock(containingBlock, state));
-    ASSERT_TRUE(alttree.addPayloads(containingBlock.getHash(), pop, state));
+    ASSERT_TRUE(alttree.addPayloads(containingBlock.getHash(), pop, state)) << state.toString();
     ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
     ASSERT_TRUE(state.IsValid());
   }

@@ -11,10 +11,10 @@
 #include <vector>
 
 #include <veriblock/blockchain/alt_block_addon.hpp>
-#include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/json.hpp>
 #include <veriblock/serde.hpp>
+#include <veriblock/blockchain/block_index.hpp>
 
 namespace altintegration {
 
@@ -123,13 +123,6 @@ inline void PrintTo(const AltBlock& block, ::std::ostream* os) {
 }  // namespace altintegration
 
 namespace std {
-
-template <>
-struct hash<std::vector<uint8_t>> {
-  size_t operator()(const std::vector<uint8_t>& x) const {
-    return std::hash<std::string>{}(std::string{x.begin(), x.end()});
-  }
-};
 
 template <>
 struct hash<altintegration::AltBlock> {

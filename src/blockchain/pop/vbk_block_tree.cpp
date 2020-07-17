@@ -10,7 +10,6 @@
 #include <veriblock/finalizer.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/reversed_range.hpp>
-#include <veriblock/storage/blockchain_storage_util.hpp>
 
 namespace altintegration {
 
@@ -90,6 +89,7 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(success);
   }
 
+  auto containingHash = index.getHash();
   for (const auto& pid : pids) {
     auto& vtbids = index.getPayloadIds<VTB>();
     auto it = std::find(vtbids.begin(), vtbids.end(), pid);
@@ -98,7 +98,7 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(it != vtbids.end() &&
                "could not find the payload to remove");
 
-    if (!storagePayloads_.isValid<VTB, index_t>(pid, index)) {
+    if (!storage_.getValidity(containingHash, pid)) {
       revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
@@ -129,20 +129,22 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
                 pid.toPrettyString(),
                 index.toPrettyString());
 
+  auto containingHash = index.getHash();
   auto& vtbids = index.getPayloadIds<VTB>();
+
   auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
-  VBK_ASSERT(vtbid_it != vtbids.end() &&
+  VBK_ASSERT(vtbid_it != index.vtbids.end() &&
              "state corruption: the block does not contain the payload");
 
   // removing an invalid payload might render the block valid
-  if (!storagePayloads_.isValid<VTB, index_t>(pid, index)) {
+  if (!storage_.getValidity(containingHash, pid)) {
     revalidateSubtree(index, BLOCK_FAILED_POP, false);
   }
 
   bool isApplied = activeChain_.contains(&index);
 
   if (isApplied) {
-    auto cmdGroups = storagePayloads_.loadCommands<VbkBlockTree>(index, *this);
+    auto cmdGroups = storage_.loadCommands<VbkBlockTree>(index, *this);
 
     auto group_it = std::find_if(
         cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
@@ -241,6 +243,13 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   index->insertPayloadIds<VTB>(pids);
   storagePayloads_.savePayloadsMany(payloads);
 
+  auto containingHash = index->getHash();
+  for (const auto& pid : pids) {
+    storage_.addVbkPayloadIndex(containingHash, pid.asVector());
+  }
+
+  storage_.savePayloads(payloads);
+
   // don't defer fork resolution in the acceptBlock+addPayloads flow until the
   // validation hole is plugged
   doUpdateAffectedTips(*index, state);
@@ -251,6 +260,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   // roll back our attempted changes
   for (const auto& pid : pids) {
+    auto pid = payload.getId();
+    storage_.removeVbkPayloadIndex(containingHash, pid.asVector());
     unsafelyRemovePayload(*index, pid, /*shouldDetermineBestChain =*/false);
   }
 
@@ -302,13 +313,20 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
     return state.Invalid("load-block");
   }
 
+  storage_.addBlockToIndex(*current);
+
   return true;
+}
+
+void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
+  storage_.removePayloadsIndex(toRemove);
+  BaseBlockTree::removeSubtree(toRemove);
 }
 
 template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename VbkBlockTree::index_t& index, VbkBlockTree& tree) {
-  return loadCommandsStorage<VbkBlockTree, VTB>(index, tree);
+  return loadCommandsStorage<VbkBlockTree, VTB>(DB_VTB_PREFIX, index, tree);
 }
 
 template <>
