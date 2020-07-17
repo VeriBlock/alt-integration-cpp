@@ -14,7 +14,7 @@
 
 namespace altintegration {
 
-template <typename BlockIndexT, typename EndorsementT>
+template <typename EndorsementT>
 struct PopState {
   using endorsement_t = EndorsementT;
   using eid_t = typename endorsement_t::id_t;
@@ -29,12 +29,12 @@ struct PopState {
 
   void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
     _containingEndorsements.insert(std::make_pair(e->id, std::move(e)));
-    static_cast<BlockIndexT*>(this)->setDirty();
+    setDirty();
   }
 
   void removeContainingEndorsement(const eid_t& eid) {
     _containingEndorsements.erase(eid);
-    static_cast<BlockIndexT*>(this)->setDirty();
+    setDirty();
   }
 
   bool operator==(const PopState& o) const {
@@ -60,6 +60,8 @@ struct PopState {
   //! (stored as vector) list of containing endorsements in this block
   std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
       _containingEndorsements{};
+
+  void setDirty();
 
   void setNull() {
     _containingEndorsements.clear();

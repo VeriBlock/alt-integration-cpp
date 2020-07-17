@@ -9,4 +9,5 @@ add_library(blockchain OBJECT
         vbk_chain_params_serializable.cpp
         alt_block_addon.cpp
         vbk_block_addon.cpp
+        btc_block_addon.cpp
         )

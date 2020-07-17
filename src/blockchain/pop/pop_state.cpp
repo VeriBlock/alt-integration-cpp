@@ -4,20 +4,20 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/blockchain/vbk_block_addon.hpp>
 #include <veriblock/entities/vbkblock.hpp>
-#include <veriblock/entities/vtb.hpp>
+#include <veriblock/entities/altblock.hpp>
+#include <veriblock/blockchain/pop/pop_state.hpp>
 
 namespace altintegration {
 
-void VbkBlockAddon::setDirty() {
+template <>
+void PopState<VbkEndorsement>::setDirty() {
   static_cast<BlockIndex<VbkBlock>*>(this)->setDirty();
 }
 
 template <>
-const std::vector<typename VTB::id_t>& VbkBlockAddon::getPayloadIds<VTB>()
-    const {
-  return _vtbids;
+void PopState<AltEndorsement>::setDirty() {
+  static_cast<BlockIndex<AltBlock>*>(this)->setDirty();
 }
 
 }  // namespace altintegration

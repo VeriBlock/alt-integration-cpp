@@ -12,45 +12,43 @@
 
 namespace altintegration {
 
-template <>
+void AltBlockAddon::setDirty() {
+  static_cast<BlockIndex<AltBlock>*>(this)->setDirty();
+}
+
 template <>
 const std::vector<typename ATV::id_t>&
-AltBlockAddon<BlockIndex<AltBlock>>::getPayloadIds<ATV>() const {
+AltBlockAddon::getPayloadIds<ATV>() const {
   return _atvids;
 }
 
 template <>
-template <>
 const std::vector<typename VTB::id_t>&
-AltBlockAddon<BlockIndex<AltBlock>>::getPayloadIds<VTB>() const {
+AltBlockAddon::getPayloadIds<VTB>() const {
   return _vtbids;
 }
 
 template <>
-template <>
 const std::vector<typename VbkBlock::id_t>&
-AltBlockAddon<BlockIndex<AltBlock>>::getPayloadIds<VbkBlock>() const {
+AltBlockAddon::getPayloadIds<VbkBlock>() const {
   return _vbkblockids;
 }
 
 template <>
-template <>
 std::vector<typename ATV::id_t>&
-AltBlockAddon<BlockIndex<AltBlock>>::getPayloadIdsInner<ATV>() {
+AltBlockAddon::getPayloadIdsInner<ATV>() {
   return _atvids;
 }
 
 template <>
-template <>
 std::vector<typename VTB::id_t>&
-AltBlockAddon<BlockIndex<AltBlock>>::getPayloadIdsInner<VTB>() {
+AltBlockAddon::getPayloadIdsInner<VTB>() {
   return _vtbids;
 }
 
 template <>
-template <>
 std::vector<typename VbkBlock::id_t>&
-AltBlockAddon<BlockIndex<AltBlock>>::getPayloadIdsInner<VbkBlock>() {
+AltBlockAddon::getPayloadIdsInner<VbkBlock>() {
   return _vbkblockids;
 }
 

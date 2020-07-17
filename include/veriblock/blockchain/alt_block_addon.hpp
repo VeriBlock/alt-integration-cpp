@@ -15,8 +15,7 @@ namespace altintegration {
 
 struct PopData;
 
-template <typename BlockIndexT>
-struct AltBlockAddon : public PopState<BlockIndexT, AltEndorsement> {
+struct AltBlockAddon : public PopState<AltEndorsement> {
   using payloads_t = PopData;
 
   // TODO: refactor base block tree, and move chainwork to blocktree.hpp, then
@@ -31,7 +30,7 @@ struct AltBlockAddon : public PopState<BlockIndexT, AltEndorsement> {
     bool a = _atvids == o._atvids;
     bool b = _vtbids == o._vtbids;
     bool c = _vbkblockids == o._vbkblockids;
-    bool d = PopState<BlockIndexT, AltEndorsement>::operator==(o);
+    bool d = PopState<AltEndorsement>::operator==(o);
     return a && b && c && d;
   }
 
@@ -44,21 +43,21 @@ struct AltBlockAddon : public PopState<BlockIndexT, AltEndorsement> {
     auto it = std::find(payloads.begin(), payloads.end(), pid);
     VBK_ASSERT(it != payloads.end());
     payloads.erase(it);
-    static_cast<BlockIndexT*>(this)->setDirty();
+    setDirty();
   }
 
   template <typename pop_t>
   void insertPayloadId(const typename pop_t::id_t& pid) {
     auto& payloads = getPayloadIdsInner<pop_t>();
     payloads.push_back(pid);
-    static_cast<BlockIndexT*>(this)->setDirty();
+    setDirty();
   }
 
   template <typename pop_t>
   void insertPayloadIds(const std::vector<typename pop_t::id_t>& pids) {
     auto& payloads = getPayloadIdsInner<pop_t>();
     payloads.insert(payloads.end(), pids.begin(), pids.end());
-    static_cast<BlockIndexT*>(this)->setDirty();
+    setDirty();
   }
 
   std::string toPrettyString() const {
@@ -69,7 +68,7 @@ struct AltBlockAddon : public PopState<BlockIndexT, AltEndorsement> {
   }
 
   void toRaw(WriteStream& w) const {
-    PopState<BlockIndexT, AltEndorsement>::toRaw(w);
+    PopState<AltEndorsement>::toRaw(w);
     writeArrayOf<uint256>(w, _atvids, writeSingleByteLenValue);
     writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
     writeArrayOf<uint96>(w, _vbkblockids, writeSingleByteLenValue);
@@ -84,8 +83,10 @@ struct AltBlockAddon : public PopState<BlockIndexT, AltEndorsement> {
   // VbkBlock::id_t
   std::vector<uint96> _vbkblockids;
 
+  void setDirty();
+
   void setNull() {
-    PopState<BlockIndexT, AltEndorsement>::setNull();
+    PopState<AltEndorsement>::setNull();
     chainWork = 0;
     _atvids.clear();
     _vtbids.clear();
@@ -93,7 +94,7 @@ struct AltBlockAddon : public PopState<BlockIndexT, AltEndorsement> {
   }
 
   void initAddonFromRaw(ReadStream& r) {
-    PopState<BlockIndexT, AltEndorsement>::initAddonFromRaw(r);
+    PopState<AltEndorsement>::initAddonFromRaw(r);
     _atvids = readArrayOf<uint256>(
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
     _vtbids = readArrayOf<uint256>(

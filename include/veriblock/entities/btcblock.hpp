@@ -28,7 +28,7 @@ struct BtcBlock {
   using height_t = int32_t;
   using nonce_t = uint32_t;
   using merkle_t = uint256;
-  using addon_t = BtcBlockAddon<BlockIndex<BtcBlock>>;
+  using addon_t = BtcBlockAddon;
 
   static BtcBlock fromHex(const std::string& hex);
 

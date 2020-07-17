@@ -16,12 +16,11 @@ namespace altintegration {
 
 struct VTB;
 
-template <typename BlockIndexT>
 struct VbkBlockAddon :
     // for endorsement map
-    public PopState<BlockIndexT, VbkEndorsement>,
+    public PopState<VbkEndorsement>,
     // for chainwork + ref
-    public BtcBlockAddon<BlockIndexT> {
+    public BtcBlockAddon {
   using payloads_t = VTB;
 
   bool payloadsIdsEmpty() const { return _vtbids.empty(); }
@@ -34,25 +33,25 @@ struct VbkBlockAddon :
     auto it = std::find(_vtbids.begin(), _vtbids.end(), pid);
     VBK_ASSERT(it != _vtbids.end());
     _vtbids.erase(it);
-    static_cast<BlockIndexT*>(this)->setDirty();
+    setDirty();
   }
 
   template <typename pop_t>
   void insertPayloadId(const typename pop_t::id_t& pid) {
     _vtbids.push_back(pid);
-    static_cast<BlockIndexT*>(this)->setDirty();
+    setDirty();
   }
 
   template <typename pop_t>
   void insertPayloadIds(const std::vector<typename pop_t::id_t>& pids) {
     _vtbids.insert(_vtbids.end(), pids.begin(), pids.end());
-    static_cast<BlockIndexT*>(this)->setDirty();
+    setDirty();
   }
 
   bool operator==(const VbkBlockAddon& o) const {
     bool a = _vtbids == o._vtbids;
-    bool b = BtcBlockAddon<BlockIndexT>::operator==(o);
-    bool c = PopState<BlockIndexT, VbkEndorsement>::operator==(o);
+    bool b = BtcBlockAddon::operator==(o);
+    bool c = PopState<VbkEndorsement>::operator==(o);
     return a && b && c;
   }
 
@@ -61,8 +60,8 @@ struct VbkBlockAddon :
   }
 
   void toRaw(WriteStream& w) const {
-    BtcBlockAddon<BlockIndexT>::toRaw(w);
-    PopState<BlockIndexT, VbkEndorsement>::toRaw(w);
+    BtcBlockAddon::toRaw(w);
+    PopState<VbkEndorsement>::toRaw(w);
     writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
   }
 
@@ -70,15 +69,17 @@ struct VbkBlockAddon :
   // VTB::id_t
   std::vector<uint256> _vtbids;
 
+  void setDirty();
+
   void setNull() {
-    BtcBlockAddon<BlockIndexT>::setNull();
-    PopState<BlockIndexT, VbkEndorsement>::setNull();
+    BtcBlockAddon::setNull();
+    PopState<VbkEndorsement>::setNull();
     _vtbids.clear();
   }
 
   void initAddonFromRaw(ReadStream& r) {
-    BtcBlockAddon<BlockIndexT>::initAddonFromRaw(r);
-    PopState<BlockIndexT, VbkEndorsement>::initAddonFromRaw(r);
+    BtcBlockAddon::initAddonFromRaw(r);
+    PopState<VbkEndorsement>::initAddonFromRaw(r);
 
     _vtbids = readArrayOf<uint256>(
         r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });

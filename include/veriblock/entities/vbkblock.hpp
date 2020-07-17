@@ -32,7 +32,7 @@ struct VbkBlock {
   using keystone_t = uint72;
   using merkle_t = uint128;
   using protecting_block_t = BtcBlock;
-  using addon_t = VbkBlockAddon<BlockIndex<VbkBlock>>;
+  using addon_t = VbkBlockAddon;
 
   std::string toPrettyString() const;
 

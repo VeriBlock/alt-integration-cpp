@@ -25,7 +25,7 @@ struct AltBlock {
   using hash_t = std::vector<uint8_t>;
   using prev_hash_t = std::vector<uint8_t>;
   using protecting_block_t = VbkBlock;
-  using addon_t = AltBlockAddon<BlockIndex<AltBlock>>;
+  using addon_t = AltBlockAddon;
 
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
