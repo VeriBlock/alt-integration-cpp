@@ -9,7 +9,7 @@
 #include <vector>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/logger.hpp>
-#include <veriblock/storage/batch.hpp>
+#include <veriblock/storage/batch_adaptor.hpp>
 #include <veriblock/validation_state.hpp>
 
 namespace altintegration {
@@ -38,7 +38,7 @@ bool LoadTree(
 
 //! Save blocks and tip to batch
 template <typename BlockTreeT>
-void SaveTree(const BlockTreeT& tree, Batch& batch) {
+void SaveTree(const BlockTreeT& tree, BatchAdaptor& batch) {
   // TODO: add dirty flag and write only dirty blocks
   for (auto& block : tree.getBlocks()) {
     batch.writeBlock(*block.second);

@@ -7,8 +7,7 @@
 
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
-#include <veriblock/storage/batch.hpp>
-#include <veriblock/storage/blockchain_storage_util.hpp>
+#include <veriblock/storage/batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
 #include "veriblock/command_group_cache.hpp"
@@ -74,9 +73,14 @@ bool payloadsCheckDuplicates(Index& index,
 }
 
 template <typename Index, typename Pop>
-void commitPayloadsIds(Index& index, const std::vector<Pop>& pop) {
+void commitPayloadsIds(Index& index, const std::vector<Pop>& pop, PayloadsStorage& storage) {
   auto pids = map_get_id(pop);
   index.template insertPayloadIds<Pop>(pids);
+
+  auto containing = index.getHash();
+  for (const auto& pid : pids) {
+    storage.addAltPayloadIndex(containing, pid.asVector());
+  }
 }
 
 bool AltTree::addPayloads(const AltBlock::hash_t& containing,
@@ -118,22 +122,24 @@ bool AltTree::addPayloads(index_t& index,
     VBK_ASSERT(success);
   }
 
-  if (!payloadsCheckDuplicates(
+  // filter payloads
+  if (!payloadsCheckDuplicates<index_t, VbkBlock>(
           index, payloads.context, state, continueOnInvalid) ||
-      !payloadsCheckDuplicates(
+      !payloadsCheckDuplicates<index_t, VTB>(
           index, payloads.vtbs, state, continueOnInvalid) ||
-      !payloadsCheckDuplicates(
+      !payloadsCheckDuplicates<index_t, ATV>(
           index, payloads.atvs, state, continueOnInvalid)) {
     return false;
   }
 
   // all payloads checked, they do not contain duplicates. to ensure atomic
   // change, we commit payloads after all 3 vectors have been validated
-  commitPayloadsIds<decltype(index), VbkBlock>(index, payloads.context);
-  commitPayloadsIds<decltype(index), VTB>(index, payloads.vtbs);
-  commitPayloadsIds<decltype(index), ATV>(index, payloads.atvs);
+  commitPayloadsIds<index_t, VbkBlock>(index, payloads.context, storage_);
+  commitPayloadsIds<index_t, VTB>(index, payloads.vtbs, storage_);
+  commitPayloadsIds<index_t, ATV>(index, payloads.atvs, storage_);
 
-  storagePayloads_.savePayloads(payloads);
+  // save payloads only in alt tree
+  storage_.savePayloads(payloads);
 
   return true;
 }
@@ -322,15 +328,14 @@ void AltTree::removePayloads(const AltBlock::hash_t& hash,
   return removePayloads(*index, popData);
 }
 
-template <typename Tree, typename Index, typename Pop, typename Storage>
+template <typename Tree, typename Index, typename Pop>
 void handleRemovePayloads(Tree& tree,
                           Index& index,
                           const std::vector<Pop>& payloads,
-                          Storage& storage) {
-  std::vector<typename Pop::id_t> pids = map_vector<Pop, typename Pop::id_t>(
-      payloads, [](const Pop& p) { return p.getId(); });
-
+                          PayloadsStorage& storage) {
+  auto containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
+  auto pids = map_get_id(payloads);
 
   for (const auto& pid : pids) {
     auto it = std::find(payloadIds.begin(), payloadIds.end(), pid);
@@ -338,12 +343,12 @@ void handleRemovePayloads(Tree& tree,
       continue;
     }
 
-    if (!storage.template isValid<Pop, Index>(pid, index)) {
+    if (!storage.getValidity(containingHash, pid)) {
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
     index.template removePayloadId<Pop>(pid);
-    // TODO: do we want to erase payloads from repository?
+    storage.removeAltPayloadIndex(containingHash, pid.asVector());
   }
 }
 
@@ -365,18 +370,24 @@ void AltTree::removePayloads(index_t& index, const PopData& payloads) {
     VBK_ASSERT(success);
   }
 
-  handleRemovePayloads(*this, index, payloads.atvs, storagePayloads_);
-  handleRemovePayloads(*this, index, payloads.vtbs, storagePayloads_);
-  handleRemovePayloads(*this, index, payloads.context, storagePayloads_);
+  handleRemovePayloads(*this, index, payloads.atvs, storage_);
+  handleRemovePayloads(*this, index, payloads.vtbs, storage_);
+  handleRemovePayloads(*this, index, payloads.context, storage_);
 }
 
-template <typename Payloads, typename Storage, typename BlockIndex>
+template <typename Payloads, typename BlockIndex>
 void removePayloadsIfInvalid(std::vector<Payloads>& p,
-                             Storage& storage,
+                             PayloadsStorage& storage,
                              BlockIndex& index) {
+  auto containing = index.getHash();
   auto it = std::remove_if(p.begin(), p.end(), [&](const Payloads& payloads) {
-    auto isValid =
-        storage.template isValid<Payloads, BlockIndex>(payloads.getId(), index);
+    auto pid = payloads.getId().asVector();
+    auto isValid = storage.getValidity(containing, pid);
+    // reset validity for this block, as this payload is in temporary block
+    if (!isValid) {
+      storage.setValidity(containing, pid, true);
+    }
+
     return !isValid;
   });
   p.erase(it, p.end());
@@ -414,12 +425,11 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
   VBK_ASSERT(success);
 
   // setState in 'continueOnInvalid' mode
-  success = setTipContinueOnInvalid(*tmpindex, state);
-  VBK_ASSERT(success);
+  setTipContinueOnInvalid(*tmpindex);
 
-  removePayloadsIfInvalid(pop.atvs, storagePayloads_, *tmpindex);
-  removePayloadsIfInvalid(pop.vtbs, storagePayloads_, *tmpindex);
-  removePayloadsIfInvalid(pop.context, storagePayloads_, *tmpindex);
+  removePayloadsIfInvalid(pop.atvs, storage_, *tmpindex);
+  removePayloadsIfInvalid(pop.vtbs, storage_, *tmpindex);
+  removePayloadsIfInvalid(pop.context, storage_, *tmpindex);
 
   VBK_LOG_INFO("After filter VBK=%d VTB=%d ATV=%d",
                pop.context.size(),
@@ -428,7 +438,7 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
 
   // at this point `pop` contains only valid payloads
 
-  removeSubtree(*tmpindex);
+  this->removeSubtree(*tmpindex);
 }
 
 bool AltTree::addPayloads(AltTree::index_t& index,
@@ -462,15 +472,11 @@ void AltTree::overrideTip(index_t& to) {
   tryAddTip(&to);
 }
 
-bool AltTree::setTipContinueOnInvalid(AltTree::index_t& to,
-                                      ValidationState& state) {
-  bool success = cmp_.setState(*this, to, state, /*continueOnInvalid=*/true);
+void AltTree::setTipContinueOnInvalid(AltTree::index_t& to) {
+  ValidationState dummy;
+  bool success = cmp_.setState(*this, to, dummy, /*continueOnInvalid=*/true);
   VBK_ASSERT(success);
-
   overrideTip(to);
-
-  // true if tip has been changed
-  return success;
 }
 
 bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
@@ -479,7 +485,8 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   }
 
   // load endorsements
-  auto* current = getBlockIndex(index.getHash());
+  auto containingHash = index.getHash();
+  auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
   // recover `endorsedBy`
@@ -489,6 +496,8 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
     return state.Invalid("load-block");
   }
+
+  storage_.addBlockToIndex(*current);
 
   return true;
 }
@@ -512,25 +521,11 @@ AltTree::AltTree(const AltTree::alt_config_t& alt_config,
            alt_config,
            storagePayloads),
       rewards_(alt_config),
-      storagePayloads_(storagePayloads) {}
+      storage_(storagePayloads) {}
 
-template <typename pop_t>
-std::vector<CommandGroup> loadCommands_(const typename AltTree::index_t& index,
-                                        AltTree& tree,
-                                        const PayloadsRepository<pop_t>& prep) {
-  auto& pids = index.getPayloadIds<pop_t, typename pop_t::id_t>();
-  std::vector<CommandGroup> out{};
-  for (const auto& pid : pids) {
-    pop_t payloads;
-    if (!prep.get(pid, &payloads)) {
-      throw db::StateCorruptedException(
-          fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
-    }
-    CommandGroup cg(pid.asVector(), payloads.valid, pop_t::name());
-    tree.payloadsToCommands(payloads, cg.commands);
-    out.push_back(cg);
-  }
-  return out;
+void AltTree::removeSubtree(AltTree::index_t& toRemove) {
+  storage_.removePayloadsIndex(toRemove);
+  base::removeSubtree(toRemove);
 }
 
 template <>
@@ -538,11 +533,12 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename AltTree::index_t& index, AltTree& tree) {
   std::vector<CommandGroup> out{};
   std::vector<CommandGroup> payloads_out;
-  payloads_out = loadCommandsStorage<AltTree, VbkBlock>(index, tree);
+  payloads_out =
+      loadCommandsStorage<AltTree, VbkBlock>(DB_VBK_PREFIX, index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
-  payloads_out = loadCommandsStorage<AltTree, VTB>(index, tree);
+  payloads_out = loadCommandsStorage<AltTree, VTB>(DB_VTB_PREFIX, index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
-  payloads_out = loadCommandsStorage<AltTree, ATV>(index, tree);
+  payloads_out = loadCommandsStorage<AltTree, ATV>(DB_ATV_PREFIX, index, tree);
   out.insert(out.end(), payloads_out.begin(), payloads_out.end());
   return out;
 }

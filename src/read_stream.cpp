@@ -56,6 +56,10 @@ ReadStream::ReadStream(Slice<const uint8_t> slice)
     : m_Buffer(reinterpret_cast<const uint8_t *>(slice.data())),
       m_Size(slice.size()) {}
 
+Slice<const uint8_t> ReadStream::data() const {
+  return Slice<const uint8_t>(m_Buffer, m_Size);
+}
+
 std::vector<uint8_t> ReadStream::read(size_t size) {
   return read<std::vector<uint8_t>>(size);
 }

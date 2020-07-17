@@ -19,9 +19,14 @@ class WriteStream {
  public:
   WriteStream() = default;
 
-  explicit WriteStream(size_t size);
+  using storage_t = std::vector<uint8_t>;
 
-  void write(const void *buf, size_t size);
+  explicit WriteStream(size_t size) { m_data.reserve(size); }
+
+  void write(const void *buf, size_t size) {
+    const uint8_t *inp = (uint8_t *)buf;
+    m_data.insert(m_data.end(), inp, inp + size);
+  }
 
   template <typename T,
             typename = typename std::enable_if<sizeof(typename T::value_type) ==
@@ -49,10 +54,10 @@ class WriteStream {
     }
   }
 
-  const std::vector<uint8_t> &data() const noexcept;
+  const storage_t &data() const noexcept { return m_data; }
 
  private:
-  std::vector<uint8_t> m_data;
+  storage_t m_data;
 };
 
 }  // namespace altintegration

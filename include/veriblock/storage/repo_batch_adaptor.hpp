@@ -6,12 +6,12 @@
 #ifndef VERIBLOCK_POP_CPP_REPO_BATCH_ADAPTOR_HPP
 #define VERIBLOCK_POP_CPP_REPO_BATCH_ADAPTOR_HPP
 
-#include "batch.hpp"
+#include "batch_adaptor.hpp"
 #include "pop_storage.hpp"
 
 namespace altintegration {
 
-struct RepoBatchAdaptor : public Batch {
+struct RepoBatchAdaptor : public BatchAdaptor {
   ~RepoBatchAdaptor() override = default;
 
   RepoBatchAdaptor(PopStorage& pop) : pop_(pop) {}

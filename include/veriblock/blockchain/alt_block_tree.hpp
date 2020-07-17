@@ -134,8 +134,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   const AltChainParams& getParams() const { return *alt_config_; }
 
-  PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
-  const PayloadsStorage getStoragePayloads() const { return storagePayloads_; }
+  PayloadsStorage& getStoragePayloads() { return storage_; }
+  const PayloadsStorage getStoragePayloads() const { return storage_; }
 
   std::string toPrettyString(size_t level = 0) const;
 
@@ -144,13 +144,17 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   void overrideTip(index_t& to) override;
 
+  void removeSubtree(index_t& toRemove) override;
+  using base::removeLeaf;
+  using base::removeSubtree;
+
  protected:
   const alt_config_t* alt_config_;
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
   PopRewards rewards_;
-  PayloadsStorage& storagePayloads_;
+  PayloadsStorage& storage_;
 
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
@@ -159,7 +163,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
                    ValidationState& state,
                    bool continueOnInvalid = false);
 
-  bool setTipContinueOnInvalid(index_t& to, ValidationState& state);
+  void setTipContinueOnInvalid(index_t& to);
 };
 
 template <>
