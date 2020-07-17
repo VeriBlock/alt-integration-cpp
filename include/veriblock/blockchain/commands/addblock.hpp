@@ -27,7 +27,7 @@ struct AddBlock : public Command {
   bool Execute(ValidationState& state) override {
     auto* index = tree_->getBlockIndex(block_->getHash());
     if (index != nullptr) {
-      index->refCounter++;
+      index->incRefCounter();
       return true;
     }
     return tree_->acceptBlock(block_, state);
@@ -39,11 +39,11 @@ struct AddBlock : public Command {
     VBK_ASSERT(index != nullptr &&
                "failed to roll back AddBlock: the block does not exist");
 
-    if (index->refCounter == 0) {
+    if (index->getRefCounter() == 0) {
       return tree_->removeLeaf(*index);
     }
 
-    --index->refCounter;
+    index->decRefCounter();
   }
 
   size_t getId() const override { return block_->getHash().getLow64(); }

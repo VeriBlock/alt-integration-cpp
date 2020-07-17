@@ -17,28 +17,43 @@ struct BtcBlockAddon {
   //! block
   ArithUint256 chainWork = 0;
 
-  //! reference counter for fork resolution
-  uint32_t refCounter = 0;
+  uint32_t getRefCounter() const { return _refCounter; }
 
-  bool operator==(const BtcBlockAddon& o) const {
-    bool a = refCounter == o.refCounter;
-    bool b = chainWork == o.chainWork;
-    return a && b;
+  void incRefCounter() {
+    _refCounter++;
+    setDirty();
   }
 
-  void setNull() {
-    refCounter = 0;
-    chainWork = 0;
+  void decRefCounter() {
+    _refCounter--;
+    setDirty();
+  }
+
+  bool operator==(const BtcBlockAddon& o) const {
+    bool a = _refCounter == o._refCounter;
+    bool b = chainWork == o.chainWork;
+    return a && b;
   }
 
   std::string toPrettyString() const {
     return fmt::format("chainwork={}", chainWork.toHex());
   }
 
-  void toRaw(WriteStream& w) const { w.writeBE<uint32_t>(refCounter); }
+  void toRaw(WriteStream& w) const { w.writeBE<uint32_t>(_refCounter); }
+
+ protected:
+  //! reference counter for fork resolution
+  uint32_t _refCounter = 0;
+
+  void setDirty();
+
+  void setNull() {
+    _refCounter = 0;
+    chainWork = 0;
+  }
 
   // not static, on purpose
-  void initAddonFromRaw(ReadStream& r) { refCounter = r.readBE<uint32_t>(); }
+  void initAddonFromRaw(ReadStream& r) { _refCounter = r.readBE<uint32_t>(); }
 };
 
 }  // namespace altintegration

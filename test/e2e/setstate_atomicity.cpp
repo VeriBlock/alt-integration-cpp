@@ -20,7 +20,7 @@ using namespace altintegration;
 struct SetStateAtomicity : public ::testing::Test, public PopTestFixture {};
 
 TEST_F(SetStateAtomicity, setStateAtomicity) {
-  AltBlock chainA = *alttree.getBestChain().tip()->header;
+  AltBlock chainA = alttree.getBestChain().tip()->getHeader();
   // mine and activate the primary valid chain
   auto altForkPoint = chainA;
 
@@ -62,7 +62,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   auto* originalBtcTip = alttree.btc().getBestChain().tip();
   auto* originalVbkTip = alttree.vbk().getBestChain().tip();
   auto* originalAltTip = alttree.getBestChain().tip();
-  EXPECT_EQ(*originalAltTip->header, chainA);
+  EXPECT_EQ(originalAltTip->getHeader(), chainA);
 
   EXPECT_FALSE(alttree.setState(chainB.getHash(), state));
 

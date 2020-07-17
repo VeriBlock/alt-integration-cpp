@@ -22,6 +22,16 @@ std::vector<B> map_vector(const std::vector<A>& a,
   return b;
 }
 
+template <typename T>
+typename T::id_t get_id(const T& t) {
+  return t.getId();
+}
+
+template <typename P>
+std::vector<typename P::id_t> map_get_id(const std::vector<P>& a) {
+  return map_vector<P, typename P::id_t>(a, get_id<P>);
+}
+
 }  // namespace altintegration
 
 #endif  // VERIBLOCK_POP_CPP_ALGORITHM_HPP

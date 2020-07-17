@@ -21,12 +21,13 @@ static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
                                                   uint32_t chainlength) {
   assert(chainlength != 0);
 
+  VbkBlock block{};
+  block.height = 1;
+  block.timestamp = 10000;
+  block.difficulty = difficulty;
   BlockIndex<VbkBlock> blockIndex;
-  blockIndex.header = std::make_shared<VbkBlock>();
-  blockIndex.header->height = 1;
-  blockIndex.header->timestamp = 10000;
-  blockIndex.header->difficulty = difficulty;
-  blockIndex.height = blockIndex.header->height;
+  blockIndex.setHeader(block);
+  blockIndex.setHeight(block.height);
   blockIndex.pprev = nullptr;
 
   std::vector<BlockIndex<VbkBlock>> chain(chainlength);
@@ -37,12 +38,13 @@ static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
       deltaTime -= deltaTime_change;
     }
 
+    VbkBlock blockTmp{};
+    blockTmp.height = (int32_t)i + 1;
+    blockTmp.timestamp = chain[i - 1].getHeader().getBlockTime() + deltaTime;
+    blockTmp.difficulty = difficulty;
     BlockIndex<VbkBlock> temp;
-    temp.header = std::make_shared<VbkBlock>();
-    temp.header->height = (int32_t)i + 1;
-    temp.header->timestamp = chain[i - 1].header->timestamp + deltaTime;
-    temp.header->difficulty = difficulty;
-    temp.height = (int32_t)i + 1;
+    temp.setHeader(blockTmp);
+    temp.setHeight(blockTmp.height);
     temp.pprev = &chain[i - 1];
 
     chain[i] = temp;
@@ -169,13 +171,13 @@ TEST_F(SingleTest, single_test) {
 
   int32_t deltaTime = chainparams->getTargetBlockTime();
 
+  VbkBlock block{};
+  block.height = 1;
+  block.timestamp = 10000;
+  block.difficulty = ArithUint256::fromHex("09184E72A000").toBits();
   BlockIndex<VbkBlock> blockIndex;
-  blockIndex.header = std::make_shared<VbkBlock>();
-  blockIndex.header->height = 1;
-  blockIndex.header->timestamp = 10000;
-  blockIndex.header->difficulty =
-      ArithUint256::fromHex("09184E72A000").toBits();
-  blockIndex.height = blockIndex.header->height;
+  blockIndex.setHeader(block);
+  blockIndex.setHeight(block.height);
   blockIndex.pprev = nullptr;
 
   std::vector<BlockIndex<VbkBlock>> chain(chainlength);
@@ -186,12 +188,13 @@ TEST_F(SingleTest, single_test) {
       deltaTime = 300;
     }
 
+    VbkBlock blockTmp{};
+    blockTmp.height = (int32_t)i + 1;
+    blockTmp.timestamp = chain[i - 1].getHeader().getBlockTime() + deltaTime;
+    blockTmp.difficulty = ArithUint256::fromHex("09184E72A000").toBits();
     BlockIndex<VbkBlock> temp;
-    temp.header = std::make_shared<VbkBlock>();
-    temp.header->height = (int32_t)i + 1;
-    temp.header->timestamp = chain[i - 1].header->timestamp + deltaTime;
-    temp.header->difficulty = ArithUint256::fromHex("09184E72A000").toBits();
-    temp.height = (int32_t)i + 1;
+    temp.setHeader(blockTmp);
+    temp.setHeight(blockTmp.height);
     temp.pprev = &chain[i - 1];
 
     chain[i] = temp;
@@ -210,13 +213,14 @@ TEST(Vbk, CheckBlockTime1) {
   for (int i = 0; i < 1000; i++) {
     chain.push_back(std::make_shared<BlockIndex<VbkBlock>>());
     auto& index = chain[chain.size() - 1];
-    index->height = VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT + i;
-    index->header = std::make_shared<VbkBlock>();
-    index->header->timestamp = startTime + (120 * i);
+    VbkBlock blockTmp{};
+    blockTmp.timestamp = startTime + (120 * i);
+    index->setHeight(VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT + i);
+    index->setHeader(blockTmp);
     index->pprev = i == 0 ? nullptr : chain[i - 1].get();
   }
 
-  VbkBlock block;
+  VbkBlock block{};
 
   auto& last = chain[chain.size() - 1];
   // validateMinimumTimestampWhenAboveMedian
@@ -233,9 +237,10 @@ TEST(Vbk, CheckBlockTime1) {
 TEST(Vbk, CheckBlockTime2) {
   auto makeBlock = [](int timestamp, int height) -> BlockIndex<VbkBlock> {
     BlockIndex<VbkBlock> index;
-    index.height = height;
-    index.header = std::make_shared<VbkBlock>();
-    index.header->timestamp = timestamp;
+    VbkBlock blockTmp{};
+    blockTmp.timestamp = timestamp;
+    index.setHeight(height);
+    index.setHeader(blockTmp);
     return index;
   };
 
@@ -292,7 +297,6 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
   block.previousKeystone = badKeystone;
-
   ASSERT_FALSE(blockchain->acceptBlock(block, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-bad-keystones");
@@ -305,7 +309,6 @@ TEST_F(BlockchainTest, InvalidKeystone2) {
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
   block.secondPreviousKeystone = badKeystone;
-
   ASSERT_FALSE(blockchain->acceptBlock(block, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-bad-keystones");

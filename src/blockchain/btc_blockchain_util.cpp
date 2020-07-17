@@ -33,8 +33,8 @@ template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
     const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) {
   BtcBlock block;
-  block.version = tip.header->version;
-  block.previousBlock = tip.header->getHash();
+  block.version = tip.getHeader().version;
+  block.previousBlock = tip.getHeader().getHash();
   block.merkleRoot = merkle;
   block.timestamp = (std::max)(tip.getBlockTime(), currentTimestamp4());
   block.bits = getNextWorkRequired(tip, block, params_);
@@ -82,19 +82,21 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
   unsigned int nProofOfWorkLimit = ArithUint256(params.getPowLimit()).toBits();
 
   // Only change once per difficulty adjustment interval
-  if ((prevBlock.height + 1) % params.getDifficultyAdjustmentInterval() != 0) {
+  if ((prevBlock.getHeight() + 1) % params.getDifficultyAdjustmentInterval() !=
+      0) {
     if (params.getAllowMinDifficultyBlocks()) {
       // Special difficulty rule for testnet:
       // If the new block's timestamp is more than 2* 10 minutes
       // then allow mining of a min-difficulty block.
-      if (block.timestamp >
+      if (block.getBlockTime() >
           prevBlock.getBlockTime() + params.getPowTargetSpacing() * 2) {
         return nProofOfWorkLimit;
       } else {
         // Return the last non-special-min-difficulty-rules-block
         const BlockIndex<BtcBlock>* pindex = &prevBlock;
         while (pindex->pprev &&
-               pindex->height % params.getDifficultyAdjustmentInterval() != 0 &&
+               pindex->getHeight() % params.getDifficultyAdjustmentInterval() !=
+                   0 &&
                pindex->getDifficulty() == nProofOfWorkLimit)
           pindex = pindex->pprev;
         return pindex->getDifficulty();
@@ -105,7 +107,7 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
 
   // Go back by what we want to be 14 days worth of blocks
   uint32_t nHeightFirst =
-      prevBlock.height - (params.getDifficultyAdjustmentInterval() - 1);
+      prevBlock.getHeight() - (params.getDifficultyAdjustmentInterval() - 1);
   const auto* pindexFirst = prevBlock.getAncestor(nHeightFirst);
   if (pindexFirst == nullptr) {
     throw std::logic_error("unable to find block ancestor at given height");

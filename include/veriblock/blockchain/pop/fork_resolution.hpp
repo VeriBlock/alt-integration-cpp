@@ -121,7 +121,7 @@ std::vector<KeystoneContext> getKeystoneContext(
         continue;
       }
 
-      auto endorsementIndex = btcIndex->height;
+      auto endorsementIndex = btcIndex->getHeight();
       if (endorsementIndex >= earliestEndorsementIndex) {
         continue;
       }
@@ -185,9 +185,9 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
   auto* tip = chain.tip();
   VBK_ASSERT(tip != nullptr && "tip must not be nullptr");
 
-  auto highestPossibleEndorsedBlockHeaderHeight = tip->height;
-  auto lastKeystone = highestKeystoneAtOrBefore(tip->height, ki);
-  auto firstKeystone = firstKeystoneAfter(chain.first()->height, ki);
+  auto highestPossibleEndorsedBlockHeaderHeight = tip->getHeight();
+  auto lastKeystone = highestKeystoneAtOrBefore(tip->getHeight(), ki);
+  auto firstKeystone = firstKeystoneAfter(chain.first()->getHeight(), ki);
   const auto allHashesInChain = chain.getAllHashesInChain();
 
   // For each keystone, find the endorsements of itself and other blocks which
@@ -197,7 +197,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
        keystoneToConsider <= lastKeystone;
        keystoneToConsider = firstKeystoneAfter(keystoneToConsider, ki)) {
     ProtoKeystoneContext<ProtectingBlockT> pkc(
-        keystoneToConsider, chain[keystoneToConsider]->height);
+        keystoneToConsider, chain[keystoneToConsider]->getHeight());
 
     auto highestConnectingBlock =
         highestBlockWhichConnectsKeystoneToPrevious(keystoneToConsider, ki);
@@ -477,13 +477,13 @@ struct PopAwareForkResolutionComparator {
     auto originalProtectingTip = ing_->getBestChain().tip();
 
     // candidate is on top of our best tip
-    if (candidate.getAncestor(bestTip->height) == bestTip) {
+    if (candidate.getAncestor(bestTip->getHeight()) == bestTip) {
       VBK_LOG_DEBUG("Candidate is %d blocks ahead",
-                   candidate.height - bestTip->height);
+                    candidate.getHeight() - bestTip->getHeight());
 
       auto guard = ing_->deferForkResolutionGuard();
 
-      sm_t sm(ed, *ing_, storage_, bestTip->height);
+      sm_t sm(ed, *ing_, storage_, bestTip->getHeight());
       if (!sm.apply(*bestTip, candidate, state)) {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
@@ -508,9 +508,9 @@ struct PopAwareForkResolutionComparator {
                "thus all pairs of chains must have a fork point");
 
     bool AcrossedKeystoneBoundary =
-        isCrossedKeystoneBoundary(fork->height, bestTip->height, ki);
+        isCrossedKeystoneBoundary(fork->getHeight(), bestTip->getHeight(), ki);
     bool BcrossedKeystoneBoundary =
-        isCrossedKeystoneBoundary(fork->height, candidate.height, ki);
+        isCrossedKeystoneBoundary(fork->getHeight(), candidate.getHeight(), ki);
     if (!AcrossedKeystoneBoundary && !BcrossedKeystoneBoundary) {
       // chains are equal in terms of POP
       VBK_LOG_INFO(
@@ -519,9 +519,9 @@ struct PopAwareForkResolutionComparator {
     }
 
     // [vbk fork point ... current tip]
-    Chain<protected_index_t> chainA(fork->height, currentBest.tip());
+    Chain<protected_index_t> chainA(fork->getHeight(), currentBest.tip());
     // [vbk fork point ... new block]
-    Chain<protected_index_t> chainB(fork->height, &candidate);
+    Chain<protected_index_t> chainB(fork->getHeight(), &candidate);
 
     // chains are not empty and chains start at the same block
     VBK_ASSERT(chainA.first() != nullptr && chainA.first() == chainB.first());
@@ -530,7 +530,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed, *ing_, storage_, chainA.first()->height);
+    sm_t sm(ed, *ing_, storage_, chainA.first()->getHeight());
 
     if (VBK_UNLIKELY(IsShutdownRequested())) {
       return 13371337;

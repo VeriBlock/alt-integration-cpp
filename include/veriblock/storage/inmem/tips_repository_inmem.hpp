@@ -31,7 +31,7 @@ struct TipsRepositoryInmem : public TipsRepository<Block> {
 
   bool put(const stored_block_t& tip) override {
     _hash = tip.getHash();
-    _height = tip.height;
+    _height = tip.getHeight();
     return true;
   }
 

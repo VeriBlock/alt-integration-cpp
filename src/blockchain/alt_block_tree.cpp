@@ -27,7 +27,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  auto height = block.height;
+  auto height = index->getHeight();
 
   index->setFlag(BLOCK_APPLIED);
   index->setFlag(BLOCK_BOOTSTRAP);
@@ -49,7 +49,7 @@ bool payloadsCheckDuplicates(Index& index,
                              std::vector<Pop>& payloads,
                              ValidationState& state,
                              bool continueOnInvalid = false) {
-  auto& v = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  auto& v = index.template getPayloadIds<Pop>();
   std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
   for (auto it = payloads.begin(); it != payloads.end();) {
     auto pid = it->getId();
@@ -67,7 +67,6 @@ bool payloadsCheckDuplicates(Index& index,
                        Pop::name(),
                        pid.toHex()));
     }
-
     ++it;
   }
 
@@ -76,11 +75,8 @@ bool payloadsCheckDuplicates(Index& index,
 
 template <typename Index, typename Pop>
 void commitPayloadsIds(Index& index, const std::vector<Pop>& pop) {
-  auto& v = index.template getPayloadIds<Pop, typename Pop::id_t>();
-  std::transform(
-      pop.begin(), pop.end(), std::back_inserter(v), [](const Pop& p) {
-        return p.getId();
-      });
+  auto pids = map_get_id(pop);
+  index.template insertPayloadIds<Pop>(pids);
 }
 
 bool AltTree::addPayloads(const AltBlock::hash_t& containing,
@@ -198,7 +194,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   if (!index->isValid()) {
     return state.Invalid(block_t::name() + "-bad-chain",
                          "One of previous blocks is invalid. Status=(" +
-                             std::to_string(index->status) + ")");
+                             std::to_string(index->getStatus()) + ")");
   }
 
   tryAddTip(index);
@@ -334,7 +330,7 @@ void handleRemovePayloads(Tree& tree,
   std::vector<typename Pop::id_t> pids = map_vector<Pop, typename Pop::id_t>(
       payloads, [](const Pop& p) { return p.getId(); });
 
-  auto& payloadIds = index.template getPayloadIds<Pop, typename Pop::id_t>();
+  auto& payloadIds = index.template getPayloadIds<Pop>();
 
   for (const auto& pid : pids) {
     auto it = std::find(payloadIds.begin(), payloadIds.end(), pid);
@@ -346,7 +342,7 @@ void handleRemovePayloads(Tree& tree,
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
     }
 
-    payloadIds.erase(it);
+    index.template removePayloadId<Pop>(pid);
     // TODO: do we want to erase payloads from repository?
   }
 }
@@ -405,12 +401,12 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
     tmp.hash = std::vector<uint8_t>(32, 2);
     tmp.previousBlock = tip.getHash();
     tmp.timestamp = tip.getBlockTime() + 1;
-    tmp.height = tip.height + 1;
+    tmp.height = tip.getHeight() + 1;
     bool ret = acceptBlock(tmp, state);
     VBK_ASSERT(ret);
   }
 
-  auto* tmpindex = getBlockIndex(tmp.hash);
+  auto* tmpindex = getBlockIndex(tmp.getHash());
   VBK_ASSERT(tmpindex != nullptr);
 
   // add all payloads in `continueOnInvalid` mode
@@ -488,7 +484,7 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
 
   // recover `endorsedBy`
   auto window = std::max(
-      0, index.height - getParams().getEndorsementSettlementInterval());
+      0, index.getHeight() - getParams().getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
     return state.Invalid("load-block");
@@ -500,7 +496,7 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
 bool AltTree::addPayloads(const AltBlock& containing,
                           const PopData& popData,
                           ValidationState& state) {
-  return addPayloads(containing.hash, popData, state);
+  return addPayloads(containing.getHash(), popData, state);
 }
 
 AltTree::AltTree(const AltTree::alt_config_t& alt_config,
@@ -551,52 +547,31 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
   return out;
 }
 
-namespace {
-bool removeId(std::vector<uint256>& pop, const uint256& id) {
-  auto it = std::find(pop.rbegin(), pop.rend(), id);
-  if (it == pop.rend()) {
-    return false;
-  }
-
-  auto toRemove = --(it.base());
-  pop.erase(toRemove);
-  return true;
+template <typename Payloads>
+void removeId(BlockIndex<AltBlock>& index,
+              const typename Payloads::id_t& pid) {
+  auto& payloads = index.template getPayloadIds<Payloads>();
+  auto it = std::find(payloads.rbegin(), payloads.rend(), pid);
+  VBK_ASSERT(it != payloads.rend());
+  index.removePayloadId<Payloads>(pid);
 }
-
-bool removeId(std::vector<VbkBlock::id_t>& pop, const uint256& id) {
-  auto it = std::find_if(pop.rbegin(), pop.rend(), [&](const uint96& a) {
-    return uint256(a) == id;
-  });
-  if (it == pop.rend()) {
-    return false;
-  }
-
-  auto toRemove = --(it.base());
-  pop.erase(toRemove);
-  return true;
-}
-}  // namespace
 
 template <>
 void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
                              const CommandGroup& cg) {
   // TODO: can we do better?
-
   if (cg.payload_type_name == VTB::name()) {
-    bool ret = removeId(index.vtbids, cg.id);
-    VBK_ASSERT(ret);
+    removeId<VTB>(index, cg.id);
     return;
   }
 
   if (cg.payload_type_name == ATV::name()) {
-    bool ret = removeId(index.atvids, cg.id);
-    VBK_ASSERT(ret);
+    removeId<ATV>(index, cg.id);
     return;
   }
 
   if (cg.payload_type_name == VbkBlock::name()) {
-    bool ret = removeId(index.vbkblockids, cg.id);
-    VBK_ASSERT(ret);
+    removeId<VbkBlock>(index, cg.id);
     return;
   }
 

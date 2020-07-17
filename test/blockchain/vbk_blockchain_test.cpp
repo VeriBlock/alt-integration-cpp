@@ -109,9 +109,9 @@ TEST_P(AcceptTest, BootstrapWithChain) {
   size_t totalBlocks = bootstrapChain.size();
 
   ASSERT_TRUE(tree.getBestChain().tip());
-  EXPECT_EQ(*tree.getBestChain().tip()->header,
+  EXPECT_EQ(tree.getBestChain().tip()->getHeader(),
             bootstrapChain[bootstrapChain.size() - 1]);
-  EXPECT_EQ(tree.getBestChain().tip()->height,
+  EXPECT_EQ(tree.getBestChain().tip()->getHeight(),
             bootstrapChain[bootstrapChain.size() - 1].height);
 
   for (const auto& block : acceptChain) {
@@ -123,11 +123,11 @@ TEST_P(AcceptTest, BootstrapWithChain) {
 
     // we are not sure that block gets to the main chain. Make sure it at least
     // exists
-    if (*tree.getBestChain().tip()->header != block) {
+    if (tree.getBestChain().tip()->getHeader() != block) {
       EXPECT_NE(tree.getBlockIndex(block.getHash()), nullptr);
     }
 
-    EXPECT_EQ(tree.getBestChain().tip()->height, block.height);
+    EXPECT_EQ(tree.getBestChain().tip()->getHeight(), block.height);
     ++totalBlocks;
   }
 }

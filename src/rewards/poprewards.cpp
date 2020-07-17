@@ -17,8 +17,8 @@ static int getBestPublicationHeight(const BlockIndex<AltBlock>& endorsedBlock,
   for (const auto* e : endorsedBlock.endorsedBy) {
     auto* b = vbk_tree.getBlockIndex(e->blockOfProof);
     if (!vbk_tree.getBestChain().contains(b)) continue;
-    if (b->height < bestPublication || bestPublication < 0)
-      bestPublication = b->height;
+    if (b->getHeight() < bestPublication || bestPublication < 0)
+      bestPublication = b->getHeight();
   }
   return bestPublication;
 }
@@ -34,7 +34,7 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
   for (const auto* e : endorsedBlock.endorsedBy) {
     auto* b = vbk_tree.getBlockIndex(e->blockOfProof);
     if (!vbk_tree.getBestChain().contains(b)) continue;
-    int relativeHeight = b->height - bestPublication;
+    int relativeHeight = b->getHeight() - bestPublication;
     assert(relativeHeight >= 0);
     totalScore +=
         calculator_.getScoreMultiplierFromRelativeBlock(relativeHeight);
@@ -81,11 +81,11 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
     auto* b = vbk_tree.getBlockIndex(e->blockOfProof);
     if (!vbk_tree.getBestChain().contains(b)) continue;
 
-    int veriBlockHeight = b->height;
+    int veriBlockHeight = b->getHeight();
     int relativeHeight = veriBlockHeight - bestPublication;
     assert(relativeHeight >= 0);
     auto minerReward = calculator_.calculateMinerReward(
-        endorsedBlock.height, relativeHeight, blockScore, popDifficulty);
+        endorsedBlock.getHeight(), relativeHeight, blockScore, popDifficulty);
     rewards[e->payoutInfo] += minerReward.value.getLow64();
   }
   return rewards;

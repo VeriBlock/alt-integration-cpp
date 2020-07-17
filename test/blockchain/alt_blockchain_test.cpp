@@ -41,16 +41,17 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
-  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
   auto* endorsedBlockIndex = alttree.getBlockIndex(endorsement1.endorsedHash);
   auto* containingBlockIndex1 =
       alttree.getBlockIndex(endorsement1.containingHash);
-  EXPECT_TRUE(
-      containingBlockIndex1->containingEndorsements.find(endorsement1.id) !=
-      containingBlockIndex1->containingEndorsements.end());
+  auto& containingEndorsements =
+      containingBlockIndex1->getContainingEndorsements();
+  EXPECT_TRUE(containingEndorsements.find(endorsement1.id) !=
+              containingEndorsements.end());
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   // generate endorsements
@@ -67,16 +68,16 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads2}, state))
       << state.toString();
-  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   auto* containingBlockIndex2 =
       alttree.getBlockIndex(endorsement2.containingHash);
-  EXPECT_TRUE(
-      containingBlockIndex2->containingEndorsements.find(endorsement2.id) !=
-      containingBlockIndex2->containingEndorsements.end());
+  auto& containingEndorsements2 = containingBlockIndex2->getContainingEndorsements();
+  EXPECT_TRUE(containingEndorsements2.find(endorsement2.id) !=
+              containingEndorsements2.end());
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   tx = popminer->createVbkTxEndorsingAltBlock(
@@ -91,16 +92,17 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads3, state));
-  ASSERT_TRUE(alttree.setState(containingBlock.hash, state));
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   // check endorsements
   endorsedBlockIndex = alttree.getBlockIndex(endorsement3.endorsedHash);
   auto* containingBlockIndex3 =
       alttree.getBlockIndex(endorsement3.containingHash);
-  EXPECT_TRUE(
-      containingBlockIndex3->containingEndorsements.find(endorsement3.id) !=
-      containingBlockIndex3->containingEndorsements.end());
+  auto& containingEndorsements3 =
+      containingBlockIndex3->getContainingEndorsements();
+  EXPECT_TRUE(containingEndorsements3.find(endorsement3.id) !=
+              containingEndorsements3.end());
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
   // remove block
@@ -108,9 +110,10 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   alttree.removeSubtree(removeBlock.getHash());
 
   containingBlockIndex3 = alttree.getBlockIndex(endorsement3.containingHash);
-  EXPECT_TRUE(
-      containingBlockIndex3->containingEndorsements.find(endorsement3.id) !=
-      containingBlockIndex3->containingEndorsements.end());
+  auto& containingEndorsements4 =
+      containingBlockIndex3->getContainingEndorsements();
+  EXPECT_TRUE(containingEndorsements4.find(endorsement3.id) !=
+              containingEndorsements4.end());
 
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);

@@ -209,7 +209,6 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     //  "difficulty": 117586646,
     //  "nonce": 1924857207
     //}
-
     VbkBlock block;
     block.height = 0;
     block.version = 2;

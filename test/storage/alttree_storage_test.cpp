@@ -125,15 +125,15 @@ TYPED_TEST_SUITE_P(AltTreeRepositoryTest);
 TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   auto* vbkTip = this->popminer->mineVbkBlocks(1);
   // create endorsement of VBKTIP in BTC_1
-  auto btctx = this->popminer->createBtcTxEndorsingVbkBlock(*vbkTip->header);
+  auto btctx = this->popminer->createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
   // add BTC tx endorsing VBKTIP into next block
   auto* chainAtip = this->popminer->mineBtcBlocks(1);
 
   // create VBK pop tx that has 'block of proof=CHAIN A'
   this->popminer->createVbkPopTxEndorsingVbkBlock(
-      *chainAtip->header,
+      chainAtip->getHeader(),
       btctx,
-      *vbkTip->header,
+      vbkTip->getHeader(),
       lastKnownLocalBtcBlock(*this->popminer));
   // erase part of BTC - it will be restored from payloads anyway
   this->popminer->btc().removeLeaf(*this->popminer->btc().getBestChain().tip());

@@ -37,10 +37,10 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 
   void removeLastAltBlock() {
-    alttree.removeSubtree(chain.rbegin()->hash);
+    alttree.removeSubtree(chain.rbegin()->getHash());
     chain.pop_back();
     ValidationState dummy;
-    alttree.setState(chain.rbegin()->hash, dummy);
+    alttree.setState(chain.rbegin()->getHash(), dummy);
   }
 };
 
@@ -49,11 +49,11 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
-  generatePopTx(*endorsedVbkBlock1->header);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+  generatePopTx(endorsedVbkBlock1->getHeader());
   popminer->mineBtcBlocks(100);
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   vbkTip = popminer->mineVbkBlocks(1);
 
@@ -114,11 +114,11 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
-  generatePopTx(*endorsedVbkBlock1->header);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+  generatePopTx(endorsedVbkBlock1->getHeader());
   popminer->mineBtcBlocks(100);
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   vbkTip = popminer->mineVbkBlocks(1);
 
@@ -181,16 +181,16 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
 
   popminer->mineVbkBlocks(
       popminer->vbk().getParams().getEndorsementSettlementInterval());
 
   std::vector<VbkPopTx> txes;
-  txes.push_back(generatePopTx(*endorsedVbkBlock1->header));
+  txes.push_back(generatePopTx(endorsedVbkBlock1->getHeader()));
   popminer->mineBtcBlocks(100);
-  txes.push_back(generatePopTx(*endorsedVbkBlock2->header));
+  txes.push_back(generatePopTx(endorsedVbkBlock2->getHeader()));
 
   // remove invalid vbk_poptxes
   popminer->vbkmempool.clear();
@@ -257,11 +257,11 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
-  generatePopTx(*endorsedVbkBlock1->header);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+  generatePopTx(endorsedVbkBlock1->getHeader());
   popminer->mineBtcBlocks(100);
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   vbkTip = popminer->mineVbkBlocks(1);
 
@@ -297,7 +297,7 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
       << state.toString();
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  ASSERT_EQ(alttree.getBestChain().tip()->height, 10);
+  ASSERT_EQ(alttree.getBestChain().tip()->getHeight(), 10);
   PopData pop = checkedGetPop();
   EXPECT_EQ(pop.vtbs.size(), 2);
   applyInNextBlock(pop);
@@ -308,9 +308,9 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
-  generatePopTx(*endorsedVbkBlock1->header);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+  generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads.at(containingVbkBlock1->getHash()).size(), 1);
@@ -323,7 +323,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
 
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
@@ -411,10 +411,10 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   mineAltBlocks(10, chain);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
 
-  generatePopTx(*endorsedVbkBlock1->header);
+  generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
@@ -434,7 +434,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
 
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
@@ -526,9 +526,9 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   mineAltBlocks(10, chain);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
 
-  auto vbkPopTx = generatePopTx(*endorsedVbkBlock1->header);
+  auto vbkPopTx = generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
@@ -635,9 +635,9 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   mineAltBlocks(10, chain);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
 
-  auto vbkPopTx = generatePopTx(*endorsedVbkBlock1->header);
+  auto vbkPopTx = generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
@@ -858,11 +858,11 @@ TEST_F(MemPoolFixture, getPop_scenario_14) {
   mineAltBlocks(10, chain);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->height - 10);
-  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->height - 11);
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
 
-  generatePopTx(*endorsedVbkBlock1->header);
-  generatePopTx(*endorsedVbkBlock2->header);
+  generatePopTx(endorsedVbkBlock1->getHeader());
+  generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock->getHash()].size(), 2);

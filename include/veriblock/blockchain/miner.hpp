@@ -16,7 +16,7 @@ namespace altintegration {
 
 template <typename Block, typename ChainParams>
 struct Miner {
-  using merkle_t = decltype(Block::merkleRoot);
+  using merkle_t = typename Block::merkle_t;
   using index_t = BlockIndex<Block>;
 
   Miner(const ChainParams& params) : params_(params) {}

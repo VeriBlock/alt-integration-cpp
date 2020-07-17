@@ -40,7 +40,7 @@ struct Chain {
   height_t getStartHeight() const { return startHeight_; }
 
   bool contains(const index_t* index) const {
-    return index != nullptr && this->operator[](index->height) == index;
+    return index != nullptr && this->operator[](index->getHeight()) == index;
   }
 
   index_t* operator[](height_t height) const {
@@ -57,7 +57,7 @@ struct Chain {
     if (!contains(index)) {
       return nullptr;
     }
-    return (*this)[index->height + 1];
+    return (*this)[index->getHeight() + 1];
   }
 
   height_t chainHeight() const {
@@ -89,20 +89,20 @@ struct Chain {
   typename storage_t::const_iterator end() const { return chain.end(); }
 
   void setTip(index_t* index) {
-    if (index == nullptr || index->height < startHeight_) {
+    if (index == nullptr || index->getHeight() < startHeight_) {
       chain.clear();
       return;
     }
 
-    height_t innerHeight = toInnerHeight(index->height);
+    height_t innerHeight = toInnerHeight(index->getHeight());
     chain.resize(innerHeight + 1);
 
     /// TODO: may stuck here forever when fed with malformed data
     while (true) {
       if (index == nullptr) break;
       if (contains(index)) break;
-      if (index->height < startHeight_) break;
-      innerHeight = toInnerHeight(index->height);
+      if (index->getHeight() < startHeight_) break;
+      innerHeight = toInnerHeight(index->getHeight());
       chain[innerHeight] = index;
       index = index->pprev;
     }
@@ -126,7 +126,7 @@ struct Chain {
     }
 
     auto lastHeight = chainHeight();
-    if (pindex->height > lastHeight) {
+    if (pindex->getHeight() > lastHeight) {
       pindex = pindex->getAncestor(lastHeight);
     }
     while (pindex && !contains(pindex)) {
@@ -168,10 +168,10 @@ const index_t* findBlockContainingEndorsement(
     const uint32_t& endorsement_settlement_interval) {
   for (uint32_t count = 0;
        count < endorsement_settlement_interval && workBlock &&
-       workBlock->height >= chain.getStartHeight() &&
+       workBlock->getHeight() >= chain.getStartHeight() &&
        e.endorsedHash != workBlock->getHash();
        count++) {
-    if (workBlock->containingEndorsements.count(e.id)) {
+    if (workBlock->getContainingEndorsements().count(e.id)) {
       return workBlock;
     }
     workBlock = workBlock->pprev;
@@ -196,9 +196,9 @@ const index_t* findBlockContainingEndorsement(
     const typename index_t::endorsement_t::id_t& id,
     const uint32_t& window) {
   for (uint32_t count = 0; count < window && workBlock &&
-                           workBlock->height >= chain.getStartHeight();
+                           workBlock->getHeight() >= chain.getStartHeight();
        count++) {
-    if (workBlock->containingEndorsements.count(id)) {
+    if (workBlock->getContainingEndorsements().count(id)) {
       return workBlock;
     }
     workBlock = workBlock->pprev;

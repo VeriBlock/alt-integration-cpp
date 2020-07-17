@@ -8,16 +8,15 @@
 
 #include <memory>
 #include <set>
-#include <unordered_map>
 #include <vector>
 
-#include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/command.hpp"
-#include "veriblock/blockchain/command_group.hpp"
-#include "veriblock/entities/endorsements.hpp"
-#include "veriblock/logger.hpp"
-#include "veriblock/validation_state.hpp"
-#include "veriblock/write_stream.hpp"
+#include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/command.hpp>
+#include <veriblock/blockchain/command_group.hpp>
+#include <veriblock/entities/endorsements.hpp>
+#include <veriblock/logger.hpp>
+#include <veriblock/validation_state.hpp>
+#include <veriblock/write_stream.hpp>
 
 namespace altintegration {
 
@@ -41,6 +40,8 @@ enum BlockStatus : uint8_t {
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
   //! the block has been applied via PopStateMachine
   BLOCK_APPLIED = 1 << 5,
+  //! the block has been modified, and should be written on disk
+  BLOCK_DIRTY = 1 << 6
 };
 
 //! Store block
@@ -58,15 +59,6 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) a set of pointers for forward iteration
   std::set<BlockIndex*> pnext{};
 
-  //! height of the entry in the chain
-  height_t height = 0;
-
-  //! block header
-  std::shared_ptr<block_t> header{};
-
-  //! contains status flags
-  uint8_t status = 0;  // unknown validity
-
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
     VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
@@ -82,6 +74,8 @@ struct BlockIndex : public Block::addon_t {
     this->pnext.clear();
     this->height = 0;
     this->status = 0;
+    // make it dirty by default
+    setDirty();
   }
 
   bool raiseValidity(enum BlockStatus upTo) {
@@ -91,18 +85,51 @@ struct BlockIndex : public Block::addon_t {
     }
     if ((status & BLOCK_VALID_MASK) < upTo) {
       status = (status & ~BLOCK_VALID_MASK) | upTo;
+      setDirty();
       return true;
     }
     return false;
   }
 
-  void setFlag(enum BlockStatus s) { this->status |= s; }
-  void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
+  void setDirty() { this->status |= BLOCK_DIRTY; }
+  void unsetDirty() { this->status &= ~BLOCK_DIRTY; }
+
+  void setFlag(enum BlockStatus s) {
+    this->status |= (s | BLOCK_DIRTY);
+  }
+  void unsetFlag(enum BlockStatus s) {
+    this->status &= ~s;
+    // set DIRTY unless we explicitly want to unset DIRTY
+    if ((s & BLOCK_DIRTY) != BLOCK_DIRTY) {
+      this->status |= BLOCK_DIRTY;
+    }
+  }
+
   bool hasFlags(enum BlockStatus s) const { return this->status & s; }
 
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }
   uint32_t getDifficulty() const { return header->getDifficulty(); }
+
+  height_t getHeight() const { return height; }
+  void setHeight(const height_t newHeight) {
+    height = newHeight;
+    setDirty();
+  }
+
+  const block_t& getHeader() const { return *header; }
+  
+  void setHeader(const block_t& newHeader) {
+    header = std::make_shared<block_t>(newHeader);
+    setDirty();
+  }
+
+  void setHeader(std::shared_ptr<block_t> newHeader) {
+    header = std::move(newHeader);
+    setDirty();
+  }
+
+  uint8_t getStatus() const { return status; }
 
   bool isValidTip() const {
     // can be a valid tip iff there're no next blocks or all next blocks are
@@ -170,6 +197,7 @@ struct BlockIndex : public Block::addon_t {
     status = stream.readBE<uint8_t>();
     header = std::make_shared<Block>(Block::fromRaw(stream));
     addon_t::initAddonFromRaw(stream);
+    setDirty();
   }
 
   std::vector<uint8_t> toRaw() const {
@@ -197,6 +225,16 @@ struct BlockIndex : public Block::addon_t {
   }
 
   bool operator!=(const BlockIndex& b) const { return !operator==(b); }
+
+ protected:
+  //! height of the entry in the chain
+  height_t height = 0;
+
+  //! block header
+  std::shared_ptr<block_t> header{};
+
+  //! contains status flags
+  uint8_t status = 0;  // unknown validity
 };
 
 template <typename Block>

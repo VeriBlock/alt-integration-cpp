@@ -12,29 +12,23 @@
 #include <string>
 #include <vector>
 
-#include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/btc_block_addon.hpp"
-#include "veriblock/fmt.hpp"
-#include "veriblock/hashutil.hpp"
-#include "veriblock/serde.hpp"
-#include "veriblock/uint.hpp"
+#include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/btc_block_addon.hpp>
+#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/fmt.hpp>
+#include <veriblock/hashutil.hpp>
+#include <veriblock/serde.hpp>
+#include <veriblock/uint.hpp>
 
 namespace altintegration {
-
-struct BtcBlockAddon;
 
 struct BtcBlock {
   using hash_t = uint256;
   using prev_hash_t = uint256;
   using height_t = int32_t;
+  using nonce_t = uint32_t;
+  using merkle_t = uint256;
   using addon_t = BtcBlockAddon;
-
-  uint32_t version = 0;
-  uint256 previousBlock{};
-  uint256 merkleRoot{};
-  uint32_t timestamp = 0;
-  uint32_t bits = 0;
-  uint32_t nonce = 0;
 
   static BtcBlock fromHex(const std::string& hex);
 
@@ -84,9 +78,9 @@ struct BtcBlock {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
-  uint32_t getDifficulty() const { return bits; }
+  uint32_t getDifficulty() const;
 
-  uint32_t getBlockTime() const { return timestamp; }
+  uint32_t getBlockTime() const;
 
   friend bool operator==(const BtcBlock& a, const BtcBlock& b) {
     // clang-format off
@@ -112,6 +106,13 @@ struct BtcBlock {
   static std::string name() { return "BTC"; }
 
   std::string toPrettyString() const;
+
+  uint32_t version = 0;
+  uint256 previousBlock{};
+  uint256 merkleRoot{};
+  uint32_t timestamp = 0;
+  uint32_t bits = 0;
+  uint32_t nonce = 0;
 };
 
 template <typename JsonValue>
@@ -121,8 +122,8 @@ JsonValue ToJSON(const BtcBlock& b) {
   json::putIntKV(object, "version", b.version);
   json::putStringKV(object, "previousBlock", HexStr(b.previousBlock));
   json::putStringKV(object, "merkleRoot", HexStr(b.merkleRoot));
-  json::putIntKV(object, "timestamp", b.timestamp);
-  json::putIntKV(object, "bits", b.bits);
+  json::putIntKV(object, "timestamp", b.getBlockTime());
+  json::putIntKV(object, "bits", b.getDifficulty());
   json::putIntKV(object, "nonce", b.nonce);
   return object;
 }

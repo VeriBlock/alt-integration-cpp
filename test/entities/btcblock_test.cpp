@@ -33,8 +33,8 @@ TEST(BtcBlock, Deserialize) {
   EXPECT_EQ(decoded.version, defaultBlock.version);
   EXPECT_EQ(decoded.previousBlock.toHex(), defaultBlock.previousBlock.toHex());
   EXPECT_EQ(decoded.merkleRoot.toHex(), defaultBlock.merkleRoot.toHex());
-  EXPECT_EQ(decoded.timestamp, defaultBlock.timestamp);
-  EXPECT_EQ(decoded.bits, defaultBlock.bits);
+  EXPECT_EQ(decoded.getBlockTime(), defaultBlock.getBlockTime());
+  EXPECT_EQ(decoded.getDifficulty(), defaultBlock.getDifficulty());
   EXPECT_EQ(decoded.nonce, defaultBlock.nonce);
 
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";

@@ -127,7 +127,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putStringKV(obj, "chainWork", i.chainWork.toHex());
 
   std::vector<uint256> endorsements;
-  for (const auto& e : i.containingEndorsements) {
+  for (const auto& e : i.getContainingEndorsements()) {
     endorsements.push_back(e.first);
   }
   json::putArrayKV(obj, "containingEndorsements", endorsements);
@@ -137,13 +137,13 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
-  json::putIntKV(obj, "height", i.height);
-  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
-  json::putIntKV(obj, "status", i.status);
-  json::putIntKV(obj, "ref", i.refCounter);
+  json::putIntKV(obj, "height", i.getHeight());
+  json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
+  json::putIntKV(obj, "status", i.getStatus());
+  json::putIntKV(obj, "ref", i.getRefCounter());
 
   auto stored = json::makeEmptyObject<JsonValue>();
-  json::putArrayKV(stored, "vtbids", i.vtbids);
+  json::putArrayKV(stored, "vtbids", i.getPayloadIds<VTB>());
 
   json::putKV(obj, "stored", stored);
 
@@ -154,10 +154,10 @@ template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "chainWork", i.chainWork.toHex());
-  json::putIntKV(obj, "height", i.height);
-  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
-  json::putIntKV(obj, "status", i.status);
-  json::putIntKV(obj, "ref", i.refCounter);
+  json::putIntKV(obj, "height", i.getHeight());
+  json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
+  json::putIntKV(obj, "status", i.getStatus());
+  json::putIntKV(obj, "ref", i.getRefCounter());
 
   return obj;
 }
