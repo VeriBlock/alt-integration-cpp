@@ -131,9 +131,8 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
 
   auto containingHash = index.getHash();
   auto& vtbids = index.getPayloadIds<VTB>();
-
   auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
-  VBK_ASSERT(vtbid_it != index.vtbids.end() &&
+  VBK_ASSERT(vtbid_it != vtbids.end() &&
              "state corruption: the block does not contain the payload");
 
   // removing an invalid payload might render the block valid
@@ -240,14 +239,16 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                "state corruption: failed to roll back the best chain tip");
   }
 
+  // commit payloads to block index
   index->insertPayloadIds<VTB>(pids);
-  storagePayloads_.savePayloadsMany(payloads);
 
+  // update indices in payload storage
   auto containingHash = index->getHash();
   for (const auto& pid : pids) {
     storage_.addVbkPayloadIndex(containingHash, pid.asVector());
   }
 
+  // and save payloads on disk
   storage_.savePayloads(payloads);
 
   // don't defer fork resolution in the acceptBlock+addPayloads flow until the
@@ -260,7 +261,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   // roll back our attempted changes
   for (const auto& pid : pids) {
-    auto pid = payload.getId();
     storage_.removeVbkPayloadIndex(containingHash, pid.asVector());
     unsafelyRemovePayload(*index, pid, /*shouldDetermineBestChain =*/false);
   }

@@ -73,7 +73,7 @@ bool payloadsCheckDuplicates(Index& index,
 }
 
 template <typename Index, typename Pop>
-void commitPayloadsIds(Index& index, const std::vector<Pop>& pop) {
+void commitPayloadsIds(Index& index, const std::vector<Pop>& pop, PayloadsStorage& storage) {
   auto pids = map_get_id(pop);
   index.template insertPayloadIds<Pop>(pids);
 
@@ -335,7 +335,7 @@ void handleRemovePayloads(Tree& tree,
                           PayloadsStorage& storage) {
   auto containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
-  auto pids = map_getid(payloads);
+  auto pids = map_get_id(payloads);
 
   for (const auto& pid : pids) {
     auto it = std::find(payloadIds.begin(), payloadIds.end(), pid);

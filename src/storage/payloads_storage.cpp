@@ -66,20 +66,20 @@ const std::set<VbkBlock::hash_t>& PayloadsStorage::getContainingVbkBlocks(
 
 void PayloadsStorage::addBlockToIndex(const BlockIndex<AltBlock>& block) {
   auto containing = block.getHash();
-  for (auto& pid : block.vbkblockids) {
+  for (auto& pid : block.getPayloadIds<VbkBlock>()) {
     this->addAltPayloadIndex(containing, pid.asVector());
   }
-  for (auto& pid : block.vtbids) {
+  for (auto& pid : block.getPayloadIds<VTB>()) {
     this->addAltPayloadIndex(containing, pid.asVector());
   }
-  for (auto& pid : block.atvids) {
+  for (auto& pid : block.getPayloadIds<ATV>()) {
     this->addAltPayloadIndex(containing, pid.asVector());
   }
 }
 
 void PayloadsStorage::addBlockToIndex(const BlockIndex<VbkBlock>& block) {
   auto containing = block.getHash();
-  for (auto& pid : block.vtbids) {
+  for (auto& pid : block.getPayloadIds<VTB>()) {
     this->addVbkPayloadIndex(containing, pid.asVector());
   }
 }
@@ -105,20 +105,20 @@ void PayloadsStorage::removeVbkPayloadIndex(
 
 void PayloadsStorage::removePayloadsIndex(const BlockIndex<AltBlock>& block) {
   auto containingHash = block.getHash();
-  for (auto& c : block.vbkblockids) {
+  for (auto& c : block.getPayloadIds<VbkBlock>()) {
     removeAltPayloadIndex(containingHash, c.asVector());
   }
-  for (auto& c : block.vtbids) {
+  for (auto& c : block.getPayloadIds<VTB>()) {
     removeAltPayloadIndex(containingHash, c.asVector());
   }
-  for (auto& c : block.atvids) {
+  for (auto& c : block.getPayloadIds<ATV>()) {
     removeAltPayloadIndex(containingHash, c.asVector());
   }
 }
 
 void PayloadsStorage::removePayloadsIndex(const BlockIndex<VbkBlock>& block) {
   auto containingHash = block.getHash();
-  for (auto& c : block.vtbids) {
+  for (auto& c : block.getPayloadIds<VTB>()) {
     removeVbkPayloadIndex(containingHash, c.asVector());
   }
 }

@@ -97,12 +97,12 @@ class PayloadsStorage {
   template <typename Tree, typename Payloads>
   std::vector<CommandGroup> loadCommandsStorage(
       char prefix, const typename Tree::index_t& index, Tree& tree) {
-    using id_t = typename Payloads::id_t;
-    auto& pids = index.template getPayloadIds<Payloads, id_t>();
     std::vector<CommandGroup> out{};
-    auto containingHash = index.getHash();
+    const auto containingHash = index.getHash();
+    auto& cache = getCache<Tree, Payloads>();
+
+    auto& pids = index.template getPayloadIds<Payloads>();
     for (const auto& pid : pids) {
-      auto& cache = getCache<Tree, Payloads>();
       auto cid = makeGlobalPid(containingHash, pid);
       CommandGroup cg(pid.asVector(), true, Payloads::name());
       if (!cache.get(cid, &cg)) {
