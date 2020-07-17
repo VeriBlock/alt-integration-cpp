@@ -128,10 +128,10 @@ struct BaseBlockTree {
     if (!index) {
       throw std::logic_error("could not find the subtree to remove");
     }
-    return removeSubtree(*index);
+    return this->removeSubtree(*index);
   }
 
-  void removeSubtree(index_t& toRemove) {
+  virtual void removeSubtree(index_t& toRemove) {
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
@@ -163,7 +163,7 @@ struct BaseBlockTree {
     if (!toRemove.pnext.empty()) {
       throw std::logic_error("not a leaf block");
     }
-    return removeSubtree(toRemove);
+    return this->removeSubtree(toRemove);
   }
 
   void invalidateSubtree(const hash_t& toBeInvalidated,

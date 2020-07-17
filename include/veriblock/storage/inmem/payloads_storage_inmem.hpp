@@ -6,8 +6,8 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_INMEM_PAYLOADS_STORAGE_INMEM_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_INMEM_PAYLOADS_STORAGE_INMEM_HPP_
 
+#include <veriblock/storage/inmem/repository_inmem.hpp>
 #include <veriblock/storage/payloads_storage.hpp>
-#include <veriblock/storage/inmem/payloads_repository_inmem.hpp>
 
 namespace altintegration {
 
@@ -15,11 +15,8 @@ class PayloadsStorageInmem : public PayloadsStorage {
  public:
   virtual ~PayloadsStorageInmem() = default;
 
-  PayloadsStorageInmem() {
-    _repoAtv = std::make_shared<PayloadsRepositoryInmem<ATV>>();
-    _repoVtb = std::make_shared<PayloadsRepositoryInmem<VTB>>();
-    _repoBlocks = std::make_shared<PayloadsRepositoryInmem<VbkBlock>>();
-  }
+  PayloadsStorageInmem()
+      : PayloadsStorage(std::make_shared<RepositoryInmem>()) {}
 };
 
 }  // namespace altintegration

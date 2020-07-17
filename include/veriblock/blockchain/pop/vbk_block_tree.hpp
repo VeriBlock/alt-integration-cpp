@@ -38,7 +38,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                PayloadsStorage& storagePayloads)
       : VbkTree(vbkp),
         cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp, storagePayloads),
-        storagePayloads_(storagePayloads) {}
+        storage_(storagePayloads) {}
 
   //! efficiently connect `index` to current tree, loaded from disk
   //! - recovers all pointers (pprev, pnext, endorsedBy)
@@ -54,8 +54,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
 
-  PayloadsStorage& getStoragePayloads() { return storagePayloads_; }
-  const PayloadsStorage& getStoragePayloads() const { return storagePayloads_; }
+  PayloadsStorage& getStoragePayloads() { return storage_; }
+  const PayloadsStorage& getStoragePayloads() const { return storage_; }
 
   /**
    * @invariant atomic: adds either all or none of the payloads
@@ -89,10 +89,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void payloadsToCommands(const payloads_t& p,
                           std::vector<CommandPtr>& commands);
 
-  bool saveToStorage(PopStorage& storage, ValidationState& state);
-
-  bool loadFromStorage(PopStorage& storage, ValidationState& state);
-
   bool operator==(const VbkBlockTree& o) const {
     bool a = cmp_ == o.cmp_;
     bool b = VbkTree::operator==(o);
@@ -106,11 +102,13 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using base::setState;
   bool setState(index_t& to, ValidationState& state) override;
 
+  void removeSubtree(index_t& toRemove) override;
+
  private:
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
   PopForkComparator cmp_;
-  PayloadsStorage& storagePayloads_;
+  PayloadsStorage& storage_;
 };
 
 template <>

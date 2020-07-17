@@ -20,7 +20,6 @@ set(SOURCES
         serde.cpp
         keystone_util.cpp
         read_stream.cpp
-        write_stream.cpp
         hashutil.cpp
         stateless_validation.cpp
         arith_uint256.cpp

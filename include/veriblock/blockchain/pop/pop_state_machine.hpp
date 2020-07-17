@@ -44,6 +44,7 @@ struct PopStateMachine {
     VBK_ASSERT(!index.hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to apply an already applied block");
 
+    auto containingHash = index.getHash();
     if (!index.payloadsIdsEmpty()) {
       std::vector<std::vector<CommandPtr>> executed;
       auto cgs = storage_.loadCommands<ProtectedTree>(index, ed_);
@@ -64,7 +65,7 @@ struct PopStateMachine {
           }
 
           // command is invalid
-          storage_.setValidity(cg, index, false);
+          storage_.setValidity(containingHash, cg.id, false);
           if (continueOnInvalid_) {
             cleanupLast(index, executed, cg);
             state.clear();
@@ -85,7 +86,7 @@ struct PopStateMachine {
         if (!continueOnInvalid_) {
           // continueOnInvalid=false and we were able to apply given
           // CommandGroup. It means that it is valid, so update its validity.
-          storage_.setValidity(cg, index, true);
+          storage_.setValidity(containingHash, cg.id, true);
         }
       }  // end for
 
