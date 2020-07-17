@@ -32,23 +32,19 @@ PopData MemPool::VbkPayloadsRelations::toPopData() const {
 }
 
 void MemPool::VbkPayloadsRelations::removeVTB(const VTB::id_t& vtb_id) {
-  auto removed_it = std::remove_if(this->vtbs.begin(),
-                                   this->vtbs.end(),
-                                   [&vtb_id](const std::shared_ptr<VTB>& vtb) {
-                                     return vtb->getId() == vtb_id;
-                                   });
-
-  vtbs.erase(removed_it, vtbs.end());
+  auto it = std::find_if(
+      vtbs.begin(), vtbs.end(), [&vtb_id](const std::shared_ptr<VTB>& vtb) {
+        return vtb->getId() == vtb_id;
+      });
+  vtbs.erase(it);
 }
 
 void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
-  auto removed_it = std::remove_if(this->atvs.begin(),
-                                   this->atvs.end(),
-                                   [&atv_id](const std::shared_ptr<ATV>& atv) {
-                                     return atv->getId() == atv_id;
-                                   });
-
-  atvs.erase(removed_it, atvs.end());
+  auto it = std::find_if(
+      atvs.begin(), atvs.end(), [&atv_id](const std::shared_ptr<ATV>& atv) {
+        return atv->getId() == atv_id;
+      });
+  atvs.erase(it);
 }
 
 PopData MemPool::getPop(AltTree& tree) {
@@ -87,9 +83,11 @@ void MemPool::removePayloads(const PopData& pop) {
     auto vtb_id = vtb.getId();
 
     auto relation_it = relations_.find(vtb.containingBlock.getId());
-    VBK_ASSERT(relation_it != relations_.end());
-    relation_it->second->removeVTB(vtb_id);
+    if (relation_it == relations_.end()) {
+      continue;
+    }
 
+    relation_it->second->removeVTB(vtb_id);
     stored_vtbs_.erase(vtb_id);
   }
 
@@ -98,9 +96,11 @@ void MemPool::removePayloads(const PopData& pop) {
     auto atv_id = atv.getId();
 
     auto relation_it = relations_.find(atv.blockOfProof.getId());
-    VBK_ASSERT(relation_it != relations_.end());
-    relation_it->second->removeATV(atv_id);
+    if (relation_it == relations_.end()) {
+      continue;
+    }
 
+    relation_it->second->removeATV(atv_id);
     stored_atvs_.erase(atv_id);
   }
 
@@ -108,7 +108,10 @@ void MemPool::removePayloads(const PopData& pop) {
   for (const auto& b : pop.context) {
     auto hash = b.getId();
     auto relation_it = relations_.find(hash);
-    VBK_ASSERT(relation_it != relations_.end())
+    if (relation_it == relations_.end()) {
+      continue;
+    }
+
     if (relation_it->second->empty()) {
       vbkblocks_.erase(hash);
       relations_.erase(relation_it);
