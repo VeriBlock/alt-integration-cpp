@@ -316,7 +316,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   if (!isOnActiveChain) {
     bool success = setState(*index, state);
     if (!success) {
-      // once we plug the validation hole, we want this to be an assert
+      // TODO: once we plug the validation hole, we want this to be an assert
       return state.Invalid(
           block_t::name() + "-invalid-containing-block",
           fmt::sprintf(
