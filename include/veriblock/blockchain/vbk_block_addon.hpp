@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 #define VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 
-#include <veriblock/blockchain/btc_block_addon.hpp>
 #include <veriblock/blockchain/pop/pop_state.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/logger.hpp>
@@ -16,12 +15,24 @@ namespace altintegration {
 
 struct VTB;
 
-struct VbkBlockAddon :
-    // for endorsement map
-    public PopState<VbkEndorsement>,
-    // for chainwork + ref
-    public BtcBlockAddon {
+struct VbkBlockAddon : public PopState<VbkEndorsement> {
   using payloads_t = VTB;
+
+  //! (memory only) total amount of work in the chain up to and including this
+  //! block
+  ArithUint256 chainWork = 0;
+
+  uint32_t getRefCounter() const { return _refCounter; }
+
+  void incRefCounter() {
+    _refCounter++;
+    setDirty();
+  }
+
+  void decRefCounter() {
+    _refCounter--;
+    setDirty();
+  }
 
   bool payloadsIdsEmpty() const { return _vtbids.empty(); }
 
@@ -50,9 +61,10 @@ struct VbkBlockAddon :
 
   bool operator==(const VbkBlockAddon& o) const {
     bool a = _vtbids == o._vtbids;
-    bool b = BtcBlockAddon::operator==(o);
-    bool c = PopState<VbkEndorsement>::operator==(o);
-    return a && b && c;
+    bool b = _refCounter == o._refCounter;
+    bool c = chainWork == o.chainWork;
+    bool d = PopState<VbkEndorsement>::operator==(o);
+    return a && b && c && d;
   }
 
   std::string toPrettyString() const {
@@ -60,25 +72,28 @@ struct VbkBlockAddon :
   }
 
   void toRaw(WriteStream& w) const {
-    BtcBlockAddon::toRaw(w);
+    w.writeBE<uint32_t>(_refCounter);
     PopState<VbkEndorsement>::toRaw(w);
     writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
   }
 
  protected:
+  //! reference counter for fork resolution
+  uint32_t _refCounter = 0;
   // VTB::id_t
   std::vector<uint256> _vtbids;
 
   void setDirty();
 
   void setNull() {
-    BtcBlockAddon::setNull();
+    _refCounter = 0;
+    chainWork = 0;
     PopState<VbkEndorsement>::setNull();
     _vtbids.clear();
   }
 
   void initAddonFromRaw(ReadStream& r) {
-    BtcBlockAddon::initAddonFromRaw(r);
+    _refCounter = r.readBE<uint32_t>();
     PopState<VbkEndorsement>::initAddonFromRaw(r);
 
     _vtbids = readArrayOf<uint256>(
