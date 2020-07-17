@@ -229,7 +229,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   VBK_ASSERT(group_it != cmdGroups.end() &&
              "state corruption: could not find the command group that "
              "corresponds to the payload we have just added");
-  auto group = *group_it;
+  const auto& group = *group_it;
 
   std::vector<CommandPtr> executed;
   for (auto& cmd : group.commands) {
