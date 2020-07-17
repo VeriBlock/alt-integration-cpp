@@ -38,23 +38,12 @@ struct MemPool {
     std::vector<std::shared_ptr<VTB>> vtbs;
     std::vector<std::shared_ptr<ATV>> atvs;
 
-    PopData toPopData() const {
-      PopData pop;
-      pop.context.push_back(*header);
-      for (const auto& vtb : vtbs) {
-        pop.vtbs.push_back(*vtb);
-      }
+    PopData toPopData() const;
 
-      for (const auto& atv : atvs) {
-        pop.atvs.push_back(*atv);
-      }
+    bool emptyConnectedPayloads() const { return atvs.empty() && vtbs.empty(); }
 
-      // TODO: we might want to sort VTBs in ascending order of their
-      // blockOfProofs to guarantee that within a single block they all are
-      // connected.
-
-      return pop;
-    }
+    void removeVTB(const VTB::id_t& vtb_id);
+    void removeATV(const ATV::id_t& atv_id);
   };
 
   template <typename Payload>
@@ -126,7 +115,7 @@ struct MemPool {
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
                                       VbkBlock::id_t id = VbkBlock::id_t());
 
-  bool filterVbkBlock(const VbkBlock& block, ValidationState& state);
+  bool filterVbkBlock(const VbkBlock& block);
 };
 
 template <>
