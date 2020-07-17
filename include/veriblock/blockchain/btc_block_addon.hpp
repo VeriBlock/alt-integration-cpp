@@ -85,6 +85,16 @@ struct BtcBlockAddon {
 
  protected:
   //! reference counter for fork resolution
+  // Ideally we would want a sorted collection with cheap addition, deletion and
+  // lookup. In practice, due to VBK/BTC block time ratio(20x) and multiple APMs
+  // running, there's little chance of VTBs shipping non-empty BTC context. The
+  // altchain mempool prioritization algo will realistically pick 1 VTB per VBK
+  // keystone period(20 blocks), providing us with the BTC block mined during
+  // this period. Thus, we can expect to have 1-2 references per block and 2x
+  // that during fork resolution making std::vector the fastest storage option
+  // in this case.
+  // TODO: figure out if this is somehow abusable by spammers/dosers
+
   std::vector<ref_height_t> refs{};
 
   void setDirty();
