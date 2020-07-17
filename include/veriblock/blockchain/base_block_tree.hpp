@@ -65,6 +65,12 @@ struct BaseBlockTree {
     }
 
     this->overrideTip(*tip);
+
+    if (activeChain_.blocksCount() > 0) {
+      for (auto it = activeChain_.rbegin() + 1; it != activeChain_.rend(); ++it) {
+        (*it)->setFlag(BLOCK_APPLIED);
+      }
+    }
     return true;
   }
 

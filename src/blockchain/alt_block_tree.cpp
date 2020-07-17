@@ -200,7 +200,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   if (!index->isValid()) {
     return state.Invalid(block_t::name() + "-bad-chain",
                          "One of previous blocks is invalid. Status=(" +
-                             std::to_string(index->getStatus()) + ")");
+                             std::to_string(index->status) + ")");
   }
 
   tryAddTip(index);

@@ -188,7 +188,7 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
-  json::putIntKV(obj, "status", i.getStatus());
+  json::putIntKV(obj, "status", i.status);
 
   auto stored = json::makeEmptyObject<JsonValue>();
   json::putArrayKV(

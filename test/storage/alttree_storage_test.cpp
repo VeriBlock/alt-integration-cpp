@@ -9,8 +9,11 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/storage/inmem/storage_manager_inmem.hpp>
 #include <veriblock/storage/repo_batch_adaptor.hpp>
-#include <veriblock/storage/rocks/storage_manager_rocks.hpp>
 #include <veriblock/storage/util.hpp>
+
+#ifdef VERIBLOCK_ROCKSDB
+#include <veriblock/storage/rocks/storage_manager_rocks.hpp>
+#endif  // VERIBLOCK_ROCKSDB
 
 using namespace altintegration;
 
@@ -20,26 +23,27 @@ static const std::string dbName2 = "db-test2";
 struct TestStorageInmem {
   TestStorageInmem() {
     StorageManagerInmem storageManager{};
-    storage = std::make_shared<PopStorage>(storageManager.getPopStorage());
+    storage = std::make_shared<PopStorageInmem>();
     storagePayloads2 = std::make_shared<PayloadsStorageInmem>();
   }
 
-  void saveToPayloadsStorageVbk(const PayloadsStorage& from,
-                                PayloadsStorage& to) {
-    payloadsRepositoryCopy(from.getRepo<VTB>(), to.getRepo<VTB>());
+  void repositoryCopy(const Repository& copyFrom, Repository& copyTo) {
+    auto cursor = copyFrom.newCursor();
+    for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
+      copyTo.put(cursor->key(), cursor->value());
+    }
   }
 
-  void saveToPayloadsStorageAlt(const PayloadsStorage& from,
-                                PayloadsStorage& to) {
-    payloadsRepositoryCopy(from.getRepo<ATV>(), to.getRepo<ATV>());
-    payloadsRepositoryCopy(from.getRepo<VTB>(), to.getRepo<VTB>());
-    payloadsRepositoryCopy(from.getRepo<VbkBlock>(), to.getRepo<VbkBlock>());
+  void saveToPayloadsStorage(const PayloadsStorage& from, PayloadsStorage& to) {
+    repositoryCopy(from.getRepo(), to.getRepo());
   }
 
   std::shared_ptr<PopStorage> storage;
   // another DB instance for the data copy
   std::shared_ptr<PayloadsStorage> storagePayloads2;
 };
+
+#ifdef VERIBLOCK_ROCKSDB
 
 struct TestStorageRocks {
   TestStorageRocks() {
@@ -77,6 +81,8 @@ struct TestStorageRocks {
   std::shared_ptr<PayloadsStorage> storagePayloads2;
   std::shared_ptr<StorageManager> storageManager2;
 };
+
+#endif  // VERIBLOCK_ROCKSDB
 
 template <typename Storage>
 struct AltTreeRepositoryTest : public ::testing::Test,
@@ -125,7 +131,8 @@ TYPED_TEST_SUITE_P(AltTreeRepositoryTest);
 TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   auto* vbkTip = this->popminer->mineVbkBlocks(1);
   // create endorsement of VBKTIP in BTC_1
-  auto btctx = this->popminer->createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
+  auto btctx =
+      this->popminer->createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
   // add BTC tx endorsing VBKTIP into next block
   auto* chainAtip = this->popminer->mineBtcBlocks(1);
 
@@ -144,8 +151,8 @@ TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
   auto adaptor = RepoBatchAdaptor(*this->storage);
   SaveTree(this->popminer->btc(), adaptor);
   SaveTree(this->popminer->vbk(), adaptor);
-  this->saveToPayloadsStorageVbk(this->popminer->vbk().getStoragePayloads(),
-                                 *this->storagePayloads2);
+  this->saveToPayloadsStorage(this->popminer->vbk().getStoragePayloads(),
+                              *this->storagePayloads2);
   VbkBlockTree newvbk{this->vbkparam, this->btcparam, *this->storagePayloads2};
   newvbk.btc().bootstrapWithGenesis(this->state);
   newvbk.bootstrapWithGenesis(this->state);
@@ -194,10 +201,10 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
 
   auto adaptor = RepoBatchAdaptor(*this->storage);
   SaveAllTrees(this->alttree, adaptor);
-  this->saveToPayloadsStorageVbk(this->alttree.vbk().getStoragePayloads(),
-                                 *this->storagePayloads2);
-  this->saveToPayloadsStorageAlt(this->alttree.getStoragePayloads(),
-                                 *this->storagePayloads2);
+  this->saveToPayloadsStorage(this->alttree.vbk().getStoragePayloads(),
+                              *this->storagePayloads2);
+  this->saveToPayloadsStorage(this->alttree.getStoragePayloads(),
+                              *this->storagePayloads2);
 
   AltTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, *this->storagePayloads2};
@@ -226,7 +233,11 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, Basic, Altchain);
 
+#ifdef VERIBLOCK_ROCKSDB
 typedef ::testing::Types<TestStorageInmem, TestStorageRocks> TypesUnderTest;
+#else   //! VERIBLOCK_ROCKSDB
+typedef ::testing::Types<TestStorageInmem> TypesUnderTest;
+#endif  // VERIBLOCK_ROCKSDB
 
 INSTANTIATE_TYPED_TEST_SUITE_P(AltTreeRepositoryTestSuite,
                                AltTreeRepositoryTest,

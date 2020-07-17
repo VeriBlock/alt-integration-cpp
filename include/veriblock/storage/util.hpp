@@ -28,7 +28,11 @@ bool LoadTree(
 
   for (auto& block : blocks) {
     // load blocks one by one
-    if (!tree.loadBlock(block.second, state)) {
+    typename BlockTreeT::index_t blockTmp = block.second;
+    blockTmp.status = BLOCK_VALID_TREE;
+    if (block.second.hasFlags(BLOCK_BOOTSTRAP))
+      blockTmp.status |= BLOCK_BOOTSTRAP;
+    if (!tree.loadBlock(blockTmp, state)) {
       return state.Invalid("load-tree");
     }
   }
@@ -42,6 +46,7 @@ void SaveTree(const BlockTreeT& tree, BatchAdaptor& batch) {
   // TODO: add dirty flag and write only dirty blocks
   for (auto& block : tree.getBlocks()) {
     batch.writeBlock(*block.second);
+    block.second->unsetDirty();
   }
 
   batch.writeTip(*tree.getBestChain().tip());
@@ -49,7 +54,7 @@ void SaveTree(const BlockTreeT& tree, BatchAdaptor& batch) {
 
 struct AltTree;
 
-void SaveAllTrees(const AltTree& tree, Batch& batch);
+void SaveAllTrees(const AltTree& tree, BatchAdaptor& batch);
 
 }  // namespace altintegration
 

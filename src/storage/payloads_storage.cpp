@@ -23,6 +23,8 @@ bool PayloadsStorage::getValidity(Slice<const uint8_t> containingBlock,
 
 Repository& PayloadsStorage::getRepo() { return *repo_; }
 
+const Repository& PayloadsStorage::getRepo() const { return *repo_; }
+
 void PayloadsStorage::setValidity(Slice<const uint8_t> containingBlock,
                                   Slice<const uint8_t> payloadId,
                                   bool validity) {

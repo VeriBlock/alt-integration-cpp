@@ -75,12 +75,12 @@ TEST_F(BtcInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
   ASSERT_EQ(totalInvalid, 6);
 
   // block #5 is marked as BLOCK_FAILED_BLOCK
-  ASSERT_TRUE(chain[5]->getStatus() & BLOCK_FAILED_BLOCK);
+  ASSERT_TRUE(chain[5]->status & BLOCK_FAILED_BLOCK);
 
   // all next blocks are marked as BLOCK_FAILED_CHILD
   BlockIndex<BtcBlock>* current = chain.next(toBeInvalidated);
   do {
-    ASSERT_TRUE(current->getStatus() & BLOCK_FAILED_CHILD);
+    ASSERT_TRUE(current->status & BLOCK_FAILED_CHILD);
     current = chain.next(current);
   } while (current != nullptr);
 
