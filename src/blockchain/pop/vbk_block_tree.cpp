@@ -178,10 +178,13 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                          ? tx.blockOfProofContext[0]
                          : tx.blockOfProof;
 
-  auto& connectingHash = firstBlock.previousBlock;
+  auto& connectingHash = firstBlock.previousBlock != ArithUint256()? firstBlock.previousBlock : firstBlock.getHash();
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (!connectingIndex) {
+    VBK_LOG_DEBUG("Could not find block %s that payload %s needs to connect to",
+                  connectingHash.toHex(),
+                  vtb.toPrettyString());
     return state.Invalid("vtb-btc-context-unknown-previous-block",
                          "Can not find the BTC block referenced by the first "
                          "block of the VTB context: " +
