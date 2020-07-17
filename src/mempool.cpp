@@ -13,6 +13,44 @@
 
 namespace altintegration {
 
+PopData MemPool::VbkPayloadsRelations::toPopData() const {
+  PopData pop;
+  pop.context.push_back(*header);
+  for (const auto& vtb : vtbs) {
+    pop.vtbs.push_back(*vtb);
+  }
+
+  for (const auto& atv : atvs) {
+    pop.atvs.push_back(*atv);
+  }
+
+  // TODO: we might want to sort VTBs in ascending order of their
+  // blockOfProofs to guarantee that within a single block they all are
+  // connected.
+
+  return pop;
+}
+
+void MemPool::VbkPayloadsRelations::removeVTB(const VTB::id_t& vtb_id) {
+  auto removed_it = std::remove_if(this->vtbs.begin(),
+                                   this->vtbs.end(),
+                                   [&vtb_id](const std::shared_ptr<VTB>& vtb) {
+                                     return vtb->getId() == vtb_id;
+                                   });
+
+  vtbs.erase(removed_it, vtbs.end());
+}
+
+void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
+  auto removed_it = std::remove_if(this->atvs.begin(),
+                                   this->atvs.end(),
+                                   [&atv_id](const std::shared_ptr<ATV>& atv) {
+                                     return atv->getId() == atv_id;
+                                   });
+
+  atvs.erase(removed_it, atvs.end());
+}
+
 PopData MemPool::getPop(AltTree& tree) {
   PopData ret;
   // size in bytes of pop data added to
@@ -22,7 +60,7 @@ PopData MemPool::getPop(AltTree& tree) {
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
   std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
-    return a.second->header.height < b.second->header.height;
+    return a.second->header->height < b.second->header->height;
   });
 
   for (const P& block : blocks) {
@@ -44,23 +82,37 @@ PopData MemPool::getPop(AltTree& tree) {
 }
 
 void MemPool::removePayloads(const PopData& pop) {
-  // clear context
-  for (const auto& b : pop.context) {
-    auto hash = b.getId();
-    vbkblocks_.erase(hash);
-    relations_.erase(hash);
-  }
-
   // clear vtbs
   for (const auto& vtb : pop.vtbs) {
     auto vtb_id = vtb.getId();
+
+    auto relation_it = relations_.find(vtb.containingBlock.getId());
+    VBK_ASSERT(relation_it != relations_.end());
+    relation_it->second->removeVTB(vtb_id);
+
     stored_vtbs_.erase(vtb_id);
   }
 
   // clear atvs
   for (const auto& atv : pop.atvs) {
     auto atv_id = atv.getId();
+
+    auto relation_it = relations_.find(atv.blockOfProof.getId());
+    VBK_ASSERT(relation_it != relations_.end());
+    relation_it->second->removeATV(atv_id);
+
     stored_atvs_.erase(atv_id);
+  }
+
+  // clear context
+  for (const auto& b : pop.context) {
+    auto hash = b.getId();
+    auto relation_it = relations_.find(hash);
+    VBK_ASSERT(relation_it != relations_.end())
+    if (relation_it->second->empty()) {
+      vbkblocks_.erase(hash);
+      relations_.erase(relation_it);
+    }
   }
 }
 
@@ -70,11 +122,13 @@ MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
     block_id = block.getId();
   }
 
-  vbkblocks_[block_id] = std::make_shared<VbkBlock>(block);
+  std::shared_ptr<VbkBlock> vbk_block = std::make_shared<VbkBlock>(block);
+
+  vbkblocks_[block_id] = vbk_block;
 
   auto& val = relations_[block_id];
   if (val == nullptr) {
-    val = std::make_shared<VbkPayloadsRelations>(block);
+    val = std::make_shared<VbkPayloadsRelations>(vbk_block);
   }
 
   return *val;

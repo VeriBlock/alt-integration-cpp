@@ -44,7 +44,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 };
 
-TEST_F(MemPoolFixture, removePayloads_test) {
+TEST_F(MemPoolFixture, removePayloads_test1) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -81,21 +81,21 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  PopData v_popData = checkedGetPop();
+  PopData popData = checkedGetPop();
 
-  EXPECT_EQ(v_popData.vtbs.size(), 2);
-  EXPECT_EQ(v_popData.atvs.size(), 1);
-  EXPECT_EQ(v_popData.atvs.at(0), atv);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv);
 
   // do the same to show that from mempool do not remove payloads
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
-  v_popData = checkedGetPop();
+  popData = checkedGetPop();
 
-  EXPECT_EQ(v_popData.vtbs.size(), 2);
-  EXPECT_EQ(v_popData.atvs.at(0), atv);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.at(0), atv);
 
   // remove from mempool
-  mempool->removePayloads(v_popData);
+  mempool->removePayloads(popData);
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
 
@@ -103,10 +103,69 @@ TEST_F(MemPoolFixture, removePayloads_test) {
   ASSERT_TRUE(mempool->getMap<VTB>().empty());
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 
-  v_popData = checkedGetPop();
-  EXPECT_EQ(v_popData.context.size(), 0);
-  EXPECT_EQ(v_popData.vtbs.size(), 0);
-  EXPECT_EQ(v_popData.atvs.size(), 0);
+  popData = checkedGetPop();
+  EXPECT_EQ(popData.context.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 0);
+  EXPECT_EQ(popData.atvs.size(), 0);
+}
+
+TEST_F(MemPoolFixture, removePayloads_test2) {
+  // mine 65 VBK blocks
+  auto* vbkTip = popminer->mineVbkBlocks(65);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+  generatePopTx(endorsedVbkBlock1->getHeader());
+  popminer->mineBtcBlocks(100);
+  generatePopTx(endorsedVbkBlock2->getHeader());
+
+  vbkTip = popminer->mineVbkBlocks(1);
+
+  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+
+  ASSERT_EQ(vtbs.size(), 2);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
+            VbkEndorsement::fromContainer(vtbs[1]).id);
+  fillVbkContext(
+      vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+  fillVbkContext(
+      vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  AltBlock endorsedBlock = chain[5];
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
+
+  EXPECT_TRUE(mempool->submit<ATV>(atv, alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(0), alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), alttree, state));
+
+  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  PopData popData = checkedGetPop();
+
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv);
+
+  // modify popData to not remove all payloads
+  popData.atvs.clear();
+
+  mempool->removePayloads(popData);
+
+  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+
+  ASSERT_FALSE(mempool->getMap<ATV>().empty());
+  ASSERT_TRUE(mempool->getMap<VTB>().empty());
+  ASSERT_FALSE(mempool->getMap<VbkBlock>().empty());
+  ASSERT_EQ(mempool->getMap<VbkBlock>().size(), 1);
+  ASSERT_EQ(mempool->getMap<ATV>().size(), 1);
+  ASSERT_EQ(mempool->getMap<VbkBlock>().begin()->second->getHash(),
+            mempool->getMap<ATV>().begin()->second->blockOfProof.getHash());
 }
 
 TEST_F(MemPoolFixture, removed_payloads_cache_test) {
@@ -516,7 +575,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   }
 }
 
-TEST_F(MemPoolFixture, getPop_scenario_8) {
+TEST_F(MemPoolFixture, getPop_scenario_6) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   // mine 65 VBK blocks
@@ -597,7 +656,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
 }
 
 // We expect that ATV duplicate will not be added
-TEST_F(MemPoolFixture, getPop_scenario_9) {
+TEST_F(MemPoolFixture, getPop_scenario_7) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   // mine 65 VBK blocks
@@ -625,7 +684,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   ASSERT_EQ(state.GetPath(), "pop-mempool-submit-atv-duplicate");
 }
 
-TEST_F(MemPoolFixture, getPop_scenario_10) {
+TEST_F(MemPoolFixture, getPop_scenario_8) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   // mine 65 VBK blocks
@@ -721,7 +780,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   EXPECT_EQ(v_popData.context.size(), 56);
 }
 
-TEST_F(MemPoolFixture, getPop_scenario_11) {
+TEST_F(MemPoolFixture, getPop_scenario_9) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   // mine 65 VBK blocks
@@ -767,7 +826,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
 // maxPopDataSize() in bytes.
 // we expect that first getPop returns PopData which contains around 15k VBK
 // blocks (maxPopDataSize / 71 = 14768), 0 VTBs, and 0 ATVs
-TEST_F(MemPoolFixture, getPop_scenario_12) {
+TEST_F(MemPoolFixture, getPop_scenario_10) {
   const auto estimatePopDataWithVbkSize = []() {
     PopData p;
     p.context.emplace_back();
@@ -820,7 +879,7 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
   }
 }
 
-TEST_F(MemPoolFixture, getPop_scenario_13) {
+TEST_F(MemPoolFixture, getPop_scenario_11) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   size_t vbkblocks_count = 100;
@@ -850,7 +909,7 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   EXPECT_EQ(popData.atvs.size(), 0);
 }
 
-TEST_F(MemPoolFixture, getPop_scenario_14) {
+TEST_F(MemPoolFixture, getPop_scenario_12) {
   popminer->mineBtcBlocks(100);
   auto* vbkTip = popminer->mineVbkBlocks(54);
 
