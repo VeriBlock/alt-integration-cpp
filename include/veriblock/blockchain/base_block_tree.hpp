@@ -121,9 +121,7 @@ struct BaseBlockTree {
 
   void removeSubtree(const hash_t& toRemove) {
     auto* index = getBlockIndex(toRemove);
-    if (!index) {
-      throw std::logic_error("could not find the subtree to remove");
-    }
+    VBK_ASSERT(index && "can not find the subtree to remove");
     return this->removeSubtree(*index);
   }
 
@@ -131,9 +129,7 @@ struct BaseBlockTree {
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
-    if (!prev) {
-      throw std::logic_error("can not remove genesis block");
-    }
+    VBK_ASSERT(prev && "can not remove genesis block");
 
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
@@ -156,9 +152,7 @@ struct BaseBlockTree {
   }
 
   void removeLeaf(index_t& toRemove) {
-    if (!toRemove.pnext.empty()) {
-      throw std::logic_error("not a leaf block");
-    }
+    VBK_ASSERT(toRemove.pnext.empty() && "not a leaf block");
     return this->removeSubtree(toRemove);
   }
 
@@ -166,9 +160,7 @@ struct BaseBlockTree {
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
     auto* index = getBlockIndex(toBeInvalidated);
-    if (!index) {
-      throw std::logic_error("could not find the subtree to invalidate");
-    }
+    VBK_ASSERT(index && "could not find the subtree to invalidate");
     return invalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
 
@@ -179,9 +171,7 @@ struct BaseBlockTree {
                  block_t::name(),
                  (int)reason,
                  toBeInvalidated.toShortPrettyString());
-    if (!toBeInvalidated.pprev) {
-      throw std::logic_error("Can not invalidate genesis block");
-    }
+    VBK_ASSERT(toBeInvalidated.pprev && "can not invalidate genesis block");
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
       ValidationState dummy;
@@ -213,9 +203,7 @@ struct BaseBlockTree {
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
     auto* index = this->getBlockIndex(hash);
-    if (index == nullptr) {
-      throw std::logic_error("could not find the subtree to revalidate");
-    }
+    VBK_ASSERT(index && "can not find subtree to revalidate");
     revalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
 
