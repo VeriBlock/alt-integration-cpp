@@ -119,16 +119,12 @@ TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
       btcTx,
       endorsedBlock->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
-  tipA = popminer->mineVbkBlocks(*tipA, 1);
+  popminer->mineVbkBlocks(*tipA, 1);
 
   popminer->createVbkPopTxEndorsingVbkBlock(
       btcTip->getHeader(),
       btcTx,
       endorsedBlock->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
-  tipB = popminer->mineVbkBlocks(*tipB, 1);
-
-  // one of the chains ends up being invalid due to broken duplicate endorsement
-  // handling
-  ASSERT_NE(tipA->isValid(), tipB->isValid());
+  EXPECT_THROW(popminer->mineVbkBlocks(*tipB, 1), std::domain_error);
 }
