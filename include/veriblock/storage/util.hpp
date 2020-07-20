@@ -23,7 +23,11 @@ bool LoadTree(
     const std::vector<std::pair<int, typename BlockTreeT::index_t>>& blocks,
     const typename BlockTreeT::hash_t& tiphash,
     ValidationState& state) {
-  VBK_LOG_WARN("Loading %d blocks with tip %s", blocks.size(), HexStr(tiphash));
+  using block_t = typename BlockTreeT::block_t;
+  VBK_LOG_WARN("Loading %d %s blocks with tip %s",
+               blocks.size(),
+               block_t::name(),
+               HexStr(tiphash));
   VBK_ASSERT(tree.isBootstrapped() && "tree must be bootstrapped");
 
   for (auto& block : blocks) {

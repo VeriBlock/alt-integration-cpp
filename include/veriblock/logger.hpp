@@ -37,7 +37,7 @@ void SetLogger() {
 std::string LevelToString(LogLevel l);
 LogLevel StringToLevel(const std::string&);
 
-#ifdef VERIBLOCK_POP_LOGGER_ENABLED
+#ifndef VERIBLOCK_POP_LOGGER_DISABLED
 
 #ifndef VBK_LOG_FORMAT
 #define VBK_LOG_FORMAT(format, ...) \
@@ -58,14 +58,14 @@ LogLevel StringToLevel(const std::string&);
 #define VBK_LOG_ERROR(format, ...) VBK_LOG(LogLevel::error, format, ##__VA_ARGS__)
 // clang-format on
 
-#else  // !VERIBLOCK_POP_LOGGER_ENABLED
+#else  // !VERIBLOCK_POP_LOGGER_DISABLED
 
 #define VBK_LOG_DEBUG(...)
 #define VBK_LOG_INFO(...)
 #define VBK_LOG_WARN(...)
 #define VBK_LOG_ERROR(...)
 
-#endif  // VERIBLOCK_POP_LOGGER_ENABLED
+#endif  // VERIBLOCK_POP_LOGGER_DISABLED
 
 }  // namespace altintegration
 

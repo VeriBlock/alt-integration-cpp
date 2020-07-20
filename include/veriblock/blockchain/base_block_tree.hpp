@@ -71,6 +71,8 @@ struct BaseBlockTree {
   //! field has unexpected value, therefore we need to perform reindex).
   //! @invariant NOT atomic.
   virtual bool loadBlock(const index_t& index, ValidationState& state) {
+    VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
+
     auto currentHash = index.getHash();
     auto* current = getBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
