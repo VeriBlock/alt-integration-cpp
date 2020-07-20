@@ -95,8 +95,7 @@ void VbkBlockTree::removePayloads(index_t& index,
     auto it = std::find(vtbids.begin(), vtbids.end(), pid);
     // using an assert because throwing breaks atomicity
     // if there are multiple pids
-    VBK_ASSERT(it != vtbids.end() &&
-               "could not find the payload to remove");
+    VBK_ASSERT(it != vtbids.end() && "could not find the payload to remove");
 
     if (!storage_.getValidity(containingHash, pid)) {
       revalidateSubtree(index, BLOCK_FAILED_POP, false);
@@ -310,7 +309,7 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
       0, index.getHeight() - param_->getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
-    return state.Invalid("load-block");
+    return state.Error("bad-endorsements");
   }
 
   storage_.addBlockToIndex(*current);
@@ -321,6 +320,28 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
 void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
   storage_.removePayloadsIndex(toRemove);
   BaseBlockTree::removeSubtree(toRemove);
+}
+
+VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
+                           const BtcChainParams& btcp,
+                           PayloadsStorage& storagePayloads)
+    : VbkTree(vbkp),
+      cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp, storagePayloads),
+      storage_(storagePayloads) {}
+
+bool VbkBlockTree::loadTip(const Blob<24>& hash, ValidationState& state) {
+  if (!base::loadTip(hash, state)) {
+    return false;
+  }
+
+  auto* tip = activeChain_.tip();
+  VBK_ASSERT(tip);
+  while (tip) {
+    tip->setFlag(BLOCK_APPLIED);
+    tip = tip->pprev;
+  }
+
+  return true;
 }
 
 template <>

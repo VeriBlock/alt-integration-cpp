@@ -42,6 +42,7 @@ void SaveTree(const BlockTreeT& tree, BatchAdaptor& batch) {
   // TODO: add dirty flag and write only dirty blocks
   for (auto& block : tree.getBlocks()) {
     batch.writeBlock(*block.second);
+    block.second->unsetDirty();
   }
 
   batch.writeTip(*tree.getBestChain().tip());
@@ -49,7 +50,7 @@ void SaveTree(const BlockTreeT& tree, BatchAdaptor& batch) {
 
 struct AltTree;
 
-void SaveAllTrees(const AltTree& tree, Batch& batch);
+void SaveAllTrees(const AltTree& tree, BatchAdaptor& batch);
 
 }  // namespace altintegration
 

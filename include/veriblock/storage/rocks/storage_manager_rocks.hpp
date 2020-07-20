@@ -30,7 +30,6 @@ struct StorageManagerRocks : public StorageManager {
     auto s = _rocksManager->open();
     if (!s.ok()) throw db::StateCorruptedException(s.ToString());
 
-    _storagePop = std::make_shared<PopStorageRocks>(*_rocksManager);
     _storagePayloads = std::make_shared<PayloadsStorageRocks>(*_rocksManager);
   }
 

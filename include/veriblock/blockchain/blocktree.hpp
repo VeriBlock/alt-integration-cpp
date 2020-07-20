@@ -54,9 +54,9 @@ struct BlockTree : public BaseBlockTree<Block> {
   virtual bool bootstrapWithGenesis(ValidationState& state) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
     auto genesisBlock = param_->getGenesisBlock();
-    return ! this->bootstrap(0, genesisBlock, state)
-           ? state.Invalid(block_t::name() + "-bootstrap-genesis")
-           : true;
+    return !this->bootstrap(0, genesisBlock, state)
+               ? state.Invalid(block_t::name() + "-bootstrap-genesis")
+               : true;
   }
 
   /**
@@ -127,24 +127,31 @@ struct BlockTree : public BaseBlockTree<Block> {
   //! @invariant NOT atomic.
   bool loadBlock(const index_t& index, ValidationState& state) override {
     if (!checkBlock(index.getHeader(), state, *param_)) {
-      return state.Invalid("bad-header");
+      return state.Error("bad-header");
     }
 
     if (!base::loadBlock(index, state)) {
-      return state.Invalid("load-block");
+      return false;
     }
 
     auto* current = base::getBlockIndex(index.getHash());
     VBK_ASSERT(current);
 
+    auto* prev = current->pprev;
+    if (prev &&
+        !contextuallyCheckBlock(*prev, current->getHeader(), state, *param_)) {
+      return state.Error("bad-block-contextually");
+    }
+
     // recover chainwork
-    if (current->pprev) {
+    if (prev) {
       current->chainWork =
           current->pprev->chainWork + getBlockProof(current->getHeader());
     } else {
       current->chainWork = getBlockProof(current->getHeader());
     }
 
+    current->setFlag(BLOCK_VALID_TREE);
     return true;
   }
 
@@ -266,6 +273,11 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
   }
 };
+
+template <typename Block, typename ChainParams>
+void PrintTo(const BlockTree<Block, ChainParams>& tree, std::ostream* os) {
+  *os << tree.toPrettyString();
+}
 
 }  // namespace altintegration
 

@@ -76,6 +76,8 @@ class PopStorage {
   }
 
  protected:
+  PopStorage() = default;
+
   std::shared_ptr<BlockRepository<BlockIndex<BtcBlock>>> _brepoBtc;
   std::shared_ptr<BlockRepository<BlockIndex<VbkBlock>>> _brepoVbk;
   std::shared_ptr<BlockRepository<BlockIndex<AltBlock>>> _brepoAlt;
