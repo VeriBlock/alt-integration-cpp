@@ -94,11 +94,11 @@ PopData MemPool::generatePopData(
     PopData pop = block.second->toPopData();
     size_t estimated = pop.estimateSize();
 
-    while (popSize + estimated > params.getMaxPopDataSize()) {
+    while (popSize + estimated > params.getMaxPopDataSize() && !pop.empty()) {
       estimated = cutPopData(pop, estimated);
     }
 
-    if (popSize + estimated > params.getMaxPopDataSize()) {
+    if (popSize + estimated > params.getMaxPopDataSize() || pop.empty()) {
       continue;
     }
 
