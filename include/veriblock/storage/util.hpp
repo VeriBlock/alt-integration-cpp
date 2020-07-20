@@ -28,11 +28,7 @@ bool LoadTree(
 
   for (auto& block : blocks) {
     // load blocks one by one
-    typename BlockTreeT::index_t blockTmp = block.second;
-    blockTmp.status = BLOCK_VALID_TREE;
-    if (block.second.hasFlags(BLOCK_BOOTSTRAP))
-      blockTmp.status |= BLOCK_BOOTSTRAP;
-    if (!tree.loadBlock(blockTmp, state)) {
+    if (!tree.loadBlock(block.second, state)) {
       return state.Invalid("load-tree");
     }
   }

@@ -95,6 +95,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   //! @invariant NOT atomic.
   bool loadBlock(const index_t& index, ValidationState& state) override;
 
+  bool loadTip(const hash_t& hash, ValidationState& state) override;
+
   bool operator==(const AltTree& o) const {
     return cmp_ == o.cmp_ && base::operator==(o);
   }
@@ -191,14 +193,17 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
   json::putIntKV(obj, "status", i.status);
 
   auto stored = json::makeEmptyObject<JsonValue>();
-  json::putArrayKV(
-      stored, "vbkblocks", i.getPayloadIds<VbkBlock>());
+  json::putArrayKV(stored, "vbkblocks", i.getPayloadIds<VbkBlock>());
   json::putArrayKV(stored, "vtbs", i.getPayloadIds<VTB>());
   json::putArrayKV(stored, "atvs", i.getPayloadIds<ATV>());
 
   json::putKV(obj, "stored", stored);
 
   return obj;
+}
+
+inline void PrintTo(const AltTree& tree, std::ostream* os) {
+  *os << tree.toPrettyString();
 }
 
 inline uint8_t getBlockProof(const AltBlock&) { return 0; }

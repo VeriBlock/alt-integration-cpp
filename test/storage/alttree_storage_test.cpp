@@ -128,7 +128,7 @@ BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
 
 TYPED_TEST_SUITE_P(AltTreeRepositoryTest);
 
-TYPED_TEST_P(AltTreeRepositoryTest, Basic) {
+TYPED_TEST_P(AltTreeRepositoryTest, ValidBlocks) {
   auto* vbkTip = this->popminer->mineVbkBlocks(1);
   // create endorsement of VBKTIP in BTC_1
   auto btctx =
@@ -231,7 +231,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
 }
 
 // make sure to enumerate the test cases here
-REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, Basic, Altchain);
+REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, ValidBlocks, Altchain);
 
 #ifdef VERIBLOCK_ROCKSDB
 typedef ::testing::Types<TestStorageInmem, TestStorageRocks> TypesUnderTest;
