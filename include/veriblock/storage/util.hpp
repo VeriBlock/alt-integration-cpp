@@ -52,7 +52,7 @@ void SaveTree(BlockTreeT& tree, BatchAdaptor& batch) {
 
 struct AltTree;
 
-void SaveAllTrees(const AltTree& tree, BatchAdaptor& batch);
+void SaveAllTrees(AltTree& tree, BatchAdaptor& batch);
 
 }  // namespace altintegration
 
