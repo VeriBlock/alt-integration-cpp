@@ -178,9 +178,9 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                          ? tx.blockOfProofContext[0]
                          : tx.blockOfProof;
 
-  auto& connectingHash = firstBlock.previousBlock != ArithUint256()
-                             ? firstBlock.previousBlock
-                             : firstBlock.getHash();
+  auto connectingHash = firstBlock.previousBlock != ArithUint256()
+                            ? firstBlock.previousBlock
+                            : firstBlock.getHash();
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (!connectingIndex) {
