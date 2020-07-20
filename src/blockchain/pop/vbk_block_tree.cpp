@@ -170,6 +170,98 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   }
 }
 
+bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
+                                      ValidationState& state) {
+  auto& tx = vtb.transaction;
+
+  auto& firstBlock = tx.blockOfProofContext.size() > 0
+                         ? tx.blockOfProofContext[0]
+                         : tx.blockOfProof;
+
+  auto connectingHash = firstBlock.previousBlock != ArithUint256()
+                            ? firstBlock.previousBlock
+                            : firstBlock.getHash();
+
+  auto* connectingIndex = btc().getBlockIndex(connectingHash);
+  if (!connectingIndex) {
+    VBK_LOG_DEBUG("Could not find block %s that payload %s needs to connect to",
+                  connectingHash.toHex(),
+                  vtb.toPrettyString());
+    return state.Invalid("vtb-btc-context-unknown-previous-block",
+                         "Can not find the BTC block referenced by the first "
+                         "block of the VTB context: " +
+                             connectingHash.toHex());
+  }
+
+  bool isValid = std::any_of(connectingIndex->getRefs().begin(),
+                             connectingIndex->getRefs().end(),
+                             [&](BtcTree::index_t::ref_height_t height) {
+                               return height <= vtb.containingBlock.height;
+                             });
+
+  if (isValid) {
+    return true;
+  }
+
+  return state.Invalid(
+      "vtb-btc-context-block-referenced-too-early",
+      "The BTC block referenced by the first block of the VTB context is added "
+      "by blocks that follow the containing block: " +
+          connectingHash.toHex());
+}
+
+bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
+                                            const payloads_t& payload,
+                                            ValidationState& state) {
+  VBK_ASSERT(index.hasFlags(BLOCK_APPLIED));
+
+  auto pid = payload.getId();
+  VBK_LOG_DEBUG("Adding and applying payload %s in block %s",
+                pid.toHex(),
+                index.toShortPrettyString());
+
+  index.insertPayloadId<payloads_t>(pid);
+  storage_.addVbkPayloadIndex(index.getHash(), pid.asVector());
+  storage_.savePayloads({payload});
+
+  auto cmdGroups = storage_.loadCommands<VbkBlockTree>(index, *this);
+
+  auto group_it = std::find_if(
+      cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
+        return group.id == pid;
+      });
+
+  VBK_ASSERT(group_it != cmdGroups.end() &&
+             "state corruption: could not find the command group that "
+             "corresponds to the payload we have just added");
+  const auto& group = *group_it;
+
+  std::vector<CommandPtr> executed;
+  for (auto& cmd : group.commands) {
+    if (cmd->Execute(state)) {
+      executed.push_back(cmd);
+
+    } else {
+      VBK_LOG_DEBUG("Failed to apply payload %s to block %s: %s",
+                    index.toPrettyString(),
+                    pid.toHex(),
+                    state.toString());
+
+      // rollback the partially executed commandGroup
+      for (auto& c : reverse_iterate(executed)) {
+        c->UnExecute();
+      }
+
+      // remove the failed payload
+      index.removePayloadId<payloads_t>(pid);
+
+      return false;
+    }
+  }
+
+  return true;
+}
+
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {
@@ -192,6 +284,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                          "It is forbidden to add payloads to bootstrap block");
   }
 
+  // TODO: once we plug the validation hole, we want this to be an assert
   if (!index->isValid()) {
     // adding payloads to an invalid block will not result in a state change
     return state.Invalid(
@@ -216,73 +309,98 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   auto tip = activeChain_.tip();
+  VBK_ASSERT(tip != nullptr);
 
   bool isOnActiveChain = activeChain_.contains(index);
-  if (isOnActiveChain) {
-    VBK_ASSERT(tip != nullptr);
-    auto window = (std::max)(0, tip->getHeight() - index->getHeight());
-    if (window >= param_->getHistoryOverwriteLimit()) {
+
+  // we need the index to be applied in order to validate VTBs efficiently
+  if (!isOnActiveChain) {
+    bool success = setState(*index, state);
+    if (!success) {
+      // TODO: once we plug the validation hole, we want this to be an assert
       return state.Invalid(
-          block_t::name() + "-too-late",
+          block_t::name() + "-invalid-containing-block",
           fmt::sprintf(
-              "Containing block=%s is too much behind "
-              "of active chain tip. Diff %d is more than allowed %d blocks.",
-              index->toShortPrettyString(),
-              window,
-              param_->getHistoryOverwriteLimit()));
+              "Containing block=%s could not be applied due to being invalid",
+              index->toPrettyString()));
+    }
+  }
+
+  // temporal validation: the connecting BTC block must be added in 'index' or
+  // earlier blocks
+  bool areContextsValid = std::all_of(
+      payloads.begin(), payloads.end(), [&](const payloads_t& payload) {
+        return validateBTCContext(payload, state);
+      });
+
+  if (!areContextsValid) {
+    // restore the tip
+    if (!isOnActiveChain) {
+      bool success = setState(*tip, state);
+      VBK_ASSERT(success &&
+                 "state corruption: failed to restore the best chain tip");
     }
 
-    ValidationState dummy;
-    bool success = setState(*index->pprev, dummy);
-    VBK_ASSERT(success &&
-               "state corruption: failed to roll back the best chain tip");
+    return state.Invalid(
+        block_t::name() + "-btc-context-does-not-connect",
+        fmt::sprintf("one of the payloads we attempted to add to block %s has "
+                     "the BTC context that does not connect to the BTC tree",
+                     index->toPrettyString()));
   }
 
-  // commit payloads to block index
-  index->insertPayloadIds<VTB>(pids);
+  // apply payloads
+  std::vector<pid_t> appliedPayloads;
 
-  // update indices in payload storage
-  auto containingHash = index->getHash();
-  for (const auto& pid : pids) {
-    storage_.addVbkPayloadIndex(containingHash, pid.asVector());
+  for (const auto& payload : payloads) {
+    auto pid = payload.getId();
+
+    bool added = addPayloadToAppliedBlock(*index, payload, state);
+    if (!added) {
+      // roll back previously applied payloads
+      for (const auto& pidToRemove : reverse_iterate(appliedPayloads)) {
+        storage_.removeVbkPayloadIndex(index->getHash(), pid.asVector());
+        unsafelyRemovePayload(
+            *index, pidToRemove, /*shouldDetermineBestChain =*/false);
+      }
+
+      // restore the tip
+      if (!isOnActiveChain) {
+        bool success = setState(*tip, state);
+        VBK_ASSERT(success &&
+                   "state corruption: failed to restore the best chain tip");
+      }
+
+      return state.Invalid(
+          block_t::name() + "-invalid-payloads",
+          fmt::sprintf("Attempted to add invalid payload %s to block %s",
+                       pid.toHex(),
+                       index->toPrettyString()));
+    }
+
+    appliedPayloads.push_back(pid);
   }
-
-  // and save payloads on disk
-  storage_.savePayloads(payloads);
 
   // don't defer fork resolution in the acceptBlock+addPayloads flow until the
   // validation hole is plugged
   doUpdateAffectedTips(*index, state);
 
-  if (index->isValid()) {
-    return true;
+  // compare to the original best chain
+  if (!isOnActiveChain) {
+    doUpdateAffectedTips(*tip, state);
   }
 
-  // roll back our attempted changes
-  for (const auto& pid : pids) {
-    storage_.removeVbkPayloadIndex(containingHash, pid.asVector());
-    unsafelyRemovePayload(*index, pid, /*shouldDetermineBestChain =*/false);
-  }
-
-  // restore the tip
-  if (isOnActiveChain) {
-    ValidationState dummy;
-    bool success = setState(*tip, dummy);
-    VBK_ASSERT(success &&
-               "state corruption: failed to restore the best chain tip");
-  }
-
-  return false;
+  return true;
 }
 
 void VbkBlockTree::payloadsToCommands(const payloads_t& p,
                                       std::vector<CommandPtr>& commands) {
   // process context blocks
   for (const auto& b : p.transaction.blockOfProofContext) {
-    addBlock(btc(), b, commands);
+    addBlock(btc(), b, p.containingBlock.height, commands);
   }
   // process block of proof
-  addBlock(btc(), p.transaction.blockOfProof, commands);
+  addBlock(
+      btc(), p.transaction.blockOfProof, p.containingBlock.height, commands);
 
   // add endorsement
   auto e = VbkEndorsement::fromContainerPtr(p);
