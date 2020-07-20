@@ -882,6 +882,41 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_11) {
+  auto* vbkTip = popminer->mineVbkBlocks(65);
+
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  size_t vtbs_amount = 100;
+  for (size_t i = 0; i < vtbs_amount; ++i) {
+    popminer->mineBtcBlocks(100);
+    generatePopTx(endorsedVbkBlock1->getHeader());
+  }
+
+  ASSERT_EQ(popminer->vbkmempool.size(), vtbs_amount);
+
+  vbkTip = popminer->mineVbkBlocks(1);
+
+  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+
+  fillVbkContext(vtbs[0].context,
+                 vbkparam.getGenesisBlock().getHash(),
+                 vtbs[0].containingBlock.getHash(),
+                 popminer->vbk());
+
+  ASSERT_EQ(vtbs.size(), vtbs_amount);
+
+  for (const auto& vtb : vtbs) {
+    ASSERT_TRUE(mempool->submit<VTB>(vtb, alttree, state)) << state.toString();
+  }
+
+  ASSERT_EQ(mempool->getMap<VTB>().size(), vtbs_amount);
+
+  PopData pop = checkedGetPop();
+
+  EXPECT_TRUE(pop.vtbs.size() < vtbs_amount);
+  applyInNextBlock(pop);
+}
+
+TEST_F(MemPoolFixture, getPop_scenario_12) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   size_t vbkblocks_count = 100;
@@ -911,7 +946,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   EXPECT_EQ(popData.atvs.size(), 0);
 }
 
-TEST_F(MemPoolFixture, getPop_scenario_12) {
+TEST_F(MemPoolFixture, getPop_scenario_13) {
   popminer->mineBtcBlocks(100);
   auto* vbkTip = popminer->mineVbkBlocks(54);
 

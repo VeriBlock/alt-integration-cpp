@@ -83,8 +83,8 @@ size_t MemPool::cutPopData(PopData& popData, size_t current_size) const {
 }
 
 PopData MemPool::generatePopData(
-    std::vector<std::pair<VbkBlock::id_t,
-                          std::shared_ptr<VbkPayloadsRelations>>> blocks,
+    const std::vector<std::pair<VbkBlock::id_t,
+                                std::shared_ptr<VbkPayloadsRelations>>>& blocks,
     const AltChainParams& params) const {
   PopData ret;
   // size in bytes of pop data added to

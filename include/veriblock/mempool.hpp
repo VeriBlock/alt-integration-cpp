@@ -116,8 +116,9 @@ struct MemPool {
                                       VbkBlock::id_t id = VbkBlock::id_t());
 
   PopData generatePopData(
-      std::vector<std::pair<VbkBlock::id_t,
-                            std::shared_ptr<VbkPayloadsRelations>>> blocks,
+      const std::vector<
+          std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>>&
+          blocks,
       const AltChainParams& params) const;
 
   size_t cutPopData(PopData& popData, size_t current_size) const;
