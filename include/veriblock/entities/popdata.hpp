@@ -66,6 +66,8 @@ struct PopData {
 
   id_t getId() const { return getHash(); }
 
+  bool empty() const { return context.empty() && atvs.empty() && vtbs.empty(); }
+
   friend bool operator==(const PopData& a, const PopData& b) {
     // clang-format off
     return a.toVbkEncoding() == b.toVbkEncoding();

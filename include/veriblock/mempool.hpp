@@ -114,8 +114,6 @@ struct MemPool {
 
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
                                       VbkBlock::id_t id = VbkBlock::id_t());
-
-  bool filterVbkBlock(const VbkBlock& block);
 };
 
 template <>
