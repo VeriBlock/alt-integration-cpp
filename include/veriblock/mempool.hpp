@@ -115,9 +115,12 @@ struct MemPool {
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
                                       VbkBlock::id_t id = VbkBlock::id_t());
 
-  size_t cutPopdata(PopData& popData,
-                  size_t current_size,
-                  const AltChainParams& params);
+  PopData generatePopData(
+      std::vector<std::pair<VbkBlock::id_t,
+                            std::shared_ptr<VbkPayloadsRelations>>> blocks,
+      const AltChainParams& params) const;
+
+  size_t cutPopData(PopData& popData, size_t current_size) const;
 
   bool filterVbkBlock(const VbkBlock& block);
 };
