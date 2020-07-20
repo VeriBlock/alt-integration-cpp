@@ -178,7 +178,9 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                          ? tx.blockOfProofContext[0]
                          : tx.blockOfProof;
 
-  auto& connectingHash = firstBlock.previousBlock != ArithUint256()? firstBlock.previousBlock : firstBlock.getHash();
+  auto& connectingHash = firstBlock.previousBlock != ArithUint256()
+                             ? firstBlock.previousBlock
+                             : firstBlock.getHash();
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (!connectingIndex) {
@@ -191,8 +193,8 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                              connectingHash.toHex());
   }
 
-  bool isValid = std::any_of(connectingIndex->refs.begin(),
-                             connectingIndex->refs.end(),
+  bool isValid = std::any_of(connectingIndex->getRefs().begin(),
+                             connectingIndex->getRefs().end(),
                              [&](BtcTree::index_t::ref_height_t height) {
                                return height <= vtb.containingBlock.height;
                              });
@@ -218,11 +220,11 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
                 pid.toHex(),
                 index.toShortPrettyString());
 
-  index.vtbids.push_back(pid);
-  storage_.addVbkPayloadIndex(index->getHash(), pid.asVector());
-  storagePayloads_.savePayloads(payload);
+  index.insertPayloadId<payloads_t>(pid);
+  storage_.addVbkPayloadIndex(index.getHash(), pid.asVector());
+  storage_.savePayloads({payload});
 
-  auto cmdGroups = storagePayloads_.loadCommands<VbkBlockTree>(index, *this);
+  auto cmdGroups = storage_.loadCommands<VbkBlockTree>(index, *this);
 
   auto group_it = std::find_if(
       cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
@@ -251,11 +253,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
       }
 
       // remove the failed payload
-      auto failed_vtbid_it =
-          std::find(index.vtbids.begin(), index.vtbids.end(), pid);
-      VBK_ASSERT(failed_vtbid_it != index.vtbids.end() &&
-                 "state corruption: the block does not contain the payload");
-      index.vtbids.erase(failed_vtbid_it);
+      index.removePayloadId<payloads_t>(pid);
 
       return false;
     }
@@ -360,7 +358,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     if (!added) {
       // roll back previously applied payloads
       for (const auto& pidToRemove : reverse_iterate(appliedPayloads)) {
-        storage_.removeVbkPayloadIndex(containingHash, pid.asVector());
+        storage_.removeVbkPayloadIndex(index->getHash(), pid.asVector());
         unsafelyRemovePayload(
             *index, pidToRemove, /*shouldDetermineBestChain =*/false);
       }
