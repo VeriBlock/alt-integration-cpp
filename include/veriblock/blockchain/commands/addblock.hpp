@@ -21,16 +21,30 @@ namespace altintegration {
 template <typename Block, typename ChainParams>
 struct AddBlock : public Command {
   using Tree = BlockTree<Block, ChainParams>;
-  AddBlock(Tree& tree, std::shared_ptr<Block> block)
-      : tree_(&tree), block_(std::move(block)) {}
+  using ref_height_t = int32_t;
+
+  AddBlock(Tree& tree,
+           std::shared_ptr<Block> block,
+           ref_height_t referencedAtHeight = 0)
+      : tree_(&tree),
+        block_(std::move(block)),
+        referencedAtHeight_(referencedAtHeight) {}
 
   bool Execute(ValidationState& state) override {
     auto* index = tree_->getBlockIndex(block_->getHash());
-    if (index != nullptr) {
-      index->incRefCounter();
-      return true;
+
+    if (index == nullptr) {
+      if (!tree_->acceptBlock(block_, state)) {
+        return false;
+      }
+
+      index = tree_->getBlockIndex(block_->getHash());
+      VBK_ASSERT(index != nullptr &&
+                 "could not find the block we have just added");
     }
-    return tree_->acceptBlock(block_, state);
+
+    index->addRef(referencedAtHeight_);
+    return true;
   }
 
   void UnExecute() override {
@@ -39,11 +53,11 @@ struct AddBlock : public Command {
     VBK_ASSERT(index != nullptr &&
                "failed to roll back AddBlock: the block does not exist");
 
-    if (index->getRefCounter() == 0) {
+    index->removeRef(referencedAtHeight_);
+
+    if (index->refCount() == 0) {
       return tree_->removeLeaf(*index);
     }
-
-    index->decRefCounter();
   }
 
   size_t getId() const override { return block_->getHash().getLow64(); }
@@ -53,6 +67,7 @@ struct AddBlock : public Command {
  private:
   Tree* tree_;
   std::shared_ptr<Block> block_;
+  int32_t referencedAtHeight_;
 };
 
 using AddBtcBlock = AddBlock<BtcBlock, BtcChainParams>;
@@ -78,15 +93,23 @@ inline std::string AddVbkBlock::toPrettyString(size_t level) const {
 template <typename BlockTree>
 void addBlock(BlockTree& tree,
               const typename BlockTree::block_t& block,
+              int32_t referencedAtHeight,
               std::vector<CommandPtr>& commands) {
   using block_t = typename BlockTree::block_t;
   using params_t = typename BlockTree::params_t;
   // we don't know this block, create command
   auto blockPtr = std::make_shared<block_t>(block);
-  auto cmd =
-      std::make_shared<AddBlock<block_t, params_t>>(tree, std::move(blockPtr));
+  auto cmd = std::make_shared<AddBlock<block_t, params_t>>(
+      tree, std::move(blockPtr), referencedAtHeight);
   commands.push_back(std::move(cmd));
 };
+
+template <typename BlockTree>
+void addBlock(BlockTree& tree,
+              const typename BlockTree::block_t& block,
+              std::vector<CommandPtr>& commands) {
+  return addBlock(tree, block, 0, commands);
+}
 
 }  // namespace altintegration
 

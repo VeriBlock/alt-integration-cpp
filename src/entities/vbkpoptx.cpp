@@ -66,11 +66,13 @@ uint256 VbkPopTx::getHash() const {
 
 std::string VbkPopTx::toPrettyString() const {
   return fmt::sprintf(
-      "VbkPopTx{address=%s, publishedBlock=%s, blockOfProof=%s, "
-      "contextsize=%d}",
+      "VbkPopTx{address=%s, publishedBlock=%s, blockOfProof=%s, context= %d blocks starting with %s}",
       address.toString(),
       publishedBlock.toPrettyString(),
-      blockOfProof.toPrettyString());
+      blockOfProof.toPrettyString(),
+      blockOfProofContext.size(),
+      blockOfProofContext.size() > 0 ?blockOfProofContext[0].toPrettyString() : "(none)"
+                     );
 }
 
 }  // namespace altintegration
