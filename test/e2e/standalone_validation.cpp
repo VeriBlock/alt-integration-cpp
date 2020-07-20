@@ -76,5 +76,5 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
   // "not a leaf block" while trying to unapply the first VTB
   ASSERT_DEATH(
       alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash()),
-      "");
+      "not a leaf block");
 }
