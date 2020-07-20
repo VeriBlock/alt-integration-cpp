@@ -73,7 +73,9 @@ bool payloadsCheckDuplicates(Index& index,
 }
 
 template <typename Index, typename Pop>
-void commitPayloadsIds(Index& index, const std::vector<Pop>& pop, PayloadsStorage& storage) {
+void commitPayloadsIds(Index& index,
+                       const std::vector<Pop>& pop,
+                       PayloadsStorage& storage) {
   auto pids = map_get_id(pop);
   index.template insertPayloadIds<Pop>(pids);
 
@@ -200,7 +202,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
   if (!index->isValid()) {
     return state.Invalid(block_t::name() + "-bad-chain",
                          "One of previous blocks is invalid. Status=(" +
-                             std::to_string(index->getStatus()) + ")");
+                             std::to_string(index->status) + ")");
   }
 
   tryAddTip(index);
@@ -494,7 +496,7 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
       0, index.getHeight() - getParams().getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
-    return state.Invalid("load-block");
+    return state.Error("bad-endorsements");
   }
 
   storage_.addBlockToIndex(*current);
@@ -528,6 +530,21 @@ void AltTree::removeSubtree(AltTree::index_t& toRemove) {
   base::removeSubtree(toRemove);
 }
 
+bool AltTree::loadTip(const AltTree::hash_t& hash, ValidationState& state) {
+  if (!base::loadTip(hash, state)) {
+    return false;
+  }
+
+  auto* tip = activeChain_.tip();
+  VBK_ASSERT(tip);
+  while (tip) {
+    tip->setFlag(BLOCK_APPLIED);
+    tip = tip->pprev;
+  }
+
+  return true;
+}
+
 template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename AltTree::index_t& index, AltTree& tree) {
@@ -544,8 +561,7 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
 }
 
 template <typename Payloads>
-void removeId(BlockIndex<AltBlock>& index,
-              const typename Payloads::id_t& pid) {
+void removeId(BlockIndex<AltBlock>& index, const typename Payloads::id_t& pid) {
   auto& payloads = index.template getPayloadIds<Payloads>();
   auto it = std::find(payloads.rbegin(), payloads.rend(), pid);
   VBK_ASSERT(it != payloads.rend());

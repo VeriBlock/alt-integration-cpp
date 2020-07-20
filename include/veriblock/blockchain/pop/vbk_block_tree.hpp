@@ -35,10 +35,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   VbkBlockTree(const VbkChainParams& vbkp,
                const BtcChainParams& btcp,
-               PayloadsStorage& storagePayloads)
-      : VbkTree(vbkp),
-        cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp, storagePayloads),
-        storage_(storagePayloads) {}
+               PayloadsStorage& storagePayloads);
 
   //! efficiently connect `index` to current tree, loaded from disk
   //! - recovers all pointers (pprev, pnext, endorsedBy)
@@ -56,6 +53,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   PayloadsStorage& getStoragePayloads() { return storage_; }
   const PayloadsStorage& getStoragePayloads() const { return storage_; }
+
+  bool loadTip(const hash_t& hash, ValidationState& state) override;
 
   /**
    * @invariant atomic: adds either all or none of the payloads
@@ -137,7 +136,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
   json::putIntKV(obj, "height", i.getHeight());
   json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
-  json::putIntKV(obj, "status", i.getStatus());
+  json::putIntKV(obj, "status", i.status);
   json::putIntKV(obj, "ref", i.getRefCounter());
 
   auto stored = json::makeEmptyObject<JsonValue>();
@@ -154,7 +153,7 @@ JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   json::putStringKV(obj, "chainWork", i.chainWork.toHex());
   json::putIntKV(obj, "height", i.getHeight());
   json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
-  json::putIntKV(obj, "status", i.getStatus());
+  json::putIntKV(obj, "status", i.status);
   json::putIntKV(obj, "ref", i.getRefCounter());
 
   return obj;
@@ -177,6 +176,10 @@ BaseBlockTree<VbkBlock>::makePrevHash<BaseBlockTree<VbkBlock>::hash_t>(
     const hash_t& h) const {
   // do an explicit cast from hash_t -> prev_block_hash_t
   return h.template trimLE<prev_block_hash_t::size()>();
+}
+
+inline void PrintTo(const VbkBlockTree& tree, std::ostream* os) {
+  *os << tree.toPrettyString();
 }
 
 }  // namespace altintegration

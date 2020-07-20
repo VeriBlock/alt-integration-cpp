@@ -72,6 +72,7 @@ class PayloadsStorage {
   void removePayloadsIndex(const BlockIndex<VbkBlock>& block);
 
   Repository& getRepo();
+  const Repository& getRepo() const;
 
   // realisation in the alt_block_tree, vbK_block_tree
   template <typename BlockTree>

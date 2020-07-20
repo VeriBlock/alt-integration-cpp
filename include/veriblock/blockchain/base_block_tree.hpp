@@ -59,15 +59,16 @@ struct BaseBlockTree {
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
     auto* tip = getBlockIndex(hash);
     if (!tip) {
-      return state.Invalid(
-          block_t::name() + "-no-tip",
-          fmt::format("Can not find tip with hash {}", HexStr(hash)));
+      return state.Error(block_t::name() + "-no-tip");
     }
 
     this->overrideTip(*tip);
     return true;
   }
 
+  //! @returns false if block is failed to pass validation. State will be set to
+  //! Error if block failed to meet expectations (block is invalid, and some
+  //! field has unexpected value, therefore we need to perform reindex).
   //! @invariant NOT atomic.
   virtual bool loadBlock(const index_t& index, ValidationState& state) {
     auto currentHash = index.getHash();
@@ -75,18 +76,12 @@ struct BaseBlockTree {
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block
     if (current && !current->hasFlags(BLOCK_BOOTSTRAP)) {
-      return state.Invalid("block-exists",
-                           "Trying to load a block, which already exists on "
-                           "chain and is not a bootstrap block.");
+      return state.Error("block-exists");
     }
 
     // if current block is not known, and previous also not known
     if (!current && !getBlockIndex(index.getHeader().previousBlock)) {
-      return state.Invalid(
-          "bad-prev",
-          fmt::format("Can not load block {}, no previous block {}",
-                      index.toPrettyString(),
-                      HexStr(index.getHeader().previousBlock)));
+      return state.Error("bad-prev");
     }
 
     current = touchBlockIndex(currentHash);
@@ -95,9 +90,12 @@ struct BaseBlockTree {
     // touchBlockIndex may return existing block (one of bootstrap blocks), so
     // backup its 'pnext'
     auto next = current->pnext;
+    auto status = current->status;
 
     // copy all fields
     *current = index;
+    // recover status
+    current->status = status;
     // recover pnext
     current->pnext = next;
     // recover pprev
@@ -107,16 +105,14 @@ struct BaseBlockTree {
       // prev block found
       auto expectedHeight = current->pprev->getHeight() + 1;
       if (current->getHeight() != expectedHeight) {
-        return state.Invalid(
-            "bad-height",
-            fmt::format("Block {} expected height={}, actual={}",
-                        current->toShortPrettyString(),
-                        expectedHeight,
-                        current->getHeight()));
+        return state.Error("bad-height");
       }
 
       current->pprev->pnext.insert(current);
     }
+
+    current->setFlag(BLOCK_VALID_TREE);
+    current->unsetDirty();
 
     tryAddTip(current);
 

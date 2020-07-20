@@ -59,6 +59,9 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) a set of pointers for forward iteration
   std::set<BlockIndex*> pnext{};
 
+  //! (memory only) contains status flags
+  uint8_t status = 0;  // unknown validity
+
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
     VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
@@ -85,7 +88,6 @@ struct BlockIndex : public Block::addon_t {
     }
     if ((status & BLOCK_VALID_MASK) < upTo) {
       status = (status & ~BLOCK_VALID_MASK) | upTo;
-      setDirty();
       return true;
     }
     return false;
@@ -95,14 +97,10 @@ struct BlockIndex : public Block::addon_t {
   void unsetDirty() { this->status &= ~BLOCK_DIRTY; }
 
   void setFlag(enum BlockStatus s) {
-    this->status |= (s | BLOCK_DIRTY);
+    this->status |= s;
   }
   void unsetFlag(enum BlockStatus s) {
     this->status &= ~s;
-    // set DIRTY unless we explicitly want to unset DIRTY
-    if ((s & BLOCK_DIRTY) != BLOCK_DIRTY) {
-      this->status |= BLOCK_DIRTY;
-    }
   }
 
   bool hasFlags(enum BlockStatus s) const { return this->status & s; }
@@ -128,8 +126,6 @@ struct BlockIndex : public Block::addon_t {
     header = std::move(newHeader);
     setDirty();
   }
-
-  uint8_t getStatus() const { return status; }
 
   bool isValidTip() const {
     // can be a valid tip iff there're no next blocks or all next blocks are
@@ -187,14 +183,12 @@ struct BlockIndex : public Block::addon_t {
 
   void toRaw(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
-    stream.writeBE<uint8_t>(status);
     header->toRaw(stream);
     addon_t::toRaw(stream);
   }
 
   void initFromRaw(ReadStream& stream) {
     height = stream.readBE<uint32_t>();
-    status = stream.readBE<uint8_t>();
     header = std::make_shared<Block>(Block::fromRaw(stream));
     addon_t::initAddonFromRaw(stream);
     setDirty();
@@ -219,7 +213,7 @@ struct BlockIndex : public Block::addon_t {
 
   bool operator==(const BlockIndex& o) const {
     bool a = *header == *o.header;
-    bool b = status == o.status;
+    bool b = (status & ~BLOCK_DIRTY) == (o.status & ~BLOCK_DIRTY);
     bool c = addon_t::operator==(o);
     return a && b && c;
   }
@@ -232,9 +226,6 @@ struct BlockIndex : public Block::addon_t {
 
   //! block header
   std::shared_ptr<block_t> header{};
-
-  //! contains status flags
-  uint8_t status = 0;  // unknown validity
 };
 
 template <typename Block>
