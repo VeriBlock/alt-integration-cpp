@@ -26,10 +26,13 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
 
   uint32_t refCount() const { return _refCount; }
 
-  void addRef(ref_height_t) { ++_refCount; setDirty(); }
+  void addRef(ref_height_t) {
+    ++_refCount;
+    setDirty();
+  }
 
   void removeRef(ref_height_t) {
-    VBK_ASSERT(refCount_ > 0 &&
+    VBK_ASSERT(_refCount > 0 &&
                "state corruption: attempted to remove a nonexitent reference "
                "to a VBK block");
     --_refCount;
@@ -81,7 +84,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
     bool c = chainWork == o.chainWork;
     bool d = PopState<VbkEndorsement>::operator==(o);
     return a && b && c && d;
-
+  }
 
   std::string toPrettyString() const {
     return fmt::sprintf("VTB=%d", _vtbids.size());
