@@ -52,6 +52,20 @@ void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
   }
 }
 
+size_t MemPool::cutPopdata(PopData& popData,
+                           size_t current_size,
+                           const AltChainParams& params) {
+  size_t estimated = popData.estimateSize();
+
+  if (current_size + estimated > params.getMaxPopDataSize()) {
+    popData.atvs.clear();
+    popData.vtbs.clear();
+    popData.context.clear();
+  }
+
+  return estimated;
+}
+
 PopData MemPool::getPop(AltTree& tree) {
   PopData ret;
   // size in bytes of pop data added to
@@ -66,16 +80,12 @@ PopData MemPool::getPop(AltTree& tree) {
 
   for (const P& block : blocks) {
     PopData pop = block.second->toPopData();
-    size_t estimated = pop.estimateSize();
-    if (popSize + estimated <= tree.getParams().getMaxPopDataSize()) {
-      // include this pop data into a block
-      popSize += estimated;
-      ret.mergeFrom(pop);
-      continue;
-    }
+    popSize += cutPopdata(pop, popSize, tree.getParams());
+    ret.mergeFrom(pop);
 
-    // we are over max size
-    break;
+    if (popSize > tree.getParams().getMaxPopDataSize()) {
+      break;
+    }
   }
 
   tree.filterInvalidPayloads(ret);

@@ -115,6 +115,10 @@ struct MemPool {
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
                                       VbkBlock::id_t id = VbkBlock::id_t());
 
+  size_t cutPopdata(PopData& popData,
+                  size_t current_size,
+                  const AltChainParams& params);
+
   bool filterVbkBlock(const VbkBlock& block);
 };
 
