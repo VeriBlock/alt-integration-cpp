@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 #define VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 
-#include <veriblock/arith_uint256.hpp>
 #include <veriblock/blockchain/pop/pop_state.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/logger.hpp>
@@ -18,34 +17,21 @@ struct VTB;
 
 struct VbkBlockAddon : public PopState<VbkEndorsement> {
   using payloads_t = VTB;
-  using ref_height_t = int32_t;
 
   //! (memory only) total amount of work in the chain up to and including this
   //! block
   ArithUint256 chainWork = 0;
 
-  uint32_t refCount() const { return _refCount; }
+  uint32_t getRefCounter() const { return _refCounter; }
 
-  void addRef(ref_height_t) {
-    ++_refCount;
+  void incRefCounter() {
+    _refCounter++;
     setDirty();
   }
 
-  void removeRef(ref_height_t) {
-    VBK_ASSERT(_refCount > 0 &&
-               "state corruption: attempted to remove a nonexitent reference "
-               "to a VBK block");
-    --_refCount;
+  void decRefCounter() {
+    _refCounter--;
     setDirty();
-  }
-
-  void setIsBootstrap(bool isBootstrap) {
-    if (isBootstrap) {
-      // pretend this block is referenced by the genesis block of the SI chain
-      addRef(0);
-    } else {
-      VBK_ASSERT(false && "not supported");
-    }
   }
 
   bool payloadsIdsEmpty() const { return _vtbids.empty(); }
@@ -75,12 +61,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
 
   bool operator==(const VbkBlockAddon& o) const {
     bool a = _vtbids == o._vtbids;
-    // comparing reference counts does not seem like a good idea
-    // as the only situation where they would be different is
-    // comparing blocks across different trees eg mock miner vs
-    // the test tree and in this situation the references and counts
-    // are likely to differ
-    bool b = true;  // _refCount == o._refCount;
+    bool b = _refCounter == o._refCounter;
     bool c = chainWork == o.chainWork;
     bool d = PopState<VbkEndorsement>::operator==(o);
     return a && b && c && d;
@@ -91,28 +72,28 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   }
 
   void toRaw(WriteStream& w) const {
-    w.writeBE<uint32_t>(_refCount);
+    w.writeBE<uint32_t>(_refCounter);
     PopState<VbkEndorsement>::toRaw(w);
     writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
   }
 
  protected:
   //! reference counter for fork resolution
-  uint32_t _refCount = 0;
+  uint32_t _refCounter = 0;
   // VTB::id_t
   std::vector<uint256> _vtbids;
 
   void setDirty();
 
   void setNull() {
-    _refCount = 0;
+    _refCounter = 0;
     chainWork = 0;
     PopState<VbkEndorsement>::setNull();
     _vtbids.clear();
   }
 
   void initAddonFromRaw(ReadStream& r) {
-    _refCount = r.readBE<uint32_t>();
+    _refCounter = r.readBE<uint32_t>();
     PopState<VbkEndorsement>::initAddonFromRaw(r);
 
     _vtbids = readArrayOf<uint256>(

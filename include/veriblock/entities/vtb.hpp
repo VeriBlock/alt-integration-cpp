@@ -32,13 +32,9 @@ struct VTB {
   std::string toHex() const { return HexStr(toVbkEncoding()); }
 
   std::string toPrettyString() const {
-    return fmt::sprintf("VTB{containingTx=%s(%s), containingBlock=%s, context=%d blocks starting at %s}",
+    return fmt::sprintf("VTB{containingTx=%s, containingBlock=%s}",
                         transaction.getHash().toHex(),
-                        transaction.toPrettyString(),
-                        containingBlock.getHash().toHex(),
-                        context.size(),
-                        context.size() > 0 ? context[0].toPrettyString() : "(none)"
-                       );
+                        containingBlock.getHash().toHex());
   }
 
   /**

@@ -104,19 +104,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void removeSubtree(index_t& toRemove) override;
 
  private:
-  bool validateBTCContext(const payloads_t& vtb, ValidationState& state);
-  /**
-   * Add, apply and validate a payload to a block that's currently applied
-   *
-   * Will add duplicates.
-   * The containing block must be applied
-   * @invariant atomic: leaves the state unchanged on failure
-   * @return: true/false on success/failure
-   */
-  bool addPayloadToAppliedBlock(index_t& index,
-                                const payloads_t& payload,
-                                ValidationState& state);
-
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
   PopForkComparator cmp_;
@@ -150,7 +137,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putIntKV(obj, "height", i.getHeight());
   json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
   json::putIntKV(obj, "status", i.status);
-  json::putIntKV(obj, "ref", i.refCount());
+  json::putIntKV(obj, "ref", i.getRefCounter());
 
   auto stored = json::makeEmptyObject<JsonValue>();
   json::putArrayKV(stored, "vtbids", i.getPayloadIds<VTB>());
@@ -167,7 +154,7 @@ JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   json::putIntKV(obj, "height", i.getHeight());
   json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
   json::putIntKV(obj, "status", i.status);
-  json::putIntKV(obj, "ref", i.refCount());
+  json::putIntKV(obj, "ref", i.getRefCounter());
 
   return obj;
 }
