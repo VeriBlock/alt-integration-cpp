@@ -189,7 +189,6 @@ bool MemPool::submit(const ATV& atv,
   std::vector<uint8_t> endorsed_hash =
       tree.getParams().getHash(atv.transaction.publicationData.header);
   auto* endorsed_index = tree.getBlockIndex(endorsed_hash);
-
   if (endorsed_index != nullptr) {
     auto* tip = tree.getBestChain().tip();
     assert(tip != nullptr && "block tree is not bootstrapped");

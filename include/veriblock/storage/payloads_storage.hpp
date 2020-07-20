@@ -49,10 +49,10 @@ class PayloadsStorage {
 
   // get a list of ALT containing blocks for given payload
   const std::set<AltBlock::hash_t>& getContainingAltBlocks(
-      const std::vector<uint8_t>& payloadId);
+      const std::vector<uint8_t>& payloadId) const ;
   // get a list of VBK containing blocks for given payload
   const std::set<VbkBlock::hash_t>& getContainingVbkBlocks(
-      const std::vector<uint8_t>& payloadId);
+      const std::vector<uint8_t>& payloadId) const ;
   void addBlockToIndex(const BlockIndex<AltBlock>& block);
   void addBlockToIndex(const BlockIndex<VbkBlock>& block);
   // add ALT payload to index

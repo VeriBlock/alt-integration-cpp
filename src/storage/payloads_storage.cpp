@@ -45,7 +45,7 @@ void PayloadsStorage::setValidity(Slice<const uint8_t> containingBlock,
 }
 
 const std::set<AltBlock::hash_t>& PayloadsStorage::getContainingAltBlocks(
-    const std::vector<uint8_t>& payloadId) {
+    const std::vector<uint8_t>& payloadId) const {
   static const std::set<AltBlock::hash_t> empty;
   auto it = payload_in_alt.find(payloadId);
   if (it == payload_in_alt.end()) {
@@ -56,7 +56,7 @@ const std::set<AltBlock::hash_t>& PayloadsStorage::getContainingAltBlocks(
 }
 
 const std::set<VbkBlock::hash_t>& PayloadsStorage::getContainingVbkBlocks(
-    const std::vector<uint8_t>& payloadId) {
+    const std::vector<uint8_t>& payloadId) const {
   static const std::set<VbkBlock::hash_t> empty;
   auto it = payload_in_vbk.find(payloadId);
   if (it == payload_in_vbk.end()) {

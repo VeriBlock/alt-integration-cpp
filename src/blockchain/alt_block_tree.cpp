@@ -462,14 +462,14 @@ bool AltTree::setState(index_t& to, ValidationState& state) {
 }
 
 void AltTree::overrideTip(index_t& to) {
-  VBK_LOG_INFO("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
-               to.toShortPrettyString(),
-               (vbk().getBestChain().tip()
-                    ? vbk().getBestChain().tip()->toShortPrettyString()
-                    : "<empty>"),
-               (btc().getBestChain().tip()
-                    ? btc().getBestChain().tip()->toShortPrettyString()
-                    : "<empty>"));
+  VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
+                to.toShortPrettyString(),
+                (vbk().getBestChain().tip()
+                     ? vbk().getBestChain().tip()->toShortPrettyString()
+                     : "<empty>"),
+                (btc().getBestChain().tip()
+                     ? btc().getBestChain().tip()->toShortPrettyString()
+                     : "<empty>"));
   activeChain_.setTip(&to);
   tryAddTip(&to);
 }
