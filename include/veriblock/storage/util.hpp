@@ -38,11 +38,13 @@ bool LoadTree(
 
 //! Save blocks and tip to batch
 template <typename BlockTreeT>
-void SaveTree(const BlockTreeT& tree, BatchAdaptor& batch) {
-  // TODO: add dirty flag and write only dirty blocks
+void SaveTree(BlockTreeT& tree, BatchAdaptor& batch) {
   for (auto& block : tree.getBlocks()) {
-    batch.writeBlock(*block.second);
-    block.second->unsetDirty();
+    auto& index = block.second;
+    if (index->hasFlags(BLOCK_DIRTY)) {
+      index->unsetDirty();
+      batch.writeBlock(*index);
+    }
   }
 
   batch.writeTip(*tree.getBestChain().tip());
@@ -50,7 +52,7 @@ void SaveTree(const BlockTreeT& tree, BatchAdaptor& batch) {
 
 struct AltTree;
 
-void SaveAllTrees(const AltTree& tree, BatchAdaptor& batch);
+void SaveAllTrees(AltTree& tree, BatchAdaptor& batch);
 
 }  // namespace altintegration
 

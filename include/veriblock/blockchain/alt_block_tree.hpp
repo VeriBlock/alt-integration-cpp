@@ -136,8 +136,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   const AltChainParams& getParams() const { return *alt_config_; }
 
-  PayloadsStorage& getStoragePayloads() { return storage_; }
-  const PayloadsStorage getStoragePayloads() const { return storage_; }
+  PayloadsStorage& getStorage() { return storage_; }
+  const PayloadsStorage getStorage() const { return storage_; }
 
   std::string toPrettyString(size_t level = 0) const;
 
