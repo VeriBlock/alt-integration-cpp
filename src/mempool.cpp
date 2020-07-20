@@ -3,14 +3,80 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/entities/vbkfullblock.hpp"
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
+
+namespace {
+
+size_t cutPopData(PopData& popData, size_t current_size) {
+  // first remove vtb
+  if (!popData.vtbs.empty()) {
+    auto& vtb = popData.vtbs.back();
+    current_size -= vtb.toVbkEncoding().size();
+    popData.vtbs.pop_back();
+
+    return current_size;
+  }
+  // second remove atv
+  if (!popData.atvs.empty()) {
+    auto& atv = popData.atvs.back();
+    current_size -= atv.toVbkEncoding().size();
+    popData.atvs.pop_back();
+
+    return current_size;
+  }
+  // third remove vbk blocks
+  if (!popData.context.empty()) {
+    auto& block = popData.context.back();
+    current_size -= block.toVbkEncoding().size();
+    popData.context.pop_back();
+
+    return current_size;
+  }
+
+  return current_size;
+}
+
+PopData generatePopData(
+    const std::vector<
+        std::pair<VbkBlock::id_t,
+                  std::shared_ptr<MemPool::VbkPayloadsRelations>>>& blocks,
+    const AltChainParams& params) {
+  PopData ret;
+  // size in bytes of pop data added to
+  size_t popSize = 0;
+
+  for (const auto& block : blocks) {
+    PopData pop = block.second->toPopData();
+    size_t estimated = pop.estimateSize();
+
+    while (popSize + estimated > params.getMaxPopDataSize() && !pop.empty()) {
+      estimated = cutPopData(pop, estimated);
+    }
+
+    if (popSize + estimated > params.getMaxPopDataSize() || pop.empty()) {
+      continue;
+    }
+
+    popSize += estimated;
+    ret.mergeFrom(pop);
+
+    if (popSize > params.getMaxPopDataSize()) {
+      break;
+    }
+  }
+
+  return ret;
+}
+
+}  // namespace
 
 PopData MemPool::VbkPayloadsRelations::toPopData() const {
   PopData pop;
@@ -53,10 +119,6 @@ void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
 }
 
 PopData MemPool::getPop(AltTree& tree) {
-  PopData ret;
-  // size in bytes of pop data added to
-  size_t popSize = 0;
-
   // sorted array of VBK blocks (ascending order)
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
@@ -64,19 +126,7 @@ PopData MemPool::getPop(AltTree& tree) {
     return a.second->header->height < b.second->header->height;
   });
 
-  for (const P& block : blocks) {
-    PopData pop = block.second->toPopData();
-    size_t estimated = pop.estimateSize();
-    if (popSize + estimated <= tree.getParams().getMaxPopDataSize()) {
-      // include this pop data into a block
-      popSize += estimated;
-      ret.mergeFrom(pop);
-      continue;
-    }
-
-    // we are over max size
-    break;
-  }
+  PopData ret = generatePopData(blocks, tree.getParams());
 
   tree.filterInvalidPayloads(ret);
   return ret;
