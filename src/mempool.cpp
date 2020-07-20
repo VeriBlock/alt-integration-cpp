@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/entities/vbkfullblock.hpp"
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -36,7 +35,10 @@ void MemPool::VbkPayloadsRelations::removeVTB(const VTB::id_t& vtb_id) {
       vtbs.begin(), vtbs.end(), [&vtb_id](const std::shared_ptr<VTB>& vtb) {
         return vtb->getId() == vtb_id;
       });
-  vtbs.erase(it);
+
+  if (it != vtbs.end()) {
+    vtbs.erase(it);
+  }
 }
 
 void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
@@ -44,7 +46,10 @@ void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
       atvs.begin(), atvs.end(), [&atv_id](const std::shared_ptr<ATV>& atv) {
         return atv->getId() == atv_id;
       });
-  atvs.erase(it);
+
+  if (it != atvs.end()) {
+    atvs.erase(it);
+  }
 }
 
 PopData MemPool::getPop(AltTree& tree) {

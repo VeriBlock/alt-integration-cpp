@@ -98,6 +98,11 @@ struct Blob {
     return *this;
   }
 
+  Blob<N>& operator=(const std::vector<uint8_t>& vec) {
+    *this = Blob<N>(vec);
+    return *this;
+  }
+
   Blob<N> reverse() const {
     Blob<N> ret = *this;
     std::reverse(ret.begin(), ret.end());
