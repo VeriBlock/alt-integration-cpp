@@ -38,7 +38,7 @@ bool LoadTree(
 
 //! Save blocks and tip to batch
 template <typename BlockTreeT>
-void SaveTree(const BlockTreeT& tree, BatchAdaptor& batch) {
+void SaveTree(BlockTreeT& tree, BatchAdaptor& batch) {
   for (auto& block : tree.getBlocks()) {
     auto& index = block.second;
     if (index->hasFlags(BLOCK_DIRTY)) {
