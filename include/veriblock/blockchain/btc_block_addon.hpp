@@ -28,7 +28,7 @@ struct BtcBlockAddon {
     }
   }
 
-  uint32_t refCount() const { return refs.size(); }
+  uint32_t refCount() const { return (uint32_t)refs.size(); }
 
   const std::vector<ref_height_t>& getRefs() const { return refs; }
 
