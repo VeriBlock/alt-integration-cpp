@@ -138,7 +138,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     VBK_ASSERT(current);
 
     auto* prev = current->pprev;
-    if (prev &&
+    // we only check blocks contextually if they are not bootstrap blocks, and previous block exists
+    if (prev && !current->hasFlags(BLOCK_BOOTSTRAP) &&
         !contextuallyCheckBlock(*prev, current->getHeader(), state, *param_)) {
       return state.Error("bad-block-contextually");
     }
@@ -167,6 +168,11 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     VBK_ASSERT(index);
+    if (!shouldContextuallyCheck) {
+      // this is a bootstrap block
+      index->setFlag(BLOCK_BOOTSTRAP);
+    }
+
     base::tryAddTip(index);
 
     // don't defer fork resolution in the acceptBlock+addPayloads flow until the
