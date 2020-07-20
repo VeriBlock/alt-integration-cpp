@@ -51,8 +51,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
 
-  PayloadsStorage& getStoragePayloads() { return storage_; }
-  const PayloadsStorage& getStoragePayloads() const { return storage_; }
+  PayloadsStorage& getStorage() { return storage_; }
+  const PayloadsStorage& getStorage() const { return storage_; }
 
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 

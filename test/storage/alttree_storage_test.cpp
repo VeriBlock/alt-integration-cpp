@@ -151,7 +151,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, ValidBlocks) {
   auto adaptor = RepoBatchAdaptor(*this->storage);
   SaveTree(this->popminer->btc(), adaptor);
   SaveTree(this->popminer->vbk(), adaptor);
-  this->saveToPayloadsStorage(this->popminer->vbk().getStoragePayloads(),
+  this->saveToPayloadsStorage(this->popminer->vbk().getStorage(),
                               *this->storagePayloads2);
   VbkBlockTree newvbk{this->vbkparam, this->btcparam, *this->storagePayloads2};
   newvbk.btc().bootstrapWithGenesis(this->state);
@@ -201,9 +201,9 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
 
   auto adaptor = RepoBatchAdaptor(*this->storage);
   SaveAllTrees(this->alttree, adaptor);
-  this->saveToPayloadsStorage(this->alttree.vbk().getStoragePayloads(),
+  this->saveToPayloadsStorage(this->alttree.vbk().getStorage(),
                               *this->storagePayloads2);
-  this->saveToPayloadsStorage(this->alttree.getStoragePayloads(),
+  this->saveToPayloadsStorage(this->alttree.getStorage(),
                               *this->storagePayloads2);
 
   AltTree reloadedAltTree{
