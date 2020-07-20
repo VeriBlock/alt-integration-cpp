@@ -13,6 +13,71 @@
 
 namespace altintegration {
 
+namespace {
+
+size_t cutPopData(PopData& popData, size_t current_size) {
+  // first remove vtb
+  if (!popData.vtbs.empty()) {
+    auto& vtb = popData.vtbs.back();
+    current_size -= vtb.toVbkEncoding().size();
+    popData.vtbs.pop_back();
+
+    return current_size;
+  }
+  // second remove atv
+  if (!popData.atvs.empty()) {
+    auto& atv = popData.atvs.back();
+    current_size -= atv.toVbkEncoding().size();
+    popData.atvs.pop_back();
+
+    return current_size;
+  }
+  // third remove vbk blocks
+  if (!popData.context.empty()) {
+    auto& block = popData.context.back();
+    current_size -= block.toVbkEncoding().size();
+    popData.context.pop_back();
+
+    return current_size;
+  }
+
+  return current_size;
+}
+
+PopData generatePopData(
+    const std::vector<
+        std::pair<VbkBlock::id_t,
+                  std::shared_ptr<MemPool::VbkPayloadsRelations>>>& blocks,
+    const AltChainParams& params) {
+  PopData ret;
+  // size in bytes of pop data added to
+  size_t popSize = 0;
+
+  for (const auto& block : blocks) {
+    PopData pop = block.second->toPopData();
+    size_t estimated = pop.estimateSize();
+
+    while (popSize + estimated > params.getMaxPopDataSize() && !pop.empty()) {
+      estimated = cutPopData(pop, estimated);
+    }
+
+    if (popSize + estimated > params.getMaxPopDataSize() || pop.empty()) {
+      continue;
+    }
+
+    popSize += estimated;
+    ret.mergeFrom(pop);
+
+    if (popSize > params.getMaxPopDataSize()) {
+      break;
+    }
+  }
+
+  return ret;
+}
+
+}  // namespace
+
 PopData MemPool::VbkPayloadsRelations::toPopData() const {
   PopData pop;
   pop.context.push_back(*header);
@@ -51,66 +116,6 @@ void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
   if (it != atvs.end()) {
     atvs.erase(it);
   }
-}
-
-size_t MemPool::cutPopData(PopData& popData, size_t current_size) const {
-  // first remove vtb
-  if (!popData.vtbs.empty()) {
-    auto& vtb = popData.vtbs.back();
-    current_size -= vtb.toVbkEncoding().size();
-    popData.vtbs.pop_back();
-
-    return current_size;
-  }
-  // second remove atv
-  if (!popData.atvs.empty()) {
-    auto& atv = popData.atvs.back();
-    current_size -= atv.toVbkEncoding().size();
-    popData.atvs.pop_back();
-
-    return current_size;
-  }
-  // third remove vbk blocks
-  if (!popData.context.empty()) {
-    auto& block = popData.context.back();
-    current_size -= block.toVbkEncoding().size();
-    popData.context.pop_back();
-
-    return current_size;
-  }
-
-  return current_size;
-}
-
-PopData MemPool::generatePopData(
-    const std::vector<std::pair<VbkBlock::id_t,
-                                std::shared_ptr<VbkPayloadsRelations>>>& blocks,
-    const AltChainParams& params) const {
-  PopData ret;
-  // size in bytes of pop data added to
-  size_t popSize = 0;
-
-  for (const auto& block : blocks) {
-    PopData pop = block.second->toPopData();
-    size_t estimated = pop.estimateSize();
-
-    while (popSize + estimated > params.getMaxPopDataSize() && !pop.empty()) {
-      estimated = cutPopData(pop, estimated);
-    }
-
-    if (popSize + estimated > params.getMaxPopDataSize() || pop.empty()) {
-      continue;
-    }
-
-    popSize += estimated;
-    ret.mergeFrom(pop);
-
-    if (popSize > params.getMaxPopDataSize()) {
-      break;
-    }
-  }
-
-  return ret;
 }
 
 PopData MemPool::getPop(AltTree& tree) {
