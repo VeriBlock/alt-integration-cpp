@@ -990,7 +990,7 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
 
   EXPECT_EQ(popData.atvs.size(), 0);
   EXPECT_EQ(popData.vtbs.size(), 1);
-  EXPECT_TRUE(!popData.context.empty());
+  EXPECT_TRUE(popData.context.empty());
 
   applyInNextBlock(popData);
 }
