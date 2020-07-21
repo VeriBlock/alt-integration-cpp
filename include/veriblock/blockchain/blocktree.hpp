@@ -100,6 +100,9 @@ struct BlockTree : public BaseBlockTree<Block> {
       if (!this->acceptBlock(std::make_shared<block_t>(block), state, false)) {
         return state.Invalid(block_t::name() + "-blocktree-accept");
       }
+      auto * index = base::getBlockIndex(block.getHash());
+      VBK_ASSERT(index);
+      index->setIsBootstrap(true);
     }
 
     return true;
