@@ -9,7 +9,6 @@
 #include <memory>
 #include <set>
 #include <vector>
-
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/blockchain/command.hpp>
 #include <veriblock/blockchain/command_group.hpp>
@@ -39,9 +38,7 @@ enum BlockStatus : uint8_t {
   BLOCK_FAILED_MASK =
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
   //! the block has been applied via PopStateMachine
-  BLOCK_APPLIED = 1 << 5,
-  //! the block has been modified, and should be written on disk
-  BLOCK_DIRTY = 1 << 6
+  BLOCK_APPLIED = 1 << 5
 };
 
 //! Store block
@@ -93,15 +90,12 @@ struct BlockIndex : public Block::addon_t {
     return false;
   }
 
-  void setDirty() { this->status |= BLOCK_DIRTY; }
-  void unsetDirty() { this->status &= ~BLOCK_DIRTY; }
+  void setDirty() { this->dirty = true; }
+  void unsetDirty() { this->dirty = false; }
+  bool isDirty() const { return this->dirty; }
 
-  void setFlag(enum BlockStatus s) {
-    this->status |= s;
-  }
-  void unsetFlag(enum BlockStatus s) {
-    this->status &= ~s;
-  }
+  void setFlag(enum BlockStatus s) { this->status |= s; }
+  void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
 
   bool hasFlags(enum BlockStatus s) const { return this->status & s; }
 
@@ -116,7 +110,7 @@ struct BlockIndex : public Block::addon_t {
   }
 
   const block_t& getHeader() const { return *header; }
-  
+
   void setHeader(const block_t& newHeader) {
     header = std::make_shared<block_t>(newHeader);
     setDirty();
@@ -213,7 +207,7 @@ struct BlockIndex : public Block::addon_t {
 
   bool operator==(const BlockIndex& o) const {
     bool a = *header == *o.header;
-    bool b = (status & ~BLOCK_DIRTY) == (o.status & ~BLOCK_DIRTY);
+    bool b = status == o.status;
     bool c = addon_t::operator==(o);
     return a && b && c;
   }
@@ -226,6 +220,9 @@ struct BlockIndex : public Block::addon_t {
 
   //! block header
   std::shared_ptr<block_t> header{};
+
+  //! (memory only) if true, this block should be written on disk
+  bool dirty = false;
 };
 
 template <typename Block>
