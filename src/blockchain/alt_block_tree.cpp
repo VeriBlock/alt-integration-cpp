@@ -90,12 +90,14 @@ bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
     // check that VbkBlocks do not contain in the current chain
     auto alt_block_hashes =
         tree.getStorage().getContainingAltBlocks(pid.asVector());
+    bool removed = false;
     for (const auto& hash : alt_block_hashes) {
       auto* b_index = tree.getBlockIndex(hash);
-      if (chain.contains(b_index) && chain.tip() == b_index) {
+      if (chain.contains(b_index)) {
         if (continueOnInvalid) {
           it = payloads.erase(it);
-          continue;
+          removed = true;
+          break;
         }
 
         return state.Invalid(
@@ -104,6 +106,10 @@ bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
                          VbkBlock::name(),
                          pid.toHex()));
       }
+    }
+
+    if (removed) {
+      continue;
     }
 
     ++it;

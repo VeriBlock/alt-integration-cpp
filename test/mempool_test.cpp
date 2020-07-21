@@ -781,7 +781,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   EXPECT_EQ(v_popData.atvs.size(), 1);
   EXPECT_EQ(v_popData.context.size(), 56);
 }
-
+// This test scenrio tests filter payloads duplicates in the same altblock chain
 TEST_F(MemPoolFixture, getPop_scenario_9) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
@@ -820,6 +820,8 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.atvs.at(0), atv2);
+  EXPECT_EQ(v_popData.context.size(), 1);
+  EXPECT_EQ(v_popData.vtbs.size(), 0);
 
   applyInNextBlock(v_popData);
 }
@@ -881,6 +883,8 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   }
 }
 
+// This test scenrio tests the possible context gap in case that all payloads
+// contain in the same PopData which bigger than maxPopDataSize
 TEST_F(MemPoolFixture, getPop_scenario_11) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
