@@ -43,9 +43,10 @@ bool AltTree::bootstrap(ValidationState& state) {
   return true;
 }
 
-template <typename Index, typename Pop>
-bool payloadsCheckDuplicates(Index& index,
+template <typename Pop>
+bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
                              std::vector<Pop>& payloads,
+                             AltTree&,
                              ValidationState& state,
                              bool continueOnInvalid = false) {
   auto& v = index.template getPayloadIds<Pop>();
@@ -72,8 +73,47 @@ bool payloadsCheckDuplicates(Index& index,
   return true;
 }
 
-template <typename Index, typename Pop>
-void commitPayloadsIds(Index& index,
+template <>
+bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
+                             std::vector<VbkBlock>& payloads,
+                             AltTree& tree,
+                             ValidationState& state,
+                             bool continueOnInvalid) {
+  auto& v = index.template getPayloadIds<VbkBlock>();
+  Chain<BlockIndex<AltBlock>> chain(tree.getParams().getBootstrapBlock().height,
+                                    &index);
+
+  std::set<typename VbkBlock::id_t> existingPids(v.begin(), v.end());
+  for (auto it = payloads.begin(); it != payloads.end();) {
+    auto pid = it->getId();
+
+    // check that VbkBlocks do not contain in the current chain
+    auto alt_block_hashes =
+        tree.getStorage().getContainingAltBlocks(pid.asVector());
+    for (const auto& hash : alt_block_hashes) {
+      auto* b_index = tree.getBlockIndex(hash);
+      if (chain.contains(b_index) && chain.tip() == b_index) {
+        if (continueOnInvalid) {
+          it = payloads.erase(it);
+          continue;
+        }
+
+        return state.Invalid(
+            "ALT-duplicate-payloads",
+            fmt::sprintf("Chain already contains payload %s=%s.",
+                         VbkBlock::name(),
+                         pid.toHex()));
+      }
+    }
+
+    ++it;
+  }
+
+  return true;
+}
+
+template <typename Pop>
+void commitPayloadsIds(BlockIndex<AltBlock>& index,
                        const std::vector<Pop>& pop,
                        PayloadsStorage& storage) {
   auto pids = map_get_id(pop);
@@ -125,20 +165,20 @@ bool AltTree::addPayloads(index_t& index,
   }
 
   // filter payloads
-  if (!payloadsCheckDuplicates<index_t, VbkBlock>(
-          index, payloads.context, state, continueOnInvalid) ||
-      !payloadsCheckDuplicates<index_t, VTB>(
-          index, payloads.vtbs, state, continueOnInvalid) ||
-      !payloadsCheckDuplicates<index_t, ATV>(
-          index, payloads.atvs, state, continueOnInvalid)) {
+  if (!payloadsCheckDuplicates<VbkBlock>(
+          index, payloads.context, *this, state, continueOnInvalid) ||
+      !payloadsCheckDuplicates<VTB>(
+          index, payloads.vtbs, *this, state, continueOnInvalid) ||
+      !payloadsCheckDuplicates<ATV>(
+          index, payloads.atvs, *this, state, continueOnInvalid)) {
     return false;
   }
 
   // all payloads checked, they do not contain duplicates. to ensure atomic
   // change, we commit payloads after all 3 vectors have been validated
-  commitPayloadsIds<index_t, VbkBlock>(index, payloads.context, storage_);
-  commitPayloadsIds<index_t, VTB>(index, payloads.vtbs, storage_);
-  commitPayloadsIds<index_t, ATV>(index, payloads.atvs, storage_);
+  commitPayloadsIds<VbkBlock>(index, payloads.context, storage_);
+  commitPayloadsIds<VTB>(index, payloads.vtbs, storage_);
+  commitPayloadsIds<ATV>(index, payloads.atvs, storage_);
 
   // save payloads only in alt tree
   storage_.savePayloads(payloads);
