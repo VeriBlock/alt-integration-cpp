@@ -71,6 +71,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
   BlockIndex<BtcBlock>* btcBtip;
   BlockIndex<VbkBlock>* vbkAtip;
   BlockIndex<VbkBlock>* vbkBtip;
+  BlockIndex<VbkBlock>* vbkFork;
 
   std::vector<AltBlock> altchain;
 
@@ -79,13 +80,14 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     btcAtip = popminer->mineBtcBlocks(*btcFork, 2);
     btcBtip = popminer->mineBtcBlocks(*btcFork, 4);
 
-    auto* vbkFork = popminer->mineVbkBlocks(50);
+    vbkFork = popminer->mineVbkBlocks(50);
     // build up more blocks since POP fork resolution only works after
     // keystone interval has been passed
     auto* vbkAendorsed = popminer->mineVbkBlocks(*vbkFork, 20);
     auto* vbkBendorsed = popminer->mineVbkBlocks(*vbkFork, 20);
 
-    auto btctxA = popminer->createBtcTxEndorsingVbkBlock(vbkAendorsed->getHeader());
+    auto btctxA =
+        popminer->createBtcTxEndorsingVbkBlock(vbkAendorsed->getHeader());
     auto* btcAContaining = popminer->mineBtcBlocks(*btcAtip, 1);
     btcAtip = popminer->mineBtcBlocks(*btcAContaining, 2);
 
@@ -140,8 +142,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 TEST_F(Scenario1, scenario_1) {
   // Step 1
   ASSERT_EQ(vbkAtip->getHeight(), vbkBtip->getHeight());
-  ASSERT_EQ(*vbkBtip,
-            *popminer->vbk().getBestChain().tip());
+  ASSERT_EQ(*vbkBtip, *popminer->vbk().getBestChain().tip());
 
   AltBlock endorsedBlock = altchain[90];
   AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
@@ -194,7 +195,7 @@ TEST_F(Scenario1, scenario_1) {
   // send VTB_vBc71 (only VTB) in ALT block 102 (in chain A of ALT)
   auto vtbsVBB71 = popminer->vbkPayloads[vbkBtip->getAncestor(71)->getHash()];
   fillVbkContext(altPayloadsVBB71.context,
-                 vbkparam.getGenesisBlock().getHash(),
+                 vbkFork->getHash(),
                  vtbsVBB71[0].containingBlock.getHash(),
                  popminer->vbk());
   altPayloadsVBB71.vtbs = {vtbsVBB71[0]};
