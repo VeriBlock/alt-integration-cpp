@@ -14,7 +14,9 @@ using namespace altintegration;
 
 struct PopVbkForkResolution : public ::testing::Test, public PopTestFixture {};
 
-TEST_F(PopVbkForkResolution, TooLateToAddPayloads) {
+// the history overwrite limit has been removed temporarily as the
+// implementation no longer served any useful purpose
+TEST_F(PopVbkForkResolution, DISABLED_TooLateToAddPayloads) {
   popminer->mineVbkBlocks(2);
 
   // generate a VTB
