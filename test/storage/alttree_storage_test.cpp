@@ -92,17 +92,17 @@ struct AltTreeRepositoryTest : public ::testing::Test,
 };
 
 template <typename index_t>
-std::vector<std::pair<int, index_t>> LoadBlocksFromDisk(PopStorage& storage) {
+std::vector<index_t> LoadBlocksFromDisk(PopStorage& storage) {
   auto map = storage.loadBlocks<index_t>();
-  std::vector<std::pair<int, index_t>> ret;
+  std::vector<index_t> ret;
   for (auto& pair : map) {
-    ret.push_back({pair.first, *pair.second});
+    ret.push_back(*pair.second);
   }
 
-  std::sort(ret.begin(),
-            ret.end(),
-            [](const std::pair<int, index_t>& a,
-               const std::pair<int, index_t>& b) { return a.first < b.first; });
+  std::sort(ret.begin(), ret.end(), [](const index_t& a, const index_t& b) {
+    return a.getHeight() < b.getHeight();
+  });
+
   return ret;
 }
 

@@ -30,6 +30,8 @@ struct DuplicateATVfixture : public ::testing::Test, public PopTestFixture {
 TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
   ASSERT_TRUE(alttree.addPayloads(chain[99].getHash(), payloads, state));
   ASSERT_TRUE(alttree.setState(chain[99].getHash(), state));
+  // remove context blocks
+  payloads.context.clear();
   ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), payloads, state));
   ASSERT_FALSE(alttree.setState(chain[100].getHash(), state));
   ASSERT_EQ(state.GetPath(), "ALT-bad-command+VBK-duplicate-payloads");
@@ -112,6 +114,8 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   auto p2id = payloads.atvs.at(0).getId();
 
   auto p1 = payloads;
+  // remove context blocks
+  p1.context.clear();
   ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), p1, state));
 
   auto index99 = alttree.getBlockIndex(chain[99].getHash());
@@ -140,6 +144,8 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   ASSERT_EQ(*atvids4.begin(), p1.atvs.at(0).getId());
 
   // now we remove that duplicating payloads
+  // remain vbk blocks as a payloads in the alt block [99]
+  p2.context.clear();
   ASSERT_NO_FATAL_FAILURE(alttree.removePayloads(chain[99].getHash(), p2));
   ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
   // both indices are now valid
