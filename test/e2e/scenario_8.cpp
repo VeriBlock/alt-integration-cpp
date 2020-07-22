@@ -130,14 +130,15 @@ TEST_F(Scenario8, scenario_8) {
 
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  ATV atv2 =
-      popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
+  ATV atv2 = popminer->generateATV(
+      tx1, alttree.vbk().getBestChain().tip()->getHash(), state);
 
   PopData popData2 = createPopData({atv2}, {vtb2});
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
+  popData2.context.clear();
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock, popData2, state));
   EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state));

@@ -34,6 +34,9 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
 
   chainA = generateNextBlock(chainA);
   payloads = endorseAltBlock({altForkPoint}, 1);
+  payloads.context.erase(
+      payloads.context.begin(),
+      payloads.context.begin() + (payloads.context.size() - 2));
   ASSERT_TRUE(alttree.acceptBlock(chainA, state));
   ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), {payloads}, state));
 
