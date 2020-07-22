@@ -18,11 +18,10 @@ namespace altintegration {
 //! does validation of these blocks. Sets tip after loading.
 //! @invariant NOT atomic
 template <typename BlockTreeT>
-bool LoadTree(
-    BlockTreeT& tree,
-    const std::vector<std::pair<int, typename BlockTreeT::index_t>>& blocks,
-    const typename BlockTreeT::hash_t& tiphash,
-    ValidationState& state) {
+bool LoadTree(BlockTreeT& tree,
+              const std::vector<typename BlockTreeT::index_t>& blocks,
+              const typename BlockTreeT::hash_t& tiphash,
+              ValidationState& state) {
   using block_t = typename BlockTreeT::block_t;
   VBK_LOG_WARN("Loading %d %s blocks with tip %s",
                blocks.size(),
@@ -32,7 +31,7 @@ bool LoadTree(
 
   for (auto& block : blocks) {
     // load blocks one by one
-    if (!tree.loadBlock(block.second, state)) {
+    if (!tree.loadBlock(block, state)) {
       return state.Invalid("load-tree");
     }
   }
@@ -45,7 +44,7 @@ template <typename BlockTreeT>
 void SaveTree(BlockTreeT& tree, BatchAdaptor& batch) {
   for (auto& block : tree.getBlocks()) {
     auto& index = block.second;
-    if (index->hasFlags(BLOCK_DIRTY)) {
+    if (index->isDirty()) {
       index->unsetDirty();
       batch.writeBlock(*index);
     }

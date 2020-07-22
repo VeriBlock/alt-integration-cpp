@@ -123,10 +123,8 @@ struct PopTestFixture {
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
     auto Btctx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
     auto* btcBlockTip = popminer->mineBtcBlocks(1);
-    return popminer->createVbkPopTxEndorsingVbkBlock(btcBlockTip->getHeader(),
-                                                     Btctx,
-                                                     endorsedBlock,
-                                                     getLastKnownBtcBlock());
+    return popminer->createVbkPopTxEndorsingVbkBlock(
+        btcBlockTip->getHeader(), Btctx, endorsedBlock, getLastKnownBtcBlock());
   }
 
   void fillVbkContext(VTB& vtb,
