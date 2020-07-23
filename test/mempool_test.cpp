@@ -207,6 +207,7 @@ TEST_F(MemPoolFixture, removePayloads_test3) {
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   PopData popData = checkedGetPop();
+  applyInNextBlock(popData);
 
   EXPECT_EQ(popData.vtbs.size(), 2);
   EXPECT_EQ(popData.atvs.size(), 1);
