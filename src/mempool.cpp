@@ -217,6 +217,8 @@ MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
     val = std::make_shared<VbkPayloadsRelations>(vbk_block);
   }
 
+  on_vbkblock_accepted.emit(block);
+
   return *val;
 }
 
@@ -301,6 +303,8 @@ bool MemPool::submit(const ATV& atv,
   // store atv id in containing block index
   stored_atvs_.insert(pair);
 
+  on_atv_accepted.emit(atv);
+
   return true;
 }
 
@@ -357,6 +361,8 @@ bool MemPool::submit(const VTB& vtb,
 
   stored_vtbs_.insert(pair);
 
+  on_vtb_accepted.emit(vtb);
+
   return true;
 }
 
@@ -378,6 +384,21 @@ bool MemPool::submit(const VbkBlock& blk,
   touchVbkBlock(blk, blk.getId());
 
   return true;
+}
+
+template <>
+const MemPool::payload_map<VbkBlock>& MemPool::getMap() const {
+  return vbkblocks_;
+}
+
+template <>
+const MemPool::payload_map<ATV>& MemPool::getMap() const {
+  return stored_atvs_;
+}
+
+template <>
+const MemPool::payload_map<VTB>& MemPool::getMap() const {
+  return stored_vtbs_;
 }
 
 }  // namespace altintegration
