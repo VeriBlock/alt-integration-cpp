@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/entities/vbkfullblock.hpp"
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -138,6 +137,7 @@ void MemPool::filterVbkBlocks(const AltTree& tree) {
             nullptr &&
         rel_it->second->empty()) {
       rel_it = relations_.erase(rel_it);
+      vbkblocks_.erase(rel_it->first);
       continue;
     }
     ++rel_it;
