@@ -16,6 +16,17 @@ namespace signals {
 template <typename SignalSignature>
 using Signal = Simple::Signal<SignalSignature>;
 
+//! lifetime of connection MUST always be less than of corresponding Signal
+struct Connection {
+  Connection(std::function<void()> unsubscribe)
+      : unsub_(std::move(unsubscribe)) {}
+
+  ~Connection() { unsub_(); }
+
+ private:
+  std::function<void()> unsub_;
+};
+
 }  // namespace signals
 
 }  // namespace altintegration
