@@ -136,6 +136,7 @@ void MemPool::filterVbkBlocks(const AltTree& tree) {
     if (tree.vbk().getBlockIndex(rel_it->second->header->getHash()) !=
             nullptr &&
         rel_it->second->empty()) {
+      vbkblocks_.erase(rel_it->first);
       rel_it = relations_.erase(rel_it);
       vbkblocks_.erase(rel_it->first);
       continue;
