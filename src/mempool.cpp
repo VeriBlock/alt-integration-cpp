@@ -137,8 +137,6 @@ void MemPool::filterVbkBlocks(const AltTree& tree) {
     auto* index = tree.vbk().getBlockIndex(blockHash);
     auto* tip = tree.vbk().getBestChain().tip();
 
-    tree.vbk().getParams().getMaxReorgBlocks();
-
     if ((index != nullptr && rel_it->second->empty()) ||
         (tip->getHeight() - tree.vbk().getParams().getMaxReorgBlocks() >
          rel_it->second->header->height)) {
