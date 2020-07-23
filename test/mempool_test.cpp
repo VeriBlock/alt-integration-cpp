@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -12,6 +10,7 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
+#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -215,23 +214,26 @@ TEST_F(MemPoolFixture, removePayloads_test3) {
   EXPECT_FALSE(popData.context.empty());
 
   size_t prev_size = popData.context.size();
+  size_t removed = 0;
   // remove from popData payloads containing vbk blocks
   for (auto it = popData.context.begin(); it != popData.context.end();) {
     if (it->getHash() == popData.atvs[0].blockOfProof.getHash() ||
         it->getHash() == popData.vtbs[0].containingBlock.getHash() ||
         it->getHash() == popData.vtbs[1].containingBlock.getHash()) {
       it = popData.context.erase(it);
+      ++removed;
+      continue;
     }
     ++it;
   }
 
-  EXPECT_EQ(popData.context.size(), prev_size - 3);
+  EXPECT_EQ(popData.context.size(), prev_size - removed);
 
   mempool->removePayloads(popData, alttree);
 
-  ASSERT_FALSE(mempool->getMap<ATV>().empty());
+  ASSERT_TRUE(mempool->getMap<ATV>().empty());
   ASSERT_TRUE(mempool->getMap<VTB>().empty());
-  // ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
+  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 }
 
 TEST_F(MemPoolFixture, removed_payloads_cache_test) {
