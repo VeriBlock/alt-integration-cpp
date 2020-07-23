@@ -22,6 +22,7 @@ struct BtcChainParams {
   virtual bool getAllowMinDifficultyBlocks() const noexcept = 0;
   virtual bool getPowNoRetargeting() const noexcept = 0;
   virtual BtcBlock getGenesisBlock() const noexcept = 0;
+  virtual bool EnableTimeAdjustment() const noexcept = 0;
   uint32_t getDifficultyAdjustmentInterval() const noexcept {
     return getPowTargetTimespan() / getPowTargetSpacing();
   }
@@ -34,6 +35,8 @@ struct BtcChainParams {
 
 struct BtcChainParamsMain : public BtcChainParams {
   ~BtcChainParamsMain() override = default;
+
+  bool EnableTimeAdjustment() const noexcept override { return true; }
 
   std::string networkName() const noexcept override { return "main"; }
 
@@ -73,6 +76,8 @@ struct BtcChainParamsMain : public BtcChainParams {
 struct BtcChainParamsTest : public BtcChainParams {
   ~BtcChainParamsTest() override = default;
 
+  bool EnableTimeAdjustment() const noexcept override { return true; }
+
   std::string networkName() const noexcept override { return "test"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
@@ -110,6 +115,8 @@ struct BtcChainParamsTest : public BtcChainParams {
 
 struct BtcChainParamsRegTest : public BtcChainParams {
   ~BtcChainParamsRegTest() override = default;
+
+  bool EnableTimeAdjustment() const noexcept override { return false; }
 
   std::string networkName() const noexcept override { return "regtest"; }
 

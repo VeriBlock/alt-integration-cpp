@@ -120,7 +120,7 @@ struct AltChainParams {
   }
 
   virtual size_t getMaxPopDataSize() const noexcept {
-    return 1 * 1024 * 1024; // 1 MB
+    return 1 * 1024 * 1024;  // 1 MB
   }
 
   // getter for reward parameters

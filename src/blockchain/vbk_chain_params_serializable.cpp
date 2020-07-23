@@ -44,6 +44,7 @@ void VbkChainParams::toRaw(WriteStream& stream) const {
   for (const auto& el : this->networkName()) {
     stream.writeBE<char>(el);
   }
+  stream.writeBE<uint8_t>((uint8_t)this->EnableTimeAdjustment());
 
   writeVarLenValue(stream,
                    Slice<const uint8_t>(this->getMinimumDifficulty().data(),
@@ -76,6 +77,7 @@ VbkChainParamsSerializable VbkChainParamsSerializable::fromRaw(
     ReadStream& stream) {
   VbkChainParamsSerializable param;
   param.networkName_ = readString(stream);
+  param.EnableTimeAdjustment_ =  (bool)stream.readBE<uint8_t>();
   param.minimumDifficulty_ = readVarLenValue(stream, 0, MAX_CONTEXT_COUNT);
   param.transactionMagicByte_ = VbkNetworkType::fromRaw(stream);
   param.powNoRetargeting_ = (bool)stream.readBE<uint8_t>();
