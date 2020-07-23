@@ -92,7 +92,7 @@ struct MemPool {
 
   PopData getPop(AltTree& tree);
 
-  void removePayloads(const PopData& v_popData);
+  void removePayloads(const PopData& v_popData, const AltTree& tree);
 
   void clear() {
     relations_.clear();
@@ -114,6 +114,8 @@ struct MemPool {
 
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
                                       VbkBlock::id_t id = VbkBlock::id_t());
+
+  void filterVbkBlocks(const AltTree& tree);
 };
 
 template <>

@@ -15,29 +15,29 @@ namespace altintegration {
 
 namespace {
 
+template <typename pop_t>
+bool process_cut_payloads(std::vector<pop_t>& payloads, size_t& current_size) {
+  if (!payloads.empty()) {
+    auto& p = payloads.back();
+    current_size -= p.toVbkEncoding().size();
+    payloads.pop_back();
+    return true;
+  }
+
+  return false;
+}
+
 size_t cutPopData(PopData& popData, size_t current_size) {
   // first remove vtb
-  if (!popData.vtbs.empty()) {
-    auto& vtb = popData.vtbs.back();
-    current_size -= vtb.toVbkEncoding().size();
-    popData.vtbs.pop_back();
-
+  if (process_cut_payloads(popData.vtbs, current_size)) {
     return current_size;
   }
   // second remove atv
-  if (!popData.atvs.empty()) {
-    auto& atv = popData.atvs.back();
-    current_size -= atv.toVbkEncoding().size();
-    popData.atvs.pop_back();
-
+  if (process_cut_payloads(popData.atvs, current_size)) {
     return current_size;
   }
   // third remove vbk blocks
-  if (!popData.context.empty()) {
-    auto& block = popData.context.back();
-    current_size -= block.toVbkEncoding().size();
-    popData.context.pop_back();
-
+  if (process_cut_payloads(popData.context, current_size)) {
     return current_size;
   }
 
@@ -132,7 +132,19 @@ PopData MemPool::getPop(AltTree& tree) {
   return ret;
 }
 
-void MemPool::removePayloads(const PopData& pop) {
+void MemPool::filterVbkBlocks(const AltTree& tree) {
+  for (auto rel_it = relations_.begin(); rel_it != relations_.end();) {
+    if (tree.vbk().getBlockIndex(rel_it->second->header->getHash()) !=
+            nullptr &&
+        rel_it->second->empty()) {
+      rel_it = relations_.erase(rel_it);
+      continue;
+    }
+    ++rel_it;
+  }
+}
+
+void MemPool::removePayloads(const PopData& pop, const AltTree& tree) {
   // clear vtbs
   for (const auto& vtb : pop.vtbs) {
     auto vtb_id = vtb.getId();
@@ -172,6 +184,8 @@ void MemPool::removePayloads(const PopData& pop) {
       relations_.erase(relation_it);
     }
   }
+
+  filterVbkBlocks(tree);
 }
 
 MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
@@ -192,25 +206,29 @@ MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
   return *val;
 }
 
+namespace {
+
+template <typename pop_t>
+void process_submit(
+    MemPool& memPool,
+    const std::vector<pop_t>& payloads,
+    const AltTree& tree,
+    std::vector<std::pair<typename pop_t::id_t, ValidationState>>& res) {
+  for (const auto& p : payloads) {
+    ValidationState state;
+    memPool.submit<pop_t>(p, tree, state);
+    res.emplace_back(p.getId(), state);
+  }
+}
+
+}  // namespace
+
 MempoolResult MemPool::submitAll(const PopData& pop, const AltTree& tree) {
   MempoolResult r;
-  for (const VbkBlock& block : pop.context) {
-    ValidationState state;
-    submit<VbkBlock>(block, tree, state);
-    r.context.emplace_back(block.getId(), state);
-  }
 
-  for (const VTB& vtb : pop.vtbs) {
-    ValidationState state;
-    submit<VTB>(vtb, tree, state);
-    r.vtbs.emplace_back(vtb.getId(), state);
-  }
-
-  for (const ATV& atv : pop.atvs) {
-    ValidationState state;
-    submit<ATV>(atv, tree, state);
-    r.atvs.emplace_back(atv.getId(), state);
-  }
+  process_submit(*this, pop.context, tree, r.context);
+  process_submit(*this, pop.vtbs, tree, r.vtbs);
+  process_submit(*this, pop.atvs, tree, r.atvs);
 
   return r;
 }
