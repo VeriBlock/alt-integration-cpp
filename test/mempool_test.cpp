@@ -237,6 +237,80 @@ TEST_F(MemPoolFixture, removePayloads_test3) {
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 }
 
+TEST_F(MemPoolFixture, removePayloads_test4) {
+  // mine 65 VBK blocks
+  auto* vbkTip = popminer->mineVbkBlocks(65);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+  generatePopTx(endorsedVbkBlock1->getHeader());
+  popminer->mineBtcBlocks(100);
+  generatePopTx(endorsedVbkBlock2->getHeader());
+
+  vbkTip = popminer->mineVbkBlocks(1);
+
+  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+
+  ASSERT_EQ(vtbs.size(), 2);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
+            VbkEndorsement::fromContainer(vtbs[1]).id);
+  fillVbkContext(
+      vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+  fillVbkContext(
+      vtbs[1], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  AltBlock endorsedBlock = chain[5];
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
+
+  EXPECT_TRUE(mempool->submit<ATV>(atv, alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(0), alttree, state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), alttree, state));
+
+  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  PopData popData = checkedGetPop();
+  applyInNextBlock(popData);
+
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
+  EXPECT_EQ(popData.atvs.at(0), atv);
+  EXPECT_FALSE(popData.context.empty());
+
+  // do not remove atv payloads from the mempool
+  popData.atvs.clear();
+
+  mempool->removePayloads(popData, alttree);
+
+  ASSERT_FALSE(mempool->getMap<ATV>().empty());
+  ASSERT_TRUE(mempool->getMap<VTB>().empty());
+  ASSERT_FALSE(mempool->getMap<VbkBlock>().empty());
+
+  popminer->mineVbkBlocks(popminer->vbk().getParams().getMaxReorgBlocks());
+  generatePopTx(popminer->vbk().getBestChain().tip()->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1);
+  vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+
+  EXPECT_EQ(vtbs.size(), 1);
+  fillVbkContext(
+      vtbs[0], vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs[0], alttree, state));
+
+  popData = checkedGetPop();
+  applyInNextBlock(popData);
+
+  mempool->removePayloads(popData, alttree);
+
+  ASSERT_TRUE(mempool->getMap<ATV>().empty());
+  ASSERT_TRUE(mempool->getMap<VTB>().empty());
+  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
+}
+
 TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
