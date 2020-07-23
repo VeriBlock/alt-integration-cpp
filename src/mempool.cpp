@@ -401,4 +401,19 @@ const MemPool::payload_map<VTB>& MemPool::getMap() const {
   return stored_vtbs_;
 }
 
+template <>
+signals::Signal<void(const ATV&)>& MemPool::getSignal() {
+  return on_atv_accepted;
+}
+
+template <>
+signals::Signal<void(const VTB&)>& MemPool::getSignal() {
+  return on_vtb_accepted;
+}
+
+template <>
+signals::Signal<void(const VbkBlock&)>& MemPool::getSignal() {
+  return on_vbkblock_accepted;
+}
+
 }  // namespace altintegration

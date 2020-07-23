@@ -149,29 +149,14 @@ bool MemPool::submit(const VbkBlock& block,
                      const AltTree& tree,
                      ValidationState& state);
 
-template <>
-const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
-
-template <>
-const MemPool::payload_map<ATV>& MemPool::getMap() const;
-
-template <>
-const MemPool::payload_map<VTB>& MemPool::getMap() const;
-
-template <>
-inline signals::Signal<void(const ATV&)>& MemPool::getSignal() {
-  return on_atv_accepted;
-}
-
-template <>
-inline signals::Signal<void(const VTB&)>& MemPool::getSignal() {
-  return on_vtb_accepted;
-}
-
-template <>
-inline signals::Signal<void(const VbkBlock&)>& MemPool::getSignal() {
-  return on_vbkblock_accepted;
-}
+// clang-format off
+template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
+template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
+template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
+template <> signals::Signal<void(const ATV&)>& MemPool::getSignal();
+template <> signals::Signal<void(const VTB&)>& MemPool::getSignal();
+template <> signals::Signal<void(const VbkBlock&)>& MemPool::getSignal();
+// clang-format on
 
 namespace detail {
 
