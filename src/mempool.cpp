@@ -135,9 +135,24 @@ void MemPool::filterVbkBlocks(const AltTree& tree) {
   for (auto rel_it = relations_.begin(); rel_it != relations_.end();) {
     auto blockHash = rel_it->second->header->getHash();
     auto* index = tree.vbk().getBlockIndex(blockHash);
+    auto* tip = tree.vbk().getBestChain().tip();
 
-    if (index != nullptr && rel_it->second->empty()) {
+    tree.vbk().getParams().getMaxReorgBlocks();
+
+    if ((index != nullptr && rel_it->second->empty()) ||
+        (tip->getHeight() - tree.vbk().getParams().getMaxReorgBlocks() >
+         rel_it->second->header->height)) {
       vbkblocks_.erase(rel_it->first);
+
+      // remove payloads
+      for (const auto& atv : rel_it->second->atvs) {
+        stored_atvs_.erase(atv->getId());
+      }
+
+      for (const auto& vtb : rel_it->second->vtbs) {
+        stored_vtbs_.erase(vtb->getId());
+      }
+
       rel_it = relations_.erase(rel_it);
       continue;
     }
