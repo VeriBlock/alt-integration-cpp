@@ -19,6 +19,7 @@
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vtb.hpp"
 #include "veriblock/mempool_result.hpp"
+#include "veriblock/signals.hpp"
 
 namespace altintegration {
 
@@ -101,6 +102,12 @@ struct MemPool {
     stored_atvs_.clear();
   }
 
+  template <typename Pop>
+  size_t onAccepted(std::function<void(const Pop& p)> f) {
+    auto& sig = getSignal<Pop>();
+    return sig.connect(f);
+  }
+
  private:
   // relations between VBK block and payloads
   relations_map_t relations_;
@@ -108,12 +115,21 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
+  signals::Signal<void(const ATV& atv)> on_atv_accepted;
+  signals::Signal<void(const VTB& atv)> on_vtb_accepted;
+  signals::Signal<void(const VbkBlock& atv)> on_vbkblock_accepted;
+
   const AltChainParams* alt_chain_params_{nullptr};
   const VbkChainParams* vbk_chain_params_{nullptr};
   const BtcChainParams* btc_chain_params_{nullptr};
 
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
                                       VbkBlock::id_t id = VbkBlock::id_t());
+
+  template <typename Pop>
+  signals::Signal<void(const Pop&)>& getSignal() {
+    static_assert(sizeof(Pop) == 0, "Unknown type in getSignal");
+  }
 
   void filterVbkBlocks(const AltTree& tree);
 };
@@ -133,20 +149,14 @@ bool MemPool::submit(const VbkBlock& block,
                      const AltTree& tree,
                      ValidationState& state);
 
-template <>
-inline const MemPool::payload_map<VbkBlock>& MemPool::getMap() const {
-  return vbkblocks_;
-}
-
-template <>
-inline const MemPool::payload_map<ATV>& MemPool::getMap() const {
-  return stored_atvs_;
-}
-
-template <>
-inline const MemPool::payload_map<VTB>& MemPool::getMap() const {
-  return stored_vtbs_;
-}
+// clang-format off
+template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
+template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
+template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
+template <> signals::Signal<void(const ATV&)>& MemPool::getSignal();
+template <> signals::Signal<void(const VTB&)>& MemPool::getSignal();
+template <> signals::Signal<void(const VbkBlock&)>& MemPool::getSignal();
+// clang-format on
 
 namespace detail {
 
