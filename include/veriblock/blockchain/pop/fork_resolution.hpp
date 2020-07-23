@@ -13,6 +13,7 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/pop/pop_state_machine.hpp>
+#include <veriblock/context.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/logger.hpp>
@@ -126,7 +127,9 @@ std::vector<KeystoneContext> getKeystoneContext(
         continue;
       }
 
-      if (pkc.timestampOfEndorsedBlock < btcIndex->getBlockTime()) {
+      bool EnableTimeAdjustment = tree.getParams().EnableTimeAdjustment();
+      if (!EnableTimeAdjustment ||
+          pkc.timestampOfEndorsedBlock < btcIndex->getBlockTime()) {
         earliestEndorsementIndex = endorsementIndex;
         continue;
       }
