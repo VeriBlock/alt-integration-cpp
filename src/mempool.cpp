@@ -133,12 +133,12 @@ PopData MemPool::getPop(AltTree& tree) {
 
 void MemPool::filterVbkBlocks(const AltTree& tree) {
   for (auto rel_it = relations_.begin(); rel_it != relations_.end();) {
-    if (tree.vbk().getBlockIndex(rel_it->second->header->getHash()) !=
-            nullptr &&
-        rel_it->second->empty()) {
+    const auto& blockId = rel_it->second->header->getHash();
+    auto* index = tree.vbk().getBlockIndex(blockId);
+
+    if (index != nullptr && rel_it->second->empty()) {
       vbkblocks_.erase(rel_it->first);
       rel_it = relations_.erase(rel_it);
-      vbkblocks_.erase(rel_it->first);
       continue;
     }
     ++rel_it;
