@@ -57,12 +57,7 @@ struct MemPool {
   using relations_map_t = payload_map<VbkPayloadsRelations>;
 
   ~MemPool() = default;
-  MemPool(const AltChainParams& alt_param,
-          const VbkChainParams& vbk_params,
-          const BtcChainParams& btc_params)
-      : alt_chain_params_(&alt_param),
-        vbk_chain_params_(&vbk_params),
-        btc_chain_params_(&btc_params) {}
+  MemPool(AltTree& tree) : tree_(&tree) {}
 
   template <typename T>
   const T* get(const typename T::id_t& id) const {
@@ -76,31 +71,25 @@ struct MemPool {
   }
 
   template <typename T>
-  bool submit(const T& pl, const AltTree& tree, ValidationState& state) {
+  bool submit(const T& pl, ValidationState& state) {
     (void)pl;
-    (void)tree;
     (void)state;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return true;
   }
 
-  MempoolResult submitAll(const PopData& pop, const AltTree& tree);
+  MempoolResult submitAll(const PopData& pop);
 
   template <typename T>
   const payload_map<T>& getMap() const {
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getMap");
   }
 
-  PopData getPop(AltTree& tree);
+  PopData getPop();
 
-  void removePayloads(const PopData& v_popData, const AltTree& tree);
+  void removePayloads(const PopData& v_popData);
 
-  void clear() {
-    relations_.clear();
-    vbkblocks_.clear();
-    stored_vtbs_.clear();
-    stored_atvs_.clear();
-  }
+  void clear();
 
   template <typename Pop>
   size_t onAccepted(std::function<void(const Pop& p)> f) {
@@ -109,6 +98,7 @@ struct MemPool {
   }
 
  private:
+  AltTree* tree_;
   // relations between VBK block and payloads
   relations_map_t relations_;
   vbkblock_map_t vbkblocks_;
@@ -119,10 +109,6 @@ struct MemPool {
   signals::Signal<void(const VTB& atv)> on_vtb_accepted;
   signals::Signal<void(const VbkBlock& atv)> on_vbkblock_accepted;
 
-  const AltChainParams* alt_chain_params_{nullptr};
-  const VbkChainParams* vbk_chain_params_{nullptr};
-  const BtcChainParams* btc_chain_params_{nullptr};
-
   VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
                                       VbkBlock::id_t id = VbkBlock::id_t());
 
@@ -131,33 +117,19 @@ struct MemPool {
     static_assert(sizeof(Pop) == 0, "Unknown type in getSignal");
   }
 
-  void vacuum(const PopData& pop, const AltTree& tree);
+  void vacuum(const PopData& pop);
+
   template <typename Pop>
-  void remove(const typename Pop::id_t& id);
+  bool checkContextually(const Pop& payload, ValidationState& state);
 };
 
-template <>
-void MemPool::remove<VbkBlock>(const typename VbkBlock::id_t& id);
-
-template <>
-bool MemPool::submit(const ATV& atv,
-                     const AltTree& tree,
-                     ValidationState& state);
-
-template <>
-bool MemPool::submit(const VTB& vtb,
-                     const AltTree& tree,
-                     ValidationState& state);
-
-template <>
-bool MemPool::submit(const VbkBlock& block,
-                     const AltTree& tree,
-                     ValidationState& state);
-
 // clang-format off
-template <> void MemPool::remove<VbkBlock>(const typename VbkBlock::id_t& id);
-template <> void MemPool::remove<VTB>(const typename VTB::id_t& id);
-template <> void MemPool::remove<ATV>(const typename ATV::id_t& id);
+
+template <> bool MemPool::submit(const ATV& atv, ValidationState& state);
+template <> bool MemPool::submit(const VTB& vtb, ValidationState& state);
+template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state);
+template <> bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state);
+template <> bool MemPool::checkContextually<ATV>(const ATV& id, ValidationState& state);
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
 template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;

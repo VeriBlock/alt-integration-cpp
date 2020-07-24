@@ -55,7 +55,7 @@ struct PopTestFixture {
 
     popminer = std::make_shared<MockMiner>();
 
-    mempool = std::make_shared<MemPool>(altparam, vbkparam, btcparam);
+    mempool = std::make_shared<MemPool>(alttree);
   }
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
