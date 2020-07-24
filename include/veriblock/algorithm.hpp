@@ -6,9 +6,10 @@
 #ifndef VERIBLOCK_POP_CPP_ALGORITHM_HPP
 #define VERIBLOCK_POP_CPP_ALGORITHM_HPP
 
-#include <vector>
-#include <functional>
 #include <algorithm>
+#include <functional>
+#include <set>
+#include <vector>
 
 namespace altintegration {
 
@@ -30,6 +31,13 @@ typename T::id_t get_id(const T& t) {
 template <typename P>
 std::vector<typename P::id_t> map_get_id(const std::vector<P>& a) {
   return map_vector<P, typename P::id_t>(a, get_id<P>);
+}
+
+template <typename T>
+std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
+  auto ids = map_get_id(v);
+  std::set<typename T::id_t> s(ids.begin(), ids.end());
+  return s;
 }
 
 }  // namespace altintegration

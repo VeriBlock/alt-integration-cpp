@@ -120,7 +120,7 @@ void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
   }
 }
 
-PopData MemPool::getPop(AltTree& tree) {
+PopData MemPool::getPop() {
   // sorted array of VBK blocks (ascending order)
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
@@ -128,77 +128,15 @@ PopData MemPool::getPop(AltTree& tree) {
     return a.second->header->height < b.second->header->height;
   });
 
-  PopData ret = generatePopData(blocks, tree.getParams());
-
-  tree.filterInvalidPayloads(ret);
+  PopData ret = generatePopData(blocks, tree_->getParams());
+  tree_->filterInvalidPayloads(ret);
   return ret;
 }
 
-template <>
-void MemPool::remove<VbkBlock>(const VbkBlock::id_t& id) {
-  vbkblocks_.erase(id);
-
-  auto it = relations_.find(id);
-  if (it == relations_.end()) {
-    return;
-  }
-
-  for (auto& vtb : it->second->vtbs) {
-    stored_vtbs_.erase(vtb->getId());
-  }
-
-  for (auto& atv : it->second->atvs) {
-    stored_atvs_.erase(atv->getId());
-  }
-
-  relations_.erase(it);
-}
-
-template <>
-void MemPool::remove<VTB>(const VTB::id_t& id) {
-  auto it = stored_vtbs_.find(id);
-  if (it == stored_vtbs_.end()) {
-    // nothing to remove
-    return;
-  }
-
-  // remove VTB from relation
-  auto containingId = it->second->containingBlock.getId();
-  auto rit = relations_.find(containingId);
-  if (rit == relations_.end()) {
-    return;
-  }
-
-  rit->second->removeVTB(id);
-  stored_vtbs_.erase(it);
-}
-
-template <>
-void MemPool::remove<ATV>(const ATV::id_t& id) {
-  auto it = stored_atvs_.find(id);
-  if (it == stored_atvs_.end()) {
-    // nothing to remove
-    return;
-  }
-
-  // remove ATV from relation
-  auto containingId = it->second->blockOfProof.getId();
-  auto rit = relations_.find(containingId);
-  if (rit == relations_.end()) {
-    return;
-  }
-
-  rit->second->removeATV(id);
-  stored_atvs_.erase(it);
-}
-
-void MemPool::vacuum(const PopData& pop, const AltTree& tree) {
-  // save ids of all Vbk Blocks that have been added into last block
-  std::set<VbkBlock::id_t> blocks;
-  std::transform(pop.context.begin(),
-                 pop.context.end(),
-                 std::inserter(blocks, std::end(blocks)),
-                 get_id<VbkBlock>);
+void MemPool::vacuum(const PopData& pop) {
+  auto vbkblockids = make_idset(pop.context);
+  auto vtbids = make_idset(pop.vtbs);
+  auto atvids = make_idset(pop.atvs);
 
   // cascade removal of relation and stored payloads
   auto removeRelation = [&](decltype(relations_.begin()) it) {
@@ -215,9 +153,10 @@ void MemPool::vacuum(const PopData& pop, const AltTree& tree) {
 
   for (auto it = relations_.begin(); it != relations_.end();) {
     auto blockHash = it->second->header->getHash();
-    auto* index = tree.vbk().getBlockIndex(blockHash);
-    auto* tip = tree.vbk().getBestChain().tip();
-    auto maxReorgBlocks = tree.vbk().getParams().getMaxReorgBlocks();
+    auto& vbk = tree_->vbk();
+    auto* index = vbk.getBlockIndex(blockHash);
+    auto* tip = vbk.getBestChain().tip();
+    auto maxReorgBlocks = vbk.getParams().getMaxReorgBlocks();
     auto& rel = *it->second;
 
     bool tooOld = tip->getHeight() - maxReorgBlocks > rel.header->height;
@@ -225,6 +164,32 @@ void MemPool::vacuum(const PopData& pop, const AltTree& tree) {
       // VBK block is too old to be included or modified
       it = removeRelation(it);
       continue;
+    }
+
+    // cleanup stale VTBs
+    for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
+      auto& vtb = **vtbit;
+      ValidationState state;
+      auto id = vtb.getId();
+      if (vtbids.count(id) > 0 || !checkContextually(vtb, state)) {
+        stored_vtbs_.erase(id);
+        vtbit = rel.vtbs.erase(vtbit);
+      } else {
+        ++vtbit;
+      }
+    }
+
+    // cleanup stale ATVs
+    for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
+      auto& atv = **atvit;
+      auto id = atv.getId();
+      ValidationState state;
+      if (atvids.count(id) > 0 || !checkContextually(atv, state)) {
+        stored_atvs_.erase(id);
+        atvit = rel.atvs.erase(atvit);
+      } else {
+        ++atvit;
+      }
     }
 
     if (index != nullptr) {
@@ -238,49 +203,31 @@ void MemPool::vacuum(const PopData& pop, const AltTree& tree) {
                      std::inserter(ids, std::end(ids)),
                      get_id<VTB>);
 
-      for (auto& vtb : rel.vtbs) {
-        auto id = vtb->getId();
-        if (ids.count(id)) {
-          // mempool contains VBK block, which already exists in VBK tree, and
-          // we found a VTB which exists in that VBK block. we can remove VTB
-          // from mempool
-          remove<VTB>(id);
-        }
+      for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
+        auto id = (*vtbit)->getId();
+        // mempool contains VBK block, which already exists in VBK tree, and
+        // we found a VTB which exists in that VBK block. we can remove VTB
+        // from mempool
+        vtbit = ids.count(id) ? rel.vtbs.erase(vtbit) : std::next(vtbit);
       }
 
-      // does this VBK block contain any new VTB/ATV payloads?
       if (rel.empty()) {
-        // it does not... we can remove this VBK block
         it = removeRelation(it);
         continue;
       }
-
-      // this relation still has something useful
     }
 
-    if (blocks.count(it->first)) {
-      // this VBK block is added to new ALT block, and it has no payloads
-      if (rel.empty()) {
-        it = removeRelation(it);
-        continue;
-      }
+    // if header is recently added to new block or relation is empty, cleanup
+    if (vbkblockids.count(rel.header->getId()) && rel.empty()) {
+      it = removeRelation(it);
+      continue;
     }
 
     ++it;
   }
 }
 
-void MemPool::removePayloads(const PopData& pop, const AltTree& tree) {
-  for (auto& vtb : pop.vtbs) {
-    remove<VTB>(vtb.getId());
-  }
-  for (auto& atv : pop.atvs) {
-    remove<ATV>(atv.getId());
-  }
-
-  // vbk blocks will be cleaned during vacuum
-  vacuum(pop, tree);
-}
+void MemPool::removePayloads(const PopData& pop) { vacuum(pop); }
 
 MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
                                                       VbkBlock::id_t block_id) {
@@ -308,66 +255,47 @@ template <typename pop_t>
 void process_submit(
     MemPool& memPool,
     const std::vector<pop_t>& payloads,
-    const AltTree& tree,
     std::vector<std::pair<typename pop_t::id_t, ValidationState>>& res) {
   for (const auto& p : payloads) {
     ValidationState state;
-    memPool.submit<pop_t>(p, tree, state);
+    memPool.submit<pop_t>(p, state);
     res.emplace_back(p.getId(), state);
   }
 }
 
 }  // namespace
 
-MempoolResult MemPool::submitAll(const PopData& pop, const AltTree& tree) {
+MempoolResult MemPool::submitAll(const PopData& pop) {
   MempoolResult r;
 
-  process_submit(*this, pop.context, tree, r.context);
-  process_submit(*this, pop.vtbs, tree, r.vtbs);
-  process_submit(*this, pop.atvs, tree, r.atvs);
+  process_submit(*this, pop.context, r.context);
+  process_submit(*this, pop.vtbs, r.vtbs);
+  process_submit(*this, pop.atvs, r.atvs);
 
   return r;
 }
 
+void MemPool::clear() {
+  relations_.clear();
+  vbkblocks_.clear();
+  stored_vtbs_.clear();
+  stored_atvs_.clear();
+}
+
 template <>
-bool MemPool::submit(const ATV& atv,
-                     const AltTree& tree,
-                     ValidationState& state) {
+bool MemPool::submit(const ATV& atv, ValidationState& state) {
   // stateless validation
-  if (!checkATV(atv, state, *alt_chain_params_, *vbk_chain_params_)) {
+  if (!checkATV(atv, state, tree_->getParams(), tree_->vbk().getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
   }
 
-  // stateful validation
-  int32_t window = alt_chain_params_->getEndorsementSettlementInterval();
-  auto duplicate = findBlockContainingEndorsement(
-      tree.getBestChain(), tree.getBestChain().tip(), atv.getId(), window);
-  if (duplicate) {
-    return state.Invalid(
-        "pop-mempool-submit-atv-duplicate",
-        fmt::sprintf("ATV=%s already added to active chain in block %s",
-                     atv.getId().toHex(),
-                     duplicate->toShortPrettyString()));
-  }
-
-  std::vector<uint8_t> endorsed_hash =
-      tree.getParams().getHash(atv.transaction.publicationData.header);
-  auto* endorsed_index = tree.getBlockIndex(endorsed_hash);
-  if (endorsed_index != nullptr) {
-    auto* tip = tree.getBestChain().tip();
-    assert(tip != nullptr && "block tree is not bootstrapped");
-
-    if (tip && (tip->getHeight() - endorsed_index->getHeight() + 1 > window)) {
-      return state.Invalid("pop-mempool-submit-atv-expired",
-                           fmt::sprintf("ATV=%s expired %s",
-                                        atv.getId().toHex(),
-                                        endorsed_index->toShortPrettyString()));
-    }
+  if (!checkContextually(atv, state)) {
+    return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
   for (const auto& b : atv.context) {
     // stateful validation
-    if (!tree.vbk().getBlockIndex(b.getHash())) {
+    if (!tree_->vbk().getBlockIndex(b.getHash())) {
       touchVbkBlock(b, b.getId());
     }
   }
@@ -389,44 +317,21 @@ bool MemPool::submit(const ATV& atv,
 }
 
 template <>
-bool MemPool::submit(const VTB& vtb,
-                     const AltTree& tree,
-                     ValidationState& state) {
+bool MemPool::submit(const VTB& vtb, ValidationState& state) {
+  auto& vbk = tree_->vbk();
   // stateless validation
-  if (!checkVTB(vtb, state, *vbk_chain_params_, *btc_chain_params_)) {
+  if (!checkVTB(vtb, state, vbk.getParams(), vbk.btc().getParams())) {
     return state.Invalid("pop-mempool-submit-vtb-stateless");
   }
 
   // stateful validation
-  auto* containing = tree.vbk().getBlockIndex(vtb.containingBlock.getHash());
-  int32_t window = vbk_chain_params_->getEndorsementSettlementInterval();
-  auto duplicate = findBlockContainingEndorsement(
-      tree.vbk().getBestChain(),
-      // if containing exists on chain, then search for duplicates starting from
-      // containing, else search starting from tip
-      (containing ? containing : tree.vbk().getBestChain().tip()),
-      vtb.getId(),
-      window);
-  if (duplicate) {
-    return state.Invalid(
-        "pop-mempool-submit-vtb-duplicate",
-        fmt::sprintf("VTB=%s already added to active chain in block %s",
-                     vtb.getId().toHex(),
-                     duplicate->toShortPrettyString()));
-  }
-
-  if (vtb.containingBlock.height - vtb.transaction.publishedBlock.height >
-      window) {
-    return state.Invalid(
-        "pop-mempool-submit-vtb-expired",
-        fmt::sprintf("VTB=%s expired %s",
-                     vtb.getId().toHex(),
-                     vtb.transaction.publishedBlock.toPrettyString()));
+  if (!checkContextually(vtb, state)) {
+    return state.Invalid("pop-mempool-submit-vtb-stateful");
   }
 
   for (const auto& b : vtb.context) {
     // stateful validation
-    if (!tree.vbk().getBlockIndex(b.getHash())) {
+    if (!vbk.getBlockIndex(b.getHash())) {
       touchVbkBlock(b, b.getId());
     }
   }
@@ -447,16 +352,14 @@ bool MemPool::submit(const VTB& vtb,
 }
 
 template <>
-bool MemPool::submit(const VbkBlock& blk,
-                     const AltTree& tree,
-                     ValidationState& state) {
+bool MemPool::submit(const VbkBlock& blk, ValidationState& state) {
   // stateless validation
-  if (!checkBlock(blk, state, *vbk_chain_params_)) {
+  if (!checkBlock(blk, state, tree_->vbk().getParams())) {
     return state.Invalid("pop-mempool-submit-vbkblock-stateless");
   }
 
   // stateful validation
-  if (tree.vbk().getBlockIndex(blk.getHash())) {
+  if (tree_->vbk().getBlockIndex(blk.getHash())) {
     // duplicate
     return state.Invalid("pop-mempool-submit-vbkblock-stateful");
   }
@@ -494,6 +397,69 @@ signals::Signal<void(const VTB&)>& MemPool::getSignal() {
 template <>
 signals::Signal<void(const VbkBlock&)>& MemPool::getSignal() {
   return on_vbkblock_accepted;
+}
+
+template <>
+bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state) {
+  auto& vbk = tree_->vbk();
+  auto* containing = vbk.getBlockIndex(vtb.containingBlock.getHash());
+  int32_t window = vbk.getParams().getEndorsementSettlementInterval();
+  auto duplicate = findBlockContainingEndorsement(
+      vbk.getBestChain(),
+      // if containing exists on chain, then search for duplicates starting from
+      // containing, else search starting from tip
+      (containing ? containing : vbk.getBestChain().tip()),
+      vtb.getId(),
+      window);
+  if (duplicate) {
+    return state.Invalid(
+        "vtb-duplicate",
+        fmt::sprintf("VTB=%s already added to active chain in block %s",
+                     vtb.getId().toHex(),
+                     duplicate->toShortPrettyString()));
+  }
+
+  if (vtb.containingBlock.height - vtb.transaction.publishedBlock.height >
+      window) {
+    return state.Invalid(
+        "vtb-expired",
+        fmt::sprintf("VTB=%s expired %s",
+                     vtb.getId().toHex(),
+                     vtb.transaction.publishedBlock.toPrettyString()));
+  }
+
+  return true;
+}
+template <>
+bool MemPool::checkContextually<ATV>(const ATV& atv, ValidationState& state) {
+  // stateful validation
+  int32_t window = tree_->getParams().getEndorsementSettlementInterval();
+  auto duplicate = findBlockContainingEndorsement(
+      tree_->getBestChain(), tree_->getBestChain().tip(), atv.getId(), window);
+  if (duplicate) {
+    return state.Invalid(
+        "atv-duplicate",
+        fmt::sprintf("ATV=%s already added to active chain in block %s",
+                     atv.getId().toHex(),
+                     duplicate->toShortPrettyString()));
+  }
+
+  auto endorsed_hash =
+      tree_->getParams().getHash(atv.transaction.publicationData.header);
+  auto* endorsed_index = tree_->getBlockIndex(endorsed_hash);
+  if (endorsed_index != nullptr) {
+    auto* tip = tree_->getBestChain().tip();
+    assert(tip != nullptr && "block tree is not bootstrapped");
+
+    if (tip && (tip->getHeight() - endorsed_index->getHeight() + 1 > window)) {
+      return state.Invalid("atv-expired",
+                           fmt::sprintf("ATV=%s expired %s",
+                                        atv.getId().toHex(),
+                                        endorsed_index->toShortPrettyString()));
+    }
+  }
+
+  return true;
 }
 
 }  // namespace altintegration
