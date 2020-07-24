@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/entities/vbkfullblock.hpp"
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -88,9 +89,11 @@ PopData MemPool::VbkPayloadsRelations::toPopData() const {
     pop.atvs.push_back(*atv);
   }
 
-  // TODO: we might want to sort VTBs in ascending order of their
-  // blockOfProofs to guarantee that within a single block they all are
-  // connected.
+  // we sort VTBs in ascending order of their containing VBK blocks to guarantee
+  // that within a single block they all are connected.
+  std::sort(pop.vtbs.begin(), pop.vtbs.end(), [](const VTB& a, const VTB& b) {
+    return a.containingBlock.height < b.containingBlock.height;
+  });
 
   return pop;
 }
@@ -131,75 +134,152 @@ PopData MemPool::getPop(AltTree& tree) {
   return ret;
 }
 
-void MemPool::filterVbkBlocks(const AltTree& tree) {
-  for (auto rel_it = relations_.begin(); rel_it != relations_.end();) {
-    auto blockHash = rel_it->second->header->getHash();
+template <>
+void MemPool::remove<VbkBlock>(const VbkBlock::id_t& id) {
+  vbkblocks_.erase(id);
+
+  auto it = relations_.find(id);
+  if (it == relations_.end()) {
+    return;
+  }
+
+  for (auto& vtb : it->second->vtbs) {
+    stored_vtbs_.erase(vtb->getId());
+  }
+
+  for (auto& atv : it->second->atvs) {
+    stored_atvs_.erase(atv->getId());
+  }
+
+  relations_.erase(it);
+}
+
+template <>
+void MemPool::remove<VTB>(const VTB::id_t& id) {
+  auto it = stored_vtbs_.find(id);
+  if (it == stored_vtbs_.end()) {
+    // nothing to remove
+    return;
+  }
+
+  // remove VTB from relation
+  auto containingId = it->second->containingBlock.getId();
+  auto rit = relations_.find(containingId);
+  if (rit == relations_.end()) {
+    return;
+  }
+
+  rit->second->removeVTB(id);
+  stored_vtbs_.erase(it);
+}
+
+template <>
+void MemPool::remove<ATV>(const ATV::id_t& id) {
+  auto it = stored_atvs_.find(id);
+  if (it == stored_atvs_.end()) {
+    // nothing to remove
+    return;
+  }
+
+  // remove ATV from relation
+  auto containingId = it->second->blockOfProof.getId();
+  auto rit = relations_.find(containingId);
+  if (rit == relations_.end()) {
+    return;
+  }
+
+  rit->second->removeATV(id);
+  stored_atvs_.erase(it);
+}
+
+void MemPool::vacuum(const PopData& pop, const AltTree& tree) {
+  // save ids of all Vbk Blocks that have been added into last block
+  std::set<VbkBlock::id_t> blocks;
+  std::transform(pop.context.begin(),
+                 pop.context.end(),
+                 std::inserter(blocks, std::end(blocks)),
+                 get_id<VbkBlock>);
+
+  // cascade removal of relation and stored payloads
+  auto removeRelation = [&](decltype(relations_.begin()) it) {
+    auto& rel = *it->second;
+    vbkblocks_.erase(it->first);
+    for (auto& vtb : rel.vtbs) {
+      stored_vtbs_.erase(vtb->getId());
+    }
+    for (auto& atv : rel.atvs) {
+      stored_atvs_.erase(atv->getId());
+    }
+    return relations_.erase(it);
+  };
+
+  for (auto it = relations_.begin(); it != relations_.end();) {
+    auto blockHash = it->second->header->getHash();
     auto* index = tree.vbk().getBlockIndex(blockHash);
     auto* tip = tree.vbk().getBestChain().tip();
+    auto maxReorgBlocks = tree.vbk().getParams().getMaxReorgBlocks();
+    auto& rel = *it->second;
 
-    if ((index != nullptr && rel_it->second->empty()) ||
-        (tip->getHeight() - tree.vbk().getParams().getMaxReorgBlocks() >
-         rel_it->second->header->height)) {
-      vbkblocks_.erase(rel_it->first);
-
-      // remove payloads
-      for (const auto& atv : rel_it->second->atvs) {
-        stored_atvs_.erase(atv->getId());
-      }
-
-      for (const auto& vtb : rel_it->second->vtbs) {
-        stored_vtbs_.erase(vtb->getId());
-      }
-
-      rel_it = relations_.erase(rel_it);
+    bool tooOld = tip->getHeight() - maxReorgBlocks > rel.header->height;
+    if (tooOld) {
+      // VBK block is too old to be included or modified
+      it = removeRelation(it);
       continue;
     }
-    ++rel_it;
+
+    if (index != nullptr) {
+      // VBK tree knows about this VBK block
+      // does it know about stored VTBs?
+      auto& v = index->getPayloadIds<VTB>();
+      std::set<VTB::id_t> ids(v.begin(), v.end());
+      // include vtbs that have just been included into new block
+      std::transform(pop.vtbs.begin(),
+                     pop.vtbs.end(),
+                     std::inserter(ids, std::end(ids)),
+                     get_id<VTB>);
+
+      for (auto& vtb : rel.vtbs) {
+        auto id = vtb->getId();
+        if (ids.count(id)) {
+          // mempool contains VBK block, which already exists in VBK tree, and
+          // we found a VTB which exists in that VBK block. we can remove VTB
+          // from mempool
+          remove<VTB>(id);
+        }
+      }
+
+      // does this VBK block contain any new VTB/ATV payloads?
+      if (rel.empty()) {
+        // it does not... we can remove this VBK block
+        it = removeRelation(it);
+        continue;
+      }
+
+      // this relation still has something useful
+    }
+
+    if (blocks.count(it->first)) {
+      // this VBK block is added to new ALT block, and it has no payloads
+      if (rel.empty()) {
+        it = removeRelation(it);
+        continue;
+      }
+    }
+
+    ++it;
   }
 }
 
 void MemPool::removePayloads(const PopData& pop, const AltTree& tree) {
-  // clear vtbs
-  for (const auto& vtb : pop.vtbs) {
-    auto vtb_id = vtb.getId();
-
-    auto relation_it = relations_.find(vtb.containingBlock.getId());
-    if (relation_it == relations_.end()) {
-      continue;
-    }
-
-    relation_it->second->removeVTB(vtb_id);
-    stored_vtbs_.erase(vtb_id);
+  for (auto& vtb : pop.vtbs) {
+    remove<VTB>(vtb.getId());
+  }
+  for (auto& atv : pop.atvs) {
+    remove<ATV>(atv.getId());
   }
 
-  // clear atvs
-  for (const auto& atv : pop.atvs) {
-    auto atv_id = atv.getId();
-
-    auto relation_it = relations_.find(atv.blockOfProof.getId());
-    if (relation_it == relations_.end()) {
-      continue;
-    }
-
-    relation_it->second->removeATV(atv_id);
-    stored_atvs_.erase(atv_id);
-  }
-
-  // clear context
-  for (const auto& b : pop.context) {
-    auto hash = b.getId();
-    auto relation_it = relations_.find(hash);
-    if (relation_it == relations_.end()) {
-      continue;
-    }
-
-    if (relation_it->second->empty()) {
-      vbkblocks_.erase(hash);
-      relations_.erase(relation_it);
-    }
-  }
-
-  filterVbkBlocks(tree);
+  // vbk blocks will be cleaned during vacuum
+  vacuum(pop, tree);
 }
 
 MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,

@@ -103,7 +103,7 @@ TEST_F(MemPoolFixture, removePayloads_test1) {
 
   ASSERT_TRUE(mempool->getMap<ATV>().empty());
   ASSERT_TRUE(mempool->getMap<VTB>().empty());
-  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
+  ASSERT_EQ(mempool->getMap<VbkBlock>().size(), 0);
 
   popData = checkedGetPop();
   EXPECT_EQ(popData.context.size(), 0);

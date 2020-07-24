@@ -131,8 +131,13 @@ struct MemPool {
     static_assert(sizeof(Pop) == 0, "Unknown type in getSignal");
   }
 
-  void filterVbkBlocks(const AltTree& tree);
+  void vacuum(const PopData& pop, const AltTree& tree);
+  template <typename Pop>
+  void remove(const typename Pop::id_t& id);
 };
+
+template <>
+void MemPool::remove<VbkBlock>(const typename VbkBlock::id_t& id);
 
 template <>
 bool MemPool::submit(const ATV& atv,
@@ -150,6 +155,9 @@ bool MemPool::submit(const VbkBlock& block,
                      ValidationState& state);
 
 // clang-format off
+template <> void MemPool::remove<VbkBlock>(const typename VbkBlock::id_t& id);
+template <> void MemPool::remove<VTB>(const typename VTB::id_t& id);
+template <> void MemPool::remove<ATV>(const typename ATV::id_t& id);
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
 template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
