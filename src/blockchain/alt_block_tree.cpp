@@ -142,6 +142,45 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
   return addPayloads(*index, popData, state);
 }
 
+// check for VTB duplicates in ancestor and descendant blocks
+bool checkNoVTBDuplicates(AltTree& tree,
+                          AltTree::index_t& index,
+                          const std::vector<VTB>& vtbs,
+                          ValidationState& state) {
+  for (const auto& vtb : vtbs) {
+    const auto& containingBlocks =
+        tree.getStorage().getContainingAltBlocks(vtb.getId().asVector());
+    for (const auto& containingBlock : containingBlocks) {
+      auto* containingIndex = tree.getBlockIndex(containingBlock);
+      VBK_ASSERT(
+          containingIndex != nullptr &&
+          "state corruption: the storage index and block tree are out of sync");
+
+      if (containingIndex->getHeight() > index.getHeight()) {
+        if (containingIndex->getAncestor(index.getHeight()) == &index) {
+          // TODO: flag the descendant block and its VTB copy as invalid
+          // currently, payload invalidation is broken
+        }
+
+      } else {
+        // check if this is an ancestor that contains the VTB
+        if (index.getAncestor(containingIndex->getHeight()) ==
+            containingIndex) {
+          return state.Invalid(
+              "ALT-duplicate-payloads-vtb-ancestor",
+              fmt::sprintf("Ancestor block=%s already contains VTB=%s that we "
+                           "attempted to add to block=%s.",
+                           containingIndex->toPrettyString(),
+                           vtb.toPrettyString(),
+                           index.toPrettyString()));
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
 bool AltTree::addPayloads(index_t& index,
                           PopData& payloads,
                           ValidationState& state,
@@ -177,6 +216,11 @@ bool AltTree::addPayloads(index_t& index,
           index, payloads.vtbs, *this, state, continueOnInvalid) ||
       !payloadsCheckDuplicates<ATV>(
           index, payloads.atvs, *this, state, continueOnInvalid)) {
+    return false;
+  }
+
+  // check for VTB duplicates in ancestor and descendant blocks
+  if (!checkNoVTBDuplicates(*this, index, payloads.vtbs, state)) {
     return false;
   }
 

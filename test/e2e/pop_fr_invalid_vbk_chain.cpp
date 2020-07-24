@@ -128,7 +128,6 @@ TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
       popminer->getBtcParams().getGenesisBlock().getHash());
   tipB = popminer->mineVbkBlocks(*tipB, 1);
 
-  // one of the chains ends up being invalid due to broken duplicate endorsement
-  // handling
-  ASSERT_NE(tipA->isValid(), tipB->isValid());
+  ASSERT_TRUE(tipA->isValid());
+  ASSERT_TRUE(tipB->isValid());
 }

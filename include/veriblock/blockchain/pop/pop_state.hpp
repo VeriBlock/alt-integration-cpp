@@ -18,12 +18,13 @@ template <typename EndorsementT>
 struct PopState {
   using endorsement_t = EndorsementT;
   using eid_t = typename endorsement_t::id_t;
+  using containing_endorsement_store_t =
+      std::unordered_multimap<eid_t, std::shared_ptr<endorsement_t>>;
 
   //! (memory-only) list of endorsements pointing to this block
   std::vector<endorsement_t*> endorsedBy;
 
-  const std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>&
-    getContainingEndorsements() const {
+  const containing_endorsement_store_t& getContainingEndorsements() const {
     return _containingEndorsements;
   }
 
@@ -32,8 +33,20 @@ struct PopState {
     setDirty();
   }
 
-  void removeContainingEndorsement(const eid_t& eid) {
-    _containingEndorsements.erase(eid);
+  void removeContainingEndorsement(std::shared_ptr<endorsement_t> e) {
+    auto range = _containingEndorsements.equal_range(e->id);
+    auto endorsement_it = std::find_if(
+        range.first,
+        range.second,
+        [&](const typename containing_endorsement_store_t::reference item) {
+          return *item.second == *e;
+        });
+
+    VBK_ASSERT(endorsement_it != range.second &&
+               "state corruption: tried to remove an endorsement that the "
+               "block doesn't contain");
+    _containingEndorsements.erase(endorsement_it);
+
     setDirty();
   }
 
@@ -55,11 +68,10 @@ struct PopState {
         });
   }
 
- // hide setters from public usage
+  // hide setters from public usage
  protected:
   //! (stored as vector) list of containing endorsements in this block
-  std::unordered_map<eid_t, std::shared_ptr<endorsement_t>>
-      _containingEndorsements{};
+  containing_endorsement_store_t _containingEndorsements{};
 
   void setDirty();
 
@@ -76,9 +88,8 @@ struct PopState {
     for (auto& e : v) {
       auto pair = _containingEndorsements.insert(
           {e.getId(), std::make_shared<endorsement_t>(e)});
-      VBK_ASSERT(pair.second);
+      VBK_ASSERT(pair->second);
     }
-
     // do not restore 'endorsedBy', it will be done later
   }
 

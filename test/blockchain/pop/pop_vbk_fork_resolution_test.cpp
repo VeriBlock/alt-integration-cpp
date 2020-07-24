@@ -223,7 +223,8 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->getHash(),
             vbkBlockTip->getHash());
 
-  auto* endorsedVbkBlock = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 10);
+  auto* endorsedVbkBlock =
+      vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 10);
 
   // create 1 endorsement and put it into
   auto Atx1 =
@@ -249,10 +250,19 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
       endorsedVbkBlock->getHeader(),
       popminer->getBtcParams().getGenesisBlock().getHash());
 
-  // mine the second the same endorsement
+  // mine another copy of the same endorsement
+
+  // Technically, that makes an invalid VBK chain,
+  // but it is not our task to validate VBK blocks.
+  // In general, it is impossible to validate a chain
+  // unless we can obtain/reconstruct all blocks.
+  // Thus, it makes no sense to focus on those edge
+  // cases when we actually can figure out that
+  // the block is invalid
+
   auto vbktip1 = popminer->vbk().getBestChain().tip();
-  ASSERT_THROW(popminer->mineVbkBlocks(1), std::domain_error);
+  popminer->mineVbkBlocks(1);
   auto vbktip3 = popminer->vbk().getBestChain().tip();
 
-  ASSERT_EQ(*vbktip1, *vbktip3);
+  ASSERT_EQ(vbktip1, vbktip3->pprev);
 }

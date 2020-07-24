@@ -69,22 +69,6 @@ struct AddEndorsement : public Command {
               HexStr(e_->endorsedHash)));
     }
 
-    auto& id = e_->id;
-    auto endorsed_it =
-        std::find_if(endorsed->endorsedBy.rbegin(),
-                     endorsed->endorsedBy.rend(),
-                     [&id](endorsement_t* p) { return p->id == id; });
-    if (endorsed_it != endorsed->endorsedBy.rend()) {
-      // found duplicate
-      return state.Invalid(
-          protected_block_t ::name() + "-duplicate",
-          fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
-                       "found block endorsed by it in %s",
-                       e_->toPrettyString(),
-                       containing->toShortPrettyString(),
-                       endorsed->toShortPrettyString()));
-    }
-
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
     if (!blockOfProof) {
       return state.Invalid(
@@ -93,19 +77,36 @@ struct AddEndorsement : public Command {
                        HexStr(e_->blockOfProof)));
     }
 
-    auto* duplicate =
-        findBlockContainingEndorsement(chain, containing, *e_, window);
-    if (duplicate) {
-      // found duplicate
-      return state.Invalid(
-          protected_block_t ::name() + "-duplicate",
-          fmt::sprintf("Can not add endorsement=%s to block=%s, because we"
-                       "found its duplicate in block %s",
-                       e_->toPrettyString(),
-                       containing->toShortPrettyString(),
-                       duplicate->toShortPrettyString()));
-    }
+    if (!protected_index_t::addEndorsementAllowDuplicates) {
+      auto& id = e_->id;
+      auto endorsed_it =
+          std::find_if(endorsed->endorsedBy.rbegin(),
+                       endorsed->endorsedBy.rend(),
+                       [&id](endorsement_t* p) { return p->id == id; });
+      if (endorsed_it != endorsed->endorsedBy.rend()) {
+        // found duplicate
+        return state.Invalid(
+            protected_block_t ::name() + "-duplicate",
+            fmt::sprintf("Can not add endorsement=%s to block=%s, because we "
+                         "found block endorsed by it in %s",
+                         e_->toPrettyString(),
+                         containing->toShortPrettyString(),
+                         endorsed->toShortPrettyString()));
+      }
 
+      auto* duplicate =
+          findBlockContainingEndorsement(chain, containing, *e_, window);
+      if (duplicate) {
+        // found duplicate
+        return state.Invalid(
+            protected_block_t ::name() + "-duplicate",
+            fmt::sprintf("Can not add endorsement=%s to block=%s, because we"
+                         "found its duplicate in block %s",
+                         e_->toPrettyString(),
+                         containing->toShortPrettyString(),
+                         duplicate->toShortPrettyString()));
+      }
+    }
     containing->insertContainingEndorsement(e_);
     endorsed->endorsedBy.push_back(e_.get());
     return true;
@@ -123,10 +124,6 @@ struct AddEndorsement : public Command {
         endorsed != nullptr &&
         "failed to roll back AddEndorsement: the endorsed block does not "
         "exist");
-
-    auto& containingEndorsements = containing->getContainingEndorsements();
-    auto endorsement_it = containingEndorsements.find(e_->id);
-    VBK_ASSERT(endorsement_it != containingEndorsements.end());
 
     // erase endorsedBy
     {
@@ -149,7 +146,7 @@ struct AddEndorsement : public Command {
     }
 
     // erase endorsement
-    containing->removeContainingEndorsement(e_->id);
+    containing->removeContainingEndorsement(e_);
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

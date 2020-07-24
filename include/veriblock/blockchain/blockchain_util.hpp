@@ -83,8 +83,10 @@ bool recoverEndorsedBy(ProtectedBlockTree& ed_,
     // validation, no 'action' is actually executed.
     actions.push_back([&] {
       auto& by = endorsed->endorsedBy;
-      VBK_ASSERT(std::find(by.rbegin(), by.rend(), &e) == by.rend() &&
-                 "same endorsement is added to endorsedBy second time");
+      if (!ProtectedBlockTree::index_t::addEndorsementAllowDuplicates) {
+        VBK_ASSERT(std::find(by.rbegin(), by.rend(), &e) == by.rend() &&
+                   "same endorsement is added to endorsedBy second time");
+      }
       by.push_back(&e);
     });
   }

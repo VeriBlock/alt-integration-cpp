@@ -776,7 +776,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   EXPECT_EQ(E1.blockOfProof, E2.blockOfProof);
   EXPECT_EQ(E1.endorsedHash, E2.endorsedHash);
   EXPECT_NE(E1.containingHash, E2.containingHash);
-  EXPECT_EQ(E1.id, E2.id);
+  EXPECT_NE(E1.id, E2.id);
 
   fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
@@ -794,9 +794,10 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   PopData v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.context.size(), 122);
-  EXPECT_EQ(v_popData.vtbs.size(), 1);
+  EXPECT_EQ(v_popData.vtbs.size(), 2);
   EXPECT_EQ(v_popData.atvs.size(), 1);
   EXPECT_EQ(v_popData.vtbs.at(0), vtb1);
+  EXPECT_EQ(v_popData.vtbs.at(1), vtb2);
 
   applyInNextBlock(v_popData);
 }
@@ -830,7 +831,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   ASSERT_EQ(state.GetPath(), "pop-mempool-submit-atv-stateful+atv-duplicate");
 }
 
-TEST_F(MemPoolFixture, getPop_scenario_8) {
+TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   // mine 65 VBK blocks
@@ -905,7 +906,7 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
   EXPECT_EQ(E1.blockOfProof, E2.blockOfProof);
   EXPECT_EQ(E1.endorsedHash, E2.endorsedHash);
   EXPECT_NE(E1.containingHash, E2.containingHash);
-  EXPECT_EQ(E1.id, E2.id);
+  EXPECT_NE(E1.id, E2.id);
 
   fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
@@ -916,12 +917,14 @@ TEST_F(MemPoolFixture, getPop_scenario_8) {
       popminer->generateATV(tx2, vbkparam.getGenesisBlock().getHash(), state);
 
   EXPECT_TRUE(mempool->submit(atv2, state));
-  EXPECT_FALSE(mempool->submit(vtb2, state)) << state.toString();
+  // mempool should discard such transactions
+  // EXPECT_FALSE(mempool->submit(vtb2, state)) << state.toString();
+  EXPECT_TRUE(mempool->submit(vtb2, alttree, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   v_popData = checkedGetPop();
 
-  EXPECT_EQ(v_popData.vtbs.size(), 0);
+  EXPECT_EQ(v_popData.vtbs.size(), 1);
   EXPECT_EQ(v_popData.atvs.size(), 1);
   EXPECT_EQ(v_popData.context.size(), 56);
 }
