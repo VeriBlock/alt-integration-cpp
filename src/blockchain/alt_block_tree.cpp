@@ -142,48 +142,63 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
   return addPayloads(*index, popData, state);
 }
 
-// check for VTB duplicates in ancestor and descendant blocks
-bool checkNoVTBDuplicates(AltTree& tree,
-                          AltTree::index_t& index,
-                          const std::vector<VTB>& vtbs,
-                          ValidationState& state) {
+// check for Payload duplicates in ancestor and descendant blocks
+template <typename P>
+bool checkNoPayloadDuplicatesInOtherBlocks(AltTree& tree,
+                                           AltTree::index_t& index,
+                                           std::vector<P>& payloads,
+                                           ValidationState& state,
+                                           bool continueOnInvalid){
   auto& storage = tree.getStorage();
-  for (const auto& vtb : vtbs) {
-    auto vtbid = vtb.getId();
-    for (const auto& containingBlock :
-         storage.getContainingAltBlocks(vtbid.asVector())) {
+
+  for (auto it = payloads.begin(); it != payloads.end();) {
+    auto& payload = *it;
+    auto pid = payload.getId();
+    bool failedPayload = false;
+
+    const auto& containingBlocks =
+        tree.getStorage().getContainingAltBlocks(pid.asVector());
+    for (const auto& containingBlock : containingBlocks) {
       auto* containingIndex = tree.getBlockIndex(containingBlock);
       VBK_ASSERT(
           containingIndex != nullptr &&
           "state corruption: the storage index and block tree are out of sync");
 
-      // is `containing` of this VTB is descendant of `index`?
+      // is `containing` block of this payload is descendant of `index`?
       if (containingIndex->getHeight() > index.getHeight()) {
         if (containingIndex->getAncestor(index.getHeight()) == &index) {
-          // we called AddPayloads(index, vtbid), where `index` is on the same
+          // we called AddPayloads(index, pid), where `index` is on the same
           // chain as `containing` and `containing` already has payload with id
-          // `vtbid`. Block that is later, becomes invalid, all its descendants
+          // `pid`. Block that is later, becomes invalid, all its descendants
           // become invalid.
-          storage.setValidity(containingBlock, vtbid, false);
+          storage.setValidity(containingBlock, pid, false);
           tree.invalidateSubtree(*containingIndex, BLOCK_FAILED_BLOCK, false);
         } else {
-          // `containing` already has `vtbid`, but is on different chain than
+          // `containing` already has `pid`, but is on different chain than
           // `index`
         }
       } else {
         // check if this is an ancestor that contains the VTB
         if (index.getAncestor(containingIndex->getHeight()) ==
             containingIndex) {
+          if (continueOnInvalid) {
+            failedPayload = true;
+            break;
+          }
+
           return state.Invalid(
-              "ALT-duplicate-payloads-vtb-ancestor",
-              fmt::format("Ancestor block={} already contains VTB={} that we "
-                          "attempted to add to block={}.",
-                          containingIndex->toPrettyString(),
-                          vtb.toPrettyString(),
-                          index.toPrettyString()));
+              "ALT-duplicate-payloads-" + P::name() + "-ancestor",
+              fmt::sprintf("Ancestor block=%s already contains %s=%s that we "
+                           "attempted to add to block=%s.",
+                           containingIndex->toPrettyString(),
+                           P::name(),
+                           payload.toPrettyString(),
+                           index.toPrettyString()));
         }
       }  // end if
     }    // end for
+
+    it = failedPayload ? payloads.erase(it) : ++it;
   }      // end for
 
   return true;
@@ -228,7 +243,10 @@ bool AltTree::addPayloads(index_t& index,
   }
 
   // check for VTB duplicates in ancestor and descendant blocks
-  if (!checkNoVTBDuplicates(*this, index, payloads.vtbs, state)) {
+  if (!checkNoPayloadDuplicatesInOtherBlocks(
+          *this, index, payloads.vtbs, state, continueOnInvalid) ||
+      !checkNoPayloadDuplicatesInOtherBlocks(
+          *this, index, payloads.atvs, state, continueOnInvalid)) {
     return false;
   }
 

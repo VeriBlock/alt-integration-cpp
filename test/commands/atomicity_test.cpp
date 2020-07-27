@@ -115,9 +115,19 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
 
   // execute command second time
-  ASSERT_FALSE(cmd->Execute(state));
+  ASSERT_TRUE(cmd->Execute(state));
 
-  // verify that state has NOT been changed
+  // verify that state has been changed
+  // as duplicates are filtered by addPayloads
+  ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
+  ASSERT_EQ(alt5->endorsedBy.size(), 2);
+  ASSERT_EQ(alt10->getContainingEndorsements().size(), 2);
+  ASSERT_EQ(alt10->endorsedBy.size(), 0);
+
+  // unexecute command
+  ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
+
+  // endorsement is removed
   ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
   ASSERT_EQ(alt10->getContainingEndorsements().size(), 1);
