@@ -919,7 +919,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   EXPECT_TRUE(mempool->submit(atv2, state));
   // mempool should discard such transactions
   // EXPECT_FALSE(mempool->submit(vtb2, state)) << state.toString();
-  EXPECT_TRUE(mempool->submit(vtb2, alttree, state));
+  EXPECT_TRUE(mempool->submit(vtb2, state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   v_popData = checkedGetPop();

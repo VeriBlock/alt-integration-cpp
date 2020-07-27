@@ -147,36 +147,44 @@ bool checkNoVTBDuplicates(AltTree& tree,
                           AltTree::index_t& index,
                           const std::vector<VTB>& vtbs,
                           ValidationState& state) {
+  auto& storage = tree.getStorage();
   for (const auto& vtb : vtbs) {
-    const auto& containingBlocks =
-        tree.getStorage().getContainingAltBlocks(vtb.getId().asVector());
-    for (const auto& containingBlock : containingBlocks) {
+    auto vtbid = vtb.getId();
+    for (const auto& containingBlock :
+         storage.getContainingAltBlocks(vtbid.asVector())) {
       auto* containingIndex = tree.getBlockIndex(containingBlock);
       VBK_ASSERT(
           containingIndex != nullptr &&
           "state corruption: the storage index and block tree are out of sync");
 
+      // is `containing` of this VTB is descendant of `index`?
       if (containingIndex->getHeight() > index.getHeight()) {
         if (containingIndex->getAncestor(index.getHeight()) == &index) {
-          // TODO: flag the descendant block and its VTB copy as invalid
-          // currently, payload invalidation is broken
+          // we called AddPayloads(index, vtbid), where `index` is on the same
+          // chain as `containing` and `containing` already has payload with id
+          // `vtbid`. Block that is later, becomes invalid, all its descendants
+          // become invalid.
+          storage.setValidity(containingBlock, vtbid, false);
+          tree.invalidateSubtree(*containingIndex, BLOCK_FAILED_BLOCK, false);
+        } else {
+          // `containing` already has `vtbid`, but is on different chain than
+          // `index`
         }
-
       } else {
         // check if this is an ancestor that contains the VTB
         if (index.getAncestor(containingIndex->getHeight()) ==
             containingIndex) {
           return state.Invalid(
               "ALT-duplicate-payloads-vtb-ancestor",
-              fmt::sprintf("Ancestor block=%s already contains VTB=%s that we "
-                           "attempted to add to block=%s.",
-                           containingIndex->toPrettyString(),
-                           vtb.toPrettyString(),
-                           index.toPrettyString()));
+              fmt::format("Ancestor block={} already contains VTB={} that we "
+                          "attempted to add to block={}.",
+                          containingIndex->toPrettyString(),
+                          vtb.toPrettyString(),
+                          index.toPrettyString()));
         }
-      }
-    }
-  }
+      }  // end if
+    }    // end for
+  }      // end for
 
   return true;
 }
