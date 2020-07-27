@@ -14,7 +14,6 @@
 #include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
-#include <veriblock/context.hpp>
 #include <veriblock/stateless_validation.hpp>
 #include <veriblock/validation_state.hpp>
 

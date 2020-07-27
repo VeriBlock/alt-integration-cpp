@@ -6,7 +6,6 @@
 #include <veriblock/algorithm.hpp>
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
-#include <veriblock/context.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/reversed_range.hpp>

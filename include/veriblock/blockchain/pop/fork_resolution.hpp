@@ -13,7 +13,6 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/blockchain/pop/pop_state_machine.hpp>
-#include <veriblock/context.hpp>
 #include <veriblock/finalizer.hpp>
 #include <veriblock/keystone_util.hpp>
 #include <veriblock/logger.hpp>
