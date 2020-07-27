@@ -48,8 +48,18 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
 
   // execute again
-  ASSERT_FALSE(cmd->Execute(state));
-  // verify that state has not been changed
+  ASSERT_TRUE(cmd->Execute(state));
+
+  // verify that another endorsement has been added
+  ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
+  ASSERT_EQ(vbk5->endorsedBy.size(), 2);
+  ASSERT_EQ(vbk10->getContainingEndorsements().size(), 2);
+  ASSERT_EQ(vbk10->endorsedBy.size(), 0);
+
+  // unexecute command
+  ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
+
+  // endorsement is removed
   ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(vbk5->endorsedBy.size(), 1);
   ASSERT_EQ(vbk10->getContainingEndorsements().size(), 1);
@@ -63,8 +73,6 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
   ASSERT_EQ(vbk5->endorsedBy.size(), 0);
   ASSERT_EQ(vbk10->getContainingEndorsements().size(), 0);
   ASSERT_EQ(vbk10->endorsedBy.size(), 0);
-
-  ASSERT_DEATH(cmd->UnExecute(), "");
 }
 
 TEST_F(AtomicityTestFixture, AddAltEndorsement) {
@@ -107,9 +115,19 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   ASSERT_EQ(alt10->endorsedBy.size(), 0);
 
   // execute command second time
-  ASSERT_FALSE(cmd->Execute(state));
+  ASSERT_TRUE(cmd->Execute(state));
 
-  // verify that state has NOT been changed
+  // verify that state has been changed
+  // as duplicates are filtered by addPayloads
+  ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
+  ASSERT_EQ(alt5->endorsedBy.size(), 2);
+  ASSERT_EQ(alt10->getContainingEndorsements().size(), 2);
+  ASSERT_EQ(alt10->endorsedBy.size(), 0);
+
+  // unexecute command
+  ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
+
+  // endorsement is removed
   ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
   ASSERT_EQ(alt5->endorsedBy.size(), 1);
   ASSERT_EQ(alt10->getContainingEndorsements().size(), 1);
@@ -178,11 +196,18 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   ASSERT_EQ(vtbids2.at(0), vtb1.getId());
 
   // run execute second time on same VTB
-  ASSERT_FALSE(cmd1->Execute(state));
+  ASSERT_TRUE(cmd1->Execute(state));
   auto& vtbids3 = altvbkcontaining->template getPayloadIds<VTB>();
 
-  ASSERT_EQ(vtbids3.size(), 1);
+  ASSERT_EQ(vtbids3.size(), 2);
   ASSERT_EQ(vtbids3.at(0), vtb1.getId());
+  ASSERT_EQ(vtbids3.at(1), vtb1.getId());
+
+  {  // roll back the duplicate
+    ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
+    auto vtbids = altvbkcontaining->template getPayloadIds<VTB>();
+    ASSERT_EQ(vtbids.size(), 1);
+  }
 
   // add vtb2
   auto cmd2 = std::make_shared<AddVTB>(alttree, vtb2);

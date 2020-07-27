@@ -102,6 +102,18 @@ struct Endorsement {
     return a && b && c && d && e;
   }
 
+  friend bool operator<(const type& a, const type& b) {
+    if (a.id < b.id) return true;
+    if (a.id > b.id) return false;
+    if (a.endorsedHash < b.endorsedHash) return true;
+    if (a.endorsedHash > b.endorsedHash) return false;
+    if (a.containingHash < b.containingHash) return true;
+    if (a.containingHash > b.containingHash) return false;
+    if (a.blockOfProof < b.blockOfProof) return true;
+    if (a.blockOfProof > b.blockOfProof) return false;
+    return a.payoutInfo < b.payoutInfo;
+  }
+
   bool operator!=(const type& other) const { return !operator==(other); }
 
   std::string toPrettyString(size_t level = 0) const;

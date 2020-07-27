@@ -204,5 +204,6 @@ TEST(VTB, getId_test) {
   auto stream = ReadStream(atvBytes);
   auto vtb = VTB::fromVbkEncoding(stream);
 
-  EXPECT_EQ(vtb.getId().toHex(), "c33c58fec631de387990e1df60ff757675d6fe258c4e719543dca9b1230475ac");
+  EXPECT_EQ(vtb.getId().toHex(),
+            "e3d7f971cf23efadc50c4ff9d1b971346f7f7851f4dad89bfa8408be0b1a70e7");
 }
