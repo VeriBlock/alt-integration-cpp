@@ -141,8 +141,8 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   ASSERT_TRUE(index99->isValid());
   ASSERT_TRUE(index100->isValid());
   {
-    auto& atvids = index100->getPayloadIds<ATV>();
-    ASSERT_EQ(atvids.size(), 0);
+    auto& _atvids = index100->getPayloadIds<ATV>();
+    ASSERT_EQ(_atvids.size(), 0);
   }
 }
 
