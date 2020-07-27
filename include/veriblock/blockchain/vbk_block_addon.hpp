@@ -20,8 +20,6 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   using payloads_t = VTB;
   using ref_height_t = int32_t;
 
-  static constexpr bool addEndorsementAllowDuplicates = true;
-
   //! (memory only) total amount of work in the chain up to and including this
   //! block
   ArithUint256 chainWork = 0;

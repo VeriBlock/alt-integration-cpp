@@ -77,20 +77,6 @@ struct AddEndorsement : public Command {
                        HexStr(e_->blockOfProof)));
     }
 
-    if (!protected_index_t::addEndorsementAllowDuplicates) {
-      auto* duplicate =
-          findBlockContainingEndorsement(chain, containing, *e_, window);
-      if (duplicate) {
-        // found duplicate
-        return state.Invalid(
-            protected_block_t ::name() + "-duplicate",
-            fmt::sprintf("Can not add endorsement=%s to block=%s, because we"
-                         "found its duplicate in block %s",
-                         e_->toPrettyString(),
-                         containing->toShortPrettyString(),
-                         duplicate->toShortPrettyString()));
-      }
-    }
     containing->insertContainingEndorsement(e_);
     endorsed->endorsedBy.push_back(e_.get());
     return true;

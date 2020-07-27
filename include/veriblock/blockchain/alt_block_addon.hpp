@@ -18,8 +18,6 @@ struct PopData;
 struct AltBlockAddon : public PopState<AltEndorsement> {
   using payloads_t = PopData;
 
-  static constexpr bool addEndorsementAllowDuplicates = false;
-
   // TODO: refactor base block tree, and move chainwork to blocktree.hpp, then
   // remove this
   uint8_t chainWork;
