@@ -293,21 +293,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                      index->toPrettyString()));
   }
 
-  auto pids = map_get_id(payloads);
-
-  // check that we can add all payloads at once to guarantee atomicity
-  auto& vtbids = index->getPayloadIds<VTB>();
-  std::set<pid_t> existingPids(vtbids.begin(), vtbids.end());
-  for (const auto& pid : pids) {
-    if (!existingPids.insert(pid).second) {
-      return state.Invalid(
-          block_t::name() + "-duplicate-payloads",
-          fmt::sprintf("Containing block=%s already contains payload %s.",
-                       index->toPrettyString(),
-                       pid.toHex()));
-    }
-  }
-
   auto tip = activeChain_.tip();
   VBK_ASSERT(tip != nullptr);
 

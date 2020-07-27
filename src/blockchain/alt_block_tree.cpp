@@ -142,6 +142,67 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
   return addPayloads(*index, popData, state);
 }
 
+// check for Payload duplicates in ancestor and descendant blocks
+template <typename P>
+bool checkNoPayloadDuplicatesInOtherBlocks(AltTree& tree,
+                                           AltTree::index_t& index,
+                                           std::vector<P>& payloads,
+                                           ValidationState& state,
+                                           bool continueOnInvalid) {
+  auto& storage = tree.getStorage();
+
+  for (auto it = payloads.begin(); it != payloads.end();) {
+    auto& payload = *it;
+    auto pid = payload.getId();
+    bool failedPayload = false;
+
+    for (const auto& containingBlock :
+         storage.getContainingAltBlocks(pid.asVector())) {
+      auto* containingIndex = tree.getBlockIndex(containingBlock);
+      VBK_ASSERT(
+          containingIndex != nullptr &&
+          "state corruption: the storage index and block tree are out of sync");
+
+      // is `containing` block of this payload is descendant of `index`?
+      if (containingIndex->getHeight() > index.getHeight()) {
+        if (containingIndex->getAncestor(index.getHeight()) == &index) {
+          // we called AddPayloads(index, pid), where `index` is on the same
+          // chain as `containing` and `containing` already has payload with id
+          // `pid`. Block that is later, becomes invalid, all its descendants
+          // become invalid.
+          storage.setValidity(containingBlock, pid, false);
+          tree.invalidateSubtree(*containingIndex, BLOCK_FAILED_BLOCK, false);
+        } else {
+          // `containing` already has `pid`, but is on different chain than
+          // `index`
+        }
+      } else {
+        // check if this is an ancestor that contains the `pid`
+        if (index.getAncestor(containingIndex->getHeight()) ==
+            containingIndex) {
+          if (continueOnInvalid) {
+            failedPayload = true;
+            break;
+          }
+
+          return state.Invalid(
+              "ALT-duplicate-payloads-" + P::name() + "-ancestor",
+              fmt::sprintf("Ancestor block=%s already contains %s=%s that we "
+                           "attempted to add to block=%s.",
+                           containingIndex->toPrettyString(),
+                           P::name(),
+                           payload.toPrettyString(),
+                           index.toPrettyString()));
+        }
+      }  // end if
+    }    // end for
+
+    it = failedPayload ? payloads.erase(it) : ++it;
+  }  // end for
+
+  return true;
+}
+
 bool AltTree::addPayloads(index_t& index,
                           PopData& payloads,
                           ValidationState& state,
@@ -177,6 +238,14 @@ bool AltTree::addPayloads(index_t& index,
           index, payloads.vtbs, *this, state, continueOnInvalid) ||
       !payloadsCheckDuplicates<ATV>(
           index, payloads.atvs, *this, state, continueOnInvalid)) {
+    return false;
+  }
+
+  // check for VTB duplicates in ancestor and descendant blocks
+  if (!checkNoPayloadDuplicatesInOtherBlocks(
+          *this, index, payloads.vtbs, state, continueOnInvalid) ||
+      !checkNoPayloadDuplicatesInOtherBlocks(
+          *this, index, payloads.atvs, state, continueOnInvalid)) {
     return false;
   }
 

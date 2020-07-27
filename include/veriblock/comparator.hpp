@@ -64,6 +64,29 @@ struct CollectionOfPtrComparator {
     return true;
   }
 
+  template <typename K, typename V>
+  bool operator()(const std::unordered_multimap<K, std::shared_ptr<V>>& a,
+                  const std::unordered_multimap<K, std::shared_ptr<V>>& b) {
+    std::vector<V> aValues, bValues;
+    std::transform(a.begin(),
+                   a.end(),
+                   std::back_inserter(aValues),
+                   [](const std::pair<K, std::shared_ptr<V>>& item) -> V {
+                     return *item.second;
+                   });
+    std::transform(b.begin(),
+                   b.end(),
+                   std::back_inserter(bValues),
+                   [](const std::pair<K, std::shared_ptr<V>>& item) -> V {
+                     return *item.second;
+                   });
+
+    std::sort(aValues.begin(), aValues.end());
+    std::sort(bValues.begin(), bValues.end());
+
+    return aValues == bValues;
+  }
+
   template <typename T>
   bool operator()(const std::unordered_set<T*>& a,
                   const std::unordered_set<T*>& b) {
