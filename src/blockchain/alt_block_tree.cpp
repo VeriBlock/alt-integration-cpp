@@ -156,9 +156,8 @@ bool checkNoPayloadDuplicatesInOtherBlocks(AltTree& tree,
     auto pid = payload.getId();
     bool failedPayload = false;
 
-    const auto& containingBlocks =
-        tree.getStorage().getContainingAltBlocks(pid.asVector());
-    for (const auto& containingBlock : containingBlocks) {
+    for (const auto& containingBlock :
+         storage.getContainingAltBlocks(pid.asVector())) {
       auto* containingIndex = tree.getBlockIndex(containingBlock);
       VBK_ASSERT(
           containingIndex != nullptr &&
