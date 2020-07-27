@@ -148,7 +148,7 @@ bool checkNoPayloadDuplicatesInOtherBlocks(AltTree& tree,
                                            AltTree::index_t& index,
                                            std::vector<P>& payloads,
                                            ValidationState& state,
-                                           bool continueOnInvalid){
+                                           bool continueOnInvalid) {
   auto& storage = tree.getStorage();
 
   for (auto it = payloads.begin(); it != payloads.end();) {
@@ -178,7 +178,7 @@ bool checkNoPayloadDuplicatesInOtherBlocks(AltTree& tree,
           // `index`
         }
       } else {
-        // check if this is an ancestor that contains the VTB
+        // check if this is an ancestor that contains the `pid`
         if (index.getAncestor(containingIndex->getHeight()) ==
             containingIndex) {
           if (continueOnInvalid) {
@@ -199,7 +199,7 @@ bool checkNoPayloadDuplicatesInOtherBlocks(AltTree& tree,
     }    // end for
 
     it = failedPayload ? payloads.erase(it) : ++it;
-  }      // end for
+  }  // end for
 
   return true;
 }
