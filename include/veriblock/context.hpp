@@ -8,7 +8,6 @@
 
 namespace altintegration {
 
-extern bool IsShutdownRequested();
 extern void RequestShutdown();
 
 //! warning!!! should be used in tests ONLY. It is NOT guaranteed that state

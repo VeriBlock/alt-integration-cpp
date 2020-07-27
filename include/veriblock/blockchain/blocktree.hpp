@@ -262,10 +262,6 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   void determineBestChain(index_t& candidate, ValidationState& state) override {
-    if (VBK_UNLIKELY(IsShutdownRequested())) {
-      return;
-    }
-
     auto bestTip = base::getBestChain().tip();
     VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
 

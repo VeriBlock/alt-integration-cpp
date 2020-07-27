@@ -62,7 +62,6 @@ struct BaseBlockTree {
       return state.Error(block_t::name() + "-no-tip");
     }
 
-    tips_.clear();
     tips_.insert(tip);
     this->overrideTip(*tip);
     return true;
