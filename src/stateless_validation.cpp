@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/stateless_validation.hpp"
-
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -14,6 +12,7 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
+#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -165,6 +164,10 @@ bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
     return true;
   }
 
+  if (!checkBlock(btcBlock[0], state, params)) {
+    return state.Invalid("vbk-check-block");
+  }
+
   uint256 lastHash = btcBlock[0].getHash();
   for (size_t i = 1; i < btcBlock.size(); ++i) {
     if (!checkBlock(btcBlock[i], state, params)) {
@@ -182,16 +185,20 @@ bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
 
 bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
                     ValidationState& state,
-                    const VbkChainParams& param) {
+                    const VbkChainParams& params) {
   if (vbkBlocks.empty()) {
     return true;
+  }
+
+  if (!checkBlock(vbkBlocks[0], state, params)) {
+    return state.Invalid("vbk-check-block");
   }
 
   int32_t lastHeight = vbkBlocks[0].height;
   auto lastHash = vbkBlocks[0].getHash();
 
   for (size_t i = 1; i < vbkBlocks.size(); ++i) {
-    if (!checkBlock(vbkBlocks[i], state, param)) {
+    if (!checkBlock(vbkBlocks[i], state, params)) {
       return state.Invalid("vbk-check-block");
     }
 
@@ -211,7 +218,8 @@ bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param) {
   auto powLimit = ArithUint256(param.getPowLimit());
   bool negative = false;
   bool overflow = false;
-  auto target = ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
+  auto target =
+      ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
 
   if (negative || overflow || target == 0 || target > powLimit) {
     return false;
@@ -226,7 +234,8 @@ bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
   auto minDiff = ArithUint256(param.getMinimumDifficulty());
   bool negative = false;
   bool overflow = false;
-  auto target = ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
+  auto target =
+      ArithUint256::fromBits(block.getDifficulty(), &negative, &overflow);
 
   if (negative || overflow || target == 0 || target < minDiff) {
     return false;
