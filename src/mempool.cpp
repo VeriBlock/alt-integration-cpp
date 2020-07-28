@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/entities/vbkfullblock.hpp"
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -289,12 +288,12 @@ bool MemPool::submit(const ATV& atv, ValidationState& state) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
   }
 
+  // stateful validation
   if (!checkContextually(atv, state)) {
     return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
   for (const auto& b : atv.context) {
-    // stateful validation
     if (!tree_->vbk().getBlockIndex(b.getHash())) {
       touchVbkBlock(b, b.getId());
     }
@@ -330,7 +329,6 @@ bool MemPool::submit(const VTB& vtb, ValidationState& state) {
   }
 
   for (const auto& b : vtb.context) {
-    // stateful validation
     if (!vbk.getBlockIndex(b.getHash())) {
       touchVbkBlock(b, b.getId());
     }
@@ -359,12 +357,10 @@ bool MemPool::submit(const VbkBlock& blk, ValidationState& state) {
   }
 
   // stateful validation
-  if (tree_->vbk().getBlockIndex(blk.getHash())) {
+  if (!tree_->vbk().getBlockIndex(blk.getHash())) {
     // duplicate
-    return state.Invalid("pop-mempool-submit-vbkblock-stateful");
+    touchVbkBlock(blk, blk.getId());
   }
-
-  touchVbkBlock(blk, blk.getId());
 
   return true;
 }
