@@ -51,12 +51,12 @@ struct CommandGroup {
    * @return true if all commands succeded, false otherwise
    */
   bool execute(ValidationState& state) const {
-    for (auto cmd = begin(); cmd != end(); cmd++) {
+    for (auto cmd = begin(); cmd != end(); ++cmd) {
       if (!(*cmd)->Execute(state)) {
         // one of the commands has failed, rollback
         for (auto r_cmd = std::reverse_iterator<decltype(cmd)>(cmd);
              r_cmd != rend();
-             r_cmd++) {
+             ++r_cmd) {
           (*r_cmd)->UnExecute();
         }
 
