@@ -152,15 +152,12 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
     VBK_ASSERT(group_it != cmdGroups.end() &&
                "state corruption: could not find the supposedly applied "
                "command group");
-    auto group = *group_it;
 
     VBK_LOG_DEBUG("Unapplying payload %s in block %s",
-                  HexStr(group.id),
+                  HexStr(pid),
                   index.toShortPrettyString());
 
-    for (auto& cmd : reverse_iterate(group.commands)) {
-      cmd->UnExecute();
-    }
+    group_it->unExecute();
   }
 
   index.removePayloadId<VTB>(pid);
@@ -234,29 +231,17 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   VBK_ASSERT(group_it != cmdGroups.end() &&
              "state corruption: could not find the command group that "
              "corresponds to the payload we have just added");
-  const auto& group = *group_it;
 
-  std::vector<CommandPtr> executed;
-  for (auto& cmd : group.commands) {
-    if (cmd->Execute(state)) {
-      executed.push_back(cmd);
+  if (!group_it->execute(state)) {
+    VBK_LOG_DEBUG("Failed to apply payload %s to block %s: %s",
+                  index.toPrettyString(),
+                  pid.toHex(),
+                  state.toString());
 
-    } else {
-      VBK_LOG_DEBUG("Failed to apply payload %s to block %s: %s",
-                    index.toPrettyString(),
-                    pid.toHex(),
-                    state.toString());
+    // remove the failed payload
+    index.removePayloadId<payloads_t>(pid);
 
-      // rollback the partially executed commandGroup
-      for (auto& c : reverse_iterate(executed)) {
-        c->UnExecute();
-      }
-
-      // remove the failed payload
-      index.removePayloadId<payloads_t>(pid);
-
-      return false;
-    }
+    return false;
   }
 
   return true;
