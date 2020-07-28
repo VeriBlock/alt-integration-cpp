@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <veriblock/blockchain/command.hpp>
+#include <veriblock/reversed_range.hpp>
 #include <veriblock/uint.hpp>
 
 namespace altintegration {
@@ -43,6 +44,37 @@ struct CommandGroup {
   // clang-format on
 
   std::string getPayloadsTypeName() const { return payload_type_name; }
+
+  /**
+   * Execute all commands in the group
+   * @invariant atomic: executes either all or none of the commands
+   * @return true if all commands succeded, false otherwise
+   */
+  bool execute(ValidationState& state) const {
+    for (auto cmd = begin(); cmd != end(); ++cmd) {
+      if (!(*cmd)->Execute(state)) {
+        // one of the commands has failed, rollback
+        for (auto r_cmd = std::reverse_iterator<decltype(cmd)>(cmd);
+             r_cmd != rend();
+             ++r_cmd) {
+          (*r_cmd)->UnExecute();
+        }
+
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * UnExecute all commands in the group
+   */
+  void unExecute() const {
+    for (auto& cmd : reverse_iterate(commands)) {
+      cmd->UnExecute();
+    }
+  }
 
   bool operator==(const CommandGroup& o) const { return id == o.id; }
 
