@@ -23,10 +23,11 @@ struct PopStateMachine {
   using block_t = typename index_t::block_t;
   using endorsement_t = typename index_t::endorsement_t;
   using height_t = typename ProtectedIndex::height_t;
+  using storage_t = PayloadsStorage;
 
   PopStateMachine(ProtectedTree& ed,
                   ProtectingBlockTree& ing,
-                  PayloadsStorage& storage,
+                  storage_t& storage,
                   height_t startHeight = 0,
                   bool continueOnInvalid = false)
       : ed_(ed),
@@ -67,7 +68,7 @@ struct PopStateMachine {
           storage_.setValidity(containingHash, cgroup.id, false);
 
           if (continueOnInvalid_) {
-            removePayloadsFromIndex<block_t>(index, cgroup);
+            removePayloadsFromIndex<block_t>(storage_, index, cgroup);
             state.clear();
 
           } else {

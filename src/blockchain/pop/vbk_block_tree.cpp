@@ -102,6 +102,7 @@ void VbkBlockTree::removePayloads(index_t& index,
     }
 
     index.removePayloadId<VTB>(pid);
+    storage_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
   }
 
   updateTips();
@@ -161,6 +162,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   }
 
   index.removePayloadId<VTB>(pid);
+  storage_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
 
   if (shouldDetermineBestChain) {
     updateTips();
@@ -240,6 +242,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
     // remove the failed payload
     index.removePayloadId<payloads_t>(pid);
+    storage_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
 
     return false;
   }
@@ -328,7 +331,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     if (!added) {
       // roll back previously applied payloads
       for (const auto& pidToRemove : reverse_iterate(appliedPayloads)) {
-        storage_.removeVbkPayloadIndex(index->getHash(), pid.asVector());
         unsafelyRemovePayload(
             *index, pidToRemove, /*shouldDetermineBestChain =*/false);
       }
@@ -439,13 +441,15 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
 }
 
 template <>
-void removePayloadsFromIndex(BlockIndex<VbkBlock>& index,
+void removePayloadsFromIndex(PayloadsStorage& storage,
+                             BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
   VBK_ASSERT(cg.payload_type_name == VTB::name());
   auto& payloads = index.template getPayloadIds<VTB>();
   auto it = std::find(payloads.rbegin(), payloads.rend(), cg.id);
   VBK_ASSERT(it != payloads.rend());
   index.removePayloadId<VTB>(cg.id);
+  storage.removeVbkPayloadIndex(index.getHash(), cg.id);
 }
 
 }  // namespace altintegration
