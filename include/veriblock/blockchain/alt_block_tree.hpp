@@ -169,10 +169,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 };
 
 template <>
-void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
-                             const CommandGroup& cg);
-
-template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename AltTree::index_t& index, AltTree& tree);
 

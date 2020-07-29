@@ -37,8 +37,10 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             ValidationState& state,
                             const ChainParams& params);
 
-template <typename Block>
-void removePayloadsFromIndex(BlockIndex<Block>& index, const CommandGroup& cg);
+template <typename Block, typename Storage>
+void removePayloadsFromIndex(Storage& storage,
+                             BlockIndex<Block>& index,
+                             const CommandGroup& cg);
 
 template <typename ProtectedBlockTree>
 bool recoverEndorsedBy(ProtectedBlockTree& ed_,

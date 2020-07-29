@@ -676,29 +676,33 @@ std::vector<CommandGroup> PayloadsStorage::loadCommands(
 }
 
 template <typename Payloads>
-void removeId(BlockIndex<AltBlock>& index, const typename Payloads::id_t& pid) {
+void removeId(PayloadsStorage& storage,
+              BlockIndex<AltBlock>& index,
+              const typename Payloads::id_t& pid) {
   auto& payloads = index.template getPayloadIds<Payloads>();
   auto it = std::find(payloads.rbegin(), payloads.rend(), pid);
   VBK_ASSERT(it != payloads.rend());
   index.removePayloadId<Payloads>(pid);
+  storage.removeAltPayloadIndex(index.getHash(), pid.asVector());
 }
 
 template <>
-void removePayloadsFromIndex(BlockIndex<AltBlock>& index,
+void removePayloadsFromIndex(PayloadsStorage& storage,
+                             BlockIndex<AltBlock>& index,
                              const CommandGroup& cg) {
   // TODO: can we do better?
   if (cg.payload_type_name == VTB::name()) {
-    removeId<VTB>(index, cg.id);
+    removeId<VTB>(storage, index, cg.id);
     return;
   }
 
   if (cg.payload_type_name == ATV::name()) {
-    removeId<ATV>(index, cg.id);
+    removeId<ATV>(storage, index, cg.id);
     return;
   }
 
   if (cg.payload_type_name == VbkBlock::name()) {
-    removeId<VbkBlock>(index, cg.id);
+    removeId<VbkBlock>(storage, index, cg.id);
     return;
   }
 
