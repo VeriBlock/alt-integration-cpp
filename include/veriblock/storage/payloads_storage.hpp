@@ -49,10 +49,10 @@ class PayloadsStorage {
 
   // get a list of ALT containing blocks for given payload
   const std::set<AltBlock::hash_t>& getContainingAltBlocks(
-      const std::vector<uint8_t>& payloadId) const ;
+      const std::vector<uint8_t>& payloadId) const;
   // get a list of VBK containing blocks for given payload
   const std::set<VbkBlock::hash_t>& getContainingVbkBlocks(
-      const std::vector<uint8_t>& payloadId) const ;
+      const std::vector<uint8_t>& payloadId) const;
   void addBlockToIndex(const BlockIndex<AltBlock>& block);
   void addBlockToIndex(const BlockIndex<VbkBlock>& block);
   // add ALT payload to index
@@ -119,6 +119,19 @@ class PayloadsStorage {
       out.push_back(cg);
     }
     return out;
+  }
+
+  const std::unordered_map<std::vector<uint8_t>, bool>& getValidity() const {
+    return _cgValidity;
+  }
+  const std::map<std::vector<uint8_t>, std::set<AltBlock::hash_t>>&
+  getPayloadsInAlt() const {
+    return payload_in_alt;
+  }
+
+  const std::map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>&
+  getPayloadsInVbk() const {
+    return payload_in_vbk;
   }
 
  private:

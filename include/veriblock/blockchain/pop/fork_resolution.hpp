@@ -398,7 +398,7 @@ struct PopAwareForkResolutionComparator {
     auto* currentActive = ed.getBestChain().tip();
     VBK_ASSERT(currentActive && "should be bootstrapped");
 
-    if (*currentActive == to) {
+    if (currentActive == &to) {
       // already at this state
       return true;
     }
@@ -589,10 +589,6 @@ struct PopAwareForkResolutionComparator {
     }
 
     return result;
-  }
-
-  bool operator==(const PopAwareForkResolutionComparator& o) const {
-    return *ing_ == *o.ing_;
   }
 
   std::string toPrettyString(size_t level = 0) const {

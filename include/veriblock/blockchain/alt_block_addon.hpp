@@ -26,14 +26,6 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     return _atvids.empty() && _vtbids.empty() && _vbkblockids.empty();
   }
 
-  bool operator==(const AltBlockAddon& o) const {
-    bool a = _atvids == o._atvids;
-    bool b = _vtbids == o._vtbids;
-    bool c = _vbkblockids == o._vbkblockids;
-    bool d = PopState<AltEndorsement>::operator==(o);
-    return a && b && c && d;
-  }
-
   template <typename pop_t>
   const std::vector<typename pop_t::id_t>& getPayloadIds() const;
 

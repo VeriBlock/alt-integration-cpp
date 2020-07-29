@@ -156,7 +156,7 @@ struct PopStateMachine {
   // applies all commands from blocks in the range of (from; to].
   // atomic: applies either all or none of the requested blocks
   bool apply(index_t& from, index_t& to, ValidationState& state) {
-    if (from == to) {
+    if (&from == &to) {
       // already applied this block
       return true;
     }
@@ -197,7 +197,7 @@ struct PopStateMachine {
       return true;
     }
 
-    if (from == to) {
+    if (&from == &to) {
       // already at this state
       return true;
     }

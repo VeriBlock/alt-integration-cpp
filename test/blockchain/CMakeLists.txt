@@ -69,6 +69,9 @@ set_tests_properties(blockchain_test PROPERTIES
 
 
 addtest(chainparams_test chainparams_test.cpp)
+
 addtest(alt_blockchain_test alt_blockchain_test.cpp)
+target_link_libraries(alt_blockchain_test comparator)
+
 addtest(alt_invalidation_test alt_invalidation_test.cpp)
 addtest(btc_invalidation_test btc_invalidation_test.cpp)

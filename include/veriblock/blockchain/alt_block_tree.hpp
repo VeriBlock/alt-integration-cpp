@@ -97,12 +97,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
-  bool operator==(const AltTree& o) const {
-    return cmp_ == o.cmp_ && base::operator==(o);
-  }
-
-  bool operator!=(const AltTree& o) const { return !operator==(o); }
-
   int comparePopScore(const AltBlock::hash_t& hleft,
                       const AltBlock::hash_t& hright);
 
@@ -137,7 +131,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   const AltChainParams& getParams() const { return *alt_config_; }
 
   PayloadsStorage& getStorage() { return storage_; }
-  const PayloadsStorage getStorage() const { return storage_; }
+  const PayloadsStorage& getStorage() const { return storage_; }
 
   std::string toPrettyString(size_t level = 0) const;
 

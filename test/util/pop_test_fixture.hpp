@@ -18,6 +18,8 @@
 #include <veriblock/mempool.hpp>
 #include <veriblock/mock_miner.hpp>
 #include <veriblock/storage/inmem/storage_manager_inmem.hpp>
+#include <veriblock/storage/util.hpp>
+#include <veriblock/comparator.hpp>
 
 #include "util/fmtlogger.hpp"
 #include "util/test_utils.hpp"
@@ -256,7 +258,64 @@ struct PopTestFixture {
   BtcBlock::hash_t getLastKnownBtcBlock() {
     return alttree.btc().getBestChain().tip()->getHash();
   }
+
+  void endorseVbkTip() {
+    auto* tip = popminer->vbk().getBestChain().tip();
+    VBK_ASSERT(tip);
+    auto tx = popminer->endorseVbkBlock(
+        tip->getHeader(), getLastKnownBtcBlock(), state);
+    popminer->vbkmempool.push_back(tx);
+  }
+
+  void createEndorsedAltChain(size_t blocks, size_t vtbs = 1) {
+    for (size_t i = 0; i < vtbs; i++) {
+      endorseVbkTip();
+    }
+    popminer->mineVbkBlocks(1);
+
+    auto* altTip = alttree.getBestChain().tip();
+    VBK_ASSERT(altTip);
+    for (size_t i = 0; i < blocks; i++) {
+      auto nextBlock = generateNextBlock(altTip->getHeader());
+      auto popdata = endorseAltBlock({altTip->getHeader()}, vtbs);
+      EXPECT_TRUE(alttree.acceptBlock(nextBlock, state));
+      EXPECT_TRUE(alttree.addPayloads(nextBlock, popdata, state));
+      auto* next = alttree.getBlockIndex(nextBlock.getHash());
+      VBK_ASSERT(next);
+      EXPECT_TRUE(alttree.setState(*next, state));
+      altTip = next;
+    }
+  }
 };
+
+template <typename index_t>
+std::vector<index_t> LoadBlocksFromDisk(PopStorage& storage) {
+  auto map = storage.loadBlocks<index_t>();
+  std::vector<index_t> ret;
+  for (auto& pair : map) {
+    ret.push_back(*pair.second);
+  }
+
+  std::sort(ret.begin(), ret.end(), [](const index_t& a, const index_t& b) {
+    return a.getHeight() < b.getHeight();
+  });
+
+  return ret;
+}
+
+template <typename index_t>
+typename index_t::hash_t LoadTipFromDisk(PopStorage& storage) {
+  auto tip = storage.loadTip<index_t>();
+  return tip.second;
+}
+
+template <typename Tree>
+bool LoadTreeWrapper(Tree& tree, PopStorage& storage, ValidationState& state) {
+  using index_t = typename Tree::index_t;
+  auto blocks = LoadBlocksFromDisk<index_t>(storage);
+  auto tip = LoadTipFromDisk<index_t>(storage);
+  return LoadTree<Tree>(tree, blocks, tip, state);
+}
 
 }  // namespace altintegration
 
