@@ -230,8 +230,62 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(reloadedAltTree == this->alttree);
 }
 
+TYPED_TEST_P(AltTreeRepositoryTest, ManyEndorsements) {
+  std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
+
+  // mine 2 blocks
+  this->mineAltBlocks(2, chain);
+
+  AltBlock endorsedBlock1 = chain[1];
+  AltBlock endorsedBlock2 = chain[2];
+
+  VbkTx tx1 = this->popminer->createVbkTxEndorsingAltBlock(
+      this->generatePublicationData(endorsedBlock1));
+  VbkTx tx2 = this->popminer->createVbkTxEndorsingAltBlock(
+      this->generatePublicationData(endorsedBlock2));
+  AltBlock containingBlock = this->generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+
+  PopData altPayloads1 = this->generateAltPayloads(
+      {tx1, tx2}, this->vbkparam.getGenesisBlock().getHash());
+
+  // mine 1 VBK blocks
+  this->popminer->mineVbkBlocks(1);
+  this->popminer->mineBtcBlocks(1);
+
+  EXPECT_TRUE(this->alttree.acceptBlock(containingBlock, this->state));
+  EXPECT_TRUE(
+      this->alttree.addPayloads(containingBlock, altPayloads1, this->state));
+  EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
+  EXPECT_TRUE(this->state.IsValid());
+
+  auto adaptor = RepoBatchAdaptor(*this->storage);
+  SaveAllTrees(this->alttree, adaptor);
+  this->saveToPayloadsStorage(this->alttree.vbk().getStorage(),
+                              *this->storagePayloads2);
+  this->saveToPayloadsStorage(this->alttree.getStorage(),
+                              *this->storagePayloads2);
+
+  AltTree reloadedAltTree{
+      this->altparam, this->vbkparam, this->btcparam, *this->storagePayloads2};
+
+  reloadedAltTree.btc().bootstrapWithGenesis(this->state);
+  reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
+  reloadedAltTree.bootstrap(this->state);
+
+  ASSERT_TRUE(
+      LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
+  ASSERT_TRUE(
+      LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
+
+  ASSERT_EQ(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc());
+  ASSERT_EQ(reloadedAltTree.vbk(), this->alttree.vbk());
+  ASSERT_EQ(reloadedAltTree, this->alttree);
+}
+
 // make sure to enumerate the test cases here
-REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, ValidBlocks, Altchain);
+REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest, ValidBlocks, Altchain, ManyEndorsements);
 
 #ifdef VERIBLOCK_ROCKSDB
 typedef ::testing::Types<TestStorageInmem, TestStorageRocks> TypesUnderTest;

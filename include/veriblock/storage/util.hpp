@@ -44,7 +44,7 @@ template <typename BlockTreeT>
 void SaveTree(BlockTreeT& tree, BatchAdaptor& batch) {
   for (auto& block : tree.getBlocks()) {
     auto& index = block.second;
-    if (/*index->isDirty()*/true) {
+    if (index->isDirty()) {
       index->unsetDirty();
       batch.writeBlock(*index);
     }
