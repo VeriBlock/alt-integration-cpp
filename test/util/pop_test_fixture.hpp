@@ -303,7 +303,7 @@ inline void validateAlttreeIndexState(AltTree& tree,
   validatePayloadsIndexState(
       storage, containingHash, popData.vtbs, payloads_existance);
 
-  auto commands =
+  std::vector<CommandGroup> commands =
       storage.loadCommands(*tree.getBlockIndex(containingHash), tree);
 
   EXPECT_EQ(commands.size() == popData.context.size() + popData.atvs.size() +
