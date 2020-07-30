@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -12,6 +10,7 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
+#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -28,6 +27,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
         << state.toString();
     ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
     ASSERT_TRUE(state.IsValid());
+    validateAlttreeIndexState(alttree, containingBlock, pop);
   }
 
   PopData checkedGetPop() {
@@ -79,7 +79,7 @@ TEST_F(MemPoolFixture, removePayloads_test1) {
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
   EXPECT_TRUE(mempool->submit<ATV>(atv, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(0),  state));
+  EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(0), state));
   EXPECT_TRUE(mempool->submit<VTB>(vtbs.at(1), state));
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
@@ -496,10 +496,8 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   ATV atv = popminer->generateATV(tx, vbkTip->getHash(), state);
 
   ASSERT_TRUE(mempool->submit<ATV>(atv, state)) << state.toString();
-  ASSERT_TRUE(mempool->submit<VTB>(vtbs[0], state))
-      << state.toString();
-  ASSERT_TRUE(mempool->submit<VTB>(vtbs[1], state))
-      << state.toString();
+  ASSERT_TRUE(mempool->submit<VTB>(vtbs[0], state)) << state.toString();
+  ASSERT_TRUE(mempool->submit<VTB>(vtbs[1], state)) << state.toString();
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   ASSERT_EQ(alttree.getBestChain().tip()->getHeight(), 10);

@@ -9,9 +9,9 @@
 
 namespace altintegration {
 
-bool PayloadsStorage::getValidity(Slice<const uint8_t> containingBlock,
+bool PayloadsStorage::getValidity(Slice<const uint8_t> containingBlockHash,
                                   Slice<const uint8_t> payloadId) {
-  auto key = makeGlobalPid(containingBlock, payloadId);
+  auto key = makeGlobalPid(containingBlockHash, payloadId);
   auto it = _cgValidity.find(key);
   if (it == _cgValidity.end()) {
     // we don't know if this payload is invalid, so assume it is valid
@@ -25,10 +25,10 @@ Repository& PayloadsStorage::getRepo() { return *repo_; }
 
 const Repository& PayloadsStorage::getRepo() const { return *repo_; }
 
-void PayloadsStorage::setValidity(Slice<const uint8_t> containingBlock,
+void PayloadsStorage::setValidity(Slice<const uint8_t> containingBlockHash,
                                   Slice<const uint8_t> payloadId,
                                   bool validity) {
-  auto key = makeGlobalPid(containingBlock, payloadId);
+  auto key = makeGlobalPid(containingBlockHash, payloadId);
   if (!validity) {
     _cgValidity[key] = validity;
     return;
