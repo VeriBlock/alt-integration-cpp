@@ -73,6 +73,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   ASSERT_TRUE(alttree.addPayloads(chain[9], p1, state));
   ASSERT_TRUE(alttree.setState(chain[9].getHash(), state)) << state.toString();
+  validateAlttreeIndexState(alttree, chain[9], p1);
 
   //! act: add ATV2, VTB2 to ALT10
   // endorse ALT5
@@ -90,6 +91,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   ASSERT_TRUE(alttree.addPayloads(chain[10], p2, state));
   ASSERT_FALSE(alttree.setState(chain[10].getHash(), state));
+  validateAlttreeIndexState(alttree, chain[10], p2, false);
 }
 
 TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {

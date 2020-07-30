@@ -30,6 +30,7 @@ struct DuplicateATVfixture : public ::testing::Test, public PopTestFixture {
 TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
   ASSERT_TRUE(alttree.addPayloads(chain[99].getHash(), payloads, state));
   ASSERT_TRUE(alttree.setState(chain[99].getHash(), state));
+  validateAlttreeIndexState(alttree, chain[99], payloads);
 
   // remove context blocks
   payloads.context.clear();
