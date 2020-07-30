@@ -209,6 +209,8 @@ TEST_F(Scenario1, scenario_1) {
             altchain.rbegin()->getHash());
   EXPECT_TRUE(state.IsValid());
 
+  validateAlttreeIndexState(alttree, containingBlock, altPayloadsVBB71, true);
+
   // expect that ALTBTC tree knows all blocks from chain B until block B55
   blockCount =
       checkBlocksExisting(alttree.vbk().btc(), btcBtip->getAncestor(55));
