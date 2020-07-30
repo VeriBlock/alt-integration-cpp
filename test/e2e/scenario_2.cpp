@@ -94,6 +94,8 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads1, true);
+
   auto* containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
 
   EXPECT_TRUE(containinVbkBlock->getContainingEndorsements().count(
@@ -118,6 +120,7 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, true);
 
   auto* vbkTip2 = alttree.vbk().getBestChain().tip();
 
@@ -144,6 +147,7 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads3, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads3, true);
 
   EXPECT_TRUE(containinVbkBlock->getContainingEndorsements().count(
       VbkEndorsement::getId(vtbs[0])));
@@ -163,6 +167,7 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads4, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads4, true);
 
   containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
   EXPECT_TRUE(containinVbkBlock->getContainingEndorsements().count(

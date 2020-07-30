@@ -120,6 +120,7 @@ TEST_F(Scenario3, scenario_3) {
   ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
   ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip1->getHash());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads1, true);
 
   auto* containingVbkBlock =
       alttree.vbk().getBlockIndex(vtbs1[1].containingBlock.getHash());
@@ -155,6 +156,7 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip2->getHash());
   ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
   ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, true);
 
   // Step 4
   containingBlock = generateNextBlock(*chain.rbegin());
@@ -170,9 +172,10 @@ TEST_F(Scenario3, scenario_3) {
   altPayloads3.vtbs = {vtbs1[0]};
   altPayloads3.context.clear();
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, {altPayloads3}, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads3, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads3, true);
 
   // check endorsements
   EXPECT_TRUE(containingVbkBlock->getContainingEndorsements().count(

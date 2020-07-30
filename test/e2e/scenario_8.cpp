@@ -118,6 +118,7 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, popData1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, popData1, true);
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
             popminer->vbk().getBestChain().tip()->getHash());
@@ -145,6 +146,7 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(),
             "ALT-bad-command+VBK-invalid-payloads+VBK-expired");
+  validateAlttreeIndexState(alttree, containingBlock, popData2, false);
 
   // VBK subtree 501 (contains expired VTB) is VALID - because we tried to add
   // VTB, it was invalid, so we immediately removed it

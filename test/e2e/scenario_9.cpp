@@ -66,6 +66,8 @@ TEST_F(Scenario9, scenario_9) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads1, true);
+
   auto* containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
 
   EXPECT_TRUE(containinVbkBlock->getContainingEndorsements().count(
@@ -89,6 +91,7 @@ TEST_F(Scenario9, scenario_9) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_FALSE(alttree.addPayloads(containingBlock, altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, false);
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "ALT-duplicate-payloads");
 }
