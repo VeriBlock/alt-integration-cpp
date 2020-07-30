@@ -258,6 +258,64 @@ struct PopTestFixture {
   }
 };
 
+namespace {
+
+template <typename pop_t>
+void validatePayloadsIndexState(PayloadsStorage& storage,
+                                const AltBlock::hash_t& containingHash,
+                                const std::vector<pop_t>& payloads,
+                                bool payloads_existance) {
+  for (const auto& data : payloads) {
+    auto alt_set = storage.getContainingAltBlocks(data.getId().asVector());
+    EXPECT_EQ(alt_set.find(containingHash) != alt_set.end(),
+              payloads_existance);
+  }
+}
+
+template <typename pop_t>
+bool allPayloadsIsValid(PayloadsStorage& storage,
+                        const AltBlock::hash_t& containingHash,
+                        const std::vector<pop_t>& payloads) {
+  for (const auto& p : payloads) {
+    auto id = p.getId();
+    if (!storage.getValidity(containingHash, id)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+}  // namespace
+
+inline void validateAlttreeIndexState(AltTree& tree,
+                                      const AltBlock& containing,
+                                      const PopData& popData,
+                                      bool payloads_validation = true,
+                                      bool payloads_existance = true) {
+  auto& storage = tree.getStorage();
+  auto containingHash = containing.getHash();
+
+  validatePayloadsIndexState(
+      storage, containingHash, popData.context, payloads_existance);
+  validatePayloadsIndexState(
+      storage, containingHash, popData.atvs, payloads_existance);
+  validatePayloadsIndexState(
+      storage, containingHash, popData.vtbs, payloads_existance);
+
+  std::vector<CommandGroup> commands =
+      storage.loadCommands(*tree.getBlockIndex(containingHash), tree);
+
+  EXPECT_EQ(commands.size() == popData.context.size() + popData.atvs.size() +
+                                   popData.vtbs.size(),
+            payloads_existance);
+
+  EXPECT_EQ(allPayloadsIsValid(storage, containingHash, popData.context) &&
+                allPayloadsIsValid(storage, containingHash, popData.atvs) &&
+                allPayloadsIsValid(storage, containingHash, popData.vtbs),
+            payloads_validation);
+}
+
 }  // namespace altintegration
 
 #endif  // ALTINTEGRATION_TEST_BLOCKCHAIN_FIXTURE_HPP

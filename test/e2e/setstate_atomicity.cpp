@@ -38,7 +38,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
       payloads.context.begin(),
       payloads.context.begin() + (payloads.context.size() - 2));
   ASSERT_TRUE(alttree.acceptBlock(chainA, state));
-  ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), {payloads}, state));
+  ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), payloads, state));
 
   // corrupted payloads
   std::vector<uint8_t> invalid_hash = {1, 2, 3, 9, 8, 2};
@@ -60,6 +60,8 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
 
   EXPECT_TRUE(alttree.setState(chainA.getHash(), state));
 
+  validateAlttreeIndexState(alttree, chainA, payloads);
+
   // attempting to set the state to a corrupted block should fail and leave the
   // tree unaltered
   auto* originalBtcTip = alttree.btc().getBestChain().tip();
@@ -68,6 +70,8 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   EXPECT_EQ(originalAltTip->getHeader(), chainA);
 
   EXPECT_FALSE(alttree.setState(chainB.getHash(), state));
+
+  validateAlttreeIndexState(alttree, chainB, corruptedPayloads, false);
 
   EXPECT_EQ(originalBtcTip, alttree.btc().getBestChain().tip());
   EXPECT_EQ(originalVbkTip, alttree.vbk().getBestChain().tip());

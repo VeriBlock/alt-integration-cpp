@@ -164,6 +164,8 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_NE(btcAtip, nullptr);
   ASSERT_GE(btcAtip->getHeight(), 53);
 
+  validateAlttreeIndexState(alttree, containingBlock, altPayloadsVBA71);
+
   // expect that ALTBTC tree has all blocks from BTC chain A, until A53,
   // including
   auto* btcA53 = btcAtip->getAncestor(53);
@@ -206,6 +208,8 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(),
             altchain.rbegin()->getHash());
   EXPECT_TRUE(state.IsValid());
+
+  validateAlttreeIndexState(alttree, containingBlock, altPayloadsVBB71);
 
   // expect that ALTBTC tree knows all blocks from chain B until block B55
   blockCount =

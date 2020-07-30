@@ -53,6 +53,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     ASSERT_TRUE(tree.acceptBlock(containing, state));
     ASSERT_TRUE(tree.addPayloads(containing, payloads, state));
     ASSERT_TRUE(tree.setState(containing.getHash(), state));
+    validateAlttreeIndexState(tree, containing, payloads);
   }
 
   void mineEndorsements(AltTree& tree,
@@ -89,6 +90,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
       ASSERT_TRUE(tree.acceptBlock(containing, state));
       ASSERT_TRUE(tree.addPayloads(containing, payloads1, state));
       ASSERT_TRUE(tree.setState(containing.getHash(), state));
+      validateAlttreeIndexState(tree, containing, payloads1);
     }
   }
 

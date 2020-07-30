@@ -63,13 +63,14 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
 
   // mine the last block of chainA with payloads and activate it
   mineAltBlocks(1, chainA);
-  EXPECT_TRUE(alttree.addPayloads(chainA.back(), {payloadsA}, state));
+  EXPECT_TRUE(alttree.addPayloads(chainA.back(), payloadsA, state));
   EXPECT_TRUE(alttree.setState(chainA.back().getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, chainA.back(), payloadsA);
 
   // add the last block of chainB with payloads
   EXPECT_TRUE(alttree.acceptBlock(chainB.back(), state));
-  EXPECT_TRUE(alttree.addPayloads(chainB.back(), {payloadsB}, state));
+  EXPECT_TRUE(alttree.addPayloads(chainB.back(), payloadsB, state));
 
   // fork resolution decides that chainB is better
   // but switching to chainB causes state corruption
