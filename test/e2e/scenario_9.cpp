@@ -91,7 +91,7 @@ TEST_F(Scenario9, scenario_9) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_FALSE(alttree.addPayloads(containingBlock, altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, false);
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, true, false);
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "ALT-duplicate-payloads");
 }

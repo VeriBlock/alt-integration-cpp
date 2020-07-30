@@ -118,7 +118,7 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, popData1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
-  validateAlttreeIndexState(alttree, containingBlock, popData1, true);
+  validateAlttreeIndexState(alttree, containingBlock, popData1);
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
             popminer->vbk().getBestChain().tip()->getHash());

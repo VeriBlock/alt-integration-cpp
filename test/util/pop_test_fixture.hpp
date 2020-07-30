@@ -264,10 +264,11 @@ template <typename pop_t>
 void validatePayloadsIndexState(PayloadsStorage& storage,
                                 const AltBlock::hash_t& containingHash,
                                 const std::vector<pop_t>& payloads,
-                                bool existance_state) {
+                                bool payloads_existance) {
   for (const auto& data : payloads) {
     auto alt_set = storage.getContainingAltBlocks(data.getId().asVector());
-    EXPECT_EQ(alt_set.find(containingHash) != alt_set.end(), existance_state);
+    EXPECT_EQ(alt_set.find(containingHash) != alt_set.end(),
+              payloads_existance);
   }
 }
 
@@ -290,28 +291,29 @@ bool allPayloadsIsValid(PayloadsStorage& storage,
 inline void validateAlttreeIndexState(AltTree& tree,
                                       const AltBlock& containing,
                                       const PopData& popData,
-                                      bool expected_state) {
+                                      bool payloads_validation = true,
+                                      bool payloads_existance = true) {
   auto& storage = tree.getStorage();
   auto containingHash = containing.getHash();
 
   validatePayloadsIndexState(
-      storage, containingHash, popData.context, expected_state);
+      storage, containingHash, popData.context, payloads_existance);
   validatePayloadsIndexState(
-      storage, containingHash, popData.atvs, expected_state);
+      storage, containingHash, popData.atvs, payloads_existance);
   validatePayloadsIndexState(
-      storage, containingHash, popData.vtbs, expected_state);
+      storage, containingHash, popData.vtbs, payloads_existance);
 
   auto commands =
       storage.loadCommands(*tree.getBlockIndex(containingHash), tree);
 
   EXPECT_EQ(commands.size() == popData.context.size() + popData.atvs.size() +
                                    popData.vtbs.size(),
-            expected_state);
+            payloads_existance);
 
   EXPECT_EQ(allPayloadsIsValid(storage, containingHash, popData.context) &&
                 allPayloadsIsValid(storage, containingHash, popData.atvs) &&
                 allPayloadsIsValid(storage, containingHash, popData.vtbs),
-            expected_state);
+            payloads_validation);
 }
 
 }  // namespace altintegration

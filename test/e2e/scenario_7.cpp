@@ -72,5 +72,5 @@ TEST_F(Scenario7, scenario_7) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
-  validateAlttreeIndexState(alttree, containingBlock, popData, true);
+  validateAlttreeIndexState(alttree, containingBlock, popData);
 }
