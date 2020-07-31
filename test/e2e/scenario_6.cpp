@@ -42,7 +42,8 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   auto* vbkTip = popminer->mineVbkBlocks(10);
   ASSERT_EQ(*popminer->vbk().getBestChain().tip(), *vbkTip);
   auto* btcTip = popminer->mineBtcBlocks(40);
-  ASSERT_EQ(*popminer->btc().getBestChain().tip(), *btcTip);
+
+  ASSERT_TRUE(cmp(*popminer->btc().getBestChain().tip(), *btcTip));
 
   // endorsed vbk block
   auto* endorsedBlock = vbkTip->getAncestor(vbkTip->getHeight() - 5);

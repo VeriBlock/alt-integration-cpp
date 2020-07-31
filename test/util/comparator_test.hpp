@@ -29,7 +29,7 @@ struct TestComparator {
       EXPECT_TRUE((a[i] == nullptr && b[i] != nullptr) ||
                   (b[i] == nullptr && a[i] != nullptr));
 
-      EXPECT_TRUE(this->operator()(*a[i], *b[i])) << "Iteration " << i;
+      EXPECT_TRUE(*a[i], *b[i]) << "Iteration " << i;
     }
     return true;
   }
@@ -65,7 +65,7 @@ struct TestComparator {
       ASSERT_NE(expectedSet, b.end());
 
       for (const auto& el : k.second) {
-        EXPECT_EQ(expectedSet->second, el);
+        EXPECT_NE(expectedSet->second.count(el), 0);
       }
     }
     return true;
@@ -120,22 +120,34 @@ struct TestComparator {
   bool operator()(const BaseBlockTree<Block>& a,
                   const BaseBlockTree<Block>& b) {
     EXPECT_TRUE(this->operator()(a.getBlocks(), b.getBlocks()));
-    EXPECT_TRUE(this->(a.getTips(), b.getTips()));
+    EXPECT_TRUE(this->operator()(a.getTips(), b.getTips()));
     EXPECT_TRUE(this->operator()(a.getBestChain(), b.getBestChain()));
     return true;
   }
 
-  template <typename E>
-  bool operator()(const PopState<E>& a, const PopState<E>& b) {
-    EXPECT_TRUE(this->operator()(a.getContainingEndorsements(),
-                                 b.getContainingEndorsements()));
-    EXPECT_TRUE(this->operator()(a.getEndorsedBy(), b.getEndorsedBy()));
+  template <typename Block>
+  bool operator()(const Chain<Block>& chain1, const Chain<Block>& chain2) {
+    EXPECT_EQ(chain1.blocksCount(), chain2.blocksCount());
+
+    auto b1 = chain1.begin();
+    auto b2 = chain2.begin();
+
+    for (; b1 != chain1.end() && b2 != chain2.end(); ++b1, ++b2) {
+      EXPECT_EQ(*b1, *b2);
+    }
+
     return true;
   }
 
   template <typename Block>
   bool operator()(const BlockIndex<Block>& a, const BlockIndex<Block>& b) {
     EXPECT_TRUE(this->operator()(a.getHeader(), b.getHeader()));
+
+    using base = typename Block::addon_t;
+    const base& A = a;
+    const base& B = b;
+    EXPECT_TRUE(this->operator()(A, B));
+
     EXPECT_EQ(a.status, b.status);
     return true;
   }
@@ -145,6 +157,34 @@ struct TestComparator {
                   const PopAwareForkResolutionComparator<A, B, C, D>& b) {
     EXPECT_TRUE(this->operator()(a.getProtectingBlockTree(),
                                  b.getProtectingBlockTree()));
+    return true;
+  }
+
+  bool operator()(const AltBlock& a, const AltBlock& b) {
+    EXPECT_EQ(a.height, b.height);
+    EXPECT_EQ(a.hash, b.hash);
+    EXPECT_EQ(a.previousBlock, b.previousBlock);
+    EXPECT_EQ(a.timestamp, b.timestamp);
+    return true;
+  }
+
+  bool operator()(const BtcBlock& a, const BtcBlock& b) {
+    EXPECT_EQ(a.version, b.version);
+    EXPECT_EQ(a.timestamp, b.timestamp);
+    EXPECT_EQ(a.nonce, b.nonce);
+    EXPECT_EQ(a.merkleRoot, b.merkleRoot);
+    EXPECT_EQ(a.previousBlock, b.previousBlock);
+    return true;
+  }
+
+  bool operator()(const VbkBlock& a, const VbkBlock& b) {
+    EXPECT_EQ(a.version, b.version);
+    EXPECT_EQ(a.timestamp, b.timestamp);
+    EXPECT_EQ(a.nonce, b.nonce);
+    EXPECT_EQ(a.previousBlock, b.previousBlock);
+    EXPECT_EQ(a.previousKeystone, b.previousKeystone);
+    EXPECT_EQ(a.secondPreviousKeystone, b.secondPreviousKeystone);
+    EXPECT_EQ(a.height, b.height);
     return true;
   }
 
@@ -167,7 +207,15 @@ struct TestComparator {
     using base = PopState<VbkEndorsement>;
     const base& A = a;
     const base& B = b;
-    EXPECT_EQ(A, B);
+    EXPECT_TRUE(this->operator()(A, B));
+    return true;
+  }
+
+  template <typename E>
+  bool operator()(const PopState<E>& a, const PopState<E>& b) {
+    EXPECT_TRUE(this->operator()(a.getContainingEndorsements(),
+                                 b.getContainingEndorsements()));
+    EXPECT_TRUE(this->operator()(a.getEndorsedBy(), b.getEndorsedBy()));
     return true;
   }
 
@@ -179,7 +227,7 @@ struct TestComparator {
     using base = PopState<AltEndorsement>;
     const base& A = a;
     const base& B = b;
-    EXPECT_EQ(A, B);
+    EXPECT_TRUE(this->operator()(A, B));
     return true;
   }
 
@@ -193,7 +241,7 @@ struct TestComparator {
   }
 
   bool operator()(const AltTree& a, const AltTree& b) {
-    EXPECT_EQ(a.getComparator(), b.getComparator());
+    EXPECT_TRUE(this->operator()(a.getComparator(), b.getComparator()));
     using base = AltTree::base;
     const base& A = a;
     const base& B = b;

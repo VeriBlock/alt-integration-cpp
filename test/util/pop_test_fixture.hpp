@@ -20,13 +20,15 @@
 #include <veriblock/storage/inmem/storage_manager_inmem.hpp>
 #include <veriblock/storage/util.hpp>
 
+#include "util/comparator_test.hpp"
 #include "util/fmtlogger.hpp"
 #include "util/test_utils.hpp"
-#include "util/comparator_test.hpp"
 
 namespace altintegration {
 
 struct PopTestFixture {
+  TestComparator cmp{};
+
   const static std::vector<uint8_t> getPayoutInfo() {
     return {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   }
