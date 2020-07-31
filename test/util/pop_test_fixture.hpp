@@ -220,7 +220,7 @@ struct PopTestFixture {
 
   PopData generateAltPayloads(const std::vector<VbkTx>& transactions,
                               const VbkBlock::hash_t& lastVbk,
-                              int VTBs = 0) {
+                              size_t VTBs = 0) {
     PopData popData;
 
     for (auto i = 0; i < VTBs; i++) {
@@ -244,7 +244,7 @@ struct PopTestFixture {
     return popData;
   }
 
-  PopData endorseAltBlock(const std::vector<AltBlock>& endorsed, int VTBs = 0) {
+  PopData endorseAltBlock(const std::vector<AltBlock>& endorsed, size_t VTBs = 0) {
     std::vector<VbkTx> transactions(endorsed.size());
     for (size_t i = 0; i < endorsed.size(); ++i) {
       auto data = generatePublicationData(endorsed[i]);
