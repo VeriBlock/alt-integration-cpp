@@ -28,10 +28,10 @@ struct TestComparator {
         continue;
       }
 
-      EXPECT_TRUE((a[i] == nullptr && b[i] != nullptr) ||
-                  (b[i] == nullptr && a[i] != nullptr));
-
-      EXPECT_EQ(*a[i], *b[i]) << "Iteration " << i;
+      EXPECT_TRUE(a[i] != nullptr && b[i] != nullptr) << "Iteration" << i;
+      if (a[i] != nullptr && b[i] != nullptr) {
+        EXPECT_EQ(*a[i], *b[i]) << "Iteration " << i;
+      }
     }
     return true;
   }
@@ -128,20 +128,6 @@ struct TestComparator {
   }
 
   template <typename Block>
-  bool operator()(const Chain<Block>& chain1, const Chain<Block>& chain2) {
-    EXPECT_EQ(chain1.blocksCount(), chain2.blocksCount());
-
-    auto b1 = chain1.begin();
-    auto b2 = chain2.begin();
-
-    for (; b1 != chain1.end() && b2 != chain2.end(); ++b1, ++b2) {
-      EXPECT_EQ(*b1, *b2);
-    }
-
-    return true;
-  }
-
-  template <typename Block>
   bool operator()(const BlockIndex<Block>& a, const BlockIndex<Block>& b) {
     EXPECT_TRUE(this->operator()(a.getHeader(), b.getHeader()));
 
@@ -151,6 +137,20 @@ struct TestComparator {
     EXPECT_TRUE(this->operator()(A, B));
 
     EXPECT_EQ(a.status, b.status);
+    return true;
+  }
+
+  template <typename Block>
+  bool operator()(const Chain<Block>& chain1, const Chain<Block>& chain2) {
+    EXPECT_EQ(chain1.blocksCount(), chain2.blocksCount());
+
+    auto b1 = chain1.begin();
+    auto b2 = chain2.begin();
+
+    for (; b1 != chain1.end() && b2 != chain2.end(); ++b1, ++b2) {
+      EXPECT_TRUE(this->operator()(**b1, **b2));
+    }
+
     return true;
   }
 
@@ -196,7 +196,7 @@ struct TestComparator {
     // comparing blocks across different trees eg mock miner vs
     // the test tree and in this situation the references and counts
     // are likely to differ
-    EXPECT_EQ(a.getRefs(), b.getRefs());
+    // EXPECT_EQ(a.getRefs(), b.getRefs());
     EXPECT_EQ(a.chainWork, b.chainWork);
     return true;
   }
