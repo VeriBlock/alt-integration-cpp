@@ -66,6 +66,7 @@ TEST_F(Scenario4, scenario_4) {
       alttree.addPayloads(containingBlock.getHash(), altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads1);
 
   // check vbk tree state
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip.getHash());
@@ -88,6 +89,7 @@ TEST_F(Scenario4, scenario_4) {
       alttree.addPayloads(containingBlock.getHash(), altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads2);
 
   // check vbk tree state
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip.getHash());
@@ -98,8 +100,8 @@ TEST_F(Scenario4, scenario_4) {
   chain2.resize(chain.size() - 5);
   containingBlock = generateNextBlock(*chain2.rbegin());
   chain2.push_back(containingBlock);
-  PopData altPayloads3 =
-      generateAltPayloads({tx}, alttree.vbk().getBestChain().tip()->pprev->getHash());
+  PopData altPayloads3 = generateAltPayloads(
+      {tx}, alttree.vbk().getBestChain().tip()->pprev->getHash());
 
   // new tip is the next block after vbkTip
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
@@ -111,6 +113,7 @@ TEST_F(Scenario4, scenario_4) {
       alttree.addPayloads(containingBlock.getHash(), altPayloads3, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads3);
 
   // check vbk tree state
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip.getHash());

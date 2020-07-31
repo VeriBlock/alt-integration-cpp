@@ -79,12 +79,11 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
       containingAltBlock.getHash(), altPayloads, state));
   EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));
 
+  validateAlttreeIndexState(test_alttree, containingAltBlock, altPayloads, false);
+
   EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->getHash(),
             vbkTip->getHash());
   EXPECT_EQ(test_alttree.vbk().getBestChain().blocksCount(), 1);
-  auto& vtbids = test_alttree.vbk()
-                     .getBestChain()
-                     .tip()
-                     ->getPayloadIds<VTB>();
+  auto& vtbids = test_alttree.vbk().getBestChain().tip()->getPayloadIds<VTB>();
   EXPECT_EQ(vtbids.size(), 0);
 }

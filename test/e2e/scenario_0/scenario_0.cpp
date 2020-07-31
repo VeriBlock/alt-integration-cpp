@@ -128,4 +128,5 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->addPayloads(containing.getHash(), popData, state));
   ASSERT_FALSE(alt->setState(containing.getHash(), state));
   ASSERT_EQ("ALT-bad-command+VBK-bad-containing", state.GetPath());
+  validateAlttreeIndexState(*alt, containing, popData, false);
 }

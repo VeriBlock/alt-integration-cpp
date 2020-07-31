@@ -173,10 +173,6 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* index : chain) {
-      if (VBK_UNLIKELY(IsShutdownRequested())) {
-        return true;
-      }
-
       if (!applyBlock(*index, state)) {
         // rollback the previously appled slice of the chain
         unapply(*index->pprev, from);
@@ -193,11 +189,7 @@ struct PopStateMachine {
   // optimization: avoids applying/unapplying (genesis; fork_point(from, to)]
   // atomic: either changes the state to 'to' or leaves it unchanged
   bool setState(index_t& from, index_t& to, ValidationState& state) {
-    if (VBK_UNLIKELY(IsShutdownRequested())) {
-      return true;
-    }
-
-    if (&from == &to) {
+    if (from == to) {
       // already at this state
       return true;
     }

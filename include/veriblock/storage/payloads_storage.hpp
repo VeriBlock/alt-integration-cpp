@@ -35,10 +35,10 @@ class PayloadsStorage {
   PayloadsStorage(std::shared_ptr<Repository> repo);
 
   //! getter for cached payload validity
-  bool getValidity(Slice<const uint8_t> containingBlock,
+  bool getValidity(Slice<const uint8_t> containingBlockHash,
                    Slice<const uint8_t> payloadId);
   //! setter for payload validity
-  void setValidity(Slice<const uint8_t> containingBlock,
+  void setValidity(Slice<const uint8_t> containingBlockHash,
                    Slice<const uint8_t> payloadId,
                    bool validity);
 
@@ -138,6 +138,9 @@ class PayloadsStorage {
   template <typename Tree, typename Payloads>
   CommandGroupCache& getCache();
 
+  template <typename Tree, typename Payloads>
+  const CommandGroupCache& getCache() const;
+
   std::vector<uint8_t> makeGlobalPid(Slice<const uint8_t> a,
                                      Slice<const uint8_t> b);
 
@@ -166,9 +169,21 @@ inline CommandGroupCache& PayloadsStorage::getCache() {
   return _cacheAlt;
 }
 
+template <typename Tree, typename Payloads>
+inline const CommandGroupCache& PayloadsStorage::getCache() const {
+  return _cacheAlt;
+}
+
 struct VbkBlockTree;
 template <>
 inline CommandGroupCache& PayloadsStorage::getCache<VbkBlockTree, VTB>() {
+  return _cacheVbk;
+}
+
+struct VbkBlockTree;
+template <>
+inline const CommandGroupCache& PayloadsStorage::getCache<VbkBlockTree, VTB>()
+    const {
   return _cacheVbk;
 }
 
