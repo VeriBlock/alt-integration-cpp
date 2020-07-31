@@ -18,6 +18,8 @@
 namespace altintegration {
 
 struct TestComparator {
+  TestComparator() = default;
+
   template <typename T>
   bool operator()(const std::vector<T*>& a, const std::vector<T*>& b) {
     EXPECT_EQ(a.size(), b.size());
@@ -29,7 +31,7 @@ struct TestComparator {
       EXPECT_TRUE((a[i] == nullptr && b[i] != nullptr) ||
                   (b[i] == nullptr && a[i] != nullptr));
 
-      EXPECT_TRUE(*a[i], *b[i]) << "Iteration " << i;
+      EXPECT_EQ(*a[i], *b[i]) << "Iteration " << i;
     }
     return true;
   }
@@ -62,7 +64,7 @@ struct TestComparator {
       auto value = k.second;
       auto expectedSet = b.find(key);
       // key exists in map A but does not exist in map B
-      ASSERT_NE(expectedSet, b.end());
+      EXPECT_NE(expectedSet, b.end());
 
       for (const auto& el : k.second) {
         EXPECT_NE(expectedSet->second.count(el), 0);

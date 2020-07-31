@@ -189,7 +189,7 @@ struct PopStateMachine {
   // optimization: avoids applying/unapplying (genesis; fork_point(from, to)]
   // atomic: either changes the state to 'to' or leaves it unchanged
   bool setState(index_t& from, index_t& to, ValidationState& state) {
-    if (from == to) {
+    if (&from == &to) {
       // already at this state
       return true;
     }

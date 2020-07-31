@@ -40,7 +40,8 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   // Step1
   // mine 10 Vbk blocks in the pop miner
   auto* vbkTip = popminer->mineVbkBlocks(10);
-  ASSERT_EQ(*popminer->vbk().getBestChain().tip(), *vbkTip);
+
+  ASSERT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *vbkTip));
   auto* btcTip = popminer->mineBtcBlocks(40);
 
   ASSERT_TRUE(cmp(*popminer->btc().getBestChain().tip(), *btcTip));
@@ -79,7 +80,8 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
       containingAltBlock.getHash(), altPayloads, state));
   EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));
 
-  validateAlttreeIndexState(test_alttree, containingAltBlock, altPayloads, false);
+  validateAlttreeIndexState(
+      test_alttree, containingAltBlock, altPayloads, false);
 
   EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->getHash(),
             vbkTip->getHash());

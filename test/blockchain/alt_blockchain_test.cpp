@@ -75,7 +75,8 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   auto* containingBlockIndex2 =
       alttree.getBlockIndex(endorsement2.containingHash);
-  auto& containingEndorsements2 = containingBlockIndex2->getContainingEndorsements();
+  auto& containingEndorsements2 =
+      containingBlockIndex2->getContainingEndorsements();
   EXPECT_TRUE(containingEndorsements2.find(endorsement2.id) !=
               containingEndorsements2.end());
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
@@ -130,17 +131,17 @@ TEST_F(AltTreeFixture, compareTrees) {
   EXPECT_TRUE(alttree2.bootstrap(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
-  EXPECT_EQ(alttree, alttree2);
-  EXPECT_EQ(alttree.vbk(), alttree2.vbk());
-  EXPECT_EQ(alttree.vbk().btc(), alttree2.vbk().btc());
+  EXPECT_TRUE(cmp(alttree, alttree2));
+  EXPECT_TRUE(cmp(alttree.vbk(), alttree2.vbk()));
+  EXPECT_TRUE(cmp(alttree.vbk().btc(), alttree2.vbk().btc()));
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 1 blocks
   mineAltBlocks(1, chain);
-  EXPECT_NE(alttree, alttree2);
-  EXPECT_EQ(alttree.vbk(), alttree2.vbk());
-  EXPECT_EQ(alttree.vbk().btc(), alttree2.vbk().btc());
+  EXPECT_FALSE(cmp(alttree, alttree2));
+  EXPECT_TRUE(cmp(alttree.vbk(), alttree2.vbk()));
+  EXPECT_TRUE(cmp(alttree.vbk().btc(), alttree2.vbk().btc()));
 }
 
 TEST_F(AltTreeFixture, validatePayloads_test) {

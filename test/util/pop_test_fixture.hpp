@@ -27,7 +27,7 @@
 namespace altintegration {
 
 struct PopTestFixture {
-  TestComparator cmp{};
+  TestComparator cmp;
 
   const static std::vector<uint8_t> getPayoutInfo() {
     return {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

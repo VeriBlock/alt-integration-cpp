@@ -68,13 +68,14 @@ TEST_F(Scenario3, scenario_3) {
   // vbkTip1 heigher than vbkTip2
   ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());
   // but active chain on the vbkTip2 because this chain has endorsements
-  ASSERT_EQ(*vbkTip2, *popminer->vbk().getBestChain().tip());
+
+  ASSERT_TRUE(cmp(*vbkTip2, *popminer->vbk().getBestChain().tip()));
 
   vbkTip1 = popminer->mineVbkBlocks(*vbkTip1, {popTx1, popTx3});
 
   // now we switch active chain to the better endorsements
   ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());
-  ASSERT_EQ(*vbkTip1, *popminer->vbk().getBestChain().tip());
+  ASSERT_TRUE(cmp(*vbkTip1, *popminer->vbk().getBestChain().tip()));
 
   auto vtbs1 = popminer->vbkPayloads[vbkTip1->getHash()];
   auto vtbs2 = popminer->vbkPayloads[vbkTip2->getHash()];

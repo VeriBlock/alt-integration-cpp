@@ -49,16 +49,16 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
   }
 
   auto assertTreesEqual() {
-    ASSERT_EQ(alttree, alttree2);
+    ASSERT_TRUE(cmp(alttree, alttree2));
     auto tip = alttree.getBestChain().tip();
     auto to1 = alttree.getBestChain().first()->getHash();
     EXPECT_TRUE(alttree.setState(to1, state));
     EXPECT_TRUE(alttree2.setState(to1, state));
-    ASSERT_EQ(alttree, alttree2);
+    ASSERT_TRUE(cmp(alttree, alttree2));
     auto to2 = tip->getHash();
     EXPECT_TRUE(alttree.setState(to2, state));
     EXPECT_TRUE(alttree2.setState(to2, state));
-    ASSERT_EQ(alttree, alttree2);
+    ASSERT_TRUE(cmp(alttree, alttree2));
   }
 };
 
