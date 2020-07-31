@@ -133,15 +133,15 @@ TYPED_TEST_P(AltTreeRepositoryTest, ValidBlocks) {
   ASSERT_TRUE(LoadTreeWrapper(newvbk, *this->storage, this->state))
       << this->state.toString();
 
-  ASSERT_TRUE(cmp(newvbk.btc(), this->popminer->btc()));
-  ASSERT_TRUE(cmp(newvbk, this->popminer->vbk()));
+  ASSERT_TRUE(this->cmp(newvbk.btc(), this->popminer->btc()));
+  ASSERT_TRUE(this->cmp(newvbk, this->popminer->vbk()));
   this->popminer->vbk().removeLeaf(*this->popminer->vbk().getBestChain().tip());
-  ASSERT_FALSE(cmp(newvbk, this->popminer->vbk()));
+  ASSERT_FALSE(this->cmp(newvbk, this->popminer->vbk()));
 
   // commands should be properly restored to make it pass
   newvbk.removeLeaf(*newvbk.getBestChain().tip());
-  ASSERT_TRUE(cmp(newvbk, this->popminer->vbk()));
-  ASSERT_TRUE(cmp(newvbk.btc(), this->popminer->btc()));
+  ASSERT_TRUE(this->cmp(newvbk, this->popminer->vbk()));
+  ASSERT_TRUE(this->cmp(newvbk.btc(), this->popminer->btc()));
 }
 
 TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {

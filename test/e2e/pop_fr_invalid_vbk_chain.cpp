@@ -37,7 +37,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   // since chain B contains an endorsement of KS period 20-40, now it has to
   // be active
-  EXPECT_EQ(*popminer->vbk().getBestChain().tip(), *tipB);
+  EXPECT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *tipB));
 
   // endorse block 26 in chain B, containing is B40
   auto missingVbkBlock = popminer->mineVbkBlocks(*tipB, 1);
