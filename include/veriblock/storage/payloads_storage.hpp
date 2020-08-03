@@ -121,6 +121,19 @@ class PayloadsStorage {
     return out;
   }
 
+  const std::unordered_map<std::vector<uint8_t>, bool>& getValidity() const {
+    return _cgValidity;
+  }
+  const std::map<std::vector<uint8_t>, std::set<AltBlock::hash_t>>&
+  getPayloadsInAlt() const {
+    return payload_in_alt;
+  }
+
+  const std::map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>&
+  getPayloadsInVbk() const {
+    return payload_in_vbk;
+  }
+
  private:
   template <typename Tree, typename Payloads>
   CommandGroupCache& getCache();

@@ -19,7 +19,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto *tipA = popminer->mineVbkBlocks(40);
   // tipB forks at 10, and has 28 more blocks. tipA is best chain
   auto *tipB = popminer->mineVbkBlocks(*tipA->getAncestor(10), 28);
-  EXPECT_EQ(*popminer->vbk().getBestChain().tip(), *tipA);
+  EXPECT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *tipA));
 
   // next block in B endorses block number 25 in its chain twice, and
   // containing is block 39
@@ -37,7 +37,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   // since chain B contains an endorsement of KS period 20-40, now it has to
   // be active
-  EXPECT_EQ(*popminer->vbk().getBestChain().tip(), *tipB);
+  EXPECT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *tipB));
 
   // endorse block 26 in chain B, containing is B40
   auto missingVbkBlock = popminer->mineVbkBlocks(*tipB, 1);

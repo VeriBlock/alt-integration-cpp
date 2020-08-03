@@ -88,14 +88,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void payloadsToCommands(const payloads_t& p,
                           std::vector<CommandPtr>& commands);
 
-  bool operator==(const VbkBlockTree& o) const {
-    bool a = cmp_ == o.cmp_;
-    bool b = VbkTree::operator==(o);
-    return a && b;
-  }
-
-  bool operator!=(const VbkBlockTree& o) const { return !operator==(o); }
-
   std::string toPrettyString(size_t level = 0) const;
 
   using base::setState;

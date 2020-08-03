@@ -73,19 +73,6 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
     setDirty();
   }
 
-  bool operator==(const VbkBlockAddon& o) const {
-    bool a = _vtbids == o._vtbids;
-    // comparing reference counts does not seem like a good idea
-    // as the only situation where they would be different is
-    // comparing blocks across different trees eg mock miner vs
-    // the test tree and in this situation the references and counts
-    // are likely to differ
-    bool b = true;  // _refCount == o._refCount;
-    bool c = chainWork == o.chainWork;
-    bool d = PopState<VbkEndorsement>::operator==(o);
-    return a && b && c && d;
-  }
-
   std::string toPrettyString() const {
     return fmt::sprintf("VTB=%d", _vtbids.size());
   }

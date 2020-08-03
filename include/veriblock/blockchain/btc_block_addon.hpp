@@ -59,17 +59,6 @@ struct BtcBlockAddon {
         r, [](ReadStream& stream) { return stream.readBE<ref_height_t>(); });
   }
 
-  bool operator==(const BtcBlockAddon& o) const {
-    // comparing reference counts does not seem like a good idea
-    // as the only situation where they would be different is
-    // comparing blocks across different trees eg mock miner vs
-    // the test tree and in this situation the references and counts
-    // are likely to differ
-    bool a = true;  // refs == o.refs;
-    bool b = chainWork == o.chainWork;
-    return a && b;
-  }
-
   std::string toPrettyString() const {
     return fmt::format("chainwork={}", chainWork.toHex());
   }

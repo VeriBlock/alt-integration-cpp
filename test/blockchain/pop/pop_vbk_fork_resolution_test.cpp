@@ -77,7 +77,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   auto Avbkcontaining1 = popminer->mineVbkBlocks(*chainAtip, 1);
 
   // chain changed to chain A, because its POP score is higher
-  ASSERT_EQ(*popminer->vbk().getBestChain().tip(), *Avbkcontaining1);
+  ASSERT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *Avbkcontaining1));
 
   // and now endorse block 60 of chain B
   // mine 5 BtcBlocks
@@ -97,7 +97,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   popminer->mineVbkBlocks(*chainBtip, 1);
 
   // chain is still at chain A, because endorsement was erlier
-  EXPECT_EQ(*popminer->vbk().getBestChain().tip(), *Avbkcontaining1);
+  EXPECT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *Avbkcontaining1));
 }
 
 TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
@@ -145,7 +145,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
 
   // change active chain to the another branch
   btcBlockTip1 = popminer->mineBtcBlocks(*btcBlockTip1, 90);
-  ASSERT_EQ(*popminer->btc().getBestChain().tip(), *btcBlockTip1);
+  ASSERT_TRUE(cmp(*popminer->btc().getBestChain().tip(), *btcBlockTip1));
 
   context = internal::getProtoKeystoneContext(
       chain, popminer->btc(), popminer->getVbkParams());
@@ -190,7 +190,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
       popminer->createBtcTxEndorsingVbkBlock(endorsedVbkBlock->getHeader());
 
   btcBlockTip1 = popminer->mineBtcBlocks(1);
-  EXPECT_EQ(*btcBlockTip1, *popminer->btc().getBestChain().tip());
+  EXPECT_TRUE(cmp(*btcBlockTip1, *popminer->btc().getBestChain().tip()));
 
   popminer->createVbkPopTxEndorsingVbkBlock(
       btcBlockTip1->getHeader(),
@@ -203,7 +203,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
   ASSERT_THROW(popminer->mineVbkBlocks(*vbkBlockTip2, 1), std::domain_error);
   auto vbktip3 = popminer->vbk().getBestChain().tip();
 
-  ASSERT_EQ(*vbktip1, *vbktip3) << "tip has been changed wrongly";
+  ASSERT_TRUE(cmp(*vbktip1, *vbktip3)) << "tip has been changed wrongly";
 }
 
 TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {

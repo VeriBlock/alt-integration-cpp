@@ -142,7 +142,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 TEST_F(Scenario1, scenario_1) {
   // Step 1
   ASSERT_EQ(vbkAtip->getHeight(), vbkBtip->getHeight());
-  ASSERT_EQ(*vbkBtip, *popminer->vbk().getBestChain().tip());
+  ASSERT_TRUE(cmp(*vbkBtip, *popminer->vbk().getBestChain().tip()));
 
   AltBlock endorsedBlock = altchain[90];
   AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
@@ -174,7 +174,7 @@ TEST_F(Scenario1, scenario_1) {
 
   // expect that ALTBTC tip is A53
   ASSERT_EQ(blockCount, 54);
-  EXPECT_EQ(*btcA53, *alttree.vbk().btc().getBestChain().tip());
+  EXPECT_TRUE(cmp(*btcA53, *alttree.vbk().btc().getBestChain().tip()));
 
   // expect that ALTVBK tree has all blocks from VBK chain A, until vAc71,
   // including
@@ -226,7 +226,7 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(btcBtip->getAncestor(55)->getHash(),
             alttree.vbk().btc().getBestChain().tip()->getHash());
   // expect that ALTVBK tip is vBc71
-  EXPECT_EQ(*vbkBtip->getAncestor(71), *alttree.vbk().getBestChain().tip());
+  EXPECT_TRUE(cmp(*vbkBtip->getAncestor(71), *alttree.vbk().getBestChain().tip()));
   // expect that ALT tip is 102
   EXPECT_EQ(altchain.size(), 103);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 102);
@@ -244,8 +244,8 @@ TEST_F(Scenario1, scenario_1) {
   blockCount = checkBlocksExisting(alttree.vbk().btc(), btcA53);
   // expect that ALTBTC tip is A53
   EXPECT_EQ(blockCount, 54);
-  EXPECT_EQ(*btcAtip->getAncestor(53),
-            *alttree.vbk().btc().getBestChain().tip());
+  EXPECT_TRUE(cmp(*btcAtip->getAncestor(53),
+                  *alttree.vbk().btc().getBestChain().tip()));
 
   // expect that ALTVBK tree has all blocks from VBK chain A, until vAc71,
   // including

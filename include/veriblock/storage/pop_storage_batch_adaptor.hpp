@@ -3,18 +3,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_REPO_BATCH_ADAPTOR_HPP
-#define VERIBLOCK_POP_CPP_REPO_BATCH_ADAPTOR_HPP
+#ifndef VERIBLOCK_POP_CPP_POP_STORAGE_REPO_BATCH_ADAPTOR_HPP
+#define VERIBLOCK_POP_CPP_POP_STORAGE_REPO_BATCH_ADAPTOR_HPP
 
 #include "batch_adaptor.hpp"
 #include "pop_storage.hpp"
 
 namespace altintegration {
 
-struct RepoBatchAdaptor : public BatchAdaptor {
-  ~RepoBatchAdaptor() override = default;
+struct PopStorageBatchAdaptor : public BatchAdaptor {
+  ~PopStorageBatchAdaptor() override = default;
 
-  RepoBatchAdaptor(PopStorage& pop) : pop_(pop) {}
+  PopStorageBatchAdaptor(PopStorage& pop) : pop_(pop) {}
 
   bool writeBlock(const BlockIndex<BtcBlock>& value) override {
     pop_.getBlockRepo<BlockIndex<BtcBlock>>().put(value);
@@ -48,4 +48,4 @@ struct RepoBatchAdaptor : public BatchAdaptor {
 
 }  // namespace altintegration
 
-#endif  // VERIBLOCK_POP_CPP_REPO_BATCH_ADAPTOR_HPP
+#endif  // VERIBLOCK_POP_CPP_POP_STORAGE_REPO_BATCH_ADAPTOR_HPP

@@ -12,7 +12,6 @@
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
-#include <veriblock/comparator.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/signals.hpp>
 
@@ -283,16 +282,6 @@ struct BaseBlockTree {
   bool disconnectOnValidityBlockChanged(size_t id) {
     return validity_sig_.disconnect(id);
   }
-
-  bool operator==(const BaseBlockTree& o) const {
-    CollectionOfPtrComparator cmp{};
-    bool a = cmp(blocks_, o.blocks_);
-    bool b = cmp(tips_, o.tips_);
-    bool c = (activeChain_ == o.activeChain_);
-    return a && b && c;
-  }
-
-  bool operator!=(const BaseBlockTree& o) const { return !operator==(o); }
 
  protected:
   virtual void determineBestChain(index_t& candidate,
