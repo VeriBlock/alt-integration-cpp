@@ -9,7 +9,6 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include <veriblock/comparator.hpp>
 #include <veriblock/serde.hpp>
 
 namespace altintegration {
@@ -26,6 +25,10 @@ struct PopState {
 
   const containing_endorsement_store_t& getContainingEndorsements() const {
     return _containingEndorsements;
+  }
+
+  const std::vector<endorsement_t*>& getEndorsedBy() const {
+    return endorsedBy;
   }
 
   void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
@@ -50,12 +53,7 @@ struct PopState {
     setDirty();
   }
 
-  bool operator==(const PopState& o) const {
-    CollectionOfPtrComparator cmp;
-    bool a = cmp(_containingEndorsements, o._containingEndorsements);
-    bool b = cmp(endorsedBy, o.endorsedBy);
-    return a && b;
-  }
+
 
   void toRaw(WriteStream& w) const {
     // write containingEndorsements as vector

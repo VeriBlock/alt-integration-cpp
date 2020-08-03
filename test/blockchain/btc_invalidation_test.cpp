@@ -16,7 +16,7 @@ struct BtcInvalidationTest : public ::testing::Test, public PopTestFixture {
   BtcInvalidationTest() {
     tip = popminer->mineBtcBlocks(10);
     best = &popminer->btc().getBestChain();
-    EXPECT_EQ(*best->tip(), *tip);
+    EXPECT_TRUE(cmp(*best->tip(), *tip));
     EXPECT_TRUE(tip->hasFlags(BLOCK_VALID_TREE));
     EXPECT_TRUE(tip->isValid());
   }
@@ -125,14 +125,14 @@ TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   ASSERT_EQ(btc.getTips().size(), 6);
 
   // current best is B
-  ASSERT_EQ(*best->tip(), *Btip);
+  ASSERT_TRUE(cmp(*best->tip(), *Btip));
 
   // invalidate block (5) on the main chain
   btc.invalidateSubtree(*sixth, BLOCK_FAILED_BLOCK);
 
   // chain A is now best
-  ASSERT_EQ(*best, btc.getBestChain());
-  ASSERT_EQ(*best->tip(), *btc.getBestChain().tip());
+  ASSERT_TRUE(cmp(*best, btc.getBestChain()));
+  ASSERT_TRUE(cmp(*best->tip(), *btc.getBestChain().tip()));
 
   Chain<BlockIndex<BtcBlock>> Achain(0, Atip);
   Chain<BlockIndex<BtcBlock>> Bchain(6, Btip);

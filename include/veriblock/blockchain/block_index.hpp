@@ -205,15 +205,6 @@ struct BlockIndex : public Block::addon_t {
     return fromRaw(stream);
   }
 
-  bool operator==(const BlockIndex& o) const {
-    bool a = *header == *o.header;
-    bool b = status == o.status;
-    bool c = addon_t::operator==(o);
-    return a && b && c;
-  }
-
-  bool operator!=(const BlockIndex& b) const { return !operator==(b); }
-
  protected:
   //! height of the entry in the chain
   height_t height = 0;

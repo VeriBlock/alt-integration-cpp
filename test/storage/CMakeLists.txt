@@ -1,5 +1,7 @@
 addtest(alttree_storage_test alttree_storage_test.cpp)
 
+addtest(save_load_tree_test save_load_tree_test.cpp)
+
 if(WITH_ROCKSDB)
     addtest(blocks_storage_test blocks_storage_test.cpp)
     target_link_libraries(blocks_storage_test rocksdb)
