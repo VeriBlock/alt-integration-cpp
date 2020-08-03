@@ -139,7 +139,7 @@ TEST_F(AltTreeFixture, compareTrees) {
 
   // mine 1 blocks
   mineAltBlocks(1, chain);
-  EXPECT_FALSE(cmp(alttree, alttree2));
+  EXPECT_FALSE(cmp(alttree, alttree2, true));
   EXPECT_TRUE(cmp(alttree.vbk(), alttree2.vbk()));
   EXPECT_TRUE(cmp(alttree.vbk().btc(), alttree2.vbk().btc()));
 }

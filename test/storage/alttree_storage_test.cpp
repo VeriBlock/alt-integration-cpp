@@ -136,7 +136,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, ValidBlocks) {
   ASSERT_TRUE(this->cmp(newvbk.btc(), this->popminer->btc()));
   ASSERT_TRUE(this->cmp(newvbk, this->popminer->vbk()));
   this->popminer->vbk().removeLeaf(*this->popminer->vbk().getBestChain().tip());
-  ASSERT_FALSE(this->cmp(newvbk, this->popminer->vbk()));
+  ASSERT_FALSE(this->cmp(newvbk, this->popminer->vbk(), true));
 
   // commands should be properly restored to make it pass
   newvbk.removeLeaf(*newvbk.getBestChain().tip());
@@ -196,7 +196,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 
   this->alttree.removeLeaf(*this->alttree.getBestChain().tip());
-  EXPECT_FALSE(this->cmp(reloadedAltTree, this->alttree));
+  EXPECT_FALSE(this->cmp(reloadedAltTree, this->alttree, true));
 
   reloadedAltTree.removeLeaf(*reloadedAltTree.getBestChain().tip());
   EXPECT_TRUE(this->cmp(reloadedAltTree, this->alttree));

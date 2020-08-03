@@ -12,8 +12,10 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <veriblock/blockchain/alt_block_tree.hpp>
-#include <veriblock/blockchain/base_block_tree.hpp>
+
+#include "comparator_macro.hpp"
+#include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/blockchain/base_block_tree.hpp"
 
 namespace altintegration {
 
@@ -21,53 +23,56 @@ struct TestComparator {
   TestComparator() = default;
 
   template <typename T>
-  bool operator()(const std::vector<T*>& a, const std::vector<T*>& b) {
-    EXPECT_EQ(a.size(), b.size());
+  bool operator()(const std::vector<T*>& a,
+                  const std::vector<T*>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_EQ(a.size(), b.size(), suppress);
     for (size_t i = 0, size = a.size(); i < size; i++) {
       if (a[i] == nullptr && b[i] == nullptr) {
         continue;
       }
 
-      EXPECT_TRUE(a[i] != nullptr && b[i] != nullptr) << "Iteration" << i;
-      if (a[i] != nullptr && b[i] != nullptr) {
-        EXPECT_EQ(*a[i], *b[i]) << "Iteration " << i;
-      }
+      VBK_EXPECT_TRUE((bool)(a[i] != nullptr && b[i] != nullptr), suppress);
+      VBK_EXPECT_EQ(*a[i], *b[i], suppress);
     }
     return true;
   }
 
   template <typename K, typename V>
   bool operator()(const std::unordered_map<K, std::shared_ptr<V>>& a,
-                  const std::unordered_map<K, std::shared_ptr<V>>& b) {
-    EXPECT_EQ(a.size(), b.size());
+                  const std::unordered_map<K, std::shared_ptr<V>>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_EQ(a.size(), b.size(), suppress);
     for (const auto& k : a) {
       auto key = k.first;
       auto value = k.second;
       auto expectedValue = b.find(key);
       // key exists in map A but does not exist in map B
-      EXPECT_NE(expectedValue, b.end());
+      VBK_EXPECT_NE(expectedValue, b.end(), suppress);
       // pointers are equal - comparison is true
-      EXPECT_TRUE(expectedValue->second);
-      EXPECT_TRUE(value);
+      VBK_EXPECT_TRUE(expectedValue->second, suppress);
+      VBK_EXPECT_TRUE(value, suppress);
 
-      EXPECT_TRUE(this->operator()(*value, *expectedValue->second));
+      VBK_EXPECT_TRUE(
+          this->operator()(*value, *expectedValue->second, suppress), suppress);
     }
     return true;
   }
 
   template <typename K, typename V>
   bool operator()(const std::map<K, std::set<V>>& a,
-                  const std::map<K, std::set<V>>& b) {
-    EXPECT_EQ(a.size(), b.size());
+                  const std::map<K, std::set<V>>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_EQ(a.size(), b.size(), suppress);
     for (const auto& k : a) {
       auto key = k.first;
       auto value = k.second;
       auto expectedSet = b.find(key);
       // key exists in map A but does not exist in map B
-      EXPECT_NE(expectedSet, b.end());
+      VBK_EXPECT_NE(expectedSet, b.end(), suppress);
 
       for (const auto& el : k.second) {
-        EXPECT_NE(expectedSet->second.count(el), 0);
+        VBK_EXPECT_NE(expectedSet->second.count(el), 0, suppress);
       }
     }
     return true;
@@ -75,7 +80,8 @@ struct TestComparator {
 
   template <typename K, typename V>
   bool operator()(const std::unordered_multimap<K, std::shared_ptr<V>>& a,
-                  const std::unordered_multimap<K, std::shared_ptr<V>>& b) {
+                  const std::unordered_multimap<K, std::shared_ptr<V>>& b,
+                  bool suppress = false) {
     std::vector<V> aValues, bValues;
     std::transform(a.begin(),
                    a.end(),
@@ -93,14 +99,15 @@ struct TestComparator {
     std::sort(aValues.begin(), aValues.end());
     std::sort(bValues.begin(), bValues.end());
 
-    EXPECT_EQ(aValues, bValues);
+    VBK_EXPECT_EQ(aValues, bValues, suppress);
     return true;
   }
 
   template <typename T>
   bool operator()(const std::unordered_set<T*>& a,
-                  const std::unordered_set<T*>& b) {
-    EXPECT_EQ(a.size(), b.size());
+                  const std::unordered_set<T*>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_EQ(a.size(), b.size(), suppress);
 
     using H = typename T::hash_t;
 
@@ -114,41 +121,51 @@ struct TestComparator {
                    b.cend(),
                    std::inserter(bHashes, bHashes.begin()),
                    [](const T* v) { return v->getHash(); });
-    EXPECT_EQ(aHashes, bHashes);
+    VBK_EXPECT_EQ(aHashes, bHashes, suppress);
     return true;
   }
 
   template <typename Block>
   bool operator()(const BaseBlockTree<Block>& a,
-                  const BaseBlockTree<Block>& b) {
-    EXPECT_TRUE(this->operator()(a.getBlocks(), b.getBlocks()));
-    EXPECT_TRUE(this->operator()(a.getTips(), b.getTips()));
-    EXPECT_TRUE(this->operator()(a.getBestChain(), b.getBestChain()));
+                  const BaseBlockTree<Block>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_TRUE(this->operator()(a.getBlocks(), b.getBlocks(), suppress),
+                    suppress);
+    VBK_EXPECT_TRUE(this->operator()(a.getTips(), b.getTips(), suppress),
+                    suppress);
+    VBK_EXPECT_TRUE(
+        this->operator()(a.getBestChain(), b.getBestChain(), suppress),
+        suppress);
     return true;
   }
 
   template <typename Block>
-  bool operator()(const BlockIndex<Block>& a, const BlockIndex<Block>& b) {
-    EXPECT_TRUE(this->operator()(a.getHeader(), b.getHeader()));
+  bool operator()(const BlockIndex<Block>& a,
+                  const BlockIndex<Block>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_TRUE(this->operator()(a.getHeader(), b.getHeader(), suppress),
+                    suppress);
 
     using base = typename Block::addon_t;
     const base& A = a;
     const base& B = b;
-    EXPECT_TRUE(this->operator()(A, B));
+    VBK_EXPECT_TRUE(this->operator()(A, B, suppress), suppress);
 
-    EXPECT_EQ(a.status, b.status);
+    VBK_EXPECT_EQ(a.status, b.status, suppress);
     return true;
   }
 
   template <typename Block>
-  bool operator()(const Chain<Block>& chain1, const Chain<Block>& chain2) {
-    EXPECT_EQ(chain1.blocksCount(), chain2.blocksCount());
+  bool operator()(const Chain<Block>& chain1,
+                  const Chain<Block>& chain2,
+                  bool suppress = false) {
+    VBK_EXPECT_EQ(chain1.blocksCount(), chain2.blocksCount(), suppress);
 
     auto b1 = chain1.begin();
     auto b2 = chain2.begin();
 
     for (; b1 != chain1.end() && b2 != chain2.end(); ++b1, ++b2) {
-      EXPECT_TRUE(this->operator()(**b1, **b2));
+      VBK_EXPECT_TRUE(this->operator()(**b1, **b2, suppress), suppress);
     }
 
     return true;
@@ -156,123 +173,153 @@ struct TestComparator {
 
   template <typename A, typename B, typename C, typename D>
   bool operator()(const PopAwareForkResolutionComparator<A, B, C, D>& a,
-                  const PopAwareForkResolutionComparator<A, B, C, D>& b) {
-    EXPECT_TRUE(this->operator()(a.getProtectingBlockTree(),
-                                 b.getProtectingBlockTree()));
+                  const PopAwareForkResolutionComparator<A, B, C, D>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_TRUE(
+        this->operator()(
+            a.getProtectingBlockTree(), b.getProtectingBlockTree(), suppress),
+        suppress);
     return true;
   }
 
-  bool operator()(const AltBlock& a, const AltBlock& b) {
-    EXPECT_EQ(a.height, b.height);
-    EXPECT_EQ(a.hash, b.hash);
-    EXPECT_EQ(a.previousBlock, b.previousBlock);
-    EXPECT_EQ(a.timestamp, b.timestamp);
+  bool operator()(const AltBlock& a, const AltBlock& b, bool suppress = false) {
+    VBK_EXPECT_EQ(a.height, b.height, suppress);
+    VBK_EXPECT_EQ(a.hash, b.hash, suppress);
+    VBK_EXPECT_EQ(a.previousBlock, b.previousBlock, suppress);
+    VBK_EXPECT_EQ(a.timestamp, b.timestamp, suppress);
     return true;
   }
 
-  bool operator()(const BtcBlock& a, const BtcBlock& b) {
-    EXPECT_EQ(a.version, b.version);
-    EXPECT_EQ(a.timestamp, b.timestamp);
-    EXPECT_EQ(a.nonce, b.nonce);
-    EXPECT_EQ(a.merkleRoot, b.merkleRoot);
-    EXPECT_EQ(a.previousBlock, b.previousBlock);
+  bool operator()(const BtcBlock& a, const BtcBlock& b, bool suppress = false) {
+    VBK_EXPECT_EQ(a.version, b.version, suppress);
+    VBK_EXPECT_EQ(a.timestamp, b.timestamp, suppress);
+    VBK_EXPECT_EQ(a.nonce, b.nonce, suppress);
+    VBK_EXPECT_EQ(a.merkleRoot, b.merkleRoot, suppress);
+    VBK_EXPECT_EQ(a.previousBlock, b.previousBlock, suppress);
     return true;
   }
 
-  bool operator()(const VbkBlock& a, const VbkBlock& b) {
-    EXPECT_EQ(a.version, b.version);
-    EXPECT_EQ(a.timestamp, b.timestamp);
-    EXPECT_EQ(a.nonce, b.nonce);
-    EXPECT_EQ(a.previousBlock, b.previousBlock);
-    EXPECT_EQ(a.previousKeystone, b.previousKeystone);
-    EXPECT_EQ(a.secondPreviousKeystone, b.secondPreviousKeystone);
-    EXPECT_EQ(a.height, b.height);
+  bool operator()(const VbkBlock& a, const VbkBlock& b, bool suppress = false) {
+    VBK_EXPECT_EQ(a.version, b.version, suppress);
+    VBK_EXPECT_EQ(a.timestamp, b.timestamp, suppress);
+    VBK_EXPECT_EQ(a.nonce, b.nonce, suppress);
+    VBK_EXPECT_EQ(a.previousBlock, b.previousBlock, suppress);
+    VBK_EXPECT_EQ(a.previousKeystone, b.previousKeystone, suppress);
+    VBK_EXPECT_EQ(a.secondPreviousKeystone, b.secondPreviousKeystone, suppress);
+    VBK_EXPECT_EQ(a.height, b.height, suppress);
     return true;
   }
 
-  bool operator()(const BtcBlockAddon& a, const BtcBlockAddon& b) {
+  bool operator()(const BtcBlockAddon& a,
+                  const BtcBlockAddon& b,
+                  bool suppress = false) {
     // comparing reference counts does not seem like a good idea
     // as the only situation where they would be different is
     // comparing blocks across different trees eg mock miner vs
     // the test tree and in this situation the references and counts
     // are likely to differ
+
     // EXPECT_EQ(a.getRefs(), b.getRefs());
-    EXPECT_EQ(a.chainWork, b.chainWork);
+    VBK_EXPECT_EQ(a.chainWork, b.chainWork, suppress);
     return true;
   }
 
-  bool operator()(const VbkBlockAddon& a, const VbkBlockAddon& b) {
-    EXPECT_EQ(a.chainWork, b.chainWork);
-    EXPECT_EQ(a.refCount(), b.refCount());
-    EXPECT_EQ(a.getPayloadIds<VTB>(), b.getPayloadIds<VTB>());
+  bool operator()(const VbkBlockAddon& a,
+                  const VbkBlockAddon& b,
+                  bool suppress = false) {
+    VBK_EXPECT_EQ(a.chainWork, b.chainWork, suppress);
+    VBK_EXPECT_EQ(a.refCount(), b.refCount(), suppress);
+    VBK_EXPECT_EQ(a.getPayloadIds<VTB>(), b.getPayloadIds<VTB>(), suppress);
 
     using base = PopState<VbkEndorsement>;
     const base& A = a;
     const base& B = b;
-    EXPECT_TRUE(this->operator()(A, B));
+    VBK_EXPECT_TRUE(this->operator()(A, B, suppress), suppress);
     return true;
   }
 
   template <typename E>
-  bool operator()(const PopState<E>& a, const PopState<E>& b) {
-    EXPECT_TRUE(this->operator()(a.getContainingEndorsements(),
-                                 b.getContainingEndorsements()));
-    EXPECT_TRUE(this->operator()(a.getEndorsedBy(), b.getEndorsedBy()));
+  bool operator()(const PopState<E>& a,
+                  const PopState<E>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_TRUE(this->operator()(a.getContainingEndorsements(),
+                                     b.getContainingEndorsements(),
+                                     suppress),
+                    suppress);
+    VBK_EXPECT_TRUE(
+        this->operator()(a.getEndorsedBy(), b.getEndorsedBy(), suppress),
+        suppress);
     return true;
   }
 
-  bool operator()(const AltBlockAddon& a, const AltBlockAddon& b) {
-    EXPECT_EQ(a.getPayloadIds<VbkBlock>(), b.getPayloadIds<VbkBlock>());
-    EXPECT_EQ(a.getPayloadIds<VTB>(), b.getPayloadIds<VTB>());
-    EXPECT_EQ(a.getPayloadIds<ATV>(), b.getPayloadIds<ATV>());
+  bool operator()(const AltBlockAddon& a,
+                  const AltBlockAddon& b,
+                  bool suppress = false) {
+    VBK_EXPECT_EQ(
+        a.getPayloadIds<VbkBlock>(), b.getPayloadIds<VbkBlock>(), suppress);
+    VBK_EXPECT_EQ(a.getPayloadIds<VTB>(), b.getPayloadIds<VTB>(), suppress);
+    VBK_EXPECT_EQ(a.getPayloadIds<ATV>(), b.getPayloadIds<ATV>(), suppress);
 
     using base = PopState<AltEndorsement>;
     const base& A = a;
     const base& B = b;
-    EXPECT_TRUE(this->operator()(A, B));
+    VBK_EXPECT_TRUE(this->operator()(A, B, suppress), suppress);
     return true;
   }
 
-  bool operator()(const VbkBlockTree& a, const VbkBlockTree& b) {
-    EXPECT_TRUE(this->operator()(a.getComparator(), b.getComparator()));
+  bool operator()(const VbkBlockTree& a,
+                  const VbkBlockTree& b,
+                  bool suppress = false) {
+    VBK_EXPECT_TRUE(
+        this->operator()(a.getComparator(), b.getComparator(), suppress),
+        suppress);
     using base = VbkBlockTree::base;
     const base& A = a;
     const base& B = b;
-    EXPECT_TRUE(this->operator()(A, B));
+    VBK_EXPECT_TRUE(this->operator()(A, B, suppress), suppress);
     return true;
   }
 
-  bool operator()(const AltTree& a, const AltTree& b) {
-    EXPECT_TRUE(this->operator()(a.getComparator(), b.getComparator()));
+  bool operator()(const AltTree& a, const AltTree& b, bool suppress = false) {
+    VBK_EXPECT_TRUE(
+        this->operator()(a.getComparator(), b.getComparator(), suppress),
+        suppress);
     using base = AltTree::base;
     const base& A = a;
     const base& B = b;
-    EXPECT_TRUE(this->operator()(A, B));
-    EXPECT_TRUE(this->operator()(a.getStorage(), b.getStorage()));
+    VBK_EXPECT_TRUE(this->operator()(A, B, suppress), suppress);
+    VBK_EXPECT_TRUE(this->operator()(a.getStorage(), b.getStorage(), suppress),
+                    suppress);
     return true;
   }
 
-  bool operator()(const PayloadsStorage& a, const PayloadsStorage& b) {
-    EXPECT_TRUE(this->operator()(a.getRepo(), b.getRepo()));
+  bool operator()(const PayloadsStorage& a,
+                  const PayloadsStorage& b,
+                  bool suppress = false) {
+    VBK_EXPECT_TRUE(this->operator()(a.getRepo(), b.getRepo(), suppress),
+                    suppress);
 
-    this->operator()(a.getPayloadsInAlt(), b.getPayloadsInAlt());
-    this->operator()(a.getPayloadsInVbk(), b.getPayloadsInVbk());
+    VBK_EXPECT_TRUE(
+        this->operator()(a.getPayloadsInAlt(), b.getPayloadsInAlt(), suppress),
+        suppress);
+    VBK_EXPECT_TRUE(
+        this->operator()(a.getPayloadsInVbk(), b.getPayloadsInVbk(), suppress),
+        suppress);
 
-    EXPECT_TRUE(this->operator()(a.getPayloadsInAlt(), b.getPayloadsInAlt()));
-    EXPECT_TRUE(this->operator()(a.getPayloadsInVbk(), b.getPayloadsInVbk()));
-
-    EXPECT_EQ(a.getValidity(), b.getValidity());
+    VBK_EXPECT_EQ(a.getValidity(), b.getValidity(), suppress);
     return true;
   }
 
-  bool operator()(const Repository& a, const Repository& b) {
+  bool operator()(const Repository& a,
+                  const Repository& b,
+                  bool suppress = false) {
     std::map<std::vector<uint8_t>, std::vector<uint8_t>> mA;
     std::map<std::vector<uint8_t>, std::vector<uint8_t>> mB;
 
     readRepositoryInto(mA, a);
     readRepositoryInto(mB, b);
 
-    EXPECT_EQ(mA, mB);
+    VBK_EXPECT_EQ(mA, mB, suppress);
     return true;
   }
 
