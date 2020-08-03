@@ -44,6 +44,8 @@ struct PopStateMachine {
                "unapplied block");
     VBK_ASSERT(!index.hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to apply an already applied block");
+    VBK_ASSERT(index.isValid() &&
+               "we should have returned earlier when block is invalid");
 
     auto containingHash = index.getHash();
     if (!index.payloadsIdsEmpty()) {
@@ -159,6 +161,11 @@ struct PopStateMachine {
     if (&from == &to) {
       // already applied this block
       return true;
+    }
+
+    // return early, if 'to' is invalid
+    if (!to.isValid()) {
+      return false;
     }
 
     VBK_ASSERT(from.getHeight() < to.getHeight());
