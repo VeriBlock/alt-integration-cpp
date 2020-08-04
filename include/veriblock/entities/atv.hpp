@@ -71,7 +71,8 @@ struct ATV {
    */
   id_t getId() const;
 
-  static std::string name() { return "ATV"; }
+  static const std::string _name;
+  static const std::string& name() { return _name; }
 
   static ATV fromHex(const std::string& h);
 

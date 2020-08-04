@@ -7,6 +7,8 @@
 
 using namespace altintegration;
 
+const std::string AltBlock::_name = "ALT";
+
 AltBlock AltBlock::fromRaw(Slice<const uint8_t> bytes) {
   ReadStream stream(bytes);
   return fromRaw(stream);

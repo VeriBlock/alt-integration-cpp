@@ -9,10 +9,9 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-
 #include <veriblock/arith_uint256.hpp>
-#include <veriblock/blockchain/vbk_block_addon.hpp>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/blockchain/vbk_block_addon.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/fmt.hpp>
@@ -133,7 +132,8 @@ struct VbkBlock {
 
   short_hash_t getId() const { return getShortHash(); }
 
-  static std::string name() { return "VBK"; }
+  static const std::string _name;
+  static const std::string& name() { return _name; }
 
   int32_t height{};
   int16_t version{};

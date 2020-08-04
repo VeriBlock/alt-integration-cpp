@@ -7,6 +7,8 @@
 
 using namespace altintegration;
 
+const std::string BtcBlock::_name = "BTC";
+
 BtcBlock BtcBlock::fromRaw(const std::vector<uint8_t>& bytes) {
   ReadStream stream(bytes);
   return fromRaw(stream);

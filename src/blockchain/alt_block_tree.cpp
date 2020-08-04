@@ -690,17 +690,17 @@ void removePayloadsFromIndex(PayloadsStorage& storage,
                              BlockIndex<AltBlock>& index,
                              const CommandGroup& cg) {
   // TODO: can we do better?
-  if (cg.payload_type_name == VTB::name()) {
+  if (cg.payload_type_name == &VTB::name()) {
     removeId<VTB>(storage, index, cg.id);
     return;
   }
 
-  if (cg.payload_type_name == ATV::name()) {
+  if (cg.payload_type_name == &ATV::name()) {
     removeId<ATV>(storage, index, cg.id);
     return;
   }
 
-  if (cg.payload_type_name == VbkBlock::name()) {
+  if (cg.payload_type_name == &VbkBlock::name()) {
     removeId<VbkBlock>(storage, index, cg.id);
     return;
   }

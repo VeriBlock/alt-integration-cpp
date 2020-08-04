@@ -22,10 +22,10 @@ struct CommandGroup {
   CommandGroup(const std::vector<uint8_t> id,
                bool valid,
                const std::string& payload_type_name)
-      : payload_type_name(payload_type_name), id(id), valid(valid) {}
+      : payload_type_name(&payload_type_name), id(id), valid(valid) {}
 
   // HACK, store the payload type name
-  std::string payload_type_name{};
+  const std::string* payload_type_name{};
 
   // ATV id or VTB id or VBK block id
   std::vector<uint8_t> id;
@@ -43,7 +43,7 @@ struct CommandGroup {
   typename storage_t::const_reverse_iterator rend() const { return commands.rend(); }
   // clang-format on
 
-  std::string getPayloadsTypeName() const { return payload_type_name; }
+  const std::string& getPayloadsTypeName() const { return *payload_type_name; }
 
   /**
    * Execute all commands in the group

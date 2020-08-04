@@ -443,7 +443,7 @@ template <>
 void removePayloadsFromIndex(PayloadsStorage& storage,
                              BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
-  VBK_ASSERT(cg.payload_type_name == VTB::name());
+  VBK_ASSERT(cg.payload_type_name == &VTB::name());
   auto& payloads = index.template getPayloadIds<VTB>();
   auto it = std::find(payloads.rbegin(), payloads.rend(), cg.id);
   VBK_ASSERT(it != payloads.rend());
