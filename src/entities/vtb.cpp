@@ -9,6 +9,8 @@
 
 using namespace altintegration;
 
+const std::string VTB::_name = "VTB";
+
 VTB VTB::fromVbkEncoding(ReadStream& stream) {
   VTB vtb{};
   vtb.transaction = VbkPopTx::fromVbkEncoding(stream);

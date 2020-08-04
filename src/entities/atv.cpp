@@ -9,6 +9,8 @@
 
 using namespace altintegration;
 
+const std::string ATV::_name = "ATV";
+
 ATV ATV::fromVbkEncoding(ReadStream& stream) {
   ATV atv{};
   atv.transaction = VbkTx::fromVbkEncoding(stream);

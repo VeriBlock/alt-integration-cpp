@@ -93,7 +93,8 @@ struct AltBlock {
     return !(a == b);
   }
 
-  static std::string name() { return "ALT"; }
+  static const std::string _name;
+  static const std::string& name() { return _name; }
 
   std::string toPrettyString() const {
     return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
