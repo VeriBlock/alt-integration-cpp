@@ -344,12 +344,103 @@ TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
   ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 }
 
+TYPED_TEST_P(AltTreeRepositoryTest, ReloadWithoutDuplicates_test) {
+  std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
+
+  // mine 20 blocks
+  this->mineAltBlocks(20, chain);
+
+  auto* vbkTip = this->popminer->mineVbkBlocks(1);
+  // create endorsement of VBKTIP in BTC_1
+  auto btctx =
+      this->popminer->createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
+  // add BTC tx endorsing VBKTIP into next block
+  auto* chainAtip = this->popminer->mineBtcBlocks(1);
+
+  // create VBK pop tx that has 'block of proof=CHAIN A'
+  this->popminer->createVbkPopTxEndorsingVbkBlock(
+      chainAtip->getHeader(),
+      btctx,
+      vbkTip->getHeader(),
+      lastKnownLocalBtcBlock(*this->popminer));
+
+  // mine txA into VBK 2nd block
+  vbkTip = this->popminer->mineVbkBlocks(1);
+
+  auto vtbs = this->popminer->vbkPayloads[vbkTip->getHash()];
+
+  ASSERT_EQ(vtbs.size(), 1);
+  this->fillVbkContext(
+      vtbs[0],
+      this->popminer->vbk().getParams().getGenesisBlock().getHash(),
+      this->popminer->vbk());
+
+  PopData popData = this->createPopData({}, vtbs);
+  auto containingBlock = this->generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+
+  // add alt payloads
+  EXPECT_TRUE(this->alttree.acceptBlock(containingBlock, this->state));
+  EXPECT_TRUE(this->alttree.addPayloads(containingBlock, popData, this->state));
+  EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
+  EXPECT_TRUE(this->state.IsValid());
+  validateAlttreeIndexState(this->alttree, containingBlock, popData);
+
+  auto adaptor = PopStorageBatchAdaptor(*this->storage);
+  SaveAllTrees(this->alttree, adaptor);
+  this->saveToPayloadsStorage(this->alttree.vbk().getStorage(),
+                              *this->storagePayloads2);
+  this->saveToPayloadsStorage(this->alttree.getStorage(),
+                              *this->storagePayloads2);
+
+  containingBlock = this->generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+
+  // add alt payloads
+  EXPECT_TRUE(this->alttree.acceptBlock(containingBlock, this->state));
+  EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
+  EXPECT_TRUE(this->state.IsValid());
+
+  // add duplicates
+  // add duplicate vtb
+  this->storagePayloads2->addAltPayloadIndex(
+      containingBlock.getHash(), popData.vtbs[0].getId().asVector());
+  // add duplicate vbk blocks
+  for (const auto& b : popData.context) {
+    this->storagePayloads2->addAltPayloadIndex(containingBlock.getHash(),
+                                               b.getId().asVector());
+  }
+
+  AltTree reloadedAltTree{
+      this->altparam, this->vbkparam, this->btcparam, *this->storagePayloads2};
+
+  // set state that validity flags should be the same
+  EXPECT_TRUE(reloadedAltTree.setState(containingBlock.getHash(), this->state));
+  EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
+
+  reloadedAltTree.btc().bootstrapWithGenesis(this->state);
+  reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
+  reloadedAltTree.bootstrap(this->state);
+
+  ASSERT_TRUE(
+      LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
+  ASSERT_TRUE(
+      LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
+
+  ASSERT_TRUE(
+      this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
+  ASSERT_TRUE(this->cmp(reloadedAltTree.vbk(), this->alttree.vbk()));
+  ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
+}
+
 // make sure to enumerate the test cases here
 REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest,
                             ValidBlocks,
                             InvalidBlocks,
                             Altchain,
-                            ManyEndorsements);
+                            ManyEndorsements,
+                            ReloadWithoutDuplicates_test);
 
 #ifdef VERIBLOCK_ROCKSDB
 typedef ::testing::Types<TestStorageInmem, TestStorageRocks> TypesUnderTest;
