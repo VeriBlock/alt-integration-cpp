@@ -45,16 +45,22 @@ struct PopStateMachine {
     VBK_ASSERT(!index.hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to apply an already applied block");
 
-    // if block is invalid, return early
-    if (!index.isValid()) {
-      return false;
+    if (index.hasFlags(BLOCK_FAILED_BLOCK)) {
+      return state.Invalid(
+          index_t::block_t::name() + "-marked-invalid",
+          fmt::sprintf("block %s is marked as invalid and cannot be applied",
+                       index.toPrettyString()));
     }
+    VBK_ASSERT(!index.hasFlags(BLOCK_FAILED_CHILD) &&
+               "state corruption: attempted to apply a block that as an "
+               "invalid ancestor");
+    // if the block is marked as BLOCK_FAILED_POP,
+    // we try to apply it and see if it is still invalid
 
     auto containingHash = index.getHash();
     if (!index.payloadsIdsEmpty()) {
       std::vector<const CommandGroup*> executed;
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
-      // even if the block is marked as invalid, we still try to apply it
       for (const auto& cgroup : cgroups) {
         VBK_LOG_DEBUG("Applying payload %s from block %s",
                       HexStr(cgroup.id),
@@ -96,8 +102,9 @@ struct PopStateMachine {
         ed_.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
       }
     } else {
-      // an empty block must be valid
-      VBK_ASSERT(index.isValid());
+      VBK_ASSERT(!index.hasFlags(BLOCK_FAILED_POP) &&
+                 "state corruption: an empty block must not be invalid due to "
+                 "its payloads");
     }
 
     index.setFlag(BLOCK_APPLIED);
@@ -166,9 +173,11 @@ struct PopStateMachine {
       return true;
     }
 
-    // return early, if 'to' is invalid
-    if (!to.isValid()) {
-      return false;
+    if (to.hasFlags(BLOCK_FAILED_BLOCK)) {
+      return state.Invalid(
+          index_t::block_t::name() + "-marked-invalid",
+          fmt::sprintf("block %s is marked as invalid and cannot be applied",
+                       to.toPrettyString()));
     }
 
     VBK_ASSERT(from.getHeight() < to.getHeight());
