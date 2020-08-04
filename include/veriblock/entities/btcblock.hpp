@@ -11,10 +11,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
 #include <veriblock/arith_uint256.hpp>
-#include <veriblock/blockchain/btc_block_addon.hpp>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/blockchain/btc_block_addon.hpp>
 #include <veriblock/fmt.hpp>
 #include <veriblock/hashutil.hpp>
 #include <veriblock/serde.hpp>
@@ -103,7 +102,8 @@ struct BtcBlock {
    */
   uint256 getHash() const;
 
-  static std::string name() { return "BTC"; }
+  static const std::string _name;
+  static const std::string& name() { return _name; }
 
   std::string toPrettyString() const;
 

@@ -7,6 +7,8 @@
 
 using namespace altintegration;
 
+const std::string VbkBlock::_name = "VBK";
+
 VbkBlock VbkBlock::fromRaw(Slice<const uint8_t> bytes) {
   ReadStream stream(bytes);
   return fromRaw(stream);

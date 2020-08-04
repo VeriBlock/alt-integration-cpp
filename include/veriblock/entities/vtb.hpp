@@ -32,13 +32,14 @@ struct VTB {
   std::string toHex() const { return HexStr(toVbkEncoding()); }
 
   std::string toPrettyString() const {
-    return fmt::sprintf("VTB{containingTx=%s(%s), containingBlock=%s, context=%d blocks starting at %s}",
-                        transaction.getHash().toHex(),
-                        transaction.toPrettyString(),
-                        containingBlock.getHash().toHex(),
-                        context.size(),
-                        context.size() > 0 ? context[0].toPrettyString() : "(none)"
-                       );
+    return fmt::sprintf(
+        "VTB{containingTx=%s(%s), containingBlock=%s, context=%d blocks "
+        "starting at %s}",
+        transaction.getHash().toHex(),
+        transaction.toPrettyString(),
+        containingBlock.getHash().toHex(),
+        context.size(),
+        context.size() > 0 ? context[0].toPrettyString() : "(none)");
   }
 
   /**
@@ -82,7 +83,8 @@ struct VTB {
    */
   id_t getId() const;
 
-  static std::string name() { return "VTB"; }
+  static const std::string _name;
+  static const std::string& name() { return _name; }
 
   friend bool operator==(const VTB& a, const VTB& b) {
     return a.getId() == b.getId();
