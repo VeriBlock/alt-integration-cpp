@@ -382,8 +382,14 @@ TYPED_TEST_P(AltTreeRepositoryTest, ReloadWithoutDuplicates_test) {
 
   // add duplicates
   // add duplicate atv
-  this->storagePayloads2->addAltPayloadIndex(
-      containingBlock.getHash(), popData.atvs[0].getId().asVector());
+  //   this->storagePayloads2->addAltPayloadIndex(
+  //       containingBlock.getHash(), popData.atvs[0].getId().asVector());
+
+  popData.atvs.clear();
+  popData.vtbs.clear();
+  EXPECT_TRUE(popData.atvs.empty());
+  EXPECT_TRUE(popData.vtbs.empty());
+  EXPECT_FALSE(popData.context.empty());
 
   // add duplicate vbk blocks
   for (const auto& b : popData.context) {
@@ -402,7 +408,10 @@ TYPED_TEST_P(AltTreeRepositoryTest, ReloadWithoutDuplicates_test) {
       LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
   ASSERT_TRUE(
       LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
-  ASSERT_FALSE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
+  EXPECT_FALSE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
+
+  EXPECT_FALSE(this->state.IsValid());
+  EXPECT_EQ(this->state.GetPath(), "load-tree+ALT-duplicate-payloads");
 }
 
 // make sure to enumerate the test cases here

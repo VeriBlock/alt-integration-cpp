@@ -619,19 +619,7 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
-  if (!payloadsCheckDuplicates<VbkBlock>(
-          *current,
-          current->getPayloadIds<VbkBlock>(),
-          *this,
-          state,
-          [](const VbkBlock::id_t&) -> bool { return false; }) ||
-      !payloadsCheckDuplicates<VTB>(
-          *current,
-          current->getPayloadIds<VTB>(),
-          *this,
-          state,
-          [](const VTB::id_t&) -> bool { return false; }) ||
-      !payloadsCheckDuplicates<ATV>(
+  if (!payloadsCheckDuplicates<ATV>(
           *current,
           current->getPayloadIds<ATV>(),
           *this,
