@@ -223,16 +223,6 @@ void writeDouble(WriteStream& stream, const double& val);
 
 double readDouble(ReadStream& stream);
 
-template <typename T>
-void writeArrayOf(WriteStream& w,
-                  const std::vector<T>& t,
-                  std::function<void(WriteStream& w, const T& t)> f) {
-  writeSingleBEValue(w, (int64_t)t.size());
-  for (auto& v : t) {
-    f(w, v);
-  }
-}
-
 template <typename Container>
 void writeContainer(
     WriteStream& w,
@@ -243,6 +233,13 @@ void writeContainer(
   for (auto& v : t) {
     f(w, v);
   }
+}
+
+template <typename T>
+void writeArrayOf(WriteStream& w,
+                  const std::vector<T>& t,
+                  std::function<void(WriteStream& w, const T& t)> f) {
+  return writeContainer<std::vector<T>>(w, t, f);
 }
 
 }  // namespace altintegration
