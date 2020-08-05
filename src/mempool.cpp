@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/entities/vbkfullblock.hpp"
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -282,14 +283,16 @@ void MemPool::clear() {
 }
 
 template <>
-bool MemPool::submit(const ATV& atv, ValidationState& state) {
+bool MemPool::submit(const ATV& atv,
+                     ValidationState& state,
+                     bool shouldDoContextualCheck) {
   // stateless validation
   if (!checkATV(atv, state, tree_->getParams(), tree_->vbk().getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
   }
 
   // stateful validation
-  if (!checkContextually(atv, state)) {
+  if (shouldDoContextualCheck && !checkContextually(atv, state)) {
     return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
@@ -316,7 +319,9 @@ bool MemPool::submit(const ATV& atv, ValidationState& state) {
 }
 
 template <>
-bool MemPool::submit(const VTB& vtb, ValidationState& state) {
+bool MemPool::submit(const VTB& vtb,
+                     ValidationState& state,
+                     bool shouldDoContextualCheck) {
   auto& vbk = tree_->vbk();
   // stateless validation
   if (!checkVTB(vtb, state, vbk.getParams(), vbk.btc().getParams())) {
@@ -324,7 +329,7 @@ bool MemPool::submit(const VTB& vtb, ValidationState& state) {
   }
 
   // stateful validation
-  if (!checkContextually(vtb, state)) {
+  if (shouldDoContextualCheck && !checkContextually(vtb, state)) {
     return state.Invalid("pop-mempool-submit-vtb-stateful");
   }
 
@@ -350,14 +355,16 @@ bool MemPool::submit(const VTB& vtb, ValidationState& state) {
 }
 
 template <>
-bool MemPool::submit(const VbkBlock& blk, ValidationState& state) {
+bool MemPool::submit(const VbkBlock& blk,
+                     ValidationState& state,
+                     bool shouldDoContextualCheck) {
   // stateless validation
   if (!checkBlock(blk, state, tree_->vbk().getParams())) {
     return state.Invalid("pop-mempool-submit-vbkblock-stateless");
   }
 
   // stateful validation
-  if (!tree_->vbk().getBlockIndex(blk.getHash())) {
+  if (!shouldDoContextualCheck || !tree_->vbk().getBlockIndex(blk.getHash())) {
     // duplicate
     touchVbkBlock(blk, blk.getId());
   }

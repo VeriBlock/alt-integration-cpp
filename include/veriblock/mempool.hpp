@@ -71,7 +71,7 @@ struct MemPool {
   }
 
   template <typename T>
-  bool submit(const T& pl, ValidationState& state) {
+  bool submit(const T& pl, ValidationState& state, bool shouldDoContextualCheck = true) {
     (void)pl;
     (void)state;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
@@ -125,9 +125,9 @@ struct MemPool {
 
 // clang-format off
 
-template <> bool MemPool::submit(const ATV& atv, ValidationState& state);
-template <> bool MemPool::submit(const VTB& vtb, ValidationState& state);
-template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state);
+template <> bool MemPool::submit(const ATV& atv, ValidationState& state, bool shouldDoContextualCheck);
+template <> bool MemPool::submit(const VTB& vtb, ValidationState& state, bool shouldDoContextualCheck);
+template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state, bool shouldDoContextualCheck);
 template <> bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state);
 template <> bool MemPool::checkContextually<ATV>(const ATV& id, ValidationState& state);
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
