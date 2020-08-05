@@ -414,32 +414,6 @@ struct PopAwareForkResolutionComparator {
     return false;
   }
 
-  //! finds a path between current ed's best chain and 'to', and applies all
-  //! commands in between
-  // atomic: either changes the state to 'to' or leaves it unchanged
-  bool validate(ProtectedBlockTree& ed,
-                protected_index_t& to,
-                ValidationState& state) {
-    auto* currentActive = ed.getBestChain().tip();
-    VBK_ASSERT(currentActive && "should be bootstrapped");
-
-    if (*currentActive == to) {
-      // already at this state
-      return true;
-    }
-
-    auto guard = ing_->deferForkResolutionGuard();
-    auto originalTip = ing_->getBestChain().tip();
-
-    sm_t sm(ed, *ing_, storage_);
-    if (sm.setState(*currentActive, to, state)) {
-      return true;
-    }
-
-    guard.overrideDeferredForkResolution(originalTip);
-    return false;
-  }
-
   /**
    * Compare the currently applied(best) and candidate chains
    * @return 0 if the chains are equal,

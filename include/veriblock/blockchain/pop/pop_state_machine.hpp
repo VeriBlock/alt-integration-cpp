@@ -39,11 +39,16 @@ struct PopStateMachine {
   // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
     VBK_ASSERT(index.pprev && "cannot apply the genesis block");
+
     VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to apply a block that follows an "
                "unapplied block");
     VBK_ASSERT(!index.hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to apply an already applied block");
+    // an expensive check; might want to  disable it eventually
+    VBK_ASSERT(index.allDescendantsUnapplied() &&
+               "state corruption: found an unapplied block that has some of "
+               "its descendants applied");
 
     if (index.hasFlags(BLOCK_FAILED_BLOCK)) {
       return state.Invalid(
@@ -58,40 +63,50 @@ struct PopStateMachine {
     // we try to apply it and see if it is still invalid
 
     auto containingHash = index.getHash();
-    if (!index.payloadsIdsEmpty()) {
-      std::vector<const CommandGroup*> executed;
+    if (index.hasPayloads()) {
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
-      for (const auto& cgroup : cgroups) {
+
+      for (auto cgroup = cgroups.cbegin(); cgroup != cgroups.cend(); ++cgroup) {
         VBK_LOG_DEBUG("Applying payload %s from block %s",
-                      HexStr(cgroup.id),
+                      HexStr(cgroup->id),
                       index.toShortPrettyString());
 
-        if (cgroup.execute(state)) {
-          executed.emplace_back(&cgroup);
+        if (cgroup->execute(state)) {
           // we were able to apply the command group, so flag it as valid,
           // unless we are in in 'continueOnInvalid' mode which precludes
           // payload re-validation
           if (!continueOnInvalid_) {
-            storage_.setValidity(containingHash, cgroup.id, true);
+            storage_.setValidity(containingHash, cgroup->id, true);
           }
+
         } else {
           // flag the command group as invalid
-          storage_.setValidity(containingHash, cgroup.id, false);
+          storage_.setValidity(containingHash, cgroup->id, false);
 
           if (continueOnInvalid_) {
-            removePayloadsFromIndex<block_t>(storage_, index, cgroup);
+            removePayloadsFromIndex<block_t>(storage_, index, *cgroup);
             state.clear();
-
-          } else {
-            cleanupAll(index, executed, state);
-
-            // if the block is marked as valid, invalidate its subtree
-            if (index.isValid()) {
-              ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-            }
-
-            return state.Invalid(index_t::block_t::name() + "-bad-command");
+            continue;
           }
+
+          VBK_LOG_ERROR("Invalid %s command in block %s: %s",
+                        index_t::block_t::name(),
+                        index.toPrettyString(),
+                        state.toString());
+
+          // unexecute executed command groups in the reverse order
+          for (auto r_group = std::reverse_iterator<decltype(cgroup)>(cgroup);
+               r_group != cgroups.rend();
+               ++r_group) {
+            r_group->unExecute();
+          }
+
+          // if the block is marked as valid, invalidate its subtree
+          if (index.isValid()) {
+            ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+          }
+
+          return state.Invalid(index_t::block_t::name() + "-bad-command");
         }
 
       }  // end for
@@ -113,23 +128,19 @@ struct PopStateMachine {
 
   // atomic: applies either all of the block's commands or fails on an assert
   void unapplyBlock(index_t& index) {
-    // this check is expensive; might want to eventually disable it
-    bool allLeavesUnapplied =
-        std::all_of(index.pnext.begin(), index.pnext.end(), [](index_t* index) {
-          return !index->hasFlags(BLOCK_APPLIED);
-        });
-    VBK_ASSERT(allLeavesUnapplied &&
-               "state corruption: tried to unapply a block before unapplying "
-               "its applied leaves");
+    VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
 
     VBK_ASSERT(index.hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to unapply an already unapplied block");
-    VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
     VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to unapply a block that follows an "
                "unapplied block");
+    // an expensive check; might want to  disable it eventually
+    VBK_ASSERT(index.allDescendantsUnapplied() &&
+               "state corruption: tried to unapply a block before unapplying "
+               "its applied descendants");
 
-    if (!index.payloadsIdsEmpty()) {
+    if (index.hasPayloads()) {
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
       for (const auto& cgroup : reverse_iterate(cgroups)) {
         VBK_LOG_DEBUG("Unapplying payload %s from block %s",
@@ -228,8 +239,8 @@ struct PopStateMachine {
     unapply(from, *forkBlock);
     if (!apply(*forkBlock, to, state)) {
       // attempted to switch to an invalid block, rollback
-      bool ret = apply(*forkBlock, from, state);
-      VBK_ASSERT(ret);
+      bool success = apply(*forkBlock, from, state);
+      VBK_ASSERT(success && "state corruption: failed to rollback the state");
 
       return false;
     }
@@ -240,21 +251,6 @@ struct PopStateMachine {
   ProtectingBlockTree& tree() { return ing_; }
   const ProtectingBlockTree& tree() const { return ing_; }
   const ProtectedChainParams& params() const { return ed_.getParams(); }
-
- private:
-  void cleanupAll(index_t& index,
-                  const std::vector<const CommandGroup*>& executed,
-                  ValidationState& state) {
-    VBK_LOG_ERROR("Invalid %s command in block %s: %s",
-                  index_t::block_t::name(),
-                  index.toPrettyString(),
-                  state.toString());
-
-    // unexecute executed commands in the reverse order
-    for (auto* group : reverse_iterate(executed)) {
-      group->unExecute();
-    }
-  }
 
  private:
   ProtectedTree& ed_;
