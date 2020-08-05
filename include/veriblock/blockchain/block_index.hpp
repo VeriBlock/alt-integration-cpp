@@ -121,14 +121,26 @@ struct BlockIndex : public Block::addon_t {
     setDirty();
   }
 
+  /**
+   * The block is a valid tip if it is valid and either there are no descendant
+   * blocks or all the descendants are invalid
+   */
   bool isValidTip() const {
-    // can be a valid tip iff there're no next blocks or all next blocks are
-    // invalid
     return isValid() &&
            (pnext.empty() ||
             std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
               return !index->isValid();
             }));
+  }
+
+  /**
+   *  Check if all immediate descendants of the block are unapplied
+   */
+  bool allDescendantsUnapplied() const {
+    return pnext.empty() ||
+           std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+             return !index->hasFlags(BLOCK_APPLIED);
+           });
   }
 
   const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
