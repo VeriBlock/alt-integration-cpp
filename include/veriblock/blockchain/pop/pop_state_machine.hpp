@@ -59,39 +59,49 @@ struct PopStateMachine {
 
     auto containingHash = index.getHash();
     if (index.hasPayloads()) {
-      std::vector<const CommandGroup*> executed;
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
-      for (const auto& cgroup : cgroups) {
+
+      for (auto cgroup = cgroups.cbegin(); cgroup != cgroups.cend(); ++cgroup) {
         VBK_LOG_DEBUG("Applying payload %s from block %s",
-                      HexStr(cgroup.id),
+                      HexStr(cgroup->id),
                       index.toShortPrettyString());
 
-        if (cgroup.execute(state)) {
-          executed.emplace_back(&cgroup);
+        if (cgroup->execute(state)) {
           // we were able to apply the command group, so flag it as valid,
           // unless we are in in 'continueOnInvalid' mode which precludes
           // payload re-validation
           if (!continueOnInvalid_) {
-            storage_.setValidity(containingHash, cgroup.id, true);
+            storage_.setValidity(containingHash, cgroup->id, true);
           }
+
         } else {
           // flag the command group as invalid
-          storage_.setValidity(containingHash, cgroup.id, false);
+          storage_.setValidity(containingHash, cgroup->id, false);
 
           if (continueOnInvalid_) {
-            removePayloadsFromIndex<block_t>(storage_, index, cgroup);
+            removePayloadsFromIndex<block_t>(storage_, index, *cgroup);
             state.clear();
-
-          } else {
-            cleanupAll(index, executed, state);
-
-            // if the block is marked as valid, invalidate its subtree
-            if (index.isValid()) {
-              ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-            }
-
-            return state.Invalid(index_t::block_t::name() + "-bad-command");
+            continue;
           }
+
+          VBK_LOG_ERROR("Invalid %s command in block %s: %s",
+                        index_t::block_t::name(),
+                        index.toPrettyString(),
+                        state.toString());
+
+          // unexecute executed command groups in the reverse order
+          for (auto r_group = std::reverse_iterator<decltype(cgroup)>(cgroup);
+               r_group != cgroups.rend();
+               ++r_group) {
+            r_group->unExecute();
+          }
+
+          // if the block is marked as valid, invalidate its subtree
+          if (index.isValid()) {
+            ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+          }
+
+          return state.Invalid(index_t::block_t::name() + "-bad-command");
         }
 
       }  // end for
@@ -228,8 +238,8 @@ struct PopStateMachine {
     unapply(from, *forkBlock);
     if (!apply(*forkBlock, to, state)) {
       // attempted to switch to an invalid block, rollback
-      bool ret = apply(*forkBlock, from, state);
-      VBK_ASSERT(ret);
+      bool success = apply(*forkBlock, from, state);
+      VBK_ASSERT(success && "state corruption: failed to rollback the state");
 
       return false;
     }
@@ -240,21 +250,6 @@ struct PopStateMachine {
   ProtectingBlockTree& tree() { return ing_; }
   const ProtectingBlockTree& tree() const { return ing_; }
   const ProtectedChainParams& params() const { return ed_.getParams(); }
-
- private:
-  void cleanupAll(index_t& index,
-                  const std::vector<const CommandGroup*>& executed,
-                  ValidationState& state) {
-    VBK_LOG_ERROR("Invalid %s command in block %s: %s",
-                  index_t::block_t::name(),
-                  index.toPrettyString(),
-                  state.toString());
-
-    // unexecute executed commands in the reverse order
-    for (auto* group : reverse_iterate(executed)) {
-      group->unExecute();
-    }
-  }
 
  private:
   ProtectedTree& ed_;
