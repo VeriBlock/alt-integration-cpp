@@ -48,7 +48,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
     }
   }
 
-  bool payloadsIdsEmpty() const { return _vtbids.empty(); }
+  bool hasPayloads() const { return !_vtbids.empty(); }
 
   template <typename pop_t>
   const std::vector<typename pop_t::id_t>& getPayloadIds() const;

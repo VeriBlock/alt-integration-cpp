@@ -58,7 +58,7 @@ struct PopStateMachine {
     // we try to apply it and see if it is still invalid
 
     auto containingHash = index.getHash();
-    if (!index.payloadsIdsEmpty()) {
+    if (index.hasPayloads()) {
       std::vector<const CommandGroup*> executed;
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
       for (const auto& cgroup : cgroups) {
@@ -129,7 +129,7 @@ struct PopStateMachine {
                "state corruption: tried to unapply a block that follows an "
                "unapplied block");
 
-    if (!index.payloadsIdsEmpty()) {
+    if (index.hasPayloads()) {
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
       for (const auto& cgroup : reverse_iterate(cgroups)) {
         VBK_LOG_DEBUG("Unapplying payload %s from block %s",
