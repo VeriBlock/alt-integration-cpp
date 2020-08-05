@@ -184,7 +184,7 @@ bool checkNoPayloadDuplicatesInOtherBlocks(
          storage.getContainingAltBlocks(pid.asVector())) {
       auto* containingIndex = tree.getBlockIndex(containingBlock);
       if (containingIndex == nullptr) {
-        continue;
+        return false;
       }
 
       // is `containing` block of this payload is descendant of `index`?
