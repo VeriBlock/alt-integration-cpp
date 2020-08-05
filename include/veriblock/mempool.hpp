@@ -74,6 +74,7 @@ struct MemPool {
   bool submit(const T& pl, ValidationState& state, bool shouldDoContextualCheck = true) {
     (void)pl;
     (void)state;
+    (void)shouldDoContextualCheck;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return true;
   }
