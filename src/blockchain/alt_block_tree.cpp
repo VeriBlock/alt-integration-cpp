@@ -183,9 +183,9 @@ bool checkNoPayloadDuplicatesInOtherBlocks(
     for (const auto& containingBlock :
          storage.getContainingAltBlocks(pid.asVector())) {
       auto* containingIndex = tree.getBlockIndex(containingBlock);
-      VBK_ASSERT(
-          containingIndex != nullptr &&
-          "state corruption: the storage index and block tree are out of sync");
+      if (containingIndex == nullptr) {
+        continue;
+      }
 
       // is `containing` block of this payload is descendant of `index`?
       if (containingIndex->getHeight() > index.getHeight()) {

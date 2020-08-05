@@ -473,7 +473,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, ReloadWithoutDuplicates_test2) {
   EXPECT_FALSE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
 
   EXPECT_FALSE(this->state.IsValid());
-  EXPECT_EQ(this->state.GetPath(), "load-tree+ALT-duplicate-payloads-VBK");
+  EXPECT_EQ(this->state.GetPath(), "load-tree+ALT-duplicate-payloads-ATV-ancestor");
 }
 
 // make sure to enumerate the test cases here
