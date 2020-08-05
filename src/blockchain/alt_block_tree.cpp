@@ -43,19 +43,18 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 template <typename Pop>
-bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
-                             std::vector<Pop>& payloads,
-                             AltTree&,
-                             ValidationState& state,
-                             bool continueOnInvalid = false) {
+bool payloadsCheckDuplicates(
+    BlockIndex<AltBlock>& index,
+    const std::vector<typename Pop::id_t>& payload_ids,
+    AltTree&,
+    ValidationState& state,
+    std::function<bool(const typename Pop::id_t&)> remove_payload) {
   auto& v = index.template getPayloadIds<Pop>();
   std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
-  for (auto it = payloads.begin(); it != payloads.end();) {
-    auto pid = it->getId();
+  for (size_t i = 0; i < payload_ids.size(); ++i) {
+    auto& pid = payload_ids[i];
     if (!existingPids.insert(pid).second) {
-      if (continueOnInvalid) {
-        // remove duplicate id
-        it = payloads.erase(it);
+      if (remove_payload(pid)) {
         continue;
       }
 
@@ -66,36 +65,33 @@ bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
                        Pop::name(),
                        pid.toHex()));
     }
-    ++it;
   }
 
   return true;
 }
 
 template <>
-bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
-                             std::vector<VbkBlock>& payloads,
-                             AltTree& tree,
-                             ValidationState& state,
-                             bool continueOnInvalid) {
+bool payloadsCheckDuplicates<VbkBlock>(
+    BlockIndex<AltBlock>& index,
+    const std::vector<typename VbkBlock::id_t>& payload_ids,
+    AltTree& tree,
+    ValidationState& state,
+    std::function<bool(const typename VbkBlock::id_t&)> remove_payload) {
   auto& v = index.template getPayloadIds<VbkBlock>();
   Chain<BlockIndex<AltBlock>> chain(tree.getParams().getBootstrapBlock().height,
                                     &index);
 
   std::set<typename VbkBlock::id_t> existingPids(v.begin(), v.end());
-  for (auto it = payloads.begin(); it != payloads.end();) {
-    auto pid = it->getId();
+  for (size_t i = 0; i < payload_ids.size(); ++i) {
+    auto& pid = payload_ids[i];
 
     // check that VbkBlocks do not contain in the current chain
     auto alt_block_hashes =
         tree.getStorage().getContainingAltBlocks(pid.asVector());
-    bool removed = false;
     for (const auto& hash : alt_block_hashes) {
       auto* b_index = tree.getBlockIndex(hash);
       if (chain.contains(b_index)) {
-        if (continueOnInvalid) {
-          it = payloads.erase(it);
-          removed = true;
+        if (remove_payload(pid)) {
           break;
         }
 
@@ -106,15 +102,33 @@ bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
                          pid.toHex()));
       }
     }
-
-    if (removed) {
-      continue;
-    }
-
-    ++it;
   }
 
   return true;
+}
+
+template <typename Pop>
+bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
+                             std::vector<Pop>& payloads,
+                             AltTree& tree,
+                             ValidationState& state,
+                             bool continueOnInvalid = false) {
+  auto remove_payload =
+      [&payloads, &continueOnInvalid](const typename Pop::id_t& id) -> bool {
+    if (continueOnInvalid) {
+      for (size_t i = 0; i < payloads.size(); ++i) {
+        if (id == payloads[i].getId()) {
+          payloads.erase(payloads.begin() + i);
+        }
+      }
+      return true;
+    }
+
+    return false;
+  };
+
+  return payloadsCheckDuplicates<Pop>(
+      index, map_get_id(payloads), tree, state, remove_payload);
 }
 
 template <typename Pop>
@@ -604,6 +618,27 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   auto containingHash = index.getHash();
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
+
+  if (!payloadsCheckDuplicates<VbkBlock>(
+          *current,
+          current->getPayloadIds<VbkBlock>(),
+          *this,
+          state,
+          [](const VbkBlock::id_t&) -> bool { return false; }) ||
+      !payloadsCheckDuplicates<VTB>(
+          *current,
+          current->getPayloadIds<VTB>(),
+          *this,
+          state,
+          [](const VTB::id_t&) -> bool { return false; }) ||
+      !payloadsCheckDuplicates<ATV>(
+          *current,
+          current->getPayloadIds<ATV>(),
+          *this,
+          state,
+          [](const ATV::id_t&) -> bool { return false; })) {
+    return false;
+  }
 
   // recover `endorsedBy`
   auto window = std::max(
