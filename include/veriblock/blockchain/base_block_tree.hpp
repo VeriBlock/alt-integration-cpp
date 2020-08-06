@@ -122,7 +122,7 @@ struct BaseBlockTree {
 
   void removeSubtree(const hash_t& toRemove) {
     auto* index = getBlockIndex(toRemove);
-    VBK_ASSERT(index && "can not find the subtree to remove");
+    VBK_ASSERT(index && "cannot find the subtree to remove");
     return this->removeSubtree(*index);
   }
 
@@ -130,7 +130,7 @@ struct BaseBlockTree {
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
-    VBK_ASSERT(prev && "can not remove genesis block");
+    VBK_ASSERT(prev && "cannot remove the genesis block");
 
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
@@ -161,7 +161,7 @@ struct BaseBlockTree {
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
     auto* index = getBlockIndex(toBeInvalidated);
-    VBK_ASSERT(index && "could not find the subtree to invalidate");
+    VBK_ASSERT(index && "cannot find the subtree to invalidate");
     return invalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
 
@@ -172,7 +172,23 @@ struct BaseBlockTree {
                  block_t::name(),
                  (int)reason,
                  toBeInvalidated.toShortPrettyString());
-    VBK_ASSERT(toBeInvalidated.pprev && "can not invalidate genesis block");
+
+    VBK_ASSERT(toBeInvalidated.pprev && "cannot invalidate the genesis block");
+
+    VBK_ASSERT(isValidInvalidationReason(reason) &&
+               "invalid invalidation reason");
+
+    if (toBeInvalidated.hasFlags(reason)) {
+      return;
+    }
+
+    // all descendants of an invalid block are already flagged as
+    // BLOCK_FAILED_CHILD
+    if (!toBeInvalidated.isValid()) {
+      doInvalidate(toBeInvalidated, reason);
+      return;
+    }
+
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
       ValidationState dummy;
@@ -204,10 +220,14 @@ struct BaseBlockTree {
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
     auto* index = this->getBlockIndex(hash);
-    VBK_ASSERT(index && "can not find subtree to revalidate");
+    VBK_ASSERT(index && "cannot find the subtree to revalidate");
     revalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
 
+  /*
+   * `tobeValidated` does NOT necessarily become valid after a call to this
+   * function.
+   */
   void revalidateSubtree(index_t& toBeValidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
@@ -215,6 +235,23 @@ struct BaseBlockTree {
                  block_t::name(),
                  (int)reason,
                  toBeValidated.toShortPrettyString());
+
+    VBK_ASSERT(toBeValidated.pprev && "cannot revalidate the genesis block");
+
+    VBK_ASSERT(isValidInvalidationReason(reason) &&
+               "invalid revalidation reason");
+
+    if (!toBeValidated.hasFlags(reason)) {
+      return;
+    }
+
+    // if the block has any invalidity flags other than `reason`, its
+    // descendants are already flagged as BLOCK_FAILED_CHILD and should stay so
+    if (toBeValidated.hasFlags(static_cast<enum BlockStatus>(BLOCK_FAILED_MASK & ~reason))) {
+      doReValidate(toBeValidated, reason);
+      return;
+    }
+
     doReValidate(toBeValidated, reason);
     tryAddTip(&toBeValidated);
 

@@ -243,7 +243,8 @@ bool checkNoPayloadDuplicatesInOtherBlocks(AltTree& tree,
           // `pid`. Block that is later, becomes invalid, all its descendants
           // become invalid.
           storage.setValidity(containingBlock, pid, false);
-          tree.invalidateSubtree(*containingIndex, BLOCK_FAILED_POP, false);
+          tree.invalidateSubtree(
+              *containingIndex, BLOCK_FAILED_POP, /*do fr=*/false);
         } else {
           // `containing` already has `pid`, but is on different chain than
           // `index`
@@ -533,7 +534,7 @@ void handleRemovePayloads(Tree& tree,
     }
 
     if (!storage.getValidity(containingHash, pid)) {
-      tree.revalidateSubtree(index, BLOCK_FAILED_POP, false);
+      tree.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
     }
 
     index.template removePayloadId<Pop>(pid);

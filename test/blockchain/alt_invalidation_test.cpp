@@ -25,6 +25,8 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
   size_t connId = 0;
   size_t totalInvalidations = 0;
 
+  BlockIndex<AltBlock>*earlier, *earlierChild, *latter, *latterChild;
+
   AltInvalidationTest() {
     tip = mineAltBlocks(*alttree.getBlocks().begin()->second, 10);
     EXPECT_TRUE(tip->hasFlags(BLOCK_VALID_TREE));
@@ -33,6 +35,41 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
 
     connId = alttree.connectOnValidityBlockChanged(
         [&](const BlockIndex<AltBlock>&) { totalInvalidations++; });
+
+    // we are going to change the validity of 'earlier'/'latter'
+    // and test the status changes of earlierChild/latterChild
+    earlier = tip->getAncestor(5);
+    earlierChild = tip->getAncestor(7);
+    latter = tip->getAncestor(8);
+    latterChild = tip->getAncestor(10);
+  }
+
+  void ASSERT_EARLIER_VALID() {
+    ASSERT_TRUE(earlier->isValid());
+    ASSERT_TRUE(earlierChild->isValid());
+  }
+
+  void ASSERT_EARLIER_INVALID() {
+    ASSERT_FALSE(earlier->isValid());
+    ASSERT_FALSE(earlierChild->isValid());
+  }
+
+  void ASSERT_LATTER_VALID() {
+    ASSERT_TRUE(latter->isValid());
+    ASSERT_TRUE(latterChild->isValid());
+  };
+
+  void ASSERT_LATTER_INVALID() {
+    ASSERT_FALSE(latter->isValid());
+    ASSERT_FALSE(latterChild->isValid());
+  }
+  void ASSERT_ALL_VALID() {
+    ASSERT_EARLIER_VALID();
+    ASSERT_LATTER_VALID();
+  }
+  void ASSERT_ALL_INVALID() {
+    ASSERT_EARLIER_INVALID();
+    ASSERT_LATTER_INVALID();
   }
 
   template <typename Block, typename F>
@@ -84,6 +121,132 @@ TEST_F(AltInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
   } while (current != nullptr);
 
   ASSERT_EQ(totalInvalidations, 6);
+}
+
+TEST_F(AltInvalidationTest, MultipleInvalidationsOfTheSameBlock) {
+  ASSERT_ALL_VALID();
+
+  // intial invalidation of 'earlier'
+  alttree.invalidateSubtree(*earlier, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_INVALID();
+
+  // add one more invalidity reason for 'earlier'
+  alttree.invalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+
+  // remove the initial invalidation reason, the blocks should stay invalid
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_INVALID();
+
+  // remove the initial invalidation reason again, must be a no-op
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_INVALID();
+
+  // remove the last invalidation reason, the blocks should become valid
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_VALID();
+}
+
+TEST_F(AltInvalidationTest, OverlappingInvalidations1) {
+  ASSERT_ALL_VALID();
+
+  // the earlier block becomes invalid
+  alttree.invalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+
+  // the latter block becomes invalid for multiple reasons
+  alttree.invalidateSubtree(*latter, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+  alttree.invalidateSubtree(*latter, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_INVALID();
+
+  // the latter block is revalidated, stays invalid
+  alttree.revalidateSubtree(*latter, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+  alttree.revalidateSubtree(*latter, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_INVALID();
+
+  // the earlier block is revalidated, all blocks become valid
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_VALID();
+}
+
+TEST_F(AltInvalidationTest, OverlappingInvalidations2) {
+  ASSERT_ALL_VALID();
+
+  // the earlier block becomes invalid
+  alttree.invalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+
+  // the latter block becomes invalid for multiple reasons
+  alttree.invalidateSubtree(*latter, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+  alttree.invalidateSubtree(*latter, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_INVALID();
+
+  // the earlier block is revalidated and becomes valid
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_EARLIER_VALID();
+  ASSERT_LATTER_INVALID();
+
+  // the latter block is revalidated, all blocks become valid
+  alttree.revalidateSubtree(*latter, BLOCK_FAILED_POP);
+  ASSERT_EARLIER_VALID();
+  ASSERT_LATTER_INVALID();
+
+  alttree.revalidateSubtree(*latter, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_VALID();
+}
+
+TEST_F(AltInvalidationTest, OverlappingInvalidations3) {
+  ASSERT_ALL_VALID();
+
+  // the latter block becomes invalid
+  alttree.invalidateSubtree(*latter, BLOCK_FAILED_POP);
+  ASSERT_EARLIER_VALID();
+  ASSERT_LATTER_INVALID();
+
+  // the earlier block becomes invalid for multiple reasons
+  alttree.invalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+  alttree.invalidateSubtree(*earlier, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_INVALID();
+
+  // the earlier block is revalidated and becomes valid
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_BLOCK);
+  ASSERT_EARLIER_VALID();
+  ASSERT_LATTER_INVALID();
+
+  // the latter block is revalidated, all blocks become valid
+  alttree.revalidateSubtree(*latter, BLOCK_FAILED_POP);
+  ASSERT_ALL_VALID();
+}
+
+TEST_F(AltInvalidationTest, OverlappingInvalidations4) {
+  ASSERT_ALL_VALID();
+
+  // the latter block becomes invalid
+  alttree.invalidateSubtree(*latter, BLOCK_FAILED_POP);
+  ASSERT_EARLIER_VALID();
+  ASSERT_LATTER_INVALID();
+
+  // the earlier block becomes invalid for multiple reasons
+  alttree.invalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+  alttree.invalidateSubtree(*earlier, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_INVALID();
+
+  // the latter block is revalidated, remains invalid
+  alttree.revalidateSubtree(*latter, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+
+  // the earlier block is revalidated and becomes valid
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_POP);
+  ASSERT_ALL_INVALID();
+  alttree.revalidateSubtree(*earlier, BLOCK_FAILED_BLOCK);
+  ASSERT_ALL_VALID();
 }
 
 TEST_F(AltInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
