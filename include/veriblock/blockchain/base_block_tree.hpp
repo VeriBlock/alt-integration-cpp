@@ -231,13 +231,12 @@ struct BaseBlockTree {
   void revalidateSubtree(index_t& toBeValidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
-    VBK_LOG_INFO("Revalidating %s subtree: reason=%d block=%s",
+    VBK_LOG_DEBUG("Revalidating %s subtree: reason=%d block=%s",
                  block_t::name(),
                  (int)reason,
                  toBeValidated.toShortPrettyString());
 
     VBK_ASSERT(toBeValidated.pprev && "cannot revalidate the genesis block");
-
     VBK_ASSERT(isValidInvalidationReason(reason) &&
                "invalid revalidation reason");
 
