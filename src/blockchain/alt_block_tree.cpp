@@ -48,7 +48,7 @@ bool payloadsCheckDuplicates(
     const std::vector<typename Pop::id_t>& payloads,
     AltTree&,
     ValidationState& state,
-    std::function<bool(const typename Pop::id_t&)> remove_function =
+    const std::function<bool(const typename Pop::id_t&)>& remove_function =
         [](const typename Pop::id_t&) { return false; }) {
   auto& v = index.template getPayloadIds<Pop>();
   std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
@@ -78,7 +78,8 @@ bool payloadsCheckDuplicates<VbkBlock>(
     const std::vector<typename VbkBlock::id_t>& vbkblocks,
     AltTree& tree,
     ValidationState& state,
-    std::function<bool(const typename VbkBlock::id_t&)> remove_function) {
+    const std::function<bool(const typename VbkBlock::id_t&)>&
+        remove_function) {
   Chain<BlockIndex<AltBlock>> chain(tree.getParams().getBootstrapBlock().height,
                                     &index);
   for (size_t i = 0; i < vbkblocks.size(); ++i) {
