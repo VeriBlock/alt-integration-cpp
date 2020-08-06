@@ -19,15 +19,8 @@ struct PopRewardsCurveParamsSerializable : public PopRewardsCurveParams {
 
   double slopeKeystone() const noexcept override { return slopeKeystone_; }
 
-  static PopRewardsCurveParamsSerializable fromRaw(ReadStream& stream);
-
-  static PopRewardsCurveParamsSerializable fromRaw(
-      const std::vector<uint8_t>& bytes);
-
  private:
-  double startOfSlope_;
-  double slopeNormal_;
-  double slopeKeystone_;
+
 };
 
 struct PopRewardsParamsSerializable : public PopRewardsParams {

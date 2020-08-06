@@ -16,79 +16,126 @@
 namespace altintegration {
 
 struct PopRewardsCurveParams {
-  virtual ~PopRewardsCurveParams() = default;
-
   // we start decreasing rewards after this score
-  virtual double startOfSlope() const noexcept { return 1.0; }
+  double startOfSlope() const noexcept { return mStartOfSlope; }
 
   // we decrease reward coefficient for this value for
   // each additional score point above startOfDecreasingLine
-  virtual double slopeNormal() const noexcept { return 0.2; }
+  double slopeNormal() const noexcept { return mSlopeNormal; }
 
   // slope for keystone rounds
-  virtual double slopeKeystone() const noexcept { return 0.21325; }
+  double slopeKeystone() const noexcept { return mSlopeKeystone; }
 
-  std::vector<uint8_t> toRaw() const;
+  void toRaw(WriteStream& stream) const {
+    writeDouble(stream, this->startOfSlope());
+    writeDouble(stream, this->slopeNormal());
+    writeDouble(stream, this->slopeKeystone());
+  }
 
-  void toRaw(WriteStream& stream) const;
+  static PopRewardsCurveParams fromRaw(ReadStream& stream) {
+    PopRewardsCurveParams param;
+    param.mStartOfSlope = readDouble(stream);
+    param.mSlopeNormal = readDouble(stream);
+    param.mSlopeKeystone = readDouble(stream);
+    return param;
+  }
+
+ protected:
+  double mStartOfSlope = 1.0;
+  double mSlopeNormal = 0.2;
+  double mSlopeKeystone = 0.21325;
 };
 
 struct PopRewardsParams {
-  virtual ~PopRewardsParams() = default;
-
   // we use this round number to detect keystones
-  virtual uint32_t keystoneRound() const noexcept { return 3; }
+  uint32_t keystoneRound() const noexcept { return mKeystoneRound; }
 
   // we have this number of rounds eg rounds 0, 1, 2, 3
-  virtual uint32_t payoutRounds() const noexcept { return 4; }
+  uint32_t payoutRounds() const noexcept { return mPayoutRounds; }
 
   // we use this round number to pay flat reward (does not depend on pop
   // difficulty)
-  virtual uint32_t flatScoreRound() const noexcept { return 2; }
+  uint32_t flatScoreRound() const noexcept { return mFlatScoreRound; }
 
   // should we use flat rewards at all
-  virtual bool flatScoreRoundUse() const noexcept { return true; }
+  bool flatScoreRoundUse() const noexcept { return mFlatScoreRoundUse; }
 
   // we have these payout modifiers for different rounds. Keystone round has
   // the highest multiplier
-  virtual const std::vector<double>& roundRatios() const noexcept {
-    return roundRatios_;
+  const std::vector<double>& roundRatios() const noexcept {
+    return mRoundRatios;
   }
 
   // limit block score to this value
-  virtual double maxScoreThresholdNormal() const noexcept { return 2.0; }
+  double maxScoreThresholdNormal() const noexcept {
+    return mMaxScoreThresholdNormal;
+  }
 
   // limit block with keystones score to this value
-  virtual double maxScoreThresholdKeystone() const noexcept { return 3.0; }
+  double maxScoreThresholdKeystone() const noexcept {
+    return mMaxScoreThresholdKeystone;
+  }
 
   // collect this amount of blocks BEFORE the block to calculate pop difficulty
-  virtual uint32_t difficultyAveragingInterval() const noexcept { return 50; }
+  uint32_t difficultyAveragingInterval() const noexcept {
+    return mDifficultyAveragingInterval;
+  }
 
   // getter for reward curve parameters
-  virtual const PopRewardsCurveParams& getCurveParams() const noexcept {
-    return *curveParams;
+  const PopRewardsCurveParams& getCurveParams() const noexcept {
+    return curveParams;
   }
 
   // reward score table
   // we score each VeriBlock and lower the reward for late blocks
-  virtual const std::vector<double>& relativeScoreLookupTable() const noexcept {
-    return lookupTable_;
+  const std::vector<double>& relativeScoreLookupTable() const noexcept {
+    return mLookupTable;
   }
 
-  std::vector<uint8_t> toRaw() const;
+  void toRaw(WriteStream& stream) const {
+    stream.writeBE<uint32_t>(this->keystoneRound());
+    stream.writeBE<uint32_t>(this->payoutRounds());
+    stream.writeBE<uint32_t>(this->flatScoreRound());
+    stream.writeBE<uint8_t>(this->flatScoreRoundUse());
+    writeArrayOf<double>(stream, this->roundRatios(), writeDouble);
+    writeDouble(stream, this->maxScoreThresholdNormal());
+    writeDouble(stream, this->maxScoreThresholdKeystone());
+    stream.writeBE<uint32_t>(this->difficultyAveragingInterval());
+    writeArrayOf<double>(stream, this->relativeScoreLookupTable(), writeDouble);
+    this->getCurveParams().toRaw(stream);
+  }
 
-  void toRaw(WriteStream& stream) const;
+  static PopRewardsParams fromRaw(ReadStream& stream) {
+    PopRewardsParams param;
+
+    param.mKeystoneRound = stream.readBE<uint32_t>();
+    param.mPayoutRounds = stream.readBE<uint32_t>();
+    param.mFlatScoreRound = stream.readBE<uint32_t>();
+    param.mFlatScoreRoundUse = (bool)stream.readBE<uint8_t>();
+    param.mRoundRatios = readArrayOf<double>(stream, readDouble);
+    param.mMaxScoreThresholdNormal = readDouble(stream);
+    param.mMaxScoreThresholdKeystone = readDouble(stream);
+    param.mDifficultyAveragingInterval = stream.readBE<uint32_t>();
+    param.mLookupTable = readArrayOf<double>(stream, readDouble);
+    param.curveParams = PopRewardsCurveParams::fromRaw(stream);
+
+    return param;
+  }
 
  protected:
-  std::shared_ptr<PopRewardsCurveParams> curveParams =
-      std::make_shared<PopRewardsCurveParams>();
+  PopRewardsCurveParams curveParams{};
 
-  std::vector<double> roundRatios_{std::atof("0.97"),
-                                   std::atof("1.03"),
-                                   std::atof("1.07"),
-                                   std::atof("3.00")};
+  uint32_t mKeystoneRound = 3;
+  uint32_t mPayoutRounds = 4;
+  uint32_t mFlatScoreRound = 2;
+  bool mFlatScoreRoundUse = true;
+  double mMaxScoreThresholdNormal = 2.0;
+  double mMaxScoreThresholdKeystone = 3.0;
+  uint32_t mDifficultyAveragingInterval = 50;
 
-  std::vector<double> lookupTable_{
+  std::vector<double> mRoundRatios{0.97, 1.03, 1.07, 3.00};
+
+  std::vector<double> mLookupTable{
       1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
       1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
       0.48296816, 0.31551694, 0.23325824, 0.18453616, 0.15238463, 0.12961255,

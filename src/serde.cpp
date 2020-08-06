@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <cstring>
 #include <veriblock/serde.hpp>
 
 namespace altintegration {
@@ -92,22 +93,17 @@ std::string readString(ReadStream& stream) {
 
   return result;
 }
-}  // namespace altintegration
-
-#include <veriblock/fmt.hpp>
-
-namespace altintegration {
 
 void writeDouble(WriteStream& stream, const double& val) {
-  std::string temp = fmt::format("{}", val);
-  writeSingleBEValue(stream, temp.size());
-  for (const auto& ch : temp) {
-    stream.writeBE<char>(ch);
-  }
+  uint64_t d = 0;
+  memcpy(&d, &val, sizeof(val));
+  stream.writeBE<uint64_t>(d);
 }
 
 double readDouble(ReadStream& stream) {
-  std::string temp = readString(stream);
-  return std::atof(temp.data());
+  uint64_t d = stream.readBE<uint64_t>();
+  double r = 0;
+  memcpy(&r, &d, sizeof(d));
+  return r;
 }
 }  // namespace altintegration

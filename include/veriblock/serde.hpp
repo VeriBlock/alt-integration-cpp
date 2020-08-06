@@ -242,6 +242,12 @@ void writeArrayOf(WriteStream& w,
   return writeContainer<std::vector<T>>(w, t, f);
 }
 
+template <typename T>
+T fromRaw(const std::vector<uint8_t>& bytes) {
+  ReadStream r(bytes);
+  return T::fromRaw(r);
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_SERDE_HPP
