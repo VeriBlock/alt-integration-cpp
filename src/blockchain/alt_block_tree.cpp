@@ -53,7 +53,7 @@ bool checkDuplicatesVbkBlocksInChain(
   for (size_t i = 0; i < vbkblocks.size(); ++i) {
     auto pid = vbkblocks[i];
 
-    // check that VbkBlocks do not contain in the current chain
+    // check that VbkBlocks do not exist in the current chain
     auto alt_block_hashes =
         tree.getStorage().getContainingAltBlocks(pid.asVector());
     for (const auto& hash : alt_block_hashes) {
@@ -184,7 +184,13 @@ bool checkNoPayloadDuplicatesInOtherBlocks(
          storage.getContainingAltBlocks(pid.asVector())) {
       auto* containingIndex = tree.getBlockIndex(containingBlock);
       if (containingIndex == nullptr) {
-        return false;
+        return state.Invalid(
+            "ALT-duplicate-payloads-" + P::name() + "-ancestor",
+            fmt::sprintf(
+                "Ancestor block does not exist in the chain %s that we "
+                "attempted to add to block=%s.",
+                P::name(),
+                index.toPrettyString()));
       }
 
       // is `containing` block of this payload is descendant of `index`?
