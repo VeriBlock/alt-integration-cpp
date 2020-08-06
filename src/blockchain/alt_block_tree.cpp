@@ -53,7 +53,7 @@ bool payloadsCheckDuplicates(
   auto& v = index.template getPayloadIds<Pop>();
   std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
   for (size_t i = 0; i < payloads.size(); ++i) {
-    auto pid = payloads[i];
+    auto& pid = payloads[i];
     if (!existingPids.insert(pid).second) {
       // remove duplicate id
       if (remove_function(pid)) {
