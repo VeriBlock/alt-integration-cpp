@@ -158,7 +158,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
 
   ASSERT_FALSE(alttree.validatePayloads(chain[100].getHash(), payloads, state));
   ASSERT_EQ(state.GetPath(),
-            "ALT-addPayloadsTemporarily+ALT-duplicate-payloads");
+            "ALT-addPayloadsTemporarily+ALT-duplicate-payloads-VBK");
   ASSERT_TRUE(index100->isValid());
   auto& atvids2 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids2.size(), 1);
@@ -169,7 +169,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   payloads.atvs.push_back(payloads.atvs.at(0));
 
   ASSERT_FALSE(alttree.addPayloads(chain[100].getHash(), payloads, state));
-  ASSERT_EQ(state.GetPath(), "ALT-duplicate-payloads");
+  ASSERT_EQ(state.GetPath(), "ALT-duplicate-payloads-ATV");
 
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100);

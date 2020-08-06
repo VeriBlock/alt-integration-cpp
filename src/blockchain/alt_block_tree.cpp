@@ -44,78 +44,92 @@ bool AltTree::bootstrap(ValidationState& state) {
 }
 
 template <typename Pop>
-bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
-                             std::vector<Pop>& payloads,
-                             AltTree&,
-                             ValidationState& state,
-                             bool continueOnInvalid = false) {
+bool payloadsCheckDuplicates(
+    BlockIndex<AltBlock>& index,
+    const std::vector<typename Pop::id_t>& payloads,
+    AltTree&,
+    ValidationState& state,
+    const std::function<bool(const typename Pop::id_t&)>& remove_function =
+        [](const typename Pop::id_t&) { return false; }) {
   auto& v = index.template getPayloadIds<Pop>();
   std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
-  for (auto it = payloads.begin(); it != payloads.end();) {
-    auto pid = it->getId();
+  for (size_t i = 0; i < payloads.size(); ++i) {
+    auto& pid = payloads[i];
     if (!existingPids.insert(pid).second) {
-      if (continueOnInvalid) {
-        // remove duplicate id
-        it = payloads.erase(it);
+      // remove duplicate id
+      if (remove_function(pid)) {
         continue;
       }
 
       return state.Invalid(
-          "ALT-duplicate-payloads",
+          "ALT-duplicate-payloads-" + Pop::name(),
           fmt::sprintf("Containing block=%s already contains payload %s=%s.",
                        index.toPrettyString(),
                        Pop::name(),
                        pid.toHex()));
     }
-    ++it;
   }
 
   return true;
 }
 
 template <>
-bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
-                             std::vector<VbkBlock>& payloads,
-                             AltTree& tree,
-                             ValidationState& state,
-                             bool continueOnInvalid) {
-  auto& v = index.template getPayloadIds<VbkBlock>();
+bool payloadsCheckDuplicates<VbkBlock>(
+    BlockIndex<AltBlock>& index,
+    const std::vector<typename VbkBlock::id_t>& vbkblocks,
+    AltTree& tree,
+    ValidationState& state,
+    const std::function<bool(const typename VbkBlock::id_t&)>&
+        remove_function) {
   Chain<BlockIndex<AltBlock>> chain(tree.getParams().getBootstrapBlock().height,
                                     &index);
+  for (size_t i = 0; i < vbkblocks.size(); ++i) {
+    auto pid = vbkblocks[i];
 
-  std::set<typename VbkBlock::id_t> existingPids(v.begin(), v.end());
-  for (auto it = payloads.begin(); it != payloads.end();) {
-    auto pid = it->getId();
-
-    // check that VbkBlocks do not contain in the current chain
+    // check that VbkBlocks do not exist in the current chain
     auto alt_block_hashes =
         tree.getStorage().getContainingAltBlocks(pid.asVector());
-    bool removed = false;
     for (const auto& hash : alt_block_hashes) {
       auto* b_index = tree.getBlockIndex(hash);
       if (chain.contains(b_index)) {
-        if (continueOnInvalid) {
-          it = payloads.erase(it);
-          removed = true;
+        if (remove_function(pid)) {
           break;
         }
 
         return state.Invalid(
-            "ALT-duplicate-payloads",
+            "ALT-duplicate-payloads-" + VbkBlock::name(),
             fmt::sprintf("Chain already contains payload %s=%s.",
                          VbkBlock::name(),
                          pid.toHex()));
       }
     }
-
-    if (removed) {
-      continue;
-    }
-
-    ++it;
   }
 
   return true;
+}
+
+template <typename Pop>
+bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
+                             std::vector<Pop>& payloads,
+                             AltTree& tree,
+                             ValidationState& state,
+                             bool continueOnInvalid = false) {
+  auto remove_payload =
+      [&payloads, &continueOnInvalid](const typename Pop::id_t& pid) -> bool {
+    if (continueOnInvalid) {
+      for (auto it = payloads.begin(); it != payloads.end(); ++it) {
+        if (it->getId() == pid) {
+          payloads.erase(it);
+          break;
+        }
+      }
+      return true;
+    }
+    return false;
+  };
+
+  return payloadsCheckDuplicates<Pop>(
+      index, map_get_id(payloads), tree, state, remove_payload);
 }
 
 template <typename Pop>
@@ -140,6 +154,64 @@ bool AltTree::addPayloads(const AltBlock::hash_t& containing,
                          "Can't find containing block");
   }
   return addPayloads(*index, popData, state);
+}
+
+// check for Payload duplicates in ancestor and descendant blocks
+template <typename P>
+bool checkNoPayloadDuplicatesInOtherBlocks(
+    AltTree& tree,
+    AltTree::index_t& index,
+    const std::vector<typename P::id_t>& payloads_ids,
+    ValidationState& state) {
+  auto& storage = tree.getStorage();
+
+  for (size_t i = 0; i < payloads_ids.size(); ++i) {
+    auto pid = payloads_ids[i];
+
+    for (const auto& containingBlock :
+         storage.getContainingAltBlocks(pid.asVector())) {
+      auto* containingIndex = tree.getBlockIndex(containingBlock);
+      if (containingIndex == nullptr) {
+        return state.Invalid(
+            "ALT-duplicate-payloads-" + P::name() + "-ancestor",
+            fmt::sprintf(
+                "Ancestor block does not exist in the chain %s that we "
+                "attempted to add to block=%s.",
+                P::name(),
+                index.toPrettyString()));
+      }
+
+      // is `containing` block of this payload is descendant of `index`?
+      if (containingIndex->getHeight() > index.getHeight()) {
+        if (containingIndex->getAncestor(index.getHeight()) == &index) {
+          // we called AddPayloads(index, pid), where `index` is on the same
+          // chain as `containing` and `containing` already has payload with id
+          // `pid`. Block that is later, becomes invalid, all its descendants
+          // become invalid.
+          storage.setValidity(containingBlock, pid, false);
+          tree.invalidateSubtree(*containingIndex, BLOCK_FAILED_BLOCK, false);
+        } else {
+          // `containing` already has `pid`, but is on different chain than
+          // `index`
+        }
+      } else {
+        // check if this is an ancestor that contains the `pid`
+        if (index.getAncestor(containingIndex->getHeight()) ==
+            containingIndex) {
+          return state.Invalid(
+              "ALT-duplicate-payloads-" + P::name() + "-ancestor",
+              fmt::sprintf("Ancestor block=%s already contains %s that we "
+                           "attempted to add to block=%s.",
+                           containingIndex->toPrettyString(),
+                           P::name(),
+                           index.toPrettyString()));
+        }
+      }  // end if
+    }    // end for
+
+  }  // end for
+
+  return true;
 }
 
 // check for Payload duplicates in ancestor and descendant blocks
@@ -606,12 +678,25 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
+  if (current->pprev &&
+      !payloadsCheckDuplicates<VbkBlock>(
+          *current->pprev, current->getPayloadIds<VbkBlock>(), *this, state)) {
+    return false;
+  }
+
   // recover `endorsedBy`
   auto window = std::max(
       0, index.getHeight() - getParams().getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsedBy(*this, chain, *current, state)) {
     return state.Error("bad-endorsements");
+  }
+
+  if (!checkNoPayloadDuplicatesInOtherBlocks<ATV>(
+          *this, *current, current->getPayloadIds<ATV>(), state) ||
+      !checkNoPayloadDuplicatesInOtherBlocks<VTB>(
+          *this, *current, current->getPayloadIds<VTB>(), state)) {
+    return false;
   }
 
   storage_.addBlockToIndex(*current);
