@@ -42,14 +42,45 @@ bool AltTree::bootstrap(ValidationState& state) {
   return true;
 }
 
-bool checkDuplicatesVbkBlocksInChain(
+template <typename Pop>
+bool payloadsCheckDuplicates(
+    BlockIndex<AltBlock>& index,
+    const std::vector<typename Pop::id_t>& payloads,
+    AltTree&,
+    ValidationState& state,
+    std::function<bool(const typename Pop::id_t&)> remove_function =
+        [](const typename Pop::id_t&) { return false; }) {
+  auto& v = index.template getPayloadIds<Pop>();
+  std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
+  for (size_t i = 0; i < payloads.size(); ++i) {
+    auto pid = payloads[i];
+    if (!existingPids.insert(pid).second) {
+      // remove duplicate id
+      if (remove_function(pid)) {
+        continue;
+      }
+
+      return state.Invalid(
+          "ALT-duplicate-payloads-" + Pop::name(),
+          fmt::sprintf("Containing block=%s already contains payload %s=%s.",
+                       index.toPrettyString(),
+                       Pop::name(),
+                       pid.toHex()));
+    }
+  }
+
+  return true;
+}
+
+template <>
+bool payloadsCheckDuplicates<VbkBlock>(
     BlockIndex<AltBlock>& index,
     const std::vector<typename VbkBlock::id_t>& vbkblocks,
     AltTree& tree,
-    ValidationState& state) {
+    ValidationState& state,
+    std::function<bool(const typename VbkBlock::id_t&)> remove_function) {
   Chain<BlockIndex<AltBlock>> chain(tree.getParams().getBootstrapBlock().height,
                                     &index);
-
   for (size_t i = 0; i < vbkblocks.size(); ++i) {
     auto pid = vbkblocks[i];
 
@@ -59,6 +90,10 @@ bool checkDuplicatesVbkBlocksInChain(
     for (const auto& hash : alt_block_hashes) {
       auto* b_index = tree.getBlockIndex(hash);
       if (chain.contains(b_index)) {
+        if (remove_function(pid)) {
+          break;
+        }
+
         return state.Invalid(
             "ALT-duplicate-payloads-" + VbkBlock::name(),
             fmt::sprintf("Chain already contains payload %s=%s.",
@@ -74,74 +109,25 @@ bool checkDuplicatesVbkBlocksInChain(
 template <typename Pop>
 bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
                              std::vector<Pop>& payloads,
-                             AltTree&,
-                             ValidationState& state,
-                             bool continueOnInvalid = false) {
-  auto& v = index.template getPayloadIds<Pop>();
-  std::set<typename Pop::id_t> existingPids(v.begin(), v.end());
-  for (auto it = payloads.begin(); it != payloads.end();) {
-    auto pid = it->getId();
-    if (!existingPids.insert(pid).second) {
-      if (continueOnInvalid) {
-        // remove duplicate id
-        it = payloads.erase(it);
-        continue;
-      }
-
-      return state.Invalid(
-          "ALT-duplicate-payloads-" + Pop::name(),
-          fmt::sprintf("Containing block=%s already contains payload %s=%s.",
-                       index.toPrettyString(),
-                       Pop::name(),
-                       pid.toHex()));
-    }
-    ++it;
-  }
-
-  return true;
-}
-
-template <>
-bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
-                             std::vector<VbkBlock>& payloads,
                              AltTree& tree,
                              ValidationState& state,
-                             bool continueOnInvalid) {
-  Chain<BlockIndex<AltBlock>> chain(tree.getParams().getBootstrapBlock().height,
-                                    &index);
-
-  for (auto it = payloads.begin(); it != payloads.end();) {
-    auto pid = it->getId();
-
-    // check that VbkBlocks do not contain in the current chain
-    auto alt_block_hashes =
-        tree.getStorage().getContainingAltBlocks(pid.asVector());
-    bool removed = false;
-    for (const auto& hash : alt_block_hashes) {
-      auto* b_index = tree.getBlockIndex(hash);
-      if (chain.contains(b_index)) {
-        if (continueOnInvalid) {
-          it = payloads.erase(it);
-          removed = true;
+                             bool continueOnInvalid = false) {
+  auto remove_payload =
+      [&payloads, &continueOnInvalid](const typename Pop::id_t& pid) -> bool {
+    if (continueOnInvalid) {
+      for (auto it = payloads.begin(); it != payloads.end(); ++it) {
+        if (it->getId() == pid) {
+          payloads.erase(it);
           break;
         }
-
-        return state.Invalid(
-            "ALT-duplicate-payloads-" + VbkBlock::name(),
-            fmt::sprintf("Chain already contains payload %s=%s.",
-                         VbkBlock::name(),
-                         pid.toHex()));
       }
+      return true;
     }
+    return false;
+  };
 
-    if (removed) {
-      continue;
-    }
-
-    ++it;
-  }
-
-  return true;
+  return payloadsCheckDuplicates<Pop>(
+      index, map_get_id(payloads), tree, state, remove_payload);
 }
 
 template <typename Pop>
@@ -690,7 +676,8 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
-  if (!checkDuplicatesVbkBlocksInChain(
+  if (current->pprev &&
+      !payloadsCheckDuplicates<VbkBlock>(
           *current->pprev, current->getPayloadIds<VbkBlock>(), *this, state)) {
     return false;
   }
