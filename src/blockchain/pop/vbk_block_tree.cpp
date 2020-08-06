@@ -98,7 +98,7 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(it != vtbids.end() && "could not find the payload to remove");
 
     if (!storage_.getValidity(containingHash, pid)) {
-      revalidateSubtree(index, BLOCK_FAILED_POP, false);
+      revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
     }
 
     index.removePayloadId<VTB>(pid);
@@ -137,7 +137,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
 
   // removing an invalid payload might render the block valid
   if (!storage_.getValidity(containingHash, pid)) {
-    revalidateSubtree(index, BLOCK_FAILED_POP, false);
+    revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
   }
 
   bool isApplied = activeChain_.contains(&index);

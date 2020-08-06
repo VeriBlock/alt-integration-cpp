@@ -220,6 +220,9 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
         }
 
         auto* ind = tree.getBlockIndex(e->blockOfProof);
+        VBK_ASSERT(ind != nullptr &&
+                   "state corruption: could not find the block of proof of "
+                   "an applied endorsement");
         if (!tree.getBestChain().contains(ind)) {
           continue;
         }

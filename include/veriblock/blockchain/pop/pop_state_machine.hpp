@@ -101,21 +101,16 @@ struct PopStateMachine {
             r_group->unExecute();
           }
 
-          // if the block is marked as valid, invalidate its subtree
-          if (index.isValid()) {
-            ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-          }
+          ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
 
           return state.Invalid(index_t::block_t::name() + "-bad-command");
         }
 
       }  // end for
 
-      // we have successfully applied the block
-      // if the block is marked as invalid, revalidate its subtree
-      if (!index.isValid()) {
-        ed_.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-      }
+      // since we have successfully applied the block, clear BLOCK_FAILED_POP
+      ed_.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+
     } else {
       VBK_ASSERT(!index.hasFlags(BLOCK_FAILED_POP) &&
                  "state corruption: an empty block must not be invalid due to "
