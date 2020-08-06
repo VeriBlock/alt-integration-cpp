@@ -22,17 +22,18 @@ namespace altintegration {
 enum BlockStatus : uint8_t {
   //! default state for validity - validity state is unknown
   BLOCK_VALID_UNKNOWN = 0,
-  //! acceptBlock succeded. All parents are at least at this state.
+  //! acceptBlock succeded. All ancestors are at least at this state.
   BLOCK_VALID_TREE = 1 << 0,
   //! all validity flags
   BLOCK_VALID_MASK = BLOCK_VALID_TREE,
-  //! this is bootstrap block
+  //! this is a bootstrap block
   BLOCK_BOOTSTRAP = 1 << 1,
-  //! block is statelessly valid, but we marked it as failed
+  //! block is statelessly valid, but the altchain marked it as failed
   BLOCK_FAILED_BLOCK = 1 << 2,
-  //! block failed POP validation
+  //! block failed state{less,ful} validation due to its payloads
   BLOCK_FAILED_POP = 1 << 3,
-  //! block is state{lessly,fully} valid, but some of previous blocks is invalid
+  //! block is state{lessly,fully} valid and the altchain did not report it as
+  //! invalid, but some of the ancestor blocks are invalid
   BLOCK_FAILED_CHILD = 1 << 4,
   //! all invalidity flags
   BLOCK_FAILED_MASK =
@@ -40,6 +41,14 @@ enum BlockStatus : uint8_t {
   //! the block has been applied via PopStateMachine
   BLOCK_APPLIED = 1 << 5
 };
+
+/**
+ * Check if the `reason` value can be used as the reason for invalidateSubtree
+ * and revalidateSubtree
+ */
+constexpr bool isValidInvalidationReason(const enum BlockStatus reason) {
+  return reason == BLOCK_FAILED_BLOCK || reason == BLOCK_FAILED_POP;
+}
 
 //! Store block
 template <typename Block>
