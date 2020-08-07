@@ -154,6 +154,9 @@ struct BlockTree : public BaseBlockTree<Block> {
       current->chainWork = getBlockProof(current->getHeader());
     }
 
+    // clear blockOfProofEndorsements inmem field
+    current->blockOfProofEndorsements.clear();
+
     current->setFlag(BLOCK_VALID_TREE);
     return true;
   }
