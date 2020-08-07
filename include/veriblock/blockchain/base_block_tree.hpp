@@ -122,7 +122,8 @@ struct BaseBlockTree {
 
   void removeSubtree(const hash_t& toRemove) {
     auto* index = getBlockIndex(toRemove);
-    VBK_ASSERT(index && "cannot find the subtree to remove");
+    VBK_ASSERT_MSG(
+        index, "cannot find the subtree to remove: %s", HexStr(toRemove));
     return this->removeSubtree(*index);
   }
 
@@ -153,7 +154,10 @@ struct BaseBlockTree {
   }
 
   void removeLeaf(index_t& toRemove) {
-    VBK_ASSERT(toRemove.pnext.empty() && "not a leaf block");
+    VBK_ASSERT_MSG(toRemove.pnext.empty(),
+                   "not a leaf block %s, pnext.size=%d",
+                   toRemove.toPrettyString(),
+                   toRemove.pnext.size());
     return this->removeSubtree(toRemove);
   }
 
@@ -232,9 +236,9 @@ struct BaseBlockTree {
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
     VBK_LOG_DEBUG("Revalidating %s subtree: reason=%d block=%s",
-                 block_t::name(),
-                 (int)reason,
-                 toBeValidated.toShortPrettyString());
+                  block_t::name(),
+                  (int)reason,
+                  toBeValidated.toShortPrettyString());
 
     VBK_ASSERT(toBeValidated.pprev && "cannot revalidate the genesis block");
     VBK_ASSERT(isValidInvalidationReason(reason) &&
@@ -246,7 +250,8 @@ struct BaseBlockTree {
 
     // if the block has any invalidity flags other than `reason`, its
     // descendants are already flagged as BLOCK_FAILED_CHILD and should stay so
-    if (toBeValidated.hasFlags(static_cast<enum BlockStatus>(BLOCK_FAILED_MASK & ~reason))) {
+    if (toBeValidated.hasFlags(
+            static_cast<enum BlockStatus>(BLOCK_FAILED_MASK & ~reason))) {
       doReValidate(toBeValidated, reason);
       return;
     }
