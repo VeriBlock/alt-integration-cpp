@@ -62,6 +62,24 @@ struct PopTestFixture {
     mempool = std::make_shared<MemPool>(alttree);
   }
 
+  template <typename T, typename E>
+  void verifyEndorsementAdded(T& tree, const E& e) {
+    auto* containing = tree.getBlockIndex(e.containingHash);
+    ASSERT_TRUE(containing)
+        << "no containing block " << HexStr(e.containingHash);
+    EXPECT_EQ(containing->getContainingEndorsements().count(e.id), 1);
+    auto* blockOfProof = tree.vbk().getBlockIndex(e.blockOfProof);
+    ASSERT_TRUE(blockOfProof) << "no blockOfProof " << HexStr(e.blockOfProof);
+    auto& bop = blockOfProof->blockOfProofEndorsements;
+
+    auto _ = [&](const E* end) -> bool { return end->id == e.id; };
+    EXPECT_EQ(std::count_if(bop.begin(), bop.end(), _), 1);
+    auto* endorsed = tree.getBlockIndex(e.endorsedHash);
+    ASSERT_TRUE(endorsed) << "no endorsed block " << HexStr(e.endorsedHash);
+    auto& by = endorsed->endorsedBy;
+    EXPECT_EQ(std::count_if(by.begin(), by.end(), _), 1);
+  }
+
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
                                       size_t num) {
     const BlockIndex<AltBlock>* index = &prev;
@@ -244,7 +262,8 @@ struct PopTestFixture {
     return popData;
   }
 
-  PopData endorseAltBlock(const std::vector<AltBlock>& endorsed, size_t VTBs = 0) {
+  PopData endorseAltBlock(const std::vector<AltBlock>& endorsed,
+                          size_t VTBs = 0) {
     std::vector<VbkTx> transactions(endorsed.size());
     for (size_t i = 0; i < endorsed.size(); ++i) {
       auto data = generatePublicationData(endorsed[i]);

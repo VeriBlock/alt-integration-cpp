@@ -10,6 +10,7 @@
 #include <functional>
 #include <set>
 #include <vector>
+#include <veriblock/assert.hpp>
 #include <iterator>
 
 namespace altintegration {
@@ -39,6 +40,21 @@ std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
   auto ids = map_get_id(v);
   std::set<typename T::id_t> s(ids.begin(), ids.end());
   return s;
+}
+
+template <typename T>
+void eraseLastItem(std::vector<T*>& v,
+                   const T* item,
+                   std::function<bool(const T*)> locator) {
+  // find and erase the last occurrence of item
+  auto it = std::find_if(v.rbegin(), v.rend(), locator);
+
+  VBK_ASSERT_MSG(it != v.rend(),
+                 "failed to remove item from vector: can not find element %s",
+                 item->toPrettyString());
+
+  auto toRemove = --(it.base());
+  v.erase(toRemove);
 }
 
 }  // namespace altintegration

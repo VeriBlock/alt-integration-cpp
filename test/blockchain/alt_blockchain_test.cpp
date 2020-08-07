@@ -43,6 +43,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  verifyEndorsementAdded(alttree, endorsement1);
 
   // check endorsements
   auto* endorsedBlockIndex = alttree.getBlockIndex(endorsement1.endorsedHash);

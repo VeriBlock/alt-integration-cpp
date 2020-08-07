@@ -50,12 +50,19 @@ struct AddBlock : public Command {
   void UnExecute() override {
     auto hash = block_->getHash();
     auto* index = tree_->getBlockIndex(hash);
-    VBK_ASSERT(index != nullptr &&
-               "failed to roll back AddBlock: the block does not exist");
+    VBK_ASSERT_MSG(index != nullptr,
+                   "failed to roll back AddBlock: the block does not exist %s",
+                   HexStr(hash));
 
     index->removeRef(referencedAtHeight_);
 
     if (index->refCount() == 0) {
+      VBK_ASSERT_MSG(
+          index->blockOfProofEndorsements.empty(),
+          "blockOfProof has %d pointers to endorsements, they will be "
+          "lost",
+          index->blockOfProofEndorsements.size());
+
       return tree_->removeLeaf(*index);
     }
   }

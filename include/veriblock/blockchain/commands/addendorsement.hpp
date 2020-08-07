@@ -79,44 +79,46 @@ struct AddEndorsement : public Command {
 
     containing->insertContainingEndorsement(e_);
     endorsed->endorsedBy.push_back(e_.get());
+    blockOfProof->blockOfProofEndorsements.push_back(e_.get());
+
     return true;
   }
 
   void UnExecute() override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
-    VBK_ASSERT(
+    VBK_ASSERT_MSG(
         containing != nullptr &&
-        "failed to roll back AddEndorsement: the containing block does not "
-        "exist");
+            "failed to roll back AddEndorsement: the containing block does not "
+            "exist %s",
+        e_->toPrettyString());
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
-    VBK_ASSERT(
+    VBK_ASSERT_MSG(
         endorsed != nullptr &&
-        "failed to roll back AddEndorsement: the endorsed block does not "
-        "exist");
+            "failed to roll back AddEndorsement: the endorsed block does not "
+            "exist %s",
+        e_->toPrettyString());
+
+    auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
+    VBK_ASSERT_MSG(blockOfProof != nullptr &&
+                       "failed to roll back AddEndorsement: the blockOfProof "
+                       "block does not exist %s",
+                   e_->toPrettyString());
 
     // erase endorsedBy
-    {
-      auto& v = endorsed->endorsedBy;
-      auto& id = e_->id;
+    eraseLastItem<endorsement_t>(
+        endorsed->endorsedBy, e_.get(), [this](const endorsement_t* e) -> bool {
+          return e->id == e_->id;
+        });
 
-      // find and erase the last occurrence of e_
-      auto endorsed_it =
-          std::find_if(v.rbegin(), v.rend(), [&id](endorsement_t* p) {
-            return p->id == id;
-          });
-
-      VBK_ASSERT(
-          endorsed_it != v.rend() &&
-          "failed to roll back AddEndorsement: the endorsed block does not "
-          "contain the endorsement in endorsedBy");
-
-      auto toRemove = --(endorsed_it.base());
-      v.erase(toRemove);
-    }
-
-    // erase endorsement
+    // erase containing
     containing->removeContainingEndorsement(e_);
+
+    // erase blockOfProof
+    eraseLastItem<endorsement_t>(
+        blockOfProof->blockOfProofEndorsements,
+        e_.get(),
+        [this](const endorsement_t* e) -> bool { return e->id == e_->id; });
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

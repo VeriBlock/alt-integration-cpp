@@ -125,6 +125,19 @@ struct TestComparator {
     return true;
   }
 
+  template <typename T>
+  bool operator()(const std::set<T*>& a,
+                  const std::set<T*>& b,
+                  bool suppress = false) {
+    VBK_EXPECT_EQ(a.size(), b.size(), suppress);
+
+    for (auto* item : a) {
+      VBK_EXPECT_TRUE(item, suppress);
+      VBK_EXPECT_EQ(b.count(item), 1, suppress);
+    }
+    return true;
+  }
+
   template <typename Block>
   bool operator()(const BaseBlockTree<Block>& a,
                   const BaseBlockTree<Block>& b,

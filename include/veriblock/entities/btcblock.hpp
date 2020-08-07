@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include <veriblock/arith_uint256.hpp>
-#include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/btc_block_addon.hpp>
 #include <veriblock/fmt.hpp>
 #include <veriblock/hashutil.hpp>

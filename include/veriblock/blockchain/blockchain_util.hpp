@@ -82,15 +82,15 @@ bool recoverEndorsedBy(ProtectedBlockTree& ed_,
     }
 
     // make sure it is accessible in lambda
-    auto& endorsedPtr = *endorsed;
+    auto* endorsement = &e;
 
     // delay execution. this ensures atomic changes - if any of endorsemens fail
     // validation, no 'action' is actually executed.
-    actions.push_back([&] {
-      auto& by = endorsedPtr.endorsedBy;
-      VBK_ASSERT(std::find(by.rbegin(), by.rend(), &e) == by.rend() &&
+    actions.push_back([endorsed, endorsement] {
+      auto& by = endorsed->endorsedBy;
+      VBK_ASSERT(std::find(by.rbegin(), by.rend(), endorsement) == by.rend() &&
                  "same endorsement is added to endorsedBy second time");
-      by.push_back(&e);
+      by.push_back(endorsement);
     });
   }
 

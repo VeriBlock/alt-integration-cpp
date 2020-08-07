@@ -16,6 +16,9 @@
 
 namespace altintegration {
 
+extern template struct AddBlock<VbkBlock, VbkChainParams>;
+extern template struct AddEndorsement<VbkBlockTree, AltTree>;
+
 bool AltTree::bootstrap(ValidationState& state) {
   if (base::isBootstrapped()) {
     return state.Error("already bootstrapped");

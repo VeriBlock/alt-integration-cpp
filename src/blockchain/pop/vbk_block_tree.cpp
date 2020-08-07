@@ -12,6 +12,9 @@
 
 namespace altintegration {
 
+extern template struct AddBlock<BtcBlock, BtcChainParams>;
+extern template struct AddEndorsement<VbkBlockTree::BtcTree, VbkBlockTree>;
+
 void VbkBlockTree::determineBestChain(index_t& candidate,
                                       ValidationState& state) {
   auto bestTip = getBestChain().tip();

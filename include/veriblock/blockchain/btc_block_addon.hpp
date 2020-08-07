@@ -6,7 +6,9 @@
 #ifndef VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
 #define VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
 
+#include <set>
 #include <veriblock/arith_uint256.hpp>
+#include <veriblock/entities/endorsements.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/serde.hpp>
 
@@ -18,6 +20,10 @@ struct BtcBlockAddon {
   //! (memory only) total amount of work in the chain up to and including this
   //! block
   ArithUint256 chainWork = 0;
+
+  // (memory-only) a list of endorsements of VBK blocks, whose BlockOfProof is
+  // this block
+  std::vector<VbkEndorsement*> blockOfProofEndorsements;
 
   void setIsBootstrap(bool isBootstrap) {
     if (isBootstrap) {

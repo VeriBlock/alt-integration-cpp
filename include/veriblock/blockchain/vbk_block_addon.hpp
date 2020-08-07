@@ -6,6 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 #define VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 
+#include <set>
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/blockchain/pop/pop_state.hpp>
 #include <veriblock/entities/endorsements.hpp>
@@ -23,6 +24,10 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   //! (memory only) total amount of work in the chain up to and including this
   //! block
   ArithUint256 chainWork = 0;
+
+  //! (memory only) a vector of endorsements of ALT blocks, whose BlockOfProof
+  //! is this block
+  std::vector<AltEndorsement*> blockOfProofEndorsements;
 
   uint32_t refCount() const { return _refCount; }
 
