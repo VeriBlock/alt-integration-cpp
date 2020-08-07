@@ -10,6 +10,7 @@
 #include <functional>
 #include <set>
 #include <vector>
+#include <iterator>
 
 namespace altintegration {
 
