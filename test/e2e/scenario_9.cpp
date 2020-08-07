@@ -51,8 +51,9 @@ TEST_F(Scenario9, scenario_9) {
   auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
 
   ASSERT_EQ(vtbs.size(), 2);
-  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
-            VbkEndorsement::fromContainer(vtbs[1]).id);
+  auto E1 = VbkEndorsement::fromContainer(vtbs[0]);
+  auto E2 = VbkEndorsement::fromContainer(vtbs[1]);
+  ASSERT_NE(E1.id, E2.id);
 
   // store vtbs in different altPayloads
   altPayloads1.vtbs = {vtbs[0]};
@@ -66,6 +67,7 @@ TEST_F(Scenario9, scenario_9) {
   EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
+  verifyEndorsementAdded(alttree.vbk(), E1);
   validateAlttreeIndexState(alttree, containingBlock, altPayloads1, true);
 
   auto* containinVbkBlock = alttree.vbk().getBlockIndex(vbkTip->getHash());
@@ -91,7 +93,9 @@ TEST_F(Scenario9, scenario_9) {
   EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
   EXPECT_FALSE(alttree.addPayloads(containingBlock, altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, true, false);
+  validateAlttreeIndexState(
+      alttree, containingBlock, altPayloads2, true, false);
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "ALT-duplicate-payloads-VBK");
+  verifyEndorsementAdded(alttree.vbk(), E1);
 }

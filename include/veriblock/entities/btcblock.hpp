@@ -101,7 +101,6 @@ struct BtcBlock {
    */
   uint256 getHash() const;
 
-  static const std::string _name;
   static const std::string& name() { return _name; }
 
   std::string toPrettyString() const;
@@ -112,6 +111,9 @@ struct BtcBlock {
   uint32_t timestamp = 0;
   uint32_t bits = 0;
   uint32_t nonce = 0;
+
+ private:
+  static const std::string _name;
 };
 
 template <typename JsonValue>

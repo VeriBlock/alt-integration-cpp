@@ -105,20 +105,27 @@ struct AddEndorsement : public Command {
                        "block does not exist %s",
                    e_->toPrettyString());
 
+    auto rm = [this](const endorsement_t* e) -> bool {
+      return e->id == e_->id;
+    };
+
     // erase endorsedBy
-    eraseLastItem<endorsement_t>(
-        endorsed->endorsedBy, e_.get(), [this](const endorsement_t* e) -> bool {
-          return e->id == e_->id;
-        });
+    bool p1 = erase_last_item_if<endorsement_t>(endorsed->endorsedBy, rm);
+    VBK_ASSERT_MSG(p1,
+                   "Failed to remove endorsement %s from endorsedBy in "
+                   "AddEndorsement::Unexecute",
+                   e_->toPrettyString());
 
     // erase containing
     containing->removeContainingEndorsement(e_);
 
     // erase blockOfProof
-    eraseLastItem<endorsement_t>(
-        blockOfProof->blockOfProofEndorsements,
-        e_.get(),
-        [this](const endorsement_t* e) -> bool { return e->id == e_->id; });
+    bool p2 = erase_last_item_if<endorsement_t>(
+        blockOfProof->blockOfProofEndorsements, rm);
+    VBK_ASSERT_MSG(p2,
+                   "Failed to remove endorsement %s from blockOfProof in "
+                   "AddEndorsement::Unexecute",
+                   e_->toPrettyString());
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

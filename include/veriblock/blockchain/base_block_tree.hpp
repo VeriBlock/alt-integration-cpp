@@ -77,12 +77,12 @@ struct BaseBlockTree {
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block
     if (current && !current->hasFlags(BLOCK_BOOTSTRAP)) {
-      return state.Error("block-exists");
+      return state.Invalid("block-exists");
     }
 
     // if current block is not known, and previous also not known
     if (!current && !getBlockIndex(index.getHeader().previousBlock)) {
-      return state.Error("bad-prev");
+      return state.Invalid("bad-prev");
     }
 
     current = touchBlockIndex(currentHash);
@@ -106,7 +106,7 @@ struct BaseBlockTree {
       // prev block found
       auto expectedHeight = current->pprev->getHeight() + 1;
       if (current->getHeight() != expectedHeight) {
-        return state.Error("bad-height");
+        return state.Invalid("bad-height");
       }
 
       current->pprev->pnext.insert(current);

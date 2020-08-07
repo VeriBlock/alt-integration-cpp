@@ -43,13 +43,14 @@ void removePayloadsFromIndex(Storage& storage,
                              const CommandGroup& cg);
 
 template <typename ProtectedBlockTree>
-bool recoverEndorsedBy(ProtectedBlockTree& ed_,
-                       Chain<typename ProtectedBlockTree::index_t>& chain,
-                       typename ProtectedBlockTree::index_t& toRecover,
-                       ValidationState& state) {
+bool recoverEndorsements(ProtectedBlockTree& ed_,
+                         Chain<typename ProtectedBlockTree::index_t>& chain,
+                         typename ProtectedBlockTree::index_t& toRecover,
+                         ValidationState& state) {
   std::vector<std::function<void()>> actions;
   auto& containingEndorsements = toRecover.getContainingEndorsements();
   actions.reserve(containingEndorsements.size());
+  auto& ing = ed_.getComparator().getProtectingBlockTree();
 
   for (const auto& p : containingEndorsements) {
     auto& id = p.first;
@@ -81,16 +82,30 @@ bool recoverEndorsedBy(ProtectedBlockTree& ed_,
                                        e.toPrettyString()));
     }
 
+    auto* blockOfProof = ing.getBlockIndex(e.blockOfProof);
+    if (!blockOfProof) {
+      return state.Invalid(
+          "bad-blockofproof",
+          fmt::format("Block Of Proof %s does not exist in SP chain",
+                      HexStr(e.blockOfProof)));
+    }
+
     // make sure it is accessible in lambda
     auto* endorsement = &e;
 
     // delay execution. this ensures atomic changes - if any of endorsemens fail
     // validation, no 'action' is actually executed.
-    actions.push_back([endorsed, endorsement] {
+    actions.push_back([endorsed, blockOfProof, endorsement] {
       auto& by = endorsed->endorsedBy;
-      VBK_ASSERT(std::find(by.rbegin(), by.rend(), endorsement) == by.rend() &&
-                 "same endorsement is added to endorsedBy second time");
+      VBK_ASSERT_MSG(std::find(by.begin(), by.end(), endorsement) == by.end(),
+                     "same endorsement is added to endorsedBy second time");
       by.push_back(endorsement);
+
+      auto& bop = blockOfProof->blockOfProofEndorsements;
+      VBK_ASSERT_MSG(
+          std::find(bop.begin(), bop.end(), endorsement) == bop.end(),
+          "same endorsement is added to blockOfProof second time");
+      bop.push_back(endorsement);
     });
   }
 
@@ -102,6 +117,9 @@ bool recoverEndorsedBy(ProtectedBlockTree& ed_,
 
   return true;
 }
+
+template <typename Block>
+void assertBlockCanBeRemoved(const Block& block);
 
 }  // namespace altintegration
 

@@ -19,6 +19,9 @@
 
 namespace altintegration {
 
+extern template struct BlockIndex<BtcBlock>;
+extern template struct BlockIndex<VbkBlock>;
+
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
@@ -114,6 +117,11 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator cmp_;
   PayloadsStorage& storage_;
 };
+
+template <>
+void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index);
+template <>
+void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index);
 
 template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands(

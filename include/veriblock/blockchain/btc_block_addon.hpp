@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
 #define VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
 
-#include <set>
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/logger.hpp>
@@ -21,8 +20,8 @@ struct BtcBlockAddon {
   //! block
   ArithUint256 chainWork = 0;
 
-  // (memory-only) a list of endorsements of VBK blocks, whose BlockOfProof is
-  // this block
+  //! (memory-only) a list of endorsements of VBK blocks, whose BlockOfProof is
+  //! this block. must be a vector, because we can have duplicates here
   std::vector<VbkEndorsement*> blockOfProofEndorsements;
 
   void setIsBootstrap(bool isBootstrap) {

@@ -62,13 +62,17 @@ struct PopTestFixture {
     mempool = std::make_shared<MemPool>(alttree);
   }
 
+  // T = tree
+  // E = endorsement
   template <typename T, typename E>
   void verifyEndorsementAdded(T& tree, const E& e) {
     auto* containing = tree.getBlockIndex(e.containingHash);
     ASSERT_TRUE(containing)
         << "no containing block " << HexStr(e.containingHash);
     EXPECT_EQ(containing->getContainingEndorsements().count(e.id), 1);
-    auto* blockOfProof = tree.vbk().getBlockIndex(e.blockOfProof);
+    const auto& comparator = tree.getComparator();
+    auto* blockOfProof =
+        comparator.getProtectingBlockTree().getBlockIndex(e.blockOfProof);
     ASSERT_TRUE(blockOfProof) << "no blockOfProof " << HexStr(e.blockOfProof);
     auto& bop = blockOfProof->blockOfProofEndorsements;
 

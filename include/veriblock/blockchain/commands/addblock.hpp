@@ -57,12 +57,7 @@ struct AddBlock : public Command {
     index->removeRef(referencedAtHeight_);
 
     if (index->refCount() == 0) {
-      VBK_ASSERT_MSG(
-          index->blockOfProofEndorsements.empty(),
-          "blockOfProof has %d pointers to endorsements, they will be "
-          "lost",
-          index->blockOfProofEndorsements.size());
-
+      assertBlockCanBeRemoved(*index);
       return tree_->removeLeaf(*index);
     }
   }
