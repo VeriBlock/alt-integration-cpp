@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_POP_STATE_HPP
 
 #include <memory>
+#include <set>
 #include <unordered_map>
 #include <vector>
 #include <veriblock/serde.hpp>
@@ -20,7 +21,8 @@ struct PopState {
   using containing_endorsement_store_t =
       std::unordered_multimap<eid_t, std::shared_ptr<endorsement_t>>;
 
-  //! (memory-only) list of endorsements pointing to this block
+  //! (memory-only) list of endorsements pointing to this block.
+  // must be a vector, because we can have duplicates here
   std::vector<endorsement_t*> endorsedBy;
 
   const containing_endorsement_store_t& getContainingEndorsements() const {
@@ -52,8 +54,6 @@ struct PopState {
 
     setDirty();
   }
-
-
 
   void toRaw(WriteStream& w) const {
     // write containingEndorsements as vector

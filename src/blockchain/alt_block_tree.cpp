@@ -16,6 +16,8 @@
 
 namespace altintegration {
 
+template struct BlockIndex<AltBlock>;
+
 bool AltTree::bootstrap(ValidationState& state) {
   if (base::isBootstrapped()) {
     return state.Error("already bootstrapped");
@@ -689,8 +691,8 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   auto window = std::max(
       0, index.getHeight() - getParams().getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
-  if (!recoverEndorsedBy(*this, chain, *current, state)) {
-    return state.Error("bad-endorsements");
+  if (!recoverEndorsements(*this, chain, *current, state)) {
+    return state.Invalid("bad-endorsements");
   }
 
   if (!checkNoPayloadDuplicatesInOtherBlocks<ATV>(

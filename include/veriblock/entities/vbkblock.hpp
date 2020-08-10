@@ -132,7 +132,6 @@ struct VbkBlock {
 
   short_hash_t getId() const { return getShortHash(); }
 
-  static const std::string _name;
   static const std::string& name() { return _name; }
 
   int32_t height{};
@@ -144,6 +143,9 @@ struct VbkBlock {
   int32_t timestamp{};
   int32_t difficulty{};
   int32_t nonce{};
+
+ private:
+  static const std::string _name;
 };
 
 template <typename JsonValue>

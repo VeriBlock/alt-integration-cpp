@@ -8,9 +8,10 @@
 
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <set>
 #include <vector>
-#include <iterator>
+#include <veriblock/assert.hpp>
 
 namespace altintegration {
 
@@ -39,6 +40,19 @@ std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
   auto ids = map_get_id(v);
   std::set<typename T::id_t> s(ids.begin(), ids.end());
   return s;
+}
+
+template <typename T>
+bool erase_last_item_if(std::vector<T*>& v, std::function<bool(const T*)> locator) {
+  // find and erase the last occurrence of item
+  auto it = std::find_if(v.rbegin(), v.rend(), locator);
+  if (it == v.rend()) {
+    return false;
+  }
+
+  auto toRemove = --(it.base());
+  v.erase(toRemove);
+  return true;
 }
 
 }  // namespace altintegration

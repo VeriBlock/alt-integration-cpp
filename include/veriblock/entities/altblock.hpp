@@ -85,6 +85,11 @@ struct AltBlock {
 
   hash_t getHash() const;
 
+  // dummy
+  uint32_t getDifficulty() const {
+    return 0;
+  }
+
   friend bool operator==(const AltBlock& a, const AltBlock& b) {
     return a.hash == b.hash;
   }
@@ -93,7 +98,6 @@ struct AltBlock {
     return !(a == b);
   }
 
-  static const std::string _name;
   static const std::string& name() { return _name; }
 
   std::string toPrettyString() const {
@@ -104,6 +108,9 @@ struct AltBlock {
   hash_t previousBlock{};
   uint32_t timestamp{};
   height_t height{};
+
+ private:
+  static const std::string _name;
 };
 
 template <typename JsonValue>

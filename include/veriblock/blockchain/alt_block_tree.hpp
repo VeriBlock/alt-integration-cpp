@@ -29,6 +29,8 @@
 
 namespace altintegration {
 
+extern template struct BlockIndex<AltBlock>;
+
 /**
  * @warning POP Fork Resolution is NOT transitive. If A is better than B, and B
  * is better than C, then A may NOT be better than C.
