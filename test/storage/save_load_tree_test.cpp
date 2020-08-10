@@ -134,6 +134,45 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
 
+  auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
+
+  containingIndex->template insertPayloadIds<VbkBlock>(
+      map_get_id(popData.context));
+
+  for (const auto& b : popData.context) {
+    alttree.getStorage().addAltPayloadIndex(containingBlock.getHash(),
+                                            b.getId().asVector());
+  }
+
+  save();
+
+  EXPECT_FALSE(load(state));
+  EXPECT_FALSE(state.IsValid());
+  EXPECT_EQ(state.GetPath(), "load-tree+ALT-duplicate-payloads-VBK");
+}
+
+TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
+  // mine 20 blocks
+  mineAltBlocks(20, chain);
+  AltBlock endorsedBlock = chain[5];
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+
+  PopData popData =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+  ASSERT_EQ(popData.atvs.size(), 1);
+  ASSERT_EQ(popData.vtbs.size(), 0);
+
+  // add alt payloads
+  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, popData);
+
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
