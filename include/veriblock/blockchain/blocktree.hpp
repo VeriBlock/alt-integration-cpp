@@ -129,7 +129,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   //! @invariant NOT atomic.
   bool loadBlock(const index_t& index, ValidationState& state) override {
     if (!checkBlock(index.getHeader(), state, *param_)) {
-      return state.Error("bad-header");
+      return state.Invalid("bad-header");
     }
 
     if (!base::loadBlock(index, state)) {
@@ -143,7 +143,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     // we only check blocks contextually if they are not bootstrap blocks, and previous block exists
     if (prev && !current->hasFlags(BLOCK_BOOTSTRAP) &&
         !contextuallyCheckBlock(*prev, current->getHeader(), state, *param_)) {
-      return state.Error("bad-block-contextually");
+      return state.Invalid("bad-block-contextually");
     }
 
     // recover chainwork
@@ -153,6 +153,9 @@ struct BlockTree : public BaseBlockTree<Block> {
     } else {
       current->chainWork = getBlockProof(current->getHeader());
     }
+
+    // clear blockOfProofEndorsements inmem field
+    current->blockOfProofEndorsements.clear();
 
     current->setFlag(BLOCK_VALID_TREE);
     return true;

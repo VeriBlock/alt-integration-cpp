@@ -12,6 +12,9 @@
 
 namespace altintegration {
 
+template struct BlockIndex<BtcBlock>;
+template struct BlockIndex<VbkBlock>;
+
 void VbkBlockTree::determineBestChain(index_t& candidate,
                                       ValidationState& state) {
   auto bestTip = getBestChain().tip();
@@ -398,8 +401,8 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
   auto window = std::max(
       0, index.getHeight() - param_->getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
-  if (!recoverEndorsedBy(*this, chain, *current, state)) {
-    return state.Error("bad-endorsements");
+  if (!recoverEndorsements(*this, chain, *current, state)) {
+    return state.Invalid("bad-endorsements");
   }
 
   storage_.addBlockToIndex(*current);
@@ -438,6 +441,27 @@ template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename VbkBlockTree::index_t& index, VbkBlockTree& tree) {
   return loadCommandsStorage<VbkBlockTree, VTB>(DB_VTB_PREFIX, index, tree);
+}
+
+template <>
+void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index) {
+  VBK_ASSERT_MSG(index.blockOfProofEndorsements.empty(),
+                 "blockOfProof has %d pointers to endorsements, they will be "
+                 "lost",
+                 index.blockOfProofEndorsements.size());
+}
+
+template <>
+void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index) {
+  VBK_ASSERT_MSG(index.blockOfProofEndorsements.empty(),
+                 "blockOfProof has %d pointers to endorsements, they will be "
+                 "lost",
+                 index.blockOfProofEndorsements.size());
+
+  VBK_ASSERT_MSG(index.endorsedBy.empty(),
+                 "endorsedBy has %d pointers to endorsements, they will be "
+                 "lost",
+                 index.endorsedBy.size());
 }
 
 template <>

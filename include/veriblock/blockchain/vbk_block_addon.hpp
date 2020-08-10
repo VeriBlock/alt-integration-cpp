@@ -24,6 +24,10 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   //! block
   ArithUint256 chainWork = 0;
 
+  //! (memory-only) a list of endorsements of ALT blocks, whose BlockOfProof is
+  //! this block. must be a vector, because we can have duplicates here
+  std::vector<AltEndorsement*> blockOfProofEndorsements;
+
   uint32_t refCount() const { return _refCount; }
 
   void addRef(ref_height_t) {
