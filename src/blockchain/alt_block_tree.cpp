@@ -3,13 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
-
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -43,6 +42,26 @@ bool AltTree::bootstrap(ValidationState& state) {
   return true;
 }
 
+// check for the duplicates current index
+template <typename Pop>
+bool payloadsCheckDuplicates(BlockIndex<AltBlock>& index,
+                             ValidationState& state) {
+  std::set<typename Pop::id_t> knownIds;
+
+  for (const auto& pid : index.getPayloadIds<Pop>()) {
+    if (!knownIds.insert(pid).second) {
+      return state.Invalid(
+          "ALT-duplicate-payloads-" + Pop::name(),
+          fmt::sprintf("Containing block=%s already contains payload %s=%s.",
+                       index.toPrettyString(),
+                       Pop::name(),
+                       pid.toHex()));
+    }
+  }
+  return true;
+}
+
+// check that provided payloads exist in the index paylaods
 template <typename Pop>
 bool payloadsCheckDuplicates(
     BlockIndex<AltBlock>& index,
@@ -73,16 +92,15 @@ bool payloadsCheckDuplicates(
   return true;
 }
 
-template <>
-bool payloadsCheckDuplicates<VbkBlock>(
-    BlockIndex<AltBlock>& index,
+bool vbkBlockCheckDuplicatesInChain(
+    BlockIndex<AltBlock>& chainHead,
     const std::vector<typename VbkBlock::id_t>& vbkblocks,
     AltTree& tree,
     ValidationState& state,
-    const std::function<bool(const typename VbkBlock::id_t&)>&
-        remove_function) {
+    const std::function<bool(const typename VbkBlock::id_t&)>& remove_function =
+        [](const typename VbkBlock::id_t&) { return false; }) {
   Chain<BlockIndex<AltBlock>> chain(tree.getParams().getBootstrapBlock().height,
-                                    &index);
+                                    &chainHead);
   for (size_t i = 0; i < vbkblocks.size(); ++i) {
     auto pid = vbkblocks[i];
 
@@ -106,6 +124,18 @@ bool payloadsCheckDuplicates<VbkBlock>(
   }
 
   return true;
+}
+
+template <>
+bool payloadsCheckDuplicates<VbkBlock>(
+    BlockIndex<AltBlock>& index,
+    const std::vector<typename VbkBlock::id_t>& vbkblocks,
+    AltTree& tree,
+    ValidationState& state,
+    const std::function<bool(const typename VbkBlock::id_t&)>&
+        remove_function) {
+  return vbkBlockCheckDuplicatesInChain(
+      index, vbkblocks, tree, state, remove_function);
 }
 
 template <typename Pop>
@@ -679,8 +709,14 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
+  if (!payloadsCheckDuplicates<VbkBlock>(*current, state) ||
+      !payloadsCheckDuplicates<ATV>(*current, state) ||
+      !payloadsCheckDuplicates<VTB>(*current, state)) {
+    return false;
+  }
+
   if (current->pprev &&
-      !payloadsCheckDuplicates<VbkBlock>(
+      !vbkBlockCheckDuplicatesInChain(
           *current->pprev, current->getPayloadIds<VbkBlock>(), *this, state)) {
     return false;
   }
