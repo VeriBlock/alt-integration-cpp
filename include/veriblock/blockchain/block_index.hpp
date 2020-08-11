@@ -43,7 +43,8 @@ enum BlockStatus : uint8_t {
 
   //! when set - we executed AddPayloads (in alttree) on this block
   BLOCK_HAS_PAYLOADS = 1 << 6,
-  //! when set, we executed AddPayloads (in alttree) on all previous blocks, including this block
+  //! when set, we executed AddPayloads (in alttree) on all previous blocks,
+  //! including this block
   BLOCK_CHAIN_HAS_PAYLOADS = 1 << 7
 };
 
@@ -188,7 +189,7 @@ struct BlockIndex : public Block::addon_t {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    return fmt::sprintf("%s%sBlockIndex{height=%d, hash=%s, status=%d, %s}",
+    return fmt::sprintf("%s%sBlockIndex(height=%d, hash=%s, status=%d, %s)",
                         std::string(level, ' '),
                         Block::name(),
                         height,
