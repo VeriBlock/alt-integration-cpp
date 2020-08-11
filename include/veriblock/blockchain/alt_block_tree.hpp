@@ -112,20 +112,21 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   /**
    * Efficiently compares current tip (A) and any other block (B).
    *
-   * Returns negative if right block is better.
-   * Returns 0 if blocks are equal in terms of POP. Users should fallback to
-   * chain-native Fork Resolution algorithm.
-   * Returns positive if left block is better.
-   *
    * @param[in] A hash of current tip in AltTree. Fails on assert if current
    * tip != A.
    * @param[in] B current tip will be compared against this block. Must
    * exist on chain and have BLOCK_HAS_PAYLOADS.
-   * @warning POP Fork Resolution is NOT transitive, it can not be used for
-   * finding "absolute" best chain. If A is better than B, and B is better than
-   * C, then A may NOT be better than C. Peers with different chains will
-   * eventually converge to the same chain.
+   * @warning POP Fork Resolution is NOT transitive, it can not be used to
+   * search for an "absolute" best chain. If A is better than B, and B is better
+   * than C, then A may NOT be better than C. It is expected that caller will
+   * execute this comparator once for every tip candidate to avoid cycles
+   * (A->B->C->A). But this is no big deal, as sooner or later peers with
+   * different chains will eventually converge to the same chain.
    * @return
+   * Returns positive if chain A is better.
+   * Returns negative if chain B is better.
+   * Returns 0 if blocks are equal in terms of POP. Users should fallback to
+   * chain-native Fork Resolution algorithm.
    */
   int comparePopScore(const AltBlock::hash_t& A, const AltBlock::hash_t& B);
 
