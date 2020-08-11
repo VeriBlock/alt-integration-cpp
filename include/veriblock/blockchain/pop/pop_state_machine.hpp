@@ -43,6 +43,9 @@ struct PopStateMachine {
     VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to apply a block that follows an "
                "unapplied block");
+    VBK_ASSERT(index.pprev->hasFlags(BLOCK_ONCE_APPLIED) &&
+               "state corruption: tried to unapply a block that follows a "
+               "block that has not been applied");
     VBK_ASSERT(!index.hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to apply an already applied block");
     // an expensive check; might want to  disable it eventually
@@ -118,6 +121,7 @@ struct PopStateMachine {
     }
 
     index.setFlag(BLOCK_APPLIED);
+    index.setFlag(BLOCK_ONCE_APPLIED);
     return true;
   }
 
@@ -127,9 +131,15 @@ struct PopStateMachine {
 
     VBK_ASSERT(index.hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to unapply an already unapplied block");
+    VBK_ASSERT(
+        index.hasFlags(BLOCK_ONCE_APPLIED) &&
+        "state corruption: tried to unapply block that has not been applied");
     VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
                "state corruption: tried to unapply a block that follows an "
                "unapplied block");
+    VBK_ASSERT(index.pprev->hasFlags(BLOCK_ONCE_APPLIED) &&
+               "state corruption: tried to unapply a block that follows a "
+               "block that has not been applied");
     // an expensive check; might want to  disable it eventually
     VBK_ASSERT(index.allDescendantsUnapplied() &&
                "state corruption: tried to unapply a block before unapplying "
