@@ -509,7 +509,7 @@ int AltTree::comparePopScore(const AltBlock::hash_t& A,
   VBK_ASSERT_MSG(right, "unknown 'B' block %s", HexStr(B));
   VBK_ASSERT(activeChain_.tip() && "not bootstrapped");
   VBK_ASSERT_MSG(activeChain_.tip() == left,
-                 "left form must be applied. Tip: %s, Left: %s",
+                 "left fork must be applied. Tip: %s, Left: %s",
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
 
