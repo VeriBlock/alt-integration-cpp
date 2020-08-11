@@ -421,9 +421,10 @@ bool AltTree::acceptBlockHeader(const AltBlock& block, ValidationState& state) {
 
 std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
     const AltBlock::hash_t& tip) {
+  VBK_ASSERT(isBootstrapped() && "not bootstrapped");
+
   auto* index = getBlockIndex(tip);
   VBK_ASSERT_MSG(index, "can not find block %s", HexStr(tip));
-  VBK_ASSERT(activeChain_.tip() && "not bootstrapped");
   VBK_ASSERT_MSG(index == activeChain_.tip(),
                  "AltTree is at unexpected state: Tip=%s ExpectedTip=%s",
                  activeChain_.tip()->toPrettyString(),
@@ -513,8 +514,10 @@ int AltTree::comparePopScore(const AltBlock::hash_t& A,
                  left->toPrettyString());
 
   // can compare chains with payloads added
-  VBK_ASSERT(left->hasFlags(BLOCK_CHAIN_HAS_PAYLOADS));
-  VBK_ASSERT(right->hasFlags(BLOCK_CHAIN_HAS_PAYLOADS));
+  VBK_ASSERT(!getParams().isStrictAddPayloadsEnabled() ||
+             left->hasFlags(BLOCK_CHAIN_HAS_PAYLOADS));
+  VBK_ASSERT(!getParams().isStrictAddPayloadsEnabled() ||
+             right->hasFlags(BLOCK_CHAIN_HAS_PAYLOADS));
 
   ValidationState state;
   // compare current active chain to other chain
