@@ -16,79 +16,82 @@
 namespace altintegration {
 
 struct PopRewardsCurveParams {
-  virtual ~PopRewardsCurveParams() = default;
-
   // we start decreasing rewards after this score
-  virtual double startOfSlope() const noexcept { return 1.0; }
+  double startOfSlope() const noexcept { return mStartOfSlope; }
 
   // we decrease reward coefficient for this value for
   // each additional score point above startOfDecreasingLine
-  virtual double slopeNormal() const noexcept { return 0.2; }
+  double slopeNormal() const noexcept { return mSlopeNormal; }
 
   // slope for keystone rounds
-  virtual double slopeKeystone() const noexcept { return 0.21325; }
+  double slopeKeystone() const noexcept { return mSlopeKeystone; }
 
-  std::vector<uint8_t> toRaw() const;
-
-  void toRaw(WriteStream& stream) const;
+ protected:
+  double mStartOfSlope = 1.0;
+  double mSlopeNormal = 0.2;
+  double mSlopeKeystone = 0.21325;
 };
 
 struct PopRewardsParams {
-  virtual ~PopRewardsParams() = default;
-
   // we use this round number to detect keystones
-  virtual uint32_t keystoneRound() const noexcept { return 3; }
+  uint32_t keystoneRound() const noexcept { return mKeystoneRound; }
 
   // we have this number of rounds eg rounds 0, 1, 2, 3
-  virtual uint32_t payoutRounds() const noexcept { return 4; }
+  uint32_t payoutRounds() const noexcept { return mPayoutRounds; }
 
   // we use this round number to pay flat reward (does not depend on pop
   // difficulty)
-  virtual uint32_t flatScoreRound() const noexcept { return 2; }
+  uint32_t flatScoreRound() const noexcept { return mFlatScoreRound; }
 
   // should we use flat rewards at all
-  virtual bool flatScoreRoundUse() const noexcept { return true; }
+  bool flatScoreRoundUse() const noexcept { return mFlatScoreRoundUse; }
 
   // we have these payout modifiers for different rounds. Keystone round has
   // the highest multiplier
-  virtual const std::vector<double>& roundRatios() const noexcept {
-    return roundRatios_;
+  const std::vector<double>& roundRatios() const noexcept {
+    return mRoundRatios;
   }
 
   // limit block score to this value
-  virtual double maxScoreThresholdNormal() const noexcept { return 2.0; }
+  double maxScoreThresholdNormal() const noexcept {
+    return mMaxScoreThresholdNormal;
+  }
 
   // limit block with keystones score to this value
-  virtual double maxScoreThresholdKeystone() const noexcept { return 3.0; }
+  double maxScoreThresholdKeystone() const noexcept {
+    return mMaxScoreThresholdKeystone;
+  }
 
   // collect this amount of blocks BEFORE the block to calculate pop difficulty
-  virtual uint32_t difficultyAveragingInterval() const noexcept { return 50; }
+  uint32_t difficultyAveragingInterval() const noexcept {
+    return mDifficultyAveragingInterval;
+  }
 
   // getter for reward curve parameters
-  virtual const PopRewardsCurveParams& getCurveParams() const noexcept {
-    return *curveParams;
+  const PopRewardsCurveParams& getCurveParams() const noexcept {
+    return curveParams;
   }
 
   // reward score table
   // we score each VeriBlock and lower the reward for late blocks
-  virtual const std::vector<double>& relativeScoreLookupTable() const noexcept {
-    return lookupTable_;
+  const std::vector<double>& relativeScoreLookupTable() const noexcept {
+    return mLookupTable;
   }
 
-  std::vector<uint8_t> toRaw() const;
-
-  void toRaw(WriteStream& stream) const;
-
  protected:
-  std::shared_ptr<PopRewardsCurveParams> curveParams =
-      std::make_shared<PopRewardsCurveParams>();
+  PopRewardsCurveParams curveParams{};
 
-  std::vector<double> roundRatios_{std::atof("0.97"),
-                                   std::atof("1.03"),
-                                   std::atof("1.07"),
-                                   std::atof("3.00")};
+  uint32_t mKeystoneRound = 3;
+  uint32_t mPayoutRounds = 4;
+  uint32_t mFlatScoreRound = 2;
+  bool mFlatScoreRoundUse = true;
+  double mMaxScoreThresholdNormal = 2.0;
+  double mMaxScoreThresholdKeystone = 3.0;
+  uint32_t mDifficultyAveragingInterval = 50;
 
-  std::vector<double> lookupTable_{
+  std::vector<double> mRoundRatios{0.97, 1.03, 1.07, 3.00};
+
+  std::vector<double> mLookupTable{
       1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
       1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
       0.48296816, 0.31551694, 0.23325824, 0.18453616, 0.15238463, 0.12961255,
@@ -103,29 +106,26 @@ struct PopRewardsParams {
 struct AltChainParams {
   virtual ~AltChainParams() = default;
 
-  virtual uint32_t getKeystoneInterval() const noexcept { return 5; }
+  uint32_t getKeystoneInterval() const noexcept { return mKeystoneInterval; }
 
   ///! number of blocks in VBK for finalization
-  virtual uint32_t getFinalityDelay() const noexcept { return 100; }
+  uint32_t getFinalityDelay() const noexcept { return mFinalityDelay; }
 
-  virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
-      const noexcept {
+  const std::vector<uint32_t>& getForkResolutionLookUpTable() const noexcept {
     // TODO(warchant): this should be recalculated. see paper.
-    return forkResolutionLookUpTable_;
+    return mForkResolutionLookUpTable;
   }
 
   /// endorsement validity window, pop payout delay
-  virtual int32_t getEndorsementSettlementInterval() const noexcept {
-    return 50;
+  int32_t getEndorsementSettlementInterval() const noexcept {
+    return mEndorsementSettlementInterval;
   }
 
-  virtual size_t getMaxPopDataSize() const noexcept {
-    return 1 * 1024 * 1024;  // 1 MB
-  }
+  size_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
   // getter for reward parameters
-  virtual const PopRewardsParams& getRewardParams() const noexcept {
-    return *popRewardsParams;
+  const PopRewardsParams& getRewardParams() const noexcept {
+    return mPopRewardsParams;
   }
 
   // unique POP id for the chain
@@ -136,15 +136,15 @@ struct AltChainParams {
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
-  std::vector<uint8_t> toRaw() const;
-
-  void toRaw(WriteStream& stream) const;
-
  protected:
-  std::shared_ptr<PopRewardsParams> popRewardsParams =
-      std::make_shared<PopRewardsParams>();
+  PopRewardsParams mPopRewardsParams;
 
-  std::vector<uint32_t> forkResolutionLookUpTable_{
+  uint32_t mKeystoneInterval = 5;
+  uint32_t mFinalityDelay = 100;
+  int32_t mEndorsementSettlementInterval = 50;
+  uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
+
+  std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
 
