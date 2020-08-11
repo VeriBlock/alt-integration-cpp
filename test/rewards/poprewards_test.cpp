@@ -41,7 +41,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   PopData altPayloads1 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  EXPECT_TRUE(validatePayloads(containingBlock.getHash(), altPayloads1));
+  EXPECT_TRUE(validatePayloads(containingBlock.getHash(), altPayloads1, state));
   EXPECT_TRUE(state.IsValid());
   // ALT has 11 blocks + endorsement block
   EXPECT_EQ(altchain.size(), 12);

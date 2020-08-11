@@ -121,6 +121,10 @@ struct AltChainParams {
     return mEndorsementSettlementInterval;
   }
 
+  bool isStrictAddPayloadsEnabled() const noexcept {
+    return false;
+  }
+
   size_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
   // getter for reward parameters

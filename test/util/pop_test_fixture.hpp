@@ -85,23 +85,19 @@ struct PopTestFixture {
   }
 
   bool validatePayloads(const AltBlock::hash_t& block_hash,
-                                 const PopData& popData) {
+                        const PopData& popData, ValidationState& _state) {
     auto* index = alttree.getBlockIndex(block_hash);
     if (!index) {
-      return state.Invalid("bad-block",
-                           "Can't find containing block");
+      return _state.Invalid("bad-block", "Can't find containing block");
     }
 
-    if (!alttree.addPayloads(block_hash, popData, state)) {
-      return state.Invalid("addPayloadsTemporarily");
+    if (!alttree.addPayloads(block_hash, popData, _state)) {
+      return _state.Invalid("addPayloadsTemporarily");
     }
 
-    if (!alttree.setState(*index, state)) {
-      VBK_LOG_DEBUG("Statefully invalid payloads: %s",
-                    state.toString());
-
-      alttree.removeAllPayloads(block_hash);
-      return state.Invalid("addPayloadsTemporarily");
+    if (!alttree.setState(*index, _state)) {
+      EXPECT_NO_FATAL_FAILURE(alttree.removeAllPayloads(block_hash));
+      return _state.Invalid("addPayloadsTemporarily");
     }
 
     return true;

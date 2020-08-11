@@ -136,6 +136,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   // now we remove that duplicating payloads
   // remain vbk blocks as a payloads in the alt block [99]
   p2.context.clear();
+  ASSERT_TRUE(alttree.setState(chain[98].getHash(), state));
   ASSERT_NO_FATAL_FAILURE(alttree.removeAllPayloads(chain[99].getHash()));
   ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
   // both indices are valid
@@ -151,16 +152,14 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100);
 
-  ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), payloads, state));
-  ASSERT_NO_FATAL_FAILURE(alttree.removeAllPayloads(index100->getHash()));
+  ASSERT_TRUE(validatePayloads(chain[100].getHash(), payloads, state));
   auto& atvids = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids.size(), 1);
   ASSERT_TRUE(index100->isValid());
 
-  ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), payloads, state));
-  ASSERT_NO_FATAL_FAILURE(alttree.removeAllPayloads(index100->getHash()));
+  ASSERT_FALSE(validatePayloads(chain[100].getHash(), payloads, state));
   ASSERT_EQ(state.GetPath(),
-            "ALT-addPayloadsTemporarily+ALT-duplicate-payloads-VBK");
+            "addPayloadsTemporarily+ALT-duplicate-payloads-VBK");
   ASSERT_TRUE(index100->isValid());
   auto& atvids2 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids2.size(), 1);
