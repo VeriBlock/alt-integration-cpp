@@ -72,7 +72,7 @@ struct BlockIndex : public Block::addon_t {
   std::set<BlockIndex*> pnext{};
 
   //! (memory only) contains status flags
-  uint8_t status = 0;  // unknown validity
+  uint32_t status = 0;  // unknown validity
 
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
     VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
