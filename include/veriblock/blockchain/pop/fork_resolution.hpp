@@ -417,6 +417,8 @@ struct PopAwareForkResolutionComparator {
     return false;
   }
 
+#include <iostream>
+
   /**
    * Compare the currently applied(best) and candidate chains
    * @return 0 if the chains are equal,
@@ -508,9 +510,10 @@ struct PopAwareForkResolutionComparator {
     sm_t sm(ed, *ing_, storage_, chainA.first()->getHeight());
 
     // we are at chainA.
-    // apply all payloads from chain B (both chains have same first block - the
-    // fork point, so exclude it during 'apply')
-    {
+    // apply all payloads from chain B if the candidate block has previously
+    // applied (both chains have same first block - the fork point, so exclude
+    // it during 'apply')
+    if (candidate.hasFlags(BLOCK_ONCE_APPLIED)) {
       auto guard = ing_->deferForkResolutionGuard();
 
       if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
@@ -520,6 +523,36 @@ struct PopAwareForkResolutionComparator {
         guard.overrideDeferredForkResolution(originalProtectingTip);
         return 1;
       }
+    }
+    // In the other case we should unnaply chain A then apply chain B and
+    // after apply chain A. This will guarantee that chain B will have correct
+    // state
+    else {
+      // unapply chain A
+      sm.unapply(*chainA.tip(), *chainA.first());
+
+      auto guard = ing_->deferForkResolutionGuard();
+
+      std::cout << "comparePopScore() here 3" << std::endl;
+
+      // apply chain B
+      if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
+        // chain B has been unapplied and invalidated already
+        VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
+                     state.toString());
+        guard.overrideDeferredForkResolution(originalProtectingTip);
+        return 1;
+      }
+
+      std::cout << "comparePopScore() here 4" << std::endl;
+      // apply chain A
+      VBK_ASSERT(sm.apply(*chainA.first(),
+                          *chainA.tip()->pprev->pprev->pprev,
+                          state) &&
+                 "state corruption: chain A should has valid paylaods");
+      // VBK_ASSERT(sm.apply(*chainA.first(), *chainA.tip(), state) &&
+      //            "state corruption: chain A should has valid paylaods");
+      std::cout << "comparePopScore() here 5" << std::endl;
     }
 
     // now the tree contains payloads from both chains

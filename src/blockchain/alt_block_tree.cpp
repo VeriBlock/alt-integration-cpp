@@ -425,7 +425,7 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
                          "One of previous blocks is invalid. Status=(" +
                              std::to_string(index->status) + ")");
   }
-  
+
   tryAddTip(index);
 
   return true;
