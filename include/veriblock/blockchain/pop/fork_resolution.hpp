@@ -533,8 +533,6 @@ struct PopAwareForkResolutionComparator {
 
       auto guard = ing_->deferForkResolutionGuard();
 
-      std::cout << "comparePopScore() here 3" << std::endl;
-
       // apply chain B
       if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
         // chain B has been unapplied and invalidated already
@@ -544,15 +542,10 @@ struct PopAwareForkResolutionComparator {
         return 1;
       }
 
-      std::cout << "comparePopScore() here 4" << std::endl;
       // apply chain A
-      VBK_ASSERT(sm.apply(*chainA.first(),
-                          *chainA.tip()->pprev->pprev->pprev,
-                          state) &&
-                 "state corruption: chain A should has valid paylaods");
-      // VBK_ASSERT(sm.apply(*chainA.first(), *chainA.tip(), state) &&
-      //            "state corruption: chain A should has valid paylaods");
-      std::cout << "comparePopScore() here 5" << std::endl;
+      bool res = sm.apply(*chainA.first(), *chainA.tip(), state);
+      VBK_ASSERT_MSG(
+          res, "state corruption: %s", "chain A should has valid paylaods");
     }
 
     // now the tree contains payloads from both chains
