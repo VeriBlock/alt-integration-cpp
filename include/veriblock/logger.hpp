@@ -13,7 +13,7 @@
 
 namespace altintegration {
 
-enum class LogLevel { debug, info, warn, error, off };
+enum class LogLevel { debug, info, warn, error, critical, off };
 
 struct Logger {
   virtual ~Logger() = default;
@@ -44,18 +44,20 @@ LogLevel StringToLevel(const std::string&);
   fmt::sprintf(std::string("%s: ") + format, __func__, ##__VA_ARGS__)
 #endif
 
-#define VBK_LOG(lvl, format, ...)                                  \
-  do {                                                             \
-    if (GetLogger().level <= lvl) {                                \
-      GetLogger().log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
-    }                                                              \
+#define VBK_LOG(lvl, format, ...)                                             \
+  do {                                                                        \
+    if (altintegration::GetLogger().level <= lvl) {                           \
+      altintegration::GetLogger().log(lvl,                                    \
+                                      VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
+    }                                                                         \
   } while (0)
 
 // clang-format off
-#define VBK_LOG_DEBUG(format, ...) VBK_LOG(LogLevel::debug, format, ##__VA_ARGS__)
-#define VBK_LOG_INFO(format, ...)  VBK_LOG(LogLevel::info, format, ##__VA_ARGS__)
-#define VBK_LOG_WARN(format, ...)  VBK_LOG(LogLevel::warn, format, ##__VA_ARGS__)
-#define VBK_LOG_ERROR(format, ...) VBK_LOG(LogLevel::error, format, ##__VA_ARGS__)
+#define VBK_LOG_DEBUG(format, ...) VBK_LOG(altintegration::LogLevel::debug, format, ##__VA_ARGS__)
+#define VBK_LOG_INFO(format, ...)  VBK_LOG(altintegration::LogLevel::info, format, ##__VA_ARGS__)
+#define VBK_LOG_WARN(format, ...)  VBK_LOG(altintegration::LogLevel::warn, format, ##__VA_ARGS__)
+#define VBK_LOG_ERROR(format, ...) VBK_LOG(altintegration::LogLevel::error, format, ##__VA_ARGS__)
+#define VBK_LOG_CRITICAL(format, ...) VBK_LOG(altintegration::LogLevel::critical, format, ##__VA_ARGS__)
 // clang-format on
 
 #else  // !VERIBLOCK_POP_LOGGER_DISABLED
@@ -64,6 +66,7 @@ LogLevel StringToLevel(const std::string&);
 #define VBK_LOG_INFO(...)
 #define VBK_LOG_WARN(...)
 #define VBK_LOG_ERROR(...)
+#define VBK_LOG_CRITICAL(...)
 
 #endif  // VERIBLOCK_POP_LOGGER_DISABLED
 

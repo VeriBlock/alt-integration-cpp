@@ -32,6 +32,8 @@ std::string LevelToString(LogLevel l) {
       return "warn";
     case LogLevel::error:
       return "error";
+    case LogLevel::critical:
+      return "critical";
     default:
       return "";
   }
@@ -46,12 +48,14 @@ LogLevel StringToLevel(const std::string& str) {
     return LogLevel::warn;
   } else if (str == "error") {
     return LogLevel::error;
+  } else if (str == "critical") {
+    return LogLevel::critical;
   } else if (str == "off") {
     return LogLevel::off;
   } else {
     throw std::invalid_argument(
         fmt::sprintf("%s is not valid log level. Expected one of "
-                     "debug/info/warn/error/off"));
+                     "debug/info/warn/error/critical/off"));
   }
 }
 
