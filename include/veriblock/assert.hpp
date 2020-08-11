@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_ASSERT_HPP
 #define VERIBLOCK_POP_CPP_ASSERT_HPP
 
-#include <iostream>
 #include <veriblock/logger.hpp>
 
 #ifdef VBK_HAVE_BUILTIN_EXPECT
