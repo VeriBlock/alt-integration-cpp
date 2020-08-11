@@ -3,9 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/blockchain/alt_chain_params_serializable.hpp>
-#include <veriblock/blockchain/btc_chain_params_serializable.hpp>
-#include <veriblock/blockchain/vbk_chain_params_serializable.hpp>
 #include <veriblock/config.hpp>
 
 namespace altintegration {
@@ -71,40 +68,6 @@ void Config::validate() const {
           state.GetDebugMessage());
     }
   }
-}
-
-Config Config::fromRaw(ReadStream& stream) {
-  Config conf;
-
-  conf.btc = Bootstrap<BtcBlock, BtcChainParams>::fromRaw(stream);
-  conf.btc.params = std::make_shared<BtcChainParamsSerializable>(
-      BtcChainParamsSerializable::fromRaw(stream));
-
-  conf.vbk = Bootstrap<VbkBlock, VbkChainParams>::fromRaw(stream);
-  conf.vbk.params = std::make_shared<VbkChainParamsSerializable>(
-      VbkChainParamsSerializable::fromRaw(stream));
-
-  conf.alt = std::make_shared<AltChainParamsSerializable>(
-      AltChainParamsSerializable::fromRaw(stream));
-
-  return conf;
-}
-
-Config Config::fromRaw(const std::vector<uint8_t>& bytes) {
-  ReadStream stream(bytes);
-  return fromRaw(stream);
-}
-
-void Config::toRaw(WriteStream& stream) const {
-  btc.toRaw(stream);
-  vbk.toRaw(stream);
-  alt->toRaw(stream);
-}
-
-std::vector<uint8_t> Config::toRaw() const {
-  WriteStream stream;
-  toRaw(stream);
-  return stream.data();
 }
 
 }  // namespace altintegration
