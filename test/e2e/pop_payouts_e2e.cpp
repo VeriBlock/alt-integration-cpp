@@ -30,7 +30,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     for (uint32_t i = 0; i < num; ++i) {
       chain.push_back(generateNextBlock(*chain.rbegin()));
 
-      ASSERT_TRUE(tree.acceptBlock(*chain.rbegin(), state));
+      ASSERT_TRUE(tree.acceptBlockHeader(*chain.rbegin(), state));
       ASSERT_TRUE(tree.setState(chain.rbegin()->getHash(), state));
       ASSERT_TRUE(state.IsValid());
     }
@@ -50,8 +50,8 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     chain.push_back(containing);
     auto payloads = generateAltPayloads(
         {vbktx}, tree.vbk().getBestChain().tip()->getHash());
-    ASSERT_TRUE(tree.acceptBlock(containing, state));
-    ASSERT_TRUE(tree.addPayloads(containing, payloads, state));
+    ASSERT_TRUE(tree.acceptBlockHeader(containing, state));
+    ASSERT_TRUE(tree.addPayloads(containing.getHash(), payloads, state));
     ASSERT_TRUE(tree.setState(containing.getHash(), state));
     validateAlttreeIndexState(tree, containing, payloads);
   }
@@ -87,8 +87,8 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
       chain.push_back(containing);
       auto payloads1 = generateAltPayloads(
           {vbktx1, vbktx2}, tree.vbk().getBestChain().tip()->getHash());
-      ASSERT_TRUE(tree.acceptBlock(containing, state));
-      ASSERT_TRUE(tree.addPayloads(containing, payloads1, state));
+      ASSERT_TRUE(tree.acceptBlockHeader(containing, state));
+      ASSERT_TRUE(tree.addPayloads(containing.getHash(), payloads1, state));
       ASSERT_TRUE(tree.setState(containing.getHash(), state));
       validateAlttreeIndexState(tree, containing, payloads1);
     }
@@ -102,14 +102,15 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
 
   for (size_t i = 0; i < 10000; i++) {
     std::map<std::vector<uint8_t>, int64_t> payout;
+    ASSERT_TRUE(alttree.setState(chain[i].getHash(), state));
     ASSERT_NO_FATAL_FAILURE(
-        payout = alttree.getPopPayout(chain[i].getHash(), state));
+        payout = alttree.getPopPayout(chain[i].getHash()));
     // no endorsements = no payouts
     ASSERT_TRUE(payout.empty());
 
     auto block = generateNextBlock(chain.back());
     chain.push_back(block);
-    ASSERT_TRUE(alttree.acceptBlock(block, state));
+    ASSERT_TRUE(alttree.acceptBlockHeader(block, state));
   }
 }
 
@@ -118,15 +119,14 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
   auto endorsed = chain.back();
   mineSingleEndorsement(alttree, endorsed, 1, chain);
 
-  auto payout = alttree.getPopPayout(chain.back().getHash(), state);
+  auto payout = alttree.getPopPayout(chain.back().getHash());
   ASSERT_TRUE(payout.empty());
-  ASSERT_TRUE(state.IsError());
 
   state = ValidationState();
   mineAltBlocksWithTree(
       alttree, altparam.getEndorsementSettlementInterval() - 2, chain);
 
-  payout = alttree.getPopPayout(chain.back().getHash(), state);
+  payout = alttree.getPopPayout(chain.back().getHash());
   ASSERT_FALSE(payout.empty());
 
   auto miner1 = getPayoutInfo();
@@ -147,15 +147,14 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
     mineSingleEndorsement(alttree, endorsed, i, chain);
   }
 
-  auto payout = alttree.getPopPayout(chain.back().getHash(), state);
+  auto payout = alttree.getPopPayout(chain.back().getHash());
   ASSERT_TRUE(payout.empty());
-  ASSERT_TRUE(state.IsError());
 
   state = ValidationState();
   mineAltBlocksWithTree(
       alttree, altparam.getEndorsementSettlementInterval() - 3, chain);
 
-  payout = alttree.getPopPayout(chain.back().getHash(), state);
+  payout = alttree.getPopPayout(chain.back().getHash());
   ASSERT_EQ(payout.size(), 2);
   auto miner1 = getPayoutInfo();
   miner1.push_back(0);
@@ -182,7 +181,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
       alttree, altparam.getEndorsementSettlementInterval() - 2, chain);
 
   // this is a regular payout - each block is endorsed by the next one
-  auto payout = alttree.getPopPayout(chain.back().getHash(), state);
+  auto payout = alttree.getPopPayout(chain.back().getHash());
   auto firstBlock = alttree.getBlockIndex(chain.back().getHash())
                         ->getAncestorBlocksBehind(
                             altparam.getEndorsementSettlementInterval());
@@ -205,7 +204,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   mineAltBlocksWithTree(
       alttree2, altparam.getEndorsementSettlementInterval() - 2, chain2);
 
-  auto payout2 = alttree2.getPopPayout(chain2.back().getHash(), state);
+  auto payout2 = alttree2.getPopPayout(chain2.back().getHash());
   auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
                          ->getAncestorBlocksBehind(
                              altparam.getEndorsementSettlementInterval());
@@ -241,7 +240,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
 
   // each block is endorsed by the next one but we have higher difficulty
   // since before each block was endorsed by two miners
-  auto payout = alttree.getPopPayout(chain.back().getHash(), state);
+  auto payout = alttree.getPopPayout(chain.back().getHash());
   auto firstBlock = alttree.getBlockIndex(chain.back().getHash())
                         ->getAncestorBlocksBehind(
                             altparam.getEndorsementSettlementInterval());
@@ -261,7 +260,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   mineAltBlocksWithTree(
       alttree2, altparam.getEndorsementSettlementInterval() - 2, chain2);
 
-  auto payout2 = alttree2.getPopPayout(chain2.back().getHash(), state);
+  auto payout2 = alttree2.getPopPayout(chain2.back().getHash());
   auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
                          ->getAncestorBlocksBehind(
                              altparam.getEndorsementSettlementInterval());
@@ -291,7 +290,8 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
 
   // find maximum reward and store it together with endorsed block height
   for (size_t i = 0; i < altparam.getKeystoneInterval(); i++) {
-    auto payout = alttree.getPopPayout(initialBlock->getHash(), state);
+    ASSERT_TRUE(alttree.setState(initialBlock->getHash(), state));
+    auto payout = alttree.getPopPayout(initialBlock->getHash());
     if (payout.begin()->second > highestReward) {
       highestReward = payout.begin()->second;
       auto endorsedBlock = initialBlock->getAncestorBlocksBehind(

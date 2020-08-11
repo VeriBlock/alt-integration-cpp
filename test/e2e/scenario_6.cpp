@@ -75,7 +75,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   // put corrupted VTB
   altPayloads.vtbs.push_back(vtb);
 
-  EXPECT_TRUE(test_alttree.acceptBlock(containingAltBlock, state));
+  EXPECT_TRUE(test_alttree.acceptBlockHeader(containingAltBlock, state));
   ASSERT_TRUE(test_alttree.addPayloads(
       containingAltBlock.getHash(), altPayloads, state));
   EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));

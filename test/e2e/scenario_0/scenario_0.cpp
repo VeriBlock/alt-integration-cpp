@@ -122,9 +122,9 @@ TEST_F(Scenario0, Scenario0) {
   popData.vtbs = vtbs;
 
   ValidationState state;
-  ASSERT_TRUE(alt->acceptBlock(endorsedPrev, state)) << state.toString();
-  ASSERT_TRUE(alt->acceptBlock(endorsed, state)) << state.toString();
-  ASSERT_TRUE(alt->acceptBlock(containing, state)) << state.toString();
+  ASSERT_TRUE(alt->acceptBlockHeader(endorsedPrev, state)) << state.toString();
+  ASSERT_TRUE(alt->acceptBlockHeader(endorsed, state)) << state.toString();
+  ASSERT_TRUE(alt->acceptBlockHeader(containing, state)) << state.toString();
   ASSERT_TRUE(alt->addPayloads(containing.getHash(), popData, state));
   ASSERT_FALSE(alt->setState(containing.getHash(), state));
   ASSERT_EQ("ALT-bad-command+VBK-bad-containing", state.GetPath());

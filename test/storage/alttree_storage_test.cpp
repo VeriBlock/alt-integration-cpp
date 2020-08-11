@@ -164,9 +164,9 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   this->popminer->mineVbkBlocks(1);
   this->popminer->mineBtcBlocks(1);
 
-  EXPECT_TRUE(this->alttree.acceptBlock(containingBlock, this->state));
-  EXPECT_TRUE(
-      this->alttree.addPayloads(containingBlock, altPayloads1, this->state));
+  EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
+  EXPECT_TRUE(this->alttree.addPayloads(
+      containingBlock.getHash(), altPayloads1, this->state));
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
@@ -225,9 +225,9 @@ TYPED_TEST_P(AltTreeRepositoryTest, ManyEndorsements) {
   this->popminer->mineVbkBlocks(1);
   this->popminer->mineBtcBlocks(1);
 
-  EXPECT_TRUE(this->alttree.acceptBlock(containingBlock, this->state));
-  EXPECT_TRUE(
-      this->alttree.addPayloads(containingBlock, altPayloads1, this->state));
+  EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
+  EXPECT_TRUE(this->alttree.addPayloads(
+      containingBlock.getHash(), altPayloads1, this->state));
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
@@ -293,8 +293,9 @@ TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
   chain.push_back(containingBlock);
 
   // add alt payloads
-  EXPECT_TRUE(this->alttree.acceptBlock(containingBlock, this->state));
-  EXPECT_TRUE(this->alttree.addPayloads(containingBlock, popData, this->state));
+  EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
+  EXPECT_TRUE(this->alttree.addPayloads(
+      containingBlock.getHash(), popData, this->state));
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
   validateAlttreeIndexState(this->alttree, containingBlock, popData);
@@ -307,8 +308,9 @@ TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
   chain.push_back(containingBlock);
 
   // add alt payloads
-  EXPECT_TRUE(this->alttree.acceptBlock(containingBlock, this->state));
-  EXPECT_TRUE(this->alttree.addPayloads(containingBlock, popData, this->state));
+  EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
+  EXPECT_TRUE(this->alttree.addPayloads(
+      containingBlock.getHash(), popData, this->state));
   EXPECT_FALSE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_FALSE(this->state.IsValid());
   validateAlttreeIndexState(this->alttree, containingBlock, popData, false);

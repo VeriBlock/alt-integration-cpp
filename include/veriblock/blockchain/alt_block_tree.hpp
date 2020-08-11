@@ -32,8 +32,7 @@ namespace altintegration {
 extern template struct BlockIndex<AltBlock>;
 
 /**
- * @warning POP Fork Resolution is NOT transitive. If A is better than B, and B
- * is better than C, then A may NOT be better than C.
+ * @class AltTree
  */
 struct AltTree : public BaseBlockTree<AltBlock> {
   using base = BaseBlockTree<AltBlock>;
@@ -49,7 +48,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
                                                              AltChainParams,
                                                              VbkBlockTree,
                                                              AltTree>;
-  using determine_best_chain_f = std::function<int(index_t&, index_t&)>;
 
   virtual ~AltTree() = default;
 
@@ -58,64 +56,88 @@ struct AltTree : public BaseBlockTree<AltBlock> {
           const btc_config_t& btc_config,
           PayloadsStorage& storagePayloads);
 
-  //! before any use, bootstrap the three with ALT bootstrap block.
-  //! may return false, if bootstrap block is invalid
+  /**
+   * Set very first (bootstrap) altchain block with enabled POP.
+   *
+   * Call this method before any use of AltTree.
+   *
+   * @param[out] state validation state
+   * @return true in success, false if block is invalid.
+   */
   bool bootstrap(ValidationState& state);
 
-  bool acceptBlock(const AltBlock& block, ValidationState& state);
-
-  void removePayloads(index_t& index, const PopData& popData);
-
-  void removePayloads(const AltBlock::hash_t& containing,
-                      const PopData& popData);
-
-  bool addPayloads(index_t& index,
-                   const PopData& popData,
-                   ValidationState& state);
-
-  bool addPayloads(const AltBlock::hash_t& containing,
-                   const PopData& popData,
-                   ValidationState& state);
-
-  bool addPayloads(const AltBlock& containing,
-                   const PopData& popData,
-                   ValidationState& state);
-
-  void payloadsToCommands(const ATV& atv,
-                          const AltBlock& containing,
-                          std::vector<CommandPtr>& commands);
-
-  void payloadsToCommands(const VTB& vtb, std::vector<CommandPtr>& commands);
-
-  void payloadsToCommands(const VbkBlock& block,
-                          std::vector<CommandPtr>& commands);
-
-  //! efficiently connect `index` to current tree, loaded from disk
-  //! - recovers all pointers (pprev, pnext, endorsedBy)
-  //! - does validation of endorsements
-  //! - recovers tips array
-  //! @invariant NOT atomic.
-  bool loadBlock(const index_t& index, ValidationState& state) override;
-
-  bool loadTip(const hash_t& hash, ValidationState& state) override;
-
-  int comparePopScore(const AltBlock::hash_t& hleft,
-                      const AltBlock::hash_t& hright);
+  /**
+   * Validate and add ALT block header to AltTree.
+   * @param[in] block ALT block header
+   * @param[out] state validation state
+   * @return true if block is valid, and added; false otherwise.
+   */
+  bool acceptBlockHeader(const AltBlock& block, ValidationState& state);
 
   /**
-   * Calculate payouts for the altchain tip
+   * Add block body to block header. Can be done once per each block, in any
+   * order.
+   * @param[in] block hash of ALT block where block body is added.
+   * @param[in] popData POP block body
+   * @param[out] state validation state
+   * @return true if PopData does not contain duplicates (searched across active
+   * chain). However, it is far from certain that it is completely valid.
+   */
+  bool addPayloads(const hash_t& block,
+                   const PopData& popData,
+                   ValidationState& state);
+
+  /**
+   * Efficiently connect block loaded from disk.
+   *
+   * It recovers all pointers (pprev, pnext, endorsedBy,
+   * blockOfProofEndorsements), validates block and endorsements, recovers
+   * validity index, recovers tips array.
+   * @param[in] index block
+   * @param[out] state validation state
+   * @return true if block is valid
+   * @invariant NOT atomic. If loadBlock failed, AltTree state is undefined and
+   * can not be used. Tip: ask user to run with '-reindex'.
+   */
+  bool loadBlock(const index_t& index, ValidationState& state) override;
+
+  /**
+   * After all blocks loaded, efficiently set current tip.
+   * @param[in] hash tip hash
+   * @param[out] state validation state
+   * @return true on success, false otherwise
+   */
+  bool loadTip(const hash_t& hash, ValidationState& state) override;
+
+  /**
+   * Efficiently compares current tip (A) and any other block (B).
+   *
+   * Returns negative if right block is better.
+   * Returns 0 if blocks are equal in terms of POP. Users should fallback to
+   * chain-native Fork Resolution algorithm.
+   * Returns positive if left block is better.
+   *
+   * @param[in] A hash of current tip in AltTree. Fails on assert if current
+   * tip != A.
+   * @param[in] B current tip will be compared against this block. Must
+   * exist on chain and have BLOCK_HAS_PAYLOADS.
+   * @warning POP Fork Resolution is NOT transitive, it can not be used for
+   * finding "absolute" best chain. If A is better than B, and B is better than
+   * C, then A may NOT be better than C. Peers with different chains will
+   * eventually converge to the same chain.
+   * @return
+   */
+  int comparePopScore(const AltBlock::hash_t& A, const AltBlock::hash_t& B);
+
+  /**
+   * Calculate payouts for the altchain tip.
+   * @param[in] hash of altchain tip.
    * @return map with reward recipient as a key and reward amount as a value
    */
-  std::map<std::vector<uint8_t>, int64_t> getPopPayout(
-      const AltBlock::hash_t& tip, ValidationState& state);
+  std::map<std::vector<uint8_t>, int64_t> getPopPayout(const hash_t& tip);
 
-  bool validatePayloads(const AltBlock& block,
-                        const PopData& popData,
-                        ValidationState& state);
-
-  bool validatePayloads(const AltBlock::hash_t& block_hash,
-                        const PopData& popData,
-                        ValidationState& state);
+  // removes all payloads from a block
+  void removeAllPayloads(const hash_t& hash);
 
   // use this method for stateful validation of pop data. invalid pop data will
   // be removed from `pop`
@@ -129,9 +151,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   }
 
   const PopForkComparator& getComparator() const { return cmp_; }
-
   const AltChainParams& getParams() const { return *alt_config_; }
-
   PayloadsStorage& getStorage() { return storage_; }
   const PayloadsStorage& getStorage() const { return storage_; }
 
@@ -145,6 +165,15 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   void removeSubtree(index_t& toRemove) override;
   using base::removeLeaf;
   using base::removeSubtree;
+
+  void payloadsToCommands(const ATV& atv,
+                          const AltBlock& containing,
+                          std::vector<CommandPtr>& commands);
+
+  void payloadsToCommands(const VTB& vtb, std::vector<CommandPtr>& commands);
+
+  void payloadsToCommands(const VbkBlock& block,
+                          std::vector<CommandPtr>& commands);
 
  protected:
   const alt_config_t* alt_config_;
@@ -162,6 +191,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
                    bool continueOnInvalid = false);
 
   void setTipContinueOnInvalid(index_t& to);
+
+  void removeAllPayloads(index_t& index);
 };
 
 template <>

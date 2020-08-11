@@ -61,7 +61,7 @@ TEST_F(Scenario4, scenario_4) {
   vbkTip = *popminer->vbk().getBestChain().tip();
 
   altPayloads1.vtbs = {vtbs1[0]};
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(
       alttree.addPayloads(containingBlock.getHash(), altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
@@ -84,7 +84,7 @@ TEST_F(Scenario4, scenario_4) {
   vbkTip = *popminer->vbk().getBestChain().tip();
 
   altPayloads2.vtbs = {vtbs2[0]};
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(
       alttree.addPayloads(containingBlock.getHash(), altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
@@ -108,7 +108,7 @@ TEST_F(Scenario4, scenario_4) {
             vbkTip.getHash());
   vbkTip = *popminer->vbk().getBestChain().tip();
 
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(
       alttree.addPayloads(containingBlock.getHash(), altPayloads3, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));

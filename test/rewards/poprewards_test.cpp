@@ -41,9 +41,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   PopData altPayloads1 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
 
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(validatePayloads(containingBlock.getHash(), altPayloads1));
   EXPECT_TRUE(state.IsValid());
   // ALT has 11 blocks + endorsement block
   EXPECT_EQ(altchain.size(), 12);
@@ -52,7 +50,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   // mine rewardSettlementInterval blocks - endorsed block - endorsement block
   mineAltBlocks(altparam.getEndorsementSettlementInterval() - 2, altchain);
 
-  auto payouts = alttree.getPopPayout(altchain.back().getHash(), state);
+  auto payouts = alttree.getPopPayout(altchain.back().getHash());
   ASSERT_TRUE(payouts.size());
 
   PopRewardsCalculator sampleCalculator = PopRewardsCalculator(altparam);
