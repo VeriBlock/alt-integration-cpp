@@ -14,6 +14,54 @@
 
 namespace altintegration {
 
+namespace {
+
+template <typename index_t>
+void applyBlockAsserts(index_t& index) {
+  VBK_ASSERT(index.pprev && "cannot apply the genesis block");
+
+  // VBK_ASSERT(
+  //     !(index.hasFlags(BLOCK_HAS_POP) ^ index.hasFlags(BLOCK_POP_ADDED)) &&
+  //     "state corruption: tried to aplly a block which has pop data, which "
+  //     "has not added");
+
+  VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
+             "state corruption: tried to apply a block that follows an "
+             "unapplied block");
+  VBK_ASSERT(index.pprev->hasFlags(BLOCK_ONCE_APPLIED) &&
+             "state corruption: tried to unapply a block that follows a "
+             "block that has not been applied");
+  VBK_ASSERT(!index.hasFlags(BLOCK_APPLIED) &&
+             "state corruption: tried to apply an already applied block");
+  // an expensive check; might want to  disable it eventually
+  VBK_ASSERT(index.allDescendantsUnapplied() &&
+             "state corruption: found an unapplied block that has some of "
+             "its descendants applied");
+}
+
+template <typename index_t>
+void unapplyBlockAsserts(index_t& index) {
+  VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
+
+  VBK_ASSERT(index.hasFlags(BLOCK_APPLIED) &&
+             "state corruption: tried to unapply an already unapplied block");
+  VBK_ASSERT(
+      index.hasFlags(BLOCK_ONCE_APPLIED) &&
+      "state corruption: tried to unapply block that has not been applied");
+  VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
+             "state corruption: tried to unapply a block that follows an "
+             "unapplied block");
+  VBK_ASSERT(index.pprev->hasFlags(BLOCK_ONCE_APPLIED) &&
+             "state corruption: tried to unapply a block that follows a "
+             "block that has not been applied");
+  // an expensive check; might want to  disable it eventually
+  VBK_ASSERT(index.allDescendantsUnapplied() &&
+             "state corruption: tried to unapply a block before unapplying "
+             "its applied descendants");
+}
+
+}  // namespace
+
 template <typename ProtectingBlockTree,
           typename ProtectedTree,
           typename ProtectedIndex,
@@ -38,20 +86,7 @@ struct PopStateMachine {
 
   // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
-    VBK_ASSERT(index.pprev && "cannot apply the genesis block");
-
-    VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
-               "state corruption: tried to apply a block that follows an "
-               "unapplied block");
-    VBK_ASSERT(index.pprev->hasFlags(BLOCK_ONCE_APPLIED) &&
-               "state corruption: tried to unapply a block that follows a "
-               "block that has not been applied");
-    VBK_ASSERT(!index.hasFlags(BLOCK_APPLIED) &&
-               "state corruption: tried to apply an already applied block");
-    // an expensive check; might want to  disable it eventually
-    VBK_ASSERT(index.allDescendantsUnapplied() &&
-               "state corruption: found an unapplied block that has some of "
-               "its descendants applied");
+    applyBlockAsserts(index);
 
     if (index.hasFlags(BLOCK_FAILED_BLOCK)) {
       return state.Invalid(
@@ -127,23 +162,7 @@ struct PopStateMachine {
 
   // atomic: applies either all of the block's commands or fails on an assert
   void unapplyBlock(index_t& index) {
-    VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
-
-    VBK_ASSERT(index.hasFlags(BLOCK_APPLIED) &&
-               "state corruption: tried to unapply an already unapplied block");
-    VBK_ASSERT(
-        index.hasFlags(BLOCK_ONCE_APPLIED) &&
-        "state corruption: tried to unapply block that has not been applied");
-    VBK_ASSERT(index.pprev->hasFlags(BLOCK_APPLIED) &&
-               "state corruption: tried to unapply a block that follows an "
-               "unapplied block");
-    VBK_ASSERT(index.pprev->hasFlags(BLOCK_ONCE_APPLIED) &&
-               "state corruption: tried to unapply a block that follows a "
-               "block that has not been applied");
-    // an expensive check; might want to  disable it eventually
-    VBK_ASSERT(index.allDescendantsUnapplied() &&
-               "state corruption: tried to unapply a block before unapplying "
-               "its applied descendants");
+    unapplyBlockAsserts(index);
 
     if (index.hasPayloads()) {
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
