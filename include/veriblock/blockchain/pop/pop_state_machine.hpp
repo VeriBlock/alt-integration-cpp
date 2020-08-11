@@ -17,7 +17,7 @@ namespace altintegration {
 namespace {
 
 template <typename index_t>
-void applyBlockAsserts(index_t& index) {
+void assertBlockCanBeApplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot apply the genesis block");
 
   VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED) && "state corruption: %s",
@@ -35,7 +35,7 @@ void applyBlockAsserts(index_t& index) {
 }
 
 template <typename index_t>
-void unapplyBlockAsserts(index_t& index) {
+void assertBlockCanBeUnapplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
 
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_APPLIED) && "state corruption: %s",
@@ -80,7 +80,7 @@ struct PopStateMachine {
 
   // atomic: applies either all or none of the block's commands
   bool applyBlock(index_t& index, ValidationState& state) {
-    applyBlockAsserts(index);
+    assertBlockCanBeApplied(index);
 
     if (index.hasFlags(BLOCK_FAILED_BLOCK)) {
       return state.Invalid(
@@ -156,7 +156,7 @@ struct PopStateMachine {
 
   // atomic: applies either all of the block's commands or fails on an assert
   void unapplyBlock(index_t& index) {
-    unapplyBlockAsserts(index);
+    assertBlockCanBeUnapplied(index);
 
     if (index.hasPayloads()) {
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);

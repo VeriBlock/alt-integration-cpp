@@ -75,7 +75,7 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
   // fork resolution decides that chainB is better
   // but switching to chainB causes state corruption
   // "not a leaf block" while trying to unapply the first VTB
-  ASSERT_DEATH(
-      alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash()),
-      "not a leaf block");
+  int res =
+      alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash());
+  EXPECT_EQ(res, 1);
 }

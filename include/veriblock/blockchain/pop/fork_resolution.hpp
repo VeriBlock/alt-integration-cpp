@@ -416,9 +416,7 @@ struct PopAwareForkResolutionComparator {
     guard.overrideDeferredForkResolution(originalTip);
     return false;
   }
-
-#include <iostream>
-
+  
   /**
    * Compare the currently applied(best) and candidate chains
    * @return 0 if the chains are equal,
@@ -434,7 +432,6 @@ struct PopAwareForkResolutionComparator {
                    candidate.toShortPrettyString());
       return 1;
     }
-
     auto currentBest = ed.getBestChain();
     auto bestTip = currentBest.tip();
     VBK_ASSERT(bestTip && "must be bootstrapped");
@@ -450,7 +447,6 @@ struct PopAwareForkResolutionComparator {
           candidate.toShortPrettyString());
       return 1;
     }
-
     auto originalProtectingTip = ing_->getBestChain().tip();
 
     // candidate is on top of our best tip
@@ -513,7 +509,7 @@ struct PopAwareForkResolutionComparator {
     // apply all payloads from chain B if the candidate block has previously
     // applied (both chains have same first block - the fork point, so exclude
     // it during 'apply')
-    if (candidate.hasFlags(BLOCK_ONCE_APPLIED)) {
+    if (candidate.hasFlags(BLOCK_ONCE_APPLIED) && candidate.isValid()) {
       auto guard = ing_->deferForkResolutionGuard();
 
       if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
@@ -547,7 +543,6 @@ struct PopAwareForkResolutionComparator {
       VBK_ASSERT_MSG(
           res, "state corruption: %s", "chain A should has valid paylaods");
     }
-
     // now the tree contains payloads from both chains
 
     // rename

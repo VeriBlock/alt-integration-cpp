@@ -19,7 +19,7 @@
 
 namespace altintegration {
 
-enum BlockStatus : uint16_t {
+enum BlockStatus : uint32_t {
   //! default state for validity - validity state is unknown
   BLOCK_VALID_UNKNOWN = 0,
   //! acceptBlock succeded. All ancestors are at least at this state.
