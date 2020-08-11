@@ -15,35 +15,12 @@ addtest(streamutils_test streamutils_test.cpp)
 addtest(base58_test base58_test.cpp)
 addtest(base59_test base59_test.cpp)
 addtest(serde_test serde_test.cpp)
-
-
-gencpp(
-        btcblockheaders
-        config_btcblocks.txt
-        btc_headers
-)
-gencpp(
-        vbkblockheaders
-        config_vbkblocks.txt
-        vbk_headers
-)
-addtest(config_test config_test.cpp
-        ${btc_headers}
-        ${vbk_headers}
-        )
-
 addtest(stateless_validation_test stateless_validation_test.cpp)
-
 addtest(arith_uint256_test arith_uint256_test.cpp)
-
 addtest(signutil_test signutil_test.cpp)
-
 addtest(keystone_util_test keystone_util_test.cpp)
-
 addtest(validationstate_test validationstate_test.cpp)
-
 addtest(alt-util_test alt-util_test.cpp)
-
 addtest(mempool_test mempool_test.cpp)
 set_tests_properties(mempool_test PROPERTIES
         COST 10000 # 10 sec

@@ -26,20 +26,6 @@ struct PopRewardsCurveParams {
   // slope for keystone rounds
   double slopeKeystone() const noexcept { return mSlopeKeystone; }
 
-  void toRaw(WriteStream& stream) const {
-    writeDouble(stream, this->startOfSlope());
-    writeDouble(stream, this->slopeNormal());
-    writeDouble(stream, this->slopeKeystone());
-  }
-
-  static PopRewardsCurveParams fromRaw(ReadStream& stream) {
-    PopRewardsCurveParams param;
-    param.mStartOfSlope = readDouble(stream);
-    param.mSlopeNormal = readDouble(stream);
-    param.mSlopeKeystone = readDouble(stream);
-    return param;
-  }
-
  protected:
   double mStartOfSlope = 1.0;
   double mSlopeNormal = 0.2;
@@ -92,36 +78,6 @@ struct PopRewardsParams {
     return mLookupTable;
   }
 
-  void toRaw(WriteStream& stream) const {
-    stream.writeBE<uint32_t>(this->keystoneRound());
-    stream.writeBE<uint32_t>(this->payoutRounds());
-    stream.writeBE<uint32_t>(this->flatScoreRound());
-    stream.writeBE<uint8_t>(this->flatScoreRoundUse());
-    writeArrayOf<double>(stream, this->roundRatios(), writeDouble);
-    writeDouble(stream, this->maxScoreThresholdNormal());
-    writeDouble(stream, this->maxScoreThresholdKeystone());
-    stream.writeBE<uint32_t>(this->difficultyAveragingInterval());
-    writeArrayOf<double>(stream, this->relativeScoreLookupTable(), writeDouble);
-    this->getCurveParams().toRaw(stream);
-  }
-
-  static PopRewardsParams fromRaw(ReadStream& stream) {
-    PopRewardsParams param;
-
-    param.mKeystoneRound = stream.readBE<uint32_t>();
-    param.mPayoutRounds = stream.readBE<uint32_t>();
-    param.mFlatScoreRound = stream.readBE<uint32_t>();
-    param.mFlatScoreRoundUse = (bool)stream.readBE<uint8_t>();
-    param.mRoundRatios = readArrayOf<double>(stream, readDouble);
-    param.mMaxScoreThresholdNormal = readDouble(stream);
-    param.mMaxScoreThresholdKeystone = readDouble(stream);
-    param.mDifficultyAveragingInterval = stream.readBE<uint32_t>();
-    param.mLookupTable = readArrayOf<double>(stream, readDouble);
-    param.curveParams = PopRewardsCurveParams::fromRaw(stream);
-
-    return param;
-  }
-
  protected:
   PopRewardsCurveParams curveParams{};
 
@@ -150,29 +106,26 @@ struct PopRewardsParams {
 struct AltChainParams {
   virtual ~AltChainParams() = default;
 
-  virtual uint32_t getKeystoneInterval() const noexcept { return 5; }
+  uint32_t getKeystoneInterval() const noexcept { return mKeystoneInterval; }
 
   ///! number of blocks in VBK for finalization
-  virtual uint32_t getFinalityDelay() const noexcept { return 100; }
+  uint32_t getFinalityDelay() const noexcept { return mFinalityDelay; }
 
-  virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
-      const noexcept {
+  const std::vector<uint32_t>& getForkResolutionLookUpTable() const noexcept {
     // TODO(warchant): this should be recalculated. see paper.
-    return forkResolutionLookUpTable_;
+    return mForkResolutionLookUpTable;
   }
 
   /// endorsement validity window, pop payout delay
-  virtual int32_t getEndorsementSettlementInterval() const noexcept {
-    return 50;
+  int32_t getEndorsementSettlementInterval() const noexcept {
+    return mEndorsementSettlementInterval;
   }
 
-  virtual size_t getMaxPopDataSize() const noexcept {
-    return 1 * 1024 * 1024;  // 1 MB
-  }
+  size_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
   // getter for reward parameters
-  virtual const PopRewardsParams& getRewardParams() const noexcept {
-    return *popRewardsParams;
+  const PopRewardsParams& getRewardParams() const noexcept {
+    return mPopRewardsParams;
   }
 
   // unique POP id for the chain
@@ -183,15 +136,15 @@ struct AltChainParams {
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
-  std::vector<uint8_t> toRaw() const;
-
-  void toRaw(WriteStream& stream) const;
-
  protected:
-  std::shared_ptr<PopRewardsParams> popRewardsParams =
-      std::make_shared<PopRewardsParams>();
+  PopRewardsParams mPopRewardsParams;
 
-  std::vector<uint32_t> forkResolutionLookUpTable_{
+  uint32_t mKeystoneInterval = 5;
+  uint32_t mFinalityDelay = 100;
+  int32_t mEndorsementSettlementInterval = 50;
+  uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
+
+  std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
 
