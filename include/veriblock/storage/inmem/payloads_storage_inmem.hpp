@@ -15,8 +15,10 @@ class PayloadsStorageInmem : public PayloadsStorage {
  public:
   virtual ~PayloadsStorageInmem() = default;
 
-  PayloadsStorageInmem()
-      : PayloadsStorage(std::make_shared<RepositoryInmem>()) {}
+  PayloadsStorageInmem() : PayloadsStorage(_repoStorage) {}
+
+ private:
+  RepositoryInmem _repoStorage;
 };
 
 }  // namespace altintegration

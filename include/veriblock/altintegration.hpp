@@ -6,43 +6,88 @@
 #ifndef ALTINTEGRATION_ALTINTEGRATION_HPP
 #define ALTINTEGRATION_ALTINTEGRATION_HPP
 
-#include "veriblock/alt-util.hpp"
-#include "veriblock/blockchain/alt_block_tree.hpp"
-#include "veriblock/storage/payloads_storage.hpp"
-#include "veriblock/config.hpp"
+#include <veriblock/alt-util.hpp>
+#include <veriblock/blockchain/alt_block_tree.hpp>
+#include <veriblock/config.hpp>
+#include <veriblock/mempool.hpp>
+#include <veriblock/storage/payloads_storage.hpp>
 
 namespace altintegration {
 
-struct Altintegration {
-  static std::shared_ptr<AltTree> create(const Config& config, PayloadsStorage& storage) {
-    config.validate();
-    auto tree = std::make_shared<altintegration::AltTree>(
-        *config.alt, *config.vbk.params, *config.btc.params, storage);
+class Altintegration {
+ public:
+  static std::shared_ptr<Altintegration> create(
+      const std::shared_ptr<Config>& config, std::shared_ptr<Repository>& db) {
+    config->validate();
+
+    std::shared_ptr<Altintegration> service =
+        std::make_shared<Altintegration>();
+    service->config = std::move(config);
+    service->repo = std::move(db);
+    service->store = std::make_shared<PayloadsStorage>(*service->repo);
+    service->altTree = std::make_shared<AltTree>(*service->config->alt,
+                                                 *service->config->vbk.params,
+                                                 *service->config->btc.params,
+                                                 *service->store);
+    service->mempool =
+        std::make_shared<altintegration::MemPool>(*service->altTree);
+
     ValidationState state;
 
     // first, bootstrap BTC
-    if (config.btc.blocks.empty()) {
-      tree->btc().bootstrapWithGenesis(state);
+    if (service->config->btc.blocks.empty()) {
+      service->altTree->btc().bootstrapWithGenesis(state);
       VBK_ASSERT(state.IsValid());
     } else {
-      tree->btc().bootstrapWithChain(
-          config.btc.startHeight, config.btc.blocks, state);
+      service->altTree->btc().bootstrapWithChain(
+          service->config->btc.startHeight, service->config->btc.blocks, state);
       VBK_ASSERT(state.IsValid());
     }
 
     // then, bootstrap VBK
-    if (config.vbk.blocks.empty()) {
-      tree->vbk().bootstrapWithGenesis(state);
+    if (service->config->vbk.blocks.empty()) {
+      service->altTree->vbk().bootstrapWithGenesis(state);
       VBK_ASSERT(state.IsValid());
     } else {
-      tree->vbk().bootstrapWithChain(
-          config.vbk.startHeight, config.vbk.blocks, state);
+      service->altTree->vbk().bootstrapWithChain(
+          service->config->vbk.startHeight, service->config->vbk.blocks, state);
       VBK_ASSERT(state.IsValid());
     }
 
-    tree->bootstrap(state);
-    return tree;
+    service->altTree->bootstrap(state);
+    return service;
   }
+
+  bool popdataStatelessValidation(const PopData& popData,
+                                  ValidationState& state) {
+    for (const auto& b : popData.context) {
+      if (!checkBlock(b, state, *config->vbk.params)) {
+        return state.Invalid("pop-vbkblock-statelessly-invalid");
+      }
+    }
+
+    for (const auto& vtb : popData.vtbs) {
+      if (!checkVTB(vtb, state, *config->vbk.params, *config->btc.params)) {
+        return state.Invalid("pop-vtb-statelessly-invalid");
+      }
+    }
+
+    for (const auto& atv : popData.atvs) {
+      if (!checkATV(atv, state, *config->alt, *config->vbk.params)) {
+        return state.Invalid("pop-atv-statelessly-invalid");
+      }
+    }
+
+    return true;
+  }
+
+ public:
+  std::shared_ptr<Config> config;
+  std::shared_ptr<Repository> repo;
+  std::shared_ptr<MemPool> mempool;
+  std::shared_ptr<AltTree> altTree;
+  std::shared_ptr<PayloadsStorage> store;
+  std::vector<PopData> disconnected_popdata;
 };
 
 }  // namespace altintegration

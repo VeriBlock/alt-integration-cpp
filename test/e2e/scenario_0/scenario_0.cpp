@@ -59,9 +59,9 @@ struct Scenario0 : public ::testing::Test {
   const int vbkStart = 438198;
   const int chainId = 3860170;
   std::shared_ptr<Config> config;
+  std::shared_ptr<Altintegration> service;
   std::shared_ptr<AltTree> alt;
-  StorageManagerInmem storageManager{};
-  PayloadsStorage& storage = storageManager.getPayloadsStorage();
+  std::shared_ptr<Repository> repo = std::make_shared<RepositoryInmem>();
 
   ATV atv;
   std::vector<VTB> vtbs;
@@ -88,7 +88,8 @@ struct Scenario0 : public ::testing::Test {
     config->vbk.blocks =
         parse<VbkBlock>(generated::vbkbootstraps, fromHex<VbkBlock>);
 
-    alt = Altintegration::create(*config, storage);
+    service = Altintegration::create(config, repo);
+    alt = service->altTree;
 
     atv = parse<ATV>(generated::atv, fromHex<ATV>)[0];
     vtbs = parse<VTB>(generated::vtbs, fromHex<VTB>);

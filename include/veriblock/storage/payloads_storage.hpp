@@ -32,7 +32,7 @@ class PayloadsStorage {
  public:
   virtual ~PayloadsStorage() = default;
 
-  PayloadsStorage(std::shared_ptr<Repository> repo);
+  PayloadsStorage(Repository& repo);
 
   //! getter for cached payload validity
   bool getValidity(Slice<const uint8_t> containingBlockHash,
@@ -108,7 +108,7 @@ class PayloadsStorage {
       CommandGroup cg(pid.asVector(), true, Payloads::name());
       if (!cache.get(cid, &cg)) {
         Payloads payloads;
-        if (!repo_->getObject(std::make_pair(prefix, pid), &payloads)) {
+        if (!repo_.getObject(std::make_pair(prefix, pid), &payloads)) {
           throw db::StateCorruptedException(
               fmt::sprintf("Failed to read payloads id={%s}", pid.toHex()));
         }
@@ -145,7 +145,7 @@ class PayloadsStorage {
                                      Slice<const uint8_t> b);
 
  protected:
-  std::shared_ptr<Repository> repo_;
+  Repository& repo_;
   CommandGroupCache _cacheAlt;
   CommandGroupCache _cacheVbk;
 
