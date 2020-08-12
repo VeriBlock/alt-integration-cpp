@@ -16,7 +16,7 @@ struct Payloads {
   std::vector<VTB> vtbs;
 
   std::string toPrettyString() const {
-    return fmt::sprintf("Payloads{atv, vtbs=%d}", vtbs.size());
+    return fmt::sprintf("Payloads(atv, vtbs=%d)", vtbs.size());
   }
 
   list prepare() const {
@@ -46,9 +46,9 @@ struct MockMinerProxy : private MockMiner {
 
   std::string toPrettyString() {
     std::ostringstream ss;
-    ss << "MockMiner{btc=" << this->getBtcTip().toPrettyString();
+    ss << "MockMiner(btc=" << this->getBtcTip().toPrettyString();
     ss << ", vbk=" << this->getVbkTip().toPrettyString();
-    ss << "}";
+    ss << ")";
     return ss.str();
   }
 

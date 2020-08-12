@@ -3,12 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
-#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -175,17 +176,6 @@ void commitPayloadsIds(BlockIndex<AltBlock>& index,
   for (const auto& pid : pids) {
     storage.addAltPayloadIndex(containing, pid.asVector());
   }
-}
-
-bool AltTree::addPayloads(const AltBlock::hash_t& containing,
-                          const PopData& popData,
-                          ValidationState& state) {
-  auto* index = getBlockIndex(containing);
-  if (!index) {
-    return state.Invalid(block_t::name() + "-bad-block",
-                         "Can't find containing block");
-  }
-  return addPayloads(*index, popData, state);
 }
 
 // check for Payload duplicates in ancestor and descendant blocks
@@ -360,47 +350,13 @@ bool AltTree::addPayloads(index_t& index,
   commitPayloadsIds<VTB>(index, payloads.vtbs, storage_);
   commitPayloadsIds<ATV>(index, payloads.atvs, storage_);
 
-  // save payloads only in alt tree
+  // save payloads on disk
   storage_.savePayloads(payloads);
 
   return true;
 }
 
-bool AltTree::validatePayloads(const AltBlock& block,
-                               const PopData& popData,
-                               ValidationState& state) {
-  return validatePayloads(block.getHash(), popData, state);
-}
-
-bool AltTree::validatePayloads(const AltBlock::hash_t& block_hash,
-                               const PopData& popData,
-                               ValidationState& state) {
-  auto* index = getBlockIndex(block_hash);
-
-  if (!index) {
-    return state.Invalid(block_t::name() + "bad-block",
-                         "Can't find containing block");
-  }
-
-  if (!addPayloads(*index, popData, state)) {
-    VBK_LOG_DEBUG(
-        "%s Can not add payloads: %s", block_t::name(), state.toString());
-    return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
-  }
-
-  if (!setState(*index, state)) {
-    VBK_LOG_DEBUG("%s Statefully invalid payloads: %s",
-                  block_t::name(),
-                  state.toString());
-
-    removePayloads(*index, popData);
-    return state.Invalid(block_t::name() + "-addPayloadsTemporarily");
-  }
-
-  return true;
-}
-
-bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
+bool AltTree::acceptBlockHeader(const AltBlock& block, ValidationState& state) {
   if (getBlockIndex(block.getHash()) != nullptr) {
     // duplicate
     return true;
@@ -431,17 +387,20 @@ bool AltTree::acceptBlock(const AltBlock& block, ValidationState& state) {
 }
 
 std::map<std::vector<uint8_t>, int64_t> AltTree::getPopPayout(
-    const AltBlock::hash_t& tip, ValidationState& state) {
+    const AltBlock::hash_t& tip) {
+  VBK_ASSERT(isBootstrapped() && "not bootstrapped");
+
   auto* index = getBlockIndex(tip);
-  if (index == nullptr) {
-    state.Error("Block not found");
-    return {};
-  }
+  VBK_ASSERT_MSG(index, "can not find block %s", HexStr(tip));
+  VBK_ASSERT_MSG(index == activeChain_.tip(),
+                 "AltTree is at unexpected state: Tip=%s ExpectedTip=%s",
+                 activeChain_.tip()->toPrettyString(),
+                 index->toPrettyString());
 
   auto* endorsedBlock = index->getAncestorBlocksBehind(
       alt_config_->getEndorsementSettlementInterval());
   if (endorsedBlock == nullptr) {
-    state.Error("Not enough blocks to get the endorsed block");
+    // not enough blocks for payout
     return {};
   }
 
@@ -509,23 +468,17 @@ void AltTree::determineBestChain(index_t& candidate, ValidationState&) {
   // else - do nothing. AltTree does not (yet) do fork resolution
 }
 
-int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
-                             const AltBlock::hash_t& hright) {
-  auto* left = getBlockIndex(hleft);
-  if (!left) {
-    throw std::logic_error("AltTree: unknown 'left' block");
-  }
-
-  auto* right = getBlockIndex(hright);
-  if (!right) {
-    throw std::logic_error("AltTree: unknown 'other' block");
-  }
-
-  if (activeChain_.tip() != left) {
-    throw std::logic_error(
-        "AltTree: left fork must be applied. Call SetState(left) before fork "
-        "resolution.");
-  }
+int AltTree::comparePopScore(const AltBlock::hash_t& A,
+                             const AltBlock::hash_t& B) {
+  auto* left = getBlockIndex(A);
+  auto* right = getBlockIndex(B);
+  VBK_ASSERT_MSG(left, "unknown 'A' block %s", HexStr(A));
+  VBK_ASSERT_MSG(right, "unknown 'B' block %s", HexStr(B));
+  VBK_ASSERT(activeChain_.tip() && "not bootstrapped");
+  VBK_ASSERT_MSG(activeChain_.tip() == left,
+                 "left fork must be applied. Tip: %s, Left: %s",
+                 activeChain_.tip()->toPrettyString(),
+                 left->toPrettyString());
 
   ValidationState state;
   // compare current active chain to other chain
@@ -539,62 +492,45 @@ int AltTree::comparePopScore(const AltBlock::hash_t& hleft,
   return result;
 }
 
-void AltTree::removePayloads(const AltBlock::hash_t& hash,
-                             const PopData& popData) {
-  auto* index = base::getBlockIndex(hash);
-  if (!index) {
-    throw std::logic_error("removePayloads is called on unknown ALT block: " +
-                           HexStr(hash));
-  }
-
-  return removePayloads(*index, popData);
-}
-
-template <typename Tree, typename Index, typename Pop>
-void handleRemovePayloads(Tree& tree,
-                          Index& index,
-                          const std::vector<Pop>& payloads,
-                          PayloadsStorage& storage) {
+template <typename Pop, typename Tree, typename Index>
+static void clearSideEffects(Tree& tree,
+                             Index& index,
+                             PayloadsStorage& storage) {
   auto containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
-  auto pids = map_get_id(payloads);
-
-  for (const auto& pid : pids) {
-    auto it = std::find(payloadIds.begin(), payloadIds.end(), pid);
-    if (it == payloadIds.end()) {
-      continue;
-    }
-
+  for (const auto& pid : payloadIds) {
     if (!storage.getValidity(containingHash, pid)) {
       tree.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+      storage.setValidity(containingHash, pid, true);  // cleanup validity
     }
 
-    index.template removePayloadId<Pop>(pid);
     storage.removeAltPayloadIndex(containingHash, pid.asVector());
   }
 }
 
-void AltTree::removePayloads(index_t& index, const PopData& payloads) {
+void AltTree::removeAllPayloads(index_t& index) {
   VBK_LOG_INFO("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
                block_t::name(),
-               payloads.context.size(),
-               payloads.vtbs.size(),
-               payloads.atvs.size(),
+               index.getPayloadIds<VbkBlock>().size(),
+               index.getPayloadIds<VTB>().size(),
+               index.getPayloadIds<ATV>().size(),
                index.toShortPrettyString());
 
   // we do not allow adding payloads to the genesis block
   VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
+                 "block %s is applied",
+                 index.toPrettyString());
 
-  bool isOnActiveChain = activeChain_.contains(&index);
-  if (isOnActiveChain) {
-    ValidationState dummy;
-    bool success = setState(*index.pprev, dummy);
-    VBK_ASSERT(success);
+  if (!index.hasPayloads()) {
+    // early return
+    return;
   }
 
-  handleRemovePayloads(*this, index, payloads.atvs, storage_);
-  handleRemovePayloads(*this, index, payloads.vtbs, storage_);
-  handleRemovePayloads(*this, index, payloads.context, storage_);
+  clearSideEffects<VbkBlock>(*this, index, storage_);
+  clearSideEffects<VTB>(*this, index, storage_);
+  clearSideEffects<ATV>(*this, index, storage_);
+  index.clearPayloads();
 }
 
 template <typename Payloads, typename BlockIndex>
@@ -617,7 +553,7 @@ void removePayloadsIfInvalid(std::vector<Payloads>& p,
 
 void AltTree::filterInvalidPayloads(PopData& pop) {
   // return early
-  if (pop.context.empty() && pop.vtbs.empty() && pop.atvs.empty()) {
+  if (pop.empty()) {
     return;
   }
 
@@ -635,7 +571,7 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
     tmp.previousBlock = tip.getHash();
     tmp.timestamp = tip.getBlockTime() + 1;
     tmp.height = tip.getHeight() + 1;
-    bool ret = acceptBlock(tmp, state);
+    bool ret = acceptBlockHeader(tmp, state);
     VBK_ASSERT(ret);
   }
 
@@ -663,11 +599,13 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
   this->removeSubtree(*tmpindex);
 }
 
-bool AltTree::addPayloads(AltTree::index_t& index,
+bool AltTree::addPayloads(const hash_t& block,
                           const PopData& popData,
                           ValidationState& state) {
   auto copy = popData;
-  return addPayloads(index, copy, state, false);
+  auto* index = getBlockIndex(block);
+  VBK_ASSERT_MSG(index, "can't find block %s", HexStr(block));
+  return addPayloads(*index, copy, state, false);
 }
 
 bool AltTree::setState(index_t& to, ValidationState& state) {
@@ -723,7 +661,7 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
     return false;
   }
 
-  // recover `endorsedBy`
+  // recover `endorsedBy` and `blockOfProofEndorsements`
   auto window = std::max(
       0, index.getHeight() - getParams().getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
@@ -741,12 +679,6 @@ bool AltTree::loadBlock(const AltTree::index_t& index, ValidationState& state) {
   storage_.addBlockToIndex(*current);
 
   return true;
-}
-
-bool AltTree::addPayloads(const AltBlock& containing,
-                          const PopData& popData,
-                          ValidationState& state) {
-  return addPayloads(containing.getHash(), popData, state);
 }
 
 AltTree::AltTree(const AltTree::alt_config_t& alt_config,
@@ -782,6 +714,12 @@ bool AltTree::loadTip(const AltTree::hash_t& hash, ValidationState& state) {
   }
 
   return true;
+}
+
+void AltTree::removeAllPayloads(const AltTree::hash_t& hash) {
+  auto* index = getBlockIndex(hash);
+  VBK_ASSERT_MSG(index, "does not contain block %s", HexStr(hash));
+  return removeAllPayloads(*index);
 }
 
 template <>

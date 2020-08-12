@@ -106,7 +106,7 @@ struct BlockIndex : public Block::addon_t {
   void setFlag(enum BlockStatus s) { this->status |= s; }
   void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
 
-  bool hasFlags(enum BlockStatus s) const { return this->status & s; }
+  bool hasFlags(decltype(status) s) const { return this->status & s; }
 
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }
@@ -183,7 +183,7 @@ struct BlockIndex : public Block::addon_t {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    return fmt::sprintf("%s%sBlockIndex{height=%d, hash=%s, status=%d, %s}",
+    return fmt::sprintf("%s%sBlockIndex(height=%d, hash=%s, status=%d, %s)",
                         std::string(level, ' '),
                         Block::name(),
                         height,

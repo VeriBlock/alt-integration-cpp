@@ -84,12 +84,31 @@ struct PopTestFixture {
     EXPECT_EQ(std::count_if(by.begin(), by.end(), _), 1);
   }
 
+  bool validatePayloads(const AltBlock::hash_t& block_hash,
+                        const PopData& popData, ValidationState& _state) {
+    auto* index = alttree.getBlockIndex(block_hash);
+    if (!index) {
+      return _state.Invalid("bad-block", "Can't find containing block");
+    }
+
+    if (!alttree.addPayloads(block_hash, popData, _state)) {
+      return _state.Invalid("addPayloadsTemporarily");
+    }
+
+    if (!alttree.setState(*index, _state)) {
+      EXPECT_NO_FATAL_FAILURE(alttree.removeAllPayloads(block_hash));
+      return _state.Invalid("addPayloadsTemporarily");
+    }
+
+    return true;
+  }
+
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
                                       size_t num) {
     const BlockIndex<AltBlock>* index = &prev;
     for (size_t i = 0; i < num; i++) {
       auto next = generateNextBlock(index->getHeader());
-      EXPECT_TRUE(alttree.acceptBlock(next, state));
+      EXPECT_TRUE(alttree.acceptBlockHeader(next, state));
       EXPECT_TRUE(alttree.setState(next.getHash(), state));
       index = alttree.getBlockIndex(next.getHash());
     }
@@ -103,7 +122,7 @@ struct PopTestFixture {
     for (uint32_t i = 0; i < num; ++i) {
       chain.push_back(generateNextBlock(*chain.rbegin()));
 
-      ASSERT_TRUE(alttree.acceptBlock(*chain.rbegin(), state));
+      ASSERT_TRUE(alttree.acceptBlockHeader(*chain.rbegin(), state));
       ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
       ASSERT_TRUE(state.IsValid());
     }
@@ -303,8 +322,8 @@ struct PopTestFixture {
     for (size_t i = 0; i < blocks; i++) {
       auto nextBlock = generateNextBlock(altTip->getHeader());
       auto popdata = endorseAltBlock({altTip->getHeader()}, vtbs);
-      EXPECT_TRUE(alttree.acceptBlock(nextBlock, state));
-      EXPECT_TRUE(alttree.addPayloads(nextBlock, popdata, state));
+      EXPECT_TRUE(alttree.acceptBlockHeader(nextBlock, state));
+      EXPECT_TRUE(alttree.addPayloads(nextBlock.getHash(), popdata, state));
       auto* next = alttree.getBlockIndex(nextBlock.getHash());
       VBK_ASSERT(next);
       EXPECT_TRUE(alttree.setState(*next, state));

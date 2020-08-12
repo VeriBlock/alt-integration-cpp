@@ -63,8 +63,9 @@ TEST_F(Scenario9, scenario_9) {
                  popminer->vbk());
 
   // Step 1
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   verifyEndorsementAdded(alttree.vbk(), E1);
@@ -90,8 +91,9 @@ TEST_F(Scenario9, scenario_9) {
   altPayloads2.vtbs = {vtbs[1]};
 
   // Step 2
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_FALSE(alttree.addPayloads(containingBlock, altPayloads2, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_FALSE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   validateAlttreeIndexState(
       alttree, containingBlock, altPayloads2, true, false);

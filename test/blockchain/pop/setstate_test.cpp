@@ -57,7 +57,7 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
 
   auto next = generateNextBlock(chain[100]);
   ValidationState state2;
-  ASSERT_FALSE(alttree.acceptBlock(next, state2));
+  ASSERT_FALSE(alttree.acceptBlockHeader(next, state2));
   ASSERT_EQ(state2.GetPath(), "ALT-bad-chain");
   auto index = alttree.getBlockIndex(next.getHash());
   ASSERT_TRUE(index);
@@ -84,9 +84,9 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
             -1);
   ASSERT_TRUE(alttree.setState(chain[60].getHash(), state)) << state.toString();
   // we applied block 60, but pass 100 as left fork. expect logic_error
-  ASSERT_THROW(
+  ASSERT_DEATH(
       alttree.comparePopScore(chain[100].getHash(), chain[60].getHash()),
-               std::logic_error);
+      "left fork must be applied");
   ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
   ASSERT_EQ(alttree.comparePopScore(chain[100].getHash(), chain[60].getHash()),
             1);

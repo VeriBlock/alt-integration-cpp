@@ -26,6 +26,12 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     return !_atvids.empty() || !_vtbids.empty() || !_vbkblockids.empty();
   }
 
+  void clearPayloads() {
+    _atvids.clear();
+    _vtbids.clear();
+    _vbkblockids.clear();
+  }
+
   template <typename pop_t>
   const std::vector<typename pop_t::id_t>& getPayloadIds() const;
 
@@ -80,9 +86,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   void setNull() {
     PopState<AltEndorsement>::setNull();
     chainWork = 0;
-    _atvids.clear();
-    _vtbids.clear();
-    _vbkblockids.clear();
+    clearPayloads();
   }
 
   void initAddonFromRaw(ReadStream& r) {
