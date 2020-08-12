@@ -17,17 +17,18 @@ namespace altintegration {
 namespace {
 
 template <typename index_t>
-void assertBlockCanBeApplied(index_t& index) {
+void assertBlockCanBeApplied(index_t& index, bool shouldSetCanBeApplied) {
   VBK_ASSERT(index.pprev && "cannot apply the genesis block");
 
   VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to apply a block that follows an "
                  "unapplied block %s",
                  index.pprev->toPrettyString());
-  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED),
-                 "state corruption: tried to unapply a block that follows a "
-                 "block that has not been applied %s",
-                 index.pprev->toPrettyString());
+  VBK_ASSERT_MSG(
+      index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
+      "state corruption: tried to unapply a block that follows a "
+      "block that has not been applied %s",
+      index.pprev->toPrettyString());
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to apply an already applied block %s",
                  index.toPrettyString());
@@ -40,7 +41,7 @@ void assertBlockCanBeApplied(index_t& index) {
 }
 
 template <typename index_t>
-void assertBlockCanBeUnapplied(index_t& index) {
+void assertBlockCanBeUnapplied(index_t& index, bool shouldSetCanBeApplied) {
   VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
 
   VBK_ASSERT_MSG(
@@ -48,18 +49,19 @@ void assertBlockCanBeUnapplied(index_t& index) {
       "state corruption: tried to unapply an already unapplied block %s",
       index.toPrettyString());
   VBK_ASSERT_MSG(
-      index.hasFlags(BLOCK_CAN_BE_APPLIED),
+      index.hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
       "state corruption: tried to unapply block that has not been applied %s",
       index.toPrettyString());
   VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to unapply a block that follows an "
                  "unapplied block %s",
                  index.pprev->toPrettyString());
-  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED),
-                 "state corruption: tried to unapply a block that follows a "
-                 "block that has not been "
-                 "applied %s",
-                 index.pprev->toPrettyString());
+  VBK_ASSERT_MSG(
+      index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
+      "state corruption: tried to unapply a block that follows a "
+      "block that has not been "
+      "applied %s",
+      index.pprev->toPrettyString());
   // an expensive check; might want to  disable it eventually
   VBK_ASSERT_MSG(index.allDescendantsUnapplied(),
                  "state corruption: tried to unapply a block before unapplying "
@@ -92,8 +94,10 @@ struct PopStateMachine {
         continueOnInvalid_(continueOnInvalid) {}
 
   // atomic: applies either all or none of the block's commands
-  bool applyBlock(index_t& index, ValidationState& state) {
-    assertBlockCanBeApplied(index);
+  bool applyBlock(index_t& index,
+                  ValidationState& state,
+                  bool shouldSetCanBeApplied = true) {
+    assertBlockCanBeApplied(index, shouldSetCanBeApplied);
 
     if (index.hasFlags(BLOCK_FAILED_BLOCK)) {
       return state.Invalid(
@@ -163,13 +167,15 @@ struct PopStateMachine {
     }
 
     index.setFlag(BLOCK_APPLIED);
-    index.setFlag(BLOCK_CAN_BE_APPLIED);
+    if (shouldSetCanBeApplied) {
+      index.setFlag(BLOCK_CAN_BE_APPLIED);
+    }
     return true;
   }
 
   // atomic: applies either all of the block's commands or fails on an assert
-  void unapplyBlock(index_t& index) {
-    assertBlockCanBeUnapplied(index);
+  void unapplyBlock(index_t& index, bool shouldSetCanBeApplied = true) {
+    assertBlockCanBeUnapplied(index, shouldSetCanBeApplied);
 
     if (index.hasPayloads()) {
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
@@ -186,7 +192,7 @@ struct PopStateMachine {
 
   // unapplies all commands commands from blocks in the range of [from; to)
   // atomic: either applies all of the requested blocks or fails on an assert
-  void unapply(index_t& from, index_t& to) {
+  void unapply(index_t& from, index_t& to, bool shouldSetCanBeApplied = true) {
     if (&from == &to) {
       return;
     }
@@ -203,13 +209,16 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* current : reverse_iterate(chain)) {
-      unapplyBlock(*current);
+      unapplyBlock(*current, shouldSetCanBeApplied);
     }
   }
 
   // applies all commands from blocks in the range of (from; to].
   // atomic: applies either all or none of the requested blocks
-  bool apply(index_t& from, index_t& to, ValidationState& state) {
+  bool apply(index_t& from,
+             index_t& to,
+             ValidationState& state,
+             bool shouldSetCanBeApplied = true) {
     if (&from == &to) {
       // already applied this block
       return true;
@@ -234,9 +243,9 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* index : chain) {
-      if (!applyBlock(*index, state)) {
+      if (!applyBlock(*index, state, shouldSetCanBeApplied)) {
         // rollback the previously appled slice of the chain
-        unapply(*index->pprev, from);
+        unapply(*index->pprev, from, shouldSetCanBeApplied);
         return false;
       }
     }

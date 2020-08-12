@@ -505,15 +505,12 @@ struct PopAwareForkResolutionComparator {
 
     sm_t sm(ed, *ing_, storage_, chainA.first()->getHeight());
 
-    // we save the value of this flag before we have applied chainB
-    bool canBeApplied = candidate.hasFlags(BLOCK_CAN_BE_APPLIED);
-
     // apply all payloads from chain B (both chains have same first block - the
     // fork point, so exclude it during 'apply')
     {
       auto guard = ing_->deferForkResolutionGuard();
 
-      if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
+      if (!sm.apply(*chainB.first(), *chainB.tip(), state, false)) {
         // chain B has been unapplied and invalidated already
         VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                      state.toString());
@@ -546,27 +543,28 @@ struct PopAwareForkResolutionComparator {
     if (result >= 0) {
       // chain A remains the best one. unapply B and leave A applied
       auto guard = ing_->deferForkResolutionGuard();
-      sm.unapply(*chainB.tip(), *chainB.first());
+      sm.unapply(*chainB.tip(), *chainB.first(), false);
       guard.overrideDeferredForkResolution(originalProtectingTip);
       VBK_LOG_INFO("Chain A remains the best chain");
     } else {
       // chain B is better. unapply A and leave B applied
       auto guard = ing_->deferForkResolutionGuard();
-      // if candidate has never been applied before the comparePopScore() so we
-      // have carefully unapply this chain before unapplying chainA and trying
+      // if candidate has never been applied before with setState(), we
+      // have to unapply candidate before unapplying chainA and try
       // to apply chainB without any payloads from chainA
-      if (!canBeApplied) {
-        sm.unapply(*chainB.tip(), *chainB.first());
+      if (!candidate.hasFlags(BLOCK_CAN_BE_APPLIED)) {
+        sm.unapply(*chainB.tip(), *chainB.first(), false);
       }
       sm.unapply(*chainA.tip(), *chainA.first());
 
       // validate chain
-      if (!canBeApplied && !sm.apply(*chainB.first(), *chainB.tip(), state)) {
+      if (!candidate.hasFlags(BLOCK_CAN_BE_APPLIED) &&
+          !sm.apply(*chainB.first(), *chainB.tip(), state)) {
         bool res = sm.apply(*chainA.first(), *chainA.tip(), state);
         VBK_ASSERT_MSG(res,
                        "state corruption: %s",
                        "chainA as a previous best chain should be valid");
-        VBK_LOG_INFO("Chain A wins");
+        VBK_LOG_INFO("Chain B is invalid when applied alone. Chain A wins");
         return 1;
       }
 
