@@ -19,7 +19,7 @@
 
 namespace altintegration {
 
-enum BlockStatus : uint8_t {
+enum BlockStatus : uint32_t {
   //! default state for validity - validity state is unknown
   BLOCK_VALID_UNKNOWN = 0,
   //! acceptBlock succeded. All ancestors are at least at this state.
@@ -39,7 +39,9 @@ enum BlockStatus : uint8_t {
   BLOCK_FAILED_MASK =
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
   //! the block has been applied via PopStateMachine
-  BLOCK_APPLIED = 1 << 5
+  BLOCK_APPLIED = 1 << 5,
+  //! the block has been at least once successful applied via PopStateMachine
+  BLOCK_CAN_BE_APPLIED = 1 << 6,
 };
 
 /**
@@ -66,7 +68,7 @@ struct BlockIndex : public Block::addon_t {
   std::set<BlockIndex*> pnext{};
 
   //! (memory only) contains status flags
-  uint8_t status = 0;  // unknown validity
+  uint32_t status = 0;  // unknown validity
 
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
     VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.

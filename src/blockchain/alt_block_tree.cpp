@@ -31,6 +31,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   auto height = index->getHeight();
 
   index->setFlag(BLOCK_APPLIED);
+  index->setFlag(BLOCK_CAN_BE_APPLIED);
   index->setFlag(BLOCK_BOOTSTRAP);
   base::activeChain_ = Chain<index_t>(height, index);
 
@@ -710,6 +711,7 @@ bool AltTree::loadTip(const AltTree::hash_t& hash, ValidationState& state) {
   VBK_ASSERT(tip);
   while (tip) {
     tip->setFlag(BLOCK_APPLIED);
+    tip->setFlag(BLOCK_CAN_BE_APPLIED);
     tip = tip->pprev;
   }
 
