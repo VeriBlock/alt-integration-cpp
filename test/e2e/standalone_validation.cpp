@@ -72,6 +72,9 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
   EXPECT_TRUE(alttree.acceptBlock(chainB.back(), state));
   EXPECT_TRUE(alttree.addPayloads(chainB.back(), payloadsB, state));
 
+  // fork resolution decides that chainB is better
+  // but switching to chainB causes state corruption
+  // we expect that something fails
   EXPECT_GT(
       alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash()),
       0);
