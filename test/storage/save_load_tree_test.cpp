@@ -85,8 +85,8 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
   ASSERT_EQ(popData.vtbs.size(), 0);
 
   // add alt payloads
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
@@ -94,7 +94,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
 
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   containingIndex->template insertPayloadIds<VbkBlock>(
@@ -128,8 +128,8 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
   ASSERT_EQ(popData.vtbs.size(), 0);
 
   // add alt payloads
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
@@ -167,8 +167,8 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
   ASSERT_EQ(popData.vtbs.size(), 0);
 
   // add alt payloads
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
@@ -176,7 +176,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
 
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   containingIndex->template insertPayloadIds<ATV>(map_get_id(popData.atvs));

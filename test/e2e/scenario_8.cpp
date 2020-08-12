@@ -114,8 +114,8 @@ TEST_F(Scenario8, scenario_8) {
   chain.push_back(containingBlock);
 
   // add alt payloads
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData1, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData1);
@@ -140,8 +140,8 @@ TEST_F(Scenario8, scenario_8) {
   chain.push_back(containingBlock);
 
   popData2.context.clear();
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData2, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData2, state));
   EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(),
@@ -157,7 +157,9 @@ TEST_F(Scenario8, scenario_8) {
   ASSERT_NE(vbkBlock, nullptr);
 
   // remove payloads from alt, vbk state is still valid
-  alttree.removePayloads(containingBlock.getHash(), popData2);
+  auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
+  ASSERT_TRUE(containingIndex);
+  alttree.removeAllPayloads(containingIndex->getHash());
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   validityFlagCheck(*vbkBlock, true);
 }

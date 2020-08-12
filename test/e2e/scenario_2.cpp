@@ -90,8 +90,9 @@ TEST_F(Scenario2, scenario_2) {
                  popminer->vbk());
 
   // Step 1
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads1, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloads1, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads1);
@@ -116,8 +117,9 @@ TEST_F(Scenario2, scenario_2) {
   altPayloads2.vtbs = {vtbs[1]};
 
   // Step 2
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads2, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloads2, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads2);
@@ -143,8 +145,9 @@ TEST_F(Scenario2, scenario_2) {
   PopData altPayloads3 = generateAltPayloads({tx}, vbkTip1->getHash());
 
   // Step 3
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads3, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloads3, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads3);
@@ -163,8 +166,9 @@ TEST_F(Scenario2, scenario_2) {
   PopData altPayloads4 = generateAltPayloads({tx}, vbkTip2->getHash());
 
   // Step 4
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, altPayloads4, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloads4, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads4);

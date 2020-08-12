@@ -68,8 +68,8 @@ TEST_F(Scenario7, scenario_7) {
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
-  EXPECT_TRUE(alttree.acceptBlock(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock, popData, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
