@@ -39,13 +39,7 @@ enum BlockStatus : uint8_t {
   BLOCK_FAILED_MASK =
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
   //! the block has been applied via PopStateMachine
-  BLOCK_APPLIED = 1 << 5,
-
-  //! when set - we executed AddPayloads (in alttree) on this block
-  BLOCK_HAS_PAYLOADS = 1 << 6,
-  //! when set, we executed AddPayloads (in alttree) on all previous blocks,
-  //! including this block
-  BLOCK_CHAIN_HAS_PAYLOADS = 1 << 7
+  BLOCK_APPLIED = 1 << 5
 };
 
 /**

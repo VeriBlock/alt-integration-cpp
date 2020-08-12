@@ -121,10 +121,6 @@ struct AltChainParams {
     return mEndorsementSettlementInterval;
   }
 
-  bool isStrictAddPayloadsEnabled() const noexcept {
-    return mStrictAddPayloadsEnabled;
-  }
-
   size_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
   // getter for reward parameters
@@ -147,7 +143,6 @@ struct AltChainParams {
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;
   uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
-  bool mStrictAddPayloadsEnabled = false;
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};

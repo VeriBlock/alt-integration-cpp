@@ -350,39 +350,6 @@ bool AltTree::addPayloads(index_t& index,
   commitPayloadsIds<VTB>(index, payloads.vtbs, storage_);
   commitPayloadsIds<ATV>(index, payloads.atvs, storage_);
 
-  // this block now has payloads
-  index.setFlag(BLOCK_HAS_PAYLOADS);
-
-  // if previous block has CHAIN_HAS_PAYLOADS, see if we can advance
-  // CHAIN_HAS_PAYLOADS further
-  if (index.pprev && index.pprev->hasFlags(BLOCK_CHAIN_HAS_PAYLOADS)) {
-    forEachNodePreorder<AltBlock>(index, [](index_t& current) -> bool {
-      if (!current.hasFlags(BLOCK_HAS_PAYLOADS)) {
-        // this subtree has a block with no payloads set (yet), do not consider
-        return false;
-      }
-
-      if (current.hasFlags(BLOCK_CHAIN_HAS_PAYLOADS)) {
-        // traverse to subtree after CHAIN_HAS_PAYLOADS
-        return true;
-      }
-
-      if (current.pprev && current.pprev->hasFlags(BLOCK_CHAIN_HAS_PAYLOADS)) {
-        // this block has BLOCK_HAS_PAYLOADS and previous block has
-        // BLOCK_CHAIN_HAS_PAYLOADS. this can be set to CHAIN_HAS_PAYLOADS
-        current.setFlag(BLOCK_CHAIN_HAS_PAYLOADS);
-        // sanity check
-        VBK_ASSERT(current.pprev->hasFlags(BLOCK_HAS_PAYLOADS));
-        // continue traversal
-        return true;
-      }
-
-      // stop traversal in this subtree, as previous block has no
-      // BLOCK_CHAIN_HAS_PAYLOADS
-      return false;
-    });
-  }
-
   // save payloads on disk
   storage_.savePayloads(payloads);
 
@@ -513,12 +480,6 @@ int AltTree::comparePopScore(const AltBlock::hash_t& A,
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
 
-  // can compare chains with payloads added
-  VBK_ASSERT(!getParams().isStrictAddPayloadsEnabled() ||
-             left->hasFlags(BLOCK_CHAIN_HAS_PAYLOADS));
-  VBK_ASSERT(!getParams().isStrictAddPayloadsEnabled() ||
-             right->hasFlags(BLOCK_CHAIN_HAS_PAYLOADS));
-
   ValidationState state;
   // compare current active chain to other chain
   int result = cmp_.comparePopScore(*this, *right, state);
@@ -557,9 +518,6 @@ void AltTree::removeAllPayloads(index_t& index) {
 
   // we do not allow adding payloads to the genesis block
   VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
-  VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
-                 "block %s has no payloads",
-                 index.toPrettyString());
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "block %s is applied",
                  index.toPrettyString());
