@@ -505,10 +505,11 @@ struct PopAwareForkResolutionComparator {
 
     sm_t sm(ed, *ing_, storage_, chainA.first()->getHeight());
 
-    // we are at chainA.
-    // apply all payloads from chain B if the candidate block has previously
-    // applied (both chains have same first block - the fork point, so exclude
-    // it during 'apply')
+    // we save the value of this flag before we have applied chainB
+    bool canBeApplied = candidate.hasFlags(BLOCK_ONCE_APPLIED);
+
+    // apply all payloads from chain B (both chains have same first block - the
+    // fork point, so exclude it during 'apply')
     {
       auto guard = ing_->deferForkResolutionGuard();
 
@@ -551,11 +552,16 @@ struct PopAwareForkResolutionComparator {
     } else {
       // chain B is better. unapply A and leave B applied
       auto guard = ing_->deferForkResolutionGuard();
+      // if candidate has never been applied before the comparePopScore() so we
+      // have carefully unapply this chain before unapplying chainA and trying
+      // to apply chainB without any payloads from chainA
+      if (!canBeApplied) {
+        sm.unapply(*chainB.tip(), *chainB.first());
+      }
       sm.unapply(*chainA.tip(), *chainA.first());
 
       // validate chain
-      if (candidate.hasFlags(BLOCK_ONCE_APPLIED) &&
-          !sm.apply(*chainB.first(), *chainB.tip(), state)) {
+      if (!canBeApplied && !sm.apply(*chainB.first(), *chainB.tip(), state)) {
         bool res = sm.apply(*chainA.first(), *chainA.tip(), state);
         VBK_ASSERT_MSG(res,
                        "state corruption: %s",

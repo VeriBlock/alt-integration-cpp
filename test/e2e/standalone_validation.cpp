@@ -72,10 +72,7 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
   EXPECT_TRUE(alttree.acceptBlock(chainB.back(), state));
   EXPECT_TRUE(alttree.addPayloads(chainB.back(), payloadsB, state));
 
-  // fork resolution decides that chainB is better
-  // but switching to chainB causes state corruption
-  // "not a leaf block" while trying to unapply the first VTB
-  int res =
-      alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash());
-  EXPECT_EQ(res, 1);
+  EXPECT_GT(
+      alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash()),
+      0);
 }
