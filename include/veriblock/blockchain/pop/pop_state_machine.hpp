@@ -20,38 +20,51 @@ template <typename index_t>
 void assertBlockCanBeApplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot apply the genesis block");
 
-  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED) && "state corruption: %s",
-                 "tried to apply a block that follows an unapplied block");
-  VBK_ASSERT_MSG(
-      index.pprev->hasFlags(BLOCK_ONCE_APPLIED) && "state corruption: %s",
-      "tried to unapply a block that follows a block that has not been "
-      "applied");
-  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED) && "state corruption: %s",
-                 "tried to apply an already applied block");
+  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
+                 "state corruption: tried to apply a block that follows an "
+                 "unapplied block %s",
+                 index.pprev->toPrettyString());
+  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED),
+                 "state corruption: tried to unapply a block that follows a "
+                 "block that has not been applied %s",
+                 index.pprev->toPrettyString());
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
+                 "state corruption: tried to apply an already applied block %s",
+                 index.toPrettyString());
   // an expensive check; might want to  disable it eventually
   VBK_ASSERT_MSG(
-      index.allDescendantsUnapplied() && "state corruption: %s",
-      "found an unapplied block that has some of its descendants applied");
+      index.allDescendantsUnapplied(),
+      "state corruption: found an unapplied block that has some of its "
+      "descendants applied %s",
+      index.toPrettyString());
 }
 
 template <typename index_t>
 void assertBlockCanBeUnapplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
 
-  VBK_ASSERT_MSG(index.hasFlags(BLOCK_APPLIED) && "state corruption: %s",
-                 "tried to unapply an already unapplied block");
-  VBK_ASSERT_MSG(index.hasFlags(BLOCK_ONCE_APPLIED) && "state corruption: %s",
-                 "tried to unapply block that has not been applied");
-  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED) && "state corruption: %s",
-                 "tried to unapply a block that follows an unapplied block");
   VBK_ASSERT_MSG(
-      index.pprev->hasFlags(BLOCK_ONCE_APPLIED) && "state corruption: %s",
-      "tried to unapply a block that follows a block that has not been "
-      "applied");
+      index.hasFlags(BLOCK_APPLIED),
+      "state corruption: tried to unapply an already unapplied block %s",
+      index.toPrettyString());
+  VBK_ASSERT_MSG(
+      index.hasFlags(BLOCK_CAN_BE_APPLIED),
+      "state corruption: tried to unapply block that has not been applied %s",
+      index.toPrettyString());
+  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
+                 "state corruption: tried to unapply a block that follows an "
+                 "unapplied block %s",
+                 index.pprev->toPrettyString());
+  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED),
+                 "state corruption: tried to unapply a block that follows a "
+                 "block that has not been "
+                 "applied %s",
+                 index.pprev->toPrettyString());
   // an expensive check; might want to  disable it eventually
-  VBK_ASSERT_MSG(
-      index.allDescendantsUnapplied() && "state corruption: %s",
-      "tried to unapply a block before unapplying its applied descendants");
+  VBK_ASSERT_MSG(index.allDescendantsUnapplied(),
+                 "state corruption: tried to unapply a block before unapplying "
+                 "its applied descendants %s",
+                 index.toPrettyString());
 }
 
 }  // namespace
@@ -150,7 +163,7 @@ struct PopStateMachine {
     }
 
     index.setFlag(BLOCK_APPLIED);
-    index.setFlag(BLOCK_ONCE_APPLIED);
+    index.setFlag(BLOCK_CAN_BE_APPLIED);
     return true;
   }
 

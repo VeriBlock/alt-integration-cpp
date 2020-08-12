@@ -431,7 +431,7 @@ bool VbkBlockTree::loadTip(const Blob<24>& hash, ValidationState& state) {
   VBK_ASSERT(tip);
   while (tip) {
     tip->setFlag(BLOCK_APPLIED);
-    tip->setFlag(BLOCK_ONCE_APPLIED);
+    tip->setFlag(BLOCK_CAN_BE_APPLIED);
     tip = tip->pprev;
   }
 

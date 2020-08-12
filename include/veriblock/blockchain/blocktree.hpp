@@ -218,7 +218,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     base::tryAddTip(index);
 
     index->setFlag(BLOCK_APPLIED);
-    index->setFlag(BLOCK_ONCE_APPLIED);
+    index->setFlag(BLOCK_CAN_BE_APPLIED);
     index->setFlag(BLOCK_BOOTSTRAP);
 
     return true;

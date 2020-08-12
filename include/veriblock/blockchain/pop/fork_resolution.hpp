@@ -506,7 +506,7 @@ struct PopAwareForkResolutionComparator {
     sm_t sm(ed, *ing_, storage_, chainA.first()->getHeight());
 
     // we save the value of this flag before we have applied chainB
-    bool canBeApplied = candidate.hasFlags(BLOCK_ONCE_APPLIED);
+    bool canBeApplied = candidate.hasFlags(BLOCK_CAN_BE_APPLIED);
 
     // apply all payloads from chain B (both chains have same first block - the
     // fork point, so exclude it during 'apply')
