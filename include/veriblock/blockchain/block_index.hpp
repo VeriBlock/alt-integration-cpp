@@ -42,10 +42,6 @@ enum BlockStatus : uint32_t {
   BLOCK_APPLIED = 1 << 5,
   //! the block has been at least once applied via PopStateMachine
   BLOCK_ONCE_APPLIED = 1 << 6,
-  //! the block has pop data
-  BLOCK_HAS_POP = 1 << 7,
-  //! the block has already added pop data (executed addPayloads)
-  BLOCK_POP_ADDED = 1 << 8,
 };
 
 /**
