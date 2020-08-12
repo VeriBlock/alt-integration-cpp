@@ -505,6 +505,7 @@ struct PopAwareForkResolutionComparator {
 
     sm_t sm(ed, *ing_, storage_, chainA.first()->getHeight());
 
+    // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the
     // fork point, so exclude it during 'apply')
     {
