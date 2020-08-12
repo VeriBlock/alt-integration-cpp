@@ -27,9 +27,8 @@ using namespace altintegration;
  * Mine and activate the last block of chain A adding its part of the payloads
  * Mine the last block of chain B adding its part of the payloads
  *
- * Check that fork resolution causes state corruption due to deciding that
- * chain B is better, and unapplying chain A that chain B depends on for context
- * to be valid
+ * Fork resolution decides that chainB is better, so it switches to B. But B is
+ * invalid when applied on its own, so it switches back to A
  */
 
 struct StandaloneValidation : public ::testing::Test, public PopTestFixture {};
@@ -72,10 +71,9 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
   EXPECT_TRUE(alttree.acceptBlockHeader(chainB.back(), state));
   EXPECT_TRUE(alttree.addPayloads(chainB.back().getHash(), payloadsB, state));
 
-  // fork resolution decides that chainB is better
-  // but switching to chainB causes state corruption
-  // "not a leaf block" while trying to unapply the first VTB
-  ASSERT_DEATH(
+  // applying chainB causes state corruption
+  // so we decide that chainA is better
+  EXPECT_GT(
       alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash()),
-      "not a leaf block");
+      0);
 }
