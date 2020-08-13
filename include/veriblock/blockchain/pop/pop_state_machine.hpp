@@ -190,19 +190,16 @@ struct PopStateMachine {
     index.unsetFlag(BLOCK_APPLIED);
   }
 
-  // unapplies all commands commands from blocks in the range of [from; to) if
-  // provided predicate return true
-  // atomic: either applies all of the requested blocks
-  // or fails on an assert
-  void unapply(
-      index_t& from,
-      index_t& to,
-      bool shouldSetCanBeApplied = true,
-      const std::function<bool(index_t& index)>& pred = [](index_t&) -> bool {
-        return true;
-      }) {
+  // unapplies all commands commands from blocks in the range of [from; to)
+  // while predicate returns true, if predicate return false stop unappluing and
+  // return the index on which predicate returns false
+  // atomic: either applies all of the requested blocks or fails on an assert
+  index_t* unapplyWhile(index_t& from,
+                        index_t& to,
+                        const std::function<bool(index_t& index)>& pred,
+                        bool shouldSetCanBeApplied = true) {
     if (&from == &to) {
-      return;
+      return &to;
     }
 
     VBK_ASSERT(from.getHeight() > to.getHeight());
@@ -219,20 +216,29 @@ struct PopStateMachine {
     for (auto* current : reverse_iterate(chain)) {
       if (pred(*current)) {
         unapplyBlock(*current, shouldSetCanBeApplied);
+      } else {
+        return current;
       }
     }
+
+    return &to;
+  }
+
+  // unapplies all commands commands from blocks in the range of [from; to)
+  // atomic: either applies all of the requested blocks
+  // or fails on an assert
+  void unapply(index_t& from, index_t& to, bool shouldSetCanBeApplied = true) {
+    auto pred = [](index_t&) -> bool { return true; };
+    auto* index = unapplyWhile(from, to, pred, shouldSetCanBeApplied);
+    VBK_ASSERT(index == &to);
   }
 
   // applies all commands from blocks in the range of (from; to].
   // atomic: applies either all or none of the requested blocks
-  bool apply(
-      index_t& from,
-      index_t& to,
-      ValidationState& state,
-      bool shouldSetCanBeApplied = true,
-      const std::function<bool(index_t& index)>& pred = [](index_t&) -> bool {
-        return true;
-      }) {
+  bool apply(index_t& from,
+             index_t& to,
+             ValidationState& state,
+             bool shouldSetCanBeApplied = true) {
     if (&from == &to) {
       // already applied this block
       return true;
@@ -257,12 +263,10 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* index : chain) {
-      if (pred(*index)) {
-        if (!applyBlock(*index, state, shouldSetCanBeApplied)) {
-          // rollback the previously appled slice of the chain
-          unapply(*index->pprev, from, shouldSetCanBeApplied);
-          return false;
-        }
+      if (!applyBlock(*index, state, shouldSetCanBeApplied)) {
+        // rollback the previously appled slice of the chain
+        unapply(*index->pprev, from, shouldSetCanBeApplied);
+        return false;
       }
     }
 
