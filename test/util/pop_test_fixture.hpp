@@ -85,7 +85,8 @@ struct PopTestFixture {
   }
 
   bool validatePayloads(const AltBlock::hash_t& block_hash,
-                        const PopData& popData, ValidationState& _state) {
+                        const PopData& popData,
+                        ValidationState& _state) {
     auto* index = alttree.getBlockIndex(block_hash);
     if (!index) {
       return _state.Invalid("bad-block", "Can't find containing block");
@@ -273,13 +274,6 @@ struct PopTestFixture {
 
     for (const auto& t : transactions) {
       popData.atvs.push_back(popminer->generateATV(t, lastVbk, state));
-    }
-
-    for (const auto& atv : popData.atvs) {
-      fillVbkContext(popData.context,
-                     lastVbk,
-                     atv.blockOfProof.getHash(),
-                     popminer->vbk());
     }
 
     return popData;
