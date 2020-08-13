@@ -58,8 +58,7 @@ class Altintegration {
     return service;
   }
 
-  bool popdataStatelessValidation(const PopData& popData,
-                                  ValidationState& state) {
+  bool checkPopData(const PopData& popData, ValidationState& state) {
     for (const auto& b : popData.context) {
       if (!checkBlock(b, state, *config->vbk.params)) {
         return state.Invalid("pop-vbkblock-statelessly-invalid");
