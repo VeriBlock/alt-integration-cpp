@@ -553,15 +553,27 @@ struct PopAwareForkResolutionComparator {
       // if candidate has never been applied before with setState(), we
       // have to unapply candidate before unapplying chainA and try
       // to apply chainB without any payloads from chainA
-      if (!candidate.hasFlags(BLOCK_CAN_BE_APPLIED)) {
-        sm.unapply(*chainB.tip(), *chainB.first(), false);
+      bool hasFlag = candidate.hasFlags(BLOCK_CAN_BE_APPLIED);
+      if (!hasFlag) {
+        sm.unapply(*chainB.tip(),
+                   *chainB.first(),
+                   false,
+                   [](protected_index_t& index) -> bool {
+                     return !index.hasFlags(BLOCK_CAN_BE_APPLIED);
+                   });
       }
       sm.unapply(*chainA.tip(), *chainA.first());
 
       // validate chain
-      if (!candidate.hasFlags(BLOCK_CAN_BE_APPLIED) &&
-          !sm.apply(*chainB.first(), *chainB.tip(), state)) {
+      if (!hasFlag && !sm.apply(*chainB.first(),
+                                *chainB.tip(),
+                                state,
+                                true,
+                                [](protected_index_t& index) -> bool {
+                                  return index.hasFlags(BLOCK_CAN_BE_APPLIED);
+                                })) {
         bool res = sm.apply(*chainA.first(), *chainA.tip(), state);
+        guard.overrideDeferredForkResolution(originalProtectingTip);
         VBK_ASSERT_MSG(res,
                        "state corruption: %s",
                        "chainA as a previous best chain should be valid");

@@ -190,9 +190,17 @@ struct PopStateMachine {
     index.unsetFlag(BLOCK_APPLIED);
   }
 
-  // unapplies all commands commands from blocks in the range of [from; to)
-  // atomic: either applies all of the requested blocks or fails on an assert
-  void unapply(index_t& from, index_t& to, bool shouldSetCanBeApplied = true) {
+  // unapplies all commands commands from blocks in the range of [from; to) if
+  // provided predicate return true
+  // atomic: either applies all of the requested blocks
+  // or fails on an assert
+  void unapply(
+      index_t& from,
+      index_t& to,
+      bool shouldSetCanBeApplied = true,
+      const std::function<bool(index_t& index)>& pred = [](index_t&) -> bool {
+        return true;
+      }) {
     if (&from == &to) {
       return;
     }
@@ -209,16 +217,22 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* current : reverse_iterate(chain)) {
-      unapplyBlock(*current, shouldSetCanBeApplied);
+      if (pred(*current)) {
+        unapplyBlock(*current, shouldSetCanBeApplied);
+      }
     }
   }
 
   // applies all commands from blocks in the range of (from; to].
   // atomic: applies either all or none of the requested blocks
-  bool apply(index_t& from,
-             index_t& to,
-             ValidationState& state,
-             bool shouldSetCanBeApplied = true) {
+  bool apply(
+      index_t& from,
+      index_t& to,
+      ValidationState& state,
+      bool shouldSetCanBeApplied = true,
+      const std::function<bool(index_t& index)>& pred = [](index_t&) -> bool {
+        return true;
+      }) {
     if (&from == &to) {
       // already applied this block
       return true;
@@ -243,10 +257,12 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* index : chain) {
-      if (!applyBlock(*index, state, shouldSetCanBeApplied)) {
-        // rollback the previously appled slice of the chain
-        unapply(*index->pprev, from, shouldSetCanBeApplied);
-        return false;
+      if (pred(*index)) {
+        if (!applyBlock(*index, state, shouldSetCanBeApplied)) {
+          // rollback the previously appled slice of the chain
+          unapply(*index->pprev, from, shouldSetCanBeApplied);
+          return false;
+        }
       }
     }
 
