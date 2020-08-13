@@ -21,9 +21,9 @@ bool PayloadsStorage::getValidity(Slice<const uint8_t> containingBlockHash,
   return it->second;
 }
 
-Repository& PayloadsStorage::getRepo() { return *repo_; }
+Repository& PayloadsStorage::getRepo() { return repo_; }
 
-const Repository& PayloadsStorage::getRepo() const { return *repo_; }
+const Repository& PayloadsStorage::getRepo() const { return repo_; }
 
 void PayloadsStorage::setValidity(Slice<const uint8_t> containingBlockHash,
                                   Slice<const uint8_t> payloadId,
@@ -145,8 +145,8 @@ void PayloadsStorage::reindex(const AltTree& tree) {
   VBK_LOG_WARN("Reindexing finished");
 }
 
-PayloadsStorage::PayloadsStorage(std::shared_ptr<Repository> repo)
-    : repo_(std::move(repo)) {}
+PayloadsStorage::PayloadsStorage(Repository& repo)
+    : repo_(repo) {}
 
 std::vector<uint8_t> PayloadsStorage::makeGlobalPid(Slice<const uint8_t> a,
                                                     Slice<const uint8_t> b) {
@@ -159,7 +159,7 @@ std::vector<uint8_t> PayloadsStorage::makeGlobalPid(Slice<const uint8_t> a,
 }
 
 void PayloadsStorage::savePayloads(const PopData& pop) {
-  auto batch = repo_->newBatch();
+  auto batch = repo_.newBatch();
   for (const auto& b : pop.context) {
     batch->putObject(std::make_pair(DB_VBK_PREFIX, b.getId()), b);
   }
@@ -173,7 +173,7 @@ void PayloadsStorage::savePayloads(const PopData& pop) {
 }
 
 void PayloadsStorage::savePayloads(const std::vector<VTB>& vtbs) {
-  auto batch = repo_->newBatch();
+  auto batch = repo_.newBatch();
   for (auto& b : vtbs) {
     batch->putObject(std::make_pair(DB_VTB_PREFIX, b.getId()), b);
   }
