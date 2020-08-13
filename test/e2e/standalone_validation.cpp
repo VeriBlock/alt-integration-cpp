@@ -67,6 +67,9 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, chainA.back(), payloadsA);
 
+  auto* vbkTip = alttree.vbk().getBestChain().tip();
+  auto* btcTip = alttree.btc().getBestChain().tip();
+
   // add the last block of chainB with payloads
   EXPECT_TRUE(alttree.acceptBlockHeader(chainB.back(), state));
   EXPECT_TRUE(alttree.addPayloads(chainB.back().getHash(), payloadsB, state));
@@ -76,4 +79,12 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
   EXPECT_GT(
       alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash()),
       0);
+
+  EXPECT_EQ(vbkTip->getHeader(),
+            alttree.vbk().getBestChain().tip()->getHeader());
+  EXPECT_EQ(btcTip->getHeader(),
+            alttree.btc().getBestChain().tip()->getHeader());
+
+  auto* invalidBlock = alttree.getBlockIndex(chainB.back().getHash());
+  EXPECT_TRUE(invalidBlock->hasFlags(BLOCK_FAILED_POP));
 }
