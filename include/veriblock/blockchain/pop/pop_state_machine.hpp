@@ -191,10 +191,15 @@ struct PopStateMachine {
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)
+  // while predicate returns true, if predicate return false stop unappluing and
+  // return the index on which predicate returns false
   // atomic: either applies all of the requested blocks or fails on an assert
-  void unapply(index_t& from, index_t& to, bool shouldSetCanBeApplied = true) {
+  index_t* unapplyWhile(index_t& from,
+                        index_t& to,
+                        const std::function<bool(index_t& index)>& pred,
+                        bool shouldSetCanBeApplied = true) {
     if (&from == &to) {
-      return;
+      return &to;
     }
 
     VBK_ASSERT(from.getHeight() > to.getHeight());
@@ -209,8 +214,23 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* current : reverse_iterate(chain)) {
-      unapplyBlock(*current, shouldSetCanBeApplied);
+      if (pred(*current)) {
+        unapplyBlock(*current, shouldSetCanBeApplied);
+      } else {
+        return current;
+      }
     }
+
+    return &to;
+  }
+
+  // unapplies all commands commands from blocks in the range of [from; to)
+  // atomic: either applies all of the requested blocks
+  // or fails on an assert
+  void unapply(index_t& from, index_t& to, bool shouldSetCanBeApplied = true) {
+    auto pred = [](index_t&) -> bool { return true; };
+    auto* index = unapplyWhile(from, to, pred, shouldSetCanBeApplied);
+    VBK_ASSERT(index == &to);
   }
 
   // applies all commands from blocks in the range of (from; to].
