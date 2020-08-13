@@ -84,4 +84,7 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
             alttree.vbk().getBestChain().tip()->getHeader());
   EXPECT_EQ(btcTip->getHeader(),
             alttree.btc().getBestChain().tip()->getHeader());
+
+  auto* invalidBlock = alttree.getBlockIndex(chainB.back().getHash());
+  EXPECT_TRUE(invalidBlock->hasFlags(BLOCK_FAILED_POP));
 }
