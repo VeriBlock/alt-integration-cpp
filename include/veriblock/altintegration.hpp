@@ -14,8 +14,7 @@
 
 namespace altintegration {
 
-class Altintegration {
- public:
+struct Altintegration {
   static std::shared_ptr<Altintegration> create(
       const std::shared_ptr<Config>& config, std::shared_ptr<Repository>& db) {
     config->validate();
@@ -80,7 +79,6 @@ class Altintegration {
     return true;
   }
 
- public:
   std::shared_ptr<Config> config;
   std::shared_ptr<Repository> repo;
   std::shared_ptr<MemPool> mempool;
