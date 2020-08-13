@@ -97,7 +97,7 @@ struct PopTestFixture {
     }
 
     if (!alttree.setState(*index, _state)) {
-      EXPECT_NO_FATAL_FAILURE(alttree.removeAllPayloads(block_hash));
+      EXPECT_NO_FATAL_FAILURE(alttree.removePayloads(block_hash));
       return _state.Invalid("addPayloadsTemporarily");
     }
 

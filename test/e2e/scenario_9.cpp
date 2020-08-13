@@ -98,6 +98,6 @@ TEST_F(Scenario9, scenario_9) {
   validateAlttreeIndexState(
       alttree, containingBlock, altPayloads2, true, false);
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "ALT-duplicate-payloads-VBK");
+  EXPECT_EQ(state.GetPath(), "VBK-duplicate");
   verifyEndorsementAdded(alttree.vbk(), E1);
 }

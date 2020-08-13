@@ -135,6 +135,10 @@ struct AltChainParams {
 
   size_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
+  bool isStrictAddPayloadsOrderingEnabled() const noexcept {
+    return mStrictAddPayloadsOrderingEnabled;
+  }
+
   // getter for reward parameters
   const PopRewardsParams& getRewardParams() const noexcept {
     return mPopRewardsParams;
@@ -151,6 +155,9 @@ struct AltChainParams {
  protected:
   PopRewardsParams mPopRewardsParams;
 
+  // should be disabled in tests
+  // should be enabled in prod
+  bool mStrictAddPayloadsOrderingEnabled = false;
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;

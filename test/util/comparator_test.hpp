@@ -164,7 +164,7 @@ struct TestComparator {
     const base& B = b;
     VBK_EXPECT_TRUE(this->operator()(A, B, suppress), suppress);
 
-    VBK_EXPECT_EQ(a.status, b.status, suppress);
+    VBK_EXPECT_EQ(a.getStatus(), b.getStatus(), suppress);
     return true;
   }
 
