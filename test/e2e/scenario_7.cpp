@@ -36,7 +36,6 @@ TEST_F(Scenario7, scenario_7) {
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
-  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -44,7 +43,7 @@ TEST_F(Scenario7, scenario_7) {
   AltBlock endorsedBlock1 = chain[5];
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
-  ATV atv1 = popminer->generateATV(tx1, containingVbkBlock1->getHash(), state);
+  ATV atv1 = popminer->generateATV(tx1, state);
 
   vbkTip = popminer->vbk().getBestChain().tip();
 
@@ -56,21 +55,26 @@ TEST_F(Scenario7, scenario_7) {
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
   VTB vtb2 = popminer->vbkPayloads[containingVbkBlock2->getHash()][0];
-  fillVbkContext(vtb2, vbkTip->getHash(), popminer->vbk());
 
   AltBlock endorsedBlock2 = chain[5];
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock2));
-  ATV atv2 = popminer->generateATV(tx2, containingVbkBlock2->getHash(), state);
+  ATV atv2 = popminer->generateATV(tx2, state);
 
-  PopData popData = createPopData({atv1, atv2}, {vtb1, vtb2});
+  PopData popData;
+  popData.atvs = {atv1, atv2};
+  popData.vtbs = {vtb1, vtb2};
+
+  fillVbkContext(
+      popData.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state))
+      << state.toString();
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
 }

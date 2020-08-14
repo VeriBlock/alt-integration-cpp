@@ -96,19 +96,20 @@ TEST_F(Scenario8, scenario_8) {
 
   EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
 
-  fillVbkContext(vtb1, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
-  fillVbkContext(vtb2, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
-
   // mine 10 blocks
   mineAltBlocks(10, chain);
 
   AltBlock endorsedBlock = chain[5];
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  ATV atv1 =
-      popminer->generateATV(tx1, vbkparam.getGenesisBlock().getHash(), state);
+  ATV atv1 = popminer->generateATV(tx1, state);
 
-  PopData popData1 = createPopData({atv1}, {vtb1});
+  PopData popData1;
+  popData1.atvs = {atv1};
+  popData1.vtbs = {vtb1};
+
+  fillVbkContext(
+      popData1.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   auto containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
@@ -131,10 +132,14 @@ TEST_F(Scenario8, scenario_8) {
 
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  ATV atv2 = popminer->generateATV(
-      tx1, alttree.vbk().getBestChain().tip()->getHash(), state);
+  ATV atv2 = popminer->generateATV(tx1, state);
 
-  PopData popData2 = createPopData({atv2}, {vtb2});
+  PopData popData2;
+  popData2.atvs = {atv2};
+  popData2.vtbs = {vtb2};
+
+  fillVbkContext(
+      popData2.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
