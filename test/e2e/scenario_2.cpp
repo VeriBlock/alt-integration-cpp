@@ -148,7 +148,8 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(
       alttree.addPayloads(containingBlock.getHash(), altPayloads3, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state))
+      << state.toString();
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads3);
 

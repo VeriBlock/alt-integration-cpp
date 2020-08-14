@@ -94,6 +94,54 @@ struct Scenario0 : public ::testing::Test {
     atv = parse<ATV>(generated::atv, fromHex<ATV>)[0];
     vtbs = parse<VTB>(generated::vtbs, fromHex<VTB>);
   }
+
+  PopData createPopData() {
+    PopData popData;
+
+    std::set<typename VbkBlock::hash_t> known_blocks;
+
+    // fill vbk context
+    for (auto& vtb : vtbs) {
+      for (const auto& block : vtb.context) {
+        if (known_blocks.count(block.getHash()) == 0) {
+          popData.context.push_back(block);
+          known_blocks.insert(block.getHash());
+        }
+      }
+
+      if (known_blocks.count(vtb.containingBlock.getHash()) == 0) {
+        popData.context.push_back(vtb.containingBlock);
+        known_blocks.insert(vtb.containingBlock.getHash());
+      }
+
+      vtb.context.clear();
+    }
+
+    for (const auto& block : atv.context) {
+      if (known_blocks.count(block.getHash()) == 0) {
+        popData.context.push_back(block);
+        known_blocks.insert(block.getHash());
+      }
+    }
+
+    if (known_blocks.count(atv.blockOfProof.getHash()) == 0) {
+      popData.context.push_back(atv.blockOfProof);
+      known_blocks.insert(atv.blockOfProof.getHash());
+    }
+
+    atv.context.clear();
+
+    std::sort(popData.context.begin(),
+              popData.context.end(),
+              [](const VbkBlock& a, const VbkBlock& b) {
+                return a.height < b.height;
+              });
+
+    popData.atvs = {atv};
+    popData.vtbs = vtbs;
+
+    return popData;
+  }
 };
 
 TEST_F(Scenario0, Scenario0) {
@@ -118,9 +166,7 @@ TEST_F(Scenario0, Scenario0) {
   containing.hash = std::vector<uint8_t>{1, 3, 3, 10};
 
   // TODO correctly generate popData
-  PopData popData;
-  popData.atvs = {atv};
-  popData.vtbs = vtbs;
+  PopData popData = createPopData();
 
   ValidationState state;
   ASSERT_TRUE(alt->acceptBlockHeader(endorsedPrev, state)) << state.toString();
@@ -128,6 +174,6 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlockHeader(containing, state)) << state.toString();
   ASSERT_TRUE(alt->addPayloads(containing.getHash(), popData, state));
   ASSERT_FALSE(alt->setState(containing.getHash(), state));
-  ASSERT_EQ("ALT-bad-command+VBK-bad-containing", state.GetPath());
+  ASSERT_EQ("ALT-bad-command+VBK-bad-prev-block", state.GetPath());
   validateAlttreeIndexState(*alt, containing, popData, false);
 }

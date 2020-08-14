@@ -157,9 +157,11 @@ TEST_F(Scenario1, scenario_1) {
                  popminer->vbk());
   altPayloadsVBA71.vtbs = {vtbsVBA71[0]};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  ASSERT_TRUE(alttree.addPayloads(
-      containingBlock.getHash(), {altPayloadsVBA71}, state));
-  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  ASSERT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloadsVBA71, state))
+      << state.toString();
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
+      << state.toString();
   EXPECT_TRUE(state.IsValid());
   ASSERT_NE(btcAtip, nullptr);
   ASSERT_GE(btcAtip->getHeight(), 53);
@@ -202,9 +204,11 @@ TEST_F(Scenario1, scenario_1) {
                  popminer->vbk());
   altPayloadsVBB71.vtbs = {vtbsVBB71[0]};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  ASSERT_TRUE(alttree.addPayloads(
-      containingBlock.getHash(), {altPayloadsVBB71}, state));
-  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  ASSERT_TRUE(
+      alttree.addPayloads(containingBlock.getHash(), altPayloadsVBB71, state))
+      << state.toString();
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
+      << state.toString();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(),
             altchain.rbegin()->getHash());
   EXPECT_TRUE(state.IsValid());
@@ -226,7 +230,8 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(btcBtip->getAncestor(55)->getHash(),
             alttree.vbk().btc().getBestChain().tip()->getHash());
   // expect that ALTVBK tip is vBc71
-  EXPECT_TRUE(cmp(*vbkBtip->getAncestor(71), *alttree.vbk().getBestChain().tip()));
+  EXPECT_TRUE(
+      cmp(*vbkBtip->getAncestor(71), *alttree.vbk().getBestChain().tip()));
   // expect that ALT tip is 102
   EXPECT_EQ(altchain.size(), 103);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 102);

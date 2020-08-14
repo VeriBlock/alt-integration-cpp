@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/entities/vbkfullblock.hpp"
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -286,6 +285,10 @@ template <>
 bool MemPool::submit(const ATV& atv,
                      ValidationState& state,
                      bool shouldDoContextualCheck) {
+  VBK_ASSERT_MSG(atv.context.empty(),
+                 "atv should have empty context, context size: %d",
+                 atv.context.size());
+
   // stateless validation
   if (!checkATV(atv, state, tree_->getParams(), tree_->vbk().getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
@@ -296,19 +299,10 @@ bool MemPool::submit(const ATV& atv,
     return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
-  for (const auto& b : atv.context) {
-    if (!tree_->vbk().getBlockIndex(b.getHash())) {
-      touchVbkBlock(b, b.getId());
-    }
-  }
-
   auto& rel = touchVbkBlock(atv.blockOfProof);
   auto atvptr = std::make_shared<ATV>(atv);
   auto pair = std::make_pair(atv.getId(), atvptr);
   rel.atvs.push_back(atvptr);
-
-  // clear context
-  pair.second->context.clear();
 
   // store atv id in containing block index
   stored_atvs_.insert(pair);
@@ -322,6 +316,10 @@ template <>
 bool MemPool::submit(const VTB& vtb,
                      ValidationState& state,
                      bool shouldDoContextualCheck) {
+  VBK_ASSERT_MSG(vtb.context.empty(),
+                 "vtb should have empty context, context size: %d",
+                 vtb.context.size());
+
   auto& vbk = tree_->vbk();
   // stateless validation
   if (!checkVTB(vtb, state, vbk.getParams(), vbk.btc().getParams())) {
@@ -333,19 +331,10 @@ bool MemPool::submit(const VTB& vtb,
     return state.Invalid("pop-mempool-submit-vtb-stateful");
   }
 
-  for (const auto& b : vtb.context) {
-    if (!vbk.getBlockIndex(b.getHash())) {
-      touchVbkBlock(b, b.getId());
-    }
-  }
-
   auto& rel = touchVbkBlock(vtb.containingBlock);
   auto vtbptr = std::make_shared<VTB>(vtb);
   auto pair = std::make_pair(vtb.getId(), vtbptr);
   rel.vtbs.push_back(vtbptr);
-
-  // clear context
-  pair.second->context.clear();
 
   stored_vtbs_.insert(pair);
 
