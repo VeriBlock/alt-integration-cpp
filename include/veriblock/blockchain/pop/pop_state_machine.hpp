@@ -26,9 +26,15 @@ void assertBlockCanBeApplied(index_t& index, bool shouldSetCanBeApplied) {
                  index.pprev->toPrettyString());
   VBK_ASSERT_MSG(
       index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
-      "state corruption: tried to unapply a block that follows a "
+      "state corruption: tried to apply a block that follows a "
       "block that has not been applied %s",
       index.pprev->toPrettyString());
+  VBK_ASSERT_MSG(
+      (index.hasFlags(BLOCK_CAN_BE_APPLIED) &&
+       !index.hasFlags(BLOCK_FAILED_POP)) ||
+          !shouldSetCanBeApplied,
+      "state corruption: tried to apply block that is pop invalid, %s",
+      index.toPrettyString());
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to apply an already applied block %s",
                  index.toPrettyString());
