@@ -46,7 +46,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   }
 
   template <typename pop_t>
-  void setPayload(const std::vector<typename pop_t::id_t>& pids) {
+  void setPayloads(const std::vector<typename pop_t::id_t>& pids) {
     auto& payloads = getPayloadIdsInner<pop_t>();
     payloads = pids;
     setDirty();

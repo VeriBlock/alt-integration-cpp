@@ -3,12 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
-#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -51,7 +52,7 @@ void commitPayloadsIds(BlockIndex<AltBlock>& index,
                        const std::vector<Pop>& pop,
                        PayloadsStorage& storage) {
   auto pids = map_get_id(pop);
-  index.template setPayload<Pop>(pids);
+  index.template setPayloads<Pop>(pids);
 
   auto containing = index.getHash();
   for (const auto& pid : pids) {
@@ -60,7 +61,7 @@ void commitPayloadsIds(BlockIndex<AltBlock>& index,
 }
 
 template <typename Element, typename Container>
-auto find_duplicates(BlockIndex<AltBlock>& index, Container& pop, AltTree& tree)
+auto findDuplicates(BlockIndex<AltBlock>& index, Container& pop, AltTree& tree)
     -> decltype(pop.end()) {
   const auto startHeight = tree.getParams().getBootstrapBlock().height;
   Chain<BlockIndex<AltBlock>> chain(startHeight, &index);
@@ -92,7 +93,7 @@ bool searchForDuplicates(BlockIndex<AltBlock>& index,
                          AltTree& tree,
                          ValidationState& state,
                          bool continueOnInvalid) {
-  auto newend = find_duplicates<Pop>(index, pop, tree);
+  auto newend = findDuplicates<Pop>(index, pop, tree);
   if (newend == pop.end()) {
     // no duplicates found
     return true;
@@ -118,7 +119,7 @@ bool searchForDuplicates(BlockIndex<AltBlock>& index,
                          std::vector<T>& pop,
                          AltTree& tree,
                          ValidationState& state) {
-  auto newend = find_duplicates<T>(index, pop, tree);
+  auto newend = findDuplicates<T>(index, pop, tree);
   if (newend == pop.end()) {
     // no duplicates found
     return true;
@@ -133,12 +134,12 @@ bool searchForDuplicates(BlockIndex<AltBlock>& index,
 
 template <typename pop_t>
 void assertContextEmpty(const std::vector<pop_t>& payloads) {
-	for (const auto& p : payloads) {
-		VBK_ASSERT_MSG(p.context.empty(),
-					   "POP %s should have empty context, conetx size: %d",
-					   pop_t::name(),
-					   p.context.size());
-	}
+  for (const auto& p : payloads) {
+    VBK_ASSERT_MSG(p.context.empty(),
+                   "POP %s should have empty context, conetx size: %d",
+                   pop_t::name(),
+                   p.context.size());
+  }
 }
 
 bool AltTree::addPayloads(index_t& index,
@@ -157,8 +158,8 @@ bool AltTree::addPayloads(index_t& index,
                  "block %s already contains PopData",
                  index.toPrettyString());
 
-	assertContextEmpty(payloads.atvs);
-	assertContextEmpty(payloads.vtbs);
+  assertContextEmpty(payloads.atvs);
+  assertContextEmpty(payloads.vtbs);
 
   // prev block must exist
   VBK_ASSERT_MSG(index.pprev,
