@@ -25,9 +25,6 @@ struct Payloads {
     list listctx;
     list listvtbs;
     for (const auto& vtb : vtbs) {
-      for (auto& block : vtb.context) {
-        listctx.append(HexStr(block.toVbkEncoding()));
-      }
       listvtbs.append(HexStr(vtb.toVbkEncoding()));
     }
 
@@ -184,10 +181,6 @@ struct MockMinerProxy : private MockMiner {
     std::reverse(vtbs.begin(), vtbs.end());
 
     std::reverse(context.begin(), context.end());
-    if (vtbs.size() > 0) {
-      // supply all vbk context into first VTB
-      vtbs[0].context = context;
-    }
 
     return payloads;
   }

@@ -247,8 +247,7 @@ TEST(ToJson, VTB) {
                                     117576138,
                                     -266584319};
 
-  static const VTB defaultVtb{
-      defaultTx, vtbProofPath, vtbVbkBlock, std::vector<VbkBlock>{}};
+  static const VTB defaultVtb{defaultTx, vtbProofPath, vtbVbkBlock};
 
   picojson::value val = ToJSON<picojson::value>(defaultVtb);
   auto actual = val.serialize(true);

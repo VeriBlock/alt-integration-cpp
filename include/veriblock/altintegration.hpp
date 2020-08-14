@@ -63,7 +63,7 @@ struct Altintegration {
     }
 
     for (const auto& vtb : popData.vtbs) {
-      if (!checkVTB(vtb, state, *config->vbk.params, *config->btc.params)) {
+      if (!checkVTB(vtb, state, *config->btc.params)) {
         return state.Invalid("pop-vtb-statelessly-invalid");
       }
     }

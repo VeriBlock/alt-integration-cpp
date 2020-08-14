@@ -82,7 +82,6 @@ bool checkATV(const ATV& atv,
 
 bool checkVTB(const VTB& vtb,
               ValidationState& state,
-              const VbkChainParams& vbk,
               const BtcChainParams& btc);
 }  // namespace altintegration
 
