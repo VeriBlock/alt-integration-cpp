@@ -32,6 +32,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   index->setFlag(BLOCK_APPLIED);
   index->setFlag(BLOCK_CAN_BE_APPLIED);
   index->setFlag(BLOCK_BOOTSTRAP);
+  index->setFlag(BLOCK_HAS_PAYLOADS);
   base::activeChain_ = Chain<index_t>(height, index);
 
   VBK_ASSERT(base::isBootstrapped());
