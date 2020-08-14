@@ -176,6 +176,6 @@ TEST_F(Scenario0, Scenario0) {
   ASSERT_TRUE(alt->acceptBlockHeader(containing, state)) << state.toString();
   ASSERT_TRUE(alt->addPayloads(containing.getHash(), popData, state));
   ASSERT_FALSE(alt->setState(containing.getHash(), state));
-  ASSERT_EQ("ALT-bad-command+VBK-bad-containing", state.GetPath());
+  ASSERT_EQ("ALT-bad-command+VBK-bad-prev-block", state.GetPath());
   validateAlttreeIndexState(*alt, containing, popData, false);
 }
