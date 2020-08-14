@@ -299,7 +299,7 @@ bool checkNoPayloadDuplicatesInOtherBlocks(AltTree& tree,
 }
 
 template <typename pop_t>
-void payloadsContextEmptyAssert(const std::vector<pop_t>& payloads) {
+void assertContextEmpty(const std::vector<pop_t>& payloads) {
   for (const auto& p : payloads) {
     VBK_ASSERT_MSG(p.context.empty(),
                    "POP %s should have empty context, conetx size: %d",
@@ -319,8 +319,8 @@ bool AltTree::addPayloads(index_t& index,
                payloads.atvs.size(),
                index.toShortPrettyString());
 
-  payloadsContextEmptyAssert(payloads.atvs);
-  payloadsContextEmptyAssert(payloads.vtbs);
+  assertContextEmpty(payloads.atvs);
+  assertContextEmpty(payloads.vtbs);
 
   if (!index.pprev) {
     return state.Invalid(block_t::name() + "-bad-containing-prev",
