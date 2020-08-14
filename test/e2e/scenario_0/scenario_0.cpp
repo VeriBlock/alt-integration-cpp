@@ -95,7 +95,7 @@ struct Scenario0 : public ::testing::Test {
     vtbs = parse<VTB>(generated::vtbs, fromHex<VTB>);
   }
 
-  PopData createPopData(std::vector<ATV> atvs, std::vector<VTB> vtbs) {
+  PopData createPopData() {
     PopData popData;
 
     std::set<typename VbkBlock::hash_t> known_blocks;
@@ -117,21 +117,19 @@ struct Scenario0 : public ::testing::Test {
       vtb.context.clear();
     }
 
-    for (auto& atv : atvs) {
-      for (const auto& block : atv.context) {
-        if (known_blocks.count(block.getHash()) == 0) {
-          popData.context.push_back(block);
-          known_blocks.insert(block.getHash());
-        }
+    for (const auto& block : atv.context) {
+      if (known_blocks.count(block.getHash()) == 0) {
+        popData.context.push_back(block);
+        known_blocks.insert(block.getHash());
       }
-
-      if (known_blocks.count(atv.blockOfProof.getHash()) == 0) {
-        popData.context.push_back(atv.blockOfProof);
-        known_blocks.insert(atv.blockOfProof.getHash());
-      }
-
-      atv.context.clear();
     }
+
+    if (known_blocks.count(atv.blockOfProof.getHash()) == 0) {
+      popData.context.push_back(atv.blockOfProof);
+      known_blocks.insert(atv.blockOfProof.getHash());
+    }
+
+    atv.context.clear();
 
     std::sort(popData.context.begin(),
               popData.context.end(),
@@ -139,7 +137,7 @@ struct Scenario0 : public ::testing::Test {
                 return a.height < b.height;
               });
 
-    popData.atvs = atvs;
+    popData.atvs = {atv};
     popData.vtbs = vtbs;
 
     return popData;
@@ -168,7 +166,7 @@ TEST_F(Scenario0, Scenario0) {
   containing.hash = std::vector<uint8_t>{1, 3, 3, 10};
 
   // TODO correctly generate popData
-  PopData popData = createPopData({atv}, vtbs);
+  PopData popData = createPopData();
 
   ValidationState state;
   ASSERT_TRUE(alt->acceptBlockHeader(endorsedPrev, state)) << state.toString();
