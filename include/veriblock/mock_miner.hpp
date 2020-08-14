@@ -51,9 +51,7 @@ class MockMiner {
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkPayloads;
 
   VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData);
-  ATV generateATV(const VbkTx& transaction,
-                  const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                  ValidationState& state);
+  ATV generateATV(const VbkTx& transaction, ValidationState& state);
 
   BlockIndex<BtcBlock>* mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
                                       size_t amount);

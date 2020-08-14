@@ -283,12 +283,13 @@ TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
   auto vtbs = this->popminer->vbkPayloads[vbkTip->getHash()];
 
   ASSERT_EQ(vtbs.size(), 1);
+
+  PopData popData;
+  popData.vtbs = vtbs;
   this->fillVbkContext(
-      vtbs[0],
+      popData.context,
       this->popminer->vbk().getParams().getGenesisBlock().getHash(),
       this->popminer->vbk());
-
-  PopData popData = this->createPopData({}, vtbs);
   auto containingBlock = this->generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
 

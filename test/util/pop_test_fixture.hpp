@@ -173,15 +173,6 @@ struct PopTestFixture {
         btcBlockTip->getHeader(), Btctx, endorsedBlock, getLastKnownBtcBlock());
   }
 
-  void fillVbkContext(VTB& vtb,
-                      const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                      VbkBlockTree& tree) {
-    fillVbkContext(vtb.context,
-                   lastKnownVbkBlockHash,
-                   vtb.containingBlock.getHash(),
-                   tree);
-  }
-
   void fillVbkContext(std::vector<VbkBlock>& out,
                       const VbkBlock::hash_t& lastKnownVbkBlockHash,
                       const VbkBlock::hash_t& containingBlock,
@@ -210,54 +201,11 @@ struct PopTestFixture {
     out.insert(out.end(), ctx.begin(), ctx.end());
   }
 
-  PopData createPopData(std::vector<ATV> atvs, std::vector<VTB> vtbs) {
-    PopData popData;
-
-    std::set<typename VbkBlock::hash_t> known_blocks;
-
-    // fill vbk context
-    for (auto& vtb : vtbs) {
-      for (const auto& block : vtb.context) {
-        if (known_blocks.count(block.getHash()) == 0) {
-          popData.context.push_back(block);
-          known_blocks.insert(block.getHash());
-        }
-      }
-
-      if (known_blocks.count(vtb.containingBlock.getHash()) == 0) {
-        popData.context.push_back(vtb.containingBlock);
-        known_blocks.insert(vtb.containingBlock.getHash());
-      }
-
-      vtb.context.clear();
-    }
-
-    for (auto& atv : atvs) {
-      for (const auto& block : atv.context) {
-        if (known_blocks.count(block.getHash()) == 0) {
-          popData.context.push_back(block);
-          known_blocks.insert(block.getHash());
-        }
-      }
-
-      if (known_blocks.count(atv.blockOfProof.getHash()) == 0) {
-        popData.context.push_back(atv.blockOfProof);
-        known_blocks.insert(atv.blockOfProof.getHash());
-      }
-
-      atv.context.clear();
-    }
-
-    std::sort(popData.context.begin(),
-              popData.context.end(),
-              [](const VbkBlock& a, const VbkBlock& b) {
-                return a.height < b.height;
-              });
-
-    popData.atvs = atvs;
-    popData.vtbs = vtbs;
-
-    return popData;
+  void fillVbkContext(std::vector<VbkBlock>& out,
+                      const VbkBlock::hash_t& lastKnownVbkBlockHash,
+                      VbkBlockTree& tree) {
+    fillVbkContext(
+        out, lastKnownVbkBlockHash, tree.getBestChain().tip()->getHash(), tree);
   }
 
   PopData generateAltPayloads(const std::vector<VbkTx>& transactions,
@@ -273,8 +221,10 @@ struct PopTestFixture {
     }
 
     for (const auto& t : transactions) {
-      popData.atvs.push_back(popminer->generateATV(t, lastVbk, state));
+      popData.atvs.push_back(popminer->generateATV(t, state));
     }
+
+    fillVbkContext(popData.context, lastVbk, popminer->vbk());
 
     return popData;
   }

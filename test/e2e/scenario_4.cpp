@@ -35,14 +35,6 @@ TEST_F(Scenario4, scenario_4) {
   ASSERT_EQ(vtbs2.size(), 1);
   ASSERT_NE(VbkEndorsement::fromContainer(vtbs1[0]).id,
             VbkEndorsement::fromContainer(vtbs2[0]).id);
-  fillVbkContext(vtbs1[0].context,
-                 vbkparam.getGenesisBlock().getHash(),
-                 vtbs1[0].containingBlock.getHash(),
-                 popminer->vbk());
-  fillVbkContext(vtbs2[0].context,
-                 vbkparam.getGenesisBlock().getHash(),
-                 vtbs2[0].containingBlock.getHash(),
-                 popminer->vbk());
 
   // mine 10 blocks
   mineAltBlocks(10, chain);
