@@ -266,7 +266,6 @@ TEST(ToJson, VTB) {
     "timestamp": 1553699345,
     "version": 2
   },
-  "context": [],
   "id": "e3d7f971cf23efadc50c4ff9d1b971346f7f7851f4dad89bfa8408be0b1a70e7",
   "merklePath": {
     "index": 13,
@@ -430,7 +429,6 @@ TEST(ToJson, ATV) {
     "timestamp": 1553699059,
     "version": 2
   },
-  "context": [],
   "id": "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d",
   "merklePath": {
     "index": 0,
