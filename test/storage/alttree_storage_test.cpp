@@ -339,11 +339,11 @@ TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk(), this->alttree.vbk()));
-  ASSERT_FALSE(this->cmp(reloadedAltTree, this->alttree, true));
+  EXPECT_FALSE(this->cmp(reloadedAltTree, this->alttree, true));
 
   // set state that validity flags should be the same
-  reloadedAltTree.setState(containingBlock.getHash(), this->state);
-  this->alttree.setState(containingBlock.getHash(), this->state);
+  EXPECT_FALSE(reloadedAltTree.setState(containingBlock.getHash(), this->state));
+  EXPECT_FALSE(this->alttree.setState(containingBlock.getHash(), this->state));
 
   ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 }

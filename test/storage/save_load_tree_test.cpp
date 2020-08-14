@@ -109,7 +109,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
 
   EXPECT_FALSE(load(state));
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "load-tree+ALT-duplicate-payloads-VBK");
+  EXPECT_EQ(state.GetPath(), "load-tree+VBK-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
@@ -148,7 +148,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
 
   EXPECT_FALSE(load(state));
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "load-tree+ALT-duplicate-payloads-VBK");
+  EXPECT_EQ(state.GetPath(), "load-tree+VBK-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
@@ -190,5 +190,5 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
 
   EXPECT_FALSE(load(state));
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "load-tree+ALT-duplicate-payloads-ATV-ancestor");
+  EXPECT_EQ(state.GetPath(), "load-tree+ATV-duplicate");
 }

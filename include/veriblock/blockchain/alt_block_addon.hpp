@@ -35,6 +35,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   template <typename pop_t>
   const std::vector<typename pop_t::id_t>& getPayloadIds() const;
 
+  // used in `continueOnInvalid` mode
   template <typename pop_t>
   void removePayloadId(const typename pop_t::id_t& pid) {
     auto& payloads = getPayloadIdsInner<pop_t>();
@@ -45,12 +46,13 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   }
 
   template <typename pop_t>
-  void insertPayloadId(const typename pop_t::id_t& pid) {
+  void setPayloads(const std::vector<typename pop_t::id_t>& pids) {
     auto& payloads = getPayloadIdsInner<pop_t>();
-    payloads.push_back(pid);
+    payloads = pids;
     setDirty();
   }
 
+  // used in tests
   template <typename pop_t>
   void insertPayloadIds(const std::vector<typename pop_t::id_t>& pids) {
     auto& payloads = getPayloadIdsInner<pop_t>();

@@ -42,6 +42,10 @@ enum BlockStatus : uint32_t {
   BLOCK_APPLIED = 1 << 5,
   //! the block has been at least once successful applied via PopStateMachine
   BLOCK_CAN_BE_APPLIED = 1 << 6,
+  //! if set, AddPayloads has been executed on this block
+  BLOCK_HAS_PAYLOADS = 1 << 7,
+
+  // DEV NOTE: new flags should be added in the end
 };
 
 /**
@@ -52,7 +56,6 @@ constexpr bool isValidInvalidationReason(const enum BlockStatus reason) {
   return reason == BLOCK_FAILED_BLOCK || reason == BLOCK_FAILED_POP;
 }
 
-//! Store block
 template <typename Block>
 struct BlockIndex : public Block::addon_t {
   using block_t = Block;
@@ -67,8 +70,13 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) a set of pointers for forward iteration
   std::set<BlockIndex*> pnext{};
 
-  //! (memory only) contains status flags
-  uint32_t status = 0;  // unknown validity
+  uint32_t getStatus() const {
+    return status;
+  }
+  void setStatus(uint32_t _status) {
+    this->status = _status;
+    setDirty();
+  }
 
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
     VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
@@ -105,10 +113,16 @@ struct BlockIndex : public Block::addon_t {
   void unsetDirty() { this->dirty = false; }
   bool isDirty() const { return this->dirty; }
 
-  void setFlag(enum BlockStatus s) { this->status |= s; }
-  void unsetFlag(enum BlockStatus s) { this->status &= ~s; }
+  void setFlag(enum BlockStatus s) {
+    this->status |= s;
+    setDirty();
+  }
+  void unsetFlag(enum BlockStatus s) {
+    this->status &= ~s;
+    setDirty();
+  }
 
-  bool hasFlags(decltype(status) s) const { return this->status & s; }
+  bool hasFlags(BlockStatus s) const { return this->status & s; }
 
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }
@@ -121,12 +135,10 @@ struct BlockIndex : public Block::addon_t {
   }
 
   const block_t& getHeader() const { return *header; }
-
   void setHeader(const block_t& newHeader) {
     header = std::make_shared<block_t>(newHeader);
     setDirty();
   }
-
   void setHeader(std::shared_ptr<block_t> newHeader) {
     header = std::move(newHeader);
     setDirty();
@@ -201,12 +213,14 @@ struct BlockIndex : public Block::addon_t {
   void toRaw(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
     header->toRaw(stream);
+    stream.writeBE<uint32_t>(status);
     addon_t::toRaw(stream);
   }
 
   void initFromRaw(ReadStream& stream) {
     height = stream.readBE<uint32_t>();
     header = std::make_shared<Block>(Block::fromRaw(stream));
+    status = stream.readBE<uint32_t>();
     addon_t::initAddonFromRaw(stream);
     setDirty();
   }
@@ -234,6 +248,9 @@ struct BlockIndex : public Block::addon_t {
 
   //! block header
   std::shared_ptr<block_t> header{};
+
+  //! contains status flags
+  uint32_t status = BLOCK_VALID_UNKNOWN;
 
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;

@@ -164,7 +164,7 @@ TEST_F(Scenario8, scenario_8) {
   // remove payloads from alt, vbk state is still valid
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   ASSERT_TRUE(containingIndex);
-  alttree.removeAllPayloads(containingIndex->getHash());
+  alttree.removePayloads(containingIndex->getHash());
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   validityFlagCheck(*vbkBlock, true);
 }

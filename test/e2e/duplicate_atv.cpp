@@ -35,7 +35,7 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
   // remove context blocks
   payloads.context.clear();
   ASSERT_FALSE(alttree.addPayloads(chain[100].getHash(), payloads, state));
-  ASSERT_EQ(state.GetPath(), "ALT-duplicate-payloads-VTB-ancestor");
+  ASSERT_EQ(state.GetPath(), "VTB-duplicate");
 
   // we are at chain[99]
   ASSERT_EQ(alttree.getBestChain().tip()->getHeader(), chain[99]);
@@ -90,7 +90,7 @@ TEST_F(DuplicateATVfixture,
   ASSERT_EQ(*atvids4.begin(), p1id);
 
   // now we remove that duplicating payloads
-  ASSERT_NO_FATAL_FAILURE(alttree.removeAllPayloads(chain[100].getHash()));
+  ASSERT_NO_FATAL_FAILURE(alttree.removePayloads(chain[100].getHash()));
   // index100 is now valid
   ASSERT_TRUE(index100->isValid());
   auto& atvids5 = index100->getPayloadIds<ATV>();
@@ -132,12 +132,14 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
   ASSERT_TRUE(index100->isValid());
   auto& atvids4 = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids4.size(), 0);
+  ASSERT_EQ(alttree.vbk().getBestChain().tip()->getHeight(), 11);
+  ASSERT_EQ(alttree.btc().getBestChain().tip()->getHeight(), 10);
 
   // now we remove that duplicating payloads
   // remain vbk blocks as a payloads in the alt block [99]
   p2.context.clear();
   ASSERT_TRUE(alttree.setState(chain[98].getHash(), state));
-  ASSERT_NO_FATAL_FAILURE(alttree.removeAllPayloads(chain[99].getHash()));
+  ASSERT_NO_FATAL_FAILURE(alttree.removePayloads(chain[99].getHash()));
   ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
   // both indices are valid
   ASSERT_TRUE(index99->isValid());
@@ -157,20 +159,14 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
   ASSERT_EQ(atvids.size(), 1);
   ASSERT_TRUE(index100->isValid());
 
-  ASSERT_FALSE(validatePayloads(chain[100].getHash(), payloads, state));
-  ASSERT_EQ(state.GetPath(),
-            "addPayloadsTemporarily+ALT-duplicate-payloads-VBK");
-  ASSERT_TRUE(index100->isValid());
-  auto& atvids2 = index100->getPayloadIds<ATV>();
-  ASSERT_EQ(atvids2.size(), 1);
-  ASSERT_EQ(*atvids2.begin(), payloads.atvs.at(0).getId());
+  ASSERT_DEATH(validatePayloads(chain[100].getHash(), payloads, state), "already contains PopData");
 }
 
 TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   payloads.atvs.push_back(payloads.atvs.at(0));
 
   ASSERT_FALSE(alttree.addPayloads(chain[100].getHash(), payloads, state));
-  ASSERT_EQ(state.GetPath(), "ALT-duplicate-payloads-ATV");
+  ASSERT_EQ(state.GetPath(), "ATV-duplicate");
 
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100);
