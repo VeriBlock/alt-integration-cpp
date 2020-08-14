@@ -14,6 +14,7 @@ using namespace altintegration;
 struct Payloads {
   ATV atv;
   std::vector<VTB> vtbs;
+  std::vector<VbkBlock> context;
 
   std::string toPrettyString() const {
     return fmt::sprintf("Payloads(atv, vtbs=%d)", vtbs.size());
@@ -26,6 +27,10 @@ struct Payloads {
     list listvtbs;
     for (const auto& vtb : vtbs) {
       listvtbs.append(HexStr(vtb.toVbkEncoding()));
+    }
+
+    for (const auto& b : context) {
+      listctx.append(HexStr(b.toVbkEncoding()));
     }
 
     list listatvs;
@@ -181,6 +186,7 @@ struct MockMinerProxy : private MockMiner {
     std::reverse(vtbs.begin(), vtbs.end());
 
     std::reverse(context.begin(), context.end());
+    payloads.context = context;
 
     return payloads;
   }
