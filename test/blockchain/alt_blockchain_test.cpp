@@ -168,7 +168,6 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
       generateAltPayloads({tx1}, vbkparam.getGenesisBlock().getHash(), 0);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-
   EXPECT_TRUE(validatePayloads(containingBlock.getHash(), payloads1, state));
   EXPECT_TRUE(state.IsValid());
 
@@ -177,8 +176,7 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
             popminer->vbk().getBestChain().tip()->getHash());
 
-  EXPECT_FALSE(validatePayloads(containingBlock.getHash(), payloads1, state));
-  EXPECT_FALSE(state.IsValid());
+  ASSERT_DEATH(validatePayloads(containingBlock.getHash(), payloads1, state), "already contains PopData");
   containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   EXPECT_TRUE(containingIndex->isValid());
 }

@@ -191,7 +191,7 @@ struct PopStateMachine {
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)
-  // while predicate returns true, if predicate return false stop unappluing and
+  // while predicate returns true, if predicate return false stop unapplying and
   // return the index on which predicate returns false
   // atomic: either applies all of the requested blocks or fails on an assert
   index_t* unapplyWhile(index_t& from,

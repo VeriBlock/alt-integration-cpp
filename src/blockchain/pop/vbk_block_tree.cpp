@@ -397,6 +397,8 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
   auto* current = getBlockIndex(index.getHash());
   VBK_ASSERT(current);
 
+  // TODO: check for duplicates
+
   // recover `endorsedBy`
   auto window = std::max(
       0, index.getHeight() - param_->getEndorsementSettlementInterval());

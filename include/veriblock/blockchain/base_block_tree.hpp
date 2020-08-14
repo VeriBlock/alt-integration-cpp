@@ -91,12 +91,9 @@ struct BaseBlockTree {
     // touchBlockIndex may return existing block (one of bootstrap blocks), so
     // backup its 'pnext'
     auto next = current->pnext;
-    auto status = current->status;
 
     // copy all fields
     *current = index;
-    // recover status
-    current->status = status;
     // recover pnext
     current->pnext = next;
     // recover pprev
@@ -214,6 +211,8 @@ struct BaseBlockTree {
 
     // after invalidation, try to add tip
     tryAddTip(toBeInvalidated.pprev);
+    // remove current block from tips
+    tips_.erase(&toBeInvalidated);
 
     if (shouldDetermineBestChain) {
       updateTips();
@@ -565,7 +564,7 @@ struct BaseBlockTree {
     }
   }
 
-  // HACK: see comment below.
+  // HACK: see big comment in VBK tree.
   template <typename T>
   inline prev_block_hash_t makePrevHash(const T& h) const {
     // given any type T, just return an implicit cast to prev_block_hash_t
