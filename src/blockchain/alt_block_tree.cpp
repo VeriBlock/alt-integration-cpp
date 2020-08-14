@@ -158,7 +158,6 @@ bool AltTree::addPayloads(index_t& index,
                  "block %s already contains PopData",
                  index.toPrettyString());
 
-  assertContextEmpty(payloads.atvs);
   assertContextEmpty(payloads.vtbs);
 
   // prev block must exist

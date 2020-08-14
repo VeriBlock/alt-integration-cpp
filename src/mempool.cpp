@@ -285,12 +285,8 @@ template <>
 bool MemPool::submit(const ATV& atv,
                      ValidationState& state,
                      bool shouldDoContextualCheck) {
-  VBK_ASSERT_MSG(atv.context.empty(),
-                 "atv should have empty context, context size: %d",
-                 atv.context.size());
-
   // stateless validation
-  if (!checkATV(atv, state, tree_->getParams(), tree_->vbk().getParams())) {
+  if (!checkATV(atv, state, tree_->getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
   }
 

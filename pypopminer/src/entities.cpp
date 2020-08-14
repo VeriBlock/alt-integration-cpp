@@ -104,8 +104,7 @@ void init_entities() {
       .def("getId", &ATV::getId)
       .def_readwrite("transaction", &ATV::transaction)
       .def_readwrite("merklePath", &ATV::merklePath)
-      .def_readwrite("blockOfProof", &ATV::blockOfProof)
-      .def_readwrite("context", &ATV::context);
+      .def_readwrite("blockOfProof", &ATV::blockOfProof);
 
   class_<BtcTx, boost::shared_ptr<BtcTx>>("BtcTx")
       .def("__str__", &BtcTx::toHex)

@@ -412,8 +412,7 @@ TEST(ToJson, ATV) {
       16842752,
       1};
 
-  static const ATV defaultAtv{
-      defaultTx, defaultPath, defaultVbkBlock, std::vector<VbkBlock>{}};
+  static const ATV defaultAtv{defaultTx, defaultPath, defaultVbkBlock};
 
   picojson::value val = ToJSON<picojson::value>(defaultAtv);
   auto actual = val.serialize(true);

@@ -58,10 +58,8 @@ struct Altintegration {
   }
 
   bool checkPopData(const PopData& popData, ValidationState& state) {
-    for (const auto& b : popData.context) {
-      if (!checkBlock(b, state, *config->vbk.params)) {
-        return state.Invalid("pop-vbkblock-statelessly-invalid");
-      }
+    if (!checkVbkBlocks(popData.context, state, *config->vbk.params)) {
+      return state.Invalid("pop-vbkblock-statelessly-invalid");
     }
 
     for (const auto& vtb : popData.vtbs) {
@@ -71,7 +69,7 @@ struct Altintegration {
     }
 
     for (const auto& atv : popData.atvs) {
-      if (!checkATV(atv, state, *config->alt, *config->vbk.params)) {
+      if (!checkATV(atv, state, *config->alt)) {
         return state.Invalid("pop-atv-statelessly-invalid");
       }
     }

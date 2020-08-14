@@ -99,9 +99,6 @@ ATV MockMiner::generateATV(const VbkTx& transaction, ValidationState& state) {
   atv.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
   atv.blockOfProof = containingBlock;
 
-  // since we inserted in reverse order, we need to reverse context blocks
-  std::reverse(atv.context.begin(), atv.context.end());
-
   if (!acceptBlock(vbktree, containingBlock, state)) {
     throw std::domain_error(state.toString());
   }

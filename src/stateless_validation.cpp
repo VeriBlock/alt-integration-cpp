@@ -307,8 +307,7 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
 
 bool checkATV(const ATV& atv,
               ValidationState& state,
-              const AltChainParams& altp,
-              const VbkChainParams& vbkp) {
+              const AltChainParams& altp) {
   if (atv.checked) {
     // we've already checked that ATV
     return true;
@@ -332,10 +331,6 @@ bool checkATV(const ATV& atv,
                        atv.blockOfProof.merkleRoot,
                        state)) {
     return state.Invalid("vbk-check-merkle-path");
-  }
-
-  if (!checkVbkBlocks(atv.context, state, vbkp)) {
-    return state.Invalid("vbk-check-vbk-blocks");
   }
 
   atv.checked = true;

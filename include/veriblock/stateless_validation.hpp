@@ -78,8 +78,7 @@ bool checkBlock(const VbkBlock& block,
 
 bool checkATV(const ATV& atv,
               ValidationState& state,
-              const AltChainParams& alt,
-              const VbkChainParams& vbk);
+              const AltChainParams& alt);
 
 bool checkVTB(const VTB& vtb,
               ValidationState& state,
