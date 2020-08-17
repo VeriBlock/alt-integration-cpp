@@ -67,6 +67,16 @@ struct PopRewardsParams {
     return mDifficultyAveragingInterval;
   }
 
+  // pay the 100% - rewardPercentage() to the regular miners
+  uint32_t rewardPercentage() const noexcept {
+    return mPopRewardPercentage;
+  }
+
+  // pay this amount of coins for each PoP reward point
+  int32_t rewardCoefficient() const noexcept {
+    return mPopRewardCoefficient;
+  }
+
   // getter for reward curve parameters
   const PopRewardsCurveParams& getCurveParams() const noexcept {
     return curveParams;
@@ -88,6 +98,8 @@ struct PopRewardsParams {
   double mMaxScoreThresholdNormal = 2.0;
   double mMaxScoreThresholdKeystone = 3.0;
   uint32_t mDifficultyAveragingInterval = 50;
+  uint32_t mPopRewardPercentage = 40;
+  int32_t mPopRewardCoefficient = 20;
 
   std::vector<double> mRoundRatios{0.97, 1.03, 1.07, 3.00};
 
@@ -121,7 +133,9 @@ struct AltChainParams {
     return mEndorsementSettlementInterval;
   }
 
-  size_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
+  uint32_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
+
+  uint32_t getMaxFutureBlockTime() const noexcept { return mMaxFutureBlockTime; }
 
   bool isStrictAddPayloadsOrderingEnabled() const noexcept {
     return mStrictAddPayloadsOrderingEnabled;
@@ -150,6 +164,7 @@ struct AltChainParams {
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;
   uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
+  uint32_t mMaxFutureBlockTime = 10 * 60;
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
