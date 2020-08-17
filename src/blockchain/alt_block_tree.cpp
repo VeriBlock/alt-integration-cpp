@@ -3,13 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
-
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -132,16 +131,6 @@ bool searchForDuplicates(BlockIndex<AltBlock>& index,
                                    Pop::name()));
 }
 
-template <typename pop_t>
-void assertContextEmpty(const std::vector<pop_t>& payloads) {
-  for (const auto& p : payloads) {
-    VBK_ASSERT_MSG(p.context.empty(),
-                   "POP %s should have empty context, conetx size: %d",
-                   pop_t::name(),
-                   p.context.size());
-  }
-}
-
 bool AltTree::addPayloads(index_t& index,
                           PopData& payloads,
                           ValidationState& state,
@@ -157,9 +146,6 @@ bool AltTree::addPayloads(index_t& index,
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s already contains PopData",
                  index.toPrettyString());
-
-  assertContextEmpty(payloads.atvs);
-  assertContextEmpty(payloads.vtbs);
 
   // prev block must exist
   VBK_ASSERT_MSG(index.pprev,

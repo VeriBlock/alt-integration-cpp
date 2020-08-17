@@ -16,13 +16,6 @@ ATV ATV::fromVbkEncoding(ReadStream& stream) {
   atv.transaction = VbkTx::fromVbkEncoding(stream);
   atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
   atv.blockOfProof = VbkBlock::fromVbkEncoding(stream);
-  atv.context =
-      readArrayOf<VbkBlock>(stream,
-                            0,
-                            MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                            (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding
-
-      );
 
   return atv;
 }
@@ -36,10 +29,6 @@ void ATV::toVbkEncoding(WriteStream& stream) const {
   transaction.toVbkEncoding(stream);
   merklePath.toVbkEncoding(stream);
   blockOfProof.toVbkEncoding(stream);
-  writeSingleBEValue(stream, context.size());
-  for (const auto& block : context) {
-    block.toVbkEncoding(stream);
-  }
 }
 
 std::vector<uint8_t> ATV::toVbkEncoding() const {

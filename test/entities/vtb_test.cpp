@@ -3,14 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/vtb.hpp"
-
 #include <gtest/gtest.h>
 
 #include <string>
 #include <vector>
 
 #include "util/test_utils.hpp"
+#include "veriblock/entities/vtb.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -165,8 +164,7 @@ static const VbkBlock vtbVbkBlock{4976,
                                   117576138,
                                   -266584319};
 
-static const VTB defaultVtb{
-    defaultTx, vtbProofPath, vtbVbkBlock, std::vector<VbkBlock>{}};
+static const VTB defaultVtb{defaultTx, vtbProofPath, vtbVbkBlock};
 
 TEST(VTB, Deserialize) {
   const auto vtbBytes = ParseHex(defaultVtbEncoded);

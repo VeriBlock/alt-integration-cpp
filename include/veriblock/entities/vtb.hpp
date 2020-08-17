@@ -24,7 +24,6 @@ struct VTB {
   VbkPopTx transaction{};
   VbkMerklePath merklePath{};
   containing_block_t containingBlock{};
-  std::vector<VbkBlock> context{};
 
   //! (memory only) indicates whether we already did 'checkPayloads' on this VTB
   mutable bool checked{false};
@@ -32,14 +31,10 @@ struct VTB {
   std::string toHex() const { return HexStr(toVbkEncoding()); }
 
   std::string toPrettyString() const {
-    return fmt::sprintf(
-        "VTB{containingTx=%s(%s), containingBlock=%s, context=%d blocks "
-        "starting at %s}",
-        transaction.getHash().toHex(),
-        transaction.toPrettyString(),
-        containingBlock.getHash().toHex(),
-        context.size(),
-        context.size() > 0 ? context[0].toPrettyString() : "(none)");
+    return fmt::sprintf("VTB{containingTx=%s(%s), containingBlock=%s}",
+                        transaction.getHash().toHex(),
+                        transaction.toPrettyString(),
+                        containingBlock.getHash().toHex());
   }
 
   /**
@@ -100,7 +95,6 @@ JsonValue ToJSON(const VTB& v) {
   json::putKV(obj, "transaction", ToJSON<JsonValue>(v.transaction));
   json::putKV(obj, "merklePath", ToJSON<JsonValue>(v.merklePath));
   json::putKV(obj, "containingBlock", ToJSON<JsonValue>(v.containingBlock));
-  json::putArrayKV(obj, "context", v.context);
   return obj;
 }
 

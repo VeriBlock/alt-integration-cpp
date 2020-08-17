@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/vtb.hpp"
-
 #include "veriblock/hashutil.hpp"
 
 using namespace altintegration;
@@ -16,11 +15,6 @@ VTB VTB::fromVbkEncoding(ReadStream& stream) {
   vtb.transaction = VbkPopTx::fromVbkEncoding(stream);
   vtb.merklePath = VbkMerklePath::fromVbkEncoding(stream);
   vtb.containingBlock = VbkBlock::fromVbkEncoding(stream);
-  vtb.context = readArrayOf<VbkBlock>(
-      stream,
-      0,
-      MAX_CONTEXT_COUNT,
-      (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding);
 
   return vtb;
 }
@@ -39,10 +33,6 @@ void VTB::toVbkEncoding(WriteStream& stream) const {
   transaction.toVbkEncoding(stream);
   merklePath.toVbkEncoding(stream);
   containingBlock.toVbkEncoding(stream);
-  writeSingleBEValue(stream, context.size());
-  for (const auto& block : context) {
-    block.toVbkEncoding(stream);
-  }
 }
 
 std::vector<uint8_t> VTB::toVbkEncoding() const {

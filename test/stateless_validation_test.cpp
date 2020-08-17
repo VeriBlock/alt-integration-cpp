@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/stateless_validation.hpp"
-
 #include <gtest/gtest.h>
 
 #include "util/alt_chain_params_regtest.hpp"
@@ -12,6 +10,7 @@
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/literals.hpp"
+#include "veriblock/stateless_validation.hpp"
 
 using namespace altintegration;
 
@@ -119,15 +118,7 @@ static const ATV validATV = {
      1553699059,
      16842752,
      1},
-    {VbkBlock::fromHex(
-         "000212B90002500640D2DCFDD047AF3F197C2BB743C05C2619919657462191847838E"
-         "067A540836ABBE2C5AB1AA8DA98602D68C05DFB5C010405F5E1584D4024"),
-     VbkBlock::fromHex(
-         "000212BA0002539544FC18F77FD997B080D52BB743C05C2619919657462191847838E"
-         "067FF19E383F41F4B8A586142E47DB3B6225DFB5C080405F5E15876C544"),
-     VbkBlock::fromHex(
-         "000212BB0002304FB9683DAFC9396A7F36492BB743C05C2619919657462191847838E"
-         "067A87CF5F304B4E102B104320C5CBA33B85DFB5C500405F5E15A2670DE")}};
+};
 
 static const VTB validVTB = {
     validPopTx,
@@ -150,15 +141,7 @@ static const VTB validVTB = {
     VbkBlock::fromHex(
         "000013700002449C60619294546AD825AF03B0935637860679DDD55EE4FD21082E1868"
         "6EB53C1F4E259E6A0DF23721A0B3B4B7AB5C9B9211070211CAF01C3F01"),
-    {VbkBlock::fromHex(
-         "000212B90002500640D2DCFDD047AF3F197C2BB743C05C2619919657462191847838E"
-         "067A540836ABBE2C5AB1AA8DA98602D68C05DFB5C010405F5E1584D4024"),
-     VbkBlock::fromHex(
-         "000212BA0002539544FC18F77FD997B080D52BB743C05C2619919657462191847838E"
-         "067FF19E383F41F4B8A586142E47DB3B6225DFB5C080405F5E15876C544"),
-     VbkBlock::fromHex(
-         "000212BB0002304FB9683DAFC9396A7F36492BB743C05C2619919657462191847838E"
-         "067A87CF5F304B4E102B104320C5CBA33B85DFB5C500405F5E15A2670DE")}};
+};
 
 struct StatelessValidationTest : public ::testing::Test {
   BtcChainParamsRegTest btc;
@@ -190,7 +173,7 @@ TEST_F(StatelessValidationTest,
 
 TEST_F(StatelessValidationTest, ATV_valid) {
   AltChainParamsRegTest altp;
-  ASSERT_TRUE(checkATV(validATV, state, altp, vbk)) << state.GetDebugMessage();
+  ASSERT_TRUE(checkATV(validATV, state, altp)) << state.GetDebugMessage();
 }
 
 TEST_F(StatelessValidationTest,
@@ -208,7 +191,8 @@ TEST_F(StatelessValidationTest,
 TEST_F(StatelessValidationTest,
        ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
   ATV atv = validATV;
-  atv.blockOfProof.merkleRoot = uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
+  atv.blockOfProof.merkleRoot =
+      uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
 
   ASSERT_FALSE(checkMerklePath(atv.merklePath,
                                atv.transaction.getHash(),
@@ -216,14 +200,8 @@ TEST_F(StatelessValidationTest,
                                state));
 }
 
-TEST_F(StatelessValidationTest, ATV_checkVeriBlockBlocks_blocks_not_contigous) {
-  ATV atv = validATV;
-  atv.context.erase(atv.context.begin() + 1);
-  ASSERT_FALSE(checkVbkBlocks(atv.context, state, vbk));
-}
-
 TEST_F(StatelessValidationTest, VTB_valid) {
-  ASSERT_TRUE(checkVTB(validVTB, state, vbk, btc));
+  ASSERT_TRUE(checkVTB(validVTB, state, btc));
 }
 
 TEST_F(StatelessValidationTest,
@@ -241,17 +219,12 @@ TEST_F(StatelessValidationTest,
 TEST_F(StatelessValidationTest,
        VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
   VTB vtb = validVTB;
-  vtb.containingBlock.merkleRoot = uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
+  vtb.containingBlock.merkleRoot =
+      uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
   ASSERT_FALSE(checkMerklePath(vtb.merklePath,
                                vtb.transaction.getHash(),
                                vtb.containingBlock.merkleRoot,
                                state));
-}
-
-TEST_F(StatelessValidationTest, VTB_checkVeriBlockBlocks_blocks_not_contigous) {
-  VTB vtb = validVTB;
-  vtb.context.erase(vtb.context.begin() + 1);
-  ASSERT_FALSE(checkVbkBlocks(vtb.context, state, vbk));
 }
 
 TEST_F(StatelessValidationTest, checkVbkPopTx_valid) {
