@@ -43,6 +43,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using endorsement_t = typename index_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
   using hash_t = typename AltBlock::hash_t;
+  using payloads_t = PopData;
 
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
@@ -84,7 +85,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
    * chain). However, it is far from certain that it is completely valid.
    */
   bool addPayloads(const hash_t& block,
-                   const PopData& popData,
+                   const payloads_t& popData,
                    ValidationState& state);
 
   /**
@@ -137,12 +138,19 @@ struct AltTree : public BaseBlockTree<AltBlock> {
    */
   std::map<std::vector<uint8_t>, int64_t> getPopPayout(const hash_t& tip);
 
+  /**
+   * Check if the block header and contents have been added to the tree
+   * @param[in] hash of the block.
+   * @return true if the block is fully initialized, false otherwise
+   */
+  bool isBlockInitialized(const hash_t& block);
+
   // removes all payloads from a block
   void removePayloads(const hash_t& hash);
 
   // use this method for stateful validation of pop data. invalid pop data will
   // be removed from `pop`
-  void filterInvalidPayloads(PopData& pop);
+  void filterInvalidPayloads(payloads_t& pop);
 
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
@@ -187,7 +195,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
   bool addPayloads(index_t& index,
-                   PopData& payloads,
+                   payloads_t& payloads,
                    ValidationState& state,
                    bool continueOnInvalid = false);
 

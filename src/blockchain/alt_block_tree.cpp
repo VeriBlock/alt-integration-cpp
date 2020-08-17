@@ -18,6 +18,15 @@ namespace altintegration {
 
 template struct BlockIndex<AltBlock>;
 
+bool AltTree::isBlockInitialized(const hash_t& block) {
+  auto* index = getBlockIndex(block);
+  if (index == nullptr) {
+    return false;
+  }
+
+  return index->hasFlags(BLOCK_HAS_PAYLOADS);
+}
+
 bool AltTree::bootstrap(ValidationState& state) {
   if (base::isBootstrapped()) {
     return state.Error("already bootstrapped");
@@ -143,7 +152,7 @@ void assertContextEmpty(const std::vector<pop_t>& payloads) {
 }
 
 bool AltTree::addPayloads(index_t& index,
-                          PopData& payloads,
+                          payloads_t& payloads,
                           ValidationState& state,
                           bool continueOnInvalid) {
   VBK_LOG_INFO("%s add %d VBK, %d VTB, %d ATV payloads to block %s",
@@ -430,7 +439,7 @@ void removePayloadsIfInvalid(std::vector<Payloads>& p,
   p.erase(it, p.end());
 }
 
-void AltTree::filterInvalidPayloads(PopData& pop) {
+void AltTree::filterInvalidPayloads(payloads_t& pop) {
   // return early
   if (pop.empty()) {
     return;
@@ -479,7 +488,7 @@ void AltTree::filterInvalidPayloads(PopData& pop) {
 }
 
 bool AltTree::addPayloads(const hash_t& block,
-                          const PopData& popData,
+                          const payloads_t& popData,
                           ValidationState& state) {
   auto copy = popData;
   auto* index = getBlockIndex(block);

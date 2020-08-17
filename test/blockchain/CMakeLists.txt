@@ -74,3 +74,5 @@ addtest(alt_blockchain_test alt_blockchain_test.cpp)
 
 addtest(alt_invalidation_test alt_invalidation_test.cpp)
 addtest(btc_invalidation_test btc_invalidation_test.cpp)
+
+addtest(orphan_block_container_test orphan_block_container_test.cpp)
