@@ -133,7 +133,9 @@ struct AltChainParams {
     return mEndorsementSettlementInterval;
   }
 
-  size_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
+  uint32_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
+
+  uint32_t getMaxFutureBlockTime() const noexcept { return mMaxFutureBlockTime; }
 
   bool isStrictAddPayloadsOrderingEnabled() const noexcept {
     return mStrictAddPayloadsOrderingEnabled;
@@ -162,6 +164,7 @@ struct AltChainParams {
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;
   uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
+  uint32_t mMaxFutureBlockTime = 10 * 60;
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
