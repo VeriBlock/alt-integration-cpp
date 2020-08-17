@@ -26,7 +26,6 @@ struct ATV {
   VbkTx transaction{};
   VbkMerklePath merklePath{};
   VbkBlock blockOfProof{};
-  std::vector<VbkBlock> context{};
 
   //! (memory only) indicates whether we already did 'checkATV' on this ATV
   mutable bool checked{false};
@@ -90,7 +89,6 @@ JsonValue ToJSON(const ATV& atv) {
   json::putKV(obj, "transaction", ToJSON<JsonValue>(atv.transaction));
   json::putKV(obj, "merklePath", ToJSON<JsonValue>(atv.merklePath));
   json::putKV(obj, "blockOfProof", ToJSON<JsonValue>(atv.blockOfProof));
-  json::putArrayKV(obj, "context", atv.context);
   return obj;
 }
 

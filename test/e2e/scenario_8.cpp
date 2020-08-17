@@ -79,8 +79,7 @@ TEST_F(Scenario8, scenario_8) {
   vtb1.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
   vtb1.containingBlock = containingVbkBlock;
 
-  EXPECT_TRUE(checkVTB(
-      vtb1, state, popminer->vbk().getParams(), popminer->btc().getParams()));
+  EXPECT_TRUE(checkVTB(vtb1, state, popminer->btc().getParams()));
 
   // Create VTV
   VTB vtb2;
@@ -91,8 +90,7 @@ TEST_F(Scenario8, scenario_8) {
   vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[1]);
   vtb2.containingBlock = containingVbkBlock;
 
-  EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
+  EXPECT_TRUE(checkVTB(vtb2, state, popminer->btc().getParams()));
 
   EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
 

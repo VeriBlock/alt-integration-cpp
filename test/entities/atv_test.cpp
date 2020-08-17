@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/atv.hpp"
-
 #include <gtest/gtest.h>
 
 #include "util/test_utils.hpp"
+#include "veriblock/entities/atv.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -56,8 +55,7 @@ static const VbkBlock defaultVbkBlock{5000,
                                       16842752,
                                       1};
 
-static const ATV defaultAtv{
-    defaultTx, defaultPath, defaultVbkBlock, std::vector<VbkBlock>{}};
+static const ATV defaultAtv{defaultTx, defaultPath, defaultVbkBlock};
 
 TEST(ATV, Deserialize) {
   const auto atvBytes = ParseHex(defaultAtvEncoded);
@@ -95,5 +93,6 @@ TEST(ATV, getId_test) {
   auto stream = ReadStream(atvBytes);
   auto atv = ATV::fromVbkEncoding(stream);
 
-  EXPECT_EQ(atv.getId().toHex(), "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d");
+  EXPECT_EQ(atv.getId().toHex(),
+            "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d");
 }

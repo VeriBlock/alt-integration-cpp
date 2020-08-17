@@ -475,8 +475,7 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   // insert the same payloads into the mempool
   EXPECT_FALSE(mempool->submit(atv, state));
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(checkVTB(
-        vtb, state, popminer->getVbkParams(), popminer->getBtcParams()));
+    EXPECT_TRUE(checkVTB(vtb, state, popminer->getBtcParams()));
     EXPECT_FALSE(mempool->submit(vtb, state));
   }
 }
@@ -798,8 +797,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
   vtb2.containingBlock = containingVbkBlock;
 
-  EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
+  EXPECT_TRUE(checkVTB(vtb2, state, popminer->btc().getParams()));
 
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);
@@ -944,8 +942,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
   vtb2.containingBlock = containingVbkBlock;
 
-  EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer->vbk().getParams(), popminer->btc().getParams()));
+  EXPECT_TRUE(checkVTB(vtb2, state, popminer->btc().getParams()));
 
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);
