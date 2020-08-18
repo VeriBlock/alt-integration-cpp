@@ -80,7 +80,7 @@ struct VbkChainParams {
   void toRaw(WriteStream& stream) const;
 
  protected:
-  uint32_t mMaxFutureBlockTime = 10 * 60;  // 10 min
+  uint32_t mMaxFutureBlockTime = 5 * 60;  // 5 min
   std::vector<uint32_t> forkResolutionLookUpTable_{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
