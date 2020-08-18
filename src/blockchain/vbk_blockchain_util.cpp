@@ -190,14 +190,15 @@ int64_t getMedianTimePast(const BlockIndex<VbkBlock>& prev) {
 template <>
 bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                     const VbkBlock& block,
-                    ValidationState& state) {
+                    ValidationState& state,
+                    const VbkChainParams& params) {
   int64_t blockTime = block.getBlockTime();
   int64_t median = getMedianTimePast(prev);
   if (blockTime < median) {
     return state.Invalid("vbk-time-too-old", "block's timestamp is too early");
   }
 
-  int64_t maxTime = currentTimestamp4() + VBK_MAX_FUTURE_BLOCK_TIME;
+  int64_t maxTime = currentTimestamp4() + params.maxFutureBlockTime();
   if (blockTime > maxTime) {
     return state.Invalid("vbk-time-too-new",
                          "block timestamp too far in the future");
@@ -232,7 +233,7 @@ bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                             const VbkBlock& block,
                             ValidationState& state,
                             const VbkChainParams& params) {
-  if (!checkBlockTime(prev, block, state)) {
+  if (!checkBlockTime<VbkBlock, VbkChainParams>(prev, block, state, params)) {
     return state.Invalid("vbk-check-block-time");
   }
 

@@ -28,9 +28,15 @@ struct BtcChainParams {
   }
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
   virtual std::string networkName() const noexcept = 0;
+  virtual uint32_t maxFutureBlockTime() const noexcept {
+    return mMaxFutureBlockTime;
+  }
 
   std::vector<uint8_t> toRaw() const;
   void toRaw(WriteStream& stream) const;
+
+ protected:
+  uint32_t mMaxFutureBlockTime = 2 * 60 * 60; // 2 hours
 };
 
 struct BtcChainParamsMain : public BtcChainParams {
