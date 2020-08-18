@@ -18,6 +18,22 @@ namespace altintegration {
 
 template struct BlockIndex<AltBlock>;
 
+template <>
+bool checkBlockTime(const BlockIndex<AltBlock>& prev,
+                    const AltBlock& block,
+                    ValidationState& state,
+                    const AltChainParams& params) {
+  (void)prev;
+  int64_t blockTime = block.getBlockTime();
+  int64_t maxTime = currentTimestamp4() + params.maxFutureBlockTime();
+  if (blockTime > maxTime) {
+    return state.Invalid("alt-time-too-new",
+                         "block timestamp too far in the future");
+  }
+
+  return true;
+}
+
 bool AltTree::bootstrap(ValidationState& state) {
   if (base::isBootstrapped()) {
     return state.Error("already bootstrapped");
@@ -369,6 +385,11 @@ bool AltTree::acceptBlockHeader(const AltBlock& block, ValidationState& state) {
     return state.Invalid(
         block_t::name() + "-bad-prev-block",
         "can not find previous block: " + HexStr(block.previousBlock));
+  }
+
+  // stateless validation
+  if (!checkBlockTime(*prev, block, state, getParams())) {
+    return state.Invalid(block_t::name() + "-bad-time");
   }
 
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(block));

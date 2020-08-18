@@ -45,6 +45,9 @@ struct VbkChainParams {
   virtual uint32_t getRetargetPeriod() const noexcept = 0;
   virtual uint32_t getTargetBlockTime() const noexcept = 0;
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
+  virtual uint32_t maxFutureBlockTime() const noexcept {
+    return mMaxFutureBlockTime;
+  }
 
   //! In miner it is hard to simulate correct timestamps, so this flag disables
   //! Time Adjustment Algorithm in POP Fork Resolution. Set it to TRUE in
@@ -76,7 +79,8 @@ struct VbkChainParams {
 
   void toRaw(WriteStream& stream) const;
 
- private:
+ protected:
+  uint32_t mMaxFutureBlockTime = 10 * 60;  // 10 min
   std::vector<uint32_t> forkResolutionLookUpTable_{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
 };

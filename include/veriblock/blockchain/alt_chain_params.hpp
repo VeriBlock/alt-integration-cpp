@@ -140,6 +140,10 @@ struct AltChainParams {
     return mPopRewardsParams;
   }
 
+  uint32_t maxFutureBlockTime() const noexcept {
+    return mMaxFutureBlockTime;
+  }
+
   // unique POP id for the chain
   virtual uint32_t getIdentifier() const noexcept = 0;
 
@@ -151,6 +155,7 @@ struct AltChainParams {
  protected:
   PopRewardsParams mPopRewardsParams;
 
+  uint32_t mMaxFutureBlockTime = 10 * 60; // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;

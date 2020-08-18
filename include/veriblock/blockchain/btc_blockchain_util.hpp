@@ -32,7 +32,8 @@ int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev);
 template <>
 bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
                     const BtcBlock& block,
-                    ValidationState& state);
+                    ValidationState& state,
+                    const BtcChainParams& param);
 
 template <>
 bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
