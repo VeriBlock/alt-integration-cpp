@@ -387,11 +387,6 @@ bool AltTree::acceptBlockHeader(const AltBlock& block, ValidationState& state) {
         "can not find previous block: " + HexStr(block.previousBlock));
   }
 
-  // stateless validation
-  if (!checkBlockTime(*prev, block, state, getParams())) {
-    return state.Invalid(block_t::name() + "-bad-time");
-  }
-
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(block));
 
   VBK_ASSERT(index != nullptr &&
