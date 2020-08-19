@@ -172,6 +172,8 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   }
 }
 
+// temporal validation: the connecting BTC block must be added in the containing
+// or earlier blocks
 bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                       ValidationState& state) {
   auto& tx = vtb.transaction;
@@ -201,15 +203,13 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.height;
                              });
 
-  if (isValid) {
-    return true;
-  }
-
-  return state.Invalid(
-      "vtb-btc-context-block-referenced-too-early",
-      "The BTC block referenced by the first block of the VTB context is added "
-      "by blocks that follow the containing block: " +
-          connectingHash.toHex());
+  return isValid
+             ? true
+             : state.Invalid("vtb-btc-context-block-referenced-too-early",
+                             "The BTC block referenced by the first block of "
+                             "the VTB context is added "
+                             "by blocks that follow the containing block: " +
+                                 connectingHash.toHex());
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
@@ -221,6 +221,15 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   VBK_LOG_DEBUG("Adding and applying payload %s in block %s",
                 pid.toHex(),
                 index.toShortPrettyString());
+
+  if (!validateBTCContext(payload, state)) {
+    return state.Invalid(
+        block_t::name() + "-btc-context-does-not-connect",
+        fmt::sprintf("payload %s we attempted to add to block %s has "
+                     "the BTC context that does not connect to the BTC tree",
+                     payload.toPrettyString(),
+                     index.toPrettyString()));
+  }
 
   index.insertPayloadId<payloads_t>(pid);
   storage_.addVbkPayloadIndex(index.getHash(), pid.asVector());
@@ -300,28 +309,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
               "Containing block=%s could not be applied due to being invalid",
               index->toPrettyString()));
     }
-  }
-
-  // temporal validation: the connecting BTC block must be added in 'index' or
-  // earlier blocks
-  bool areContextsValid = std::all_of(
-      payloads.begin(), payloads.end(), [&](const payloads_t& payload) {
-        return validateBTCContext(payload, state);
-      });
-
-  if (!areContextsValid) {
-    // restore the tip
-    if (!isOnActiveChain) {
-      bool success = setState(*tip, state);
-      VBK_ASSERT(success &&
-                 "state corruption: failed to restore the best chain tip");
-    }
-
-    return state.Invalid(
-        block_t::name() + "-btc-context-does-not-connect",
-        fmt::sprintf("one of the payloads we attempted to add to block %s has "
-                     "the BTC context that does not connect to the BTC tree",
-                     index->toPrettyString()));
   }
 
   // apply payloads
