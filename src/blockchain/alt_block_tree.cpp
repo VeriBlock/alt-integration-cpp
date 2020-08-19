@@ -17,6 +17,22 @@ namespace altintegration {
 
 template struct BlockIndex<AltBlock>;
 
+template <>
+bool checkBlockTime(const BlockIndex<AltBlock>& prev,
+                    const AltBlock& block,
+                    ValidationState& state,
+                    const AltChainParams& params) {
+  (void)prev;
+  int64_t blockTime = block.getBlockTime();
+  int64_t maxTime = currentTimestamp4() + params.maxFutureBlockTime();
+  if (blockTime > maxTime) {
+    return state.Invalid("alt-time-too-new",
+                         "block timestamp too far in the future");
+  }
+
+  return true;
+}
+
 bool AltTree::bootstrap(ValidationState& state) {
   if (base::isBootstrapped()) {
     return state.Error("already bootstrapped");

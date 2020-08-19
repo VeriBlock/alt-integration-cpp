@@ -197,6 +197,12 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 };
 
 template <>
+bool checkBlockTime(const BlockIndex<AltBlock>& prev,
+                    const AltBlock& block,
+                    ValidationState& state,
+                    const AltChainParams& params);
+
+template <>
 std::vector<CommandGroup> PayloadsStorage::loadCommands(
     const typename AltTree::index_t& index, AltTree& tree);
 

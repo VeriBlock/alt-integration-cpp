@@ -138,13 +138,14 @@ int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev) {
 template <>
 bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
                     const BtcBlock& block,
-                    ValidationState& state) {
+                    ValidationState& state,
+                    const BtcChainParams& param) {
   if (int64_t(block.getBlockTime()) < getMedianTimePast(prev)) {
     return state.Invalid("btc-time-too-old", "block's timestamp is too early");
   }
 
   if (int64_t(block.getBlockTime()) >
-      currentTimestamp4() + BTC_MAX_FUTURE_BLOCK_TIME) {
+      currentTimestamp4() + param.maxFutureBlockTime()) {
     return state.Invalid("btc-time-too-new",
                          "block timestamp too far in the future");
   }
@@ -162,7 +163,7 @@ bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
                          "incorrect proof of work of BTC block");
   }
 
-  if (!checkBlockTime(prev, block, state)) {
+  if (!checkBlockTime<BtcBlock, BtcChainParams>(prev, block, state, params)) {
     return state.Invalid("btc-check-block-time");
   }
 
