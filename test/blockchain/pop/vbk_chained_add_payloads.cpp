@@ -32,6 +32,7 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
   popData.vtbs = popminer->vbkPayloads.at(containingVbkBlock.getHash());
   fillVbkContext(popData.context,
                  alttree.vbk().getBestChain().tip()->getHash(),
+                 containingVbkBlock.getHash(),
                  popminer->vbk());
 
   // BTC contexts should be empty
