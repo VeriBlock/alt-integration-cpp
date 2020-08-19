@@ -3,12 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/blockchain/vbk_blockchain_util.hpp"
+
 #include <gtest/gtest.h>
 
 #include <memory>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/vbk_blockchain_util.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/time.hpp"
@@ -220,16 +221,19 @@ TEST(Vbk, CheckBlockTime1) {
     index->pprev = i == 0 ? nullptr : chain[i - 1].get();
   }
 
+  VbkChainParamsMain main;
   VbkBlock block{};
 
   auto& last = chain[chain.size() - 1];
   // validateMinimumTimestampWhenAboveMedian
   block.timestamp = startTime + (120 * 1000);
-  ASSERT_TRUE(checkBlockTime(*last, block, state)) << state.GetPath();
+  bool r1 = checkBlockTime<VbkBlock, VbkChainParams>(*last, block, state, main);
+  ASSERT_TRUE(r1) << state.GetPath();
 
   // validateMinimumTimestampWhenBelowMedian
   block.timestamp = 1527118679;
-  ASSERT_FALSE(checkBlockTime(*last, block, state)) << state.GetPath();
+  bool r2 = checkBlockTime<VbkBlock, VbkChainParams>(*last, block, state, main);
+  ASSERT_FALSE(r2) << state.GetPath();
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-time-too-old");
 }
@@ -256,13 +260,18 @@ TEST(Vbk, CheckBlockTime2) {
   }
 
   VbkBlock block;
+  VbkChainParamsMain params;
   block.timestamp = 1527499999;
-  ASSERT_FALSE(checkBlockTime(chain[chain.size() - 1], block, state));
+  bool r1 = checkBlockTime<VbkBlock, VbkChainParams>(
+      chain[chain.size() - 1], block, state, params);
+  ASSERT_FALSE(r1);
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-time-too-old");
 
   block.timestamp = 1527500000;
-  ASSERT_TRUE(checkBlockTime(chain[chain.size() - 1], block, state));
+  bool r2 = checkBlockTime<VbkBlock, VbkChainParams>(
+      chain[chain.size() - 1], block, state, params);
+  ASSERT_TRUE(r2);
 }
 
 struct BlockchainTest : public ::testing::Test {

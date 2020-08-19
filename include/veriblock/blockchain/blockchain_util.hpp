@@ -26,10 +26,11 @@ ArithUint256 getBlockProof(const Block& block);
 template <typename Block>
 int64_t getMedianTimePast(const BlockIndex<Block>& prev);
 
-template <typename Block>
+template <typename Block, typename ChainParams>
 bool checkBlockTime(const BlockIndex<Block>& prev,
                     const Block& block,
-                    ValidationState& state);
+                    ValidationState& state,
+                    const ChainParams& param);
 
 template <typename Block, typename ChainParams>
 bool contextuallyCheckBlock(const BlockIndex<Block>& prev,

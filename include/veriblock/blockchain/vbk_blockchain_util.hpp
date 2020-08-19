@@ -31,7 +31,8 @@ int64_t getMedianTimePast(const BlockIndex<VbkBlock>& prev);
 template <>
 bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                     const VbkBlock& block,
-                    ValidationState& state);
+                    ValidationState& state,
+                    const VbkChainParams& params);
 
 int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev);
 
