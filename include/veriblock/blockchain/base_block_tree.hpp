@@ -493,7 +493,7 @@ struct BaseBlockTree {
    * Find all tips affected by a block modification and do fork resolution
    */
   void doUpdateAffectedTips(index_t& modifiedBlock, ValidationState& state) {
-    auto tips = findValidTips<block_t>(modifiedBlock);
+    auto tips = findValidTips<block_t>(this->getTips(), modifiedBlock);
     VBK_LOG_DEBUG(
         "Found %d affected valid tips in %s", tips.size(), block_t::name());
     for (auto* tip : tips) {
