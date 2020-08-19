@@ -17,13 +17,13 @@ enum class TxType {
 };
 
 constexpr const auto HISTORY_FOR_TIMESTAMP_AVERAGE = 20;
-
 constexpr const auto VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT = 110000;
 constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
 constexpr const auto MAX_PAYOUT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
-constexpr const auto MAX_CONTEXT_COUNT = 150000;
+constexpr const auto MAX_CONTEXT_COUNT = 15000;
 constexpr const auto MAX_CONTEXT_COUNT_ALT_PUBLICATION = 15000;
+constexpr const auto MAX_CONTEXT_COUNT_VBK_PUBLICATION = 15000;
 constexpr const auto SHA256_HASH_SIZE = 32;
 constexpr const auto VBLAKE_BLOCK_HASH_SIZE = 24;
 constexpr const auto VBK_MERKLE_ROOT_HASH_SIZE = 16;
@@ -49,8 +49,6 @@ constexpr const auto MULTISIG_ADDRESS_SIZE = 30;
  * (subject.length.size + subject.length.size.size) + (subject.length) +
  * (data_size)
  */
-
-constexpr const uint32_t ALLOWED_TIME_DRIFT = 60 * 5;
 
 constexpr const auto VBK_MAXIMUM_DIFFICULTY =
     "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
@@ -110,8 +108,6 @@ constexpr const auto MAX_RAWTX_SIZE_VBKPOPTX =
     // raw.size.size, raw.size
     5;
 
-constexpr const auto BTC_INMEM_BLOCKS_WINDOW = 1000;
-constexpr const auto VBK_INMEM_BLOCKS_WINDOW = 10000;
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_CONSTS_HPP_

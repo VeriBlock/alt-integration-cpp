@@ -55,7 +55,7 @@ static const VbkBlock defaultVbkBlock{5000,
                                       16842752,
                                       1};
 
-static const ATV defaultAtv{defaultTx, defaultPath, defaultVbkBlock};
+static const ATV defaultAtv{1, defaultTx, defaultPath, defaultVbkBlock};
 
 TEST(ATV, Deserialize) {
   const auto atvBytes = ParseHex(defaultAtvEncoded);
