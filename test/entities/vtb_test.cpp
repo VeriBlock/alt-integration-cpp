@@ -164,7 +164,7 @@ static const VbkBlock vtbVbkBlock{4976,
                                   117576138,
                                   -266584319};
 
-static const VTB defaultVtb{defaultTx, vtbProofPath, vtbVbkBlock};
+static const VTB defaultVtb{1, defaultTx, vtbProofPath, vtbVbkBlock};
 
 TEST(VTB, Deserialize) {
   const auto vtbBytes = ParseHex(defaultVtbEncoded);
