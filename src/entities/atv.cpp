@@ -13,9 +13,15 @@ const std::string ATV::_name = "ATV";
 
 ATV ATV::fromVbkEncoding(ReadStream& stream) {
   ATV atv{};
-  atv.transaction = VbkTx::fromVbkEncoding(stream);
-  atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
-  atv.blockOfProof = VbkBlock::fromVbkEncoding(stream);
+  atv.version = stream.readBE<uint32_t>();
+  if (atv.version == 1) {
+    atv.transaction = VbkTx::fromVbkEncoding(stream);
+    atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
+    atv.blockOfProof = VbkBlock::fromVbkEncoding(stream);
+  } else {
+    throw std::domain_error(fmt::format(
+        "ATV deserialization version={} is not implemented", atv.version));
+  }
 
   return atv;
 }
@@ -26,9 +32,15 @@ ATV ATV::fromVbkEncoding(Slice<const uint8_t> bytes) {
 }
 
 void ATV::toVbkEncoding(WriteStream& stream) const {
-  transaction.toVbkEncoding(stream);
-  merklePath.toVbkEncoding(stream);
-  blockOfProof.toVbkEncoding(stream);
+  stream.writeBE<uint32_t>(version);
+  if (version == 1) {
+    transaction.toVbkEncoding(stream);
+    merklePath.toVbkEncoding(stream);
+    blockOfProof.toVbkEncoding(stream);
+  } else {
+    VBK_ASSERT_MSG(
+        false, "ATV serialization version=%d is not implemented", version);
+  }
 }
 
 std::vector<uint8_t> ATV::toVbkEncoding() const {

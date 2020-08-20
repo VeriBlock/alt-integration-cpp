@@ -22,7 +22,7 @@ struct AltChainParamsTest : public AltChainParams {
     return genesisBlock;
   }
 
-  uint32_t getIdentifier() const noexcept override { return 0x7ec7; }
+  int64_t getIdentifier() const noexcept override { return 0x7ec7; }
 
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {

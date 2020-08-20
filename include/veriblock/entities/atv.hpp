@@ -23,6 +23,7 @@ namespace altintegration {
 struct ATV {
   using id_t = uint256;
 
+  uint32_t version = 1;
   VbkTx transaction{};
   VbkMerklePath merklePath{};
   VbkBlock blockOfProof{};
@@ -86,6 +87,7 @@ template <typename JsonValue>
 JsonValue ToJSON(const ATV& atv) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "id", atv.getId().toHex());
+  json::putIntKV(obj, "version", atv.version);
   json::putKV(obj, "transaction", ToJSON<JsonValue>(atv.transaction));
   json::putKV(obj, "merklePath", ToJSON<JsonValue>(atv.merklePath));
   json::putKV(obj, "blockOfProof", ToJSON<JsonValue>(atv.blockOfProof));

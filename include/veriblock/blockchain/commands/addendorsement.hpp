@@ -116,9 +116,6 @@ struct AddEndorsement : public Command {
                    "AddEndorsement::Unexecute",
                    e_->toPrettyString());
 
-    // erase containing
-    containing->removeContainingEndorsement(e_);
-
     // erase blockOfProof
     bool p2 = erase_last_item_if<endorsement_t>(
         blockOfProof->blockOfProofEndorsements, rm);
@@ -126,6 +123,9 @@ struct AddEndorsement : public Command {
                    "Failed to remove endorsement %s from blockOfProof in "
                    "AddEndorsement::Unexecute",
                    e_->toPrettyString());
+
+    // erase containing, should be removed last
+    containing->removeContainingEndorsement(e_);
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

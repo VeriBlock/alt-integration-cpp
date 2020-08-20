@@ -139,7 +139,7 @@ struct AltChainParams {
   }
 
   // unique POP id for the chain
-  virtual uint32_t getIdentifier() const noexcept = 0;
+  virtual int64_t getIdentifier() const noexcept = 0;
 
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 

@@ -100,6 +100,7 @@ const static VbkTx validVbkTx = {
     "3056301006072A8648CE3D020106052B8104000A03420004DE4EE8300C3CD99E913536CF53C4ADD179F048F8FE90E5ADF3ED19668DD1DBF6C2D8E692B1D36EAC7187950620A28838DA60A8C9DD60190C14C59B82CB90319E"_unhex};
 
 static const ATV validATV = {
+    1,
     validVbkTx,
     {1,
      0,
@@ -121,6 +122,7 @@ static const ATV validATV = {
 };
 
 static const VTB validVTB = {
+    1,
     validPopTx,
     {0,
      13,
