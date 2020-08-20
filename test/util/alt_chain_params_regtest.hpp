@@ -22,7 +22,7 @@ struct AltChainParamsRegTest : public AltChainParams {
     return b;
   }
 
-  uint32_t getIdentifier() const noexcept override { return id; }
+  int64_t getIdentifier() const noexcept override { return id; }
 
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
@@ -31,7 +31,7 @@ struct AltChainParamsRegTest : public AltChainParams {
     return altBlock.getHash();
   }
 
-  uint32_t id = 0;
+  int64_t id = 0;
 };
 
 }  // namespace altintegration
