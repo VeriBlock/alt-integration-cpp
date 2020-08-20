@@ -159,7 +159,7 @@ struct MockMinerProxy : private MockMiner {
           lastVbkBlock);
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    payloads.atv = base::generateATV(vbktx, state);
+    payloads.atv = base::applyATV(vbktx, state);
     if (!state.IsValid()) {
       throw std::logic_error("MockMiner: can't create ATV: " +
                              state.toString());
