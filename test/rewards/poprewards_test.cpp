@@ -36,19 +36,23 @@ struct RewardsTestFixture : public ::testing::Test, public PopTestFixture {
     AltBlock endorsedBlock = *altchain.rbegin();
     std::vector<VbkTx> popTxs{};
     for (size_t i = 0; i < endorsements; i++) {
-      VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
-          generatePublicationData(endorsedBlock));
+      auto pubdata = generatePublicationData(endorsedBlock);
+      pubdata.contextInfo.push_back((unsigned char)i);
+      VbkTx tx = popminer->createVbkTxEndorsingAltBlock(pubdata);
       popTxs.push_back(tx);
     }
-    AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
-    altchain.push_back(containingBlock);
+    auto atvs = popminer->applyATVs(popTxs, state);
 
-    auto altPayloads1 =
-        generateAltPayloads(popTxs, vbkparam.getGenesisBlock().getHash());
+    PopData popData;
+    popData.atvs = atvs;
+    fillVbkContext(
+        popData.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
-    EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-    ASSERT_TRUE(
-        validatePayloads(containingBlock.getHash(), altPayloads1, state));
+    auto* altTip = alttree.getBestChain().tip();
+    auto nextBlock = generateNextBlock(altTip->getHeader());
+    altchain.push_back(nextBlock);
+    EXPECT_TRUE(alttree.acceptBlockHeader(nextBlock, state));
+    ASSERT_TRUE(validatePayloads(nextBlock.getHash(), popData, state));
     ASSERT_TRUE(state.IsValid());
     EXPECT_EQ(altchain.size(), chainSize + 1);
 
@@ -81,9 +85,9 @@ TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getRewardParams().keystoneRound());
-  // and total miners' reward is 25 reward points
-  ASSERT_GT(payouts.begin()->second, 24LL * PopRewardsBigDecimal::decimals);
-  ASSERT_LT(payouts.begin()->second, 26LL * PopRewardsBigDecimal::decimals);
+  // and total miners' reward is 51 reward points
+  ASSERT_GT(payouts.begin()->second, 51LL * PopRewardsBigDecimal::decimals);
+  ASSERT_LT(payouts.begin()->second, 52LL * PopRewardsBigDecimal::decimals);
 }
 
 TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
@@ -96,9 +100,9 @@ TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getRewardParams().keystoneRound());
-  // and total miners' reward is 25 reward points
-  ASSERT_GT(payouts.begin()->second, 24LL * PopRewardsBigDecimal::decimals);
-  ASSERT_LT(payouts.begin()->second, 26LL * PopRewardsBigDecimal::decimals);
+  // and total miners' reward is 172 reward points
+  ASSERT_GT(payouts.begin()->second, 170LL * PopRewardsBigDecimal::decimals);
+  ASSERT_LT(payouts.begin()->second, 174LL * PopRewardsBigDecimal::decimals);
 }
 
 TEST_F(RewardsTestFixture, largeFlatReward_test) {
@@ -116,9 +120,9 @@ TEST_F(RewardsTestFixture, largeFlatReward_test) {
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getRewardParams().flatScoreRound());
-  // and total miners' reward is 15 reward points
-  ASSERT_GT(payouts.begin()->second, 15LL * PopRewardsBigDecimal::decimals);
-  ASSERT_LT(payouts.begin()->second, 16LL * PopRewardsBigDecimal::decimals);
+  // and total miners' reward is 32 reward points
+  ASSERT_GT(payouts.begin()->second, 32LL * PopRewardsBigDecimal::decimals);
+  ASSERT_LT(payouts.begin()->second, 33LL * PopRewardsBigDecimal::decimals);
 }
 
 TEST_F(RewardsTestFixture, hugeFlatReward_test) {
@@ -136,7 +140,7 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getRewardParams().flatScoreRound());
-  // and total miners' reward is 15 reward points
-  ASSERT_GT(payouts.begin()->second, 15LL * PopRewardsBigDecimal::decimals);
-  ASSERT_LT(payouts.begin()->second, 16LL * PopRewardsBigDecimal::decimals);
+  // and total miners' reward is 107 reward points
+  ASSERT_GT(payouts.begin()->second, 105LL * PopRewardsBigDecimal::decimals);
+  ASSERT_LT(payouts.begin()->second, 109LL * PopRewardsBigDecimal::decimals);
 }
