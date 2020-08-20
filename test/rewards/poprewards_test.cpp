@@ -74,7 +74,10 @@ TEST_F(RewardsTestFixture, basicReward_test) {
             (int64_t)PopRewardsBigDecimal::decimals *
                 altparam.getRewardParams().roundRatios()[payoutBlockRound]);
   // keystone payout is 3 reward points
-  ASSERT_EQ(payouts.begin()->second / PopRewardsBigDecimal::decimals, 3);
+  ASSERT_NEAR(
+      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
+      3,
+      0.01);
 }
 
 TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
@@ -87,9 +90,11 @@ TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getRewardParams().keystoneRound());
-  // and total miners' reward is 51 reward points
+  // and total miners' reward is 5.1 reward points
   ASSERT_NEAR(
-      (double)(payouts.begin()->second / PopRewardsBigDecimal::decimals), 51, 1);
+      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
+      5.1,
+      0.1);
 }
 
 TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
@@ -102,9 +107,11 @@ TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getRewardParams().keystoneRound());
-  // and total miners' reward is 172 reward points
+  // and total miners' reward is 5.1 reward points
   ASSERT_NEAR(
-      (double)(payouts.begin()->second / PopRewardsBigDecimal::decimals), 172, 1);
+      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
+      5.1,
+      0.1);
 }
 
 TEST_F(RewardsTestFixture, largeFlatReward_test) {
@@ -122,9 +129,11 @@ TEST_F(RewardsTestFixture, largeFlatReward_test) {
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getRewardParams().flatScoreRound());
-  // and total miners' reward is 32 reward points
+  // and total miners' reward is 1.07 reward points
   ASSERT_NEAR(
-      (double)(payouts.begin()->second / PopRewardsBigDecimal::decimals), 32, 1);
+      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
+      1.07,
+      0.1);
 }
 
 TEST_F(RewardsTestFixture, hugeFlatReward_test) {
@@ -142,7 +151,9 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getRewardParams().flatScoreRound());
-  // and total miners' reward is 107 reward points
+  // and total miners' reward is 1.07 reward points
   ASSERT_NEAR(
-      (double)(payouts.begin()->second / PopRewardsBigDecimal::decimals), 107, 1);
+      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
+      1.07,
+      0.1);
 }

@@ -94,23 +94,31 @@ PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
   return table[relativeBlock];
 }
 
-PopRewardsBigDecimal PopRewardsCalculator::calculateMinerRewardWithWeight(
+PopRewardsBigDecimal PopRewardsCalculator::calculateBlockReward(
     uint32_t height,
-    const PopRewardsBigDecimal& endorsementWeight,
     const PopRewardsBigDecimal& scoreForThisBlock,
-    PopRewardsBigDecimal difficulty) const {
-  if (scoreForThisBlock == 0.0) {
+    const PopRewardsBigDecimal& difficulty) const {
+  const auto& params = altParams_->getRewardParams();
+  uint32_t payoutRound = getRoundForBlockNumber(height);
+
+  PopRewardsBigDecimal popscore = scoreForThisBlock;
+  PopRewardsBigDecimal popdifficulty = difficulty;
+  if (params.flatScoreRoundUse() && payoutRound == params.flatScoreRound() &&
+      isFirstRoundAfterKeystone(*altParams_, height)) {
+    popscore = 1.0;
+    popdifficulty = 1.0;
+  }
+
+  if (popscore == 0.0) {
     return 0.0;
   }
 
   // Minimum difficulty
-  if (difficulty < 1.0) {
-    difficulty = 1.0;
+  if (popdifficulty < 1.0) {
+    popdifficulty = 1.0;
   }
 
-  const auto& params = altParams_->getRewardParams();
-  uint32_t payoutRound = getRoundForBlockNumber(height);
-  auto scoreToDifficulty = scoreForThisBlock / difficulty;
+  auto scoreToDifficulty = popscore / popdifficulty;
   const auto& curveParams = params.getCurveParams();
   auto roundRatio = getRoundRatio(params, payoutRound);
 
@@ -130,34 +138,19 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateMinerRewardWithWeight(
     slope = calculateSlopeRatio(params, scoreToDifficulty, payoutRound);
   }
 
-  return slope * endorsementWeight * roundRatio / difficulty;
+  return slope * scoreToDifficulty * roundRatio / popdifficulty;
 }
 
-// we calculate the reward for a given miner
 PopRewardsBigDecimal PopRewardsCalculator::calculateMinerReward(
-    uint32_t height,
     uint32_t vbkRelativeHeight,
     const PopRewardsBigDecimal& scoreForThisBlock,
-    const PopRewardsBigDecimal& difficulty) const {
+    const PopRewardsBigDecimal& blockReward) const {
   if (scoreForThisBlock == 0.0) {
     return 0.0;
   }
-
-  // Special case for the first ROUND 3 after keystone - do not adjust for score
-  // to difficulty ratio
-  uint32_t roundNumber = getRoundForBlockNumber(height);
   auto endorsementLevelWeight =
       getScoreMultiplierFromRelativeBlock(vbkRelativeHeight);
-
-  const auto& params = altParams_->getRewardParams();
-  if (params.flatScoreRoundUse() && roundNumber == params.flatScoreRound() &&
-      isFirstRoundAfterKeystone(*altParams_, height)) {
-    return calculateMinerRewardWithWeight(
-        height, endorsementLevelWeight, 1.0, 1.0);
-  }
-
-  return calculateMinerRewardWithWeight(
-      height, endorsementLevelWeight, scoreForThisBlock, difficulty);
+  return blockReward * endorsementLevelWeight / scoreForThisBlock;
 }
 
 // getter for altchain parameters
