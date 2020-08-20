@@ -84,6 +84,27 @@ std::vector<BlockIndex<Block>*> findValidTips(BlockIndex<Block>& index) {
 
   return ret;
 }
+
+/**
+ * Find all tips after given block, including given block
+ * @tparam Block
+ */
+template <typename Block>
+std::vector<BlockIndex<Block>*> findValidTips(
+    const std::unordered_set<BlockIndex<Block>*>& tips,
+    BlockIndex<Block>& index) {
+  using index_t = BlockIndex<Block>;
+  std::vector<index_t*> ret{};
+  for (auto* tip : tips) {
+    auto* ancestor = tip->getAncestor(index.getHeight());
+    if (ancestor == &index) {
+      ret.push_back(tip);
+    }
+  }
+
+  return ret;
+}
+
 }  // namespace altintegration
 
 #endif  // ALTINTEGRATION_TREE_ALGO_HPP
