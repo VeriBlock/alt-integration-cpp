@@ -148,3 +148,54 @@ TEST_F(RewardsCalculatorTestFixture, specialReward_test) {
   ASSERT_GT(minerRewardKeystone2, minerReward3);
   ASSERT_GT(minerRewardKeystone2, minerReward4);
 }
+
+#if 0
+
+struct LoggerPrintf : public Logger {
+  void log(LogLevel, const std::string& msg) override {
+    fprintf(stderr, msg.c_str());
+  }
+};
+
+TEST_F(RewardsCalculatorTestFixture, calculateValues_test) {
+  PopRewardsBigDecimal score = 1.0;
+  PopRewardsBigDecimal difficulty = 1.0;
+  // pay 20 VBTC for each reward point
+  double popCoefficient = 20.0;
+  std::vector<int> minersCount = {1, 2, 5, 10, 25};
+  std::vector<int> endorsementsCount = {1, 2, 5, 10, 25};
+  std::vector<int> difficulties = {1, 2, 5, 10, 25};
+  std::vector<int> heights = {2, 3, 4, 5};
+
+  SetLogger<LoggerPrintf>();
+
+  for (const auto& h : heights) {
+    for (const auto& m : minersCount) {
+      for (const auto& d : difficulties) {
+        for (const auto& e : endorsementsCount) {
+          score = e * 1.0;
+          difficulty = d * 1.0;
+          auto blockReward =
+              rewardsCalculator.calculateBlockReward(h, score, difficulty);
+          double blockRewardDouble = ((double)blockReward.value.getLow64()) /
+                                     PopRewardsBigDecimal::decimals;
+          blockRewardDouble *= popCoefficient;
+          auto minerReward = blockRewardDouble / m;
+
+          VBK_LOG_INFO(
+              "H = %d, ROUND = %d, S = %d, M = %d, D = %d, BR = %.4f, R = "
+              "%.4f\r\n",
+              h,
+              rewardsCalculator.getRoundForBlockNumber(h),
+              score.getIntegerFraction(),
+              m,
+              difficulty.getIntegerFraction(),
+              blockRewardDouble,
+              minerReward);
+        }
+      }
+    }
+  }
+}
+
+#endif //0
