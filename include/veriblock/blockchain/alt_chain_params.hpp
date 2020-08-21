@@ -44,7 +44,7 @@ struct PopRewardsParams {
   uint32_t flatScoreRound() const noexcept { return mFlatScoreRound; }
 
   // should we use flat rewards at all
-  bool flatScoreRoundUse() const noexcept { return mFlatScoreRoundUse; }
+  bool useFlatScoreRound() const noexcept { return mUseFlatScoreRound; }
 
   // we have these payout modifiers for different rounds. Keystone round has
   // the highest multiplier
@@ -84,7 +84,7 @@ struct PopRewardsParams {
   uint32_t mKeystoneRound = 3;
   uint32_t mPayoutRounds = 4;
   uint32_t mFlatScoreRound = 2;
-  bool mFlatScoreRoundUse = true;
+  bool mUseFlatScoreRound = true;
   double mMaxScoreThresholdNormal = 2.0;
   double mMaxScoreThresholdKeystone = 3.0;
   uint32_t mDifficultyAveragingInterval = 50;
