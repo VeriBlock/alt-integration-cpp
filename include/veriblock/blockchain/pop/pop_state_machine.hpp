@@ -165,7 +165,7 @@ struct PopStateMachine {
 
   // atomic: applies either all of the block's commands or fails on an assert
   void unapplyBlock(index_t& index, bool shouldSetCanBeApplied = true) {
-    assertBlockCanBeUnapplied(index, shouldSetCanBeApplied);
+    assertBlockCanBeUnapplied(index);
 
     if (index.hasPayloads()) {
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
