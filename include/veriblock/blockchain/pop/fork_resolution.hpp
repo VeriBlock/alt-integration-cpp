@@ -45,8 +45,8 @@ template <typename ConfigType>
 bool publicationViolatesFinality(int pubToCheck,
                                  int base,
                                  const ConfigType& config) {
-  int diff = pubToCheck - base;
-  return (int32_t)(diff - config.getFinalityDelay()) > 0;
+  int64_t diff = pubToCheck - base;
+  return (diff - config.getFinalityDelay()) > 0;
 }
 
 template <typename ConfigType>
@@ -158,15 +158,6 @@ std::vector<KeystoneContext> getKeystoneContext(
       }    // end for
     }      // end for
 
-    //    // if there's no suitable endorsement for the current keystone
-    //    // the fork loses continuity
-    //    //
-    //    // duplicated logic for "cropping" is inside KeystoneContextList
-    //    // constructor. Saves CPU a little.
-    //    if (earliestEndorsementIndex == std::numeric_limits<int>::max()) {
-    //      break;
-    //    }
-
     ret.push_back(KeystoneContext{pkc.blockHeight, earliestEndorsementIndex});
   }
 
@@ -254,7 +245,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
   }
 
   if (a.empty()) {
-    // a empty, b is not
+    // a is empty, b is not
     return -1;
   }
 
@@ -361,14 +352,12 @@ template <typename ProtectedBlock,
           typename ProtectedBlockTree>
 struct PopAwareForkResolutionComparator {
   using protected_block_t = ProtectedBlock;
-  using protected_block_hash_t = typename ProtectedBlock::hash_t;
   using protected_params_t = ProtectedParams;
   using protecting_params_t = typename ProtectingBlockTree::params_t;
   using protected_index_t = BlockIndex<protected_block_t>;
   using protecting_index_t = typename ProtectingBlockTree::index_t;
   using protecting_block_t = typename protecting_index_t::block_t;
   using endorsement_t = typename protected_index_t::endorsement_t;
-  using protected_payloads_t = typename protected_index_t::payloads_t;
   using sm_t = PopStateMachine<ProtectingBlockTree,
                                ProtectedBlockTree,
                                BlockIndex<protected_block_t>,
@@ -447,6 +436,7 @@ struct PopAwareForkResolutionComparator {
           candidate.toShortPrettyString());
       return 1;
     }
+
     auto originalProtectingTip = ing_->getBestChain().tip();
 
     // candidate is on top of our best tip
@@ -544,30 +534,20 @@ struct PopAwareForkResolutionComparator {
     if (result >= 0) {
       // chain A remains the best one. unapply B and leave A applied
       auto guard = ing_->deferForkResolutionGuard();
-      sm.unapply(*chainB.tip(), *chainB.first(), false);
+      sm.unapply(*chainB.tip(), *chainB.first());
       guard.overrideDeferredForkResolution(originalProtectingTip);
       VBK_LOG_INFO("Chain A remains the best chain");
     } else {
       // chain B is better. unapply A and leave B applied
       auto guard = ing_->deferForkResolutionGuard();
-      // if candidate has never been applied before with setState(), we
-      // have to unapply candidate before unapplying chainA and try
-      // to apply chainB without any payloads from chainA
-      bool hasFlag = candidate.hasFlags(BLOCK_CAN_BE_APPLIED);
-      auto* chainBFrom = chainB.first();
-      if (!hasFlag) {
-        chainBFrom = sm.unapplyWhile(
-            *chainB.tip(),
-            *chainB.first(),
-            [](protected_index_t& index) -> bool {
-              return !index.hasFlags(BLOCK_CAN_BE_APPLIED);
-            },
-            false);
-      }
+
+      // TODO: unapply part of the chain with unknown validity.
+      // unapply both chains, unapply B first
+      sm.unapply(*chainB.tip(), *chainB.first());
       sm.unapply(*chainA.tip(), *chainA.first());
 
-      // validate chain
-      if (!hasFlag && !sm.apply(*chainBFrom, *chainB.tip(), state)) {
+      // validate chainB
+      if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
         bool res = sm.apply(*chainA.first(), *chainA.tip(), state);
         guard.overrideDeferredForkResolution(originalProtectingTip);
         VBK_ASSERT_MSG(res,

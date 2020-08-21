@@ -41,27 +41,17 @@ void assertBlockCanBeApplied(index_t& index, bool shouldSetCanBeApplied) {
 }
 
 template <typename index_t>
-void assertBlockCanBeUnapplied(index_t& index, bool shouldSetCanBeApplied) {
+void assertBlockCanBeUnapplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
 
   VBK_ASSERT_MSG(
       index.hasFlags(BLOCK_APPLIED),
       "state corruption: tried to unapply an already unapplied block %s",
       index.toPrettyString());
-  VBK_ASSERT_MSG(
-      index.hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
-      "state corruption: tried to unapply block that has not been applied %s",
-      index.toPrettyString());
   VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to unapply a block that follows an "
                  "unapplied block %s",
                  index.pprev->toPrettyString());
-  VBK_ASSERT_MSG(
-      index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
-      "state corruption: tried to unapply a block that follows a "
-      "block that has not been "
-      "applied %s",
-      index.pprev->toPrettyString());
   // an expensive check; might want to  disable it eventually
   VBK_ASSERT_MSG(index.allDescendantsUnapplied(),
                  "state corruption: tried to unapply a block before unapplying "
@@ -174,8 +164,8 @@ struct PopStateMachine {
   }
 
   // atomic: applies either all of the block's commands or fails on an assert
-  void unapplyBlock(index_t& index, bool shouldSetCanBeApplied = true) {
-    assertBlockCanBeUnapplied(index, shouldSetCanBeApplied);
+  void unapplyBlock(index_t& index) {
+    assertBlockCanBeUnapplied(index);
 
     if (index.hasPayloads()) {
       auto cgroups = storage_.loadCommands<ProtectedTree>(index, ed_);
@@ -196,8 +186,7 @@ struct PopStateMachine {
   // atomic: either applies all of the requested blocks or fails on an assert
   index_t* unapplyWhile(index_t& from,
                         index_t& to,
-                        const std::function<bool(index_t& index)>& pred,
-                        bool shouldSetCanBeApplied = true) {
+                        const std::function<bool(index_t& index)>& pred) {
     if (&from == &to) {
       return &to;
     }
@@ -215,7 +204,7 @@ struct PopStateMachine {
 
     for (auto* current : reverse_iterate(chain)) {
       if (pred(*current)) {
-        unapplyBlock(*current, shouldSetCanBeApplied);
+        unapplyBlock(*current);
       } else {
         return current;
       }
@@ -227,9 +216,9 @@ struct PopStateMachine {
   // unapplies all commands commands from blocks in the range of [from; to)
   // atomic: either applies all of the requested blocks
   // or fails on an assert
-  void unapply(index_t& from, index_t& to, bool shouldSetCanBeApplied = true) {
+  void unapply(index_t& from, index_t& to) {
     auto pred = [](index_t&) -> bool { return true; };
-    auto* index = unapplyWhile(from, to, pred, shouldSetCanBeApplied);
+    auto* index = unapplyWhile(from, to, pred);
     VBK_ASSERT(index == &to);
   }
 
@@ -265,7 +254,7 @@ struct PopStateMachine {
     for (auto* index : chain) {
       if (!applyBlock(*index, state, shouldSetCanBeApplied)) {
         // rollback the previously appled slice of the chain
-        unapply(*index->pprev, from, shouldSetCanBeApplied);
+        unapply(*index->pprev, from);
         return false;
       }
     }
