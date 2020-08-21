@@ -534,7 +534,7 @@ struct PopAwareForkResolutionComparator {
     if (result >= 0) {
       // chain A remains the best one. unapply B and leave A applied
       auto guard = ing_->deferForkResolutionGuard();
-      sm.unapply(*chainB.tip(), *chainB.first(), false);
+      sm.unapply(*chainB.tip(), *chainB.first());
       guard.overrideDeferredForkResolution(originalProtectingTip);
       VBK_LOG_INFO("Chain A remains the best chain");
     } else {
