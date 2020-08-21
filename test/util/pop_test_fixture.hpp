@@ -221,7 +221,7 @@ struct PopTestFixture {
     }
 
     for (const auto& t : transactions) {
-      popData.atvs.push_back(popminer->generateATV(t, state));
+      popData.atvs.push_back(popminer->applyATV(t, state));
     }
 
     fillVbkContext(popData.context, lastVbk, popminer->vbk());

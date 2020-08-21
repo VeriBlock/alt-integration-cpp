@@ -36,30 +36,35 @@ struct PopRewardsCalculator {
 
   /**
    * Calculate reward for the miner from the block score, height of the VBK
-   * endorsement and current POP difficulty.
-   * @param height reward is calculated for the block at this height.
+   * endorsement and total block reward.
    * @param vbkRelativeHeight height of the VBK block with endorsement
    * @param scoreForThisBlock block score
-   * @param difficulty current POP difficulty
+   * @param blockReward total block reward
    * @return PopRewardsBigDecimal resulting reward for each miner
    */
   virtual PopRewardsBigDecimal calculateMinerReward(
-      uint32_t height,
       uint32_t vbkRelativeHeight,
       const PopRewardsBigDecimal& scoreForThisBlock,
-      const PopRewardsBigDecimal& difficulty) const;
+      const PopRewardsBigDecimal& blockReward) const;
+
+  /**
+   * Calculate reward for the entire block from the block score, height of the
+   * VBK endorsement and current POP difficulty.
+   * @param height reward is calculated for the block at this height.
+   * @param scoreForThisBlock block score
+   * @param difficulty current POP difficulty
+   * @return PopRewardsBigDecimal resulting reward for the block
+   */
+  virtual PopRewardsBigDecimal calculateBlockReward(
+      uint32_t height,
+      PopRewardsBigDecimal scoreForThisBlock,
+      PopRewardsBigDecimal difficulty) const;
 
   // getter for altchain parameters
   virtual const AltChainParams& getAltParams() const noexcept;
 
  protected:
-  const AltChainParams *altParams_;
-
-  virtual PopRewardsBigDecimal calculateMinerRewardWithWeight(
-      uint32_t height,
-      const PopRewardsBigDecimal& endorsementWeight,
-      const PopRewardsBigDecimal& scoreForThisBlock,
-      PopRewardsBigDecimal difficulty) const;
+  const AltChainParams* altParams_;
 };
 
 }  // namespace altintegration
