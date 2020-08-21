@@ -41,27 +41,17 @@ void assertBlockCanBeApplied(index_t& index, bool shouldSetCanBeApplied) {
 }
 
 template <typename index_t>
-void assertBlockCanBeUnapplied(index_t& index, bool shouldSetCanBeApplied) {
+void assertBlockCanBeUnapplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
 
   VBK_ASSERT_MSG(
       index.hasFlags(BLOCK_APPLIED),
       "state corruption: tried to unapply an already unapplied block %s",
       index.toPrettyString());
-  VBK_ASSERT_MSG(
-      index.hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
-      "state corruption: tried to unapply block that has not been applied %s",
-      index.toPrettyString());
   VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to unapply a block that follows an "
                  "unapplied block %s",
                  index.pprev->toPrettyString());
-  VBK_ASSERT_MSG(
-      index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
-      "state corruption: tried to unapply a block that follows a "
-      "block that has not been "
-      "applied %s",
-      index.pprev->toPrettyString());
   // an expensive check; might want to  disable it eventually
   VBK_ASSERT_MSG(index.allDescendantsUnapplied(),
                  "state corruption: tried to unapply a block before unapplying "
