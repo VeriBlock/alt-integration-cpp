@@ -96,14 +96,12 @@ PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
 
 PopRewardsBigDecimal PopRewardsCalculator::calculateBlockReward(
     uint32_t height,
-    const PopRewardsBigDecimal& scoreForThisBlock,
-    const PopRewardsBigDecimal& difficulty) const {
+    PopRewardsBigDecimal popscore,
+    PopRewardsBigDecimal popdifficulty) const {
   const auto& params = altParams_->getRewardParams();
   uint32_t payoutRound = getRoundForBlockNumber(height);
 
-  PopRewardsBigDecimal popscore = scoreForThisBlock;
-  PopRewardsBigDecimal popdifficulty = difficulty;
-  if (params.flatScoreRoundUse() && payoutRound == params.flatScoreRound() &&
+  if (params.useFlatScoreRound() && payoutRound == params.flatScoreRound() &&
       isFirstRoundAfterKeystone(*altParams_, height)) {
     popscore = 1.0;
     popdifficulty = 1.0;

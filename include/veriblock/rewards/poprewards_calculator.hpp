@@ -48,8 +48,8 @@ struct PopRewardsCalculator {
       const PopRewardsBigDecimal& blockReward) const;
 
   /**
-   * Calculate reward for the entire block from the block score, height of the VBK
-   * endorsement and current POP difficulty.
+   * Calculate reward for the entire block from the block score, height of the
+   * VBK endorsement and current POP difficulty.
    * @param height reward is calculated for the block at this height.
    * @param scoreForThisBlock block score
    * @param difficulty current POP difficulty
@@ -57,14 +57,14 @@ struct PopRewardsCalculator {
    */
   virtual PopRewardsBigDecimal calculateBlockReward(
       uint32_t height,
-      const PopRewardsBigDecimal& scoreForThisBlock,
-      const PopRewardsBigDecimal& difficulty) const;
+      PopRewardsBigDecimal scoreForThisBlock,
+      PopRewardsBigDecimal difficulty) const;
 
   // getter for altchain parameters
   virtual const AltChainParams& getAltParams() const noexcept;
 
  protected:
-  const AltChainParams *altParams_;
+  const AltChainParams* altParams_;
 };
 
 }  // namespace altintegration
