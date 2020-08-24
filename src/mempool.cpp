@@ -344,6 +344,10 @@ bool MemPool::submit(const VbkBlock& blk,
     return state.Invalid("pop-mempool-submit-vbkblock-stateless");
   }
 
+  if (shouldDoContextualCheck && !checkContextually(blk, state)) {
+    return state.Invalid("pop-mempool-submit-vbk-stateful");
+  }
+
   // stateful validation
   if (!shouldDoContextualCheck || !tree_->vbk().getBlockIndex(blk.getHash())) {
     // duplicate
@@ -414,6 +418,7 @@ bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state) {
 
   return true;
 }
+
 template <>
 bool MemPool::checkContextually<ATV>(const ATV& atv, ValidationState& state) {
   // stateful validation
@@ -441,6 +446,20 @@ bool MemPool::checkContextually<ATV>(const ATV& atv, ValidationState& state) {
                                         atv.getId().toHex(),
                                         endorsed_index->toShortPrettyString()));
     }
+  }
+
+  return true;
+}
+
+template <>
+bool MemPool::checkContextually<VbkBlock>(const VbkBlock& blk,
+                                          ValidationState& state) {
+  if (!getMap<VbkBlock>().empty() &&
+      get<VbkBlock>(blk.previousBlock) == nullptr) {
+    return state.Invalid(
+        "potential-stale-vbk-block",
+        fmt::sprintf("Block=%s does not connect to the known chains",
+                     blk.toPrettyString()));
   }
 
   return true;
