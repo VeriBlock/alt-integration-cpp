@@ -71,7 +71,9 @@ struct MemPool {
   }
 
   template <typename T>
-  bool submit(const T& pl, ValidationState& state, bool shouldDoContextualCheck = true) {
+  bool submit(const T& pl,
+              ValidationState& state,
+              bool shouldDoContextualCheck = true) {
     (void)pl;
     (void)state;
     (void)shouldDoContextualCheck;
@@ -131,6 +133,7 @@ template <> bool MemPool::submit(const VTB& vtb, ValidationState& state, bool sh
 template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state, bool shouldDoContextualCheck);
 template <> bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state);
 template <> bool MemPool::checkContextually<ATV>(const ATV& id, ValidationState& state);
+template <> bool MemPool::checkContextually<VbkBlock>(const VbkBlock& id, ValidationState& state);
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
 template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;

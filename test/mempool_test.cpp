@@ -404,6 +404,45 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   EXPECT_TRUE(popData.context.empty());
 }
 
+// test that mempool would reject not continuous vbk blocks
+TEST_F(MemPoolFixture, submit_vbk_blocks) {
+  // miner 65 vbk blocks
+  popminer->mineVbkBlocks(65);
+
+  ASSERT_EQ(popminer->vbk().getBestChain().tip()->getHeight(), 65);
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(
+      context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+  ASSERT_EQ(context.size(), 65);
+
+  // validate that we have valid vbk block context
+  for (const auto& b : context) {
+    ASSERT_TRUE(mempool->submit<VbkBlock>(b, state)) << state.toString();
+  }
+
+  // clean mempool
+  mempool->clear();
+  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
+
+  ASSERT_EQ(context.rbegin()->height, 65);
+  ASSERT_EQ((++context.rbegin())->height, 64);
+
+  // corrupt continuity of the vbk blocks
+  context.erase(--(--context.end()));
+  ASSERT_EQ(context.size(), 64);
+  ASSERT_EQ(context.rbegin()->height, 65);
+  ASSERT_EQ((++context.rbegin())->height, 63);
+
+  for (size_t i = 0; i < context.size() - 1; ++i) {
+    ASSERT_TRUE(mempool->submit<VbkBlock>(context[i], state))
+        << state.toString();
+  }
+
+  EXPECT_FALSE(mempool->submit<VbkBlock>(context.back(), state));
+  EXPECT_EQ(state.GetPath(), "pop-mempool-submit-vbk-stateful+invalid-vbk-block");
+}
+
 TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
   // mine 65 VBK blocks
