@@ -457,8 +457,8 @@ bool MemPool::checkContextually<VbkBlock>(const VbkBlock& blk,
   if (tree_->vbk().getBlockIndex(blk.previousBlock) == nullptr &&
       get<VbkBlock>(blk.previousBlock) == nullptr) {
     return state.Invalid(
-        "potential-stale-vbk-block",
-        fmt::sprintf("Block=%s does not connect to the known chains",
+        "bad-prev",
+        fmt::sprintf("Block=%s does not connect to known VBK tree",
                      blk.toPrettyString()));
   }
 
