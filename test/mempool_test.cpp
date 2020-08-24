@@ -440,7 +440,7 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
   }
 
   EXPECT_FALSE(mempool->submit<VbkBlock>(context.back(), state));
-  EXPECT_EQ(state.GetPath(), "pop-mempool-submit-vbk-stateful+invalid-vbk-block");
+  EXPECT_EQ(state.GetPath(), "pop-mempool-submit-vbk-stateful+potential-stale-vbk-block");
 }
 
 TEST_F(MemPoolFixture, submit_deprecated_payloads) {
