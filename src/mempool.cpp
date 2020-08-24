@@ -454,7 +454,7 @@ bool MemPool::checkContextually<ATV>(const ATV& atv, ValidationState& state) {
 template <>
 bool MemPool::checkContextually<VbkBlock>(const VbkBlock& blk,
                                           ValidationState& state) {
-  if (!getMap<VbkBlock>().empty() &&
+  if (tree_->vbk().getBlockIndex(blk.previousBlock) == nullptr &&
       get<VbkBlock>(blk.previousBlock) == nullptr) {
     return state.Invalid(
         "potential-stale-vbk-block",
