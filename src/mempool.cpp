@@ -14,13 +14,18 @@ namespace altintegration {
 
 namespace {
 
-uint256 getStronglyEquivalencyId(const VTB& vtb) {
+template <typename pop_t>
+uint256 getStronglyEquivalencyId(const pop_t& p);
+
+template <>
+uint256 getStronglyEquivalencyId<VTB>(const VTB& vtb) {
   auto btcTx = vtb.transaction.bitcoinTransaction.getHash();
   auto blockOfProof = vtb.transaction.blockOfProof.getHash();
   return sha256(btcTx, blockOfProof);
 }
 
-uint256 getStronglyEquivalencyId(const ATV& atv) {
+template <>
+uint256 getStronglyEquivalencyId<ATV>(const ATV& atv) {
   auto vbkTx = atv.transaction.getHash();
   auto blockOfProof = atv.blockOfProof.getHash();
   return sha256(vbkTx, blockOfProof);
@@ -146,8 +151,12 @@ PopData MemPool::getPop() {
 
 void MemPool::vacuum(const PopData& pop) {
   auto vbkblockids = make_idset(pop.context);
-  auto vtbids = make_idset(pop.vtbs);
-  auto atvids = make_idset(pop.atvs);
+  std::function<typename VTB::id_t(const VTB&)> fn1 =
+      getStronglyEquivalencyId<VTB>;
+  std::function<typename ATV::id_t(const ATV&)> fn2 =
+      getStronglyEquivalencyId<ATV>;
+  auto vtbids = make_idset(pop.vtbs, fn1);
+  auto atvids = make_idset(pop.atvs, fn2);
 
   // cascade removal of relation and stored payloads
   auto removeRelation = [&](decltype(relations_.begin()) it) {
@@ -212,7 +221,7 @@ void MemPool::vacuum(const PopData& pop) {
       std::transform(pop.vtbs.begin(),
                      pop.vtbs.end(),
                      std::inserter(ids, std::end(ids)),
-                     get_id<VTB>);
+                     getStronglyEquivalencyId<VTB>);
 
       for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
         auto id = getStronglyEquivalencyId(**vtbit);
@@ -409,7 +418,7 @@ bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state) {
       // if containing exists on chain, then search for duplicates starting from
       // containing, else search starting from tip
       (containing ? containing : vbk.getBestChain().tip()),
-      vtb.getId(),
+      getStronglyEquivalencyId(vtb),
       window);
   if (duplicate) {
     return state.Invalid(
