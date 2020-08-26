@@ -32,6 +32,11 @@ typename T::id_t get_id(const T& t) {
 }
 
 template <typename T>
+typename T::id_t get_strong_id(const T& t) {
+  return t.getStronglyEquivalencyId();
+}
+
+template <typename T>
 std::vector<uint8_t> getIdVector(const T& t) {
   auto id = get_id<T>(t);
   std::vector<uint8_t> v(id.begin(), id.end());

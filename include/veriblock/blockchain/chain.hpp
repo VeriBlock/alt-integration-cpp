@@ -164,14 +164,12 @@ template <typename index_t>
 const index_t* findBlockContainingEndorsement(
     const Chain<index_t>& chain,
     const index_t* workBlock,
-    const typename index_t::endorsement_t& e,
-    const uint32_t& endorsement_settlement_interval) {
-  for (uint32_t count = 0;
-       count < endorsement_settlement_interval && workBlock &&
-       workBlock->getHeight() >= chain.getStartHeight() &&
-       e.endorsedHash != workBlock->getHash();
+    const typename index_t::endorsement_t::id_t& id,
+    const uint32_t& window) {
+  for (uint32_t count = 0; count < window && workBlock &&
+                           workBlock->getHeight() >= chain.getStartHeight();
        count++) {
-    if (workBlock->getContainingEndorsements().count(e.id)) {
+    if (workBlock->getContainingEndorsements().count(id)) {
       return workBlock;
     }
     workBlock = workBlock->pprev;
@@ -186,25 +184,7 @@ inline const index_t* findBlockContainingEndorsement(
     const typename index_t::endorsement_t& e,
     const uint32_t& endorsement_settlement_interval) {
   return findBlockContainingEndorsement<index_t>(
-      chain, chain.tip(), e, endorsement_settlement_interval);
-}
-
-template <typename index_t>
-const index_t* findBlockContainingEndorsement(
-    const Chain<index_t>& chain,
-    const index_t* workBlock,
-    const typename index_t::endorsement_t::id_t& id,
-    const uint32_t& window) {
-  for (uint32_t count = 0; count < window && workBlock &&
-                           workBlock->getHeight() >= chain.getStartHeight();
-       count++) {
-    if (workBlock->getContainingEndorsements().count(id)) {
-      return workBlock;
-    }
-    workBlock = workBlock->pprev;
-  }
-
-  return nullptr;
+      chain, chain.tip(), e.id, endorsement_settlement_interval);
 }
 
 template <typename T>

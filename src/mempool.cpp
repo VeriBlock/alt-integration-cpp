@@ -15,23 +15,6 @@ namespace altintegration {
 namespace {
 
 template <typename pop_t>
-uint256 getStronglyEquivalencyId(const pop_t& p);
-
-template <>
-uint256 getStronglyEquivalencyId<VTB>(const VTB& vtb) {
-  auto btcTx = vtb.transaction.bitcoinTransaction.getHash();
-  auto blockOfProof = vtb.transaction.blockOfProof.getHash();
-  return sha256(btcTx, blockOfProof);
-}
-
-template <>
-uint256 getStronglyEquivalencyId<ATV>(const ATV& atv) {
-  auto vbkTx = atv.transaction.getHash();
-  auto blockOfProof = atv.blockOfProof.getHash();
-  return sha256(vbkTx, blockOfProof);
-}
-
-template <typename pop_t>
 bool process_cut_payloads(std::vector<pop_t>& payloads, size_t& current_size) {
   if (!payloads.empty()) {
     auto& p = payloads.back();
@@ -117,7 +100,7 @@ PopData MemPool::VbkPayloadsRelations::toPopData() const {
 void MemPool::VbkPayloadsRelations::removeVTB(const VTB::id_t& vtb_id) {
   auto it = std::find_if(
       vtbs.begin(), vtbs.end(), [&vtb_id](const std::shared_ptr<VTB>& vtb) {
-        return getStronglyEquivalencyId(*vtb) == vtb_id;
+        return vtb->getId() == vtb_id;
       });
 
   if (it != vtbs.end()) {
@@ -128,7 +111,7 @@ void MemPool::VbkPayloadsRelations::removeVTB(const VTB::id_t& vtb_id) {
 void MemPool::VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
   auto it = std::find_if(
       atvs.begin(), atvs.end(), [&atv_id](const std::shared_ptr<ATV>& atv) {
-        return getStronglyEquivalencyId(*atv) == atv_id;
+        return atv->getId() == atv_id;
       });
 
   if (it != atvs.end()) {
@@ -151,18 +134,18 @@ PopData MemPool::getPop() {
 
 void MemPool::vacuum(const PopData& pop) {
   auto vbkblockids = make_idset(pop.context);
-  auto vtbids = make_idset<VTB>(pop.vtbs, getStronglyEquivalencyId<VTB>);
-  auto atvids = make_idset<ATV>(pop.atvs, getStronglyEquivalencyId<ATV>);
+  auto vtb_strong_ids = make_idset<VTB>(pop.vtbs, get_strong_id<VTB>);
+  auto atv_strong_ids = make_idset<ATV>(pop.atvs, get_strong_id<ATV>);
 
   // cascade removal of relation and stored payloads
   auto removeRelation = [&](decltype(relations_.begin()) it) {
     auto& rel = *it->second;
     vbkblocks_.erase(it->first);
     for (auto& vtb : rel.vtbs) {
-      stored_vtbs_.erase(getStronglyEquivalencyId(*vtb));
+      stored_vtbs_.erase(vtb->getStronglyEquivalencyId());
     }
     for (auto& atv : rel.atvs) {
-      stored_atvs_.erase(getStronglyEquivalencyId(*atv));
+      stored_atvs_.erase(atv->getStronglyEquivalencyId());
     }
     return relations_.erase(it);
   };
@@ -186,9 +169,10 @@ void MemPool::vacuum(const PopData& pop) {
     for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
       auto& vtb = **vtbit;
       ValidationState state;
-      auto id = getStronglyEquivalencyId(vtb);
-      if (vtbids.count(id) > 0 || !checkContextually(vtb, state)) {
-        stored_vtbs_.erase(id);
+      auto strong_id = vtb.getStronglyEquivalencyId();
+      if (vtb_strong_ids.count(strong_id) > 0 ||
+          !checkContextually(vtb, state)) {
+        stored_vtbs_.erase(strong_id);
         vtbit = rel.vtbs.erase(vtbit);
       } else {
         ++vtbit;
@@ -198,10 +182,11 @@ void MemPool::vacuum(const PopData& pop) {
     // cleanup stale ATVs
     for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
       auto& atv = **atvit;
-      auto id = getStronglyEquivalencyId(atv);
+      auto strong_id = atv.getStronglyEquivalencyId();
       ValidationState state;
-      if (atvids.count(id) > 0 || !checkContextually(atv, state)) {
-        stored_atvs_.erase(id);
+      if (atv_strong_ids.count(strong_id) > 0 ||
+          !checkContextually(atv, state)) {
+        stored_atvs_.erase(strong_id);
         atvit = rel.atvs.erase(atvit);
       } else {
         ++atvit;
@@ -217,10 +202,10 @@ void MemPool::vacuum(const PopData& pop) {
       std::transform(pop.vtbs.begin(),
                      pop.vtbs.end(),
                      std::inserter(ids, std::end(ids)),
-                     getStronglyEquivalencyId<VTB>);
+                     get_id<VTB>);
 
       for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
-        auto id = getStronglyEquivalencyId(**vtbit);
+        auto id = (*vtbit)->getId();
         // mempool contains VBK block, which already exists in VBK tree, and
         // we found a VTB which exists in that VBK block. we can remove VTB
         // from mempool
@@ -314,7 +299,7 @@ bool MemPool::submit(const ATV& atv,
 
   auto& rel = touchVbkBlock(atv.blockOfProof);
   auto atvptr = std::make_shared<ATV>(atv);
-  auto pair = std::make_pair(getStronglyEquivalencyId(atv), atvptr);
+  auto pair = std::make_pair(atv.getStronglyEquivalencyId(), atvptr);
   rel.atvs.push_back(atvptr);
 
   // store atv id in containing block index
@@ -342,7 +327,7 @@ bool MemPool::submit(const VTB& vtb,
 
   auto& rel = touchVbkBlock(vtb.containingBlock);
   auto vtbptr = std::make_shared<VTB>(vtb);
-  auto pair = std::make_pair(getStronglyEquivalencyId(vtb), vtbptr);
+  auto pair = std::make_pair(vtb.getStronglyEquivalencyId(), vtbptr);
   rel.vtbs.push_back(vtbptr);
 
   stored_vtbs_.insert(pair);
@@ -414,7 +399,7 @@ bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state) {
       // if containing exists on chain, then search for duplicates starting from
       // containing, else search starting from tip
       (containing ? containing : vbk.getBestChain().tip()),
-      getStronglyEquivalencyId(vtb),
+      vtb.getId(),
       window);
   if (duplicate) {
     return state.Invalid(

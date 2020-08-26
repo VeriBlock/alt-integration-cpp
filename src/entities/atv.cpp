@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/atv.hpp"
-
 #include "veriblock/hashutil.hpp"
 
 using namespace altintegration;
@@ -60,3 +59,5 @@ ATV::id_t ATV::getId() const {
   auto right = blockOfProof.getHash();
   return sha256(left, right);
 }
+
+ATV::id_t ATV::getStronglyEquivalencyId() const { return getId(); }
