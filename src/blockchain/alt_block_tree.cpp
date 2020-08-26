@@ -27,7 +27,7 @@ bool checkBlockTime(const BlockIndex<AltBlock>& prev,
   int64_t maxTime = currentTimestamp4() + params.maxFutureBlockTime();
   if (blockTime > maxTime) {
     return state.Invalid("alt-time-too-new",
-                         "block timestamp too far in the future");
+                         "ALT block timestamp too far in the future");
   }
 
   return true;
