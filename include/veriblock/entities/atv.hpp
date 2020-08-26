@@ -71,6 +71,13 @@ struct ATV {
    */
   id_t getId() const;
 
+  /**
+   * Calculate a ATV id that is the sha256 hash of the veriblockTx hash and
+   * veriblock blockOfProof hash
+   * @return id sha256 hash
+   */
+  id_t getStronglyEquivalencyId() const;
+
   static const std::string _name;
   static const std::string& name() { return _name; }
 

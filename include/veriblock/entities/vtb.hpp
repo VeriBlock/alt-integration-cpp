@@ -74,6 +74,13 @@ struct VTB {
    */
   id_t getId() const;
 
+  /**
+   * Calculate a VTB id that is the sha256 hash of the bitcoinTx hash and
+   * bitcoin blockOfProof hash
+   * @return id sha256 hash
+   */
+  id_t getStronglyEquivalencyId() const;
+
   static const std::string _name;
   static const std::string& name() { return _name; }
 

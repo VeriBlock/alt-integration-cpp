@@ -32,6 +32,11 @@ typename T::id_t get_id(const T& t) {
 }
 
 template <typename T>
+typename T::id_t get_strong_id(const T& t) {
+  return t.getStronglyEquivalencyId();
+}
+
+template <typename T>
 std::vector<uint8_t> getIdVector(const T& t) {
   auto id = get_id<T>(t);
   std::vector<uint8_t> v(id.begin(), id.end());
@@ -49,9 +54,23 @@ std::vector<typename P::id_t> map_get_id(const std::vector<P>& a) {
   return map_vector<P, typename P::id_t>(a, get_id<P>);
 }
 
+template <typename P>
+std::vector<typename P::id_t> map_get_id(
+    const std::vector<P>& a, std::function<typename P::id_t(const P&)> fn) {
+  return map_vector<P, typename P::id_t>(a, fn);
+}
+
 template <typename T>
 std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
-  auto ids = map_get_id(v);
+  auto ids = map_get_id<T>(v);
+  std::set<typename T::id_t> s(ids.begin(), ids.end());
+  return s;
+}
+
+template <typename T>
+std::set<typename T::id_t> make_idset(
+    const std::vector<T>& v, std::function<typename T::id_t(const T&)> fn) {
+  auto ids = map_get_id<T>(v, fn);
   std::set<typename T::id_t> s(ids.begin(), ids.end());
   return s;
 }
