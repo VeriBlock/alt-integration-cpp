@@ -151,8 +151,8 @@ PopData MemPool::getPop() {
 
 void MemPool::vacuum(const PopData& pop) {
   auto vbkblockids = make_idset(pop.context);
-  auto vtbids = make_idset(pop.vtbs, getStronglyEquivalencyId<VTB>);
-  auto atvids = make_idset(pop.atvs, getStronglyEquivalencyId<ATV>);
+  auto vtbids = make_idset<VTB>(pop.vtbs, getStronglyEquivalencyId<VTB>);
+  auto atvids = make_idset<ATV>(pop.atvs, getStronglyEquivalencyId<ATV>);
 
   // cascade removal of relation and stored payloads
   auto removeRelation = [&](decltype(relations_.begin()) it) {
