@@ -134,18 +134,18 @@ PopData MemPool::getPop() {
 
 void MemPool::vacuum(const PopData& pop) {
   auto vbkblockids = make_idset(pop.context);
-  auto vtb_strong_ids = make_idset<VTB>(pop.vtbs, get_strong_id<VTB>);
-  auto atv_strong_ids = make_idset<ATV>(pop.atvs, get_strong_id<ATV>);
+  auto vtbids = make_idset(pop.vtbs);
+  auto atvids = make_idset(pop.atvs);
 
   // cascade removal of relation and stored payloads
   auto removeRelation = [&](decltype(relations_.begin()) it) {
     auto& rel = *it->second;
     vbkblocks_.erase(it->first);
     for (auto& vtb : rel.vtbs) {
-      stored_vtbs_.erase(vtb->getStronglyEquivalencyId());
+      stored_vtbs_.erase(vtb->getId());
     }
     for (auto& atv : rel.atvs) {
-      stored_atvs_.erase(atv->getStronglyEquivalencyId());
+      stored_atvs_.erase(atv->getId());
     }
     return relations_.erase(it);
   };
@@ -169,10 +169,9 @@ void MemPool::vacuum(const PopData& pop) {
     for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
       auto& vtb = **vtbit;
       ValidationState state;
-      auto strong_id = vtb.getStronglyEquivalencyId();
-      if (vtb_strong_ids.count(strong_id) > 0 ||
-          !checkContextually(vtb, state)) {
-        stored_vtbs_.erase(strong_id);
+      auto id = vtb.getId();
+      if (vtbids.count(id) > 0 || !checkContextually(vtb, state)) {
+        stored_vtbs_.erase(id);
         vtbit = rel.vtbs.erase(vtbit);
       } else {
         ++vtbit;
@@ -182,11 +181,10 @@ void MemPool::vacuum(const PopData& pop) {
     // cleanup stale ATVs
     for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
       auto& atv = **atvit;
-      auto strong_id = atv.getStronglyEquivalencyId();
+      auto id = atv.getId();
       ValidationState state;
-      if (atv_strong_ids.count(strong_id) > 0 ||
-          !checkContextually(atv, state)) {
-        stored_atvs_.erase(strong_id);
+      if (atvids.count(id) > 0 || !checkContextually(atv, state)) {
+        stored_atvs_.erase(id);
         atvit = rel.atvs.erase(atvit);
       } else {
         ++atvit;
@@ -299,7 +297,7 @@ bool MemPool::submit(const ATV& atv,
 
   auto& rel = touchVbkBlock(atv.blockOfProof);
   auto atvptr = std::make_shared<ATV>(atv);
-  auto pair = std::make_pair(atv.getStronglyEquivalencyId(), atvptr);
+  auto pair = std::make_pair(atv.getId(), atvptr);
   rel.atvs.push_back(atvptr);
 
   // store atv id in containing block index
@@ -327,7 +325,7 @@ bool MemPool::submit(const VTB& vtb,
 
   auto& rel = touchVbkBlock(vtb.containingBlock);
   auto vtbptr = std::make_shared<VTB>(vtb);
-  auto pair = std::make_pair(vtb.getStronglyEquivalencyId(), vtbptr);
+  auto pair = std::make_pair(vtb.getId(), vtbptr);
   rel.vtbs.push_back(vtbptr);
 
   stored_vtbs_.insert(pair);
