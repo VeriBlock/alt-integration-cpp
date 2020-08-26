@@ -26,8 +26,9 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
 
   chainA = generateNextBlock(chainA);
   auto payloads = endorseAltBlock({altForkPoint}, 1);
-  ASSERT_TRUE(alttree.acceptBlockHeader(chainA, state));
-  ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), {payloads}, state));
+  ASSERT_TRUE(alttree.acceptBlockHeader(chainA, state)) << state.toString();
+  ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), {payloads}, state))
+      << state.toString();
 
   // make a copy that we will use later to create corrupted payloads
   VTB corruptedVtb = payloads.vtbs.at(0);
@@ -37,8 +38,9 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   payloads.context.erase(
       payloads.context.begin(),
       payloads.context.begin() + (payloads.context.size() - 2));
-  ASSERT_TRUE(alttree.acceptBlockHeader(chainA, state));
-  ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), payloads, state));
+  ASSERT_TRUE(alttree.acceptBlockHeader(chainA, state)) << state.toString();
+  ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), payloads, state))
+      << state.toString();
 
   // corrupted payloads
   std::vector<uint8_t> invalid_hash = {1, 2, 3, 9, 8, 2};
@@ -52,13 +54,15 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
 
   corruptedPayloads.vtbs.push_back(corruptedVtb);
 
-  ASSERT_TRUE(alttree.acceptBlockHeader(corruptedAltBlock, state));
+  ASSERT_TRUE(alttree.acceptBlockHeader(corruptedAltBlock, state))
+      << state.toString();
   ASSERT_TRUE(alttree.addPayloads(
-      corruptedAltBlock.getHash(), corruptedPayloads, state));
+      corruptedAltBlock.getHash(), corruptedPayloads, state))
+      << state.toString();
 
   auto chainB = corruptedAltBlock;
 
-  EXPECT_TRUE(alttree.setState(chainA.getHash(), state));
+  EXPECT_TRUE(alttree.setState(chainA.getHash(), state)) << state.toString();
 
   validateAlttreeIndexState(alttree, chainA, payloads);
 
@@ -69,7 +73,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   auto* originalAltTip = alttree.getBestChain().tip();
   EXPECT_EQ(originalAltTip->getHeader(), chainA);
 
-  EXPECT_FALSE(alttree.setState(chainB.getHash(), state));
+  EXPECT_FALSE(alttree.setState(chainB.getHash(), state)) << state.toString();
 
   validateAlttreeIndexState(alttree, chainB, corruptedPayloads, false);
 

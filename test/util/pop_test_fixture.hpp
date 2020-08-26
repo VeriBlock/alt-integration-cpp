@@ -105,26 +105,41 @@ struct PopTestFixture {
   }
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
-                                      size_t num) {
+                                      size_t num,
+                                      bool connectBlocks = false,
+                                      bool setState = true) {
     const BlockIndex<AltBlock>* index = &prev;
     for (size_t i = 0; i < num; i++) {
       auto next = generateNextBlock(index->getHeader());
       EXPECT_TRUE(alttree.acceptBlockHeader(next, state));
-      EXPECT_TRUE(alttree.setState(next.getHash(), state));
+      if (connectBlocks) {
+        alttree.acceptBlock(next.getHash(), {});
+      }
+      if (setState) {
+        EXPECT_TRUE(alttree.setState(next.getHash(), state));
+      }
       index = alttree.getBlockIndex(next.getHash());
     }
 
     return const_cast<BlockIndex<AltBlock>*>(index);
   }
 
-  void mineAltBlocks(uint32_t num, std::vector<AltBlock>& chain) {
+  void mineAltBlocks(uint32_t num,
+                     std::vector<AltBlock>& chain,
+                     bool connectBlocks = false,
+                     bool setState = true) {
     ASSERT_NE(chain.size(), 0);
 
     for (uint32_t i = 0; i < num; ++i) {
       chain.push_back(generateNextBlock(*chain.rbegin()));
 
       ASSERT_TRUE(alttree.acceptBlockHeader(*chain.rbegin(), state));
-      ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+      if (connectBlocks) {
+        alttree.acceptBlock(chain.back().getHash(), {});
+      }
+      if (setState) {
+        ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+      }
       ASSERT_TRUE(state.IsValid());
     }
   }

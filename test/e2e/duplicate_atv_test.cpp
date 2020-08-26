@@ -20,7 +20,7 @@ struct DuplicateATVfixture : public ::testing::Test, public PopTestFixture {
 
   DuplicateATVfixture() {
     chain.push_back(alttree.getParams().getBootstrapBlock());
-    mineAltBlocks(100, chain);
+    mineAltBlocks(100, chain, /*connectBlocks=*/false, /*setState=*/false);
     endorsed = chain[50];
     containing = chain[100];
     payloads = endorseAltBlock({endorsed}, 10);
@@ -40,16 +40,19 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
   // we are at chain[99]
   ASSERT_EQ(alttree.getBestChain().tip()->getHeader(), chain[99]);
 
-  // chain100 exists and marked as valid
+  // chain100 exists and marked as invalid
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100);
-  ASSERT_TRUE(index100->isValid());
-  // chain100 contains no command groups
+  ASSERT_FALSE(index100->isValid());
+  // chain100 has the duplicate payloads added
   auto& atvids = index100->getPayloadIds<ATV>();
-  ASSERT_EQ(atvids.size(), 0);
+  ASSERT_GT(atvids.size(), 0);
 
   // we can switch to chain 100
-  ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
+  // BUG: setState will clear BLOCK_FAILED_POP since it does not check for
+  // duplicates, thus letting us switch to an invalid block
+  ASSERT_TRUE(alttree.setState(chain[100].getHash(), state))
+      << state.toString();
 }
 
 // we can't test this due to payload invalidation being broken
@@ -100,7 +103,9 @@ TEST_F(DuplicateATVfixture,
   ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
 }
 
-TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_BA_removeB) {
+// disabled because we no longer support removing payloads from non-leaf blocks
+TEST_F(DuplicateATVfixture,
+       DISABLED_DuplicateATV_DifferentContaining_BA_removeB) {
   auto p2 = payloads;
   ASSERT_TRUE(alttree.addPayloads(chain[99].getHash(), p2, state));
   ASSERT_TRUE(alttree.setState(chain[99].getHash(), state));
@@ -159,21 +164,14 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
   ASSERT_EQ(atvids.size(), 1);
   ASSERT_TRUE(index100->isValid());
 
-  ASSERT_DEATH(validatePayloads(chain[100].getHash(), payloads, state), "already contains PopData");
+  ASSERT_DEATH(validatePayloads(chain[100].getHash(), payloads, state),
+               "already contains payloads");
 }
 
 TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   payloads.atvs.push_back(payloads.atvs.at(0));
 
-  ASSERT_FALSE(alttree.addPayloads(chain[100].getHash(), payloads, state));
-  ASSERT_EQ(state.GetPath(), "ATV-duplicate");
-
-  auto index100 = alttree.getBlockIndex(chain[100].getHash());
-  ASSERT_TRUE(index100);
-  auto& atvids = index100->getPayloadIds<ATV>();
-  ASSERT_EQ(atvids.size(), 0);
-  auto& vtbids = index100->getPayloadIds<VTB>();
-  ASSERT_EQ(vtbids.size(), 0);
-  auto& blockids = index100->getPayloadIds<VbkBlock>();
-  ASSERT_EQ(blockids.size(), 0);
+  // should fail due to payloads being statelessly invalid(duplicate ids)
+  ASSERT_DEATH(alttree.addPayloads(chain[100].getHash(), payloads, state),
+               "must not contain duplicate ATVs");
 }
