@@ -62,7 +62,7 @@ std::vector<typename P::id_t> map_get_id(
 
 template <typename T>
 std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
-  auto ids = map_get_id(v);
+  auto ids = map_get_id<T>(v);
   std::set<typename T::id_t> s(ids.begin(), ids.end());
   return s;
 }
@@ -70,7 +70,7 @@ std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
 template <typename T>
 std::set<typename T::id_t> make_idset(
     const std::vector<T>& v, std::function<typename T::id_t(const T&)> fn) {
-  auto ids = map_get_id(v, fn);
+  auto ids = map_get_id<T>(v, fn);
   std::set<typename T::id_t> s(ids.begin(), ids.end());
   return s;
 }
