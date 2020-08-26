@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/vtb.hpp"
-
 #include "veriblock/hashutil.hpp"
 
 using namespace altintegration;
@@ -60,6 +59,12 @@ VTB::id_t VTB::getId() const {
   auto containingVbkBlock = uint256(containingBlock.getHash());
   auto temp = sha256(blockOfProof, containingVbkBlock);
   return sha256(btcTx, temp);
+}
+
+VTB::id_t VTB::getStronglyEquivalencyId() const {
+  auto btcTx = transaction.bitcoinTransaction.getHash();
+  auto blockOfProof = transaction.blockOfProof.getHash();
+  return sha256(btcTx, blockOfProof);
 }
 
 VTB VTB::fromHex(const std::string& hex) {
