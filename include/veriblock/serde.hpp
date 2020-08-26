@@ -82,6 +82,24 @@ Slice<const uint8_t> readVarLenValue(
 
 /**
  * Read variable length value, which consists of
+ * `[N=(4 bytes = size of slice) | N bytes slice]`
+ * Size of slice should be within range [minLen; maxLen]
+ * @param stream read data from this stream
+ * @param out slice with data
+ * @param state will return error description here
+ * @param minLen minimum possible value of slice size
+ * @param maxLen maximum possible value of slice size
+ * @return true if read is OK, false otherwise
+ */
+bool readVarLenValueNoExcept(
+    ReadStream& stream,
+    Slice<const uint8_t>& out,
+    ValidationState& state,
+    int32_t minLen = 0,
+    int32_t maxLen = (std::numeric_limits<int32_t>::max)());
+
+/**
+ * Read variable length value, which consists of
  * `[N=(1 byte = size of slice) | N bytes slice]`
  * Size of slice should be within range [minLen; maxLen]
  * @param stream read data from this stream
@@ -100,16 +118,17 @@ Slice<const uint8_t> readSingleByteLenValue(
  * `[N=(1 byte = size of slice) | N bytes slice]`
  * Size of slice should be within range [minLen; maxLen]
  * @param stream read data from this stream
+ * @param out slice with data
+ * @param state will return error description here
  * @param minLen minimum possible value of slice size
  * @param maxLen maximum possible value of slice size
- * @param out slice with data
  * @return true if read is OK, false otherwise
  */
 bool readSingleByteLenValueNoExcept(ReadStream& stream,
-                                    int minLen,
-                                    int maxLen,
                                     Slice<const uint8_t>& out,
-                                    ValidationState& state);
+                                    ValidationState& state,
+                                    int minLen,
+                                    int maxLen);
 
 /**
  * Read single Big-Endian value from a stream.
@@ -125,6 +144,26 @@ T readSingleBEValue(ReadStream& stream) {
   return ReadStream(
              pad(readSingleByteLenValue(stream, 0, sizeof(T)), sizeof(T)))
       .readBE<T>();
+}
+
+/**
+ * Read single Big-Endian value from a stream.
+ * This function interprets sizeof(T) bytes as Big-Endian number and returns it.
+ * @tparam T number type - uint64_t, etc.
+ * @param stream read data from this stream
+ * @param out read number
+ * @param state will return error description here
+ * @return true if read is OK, false otherwise
+ */
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type>
+bool readSingleBEValueNoExcept(ReadStream& stream, T& out, ValidationState& state) {
+  Slice<const uint8_t> data;
+  if (!readSingleByteLenValueNoExcept(stream, data, state, 0, sizeof(T))) {
+    return state.Invalid("bad-data");
+  }
+  auto dataStream = ReadStream(pad(data, sizeof(T)));
+  return dataStream.readBENoExcept<T>(out, state);
 }
 
 /**

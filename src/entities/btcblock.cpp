@@ -118,7 +118,7 @@ bool altintegration::Deserialize(Slice<const uint8_t> data,
   ReadStream dataStream(data);
   Slice<const uint8_t> value;
   if (!readSingleByteLenValueNoExcept(
-          dataStream, BTC_HEADER_SIZE, BTC_HEADER_SIZE, value, state)) {
+          dataStream, value, state, BTC_HEADER_SIZE, BTC_HEADER_SIZE)) {
     return state.Invalid("bad-header");
   }
   return DeserializeRaw(value, out, state);

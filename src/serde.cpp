@@ -34,6 +34,23 @@ Slice<const uint8_t> readVarLenValue(ReadStream& stream,
   return stream.readSlice(length);
 }
 
+bool readVarLenValueNoExcept(
+  ReadStream& stream,
+  Slice<const uint8_t>& out,
+    ValidationState& state,
+    int32_t minLen,
+    int32_t maxLen) {
+  int32_t length;
+  if (!readSingleBEValueNoExcept<int32_t>(stream, length, state)) {
+    return state.Invalid("malformed-length");
+  }
+  if (!checkRangeNoExcept(length, minLen, maxLen, state)) {
+    return state.Invalid("bad-length");
+  }
+  return stream.readSliceNoExcept(length, out, state);
+
+}
+
 Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
                                             int minLen,
                                             int maxLen) {
@@ -43,10 +60,10 @@ Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
 }
 
 bool readSingleByteLenValueNoExcept(ReadStream& stream,
-                                    int minLen,
-                                    int maxLen,
                                     Slice<const uint8_t>& out,
-                                    ValidationState& state) {
+                                    ValidationState& state,
+                                    int minLen,
+                                    int maxLen) {
   uint8_t lengthLength;
   if (!stream.readBENoExcept<uint8_t>(lengthLength, state)) {
     return state.Invalid("invalid-length-of-length");

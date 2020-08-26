@@ -107,3 +107,62 @@ std::string VbkBlock::toPrettyString() const {
       difficulty,
       nonce);
 }
+
+bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
+                                    VbkBlock& out,
+                                    ValidationState& state) {
+  ReadStream stream(data);
+  VbkBlock block{};
+  if (!stream.readBENoExcept<int32_t>(block.height, state)) {
+    return state.Invalid("block-height");
+  }
+  if (!stream.readBENoExcept<int16_t>(block.version, state)) {
+    return state.Invalid("block-version");
+  }
+  Slice<const uint8_t> previousBlock;
+  if (!stream.readSliceNoExcept(
+          VBLAKE_PREVIOUS_BLOCK_HASH_SIZE, previousBlock, state)) {
+    return state.Invalid("block-previous");
+  }
+  block.previousBlock = previousBlock;
+  Slice<const uint8_t> previousKeystone;
+  if (!stream.readSliceNoExcept(
+          VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, previousKeystone, state)) {
+    return state.Invalid("block-previous-keystone");
+  }
+  block.previousKeystone = previousKeystone;
+  Slice<const uint8_t> secondPreviousKeystone;
+  if (!stream.readSliceNoExcept(
+          VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, secondPreviousKeystone, state)) {
+    return state.Invalid("block-second-previous-keystone");
+  }
+  block.secondPreviousKeystone = secondPreviousKeystone;
+  Slice<const uint8_t> merkleRoot;
+  if (!stream.readSliceNoExcept(VBK_MERKLE_ROOT_HASH_SIZE, merkleRoot, state)) {
+    return state.Invalid("block-merkle-root");
+  }
+  block.merkleRoot = merkleRoot;
+  if (!stream.readLENoExcept<int32_t>(block.timestamp, state)) {
+    return state.Invalid("block-timestamp");
+  }
+  if (!stream.readLENoExcept<int32_t>(block.difficulty, state)) {
+    return state.Invalid("block-difficulty");
+  }
+  if (!stream.readLENoExcept<int32_t>(block.nonce, state)) {
+    return state.Invalid("block-nonce");
+  }
+  out = block;
+  return true;
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+                                 VbkBlock& out,
+                                 ValidationState& state) {
+  ReadStream dataStream(data);
+  Slice<const uint8_t> value;
+  if (!readSingleByteLenValueNoExcept(
+          dataStream, value, state, VBK_HEADER_SIZE, VBK_HEADER_SIZE)) {
+    return state.Invalid("bad-header");
+  }
+  return DeserializeRaw(value, out, state);
+}
