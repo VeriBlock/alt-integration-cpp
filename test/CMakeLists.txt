@@ -23,6 +23,7 @@ addtest(keystone_util_test keystone_util_test.cpp)
 addtest(validationstate_test validationstate_test.cpp)
 addtest(alt-util_test alt-util_test.cpp)
 addtest(mempool_test mempool_test.cpp)
+addtest(mempool_prioritization_test mempool_prioritization_test.cpp)
 set_tests_properties(mempool_test PROPERTIES
         COST 10000 # 10 sec
         )
