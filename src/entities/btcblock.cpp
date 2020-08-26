@@ -3,7 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/btcblock.hpp"
+#include <veriblock/entities/btcblock.hpp>
 
 using namespace altintegration;
 
@@ -79,4 +79,47 @@ std::string BtcBlock::toPrettyString() const {
       timestamp,
       bits,
       nonce);
+}
+
+bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
+                    BtcBlock& out,
+                    ValidationState& state) {
+  ReadStream stream(data);
+  BtcBlock block{};
+  if (!stream.readLENoExcept<uint32_t>(block.version, state)) {
+    return state.Invalid("block-version");
+  }
+  Slice<const uint8_t> previousBlock;
+  if (!stream.readSliceNoExcept(SHA256_HASH_SIZE, previousBlock, state)) {
+    return state.Invalid("block-previous");
+  }
+  block.previousBlock = previousBlock.reverse();
+  Slice<const uint8_t> merkleRoot;
+  if (!stream.readSliceNoExcept(SHA256_HASH_SIZE, merkleRoot, state)) {
+    return state.Invalid("block-merkle-root");
+  }
+  block.merkleRoot = merkleRoot.reverse();
+  if (!stream.readLENoExcept<uint32_t>(block.timestamp, state)) {
+    return state.Invalid("block-timestamp");
+  }
+  if (!stream.readLENoExcept<uint32_t>(block.bits, state)) {
+    return state.Invalid("block-difficulty");
+  }
+  if (!stream.readLENoExcept<uint32_t>(block.nonce, state)) {
+    return state.Invalid("block-nonce");
+  }
+  out = block;
+  return true;
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+                 BtcBlock& out,
+                 ValidationState& state) {
+  ReadStream dataStream(data);
+  Slice<const uint8_t> value;
+  if (!readSingleByteLenValueNoExcept(
+          dataStream, BTC_HEADER_SIZE, BTC_HEADER_SIZE, value, state)) {
+    return state.Invalid("bad-header");
+  }
+  return DeserializeRaw(value, out, state);
 }

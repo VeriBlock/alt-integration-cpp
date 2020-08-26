@@ -42,6 +42,21 @@ Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
   return stream.readSlice(lengthLength);
 }
 
+bool readSingleByteLenValueNoExcept(ReadStream& stream,
+                                    int minLen,
+                                    int maxLen,
+                                    Slice<const uint8_t>& out,
+                                    ValidationState& state) {
+  uint8_t lengthLength;
+  if (!stream.readBENoExcept<uint8_t>(lengthLength, state)) {
+    return state.Invalid("invalid-length-of-length");
+  }
+  if (!checkRangeNoExcept(lengthLength, minLen, maxLen, state)) {
+    return state.Invalid("invalid-length-of-length");
+  }
+  return stream.readSliceNoExcept(lengthLength, out, state);
+}
+
 void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value) {
   checkRange(value.size(), 0, (std::numeric_limits<uint8_t>::max)());
   stream.writeBE<uint8_t>((uint8_t)value.size());

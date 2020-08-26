@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "slice.hpp"
+#include "validation_state.hpp"
 
 namespace altintegration {
 
@@ -30,6 +31,17 @@ class ReadStream {
   /**
    * Read vector of 'size' bytes
    * @param size bytes to be read
+   * @param out vector of bytes read from a stream
+   * @param state will return error description here
+   * @return true if read is OK, false otherwise
+   */
+  bool readNoExcept(size_t size,
+                    std::vector<uint8_t> &out,
+                    ValidationState &state);
+
+  /**
+   * Read vector of 'size' bytes
+   * @param size bytes to be read
    * @return vector of bytes read from a stream
    */
   std::vector<uint8_t> read(size_t size);
@@ -38,22 +50,47 @@ class ReadStream {
    * Read type T of 'size' bytes
    * @tparam T any contiguous storage type (std::string, std::vector)
    * @param size bytes to be read
-   * @return T of bytes raad from a stream
+   * @param out T of bytes read from a stream
+   * @param state will return error description here
+   * @return true if read is OK, false otherwise
    */
   template <typename T,
             typename = typename std::enable_if<sizeof(typename T::value_type) ==
                                                1>::type>
-  T read(size_t size) {
+  bool readNoExcept(size_t size, T& out, ValidationState& state) {
     if (!hasMore(size)) {
-      throw std::out_of_range("stream.read(): out of data");
+      return state.Invalid("buffer-inderflow");
     }
 
     T result;
     result.resize(size);
     std::copy(m_Buffer + m_Pos, m_Buffer + m_Pos + size, result.data());
     m_Pos += size;
-    return result;
+    out = result;
+    return true;
   }
+
+  /**
+   * Read type T of 'size' bytes
+   * @tparam T any contiguous storage type (std::string, std::vector)
+   * @param size bytes to be read
+   * @return T of bytes read from a stream
+   */
+  template <typename T,
+            typename = typename std::enable_if<sizeof(typename T::value_type) ==
+                                               1>::type>
+  T read(size_t size) {
+    T out;
+    ValidationState state;
+    if (!readNoExcept(size, out, state)) {
+      throw std::out_of_range("stream.read(): out of data");
+    }
+    return out;
+  }
+
+  bool readSliceNoExcept(size_t size,
+                         Slice<const uint8_t> &out,
+                         ValidationState &state);
 
   Slice<const uint8_t> readSlice(size_t size);
 
@@ -61,31 +98,60 @@ class ReadStream {
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  T readBE() {
+  bool readBENoExcept(T &out, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
-      throw std::out_of_range("stream.readSingleBEValue(): out of data");
+      return state.Invalid("buffer-inderflow");
     }
     T t = 0;
     for (size_t i = 0, shift = (sizeof(T) - 1) * 8; i < sizeof(T);
          i++, shift -= 8) {
       t += ((T)m_Buffer[m_Pos++]) << shift;
     }
-    return t;
+    out = t;
+    return true;
   }
 
-  //  little endian
+  // big endian
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  T readLE() {
-    if (!hasMore(sizeof(T))) {
-      throw std::out_of_range("stream.readLE(): out of data");
+  T readBE() {
+    T out;
+    ValidationState state;
+    if (!readBENoExcept(out, state)) {
+      throw std::out_of_range("stream.readBE(): out of data");
     }
+    return out;
+  }
+
+    // little endian
+  template <
+      typename T,
+      typename = typename std::enable_if<std::is_integral<T>::value>::type>
+  bool readLENoExcept(T &out, ValidationState &state) {
+    if (!hasMore(sizeof(T))) {
+      return state.Invalid("buffer-inderflow");
+    }
+
     T t = 0;
     for (size_t i = 0, shift = 0; i < sizeof(T); i++, shift += 8) {
       t += m_Buffer[m_Pos++] << shift;
     }
-    return t;
+    out = t;
+    return true;
+  }
+
+  // little endian
+  template <
+      typename T,
+      typename = typename std::enable_if<std::is_integral<T>::value>::type>
+  T readLE() {
+    T out;
+    ValidationState state;
+    if (!readLENoExcept(out, state)) {
+      throw std::out_of_range("stream.readLE(): out of data");
+    }
+    return out;
   }
 
   size_t position() const noexcept;

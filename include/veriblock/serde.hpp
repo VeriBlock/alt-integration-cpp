@@ -96,6 +96,22 @@ Slice<const uint8_t> readSingleByteLenValue(
     int32_t maxLen = (std::numeric_limits<int32_t>::max)());
 
 /**
+ * Read variable length value, which consists of
+ * `[N=(1 byte = size of slice) | N bytes slice]`
+ * Size of slice should be within range [minLen; maxLen]
+ * @param stream read data from this stream
+ * @param minLen minimum possible value of slice size
+ * @param maxLen maximum possible value of slice size
+ * @param out slice with data
+ * @return true if read is OK, false otherwise
+ */
+bool readSingleByteLenValueNoExcept(ReadStream& stream,
+                                    int minLen,
+                                    int maxLen,
+                                    Slice<const uint8_t>& out,
+                                    ValidationState& state);
+
+/**
  * Read single Big-Endian value from a stream.
  * This function interprets sizeof(T) bytes as Big-Endian number and returns it.
  * @tparam T number type - uint64_t, etc.
