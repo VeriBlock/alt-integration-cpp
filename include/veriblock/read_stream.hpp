@@ -114,7 +114,7 @@ class ReadStream {
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
   T readBE() {
-    T out;
+    T out{};
     ValidationState state;
     if (!readBE(out, state)) {
       throw std::out_of_range("stream.readBE(): out of data");
@@ -144,7 +144,7 @@ class ReadStream {
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
   T readLE() {
-    T out;
+    T out{};
     ValidationState state;
     if (!readLE(out, state)) {
       throw std::out_of_range("stream.readLE(): out of data");
