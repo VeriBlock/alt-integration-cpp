@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 
 #include <util/alt_chain_params_regtest.hpp>
+#include <util/test_main.hpp>
 #include <util/test_utils.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
@@ -53,6 +54,12 @@ struct PopTestFixture {
     SetLogger<FmtLogger>();
     GetLogger().level = LogLevel::off;
 
+    // by default, set mocktime to the latest time between all genesis blocks
+    auto time = std::max({altparam.getBootstrapBlock().getBlockTime(),
+                          vbkparam.getGenesisBlock().getBlockTime(),
+                          btcparam.getGenesisBlock().getBlockTime()});
+    setMockTime(time + 1);
+
     EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.bootstrap(state));
@@ -60,8 +67,6 @@ struct PopTestFixture {
     popminer = std::make_shared<MockMiner>();
 
     mempool = std::make_shared<MemPool>(alttree);
-
-    setMockTime(1337);
   }
 
   // T = tree
