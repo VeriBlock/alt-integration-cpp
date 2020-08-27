@@ -141,13 +141,14 @@ bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
                     ValidationState& state,
                     const BtcChainParams& param) {
   if (int64_t(block.getBlockTime()) < getMedianTimePast(prev)) {
-    return state.Invalid("btc-time-too-old", "block's timestamp is too early");
+    return state.Invalid("btc-time-too-old",
+                         "BTC block's timestamp is too early");
   }
 
-  if (int64_t(block.getBlockTime()) >
-      currentTimestamp4() + param.maxFutureBlockTime()) {
+  const auto time = currentTimestamp4();
+  if (int64_t(block.getBlockTime()) > time + param.maxFutureBlockTime()) {
     return state.Invalid("btc-time-too-new",
-                         "block timestamp too far in the future");
+                         "BTC block timestamp too far in the future");
   }
 
   return true;
