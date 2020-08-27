@@ -427,20 +427,6 @@ bool VbkBlockTree::loadTip(const Blob<24>& hash, ValidationState& state) {
   return true;
 }
 
-bool VbkBlockTree::areOnSameChain(const VbkBlock& blk1, const VbkBlock& blk2) {
-  auto* blk_index1 = this->getBlockIndex(blk1.getHash());
-  auto* blk_index2 = this->getBlockIndex(blk2.getHash());
-
-  VBK_ASSERT_MSG(blk_index1, "unknown block %s", blk1.toPrettyString());
-  VBK_ASSERT_MSG(blk_index2, "unknown block %s", blk2.toPrettyString());
-
-  if (blk_index1->getHeight() > blk_index2->getHeight()) {
-    return blk_index1->getAncestor(blk_index2->getHeight()) == blk_index2;
-  } else {
-    return blk_index2->getAncestor(blk_index1->getHeight()) == blk_index1;
-  }
-}
-
 bool VbkBlockTree::isStronglyEquivalent(const VTB& vtb1, const VTB& vtb2) {
   bool are_on_the_same_chain =
       areOnSameChain(vtb1.containingBlock, vtb2.containingBlock);
@@ -449,6 +435,25 @@ bool VbkBlockTree::isStronglyEquivalent(const VTB& vtb1, const VTB& vtb2) {
           vtb2.transaction.bitcoinTransaction) &&
          (vtb1.transaction.blockOfProof == vtb2.transaction.blockOfProof) &&
          are_on_the_same_chain;
+}
+
+bool VbkBlockTree::isWeaklyEquivalent(const VTB& vtb1, const VTB& vtb2) {
+  bool is_on_the_same_btc_chain = btc().areOnSameChain(
+      vtb1.transaction.blockOfProof, vtb2.transaction.blockOfProof);
+
+  bool is_on_the_same_vbk_chain = areOnSameChain(
+      vtb1.transaction.publishedBlock, vtb2.transaction.publishedBlock);
+
+  bool is_the_same_keystone_period =
+      abs(vtb1.transaction.publishedBlock.height -
+          vtb2.transaction.publishedBlock.height) <=
+      (int32_t)getParams().getKeystoneInterval();
+
+  return ((vtb1.transaction.publishedBlock ==
+           vtb2.transaction.publishedBlock) &&
+          is_on_the_same_btc_chain) ||
+         (is_on_the_same_vbk_chain && is_the_same_keystone_period &&
+          is_on_the_same_btc_chain);
 }
 
 template <>

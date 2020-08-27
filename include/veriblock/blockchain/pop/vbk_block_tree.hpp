@@ -59,7 +59,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool isStronglyEquivalent(const VTB& vtb1, const VTB& vtb2);
 
-  bool areOnSameChain(const VbkBlock& blk1, const VbkBlock& blk2);
+  bool isWeaklyEquivalent(const VTB& vtb1, const VTB& vtb2);
 
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
