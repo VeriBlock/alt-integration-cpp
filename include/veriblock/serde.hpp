@@ -91,12 +91,11 @@ Slice<const uint8_t> readVarLenValue(
  * @param maxLen maximum possible value of slice size
  * @return true if read is OK, false otherwise
  */
-bool readVarLenValueNoExcept(
-    ReadStream& stream,
-    Slice<const uint8_t>& out,
-    ValidationState& state,
-    int32_t minLen = 0,
-    int32_t maxLen = (std::numeric_limits<int32_t>::max)());
+bool readVarLenValue(ReadStream& stream,
+                     Slice<const uint8_t>& out,
+                     ValidationState& state,
+                     int32_t minLen = 0,
+                     int32_t maxLen = (std::numeric_limits<int32_t>::max)());
 
 /**
  * Read variable length value, which consists of
@@ -124,11 +123,11 @@ Slice<const uint8_t> readSingleByteLenValue(
  * @param maxLen maximum possible value of slice size
  * @return true if read is OK, false otherwise
  */
-bool readSingleByteLenValueNoExcept(ReadStream& stream,
-                                    Slice<const uint8_t>& out,
-                                    ValidationState& state,
-                                    int minLen,
-                                    int maxLen);
+bool readSingleByteLenValue(ReadStream& stream,
+                            Slice<const uint8_t>& out,
+                            ValidationState& state,
+                            int minLen,
+                            int maxLen);
 
 /**
  * Read single Big-Endian value from a stream.
@@ -157,16 +156,14 @@ T readSingleBEValue(ReadStream& stream) {
  */
 template <typename T,
           typename = typename std::enable_if<std::is_integral<T>::value>::type>
-bool readSingleBEValueNoExcept(ReadStream& stream,
-                               T& out,
-                               ValidationState& state) {
+bool readSingleBEValue(ReadStream& stream, T& out, ValidationState& state) {
   Slice<const uint8_t> data;
-  if (!readSingleByteLenValueNoExcept(stream, data, state, 0, sizeof(T))) {
+  if (!readSingleByteLenValue(stream, data, state, 0, sizeof(T))) {
     return state.Invalid("bad-data");
   }
   auto padded = pad(data, sizeof(T));
   auto dataStream = ReadStream(padded);
-  return dataStream.readBENoExcept<T>(out, state);
+  return dataStream.readBE<T>(out, state);
 }
 
 /**
@@ -241,10 +238,10 @@ NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
  * @param state will return error description here
  * @return true if read is OK, false otherwise
  */
-bool readNetworkByteNoExcept(ReadStream& stream,
-                             TxType type,
-                             NetworkBytePair& out,
-                             ValidationState& state);
+bool readNetworkByte(ReadStream& stream,
+                     TxType type,
+                     NetworkBytePair& out,
+                     ValidationState& state);
 
 /**
  * Write optional network byte to the stream
@@ -266,7 +263,7 @@ void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
  * @return true if read is OK, false otherwise
  */
 template <typename T>
-bool readArrayOfNoExcept(
+bool readArrayOf(
     ReadStream& stream,
     std::vector<T>& out,
     ValidationState& state,
@@ -274,10 +271,10 @@ bool readArrayOfNoExcept(
     int32_t max,
     std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
   int32_t count = 0;
-  if (!readSingleBEValueNoExcept<int32_t>(stream, count, state)) {
+  if (!readSingleBEValue<int32_t>(stream, count, state)) {
     return state.Invalid("bad-count");
   }
-  if (!checkRangeNoExcept(count, min, max, state)) {
+  if (!checkRange(count, min, max, state)) {
     return state.Invalid("bad-count");
   }
 
@@ -325,13 +322,13 @@ std::vector<T> readArrayOf(ReadStream& stream,
 }
 
 template <typename T>
-bool readArrayOfNoExcept(
+bool readArrayOf(
     ReadStream& stream,
     std::vector<T>& out,
     ValidationState& state,
     std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
   int32_t max = std::numeric_limits<int32_t>::max();
-  return readArrayOfNoExcept<T>(stream, out, state, 0, max, readFunc);
+  return readArrayOf<T>(stream, out, state, 0, max, readFunc);
 }
 
 template <typename T>

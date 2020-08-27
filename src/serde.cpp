@@ -34,21 +34,19 @@ Slice<const uint8_t> readVarLenValue(ReadStream& stream,
   return stream.readSlice(length);
 }
 
-bool readVarLenValueNoExcept(
-  ReadStream& stream,
-  Slice<const uint8_t>& out,
-    ValidationState& state,
-    int32_t minLen,
-    int32_t maxLen) {
+bool readVarLenValue(ReadStream& stream,
+                     Slice<const uint8_t>& out,
+                     ValidationState& state,
+                     int32_t minLen,
+                     int32_t maxLen) {
   int32_t length;
-  if (!readSingleBEValueNoExcept<int32_t>(stream, length, state)) {
+  if (!readSingleBEValue<int32_t>(stream, length, state)) {
     return state.Invalid("malformed-length");
   }
-  if (!checkRangeNoExcept(length, minLen, maxLen, state)) {
+  if (!checkRange(length, minLen, maxLen, state)) {
     return state.Invalid("bad-length");
   }
-  return stream.readSliceNoExcept(length, out, state);
-
+  return stream.readSlice(length, out, state);
 }
 
 Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
@@ -59,19 +57,19 @@ Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
   return stream.readSlice(lengthLength);
 }
 
-bool readSingleByteLenValueNoExcept(ReadStream& stream,
-                                    Slice<const uint8_t>& out,
-                                    ValidationState& state,
-                                    int minLen,
-                                    int maxLen) {
+bool readSingleByteLenValue(ReadStream& stream,
+                            Slice<const uint8_t>& out,
+                            ValidationState& state,
+                            int minLen,
+                            int maxLen) {
   uint8_t lengthLength;
-  if (!stream.readBENoExcept<uint8_t>(lengthLength, state)) {
+  if (!stream.readBE<uint8_t>(lengthLength, state)) {
     return state.Invalid("invalid-length-of-length");
   }
-  if (!checkRangeNoExcept(lengthLength, minLen, maxLen, state)) {
+  if (!checkRange(lengthLength, minLen, maxLen, state)) {
     return state.Invalid("invalid-length-of-length");
   }
-  return stream.readSliceNoExcept(lengthLength, out, state);
+  return stream.readSlice(lengthLength, out, state);
 }
 
 void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value) {
@@ -106,12 +104,12 @@ NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
   return ret;
 }
 
-bool readNetworkByteNoExcept(ReadStream& stream,
-                             TxType type,
-                             NetworkBytePair& out,
-                             ValidationState& state) {
+bool readNetworkByte(ReadStream& stream,
+                     TxType type,
+                     NetworkBytePair& out,
+                     ValidationState& state) {
   uint8_t networkOrType;
-  if (!stream.readBENoExcept<uint8_t>(networkOrType, state)) {
+  if (!stream.readBE<uint8_t>(networkOrType, state)) {
     return state.Invalid("invalid-network-byte");
   }
 
@@ -121,7 +119,7 @@ bool readNetworkByteNoExcept(ReadStream& stream,
   } else {
     ret.hasNetworkByte = true;
     ret.networkByte = networkOrType;
-    if (!stream.readBENoExcept<uint8_t>(ret.typeId, state)) {
+    if (!stream.readBE<uint8_t>(ret.typeId, state)) {
       return state.Invalid("invalid-type-id");
     }
   }

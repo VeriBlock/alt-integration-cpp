@@ -27,7 +27,7 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  Coin& out,
                                  ValidationState& state) {
   int64_t amount;
-  if (!readSingleBEValueNoExcept<int64_t>(stream, amount, state)) {
+  if (!readSingleBEValue<int64_t>(stream, amount, state)) {
     return state.Invalid("invalid-amount");
   }
   out = Coin(amount);

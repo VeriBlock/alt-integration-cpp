@@ -32,7 +32,7 @@ void checkRange(int64_t num, int64_t min, int64_t max);
  * @param state will return error description here
  * @return true if check is OK, false otherwise
  */
-bool checkRangeNoExcept(int64_t num, int64_t min, int64_t max, ValidationState& state);
+bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState& state);
 
 }  // namespace altintegration
 

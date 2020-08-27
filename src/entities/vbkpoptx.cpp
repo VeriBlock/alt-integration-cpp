@@ -66,13 +66,14 @@ uint256 VbkPopTx::getHash() const {
 
 std::string VbkPopTx::toPrettyString() const {
   return fmt::sprintf(
-      "VbkPopTx{address=%s, publishedBlock=%s, blockOfProof=%s, context= %d blocks starting with %s}",
+      "VbkPopTx{address=%s, publishedBlock=%s, blockOfProof=%s, context= %d "
+      "blocks starting with %s}",
       address.toString(),
       publishedBlock.toPrettyString(),
       blockOfProof.toPrettyString(),
       blockOfProofContext.size(),
-      blockOfProofContext.size() > 0 ?blockOfProofContext[0].toPrettyString() : "(none)"
-                     );
+      blockOfProofContext.size() > 0 ? blockOfProofContext[0].toPrettyString()
+                                     : "(none)");
 }
 
 bool altintegration::DeserializeRaw(ReadStream& stream,
@@ -81,8 +82,7 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
                                     VbkPopTx& out,
                                     ValidationState& state) {
   VbkPopTx tx{};
-  if (!readNetworkByteNoExcept(
-          stream, TxType::VBK_POP_TX, tx.networkOrType, state)) {
+  if (!readNetworkByte(stream, TxType::VBK_POP_TX, tx.networkOrType, state)) {
     return state.Invalid("network-or-type");
   }
 
@@ -106,12 +106,12 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
   }
 
   typedef bool (*btcde)(ReadStream&, BtcBlock&, ValidationState&);
-  if (!readArrayOfNoExcept<BtcBlock>(stream,
-                                     tx.blockOfProofContext,
-                                     state,
-                                     0,
-                                     MAX_CONTEXT_COUNT,
-                                     static_cast<btcde>(Deserialize))) {
+  if (!readArrayOf<BtcBlock>(stream,
+                             tx.blockOfProofContext,
+                             state,
+                             0,
+                             MAX_CONTEXT_COUNT,
+                             static_cast<btcde>(Deserialize))) {
     return state.Invalid("btc-context");
   }
 
@@ -132,30 +132,27 @@ bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
 }
 
 bool altintegration::Deserialize(ReadStream& stream,
-  VbkPopTx& out,
-  ValidationState& state) {
+                                 VbkPopTx& out,
+                                 ValidationState& state) {
   Slice<const uint8_t> rawTx;
-  if (!readVarLenValueNoExcept(
-          stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKPOPTX)) {
+  if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKPOPTX)) {
     return state.Invalid("invalid-tx");
   }
   Slice<const uint8_t> signature;
-  if (!readSingleByteLenValueNoExcept(
+  if (!readSingleByteLenValue(
           stream, signature, state, 0, MAX_SIGNATURE_SIZE)) {
     return state.Invalid("invalid-signature");
   }
   Slice<const uint8_t> publicKey;
-  if (!readSingleByteLenValueNoExcept(
-          stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
+  if (!readSingleByteLenValue(stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
     return state.Invalid("invalid-public-key");
   }
   return DeserializeRaw(rawTx, signature, publicKey, out, state);
-
 }
 
 bool altintegration::Deserialize(Slice<const uint8_t> data,
-  VbkPopTx& out,
-  ValidationState& state) {
+                                 VbkPopTx& out,
+                                 ValidationState& state) {
   ReadStream stream(data);
   return Deserialize(stream, out, state);
 }

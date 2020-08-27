@@ -213,16 +213,16 @@ Address::Address(const std::string& input) {
   m_Address = input;
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
+bool Deserialize(ReadStream& stream,
                                  Address& out,
                                  ValidationState& state) {
   uint8_t addressType;
-  if (!stream.readLENoExcept<uint8_t>(addressType, state)) {
+  if (!stream.readLE<uint8_t>(addressType, state)) {
     return state.Invalid("address-type");
   }
 
   Slice<const uint8_t> addressBytes;
-  if (!readSingleByteLenValueNoExcept(
+  if (!readSingleByteLenValue(
           stream, addressBytes, state, 0, altintegration::ADDRESS_SIZE)) {
     return state.Invalid("address-bytes");
   }
@@ -250,7 +250,7 @@ bool altintegration::Deserialize(ReadStream& stream,
   return true;
 }
 
-bool altintegration::Deserialize(Slice<const uint8_t> data,
+bool Deserialize(Slice<const uint8_t> data,
   Address& out,
   ValidationState& state) {
   ReadStream stream(data);

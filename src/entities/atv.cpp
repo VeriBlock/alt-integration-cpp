@@ -64,7 +64,7 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  ATV& out,
                                  ValidationState& state) {
   ATV atv{};
-  if (!stream.readBENoExcept<uint32_t>(atv.version, state)) {
+  if (!stream.readBE<uint32_t>(atv.version, state)) {
     return state.Invalid("version");
   }
   if (atv.version != 1) {

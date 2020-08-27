@@ -68,6 +68,8 @@ bool altintegration::Deserialize(ReadStream& stream,
   VTB& out,
   ValidationState& state) {
   VTB vtb{};
+  typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
+
   if (!Deserialize(stream, vtb.transaction, state)) {
     return state.Invalid("transaction");
   }
@@ -77,6 +79,16 @@ bool altintegration::Deserialize(ReadStream& stream,
   if (!Deserialize(stream, vtb.containingBlock, state)) {
     return state.Invalid("containing-block");
   }
+
+  if (!readArrayOf<VbkBlock>(stream,
+                             vtb.context,
+                             state,
+                             0,
+                             MAX_CONTEXT_COUNT,
+                             static_cast<vbkde>(Deserialize))) {
+    return state.Invalid("context");
+  }
+
   out = vtb;
   return true;
 }

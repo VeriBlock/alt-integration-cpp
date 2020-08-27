@@ -32,26 +32,26 @@ void PublicationData::toRaw(WriteStream& stream) const {
 }
 
 bool altintegration::Deserialize(ReadStream& stream,
-  PublicationData& out,
-  ValidationState& state) {
+                                 PublicationData& out,
+                                 ValidationState& state) {
   PublicationData pub;
-  if (!readSingleBEValueNoExcept<int64_t>(stream, pub.identifier, state)) {
+  if (!readSingleBEValue<int64_t>(stream, pub.identifier, state)) {
     return state.Invalid("invalid-identifier");
   }
-  Slice<const uint8_t> header; 
-  if (!readVarLenValueNoExcept(
+  Slice<const uint8_t> header;
+  if (!readVarLenValue(
           stream, header, state, 0, MAX_HEADER_SIZE_PUBLICATION_DATA)) {
     return state.Invalid("invalid-header");
   }
   pub.header = header.asVector();
   Slice<const uint8_t> contextInfo;
-  if (!readVarLenValueNoExcept(
+  if (!readVarLenValue(
           stream, contextInfo, state, 0, MAX_CONTEXT_SIZE_PUBLICATION_DATA)) {
     return state.Invalid("invalid-context-info");
   }
   pub.contextInfo = contextInfo.asVector();
   Slice<const uint8_t> payoutInfo;
-  if (!readVarLenValueNoExcept(
+  if (!readVarLenValue(
           stream, payoutInfo, state, 0, MAX_PAYOUT_SIZE_PUBLICATION_DATA)) {
     return state.Invalid("invalid-payout-info");
   }
@@ -61,8 +61,8 @@ bool altintegration::Deserialize(ReadStream& stream,
 }
 
 bool altintegration::Deserialize(Slice<const uint8_t> data,
-  PublicationData& out,
-  ValidationState& state) {
+                                 PublicationData& out,
+                                 ValidationState& state) {
   ReadStream stream(data);
   return Deserialize(stream, out, state);
 }

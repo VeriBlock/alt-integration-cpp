@@ -61,24 +61,24 @@ uint128 VbkMerklePath::calculateMerkleRoot() const {
 }
 
 bool altintegration::Deserialize(ReadStream& stream,
-  VbkMerklePath& out,
-  ValidationState& state) {
+                                 VbkMerklePath& out,
+                                 ValidationState& state) {
   VbkMerklePath path{};
 
-  if (!readSingleBEValueNoExcept<int32_t>(stream, path.treeIndex, state)) {
+  if (!readSingleBEValue<int32_t>(stream, path.treeIndex, state)) {
     return state.Invalid("invalid-tree-index");
   }
-  if (!readSingleBEValueNoExcept<int32_t>(stream, path.index, state)) {
+  if (!readSingleBEValue<int32_t>(stream, path.index, state)) {
     return state.Invalid("invalid-index");
   }
   Slice<const uint8_t> subject;
-  if (!readSingleByteLenValueNoExcept(
+  if (!readSingleByteLenValue(
           stream, subject, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
     return state.Invalid("invalid-subject");
   }
   path.subject = subject;
 
-  readArrayOfNoExcept<uint256>(
+  readArrayOf<uint256>(
       stream,
       path.layers,
       state,
@@ -86,7 +86,7 @@ bool altintegration::Deserialize(ReadStream& stream,
       MAX_LAYER_COUNT_MERKLE,
       [](ReadStream& stream, uint256& out, ValidationState& state) {
         Slice<const uint8_t> layer;
-        if(!readSingleByteLenValueNoExcept(
+        if (!readSingleByteLenValue(
                 stream, layer, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
           return false;
         }
@@ -99,8 +99,8 @@ bool altintegration::Deserialize(ReadStream& stream,
 }
 
 bool altintegration::Deserialize(Slice<const uint8_t> data,
-  VbkMerklePath& out,
-  ValidationState& state) {
+                                 VbkMerklePath& out,
+                                 ValidationState& state) {
   ReadStream stream(data);
   return Deserialize(stream, out, state);
 }

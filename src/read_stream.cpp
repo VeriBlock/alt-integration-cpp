@@ -42,19 +42,19 @@ ReadStream::ReadStream(const std::vector<uint8_t> &v)
 ReadStream::ReadStream(const std::string &s)
     : m_Buffer((uint8_t *)s.data()), m_Size(s.size()) {}
 
-bool ReadStream::readNoExcept(size_t size,
-                              std::vector<uint8_t> &out,
-                              ValidationState &state) {
-  return readNoExcept<std::vector<uint8_t>>(size, out, state);
+bool ReadStream::read(size_t size,
+                      std::vector<uint8_t> &out,
+                      ValidationState &state) {
+  return read<std::vector<uint8_t>>(size, out, state);
 }
 
 std::vector<uint8_t> ReadStream::read(size_t size) {
   return read<std::vector<uint8_t>>(size);
 }
 
-bool ReadStream::readSliceNoExcept(size_t size,
-                                   Slice<const uint8_t> &out,
-                                   ValidationState &state) {
+bool ReadStream::readSlice(size_t size,
+                           Slice<const uint8_t> &out,
+                           ValidationState &state) {
   if (!hasMore(size)) {
     return state.Invalid("buffer-inderflow");
   }
@@ -68,7 +68,7 @@ bool ReadStream::readSliceNoExcept(size_t size,
 Slice<const uint8_t> ReadStream::readSlice(size_t size) {
   Slice<const uint8_t> out;
   ValidationState state;
-  if (!readSliceNoExcept(size, out, state)) {
+  if (!readSlice(size, out, state)) {
     throw std::out_of_range("stream.read(): out of data");
   }
   return out;

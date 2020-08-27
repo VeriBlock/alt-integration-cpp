@@ -35,9 +35,7 @@ class ReadStream {
    * @param state will return error description here
    * @return true if read is OK, false otherwise
    */
-  bool readNoExcept(size_t size,
-                    std::vector<uint8_t> &out,
-                    ValidationState &state);
+  bool read(size_t size, std::vector<uint8_t> &out, ValidationState &state);
 
   /**
    * Read vector of 'size' bytes
@@ -57,7 +55,7 @@ class ReadStream {
   template <typename T,
             typename = typename std::enable_if<sizeof(typename T::value_type) ==
                                                1>::type>
-  bool readNoExcept(size_t size, T& out, ValidationState& state) {
+  bool read(size_t size, T &out, ValidationState &state) {
     if (!hasMore(size)) {
       return state.Invalid("buffer-underflow");
     }
@@ -82,15 +80,15 @@ class ReadStream {
   T read(size_t size) {
     T out;
     ValidationState state;
-    if (!readNoExcept(size, out, state)) {
+    if (!read(size, out, state)) {
       throw std::out_of_range("stream.read(): out of data");
     }
     return out;
   }
 
-  bool readSliceNoExcept(size_t size,
-                         Slice<const uint8_t> &out,
-                         ValidationState &state);
+  bool readSlice(size_t size,
+                 Slice<const uint8_t> &out,
+                 ValidationState &state);
 
   Slice<const uint8_t> readSlice(size_t size);
 
@@ -98,7 +96,7 @@ class ReadStream {
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  bool readBENoExcept(T &out, ValidationState &state) {
+  bool readBE(T &out, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
       return state.Invalid("buffer-underflow");
     }
@@ -118,17 +116,17 @@ class ReadStream {
   T readBE() {
     T out;
     ValidationState state;
-    if (!readBENoExcept(out, state)) {
+    if (!readBE(out, state)) {
       throw std::out_of_range("stream.readBE(): out of data");
     }
     return out;
   }
 
-    // little endian
+  // little endian
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  bool readLENoExcept(T &out, ValidationState &state) {
+  bool readLE(T &out, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
       return state.Invalid("buffer-underflow");
     }
@@ -148,7 +146,7 @@ class ReadStream {
   T readLE() {
     T out;
     ValidationState state;
-    if (!readLENoExcept(out, state)) {
+    if (!readLE(out, state)) {
       throw std::out_of_range("stream.readLE(): out of data");
     }
     return out;

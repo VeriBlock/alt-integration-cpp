@@ -71,30 +71,30 @@ bool altintegration::Deserialize(ReadStream& stream,
   typedef bool (*atvde)(ReadStream&, ATV&, ValidationState&);
   typedef bool (*vtbde)(ReadStream&, VTB&, ValidationState&);
 
-  if (!readArrayOfNoExcept<VbkBlock>(stream,
-                                     pd.context,
-                                     state,
-                                     0,
-                                     MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                                     static_cast<vbkde>(Deserialize))) {
+  if (!readArrayOf<VbkBlock>(stream,
+                             pd.context,
+                             state,
+                             0,
+                             MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                             static_cast<vbkde>(Deserialize))) {
     return state.Invalid("bad-vbk-context");
   }
 
-  if (!readArrayOfNoExcept<ATV>(stream,
-                                pd.atvs,
-                                state,
-                                0,
-                                MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                                static_cast<atvde>(Deserialize))) {
+  if (!readArrayOf<ATV>(stream,
+                        pd.atvs,
+                        state,
+                        0,
+                        MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                        static_cast<atvde>(Deserialize))) {
     return state.Invalid("bad-atv-context");
   }
 
-  if (!readArrayOfNoExcept<VTB>(stream,
-                                pd.vtbs,
-                                state,
-                                0,
-                                MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                                static_cast<vtbde>(Deserialize))) {
+  if (!readArrayOf<VTB>(stream,
+                        pd.vtbs,
+                        state,
+                        0,
+                        MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                        static_cast<vtbde>(Deserialize))) {
     return state.Invalid("bad-vtb-context");
   }
   out = pd;

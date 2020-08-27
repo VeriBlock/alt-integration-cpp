@@ -70,14 +70,13 @@ uint256 VbkTx::getHash() const {
 }
 
 bool altintegration::DeserializeRaw(ReadStream& stream,
-  Slice<const uint8_t> signature,
-  Slice<const uint8_t> publicKey,
-  VbkTx& out,
-  ValidationState& state) {
+                                    Slice<const uint8_t> signature,
+                                    Slice<const uint8_t> publicKey,
+                                    VbkTx& out,
+                                    ValidationState& state) {
   VbkTx tx{};
 
-  if (!readNetworkByteNoExcept(
-          stream, TxType::VBK_TX, tx.networkOrType, state)) {
+  if (!readNetworkByte(stream, TxType::VBK_TX, tx.networkOrType, state)) {
     return state.Invalid("network-or-type");
   }
 
@@ -89,7 +88,7 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
   }
 
   uint8_t outputSize;
-  if (!stream.readBENoExcept<uint8_t>(outputSize, state)) {
+  if (!stream.readBE<uint8_t>(outputSize, state)) {
     return state.Invalid("outputs-size");
   }
 
@@ -102,13 +101,12 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
     tx.outputs.emplace_back(output);
   }
 
-  if (!readSingleBEValueNoExcept<int64_t>(stream, tx.signatureIndex, state)) {
+  if (!readSingleBEValue<int64_t>(stream, tx.signatureIndex, state)) {
     return state.Invalid("signature-index");
   }
 
   Slice<const uint8_t> pubBytes;
-  if (!readVarLenValueNoExcept(
-          stream, pubBytes, state, 0, MAX_SIZE_PUBLICATION_DATA)) {
+  if (!readVarLenValue(stream, pubBytes, state, 0, MAX_SIZE_PUBLICATION_DATA)) {
     return state.Invalid("publication-bytes");
   }
 
@@ -136,17 +134,16 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  VbkTx& out,
                                  ValidationState& state) {
   Slice<const uint8_t> rawTx;
-  if (!readVarLenValueNoExcept(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKTX)) {
+  if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKTX)) {
     return state.Invalid("bad-header");
   }
   Slice<const uint8_t> signature;
-  if (!readSingleByteLenValueNoExcept(
+  if (!readSingleByteLenValue(
           stream, signature, state, 0, MAX_SIGNATURE_SIZE)) {
     return state.Invalid("bad-signature");
   }
   Slice<const uint8_t> publicKey;
-  if (!readSingleByteLenValueNoExcept(
-          stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
+  if (!readSingleByteLenValue(stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
     return state.Invalid("bad-public-key");
   }
   return DeserializeRaw(rawTx, signature, publicKey, out, state);

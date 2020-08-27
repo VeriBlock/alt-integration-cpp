@@ -17,10 +17,7 @@ void checkRange(int64_t num, int64_t min, int64_t max) {
   }
 }
 
-bool checkRangeNoExcept(int64_t num,
-                        int64_t min,
-                        int64_t max,
-                        ValidationState& state) {
+bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState& state) {
   if (num < min) {
     return state.Invalid("range-below");
   }
