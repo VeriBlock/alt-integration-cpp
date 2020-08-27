@@ -9,7 +9,6 @@
 #include <gtest/gtest.h>
 
 #include <util/alt_chain_params_regtest.hpp>
-#include <util/test_main.hpp>
 #include <util/test_utils.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
