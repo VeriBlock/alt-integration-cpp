@@ -18,7 +18,7 @@ void setMockTime(uint32_t mocktime) {
 uint32_t getMockTime() { return MockTime.load(std::memory_order_relaxed); }
 
 uint32_t currentTimestamp4() {
-  int64_t mocktime = MockTime.load(std::memory_order_relaxed);
+  auto mocktime = MockTime.load(std::memory_order_relaxed);
   if (mocktime) {
     return mocktime;
   }
