@@ -15,6 +15,13 @@ bool isStronglyEquivalent(const VTB& vtb1,
   auto* vtb2_containing_block =
       tree.getBlockIndex(vtb2.containingBlock.getHash());
 
+  VBK_ASSERT_MSG(vtb1_containing_block,
+                 "vtb1 unknown containing block %s",
+                 vtb1.containingBlock.toPrettyString());
+  VBK_ASSERT_MSG(vtb2_containing_block,
+                 "vtb1 unknown containing block %s",
+                 vtb2.containingBlock.toPrettyString());
+
   bool is_on_the_same_chain = false;
   if (vtb1_containing_block->getHeight() > vtb2_containing_block->getHeight()) {
     is_on_the_same_chain =
