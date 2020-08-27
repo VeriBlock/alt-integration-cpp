@@ -64,12 +64,7 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  ATV& out,
                                  ValidationState& state) {
   ATV atv{};
-  if (!stream.readBE<uint32_t>(atv.version, state)) {
-    return state.Invalid("version");
-  }
-  if (atv.version != 1) {
-    return state.Invalid("bad-version");
-  }
+  typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
 
   if (!Deserialize(stream, atv.transaction, state)) {
     return state.Invalid("transaction");
@@ -80,6 +75,16 @@ bool altintegration::Deserialize(ReadStream& stream,
   if (!Deserialize(stream, atv.blockOfProof, state)) {
     return state.Invalid("containing-block");
   }
+
+  if (!readArrayOf<VbkBlock>(stream,
+                             atv.context,
+                             state,
+                             0,
+                             MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                             static_cast<vbkde>(Deserialize))) {
+    return state.Invalid("context");
+  }
+
   out = atv;
   return true;
 }
