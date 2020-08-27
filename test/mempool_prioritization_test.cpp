@@ -177,3 +177,39 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario2_test) {
   EXPECT_TRUE(popminer->vbk().isWeaklyEquivalent(vtb1, vtb2));
   EXPECT_TRUE(popminer->vbk().isWeaklyEquivalent(vtb2, vtb1));
 }
+
+TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario3_test) {
+  // mine 65 VBK blocks
+  auto* vbkTip = popminer->mineVbkBlocks(65);
+
+  // mine 10 Btc blocks
+  auto* btcFork = popminer->mineBtcBlocks(10);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  auto vbkPopTx1 = generatePopTx(endorsedVbkBlock->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1);
+  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+
+  ASSERT_EQ(vtbs.size(), 1);
+  ASSERT_EQ(vtbs[0].transaction.getHash(), vbkPopTx1.getHash());
+
+  auto vtb1 = vtbs[0];
+
+  // mine btc fork
+  popminer->mineBtcBlocks(*btcFork, 10);
+  auto vbkPopTx2 = generatePopTx(endorsedVbkBlock->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1);
+  vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+
+  ASSERT_EQ(vtbs.size(), 1);
+  ASSERT_EQ(vtbs[0].transaction.getHash(), vbkPopTx2.getHash());
+
+  auto vtb2 = vtbs[0];
+
+  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
+  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb2, vtb1));
+
+  EXPECT_FALSE(popminer->vbk().isWeaklyEquivalent(vtb1, vtb2));
+  EXPECT_FALSE(popminer->vbk().isWeaklyEquivalent(vtb2, vtb1));
+}
