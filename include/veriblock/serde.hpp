@@ -369,6 +369,18 @@ T fromRaw(const std::vector<uint8_t>& bytes) {
   return T::fromRaw(r);
 }
 
+template <typename T>
+bool Deserialize(Slice<const uint8_t> data, T& out, ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
+}
+
+template <typename T>
+bool DeserializeRaw(Slice<const uint8_t> data, T& out, ValidationState& state) {
+  ReadStream stream(data);
+  return DeserializeRaw(stream, out, state);
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_SERDE_HPP

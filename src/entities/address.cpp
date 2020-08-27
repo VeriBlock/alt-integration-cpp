@@ -250,11 +250,4 @@ bool Deserialize(ReadStream& stream,
   return true;
 }
 
-bool Deserialize(Slice<const uint8_t> data,
-  Address& out,
-  ValidationState& state) {
-  ReadStream stream(data);
-  return Deserialize(stream, out, state);
-}
-
 }  // namespace altintegration

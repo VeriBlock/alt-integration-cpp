@@ -154,13 +154,6 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
   return true;
 }
 
-bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
-                                    VbkBlock& out,
-                                    ValidationState& state) {
-  ReadStream stream(data);
-  return DeserializeRaw(stream, out, state);
-}
-
 bool altintegration::Deserialize(ReadStream& stream,
                                  VbkBlock& out,
                                  ValidationState& state) {
@@ -170,11 +163,4 @@ bool altintegration::Deserialize(ReadStream& stream,
     return state.Invalid("bad-header");
   }
   return DeserializeRaw(value, out, state);
-}
-
-bool altintegration::Deserialize(Slice<const uint8_t> data,
-                                 VbkBlock& out,
-                                 ValidationState& state) {
-  ReadStream stream(data);
-  return Deserialize(stream, out, state);
 }

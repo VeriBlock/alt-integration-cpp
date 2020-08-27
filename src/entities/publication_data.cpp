@@ -59,10 +59,3 @@ bool altintegration::Deserialize(ReadStream& stream,
   out = pub;
   return true;
 }
-
-bool altintegration::Deserialize(Slice<const uint8_t> data,
-                                 PublicationData& out,
-                                 ValidationState& state) {
-  ReadStream stream(data);
-  return Deserialize(stream, out, state);
-}

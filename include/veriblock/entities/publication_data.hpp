@@ -68,10 +68,6 @@ bool Deserialize(ReadStream& stream,
                  PublicationData& out,
                  ValidationState& state);
 
-bool Deserialize(Slice<const uint8_t> data,
-                 PublicationData& out,
-                 ValidationState& state);
-
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_PUBLICATION_DATA_HPP_

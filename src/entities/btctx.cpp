@@ -31,10 +31,3 @@ bool altintegration::Deserialize(ReadStream& stream,
   out = BtcTx(tx);
   return true;
 }
-
-bool altintegration::Deserialize(Slice<const uint8_t> data,
-                                 BtcTx& out,
-                                 ValidationState& state) {
-  ReadStream stream(data);
-  return Deserialize(stream, out, state);
-}

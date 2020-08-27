@@ -148,10 +148,3 @@ bool altintegration::Deserialize(ReadStream& stream,
   }
   return DeserializeRaw(rawTx, signature, publicKey, out, state);
 }
-
-bool altintegration::Deserialize(Slice<const uint8_t> data,
-                                 VbkTx& out,
-                                 ValidationState& state) {
-  ReadStream stream(data);
-  return Deserialize(stream, out, state);
-}

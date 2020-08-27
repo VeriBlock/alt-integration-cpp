@@ -110,8 +110,6 @@ inline void PrintTo(const VTB& v, std::ostream* os) {
 
 bool Deserialize(ReadStream& stream, VTB& out, ValidationState& state);
 
-bool Deserialize(Slice<const uint8_t> data, VTB& out, ValidationState& state);
-
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VTB_HPP_

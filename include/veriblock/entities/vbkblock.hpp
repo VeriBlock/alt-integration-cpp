@@ -168,15 +168,7 @@ JsonValue ToJSON(const VbkBlock& b) {
 
 bool DeserializeRaw(ReadStream& stream, VbkBlock& out, ValidationState& state);
 
-bool DeserializeRaw(Slice<const uint8_t> data,
-                    VbkBlock& out,
-                    ValidationState& state);
-
 bool Deserialize(ReadStream& stream, VbkBlock& out, ValidationState& state);
-
-bool Deserialize(Slice<const uint8_t> data,
-                 VbkBlock& out,
-                 ValidationState& state);
 
 }  // namespace altintegration
 

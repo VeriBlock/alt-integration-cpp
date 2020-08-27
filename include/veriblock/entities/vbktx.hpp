@@ -106,9 +106,6 @@ bool DeserializeRaw(Slice<const uint8_t> data,
 
 bool Deserialize(ReadStream& stream, VbkTx& out, ValidationState& state);
 
-bool Deserialize(Slice<const uint8_t> data, VbkTx& out,
-                 ValidationState& state);
-
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKTX_HPP_

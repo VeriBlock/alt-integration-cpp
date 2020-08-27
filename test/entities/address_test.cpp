@@ -3,7 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/address.hpp"
+#include <veriblock/entities/address.hpp>
+#include <veriblock/serde.hpp>
 
 #include <gtest/gtest.h>
 
