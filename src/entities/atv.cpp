@@ -59,3 +59,34 @@ ATV::id_t ATV::getId() const {
   auto right = blockOfProof.getHash();
   return sha256(left, right);
 }
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 ATV& out,
+                                 ValidationState& state) {
+  ATV atv{};
+  if (!stream.readBENoExcept<uint32_t>(atv.version, state)) {
+    return state.Invalid("version");
+  }
+  if (atv.version != 1) {
+    return state.Invalid("bad-version");
+  }
+
+  if (!Deserialize(stream, atv.transaction, state)) {
+    return state.Invalid("transaction");
+  }
+  if (!Deserialize(stream, atv.merklePath, state)) {
+    return state.Invalid("merkle-path");
+  }
+  if (!Deserialize(stream, atv.blockOfProof, state)) {
+    return state.Invalid("containing-block");
+  }
+  out = atv;
+  return true;
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+                                 ATV& out,
+                                 ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
+}

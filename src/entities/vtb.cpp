@@ -63,3 +63,27 @@ VTB VTB::fromHex(const std::string& hex) {
   auto data = ParseHex(hex);
   return fromVbkEncoding(data);
 }
+
+bool altintegration::Deserialize(ReadStream& stream,
+  VTB& out,
+  ValidationState& state) {
+  VTB vtb{};
+  if (!Deserialize(stream, vtb.transaction, state)) {
+    return state.Invalid("transaction");
+  }
+  if (!Deserialize(stream, vtb.merklePath, state)) {
+    return state.Invalid("merkle-path");
+  }
+  if (!Deserialize(stream, vtb.containingBlock, state)) {
+    return state.Invalid("containing-block");
+  }
+  out = vtb;
+  return true;
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+  VTB& out,
+  ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
+}

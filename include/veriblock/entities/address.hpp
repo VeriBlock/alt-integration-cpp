@@ -102,6 +102,14 @@ inline Value ToJSON(const Address& addr) {
   return ToJSON<Value>(addr.toString());
 }
 
+bool Deserialize(ReadStream& stream,
+                 Address& out,
+                 ValidationState& state);
+
+bool Deserialize(Slice<const uint8_t> data,
+                 Address& out,
+                 ValidationState& state);
+
 }  // namespace altintegration
 
 #endif

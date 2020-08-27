@@ -20,3 +20,21 @@ uint256 BtcTx::getHash() const { return sha256twice(tx); }
 std::string BtcTx::toHex() const {
   return HexStr(tx);
 }
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 BtcTx& out,
+                                 ValidationState& state) {
+  Slice<const uint8_t> tx;
+  if (!readVarLenValueNoExcept(stream, tx, state, 0, BTC_TX_MAX_RAW_SIZE)) {
+    return state.Invalid("invalid-tx");
+  }
+  out = BtcTx(tx);
+  return true;
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+                                 BtcTx& out,
+                                 ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
+}

@@ -106,6 +106,29 @@ NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
   return ret;
 }
 
+bool readNetworkByteNoExcept(ReadStream& stream,
+                             TxType type,
+                             NetworkBytePair& out,
+                             ValidationState& state) {
+  uint8_t networkOrType;
+  if (!stream.readBENoExcept<uint8_t>(networkOrType, state)) {
+    return state.Invalid("invalid-network-byte");
+  }
+
+  NetworkBytePair ret;
+  if (networkOrType == (uint8_t)type) {
+    ret.typeId = networkOrType;
+  } else {
+    ret.hasNetworkByte = true;
+    ret.networkByte = networkOrType;
+    if (!stream.readBENoExcept<uint8_t>(ret.typeId, state)) {
+      return state.Invalid("invalid-type-id");
+    }
+  }
+  out = ret;
+  return true;
+}
+
 void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
   if (networkOrType.hasNetworkByte) {
     stream.writeBE<uint8_t>(networkOrType.networkByte);

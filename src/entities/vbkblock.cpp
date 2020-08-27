@@ -108,10 +108,9 @@ std::string VbkBlock::toPrettyString() const {
       nonce);
 }
 
-bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
+bool altintegration::DeserializeRaw(ReadStream& stream,
                                     VbkBlock& out,
                                     ValidationState& state) {
-  ReadStream stream(data);
   VbkBlock block{};
   if (!stream.readBENoExcept<int32_t>(block.height, state)) {
     return state.Invalid("block-height");
@@ -155,14 +154,27 @@ bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
   return true;
 }
 
-bool altintegration::Deserialize(Slice<const uint8_t> data,
+bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
+                                    VbkBlock& out,
+                                    ValidationState& state) {
+  ReadStream stream(data);
+  return DeserializeRaw(stream, out, state);
+}
+
+bool altintegration::Deserialize(ReadStream& stream,
                                  VbkBlock& out,
                                  ValidationState& state) {
-  ReadStream dataStream(data);
   Slice<const uint8_t> value;
   if (!readSingleByteLenValueNoExcept(
-          dataStream, value, state, VBK_HEADER_SIZE, VBK_HEADER_SIZE)) {
+          stream, value, state, VBK_HEADER_SIZE, VBK_HEADER_SIZE)) {
     return state.Invalid("bad-header");
   }
   return DeserializeRaw(value, out, state);
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+                                 VbkBlock& out,
+                                 ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
 }

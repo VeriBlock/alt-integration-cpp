@@ -130,9 +130,13 @@ JsonValue ToJSON(const BtcBlock& b) {
   return object;
 }
 
+bool DeserializeRaw(ReadStream& stream, BtcBlock& out, ValidationState& state);
+
 bool DeserializeRaw(Slice<const uint8_t> data,
                     BtcBlock& out,
                     ValidationState& state);
+
+bool Deserialize(ReadStream& stream, BtcBlock& out, ValidationState& state);
 
 bool Deserialize(Slice<const uint8_t> data,
                  BtcBlock& out,

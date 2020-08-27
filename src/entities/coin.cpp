@@ -22,3 +22,21 @@ bool Coin::operator==(const Coin& other) const noexcept {
 std::string Coin::toPrettyString() const {
   return fmt::sprintf("Coin{%lld}", units);
 }
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 Coin& out,
+                                 ValidationState& state) {
+  int64_t amount;
+  if (!readSingleBEValueNoExcept<int64_t>(stream, amount, state)) {
+    return state.Invalid("invalid-amount");
+  }
+  out = Coin(amount);
+  return true;
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+                                 Coin& out,
+                                 ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
+}

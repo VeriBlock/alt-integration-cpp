@@ -213,4 +213,48 @@ Address::Address(const std::string& input) {
   m_Address = input;
 }
 
+bool altintegration::Deserialize(ReadStream& stream,
+                                 Address& out,
+                                 ValidationState& state) {
+  uint8_t addressType;
+  if (!stream.readLENoExcept<uint8_t>(addressType, state)) {
+    return state.Invalid("address-type");
+  }
+
+  Slice<const uint8_t> addressBytes;
+  if (!readSingleByteLenValueNoExcept(
+          stream, addressBytes, state, 0, altintegration::ADDRESS_SIZE)) {
+    return state.Invalid("address-bytes");
+  }
+
+  std::string addressText;
+  switch ((AddressType)addressType) {
+    case AddressType::STANDARD:
+      addressText = EncodeBase58(addressBytes);
+      break;
+    case AddressType::MULTISIG:
+      addressText = EncodeBase59(addressBytes);
+      break;
+    default:
+      return state.Invalid("invalid-address-type");
+  }
+
+  Address address;
+  try {
+    address = Address::fromString(addressText);
+  } catch (std::invalid_argument&) {
+    return state.Invalid("invalid-address");
+  }
+
+  out = address;
+  return true;
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+  Address& out,
+  ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
+}
+
 }  // namespace altintegration

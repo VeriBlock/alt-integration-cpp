@@ -56,6 +56,14 @@ JsonValue ToJSON(const VbkMerklePath& mp) {
   return obj;
 }
 
+bool Deserialize(ReadStream& stream,
+                 VbkMerklePath& out,
+                 ValidationState& state);
+
+bool Deserialize(Slice<const uint8_t> data,
+                 VbkMerklePath& out,
+                 ValidationState& state);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBK_MERKLE_PATH_HPP_

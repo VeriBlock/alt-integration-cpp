@@ -96,6 +96,24 @@ JsonValue ToJSON(const VbkPopTx& tx) {
   return obj;
 }
 
+bool DeserializeRaw(ReadStream& stream,
+                    Slice<const uint8_t> signature,
+                    Slice<const uint8_t> publicKey,
+                    VbkPopTx& out,
+                    ValidationState& state);
+
+bool DeserializeRaw(Slice<const uint8_t> data,
+                    Slice<const uint8_t> signature,
+                    Slice<const uint8_t> publicKey,
+                    VbkPopTx& out,
+                    ValidationState& state);
+
+bool Deserialize(ReadStream& stream, VbkPopTx& out, ValidationState& state);
+
+bool Deserialize(Slice<const uint8_t> data,
+                 VbkPopTx& out,
+                 ValidationState& state);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKPOPTX_HPP_

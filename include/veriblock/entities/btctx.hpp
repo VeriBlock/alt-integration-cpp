@@ -51,6 +51,10 @@ struct BtcTx {
   std::string toHex() const;
 };
 
+bool Deserialize(ReadStream& stream, BtcTx& out, ValidationState& state);
+
+bool Deserialize(Slice<const uint8_t> data, BtcTx& out, ValidationState& state);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCTX_HPP_

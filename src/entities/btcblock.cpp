@@ -81,10 +81,9 @@ std::string BtcBlock::toPrettyString() const {
       nonce);
 }
 
-bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
-                    BtcBlock& out,
-                    ValidationState& state) {
-  ReadStream stream(data);
+bool altintegration::DeserializeRaw(ReadStream& stream,
+                                    BtcBlock& out,
+                                    ValidationState& state) {
   BtcBlock block{};
   if (!stream.readLENoExcept<uint32_t>(block.version, state)) {
     return state.Invalid("block-version");
@@ -112,14 +111,27 @@ bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
   return true;
 }
 
-bool altintegration::Deserialize(Slice<const uint8_t> data,
-                 BtcBlock& out,
-                 ValidationState& state) {
-  ReadStream dataStream(data);
+bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
+                    BtcBlock& out,
+                    ValidationState& state) {
+  ReadStream stream(data);
+  return DeserializeRaw(stream, out, state);
+}
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 BtcBlock& out,
+                                 ValidationState& state) {
   Slice<const uint8_t> value;
   if (!readSingleByteLenValueNoExcept(
-          dataStream, value, state, BTC_HEADER_SIZE, BTC_HEADER_SIZE)) {
+          stream, value, state, BTC_HEADER_SIZE, BTC_HEADER_SIZE)) {
     return state.Invalid("bad-header");
   }
   return DeserializeRaw(value, out, state);
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+                 BtcBlock& out,
+                 ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
 }

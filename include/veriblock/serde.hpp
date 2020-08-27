@@ -157,7 +157,9 @@ T readSingleBEValue(ReadStream& stream) {
  */
 template <typename T,
           typename = typename std::enable_if<std::is_integral<T>::value>::type>
-bool readSingleBEValueNoExcept(ReadStream& stream, T& out, ValidationState& state) {
+bool readSingleBEValueNoExcept(ReadStream& stream,
+                               T& out,
+                               ValidationState& state) {
   Slice<const uint8_t> data;
   if (!readSingleByteLenValueNoExcept(stream, data, state, 0, sizeof(T))) {
     return state.Invalid("bad-data");
@@ -230,12 +232,68 @@ struct NetworkBytePair {
 NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
 
 /**
+ * Read optional network byte from the stream
+ * @param stream read data from this stream
+ * @param type use this value to detect if we are reading
+ * network byte or type byte
+ * @param out NetworkBytePair structure
+ * @param state will return error description here
+ * @return true if read is OK, false otherwise
+ */
+bool readNetworkByteNoExcept(ReadStream& stream,
+                             TxType type,
+                             NetworkBytePair& out,
+                             ValidationState& state);
+
+/**
  * Write optional network byte to the stream
  * @param stream write data to this stream
  * @param networkOrType write network byte if available, write type
  * byte after
  */
 void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
+
+/**
+ * Reads array of entities of type T.
+ * @tparam T type of entity to read
+ * @param stream read data from this stream
+ * @param out vector of read elements of type T
+ * @param state will return error description here
+ * @param min min size of array
+ * @param max max size of array
+ * @param readFunc function that is called to read single value of type T
+ * @return true if read is OK, false otherwise
+ */
+template <typename T>
+bool readArrayOfNoExcept(
+    ReadStream& stream,
+    std::vector<T>& out,
+    ValidationState& state,
+    int32_t min,
+    int32_t max,
+    std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
+  int32_t count = 0;
+  if (!readSingleBEValueNoExcept<int32_t>(stream, count, state)) {
+    return state.Invalid("bad-count");
+  }
+  if (!checkRangeNoExcept(count, min, max, state)) {
+    return state.Invalid("bad-count");
+  }
+
+  std::vector<T> items;
+  items.reserve(count);
+
+  for (int32_t i = 0; i < count; i++) {
+    T item;
+    if (!readFunc(stream, item, state)) {
+      return state.Invalid("bad-item", i);
+    }
+    items.push_back(item);
+  }
+
+  out = items;
+  return true;
+}
 
 /**
  * Reads array of entities of type T.
@@ -263,6 +321,16 @@ std::vector<T> readArrayOf(ReadStream& stream,
   }
 
   return items;
+}
+
+template <typename T>
+bool readArrayOfNoExcept(
+    ReadStream& stream,
+    std::vector<T>& out,
+    ValidationState& state,
+    std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
+  int32_t max = std::numeric_limits<int32_t>::max();
+  return readArrayOfNoExcept<T>(stream, out, state, 0, max, readFunc);
 }
 
 template <typename T>
