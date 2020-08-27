@@ -82,30 +82,30 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
                                     ValidationState& state) {
   MerklePath path{};
   if (!readSingleBEValue<int32_t>(stream, path.index, state)) {
-    return state.Invalid("invalid-index");
+    return state.Invalid("merkle-index");
   }
   int32_t numLayers = 0;
   if (!readSingleBEValue<int32_t>(stream, numLayers, state)) {
-    return state.Invalid("invalid-num-layers");
+    return state.Invalid("merkle-num-layers");
   }
   if (!checkRange(numLayers, 0, MAX_LAYER_COUNT_MERKLE, state)) {
-    return state.Invalid("invalid-num-layers");
+    return state.Invalid("merkle-num-layers-range");
   }
 
   int32_t sizeOfSizeBottomData = 0;
   if (!readSingleBEValue<int32_t>(stream, sizeOfSizeBottomData, state)) {
-    return state.Invalid("invalid-size-of-size");
+    return state.Invalid("merkle-size-of-size");
   }
   if (sizeOfSizeBottomData != sizeof(int32_t)) {
-    return state.Invalid("invalid-size-of-size");
+    return state.Invalid("merkle-size-of-size-range");
   }
 
   int32_t sizeOfBottomData = 0;
   if (!stream.readBE<int32_t>(sizeOfBottomData, state)) {
-    return state.Invalid("invalid-size-of-data");
+    return state.Invalid("merkle-size-of-data");
   }
   if (sizeOfBottomData != SHA256_HASH_SIZE) {
-    return state.Invalid("invalid-size-of-data");
+    return state.Invalid("merkle-size-of-data-range");
   }
 
   path.layers.reserve(numLayers);
@@ -113,7 +113,7 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
     Slice<const uint8_t> layer;
     if (!readSingleByteLenValue(
             stream, layer, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
-      return state.Invalid("invalid-layer", i);
+      return state.Invalid("merkle-layer", i);
     }
     path.layers.emplace_back(layer);
   }
@@ -137,7 +137,7 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  ValidationState& state) {
   Slice<const uint8_t> merkleBytes;
   if (!readVarLenValue(stream, merkleBytes, state, 0, MAX_MERKLE_BYTES)) {
-    return state.Invalid("invalid-merkle-bytes");
+    return state.Invalid("merkle-bytes");
   }
   return DeserializeRaw(merkleBytes, subject, out, state);
 }

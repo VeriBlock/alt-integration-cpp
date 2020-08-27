@@ -57,7 +57,7 @@ class ReadStream {
                                                1>::type>
   bool read(size_t size, T &out, ValidationState &state) {
     if (!hasMore(size)) {
-      return state.Invalid("buffer-underflow");
+      return state.Invalid("read-buffer-underflow");
     }
 
     T result;
@@ -98,7 +98,7 @@ class ReadStream {
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
   bool readBE(T &out, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
-      return state.Invalid("buffer-underflow");
+      return state.Invalid("readbe-buffer-underflow");
     }
     T t = 0;
     for (size_t i = 0, shift = (sizeof(T) - 1) * 8; i < sizeof(T);
@@ -128,7 +128,7 @@ class ReadStream {
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
   bool readLE(T &out, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
-      return state.Invalid("buffer-underflow");
+      return state.Invalid("readle-buffer-underflow");
     }
 
     T t = 0;

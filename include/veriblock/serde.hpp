@@ -159,7 +159,7 @@ template <typename T,
 bool readSingleBEValue(ReadStream& stream, T& out, ValidationState& state) {
   Slice<const uint8_t> data;
   if (!readSingleByteLenValue(stream, data, state, 0, sizeof(T))) {
-    return state.Invalid("bad-data");
+    return state.Invalid("readsinglebe-bad-data");
   }
   auto padded = pad(data, sizeof(T));
   auto dataStream = ReadStream(padded);
@@ -272,10 +272,10 @@ bool readArrayOf(
     std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
   int32_t count = 0;
   if (!readSingleBEValue<int32_t>(stream, count, state)) {
-    return state.Invalid("bad-count");
+    return state.Invalid("readarray-bad-count");
   }
   if (!checkRange(count, min, max, state)) {
-    return state.Invalid("bad-count");
+    return state.Invalid("readarray-bad-count-range");
   }
 
   std::vector<T> items;
@@ -284,7 +284,7 @@ bool readArrayOf(
   for (int32_t i = 0; i < count; i++) {
     T item;
     if (!readFunc(stream, item, state)) {
-      return state.Invalid("bad-item", i);
+      return state.Invalid("readarray-bad-item", i);
     }
     items.push_back(item);
   }

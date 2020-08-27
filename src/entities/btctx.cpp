@@ -26,7 +26,7 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  ValidationState& state) {
   Slice<const uint8_t> tx;
   if (!readVarLenValue(stream, tx, state, 0, BTC_TX_MAX_RAW_SIZE)) {
-    return state.Invalid("invalid-tx");
+    return state.Invalid("btc-invalid-tx");
   }
   out = BtcTx(tx);
   return true;

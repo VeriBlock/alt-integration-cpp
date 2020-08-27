@@ -56,7 +56,7 @@ bool ReadStream::readSlice(size_t size,
                            Slice<const uint8_t> &out,
                            ValidationState &state) {
   if (!hasMore(size)) {
-    return state.Invalid("buffer-underflow");
+    return state.Invalid("readslice-buffer-underflow");
   }
 
   Slice<const uint8_t> data(m_Buffer + m_Pos, size);

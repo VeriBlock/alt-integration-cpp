@@ -83,26 +83,26 @@ bool DeserializeRaw(ReadStream& stream,
                     ValidationState& state) {
   VbkPopTx tx{};
   if (!readNetworkByte(stream, TxType::VBK_POP_TX, tx.networkOrType, state)) {
-    return state.Invalid("network-or-type");
+    return state.Invalid("vbkpoptx-network-or-type");
   }
 
   if (!Deserialize(stream, tx.address, state)) {
-    return state.Invalid("address");
+    return state.Invalid("vbkpoptx-address");
   }
   if (!Deserialize(stream, tx.publishedBlock, state)) {
-    return state.Invalid("published-block");
+    return state.Invalid("vbkpoptx-published-block");
   }
   if (!Deserialize(stream, tx.bitcoinTransaction, state)) {
-    return state.Invalid("bitcoin-tx");
+    return state.Invalid("vbkpoptx-bitcoin-tx");
   }
 
   auto hash = sha256twice(tx.bitcoinTransaction.tx);
   if (!Deserialize(stream, hash, tx.merklePath, state)) {
-    return state.Invalid("merkle-path");
+    return state.Invalid("vbkpoptx-merkle-path");
   }
 
   if (!Deserialize(stream, tx.blockOfProof, state)) {
-    return state.Invalid("block-of-proof");
+    return state.Invalid("vbkpoptx-block-of-proof");
   }
 
   typedef bool (*btcde)(ReadStream&, BtcBlock&, ValidationState&);
@@ -112,7 +112,7 @@ bool DeserializeRaw(ReadStream& stream,
                              0,
                              MAX_CONTEXT_COUNT,
                              static_cast<btcde>(Deserialize))) {
-    return state.Invalid("btc-context");
+    return state.Invalid("vbkpoptx-btc-context");
   }
 
   tx.signature = std::vector<uint8_t>(signature.begin(), signature.end());
@@ -134,16 +134,16 @@ bool DeserializeRaw(Slice<const uint8_t> data,
 bool Deserialize(ReadStream& stream, VbkPopTx& out, ValidationState& state) {
   Slice<const uint8_t> rawTx;
   if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKPOPTX)) {
-    return state.Invalid("invalid-tx");
+    return state.Invalid("vbkpoptx-invalid-tx");
   }
   Slice<const uint8_t> signature;
   if (!readSingleByteLenValue(
           stream, signature, state, 0, MAX_SIGNATURE_SIZE)) {
-    return state.Invalid("invalid-signature");
+    return state.Invalid("vbkpoptx-invalid-signature");
   }
   Slice<const uint8_t> publicKey;
   if (!readSingleByteLenValue(stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
-    return state.Invalid("invalid-public-key");
+    return state.Invalid("vbkpoptx-invalid-public-key");
   }
   return DeserializeRaw(rawTx, signature, publicKey, out, state);
 }

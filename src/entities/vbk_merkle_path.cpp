@@ -66,19 +66,19 @@ bool altintegration::Deserialize(ReadStream& stream,
   VbkMerklePath path{};
 
   if (!readSingleBEValue<int32_t>(stream, path.treeIndex, state)) {
-    return state.Invalid("invalid-tree-index");
+    return state.Invalid("vbkmerkle-tree-index");
   }
   if (!readSingleBEValue<int32_t>(stream, path.index, state)) {
-    return state.Invalid("invalid-index");
+    return state.Invalid("vbkmerkle-index");
   }
   Slice<const uint8_t> subject;
   if (!readSingleByteLenValue(
           stream, subject, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
-    return state.Invalid("invalid-subject");
+    return state.Invalid("vbkmerkle-subject");
   }
   path.subject = subject;
 
-  readArrayOf<uint256>(
+  if(!readArrayOf<uint256>(
       stream,
       path.layers,
       state,
@@ -92,7 +92,9 @@ bool altintegration::Deserialize(ReadStream& stream,
         }
         out = layer;
         return true;
-      });
+          })) {
+    return state.Invalid("vbkmerkle-layers");
+  }
 
   out = path;
   return true;

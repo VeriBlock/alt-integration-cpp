@@ -33,10 +33,10 @@ bool altintegration::Deserialize(ReadStream& stream,
   Address address;
   Coin amount;
   if (!Deserialize(stream, address, state)) {
-    return state.Invalid("invalid-address");
+    return state.Invalid("output-address");
   }
   if (!Deserialize(stream, amount, state)) {
-    return state.Invalid("invalid-amount");
+    return state.Invalid("output-amount");
   }
   out = Output(address, amount);
   return true;

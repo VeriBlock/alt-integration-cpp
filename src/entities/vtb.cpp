@@ -71,13 +71,13 @@ bool altintegration::Deserialize(ReadStream& stream,
   typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
 
   if (!Deserialize(stream, vtb.transaction, state)) {
-    return state.Invalid("transaction");
+    return state.Invalid("vtb-transaction");
   }
   if (!Deserialize(stream, vtb.merklePath, state)) {
-    return state.Invalid("merkle-path");
+    return state.Invalid("vtb-merkle-path");
   }
   if (!Deserialize(stream, vtb.containingBlock, state)) {
-    return state.Invalid("containing-block");
+    return state.Invalid("vtb-containing-block");
   }
 
   if (!readArrayOf<VbkBlock>(stream,
@@ -86,7 +86,7 @@ bool altintegration::Deserialize(ReadStream& stream,
                              0,
                              MAX_CONTEXT_COUNT,
                              static_cast<vbkde>(Deserialize))) {
-    return state.Invalid("context");
+    return state.Invalid("vtb-context");
   }
 
   out = vtb;

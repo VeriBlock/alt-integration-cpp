@@ -41,10 +41,10 @@ bool readVarLenValue(ReadStream& stream,
                      int32_t maxLen) {
   int32_t length;
   if (!readSingleBEValue<int32_t>(stream, length, state)) {
-    return state.Invalid("malformed-length");
+    return state.Invalid("readvarlen-bad-length");
   }
   if (!checkRange(length, minLen, maxLen, state)) {
-    return state.Invalid("bad-length");
+    return state.Invalid("readvarlen-bad-length-range");
   }
   return stream.readSlice(length, out, state);
 }
@@ -64,10 +64,10 @@ bool readSingleByteLenValue(ReadStream& stream,
                             int maxLen) {
   uint8_t lengthLength;
   if (!stream.readBE<uint8_t>(lengthLength, state)) {
-    return state.Invalid("invalid-length-of-length");
+    return state.Invalid("readsingle-invalid-length-of-length");
   }
   if (!checkRange(lengthLength, minLen, maxLen, state)) {
-    return state.Invalid("invalid-length-of-length");
+    return state.Invalid("readsingle-invalid-length-of-length-range");
   }
   return stream.readSlice(lengthLength, out, state);
 }
@@ -110,7 +110,7 @@ bool readNetworkByte(ReadStream& stream,
                      ValidationState& state) {
   uint8_t networkOrType;
   if (!stream.readBE<uint8_t>(networkOrType, state)) {
-    return state.Invalid("invalid-network-byte");
+    return state.Invalid("readnetwork-invalid-network-byte");
   }
 
   NetworkBytePair ret;
@@ -120,7 +120,7 @@ bool readNetworkByte(ReadStream& stream,
     ret.hasNetworkByte = true;
     ret.networkByte = networkOrType;
     if (!stream.readBE<uint8_t>(ret.typeId, state)) {
-      return state.Invalid("invalid-type-id");
+      return state.Invalid("readnetwork-invalid-type-id");
     }
   }
   out = ret;

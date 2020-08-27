@@ -86,26 +86,26 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
                                     ValidationState& state) {
   BtcBlock block{};
   if (!stream.readLE<uint32_t>(block.version, state)) {
-    return state.Invalid("block-version");
+    return state.Invalid("btc-block-version");
   }
   Slice<const uint8_t> previousBlock;
   if (!stream.readSlice(SHA256_HASH_SIZE, previousBlock, state)) {
-    return state.Invalid("block-previous");
+    return state.Invalid("btc-block-previous");
   }
   block.previousBlock = previousBlock.reverse();
   Slice<const uint8_t> merkleRoot;
   if (!stream.readSlice(SHA256_HASH_SIZE, merkleRoot, state)) {
-    return state.Invalid("block-merkle-root");
+    return state.Invalid("btc-block-merkle-root");
   }
   block.merkleRoot = merkleRoot.reverse();
   if (!stream.readLE<uint32_t>(block.timestamp, state)) {
-    return state.Invalid("block-timestamp");
+    return state.Invalid("btc-block-timestamp");
   }
   if (!stream.readLE<uint32_t>(block.bits, state)) {
-    return state.Invalid("block-difficulty");
+    return state.Invalid("btc-block-difficulty");
   }
   if (!stream.readLE<uint32_t>(block.nonce, state)) {
-    return state.Invalid("block-nonce");
+    return state.Invalid("btc-block-nonce");
   }
   out = block;
   return true;
@@ -117,7 +117,7 @@ bool altintegration::Deserialize(ReadStream& stream,
   Slice<const uint8_t> value;
   if (!readSingleByteLenValue(
           stream, value, state, BTC_HEADER_SIZE, BTC_HEADER_SIZE)) {
-    return state.Invalid("bad-header");
+    return state.Invalid("btc-block-bad-header");
   }
   return DeserializeRaw(value, out, state);
 }

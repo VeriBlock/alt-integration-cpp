@@ -113,42 +113,42 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
                                     ValidationState& state) {
   VbkBlock block{};
   if (!stream.readBE<int32_t>(block.height, state)) {
-    return state.Invalid("block-height");
+    return state.Invalid("vbk-block-height");
   }
   if (!stream.readBE<int16_t>(block.version, state)) {
-    return state.Invalid("block-version");
+    return state.Invalid("vbk-block-version");
   }
   Slice<const uint8_t> previousBlock;
   if (!stream.readSlice(
           VBLAKE_PREVIOUS_BLOCK_HASH_SIZE, previousBlock, state)) {
-    return state.Invalid("block-previous");
+    return state.Invalid("vbk-block-previous");
   }
   block.previousBlock = previousBlock;
   Slice<const uint8_t> previousKeystone;
   if (!stream.readSlice(
           VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, previousKeystone, state)) {
-    return state.Invalid("block-previous-keystone");
+    return state.Invalid("vbk-block-previous-keystone");
   }
   block.previousKeystone = previousKeystone;
   Slice<const uint8_t> secondPreviousKeystone;
   if (!stream.readSlice(
           VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, secondPreviousKeystone, state)) {
-    return state.Invalid("block-second-previous-keystone");
+    return state.Invalid("vbk-block-second-previous-keystone");
   }
   block.secondPreviousKeystone = secondPreviousKeystone;
   Slice<const uint8_t> merkleRoot;
   if (!stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE, merkleRoot, state)) {
-    return state.Invalid("block-merkle-root");
+    return state.Invalid("vbk-block-merkle-root");
   }
   block.merkleRoot = merkleRoot;
   if (!stream.readBE<int32_t>(block.timestamp, state)) {
-    return state.Invalid("block-timestamp");
+    return state.Invalid("vbk-block-timestamp");
   }
   if (!stream.readBE<int32_t>(block.difficulty, state)) {
-    return state.Invalid("block-difficulty");
+    return state.Invalid("vbk-block-difficulty");
   }
   if (!stream.readBE<int32_t>(block.nonce, state)) {
-    return state.Invalid("block-nonce");
+    return state.Invalid("vbk-block-nonce");
   }
   out = block;
   return true;
@@ -160,7 +160,7 @@ bool altintegration::Deserialize(ReadStream& stream,
   Slice<const uint8_t> value;
   if (!readSingleByteLenValue(
           stream, value, state, VBK_HEADER_SIZE, VBK_HEADER_SIZE)) {
-    return state.Invalid("bad-header");
+    return state.Invalid("vbk-block-bad-header");
   }
   return DeserializeRaw(value, out, state);
 }

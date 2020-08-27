@@ -75,7 +75,7 @@ bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
                              0,
                              MAX_CONTEXT_COUNT_ALT_PUBLICATION,
                              static_cast<vbkde>(Deserialize))) {
-    return state.Invalid("bad-vbk-context");
+    return state.Invalid("pop-vbk-context");
   }
 
   if (!readArrayOf<ATV>(stream,
@@ -84,7 +84,7 @@ bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
                         0,
                         MAX_CONTEXT_COUNT_ALT_PUBLICATION,
                         static_cast<atvde>(Deserialize))) {
-    return state.Invalid("bad-atv-context");
+    return state.Invalid("pop-atv-context");
   }
 
   if (!readArrayOf<VTB>(stream,
@@ -93,7 +93,7 @@ bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
                         0,
                         MAX_CONTEXT_COUNT_ALT_PUBLICATION,
                         static_cast<vtbde>(Deserialize))) {
-    return state.Invalid("bad-vtb-context");
+    return state.Invalid("pop-vtb-context");
   }
   out = pd;
   return true;

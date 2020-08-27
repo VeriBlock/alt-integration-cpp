@@ -36,24 +36,24 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  ValidationState& state) {
   PublicationData pub;
   if (!readSingleBEValue<int64_t>(stream, pub.identifier, state)) {
-    return state.Invalid("invalid-identifier");
+    return state.Invalid("pub-identifier");
   }
   Slice<const uint8_t> header;
   if (!readVarLenValue(
           stream, header, state, 0, MAX_HEADER_SIZE_PUBLICATION_DATA)) {
-    return state.Invalid("invalid-header");
+    return state.Invalid("pub-header");
   }
   pub.header = header.asVector();
   Slice<const uint8_t> contextInfo;
   if (!readVarLenValue(
           stream, contextInfo, state, 0, MAX_CONTEXT_SIZE_PUBLICATION_DATA)) {
-    return state.Invalid("invalid-context-info");
+    return state.Invalid("pub-context-info");
   }
   pub.contextInfo = contextInfo.asVector();
   Slice<const uint8_t> payoutInfo;
   if (!readVarLenValue(
           stream, payoutInfo, state, 0, MAX_PAYOUT_SIZE_PUBLICATION_DATA)) {
-    return state.Invalid("invalid-payout-info");
+    return state.Invalid("pub-payout-info");
   }
   pub.payoutInfo = payoutInfo.asVector();
   out = pub;
