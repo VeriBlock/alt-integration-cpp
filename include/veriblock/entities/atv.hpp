@@ -94,6 +94,8 @@ JsonValue ToJSON(const ATV& atv) {
   return obj;
 }
 
+bool Deserialize(ReadStream& stream, ATV& out, ValidationState& state);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ATV_HPP_

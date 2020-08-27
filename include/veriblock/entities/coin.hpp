@@ -43,5 +43,7 @@ struct Coin {
   bool operator==(const Coin& other) const noexcept;
 };
 
+bool Deserialize(ReadStream& stream, Coin& out, ValidationState& state);
+
 }  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_

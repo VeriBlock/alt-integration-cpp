@@ -75,3 +75,77 @@ uint256 MerklePath::calculateMerkleRoot() const {
   }
   return cursor;
 }
+
+bool altintegration::DeserializeRaw(ReadStream& stream,
+                                    const uint256& subject,
+                                    MerklePath& out,
+                                    ValidationState& state) {
+  MerklePath path{};
+  if (!readSingleBEValue<int32_t>(stream, path.index, state)) {
+    return state.Invalid("merkle-index");
+  }
+  int32_t numLayers = 0;
+  if (!readSingleBEValue<int32_t>(stream, numLayers, state)) {
+    return state.Invalid("merkle-num-layers");
+  }
+  if (!checkRange(numLayers, 0, MAX_LAYER_COUNT_MERKLE, state)) {
+    return state.Invalid("merkle-num-layers-range");
+  }
+
+  int32_t sizeOfSizeBottomData = 0;
+  if (!readSingleBEValue<int32_t>(stream, sizeOfSizeBottomData, state)) {
+    return state.Invalid("merkle-size-of-size");
+  }
+  if (sizeOfSizeBottomData != sizeof(int32_t)) {
+    return state.Invalid("merkle-size-of-size-range");
+  }
+
+  int32_t sizeOfBottomData = 0;
+  if (!stream.readBE<int32_t>(sizeOfBottomData, state)) {
+    return state.Invalid("merkle-size-of-data");
+  }
+  if (sizeOfBottomData != SHA256_HASH_SIZE) {
+    return state.Invalid("merkle-size-of-data-range");
+  }
+
+  path.layers.reserve(numLayers);
+  for (int i = 0; i < numLayers; i++) {
+    Slice<const uint8_t> layer;
+    if (!readSingleByteLenValue(
+            stream, layer, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
+      return state.Invalid("merkle-layer", i);
+    }
+    path.layers.emplace_back(layer);
+  }
+
+  path.subject = subject;
+  out = path;
+  return true;
+}
+
+bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
+                                    const uint256& subject,
+                                    MerklePath& out,
+                                    ValidationState& state) {
+  ReadStream stream(data);
+  return DeserializeRaw(stream, subject, out, state);
+}
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 const uint256& subject,
+                                 MerklePath& out,
+                                 ValidationState& state) {
+  Slice<const uint8_t> merkleBytes;
+  if (!readVarLenValue(stream, merkleBytes, state, 0, MAX_MERKLE_BYTES)) {
+    return state.Invalid("merkle-bytes");
+  }
+  return DeserializeRaw(merkleBytes, subject, out, state);
+}
+
+bool altintegration::Deserialize(Slice<const uint8_t> data,
+                                 const uint256& subject,
+                                 MerklePath& out,
+                                 ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, subject, out, state);
+}

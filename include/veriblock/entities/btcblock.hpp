@@ -17,6 +17,7 @@
 #include <veriblock/hashutil.hpp>
 #include <veriblock/serde.hpp>
 #include <veriblock/uint.hpp>
+#include <veriblock/validation_state.hpp>
 
 namespace altintegration {
 
@@ -128,6 +129,10 @@ JsonValue ToJSON(const BtcBlock& b) {
   json::putIntKV(object, "nonce", b.nonce);
   return object;
 }
+
+bool DeserializeRaw(ReadStream& stream, BtcBlock& out, ValidationState& state);
+
+bool Deserialize(ReadStream& stream, BtcBlock& out, ValidationState& state);
 
 }  // namespace altintegration
 

@@ -69,4 +69,47 @@ std::vector<uint8_t> PopData::toVbkEncoding() const {
   return stream.data();
 }
 
+bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
+  PopData pd;
+  typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
+  typedef bool (*atvde)(ReadStream&, ATV&, ValidationState&);
+  typedef bool (*vtbde)(ReadStream&, VTB&, ValidationState&);
+
+  if (!stream.readBE<uint32_t>(pd.version, state)) {
+    return state.Invalid("pop-version");
+  }
+  if (pd.version != 1) {
+    return state.Invalid("pop-bad-version");
+  }
+
+  if (!readArrayOf<VbkBlock>(stream,
+                             pd.context,
+                             state,
+                             0,
+                             MAX_CONTEXT_COUNT,
+                             static_cast<vbkde>(Deserialize))) {
+    return state.Invalid("pop-vbk-context");
+  }
+
+  if (!readArrayOf<ATV>(stream,
+                        pd.atvs,
+                        state,
+                        0,
+                        MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                        static_cast<atvde>(Deserialize))) {
+    return state.Invalid("pop-atv-context");
+  }
+
+  if (!readArrayOf<VTB>(stream,
+                        pd.vtbs,
+                        state,
+                        0,
+                        MAX_CONTEXT_COUNT_VBK_PUBLICATION,
+                        static_cast<vtbde>(Deserialize))) {
+    return state.Invalid("pop-vtb-context");
+  }
+  out = pd;
+  return true;
+}
+
 }  // namespace altintegration

@@ -66,13 +66,86 @@ uint256 VbkPopTx::getHash() const {
 
 std::string VbkPopTx::toPrettyString() const {
   return fmt::sprintf(
-      "VbkPopTx{address=%s, publishedBlock=%s, blockOfProof=%s, context= %d blocks starting with %s}",
+      "VbkPopTx{address=%s, publishedBlock=%s, blockOfProof=%s, context= %d "
+      "blocks starting with %s}",
       address.toString(),
       publishedBlock.toPrettyString(),
       blockOfProof.toPrettyString(),
       blockOfProofContext.size(),
-      blockOfProofContext.size() > 0 ?blockOfProofContext[0].toPrettyString() : "(none)"
-                     );
+      blockOfProofContext.size() > 0 ? blockOfProofContext[0].toPrettyString()
+                                     : "(none)");
+}
+
+bool DeserializeRaw(ReadStream& stream,
+                    Slice<const uint8_t> signature,
+                    Slice<const uint8_t> publicKey,
+                    VbkPopTx& out,
+                    ValidationState& state) {
+  VbkPopTx tx{};
+  if (!readNetworkByte(stream, TxType::VBK_POP_TX, tx.networkOrType, state)) {
+    return state.Invalid("vbkpoptx-network-or-type");
+  }
+
+  if (!Deserialize(stream, tx.address, state)) {
+    return state.Invalid("vbkpoptx-address");
+  }
+  if (!Deserialize(stream, tx.publishedBlock, state)) {
+    return state.Invalid("vbkpoptx-published-block");
+  }
+  if (!Deserialize(stream, tx.bitcoinTransaction, state)) {
+    return state.Invalid("vbkpoptx-bitcoin-tx");
+  }
+
+  auto hash = sha256twice(tx.bitcoinTransaction.tx);
+  if (!Deserialize(stream, hash, tx.merklePath, state)) {
+    return state.Invalid("vbkpoptx-merkle-path");
+  }
+
+  if (!Deserialize(stream, tx.blockOfProof, state)) {
+    return state.Invalid("vbkpoptx-block-of-proof");
+  }
+
+  typedef bool (*btcde)(ReadStream&, BtcBlock&, ValidationState&);
+  if (!readArrayOf<BtcBlock>(stream,
+                             tx.blockOfProofContext,
+                             state,
+                             0,
+                             MAX_CONTEXT_COUNT,
+                             static_cast<btcde>(Deserialize))) {
+    return state.Invalid("vbkpoptx-btc-context");
+  }
+
+  tx.signature = std::vector<uint8_t>(signature.begin(), signature.end());
+  tx.publicKey = std::vector<uint8_t>(publicKey.begin(), publicKey.end());
+
+  out = tx;
+  return true;
+}
+
+bool DeserializeRaw(Slice<const uint8_t> data,
+                    Slice<const uint8_t> signature,
+                    Slice<const uint8_t> publicKey,
+                    VbkPopTx& out,
+                    ValidationState& state) {
+  ReadStream stream(data);
+  return DeserializeRaw(stream, signature, publicKey, out, state);
+}
+
+bool Deserialize(ReadStream& stream, VbkPopTx& out, ValidationState& state) {
+  Slice<const uint8_t> rawTx;
+  if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKPOPTX)) {
+    return state.Invalid("vbkpoptx-invalid-tx");
+  }
+  Slice<const uint8_t> signature;
+  if (!readSingleByteLenValue(
+          stream, signature, state, 0, MAX_SIGNATURE_SIZE)) {
+    return state.Invalid("vbkpoptx-invalid-signature");
+  }
+  Slice<const uint8_t> publicKey;
+  if (!readSingleByteLenValue(stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
+    return state.Invalid("vbkpoptx-invalid-public-key");
+  }
+  return DeserializeRaw(rawTx, signature, publicKey, out, state);
 }
 
 }  // namespace altintegration

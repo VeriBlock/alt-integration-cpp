@@ -166,6 +166,10 @@ JsonValue ToJSON(const VbkBlock& b) {
   return obj;
 }
 
+bool DeserializeRaw(ReadStream& stream, VbkBlock& out, ValidationState& state);
+
+bool Deserialize(ReadStream& stream, VbkBlock& out, ValidationState& state);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKBLOCK_HPP_

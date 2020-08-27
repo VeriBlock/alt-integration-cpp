@@ -64,6 +64,26 @@ JsonValue ToJSON(const MerklePath& m) {
   return obj;
 }
 
+bool DeserializeRaw(ReadStream& stream,
+                    const uint256& subject,
+                    MerklePath& out,
+                    ValidationState& state);
+
+bool DeserializeRaw(Slice<const uint8_t> data,
+                    const uint256& subject,
+                    MerklePath& out,
+                    ValidationState& state);
+
+bool Deserialize(ReadStream& stream,
+                 const uint256& subject,
+                 MerklePath& out,
+                 ValidationState& state);
+
+bool Deserialize(Slice<const uint8_t> data,
+                 const uint256& subject,
+                 MerklePath& out,
+                 ValidationState& state);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_

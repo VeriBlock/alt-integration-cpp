@@ -88,6 +88,23 @@ TEST(ATV, RoundTrip) {
   EXPECT_EQ(txReEncoded, defaultAtvEncoded);
 }
 
+TEST(ATV, RoundTripNew) {
+  auto atvBytes = ParseHex(defaultAtvEncoded);
+  ATV decoded;
+  ValidationState state;
+  bool ret = Deserialize(atvBytes, decoded, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
+  EXPECT_EQ(decoded.transaction.sourceAddress,
+            Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto txBytes = outputStream.data();
+  auto txReEncoded = HexStr(txBytes);
+  EXPECT_EQ(txReEncoded, defaultAtvEncoded);
+}
+
 TEST(ATV, getId_test) {
   auto atvBytes = ParseHex(defaultAtvEncoded);
   auto stream = ReadStream(atvBytes);
