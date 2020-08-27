@@ -68,3 +68,83 @@ uint256 VbkTx::getHash() const {
   toRaw(stream);
   return sha256(stream.data());
 }
+
+bool altintegration::DeserializeRaw(ReadStream& stream,
+                                    Slice<const uint8_t> signature,
+                                    Slice<const uint8_t> publicKey,
+                                    VbkTx& out,
+                                    ValidationState& state) {
+  VbkTx tx{};
+
+  if (!readNetworkByte(stream, TxType::VBK_TX, tx.networkOrType, state)) {
+    return state.Invalid("vbktx-network-or-type");
+  }
+
+  if (!Deserialize(stream, tx.sourceAddress, state)) {
+    return state.Invalid("vbktx-address");
+  }
+  if (!Deserialize(stream, tx.sourceAmount, state)) {
+    return state.Invalid("vbktx-amount");
+  }
+
+  uint8_t outputSize;
+  if (!stream.readBE<uint8_t>(outputSize, state)) {
+    return state.Invalid("vbktx-outputs-size");
+  }
+
+  tx.outputs.reserve(outputSize);
+  for (size_t i = 0; i < outputSize; i++) {
+    Output output;
+    if (!Deserialize(stream, output, state)) {
+      return state.Invalid("vbktx-output", i);
+    }
+    tx.outputs.emplace_back(output);
+  }
+
+  if (!readSingleBEValue<int64_t>(stream, tx.signatureIndex, state)) {
+    return state.Invalid("vbktx-signature-index");
+  }
+
+  Slice<const uint8_t> pubBytes;
+  if (!readVarLenValue(stream, pubBytes, state, 0, MAX_SIZE_PUBLICATION_DATA)) {
+    return state.Invalid("vbktx-publication-bytes");
+  }
+
+  ReadStream pubBytesStream(pubBytes);
+  if (!Deserialize(pubBytes, tx.publicationData, state)) {
+    return state.Invalid("vbktx-publication-data");
+  }
+  tx.signature = std::vector<uint8_t>(signature.begin(), signature.end());
+  tx.publicKey = std::vector<uint8_t>(publicKey.begin(), publicKey.end());
+
+  out = tx;
+  return true;
+}
+
+bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
+                                    Slice<const uint8_t> signature,
+                                    Slice<const uint8_t> publicKey,
+                                    VbkTx& out,
+                                    ValidationState& state) {
+  ReadStream stream(data);
+  return DeserializeRaw(stream, signature, publicKey, out, state);
+}
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 VbkTx& out,
+                                 ValidationState& state) {
+  Slice<const uint8_t> rawTx;
+  if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKTX)) {
+    return state.Invalid("vbktx-header");
+  }
+  Slice<const uint8_t> signature;
+  if (!readSingleByteLenValue(
+          stream, signature, state, 0, MAX_SIGNATURE_SIZE)) {
+    return state.Invalid("vbktx-signature");
+  }
+  Slice<const uint8_t> publicKey;
+  if (!readSingleByteLenValue(stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
+    return state.Invalid("vbktx-public-key");
+  }
+  return DeserializeRaw(rawTx, signature, publicKey, out, state);
+}

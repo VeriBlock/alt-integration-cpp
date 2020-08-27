@@ -52,6 +52,8 @@ JsonValue ToJSON(const Output& o) {
   return obj;
 }
 
+bool Deserialize(ReadStream& stream, Output& out, ValidationState& state);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_OUTPUT_HPP_

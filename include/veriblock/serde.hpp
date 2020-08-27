@@ -82,6 +82,23 @@ Slice<const uint8_t> readVarLenValue(
 
 /**
  * Read variable length value, which consists of
+ * `[N=(4 bytes = size of slice) | N bytes slice]`
+ * Size of slice should be within range [minLen; maxLen]
+ * @param stream read data from this stream
+ * @param out slice with data
+ * @param state will return error description here
+ * @param minLen minimum possible value of slice size
+ * @param maxLen maximum possible value of slice size
+ * @return true if read is OK, false otherwise
+ */
+bool readVarLenValue(ReadStream& stream,
+                     Slice<const uint8_t>& out,
+                     ValidationState& state,
+                     int32_t minLen = 0,
+                     int32_t maxLen = (std::numeric_limits<int32_t>::max)());
+
+/**
+ * Read variable length value, which consists of
  * `[N=(1 byte = size of slice) | N bytes slice]`
  * Size of slice should be within range [minLen; maxLen]
  * @param stream read data from this stream
@@ -96,6 +113,23 @@ Slice<const uint8_t> readSingleByteLenValue(
     int32_t maxLen = (std::numeric_limits<int32_t>::max)());
 
 /**
+ * Read variable length value, which consists of
+ * `[N=(1 byte = size of slice) | N bytes slice]`
+ * Size of slice should be within range [minLen; maxLen]
+ * @param stream read data from this stream
+ * @param out slice with data
+ * @param state will return error description here
+ * @param minLen minimum possible value of slice size
+ * @param maxLen maximum possible value of slice size
+ * @return true if read is OK, false otherwise
+ */
+bool readSingleByteLenValue(ReadStream& stream,
+                            Slice<const uint8_t>& out,
+                            ValidationState& state,
+                            int minLen,
+                            int maxLen);
+
+/**
  * Read single Big-Endian value from a stream.
  * This function interprets sizeof(T) bytes as Big-Endian number and returns it.
  * @tparam T number type - uint64_t, etc.
@@ -106,9 +140,31 @@ Slice<const uint8_t> readSingleByteLenValue(
 template <typename T,
           typename = typename std::enable_if<std::is_integral<T>::value>::type>
 T readSingleBEValue(ReadStream& stream) {
-  return ReadStream(
-             pad(readSingleByteLenValue(stream, 0, sizeof(T)), sizeof(T)))
-      .readBE<T>();
+  auto data = readSingleByteLenValue(stream, 0, sizeof(T));
+  auto padded = pad(data, sizeof(T));
+  auto dataStream = ReadStream(padded);
+  return dataStream.readBE<T>();
+}
+
+/**
+ * Read single Big-Endian value from a stream.
+ * This function interprets sizeof(T) bytes as Big-Endian number and returns it.
+ * @tparam T number type - uint64_t, etc.
+ * @param stream read data from this stream
+ * @param out read number
+ * @param state will return error description here
+ * @return true if read is OK, false otherwise
+ */
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type>
+bool readSingleBEValue(ReadStream& stream, T& out, ValidationState& state) {
+  Slice<const uint8_t> data;
+  if (!readSingleByteLenValue(stream, data, state, 0, sizeof(T))) {
+    return state.Invalid("readsinglebe-bad-data");
+  }
+  auto padded = pad(data, sizeof(T));
+  auto dataStream = ReadStream(padded);
+  return dataStream.readBE<T>(out, state);
 }
 
 /**
@@ -175,12 +231,68 @@ struct NetworkBytePair {
 NetworkBytePair readNetworkByte(ReadStream& stream, TxType type);
 
 /**
+ * Read optional network byte from the stream
+ * @param stream read data from this stream
+ * @param type use this value to detect if we are reading
+ * network byte or type byte
+ * @param out NetworkBytePair structure
+ * @param state will return error description here
+ * @return true if read is OK, false otherwise
+ */
+bool readNetworkByte(ReadStream& stream,
+                     TxType type,
+                     NetworkBytePair& out,
+                     ValidationState& state);
+
+/**
  * Write optional network byte to the stream
  * @param stream write data to this stream
  * @param networkOrType write network byte if available, write type
  * byte after
  */
 void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
+
+/**
+ * Reads array of entities of type T.
+ * @tparam T type of entity to read
+ * @param stream read data from this stream
+ * @param out vector of read elements of type T
+ * @param state will return error description here
+ * @param min min size of array
+ * @param max max size of array
+ * @param readFunc function that is called to read single value of type T
+ * @return true if read is OK, false otherwise
+ */
+template <typename T>
+bool readArrayOf(
+    ReadStream& stream,
+    std::vector<T>& out,
+    ValidationState& state,
+    int32_t min,
+    int32_t max,
+    std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
+  int32_t count = 0;
+  if (!readSingleBEValue<int32_t>(stream, count, state)) {
+    return state.Invalid("readarray-bad-count");
+  }
+  if (!checkRange(count, min, max, state)) {
+    return state.Invalid("readarray-bad-count-range");
+  }
+
+  std::vector<T> items;
+  items.reserve(count);
+
+  for (int32_t i = 0; i < count; i++) {
+    T item;
+    if (!readFunc(stream, item, state)) {
+      return state.Invalid("readarray-bad-item", i);
+    }
+    items.push_back(item);
+  }
+
+  out = items;
+  return true;
+}
 
 /**
  * Reads array of entities of type T.
@@ -208,6 +320,16 @@ std::vector<T> readArrayOf(ReadStream& stream,
   }
 
   return items;
+}
+
+template <typename T>
+bool readArrayOf(
+    ReadStream& stream,
+    std::vector<T>& out,
+    ValidationState& state,
+    std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
+  int32_t max = std::numeric_limits<int32_t>::max();
+  return readArrayOf<T>(stream, out, state, 0, max, readFunc);
 }
 
 template <typename T>
@@ -246,6 +368,18 @@ template <typename T>
 T fromRaw(const std::vector<uint8_t>& bytes) {
   ReadStream r(bytes);
   return T::fromRaw(r);
+}
+
+template <typename T>
+bool Deserialize(Slice<const uint8_t> data, T& out, ValidationState& state) {
+  ReadStream stream(data);
+  return Deserialize(stream, out, state);
+}
+
+template <typename T>
+bool DeserializeRaw(Slice<const uint8_t> data, T& out, ValidationState& state) {
+  ReadStream stream(data);
+  return DeserializeRaw(stream, out, state);
 }
 
 }  // namespace altintegration

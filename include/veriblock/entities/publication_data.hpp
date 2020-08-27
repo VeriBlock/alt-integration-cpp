@@ -64,6 +64,10 @@ JsonValue ToJSON(const PublicationData& p) {
   return obj;
 }
 
+bool Deserialize(ReadStream& stream,
+                 PublicationData& out,
+                 ValidationState& state);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_PUBLICATION_DATA_HPP_
