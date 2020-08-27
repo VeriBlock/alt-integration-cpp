@@ -59,7 +59,7 @@ class ReadStream {
                                                1>::type>
   bool readNoExcept(size_t size, T& out, ValidationState& state) {
     if (!hasMore(size)) {
-      return state.Invalid("buffer-inderflow");
+      return state.Invalid("buffer-underflow");
     }
 
     T result;
@@ -100,7 +100,7 @@ class ReadStream {
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
   bool readBENoExcept(T &out, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
-      return state.Invalid("buffer-inderflow");
+      return state.Invalid("buffer-underflow");
     }
     T t = 0;
     for (size_t i = 0, shift = (sizeof(T) - 1) * 8; i < sizeof(T);
@@ -130,7 +130,7 @@ class ReadStream {
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
   bool readLENoExcept(T &out, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
-      return state.Invalid("buffer-inderflow");
+      return state.Invalid("buffer-underflow");
     }
 
     T t = 0;

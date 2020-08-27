@@ -61,6 +61,22 @@ TEST(BtcBlock, RoundTrip) {
   EXPECT_EQ(blockReEncoded, defaultBlockEncoded);
 }
 
+TEST(BtcBlock, RoundTripNew) {
+  auto blockEncoded = ParseHex(defaultBlockEncoded);
+  BtcBlock decoded;
+  ValidationState state;
+  bool ret = Deserialize(blockEncoded, decoded, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
+  EXPECT_EQ(decoded.version, defaultBlock.version);
+
+  WriteStream outputStream;
+  decoded.toRaw(outputStream);
+  auto btcBytes = outputStream.data();
+  auto blockReEncoded = HexStr(btcBytes);
+  EXPECT_EQ(blockReEncoded, defaultBlockEncoded);
+}
+
 TEST(BtcBlock, getBlockHash_test) {
   BtcBlock block;
   block.version = 536870912;
