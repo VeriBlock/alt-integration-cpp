@@ -27,7 +27,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario1_test) {
   ASSERT_EQ(vtbs.size(), 1);
   ASSERT_EQ(vtbs[0].transaction.getHash(), vbkPopTx.getHash());
 
-  EXPECT_TRUE(isStronglyEquivalent(vtbs[0], vtbs[0], popminer->vbk()));
+  EXPECT_TRUE(popminer->vbk().isStronglyEquivalent(vtbs[0], vtbs[0]));
 }
 
 // Compare vtbs that are contains in the same chain with the same vbkPop
@@ -58,7 +58,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario2_test) {
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
 
-  EXPECT_TRUE(isStronglyEquivalent(vtb1, vtb2, popminer->vbk()));
+  EXPECT_TRUE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
 }
 
 // Compare vtbs that are contains in the different chains with the same vbkPop
@@ -92,7 +92,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario3_test) {
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
 
-  EXPECT_FALSE(isStronglyEquivalent(vtb1, vtb2, popminer->vbk()));
+  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
 }
 
 // Compare vtbs that are not equal
@@ -121,5 +121,5 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario4_test) {
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
 
-  EXPECT_FALSE(isStronglyEquivalent(vtb1, vtb2, popminer->vbk()));
+  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
 }

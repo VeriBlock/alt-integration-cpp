@@ -57,6 +57,10 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PayloadsStorage& getStorage() { return storage_; }
   const PayloadsStorage& getStorage() const { return storage_; }
 
+  bool isStronglyEquivalent(const VTB& vtb1, const VTB& vtb2);
+
+  bool areOnSameChain(const VbkBlock& blk1, const VbkBlock& blk2);
+
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
   /**

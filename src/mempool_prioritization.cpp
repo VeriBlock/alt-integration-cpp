@@ -5,38 +5,4 @@
 
 #include "veriblock/mempool_prioritization.hpp"
 
-namespace altintegration {
-
-bool isStronglyEquivalent(const VTB& vtb1,
-                          const VTB& vtb2,
-                          VbkBlockTree& tree) {
-  auto* vtb1_containing_block =
-      tree.getBlockIndex(vtb1.containingBlock.getHash());
-  auto* vtb2_containing_block =
-      tree.getBlockIndex(vtb2.containingBlock.getHash());
-
-  VBK_ASSERT_MSG(vtb1_containing_block,
-                 "vtb1 unknown containing block %s",
-                 vtb1.containingBlock.toPrettyString());
-  VBK_ASSERT_MSG(vtb2_containing_block,
-                 "vtb1 unknown containing block %s",
-                 vtb2.containingBlock.toPrettyString());
-
-  bool is_on_the_same_chain = false;
-  if (vtb1_containing_block->getHeight() > vtb2_containing_block->getHeight()) {
-    is_on_the_same_chain =
-        vtb1_containing_block->getAncestor(
-            vtb2_containing_block->getHeight()) == vtb2_containing_block;
-  } else {
-    is_on_the_same_chain =
-        vtb2_containing_block->getAncestor(
-            vtb1_containing_block->getHeight()) == vtb1_containing_block;
-  }
-
-  return (vtb1.transaction.bitcoinTransaction ==
-          vtb2.transaction.bitcoinTransaction) &&
-         (vtb1.transaction.blockOfProof == vtb1.transaction.blockOfProof) &&
-         is_on_the_same_chain;
-}
-
-}  // namespace altintegration
+namespace altintegration {}  // namespace altintegration
