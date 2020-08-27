@@ -469,21 +469,21 @@ int VbkBlockTree::weaklyCompare(const VTB& vtb1, const VTB& vtb2) {
                  vtb2.transaction.blockOfProof.toPrettyString());
 
   if (blockOfProof1->getHeight() > blockOfProof2->getHeight()) {
-    return 1;
+    return -1;
   }
 
   if (blockOfProof1->getHeight() < blockOfProof2->getHeight()) {
-    return -1;
+    return 1;
   }
 
   if (vtb1.transaction.publishedBlock.height >
       vtb2.transaction.publishedBlock.height) {
-    return 1;
+    return -1;
   }
 
   if (vtb1.transaction.publishedBlock.height <
       vtb2.transaction.publishedBlock.height) {
-    return -1;
+    return 1;
   }
 
   if (vtb1.transaction.blockOfProofContext.size() >
