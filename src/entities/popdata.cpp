@@ -63,9 +63,7 @@ PopData::id_t PopData::getHash() const {
   return sha256(bytes);
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
-                                 PopData& out,
-                                 ValidationState& state) {
+bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
   PopData pd;
   typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
   typedef bool (*atvde)(ReadStream&, ATV&, ValidationState&);
