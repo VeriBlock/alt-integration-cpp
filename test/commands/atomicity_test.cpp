@@ -11,11 +11,7 @@
 
 using namespace altintegration;
 
-struct AtomicityTestFixture : public ::testing::Test, public PopTestFixture {
-  AtomicityTestFixture() {
-    GetLogger().level = LogLevel::debug;
-  }
-};
+struct AtomicityTestFixture : public ::testing::Test, public PopTestFixture {};
 
 TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
   popminer->mineBtcBlocks(10);

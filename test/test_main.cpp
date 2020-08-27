@@ -6,7 +6,9 @@
 #include <gtest/gtest.h>
 
 #include <sstream>
+#include <util/fmtlogger.hpp>
 #include <veriblock/fmt.hpp>
+#include <veriblock/logger.hpp>
 
 static bool str2int(int& i, char const* s) {
   std::stringstream ss(s);
@@ -20,14 +22,24 @@ static bool str2int(int& i, char const* s) {
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
-  int seed = 0;
+  using namespace altintegration;
+  SetLogger<FmtLogger>();
 
-  if (argc == 2 && argv[1]) {
+  int seed = 0;
+  LogLevel level = LogLevel::off;
+
+  if (argc >= 2 && argv[1]) {
     str2int(seed, argv[1]);
   }
 
+  if (argc >= 3 && argv[2]) {
+    level = StringToLevel(argv[2]);
+  }
+
   srand(seed);
-  fmt::printf("[~~~~~~~~~~] Running test suite with seed=%d.\n", seed);
+  GetLogger().level = level;
+  fmt::printf("[~~~~~~~~~~] Seed=%d\n", seed);
+  fmt::printf("[~~~~~~~~~~] LogLevel=%s\n", LevelToString(level));
 
   return RUN_ALL_TESTS();
 }
