@@ -199,6 +199,23 @@ TEST(VTB, RoundTrip) {
   EXPECT_EQ(txReEncoded, defaultVtbEncoded);
 }
 
+TEST(VTB, RoundTripNew) {
+  auto vtbBytes = ParseHex(defaultVtbEncoded);
+  VTB decoded;
+  ValidationState state;
+  bool ret = Deserialize(vtbBytes, decoded, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
+  EXPECT_EQ(decoded.transaction.address,
+            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto txBytes = outputStream.data();
+  auto txReEncoded = HexStr(txBytes);
+  EXPECT_EQ(txReEncoded, defaultVtbEncoded);
+}
+
 TEST(VTB, getId_test) {
   auto atvBytes = ParseHex(defaultVtbEncoded);
   auto stream = ReadStream(atvBytes);
