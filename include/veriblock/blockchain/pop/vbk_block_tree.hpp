@@ -68,7 +68,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
    * @return:
    * Return positive if vtb1 is better
    * Return negative if vtb2 is better
-   * Return 0 if they are strngly equal
+   * Return 0 if they are strongly equal
    */
   int weaklyCompare(const VTB& vtb1, const VTB& vtb2);
 
