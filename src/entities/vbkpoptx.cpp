@@ -76,11 +76,11 @@ std::string VbkPopTx::toPrettyString() const {
                                      : "(none)");
 }
 
-bool altintegration::DeserializeRaw(ReadStream& stream,
-                                    Slice<const uint8_t> signature,
-                                    Slice<const uint8_t> publicKey,
-                                    VbkPopTx& out,
-                                    ValidationState& state) {
+bool DeserializeRaw(ReadStream& stream,
+                    Slice<const uint8_t> signature,
+                    Slice<const uint8_t> publicKey,
+                    VbkPopTx& out,
+                    ValidationState& state) {
   VbkPopTx tx{};
   if (!readNetworkByte(stream, TxType::VBK_POP_TX, tx.networkOrType, state)) {
     return state.Invalid("network-or-type");
@@ -122,18 +122,16 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
   return true;
 }
 
-bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
-                                    Slice<const uint8_t> signature,
-                                    Slice<const uint8_t> publicKey,
-                                    VbkPopTx& out,
-                                    ValidationState& state) {
+bool DeserializeRaw(Slice<const uint8_t> data,
+                    Slice<const uint8_t> signature,
+                    Slice<const uint8_t> publicKey,
+                    VbkPopTx& out,
+                    ValidationState& state) {
   ReadStream stream(data);
   return DeserializeRaw(stream, signature, publicKey, out, state);
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
-                                 VbkPopTx& out,
-                                 ValidationState& state) {
+bool Deserialize(ReadStream& stream, VbkPopTx& out, ValidationState& state) {
   Slice<const uint8_t> rawTx;
   if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKPOPTX)) {
     return state.Invalid("invalid-tx");
