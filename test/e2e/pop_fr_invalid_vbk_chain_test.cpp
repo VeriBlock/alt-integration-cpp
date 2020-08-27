@@ -55,7 +55,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // endorse ALT5
   auto vbktx1 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
-  auto atv1 = popminer->generateATV(vbktx1, getLastKnownVbkBlock(), state);
+  auto atv1 = popminer->applyATV(vbktx1, state);
   ASSERT_EQ(atv1.blockOfProof.height, 42);
 
   // mine 10 more blocks on top of tipB
@@ -79,7 +79,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // endorse ALT5
   auto vbktx2 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
-  auto atv2 = popminer->generateATV(vbktx1, getLastKnownVbkBlock(), state);
+  auto atv2 = popminer->applyATV(vbktx1, state);
   ASSERT_EQ(atv1.blockOfProof.height, 42);
 
   auto vtb2 = popminer->vbkPayloads[vtbcontaining.getHash()][1];

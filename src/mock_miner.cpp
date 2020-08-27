@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mock_miner.hpp"
-
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
+#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -43,19 +42,19 @@ bool mineBlocks(const uint32_t& n,
 
 // wrappers that prevent the block from being deleted
 template <typename BlockTree, typename Block>
-bool acceptBlock(BlockTree & tree, const Block & block, ValidationState & state) {
-    if (!tree.acceptBlock(block, state)) {
-        return false;
-    }
-    auto * index = tree.getBlockIndex(block.getHash());
-    VBK_ASSERT(index != nullptr && "could not find the block we have just added");
-    index->addRef(0);
-    return true;
+bool acceptBlock(BlockTree& tree, const Block& block, ValidationState& state) {
+  if (!tree.acceptBlock(block, state)) {
+    return false;
+  }
+  auto* index = tree.getBlockIndex(block.getHash());
+  VBK_ASSERT(index != nullptr && "could not find the block we have just added");
+  index->addRef(0);
+  return true;
 }
 template <typename BlockTree, typename BlockIndex>
-void removeLeaf(BlockTree & tree, BlockIndex & index) {
-    index.removeRef(0);
-    return tree.removeLeaf(index);
+void removeLeaf(BlockTree& tree, BlockIndex& index) {
+  index.removeRef(0);
+  return tree.removeLeaf(index);
 }
 
 VbkTx MockMiner::createVbkTxEndorsingAltBlock(
@@ -79,9 +78,7 @@ VbkTx MockMiner::createVbkTxEndorsingAltBlock(
   return transaction;
 }
 
-ATV MockMiner::generateATV(const VbkTx& transaction,
-                           const VbkBlock::hash_t& lastKnownVbkBlockHash,
-                           ValidationState& state) {
+ATV MockMiner::applyATV(const VbkTx& transaction, ValidationState& state) {
   // build merkle tree
   auto hashes = hashAll<VbkTx>({transaction});
   const int32_t treeIndex = 0;  // this is POP tx
@@ -102,20 +99,53 @@ ATV MockMiner::generateATV(const VbkTx& transaction,
   atv.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
   atv.blockOfProof = containingBlock;
 
-  for (auto* walkBlock = tip;
-       walkBlock && walkBlock->getHeader().getHash() != lastKnownVbkBlockHash;
-       walkBlock = walkBlock->pprev) {
-    atv.context.push_back(walkBlock->getHeader());
-  }
-
-  // since we inserted in reverse order, we need to reverse context blocks
-  std::reverse(atv.context.begin(), atv.context.end());
-
   if (!acceptBlock(vbktree, containingBlock, state)) {
     throw std::domain_error(state.toString());
   }
 
   return atv;
+}
+
+std::vector<ATV> MockMiner::applyATVs(
+    const std::vector<VbkTx>& transactions, ValidationState& state) {
+  // build merkle tree
+  auto hashes = hashAll<VbkTx>(transactions);
+  const int32_t treeIndex = 0;  // this is POP tx
+  VbkMerkleTree mtree(hashes, treeIndex);
+
+  // create containing block
+  auto* tip = vbktree.getBestChain().tip();
+  assert(vbktree.isBootstrapped() && "VBK blockchain is not bootstrapped");
+
+  VbkBlock containingBlock = vbk_miner.createNextBlock(
+      *tip, mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
+
+  // map VbkTx -> ATV
+  std::vector<ATV> atvs;
+  atvs.reserve(transactions.size());
+  int32_t index = 0;
+  std::transform(transactions.begin(),
+                 transactions.end(),
+                 std::back_inserter(atvs),
+                 [&](const VbkTx& tx) -> ATV {
+                   ATV atv;
+                   atv.transaction = tx;
+                   atv.merklePath.treeIndex = treeIndex;
+                   atv.merklePath.index = index;
+                   atv.merklePath.subject = hashes[index];
+                   atv.merklePath.layers =
+                       mtree.getMerklePathLayers(hashes[index]);
+                   atv.blockOfProof = containingBlock;
+                   index++;
+
+                   return atv;
+                 });
+
+  if (!acceptBlock(vbktree, containingBlock, state)) {
+    throw std::domain_error(state.toString());
+  }
+
+  return atvs;
 }
 
 BtcTx MockMiner::createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock) {

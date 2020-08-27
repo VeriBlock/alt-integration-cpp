@@ -10,24 +10,29 @@
 namespace altintegration {
 
 PopData PopData::fromVbkEncoding(ReadStream& stream) {
-  PopData alt_pop_tx;
-  alt_pop_tx.context = readArrayOf<VbkBlock>(
-      stream,
-      0,
-      MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-      (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding);
+  PopData pd;
+  pd.version = stream.readBE<uint32_t>();
+  if (pd.version == 1) {
+    pd.context = readArrayOf<VbkBlock>(
+        stream,
+        0,
+        MAX_CONTEXT_COUNT,
+        (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding);
 
-  alt_pop_tx.atvs = readArrayOf<ATV>(stream,
-                                     0,
-                                     MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                                     (ATV(*)(ReadStream&))ATV::fromVbkEncoding);
+    pd.atvs = readArrayOf<ATV>(stream,
+                               0,
+                               MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                               (ATV(*)(ReadStream&))ATV::fromVbkEncoding);
 
-  alt_pop_tx.vtbs = readArrayOf<VTB>(stream,
-                                     0,
-                                     MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                                     (VTB(*)(ReadStream&))VTB::fromVbkEncoding);
-
-  return alt_pop_tx;
+    pd.vtbs = readArrayOf<VTB>(stream,
+                               0,
+                               MAX_CONTEXT_COUNT_VBK_PUBLICATION,
+                               (VTB(*)(ReadStream&))VTB::fromVbkEncoding);
+  } else {
+    throw std::domain_error(fmt::format(
+        "PopData deserialization version={} is not implemented", pd.version));
+  }
+  return pd;
 }
 
 PopData PopData::fromVbkEncoding(Slice<const uint8_t> raw_bytes) {
@@ -36,19 +41,25 @@ PopData PopData::fromVbkEncoding(Slice<const uint8_t> raw_bytes) {
 }
 
 void PopData::toVbkEncoding(WriteStream& stream) const {
-  writeSingleBEValue(stream, context.size());
-  for (const auto& b : context) {
-    b.toVbkEncoding(stream);
-  }
+  stream.writeBE<uint32_t>(version);
+  if (version == 1) {
+    writeSingleBEValue(stream, context.size());
+    for (const auto& b : context) {
+      b.toVbkEncoding(stream);
+    }
 
-  writeSingleBEValue(stream, atvs.size());
-  for (const auto& atv : atvs) {
-    atv.toVbkEncoding(stream);
-  }
+    writeSingleBEValue(stream, atvs.size());
+    for (const auto& atv : atvs) {
+      atv.toVbkEncoding(stream);
+    }
 
-  writeSingleBEValue(stream, vtbs.size());
-  for (const auto& vtb : vtbs) {
-    vtb.toVbkEncoding(stream);
+    writeSingleBEValue(stream, vtbs.size());
+    for (const auto& vtb : vtbs) {
+      vtb.toVbkEncoding(stream);
+    }
+  } else {
+    VBK_ASSERT_MSG(
+        false, "PopData serialization version=%d is not implemented", version);
   }
 }
 
@@ -58,22 +69,24 @@ std::vector<uint8_t> PopData::toVbkEncoding() const {
   return stream.data();
 }
 
-PopData::id_t PopData::getHash() const {
-  auto bytes = toVbkEncoding();
-  return sha256(bytes);
-}
-
 bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
   PopData pd;
   typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
   typedef bool (*atvde)(ReadStream&, ATV&, ValidationState&);
   typedef bool (*vtbde)(ReadStream&, VTB&, ValidationState&);
 
+  if (stream.readBE<uint32_t>(pd.version, state)) {
+    return state.Invalid("pop-version");
+  }
+  if (pd.version != 1) {
+    return state.Invalid("pop-bad-version");
+  }
+
   if (!readArrayOf<VbkBlock>(stream,
                              pd.context,
                              state,
                              0,
-                             MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                             MAX_CONTEXT_COUNT,
                              static_cast<vbkde>(Deserialize))) {
     return state.Invalid("pop-vbk-context");
   }
@@ -91,7 +104,7 @@ bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
                         pd.vtbs,
                         state,
                         0,
-                        MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                        MAX_CONTEXT_COUNT_VBK_PUBLICATION,
                         static_cast<vtbde>(Deserialize))) {
     return state.Invalid("pop-vtb-context");
   }

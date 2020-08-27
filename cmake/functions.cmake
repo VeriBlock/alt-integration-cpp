@@ -22,11 +22,13 @@ endfunction()
 function(addtest test_name)
     set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads REQUIRED)
-
-    add_executable(${test_name} ${ARGN})
+    add_executable(
+            ${test_name}
+            ${ARGN}
+            $<TARGET_OBJECTS:test_main>
+    )
     addtest_part(${test_name} ${ARGN})
     target_link_libraries(${test_name}
-            gtest_main
             gtest
             gmock
             Threads::Threads

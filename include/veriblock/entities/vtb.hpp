@@ -21,26 +21,17 @@ struct VTB {
   using id_t = uint256;
   using containing_block_t = VbkBlock;
 
+  uint32_t version = 1;
   VbkPopTx transaction{};
   VbkMerklePath merklePath{};
   containing_block_t containingBlock{};
-  std::vector<VbkBlock> context{};
 
   //! (memory only) indicates whether we already did 'checkPayloads' on this VTB
   mutable bool checked{false};
 
   std::string toHex() const { return HexStr(toVbkEncoding()); }
 
-  std::string toPrettyString() const {
-    return fmt::sprintf(
-        "VTB{containingTx=%s(%s), containingBlock=%s, context=%d blocks "
-        "starting at %s}",
-        transaction.getHash().toHex(),
-        transaction.toPrettyString(),
-        containingBlock.getHash().toHex(),
-        context.size(),
-        context.size() > 0 ? context[0].toPrettyString() : "(none)");
-  }
+  std::string toPrettyString() const;
 
   /**
    * Read VBK data from the stream and convert it to VTB
@@ -97,10 +88,10 @@ template <typename JsonValue>
 JsonValue ToJSON(const VTB& v) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "id", v.getId().toHex());
+  json::putIntKV(obj, "version", v.version);
   json::putKV(obj, "transaction", ToJSON<JsonValue>(v.transaction));
   json::putKV(obj, "merklePath", ToJSON<JsonValue>(v.merklePath));
   json::putKV(obj, "containingBlock", ToJSON<JsonValue>(v.containingBlock));
-  json::putArrayKV(obj, "context", v.context);
   return obj;
 }
 

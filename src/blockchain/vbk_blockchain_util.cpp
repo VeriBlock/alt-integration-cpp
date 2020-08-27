@@ -201,7 +201,7 @@ bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
   int64_t maxTime = currentTimestamp4() + params.maxFutureBlockTime();
   if (blockTime > maxTime) {
     return state.Invalid("vbk-time-too-new",
-                         "block timestamp too far in the future");
+                         "VBK block timestamp too far in the future");
   }
 
   return true;

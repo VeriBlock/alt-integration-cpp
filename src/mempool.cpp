@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/entities/vbkfullblock.hpp"
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -287,7 +286,7 @@ bool MemPool::submit(const ATV& atv,
                      ValidationState& state,
                      bool shouldDoContextualCheck) {
   // stateless validation
-  if (!checkATV(atv, state, tree_->getParams(), tree_->vbk().getParams())) {
+  if (!checkATV(atv, state, tree_->getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
   }
 
@@ -296,19 +295,10 @@ bool MemPool::submit(const ATV& atv,
     return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
-  for (const auto& b : atv.context) {
-    if (!tree_->vbk().getBlockIndex(b.getHash())) {
-      touchVbkBlock(b, b.getId());
-    }
-  }
-
   auto& rel = touchVbkBlock(atv.blockOfProof);
   auto atvptr = std::make_shared<ATV>(atv);
   auto pair = std::make_pair(atv.getId(), atvptr);
   rel.atvs.push_back(atvptr);
-
-  // clear context
-  pair.second->context.clear();
 
   // store atv id in containing block index
   stored_atvs_.insert(pair);
@@ -324,7 +314,7 @@ bool MemPool::submit(const VTB& vtb,
                      bool shouldDoContextualCheck) {
   auto& vbk = tree_->vbk();
   // stateless validation
-  if (!checkVTB(vtb, state, vbk.getParams(), vbk.btc().getParams())) {
+  if (!checkVTB(vtb, state, vbk.btc().getParams())) {
     return state.Invalid("pop-mempool-submit-vtb-stateless");
   }
 
@@ -333,19 +323,10 @@ bool MemPool::submit(const VTB& vtb,
     return state.Invalid("pop-mempool-submit-vtb-stateful");
   }
 
-  for (const auto& b : vtb.context) {
-    if (!vbk.getBlockIndex(b.getHash())) {
-      touchVbkBlock(b, b.getId());
-    }
-  }
-
   auto& rel = touchVbkBlock(vtb.containingBlock);
   auto vtbptr = std::make_shared<VTB>(vtb);
   auto pair = std::make_pair(vtb.getId(), vtbptr);
   rel.vtbs.push_back(vtbptr);
-
-  // clear context
-  pair.second->context.clear();
 
   stored_vtbs_.insert(pair);
 
@@ -361,6 +342,10 @@ bool MemPool::submit(const VbkBlock& blk,
   // stateless validation
   if (!checkBlock(blk, state, tree_->vbk().getParams())) {
     return state.Invalid("pop-mempool-submit-vbkblock-stateless");
+  }
+
+  if (shouldDoContextualCheck && !checkContextually(blk, state)) {
+    return state.Invalid("pop-mempool-submit-vbk-stateful");
   }
 
   // stateful validation
@@ -433,6 +418,7 @@ bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state) {
 
   return true;
 }
+
 template <>
 bool MemPool::checkContextually<ATV>(const ATV& atv, ValidationState& state) {
   // stateful validation
@@ -460,6 +446,20 @@ bool MemPool::checkContextually<ATV>(const ATV& atv, ValidationState& state) {
                                         atv.getId().toHex(),
                                         endorsed_index->toShortPrettyString()));
     }
+  }
+
+  return true;
+}
+
+template <>
+bool MemPool::checkContextually<VbkBlock>(const VbkBlock& blk,
+                                          ValidationState& state) {
+  if (tree_->vbk().getBlockIndex(blk.previousBlock) == nullptr &&
+      get<VbkBlock>(blk.previousBlock) == nullptr) {
+    return state.Invalid(
+        "bad-prev",
+        fmt::sprintf("Block=%s does not connect to known VBK tree",
+                     blk.toPrettyString()));
   }
 
   return true;

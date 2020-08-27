@@ -26,9 +26,16 @@ void assertBlockCanBeApplied(index_t& index, bool shouldSetCanBeApplied) {
                  index.pprev->toPrettyString());
   VBK_ASSERT_MSG(
       index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
-      "state corruption: tried to unapply a block that follows a "
+      "state corruption: tried to apply a block that follows a "
       "block that has not been applied %s",
       index.pprev->toPrettyString());
+
+  // BLOCK_CAN_BE_APPLIED and BLOCK_FAILED_POP are mutually exclusive flags
+  if (index.hasFlags(BLOCK_CAN_BE_APPLIED)) {
+    VBK_ASSERT_MSG(!index.hasFlags(BLOCK_FAILED_POP),
+                   "block 'can be applied' but has 'block failed pop");
+  }
+
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to apply an already applied block %s",
                  index.toPrettyString());
@@ -181,7 +188,7 @@ struct PopStateMachine {
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)
-  // while predicate returns true, if predicate return false stop unappluing and
+  // while predicate returns true, if predicate return false stop unapplying and
   // return the index on which predicate returns false
   // atomic: either applies all of the requested blocks or fails on an assert
   index_t* unapplyWhile(index_t& from,

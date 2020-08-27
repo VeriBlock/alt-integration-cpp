@@ -138,7 +138,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   std::map<std::vector<uint8_t>, int64_t> getPopPayout(const hash_t& tip);
 
   // removes all payloads from a block
-  void removeAllPayloads(const hash_t& hash);
+  void removePayloads(const hash_t& hash);
 
   // use this method for stateful validation of pop data. invalid pop data will
   // be removed from `pop`
@@ -220,7 +220,7 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
-  json::putIntKV(obj, "status", i.status);
+  json::putIntKV(obj, "status", i.getStatus());
 
   auto stored = json::makeEmptyObject<JsonValue>();
   json::putArrayKV(stored, "vbkblocks", i.getPayloadIds<VbkBlock>());

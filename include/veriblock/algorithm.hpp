@@ -12,6 +12,7 @@
 #include <set>
 #include <vector>
 #include <veriblock/assert.hpp>
+#include <veriblock/blob.hpp>
 
 namespace altintegration {
 
@@ -28,6 +29,19 @@ std::vector<B> map_vector(const std::vector<A>& a,
 template <typename T>
 typename T::id_t get_id(const T& t) {
   return t.getId();
+}
+
+template <typename T>
+std::vector<uint8_t> getIdVector(const T& t) {
+  auto id = get_id<T>(t);
+  std::vector<uint8_t> v(id.begin(), id.end());
+  return v;
+}
+
+template <size_t N>
+std::vector<uint8_t> getIdVector(const Blob<N>& t) {
+  std::vector<uint8_t> v(t.begin(), t.end());
+  return v;
 }
 
 template <typename P>

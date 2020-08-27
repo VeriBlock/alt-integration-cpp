@@ -384,6 +384,8 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
   auto* current = getBlockIndex(index.getHash());
   VBK_ASSERT(current);
 
+  // TODO: check for duplicates
+
   // recover `endorsedBy`
   auto window = std::max(
       0, index.getHeight() - param_->getEndorsementSettlementInterval());
@@ -423,6 +425,30 @@ bool VbkBlockTree::loadTip(const Blob<24>& hash, ValidationState& state) {
   }
 
   return true;
+}
+
+bool VbkBlockTree::areOnSameChain(const VbkBlock& blk1, const VbkBlock& blk2) {
+  auto* blk_index1 = this->getBlockIndex(blk1.getHash());
+  auto* blk_index2 = this->getBlockIndex(blk2.getHash());
+
+  VBK_ASSERT_MSG(blk_index1, "unknown block %s", blk1.toPrettyString());
+  VBK_ASSERT_MSG(blk_index2, "unknown block %s", blk2.toPrettyString());
+
+  if (blk_index1->getHeight() > blk_index2->getHeight()) {
+    return blk_index1->getAncestor(blk_index2->getHeight()) == blk_index2;
+  } else {
+    return blk_index2->getAncestor(blk_index1->getHeight()) == blk_index1;
+  }
+}
+
+bool VbkBlockTree::isStronglyEquivalent(const VTB& vtb1, const VTB& vtb2) {
+  bool are_on_the_same_chain =
+      areOnSameChain(vtb1.containingBlock, vtb2.containingBlock);
+
+  return (vtb1.transaction.bitcoinTransaction ==
+          vtb2.transaction.bitcoinTransaction) &&
+         (vtb1.transaction.blockOfProof == vtb2.transaction.blockOfProof) &&
+         are_on_the_same_chain;
 }
 
 template <>

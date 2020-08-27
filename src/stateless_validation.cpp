@@ -307,8 +307,7 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
 
 bool checkATV(const ATV& atv,
               ValidationState& state,
-              const AltChainParams& altp,
-              const VbkChainParams& vbkp) {
+              const AltChainParams& altp) {
   if (atv.checked) {
     // we've already checked that ATV
     return true;
@@ -334,10 +333,6 @@ bool checkATV(const ATV& atv,
     return state.Invalid("vbk-check-merkle-path");
   }
 
-  if (!checkVbkBlocks(atv.context, state, vbkp)) {
-    return state.Invalid("vbk-check-vbk-blocks");
-  }
-
   atv.checked = true;
 
   return true;
@@ -345,7 +340,6 @@ bool checkATV(const ATV& atv,
 
 bool checkVTB(const VTB& vtb,
               ValidationState& state,
-              const VbkChainParams& vbk,
               const BtcChainParams& btc) {
   if (vtb.checked) {
     // we've already checked that VTB
@@ -361,10 +355,6 @@ bool checkVTB(const VTB& vtb,
                        vtb.containingBlock.merkleRoot,
                        state)) {
     return state.Invalid("vbk-check-merkle-path");
-  }
-
-  if (!checkVbkBlocks(vtb.context, state, vbk)) {
-    return state.Invalid("vbk-check-vbk-blocks");
   }
 
   vtb.checked = true;

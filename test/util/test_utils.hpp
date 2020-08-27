@@ -11,10 +11,13 @@
 #include <algorithm>
 #include <random>
 #include <vector>
+#include <veriblock/blockchain/alt_chain_params.hpp>
+#include <veriblock/entities/altblock.hpp>
 
 namespace altintegration {
 
 static const std::string defaultAtvEncoded =
+    "00000001"  // version=1
     "01580101166772f51ab208d32771ab1506970eeb664462730b838e0203e800010701370100"
     "010c6865616465722062797465730112636f6e7465787420696e666f206279746573011170"
     "61796f757420696e666f2062797465734630440220398b74708dc8f8aee68fce0c47b8959e"
@@ -26,9 +29,10 @@ static const std::string defaultAtvEncoded =
     "00022000000000000000000000000000000000000000000000000000000000000000002000"
     "00000000000000000000000000000000000000000000000000000000000000400000138800"
     "02449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4"
-    "462ef24ae02d67e47d785c9b90f301010000000000010100";
+    "462ef24ae02d67e47d785c9b90f30101000000000001";
 
 static const std::string defaultVtbEncoded =
+    "00000001"  // version=1
     "02046002011667ff0a897e5d512a0b6da2f41c479867fe6b3a4cae2640000013350002a793"
     "c872d6f6460e90bed62342bb968195f8c515d3eed7277a09efac4be99f95f0a15628b06ba3"
     "b44c0190b5c0495c9b8acd0701c5235ebbbe9c02011b01000000010ce74f1fb694a001eebb"
@@ -72,7 +76,7 @@ static const std::string defaultVtbEncoded =
     "00000000000000000000000000000000002036252dfc621de420fb083ad9d8767cba627edd"
     "eec64e421e9576cee21297dd0a40000013700002449c60619294546ad825af03b093563786"
     "0679ddd55ee4fd21082e18686eb53c1f4e259e6a0df23721a0b3b4b7ab5c9b9211070211ca"
-    "f01c3f010100";
+    "f01c3f01";
 
 template <typename T>
 void generateRandomBytes(T begin, T end) {
@@ -84,6 +88,26 @@ inline std::vector<uint8_t> generateRandomBytesVector(size_t n) {
   generateRandomBytes(bytes.begin(), bytes.end());
   return bytes;
 }
+
+struct AltChainParamsTest : public AltChainParams {
+  AltBlock getBootstrapBlock() const noexcept override {
+    AltBlock genesisBlock;
+    genesisBlock.hash = {1, 2, 3};
+    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.height = 0;
+    genesisBlock.timestamp = 0;
+    return genesisBlock;
+  }
+
+  int64_t getIdentifier() const noexcept override { return 0x7ec7; }
+
+  std::vector<uint8_t> getHash(
+      const std::vector<uint8_t>& bytes) const noexcept override {
+    ReadStream stream(bytes);
+    AltBlock altBlock = AltBlock::fromVbkEncoding(stream);
+    return altBlock.getHash();
+  }
+};
 
 }  // namespace altintegration
 

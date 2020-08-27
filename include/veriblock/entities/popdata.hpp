@@ -19,6 +19,8 @@ namespace altintegration {
 
 struct PopData {
   using id_t = uint256;
+
+  uint32_t version = 1;
   std::vector<VbkBlock> context;
   std::vector<VTB> vtbs{};
   std::vector<ATV> atvs{};
@@ -56,15 +58,6 @@ struct PopData {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
-
-  /**
-   * Calculate a Payloads id that is the sha256 hash of the payloads rawBytes
-   * @return id sha256 hash
-   */
-
-  id_t getHash() const;
-
-  id_t getId() const { return getHash(); }
 
   bool empty() const { return context.empty() && atvs.empty() && vtbs.empty(); }
 

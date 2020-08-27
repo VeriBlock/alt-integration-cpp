@@ -14,6 +14,7 @@ using namespace altintegration;
 struct Payloads {
   ATV atv;
   std::vector<VTB> vtbs;
+  std::vector<VbkBlock> context;
 
   std::string toPrettyString() const {
     return fmt::sprintf("Payloads(atv, vtbs=%d)", vtbs.size());
@@ -25,10 +26,11 @@ struct Payloads {
     list listctx;
     list listvtbs;
     for (const auto& vtb : vtbs) {
-      for (auto& block : vtb.context) {
-        listctx.append(HexStr(block.toVbkEncoding()));
-      }
       listvtbs.append(HexStr(vtb.toVbkEncoding()));
+    }
+
+    for (const auto& b : context) {
+      listctx.append(HexStr(b.toVbkEncoding()));
     }
 
     list listatvs;
@@ -157,7 +159,7 @@ struct MockMinerProxy : private MockMiner {
           lastVbkBlock);
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    payloads.atv = base::generateATV(vbktx, vbkindex->getHash(), state);
+    payloads.atv = base::applyATV(vbktx, state);
     if (!state.IsValid()) {
       throw std::logic_error("MockMiner: can't create ATV: " +
                              state.toString());
@@ -184,10 +186,7 @@ struct MockMinerProxy : private MockMiner {
     std::reverse(vtbs.begin(), vtbs.end());
 
     std::reverse(context.begin(), context.end());
-    if (vtbs.size() > 0) {
-      // supply all vbk context into first VTB
-      vtbs[0].context = context;
-    }
+    payloads.context = context;
 
     return payloads;
   }

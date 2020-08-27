@@ -53,7 +53,6 @@ TEST(ToJson, MempoolResult) {
 }
 )";
 
-  std::cout << actual;
   ASSERT_EQ(actual, expected);
 }
 
@@ -247,8 +246,7 @@ TEST(ToJson, VTB) {
                                     117576138,
                                     -266584319};
 
-  static const VTB defaultVtb{
-      defaultTx, vtbProofPath, vtbVbkBlock, std::vector<VbkBlock>{}};
+  static const VTB defaultVtb{1, defaultTx, vtbProofPath, vtbVbkBlock};
 
   picojson::value val = ToJSON<picojson::value>(defaultVtb);
   auto actual = val.serialize(true);
@@ -267,7 +265,6 @@ TEST(ToJson, VTB) {
     "timestamp": 1553699345,
     "version": 2
   },
-  "context": [],
   "id": "e3d7f971cf23efadc50c4ff9d1b971346f7f7851f4dad89bfa8408be0b1a70e7",
   "merklePath": {
     "index": 13,
@@ -359,7 +356,8 @@ TEST(ToJson, VTB) {
     },
     "signature": "3045022100f4dce45edcc6bfc4a1f44ef04e47e90a348efd471f742f18b882ac77a8d0e89e0220617cf7c4a22211991687b17126c1bb007a3b2a25c550f75d66b857a8fd9d75e7",
     "type": 2
-  }
+  },
+  "version": 1
 }
 )";
 
@@ -412,8 +410,7 @@ TEST(ToJson, ATV) {
       16842752,
       1};
 
-  static const ATV defaultAtv{
-      defaultTx, defaultPath, defaultVbkBlock, std::vector<VbkBlock>{}};
+  static const ATV defaultAtv{1, defaultTx, defaultPath, defaultVbkBlock};
 
   picojson::value val = ToJSON<picojson::value>(defaultAtv);
   auto actual = val.serialize(true);
@@ -432,7 +429,6 @@ TEST(ToJson, ATV) {
     "timestamp": 1553699059,
     "version": 2
   },
-  "context": [],
   "id": "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d",
   "merklePath": {
     "index": 0,
@@ -459,7 +455,8 @@ TEST(ToJson, ATV) {
     "sourceAddress": "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX",
     "sourceAmount": 1000,
     "type": 1
-  }
+  },
+  "version": 1
 }
 )";
 

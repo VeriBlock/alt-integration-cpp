@@ -75,6 +75,9 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
   }
 
   auto blockScore = scoreFromEndorsements(vbk_tree, endorsedBlock);
+  // precalculate block reward - it helps calculating each miner's reward
+  auto blockReward = calculator_.calculateBlockReward(
+      endorsedBlock.getHeight(), blockScore, popDifficulty);
 
   // pay reward for each of the endorsements
   for (const auto* e : endorsedBlock.endorsedBy) {
@@ -85,7 +88,7 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
     int relativeHeight = veriBlockHeight - bestPublication;
     assert(relativeHeight >= 0);
     auto minerReward = calculator_.calculateMinerReward(
-        endorsedBlock.getHeight(), relativeHeight, blockScore, popDifficulty);
+        relativeHeight, blockScore, blockReward);
     rewards[e->payoutInfo] += minerReward.value.getLow64();
   }
   return rewards;

@@ -13,14 +13,15 @@ const std::string VTB::_name = "VTB";
 
 VTB VTB::fromVbkEncoding(ReadStream& stream) {
   VTB vtb{};
-  vtb.transaction = VbkPopTx::fromVbkEncoding(stream);
-  vtb.merklePath = VbkMerklePath::fromVbkEncoding(stream);
-  vtb.containingBlock = VbkBlock::fromVbkEncoding(stream);
-  vtb.context = readArrayOf<VbkBlock>(
-      stream,
-      0,
-      MAX_CONTEXT_COUNT,
-      (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding);
+  vtb.version = stream.readBE<uint32_t>();
+  if (vtb.version == 1) {
+    vtb.transaction = VbkPopTx::fromVbkEncoding(stream);
+    vtb.merklePath = VbkMerklePath::fromVbkEncoding(stream);
+    vtb.containingBlock = VbkBlock::fromVbkEncoding(stream);
+  } else {
+    throw std::domain_error(
+        fmt::format("VTB version={} is not implemented", vtb.version));
+  }
 
   return vtb;
 }
@@ -36,12 +37,14 @@ VTB VTB::fromVbkEncoding(const std::string& bytes) {
 }
 
 void VTB::toVbkEncoding(WriteStream& stream) const {
-  transaction.toVbkEncoding(stream);
-  merklePath.toVbkEncoding(stream);
-  containingBlock.toVbkEncoding(stream);
-  writeSingleBEValue(stream, context.size());
-  for (const auto& block : context) {
-    block.toVbkEncoding(stream);
+  stream.writeBE<uint32_t>(version);
+  if (version == 1) {
+    transaction.toVbkEncoding(stream);
+    merklePath.toVbkEncoding(stream);
+    containingBlock.toVbkEncoding(stream);
+  } else {
+    VBK_ASSERT_MSG(
+        false, "VTB serialization version=%d is not implemented", version);
   }
 }
 
@@ -65,10 +68,17 @@ VTB VTB::fromHex(const std::string& hex) {
 }
 
 bool altintegration::Deserialize(ReadStream& stream,
-  VTB& out,
-  ValidationState& state) {
+                                 VTB& out,
+                                 ValidationState& state) {
   VTB vtb{};
   typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
+
+  if (stream.readBE<uint32_t>(vtb.version, state)) {
+    return state.Invalid("vtb-version");
+  }
+  if (vtb.version != 1) {
+    return state.Invalid("vtb-bad-version");
+  }
 
   if (!Deserialize(stream, vtb.transaction, state)) {
     return state.Invalid("vtb-transaction");
@@ -80,15 +90,14 @@ bool altintegration::Deserialize(ReadStream& stream,
     return state.Invalid("vtb-containing-block");
   }
 
-  if (!readArrayOf<VbkBlock>(stream,
-                             vtb.context,
-                             state,
-                             0,
-                             MAX_CONTEXT_COUNT,
-                             static_cast<vbkde>(Deserialize))) {
-    return state.Invalid("vtb-context");
-  }
-
   out = vtb;
   return true;
+}
+
+std::string VTB::toPrettyString() const {
+  return fmt::sprintf("VTB(version=%d,containingTx=%s(%s), containingBlock=%s)",
+                      version,
+                      transaction.getHash().toHex(),
+                      transaction.toPrettyString(),
+                      containingBlock.getHash().toHex());
 }

@@ -13,16 +13,15 @@ const std::string ATV::_name = "ATV";
 
 ATV ATV::fromVbkEncoding(ReadStream& stream) {
   ATV atv{};
-  atv.transaction = VbkTx::fromVbkEncoding(stream);
-  atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
-  atv.blockOfProof = VbkBlock::fromVbkEncoding(stream);
-  atv.context =
-      readArrayOf<VbkBlock>(stream,
-                            0,
-                            MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                            (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding
-
-      );
+  atv.version = stream.readBE<uint32_t>();
+  if (atv.version == 1) {
+    atv.transaction = VbkTx::fromVbkEncoding(stream);
+    atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
+    atv.blockOfProof = VbkBlock::fromVbkEncoding(stream);
+  } else {
+    throw std::domain_error(fmt::format(
+        "ATV deserialization version={} is not implemented", atv.version));
+  }
 
   return atv;
 }
@@ -33,12 +32,14 @@ ATV ATV::fromVbkEncoding(Slice<const uint8_t> bytes) {
 }
 
 void ATV::toVbkEncoding(WriteStream& stream) const {
-  transaction.toVbkEncoding(stream);
-  merklePath.toVbkEncoding(stream);
-  blockOfProof.toVbkEncoding(stream);
-  writeSingleBEValue(stream, context.size());
-  for (const auto& block : context) {
-    block.toVbkEncoding(stream);
+  stream.writeBE<uint32_t>(version);
+  if (version == 1) {
+    transaction.toVbkEncoding(stream);
+    merklePath.toVbkEncoding(stream);
+    blockOfProof.toVbkEncoding(stream);
+  } else {
+    VBK_ASSERT_MSG(
+        false, "ATV serialization version=%d is not implemented", version);
   }
 }
 
@@ -66,6 +67,13 @@ bool altintegration::Deserialize(ReadStream& stream,
   ATV atv{};
   typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
 
+  if (stream.readBE<uint32_t>(atv.version, state)) {
+    return state.Invalid("atv-version");
+  }
+  if (atv.version != 1) {
+    return state.Invalid("atv-bad-version");
+  }
+
   if (!Deserialize(stream, atv.transaction, state)) {
     return state.Invalid("atv-transaction");
   }
@@ -74,15 +82,6 @@ bool altintegration::Deserialize(ReadStream& stream,
   }
   if (!Deserialize(stream, atv.blockOfProof, state)) {
     return state.Invalid("atv-containing-block");
-  }
-
-  if (!readArrayOf<VbkBlock>(stream,
-                             atv.context,
-                             state,
-                             0,
-                             MAX_CONTEXT_COUNT_ALT_PUBLICATION,
-                             static_cast<vbkde>(Deserialize))) {
-    return state.Invalid("atv-context");
   }
 
   out = atv;

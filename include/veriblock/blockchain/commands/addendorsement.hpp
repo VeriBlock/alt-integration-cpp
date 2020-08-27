@@ -87,22 +87,22 @@ struct AddEndorsement : public Command {
   void UnExecute() override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
     VBK_ASSERT_MSG(
-        containing != nullptr &&
-            "failed to roll back AddEndorsement: the containing block does not "
-            "exist %s",
+        containing != nullptr,
+        "failed to roll back AddEndorsement: the containing block does not "
+        "exist %s",
         e_->toPrettyString());
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     VBK_ASSERT_MSG(
-        endorsed != nullptr &&
-            "failed to roll back AddEndorsement: the endorsed block does not "
-            "exist %s",
+        endorsed != nullptr,
+        "failed to roll back AddEndorsement: the endorsed block does not "
+        "exist %s",
         e_->toPrettyString());
 
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
-    VBK_ASSERT_MSG(blockOfProof != nullptr &&
-                       "failed to roll back AddEndorsement: the blockOfProof "
-                       "block does not exist %s",
+    VBK_ASSERT_MSG(blockOfProof != nullptr,
+                   "failed to roll back AddEndorsement: the blockOfProof "
+                   "block does not exist %s",
                    e_->toPrettyString());
 
     auto rm = [this](const endorsement_t* e) -> bool {
