@@ -140,9 +140,10 @@ bool readSingleByteLenValue(ReadStream& stream,
 template <typename T,
           typename = typename std::enable_if<std::is_integral<T>::value>::type>
 T readSingleBEValue(ReadStream& stream) {
-  return ReadStream(
-             pad(readSingleByteLenValue(stream, 0, sizeof(T)), sizeof(T)))
-      .readBE<T>();
+  auto data = readSingleByteLenValue(stream, 0, sizeof(T));
+  auto padded = pad(data, sizeof(T));
+  auto dataStream = ReadStream(padded);
+  return dataStream.readBE<T>();
 }
 
 /**
