@@ -29,6 +29,10 @@ struct BtcTx {
     return a.tx == b.tx;
   }
 
+  friend bool operator!=(const BtcTx& a, const BtcTx& b) {
+    return !(a.tx == b.tx);
+  }
+
   /**
    * Read VBK data from the stream and convert it to BtcTx
    * @param stream data stream to read from

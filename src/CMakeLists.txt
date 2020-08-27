@@ -24,7 +24,6 @@ set(SOURCES
         arith_uint256.cpp
         signutil.cpp
         mempool.cpp
-        mempool_prioritization.cpp
         mock_miner.cpp
         config.cpp
         $<TARGET_OBJECTS:strutil>
