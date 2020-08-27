@@ -49,6 +49,20 @@ TEST(Address, RoundTrip) {
   EXPECT_EQ(bytes, ADDRESS_BYTES);
 }
 
+TEST(Address, RoundTripNew) {
+  Address decoded;
+  ValidationState state;
+  bool ret = Deserialize(ADDRESS_BYTES, decoded, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
+  EXPECT_EQ(decoded.toString(), ADDRESS_VALUE);
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto bytes = outputStream.data();
+  EXPECT_EQ(bytes, ADDRESS_BYTES);
+}
+
 TEST(Address, ValidStandard) {
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
   Address address = Address::fromString(addressString);
