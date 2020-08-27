@@ -59,3 +59,43 @@ uint128 VbkMerklePath::calculateMerkleRoot() const {
 
   return cursor.trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 }
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 VbkMerklePath& out,
+                                 ValidationState& state) {
+  VbkMerklePath path{};
+
+  if (!readSingleBEValue<int32_t>(stream, path.treeIndex, state)) {
+    return state.Invalid("vbkmerkle-tree-index");
+  }
+  if (!readSingleBEValue<int32_t>(stream, path.index, state)) {
+    return state.Invalid("vbkmerkle-index");
+  }
+  Slice<const uint8_t> subject;
+  if (!readSingleByteLenValue(
+          stream, subject, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
+    return state.Invalid("vbkmerkle-subject");
+  }
+  path.subject = subject;
+
+  if(!readArrayOf<uint256>(
+      stream,
+      path.layers,
+      state,
+      0,
+      MAX_LAYER_COUNT_MERKLE,
+      [](ReadStream& stream, uint256& out, ValidationState& state) {
+        Slice<const uint8_t> layer;
+        if (!readSingleByteLenValue(
+                stream, layer, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
+          return false;
+        }
+        out = layer;
+        return true;
+          })) {
+    return state.Invalid("vbkmerkle-layers");
+  }
+
+  out = path;
+  return true;
+}

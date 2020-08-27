@@ -3,7 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/address.hpp"
+#include <veriblock/entities/address.hpp>
+#include <veriblock/serde.hpp>
 
 #include <gtest/gtest.h>
 
@@ -41,6 +42,20 @@ TEST(Address, Serialize) {
 TEST(Address, RoundTrip) {
   auto stream = ReadStream(ADDRESS_BYTES);
   auto decoded = Address::fromVbkEncoding(stream);
+  EXPECT_EQ(decoded.toString(), ADDRESS_VALUE);
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto bytes = outputStream.data();
+  EXPECT_EQ(bytes, ADDRESS_BYTES);
+}
+
+TEST(Address, RoundTripNew) {
+  Address decoded;
+  ValidationState state;
+  bool ret = Deserialize(ADDRESS_BYTES, decoded, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.toString(), ADDRESS_VALUE);
 
   WriteStream outputStream;

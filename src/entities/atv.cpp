@@ -59,3 +59,32 @@ ATV::id_t ATV::getId() const {
   auto right = blockOfProof.getHash();
   return sha256(left, right);
 }
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 ATV& out,
+                                 ValidationState& state) {
+  ATV atv{};
+  typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
+
+  if (!Deserialize(stream, atv.transaction, state)) {
+    return state.Invalid("atv-transaction");
+  }
+  if (!Deserialize(stream, atv.merklePath, state)) {
+    return state.Invalid("atv-merkle-path");
+  }
+  if (!Deserialize(stream, atv.blockOfProof, state)) {
+    return state.Invalid("atv-containing-block");
+  }
+
+  if (!readArrayOf<VbkBlock>(stream,
+                             atv.context,
+                             state,
+                             0,
+                             MAX_CONTEXT_COUNT_ALT_PUBLICATION,
+                             static_cast<vbkde>(Deserialize))) {
+    return state.Invalid("atv-context");
+  }
+
+  out = atv;
+  return true;
+}

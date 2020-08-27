@@ -26,3 +26,18 @@ std::string Output::toPrettyString() const {
   return fmt::sprintf(
       "Output{address=%s, coin=%lld}", address.toString(), coin.units);
 }
+
+bool altintegration::Deserialize(ReadStream& stream,
+                                 Output& out,
+                                 ValidationState& state) {
+  Address address;
+  Coin amount;
+  if (!Deserialize(stream, address, state)) {
+    return state.Invalid("output-address");
+  }
+  if (!Deserialize(stream, amount, state)) {
+    return state.Invalid("output-amount");
+  }
+  out = Output(address, amount);
+  return true;
+}

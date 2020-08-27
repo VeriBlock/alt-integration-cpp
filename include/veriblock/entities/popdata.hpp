@@ -107,6 +107,8 @@ JsonValue ToJSON(const PopData& p, bool verbose) {
   return obj;
 }
 
+bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state);
+
 }  // namespace altintegration
 
 #endif

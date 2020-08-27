@@ -24,7 +24,13 @@ TEST(AltPopTx, Deserialize) {
   PopData expectedPopData = {{}, {vtb}, {atv}};
   std::vector<uint8_t> bytes = expectedPopData.toVbkEncoding();
 
-  PopData encodedPopData = PopData::fromVbkEncoding(bytes);
+  PopData decodedPopData = PopData::fromVbkEncoding(bytes);
+  EXPECT_EQ(decodedPopData, expectedPopData);
 
-  EXPECT_EQ(encodedPopData, expectedPopData);
+  PopData decodedPopDataNew;
+  ValidationState state;
+  bool ret = Deserialize(bytes, decodedPopDataNew, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
+  EXPECT_EQ(decodedPopDataNew, expectedPopData);
 }

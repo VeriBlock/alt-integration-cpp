@@ -53,9 +53,25 @@ TEST(VbkBlock, Serialize) {
 }
 
 TEST(VbkBlock, RoundTrip) {
-  auto blockDecoded = ParseHex(defaultBlockEncoded);
-  auto stream = ReadStream(blockDecoded);
+  auto blockEncoded = ParseHex(defaultBlockEncoded);
+  auto stream = ReadStream(blockEncoded);
   auto decoded = VbkBlock::fromVbkEncoding(stream);
+  EXPECT_EQ(decoded.version, defaultBlock.version);
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto vbkBytes = outputStream.data();
+  auto blockReEncoded = HexStr(vbkBytes);
+  EXPECT_EQ(blockReEncoded, defaultBlockEncoded);
+}
+
+TEST(VbkBlock, RoundTripNew) {
+  auto blockEncoded = ParseHex(defaultBlockEncoded);
+  VbkBlock decoded;
+  ValidationState state;
+  bool ret = Deserialize(blockEncoded, decoded, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.version, defaultBlock.version);
 
   WriteStream outputStream;

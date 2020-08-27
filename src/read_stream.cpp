@@ -42,14 +42,36 @@ ReadStream::ReadStream(const std::vector<uint8_t> &v)
 ReadStream::ReadStream(const std::string &s)
     : m_Buffer((uint8_t *)s.data()), m_Size(s.size()) {}
 
-Slice<const uint8_t> ReadStream::readSlice(size_t size) {
+bool ReadStream::read(size_t size,
+                      std::vector<uint8_t> &out,
+                      ValidationState &state) {
+  return read<std::vector<uint8_t>>(size, out, state);
+}
+
+std::vector<uint8_t> ReadStream::read(size_t size) {
+  return read<std::vector<uint8_t>>(size);
+}
+
+bool ReadStream::readSlice(size_t size,
+                           Slice<const uint8_t> &out,
+                           ValidationState &state) {
   if (!hasMore(size)) {
-    throw std::out_of_range("stream.read(): out of data");
+    return state.Invalid("readslice-buffer-underflow");
   }
 
   Slice<const uint8_t> data(m_Buffer + m_Pos, size);
   m_Pos += size;
-  return data;
+  out = data;
+  return true;
+}
+
+Slice<const uint8_t> ReadStream::readSlice(size_t size) {
+  Slice<const uint8_t> out;
+  ValidationState state;
+  if (!readSlice(size, out, state)) {
+    throw std::out_of_range("stream.read(): out of data");
+  }
+  return out;
 }
 
 ReadStream::ReadStream(Slice<const uint8_t> slice)
@@ -58,10 +80,6 @@ ReadStream::ReadStream(Slice<const uint8_t> slice)
 
 Slice<const uint8_t> ReadStream::data() const {
   return Slice<const uint8_t>(m_Buffer, m_Size);
-}
-
-std::vector<uint8_t> ReadStream::read(size_t size) {
-  return read<std::vector<uint8_t>>(size);
 }
 
 }  // namespace altintegration
