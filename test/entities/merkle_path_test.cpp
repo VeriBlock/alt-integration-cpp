@@ -83,3 +83,21 @@ TEST(MerklePath, RoundTrip) {
 
   EXPECT_EQ(pathReEncoded, defaultPathEncoded);
 }
+
+TEST(MerklePath, RoundTripNew) {
+  auto merklePath = ParseHex(defaultPathEncoded);
+  auto subject = ParseHex(defaultSubject);
+  MerklePath decoded;
+  ValidationState state;
+  bool ret = Deserialize(merklePath, subject, decoded, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
+  EXPECT_EQ(decoded.index, defaultIndex);
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto pathBytes = outputStream.data();
+  auto pathReEncoded = HexStr(pathBytes);
+
+  EXPECT_EQ(pathReEncoded, defaultPathEncoded);
+}
