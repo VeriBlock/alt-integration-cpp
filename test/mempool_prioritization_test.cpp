@@ -27,7 +27,8 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario1_test) {
   ASSERT_EQ(vtbs.size(), 1);
   ASSERT_EQ(vtbs[0].transaction.getHash(), vbkPopTx.getHash());
 
-  EXPECT_TRUE(popminer->vbk().isStronglyEquivalent(vtbs[0], vtbs[0]));
+  EXPECT_TRUE(popminer->vbk().areStronglyEquivalent(vtbs[0], vtbs[0]));
+  EXPECT_EQ(popminer->vbk().weaklyCompare(vtbs[0], vtbs[0]), 0);
 }
 
 // Compare vtbs that are contains in the same chain with the same vbkPop
@@ -58,8 +59,9 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario2_test) {
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
 
-  EXPECT_TRUE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
-  EXPECT_TRUE(popminer->vbk().isStronglyEquivalent(vtb2, vtb1));
+  EXPECT_TRUE(popminer->vbk().areStronglyEquivalent(vtb1, vtb2));
+  EXPECT_TRUE(popminer->vbk().areStronglyEquivalent(vtb2, vtb1));
+  EXPECT_EQ(popminer->vbk().weaklyCompare(vtb1, vtb2), 0);
 }
 
 // Compare vtbs that are contains in the different chains with the same vbkPop
@@ -93,8 +95,9 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario3_test) {
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
 
-  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
-  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb2, vtb1));
+  EXPECT_TRUE(popminer->vbk().areStronglyEquivalent(vtb1, vtb2));
+  EXPECT_TRUE(popminer->vbk().areStronglyEquivalent(vtb2, vtb1));
+  EXPECT_EQ(popminer->vbk().weaklyCompare(vtb1, vtb2), 0);
 }
 
 // Compare vtbs that are not equal
@@ -123,11 +126,11 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario4_test) {
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
 
-  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
-  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb2, vtb1));
+  EXPECT_FALSE(popminer->vbk().areStronglyEquivalent(vtb1, vtb2));
+  EXPECT_FALSE(popminer->vbk().areStronglyEquivalent(vtb2, vtb1));
 
-  EXPECT_TRUE(popminer->vbk().isWeaklyEquivalent(vtb1, vtb2));
-  EXPECT_TRUE(popminer->vbk().isWeaklyEquivalent(vtb2, vtb1));
+  EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtb1, vtb2));
+  EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtb2, vtb1));
 }
 
 TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario1_test) {
@@ -143,7 +146,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario1_test) {
   ASSERT_EQ(vtbs.size(), 1);
   ASSERT_EQ(vtbs[0].transaction.getHash(), vbkPopTx.getHash());
 
-  EXPECT_TRUE(popminer->vbk().isWeaklyEquivalent(vtbs[0], vtbs[0]));
+  EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtbs[0], vtbs[0]));
 }
 
 TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario2_test) {
@@ -171,11 +174,11 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario2_test) {
 
   auto vtb2 = vtbs[0];
 
-  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
-  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb2, vtb1));
+  EXPECT_FALSE(popminer->vbk().areStronglyEquivalent(vtb1, vtb2));
+  EXPECT_FALSE(popminer->vbk().areStronglyEquivalent(vtb2, vtb1));
 
-  EXPECT_TRUE(popminer->vbk().isWeaklyEquivalent(vtb1, vtb2));
-  EXPECT_TRUE(popminer->vbk().isWeaklyEquivalent(vtb2, vtb1));
+  EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtb1, vtb2));
+  EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtb2, vtb1));
 }
 
 TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario3_test) {
@@ -207,9 +210,12 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario3_test) {
 
   auto vtb2 = vtbs[0];
 
-  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb1, vtb2));
-  EXPECT_FALSE(popminer->vbk().isStronglyEquivalent(vtb2, vtb1));
+  EXPECT_FALSE(popminer->vbk().areStronglyEquivalent(vtb1, vtb2));
+  EXPECT_FALSE(popminer->vbk().areStronglyEquivalent(vtb2, vtb1));
 
-  EXPECT_FALSE(popminer->vbk().isWeaklyEquivalent(vtb1, vtb2));
-  EXPECT_FALSE(popminer->vbk().isWeaklyEquivalent(vtb2, vtb1));
+  EXPECT_FALSE(popminer->vbk().areWeaklyEquivalent(vtb1, vtb2));
+  EXPECT_FALSE(popminer->vbk().areWeaklyEquivalent(vtb2, vtb1));
+
+  ASSERT_DEATH(popminer->vbk().weaklyCompare(vtb1, vtb2),
+               "vtbs should be weakly equivalent");
 }
