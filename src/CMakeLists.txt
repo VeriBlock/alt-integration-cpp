@@ -15,6 +15,7 @@ add_library(strutil OBJECT
         )
 
 set(SOURCES
+        time.cpp
         checks.cpp
         serde.cpp
         keystone_util.cpp

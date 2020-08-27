@@ -50,8 +50,11 @@ struct PopTestFixture {
   ValidationState state;
 
   PopTestFixture() {
-    SetLogger<FmtLogger>();
-    GetLogger().level = LogLevel::off;
+    // by default, set mocktime to the latest time between all genesis blocks
+    auto time = std::max({altparam.getBootstrapBlock().getBlockTime(),
+                          vbkparam.getGenesisBlock().getBlockTime(),
+                          btcparam.getGenesisBlock().getBlockTime()});
+    setMockTime(time + 1);
 
     EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(state));
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));

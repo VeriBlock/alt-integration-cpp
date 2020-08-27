@@ -34,6 +34,8 @@ std::string LevelToString(LogLevel l) {
       return "error";
     case LogLevel::critical:
       return "critical";
+    case LogLevel::off:
+      return "off";
     default:
       return "";
   }
