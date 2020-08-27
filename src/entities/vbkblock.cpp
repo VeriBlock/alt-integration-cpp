@@ -141,13 +141,13 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
     return state.Invalid("block-merkle-root");
   }
   block.merkleRoot = merkleRoot;
-  if (!stream.readLENoExcept<int32_t>(block.timestamp, state)) {
+  if (!stream.readBENoExcept<int32_t>(block.timestamp, state)) {
     return state.Invalid("block-timestamp");
   }
-  if (!stream.readLENoExcept<int32_t>(block.difficulty, state)) {
+  if (!stream.readBENoExcept<int32_t>(block.difficulty, state)) {
     return state.Invalid("block-difficulty");
   }
-  if (!stream.readLENoExcept<int32_t>(block.nonce, state)) {
+  if (!stream.readBENoExcept<int32_t>(block.nonce, state)) {
     return state.Invalid("block-nonce");
   }
   out = block;

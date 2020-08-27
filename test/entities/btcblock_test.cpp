@@ -49,8 +49,8 @@ TEST(BtcBlock, Serialize) {
 }
 
 TEST(BtcBlock, RoundTrip) {
-  auto blockDecoded = ParseHex(defaultBlockEncoded);
-  auto stream = ReadStream(blockDecoded);
+  auto blockEncoded = ParseHex(defaultBlockEncoded);
+  auto stream = ReadStream(blockEncoded);
   auto decoded = BtcBlock::fromRaw(stream);
   EXPECT_EQ(decoded.version, defaultBlock.version);
 
@@ -65,7 +65,7 @@ TEST(BtcBlock, RoundTripNew) {
   auto blockEncoded = ParseHex(defaultBlockEncoded);
   BtcBlock decoded;
   ValidationState state;
-  bool ret = Deserialize(blockEncoded, decoded, state);
+  bool ret = DeserializeRaw(blockEncoded, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.version, defaultBlock.version);
