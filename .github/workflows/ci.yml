@@ -50,7 +50,9 @@ jobs:
             linux-ccache-matrix-${{ matrix.flags }}-
             linux-ccache-matrix-
       - name: install cmake
-        run: apt-get install -y cmake
+        run: |
+          apt-get update
+          apt-get install -y cmake
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
