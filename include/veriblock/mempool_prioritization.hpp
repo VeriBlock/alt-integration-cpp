@@ -9,10 +9,6 @@
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/entities/vtb.hpp"
 
-namespace altintegration {
-
-bool isStronglyEquivalent(const VTB& vtb1, const VTB& vtb2, VbkBlockTree& tree);
-
-}
+namespace altintegration {}
 
 #endif
