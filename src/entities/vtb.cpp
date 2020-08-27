@@ -71,8 +71,6 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  VTB& out,
                                  ValidationState& state) {
   VTB vtb{};
-  typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
-
   if (!stream.readBE<uint32_t>(vtb.version, state)) {
     return state.Invalid("vtb-version");
   }
