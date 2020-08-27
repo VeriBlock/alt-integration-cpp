@@ -49,6 +49,8 @@ jobs:
           restore-keys: |
             linux-ccache-matrix-${{ matrix.flags }}-
             linux-ccache-matrix-
+      - name: install cmake
+        run: pip install --upgrade cmake
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
