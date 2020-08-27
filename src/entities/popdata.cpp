@@ -75,7 +75,7 @@ bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
   typedef bool (*atvde)(ReadStream&, ATV&, ValidationState&);
   typedef bool (*vtbde)(ReadStream&, VTB&, ValidationState&);
 
-  if (stream.readBE<uint32_t>(pd.version, state)) {
+  if (!stream.readBE<uint32_t>(pd.version, state)) {
     return state.Invalid("pop-version");
   }
   if (pd.version != 1) {
