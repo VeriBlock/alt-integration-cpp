@@ -61,9 +61,25 @@ TEST(VbkTx, Serialize) {
 }
 
 TEST(VbkTx, RoundTrip) {
-  auto txDecoded = ParseHex(defaultTxEncoded);
-  auto stream = ReadStream(txDecoded);
+  auto txEncoded = ParseHex(defaultTxEncoded);
+  auto stream = ReadStream(txEncoded);
   auto decoded = VbkTx::fromVbkEncoding(stream);
+  EXPECT_EQ(decoded.signatureIndex, defaultTx.signatureIndex);
+
+  WriteStream outputStream;
+  decoded.toVbkEncoding(outputStream);
+  auto txBytes = outputStream.data();
+  auto txReEncoded = HexStr(txBytes);
+  EXPECT_EQ(txReEncoded, defaultTxEncoded);
+}
+
+TEST(VbkTx, RoundTripNew) {
+  auto txEncoded = ParseHex(defaultTxEncoded);
+  VbkTx decoded;
+  ValidationState state;
+  bool ret = Deserialize(txEncoded, decoded, state);
+  ASSERT_TRUE(ret);
+  EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.signatureIndex, defaultTx.signatureIndex);
 
   WriteStream outputStream;

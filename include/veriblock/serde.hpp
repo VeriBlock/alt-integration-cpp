@@ -164,7 +164,8 @@ bool readSingleBEValueNoExcept(ReadStream& stream,
   if (!readSingleByteLenValueNoExcept(stream, data, state, 0, sizeof(T))) {
     return state.Invalid("bad-data");
   }
-  auto dataStream = ReadStream(pad(data, sizeof(T)));
+  auto padded = pad(data, sizeof(T));
+  auto dataStream = ReadStream(padded);
   return dataStream.readBENoExcept<T>(out, state);
 }
 
