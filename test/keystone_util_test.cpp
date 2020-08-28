@@ -56,3 +56,12 @@ TEST(KeystoneUtil, testHighestBlockWhichConnectsKeystoneToPrevious) {
       41,
       highestBlockWhichConnectsKeystoneToPrevious(20, VBK_KEYSTONE_INTERVAL));
 }
+
+TEST(KeystoneUtil, testAreOnSameKeystoneInterval) {
+  ASSERT_TRUE(areOnSameKeystoneInterval(1, 2, 5));
+  ASSERT_FALSE(areOnSameKeystoneInterval(1, 5, 5));
+  ASSERT_TRUE(areOnSameKeystoneInterval(6, 5, 5));
+  ASSERT_TRUE(areOnSameKeystoneInterval(22, 21, 20));
+  ASSERT_FALSE(areOnSameKeystoneInterval(40, 21, 20));
+  ASSERT_TRUE(areOnSameKeystoneInterval(39, 21, 20));
+}
