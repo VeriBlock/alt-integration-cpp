@@ -11,9 +11,8 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <veriblock/storage/payloads_storage.hpp>
-#include <veriblock/storage/pop_storage.hpp>
 
+#include "alt_block_tree_util.hpp"
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/base_block_tree.hpp"
 #include "veriblock/blockchain/chain.hpp"
@@ -25,11 +24,15 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/rewards/poprewards.hpp"
+#include "veriblock/storage/payloads_index.hpp"
+#include "veriblock/storage/payloads_provider.hpp"
 #include "veriblock/validation_state.hpp"
 
 namespace altintegration {
 
+// defined in alt_block_tree.cpp
 extern template struct BlockIndex<AltBlock>;
+extern template struct BaseBlockTree<AltBlock>;
 
 /**
  * @class AltTree
@@ -51,10 +54,10 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   virtual ~AltTree() = default;
 
-  AltTree(const alt_config_t& alt_config,
-          const vbk_config_t& vbk_config,
-          const btc_config_t& btc_config,
-          PayloadsStorage& storagePayloads);
+  explicit AltTree(const alt_config_t& alt_config,
+                   const vbk_config_t& vbk_config,
+                   const btc_config_t& btc_config,
+                   PayloadsProvider& storagePayloads);
 
   /**
    * Set very first (bootstrap) altchain block with enabled POP.
@@ -159,17 +162,18 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   // be removed from `pop`
   void filterInvalidPayloads(PopData& pop);
 
+  // clang-format off
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
   VbkBlockTree::BtcTree& btc() { return cmp_.getProtectingBlockTree().btc(); }
-  const VbkBlockTree::BtcTree& btc() const {
-    return cmp_.getProtectingBlockTree().btc();
-  }
-
+  const VbkBlockTree::BtcTree& btc() const { return cmp_.getProtectingBlockTree().btc(); }
   const PopForkComparator& getComparator() const { return cmp_; }
   const AltChainParams& getParams() const { return *alt_config_; }
-  PayloadsStorage& getStorage() { return storage_; }
-  const PayloadsStorage& getStorage() const { return storage_; }
+  PayloadsIndex& getPayloadsIndex()  { return payloadsIndex_; }
+  const PayloadsIndex& getPayloadsIndex() const { return payloadsIndex_; }
+  PayloadsProvider& getPayloadsProvider()  { return payloadsProvider_; }
+  const PayloadsProvider& getPayloadsProvider() const { return payloadsProvider_; }
+  // clang-format on
 
   std::string toPrettyString(size_t level = 0) const;
 
@@ -182,22 +186,14 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using base::removeLeaf;
   using base::removeSubtree;
 
-  void payloadsToCommands(const ATV& atv,
-                          const AltBlock& containing,
-                          std::vector<CommandPtr>& commands);
-
-  void payloadsToCommands(const VTB& vtb, std::vector<CommandPtr>& commands);
-
-  void payloadsToCommands(const VbkBlock& block,
-                          std::vector<CommandPtr>& commands);
-
  protected:
   const alt_config_t* alt_config_;
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
   PopRewards rewards_;
-  PayloadsStorage& storage_;
+  PayloadsIndex payloadsIndex_;
+  PayloadsProvider& payloadsProvider_;
 
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
@@ -214,16 +210,6 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   void removeAllPayloads(index_t& index);
 };
-
-template <>
-bool checkBlockTime(const BlockIndex<AltBlock>& prev,
-                    const AltBlock& block,
-                    ValidationState& state,
-                    const AltChainParams& params);
-
-template <>
-std::vector<CommandGroup> PayloadsStorage::loadCommands(
-    const typename AltTree::index_t& index, AltTree& tree);
 
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<AltBlock>& i) {

@@ -17,7 +17,7 @@
 #include <veriblock/logger.hpp>
 #include <veriblock/mempool.hpp>
 #include <veriblock/mock_miner.hpp>
-#include <veriblock/storage/inmem/storage_manager_inmem.hpp>
+#include <veriblock/storage/inmem_block_storage.hpp>
 #include <veriblock/storage/util.hpp>
 
 #include "util/comparator_test.hpp"
@@ -38,14 +38,14 @@ struct PopTestFixture {
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
-  StorageManagerInmem storageManager{};
-  PayloadsStorage& storagePayloads = storageManager.getPayloadsStorage();
+  InmemPayloadsProvider payloadsProvider;
+  InmemBlockStorage blockStorage;
 
   // miners
   std::shared_ptr<MockMiner> popminer;
 
   // trees
-  AltTree alttree = AltTree(altparam, vbkparam, btcparam, storagePayloads);
+  AltTree alttree = AltTree(altparam, vbkparam, btcparam, payloadsProvider);
 
   ValidationState state;
 
@@ -61,7 +61,6 @@ struct PopTestFixture {
     EXPECT_TRUE(alttree.bootstrap(state));
 
     popminer = std::make_shared<MockMiner>();
-
     mempool = std::make_shared<MemPool>(alttree);
   }
 
@@ -87,21 +86,30 @@ struct PopTestFixture {
     EXPECT_EQ(std::count_if(by.begin(), by.end(), _), 1);
   }
 
+  bool AddPayloads(const AltBlock::hash_t& hash, const PopData& pop) {
+    return AddPayloads(alttree, hash, pop);
+  }
+
+  bool AddPayloads(AltTree& tree, const AltBlock::hash_t& hash, const PopData& pop) {
+    popminer->getPayloadsProvider().write(pop);
+    payloadsProvider.write(pop);
+    return tree.addPayloads(hash, pop, state);
+  }
+
   bool validatePayloads(const AltBlock::hash_t& block_hash,
-                        const PopData& popData,
-                        ValidationState& _state) {
+                        const PopData& popData) {
     auto* index = alttree.getBlockIndex(block_hash);
     if (!index) {
-      return _state.Invalid("bad-block", "Can't find containing block");
+      return state.Invalid("bad-block", "Can't find containing block");
     }
 
-    if (!alttree.addPayloads(block_hash, popData, _state)) {
-      return _state.Invalid("addPayloadsTemporarily");
+    if (!AddPayloads(block_hash, popData)) {
+      return state.Invalid("addPayloadsTemporarily");
     }
 
-    if (!alttree.setState(*index, _state)) {
+    if (!alttree.setState(*index, state)) {
       EXPECT_NO_FATAL_FAILURE(alttree.removePayloads(block_hash));
-      return _state.Invalid("addPayloadsTemporarily");
+      return state.Invalid("addPayloadsTemporarily");
     }
 
     return true;
@@ -285,48 +293,37 @@ struct PopTestFixture {
       auto nextBlock = generateNextBlock(altTip->getHeader());
       auto popdata = endorseAltBlock({altTip->getHeader()}, vtbs);
       EXPECT_TRUE(alttree.acceptBlockHeader(nextBlock, state));
-      EXPECT_TRUE(alttree.addPayloads(nextBlock.getHash(), popdata, state));
+      EXPECT_TRUE(AddPayloads(nextBlock.getHash(), popdata));
       auto* next = alttree.getBlockIndex(nextBlock.getHash());
       VBK_ASSERT(next);
       EXPECT_TRUE(alttree.setState(*next, state));
       altTip = next;
     }
   }
-};
 
-template <typename index_t>
-std::vector<index_t> LoadBlocksFromDisk(PopStorage& storage) {
-  auto map = storage.loadBlocks<index_t>();
-  std::vector<index_t> ret;
-  for (auto& pair : map) {
-    ret.push_back(*pair.second);
+  template <typename index_t>
+  std::vector<index_t> LoadBlocksFromDisk() {
+    return blockStorage.load<typename index_t::block_t>();
   }
 
-  std::sort(ret.begin(), ret.end(), [](const index_t& a, const index_t& b) {
-    return a.getHeight() < b.getHeight();
-  });
+  template <typename index_t>
+  typename index_t::hash_t LoadTipFromDisk() {
+    return blockStorage.getTip<typename index_t::block_t>();
+  }
 
-  return ret;
-}
-
-template <typename index_t>
-typename index_t::hash_t LoadTipFromDisk(PopStorage& storage) {
-  auto tip = storage.loadTip<index_t>();
-  return tip.second;
-}
-
-template <typename Tree>
-bool LoadTreeWrapper(Tree& tree, PopStorage& storage, ValidationState& state) {
-  using index_t = typename Tree::index_t;
-  auto blocks = LoadBlocksFromDisk<index_t>(storage);
-  auto tip = LoadTipFromDisk<index_t>(storage);
-  return LoadTree<Tree>(tree, blocks, tip, state);
-}
+  template <typename Tree>
+  bool LoadTreeWrapper(Tree& tree) {
+    using index_t = typename Tree::index_t;
+    auto blocks = LoadBlocksFromDisk<index_t>();
+    auto tip = LoadTipFromDisk<index_t>();
+    return LoadTree<Tree>(tree, blocks, tip, state);
+  }
+};
 
 namespace {
 
 template <typename pop_t>
-void validatePayloadsIndexState(PayloadsStorage& storage,
+void validatePayloadsIndexState(PayloadsIndex& storage,
                                 const AltBlock::hash_t& containingHash,
                                 const std::vector<pop_t>& payloads,
                                 bool payloads_existance) {
@@ -338,7 +335,7 @@ void validatePayloadsIndexState(PayloadsStorage& storage,
 }
 
 template <typename pop_t>
-bool allPayloadsIsValid(PayloadsStorage& storage,
+bool allPayloadsIsValid(PayloadsIndex& storage,
                         const AltBlock::hash_t& containingHash,
                         const std::vector<pop_t>& payloads) {
   for (const auto& p : payloads) {
@@ -358,27 +355,32 @@ inline void validateAlttreeIndexState(AltTree& tree,
                                       const PopData& popData,
                                       bool payloads_validation = true,
                                       bool payloads_existance = true) {
-  auto& storage = tree.getStorage();
+  auto& payloadsIndex = tree.getPayloadsIndex();
+  auto& payloadsProvider = tree.getPayloadsProvider();
   auto containingHash = containing.getHash();
 
   validatePayloadsIndexState(
-      storage, containingHash, popData.context, payloads_existance);
+      payloadsIndex, containingHash, popData.context, payloads_existance);
   validatePayloadsIndexState(
-      storage, containingHash, popData.atvs, payloads_existance);
+      payloadsIndex, containingHash, popData.atvs, payloads_existance);
   validatePayloadsIndexState(
-      storage, containingHash, popData.vtbs, payloads_existance);
+      payloadsIndex, containingHash, popData.vtbs, payloads_existance);
 
-  std::vector<CommandGroup> commands =
-      storage.loadCommands(*tree.getBlockIndex(containingHash), tree);
+  std::vector<CommandGroup> commands;
+  ValidationState state;
+  ASSERT_TRUE(payloadsProvider.getCommands(
+      tree, *tree.getBlockIndex(containingHash), commands, state))
+      << state.toString();
 
   EXPECT_EQ(commands.size() == popData.context.size() + popData.atvs.size() +
                                    popData.vtbs.size(),
             payloads_existance);
 
-  EXPECT_EQ(allPayloadsIsValid(storage, containingHash, popData.context) &&
-                allPayloadsIsValid(storage, containingHash, popData.atvs) &&
-                allPayloadsIsValid(storage, containingHash, popData.vtbs),
-            payloads_validation);
+  EXPECT_EQ(
+      allPayloadsIsValid(payloadsIndex, containingHash, popData.context) &&
+          allPayloadsIsValid(payloadsIndex, containingHash, popData.atvs) &&
+          allPayloadsIsValid(payloadsIndex, containingHash, popData.vtbs),
+      payloads_validation);
 }
 
 }  // namespace altintegration

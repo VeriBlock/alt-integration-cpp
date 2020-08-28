@@ -29,6 +29,11 @@ struct BtcBlockAddon {
     return true;
   }
 
+  void setNullInmemFields() {
+    chainWork = 0;
+    blockOfProofEndorsements.clear();
+  }
+
   void setIsBootstrap(bool isBootstrap) {
     if (isBootstrap) {
       // pretend this block is referenced by the genesis block of the SI chain

@@ -57,6 +57,11 @@ struct Blob {
 
   Blob(Blob<N>&& other) noexcept : data_(std::move(other.data_)) {}
 
+  explicit operator std::vector<uint8_t>() const {
+    std::vector<uint8_t> ret(begin(), end());
+    return ret;
+  }
+
   iterator begin() noexcept { return data_.begin(); }
   const_iterator begin() const noexcept { return data_.begin(); }
   iterator end() noexcept { return data_.end(); }

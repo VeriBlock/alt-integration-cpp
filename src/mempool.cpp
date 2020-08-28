@@ -6,7 +6,6 @@
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
-#include "veriblock/entities/vbkfullblock.hpp"
 #include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 

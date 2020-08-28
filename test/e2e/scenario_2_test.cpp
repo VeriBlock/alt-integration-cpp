@@ -91,8 +91,7 @@ TEST_F(Scenario2, scenario_2) {
 
   // Step 1
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads1, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads1));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads1);
@@ -118,8 +117,7 @@ TEST_F(Scenario2, scenario_2) {
 
   // Step 2
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads2, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads2));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads2);
@@ -146,8 +144,7 @@ TEST_F(Scenario2, scenario_2) {
 
   // Step 3
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads3, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads3));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state))
       << state.toString();
   EXPECT_TRUE(state.IsValid());
@@ -168,8 +165,7 @@ TEST_F(Scenario2, scenario_2) {
 
   // Step 4
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads4, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads4));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads4);

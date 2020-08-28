@@ -51,7 +51,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     auto payloads = generateAltPayloads(
         {vbktx}, tree.vbk().getBestChain().tip()->getHash());
     ASSERT_TRUE(tree.acceptBlockHeader(containing, state)) << state.toString();
-    ASSERT_TRUE(tree.addPayloads(containing.getHash(), payloads, state))
+    ASSERT_TRUE(AddPayloads(tree, containing.getHash(), payloads))
         << state.toString();
     ASSERT_TRUE(tree.setState(containing.getHash(), state)) << state.toString();
     validateAlttreeIndexState(tree, containing, payloads);
@@ -89,7 +89,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
       auto payloads1 = generateAltPayloads(
           {vbktx1, vbktx2}, tree.vbk().getBestChain().tip()->getHash());
       ASSERT_TRUE(tree.acceptBlockHeader(containing, state));
-      ASSERT_TRUE(tree.addPayloads(containing.getHash(), payloads1, state));
+      ASSERT_TRUE(AddPayloads(tree, containing.getHash(), payloads1));
       ASSERT_TRUE(tree.setState(containing.getHash(), state));
       validateAlttreeIndexState(tree, containing, payloads1);
     }
@@ -189,8 +189,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  PayloadsStorage& storage2 = storageManager.getPayloadsStorage();
-  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storage2);
+  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, payloadsProvider);
   EXPECT_TRUE(alttree2.bootstrap(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
@@ -248,8 +247,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  PayloadsStorage& storage2 = storageManager.getPayloadsStorage();
-  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storage2);
+  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, payloadsProvider);
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.bootstrap(state));

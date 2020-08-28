@@ -71,7 +71,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
                  atv1.blockOfProof.getHash(),
                  popminer->vbk());
 
-  ASSERT_TRUE(alttree.addPayloads(chain[9].getHash(), p1, state));
+  ASSERT_TRUE(AddPayloads(chain[9].getHash(), p1));
   ASSERT_TRUE(alttree.setState(chain[9].getHash(), state)) << state.toString();
   validateAlttreeIndexState(alttree, chain[9], p1);
 
@@ -89,7 +89,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   vtb2.containingBlock.previousBlock = uint96::fromHex("abcdef");
   p2.vtbs = {vtb2};
 
-  ASSERT_TRUE(alttree.addPayloads(chain[10].getHash(), p2, state));
+  ASSERT_TRUE(AddPayloads(chain[10].getHash(), p2));
   ASSERT_FALSE(alttree.setState(chain[10].getHash(), state));
   validateAlttreeIndexState(alttree, chain[10], p2, false);
 }

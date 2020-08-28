@@ -6,6 +6,7 @@
 #ifndef ALTINTEGRATION_COMMANDGROUP_HPP
 #define ALTINTEGRATION_COMMANDGROUP_HPP
 
+#include <utility>
 #include <vector>
 #include <veriblock/blockchain/command.hpp>
 #include <veriblock/reversed_range.hpp>
@@ -19,10 +20,12 @@ struct CommandGroup {
 
   CommandGroup() = default;
 
-  CommandGroup(const std::vector<uint8_t> id,
+  CommandGroup(std::vector<uint8_t> id,
                bool valid,
                const std::string& payload_type_name)
-      : payload_type_name(&payload_type_name), id(id), valid(valid) {}
+      : payload_type_name(&payload_type_name),
+        id(std::move(id)),
+        valid(valid) {}
 
   // HACK, store the payload type name
   const std::string* payload_type_name{};

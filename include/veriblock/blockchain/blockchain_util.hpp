@@ -122,6 +122,37 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
 template <typename Block>
 void assertBlockCanBeRemoved(const Block& block);
 
+template <typename Tree, typename Pop>
+void payloadToCommands(Tree& tree,
+                       const Pop& pop,
+                       const std::vector<uint8_t>& containingHash,
+                       std::vector<CommandPtr>& cmds);
+
+struct PopData;
+
+template <typename Tree, typename PayloadsT>
+std::vector<CommandGroup> payloadsToCommandGroups(
+    Tree& tree,
+    const PayloadsT& pop,
+    const std::vector<uint8_t>& containinghash);
+
+template <typename Tree, typename Pop>
+void vectorPopToCommandGroup(Tree& tree,
+                             const std::vector<Pop>& pop,
+                             const std::vector<uint8_t>& containingHash,
+                             std::vector<CommandGroup>& cgs) {
+  const auto& pl = tree.getPayloadsIndex();
+  for (const auto& b : pop) {
+    CommandGroup cg;
+    cg.payload_type_name = &Pop::name();
+    cg.id = b.getId().asVector();
+    cg.valid = pl.getValidity(containingHash, cg.id);
+    payloadToCommands(tree, b, containingHash, cg.commands);
+
+    cgs.push_back(std::move(cg));
+  }
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_UTIL_HPP_

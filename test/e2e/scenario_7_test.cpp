@@ -72,7 +72,7 @@ TEST_F(Scenario7, scenario_7) {
   chain.push_back(containingBlock);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state))
       << state.toString();
   EXPECT_TRUE(state.IsValid());

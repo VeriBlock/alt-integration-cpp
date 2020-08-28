@@ -16,8 +16,6 @@ struct DuplicateATVfixture : public ::testing::Test, public PopTestFixture {
   AltBlock endorsed;
   AltBlock containing;
 
-  ValidationState state;
-
   DuplicateATVfixture() {
     chain.push_back(alttree.getParams().getBootstrapBlock());
     mineAltBlocks(100, chain, /*connectBlocks=*/false, /*setState=*/false);
@@ -28,13 +26,13 @@ struct DuplicateATVfixture : public ::testing::Test, public PopTestFixture {
 };
 
 TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
-  ASSERT_TRUE(alttree.addPayloads(chain[99].getHash(), payloads, state));
+  ASSERT_TRUE(AddPayloads(chain[99].getHash(), payloads));
   ASSERT_TRUE(alttree.setState(chain[99].getHash(), state));
   validateAlttreeIndexState(alttree, chain[99], payloads);
 
   // remove context blocks
   payloads.context.clear();
-  ASSERT_FALSE(alttree.addPayloads(chain[100].getHash(), payloads, state));
+  ASSERT_FALSE(AddPayloads(chain[100].getHash(), payloads));
   ASSERT_EQ(state.GetPath(), "VTB-duplicate");
 
   // we are at chain[99]
@@ -59,11 +57,11 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
 TEST_F(DuplicateATVfixture,
        DISABLED_DuplicateATV_DifferentContaining_BA_removeA) {
   auto p1 = payloads;
-  ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), p1, state));
+  ASSERT_TRUE(AddPayloads(chain[100].getHash(), p1));
   auto p1id = payloads.atvs[0].getId();
 
   auto p2 = payloads;
-  ASSERT_TRUE(alttree.addPayloads(chain[99].getHash(), p2, state));
+  ASSERT_TRUE(AddPayloads(chain[99].getHash(), p2));
   auto p2id = payloads.atvs[0].getId();
 
   auto index99 = alttree.getBlockIndex(chain[99].getHash());
@@ -107,14 +105,14 @@ TEST_F(DuplicateATVfixture,
 TEST_F(DuplicateATVfixture,
        DISABLED_DuplicateATV_DifferentContaining_BA_removeB) {
   auto p2 = payloads;
-  ASSERT_TRUE(alttree.addPayloads(chain[99].getHash(), p2, state));
+  ASSERT_TRUE(AddPayloads(chain[99].getHash(), p2));
   ASSERT_TRUE(alttree.setState(chain[99].getHash(), state));
   auto p2id = payloads.atvs.at(0).getId();
 
   auto p1 = payloads;
   // remove context blocks
   p1.context.clear();
-  ASSERT_FALSE(alttree.addPayloads(chain[100].getHash(), p1, state));
+  ASSERT_FALSE(AddPayloads(chain[100].getHash(), p1));
 
   auto index99 = alttree.getBlockIndex(chain[99].getHash());
   auto& atvids = index99->getPayloadIds<ATV>();
@@ -159,12 +157,13 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100);
 
-  ASSERT_TRUE(validatePayloads(chain[100].getHash(), payloads, state));
+  ASSERT_TRUE(validatePayloads(chain[100].getHash(), payloads));
   auto& atvids = index100->getPayloadIds<ATV>();
   ASSERT_EQ(atvids.size(), 1);
   ASSERT_TRUE(index100->isValid());
 
-  ASSERT_DEATH(validatePayloads(chain[100].getHash(), payloads, state),
+  ASSERT_DEATH(validatePayloads(chain[100].getHash(), payloads),
+
                "already contains payloads");
 }
 
@@ -172,6 +171,6 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   payloads.atvs.push_back(payloads.atvs.at(0));
 
   // should fail due to payloads being statelessly invalid(duplicate ids)
-  ASSERT_DEATH(alttree.addPayloads(chain[100].getHash(), payloads, state),
+  ASSERT_DEATH(AddPayloads(chain[100].getHash(), payloads),
                "must not contain duplicate ATVs");
 }
