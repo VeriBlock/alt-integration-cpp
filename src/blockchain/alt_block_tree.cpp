@@ -197,12 +197,9 @@ void AltTree::setPayloads(index_t& index, const PopData& payloads) {
                  index.toPrettyString());
 
   // add payload ids to the block, update the payload index
-  commitPayloadsIds<VbkBlock>(index, payloads.context, storage_);
-  commitPayloadsIds<VTB>(index, payloads.vtbs, storage_);
-  commitPayloadsIds<ATV>(index, payloads.atvs, storage_);
-
-  // save payloads on disk
-  storage_.savePayloads(payloads);
+  commitPayloadsIds<VbkBlock>(index, payloads.context, payloadsIndex_);
+  commitPayloadsIds<VTB>(index, payloads.vtbs, payloadsIndex_);
+  commitPayloadsIds<ATV>(index, payloads.atvs, payloadsIndex_);
 
   // we successfully added this block payloads
   index.setFlag(BLOCK_HAS_PAYLOADS);
