@@ -93,11 +93,14 @@ TEST_F(Scenario9, scenario_9) {
   // Step 2
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_FALSE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads2, state));
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
-  validateAlttreeIndexState(
-      alttree, containingBlock, altPayloads2, true, false);
-  EXPECT_FALSE(state.IsValid());
+      alttree.addPayloads(containingBlock.getHash(), altPayloads2, state))
+      << state.toString();
   EXPECT_EQ(state.GetPath(), "VBK-duplicate");
+  EXPECT_FALSE(state.IsValid());
+
+  // BUG: setState clears BLOCK_FAILED_POP which shouldn't happen
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, true, true);
+
   verifyEndorsementAdded(alttree.vbk(), E1);
 }

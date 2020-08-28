@@ -28,10 +28,12 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock>*earlier, *earlierChild, *latter, *latterChild;
 
   AltInvalidationTest() {
-    tip = mineAltBlocks(*alttree.getBlocks().begin()->second, 10);
+    tip = mineAltBlocks(
+        *alttree.getBlocks().begin()->second, 10, /*connectBlocks=*/true);
     EXPECT_TRUE(tip->hasFlags(BLOCK_VALID_TREE));
     EXPECT_TRUE(tip->hasFlags(BLOCK_APPLIED));
     EXPECT_TRUE(tip->hasFlags(BLOCK_CAN_BE_APPLIED));
+    EXPECT_TRUE(tip->hasFlags(BLOCK_CONNECTED));
     EXPECT_TRUE(tip->isValid());
 
     connId = alttree.connectOnValidityBlockChanged(
@@ -269,16 +271,18 @@ TEST_F(AltInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
 
   auto* fourth = tip->getAncestor(4);
   auto* sixth = tip->getAncestor(6);
-  auto* Atip = mineAltBlocks(*fourth, 5);
+  auto* Atip = mineAltBlocks(*fourth, 5, /*connectBlocks=*/true);
   auto* Btip = tip;
-  auto* Ctip = mineAltBlocks(*sixth, 3);
-  auto* Dtip = mineAltBlocks(*Ctip->getAncestor(7), 2);
-  auto* Etip = mineAltBlocks(*Dtip->getAncestor(8), 1);
-  auto* Ftip = mineAltBlocks(*sixth, 3);  // 7-8-9
-  auto* Gtip = mineAltBlocks(*sixth, 2);  // 7-8
-  auto* Htip = mineAltBlocks(*sixth, 1);  // 7
+  auto* Ctip = mineAltBlocks(*sixth, 3, /*connectBlocks=*/true);
+  auto* Dtip = mineAltBlocks(*Ctip->getAncestor(7), 2, /*connectBlocks=*/true);
+  auto* Etip = mineAltBlocks(*Dtip->getAncestor(8), 1, /*connectBlocks=*/true);
+  auto* Ftip = mineAltBlocks(*sixth, 3, /*connectBlocks=*/true);  // 7-8-9
+  auto* Gtip = mineAltBlocks(*sixth, 2, /*connectBlocks=*/true);  // 7-8
+  auto* Htip = mineAltBlocks(*sixth, 1, /*connectBlocks=*/true);  // 7
 
   ASSERT_EQ(alttree.getBlocks().size(), 11 + 5 + 3 + 2 + 1 + 3 + 2 + 1);
+
+  ASSERT_EQ(alttree.getTips().size(), 8);
 
   // invalidate block (5) on the main chain
   alttree.invalidateSubtree(*sixth, BLOCK_FAILED_BLOCK);

@@ -74,9 +74,23 @@ struct AltTree : public BaseBlockTree<AltBlock> {
    */
   bool acceptBlockHeader(const AltBlock& block, ValidationState& state);
 
+  /** Add payloads to the block, ensure the block is statelessly valid, connect
+   * the block to the tree asynchronously, emit signals when the block is
+   * connected
+   */
+  void acceptBlock(const hash_t& block, const PopData& payloads);
+  void acceptBlock(index_t& index, const PopData& payloads);
+
+  //! a block has been handed over to the underlying tree and flagged as invalid
+  signals::Signal<void(index_t& index, ValidationState&)>
+      onInvalidBlockConnected;
+
+  //! a block has been successfully handed over to the underlying tree
+  signals::Signal<void(index_t& index)> onBlockConnected;
+
   /**
-   * Add block body to block header. Can be done once per each block, in any
-   * order.
+   * Add a block body to the block header. Can be done once per each block.
+   * Blocks with added payloads must form a tree.
    * @param[in] block hash of ALT block where block body is added.
    * @param[in] popData POP block body
    * @param[out] state validation state
@@ -86,6 +100,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   bool addPayloads(const hash_t& block,
                    const PopData& popData,
                    ValidationState& state);
+  bool addPayloads(index_t& index, PopData& payloads, ValidationState& state);
 
   /**
    * Efficiently connect block loaded from disk.
@@ -186,10 +201,14 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
-  bool addPayloads(index_t& index,
-                   PopData& payloads,
-                   ValidationState& state,
-                   bool continueOnInvalid = false);
+  void setPayloads(index_t& index, const PopData& payloads);
+
+  /**
+   * Connect the block to the tree, doing stateful validation(incomplete at this
+   * moment)
+   * @return true if the block is statefully valid
+   */
+  bool connectBlock(index_t& index, ValidationState& state);
 
   void setTipContinueOnInvalid(index_t& to);
 
