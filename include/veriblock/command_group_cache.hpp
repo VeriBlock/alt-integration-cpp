@@ -7,88 +7,35 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_COMMAND_GROUP_CACHE_HPP_
 
 #include <list>
-// important to include this since it contains hasher for the vector as a key
+#include <unordered_map>
 #include <veriblock/blockchain/command_group.hpp>
-#include <veriblock/entities/altblock.hpp>
+#include <veriblock/hashers.hpp>
 
 namespace altintegration {
 
-static const size_t DEFAULT_CACHE_SIZE = 10000;
-
 struct CommandGroupCache {
+  // id = containing block hash
   using id_t = std::vector<uint8_t>;
-  CommandGroupCache(const size_t maxsize = DEFAULT_CACHE_SIZE)
-      : _maxsize(maxsize) {}
+  CommandGroupCache(const size_t maxsize = 1000);
 
-  virtual ~CommandGroupCache() = default;
+  bool put(const id_t& cid, const std::vector<CommandGroup>& cg);
 
-  virtual bool put(const id_t& cid, const CommandGroup& cg) {
-    bool res = _cache.find(cid) != _cache.end();
-    _cache.insert({cid, std::make_shared<CommandGroup>(cg)});
-    truncate();
-    return res;
-  }
+  bool get(const id_t& cid, std::vector<CommandGroup>* out);
 
-  virtual bool get(const id_t& cid, CommandGroup* out) {
-    auto it = _cache.find(cid);
-    if (it == _cache.end()) {
-      return false;
-    } else {
-      refer(cid);
-      if (out) {
-        *out = *it->second;
-      }
-    }
-    return true;
-  }
+  bool remove(const id_t& cid);
 
-  virtual bool remove(const id_t& cid) {
-    bool res = _keys.find(cid) != _keys.end();
-    _cache.erase(cid);
-    if (res) {
-      _priority.erase(_keys[cid]);
-      _keys.erase(cid);
-    }
-    return res;
-  }
-
-  virtual void clear() {
-    _cache.clear();
-    _keys.clear();
-    _priority.clear();
-  }
+  void clear();
 
  protected:
   size_t _maxsize;
   std::list<id_t> _priority;
   std::unordered_map<id_t, std::list<id_t>::iterator> _keys;
-  std::unordered_map<id_t, std::shared_ptr<CommandGroup>> _cache;
+  // cache stores [containing block hash] => list of command groups
+  std::unordered_map<id_t, std::vector<CommandGroup>> _cache;
 
-  virtual void truncate() {
-    if ((_priority.size() < _maxsize) && (_cache.size() < _maxsize)) return;
+  void truncate();
 
-    // cache size is over the limit - erase the oldest element
-    if (_priority.empty()) {
-      _cache.erase(_cache.begin());
-    } else {
-      auto lastid = _priority.back();
-      _priority.pop_back();
-      _keys.erase(lastid);
-      _cache.erase(lastid);
-    }
-  }
-
-  virtual bool refer(const id_t& cid) {
-    bool res = _keys.find(cid) != _keys.end();
-    if (res) {
-      _priority.erase(_keys[cid]);
-    } else {
-      truncate();
-    }
-    _priority.push_front(cid);
-    _keys[cid] = _priority.begin();
-    return res;
-  }
+  bool refer(const id_t& cid);
 };
 
 }  // namespace altintegration

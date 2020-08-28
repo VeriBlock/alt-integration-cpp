@@ -52,7 +52,7 @@ struct RewardsTestFixture : public ::testing::Test, public PopTestFixture {
     auto nextBlock = generateNextBlock(altTip->getHeader());
     altchain.push_back(nextBlock);
     EXPECT_TRUE(alttree.acceptBlockHeader(nextBlock, state));
-    ASSERT_TRUE(validatePayloads(nextBlock.getHash(), popData, state));
+    ASSERT_TRUE(validatePayloads(nextBlock.getHash(), popData));
     ASSERT_TRUE(state.IsValid());
     EXPECT_EQ(altchain.size(), chainSize + 1);
 

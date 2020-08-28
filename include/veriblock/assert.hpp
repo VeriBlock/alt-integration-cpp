@@ -19,9 +19,7 @@
 #endif
 
 #define VBK_ASSERT_MSG(x, ...)                                               \
-  if (VBK_LIKELY((x))) {                                                     \
-    /* do nothing, all good */                                               \
-  } else {                                                                   \
+  if (!VBK_LIKELY((x))) {                                                    \
     auto msg = fmt::format("Assertion failed at {}:{} inside {}:\n{}\n{}\n", \
                            __FILE__,                                         \
                            __LINE__,                                         \
@@ -34,5 +32,13 @@
   }
 
 #define VBK_ASSERT(x) VBK_ASSERT_MSG(x, " ");
+
+#if defined(__GNUC__) && (__GNUC__ >= 4)
+#define VBK_CHECK_RETURN __attribute__((warn_unused_result))
+#elif defined(_MSC_VER) && (_MSC_VER >= 1700)
+#define VBK_CHECK_RETURN _Check_return_
+#else
+#define VBK_CHECK_RETURN
+#endif
 
 #endif  // VERIBLOCK_POP_CPP_ASSERT_HPP

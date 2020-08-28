@@ -14,14 +14,21 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/finalizer.hpp>
-#include <veriblock/storage/payloads_storage.hpp>
-#include <veriblock/storage/pop_storage.hpp>
+#include <veriblock/storage/payloads_index.hpp>
 
 namespace altintegration {
 
+// defined in vbk_block_tree.cpp
 extern template struct BlockIndex<BtcBlock>;
+extern template struct BlockTree<BtcBlock, BtcChainParams>;
+extern template struct BaseBlockTree<BtcBlock>;
 extern template struct BlockIndex<VbkBlock>;
+extern template struct BlockTree<VbkBlock, VbkChainParams>;
+extern template struct BaseBlockTree<VbkBlock>;
 
+/**
+ * @class VbkBlockTree
+ */
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
@@ -38,7 +45,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   VbkBlockTree(const VbkChainParams& vbkp,
                const BtcChainParams& btcp,
-               PayloadsStorage& storagePayloads);
+               PayloadsProvider& storagePayloads,
+               PayloadsIndex& payloadsIndex);
 
   //! efficiently connect `index` to current tree, loaded from disk
   //! - recovers all pointers (pprev, pnext, endorsedBy)
@@ -53,9 +61,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
-
-  PayloadsStorage& getStorage() { return storage_; }
-  const PayloadsStorage& getStorage() const { return storage_; }
+  PayloadsIndex& getPayloadsIndex() { return payloadsIndex_; }
 
   bool areStronglyEquivalent(const VTB& vtb1, const VTB& vtb2);
 
@@ -103,9 +109,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                              const pid_t& pid,
                              bool shouldDetermineBestChain = true);
 
-  void payloadsToCommands(const payloads_t& p,
-                          std::vector<CommandPtr>& commands);
-
   std::string toPrettyString(size_t level = 0) const;
 
   using base::setState;
@@ -130,7 +133,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
   PopForkComparator cmp_;
-  PayloadsStorage& storage_;
+  PayloadsProvider& payloadsProvider_;
+  PayloadsIndex& payloadsIndex_;
 };
 
 template <>
@@ -139,8 +143,16 @@ template <>
 void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index);
 
 template <>
-std::vector<CommandGroup> PayloadsStorage::loadCommands(
-    const typename VbkBlockTree::index_t& index, VbkBlockTree& tree);
+std::vector<CommandGroup> payloadsToCommandGroups(
+    VbkBlockTree& tree,
+    const std::vector<VTB>& pop,
+    const std::vector<uint8_t>& containinghash);
+
+template <>
+void payloadToCommands(VbkBlockTree& tree,
+                       const VTB& pop,
+                       const std::vector<uint8_t>& containingHash,
+                       std::vector<CommandPtr>& cmds);
 
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {

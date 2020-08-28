@@ -1,6 +1,5 @@
 add_library(storage OBJECT
-        pop_storage.cpp
-        payloads_storage.cpp
+        payloads_index.cpp
         util.cpp
-        repository_inmem.cpp
+        payloads_provider.cpp
         )

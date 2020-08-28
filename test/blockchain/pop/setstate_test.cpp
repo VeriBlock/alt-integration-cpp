@@ -20,7 +20,7 @@ struct SetStateTest : public ::testing::Test, public PopTestFixture {
     auto e90c100 = endorseAltBlock({chain[90]}, VTBs);
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());
     ASSERT_TRUE(alttree.getBlockIndex(chain[100].getHash()));
-    ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), {e90c100}, state));
+    ASSERT_TRUE(AddPayloads(chain[100].getHash(), {e90c100}));
     ASSERT_TRUE(alttree.setState(chain[100].getHash(), state));
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[100].getHash());
     ASSERT_EQ(alttree.btc().getBestChain().tip()->getHeight(), VTBs);
@@ -44,7 +44,7 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
   e90c100.atvs.at(0).blockOfProof.previousBlock = uint96();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());
   ASSERT_TRUE(alttree.getBlockIndex(chain[100].getHash()));
-  ASSERT_TRUE(alttree.addPayloads(chain[100].getHash(), {e90c100}, state));
+  ASSERT_TRUE(AddPayloads(chain[100].getHash(), {e90c100}));
   ASSERT_FALSE(alttree.setState(chain[100].getHash(), state));
   // state has not been changed
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());

@@ -19,7 +19,7 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "veriblock/storage/inmem/storage_manager_inmem.hpp"
+#include "veriblock/storage/inmem_payloads_provider.hpp"
 
 namespace altintegration {
 
@@ -39,11 +39,7 @@ class MockMiner {
   using btc_block_t = BtcBlock;
   using btc_params_t = BtcChainParams;
   using btc_block_tree = BlockTree<btc_block_t, btc_params_t>;
-  using btc_block_index_t = btc_block_tree::index_t;
-
-  using vbk_block_t = VbkBlock;
   using vbk_block_tree = VbkBlockTree;
-  using vbk_block_index_t = vbk_block_tree::index_t;
 
  public:
   std::vector<BtcTx> btcmempool;
@@ -113,18 +109,20 @@ class MockMiner {
     VBK_ASSERT(ret);
   }
 
+  InmemPayloadsProvider& getPayloadsProvider() { return payloadsProvider; }
+
  private:
   BtcChainParamsRegTest btc_params{};
   VbkChainParamsRegTest vbk_params{};
-  StorageManagerInmem storageManager{};
-  PayloadsStorage& storagePayloads = storageManager.getPayloadsStorage();
+  InmemPayloadsProvider payloadsProvider;
+  PayloadsIndex payloadsIndex;
 
   Miner<BtcBlock, BtcChainParams> btc_miner =
       Miner<BtcBlock, BtcChainParams>(btc_params);
   Miner<VbkBlock, VbkChainParams> vbk_miner =
       Miner<VbkBlock, VbkChainParams>(vbk_params);
 
-  VbkBlockTree vbktree{vbk_params, btc_params, storagePayloads};
+  VbkBlockTree vbktree{vbk_params, btc_params, payloadsProvider, payloadsIndex};
 
   std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes;
 

@@ -12,8 +12,9 @@
 #include <veriblock/entities/vbkblock.hpp>
 
 namespace altintegration {
-struct BatchAdaptor {
-  virtual ~BatchAdaptor() = default;
+
+struct BlockBatchAdaptor {
+  virtual ~BlockBatchAdaptor() = default;
 
   virtual bool writeBlock(const BlockIndex<BtcBlock>& value) = 0;
   virtual bool writeBlock(const BlockIndex<VbkBlock>& value) = 0;

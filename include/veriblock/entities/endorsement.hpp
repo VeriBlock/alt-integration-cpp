@@ -93,14 +93,7 @@ struct Endorsement {
 
   type::id_t getId() const { return id; }
 
-  bool operator==(const type& other) const {
-    bool a = id == other.id;
-    bool b = endorsedHash == other.endorsedHash;
-    bool c = containingHash == other.containingHash;
-    bool d = blockOfProof == other.blockOfProof;
-    bool e = payoutInfo == other.payoutInfo;
-    return a && b && c && d && e;
-  }
+  bool operator==(const type& other) const { return id == other.id; }
 
   friend bool operator<(const type& a, const type& b) {
     if (a.id < b.id) return true;

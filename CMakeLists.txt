@@ -51,7 +51,6 @@ option(WITH_SECP256K1 "Include secp256k1" ON)
 option(VERIBLOCK_POP_LOGGER_ENABLED "Use logger" ON)
 option(WITH_PYPOPMINER "Build libpypopminer" OFF)
 option(INSTALL_FMT     "Install fmt" ON)
-option(WITH_ROCKSDB "Build RocksDB" OFF)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -103,9 +102,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     # using Visual Studio C++
     add_flag(/W4)                      # displays level 1, level 2, and level 3 warnings, and all level 4 (informational) warnings that are not turned off by default.
     add_flag(/permissive-)             # enforces standards conformance
-    if(NOT WITH_ROCKSDB)
-       add_flag(/w14242)                  # 'identfier': conversion from 'type1' to 'type1', possible loss of data
-    endif()
+    add_flag(/w14242)                  # 'identfier': conversion from 'type1' to 'type1', possible loss of data
     add_flag(/w14263)                  # 'function': member function does not override any base class virtual member function
     add_flag(/w14265)                  # 'classname': class has virtual functions, but destructor is not virtual instances of this class may not be destructed correctly
     add_flag(/w14296)                  # 'operator': expression is always 'boolean_value'

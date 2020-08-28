@@ -5,12 +5,12 @@
 
 #include <veriblock/algorithm.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
-#include <veriblock/storage/payloads_storage.hpp>
+#include <veriblock/storage/payloads_index.hpp>
 
 namespace altintegration {
 
-bool PayloadsStorage::getValidity(Slice<const uint8_t> containingBlockHash,
-                                  Slice<const uint8_t> payloadId) {
+bool PayloadsIndex::getValidity(Slice<const uint8_t> containingBlockHash,
+                                Slice<const uint8_t> payloadId) const {
   auto key = makeGlobalPid(containingBlockHash, payloadId);
   auto it = _cgValidity.find(key);
   if (it == _cgValidity.end()) {
@@ -21,13 +21,9 @@ bool PayloadsStorage::getValidity(Slice<const uint8_t> containingBlockHash,
   return it->second;
 }
 
-Repository& PayloadsStorage::getRepo() { return repo_; }
-
-const Repository& PayloadsStorage::getRepo() const { return repo_; }
-
-void PayloadsStorage::setValidity(Slice<const uint8_t> containingBlockHash,
-                                  Slice<const uint8_t> payloadId,
-                                  bool validity) {
+void PayloadsIndex::setValidity(Slice<const uint8_t> containingBlockHash,
+                                Slice<const uint8_t> payloadId,
+                                bool validity) {
   auto key = makeGlobalPid(containingBlockHash, payloadId);
   if (!validity) {
     _cgValidity[key] = validity;
@@ -44,7 +40,7 @@ void PayloadsStorage::setValidity(Slice<const uint8_t> containingBlockHash,
   // do nothing. any entry that is not in this map is valid by default
 }
 
-const std::set<AltBlock::hash_t>& PayloadsStorage::getContainingAltBlocks(
+const std::set<AltBlock::hash_t>& PayloadsIndex::getContainingAltBlocks(
     const std::vector<uint8_t>& payloadId) const {
   static const std::set<AltBlock::hash_t> empty;
   auto it = payload_in_alt.find(payloadId);
@@ -55,7 +51,7 @@ const std::set<AltBlock::hash_t>& PayloadsStorage::getContainingAltBlocks(
   return it->second;
 }
 
-const std::set<VbkBlock::hash_t>& PayloadsStorage::getContainingVbkBlocks(
+const std::set<VbkBlock::hash_t>& PayloadsIndex::getContainingVbkBlocks(
     const std::vector<uint8_t>& payloadId) const {
   static const std::set<VbkBlock::hash_t> empty;
   auto it = payload_in_vbk.find(payloadId);
@@ -66,7 +62,7 @@ const std::set<VbkBlock::hash_t>& PayloadsStorage::getContainingVbkBlocks(
   return it->second;
 }
 
-void PayloadsStorage::addBlockToIndex(const BlockIndex<AltBlock>& block) {
+void PayloadsIndex::addBlockToIndex(const BlockIndex<AltBlock>& block) {
   auto containing = block.getHash();
   for (auto& pid : block.getPayloadIds<VbkBlock>()) {
     this->addAltPayloadIndex(containing, pid.asVector());
@@ -79,33 +75,33 @@ void PayloadsStorage::addBlockToIndex(const BlockIndex<AltBlock>& block) {
   }
 }
 
-void PayloadsStorage::addBlockToIndex(const BlockIndex<VbkBlock>& block) {
+void PayloadsIndex::addBlockToIndex(const BlockIndex<VbkBlock>& block) {
   auto containing = block.getHash();
   for (auto& pid : block.getPayloadIds<VTB>()) {
     this->addVbkPayloadIndex(containing, pid.asVector());
   }
 }
 
-void PayloadsStorage::addAltPayloadIndex(
-    const AltBlock::hash_t& containing, const std::vector<uint8_t>& payloadId) {
+void PayloadsIndex::addAltPayloadIndex(const AltBlock::hash_t& containing,
+                                       const std::vector<uint8_t>& payloadId) {
   payload_in_alt[payloadId].insert(containing);
 }
-void PayloadsStorage::addVbkPayloadIndex(
-    const VbkBlock::hash_t& containing, const std::vector<uint8_t>& payloadId) {
+void PayloadsIndex::addVbkPayloadIndex(const VbkBlock::hash_t& containing,
+                                       const std::vector<uint8_t>& payloadId) {
   payload_in_vbk[payloadId].insert(containing);
 }
 
-void PayloadsStorage::removeAltPayloadIndex(
+void PayloadsIndex::removeAltPayloadIndex(
     const AltBlock::hash_t& containing, const std::vector<uint8_t>& payloadId) {
   payload_in_alt[payloadId].erase(containing);
 }
 
-void PayloadsStorage::removeVbkPayloadIndex(
+void PayloadsIndex::removeVbkPayloadIndex(
     const VbkBlock::hash_t& containing, const std::vector<uint8_t>& payloadId) {
   payload_in_vbk[payloadId].erase(containing);
 }
 
-void PayloadsStorage::removePayloadsIndex(const BlockIndex<AltBlock>& block) {
+void PayloadsIndex::removePayloadsIndex(const BlockIndex<AltBlock>& block) {
   auto containingHash = block.getHash();
   for (auto& c : block.getPayloadIds<VbkBlock>()) {
     removeAltPayloadIndex(containingHash, c.asVector());
@@ -118,14 +114,14 @@ void PayloadsStorage::removePayloadsIndex(const BlockIndex<AltBlock>& block) {
   }
 }
 
-void PayloadsStorage::removePayloadsIndex(const BlockIndex<VbkBlock>& block) {
+void PayloadsIndex::removePayloadsIndex(const BlockIndex<VbkBlock>& block) {
   auto containingHash = block.getHash();
   for (auto& c : block.getPayloadIds<VTB>()) {
     removeVbkPayloadIndex(containingHash, c.asVector());
   }
 }
 
-void PayloadsStorage::reindex(const AltTree& tree) {
+void PayloadsIndex::reindex(const AltTree& tree) {
   payload_in_alt.clear();
   payload_in_vbk.clear();
 
@@ -145,11 +141,8 @@ void PayloadsStorage::reindex(const AltTree& tree) {
   VBK_LOG_WARN("Reindexing finished");
 }
 
-PayloadsStorage::PayloadsStorage(Repository& repo)
-    : repo_(repo) {}
-
-std::vector<uint8_t> PayloadsStorage::makeGlobalPid(Slice<const uint8_t> a,
-                                                    Slice<const uint8_t> b) {
+std::vector<uint8_t> PayloadsIndex::makeGlobalPid(
+    Slice<const uint8_t> a, Slice<const uint8_t> b) const {
   std::vector<uint8_t> key;
   key.reserve(a.size() + b.size());
   key.insert(key.end(), a.begin(), a.end());
@@ -158,26 +151,19 @@ std::vector<uint8_t> PayloadsStorage::makeGlobalPid(Slice<const uint8_t> a,
   return key;
 }
 
-void PayloadsStorage::savePayloads(const PopData& pop) {
-  auto batch = repo_.newBatch();
-  for (const auto& b : pop.context) {
-    batch->putObject(std::make_pair(DB_VBK_PREFIX, b.getId()), b);
-  }
-  for (const auto& b : pop.vtbs) {
-    batch->putObject(std::make_pair(DB_VTB_PREFIX, b.getId()), b);
-  }
-  for (const auto& b : pop.atvs) {
-    batch->putObject(std::make_pair(DB_ATV_PREFIX, b.getId()), b);
-  }
-  batch->commit();
+const std::map<std::vector<uint8_t>, std::set<AltBlock::hash_t>>&
+PayloadsIndex::getPayloadsInAlt() const {
+  return payload_in_alt;
 }
 
-void PayloadsStorage::savePayloads(const std::vector<VTB>& vtbs) {
-  auto batch = repo_.newBatch();
-  for (auto& b : vtbs) {
-    batch->putObject(std::make_pair(DB_VTB_PREFIX, b.getId()), b);
-  }
-  batch->commit();
+const std::map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>&
+PayloadsIndex::getPayloadsInVbk() const {
+  return payload_in_vbk;
+}
+
+const std::unordered_map<std::vector<uint8_t>, bool>&
+PayloadsIndex::getValidity() const {
+  return _cgValidity;
 }
 
 }  // namespace altintegration

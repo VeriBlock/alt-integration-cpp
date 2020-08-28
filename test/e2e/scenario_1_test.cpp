@@ -157,8 +157,7 @@ TEST_F(Scenario1, scenario_1) {
                  popminer->vbk());
   altPayloadsVBA71.vtbs = {vtbsVBA71[0]};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  ASSERT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloadsVBA71, state))
+  ASSERT_TRUE(AddPayloads(containingBlock.getHash(), altPayloadsVBA71))
       << state.toString();
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
       << state.toString();
@@ -204,8 +203,7 @@ TEST_F(Scenario1, scenario_1) {
                  popminer->vbk());
   altPayloadsVBB71.vtbs = {vtbsVBB71[0]};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  ASSERT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloadsVBB71, state))
+  ASSERT_TRUE(AddPayloads(containingBlock.getHash(), altPayloadsVBB71))
       << state.toString();
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
       << state.toString();

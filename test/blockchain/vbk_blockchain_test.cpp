@@ -11,8 +11,7 @@
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/literals.hpp"
-#include "veriblock/storage/pop_storage.hpp"
-#include "veriblock/storage/inmem/storage_manager_inmem.hpp"
+#include "veriblock/storage/inmem_payloads_provider.hpp"
 
 using namespace altintegration;
 
@@ -27,8 +26,8 @@ struct BtcInvalidationTest {
 
   BtcChainParamsRegTest btcparam;
   VbkChainParamsRegTest vbkparam;
-  StorageManagerInmem storageManager{};
-  PayloadsStorage& storage = storageManager.getPayloadsStorage();
+  InmemPayloadsProvider storage;
+  PayloadsIndex payloadsIndex;
 };
 
 struct VbkTestCase {
@@ -100,7 +99,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap() * 2,
       allblocks.end()};
 
-  VbkBlockTree tree(*value.params, btcparam, storage);
+  VbkBlockTree tree(*value.params, btcparam, storage, payloadsIndex);
 
   ASSERT_TRUE(
       tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))

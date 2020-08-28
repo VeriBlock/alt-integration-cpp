@@ -13,7 +13,11 @@
 namespace altintegration {
 
 template struct BlockIndex<BtcBlock>;
+template struct BlockTree<BtcBlock, BtcChainParams>;
+template struct BaseBlockTree<BtcBlock>;
 template struct BlockIndex<VbkBlock>;
+template struct BlockTree<VbkBlock, VbkChainParams>;
+template struct BaseBlockTree<VbkBlock>;
 
 void VbkBlockTree::determineBestChain(index_t& candidate,
                                       ValidationState& state) {
@@ -62,7 +66,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
   return removePayloads(block.getHash(), pids);
 }
 
-void VbkBlockTree::removePayloads(const Blob<24>& hash,
+void VbkBlockTree::removePayloads(const hash_t& hash,
                                   const std::vector<pid_t>& pids) {
   auto index = VbkTree::getBlockIndex(hash);
   if (!index) {
@@ -100,12 +104,12 @@ void VbkBlockTree::removePayloads(index_t& index,
     // if there are multiple pids
     VBK_ASSERT(it != vtbids.end() && "could not find the payload to remove");
 
-    if (!storage_.getValidity(containingHash, pid)) {
+    if (!payloadsIndex_.getValidity(containingHash, pid)) {
       revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
     }
 
     index.removePayloadId<VTB>(pid);
-    storage_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
+    payloadsIndex_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
   }
 
   updateTips();
@@ -139,15 +143,20 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
              "state corruption: the block does not contain the payload");
 
   // removing an invalid payload might render the block valid
-  if (!storage_.getValidity(containingHash, pid)) {
+  if (!payloadsIndex_.getValidity(containingHash, pid)) {
     revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
   }
 
   bool isApplied = activeChain_.contains(&index);
 
   if (isApplied) {
-    auto cmdGroups = storage_.loadCommands<VbkBlockTree>(index, *this);
-
+    ValidationState dummy;
+    std::vector<CommandGroup> cmdGroups;
+    bool ret = payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
+    VBK_ASSERT_MSG(ret,
+                   "failed to load commands from block=%s, reason=%s",
+                   index.toPrettyString(),
+                   dummy.toString());
     auto group_it = std::find_if(
         cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
           return group.id == pid;
@@ -165,7 +174,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   }
 
   index.removePayloadId<VTB>(pid);
-  storage_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
+  payloadsIndex_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
 
   if (shouldDetermineBestChain) {
     updateTips();
@@ -232,11 +241,15 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   }
 
   index.insertPayloadId<payloads_t>(pid);
-  storage_.addVbkPayloadIndex(index.getHash(), pid.asVector());
-  storage_.savePayloads({payload});
+  payloadsIndex_.addVbkPayloadIndex(index.getHash(), pid.asVector());
 
-  auto cmdGroups = storage_.loadCommands<VbkBlockTree>(index, *this);
-
+  // load commands from block
+  std::vector<CommandGroup> cmdGroups;
+  bool ret = payloadsProvider_.getCommands(*this, index, cmdGroups, state);
+  VBK_ASSERT_MSG(ret,
+                 "failed to load commands from block=%s, reason=%s",
+                 index.toPrettyString(),
+                 state.toString());
   auto group_it = std::find_if(
       cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
         return group.id == pid;
@@ -254,7 +267,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
     // remove the failed payload
     index.removePayloadId<payloads_t>(pid);
-    storage_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
+    payloadsIndex_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
 
     return false;
   }
@@ -354,22 +367,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   return true;
 }
 
-void VbkBlockTree::payloadsToCommands(const payloads_t& p,
-                                      std::vector<CommandPtr>& commands) {
-  // process context blocks
-  for (const auto& b : p.transaction.blockOfProofContext) {
-    addBlock(btc(), b, p.containingBlock.height, commands);
-  }
-  // process block of proof
-  addBlock(
-      btc(), p.transaction.blockOfProof, p.containingBlock.height, commands);
-
-  // add endorsement
-  auto e = VbkEndorsement::fromContainerPtr(p);
-  auto cmd = std::make_shared<AddVbkEndorsement>(btc(), *this, std::move(e));
-  commands.push_back(std::move(cmd));
-}
-
 std::string VbkBlockTree::toPrettyString(size_t level) const {
   return fmt::sprintf(
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
@@ -394,22 +391,27 @@ bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
     return state.Invalid("bad-endorsements");
   }
 
-  storage_.addBlockToIndex(*current);
+  payloadsIndex_.addBlockToIndex(*current);
 
   return true;
 }
 
 void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
-  storage_.removePayloadsIndex(toRemove);
+  payloadsIndex_.removePayloadsIndex(toRemove);
   BaseBlockTree::removeSubtree(toRemove);
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            const BtcChainParams& btcp,
-                           PayloadsStorage& storagePayloads)
+                           PayloadsProvider& storagePayloads,
+                           PayloadsIndex& payloadsIndex)
     : VbkTree(vbkp),
-      cmp_(std::make_shared<BtcTree>(btcp), btcp, vbkp, storagePayloads),
-      storage_(storagePayloads) {}
+      cmp_(std::make_shared<BtcTree>(btcp),
+           vbkp,
+           storagePayloads,
+           payloadsIndex),
+      payloadsProvider_(storagePayloads),
+      payloadsIndex_(payloadsIndex) {}
 
 bool VbkBlockTree::loadTip(const Blob<24>& hash, ValidationState& state) {
   if (!base::loadTip(hash, state)) {
@@ -503,12 +505,6 @@ int VbkBlockTree::weaklyCompare(const VTB& vtb1, const VTB& vtb2) {
 }
 
 template <>
-std::vector<CommandGroup> PayloadsStorage::loadCommands(
-    const typename VbkBlockTree::index_t& index, VbkBlockTree& tree) {
-  return loadCommandsStorage<VbkBlockTree, VTB>(DB_VTB_PREFIX, index, tree);
-}
-
-template <>
 void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index) {
   VBK_ASSERT_MSG(index.blockOfProofEndorsements.empty(),
                  "blockOfProof has %d pointers to endorsements, they will be "
@@ -530,7 +526,7 @@ void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index) {
 }
 
 template <>
-void removePayloadsFromIndex(PayloadsStorage& storage,
+void removePayloadsFromIndex(PayloadsIndex& storage,
                              BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {
   VBK_ASSERT(cg.payload_type_name == &VTB::name());
