@@ -3,7 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-
 #include <veriblock/keystone_util.hpp>
 
 namespace altintegration {
@@ -58,5 +57,11 @@ bool isCrossedKeystoneBoundary(int bottomHeight,
   auto tipIntervalAmount = tipHeight / keystoneInterval;
 
   return keystoneIntervalAmount < tipIntervalAmount;
+}
+
+bool areOnSameKeystoneInterval(int32_t height1,
+                               int32_t height2,
+                               int32_t keystoneInterval) {
+  return (height1 / keystoneInterval) == (height2 / keystoneInterval);
 }
 }  // namespace altintegration

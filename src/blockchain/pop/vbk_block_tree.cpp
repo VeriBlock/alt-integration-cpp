@@ -440,16 +440,15 @@ bool VbkBlockTree::areWeaklyEquivalent(const VTB& vtb1, const VTB& vtb2) {
   bool is_on_the_same_vbk_chain = areOnSameChain(
       vtb1.transaction.publishedBlock, vtb2.transaction.publishedBlock);
 
-  bool is_the_same_keystone_period =
-      ((int32_t)vtb1.transaction.publishedBlock.height /
-       getParams().getKeystoneInterval()) ==
-      ((int32_t)vtb2.transaction.publishedBlock.height /
-       getParams().getKeystoneInterval());
+  bool are_the_same_keystone_period =
+      areOnSameKeystoneInterval(vtb1.transaction.publishedBlock.height,
+                                vtb2.transaction.publishedBlock.height,
+                                getParams().getKeystoneInterval());
 
   return ((vtb1.transaction.publishedBlock ==
            vtb2.transaction.publishedBlock) &&
           is_on_the_same_btc_chain) ||
-         (is_on_the_same_vbk_chain && is_the_same_keystone_period &&
+         (is_on_the_same_vbk_chain && are_the_same_keystone_period &&
           is_on_the_same_btc_chain);
 }
 
