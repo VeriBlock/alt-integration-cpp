@@ -11,15 +11,20 @@
 
 namespace altintegration {
 
-bool isKeystone(int blockNumber, int keystoneInterval);
-int highestKeystoneAtOrBefore(int blockNumber, int keystoneInterval);
-int firstKeystoneAfter(int blockNumber, int keystoneInterval);
-int highestBlockWhichConnectsKeystoneToPrevious(int blockNumberOfKeystone,
-                                                int keystoneInterval);
+bool isKeystone(int32_t blockNumber, int32_t keystoneInterval);
+int32_t highestKeystoneAtOrBefore(int32_t blockNumber,
+                                  int32_t keystoneInterval);
+int32_t firstKeystoneAfter(int32_t blockNumber, int32_t keystoneInterval);
+int32_t highestBlockWhichConnectsKeystoneToPrevious(
+    int32_t blockNumberOfKeystone, int32_t keystoneInterval);
 
-bool isCrossedKeystoneBoundary(int bottomHeight,
-                               int tipHeight,
-                               int keystoneInterval);
+bool isCrossedKeystoneBoundary(int32_t bottomHeight,
+                               int32_t tipHeight,
+                               int32_t keystoneInterval);
+
+bool areOnSameKeystoneInterval(int32_t height1,
+                               int32_t height2,
+                               int32_t keystoneInterval);
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_KEYSTONE_UTIL_HPP_

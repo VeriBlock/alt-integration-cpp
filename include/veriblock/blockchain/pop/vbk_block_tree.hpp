@@ -57,9 +57,20 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PayloadsStorage& getStorage() { return storage_; }
   const PayloadsStorage& getStorage() const { return storage_; }
 
-  bool isStronglyEquivalent(const VTB& vtb1, const VTB& vtb2);
+  bool areStronglyEquivalent(const VTB& vtb1, const VTB& vtb2);
 
-  bool areOnSameChain(const VbkBlock& blk1, const VbkBlock& blk2);
+  bool areWeaklyEquivalent(const VTB& vtb1, const VTB& vtb2);
+
+  /**
+   * Compare two vtbs that are weakly equivalent.
+   * @param[in] first VTB to compare
+   * @param[in] second VTB to compare
+   * @return:
+   * Return positive if vtb1 is better
+   * Return negative if vtb2 is better
+   * Return 0 if they are strongly equal
+   */
+  int weaklyCompare(const VTB& vtb1, const VTB& vtb2);
 
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
