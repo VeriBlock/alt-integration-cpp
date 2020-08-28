@@ -26,7 +26,14 @@ class ValidationState {
  public:
   ValidationState() : m_mode(MODE_VALID) {}
 
-  std::string toString() const { return GetPath() + ", " + GetDebugMessage(); }
+  std::string toString() const {
+    std::string msg = "";
+    if (GetDebugMessage().size() > 0) {
+      msg = ", ";
+      msg += GetDebugMessage();
+    }
+    return GetPath() + msg;
+  }
 
   void clear() {
     stack_trace.clear();
