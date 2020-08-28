@@ -7,4 +7,5 @@ add_library(blockchain OBJECT
         alt_block_addon.cpp
         vbk_block_addon.cpp
         btc_block_addon.cpp
+        commands.cpp
         )

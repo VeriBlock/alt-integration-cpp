@@ -40,8 +40,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       altPayloads1.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads1, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads1));
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   verifyEndorsementAdded(alttree, endorsement1);
@@ -68,8 +67,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       altPayloads2.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), {altPayloads2}, state))
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), {altPayloads2}))
       << state.toString();
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
@@ -96,8 +94,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       altPayloads3.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads3, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads3));
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   verifyEndorsementAdded(alttree, endorsement3);
@@ -133,7 +130,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 }
 
 TEST_F(AltTreeFixture, compareTrees) {
-  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storagePayloads);
+  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, payloadsProvider);
   EXPECT_TRUE(alttree2.bootstrap(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
   EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
@@ -168,7 +165,7 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
       generateAltPayloads({tx1}, vbkparam.getGenesisBlock().getHash(), 0);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(validatePayloads(containingBlock.getHash(), payloads1, state));
+  EXPECT_TRUE(validatePayloads(containingBlock.getHash(), payloads1));
   EXPECT_TRUE(state.IsValid());
 
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
@@ -176,7 +173,8 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
             popminer->vbk().getBestChain().tip()->getHash());
 
-  ASSERT_DEATH(validatePayloads(containingBlock.getHash(), payloads1, state),
+  ASSERT_DEATH(validatePayloads(containingBlock.getHash(), payloads1),
+
                "already contains payloads");
   containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   EXPECT_TRUE(containingIndex->isValid());

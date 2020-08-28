@@ -64,8 +64,7 @@ TEST_F(Scenario9, scenario_9) {
 
   // Step 1
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads1, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads1));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   verifyEndorsementAdded(alttree.vbk(), E1);
@@ -92,8 +91,7 @@ TEST_F(Scenario9, scenario_9) {
 
   // Step 2
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_FALSE(
-      alttree.addPayloads(containingBlock.getHash(), altPayloads2, state))
+  EXPECT_FALSE(AddPayloads(containingBlock.getHash(), altPayloads2))
       << state.toString();
   EXPECT_EQ(state.GetPath(), "VBK-duplicate");
   EXPECT_FALSE(state.IsValid());

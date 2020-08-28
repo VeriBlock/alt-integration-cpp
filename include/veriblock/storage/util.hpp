@@ -9,7 +9,7 @@
 #include <vector>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/logger.hpp>
-#include <veriblock/storage/batch_adaptor.hpp>
+#include <veriblock/storage/block_batch_adaptor.hpp>
 #include <veriblock/validation_state.hpp>
 
 namespace altintegration {
@@ -19,15 +19,22 @@ namespace altintegration {
 //! @invariant NOT atomic
 template <typename BlockTreeT>
 bool LoadTree(BlockTreeT& tree,
-              const std::vector<typename BlockTreeT::index_t>& blocks,
+              std::vector<typename BlockTreeT::index_t> blocks,
               const typename BlockTreeT::hash_t& tiphash,
               ValidationState& state) {
+  using index_t = typename BlockTreeT::index_t;
   using block_t = typename BlockTreeT::block_t;
   VBK_LOG_WARN("Loading %d %s blocks with tip %s",
                blocks.size(),
                block_t::name(),
                HexStr(tiphash));
   VBK_ASSERT(tree.isBootstrapped() && "tree must be bootstrapped");
+
+  // first, sort them by height
+  std::sort(
+      blocks.begin(), blocks.end(), [](const index_t& a, const index_t& b) {
+        return a.getHeight() < b.getHeight();
+      });
 
   for (auto& block : blocks) {
     // load blocks one by one
@@ -41,7 +48,7 @@ bool LoadTree(BlockTreeT& tree,
 
 //! Save blocks and tip to batch
 template <typename BlockTreeT>
-void SaveTree(BlockTreeT& tree, BatchAdaptor& batch) {
+void SaveTree(BlockTreeT& tree, BlockBatchAdaptor& batch) {
   for (auto& block : tree.getBlocks()) {
     auto& index = block.second;
     if (index->isDirty()) {
@@ -55,7 +62,7 @@ void SaveTree(BlockTreeT& tree, BatchAdaptor& batch) {
 
 struct AltTree;
 
-void SaveAllTrees(AltTree& tree, BatchAdaptor& batch);
+void SaveAllTrees(AltTree& tree, BlockBatchAdaptor& batch);
 
 }  // namespace altintegration
 

@@ -58,15 +58,25 @@ std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
 
 template <typename T>
 bool erase_last_item_if(std::vector<T*>& v,
-                        std::function<bool(const T*)> locator) {
+                        const std::function<bool(const T*)>& locator) {
   // find and erase the last occurrence of item
-  auto it = std::find_if(v.rbegin(), v.rend(), locator);
-  if (it == v.rend()) {
+  size_t last = v.size();
+  for (size_t i = v.size(); i-- > 0;) {
+    const T* el = v[i];
+    if (locator(el)) {
+      last = i;
+      break;
+    }
+  }
+
+  if (last >= v.size()) {
+    // not found
     return false;
   }
 
-  auto toRemove = --(it.base());
-  v.erase(toRemove);
+  auto it = v.begin() + last;
+  v.erase(it);
+
   return true;
 }
 

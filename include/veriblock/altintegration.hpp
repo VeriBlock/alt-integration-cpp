@@ -10,26 +10,23 @@
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/config.hpp>
 #include <veriblock/mempool.hpp>
-#include <veriblock/storage/payloads_storage.hpp>
+#include <veriblock/storage/payloads_index.hpp>
 
 namespace altintegration {
 
 struct Altintegration {
   static std::shared_ptr<Altintegration> create(
-      const std::shared_ptr<Config>& config, std::shared_ptr<Repository>& db) {
+      std::shared_ptr<Config> config, std::shared_ptr<PayloadsProvider> db) {
     config->validate();
 
-    std::shared_ptr<Altintegration> service =
-        std::make_shared<Altintegration>();
+    auto service = std::make_shared<Altintegration>();
     service->config = std::move(config);
-    service->repo = std::move(db);
-    service->store = std::make_shared<PayloadsStorage>(*service->repo);
+    service->payloadsProvider = std::move(db);
     service->altTree = std::make_shared<AltTree>(*service->config->alt,
                                                  *service->config->vbk.params,
                                                  *service->config->btc.params,
-                                                 *service->store);
-    service->mempool =
-        std::make_shared<altintegration::MemPool>(*service->altTree);
+                                                 *service->payloadsProvider);
+    service->mempool = std::make_shared<MemPool>(*service->altTree);
 
     ValidationState state;
 
@@ -53,6 +50,7 @@ struct Altintegration {
       VBK_ASSERT(state.IsValid());
     }
 
+    // then, bootstrap ALT
     service->altTree->bootstrap(state);
     return service;
   }
@@ -78,11 +76,9 @@ struct Altintegration {
   }
 
   std::shared_ptr<Config> config;
-  std::shared_ptr<Repository> repo;
   std::shared_ptr<MemPool> mempool;
   std::shared_ptr<AltTree> altTree;
-  std::shared_ptr<PayloadsStorage> store;
-  std::vector<PopData> disconnected_popdata;
+  std::shared_ptr<PayloadsProvider> payloadsProvider;
 };
 
 }  // namespace altintegration

@@ -23,6 +23,11 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   // remove this
   uint8_t chainWork;
 
+  void setNullInmemFields() {
+    chainWork = 0;
+    endorsedBy.clear();
+  }
+
   template <typename I>
   static bool canBeATip(const I& index) {
     return index.hasFlags(BLOCK_CONNECTED);

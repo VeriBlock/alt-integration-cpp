@@ -165,7 +165,9 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   // now we have 2 valid VTBs endorsing VBK5
   VTB& vtb1 = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
   VTB& vtb2 = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(1);
-  (void)vtb2;
+
+  payloadsProvider.write(vtb1);
+  payloadsProvider.write(vtb2);
 
   auto cmd1 = std::make_shared<AddVTB>(alttree, vtb1);
 
@@ -190,6 +192,14 @@ TEST_F(AtomicityTestFixture, AddVTB) {
 
   // execute that AddVTB1
   ASSERT_TRUE(cmd1->Execute(state)) << state.toString();
+
+  {
+    // special case: same as cmd1, but different endorsement address. unapply
+    // should not fail on assert.
+    auto cmd1b = std::make_shared<AddVTB>(alttree, vtb1);
+    ASSERT_NO_FATAL_FAILURE(cmd1b->UnExecute());
+    ASSERT_TRUE(cmd1b->Execute(state)) << state.toString();
+  }
 
   auto& vtbids2 = altvbkcontaining->template getPayloadIds<VTB>();
   ASSERT_EQ(vtbids2.size(), 1);

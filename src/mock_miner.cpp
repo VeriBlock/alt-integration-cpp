@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mock_miner.hpp"
+
 #include <stdexcept>
 
 #include "veriblock/entities/address.hpp"
-#include "veriblock/mock_miner.hpp"
 #include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -106,8 +107,8 @@ ATV MockMiner::applyATV(const VbkTx& transaction, ValidationState& state) {
   return atv;
 }
 
-std::vector<ATV> MockMiner::applyATVs(
-    const std::vector<VbkTx>& transactions, ValidationState& state) {
+std::vector<ATV> MockMiner::applyATVs(const std::vector<VbkTx>& transactions,
+                                      ValidationState& state) {
   // build merkle tree
   auto hashes = hashAll<VbkTx>(transactions);
   const int32_t treeIndex = 0;  // this is POP tx
@@ -338,12 +339,14 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
     throw std::domain_error(state.toString());
   }
 
+  payloadsProvider.write(vtbs);
   if (!tree.addPayloads(containingHash, vtbs, state)) {
     auto* containingIndex = tree.getBlockIndex(containingHash);
     VBK_ASSERT(containingIndex != nullptr);
     removeLeaf(tree, *containingIndex);
     throw std::domain_error(state.toString());
   }
+
   vbkPayloads[containingHash] = vtbs;
 
   return containingBlock;
@@ -429,10 +432,5 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount) {
   assert(tip);
   return mineVbkBlocks(*tip, amount);
 }
-
-// void MockMiner::getGeneratedVTBs(const BlockIndex<VbkBlock>& containingBlock,
-//                                 std::vector<VTB>& vtbs) {
-////  vtbp_.get(containingBlock.containingPayloads, &vtbs);
-//}
 
 }  // namespace altintegration

@@ -7,7 +7,7 @@
 
 #include <veriblock/config.hpp>
 #include <veriblock/mock_miner.hpp>
-#include <veriblock/storage/inmem/storage_manager_inmem.hpp>
+#include <veriblock/storage/inmem_payloads_provider.hpp>
 
 #include "veriblock/altintegration.hpp"
 
@@ -16,9 +16,10 @@ using namespace altintegration;
 struct PopContextFixture : public ::testing::Test {
   VbkChainParamsRegTest vbkp;
   BtcChainParamsRegTest btcp;
-  StorageManagerInmem storageManager{};
-  PayloadsStorage& storage = storageManager.getPayloadsStorage();
-  VbkBlockTree local = VbkBlockTree(vbkp, btcp, storage);
+  InmemPayloadsProvider payloadsProvider;
+  PayloadsIndex payloadsIndex;
+  VbkBlockTree local =
+      VbkBlockTree(vbkp, btcp, payloadsProvider, payloadsIndex);
   MockMiner remote;
 
   BlockIndex<BtcBlock>* forkPoint;
@@ -129,6 +130,7 @@ TEST_F(PopContextFixture, A) {
     auto& vtbs = it->second;
 
     ASSERT_TRUE(local.acceptBlock(containing->getHeader(), state));
+    payloadsProvider.write(vtbs);
     ASSERT_TRUE(
         local.addPayloads(containing->getHeader().getHash(), {vtbs}, state));
   };

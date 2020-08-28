@@ -7,88 +7,12 @@
 
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/storage/inmem/storage_manager_inmem.hpp>
-#include <veriblock/storage/pop_storage_batch_adaptor.hpp>
 #include <veriblock/storage/util.hpp>
-
-#ifdef VERIBLOCK_ROCKSDB
-#include <veriblock/storage/rocks/storage_manager_rocks.hpp>
-#endif  // VERIBLOCK_ROCKSDB
 
 using namespace altintegration;
 
-static const std::string dbName = "db-test";
-static const std::string dbName2 = "db-test2";
-
-struct TestStorageInmem {
-  TestStorageInmem() {
-    StorageManagerInmem storageManager{};
-    storage = std::make_shared<PopStorageInmem>();
-    storagePayloads2 = std::make_shared<PayloadsStorageInmem>();
-  }
-
-  void repositoryCopy(const Repository& copyFrom, Repository& copyTo) {
-    auto cursor = copyFrom.newCursor();
-    for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
-      copyTo.put(cursor->key(), cursor->value());
-    }
-  }
-
-  void saveToPayloadsStorage(const PayloadsStorage& from, PayloadsStorage& to) {
-    repositoryCopy(from.getRepo(), to.getRepo());
-  }
-
-  std::shared_ptr<PopStorage> storage;
-  // another DB instance for the data copy
-  std::shared_ptr<PayloadsStorage> storagePayloads2;
-};
-
-#ifdef VERIBLOCK_ROCKSDB
-
-struct TestStorageRocks {
-  TestStorageRocks() {
-    storageManager_ = std::make_shared<StorageManagerRocks>(dbName);
-    storage = std::make_shared<PopStorage>(storageManager_->getPopStorage());
-
-    storage->getBlockRepo<BlockIndex<BtcBlock>>().clear();
-    storage->getBlockRepo<BlockIndex<VbkBlock>>().clear();
-    storage->getBlockRepo<BlockIndex<AltBlock>>().clear();
-
-    storageManager2 = std::make_shared<StorageManagerRocks>(dbName2);
-    storagePayloads2 = std::make_shared<PayloadsStorage>(
-        storageManager_->getPayloadsStorage());
-
-    storagePayloads2->getRepo<ATV>().clear();
-    storagePayloads2->getRepo<VTB>().clear();
-    storagePayloads2->getRepo<VbkBlock>().clear();
-  }
-
-  void saveToPayloadsStorageVbk(const PayloadsStorage& from,
-                                PayloadsStorage& to) {
-    payloadsRepositoryCopy(from.getRepo<VTB>(), to.getRepo<VTB>());
-  }
-
-  void saveToPayloadsStorageAlt(const PayloadsStorage& from,
-                                PayloadsStorage& to) {
-    payloadsRepositoryCopy(from.getRepo<ATV>(), to.getRepo<ATV>());
-    payloadsRepositoryCopy(from.getRepo<VTB>(), to.getRepo<VTB>());
-    payloadsRepositoryCopy(from.getRepo<VbkBlock>(), to.getRepo<VbkBlock>());
-  }
-
-  std::shared_ptr<PopStorage> storage;
-  std::shared_ptr<StorageManager> storageManager_;
-  // another DB instance for the data copy
-  std::shared_ptr<PayloadsStorage> storagePayloads2;
-  std::shared_ptr<StorageManager> storageManager2;
-};
-
-#endif  // VERIBLOCK_ROCKSDB
-
-template <typename Storage>
-struct AltTreeRepositoryTest : public ::testing::Test,
-                               public PopTestFixture,
-                               public Storage {
-  AltTreeRepositoryTest() {}
+struct AltTreeRepositoryTest : public ::testing::Test, public PopTestFixture {
+  PayloadsIndex payloadsIndex;
 };
 
 BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
@@ -97,9 +21,7 @@ BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
   return tip->getHash();
 }
 
-TYPED_TEST_SUITE_P(AltTreeRepositoryTest);
-
-TYPED_TEST_P(AltTreeRepositoryTest, ValidBlocks) {
+TEST_F(AltTreeRepositoryTest, ValidBlocks) {
   auto* vbkTip = this->popminer->mineVbkBlocks(1);
   // create endorsement of VBKTIP in BTC_1
   auto btctx =
@@ -119,19 +41,19 @@ TYPED_TEST_P(AltTreeRepositoryTest, ValidBlocks) {
   // mine txA into VBK 2nd block
   vbkTip = this->popminer->mineVbkBlocks(1);
 
-  auto adaptor = PopStorageBatchAdaptor(*this->storage);
+  auto adaptor = InmemBlockBatch(blockStorage);
   SaveTree(this->popminer->btc(), adaptor);
   SaveTree(this->popminer->vbk(), adaptor);
-  this->saveToPayloadsStorage(this->popminer->vbk().getStorage(),
-                              *this->storagePayloads2);
-  VbkBlockTree newvbk{this->vbkparam, this->btcparam, *this->storagePayloads2};
+
+  VbkBlockTree newvbk{this->vbkparam,
+                      this->btcparam,
+                      popminer->getPayloadsProvider(),
+                      payloadsIndex};
   newvbk.btc().bootstrapWithGenesis(this->state);
   newvbk.bootstrapWithGenesis(this->state);
 
-  ASSERT_TRUE(LoadTreeWrapper(newvbk.btc(), *this->storage, this->state))
-      << this->state.toString();
-  ASSERT_TRUE(LoadTreeWrapper(newvbk, *this->storage, this->state))
-      << this->state.toString();
+  ASSERT_TRUE(LoadTreeWrapper(newvbk.btc())) << this->state.toString();
+  ASSERT_TRUE(LoadTreeWrapper(newvbk)) << this->state.toString();
 
   ASSERT_TRUE(this->cmp(newvbk.btc(), this->popminer->btc()));
   ASSERT_TRUE(this->cmp(newvbk, this->popminer->vbk()));
@@ -144,7 +66,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, ValidBlocks) {
   ASSERT_TRUE(this->cmp(newvbk.btc(), this->popminer->btc()));
 }
 
-TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
+TEST_F(AltTreeRepositoryTest, Altchain) {
   std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
 
   // mine 2 blocks
@@ -165,30 +87,22 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   this->popminer->mineBtcBlocks(1);
 
   EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
-  EXPECT_TRUE(this->alttree.addPayloads(
-      containingBlock.getHash(), altPayloads1, this->state));
+  EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), altPayloads1));
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto adaptor = PopStorageBatchAdaptor(*this->storage);
+  auto adaptor = InmemBlockBatch(blockStorage);
   SaveAllTrees(this->alttree, adaptor);
-  this->saveToPayloadsStorage(this->alttree.vbk().getStorage(),
-                              *this->storagePayloads2);
-  this->saveToPayloadsStorage(this->alttree.getStorage(),
-                              *this->storagePayloads2);
-
   AltTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, *this->storagePayloads2};
+      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
   reloadedAltTree.bootstrap(this->state);
 
-  ASSERT_TRUE(
-      LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
-  ASSERT_TRUE(
-      LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
@@ -202,7 +116,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 }
 
-TYPED_TEST_P(AltTreeRepositoryTest, ManyEndorsements) {
+TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
 
   // mine 2 blocks
@@ -226,30 +140,23 @@ TYPED_TEST_P(AltTreeRepositoryTest, ManyEndorsements) {
   this->popminer->mineBtcBlocks(1);
 
   EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
-  EXPECT_TRUE(this->alttree.addPayloads(
-      containingBlock.getHash(), altPayloads1, this->state));
+  EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), altPayloads1));
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto adaptor = PopStorageBatchAdaptor(*this->storage);
+  auto adaptor = InmemBlockBatch(blockStorage);
   SaveAllTrees(this->alttree, adaptor);
-  this->saveToPayloadsStorage(this->alttree.vbk().getStorage(),
-                              *this->storagePayloads2);
-  this->saveToPayloadsStorage(this->alttree.getStorage(),
-                              *this->storagePayloads2);
 
   AltTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, *this->storagePayloads2};
+      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
   reloadedAltTree.bootstrap(this->state);
 
-  ASSERT_TRUE(
-      LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
-  ASSERT_TRUE(
-      LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
@@ -257,7 +164,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, ManyEndorsements) {
   ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 }
 
-TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
+TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
 
   // mine 20 blocks
@@ -295,8 +202,7 @@ TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
 
   // add alt payloads
   EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
-  EXPECT_TRUE(this->alttree.addPayloads(
-      containingBlock.getHash(), popData, this->state));
+  EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), popData));
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
   validateAlttreeIndexState(this->alttree, containingBlock, popData);
@@ -310,31 +216,23 @@ TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
 
   // add alt payloads
   EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
-  EXPECT_TRUE(this->alttree.addPayloads(
-      containingBlock.getHash(), popData, this->state));
+  EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), popData));
   EXPECT_FALSE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_FALSE(this->state.IsValid());
   validateAlttreeIndexState(this->alttree, containingBlock, popData, false);
 
-  auto adaptor = PopStorageBatchAdaptor(*this->storage);
+  auto adaptor = InmemBlockBatch(blockStorage);
   SaveAllTrees(this->alttree, adaptor);
-  this->saveToPayloadsStorage(this->alttree.vbk().getStorage(),
-                              *this->storagePayloads2);
-  this->saveToPayloadsStorage(this->alttree.getStorage(),
-                              *this->storagePayloads2);
-
   AltTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, *this->storagePayloads2};
+      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
   reloadedAltTree.bootstrap(this->state);
 
-  ASSERT_TRUE(
-      LoadTreeWrapper(reloadedAltTree.btc(), *this->storage, this->state));
-  ASSERT_TRUE(
-      LoadTreeWrapper(reloadedAltTree.vbk(), *this->storage, this->state));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree, *this->storage, this->state));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
@@ -342,25 +240,9 @@ TYPED_TEST_P(AltTreeRepositoryTest, InvalidBlocks) {
   EXPECT_FALSE(this->cmp(reloadedAltTree, this->alttree, true));
 
   // set state that validity flags should be the same
-  EXPECT_FALSE(reloadedAltTree.setState(containingBlock.getHash(), this->state));
+  EXPECT_FALSE(
+      reloadedAltTree.setState(containingBlock.getHash(), this->state));
   EXPECT_FALSE(this->alttree.setState(containingBlock.getHash(), this->state));
 
   ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 }
-
-// make sure to enumerate the test cases here
-REGISTER_TYPED_TEST_SUITE_P(AltTreeRepositoryTest,
-                            ValidBlocks,
-                            InvalidBlocks,
-                            Altchain,
-                            ManyEndorsements);
-
-#ifdef VERIBLOCK_ROCKSDB
-typedef ::testing::Types<TestStorageInmem, TestStorageRocks> TypesUnderTest;
-#else   //! VERIBLOCK_ROCKSDB
-typedef ::testing::Types<TestStorageInmem> TypesUnderTest;
-#endif  // VERIBLOCK_ROCKSDB
-
-INSTANTIATE_TYPED_TEST_SUITE_P(AltTreeRepositoryTestSuite,
-                               AltTreeRepositoryTest,
-                               TypesUnderTest);

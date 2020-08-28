@@ -105,8 +105,16 @@ struct AddEndorsement : public Command {
                    "block does not exist %s",
                    e_->toPrettyString());
 
-    auto rm = [this](const endorsement_t* e) -> bool {
-      return e->id == e_->id;
+    // e_ is likely to have different address than one stored in a Block.
+    // make sure that we use correct Endorsement instance, then to remove proper
+    // ptrs from endorsedBy and blockOfProofEndorsements
+    auto Eit = containing->findContainingEndorsement(e_->id);
+    VBK_ASSERT_MSG(Eit != containing->getContainingEndorsements().end(),
+                   "state corruption: containing endorsement not found");
+
+    // we added endorsements by ptr, so find them by ptr
+    auto rm = [&](const endorsement_t* e) -> bool {
+      return e == (Eit->second).get();
     };
 
     // erase endorsedBy
@@ -125,7 +133,7 @@ struct AddEndorsement : public Command {
                    e_->toPrettyString());
 
     // erase containing, should be removed last
-    containing->removeContainingEndorsement(e_);
+    containing->removeContainingEndorsement(Eit);
   }
 
   size_t getId() const override { return e_->id.getLow64(); }

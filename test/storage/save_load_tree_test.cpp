@@ -6,8 +6,6 @@
 #include <gtest/gtest.h>
 
 #include <util/pop_test_fixture.hpp>
-#include <veriblock/storage/pop_storage.hpp>
-#include <veriblock/storage/pop_storage_batch_adaptor.hpp>
 
 using namespace altintegration;
 
@@ -22,30 +20,17 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
   }
 
   std::vector<AltBlock> chain;
-  PopStorageInmem storage;
-  StorageManagerInmem storageManager2{};
-  PayloadsStorage& storagePayloads2 = storageManager2.getPayloadsStorage();
 
-  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, storagePayloads2);
+  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, payloadsProvider);
 
   void save() {
-    auto adaptor = PopStorageBatchAdaptor(storage);
+    auto adaptor = InmemBlockBatch(blockStorage);
     SaveAllTrees(alttree, adaptor);
   }
 
-  bool load(ValidationState& _state) {
-    // copy payloads from storagePayloads -> storagePayloads2
-    auto cursor = storagePayloads.getRepo().newCursor();
-    auto batch = storagePayloads2.getRepo().newBatch();
-    for (cursor->seekToFirst(); cursor->isValid(); cursor->next()) {
-      batch->put(cursor->key(), cursor->value());
-    }
-    batch->commit();
-
-    // now load blocks
-    return LoadTreeWrapper(alttree2.btc(), storage, _state) &&
-           LoadTreeWrapper(alttree2.vbk(), storage, _state) &&
-           LoadTreeWrapper(alttree2, storage, _state);
+  bool load() {
+    return LoadTreeWrapper(alttree2.btc()) && LoadTreeWrapper(alttree2.vbk()) &&
+           LoadTreeWrapper(alttree2);
   }
 
   auto assertTreesEqual() {
@@ -65,7 +50,7 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
 // alttree does not contain any invalid blocks
 TEST_F(SaveLoadTreeTest, ValidTree) {
   save();
-  ASSERT_TRUE(load(state));
+  ASSERT_TRUE(load()) << state.toString();
   assertTreesEqual();
 }
 
@@ -86,7 +71,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
 
   // add alt payloads
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
@@ -101,13 +86,13 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
       map_get_id(popData.context));
 
   for (const auto& b : popData.context) {
-    alttree.getStorage().addAltPayloadIndex(containingBlock.getHash(),
-                                            b.getId().asVector());
+    alttree.getPayloadsIndex().addAltPayloadIndex(containingBlock.getHash(),
+                                                  b.getId().asVector());
   }
 
   save();
 
-  EXPECT_FALSE(load(state));
+  EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "load-tree+VBK-duplicate");
 }
@@ -129,7 +114,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
 
   // add alt payloads
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
@@ -140,13 +125,13 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
       map_get_id(popData.context));
 
   for (const auto& b : popData.context) {
-    alttree.getStorage().addAltPayloadIndex(containingBlock.getHash(),
-                                            b.getId().asVector());
+    alttree.getPayloadsIndex().addAltPayloadIndex(containingBlock.getHash(),
+                                                  b.getId().asVector());
   }
 
   save();
 
-  EXPECT_FALSE(load(state));
+  EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "load-tree+VBK-duplicate");
 }
@@ -168,7 +153,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
 
   // add alt payloads
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  EXPECT_TRUE(alttree.addPayloads(containingBlock.getHash(), popData, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
@@ -183,12 +168,12 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
 
   // add duplicates
   // add duplicate atv
-  alttree.getStorage().addAltPayloadIndex(containingBlock.getHash(),
-                                          popData.atvs[0].getId().asVector());
+  alttree.getPayloadsIndex().addAltPayloadIndex(
+      containingBlock.getHash(), popData.atvs[0].getId().asVector());
 
   save();
 
-  EXPECT_FALSE(load(state));
+  EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "load-tree+ATV-duplicate");
 }

@@ -27,7 +27,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   chainA = generateNextBlock(chainA);
   auto payloads = endorseAltBlock({altForkPoint}, 1);
   ASSERT_TRUE(alttree.acceptBlockHeader(chainA, state)) << state.toString();
-  ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), {payloads}, state))
+  ASSERT_TRUE(AddPayloads(chainA.getHash(), {payloads}))
       << state.toString();
 
   // make a copy that we will use later to create corrupted payloads
@@ -39,7 +39,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
       payloads.context.begin(),
       payloads.context.begin() + (payloads.context.size() - 2));
   ASSERT_TRUE(alttree.acceptBlockHeader(chainA, state)) << state.toString();
-  ASSERT_TRUE(alttree.addPayloads(chainA.getHash(), payloads, state))
+  ASSERT_TRUE(AddPayloads(chainA.getHash(), payloads))
       << state.toString();
 
   // corrupted payloads
@@ -56,8 +56,8 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
 
   ASSERT_TRUE(alttree.acceptBlockHeader(corruptedAltBlock, state))
       << state.toString();
-  ASSERT_TRUE(alttree.addPayloads(
-      corruptedAltBlock.getHash(), corruptedPayloads, state))
+  ASSERT_TRUE(AddPayloads(
+      corruptedAltBlock.getHash(), corruptedPayloads))
       << state.toString();
 
   auto chainB = corruptedAltBlock;

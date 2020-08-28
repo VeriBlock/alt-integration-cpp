@@ -35,6 +35,8 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
                  containingVbkBlock.getHash(),
                  popminer->vbk());
 
+  payloadsProvider.write(popData);
+
   // BTC contexts should be empty
   ASSERT_EQ(popData.vtbs[0].transaction.blockOfProofContext.size(), 0);
   ASSERT_EQ(popData.vtbs[1].transaction.blockOfProofContext.size(), 0);

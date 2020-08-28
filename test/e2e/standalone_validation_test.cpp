@@ -62,7 +62,7 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
 
   // mine the last block of chainA with payloads and activate it
   mineAltBlocks(1, chainA);
-  EXPECT_TRUE(alttree.addPayloads(chainA.back().getHash(), payloadsA, state));
+  EXPECT_TRUE(AddPayloads(chainA.back().getHash(), payloadsA));
   EXPECT_TRUE(alttree.setState(chainA.back().getHash(), state));
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, chainA.back(), payloadsA);
@@ -72,7 +72,7 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
 
   // add the last block of chainB with payloads
   EXPECT_TRUE(alttree.acceptBlockHeader(chainB.back(), state));
-  EXPECT_TRUE(alttree.addPayloads(chainB.back().getHash(), payloadsB, state));
+  EXPECT_TRUE(AddPayloads(chainB.back().getHash(), payloadsB));
 
   // applying chainB causes state corruption
   // so we decide that chainA is better
