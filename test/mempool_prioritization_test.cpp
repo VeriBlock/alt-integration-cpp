@@ -131,25 +131,12 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario4_test) {
 
   EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtb1, vtb2));
   EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtb2, vtb1));
+
+  EXPECT_GT(popminer->vbk().weaklyCompare(vtb1, vtb2), 0);
+  EXPECT_LT(popminer->vbk().weaklyCompare(vtb2, vtb1), 0);
 }
 
 TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario1_test) {
-  // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
-
-  // endorse VBK blocks
-  const auto* endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
-  auto vbkPopTx = generatePopTx(endorsedVbkBlock->getHeader());
-  vbkTip = popminer->mineVbkBlocks(1);
-  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
-
-  ASSERT_EQ(vtbs.size(), 1);
-  ASSERT_EQ(vtbs[0].transaction.getHash(), vbkPopTx.getHash());
-
-  EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtbs[0], vtbs[0]));
-}
-
-TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario2_test) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -179,9 +166,12 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario2_test) {
 
   EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtb1, vtb2));
   EXPECT_TRUE(popminer->vbk().areWeaklyEquivalent(vtb2, vtb1));
+
+  EXPECT_GT(popminer->vbk().weaklyCompare(vtb1, vtb2), 0);
+  EXPECT_LT(popminer->vbk().weaklyCompare(vtb2, vtb1), 0);
 }
 
-TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario3_test) {
+TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario2_test) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -217,5 +207,49 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario3_test) {
   EXPECT_FALSE(popminer->vbk().areWeaklyEquivalent(vtb2, vtb1));
 
   ASSERT_DEATH(popminer->vbk().weaklyCompare(vtb1, vtb2),
+               "vtbs should be weakly equivalent");
+  ASSERT_DEATH(popminer->vbk().weaklyCompare(vtb2, vtb1),
+               "vtbs should be weakly equivalent");
+}
+
+TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario3_test) {
+  // mine 65 vbk blocks
+  auto* vbkTip = popminer->mineVbkBlocks(
+      popminer->vbk().getParams().getKeystoneInterval() * 3);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(
+      vbkTip->getHeight() - popminer->vbk().getParams().getKeystoneInterval() +
+      1);
+  const auto* endorsedVbkBlock2 =
+      vbkTip->getAncestor(popminer->vbk().getParams().getKeystoneInterval());
+
+  auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1);
+  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+  ASSERT_EQ(vtbs.size(), 1);
+  ASSERT_EQ(vtbs[0].transaction.getHash(), vbkPopTx1.getHash());
+
+  auto vtb1 = vtbs[0];
+
+  auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1);
+  vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+  ASSERT_EQ(vtbs.size(), 1);
+  ASSERT_EQ(vtbs[0].transaction.getHash(), vbkPopTx2.getHash());
+
+  auto vtb2 = vtbs[0];
+
+  ASSERT_NE(vtb1.getId(), vtb2.getId());
+
+  EXPECT_FALSE(popminer->vbk().areStronglyEquivalent(vtb1, vtb2));
+  EXPECT_FALSE(popminer->vbk().areStronglyEquivalent(vtb2, vtb1));
+
+  EXPECT_FALSE(popminer->vbk().areWeaklyEquivalent(vtb1, vtb2));
+  EXPECT_FALSE(popminer->vbk().areWeaklyEquivalent(vtb2, vtb1));
+
+  ASSERT_DEATH(popminer->vbk().weaklyCompare(vtb1, vtb2),
+               "vtbs should be weakly equivalent");
+  ASSERT_DEATH(popminer->vbk().weaklyCompare(vtb2, vtb1),
                "vtbs should be weakly equivalent");
 }
