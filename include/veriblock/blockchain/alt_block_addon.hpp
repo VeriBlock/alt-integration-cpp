@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_ALT_BLOCK_ADDON_HPP
 
 #include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/block_status.hpp>
 #include <veriblock/blockchain/pop/pop_state.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/uint.hpp>
@@ -21,6 +22,11 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   // TODO: refactor base block tree, and move chainwork to blocktree.hpp, then
   // remove this
   uint8_t chainWork;
+
+  template <typename I>
+  static bool canBeATip(const I& index) {
+    return index.hasFlags(BLOCK_CONNECTED);
+  }
 
   bool hasPayloads() const {
     return !_atvids.empty() || !_vtbids.empty() || !_vbkblockids.empty();

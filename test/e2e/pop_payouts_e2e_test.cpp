@@ -50,9 +50,10 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     chain.push_back(containing);
     auto payloads = generateAltPayloads(
         {vbktx}, tree.vbk().getBestChain().tip()->getHash());
-    ASSERT_TRUE(tree.acceptBlockHeader(containing, state));
-    ASSERT_TRUE(tree.addPayloads(containing.getHash(), payloads, state));
-    ASSERT_TRUE(tree.setState(containing.getHash(), state));
+    ASSERT_TRUE(tree.acceptBlockHeader(containing, state)) << state.toString();
+    ASSERT_TRUE(tree.addPayloads(containing.getHash(), payloads, state))
+        << state.toString();
+    ASSERT_TRUE(tree.setState(containing.getHash(), state)) << state.toString();
     validateAlttreeIndexState(tree, containing, payloads);
   }
 
@@ -103,8 +104,7 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
   for (size_t i = 0; i < 10000; i++) {
     std::map<std::vector<uint8_t>, int64_t> payout;
     ASSERT_TRUE(alttree.setState(chain[i].getHash(), state));
-    ASSERT_NO_FATAL_FAILURE(
-        payout = alttree.getPopPayout(chain[i].getHash()));
+    ASSERT_NO_FATAL_FAILURE(payout = alttree.getPopPayout(chain[i].getHash()));
     // no endorsements = no payouts
     ASSERT_TRUE(payout.empty());
 

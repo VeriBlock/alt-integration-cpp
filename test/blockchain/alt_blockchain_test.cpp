@@ -176,7 +176,8 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
             popminer->vbk().getBestChain().tip()->getHash());
 
-  ASSERT_DEATH(validatePayloads(containingBlock.getHash(), payloads1, state), "already contains PopData");
+  ASSERT_DEATH(validatePayloads(containingBlock.getHash(), payloads1, state),
+               "already contains payloads");
   containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   EXPECT_TRUE(containingIndex->isValid());
 }

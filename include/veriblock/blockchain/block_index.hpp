@@ -10,6 +10,7 @@
 #include <set>
 #include <vector>
 #include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/block_status.hpp>
 #include <veriblock/blockchain/command.hpp>
 #include <veriblock/blockchain/command_group.hpp>
 #include <veriblock/entities/endorsements.hpp>
@@ -18,43 +19,6 @@
 #include <veriblock/write_stream.hpp>
 
 namespace altintegration {
-
-enum BlockStatus : uint32_t {
-  //! default state for validity - validity state is unknown
-  BLOCK_VALID_UNKNOWN = 0,
-  //! acceptBlock succeded. All ancestors are at least at this state.
-  BLOCK_VALID_TREE = 1 << 0,
-  //! all validity flags
-  BLOCK_VALID_MASK = BLOCK_VALID_TREE,
-  //! this is a bootstrap block
-  BLOCK_BOOTSTRAP = 1 << 1,
-  //! block is statelessly valid, but the altchain marked it as failed
-  BLOCK_FAILED_BLOCK = 1 << 2,
-  //! block failed state{less,ful} validation due to its payloads
-  BLOCK_FAILED_POP = 1 << 3,
-  //! block is state{lessly,fully} valid and the altchain did not report it as
-  //! invalid, but some of the ancestor blocks are invalid
-  BLOCK_FAILED_CHILD = 1 << 4,
-  //! all invalidity flags
-  BLOCK_FAILED_MASK =
-      BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
-  //! the block has been applied via PopStateMachine
-  BLOCK_APPLIED = 1 << 5,
-  //! the block has been at least once successful applied via PopStateMachine
-  BLOCK_CAN_BE_APPLIED = 1 << 6,
-  //! if set, AddPayloads has been executed on this block
-  BLOCK_HAS_PAYLOADS = 1 << 7,
-
-  // DEV NOTE: new flags should be added in the end
-};
-
-/**
- * Check if the `reason` value can be used as the reason for invalidateSubtree
- * and revalidateSubtree
- */
-constexpr bool isValidInvalidationReason(const enum BlockStatus reason) {
-  return reason == BLOCK_FAILED_BLOCK || reason == BLOCK_FAILED_POP;
-}
 
 template <typename Block>
 struct BlockIndex : public Block::addon_t {
@@ -70,9 +34,7 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) a set of pointers for forward iteration
   std::set<BlockIndex*> pnext{};
 
-  uint32_t getStatus() const {
-    return status;
-  }
+  uint32_t getStatus() const { return status; }
   void setStatus(uint32_t _status) {
     this->status = _status;
     setDirty();
@@ -92,7 +54,7 @@ struct BlockIndex : public Block::addon_t {
     this->pprev = nullptr;
     this->pnext.clear();
     this->height = 0;
-    this->status = 0;
+    this->status = BLOCK_VALID_UNKNOWN;
     // make it dirty by default
     setDirty();
   }
@@ -144,15 +106,16 @@ struct BlockIndex : public Block::addon_t {
     setDirty();
   }
 
+  bool canBeATip() const { return isValid() && addon_t::canBeATip(*this); }
   /**
-   * The block is a valid tip if it is valid and either there are no descendant
-   * blocks or all the descendants are invalid
+   * The block is a valid tip if it can be a tip and either there are no
+   * descendant blocks or none of the descendants can be a tip
    */
   bool isValidTip() const {
-    return isValid() &&
+    return canBeATip() &&
            (pnext.empty() ||
             std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
-              return !index->isValid();
+              return !index->canBeATip();
             }));
   }
 
@@ -163,6 +126,16 @@ struct BlockIndex : public Block::addon_t {
     return pnext.empty() ||
            std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
              return !index->hasFlags(BLOCK_APPLIED);
+           });
+  }
+
+  /**
+   *  Check if all immediate descendants of the block are not connected
+   */
+  bool allDescendantsUnconnected() const {
+    return pnext.empty() ||
+           std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+             return !index->hasFlags(BLOCK_CONNECTED);
            });
   }
 
