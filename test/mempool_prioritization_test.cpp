@@ -14,7 +14,7 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
                                       public PopTestFixture {};
 
 // Compare the same vtbs
-TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario1_test) {
+TEST_F(MemPoolPrioritizationFixture, vtb_areStronglyEquivalent_scenario1_test) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -33,7 +33,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario1_test) {
 
 // Compare vtbs that are contains in the same chain with the same vbkPop
 // transactions
-TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario2_test) {
+TEST_F(MemPoolPrioritizationFixture, vtb_areStronglyEquivalent_scenario2_test) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -66,7 +66,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario2_test) {
 
 // Compare vtbs that are contains in the different chains with the same vbkPop
 // transactions
-TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario3_test) {
+TEST_F(MemPoolPrioritizationFixture, vtb_areStronglyEquivalent_scenario3_test) {
   auto* vbkFork = popminer->mineVbkBlocks(50);
   auto* vbkTip = popminer->mineVbkBlocks(2);
 
@@ -101,7 +101,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario3_test) {
 }
 
 // Compare vtbs that are not equal
-TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario4_test) {
+TEST_F(MemPoolPrioritizationFixture, vtb_areStronglyEquivalent_scenario4_test) {
   // mine 65 vbk blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -136,7 +136,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isStronglyEquivalent_scenario4_test) {
   EXPECT_LT(popminer->vbk().weaklyCompare(vtb2, vtb1), 0);
 }
 
-TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario1_test) {
+TEST_F(MemPoolPrioritizationFixture, vtb_areWeaklyEquivalent_scenario1_test) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -171,7 +171,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario1_test) {
   EXPECT_LT(popminer->vbk().weaklyCompare(vtb2, vtb1), 0);
 }
 
-TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario2_test) {
+TEST_F(MemPoolPrioritizationFixture, vtb_areWeaklyEquivalent_scenario2_test) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -212,7 +212,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario2_test) {
                "vtbs should be weakly equivalent");
 }
 
-TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario3_test) {
+TEST_F(MemPoolPrioritizationFixture, vtb_areWeaklyEquivalent_scenario3_test) {
   // mine 65 vbk blocks
   auto* vbkTip = popminer->mineVbkBlocks(
       popminer->vbk().getParams().getKeystoneInterval() * 3);
@@ -252,4 +252,61 @@ TEST_F(MemPoolPrioritizationFixture, vtb_isWeaklyEquivalent_scenario3_test) {
                "vtbs should be weakly equivalent");
   ASSERT_DEATH(popminer->vbk().weaklyCompare(vtb2, vtb1),
                "vtbs should be weakly equivalent");
+}
+
+TEST_F(MemPoolPrioritizationFixture, atv_areStronglyEquivalent_scenario1_test) {
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  AltBlock endorsedBlock = chain[5];
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+
+  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  PopData altPayloads1 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+
+  ASSERT_EQ(altPayloads1.atvs.size(), 1);
+  ASSERT_TRUE(altPayloads1.vtbs.empty());
+
+  auto atv = altPayloads1.atvs[0];
+
+  ASSERT_EQ(atv.transaction.getHash(), tx.getHash());
+
+  ASSERT_TRUE(alttree.areStronglyEquivalent(atv, atv));
+}
+
+TEST_F(MemPoolPrioritizationFixture, atv_areStronglyEquivalent_scenario2_test) {
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  AltBlock endorsedBlock = chain[5];
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+
+  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  chain.push_back(containingBlock);
+  PopData altPayloads1 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+  PopData altPayloads2 =
+      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+
+  ASSERT_EQ(altPayloads1.atvs.size(), 1);
+  ASSERT_TRUE(altPayloads1.vtbs.empty());
+  ASSERT_EQ(altPayloads2.atvs.size(), 1);
+  ASSERT_TRUE(altPayloads2.vtbs.empty());
+
+  auto atv1 = altPayloads1.atvs[0];
+  auto atv2 = altPayloads2.atvs[0];
+
+  ASSERT_EQ(atv1.transaction.getHash(), tx.getHash());
+  ASSERT_EQ(atv2.transaction.getHash(), tx.getHash());
+
+  ASSERT_FALSE(alttree.areStronglyEquivalent(atv1, atv2));
+  ASSERT_FALSE(alttree.areStronglyEquivalent(atv2, atv1));
 }
