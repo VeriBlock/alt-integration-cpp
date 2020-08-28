@@ -441,9 +441,10 @@ bool VbkBlockTree::areWeaklyEquivalent(const VTB& vtb1, const VTB& vtb2) {
       vtb1.transaction.publishedBlock, vtb2.transaction.publishedBlock);
 
   bool is_the_same_keystone_period =
-      abs(vtb1.transaction.publishedBlock.height -
-          vtb2.transaction.publishedBlock.height) <=
-      (int32_t)getParams().getKeystoneInterval();
+      ((int32_t)vtb1.transaction.publishedBlock.height /
+       getParams().getKeystoneInterval()) ==
+      ((int32_t)vtb2.transaction.publishedBlock.height /
+       getParams().getKeystoneInterval());
 
   return ((vtb1.transaction.publishedBlock ==
            vtb2.transaction.publishedBlock) &&
