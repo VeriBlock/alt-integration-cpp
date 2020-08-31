@@ -10,22 +10,56 @@
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/block_index.hpp"
-#include "veriblock/mempool.hpp"
 
 namespace altintegration {
 
-struct MempoolBlockTree {
-  using relation_t = MemPool::VbkPayloadsRelations;
-  using relations_map_t = std::unordered_map<typename relation_t::id_t,
-                                             std::shared_ptr<relation_t>>;
+struct MemPoolBlockTree {
+  MemPoolBlockTree(const AltTree& tree) : tree_(tree) { (void)tree_; }
+  MemPoolBlockTree(const MemPoolBlockTree& tree) : tree_(tree.tree_) {}
 
-  MempoolBlockTree(const AltTree& tree) : _tree(tree) { (void)_tree; }
+  /**
+   * Compares ATVs for the strongly equivalence
+   *
+   * @param[in] first ATV
+   * @param[in] second ATV
+   * @return
+   * Returns true if ATVs strongly equivalent, otherwise returns false
+   */
+  bool areStronglyEquivalent(const ATV& atv1, const ATV& atv2);
 
-  const VbkBlock* getVbkBlock(const typename VbkBlock::hash_t& hash);
+  /**
+   * Compares VTBs for the strongly equivalence
+   *
+   * @param[in] first VTB
+   * @param[in] second VTB
+   * @return
+   * Returns true if VTB strongly equivalent, otherwise returns false
+   */
+  bool areStronglyEquivalent(const VTB& vtb1, const VTB& vtb2);
+
+  /**
+   * Compares VTBs for the weakly equivalence
+   *
+   * @param[in] first VTB
+   * @param[in] second VTB
+   * @return
+   * Returns true if VTBs weakly equivalent, otherwise returns false
+   */
+  bool areWeaklyEquivalent(const VTB& vtb1, const VTB& vtb2);
+
+  /**
+   * Compare two vtbs that are weakly equivalent.
+   * @param[in] first VTB to compare
+   * @param[in] second VTB to compare
+   * @return:
+   * Return positive if vtb1 is better
+   * Return negative if vtb2 is better
+   * Return 0 if they are strongly equal
+   */
+  int weaklyCompare(const VTB& vtb1, const VTB& vtb2);
 
  private:
-  relations_map_t relations;
-  const AltTree& _tree;
+  const AltTree& tree_;
 };
 
 }  // namespace altintegration

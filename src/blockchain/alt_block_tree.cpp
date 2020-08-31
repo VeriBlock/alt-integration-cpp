@@ -387,42 +387,6 @@ void AltTree::determineBestChain(index_t& candidate, ValidationState&) {
   // else - do nothing. AltTree does not (yet) do fork resolution
 }
 
-bool AltTree::areStronglyEquivalent(const ATV& atv1, const ATV& atv2) {
-  return atv1.transaction.getHash() == atv2.transaction.getHash() &&
-         atv1.blockOfProof.getHash() == atv2.blockOfProof.getHash();
-}
-
-int AltTree::atvCompare(const ATV& atv1, const ATV& atv2) {
-  auto endorsed_hash1 =
-      getParams().getHash(atv1.transaction.publicationData.header);
-  auto endorsed_hash2 =
-      getParams().getHash(atv2.transaction.publicationData.header);
-
-  auto* endorsed_index1 = getBlockIndex(endorsed_hash1);
-  auto* endorsed_index2 = getBlockIndex(endorsed_hash2);
-
-  VBK_ASSERT_MSG(endorsed_index1, "unknown block: %s", HexStr(endorsed_hash1));
-  VBK_ASSERT_MSG(endorsed_index2, "unknown block: %s", HexStr(endorsed_hash2));
-
-  if (endorsed_index1->getHeight() < endorsed_index2->getHeight()) {
-    return 1;
-  }
-
-  if (endorsed_index1->getHeight() > endorsed_index2->getHeight()) {
-    return -1;
-  }
-
-  if (atv1.blockOfProof.height < atv2.blockOfProof.height) {
-    return 1;
-  }
-
-  if (atv1.blockOfProof.height > atv2.blockOfProof.height) {
-    return -1;
-  }
-
-  return 0;
-}
-
 int AltTree::comparePopScore(const AltBlock::hash_t& A,
                              const AltBlock::hash_t& B) {
   auto* left = getBlockIndex(A);

@@ -312,7 +312,7 @@ struct BaseBlockTree {
     }
   }
 
-  bool areOnSameChain(const block_t& blk1, const block_t& blk2) {
+  bool areOnSameChain(const block_t& blk1, const block_t& blk2) const {
     auto* blk_index1 = this->getBlockIndex(blk1.getHash());
     auto* blk_index2 = this->getBlockIndex(blk2.getHash());
 
@@ -668,6 +668,9 @@ struct BaseBlockTree {
   //! stores all removed blocks, to ensure pointers to blocks remain stable
   // TODO(bogdan): remove for future releases
   block_index_t removed_;
+  //! stores all blocks that are not included to the blocks_ map,
+  //! is used due to the mempool purposes
+  block_index_t prevalidated_blocks_;
   //! stores ONLY VALID tips, including currently active tip
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
