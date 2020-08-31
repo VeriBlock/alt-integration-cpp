@@ -8,4 +8,5 @@ add_library(blockchain OBJECT
         vbk_block_addon.cpp
         btc_block_addon.cpp
         commands.cpp
+        mempool_block_tree.cpp
         )
