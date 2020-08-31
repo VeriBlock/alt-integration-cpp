@@ -17,18 +17,19 @@ namespace altintegration {
 namespace {
 
 template <typename index_t>
-void assertBlockCanBeApplied(index_t& index, bool shouldSetCanBeApplied) {
+void assertBlockCanBeApplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot apply the genesis block");
 
   VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to apply a block that follows an "
                  "unapplied block %s",
                  index.pprev->toPrettyString());
-  VBK_ASSERT_MSG(
-      index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) || !shouldSetCanBeApplied,
-      "state corruption: tried to unapply a block that follows a "
-      "block that has not been applied %s",
-      index.pprev->toPrettyString());
+  // BLOCK_CAN_BE_APPLIED and BLOCK_FAILED_POP are mutually exclusive flags
+  if (index.hasFlags(BLOCK_CAN_BE_APPLIED)) {
+    VBK_ASSERT_MSG(!index.hasFlags(BLOCK_FAILED_POP),
+                   "block 'can be applied' but has 'block failed pop");
+  }
+
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to apply an already applied block %s",
                  index.toPrettyString());
@@ -84,10 +85,8 @@ struct PopStateMachine {
         continueOnInvalid_(continueOnInvalid) {}
 
   // atomic: applies either all or none of the block's commands
-  bool applyBlock(index_t& index,
-                  ValidationState& state,
-                  bool shouldSetCanBeApplied = true) {
-    assertBlockCanBeApplied(index, shouldSetCanBeApplied);
+   bool applyBlock(index_t& index, ValidationState& state) {
+    assertBlockCanBeApplied(index);
 
     if (index.hasFlags(BLOCK_FAILED_BLOCK)) {
       return state.Invalid(
@@ -156,10 +155,17 @@ struct PopStateMachine {
                  "its payloads");
     }
 
-    index.setFlag(BLOCK_APPLIED);
-    if (shouldSetCanBeApplied) {
+    // if the applied block count equals the size of the chain between the root
+    // and index, we have just applied a block on top of the only applied chain,
+    // so it is fully valid
+    if (index.getHeight() ==
+        ed_.getRoot().getHeight() + ed_.appliedBlockCount) {
       index.setFlag(BLOCK_CAN_BE_APPLIED);
     }
+
+    index.setFlag(BLOCK_APPLIED);
+    ++ed_.appliedBlockCount;
+
     return true;
   }
 
@@ -178,6 +184,7 @@ struct PopStateMachine {
     }
 
     index.unsetFlag(BLOCK_APPLIED);
+    --ed_.appliedBlockCount;
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)
@@ -226,8 +233,7 @@ struct PopStateMachine {
   // atomic: applies either all or none of the requested blocks
   bool apply(index_t& from,
              index_t& to,
-             ValidationState& state,
-             bool shouldSetCanBeApplied = true) {
+             ValidationState& state) {
     if (&from == &to) {
       // already applied this block
       return true;
@@ -252,7 +258,7 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* index : chain) {
-      if (!applyBlock(*index, state, shouldSetCanBeApplied)) {
+      if (!applyBlock(*index, state)) {
         // rollback the previously appled slice of the chain
         unapply(*index->pprev, from);
         return false;

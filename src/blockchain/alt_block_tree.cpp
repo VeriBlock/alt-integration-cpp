@@ -47,6 +47,7 @@ bool AltTree::bootstrap(ValidationState& state) {
   auto height = index->getHeight();
 
   index->setFlag(BLOCK_APPLIED);
+  ++appliedBlockCount;
   index->setFlag(BLOCK_CAN_BE_APPLIED);
   index->setFlag(BLOCK_BOOTSTRAP);
   base::activeChain_ = Chain<index_t>(height, index);
@@ -645,6 +646,10 @@ void AltTree::overrideTip(index_t& to) {
                 (btc().getBestChain().tip()
                      ? btc().getBestChain().tip()->toShortPrettyString()
                      : "<empty>"));
+
+  VBK_ASSERT_MSG(to.hasFlags(BLOCK_CAN_BE_APPLIED),
+                 "the active chain tip(%s) must be fully valid",
+                 to.toPrettyString());
   activeChain_.setTip(&to);
   tryAddTip(&to);
 }
@@ -725,8 +730,10 @@ bool AltTree::loadTip(const AltTree::hash_t& hash, ValidationState& state) {
 
   auto* tip = activeChain_.tip();
   VBK_ASSERT(tip);
+  appliedBlockCount = 0;
   while (tip) {
     tip->setFlag(BLOCK_APPLIED);
+    ++appliedBlockCount;
     tip->setFlag(BLOCK_CAN_BE_APPLIED);
     tip = tip->pprev;
   }
