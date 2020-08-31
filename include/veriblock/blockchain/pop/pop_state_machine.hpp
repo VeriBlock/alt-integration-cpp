@@ -158,8 +158,9 @@ struct PopStateMachine {
     // if the applied block count equals the size of the chain between the root
     // and index, we have just applied a block on top of the only applied chain,
     // so it is fully valid
-    if (index.getHeight() ==
-        ed_.getRoot().getHeight() + ed_.appliedBlockCount) {
+    if (index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) &&
+        index.getHeight() ==
+            ed_.getRoot().getHeight() + ed_.appliedBlockCount) {
       index.setFlag(BLOCK_CAN_BE_APPLIED);
     }
 
