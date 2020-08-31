@@ -389,6 +389,10 @@ struct PopAwareForkResolutionComparator {
     auto* currentActive = ed.getBestChain().tip();
     VBK_ASSERT(currentActive && "should be bootstrapped");
 
+    VBK_ASSERT_MSG(currentActive->getHeight() + 1 ==
+                       ed.getRoot().getHeight() + ed.appliedBlockCount,
+                   "the tree must have the best chain applied");
+
     if (currentActive == &to) {
       // already at this state
       return true;
@@ -506,7 +510,7 @@ struct PopAwareForkResolutionComparator {
     {
       auto guard = ing_->deferForkResolutionGuard();
 
-      if (!sm.apply(*chainB.first(), *chainB.tip(), state, false)) {
+      if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
         // chain B has been unapplied and invalidated already
         VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                      state.toString());

@@ -27,6 +27,7 @@ namespace altintegration {
 template <typename Block>
 struct BaseBlockTree {
   using block_t = Block;
+  using block_height_t = typename block_t::height_t;
   using hash_t = typename Block::hash_t;
   using prev_block_hash_t = typename Block::prev_hash_t;
   using index_t = BlockIndex<Block>;
@@ -325,6 +326,7 @@ struct BaseBlockTree {
 
   virtual void overrideTip(index_t& to) {
     VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
+
     activeChain_.setTip(&to);
     tryAddTip(&to);
   }
@@ -339,6 +341,14 @@ struct BaseBlockTree {
   bool disconnectOnValidityBlockChanged(size_t id) {
     return validity_sig_.disconnect(id);
   }
+
+  index_t& getRoot() {
+    VBK_ASSERT_MSG(isBootstrapped(), "must be bootstrapped");
+    return *getBestChain().first();
+  }
+
+  //! the number of blocks that have BLOCK_APPLIED flag set
+  block_height_t appliedBlockCount = 0;
 
  protected:
   virtual void determineBestChain(index_t& candidate,

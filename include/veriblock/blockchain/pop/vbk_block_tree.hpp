@@ -114,6 +114,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using base::setState;
   bool setState(index_t& to, ValidationState& state) override;
 
+  void overrideTip(index_t& to) override;
+
   void removeSubtree(index_t& toRemove) override;
 
  private:
