@@ -15,6 +15,7 @@
 
 namespace altintegration {
 
+//! @private
 template <typename EndorsementT>
 struct PopState {
   using endorsement_t = EndorsementT;

@@ -20,7 +20,7 @@
 namespace altintegration {
 
 /**
- * A base block tree that stores all blocks, maintains tree tips, maintains
+ * Base block tree that stores all blocks, maintains tree tips, maintains
  * active chain.
  * @tparam Block
  */
@@ -43,8 +43,18 @@ struct BaseBlockTree {
   BaseBlockTree(const BaseBlockTree&) = delete;
   BaseBlockTree& operator=(const BaseBlockTree&) = delete;
 
+  /**
+   * Getter for currently Active Chain.
+   * @return reference for current chain.
+   */
   const Chain<index_t>& getBestChain() const { return this->activeChain_; }
 
+  /**
+   * Get BlockIndex by block hash.
+   * @tparam T block type
+   * @param[in] hash block hash
+   * @return nullptr if block is not found, or ptr to block otherwise.
+   */
   template <typename T,
             typename = typename std::enable_if<
                 std::is_same<T, hash_t>::value ||
@@ -65,10 +75,14 @@ struct BaseBlockTree {
     return true;
   }
 
-  //! @returns false if block is failed to pass validation. State will be set to
-  //! Error if block failed to meet expectations (block is invalid, and some
-  //! field has unexpected value, therefore we need to perform reindex).
-  //! @invariant NOT atomic.
+  /**
+   * Efficiently connects BlockIndex to this tree, when it is loaded from disk.
+   * @param[in] index block to be connected
+   * @param[out] state validation state
+   * @return true if block is valid and successfully loaded, false otherwise.
+   * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
+   * state.
+   */
   virtual bool loadBlock(const index_t& index, ValidationState& state) {
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
@@ -120,13 +134,11 @@ struct BaseBlockTree {
     return true;
   }
 
-  void removeSubtree(const hash_t& toRemove) {
-    auto* index = getBlockIndex(toRemove);
-    VBK_ASSERT_MSG(
-        index, "cannot find the subtree to remove: %s", HexStr(toRemove));
-    return this->removeSubtree(*index);
-  }
-
+  /**
+   * Removes block and all its successors.
+   * @param toRemove block to be removed.
+   * @warning fails on assert if unknown hash is provided
+   */
   virtual void removeSubtree(index_t& toRemove) {
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
     // save ptr to a previous block
@@ -153,6 +165,16 @@ struct BaseBlockTree {
     }
   }
 
+  //! @overload
+  //! @invariant block must exist in a tree
+  void removeSubtree(const hash_t& toRemove) {
+    auto* index = getBlockIndex(toRemove);
+    VBK_ASSERT_MSG(
+        index, "cannot find the subtree to remove: %s", HexStr(toRemove));
+    return this->removeSubtree(*index);
+  }
+
+  //! @overload
   void removeLeaf(index_t& toRemove) {
     VBK_ASSERT_MSG(toRemove.pnext.empty(),
                    "not a leaf block %s, pnext.size=%d",
@@ -161,14 +183,18 @@ struct BaseBlockTree {
     return this->removeSubtree(toRemove);
   }
 
-  void invalidateSubtree(const hash_t& toBeInvalidated,
-                         enum BlockStatus reason,
-                         bool shouldDetermineBestChain = true) {
-    auto* index = getBlockIndex(toBeInvalidated);
-    VBK_ASSERT(index && "cannot find the subtree to invalidate");
-    return invalidateSubtree(*index, reason, shouldDetermineBestChain);
-  }
-
+  /**
+   * Mark given block as invalid. Also marks all successors as FAILED_CHILD.
+   * @param[in] toBeInvalidated block to be invalidated
+   * @param[in] reason invalidation reason. BLOCK_FAILED_BLOCK is used to
+   * indicate that block is invalid because of consensus rules (altchain decided
+   * to invalidate it). BLOCK_FAILED_POP is used to indicate that block is
+   * invalid because it contains invalid POP data.
+   * @param[in] shouldDetermineBestChain when true, will trigger fork resolution
+   * with all tips. If it is known that block is on a fork (not on active
+   * chain), it is safe to omit fork resolution here. Otherwise, leaves tree in
+   * undefined state.
+   */
   void invalidateSubtree(index_t& toBeInvalidated,
                          enum BlockStatus reason,
                          bool shouldDetermineBestChain = true) {
@@ -220,6 +246,16 @@ struct BaseBlockTree {
     if (shouldDetermineBestChain) {
       updateTips();
     }
+  }
+
+  //! @overload
+  //! @invariant block must exist in a tree
+  void invalidateSubtree(const hash_t& toBeInvalidated,
+                         enum BlockStatus reason,
+                         bool shouldDetermineBestChain = true) {
+    auto* index = getBlockIndex(toBeInvalidated);
+    VBK_ASSERT(index && "cannot find the subtree to invalidate");
+    return invalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
 
   void revalidateSubtree(const hash_t& hash,
@@ -461,6 +497,7 @@ struct BaseBlockTree {
   }
 
  public:
+  //! @private
   class DeferForkResolutionGuard {
     BaseBlockTree<Block>& tree_;
 

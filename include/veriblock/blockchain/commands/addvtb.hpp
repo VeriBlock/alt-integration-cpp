@@ -13,6 +13,7 @@
 
 namespace altintegration {
 
+//! @private
 struct AddVTB : public Command {
   using block_t = VbkBlock;
   ~AddVTB() override = default;

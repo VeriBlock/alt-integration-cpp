@@ -21,6 +21,11 @@
 
 namespace altintegration {
 
+/**
+ * @struct VbkBlock
+ *
+ * Veriblock block
+ */
 struct VbkBlock {
   using hash_t = uint192;
   using short_hash_t = uint96;

@@ -21,6 +21,13 @@
 
 namespace altintegration {
 
+/**
+ * @struct VbkPopTx
+ *
+ * Veriblock POP transaction, which endorses VBK block in BTC blockchain.
+ *
+ * @ingroup entities
+ */
 struct VbkPopTx {
   using hash_t = uint256;
 

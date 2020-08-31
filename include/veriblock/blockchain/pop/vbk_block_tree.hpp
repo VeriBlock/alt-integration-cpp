@@ -28,6 +28,10 @@ extern template struct BaseBlockTree<VbkBlock>;
 
 /**
  * @class VbkBlockTree
+ *
+ * Veriblock block tree.
+ *
+ * @invariant stores only valid payloads.
  */
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;

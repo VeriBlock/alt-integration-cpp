@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+//! @private
 template <>
 struct std::hash<std::vector<uint8_t>> {
   size_t operator()(const std::vector<uint8_t>& x) const {

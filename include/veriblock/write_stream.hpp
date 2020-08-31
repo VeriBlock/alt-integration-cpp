@@ -13,7 +13,7 @@
 namespace altintegration {
 
 /**
- * Binary writer that is useful during binary serialization.
+ * Binary writer that is useful for binary serialization.
  */
 class WriteStream {
  public:
@@ -21,12 +21,9 @@ class WriteStream {
 
   using storage_t = std::vector<uint8_t>;
 
-  explicit WriteStream(size_t size) { m_data.reserve(size); }
+  explicit WriteStream(size_t size);
 
-  void write(const void *buf, size_t size) {
-    const uint8_t *inp = (uint8_t *)buf;
-    m_data.insert(m_data.end(), inp, inp + size);
-  }
+  void write(const void *buf, size_t size);
 
   template <typename T,
             typename = typename std::enable_if<sizeof(typename T::value_type) ==
@@ -54,7 +51,7 @@ class WriteStream {
     }
   }
 
-  const storage_t &data() const noexcept { return m_data; }
+  const storage_t &data() const noexcept;
 
  private:
   storage_t m_data;

@@ -10,8 +10,14 @@
 #include <veriblock/mock_miner.hpp>
 
 #include "veriblock/literals.hpp"
+#include "veriblock/adapters/picojson.hpp"
 
 using namespace altintegration;
+
+
+inline void PrintTo(const VTB& v, std::ostream* os) {
+  *os << ToJSON<picojson::value>(v).serialize(false);
+}
 
 TEST(ToJson, MempoolResult) {
   MempoolResult r;

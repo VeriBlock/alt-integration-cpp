@@ -10,20 +10,43 @@
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/popdata.hpp>
 
+/**
+ * @defgroup interfaces Interfaces to be implemented
+ * These interfaces must be implemented by Altchain developers for integration
+ * of POP protocol.
+ */
+
 namespace altintegration {
 
 struct AltTree;
 struct VbkBlockTree;
 
+/**
+ * @struct PayloadsProvider
+ *
+ * An abstraction over on-disk storage.
+ *
+ * veriblock-pop-cpp does not dictate how to store payloads on-disk. Altchains
+ * must create derived class and provide it to AltTree, so that it can fetch
+ * payloads from disk during state changes.
+ *
+ * @ingroup interfaces
+ */
 struct PayloadsProvider {
   virtual ~PayloadsProvider() = default;
 
+  //! should write ALL ATVs identified by `id` into `out`, or return false
   virtual bool getATVs(const std::vector<ATV::id_t>& id,
-                       std::vector<ATV>& out, ValidationState& state) = 0;
+                       std::vector<ATV>& out,
+                       ValidationState& state) = 0;
+  //! should write ALL VTBs identified by `id` into `out`, or return false
   virtual bool getVTBs(const std::vector<VTB::id_t>& id,
-                       std::vector<VTB>& out, ValidationState& state) = 0;
+                       std::vector<VTB>& out,
+                       ValidationState& state) = 0;
+  //! should write ALL VbkBlocks identified by `id` into `out`, or return false
   virtual bool getVBKs(const std::vector<VbkBlock::id_t>& id,
-                       std::vector<VbkBlock>& out, ValidationState& state) = 0;
+                       std::vector<VbkBlock>& out,
+                       ValidationState& state) = 0;
 
   /**
    * Load commands from a particular block.

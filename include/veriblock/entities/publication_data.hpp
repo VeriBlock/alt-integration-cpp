@@ -16,10 +16,21 @@
 
 namespace altintegration {
 
+/**
+ * @struct PublicationData
+ *
+ * Publication data about ALT block inside VBK blockchain.
+ *
+ * @ingroup entities
+ */
 struct PublicationData {
+  //! altchain network POP ID
   int64_t identifier{};
+  //! altchain block header
   std::vector<uint8_t> header{};
+  //! bitcoin script or POP payout address
   std::vector<uint8_t> payoutInfo{};
+  //! TBD
   std::vector<uint8_t> contextInfo{};
 
   std::string toPrettyString() const {
@@ -54,6 +65,7 @@ struct PublicationData {
   void toRaw(WriteStream& stream) const;
 };
 
+//! @private
 template <typename JsonValue>
 JsonValue ToJSON(const PublicationData& p) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -64,6 +76,7 @@ JsonValue ToJSON(const PublicationData& p) {
   return obj;
 }
 
+//! @overload
 bool Deserialize(ReadStream& stream,
                  PublicationData& out,
                  ValidationState& state);

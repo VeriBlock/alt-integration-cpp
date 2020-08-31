@@ -34,6 +34,7 @@ std::vector<typename T::hash_t> hashAll(const std::vector<T>& txes) {
   return ret;
 }
 
+//! @private
 class MockMiner {
  public:
   using btc_block_t = BtcBlock;

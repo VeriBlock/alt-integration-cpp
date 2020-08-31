@@ -14,6 +14,7 @@
 
 namespace altintegration {
 
+// clang-format off
 /**
  * Class that is used for storing validation state.
  *
@@ -22,6 +23,7 @@ namespace altintegration {
  * - invalid - validation failed. Example: invalid signature in transaction.
  * - error - internal error during validation. Example: database corrupted.
  */
+// clang-format on
 class ValidationState {
  public:
   ValidationState() : m_mode(MODE_VALID) {}

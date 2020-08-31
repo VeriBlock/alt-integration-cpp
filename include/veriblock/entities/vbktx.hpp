@@ -21,6 +21,13 @@
 
 namespace altintegration {
 
+/**
+ * @struct VbkTx
+ *
+ * Veriblock transaction, which endorses ALT block in VBK blockchain.
+ *
+ * @ingroup entities
+ */
 struct VbkTx {
   using hash_t = uint256;
 

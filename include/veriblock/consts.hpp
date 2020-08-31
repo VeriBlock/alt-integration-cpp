@@ -9,13 +9,27 @@
 #include <cstdint>
 #include <vector>
 
+/**
+ * @file consts.hpp
+ *
+ * All constants in alt-cpp.
+ */
+
 namespace altintegration {
 
+/**
+ * Veriblock transaction type.
+ */
 enum class TxType {
+  //! regular transaction
   VBK_TX = 0x01,
+  //! pop transaction
   VBK_POP_TX = 0x02,
 };
 
+constexpr const auto SHA256_HASH_SIZE = 32;
+constexpr const auto BTC_TX_MAX_RAW_SIZE = 4 * 1000 * 1000;
+constexpr const uint32_t BTC_HEADER_SIZE = 80;
 constexpr const auto HISTORY_FOR_TIMESTAMP_AVERAGE = 20;
 constexpr const auto VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT = 110000;
 constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
@@ -24,31 +38,20 @@ constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_COUNT = 15000;
 constexpr const auto MAX_CONTEXT_COUNT_ALT_PUBLICATION = 15000;
 constexpr const auto MAX_CONTEXT_COUNT_VBK_PUBLICATION = 15000;
-constexpr const auto SHA256_HASH_SIZE = 32;
 constexpr const auto VBLAKE_BLOCK_HASH_SIZE = 24;
 constexpr const auto VBK_MERKLE_ROOT_HASH_SIZE = 16;
 constexpr const auto VBLAKE_PREVIOUS_BLOCK_HASH_SIZE = 12;
 constexpr const auto VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE = 9;
-constexpr const uint32_t BTC_HEADER_SIZE = 80;
 constexpr const uint32_t VBK_HEADER_SIZE = 64;
-constexpr const auto BTC_TX_MAX_RAW_SIZE = 4 * 1000 * 1000;
 constexpr const auto MAX_LAYER_COUNT_MERKLE = 40;
-// NodeCore is using byte value when serializing outputs so we limit to 255
+//! NodeCore is using byte value when serializing outputs so we limit to 255
 constexpr const auto MAX_OUTPUTS_COUNT = 255;
-// ASN.1/DER ECDSA encoding max value
+//! ASN.1/DER ECDSA encoding max value
 constexpr const auto MAX_SIGNATURE_SIZE = 72;
-// X509 encoding. Max value is based on experimental data.
+//! X509 encoding. Max value is based on experimental data.
 constexpr const auto PUBLIC_KEY_SIZE = 88;
-
 constexpr const auto ADDRESS_SIZE = 30;
 constexpr const auto MULTISIG_ADDRESS_SIZE = 30;
-
-/**
- * size = (hash + hash.length) * MAX_LAYER_COUNT + (index + index.length) +
- * (layers.size + layers.size.length) +
- * (subject.length.size + subject.length.size.size) + (subject.length) +
- * (data_size)
- */
 
 constexpr const auto VBK_MAXIMUM_DIFFICULTY =
     "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";

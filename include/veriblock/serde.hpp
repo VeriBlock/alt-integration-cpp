@@ -213,6 +213,9 @@ void writeSingleFixedBEValue(WriteStream& stream, T value) {
  */
 void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value);
 
+/**
+ * Stores pair of TxType and VBK network byte.
+ */
 struct NetworkBytePair {
   ///< works as std::optional. if hasNetworkByte is true, networkByte is set
   bool hasNetworkByte = false;

@@ -16,6 +16,7 @@ namespace altintegration {
 
 struct VTB;
 
+//! @private
 struct VbkBlockAddon : public PopState<VbkEndorsement> {
   using payloads_t = VTB;
   using ref_height_t = int32_t;

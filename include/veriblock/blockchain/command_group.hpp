@@ -14,6 +14,7 @@
 
 namespace altintegration {
 
+//! @private
 struct CommandGroup {
   using storage_t = std::vector<CommandPtr>;
   using id_t = std::vector<uint8_t>;

@@ -16,6 +16,11 @@
 
 namespace altintegration {
 
+/**
+ * @struct VbkMerklePath
+ *
+ * Path in Merkle tree, which proves that `subject` exists in the tree.
+ */
 struct VbkMerklePath {
   //! an indentifier of which transactions tree (pop=0, normal=1)
   int32_t treeIndex = 0;

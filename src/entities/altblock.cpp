@@ -5,7 +5,7 @@
 
 #include "veriblock/entities/altblock.hpp"
 
-using namespace altintegration;
+namespace altintegration {
 
 const std::string AltBlock::_name = "ALT";
 
@@ -73,3 +73,10 @@ std::vector<uint8_t> AltBlock::toVbkEncoding() const {
 uint32_t AltBlock::getBlockTime() const noexcept { return timestamp; }
 
 AltBlock::hash_t AltBlock::getHash() const { return hash; }
+
+bool operator==(const AltBlock& a, const AltBlock& b) {
+  return a.hash == b.hash;
+}
+bool operator!=(const AltBlock& a, const AltBlock& b) { return !(a == b); }
+
+}  // namespace altintegration

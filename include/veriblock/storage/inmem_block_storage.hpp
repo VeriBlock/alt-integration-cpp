@@ -62,6 +62,7 @@ template <> inline VbkBlock::hash_t InmemBlockStorage::getTip<VbkBlock>() const 
 template <> inline AltBlock::hash_t InmemBlockStorage::getTip<AltBlock>() const { return altTip; }
 // clang-format on
 
+//! @private
 struct InmemBlockBatch : public BlockBatchAdaptor {
   InmemBlockBatch(InmemBlockStorage& storage) : storage_(storage) {}
   ~InmemBlockBatch() override = default;

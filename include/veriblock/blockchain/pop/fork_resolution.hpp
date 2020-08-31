@@ -22,6 +22,7 @@ namespace altintegration {
 
 namespace internal {
 
+//! @private
 template <typename ProtectingBlockT>
 struct ProtoKeystoneContext {
   int blockHeight;
@@ -36,6 +37,7 @@ struct ProtoKeystoneContext {
   std::set<BlockIndex<ProtectingBlockT>*> referencedByBlocks;
 };
 
+//! @private
 struct KeystoneContext {
   int blockHeight;
   int firstBlockPublicationHeight;
@@ -60,6 +62,7 @@ int getConsensusScoreFromRelativeBlockStartingAtZero(int64_t relativeBlock,
   return config.getForkResolutionLookUpTable()[relativeBlock];
 }
 
+//! @private
 struct KeystoneContextList {
   std::vector<KeystoneContext> ctx;
   const int keystoneInterval;
@@ -346,6 +349,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
 }  // namespace internal
 
+//! @private
 template <typename ProtectedBlock,
           typename ProtectedParams,
           typename ProtectingBlockTree,
