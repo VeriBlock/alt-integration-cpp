@@ -99,7 +99,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       if (!this->acceptBlock(std::make_shared<block_t>(block), state, false)) {
         return state.Invalid(block_t::name() + "-blocktree-accept");
       }
-      auto * index = base::getBlockIndex(block.getHash());
+      auto* index = base::getBlockIndex(block.getHash());
       VBK_ASSERT(index);
       index->setIsBootstrap(true);
     }
@@ -140,7 +140,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     VBK_ASSERT(current);
 
     auto* prev = current->pprev;
-    // we only check blocks contextually if they are not bootstrap blocks, and previous block exists
+    // we only check blocks contextually if they are not bootstrap blocks, and
+    // previous block exists
     if (prev && !current->hasFlags(BLOCK_BOOTSTRAP) &&
         !contextuallyCheckBlock(*prev, current->getHeader(), state, *param_)) {
       return state.Invalid("bad-block-contextually");
@@ -220,6 +221,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     index->setFlag(BLOCK_APPLIED);
     index->setFlag(BLOCK_CAN_BE_APPLIED);
     index->setFlag(BLOCK_BOOTSTRAP);
+    base::appliedBlockCount = 1;
 
     return true;
   }

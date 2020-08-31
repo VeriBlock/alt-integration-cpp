@@ -33,7 +33,7 @@ using namespace altintegration;
 
 struct StandaloneValidation : public ::testing::Test, public PopTestFixture {};
 
-TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
+TEST_F(StandaloneValidation, standaloneValidation) {
   // mine chains up to the fork point
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
   mineAltBlocks(altparam.getKeystoneInterval() / 2, chain);
@@ -74,8 +74,8 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
   EXPECT_TRUE(alttree.acceptBlockHeader(chainB.back(), state));
   EXPECT_TRUE(AddPayloads(chainB.back().getHash(), payloadsB));
 
-  // applying chainB causes state corruption
-  // so we decide that chainA is better
+  // chainB is invalid if applied without chainA so chainA wins the fork
+  // resolution
   EXPECT_GT(
       alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash()),
       0);
@@ -87,4 +87,9 @@ TEST_F(StandaloneValidation, standaloneValidationDoesNotHappen) {
 
   auto* invalidBlock = alttree.getBlockIndex(chainB.back().getHash());
   EXPECT_TRUE(invalidBlock->hasFlags(BLOCK_FAILED_POP));
+
+  // the fork resolution left the tree in a consistent state and we can still
+  // setState() to any block
+  EXPECT_TRUE(alttree.setState(chain.back().getHash(), state));
+  EXPECT_TRUE(alttree.setState(chainA.back().getHash(), state));
 }
