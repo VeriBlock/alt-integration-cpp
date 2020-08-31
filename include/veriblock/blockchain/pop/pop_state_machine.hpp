@@ -203,6 +203,7 @@ struct PopStateMachine {
     }
 
     index.unsetFlag(BLOCK_APPLIED);
+    VBK_ASSERT(ed_.appliedBlockCount > 0);
     --ed_.appliedBlockCount;
   }
 
