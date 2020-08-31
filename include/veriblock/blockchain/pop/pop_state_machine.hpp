@@ -210,6 +210,7 @@ struct PopStateMachine {
                   to.toPrettyString());
 
     for (auto* current : reverse_iterate(chain)) {
+      VBK_ASSERT(current != nullptr);
       if (pred(*current)) {
         unapplyBlock(*current);
       } else {

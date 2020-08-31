@@ -545,19 +545,26 @@ struct PopAwareForkResolutionComparator {
       // chain B is better. unapply A and leave B applied
       auto guard = ing_->deferForkResolutionGuard();
 
-      // TODO: unapply part of the chain with unknown validity.
-      // unapply both chains, unapply B first
-      sm.unapply(*chainB.tip(), *chainB.first());
+      // if part of chainB has uncertain validity(never been applied before with
+      // setState()), we have to unapply this part before unapplying chainA and
+      // try to apply the unvalidated part of chainB without any payloads from
+      // chainA to make sure it is fully valid
+      auto* chainBValidFrom = sm.unapplyWhile(
+          *chainB.tip(), *chainB.first(), [](protected_index_t& index) -> bool {
+            return !index.hasFlags(BLOCK_CAN_BE_APPLIED);
+          });
+
       sm.unapply(*chainA.tip(), *chainA.first());
 
-      // validate chainB
-      if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
-        bool res = sm.apply(*chainA.first(), *chainA.tip(), state);
-        guard.overrideDeferredForkResolution(originalProtectingTip);
-        VBK_ASSERT_MSG(res,
-                       "state corruption: %s",
-                       "chainA as a previous best chain should be valid");
+      // validate the unvalidated part of chainB
+      if (!sm.apply(*chainBValidFrom, *chainB.tip(), state)) {
+        sm.unapply(*chainBValidFrom, *chainB.first());
+        bool success = sm.apply(*chainA.first(), *chainA.tip(), state);
+        VBK_ASSERT_MSG(
+            success,
+            "state corruption: chainA as a former best chain should be valid");
         VBK_LOG_INFO("Chain B is invalid when applied alone. Chain A wins");
+        guard.overrideDeferredForkResolution(originalProtectingTip);
         return 1;
       }
 
