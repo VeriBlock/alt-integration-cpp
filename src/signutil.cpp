@@ -152,11 +152,9 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
 
   size_t outputlen = PUBLIC_KEY_UNCOMPRESSED_SIZE;
   std::vector<uint8_t> output(outputlen);
-  if (!secp256k1_ec_pubkey_serialize(
-          ctx, output.data(), &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED)) {
-    throw std::invalid_argument(
-        "derivePublicKey(): public key serialize failed");
-  }
+  bool ret = secp256k1_ec_pubkey_serialize(
+      ctx, output.data(), &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
+  VBK_ASSERT_MSG(ret, "can not serialize public key");
   return output;
 }
 
@@ -164,10 +162,9 @@ Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
   auto messageHash = sha256(message);
 
   secp256k1_ecdsa_signature signature;
-  if (!secp256k1_ecdsa_sign(
-          ctx, &signature, messageHash.data(), privateKey.data(), NULL, NULL)) {
-    throw std::invalid_argument("sha256EcdsaSign(): cannot sign");
-  }
+  bool ret = secp256k1_ecdsa_sign(
+      ctx, &signature, messageHash.data(), privateKey.data(), NULL, NULL);
+  VBK_ASSERT_MSG(ret, "can not sign message");
 
   unsigned char sig[100]{};
   size_t outputlen = 100;
