@@ -93,10 +93,9 @@ struct KeystoneContextList {
   int lastKeystone() const { return ctx[ctx.size() - 1].blockHeight; }
 
   const KeystoneContext* getKeystone(int blockNumber) const {
-    if (!isKeystone(blockNumber, keystoneInterval)) {
-      throw std::invalid_argument(
-          "getKeystone can not be called with a non-keystone block number");
-    }
+    VBK_ASSERT_MSG(
+        isKeystone(blockNumber, keystoneInterval),
+        "getKeystone can not be called with a non-keystone block number");
 
     if (blockNumber < this->firstKeystone()) {
       return nullptr;
@@ -268,11 +267,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
       b.lastKeystone());
 
   int earliestKeystone = a.firstKeystone();
-  if (earliestKeystone != b.firstKeystone()) {
-    throw std::invalid_argument(
-        "comparePopScore can not be called on two keystone lists that don't "
-        "start at the same keystone index");
-  }
+  VBK_ASSERT(earliestKeystone == b.firstKeystone());
 
   int latestKeystone = (std::max)(a.lastKeystone(), b.lastKeystone());
 
