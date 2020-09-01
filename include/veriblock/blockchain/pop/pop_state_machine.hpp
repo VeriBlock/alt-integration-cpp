@@ -24,12 +24,6 @@ void assertBlockCanBeApplied(index_t& index) {
                  "state corruption: tried to apply a block that follows an "
                  "unapplied block %s",
                  index.pprev->toPrettyString());
-  // BLOCK_CAN_BE_APPLIED and BLOCK_FAILED_POP are mutually exclusive flags
-  if (index.hasFlags(BLOCK_CAN_BE_APPLIED)) {
-    VBK_ASSERT_MSG(!index.hasFlags(BLOCK_FAILED_POP),
-                   "block 'can be applied' but has 'block failed pop");
-  }
-
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to apply an already applied block %s",
                  index.toPrettyString());
