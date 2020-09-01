@@ -11,5 +11,6 @@ POP overall consists of 2 protocols:
 
 1. [POP Protocol Description](./docs/pop.md)
 2. [Build And Install](./docs/build.md)
-3. [Data Structures](./docs/data_structures.md)
-4. [pypopminer](./docs/pypopminer.md)
+3. [POP Integration](./docs/integration.md)
+4. [Data Structures](./docs/data_structures.md)
+5. [pypopminer](./docs/pypopminer.md)
