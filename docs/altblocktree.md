@@ -24,7 +24,7 @@ After initialization AltBlockTree does not contain any blocks.
 We will refer to this block as **bootstrap block**.
 Bootstrap block is a first block in Altchain that can be endorsed, but can not contain POP body (PopData).
 
-If `bootstrap()` fails, your block provided in struct AltChainParams::getBootstrapBlock().
+If `bootstrap()` fails, your block provided in struct AltChainParams::getBootstrapBlock() is invalid.
 
 ValidationState will contain detailed info about failure reason, if any.
 
@@ -55,7 +55,7 @@ bool onNewFullBlock(Block block) {
     // ...
 ``` 
 
-AltBlockTree::acceptBlock() does connects block immediately if all previous blocks are connected, or just adds block body to AltBlock when one of previous blocks is not connected.
+AltBlockTree::acceptBlock() connects block immediately if all previous blocks are connected, or just adds block body to AltBlock when one of previous blocks is not connected.
 
 After that, users can check if this block is connected:
 ```c++

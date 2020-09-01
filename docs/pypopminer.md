@@ -60,13 +60,13 @@ cd test/functional
 $ cd /tmp/bitcoin_func_test_uqgiab8_
 /tmp/bitcoin_func_test_qbjor7qu » ls -la
 total 8
-drwx------  6 bogdan bogdan  140 лип 22 23:17 .
-drwxrwxrwt 24 root   root   1040 лип 22 23:17 ..
-drwxr-xr-x  5 bogdan bogdan  120 лип 22 23:17 node0
-drwxr-xr-x  5 bogdan bogdan  120 лип 22 23:17 node1
-drwxr-xr-x  5 bogdan bogdan  120 лип 22 23:17 node2
-drwxr-xr-x  5 bogdan bogdan  120 лип 22 23:17 node3
--rw-r--r--  1 bogdan bogdan 4298 лип 22 23:18 test_framework.log
+drwx------  6 user user  140 jul 22 23:17 .
+drwxrwxrwt 24 root root 1040 jul 22 23:17 ..
+drwxr-xr-x  5 user user  120 jul 22 23:17 node0
+drwxr-xr-x  5 user user  120 jul 22 23:17 node1
+drwxr-xr-x  5 user user  120 jul 22 23:17 node2
+drwxr-xr-x  5 user user  120 jul 22 23:17 node3
+-rw-r--r--  1 user user 4298 jul 22 23:18 test_framework.log
 # then, you can see all datadirs of each node from the test, including its debug.log and vbitcoin.conf
 ```
 
