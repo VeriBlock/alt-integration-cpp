@@ -9,6 +9,7 @@ POP overall consists of 2 protocols:
 
 ## Getting Started 
 
-1. [Build And Install](./docs/build.md)
-2. [Data Structures](./docs/data_structures.md)
-3. [pypopminer](./docs/pypopminer.md)
+1. [POP Protocol Description](./docs/pop.md)
+2. [Build And Install](./docs/build.md)
+3. [Data Structures](./docs/data_structures.md)
+4. [pypopminer](./docs/pypopminer.md)
