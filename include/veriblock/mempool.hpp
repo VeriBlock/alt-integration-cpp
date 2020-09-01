@@ -66,6 +66,7 @@ struct MemPool {
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
   using relations_map_t = payload_map<VbkPayloadsRelations>;
+  //! @}
 
   ~MemPool() = default;
   MemPool(AltBlockTree& tree) : tree_(&tree) {}
@@ -205,17 +206,29 @@ struct MemPool {
 
 // clang-format off
 
+//! @overload
 template <> bool MemPool::submit(const ATV& atv, ValidationState& state, bool shouldDoContextualCheck);
+//! @overload
 template <> bool MemPool::submit(const VTB& vtb, ValidationState& state, bool shouldDoContextualCheck);
+//! @overload
 template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state, bool shouldDoContextualCheck);
+//! @overload
 template <> bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state);
+//! @overload
 template <> bool MemPool::checkContextually<ATV>(const ATV& id, ValidationState& state);
+//! @overload
 template <> bool MemPool::checkContextually<VbkBlock>(const VbkBlock& id, ValidationState& state);
+//! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
+//! @overload
 template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
+//! @overload
 template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
+//! @overload
 template <> signals::Signal<void(const ATV&)>& MemPool::getSignal();
+//! @overload
 template <> signals::Signal<void(const VTB&)>& MemPool::getSignal();
+//! @overload
 template <> signals::Signal<void(const VbkBlock&)>& MemPool::getSignal();
 // clang-format on
 
