@@ -668,9 +668,6 @@ struct BaseBlockTree {
   //! stores all removed blocks, to ensure pointers to blocks remain stable
   // TODO(bogdan): remove for future releases
   block_index_t removed_;
-  //! stores all blocks that are not included to the blocks_ map,
-  //! is used due to the mempool purposes
-  block_index_t prevalidated_blocks_;
   //! stores ONLY VALID tips, including currently active tip
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
