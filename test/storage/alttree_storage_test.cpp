@@ -93,7 +93,7 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
 
   auto adaptor = InmemBlockBatch(blockStorage);
   SaveAllTrees(this->alttree, adaptor);
-  AltTree reloadedAltTree{
+  AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(this->state);
@@ -147,7 +147,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   auto adaptor = InmemBlockBatch(blockStorage);
   SaveAllTrees(this->alttree, adaptor);
 
-  AltTree reloadedAltTree{
+  AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(this->state);
@@ -223,7 +223,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
 
   auto adaptor = InmemBlockBatch(blockStorage);
   SaveAllTrees(this->alttree, adaptor);
-  AltTree reloadedAltTree{
+  AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(this->state);

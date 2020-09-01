@@ -22,14 +22,6 @@ struct VbkNetworkType {
   bool hasValue = false;
   //! otherwise, use value for network ID
   uint8_t value = 0;
-
-  std::vector<uint8_t> toRaw() const;
-
-  void toRaw(WriteStream& stream) const;
-
-  static VbkNetworkType fromRaw(const std::vector<uint8_t>& bytes);
-
-  static VbkNetworkType fromRaw(ReadStream& stream);
 };
 
 /**
@@ -75,10 +67,6 @@ struct VbkChainParams {
     return 400;
   }
 
-  std::vector<uint8_t> toRaw() const;
-
-  void toRaw(WriteStream& stream) const;
-
  protected:
   uint32_t mMaxFutureBlockTime = 5 * 60;  // 5 min
   std::vector<uint32_t> forkResolutionLookUpTable_{
@@ -86,7 +74,9 @@ struct VbkChainParams {
 };
 
 /**
- * MainNet.
+ * MainNet VBK parameters.
+ *
+ * @ingroup config
  */
 struct VbkChainParamsMain : public VbkChainParams {
   ~VbkChainParamsMain() override = default;
@@ -139,9 +129,10 @@ struct VbkChainParamsMain : public VbkChainParams {
 };
 
 /**
- * TestNet
+ * TestNet VBK config.
+ *
+ * @ingroup config
  */
-
 struct VbkChainParamsTest : public VbkChainParams {
   ~VbkChainParamsTest() override = default;
 
@@ -193,7 +184,12 @@ struct VbkChainParamsTest : public VbkChainParams {
 };
 
 /**
- * RegTest
+ * RegTest VBK config.
+ *
+ * @note technically, there's no RegTest in VeriBlock, we created it only for
+ * testing purposes specifically in veriblock-pop-cpp.
+ *
+ * @ingroup config
  */
 struct VbkChainParamsRegTest : public VbkChainParams {
   ~VbkChainParamsRegTest() override = default;
@@ -244,7 +240,9 @@ struct VbkChainParamsRegTest : public VbkChainParams {
 };
 
 /**
- * AlphaNet
+ * AlphaNet VBK chain params.
+ *
+ * @ingroup config
  */
 struct VbkChainParamsAlpha : public VbkChainParams {
   ~VbkChainParamsAlpha() override = default;

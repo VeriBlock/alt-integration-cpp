@@ -13,6 +13,7 @@ namespace altintegration {
 /**
  * @class InmemBlockStorage
  * In-memory block storage, used in tests.
+ * @private
  */
 struct InmemBlockStorage {
   template <typename T>

@@ -38,6 +38,13 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) a set of pointers for forward iteration
   std::set<BlockIndex*> pnext{};
 
+  /**
+   * Block is connected if it contains block body (PopData), and all its
+   * ancestors are connected.
+   * @return true if block is connected, false otherwise.
+   */
+  bool isConnected() const noexcept { return this->hasFlags(BLOCK_CONNECTED); }
+
   uint32_t getStatus() const { return status; }
   void setStatus(uint32_t _status) {
     this->status = _status;

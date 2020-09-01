@@ -18,7 +18,7 @@ namespace altintegration {
  *
  * Wrapper around Batch, which writes blocks on disk.
  *
- * Used by Altchain to dump AltTree state on-disk.
+ * Used by Altchain to dump AltBlockTree state on-disk.
  *
  * @ingroup interfaces
  */

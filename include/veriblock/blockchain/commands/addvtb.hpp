@@ -19,7 +19,7 @@ struct AddVTB : public Command {
   ~AddVTB() override = default;
 
   template <class VTB_t>
-  AddVTB(AltTree& tree, VTB_t&& vtb)
+  AddVTB(AltBlockTree& tree, VTB_t&& vtb)
       : tree_(tree), vtb_(std::forward<VTB_t>(vtb)) {}
 
   bool Execute(ValidationState& state) override {
@@ -41,7 +41,7 @@ struct AddVTB : public Command {
   };
 
  private:
-  AltTree& tree_;
+  AltBlockTree& tree_;
   VTB vtb_;
 };
 

@@ -21,7 +21,8 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
 
   std::vector<AltBlock> chain;
 
-  AltTree alttree2 = AltTree(altparam, vbkparam, btcparam, payloadsProvider);
+  AltBlockTree alttree2 =
+      AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
 
   void save() {
     auto adaptor = InmemBlockBatch(blockStorage);

@@ -45,7 +45,8 @@ struct PopTestFixture {
   std::shared_ptr<MockMiner> popminer;
 
   // trees
-  AltTree alttree = AltTree(altparam, vbkparam, btcparam, payloadsProvider);
+  AltBlockTree alttree =
+      AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
 
   ValidationState state;
 
@@ -90,7 +91,7 @@ struct PopTestFixture {
     return AddPayloads(alttree, hash, pop);
   }
 
-  bool AddPayloads(AltTree& tree, const AltBlock::hash_t& hash, const PopData& pop) {
+  bool AddPayloads(AltBlockTree& tree, const AltBlock::hash_t& hash, const PopData& pop) {
     popminer->getPayloadsProvider().write(pop);
     payloadsProvider.write(pop);
     return tree.addPayloads(hash, pop, state);
@@ -350,7 +351,7 @@ bool allPayloadsIsValid(PayloadsIndex& storage,
 
 }  // namespace
 
-inline void validateAlttreeIndexState(AltTree& tree,
+inline void validateAlttreeIndexState(AltBlockTree& tree,
                                       const AltBlock& containing,
                                       const PopData& popData,
                                       bool payloads_validation = true,

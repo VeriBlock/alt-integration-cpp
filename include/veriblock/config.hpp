@@ -18,7 +18,7 @@
 /**
  * @file config.hpp
  *
- * Altchains must configure AltTree prior any usage by providing bootstrapping
+ * Altchains must configure AltBlockTree prior any usage by providing bootstrapping
  * Config.
  *
  * Config MUST specify Bitcoin and Veriblock blockchains configs.

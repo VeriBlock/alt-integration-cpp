@@ -9,7 +9,7 @@
 namespace altintegration {
 
 template <>
-void payloadToCommands(AltTree& tree,
+void payloadToCommands(AltBlockTree& tree,
                        const VbkBlock& pop,
                        const std::vector<uint8_t>& /* ignore */,
                        std::vector<CommandPtr>& cmds) {
@@ -17,7 +17,7 @@ void payloadToCommands(AltTree& tree,
 }
 
 template <>
-void payloadToCommands(AltTree& tree,
+void payloadToCommands(AltBlockTree& tree,
                        const VTB& pop,
                        const std::vector<uint8_t>& /* ignore */,
                        std::vector<CommandPtr>& cmds) {
@@ -26,7 +26,7 @@ void payloadToCommands(AltTree& tree,
 }
 
 template <>
-void payloadToCommands(AltTree& tree,
+void payloadToCommands(AltBlockTree& tree,
                        const ATV& pop,
                        const std::vector<uint8_t>& containingHash,
                        std::vector<CommandPtr>& cmds) {
@@ -44,7 +44,7 @@ void payloadToCommands(AltTree& tree,
 
 template <>
 std::vector<CommandGroup> payloadsToCommandGroups(
-    AltTree& tree,
+    AltBlockTree& tree,
     const PopData& pop,
     const std::vector<uint8_t>& containinghash) {
   std::vector<CommandGroup> cgs;

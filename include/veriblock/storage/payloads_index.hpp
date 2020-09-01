@@ -13,7 +13,7 @@
 
 namespace altintegration {
 
-struct AltTree;
+struct AltBlockTree;
 
 //! @private
 class PayloadsIndex {
@@ -30,7 +30,7 @@ class PayloadsIndex {
                    Slice<const uint8_t> payloadId,
                    bool validity);
 
-  void reindex(const AltTree& tree);
+  void reindex(const AltBlockTree& tree);
 
   // get a list of ALT containing blocks for given payload
   const std::set<AltBlock::hash_t>& getContainingAltBlocks(

@@ -150,7 +150,7 @@ struct AddEndorsement : public Command {
   std::shared_ptr<endorsement_t> e_;
 };
 
-struct AltTree;
+struct AltBlockTree;
 struct VbkBlockTree;
 template <typename Block, typename ChainParams>
 struct BlockTree;
@@ -158,7 +158,7 @@ struct BlockTree;
 using AddVbkEndorsement =
     AddEndorsement<BlockTree<BtcBlock, BtcChainParams>, VbkBlockTree>;
 
-using AddAltEndorsement = AddEndorsement<VbkBlockTree, AltTree>;
+using AddAltEndorsement = AddEndorsement<VbkBlockTree, AltBlockTree>;
 
 }  // namespace altintegration
 

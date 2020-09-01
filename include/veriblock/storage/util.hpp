@@ -60,9 +60,9 @@ void SaveTree(BlockTreeT& tree, BlockBatchAdaptor& batch) {
   batch.writeTip(*tree.getBestChain().tip());
 }
 
-struct AltTree;
+struct AltBlockTree;
 
-void SaveAllTrees(AltTree& tree, BlockBatchAdaptor& batch);
+void SaveAllTrees(AltBlockTree& tree, BlockBatchAdaptor& batch);
 
 }  // namespace altintegration
 
