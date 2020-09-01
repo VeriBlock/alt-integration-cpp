@@ -16,7 +16,7 @@ namespace altintegration {
 
 struct VbkBlockTree;
 struct AltChainParams;
-struct AltTree;
+struct AltBlockTree;
 
 template <>
 bool checkBlockTime(const BlockIndex<AltBlock>& prev,
@@ -26,7 +26,7 @@ bool checkBlockTime(const BlockIndex<AltBlock>& prev,
 
 template <>
 std::vector<CommandGroup> payloadsToCommandGroups(
-    AltTree& tree, const PopData& pop, const AltBlock::hash_t& containinghash);
+    AltBlockTree& tree, const PopData& pop, const AltBlock::hash_t& containinghash);
 
 }  // namespace altintegration
 

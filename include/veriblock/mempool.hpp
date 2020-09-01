@@ -68,7 +68,7 @@ struct MemPool {
   using relations_map_t = payload_map<VbkPayloadsRelations>;
 
   ~MemPool() = default;
-  MemPool(AltTree& tree) : tree_(&tree) {}
+  MemPool(AltBlockTree& tree) : tree_(&tree) {}
 
   //! getter for payloads stored in mempool
   //! @ingroup api
@@ -136,7 +136,7 @@ struct MemPool {
    * (POW) Miners should execute this to get POP content for "next block".
    *
    * @warning Expensive operation. It builds virtual VBK Block Tree with
-   * payloads stored in mempool, applies them to current AltTree tip. All
+   * payloads stored in mempool, applies them to current AltBlockTree tip. All
    * payloads that can not be connected will remain in mempool. As a result,
    * this method returns PopData which contains fully valid and connected
    * payloads. This should be inserted into AltBlock as is.
@@ -182,7 +182,7 @@ struct MemPool {
   signals::Signal<void(const VbkBlock& atv)> on_vbkblock_accepted;
 
  private:
-  AltTree* tree_;
+  AltBlockTree* tree_;
   // relations between VBK block and payloads
   relations_map_t relations_;
   vbkblock_map_t vbkblocks_;

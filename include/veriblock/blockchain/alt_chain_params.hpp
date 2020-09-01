@@ -169,7 +169,7 @@ struct AltChainParams {
   //! unique POP ID for the chain
   virtual int64_t getIdentifier() const noexcept = 0;
 
-  //! first ALT block used in AltTree. This is first block that can be endorsed.
+  //! first ALT block used in AltBlockTree. This is first block that can be endorsed.
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
   /**
