@@ -13,7 +13,43 @@
 
 namespace altintegration {
 
+struct VbkPayloadsRelations {
+  using id_t = VbkBlock::id_t;
+  using height_t = typename VbkBlock::height_t;
+
+  VbkPayloadsRelations(const VbkBlock& b)
+      : header(std::make_shared<VbkBlock>(b)) {}
+
+  VbkPayloadsRelations(const std::shared_ptr<VbkBlock>& ptr_b)
+      : header(ptr_b) {}
+
+  std::shared_ptr<VbkBlock> header;
+  std::vector<std::shared_ptr<VTB>> vtbs;
+  std::vector<std::shared_ptr<ATV>> atvs;
+
+  VbkPayloadsRelations* relation_pprev_;
+  BlockIndex<VbkBlock>* block_pprev_;
+
+  const VbkBlock* getAncestor(height_t height) const;
+
+  PopData toPopData() const;
+
+  bool empty() const { return atvs.empty() && vtbs.empty(); }
+
+  void removeVTB(const VTB::id_t& vtb_id);
+  void removeATV(const ATV::id_t& atv_id);
+
+  height_t getHeight() const;
+};
+
 struct MemPoolBlockTree {
+  using btc_index_t = BlockIndex<BtcBlock>;
+  using vbk_blocks_map_t =
+      std::unordered_map<typename VbkPayloadsRelations::id_t,
+                         std::shared_ptr<VbkPayloadsRelations>>;
+  using btc_blocks_map_t = std::unordered_map<typename btc_index_t::prev_hash_t,
+                                              std::shared_ptr<btc_index_t>>;
+
   MemPoolBlockTree(const AltTree& tree) : tree_(tree) { (void)tree_; }
   MemPoolBlockTree(const MemPoolBlockTree& tree) : tree_(tree.tree_) {}
 
@@ -58,7 +94,16 @@ struct MemPoolBlockTree {
    */
   int weaklyCompare(const VTB& vtb1, const VTB& vtb2);
 
+  VbkPayloadsRelations* getVbkRelationIndex(
+      const typename VbkBlock::hash_t& hash) const;
+
+  BlockIndex<VbkBlock>* getVbkBlockIndex(
+      const typename VbkBlock::hash_t& hash) const;
+
+  bool areOnSameChain(const VbkBlock& blk1, const VbkBlock& blk2) const;
+
  private:
+  vbk_blocks_map_t vbk_blocks_;
   const AltTree& tree_;
 };
 

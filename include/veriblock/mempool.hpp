@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/blockchain/mempool_block_tree.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/mempool_result.hpp"
 #include "veriblock/signals.hpp"
@@ -35,28 +36,6 @@ namespace altintegration {
  */
 struct MemPool {
   using vbk_hash_t = typename VbkBlock::prev_hash_t;
-
-  //! @private
-  struct VbkPayloadsRelations {
-    using id_t = VbkBlock::id_t;
-
-    VbkPayloadsRelations(const VbkBlock& b)
-        : header(std::make_shared<VbkBlock>(b)) {}
-
-    VbkPayloadsRelations(const std::shared_ptr<VbkBlock>& ptr_b)
-        : header(ptr_b) {}
-
-    std::shared_ptr<VbkBlock> header;
-    std::vector<std::shared_ptr<VTB>> vtbs;
-    std::vector<std::shared_ptr<ATV>> atvs;
-
-    PopData toPopData() const;
-
-    bool empty() const { return atvs.empty() && vtbs.empty(); }
-
-    void removeVTB(const VTB::id_t& vtb_id);
-    void removeATV(const ATV::id_t& atv_id);
-  };
 
   template <typename Payload>
   using payload_map =
