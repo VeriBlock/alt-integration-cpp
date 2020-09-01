@@ -153,6 +153,23 @@ void vectorPopToCommandGroup(Tree& tree,
   }
 }
 
+template <typename BlockTree>
+bool areOnSameChain(const typename BlockTree::block_t& blk1,
+                    const typename BlockTree::block_t& blk2,
+                    const BlockTree& tree) {
+  auto* blk_index1 = tree.getBlockIndex(blk1.getHash());
+  auto* blk_index2 = tree.getBlockIndex(blk2.getHash());
+
+  VBK_ASSERT_MSG(blk_index1, "unknown block %s", blk1.toPrettyString());
+  VBK_ASSERT_MSG(blk_index2, "unknown block %s", blk2.toPrettyString());
+
+  if (blk_index1->getHeight() > blk_index2->getHeight()) {
+    return blk_index1->getAncestor(blk_index2->getHeight()) == blk_index2;
+  } else {
+    return blk_index2->getAncestor(blk_index1->getHeight()) == blk_index1;
+  }
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKCHAIN_UTIL_HPP_

@@ -50,6 +50,13 @@ struct BaseBlockTree {
    */
   const Chain<index_t>& getBestChain() const { return this->activeChain_; }
 
+  // HACK: see big comment in VBK tree.
+  template <typename T>
+  inline prev_block_hash_t makePrevHash(const T& h) const {
+    // given any type T, just return an implicit cast to prev_block_hash_t
+    return h;
+  }
+
   /**
    * Get BlockIndex by block hash.
    * @tparam T block type
@@ -309,20 +316,6 @@ struct BaseBlockTree {
 
     if (shouldDetermineBestChain) {
       updateTips();
-    }
-  }
-
-  bool areOnSameChain(const block_t& blk1, const block_t& blk2) const {
-    auto* blk_index1 = this->getBlockIndex(blk1.getHash());
-    auto* blk_index2 = this->getBlockIndex(blk2.getHash());
-
-    VBK_ASSERT_MSG(blk_index1, "unknown block %s", blk1.toPrettyString());
-    VBK_ASSERT_MSG(blk_index2, "unknown block %s", blk2.toPrettyString());
-
-    if (blk_index1->getHeight() > blk_index2->getHeight()) {
-      return blk_index1->getAncestor(blk_index2->getHeight()) == blk_index2;
-    } else {
-      return blk_index2->getAncestor(blk_index1->getHeight()) == blk_index1;
     }
   }
 
@@ -626,13 +619,6 @@ struct BaseBlockTree {
       doUpdateTips();
       isUpdateTipsDeferred = false;
     }
-  }
-
-  // HACK: see big comment in VBK tree.
-  template <typename T>
-  inline prev_block_hash_t makePrevHash(const T& h) const {
-    // given any type T, just return an implicit cast to prev_block_hash_t
-    return h;
   }
 
   void removeSingleBlock(index_t& block) {
