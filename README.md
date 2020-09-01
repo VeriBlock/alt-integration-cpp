@@ -4,10 +4,13 @@
 This repository contains a C++11 `veriblock-pop-cpp` library - an implementation of VeriBlock Proof-of-Proof ("POP") consensus protocol for prevention of 51% attacks.
 
 POP overall consists of 2 protocols:
-- POP Fork Resolution
-- POP Rewards
+- POP Fork Resolution - given set of POP publications sent to Altchain from 2 chains, select best chain among these two, based on timeliness of publications in VBK tree, number of publications and other factors.
+- POP Rewards - an economic incentive for POP miners to send endorsing VBK transactions in VBK blockchain, and sending back proofs to Altchain. POP Rewards are paid in Altchain coins.
 
-[TOC]
+## Getting Started 
 
-## POP Fork Resolution
-
+1. [POP Protocol Description](./docs/pop.md)
+2. [Build And Install](./docs/build.md)
+3. [POP Integration](./docs/integration.md)
+4. [Data Structures](./docs/data_structures.md)
+5. [pypopminer](./docs/pypopminer.md)

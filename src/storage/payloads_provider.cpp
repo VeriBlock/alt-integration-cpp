@@ -7,7 +7,7 @@
 
 namespace altintegration {
 
-bool PayloadsProvider::getCommands(AltTree& tree,
+bool PayloadsProvider::getCommands(AltBlockTree& tree,
                                    const BlockIndex<AltBlock>& block,
                                    std::vector<CommandGroup>& out,
                                    ValidationState& state) {
@@ -29,9 +29,9 @@ bool PayloadsProvider::getCommands(AltTree& tree,
   }
 
   auto containingHash = block.getHash();
-  vectorPopToCommandGroup<AltTree, VbkBlock>(tree, vbks, containingHash, out);
-  vectorPopToCommandGroup<AltTree, VTB>(tree, vtbs, containingHash, out);
-  vectorPopToCommandGroup<AltTree, ATV>(tree, atvs, containingHash, out);
+  vectorPopToCommandGroup<AltBlockTree, VbkBlock>(tree, vbks, containingHash, out);
+  vectorPopToCommandGroup<AltBlockTree, VTB>(tree, vtbs, containingHash, out);
+  vectorPopToCommandGroup<AltBlockTree, ATV>(tree, atvs, containingHash, out);
 
   return true;
 }

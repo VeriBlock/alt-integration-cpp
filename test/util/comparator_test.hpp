@@ -318,11 +318,11 @@ struct TestComparator {
     return true;
   }
 
-  bool operator()(const AltTree& a, const AltTree& b, bool suppress = false) {
+  bool operator()(const AltBlockTree& a, const AltBlockTree& b, bool suppress = false) {
     VBK_EXPECT_TRUE(
         this->operator()(a.getComparator(), b.getComparator(), suppress),
         suppress);
-    using base = AltTree::base;
+    using base = AltBlockTree::base;
     const base& A = a;
     const base& B = b;
     VBK_EXPECT_TRUE(this->operator()(A, B, suppress), suppress);

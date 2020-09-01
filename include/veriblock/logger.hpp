@@ -11,6 +11,23 @@
 
 #include "veriblock/fmt.hpp"
 
+/**
+ * @file logger.hpp
+ *
+ * Defines logging helpers.
+ *
+ * By default, logger is disabled (no-op logger is used).
+ * Users can derive from Logger class, and specify their logger instance.
+ *
+ * Used log levels:
+ * - DEBUG - most noisy and verbose, debug level
+ * - INFO - default recommended level for logs
+ * - WARN - warning level
+ * - ERROR - validation error happened
+ * - CRITICAL - assert messages are logged here
+ * - OFF - disable logs
+ */
+
 namespace altintegration {
 
 enum class LogLevel { debug, info, warn, error, critical, off };

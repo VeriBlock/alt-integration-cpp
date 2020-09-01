@@ -121,7 +121,7 @@ void PayloadsIndex::removePayloadsIndex(const BlockIndex<VbkBlock>& block) {
   }
 }
 
-void PayloadsIndex::reindex(const AltTree& tree) {
+void PayloadsIndex::reindex(const AltBlockTree& tree) {
   payload_in_alt.clear();
   payload_in_vbk.clear();
 
