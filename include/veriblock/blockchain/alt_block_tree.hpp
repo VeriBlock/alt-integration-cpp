@@ -178,6 +178,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * Returns negative if chain B is better.
    * Returns 0 if blocks are equal in terms of POP. Users should fallback to
    * chain-native Fork Resolution algorithm.
+   * @invariant this function can be called only on connected blocks, otherwise it dies on assert
    * @ingroup api
    */
   int comparePopScore(const AltBlock::hash_t& A, const AltBlock::hash_t& B);
