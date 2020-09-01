@@ -54,7 +54,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 };
 
-TEST_F(MemPoolFixture, removePayloads_test1) {
+TEST_F(MemPoolFixture, removeAll_test1) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -112,7 +112,7 @@ TEST_F(MemPoolFixture, removePayloads_test1) {
   EXPECT_EQ(popData.atvs.at(0), atv);
 
   // remove from mempool
-  mempool->removePayloads(popData);
+  mempool->removeAll(popData);
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
 
@@ -126,7 +126,7 @@ TEST_F(MemPoolFixture, removePayloads_test1) {
   EXPECT_EQ(popData.atvs.size(), 0);
 }
 
-TEST_F(MemPoolFixture, removePayloads_test2) {
+TEST_F(MemPoolFixture, removeAll_test2) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -178,7 +178,7 @@ TEST_F(MemPoolFixture, removePayloads_test2) {
   // modify popData to not remove all payloads
   popData.atvs.clear();
 
-  mempool->removePayloads(popData);
+  mempool->removeAll(popData);
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
 
@@ -191,7 +191,7 @@ TEST_F(MemPoolFixture, removePayloads_test2) {
             mempool->getMap<ATV>().begin()->second->blockOfProof.getHash());
 }
 
-TEST_F(MemPoolFixture, removePayloads_test3) {
+TEST_F(MemPoolFixture, removeAll_test3) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -259,14 +259,14 @@ TEST_F(MemPoolFixture, removePayloads_test3) {
 
   EXPECT_EQ(popData.context.size(), prev_size - removed);
 
-  mempool->removePayloads(popData);
+  mempool->removeAll(popData);
 
   ASSERT_TRUE(mempool->getMap<ATV>().empty());
   ASSERT_TRUE(mempool->getMap<VTB>().empty());
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 }
 
-TEST_F(MemPoolFixture, removePayloads_test4) {
+TEST_F(MemPoolFixture, removeAll_test4) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
@@ -318,7 +318,7 @@ TEST_F(MemPoolFixture, removePayloads_test4) {
   EXPECT_EQ(popData.atvs.at(0), atv);
   EXPECT_FALSE(popData.context.empty());
 
-  mempool->removePayloads(popData);
+  mempool->removeAll(popData);
 
   // add same ATV again
   ASSERT_FALSE(mempool->submit(atv, state));
@@ -350,7 +350,7 @@ TEST_F(MemPoolFixture, removePayloads_test4) {
   popData = checkedGetPop();
   applyInNextBlock(popData);
 
-  mempool->removePayloads(popData);
+  mempool->removeAll(popData);
 
   ASSERT_TRUE(mempool->getMap<ATV>().empty());
   ASSERT_TRUE(mempool->getMap<VTB>().empty());
@@ -409,7 +409,7 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   EXPECT_EQ(popData.atvs.at(0), atv);
 
   applyInNextBlock(popData);
-  mempool->removePayloads(popData);
+  mempool->removeAll(popData);
 
   popData = mempool->getPop();
 
@@ -955,7 +955,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   EXPECT_EQ(v_popData.atvs.at(0), atv1);
   applyInNextBlock(v_popData);
 
-  mempool->removePayloads(v_popData);
+  mempool->removeAll(v_popData);
   ASSERT_FALSE(mempool->submit(atv1, state)) << state.toString();
   ASSERT_EQ(state.GetPath(), "pop-mempool-submit-atv-stateful+atv-duplicate");
 }
@@ -1005,7 +1005,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   applyInNextBlock(v_popData);
 
   // remove payloads from the mempool
-  mempool->removePayloads(v_popData);
+  mempool->removeAll(v_popData);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -1188,7 +1188,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
     ASSERT_EQ(v_popData.vtbs.size(), 0);
     ASSERT_EQ(v_popData.atvs.size(), 0);
     // lets remove it
-    mempool->removePayloads(v_popData);
+    mempool->removeAll(v_popData);
   }
   {
     // third getPop returns 0, as we removed popData but not added it to
@@ -1306,7 +1306,7 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   EXPECT_TRUE(!popData.context.empty());
 
   applyInNextBlock(popData);
-  mempool->removePayloads(popData);
+  mempool->removeAll(popData);
 
   payloadsProvider.write(vtb2);
   ASSERT_TRUE(mempool->submit<VTB>(vtb2, state));

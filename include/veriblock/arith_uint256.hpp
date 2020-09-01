@@ -18,12 +18,18 @@
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {
+
+//! @private
 class uint_error : public std::runtime_error {
  public:
   explicit uint_error(const std::string& str) : std::runtime_error(str) {}
 };
 
-/** 256-bit unsigned big integer. */
+/**
+ * @class ArithUint256
+ *
+ * 256-bit unsigned big integer.
+ */
 class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
  public:
   ArithUint256() = default;

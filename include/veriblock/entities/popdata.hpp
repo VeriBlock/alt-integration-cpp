@@ -17,6 +17,13 @@
 
 namespace altintegration {
 
+/**
+ * @struct PopData
+ *
+ * Represents ALT block body of POP-related info.
+ *
+ * @version 1
+ */
 struct PopData {
   using id_t = uint256;
 

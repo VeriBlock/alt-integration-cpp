@@ -17,6 +17,11 @@
 
 namespace altintegration {
 
+/**
+ * @struct MerklePath
+ *
+ * Path in Merkle tree which proves that `subject` is inside this tree.
+ */
 struct MerklePath {
   int32_t index{};
   uint256 subject{};

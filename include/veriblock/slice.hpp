@@ -17,6 +17,7 @@ namespace altintegration {
 
 /// Non-owning contiguous array. Similar to gsl::span. Essentially, just a pair
 /// T* + size_t
+/// @private
 template <class ElementType>
 struct Slice {
   using element_type = ElementType;
@@ -83,6 +84,7 @@ struct Slice {
 };
 
 /// custom gtest printer, which prints Blob of any size as hexstring
+/// @private
 template <typename T>
 inline void PrintTo(const Slice<T> &slice, ::std::ostream *os) {
   *os << "Slice(" << slice.data() << ", " << slice.size() << ")";

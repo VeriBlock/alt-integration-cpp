@@ -12,11 +12,19 @@
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbkpoptx.hpp"
 #include "veriblock/fmt.hpp"
+#include "veriblock/json.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
 namespace altintegration {
 
+/**
+ * @struct VTB
+ *
+ * Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.
+ *
+ * @ingroup entities
+ */
 struct VTB {
   using id_t = uint256;
   using containing_block_t = VbkBlock;
@@ -84,6 +92,7 @@ struct VTB {
   friend bool operator!=(const VTB& a, const VTB& b) { return !(a == b); }
 };
 
+//! @private
 template <typename JsonValue>
 JsonValue ToJSON(const VTB& v) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -95,10 +104,7 @@ JsonValue ToJSON(const VTB& v) {
   return obj;
 }
 
-inline void PrintTo(const VTB& v, std::ostream* os) {
-  *os << ToJSON<picojson::value>(v).serialize(false);
-}
-
+//! @overload
 bool Deserialize(ReadStream& stream, VTB& out, ValidationState& state);
 
 }  // namespace altintegration

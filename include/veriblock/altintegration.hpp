@@ -12,8 +12,22 @@
 #include <veriblock/mempool.hpp>
 #include <veriblock/storage/payloads_index.hpp>
 
+/**
+ * @defgroup api Public API
+ *
+ * This is public API of veriblock-pop-cpp library, which is meant to be used by
+ * Altchains.
+ */
+
 namespace altintegration {
 
+/**
+ * @struct Altintegration
+ *
+ * Factory for creating all integration-related instances.
+ *
+ * @ingroup api
+ */
 struct Altintegration {
   static std::shared_ptr<Altintegration> create(
       std::shared_ptr<Config> config, std::shared_ptr<PayloadsProvider> db) {

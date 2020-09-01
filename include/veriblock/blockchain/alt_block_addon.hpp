@@ -16,6 +16,7 @@ namespace altintegration {
 
 struct PopData;
 
+//! @private
 struct AltBlockAddon : public PopState<AltEndorsement> {
   using payloads_t = PopData;
 

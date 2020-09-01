@@ -13,17 +13,29 @@
 #include "veriblock/entities/altblock.hpp"
 #include "veriblock/serde.hpp"
 
+/**
+ * @defgroup config Altchain Config
+ * Data structures that store all altchain-related configs required for POP
+ * integration.
+ */
+
 namespace altintegration {
 
+/**
+ * @struct PopRewardsCurveParams
+ *
+ * Defines POP rewards payout curve parameters.
+ * @ingroup config,interfaces
+ */
 struct PopRewardsCurveParams {
-  // we start decreasing rewards after this score
+  //! we start decreasing rewards after this score
   double startOfSlope() const noexcept { return mStartOfSlope; }
 
-  // we decrease reward coefficient for this value for
-  // each additional score point above startOfDecreasingLine
+  //! we decrease reward coefficient for this value for
+  //! each additional score point above startOfDecreasingLine
   double slopeNormal() const noexcept { return mSlopeNormal; }
 
-  // slope for keystone rounds
+  //! slope for keystone rounds
   double slopeKeystone() const noexcept { return mSlopeKeystone; }
 
  protected:
@@ -32,48 +44,54 @@ struct PopRewardsCurveParams {
   double mSlopeKeystone = 0.21325;
 };
 
+/**
+ * @struct PopRewardsParams
+ *
+ * Defines config for POP rewards.
+ * @ingroup config, interfaces
+ */
 struct PopRewardsParams {
-  // we use this round number to detect keystones
+  //! we use this round number to detect keystones
   uint32_t keystoneRound() const noexcept { return mKeystoneRound; }
 
-  // we have this number of rounds eg rounds 0, 1, 2, 3
+  //! we have this number of rounds eg rounds 0, 1, 2, 3
   uint32_t payoutRounds() const noexcept { return mPayoutRounds; }
 
-  // we use this round number to pay flat reward (does not depend on pop
-  // difficulty)
+  //! we use this round number to pay flat reward (does not depend on pop
+  //! difficulty)
   uint32_t flatScoreRound() const noexcept { return mFlatScoreRound; }
 
-  // should we use flat rewards at all
+  //! should we use flat rewards at all
   bool useFlatScoreRound() const noexcept { return mUseFlatScoreRound; }
 
-  // we have these payout modifiers for different rounds. Keystone round has
-  // the highest multiplier
+  //! we have these payout modifiers for different rounds. Keystone round has
+  //! the highest multiplier
   const std::vector<double>& roundRatios() const noexcept {
     return mRoundRatios;
   }
 
-  // limit block score to this value
+  //! limit block score to this value
   double maxScoreThresholdNormal() const noexcept {
     return mMaxScoreThresholdNormal;
   }
 
-  // limit block with keystones score to this value
+  //! limit block with keystones score to this value
   double maxScoreThresholdKeystone() const noexcept {
     return mMaxScoreThresholdKeystone;
   }
 
-  // collect this amount of blocks BEFORE the block to calculate pop difficulty
+  //! collect this amount of blocks BEFORE the block to calculate pop difficulty
   uint32_t difficultyAveragingInterval() const noexcept {
     return mDifficultyAveragingInterval;
   }
 
-  // getter for reward curve parameters
+  //! getter for reward curve parameters
   const PopRewardsCurveParams& getCurveParams() const noexcept {
     return curveParams;
   }
 
-  // reward score table
-  // we score each VeriBlock and lower the reward for late blocks
+  //! reward score table
+  //! we score each VeriBlock and lower the reward for late blocks
   const std::vector<double>& relativeScoreLookupTable() const noexcept {
     return mLookupTable;
   }
@@ -103,46 +121,62 @@ struct PopRewardsParams {
       0.02193952, 0.02134922};
 };
 
+/**
+ * @ingroup config, interfaces
+ *
+ * @struct AltChainParams
+ *
+ * Base class for all Altchain-related configs.
+ */
 struct AltChainParams {
   virtual ~AltChainParams() = default;
 
+  //! number of blocks in single keystone interval. 5 means that blocks with
+  //! heights 5,6,7,8,9 are blocks within same keystone interval
   uint32_t getKeystoneInterval() const noexcept { return mKeystoneInterval; }
 
-  ///! number of blocks in VBK for finalization
+  //! number of blocks in VBK for finalization
   uint32_t getFinalityDelay() const noexcept { return mFinalityDelay; }
 
+  //! pop score lookup table for fork resolution
   const std::vector<uint32_t>& getForkResolutionLookUpTable() const noexcept {
     // TODO(warchant): this should be recalculated. see paper.
     return mForkResolutionLookUpTable;
   }
 
-  /// endorsement validity window, pop payout delay
+  //! validity window for ATVs; pop payout delay, in blocks
   int32_t getEndorsementSettlementInterval() const noexcept {
     return mEndorsementSettlementInterval;
   }
 
+  //! maximum size of single PopData in a single ALT block, in bytes
   uint32_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
-  uint32_t getMaxFutureBlockTime() const noexcept { return mMaxFutureBlockTime; }
-
+  //! @deprecated
   bool isStrictAddPayloadsOrderingEnabled() const noexcept {
     return mStrictAddPayloadsOrderingEnabled;
   }
 
-  // getter for reward parameters
+  //! getter for reward parameters
   const PopRewardsParams& getRewardParams() const noexcept {
     return mPopRewardsParams;
   }
 
-  uint32_t maxFutureBlockTime() const noexcept {
-    return mMaxFutureBlockTime;
-  }
+  //! Maximum future block time for altchain blocks. Must be low enough such
+  //! that attacker can't produce endorsements faster than this interval.
+  uint32_t maxFutureBlockTime() const noexcept { return mMaxFutureBlockTime; }
 
-  // unique POP id for the chain
+  //! unique POP ID for the chain
   virtual int64_t getIdentifier() const noexcept = 0;
 
+  //! first ALT block used in AltTree. This is first block that can be endorsed.
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
+  /**
+   * Calculate hash from block header.
+   * @param bytes serialized block header
+   * @return hash
+   */
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
@@ -152,7 +186,7 @@ struct AltChainParams {
   // should be disabled in tests
   // should be enabled in prod
   bool mStrictAddPayloadsOrderingEnabled = false;
-  uint32_t mMaxFutureBlockTime = 10 * 60; // 10 min
+  uint32_t mMaxFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;

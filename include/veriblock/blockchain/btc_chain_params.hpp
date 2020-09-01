@@ -14,6 +14,7 @@
 
 namespace altintegration {
 
+//! base class for BTC params
 struct BtcChainParams {
   virtual ~BtcChainParams() = default;
   virtual uint256 getPowLimit() const = 0;
@@ -26,19 +27,24 @@ struct BtcChainParams {
   uint32_t getDifficultyAdjustmentInterval() const noexcept {
     return getPowTargetTimespan() / getPowTargetSpacing();
   }
+  //! minimum number of BTC blocks needed to bootstrap chain
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
   virtual std::string networkName() const noexcept = 0;
   virtual uint32_t maxFutureBlockTime() const noexcept {
     return mMaxFutureBlockTime;
   }
 
-  std::vector<uint8_t> toRaw() const;
-  void toRaw(WriteStream& stream) const;
-
  protected:
-  uint32_t mMaxFutureBlockTime = 2 * 60 * 60; // 2 hours
+  uint32_t mMaxFutureBlockTime = 2 * 60 * 60;  // 2 hours
 };
 
+/**
+ * @struct BtcChainParamsMain
+ *
+ * mainnet network params in Bitcoin chain.
+ *
+ * @ingroup api
+ */
 struct BtcChainParamsMain : public BtcChainParams {
   ~BtcChainParamsMain() override = default;
 
@@ -79,6 +85,13 @@ struct BtcChainParamsMain : public BtcChainParams {
   }
 };
 
+/**
+ * @struct BtcChainParamsTest
+ *
+ * testnet3 network params in Bitcoin chain.
+ *
+ * @ingroup api
+ */
 struct BtcChainParamsTest : public BtcChainParams {
   ~BtcChainParamsTest() override = default;
 
@@ -119,9 +132,17 @@ struct BtcChainParamsTest : public BtcChainParams {
   }
 };
 
+/**
+ * @struct BtcChainParamsRegTest
+ *
+ * regtest network params in Bitcoin chain.
+ *
+ * @ingroup api
+ */
 struct BtcChainParamsRegTest : public BtcChainParams {
   ~BtcChainParamsRegTest() override = default;
 
+  //! time adjustment is disabled in regtest mode
   bool EnableTimeAdjustment() const noexcept override { return false; }
 
   std::string networkName() const noexcept override { return "regtest"; }

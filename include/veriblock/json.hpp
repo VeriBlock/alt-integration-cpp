@@ -8,62 +8,105 @@
 
 namespace altintegration {
 
+/**
+ * Encode given entity into JSON.
+ * @tparam Value JSON Value type, which represents a "union" of JSON types.
+ * @tparam T Entity type to encode.
+ * @return JSON Value.
+ */
 template <typename Value, typename T>
-Value ToJSON(const T& t) {
-  (void) t;
+Value ToJSON(const T& /*entity*/) {
   static_assert(sizeof(T) == 0, "Undefined function for this type");
 }
 
+/**
+ * Package that contains adaptors to simplify serialization of entities to JSON.
+ *
+ * Depending on altchain, different JSON libraries can be used. Provide
+ * specializations of methods from this namespace to use `ToJSON<T>(...)`.
+ */
 namespace json {
 
+/**
+ * Creates an empty JSON object.
+ * @tparam Object type of JSON object.
+ * @return empty JSON object.
+ */
 template <typename Object>
-Object makeEmptyObject() {
+  Object makeEmptyObject() {
   static_assert(sizeof(Object) == 0, "Undefined function for this type");
 }
 
+/**
+ * Creates an empty JSON array.
+ * @tparam Array type of JSON array.
+ * @return empty JSON array.
+ */
 template <typename Array>
 Array makeEmptyArray() {
   static_assert(sizeof(Array) == 0, "Undefined function for this type");
 }
 
+/**
+ * Adds key-value pair to JSON Object.
+ * @tparam Value union type for JSON types
+ */
 template <typename Value>
-void putKV(Value& object, const std::string& key, const Value& val) {
-  (void) object;
-  (void) key;
-  (void) val;
+void putKV(Value& /*object*/,
+           const std::string& /*key*/,
+           const Value& /*value*/) {
   static_assert(sizeof(Value) == 0, "Undefined function for this type");
 }
 
+/**
+ * Adds a key-value pair where `value` is `std::string`.
+ * @tparam Object
+ */
 template <typename Object>
-void putStringKV(Object& object,
-                 const std::string& key,
-                 const std::string& value) {
-  (void) object;
-  (void) key;
-  (void) value;
+void putStringKV(Object& /*object to modify*/,
+                 const std::string& /*key*/,
+                 const std::string& /*value*/) {
   static_assert(sizeof(Object) == 0, "Undefined function for this type");
 }
 
+/**
+ * Sets a key-value pair where `value` is `int64_t`.
+ * @tparam Object
+ */
 template <typename Object>
-void putIntKV(Object& object, const std::string& key, int64_t value) {
-  (void) object;
-  (void) key;
-  (void) value;
+void putIntKV(Object& /*object to modify*/,
+              const std::string& /*key*/,
+              int64_t /*value*/) {
   static_assert(sizeof(Object) == 0, "Undefined function for this type");
 }
 
+/**
+ * Sets `object[key] = null`
+ * @tparam Object
+ */
 template <typename Object>
-void putNullKV(Object& object, const std::string& key) {
-  (void) object;
-  (void) key;
+void putNullKV(Object& /*object to modify*/, const std::string& /*key*/) {
   static_assert(sizeof(Object) == 0, "Undefined function for this type");
 }
 
+/**
+ * Same as `std::vector::push_back` but for JSON array.
+ * @tparam Value union type for JSON.
+ */
 template <typename Value>
-void arrayPushBack(Value& array, const Value& el) {
-  (void) array;
-  (void) el;
+void arrayPushBack(Value& /*array to modify*/, const Value& /*element*/) {
   static_assert(sizeof(Value) == 0, "Undefined function for this type");
+}
+
+/**
+ * Sets `object[key] = value` for bools.
+ * @tparam Object
+ */
+template <typename Object>
+void putBoolKV(Object& /*object to modify*/,
+               const std::string& /*key*/,
+               bool /*value*/) {
+  static_assert(sizeof(Object) == 0, "Undefined function for this type");
 }
 
 template <typename Value, typename Iterable>
@@ -75,18 +118,7 @@ void putArrayKV(Value& object, const std::string& key, const Iterable& val) {
   putKV(object, key, arr);
 }
 
-template <typename Object>
-void putBoolKV(Object& object, const std::string& key, bool value) {
-  (void) object;
-  (void) key;
-  (void) value;
-  static_assert(sizeof(Object) == 0, "Undefined function for this type");
-}
-
 }  // namespace json
 }  // namespace altintegration
-
-// header-only picojson adapter
-#include <veriblock/adapters/picojson.hpp>
 
 #endif  // VERIBLOCK_POP_CPP_JSON_HPP

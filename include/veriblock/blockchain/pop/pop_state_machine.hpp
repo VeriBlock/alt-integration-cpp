@@ -64,6 +64,7 @@ void assertBlockCanBeUnapplied(index_t& index) {
 
 }  // namespace
 
+//! @private
 template <typename ProtectingBlockTree,
           typename ProtectedTree,
           typename ProtectedIndex,

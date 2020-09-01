@@ -13,12 +13,16 @@
 
 namespace altintegration {
 
+/**
+ * An entity which is returned from MemPool on call to submitAll.
+ */
 struct MempoolResult {
   std::vector<std::pair<VbkBlock::id_t, ValidationState>> context;
   std::vector<std::pair<VTB::id_t, ValidationState>> vtbs;
   std::vector<std::pair<ATV::id_t, ValidationState>> atvs;
 };
 
+//! @private
 namespace detail {
 
 template <typename JsonValue, typename ID>

@@ -19,8 +19,8 @@ inline bool ValidAsCString(const std::string &str) noexcept {
 
 /**
  * Tests if the given character is a whitespace character. The whitespace
- * characters are: space, form-feed ('\f'), newline ('\n'), carriage return
- * ('\r'), horizontal tab ('\t'), and vertical tab ('\v').
+ * characters are: space, form-feed ('\\f'), newline ('\\n'), carriage return
+ * ('\\r'), horizontal tab ('\\t'), and vertical tab ('\\v').
  *
  * This function is locale independent. Under the C locale this function gives
  * the same result as std::isspace.

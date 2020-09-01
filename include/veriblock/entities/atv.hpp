@@ -20,6 +20,11 @@
 
 namespace altintegration {
 
+/**
+ * @class ATV
+ *
+ * @glossary{ATV}
+ */
 struct ATV {
   using id_t = uint256;
 
@@ -40,17 +45,12 @@ struct ATV {
   }
 
   /**
-   * Read VBK data from the stream and convert it to ATV
+   * Deserialize ATV from bytes
    * @param stream data stream to read from
    * @return ATV
    */
   static ATV fromVbkEncoding(ReadStream& stream);
-
-  /**
-   * Read VBK data from the raw byte representation and convert it to ATV
-   * @param string data bytes to read from
-   * @return ATV
-   */
+  //! @overload
   static ATV fromVbkEncoding(Slice<const uint8_t> bytes);
 
   /**

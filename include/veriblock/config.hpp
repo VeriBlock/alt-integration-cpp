@@ -15,20 +15,41 @@
 
 #include "veriblock/serde.hpp"
 
+/**
+ * @file config.hpp
+ *
+ * Altchains must configure AltTree prior any usage by providing bootstrapping
+ * Config.
+ *
+ * Config MUST specify Bitcoin and Veriblock blockchains configs.
+ * Namely, network (mainnet/testnet/regtest), contiguous
+ * list of blocks named Bootstrap blocks (must be at least 2016 blocks,
+ * at least single retargeting period for Bitcoin and 100 blocks for Veriblock),
+ * and height of first bootstrap block.
+ *
+ */
+
 namespace altintegration {
+
+/**
+ * A container for Bitcoin and Veriblock configuration data.
+ */
 struct Config {
+  //! per-chain bootstrap config
   template <typename Block, typename ChainParams>
   struct Bootstrap {
     //! height of the first bootstrap block
     int32_t startHeight = 0;
 
     //! a contiguous list of blocks.
-    //! if empty, bootstrapWithGenesis will be used
+    //! if empty, bootstrapWithGenesis() will be used
     //! has to have at least `params->numBlocksForBootstrap()` blocks
     std::vector<Block> blocks;
 
+    //! network parameters - Mainnet/Testnet/Regtest...
     std::shared_ptr<ChainParams> params;
 
+    //! factory method to create this config from vector of hexencoded blocks
     static Bootstrap create(int32_t start,
                             const std::vector<std::string>& hexblocks,
                             std::shared_ptr<ChainParams> params) {
@@ -44,39 +65,6 @@ struct Config {
           [](const std::string& hexblock) { return Block::fromHex(hexblock); });
 
       return b;
-    }
-
-    static Bootstrap<Block, ChainParams> fromRaw(ReadStream& stream) {
-      Bootstrap<Block, ChainParams> bootstrap;
-      bootstrap.startHeight = stream.readBE<int32_t>();
-      bootstrap.blocks =
-          readArrayOf<Block>(stream,
-                             0,
-                             MAX_CONTEXT_COUNT,
-                             (Block(*)(ReadStream&))Block::fromVbkEncoding);
-      return bootstrap;
-    }
-
-    static Bootstrap<Block, ChainParams> fromRaw(
-        const std::vector<uint8_t>& bytes) {
-      ReadStream stream(bytes);
-      return fromRaw(stream);
-    }
-
-    std::vector<uint8_t> toRaw() const {
-      WriteStream stream;
-      toRaw(stream);
-      return stream.data();
-    }
-
-    void toRaw(WriteStream& stream) const {
-      stream.writeBE<int32_t>(startHeight);
-      writeSingleBEValue(stream, blocks.size());
-      for (const auto& b : blocks) {
-        b.toVbkEncoding(stream);
-      }
-
-      this->params->toRaw(stream);
     }
   };
 
@@ -94,17 +82,9 @@ struct Config {
               const std::vector<std::string>& hexblocks,
               std::shared_ptr<VbkChainParams> params);
 
-  //! small helper to check whether config is valid
+  //! Validates config instance. Throws on errors.
   //! @throws std::invalid_argument with a message, if something is wrong.
   void validate() const;
-
-  static Config fromRaw(ReadStream& stream);
-
-  static Config fromRaw(const std::vector<uint8_t>& bytes);
-
-  std::vector<uint8_t> toRaw() const;
-
-  void toRaw(WriteStream& stream) const;
 };
 
 }  // namespace altintegration

@@ -11,6 +11,7 @@
 
 namespace altintegration {
 
+//! @private
 struct PopRewardsBigDecimal {
   static const uint32_t decimals = 100000000;
   ArithUint256 value = 0;
