@@ -7,16 +7,21 @@
 `veriblock-pop-cpp` is a CMake project, so it follows all best practices for CMake projects.
 
 To build library:
-```bash
-git clone https://github.com/VeriBlock/alt-integration-cpp
-cd alt-integration-cpp
-mkdir build
-cd build
+```sh
+# clone repo
+$ git clone https://github.com/VeriBlock/alt-integration-cpp
+$ cd alt-integration-cpp
+
+# create build dir
+$ mkdir build
+$ cd build
+
 # build static library in release mode
-cmake .. -DCMAKE_BUILD_TYPE=Release -DSHARED=OFF 
-make -j
-# to install into system
-sudo make install
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DSHARED=OFF 
+$ make -j
+
+# install it in your OS globally
+$ sudo make install
 ```
 
 ## CMake flags

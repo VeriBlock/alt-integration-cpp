@@ -86,7 +86,8 @@ void commitPayloadsIds(BlockIndex<AltBlock>& index,
 template <typename Element, typename Container>
 /*iterator*/ auto findDuplicates(BlockIndex<AltBlock>& index,
                                  Container& payloads,
-                                 AltBlockTree& tree) -> decltype(payloads.end()) {
+                                 AltBlockTree& tree)
+    -> decltype(payloads.end()) {
   const auto startHeight = tree.getParams().getBootstrapBlock().height;
   // don't look for duplicates in index itself
   Chain<BlockIndex<AltBlock>> chain(startHeight, index.pprev);
@@ -262,8 +263,8 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 // in !StrictAddPayloadsOrdering mode, payloads can be added to any block, which
 // may trigger incorrect AltTree behavior in certain cases
 bool AltBlockTree::addPayloads(index_t& index,
-                          PopData& payloads,
-                          ValidationState& state) {
+                               PopData& payloads,
+                               ValidationState& state) {
   if (getParams().isStrictAddPayloadsOrderingEnabled()) {
     // atomicity: ensure we can not just add payloads but connect the block
     VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CONNECTED),
@@ -292,7 +293,8 @@ bool AltBlockTree::addPayloads(index_t& index,
   return connectBlock(index, state);
 }
 
-bool AltBlockTree::acceptBlockHeader(const AltBlock& block, ValidationState& state) {
+bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
+                                     ValidationState& state) {
   if (getBlockIndex(block.getHash()) != nullptr) {
     // duplicate
     return true;
@@ -388,7 +390,7 @@ void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
 }
 
 int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
-                             const AltBlock::hash_t& B) {
+                                  const AltBlock::hash_t& B) {
   auto* left = getBlockIndex(A);
   auto* right = getBlockIndex(B);
   VBK_ASSERT_MSG(left, "unknown 'A' block %s", HexStr(A));
@@ -546,8 +548,8 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
 }
 
 bool AltBlockTree::addPayloads(const hash_t& block,
-                          const PopData& popData,
-                          ValidationState& state) {
+                               const PopData& popData,
+                               ValidationState& state) {
   auto copy = popData;
   auto* index = getBlockIndex(block);
   VBK_ASSERT_MSG(index, "can't find block %s", HexStr(block));
@@ -599,7 +601,8 @@ void AltBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
   overrideTip(to);
 }
 
-bool AltBlockTree::loadBlock(const AltBlockTree::index_t& index, ValidationState& state) {
+bool AltBlockTree::loadBlock(const AltBlockTree::index_t& index,
+                             ValidationState& state) {
   if (!base::loadBlock(index, state)) {
     return false;  // already set
   }
@@ -632,9 +635,9 @@ bool AltBlockTree::loadBlock(const AltBlockTree::index_t& index, ValidationState
 }
 
 AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
-                 const AltBlockTree::vbk_config_t& vbk_config,
-                 const AltBlockTree::btc_config_t& btc_config,
-                 PayloadsProvider& payloadsProvider)
+                           const AltBlockTree::vbk_config_t& vbk_config,
+                           const AltBlockTree::btc_config_t& btc_config,
+                           PayloadsProvider& payloadsProvider)
     : alt_config_(&alt_config),
       vbk_config_(&vbk_config),
       btc_config_(&btc_config),
@@ -651,7 +654,8 @@ void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
   base::removeSubtree(toRemove);
 }
 
-bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash, ValidationState& state) {
+bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
+                           ValidationState& state) {
   if (!base::loadTip(hash, state)) {
     return false;
   }
@@ -673,6 +677,25 @@ void AltBlockTree::removePayloads(const AltBlockTree::hash_t& hash) {
   auto* index = getBlockIndex(hash);
   VBK_ASSERT_MSG(index, "does not contain block %s", HexStr(hash));
   return removeAllPayloads(*index);
+}
+
+std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
+    const AltBlockTree::index_t& index) const {
+  std::vector<const index_t*> candidates;
+
+  if (!index.isConnected()) {
+    // this block is not connected
+    return candidates;
+  }
+
+  for (auto* tip : getTips()) {
+    if (tip->isConnected() && tip->getAncestor(index.getHeight()) == &index) {
+      // tip is a successor of index and it is connected
+      candidates.push_back(tip);
+    }
+  }
+
+  return candidates;
 }
 
 template <typename Payloads>
