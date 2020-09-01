@@ -13,6 +13,7 @@
 
 namespace altintegration {
 
+//! represents VBK atomic units
 struct Coin {
   int64_t units{};
 

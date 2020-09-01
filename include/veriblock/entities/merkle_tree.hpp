@@ -14,6 +14,7 @@
 
 namespace altintegration {
 
+//! @private
 template <typename Specific>
 struct MerkleTree {
   using txhash_t = uint256;
@@ -88,6 +89,7 @@ struct MerkleTree {
   std::vector<std::vector<txhash_t>> layers;
 };
 
+//! @private
 struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
   using base = MerkleTree<VbkMerkleTree>;
 
@@ -133,6 +135,7 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
   int treeIndex = 0;
 };
 
+//! @private
 struct BtcMerkleTree : public MerkleTree<BtcMerkleTree> {
   using base = MerkleTree<BtcMerkleTree>;
 

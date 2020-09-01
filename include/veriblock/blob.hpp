@@ -17,6 +17,10 @@
 
 namespace altintegration {
 
+/**
+ * Contiguous byte array of fixed size.
+ * @tparam N
+ */
 template <size_t N>
 struct Blob {
   using value_type = uint8_t;
@@ -218,12 +222,13 @@ struct Blob {
   storage_t data_;
 };
 
-/// custom gtest printer, which prints Blob of any size as hexstring
+//! @private
 template <size_t size>
 void PrintTo(const Blob<size>& blob, ::std::ostream* os) {
   *os << blob.toHex();
 }
 
+//! @overload
 template <typename Value, size_t N>
 inline Value ToJSON(const Blob<N>& blob) {
   return ToJSON<Value>(blob.toHex());
@@ -231,10 +236,9 @@ inline Value ToJSON(const Blob<N>& blob) {
 
 }  // namespace altintegration
 
-namespace std {
-
+//! @private
 template <size_t N>
-struct hash<altintegration::Blob<N>> {
+struct std::hash<altintegration::Blob<N>> {
   size_t operator()(std::true_type, const altintegration::Blob<N>& x) const {
     return x.getLow64();
   }
@@ -250,6 +254,5 @@ struct hash<altintegration::Blob<N>> {
     return operator()(f, x);
   }
 };
-}  // namespace std
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOB_HPP_

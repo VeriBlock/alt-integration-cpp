@@ -13,6 +13,7 @@
 
 namespace altintegration {
 
+//! @private
 struct CommandGroupCache {
   // id = containing block hash
   using id_t = std::vector<uint8_t>;

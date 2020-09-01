@@ -13,6 +13,15 @@
 
 namespace altintegration {
 
+/**
+ * @struct BlockBatchAdaptor
+ *
+ * Wrapper around Batch, which writes blocks on disk.
+ *
+ * Used by Altchain to dump AltTree state on-disk.
+ *
+ * @ingroup interfaces
+ */
 struct BlockBatchAdaptor {
   virtual ~BlockBatchAdaptor() = default;
 

@@ -20,11 +20,15 @@ namespace altintegration {
 
 struct VbkBlock;
 
+/**
+ * @class AltBlock
+ * Represents a view on Altchain block - i.e. contains partial info, only
+ * required for POP.
+ */
 struct AltBlock {
   using height_t = int32_t;
   using hash_t = std::vector<uint8_t>;
   using prev_hash_t = std::vector<uint8_t>;
-  using protecting_block_t = VbkBlock;
   using addon_t = AltBlockAddon;
 
   /**
@@ -83,23 +87,24 @@ struct AltBlock {
 
   uint32_t getBlockTime() const noexcept;
 
+  /**
+   * @return hash of ALT block.
+   */
   hash_t getHash() const;
 
   // dummy
-  uint32_t getDifficulty() const {
-    return 0;
-  }
+  uint32_t getDifficulty() const { return 0; }
 
-  friend bool operator==(const AltBlock& a, const AltBlock& b) {
-    return a.hash == b.hash;
-  }
+  friend bool operator==(const AltBlock& a, const AltBlock& b);
+  friend bool operator!=(const AltBlock& a, const AltBlock& b);
 
-  friend bool operator!=(const AltBlock& a, const AltBlock& b) {
-    return !(a == b);
-  }
-
+  //! @private
   static const std::string& name() { return _name; }
 
+  /**
+   * Print this entity
+   * @return
+   */
   std::string toPrettyString() const {
     return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
   }
@@ -130,16 +135,13 @@ inline void PrintTo(const AltBlock& block, ::std::ostream* os) {
 
 }  // namespace altintegration
 
-namespace std {
-
+//! @private
 template <>
-struct hash<altintegration::AltBlock> {
+struct std::hash<altintegration::AltBlock> {
   size_t operator()(const altintegration::AltBlock& block) {
     std::hash<std::vector<uint8_t>> hasher;
     return hasher(block.getHash());
   }
 };
-
-}  // namespace std
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_

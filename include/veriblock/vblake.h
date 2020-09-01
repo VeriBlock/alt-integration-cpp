@@ -13,7 +13,7 @@
 
 namespace altintegration {
 /**
- * State context.
+ * vBlake hash state context.
  */
 typedef struct {
   uint8_t b[64];  ///< input buffer
@@ -46,9 +46,9 @@ void vblake_final(vblake_ctx *ctx, void *out);
 
 /**
  * Convenience function for all-in-one computation.
- * @param out output hash - 24 bytes
- * @param in input data
- * @param inlen length of input data, not more than 64 bytes
+ * @param[out] out output hash - 24 bytes
+ * @param[in] in input data
+ * @param[in] inlen length of input data, not more than 64 bytes
  * @return 0 if succeeded, -1 if inlen is more than 64 bytes
  */
 int vblake(void *out,  // return buffer for digest

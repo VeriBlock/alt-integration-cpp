@@ -5,13 +5,20 @@
 
 #include <gtest/gtest.h>
 
-#include <util/pop_test_fixture.hpp>
-#include <veriblock/entities/btcblock.hpp>
-#include <veriblock/mock_miner.hpp>
+// clang-format off
+#include "veriblock/adapters/picojson.hpp"
+// clang-format on
 
+#include "util/pop_test_fixture.hpp"
+#include "veriblock/entities/btcblock.hpp"
 #include "veriblock/literals.hpp"
+#include "veriblock/mock_miner.hpp"
 
 using namespace altintegration;
+
+void PrintTo(const VTB& v, std::ostream* os) {
+  *os << ToJSON<picojson::value>(v).serialize(false);
+}
 
 TEST(ToJson, MempoolResult) {
   MempoolResult r;

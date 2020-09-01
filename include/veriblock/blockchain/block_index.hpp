@@ -20,6 +20,10 @@
 
 namespace altintegration {
 
+/**
+ * A node in a block tree.
+ * @tparam Block
+ */
 template <typename Block>
 struct BlockIndex : public Block::addon_t {
   using block_t = Block;

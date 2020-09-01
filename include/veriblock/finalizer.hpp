@@ -23,32 +23,6 @@ struct Finalizer {
   std::function<void()> onDestroy;
 };
 
-/// similar construction to try-with-resources in java but for "validation"
-/// functions
-inline bool tryValidateWithResources(const std::function<bool()>& action,
-                                     const std::function<void()>& finally) {
-  try {
-    // try
-    if (!action()) {
-      // invalid...
-      try {
-        // if we get exception here, just rethrow.
-        // do not invoke finally() again.
-        finally();
-      } catch (...) {
-        throw;
-      }
-      return false;
-    }
-    // valid
-    return true;
-  } catch (...) {
-    // got exception... revert
-    finally();
-    throw;
-  }
-}
-
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_FINALIZER_HPP_

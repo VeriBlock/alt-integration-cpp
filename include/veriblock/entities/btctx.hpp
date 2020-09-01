@@ -16,6 +16,12 @@
 
 namespace altintegration {
 
+/**
+ * @struct BtcTx
+ *
+ * Bitcoin transaction representation.
+ *
+ */
 struct BtcTx {
   using hash_t = uint256;
   std::vector<uint8_t> tx{};

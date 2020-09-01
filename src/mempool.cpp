@@ -225,7 +225,7 @@ void MemPool::vacuum(const PopData& pop) {
   }
 }
 
-void MemPool::removePayloads(const PopData& pop) { vacuum(pop); }
+void MemPool::removeAll(const PopData& pop) { vacuum(pop); }
 
 MemPool::VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
                                                       VbkBlock::id_t block_id) {

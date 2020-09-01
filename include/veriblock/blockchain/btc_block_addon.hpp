@@ -13,6 +13,7 @@
 
 namespace altintegration {
 
+//! @private
 struct BtcBlockAddon {
   using ref_height_t = int32_t;
 

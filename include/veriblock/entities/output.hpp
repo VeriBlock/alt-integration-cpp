@@ -12,6 +12,11 @@
 
 namespace altintegration {
 
+/**
+ * @struct Output
+ *
+ * Single spending output.
+ */
 struct Output {
   Address address{};
   Coin coin{};

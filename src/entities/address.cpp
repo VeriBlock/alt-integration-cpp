@@ -213,6 +213,17 @@ Address::Address(const std::string& input) {
   m_Address = input;
 }
 
+bool Address::operator==(const Address& other) const noexcept {
+	return m_Address == other.m_Address;
+}
+
+bool Address::operator!=(const Address& other) const noexcept {
+  return !(this->operator==(other));
+}
+bool Address::operator==(const std::string& other) const noexcept {
+  return m_Address == other;
+}
+
 bool Deserialize(ReadStream& stream,
                                  Address& out,
                                  ValidationState& state) {

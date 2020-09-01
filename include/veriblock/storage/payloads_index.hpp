@@ -15,6 +15,7 @@ namespace altintegration {
 
 struct AltTree;
 
+//! @private
 class PayloadsIndex {
   using id_t = typename CommandGroupCache::id_t;
 

@@ -19,6 +19,7 @@
 
 namespace altintegration {
 
+//! @private
 template <typename ProtectingTree, typename ProtectedTree>
 struct AddEndorsement : public Command {
   using hash_t = typename ProtectedTree::hash_t;

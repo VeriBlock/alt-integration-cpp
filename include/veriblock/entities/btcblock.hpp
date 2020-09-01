@@ -21,6 +21,12 @@
 
 namespace altintegration {
 
+/**
+ * @struct BtcBlock
+ *
+ * Bitcoin block.
+ *
+ */
 struct BtcBlock {
   using hash_t = uint256;
   using prev_hash_t = uint256;
@@ -136,15 +142,12 @@ bool Deserialize(ReadStream& stream, BtcBlock& out, ValidationState& state);
 
 }  // namespace altintegration
 
-namespace std {
-
+//! @private
 template <>
-struct hash<altintegration::BtcBlock> {
+struct std::hash<altintegration::BtcBlock> {
   size_t operator()(const altintegration::BtcBlock& block) {
     return altintegration::ArithUint256(block.getHash()).getLow64();
   }
 };
-
-}  // namespace std
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCBLOCK_HPP_

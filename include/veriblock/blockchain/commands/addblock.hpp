@@ -18,6 +18,7 @@
 
 namespace altintegration {
 
+//! @private
 template <typename Block, typename ChainParams>
 struct AddBlock : public Command {
   using Tree = BlockTree<Block, ChainParams>;

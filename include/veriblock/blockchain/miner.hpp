@@ -14,6 +14,8 @@
 
 namespace altintegration {
 
+//! @private
+//! dumb POW miner used in tests
 template <typename Block, typename ChainParams>
 struct Miner {
   using merkle_t = typename Block::merkle_t;

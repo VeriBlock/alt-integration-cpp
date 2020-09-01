@@ -15,6 +15,7 @@
 
 namespace altintegration {
 
+//! VBK Address type.
 enum class AddressType {
   ZERO_UNUSED = 0,
   STANDARD = 1,
@@ -22,21 +23,23 @@ enum class AddressType {
   MULTISIG = 3,
 };
 
+/**
+ * @class Address
+ *
+ * Represents address on VBK chain.
+ */
 struct Address {
   Address() = default;
   explicit Address(const std::string& input);
 
-  bool operator==(const Address& other) const noexcept {
-    return m_Address == other.m_Address;
-  }
-  bool operator!=(const Address& other) const noexcept {
-    return !(this->operator==(other));
-  }
+  bool operator==(const Address& other) const noexcept;
+  bool operator!=(const Address& other) const noexcept;
+  bool operator==(const std::string& other) const noexcept;
 
-  bool operator==(const std::string& other) const noexcept {
-    return m_Address == other;
-  }
-
+  /**
+   * Return address type.
+   * @return
+   */
   AddressType getType() const noexcept { return m_Type; }
 
   /**
@@ -97,14 +100,14 @@ struct Address {
   std::string m_Address{};
 };
 
+//! @overload
 template <typename Value>
 inline Value ToJSON(const Address& addr) {
   return ToJSON<Value>(addr.toString());
 }
 
-bool Deserialize(ReadStream& stream,
-                 Address& out,
-                 ValidationState& state);
+//! @overload
+bool Deserialize(ReadStream& stream, Address& out, ValidationState& state);
 
 }  // namespace altintegration
 

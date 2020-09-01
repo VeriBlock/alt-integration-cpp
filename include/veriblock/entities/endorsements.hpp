@@ -9,6 +9,9 @@
 #include "veriblock/entities/endorsement.hpp"
 #include "veriblock/fmt.hpp"
 
+
+//! @cond Doxygen_Suppress
+
 namespace altintegration {
 
 struct VTB;
@@ -56,23 +59,24 @@ inline std::string AltEndorsement::toPrettyString(size_t level) const {
 
 }  // namespace altintegration
 
-namespace std {
+//! @private
 template <>
-struct hash<altintegration::VbkEndorsement> {
+struct std::hash<altintegration::VbkEndorsement> {
   size_t operator()(const altintegration::VbkEndorsement& e) const {
     using eid = altintegration::VbkEndorsement::id_t;
     return std::hash<eid>{}(e.id);
   }
 };
 
+//! @private
 template <>
-struct hash<altintegration::AltEndorsement> {
+struct std::hash<altintegration::AltEndorsement> {
   size_t operator()(const altintegration::AltEndorsement& e) const {
     using eid = altintegration::AltEndorsement::id_t;
     return std::hash<eid>{}(e.id);
   }
 };
 
-}  // namespace std
+//! @endcond
 
 #endif  // ALTINTEGRATION_ENDORSEMENTS_HPP
