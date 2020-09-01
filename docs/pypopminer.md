@@ -41,7 +41,7 @@ make -j
 
 ### 3. Run functional tests
 
-```bash
+```sh
 cd test/functional
 # run all tests
 ./test_runner.py
@@ -67,7 +67,7 @@ drwxr-xr-x  5 bogdan bogdan  120 лип 22 23:17 node1
 drwxr-xr-x  5 bogdan bogdan  120 лип 22 23:17 node2
 drwxr-xr-x  5 bogdan bogdan  120 лип 22 23:17 node3
 -rw-r--r--  1 bogdan bogdan 4298 лип 22 23:18 test_framework.log
-# then, you can see all datadirs of each node from the test, including its `debug.log` and `vbitcoin.conf`
+# then, you can see all datadirs of each node from the test, including its debug.log and vbitcoin.conf
 ```
 
 ### 4. Write functional tests
