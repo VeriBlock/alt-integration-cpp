@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/blockchain/temp_block_tree.hpp"
 
 namespace altintegration {
 
@@ -35,8 +36,12 @@ struct VbkPayloadsRelations {
 };
 
 struct MemPoolBlockTree {
-  MemPoolBlockTree(const AltBlockTree& tree) : tree_(tree) { (void)tree_; }
-  MemPoolBlockTree(const MemPoolBlockTree& tree) : tree_(tree.tree_) {}
+  MemPoolBlockTree(const AltBlockTree& tree)
+      : tree_(tree), temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()) {
+    (void)tree_;
+    (void)temp_vbk_tree_;
+    (void)temp_btc_tree_;
+  }
 
   /**
    * Compares ATVs for the strongly equivalence
@@ -80,6 +85,8 @@ struct MemPoolBlockTree {
   int weaklyCompare(const VTB& vtb1, const VTB& vtb2);
 
  private:
+  TempBlockTree<VbkBlockTree> temp_vbk_tree_;
+  TempBlockTree<BtcBlockTree> temp_btc_tree_;
   const AltBlockTree& tree_;
 };
 
