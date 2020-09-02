@@ -218,14 +218,12 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
                  "state corruption: block %s is applied",
                  index.toPrettyString());
 
-  if (getParams().isStrictAddPayloadsOrderingEnabled()) {
-    VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CONNECTED),
-                   "the previous block of block %s must be connected",
-                   index.toPrettyString());
-    VBK_ASSERT_MSG(index.allDescendantsUnconnected(),
-                   "a descendant of block %s is connected",
-                   index.toPrettyString());
-  }
+  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CONNECTED),
+                 "the previous block of block %s must be connected",
+                 index.toPrettyString());
+  VBK_ASSERT_MSG(index.allDescendantsUnconnected(),
+                 "a descendant of block %s is connected",
+                 index.toPrettyString());
 
   // partial stateful validation
   // FIXME: eventually we want to perform full stateful validation here,
@@ -265,22 +263,10 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 bool AltBlockTree::addPayloads(index_t& index,
                                PopData& payloads,
                                ValidationState& state) {
-  if (getParams().isStrictAddPayloadsOrderingEnabled()) {
-    // atomicity: ensure we can not just add payloads but connect the block
-    VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CONNECTED),
-                   "the previous block of block %s must be connected",
-                   index.toPrettyString());
-  } else {
-    // when StrictAddPayloadsOrdering is disabled, we allow to AddPayloads in
-    // random parts of chain, so protect ourselves from adding payloads to
-    // applied chain here
-    bool isOnActiveChain = activeChain_.contains(&index);
-    if (isOnActiveChain) {
-      ValidationState dummy;
-      bool success = setState(*index.pprev, dummy);
-      VBK_ASSERT(success);
-    }
-  }
+  // atomicity: ensure we can not just add payloads but connect the block
+  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CONNECTED),
+                 "the previous block of block %s must be connected",
+                 index.toPrettyString());
 
   // NOTE: we should be able to add payloads to an invalid block
   // this check is for backwards-compatibility only
@@ -335,14 +321,12 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
                  "AltTree is at unexpected state: Tip=%s ExpectedTip=%s",
                  activeChain_.tip()->toPrettyString(),
                  index->toPrettyString());
-  if (getParams().isStrictAddPayloadsOrderingEnabled()) {
-    VBK_ASSERT_MSG(index->hasFlags(BLOCK_CONNECTED),
-                   "Block %s is not connected",
-                   index->toPrettyString());
-    VBK_ASSERT_MSG(index->hasFlags(BLOCK_HAS_PAYLOADS),
-                   "state corruption: Block %s has no payloads",
-                   index->toPrettyString());
-  }
+  VBK_ASSERT_MSG(index->hasFlags(BLOCK_CONNECTED),
+                 "Block %s is not connected",
+                 index->toPrettyString());
+  VBK_ASSERT_MSG(index->hasFlags(BLOCK_HAS_PAYLOADS),
+                 "state corruption: Block %s has no payloads",
+                 index->toPrettyString());
 
   auto* endorsedBlock = index->getAncestorBlocksBehind(
       alt_config_->getEndorsementSettlementInterval());
@@ -401,14 +385,12 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
 
-  if (getParams().isStrictAddPayloadsOrderingEnabled()) {
-    VBK_ASSERT_MSG(left->hasFlags(BLOCK_CONNECTED), "A is not connected");
-    VBK_ASSERT_MSG(left->hasFlags(BLOCK_HAS_PAYLOADS),
-                   "state corruption: A has no payloads");
-    VBK_ASSERT_MSG(right->hasFlags(BLOCK_CONNECTED), "B is not connected");
-    VBK_ASSERT_MSG(right->hasFlags(BLOCK_HAS_PAYLOADS),
-                   "state corruption: B has no payloads");
-  }
+  VBK_ASSERT_MSG(left->hasFlags(BLOCK_CONNECTED), "A is not connected");
+  VBK_ASSERT_MSG(left->hasFlags(BLOCK_HAS_PAYLOADS),
+                 "state corruption: A has no payloads");
+  VBK_ASSERT_MSG(right->hasFlags(BLOCK_CONNECTED), "B is not connected");
+  VBK_ASSERT_MSG(right->hasFlags(BLOCK_HAS_PAYLOADS),
+                 "state corruption: B has no payloads");
 
   ValidationState state;
   // compare current active chain to other chain
@@ -557,15 +539,13 @@ bool AltBlockTree::addPayloads(const hash_t& block,
 }
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
-  if (getParams().isStrictAddPayloadsOrderingEnabled()) {
-    VBK_ASSERT_MSG(to.hasFlags(BLOCK_CONNECTED),
-                   "setState(%s) is called, but block has no BLOCK_CONNECTED",
-                   to.toPrettyString());
-    VBK_ASSERT_MSG(to.hasFlags(BLOCK_HAS_PAYLOADS),
-                   "state corruption: setState(%s) is called, but block has no "
-                   "BLOCK_HAS_PAYLOADS",
-                   to.toPrettyString());
-  }
+  VBK_ASSERT_MSG(to.hasFlags(BLOCK_CONNECTED),
+                 "setState(%s) is called, but block has no BLOCK_CONNECTED",
+                 to.toPrettyString());
+  VBK_ASSERT_MSG(to.hasFlags(BLOCK_HAS_PAYLOADS),
+                 "state corruption: setState(%s) is called, but block has no "
+                 "BLOCK_HAS_PAYLOADS",
+                 to.toPrettyString());
 
   bool success = cmp_.setState(*this, to, state);
   if (success) {

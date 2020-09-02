@@ -152,11 +152,6 @@ struct AltChainParams {
   //! maximum size of single PopData in a single ALT block, in bytes
   uint32_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
-  //! @deprecated
-  bool isStrictAddPayloadsOrderingEnabled() const noexcept {
-    return mStrictAddPayloadsOrderingEnabled;
-  }
-
   //! getter for reward parameters
   const PopRewardsParams& getRewardParams() const noexcept {
     return mPopRewardsParams;
@@ -184,9 +179,6 @@ struct AltChainParams {
  protected:
   PopRewardsParams mPopRewardsParams;
 
-  // should be disabled in tests
-  // should be enabled in prod
-  bool mStrictAddPayloadsOrderingEnabled = false;
   uint32_t mMaxFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
