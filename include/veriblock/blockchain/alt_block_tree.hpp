@@ -94,6 +94,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    *
    * @invariant can be executed on blocks in random order
    * @invariant must not be executed twice on the same block
+   * @invariant must not be executed on bootstrap block
    * @invariant PopData must be statelessly validated before passing it here
    *
    * @param[in] block hash of block where to add the block body
