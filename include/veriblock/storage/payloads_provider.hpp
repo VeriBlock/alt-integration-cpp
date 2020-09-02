@@ -18,7 +18,7 @@
 
 namespace altintegration {
 
-struct AltTree;
+struct AltBlockTree;
 struct VbkBlockTree;
 
 /**
@@ -27,7 +27,7 @@ struct VbkBlockTree;
  * An abstraction over on-disk storage.
  *
  * veriblock-pop-cpp does not dictate how to store payloads on-disk. Altchains
- * must create derived class and provide it to AltTree, so that it can fetch
+ * must create derived class and provide it to AltBlockTree, so that it can fetch
  * payloads from disk during state changes.
  *
  * @ingroup interfaces
@@ -56,7 +56,7 @@ struct PayloadsProvider {
    * @param[out] state if commands can't be loaded, will be set to Error
    * @return true if loaded successfully, false otherwise
    */
-  virtual bool getCommands(AltTree& tree,
+  virtual bool getCommands(AltBlockTree& tree,
                            const BlockIndex<AltBlock>& block,
                            std::vector<CommandGroup>& out,
                            ValidationState& state);

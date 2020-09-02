@@ -7,7 +7,7 @@
 
 namespace altintegration {
 
-void SaveAllTrees(AltTree& tree, BlockBatchAdaptor& batch) {
+void SaveAllTrees(AltBlockTree& tree, BlockBatchAdaptor& batch) {
   SaveTree(tree.btc(), batch);
   SaveTree(tree.vbk(), batch);
   SaveTree(tree, batch);

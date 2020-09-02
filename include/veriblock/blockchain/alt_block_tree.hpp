@@ -36,79 +36,14 @@ extern template struct BaseBlockTree<AltBlock>;
 
 // clang-format off
 /**
- * @struct AltTree
- *
- * Represents simplified view on Altchain's block tree, maintains VBK tree and
- * BTC tree. VBK blocks and BTC blocks are added through Payloads (VTB,
- * VbkBlock).
- *
- * Helps Altchain to compare Altchain blocks by POP score (adding Endorsements
- * in VBK chain increases POP score) in POP Fork Resolution and to calculate POP
- * Rewards - payout to POP miners.
- *
- * Usage example:
- *
- * ```C++
- * // use mainnet for all chains, for instance
- * AltChainParamsMain altp;
- * VbkChainParamsMain vbkp;
- * BtcChainParamsMain btcp;
- * // your implementation of PayloadsProvider
- * PayloadsProviderImpl provider;
- * AltTree tree(altp, vbkp, btcp, provider);
- *
- * ValidationState state;
- *
- * // we received header, add it to the tree
- * if(!tree.acceptBlockHeader(block, state)) {
- *   // state will contain info about reasons why this header is invalid
- *   return false;
- * }
- *
- * // we received "block body", in our case it is PopData
- * tree.acceptBlock(block.getHash(), popData);
- * // note: acceptBlock does not return bool - it does not validate block body,
- * // because in general it can not be done efficiently
- *
- * // if block is next to our previous tip, to validate it we use setState()
- * if(tree.setState(block.getHash(), state)) {
- *   // block or intermediate blocks have incorrect POP payloads
- *   return false;
- * }
- *
- * // if block is on a fork, do POP ForkResolution
- * auto* tip = tree.getBestChain().tip();
- *
- * // we ALWAYS compare current tip, and any other block. during this comparison
- * // we efficiently connect candidate chain to current tree and compare their endorsements.
- * int result = tree.comparePopScore(tip->getHash(), block.getHash());
- * // note: after comparison, POP state ALWAYS corresponds to winner chain.
- * if(result < 0) {
- *   // `block` is better than current tip
- * } else if(result == 0) {
- *   // fallback to chain-native ForkResolution. For Bitcoin - compare by chainwork.
- * } else {
- *   // current chain is better
- * }
- *
- * // you can also get POP Payout for next block
- * // key=values from PublicationData::payoutInfo
- * // value=relative score to be paid for this miner
- * std::map<std::vector<uint8_t>, int64_t> payouts = tree.getPopPayout(tip->getHash());
- * ```
- *
- * @invariant Current active chain of AltTree always corresponds to an empty
- * tree with applied blocks 1-by-1 from first bootstrap block to current tip.
- *
- * @see PayloadsProvider
- * @see AltChainParams
- * @see VbkChainParams
- * @see BtcChainParams
+ * @struct AltBlockTree
+ * @brief Represents simplified view on Altchain's block tree, maintains VBK tree and BTC tree.
+ * @copydoc altblocktree
  *
  * @ingroup api
  */
 // clang-format on
-struct AltTree : public BaseBlockTree<AltBlock> {
+struct AltBlockTree : public BaseBlockTree<AltBlock> {
   using base = BaseBlockTree<AltBlock>;
   using alt_config_t = AltChainParams;
   using vbk_config_t = VbkChainParams;
@@ -121,19 +56,19 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
                                                              VbkBlockTree,
-                                                             AltTree>;
+                                                             AltBlockTree>;
 
-  virtual ~AltTree() = default;
+  virtual ~AltBlockTree() = default;
 
-  explicit AltTree(const alt_config_t& alt_config,
-                   const vbk_config_t& vbk_config,
-                   const btc_config_t& btc_config,
-                   PayloadsProvider& storagePayloads);
+  explicit AltBlockTree(const alt_config_t& alt_config,
+                        const vbk_config_t& vbk_config,
+                        const btc_config_t& btc_config,
+                        PayloadsProvider& storagePayloads);
 
   /**
    * Set very first (bootstrap) altchain block with enabled POP.
    *
-   * Call this method before any use of AltTree.
+   * Call this method before any use of AltBlockTree.
    *
    * @param[out] state validation state
    * @return true in success, false if block is invalid.
@@ -142,7 +77,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   bool bootstrap(ValidationState& state);
 
   /**
-   * Validate and add ALT block header to AltTree.
+   * Validate and add ALT block header to AltBlockTree.
    * @param[in] block ALT block header
    * @param[out] state validation state
    * @return true if block is valid, and added; false otherwise.
@@ -152,7 +87,7 @@ struct AltTree : public BaseBlockTree<AltBlock> {
 
   /**
    * Attach "block body" - PopData to block header, which already exists in
-   * AltTree.
+   * AltBlockTree.
    *
    * When block is connected (meaning that all of its ancestors are also
    * connected and have block body), it emits new signal onBlockConnected.
@@ -169,6 +104,14 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   void acceptBlock(const hash_t& block, const PopData& payloads);
   //! @overload
   void acceptBlock(index_t& index, const PopData& payloads);
+
+  /**
+   * Get all connected tips after given block.
+   * @param[in] index input block
+   * @return vector of blocks where every block is connected and after index.
+   * @ingroup api
+   */
+  std::vector<const index_t*> getConnectedTipsAfter(const index_t& index) const;
 
   //! a block has been handed over to the underlying tree and flagged as invalid
   signals::Signal<void(index_t& index, ValidationState&)>
@@ -202,8 +145,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
    * @param[in] index block
    * @param[out] state validation state
    * @return true if block is valid
-   * @invariant NOT atomic. If loadBlock failed, AltTree state is undefined and
-   * can not be used. Tip: ask user to run with '-reindex'.
+   * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is undefined
+   * and can not be used. Tip: ask user to run with '-reindex'.
    * @ingroup api
    */
   bool loadBlock(const index_t& index, ValidationState& state) override;
@@ -220,8 +163,8 @@ struct AltTree : public BaseBlockTree<AltBlock> {
   /**
    * Efficiently compares current tip (A) and any other block (B).
    *
-   * @param[in] A hash of current tip in AltTree. Fails on assert if current
-   * tip != A.
+   * @param[in] A hash of current tip in AltBlockTree. Fails on assert if
+   * current tip != A.
    * @param[in] B current tip will be compared against this block. Must
    * exist on chain and have BLOCK_HAS_PAYLOADS.
    * @warning POP Fork Resolution is NOT transitive, it can not be used to
@@ -235,6 +178,12 @@ struct AltTree : public BaseBlockTree<AltBlock> {
    * Returns negative if chain B is better.
    * Returns 0 if blocks are equal in terms of POP. Users should fallback to
    * chain-native Fork Resolution algorithm.
+   * @invariant this function can be called only on existing blocks
+   * @invariant this function can be called only on connected blocks, otherwise
+   * it dies on assert
+   * @invariant first argument must always be equal to current tip of AltBlockTree, otherwise dies on assert
+   * @invariant block B may have unknown validity. After comparison, we will find out if it is valid and can be used in AltBlockTree::setState()
+   * @invariant if block B wins, tree automatically switches to chain B (it becomes a tip)
    * @ingroup api
    */
   int comparePopScore(const AltBlock::hash_t& A, const AltBlock::hash_t& B);
@@ -246,14 +195,15 @@ struct AltTree : public BaseBlockTree<AltBlock> {
    * @return map with reward recipient as a key and reward amount as a value.
    * Map will contain combined reward for all endorsements sent by specific
    * miner.
-   * @invariant AltTree tip must correspond to tip provided in the argument.
+   * @invariant AltBlockTree tip must correspond to tip provided in the
+   * argument.
    * @warning Expensive operation.
    * @ingroup api
    */
   std::map<std::vector<uint8_t>, int64_t> getPopPayout(const hash_t& tip);
 
   /**
-   * Switch AltTree from current tip to different block, while doing all
+   * Switch AltBlockTree from current tip to different block, while doing all
    * validations of intermediate blocks.
    *
    * @param[in] to tree will be switched to this block
@@ -378,7 +328,7 @@ JsonValue ToJSON(const BlockIndex<AltBlock>& i) {
 }
 
 //! @private
-inline void PrintTo(const AltTree& tree, std::ostream* os) {
+inline void PrintTo(const AltBlockTree& tree, std::ostream* os) {
   *os << tree.toPrettyString();
 }
 

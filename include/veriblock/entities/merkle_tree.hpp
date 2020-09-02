@@ -28,9 +28,7 @@ struct MerkleTree {
     VBK_ASSERT(!layers.empty());
     auto& leafs = layers[0];
     auto it = std::find(leafs.begin(), leafs.end(), hash);
-    if (it == leafs.end()) {
-      throw std::invalid_argument("can not find transaction in merkle tree");
-    }
+    VBK_ASSERT_MSG(it != leafs.end(), "can not find transaction in merkle tree");
 
     if (leafs.size() == 1) {
       // no layers
@@ -116,14 +114,13 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree> {
 
     auto& normalMerkleRoot = layers.back()[0];
     auto cursor = txhash_t();
+    VBK_ASSERT_MSG(treeIndex >= 0 && treeIndex <= 1, "tree index can be either 0 or 1");
     if (treeIndex == 0) {
       // POP TXes: zeroes are on the left subtree
       cursor = hash(normalMerkleRoot, cursor);
     } else if (treeIndex == 1) {
       // NORMAL TXes: zeroes are on the right subtree
       cursor = hash(cursor, normalMerkleRoot);
-    } else {
-      throw std::invalid_argument("treeIndex can be either 0 or 1");
     }
 
     // add metapackage hash (also all zeroes) to the left subtree

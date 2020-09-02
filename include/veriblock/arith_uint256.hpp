@@ -39,9 +39,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
   // regular bytes should not be reversed
   template <size_t N>
   ArithUint256(const Blob<N>& b) {
-    if (b.size() > SHA256_HASH_SIZE) {
-      throw uint_error("size of the Blob<N> more than SHA256_HASH_SIZE");
-    }
+    VBK_ASSERT(b.size() <= SHA256_HASH_SIZE);
     assign(b);
   }
 

@@ -45,9 +45,10 @@ struct MemPool {
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
   using relations_map_t = payload_map<VbkPayloadsRelations>;
+  //! @}
 
   ~MemPool() = default;
-  MemPool(AltTree& tree) : tree_(&tree) {}
+  MemPool(AltBlockTree& tree) : tree_(&tree) {}
 
   //! getter for payloads stored in mempool
   //! @ingroup api
@@ -115,7 +116,7 @@ struct MemPool {
    * (POW) Miners should execute this to get POP content for "next block".
    *
    * @warning Expensive operation. It builds virtual VBK Block Tree with
-   * payloads stored in mempool, applies them to current AltTree tip. All
+   * payloads stored in mempool, applies them to current AltBlockTree tip. All
    * payloads that can not be connected will remain in mempool. As a result,
    * this method returns PopData which contains fully valid and connected
    * payloads. This should be inserted into AltBlock as is.
@@ -161,7 +162,7 @@ struct MemPool {
   signals::Signal<void(const VbkBlock& atv)> on_vbkblock_accepted;
 
  private:
-  AltTree* tree_;
+  AltBlockTree* tree_;
   // relations between VBK block and payloads
   relations_map_t relations_;
   vbkblock_map_t vbkblocks_;
@@ -184,17 +185,29 @@ struct MemPool {
 
 // clang-format off
 
+//! @overload
 template <> bool MemPool::submit(const ATV& atv, ValidationState& state, bool shouldDoContextualCheck);
+//! @overload
 template <> bool MemPool::submit(const VTB& vtb, ValidationState& state, bool shouldDoContextualCheck);
+//! @overload
 template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state, bool shouldDoContextualCheck);
+//! @overload
 template <> bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state);
+//! @overload
 template <> bool MemPool::checkContextually<ATV>(const ATV& id, ValidationState& state);
+//! @overload
 template <> bool MemPool::checkContextually<VbkBlock>(const VbkBlock& id, ValidationState& state);
+//! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
+//! @overload
 template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
+//! @overload
 template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
+//! @overload
 template <> signals::Signal<void(const ATV&)>& MemPool::getSignal();
+//! @overload
 template <> signals::Signal<void(const VTB&)>& MemPool::getSignal();
+//! @overload
 template <> signals::Signal<void(const VbkBlock&)>& MemPool::getSignal();
 // clang-format on
 

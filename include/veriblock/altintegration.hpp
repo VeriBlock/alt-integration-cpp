@@ -36,7 +36,7 @@ struct Altintegration {
     auto service = std::make_shared<Altintegration>();
     service->config = std::move(config);
     service->payloadsProvider = std::move(db);
-    service->altTree = std::make_shared<AltTree>(*service->config->alt,
+    service->altTree = std::make_shared<AltBlockTree>(*service->config->alt,
                                                  *service->config->vbk.params,
                                                  *service->config->btc.params,
                                                  *service->payloadsProvider);
@@ -91,7 +91,7 @@ struct Altintegration {
 
   std::shared_ptr<Config> config;
   std::shared_ptr<MemPool> mempool;
-  std::shared_ptr<AltTree> altTree;
+  std::shared_ptr<AltBlockTree> altTree;
   std::shared_ptr<PayloadsProvider> payloadsProvider;
 };
 

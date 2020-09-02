@@ -76,11 +76,7 @@ void VbkBlockTree::removePayloads(const block_t& block,
 void VbkBlockTree::removePayloads(const hash_t& hash,
                                   const std::vector<pid_t>& pids) {
   auto index = VbkTree::getBlockIndex(hash);
-  if (!index) {
-    throw std::logic_error("removePayloads is called on unknown VBK block: " +
-                           hash.toHex());
-  }
-
+  VBK_ASSERT_MSG(index, "block %s must exist", HexStr(hash));
   return removePayloads(*index, pids);
 }
 
