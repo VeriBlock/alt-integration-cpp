@@ -35,7 +35,7 @@ struct VbkPayloadsRelations {
 };
 
 struct MemPoolBlockTree {
-  MemPoolBlockTree(const AltTree& tree) : tree_(tree) { (void)tree_; }
+  MemPoolBlockTree(const AltBlockTree& tree) : tree_(tree) { (void)tree_; }
   MemPoolBlockTree(const MemPoolBlockTree& tree) : tree_(tree.tree_) {}
 
   /**
@@ -80,7 +80,7 @@ struct MemPoolBlockTree {
   int weaklyCompare(const VTB& vtb1, const VTB& vtb2);
 
  private:
-  const AltTree& tree_;
+  const AltBlockTree& tree_;
 };
 
 }  // namespace altintegration

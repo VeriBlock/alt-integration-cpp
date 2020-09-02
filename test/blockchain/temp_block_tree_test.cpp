@@ -14,15 +14,15 @@ using namespace altintegration;
 using BtcBlockTree = typename VbkBlockTree::BtcTree;
 
 template <typename TreeType>
-const TreeType& getTree(const AltTree& tree);
+const TreeType& getTree(const AltBlockTree& tree);
 
 template <>
-const VbkBlockTree& getTree<VbkBlockTree>(const AltTree& tree) {
+const VbkBlockTree& getTree<VbkBlockTree>(const AltBlockTree& tree) {
   return tree.vbk();
 }
 
 template <>
-const BtcBlockTree& getTree<BtcBlockTree>(const AltTree& tree) {
+const BtcBlockTree& getTree<BtcBlockTree>(const AltBlockTree& tree) {
   return tree.btc();
 }
 
