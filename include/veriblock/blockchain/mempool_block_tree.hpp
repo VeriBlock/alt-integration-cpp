@@ -36,8 +36,10 @@ struct VbkPayloadsRelations {
 };
 
 struct MemPoolBlockTree {
+  using BtcBlockTree = typename VbkBlockTree::BtcTree;
+
   MemPoolBlockTree(const AltBlockTree& tree)
-      : tree_(tree), temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()) {
+      : temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()), tree_(tree) {
     (void)tree_;
     (void)temp_vbk_tree_;
     (void)temp_btc_tree_;
