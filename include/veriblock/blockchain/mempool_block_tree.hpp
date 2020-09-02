@@ -9,7 +9,6 @@
 #include <unordered_map>
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
-#include "veriblock/blockchain/block_index.hpp"
 
 namespace altintegration {
 

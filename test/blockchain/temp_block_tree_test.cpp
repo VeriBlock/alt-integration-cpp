@@ -40,21 +40,24 @@ std::shared_ptr<BtcBlock> mineBlock<BtcBlock>(MockMiner& mock_miner) {
 }
 
 template <typename block_t>
-std::shared_ptr<block_t> mineBlock(const BlockIndex<block_t>& tip,
+std::shared_ptr<block_t> mineBlock(const typename block_t::hash_t& hash,
                                    MockMiner& mock_miner);
 
 template <>
-std::shared_ptr<VbkBlock> mineBlock<VbkBlock>(const BlockIndex<VbkBlock>& tip,
-                                              MockMiner& mock_miner) {
+std::shared_ptr<VbkBlock> mineBlock<VbkBlock>(
+    const typename VbkBlock::hash_t& hash, MockMiner& mock_miner) {
+  auto* tip = mock_miner.vbk().getBlockIndex(hash);
+  VBK_ASSERT(tip != nullptr);
   return std::make_shared<VbkBlock>(
-      mock_miner.mineVbkBlocks(tip, 1)->getHeader());
+      mock_miner.mineVbkBlocks(*tip, 1)->getHeader());
 }
 
 template <>
-std::shared_ptr<BtcBlock> mineBlock<BtcBlock>(const BlockIndex<BtcBlock>& tip,
-                                              MockMiner& mock_miner) {
+std::shared_ptr<BtcBlock> mineBlock<BtcBlock>(
+    const typename BtcBlock::hash_t& hash, MockMiner& mock_miner) {
+  auto* tip = mock_miner.btc().getBlockIndex(hash);
   return std::make_shared<BtcBlock>(
-      mock_miner.mineBtcBlocks(tip, 1)->getHeader());
+      mock_miner.mineBtcBlocks(*tip, 1)->getHeader());
 }
 
 template <typename BlockTreeType>
@@ -114,7 +117,32 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_1) {
       nullptr);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(TempBlockTreeTest, scenario_1);
+TYPED_TEST_P(TempBlockTreeTest, scenario_2) {
+  using block_t = typename TypeParam::block_t;
+
+  // mine 5 blocks
+  std::shared_ptr<block_t> fork_point;
+  for (int i = 0; i < 5; ++i) {
+    fork_point = mineBlock<block_t>(*this->popminer);
+    EXPECT_TRUE(this->temp_block_tree.acceptBlock(fork_point, this->state));
+    EXPECT_NE(this->temp_block_tree.getBlockIndex(fork_point->getHash()),
+              nullptr);
+    EXPECT_EQ(this->temp_block_tree.getStableTree().getBlockIndex(
+                  fork_point->getHash()),
+              nullptr);
+  }
+
+  auto fork1 = mineBlock<block_t>(fork_point->getHash(), *this->popminer);
+  EXPECT_TRUE(this->temp_block_tree.acceptBlock(fork1, this->state));
+
+  auto fork2 = mineBlock<block_t>(fork_point->getHash(), *this->popminer);
+  EXPECT_TRUE(this->temp_block_tree.acceptBlock(fork2, this->state));
+
+  EXPECT_FALSE(areOnSameChain(*fork1, *fork2, this->temp_block_tree));
+  EXPECT_FALSE(areOnSameChain(*fork2, *fork1, this->temp_block_tree));
+}
+
+REGISTER_TYPED_TEST_SUITE_P(TempBlockTreeTest, scenario_1, scenario_2);
 
 // clang-format off
 typedef ::testing::Types<
