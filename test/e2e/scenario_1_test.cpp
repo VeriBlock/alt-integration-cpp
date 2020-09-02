@@ -122,7 +122,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     EXPECT_EQ(btcBtip->getHeight(), 57);
 
     altchain = {altparam.getBootstrapBlock()};
-    mineAltBlocks(100, altchain);
+    mineAltBlocks(100, altchain, false, false);
   }
 
   template <typename Block, typename ChainParams>
@@ -156,7 +156,7 @@ TEST_F(Scenario1, scenario_1) {
                  vtbsVBA71[0].containingBlock.getHash(),
                  popminer->vbk());
   altPayloadsVBA71.vtbs = {vtbsVBA71[0]};
-  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state)) << state.toString();
   ASSERT_TRUE(AddPayloads(containingBlock.getHash(), altPayloadsVBA71))
       << state.toString();
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))

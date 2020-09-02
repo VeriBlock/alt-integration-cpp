@@ -61,7 +61,7 @@ TEST_F(StandaloneValidation, standaloneValidation) {
   payloadsB.vtbs.erase(payloadsB.vtbs.begin());
 
   // mine the last block of chainA with payloads and activate it
-  mineAltBlocks(1, chainA);
+  mineAltBlocks(1, chainA, false, false);
   EXPECT_TRUE(AddPayloads(chainA.back().getHash(), payloadsA));
   EXPECT_TRUE(alttree.setState(chainA.back().getHash(), state));
   EXPECT_TRUE(state.IsValid());

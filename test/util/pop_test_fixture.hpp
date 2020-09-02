@@ -87,13 +87,41 @@ struct PopTestFixture {
     EXPECT_EQ(std::count_if(by.begin(), by.end(), _), 1);
   }
 
+  void ConnectBlocksUntil(AltBlockTree& tree, const AltBlock::hash_t& hash) {
+    auto* index = tree.getBlockIndex(hash);
+    VBK_ASSERT(index);
+    while (index && !index->hasFlags(BLOCK_CONNECTED)) {
+      index->setFlag(BLOCK_CONNECTED);
+      index->setFlag(BLOCK_HAS_PAYLOADS);
+      index = index->pprev;
+    }
+  }
+
+  bool SetState(AltBlockTree& tree,
+                const AltBlock::hash_t& hash,
+                bool connectBlocks = true) {
+    if (connectBlocks) {
+      ConnectBlocksUntil(tree, hash);
+    }
+    return tree.setState(hash, state);
+  }
+
   bool AddPayloads(const AltBlock::hash_t& hash, const PopData& pop) {
     return AddPayloads(alttree, hash, pop);
   }
 
-  bool AddPayloads(AltBlockTree& tree, const AltBlock::hash_t& hash, const PopData& pop) {
+  bool AddPayloads(AltBlockTree& tree,
+                   const AltBlock::hash_t& hash,
+                   const PopData& pop) {
     popminer->getPayloadsProvider().write(pop);
     payloadsProvider.write(pop);
+
+    auto index = tree.getBlockIndex(hash);
+    EXPECT_TRUE(index);
+
+    if(index->pprev) {
+      ConnectBlocksUntil(tree, index->pprev->getHash());
+    }
     return tree.addPayloads(hash, pop, state);
   }
 
@@ -108,7 +136,7 @@ struct PopTestFixture {
       return state.Invalid("addPayloadsTemporarily");
     }
 
-    if (!alttree.setState(*index, state)) {
+    if (!SetState(alttree, index->getHash())) {
       EXPECT_NO_FATAL_FAILURE(alttree.removePayloads(block_hash));
       return state.Invalid("addPayloadsTemporarily");
     }
@@ -128,7 +156,7 @@ struct PopTestFixture {
         alttree.acceptBlock(next.getHash(), {});
       }
       if (setState) {
-        EXPECT_TRUE(alttree.setState(next.getHash(), state));
+        EXPECT_TRUE(SetState(alttree, next.getHash()));
       }
       index = alttree.getBlockIndex(next.getHash());
     }
@@ -150,7 +178,7 @@ struct PopTestFixture {
         alttree.acceptBlock(chain.back().getHash(), {});
       }
       if (setState) {
-        ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+        ASSERT_TRUE(SetState(alttree, chain.rbegin()->getHash()));
       }
       ASSERT_TRUE(state.IsValid());
     }
@@ -297,7 +325,7 @@ struct PopTestFixture {
       EXPECT_TRUE(AddPayloads(nextBlock.getHash(), popdata));
       auto* next = alttree.getBlockIndex(nextBlock.getHash());
       VBK_ASSERT(next);
-      EXPECT_TRUE(alttree.setState(*next, state));
+      EXPECT_TRUE(SetState(alttree, next->getHash()));
       altTip = next;
     }
   }
