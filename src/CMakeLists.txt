@@ -26,6 +26,7 @@ set(SOURCES
         arith_uint256.cpp
         signutil.cpp
         mempool.cpp
+        mempool_relations.cpp
         mock_miner.cpp
         config.cpp
         command_group_cache.cpp

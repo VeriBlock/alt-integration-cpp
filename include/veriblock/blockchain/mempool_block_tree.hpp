@@ -10,40 +10,26 @@
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/temp_block_tree.hpp"
+#include "veriblock/mempool_relations.hpp"
 
 namespace altintegration {
-
-struct VbkPayloadsRelations {
-  using id_t = VbkBlock::id_t;
-  using height_t = typename VbkBlock::height_t;
-
-  VbkPayloadsRelations(const VbkBlock& b)
-      : header(std::make_shared<VbkBlock>(b)) {}
-
-  VbkPayloadsRelations(const std::shared_ptr<VbkBlock>& ptr_b)
-      : header(ptr_b) {}
-
-  std::shared_ptr<VbkBlock> header;
-  std::vector<std::shared_ptr<VTB>> vtbs;
-  std::vector<std::shared_ptr<ATV>> atvs;
-
-  PopData toPopData() const;
-
-  bool empty() const { return atvs.empty() && vtbs.empty(); }
-
-  void removeVTB(const VTB::id_t& vtb_id);
-  void removeATV(const ATV::id_t& atv_id);
-};
 
 struct MemPoolBlockTree {
   using BtcBlockTree = typename VbkBlockTree::BtcTree;
 
-  MemPoolBlockTree(const AltBlockTree& tree)
+  MemPoolBlockTree(AltBlockTree& tree)
       : temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()), tree_(tree) {
     (void)tree_;
     (void)temp_vbk_tree_;
     (void)temp_btc_tree_;
   }
+
+  bool acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
+                      ValidationState& state);
+
+  bool acceptVTB(const VTB& vtb, ValidationState& state);
+
+  bool acceptATV(const ATV& atv, ValidationState& state);
 
   /**
    * Compares ATVs for the strongly equivalence
@@ -89,7 +75,7 @@ struct MemPoolBlockTree {
  private:
   TempBlockTree<VbkBlockTree> temp_vbk_tree_;
   TempBlockTree<BtcBlockTree> temp_btc_tree_;
-  const AltBlockTree& tree_;
+  AltBlockTree& tree_;
 };
 
 }  // namespace altintegration

@@ -48,7 +48,7 @@ struct MemPool {
   //! @}
 
   ~MemPool() = default;
-  MemPool(AltBlockTree& tree) : tree_(&tree) {}
+  MemPool(AltBlockTree& tree) : mempool_tree_(tree), tree_(&tree) {}
 
   //! getter for payloads stored in mempool
   //! @ingroup api
@@ -162,6 +162,7 @@ struct MemPool {
   signals::Signal<void(const VbkBlock& atv)> on_vbkblock_accepted;
 
  private:
+  MemPoolBlockTree mempool_tree_;
   AltBlockTree* tree_;
   // relations between VBK block and payloads
   relations_map_t relations_;
@@ -169,8 +170,8 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
-                                      VbkBlock::id_t id = VbkBlock::id_t());
+  VbkPayloadsRelations& touchVbkPayloadRelation(
+      const std::shared_ptr<VbkBlock>& block);
 
   template <typename Pop>
   signals::Signal<void(const Pop&)>& getSignal() {
@@ -178,9 +179,6 @@ struct MemPool {
   }
 
   void vacuum(const PopData& pop);
-
-  template <typename Pop>
-  bool checkContextually(const Pop& payload, ValidationState& state);
 };
 
 // clang-format off
@@ -191,12 +189,6 @@ template <> bool MemPool::submit(const ATV& atv, ValidationState& state, bool sh
 template <> bool MemPool::submit(const VTB& vtb, ValidationState& state, bool shouldDoContextualCheck);
 //! @overload
 template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state, bool shouldDoContextualCheck);
-//! @overload
-template <> bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state);
-//! @overload
-template <> bool MemPool::checkContextually<ATV>(const ATV& id, ValidationState& state);
-//! @overload
-template <> bool MemPool::checkContextually<VbkBlock>(const VbkBlock& id, ValidationState& state);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload

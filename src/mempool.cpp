@@ -43,9 +43,8 @@ size_t cutPopData(PopData& popData, size_t current_size) {
 }
 
 PopData generatePopData(
-    const std::vector<
-        std::pair<VbkBlock::id_t,
-                  std::shared_ptr<VbkPayloadsRelations>>>& blocks,
+    const std::vector<std::pair<VbkBlock::id_t,
+                                std::shared_ptr<VbkPayloadsRelations>>>& blocks,
     const AltChainParams& params) {
   PopData ret;
   // size in bytes of pop data added to
@@ -185,22 +184,18 @@ void MemPool::vacuum(const PopData& pop) {
 
 void MemPool::removeAll(const PopData& pop) { vacuum(pop); }
 
-VbkPayloadsRelations& MemPool::touchVbkBlock(const VbkBlock& block,
-                                                      VbkBlock::id_t block_id) {
-  if (block_id == VbkBlock::id_t()) {
-    block_id = block.getId();
-  }
+VbkPayloadsRelations& MemPool::touchVbkPayloadRelation(
+    const std::shared_ptr<VbkBlock>& block_ptr) {
+  auto block_id = block_ptr->getId();
 
-  std::shared_ptr<VbkBlock> vbk_block = std::make_shared<VbkBlock>(block);
-
-  vbkblocks_[block_id] = vbk_block;
+  vbkblocks_[block_id] = block_ptr;
 
   auto& val = relations_[block_id];
   if (val == nullptr) {
-    val = std::make_shared<VbkPayloadsRelations>(vbk_block);
+    val = std::make_shared<VbkPayloadsRelations>(block_ptr);
   }
 
-  on_vbkblock_accepted.emit(block);
+  on_vbkblock_accepted.emit(*block_ptr);
 
   return *val;
 }
@@ -248,11 +243,12 @@ bool MemPool::submit(const ATV& atv,
   }
 
   // stateful validation
-  if (shouldDoContextualCheck && !checkContextually(atv, state)) {
+  if (shouldDoContextualCheck && !mempool_tree_.acceptATV(atv, state)) {
     return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
-  auto& rel = touchVbkBlock(atv.blockOfProof);
+  auto& rel =
+      touchVbkPayloadRelation(std::make_shared<VbkBlock>(atv.blockOfProof));
   auto atvptr = std::make_shared<ATV>(atv);
   auto pair = std::make_pair(atv.getId(), atvptr);
   rel.atvs.push_back(atvptr);
@@ -276,11 +272,12 @@ bool MemPool::submit(const VTB& vtb,
   }
 
   // stateful validation
-  if (shouldDoContextualCheck && !checkContextually(vtb, state)) {
+  if (shouldDoContextualCheck && !mempool_tree_.acceptVTB(vtb, state)) {
     return state.Invalid("pop-mempool-submit-vtb-stateful");
   }
 
-  auto& rel = touchVbkBlock(vtb.containingBlock);
+  auto& rel =
+      touchVbkPayloadRelation(std::make_shared<VbkBlock>(vtb.containingBlock));
   auto vtbptr = std::make_shared<VTB>(vtb);
   auto pair = std::make_pair(vtb.getId(), vtbptr);
   rel.vtbs.push_back(vtbptr);
@@ -301,14 +298,17 @@ bool MemPool::submit(const VbkBlock& blk,
     return state.Invalid("pop-mempool-submit-vbkblock-stateless");
   }
 
-  if (shouldDoContextualCheck && !checkContextually(blk, state)) {
+  std::shared_ptr<VbkBlock> blk_ptr = std::make_shared<VbkBlock>(blk);
+
+  if (shouldDoContextualCheck &&
+      !mempool_tree_.acceptVbkBlock(blk_ptr, state)) {
     return state.Invalid("pop-mempool-submit-vbk-stateful");
   }
 
   // stateful validation
   if (!shouldDoContextualCheck || !tree_->vbk().getBlockIndex(blk.getHash())) {
     // duplicate
-    touchVbkBlock(blk, blk.getId());
+    touchVbkPayloadRelation(std::make_shared<VbkBlock>(blk));
   }
 
   return true;
@@ -342,84 +342,6 @@ signals::Signal<void(const VTB&)>& MemPool::getSignal() {
 template <>
 signals::Signal<void(const VbkBlock&)>& MemPool::getSignal() {
   return on_vbkblock_accepted;
-}
-
-template <>
-bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state) {
-  auto& vbk = tree_->vbk();
-  auto* containing = vbk.getBlockIndex(vtb.containingBlock.getHash());
-  int32_t window = vbk.getParams().getEndorsementSettlementInterval();
-  auto duplicate = findBlockContainingEndorsement(
-      vbk.getBestChain(),
-      // if containing exists on chain, then search for duplicates starting from
-      // containing, else search starting from tip
-      (containing ? containing : vbk.getBestChain().tip()),
-      vtb.getId(),
-      window);
-  if (duplicate) {
-    return state.Invalid(
-        "vtb-duplicate",
-        fmt::sprintf("VTB=%s already added to active chain in block %s",
-                     vtb.getId().toHex(),
-                     duplicate->toShortPrettyString()));
-  }
-
-  if (vtb.containingBlock.height - vtb.transaction.publishedBlock.height >
-      window) {
-    return state.Invalid(
-        "vtb-expired",
-        fmt::sprintf("VTB=%s expired %s",
-                     vtb.getId().toHex(),
-                     vtb.transaction.publishedBlock.toPrettyString()));
-  }
-
-  return true;
-}
-
-template <>
-bool MemPool::checkContextually<ATV>(const ATV& atv, ValidationState& state) {
-  // stateful validation
-  int32_t window = tree_->getParams().getEndorsementSettlementInterval();
-  auto duplicate = findBlockContainingEndorsement(
-      tree_->getBestChain(), tree_->getBestChain().tip(), atv.getId(), window);
-  if (duplicate) {
-    return state.Invalid(
-        "atv-duplicate",
-        fmt::sprintf("ATV=%s already added to active chain in block %s",
-                     atv.getId().toHex(),
-                     duplicate->toShortPrettyString()));
-  }
-
-  auto endorsed_hash =
-      tree_->getParams().getHash(atv.transaction.publicationData.header);
-  auto* endorsed_index = tree_->getBlockIndex(endorsed_hash);
-  if (endorsed_index != nullptr) {
-    auto* tip = tree_->getBestChain().tip();
-    assert(tip != nullptr && "block tree is not bootstrapped");
-
-    if (tip && (tip->getHeight() - endorsed_index->getHeight() + 1 > window)) {
-      return state.Invalid("atv-expired",
-                           fmt::sprintf("ATV=%s expired %s",
-                                        atv.getId().toHex(),
-                                        endorsed_index->toShortPrettyString()));
-    }
-  }
-
-  return true;
-}
-
-template <>
-bool MemPool::checkContextually<VbkBlock>(const VbkBlock& blk,
-                                          ValidationState& state) {
-  if (tree_->vbk().getBlockIndex(blk.previousBlock) == nullptr &&
-      get<VbkBlock>(blk.previousBlock) == nullptr) {
-    return state.Invalid(
-        "bad-prev",
-        fmt::sprintf("Block=%s does not connect to known VBK tree",
-                     blk.toPrettyString()));
-  }
-
-  return true;
 }
 
 }  // namespace altintegration
