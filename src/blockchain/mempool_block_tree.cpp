@@ -7,7 +7,7 @@ namespace altintegration {
 
 bool MemPoolBlockTree::acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
                                       ValidationState& state) {
-  return this->temp_vbk_tree_.acceptBlock(blk, state);
+  return temp_vbk_tree_.acceptBlock(blk, state);
 }
 
 bool MemPoolBlockTree::checkContextually(const ATV& atv,
@@ -74,16 +74,47 @@ bool MemPoolBlockTree::checkContextually(const VTB& vtb,
   return true;
 }
 
-bool MemPoolBlockTree::acceptVTB(const VTB& vtb, ValidationState& state) {
+bool MemPoolBlockTree::acceptVTB(
+    const VTB& vtb,
+    const std::shared_ptr<VbkBlock>& containingBlock,
+    ValidationState& state) {
+  VBK_ASSERT_MSG(
+      containingBlock->getHash() == vtb.containingBlock.getHash(),
+      " containingBlock should be equal to the vtb containingBlock block");
+
   if (!checkContextually(vtb, state)) {
     return false;
+  }
+
+  if (!this->temp_vbk_tree_.acceptBlock(containingBlock, state)) {
+    return false;
+  }
+
+  if (!temp_btc_tree_.acceptBlock(vtb.transaction.blockOfProof, state)) {
+    return false;
+  }
+
+  for (const auto& blk : vtb.transaction.blockOfProofContext) {
+    if (!temp_btc_tree_.acceptBlock(blk, state)) {
+      return false;
+    }
   }
 
   return true;
 }
 
-bool MemPoolBlockTree::acceptATV(const ATV& atv, ValidationState& state) {
+bool MemPoolBlockTree::acceptATV(const ATV& atv,
+                                 const std::shared_ptr<VbkBlock>& blockOfProof,
+                                 ValidationState& state) {
+  VBK_ASSERT_MSG(
+      blockOfProof->getHash() == atv.blockOfProof.getHash(),
+      " containingBlock should be equal to the atv blockOfProof block");
+
   if (!checkContextually(atv, state)) {
+    return false;
+  }
+
+  if (!temp_vbk_tree_.acceptBlock(blockOfProof, state)) {
     return false;
   }
 

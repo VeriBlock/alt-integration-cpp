@@ -32,7 +32,7 @@ struct TempBlockTree {
                                     : it->second.get();
   }
 
-  bool accpetBlock(const block_t& header, ValidationState& state) {
+  bool acceptBlock(const block_t& header, ValidationState& state) {
     return acceptBlock(std::make_shared<block_t>(header), state);
   }
 

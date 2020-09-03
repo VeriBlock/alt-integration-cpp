@@ -245,13 +245,16 @@ bool MemPool::submit(const ATV& atv,
     return state.Invalid("pop-mempool-submit-atv-stateless");
   }
 
+  std::shared_ptr<VbkBlock> blockOfProof_ptr =
+      std::make_shared<VbkBlock>(atv.blockOfProof);
+
   // stateful validation
-  if (shouldDoContextualCheck && !mempool_tree_.acceptATV(atv, state)) {
+  if (shouldDoContextualCheck &&
+      !mempool_tree_.acceptATV(atv, blockOfProof_ptr, state)) {
     return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
-  auto& rel =
-      touchVbkPayloadRelation(std::make_shared<VbkBlock>(atv.blockOfProof));
+  auto& rel = touchVbkPayloadRelation(blockOfProof_ptr);
   auto atvptr = std::make_shared<ATV>(atv);
   auto pair = std::make_pair(atv.getId(), atvptr);
   rel.atvs.push_back(atvptr);
@@ -273,13 +276,16 @@ bool MemPool::submit(const VTB& vtb,
     return state.Invalid("pop-mempool-submit-vtb-stateless");
   }
 
+  std::shared_ptr<VbkBlock> containingBlock_ptr =
+      std::make_shared<VbkBlock>(vtb.containingBlock);
+
   // stateful validation
-  if (shouldDoContextualCheck && !mempool_tree_.acceptVTB(vtb, state)) {
+  if (shouldDoContextualCheck &&
+      !mempool_tree_.acceptVTB(vtb, containingBlock_ptr, state)) {
     return state.Invalid("pop-mempool-submit-vtb-stateful");
   }
 
-  auto& rel =
-      touchVbkPayloadRelation(std::make_shared<VbkBlock>(vtb.containingBlock));
+  auto& rel = touchVbkPayloadRelation(containingBlock_ptr);
   auto vtbptr = std::make_shared<VTB>(vtb);
   auto pair = std::make_pair(vtb.getId(), vtbptr);
   rel.vtbs.push_back(vtbptr);

@@ -27,13 +27,23 @@ struct MemPoolBlockTree {
   bool acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
                       ValidationState& state);
 
-  bool acceptVTB(const VTB& vtb, ValidationState& state);
+  bool acceptVTB(const VTB& vtb,
+                 const std::shared_ptr<VbkBlock>& containingBlock,
+                 ValidationState& state);
 
-  bool acceptATV(const ATV& atv, ValidationState& state);
+  bool acceptATV(const ATV& atv,
+                 const std::shared_ptr<VbkBlock>& blockOfProof,
+                 ValidationState& state);
 
   bool checkContextually(const ATV& atv, ValidationState& state);
 
   bool checkContextually(const VTB& vtb, ValidationState& state);
+
+  void removePayloads(const VbkBlock& blk);
+
+  void removePayloads(const VTB& vtb);
+
+  void removePayloads(const ATV& atv);
 
   /**
    * Compares ATVs for the strongly equivalence

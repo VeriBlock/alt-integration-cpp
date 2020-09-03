@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -12,6 +10,7 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
+#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -124,6 +123,8 @@ TEST_F(MemPoolFixture, removeAll_test1) {
   EXPECT_EQ(popData.context.size(), 0);
   EXPECT_EQ(popData.vtbs.size(), 0);
   EXPECT_EQ(popData.atvs.size(), 0);
+
+  EXPECT_FALSE(mempool->submit<VTB>(vtbs[1], state));
 }
 
 TEST_F(MemPoolFixture, removeAll_test2) {
@@ -465,7 +466,8 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
   }
 
   EXPECT_FALSE(mempool->submit<VbkBlock>(context.back(), state));
-  EXPECT_EQ(state.GetPath(), "pop-mempool-submit-vbk-stateful+VBK-bad-prev-block");
+  EXPECT_EQ(state.GetPath(),
+            "pop-mempool-submit-vbk-stateful+VBK-bad-prev-block");
 }
 
 TEST_F(MemPoolFixture, submit_deprecated_payloads) {
@@ -579,15 +581,16 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   fillVbkContext(
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
+  payloadsProvider.write(context);
+  for (const auto& b : context) {
+    ASSERT_TRUE(mempool->submit<VbkBlock>(b, state)) << state.toString();
+  }
+
   payloadsProvider.write(atv);
   ASSERT_TRUE(mempool->submit<ATV>(atv, state)) << state.toString();
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
     ASSERT_TRUE(mempool->submit<VTB>(vtb, state)) << state.toString();
-  }
-  payloadsProvider.write(context);
-  for (const auto& b : context) {
-    ASSERT_TRUE(mempool->submit<VbkBlock>(b, state)) << state.toString();
   }
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
   ASSERT_EQ(alttree.getBestChain().tip()->getHeight(), 10);
@@ -1163,12 +1166,13 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
     fillVbkContext(
         context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
-    payloadsProvider.write(atv);
-    EXPECT_TRUE(mempool->submit<ATV>(atv, state));
     payloadsProvider.write(context);
     for (const auto& b : context) {
       EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
     }
+
+    payloadsProvider.write(atv);
+    EXPECT_TRUE(mempool->submit<ATV>(atv, state));
   }
 
   ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
