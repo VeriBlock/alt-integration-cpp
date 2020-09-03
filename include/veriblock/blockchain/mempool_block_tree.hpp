@@ -18,7 +18,7 @@ struct MemPoolBlockTree {
   using BtcBlockTree = typename VbkBlockTree::BtcTree;
 
   MemPoolBlockTree(AltBlockTree& tree)
-      : temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()), tree_(tree) {
+      : temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()), tree_(&tree) {
     (void)tree_;
     (void)temp_vbk_tree_;
     (void)temp_btc_tree_;
@@ -30,6 +30,10 @@ struct MemPoolBlockTree {
   bool acceptVTB(const VTB& vtb, ValidationState& state);
 
   bool acceptATV(const ATV& atv, ValidationState& state);
+
+  bool checkContextually(const ATV& atv, ValidationState& state);
+
+  bool checkContextually(const VTB& vtb, ValidationState& state);
 
   /**
    * Compares ATVs for the strongly equivalence
@@ -72,10 +76,27 @@ struct MemPoolBlockTree {
    */
   int weaklyCompare(const VTB& vtb1, const VTB& vtb2);
 
+  TempBlockTree<VbkBlockTree>& vbk() { return temp_vbk_tree_; }
+
+  const TempBlockTree<VbkBlockTree>& vbk() const { return temp_vbk_tree_; }
+
+  TempBlockTree<BtcBlockTree>& btc() { return temp_btc_tree_; }
+
+  const TempBlockTree<BtcBlockTree>& btc() const { return temp_btc_tree_; }
+
+  AltBlockTree& alt() { return *tree_; }
+
+  const AltBlockTree& alt() const { return *tree_; }
+
+  void clear() {
+    temp_btc_tree_.clear();
+    temp_vbk_tree_.clear();
+  }
+
  private:
   TempBlockTree<VbkBlockTree> temp_vbk_tree_;
   TempBlockTree<BtcBlockTree> temp_btc_tree_;
-  AltBlockTree& tree_;
+  AltBlockTree* tree_;
 };
 
 }  // namespace altintegration

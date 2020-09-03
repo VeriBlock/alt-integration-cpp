@@ -10,7 +10,40 @@ bool MemPoolBlockTree::acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
   return this->temp_vbk_tree_.acceptBlock(blk, state);
 }
 
-bool MemPoolBlockTree::acceptVTB(const VTB& vtb, ValidationState& state) {
+bool MemPoolBlockTree::checkContextually(const ATV& atv,
+                                         ValidationState& state) {
+  // stateful validation
+  int32_t window = tree_->getParams().getEndorsementSettlementInterval();
+  auto duplicate = findBlockContainingEndorsement(
+      tree_->getBestChain(), tree_->getBestChain().tip(), atv.getId(), window);
+  if (duplicate) {
+    return state.Invalid(
+        "atv-duplicate",
+        fmt::sprintf("ATV=%s already added to active chain in block %s",
+                     atv.getId().toHex(),
+                     duplicate->toShortPrettyString()));
+  }
+
+  auto endorsed_hash =
+      tree_->getParams().getHash(atv.transaction.publicationData.header);
+  auto* endorsed_index = tree_->getBlockIndex(endorsed_hash);
+  if (endorsed_index != nullptr) {
+    auto* tip = tree_->getBestChain().tip();
+    assert(tip != nullptr && "block tree is not bootstrapped");
+
+    if (tip && (tip->getHeight() - endorsed_index->getHeight() + 1 > window)) {
+      return state.Invalid("atv-expired",
+                           fmt::sprintf("ATV=%s expired %s",
+                                        atv.getId().toHex(),
+                                        endorsed_index->toShortPrettyString()));
+    }
+  }
+
+  return true;
+}
+
+bool MemPoolBlockTree::checkContextually(const VTB& vtb,
+                                         ValidationState& state) {
   auto& vbk = temp_vbk_tree_.getStableTree();
   auto* containing = vbk.getBlockIndex(vtb.containingBlock.getHash());
   int32_t window = vbk.getParams().getEndorsementSettlementInterval();
@@ -41,32 +74,17 @@ bool MemPoolBlockTree::acceptVTB(const VTB& vtb, ValidationState& state) {
   return true;
 }
 
-bool MemPoolBlockTree::acceptATV(const ATV& atv, ValidationState& state) {
-  // stateful validation
-  int32_t window = tree_.getParams().getEndorsementSettlementInterval();
-  auto duplicate = findBlockContainingEndorsement(
-      tree_.getBestChain(), tree_.getBestChain().tip(), atv.getId(), window);
-  if (duplicate) {
-    return state.Invalid(
-        "atv-duplicate",
-        fmt::sprintf("ATV=%s already added to active chain in block %s",
-                     atv.getId().toHex(),
-                     duplicate->toShortPrettyString()));
+bool MemPoolBlockTree::acceptVTB(const VTB& vtb, ValidationState& state) {
+  if (!checkContextually(vtb, state)) {
+    return false;
   }
 
-  auto endorsed_hash =
-      tree_.getParams().getHash(atv.transaction.publicationData.header);
-  auto* endorsed_index = tree_.getBlockIndex(endorsed_hash);
-  if (endorsed_index != nullptr) {
-    auto* tip = tree_.getBestChain().tip();
-    assert(tip != nullptr && "block tree is not bootstrapped");
+  return true;
+}
 
-    if (tip && (tip->getHeight() - endorsed_index->getHeight() + 1 > window)) {
-      return state.Invalid("atv-expired",
-                           fmt::sprintf("ATV=%s expired %s",
-                                        atv.getId().toHex(),
-                                        endorsed_index->toShortPrettyString()));
-    }
+bool MemPoolBlockTree::acceptATV(const ATV& atv, ValidationState& state) {
+  if (!checkContextually(atv, state)) {
+    return false;
   }
 
   return true;
@@ -86,17 +104,17 @@ bool MemPoolBlockTree::areStronglyEquivalent(const VTB& vtb1, const VTB& vtb2) {
 bool MemPoolBlockTree::areWeaklyEquivalent(const VTB& vtb1, const VTB& vtb2) {
   bool is_on_the_same_btc_chain = areOnSameChain(vtb1.transaction.blockOfProof,
                                                  vtb2.transaction.blockOfProof,
-                                                 tree_.btc());
+                                                 tree_->btc());
 
   bool is_on_the_same_vbk_chain =
       areOnSameChain(vtb1.transaction.publishedBlock,
                      vtb2.transaction.publishedBlock,
-                     tree_.vbk());
+                     tree_->vbk());
 
   bool are_the_same_keystone_period =
       areOnSameKeystoneInterval(vtb1.transaction.publishedBlock.height,
                                 vtb2.transaction.publishedBlock.height,
-                                tree_.vbk().getParams().getKeystoneInterval());
+                                tree_->vbk().getParams().getKeystoneInterval());
 
   return ((vtb1.transaction.publishedBlock ==
            vtb2.transaction.publishedBlock) &&
@@ -110,9 +128,9 @@ int MemPoolBlockTree::weaklyCompare(const VTB& vtb1, const VTB& vtb2) {
                  "vtbs should be weakly equivalent");
 
   auto* blockOfProof1 =
-      tree_.btc().getBlockIndex(vtb1.transaction.blockOfProof.getHash());
+      tree_->btc().getBlockIndex(vtb1.transaction.blockOfProof.getHash());
   auto* blockOfProof2 =
-      tree_.btc().getBlockIndex(vtb2.transaction.blockOfProof.getHash());
+      tree_->btc().getBlockIndex(vtb2.transaction.blockOfProof.getHash());
 
   VBK_ASSERT_MSG(blockOfProof1,
                  "unknown block %s",

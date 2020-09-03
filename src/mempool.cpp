@@ -83,8 +83,8 @@ PopData MemPool::getPop() {
     return a.second->header->height < b.second->header->height;
   });
 
-  PopData ret = generatePopData(blocks, tree_->getParams());
-  tree_->filterInvalidPayloads(ret);
+  PopData ret = generatePopData(blocks, mempool_tree_.alt().getParams());
+  mempool_tree_.alt().filterInvalidPayloads(ret);
   return ret;
 }
 
@@ -108,7 +108,7 @@ void MemPool::vacuum(const PopData& pop) {
 
   for (auto it = relations_.begin(); it != relations_.end();) {
     auto blockHash = it->second->header->getHash();
-    auto& vbk = tree_->vbk();
+    auto& vbk = mempool_tree_.vbk().getStableTree();
     auto* index = vbk.getBlockIndex(blockHash);
     auto* tip = vbk.getBestChain().tip();
     auto maxReorgBlocks = vbk.getParams().getMaxReorgBlocks();
@@ -126,7 +126,8 @@ void MemPool::vacuum(const PopData& pop) {
       auto& vtb = **vtbit;
       ValidationState state;
       auto id = vtb.getId();
-      if (vtbids.count(id) > 0 || !checkContextually(vtb, state)) {
+      if (vtbids.count(id) > 0 ||
+          !mempool_tree_.checkContextually(vtb, state)) {
         stored_vtbs_.erase(id);
         vtbit = rel.vtbs.erase(vtbit);
       } else {
@@ -139,7 +140,8 @@ void MemPool::vacuum(const PopData& pop) {
       auto& atv = **atvit;
       auto id = atv.getId();
       ValidationState state;
-      if (atvids.count(id) > 0 || !checkContextually(atv, state)) {
+      if (atvids.count(id) > 0 ||
+          !mempool_tree_.checkContextually(atv, state)) {
         stored_atvs_.erase(id);
         atvit = rel.atvs.erase(atvit);
       } else {
@@ -227,6 +229,7 @@ MempoolResult MemPool::submitAll(const PopData& pop) {
 }
 
 void MemPool::clear() {
+  mempool_tree_.clear();
   relations_.clear();
   vbkblocks_.clear();
   stored_vtbs_.clear();
@@ -238,7 +241,7 @@ bool MemPool::submit(const ATV& atv,
                      ValidationState& state,
                      bool shouldDoContextualCheck) {
   // stateless validation
-  if (!checkATV(atv, state, tree_->getParams())) {
+  if (!checkATV(atv, state, mempool_tree_.alt().getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
   }
 
@@ -265,9 +268,8 @@ template <>
 bool MemPool::submit(const VTB& vtb,
                      ValidationState& state,
                      bool shouldDoContextualCheck) {
-  auto& vbk = tree_->vbk();
   // stateless validation
-  if (!checkVTB(vtb, state, vbk.btc().getParams())) {
+  if (!checkVTB(vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
     return state.Invalid("pop-mempool-submit-vtb-stateless");
   }
 
@@ -294,7 +296,8 @@ bool MemPool::submit(const VbkBlock& blk,
                      ValidationState& state,
                      bool shouldDoContextualCheck) {
   // stateless validation
-  if (!checkBlock(blk, state, tree_->vbk().getParams())) {
+  if (!checkBlock(
+          blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
     return state.Invalid("pop-mempool-submit-vbkblock-stateless");
   }
 
@@ -306,9 +309,10 @@ bool MemPool::submit(const VbkBlock& blk,
   }
 
   // stateful validation
-  if (!shouldDoContextualCheck || !tree_->vbk().getBlockIndex(blk.getHash())) {
+  if (!shouldDoContextualCheck ||
+      !mempool_tree_.vbk().getStableTree().getBlockIndex(blk.getHash())) {
     // duplicate
-    touchVbkPayloadRelation(std::make_shared<VbkBlock>(blk));
+    touchVbkPayloadRelation(blk_ptr);
   }
 
   return true;

@@ -19,16 +19,16 @@ struct TempBlockTree {
   using index_t = typename block_tree_t::index_t;
   using block_index_t = typename block_tree_t::base::block_index_t;
 
-  TempBlockTree(const block_tree_t& tree) : tree_(tree) { (void)tree_; }
+  TempBlockTree(const block_tree_t& tree) : tree_(&tree) {}
 
   template <typename T,
             typename = typename std::enable_if<
                 std::is_same<T, typename block_t::hash_t>::value ||
                 std::is_same<T, typename block_t::prev_hash_t>::value>::type>
   index_t* getBlockIndex(const T& hash) const {
-    auto shortHash = tree_.makePrevHash(hash);
+    auto shortHash = tree_->makePrevHash(hash);
     auto it = temp_blocks_.find(shortHash);
-    return it == temp_blocks_.end() ? tree_.getBlockIndex(shortHash)
+    return it == temp_blocks_.end() ? tree_->getBlockIndex(shortHash)
                                     : it->second.get();
   }
 
@@ -53,7 +53,9 @@ struct TempBlockTree {
     return true;
   }
 
-  const block_tree_t& getStableTree() const { return tree_; }
+  const block_tree_t& getStableTree() const { return *tree_; }
+
+  void clear() { temp_blocks_.clear(); }
 
  private:
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& header) {
@@ -88,7 +90,7 @@ struct TempBlockTree {
   }
 
   index_t* touchBlockIndex(const typename block_t::hash_t& hash) {
-    auto shortHash = tree_.makePrevHash(hash);
+    auto shortHash = tree_->makePrevHash(hash);
     auto it = temp_blocks_.find(shortHash);
     if (it != temp_blocks_.end()) {
       return it->second.get();
@@ -102,7 +104,7 @@ struct TempBlockTree {
 
  private:
   block_index_t temp_blocks_;
-  const block_tree_t& tree_;
+  const block_tree_t* tree_;
 };
 
 }  // namespace altintegration

@@ -48,7 +48,7 @@ struct MemPool {
   //! @}
 
   ~MemPool() = default;
-  MemPool(AltBlockTree& tree) : mempool_tree_(tree), tree_(&tree) {}
+  MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
 
   //! getter for payloads stored in mempool
   //! @ingroup api
@@ -163,7 +163,6 @@ struct MemPool {
 
  private:
   MemPoolBlockTree mempool_tree_;
-  AltBlockTree* tree_;
   // relations between VBK block and payloads
   relations_map_t relations_;
   vbkblock_map_t vbkblocks_;
