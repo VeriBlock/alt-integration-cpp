@@ -37,7 +37,7 @@ TEST_F(Scenario4, scenario_4) {
             VbkEndorsement::fromContainer(vtbs2[0]).id);
 
   // mine 10 blocks
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
   AltBlock endorsedBlock = chain[5];
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
@@ -62,7 +62,7 @@ TEST_F(Scenario4, scenario_4) {
   // check vbk tree state
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip.getHash());
 
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
 
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);

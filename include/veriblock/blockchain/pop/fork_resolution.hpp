@@ -555,7 +555,7 @@ struct PopAwareForkResolutionComparator {
       // chainA to make sure it is fully valid
       auto* chainBValidFrom = sm.unapplyWhile(
           *chainB.tip(), *chainB.first(), [](protected_index_t& index) -> bool {
-            return !index.hasFlags(BLOCK_CAN_BE_APPLIED);
+            return !index.isValid(BLOCK_CAN_BE_APPLIED);
           });
 
       sm.unapply(*chainA.tip(), *chainA.first());

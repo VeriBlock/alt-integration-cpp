@@ -49,10 +49,9 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
 
   index->setFlag(BLOCK_APPLIED);
   ++appliedBlockCount;
-  index->setFlag(BLOCK_CAN_BE_APPLIED);
   index->setFlag(BLOCK_BOOTSTRAP);
-  index->setFlag(BLOCK_HAS_PAYLOADS);
-  index->setFlag(BLOCK_CONNECTED);
+  index->raiseValidity(BLOCK_CAN_BE_APPLIED);
+
   base::activeChain_ = Chain<index_t>(height, index);
 
   VBK_ASSERT(base::isBootstrapped());
@@ -159,7 +158,7 @@ void AltBlockTree::acceptBlock(const hash_t& block, const PopData& payloads) {
 void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
   setPayloads(index, payloads);
 
-  if (index.pprev->hasFlags(BLOCK_CONNECTED)) {
+  if (index.pprev->isConnected()) {
     ValidationState dummy;
     connectBlock(index, dummy);
   };
@@ -173,13 +172,10 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
                payloads.atvs.size(),
                index.toShortPrettyString());
 
-  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_HAS_PAYLOADS),
+  VBK_ASSERT_MSG(index.getValidityLevel() == BLOCK_VALID_TREE,
                  "block %s already contains payloads",
                  index.toPrettyString());
 
-  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_CONNECTED),
-                 "state corruption: block %s is connected",
-                 index.toPrettyString());
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: block %s is applied",
                  index.toPrettyString());
@@ -204,33 +200,31 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   commitPayloadsIds<ATV>(index, payloads.atvs, payloadsIndex_);
 
   // we successfully added this block payloads
-  index.setFlag(BLOCK_HAS_PAYLOADS);
+  index.raiseValidity(BLOCK_HAS_PAYLOADS);
 }
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
-  VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
-                 "block %s must have payloads added",
-                 index.toPrettyString());
-  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_CONNECTED),
-                 "block %s is already connected",
+  VBK_ASSERT_MSG(index.getValidityLevel() == BLOCK_HAS_PAYLOADS,
+                 "block %s must have payloads added and not be connected",
                  index.toPrettyString());
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: block %s is applied",
                  index.toPrettyString());
 
-  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CONNECTED),
+  VBK_ASSERT_MSG(index.pprev->isConnected(),
                  "the previous block of block %s must be connected",
                  index.toPrettyString());
   VBK_ASSERT_MSG(index.allDescendantsUnconnected(),
                  "a descendant of block %s is connected",
                  index.toPrettyString());
 
+  bool success = index.raiseValidity(BLOCK_CONNECTED);
+  VBK_ASSERT(success);
+
   // partial stateful validation
   // FIXME: eventually we want to perform full stateful validation here,
   // effectively find out whether setState(index) will be successful
 
-  // BUG: applyBlock will clear BLOCK_FAILED_POP flag since it does not check
-  // for duplicates
   if (hasDuplicates<VbkBlock>(
           index, index.getPayloadIds<VbkBlock>(), *this, state) ||
       hasDuplicates<VTB>(index, index.getPayloadIds<VTB>(), *this, state) ||
@@ -238,7 +232,6 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
     invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
   }
 
-  index.setFlag(BLOCK_CONNECTED);
   tryAddTip(&index);
 
   if (index.isValid()) {
@@ -249,7 +242,7 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
   // connect the descendants
   for (auto* successor : index.pnext) {
-    if (successor->hasFlags(BLOCK_HAS_PAYLOADS)) {
+    if (successor->isValidUpTo(BLOCK_HAS_PAYLOADS)) {
       ValidationState dummy;
       connectBlock(*successor, dummy);
     }
@@ -263,8 +256,8 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 bool AltBlockTree::addPayloads(index_t& index,
                                PopData& payloads,
                                ValidationState& state) {
-  // atomicity: ensure we can not just add payloads but connect the block
-  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_CONNECTED),
+  // atomicity: ensure we can not just add payloads but also connect the block
+  VBK_ASSERT_MSG(index.pprev->isConnected(),
                  "the previous block of block %s must be connected",
                  index.toPrettyString());
 
@@ -321,11 +314,9 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
                  "AltTree is at unexpected state: Tip=%s ExpectedTip=%s",
                  activeChain_.tip()->toPrettyString(),
                  index->toPrettyString());
-  VBK_ASSERT_MSG(index->hasFlags(BLOCK_CONNECTED),
+
+  VBK_ASSERT_MSG(index->isValidUpTo(BLOCK_CONNECTED),
                  "Block %s is not connected",
-                 index->toPrettyString());
-  VBK_ASSERT_MSG(index->hasFlags(BLOCK_HAS_PAYLOADS),
-                 "state corruption: Block %s has no payloads",
                  index->toPrettyString());
 
   auto* endorsedBlock = index->getAncestorBlocksBehind(
@@ -385,12 +376,8 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
 
-  VBK_ASSERT_MSG(left->hasFlags(BLOCK_CONNECTED), "A is not connected");
-  VBK_ASSERT_MSG(left->hasFlags(BLOCK_HAS_PAYLOADS),
-                 "state corruption: A has no payloads");
-  VBK_ASSERT_MSG(right->hasFlags(BLOCK_CONNECTED), "B is not connected");
-  VBK_ASSERT_MSG(right->hasFlags(BLOCK_HAS_PAYLOADS),
-                 "state corruption: B has no payloads");
+  VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), "A is not connected");
+  VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
 
   ValidationState state;
   // compare current active chain to other chain
@@ -428,7 +415,7 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
 
   // we do not allow adding payloads to the genesis block
   VBK_ASSERT_MSG(index.pprev, "can not remove payloads from the genesis block");
-  VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
+  VBK_ASSERT_MSG(index.isValidUpTo(BLOCK_HAS_PAYLOADS),
                  "Can remove payloads only from blocks with payloads");
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED), "block is applied");
 
@@ -444,8 +431,9 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
 
   VBK_ASSERT(!index.hasPayloads());
 
-  index.unsetFlag(BLOCK_HAS_PAYLOADS);
-  index.unsetFlag(BLOCK_CONNECTED);
+  revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
+  bool success = index.lowerValidity(BLOCK_VALID_TREE);
+  VBK_ASSERT(success);
 
   // the current block is no longer a tip
   tips_.erase(&index);
@@ -539,13 +527,8 @@ bool AltBlockTree::addPayloads(const hash_t& block,
 }
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
-  VBK_ASSERT_MSG(to.hasFlags(BLOCK_CONNECTED),
-                 "setState(%s) is called, but block has no BLOCK_CONNECTED",
-                 to.toPrettyString());
-  VBK_ASSERT_MSG(to.hasFlags(BLOCK_HAS_PAYLOADS),
-                 "state corruption: setState(%s) is called, but block has no "
-                 "BLOCK_HAS_PAYLOADS",
-                 to.toPrettyString());
+  VBK_ASSERT_MSG(
+      to.isConnected(), "block %s must be connected", to.toPrettyString());
 
   bool success = cmp_.setState(*this, to, state);
   if (success) {
@@ -567,7 +550,7 @@ void AltBlockTree::overrideTip(index_t& to) {
                      ? btc().getBestChain().tip()->toShortPrettyString()
                      : "<empty>"));
 
-  VBK_ASSERT_MSG(to.hasFlags(BLOCK_CAN_BE_APPLIED),
+  VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
                  "the active chain tip(%s) must be fully valid",
                  to.toPrettyString());
   activeChain_.setTip(&to);
@@ -646,7 +629,7 @@ bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
   while (tip) {
     tip->setFlag(BLOCK_APPLIED);
     ++appliedBlockCount;
-    tip->setFlag(BLOCK_CAN_BE_APPLIED);
+    tip->raiseValidity(BLOCK_CAN_BE_APPLIED);
     tip = tip->pprev;
   }
 

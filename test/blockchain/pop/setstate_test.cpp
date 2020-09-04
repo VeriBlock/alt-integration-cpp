@@ -13,7 +13,8 @@ struct SetStateTest : public ::testing::Test, public PopTestFixture {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
 
   void gen(int VTBs = 3) {
-    mineAltBlocks(100, chain, false, false);
+    mineAltBlocks(99, chain, /*connectBlocks=*/true, /*setState=*/false);
+    mineAltBlocks(1, chain, /*connectBlocks=*/false, /*setState=*/false);
     const int ATVs = 1;
     ASSERT_TRUE(SetState(alttree, chain[0].getHash()));
     ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());
@@ -29,13 +30,14 @@ struct SetStateTest : public ::testing::Test, public PopTestFixture {
 };
 
 TEST_F(SetStateTest, SetStateGenesis) {
-  mineAltBlocks(1, chain);
+  mineAltBlocks(1, chain, /*connectBlocks=*/true);
   ASSERT_TRUE(SetState(alttree, chain[1].getHash()));
   ASSERT_TRUE(SetState(alttree, chain[0].getHash()));
 }
 
 TEST_F(SetStateTest, AddPayloadsInvalid) {
-  mineAltBlocks(100, chain, /* connect=*/false, /*setstate=*/false);
+  mineAltBlocks(99, chain, /* connect=*/true, /*setstate=*/false);
+  mineAltBlocks(99, chain, /* connect=*/false, /*setstate=*/false);
   const int VTBs = 1;
   ASSERT_TRUE(SetState(alttree, chain[0].getHash()));
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());
@@ -50,8 +52,8 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());
   ASSERT_EQ(alttree.btc().getBestChain().tip()->getHeight(), 0);
   ASSERT_EQ(alttree.vbk().getBestChain().tip()->getHeight(), 0);
-  ASSERT_TRUE(
-      alttree.getBlockIndex(chain[100].getHash())->hasFlags(BLOCK_VALID_TREE));
+  ASSERT_TRUE(alttree.getBlockIndex(chain[100].getHash())
+                  ->isValidUpTo(BLOCK_VALID_TREE));
   ASSERT_TRUE(
       alttree.getBlockIndex(chain[100].getHash())->hasFlags(BLOCK_FAILED_POP));
 
@@ -65,7 +67,7 @@ TEST_F(SetStateTest, AddPayloadsInvalid) {
 }
 
 TEST_F(SetStateTest, SetStateNextChainBlockNoPayloads) {
-  mineAltBlocks(100, chain);
+  mineAltBlocks(100, chain, /* connect=*/true, /*setstate=*/true);
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[100].getHash());
   ASSERT_TRUE(SetState(alttree, chain[0].getHash()));
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[0].getHash());

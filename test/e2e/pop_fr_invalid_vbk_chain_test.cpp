@@ -50,7 +50,8 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
   // mine 10 alt blocks
-  mineAltBlocks(10, chain, false, false);
+  mineAltBlocks(8, chain, true, false);
+  mineAltBlocks(2, chain, false, false);
 
   // endorse ALT5
   auto vbktx1 =

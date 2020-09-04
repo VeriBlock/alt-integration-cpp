@@ -74,7 +74,7 @@ TEST_F(MemPoolFixture, removeAll_test1) {
             VbkEndorsement::fromContainer(vtbs[1]).id);
 
   // mine 10 blocks
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
 
   AltBlock endorsedBlock = chain[5];
 

@@ -28,13 +28,11 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock>*earlier, *earlierChild, *latter, *latterChild;
 
   AltInvalidationTest() {
-    tip = mineAltBlocks(
-        *alttree.getBlocks().begin()->second, 10, /*connectBlocks=*/true);
-    EXPECT_TRUE(tip->hasFlags(BLOCK_VALID_TREE));
-    EXPECT_TRUE(tip->hasFlags(BLOCK_APPLIED));
-    EXPECT_TRUE(tip->hasFlags(BLOCK_CAN_BE_APPLIED));
-    EXPECT_TRUE(tip->hasFlags(BLOCK_CONNECTED));
-    EXPECT_TRUE(tip->isValid());
+    tip = mineAltBlocks(*alttree.getBlocks().begin()->second,
+                        10,
+                        /*connectBlocks=*/true,
+                        /*setState=*/false);
+    EXPECT_TRUE(tip->isValid(BLOCK_CONNECTED));
 
     connId = alttree.connectOnValidityBlockChanged(
         [&](const BlockIndex<AltBlock>&) { totalInvalidations++; });

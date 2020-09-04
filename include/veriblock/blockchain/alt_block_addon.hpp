@@ -31,7 +31,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
 
   template <typename I>
   static bool canBeATip(const I& index) {
-    return index.hasFlags(BLOCK_CONNECTED);
+    return index.isValidUpTo(BLOCK_CONNECTED);
   }
 
   bool hasPayloads() const {

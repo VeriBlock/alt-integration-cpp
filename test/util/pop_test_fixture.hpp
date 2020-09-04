@@ -119,7 +119,7 @@ struct PopTestFixture {
     auto index = tree.getBlockIndex(hash);
     EXPECT_TRUE(index);
 
-    if(index->pprev) {
+    if (index->pprev) {
       ConnectBlocksUntil(tree, index->pprev->getHash());
     }
     return tree.addPayloads(hash, pop, state);
@@ -146,12 +146,12 @@ struct PopTestFixture {
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
                                       size_t num,
-                                      bool connectBlocks = false,
+                                      bool connectBlocks = true,
                                       bool setState = true) {
     const BlockIndex<AltBlock>* index = &prev;
     for (size_t i = 0; i < num; i++) {
       auto next = generateNextBlock(index->getHeader());
-      EXPECT_TRUE(alttree.acceptBlockHeader(next, state));
+      EXPECT_TRUE(alttree.acceptBlockHeader(next, state)) << state.toString();
       if (connectBlocks) {
         alttree.acceptBlock(next.getHash(), {});
       }
@@ -166,14 +166,15 @@ struct PopTestFixture {
 
   void mineAltBlocks(uint32_t num,
                      std::vector<AltBlock>& chain,
-                     bool connectBlocks = false,
+                     bool connectBlocks = true,
                      bool setState = true) {
     ASSERT_NE(chain.size(), 0);
 
     for (uint32_t i = 0; i < num; ++i) {
       chain.push_back(generateNextBlock(*chain.rbegin()));
 
-      ASSERT_TRUE(alttree.acceptBlockHeader(*chain.rbegin(), state));
+      ASSERT_TRUE(alttree.acceptBlockHeader(*chain.rbegin(), state))
+          << state.toString();
       if (connectBlocks) {
         alttree.acceptBlock(chain.back().getHash(), {});
       }
