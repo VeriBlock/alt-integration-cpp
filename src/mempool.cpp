@@ -237,81 +237,110 @@ void MemPool::clear() {
 }
 
 template <>
-bool MemPool::submit(const ATV& atv, ValidationState& state) {
+bool MemPool::submit(const std::shared_ptr<ATV>& atv, ValidationState& state) {
   // stateless validation
-  if (!checkATV(atv, state, mempool_tree_.alt().getParams())) {
+  if (!checkATV(*atv, state, mempool_tree_.alt().getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
   }
 
   std::shared_ptr<VbkBlock> blockOfProof_ptr =
-      std::make_shared<VbkBlock>(atv.blockOfProof);
+      std::make_shared<VbkBlock>(atv->blockOfProof);
 
   // stateful validation
-  if (!mempool_tree_.acceptATV(atv, blockOfProof_ptr, state)) {
-    return state.Invalid("pop-mempool-submit-atv-stateful");
+  if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
+    atvs_in_flight_[atv->getId()] = atv;
+    return true;
   }
 
   auto& rel = touchVbkPayloadRelation(blockOfProof_ptr);
-  auto atvptr = std::make_shared<ATV>(atv);
-  auto pair = std::make_pair(atv.getId(), atvptr);
-  rel.atvs.push_back(atvptr);
+  auto pair = std::make_pair(atv->getId(), atv);
+  rel.atvs.push_back(atv);
 
   // store atv id in containing block index
   stored_atvs_.insert(pair);
 
-  on_atv_accepted.emit(atv);
+  on_atv_accepted.emit(*atv);
+
+  atvs_in_flight_.erase(atv->getId());
+  resubmit_payloads();
 
   return true;
 }
 
 template <>
-bool MemPool::submit(const VTB& vtb, ValidationState& state) {
+bool MemPool::submit(const std::shared_ptr<VTB>& vtb, ValidationState& state) {
   // stateless validation
-  if (!checkVTB(vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
+  if (!checkVTB(*vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
     return state.Invalid("pop-mempool-submit-vtb-stateless");
   }
 
   std::shared_ptr<VbkBlock> containingBlock_ptr =
-      std::make_shared<VbkBlock>(vtb.containingBlock);
+      std::make_shared<VbkBlock>(vtb->containingBlock);
 
-  // stateful validation
-  if (!mempool_tree_.acceptVTB(vtb, containingBlock_ptr, state)) {
-    return state.Invalid("pop-mempool-submit-vtb-stateful");
+  // for the statefully invalid payloads we just save it for the future
+  if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
+    vtbs_in_flight_[vtb->getId()] = vtb;
+    return true;
   }
 
   auto& rel = touchVbkPayloadRelation(containingBlock_ptr);
-  auto vtbptr = std::make_shared<VTB>(vtb);
-  auto pair = std::make_pair(vtb.getId(), vtbptr);
-  rel.vtbs.push_back(vtbptr);
+  auto pair = std::make_pair(vtb->getId(), vtb);
+  rel.vtbs.push_back(vtb);
 
   stored_vtbs_.insert(pair);
 
-  on_vtb_accepted.emit(vtb);
+  on_vtb_accepted.emit(*vtb);
+
+  vtbs_in_flight_.erase(vtb->getId());
+  resubmit_payloads();
 
   return true;
 }
 
 template <>
-bool MemPool::submit(const VbkBlock& blk, ValidationState& state) {
+bool MemPool::submit(const std::shared_ptr<VbkBlock>& blk,
+                     ValidationState& state) {
   // stateless validation
   if (!checkBlock(
-          blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
+          *blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
     return state.Invalid("pop-mempool-submit-vbkblock-stateless");
   }
 
-  std::shared_ptr<VbkBlock> blk_ptr = std::make_shared<VbkBlock>(blk);
-
-  if (!mempool_tree_.acceptVbkBlock(blk_ptr, state)) {
-    return state.Invalid("pop-mempool-submit-vbk-stateful");
+  // for the statefully invalid payloads we just save it for the future
+  if (!mempool_tree_.acceptVbkBlock(blk, state)) {
+    vbkblocks_in_flight_[blk->getId()] = blk;
+    return true;
   }
 
   // stateful validation
-  if (!mempool_tree_.vbk().getStableTree().getBlockIndex(blk.getHash())) {
+  if (!mempool_tree_.vbk().getStableTree().getBlockIndex(blk->getHash())) {
     // duplicate
-    touchVbkPayloadRelation(blk_ptr);
+    touchVbkPayloadRelation(blk);
   }
 
+  vbkblocks_in_flight_.erase(blk->getId());
+  resubmit_payloads();
+
   return true;
+}
+
+void MemPool::resubmit_payloads() {
+  ValidationState state;
+
+  // resubmit vbk blocks
+  for (const auto& pair : vbkblocks_in_flight_) {
+    submit<VbkBlock>(pair.second, state);
+  }
+
+  // resubmit vtbs
+  for (const auto& pair : vtbs_in_flight_) {
+    submit<VTB>(pair.second, state);
+  }
+
+  // resubmit atvs
+  for (const auto& pair : atvs_in_flight_) {
+    submit<ATV>(pair.second, state);
+  }
 }
 
 template <>

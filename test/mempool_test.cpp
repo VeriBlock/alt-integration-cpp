@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -12,6 +10,7 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
+#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -465,7 +464,8 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
   }
 
   EXPECT_FALSE(mempool->submit<VbkBlock>(context.back(), state));
-  EXPECT_EQ(state.GetPath(), "pop-mempool-submit-vbk-stateful+VBK-bad-prev-block");
+  EXPECT_EQ(state.GetPath(),
+            "pop-mempool-submit-vbk-stateful+VBK-bad-prev-block");
 }
 
 TEST_F(MemPoolFixture, submit_deprecated_payloads) {

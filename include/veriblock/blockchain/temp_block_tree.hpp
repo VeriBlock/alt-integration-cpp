@@ -70,6 +70,7 @@ struct TempBlockTree {
   }
 
   void removeTempSingleBlock(index_t& index) {
+    // TODO: decrease counter for the previously known blocks
     auto shortHash = tree_->makePrevHash(index.getHash());
     auto it = temp_blocks_.at(shortHash);
     // TODO: it is a hack because we do not erase blocks and just move them to
@@ -101,7 +102,7 @@ struct TempBlockTree {
 
   index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header) {
     VBK_ASSERT(header != nullptr);
-
+    // TODO: use counter to the known blocks
     index_t* current = touchBlockIndex(header->getHash());
     current->setHeader(std::move(header));
     current->pprev = getBlockIndex(header->previousBlock);
