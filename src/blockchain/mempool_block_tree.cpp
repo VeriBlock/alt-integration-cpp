@@ -90,14 +90,16 @@ bool MemPoolBlockTree::acceptVTB(
     return false;
   }
 
-  if (!temp_btc_tree_.acceptBlock(vtb.transaction.blockOfProof, state)) {
-    return false;
-  }
-
   for (const auto& blk : vtb.transaction.blockOfProofContext) {
     if (!temp_btc_tree_.acceptBlock(blk, state)) {
+      removePayloads(vtb);
       return false;
     }
+  }
+
+  if (!temp_btc_tree_.acceptBlock(vtb.transaction.blockOfProof, state)) {
+    removePayloads(vtb);
+    return false;
   }
 
   return true;
@@ -119,6 +121,24 @@ bool MemPoolBlockTree::acceptATV(const ATV& atv,
   }
 
   return true;
+}
+
+void MemPoolBlockTree::removePayloads(const VbkBlock& block) {
+  temp_vbk_tree_.removeTempSingleBlock(block.getHash());
+}
+
+void MemPoolBlockTree::removePayloads(const VTB& vtb) {
+  temp_vbk_tree_.removeTempSingleBlock(vtb.containingBlock.getHash());
+
+  for (const auto& blk : vtb.transaction.blockOfProofContext) {
+    temp_btc_tree_.removeTempSingleBlock(blk.getHash());
+  }
+
+  temp_btc_tree_.removeTempSingleBlock(vtb.transaction.blockOfProof.getHash());
+}
+
+void MemPoolBlockTree::removePayloads(const ATV& atv) {
+  temp_vbk_tree_.removeTempSingleBlock(atv.blockOfProof.getHash());
 }
 
 bool MemPoolBlockTree::areStronglyEquivalent(const ATV& atv1, const ATV& atv2) {

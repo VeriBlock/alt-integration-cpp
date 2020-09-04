@@ -18,11 +18,7 @@ struct MemPoolBlockTree {
   using BtcBlockTree = typename VbkBlockTree::BtcTree;
 
   MemPoolBlockTree(AltBlockTree& tree)
-      : temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()), tree_(&tree) {
-    (void)tree_;
-    (void)temp_vbk_tree_;
-    (void)temp_btc_tree_;
-  }
+      : temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()), tree_(&tree) {}
 
   bool acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
                       ValidationState& state);

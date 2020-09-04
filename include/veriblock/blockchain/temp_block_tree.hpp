@@ -25,11 +25,19 @@ struct TempBlockTree {
             typename = typename std::enable_if<
                 std::is_same<T, typename block_t::hash_t>::value ||
                 std::is_same<T, typename block_t::prev_hash_t>::value>::type>
-  index_t* getBlockIndex(const T& hash) const {
+  index_t* getTempBlockIndex(const T& hash) const {
     auto shortHash = tree_->makePrevHash(hash);
     auto it = temp_blocks_.find(shortHash);
-    return it == temp_blocks_.end() ? tree_->getBlockIndex(shortHash)
-                                    : it->second.get();
+    return it == temp_blocks_.end() ? nullptr : it->second.get();
+  }
+
+  template <typename T,
+            typename = typename std::enable_if<
+                std::is_same<T, typename block_t::hash_t>::value ||
+                std::is_same<T, typename block_t::prev_hash_t>::value>::type>
+  index_t* getBlockIndex(const T& hash) const {
+    auto* index = getTempBlockIndex(hash);
+    return index == nullptr ? tree_->getBlockIndex(hash) : index;
   }
 
   bool acceptBlock(const block_t& header, ValidationState& state) {
@@ -53,6 +61,24 @@ struct TempBlockTree {
     return true;
   }
 
+  void removeTempSingleBlock(const typename block_t::hash_t& hash) {
+    auto* index = getTempBlockIndex(hash);
+
+    if (index != nullptr) {
+      removeTempSingleBlock(*index);
+    }
+  }
+
+  void removeTempSingleBlock(index_t& index) {
+    auto shortHash = tree_->makePrevHash(index.getHash());
+    auto it = temp_blocks_.at(shortHash);
+    // TODO: it is a hack because we do not erase blocks and just move them to
+    // the remove_ container
+    it->setNull();
+    removed_blocks_[shortHash] = it;
+    temp_blocks_.erase(shortHash);
+  }
+
   const block_tree_t& getStableTree() const { return *tree_; }
 
   void clear() { temp_blocks_.clear(); }
@@ -62,6 +88,7 @@ struct TempBlockTree {
     auto hash = header->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {
+      
       // it is a duplicate
       return current;
     }
@@ -96,7 +123,16 @@ struct TempBlockTree {
       return it->second.get();
     }
 
-    std::shared_ptr<index_t> newIndex = std::make_shared<index_t>();
+    std::shared_ptr<index_t> newIndex = nullptr;
+
+    auto itr = removed_blocks_.find(shortHash);
+    if (itr != removed_blocks_.end()) {
+      newIndex = itr->second;
+      removed_blocks_.erase(itr);
+    } else {
+      newIndex = std::make_shared<index_t>();
+    }
+
     newIndex->setNull();
     it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;
     return it->second.get();
@@ -104,6 +140,7 @@ struct TempBlockTree {
 
  private:
   block_index_t temp_blocks_;
+  block_index_t removed_blocks_;
   const block_tree_t* tree_;
 };
 

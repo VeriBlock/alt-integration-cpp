@@ -87,12 +87,9 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  bool submit(const T& pl,
-              ValidationState& state,
-              bool shouldDoContextualCheck = true) {
+  bool submit(const T& pl, ValidationState& state) {
     (void)pl;
     (void)state;
-    (void)shouldDoContextualCheck;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return true;
   }
@@ -168,6 +165,10 @@ struct MemPool {
   vbkblock_map_t vbkblocks_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
+  
+  atv_map_t atvs_in_flight_;
+  vtb_map_t vtbs_in_flight_;
+  vbkblock_map_t vbkblocks_in_flight_;
 
   VbkPayloadsRelations& touchVbkPayloadRelation(
       const std::shared_ptr<VbkBlock>& block);
@@ -183,11 +184,11 @@ struct MemPool {
 // clang-format off
 
 //! @overload
-template <> bool MemPool::submit(const ATV& atv, ValidationState& state, bool shouldDoContextualCheck);
+template <> bool MemPool::submit(const ATV& atv, ValidationState& state);
 //! @overload
-template <> bool MemPool::submit(const VTB& vtb, ValidationState& state, bool shouldDoContextualCheck);
+template <> bool MemPool::submit(const VTB& vtb, ValidationState& state);
 //! @overload
-template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state, bool shouldDoContextualCheck);
+template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload

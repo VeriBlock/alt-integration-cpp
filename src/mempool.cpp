@@ -237,9 +237,7 @@ void MemPool::clear() {
 }
 
 template <>
-bool MemPool::submit(const ATV& atv,
-                     ValidationState& state,
-                     bool shouldDoContextualCheck) {
+bool MemPool::submit(const ATV& atv, ValidationState& state) {
   // stateless validation
   if (!checkATV(atv, state, mempool_tree_.alt().getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
@@ -249,8 +247,7 @@ bool MemPool::submit(const ATV& atv,
       std::make_shared<VbkBlock>(atv.blockOfProof);
 
   // stateful validation
-  if (shouldDoContextualCheck &&
-      !mempool_tree_.acceptATV(atv, blockOfProof_ptr, state)) {
+  if (!mempool_tree_.acceptATV(atv, blockOfProof_ptr, state)) {
     return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
@@ -268,9 +265,7 @@ bool MemPool::submit(const ATV& atv,
 }
 
 template <>
-bool MemPool::submit(const VTB& vtb,
-                     ValidationState& state,
-                     bool shouldDoContextualCheck) {
+bool MemPool::submit(const VTB& vtb, ValidationState& state) {
   // stateless validation
   if (!checkVTB(vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
     return state.Invalid("pop-mempool-submit-vtb-stateless");
@@ -280,8 +275,7 @@ bool MemPool::submit(const VTB& vtb,
       std::make_shared<VbkBlock>(vtb.containingBlock);
 
   // stateful validation
-  if (shouldDoContextualCheck &&
-      !mempool_tree_.acceptVTB(vtb, containingBlock_ptr, state)) {
+  if (!mempool_tree_.acceptVTB(vtb, containingBlock_ptr, state)) {
     return state.Invalid("pop-mempool-submit-vtb-stateful");
   }
 
@@ -298,9 +292,7 @@ bool MemPool::submit(const VTB& vtb,
 }
 
 template <>
-bool MemPool::submit(const VbkBlock& blk,
-                     ValidationState& state,
-                     bool shouldDoContextualCheck) {
+bool MemPool::submit(const VbkBlock& blk, ValidationState& state) {
   // stateless validation
   if (!checkBlock(
           blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
@@ -309,14 +301,12 @@ bool MemPool::submit(const VbkBlock& blk,
 
   std::shared_ptr<VbkBlock> blk_ptr = std::make_shared<VbkBlock>(blk);
 
-  if (shouldDoContextualCheck &&
-      !mempool_tree_.acceptVbkBlock(blk_ptr, state)) {
+  if (!mempool_tree_.acceptVbkBlock(blk_ptr, state)) {
     return state.Invalid("pop-mempool-submit-vbk-stateful");
   }
 
   // stateful validation
-  if (!shouldDoContextualCheck ||
-      !mempool_tree_.vbk().getStableTree().getBlockIndex(blk.getHash())) {
+  if (!mempool_tree_.vbk().getStableTree().getBlockIndex(blk.getHash())) {
     // duplicate
     touchVbkPayloadRelation(blk_ptr);
   }
