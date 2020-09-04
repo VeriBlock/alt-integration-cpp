@@ -63,7 +63,7 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
   return difficulty;
 }
 
-std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
+std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayoutsInner(
     const BlockIndex<AltBlock>& endorsedBlock,
     const PopRewardsBigDecimal& endorsedBlockScore,
     const PopRewardsBigDecimal& popDifficulty) {
@@ -96,7 +96,7 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
     const BlockIndex<AltBlock>& endorsedBlock,
     const PopRewardsBigDecimal& popDifficulty) {
   auto blockScore = scoreFromEndorsements(endorsedBlock);
-  return calculatePayouts(endorsedBlock, blockScore, popDifficulty);
+  return calculatePayoutsInner(endorsedBlock, blockScore, popDifficulty);
 }
 
 }  // namespace altintegration

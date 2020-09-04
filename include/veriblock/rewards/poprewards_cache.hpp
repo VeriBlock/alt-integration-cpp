@@ -82,10 +82,10 @@ struct PopRewardsCache : public PopRewards {
   using pair_t = std::pair<index_t, PopRewardsBigDecimal>;
 
   PopRewardsCache(const AltChainParams& altParams, const VbkBlockTree& vbk_tree)
-      : altParams_(&altParams),
+      : PopRewards(altParams, vbk_tree),
+        altParams_(&altParams),
         vbkTree_(&vbk_tree),
-        buffer(altParams.getRewardParams().difficultyAveragingInterval() * 2),
-        PopRewards(altParams, vbk_tree) {}
+        buffer(altParams.getRewardParams().difficultyAveragingInterval() * 2) {}
 
   virtual ~PopRewardsCache() = default;
 

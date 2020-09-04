@@ -52,7 +52,7 @@ std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
   VBK_ASSERT(found &&
              "Block should be in cache. updateAndCalculateDifficulty() should "
              "be called to obtain POP difficulty.");
-  return PopRewards::calculatePayouts(
+  return PopRewards::calculatePayoutsInner(
       endorsedBlock, cached.second, popDifficulty);
 }
 

@@ -44,22 +44,6 @@ struct PopRewards {
 
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
-   * the endorsed block.
-   * @param endorsedBlock endorsed altchain block which we are paying reward
-   * for.
-   * @param endorsedBlockScore endorsed altchain block score.
-   * @param popDifficulty current POP difficulty. See calculateDifficulty for
-   * reference.
-   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
-   * key and reward amount as a value
-   */
-  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
-      const BlockIndex<AltBlock>& endorsedBlock,
-      const PopRewardsBigDecimal& endorsedBlockScore,
-      const PopRewardsBigDecimal& popDifficulty);
-
-  /**
-   * Calculate POP rewards for miners. Rewards are calculated for
    * the endorsed block. Score is calculated from the endorsements (slow).
    * @param endorsedBlock endorsed altchain block which we are paying reward
    * for.
@@ -76,6 +60,11 @@ struct PopRewards {
  protected:
   PopRewardsCalculator calculator_;
   const VbkBlockTree* vbkTree_;
+
+  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayoutsInner(
+      const BlockIndex<AltBlock>& endorsedBlock,
+      const PopRewardsBigDecimal& endorsedBlockScore,
+      const PopRewardsBigDecimal& popDifficulty);
 };
 
 }  // namespace altintegration
