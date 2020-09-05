@@ -22,12 +22,12 @@
 namespace altintegration {
 
 /**
- * @struct PopRewardsCurveParams
+ * @struct PopRewardsParams
  *
- * Defines POP rewards payout curve parameters.
- * @ingroup config,interfaces
+ * Defines config for POP rewards.
+ * @ingroup config, interfaces
  */
-struct PopRewardsCurveParams {
+struct PopRewardsParams {
   //! we start decreasing rewards after this score
   double startOfSlope() const noexcept { return mStartOfSlope; }
 
@@ -38,19 +38,6 @@ struct PopRewardsCurveParams {
   //! slope for keystone rounds
   double slopeKeystone() const noexcept { return mSlopeKeystone; }
 
- protected:
-  double mStartOfSlope = 1.0;
-  double mSlopeNormal = 0.2;
-  double mSlopeKeystone = 0.21325;
-};
-
-/**
- * @struct PopRewardsParams
- *
- * Defines config for POP rewards.
- * @ingroup config, interfaces
- */
-struct PopRewardsParams {
   //! we use this round number to detect keystones
   uint32_t keystoneRound() const noexcept { return mKeystoneRound; }
 
@@ -85,20 +72,16 @@ struct PopRewardsParams {
     return mDifficultyAveragingInterval;
   }
 
-  //! getter for reward curve parameters
-  const PopRewardsCurveParams& getCurveParams() const noexcept {
-    return curveParams;
-  }
-
   //! reward score table
   //! we score each VeriBlock and lower the reward for late blocks
   const std::vector<double>& relativeScoreLookupTable() const noexcept {
     return mLookupTable;
   }
 
- protected:
-  PopRewardsCurveParams curveParams{};
-
+ public:
+  double mStartOfSlope = 1.0;
+  double mSlopeNormal = 0.2;
+  double mSlopeKeystone = 0.21325;
   uint32_t mKeystoneRound = 3;
   uint32_t mPayoutRounds = 4;
   uint32_t mFlatScoreRound = 2;
@@ -154,7 +137,7 @@ struct AltChainParams {
 
   //! getter for reward parameters
   const PopRewardsParams& getRewardParams() const noexcept {
-    return mPopRewardsParams;
+    return *mPopRewardsParams;
   }
 
   //! Maximum future block time for altchain blocks. Must be low enough such
@@ -164,7 +147,8 @@ struct AltChainParams {
   //! unique POP ID for the chain
   virtual int64_t getIdentifier() const noexcept = 0;
 
-  //! first ALT block used in AltBlockTree. This is first block that can be endorsed.
+  //! first ALT block used in AltBlockTree. This is first block that can be
+  //! endorsed.
   //! @refitem altbootstrapblock
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
@@ -176,8 +160,9 @@ struct AltChainParams {
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
- protected:
-  PopRewardsParams mPopRewardsParams;
+ public:
+  std::shared_ptr<PopRewardsParams> mPopRewardsParams =
+      std::make_shared<PopRewardsParams>();
 
   uint32_t mMaxFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;

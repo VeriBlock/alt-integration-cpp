@@ -38,12 +38,11 @@ static PopRewardsBigDecimal getMaxScoreThreshold(
 }
 
 // slope is how the payout is decreased for each additional block score
-static PopRewardsBigDecimal getRoundSlope(const PopRewardsParams& rewardParams,
+static PopRewardsBigDecimal getRoundSlope(const PopRewardsParams& params,
                                           uint32_t payoutRound) {
-  const auto& curveParams = rewardParams.getCurveParams();
-  auto slopeRatio = curveParams.slopeNormal();
-  if (payoutRound == rewardParams.keystoneRound()) {
-    slopeRatio = curveParams.slopeKeystone();
+  auto slopeRatio = params.slopeNormal();
+  if (payoutRound == params.keystoneRound()) {
+    slopeRatio = params.slopeKeystone();
   }
   return slopeRatio;
 }
@@ -51,15 +50,14 @@ static PopRewardsBigDecimal getRoundSlope(const PopRewardsParams& rewardParams,
 // apply the reward curve to the score and subtract it from the current round
 // multiplier
 static PopRewardsBigDecimal calculateSlopeRatio(
-    const PopRewardsParams& rewardParams,
+    const PopRewardsParams& params,
     const PopRewardsBigDecimal& score,
     uint32_t payoutRound) {
-  const auto& slope = getRoundSlope(rewardParams, payoutRound);
-  const auto& curveParams = rewardParams.getCurveParams();
+  const auto& slope = getRoundSlope(params, payoutRound);
 
-  VBK_ASSERT(score >= curveParams.startOfSlope());
+  VBK_ASSERT(score >= params.startOfSlope());
 
-  auto scoreDecrease = slope * (score - curveParams.startOfSlope());
+  auto scoreDecrease = slope * (score - params.startOfSlope());
   PopRewardsBigDecimal maxScoreDecrease = 1.0;
   if (scoreDecrease > maxScoreDecrease) {
     scoreDecrease = maxScoreDecrease;
@@ -117,13 +115,12 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateBlockReward(
   }
 
   auto scoreToDifficulty = popscore / popdifficulty;
-  const auto& curveParams = params.getCurveParams();
   auto roundRatio = getRoundRatio(params, payoutRound);
 
   // penalty multiplier
   PopRewardsBigDecimal slope = 1.0;
 
-  if (scoreToDifficulty > curveParams.startOfSlope()) {
+  if (scoreToDifficulty > params.startOfSlope()) {
     auto maxScoreThreshold = getMaxScoreThreshold(params, payoutRound);
     if (scoreToDifficulty > maxScoreThreshold) {
       scoreToDifficulty = maxScoreThreshold;
