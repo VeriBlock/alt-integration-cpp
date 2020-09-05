@@ -60,6 +60,8 @@ jobs:
         run: cmake --build build -- -j2 install
       - name: test
         run: cd build && ctest
+      - name: c-bindig-test
+        run: cd build && make veriblock-pop-c-test && ./bin/veriblock-pop-c-test
 
 
   coverage:
@@ -234,6 +236,8 @@ jobs:
         run: cmake --build build -- -j2
       - name: test
         run: cd build && ctest
+      - name: c-bindig-test
+        run: cd build && make veriblock-pop-c-test && ./bin/veriblock-pop-c-test
 
   x86_64-apple-darwin16:
     runs-on: ubuntu-18.04

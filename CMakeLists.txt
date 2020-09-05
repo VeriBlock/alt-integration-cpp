@@ -158,7 +158,7 @@ endif()
 
 include_directories(include)
 add_subdirectory(src)
-
+add_subdirectory(bindings EXCLUDE_FROM_ALL)
 add_subdirectory(tools EXCLUDE_FROM_ALL)
 
 if(TESTING)

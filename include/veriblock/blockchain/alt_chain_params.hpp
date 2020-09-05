@@ -80,7 +80,7 @@ struct PopRewardsParams {
     return mLookupTable;
   }
 
- protected:
+ public:
   double mStartOfSlope = 1.0;
   double mSlopeNormal = 0.2;
   double mSlopeKeystone = 0.21325;
@@ -152,7 +152,8 @@ struct AltChainParams {
   //! unique POP ID for the chain; identifies altchain in VBK
   virtual int64_t getIdentifier() const noexcept = 0;
 
-  //! "genesis" block for POP mining. This is first block that can be endorsed
+  //! "genesis" block for POP mining. This is first block that can be
+  //! endorsed
   //! by POP miners.
   //! Can start at genesis block, or at any part of the active chain. This block
   //! is immediately finalized, so chain CAN NOT be reorganized past this block.
@@ -167,7 +168,7 @@ struct AltChainParams {
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
- protected:
+ public:
   std::shared_ptr<PopRewardsParams> mPopRewardsParams =
       std::make_shared<PopRewardsParams>();
 

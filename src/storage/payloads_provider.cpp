@@ -29,7 +29,8 @@ bool PayloadsProvider::getCommands(AltBlockTree& tree,
   }
 
   auto containingHash = block.getHash();
-  vectorPopToCommandGroup<AltBlockTree, VbkBlock>(tree, vbks, containingHash, out);
+  vectorPopToCommandGroup<AltBlockTree, VbkBlock>(
+      tree, vbks, containingHash, out);
   vectorPopToCommandGroup<AltBlockTree, VTB>(tree, vtbs, containingHash, out);
   vectorPopToCommandGroup<AltBlockTree, ATV>(tree, atvs, containingHash, out);
 
