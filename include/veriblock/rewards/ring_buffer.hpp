@@ -16,7 +16,7 @@ class ring_buffer;
 
 template <class T, bool isconst = false>
 struct ring_iterator {
-  using iterator_category = std::forward_iterator_tag ;
+  typedef std::forward_iterator_tag iterator_category;
   using size_type = size_t;
   using reference = typename std::conditional<isconst, T const &, T &>::type;
   using pointer = typename std::conditional<isconst, T const *, T *>::type;
