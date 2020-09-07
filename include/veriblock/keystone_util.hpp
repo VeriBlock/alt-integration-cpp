@@ -25,6 +25,9 @@ bool isCrossedKeystoneBoundary(int32_t bottomHeight,
 bool areOnSameKeystoneInterval(int32_t height1,
                                int32_t height2,
                                int32_t keystoneInterval);
+
+int getFirstPreviousKeystone(int32_t height, int32_t keystoneInterval);
+int getSecondPreviousKeystone(int32_t height, int32_t keystoneInterval);
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_KEYSTONE_UTIL_HPP_
