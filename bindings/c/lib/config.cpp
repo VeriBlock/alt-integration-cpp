@@ -160,6 +160,12 @@ struct AltParams {
       std::make_shared<AltChainParamsImpl>();
 };
 
+void VBK_SetAltParams(Config_t* config, AltParams_t* params) {
+  VBK_ASSERT(config);
+  VBK_ASSERT(params);
+  config->config.alt = params->alt;
+}
+
 void VBK_SetStartOfSlope(AltParams_t* params, double val) {
   params->alt->mPopRewardsParams->mStartOfSlope = val;
 }

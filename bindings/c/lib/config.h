@@ -24,6 +24,8 @@ extern AltParams_t* VBK_NewAltParams();
 //! deallocate alt params
 extern void VBK_FreeAltParams(AltParams_t* params);
 
+extern void VBK_SetAltParams(Config_t* config, AltParams_t* params);
+
 //! set VBK parameters and store them in config
 extern bool VBK_SelectVbkParams(Config_t* config,
                                 // "main\0", "test\0", "regtest\0", "alpha\0"
