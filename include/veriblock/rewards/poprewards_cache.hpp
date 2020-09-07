@@ -12,67 +12,9 @@
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/rewards/poprewards.hpp>
+#include <veriblock/rewards/ring_buffer.hpp>
 
 namespace altintegration {
-
-template <class T>
-struct circular_buffer {
-  explicit circular_buffer(size_t size)
-      : buf_(std::unique_ptr<T[]>(new T[size])), max_size_(size) {}
-
-  void put(T item) {
-    buf_[tail_] = item;
-    tail_ = (tail_ + 1) % max_size_;
-    if (head_ == tail_) {
-      head_ = (head_ + 1) % max_size_;
-    }
-  }
-
-  bool get(const size_t pos, T& out) {
-    out = buf_[pos % max_size_];
-    return true;
-  }
-
-  void eraseUpTo(const size_t pos) {
-    size_t inpos = pos % max_size_;
-    if (head_ < tail_ && inpos < head_) return;
-    if (head_ < tail_ && inpos > tail_) return;
-    if (head_ > tail_ && inpos > tail_ && inpos < head_) return;
-    tail_ = pos % max_size_;
-  }
-
-  int find(const std::function<bool(const T&)>& pred) {
-    size_t cur = head_;
-    for (size_t i = 0; i < max_size_; i++) {
-      if (cur == tail_) break;
-      if (pred(buf_[cur])) return (int)cur;
-      cur = (cur + 1) % max_size_;
-    }
-    return -1;
-  }
-
-  std::vector<T> asVector() const {
-    std::vector<T> out;
-    size_t cur = head_;
-    for (size_t i = 0; i < max_size_; i++) {
-      if (cur == tail_) break;
-      out.push_back(buf_[cur]);
-      cur = (cur + 1) % max_size_;
-    }
-    return out;
-  }
-
-  void reset() {
-    head_ = 0;
-    tail_ = 0;
-  }
-
-  private:
-  std::unique_ptr<T[]> buf_;
-  size_t head_ = 0;
-  size_t tail_ = 0;
-  const size_t max_size_;
-};
 
 /**
  * @invariant does not modify any on-disk state.
@@ -101,29 +43,17 @@ struct PopRewardsCache : public PopRewards {
  protected:
   const AltChainParams* altParams_;
   const VbkBlockTree* vbkTree_;
-  circular_buffer<pair_t> buffer;
+  ring_buffer<pair_t> buffer;
 
-  virtual int find(const index_t& block) {
-    auto pos = buffer.find([&block](const pair_t& item) {
-      return item.first.getHash() == block.getHash();
-    });
-    return pos;
-  }
+  bool cutend(const index_t& block);
 
-  virtual bool cutend(const index_t& block) {
-    auto pos = find(block);
-    if (pos < 0) {
-      return false;
-    }
-    buffer.eraseUpTo(pos);
-    return true;
-  }
+  void appendEndorsed(const index_t& block);
 
-  virtual void appendEndorsed(const index_t& block);
+  void updateCached(const index_t& endorsed);
 
-  virtual void updateCached(const index_t& endorsed);
+  void invalidateCache(const index_t& endorsed);
 
-  virtual void invalidateCache(const index_t& endorsed);
+  bool cacheExists(const index_t* range);
 };
 
 }  // namespace altintegration
