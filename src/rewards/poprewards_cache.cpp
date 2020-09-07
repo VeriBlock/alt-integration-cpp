@@ -15,18 +15,17 @@ PopRewardsBigDecimal PopRewardsCache::calculateDifficulty(
   ++it;
   PopRewardsBigDecimal sumscore = 0.0;
   size_t count = 0;
+  uint64_t difficultyInterval =
+      altParams_->getRewardParams().difficultyAveragingInterval();
   for (; it != buffer.crend(); ++it) {
-    if (count >= altParams_->getRewardParams().difficultyAveragingInterval()) {
+    if (count >= difficultyInterval) {
       break;
     }
     count++;
     sumscore += it->second;
   }
 
-  auto difficulty =
-      sumscore /
-      static_cast<uint64_t>(
-          altParams_->getRewardParams().difficultyAveragingInterval());
+  auto difficulty = sumscore / difficultyInterval;
 
   // Minimum difficulty
   if (difficulty < 1.0) {
