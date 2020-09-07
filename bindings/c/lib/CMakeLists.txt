@@ -4,4 +4,3 @@ add_library(veriblock_pop_c
         config.cpp
         )
 target_link_libraries(veriblock_pop_c PRIVATE ${LIB_NAME})
-

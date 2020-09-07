@@ -165,6 +165,12 @@ void VBK_SetAltParams(Config_t* config, AltParams_t* params) {
   VBK_ASSERT(params);
   config->config.alt = params->alt;
 }
+AltParams_t* VBK_NewAltParams() { return new AltParams(); }
+void VBK_FreeAltParams(AltParams_t* params) {
+  if (params) {
+    delete params;
+  }
+}
 
 void VBK_SetStartOfSlope(AltParams_t* params, double val) {
   params->alt->mPopRewardsParams->mStartOfSlope = val;
