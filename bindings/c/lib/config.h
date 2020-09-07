@@ -31,6 +31,7 @@ extern bool VBK_SelectVbkParams(Config_t* config,
                                 // "main\0", "test\0", "regtest\0", "alpha\0"
                                 const char* net,
                                 int startHeight,
+                                // example: hex,hex,hex
                                 const char* blocks);
 
 //! set BTC parameters and store them in config
@@ -38,6 +39,7 @@ extern bool VBK_SelectBtcParams(Config_t* config,
                                 // "main\0", "test\0", "regtest\0"
                                 const char* net,
                                 int startHeight,
+                                // example: hex,hex,hex
                                 const char* blocks);
 
 extern void VBK_SetStartOfSlope(AltParams_t* params, double val);
@@ -50,9 +52,11 @@ extern void VBK_SetMaxScoreThresholdNormal(AltParams_t* params, double val);
 extern void VBK_SetMaxScoreThresholdKeystone(AltParams_t* params, double val);
 extern void VBK_SetDifficultyAveragingInterval(AltParams_t* params,
                                                uint32_t val);
-extern void VBK_SetRoundRatios(AltParams_t* params, double* vals, int valslen);
+extern void VBK_SetRoundRatios(AltParams_t* params,
+                               const double* vals,
+                               int valslen);
 extern void VBK_SetPopRewardsLookupTable(AltParams_t* params,
-                                         double* vals,
+                                         const double* vals,
                                          int valslen);
 extern void VBK_SetMaxFutureBlockTime(AltParams_t* params, uint32_t val);
 extern void VBK_SetKeystoneInterval(AltParams_t* params, uint32_t val);
@@ -61,7 +65,7 @@ extern void VBK_SetEndorsementSettlementInterval(AltParams_t* params,
                                                  uint32_t val);
 extern void VBK_SetMaxPopDataSize(AltParams_t* params, uint32_t val);
 extern void VBK_SetForkResolutionLookupTable(AltParams_t* params,
-                                             double* vals,
+                                             const double* vals,
                                              int valslen);
 
 #ifdef __cplusplus
