@@ -73,11 +73,15 @@ struct TempBlockTree {
     // TODO: decrease counter for the previously known blocks
     auto shortHash = tree_->makePrevHash(index.getHash());
     auto it = temp_blocks_.at(shortHash);
-    // TODO: it is a hack because we do not erase blocks and just move them to
     // the remove_ container
-    it->setNull();
-    removed_blocks_[shortHash] = it;
-    temp_blocks_.erase(shortHash);
+    if (it->refCount() == 0) {
+      // TODO: it is a hack because we do not erase blocks and just move them to
+      it->setNull();
+      removed_blocks_[shortHash] = it;
+      temp_blocks_.erase(shortHash);
+    } else {
+      it->removeRef(0);
+    }
   }
 
   const block_tree_t& getStableTree() const { return *tree_; }
@@ -89,7 +93,7 @@ struct TempBlockTree {
     auto hash = header->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {
-      
+      current->addRef(0);
       // it is a duplicate
       return current;
     }
@@ -102,7 +106,6 @@ struct TempBlockTree {
 
   index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header) {
     VBK_ASSERT(header != nullptr);
-    // TODO: use counter to the known blocks
     index_t* current = touchBlockIndex(header->getHash());
     current->setHeader(std::move(header));
     current->pprev = getBlockIndex(header->previousBlock);
