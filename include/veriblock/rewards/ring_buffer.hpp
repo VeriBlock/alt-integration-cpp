@@ -30,11 +30,6 @@ struct ring_iterator {
  public:
   ring_iterator()
       : ptrToBuffer(nullptr), offset(0), index(0), reverse(false) {}
-  ring_iterator(const ring_iterator<T, false> &it)
-      : ptrToBuffer(it.ptrToBuffer),
-        offset(it.offset),
-        index(it.index),
-        reverse(it.reverse) {}
 
   reference operator*() {
     if (reverse)
