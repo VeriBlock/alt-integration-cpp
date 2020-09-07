@@ -16,8 +16,10 @@ class ring_buffer;
 
 template <class T, bool isconst = false>
 struct ring_iterator {
-  typedef std::forward_iterator_tag iterator_category;
+  using iterator_category = std::forward_iterator_tag;
   using size_type = size_t;
+  using value_type = T;
+  using difference_type = long long;
   using reference = typename std::conditional<isconst, T const &, T &>::type;
   using pointer = typename std::conditional<isconst, T const *, T *>::type;
   using vec_pointer = typename std::
@@ -40,21 +42,12 @@ struct ring_iterator {
                             (ptrToBuffer->size())];
     return (*ptrToBuffer)[(offset + index) % (ptrToBuffer->size())];
   }
-  reference operator[](size_type index) {
-    ring_iterator iter = *this;
-    iter.index += index;
-    return *iter;
-  }
   pointer operator->() { return &(operator*()); }
 
   ring_iterator &operator++() {
     ++index;
     return *this;
   };
-  ring_iterator &operator+=(int n) {
-    index += n;
-    return *this;
-  }
   bool operator==(const ring_iterator &other) {
     return (reverse == other.reverse) &&
            (index + offset == other.index + other.offset);
