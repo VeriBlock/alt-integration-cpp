@@ -335,10 +335,10 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
     return {};
   }
 
-  auto popDifficulty = rewards_.updateAndCalculateDifficulty(*endorsedBlock);
-  auto ret = rewards_.calculatePayouts(*endorsedBlock, popDifficulty);
+  auto ret = rewards_.calculatePayouts(*endorsedBlock);
+  auto difficulty = rewards_.calculateDifficulty(*endorsedBlock);
   VBK_LOG_DEBUG("Pop Difficulty=%s for block %s, paying to %d addresses",
-                popDifficulty.toPrettyString(),
+                difficulty.toPrettyString(),
                 index->toShortPrettyString(),
                 ret.size());
   return ret;

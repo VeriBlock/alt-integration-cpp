@@ -101,11 +101,17 @@ class ring_buffer {
     return m_array[prev(m_tail)];
   }
 
-  size_type capacity() const { return m_array_size - 1; }
+  size_type capacity() const {
+    assert(m_array_size > 0);
+    return m_array_size - 1;
+  }
 
   size_type size() const {
     return (m_tail + m_array_size - m_head) % m_array_size;
   }
+
+  bool empty() const { return m_tail == m_head; }
+  bool full() const { return m_head == next(m_tail); }
 
   reference operator[](size_type index) const {
     return m_array[(m_head + index) % m_array_size];
@@ -208,14 +214,11 @@ class ring_buffer {
     m_tail = 0;
   }
 
-  bool empty() const { return m_tail == m_head; }
-  bool full() const { return m_head == next(m_tail); }
-
  private:
   circularBuffer m_array;
+  const size_type m_array_size;
   size_type m_head;
   size_type m_tail;
-  const size_type m_array_size;
 
   size_type next(size_type cur) const { return (cur + 1) % m_array_size; }
   size_type prev(size_type cur) const {

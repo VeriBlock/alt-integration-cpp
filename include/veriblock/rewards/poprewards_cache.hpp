@@ -6,11 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CACHE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CACHE_HPP_
 
-#include <veriblock/blockchain/alt_chain_params.hpp>
-#include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/blockchain/pop/vbk_block_tree.hpp>
-#include <veriblock/entities/altblock.hpp>
-#include <veriblock/logger.hpp>
 #include <veriblock/rewards/poprewards.hpp>
 #include <veriblock/rewards/ring_buffer.hpp>
 
@@ -31,29 +26,53 @@ struct PopRewardsCache : public PopRewards {
 
   virtual ~PopRewardsCache() = default;
 
-  virtual PopRewardsBigDecimal updateAndCalculateDifficulty(const index_t& tip);
+  /**
+   * Calculate POP difficulty using cache data.
+   * Cache should be built using the calculatePayouts() call.
+   * @param tip calculate difficulty using chain ending with this tip
+   * @return PopRewardsBigDecimal resulting difficulty
+   */
+  PopRewardsBigDecimal calculateDifficulty(const index_t& tip) const override;
 
-  PopRewardsBigDecimal calculateDifficulty(
-      const BlockIndex<AltBlock>& tip) const override;
-
+  /**
+   * Calculate POP rewards for miners. Rewards are calculated for
+   * the endorsed block. This and previous block scores are saved in
+   * cache.
+   * @param endorsedBlock endorsed altchain block which we are paying reward
+   * for.
+   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
+   * key and reward amount as a value
+   */
   std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
-      const index_t& endorsedBlock,
-      const PopRewardsBigDecimal& popDifficulty) override;
+      const index_t& endorsedBlock) override;
 
  protected:
   const AltChainParams* altParams_;
   const VbkBlockTree* vbkTree_;
   ring_buffer<pair_t> buffer;
 
-  bool cutend(const index_t& block);
+  PopRewardsBigDecimal updateAndCalculateDifficulty(const index_t& tip);
 
-  void appendEndorsed(const index_t& block);
+  void cacheAddBlock(const index_t& block);
 
-  void updateCached(const index_t& endorsed);
+  bool cacheBlockExists(const index_t* block);
 
-  void invalidateCache(const index_t& endorsed);
+  void cacheInvalidate(const index_t& endorsed);
 
-  bool cacheExists(const index_t* range);
+  /**
+   * Remove the newest blocks from the cache till the given block
+   * is found. Therefore the given block will be the last one in cache,
+   * or cache will be empty.
+   * @param lastBlock erase cache records up to this block, not including.
+   */
+  void cacheTruncateTailTo(const index_t& lastBlock);
+
+  /**
+   * Update cache to have scores of this block and any additional blocks
+   * required to calculate POP rewards.
+   * @param endorsed reward will be paid for this block.
+   */
+  void cacheRebuild(const index_t& endorsed);
 };
 
 }  // namespace altintegration

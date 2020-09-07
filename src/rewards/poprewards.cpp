@@ -93,9 +93,9 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayoutsInner(
 }
 
 std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
-    const BlockIndex<AltBlock>& endorsedBlock,
-    const PopRewardsBigDecimal& popDifficulty) {
+    const BlockIndex<AltBlock>& endorsedBlock) {
   auto blockScore = scoreFromEndorsements(endorsedBlock);
+  auto popDifficulty = calculateDifficulty(endorsedBlock);
   return calculatePayoutsInner(endorsedBlock, blockScore, popDifficulty);
 }
 
