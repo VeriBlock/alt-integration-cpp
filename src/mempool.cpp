@@ -237,7 +237,9 @@ void MemPool::clear() {
 }
 
 template <>
-bool MemPool::submit(const std::shared_ptr<ATV>& atv, ValidationState& state) {
+bool MemPool::submit(const std::shared_ptr<ATV>& atv,
+                     ValidationState& state,
+                     bool resubmit) {
   // stateless validation
   if (!checkATV(*atv, state, mempool_tree_.alt().getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
@@ -247,7 +249,8 @@ bool MemPool::submit(const std::shared_ptr<ATV>& atv, ValidationState& state) {
       std::make_shared<VbkBlock>(atv->blockOfProof);
 
   // stateful validation
-  if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
+  ValidationState temp_state;
+  if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, temp_state)) {
     atvs_in_flight_[atv->getId()] = atv;
     return true;
   }
@@ -262,13 +265,17 @@ bool MemPool::submit(const std::shared_ptr<ATV>& atv, ValidationState& state) {
   on_atv_accepted.emit(*atv);
 
   atvs_in_flight_.erase(atv->getId());
-  resubmit_payloads();
+  if (resubmit) {
+    resubmit_payloads();
+  }
 
   return true;
 }
 
 template <>
-bool MemPool::submit(const std::shared_ptr<VTB>& vtb, ValidationState& state) {
+bool MemPool::submit(const std::shared_ptr<VTB>& vtb,
+                     ValidationState& state,
+                     bool resubmit) {
   // stateless validation
   if (!checkVTB(*vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
     return state.Invalid("pop-mempool-submit-vtb-stateless");
@@ -278,7 +285,8 @@ bool MemPool::submit(const std::shared_ptr<VTB>& vtb, ValidationState& state) {
       std::make_shared<VbkBlock>(vtb->containingBlock);
 
   // for the statefully invalid payloads we just save it for the future
-  if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
+  ValidationState temp_state;
+  if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, temp_state)) {
     vtbs_in_flight_[vtb->getId()] = vtb;
     return true;
   }
@@ -292,14 +300,17 @@ bool MemPool::submit(const std::shared_ptr<VTB>& vtb, ValidationState& state) {
   on_vtb_accepted.emit(*vtb);
 
   vtbs_in_flight_.erase(vtb->getId());
-  resubmit_payloads();
+  if (resubmit) {
+    resubmit_payloads();
+  }
 
   return true;
 }
 
 template <>
 bool MemPool::submit(const std::shared_ptr<VbkBlock>& blk,
-                     ValidationState& state) {
+                     ValidationState& state,
+                     bool resubmit) {
   // stateless validation
   if (!checkBlock(
           *blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
@@ -307,7 +318,8 @@ bool MemPool::submit(const std::shared_ptr<VbkBlock>& blk,
   }
 
   // for the statefully invalid payloads we just save it for the future
-  if (!mempool_tree_.acceptVbkBlock(blk, state)) {
+  ValidationState temp_state;
+  if (!mempool_tree_.acceptVbkBlock(blk, temp_state)) {
     vbkblocks_in_flight_[blk->getId()] = blk;
     return true;
   }
@@ -319,7 +331,9 @@ bool MemPool::submit(const std::shared_ptr<VbkBlock>& blk,
   }
 
   vbkblocks_in_flight_.erase(blk->getId());
-  resubmit_payloads();
+  if (resubmit) {
+    resubmit_payloads();
+  }
 
   return true;
 }
@@ -328,18 +342,34 @@ void MemPool::resubmit_payloads() {
   ValidationState state;
 
   // resubmit vbk blocks
-  for (const auto& pair : vbkblocks_in_flight_) {
-    submit<VbkBlock>(pair.second, state);
+  using P1 = std::pair<vbkblock_map_t::key_type, vbkblock_map_t::mapped_type>;
+  std::vector<P1> blocks(vbkblocks_in_flight_.begin(),
+                         vbkblocks_in_flight_.end());
+  std::sort(blocks.begin(), blocks.end(), [](const P1& a, const P1& b) -> bool {
+    return a.second->height < b.second->height;
+  });
+  for (const auto& pair : blocks) {
+    submit<VbkBlock>(pair.second, state, false);
   }
 
   // resubmit vtbs
-  for (const auto& pair : vtbs_in_flight_) {
-    submit<VTB>(pair.second, state);
+  using P2 = std::pair<vtb_map_t::key_type, vtb_map_t::mapped_type>;
+  std::vector<P2> vtbs(vtbs_in_flight_.begin(), vtbs_in_flight_.end());
+  std::sort(vtbs.begin(), vtbs.end(), [](const P2& a, const P2& b) -> bool {
+    return a.second->containingBlock.height < b.second->containingBlock.height;
+  });
+  for (const auto& pair : vtbs) {
+    submit<VTB>(pair.second, state, false);
   }
 
   // resubmit atvs
-  for (const auto& pair : atvs_in_flight_) {
-    submit<ATV>(pair.second, state);
+  using P3 = std::pair<atv_map_t::key_type, atv_map_t::mapped_type>;
+  std::vector<P3> atvs(atvs_in_flight_.begin(), atvs_in_flight_.end());
+  std::sort(atvs.begin(), atvs.end(), [](const P3& a, const P3& b) -> bool {
+    return a.second->blockOfProof.height < b.second->blockOfProof.height;
+  });
+  for (const auto& pair : atvs) {
+    submit<ATV>(pair.second, state, false);
   }
 }
 

@@ -115,9 +115,12 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  bool submit(const std::shared_ptr<T>& pl, ValidationState& state) {
+  bool submit(const std::shared_ptr<T>& pl,
+              ValidationState& state,
+              bool resubmit = true) {
     (void)pl;
     (void)state;
+    (void)resubmit;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return true;
   }
@@ -214,11 +217,11 @@ struct MemPool {
 // clang-format off
 
 //! @overload
-template <> bool MemPool::submit(const std::shared_ptr<ATV>& atv, ValidationState& state);
+template <> bool MemPool::submit(const std::shared_ptr<ATV>& atv, ValidationState& state, bool resubmit);
 //! @overload
-template <> bool MemPool::submit(const std::shared_ptr<VTB>& vtb, ValidationState& state);
+template <> bool MemPool::submit(const std::shared_ptr<VTB>& vtb, ValidationState& state, bool resubmit);
 //! @overload
-template <> bool MemPool::submit(const std::shared_ptr<VbkBlock>& block, ValidationState& state);
+template <> bool MemPool::submit(const std::shared_ptr<VbkBlock>& block, ValidationState& state, bool resubmit);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload
