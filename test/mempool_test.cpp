@@ -321,7 +321,10 @@ TEST_F(MemPoolFixture, removeAll_test4) {
 
   // add same ATV again
   // TODO: we do not return false value while payloads statefully incorect
-  // ASSERT_FALSE(mempool->submit(atv, state));
+
+  ASSERT_TRUE(mempool->submit(atv, state));
+  ASSERT_EQ(mempool->getMap<ATV>().size(), 0);
+  ASSERT_EQ(mempool->getInFlightMap<ATV>().size(), 1);
   // ASSERT_EQ(state.GetPath(),
   // "pop-mempool-submit-atv-stateful+atv-duplicate"); state.clear();
 
@@ -418,9 +421,11 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   EXPECT_TRUE(popData.context.empty());
 
   // insert the same payloads into the mempool
-  EXPECT_FALSE(mempool->submit(atv, state));
+  EXPECT_TRUE(mempool->submit(atv, state));
+  EXPECT_EQ(mempool->getMap<ATV>().size(), 0);
   for (const auto& vtb : vtbs) {
-    EXPECT_FALSE(mempool->submit(vtb, state));
+    EXPECT_TRUE(mempool->submit(vtb, state));
+    EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   }
 
   popData = mempool->getPop();
@@ -464,9 +469,9 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
         << state.toString();
   }
 
-  EXPECT_FALSE(mempool->submit<VbkBlock>(context.back(), state));
-  EXPECT_EQ(state.GetPath(),
-            "pop-mempool-submit-vbk-stateful+VBK-bad-prev-block");
+  EXPECT_TRUE(mempool->submit<VbkBlock>(context.back(), state));
+  EXPECT_EQ(mempool->getMap<VbkBlock>().size(), context.size() - 1);
+  EXPECT_EQ(mempool->getInFlightMap<VbkBlock>().size(), 1);
 }
 
 TEST_F(MemPoolFixture, submit_deprecated_payloads) {
@@ -539,11 +544,13 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
 
   // insert the same payloads into the mempool
   payloadsProvider.write(atv);
-  EXPECT_FALSE(mempool->submit(atv, state));
+  EXPECT_TRUE(mempool->submit(atv, state));
+  EXPECT_EQ(mempool->getMap<ATV>().size(), 0);
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
     EXPECT_TRUE(checkVTB(vtb, state, popminer->getBtcParams()));
-    EXPECT_FALSE(mempool->submit(vtb, state));
+    EXPECT_TRUE(mempool->submit(vtb, state));
+    EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   }
 }
 
@@ -957,8 +964,9 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   applyInNextBlock(v_popData);
 
   mempool->removeAll(v_popData);
-  ASSERT_FALSE(mempool->submit(atv1, state)) << state.toString();
-  ASSERT_EQ(state.GetPath(), "pop-mempool-submit-atv-stateful+atv-duplicate");
+  ASSERT_TRUE(mempool->submit(atv1, state)) << state.toString();
+  ASSERT_EQ(mempool->getMap<ATV>().size(), 0);
+  ASSERT_EQ(mempool->getInFlightMap<ATV>().size(), 1);
 }
 
 TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
@@ -1222,6 +1230,10 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   std::vector<VbkBlock> context;
   fillVbkContext(
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+  for (const auto& blk : context) {
+    ASSERT_TRUE(mempool->submit<VbkBlock>(blk, state)) << state.toString();
+  }
+
   ASSERT_EQ(vtbs.size(), vtbs_amount);
 
   payloadsProvider.write(vtbs);

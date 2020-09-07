@@ -374,18 +374,33 @@ void MemPool::resubmit_payloads() {
 }
 
 template <>
-const MemPool::payload_map<VbkBlock>& MemPool::getMap() const {
+const MemPool::vbkblock_map_t& MemPool::getMap() const {
   return vbkblocks_;
 }
 
 template <>
-const MemPool::payload_map<ATV>& MemPool::getMap() const {
+const MemPool::atv_map_t& MemPool::getMap() const {
   return stored_atvs_;
 }
 
 template <>
-const MemPool::payload_map<VTB>& MemPool::getMap() const {
+const MemPool::vtb_map_t& MemPool::getMap() const {
   return stored_vtbs_;
+}
+
+template<>
+const MemPool::vbkblock_map_t& MemPool::getInFlightMap() const {
+  return vbkblocks_in_flight_;
+}
+
+template<>
+const MemPool::atv_map_t& MemPool::getInFlightMap() const {
+  return atvs_in_flight_;
+}
+
+template<>
+const MemPool::vtb_map_t& MemPool::getInFlightMap() const {
+  return vtbs_in_flight_;
 }
 
 template <>

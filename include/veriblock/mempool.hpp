@@ -140,6 +140,12 @@ struct MemPool {
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getMap");
   }
 
+  //! @private
+  template <typename T>
+  const payload_map<T>& getInFlightMap() const {
+    static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getInFlightMap");
+  }
+
   /**
    * (POW) Miners should execute this to get POP content for "next block".
    *
@@ -228,6 +234,12 @@ template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
 //! @overload
 template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
+//! @overload
+template<> const MemPool::payload_map<VbkBlock>& MemPool::getInFlightMap() const;
+//! @overload
+template<> const MemPool::payload_map<ATV>& MemPool::getInFlightMap() const;
+//! @overload
+template<> const MemPool::payload_map<VTB>& MemPool::getInFlightMap() const;
 //! @overload
 template <> signals::Signal<void(const ATV&)>& MemPool::getSignal();
 //! @overload
