@@ -536,7 +536,7 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
 
   AltBlock endorsedBlock = chain[5];
 
-  mineAltBlocks(alttree.getParams().getEndorsementSettlementInterval(), chain);
+  mineAltBlocks(alttree.getParams().getPopPayoutDelay(), chain);
 
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
