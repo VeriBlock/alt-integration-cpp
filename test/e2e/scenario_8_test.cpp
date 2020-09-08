@@ -95,7 +95,7 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
 
   // mine 10 blocks
-  mineAltBlocks(10, chain, false, false);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
 
   AltBlock endorsedBlock = chain[5];
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
@@ -163,6 +163,10 @@ TEST_F(Scenario8, scenario_8) {
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   ASSERT_TRUE(containingIndex);
   alttree.removePayloads(containingIndex->getHash());
-  ASSERT_TRUE(SetState(alttree, containingBlock.getHash()));
   validityFlagCheck(*vbkBlock, true);
+  ASSERT_TRUE(SetState(alttree, containingBlock.previousBlock));
+  validityFlagCheck(*vbkBlock, true);
+
+  ASSERT_DEATH(SetState(alttree, containingBlock.getHash()),
+               "must be connected");
 }

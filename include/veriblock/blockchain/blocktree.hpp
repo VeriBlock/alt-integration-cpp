@@ -158,7 +158,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     // clear blockOfProofEndorsements inmem field
     current->blockOfProofEndorsements.clear();
 
-    current->setFlag(BLOCK_VALID_TREE);
+    current->raiseValidity(BLOCK_VALID_TREE);
     return true;
   }
 
@@ -217,12 +217,11 @@ struct BlockTree : public BaseBlockTree<Block> {
                "insertBlockHeader");
 
     base::tryAddTip(index);
-
     index->setFlag(BLOCK_APPLIED);
-    index->setFlag(BLOCK_CAN_BE_APPLIED);
+    bool success = index->raiseValidity(BLOCK_CAN_BE_APPLIED);
+    VBK_ASSERT(success);
     index->setFlag(BLOCK_BOOTSTRAP);
     base::appliedBlockCount = 1;
-
     return true;
   }
 
@@ -254,6 +253,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     if (ret) {
       *ret = index;
     }
+
+    index->raiseValidity(BLOCK_CONNECTED);
 
     // if prev block is invalid, mark this block as invalid
     if (!prev->isValid()) {

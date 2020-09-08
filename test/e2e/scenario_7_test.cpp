@@ -25,7 +25,7 @@ TEST_F(Scenario7, scenario_7) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // mine 10 blocks
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true);
 
   // endorse VBK blocks
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);

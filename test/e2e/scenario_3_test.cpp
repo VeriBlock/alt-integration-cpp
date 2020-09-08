@@ -55,7 +55,8 @@ TEST_F(Scenario3, scenario_3) {
 
   ASSERT_TRUE(popminer->vbk().getBestChain().contains(endorsedVbkBlock1));
   ASSERT_FALSE(popminer->vbk().getBestChain().contains(endorsedVbkBlock2));
-  // Step 1
+
+  VBK_LOG_DEBUG("Step 1");
   auto popTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   popminer->mineBtcBlocks(10);
   auto popTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
@@ -92,10 +93,10 @@ TEST_F(Scenario3, scenario_3) {
   ASSERT_LT(btcContaininBlock1->getHeight(), btcContaininBlock2->getHeight());
 
   // mine 10 Alt blocks
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
   AltBlock endorsedBlock = chain[5];
 
-  // Step 2
+  VBK_LOG_DEBUG("Step 2");
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(*chain.rbegin());
@@ -132,7 +133,7 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_TRUE(containingVbkBlock->getContainingEndorsements().count(
       VbkEndorsement::getId(vtbs1[1])));
 
-  // Step 3
+  VBK_LOG_DEBUG("Step 3");
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   PopData altPayloads2 = generateAltPayloads({tx}, vbkTip1->getHash());
@@ -159,7 +160,7 @@ TEST_F(Scenario3, scenario_3) {
   ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
   validateAlttreeIndexState(alttree, containingBlock, altPayloads2);
 
-  // Step 4
+  VBK_LOG_DEBUG("Step 4");
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   PopData altPayloads3 =

@@ -31,6 +31,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
       chain.push_back(generateNextBlock(*chain.rbegin()));
 
       ASSERT_TRUE(tree.acceptBlockHeader(*chain.rbegin(), state));
+      tree.acceptBlock(chain.back().getHash(), {});
       ASSERT_TRUE(SetState(tree, chain.rbegin()->getHash()));
       ASSERT_TRUE(state.IsValid());
     }
@@ -111,6 +112,7 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
     auto block = generateNextBlock(chain.back());
     chain.push_back(block);
     ASSERT_TRUE(alttree.acceptBlockHeader(block, state));
+    alttree.acceptBlock(block.getHash(), {});
   }
 }
 

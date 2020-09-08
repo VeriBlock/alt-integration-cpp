@@ -26,12 +26,6 @@ void assertBlockCanBeApplied(index_t& index) {
                  "unapplied block %s",
                  index.pprev->toPrettyString());
 
-  // BLOCK_CAN_BE_APPLIED and BLOCK_FAILED_POP are mutually exclusive flags
-  if (index.hasFlags(BLOCK_CAN_BE_APPLIED)) {
-    VBK_ASSERT_MSG(!index.hasFlags(BLOCK_FAILED_POP),
-                   "block 'can be applied' but has 'block failed pop");
-  }
-
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: tried to apply an already applied block %s",
                  index.toPrettyString());
@@ -41,6 +35,10 @@ void assertBlockCanBeApplied(index_t& index) {
       "state corruption: found an unapplied block that has some of its "
       "descendants applied %s",
       index.toPrettyString());
+
+  VBK_ASSERT(!index.hasFlags(BLOCK_FAILED_CHILD) &&
+             "state corruption: attempted to apply a block that has an "
+             "invalid ancestor");
 }
 
 template <typename index_t>
@@ -92,17 +90,16 @@ struct PopStateMachine {
   VBK_CHECK_RETURN bool applyBlock(index_t& index, ValidationState& state) {
     assertBlockCanBeApplied(index);
 
-    if (index.hasFlags(BLOCK_FAILED_BLOCK)) {
+    if (!index.isValid()) {
       return state.Invalid(
           index_t::block_t::name() + "-marked-invalid",
           fmt::sprintf("block %s is marked as invalid and cannot be applied",
                        index.toPrettyString()));
     }
-    VBK_ASSERT(!index.hasFlags(BLOCK_FAILED_CHILD) &&
-               "state corruption: attempted to apply a block that as an "
-               "invalid ancestor");
-    // if the block is marked as BLOCK_FAILED_POP,
-    // we try to apply it and see if it is still invalid
+
+    VBK_ASSERT_MSG(index.isValid(BLOCK_CONNECTED),
+                   "attempted to apply an unconnected block %s",
+                   index.toPrettyString());
 
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
@@ -154,23 +151,17 @@ struct PopStateMachine {
         }
 
       }  // end for
-
-      // since we have successfully applied the block, clear BLOCK_FAILED_POP
-      ed_.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-
-    } else {
-      VBK_ASSERT(!index.hasFlags(BLOCK_FAILED_POP) &&
-                 "state corruption: an empty block must not be invalid due to "
-                 "its payloads");
     }
 
     // if the applied block count equals the size of the chain between the root
     // and index, we have just applied a block on top of the only applied chain,
     // so it is fully valid
-    if (index.pprev->hasFlags(BLOCK_CAN_BE_APPLIED) &&
+    if (index.pprev->isValid(BLOCK_CAN_BE_APPLIED) &&
         index.getHeight() ==
             ed_.getRoot().getHeight() + ed_.appliedBlockCount) {
-      index.setFlag(BLOCK_CAN_BE_APPLIED);
+      index.raiseValidity(BLOCK_CAN_BE_APPLIED);
+    } else {
+      index.raiseValidity(BLOCK_HAS_BEEN_APPLIED);
     }
 
     index.setFlag(BLOCK_APPLIED);
@@ -262,7 +253,7 @@ struct PopStateMachine {
       return true;
     }
 
-    if (to.hasFlags(BLOCK_FAILED_BLOCK)) {
+    if (!to.isValid()) {
       return state.Invalid(
           index_t::block_t::name() + "-marked-invalid",
           fmt::sprintf("block %s is marked as invalid and cannot be applied",
