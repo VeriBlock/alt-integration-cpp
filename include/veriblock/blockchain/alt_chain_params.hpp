@@ -141,7 +141,7 @@ struct AltChainParams {
 
   //! getter for reward parameters
   const PopRewardsParams& getRewardParams() const noexcept {
-    return mPopRewardsParams;
+    return *mPopRewardsParams;
   }
 
   //! Maximum future block time for altchain blocks. Must be low enough such
@@ -165,7 +165,8 @@ struct AltChainParams {
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
  protected:
-  PopRewardsParams mPopRewardsParams;
+  std::shared_ptr<PopRewardsParams> mPopRewardsParams =
+      std::make_shared<PopRewardsParams>();
 
   uint32_t mMaxFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
