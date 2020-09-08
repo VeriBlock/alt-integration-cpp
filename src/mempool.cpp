@@ -237,9 +237,9 @@ void MemPool::clear() {
 }
 
 template <>
-bool MemPool::submit(const std::shared_ptr<ATV>& atv,
-                     ValidationState& state,
-                     bool resubmit) {
+bool MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
+                          ValidationState& state,
+                          bool resubmit) {
   // stateless validation
   if (!checkATV(*atv, state, mempool_tree_.alt().getParams())) {
     return state.Invalid("pop-mempool-submit-atv-stateless");
@@ -273,9 +273,9 @@ bool MemPool::submit(const std::shared_ptr<ATV>& atv,
 }
 
 template <>
-bool MemPool::submit(const std::shared_ptr<VTB>& vtb,
-                     ValidationState& state,
-                     bool resubmit) {
+bool MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
+                          ValidationState& state,
+                          bool resubmit) {
   // stateless validation
   if (!checkVTB(*vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
     return state.Invalid("pop-mempool-submit-vtb-stateless");
@@ -308,9 +308,9 @@ bool MemPool::submit(const std::shared_ptr<VTB>& vtb,
 }
 
 template <>
-bool MemPool::submit(const std::shared_ptr<VbkBlock>& blk,
-                     ValidationState& state,
-                     bool resubmit) {
+bool MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& blk,
+                               ValidationState& state,
+                               bool resubmit) {
   // stateless validation
   if (!checkBlock(
           *blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
