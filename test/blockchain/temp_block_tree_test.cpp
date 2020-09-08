@@ -142,7 +142,58 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_2) {
   EXPECT_FALSE(areOnSameChain(*fork2, *fork1, this->temp_block_tree));
 }
 
-REGISTER_TYPED_TEST_SUITE_P(TempBlockTreeTest, scenario_1, scenario_2);
+// test removeTempSingleBlock() method
+TYPED_TEST_P(TempBlockTreeTest, scenario_3) {
+  using block_t = typename TypeParam::block_t;
+
+  auto gen_block =
+      this->temp_block_tree.getStableTree().getParams().getGenesisBlock();
+
+  EXPECT_NE(this->temp_block_tree.getBlockIndex(gen_block.getHash()), nullptr);
+  EXPECT_NE(
+      this->temp_block_tree.getStableTree().getBlockIndex(gen_block.getHash()),
+      nullptr);
+  EXPECT_EQ(
+      this->temp_block_tree.getBlockIndex(gen_block.getHash()),
+      this->temp_block_tree.getStableTree().getBlockIndex(gen_block.getHash()));
+
+  auto block = mineBlock<block_t>(*this->popminer);
+
+  EXPECT_EQ(this->temp_block_tree.getBlockIndex(block->getHash()), nullptr);
+  EXPECT_EQ(
+      this->temp_block_tree.getStableTree().getBlockIndex(block->getHash()),
+      nullptr);
+
+  EXPECT_TRUE(this->temp_block_tree.acceptBlock(block, this->state));
+
+  EXPECT_NE(this->temp_block_tree.getBlockIndex(block->getHash()), nullptr);
+  EXPECT_EQ(
+      this->temp_block_tree.getStableTree().getBlockIndex(block->getHash()),
+      nullptr);
+
+  this->temp_block_tree.removeTempSingleBlock(block->getHash());
+
+  EXPECT_EQ(this->temp_block_tree.getBlockIndex(block->getHash()), nullptr);
+  EXPECT_EQ(
+      this->temp_block_tree.getStableTree().getBlockIndex(block->getHash()),
+      nullptr);
+
+  // twice add the same block
+  EXPECT_TRUE(this->temp_block_tree.acceptBlock(block, this->state));
+  EXPECT_TRUE(this->temp_block_tree.acceptBlock(block, this->state));
+
+  this->temp_block_tree.removeTempSingleBlock(block->getHash());
+
+  EXPECT_NE(this->temp_block_tree.getBlockIndex(block->getHash()), nullptr);
+  EXPECT_EQ(
+      this->temp_block_tree.getStableTree().getBlockIndex(block->getHash()),
+      nullptr);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(TempBlockTreeTest,
+                            scenario_1,
+                            scenario_2,
+                            scenario_3);
 
 // clang-format off
 typedef ::testing::Types<
