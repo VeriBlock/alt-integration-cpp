@@ -388,17 +388,17 @@ const MemPool::vtb_map_t& MemPool::getMap() const {
   return stored_vtbs_;
 }
 
-template<>
+template <>
 const MemPool::vbkblock_map_t& MemPool::getInFlightMap() const {
   return vbkblocks_in_flight_;
 }
 
-template<>
+template <>
 const MemPool::atv_map_t& MemPool::getInFlightMap() const {
   return atvs_in_flight_;
 }
 
-template<>
+template <>
 const MemPool::vtb_map_t& MemPool::getInFlightMap() const {
   return vtbs_in_flight_;
 }
