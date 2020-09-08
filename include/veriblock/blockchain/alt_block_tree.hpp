@@ -23,7 +23,7 @@
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/fmt.hpp"
-#include "veriblock/rewards/poprewards_cache.hpp"
+#include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/storage/payloads_index.hpp"
 #include "veriblock/storage/payloads_provider.hpp"
 #include "veriblock/validation_state.hpp"
@@ -281,7 +281,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
-  PopRewardsCache rewards_;
+  PopRewards rewards_;
   PayloadsIndex payloadsIndex_;
   PayloadsProvider& payloadsProvider_;
 

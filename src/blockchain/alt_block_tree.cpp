@@ -335,10 +335,10 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
     return {};
   }
 
-  auto ret = rewards_.calculatePayouts(*endorsedBlock);
-  auto difficulty = rewards_.calculateDifficulty(*endorsedBlock);
+  auto popDifficulty = rewards_.calculateDifficulty(vbk(), *endorsedBlock);
+  auto ret = rewards_.calculatePayouts(vbk(), *endorsedBlock, popDifficulty);
   VBK_LOG_DEBUG("Pop Difficulty=%s for block %s, paying to %d addresses",
-                difficulty.toPrettyString(),
+                popDifficulty.toPrettyString(),
                 index->toShortPrettyString(),
                 ret.size());
   return ret;
@@ -626,7 +626,7 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
            alt_config,
            payloadsProvider,
            payloadsIndex_),
-      rewards_(alt_config, cmp_.getProtectingBlockTree()),
+      rewards_(alt_config),
       payloadsProvider_(payloadsProvider) {}
 
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
