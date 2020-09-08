@@ -10,6 +10,7 @@
 #include <limits>
 #include <stdexcept>
 #include <vector>
+#include <veriblock/assert.hpp>
 
 #include "checks.hpp"
 #include "consts.hpp"
