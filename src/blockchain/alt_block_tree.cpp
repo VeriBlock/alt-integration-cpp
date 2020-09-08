@@ -121,19 +121,6 @@ void removeDuplicates(BlockIndex<AltBlock>& index,
   payloads.erase(duplicates, payloads.end());
 }
 
-template <typename I>
-bool hasDuplicateIds(const std::vector<I> payloads) {
-  std::unordered_set<std::vector<uint8_t>> ids;
-  for (const auto& payload : payloads) {
-    const auto id = getIdVector(payload);
-    bool inserted = ids.insert(id).second;
-    if (!inserted) {
-      return true;
-    }
-  }
-  return false;
-}
-
 template <typename P, typename T>
 bool hasDuplicates(BlockIndex<AltBlock>& index,
                    std::vector<T> payloads,
@@ -183,16 +170,14 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   VBK_ASSERT_MSG(index.pprev,
                  "Adding payloads to a bootstrap block is not allowed");
 
-  // FIXME: this check belongs to popData
-  VBK_ASSERT_MSG(!hasDuplicateIds(payloads.context),
-                 "block %s must not contain duplicate context VBK blocks",
-                 index.toPrettyString());
-  VBK_ASSERT_MSG(!hasDuplicateIds(payloads.vtbs),
-                 "block %s must not contain duplicate VBKs",
-                 index.toPrettyString());
-  VBK_ASSERT_MSG(!hasDuplicateIds(payloads.atvs),
-                 "block %s must not contain duplicate ATVs",
-                 index.toPrettyString());
+  // FIXME: it should be impossible to construct popData without running this
+  // check
+  ValidationState state;
+  VBK_ASSERT_MSG(
+      checkPopData(payloads, state),
+      "attempted to add statelessly invalid payloads to block %s: %s",
+      index.toPrettyString(),
+      state.toString());
 
   // add payload ids to the block, update the payload index
   commitPayloadsIds<VbkBlock>(index, payloads.context, payloadsIndex_);
