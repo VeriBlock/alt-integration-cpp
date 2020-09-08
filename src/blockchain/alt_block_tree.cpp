@@ -328,8 +328,8 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
                  "state corruption: Block %s has no payloads",
                  index->toPrettyString());
 
-  auto* endorsedBlock = index->getAncestorBlocksBehind(
-      alt_config_->getEndorsementSettlementInterval());
+  auto* endorsedBlock =
+      index->getAncestorBlocksBehind(alt_config_->getPopPayoutDelay());
   if (endorsedBlock == nullptr) {
     // not enough blocks for payout
     return {};
