@@ -22,12 +22,12 @@
 namespace altintegration {
 
 /**
- * @struct PopRewardsCurveParams
+ * @struct PopRewardsParams
  *
- * Defines POP rewards payout curve parameters.
- * @ingroup config,interfaces
+ * Defines config for POP rewards.
+ * @ingroup config, interfaces
  */
-struct PopRewardsCurveParams {
+struct PopRewardsParams {
   //! we start decreasing rewards after this score
   double startOfSlope() const noexcept { return mStartOfSlope; }
 
@@ -38,19 +38,6 @@ struct PopRewardsCurveParams {
   //! slope for keystone rounds
   double slopeKeystone() const noexcept { return mSlopeKeystone; }
 
- protected:
-  double mStartOfSlope = 1.0;
-  double mSlopeNormal = 0.2;
-  double mSlopeKeystone = 0.21325;
-};
-
-/**
- * @struct PopRewardsParams
- *
- * Defines config for POP rewards.
- * @ingroup config, interfaces
- */
-struct PopRewardsParams {
   //! we use this round number to detect keystones
   uint32_t keystoneRound() const noexcept { return mKeystoneRound; }
 
@@ -85,11 +72,6 @@ struct PopRewardsParams {
     return mDifficultyAveragingInterval;
   }
 
-  //! getter for reward curve parameters
-  const PopRewardsCurveParams& getCurveParams() const noexcept {
-    return curveParams;
-  }
-
   //! reward score table
   //! we score each VeriBlock and lower the reward for late blocks
   const std::vector<double>& relativeScoreLookupTable() const noexcept {
@@ -97,8 +79,9 @@ struct PopRewardsParams {
   }
 
  protected:
-  PopRewardsCurveParams curveParams{};
-
+  double mStartOfSlope = 1.0;
+  double mSlopeNormal = 0.2;
+  double mSlopeKeystone = 0.21325;
   uint32_t mKeystoneRound = 3;
   uint32_t mPayoutRounds = 4;
   uint32_t mFlatScoreRound = 2;
@@ -144,10 +127,14 @@ struct AltChainParams {
     return mForkResolutionLookUpTable;
   }
 
-  //! validity window for ATVs; pop payout delay, in blocks
+  //! Validity window for ATVs. If difference between endorsed/containing blocks
+  //! is more than this number, endorsement becomes invalid.
   int32_t getEndorsementSettlementInterval() const noexcept {
     return mEndorsementSettlementInterval;
   }
+
+  //! number of blocks in ALT between endorsed block and payout block
+  int32_t getPopPayoutDelay() const noexcept { return mPopPayoutDelay; }
 
   //! maximum size of single PopData in a single ALT block, in bytes
   uint32_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
@@ -164,7 +151,8 @@ struct AltChainParams {
   //! unique POP ID for the chain
   virtual int64_t getIdentifier() const noexcept = 0;
 
-  //! first ALT block used in AltBlockTree. This is first block that can be endorsed.
+  //! first ALT block used in AltBlockTree. This is first block that can be
+  //! endorsed.
   //! @refitem altbootstrapblock
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
@@ -183,6 +171,7 @@ struct AltChainParams {
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;
+  int32_t mPopPayoutDelay = 50;
   uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
