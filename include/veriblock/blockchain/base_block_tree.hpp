@@ -631,7 +631,6 @@ struct BaseBlockTree {
 
     auto shortHash = makePrevHash(block.getHash());
     auto it = blocks_.at(shortHash);
-    VBK_ASSERT(it != blocks_.end());
     // TODO: it is a hack because we do not erase blocks and just move them to
     // the remove_ container
     it->setNull();
