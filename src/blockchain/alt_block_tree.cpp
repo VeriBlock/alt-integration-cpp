@@ -152,11 +152,9 @@ void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
 }
 
 void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
-  VBK_LOG_INFO("%s add %d VBK, %d VTB, %d ATV payloads to block %s",
+  VBK_LOG_INFO("%s add %s to block %s",
                block_t::name(),
-               payloads.context.size(),
-               payloads.vtbs.size(),
-               payloads.atvs.size(),
+               payloads.toPrettyString(),
                index.toShortPrettyString());
 
   VBK_ASSERT_MSG(index.getValidityLevel() == BLOCK_VALID_TREE,
@@ -462,10 +460,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
     return;
   }
 
-  VBK_LOG_INFO("Called with VBK=%d VTB=%d ATV=%d",
-               pop.context.size(),
-               pop.vtbs.size(),
-               pop.atvs.size());
+  VBK_LOG_INFO("Called with %s", pop.toPrettyString());
 
   // first, create tmp alt block
   AltBlock tmp;
@@ -492,10 +487,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
   removePayloadsIfInvalid(pop.vtbs, payloadsIndex_, *tmpindex);
   removePayloadsIfInvalid(pop.context, payloadsIndex_, *tmpindex);
 
-  VBK_LOG_INFO("After filter VBK=%d VTB=%d ATV=%d",
-               pop.context.size(),
-               pop.vtbs.size(),
-               pop.atvs.size());
+  VBK_LOG_INFO("After filter %s", pop.toPrettyString());
 
   // at this point `pop` contains only valid payloads
 

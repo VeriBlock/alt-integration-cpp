@@ -9,6 +9,14 @@
 
 namespace altintegration {
 
+std::string PopData::toPrettyString() const {
+  return fmt::sprintf("PopData{VBKs=%d, VTBs=%d, ATVs=%d, version=%d}",
+                      context.size(),
+                      vtbs.size(),
+                      atvs.size(),
+                      version);
+}
+
 PopData PopData::fromVbkEncoding(ReadStream& stream) {
   PopData pd;
   pd.version = stream.readBE<uint32_t>();

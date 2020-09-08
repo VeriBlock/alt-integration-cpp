@@ -66,6 +66,8 @@ struct PopData {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
+  std::string toPrettyString() const;
+
   bool empty() const { return context.empty() && atvs.empty() && vtbs.empty(); }
 
   friend bool operator==(const PopData& a, const PopData& b) {
