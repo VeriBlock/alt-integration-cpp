@@ -43,7 +43,9 @@ struct BlockIndex : public Block::addon_t {
    * ancestors are connected.
    * @return true if block is connected, false otherwise.
    */
-  bool isConnected() const noexcept { return this->hasFlags(BLOCK_CONNECTED); }
+  bool isConnected() const noexcept {
+    return this->isValidUpTo(BLOCK_CONNECTED);
+  }
 
   uint32_t getStatus() const { return status; }
   void setStatus(uint32_t _status) {
@@ -51,13 +53,32 @@ struct BlockIndex : public Block::addon_t {
     setDirty();
   }
 
+  uint32_t getValidityLevel() const {
+    auto level = status & BLOCK_VALID_MASK;
+    VBK_ASSERT_MSG(level <= BLOCK_CAN_BE_APPLIED, "unknown validity level");
+    return level;
+  }
+
   bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
-    VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
     if ((status & BLOCK_FAILED_MASK) != 0u) {
       // block failed
       return false;
     }
-    return ((status & BLOCK_VALID_MASK) >= upTo);
+    return isValidUpTo(upTo);
+  }
+
+  bool isValidUpTo(enum BlockStatus upTo) const {
+    VBK_ASSERT_MSG(!(upTo & ~BLOCK_VALID_MASK),
+                   "Only validity flags are allowed");
+
+    auto validityLevel = getValidityLevel();
+    VBK_ASSERT_MSG(
+        validityLevel != BLOCK_CAN_BE_APPLIED || !hasFlags(BLOCK_FAILED_POP),
+        "block %s is both BLOCK_CAN_BE_APPLIED and BLOCK_FAILED_POP which are "
+        "mutually exclusive",
+        toPrettyString());
+
+    return getValidityLevel() >= upTo;
   }
 
   void setNull() {
@@ -78,10 +99,33 @@ struct BlockIndex : public Block::addon_t {
 
   bool raiseValidity(enum BlockStatus upTo) {
     VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
-    if ((status & BLOCK_FAILED_MASK) != 0u) {
+    // we can't raise the validity of a block that's known to be invalid due to
+    // PoP it's ok to raise the validity of a block invalidated by altchain
+    if ((status & BLOCK_FAILED_POP) != 0u) {
       return false;
     }
     if ((status & BLOCK_VALID_MASK) < upTo) {
+      VBK_ASSERT_MSG(pprev == nullptr || pprev->getValidityLevel() >= upTo,
+                     "attempted to raise the validity level of block %s beyond "
+                     "the validity level of its ancestor %s",
+                     toPrettyString(),
+                     pprev->toPrettyString());
+      status = (status & ~BLOCK_VALID_MASK) | upTo;
+      return true;
+    }
+    return false;
+  }
+
+  bool lowerValidity(enum BlockStatus upTo) {
+    VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+    // we can't lower the validity of a block that's known to be invalid due to
+    // PoP, as that would incorrectly label another validity level as failed.
+    // BLOCK_FAILED_POP has to be cleared first via revalidateSubtree it's ok to
+    // lower the validity of a block invalidated by altchain
+    if ((status & BLOCK_FAILED_POP) != 0u) {
+      return false;
+    }
+    if ((status & BLOCK_VALID_MASK) > upTo) {
       status = (status & ~BLOCK_VALID_MASK) | upTo;
       return true;
     }
@@ -152,7 +196,7 @@ struct BlockIndex : public Block::addon_t {
   bool allDescendantsUnconnected() const {
     return pnext.empty() ||
            std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
-             return !index->hasFlags(BLOCK_CONNECTED);
+             return !index->isConnected();
            });
   }
 
