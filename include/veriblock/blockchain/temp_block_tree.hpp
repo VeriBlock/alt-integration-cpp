@@ -70,9 +70,9 @@ struct TempBlockTree {
   }
 
   void removeTempSingleBlock(index_t& index) {
-    // TODO: decrease counter for the previously known blocks
     auto shortHash = tree_->makePrevHash(index.getHash());
     auto it = temp_blocks_.at(shortHash);
+    VBK_ASSERT(it != temp_blocks_.end());
     // the remove_ container
     if (it->refCount() == 0) {
       // TODO: it is a hack because we do not erase blocks and just move them to

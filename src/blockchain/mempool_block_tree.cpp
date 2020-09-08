@@ -31,7 +31,7 @@ bool MemPoolBlockTree::checkContextually(const ATV& atv,
     auto* tip = tree_->getBestChain().tip();
     assert(tip != nullptr && "block tree is not bootstrapped");
 
-    if (tip && (tip->getHeight() - endorsed_index->getHeight() + 1 > window)) {
+    if (tip->getHeight() + 1 > window + endorsed_index->getHeight()) {
       return state.Invalid("atv-expired",
                            fmt::sprintf("ATV=%s expired %s",
                                         atv.getId().toHex(),
@@ -62,8 +62,8 @@ bool MemPoolBlockTree::checkContextually(const VTB& vtb,
                      duplicate->toShortPrettyString()));
   }
 
-  if (vtb.containingBlock.height - vtb.transaction.publishedBlock.height >
-      window) {
+  if (vtb.containingBlock.height >
+      window + vtb.transaction.publishedBlock.height) {
     return state.Invalid(
         "vtb-expired",
         fmt::sprintf("VTB=%s expired %s",

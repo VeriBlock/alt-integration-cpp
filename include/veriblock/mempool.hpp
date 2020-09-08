@@ -81,7 +81,6 @@ struct MemPool {
    * @tparam T one of VTB, ATV, VbkBlock
    * @param[in] pl payload
    * @param[out] state validation state
-   * @param[in] shouldDoContextualCheck if true, mempool performs contextual
    * validation
    * @return true if payload is valid, false otherwise
    * @ingroup api
@@ -90,10 +89,6 @@ struct MemPool {
   bool submit(const T& pl, ValidationState& state) {
     return submit<T>(std::make_shared<T>(pl), state);
   }
-
-  //! submit new payload into mempool
-  //! has overloads for VTB, ATV, VbkBlock
-  //! @ingroup api
 
   /**
    * Add new payload to mempool.
@@ -109,7 +104,7 @@ struct MemPool {
    * @tparam shared_ptr<T> one of VTB, ATV, VbkBlock
    * @param[in] pl payload
    * @param[out] state validation state
-   * @param[in] shouldDoContextualCheck if true, mempool performs contextual
+   * @param[in] resubmit if true, mempool performs contextual
    * validation
    * @return true if payload is valid, false otherwise
    * @ingroup api
