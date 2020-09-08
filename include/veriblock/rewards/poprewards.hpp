@@ -16,7 +16,9 @@ namespace altintegration {
  * @invariant does not modify any on-disk state.
  */
 struct PopRewards {
-  PopRewards(const AltChainParams& altParams) : calculator_(altParams) {}
+  PopRewards(const AltChainParams& altParams, const VbkBlockTree& vbk_tree)
+      : calculator_(altParams),
+        vbkTree_(&vbk_tree) {}
 
   virtual ~PopRewards() = default;
 
@@ -27,7 +29,6 @@ struct PopRewards {
    * @return PopRewardsBigDecimal resulting score
    */
   virtual PopRewardsBigDecimal scoreFromEndorsements(
-      const VbkBlockTree& vbk_tree,
       const BlockIndex<AltBlock>& endorsedBlock) const;
 
   /**
@@ -39,25 +40,40 @@ struct PopRewards {
    * @return PopRewardsBigDecimal resulting difficulty
    */
   virtual PopRewardsBigDecimal calculateDifficulty(
-      const VbkBlockTree& vbk_tree, const BlockIndex<AltBlock>& tip) const;
+      const BlockIndex<AltBlock>& tip) const;
 
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
-   * the endorsed block.
+   * the endorsed block. Score is calculated from the endorsements (slow).
    * @param endorsedBlock endorsed altchain block which we are paying reward
    * for.
-   * @param popDifficulty current POP difficulty. See calculateDifficulty for
-   * reference.
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
    * key and reward amount as a value
    */
   virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
-      const VbkBlockTree& vbk_tree,
-      const BlockIndex<AltBlock>& endorsedBlock,
-      const PopRewardsBigDecimal& popDifficulty);
+      const BlockIndex<AltBlock>& endorsedBlock);
 
- private:
+ protected:
   PopRewardsCalculator calculator_;
+  const VbkBlockTree* vbkTree_;
+
+  /**
+   * Calculate POP rewards for miners. Rewards are calculated for
+   * the endorsed block. Block score and POP difficulty are set as
+   * arguments to allow caching them.
+   * @param endorsedBlock endorsed altchain block which we are paying reward
+   * for.
+   * @param endorsedBlockScore endorsed altchain block score - see
+   * scoreFromEndorsements() for reference.
+   * @param popDifficulty endorsed altchain block difficulty - see
+   * calculateDifficulty() for reference.
+   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
+   * key and reward amount as a value
+   */
+  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayoutsInner(
+      const BlockIndex<AltBlock>& endorsedBlock,
+      const PopRewardsBigDecimal& endorsedBlockScore,
+      const PopRewardsBigDecimal& popDifficulty);
 };
 
 }  // namespace altintegration
