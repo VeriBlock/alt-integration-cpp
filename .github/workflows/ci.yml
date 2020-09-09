@@ -12,27 +12,6 @@ on:
       - release/*
 
 jobs:
-  doxygen:
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-        name: checkout
-        with:
-          submodules: recursive
-          clean: true
-      - run: |
-          sudo apt-get update
-          sudo apt-get install -y graphviz
-          mkdir -p build/docs
-      - name: Install doxygen
-        run: |
-          wget http://doxygen.nl/files/doxygen-1.8.20.linux.bin.tar.gz
-          tar -xf doxygen-1.8.20.linux.bin.tar.gz
-          cd doxygen-1.8.20
-          sudo make install
-      - run: doxygen --version
-      - run: doxygen
-
   linux:
     runs-on: ubuntu-18.04
     container: veriblock/alt-integration-cpp-dev
