@@ -22,8 +22,14 @@ jobs:
           clean: true
       - run: |
           sudo apt-get update
-          sudo apt-get install -y doxygen graphviz
+          sudo apt-get install -y graphviz
           mkdir -p build/docs
+      - name: Install doxygen
+        run: |
+          wget http://doxygen.nl/files/doxygen-1.8.20.linux.bin.tar.gz
+          tar -xf doxygen-1.8.20.linux.bin.tar.gz
+          cd doxygen-1.8.20
+          sudo make install
       - run: doxygen --version
       - run: doxygen
 
