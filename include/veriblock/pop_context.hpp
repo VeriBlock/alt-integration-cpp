@@ -24,49 +24,49 @@ namespace altintegration {
 /**
  * @struct Altintegration
  *
- * Factory for creating all integration-related instances.
+ * Main entrypoint into the veriblock-pop library.
  *
  * @ingroup api
  */
-struct Altintegration {
-  static std::shared_ptr<Altintegration> create(
+struct PopContext {
+  static std::shared_ptr<PopContext> create(
       std::shared_ptr<Config> config, std::shared_ptr<PayloadsProvider> db) {
     config->validate();
 
-    auto service = std::make_shared<Altintegration>();
-    service->config = std::move(config);
-    service->payloadsProvider = std::move(db);
-    service->altTree = std::make_shared<AltBlockTree>(*service->config->alt,
-                                                 *service->config->vbk.params,
-                                                 *service->config->btc.params,
-                                                 *service->payloadsProvider);
-    service->mempool = std::make_shared<MemPool>(*service->altTree);
+    auto ctx = std::make_shared<PopContext>();
+    ctx->config = std::move(config);
+    ctx->payloadsProvider = std::move(db);
+    ctx->altTree = std::make_shared<AltBlockTree>(*ctx->config->alt,
+                                                  *ctx->config->vbk.params,
+                                                  *ctx->config->btc.params,
+                                                  *ctx->payloadsProvider);
+    ctx->mempool = std::make_shared<MemPool>(*ctx->altTree);
 
     ValidationState state;
 
     // first, bootstrap BTC
-    if (service->config->btc.blocks.empty()) {
-      service->altTree->btc().bootstrapWithGenesis(state);
+    if (ctx->config->btc.blocks.empty()) {
+      ctx->altTree->btc().bootstrapWithGenesis(state);
       VBK_ASSERT(state.IsValid());
     } else {
-      service->altTree->btc().bootstrapWithChain(
-          service->config->btc.startHeight, service->config->btc.blocks, state);
+      ctx->altTree->btc().bootstrapWithChain(
+          ctx->config->btc.startHeight, ctx->config->btc.blocks, state);
       VBK_ASSERT(state.IsValid());
     }
 
     // then, bootstrap VBK
-    if (service->config->vbk.blocks.empty()) {
-      service->altTree->vbk().bootstrapWithGenesis(state);
+    if (ctx->config->vbk.blocks.empty()) {
+      ctx->altTree->vbk().bootstrapWithGenesis(state);
       VBK_ASSERT(state.IsValid());
     } else {
-      service->altTree->vbk().bootstrapWithChain(
-          service->config->vbk.startHeight, service->config->vbk.blocks, state);
+      ctx->altTree->vbk().bootstrapWithChain(
+          ctx->config->vbk.startHeight, ctx->config->vbk.blocks, state);
       VBK_ASSERT(state.IsValid());
     }
 
     // then, bootstrap ALT
-    service->altTree->bootstrap(state);
-    return service;
+    ctx->altTree->bootstrap(state);
+    return ctx;
   }
 
   bool checkPopData(const PopData& popData, ValidationState& state) {
