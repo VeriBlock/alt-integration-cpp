@@ -38,7 +38,9 @@ enum BlockStatus : uint32_t {
   //! the chain with the block at its tip is fully valid
   BLOCK_CAN_BE_APPLIED = 5 << 6,
 
-  //! all validity flags
+  //! all stateful validity levels
+  // FIXME: BLOCK_HAS_PAYLOADS is not really a stateful validity level and does
+  // not belong here since it does not depend on other block contents
   BLOCK_VALID_MASK = BLOCK_VALID_UNKNOWN | BLOCK_VALID_TREE |
                      BLOCK_HAS_PAYLOADS | BLOCK_CONNECTED |
                      BLOCK_HAS_BEEN_APPLIED | BLOCK_CAN_BE_APPLIED,

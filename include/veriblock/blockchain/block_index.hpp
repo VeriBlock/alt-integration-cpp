@@ -105,11 +105,11 @@ struct BlockIndex : public Block::addon_t {
       return false;
     }
     if ((status & BLOCK_VALID_MASK) < upTo) {
-      VBK_ASSERT_MSG(pprev == nullptr || pprev->getValidityLevel() >= upTo,
-                     "attempted to raise the validity level of block %s beyond "
-                     "the validity level of its ancestor %s",
-                     toPrettyString(),
-                     pprev->toPrettyString());
+      // FIXME: this should be enabled once BLOCK_HAS_PAYLOADS is gone from the
+      // list of stateful validity levels
+      // VBK_ASSERT_MSG(pprev == nullptr || pprev->getValidityLevel() >= upTo,
+      // "attempted to raise the validity level of block %s beyond the validity
+      // level of its ancestor %s", toPrettyString(), pprev->toPrettyString());
       status = (status & ~BLOCK_VALID_MASK) | upTo;
       return true;
     }
