@@ -3,16 +3,19 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/stateless_validation.hpp"
+
 #include <algorithm>
 #include <bitset>
 #include <string>
 #include <vector>
 #include <veriblock/blockchain/alt_chain_params.hpp>
+#include <unordered_set>
+#include <veriblock/algorithm.hpp>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
-#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -379,6 +382,32 @@ bool checkBlock(const BtcBlock& block,
     return state.Invalid("btc-bad-pow", "Invalid Block proof of work");
   }
 
+  return true;
+}
+
+template <typename I>
+bool hasDuplicateIds(const std::vector<I> payloads) {
+  std::unordered_set<std::vector<uint8_t>> ids;
+  for (const auto& payload : payloads) {
+    const auto id = getIdVector(payload);
+    bool inserted = ids.insert(id).second;
+    if (!inserted) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool checkPopData(const PopData& popData, ValidationState& state) {
+  if (hasDuplicateIds(popData.context)) {
+    return state.Invalid("popdata-duplicate-vbk", "duplicate VBK blocks");
+  }
+  if (hasDuplicateIds(popData.vtbs)) {
+    return state.Invalid("popdata-duplicate-vtb", "duplicate VTBs");
+  }
+  if (hasDuplicateIds(popData.atvs)) {
+    return state.Invalid("popdata-duplicate-atv", "duplicate ATVs");
+  }
   return true;
 }
 
