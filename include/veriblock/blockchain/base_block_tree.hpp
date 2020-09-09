@@ -643,7 +643,7 @@ struct BaseBlockTree {
         !block.isValidUpTo(BLOCK_CAN_BE_APPLIED) ||
             (reason & BLOCK_FAILED_POP) == 0u,
         "attempted to set mutually exclusive flags BLOCK_CAN_BE_APPLIED "
-        "and BLOCK_FAILED_POPfor block %s",
+        "and BLOCK_FAILED_POP for block %s",
         block.toPrettyString());
 
     block.setFlag(reason);
