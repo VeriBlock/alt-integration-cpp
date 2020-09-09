@@ -22,4 +22,5 @@ jobs:
           clean: true
       - uses: mattnotmitt/doxygen-action@v1
         with:
-          doxyfile-path: 'Doxygen'
+          working-directory: '.'
+          doxyfile-path: './Doxygen'
