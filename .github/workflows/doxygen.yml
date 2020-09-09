@@ -19,6 +19,7 @@ jobs:
         name: checkout
         with:
           clean: true
+      - run: mkdir -p build/docs
       - uses: mattnotmitt/doxygen-action@v1
         with:
           working-directory: '.'
