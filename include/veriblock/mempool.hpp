@@ -46,7 +46,6 @@ struct MemPool {
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
   using relations_map_t = payload_map<VbkPayloadsRelations>;
-  //! @}
 
   ~MemPool() = default;
   MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
@@ -80,7 +79,7 @@ struct MemPool {
    * peers.
    *
    * @tparam Raw represantation one of VTB, ATV, VbkBlock
-   * @param[in] payload`s bytes
+   * @param[in] bytes payload`s bytes
    * @param[out] state validation state
    * validation
    * @return true if payload is valid, false otherwise

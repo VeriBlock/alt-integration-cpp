@@ -68,7 +68,7 @@ struct VbkBlock {
   /**
    * Read VBK data from the string raw byte representation
    * and convert it to VbkBlock
-   * @param string data bytes to read from
+   * @param bytes data bytes to read from
    * @return VbkBlock
    */
   static VbkBlock fromVbkEncoding(const std::string& bytes);

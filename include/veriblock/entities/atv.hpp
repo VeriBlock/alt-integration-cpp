@@ -22,8 +22,6 @@ namespace altintegration {
 
 /**
  * @class ATV
- *
- * @glossary{ATV}
  */
 struct ATV {
   using id_t = uint256;

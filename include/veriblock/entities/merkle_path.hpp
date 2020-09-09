@@ -30,6 +30,7 @@ struct MerklePath {
   /**
    * Read basic data from the stream and convert it to MerklePath
    * @param stream data stream to read from
+   * @param subject proof subject - leaf for which this proof has been built
    * @return MerklePath
    */
   static MerklePath fromRaw(ReadStream& stream, const uint256& subject);
@@ -37,6 +38,7 @@ struct MerklePath {
   /**
    * Read VBK data from the stream and convert it to MerklePath
    * @param stream data stream to read from
+   * @param subject proof subject - leaf for which this proof has been built
    * @return MerklePath
    */
   static MerklePath fromVbkEncoding(ReadStream& stream, const uint256& subject);
