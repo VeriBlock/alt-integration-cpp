@@ -22,7 +22,7 @@ jobs:
           clean: true
       - run: |
           sudo apt-get update
-          sudo apt-get install -y graphviz
+          sudo apt-get install -y graphviz libc6
           mkdir -p build/docs
       - name: Install doxygen
         run: |
