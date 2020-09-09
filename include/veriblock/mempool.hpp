@@ -80,9 +80,8 @@ struct MemPool {
    * peers.
    *
    * @tparam Raw represantation one of VTB, ATV, VbkBlock
-   * @param[in] pl payload
+   * @param[in] payload`s bytes
    * @param[out] state validation state
-   * @param[in] shouldDoContextualCheck if true, mempool performs contextual
    * validation
    * @return true if payload is valid, false otherwise
    * @ingroup api
