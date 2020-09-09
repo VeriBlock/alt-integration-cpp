@@ -44,8 +44,8 @@ struct MemPoolBlockTree {
   /**
    * Compares ATVs for the strongly equivalence
    *
-   * @param[in] first ATV
-   * @param[in] second ATV
+   * @param[in] atv1 first ATV
+   * @param[in] atv2 second ATV
    * @return
    * Returns true if ATVs strongly equivalent, otherwise returns false
    */
@@ -54,8 +54,8 @@ struct MemPoolBlockTree {
   /**
    * Compares VTBs for the strongly equivalence
    *
-   * @param[in] first VTB
-   * @param[in] second VTB
+   * @param[in] vtb1 first VTB
+   * @param[in] vtb2 second VTB
    * @return
    * Returns true if VTB strongly equivalent, otherwise returns false
    */
@@ -64,8 +64,8 @@ struct MemPoolBlockTree {
   /**
    * Compares VTBs for the weakly equivalence
    *
-   * @param[in] first VTB
-   * @param[in] second VTB
+   * @param[in] vtb1 first VTB
+   * @param[in] vtb2 second VTB
    * @return
    * Returns true if VTBs weakly equivalent, otherwise returns false
    */
@@ -73,8 +73,8 @@ struct MemPoolBlockTree {
 
   /**
    * Compare two vtbs that are weakly equivalent.
-   * @param[in] first VTB to compare
-   * @param[in] second VTB to compare
+   * @param[in] vtb1 first VTB to compare
+   * @param[in] vtb2 second VTB to compare
    * @return:
    * Return positive if vtb1 is better
    * Return negative if vtb2 is better

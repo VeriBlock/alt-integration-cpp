@@ -64,8 +64,9 @@ struct BlockTree : public BaseBlockTree<Block> {
    * This function does all blockchain integrity checks, does blockchain cleanup
    * and in general, very slow.
    *
-   * @param startHeight start height of the chain
-   * @param chain bootstrap chain
+   * @param[in] startHeight start height of the chain
+   * @param[in] chain bootstrap chain
+   * @param[out] state validation result
    * @return true if bootstrap was successful, false otherwise
    */
   virtual bool bootstrapWithChain(height_t startHeight,

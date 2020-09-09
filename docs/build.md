@@ -1,7 +1,5 @@
 # Build and Install {#build}
 
-
-
 ## How to Build
 
 `veriblock-pop-cpp` is a CMake project, so it follows all best practices for CMake projects.
