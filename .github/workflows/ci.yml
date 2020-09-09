@@ -20,6 +20,9 @@ jobs:
         with:
           submodules: recursive
           clean: true
+      - run: |
+          apt-get update
+          apt-get install -y doxygen
       - run: doxygen
 
   linux:
