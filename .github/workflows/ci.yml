@@ -22,7 +22,7 @@ jobs:
           clean: true
       - run: |
           sudo apt-get update
-          sudo apt-get install -y doxygen dot graphviz
+          sudo apt-get install -y doxygen graphviz
           mkdir -p build/docs
       - run: doxygen --version
       - run: doxygen
