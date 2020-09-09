@@ -15,6 +15,7 @@
 #include "veriblock/blockchain/mempool_block_tree.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/mempool_result.hpp"
+#include "veriblock/serde.hpp"
 #include "veriblock/signals.hpp"
 
 namespace altintegration {
@@ -66,6 +67,35 @@ struct MemPool {
   //! submit new payload into mempool
   //! has overloads for VTB, ATV, VbkBlock
   //! @ingroup api
+
+  /**
+   * Add new payload to mempool.
+   *
+   * Does stateless validation, and conditionally contextual validation.
+   *
+   *
+   * @note When payloads are received by rpc, you can do contextual validation
+   * immediately. If payloads are added during reorg/p2p sync, you can disable
+   * contextual validation, as otherwise it may ban valid payloads from remote
+   * peers.
+   *
+   * @tparam Raw represantation one of VTB, ATV, VbkBlock
+   * @param[in] payload`s bytes
+   * @param[out] state validation state
+   * validation
+   * @return true if payload is valid, false otherwise
+   * @ingroup api
+   */
+  template <typename T>
+  bool submit(Slice<const uint8_t> bytes, ValidationState& state) {
+    ReadStream stream(bytes);
+    T payload;
+    if (Deserialize(stream, payload, state)) {
+      return state.Invalid("pop-mempool-submit-deserialize");
+    }
+
+    return submit<T>(payload, state);
+  }
 
   /**
    * Add new payload to mempool.
@@ -138,7 +168,8 @@ struct MemPool {
   //! @private
   template <typename T>
   const payload_map<T>& getInFlightMap() const {
-    static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getInFlightMap");
+    static_assert(sizeof(T) == 0,
+                  "Undefined type used in MemPool::getInFlightMap");
   }
 
   /**
@@ -216,13 +247,12 @@ struct MemPool {
 };
 
 // clang-format off
-
 //! @overload
-template <> bool MemPool::submit(const std::shared_ptr<ATV>& atv, ValidationState& state, bool resubmit);
+template <> bool MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state, bool resubmit);
 //! @overload
-template <> bool MemPool::submit(const std::shared_ptr<VTB>& vtb, ValidationState& state, bool resubmit);
+template <> bool MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state, bool resubmit);
 //! @overload
-template <> bool MemPool::submit(const std::shared_ptr<VbkBlock>& block, ValidationState& state, bool resubmit);
+template <> bool MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state, bool resubmit);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload
