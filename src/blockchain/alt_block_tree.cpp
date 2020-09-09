@@ -121,19 +121,6 @@ void removeDuplicates(BlockIndex<AltBlock>& index,
   payloads.erase(duplicates, payloads.end());
 }
 
-template <typename I>
-bool hasDuplicateIds(const std::vector<I> payloads) {
-  std::unordered_set<std::vector<uint8_t>> ids;
-  for (const auto& payload : payloads) {
-    const auto id = getIdVector(payload);
-    bool inserted = ids.insert(id).second;
-    if (!inserted) {
-      return true;
-    }
-  }
-  return false;
-}
-
 template <typename P, typename T>
 bool hasDuplicates(BlockIndex<AltBlock>& index,
                    std::vector<T> payloads,
@@ -165,11 +152,9 @@ void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
 }
 
 void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
-  VBK_LOG_INFO("%s add %d VBK, %d VTB, %d ATV payloads to block %s",
+  VBK_LOG_INFO("%s add %s to block %s",
                block_t::name(),
-               payloads.context.size(),
-               payloads.vtbs.size(),
-               payloads.atvs.size(),
+               payloads.toPrettyString(),
                index.toShortPrettyString());
 
   VBK_ASSERT_MSG(index.getValidityLevel() == BLOCK_VALID_TREE,
@@ -183,16 +168,14 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   VBK_ASSERT_MSG(index.pprev,
                  "Adding payloads to a bootstrap block is not allowed");
 
-  // FIXME: this check belongs to popData
-  VBK_ASSERT_MSG(!hasDuplicateIds(payloads.context),
-                 "block %s must not contain duplicate context VBK blocks",
-                 index.toPrettyString());
-  VBK_ASSERT_MSG(!hasDuplicateIds(payloads.vtbs),
-                 "block %s must not contain duplicate VBKs",
-                 index.toPrettyString());
-  VBK_ASSERT_MSG(!hasDuplicateIds(payloads.atvs),
-                 "block %s must not contain duplicate ATVs",
-                 index.toPrettyString());
+  // FIXME: it should be impossible to construct popData without running this
+  // check
+  ValidationState state;
+  VBK_ASSERT_MSG(
+      checkPopData(payloads, state),
+      "attempted to add statelessly invalid payloads to block %s: %s",
+      index.toPrettyString(),
+      state.toString());
 
   // add payload ids to the block, update the payload index
   commitPayloadsIds<VbkBlock>(index, payloads.context, payloadsIndex_);
@@ -477,10 +460,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
     return;
   }
 
-  VBK_LOG_INFO("Called with VBK=%d VTB=%d ATV=%d",
-               pop.context.size(),
-               pop.vtbs.size(),
-               pop.atvs.size());
+  VBK_LOG_INFO("Called with %s", pop.toPrettyString());
 
   // first, create tmp alt block
   AltBlock tmp;
@@ -507,10 +487,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
   removePayloadsIfInvalid(pop.vtbs, payloadsIndex_, *tmpindex);
   removePayloadsIfInvalid(pop.context, payloadsIndex_, *tmpindex);
 
-  VBK_LOG_INFO("After filter VBK=%d VTB=%d ATV=%d",
-               pop.context.size(),
-               pop.vtbs.size(),
-               pop.atvs.size());
+  VBK_LOG_INFO("After filter %s", pop.toPrettyString());
 
   // at this point `pop` contains only valid payloads
 
