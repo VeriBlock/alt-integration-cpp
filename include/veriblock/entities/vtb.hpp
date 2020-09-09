@@ -50,14 +50,14 @@ struct VTB {
 
   /**
    * Read VBK data from the raw byte representation and convert it to VTB
-   * @param string data bytes to read from
+   * @param bytes data bytes to read from
    * @return VTB
    */
   static VTB fromVbkEncoding(Slice<const uint8_t> bytes);
 
   /**
    * Read VBK data from the string raw byte representation and convert it to VTB
-   * @param string data bytes to read from
+   * @param bytes data bytes to read from
    * @return VTB
    */
   static VTB fromVbkEncoding(const std::string& bytes);

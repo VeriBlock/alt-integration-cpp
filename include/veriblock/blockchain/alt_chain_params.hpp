@@ -153,7 +153,6 @@ struct AltChainParams {
 
   //! first ALT block used in AltBlockTree. This is first block that can be
   //! endorsed.
-  //! @refitem altbootstrapblock
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
   /**

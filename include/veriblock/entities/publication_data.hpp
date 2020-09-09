@@ -43,7 +43,7 @@ struct PublicationData {
   /**
    * Read data from the vector of bytes and convert it to
    * PublicationData
-   * @param stream data stream to read from
+   * @param bytes data stream to read from
    * @return PublicationData
    */
   static PublicationData fromRaw(const std::vector<uint8_t>& bytes);

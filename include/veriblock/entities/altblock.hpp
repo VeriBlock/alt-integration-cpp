@@ -56,7 +56,7 @@ struct AltBlock {
   /**
    * Read VBK data from the string raw byte representation and convert it to
    * AltBlock
-   * @param string data bytes to read from
+   * @param bytes data bytes to read from
    * @return AltBlock
    */
   static AltBlock fromVbkEncoding(const std::string& bytes);

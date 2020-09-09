@@ -56,6 +56,7 @@ class ValidationState {
    * class of validation. Example: mandatory-script-verify-flag-failed
    * @param debug_message - supply arbitrary message that will help to debug the
    * error.
+   * @param index index in for loop
    * @return always returns false
    */
   bool Invalid(const std::string &reject_reason,
