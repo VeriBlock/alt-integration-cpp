@@ -90,12 +90,12 @@ struct MemPool {
   template <typename T>
   bool submit(Slice<const uint8_t> bytes, ValidationState& state) {
     ReadStream stream(bytes);
-    try {
-      T payload = T::fromVbkEncoding(stream);
-      return submit<T>(payload, state);
-    } catch (const std::domain_error& e) {
-      return state.Invalid("pop-mempool-submit-deserialize", e.what());
+    T payload;
+    if (Deserialize(stream, payload, state)) {
+      return state.Invalid("pop-mempool-submit-deserialize");
     }
+
+    return submit<T>(payload, state);
   }
 
   /**
