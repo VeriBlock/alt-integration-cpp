@@ -309,6 +309,12 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
     return {};
   }
 
+  VBK_ASSERT_MSG(
+      index->getHeight() >= (endorsedBlock->getHeight() +
+                             alt_config_->getEndorsementSettlementInterval()),
+      "Block %s is not finalized for PoP payouts",
+      endorsedBlock->toPrettyString());
+
   auto popDifficulty = rewards_.calculateDifficulty(vbk(), *endorsedBlock);
   auto ret = rewards_.calculatePayouts(vbk(), *endorsedBlock, popDifficulty);
   VBK_LOG_DEBUG("Pop Difficulty=%s for block %s, paying to %d addresses",

@@ -201,11 +201,11 @@ struct BlockIndex : public Block::addon_t {
   }
 
   const BlockIndex* getAncestorBlocksBehind(height_t steps) const {
-    if (steps < 0 || steps > this->height + 1) {
+    if (steps < 0 || steps > this->height) {
       return nullptr;
     }
 
-    return this->getAncestor(this->height + 1 - steps);
+    return this->getAncestor(this->height - steps);
   }
 
   BlockIndex* getAncestor(height_t _height) const {

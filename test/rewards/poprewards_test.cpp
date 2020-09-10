@@ -56,8 +56,8 @@ struct RewardsTestFixture : public ::testing::Test, public PopTestFixture {
     ASSERT_TRUE(state.IsValid());
     EXPECT_EQ(altchain.size(), chainSize + 1);
 
-    // mine rewardSettlementInterval blocks - endorsed block - endorsement block
-    mineAltBlocks(altparam.getEndorsementSettlementInterval() - 2, altchain);
+    // mine rewardSettlementInterval blocks + 1 - endorsed block - endorsement block
+    mineAltBlocks(altparam.getEndorsementSettlementInterval() - 1, altchain);
   }
 };
 
