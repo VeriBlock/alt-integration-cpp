@@ -6,6 +6,7 @@
 #ifndef ALTINTEGRATION_ALTINTEGRATION_HPP
 #define ALTINTEGRATION_ALTINTEGRATION_HPP
 
+#include <utility>
 #include <veriblock/alt-util.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/config.hpp>
@@ -30,10 +31,16 @@ namespace altintegration {
  */
 struct PopContext {
   static std::shared_ptr<PopContext> create(
+      const Config& config, std::shared_ptr<PayloadsProvider> db) {
+    return create(std::make_shared<Config>(config), std::move(db));
+  }
+
+  static std::shared_ptr<PopContext> create(
       std::shared_ptr<Config> config, std::shared_ptr<PayloadsProvider> db) {
     config->validate();
 
-    auto ctx = std::make_shared<PopContext>();
+    // because default constructor is hidden
+    auto ctx = std::shared_ptr<PopContext>(new PopContext());
     ctx->config = std::move(config);
     ctx->payloadsProvider = std::move(db);
     ctx->altTree = std::make_shared<AltBlockTree>(*ctx->config->alt,
@@ -93,6 +100,9 @@ struct PopContext {
   std::shared_ptr<MemPool> mempool;
   std::shared_ptr<AltBlockTree> altTree;
   std::shared_ptr<PayloadsProvider> payloadsProvider;
+
+ private:
+  PopContext() = default;
 };
 
 }  // namespace altintegration

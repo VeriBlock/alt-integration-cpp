@@ -11,8 +11,25 @@ using namespace altintegration;
 
 const static uint32_t VBK_KEYSTONE_INTERVAL = 20;
 
+TEST(KeystoneUtil, PrevKeystones) {
+  ASSERT_EQ(0, getFirstPreviousKeystone(0, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(0, getSecondPreviousKeystone(0, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(0, getFirstPreviousKeystone(19, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(0, getSecondPreviousKeystone(19, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(0, getFirstPreviousKeystone(20, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(0, getSecondPreviousKeystone(20, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(20, getFirstPreviousKeystone(25, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(0, getSecondPreviousKeystone(25, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(40, getFirstPreviousKeystone(41, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(20, getSecondPreviousKeystone(41, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(40, getFirstPreviousKeystone(59, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(20, getSecondPreviousKeystone(59, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(80, getFirstPreviousKeystone(100, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(60, getSecondPreviousKeystone(100, VBK_KEYSTONE_INTERVAL));
+}
+
 TEST(KeystoneUtil, testHighestKeystoneAtOrBefore) {
-  ASSERT_ANY_THROW(highestKeystoneAtOrBefore(-1, VBK_KEYSTONE_INTERVAL));
+  ASSERT_DEATH(highestKeystoneAtOrBefore(-1, VBK_KEYSTONE_INTERVAL), "");
   ASSERT_EQ(highestKeystoneAtOrBefore(0, VBK_KEYSTONE_INTERVAL), 0);
   ASSERT_EQ(highestKeystoneAtOrBefore(1, VBK_KEYSTONE_INTERVAL), 0);
   ASSERT_EQ(highestKeystoneAtOrBefore(20, VBK_KEYSTONE_INTERVAL), 20);
@@ -28,7 +45,7 @@ TEST(KeystoneUtil, testHighestKeystoneAtOrBefore) {
 }
 
 TEST(KeystoneUtil, testIsKeystone) {
-  ASSERT_ANY_THROW(isKeystone(-1, VBK_KEYSTONE_INTERVAL));
+  ASSERT_DEATH(isKeystone(-1, VBK_KEYSTONE_INTERVAL), "");
   ASSERT_TRUE(isKeystone(0, VBK_KEYSTONE_INTERVAL));
   ASSERT_TRUE(isKeystone(20, VBK_KEYSTONE_INTERVAL));
   ASSERT_TRUE(isKeystone(40, VBK_KEYSTONE_INTERVAL));
@@ -37,7 +54,7 @@ TEST(KeystoneUtil, testIsKeystone) {
 }
 
 TEST(KeystoneUtil, testFirstKeystoneAfter) {
-  ASSERT_ANY_THROW(firstKeystoneAfter(-1, VBK_KEYSTONE_INTERVAL));
+  ASSERT_DEATH(firstKeystoneAfter(-1, VBK_KEYSTONE_INTERVAL), "");
   ASSERT_EQ(20, firstKeystoneAfter(0, VBK_KEYSTONE_INTERVAL));
   ASSERT_EQ(20, firstKeystoneAfter(1, VBK_KEYSTONE_INTERVAL));
   ASSERT_EQ(20, firstKeystoneAfter(19, VBK_KEYSTONE_INTERVAL));
@@ -45,10 +62,12 @@ TEST(KeystoneUtil, testFirstKeystoneAfter) {
 }
 
 TEST(KeystoneUtil, testHighestBlockWhichConnectsKeystoneToPrevious) {
-  ASSERT_ANY_THROW(
-      highestBlockWhichConnectsKeystoneToPrevious(-1, VBK_KEYSTONE_INTERVAL));
-  ASSERT_ANY_THROW(
-      highestBlockWhichConnectsKeystoneToPrevious(3, VBK_KEYSTONE_INTERVAL));
+  ASSERT_DEATH(
+      highestBlockWhichConnectsKeystoneToPrevious(-1, VBK_KEYSTONE_INTERVAL),
+      "");
+  ASSERT_DEATH(
+      highestBlockWhichConnectsKeystoneToPrevious(3, VBK_KEYSTONE_INTERVAL),
+      "");
   ASSERT_EQ(
       21,
       highestBlockWhichConnectsKeystoneToPrevious(0, VBK_KEYSTONE_INTERVAL));
