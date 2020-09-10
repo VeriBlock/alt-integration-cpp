@@ -126,7 +126,7 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
 
   state = ValidationState();
   mineAltBlocksWithTree(
-      alttree, altparam.getPopPayoutDelay() - 2, chain);
+      alttree, altparam.getPopPayoutDelay() - 1, chain);
 
   payout = alttree.getPopPayout(chain.back().getHash());
   ASSERT_FALSE(payout.empty());
@@ -154,7 +154,7 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
 
   state = ValidationState();
   mineAltBlocksWithTree(
-      alttree, altparam.getPopPayoutDelay() - 3, chain);
+      alttree, altparam.getPopPayoutDelay() - 2, chain);
 
   payout = alttree.getPopPayout(chain.back().getHash());
   ASSERT_EQ(payout.size(), 2);
@@ -180,7 +180,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
 
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree, altparam.getPopPayoutDelay() - 2, chain);
+      alttree, altparam.getPopPayoutDelay() - 1, chain);
 
   // this is a regular payout - each block is endorsed by the next one
   auto payout = alttree.getPopPayout(chain.back().getHash());
@@ -204,7 +204,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   auto endorsedBlock = chain2.back();
   mineSingleEndorsement(alttree2, endorsedBlock, 10000, chain2);
   mineAltBlocksWithTree(
-      alttree2, altparam.getPopPayoutDelay() - 2, chain2);
+      alttree2, altparam.getPopPayoutDelay() - 1, chain2);
 
   auto payout2 = alttree2.getPopPayout(chain2.back().getHash());
   auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
@@ -238,7 +238,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
 
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree, altparam.getPopPayoutDelay() - 2, chain);
+      alttree, altparam.getPopPayoutDelay() - 1, chain);
 
   // each block is endorsed by the next one but we have higher difficulty
   // since before each block was endorsed by two miners
@@ -260,7 +260,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
       alttree2, altparam.getPopPayoutDelay() + 2, chain2);
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree2, altparam.getPopPayoutDelay() - 2, chain2);
+      alttree2, altparam.getPopPayoutDelay() - 1, chain2);
 
   auto payout2 = alttree2.getPopPayout(chain2.back().getHash());
   auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
@@ -284,7 +284,7 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
 
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree, altparam.getPopPayoutDelay() - 2, chain);
+      alttree, altparam.getPopPayoutDelay() - 1, chain);
 
   int64_t highestReward = 0;
   int blockNumber = 0;
