@@ -99,7 +99,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
   PopRewardsCalculator rewards_;
 };
 
-/*TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
+TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
 
   for (size_t i = 0; i < 10000; i++) {
@@ -114,7 +114,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     ASSERT_TRUE(alttree.acceptBlockHeader(block, state));
     alttree.acceptBlock(block.getHash(), {});
   }
-}*/
+}
 
 TEST_F(PopPayoutsE2Etest, OnePayout) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
