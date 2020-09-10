@@ -29,7 +29,7 @@ bool MemPoolBlockTree::checkContextually(const ATV& atv,
   auto* endorsed_index = tree_->getBlockIndex(endorsed_hash);
   if (endorsed_index != nullptr) {
     auto* tip = tree_->getBestChain().tip();
-    assert(tip != nullptr && "block tree is not bootstrapped");
+    VBK_ASSERT_MSG(tip != nullptr, "block tree is not bootstrapped");
 
     if (tip->getHeight() + 1 > window + endorsed_index->getHeight()) {
       return state.Invalid("atv-expired",
@@ -80,7 +80,7 @@ bool MemPoolBlockTree::acceptVTB(
     ValidationState& state) {
   VBK_ASSERT_MSG(
       containingBlock->getHash() == vtb.containingBlock.getHash(),
-      " containingBlock should be equal to the vtb containingBlock block");
+      "containingBlock should be equal to the vtb containingBlock block");
 
   if (!checkContextually(vtb, state)) {
     return false;
@@ -110,7 +110,7 @@ bool MemPoolBlockTree::acceptATV(const ATV& atv,
                                  ValidationState& state) {
   VBK_ASSERT_MSG(
       blockOfProof->getHash() == atv.blockOfProof.getHash(),
-      " containingBlock should be equal to the atv blockOfProof block");
+      "containingBlock should be equal to the atv blockOfProof block");
 
   if (!checkContextually(atv, state)) {
     return false;
