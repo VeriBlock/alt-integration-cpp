@@ -38,10 +38,12 @@ struct PopRewardsParams {
   //! slope for keystone rounds
   double slopeKeystone() const noexcept { return mSlopeKeystone; }
 
-  //! we use this round number to detect keystones
+  //! among all rounds, this number represents round for keystone blocks.
+  //! we use this round number to detect keystones.
   uint32_t keystoneRound() const noexcept { return mKeystoneRound; }
 
-  //! we have this number of rounds eg rounds 0, 1, 2, 3
+  //! total number of payout rounds.
+  //! we have this number of rounds eg rounds 0, 1, 2, 3, total is 4
   uint32_t payoutRounds() const noexcept { return mPayoutRounds; }
 
   //! we use this round number to pay flat reward (does not depend on pop
@@ -118,7 +120,7 @@ struct AltChainParams {
   //! heights 5,6,7,8,9 are blocks within same keystone interval
   uint32_t getKeystoneInterval() const noexcept { return mKeystoneInterval; }
 
-  //! number of blocks in VBK for finalization
+  //! number of blocks in VBK used for finalization
   uint32_t getFinalityDelay() const noexcept { return mFinalityDelay; }
 
   //! pop score lookup table for fork resolution
@@ -144,21 +146,23 @@ struct AltChainParams {
     return *mPopRewardsParams;
   }
 
-  //! Maximum future block time for altchain blocks. Must be low enough such
-  //! that attacker can't produce endorsements faster than this interval.
+  //! Maximum future block time for altchain blocks.
   uint32_t maxFutureBlockTime() const noexcept { return mMaxFutureBlockTime; }
 
-  //! unique POP ID for the chain
+  //! unique POP ID for the chain; identifies altchain in VBK
   virtual int64_t getIdentifier() const noexcept = 0;
 
-  //! first ALT block used in AltBlockTree. This is first block that can be
-  //! endorsed.
+  //! "genesis" block for POP mining. This is first block that can be endorsed
+  //! by POP miners.
+  //! Can start at genesis block, or at any part of the active chain. This block
+  //! is immediately finalized, so chain CAN NOT be reorganized past this block.
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
   /**
    * Calculate hash from block header.
    * @param bytes serialized block header
    * @return hash
+   * @note if input data is not valid block header, still calculate hash from input data.
    */
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
