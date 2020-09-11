@@ -25,7 +25,6 @@ struct PopRewards {
   /**
    * Collect all endorsements for the endorsed block and calculate
    * POP score
-   * @param vbk_tree VeriBlock tree
    * @param endorsedBlock calculate score for this block
    * @return PopRewardsBigDecimal resulting score
    */
@@ -37,7 +36,6 @@ struct PopRewards {
    * Should provide at least rewardSettlementInterval blocks.
    * Will use first blocks (usually difficultyAveragingInterval blocks)
    * to calculate their scores and average them to get difficulty.
-   * @param vbk_tree VeriBlock tree
    * @param tip calculate difficulty using chain ending with this tip
    * @return PopRewardsBigDecimal resulting difficulty
    */

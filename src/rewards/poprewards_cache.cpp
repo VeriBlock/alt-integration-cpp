@@ -28,8 +28,8 @@ PopRewardsBigDecimal PopRewardsCache::calculateDifficulty(
     sumscore += it->second;
   }
 
-  VBK_ASSERT_MSG(
-      (tip.getHeight() <= (difficultyInterval + 1)) || (count >= difficultyInterval),
+  VBK_ASSERT_MSG((tip.getHeight() <= (int64_t)(difficultyInterval + 1)) ||
+                     (count >= difficultyInterval),
                  "cache corruption: expected at least %llu blocks",
                  difficultyInterval);
 
