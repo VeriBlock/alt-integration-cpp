@@ -8,8 +8,11 @@
 namespace altintegration {
 
 PopRewardsBigDecimal PopRewardsCache::calculateDifficulty(
-    const index_t& /* ignore */) const {
+    const index_t& tip) const {
   auto it = buffer.crbegin();
+  VBK_ASSERT(!buffer.empty() && "cache corruption: expected not empty");
+  VBK_ASSERT((it->first == &tip) && "cache corruption: expected tip as last item");
+
   // remove last element - it is the current block that we calculate difficulty
   // for
   ++it;
@@ -25,6 +28,11 @@ PopRewardsBigDecimal PopRewardsCache::calculateDifficulty(
     sumscore += it->second;
   }
 
+  VBK_ASSERT_MSG(
+      (tip.getHeight() <= (difficultyInterval + 1)) || (count >= difficultyInterval),
+                 "cache corruption: expected at least %llu blocks",
+                 difficultyInterval);
+
   auto difficulty = sumscore / difficultyInterval;
 
   // Minimum difficulty
@@ -37,90 +45,90 @@ PopRewardsBigDecimal PopRewardsCache::calculateDifficulty(
 std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
     const index_t& endorsedBlock) {
   auto popDifficulty = updateAndCalculateDifficulty(endorsedBlock);
-  auto it = std::find_if(
-      buffer.rbegin(), buffer.rend(), [&endorsedBlock](const pair_t& item) {
-        return item.first.getHash() == endorsedBlock.getHash();
-      });
-  VBK_ASSERT(it != buffer.rend() && "block should be in cache");
+  pair_t cached;
+  bool ret = findCached(endorsedBlock, cached);
+  VBK_ASSERT(ret && "block should be in cache");
   return PopRewards::calculatePayoutsInner(
-      endorsedBlock, it->second, popDifficulty);
+      endorsedBlock, cached.second, popDifficulty);
 }
 
 PopRewardsBigDecimal PopRewardsCache::updateAndCalculateDifficulty(
     const index_t& endorsed) {
-  cacheRebuild(endorsed);
+  updateCache(endorsed);
   return calculateDifficulty(endorsed);
 }
 
-void PopRewardsCache::cacheAddBlock(const index_t& block) {
-  auto score = scoreFromEndorsements(block);
-  buffer.push_back({block, score});
-}
+bool PopRewardsCache::findCached(const index_t& block, pair_t& out) {
+  if (buffer.empty()) return false;
+  VBK_ASSERT(buffer.back().first != nullptr && "cache corruption: expected valid back");
+  VBK_ASSERT(buffer.front().first != nullptr && "cache corruption: expected valid front");
+  auto lastHeight = buffer.back().first->getHeight();
+  auto firstHeight = buffer.front().first->getHeight();
+  if (block.getHeight() > lastHeight) return false;
+  if (block.getHeight() < firstHeight) return false;
 
-bool PopRewardsCache::cacheBlockExists(const index_t* block) {
-  if (block == nullptr) {
-    return false;
-  }
-  auto it =
-      std::find_if(buffer.rbegin(), buffer.rend(), [block](const pair_t& item) {
-        return item.first.getHash() == block->getHash();
-      });
-  if (it == buffer.rend()) {
-    return false;
-  }
+  const auto& cached = buffer[block.getHeight() - firstHeight];
+  if (cached.first != &block) return false;
+
+  out = cached;
   return true;
 }
 
-void PopRewardsCache::cacheInvalidate(const index_t& endorsed) {
+bool PopRewardsCache::findCached(const index_t& block) {
+  pair_t out;
+  bool ret = findCached(block, out);
+  (void)out;
+  return ret;
+}
+
+void PopRewardsCache::appendToCache(const index_t& block) {
+  auto score = scoreFromEndorsements(block);
+  buffer.push_back({&block, score});
+}
+
+void PopRewardsCache::truncateCacheHigherThan(const index_t& fromBlock) {
+  while (!buffer.empty() && buffer.back().first != &fromBlock) {
+    buffer.pop_back();
+  }
+}
+
+void PopRewardsCache::updateCache(const index_t& endorsed) {
+  auto* begin = endorsed.getAncestorBlocksBehind(
+      altParams_->getRewardParams().difficultyAveragingInterval());
+  auto* end = endorsed.pprev;
+
+  bool rangeExists = (begin != nullptr) && (end != nullptr) &&
+                     findCached(*begin) && findCached(*end);
+  if (!rangeExists) {
+    rebuildCache(endorsed);
+    return;
+  }
+
+  if (findCached(endorsed)) {
+    truncateCacheHigherThan(endorsed);
+    return;
+  }
+
+  truncateCacheHigherThan(*end);
+  appendToCache(endorsed);
+}
+
+void PopRewardsCache::rebuildCache(const index_t& endorsed) {
+  size_t toFetch =
+      altParams_->getRewardParams().difficultyAveragingInterval() + 1;
   buffer.clear();
-  std::vector<index_t> blocks;
+  std::vector<const index_t*> blocks;
+  blocks.reserve(toFetch);
   auto* cur = &endorsed;
-  for (size_t i = 0;
-       i < altParams_->getRewardParams().difficultyAveragingInterval();
-       i++) {
+  for (size_t i = 0; i < toFetch; i++) {
     if (cur == nullptr) break;
-    blocks.push_back(*cur);
+    blocks.push_back(cur);
     cur = cur->pprev;
   }
 
   for (const auto& b : reverse_iterate(blocks)) {
-    cacheAddBlock(b);
+    appendToCache(*b);
   }
-}
-
-void PopRewardsCache::cacheTruncateTailTo(const index_t& lastBlock) {
-  auto it = buffer.rbegin();
-  while (true) {
-    if (buffer.empty()) break;
-    if (it == buffer.rend()) break;
-    if (it->first.getHash() == lastBlock.getHash()) return;
-    buffer.pop_back();
-    it = buffer.rbegin();
-  }
-  return;
-}
-
-void PopRewardsCache::cacheRebuild(const index_t& endorsed) {
-  auto* begin = endorsed.getAncestorBlocksBehind(
-      altParams_->getRewardParams().difficultyAveragingInterval() + 1);
-  auto* end = endorsed.pprev;
-
-  bool rangeExists = true;
-  rangeExists = rangeExists && cacheBlockExists(begin);
-  rangeExists = rangeExists && cacheBlockExists(end);
-
-  if (!rangeExists) {
-    cacheInvalidate(endorsed);
-    return;
-  }
-
-  if (cacheBlockExists(&endorsed)) {
-    cacheTruncateTailTo(endorsed);
-    return;
-  }
-
-  cacheTruncateTailTo(*end);
-  cacheAddBlock(endorsed);
 }
 
 }  // namespace altintegration

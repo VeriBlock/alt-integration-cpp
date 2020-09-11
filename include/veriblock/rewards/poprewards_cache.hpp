@@ -16,7 +16,7 @@ namespace altintegration {
  */
 struct PopRewardsCache : public PopRewards {
   using index_t = BlockIndex<AltBlock>;
-  using pair_t = std::pair<index_t, PopRewardsBigDecimal>;
+  using pair_t = std::pair<const index_t*, PopRewardsBigDecimal>;
 
   PopRewardsCache(const AltChainParams& altParams, const VbkBlockTree& vbk_tree)
       : PopRewards(altParams, vbk_tree),
@@ -53,26 +53,37 @@ struct PopRewardsCache : public PopRewards {
 
   PopRewardsBigDecimal updateAndCalculateDifficulty(const index_t& tip);
 
-  void cacheAddBlock(const index_t& block);
+  bool findCached(const index_t& block, pair_t& out);
+  bool findCached(const index_t& block);
 
-  bool cacheBlockExists(const index_t* block);
-
-  void cacheInvalidate(const index_t& endorsed);
+  /**
+   * Calculate PoP score for the block and append to the cache.
+   * @param block calculate score for this block.
+   */
+  void appendToCache(const index_t& block);
 
   /**
    * Remove the newest blocks from the cache till the given block
    * is found. Therefore the given block will be the last one in cache,
    * or cache will be empty.
-   * @param lastBlock erase cache records up to this block, not including.
+   * @param fromBlock erase cache records starting from this block, not
+   * including.
    */
-  void cacheTruncateTailTo(const index_t& lastBlock);
+  void truncateCacheHigherThan(const index_t& fromBlock);
 
   /**
    * Update cache to have scores of this block and any additional blocks
    * required to calculate POP rewards.
    * @param endorsed reward will be paid for this block.
    */
-  void cacheRebuild(const index_t& endorsed);
+  void updateCache(const index_t& endorsed);
+
+  /**
+   * Erase cache and recalculate all missing blocks needed for
+   * endorsed block rewards calculation.
+   * @param endorsed reward will be paid for this block.
+   */
+  void rebuildCache(const index_t& endorsed);
 };
 
 }  // namespace altintegration

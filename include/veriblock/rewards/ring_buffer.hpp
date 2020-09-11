@@ -102,7 +102,7 @@ class ring_buffer {
   bool empty() const { return m_tail == m_head; }
   bool full() const { return m_head == next(m_tail); }
 
-  reference operator[](size_type index) const {
+  const_reference operator[](size_type index) const {
     return m_array[(m_head + index) % m_array_size];
   }
 
