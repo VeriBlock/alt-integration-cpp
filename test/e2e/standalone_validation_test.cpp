@@ -36,15 +36,16 @@ struct StandaloneValidation : public ::testing::Test, public PopTestFixture {};
 TEST_F(StandaloneValidation, standaloneValidation) {
   // mine chains up to the fork point
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  mineAltBlocks(altparam.getKeystoneInterval() / 2, chain);
+  mineAltBlocks(
+      altparam.getKeystoneInterval() / 2, chain, /*connectBlocks=*/true);
 
   // mine both chains save for the last block
   auto chainA = chain;
   auto chainB = chain;
 
   // cross the keystone boundary
-  mineAltBlocks(altparam.getKeystoneInterval(), chainB);
-  mineAltBlocks(altparam.getKeystoneInterval(), chainA);
+  mineAltBlocks(altparam.getKeystoneInterval(), chainB, /*connectBlocks=*/true);
+  mineAltBlocks(altparam.getKeystoneInterval(), chainA, /*connectBlocks=*/true);
 
   // generate the last chainB block that endorses the previous one
   auto endorsedBlockB = chainB.back();

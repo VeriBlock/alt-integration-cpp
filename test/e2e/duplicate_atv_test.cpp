@@ -18,7 +18,8 @@ struct DuplicateATVfixture : public ::testing::Test, public PopTestFixture {
 
   DuplicateATVfixture() {
     chain.push_back(alttree.getParams().getBootstrapBlock());
-    mineAltBlocks(100, chain, /*connectBlocks=*/false, /*setState=*/false);
+    mineAltBlocks(98, chain, /*connectBlocks=*/true, /*setState=*/false);
+    mineAltBlocks(2, chain, /*connectBlocks=*/false, /*setState=*/false);
     endorsed = chain[50];
     containing = chain[100];
     payloads = endorseAltBlock({endorsed}, 10);
@@ -46,10 +47,8 @@ TEST_F(DuplicateATVfixture, DuplicateATV_DifferentContaining_AB) {
   auto& atvids = index100->getPayloadIds<ATV>();
   ASSERT_GT(atvids.size(), 0);
 
-  // we can switch to chain 100
-  // BUG: setState will clear BLOCK_FAILED_POP since it does not check for
-  // duplicates, thus letting us switch to an invalid block
-  ASSERT_TRUE(alttree.setState(chain[100].getHash(), state))
+  // we cannot switch to chain 100
+  ASSERT_FALSE(alttree.setState(chain[100].getHash(), state))
       << state.toString();
 }
 
@@ -154,6 +153,8 @@ TEST_F(DuplicateATVfixture,
 }
 
 TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
+  alttree.acceptBlock(chain[99].getHash(), {});
+
   auto index100 = alttree.getBlockIndex(chain[100].getHash());
   ASSERT_TRUE(index100);
 
@@ -163,14 +164,14 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_AA) {
   ASSERT_TRUE(index100->isValid());
 
   ASSERT_DEATH(validatePayloads(chain[100].getHash(), payloads),
-
                "already contains payloads");
 }
 
 TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
+  alttree.acceptBlock(chain[99].getHash(), {});
+
   payloads.atvs.push_back(payloads.atvs.at(0));
 
   // should fail due to payloads being statelessly invalid(duplicate ids)
-  ASSERT_DEATH(AddPayloads(chain[100].getHash(), payloads),
-               "must not contain duplicate ATVs");
+  ASSERT_DEATH(AddPayloads(chain[100].getHash(), payloads), "duplicate ATVs");
 }

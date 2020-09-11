@@ -11,10 +11,6 @@ namespace altintegration {
 enum BlockStatus : uint32_t {
   //! default state for validity - validity state is unknown
   BLOCK_VALID_UNKNOWN = 0,
-  //! acceptBlock succeded. All ancestors are at least at this state.
-  BLOCK_VALID_TREE = 1 << 0,
-  //! all validity flags
-  BLOCK_VALID_MASK = BLOCK_VALID_TREE,
   //! this is a bootstrap block
   BLOCK_BOOTSTRAP = 1 << 1,
   //! block is statelessly valid, but the altchain marked it as failed
@@ -29,12 +25,25 @@ enum BlockStatus : uint32_t {
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
   //! the block has been applied via PopStateMachine
   BLOCK_APPLIED = 1 << 5,
-  //! the block has been at least once successful applied via PopStateMachine
-  BLOCK_CAN_BE_APPLIED = 1 << 6,
-  //! if set, acceptBlock has been executed on this block
-  BLOCK_HAS_PAYLOADS = 1 << 7,
+
+  //! acceptBlockHeader succeded. All ancestors are at least at this state.
+  BLOCK_VALID_TREE = 1 << 6,
+  //! acceptBlock has been executed on this block; payloads are statelessly
+  //! valid
+  BLOCK_HAS_PAYLOADS = 2 << 6,
   //! the block is connected via connectBlock
-  BLOCK_CONNECTED = 1 << 8,
+  BLOCK_CONNECTED = 3 << 6,
+  //! the block has been successfully applied, likely along with another chain
+  BLOCK_HAS_BEEN_APPLIED = 4 << 6,
+  //! the chain with the block at its tip is fully valid
+  BLOCK_CAN_BE_APPLIED = 5 << 6,
+
+  //! all stateful validity levels
+  // FIXME: BLOCK_HAS_PAYLOADS is not really a stateful validity level and does
+  // not belong here since it does not depend on other block contents
+  BLOCK_VALID_MASK = BLOCK_VALID_UNKNOWN | BLOCK_VALID_TREE |
+                     BLOCK_HAS_PAYLOADS | BLOCK_CONNECTED |
+                     BLOCK_HAS_BEEN_APPLIED | BLOCK_CAN_BE_APPLIED,
 
   // DEV NOTE: new flags should be added in the end
 };

@@ -63,7 +63,7 @@ bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
 
 void VbkBlockTree::overrideTip(index_t& to) {
   base::overrideTip(to);
-  VBK_ASSERT_MSG(to.hasFlags(BLOCK_CAN_BE_APPLIED),
+  VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
                  "the active chain tip(%s) must be fully valid",
                  to.toPrettyString());
 }
@@ -427,7 +427,7 @@ bool VbkBlockTree::loadTip(const Blob<24>& hash, ValidationState& state) {
   while (tip) {
     tip->setFlag(BLOCK_APPLIED);
     ++appliedBlockCount;
-    tip->setFlag(BLOCK_CAN_BE_APPLIED);
+    tip->raiseValidity(BLOCK_CAN_BE_APPLIED);
     tip = tip->pprev;
   }
 

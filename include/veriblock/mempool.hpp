@@ -15,6 +15,7 @@
 #include "veriblock/blockchain/mempool_block_tree.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/mempool_result.hpp"
+#include "veriblock/serde.hpp"
 #include "veriblock/signals.hpp"
 
 namespace altintegration {
@@ -45,10 +46,9 @@ struct MemPool {
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
   using relations_map_t = payload_map<VbkPayloadsRelations>;
-  //! @}
 
   ~MemPool() = default;
-  MemPool(AltBlockTree& tree) : tree_(&tree) {}
+  MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
 
   //! getter for payloads stored in mempool
   //! @ingroup api
@@ -78,21 +78,73 @@ struct MemPool {
    * contextual validation, as otherwise it may ban valid payloads from remote
    * peers.
    *
-   * @tparam T one of VTB, ATV, VbkBlock
-   * @param[in] pl payload
+   * @tparam Raw represantation one of VTB, ATV, VbkBlock
+   * @param[in] bytes payload`s bytes
    * @param[out] state validation state
-   * @param[in] shouldDoContextualCheck if true, mempool performs contextual
    * validation
    * @return true if payload is valid, false otherwise
    * @ingroup api
    */
   template <typename T>
-  bool submit(const T& pl,
+  bool submit(Slice<const uint8_t> bytes, ValidationState& state) {
+    ReadStream stream(bytes);
+    T payload;
+    if (Deserialize(stream, payload, state)) {
+      return state.Invalid("pop-mempool-submit-deserialize");
+    }
+
+    return submit<T>(payload, state);
+  }
+
+  /**
+   * Add new payload to mempool.
+   *
+   * Does stateless validation, and conditionally contextual validation.
+   *
+   *
+   * @note When payloads are received by rpc, you can do contextual validation
+   * immediately. If payloads are added during reorg/p2p sync, you can disable
+   * contextual validation, as otherwise it may ban valid payloads from remote
+   * peers.
+   *
+   * @tparam T one of VTB, ATV, VbkBlock
+   * @param[in] pl payload
+   * @param[out] state validation state
+   * validation
+   * @return true if payload is valid, false otherwise
+   * @ingroup api
+   */
+  template <typename T>
+  bool submit(const T& pl, ValidationState& state) {
+    return submit<T>(std::make_shared<T>(pl), state);
+  }
+
+  /**
+   * Add new payload to mempool.
+   *
+   * Does stateless validation, and conditionally contextual validation.
+   *
+   *
+   * @note When payloads are received by rpc, you can do contextual validation
+   * immediately. If payloads are added during reorg/p2p sync, you can disable
+   * contextual validation, as otherwise it may ban valid payloads from remote
+   * peers.
+   *
+   * @tparam shared_ptr<T> one of VTB, ATV, VbkBlock
+   * @param[in] pl payload
+   * @param[out] state validation state
+   * @param[in] resubmit if true, mempool performs contextual
+   * validation
+   * @return true if payload is valid, false otherwise
+   * @ingroup api
+   */
+  template <typename T>
+  bool submit(const std::shared_ptr<T>& pl,
               ValidationState& state,
-              bool shouldDoContextualCheck = true) {
+              bool resubmit = true) {
     (void)pl;
     (void)state;
-    (void)shouldDoContextualCheck;
+    (void)resubmit;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return true;
   }
@@ -110,6 +162,13 @@ struct MemPool {
   template <typename T>
   const payload_map<T>& getMap() const {
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getMap");
+  }
+
+  //! @private
+  template <typename T>
+  const payload_map<T>& getInFlightMap() const {
+    static_assert(sizeof(T) == 0,
+                  "Undefined type used in MemPool::getInFlightMap");
   }
 
   /**
@@ -162,15 +221,21 @@ struct MemPool {
   signals::Signal<void(const VbkBlock& atv)> on_vbkblock_accepted;
 
  private:
-  AltBlockTree* tree_;
+  MemPoolBlockTree mempool_tree_;
   // relations between VBK block and payloads
   relations_map_t relations_;
   vbkblock_map_t vbkblocks_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  VbkPayloadsRelations& touchVbkBlock(const VbkBlock& block,
-                                      VbkBlock::id_t id = VbkBlock::id_t());
+  atv_map_t atvs_in_flight_;
+  vtb_map_t vtbs_in_flight_;
+  vbkblock_map_t vbkblocks_in_flight_;
+
+  VbkPayloadsRelations& touchVbkPayloadRelation(
+      const std::shared_ptr<VbkBlock>& block);
+
+  void resubmit_payloads();
 
   template <typename Pop>
   signals::Signal<void(const Pop&)>& getSignal() {
@@ -178,31 +243,27 @@ struct MemPool {
   }
 
   void vacuum(const PopData& pop);
-
-  template <typename Pop>
-  bool checkContextually(const Pop& payload, ValidationState& state);
 };
 
 // clang-format off
-
 //! @overload
-template <> bool MemPool::submit(const ATV& atv, ValidationState& state, bool shouldDoContextualCheck);
+template <> bool MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state, bool resubmit);
 //! @overload
-template <> bool MemPool::submit(const VTB& vtb, ValidationState& state, bool shouldDoContextualCheck);
+template <> bool MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state, bool resubmit);
 //! @overload
-template <> bool MemPool::submit(const VbkBlock& block, ValidationState& state, bool shouldDoContextualCheck);
-//! @overload
-template <> bool MemPool::checkContextually<VTB>(const VTB& vtb, ValidationState& state);
-//! @overload
-template <> bool MemPool::checkContextually<ATV>(const ATV& id, ValidationState& state);
-//! @overload
-template <> bool MemPool::checkContextually<VbkBlock>(const VbkBlock& id, ValidationState& state);
+template <> bool MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state, bool resubmit);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload
 template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
 //! @overload
 template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
+//! @overload
+template<> const MemPool::payload_map<VbkBlock>& MemPool::getInFlightMap() const;
+//! @overload
+template<> const MemPool::payload_map<ATV>& MemPool::getInFlightMap() const;
+//! @overload
+template<> const MemPool::payload_map<VTB>& MemPool::getInFlightMap() const;
 //! @overload
 template <> signals::Signal<void(const ATV&)>& MemPool::getSignal();
 //! @overload

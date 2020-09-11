@@ -22,12 +22,12 @@
 namespace altintegration {
 
 /**
- * @struct PopRewardsCurveParams
+ * @struct PopRewardsParams
  *
- * Defines POP rewards payout curve parameters.
- * @ingroup config,interfaces
+ * Defines config for POP rewards.
+ * @ingroup config, interfaces
  */
-struct PopRewardsCurveParams {
+struct PopRewardsParams {
   //! we start decreasing rewards after this score
   double startOfSlope() const noexcept { return mStartOfSlope; }
 
@@ -38,23 +38,12 @@ struct PopRewardsCurveParams {
   //! slope for keystone rounds
   double slopeKeystone() const noexcept { return mSlopeKeystone; }
 
- protected:
-  double mStartOfSlope = 1.0;
-  double mSlopeNormal = 0.2;
-  double mSlopeKeystone = 0.21325;
-};
-
-/**
- * @struct PopRewardsParams
- *
- * Defines config for POP rewards.
- * @ingroup config, interfaces
- */
-struct PopRewardsParams {
-  //! we use this round number to detect keystones
+  //! among all rounds, this number represents round for keystone blocks.
+  //! we use this round number to detect keystones.
   uint32_t keystoneRound() const noexcept { return mKeystoneRound; }
 
-  //! we have this number of rounds eg rounds 0, 1, 2, 3
+  //! total number of payout rounds.
+  //! we have this number of rounds eg rounds 0, 1, 2, 3, total is 4
   uint32_t payoutRounds() const noexcept { return mPayoutRounds; }
 
   //! we use this round number to pay flat reward (does not depend on pop
@@ -85,11 +74,6 @@ struct PopRewardsParams {
     return mDifficultyAveragingInterval;
   }
 
-  //! getter for reward curve parameters
-  const PopRewardsCurveParams& getCurveParams() const noexcept {
-    return curveParams;
-  }
-
   //! reward score table
   //! we score each VeriBlock and lower the reward for late blocks
   const std::vector<double>& relativeScoreLookupTable() const noexcept {
@@ -97,8 +81,9 @@ struct PopRewardsParams {
   }
 
  protected:
-  PopRewardsCurveParams curveParams{};
-
+  double mStartOfSlope = 1.0;
+  double mSlopeNormal = 0.2;
+  double mSlopeKeystone = 0.21325;
   uint32_t mKeystoneRound = 3;
   uint32_t mPayoutRounds = 4;
   uint32_t mFlatScoreRound = 2;
@@ -135,7 +120,7 @@ struct AltChainParams {
   //! heights 5,6,7,8,9 are blocks within same keystone interval
   uint32_t getKeystoneInterval() const noexcept { return mKeystoneInterval; }
 
-  //! number of blocks in VBK for finalization
+  //! number of blocks in VBK used for finalization
   uint32_t getFinalityDelay() const noexcept { return mFinalityDelay; }
 
   //! pop score lookup table for fork resolution
@@ -144,45 +129,53 @@ struct AltChainParams {
     return mForkResolutionLookUpTable;
   }
 
-  //! validity window for ATVs; pop payout delay, in blocks
+  //! Validity window for ATVs. If difference between endorsed/containing blocks
+  //! is more than this number, endorsement becomes invalid.
   int32_t getEndorsementSettlementInterval() const noexcept {
     return mEndorsementSettlementInterval;
   }
+
+  //! number of blocks in ALT between endorsed block and payout block
+  int32_t getPopPayoutDelay() const noexcept { return mPopPayoutDelay; }
 
   //! maximum size of single PopData in a single ALT block, in bytes
   uint32_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
   //! getter for reward parameters
   const PopRewardsParams& getRewardParams() const noexcept {
-    return mPopRewardsParams;
+    return *mPopRewardsParams;
   }
 
-  //! Maximum future block time for altchain blocks. Must be low enough such
-  //! that attacker can't produce endorsements faster than this interval.
+  //! Maximum future block time for altchain blocks.
   uint32_t maxFutureBlockTime() const noexcept { return mMaxFutureBlockTime; }
 
-  //! unique POP ID for the chain
+  //! unique POP ID for the chain; identifies altchain in VBK
   virtual int64_t getIdentifier() const noexcept = 0;
 
-  //! first ALT block used in AltBlockTree. This is first block that can be endorsed.
-  //! @refitem altbootstrapblock
+  //! "genesis" block for POP mining. This is first block that can be endorsed
+  //! by POP miners.
+  //! Can start at genesis block, or at any part of the active chain. This block
+  //! is immediately finalized, so chain CAN NOT be reorganized past this block.
   virtual AltBlock getBootstrapBlock() const noexcept = 0;
 
   /**
    * Calculate hash from block header.
    * @param bytes serialized block header
    * @return hash
+   * @note if input data is not valid block header, still calculate hash from input data.
    */
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
  protected:
-  PopRewardsParams mPopRewardsParams;
+  std::shared_ptr<PopRewardsParams> mPopRewardsParams =
+      std::make_shared<PopRewardsParams>();
 
   uint32_t mMaxFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;
+  int32_t mPopPayoutDelay = 50;
   uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
 
   std::vector<uint32_t> mForkResolutionLookUpTable{

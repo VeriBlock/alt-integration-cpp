@@ -49,7 +49,7 @@ struct PopData {
 
   /**
    * Read VBK data from the raw byte representation and convert it to PopData
-   * @param string data bytes to read from
+   * @param bytes data bytes to read from
    * @return PopData
    */
   static PopData fromVbkEncoding(Slice<const uint8_t> bytes);
@@ -65,6 +65,8 @@ struct PopData {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  std::string toPrettyString() const;
 
   bool empty() const { return context.empty() && atvs.empty() && vtbs.empty(); }
 

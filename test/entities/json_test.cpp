@@ -495,7 +495,7 @@ TEST(ToJson, BlockIndex) {
   },
   "height": 0,
   "ref": 1,
-  "status": 99,
+  "status": 354,
   "stored": {
     "vtbids": []
   }

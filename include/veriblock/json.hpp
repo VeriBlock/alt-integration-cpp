@@ -27,13 +27,15 @@ Value ToJSON(const T& /*entity*/) {
  */
 namespace json {
 
+//! @cond Doxygen_Suppress
+
 /**
  * Creates an empty JSON object.
  * @tparam Object type of JSON object.
  * @return empty JSON object.
  */
 template <typename Object>
-  Object makeEmptyObject() {
+Object makeEmptyObject() {
   static_assert(sizeof(Object) == 0, "Undefined function for this type");
 }
 
@@ -108,6 +110,8 @@ void putBoolKV(Object& /*object to modify*/,
                bool /*value*/) {
   static_assert(sizeof(Object) == 0, "Undefined function for this type");
 }
+
+//! @endcond
 
 template <typename Value, typename Iterable>
 void putArrayKV(Value& object, const std::string& key, const Iterable& val) {

@@ -122,7 +122,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
     EXPECT_EQ(btcBtip->getHeight(), 57);
 
     altchain = {altparam.getBootstrapBlock()};
-    mineAltBlocks(100, altchain, false, false);
+    mineAltBlocks(100, altchain, true, false);
   }
 
   template <typename Block, typename ChainParams>
@@ -140,7 +140,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 };
 
 TEST_F(Scenario1, scenario_1) {
-  // Step 1
+  VBK_LOG_DEBUG("Step 1");
   ASSERT_EQ(vbkAtip->getHeight(), vbkBtip->getHeight());
   ASSERT_TRUE(cmp(*vbkBtip, *popminer->vbk().getBestChain().tip()));
 
@@ -156,7 +156,8 @@ TEST_F(Scenario1, scenario_1) {
                  vtbsVBA71[0].containingBlock.getHash(),
                  popminer->vbk());
   altPayloadsVBA71.vtbs = {vtbsVBA71[0]};
-  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state)) << state.toString();
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state))
+      << state.toString();
   ASSERT_TRUE(AddPayloads(containingBlock.getHash(), altPayloadsVBA71))
       << state.toString();
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
@@ -188,7 +189,7 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(),
             altchain.rbegin()->getHash());
 
-  // Step 2
+  VBK_LOG_DEBUG("Step 2");
   endorsedBlock = altchain[90];
   containingBlock = generateNextBlock(*altchain.rbegin());
   altchain.push_back(containingBlock);
@@ -234,7 +235,7 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(altchain.size(), 103);
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 102);
 
-  // Step 3
+  VBK_LOG_DEBUG("Step 3");
   // remove ALT block 102
   auto lastBlock = *altchain.rbegin();
   alttree.removeSubtree(lastBlock.getHash());

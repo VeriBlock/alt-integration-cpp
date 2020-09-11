@@ -23,7 +23,7 @@ TEST_F(Scenario9, scenario_9) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 10 blocks
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
 
   AltBlock endorsedBlock = chain[5];
 
@@ -62,7 +62,7 @@ TEST_F(Scenario9, scenario_9) {
                  vtbs[0].containingBlock.getHash(),
                  popminer->vbk());
 
-  // Step 1
+  VBK_LOG_DEBUG("Step 1");
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads1));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
@@ -81,7 +81,7 @@ TEST_F(Scenario9, scenario_9) {
   EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
             btcBlockTip1->getHash());
 
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   PopData altPayloads2 =
@@ -89,15 +89,15 @@ TEST_F(Scenario9, scenario_9) {
 
   altPayloads2.vtbs = {vtbs[1]};
 
-  // Step 2
+  VBK_LOG_DEBUG("Step 2");
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_FALSE(AddPayloads(containingBlock.getHash(), altPayloads2))
       << state.toString();
   EXPECT_EQ(state.GetPath(), "VBK-duplicate");
   EXPECT_FALSE(state.IsValid());
 
-  // BUG: setState clears BLOCK_FAILED_POP which shouldn't happen
-  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state))
+      << state.toString();
   validateAlttreeIndexState(alttree, containingBlock, altPayloads2, true, true);
 
   verifyEndorsementAdded(alttree.vbk(), E1);

@@ -1,0 +1,26 @@
+name: Doxygen
+
+on:
+  push:
+    branches:
+      - master
+      - release/*
+  pull_request:
+    branches:
+      - master
+      - trunk/*
+      - release/*
+
+jobs:
+  doxygen:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          clean: true
+      - run: mkdir -p build/docs
+      - uses: mattnotmitt/doxygen-action@v1
+        with:
+          working-directory: '.'
+          doxyfile-path: './Doxyfile'

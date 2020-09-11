@@ -17,8 +17,7 @@ struct BtcInvalidationTest : public ::testing::Test, public PopTestFixture {
     tip = popminer->mineBtcBlocks(10);
     best = &popminer->btc().getBestChain();
     EXPECT_TRUE(cmp(*best->tip(), *tip));
-    EXPECT_TRUE(tip->hasFlags(BLOCK_VALID_TREE));
-    EXPECT_TRUE(tip->isValid());
+    EXPECT_TRUE(tip->isValid(BLOCK_VALID_TREE));
   }
 
   template <typename T, typename F>
@@ -38,7 +37,7 @@ TEST_F(BtcInvalidationTest, InvalidateTip) {
   // block is not valid
   ASSERT_FALSE(tip->isValid());
   // has tree validity, but we marked it as invalid
-  EXPECT_TRUE(tip->hasFlags(BLOCK_VALID_TREE));
+  EXPECT_TRUE(tip->isValidUpTo(BLOCK_VALID_TREE));
   EXPECT_TRUE(tip->hasFlags(BLOCK_FAILED_BLOCK));
 }
 

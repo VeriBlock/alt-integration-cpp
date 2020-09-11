@@ -3,13 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/pop_context.hpp"
+
 #include <gtest/gtest.h>
 
 #include <veriblock/config.hpp>
 #include <veriblock/mock_miner.hpp>
 #include <veriblock/storage/inmem_payloads_provider.hpp>
-
-#include "veriblock/altintegration.hpp"
 
 using namespace altintegration;
 

@@ -134,7 +134,7 @@ struct BaseBlockTree {
       current->pprev->pnext.insert(current);
     }
 
-    current->setFlag(BLOCK_VALID_TREE);
+    current->raiseValidity(BLOCK_VALID_TREE);
     current->unsetDirty();
 
     tryAddTip(current);
@@ -639,6 +639,13 @@ struct BaseBlockTree {
   }
 
   void doInvalidate(index_t& block, enum BlockStatus reason) {
+    VBK_ASSERT_MSG(
+        !block.isValidUpTo(BLOCK_CAN_BE_APPLIED) ||
+            (reason & BLOCK_FAILED_POP) == 0u,
+        "attempted to set mutually exclusive flags BLOCK_CAN_BE_APPLIED "
+        "and BLOCK_FAILED_POP for block %s",
+        block.toPrettyString());
+
     block.setFlag(reason);
     validity_sig_.emit(block);
   }

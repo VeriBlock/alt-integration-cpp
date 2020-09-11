@@ -50,7 +50,7 @@ TEST_F(Scenario2, scenario_2) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 10 blocks
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true);
 
   AltBlock endorsedBlock = chain[5];
 
@@ -89,7 +89,7 @@ TEST_F(Scenario2, scenario_2) {
                  vtbs[0].containingBlock.getHash(),
                  popminer->vbk());
 
-  // Step 1
+  VBK_LOG_DEBUG("Step 1");
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads1));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
@@ -107,7 +107,7 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
             btcBlockTip1->getHash());
 
-  mineAltBlocks(10, chain);
+  mineAltBlocks(10, chain, /*connectBlocks=*/true);
   containingBlock = generateNextBlock(*chain.rbegin());
   chain.push_back(containingBlock);
   auto* vbkTip1 = alttree.vbk().getBestChain().tip();
@@ -115,7 +115,7 @@ TEST_F(Scenario2, scenario_2) {
 
   altPayloads2.vtbs = {vtbs[1]};
 
-  // Step 2
+  VBK_LOG_DEBUG("Step 2");
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads2));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
@@ -142,7 +142,7 @@ TEST_F(Scenario2, scenario_2) {
   chain2.push_back(containingBlock);
   PopData altPayloads3 = generateAltPayloads({tx}, vbkTip1->getHash());
 
-  // Step 3
+  VBK_LOG_DEBUG("Step 3");
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads3));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state))
@@ -163,7 +163,7 @@ TEST_F(Scenario2, scenario_2) {
   chain.push_back(containingBlock);
   PopData altPayloads4 = generateAltPayloads({tx}, vbkTip2->getHash());
 
-  // Step 4
+  VBK_LOG_DEBUG("Step 4");
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads4));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));

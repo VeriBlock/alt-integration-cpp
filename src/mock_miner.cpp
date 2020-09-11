@@ -304,35 +304,44 @@ VbkBlock MockMiner::applyVTBs(const BlockIndex<VbkBlock>& tip,
                               VbkBlockTree& tree,
                               const std::vector<VbkPopTx>& txes,
                               ValidationState& state) {
-  // build merkle tree
-  auto hashes = hashAll<VbkPopTx>(txes);
-  const int32_t treeIndex = 0;  // this is POP tx
-  VbkMerkleTree mtree(hashes, treeIndex);
-
-  // create containing block
-  auto containingBlock = vbk_miner.createNextBlock(
-      tip, mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
-
-  // map VbkPopTx -> VTB
   std::vector<VTB> vtbs;
   vtbs.reserve(txes.size());
-  int32_t index = 0;
-  std::transform(txes.begin(),
-                 txes.end(),
-                 std::back_inserter(vtbs),
-                 [&](const VbkPopTx& tx) -> VTB {
-                   VTB vtb;
-                   vtb.transaction = tx;
-                   vtb.merklePath.treeIndex = treeIndex;
-                   vtb.merklePath.index = index;
-                   vtb.merklePath.subject = hashes[index];
-                   vtb.merklePath.layers =
-                       mtree.getMerklePathLayers(hashes[index]);
-                   vtb.containingBlock = containingBlock;
-                   index++;
+  VbkBlock containingBlock;
 
-                   return vtb;
-                 });
+  // FIXME: workaround for a BUG: VbkMerkleTree fails on an assert if passed an
+  // empty hash vector
+  if (txes.empty()) {
+    containingBlock = vbk_miner.createNextBlock(tip);
+  } else {
+    // build merkle tree
+    auto hashes = hashAll<VbkPopTx>(txes);
+
+    const int32_t treeIndex = 0;  // this is POP tx
+    VbkMerkleTree mtree(hashes, treeIndex);
+
+    // create the containing block
+    containingBlock = vbk_miner.createNextBlock(
+        tip, mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
+
+    // map VbkPopTx -> VTB
+    int32_t index = 0;
+    std::transform(txes.begin(),
+                   txes.end(),
+                   std::back_inserter(vtbs),
+                   [&](const VbkPopTx& tx) -> VTB {
+                     VTB vtb;
+                     vtb.transaction = tx;
+                     vtb.merklePath.treeIndex = treeIndex;
+                     vtb.merklePath.index = index;
+                     vtb.merklePath.subject = hashes[index];
+                     vtb.merklePath.layers =
+                         mtree.getMerklePathLayers(hashes[index]);
+                     vtb.containingBlock = containingBlock;
+                     index++;
+
+                     return vtb;
+                   });
+  }
 
   auto containingHash = containingBlock.getHash();
   if (!acceptBlock(tree, containingBlock, state)) {
@@ -386,30 +395,18 @@ BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
                                                size_t amount) {
-  VbkBlock::hash_t last = tip.getHash();
-  if (!vbkmempool.empty() && amount > 0) {
-    //! we "simulate" mempool - a vector of transactions that can be added for
-    //! "further processing". here we mine first block separately, as it should
-    //! contain all transactions from mempool.
-    auto containing = applyVTBs(tip, vbktree, vbkmempool, state_);
-    last = containing.getHash();
+  auto* last = &tip;
+  for (size_t i = 0; i < amount; i++) {
+    // the mempool is just a vector of transactions
+    auto containingBlock = applyVTBs(*last, vbktree, vbkmempool, state_);
+    last = vbktree.getBlockIndex(containingBlock.getHash());
+    VBK_ASSERT(last != nullptr);
 
-    // we generated 1 block
-    --amount;
+    // only the first mined block is going to contain any transactions
     vbkmempool.clear();
   }
 
-  for (size_t i = 0; i < amount; i++) {
-    auto* index = vbktree.getBlockIndex(last);
-    assert(index);
-    auto block = vbk_miner.createNextBlock(*index);
-    if (!acceptBlock(vbktree, block, state_)) {
-      throw std::domain_error(state_.GetDebugMessage());
-    }
-    last = block.getHash();
-  }
-
-  return vbktree.getBlockIndex(last);
+  return vbktree.getBlockIndex(last->getHash());
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(

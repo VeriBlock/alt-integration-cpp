@@ -23,8 +23,9 @@ struct PopRewardsBigDecimal {
   PopRewardsBigDecimal(double b) : value((uint64_t)(b * decimals)) {}
 
   std::string toPrettyString() const {
-    return fmt::sprintf(
-        "BigDecimal{%llu.%llu}", getIntegerFraction(), getDecimalFraction());
+    auto decimalFraction = getDecimalDoubleFraction();
+    double outValue = (double)getIntegerFraction() + decimalFraction;
+    return fmt::sprintf("BigDecimal{%llf}", outValue);
   }
 
   PopRewardsBigDecimal& operator+=(const PopRewardsBigDecimal& b) {
@@ -54,6 +55,11 @@ struct PopRewardsBigDecimal {
     ArithUint256 integerFraction = getIntegerFraction();
     integerFraction *= decimals;
     return (value - integerFraction).getLow64();
+  }
+
+  double getDecimalDoubleFraction() const {
+    auto temp = (double)getDecimalFraction();
+    return temp / decimals;
   }
 
   friend inline const PopRewardsBigDecimal operator+(
