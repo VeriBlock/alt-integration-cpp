@@ -167,7 +167,7 @@ struct BlockIndex : public Block::addon_t {
     setDirty();
   }
 
-  bool canBeATip() const { return isValid() && addon_t::canBeATip(*this); }
+  bool canBeATip() const { return isValid(addon_t::validTipLevel); }
   /**
    * The block is a valid tip if it can be a tip and either there are no
    * descendant blocks or none of the descendants can be a tip
