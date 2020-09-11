@@ -59,9 +59,9 @@ struct ChainTest : public ::testing::TestWithParam<TestCase> {
 TEST_P(ChainTest, Full) {
   auto [start, size] = GetParam();
   auto blocks = makeBlocks(start, size);
-  chain = Chain<BlockIndex<MyDummyBlock>>(start, &*blocks.rbegin());
+  chain = Chain<BlockIndex<MyDummyBlock>>(start, &blocks.back());
   EXPECT_EQ(chain.chainHeight(), start + size - 1);
-  EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
+  EXPECT_EQ(chain.tip(), &blocks.back());
 
   // check 'contains' method
   for (int i = 0; i < size; i++) {
@@ -95,7 +95,7 @@ INSTANTIATE_TEST_SUITE_P(Chain, ChainTest, testing::ValuesIn(cases));
 
 TEST(ChainTest, ChainStartHeightAboveTip) {
   auto blocks = ChainTest::makeBlocks(0, 10);
-  Chain<BlockIndex<MyDummyBlock>> chain(100, &*blocks.rbegin());
+  Chain<BlockIndex<MyDummyBlock>> chain(100, &blocks.back());
   ASSERT_TRUE(chain.empty());
 }
 
@@ -104,7 +104,7 @@ TEST(ChainTest, CreateFrom0) {
   // created with height 0, it is expected to see that chain will contain 110
   // elements, first 100 of which are null.
   auto blocks = ChainTest::makeBlocks(100, 10);
-  Chain<BlockIndex<MyDummyBlock>> c(0, &*blocks.rbegin());
+  Chain<BlockIndex<MyDummyBlock>> c(0, &blocks.back());
   ASSERT_EQ(c.blocksCount(), 110);
   ASSERT_EQ(c.chainHeight(), 109);
 }
@@ -198,8 +198,10 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
       chain.tip()->pprev->getHeader(), newIndex.getHeader());
 
-  newIndex.insertContainingEndorsement(std::make_shared<endorsement_t>(endorsement1));
-  newIndex.insertContainingEndorsement(std::make_shared<endorsement_t>(endorsement2));
+  newIndex.insertContainingEndorsement(
+      std::make_shared<endorsement_t>(endorsement1));
+  newIndex.insertContainingEndorsement(
+      std::make_shared<endorsement_t>(endorsement2));
 
   chain.setTip(&newIndex);
 
@@ -210,26 +212,28 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
       chain.tip()->pprev->getHeader(), newIndex2.getHeader());
 
-  newIndex2.insertContainingEndorsement(std::make_shared<endorsement_t>(endorsement3));
+  newIndex2.insertContainingEndorsement(
+      std::make_shared<endorsement_t>(endorsement3));
 
   chain.setTip(&newIndex2);
 
-  auto* blockContaining1 = findBlockContainingEndorsement(chain, endorsement1, 100);
+  auto* blockContaining1 =
+      findBlockContainingEndorsement(chain, endorsement1, 100);
   EXPECT_EQ(*blockContaining1->getContainingEndorsements()
-                .find(endorsement1.id)
-                ->second,
+                 .find(endorsement1.id)
+                 ->second,
             endorsement1);
   auto* blockContaining2 =
       findBlockContainingEndorsement(chain, endorsement2, 100);
   EXPECT_EQ(*blockContaining2->getContainingEndorsements()
-                .find(endorsement2.id)
-                ->second,
+                 .find(endorsement2.id)
+                 ->second,
             endorsement2);
   auto* blockContaining3 =
       findBlockContainingEndorsement(chain, endorsement3, 100);
   EXPECT_EQ(*blockContaining3->getContainingEndorsements()
-                .find(endorsement3.id)
-                ->second,
+                 .find(endorsement3.id)
+                 ->second,
             endorsement3);
   EXPECT_EQ(findBlockContainingEndorsement(chain, endorsement4, 100), nullptr);
 }

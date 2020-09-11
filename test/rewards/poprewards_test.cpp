@@ -33,7 +33,7 @@ struct RewardsTestFixture : public ::testing::Test, public PopTestFixture {
 
   void endorseLastBlock(size_t endorsements) {
     size_t chainSize = altchain.size();
-    AltBlock endorsedBlock = *altchain.rbegin();
+    AltBlock endorsedBlock = altchain.back();
     std::vector<VbkTx> popTxs{};
     for (size_t i = 0; i < endorsements; i++) {
       auto pubdata = generatePublicationData(endorsedBlock);

@@ -145,7 +145,7 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_TRUE(cmp(*vbkBtip, *popminer->vbk().getBestChain().tip()));
 
   AltBlock endorsedBlock = altchain[90];
-  AltBlock containingBlock = generateNextBlock(*altchain.rbegin());
+  AltBlock containingBlock = generateNextBlock(altchain.back());
   altchain.push_back(containingBlock);
 
   PopData altPayloadsVBA71;
@@ -186,12 +186,11 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_EQ(blockCount, 72);
   EXPECT_EQ(vbkAtip->getAncestor(71)->getHash(),
             alttree.vbk().getBestChain().tip()->getHash());
-  ASSERT_EQ(alttree.getBestChain().tip()->getHash(),
-            altchain.rbegin()->getHash());
+  ASSERT_EQ(alttree.getBestChain().tip()->getHash(), altchain.back().getHash());
 
   VBK_LOG_DEBUG("Step 2");
   endorsedBlock = altchain[90];
-  containingBlock = generateNextBlock(*altchain.rbegin());
+  containingBlock = generateNextBlock(altchain.back());
   altchain.push_back(containingBlock);
 
   PopData altPayloadsVBB71;
@@ -208,8 +207,7 @@ TEST_F(Scenario1, scenario_1) {
       << state.toString();
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
       << state.toString();
-  ASSERT_EQ(alttree.getBestChain().tip()->getHash(),
-            altchain.rbegin()->getHash());
+  ASSERT_EQ(alttree.getBestChain().tip()->getHash(), altchain.back().getHash());
   EXPECT_TRUE(state.IsValid());
 
   validateAlttreeIndexState(alttree, containingBlock, altPayloadsVBB71);
@@ -237,7 +235,7 @@ TEST_F(Scenario1, scenario_1) {
 
   VBK_LOG_DEBUG("Step 3");
   // remove ALT block 102
-  auto lastBlock = *altchain.rbegin();
+  auto lastBlock = altchain.back();
   alttree.removeSubtree(lastBlock.getHash());
   altchain.pop_back();
   EXPECT_EQ(altchain.size(), 102);
@@ -262,7 +260,7 @@ TEST_F(Scenario1, scenario_1) {
 
   // Step 4
   // remove ALT block 101
-  lastBlock = *altchain.rbegin();
+  lastBlock = altchain.back();
   alttree.removeSubtree(lastBlock.getHash());
   altchain.pop_back();
 

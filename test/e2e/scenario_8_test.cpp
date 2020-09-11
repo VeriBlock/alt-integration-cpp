@@ -109,7 +109,7 @@ TEST_F(Scenario8, scenario_8) {
   fillVbkContext(
       popData1.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
-  auto containingBlock = generateNextBlock(*chain.rbegin());
+  auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   // add alt payloads
@@ -139,7 +139,7 @@ TEST_F(Scenario8, scenario_8) {
   fillVbkContext(
       popData2.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   popData2.context.clear();

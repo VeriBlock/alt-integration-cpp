@@ -56,7 +56,7 @@ TEST_F(Scenario2, scenario_2) {
 
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   PopData altPayloads1 =
@@ -108,7 +108,7 @@ TEST_F(Scenario2, scenario_2) {
             btcBlockTip1->getHash());
 
   mineAltBlocks(10, chain, /*connectBlocks=*/true);
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   auto* vbkTip1 = alttree.vbk().getBestChain().tip();
   PopData altPayloads2 = generateAltPayloads({tx}, vbkTip1->getHash());
@@ -138,7 +138,7 @@ TEST_F(Scenario2, scenario_2) {
   // generate new fork with the new altPayloads
   auto chain2 = chain;
   chain2.resize(chain.size() - 5);
-  containingBlock = generateNextBlock(*chain2.rbegin());
+  containingBlock = generateNextBlock(chain2.back());
   chain2.push_back(containingBlock);
   PopData altPayloads3 = generateAltPayloads({tx}, vbkTip1->getHash());
 
@@ -159,7 +159,7 @@ TEST_F(Scenario2, scenario_2) {
   EXPECT_EQ(alttree.vbk().btc().getBestChain().tip()->getHash(),
             btcBlockTip1->getHash());
 
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads4 = generateAltPayloads({tx}, vbkTip2->getHash());
 

@@ -82,7 +82,7 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   mineAltBlocks(10, chain);
 
   // alt tip = last alt block in "chain"
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
 
   // endorsed
   auto alt5 = alttree.getBestChain().tip()->getAncestor(5);

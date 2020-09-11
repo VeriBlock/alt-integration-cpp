@@ -171,15 +171,15 @@ struct PopTestFixture {
     ASSERT_NE(chain.size(), 0);
 
     for (uint32_t i = 0; i < num; ++i) {
-      chain.push_back(generateNextBlock(*chain.rbegin()));
+      chain.push_back(generateNextBlock(chain.back()));
 
-      ASSERT_TRUE(alttree.acceptBlockHeader(*chain.rbegin(), state))
+      ASSERT_TRUE(alttree.acceptBlockHeader(chain.back(), state))
           << state.toString();
       if (connectBlocks) {
         alttree.acceptBlock(chain.back().getHash(), {});
       }
       if (setState) {
-        ASSERT_TRUE(SetState(alttree, chain.rbegin()->getHash()));
+        ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
       }
       ASSERT_TRUE(state.IsValid());
     }

@@ -67,7 +67,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   VbkTx tx =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[0]));
-  AltBlock containingAltBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingAltBlock = generateNextBlock(chain.back());
   chain.push_back(containingAltBlock);
   PopData altPayloads =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());

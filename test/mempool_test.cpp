@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -10,7 +12,6 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
-#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -27,7 +28,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 
   void applyInNextBlock(const PopData& pop) {
-    auto containingBlock = generateNextBlock(*chain.rbegin());
+    auto containingBlock = generateNextBlock(chain.back());
     chain.push_back(containingBlock);
     ASSERT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
     ASSERT_TRUE(AddPayloads(containingBlock.getHash(), pop))
@@ -46,10 +47,10 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 
   void removeLastAltBlock() {
-    alttree.removeSubtree(chain.rbegin()->getHash());
+    alttree.removeSubtree(chain.back().getHash());
     chain.pop_back();
     ValidationState dummy;
-    alttree.setState(chain.rbegin()->getHash(), dummy);
+    alttree.setState(chain.back().getHash(), dummy);
   }
 };
 
@@ -96,7 +97,7 @@ TEST_F(MemPoolFixture, removeAll_test1) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData popData = checkedGetPop();
 
   EXPECT_EQ(popData.vtbs.size(), 2);
@@ -104,7 +105,7 @@ TEST_F(MemPoolFixture, removeAll_test1) {
   EXPECT_EQ(popData.atvs.at(0), atv);
 
   // do the same to show that from mempool do not remove payloads
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   popData = checkedGetPop();
 
   EXPECT_EQ(popData.vtbs.size(), 2);
@@ -113,7 +114,7 @@ TEST_F(MemPoolFixture, removeAll_test1) {
   // remove from mempool
   mempool->removeAll(popData);
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
 
   EXPECT_TRUE(mempool->getMap<ATV>().empty());
   EXPECT_TRUE(mempool->getMap<VTB>().empty());
@@ -167,7 +168,7 @@ TEST_F(MemPoolFixture, removeAll_test2) {
   for (const auto& b : context) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData popData = checkedGetPop();
 
   EXPECT_EQ(popData.vtbs.size(), 2);
@@ -179,7 +180,7 @@ TEST_F(MemPoolFixture, removeAll_test2) {
 
   mempool->removeAll(popData);
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
 
   EXPECT_FALSE(mempool->getMap<ATV>().empty());
   EXPECT_TRUE(mempool->getMap<VTB>().empty());
@@ -233,7 +234,7 @@ TEST_F(MemPoolFixture, removeAll_test3) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData popData = checkedGetPop();
   applyInNextBlock(popData);
 
@@ -308,7 +309,7 @@ TEST_F(MemPoolFixture, removeAll_test4) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData popData = checkedGetPop();
   applyInNextBlock(popData);
 
@@ -403,7 +404,7 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
     EXPECT_TRUE(mempool->submit(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData popData = mempool->getPop();
 
   EXPECT_EQ(popData.vtbs.size(), 2);
@@ -455,13 +456,13 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
   mempool->clear();
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 
-  ASSERT_EQ(context.rbegin()->height, 65);
+  ASSERT_EQ(context.back().height, 65);
   ASSERT_EQ((++context.rbegin())->height, 64);
 
   // corrupt continuity of the vbk blocks
   context.erase(--(--context.end()));
   ASSERT_EQ(context.size(), 64);
-  ASSERT_EQ(context.rbegin()->height, 65);
+  ASSERT_EQ(context.back().height, 65);
   ASSERT_EQ((++context.rbegin())->height, 63);
 
   for (size_t i = 0; i < context.size() - 1; ++i) {
@@ -597,7 +598,7 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   for (const auto& b : context) {
     ASSERT_TRUE(mempool->submit<VbkBlock>(b, state)) << state.toString();
   }
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   ASSERT_EQ(alttree.getBestChain().tip()->getHeight(), 10);
   PopData pop = checkedGetPop();
   EXPECT_EQ(pop.vtbs.size(), 2);
@@ -655,7 +656,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.vtbs.size(), 2);
@@ -680,7 +681,7 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
   payloadsProvider.write(atv.blockOfProof);
   EXPECT_TRUE(mempool->submit<ATV>(atv, state));
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.context.size(), 0);
@@ -704,7 +705,7 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
   payloadsProvider.write(atv);
   EXPECT_TRUE(mempool->submit<ATV>(atv, state));
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.vtbs.size(), 0);
@@ -772,7 +773,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
       EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
     }
 
-    ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+    ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
     PopData v_popData = checkedGetPop();
 
     ASSERT_EQ(v_popData.context.size(), 177);
@@ -800,7 +801,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
       EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
     }
 
-    ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+    ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
     PopData v_popData = checkedGetPop();
 
     ASSERT_EQ(v_popData.context.size(), 177);
@@ -828,7 +829,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
       EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
     }
 
-    ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+    ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
     PopData v_popData = checkedGetPop();
 
     ASSERT_EQ(v_popData.context.size(), 176);
@@ -918,7 +919,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.context.size(), 122);
@@ -956,7 +957,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
   EXPECT_EQ(v_popData.vtbs.size(), 0);
   EXPECT_EQ(v_popData.atvs.size(), 1);
@@ -1005,7 +1006,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.vtbs.size(), 1);
@@ -1071,7 +1072,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.vtbs.size(), 1);
@@ -1107,7 +1108,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.context.size(), 66);
@@ -1131,7 +1132,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
     EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   v_popData = checkedGetPop();
 
   EXPECT_EQ(v_popData.atvs.at(0), atv2);
@@ -1180,7 +1181,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
     }
   }
 
-  ASSERT_TRUE(alttree.setState(chain.rbegin()->getHash(), state));
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
 
   {
     PopData v_popData = checkedGetPop();
@@ -1264,7 +1265,7 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
   }
 
   EXPECT_EQ(vbk_blocks.size(), vbkblocks_count);
-  EXPECT_TRUE(vbk_blocks.rbegin()->getHash() ==
+  EXPECT_TRUE(vbk_blocks.back().getHash() ==
               popminer->vbk().getBestChain().tip()->getHash());
 
   for (size_t i = 0; i < vbk_blocks.size(); ++i) {
