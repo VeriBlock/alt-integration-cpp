@@ -218,7 +218,7 @@ struct PopStateMachine {
                   from.toPrettyString(),
                   to.toPrettyString());
 
-    for (auto* current = &from; current != &to; current = current->pprev) {
+    for (auto* current = &from; current != &to; current = current->getPrev()) {
       VBK_ASSERT_MSG(current != nullptr,
                      "reached the genesis or first bootstrap block");
       VBK_ASSERT_MSG(current->getHeight() > to.getHeight(),

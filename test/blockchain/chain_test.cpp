@@ -19,14 +19,18 @@ using ::testing::Field;
 using ::testing::Return;
 using ::testing::StrictMock;
 
-struct DummyAddon {};
+struct DummyAddon {
+  std::string toPrettyString() const { return {}; }
+};
 
 struct MyDummyBlock {
   using addon_t = DummyAddon;
-  using hash_t = int;
+  using hash_t = std::vector<uint8_t>;
   using prev_hash_t = int;
   using height_t = int;
   using protecting_block_t = std::false_type;
+  static std::string name() { return {}; };
+  hash_t getHash() const { return {}; };
 };
 
 struct TestCase {
@@ -198,8 +202,10 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
       chain.tip()->pprev->getHeader(), newIndex.getHeader());
 
-  newIndex.insertContainingEndorsement(std::make_shared<endorsement_t>(endorsement1));
-  newIndex.insertContainingEndorsement(std::make_shared<endorsement_t>(endorsement2));
+  newIndex.insertContainingEndorsement(
+      std::make_shared<endorsement_t>(endorsement1));
+  newIndex.insertContainingEndorsement(
+      std::make_shared<endorsement_t>(endorsement2));
 
   chain.setTip(&newIndex);
 
@@ -210,26 +216,28 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
       chain.tip()->pprev->getHeader(), newIndex2.getHeader());
 
-  newIndex2.insertContainingEndorsement(std::make_shared<endorsement_t>(endorsement3));
+  newIndex2.insertContainingEndorsement(
+      std::make_shared<endorsement_t>(endorsement3));
 
   chain.setTip(&newIndex2);
 
-  auto* blockContaining1 = findBlockContainingEndorsement(chain, endorsement1, 100);
+  auto* blockContaining1 =
+      findBlockContainingEndorsement(chain, endorsement1, 100);
   EXPECT_EQ(*blockContaining1->getContainingEndorsements()
-                .find(endorsement1.id)
-                ->second,
+                 .find(endorsement1.id)
+                 ->second,
             endorsement1);
   auto* blockContaining2 =
       findBlockContainingEndorsement(chain, endorsement2, 100);
   EXPECT_EQ(*blockContaining2->getContainingEndorsements()
-                .find(endorsement2.id)
-                ->second,
+                 .find(endorsement2.id)
+                 ->second,
             endorsement2);
   auto* blockContaining3 =
       findBlockContainingEndorsement(chain, endorsement3, 100);
   EXPECT_EQ(*blockContaining3->getContainingEndorsements()
-                .find(endorsement3.id)
-                ->second,
+                 .find(endorsement3.id)
+                 ->second,
             endorsement3);
   EXPECT_EQ(findBlockContainingEndorsement(chain, endorsement4, 100), nullptr);
 }
