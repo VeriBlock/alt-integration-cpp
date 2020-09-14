@@ -218,6 +218,14 @@ struct BlockIndex : public Block::addon_t {
     return pprev;
   }
 
+  bool isDescendantOf(const BlockIndex& ancestor) const {
+    return getAncestor(ancestor.getHeight()) == &ancestor;
+  }
+
+  bool isAncestorOf(const BlockIndex& descendant) const {
+    return descendant.getAncestor(getHeight()) == this;
+  }
+
   BlockIndex* getAncestor(height_t _height) const {
     VBK_ASSERT(_height >= 0);
     if (_height > this->height) {
