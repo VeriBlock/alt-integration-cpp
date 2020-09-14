@@ -353,7 +353,6 @@ struct BaseBlockTree {
     VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
 
     activeChain_.setTip(&to);
-    tryAddTip(&to);
   }
 
   //! connects a handler to a signal 'On Invalidate Block'
