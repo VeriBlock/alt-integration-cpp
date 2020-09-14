@@ -77,13 +77,11 @@ struct PopStateMachine {
                   ProtectingBlockTree& ing,
                   PayloadsProvider& payloadsProvider,
                   PayloadsIndex& payloadsIndex,
-                  height_t startHeight = 0,
                   bool continueOnInvalid = false)
       : ed_(ed),
         ing_(ing),
         payloadsProvider_(payloadsProvider),
         payloadsIndex_(payloadsIndex),
-        startHeight_(startHeight),
         continueOnInvalid_(continueOnInvalid) {}
 
   // atomic: applies either all or none of the block's commands
@@ -103,8 +101,8 @@ struct PopStateMachine {
 
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
-      bool ret = payloadsProvider_.getCommands(ed_, index, cgroups, state);
-      VBK_ASSERT_MSG(ret,
+      bool success = payloadsProvider_.getCommands(ed_, index, cgroups, state);
+      VBK_ASSERT_MSG(success,
                      "failed to load commands from block=%s, reason=%s",
                      index.toPrettyString(),
                      state.toString());
@@ -180,8 +178,8 @@ struct PopStateMachine {
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
       ValidationState state;
-      bool ret = payloadsProvider_.getCommands(ed_, index, cgroups, state);
-      VBK_ASSERT_MSG(ret,
+      bool success = payloadsProvider_.getCommands(ed_, index, cgroups, state);
+      VBK_ASSERT_MSG(success,
                      "failed to load commands from block=%s, reason=%s",
                      index.toPrettyString(),
                      state.toString());
@@ -199,48 +197,51 @@ struct PopStateMachine {
     --ed_.appliedBlockCount;
   }
 
-  // unapplies all commands commands from blocks in the range of [from; to)
-  // while predicate returns true, if predicate return false stop unapplying and
-  // return the index on which predicate returns false
-  // atomic: either applies all of the requested blocks or fails on an assert
-  VBK_CHECK_RETURN index_t* unapplyWhile(
+  /**
+   * Unapply all commands commands from blocks in the range of [from; to)
+   * while the predicate returns true. Stop if the predicate returns false.
+   * @return the block index on which the predicate returns false or 'to' if the
+   * predicate returns true for all blocks
+   *
+   * atomic: either unapplies all of the requested blocks or fails on an assert
+   */
+  VBK_CHECK_RETURN index_t& unapplyWhile(
       index_t& from,
       index_t& to,
       const std::function<bool(index_t& index)>& pred) {
     if (&from == &to) {
-      return &to;
+      return to;
     }
 
-    VBK_ASSERT(from.getHeight() > to.getHeight());
-    // exclude 'to' by adding 1
-    Chain<index_t> chain(to.getHeight() + 1, &from);
-    VBK_ASSERT(chain.first());
-    VBK_ASSERT(chain.first()->pprev == &to);
-
     VBK_LOG_DEBUG("Unapply %d blocks from=%s, to=%s",
-                  chain.blocksCount(),
+                  from.getHeight() - to.getHeight(),
                   from.toPrettyString(),
                   to.toPrettyString());
 
-    for (auto* current : reverse_iterate(chain)) {
-      VBK_ASSERT(current != nullptr);
-      if (pred(*current)) {
-        unapplyBlock(*current);
-      } else {
-        return current;
+    for (auto* current = &from; current != &to; current = current->getPrev()) {
+      VBK_ASSERT_MSG(current != nullptr,
+                     "reached the genesis or first bootstrap block");
+      VBK_ASSERT_MSG(current->getHeight() > to.getHeight(),
+                     "[from, to) is not a chain, detected at %s",
+                     current->toPrettyString());
+
+      if (!pred(*current)) {
+        return *current;
       }
+
+      unapplyBlock(*current);
     }
 
-    return &to;
+    return to;
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)
-  // atomic: either applies all of the requested blocks
+  // atomic: either unapplies all of the requested blocks
   // or fails on an assert
   void unapply(index_t& from, index_t& to) {
     auto pred = [](index_t&) -> bool { return true; };
-    auto* index = unapplyWhile(from, to, pred);
-    VBK_ASSERT(index == &to);
+    auto& firstUnprocessed = unapplyWhile(from, to, pred);
+    VBK_ASSERT(&firstUnprocessed == &to);
   }
 
   // applies all commands from blocks in the range of (from; to].
@@ -295,23 +296,15 @@ struct PopStateMachine {
       return true;
     }
 
-    // is 'to' a successor?
-    if (to.getAncestor(from.getHeight()) == &from) {
-      return apply(from, to, state);
-    }
+    auto& forkBlock = getForkBlock(from, to);
 
-    // 'to' is a predecessor or another fork
-    Chain<index_t> chain(startHeight_, &from);
-    auto* forkBlock = chain.findFork(&to);
-
-    VBK_ASSERT(forkBlock &&
-               "state corruption: from and to must be part of the same tree");
-
-    unapply(from, *forkBlock);
-    if (!apply(*forkBlock, to, state)) {
+    unapply(from, forkBlock);
+    if (!apply(forkBlock, to, state)) {
       // attempted to switch to an invalid block, rollback
-      bool success = apply(*forkBlock, from, state);
-      VBK_ASSERT(success && "state corruption: failed to rollback the state");
+      bool success = apply(forkBlock, from, state);
+      VBK_ASSERT_MSG(success,
+                     "state corruption: failed to rollback the state: %s",
+                     state.toString());
 
       return false;
     }
@@ -328,7 +321,6 @@ struct PopStateMachine {
   ProtectingBlockTree& ing_;
   PayloadsProvider& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
-  height_t startHeight_ = 0;
   bool continueOnInvalid_ = false;
 };
 

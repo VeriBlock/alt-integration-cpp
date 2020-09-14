@@ -104,7 +104,7 @@ struct Chain {
       if (index->getHeight() < startHeight_) break;
       innerHeight = toInnerHeight(index->getHeight());
       chain[innerHeight] = index;
-      index = index->pprev;
+      index = index->getPrev();
     }
   }
 
@@ -130,7 +130,7 @@ struct Chain {
       pindex = pindex->getAncestor(lastHeight);
     }
     while (pindex && !contains(pindex)) {
-      pindex = pindex->pprev;
+      pindex = pindex->getPrev();
     }
     return const_cast<index_t*>(pindex);
   }

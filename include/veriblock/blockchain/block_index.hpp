@@ -208,8 +208,27 @@ struct BlockIndex : public Block::addon_t {
     return this->getAncestor(this->height - steps);
   }
 
+  BlockIndex* getPrev() const {
+    VBK_ASSERT_MSG(pprev == nullptr || getHeight() == pprev->getHeight() + 1,
+                   "state corruption: unexpected height of the previous block "
+                   "%s of block %s",
+                   pprev->toPrettyString(),
+                   toPrettyString());
+
+    return pprev;
+  }
+
+  bool isDescendantOf(const BlockIndex& ancestor) const {
+    return getAncestor(ancestor.getHeight()) == &ancestor;
+  }
+
+  bool isAncestorOf(const BlockIndex& descendant) const {
+    return descendant.getAncestor(getHeight()) == this;
+  }
+
   BlockIndex* getAncestor(height_t _height) const {
-    if (_height < 0 || _height > this->height) {
+    VBK_ASSERT(_height >= 0);
+    if (_height > this->height) {
       return nullptr;
     }
 
@@ -217,17 +236,12 @@ struct BlockIndex : public Block::addon_t {
     // valid height. also it assumes whole blockchain is in memory (pprev is
     // valid until given height)
     BlockIndex* index = const_cast<BlockIndex*>(this);
-    while (index != nullptr) {
-      if (index->height > _height) {
-        index = index->pprev;
-      } else if (index->height == _height) {
-        return index;
-      } else {
-        return nullptr;
-      }
+    while (index != nullptr && index->height > _height) {
+      index = index->getPrev();
     }
 
-    return nullptr;
+    VBK_ASSERT(index == nullptr || index->height == _height);
+    return index;
   }
 
   std::string toPrettyString(size_t level = 0) const {
@@ -289,6 +303,31 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;
 };
+
+/**
+ * getForkBlock assumes that:
+ *      the block tree is not malformed
+ *      the fork block(worst case: genesis/bootstrap block) is in memory
+ * the complexity is O(n)
+ */
+template <typename Block>
+BlockIndex<Block>& getForkBlock(BlockIndex<Block>& a, BlockIndex<Block>& b) {
+  const auto initialHeight = std::min(a.getHeight(), b.getHeight());
+
+  for (auto cursorA = a.getAncestor(initialHeight),
+            cursorB = b.getAncestor(initialHeight);
+       cursorA != nullptr && cursorB != nullptr;
+       cursorA = cursorA->getPrev(), cursorB = cursorB->getPrev()) {
+    if (cursorA == cursorB) {
+      return *cursorA;
+    }
+  }
+
+  VBK_ASSERT_MSG(false,
+                 "blocks %s and %s must be part of the same tree",
+                 a.toPrettyString(),
+                 b.toPrettyString());
+}
 
 template <typename Block>
 void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {

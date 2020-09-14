@@ -450,10 +450,10 @@ struct BaseBlockTree {
     }
 
     current = doInsertBlockHeader(block);
+
+    current->chainWork = getBlockProof(*block);
     if (current->pprev) {
-      current->chainWork = current->pprev->chainWork + getBlockProof(*block);
-    } else {
-      current->chainWork = getBlockProof(*block);
+      current->chainWork += current->pprev->chainWork;
     }
 
     // raise validity may return false if block is invalid

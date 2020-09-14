@@ -149,11 +149,9 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     // recover chainwork
+    current->chainWork = getBlockProof(current->getHeader());
     if (prev) {
-      current->chainWork =
-          current->pprev->chainWork + getBlockProof(current->getHeader());
-    } else {
-      current->chainWork = getBlockProof(current->getHeader());
+      current->chainWork += current->pprev->chainWork;
     }
 
     // clear blockOfProofEndorsements inmem field
