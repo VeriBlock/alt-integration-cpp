@@ -552,7 +552,7 @@ struct PopAwareForkResolutionComparator {
       // setState()), we have to unapply this part before unapplying chainA and
       // try to apply the unvalidated part of chainB without any payloads from
       // chainA to make sure it is fully valid
-      auto* chainBValidFrom = sm.unapplyWhile(
+      auto& chainBValidFrom = sm.unapplyWhile(
           *chainB.tip(), *chainB.first(), [](protected_index_t& index) -> bool {
             return !index.isValid(BLOCK_CAN_BE_APPLIED);
           });
@@ -560,8 +560,8 @@ struct PopAwareForkResolutionComparator {
       sm.unapply(*chainA.tip(), *chainA.first());
 
       // validate the unvalidated part of chainB
-      if (!sm.apply(*chainBValidFrom, *chainB.tip(), state)) {
-        sm.unapply(*chainBValidFrom, *chainB.first());
+      if (!sm.apply(chainBValidFrom, *chainB.tip(), state)) {
+        sm.unapply(chainBValidFrom, *chainB.first());
         bool success = sm.apply(*chainA.first(), *chainA.tip(), state);
         VBK_ASSERT_MSG(
             success,
