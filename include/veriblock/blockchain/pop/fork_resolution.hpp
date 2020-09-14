@@ -296,13 +296,18 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
   VBK_ASSERT(earliestKeystone == b.firstKeystone());
   int latestKeystone = (std::max)(a.lastKeystone(), b.lastKeystone());
 
-  // If either chain has a keystone the other chain is missing, chop the other
-  // chain Example: Chain A has keystones VBK20:BTC100, VBK40:BTC101,
-  // VBK60:BTC103, VBK100:BTC104 Chain B has keystones VBK20:BTC100,
-  // VBK40:BTC101, VBK100:BTC102 Chain A has keystone 60 but chain B does not,
-  // so Chain B is chopped to VBK20:BTC100, VBK40:BTC101 Also chop a chain which
-  // contains a keystone which violates the Bitcoin finality delay based on the
-  // previous keystone in the chain
+  // clang-format off
+  // If either chain has a keystone the other chain is missing, chop the other chain
+  //
+  // Example:
+  // Chain A has keystones VBK20:BTC100, VBK40:BTC101, VBK60:BTC103, VBK100:BTC104
+  // Chain B has keystones VBK20:BTC100, VBK40:BTC101, VBK100:BTC102
+  //
+  // Chain A has keystone 60 but chain B does not, so Chain B is
+  // chopped to VBK20:BTC100, VBK40:BTC101. Also chop a chain which contains a
+  // keystone which violates the Bitcoin finality delay based on the previous
+  // keystone in the chain.
+  // clang-format on
   for (int keystoneToCompare = earliestKeystone;
        keystoneToCompare <= latestKeystone;
        keystoneToCompare += ki) {
