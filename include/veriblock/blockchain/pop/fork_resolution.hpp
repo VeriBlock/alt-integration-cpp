@@ -48,7 +48,7 @@ bool publicationViolatesFinality(int pubToCheck,
                                  int base,
                                  const ConfigType& config) {
   int64_t diff = pubToCheck - base;
-  return (diff - config.getFinalityDelay()) > 0;
+  return diff > config.getFinalityDelay();
 }
 
 template <typename ConfigType>
