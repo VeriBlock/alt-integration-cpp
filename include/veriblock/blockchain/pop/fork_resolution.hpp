@@ -123,8 +123,16 @@ struct KeystoneContextList {
       return nullptr;
     }
 
-    auto i = (blockNumber - firstKeystone()) / keystoneInterval;
-    return &ctx[i];
+    auto it = std::find_if(
+        ctx.begin(), ctx.end(), [blockNumber](const KeystoneContext& kc) {
+          return kc.blockHeight == blockNumber;
+        });
+
+    if (it == ctx.end()) {
+      return nullptr;
+    }
+
+    return &*it;
   }
 };
 
