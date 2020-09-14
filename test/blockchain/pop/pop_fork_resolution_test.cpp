@@ -106,12 +106,12 @@ static const std::vector<TestCase> EqualCases = {
      *
      * Expected: Chains should be equal to one another
      */
-//    {
-//        // gap of keystones 60 and 80
-//        {{20, 98},{40, 100},{100, 120},{120, 122}},
-//        // gap of keystones 60 and 80
-//        {{20, 98},{40, 100},{100, 121},{120, 121}}
-//    },
+    {
+        // gap of keystones 60 and 80
+        {{20, 98},{40, 100},{100, 120},{120, 122}},
+        // gap of keystones 60 and 80
+        {{20, 98},{40, 100},{100, 121},{120, 121}}
+    },
 };
 // clang-format on
 
@@ -183,63 +183,66 @@ static const std::vector<TestCase> AwinsCases = {
         {{20, 98}, {40, 100}, {60, 103}, {80, 111}},
         {{20, 98}, {40, 100}, {60, 102}, {80, 114}},
     },
-//    /**
-//     * Scenario: Chain A and Chain B both have a gap, but Chain B's gap is larger.
-//     *           Chain B should be chopped starting at it's gap, and A's gap should be retained.
-//     * Expected: chain A should be better then chain B
-//     */
-//    {
-//        // gap of keystone 60
-//        {{20, 98}, {40, 100}, {80, 110}, {100, 111}, {120, 112}},
-//        // gap of keystones 60 and 80
-//        {{20, 98}, {40, 100}, {100, 101}, {120, 102}},
-//    },
-//    /**
-//     * Scenario: Chain A and Chain B both have a gap of the same size, but Chain B has a Bitcoin-finality-delay-violating gap before it.
-//     *           Chain B should be chopped starting at it's Bitcoin finality delay violation
-//     * Expected: chain A should be better then chain B
-//     */
-//    {
-//        // gap of keystones 60, 80
-//        {{20, 98}, {40, 100}, {100, 111}, {120, 112}},
-//        // gap of keystones 60 and 80
-//        {{20, 98}, {40, 112}, {100, 101}, {120, 102}},
-//    },
-//    /**
-//     * Scenario: Chain A and Chain B both have a gap of the same size, and then a second gap where B's gap starts before A's.
-//     *           Chain B should be chopped starting at the beginning of its second gap.
-//     * Expected: chain A should be better then chain B
-//     */
-//    {
-//        // gap of keystones 60 and 80
-//        {{20, 98}, {40, 100}, {100, 111}, {120, 117}, {140, 120}, {180, 124}},
-//        // gap of keystones 60, 80, 140, 160
-//        {{20, 98}, {40, 100}, {100, 111}, {120, 112}, {180, 119}}
-//    },
-//    /**
-//     * Scenario: Chain A and Chain B both have a gap of the same size, and then a second gap where A's gap starts before B's.
-//     *           Chain A should be chopped starting at the beginning of its second gap. However, chain A has a much higher score, so even
-//     *           the rounds where Chain B has a keystone and Chain A doesn't, Chain A still wins in the end because of it's early lead.
-//     * Expected: chain A should be better then chain B
-//     */
-//    {
-//        // gap of keystones 60, 80, 140, 160
-//        {{20, 98}, {40, 100}, {100, 111}, {120, 112}, {180, 119}},
-//        // gap of keystones 60, 80, 160
-//        {{20, 107}, {40, 110}, {100, 116}, {120, 120}, {140, 122}, {180, 124}}
-//    },
-//    /**
-//     * Scenario: Chain A and Chain B both have a gap of the same size, and then a second gap where B's gap starts before A's.
-//     *           Chain B should be chopped starting at the beginning of its second gap. Chain B has a much higher score in the beginning, but the chop
-//     *           allows Chain A to eventually surpass it (even though Chain B has earlier publications than A even in the tip, Chain B was chopped).
-//     * Expected: chain A should be better then chain B
-//     */
-//    {
-//        // gap of keystones 60, 80, 160
-//        {{20, 107}, {40, 110}, {100, 116}, {120, 120}, {140, 122}, {180, 124}, {200, 129}, {220, 129}, {240, 130}},
-//        // gap of keystones 60, 80, 140, 160
-//        {{20, 98}, {40, 100}, {100, 111}, {120, 112}, {180, 119}, {200, 125}, {220, 126}, {240, 128}}
-//    },
+    /**
+     * Scenario: Chain A and Chain B both have a gap, but Chain B's gap is larger.
+     *           Chain B should be chopped starting at it's gap, and A's gap should be retained.
+     * Expected: chain A should be better then chain B
+     */
+     // TODO: fix
+    {
+        // gap of keystone 60
+        {{20, 98}, {40, 100}, {80, 110}, {100, 111}, {120, 112}},
+        // gap of keystones 60 and 80
+        {{20, 98}, {40, 100}, {100, 101}, {120, 102}},
+    },
+    /**
+     * Scenario: Chain A and Chain B both have a gap of the same size, but Chain B has a Bitcoin-finality-delay-violating gap before it.
+     *           Chain B should be chopped starting at it's Bitcoin finality delay violation
+     * Expected: chain A should be better then chain B
+     */
+    {
+        // gap of keystones 60, 80
+        {{20, 98}, {40, 100}, {100, 111}, {120, 112}},
+        // gap of keystones 60 and 80
+        {{20, 98}, {40, 112}, {100, 101}, {120, 102}},
+    },
+    /**
+     * Scenario: Chain A and Chain B both have a gap of the same size, and then a second gap where B's gap starts before A's.
+     *           Chain B should be chopped starting at the beginning of its second gap.
+     * Expected: chain A should be better then chain B
+     */
+    // TODO: fix
+    {
+        // gap of keystones 60 and 80
+        {{20, 98}, {40, 100}, {100, 111}, {120, 117}, {140, 120}, {180, 124}},
+        // gap of keystones 60, 80, 140, 160
+        {{20, 98}, {40, 100}, {100, 111}, {120, 112}, {180, 119}}
+    },
+    /**
+     * Scenario: Chain A and Chain B both have a gap of the same size, and then a second gap where A's gap starts before B's.
+     *           Chain A should be chopped starting at the beginning of its second gap. However, chain A has a much higher score, so even
+     *           the rounds where Chain B has a keystone and Chain A doesn't, Chain A still wins in the end because of it's early lead.
+     * Expected: chain A should be better then chain B
+     */
+    {
+        // gap of keystones 60, 80, 140, 160
+        {{20, 98}, {40, 100}, {100, 111}, {120, 112}, {180, 119}},
+        // gap of keystones 60, 80, 160
+        {{20, 107}, {40, 110}, {100, 116}, {120, 120}, {140, 122}, {180, 124}}
+    },
+    /**
+     * Scenario: Chain A and Chain B both have a gap of the same size, and then a second gap where B's gap starts before A's.
+     *           Chain B should be chopped starting at the beginning of its second gap. Chain B has a much higher score in the beginning, but the chop
+     *           allows Chain A to eventually surpass it (even though Chain B has earlier publications than A even in the tip, Chain B was chopped).
+     * Expected: chain A should be better then chain B
+     */
+    // TODO: fix
+    {
+        // gap of keystones 60, 80, 160
+        {{20, 107}, {40, 110}, {100, 116}, {120, 120}, {140, 122}, {180, 124}, {200, 129}, {220, 129}, {240, 130}},
+        // gap of keystones 60, 80, 140, 160
+        {{20, 98}, {40, 100}, {100, 111}, {120, 112}, {180, 119}, {200, 125}, {220, 126}, {240, 128}}
+    },
     // clang-format on
 };
 
