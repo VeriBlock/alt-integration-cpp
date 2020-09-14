@@ -155,8 +155,9 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   if (isApplied) {
     ValidationState dummy;
     std::vector<CommandGroup> cmdGroups;
-    bool ret = payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
-    VBK_ASSERT_MSG(ret,
+    bool success =
+        payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
+    VBK_ASSERT_MSG(success,
                    "failed to load commands from block=%s, reason=%s",
                    index.toPrettyString(),
                    dummy.toString());
@@ -248,8 +249,8 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
   // load commands from block
   std::vector<CommandGroup> cmdGroups;
-  bool ret = payloadsProvider_.getCommands(*this, index, cmdGroups, state);
-  VBK_ASSERT_MSG(ret,
+  bool success = payloadsProvider_.getCommands(*this, index, cmdGroups, state);
+  VBK_ASSERT_MSG(success,
                  "failed to load commands from block=%s, reason=%s",
                  index.toPrettyString(),
                  state.toString());

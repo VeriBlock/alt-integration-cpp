@@ -48,7 +48,7 @@ bool publicationViolatesFinality(int pubToCheck,
                                  int base,
                                  const ConfigType& config) {
   int64_t diff = pubToCheck - base;
-  return (diff - config.getFinalityDelay()) > 0;
+  return diff > config.getFinalityDelay();
 }
 
 template <typename ConfigType>
@@ -400,7 +400,7 @@ struct PopAwareForkResolutionComparator {
     auto guard = ing_->deferForkResolutionGuard();
     auto originalTip = ing_->getBestChain().tip();
 
-    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, 0, continueOnInvalid);
+    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, continueOnInvalid);
     if (sm.setState(*currentActive, to, state)) {
       return true;
     }
@@ -470,9 +470,12 @@ struct PopAwareForkResolutionComparator {
 
     auto ki = ed.getParams().getKeystoneInterval();
     const auto* fork = currentBest.findFork(&candidate);
-    VBK_ASSERT(fork != nullptr &&
-               "state corruption: all blocks in a blocktree must form a tree, "
-               "thus all pairs of chains must have a fork point");
+    VBK_ASSERT_MSG(
+        fork != nullptr,
+        "state corruption: all blocks in a blocktree must form a tree, "
+        "thus all pairs of chains must have a fork point: chainA=%s, chainB=%s",
+        bestTip->toPrettyString(),
+        candidate.toPrettyString());
 
     bool AcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(fork->getHeight(), bestTip->getHeight(), ki);
@@ -497,11 +500,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed,
-            *ing_,
-            payloadsProvider_,
-            payloadsIndex_,
-            chainA.first()->getHeight());
+    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);
 
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the
@@ -553,7 +552,7 @@ struct PopAwareForkResolutionComparator {
       // setState()), we have to unapply this part before unapplying chainA and
       // try to apply the unvalidated part of chainB without any payloads from
       // chainA to make sure it is fully valid
-      auto* chainBValidFrom = sm.unapplyWhile(
+      auto& chainBValidFrom = sm.unapplyWhile(
           *chainB.tip(), *chainB.first(), [](protected_index_t& index) -> bool {
             return !index.isValid(BLOCK_CAN_BE_APPLIED);
           });
@@ -561,8 +560,8 @@ struct PopAwareForkResolutionComparator {
       sm.unapply(*chainA.tip(), *chainA.first());
 
       // validate the unvalidated part of chainB
-      if (!sm.apply(*chainBValidFrom, *chainB.tip(), state)) {
-        sm.unapply(*chainBValidFrom, *chainB.first());
+      if (!sm.apply(chainBValidFrom, *chainB.tip(), state)) {
+        sm.unapply(chainBValidFrom, *chainB.first());
         bool success = sm.apply(*chainA.first(), *chainA.tip(), state);
         VBK_ASSERT_MSG(
             success,
