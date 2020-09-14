@@ -386,19 +386,18 @@ struct BaseBlockTree {
   void tryAddTip(index_t* index) {
     VBK_ASSERT(index);
 
-    if (!index->isValid()) {
+    if (!index->isValidTip()) {
       return;
     }
 
     auto it = tips_.find(index->pprev);
     if (it != tips_.end()) {
-      // we found prev block in chainTips
+      // remove the previous block from the valid tip set as it can no longer be
+      // a valid tip
       tips_.erase(it);
     }
 
-    if (index->isValidTip()) {
-      tips_.insert(index);
-    }
+    tips_.insert(index);
   }
 
   index_t* touchBlockIndex(const hash_t& hash) {
