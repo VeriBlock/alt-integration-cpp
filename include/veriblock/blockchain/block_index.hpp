@@ -219,7 +219,8 @@ struct BlockIndex : public Block::addon_t {
   }
 
   BlockIndex* getAncestor(height_t _height) const {
-    if (_height < 0 || _height > this->height) {
+    VBK_ASSERT(_height >= 0);
+    if (_height > this->height) {
       return nullptr;
     }
 
@@ -227,17 +228,12 @@ struct BlockIndex : public Block::addon_t {
     // valid height. also it assumes whole blockchain is in memory (pprev is
     // valid until given height)
     BlockIndex* index = const_cast<BlockIndex*>(this);
-    while (index != nullptr) {
-      if (index->height > _height) {
-        index = index->getPrev();
-      } else if (index->height == _height) {
-        return index;
-      } else {
-        return nullptr;
-      }
+    while (index != nullptr && index->height > _height) {
+      index = index->getPrev();
     }
 
-    return nullptr;
+    VBK_ASSERT(index == nullptr || index->height == _height);
+    return index;
   }
 
   std::string toPrettyString(size_t level = 0) const {
