@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
 
 #include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/block_status.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/serde.hpp>
@@ -25,10 +26,7 @@ struct BtcBlockAddon {
   //! this block. must be a vector, because we can have duplicates here
   std::vector<VbkEndorsement*> blockOfProofEndorsements;
 
-  template <typename I>
-  static bool canBeATip(const I&) {
-    return true;
-  }
+  static constexpr auto validTipLevel = BLOCK_VALID_TREE;
 
   void setNullInmemFields() {
     chainWork = 0;

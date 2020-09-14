@@ -62,7 +62,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
 
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   PopData popData =
@@ -77,7 +77,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
 
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
@@ -105,7 +105,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
 
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   PopData popData =
@@ -144,7 +144,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
 
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   PopData popData =
@@ -159,7 +159,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
 
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));

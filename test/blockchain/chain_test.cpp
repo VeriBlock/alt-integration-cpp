@@ -63,9 +63,9 @@ struct ChainTest : public ::testing::TestWithParam<TestCase> {
 TEST_P(ChainTest, Full) {
   auto [start, size] = GetParam();
   auto blocks = makeBlocks(start, size);
-  chain = Chain<BlockIndex<MyDummyBlock>>(start, &*blocks.rbegin());
+  chain = Chain<BlockIndex<MyDummyBlock>>(start, &blocks.back());
   EXPECT_EQ(chain.chainHeight(), start + size - 1);
-  EXPECT_EQ(chain.tip(), &(*blocks.rbegin()));
+  EXPECT_EQ(chain.tip(), &blocks.back());
 
   // check 'contains' method
   for (int i = 0; i < size; i++) {
@@ -99,7 +99,7 @@ INSTANTIATE_TEST_SUITE_P(Chain, ChainTest, testing::ValuesIn(cases));
 
 TEST(ChainTest, ChainStartHeightAboveTip) {
   auto blocks = ChainTest::makeBlocks(0, 10);
-  Chain<BlockIndex<MyDummyBlock>> chain(100, &*blocks.rbegin());
+  Chain<BlockIndex<MyDummyBlock>> chain(100, &blocks.back());
   ASSERT_TRUE(chain.empty());
 }
 
@@ -108,7 +108,7 @@ TEST(ChainTest, CreateFrom0) {
   // created with height 0, it is expected to see that chain will contain 110
   // elements, first 100 of which are null.
   auto blocks = ChainTest::makeBlocks(100, 10);
-  Chain<BlockIndex<MyDummyBlock>> c(0, &*blocks.rbegin());
+  Chain<BlockIndex<MyDummyBlock>> c(0, &blocks.back());
   ASSERT_EQ(c.blocksCount(), 110);
   ASSERT_EQ(c.chainHeight(), 109);
 }

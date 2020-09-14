@@ -29,10 +29,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     endorsedBy.clear();
   }
 
-  template <typename I>
-  static bool canBeATip(const I& index) {
-    return index.isValidUpTo(BLOCK_CONNECTED);
-  }
+  static constexpr auto validTipLevel = BLOCK_CONNECTED;
 
   bool hasPayloads() const {
     return !_atvids.empty() || !_vtbids.empty() || !_vbkblockids.empty();

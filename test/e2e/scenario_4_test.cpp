@@ -42,7 +42,7 @@ TEST_F(Scenario4, scenario_4) {
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
 
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
@@ -64,7 +64,7 @@ TEST_F(Scenario4, scenario_4) {
 
   mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
 
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads2 =
       generateAltPayloads({tx}, alttree.vbk().getBestChain().tip()->getHash());
@@ -88,7 +88,7 @@ TEST_F(Scenario4, scenario_4) {
   // generate new fork with the new altPayloads
   auto chain2 = chain;
   chain2.resize(chain.size() - 5);
-  containingBlock = generateNextBlock(*chain2.rbegin());
+  containingBlock = generateNextBlock(chain2.back());
   chain2.push_back(containingBlock);
   PopData altPayloads3 = generateAltPayloads(
       {tx}, alttree.vbk().getBestChain().tip()->pprev->getHash());
