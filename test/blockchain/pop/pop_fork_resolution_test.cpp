@@ -188,7 +188,6 @@ static const std::vector<TestCase> AwinsCases = {
      *           Chain B should be chopped starting at it's gap, and A's gap should be retained.
      * Expected: chain A should be better then chain B
      */
-     // TODO: fix
     {
         // gap of keystone 60
         {{20, 98}, {40, 100}, {80, 110}, {100, 111}, {120, 112}},
@@ -211,7 +210,6 @@ static const std::vector<TestCase> AwinsCases = {
      *           Chain B should be chopped starting at the beginning of its second gap.
      * Expected: chain A should be better then chain B
      */
-    // TODO: fix
     {
         // gap of keystones 60 and 80
         {{20, 98}, {40, 100}, {100, 111}, {120, 117}, {140, 120}, {180, 124}},
@@ -236,7 +234,6 @@ static const std::vector<TestCase> AwinsCases = {
      *           allows Chain A to eventually surpass it (even though Chain B has earlier publications than A even in the tip, Chain B was chopped).
      * Expected: chain A should be better then chain B
      */
-    // TODO: fix
     {
         // gap of keystones 60, 80, 160
         {{20, 107}, {40, 110}, {100, 116}, {120, 120}, {140, 122}, {180, 124}, {200, 129}, {220, 129}, {240, 130}},
