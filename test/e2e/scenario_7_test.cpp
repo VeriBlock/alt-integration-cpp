@@ -68,7 +68,7 @@ TEST_F(Scenario7, scenario_7) {
   fillVbkContext(
       popData.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
-  auto containingBlock = generateNextBlock(*chain.rbegin());
+  auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));

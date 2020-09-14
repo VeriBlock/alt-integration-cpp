@@ -99,7 +99,7 @@ TEST_F(Scenario3, scenario_3) {
   VBK_LOG_DEBUG("Step 2");
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
@@ -134,7 +134,7 @@ TEST_F(Scenario3, scenario_3) {
       VbkEndorsement::getId(vtbs1[1])));
 
   VBK_LOG_DEBUG("Step 3");
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads2 = generateAltPayloads({tx}, vbkTip1->getHash());
 
@@ -161,7 +161,7 @@ TEST_F(Scenario3, scenario_3) {
   validateAlttreeIndexState(alttree, containingBlock, altPayloads2);
 
   VBK_LOG_DEBUG("Step 4");
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads3 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());

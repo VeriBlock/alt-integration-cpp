@@ -31,7 +31,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   // generate endorsements
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
@@ -58,7 +58,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   // generate endorsements
   tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  containingBlock = generateNextBlock(*forkchain1.rbegin());
+  containingBlock = generateNextBlock(forkchain1.back());
   forkchain1.push_back(containingBlock);
   PopData altPayloads2 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
@@ -85,7 +85,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 
   tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  containingBlock = generateNextBlock(*forkchain2.rbegin());
+  containingBlock = generateNextBlock(forkchain2.back());
   forkchain2.push_back(containingBlock);
   PopData altPayloads3 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
@@ -122,7 +122,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
   EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
 
-  EXPECT_TRUE(alttree.setState(forkchain2.rbegin()->getHash(), state));
+  EXPECT_TRUE(alttree.setState(forkchain2.back().getHash(), state));
   EXPECT_TRUE(state.IsValid());
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
@@ -160,7 +160,7 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
   AltBlock endorsedBlock1 = chain[5];
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
-  auto containingBlock = generateNextBlock(*chain.rbegin());
+  auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData payloads1 =
       generateAltPayloads({tx1}, vbkparam.getGenesisBlock().getHash(), 0);
