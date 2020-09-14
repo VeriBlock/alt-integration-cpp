@@ -67,30 +67,48 @@ struct KeystoneContextList {
   std::vector<KeystoneContext> ctx;
   const int keystoneInterval;
 
-  KeystoneContextList(const std::vector<KeystoneContext>& c,
-                      int keystoneInt,
-                      int finalityDelay)
-      : keystoneInterval(keystoneInt) {
-    size_t chop_index = c.size();
-
-    for (size_t i = 1; i < c.size(); ++i) {
-      if ((c[i].firstBlockPublicationHeight -
-           c[i - 1].firstBlockPublicationHeight) > finalityDelay) {
-        chop_index = i;
-        break;
-      }
-    }
-
-    ctx.insert(ctx.begin(), c.begin(), c.begin() + chop_index);
+  KeystoneContextList(const std::vector<KeystoneContext>& c, int keystoneInt)
+      : ctx(c), keystoneInterval(keystoneInt) {
+    VBK_ASSERT(
+        std::is_sorted(ctx.begin(),
+                       ctx.end(),
+                       [](const KeystoneContext& a, const KeystoneContext& b) {
+                         return a.blockHeight < b.blockHeight;
+                       }));
   }
 
   size_t size() const { return ctx.size(); }
 
   bool empty() const { return ctx.empty(); }
 
-  int firstKeystone() const { return ctx[0].blockHeight; }
+  int firstKeystone() const { return ctx.front().blockHeight; }
 
-  int lastKeystone() const { return ctx[ctx.size() - 1].blockHeight; }
+  int lastKeystone() const { return ctx.back().blockHeight; }
+
+  void chopAtKeystone(int keystoneToChop) {
+    VBK_ASSERT_MSG(
+        keystoneToChop >= firstKeystone(),
+        "Cannot chop a keystone context to %d when its first keystone is %d",
+        keystoneToChop,
+        firstKeystone());
+    VBK_ASSERT(isKeystone(keystoneToChop, keystoneInterval));
+
+    if (ctx.empty()) {
+      return;
+    }
+
+    if (keystoneToChop > lastKeystone()) {
+      return;
+    }
+
+    // erase all keystone contexts >= 'keystoneToChop'
+    auto newend = std::remove_if(
+        ctx.begin(), ctx.end(), [keystoneToChop](const KeystoneContext& kc) {
+          return kc.blockHeight >= keystoneToChop;
+        });
+
+    ctx.erase(newend, ctx.end());
+  }
 
   const KeystoneContext* getKeystone(int blockNumber) const {
     VBK_ASSERT_MSG(
@@ -106,7 +124,7 @@ struct KeystoneContextList {
     }
 
     auto i = (blockNumber - firstKeystone()) / keystoneInterval;
-    return &ctx.at(i);
+    return &ctx[i];
   }
 };
 
@@ -239,8 +257,8 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
                         const ProtectedChainConfig& config) {
   VBK_ASSERT(config.getKeystoneInterval() > 0);
   auto ki = config.getKeystoneInterval();
-  KeystoneContextList a(chainA, ki, config.getFinalityDelay());
-  KeystoneContextList b(chainB, ki, config.getFinalityDelay());
+  KeystoneContextList a(chainA, ki);
+  KeystoneContextList b(chainB, ki);
 
   if (a.empty() && b.empty()) {
     return 0;
@@ -268,8 +286,57 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
   int earliestKeystone = a.firstKeystone();
   VBK_ASSERT(earliestKeystone == b.firstKeystone());
-
   int latestKeystone = (std::max)(a.lastKeystone(), b.lastKeystone());
+
+  // If either chain has a keystone the other chain is missing, chop the other
+  // chain Example: Chain A has keystones VBK20:BTC100, VBK40:BTC101,
+  // VBK60:BTC103, VBK100:BTC104 Chain B has keystones VBK20:BTC100,
+  // VBK40:BTC101, VBK100:BTC102 Chain A has keystone 60 but chain B does not,
+  // so Chain B is chopped to VBK20:BTC100, VBK40:BTC101 Also chop a chain which
+  // contains a keystone which violates the Bitcoin finality delay based on the
+  // previous keystone in the chain
+  for (int keystoneToCompare = earliestKeystone;
+       keystoneToCompare <= latestKeystone;
+       keystoneToCompare += ki) {
+    auto* A = a.getKeystone(keystoneToCompare);
+    auto* B = b.getKeystone(keystoneToCompare);
+
+    if (A == nullptr && B == nullptr) {
+      // both chains are missing keystone at this height, ignore...
+      continue;
+    } else if (B == nullptr) {
+      // chain B is missing the keystone but A isn't, chop B after this point
+      b.chopAtKeystone(keystoneToCompare);
+    } else if (A == nullptr) {
+      // chain A is missing the keystone but B isn't, chop A after this point
+      a.chopAtKeystone(keystoneToCompare);
+    } else {
+      // both chains have a keystone at this height
+      // can't check first keystone for violating Bitcoin finality delay
+      auto* Aprev = a.getKeystone(keystoneToCompare - ki);
+      auto* Bprev = b.getKeystone(keystoneToCompare - ki);
+
+      // Aprev could be null if keystoneToCompare is right after an allowed gap,
+      // and Bitcoin finality delay violations cannot (and should not) be
+      // checked
+      if (Aprev != nullptr &&
+          publicationViolatesFinality(A->firstBlockPublicationHeight,
+                                      Aprev->firstBlockPublicationHeight,
+                                      config)) {
+        a.chopAtKeystone(keystoneToCompare);
+      }
+
+      // Bprev could be null if keystoneToCompare is right after an allowed gap,
+      // and Bitcoin finality delay violations cannot (and should not) be
+      // checked
+      if (Bprev != nullptr &&
+          publicationViolatesFinality(B->firstBlockPublicationHeight,
+                                      Bprev->firstBlockPublicationHeight,
+                                      config)) {
+        b.chopAtKeystone(keystoneToCompare);
+      }
+    }
+  }
 
   bool aOutsideFinality = false;
   bool bOutsideFinality = false;
@@ -290,7 +357,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
     }
 
     if (actx == nullptr && bctx == nullptr) {
-      break;
+      continue;
     }
 
     if (actx == nullptr) {
