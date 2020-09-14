@@ -400,7 +400,7 @@ struct PopAwareForkResolutionComparator {
     auto guard = ing_->deferForkResolutionGuard();
     auto originalTip = ing_->getBestChain().tip();
 
-    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, 0, continueOnInvalid);
+    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, continueOnInvalid);
     if (sm.setState(*currentActive, to, state)) {
       return true;
     }
@@ -470,9 +470,12 @@ struct PopAwareForkResolutionComparator {
 
     auto ki = ed.getParams().getKeystoneInterval();
     const auto* fork = currentBest.findFork(&candidate);
-    VBK_ASSERT(fork != nullptr &&
-               "state corruption: all blocks in a blocktree must form a tree, "
-               "thus all pairs of chains must have a fork point");
+    VBK_ASSERT_MSG(
+        fork != nullptr,
+        "state corruption: all blocks in a blocktree must form a tree, "
+        "thus all pairs of chains must have a fork point: chainA=%s, chainB=%s",
+        bestTip->toPrettyString(),
+        candidate.toPrettyString());
 
     bool AcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(fork->getHeight(), bestTip->getHeight(), ki);
@@ -497,11 +500,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed,
-            *ing_,
-            payloadsProvider_,
-            payloadsIndex_,
-            chainA.first()->getHeight());
+    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);
 
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the

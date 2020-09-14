@@ -77,13 +77,11 @@ struct PopStateMachine {
                   ProtectingBlockTree& ing,
                   PayloadsProvider& payloadsProvider,
                   PayloadsIndex& payloadsIndex,
-                  height_t startHeight = 0,
                   bool continueOnInvalid = false)
       : ed_(ed),
         ing_(ing),
         payloadsProvider_(payloadsProvider),
         payloadsIndex_(payloadsIndex),
-        startHeight_(startHeight),
         continueOnInvalid_(continueOnInvalid) {}
 
   // atomic: applies either all or none of the block's commands
@@ -199,10 +197,14 @@ struct PopStateMachine {
     --ed_.appliedBlockCount;
   }
 
-  // unapplies all commands commands from blocks in the range of [from; to)
-  // while predicate returns true, if predicate return false stop unapplying and
-  // return the index on which predicate returns false
-  // atomic: either applies all of the requested blocks or fails on an assert
+  /**
+   * Unapply all commands commands from blocks in the range of [from; to)
+   * while the predicate returns true. Stop if the predicate returns false.
+   * @return the block index on which the predicate returns false or 'to' if the
+   * predicate returns true for all blocks
+   *
+   * atomic: either unapplies all of the requested blocks or fails on an assert
+   */
   VBK_CHECK_RETURN index_t* unapplyWhile(
       index_t& from,
       index_t& to,
@@ -235,7 +237,7 @@ struct PopStateMachine {
   }
 
   // unapplies all commands commands from blocks in the range of [from; to)
-  // atomic: either applies all of the requested blocks
+  // atomic: either unapplies all of the requested blocks
   // or fails on an assert
   void unapply(index_t& from, index_t& to) {
     auto pred = [](index_t&) -> bool { return true; };
@@ -295,23 +297,15 @@ struct PopStateMachine {
       return true;
     }
 
-    // is 'to' a successor?
-    if (to.getAncestor(from.getHeight()) == &from) {
-      return apply(from, to, state);
-    }
+    auto & forkBlock = getForkBlock(from, to);
 
-    // 'to' is a predecessor or another fork
-    Chain<index_t> chain(startHeight_, &from);
-    auto* forkBlock = chain.findFork(&to);
-
-    VBK_ASSERT(forkBlock &&
-               "state corruption: from and to must be part of the same tree");
-
-    unapply(from, *forkBlock);
-    if (!apply(*forkBlock, to, state)) {
+    unapply(from, forkBlock);
+    if (!apply(forkBlock, to, state)) {
       // attempted to switch to an invalid block, rollback
-      bool success = apply(*forkBlock, from, state);
-      VBK_ASSERT(success && "state corruption: failed to rollback the state");
+      bool success = apply(forkBlock, from, state);
+      VBK_ASSERT_MSG(success,
+                     "state corruption: failed to rollback the state: %s",
+                     state.toString());
 
       return false;
     }
@@ -328,7 +322,6 @@ struct PopStateMachine {
   ProtectingBlockTree& ing_;
   PayloadsProvider& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
-  height_t startHeight_ = 0;
   bool continueOnInvalid_ = false;
 };
 

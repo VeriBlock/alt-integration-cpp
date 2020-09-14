@@ -290,6 +290,31 @@ struct BlockIndex : public Block::addon_t {
   bool dirty = false;
 };
 
+/**
+ * getForkBlock assumes that:
+ *      the block tree is not malformed
+ *      the fork block(worst case: genesis/bootstrap block) is in memory
+ * the complexity is O(n)
+ */
+template <typename Block>
+BlockIndex<Block> & getForkBlock(BlockIndex<Block>& a, BlockIndex<Block>& b) {
+  const auto initialHeight = std::min(a.getHeight(), b.getHeight());
+
+  for (auto cursorA = a.getAncestor(initialHeight),
+            cursorB = b.getAncestor(initialHeight);
+       cursorA != nullptr && cursorB != nullptr;
+       cursorA = cursorA->pprev, cursorB = cursorB->pprev) {
+    if (cursorA == cursorB) {
+      return *cursorA;
+    }
+  }
+
+  VBK_ASSERT_MSG(false,
+                 "blocks %s and %s must be part of the same tree",
+                 a.toPrettyString(),
+                 b.toPrettyString());
+}
+
 template <typename Block>
 void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
   *os << b.toPrettyString();
