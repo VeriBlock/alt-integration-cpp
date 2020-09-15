@@ -1,7 +1,8 @@
 package veriblock
 
-// #cgo LDFLAGS: -L../../c/lib -lveriblock-pop-c -lveriblock-pop-cpp -lstdc++
-// #include "../../c/lib/config.h"
+// #cgo CFLAGS: -I${VBK_INCLUDE_DIR}
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
+// #include <veriblock/c/config.h>
 import "C"
 import "unsafe"
 

@@ -2,12 +2,13 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-#include "../extern.h"
-#include "../pop_context.h"
+#include "veriblock/c/pop_context.h"
+
 #include "config.hpp"
 #include "pop_context.hpp"
-#include "veriblock/altintegration.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/c/extern.h"
+#include "veriblock/pop_context.hpp"
 
 struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
   ~PayloadsProviderImpl() override = default;
@@ -81,7 +82,7 @@ PopContext* VBK_NewPopContext(Config_t* config) {
   // maxPopDataSize is the maximum size of payload per block, it is safe
   // to allocate buffer with this size for all operations
   v->provider = std::make_shared<PayloadsProviderImpl>(maxPopDataSize);
-  v->context = altintegration::Altintegration::create(c, v->provider);
+  v->context = altintegration::PopContext::create(c, v->provider);
 
   return v;
 }

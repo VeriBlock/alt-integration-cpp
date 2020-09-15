@@ -6,12 +6,12 @@
 #ifndef VERIBLOCK_POP_CPP_POP_CONTEXT_HPP_BINDINGS
 #define VERIBLOCK_POP_CPP_POP_CONTEXT_HPP_BINDINGS
 
-#include "veriblock/altintegration.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
+#include "veriblock/pop_context.hpp"
 
 // all-in-one thing
 struct PopContext {
-  std::shared_ptr<altintegration::Altintegration> context;
+  std::shared_ptr<altintegration::PopContext> context;
   std::shared_ptr<altintegration::PayloadsProvider> provider;
 };
 
