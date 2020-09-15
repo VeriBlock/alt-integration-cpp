@@ -316,7 +316,7 @@ TEST_F(MemPoolPrioritizationFixture, atv_areStronglyEquivalent_scenario1_test) {
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
 
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
@@ -341,7 +341,7 @@ TEST_F(MemPoolPrioritizationFixture, atv_areStronglyEquivalent_scenario2_test) {
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
 
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());

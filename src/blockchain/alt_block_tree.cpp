@@ -538,7 +538,6 @@ void AltBlockTree::overrideTip(index_t& to) {
                  "the active chain tip(%s) must be fully valid",
                  to.toPrettyString());
   activeChain_.setTip(&to);
-  tryAddTip(&to);
 }
 
 void AltBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {

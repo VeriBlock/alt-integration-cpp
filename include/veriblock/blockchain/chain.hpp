@@ -98,13 +98,11 @@ struct Chain {
     chain.resize(innerHeight + 1);
 
     /// TODO: may stuck here forever when fed with malformed data
-    while (true) {
-      if (index == nullptr) break;
-      if (contains(index)) break;
-      if (index->getHeight() < startHeight_) break;
+    while (index != nullptr && !contains(index) &&
+           index->getHeight() >= startHeight_) {
       innerHeight = toInnerHeight(index->getHeight());
       chain[innerHeight] = index;
-      index = index->pprev;
+      index = index->getPrev();
     }
   }
 
@@ -130,7 +128,7 @@ struct Chain {
       pindex = pindex->getAncestor(lastHeight);
     }
     while (pindex && !contains(pindex)) {
-      pindex = pindex->pprev;
+      pindex = pindex->getPrev();
     }
     return const_cast<index_t*>(pindex);
   }

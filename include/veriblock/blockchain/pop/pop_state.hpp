@@ -36,7 +36,7 @@ struct PopState {
   }
 
   void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
-    _containingEndorsements.insert({e->id, std::move(e)});
+    _containingEndorsements.emplace(e->id, std::move(e));
     setDirty();
   }
 
@@ -51,14 +51,14 @@ struct PopState {
     setDirty();
   }
 
-  void toRaw(WriteStream& w) const {
+  void toRaw(WriteStream& stream) const {
     // write containingEndorsements as vector
     writeContainer<decltype(_containingEndorsements)>(
-        w,
+        stream,
         _containingEndorsements,
-        [](WriteStream& W,
-           const typename decltype(_containingEndorsements)::value_type& e) {
-          e.second->toVbkEncoding(W);
+        [](WriteStream& w,
+           const typename decltype(_containingEndorsements)::value_type& endorsement) {
+          endorsement.second->toVbkEncoding(w);
         });
   }
 
@@ -74,14 +74,14 @@ struct PopState {
     endorsedBy.clear();
   }
 
-  void initAddonFromRaw(ReadStream& r) {
+  void initAddonFromRaw(ReadStream& stream) {
     // read containingEndorsements as vector
-    auto v = readArrayOf<endorsement_t>(
-        r, [](ReadStream& r) { return endorsement_t::fromVbkEncoding(r); });
+    auto endorsements = readArrayOf<endorsement_t>(
+        stream, [](ReadStream& r) { return endorsement_t::fromVbkEncoding(r); });
 
-    for (auto& e : v) {
-      auto pair = _containingEndorsements.insert(
-          {e.getId(), std::make_shared<endorsement_t>(e)});
+    for (auto& endorsement : endorsements) {
+      auto pair = _containingEndorsements.emplace(
+          endorsement.getId(), std::make_shared<endorsement_t>(endorsement));
       VBK_ASSERT(pair->second);
     }
     // do not restore 'endorsedBy', it will be done later

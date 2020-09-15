@@ -29,7 +29,7 @@ TEST_F(Scenario9, scenario_9) {
 
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   PopData altPayloads1 =
@@ -82,7 +82,7 @@ TEST_F(Scenario9, scenario_9) {
             btcBlockTip1->getHash());
 
   mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
-  containingBlock = generateNextBlock(*chain.rbegin());
+  containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads2 =
       generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());

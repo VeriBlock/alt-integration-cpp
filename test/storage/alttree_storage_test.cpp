@@ -76,7 +76,7 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
 
   VbkTx tx = this->popminer->createVbkTxEndorsingAltBlock(
       this->generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = this->generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   PopData altPayloads1 = this->generateAltPayloads(
@@ -129,7 +129,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
       this->generatePublicationData(endorsedBlock1));
   VbkTx tx2 = this->popminer->createVbkTxEndorsingAltBlock(
       this->generatePublicationData(endorsedBlock2));
-  AltBlock containingBlock = this->generateNextBlock(*chain.rbegin());
+  AltBlock containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   PopData altPayloads1 = this->generateAltPayloads(
@@ -197,7 +197,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
       popData.context,
       this->popminer->vbk().getParams().getGenesisBlock().getHash(),
       this->popminer->vbk());
-  auto containingBlock = this->generateNextBlock(*chain.rbegin());
+  auto containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   VBK_LOG_DEBUG("add alt payloads");
@@ -211,7 +211,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   // corrupt vtb
   popData.vtbs[0].containingBlock.merkleRoot = uint128();
 
-  containingBlock = this->generateNextBlock(*chain.rbegin());
+  containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
   VBK_LOG_DEBUG("add alt payloads #2");

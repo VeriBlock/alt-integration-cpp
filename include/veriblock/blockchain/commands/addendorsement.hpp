@@ -44,30 +44,25 @@ struct AddEndorsement : public Command {
                        e_->toPrettyString()));
     }
 
-    // endorsement validity window
-    auto window = ed_->getParams().getEndorsementSettlementInterval();
-    auto minHeight = (std::max)(containing->getHeight() - window, 0);
-    Chain<protected_index_t> chain(minHeight, containing);
-
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     if (!endorsed) {
       return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
                            "Endorsed block not found in the tree");
     }
 
-    if (containing->getHeight() - endorsed->getHeight() > window) {
-      return state.Invalid(protected_block_t::name() + "-expired",
-                           "Endorsement expired");
-    }
-
-    if (chain[endorsed->getHeight()] == nullptr ||
-        endorsed->getHash() != chain[endorsed->getHeight()]->getHash()) {
+    if (!containing->isDescendantOf(*endorsed)) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
               "Endorsed block is on a different chain. Expected: %s, got %s",
               endorsed->toShortPrettyString(),
               HexStr(e_->endorsedHash)));
+    }
+
+    if (containing->getHeight() - endorsed->getHeight() >
+        ed_->getParams().getEndorsementSettlementInterval()) {
+      return state.Invalid(protected_block_t::name() + "-expired",
+                           "Endorsement expired");
     }
 
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);

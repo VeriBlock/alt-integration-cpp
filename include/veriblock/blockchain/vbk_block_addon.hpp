@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 
 #include <veriblock/arith_uint256.hpp>
+#include <veriblock/blockchain/block_status.hpp>
 #include <veriblock/blockchain/pop/pop_state.hpp>
 #include <veriblock/entities/endorsements.hpp>
 #include <veriblock/logger.hpp>
@@ -35,10 +36,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
     endorsedBy.clear();
   }
 
-  template <typename I>
-  static bool canBeATip(const I&) {
-    return true;
-  }
+  static constexpr auto validTipLevel = BLOCK_VALID_TREE;
 
   uint32_t refCount() const { return _refCount; }
 

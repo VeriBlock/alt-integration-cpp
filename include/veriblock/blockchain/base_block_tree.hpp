@@ -246,10 +246,8 @@ struct BaseBlockTree {
       });
     }
 
-    // after invalidation, try to add tip
+    // after invalidation, the previous block might have become a tip
     tryAddTip(toBeInvalidated.pprev);
-    // remove current block from tips
-    tips_.erase(&toBeInvalidated);
 
     if (shouldDetermineBestChain) {
       updateTips();
@@ -303,13 +301,11 @@ struct BaseBlockTree {
     }
 
     doReValidate(toBeValidated, reason);
-    tryAddTip(&toBeValidated);
 
     for (auto* pnext : toBeValidated.pnext) {
       forEachNodePreorder<block_t>(*pnext, [&](index_t& index) -> bool {
         doReValidate(index, BLOCK_FAILED_CHILD);
         bool valid = index.isValid();
-        tryAddTip(&index);
         return valid;
       });
     }
@@ -357,7 +353,6 @@ struct BaseBlockTree {
     VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
 
     activeChain_.setTip(&to);
-    tryAddTip(&to);
   }
 
   //! connects a handler to a signal 'On Invalidate Block'
@@ -386,19 +381,18 @@ struct BaseBlockTree {
   void tryAddTip(index_t* index) {
     VBK_ASSERT(index);
 
-    if (!index->isValid()) {
+    if (!index->isValidTip()) {
       return;
     }
 
     auto it = tips_.find(index->pprev);
     if (it != tips_.end()) {
-      // we found prev block in chainTips
+      // remove the previous block from the valid tip set as it can no longer be
+      // a valid tip
       tips_.erase(it);
     }
 
-    if (index->isValidTip()) {
-      tips_.insert(index);
-    }
+    tips_.insert(index);
   }
 
   index_t* touchBlockIndex(const hash_t& hash) {
@@ -456,10 +450,10 @@ struct BaseBlockTree {
     }
 
     current = doInsertBlockHeader(block);
+
+    current->chainWork = getBlockProof(*block);
     if (current->pprev) {
-      current->chainWork = current->pprev->chainWork + getBlockProof(*block);
-    } else {
-      current->chainWork = getBlockProof(*block);
+      current->chainWork += current->pprev->chainWork;
     }
 
     // raise validity may return false if block is invalid
@@ -571,15 +565,13 @@ struct BaseBlockTree {
   index_t* lastModifiedBlock = nullptr;
 
   void doUpdateTips() {
-    for (auto it = tips_.begin(); it != tips_.end();) {
-      index_t* tip = *it;
-      if (!tip->isValid()) {
-        it = tips_.erase(it);
-      } else {
-        ValidationState state;
-        determineBestChain(*tip, state);
-        ++it;
-      }
+    for (auto* tip : tips_) {
+      VBK_ASSERT_MSG(tip->isValidTip(),
+                     "found block %s in tips_ which is not a valid tip",
+                     tip->toPrettyString());
+
+      ValidationState state;
+      determineBestChain(*tip, state);
     }
   }
 
@@ -647,11 +639,14 @@ struct BaseBlockTree {
         block.toPrettyString());
 
     block.setFlag(reason);
+    tips_.erase(&block);
+
     validity_sig_.emit(block);
   }
 
   void doReValidate(index_t& block, enum BlockStatus reason) {
     block.unsetFlag(reason);
+    tryAddTip(&block);
     validity_sig_.emit(block);
   }
 

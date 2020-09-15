@@ -48,7 +48,7 @@ bool publicationViolatesFinality(int pubToCheck,
                                  int base,
                                  const ConfigType& config) {
   int64_t diff = pubToCheck - base;
-  return (diff - config.getFinalityDelay()) > 0;
+  return diff > config.getFinalityDelay();
 }
 
 template <typename ConfigType>
@@ -67,30 +67,48 @@ struct KeystoneContextList {
   std::vector<KeystoneContext> ctx;
   const int keystoneInterval;
 
-  KeystoneContextList(const std::vector<KeystoneContext>& c,
-                      int keystoneInt,
-                      int finalityDelay)
-      : keystoneInterval(keystoneInt) {
-    size_t chop_index = c.size();
-
-    for (size_t i = 1; i < c.size(); ++i) {
-      if ((c[i].firstBlockPublicationHeight -
-           c[i - 1].firstBlockPublicationHeight) > finalityDelay) {
-        chop_index = i;
-        break;
-      }
-    }
-
-    ctx.insert(ctx.begin(), c.begin(), c.begin() + chop_index);
+  KeystoneContextList(const std::vector<KeystoneContext>& c, int keystoneInt)
+      : ctx(c), keystoneInterval(keystoneInt) {
+    VBK_ASSERT(
+        std::is_sorted(ctx.begin(),
+                       ctx.end(),
+                       [](const KeystoneContext& a, const KeystoneContext& b) {
+                         return a.blockHeight < b.blockHeight;
+                       }));
   }
 
   size_t size() const { return ctx.size(); }
 
   bool empty() const { return ctx.empty(); }
 
-  int firstKeystone() const { return ctx[0].blockHeight; }
+  int firstKeystone() const { return ctx.front().blockHeight; }
 
-  int lastKeystone() const { return ctx[ctx.size() - 1].blockHeight; }
+  int lastKeystone() const { return ctx.back().blockHeight; }
+
+  void chopAtKeystone(int keystoneToChop) {
+    VBK_ASSERT_MSG(
+        keystoneToChop >= firstKeystone(),
+        "Cannot chop a keystone context to %d when its first keystone is %d",
+        keystoneToChop,
+        firstKeystone());
+    VBK_ASSERT(isKeystone(keystoneToChop, keystoneInterval));
+
+    if (ctx.empty()) {
+      return;
+    }
+
+    if (keystoneToChop > lastKeystone()) {
+      return;
+    }
+
+    // erase all keystone contexts >= 'keystoneToChop'
+    auto newend = std::remove_if(
+        ctx.begin(), ctx.end(), [keystoneToChop](const KeystoneContext& kc) {
+          return kc.blockHeight >= keystoneToChop;
+        });
+
+    ctx.erase(newend, ctx.end());
+  }
 
   const KeystoneContext* getKeystone(int blockNumber) const {
     VBK_ASSERT_MSG(
@@ -105,8 +123,16 @@ struct KeystoneContextList {
       return nullptr;
     }
 
-    auto i = (blockNumber - firstKeystone()) / keystoneInterval;
-    return &ctx.at(i);
+    auto it = std::find_if(
+        ctx.begin(), ctx.end(), [blockNumber](const KeystoneContext& kc) {
+          return kc.blockHeight == blockNumber;
+        });
+
+    if (it == ctx.end()) {
+      return nullptr;
+    }
+
+    return &*it;
   }
 };
 
@@ -239,8 +265,8 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
                         const ProtectedChainConfig& config) {
   VBK_ASSERT(config.getKeystoneInterval() > 0);
   auto ki = config.getKeystoneInterval();
-  KeystoneContextList a(chainA, ki, config.getFinalityDelay());
-  KeystoneContextList b(chainB, ki, config.getFinalityDelay());
+  KeystoneContextList a(chainA, ki);
+  KeystoneContextList b(chainB, ki);
 
   if (a.empty() && b.empty()) {
     return 0;
@@ -268,8 +294,62 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
   int earliestKeystone = a.firstKeystone();
   VBK_ASSERT(earliestKeystone == b.firstKeystone());
-
   int latestKeystone = (std::max)(a.lastKeystone(), b.lastKeystone());
+
+  // clang-format off
+  // If either chain has a keystone the other chain is missing, chop the other chain
+  //
+  // Example:
+  // Chain A has keystones VBK20:BTC100, VBK40:BTC101, VBK60:BTC103, VBK100:BTC104
+  // Chain B has keystones VBK20:BTC100, VBK40:BTC101, VBK100:BTC102
+  //
+  // Chain A has keystone 60 but chain B does not, so Chain B is
+  // chopped to VBK20:BTC100, VBK40:BTC101. Also chop a chain which contains a
+  // keystone which violates the Bitcoin finality delay based on the previous
+  // keystone in the chain.
+  // clang-format on
+  for (int keystoneToCompare = earliestKeystone;
+       keystoneToCompare <= latestKeystone;
+       keystoneToCompare += ki) {
+    auto* A = a.getKeystone(keystoneToCompare);
+    auto* B = b.getKeystone(keystoneToCompare);
+
+    if (A == nullptr && B == nullptr) {
+      // both chains are missing keystone at this height, ignore...
+      continue;
+    } else if (B == nullptr) {
+      // chain B is missing the keystone but A isn't, chop B after this point
+      b.chopAtKeystone(keystoneToCompare);
+    } else if (A == nullptr) {
+      // chain A is missing the keystone but B isn't, chop A after this point
+      a.chopAtKeystone(keystoneToCompare);
+    } else {
+      // both chains have a keystone at this height
+      // can't check first keystone for violating Bitcoin finality delay
+      auto* Aprev = a.getKeystone(keystoneToCompare - ki);
+      auto* Bprev = b.getKeystone(keystoneToCompare - ki);
+
+      // Aprev could be null if keystoneToCompare is right after an allowed gap,
+      // and Bitcoin finality delay violations cannot (and should not) be
+      // checked
+      if (Aprev != nullptr &&
+          publicationViolatesFinality(A->firstBlockPublicationHeight,
+                                      Aprev->firstBlockPublicationHeight,
+                                      config)) {
+        a.chopAtKeystone(keystoneToCompare);
+      }
+
+      // Bprev could be null if keystoneToCompare is right after an allowed gap,
+      // and Bitcoin finality delay violations cannot (and should not) be
+      // checked
+      if (Bprev != nullptr &&
+          publicationViolatesFinality(B->firstBlockPublicationHeight,
+                                      Bprev->firstBlockPublicationHeight,
+                                      config)) {
+        b.chopAtKeystone(keystoneToCompare);
+      }
+    }
+  }
 
   bool aOutsideFinality = false;
   bool bOutsideFinality = false;
@@ -290,7 +370,7 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
     }
 
     if (actx == nullptr && bctx == nullptr) {
-      break;
+      continue;
     }
 
     if (actx == nullptr) {
@@ -400,7 +480,7 @@ struct PopAwareForkResolutionComparator {
     auto guard = ing_->deferForkResolutionGuard();
     auto originalTip = ing_->getBestChain().tip();
 
-    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, 0, continueOnInvalid);
+    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, continueOnInvalid);
     if (sm.setState(*currentActive, to, state)) {
       return true;
     }
@@ -470,9 +550,12 @@ struct PopAwareForkResolutionComparator {
 
     auto ki = ed.getParams().getKeystoneInterval();
     const auto* fork = currentBest.findFork(&candidate);
-    VBK_ASSERT(fork != nullptr &&
-               "state corruption: all blocks in a blocktree must form a tree, "
-               "thus all pairs of chains must have a fork point");
+    VBK_ASSERT_MSG(
+        fork != nullptr,
+        "state corruption: all blocks in a blocktree must form a tree, "
+        "thus all pairs of chains must have a fork point: chainA=%s, chainB=%s",
+        bestTip->toPrettyString(),
+        candidate.toPrettyString());
 
     bool AcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(fork->getHeight(), bestTip->getHeight(), ki);
@@ -497,11 +580,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed,
-            *ing_,
-            payloadsProvider_,
-            payloadsIndex_,
-            chainA.first()->getHeight());
+    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);
 
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the
@@ -509,7 +588,7 @@ struct PopAwareForkResolutionComparator {
     {
       auto guard = ing_->deferForkResolutionGuard();
 
-      if (!sm.apply(*chainB.first(), *chainB.tip(), state)) {
+      if (!sm.apply(chainB, state)) {
         // chain B has been unapplied and invalidated already
         VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                      state.toString());
@@ -542,7 +621,7 @@ struct PopAwareForkResolutionComparator {
     if (result >= 0) {
       // chain A remains the best one. unapply B and leave A applied
       auto guard = ing_->deferForkResolutionGuard();
-      sm.unapply(*chainB.tip(), *chainB.first());
+      sm.unapply(chainB);
       guard.overrideDeferredForkResolution(originalProtectingTip);
       VBK_LOG_INFO("Chain A remains the best chain");
     } else {
@@ -553,16 +632,17 @@ struct PopAwareForkResolutionComparator {
       // setState()), we have to unapply this part before unapplying chainA and
       // try to apply the unvalidated part of chainB without any payloads from
       // chainA to make sure it is fully valid
-      auto* chainBValidFrom = sm.unapplyWhile(
-          *chainB.tip(), *chainB.first(), [](protected_index_t& index) -> bool {
+      auto& chainBValidFrom =
+          sm.unapplyWhile(chainB, [](protected_index_t& index) -> bool {
             return !index.isValid(BLOCK_CAN_BE_APPLIED);
           });
 
-      sm.unapply(*chainA.tip(), *chainA.first());
+      // unapply losing chain
+      sm.unapply(chainA);
 
       // validate the unvalidated part of chainB
-      if (!sm.apply(*chainBValidFrom, *chainB.tip(), state)) {
-        sm.unapply(*chainBValidFrom, *chainB.first());
+      if (!sm.apply(chainBValidFrom, *chainB.tip(), state)) {
+        sm.unapply(chainBValidFrom, *chainB.first());
         bool success = sm.apply(*chainA.first(), *chainA.tip(), state);
         VBK_ASSERT_MSG(
             success,
