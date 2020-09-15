@@ -1,6 +1,6 @@
 package veriblock
 
-// #cgo CFLAGS: -I${VBK_INCLUDE_DIR}
+// #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/pop_context.h>
 import "C"
