@@ -235,17 +235,25 @@ struct PopStateMachine {
     return to;
   }
 
-  // unapplies all commands commands from blocks in the range of [from; to)
-  // atomic: either unapplies all of the requested blocks
-  // or fails on an assert
+  //!@ overload
+  VBK_CHECK_RETURN index_t& unapplyWhile(
+      Chain<index_t>& chain, const std::function<bool(index_t& index)>& pred) {
+    return unapplyWhile(*chain.tip(), *chain.first(), pred);
+  }
+
+  //! unapplies all commands commands from blocks in the range of [from; to)
   void unapply(index_t& from, index_t& to) {
     auto pred = [](index_t&) -> bool { return true; };
     auto& firstUnprocessed = unapplyWhile(from, to, pred);
     VBK_ASSERT(&firstUnprocessed == &to);
   }
 
-  // applies all commands from blocks in the range of (from; to].
-  // atomic: applies either all or none of the requested blocks
+  //! unapplies all commands in chain
+  //! @overload
+  void unapply(Chain<index_t>& chain) { unapply(*chain.tip(), *chain.first()); }
+
+  //! applies all commands from blocks in the range of (from; to].
+  //! @invariant atomic: applies either all or none of the requested blocks
   VBK_CHECK_RETURN bool apply(index_t& from,
                               index_t& to,
                               ValidationState& state) {
@@ -282,6 +290,13 @@ struct PopStateMachine {
 
     // this subchain is valid
     return true;
+  }
+
+  //! applies all commands from blocks in chain.
+  //! @invariant atomic: applies either all or none of the requested blocks
+  //! @overload
+  VBK_CHECK_RETURN bool apply(Chain<index_t>& chain, ValidationState& state) {
+    return apply(*chain.first(), *chain.tip(), state);
   }
 
   // effectively unapplies [from; genesis) and applies (genesis; to]
