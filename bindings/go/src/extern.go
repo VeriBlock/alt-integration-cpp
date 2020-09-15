@@ -6,19 +6,17 @@ import "C"
 
 //export VBK_getAltchainId
 func VBK_getAltchainId() C.int64_t {
-	// Todo: Return altchain id
-	return C.int64_t(1)
+	return C.int64_t(onGetAltchainID())
 }
 
 //export VBK_getBootstrapBlock
 func VBK_getBootstrapBlock() *C.char {
-	// Todo: Return bootstrap block
-	return C.CString("")
+	return C.CString(onGetBootstrapBlock())
 }
 
 //export VBK_getBlockHeaderHash
 func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *C.int) {
-	// Todo: Put value in out
+	onGetBlockHeaderHash()
 }
 
 // PayloadsProvider externs

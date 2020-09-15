@@ -5,6 +5,15 @@ package veriblock
 import "C"
 import "unsafe"
 
+var (
+	onGetAltchainID      = func() int { return 1 }
+	onGetBootstrapBlock  = func() string { return "" }
+	onGetBlockHeaderHash = func() {}
+	// onGetAltchainID      = func() int { panic("") }
+	// onGetBootstrapBlock  = func() string { panic("") }
+	// onGetBlockHeaderHash = func() { panic("") }
+)
+
 // PopContext ...
 type PopContext struct {
 	Config *Config
@@ -159,9 +168,7 @@ func (v PopContext) MemPoolGetPop() []byte {
 	bytesSizeC := (*C.int)(unsafe.Pointer(&bytesSize))
 	C.VBK_MemPool_getPop(v.ref, bytesC, bytesSizeC)
 	out := make([]byte, bytesSize)
-	// TODO: Test this
 	copy(out, v.popData)
-	v.popData = make([]byte, v.Config.GetMaxPopDataSize())
 	return out
 }
 

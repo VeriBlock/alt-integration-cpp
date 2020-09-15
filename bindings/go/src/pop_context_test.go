@@ -6,15 +6,15 @@ func TestPopContext(t *testing.T) {
 	config := NewConfig()
 	defer config.Free()
 
-	if !config.SelectVbkParams("test", 1, &blocks) {
+	if !config.SelectVbkParams("test", popvbkstartheight, &popvbkblocks) {
 		t.Error("Failed to select btc params")
 	}
-	if !config.SelectBtcParams("test", 1, &blocks) {
+	if !config.SelectBtcParams("test", popbtcstartheight, &popbtcblocks) {
 		t.Error("Failed to select btc params")
 	}
 
-	popContext := NewPopContext(&config)
-	defer popContext.Free()
+	// popContext := NewPopContext(&config)
+	// defer popContext.Free()
 
 	// res := popContext.MemPoolGetPop()
 	// t.Errorf("Res: %v", res)

@@ -26,10 +26,10 @@ func TestConfig(t *testing.T) {
 	config.SetMaxPopDataSize(1000)
 	config.SetForkResolutionLookupTable([]uint32{5, 15})
 
-	if !config.SelectVbkParams("test", 1, &blocks) {
+	if !config.SelectVbkParams("test", popvbkstartheight, &popvbkblocks) || !config.SelectVbkParams("test", 1, nil) {
 		t.Error("Failed to select vbk params")
 	}
-	if !config.SelectBtcParams("test", 1, &blocks) || !config.SelectBtcParams("test", 1, nil) {
+	if !config.SelectBtcParams("test", popbtcstartheight, &popbtcblocks) || !config.SelectBtcParams("test", 1, nil) {
 		t.Error("Failed to select btc params")
 	}
 }
