@@ -43,8 +43,8 @@ struct PopRewardsCache : public PopRewards {
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
    * key and reward amount as a value
    */
-  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
-      const BlockIndex<AltBlock>& endorsedBlock);
+  std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
+      const BlockIndex<AltBlock>& endorsedBlock) override;
 
   /**
    * Erase cache completely.
