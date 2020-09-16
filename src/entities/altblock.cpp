@@ -79,4 +79,15 @@ bool operator==(const AltBlock& a, const AltBlock& b) {
 }
 bool operator!=(const AltBlock& a, const AltBlock& b) { return !(a == b); }
 
+bool Deserialize(ReadStream& stream, AltBlock& out, ValidationState& state) {
+  (void)stream;
+  (void)state;
+  AltBlock block;
+
+  // TODO: implement
+
+  out = block;
+  return true;
+}
+
 }  // namespace altintegration

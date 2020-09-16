@@ -5,6 +5,7 @@ add_subdirectory(storage)
 add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
+add_subdirectory(c)
 
 add_library(vblake OBJECT vblake.cpp)
 
@@ -39,6 +40,7 @@ set(SOURCES
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
+        $<TARGET_OBJECTS:veriblock-pop-c>
         )
 if(WITH_SECP256K1)
     list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)

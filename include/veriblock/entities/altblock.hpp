@@ -133,6 +133,8 @@ inline void PrintTo(const AltBlock& block, ::std::ostream* os) {
   *os << block.toPrettyString();
 }
 
+bool Deserialize(ReadStream& stream, AltBlock& out, ValidationState& state);
+
 }  // namespace altintegration
 
 //! @private

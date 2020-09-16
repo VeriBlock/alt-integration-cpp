@@ -150,9 +150,9 @@ struct MemPool {
   }
 
   /**
-   * Shortcut to submit PopData as whole thing.
+   * Shortcut to submit altintegration::PopData as whole thing.
    *
-   * @param pop PopData
+   * @param pop altintegration::PopData
    * @return MempoolResult - an entity that can be serialized ToJSON.
    * @ingroup api
    */
@@ -177,11 +177,11 @@ struct MemPool {
    * @warning Expensive operation. It builds virtual VBK Block Tree with
    * payloads stored in mempool, applies them to current AltBlockTree tip. All
    * payloads that can not be connected will remain in mempool. As a result,
-   * this method returns PopData which contains fully valid and connected
+   * this method returns altintegration::PopData which contains fully valid and connected
    * payloads. This should be inserted into AltBlock as is.
    *
    * @ingroup api
-   * @return statefully valid PopData that can be connected to current tip.
+   * @return statefully valid altintegration::PopData that can be connected to current tip.
    */
   PopData getPop();
 
@@ -191,12 +191,13 @@ struct MemPool {
    * Use it when new block arrives and it contains PopData. Doing this, mempool
    * will not contain duplicates (payloads that are already in blockchain).
    * @ingroup api
-   * @param popData
+   * @param[in] popData altintegration::PopData
    */
   void removeAll(const PopData& popData);
 
   /**
    * Clear mempool from all payloads.
+   * @ingroup api
    */
   void clear();
 
