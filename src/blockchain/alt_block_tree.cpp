@@ -373,14 +373,6 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   // compare current active chain to other chain
   int result = cmp_.comparePopScore(*this, *right, state);
   if (result < 0) {
-    // invalidate rewards cache if necessary
-    //uint32_t invalidBlocks = std::numeric_limits<uint32_t>::max();
-
-    /*const auto* fork = activeChain_.findFork(right);
-    if (fork != nullptr) {
-      invalidBlocks = activeChain_.tip()->getHeight() - fork->getHeight();
-    }*/
-    //rewards_.eraseCacheHistory(invalidBlocks);
     rewards_.invalidateCache();
 
     // other chain is better, and we already changed 'cmp' state to winner, so
