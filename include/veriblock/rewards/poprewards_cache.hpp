@@ -38,8 +38,8 @@ struct PopRewardsCache : public PopRewards {
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
    * the endorsed block. Score is calculated from cache.
-   * @param endorsedBlock endorsed altchain block which we are paying reward
-   * for.
+   * @param endorsedBlock endorsed altchain block that we are using to
+   * collect endorsements and calculate rewards.
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
    * key and reward amount as a value
    */
@@ -51,6 +51,10 @@ struct PopRewardsCache : public PopRewards {
    */
   void invalidateCache();
 
+  /**
+   * Erase N blocks from the cache history.
+   * @param blocks amount of blocks to erase
+   */
   void eraseCacheHistory(uint32_t blocks);
 
  protected:

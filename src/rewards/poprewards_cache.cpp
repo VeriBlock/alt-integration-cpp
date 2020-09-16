@@ -33,7 +33,7 @@ std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
       eraseCacheHistory(1);
     }
 
-    if (history_.size() < expectedDifficultyBlocks) {
+    if ((int32_t)history_.size() < expectedDifficultyBlocks) {
       invalidateCache();
     }
   }
