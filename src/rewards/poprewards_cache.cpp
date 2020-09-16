@@ -23,8 +23,8 @@ std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
   // blocks to calculate POP difficulty for the endorsed block
 
   if (!cache_.empty()) {
-    size_t expectedDifficultyBlocks =
-        altParams_->getRewardParams().difficultyAveragingInterval();
+    int32_t expectedDifficultyBlocks =
+        (int32_t)altParams_->getRewardParams().difficultyAveragingInterval();
     if (expectedDifficultyBlocks > endorsedBlock.getHeight()) {
       expectedDifficultyBlocks = endorsedBlock.getHeight();
     }
