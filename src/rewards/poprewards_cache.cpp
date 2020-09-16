@@ -69,6 +69,7 @@ void PopRewardsCache::invalidateCache() {
 
 void PopRewardsCache::eraseCacheHistory(uint32_t blocks) {
   for (uint32_t i = 0; i < blocks; i++) {
+    if (history_.empty()) break;
     const auto* block = history_.pop_back();
     auto it = cache_.find(block);
     if (it == cache_.end()) continue;
