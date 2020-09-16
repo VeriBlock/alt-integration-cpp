@@ -166,7 +166,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    *
    * @param[in] A hash of current tip in AltBlockTree. Fails on assert if
    * current tip != A.
-   * @param[in] B current tip will be compared against this block. Must
+   * @param[in] B block. Current tip will be compared against this block. Must
    * exist on chain and be connected(have BLOCK_HAS_PAYLOADS and
    * BLOCK_CONNECTED), but does not have to be fully validated(necessary
    * validation will be performed during the fork resolution).
@@ -245,7 +245,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
 
   /**
    * Removes all payloads from a block
-   * @param hash
+   * @param[in] hash
    * @ingroup api
    */
   void removePayloads(const hash_t& hash);
