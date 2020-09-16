@@ -31,7 +31,55 @@ extern template struct BaseBlockTree<VbkBlock>;
  *
  * Veriblock block tree.
  *
- * @invariant stores only valid payloads.
+ * It is strongly advised to not modify the Veriblock tree directly, as it is
+ * intended to be fully managed by AltBlockTree
+ *
+ * @invariant Adding an invalid payload to block X cannot invalidate any block
+ * but X. As a consequence, the tree allows duplicates and AltBlockTree must
+ * check that an altchain fork does not contain VTB duplicates.
+ * @invariant addPayloads fully validates each payload and refuses to add
+ * invalid payloads.
+ * @invariant removePayloads and unsafelyRemovePayload cannot invalidate any
+ * block as long as they are called by AltBlockTree, and not by the user.
+ * @invariant all payloads and blocks are valid as a consequence of the above.
+ * @invariant acceptBlockHeader and acceptBlock are effectively equivalent
+ *
+ * Definition: a validation hole is incorrect use of removePayloads and
+ * unsafelyRemovePayload by AltBlockTree that results in invalid Veriblock
+ * tree blocks or corrupted state.
+ *
+ * Notes regarding the validation hole:
+ * At this moment, the validation hole can be considered plugged as long as the
+ * user never modifies the VBK tree directly, never uses PopStateMachine and
+ * only calls AltBlockTree::setState() and AltBlockTree::comparePopScore() as
+ * currently implemented. However, a trivial code modification can
+ * unintentionally re-introduce the issue.
+ *
+ * To plug the validation hole, we must ensure that any unvalidated block is
+ * unapplied before all of the blocks that were applied at the time of the
+ * application.
+ *
+ * Suppose, altchain blocks were applied in the following order:
+ *        V1, V2, V3, U4, U5, U6, V7, V8, U9
+ *        (V* are fully valid blocks, U* are unvalidated blocks)
+ *
+ * In this example, AltBlockTree must ensure that the blocks are unapplied in
+ * the following sequence:
+ *      * U9 is unapplied first
+ *      * V8 and V7 in any order; both V8, V7 and V7, V8 are safe
+ *      * U6, U5, U4 in this specific order
+ *      * V3-V1 in any order
+ *
+ * This looks like a feasible safeguard:
+ *      * Prevent the user from modifying the VBK tree
+ *      * Add a list stack that stores all blocks in the order they were
+ *        applied. On application, blocks are appended to the list. On
+ *        unapplication, blocks are deleted from the list. A block can be
+ *        unapplied only if it is contained in the list slice beween the tail
+ *        and the last unvalidated block.
+ *
+ * In this example, initially, the slice is [U9]. After we unapply U9, the slice
+ * becomes [U6, V7, V8]. If U6 is unapplied, the slice becomes [U5, V7, V8].
  */
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
@@ -70,6 +118,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
   /**
+   * Attempts to add payloads to the block and perform full validation.
+   * If successful, it is possible to setState() to the block after the
+   * addPayloads call. If unsuccessful, it leaves the state unchanged.
    * @invariant atomic: adds either all or none of the payloads
    */
   bool addPayloads(const VbkBlock::hash_t& hash,
@@ -113,7 +164,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
    * Add, apply and validate a payload to a block that's currently applied
    *
    * Will add duplicates.
-   * The containing block must be applied
+   * The containing block must be applied and must be valid as a consequence
    * @invariant atomic: leaves the state unchanged on failure
    * @return: true/false on success/failure
    */

@@ -167,13 +167,15 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @param[in] A hash of current tip in AltBlockTree. Fails on assert if
    * current tip != A.
    * @param[in] B current tip will be compared against this block. Must
-   * exist on chain and have BLOCK_HAS_PAYLOADS.
+   * exist on chain and be connected(have BLOCK_HAS_PAYLOADS and
+   * BLOCK_CONNECTED), but does not have to be fully validated(necessary
+   * validation will be performed during the fork resolution).
    * @warning POP Fork Resolution is NOT transitive, it can not be used to
    * search for an "absolute" best chain. If A is better than B, and B is better
    * than C, then A may NOT be better than C. It is expected that caller will
    * execute this comparator once for every tip candidate to avoid cycles
    * (A->B->C->A). But this is no big deal, as sooner or later peers with
-   * different chains will eventually converge to the same chain.
+   * different chains will converge to the same chain.
    * @return
    * Returns positive if chain A is better.
    * Returns negative if chain B is better.
@@ -182,9 +184,16 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @invariant this function can be called only on existing blocks
    * @invariant this function can be called only on connected blocks, otherwise
    * it dies on assert
-   * @invariant first argument must always be equal to current tip of AltBlockTree, otherwise dies on assert
-   * @invariant block B may have unknown validity. After comparison, we will find out if it is valid and can be used in AltBlockTree::setState()
-   * @invariant if block B wins, tree automatically switches to chain B (it becomes a tip)
+   * @invariant the first argument must always be equal to the current tip of
+   * AltBlockTree, otherwise  it dies on assert
+   * @invariant no other blocks but [genesis .. current tip] must be applied
+   * @invariant If B loses the fork resolution, only partial validation of B is
+   * performed.
+   * @invariant If B wins the fork resolution, it is fully validated and
+   * AltBlockTree::setState(B,...) will be successful.
+   * @invariant if neither chain wins, A stays applied.
+   * @invariant if chain B wins, the tree automatically switches to chain B (it
+   * becomes the tip)
    * @ingroup api
    */
   int comparePopScore(const AltBlock::hash_t& A, const AltBlock::hash_t& B);
@@ -204,8 +213,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   std::map<std::vector<uint8_t>, int64_t> getPopPayout(const hash_t& tip);
 
   /**
-   * Switch AltBlockTree from current tip to different block, while doing all
-   * validations of intermediate blocks.
+   * Switch AltBlockTree from the current tip to different block, while doing
+   * all validations of intermediate blocks.
    *
    * @param[in] to tree will be switched to this block
    * @param[out] state
@@ -213,6 +222,11 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * tree will rollback into original state. `true` if state change is
    * successful.
    * @invariant atomic - either switches to new state, or does nothing.
+   * @invariant the function switches state from exactly [genesis .. current
+   * tip] chain being applied(and no other) to [genesis .. to] chain being
+   * applied
+   * @invariant both the current and new chains are fully valid; full validation
+   * of [genesis .. to] is a side effect
    * @warning Expensive operation.
    * @ingroup api
    */
@@ -271,6 +285,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   std::string toPrettyString(size_t level = 0) const;
 
   //! @private
+  //! @invariant the tip must be fully validated
   void overrideTip(index_t& to) override;
 
   //! @private
