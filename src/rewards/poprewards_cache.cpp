@@ -18,9 +18,28 @@ PopRewardsBigDecimal PopRewardsCache::scoreFromEndorsements(
 
 std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
     const index_t& endorsedBlock) {
+
+  // make sure cache is in valid state, eg contains all necessary
+  // blocks to calculate POP difficulty for the endorsed block
+
+  if (!cache_.empty()) {
+    size_t expectedDifficultyBlocks =
+        altParams_->getRewardParams().difficultyAveragingInterval();
+    if (expectedDifficultyBlocks > endorsedBlock.getHeight()) {
+      expectedDifficultyBlocks = endorsedBlock.getHeight();
+    }
+
+    while (!history_.empty() && history_.back() != endorsedBlock.pprev) {
+      eraseCacheHistory(1);
+    }
+
+    if (history_.size() < expectedDifficultyBlocks) {
+      invalidateCache();
+    }
+  }
+
   // rebuild difficulty blocks if cache is not populated or bad
-  if (cache_.empty() || (history_.back() != endorsedBlock.pprev)) {
-    invalidateCache();
+  if (cache_.empty()) {
     auto* curBlock = endorsedBlock.pprev;
     size_t toFetch =
         altParams_->getRewardParams().difficultyAveragingInterval();
@@ -46,6 +65,15 @@ std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
 void PopRewardsCache::invalidateCache() {
   cache_.clear();
   history_.clear();
+}
+
+void PopRewardsCache::eraseCacheHistory(uint32_t blocks) {
+  for (uint32_t i = 0; i < blocks; i++) {
+    const auto* block = history_.pop_back();
+    auto it = cache_.find(block);
+    if (it == cache_.end()) continue;
+    cache_.erase(it);
+  }
 }
 
 PopRewardsBigDecimal PopRewardsCache::appendToCache(const index_t& block) {

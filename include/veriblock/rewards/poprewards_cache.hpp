@@ -51,6 +51,8 @@ struct PopRewardsCache : public PopRewards {
    */
   void invalidateCache();
 
+  void eraseCacheHistory(uint32_t blocks);
+
  protected:
   const AltChainParams* altParams_;
   const VbkBlockTree* vbkTree_;
