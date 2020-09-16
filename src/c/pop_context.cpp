@@ -20,7 +20,7 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
                altintegration::ValidationState& state) override {
     for (const auto& id : ids) {
       int size = 0;
-      VBK_getATV(id.data(), id.size(), buffer.data(), &size);
+      VBK_getATV(id.data(), (int)id.size(), buffer.data(), &size);
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::ATV atv_out;
@@ -38,7 +38,7 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
                altintegration::ValidationState& state) override {
     for (const auto& id : ids) {
       int size = 0;
-      VBK_getVTB(id.data(), id.size(), buffer.data(), &size);
+      VBK_getVTB(id.data(), (int)id.size(), buffer.data(), &size);
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::VTB vtb_out;
@@ -56,7 +56,7 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
                altintegration::ValidationState& state) override {
     for (const auto& id : ids) {
       int size = 0;
-      VBK_getVBK(id.data(), id.size(), buffer.data(), &size);
+      VBK_getVBK(id.data(), (int)id.size(), buffer.data(), &size);
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::VbkBlock vbk_out;
@@ -196,7 +196,7 @@ bool VBK_btc_getBlockIndex(PopContext* self,
   std::vector<uint8_t> bytes = blockIndex->toRaw();
   *blockindex = new uint8_t[bytes.size()];
   memcpy(*blockindex, bytes.data(), bytes.size());
-  *blockindex_size = bytes.size();
+  *blockindex_size = (int)bytes.size();
 
   return true;
 }
@@ -216,7 +216,7 @@ bool VBK_vbk_getBlockIndex(PopContext* self,
   std::vector<uint8_t> bytes = blockIndex->toRaw();
   *blockindex = new uint8_t[bytes.size()];
   memcpy(*blockindex, bytes.data(), bytes.size());
-  *blockindex_size = bytes.size();
+  *blockindex_size = (int)bytes.size();
 
   return true;
 }
@@ -235,7 +235,7 @@ bool VBK_alt_getBlockIndex(PopContext* self,
   std::vector<uint8_t> bytes = blockIndex->toRaw();
   *blockindex = new uint8_t[bytes.size()];
   memcpy(*blockindex, bytes.data(), bytes.size());
-  *blockindex_size = bytes.size();
+  *blockindex_size = (int)bytes.size();
 
   return true;
 }
@@ -270,7 +270,7 @@ void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size) {
   std::vector<uint8_t> bytes = popData.toVbkEncoding();
 
   memcpy(out_bytes, bytes.data(), bytes.size());
-  *bytes_size = bytes.size();
+  *bytes_size = (int)bytes.size();
 }
 
 void VBK_MemPool_removeAll(PopContext* self,
