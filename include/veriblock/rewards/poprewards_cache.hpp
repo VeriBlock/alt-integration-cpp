@@ -16,74 +16,53 @@ namespace altintegration {
  */
 struct PopRewardsCache : public PopRewards {
   using index_t = BlockIndex<AltBlock>;
-  using pair_t = std::pair<const index_t*, PopRewardsBigDecimal>;
 
   PopRewardsCache(const AltChainParams& altParams, const VbkBlockTree& vbk_tree)
       : PopRewards(altParams, vbk_tree),
         altParams_(&altParams),
         vbkTree_(&vbk_tree),
-        buffer(altParams.getRewardParams().difficultyAveragingInterval() * 2) {}
+        history_(altParams.getRewardParams().difficultyAveragingInterval() *
+                 2) {}
 
   virtual ~PopRewardsCache() = default;
 
   /**
-   * Calculate POP difficulty using cache data.
-   * Cache should be built using the calculatePayouts() call.
-   * @param tip calculate difficulty using chain ending with this tip
-   * @return PopRewardsBigDecimal resulting difficulty
+   * Collect all endorsements for the endorsed block and calculate
+   * POP score. Use cache if possible.
+   * @param endorsedBlock calculate score for this block
+   * @return PopRewardsBigDecimal resulting score
    */
-  PopRewardsBigDecimal calculateDifficulty(const index_t& tip) const override;
+  PopRewardsBigDecimal scoreFromEndorsements(
+      const index_t& endorsedBlock) override;
 
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
-   * the endorsed block. This and previous block scores are saved in
-   * cache.
+   * the endorsed block. Score is calculated from cache.
    * @param endorsedBlock endorsed altchain block which we are paying reward
    * for.
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
    * key and reward amount as a value
    */
-  std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
-      const index_t& endorsedBlock) override;
+  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
+      const BlockIndex<AltBlock>& endorsedBlock);
+
+  /**
+   * Erase cache completely.
+   */
+  void invalidateCache();
 
  protected:
   const AltChainParams* altParams_;
   const VbkBlockTree* vbkTree_;
-  ring_buffer<pair_t> buffer;
-
-  PopRewardsBigDecimal updateAndCalculateDifficulty(const index_t& tip);
-
-  bool findCached(const index_t& block, pair_t& out);
-  bool findCached(const index_t& block);
+  ring_buffer<const index_t*> history_;
+  std::unordered_map<const index_t*, PopRewardsBigDecimal> cache_;
 
   /**
    * Calculate PoP score for the block and append to the cache.
    * @param block calculate score for this block.
+   * @return PopRewardsBigDecimal score of the block
    */
-  void appendToCache(const index_t& block);
-
-  /**
-   * Remove the newest blocks from the cache till the given block
-   * is found. Therefore the given block will be the last one in cache,
-   * or cache will be empty.
-   * @param fromBlock erase cache records starting from this block, not
-   * including.
-   */
-  void truncateCacheHigherThan(const index_t& fromBlock);
-
-  /**
-   * Update cache to have scores of this block and any additional blocks
-   * required to calculate POP rewards.
-   * @param endorsed reward will be paid for this block.
-   */
-  void updateCache(const index_t& endorsed);
-
-  /**
-   * Erase cache and recalculate all missing blocks needed for
-   * endorsed block rewards calculation.
-   * @param endorsed reward will be paid for this block.
-   */
-  void rebuildCache(const index_t& endorsed);
+  PopRewardsBigDecimal appendToCache(const index_t& block);
 };
 
 }  // namespace altintegration

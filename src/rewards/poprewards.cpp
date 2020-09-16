@@ -24,7 +24,7 @@ static int getBestPublicationHeight(const BlockIndex<AltBlock>& endorsedBlock,
 }
 
 PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
-    const BlockIndex<AltBlock>& endorsedBlock) const {
+    const BlockIndex<AltBlock>& endorsedBlock) {
   PopRewardsBigDecimal totalScore = 0.0;
   // we simply find the lowest VBK height in the endorsements
   int bestPublication = getBestPublicationHeight(endorsedBlock, *vbkTree_);
@@ -42,7 +42,7 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
 }
 
 PopRewardsBigDecimal PopRewards::calculateDifficulty(
-    const BlockIndex<AltBlock>& tip) const {
+    const BlockIndex<AltBlock>& tip) {
   PopRewardsBigDecimal difficulty = 0.0;
   auto& params = calculator_.getAltParams().getRewardParams();
   const BlockIndex<AltBlock>* currentBlock = tip.pprev;

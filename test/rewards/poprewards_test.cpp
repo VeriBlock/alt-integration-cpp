@@ -161,24 +161,6 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
 }
 
 TEST_F(RewardsTestFixture, basicCacheReward_test) {
-  /*mineAltBlocks(altparam.getRewardParams().difficultyAveragingInterval() + 1, altchain);
-  AltBlock endorsedBlock = altchain.back();
-  endorseLastBlock(10);
-
-  auto payouts = alttree.getPopPayout(altchain.back().getHash());
-  ASSERT_TRUE(payouts.size());
-
-  auto payoutBlockRound =
-      sampleCalculator->getRoundForBlockNumber(endorsedBlock.height);
-  ASSERT_EQ(payouts.size(), 1);
-
-  auto chain2 = altchain;
-  chain2.resize(altchain.size() - 5);
-  auto containingBlock = generateNextBlock(*chain2.rbegin());
-  chain2.push_back(containingBlock);
-  auto
-  PopData altPayloads3 = generateAltPayloads({tx}, vbkTip1->getHash());*/
-
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 100 blocks
@@ -242,8 +224,6 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
   ASSERT_EQ(payouts.size(), 1);
   payoutsUncached = sampleRewards->calculatePayouts(*endorsedIndex);
 
-  // we didn't call getPopPayout() for each subsequent block therefore
-  // our cache is bad now
   ASSERT_EQ(payoutsUncached.size(), 1);
-  ASSERT_NE(payoutsUncached.begin()->second, payouts.begin()->second);
+  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
 }

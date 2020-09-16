@@ -6,57 +6,9 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_RING_BUFFER_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_RING_BUFFER_HPP_
 
-#include <algorithm>
 #include <vector>
 
 namespace altintegration {
-
-template <class T>
-class ring_buffer;
-
-template <class T, bool isconst = false>
-struct ring_iterator {
-  using iterator_category = std::forward_iterator_tag;
-  using size_type = size_t;
-  using value_type = T;
-  using difference_type = long long;
-  using reference = typename std::conditional<isconst, T const &, T &>::type;
-  using pointer = typename std::conditional<isconst, T const *, T *>::type;
-  using vec_pointer = typename std::
-      conditional<isconst, std::vector<T> const *, std::vector<T> *>::type;
-
-  friend class ring_buffer<T>;
-
- public:
-  ring_iterator()
-      : ptrToBuffer(nullptr), offset(0), index(0), reverse(false) {}
-
-  reference operator*() {
-    if (reverse)
-      return (*ptrToBuffer)[(ptrToBuffer->size() + offset - index) %
-                            (ptrToBuffer->size())];
-    return (*ptrToBuffer)[(offset + index) % (ptrToBuffer->size())];
-  }
-  pointer operator->() { return &(operator*()); }
-
-  ring_iterator &operator++() {
-    ++index;
-    return *this;
-  };
-  bool operator==(const ring_iterator &other) {
-    return (reverse == other.reverse) &&
-           (index + offset == other.index + other.offset);
-  }
-  bool operator!=(const ring_iterator &other) {
-    return !this->operator==(other);
-  }
-
- private:
-  vec_pointer ptrToBuffer;
-  size_type offset;
-  size_type index;
-  bool reverse;
-};
 
 template <class T>
 class ring_buffer {
@@ -64,10 +16,8 @@ class ring_buffer {
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
-  using size_type = typename ring_iterator<T, false>::size_type;
+  using size_type = size_t;
   using circularBuffer = std::vector<value_type>;
-  using iterator = ring_iterator<T, false>;
-  using const_iterator = ring_iterator<T, true>;
 
   ring_buffer(size_type size)
       : m_array(size + 1), m_array_size(size + 1), m_head(0), m_tail(0) {}
@@ -104,78 +54,6 @@ class ring_buffer {
 
   const_reference operator[](size_type index) const {
     return m_array[(m_head + index) % m_array_size];
-  }
-
-  iterator begin() const {
-    iterator iter;
-    iter.ptrToBuffer = &m_array;
-    iter.offset = m_head;
-    iter.index = 0;
-    iter.reverse = false;
-    return iter;
-  }
-
-  const_iterator cbegin() const {
-    const_iterator iter;
-    iter.ptrToBuffer = &m_array;
-    iter.offset = m_head;
-    iter.index = 0;
-    iter.reverse = false;
-    return iter;
-  }
-
-  iterator rbegin() {
-    iterator iter;
-    iter.ptrToBuffer = &m_array;
-    iter.offset = prev(m_tail);
-    iter.index = 0;
-    iter.reverse = true;
-    return iter;
-  }
-
-  const_iterator crbegin() const {
-    const_iterator iter;
-    iter.ptrToBuffer = &m_array;
-    iter.offset = prev(m_tail);
-    iter.index = 0;
-    iter.reverse = true;
-    return iter;
-  }
-
-  iterator end() {
-    iterator iter;
-    iter.ptrToBuffer = &m_array;
-    iter.offset = m_head;
-    iter.index = size();
-    iter.reverse = false;
-    return iter;
-  }
-
-  const_iterator cend() const {
-    const_iterator iter;
-    iter.ptrToBuffer = &m_array;
-    iter.offset = m_head;
-    iter.index = size();
-    iter.reverse = false;
-    return iter;
-  }
-
-  iterator rend() {
-    iterator iter;
-    iter.ptrToBuffer = &m_array;
-    iter.offset = prev(m_tail);
-    iter.index = size();
-    iter.reverse = true;
-    return iter;
-  }
-
-  const_iterator crend() const {
-    const_iterator iter;
-    iter.ptrToBuffer = &m_array;
-    iter.offset = prev(m_tail);
-    iter.index = size();
-    iter.reverse = true;
-    return iter;
   }
 
   void push_back(const value_type &item) {

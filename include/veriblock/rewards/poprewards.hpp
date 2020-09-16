@@ -29,7 +29,7 @@ struct PopRewards {
    * @return PopRewardsBigDecimal resulting score
    */
   virtual PopRewardsBigDecimal scoreFromEndorsements(
-      const BlockIndex<AltBlock>& endorsedBlock) const;
+      const BlockIndex<AltBlock>& endorsedBlock);
 
   /**
    * Calculate POP difficulty using a list of blocks.
@@ -40,7 +40,7 @@ struct PopRewards {
    * @return PopRewardsBigDecimal resulting difficulty
    */
   virtual PopRewardsBigDecimal calculateDifficulty(
-      const BlockIndex<AltBlock>& tip) const;
+      const BlockIndex<AltBlock>& tip);
 
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
