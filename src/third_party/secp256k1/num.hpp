@@ -19,6 +19,8 @@
 #error "Please select num implementation"
 #endif
 
+namespace altintegration {
+
 /** Copy a number. */
 static void secp256k1_num_copy(secp256k1_num *r, const secp256k1_num *a);
 
@@ -68,6 +70,8 @@ static int secp256k1_num_is_neg(const secp256k1_num *a);
 
 /** Change a number's sign. */
 static void secp256k1_num_negate(secp256k1_num *r);
+
+}
 
 #endif
 

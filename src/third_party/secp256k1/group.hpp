@@ -7,8 +7,10 @@
 #ifndef SECP256K1_GROUP_H
 #define SECP256K1_GROUP_H
 
-#include "num.h"
-#include "field.h"
+#include "num.hpp"
+#include "field.hpp"
+
+namespace altintegration {
 
 /** A group element of the secp256k1 curve, in affine coordinates. */
 typedef struct {
@@ -137,5 +139,7 @@ static void secp256k1_ge_storage_cmov(secp256k1_ge_storage *r, const secp256k1_g
 
 /** Rescale a jacobian point by b which must be non-zero. Constant-time. */
 static void secp256k1_gej_rescale(secp256k1_gej *r, const secp256k1_fe *b);
+
+}
 
 #endif /* SECP256K1_GROUP_H */

@@ -7,8 +7,10 @@
 #ifndef SECP256K1_FIELD_REPR_IMPL_H
 #define SECP256K1_FIELD_REPR_IMPL_H
 
-#include "util.h"
-#include "field.h"
+#include "util.hpp"
+#include "field.hpp"
+
+namespace altintegration {
 
 #ifdef VERIFY
 static void secp256k1_fe_verify(const secp256k1_fe *a) {
@@ -1158,5 +1160,7 @@ static SECP256K1_INLINE void secp256k1_fe_from_storage(secp256k1_fe *r, const se
     r->normalized = 1;
 #endif
 }
+
+} 
 
 #endif /* SECP256K1_FIELD_REPR_IMPL_H */

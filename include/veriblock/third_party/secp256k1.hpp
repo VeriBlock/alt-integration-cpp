@@ -21,14 +21,12 @@
 // This code has been copied from https://github.com/bitcoin-core/secp256k1
 //vat 074ab582ddb9085611cba8a0495828dadb645345
 
-#ifndef SECP256K1_H
-#define SECP256K1_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef SECP256K1_HPP
+#define SECP256K1_HPP
 
 #include <stddef.h>
+
+namespace altintegration {  
 
 /* These rules specify the order of arguments in API calls:
  *
@@ -724,8 +722,6 @@ SECP256K1_API SECP256K1_WARN_UNUSED_RESULT int secp256k1_ec_pubkey_combine(
     size_t n
 ) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(3);
 
-#ifdef __cplusplus
 }
-#endif
 
 #endif /* SECP256K1_H */
