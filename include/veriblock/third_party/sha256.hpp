@@ -22,8 +22,8 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-#ifndef _SHA2_H
-#define _SHA2_H
+#ifndef _SHA2_HPP
+#define _SHA2_HPP
 
 #include <stdint.h>
 

@@ -8,19 +8,21 @@
 #define SECP256K1_FIELD_IMPL_H
 
 #if defined HAVE_CONFIG_H
-#include "libsecp256k1-config.h"
+#include "libsecp256k1-config.hpp"
 #endif
 
-#include "util.h"
-#include "num.h"
+#include "util.hpp"
+#include "num.hpp"
 
 #if defined(USE_FIELD_10X26)
-#include "field_10x26_impl.h"
+#include "field_10x26_impl.hpp"
 #elif defined(USE_FIELD_5X52)
 #include "field_5x52_impl.h"
 #else
 #error "Please select field implementation"
 #endif
+
+namespace altintegration {
 
 SECP256K1_INLINE static int secp256k1_fe_equal(const secp256k1_fe *a, const secp256k1_fe *b) {
     secp256k1_fe na;
@@ -261,6 +263,8 @@ static void secp256k1_fe_inv_var(secp256k1_fe *r, const secp256k1_fe *a) {
 #else
 #error "Please select field inverse implementation"
 #endif
+}
+
 }
 
 #endif /* SECP256K1_FIELD_IMPL_H */

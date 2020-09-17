@@ -7,8 +7,10 @@
 #ifndef SECP256K1_ECMULT_GEN_H
 #define SECP256K1_ECMULT_GEN_H
 
-#include "scalar.h"
-#include "group.h"
+#include "scalar.hpp"
+#include "group.hpp"
+
+namespace altintegration {
 
 #if ECMULT_GEN_PREC_BITS != 2 && ECMULT_GEN_PREC_BITS != 4 && ECMULT_GEN_PREC_BITS != 8
 #  error "Set ECMULT_GEN_PREC_BITS to 2, 4 or 8."
@@ -45,5 +47,7 @@ static int secp256k1_ecmult_gen_context_is_built(const secp256k1_ecmult_gen_cont
 static void secp256k1_ecmult_gen(const secp256k1_ecmult_gen_context* ctx, secp256k1_gej *r, const secp256k1_scalar *a);
 
 static void secp256k1_ecmult_gen_blind(secp256k1_ecmult_gen_context *ctx, const unsigned char *seed32);
+
+}
 
 #endif /* SECP256K1_ECMULT_GEN_H */

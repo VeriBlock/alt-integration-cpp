@@ -6,19 +6,21 @@
 
 #define HAVE_CONFIG_H 1
 
-#include "veriblock/third_party/secp256k1.h"
+#include "veriblock/third_party/secp256k1.hpp"
 
-#include "util.h"
-#include "num_impl.h"
-#include "field_impl.h"
-#include "scalar_impl.h"
-#include "group_impl.h"
-#include "ecmult_impl.h"
-#include "ecmult_gen_impl.h"
-#include "ecdsa_impl.h"
-#include "eckey_impl.h"
-#include "hash_impl.h"
-#include "scratch_impl.h"
+#include "util.hpp"
+#include "num_impl.hpp"
+#include "field_impl.hpp"
+#include "scalar_impl.hpp"
+#include "group_impl.hpp"
+#include "ecmult_impl.hpp"
+#include "ecmult_gen_impl.hpp"
+#include "ecdsa_impl.hpp"
+#include "eckey_impl.hpp"
+#include "hash_impl.hpp"
+#include "scratch_impl.hpp"
+
+namespace altintegration {
 
 #define ARG_CHECK(cond) do { \
     if (EXPECT(!(cond), 0)) { \
@@ -697,3 +699,5 @@ int secp256k1_ec_pubkey_combine(const secp256k1_context* ctx, secp256k1_pubkey *
 #ifdef ENABLE_MODULE_RECOVERY
 # include "modules/recovery/main_impl.h"
 #endif
+
+}

@@ -7,8 +7,10 @@
 #ifndef _SECP256K1_SCRATCH_IMPL_H_
 #define _SECP256K1_SCRATCH_IMPL_H_
 
-#include "util.h"
-#include "scratch.h"
+#include "util.hpp"
+#include "scratch.hpp"
+
+namespace altintegration {
 
 static secp256k1_scratch* secp256k1_scratch_create(const secp256k1_callback* error_callback, size_t size) {
     const size_t base_alloc = ((sizeof(secp256k1_scratch) + ALIGNMENT - 1) / ALIGNMENT) * ALIGNMENT;
@@ -33,6 +35,8 @@ static void secp256k1_scratch_destroy(const secp256k1_callback* error_callback, 
         memset(scratch->magic, 0, sizeof(scratch->magic));
         free(scratch);
     }
+}
+
 }
 
 #endif

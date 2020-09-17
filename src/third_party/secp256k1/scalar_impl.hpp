@@ -7,11 +7,11 @@
 #ifndef SECP256K1_SCALAR_IMPL_H
 #define SECP256K1_SCALAR_IMPL_H
 
-#include "scalar.h"
-#include "util.h"
+#include "scalar.hpp"
+#include "util.hpp"
 
 #if defined HAVE_CONFIG_H
-#include "libsecp256k1-config.h"
+#include "libsecp256k1-config.hpp"
 #endif
 
 #if defined(EXHAUSTIVE_TEST_ORDER)
@@ -19,10 +19,12 @@
 #elif defined(USE_SCALAR_4X64)
 #include "scalar_4x64_impl.h"
 #elif defined(USE_SCALAR_8X32)
-#include "scalar_8x32_impl.h"
+#include "scalar_8x32_impl.hpp"
 #else
 #error "Please select scalar implementation"
 #endif
+
+namespace altintegration {
 
 #ifndef USE_NUM_NONE
 static void secp256k1_scalar_get_num(secp256k1_num *r, const secp256k1_scalar *a) {
@@ -329,5 +331,7 @@ static void secp256k1_scalar_split_lambda(secp256k1_scalar *r1, secp256k1_scalar
 }
 #endif
 #endif
+
+}
 
 #endif /* SECP256K1_SCALAR_IMPL_H */

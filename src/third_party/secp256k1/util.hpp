@@ -8,13 +8,15 @@
 #define SECP256K1_UTIL_H
 
 #if defined HAVE_CONFIG_H
-#include "libsecp256k1-config.h"
+#include "libsecp256k1-config.hpp"
 #endif
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <limits.h>
+
+namespace altintegration {
 
 typedef struct {
     void (*fn)(const char *text, void* data);
@@ -159,5 +161,7 @@ static SECP256K1_INLINE void *manual_alloc(void** prealloc_ptr, size_t alloc_siz
 # endif
 SECP256K1_GNUC_EXT typedef unsigned __int128 uint128_t;
 #endif
+
+}
 
 #endif /* SECP256K1_UTIL_H */
