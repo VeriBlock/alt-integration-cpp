@@ -7,14 +7,16 @@
 #ifndef SECP256K1_ECMULT_GEN_IMPL_H
 #define SECP256K1_ECMULT_GEN_IMPL_H
 
-#include "util.h"
-#include "scalar.h"
-#include "group.h"
-#include "ecmult_gen.h"
-#include "hash_impl.h"
+#include "util.hpp"
+#include "scalar.hpp"
+#include "group.hpp"
+#include "ecmult_gen.hpp"
+#include "hash_impl.hpp"
 #ifdef USE_ECMULT_STATIC_PRECOMPUTATION
 #include "ecmult_static_context.h"
 #endif
+
+namespace altintegration {
 
 #ifndef USE_ECMULT_STATIC_PRECOMPUTATION
     static const size_t SECP256K1_ECMULT_GEN_CONTEXT_PREALLOCATED_SIZE = ROUND_TO_ALIGN(sizeof(*((secp256k1_ecmult_gen_context*) NULL)->prec));
@@ -206,6 +208,8 @@ static void secp256k1_ecmult_gen_blind(secp256k1_ecmult_gen_context *ctx, const 
     ctx->initial = gb;
     secp256k1_scalar_clear(&b);
     secp256k1_gej_clear(&gb);
+}
+
 }
 
 #endif /* SECP256K1_ECMULT_GEN_IMPL_H */

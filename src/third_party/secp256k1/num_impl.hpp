@@ -8,13 +8,13 @@
 #define SECP256K1_NUM_IMPL_H
 
 #if defined HAVE_CONFIG_H
-#include "libsecp256k1-config.h"
+#include "libsecp256k1-config.hpp"
 #endif
 
-#include "num.h"
+#include "num.hpp"
 
 #if defined(USE_NUM_GMP)
-#include "num_gmp_impl.h"
+#include "num_gmp_impl.hpp"
 #elif defined(USE_NUM_NONE)
 /* Nothing. */
 #else

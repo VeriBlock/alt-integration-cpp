@@ -7,11 +7,13 @@
 #ifndef SECP256K1_ECMULT_H
 #define SECP256K1_ECMULT_H
 
-#include "num.h"
-#include "group.h"
-#include "scalar.h"
-#include "scratch.h"
+#include "num.hpp"
+#include "group.hpp"
+#include "scalar.hpp"
+#include "scratch.hpp"
 
+namespace altintegration {
+    
 typedef struct {
     /* For accelerating the computation of a*P + b*G: */
     secp256k1_ge_storage (*pre_g)[];    /* odd multiples of the generator */
@@ -44,4 +46,5 @@ typedef int (secp256k1_ecmult_multi_callback)(secp256k1_scalar *sc, secp256k1_ge
  */
 static int secp256k1_ecmult_multi_var(const secp256k1_callback* error_callback, const secp256k1_ecmult_context *ctx, secp256k1_scratch *scratch, secp256k1_gej *r, const secp256k1_scalar *inp_g_sc, secp256k1_ecmult_multi_callback cb, void *cbdata, size_t n);
 
+}
 #endif /* SECP256K1_ECMULT_H */

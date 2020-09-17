@@ -10,10 +10,12 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "util.h"
-#include "group.h"
-#include "scalar.h"
-#include "ecmult.h"
+#include "util.hpp"
+#include "group.hpp"
+#include "scalar.hpp"
+#include "ecmult.hpp"
+
+namespace altintegration {
 
 #if defined(EXHAUSTIVE_TEST_ORDER)
 /* We need to lower these values for exhaustive tests because
@@ -651,5 +653,7 @@ SECP256K1_INLINE static void secp256k1_ecmult_endo_split(secp256k1_scalar *s1, s
     }
 }
 #endif
+
+}
 
 #endif /* SECP256K1_ECMULT_IMPL_H */

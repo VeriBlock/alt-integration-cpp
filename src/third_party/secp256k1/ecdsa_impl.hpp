@@ -8,13 +8,15 @@
 #ifndef SECP256K1_ECDSA_IMPL_H
 #define SECP256K1_ECDSA_IMPL_H
 
-#include "scalar.h"
-#include "field.h"
-#include "group.h"
-#include "ecmult.h"
-#include "ecmult_gen.h"
-#include "ecdsa.h"
+#include "scalar.hpp"
+#include "field.hpp"
+#include "group.hpp"
+#include "ecmult.hpp"
+#include "ecmult_gen.hpp"
+#include "ecdsa.hpp"
 
+namespace altintegration {
+    
 /** Group order for secp256k1 defined as 'n' in "Standards for Efficient Cryptography" (SEC2) 2.7.1
  *  sage: for t in xrange(1023, -1, -1):
  *     ..   p = 2**256 - 2**32 - t
@@ -314,6 +316,8 @@ static int secp256k1_ecdsa_sig_sign(const secp256k1_ecmult_gen_context *ctx, sec
         }
     }
     return 1;
+}
+
 }
 
 #endif /* SECP256K1_ECDSA_IMPL_H */

@@ -7,12 +7,14 @@
 #ifndef SECP256K1_ECKEY_IMPL_H
 #define SECP256K1_ECKEY_IMPL_H
 
-#include "eckey.h"
+#include "eckey.hpp"
 
-#include "scalar.h"
-#include "field.h"
-#include "group.h"
-#include "ecmult_gen.h"
+#include "scalar.hpp"
+#include "field.hpp"
+#include "group.hpp"
+#include "ecmult_gen.hpp"
+
+namespace altintegration {
 
 static int secp256k1_eckey_pubkey_parse(secp256k1_ge *elem, const unsigned char *pub, size_t size) {
     if (size == 33 && (pub[0] == SECP256K1_TAG_PUBKEY_EVEN || pub[0] == SECP256K1_TAG_PUBKEY_ODD)) {
@@ -97,4 +99,5 @@ static int secp256k1_eckey_pubkey_tweak_mul(const secp256k1_ecmult_context *ctx,
     return 1;
 }
 
+}
 #endif /* SECP256K1_ECKEY_IMPL_H */
