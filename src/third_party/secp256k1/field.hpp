@@ -19,18 +19,20 @@
  */
 
 #if defined HAVE_CONFIG_H
-#include "libsecp256k1-config.h"
+#include "libsecp256k1-config.hpp"
 #endif
 
 #if defined(USE_FIELD_10X26)
-#include "field_10x26.h"
+#include "field_10x26.hpp"
 #elif defined(USE_FIELD_5X52)
 #include "field_5x52.h"
 #else
 #error "Please select field implementation"
 #endif
 
-#include "util.h"
+#include "util.hpp"
+
+namespace altintegration {
 
 /** Normalize a field element. */
 static void secp256k1_fe_normalize(secp256k1_fe *r);
@@ -128,5 +130,7 @@ static void secp256k1_fe_storage_cmov(secp256k1_fe_storage *r, const secp256k1_f
 
 /** If flag is true, set *r equal to *a; otherwise leave it. Constant-time. */
 static void secp256k1_fe_cmov(secp256k1_fe *r, const secp256k1_fe *a, int flag);
+
+}
 
 #endif /* SECP256K1_FIELD_H */

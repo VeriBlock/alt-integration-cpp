@@ -10,7 +10,7 @@
 
 #include "slice.hpp"
 #include "vblake.h"
-#include "veriblock/third_party/sha256.h"
+#include "veriblock/third_party/sha256.hpp"
 #include "veriblock/uint.hpp"
 
 namespace altintegration {

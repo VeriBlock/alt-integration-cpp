@@ -7,11 +7,13 @@
 #ifndef SECP256K1_HASH_IMPL_H
 #define SECP256K1_HASH_IMPL_H
 
-#include "hash.h"
+#include "hash.hpp"
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+
+namespace altintegration {
 
 #define Ch(x,y,z) ((z) ^ ((x) & ((y) ^ (z))))
 #define Maj(x,y,z) (((x) & (y)) | ((z) & ((x) | (y))))
@@ -279,5 +281,7 @@ static void secp256k1_rfc6979_hmac_sha256_finalize(secp256k1_rfc6979_hmac_sha256
 #undef Sigma0
 #undef Maj
 #undef Ch
+
+}
 
 #endif /* SECP256K1_HASH_IMPL_H */

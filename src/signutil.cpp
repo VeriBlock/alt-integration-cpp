@@ -10,7 +10,7 @@
 
 #include "veriblock/hashutil.hpp"
 #include "veriblock/strutil.hpp"
-#include "veriblock/third_party/secp256k1.h"
+#include "veriblock/third_party/secp256k1.hpp"
 
 namespace altintegration {
 

@@ -7,9 +7,11 @@
 #ifndef SECP256K1_GROUP_IMPL_H
 #define SECP256K1_GROUP_IMPL_H
 
-#include "num.h"
-#include "field.h"
-#include "group.h"
+#include "num.hpp"
+#include "field.hpp"
+#include "group.hpp"
+
+namespace altintegration {
 
 /* These points can be generated in sage as follows:
  *
@@ -648,5 +650,7 @@ static void secp256k1_ge_mul_lambda(secp256k1_ge *r, const secp256k1_ge *a) {
     secp256k1_fe_mul(&r->x, &r->x, &beta);
 }
 #endif
+
+}
 
 #endif /* SECP256K1_GROUP_IMPL_H */

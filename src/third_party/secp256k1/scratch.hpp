@@ -7,6 +7,8 @@
 #ifndef _SECP256K1_SCRATCH_
 #define _SECP256K1_SCRATCH_
 
+namespace altintegration {
+
 /* The typedef is used internally; the struct name is used in the public API
  * (where it is exposed as a different typedef) */
 typedef struct secp256k1_scratch_space_struct {
@@ -39,4 +41,5 @@ static size_t secp256k1_scratch_max_allocation(const secp256k1_callback* error_c
 /** Returns a pointer into the most recently allocated frame, or NULL if there is insufficient available space */
 static void *secp256k1_scratch_alloc(const secp256k1_callback* error_callback, secp256k1_scratch* scratch, size_t n);
 
+}
 #endif
