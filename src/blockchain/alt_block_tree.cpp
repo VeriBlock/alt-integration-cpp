@@ -373,15 +373,6 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   // compare current active chain to other chain
   int result = cmp_.comparePopScore(*this, *right, state);
   if (result < 0) {
-    // invalidate rewards cache if necessary
-    uint32_t invalidBlocks = std::numeric_limits<uint32_t>::max();
-
-    const auto* fork = activeChain_.findFork(right);
-    if (fork != nullptr) {
-      invalidBlocks = activeChain_.tip()->getHeight() - fork->getHeight();
-    }
-    rewards_.eraseCacheHistory(invalidBlocks);
-
     // other chain is better, and we already changed 'cmp' state to winner, so
     // just update active chain tip
     activeChain_.setTip(right);
@@ -546,6 +537,16 @@ void AltBlockTree::overrideTip(index_t& to) {
   VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
                  "the active chain tip(%s) must be fully valid",
                  to.toPrettyString());
+
+  // invalidate rewards cache if necessary
+  uint32_t invalidBlocks = std::numeric_limits<uint32_t>::max();
+
+  const auto* fork = activeChain_.findFork(&to);
+  if (fork != nullptr) {
+    invalidBlocks = activeChain_.tip()->getHeight() - fork->getHeight();
+  }
+  rewards_.eraseCacheHistory(invalidBlocks);
+
   activeChain_.setTip(&to);
 }
 

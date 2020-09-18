@@ -29,6 +29,9 @@ std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
       expectedDifficultyBlocks = endorsedBlock.getHeight();
     }
 
+    //TODO: find in history endorsedBlock.pprev and restore all missing blocks
+    //      till the endorsedBlock.pprev
+
     while (!history_.empty() && history_.back() != endorsedBlock.pprev) {
       eraseCacheHistory(1);
     }
