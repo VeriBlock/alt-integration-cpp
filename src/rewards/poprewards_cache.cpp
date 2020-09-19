@@ -18,46 +18,53 @@ PopRewardsBigDecimal PopRewardsCache::scoreFromEndorsements(
 
 std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
     const index_t& endorsedBlock) {
-
   // make sure cache is in valid state, eg contains all necessary
   // blocks to calculate POP difficulty for the endorsed block
 
-  if (!cache_.empty()) {
-    int32_t expectedDifficultyBlocks =
-        (int32_t)altParams_->getRewardParams().difficultyAveragingInterval();
-    if (expectedDifficultyBlocks > endorsedBlock.getHeight()) {
-      expectedDifficultyBlocks = endorsedBlock.getHeight();
-    }
+  const auto* curBlock = endorsedBlock.pprev;
+  size_t toFetch = altParams_->getRewardParams().difficultyAveragingInterval();
+  if (toFetch > endorsedBlock.getHeight()) {
+    toFetch = endorsedBlock.getHeight();
+  }
+  std::vector<const index_t*> difficultyBlocks;
+  difficultyBlocks.reserve(toFetch);
 
-    //TODO: find in history endorsedBlock.pprev and restore all missing blocks
-    //      till the endorsedBlock.pprev
-
-    while (!history_.empty() && history_.back() != endorsedBlock.pprev) {
-      eraseCacheHistory(1);
-    }
-
-    if ((int32_t)history_.size() < expectedDifficultyBlocks) {
-      invalidateCache();
-    }
+  for (size_t i = 0; i < toFetch; i++) {
+    if (curBlock == nullptr) break;
+    if (!history_.empty() && history_.back() == curBlock) break;
+    difficultyBlocks.push_back(curBlock);
+    curBlock = curBlock->pprev;
   }
 
-  // rebuild difficulty blocks if cache is not populated or bad
-  if (cache_.empty()) {
-    auto* curBlock = endorsedBlock.pprev;
-    size_t toFetch =
-        altParams_->getRewardParams().difficultyAveragingInterval();
-    std::vector<const index_t*> difficultyBlocks;
-    difficultyBlocks.reserve(toFetch);
+  // now make a check that first difficulty block exists in the cache
+  const auto* beginBlock = endorsedBlock.getAncestorBlocksBehind((int)toFetch);
+  toFetch -= difficultyBlocks.size();
+  size_t historySize = history_.size();
+  bool beginOk = true;
+  bool endOk = true;
 
-    for (size_t i = 0; i < toFetch; i++) {
-      if (curBlock == nullptr) break;
-      difficultyBlocks.push_back(curBlock);
-      curBlock = curBlock->pprev;
-    }
+  if (history_.empty() || historySize < toFetch ||
+      history_[historySize - toFetch] != beginBlock) {
+    beginOk = false;
+  }
 
-    for (const auto& b : reverse_iterate(difficultyBlocks)) {
-      appendToCache(*b);
-    }
+  if (beginOk && endOk &&
+      (difficultyBlocks.size() > 0 && difficultyBlocks.back() == nullptr)) {
+    endOk = false;
+  }
+
+  if (beginOk && endOk &&
+      (difficultyBlocks.size() > 0 &&
+       difficultyBlocks.back()->pprev != history_.back())) {
+    endOk = false;
+  }
+
+  if (!beginOk || !endOk) {
+    invalidateCache();
+  }
+
+  for (const auto& b : reverse_iterate(difficultyBlocks)) {
+    appendToCache(*b);
   }
 
   auto blockScore = appendToCache(endorsedBlock);

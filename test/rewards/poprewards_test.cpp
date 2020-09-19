@@ -270,7 +270,15 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   EXPECT_FALSE(sampleRewards->scoreFromEndorsements(*endorsedIndex) == 1.0);
 
   mineAltBlocks(depth - 1, altchain, true);
-  ASSERT_EQ(endorsedIndex->endorsedBy.size(), 101);
+
+  // current block height is 101 + 50 - 101 + 95 + 1 = 146
+  // reorgs longer than 45 blocks erase initial endorsement
+  // therefore we only have 100 endorsements left
+  if (depth < 45) {
+    ASSERT_EQ(endorsedIndex->endorsedBy.size(), 101);
+  } else {
+    ASSERT_EQ(endorsedIndex->endorsedBy.size(), 100);
+  }
 
   if (depth == 1) {
     // for depth = 1 endorsed block is before the endorsement settlement
