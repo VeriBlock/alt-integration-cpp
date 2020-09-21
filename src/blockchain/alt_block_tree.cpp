@@ -315,10 +315,11 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
       "Block %s is not finalized for PoP payouts",
       endorsedBlock->toPrettyString());
 
-  auto popDifficulty = rewards_.calculateDifficulty(vbk(), *endorsedBlock);
-  auto ret = rewards_.calculatePayouts(vbk(), *endorsedBlock, popDifficulty);
+  auto ret = rewards_.calculatePayouts(*endorsedBlock);
+  auto difficulty = rewards_.calculateDifficulty(*endorsedBlock);
+
   VBK_LOG_DEBUG("Pop Difficulty=%s for block %s, paying to %d addresses",
-                popDifficulty.toPrettyString(),
+                difficulty.toPrettyString(),
                 index->toShortPrettyString(),
                 ret.size());
   return ret;
@@ -536,6 +537,16 @@ void AltBlockTree::overrideTip(index_t& to) {
   VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
                  "the active chain tip(%s) must be fully valid",
                  to.toPrettyString());
+
+  // invalidate rewards cache if necessary
+  uint32_t invalidBlocks = std::numeric_limits<uint32_t>::max();
+
+  const auto* fork = activeChain_.findFork(&to);
+  if (fork != nullptr) {
+    invalidBlocks = activeChain_.tip()->getHeight() - fork->getHeight();
+  }
+  rewards_.eraseCacheHistory(invalidBlocks);
+
   activeChain_.setTip(&to);
 }
 
@@ -591,7 +602,7 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
            alt_config,
            payloadsProvider,
            payloadsIndex_),
-      rewards_(alt_config),
+      rewards_(alt_config, cmp_.getProtectingBlockTree()),
       payloadsProvider_(payloadsProvider) {}
 
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
