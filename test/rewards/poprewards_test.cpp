@@ -10,11 +10,13 @@
 
 using namespace altintegration;
 
-struct RewardsTestFixture : public ::testing::Test, public PopTestFixture {
+struct RewardsTestFixture : public testing::TestWithParam<int>,
+                            public PopTestFixture {
   BlockIndex<BtcBlock>* btctip;
   BlockIndex<VbkBlock>* vbktip;
   std::vector<AltBlock> altchain;
   std::shared_ptr<PopRewardsCalculator> sampleCalculator;
+  std::shared_ptr<PopRewards> sampleRewards;
 
   ValidationState state;
 
@@ -26,27 +28,31 @@ struct RewardsTestFixture : public ::testing::Test, public PopTestFixture {
     mineAltBlocks(10, altchain);
 
     sampleCalculator = std::make_shared<PopRewardsCalculator>(altparam);
+    sampleRewards = std::make_shared<PopRewards>(altparam, alttree.vbk());
 
     EXPECT_EQ(altchain.size(), 11);
     EXPECT_EQ(altchain.at(altchain.size() - 1).height, 10);
   }
 
-  void endorseLastBlock(size_t endorsements) {
+  void endorseBlocks(const std::vector<AltBlock>& endorsedBlocks,
+                     size_t endorsements) {
     size_t chainSize = altchain.size();
-    AltBlock endorsedBlock = altchain.back();
     std::vector<VbkTx> popTxs{};
     for (size_t i = 0; i < endorsements; i++) {
-      auto pubdata = generatePublicationData(endorsedBlock);
-      pubdata.contextInfo.push_back((unsigned char)i);
-      VbkTx tx = popminer->createVbkTxEndorsingAltBlock(pubdata);
-      popTxs.push_back(tx);
+      for (const auto& b : endorsedBlocks) {
+        auto pubdata = generatePublicationData(b);
+        pubdata.contextInfo.push_back((unsigned char)i);
+        VbkTx tx = popminer->createVbkTxEndorsingAltBlock(pubdata);
+        popTxs.push_back(tx);
+      }
     }
     auto atvs = popminer->applyATVs(popTxs, state);
 
     PopData popData;
     popData.atvs = atvs;
-    fillVbkContext(
-        popData.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+    fillVbkContext(popData.context,
+                   alttree.vbk().getBestChain().tip()->getHash(),
+                   popminer->vbk());
 
     auto* altTip = alttree.getBestChain().tip();
     auto nextBlock = generateNextBlock(altTip->getHeader());
@@ -55,15 +61,31 @@ struct RewardsTestFixture : public ::testing::Test, public PopTestFixture {
     ASSERT_TRUE(validatePayloads(nextBlock.getHash(), popData));
     ASSERT_TRUE(state.IsValid());
     EXPECT_EQ(altchain.size(), chainSize + 1);
+  }
 
-    // mine rewardSettlementInterval blocks + 1 - endorsed block - endorsement block
+  void endorseBlock(AltBlock& endorsedBlock, size_t endorsements) {
+    endorseBlocks({endorsedBlock}, endorsements);
+  }
+
+  void endorseForRewardLastBlock(size_t endorsements) {
+    auto& endorsedBlock = altchain.back();
+    endorseBlock(endorsedBlock, endorsements);
+    // mine rewardSettlementInterval blocks + 1 - endorsed block - endorsement
+    // block
     mineAltBlocks(altparam.getEndorsementSettlementInterval() - 1, altchain);
+  }
+
+  void reorg(size_t blocks) {
+    ASSERT_TRUE(altchain.size() >= blocks);
+    altchain.resize(altchain.size() - blocks);
+    ASSERT_TRUE(alttree.setState(altchain.back().getHash(), state));
+    ASSERT_TRUE(state.IsValid());
   }
 };
 
 TEST_F(RewardsTestFixture, basicReward_test) {
   AltBlock endorsedBlock = altchain[10];
-  endorseLastBlock(1);
+  endorseForRewardLastBlock(1);
 
   auto payouts = alttree.getPopPayout(altchain.back().getHash());
   ASSERT_TRUE(payouts.size());
@@ -83,7 +105,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
   // endorse ALT block, at height 10
   AltBlock endorsedBlock = altchain[10];
-  endorseLastBlock(30);
+  endorseForRewardLastBlock(30);
 
   auto payouts = alttree.getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
@@ -100,7 +122,7 @@ TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
 TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
   // endorse ALT block, at height 10
   AltBlock endorsedBlock = altchain[10];
-  endorseLastBlock(100);
+  endorseForRewardLastBlock(100);
 
   auto payouts = alttree.getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
@@ -122,7 +144,7 @@ TEST_F(RewardsTestFixture, largeFlatReward_test) {
 
   // endorse ALT block, at height 12
   AltBlock endorsedBlock = altchain[12];
-  endorseLastBlock(30);
+  endorseForRewardLastBlock(30);
 
   auto payouts = alttree.getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
@@ -144,7 +166,7 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
 
   // endorse ALT block, at height 12
   AltBlock endorsedBlock = altchain[12];
-  endorseLastBlock(100);
+  endorseForRewardLastBlock(100);
 
   auto payouts = alttree.getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
@@ -156,4 +178,120 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
       ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
       1.07,
       0.1);
+}
+
+TEST_F(RewardsTestFixture, basicCacheReward_test) {
+  // mine 90 blocks and have 101 total
+  mineAltBlocks(90, altchain, true);
+
+  AltBlock endorsedBlock = altchain[95];
+  endorseBlock(endorsedBlock, 1);
+  auto* endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
+
+  EXPECT_EQ(altchain.back().height, 101);
+  EXPECT_EQ(sampleRewards->scoreFromEndorsements(*endorsedIndex), 1.0);
+  mineAltBlocks(altparam.getPopPayoutDelay() - (101 - 95), altchain, true);
+
+  auto payouts = alttree.getPopPayout(altchain.back().getHash());
+  ASSERT_EQ(payouts.size(), 1);
+
+  auto payoutsUncached = sampleRewards->calculatePayouts(*endorsedIndex);
+  ASSERT_EQ(payoutsUncached.size(), 1);
+  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
+
+  // generate new fork with the new altPayloads
+  reorg(5);
+  endorseBlock(endorsedBlock, 1);
+  endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
+
+  // after reorg the score has changed
+  EXPECT_FALSE(sampleRewards->scoreFromEndorsements(*endorsedIndex) == 1.0);
+
+  mineAltBlocks(4, altchain, true);
+  payouts = alttree.getPopPayout(altchain.back().getHash());
+  ASSERT_EQ(payouts.size(), 1);
+  payoutsUncached = sampleRewards->calculatePayouts(*endorsedIndex);
+
+  ASSERT_EQ(payoutsUncached.size(), 1);
+  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
+}
+
+static AltChainParamsRegTest altparam1{};
+INSTANTIATE_TEST_SUITE_P(
+    rewardsCacheRegression,
+    RewardsTestFixture,
+    testing::Range(1, altparam1.getEndorsementSettlementInterval() + 1));
+
+TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
+  int depth = GetParam();
+
+  // mine 90 blocks and have 101 total
+  mineAltBlocks(90, altchain, true);
+
+  AltBlock endorsedBlock = altchain[95];
+  AltBlock endorsedPrevBlock = altchain[94];
+
+  endorseBlock(endorsedBlock, 1);
+  auto* endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
+  auto* endorsedPrevIndex = alttree.getBlockIndex(endorsedPrevBlock.getHash());
+
+  ASSERT_EQ(endorsedIndex->endorsedBy.size(), 1);
+  ASSERT_EQ(endorsedPrevIndex->endorsedBy.size(), 0);
+
+  EXPECT_EQ(altchain.back().height, 101);
+  EXPECT_EQ(sampleRewards->scoreFromEndorsements(*endorsedIndex), 1.0);
+  mineAltBlocks(altparam.getPopPayoutDelay() - (101 - 95), altchain, true);
+
+  auto payouts = alttree.getPopPayout(altchain.back().getHash());
+  ASSERT_EQ(payouts.size(), 1);
+
+  auto payoutsUncached = sampleRewards->calculatePayouts(*endorsedIndex);
+  ASSERT_EQ(payoutsUncached.size(), 1);
+  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
+
+  // generate new fork with the new altPayloads
+  reorg(depth);
+
+  // make 100 endorsements since we want to raise the average difficulty
+  // over 1.0
+
+  if (depth == 1) {
+    // for depth = 1 endorsed previous block is before the endorsement
+    // settlement do not try to endorse it so validation should not fail
+
+    endorseBlock(endorsedBlock, 100);
+  } else {
+    endorseBlocks({endorsedPrevBlock, endorsedBlock}, 100);
+  }
+
+  endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
+  endorsedPrevIndex = alttree.getBlockIndex(endorsedPrevBlock.getHash());
+
+  EXPECT_FALSE(sampleRewards->scoreFromEndorsements(*endorsedIndex) == 1.0);
+
+  mineAltBlocks(depth - 1, altchain, true);
+
+  // current block height is 101 + 50 - 101 + 95 + 1 = 146
+  // reorgs longer than 45 blocks erase initial endorsement
+  // therefore we only have 100 endorsements left
+  if (depth < 45) {
+    ASSERT_EQ(endorsedIndex->endorsedBy.size(), 101);
+  } else {
+    ASSERT_EQ(endorsedIndex->endorsedBy.size(), 100);
+  }
+
+  if (depth == 1) {
+    // for depth = 1 endorsed block is before the endorsement settlement
+    // interval therefore endorsedBy is not changed
+    ASSERT_EQ(endorsedPrevIndex->endorsedBy.size(), 0);
+  } else {
+    ASSERT_EQ(endorsedPrevIndex->endorsedBy.size(), 100);
+  }
+
+  payouts = alttree.getPopPayout(altchain.back().getHash());
+  ASSERT_EQ(payouts.size(), 1);
+  payoutsUncached = sampleRewards->calculatePayouts(*endorsedIndex);
+
+  ASSERT_EQ(payoutsUncached.size(), 1);
+  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
 }
