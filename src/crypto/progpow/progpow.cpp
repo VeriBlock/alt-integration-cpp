@@ -2,8 +2,6 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-#include <byteswap.h>
-
 #include <cstdint>
 #include <vector>
 #include <veriblock/consts.hpp>
@@ -37,13 +35,15 @@ namespace progpow {
 inline uint32_t rotl32(uint32_t value, unsigned int count) {
   const unsigned int mask = CHAR_BIT * sizeof(value) - 1;
   count &= mask;
-  return (value << count) | (value >> (-count & mask));
+  return (value << count) |
+         (value >> ((std::numeric_limits<uint32_t>::max() + 1 - count) & mask));
 }
 
 inline uint32_t rotr32(uint32_t value, unsigned int count) {
   const unsigned int mask = CHAR_BIT * sizeof(value) - 1;
   count &= mask;
-  return (value >> count) | (value << (-count & mask));
+  return (value >> count) |
+         (value << ((std::numeric_limits<uint32_t>::max() + 1 - count) & mask));
 }
 
 inline uint32_t fnv1a(uint32_t h, uint32_t d) { return (h ^ d) * FNV_PRIME; }
@@ -205,8 +205,8 @@ hash32_t keccak_f800_progpow(const hash32_t& header,
   for (int i = 0; i < 8; i++) {
     st[i] = header.uint32s[i];
   }
-  st[8] = seed;
-  st[9] = seed >> 32;
+  st[8] = uint32_t(seed);
+  st[9] = uint32_t(seed >> 32);
   for (int i = 0; i < 8; i++) {
     st[10 + i] = digest.uint32s[i];
   }
@@ -227,8 +227,8 @@ void fill_mix(uint64_t seed, uint32_t lane_id, Slice<uint32_t> mix) {
   // Use FNV to expand the per-warp seed to per-lane
   // Use KISS to expand the per-lane seed to fill mix
   kiss99_t st;
-  st.z = fnv1a(FNV_OFFSET_BASIS, seed);
-  st.w = fnv1a(st.z, seed >> 32);
+  st.z = fnv1a(FNV_OFFSET_BASIS, uint32_t(seed));
+  st.w = fnv1a(st.z, uint32_t(seed >> 32));
   st.jsr = fnv1a(st.w, lane_id);
   st.jcong = fnv1a(st.jsr, lane_id);
   for (int i = 0; i < PROGPOW_REGS; i++) {
@@ -239,8 +239,8 @@ void fill_mix(uint64_t seed, uint32_t lane_id, Slice<uint32_t> mix) {
 kiss99_t progPowInit(uint64_t prog_seed,
                      Slice<int> mix_seq_src,
                      Slice<int> mix_seq_dst) {
-  uint32_t leftSeed = prog_seed >> 32;
-  uint32_t rightSeed = prog_seed;
+  uint32_t leftSeed = uint32_t(prog_seed >> 32);
+  uint32_t rightSeed = uint32_t(prog_seed);
 
   kiss99_t prog_rnd;
   prog_rnd.z = fnv1a(FNV_OFFSET_BASIS, rightSeed);
@@ -282,7 +282,7 @@ void progPowLoop(const uint64_t block_number,
       mix[loop % PROGPOW_LANES][0] %
       (dag_bytes / (PROGPOW_LANES * PROGPOW_DAG_LOADS * sizeof(uint32_t)));
 
-  uint32_t lastLookup = -1;
+  uint32_t lastLookup = (uint32_t)-1;
   ethash_dag_node_t lookupNode;
 
   for (int l = 0; l < PROGPOW_LANES; l++) {
@@ -361,8 +361,8 @@ void progPowLoop(const uint64_t block_number,
 
 static inline uint64_t calcSeed(const hash32_t& seed_256) {
   // endian swap so byte 0 of the hash is the MSB of the value
-  return uint64_t(bswap_32(seed_256.uint32s[0])) << 32 |
-         bswap_32(seed_256.uint32s[1]);
+  return uint64_t(vbk_swap_u32(seed_256.uint32s[0])) << 32 |
+         vbk_swap_u32(seed_256.uint32s[1]);
 }
 
 hash32_t progPowHash(const uint64_t block_number,  // height
@@ -427,8 +427,8 @@ std::vector<uint32_t> createDagCache(ethash_light_t light) {
   std::vector<uint32_t> cdag(ETHASH_HASH_BYTES * DATASET_PARENTS, 0);
 
   ethash_dag_node_t node;
-  for (int i = 0, total = cdag.size() / 16; i < total; ++i) {
-    ethash_calculate_dag_node(&node, i, light);
+  for (size_t i = 0, total = cdag.size() / 16; i < total; ++i) {
+    ethash_calculate_dag_node(&node, uint32_t(i), light);
     for (int j = 0; j < ETHASH_DAG_NODE_SIZE; j++) {
       cdag[i * 16 + j] = node.words[j];
     }
@@ -437,6 +437,42 @@ std::vector<uint32_t> createDagCache(ethash_light_t light) {
   return cdag;
 }
 
+hash32_t hash32_t::readLE(ReadStream& rs) {
+  hash32_t ret;
+  for (int i = 0; i < 8; i++) {
+    ret.uint32s[i] = rs.readLE<uint32_t>();
+  }
+  return ret;
+}
+
+hash32_t hash32_t::readBE(ReadStream& rs) {
+  hash32_t ret;
+  for (int i = 0; i < 8; i++) {
+    ret.uint32s[i] = rs.readBE<uint32_t>();
+  }
+  return ret;
+}
+
+bool hash32_t::operator==(const hash32_t& h) const {
+  for (int i = 0; i < 8; i++) {
+    if (uint32s[i] != h.uint32s[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+hash32_t::hash32_t() {
+  for (int i = 0; i < 8; i++) {
+    uint32s[i] = 0;
+  }
+}
+
+std::string hash32_t::toHex() const {
+  char* u = (char*)&uint32s[0];
+  return HexStr(u, u + 32);
+}
 }  // namespace progpow
 
 uint192 progPowHash(Slice<const uint8_t> header) {

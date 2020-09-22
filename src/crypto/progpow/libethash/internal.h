@@ -1,8 +1,8 @@
 #pragma once
 #include <stdio.h>
 
-#include "compiler.h"
-#include "endian.h"
+#include "veriblock/crypto/compiler.h"
+#include "veriblock/crypto/endian.h"
 #include "veriblock/crypto/progpow/ethash.h"
 
 #define ENABLE_SSE 0
@@ -47,22 +47,6 @@ static inline void ethash_h256_reset(ethash_h256_t* hash)
  *                      ERRNOMEM or invalid parameters used for @ref ethash_compute_cache_nodes()
  */
 ethash_light_t ethash_light_new_internal(uint64_t cache_size, ethash_h256_t const* seed);
-
-/**
- * Calculate the light client data. Internal version.
- *
- * @param light          The light client handler
- * @param full_size      The size of the full data in bytes.
- * @param header_hash    The header hash to pack into the mix
- * @param nonce          The nonce to pack into the mix
- * @return               The resulting hash.
- */
-ethash_return_value_t ethash_light_compute_internal(
-	ethash_light_t light,
-	uint64_t full_size,
-	ethash_h256_t const header_hash,
-	uint64_t nonce
-);
 
 void ethash_calculate_dag_item(
 	node* const ret,

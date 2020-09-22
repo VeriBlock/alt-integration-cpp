@@ -25,8 +25,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "../../../../src/crypto/progpow/libethash/compiler.h"
-
 #define ETHASH_REVISION 23
 #define ETHASH_DATASET_BYTES_INIT 1073741824U  // 2**30
 #define ETHASH_DATASET_BYTES_GROWTH 8388608U   // 2**23
@@ -79,7 +77,7 @@ void ethash_calculate_dag_node(ethash_dag_node_t* out,
  *
  * @param block_number   The block number for which to create the handler
  * @return               Newly allocated ethash_light handler or NULL in case of
- *                       ERRNOMEM or invalid parameters used for @ref
+ *                       ERRNOMEM or invalid parameters used for
  * ethash_compute_cache_nodes()
  */
 ethash_light_t ethash_light_new(uint64_t block_number);
@@ -88,18 +86,6 @@ ethash_light_t ethash_light_new(uint64_t block_number);
  * @param light        The light handler to free
  */
 void ethash_light_delete(ethash_light_t light);
-/**
- * Calculate the light client data
- *
- * @param light          The light client handler
- * @param header_hash    The header hash to pack into the mix
- * @param nonce          The nonce to pack into the mix
- * @return               an object of ethash_return_value_t holding the return
- * values
- */
-ethash_return_value_t ethash_light_compute(ethash_light_t light,
-                                           ethash_h256_t const header_hash,
-                                           uint64_t nonce);
 
 /**
  * Calculate the seedhash for a given block number

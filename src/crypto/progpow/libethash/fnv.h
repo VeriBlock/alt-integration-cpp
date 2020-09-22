@@ -21,7 +21,8 @@
 
 #pragma once
 #include <stdint.h>
-#include "compiler.h"
+
+#include "veriblock/crypto/compiler.h"
 
 #ifdef __cplusplus
 extern "C" {

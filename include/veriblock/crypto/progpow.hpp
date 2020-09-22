@@ -13,47 +13,17 @@ namespace altintegration {
 
 struct kiss99_t;
 
+//! @private
 namespace progpow {
 
 struct hash32_t {
   uint32_t uint32s[32 / sizeof(uint32_t)];
 
-  hash32_t() {
-    for (int i = 0; i < 8; i++) {
-      uint32s[i] = 0;
-    }
-  }
-
-  std::string toHex() const {
-    char* u = (char*)&uint32s[0];
-    return HexStr(u, u + 32);
-  }
-
-  bool operator==(const hash32_t& h) const {
-    for (int i = 0; i < 8; i++) {
-      if (uint32s[i] != h.uint32s[i]) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  static hash32_t readLE(ReadStream& rs) {
-    hash32_t ret;
-    for (int i = 0; i < 8; i++) {
-      ret.uint32s[i] = rs.readLE<uint32_t>();
-    }
-    return ret;
-  }
-
-  static hash32_t readBE(ReadStream& rs) {
-    hash32_t ret;
-    for (int i = 0; i < 8; i++) {
-      ret.uint32s[i] = rs.readBE<uint32_t>();
-    }
-    return ret;
-  }
+  hash32_t();
+  std::string toHex() const;
+  bool operator==(const hash32_t& h) const;
+  static hash32_t readLE(ReadStream& rs);
+  static hash32_t readBE(ReadStream& rs);
 };
 
 uint256 getVbkHeaderHash(Slice<const uint8_t> header);
@@ -72,6 +42,12 @@ kiss99_t progPowInit(uint64_t prog_seed,
                      Slice<int> mix_seq_src);
 }  // namespace progpow
 
+/**
+ * Calculate vPROGPOW hash of given VbkBlock header (65 bytes)
+ *
+ * @param header 65-bytes header
+ * @return 24-byte hash
+ */
 uint192 progPowHash(Slice<const uint8_t> header);
 
 }  // namespace altintegration

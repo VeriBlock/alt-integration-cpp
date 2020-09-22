@@ -27,9 +27,10 @@
 #include <stddef.h>
 
 #include "data_sizes.h"
-#include "endian.h"
 #include "fnv.h"
 #include "sha3.h"
+#include "veriblock/crypto/compiler.h"
+#include "veriblock/crypto/endian.h"
 #include "veriblock/crypto/progpow/ethash.h"
 
 uint64_t ethash_get_epoch(uint64_t block) {
@@ -137,88 +138,6 @@ void ethash_calculate_dag_item(node* const ret,
   SHA3_512(ret->bytes, ret->bytes, sizeof(node));
 }
 
-static bool ethash_hash(ethash_return_value_t* ret,
-                        node const* full_nodes,
-                        ethash_light_t const light,
-                        uint64_t full_size,
-                        ethash_h256_t const header_hash,
-                        uint64_t const nonce) {
-  if (full_size % MIX_WORDS != 0) {
-    return false;
-  }
-
-  // pack hash and nonce together into first 40 bytes of s_mix
-  assert(sizeof(node) * 8 == 512);
-  node s_mix[MIX_NODES + 1];
-  memcpy(s_mix[0].bytes, &header_hash, 32);
-  fix_endian64(s_mix[0].double_words[4], nonce);
-
-  // compute sha3-512 hash and replicate across mix
-  SHA3_512(s_mix->bytes, s_mix->bytes, 40);
-  fix_endian_arr32(s_mix[0].words, 16);
-
-  node* const mix = s_mix + 1;
-  for (uint32_t w = 0; w != MIX_WORDS; ++w) {
-    mix->words[w] = s_mix[0].words[w % NODE_WORDS];
-  }
-
-  unsigned const page_size = sizeof(uint32_t) * MIX_WORDS;
-  unsigned const num_full_pages = (unsigned)(full_size / page_size);
-
-  for (unsigned i = 0; i != ETHASH_ACCESSES; ++i) {
-    uint32_t const index =
-        fnv_hash(s_mix->words[0] ^ i, mix->words[i % MIX_WORDS]) %
-        num_full_pages;
-
-    for (unsigned n = 0; n != MIX_NODES; ++n) {
-      node const* dag_node;
-      if (full_nodes) {
-        dag_node = &full_nodes[MIX_NODES * index + n];
-      } else {
-        node tmp_node;
-        ethash_calculate_dag_item(&tmp_node, index * MIX_NODES + n, light);
-        dag_node = &tmp_node;
-      }
-
-#if defined(_M_X64) && ENABLE_SSE
-      {
-        __m128i fnv_prime = _mm_set1_epi32(FNV_PRIME);
-        __m128i xmm0 = _mm_mullo_epi32(fnv_prime, mix[n].xmm[0]);
-        __m128i xmm1 = _mm_mullo_epi32(fnv_prime, mix[n].xmm[1]);
-        __m128i xmm2 = _mm_mullo_epi32(fnv_prime, mix[n].xmm[2]);
-        __m128i xmm3 = _mm_mullo_epi32(fnv_prime, mix[n].xmm[3]);
-        mix[n].xmm[0] = _mm_xor_si128(xmm0, dag_node->xmm[0]);
-        mix[n].xmm[1] = _mm_xor_si128(xmm1, dag_node->xmm[1]);
-        mix[n].xmm[2] = _mm_xor_si128(xmm2, dag_node->xmm[2]);
-        mix[n].xmm[3] = _mm_xor_si128(xmm3, dag_node->xmm[3]);
-      }
-#else
-      {
-        for (unsigned w = 0; w != NODE_WORDS; ++w) {
-          mix[n].words[w] = fnv_hash(mix[n].words[w], dag_node->words[w]);
-        }
-      }
-#endif
-    }
-  }
-
-  // compress mix
-  for (uint32_t w = 0; w != MIX_WORDS; w += 4) {
-    uint32_t reduction = mix->words[w + 0];
-    reduction = reduction * FNV_PRIME ^ mix->words[w + 1];
-    reduction = reduction * FNV_PRIME ^ mix->words[w + 2];
-    reduction = reduction * FNV_PRIME ^ mix->words[w + 3];
-    mix->words[w / 4] = reduction;
-  }
-
-  fix_endian_arr32(mix->words, MIX_WORDS / 4);
-  memcpy(&ret->mix_hash, mix->bytes, 32);
-  // final Keccak hash
-  SHA3_256(
-      &ret->result, s_mix->bytes, 64 + 32);  // Keccak-256(s + compressed_mix)
-  return true;
-}
-
 // dagSeed
 ethash_h256_t ethash_get_seedhash(uint64_t block_number) {
   ethash_h256_t ret;
@@ -260,9 +179,9 @@ fail_free_light:
 
 ethash_light_t ethash_light_new(uint64_t block_number) {
   ethash_h256_t seedhash = ethash_get_seedhash(block_number);
+  uint64_t cachesize = ethash_get_cachesize(block_number);
   ethash_light_t ret;
-  ret =
-      ethash_light_new_internal(ethash_get_cachesize(block_number), &seedhash);
+  ret = ethash_light_new_internal(cachesize, &seedhash);
   ret->block_number = block_number;
   return ret;
 }
@@ -272,24 +191,4 @@ void ethash_light_delete(ethash_light_t light) {
     free(light->cache);
   }
   free(light);
-}
-
-ethash_return_value_t ethash_light_compute_internal(
-    ethash_light_t light,
-    uint64_t full_size,
-    ethash_h256_t const header_hash,
-    uint64_t nonce) {
-  ethash_return_value_t ret;
-  ret.success = true;
-  if (!ethash_hash(&ret, NULL, light, full_size, header_hash, nonce)) {
-    ret.success = false;
-  }
-  return ret;
-}
-
-ethash_return_value_t ethash_light_compute(ethash_light_t light,
-                                           ethash_h256_t const header_hash,
-                                           uint64_t nonce) {
-  uint64_t full_size = ethash_get_datasize(light->block_number);
-  return ethash_light_compute_internal(light, full_size, header_hash, nonce);
 }

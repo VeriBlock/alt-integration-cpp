@@ -105,19 +105,30 @@ void progPowLoop(const uint64_t block_number,
                  ethash_light_t light);
 }  // namespace altintegration::progpow
 
-TEST(Ethash, CreateDagCache) {
-  uint64_t blockNumber = 1000000;
-  std::shared_ptr<ethash_light> light(ethash_light_new(blockNumber),
-                                      ethash_light_delete);
+struct DagTest: public ::testing::Test {
+  const uint64_t blockNumber = 1000000;
+  std::shared_ptr<ethash_light> light;
 
-  auto dag = progpow::createDagCache(light.get());
+  DagTest(){
+    if(light == nullptr) {
+      light = std::shared_ptr<ethash_light>(ethash_light_new(blockNumber),
+                                            ethash_light_delete);
 
+      dag = progpow::createDagCache(light.get());
+    }
+  }
+
+  std::vector<uint32_t> dag;
+};
+
+
+TEST_F(DagTest, CreateDagCache) {
   ASSERT_EQ(dag.size(), 16384);
   ASSERT_EQ(dag, ethash_expected_dag);
 }
 
-TEST(ProgPowUtil, Loop) {
-  uint64_t blockNumber = 1000000, loop = 0;
+TEST_F(DagTest, Loop) {
+  uint64_t loop = 0;
   uint32_t mix[PROGPOW_LANES][PROGPOW_REGS];
   for (int i = 0; i < PROGPOW_LANES; i++) {
     for (int j = 0; j < PROGPOW_REGS; j++) {
@@ -125,9 +136,6 @@ TEST(ProgPowUtil, Loop) {
     }
   }
 
-  std::shared_ptr<ethash_light> light(ethash_light_new(blockNumber),
-                                      ethash_light_delete);
-  auto dag = progpow::createDagCache(light.get());
   progpow::progPowLoop(blockNumber, loop, mix, dag, light.get());
 
   for (int i = 0; i < PROGPOW_LANES; i++) {

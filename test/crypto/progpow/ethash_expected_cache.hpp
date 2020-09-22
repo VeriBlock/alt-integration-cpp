@@ -8,6 +8,7 @@
 
 #include <string>
 
+// first 1000 uint32_ts
 const std::string ethash_expected_cache =
     "d3f0381d689553f96391482271c3554e443e1e0ffeedfe84101bc0e91f2174b542b9dcd1"
     "a3dada98cebff5e1468875e09b804bafb4297e5285d49f15d5342a7b7d58e84b35a0d27c"
