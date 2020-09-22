@@ -4,7 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <gtest/gtest.h>
-#include <veriblock/vblake.h>
+#include <veriblock/crypto/vblake.h>
 
 #include <vector>
 

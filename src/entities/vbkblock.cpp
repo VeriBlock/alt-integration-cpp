@@ -31,7 +31,7 @@ VbkBlock VbkBlock::fromRaw(ReadStream& stream) {
 
 VbkBlock VbkBlock::fromVbkEncoding(ReadStream& stream) {
   auto blockBytes =
-      readSingleByteLenValue(stream, VBK_HEADER_SIZE, VBK_HEADER_SIZE);
+      readSingleByteLenValue(stream, VBK_HEADER_SIZE_VBLAKE, VBK_HEADER_SIZE_VBLAKE);
   ReadStream blockStream(blockBytes);
   return VbkBlock::fromRaw(blockStream);
 }
@@ -159,7 +159,9 @@ bool altintegration::Deserialize(ReadStream& stream,
                                  ValidationState& state) {
   Slice<const uint8_t> value;
   if (!readSingleByteLenValue(
-          stream, value, state, VBK_HEADER_SIZE, VBK_HEADER_SIZE)) {
+          stream, value, state,
+                              VBK_HEADER_SIZE_VBLAKE,
+                              VBK_HEADER_SIZE_VBLAKE)) {
     return state.Invalid("vbk-block-bad-header");
   }
   return DeserializeRaw(value, out, state);

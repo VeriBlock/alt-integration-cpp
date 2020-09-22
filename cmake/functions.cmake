@@ -145,3 +145,8 @@ if(UNIX)
             )
 
 endif()
+
+function(has_extrinsics code OUT)
+    check_cxx_source_compiles("int main(){${code};return 0;}" ${OUT})
+    vbk_define(${OUT})
+endfunction()

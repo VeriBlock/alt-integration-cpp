@@ -25,6 +25,9 @@ include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(cmake/functions.cmake)
 
+has_extrinsics("__builtin_clz(5)"      VBK_HAS_BUILTIN_CLZ)
+has_extrinsics("__builtin_popcount(5)" VBK_HAS_BUILTIN_POPCOUNT)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

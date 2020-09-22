@@ -11,10 +11,10 @@
 #include <cstring>
 #include <string>
 
+#include "veriblock/assert.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/slice.hpp"
 #include "veriblock/strutil.hpp"
-#include "veriblock/assert.hpp"
 
 namespace altintegration {
 
@@ -117,6 +117,11 @@ struct Blob {
     Blob<N> ret = *this;
     std::reverse(ret.begin(), ret.end());
     return ret;
+  }
+
+  Blob<N>& operator~() {
+    for (unsigned i = 0; i < N; ++i) data_[i] = ~data_[i];
+    return *this;
   }
 
   std::vector<value_type> asVector() const {

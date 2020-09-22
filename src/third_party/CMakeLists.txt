@@ -1,3 +1,5 @@
+add_subdirectory(keccak800)
+
 add_library(sha256 OBJECT sha256.cpp)
 disable_clang_tidy(sha256)
 add_library(bigdecimal OBJECT BigDecimal.cpp)
