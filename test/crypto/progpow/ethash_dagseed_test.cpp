@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <gtest/gtest.h>
-#include <veriblock/crypto/progpow/ethash.h>
 
+#include <veriblock/crypto/progpow/ethash.hpp>
 #include <veriblock/serde.hpp>
 #include <veriblock/uint.hpp>
 
@@ -77,7 +77,7 @@ using namespace altintegration;
 
 TEST_P(EthashDagSeedTest, Regression) {
   auto [blockNumber, expected] = GetParam();
-  auto actual = ethash_get_seedhash(blockNumber);
+  auto actual = progpow::ethash_get_seedhash(blockNumber);
   auto actualhex = HexStr(actual.b, actual.b + 32);
   ASSERT_EQ(actualhex, expected);
 }

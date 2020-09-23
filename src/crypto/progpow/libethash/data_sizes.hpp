@@ -15,20 +15,15 @@
   along with cpp-ethereum.  If notUUU,see <http://www.gnu.org/licenses/>.
 */
 
-/** @file data_sizes.h
- */
-
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
-#include "veriblock/crypto/compiler.h"
+#include "consts.hpp"
+#include "veriblock/crypto/compiler.hpp"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "consts.h"
+namespace altintegration {
+namespace progpow {
 
 // 2048 Epochs (~20 years) worth of tabulated DAG sizes
 
@@ -63,6 +58,6 @@ extern const uint64_t dag_sizes[VBK_MAX_EPOCHS_SIZE];
 // w.close();
 
 extern const uint64_t cache_sizes[VBK_MAX_EPOCHS_SIZE];
-#ifdef __cplusplus
-}
-#endif
+
+}  // namespace progpow
+}  // namespace altintegration

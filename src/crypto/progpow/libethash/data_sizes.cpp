@@ -15,7 +15,10 @@
   along with cpp-ethereum.  If notUUU,see <http://www.gnu.org/licenses/>.
 */
 
-#include "data_sizes.h"
+#include "data_sizes.hpp"
+
+namespace altintegration {
+namespace progpow {
 
 // 2048 Epochs (~20 years) worth of tabulated DAG sizes
 
@@ -1760,6 +1763,4 @@ const uint64_t cache_sizes[VBK_MAX_EPOCHS_SIZE] = {
     594672448U, 594804416U, 594934336U, 595066048U, 595197248U, 595328192U,
     595458368U, 595590208U, 595721024U, 595851968U};
 
-#ifdef __cplusplus
-}
-#endif
+}}

@@ -6,12 +6,15 @@
  * License: CC0, attribution kindly requested. Blame taken too,
  * but not liability.
  */
-#include "sha3.h"
+#include "sha3.hpp"
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+namespace altintegration {
+namespace progpow {
 
 /******** The Keccak-f[1600] permutation ********/
 
@@ -148,4 +151,8 @@ mkapply_ds(xorin, dst[i] ^= src[i])      // xorin
   }
 
 /*** FIPS202 SHA3 FOFs ***/
-defsha3(256) defsha3(512)
+defsha3(256);
+defsha3(512);
+
+}  // namespace progpow
+}  // namespace altintegration

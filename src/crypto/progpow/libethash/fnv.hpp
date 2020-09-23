@@ -15,26 +15,23 @@
   along with cpp-ethereum.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file fnv.h
-* @author Matthew Wampler-Doty <negacthulhu@gmail.com>
-* @date 2015
-*/
+ * @author Matthew Wampler-Doty <negacthulhu@gmail.com>
+ * @date 2015
+ */
 
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 
-#include "veriblock/crypto/compiler.h"
+#include "veriblock/crypto/compiler.hpp"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace altintegration {
+namespace progpow {
 
 #define FNV_PRIME 0x01000193
 
-static inline uint32_t fnv_hash(uint32_t const x, uint32_t const y)
-{
-	return x * FNV_PRIME ^ y;
+inline uint32_t fnv_hash(uint32_t const x, uint32_t const y) {
+  return x * FNV_PRIME ^ y;
 }
 
-#ifdef __cplusplus
-}
-#endif
+}  // namespace progpow
+}  // namespace altintegration

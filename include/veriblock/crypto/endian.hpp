@@ -1,8 +1,8 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
-#include "compiler.h"
+#include "compiler.hpp"
 
 #if defined(__MINGW32__) || defined(_WIN32)
 #define LITTLE_ENDIAN 1234

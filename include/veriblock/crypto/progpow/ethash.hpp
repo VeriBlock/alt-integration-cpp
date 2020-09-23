@@ -15,33 +15,27 @@
   along with ethash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/** @file ethash.h
- * @date 2015
- */
 #pragma once
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#include <cstdint>
+#include <string>
 
-#define ETHASH_REVISION 23
-#define ETHASH_DATASET_BYTES_INIT 1073741824U  // 2**30
-#define ETHASH_DATASET_BYTES_GROWTH 8388608U   // 2**23
-#define ETHASH_CACHE_BYTES_INIT 1073741824U    // 2**24
-#define ETHASH_CACHE_BYTES_GROWTH 131072U      // 2**17
-#define ETHASH_EPOCH_LENGTH 8000U
-#define ETHASH_EPOCH_OFFSET 323
-#define ETHASH_MIX_BYTES 128
-#define ETHASH_HASH_BYTES 64
-#define ETHASH_DATASET_PARENTS 256
-#define ETHASH_CACHE_ROUNDS 3
-#define ETHASH_ACCESSES 64
-#define ETHASH_DAG_NODE_SIZE (ETHASH_HASH_BYTES / 4)
+#define VBK_ETHASH_REVISION 23
+#define VBK_ETHASH_DATASET_BYTES_INIT 1073741824U  // 2**30
+#define VBK_ETHASH_DATASET_BYTES_GROWTH 8388608U   // 2**23
+#define VBK_ETHASH_CACHE_BYTES_INIT 1073741824U    // 2**24
+#define VBK_ETHASH_CACHE_BYTES_GROWTH 131072U      // 2**17
+#define VBK_ETHASH_EPOCH_LENGTH 8000U
+#define VBK_ETHASH_EPOCH_OFFSET 323
+#define VBK_ETHASH_MIX_BYTES 128
+#define VBK_ETHASH_HASH_BYTES 64
+#define VBK_ETHASH_DATASET_PARENTS 256
+#define VBK_ETHASH_CACHE_ROUNDS 3
+#define VBK_ETHASH_ACCESSES 64
+#define VBK_ETHASH_DAG_NODE_SIZE (VBK_ETHASH_HASH_BYTES / 4)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace altintegration {
+namespace progpow {
 
 uint64_t ethash_get_epoch(uint64_t block);
 
@@ -65,7 +59,7 @@ typedef struct ethash_return_value {
 } ethash_return_value_t;
 
 typedef struct ethash_dag_node {
-  uint32_t words[ETHASH_DAG_NODE_SIZE];
+  uint32_t words[VBK_ETHASH_DAG_NODE_SIZE];
 } ethash_dag_node_t;
 
 void ethash_calculate_dag_node(ethash_dag_node_t* out,
@@ -92,6 +86,5 @@ void ethash_light_delete(ethash_light_t light);
  */
 ethash_h256_t ethash_get_seedhash(uint64_t block_number);
 
-#ifdef __cplusplus
-}
-#endif
+}  // namespace progpow
+}  // namespace altintegration

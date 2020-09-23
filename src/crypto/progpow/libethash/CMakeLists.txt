@@ -1,10 +1,5 @@
 add_library(ethash OBJECT
-        internal.c
-        sha3.c
-        data_sizes.c
+        internal.cpp
+        sha3.cpp
+        data_sizes.cpp
         )
-disable_clang_tidy(ethash)
-
-if(NOT MSVC)
-    target_compile_options(ethash PRIVATE -std=gnu99)
-endif()

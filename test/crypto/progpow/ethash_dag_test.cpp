@@ -3,18 +3,38 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <gtest/gtest.h>
-#include <veriblock/crypto/progpow/ethash.h>
 
 #include <veriblock/crypto/progpow.hpp>
+#include <veriblock/crypto/progpow/ethash.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/serde.hpp>
 #include <veriblock/strutil.hpp>
 #include <veriblock/uint.hpp>
 
+#include "ethash_expected_cache.hpp"
 #include "ethash_expected_dag.hpp"
 #include "progpow_expected_mix_state.hpp"
 
 using namespace altintegration;
+using namespace progpow;
+
+// added to get access to this function, as it is not static and has no
+// declaration in header
+namespace altintegration::progpow {
+#define PROGPOW_LANES 16
+#define PROGPOW_REGS 32
+
+std::vector<uint32_t> createDagCache(ethash_light_t light);
+void progPowLoop(const uint64_t block_number,
+                 const uint32_t loop,
+                 uint32_t mix[PROGPOW_LANES][PROGPOW_REGS],
+                 const std::vector<uint32_t>& dag,
+                 ethash_light_t light);
+
+uint64_t ethash_get_datasize(uint64_t const block_number);
+uint64_t ethash_get_cachesize(uint64_t const block_number);
+
+}  // namespace altintegration::progpow
 
 TEST(Ethash, CalculateDagNode) {
   uint64_t blockNumber = 1000000;
@@ -25,7 +45,7 @@ TEST(Ethash, CalculateDagNode) {
   ethash_calculate_dag_node(&node, 100, light.get());
 
   WriteStream w;
-  for (int i = 0; i < ETHASH_DAG_NODE_SIZE; i++) {
+  for (int i = 0; i < VBK_ETHASH_DAG_NODE_SIZE; i++) {
     w.writeLE<uint32_t>(node.words[i]);
   }
 
@@ -35,12 +55,6 @@ TEST(Ethash, CalculateDagNode) {
   std::string actual = HexStr(w.data());
 
   ASSERT_EQ(actual, expected);
-}
-
-// added to access these functions
-extern "C" {
-uint64_t ethash_get_datasize(uint64_t const block_number);
-uint64_t ethash_get_cachesize(uint64_t const block_number);
 }
 
 static const int EPOCH_SIZE = 8000;
@@ -91,26 +105,12 @@ TEST(Ethash, DAGSize) {
   ASSERT_EQ(ethash_get_datasize(1000000ULL), 4831835776ULL);
 }
 
-// added to get access to this function, as it is not static and has no
-// declaration in header
-namespace altintegration::progpow {
-#define PROGPOW_LANES 16
-#define PROGPOW_REGS 32
-
-std::vector<uint32_t> createDagCache(ethash_light_t light);
-void progPowLoop(const uint64_t block_number,
-                 const uint32_t loop,
-                 uint32_t mix[PROGPOW_LANES][PROGPOW_REGS],
-                 const std::vector<uint32_t>& dag,
-                 ethash_light_t light);
-}  // namespace altintegration::progpow
-
-struct DagTest: public ::testing::Test {
+struct DagTest : public ::testing::Test {
   const uint64_t blockNumber = 1000000;
   std::shared_ptr<ethash_light> light;
 
-  DagTest(){
-    if(light == nullptr) {
+  DagTest() {
+    if (light == nullptr) {
       light = std::shared_ptr<ethash_light>(ethash_light_new(blockNumber),
                                             ethash_light_delete);
 
@@ -120,7 +120,6 @@ struct DagTest: public ::testing::Test {
 
   std::vector<uint32_t> dag;
 };
-
 
 TEST_F(DagTest, CreateDagCache) {
   ASSERT_EQ(dag.size(), 16384);
@@ -142,4 +141,18 @@ TEST_F(DagTest, Loop) {
     ASSERT_EQ(expected_mix[i],
               (std::vector<uint32_t>{mix[i], mix[i] + PROGPOW_REGS}));
   }
+}
+
+TEST(Ethash, CreateCache) {
+  // create cache for block number = 1
+  const uint64_t blockNumber = 1;
+  std::shared_ptr<ethash_light> light(ethash_light_new(blockNumber),
+                                      ethash_light_delete);
+  uint8_t* b = static_cast<uint8_t*>(light->cache);
+  auto first1000ints = HexStr(b, b + 4 * 1000);
+
+  // 14778256 uint32_ts
+  ASSERT_EQ(light->cache_size, 14778256 * 4);
+  ASSERT_EQ(light->block_number, blockNumber);
+  ASSERT_EQ(first1000ints, ethash_expected_cache);
 }

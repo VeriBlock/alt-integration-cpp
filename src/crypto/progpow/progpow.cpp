@@ -12,8 +12,8 @@
 #include <veriblock/serde.hpp>
 #include <veriblock/slice.hpp>
 
-#include "libethash/internal.h"
-#include "veriblock/crypto/progpow/ethash.h"
+#include "libethash/internal.hpp"
+#include "veriblock/crypto/progpow/ethash.hpp"
 #include "veriblock/crypto/progpow/kiss99.hpp"
 
 #define PROGPOW_PERIOD 10
@@ -314,7 +314,7 @@ void progPowLoop(const uint64_t block_number,
   int mix_seq_src_cnt = 0;
 
   uint64_t prog_seed =
-      (block_number + ETHASH_EPOCH_LENGTH * ETHASH_EPOCH_OFFSET) /
+      (block_number + VBK_ETHASH_EPOCH_LENGTH * VBK_ETHASH_EPOCH_OFFSET) /
       PROGPOW_PERIOD;
   kiss99_t prog_rnd = progPowInit(prog_seed, mix_seq_src, mix_seq_dst);
 
@@ -424,12 +424,12 @@ uint256 getVbkHeaderHash(Slice<const uint8_t> header) {
 }
 
 std::vector<uint32_t> createDagCache(ethash_light_t light) {
-  std::vector<uint32_t> cdag(ETHASH_HASH_BYTES * DATASET_PARENTS, 0);
+  std::vector<uint32_t> cdag(VBK_ETHASH_HASH_BYTES * DATASET_PARENTS, 0);
 
   ethash_dag_node_t node;
   for (size_t i = 0, total = cdag.size() / 16; i < total; ++i) {
     ethash_calculate_dag_node(&node, uint32_t(i), light);
-    for (int j = 0; j < ETHASH_DAG_NODE_SIZE; j++) {
+    for (int j = 0; j < VBK_ETHASH_DAG_NODE_SIZE; j++) {
       cdag[i * 16 + j] = node.words[j];
     }
   }
@@ -485,8 +485,8 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   nonce &= 0x000000FFFFFFFFFFLL;
 
   // build cache
-  std::shared_ptr<ethash_light> light(ethash_light_new(height),
-                                      ethash_light_delete);
+  std::shared_ptr<progpow::ethash_light> light(
+      progpow::ethash_light_new(height), progpow::ethash_light_delete);
 
   auto dag = progpow::createDagCache(light.get());
   auto hash = progpow::progPowHash(height, nonce, headerHash, dag, light.get());

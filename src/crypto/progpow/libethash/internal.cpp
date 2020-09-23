@@ -14,37 +14,36 @@
   You should have received a copy of the GNU General Public License
   along with cpp-ethereum.	If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file internal.c
- * @author Tim Hughes <tim@twistedfury.com>
- * @author Matthew Wampler-Doty
- * @date 2015
- */
-
-#include "internal.h"
+#include "internal.hpp"
 
 #include <assert.h>
 #include <inttypes.h>
 #include <stddef.h>
 
-#include "data_sizes.h"
-#include "fnv.h"
-#include "sha3.h"
-#include "veriblock/crypto/compiler.h"
-#include "veriblock/crypto/endian.h"
-#include "veriblock/crypto/progpow/ethash.h"
+#include <cstring>
+
+#include "data_sizes.hpp"
+#include "fnv.hpp"
+#include "sha3.hpp"
+#include "veriblock/crypto/compiler.hpp"
+#include "veriblock/crypto/endian.hpp"
+#include "veriblock/crypto/progpow/ethash.hpp"
+
+namespace altintegration {
+namespace progpow {
 
 uint64_t ethash_get_epoch(uint64_t block) {
-  return (block / ETHASH_EPOCH_LENGTH) + ETHASH_EPOCH_OFFSET;
+  return (block / VBK_ETHASH_EPOCH_LENGTH) + VBK_ETHASH_EPOCH_OFFSET;
 }
 
 uint64_t ethash_get_datasize(uint64_t const block_number) {
-  assert(block_number / ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
-  return dag_sizes[block_number / ETHASH_EPOCH_LENGTH];
+  assert(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
+  return dag_sizes[block_number / VBK_ETHASH_EPOCH_LENGTH];
 }
 
 uint64_t ethash_get_cachesize(uint64_t const block_number) {
-  assert(block_number / ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
-  return cache_sizes[block_number / ETHASH_EPOCH_LENGTH];
+  assert(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
+  return cache_sizes[block_number / VBK_ETHASH_EPOCH_LENGTH];
 }
 
 // Follows Sergio's "STRICT MEMORY HARD HASHING FUNCTIONS" (2014)
@@ -64,7 +63,7 @@ static bool ethash_compute_cache_nodes(node* const nodes,
     SHA3_512(nodes[i].bytes, nodes[i - 1].bytes, 64);
   }
 
-  for (uint32_t j = 0; j != ETHASH_CACHE_ROUNDS; j++) {
+  for (uint32_t j = 0; j != VBK_ETHASH_CACHE_ROUNDS; j++) {
     for (uint32_t i = 0; i != num_nodes; i++) {
       uint32_t const idx = nodes[i].words[0] % num_nodes;
       node data;
@@ -94,7 +93,7 @@ void ethash_calculate_dag_item(node* const ret,
   uint32_t num_parent_nodes = (uint32_t)(light->cache_size / sizeof(node));
   node const* cache_nodes = (node const*)light->cache;
   node const* init = &cache_nodes[node_index % num_parent_nodes];
-  memcpy(ret, init, sizeof(node));
+  std::memcpy(ret, init, sizeof(node));
   ret->words[0] ^= node_index;
   SHA3_512(ret->bytes, ret->bytes, sizeof(node));
 #if defined(_M_X64) && ENABLE_SSE
@@ -105,7 +104,7 @@ void ethash_calculate_dag_item(node* const ret,
   __m128i xmm3 = ret->xmm[3];
 #endif
 
-  for (uint32_t i = 0; i != ETHASH_DATASET_PARENTS; ++i) {
+  for (uint32_t i = 0; i != VBK_ETHASH_DATASET_PARENTS; ++i) {
     uint32_t parent_index =
         fnv_hash(node_index ^ i, ret->words[i % NODE_WORDS]) % num_parent_nodes;
     node const* parent = &cache_nodes[parent_index];
@@ -142,8 +141,8 @@ void ethash_calculate_dag_item(node* const ret,
 ethash_h256_t ethash_get_seedhash(uint64_t block_number) {
   ethash_h256_t ret;
   ethash_h256_reset(&ret);
-  if (block_number + (ETHASH_EPOCH_OFFSET * ETHASH_EPOCH_LENGTH) >=
-      ETHASH_EPOCH_LENGTH) {
+  if (block_number + (VBK_ETHASH_EPOCH_OFFSET * VBK_ETHASH_EPOCH_LENGTH) >=
+      VBK_ETHASH_EPOCH_LENGTH) {
     uint64_t const epochs = ethash_get_epoch(block_number);
     for (uint32_t i = 0; i < epochs; ++i) {
       SHA3_256(&ret, (uint8_t*)&ret, 32);
@@ -155,26 +154,23 @@ ethash_h256_t ethash_get_seedhash(uint64_t block_number) {
 ethash_light_t ethash_light_new_internal(uint64_t cache_size,
                                          ethash_h256_t const* seed) {
   struct ethash_light* ret;
-  ret = calloc(sizeof(*ret), 1);
+  ret = (ethash_light_t)calloc(sizeof(*ret), 1);
   if (!ret) {
     return NULL;
   }
   ret->cache = malloc((size_t)cache_size);
   if (!ret->cache) {
-    goto fail_free_light;
+    free(ret->cache);
+    return NULL;
   }
   node* nodes = (node*)ret->cache;
   if (!ethash_compute_cache_nodes(nodes, cache_size, seed)) {
-    goto fail_free_cache_mem;
+    free(ret->cache);
+    free(ret);
+    return NULL;
   }
   ret->cache_size = cache_size;
   return ret;
-
-fail_free_cache_mem:
-  free(ret->cache);
-fail_free_light:
-  free(ret);
-  return NULL;
 }
 
 ethash_light_t ethash_light_new(uint64_t block_number) {
@@ -182,6 +178,9 @@ ethash_light_t ethash_light_new(uint64_t block_number) {
   uint64_t cachesize = ethash_get_cachesize(block_number);
   ethash_light_t ret;
   ret = ethash_light_new_internal(cachesize, &seedhash);
+  if (!ret) {
+    return NULL;
+  }
   ret->block_number = block_number;
   return ret;
 }
@@ -192,3 +191,6 @@ void ethash_light_delete(ethash_light_t light) {
   }
   free(light);
 }
+
+}  // namespace progpow
+}  // namespace altintegration

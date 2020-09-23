@@ -5,10 +5,9 @@
 
 // A simple vblake Reference Implementation.
 
-#include <veriblock/crypto/vblake.h>
-
 #include <cstdio>
 #include <cstring>
+#include <veriblock/crypto/vblake.hpp>
 
 #ifndef _countof
 #define _countof(x) (sizeof(x) / sizeof((x)[0]))
