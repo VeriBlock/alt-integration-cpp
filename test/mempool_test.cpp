@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -12,6 +10,7 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
+#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -52,6 +51,39 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
     ValidationState dummy;
     alttree.setState(chain.back().getHash(), dummy);
   }
+
+  void submitATV(const ATV& atv) {
+    bool res = mempool->submit(atv, state);
+    if (!res) {
+      ASSERT_GE(state.GetPath().size(), 32);
+      std::string error = state.GetPath();
+      error = std::string{error.begin(), error.begin() + 31};
+      EXPECT_EQ(error, "pop-mempool-submit-atv-stateful");
+      state.clear();
+    }
+  }
+
+  void submitVTB(const VTB& vtb) {
+    bool res = mempool->submit(vtb, state);
+    if (!res) {
+      ASSERT_GE(state.GetPath().size(), 32);
+      std::string error = state.GetPath();
+      error = std::string{error.begin(), error.begin() + 31};
+      EXPECT_EQ(error, "pop-mempool-submit-vtb-stateful");
+      state.clear();
+    }
+  }
+
+  void submitVBK(const VbkBlock& vbk) {
+    bool res = mempool->submit(vbk, state);
+    if (!res) {
+      ASSERT_GE(state.GetPath().size(), 32);
+      std::string error = state.GetPath();
+      error = std::string{error.begin(), error.begin() + 31};
+      EXPECT_EQ(error, "pop-mempool-submit-vbk-stateful");
+      state.clear();
+    }
+  }
 };
 
 TEST_F(MemPoolFixture, removeAll_test1) {
@@ -87,14 +119,15 @@ TEST_F(MemPoolFixture, removeAll_test1) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  submitATV(atv);
+
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit<VTB>(vtb, state));
+    submitVTB(vtb);
   }
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -159,14 +192,14 @@ TEST_F(MemPoolFixture, removeAll_test2) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  submitATV(atv);
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit<VTB>(vtb, state));
+    submitVTB(vtb);
   }
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData popData = checkedGetPop();
@@ -224,14 +257,14 @@ TEST_F(MemPoolFixture, removeAll_test3) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  submitATV(atv);
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit<VTB>(vtb, state));
+    submitVTB(vtb);
   }
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -299,14 +332,14 @@ TEST_F(MemPoolFixture, removeAll_test4) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  submitATV(atv);
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit<VTB>(vtb, state));
+    submitVTB(vtb);
   }
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -323,7 +356,7 @@ TEST_F(MemPoolFixture, removeAll_test4) {
   // add same ATV again
   // TODO: we do not return false value while payloads statefully incorect
 
-  ASSERT_TRUE(mempool->submit(atv, state));
+  submitATV(atv);
   ASSERT_EQ(mempool->getMap<ATV>().size(), 0);
   ASSERT_EQ(mempool->getInFlightMap<ATV>().size(), 1);
   // ASSERT_EQ(state.GetPath(),
@@ -345,10 +378,10 @@ TEST_F(MemPoolFixture, removeAll_test4) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(vtbs);
-  EXPECT_TRUE(mempool->submit<VTB>(vtbs[0], state));
+  submitVTB(vtbs[0]);
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   popData = checkedGetPop();
@@ -394,14 +427,14 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
-  EXPECT_TRUE(mempool->submit(atv, state));
+  submitATV(atv);
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit(vtb, state));
+    submitVTB(vtb);
   }
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -422,10 +455,10 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   EXPECT_TRUE(popData.context.empty());
 
   // insert the same payloads into the mempool
-  EXPECT_TRUE(mempool->submit(atv, state));
+  submitATV(atv);
   EXPECT_EQ(mempool->getMap<ATV>().size(), 0);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(mempool->submit(vtb, state));
+    submitVTB(vtb);
     EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   }
 
@@ -449,7 +482,7 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
 
   // validate that we have valid vbk block context
   for (const auto& b : context) {
-    ASSERT_TRUE(mempool->submit<VbkBlock>(b, state)) << state.toString();
+    submitVBK(b);
   }
 
   // clean mempool
@@ -466,11 +499,10 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
   ASSERT_EQ((++context.rbegin())->height, 63);
 
   for (size_t i = 0; i < context.size() - 1; ++i) {
-    ASSERT_TRUE(mempool->submit<VbkBlock>(context[i], state))
-        << state.toString();
+    submitVBK(context[i]);
   }
 
-  EXPECT_TRUE(mempool->submit<VbkBlock>(context.back(), state));
+  submitVBK(context.back());
   EXPECT_EQ(mempool->getMap<VbkBlock>().size(), context.size() - 1);
   EXPECT_EQ(mempool->getInFlightMap<VbkBlock>().size(), 1);
 }
@@ -545,12 +577,12 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
 
   // insert the same payloads into the mempool
   payloadsProvider.write(atv);
-  EXPECT_TRUE(mempool->submit(atv, state));
+  submitATV(atv);
   EXPECT_EQ(mempool->getMap<ATV>().size(), 0);
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
     EXPECT_TRUE(checkVTB(vtb, state, popminer->getBtcParams()));
-    EXPECT_TRUE(mempool->submit(vtb, state));
+    submitVTB(vtb);
     EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   }
 }
@@ -589,14 +621,14 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
-  ASSERT_TRUE(mempool->submit<ATV>(atv, state)) << state.toString();
+  submitATV(atv);
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
-    ASSERT_TRUE(mempool->submit<VTB>(vtb, state)) << state.toString();
+    submitVTB(vtb);
   }
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    ASSERT_TRUE(mempool->submit<VbkBlock>(b, state)) << state.toString();
+    submitVBK(b);
   }
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   ASSERT_EQ(alttree.getBestChain().tip()->getHeight(), 10);
@@ -646,14 +678,17 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  submitATV(atv);
+
   payloadsProvider.write(vtb1);
-  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+  submitVTB(vtb1);
+
   payloadsProvider.write(vtb2);
-  EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
+  submitVTB(vtb2);
+
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -679,7 +714,7 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
 
   payloadsProvider.write(atv);
   payloadsProvider.write(atv.blockOfProof);
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  submitATV(atv);
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -703,7 +738,7 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
   ATV atv = popminer->applyATV(tx, state);
 
   payloadsProvider.write(atv);
-  EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+  submitATV(atv);
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -765,12 +800,12 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   payloadsProvider.write(context);
 
   {
-    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-    EXPECT_TRUE(mempool->submit<ATV>(atv2, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+    submitATV(atv1);
+    submitATV(atv2);
+    submitVTB(vtb2);
+    submitVTB(vtb1);
     for (const auto& b : context) {
-      EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+      submitVBK(b);
     }
 
     ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -793,12 +828,12 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
 
   {
     // different order
-    EXPECT_TRUE(mempool->submit<ATV>(atv2, state));
-    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+    submitATV(atv2);
+    submitATV(atv1);
+    submitVTB(vtb2);
+    submitVTB(vtb1);
     for (const auto& b : context) {
-      EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+      submitVBK(b);
     }
 
     ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -822,11 +857,11 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
 
   {
     // No ATV2
-    EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
-    EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
+    submitATV(atv1);
+    submitVTB(vtb1);
+    submitVTB(vtb2);
     for (const auto& b : context) {
-      EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+      submitVBK(b);
     }
 
     ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -912,11 +947,11 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   payloadsProvider.write(vtb1);
   payloadsProvider.write(vtb2);
   payloadsProvider.write(context);
-  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtb2, state));
+  submitATV(atv1);
+  submitVTB(vtb1);
+  submitVTB(vtb2);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -952,9 +987,9 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
 
   payloadsProvider.write(atv1);
   payloadsProvider.write(context);
-  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
+  submitATV(atv1);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -965,7 +1000,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   applyInNextBlock(v_popData);
 
   mempool->removeAll(v_popData);
-  ASSERT_TRUE(mempool->submit(atv1, state)) << state.toString();
+  submitATV(atv1);
   ASSERT_EQ(mempool->getMap<ATV>().size(), 0);
   ASSERT_EQ(mempool->getInFlightMap<ATV>().size(), 1);
 }
@@ -1000,10 +1035,10 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   payloadsProvider.write(atv1);
   payloadsProvider.write(vtb1);
   payloadsProvider.write(context);
-  EXPECT_TRUE(mempool->submit<ATV>(atv1, state));
-  EXPECT_TRUE(mempool->submit<VTB>(vtb1, state));
+  submitATV(atv1);
+  submitVTB(vtb1);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -1062,14 +1097,14 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv2);
-  EXPECT_TRUE(mempool->submit(atv2, state));
+  submitATV(atv2);
   // mempool should discard such transactions
   // EXPECT_FALSE(mempool->submit(vtb2, state)) << state.toString();
   payloadsProvider.write(vtb2);
-  EXPECT_TRUE(mempool->submit(vtb2, state));
+  submitVTB(vtb2);
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -1102,10 +1137,10 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv1);
-  EXPECT_TRUE(mempool->submit(atv1, state));
+  submitATV(atv1);
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -1126,10 +1161,10 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv2);
-  EXPECT_TRUE(mempool->submit(atv2, state));
+  submitATV(atv2);
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
@@ -1174,10 +1209,11 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
         context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
 
     payloadsProvider.write(atv);
-    EXPECT_TRUE(mempool->submit<ATV>(atv, state));
+    submitATV(atv);
+
     payloadsProvider.write(context);
     for (const auto& b : context) {
-      EXPECT_TRUE(mempool->submit<VbkBlock>(b, state));
+      submitVBK(b);
     }
   }
 
@@ -1232,14 +1268,14 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   fillVbkContext(
       context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
   for (const auto& blk : context) {
-    ASSERT_TRUE(mempool->submit<VbkBlock>(blk, state)) << state.toString();
+    submitVBK(blk);
   }
 
   ASSERT_EQ(vtbs.size(), vtbs_amount);
 
   payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
-    ASSERT_TRUE(mempool->submit<VTB>(vtb, state)) << state.toString();
+    submitVTB(vtb);
   }
 
   ASSERT_EQ(mempool->getMap<VTB>().size(), vtbs_amount);
@@ -1270,8 +1306,7 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
 
   for (size_t i = 0; i < vbk_blocks.size(); ++i) {
     payloadsProvider.write(vbk_blocks[i]);
-    EXPECT_TRUE(mempool->submit<VbkBlock>(vbk_blocks[i], state));
-    EXPECT_TRUE(state.IsValid());
+    submitVBK(vbk_blocks[i]);
   }
 
   PopData popData = checkedGetPop();
@@ -1307,10 +1342,11 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   EXPECT_EQ(vtb1.containingBlock, vtb2.containingBlock);
 
   payloadsProvider.write(vtb1);
-  ASSERT_TRUE(mempool->submit<VTB>(vtb1, state));
+  submitVTB(vtb1);
+
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    ASSERT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   PopData popData = checkedGetPop();
@@ -1323,10 +1359,10 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   mempool->removeAll(popData);
 
   payloadsProvider.write(vtb2);
-  ASSERT_TRUE(mempool->submit<VTB>(vtb2, state));
+  submitVTB(vtb2);
   payloadsProvider.write(context);
   for (const auto& b : context) {
-    ASSERT_TRUE(mempool->submit<VbkBlock>(b, state));
+    submitVBK(b);
   }
 
   popData = checkedGetPop();

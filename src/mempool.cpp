@@ -249,10 +249,9 @@ bool MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
       std::make_shared<VbkBlock>(atv->blockOfProof);
 
   // stateful validation
-  ValidationState temp_state;
-  if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, temp_state)) {
+  if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
     atvs_in_flight_[atv->getId()] = atv;
-    return true;
+    return state.Invalid("pop-mempool-submit-atv-stateful");
   }
 
   auto& rel = touchVbkPayloadRelation(blockOfProof_ptr);
@@ -285,10 +284,9 @@ bool MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
       std::make_shared<VbkBlock>(vtb->containingBlock);
 
   // for the statefully invalid payloads we just save it for the future
-  ValidationState temp_state;
-  if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, temp_state)) {
+  if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
     vtbs_in_flight_[vtb->getId()] = vtb;
-    return true;
+    return state.Invalid("pop-mempool-submit-vtb-stateful");
   }
 
   auto& rel = touchVbkPayloadRelation(containingBlock_ptr);
@@ -318,10 +316,9 @@ bool MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& blk,
   }
 
   // for the statefully invalid payloads we just save it for the future
-  ValidationState temp_state;
-  if (!mempool_tree_.acceptVbkBlock(blk, temp_state)) {
+  if (!mempool_tree_.acceptVbkBlock(blk, state)) {
     vbkblocks_in_flight_[blk->getId()] = blk;
-    return true;
+    return state.Invalid("pop-mempool-submit-vbk-stateful");
   }
 
   // stateful validation
