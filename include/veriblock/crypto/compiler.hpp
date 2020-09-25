@@ -14,9 +14,6 @@
   You should have received a copy of the GNU General Public License
   along with cpp-ethereum.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file compiler.h
- * @date 2014
- */
 #pragma once
 
 // Visual Studio doesn't support the inline keyword in C mode
