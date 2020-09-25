@@ -3,7 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/signutil.hpp"
+#include "veriblock/crypto/secp256k1.hpp"
 
 #include <utility>
 #include <veriblock/assert.hpp>

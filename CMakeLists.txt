@@ -25,6 +25,10 @@ include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(cmake/functions.cmake)
 
+has_extrinsic("__builtin_expect(0, 1);" VBK_HAS_BUILTIN_EXPECT)
+has_extrinsic("__builtin_clz(5)"        VBK_HAS_BUILTIN_CLZ)
+has_extrinsic("__builtin_popcount(5)"   VBK_HAS_BUILTIN_POPCOUNT)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -96,9 +100,10 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
         add_flag(-g)
     endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    if(WERROR)
-        add_compile_options(/WX)                      # treats all compiler warnings as errors.
-    endif()
+    # TODO: enable and fix warnings
+#    if(WERROR)
+#        add_compile_options(/WX)                      # treats all compiler warnings as errors.
+#    endif()
 
     # using Visual Studio C++
     add_flag(/W4)                      # displays level 1, level 2, and level 3 warnings, and all level 4 (informational) warnings that are not turned off by default.

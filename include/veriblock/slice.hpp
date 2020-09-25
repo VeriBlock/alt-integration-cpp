@@ -9,9 +9,9 @@
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include <ostream>
 #include <type_traits>
 #include <vector>
-#include <ostream>
 
 namespace altintegration {
 

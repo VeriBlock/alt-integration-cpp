@@ -6,12 +6,6 @@ function(vbk_define def)
     endif()
 endfunction()
 
-CHECK_CXX_SOURCE_COMPILES("int main(void) { return __builtin_expect(0, 1); }"
-        VBK_HAVE_BUILTIN_EXPECT)
-if(VBK_HAVE_BUILTIN_EXPECT)
-    vbk_define(VBK_HAVE_BUILTIN_EXPECT)
-endif()
-
 function(disable_clang_tidy target)
     set_target_properties(${target} PROPERTIES
             C_CLANG_TIDY ""
@@ -145,3 +139,10 @@ if(UNIX)
             )
 
 endif()
+
+function(has_extrinsic code OUT)
+    check_cxx_source_compiles("int main(){${code};return 0;}" ${OUT})
+    if(${OUT})
+        vbk_define(${OUT})
+    endif()
+endfunction()

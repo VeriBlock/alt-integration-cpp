@@ -7,8 +7,8 @@
 
 #include <stdexcept>
 
+#include "veriblock/crypto/secp256k1.hpp"
 #include "veriblock/entities/address.hpp"
-#include "veriblock/signutil.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {

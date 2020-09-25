@@ -8,8 +8,9 @@
 
 #include <stdexcept>
 #include <vector>
-#include "slice.hpp"
-#include "blob.hpp"
+
+#include "veriblock/blob.hpp"
+#include "veriblock/slice.hpp"
 
 namespace altintegration {
 

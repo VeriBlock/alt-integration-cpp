@@ -8,7 +8,7 @@
 
 #include <veriblock/logger.hpp>
 
-#ifdef VBK_HAVE_BUILTIN_EXPECT
+#ifdef VBK_HAS_BUILTIN_EXPECT
 // tell branch predictor that condition is always true
 #define VBK_LIKELY(condition) __builtin_expect(static_cast<bool>(condition), 1)
 #define VBK_UNLIKELY(condition) \
