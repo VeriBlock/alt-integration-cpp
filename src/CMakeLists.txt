@@ -6,8 +6,9 @@ add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
 add_subdirectory(c)
+add_subdirectory(crypto)
 
-add_library(vblake OBJECT vblake.cpp)
+add_library(vblake OBJECT crypto/vblake.cpp)
 
 add_library(strutil OBJECT
         base58.cpp
@@ -25,7 +26,7 @@ set(SOURCES
         hashutil.cpp
         stateless_validation.cpp
         arith_uint256.cpp
-        signutil.cpp
+        crypto/secp256k1.cpp
         mempool.cpp
         mempool_relations.cpp
         mock_miner.cpp
@@ -40,6 +41,8 @@ set(SOURCES
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
+        $<TARGET_OBJECTS:progpow>
+        $<TARGET_OBJECTS:ethash>
         $<TARGET_OBJECTS:veriblock-pop-c>
         )
 if(WITH_SECP256K1)

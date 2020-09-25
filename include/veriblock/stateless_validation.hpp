@@ -11,12 +11,12 @@
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
+#include "veriblock/crypto/secp256k1.hpp"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "veriblock/signutil.hpp"
 #include "veriblock/time.hpp"
 
 namespace altintegration {

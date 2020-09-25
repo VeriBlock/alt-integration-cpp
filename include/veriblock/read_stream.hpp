@@ -18,7 +18,7 @@ namespace altintegration {
 /**
  * Binary reading stream, that is useful during binary deserialization.
  */
-class ReadStream {
+struct ReadStream {
  public:
   ReadStream(const void *buff, size_t size);
 
