@@ -265,7 +265,7 @@ kiss99_t progPowInit(uint64_t prog_seed,
 }
 
 void progPowLoop(const uint64_t block_number,
-                 const uint32_t loop,
+                 const uint64_t loop,
                  uint32_t mix[PROGPOW_LANES][PROGPOW_REGS],
                  const std::vector<uint32_t>& dag,
                  ethash_light_t light) {
