@@ -2,7 +2,6 @@
 
 #include <cstring>
 
-#include "veriblock/crypto/compiler.hpp"
 #include "veriblock/crypto/endian.hpp"
 #include "veriblock/crypto/progpow/ethash.hpp"
 

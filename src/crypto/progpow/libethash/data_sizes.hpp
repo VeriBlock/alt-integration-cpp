@@ -20,7 +20,6 @@
 #include <cstdint>
 
 #include "consts.hpp"
-#include "veriblock/crypto/compiler.hpp"
 
 namespace altintegration {
 namespace progpow {

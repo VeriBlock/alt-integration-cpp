@@ -22,8 +22,6 @@
 #pragma once
 #include <cstdint>
 
-#include "veriblock/crypto/compiler.hpp"
-
 namespace altintegration {
 namespace progpow {
 

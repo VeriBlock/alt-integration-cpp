@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "veriblock/crypto/compiler.hpp"
-
 namespace altintegration {
 namespace progpow {
 

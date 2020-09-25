@@ -25,7 +25,6 @@
 #include "data_sizes.hpp"
 #include "fnv.hpp"
 #include "sha3.hpp"
-#include "veriblock/crypto/compiler.hpp"
 #include "veriblock/crypto/endian.hpp"
 #include "veriblock/crypto/progpow/ethash.hpp"
 
