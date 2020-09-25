@@ -57,11 +57,11 @@ TEST(Ethash, CalculateDagNode) {
   ASSERT_EQ(actual, expected);
 }
 
-static const int EPOCH_SIZE = 8000;
+static const uint64_t EPOCH_SIZE = 8000;
 
 TEST(Ethash, CacheSize) {
-  auto checkRange = [](int base, int expect) {
-    for (int i = base * EPOCH_SIZE; i < (base + 1) * EPOCH_SIZE; i++) {
+  auto checkRange = [](uint64_t base, uint64_t expect) {
+    for (uint64_t i = base * EPOCH_SIZE; i < (base + 1) * EPOCH_SIZE; i++) {
       ASSERT_EQ(ethash_get_cachesize(i), expect);
     }
   };
@@ -82,8 +82,8 @@ TEST(Ethash, CacheSize) {
 }
 
 TEST(Ethash, DAGSize) {
-  auto checkRange = [](int base, long expect) {
-    for (int i = base * EPOCH_SIZE; i < (base + 1) * EPOCH_SIZE; i++) {
+  auto checkRange = [](uint64_t base, uint64_t expect) {
+    for (uint64_t i = base * EPOCH_SIZE; i < (base + 1) * EPOCH_SIZE; i++) {
       ASSERT_EQ(ethash_get_datasize(i), expect);
     }
   };
