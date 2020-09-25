@@ -160,7 +160,7 @@ ethash_light_t ethash_light_new_internal(uint64_t cache_size,
   }
   ret->cache = malloc((size_t)cache_size);
   if (!ret->cache) {
-    free(ret->cache);
+    free(ret);
     return NULL;
   }
   node* nodes = (node*)ret->cache;
