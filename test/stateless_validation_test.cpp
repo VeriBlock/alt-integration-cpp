@@ -158,7 +158,7 @@ TEST_F(StatelessValidationTest, check_valid_vbk_block) {
 TEST_F(StatelessValidationTest,
        checkVbkBlock_when_checkProofOfWork_invalid_test) {
   VbkBlock block = validVTB.containingBlock;
-  block.difficulty = 999999;
+  block.setDifficulty(999999);
   ASSERT_FALSE(checkProofOfWork(block, vbk));
 }
 
@@ -175,20 +175,21 @@ TEST_F(StatelessValidationTest,
 
   ASSERT_FALSE(checkMerklePath(atv.merklePath,
                                atv.transaction.getHash(),
-                               atv.blockOfProof.merkleRoot,
+                               atv.blockOfProof.getMerkleRoot(),
                                state));
 }
 
 TEST_F(StatelessValidationTest,
        ATV_checkMerklePath_merkleRoot_dont_match_ivalid) {
   ATV atv = validATV;
-  atv.blockOfProof.merkleRoot =
-      uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
+  atv.blockOfProof.setMerkleRoot(
+      uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex));
 
   ASSERT_FALSE(checkMerklePath(atv.merklePath,
                                atv.transaction.getHash(),
-                               atv.blockOfProof.merkleRoot,
-                               state));
+                               atv.blockOfProof.getMerkleRoot(),
+                               state))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest, VTB_valid) {
@@ -203,23 +204,24 @@ TEST_F(StatelessValidationTest,
 
   ASSERT_FALSE(checkMerklePath(vtb.merklePath,
                                vtb.transaction.getHash(),
-                               vtb.containingBlock.merkleRoot,
+                               vtb.containingBlock.getMerkleRoot(),
                                state));
 }
 
 TEST_F(StatelessValidationTest,
        VTB_checkMerklePath_merkleRoot_dont_match_ivalid) {
   VTB vtb = validVTB;
-  vtb.containingBlock.merkleRoot =
-      uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex);
+  vtb.containingBlock.setMerkleRoot(
+      uint128("0356EB39B851682679F9A0131A4E4A5F"_unhex));
   ASSERT_FALSE(checkMerklePath(vtb.merklePath,
                                vtb.transaction.getHash(),
-                               vtb.containingBlock.merkleRoot,
+                               vtb.containingBlock.getMerkleRoot(),
                                state));
 }
 
 TEST_F(StatelessValidationTest, checkVbkPopTx_valid) {
-  ASSERT_TRUE(checkVbkPopTx(validVTB.transaction, state, btc)) << state.toString();
+  ASSERT_TRUE(checkVbkPopTx(validVTB.transaction, state, btc))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest, VbkPopTx_checkSignature_signature_invalid) {
@@ -252,7 +254,7 @@ TEST_F(StatelessValidationTest,
       "012A4E88ED7AB65CDFAA85DAEAB07EEA6CBA5E147F736EDD8D02C2F9DDF0DEC6"_unhex);
   ASSERT_FALSE(checkMerklePath(tx.merklePath,
                                tx.bitcoinTransaction.getHash(),
-                               tx.blockOfProof.merkleRoot,
+                               tx.blockOfProof.getMerkleRoot(),
                                state));
 }
 
@@ -263,7 +265,7 @@ TEST_F(StatelessValidationTest,
       "00000020BAA42E40345A7F826A31D37DB1A5D64B67B72732477422000000000000000000A33AD6BE0634647B26633AB85FA8DE258480BBB25E59C68E48BB0B608B12362B10919B5C6C1F2C1749C4D1F0"_unhex);
   ASSERT_FALSE(checkMerklePath(tx.merklePath,
                                tx.bitcoinTransaction.getHash(),
-                               tx.blockOfProof.merkleRoot,
+                               tx.blockOfProof.getMerkleRoot(),
                                state));
 }
 

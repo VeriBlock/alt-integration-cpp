@@ -19,12 +19,12 @@ VbkBlock GetRegTestVbkBlock() {
   //  "nonce": 1924857207
   //}
   VbkBlock block;
-  block.height = 0;
-  block.version = 2;
-  block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
-  block.timestamp = 1553699987;
-  block.difficulty = 16842752;
-  block.nonce = 0;
+  block.setHeight(0);
+  block.setVersion(2);
+  block.setMerkleRoot(uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617"));
+  block.setTimestamp(1553699987);
+  block.setDifficulty(16842752);
+  block.setNonce(0);
 
   return block;
 }

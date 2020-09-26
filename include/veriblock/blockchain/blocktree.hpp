@@ -229,11 +229,11 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     // we must know previous block
-    auto* prev = base::getBlockIndex(block->previousBlock);
+    auto* prev = base::getBlockIndex(block->getPreviousBlock());
     if (prev == nullptr) {
       return state.Invalid(
           block_t::name() + "-bad-prev-block",
-          "can not find previous block: " + HexStr(block->previousBlock));
+          "can not find previous block: " + HexStr(block->getPreviousBlock()));
     }
 
     if (shouldContextuallyCheck &&

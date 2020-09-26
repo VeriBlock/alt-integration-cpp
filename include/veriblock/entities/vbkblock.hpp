@@ -150,6 +150,30 @@ struct VbkBlock {
            int32_t diff,
            uint64_t nonce);
 
+  int32_t getHeight() const { return height; }
+  int16_t getVersion() const { return version; }
+  uint96 getPreviousBlock() const { return previousBlock; }
+  keystone_t getPreviousKeystone() const { return previousKeystone; }
+  keystone_t getSecondPreviousKeystone() const {
+    return secondPreviousKeystone;
+  }
+  uint128 getMerkleRoot() const { return merkleRoot; }
+  int32_t getTimestamp() const { return timestamp; }
+  uint64_t getNonce() const { return nonce; }
+
+  void setHeight(int32_t h);
+  void setVersion(int16_t v);
+  void setPreviousBlock(const uint96& prev);
+  void setPreviousKeystone(const keystone_t& ks);
+  void setSecondPreviousKeystone(const keystone_t& ks);
+  void setMerkleRoot(const uint128& mroot);
+  void setTimestamp(int32_t ts);
+  void setDifficulty(int32_t diff);
+  void setNonce(uint64_t nnc);
+
+ private:
+  static const std::string _name;
+
   int32_t height{};
   int16_t version{};
   uint96 previousBlock{};
@@ -160,10 +184,13 @@ struct VbkBlock {
   int32_t difficulty{};
   uint64_t nonce{};
 
- private:
-  static const std::string _name;
-
   mutable hash_t hash_{};
+
+  void invalidateHash() { hash_.fill(0); }
+
+  friend bool DeserializeRaw(ReadStream& stream,
+                             VbkBlock& out,
+                             ValidationState& state);
 };
 
 template <typename JsonValue>
@@ -171,16 +198,16 @@ JsonValue ToJSON(const VbkBlock& b) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putStringKV(obj, "id", HexStr(b.getId()));
   json::putStringKV(obj, "hash", HexStr(b.getHash()));
-  json::putIntKV(obj, "height", b.height);
-  json::putIntKV(obj, "version", b.version);
-  json::putStringKV(obj, "previousBlock", HexStr(b.previousBlock));
-  json::putStringKV(obj, "previousKeystone", HexStr(b.previousKeystone));
+  json::putIntKV(obj, "height", b.getHeight());
+  json::putIntKV(obj, "version", b.getVersion());
+  json::putStringKV(obj, "previousBlock", HexStr(b.getPreviousBlock()));
+  json::putStringKV(obj, "previousKeystone", HexStr(b.getPreviousKeystone()));
   json::putStringKV(
-      obj, "secondPreviousKeystone", HexStr(b.secondPreviousKeystone));
-  json::putStringKV(obj, "merkleRoot", HexStr(b.merkleRoot));
+      obj, "secondPreviousKeystone", HexStr(b.getSecondPreviousKeystone()));
+  json::putStringKV(obj, "merkleRoot", HexStr(b.getMerkleRoot()));
   json::putIntKV(obj, "timestamp", b.getBlockTime());
   json::putIntKV(obj, "difficulty", b.getDifficulty());
-  json::putIntKV(obj, "nonce", b.nonce);
+  json::putIntKV(obj, "nonce", b.getNonce());
   return obj;
 }
 

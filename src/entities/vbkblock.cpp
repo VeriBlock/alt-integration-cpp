@@ -153,6 +153,11 @@ bool operator==(const VbkBlock& a, const VbkBlock& b) {
 
 bool operator!=(const VbkBlock& a, const VbkBlock& b) { return !(a == b); }
 
+void VbkBlock::setNonce(uint64_t nnc) {
+  nonce = nnc;
+  invalidateHash();
+}
+
 bool DeserializeRaw(ReadStream& stream, VbkBlock& out, ValidationState& state) {
   VbkBlock block{};
   if (!stream.readBE<int32_t>(block.height, state)) {
@@ -195,6 +200,38 @@ bool DeserializeRaw(ReadStream& stream, VbkBlock& out, ValidationState& state) {
   }
   out = block;
   return true;
+}
+void VbkBlock::setHeight(int32_t h) {
+  height = h;
+  invalidateHash();
+}
+void VbkBlock::setVersion(int16_t v) {
+  version = v;
+  invalidateHash();
+}
+void VbkBlock::setPreviousBlock(const uint96& prev) {
+  previousBlock = prev;
+  invalidateHash();
+}
+void VbkBlock::setPreviousKeystone(const VbkBlock::keystone_t& ks) {
+  previousKeystone = ks;
+  invalidateHash();
+}
+void VbkBlock::setSecondPreviousKeystone(const VbkBlock::keystone_t& ks) {
+  secondPreviousKeystone = ks;
+  invalidateHash();
+}
+void VbkBlock::setMerkleRoot(const uint128& mroot) {
+  merkleRoot = mroot;
+  invalidateHash();
+}
+void VbkBlock::setTimestamp(int32_t ts) {
+  timestamp = ts;
+  invalidateHash();
+}
+void VbkBlock::setDifficulty(int32_t diff) {
+  difficulty = diff;
+  invalidateHash();
 }
 
 bool Deserialize(ReadStream& stream, VbkBlock& out, ValidationState& state) {

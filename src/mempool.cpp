@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -80,7 +81,7 @@ PopData MemPool::getPop() {
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
   std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
-    return a.second->header->height < b.second->header->height;
+    return a.second->header->getHeight() < b.second->header->getHeight();
   });
 
   PopData ret = generatePopData(blocks, mempool_tree_.alt().getParams());
@@ -114,7 +115,7 @@ void MemPool::vacuum(const PopData& pop) {
     auto maxReorgBlocks = vbk.getParams().getMaxReorgBlocks();
     auto& rel = *it->second;
 
-    bool tooOld = tip->getHeight() - maxReorgBlocks > rel.header->height;
+    bool tooOld = tip->getHeight() - maxReorgBlocks > rel.header->getHeight();
     if (tooOld) {
       // VBK block is too old to be included or modified
       it = removeRelation(it);
@@ -343,7 +344,7 @@ void MemPool::resubmit_payloads() {
   std::vector<P1> blocks(vbkblocks_in_flight_.begin(),
                          vbkblocks_in_flight_.end());
   std::sort(blocks.begin(), blocks.end(), [](const P1& a, const P1& b) -> bool {
-    return a.second->height < b.second->height;
+    return a.second->getHeight() < b.second->getHeight();
   });
   for (const auto& pair : blocks) {
     submit<VbkBlock>(pair.second, state, false);
@@ -353,7 +354,8 @@ void MemPool::resubmit_payloads() {
   using P2 = std::pair<vtb_map_t::key_type, vtb_map_t::mapped_type>;
   std::vector<P2> vtbs(vtbs_in_flight_.begin(), vtbs_in_flight_.end());
   std::sort(vtbs.begin(), vtbs.end(), [](const P2& a, const P2& b) -> bool {
-    return a.second->containingBlock.height < b.second->containingBlock.height;
+    return a.second->containingBlock.getHeight() <
+           b.second->containingBlock.getHeight();
   });
   for (const auto& pair : vtbs) {
     submit<VTB>(pair.second, state, false);
@@ -363,7 +365,8 @@ void MemPool::resubmit_payloads() {
   using P3 = std::pair<atv_map_t::key_type, atv_map_t::mapped_type>;
   std::vector<P3> atvs(atvs_in_flight_.begin(), atvs_in_flight_.end());
   std::sort(atvs.begin(), atvs.end(), [](const P3& a, const P3& b) -> bool {
-    return a.second->blockOfProof.height < b.second->blockOfProof.height;
+    return a.second->blockOfProof.getHeight() <
+           b.second->blockOfProof.getHeight();
   });
   for (const auto& pair : atvs) {
     submit<ATV>(pair.second, state, false);

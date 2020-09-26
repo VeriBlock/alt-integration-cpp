@@ -491,14 +491,14 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
   mempool->clear();
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 
-  ASSERT_EQ(context.back().height, 65);
-  ASSERT_EQ((++context.rbegin())->height, 64);
+  ASSERT_EQ(context.back().getHeight(), 65);
+  ASSERT_EQ((++context.rbegin())->getHeight(), 64);
 
   // corrupt continuity of the vbk blocks
   context.erase(--(--context.end()));
   ASSERT_EQ(context.size(), 64);
-  ASSERT_EQ(context.back().height, 65);
-  ASSERT_EQ((++context.rbegin())->height, 63);
+  ASSERT_EQ(context.back().getHeight(), 65);
+  ASSERT_EQ((++context.rbegin())->getHeight(), 63);
 
   for (size_t i = 0; i < context.size() - 1; ++i) {
     submitVBK(context[i]);

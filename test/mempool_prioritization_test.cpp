@@ -39,12 +39,12 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
     BlockIndex<VbkBlock>* blk = popminer->mineVbkBlocks(tip, 1);
     EXPECT_TRUE(alttree.vbk().acceptBlock(blk->getHeader(), state));
     EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
-              GetRegTestVbkBlock().height);
+              GetRegTestVbkBlock().getHeight());
     for (size_t i = 1; i < amount; ++i) {
       blk = popminer->mineVbkBlocks(*blk, 1);
       EXPECT_TRUE(alttree.vbk().acceptBlock(blk->getHeader(), state));
       EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
-                GetRegTestVbkBlock().height);
+                GetRegTestVbkBlock().getHeight());
     }
     return blk;
   }

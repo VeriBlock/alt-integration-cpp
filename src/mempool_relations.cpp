@@ -16,7 +16,7 @@ PopData VbkPayloadsRelations::toPopData() const {
   // we sort VTBs in ascending order of their containing VBK blocks to guarantee
   // that within a single block they all are connected.
   std::sort(pop.vtbs.begin(), pop.vtbs.end(), [](const VTB& a, const VTB& b) {
-    return a.containingBlock.height < b.containingBlock.height;
+    return a.containingBlock.getHeight() < b.containingBlock.getHeight();
   });
 
   return pop;

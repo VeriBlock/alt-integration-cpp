@@ -67,6 +67,8 @@ struct Blob {
     return ret;
   }
 
+  void fill(uint8_t value) { std::fill(begin(), end(), value); }
+
   iterator begin() noexcept { return data_.begin(); }
   const_iterator begin() const noexcept { return data_.begin(); }
   iterator end() noexcept { return data_.end(); }
@@ -96,6 +98,18 @@ struct Blob {
           fmt::sprintf("bad hex length %d, expected %d", hex.size(), N * 2));
     }
     return fromHex(hex);
+  }
+
+  void setNull() { fill(0); }
+
+  bool isNull() const {
+    for (uint8_t i : data_) {
+      if (i != 0) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   Blob<N>& operator=(const Blob<N>& other) {

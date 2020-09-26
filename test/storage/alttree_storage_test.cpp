@@ -209,7 +209,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
 
   popData.context.clear();
   // corrupt vtb
-  popData.vtbs[0].containingBlock.merkleRoot = uint128();
+  popData.vtbs[0].containingBlock.setMerkleRoot(uint128());
 
   containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);

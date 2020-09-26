@@ -102,8 +102,8 @@ TEST_P(AcceptTest, DISABLED_BootstrapWithChain) {
 
   VbkBlockTree tree(*value.params, btcparam, storage, payloadsIndex);
 
-  ASSERT_TRUE(
-      tree.bootstrapWithChain(bootstrapChain[0].height, bootstrapChain, state))
+  ASSERT_TRUE(tree.bootstrapWithChain(
+      bootstrapChain[0].getHeight(), bootstrapChain, state))
       << state.GetPath();
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
@@ -112,7 +112,7 @@ TEST_P(AcceptTest, DISABLED_BootstrapWithChain) {
   EXPECT_EQ(tree.getBestChain().tip()->getHeader(),
             bootstrapChain[bootstrapChain.size() - 1]);
   EXPECT_EQ(tree.getBestChain().tip()->getHeight(),
-            bootstrapChain[bootstrapChain.size() - 1].height);
+            bootstrapChain[bootstrapChain.size() - 1].getHeight());
 
   for (const auto& block : acceptChain) {
     ASSERT_TRUE(tree.acceptBlock(block, state))
@@ -127,7 +127,7 @@ TEST_P(AcceptTest, DISABLED_BootstrapWithChain) {
       EXPECT_NE(tree.getBlockIndex(block.getHash()), nullptr);
     }
 
-    EXPECT_EQ(tree.getBestChain().tip()->getHeight(), block.height);
+    EXPECT_EQ(tree.getBestChain().tip()->getHeight(), block.getHeight());
     ++totalBlocks;
   }
 }

@@ -1,5 +1,6 @@
-#include "veriblock/blockchain/blockchain_util.hpp"
 #include "veriblock/blockchain/mempool_block_tree.hpp"
+
+#include "veriblock/blockchain/blockchain_util.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/keystone_util.hpp"
 
@@ -62,8 +63,8 @@ bool MemPoolBlockTree::checkContextually(const VTB& vtb,
                      duplicate->toShortPrettyString()));
   }
 
-  if (vtb.containingBlock.height >
-      window + vtb.transaction.publishedBlock.height) {
+  if (vtb.containingBlock.getHeight() >
+      window + vtb.transaction.publishedBlock.getHeight()) {
     return state.Invalid(
         "vtb-expired",
         fmt::sprintf("VTB=%s expired %s",
@@ -163,8 +164,8 @@ bool MemPoolBlockTree::areWeaklyEquivalent(const VTB& vtb1, const VTB& vtb2) {
                      tree_->vbk());
 
   bool are_the_same_keystone_period =
-      areOnSameKeystoneInterval(vtb1.transaction.publishedBlock.height,
-                                vtb2.transaction.publishedBlock.height,
+      areOnSameKeystoneInterval(vtb1.transaction.publishedBlock.getHeight(),
+                                vtb2.transaction.publishedBlock.getHeight(),
                                 tree_->vbk().getParams().getKeystoneInterval());
 
   return ((vtb1.transaction.publishedBlock ==
@@ -198,13 +199,13 @@ int MemPoolBlockTree::weaklyCompare(const VTB& vtb1, const VTB& vtb2) {
     return 1;
   }
 
-  if (vtb1.transaction.publishedBlock.height >
-      vtb2.transaction.publishedBlock.height) {
+  if (vtb1.transaction.publishedBlock.getHeight() >
+      vtb2.transaction.publishedBlock.getHeight()) {
     return -1;
   }
 
-  if (vtb1.transaction.publishedBlock.height <
-      vtb2.transaction.publishedBlock.height) {
+  if (vtb1.transaction.publishedBlock.getHeight() <
+      vtb2.transaction.publishedBlock.getHeight()) {
     return 1;
   }
 
