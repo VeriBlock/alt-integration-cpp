@@ -49,8 +49,8 @@ TEST_F(AltTreeRepositoryTest, ValidBlocks) {
                       this->btcparam,
                       popminer->getPayloadsProvider(),
                       payloadsIndex};
-  newvbk.btc().bootstrapWithGenesis(this->state);
-  newvbk.bootstrapWithGenesis(this->state);
+  newvbk.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
+  newvbk.bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
 
   ASSERT_TRUE(LoadTreeWrapper(newvbk.btc())) << this->state.toString();
   ASSERT_TRUE(LoadTreeWrapper(newvbk)) << this->state.toString();
@@ -80,7 +80,7 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   chain.push_back(containingBlock);
 
   PopData altPayloads1 = this->generateAltPayloads(
-      {tx}, this->vbkparam.getGenesisBlock().getHash());
+      {tx}, GetRegTestVbkBlock().getHash());
 
   // mine 1 VBK blocks
   this->popminer->mineVbkBlocks(1);
@@ -96,8 +96,8 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
-  reloadedAltTree.btc().bootstrapWithGenesis(this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
+  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
+  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   reloadedAltTree.bootstrap(this->state);
 
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
@@ -133,7 +133,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   chain.push_back(containingBlock);
 
   PopData altPayloads1 = this->generateAltPayloads(
-      {tx1, tx2}, this->vbkparam.getGenesisBlock().getHash());
+      {tx1, tx2}, GetRegTestVbkBlock().getHash());
 
   // mine 1 VBK blocks
   this->popminer->mineVbkBlocks(1);
@@ -150,8 +150,8 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
-  reloadedAltTree.btc().bootstrapWithGenesis(this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
+  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
+  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   reloadedAltTree.bootstrap(this->state);
 
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
@@ -195,7 +195,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   popData.vtbs = vtbs;
   this->fillVbkContext(
       popData.context,
-      this->popminer->vbk().getParams().getGenesisBlock().getHash(),
+      GetRegTestVbkBlock().getHash(),
       this->popminer->vbk());
   auto containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -209,7 +209,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
 
   popData.context.clear();
   // corrupt vtb
-  popData.vtbs[0].containingBlock.merkleRoot = uint128();
+  popData.vtbs[0].containingBlock.setMerkleRoot(uint128());
 
   containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -226,8 +226,8 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
-  reloadedAltTree.btc().bootstrapWithGenesis(this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(this->state);
+  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
+  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   reloadedAltTree.bootstrap(this->state);
 
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));

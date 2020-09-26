@@ -57,7 +57,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbktx1 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
   auto atv1 = popminer->applyATV(vbktx1, state);
-  ASSERT_EQ(atv1.blockOfProof.height, 42);
+  ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
   // mine 10 more blocks on top of tipB
   tipB = popminer->mineVbkBlocks(*tipB, 10);
@@ -81,13 +81,13 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbktx2 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
   auto atv2 = popminer->applyATV(vbktx1, state);
-  ASSERT_EQ(atv1.blockOfProof.height, 42);
+  ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
   auto vtb2 = popminer->vbkPayloads[vtbcontaining.getHash()][1];
   PopData p2;
   p2.atvs = {atv2};
   // break VTB2: break hash of containing block
-  vtb2.containingBlock.previousBlock = uint96::fromHex("abcdef");
+  vtb2.containingBlock.setPreviousBlock(uint96::fromHex("abcdef"));
   p2.vtbs = {vtb2};
 
   ASSERT_TRUE(AddPayloads(chain[10].getHash(), p2));
@@ -121,14 +121,14 @@ TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
       btcTip->getHeader(),
       btcTx,
       endorsedBlock->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
   tipA = popminer->mineVbkBlocks(*tipA, 1);
 
   popminer->createVbkPopTxEndorsingVbkBlock(
       btcTip->getHeader(),
       btcTx,
       endorsedBlock->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
   tipB = popminer->mineVbkBlocks(*tipB, 1);
 
   ASSERT_TRUE(tipA->isValid());

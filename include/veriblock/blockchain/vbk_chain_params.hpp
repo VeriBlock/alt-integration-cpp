@@ -29,11 +29,12 @@ struct VbkNetworkType {
  */
 struct VbkChainParams {
   virtual ~VbkChainParams() = default;
+  virtual int getProgPowForkHeight() const = 0;
   virtual std::string networkName() const = 0;
   virtual uint256 getMinimumDifficulty() const = 0;
   virtual VbkNetworkType getTransactionMagicByte() const noexcept = 0;
   virtual bool getPowNoRetargeting() const noexcept = 0;
-  virtual VbkBlock getGenesisBlock() const noexcept = 0;
+//  virtual VbkBlock getGenesisBlock() const noexcept = 0;
   virtual uint32_t getRetargetPeriod() const noexcept = 0;
   virtual uint32_t getTargetBlockTime() const noexcept = 0;
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
@@ -81,6 +82,8 @@ struct VbkChainParams {
 struct VbkChainParamsMain : public VbkChainParams {
   ~VbkChainParamsMain() override = default;
 
+  int getProgPowForkHeight() const override { return 1512000; }
+
   std::string networkName() const override { return "main"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
@@ -95,31 +98,31 @@ struct VbkChainParamsMain : public VbkChainParams {
     return VbkNetworkType(false, 0);
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
-  VbkBlock getGenesisBlock() const noexcept override {
-    //{
-    //  "height": 0,
-    //  "version": 2,
-    //  "previousBlock": "000000000000000000000000",
-    //  "previousKeystone": "000000000000000000",
-    //  "secondPreviousKeystone": "000000000000000000",
-    //  "merkleRoot": "a7e5f2b7ec94291767b4d67b4a33682d",
-    //  "timestamp": 1553497611,
-    //  "difficulty": 100722900,
-    //  "nonce": 289244493
-    //}
-    VbkBlock block;
-    block.height = 0;
-    block.version = 2;
-    block.merkleRoot = uint128::fromHex("a7e5f2b7ec94291767b4d67b4a33682d");
-    block.timestamp = 1553497611;
-    block.difficulty = 100722900;
-    block.nonce = 289244493;
-
-    VBK_ASSERT(block.getHash().toHex() ==
-               "0000000000f4fd66b91f0649bb3fcb137823c5ce317c105c");
-
-    return block;
-  }
+//  VbkBlock getGenesisBlock() const noexcept override {
+//    //{
+//    //  "height": 0,
+//    //  "version": 2,
+//    //  "previousBlock": "000000000000000000000000",
+//    //  "previousKeystone": "000000000000000000",
+//    //  "secondPreviousKeystone": "000000000000000000",
+//    //  "merkleRoot": "a7e5f2b7ec94291767b4d67b4a33682d",
+//    //  "timestamp": 1553497611,
+//    //  "difficulty": 100722900,
+//    //  "nonce": 289244493
+//    //}
+//    VbkBlock block;
+//    block.height = 0;
+//    block.version = 2;
+//    block.merkleRoot = uint128::fromHex("a7e5f2b7ec94291767b4d67b4a33682d");
+//    block.timestamp = 1553497611;
+//    block.difficulty = 100722900;
+//    block.nonce = 289244493;
+//
+//    VBK_ASSERT(block.getHash().toHex() ==
+//               "0000000000f4fd66b91f0649bb3fcb137823c5ce317c105c");
+//
+//    return block;
+//  }
 
   bool EnableTimeAdjustment() const noexcept override { return true; }
 
@@ -136,6 +139,8 @@ struct VbkChainParamsMain : public VbkChainParams {
 struct VbkChainParamsTest : public VbkChainParams {
   ~VbkChainParamsTest() override = default;
 
+  int getProgPowForkHeight() const override { return 872000; }
+
   std::string networkName() const override { return "test"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
@@ -150,31 +155,31 @@ struct VbkChainParamsTest : public VbkChainParams {
     return VbkNetworkType(true, 0xAA);
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
-  VbkBlock getGenesisBlock() const noexcept override {
-    //{
-    //  "height": 0,
-    //  "version": 2,
-    //  "previousBlock": "000000000000000000000000",
-    //  "previousKeystone": "000000000000000000",
-    //  "secondPreviousKeystone": "000000000000000000",
-    //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
-    //  "timestamp": 1570649416,
-    //  "difficulty": 67499489,
-    //  "nonce": 14304633
-    //}
-    VbkBlock block;
-    block.height = 0;
-    block.version = 2;
-    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
-    block.timestamp = 1570649416;
-    block.difficulty = 67499489;
-    block.nonce = 14304633;
-
-    VBK_ASSERT(block.getHash().toHex() ==
-               "00000017eb579ec7d0cdd63379a0615dc3d68032ce248823");
-
-    return block;
-  }
+//  VbkBlock getGenesisBlock() const noexcept override {
+//    //{
+//    //  "height": 0,
+//    //  "version": 2,
+//    //  "previousBlock": "000000000000000000000000",
+//    //  "previousKeystone": "000000000000000000",
+//    //  "secondPreviousKeystone": "000000000000000000",
+//    //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
+//    //  "timestamp": 1570649416,
+//    //  "difficulty": 67499489,
+//    //  "nonce": 14304633
+//    //}
+//    VbkBlock block;
+//    block.height = 0;
+//    block.version = 2;
+//    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
+//    block.timestamp = 1570649416;
+//    block.difficulty = 67499489;
+//    block.nonce = 14304633;
+//
+//    VBK_ASSERT(block.getHash().toHex() ==
+//               "00000017eb579ec7d0cdd63379a0615dc3d68032ce248823");
+//
+//    return block;
+//  }
 
   bool EnableTimeAdjustment() const noexcept override { return true; }
 
@@ -194,6 +199,11 @@ struct VbkChainParamsTest : public VbkChainParams {
 struct VbkChainParamsRegTest : public VbkChainParams {
   ~VbkChainParamsRegTest() override = default;
 
+  int getProgPowForkHeight() const override {
+    // never
+    return std::numeric_limits<int>::max();
+  }
+
   std::string networkName() const override { return "regtest"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override { return 0; }
@@ -208,31 +218,31 @@ struct VbkChainParamsRegTest : public VbkChainParams {
   bool EnableTimeAdjustment() const noexcept override { return false; }
 
   bool getPowNoRetargeting() const noexcept override { return true; }
-  VbkBlock getGenesisBlock() const noexcept override {
-    //{
-    //  "height": 0,
-    //  "version": 2,
-    //  "previousBlock": "000000000000000000000000",
-    //  "previousKeystone": "000000000000000000",
-    //  "secondPreviousKeystone": "000000000000000000",
-    //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
-    //  "timestamp": 1553699987,
-    //  "difficulty": 117586646,
-    //  "nonce": 1924857207
-    //}
-    VbkBlock block;
-    block.height = 0;
-    block.version = 2;
-    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
-    block.timestamp = 1553699987;
-    block.difficulty = 16842752;
-    block.nonce = 0;
-
-    VBK_ASSERT(block.getHash().toHex() ==
-               "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
-
-    return block;
-  }
+//  VbkBlock getGenesisBlock() const noexcept override {
+//    //{
+//    //  "height": 0,
+//    //  "version": 2,
+//    //  "previousBlock": "000000000000000000000000",
+//    //  "previousKeystone": "000000000000000000",
+//    //  "secondPreviousKeystone": "000000000000000000",
+//    //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
+//    //  "timestamp": 1553699987,
+//    //  "difficulty": 117586646,
+//    //  "nonce": 1924857207
+//    //}
+//    VbkBlock block;
+//    block.height = 0;
+//    block.version = 2;
+//    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
+//    block.timestamp = 1553699987;
+//    block.difficulty = 16842752;
+//    block.nonce = 0;
+//
+//    VBK_ASSERT(block.getHash().toHex() ==
+//               "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
+//
+//    return block;
+//  }
 
   uint32_t getRetargetPeriod() const noexcept override { return 100; }
 
@@ -246,6 +256,11 @@ struct VbkChainParamsRegTest : public VbkChainParams {
  */
 struct VbkChainParamsAlpha : public VbkChainParams {
   ~VbkChainParamsAlpha() override = default;
+
+  int getProgPowForkHeight() const override {
+    // never
+    return std::numeric_limits<int>::max();
+  }
 
   std::string networkName() const override { return "alpha"; }
 
@@ -263,30 +278,30 @@ struct VbkChainParamsAlpha : public VbkChainParams {
     return VbkNetworkType(true, 0xAA);
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
-  VbkBlock getGenesisBlock() const noexcept override {
-    //{
-    //  "height": 0,
-    //  "version": 2,
-    //  "previousBlock": "000000000000000000000000",
-    //  "previousKeystone": "000000000000000000",
-    //  "secondPreviousKeystone": "000000000000000000",
-    //  "merkleRoot": "b34a487a6b3a386689f59d8d2e586363",
-    //  "timestamp": 1555416021,
-    //  "difficulty": 67147926,
-    //  "nonce": 45543957
-    //}
-    VbkBlock block;
-    block.height = 0;
-    block.version = 2;
-    block.merkleRoot = uint128::fromHex("b34a487a6b3a386689f59d8d2e586363");
-    block.timestamp = 1555416021;
-    block.difficulty = 67147926;
-    block.nonce = 45543957;
-
-    VBK_ASSERT(block.getHash().toHex() ==
-               "000000701198864f3c19fb552ef9c3c10620ba8128dace8e");
-    return block;
-  }
+//  VbkBlock getGenesisBlock() const noexcept override {
+//    //{
+//    //  "height": 0,
+//    //  "version": 2,
+//    //  "previousBlock": "000000000000000000000000",
+//    //  "previousKeystone": "000000000000000000",
+//    //  "secondPreviousKeystone": "000000000000000000",
+//    //  "merkleRoot": "b34a487a6b3a386689f59d8d2e586363",
+//    //  "timestamp": 1555416021,
+//    //  "difficulty": 67147926,
+//    //  "nonce": 45543957
+//    //}
+//    VbkBlock block;
+//    block.height = 0;
+//    block.version = 2;
+//    block.merkleRoot = uint128::fromHex("b34a487a6b3a386689f59d8d2e586363");
+//    block.timestamp = 1555416021;
+//    block.difficulty = 67147926;
+//    block.nonce = 45543957;
+//
+//    VBK_ASSERT(block.getHash().toHex() ==
+//               "000000701198864f3c19fb552ef9c3c10620ba8128dace8e");
+//    return block;
+//  }
 
   uint32_t getRetargetPeriod() const noexcept override { return 100; }
 

@@ -29,12 +29,13 @@ template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     const BlockIndex<VbkBlock>& tip, const merkle_t& merkle) {
   VbkBlock block;
-  block.version = tip.getHeader().version;
-  block.previousBlock = tip.getHeader()
-                            .getHash()
-                            .template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>();
-  block.merkleRoot = merkle;
-  block.height = tip.getHeight() + 1;
+  block.setVersion(tip.getHeader().getVersion());
+  block.setPreviousBlock(
+      tip.getHeader()
+          .getHash()
+          .template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>());
+  block.setMerkleRoot(merkle);
+  block.setHeight(tip.getHeight() + 1);
   // set first previous keystone
   auto diff = tip.getHeight() % params_.getKeystoneInterval();
 
@@ -46,9 +47,9 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   if ((int32_t)diff <= tip.getHeight()) {
     auto* prevKeystoneIndex = tip.getAncestor(tip.getHeight() - diff);
     VBK_ASSERT(prevKeystoneIndex != nullptr);
-    block.previousKeystone =
+    block.setPreviousKeystone(
         prevKeystoneIndex->getHash()
-            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
+            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>());
   }
 
   // set second previous keystone
@@ -56,13 +57,13 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   if ((int32_t)diff <= tip.getHeight()) {
     auto* secondPrevKeystoneIndex = tip.getAncestor(tip.getHeight() - diff);
     VBK_ASSERT(secondPrevKeystoneIndex != nullptr);
-    block.secondPreviousKeystone =
+    block.setSecondPreviousKeystone(
         secondPrevKeystoneIndex->getHash()
-            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>();
+            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>());
   }
 
-  block.timestamp = (std::max)(tip.getBlockTime(), currentTimestamp4());
-  block.difficulty = getNextWorkRequired(tip, block, params_);
+  block.setTimestamp((std::max)(tip.getBlockTime(), currentTimestamp4()));
+  block.setDifficulty(getNextWorkRequired(tip, block, params_));
   return block;
 }
 
@@ -144,12 +145,12 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
 
     if (prevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
-        block.previousKeystone) {
+        block.getPreviousKeystone()) {
       return false;
     }
   } else {
     // should contain zeroes
-    if (block.previousKeystone != VbkBlock::keystone_t()) {
+    if (block.getPreviousKeystone() != VbkBlock::keystone_t()) {
       return false;
     }
   }
@@ -164,12 +165,12 @@ bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
 
     if (secondPrevKeystoneIndex->getHash()
             .template trimLE<VbkBlock::keystone_t::size()>() !=
-        block.secondPreviousKeystone) {
+        block.getSecondPreviousKeystone()) {
       return false;
     }
   } else {
     // should contain zeroes
-    if (block.secondPreviousKeystone != VbkBlock::keystone_t()) {
+    if (block.getSecondPreviousKeystone() != VbkBlock::keystone_t()) {
       return false;
     }
   }
@@ -232,12 +233,14 @@ template <>
 bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                             const VbkBlock& block,
                             ValidationState& state,
-                            const VbkChainParams& params) {
+                            const VbkChainParams& params,
+                            bool shouldVerifyNextWork) {
   if (!checkBlockTime<VbkBlock, VbkChainParams>(prev, block, state, params)) {
     return state.Invalid("vbk-check-block-time");
   }
 
-  if (block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
+  if (shouldVerifyNextWork &&
+      (block.getDifficulty() != getNextWorkRequired(prev, block, params))) {
     return state.Invalid("vbk-bad-diffbits", "incorrect proof of work");
   }
 

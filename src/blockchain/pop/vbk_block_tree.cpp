@@ -213,7 +213,7 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
   bool isValid = std::any_of(connectingIndex->getRefs().begin(),
                              connectingIndex->getRefs().end(),
                              [&](BtcTree::index_t::ref_height_t height) {
-                               return height <= vtb.containingBlock.height;
+                               return height <= vtb.containingBlock.getHeight();
                              });
 
   return isValid

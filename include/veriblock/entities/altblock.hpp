@@ -109,6 +109,10 @@ struct AltBlock {
     return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
   }
 
+  hash_t getPreviousBlock() const { return previousBlock; }
+  uint32_t getTimestamp() const { return timestamp; }
+  height_t getHeight() const { return height; }
+
   hash_t hash{};
   hash_t previousBlock{};
   uint32_t timestamp{};

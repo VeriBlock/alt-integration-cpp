@@ -66,7 +66,7 @@ TEST_F(Scenario7, scenario_7) {
   popData.vtbs = {vtb1, vtb2};
 
   fillVbkContext(
-      popData.context, vbkparam.getGenesisBlock().getHash(), popminer->vbk());
+      popData.context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);

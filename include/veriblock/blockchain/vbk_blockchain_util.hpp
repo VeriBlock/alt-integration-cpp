@@ -44,7 +44,8 @@ template <>
 bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                             const VbkBlock& block,
                             ValidationState& state,
-                            const VbkChainParams& params);
+                            const VbkChainParams& params,
+                            bool shouldVerifyNextWork);
 
 }  // namespace altintegration
 

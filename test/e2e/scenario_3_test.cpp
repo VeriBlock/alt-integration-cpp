@@ -102,7 +102,7 @@ TEST_F(Scenario3, scenario_3) {
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // new tip is the next block after vbkTip1
   ASSERT_TRUE(cmp(*popminer->vbk().getBestChain().tip()->pprev, *vbkTip1));
@@ -111,7 +111,7 @@ TEST_F(Scenario3, scenario_3) {
   // store vtbs in different altPayloads
   altPayloads1.vtbs = {vtbs1[1]};
   fillVbkContext(altPayloads1.context,
-                 vbkparam.getGenesisBlock().getHash(),
+                 GetRegTestVbkBlock().getHash(),
                  vtbs1[1].containingBlock.getHash(),
                  popminer->vbk());
 
@@ -164,7 +164,7 @@ TEST_F(Scenario3, scenario_3) {
   containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads3 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // new tip is the next block after vbkTip1
   ASSERT_TRUE(cmp(*popminer->vbk().getBestChain().tip()->pprev, *vbkTip1));

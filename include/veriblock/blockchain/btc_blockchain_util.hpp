@@ -39,7 +39,8 @@ template <>
 bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
                             const BtcBlock& block,
                             ValidationState& state,
-                            const BtcChainParams& params);
+                            const BtcChainParams& params,
+                            bool shouldVerifyNextWork);
 
 }  // namespace altintegration
 

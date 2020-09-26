@@ -52,8 +52,9 @@ struct PopContext {
     ValidationState state;
 
     // first, bootstrap BTC
-    if (ctx->config->btc.blocks.empty()) {
-      ctx->altTree->btc().bootstrapWithGenesis(state);
+    if (ctx->config->btc.blocks.size() == 1) {
+      ctx->altTree->btc().bootstrapWithGenesis(ctx->config->btc.blocks[0],
+                                               state);
       VBK_ASSERT(state.IsValid());
     } else {
       ctx->altTree->btc().bootstrapWithChain(
@@ -62,8 +63,9 @@ struct PopContext {
     }
 
     // then, bootstrap VBK
-    if (ctx->config->vbk.blocks.empty()) {
-      ctx->altTree->vbk().bootstrapWithGenesis(state);
+    if (ctx->config->vbk.blocks.size() == 1) {
+      ctx->altTree->vbk().bootstrapWithGenesis(ctx->config->vbk.blocks[0],
+                                               state);
       VBK_ASSERT(state.IsValid());
     } else {
       ctx->altTree->vbk().bootstrapWithChain(

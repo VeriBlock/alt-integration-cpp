@@ -36,7 +36,9 @@ template <typename Block, typename ChainParams>
 bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             const Block& block,
                             ValidationState& state,
-                            const ChainParams& params);
+                            const ChainParams& params,
+                            bool shouldVerifyNextWork = true
+                            );
 
 template <typename Block, typename Storage>
 void removePayloadsFromIndex(Storage& storage,

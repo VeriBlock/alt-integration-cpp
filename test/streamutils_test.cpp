@@ -143,3 +143,18 @@ TEST(WriteStream, BE) {
                 0xff, 0xff, 0xff, 0xfd, 0,    0,    0,    0,    0,    0,
                 0,    4,    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfc}));
 }
+
+TEST(Streams, BE_Sized) {
+  altintegration::WriteStream stream;
+  // nonce is 5 bytes
+  uint64_t nonce = 0x0000001122334455;
+  stream.writeBE<uint64_t>(nonce, 5);
+
+  ASSERT_EQ(stream.data(),
+            (std::vector<uint8_t>{0x11, 0x22, 0x33, 0x44, 0x55}));
+
+  altintegration::ReadStream rs(stream.data());
+
+  uint64_t actual = rs.readBE<uint64_t>(5);
+  ASSERT_EQ(nonce, actual) << std::hex << actual;
+}

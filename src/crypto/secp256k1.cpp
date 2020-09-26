@@ -13,6 +13,7 @@
 #include "veriblock/third_party/secp256k1.hpp"
 
 namespace altintegration {
+namespace secp256k1 {
 
 struct Secp256k1Context {
   secp256k1_context* ctx;
@@ -158,7 +159,7 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
   return output;
 }
 
-Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
+Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
   auto messageHash = sha256(message);
 
   secp256k1_ecdsa_signature signature;
@@ -172,9 +173,9 @@ Signature veriBlockSign(Slice<const uint8_t> message, PrivateKey privateKey) {
   return Signature(sig, sig + outputlen);
 }
 
-int veriBlockVerify(Slice<const uint8_t> message,
-                    Signature signature,
-                    PublicKey publicKey) {
+int verify(Slice<const uint8_t> message,
+           Signature signature,
+           PublicKey publicKey) {
   secp256k1_pubkey pubkey;
   if (!secp256k1_ec_pubkey_parse(
           ctx, &pubkey, publicKey.data(), publicKey.size())) {
@@ -195,4 +196,5 @@ int veriBlockVerify(Slice<const uint8_t> message,
       ctx, &normalizedSignature, messageHash.data(), &pubkey);
 }
 
+}  // namespace secp256k1
 }  // namespace altintegration

@@ -111,5 +111,5 @@ TEST(ATV, getId_test) {
   auto atv = ATV::fromVbkEncoding(stream);
 
   EXPECT_EQ(atv.getId().toHex(),
-            "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d");
+            "c6d96b8e87f3e347aa1d1051bb3af39c8ea60612ced905d11c6f92d7b6bd50f5");
 }

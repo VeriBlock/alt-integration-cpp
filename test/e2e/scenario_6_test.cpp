@@ -35,7 +35,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   // do not bootstrap VBK
   ASSERT_TRUE(test_alttree.bootstrap(state));
-  ASSERT_TRUE(test_alttree.btc().bootstrapWithGenesis(state));
+  ASSERT_TRUE(test_alttree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
 
   // Step1
   // mine 10 Vbk blocks in the pop miner
@@ -70,7 +70,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   AltBlock containingAltBlock = generateNextBlock(chain.back());
   chain.push_back(containingAltBlock);
   PopData altPayloads =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // put corrupted VTB
   altPayloads.vtbs.push_back(vtb);

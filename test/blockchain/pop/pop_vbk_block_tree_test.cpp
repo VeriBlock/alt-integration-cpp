@@ -25,7 +25,7 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
         btccontaining->getHeader(),
         btctx,
         endorsedIndex->getHeader(),
-        popminer.getBtcParams().getGenesisBlock().getHash());
+        GetRegTestBtcBlock().getHash());
     popminer.mineVbkBlocks(1);
   }
 
@@ -36,7 +36,7 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
         btcBlockTip->getHeader(),
         Btctx,
         endorsedBlock,
-        popminer.getBtcParams().getGenesisBlock().getHash());
+        GetRegTestBtcBlock().getHash());
   }
 };
 

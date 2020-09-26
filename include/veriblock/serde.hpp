@@ -16,6 +16,7 @@
 #include "read_stream.hpp"
 #include "slice.hpp"
 #include "write_stream.hpp"
+#include "strutil.hpp"
 
 /**
  * Contains veriblock-specific serialization and deserialziation primitives.
@@ -382,6 +383,20 @@ template <typename T>
 bool DeserializeRaw(Slice<const uint8_t> data, T& out, ValidationState& state) {
   ReadStream stream(data);
   return DeserializeRaw(stream, out, state);
+}
+
+template <typename T>
+T DeserializeFromHex(const std::string& hex) {
+  auto data = ParseHex(hex);
+  ReadStream stream(data);
+  return T::fromVbkEncoding(stream);
+}
+
+template <typename T>
+std::vector<uint8_t> SerializeToVbkEncoding(const T& obj) {
+  WriteStream w;
+  obj.toVbkEncoding(w);
+  return w.data();
 }
 
 }  // namespace altintegration

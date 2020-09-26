@@ -64,12 +64,12 @@ void payloadToCommands(VbkBlockTree& tree,
                        std::vector<CommandPtr>& cmds) {
   // process context blocks
   for (const auto& b : pop.transaction.blockOfProofContext) {
-    addBlock(tree.btc(), b, pop.containingBlock.height, cmds);
+    addBlock(tree.btc(), b, pop.containingBlock.getHeight(), cmds);
   }
   // process block of proof
   addBlock(tree.btc(),
            pop.transaction.blockOfProof,
-           pop.containingBlock.height,
+           pop.containingBlock.getHeight(),
            cmds);
 
   // add endorsement

@@ -13,6 +13,7 @@
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
+#include <veriblock/config.hpp>
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/mempool.hpp>
@@ -51,14 +52,17 @@ struct PopTestFixture {
   ValidationState state;
 
   PopTestFixture() {
+    auto BTCgenesis = GetRegTestBtcBlock();
+    auto VBKgenesis = GetRegTestVbkBlock();
+
     // by default, set mocktime to the latest time between all genesis blocks
     auto time = std::max({altparam.getBootstrapBlock().getBlockTime(),
-                          vbkparam.getGenesisBlock().getBlockTime(),
-                          btcparam.getGenesisBlock().getBlockTime()});
+                          BTCgenesis.getBlockTime(),
+                          VBKgenesis.getBlockTime()});
     setMockTime(time + 1);
 
-    EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(state));
-    EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(state));
+    EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(BTCgenesis, state));
+    EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(VBKgenesis, state));
     EXPECT_TRUE(alttree.bootstrap(state));
 
     popminer = std::make_shared<MockMiner>();

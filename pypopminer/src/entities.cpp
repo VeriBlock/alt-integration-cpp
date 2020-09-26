@@ -14,9 +14,9 @@ using namespace altintegration;
 using namespace boost::python;
 
 template <typename E>
-std::string toVbkEncodingHex(E& self) {
+std::string toVbkEncodingHex(E& self_) {
   WriteStream w;
-  self.toVbkEncoding(w);
+  self_.toVbkEncoding(w);
   return HexStr(w.data());
 }
 
@@ -130,14 +130,13 @@ void init_entities() {
       .def("toHex", &VbkBlock::toHex)
       .def("toVbkEncodingHex", &toVbkEncodingHex<VbkBlock>)
       .def("getHash", &VbkBlock::getHash)
-      .def_readwrite("height", &VbkBlock::height)
-      .def_readwrite("version", &VbkBlock::version)
-      .def_readwrite("previousBlock", &VbkBlock::previousBlock)
-      .def_readwrite("previousKeystone", &VbkBlock::previousKeystone)
-      .def_readwrite("secondPreviousKeystone",
-                     &VbkBlock::secondPreviousKeystone)
-      .def_readwrite("merkleRoot", &VbkBlock::merkleRoot)
-      .def_readwrite("timestamp", &VbkBlock::timestamp)
-      .def_readwrite("difficulty", &VbkBlock::difficulty)
-      .def_readwrite("nonce", &VbkBlock::nonce);
+      .add_property("height", &VbkBlock::getHeight, &VbkBlock::setHeight)
+      .add_property("version", &VbkBlock::getVersion, &VbkBlock::setVersion)
+      .add_property("previousBlock", &VbkBlock::getPreviousBlock, &VbkBlock::setPreviousBlock)
+      .add_property("previousKeystone", &VbkBlock::getPreviousKeystone, &VbkBlock::setPreviousKeystone)
+      .add_property("secondPreviousKeystone", &VbkBlock::getSecondPreviousKeystone, &VbkBlock::setSecondPreviousKeystone)
+      .add_property("merkleRoot", &VbkBlock::getMerkleRoot, &VbkBlock::setMerkleRoot)
+      .add_property("timestamp", &VbkBlock::getTimestamp, &VbkBlock::setTimestamp)
+      .add_property("difficulty", &VbkBlock::getDifficulty, &VbkBlock::setDifficulty)
+      .add_property("nonce", &VbkBlock::getNonce, &VbkBlock::setNonce);
 }

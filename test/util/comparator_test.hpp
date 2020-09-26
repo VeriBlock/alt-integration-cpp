@@ -221,30 +221,31 @@ struct TestComparator {
   }
 
   bool operator()(const AltBlock& a, const AltBlock& b, bool suppress = false) {
-    VBK_EXPECT_EQ(a.height, b.height, suppress);
+    VBK_EXPECT_EQ(a.getHeight(), b.getHeight(), suppress);
     VBK_EXPECT_EQ(a.hash, b.hash, suppress);
-    VBK_EXPECT_EQ(a.previousBlock, b.previousBlock, suppress);
-    VBK_EXPECT_EQ(a.timestamp, b.timestamp, suppress);
+    VBK_EXPECT_EQ(a.getPreviousBlock(), b.getPreviousBlock(), suppress);
+    VBK_EXPECT_EQ(a.getTimestamp(), b.getTimestamp(), suppress);
     return true;
   }
 
   bool operator()(const BtcBlock& a, const BtcBlock& b, bool suppress = false) {
-    VBK_EXPECT_EQ(a.version, b.version, suppress);
-    VBK_EXPECT_EQ(a.timestamp, b.timestamp, suppress);
-    VBK_EXPECT_EQ(a.nonce, b.nonce, suppress);
+    VBK_EXPECT_EQ(a.getVersion(), b.getVersion(), suppress);
+    VBK_EXPECT_EQ(a.getTimestamp(), b.getTimestamp(), suppress);
+    VBK_EXPECT_EQ(a.getNonce(), b.getNonce(), suppress);
     VBK_EXPECT_EQ(a.merkleRoot, b.merkleRoot, suppress);
-    VBK_EXPECT_EQ(a.previousBlock, b.previousBlock, suppress);
+    VBK_EXPECT_EQ(a.getPreviousBlock(), b.getPreviousBlock(), suppress);
     return true;
   }
 
   bool operator()(const VbkBlock& a, const VbkBlock& b, bool suppress = false) {
-    VBK_EXPECT_EQ(a.version, b.version, suppress);
-    VBK_EXPECT_EQ(a.timestamp, b.timestamp, suppress);
-    VBK_EXPECT_EQ(a.nonce, b.nonce, suppress);
-    VBK_EXPECT_EQ(a.previousBlock, b.previousBlock, suppress);
-    VBK_EXPECT_EQ(a.previousKeystone, b.previousKeystone, suppress);
-    VBK_EXPECT_EQ(a.secondPreviousKeystone, b.secondPreviousKeystone, suppress);
-    VBK_EXPECT_EQ(a.height, b.height, suppress);
+    VBK_EXPECT_EQ(a.getVersion(), b.getVersion(), suppress);
+    VBK_EXPECT_EQ(a.getTimestamp(), b.getTimestamp(), suppress);
+    VBK_EXPECT_EQ(a.getNonce(), b.getNonce(), suppress);
+    VBK_EXPECT_EQ(a.getPreviousBlock(), b.getPreviousBlock(), suppress);
+    VBK_EXPECT_EQ(a.getPreviousKeystone(), b.getPreviousKeystone(), suppress);
+    VBK_EXPECT_EQ(
+        a.getSecondPreviousKeystone(), b.getSecondPreviousKeystone(), suppress);
+    VBK_EXPECT_EQ(a.getHeight(), b.getHeight(), suppress);
     return true;
   }
 
@@ -318,7 +319,9 @@ struct TestComparator {
     return true;
   }
 
-  bool operator()(const AltBlockTree& a, const AltBlockTree& b, bool suppress = false) {
+  bool operator()(const AltBlockTree& a,
+                  const AltBlockTree& b,
+                  bool suppress = false) {
     VBK_EXPECT_TRUE(
         this->operator()(a.getComparator(), b.getComparator(), suppress),
         suppress);

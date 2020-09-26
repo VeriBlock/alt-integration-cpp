@@ -150,18 +150,18 @@ template <>
 BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
   VbkBlock block;
   if (prev != nullptr) {
-    block.height = prev->getHeight() + 1;
-    block.previousBlock = prev->getHash().trimLE<uint96::size()>();
-    block.timestamp = prev->getHeader().getBlockTime() + 1;
+    block.setHeight(prev->getHeight() + 1);
+    block.setPreviousBlock(prev->getHash().trimLE<uint96::size()>());
+    block.setTimestamp(prev->getHeader().getBlockTime() + 1);
   } else {
-    block.height = 0;
-    block.timestamp = 0;
-    block.nonce = 0;
-    block.version = 0;
+    block.setHeight(0);
+    block.setTimestamp(0);
+    block.setNonce(0);
+    block.setVersion(0);
   }
   BlockIndex<VbkBlock> index;
   index.setHeader(block);
-  index.setHeight(block.height);
+  index.setHeight(block.getHeight());
   index.pprev = prev;
   return index;
 }
