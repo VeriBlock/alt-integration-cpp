@@ -16,7 +16,7 @@ class MockMinerTestCase(unittest.TestCase):
     def test_mock_miner_can_produce_publications(self):
         from pypopminer import MockMiner, PublicationData
         m = MockMiner()
-        self.assertEqual(m.vbkTip.previousBlock.toHex(), "000000000000000000000000")
+        self.assertEqual(m.vbkTip.previousBlock, "000000000000000000000000")
         self.assertEqual(m.vbkTip.height, 0)
 
         endorsed = m.mineVbkBlocks(100)
@@ -38,15 +38,15 @@ class MockMinerTestCase(unittest.TestCase):
         p.header = '11'
         p.payoutInfo = b'22'
 
-        self.assertEqual(p.header.toHex(), '11')
-        self.assertEqual(p.payoutInfo.toHex(), '22')
+        self.assertEqual(str(p.header), '11')
+        self.assertEqual(str(p.payoutInfo), '22')
 
         b = BtcBlock()
-        self.assertEqual(b.merkleRoot.toHex(), "0000000000000000000000000000000000000000000000000000000000000000")
+        self.assertEqual(str(b.merkleRoot), "0000000000000000000000000000000000000000000000000000000000000000")
         b.merkleRoot = '1111111111111111111111111111111111111111111111111111111111111111'
-        self.assertEqual(b.merkleRoot.toHex(), "1111111111111111111111111111111111111111111111111111111111111111")
+        self.assertEqual(str(b.merkleRoot), "1111111111111111111111111111111111111111111111111111111111111111")
         b.merkleRoot = b'2222222222222222222222222222222222222222222222222222222222222222'
-        self.assertEqual(b.merkleRoot.toHex(), "2222222222222222222222222222222222222222222222222222222222222222")
+        self.assertEqual(str(b.merkleRoot), "2222222222222222222222222222222222222222222222222222222222222222")
 
 if __name__ == '__main__':
     unittest.main()

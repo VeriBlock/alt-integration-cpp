@@ -40,7 +40,7 @@ struct Scenario5 : public ::testing::Test, public PopTestFixture {
   uint256 vbkContextStart;
 
   Scenario5()
-      : vbkContextStart(popminer->getBtcParams().getGenesisBlock().getHash()) {}
+      : vbkContextStart(GetRegTestBtcBlock().getHash()) {}
 
   void mineVbkFork(BlockIndex<VbkBlock>*& tip, size_t blockCount) {
     tip = popminer->mineVbkBlocks(*tip, blockCount);

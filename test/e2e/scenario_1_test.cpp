@@ -105,7 +105,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
         btcAContaining->getHeader(),
         btctxA,
         vbkAendorsed->getHeader(),
-        popminer->getBtcParams().getGenesisBlock().getHash());
+        GetRegTestBtcBlock().getHash());
     vbkAtip = popminer->mineVbkBlocks(*vbkAendorsed, 5);
     EXPECT_EQ(btcAtip->getHeight(), 55);
     EXPECT_EQ(btcBtip->getHeight(), 57);
@@ -114,7 +114,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
         btcBContaining->getHeader(),
         btctxB,
         vbkBendorsed->getHeader(),
-        popminer->getBtcParams().getGenesisBlock().getHash());
+        GetRegTestBtcBlock().getHash());
     EXPECT_EQ(btcAtip->getHeight(), 55);
     EXPECT_EQ(btcBtip->getHeight(), 57);
     vbkBtip = popminer->mineVbkBlocks(*vbkBendorsed, 5);
@@ -152,7 +152,7 @@ TEST_F(Scenario1, scenario_1) {
 
   auto vtbsVBA71 = popminer->vbkPayloads[vbkAtip->getAncestor(71)->getHash()];
   fillVbkContext(altPayloadsVBA71.context,
-                 vbkparam.getGenesisBlock().getHash(),
+                 GetRegTestVbkBlock().getHash(),
                  vtbsVBA71[0].containingBlock.getHash(),
                  popminer->vbk());
   altPayloadsVBA71.vtbs = {vtbsVBA71[0]};
@@ -269,9 +269,9 @@ TEST_F(Scenario1, scenario_1) {
   EXPECT_EQ(altchain.at(altchain.size() - 1).height, 100);
 
   // expect that ALTBTC is at bootstrap
-  EXPECT_EQ(btcparam.getGenesisBlock().getHash(),
+  EXPECT_EQ(GetRegTestBtcBlock().getHash(),
             alttree.vbk().btc().getBestChain().tip()->getHash());
   // expect that ALTVBK is at bootstrap
-  EXPECT_EQ(vbkparam.getGenesisBlock().getHash(),
+  EXPECT_EQ(GetRegTestVbkBlock().getHash(),
             alttree.vbk().getBestChain().tip()->getHash());
 }

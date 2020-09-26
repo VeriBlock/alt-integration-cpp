@@ -18,7 +18,7 @@ TEST_F(AltUtilTest, GetLastKnownBlocks) {
   auto genesis = getLastKnownBlocks(popminer.btc(), 1ull);
   ASSERT_EQ(genesis.size(), 1);
   ASSERT_EQ(genesis[0],
-            popminer.getBtcParams().getGenesisBlock().getHash().asVector());
+            GetRegTestBtcBlock().getHash().asVector());
 
   auto a = popminer.mineBtcBlocks(10);
   auto one = getLastKnownBlocks(popminer.btc(), 1);

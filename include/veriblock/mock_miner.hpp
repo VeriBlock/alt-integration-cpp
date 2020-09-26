@@ -13,6 +13,7 @@
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/bootstraps.hpp"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/merkle_tree.hpp"
@@ -104,9 +105,9 @@ class MockMiner {
 
   MockMiner() {
     bool ret = false;
-    ret = vbktree.btc().bootstrapWithGenesis(state_);
+    ret = vbktree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state_);
     VBK_ASSERT(ret);
-    ret = vbktree.bootstrapWithGenesis(state_);
+    ret = vbktree.bootstrapWithGenesis(GetRegTestVbkBlock(), state_);
     VBK_ASSERT(ret);
   }
 

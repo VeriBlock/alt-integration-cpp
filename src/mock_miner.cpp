@@ -74,7 +74,7 @@ VbkTx MockMiner::createVbkTxEndorsingAltBlock(
 
   auto hash = transaction.getHash();
   transaction.signature =
-      veriBlockSign(hash, privateKeyFromVbk(defaultPrivateKeyVbk));
+      secp256k1::sign(hash, secp256k1::privateKeyFromVbk(defaultPrivateKeyVbk));
 
   return transaction;
 }
@@ -223,7 +223,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
 
   auto hash = popTx.getHash();
   popTx.signature =
-      veriBlockSign(hash, privateKeyFromVbk(defaultPrivateKeyVbk));
+      secp256k1::sign(hash, secp256k1::privateKeyFromVbk(defaultPrivateKeyVbk));
 
   vbkmempool.push_back(popTx);
 
@@ -272,7 +272,7 @@ VbkPopTx MockMiner::endorseVbkBlock(
   auto hash = popTx.getHash();
 
   popTx.signature =
-      veriBlockSign(hash, privateKeyFromVbk(defaultPrivateKeyVbk));
+      secp256k1::sign(hash, secp256k1::privateKeyFromVbk(defaultPrivateKeyVbk));
 
   return popTx;
 }

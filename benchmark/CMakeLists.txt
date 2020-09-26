@@ -14,3 +14,5 @@ function(addbenchmark name)
 endfunction()
 
 addbenchmark(vbk_sig vbk_sig.cpp)
+addbenchmark(progpow progpow.cpp)
+addbenchmark(keccakf800 keccakf800.cpp)

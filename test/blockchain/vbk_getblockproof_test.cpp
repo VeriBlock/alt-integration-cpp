@@ -6,10 +6,11 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <veriblock/bootstraps.hpp>
 
 #include "block_headers.hpp"
-#include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
+#include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -40,7 +41,7 @@ struct GetProofTest : public testing::Test {
     while (true) {
       std::string blockHash;
       if (!(file >> blockHash)) break;
-      if(ParseHex(blockHash).empty()) break;
+      if (ParseHex(blockHash).empty()) break;
       std::string cumulDifficulty;
       EXPECT_TRUE(file >> cumulDifficulty);
       std::string blockHeader;
@@ -53,9 +54,12 @@ struct GetProofTest : public testing::Test {
   }
 };
 
-TEST_F(GetProofTest, Blocks100Test) {
+// TODO(warchanT): disabled, because vbk_testnet30000.txt contains pre-progpow
+// blocks
+
+TEST_F(GetProofTest, DISABLED_Blocks100Test) {
   BlockTree<VbkBlock, VbkChainParams> tree(*params);
-  ASSERT_TRUE(tree.bootstrapWithGenesis(state));
+  ASSERT_TRUE(tree.bootstrapWithGenesis(GetRegTestVbkBlock(), state));
 
   for (size_t i = 1; i < 101; i++) {
     ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state));
@@ -68,9 +72,9 @@ TEST_F(GetProofTest, Blocks100Test) {
   ASSERT_TRUE(ret);
 }
 
-TEST_F(GetProofTest, Blocks30kTest) {
+TEST_F(GetProofTest, DISABLED_Blocks30kTest) {
   BlockTree<VbkBlock, VbkChainParams> tree(*params);
-  ASSERT_TRUE(tree.bootstrapWithGenesis(state));
+  ASSERT_TRUE(tree.bootstrapWithGenesis(GetRegTestVbkBlock(), state));
 
   for (size_t i = 1; i < allBlocks.size(); i++) {
     // 28568

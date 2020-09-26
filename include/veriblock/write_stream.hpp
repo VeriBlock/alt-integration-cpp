@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <veriblock/assert.hpp>
 
 namespace altintegration {
 
@@ -35,9 +36,15 @@ class WriteStream {
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  void writeBE(T num) {
+  void writeBE(T num, size_t bytes = sizeof(T)) {
+    VBK_ASSERT(bytes <= sizeof(T));
+
     for (size_t i = 0, shift = (sizeof(T) - 1) * 8; i < sizeof(T);
          i++, shift -= 8) {
+      // skip first bytes
+      if (i < (sizeof(T) - bytes)) {
+        continue;
+      }
       m_data.push_back((num >> shift) & 0xffu);
     }
   }

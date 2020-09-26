@@ -46,12 +46,12 @@ struct TempBlockTree {
 
   bool acceptBlock(const std::shared_ptr<block_t>& header,
                    ValidationState& state) {
-    auto* prev = getBlockIndex(header->previousBlock);
+    auto* prev = getBlockIndex(header->getPreviousBlock());
 
     if (prev == nullptr) {
       return state.Invalid(
           block_t::name() + "-bad-prev-block",
-          "can not find previous block: " + HexStr(header->previousBlock));
+          "can not find previous block: " + HexStr(header->getPreviousBlock()));
     }
 
     auto index = insertBlockHeader(header);
@@ -107,7 +107,7 @@ struct TempBlockTree {
     VBK_ASSERT(header != nullptr);
     index_t* current = touchBlockIndex(header->getHash());
     current->setHeader(std::move(header));
-    current->pprev = getBlockIndex(header->previousBlock);
+    current->pprev = getBlockIndex(header->getPreviousBlock());
 
     if (current->pprev != nullptr) {
       // prev block found

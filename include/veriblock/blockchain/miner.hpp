@@ -27,9 +27,10 @@ struct Miner {
     while (!checkProofOfWork(block, params_)) {
       // to guarantee that miner will not create exactly same blocks even if
       // time and merkle roots are equal for prev block and new block
-      block.nonce = nonce++;
-      if (block.nonce >= (std::numeric_limits<decltype(block.nonce)>::max)()) {
-        ++block.timestamp;
+      block.setNonce(nonce++);
+      if (block.getNonce() >=
+          (std::numeric_limits<decltype(block.getNonce())>::max)()) {
+        block.setTimestamp(block.getTimestamp() + 1);
         nonce = 0;
       }
     }

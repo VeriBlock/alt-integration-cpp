@@ -33,7 +33,7 @@ TEST_F(Scenario9, scenario_9) {
   chain.push_back(containingBlock);
 
   PopData altPayloads1 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
@@ -58,7 +58,7 @@ TEST_F(Scenario9, scenario_9) {
   // store vtbs in different altPayloads
   altPayloads1.vtbs = {vtbs[0]};
   fillVbkContext(altPayloads1.context,
-                 vbkparam.getGenesisBlock().getHash(),
+                 GetRegTestVbkBlock().getHash(),
                  vtbs[0].containingBlock.getHash(),
                  popminer->vbk());
 
@@ -85,7 +85,7 @@ TEST_F(Scenario9, scenario_9) {
   containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads2 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   altPayloads2.vtbs = {vtbs[1]};
 

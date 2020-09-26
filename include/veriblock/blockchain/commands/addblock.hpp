@@ -88,9 +88,9 @@ template <>
 inline std::string AddVbkBlock::toPrettyString(size_t level) const {
   return fmt::sprintf("%sAddVbkBlock{prev=%s, block=%s, height=%ld}",
                       std::string(level, ' '),
-                      block_->previousBlock.toHex(),
+                      block_->getPreviousBlock().toHex(),
                       block_->getHash().toHex(),
-                      block_->height);
+                      block_->getHeight());
 }
 
 template <typename BlockTree>

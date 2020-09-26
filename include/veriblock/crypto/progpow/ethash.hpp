@@ -20,6 +20,8 @@
 #include <cstdint>
 #include <string>
 
+#include <veriblock/uint.hpp>
+
 #define VBK_ETHASH_REVISION 23
 #define VBK_ETHASH_DATASET_BYTES_INIT 1073741824U  // 2**30
 #define VBK_ETHASH_DATASET_BYTES_GROWTH 8388608U   // 2**23
@@ -39,24 +41,11 @@ namespace progpow {
 
 uint64_t ethash_get_epoch(uint64_t block);
 
-/// Type of a seedhash/blockhash e.t.c.
-typedef struct ethash_h256 {
-  uint8_t b[32];
-} ethash_h256_t;
-
-struct ethash_light {
+struct ethash_cache {
   void* cache;
   uint64_t cache_size;
-  uint64_t block_number;
+  uint64_t epoch;
 };
-
-typedef struct ethash_light* ethash_light_t;
-
-typedef struct ethash_return_value {
-  ethash_h256_t result;
-  ethash_h256_t mix_hash;
-  bool success;
-} ethash_return_value_t;
 
 typedef struct ethash_dag_node {
   uint32_t words[VBK_ETHASH_DAG_NODE_SIZE];
@@ -64,7 +53,7 @@ typedef struct ethash_dag_node {
 
 void ethash_calculate_dag_node(ethash_dag_node_t* out,
                                uint32_t node_index,
-                               ethash_light_t const light);
+                               ethash_cache* const light);
 
 /**
  * Allocate and initialize a new ethash_light handler
@@ -74,17 +63,17 @@ void ethash_calculate_dag_node(ethash_dag_node_t* out,
  *                       ERRNOMEM or invalid parameters used for
  * ethash_compute_cache_nodes()
  */
-ethash_light_t ethash_light_new(uint64_t block_number);
+ethash_cache* ethash_light_new(uint64_t block_number);
 /**
  * Frees a previously allocated ethash_light handler
  * @param light        The light handler to free
  */
-void ethash_light_delete(ethash_light_t light);
+void ethash_light_delete(ethash_cache* light);
 
 /**
  * Calculate the seedhash for a given block number
  */
-ethash_h256_t ethash_get_seedhash(uint64_t block_number);
+uint256 ethash_get_seedhash(uint64_t block_number);
 
 }  // namespace progpow
 }  // namespace altintegration

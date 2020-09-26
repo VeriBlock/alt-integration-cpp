@@ -11,6 +11,14 @@
 
 using namespace altintegration;
 
+template <typename T>
+T getGenesisBlockHelper();
+
+template <>
+VbkBlock getGenesisBlockHelper() {return GetRegTestVbkBlock();}
+template <>
+BtcBlock getGenesisBlockHelper() {return GetRegTestBtcBlock();}
+
 using BtcBlockTree = typename VbkBlockTree::BtcTree;
 
 template <typename TreeType>
@@ -75,8 +83,7 @@ TYPED_TEST_SUITE_P(TempBlockTreeTest);
 TYPED_TEST_P(TempBlockTreeTest, scenario_1) {
   using block_t = typename TypeParam::block_t;
 
-  auto gen_block =
-      this->temp_block_tree.getStableTree().getParams().getGenesisBlock();
+  auto gen_block = getGenesisBlockHelper<block_t>();
 
   EXPECT_NE(this->temp_block_tree.getBlockIndex(gen_block.getHash()), nullptr);
   EXPECT_NE(
@@ -146,8 +153,7 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_2) {
 TYPED_TEST_P(TempBlockTreeTest, scenario_3) {
   using block_t = typename TypeParam::block_t;
 
-  auto gen_block =
-      this->temp_block_tree.getStableTree().getParams().getGenesisBlock();
+  auto gen_block = getGenesisBlockHelper<block_t>();
 
   EXPECT_NE(this->temp_block_tree.getBlockIndex(gen_block.getHash()), nullptr);
   EXPECT_NE(

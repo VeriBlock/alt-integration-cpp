@@ -45,7 +45,7 @@ TEST_F(Scenario4, scenario_4) {
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // new tip is the next block after vbkTip
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),

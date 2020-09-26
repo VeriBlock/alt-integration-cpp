@@ -34,7 +34,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   AltEndorsement endorsement1 = AltEndorsement::fromContainer(
       altPayloads1.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
@@ -61,7 +61,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   containingBlock = generateNextBlock(forkchain1.back());
   forkchain1.push_back(containingBlock);
   PopData altPayloads2 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   AltEndorsement endorsement2 = AltEndorsement::fromContainer(
       altPayloads2.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
@@ -88,7 +88,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   containingBlock = generateNextBlock(forkchain2.back());
   forkchain2.push_back(containingBlock);
   PopData altPayloads3 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   AltEndorsement endorsement3 = AltEndorsement::fromContainer(
       altPayloads3.atvs[0], containingBlock.getHash(), endorsedBlock.getHash());
@@ -133,8 +133,8 @@ TEST_F(AltTreeFixture, compareTrees) {
   AltBlockTree alttree2 =
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
   EXPECT_TRUE(alttree2.bootstrap(state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
-  EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
+  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
+  EXPECT_TRUE(alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
   EXPECT_TRUE(cmp(alttree, alttree2));
   EXPECT_TRUE(cmp(alttree.vbk(), alttree2.vbk()));
   EXPECT_TRUE(cmp(alttree.vbk().btc(), alttree2.vbk().btc()));
@@ -163,7 +163,7 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
   auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData payloads1 =
-      generateAltPayloads({tx1}, vbkparam.getGenesisBlock().getHash(), 0);
+      generateAltPayloads({tx1}, GetRegTestVbkBlock().getHash(), 0);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(validatePayloads(containingBlock.getHash(), payloads1));

@@ -24,12 +24,12 @@ namespace altintegration::progpow {
 #define PROGPOW_LANES 16
 #define PROGPOW_REGS 32
 
-std::vector<uint32_t> createDagCache(ethash_light_t light);
+std::vector<uint32_t> createDagCache(ethash_cache* light);
 void progPowLoop(const uint64_t block_number,
                  const uint64_t loop,
                  uint32_t mix[PROGPOW_LANES][PROGPOW_REGS],
                  const std::vector<uint32_t>& dag,
-                 ethash_light_t light);
+                 ethash_cache* light);
 
 uint64_t ethash_get_datasize(uint64_t const block_number);
 uint64_t ethash_get_cachesize(uint64_t const block_number);
@@ -38,7 +38,7 @@ uint64_t ethash_get_cachesize(uint64_t const block_number);
 
 TEST(Ethash, CalculateDagNode) {
   uint64_t blockNumber = 1000000;
-  std::shared_ptr<ethash_light> light(ethash_light_new(blockNumber),
+  std::shared_ptr<ethash_cache> light(ethash_light_new(blockNumber),
                                       ethash_light_delete);
 
   ethash_dag_node_t node;
@@ -107,11 +107,11 @@ TEST(Ethash, DAGSize) {
 
 struct DagTest : public ::testing::Test {
   const uint64_t blockNumber = 1000000;
-  std::shared_ptr<ethash_light> light;
+  std::shared_ptr<ethash_cache> light;
 
   DagTest() {
     if (light == nullptr) {
-      light = std::shared_ptr<ethash_light>(ethash_light_new(blockNumber),
+      light = std::shared_ptr<ethash_cache>(ethash_light_new(blockNumber),
                                             ethash_light_delete);
 
       dag = progpow::createDagCache(light.get());
@@ -146,13 +146,13 @@ TEST_F(DagTest, Loop) {
 TEST(Ethash, CreateCache) {
   // create cache for block number = 1
   const uint64_t blockNumber = 1;
-  std::shared_ptr<ethash_light> light(ethash_light_new(blockNumber),
+  std::shared_ptr<ethash_cache> light(ethash_light_new(blockNumber),
                                       ethash_light_delete);
   uint8_t* b = static_cast<uint8_t*>(light->cache);
   auto first1000ints = HexStr(b, b + 4 * 1000);
 
   // 14778256 uint32_ts
   ASSERT_EQ(light->cache_size, 14778256 * 4);
-  ASSERT_EQ(light->block_number, blockNumber);
+  ASSERT_EQ(light->epoch, VBK_ETHASH_EPOCH_OFFSET);
   ASSERT_EQ(first1000ints, ethash_expected_cache);
 }

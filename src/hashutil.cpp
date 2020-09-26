@@ -39,9 +39,10 @@ uint256 sha256(Slice<const uint8_t> a, Slice<const uint8_t> b) {
 }
 
 uint192 vblake(Slice<const uint8_t> data) {
-  VBK_ASSERT(data.size() <= (std::numeric_limits<uint32_t>::max)());
+  VBK_ASSERT(data.size() <= 64);
   uint192 hash{};
-  vblake(hash.data(), data.data(), (uint32_t)data.size());
+  int ret = vblake(hash.data(), data.data(), (uint32_t)data.size());
+  VBK_ASSERT(ret >= 0);
   return hash;
 }
 

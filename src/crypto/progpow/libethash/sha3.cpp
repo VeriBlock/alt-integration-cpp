@@ -100,8 +100,8 @@ static inline void keccakf(void* state) {
     FOR(i, 1, len, S);                                                    \
   }
 
-mkapply_ds(xorin, dst[i] ^= src[i])      // xorin
-    mkapply_sd(setout, dst[i] = src[i])  // setout
+mkapply_ds(xorin, dst[i] ^= src[i]);  // xorin
+mkapply_sd(setout, dst[i] = src[i]);  // setout
 #define P keccakf
 #define Plen 200
 
@@ -114,13 +114,13 @@ mkapply_ds(xorin, dst[i] ^= src[i])      // xorin
     L -= rate;         \
   }
 
-    /** The sponge-based hash construction. **/
-    static inline int hash(uint8_t* out,
-                           size_t outlen,
-                           const uint8_t* in,
-                           size_t inlen,
-                           size_t rate,
-                           uint8_t delim) {
+/** The sponge-based hash construction. **/
+static inline int hash(uint8_t* out,
+                       size_t outlen,
+                       const uint8_t* in,
+                       size_t inlen,
+                       size_t rate,
+                       uint8_t delim) {
   if ((out == NULL) || ((in == NULL) && inlen != 0) || (rate >= Plen)) {
     return -1;
   }

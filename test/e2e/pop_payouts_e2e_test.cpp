@@ -188,9 +188,10 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2 =
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
+  EXPECT_TRUE(
+      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
   EXPECT_TRUE(alttree2.bootstrap(state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
-  EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
 
   mineEndorsements(alttree2, altparam.getPopPayoutDelay(), chain2);
   mineAltBlocksWithTree(alttree2, 101, chain2);
@@ -242,8 +243,9 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2 =
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
-  EXPECT_TRUE(alttree2.vbk().btc().bootstrapWithGenesis(state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(state));
+  EXPECT_TRUE(
+      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
   EXPECT_TRUE(alttree2.bootstrap(state));
 
   mineEndorsements(alttree2, altparam.getPopPayoutDelay() + 2, chain2);

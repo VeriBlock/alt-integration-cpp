@@ -23,25 +23,27 @@ static const VbkBlock defaultBlock{5000,
                                    1};
 
 static const std::string defaultBlockEncoded =
-    "40000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e"
-    "26bbfda7d5e4462ef24ae02d67e47d785c9b90f30101000000000001";
+    "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e"
+    "26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001";
 
 TEST(VbkBlock, Deserialize) {
   const auto vbkblock = ParseHex(defaultBlockEncoded);
   auto stream = ReadStream(vbkblock);
   auto block = VbkBlock::fromVbkEncoding(stream);
 
-  EXPECT_EQ(block.height, defaultBlock.height);
-  EXPECT_EQ(block.version, defaultBlock.version);
-  EXPECT_EQ(block.previousBlock.toHex(), defaultBlock.previousBlock.toHex());
-  EXPECT_EQ(block.previousKeystone.toHex(),
-            defaultBlock.previousKeystone.toHex());
-  EXPECT_EQ(block.secondPreviousKeystone.toHex(),
-            defaultBlock.secondPreviousKeystone.toHex());
-  EXPECT_EQ(block.merkleRoot.toHex(), defaultBlock.merkleRoot.toHex());
+  EXPECT_EQ(block.getHeight(), defaultBlock.getHeight());
+  EXPECT_EQ(block.getVersion(), defaultBlock.getVersion());
+  EXPECT_EQ(block.getPreviousBlock().toHex(),
+            defaultBlock.getPreviousBlock().toHex());
+  EXPECT_EQ(block.getPreviousKeystone().toHex(),
+            defaultBlock.getPreviousKeystone().toHex());
+  EXPECT_EQ(block.getSecondPreviousKeystone().toHex(),
+            defaultBlock.getSecondPreviousKeystone().toHex());
+  EXPECT_EQ(block.getMerkleRoot().toHex(),
+            defaultBlock.getMerkleRoot().toHex());
   EXPECT_EQ(block.getBlockTime(), defaultBlock.getBlockTime());
   EXPECT_EQ(block.getDifficulty(), defaultBlock.getDifficulty());
-  EXPECT_EQ(block.nonce, defaultBlock.nonce);
+  EXPECT_EQ(block.getNonce(), defaultBlock.getNonce());
 }
 
 TEST(VbkBlock, Serialize) {
@@ -56,7 +58,7 @@ TEST(VbkBlock, RoundTrip) {
   auto blockEncoded = ParseHex(defaultBlockEncoded);
   auto stream = ReadStream(blockEncoded);
   auto decoded = VbkBlock::fromVbkEncoding(stream);
-  EXPECT_EQ(decoded.version, defaultBlock.version);
+  EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -72,7 +74,7 @@ TEST(VbkBlock, RoundTripNew) {
   bool ret = Deserialize(blockEncoded, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
-  EXPECT_EQ(decoded.version, defaultBlock.version);
+  EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -83,20 +85,20 @@ TEST(VbkBlock, RoundTripNew) {
 
 TEST(VbkBlock, getBlockHash_test) {
   VbkBlock block;
-  block.height = 5000;
-  block.version = 2;
-  block.previousBlock = uint96("94E7DC3E3BE21A96ECCF0FBD"_unhex);
-  block.previousKeystone = uint72("F5F62A3331DC995C36"_unhex);
-  block.secondPreviousKeystone = uint72("B0935637860679DDD5"_unhex);
-  block.merkleRoot = uint128("DB0F135312B2C27867C9A83EF1B99B98"_unhex);
-  block.timestamp = 1553699987;
-  block.difficulty = 117586646;
-  block.nonce = 1924857207;
+  block.setHeight(5000);
+  block.setVersion(2);
+  block.setPreviousBlock(uint96("94E7DC3E3BE21A96ECCF0FBD"_unhex));
+  block.setPreviousKeystone(uint72("F5F62A3331DC995C36"_unhex));
+  block.setSecondPreviousKeystone(uint72("B0935637860679DDD5"_unhex));
+  block.setMerkleRoot(uint128("DB0F135312B2C27867C9A83EF1B99B98"_unhex));
+  block.setTimestamp(1553699987);
+  block.setDifficulty(117586646);
+  block.setNonce(1924857207);
 
   EXPECT_EQ(
       ArithUint256::fromLEBytes(block.getHash()),
       ArithUint256::fromHex(
-          "0000000000000000000000000000480D8196D5B0B41861D032377F5165BB4452"));
+          "00000000000000001f45c91342b8ac0ea7ae4d721be2445dc86ddc3f0e454f60"));
 }
 
 TEST(VbkBlock, getId_test) {
@@ -104,5 +106,5 @@ TEST(VbkBlock, getId_test) {
   auto stream = ReadStream(atvBytes);
   auto vbkblock = VbkBlock::fromVbkEncoding(stream);
 
-  EXPECT_EQ(vbkblock.getId().toHex(), "08e2aae9a5e19569b1a68624");
+  EXPECT_EQ(vbkblock.getId().toHex(), "cd97599e23096ad42f119b5a");
 }
