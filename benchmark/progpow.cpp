@@ -11,7 +11,6 @@
 using namespace altintegration;
 
 static void ProgpowEpochCached(benchmark::State& state) {
-  SetUseMockVbkBlockHash(false);
   VbkBlock block;
   block.height = 0;
   block.calculateHash();
@@ -22,7 +21,6 @@ static void ProgpowEpochCached(benchmark::State& state) {
 }
 
 static void ProgpowEpochUnCached(benchmark::State& state) {
-  SetUseMockVbkBlockHash(false);
   VbkBlock block;
   block.height = 8000;
   for (auto _ : state) {
