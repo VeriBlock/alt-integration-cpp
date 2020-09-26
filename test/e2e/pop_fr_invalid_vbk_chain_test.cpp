@@ -121,14 +121,14 @@ TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
       btcTip->getHeader(),
       btcTx,
       endorsedBlock->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
   tipA = popminer->mineVbkBlocks(*tipA, 1);
 
   popminer->createVbkPopTxEndorsingVbkBlock(
       btcTip->getHeader(),
       btcTx,
       endorsedBlock->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
   tipB = popminer->mineVbkBlocks(*tipB, 1);
 
   ASSERT_TRUE(tipA->isValid());

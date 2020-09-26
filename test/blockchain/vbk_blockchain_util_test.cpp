@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <veriblock/bootstraps.hpp>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
@@ -274,6 +275,18 @@ TEST(Vbk, CheckBlockTime2) {
   ASSERT_TRUE(r2);
 }
 
+template <typename T>
+T getGenesisBlockHelper();
+
+template <>
+VbkBlock getGenesisBlockHelper() {
+  return GetRegTestVbkBlock();
+}
+template <>
+BtcBlock getGenesisBlockHelper() {
+  return GetRegTestBtcBlock();
+}
+
 struct BlockchainTest : public ::testing::Test {
   using block_t = VbkBlock;
   using params_base_t = VbkChainParams;
@@ -293,7 +306,8 @@ struct BlockchainTest : public ::testing::Test {
     miner = std::make_shared<Miner<block_t, params_base_t>>(*chainparam);
 
     // @when
-    EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
+    EXPECT_TRUE(blockchain->bootstrapWithGenesis(
+        getGenesisBlockHelper<block_t>(), state))
         << "bootstrap: " << state.GetPath() << ", " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
   };

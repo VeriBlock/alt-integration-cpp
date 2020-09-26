@@ -18,8 +18,8 @@
 /**
  * @file config.hpp
  *
- * Altchains must configure AltBlockTree prior any usage by providing bootstrapping
- * Config.
+ * Altchains must configure AltBlockTree prior any usage by providing
+ * bootstrapping Config.
  *
  * Config MUST specify Bitcoin and Veriblock blockchains configs.
  * Namely, network (mainnet/testnet/regtest), contiguous
@@ -35,6 +35,10 @@ namespace altintegration {
  * A container for Bitcoin and Veriblock configuration data.
  */
 struct Config {
+  const BtcChainParams& getBtcParams() const;
+  const VbkChainParams& getVbkParams() const;
+  const AltChainParams& getAltParams() const;
+
   //! per-chain bootstrap config
   template <typename Block, typename ChainParams>
   struct Bootstrap {
@@ -72,6 +76,19 @@ struct Config {
   Bootstrap<BtcBlock, BtcChainParams> btc;
   Bootstrap<VbkBlock, VbkChainParams> vbk;
 
+  //! Validates config instance. Throws on errors.
+  //! @throws std::invalid_argument with a message, if something is wrong.
+  void validate() const;
+
+  void SelectBtcParams(std::string net,
+                       int startHeight,
+                       const std::vector<std::string>& blocks);
+  void SelectVbkParams(std::string net,
+                       int startHeight,
+                       const std::vector<std::string>& blocks);
+  void SelectAltParams(std::shared_ptr<AltChainParams> param);
+
+ private:
   //! helper, which converts array of hexstrings (blocks) into "Bootstrap" type
   void setBTC(int32_t start,
               const std::vector<std::string>& hexblocks,
@@ -81,10 +98,6 @@ struct Config {
   void setVBK(int32_t start,
               const std::vector<std::string>& hexblocks,
               std::shared_ptr<VbkChainParams> params);
-
-  //! Validates config instance. Throws on errors.
-  //! @throws std::invalid_argument with a message, if something is wrong.
-  void validate() const;
 };
 
 }  // namespace altintegration

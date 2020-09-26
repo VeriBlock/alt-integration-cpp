@@ -23,8 +23,8 @@ static const VbkBlock defaultBlock{5000,
                                    1};
 
 static const std::string defaultBlockEncoded =
-    "40000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e"
-    "26bbfda7d5e4462ef24ae02d67e47d785c9b90f30101000000000001";
+    "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e"
+    "26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001";
 
 TEST(VbkBlock, Deserialize) {
   const auto vbkblock = ParseHex(defaultBlockEncoded);
@@ -96,7 +96,7 @@ TEST(VbkBlock, getBlockHash_test) {
   EXPECT_EQ(
       ArithUint256::fromLEBytes(block.getHash()),
       ArithUint256::fromHex(
-          "0000000000000000000000000000480D8196D5B0B41861D032377F5165BB4452"));
+          "00000000000000001f45c91342b8ac0ea7ae4d721be2445dc86ddc3f0e454f60"));
 }
 
 TEST(VbkBlock, getId_test) {
@@ -104,5 +104,5 @@ TEST(VbkBlock, getId_test) {
   auto stream = ReadStream(atvBytes);
   auto vbkblock = VbkBlock::fromVbkEncoding(stream);
 
-  EXPECT_EQ(vbkblock.getId().toHex(), "08e2aae9a5e19569b1a68624");
+  EXPECT_EQ(vbkblock.getId().toHex(), "cd97599e23096ad42f119b5a");
 }

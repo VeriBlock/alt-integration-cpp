@@ -232,12 +232,14 @@ template <>
 bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                             const VbkBlock& block,
                             ValidationState& state,
-                            const VbkChainParams& params) {
+                            const VbkChainParams& params,
+                            bool shouldVerifyNextWork) {
   if (!checkBlockTime<VbkBlock, VbkChainParams>(prev, block, state, params)) {
     return state.Invalid("vbk-check-block-time");
   }
 
-  if (block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
+  if (shouldVerifyNextWork &&
+      (block.getDifficulty() != getNextWorkRequired(prev, block, params))) {
     return state.Invalid("vbk-bad-diffbits", "incorrect proof of work");
   }
 

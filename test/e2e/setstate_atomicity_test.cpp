@@ -50,7 +50,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
       generatePublicationData(altForkPoint));
   AltBlock corruptedAltBlock = generateNextBlock(altForkPoint);
   PopData corruptedPayloads =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   corruptedPayloads.vtbs.push_back(corruptedVtb);
 

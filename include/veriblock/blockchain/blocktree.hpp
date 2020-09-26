@@ -42,18 +42,14 @@ struct BlockTree : public BaseBlockTree<Block> {
   const ChainParams& getParams() const { return *param_; }
 
   /**
-   * Bootstrap blockchain with a single genesis block, from "chain parameters"
-   * passed in constructor.
-   *
-   * This function does all blockchain integrity checks, does blockchain cleanup
-   * and in general, very slow.
+   * Bootstrap blockchain with a single genesis block.
    *
    * @return true if bootstrap was successful, false otherwise
    */
-  virtual bool bootstrapWithGenesis(ValidationState& state) {
+  virtual bool bootstrapWithGenesis(const block_t& block,
+                                    ValidationState& state) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    auto genesisBlock = param_->getGenesisBlock();
-    return !this->bootstrap(0, genesisBlock, state)
+    return !this->bootstrap(0, block, state)
                ? state.Invalid(block_t::name() + "-bootstrap-genesis")
                : true;
   }

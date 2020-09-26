@@ -158,8 +158,9 @@ template <>
 bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
                             const BtcBlock& block,
                             ValidationState& state,
-                            const BtcChainParams& params) {
-  if (block.getDifficulty() != getNextWorkRequired(prev, block, params)) {
+                            const BtcChainParams& params,
+                            bool shouldVerifyNextWork) {
+  if (shouldVerifyNextWork && (block.getDifficulty() != getNextWorkRequired(prev, block, params))) {
     return state.Invalid("btc-bad-diffbits",
                          "incorrect proof of work of BTC block");
   }

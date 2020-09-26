@@ -5,7 +5,12 @@
 
 #include "veriblock/entities/vbkblock.hpp"
 
-using namespace altintegration;
+#include <veriblock/blockchain/vbk_chain_params.hpp>
+#include <veriblock/config.hpp>
+
+#include "veriblock/crypto/progpow.hpp"
+
+namespace altintegration {
 
 const std::string VbkBlock::_name = "VBK";
 
@@ -25,13 +30,13 @@ VbkBlock VbkBlock::fromRaw(ReadStream& stream) {
   block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE);
   block.timestamp = stream.readBE<int32_t>();
   block.difficulty = stream.readBE<int32_t>();
-  block.nonce = stream.readBE<int32_t>();
+  block.nonce = stream.readBE<uint64_t>(5);
   return block;
 }
 
 VbkBlock VbkBlock::fromVbkEncoding(ReadStream& stream) {
-  auto blockBytes =
-      readSingleByteLenValue(stream, VBK_HEADER_SIZE_VBLAKE, VBK_HEADER_SIZE_VBLAKE);
+  auto blockBytes = readSingleByteLenValue(
+      stream, VBK_HEADER_SIZE_PROGPOW, VBK_HEADER_SIZE_PROGPOW);
   ReadStream blockStream(blockBytes);
   return VbkBlock::fromRaw(blockStream);
 }
@@ -57,10 +62,20 @@ uint32_t VbkBlock::getDifficulty() const { return difficulty; }
 
 uint32_t VbkBlock::getBlockTime() const { return timestamp; }
 
-VbkBlock::hash_t VbkBlock::getHash() const {
+VbkBlock::hash_t VbkBlock::calculateHash() const {
   WriteStream stream;
   toRaw(stream);
-  return vblake(stream.data());
+  auto& header = stream.data();
+  return progPowHash(header);
+}
+
+VbkBlock::hash_t VbkBlock::getHash() const {
+  static hash_t empty{};
+  if (hash_ == empty) {
+    hash_ = calculateHash();
+  }
+
+  return hash_;
 }
 
 VbkBlock::short_hash_t VbkBlock::getShortHash() const {
@@ -83,7 +98,7 @@ void VbkBlock::toRaw(WriteStream& stream) const {
   stream.write(merkleRoot);
   stream.writeBE<int32_t>(timestamp);
   stream.writeBE<int32_t>(difficulty);
-  stream.writeBE<int32_t>(nonce);
+  stream.writeBE<uint64_t>(nonce, 5);
 }
 
 std::vector<uint8_t> VbkBlock::toRaw() const {
@@ -108,9 +123,37 @@ std::string VbkBlock::toPrettyString() const {
       nonce);
 }
 
-bool altintegration::DeserializeRaw(ReadStream& stream,
-                                    VbkBlock& out,
-                                    ValidationState& state) {
+VbkBlock::VbkBlock(int32_t h,
+                   int16_t v,
+                   uint96 prevBlock,
+                   VbkBlock::keystone_t prev1,
+                   VbkBlock::keystone_t prev2,
+                   uint128 mroot,
+                   int32_t ts,
+                   int32_t diff,
+                   uint64_t nonce)
+    : height(h),
+      version(v),
+      previousBlock(std::move(prevBlock)),
+      previousKeystone(std::move(prev1)),
+      secondPreviousKeystone(std::move(prev2)),
+      merkleRoot(std::move(mroot)),
+      timestamp(ts),
+      difficulty(diff),
+      nonce(nonce) {}
+
+bool operator==(const VbkBlock& a, const VbkBlock& b) {
+  return a.height == b.height && a.difficulty == b.difficulty &&
+         a.timestamp == b.timestamp && a.version == b.version &&
+         a.merkleRoot == b.merkleRoot && a.previousBlock == b.previousBlock &&
+         a.previousKeystone == b.previousKeystone &&
+         a.secondPreviousKeystone == b.secondPreviousKeystone &&
+         a.nonce == b.nonce;
+}
+
+bool operator!=(const VbkBlock& a, const VbkBlock& b) { return !(a == b); }
+
+bool DeserializeRaw(ReadStream& stream, VbkBlock& out, ValidationState& state) {
   VbkBlock block{};
   if (!stream.readBE<int32_t>(block.height, state)) {
     return state.Invalid("vbk-block-height");
@@ -147,22 +190,23 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
   if (!stream.readBE<int32_t>(block.difficulty, state)) {
     return state.Invalid("vbk-block-difficulty");
   }
-  if (!stream.readBE<int32_t>(block.nonce, state)) {
+  if (!stream.readBE<uint64_t>(block.nonce, state, 5)) {
     return state.Invalid("vbk-block-nonce");
   }
   out = block;
   return true;
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
-                                 VbkBlock& out,
-                                 ValidationState& state) {
+bool Deserialize(ReadStream& stream, VbkBlock& out, ValidationState& state) {
   Slice<const uint8_t> value;
-  if (!readSingleByteLenValue(
-          stream, value, state,
-                              VBK_HEADER_SIZE_VBLAKE,
-                              VBK_HEADER_SIZE_VBLAKE)) {
+  if (!readSingleByteLenValue(stream,
+                              value,
+                              state,
+                              VBK_HEADER_SIZE_PROGPOW,
+                              VBK_HEADER_SIZE_PROGPOW)) {
     return state.Invalid("vbk-block-bad-header");
   }
   return DeserializeRaw(value, out, state);
 }
+
+}  // namespace altintegration

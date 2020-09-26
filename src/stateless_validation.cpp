@@ -8,10 +8,10 @@
 #include <algorithm>
 #include <bitset>
 #include <string>
-#include <vector>
-#include <veriblock/blockchain/alt_chain_params.hpp>
 #include <unordered_set>
+#include <vector>
 #include <veriblock/algorithm.hpp>
+#include <veriblock/blockchain/alt_chain_params.hpp>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
@@ -288,7 +288,8 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
   }
 
   auto hash = tx.getHash();
-  if (!veriBlockVerify(hash, tx.signature, publicKeyFromVbk(tx.publicKey))) {
+  if (!secp256k1::verify(
+          hash, tx.signature, secp256k1::publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("invalid-vbk-tx",
                          "Vbk transaction is incorrectly signed");
   }
@@ -301,7 +302,8 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
                          "Vbk Pop transaction contains an invalid public key");
   }
   auto hash = tx.getHash();
-  if (!veriBlockVerify(hash, tx.signature, publicKeyFromVbk(tx.publicKey))) {
+  if (!secp256k1::verify(
+          hash, tx.signature, secp256k1::publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("invalid-vbk-pop-tx",
                          "Vbk Pop transaction is incorrectly signed");
   }

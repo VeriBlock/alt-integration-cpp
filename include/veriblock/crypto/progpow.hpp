@@ -40,6 +40,9 @@ uint32_t merge(uint32_t a, uint32_t b, uint32_t r);
 kiss99_t progPowInit(uint64_t prog_seed,
                      Slice<int> mix_seq_dst,
                      Slice<int> mix_seq_src);
+
+struct ethash_light;
+
 }  // namespace progpow
 
 /**
@@ -49,6 +52,10 @@ kiss99_t progPowInit(uint64_t prog_seed,
  * @return 24-byte hash
  */
 uint192 progPowHash(Slice<const uint8_t> header);
+
+//! @overload
+uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_light* light);
+
 
 }  // namespace altintegration
 

@@ -17,6 +17,7 @@ add_library(strutil OBJECT
         )
 
 set(SOURCES
+        bootstraps.cpp
         time.cpp
         checks.cpp
         serde.cpp

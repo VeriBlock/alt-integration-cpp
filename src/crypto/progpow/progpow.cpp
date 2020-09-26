@@ -475,9 +475,14 @@ std::string hash32_t::toHex() const {
 }
 }  // namespace progpow
 
+static uint64_t gLastCachedLightEpoch = std::numeric_limits<uint64_t>::max();
+static std::shared_ptr<progpow::ethash_light> gLastCachedLight;
+static std::vector<uint32_t> gLastCachedDag;
+
 uint192 progPowHash(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);
+  const auto epoch = progpow::ethash_get_epoch(height);
   const auto headerHash = progpow::getVbkHeaderHash(header);
   auto nonce = progpow::getVbkBlockNonce(header);
 
@@ -485,11 +490,21 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   nonce &= 0x000000FFFFFFFFFFLL;
 
   // build cache
-  std::shared_ptr<progpow::ethash_light> light(
-      progpow::ethash_light_new(height), progpow::ethash_light_delete);
+  if (gLastCachedLight == nullptr || epoch != gLastCachedLightEpoch) {
+    VBK_LOG_WARN(
+        "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
+        epoch,
+        progpow::ethash_get_cachesize(height));
+    gLastCachedLightEpoch = epoch;
+    gLastCachedLight = std::shared_ptr<progpow::ethash_light>(
+        progpow::ethash_light_new(height), progpow::ethash_light_delete);
+    gLastCachedDag = progpow::createDagCache(gLastCachedLight.get());
+  }
 
-  auto dag = progpow::createDagCache(light.get());
-  auto hash = progpow::progPowHash(height, nonce, headerHash, dag, light.get());
+  VBK_ASSERT(gLastCachedLight);
+  auto& dag = gLastCachedDag;
+  progpow::ethash_light_t light = gLastCachedLight.get();
+  auto hash = progpow::progPowHash(height, nonce, headerHash, dag, light);
 
   WriteStream w(32);
   std::for_each(hash.uint32s, hash.uint32s + 8, [&w](uint32_t item) {

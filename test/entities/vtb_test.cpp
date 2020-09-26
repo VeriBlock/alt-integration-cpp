@@ -162,7 +162,7 @@ static const VbkBlock vtbVbkBlock{4976,
                                   "b53c1f4e259e6a0df23721a0b3b4b7ab"_unhex,
                                   1553699345,
                                   117576138,
-                                  -266584319};
+                                  static_cast<uint64_t>(-266584319)};
 
 static const VTB defaultVtb{1, defaultTx, vtbProofPath, vtbVbkBlock};
 
@@ -220,5 +220,5 @@ TEST(VTB, getId_test) {
   auto vtb = VTB::fromVbkEncoding(stream);
 
   EXPECT_EQ(vtb.getId().toHex(),
-            "e3d7f971cf23efadc50c4ff9d1b971346f7f7851f4dad89bfa8408be0b1a70e7");
+            "32dd01ab6285a92318e374fcdbd6b023c1ae1268150ce3484961870b8beb71fc");
 }

@@ -78,7 +78,8 @@ static std::vector<VbkTestCase> accept_test_cases = {
 };
 
 // Read Vbk_blockheaders file.
-TEST_P(AcceptTest, BootstrapWithChain) {
+// TODO(warchant): disabled because vbk_blockheader* contain pre-progpow data
+TEST_P(AcceptTest, DISABLED_BootstrapWithChain) {
   auto value = GetParam();
   auto allblocks = value.getBlocks();
 

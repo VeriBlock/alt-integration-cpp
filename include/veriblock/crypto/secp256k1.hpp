@@ -13,6 +13,7 @@
 #include "veriblock/slice.hpp"
 
 namespace altintegration {
+namespace secp256k1 {
 
 static const size_t PRIVATE_KEY_SIZE = 32;
 static const size_t PUBLIC_KEY_COMPRESSED_SIZE = 33;
@@ -67,8 +68,7 @@ PublicKey derivePublicKey(PrivateKey privateKey);
  * @throws std::out_of_range if privateKey is malformed
  * @return byte array with VBK encoded signature
  */
-Signature veriBlockSign(Slice<const uint8_t> message,
-                        PrivateKey privateKey);
+Signature sign(Slice<const uint8_t> message, PrivateKey privateKey);
 
 /**
  * Verify message previously signed with veriBlockSign.
@@ -83,10 +83,11 @@ Signature veriBlockSign(Slice<const uint8_t> message,
  * @throws std::out_of_range if publicKey is malformed
  * @return 1 if signature is valid, 0 - otherwise
  */
-int veriBlockVerify(Slice<const uint8_t> message,
-                    Signature signature,
-                    PublicKey publicKey);
+int verify(Slice<const uint8_t> message,
+           Signature signature,
+           PublicKey publicKey);
 
+}  // namespace secp256k1
 }  // namespace altintegration
 
 #endif  //__SIGNUTIL__HPP__

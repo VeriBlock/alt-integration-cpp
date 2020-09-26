@@ -107,27 +107,13 @@ TEST(ToJson, VTB) {
 
   static const auto btcTxBytes =
       "01000000010ce74f1fb694a001eebb1d7d08ce6208033f5bf7263ebad2de07bbf5186727"
-      "32"
-      "00000"
-      "0006a47304402200cf4998aba1682abeb777e762807a9dd2635a0b77773f66491b83ee3c"
-      "87"
-      "099ba"
-      "022033b7ca24dc520915b8b0200cbdcf95ba6ae866354585af9c53ee86f27362ebec0121"
-      "03"
-      "e5baf"
-      "0709c395a82ef0bd63bc8847564ac201d69a8e6bf448d87aa53a1c431aaffffffff02b72"
-      "70"
-      "d0000"
-      "0000001976a9148b9ea8545059f3a922457afd14ddf3855d8b109988ac00000000000000"
-      "00"
-      "536a4"
-      "c50000013350002a793c872d6f6460e90bed62342bb968195f8c515d3eed7277a09efac4"
-      "be"
-      "99f95"
-      "f0a15628b06ba3b44c0190b5c0495c9b8acd0701c5235ebbbe9cd4e943efe1864df04216"
-      "61"
-      "5cf92"
-      "083f400000000"_unhex;
+      "32000000006a47304402200cf4998aba1682abeb777e762807a9dd2635a0b77773f66491"
+      "b83ee3c87099ba022033b7ca24dc520915b8b0200cbdcf95ba6ae866354585af9c53ee86"
+      "f27362ebec012103e5baf0709c395a82ef0bd63bc8847564ac201d69a8e6bf448d87aa53"
+      "a1c431aaffffffff02b7270d00000000001976a9148b9ea8545059f3a922457afd14ddf3"
+      "855d8b109988ac0000000000000000536a4c50000013350002a793c872d6f6460e90bed6"
+      "2342bb968195f8c515d3eed7277a09efac4be99f95f0a15628b06ba3b44c0190b5c0495c"
+      "9b8acd0701c5235ebbbe9cd4e943efe1864df04216615cf92083f400000000"_unhex;
 
   static const MerklePath defaultPath{
       1659,
@@ -251,7 +237,7 @@ TEST(ToJson, VTB) {
                                     "b53c1f4e259e6a0df23721a0b3b4b7ab"_unhex,
                                     1553699345,
                                     117576138,
-                                    -266584319};
+                                    static_cast<uint64_t>(-266584319)};
 
   static const VTB defaultVtb{1, defaultTx, vtbProofPath, vtbVbkBlock};
 
@@ -261,9 +247,9 @@ TEST(ToJson, VTB) {
   std::string expected = R"({
   "containingBlock": {
     "difficulty": 117576138,
-    "hash": "00000000000033a3892576d7b861eb7fcd721c3b9f1f66df",
+    "hash": "9314b8e3d4ae11db85f006720f04294253c9f603e3ab6512",
     "height": 4976,
-    "id": "b861eb7fcd721c3b9f1f66df",
+    "id": "0f04294253c9f603e3ab6512",
     "merkleRoot": "b53c1f4e259e6a0df23721a0b3b4b7ab",
     "nonce": -266584319,
     "previousBlock": "449c60619294546ad825af03",
@@ -272,7 +258,7 @@ TEST(ToJson, VTB) {
     "timestamp": 1553699345,
     "version": 2
   },
-  "id": "e3d7f971cf23efadc50c4ff9d1b971346f7f7851f4dad89bfa8408be0b1a70e7",
+  "id": "32dd01ab6285a92318e374fcdbd6b023c1ae1268150ce3484961870b8beb71fc",
   "merklePath": {
     "index": 13,
     "layers": [
@@ -327,7 +313,7 @@ TEST(ToJson, VTB) {
         "version": 536870912
       }
     ],
-    "hash": "64b2bb5ac056f3255b3ca8e54bb72139132a1b0239ae6a67162abec50de9d152",
+    "hash": "195a793a5fb94a749876c71a40bd55d705184fd613b908564070c2c6bc553277",
     "merklePath": {
       "index": 1659,
       "layers": [
@@ -350,9 +336,9 @@ TEST(ToJson, VTB) {
     "publicKey": "3056301006072a8648ce3d020106052b8104000a03420004b3c10470c8e8e426f1937758d9fb5e97a1891176cb37d4c12d4af4107b1aa3e8a8a754c06a22760e44c60642fba883967c19740d5231336326f7962750c8df99",
     "publishedBlock": {
       "difficulty": 117556515,
-      "hash": "00000000000012a56c7e232950cba2e2cd99084a1b5b3e59",
+      "hash": "e5fcf4d45317a7de93a03fb12e785abd956fadd2bff6336b",
       "height": 4917,
-      "id": "50cba2e2cd99084a1b5b3e59",
+      "id": "2e785abd956fadd2bff6336b",
       "merkleRoot": "9f95f0a15628b06ba3b44c0190b5c049",
       "nonce": 1589362332,
       "previousBlock": "a793c872d6f6460e90bed623",
@@ -425,9 +411,9 @@ TEST(ToJson, ATV) {
   auto expected = R"({
   "blockOfProof": {
     "difficulty": 16842752,
-    "hash": "a288e74fe0c2e0a6afb0c39808e2aae9a5e19569b1a68624",
+    "hash": "2ba076219b4ff7ed36512275cd97599e23096ad42f119b5a",
     "height": 5000,
-    "id": "08e2aae9a5e19569b1a68624",
+    "id": "cd97599e23096ad42f119b5a",
     "merkleRoot": "26bbfda7d5e4462ef24ae02d67e47d78",
     "nonce": 1,
     "previousBlock": "449c60619294546ad825af03",
@@ -436,7 +422,7 @@ TEST(ToJson, ATV) {
     "timestamp": 1553699059,
     "version": 2
   },
-  "id": "50483f2dd2238329158e8d4241ec1fb74809b0ddc594efa8658e4047f105e35d",
+  "id": "c6d96b8e87f3e347aa1d1051bb3af39c8ea60612ced905d11c6f92d7b6bd50f5",
   "merklePath": {
     "index": 0,
     "layers": [
@@ -482,9 +468,9 @@ TEST(ToJson, BlockIndex) {
   "endorsedBy": [],
   "header": {
     "difficulty": 16842752,
-    "hash": "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c",
+    "hash": "c84fea3e2b16a991dc7fa986b93a9777a1d330ec8c16fd69",
     "height": 0,
-    "id": "6ad38f8a5995053b4b04d16c",
+    "id": "b93a9777a1d330ec8c16fd69",
     "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
     "nonce": 0,
     "previousBlock": "000000000000000000000000",

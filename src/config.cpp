@@ -3,9 +3,73 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <utility>
 #include <veriblock/config.hpp>
 
 namespace altintegration {
+
+static std::shared_ptr<altintegration::VbkChainParams> ParseVbkNetwork(
+    std::string net) {
+  using namespace altintegration;
+  static const std::vector<std::shared_ptr<VbkChainParams>> all{
+      std::make_shared<VbkChainParamsMain>(),
+      std::make_shared<VbkChainParamsTest>(),
+      std::make_shared<VbkChainParamsRegTest>(),
+      std::make_shared<VbkChainParamsAlpha>(),
+  };
+
+  auto it = std::find_if(
+      all.begin(), all.end(), [&](const std::shared_ptr<VbkChainParams>& p) {
+        return p->networkName() == net;
+      });
+
+  if (it == all.end()) {
+    return nullptr;
+  }
+
+  return *it;
+}
+
+static std::shared_ptr<altintegration::BtcChainParams> ParseBtcNetwork(
+    std::string net) {
+  using namespace altintegration;
+  static const std::vector<std::shared_ptr<BtcChainParams>> all{
+      std::make_shared<BtcChainParamsMain>(),
+      std::make_shared<BtcChainParamsTest>(),
+      std::make_shared<BtcChainParamsRegTest>(),
+  };
+
+  auto it = std::find_if(
+      all.begin(), all.end(), [&](const std::shared_ptr<BtcChainParams>& p) {
+        return p->networkName() == net;
+      });
+
+  if (it == all.end()) {
+    return nullptr;
+  }
+
+  return *it;
+}
+
+void Config::SelectBtcParams(std::string net,
+                     int startHeight,
+                     const std::vector<std::string>& blocks) {
+  auto param = ParseBtcNetwork(std::move(net));
+  VBK_ASSERT_MSG(param, "BTC network can be either main/test/regtest");
+  setBTC(startHeight, blocks, param);
+}
+
+void Config::SelectVbkParams(std::string net,
+                     int startHeight,
+                     const std::vector<std::string>& blocks) {
+  auto param = ParseVbkNetwork(std::move(net));
+  VBK_ASSERT_MSG(param, "VBK network can be either main/test/regtest/alpha");
+  setVBK(startHeight, blocks, param);
+}
+
+void Config::SelectAltParams(std::shared_ptr<AltChainParams> param) {
+  alt = std::move(param);
+}
 
 void Config::setBTC(int32_t start,
                     const std::vector<std::string>& hexblocks,
@@ -68,6 +132,18 @@ void Config::validate() const {
           state.GetDebugMessage());
     }
   }
+}
+
+const BtcChainParams& Config::getBtcParams() const {
+  return *btc.params;
+}
+
+const VbkChainParams& Config::getVbkParams() const {
+  return *vbk.params;
+}
+
+const AltChainParams& Config::getAltParams() const {
+  return *alt;
 }
 
 }  // namespace altintegration

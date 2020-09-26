@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "assert.hpp"
 #include "slice.hpp"
 #include "validation_state.hpp"
 
@@ -96,12 +97,12 @@ struct ReadStream {
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  bool readBE(T &out, ValidationState &state) {
-    if (!hasMore(sizeof(T))) {
+  bool readBE(T &out, ValidationState &state, size_t bytes = sizeof(T)) {
+    if (!hasMore(bytes)) {
       return state.Invalid("readbe-buffer-underflow");
     }
     T t = 0;
-    for (size_t i = 0, shift = (sizeof(T) - 1) * 8; i < sizeof(T);
+    for (size_t i = 0, shift = (bytes - 1) * 8; i < bytes;
          i++, shift -= 8) {
       t += ((T)m_Buffer[m_Pos++]) << shift;
     }
@@ -113,10 +114,10 @@ struct ReadStream {
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  T readBE() {
+  T readBE(size_t bytes = sizeof(T)) {
     T out{};
     ValidationState state;
-    if (!readBE(out, state)) {
+    if (!readBE(out, state, bytes)) {
       throw std::out_of_range("stream.readBE(): out of data");
     }
     return out;

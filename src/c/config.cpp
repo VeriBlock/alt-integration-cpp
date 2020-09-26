@@ -54,49 +54,6 @@ void VBK_FreeConfig(Config_t* config) {
   }
 }
 
-static std::shared_ptr<altintegration::VbkChainParams> ParseVbkNetwork(
-    const char* net) {
-  using namespace altintegration;
-  static const std::vector<std::shared_ptr<VbkChainParams>> all{
-      std::make_shared<VbkChainParamsMain>(),
-      std::make_shared<VbkChainParamsTest>(),
-      std::make_shared<VbkChainParamsRegTest>(),
-      std::make_shared<VbkChainParamsAlpha>(),
-  };
-
-  auto it = std::find_if(
-      all.begin(), all.end(), [&](const std::shared_ptr<VbkChainParams>& p) {
-        return p->networkName() == net;
-      });
-
-  if (it == all.end()) {
-    return nullptr;
-  }
-
-  return *it;
-}
-
-static std::shared_ptr<altintegration::BtcChainParams> ParseBtcNetwork(
-    const char* net) {
-  using namespace altintegration;
-  static const std::vector<std::shared_ptr<BtcChainParams>> all{
-      std::make_shared<BtcChainParamsMain>(),
-      std::make_shared<BtcChainParamsTest>(),
-      std::make_shared<BtcChainParamsRegTest>(),
-  };
-
-  auto it = std::find_if(
-      all.begin(), all.end(), [&](const std::shared_ptr<BtcChainParams>& p) {
-        return p->networkName() == net;
-      });
-
-  if (it == all.end()) {
-    return nullptr;
-  }
-
-  return *it;
-}
-
 static std::vector<std::string> ParseBlocks(const char* blocks) {
   std::vector<std::string> ret;
   std::istringstream ss(blocks);
@@ -111,21 +68,17 @@ bool VBK_SelectVbkParams(Config_t* config,
                          const char* net,
                          int startHeight,
                          const char* blocks) {
-  auto vbknet = ParseVbkNetwork(net);
-  VBK_ASSERT_MSG(
-      vbknet, "VBK network is invalid, must be one of main/test/regtest/alpha");
-
   if (blocks == nullptr) {
-    // bootstrap with genesis
-    config->config->setVBK(startHeight, {}, vbknet);
+    config->config->SelectVbkParams(net, startHeight, {});
     return true;
   }
 
   auto b = ParseBlocks(blocks);
-  VBK_ASSERT_MSG(!b.empty(),
-                 "'blocks' does not contain valid comma-separated hexstrings");
+  VBK_ASSERT_MSG(
+      !b.empty(),
+      "VBK 'blocks' does not contain valid comma-separated hexstrings");
 
-  config->config->setVBK(startHeight, b, vbknet);
+  config->config->SelectVbkParams(net, startHeight, b);
   return true;
 }
 
@@ -133,21 +86,17 @@ bool VBK_SelectBtcParams(Config_t* config,
                          const char* net,
                          int startHeight,
                          const char* blocks) {
-  auto btcnet = ParseBtcNetwork(net);
-  VBK_ASSERT_MSG(btcnet,
-                 "BTC network is invalid, must be one of main/test/regtest");
-
   if (blocks == nullptr) {
-    // bootstrap with genesis
-    config->config->setBTC(startHeight, {}, btcnet);
+    config->config->SelectBtcParams(net, startHeight, {});
     return true;
   }
 
   auto b = ParseBlocks(blocks);
-  VBK_ASSERT_MSG(!b.empty(),
-                 "'blocks' does not contain valid comma-separated hexstrings");
+  VBK_ASSERT_MSG(
+      !b.empty(),
+      "BTC 'blocks' does not contain valid comma-separated hexstrings");
 
-  config->config->setBTC(startHeight, b, btcnet);
+  config->config->SelectBtcParams(net, startHeight, b);
   return true;
 }
 

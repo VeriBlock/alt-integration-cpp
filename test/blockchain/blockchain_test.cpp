@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/blockchain/blocktree.hpp>
+#include <veriblock/bootstraps.hpp>
 
 #include "util/visualize.hpp"
 #include "veriblock/blockchain/btc_blockchain_util.hpp"
@@ -16,6 +17,19 @@
 #include "veriblock/time.hpp"
 
 using namespace altintegration;
+
+template <typename Block>
+Block getGenesisBlockHelper();
+
+template <>
+VbkBlock getGenesisBlockHelper() {
+  return GetRegTestVbkBlock();
+}
+
+template <>
+BtcBlock getGenesisBlockHelper() {
+  return GetRegTestBtcBlock();
+}
 
 template <typename TestCase>
 struct BlockchainTest : public ::testing::Test {
@@ -33,7 +47,10 @@ struct BlockchainTest : public ::testing::Test {
   height_t height = 0;
   ValidationState state;
 
+  std::function<block_t()> getGenesisBlock;
+
   BlockchainTest() {
+    getGenesisBlock = []() { return getGenesisBlockHelper<block_t>(); };
     chainparam = std::make_shared<params_t>();
     miner = std::make_shared<Miner<block_t, params_base_t>>(*chainparam);
 
@@ -41,7 +58,7 @@ struct BlockchainTest : public ::testing::Test {
         std::make_shared<BlockTree<block_t, params_base_t>>(*chainparam);
 
     // @when
-    EXPECT_TRUE(blockchain->bootstrapWithGenesis(state))
+    EXPECT_TRUE(blockchain->bootstrapWithGenesis(getGenesisBlock(), state))
         << "bootstrap: " << state.GetPath() << ", " << state.GetDebugMessage();
     EXPECT_TRUE(state.IsValid());
   };
@@ -90,7 +107,7 @@ struct VbkTestCase {
  * - blocks are statelessly valid
  */
 TYPED_TEST_P(BlockchainTest, Scenario1) {
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
 
   auto& chain = this->blockchain->getBestChain();
   EXPECT_NE(chain.tip(), nullptr);
@@ -140,7 +157,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
 TYPED_TEST_P(BlockchainTest, ForkResolutionWorks) {
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -185,7 +202,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_1) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -285,7 +302,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_2) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -319,7 +336,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_3) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -359,7 +376,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_4) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -400,7 +417,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_5) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -449,7 +466,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_6) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -501,7 +518,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_7) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -549,7 +566,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_8) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -597,7 +614,7 @@ TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_1) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};
@@ -656,7 +673,7 @@ TYPED_TEST_P(BlockchainTest, acceptBlock_test_scenario_2) {
 
   using block_t = typename TypeParam::block_t;
 
-  auto genesis = this->chainparam->getGenesisBlock();
+  auto genesis = this->getGenesisBlock();
   auto& best = this->blockchain->getBestChain();
 
   std::vector<block_t> fork1{genesis};

@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
 #include <vector>
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/blockchain/block_index.hpp>
@@ -20,6 +21,8 @@
 #include <veriblock/uint.hpp>
 
 namespace altintegration {
+
+struct VbkChainParams;
 
 /**
  * @struct VbkBlock
@@ -115,16 +118,13 @@ struct VbkBlock {
    */
   uint32_t getBlockTime() const;
 
-  friend bool operator==(const VbkBlock& a, const VbkBlock& b) {
-    return a.getHash() == b.getHash();
-  }
+  friend bool operator==(const VbkBlock& a, const VbkBlock& b);
+  friend bool operator!=(const VbkBlock& a, const VbkBlock& b);
 
-  friend bool operator!=(const VbkBlock& a, const VbkBlock& b) {
-    return !(a == b);
-  }
+  hash_t calculateHash() const;
 
   /**
-   * Calculate the hash of the vbk block
+   * Get current block hash
    * @return hash block hash
    */
   hash_t getHash() const;
@@ -139,6 +139,17 @@ struct VbkBlock {
 
   static const std::string& name() { return _name; }
 
+  VbkBlock() = default;
+  VbkBlock(int32_t h,
+           int16_t v,
+           uint96 prevBlock,
+           keystone_t prev1,
+           keystone_t prev2,
+           uint128 mroot,
+           int32_t ts,
+           int32_t diff,
+           uint64_t nonce);
+
   int32_t height{};
   int16_t version{};
   uint96 previousBlock{};
@@ -147,10 +158,12 @@ struct VbkBlock {
   uint128 merkleRoot{};
   int32_t timestamp{};
   int32_t difficulty{};
-  int32_t nonce{};
+  uint64_t nonce{};
 
  private:
   static const std::string _name;
+
+  mutable hash_t hash_{};
 };
 
 template <typename JsonValue>

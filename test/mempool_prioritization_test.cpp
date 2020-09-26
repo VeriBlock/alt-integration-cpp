@@ -39,12 +39,12 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
     BlockIndex<VbkBlock>* blk = popminer->mineVbkBlocks(tip, 1);
     EXPECT_TRUE(alttree.vbk().acceptBlock(blk->getHeader(), state));
     EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
-              alttree.vbk().getParams().getGenesisBlock().height);
+              GetRegTestVbkBlock().height);
     for (size_t i = 1; i < amount; ++i) {
       blk = popminer->mineVbkBlocks(*blk, 1);
       EXPECT_TRUE(alttree.vbk().acceptBlock(blk->getHeader(), state));
       EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
-                alttree.vbk().getParams().getGenesisBlock().height);
+                GetRegTestVbkBlock().height);
     }
     return blk;
   }
@@ -319,7 +319,7 @@ TEST_F(MemPoolPrioritizationFixture, atv_areStronglyEquivalent_scenario1_test) {
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   ASSERT_EQ(altPayloads1.atvs.size(), 1);
   ASSERT_TRUE(altPayloads1.vtbs.empty());
@@ -344,9 +344,9 @@ TEST_F(MemPoolPrioritizationFixture, atv_areStronglyEquivalent_scenario2_test) {
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
   PopData altPayloads1 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
   PopData altPayloads2 =
-      generateAltPayloads({tx}, vbkparam.getGenesisBlock().getHash());
+      generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   ASSERT_EQ(altPayloads1.atvs.size(), 1);
   ASSERT_TRUE(altPayloads1.vtbs.empty());

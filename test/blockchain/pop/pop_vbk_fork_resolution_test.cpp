@@ -67,7 +67,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
       Abtccontaining1->getHeader(),
       Atx1,
       chainAtip->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
 
   // state is still at chain B
   ASSERT_EQ(popminer->vbk().getBestChain().tip(), chainBtip);
@@ -92,7 +92,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
       Bbtccontaining1->getHeader(),
       Btx1,
       B60->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
 
   popminer->mineVbkBlocks(*chainBtip, 1);
 
@@ -124,7 +124,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
       btcBlockTip2->getHeader(),
       Atx1,
       vbkBlockTip->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
 
   // Test the same case but in the getProtoKeystoneContext() function
   // make btcBlockTtip2 active chain tip
@@ -196,7 +196,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
       btcBlockTip1->getHeader(),
       Atx1,
       endorsedVbkBlock->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
 
   auto vbktip1 = popminer->vbk().getBestChain().tip();
   // should not throw, as we removed call to 'invalidateSubtree'
@@ -238,7 +238,7 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
       btcBlockTip1->getHeader(),
       Atx1,
       endorsedVbkBlock->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
 
   // mine the first endorsement
   popminer->mineVbkBlocks(1);
@@ -248,7 +248,7 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
       btcBlockTip1->getHeader(),
       Atx1,
       endorsedVbkBlock->getHeader(),
-      popminer->getBtcParams().getGenesisBlock().getHash());
+      GetRegTestBtcBlock().getHash());
 
   // mine another copy of the same endorsement
 

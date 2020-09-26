@@ -97,7 +97,7 @@ constexpr const auto MAX_RAWTX_SIZE_VBKPOPTX =
     // address.size, address
     1 + ADDRESS_SIZE +
     // publishedBlock.size, publishedBlock
-    1 + VBK_HEADER_SIZE_VBLAKE +
+    1 + VBK_HEADER_SIZE_PROGPOW +
     // bitcoinTransaction.size.size, bitcoinTransaction.size, bitcoinTransaction
     5 + BTC_TX_MAX_RAW_SIZE + MAX_MERKLE_BYTES +
     // blockOfProof.size, blockOfProof
