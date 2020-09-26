@@ -125,59 +125,161 @@ static const uint32_t keccakf_rndc[24] = {
     0x8000808b, 0x0000008b, 0x00008089, 0x00008003, 0x00008002, 0x00000080,
     0x0000800a, 0x8000000a, 0x80008081, 0x00008080, 0x80000001, 0x80008008};
 
-// Implementation of the Keccakf transformation with a width of 800
-void keccak_f800_round(Slice<uint32_t> st, const int r) {
-  static const uint32_t keccakf_rotc[24] = {1,  3,  6,  10, 15, 21, 28, 36,
-                                            45, 55, 2,  14, 27, 41, 56, 8,
-                                            25, 43, 62, 18, 39, 61, 20, 44};
-  static const uint32_t keccakf_piln[24] = {10, 7,  11, 17, 18, 3,  5,  16,
-                                            8,  21, 24, 4,  15, 23, 19, 13,
-                                            12, 2,  20, 14, 22, 9,  6,  1};
-
-  uint32_t t, bc[5];
-  // VeriBlock: Theta
-  bc[0] = st[0] ^ st[6] ^ st[9] ^ st[12] ^ st[17];
-  bc[1] = st[8] ^ st[11] ^ st[14] ^ st[19] ^ st[23];
-  bc[2] = st[2] ^ st[7] ^ st[10] ^ st[18] ^ st[22];
-  bc[3] = st[4] ^ st[5] ^ st[15] ^ st[20] ^ st[24];
-  bc[4] = st[1] ^ st[3] ^ st[13] ^ st[16] ^ st[21];
-
-  for (int i = 0; i < 5; i++) {
-    t = bc[(i + 4) % 5] ^ rotl32(bc[(i + 1) % 5], 1u);
-    for (uint32_t j = 0; j < 25; j += 5) {
-      st[j + i] ^= t;
-    }
-  }
-
-  // Rho Pi
-  t = st[1];
-  for (int i = 0; i < 24; i++) {
-    uint32_t j = keccakf_piln[i];
-    bc[0] = st[j];
-    st[j] = rotl32(t, keccakf_rotc[i]);
-    t = bc[0];
-  }
-
-  // VeriBlock: update
-  st[3] = st[3] ^ 0x79938B61;
-  st[10] = st[10] ^ ((st[19] & 0x000000FF) | (st[24] & 0x0000FF00) |
-                     (st[6] & 0x00FF0000) | (st[14] & 0xFF000000));
-
-  //  Chi
-  for (uint32_t j = 0; j < 25; j += 5) {
-    for (int i = 0; i < 5; i++) bc[i] = st[j + i];
-    for (int i = 0; i < 5; i++)
-      st[j + i] ^= (~bc[(i + 1) % 5]) & bc[(i + 2) % 5];
-  }
-
-  //  Iota
-  st[0] ^= keccakf_rndc[r];
-}
+inline int right3(int foo, int n) { return (int)((uint32_t)foo >> n); }
 
 void keccak_f800(Slice<uint32_t> state) {
-  for (int r = 0; r < 22; r++) {
-    keccak_f800_round(state, r);
+  int a00 = state[0], a01 = state[1], a02 = state[2], a03 = state[3],
+      a04 = state[4];
+  int a05 = state[5], a06 = state[6], a07 = state[7], a08 = state[8],
+      a09 = state[9];
+  int a10 = state[10], a11 = state[11], a12 = state[12], a13 = state[13],
+      a14 = state[14];
+  int a15 = state[15], a16 = state[16], a17 = state[17], a18 = state[18],
+      a19 = state[19];
+  int a20 = state[20], a21 = state[21], a22 = state[22], a23 = state[23],
+      a24 = state[24];
+
+  for (int i = 0; i < 22; i++) {
+    // theta
+    int c0 = a00 ^ a06 ^ a09 ^ a12 ^ a17;
+    int c1 = a08 ^ a11 ^ a14 ^ a19 ^ a23;
+    int c2 = a02 ^ a07 ^ a10 ^ a18 ^ a22;
+    int c3 = a04 ^ a05 ^ a15 ^ a20 ^ a24;
+    int c4 = a01 ^ a03 ^ a13 ^ a16 ^ a21;
+
+    int d1 = (c1 << 1 | right3(c1, 31)) ^ c4;
+    int d2 = (c2 << 1 | right3(c2, 31)) ^ c0;
+    int d3 = (c3 << 1 | right3(c3, 31)) ^ c1;
+    int d4 = (c4 << 1 | right3(c4, 31)) ^ c2;
+    int d0 = (c0 << 1 | right3(c0, 31)) ^ c3;
+
+    a00 ^= d1;
+    a05 ^= d1;
+    a10 ^= d1;
+    a15 ^= d1;
+    a20 ^= d1;
+    a01 ^= d2;
+    a06 ^= d2;
+    a11 ^= d2;
+    a16 ^= d2;
+    a21 ^= d2;
+    a02 ^= d3;
+    a07 ^= d3;
+    a12 ^= d3;
+    a17 ^= d3;
+    a22 ^= d3;
+    a03 ^= d4;
+    a08 ^= d4;
+    a13 ^= d4;
+    a18 ^= d4;
+    a23 ^= d4;
+    a04 ^= d0;
+    a09 ^= d0;
+    a14 ^= d0;
+    a19 ^= d0;
+    a24 ^= d0;
+
+    // rho/pi
+    c1 = a01 << 1 | right3(a01, 31);
+    a01 = a06 << 12 | right3(a06, 20);
+    a06 = a09 << 20 | right3(a09, 12);
+    a09 = a22 << 29 | right3(a22, 3);
+    a22 = a14 << 7 | right3(a14, 25);
+    a14 = a20 << 18 | right3(a20, 14);
+    a20 = a02 << 30 | right3(a02, 2);
+    a02 = a12 << 11 | right3(a12, 21);
+    a12 = a13 << 25 | right3(a13, 7);
+    a13 = a19 << 8 | right3(a19, 24);
+    a19 = a23 << 24 | right3(a23, 8);
+    a23 = a15 << 9 | right3(a15, 23);
+    a15 = a04 << 27 | right3(a04, 5);
+    a04 = a24 << 14 | right3(a24, 18);
+    a24 = a21 << 2 | right3(a21, 30);
+    a21 = a08 << 23 | right3(a08, 9);
+    a08 = a16 << 13 | right3(a16, 19);
+    a16 = a05 << 4 | right3(a05, 28);
+    a05 = a03 << 28 | right3(a03, 4);
+    a03 = a18 << 21 | right3(a18, 11);
+    a18 = a17 << 15 | right3(a17, 17);
+    a17 = a11 << 10 | right3(a11, 22);
+    a11 = a07 << 6 | right3(a07, 26);
+    a07 = a10 << 3 | right3(a10, 29);
+    a10 = c1;
+
+    a03 ^= 0x79938B61;
+    a10 ^= ((a19 & 0x000000FF) | (a24 & 0x0000FF00) | (a06 & 0x00FF0000) |
+            (a14 & 0xFF000000));
+
+    // chi
+    c0 = a00 ^ (~a01 & a02);
+    c1 = a01 ^ (~a02 & a03);
+    a02 ^= ~a03 & a04;
+    a03 ^= ~a04 & a00;
+    a04 ^= ~a00 & a01;
+    a00 = c0;
+    a01 = c1;
+
+    c0 = a05 ^ (~a06 & a07);
+    c1 = a06 ^ (~a07 & a08);
+    a07 ^= ~a08 & a09;
+    a08 ^= ~a09 & a05;
+    a09 ^= ~a05 & a06;
+    a05 = c0;
+    a06 = c1;
+
+    c0 = a10 ^ (~a11 & a12);
+    c1 = a11 ^ (~a12 & a13);
+    a12 ^= ~a13 & a14;
+    a13 ^= ~a14 & a10;
+    a14 ^= ~a10 & a11;
+    a10 = c0;
+    a11 = c1;
+
+    c0 = a15 ^ (~a16 & a17);
+    c1 = a16 ^ (~a17 & a18);
+    a17 ^= ~a18 & a19;
+    a18 ^= ~a19 & a15;
+    a19 ^= ~a15 & a16;
+    a15 = c0;
+    a16 = c1;
+
+    c0 = a20 ^ (~a21 & a22);
+    c1 = a21 ^ (~a22 & a23);
+    a22 ^= ~a23 & a24;
+    a23 ^= ~a24 & a20;
+    a24 ^= ~a20 & a21;
+    a20 = c0;
+    a21 = c1;
+
+    // iota
+    a00 ^= keccakf_rndc[i];
   }
+
+  state[0] = a00;
+  state[1] = a01;
+  state[2] = a02;
+  state[3] = a03;
+  state[4] = a04;
+  state[5] = a05;
+  state[6] = a06;
+  state[7] = a07;
+  state[8] = a08;
+  state[9] = a09;
+  state[10] = a10;
+  state[11] = a11;
+  state[12] = a12;
+  state[13] = a13;
+  state[14] = a14;
+  state[15] = a15;
+  state[16] = a16;
+  state[17] = a17;
+  state[18] = a18;
+  state[19] = a19;
+  state[20] = a20;
+  state[21] = a21;
+  state[22] = a22;
+  state[23] = a23;
+  state[24] = a24;
 }
 
 hash32_t keccak_f800_progpow(const uint256& header,
@@ -268,7 +370,7 @@ void progPowLoop(const uint64_t block_number,
                  const uint64_t loop,
                  uint32_t mix[PROGPOW_LANES][PROGPOW_REGS],
                  const std::vector<uint32_t>& dag,
-                 ethash_light_t light) {
+                 ethash_cache* light) {
   uint64_t dag_bytes = ethash_get_datasize(block_number);
 
   // dag_entry holds the 256 bytes of data loaded from the DAG
@@ -282,7 +384,7 @@ void progPowLoop(const uint64_t block_number,
       mix[loop % PROGPOW_LANES][0] %
       (dag_bytes / (PROGPOW_LANES * PROGPOW_DAG_LOADS * sizeof(uint32_t)));
 
-  uint32_t lastLookup = (uint32_t)-1;
+  uint32_t lastLookup = 0xffffffff;
   ethash_dag_node_t lookupNode;
 
   for (int l = 0; l < PROGPOW_LANES; l++) {
@@ -369,7 +471,7 @@ hash32_t progPowHash(const uint64_t block_number,  // height
                      const uint64_t nonce,
                      const uint256& header,
                      const std::vector<uint32_t>& dag,
-                     ethash_light_t light) {
+                     ethash_cache* light) {
   hash32_t digest, zero, seed_256;
   uint64_t seed;
   uint32_t mix[PROGPOW_LANES][PROGPOW_REGS];
@@ -423,7 +525,7 @@ uint256 getVbkHeaderHash(Slice<const uint8_t> header) {
   return sha256twice({header.begin(), header.size() - 5});
 }
 
-std::vector<uint32_t> createDagCache(ethash_light_t light) {
+std::vector<uint32_t> createDagCache(ethash_cache* light) {
   std::vector<uint32_t> cdag(VBK_ETHASH_HASH_BYTES * DATASET_PARENTS, 0);
 
   ethash_dag_node_t node;
@@ -476,7 +578,7 @@ std::string hash32_t::toHex() const {
 }  // namespace progpow
 
 static uint64_t gLastCachedLightEpoch = std::numeric_limits<uint64_t>::max();
-static std::shared_ptr<progpow::ethash_light> gLastCachedLight;
+static std::shared_ptr<progpow::ethash_cache> gLastCachedLight;
 static std::vector<uint32_t> gLastCachedDag;
 
 uint192 progPowHash(Slice<const uint8_t> header) {
@@ -496,14 +598,14 @@ uint192 progPowHash(Slice<const uint8_t> header) {
         epoch,
         progpow::ethash_get_cachesize(height));
     gLastCachedLightEpoch = epoch;
-    gLastCachedLight = std::shared_ptr<progpow::ethash_light>(
+    gLastCachedLight = std::shared_ptr<progpow::ethash_cache>(
         progpow::ethash_light_new(height), progpow::ethash_light_delete);
     gLastCachedDag = progpow::createDagCache(gLastCachedLight.get());
   }
 
   VBK_ASSERT(gLastCachedLight);
   auto& dag = gLastCachedDag;
-  progpow::ethash_light_t light = gLastCachedLight.get();
+  auto* light = gLastCachedLight.get();
   auto hash = progpow::progPowHash(height, nonce, headerHash, dag, light);
 
   WriteStream w(32);

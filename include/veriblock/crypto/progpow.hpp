@@ -29,6 +29,7 @@ struct hash32_t {
 uint256 getVbkHeaderHash(Slice<const uint8_t> header);
 void fill_mix(uint64_t seed, uint32_t lane_id, Slice<uint32_t> mix);
 void keccak_f800(Slice<uint32_t> state);
+void keccak_f800_2(Slice<uint32_t> state);
 hash32_t keccak_f800_progpow(const uint256& header,
                              uint64_t seed,
                              const hash32_t& digest);
@@ -41,7 +42,7 @@ kiss99_t progPowInit(uint64_t prog_seed,
                      Slice<int> mix_seq_dst,
                      Slice<int> mix_seq_src);
 
-struct ethash_light;
+struct ethash_cache;
 
 }  // namespace progpow
 
@@ -54,7 +55,7 @@ struct ethash_light;
 uint192 progPowHash(Slice<const uint8_t> header);
 
 //! @overload
-uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_light* light);
+uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light);
 
 
 }  // namespace altintegration

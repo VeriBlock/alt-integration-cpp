@@ -50,7 +50,7 @@ uint64_t ethash_get_cachesize(uint64_t const block_number) {
 // SeqMemoHash(s, R, N)
 static bool ethash_compute_cache_nodes(node* const nodes,
                                        uint64_t cache_size,
-                                       ethash_h256_t const* seed) {
+                                       uint256 const* seed) {
   if (cache_size % sizeof(node) != 0) {
     return false;
   }
@@ -81,14 +81,14 @@ static bool ethash_compute_cache_nodes(node* const nodes,
 
 void ethash_calculate_dag_node(ethash_dag_node_t* out,
                                uint32_t node_index,
-                               ethash_light_t const light) {
+                               ethash_cache* const light) {
   ethash_calculate_dag_item((node*)(out->words), node_index, light);
 }
 
 // calcDatasetItem
 void ethash_calculate_dag_item(node* const ret,
                                uint32_t node_index,
-                               ethash_light_t const light) {
+                               ethash_cache* const light) {
   uint32_t num_parent_nodes = (uint32_t)(light->cache_size / sizeof(node));
   node const* cache_nodes = (node const*)light->cache;
   node const* init = &cache_nodes[node_index % num_parent_nodes];
@@ -137,9 +137,8 @@ void ethash_calculate_dag_item(node* const ret,
 }
 
 // dagSeed
-ethash_h256_t ethash_get_seedhash(uint64_t block_number) {
-  ethash_h256_t ret;
-  ethash_h256_reset(&ret);
+uint256 ethash_get_seedhash(uint64_t block_number) {
+  uint256 ret;
   if (block_number + (VBK_ETHASH_EPOCH_OFFSET * VBK_ETHASH_EPOCH_LENGTH) >=
       VBK_ETHASH_EPOCH_LENGTH) {
     uint64_t const epochs = ethash_get_epoch(block_number);
@@ -150,10 +149,10 @@ ethash_h256_t ethash_get_seedhash(uint64_t block_number) {
   return ret;
 }
 
-ethash_light_t ethash_light_new_internal(uint64_t cache_size,
-                                         ethash_h256_t const* seed) {
-  struct ethash_light* ret;
-  ret = (ethash_light_t)calloc(sizeof(*ret), 1);
+ethash_cache* ethash_light_new_internal(uint64_t cache_size,
+                                        uint256 const* seed) {
+  struct ethash_cache* ret;
+  ret = (ethash_cache*)calloc(sizeof(*ret), 1);
   if (!ret) {
     return NULL;
   }
@@ -172,19 +171,18 @@ ethash_light_t ethash_light_new_internal(uint64_t cache_size,
   return ret;
 }
 
-ethash_light_t ethash_light_new(uint64_t block_number) {
-  ethash_h256_t seedhash = ethash_get_seedhash(block_number);
+ethash_cache* ethash_light_new(uint64_t block_number) {
+  uint256 seedhash = ethash_get_seedhash(block_number);
   uint64_t cachesize = ethash_get_cachesize(block_number);
-  ethash_light_t ret;
-  ret = ethash_light_new_internal(cachesize, &seedhash);
+  ethash_cache* ret = ethash_light_new_internal(cachesize, &seedhash);
   if (!ret) {
     return NULL;
   }
-  ret->block_number = block_number;
+  ret->epoch = ethash_get_epoch(block_number);
   return ret;
 }
 
-void ethash_light_delete(ethash_light_t light) {
+void ethash_light_delete(ethash_cache* light) {
   if (light->cache) {
     free(light->cache);
   }

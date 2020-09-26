@@ -78,8 +78,7 @@ using namespace altintegration;
 TEST_P(EthashDagSeedTest, Regression) {
   auto [blockNumber, expected] = GetParam();
   auto actual = progpow::ethash_get_seedhash(blockNumber);
-  auto actualhex = HexStr(actual.b, actual.b + 32);
-  ASSERT_EQ(actualhex, expected);
+  ASSERT_EQ(actual.toHex(), expected);
 }
 
 INSTANTIATE_TEST_SUITE_P(EthashDagSeedRegression,

@@ -30,10 +30,6 @@ typedef union node {
 
 } node;
 
-static inline void ethash_h256_reset(ethash_h256_t* hash) {
-  std::memset(hash, 0, 32);
-}
-
 /**
  * Allocate and initialize a new ethash_light handler. Internal version
  *
@@ -44,12 +40,12 @@ static inline void ethash_h256_reset(ethash_h256_t* hash) {
  *                      ERRNOMEM or invalid parameters used for @ref
  * ethash_compute_cache_nodes()
  */
-ethash_light_t ethash_light_new_internal(uint64_t cache_size,
-                                         ethash_h256_t const* seed);
+ethash_cache* ethash_light_new_internal(uint64_t cache_size,
+                                        uint256 const* seed);
 
 void ethash_calculate_dag_item(node* const ret,
                                uint32_t node_index,
-                               ethash_light_t const cache);
+                               ethash_cache* const cache);
 
 uint64_t ethash_get_datasize(uint64_t const block_number);
 uint64_t ethash_get_cachesize(uint64_t const block_number);

@@ -38,15 +38,15 @@ class MockMinerTestCase(unittest.TestCase):
         p.header = '11'
         p.payoutInfo = b'22'
 
-        self.assertEqual(p.header, '11')
-        self.assertEqual(p.payoutInfo, '22')
+        self.assertEqual(str(p.header), '11')
+        self.assertEqual(str(p.payoutInfo), '22')
 
         b = BtcBlock()
-        self.assertEqual(b.merkleRoot, "0000000000000000000000000000000000000000000000000000000000000000")
+        self.assertEqual(str(b.merkleRoot), "0000000000000000000000000000000000000000000000000000000000000000")
         b.merkleRoot = '1111111111111111111111111111111111111111111111111111111111111111'
-        self.assertEqual(b.merkleRoot, "1111111111111111111111111111111111111111111111111111111111111111")
+        self.assertEqual(str(b.merkleRoot), "1111111111111111111111111111111111111111111111111111111111111111")
         b.merkleRoot = b'2222222222222222222222222222222222222222222222222222222222222222'
-        self.assertEqual(b.merkleRoot, "2222222222222222222222222222222222222222222222222222222222222222")
+        self.assertEqual(str(b.merkleRoot), "2222222222222222222222222222222222222222222222222222222222222222")
 
 if __name__ == '__main__':
     unittest.main()
