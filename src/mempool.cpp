@@ -238,12 +238,13 @@ void MemPool::clear() {
 }
 
 template <>
-bool MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
-                          ValidationState& state,
-                          bool resubmit) {
+MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
+                                           ValidationState& state,
+                                           bool resubmit) {
   // stateless validation
   if (!checkATV(*atv, state, mempool_tree_.alt().getParams())) {
-    return state.Invalid("pop-mempool-submit-atv-stateless");
+    return {MemPool::FAILED_STATELESS,
+            state.Invalid("pop-mempool-submit-atv-stateless")};
   }
 
   std::shared_ptr<VbkBlock> blockOfProof_ptr =
@@ -252,7 +253,8 @@ bool MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
   // stateful validation
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
     atvs_in_flight_[atv->getId()] = atv;
-    return state.Invalid("pop-mempool-submit-atv-stateful");
+    return {MemPool::FAILED_STATEFUL,
+            state.Invalid("pop-mempool-submit-atv-stateful")};
   }
 
   auto& rel = touchVbkPayloadRelation(blockOfProof_ptr);
@@ -273,12 +275,13 @@ bool MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 }
 
 template <>
-bool MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
-                          ValidationState& state,
-                          bool resubmit) {
+MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
+                                           ValidationState& state,
+                                           bool resubmit) {
   // stateless validation
   if (!checkVTB(*vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
-    return state.Invalid("pop-mempool-submit-vtb-stateless");
+    return {FAILED_STATELESS,
+            state.Invalid("pop-mempool-submit-vtb-stateless")};
   }
 
   std::shared_ptr<VbkBlock> containingBlock_ptr =
@@ -287,7 +290,7 @@ bool MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
     vtbs_in_flight_[vtb->getId()] = vtb;
-    return state.Invalid("pop-mempool-submit-vtb-stateful");
+    return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vtb-stateful")};
   }
 
   auto& rel = touchVbkPayloadRelation(containingBlock_ptr);
@@ -307,19 +310,21 @@ bool MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
 }
 
 template <>
-bool MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& blk,
-                               ValidationState& state,
-                               bool resubmit) {
+MemPool::SubmitResult MemPool::submit<VbkBlock>(
+    const std::shared_ptr<VbkBlock>& blk,
+    ValidationState& state,
+    bool resubmit) {
   // stateless validation
   if (!checkBlock(
           *blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
-    return state.Invalid("pop-mempool-submit-vbkblock-stateless");
+    return {FAILED_STATELESS,
+            state.Invalid("pop-mempool-submit-vbkblock-stateless")};
   }
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
     vbkblocks_in_flight_[blk->getId()] = blk;
-    return state.Invalid("pop-mempool-submit-vbk-stateful");
+    return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vbk-stateful")};
   }
 
   // stateful validation

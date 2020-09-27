@@ -36,6 +36,26 @@ namespace altintegration {
  * @ingroup api
  */
 struct MemPool {
+  enum Status { ACCEPTED, FAILED_STATELESS, FAILED_STATEFUL };
+
+  struct SubmitResult {
+    Status status = ACCEPTED;
+
+    // by default created in valid state
+    SubmitResult() = default;
+
+    SubmitResult(bool state) {
+      VBK_ASSERT_MSG(
+          state, "SubmitResult can be implicitly constructed from bool=true");
+    }
+
+    SubmitResult(Status status, bool /* ignore */) : status(status) {}
+
+    operator bool() const { return status == ACCEPTED; }
+
+    bool isFailedStateful() const { return status == FAILED_STATEFUL; }
+  };
+
   using vbk_hash_t = typename VbkBlock::prev_hash_t;
 
   template <typename Payload>
@@ -63,10 +83,6 @@ struct MemPool {
     return nullptr;
   }
 
-  //! submit new payload into mempool
-  //! has overloads for VTB, ATV, VbkBlock
-  //! @ingroup api
-
   /**
    * Add new payload to mempool.
    *
@@ -86,11 +102,12 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  bool submit(Slice<const uint8_t> bytes, ValidationState& state) {
+  SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state) {
     ReadStream stream(bytes);
     T payload;
     if (Deserialize(stream, payload, state)) {
-      return state.Invalid("pop-mempool-submit-deserialize");
+      return {FAILED_STATELESS,
+              state.Invalid("pop-mempool-submit-deserialize")};
     }
 
     return submit<T>(payload, state);
@@ -115,7 +132,7 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  bool submit(const T& pl, ValidationState& state) {
+  SubmitResult submit(const T& pl, ValidationState& state) {
     return submit<T>(std::make_shared<T>(pl), state);
   }
 
@@ -139,14 +156,14 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  bool submit(const std::shared_ptr<T>& pl,
-              ValidationState& state,
-              bool resubmit = true) {
+  SubmitResult submit(const std::shared_ptr<T>& pl,
+                      ValidationState& state,
+                      bool resubmit = true) {
     (void)pl;
     (void)state;
     (void)resubmit;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
-    return true;
+    return {};
   }
 
   /**
@@ -177,11 +194,12 @@ struct MemPool {
    * @warning Expensive operation. It builds virtual VBK Block Tree with
    * payloads stored in mempool, applies them to current AltBlockTree tip. All
    * payloads that can not be connected will remain in mempool. As a result,
-   * this method returns altintegration::PopData which contains fully valid and connected
-   * payloads. This should be inserted into AltBlock as is.
+   * this method returns altintegration::PopData which contains fully valid and
+   * connected payloads. This should be inserted into AltBlock as is.
    *
    * @ingroup api
-   * @return statefully valid altintegration::PopData that can be connected to current tip.
+   * @return statefully valid altintegration::PopData that can be connected to
+   * current tip.
    */
   PopData getPop();
 
@@ -248,11 +266,11 @@ struct MemPool {
 
 // clang-format off
 //! @overload
-template <> bool MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state, bool resubmit);
+template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state, bool resubmit);
 //! @overload
-template <> bool MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state, bool resubmit);
+template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state, bool resubmit);
 //! @overload
-template <> bool MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state, bool resubmit);
+template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state, bool resubmit);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload
