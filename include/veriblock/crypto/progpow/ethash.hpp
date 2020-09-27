@@ -73,7 +73,10 @@ void ethash_light_delete(ethash_cache* light);
 /**
  * Calculate the seedhash for a given block number
  */
+uint256 ethash_calculate_seedhash(uint64_t block_number);
 uint256 ethash_get_seedhash(uint64_t block_number);
+
+std::shared_ptr<ethash_cache> ethash_make_cache(uint64_t block_number);
 
 }  // namespace progpow
 }  // namespace altintegration

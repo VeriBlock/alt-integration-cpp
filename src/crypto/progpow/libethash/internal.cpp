@@ -36,12 +36,12 @@ uint64_t ethash_get_epoch(uint64_t block) {
 }
 
 uint64_t ethash_get_datasize(uint64_t const block_number) {
-  assert(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
+  VBK_ASSERT(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
   return dag_sizes[block_number / VBK_ETHASH_EPOCH_LENGTH];
 }
 
 uint64_t ethash_get_cachesize(uint64_t const block_number) {
-  assert(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
+  VBK_ASSERT(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
   return cache_sizes[block_number / VBK_ETHASH_EPOCH_LENGTH];
 }
 
@@ -136,8 +136,23 @@ void ethash_calculate_dag_item(node* const ret,
   SHA3_512(ret->bytes, ret->bytes, sizeof(node));
 }
 
+std::shared_ptr<ethash_cache> ethash_make_cache(uint64_t block_number) {
+  return std::shared_ptr<ethash_cache>(ethash_light_new(block_number),
+                                       ethash_light_delete);
+}
+
 // dagSeed
 uint256 ethash_get_seedhash(uint64_t block_number) {
+  uint256 ret;
+  if (block_number + (VBK_ETHASH_EPOCH_OFFSET * VBK_ETHASH_EPOCH_LENGTH) >=
+      VBK_ETHASH_EPOCH_LENGTH) {
+    VBK_ASSERT(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
+    return dag_seeds[block_number / VBK_ETHASH_EPOCH_LENGTH];
+  }
+  return ret;
+}
+
+uint256 ethash_calculate_seedhash(uint64_t block_number) {
   uint256 ret;
   if (block_number + (VBK_ETHASH_EPOCH_OFFSET * VBK_ETHASH_EPOCH_LENGTH) >=
       VBK_ETHASH_EPOCH_LENGTH) {

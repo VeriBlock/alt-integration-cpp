@@ -617,4 +617,25 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   return uint192({v.data(), VBLAKE_HASH_SIZE});
 }
 
+uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
+  VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
+  const auto height = progpow::getVbkBlockHeight(header);
+  const auto headerHash = progpow::getVbkHeaderHash(header);
+  auto nonce = progpow::getVbkBlockNonce(header);
+
+  // nonce is only 40 bits (5 bytes)
+  nonce &= 0x000000FFFFFFFFFFLL;
+
+  auto dag = progpow::createDagCache(light);
+  auto hash = progpow::progPowHash(height, nonce, headerHash, dag, light);
+
+  WriteStream w(32);
+  std::for_each(hash.uint32s, hash.uint32s + 8, [&w](uint32_t item) {
+    w.writeLE<uint32_t>(item);
+  });
+
+  auto& v = w.data();
+  return uint192({v.data(), VBLAKE_HASH_SIZE});
+}
+
 }  // namespace altintegration
