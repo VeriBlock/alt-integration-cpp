@@ -18,6 +18,7 @@
 #pragma once
 
 #include <cstdint>
+#include <veriblock/uint.hpp>
 
 #include "consts.hpp"
 
@@ -57,6 +58,20 @@ extern const uint64_t dag_sizes[VBK_MAX_EPOCHS_SIZE];
 // w.close();
 
 extern const uint64_t cache_sizes[VBK_MAX_EPOCHS_SIZE];
+
+// Calculated with the following C++ code:
+//
+// int main() {
+//  for (int i = 0; i < 4096 * 8000; i += 8000) {
+//    auto seed = ethash_calculate_seedhash(i);
+//    fmt::printf("{{");
+//    for (size_t j = 0; j < seed.size(); j++) {
+//      fmt::printf("0x%x,", seed[j]);
+//    }
+//    fmt::printf("}},\n");
+//  }
+//}
+extern const uint256 dag_seeds[VBK_MAX_EPOCHS_SIZE];
 
 }  // namespace progpow
 }  // namespace altintegration
