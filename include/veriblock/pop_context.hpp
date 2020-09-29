@@ -9,6 +9,7 @@
 #include <utility>
 #include <veriblock/alt-util.hpp>
 #include <veriblock/blockchain/alt_block_tree.hpp>
+#include <veriblock/bootstraps.hpp>
 #include <veriblock/config.hpp>
 #include <veriblock/mempool.hpp>
 #include <veriblock/storage/payloads_index.hpp>
@@ -52,26 +53,28 @@ struct PopContext {
     ValidationState state;
 
     // first, bootstrap BTC
-    if (ctx->config->btc.blocks.size() == 1) {
+    if (ctx->config->btc.blocks.size() == 0) {
+      ctx->altTree->btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state);
+    } else if (ctx->config->btc.blocks.size() == 1) {
       ctx->altTree->btc().bootstrapWithGenesis(ctx->config->btc.blocks[0],
                                                state);
-      VBK_ASSERT(state.IsValid());
     } else {
       ctx->altTree->btc().bootstrapWithChain(
           ctx->config->btc.startHeight, ctx->config->btc.blocks, state);
-      VBK_ASSERT(state.IsValid());
     }
+    VBK_ASSERT(state.IsValid());
 
     // then, bootstrap VBK
-    if (ctx->config->vbk.blocks.size() == 1) {
+    if (ctx->config->vbk.blocks.size() == 0) {
+      ctx->altTree->vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state);
+    } else if (ctx->config->vbk.blocks.size() == 1) {
       ctx->altTree->vbk().bootstrapWithGenesis(ctx->config->vbk.blocks[0],
                                                state);
-      VBK_ASSERT(state.IsValid());
     } else {
       ctx->altTree->vbk().bootstrapWithChain(
           ctx->config->vbk.startHeight, ctx->config->vbk.blocks, state);
-      VBK_ASSERT(state.IsValid());
     }
+    VBK_ASSERT(state.IsValid());
 
     // then, bootstrap ALT
     ctx->altTree->bootstrap(state);
