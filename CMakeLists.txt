@@ -25,9 +25,13 @@ include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(cmake/functions.cmake)
 
-has_extrinsic("__builtin_expect(0, 1);" VBK_HAS_BUILTIN_EXPECT)
-has_extrinsic("__builtin_clz(5)"        VBK_HAS_BUILTIN_CLZ)
-has_extrinsic("__builtin_popcount(5)"   VBK_HAS_BUILTIN_POPCOUNT)
+has_extrinsic("int main(){__builtin_expect(0, 1);return 0;}"  VBK_HAS_BUILTIN_EXPECT)
+has_extrinsic("int main(){__builtin_clz(5);      return 0;}"  VBK_HAS_BUILTIN_CLZ)
+has_extrinsic("int main(){__builtin_popcount(5); return 0;}"  VBK_HAS_BUILTIN_POPCOUNT)
+has_extrinsic("
+    void f(float * __restrict__ a){}
+    int main(){return 0;}
+" VBK_HAS_RESTRICT)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
