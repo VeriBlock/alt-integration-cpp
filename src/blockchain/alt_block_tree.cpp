@@ -152,7 +152,7 @@ void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
 }
 
 void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
-  VBK_LOG_INFO("%s add %s to block %s",
+  VBK_LOG_DEBUG("%s add %s to block %s",
                block_t::name(),
                payloads.toPrettyString(),
                index.toShortPrettyString());
