@@ -88,7 +88,6 @@ struct Config {
                        const std::vector<std::string>& blocks);
   void SelectAltParams(std::shared_ptr<AltChainParams> param);
 
- private:
   //! helper, which converts array of hexstrings (blocks) into "Bootstrap" type
   void setBTC(int32_t start,
               const std::vector<std::string>& hexblocks,
