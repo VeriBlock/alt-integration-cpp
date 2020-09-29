@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <cstdint>
+#include <mutex>
 #include <vector>
 #include <veriblock/consts.hpp>
 #include <veriblock/crypto/progpow.hpp>
@@ -579,6 +580,7 @@ std::string hash32_t::toHex() const {
 
 static std::shared_ptr<progpow::ethash_cache> gLastCachedLight;
 static std::vector<uint32_t> gLastCachedDag;
+static std::mutex gLastCachedMutex;
 
 uint192 progPowHash(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
@@ -591,13 +593,18 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   nonce &= 0x000000FFFFFFFFFFLL;
 
   // build cache
-  if (gLastCachedLight == nullptr || epoch != gLastCachedLight->epoch) {
-    VBK_LOG_WARN(
-        "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
-        epoch,
-        progpow::ethash_get_cachesize(height));
-    gLastCachedLight = progpow::ethash_make_cache(height);
-    gLastCachedDag = progpow::createDagCache(gLastCachedLight.get());
+  {
+    // lock mutex, because of (potential) shared access to
+    // gLastCachedLight->epoch
+    std::unique_lock<std::mutex> lock(gLastCachedMutex);
+    if (gLastCachedLight == nullptr || epoch != gLastCachedLight->epoch) {
+      VBK_LOG_WARN(
+          "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
+          epoch,
+          progpow::ethash_get_cachesize(height));
+      gLastCachedLight = progpow::ethash_make_cache(height);
+      gLastCachedDag = progpow::createDagCache(gLastCachedLight.get());
+    }
   }
 
   VBK_ASSERT(gLastCachedLight);
