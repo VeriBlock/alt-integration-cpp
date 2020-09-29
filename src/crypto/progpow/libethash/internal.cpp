@@ -22,6 +22,7 @@
 
 #include <cstring>
 
+#include "../compiler.hpp"
 #include "data_sizes.hpp"
 #include "fnv.hpp"
 #include "sha3.hpp"

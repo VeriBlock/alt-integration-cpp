@@ -577,7 +577,6 @@ std::string hash32_t::toHex() const {
 }
 }  // namespace progpow
 
-static uint64_t gLastCachedLightEpoch = std::numeric_limits<uint64_t>::max();
 static std::shared_ptr<progpow::ethash_cache> gLastCachedLight;
 static std::vector<uint32_t> gLastCachedDag;
 
@@ -592,14 +591,12 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   nonce &= 0x000000FFFFFFFFFFLL;
 
   // build cache
-  if (gLastCachedLight == nullptr || epoch != gLastCachedLightEpoch) {
+  if (gLastCachedLight == nullptr || epoch != gLastCachedLight->epoch) {
     VBK_LOG_WARN(
         "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
         epoch,
         progpow::ethash_get_cachesize(height));
-    gLastCachedLightEpoch = epoch;
-    gLastCachedLight = std::shared_ptr<progpow::ethash_cache>(
-        progpow::ethash_light_new(height), progpow::ethash_light_delete);
+    gLastCachedLight = progpow::ethash_make_cache(height);
     gLastCachedDag = progpow::createDagCache(gLastCachedLight.get());
   }
 
