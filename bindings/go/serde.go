@@ -10,8 +10,8 @@ import (
 	"unsafe"
 )
 
-// CheckRange - Checks if expression 'min' <= 'num' <= 'max' is true. If false, panics.
-func CheckRange(num, min, max int64) {
+// CheckRangePanic - Checks if expression 'min' <= 'num' <= 'max' is true. If false, panics.
+func CheckRangePanic(num, min, max int64) {
 	if num < min {
 		panic("value is less than minimal")
 	}
@@ -20,8 +20,8 @@ func CheckRange(num, min, max int64) {
 	}
 }
 
-// CheckRangeWithErr - Checks if expression 'min' <= 'num' <= 'max' is true. If false, returns error.
-func CheckRangeWithErr(num, min, max int64) error {
+// CheckRange - Checks if expression 'min' <= 'num' <= 'max' is true. If false, returns error.
+func CheckRange(num, min, max int64) error {
 	if num < min {
 		return errors.New("value is less than minimal")
 	}
@@ -83,8 +83,11 @@ func WriteArrayOf(w io.Writer, t interface{}, f func(w io.Writer, t interface{})
 // WriteSingleByteLenValue ...
 func WriteSingleByteLenValue(w io.Writer, value interface{}) error {
 	size := int64(binary.Size(value))
-	CheckRange(size, 0, math.MaxUint8)
-	err := binary.Write(w, binary.BigEndian, byte(binary.Size(value)))
+	err := CheckRange(size, 0, math.MaxUint8)
+	if err != nil {
+		return err
+	}
+	err = binary.Write(w, binary.BigEndian, byte(binary.Size(value)))
 	if err != nil {
 		return err
 	}
@@ -101,13 +104,17 @@ func pad(src []byte, size int) []byte {
 	return r
 }
 
-func readSingleByteLenValue(r io.Reader, minLen, maxLen int32) ([]byte, error) {
+// ReadSingleByteLenValue ...
+func ReadSingleByteLenValue(r io.Reader, minLen, maxLen int32) ([]byte, error) {
 	var length byte
 	err := binary.Read(r, binary.BigEndian, &length)
 	if err != nil {
 		return nil, err
 	}
-	CheckRange(int64(length), int64(minLen), int64(maxLen))
+	err = CheckRange(int64(length), int64(minLen), int64(maxLen))
+	if err != nil {
+		return nil, err
+	}
 	buf := make([]byte, length)
 	_, err = r.Read(buf)
 	if err != nil {
@@ -117,7 +124,7 @@ func readSingleByteLenValue(r io.Reader, minLen, maxLen int32) ([]byte, error) {
 }
 
 func readSingleBEValue(r io.Reader) (uint32, error) {
-	data, err := readSingleByteLenValue(r, 0, 4)
+	data, err := ReadSingleByteLenValue(r, 0, 4)
 	if err != nil {
 		return 0, err
 	}
@@ -137,7 +144,10 @@ func ReadArrayOf(r io.Reader, readFunc func(r io.Reader) (interface{}, error)) (
 	if err != nil {
 		return nil, err
 	}
-	CheckRange(int64(count), 0, int64(math.MaxInt32))
+	err = CheckRange(int64(count), 0, int64(math.MaxInt32))
+	if err != nil {
+		return nil, err
+	}
 	items := make([]interface{}, count)
 	for i := 0; i < int(count); i++ {
 		res, err := readFunc(r)
@@ -151,7 +161,7 @@ func ReadArrayOf(r io.Reader, readFunc func(r io.Reader) (interface{}, error)) (
 
 // ReadArrayOfFunc ...
 func ReadArrayOfFunc(stream io.Reader) (interface{}, error) {
-	return readSingleByteLenValue(stream, 0, math.MaxInt32)
+	return ReadSingleByteLenValue(stream, 0, math.MaxInt32)
 }
 
 // readVarLenValue

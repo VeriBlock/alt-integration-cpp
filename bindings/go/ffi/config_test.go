@@ -1,4 +1,4 @@
-package veriblock
+package ffi
 
 import "testing"
 
