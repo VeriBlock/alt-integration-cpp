@@ -73,7 +73,7 @@ jobs:
     - name: cmake
       run: cmake . -Bbuild
     - name: build
-      run: cmake --build build -- -j2 install
+      run: sudo cmake --build build -- -j2 install
 
     # run analysis
     - name: Perform CodeQL Analysis
