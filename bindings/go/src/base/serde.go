@@ -1,9 +1,10 @@
 package base
 
 import (
+	"bytes"
 	"encoding/binary"
 	"io"
-	"math/big"
+	"math"
 	"reflect"
 	"unsafe"
 )
@@ -37,20 +38,19 @@ func WriteSingleBEValue(w io.Writer, value int64) error {
 	return err
 }
 
-// WriteContainer ...
-func WriteContainer(w io.Writer, t interface{}, f func(w io.Writer, t interface{}) error) error {
-	err := WriteSingleBEValue(w, int64(binary.Size(t)))
+// WriteArrayOf ...
+func WriteArrayOf(w io.Writer, t interface{}, f func(w io.Writer, t interface{}) error) error {
+	ref := reflect.ValueOf(t)
+	if ref.Kind() != reflect.Slice {
+		panic("InterfaceSlice() given a non-slice type")
+	}
+	err := WriteSingleBEValue(w, int64(ref.Len()))
 	if err != nil {
 		return err
 	}
-	// TODO: Maybe not optimal solution. Get rid of reflect
-	s := reflect.ValueOf(t)
-	if s.Kind() != reflect.Slice {
-		panic("InterfaceSlice() given a non-slice type")
-	}
-	for i := 0; i < s.Len(); i++ {
-		v := s.Index(i).Interface()
-		err = f(w, v)
+	for i := 0; i < ref.Len(); i++ {
+		val := ref.Index(i).Interface()
+		err = f(w, val)
 		if err != nil {
 			return err
 		}
@@ -58,21 +58,77 @@ func WriteContainer(w io.Writer, t interface{}, f func(w io.Writer, t interface{
 	return nil
 }
 
-// WriteArrayOf ...
-func WriteArrayOf(w io.Writer, t interface{}, f func(w io.Writer, t interface{}) error) error {
-	return WriteContainer(w, t, f)
-}
-
 // WriteSingleByteLenValue ...
 func WriteSingleByteLenValue(w io.Writer, value interface{}) error {
-	// fmt.Printf("Val: %v\n", value.(int))
-	// num := int64(binary.Size([]int{999999991, 999999991, 999999991}))
-	// fmt.Printf("Val: %v\n", num)
-	// CheckRange(num, 0, math.MaxUint8)
+	size := int64(binary.Size(value))
+	CheckRange(size, 0, math.MaxUint8)
 	err := binary.Write(w, binary.BigEndian, byte(binary.Size(value)))
 	if err != nil {
 		return err
 	}
-	_, err = w.Write(U256Bytes(value.(*big.Int)))
-	return err
+	return binary.Write(w, binary.BigEndian, value)
 }
+
+func pad(src []byte, size int) []byte {
+	r := make([]byte, size)
+	s := size - len(src)
+	if s < 0 {
+		panic("Size less than zero")
+	}
+	copy(r[s:], src)
+	return r
+}
+
+func readSingleByteLenValue(r io.Reader, minLen, maxLen int32) ([]byte, error) {
+	var length byte
+	err := binary.Read(r, binary.BigEndian, &length)
+	if err != nil {
+		return nil, err
+	}
+	CheckRange(int64(length), int64(minLen), int64(maxLen))
+	buf := make([]byte, length)
+	_, err = r.Read(buf)
+	if err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+func readSingleBEValue(r io.Reader) (uint32, error) {
+	data, err := readSingleByteLenValue(r, 0, 4)
+	if err != nil {
+		return 0, err
+	}
+	padded := pad(data, 4)
+	dataStream := bytes.NewReader(padded)
+	var buf uint32
+	err = binary.Read(dataStream, binary.BigEndian, &buf)
+	if err != nil {
+		return 0, err
+	}
+	return buf, nil
+}
+
+// ReadArrayOf ...
+func ReadArrayOf(r io.Reader, readFunc func(r io.Reader) (interface{}, error)) ([]interface{}, error) {
+	count, err := readSingleBEValue(r)
+	if err != nil {
+		return nil, err
+	}
+	CheckRange(int64(count), 0, int64(math.MaxInt32))
+	items := make([]interface{}, count)
+	for i := 0; i < int(count); i++ {
+		res, err := readFunc(r)
+		if err != nil {
+			return nil, err
+		}
+		items[i] = res
+	}
+	return items, nil
+}
+
+// trimmedArray
+// readVarLenValue
+// readSingleByteLenValue
+// readNetworkByte
+// pad
