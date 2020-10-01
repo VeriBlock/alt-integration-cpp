@@ -53,10 +53,10 @@ jobs:
 
     # build alt-integration-cpp
     - name: Prepare ccache timestamp
-        if: github.event_name == 'push' || github.event_name == 'pull_request'
-        id: ccache_cache_timestamp
-        run: |
-          echo "::set-output name=timestamp::`date +%s`}"
+      if: github.event_name == 'push' || github.event_name == 'pull_request'
+      id: ccache_cache_timestamp
+      run: |
+        echo "::set-output name=timestamp::`date +%s`}"
     - name: ccache cache files
       if: github.event_name == 'push' || github.event_name == 'pull_request'
       uses: actions/cache@v1.1.0
