@@ -1,13 +1,35 @@
-package base
+package veriblock
 
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"io"
 	"math"
 	"reflect"
 	"unsafe"
 )
+
+// CheckRange - Checks if expression 'min' <= 'num' <= 'max' is true. If false, panics.
+func CheckRange(num, min, max int64) {
+	if num < min {
+		panic("value is less than minimal")
+	}
+	if num > max {
+		panic("value is greater than maximum")
+	}
+}
+
+// CheckRangeWithErr - Checks if expression 'min' <= 'num' <= 'max' is true. If false, returns error.
+func CheckRangeWithErr(num, min, max int64) error {
+	if num < min {
+		return errors.New("value is less than minimal")
+	}
+	if num > max {
+		return errors.New("value is greater than maximum")
+	}
+	return nil
+}
 
 // TrimmedArray - Converts the input to the byte array and
 // trims it's size to the lowest possible value
@@ -127,8 +149,10 @@ func ReadArrayOf(r io.Reader, readFunc func(r io.Reader) (interface{}, error)) (
 	return items, nil
 }
 
-// trimmedArray
+// ReadArrayOfFunc ...
+func ReadArrayOfFunc(stream io.Reader) (interface{}, error) {
+	return readSingleByteLenValue(stream, 0, math.MaxInt32)
+}
+
 // readVarLenValue
-// readSingleByteLenValue
 // readNetworkByte
-// pad

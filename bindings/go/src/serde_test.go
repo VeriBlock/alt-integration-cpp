@@ -1,10 +1,8 @@
-package base
+package veriblock
 
 import (
 	"bytes"
 	"encoding/hex"
-	"io"
-	"math"
 	"testing"
 )
 
@@ -45,9 +43,7 @@ func TestSerde(t *testing.T) {
 	}
 
 	r := bytes.NewReader(w.Bytes())
-	actual, err := ReadArrayOf(r, func(stream io.Reader) (interface{}, error) {
-		return readSingleByteLenValue(stream, 0, math.MaxInt32)
-	})
+	actual, err := ReadArrayOf(r, ReadArrayOfFunc)
 	if err != nil {
 		t.Fatal(err)
 	}
