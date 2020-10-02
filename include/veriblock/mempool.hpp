@@ -80,6 +80,12 @@ struct MemPool {
       return it->second.get();
     }
 
+    const auto& inflight = getInFlightMap<T>();
+    auto it2 = inflight.find(id);
+    if(it2 != inflight.end()) {
+      return it2->second.get();
+    }
+
     return nullptr;
   }
 
