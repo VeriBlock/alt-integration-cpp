@@ -306,6 +306,9 @@ inline void mapToJson(Value& obj, const MemPool& mp, const std::string& key) {
   for (auto& p : mp.getMap<T>()) {
     json::arrayPushBack(arr, ToJSON<Value>(p.first));
   }
+  for (auto& p : mp.getInFlightMap<T>()) {
+    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+  }
   json::putKV(obj, key, arr);
 }
 }  // namespace detail
