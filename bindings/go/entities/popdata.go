@@ -7,7 +7,17 @@ import (
 )
 
 // PopData ...
-type PopData struct{}
+type PopData struct {
+	version uint32
+	context []VbkBlock
+	// vtbs    []VTB
+	// atvs    []ATV
+}
+
+// NewPopData ...
+func NewPopData(context []VbkBlock) PopData {
+	return PopData{1, context}
+}
 
 // FromRaw ...
 func (v PopData) FromRaw(r io.Reader) {

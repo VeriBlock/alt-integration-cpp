@@ -1,5 +1,10 @@
 package veriblock
 
+// All constants in alt-cpp.
+const (
+	VbkHeaderSizeProgpow = 65
+)
+
 // X509 encoding. Max value is based on experimental data.
 const (
 	PublicKeySize       = 88

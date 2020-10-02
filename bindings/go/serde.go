@@ -3,12 +3,19 @@ package veriblock
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 	"errors"
 	"io"
 	"math"
 	"reflect"
 	"unsafe"
 )
+
+// Parse - parses hex string to byte array.
+func Parse(src string) []byte {
+	res, _ := hex.DecodeString(src)
+	return res
+}
 
 // CheckRangePanic - Checks if expression 'min' <= 'num' <= 'max' is true. If false, panics.
 func CheckRangePanic(num, min, max int64) {

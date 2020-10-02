@@ -52,19 +52,6 @@ func TestAddressRoundTrip(t *testing.T) {
 	assert.Equal(AddressBytes, outputStream.Bytes())
 }
 
-func TestAddressRoundTripNew(t *testing.T) {
-	assert := assert.New(t)
-
-	stream := bytes.NewReader(AddressBytes)
-	decoded, err := AddressDeserialize(stream)
-	assert.NoError(err)
-	assert.Equal(AddressValue, decoded.ToString())
-
-	outputStream := new(bytes.Buffer)
-	decoded.ToVbkEncoding(outputStream)
-	assert.Equal(AddressBytes, outputStream.Bytes())
-}
-
 func TestAddressValidStandard(t *testing.T) {
 	assert := assert.New(t)
 
