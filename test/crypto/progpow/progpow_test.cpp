@@ -11,10 +11,30 @@
 
 using namespace altintegration;
 
+namespace generated {
+extern const char vprogpow_test_vectors_50000[];
+}
+
+#define MAX_CASES 1000
+
 struct TestCase {
   std::string header;
   std::string hash;
 };
+
+std::vector<TestCase> make_test_cases() {
+  std::vector<TestCase> ret;
+  TestCase tc;
+  std::istringstream file(generated::vprogpow_test_vectors_50000);
+  EXPECT_TRUE(!file.fail());
+  int i = 0;
+  while (file >> tc.header && file >> tc.hash && i++ < MAX_CASES) {
+    EXPECT_EQ(tc.header.size(), 130);
+    EXPECT_EQ(tc.hash.size(), 48);
+    ret.push_back(tc);
+  }
+  return ret;
+}
 
 // clang-format off
 static std::vector<TestCase> cases = {
@@ -24,6 +44,15 @@ static std::vector<TestCase> cases = {
     {"000D99B00002E726E39940924893F754EC204853B952D17965D4047D00CD3AB492C43680793243DFB73D6F664857CE0813877E775F6F00FC041EF46610010E67EE", "0000000427C419A1F56F7219B6995A6FF14EFCA95EF0F638"}
 };
 // clang-format on
+
+std::vector<TestCase> operator+(const std::vector<TestCase>& a,
+                                const std::vector<TestCase>& b) {
+  std::vector<TestCase> ret;
+  ret.reserve(a.size() + b.size());
+  ret.insert(ret.end(), a.begin(), a.end());
+  ret.insert(ret.end(), b.begin(), b.end());
+  return ret;
+}
 
 class ProgPowBlockHashTest : public testing::TestWithParam<TestCase> {};
 
@@ -39,4 +68,4 @@ TEST_P(ProgPowBlockHashTest, Regression) {
 
 INSTANTIATE_TEST_SUITE_P(ProgPowBlockHashRegression,
                          ProgPowBlockHashTest,
-                         testing::ValuesIn(cases));
+                         testing::ValuesIn(cases + make_test_cases()));

@@ -80,6 +80,12 @@ struct MemPool {
       return it->second.get();
     }
 
+    const auto& inflight = getInFlightMap<T>();
+    auto it2 = inflight.find(id);
+    if(it2 != inflight.end()) {
+      return it2->second.get();
+    }
+
     return nullptr;
   }
 
@@ -298,6 +304,9 @@ template <typename Value, typename T>
 inline void mapToJson(Value& obj, const MemPool& mp, const std::string& key) {
   auto arr = json::makeEmptyArray<Value>();
   for (auto& p : mp.getMap<T>()) {
+    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+  }
+  for (auto& p : mp.getInFlightMap<T>()) {
     json::arrayPushBack(arr, ToJSON<Value>(p.first));
   }
   json::putKV(obj, key, arr);
