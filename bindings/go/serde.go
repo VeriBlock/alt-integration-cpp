@@ -169,7 +169,7 @@ func ReadSingleByteLenValue(r io.Reader, minLen, maxLen int32) ([]byte, error) {
 
 // ReadSingleBEValue ...
 func ReadSingleBEValue(r io.Reader, buf interface{}) error {
-	num := unsafe.Sizeof(buf) / 4
+	num := binary.Size(buf)
 	data, err := ReadSingleByteLenValue(r, 0, int32(num))
 	if err != nil {
 		return err
@@ -216,6 +216,9 @@ func ReadVarLenValue(stream io.Reader, minLen, maxLen int64) ([]byte, error) {
 	err = CheckRange(int64(length), minLen, maxLen)
 	if err != nil {
 		return nil, err
+	}
+	if length == 0 {
+		return []byte{}, nil
 	}
 	buf := make([]byte, length)
 	_, err = stream.Read(buf)
