@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/stateless_validation.hpp>
+#include "miner_worker.hpp"
 
 namespace altintegration {
 
@@ -20,19 +21,88 @@ template <typename Block, typename ChainParams>
 struct Miner {
   using merkle_t = typename Block::merkle_t;
   using index_t = BlockIndex<Block>;
+  using worker_t = MinerWorker<Block, ChainParams>;
+  using range_t = typename worker_t::range_t;
+  using nonce_t = typename worker_t::nonce_t;
 
-  Miner(const ChainParams& params) : params_(params) {}
+  Miner(const ChainParams& params, size_t threads = 0)
+      : params_(params), threads_(threads) {
+    // try to detect concurrent threads count
+    if (threads_ == 0) {
+      threads_ = std::thread::hardware_concurrency();
+    }
+    // make sure we have at least one worker thread
+    if (threads_ == 0) {
+      threads_ = 1;
+    }
+  }
+
+  std::vector<range_t> getRanges() {
+    assert(threads_ > 0);
+    nonce_t workerRangeSize =
+        (nonce_t)(std::numeric_limits<nonce_t>::max() / threads_);
+    nonce_t workerRangeLeftovers = std::numeric_limits<nonce_t>::max() -
+                                   (nonce_t)(workerRangeSize * threads_);
+    assert(workerRangeSize > 0);
+
+    std::vector<range_t> ranges;
+    ranges.reserve(threads_);
+    nonce_t begin = 0;
+    for (size_t i = 0; i < threads_; i++) {
+      nonce_t end = begin + workerRangeSize - 1;
+      if (workerRangeLeftovers > 0) {
+        end++;
+        workerRangeLeftovers--;
+      }
+      auto range = range_t(begin, end);
+      ranges.push_back(range);
+      begin = end + 1;
+    }
+    return ranges;
+  }
+
+  std::vector<std::shared_ptr<worker_t>> createWorkers(
+      const Block& blockTemplate,
+      std::condition_variable& finishedSignal,
+      std::mutex& lock) {
+    std::vector<std::shared_ptr<worker_t>> workers;
+    workers.reserve(threads_);
+    auto ranges = getRanges();
+
+    for (size_t i = 0; i < threads_; i++) {
+      auto worker = std::make_shared<worker_t>(
+          params_, ranges[i], blockTemplate, finishedSignal, lock);
+      workers.push_back(worker);
+    }
+    return workers;
+  }
 
   void createBlock(Block& block) {
-    while (!checkProofOfWork(block, params_)) {
-      // to guarantee that miner will not create exactly same blocks even if
-      // time and merkle roots are equal for prev block and new block
-      block.setNonce(nonce++);
-      if (block.getNonce() >=
-          (std::numeric_limits<decltype(block.getNonce())>::max)()) {
-        block.setTimestamp(block.getTimestamp() + 1);
-        nonce = 0;
+    std::mutex lock;
+    std::condition_variable finishedSignal;
+    auto workers = createWorkers(block, finishedSignal, lock);
+
+    {
+      std::unique_lock<std::mutex> guard(lock);
+      for (const auto& w : workers) {
+        w->start();
       }
+      finishedSignal.wait(guard);
+    }
+    
+    // stop all workers to avoid useless computing cycles
+    for (const auto& w : workers) {
+      w->stop();
+    }
+
+    bool blockReady = false;
+    // we wait for all threads to finish but save only first result
+    for (const auto& w : workers) {
+      auto candidate = w->waitResult();
+      if (candidate.first == false) continue;
+      if (blockReady) continue;
+      block = candidate.second;
+      blockReady = true;
     }
   }
 
@@ -56,7 +126,7 @@ struct Miner {
 
  private:
   const ChainParams& params_;
-  uint32_t nonce = 0;
+  size_t threads_;
 };
 
 }  // namespace altintegration

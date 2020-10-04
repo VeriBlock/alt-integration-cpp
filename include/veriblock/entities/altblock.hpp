@@ -34,7 +34,7 @@ struct AltBlock {
   /**
    * Read basic blockheader data from the vector of bytes and convert it to
    * AltBlock
-   * @param bytes data to read fromm
+   * @param bytes data to read from
    * @return AltBlock
    */
   static AltBlock fromRaw(Slice<const uint8_t> bytes);
