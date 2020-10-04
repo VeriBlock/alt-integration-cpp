@@ -17,6 +17,15 @@ func Parse(src string) []byte {
 	return res
 }
 
+// ReverseBytes - reverses bytes.
+func ReverseBytes(src []byte) []byte {
+	newBytes := make([]byte, len(src))
+	for i, j := 0, len(src)-1; i <= j; i, j = i+1, j-1 {
+		newBytes[i], newBytes[j] = src[j], src[i]
+	}
+	return newBytes
+}
+
 // CheckRangePanic - Checks if expression 'min' <= 'num' <= 'max' is true. If false, panics.
 func CheckRangePanic(num, min, max int64) {
 	if num < min {
@@ -36,6 +45,27 @@ func CheckRange(num, min, max int64) error {
 		return errors.New("value is greater than maximum")
 	}
 	return nil
+}
+
+// Pad - returns padded bytes.
+func Pad(src []byte, size int) []byte {
+	r := make([]byte, size)
+	s := size - len(src)
+	if s < 0 {
+		panic("Size less than zero")
+	}
+	copy(r[s:], src)
+	return r
+}
+
+// FixedArray - converts the input to the byte array
+func FixedArray(input interface{}) ([]byte, error) {
+	inputStream := new(bytes.Buffer)
+	err := binary.Write(inputStream, binary.BigEndian, input)
+	if err != nil {
+		return nil, err
+	}
+	return inputStream.Bytes(), nil
 }
 
 // TrimmedArray - Converts the input to the byte array and
@@ -101,14 +131,21 @@ func WriteSingleByteLenValue(w io.Writer, value interface{}) error {
 	return binary.Write(w, binary.BigEndian, value)
 }
 
-func pad(src []byte, size int) []byte {
-	r := make([]byte, size)
-	s := size - len(src)
-	if s < 0 {
-		panic("Size less than zero")
+// WriteVarLenValue ...
+func WriteVarLenValue(stream io.Writer, value []byte) error {
+	WriteSingleBEValue(stream, int64(len(value)))
+	_, err := stream.Write(value)
+	return err
+}
+
+// WriteSingleFixedBEValue ...
+func WriteSingleFixedBEValue(stream io.Writer, value interface{}) error {
+	dataStream := new(bytes.Buffer)
+	err := binary.Write(dataStream, binary.BigEndian, value)
+	if err != nil {
+		return err
 	}
-	copy(r[s:], src)
-	return r
+	return WriteSingleByteLenValue(stream, dataStream.Bytes())
 }
 
 // ReadSingleByteLenValue ...
@@ -130,28 +167,26 @@ func ReadSingleByteLenValue(r io.Reader, minLen, maxLen int32) ([]byte, error) {
 	return buf, nil
 }
 
-func readSingleBEValue(r io.Reader) (uint32, error) {
-	data, err := ReadSingleByteLenValue(r, 0, 4)
+// ReadSingleBEValue ...
+func ReadSingleBEValue(r io.Reader, buf interface{}) error {
+	num := unsafe.Sizeof(buf) / 4
+	data, err := ReadSingleByteLenValue(r, 0, int32(num))
 	if err != nil {
-		return 0, err
+		return err
 	}
-	padded := pad(data, 4)
+	padded := Pad(data, int(num))
 	dataStream := bytes.NewReader(padded)
-	var buf uint32
-	err = binary.Read(dataStream, binary.BigEndian, &buf)
-	if err != nil {
-		return 0, err
-	}
-	return buf, nil
+	return binary.Read(dataStream, binary.BigEndian, buf)
 }
 
 // ReadArrayOf ...
-func ReadArrayOf(r io.Reader, readFunc func(r io.Reader) (interface{}, error)) ([]interface{}, error) {
-	count, err := readSingleBEValue(r)
+func ReadArrayOf(r io.Reader, min, max int64, readFunc func(r io.Reader) (interface{}, error)) ([]interface{}, error) {
+	var count uint32
+	err := ReadSingleBEValue(r, &count)
 	if err != nil {
 		return nil, err
 	}
-	err = CheckRange(int64(count), 0, int64(math.MaxInt32))
+	err = CheckRange(int64(count), min, max)
 	if err != nil {
 		return nil, err
 	}
@@ -171,5 +206,18 @@ func ReadArrayOfFunc(stream io.Reader) (interface{}, error) {
 	return ReadSingleByteLenValue(stream, 0, math.MaxInt32)
 }
 
-// readVarLenValue
-// readNetworkByte
+// ReadVarLenValue ...
+func ReadVarLenValue(stream io.Reader, minLen, maxLen int64) ([]byte, error) {
+	var length int32
+	err := ReadSingleBEValue(stream, &length)
+	if err != nil {
+		return nil, err
+	}
+	err = CheckRange(int64(length), minLen, maxLen)
+	if err != nil {
+		return nil, err
+	}
+	buf := make([]byte, length)
+	_, err = stream.Read(buf)
+	return buf, err
+}

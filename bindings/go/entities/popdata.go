@@ -2,6 +2,7 @@ package entities
 
 import (
 	"io"
+	"math"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp"
 )
@@ -21,5 +22,5 @@ func NewPopData(context []VbkBlock) PopData {
 
 // FromRaw ...
 func (v PopData) FromRaw(r io.Reader) {
-	_, _ = veriblock.ReadArrayOf(r, veriblock.ReadArrayOfFunc)
+	_, _ = veriblock.ReadArrayOf(r, 0, int64(math.MaxInt32), veriblock.ReadArrayOfFunc)
 }

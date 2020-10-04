@@ -3,6 +3,7 @@ package veriblock
 import (
 	"bytes"
 	"encoding/hex"
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,7 +11,7 @@ import (
 
 func TestPad(t *testing.T) {
 	v := []byte{1, 2, 3, 4, 5}
-	res := pad(v, 8)
+	res := Pad(v, 8)
 	if res[0] != 0 || len(res) != 8 {
 		t.Fatalf("Invalid len: %v", res)
 	}
@@ -47,7 +48,7 @@ func TestSerde(t *testing.T) {
 	}
 
 	r := bytes.NewReader(w.Bytes())
-	actual, err := ReadArrayOf(r, ReadArrayOfFunc)
+	actual, err := ReadArrayOf(r, 0, int64(math.MaxInt32), ReadArrayOfFunc)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -21,14 +21,8 @@ type VbkBlock struct {
 	Nonce                  uint64
 }
 
-// NewVbkBlock ...
-func NewVbkBlock() VbkBlock {
-	res := VbkBlock{}
-	return res
-}
-
 // GetID - returns id of VBKBlock
-func (v VbkBlock) GetID() ([12]byte, error) {
+func (v *VbkBlock) GetID() ([12]byte, error) {
 	hash, err := v.GetHash()
 	if err != nil {
 		return [12]byte{}, err
@@ -39,7 +33,7 @@ func (v VbkBlock) GetID() ([12]byte, error) {
 }
 
 // GetHash - returns progPowHash of VBKBlock
-func (v VbkBlock) GetHash() ([24]byte, error) {
+func (v *VbkBlock) GetHash() ([24]byte, error) {
 	blockStream := new(bytes.Buffer)
 	err := v.ToRaw(blockStream)
 	if err != nil {
@@ -52,7 +46,7 @@ func (v VbkBlock) GetHash() ([24]byte, error) {
 }
 
 // ToVbkEncoding ...
-func (v VbkBlock) ToVbkEncoding(stream io.Writer) error {
+func (v *VbkBlock) ToVbkEncoding(stream io.Writer) error {
 	blockStream := new(bytes.Buffer)
 	err := v.ToRaw(blockStream)
 	if err != nil {
@@ -62,7 +56,7 @@ func (v VbkBlock) ToVbkEncoding(stream io.Writer) error {
 }
 
 // ToRaw ...
-func (v VbkBlock) ToRaw(stream io.Writer) error {
+func (v *VbkBlock) ToRaw(stream io.Writer) error {
 	err := binary.Write(stream, binary.BigEndian, v.Height)
 	if err != nil {
 		return err
@@ -111,14 +105,12 @@ func VbkBlockFromVbkEncoding(stream io.Reader) (*VbkBlock, error) {
 		return nil, err
 	}
 	blockStream := bytes.NewReader(blockBytes)
-	return FromRaw(blockStream)
+	return VbkBlockFromRaw(blockStream)
 }
 
-// FromRaw ...
-func FromRaw(stream io.Reader) (*VbkBlock, error) {
+// VbkBlockFromRaw ...
+func VbkBlockFromRaw(stream io.Reader) (*VbkBlock, error) {
 	block := &VbkBlock{}
-	// _, _ = veriblock.ReadArrayOf(r, veriblock.ReadArrayOfFunc)
-
 	err := binary.Read(stream, binary.BigEndian, &block.Height)
 	if err != nil {
 		return nil, err

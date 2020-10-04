@@ -112,8 +112,8 @@ func (v *Address) IsDerivedFromPublicKey(publicKey []byte) bool {
 	return true
 }
 
-// AddressDeserialize ...
-func AddressDeserialize(r io.Reader) (*Address, error) {
+// AddressFromVbkEncoding ...
+func AddressFromVbkEncoding(r io.Reader) (*Address, error) {
 	var addressType uint8
 	err := binary.Read(r, binary.LittleEndian, &addressType)
 	if err != nil {

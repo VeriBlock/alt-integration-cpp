@@ -18,7 +18,7 @@ func TestAddressDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(AddressBytes)
-	address, err := AddressDeserialize(stream)
+	address, err := AddressFromVbkEncoding(stream)
 	assert.NoError(err)
 
 	assert.Equal(AddressValue, address.ToString())
@@ -43,7 +43,7 @@ func TestAddressRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(AddressBytes)
-	decoded, err := AddressDeserialize(stream)
+	decoded, err := AddressFromVbkEncoding(stream)
 	assert.NoError(err)
 	assert.Equal(AddressValue, decoded.ToString())
 
@@ -103,7 +103,7 @@ func TestAddressParseStandard(t *testing.T) {
 	outputStream := new(bytes.Buffer)
 	address.ToVbkEncoding(outputStream)
 	stream := bytes.NewReader(outputStream.Bytes())
-	decoded, err := AddressDeserialize(stream)
+	decoded, err := AddressFromVbkEncoding(stream)
 	assert.NoError(err)
 
 	assert.Equal(addressString, decoded.ToString())
@@ -120,7 +120,7 @@ func TestAddressParseMultisig(t *testing.T) {
 	outputStream := new(bytes.Buffer)
 	address.ToVbkEncoding(outputStream)
 	stream := bytes.NewReader(outputStream.Bytes())
-	decoded, err := AddressDeserialize(stream)
+	decoded, err := AddressFromVbkEncoding(stream)
 	assert.NoError(err)
 
 	assert.Equal(addressString, decoded.ToString())
