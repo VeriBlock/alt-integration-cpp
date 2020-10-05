@@ -115,9 +115,9 @@ struct BtcBlock {
   uint32_t getVersion() const { return version; }
   uint256 getPreviousBlock() const { return previousBlock; }
   uint256 getMerkleRoot() const { return merkleRoot; }
-  uint32_t getNonce() const { return nonce; }
+  nonce_t getNonce() const { return nonce; }
   uint32_t getTimestamp() const { return timestamp; }
-  void setNonce(uint32_t nnc) { nonce = nnc; }
+  void setNonce(nonce_t nnc) { nonce = nnc; }
   void setTimestamp(uint32_t ts) { timestamp = ts; }
 
   uint32_t version = 0;
@@ -125,7 +125,7 @@ struct BtcBlock {
   uint256 merkleRoot{};
   uint32_t timestamp = 0;
   uint32_t bits = 0;
-  uint32_t nonce = 0;
+  nonce_t nonce = 0;
 
  private:
   static const std::string _name;

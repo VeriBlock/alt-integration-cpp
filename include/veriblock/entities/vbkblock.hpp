@@ -35,7 +35,7 @@ struct VbkBlock {
   using id_t = short_hash_t;
   using prev_hash_t = short_hash_t;
   using height_t = int32_t;
-  using nonce_t = int32_t;
+  using nonce_t = uint64_t;
   using keystone_t = uint72;
   using merkle_t = uint128;
   using protecting_block_t = BtcBlock;
@@ -148,7 +148,7 @@ struct VbkBlock {
            uint128 mroot,
            int32_t ts,
            int32_t diff,
-           uint64_t nonce);
+           nonce_t nonce);
 
   int32_t getHeight() const { return height; }
   int16_t getVersion() const { return version; }
@@ -159,7 +159,7 @@ struct VbkBlock {
   }
   uint128 getMerkleRoot() const { return merkleRoot; }
   int32_t getTimestamp() const { return timestamp; }
-  uint64_t getNonce() const { return nonce; }
+  nonce_t getNonce() const { return nonce; }
 
   void setHeight(int32_t h);
   void setVersion(int16_t v);
@@ -169,7 +169,7 @@ struct VbkBlock {
   void setMerkleRoot(const uint128& mroot);
   void setTimestamp(int32_t ts);
   void setDifficulty(int32_t diff);
-  void setNonce(uint64_t nnc);
+  void setNonce(nonce_t nnc);
 
  private:
   static const std::string _name;
@@ -182,7 +182,7 @@ struct VbkBlock {
   uint128 merkleRoot{};
   int32_t timestamp{};
   int32_t difficulty{};
-  uint64_t nonce{};
+  nonce_t nonce{};
 
   mutable hash_t hash_{};
 

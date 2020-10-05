@@ -36,11 +36,11 @@ struct MinerWorker {
               std::mutex& finished_lock)
       : params_(params),
         nonce_range_(nonce_range),
+        block_(block_template),
         finished_(finished_signal),
         finished_lock_(finished_lock) {
     VBK_ASSERT(nonce_range.first <= nonce_range.second &&
                "invalid nonce range");
-    block_ = block_template;
     block_.setNonce(nonce_range_.first);
   }
 
@@ -102,17 +102,17 @@ struct MinerWorker {
   }
 
  private:
+  // mining
+  const ChainParams& params_;
+  const range_t nonce_range_;
+  Block block_;
+
   // thread management
   std::thread runner;
   std::atomic_bool terminated_;
   std::atomic_bool block_ready_;
   std::condition_variable& finished_;
   std::mutex& finished_lock_;
-
-  // mining
-  const ChainParams& params_;
-  const range_t nonce_range_;
-  Block block_;
 };
 
 }  // namespace altintegration
