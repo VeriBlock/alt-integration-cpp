@@ -109,8 +109,8 @@ struct MinerWorker {
 
   // thread management
   std::thread runner;
-  std::atomic_bool terminated_;
-  std::atomic_bool block_ready_;
+  std::atomic_bool terminated_{false};
+  std::atomic_bool block_ready_{false};
   std::condition_variable& finished_;
   std::mutex& finished_lock_;
 };
