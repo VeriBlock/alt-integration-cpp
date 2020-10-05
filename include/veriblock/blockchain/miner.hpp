@@ -8,9 +8,6 @@
 
 #include <memory>
 #include <random>
-#include <stdexcept>
-#include <veriblock/blockchain/blocktree.hpp>
-#include <veriblock/stateless_validation.hpp>
 #include "miner_worker.hpp"
 
 namespace altintegration {

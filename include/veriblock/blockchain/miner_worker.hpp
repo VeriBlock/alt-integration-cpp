@@ -6,12 +6,10 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_MINER_WORKER_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_MINER_WORKER_HPP_
 
+#include <atomic>
 #include <condition_variable>
 #include <memory>
-#include <random>
-#include <stdexcept>
 #include <thread>
-#include <veriblock/blockchain/blocktree.hpp>
 #include <veriblock/stateless_validation.hpp>
 
 namespace altintegration {
@@ -33,7 +31,7 @@ struct MinerWorker {
    */
   MinerWorker(const ChainParams& params,
               const range_t& nonce_range,
-              const Block& blockTemplate,
+              const Block& block_template,
               std::condition_variable& finished_signal,
               std::mutex& finished_lock)
       : params_(params),
@@ -42,7 +40,7 @@ struct MinerWorker {
         finished_lock_(finished_lock) {
     VBK_ASSERT(nonce_range.first <= nonce_range.second &&
                "invalid nonce range");
-    block_ = blockTemplate;
+    block_ = block_template;
     block_.setNonce(nonce_range_.first);
   }
 
@@ -106,8 +104,8 @@ struct MinerWorker {
  private:
   // thread management
   std::thread runner;
-  std::atomic<bool> terminated_;
-  std::atomic<bool> block_ready_;
+  std::atomic_bool terminated_;
+  std::atomic_bool block_ready_;
   std::condition_variable& finished_;
   std::mutex& finished_lock_;
 
