@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,8 +21,13 @@ var (
 	defaultBtcBlockEncoded = "0000002000000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def75e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f82213b75c841a011a2e00f29a"
 )
 
+func parseHex(src string) []byte {
+	res, _ := hex.DecodeString(src)
+	return res
+}
+
 func parse32Bytes(src string) [32]byte {
-	buf := veriblock.Parse(src)
+	buf := parseHex(src)
 	var block [32]byte
 	copy(block[:], buf)
 	return block
@@ -32,7 +36,7 @@ func parse32Bytes(src string) [32]byte {
 func TestBtcBlockDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	blockEncoded := veriblock.Parse(defaultBtcBlockEncoded)
+	blockEncoded := parseHex(defaultBtcBlockEncoded)
 	stream := bytes.NewReader(blockEncoded)
 	decoded, err := BtcBlockFromRaw(stream)
 	assert.NoError(err)
@@ -59,7 +63,7 @@ func TestBtcBlockSerialize(t *testing.T) {
 func TestBtcBlockRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	blockEncoded := veriblock.Parse(defaultBtcBlockEncoded)
+	blockEncoded := parseHex(defaultBtcBlockEncoded)
 	stream := bytes.NewReader(blockEncoded)
 	decoded, err := BtcBlockFromRaw(stream)
 	assert.NoError(err)

@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +21,7 @@ var (
 func TestPublicationDataDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	pub := veriblock.Parse(defaultPublicationEncoded)
+	pub := parseHex(defaultPublicationEncoded)
 	stream := bytes.NewReader(pub)
 	decoded, err := PublicationDataFromRaw(stream)
 	assert.NoError(err)
@@ -47,7 +46,7 @@ func TestPublicationDataSerialize(t *testing.T) {
 func TestPublicationDataRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	pub := veriblock.Parse(defaultPublicationEncoded)
+	pub := parseHex(defaultPublicationEncoded)
 	stream := bytes.NewReader(pub)
 	decoded, err := PublicationDataFromRaw(stream)
 	assert.NoError(err)

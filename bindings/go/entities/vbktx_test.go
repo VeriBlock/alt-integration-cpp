@@ -37,7 +37,7 @@ var (
 func TestVbkTxDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	vbktx := veriblock.Parse(defaultVbkTxEncoded)
+	vbktx := parseHex(defaultVbkTxEncoded)
 	stream := bytes.NewReader(vbktx)
 	decoded, err := VbkTxFromVbkEncoding(stream)
 	assert.NoError(err)
@@ -67,7 +67,7 @@ func TestVbkTxSerialize(t *testing.T) {
 func TestVbkTxRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	txEncoded := veriblock.Parse(defaultVbkTxEncoded)
+	txEncoded := parseHex(defaultVbkTxEncoded)
 	stream := bytes.NewReader(txEncoded)
 	decoded, err := VbkTxFromVbkEncoding(stream)
 	assert.NoError(err)

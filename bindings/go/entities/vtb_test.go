@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,7 +40,7 @@ var (
 func TestVtbDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	vtbBytes := veriblock.Parse(defaultVtbEncoded)
+	vtbBytes := parseHex(defaultVtbEncoded)
 	stream := bytes.NewReader(vtbBytes)
 	decoded, err := VtbFromVbkEncoding(stream)
 	assert.NoError(err)
@@ -63,7 +62,7 @@ func TestVtbSerialize(t *testing.T) {
 func TestVtbRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	vtbBytes := veriblock.Parse(defaultVtbEncoded)
+	vtbBytes := parseHex(defaultVtbEncoded)
 	stream := bytes.NewReader(vtbBytes)
 	decoded, err := VtbFromVbkEncoding(stream)
 	assert.NoError(err)

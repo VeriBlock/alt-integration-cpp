@@ -4,19 +4,18 @@ import (
 	"bytes"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPopDataRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	atvBytes := veriblock.Parse(defaultAtvEncoded)
+	atvBytes := parseHex(defaultAtvEncoded)
 	stream := bytes.NewReader(atvBytes)
 	atv, err := AtvFromVbkEncoding(stream)
 	assert.NoError(err)
 
-	vtbBytes := veriblock.Parse(defaultVtbEncoded)
+	vtbBytes := parseHex(defaultVtbEncoded)
 	stream = bytes.NewReader(vtbBytes)
 	vtb, err := VtbFromVbkEncoding(stream)
 	assert.NoError(err)
