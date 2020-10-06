@@ -101,7 +101,7 @@ func TestVbkBlockGetBlockHash(t *testing.T) {
 	block.Difficulty = 117586646
 	block.Nonce = 1924857207
 
-	hash, err := block.GetHash()
+	hash, err := block.GetBlockHash()
 	assert.NoError(err)
 	// TODO: Add progPowHash
 	assert.NotEqual(parseHex("00000000000000001f45c91342b8ac0ea7ae4d721be2445dc86ddc3f0e454f60"), hash[:])

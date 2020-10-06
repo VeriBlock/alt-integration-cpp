@@ -1,5 +1,12 @@
 package entities
 
+import (
+	"encoding/binary"
+	"io"
+
+	veriblock "github.com/VeriBlock/alt-integration-cpp"
+)
+
 // BlockStatus ...
 type BlockStatus uint32
 
@@ -37,12 +44,67 @@ const (
 		BlockConnected | BlockHasBeenApplied | BlockCanBeApplied
 )
 
+// GenericBlockHeader ...
+type GenericBlockHeader interface {
+	veriblock.SerdeRaw
+	GetHash() []byte
+	GetBlockTime() uint32
+	GetDifficulty() uint32
+}
+
 // BlockIndex ...
 type BlockIndex struct {
 	// Height of the entry in the chain
 	Height uint32
 	// Block header
-	Header *interface{}
+	Header GenericBlockHeader
 	// Contains status flags
 	Status BlockStatus
+}
+
+// GetHash ...
+func (v *BlockIndex) GetHash() []byte {
+	return v.Header.GetHash()
+}
+
+// GetBlockTime ...
+func (v *BlockIndex) GetBlockTime() uint32 {
+	return v.Header.GetBlockTime()
+}
+
+// GetDifficulty ...
+func (v *BlockIndex) GetDifficulty() uint32 {
+	return v.Header.GetDifficulty()
+}
+
+// ToRaw ...
+func (v *BlockIndex) ToRaw(stream io.Writer) error {
+	if err := binary.Write(stream, binary.BigEndian, v.Height); err != nil {
+		return err
+	}
+	if err := v.Header.ToRaw(stream); err != nil {
+		return err
+	}
+	if err := binary.Write(stream, binary.BigEndian, uint32(v.Status)); err != nil {
+		return err
+	}
+	// addon_t::toRaw(stream);
+	return nil
+}
+
+// FromRaw ...
+func (v *BlockIndex) FromRaw(stream io.Reader) error {
+	if err := binary.Read(stream, binary.BigEndian, &v.Height); err != nil {
+		return err
+	}
+	if err := v.Header.FromRaw(stream); err != nil {
+		return err
+	}
+	var status uint32
+	if err := binary.Read(stream, binary.LittleEndian, &status); err != nil {
+		return err
+	}
+	v.Status = BlockStatus(status)
+	// addon_t::initAddonFromRaw(stream);
+	return nil
 }

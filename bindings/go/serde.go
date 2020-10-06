@@ -10,20 +10,16 @@ import (
 	"unsafe"
 )
 
-// Serialize - Serializes struct to bytes.
-type Serialize interface {
+// Serde - Serializes struct to Vbk Encoded bytes and deserializes Vbk Encoded bytes to struct.
+type Serde interface {
 	ToVbkEncoding(stream io.Writer) error
-}
-
-// Deserialize - Deserializes bytes to struct.
-type Deserialize interface {
 	FromVbkEncoding(stream io.Reader) error
 }
 
-// Serde - Serializes struct to bytes and deserializes bytes to struct.
-type Serde interface {
-	Serialize
-	Deserialize
+// SerdeRaw - Serializes struct to bytes and deserializes bytes to struct.
+type SerdeRaw interface {
+	ToRaw(stream io.Writer) error
+	FromRaw(stream io.Reader) error
 }
 
 // ReverseBytes - reverses bytes.
