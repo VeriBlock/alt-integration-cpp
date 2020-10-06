@@ -3,18 +3,23 @@ package veriblock
 import (
 	"bytes"
 	"encoding/hex"
+	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPad(t *testing.T) {
 	v := []byte{1, 2, 3, 4, 5}
-	res := pad(v, 8)
+	res := Pad(v, 8)
 	if res[0] != 0 || len(res) != 8 {
 		t.Fatalf("Invalid len: %v", res)
 	}
 }
 
 func TestWriteSingleByteLenValue(t *testing.T) {
+	assert := assert.New(t)
+
 	v := []byte{1, 2, 3, 4, 5}
 	w := new(bytes.Buffer)
 	err := WriteSingleByteLenValue(w, v)
@@ -22,12 +27,12 @@ func TestWriteSingleByteLenValue(t *testing.T) {
 		t.Fatal(err)
 	}
 	res := hex.EncodeToString(w.Bytes())
-	if res != "050102030405" {
-		t.Fatalf("Wrong conversion result: %v", res)
-	}
+	assert.Equal(res, "050102030405", "Wrong conversion result")
 }
 
 func TestSerde(t *testing.T) {
+	assert := assert.New(t)
+
 	arr := make([][32]byte, 3)
 	res, _ := hex.DecodeString("01")
 	copy(arr[0][:], res)
@@ -43,7 +48,7 @@ func TestSerde(t *testing.T) {
 	}
 
 	r := bytes.NewReader(w.Bytes())
-	actual, err := ReadArrayOf(r, ReadArrayOfFunc)
+	actual, err := ReadArrayOf(r, 0, int64(math.MaxInt32), ReadArrayOfFunc)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,9 +56,7 @@ func TestSerde(t *testing.T) {
 	for i, arrItem := range arr {
 		actualItem := actual[i].([]byte)
 		for j := 0; j < len(arrItem); j++ {
-			if arrItem[j] != actualItem[j] {
-				t.Fatal("Actual array and expected array mismatch")
-			}
+			assert.Equal(arrItem[j], actualItem[j], "Actual array and expected array mismatch")
 		}
 	}
 }
