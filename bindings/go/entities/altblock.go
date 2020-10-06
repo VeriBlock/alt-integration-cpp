@@ -13,6 +13,21 @@ type AltBlock struct {
 	Timestamp     uint32
 }
 
+// GetHash ...
+func (v *AltBlock) GetHash() []byte {
+	return v.Hash
+}
+
+// GetBlockTime ...
+func (v *AltBlock) GetBlockTime() uint32 {
+	return v.Timestamp
+}
+
+// GetDifficulty ...
+func (v *AltBlock) GetDifficulty() uint32 {
+	return 0
+}
+
 // ToVbkEncoding ...
 func (v *AltBlock) ToVbkEncoding(stream io.Writer) error {
 	if err := binary.Write(stream, binary.BigEndian, uint32(len(v.Hash))); err != nil {

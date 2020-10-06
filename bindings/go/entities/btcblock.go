@@ -2,6 +2,7 @@ package entities
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/binary"
 	"io"
 
@@ -16,6 +17,26 @@ type BtcBlock struct {
 	Timestamp     uint32
 	Bits          uint32
 	Nonce         uint32
+}
+
+// GetHash ...
+func (v *BtcBlock) GetHash() []byte {
+	stream := new(bytes.Buffer)
+	if err := v.ToRaw(stream); err != nil {
+		return nil
+	}
+	hash := sha256.Sum256(stream.Bytes())
+	return hash[:]
+}
+
+// GetBlockTime ...
+func (v *BtcBlock) GetBlockTime() uint32 {
+	return v.Timestamp
+}
+
+// GetDifficulty ...
+func (v *BtcBlock) GetDifficulty() uint32 {
+	return v.Bits
 }
 
 // ToVbkEncoding ...

@@ -21,9 +21,28 @@ type VbkBlock struct {
 	Nonce                  uint64
 }
 
-// GetID - returns id of VBKBlock
+// GetHash ...
+func (v *VbkBlock) GetHash() []byte {
+	hash, err := v.GetBlockHash()
+	if err != nil {
+		return nil
+	}
+	return hash[:]
+}
+
+// GetBlockTime ...
+func (v *VbkBlock) GetBlockTime() uint32 {
+	return uint32(v.Timestamp)
+}
+
+// GetDifficulty ...
+func (v *VbkBlock) GetDifficulty() uint32 {
+	return uint32(v.Difficulty)
+}
+
+// GetID - Returns id of VBKBlock
 func (v *VbkBlock) GetID() ([12]byte, error) {
-	hash, err := v.GetHash()
+	hash, err := v.GetBlockHash()
 	if err != nil {
 		return [12]byte{}, err
 	}
@@ -32,8 +51,8 @@ func (v *VbkBlock) GetID() ([12]byte, error) {
 	return res, nil
 }
 
-// GetHash - returns progPowHash of VBKBlock
-func (v *VbkBlock) GetHash() ([24]byte, error) {
+// GetBlockHash - Returns progPowHash of VBKBlock
+func (v *VbkBlock) GetBlockHash() ([24]byte, error) {
 	blockStream := new(bytes.Buffer)
 	if err := v.ToRaw(blockStream); err != nil {
 		return [24]byte{}, err
