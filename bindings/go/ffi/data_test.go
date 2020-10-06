@@ -1,4 +1,4 @@
-package veriblock
+package ffi
 
 var (
 	popbtcstartheight = 1832644
