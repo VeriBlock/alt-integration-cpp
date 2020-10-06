@@ -16,12 +16,7 @@ func (v *Coin) ToVbkEncoding(stream io.Writer) error {
 	return veriblock.WriteSingleBEValue(stream, v.Units)
 }
 
-// CoinFromVbkEncoding ...
-func CoinFromVbkEncoding(stream io.Reader) (*Coin, error) {
-	coin := Coin{}
-	err := veriblock.ReadSingleBEValue(stream, &coin.Units)
-	if err != nil {
-		return nil, err
-	}
-	return &coin, nil
+// FromVbkEncoding ...
+func (v *Coin) FromVbkEncoding(stream io.Reader) error {
+	return veriblock.ReadSingleBEValue(stream, &v.Units)
 }

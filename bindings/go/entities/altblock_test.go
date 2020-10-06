@@ -18,11 +18,10 @@ func TestAltBlockRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
 	outputStream := new(bytes.Buffer)
-	err := defaultAltBlock.ToVbkEncoding(outputStream)
-	assert.NoError(err)
+	assert.NoError(defaultAltBlock.ToVbkEncoding(outputStream))
 	stream := bytes.NewReader(outputStream.Bytes())
-	deserializedBlock, err := AltBlockFromVbkEncoding(stream)
-	assert.NoError(err)
+	deserializedBlock := AltBlock{}
+	assert.NoError(deserializedBlock.FromVbkEncoding(stream))
 
 	assert.Equal(defaultAltBlock.Hash, deserializedBlock.Hash)
 	assert.Equal(defaultAltBlock.Height, deserializedBlock.Height)

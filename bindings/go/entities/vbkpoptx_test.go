@@ -77,12 +77,12 @@ var (
 		388767596,
 		4040279113,
 	}
-	defaultSignature          = parseHex("3045022100f4dce45edcc6bfc4a1f44ef04e47e90a348efd471f742f18b882ac77a8d0e89e0220617cf7c4a22211991687b17126c1bb007a3b2a25c550f75d66b857a8fd9d75e7")
-	defaultPublicKey          = parseHex("3056301006072a8648ce3d020106052b8104000a03420004b3c10470c8e8e426f1937758d9fb5e97a1891176cb37d4c12d4af4107b1aa3e8a8a754c06a22760e44c60642fba883967c19740d5231336326f7962750c8df99")
-	defaultVbkPopTxAddress, _ = AddressFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX")
-	defaultVbkPopTx           = VbkPopTx{
+	defaultSignature       = parseHex("3045022100f4dce45edcc6bfc4a1f44ef04e47e90a348efd471f742f18b882ac77a8d0e89e0220617cf7c4a22211991687b17126c1bb007a3b2a25c550f75d66b857a8fd9d75e7")
+	defaultPublicKey       = parseHex("3056301006072a8648ce3d020106052b8104000a03420004b3c10470c8e8e426f1937758d9fb5e97a1891176cb37d4c12d4af4107b1aa3e8a8a754c06a22760e44c60642fba883967c19740d5231336326f7962750c8df99")
+	defaultVbkPopTxAddress = addressFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX")
+	defaultVbkPopTx        = VbkPopTx{
 		networkByte,
-		*defaultVbkPopTxAddress,
+		defaultVbkPopTxAddress,
 		defaultPopTxVbkBlock,
 		BtcTx{btcTxBytes},
 		defaultPath,
@@ -99,8 +99,8 @@ func TestVbkPopTxDeserialize(t *testing.T) {
 
 	vbktx := parseHex(defaultVbkPopTxEncoded)
 	stream := bytes.NewReader(vbktx)
-	decoded, err := VbkPopTxFromVbkEncoding(stream)
-	assert.NoError(err)
+	decoded := VbkPopTx{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(defaultVbkPopTx.NetworkOrType.TypeID, decoded.NetworkOrType.TypeID)
 	assert.Equal(defaultVbkPopTx.Address, decoded.Address)
@@ -120,8 +120,7 @@ func TestVbkPopTxSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	err := defaultVbkPopTx.ToVbkEncoding(stream)
-	assert.NoError(err)
+	assert.NoError(defaultVbkPopTx.ToVbkEncoding(stream))
 	assert.Equal(defaultVbkPopTxEncoded, hex.EncodeToString(stream.Bytes()))
 }
 
@@ -130,12 +129,11 @@ func TestVbkPopTxRoundTrip(t *testing.T) {
 
 	txEncoded := parseHex(defaultVbkPopTxEncoded)
 	stream := bytes.NewReader(txEncoded)
-	decoded, err := VbkPopTxFromVbkEncoding(stream)
-	assert.NoError(err)
-	assert.Equal(*defaultVbkPopTxAddress, decoded.Address)
+	decoded := VbkPopTx{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
+	assert.Equal(defaultVbkPopTxAddress, decoded.Address)
 
 	outputStream := new(bytes.Buffer)
-	err = decoded.ToVbkEncoding(outputStream)
-	assert.NoError(err)
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	assert.Equal(defaultVbkPopTxEncoded, hex.EncodeToString(outputStream.Bytes()))
 }

@@ -34,8 +34,8 @@ func TestMerklePathDeserialize(t *testing.T) {
 	merklePath := parseHex(defaultPathEncoded)
 	subject := parse32Bytes(defaultSubject)
 	stream := bytes.NewReader(merklePath)
-	decoded, err := MerklePathFromVbkEncoding(stream, subject)
-	assert.NoError(err)
+	decoded := MerklePath{}
+	assert.NoError(decoded.FromVbkEncoding(stream, subject))
 
 	assert.Equal(defaultIndex, decoded.Index)
 	assert.Equal(defaultSubject, hex.EncodeToString(decoded.Subject[:]))
@@ -50,7 +50,7 @@ func TestMerklePathSerialize(t *testing.T) {
 	subject := parse32Bytes(defaultSubject)
 	path := MerklePath{defaultIndex, subject, defaultLayers}
 	stream := new(bytes.Buffer)
-	path.ToVbkEncoding(stream)
+	assert.NoError(path.ToVbkEncoding(stream))
 	pathEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultPathEncoded, pathEncoded)
 }
@@ -61,13 +61,12 @@ func TestMerklePathRoundTrip(t *testing.T) {
 	merklePath := parseHex(defaultPathEncoded)
 	subject := parse32Bytes(defaultSubject)
 	stream := bytes.NewReader(merklePath)
-	decoded, err := MerklePathFromVbkEncoding(stream, subject)
-	assert.NoError(err)
+	decoded := MerklePath{}
+	assert.NoError(decoded.FromVbkEncoding(stream, subject))
 	assert.Equal(defaultIndex, decoded.Index)
 
 	outputStream := new(bytes.Buffer)
-	err = decoded.ToVbkEncoding(outputStream)
-	assert.NoError(err)
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	pathReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultPathEncoded, pathReEncoded)
 }

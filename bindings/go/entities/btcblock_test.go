@@ -38,8 +38,8 @@ func TestBtcBlockDeserialize(t *testing.T) {
 
 	blockEncoded := parseHex(defaultBtcBlockEncoded)
 	stream := bytes.NewReader(blockEncoded)
-	decoded, err := BtcBlockFromRaw(stream)
-	assert.NoError(err)
+	decoded := BtcBlock{}
+	assert.NoError(decoded.FromRaw(stream))
 
 	assert.Equal(defaultBtcBlock.Version, decoded.Version)
 	assert.Equal(defaultBtcBlock.PreviousBlock, decoded.PreviousBlock)
@@ -55,7 +55,7 @@ func TestBtcBlockSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	defaultBtcBlock.ToRaw(stream)
+	assert.NoError(defaultBtcBlock.ToRaw(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultBtcBlockEncoded, blockEncoded)
 }
@@ -65,12 +65,12 @@ func TestBtcBlockRoundTrip(t *testing.T) {
 
 	blockEncoded := parseHex(defaultBtcBlockEncoded)
 	stream := bytes.NewReader(blockEncoded)
-	decoded, err := BtcBlockFromRaw(stream)
-	assert.NoError(err)
+	decoded := BtcBlock{}
+	assert.NoError(decoded.FromRaw(stream))
 	assert.Equal(defaultBtcBlock.Version, decoded.Version)
 
 	outputStream := new(bytes.Buffer)
-	decoded.ToRaw(outputStream)
+	assert.NoError(decoded.ToRaw(outputStream))
 	blockReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultBtcBlockEncoded, blockReEncoded)
 }
