@@ -253,6 +253,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
   // stateful validation
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
     atvs_in_flight_[atv->getId()] = atv;
+    on_atv_accepted.emit(*atv);
     return {MemPool::FAILED_STATEFUL,
             state.Invalid("pop-mempool-submit-atv-stateful")};
   }
@@ -290,6 +291,7 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
     vtbs_in_flight_[vtb->getId()] = vtb;
+    on_vtb_accepted.emit(*vtb);
     return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vtb-stateful")};
   }
 
@@ -324,6 +326,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
     vbkblocks_in_flight_[blk->getId()] = blk;
+    on_vbkblock_accepted.emit(*blk);
     return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vbk-stateful")};
   }
 
