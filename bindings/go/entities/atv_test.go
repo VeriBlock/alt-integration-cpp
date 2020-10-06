@@ -13,14 +13,14 @@ var (
 	publicationAtvData  = PublicationData{0, []byte("header bytes"), []byte("payout info bytes"), []byte("context info bytes")}
 	defaultAtvSignature = parseHex("30440220398b74708dc8f8aee68fce0c47b8959e6fce6354665da3ed87a83f708e62aa6b02202e6c00c00487763c55e92c7b8e1dd538b7375d8df2b2117e75acbb9db7deb3c7")
 	defaultAtvPublicKey = parseHex("3056301006072a8648ce3d020106052b8104000a03420004de4ee8300c3cd99e913536cf53c4add179f048f8fe90e5adf3ed19668dd1dbf6c2d8e692b1d36eac7187950620a28838da60a8c9dd60190c14c59b82cb90319e")
-	atvAddress, _       = AddressFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX")
+	atvAddress          = addressFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX")
 	defaultAtvTx        = VbkTx{
 		veriblock.NetworkBytePair{
 			HasNetworkByte: false,
 			NetworkByte:    0,
 			TypeID:         uint8(veriblock.TxTypeVbkTx),
 		},
-		*atvAddress,
+		atvAddress,
 		Coin{1000},
 		[]Output{},
 		7,
@@ -57,17 +57,16 @@ func TestAtvDeserialize(t *testing.T) {
 
 	atvBytes := parseHex(defaultAtvEncoded)
 	stream := bytes.NewReader(atvBytes)
-	decoded, err := AtvFromVbkEncoding(stream)
-	assert.NoError(err)
-	assert.Equal(*atvAddress, decoded.Transaction.SourceAddress)
+	decoded := Atv{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
+	assert.Equal(atvAddress, decoded.Transaction.SourceAddress)
 }
 
 func TestAtvSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	err := defaultAtv.ToVbkEncoding(stream)
-	assert.NoError(err)
+	assert.NoError(defaultAtv.ToVbkEncoding(stream))
 	assert.Equal(defaultAtvEncoded, hex.EncodeToString(stream.Bytes()))
 }
 
@@ -76,12 +75,11 @@ func TestAtvRoundTrip(t *testing.T) {
 
 	atvBytes := parseHex(defaultAtvEncoded)
 	stream := bytes.NewReader(atvBytes)
-	decoded, err := AtvFromVbkEncoding(stream)
-	assert.NoError(err)
-	assert.Equal(*atvAddress, decoded.Transaction.SourceAddress)
+	decoded := Atv{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
+	assert.Equal(atvAddress, decoded.Transaction.SourceAddress)
 
 	outputStream := new(bytes.Buffer)
-	err = defaultAtv.ToVbkEncoding(outputStream)
-	assert.NoError(err)
+	assert.NoError(defaultAtv.ToVbkEncoding(outputStream))
 	assert.Equal(defaultAtvEncoded, hex.EncodeToString(outputStream.Bytes()))
 }

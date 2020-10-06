@@ -16,31 +16,24 @@ type NetworkBytePair struct {
 // Write ...
 func (v *NetworkBytePair) Write(stream io.Writer) error {
 	if v.HasNetworkByte {
-		err := binary.Write(stream, binary.BigEndian, v.NetworkByte)
-		if err != nil {
+		if err := binary.Write(stream, binary.BigEndian, v.NetworkByte); err != nil {
 			return err
 		}
 	}
 	return binary.Write(stream, binary.BigEndian, v.TypeID)
 }
 
-// ReadNetworkByte ...
-func ReadNetworkByte(stream io.Reader, txType TxType) (*NetworkBytePair, error) {
+// Read ...
+func (v *NetworkBytePair) Read(stream io.Reader, txType TxType) error {
 	var networkOrType uint8
-	err := binary.Read(stream, binary.BigEndian, &networkOrType)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &networkOrType); err != nil {
+		return err
 	}
-	ret := NetworkBytePair{}
 	if networkOrType == uint8(txType) {
-		ret.TypeID = networkOrType
-	} else {
-		ret.HasNetworkByte = true
-		ret.NetworkByte = networkOrType
-		err := binary.Read(stream, binary.BigEndian, &ret.TypeID)
-		if err != nil {
-			return nil, err
-		}
+		v.TypeID = networkOrType
+		return nil
 	}
-	return &ret, nil
+	v.HasNetworkByte = true
+	v.NetworkByte = networkOrType
+	return binary.Read(stream, binary.BigEndian, &v.TypeID)
 }

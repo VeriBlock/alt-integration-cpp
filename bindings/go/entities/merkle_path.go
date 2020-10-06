@@ -20,8 +20,7 @@ type MerklePath struct {
 // ToVbkEncoding ...
 func (v *MerklePath) ToVbkEncoding(stream io.Writer) error {
 	blockStream := new(bytes.Buffer)
-	err := v.ToRaw(blockStream)
-	if err != nil {
+	if err := v.ToRaw(blockStream); err != nil {
 		return err
 	}
 	return veriblock.WriteVarLenValue(stream, blockStream.Bytes())
@@ -29,85 +28,74 @@ func (v *MerklePath) ToVbkEncoding(stream io.Writer) error {
 
 // ToRaw ...
 func (v *MerklePath) ToRaw(stream io.Writer) error {
-	err := veriblock.WriteSingleFixedBEValue(stream, v.Index)
-	if err != nil {
+	if err := veriblock.WriteSingleFixedBEValue(stream, v.Index); err != nil {
 		return err
 	}
-	err = veriblock.WriteSingleFixedBEValue(stream, int32(len(v.Layers)))
-	if err != nil {
+	if err := veriblock.WriteSingleFixedBEValue(stream, int32(len(v.Layers))); err != nil {
 		return err
 	}
 	subjectSizeBytes, err := veriblock.FixedArray(int32(len(v.Subject)))
 	if err != nil {
 		return err
 	}
-	err = veriblock.WriteSingleFixedBEValue(stream, int32(len(subjectSizeBytes)))
-	if err != nil {
+	if err := veriblock.WriteSingleFixedBEValue(stream, int32(len(subjectSizeBytes))); err != nil {
 		return err
 	}
-	_, err = stream.Write(subjectSizeBytes)
-	if err != nil {
+	if _, err := stream.Write(subjectSizeBytes); err != nil {
 		return err
 	}
 	for _, layer := range v.Layers {
-		err = veriblock.WriteSingleByteLenValue(stream, layer[:])
-		if err != nil {
+		if err := veriblock.WriteSingleByteLenValue(stream, layer[:]); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-// MerklePathFromVbkEncoding ...
-func MerklePathFromVbkEncoding(stream io.Reader, subject [32]byte) (*MerklePath, error) {
+// FromVbkEncoding ...
+func (v *MerklePath) FromVbkEncoding(stream io.Reader, subject [32]byte) error {
 	merkleBytes, err := veriblock.ReadVarLenValue(stream, 0, veriblock.MaxMerkleBytes)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	merkleStream := bytes.NewReader(merkleBytes)
-	return MerklePathFromRaw(merkleStream, subject)
+	return v.FromRaw(merkleStream, subject)
 }
 
-// MerklePathFromRaw ...
-func MerklePathFromRaw(stream io.Reader, subject [32]byte) (*MerklePath, error) {
-	path := &MerklePath{}
-	err := veriblock.ReadSingleBEValue(stream, &path.Index)
-	if err != nil {
-		return nil, err
+// FromRaw ...
+func (v *MerklePath) FromRaw(stream io.Reader, subject [32]byte) error {
+	if err := veriblock.ReadSingleBEValue(stream, &v.Index); err != nil {
+		return err
 	}
 	var numLayers int32
-	err = veriblock.ReadSingleBEValue(stream, &numLayers)
-	if err != nil {
-		return nil, err
+	if err := veriblock.ReadSingleBEValue(stream, &numLayers); err != nil {
+		return err
 	}
-	err = veriblock.CheckRange(int64(numLayers), 0, veriblock.MaxLayerCountMerkle)
-	if err != nil {
-		return nil, err
+	if err := veriblock.CheckRange(int64(numLayers), 0, veriblock.MaxLayerCountMerkle); err != nil {
+		return err
 	}
 	var sizeOfSizeBottomData int32
-	err = veriblock.ReadSingleBEValue(stream, &sizeOfSizeBottomData)
-	if err != nil {
-		return nil, err
+	if err := veriblock.ReadSingleBEValue(stream, &sizeOfSizeBottomData); err != nil {
+		return err
 	}
 	if uintptr(sizeOfSizeBottomData) != unsafe.Sizeof(sizeOfSizeBottomData) {
-		return nil, errors.New("merkle-size-of-size-range")
+		return errors.New("merkle-size-of-size-range")
 	}
 	var sizeOfBottomData int32
-	err = binary.Read(stream, binary.BigEndian, &sizeOfBottomData)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &sizeOfBottomData); err != nil {
+		return err
 	}
 	if sizeOfBottomData != veriblock.Sha256HashSize {
-		return nil, errors.New("merkle-size-of-data-range")
+		return errors.New("merkle-size-of-data-range")
 	}
-	path.Layers = make([][32]byte, numLayers)
+	v.Layers = make([][32]byte, numLayers)
 	for i := int32(0); i < numLayers; i++ {
 		arr, err := veriblock.ReadSingleByteLenValue(stream, veriblock.Sha256HashSize, veriblock.Sha256HashSize)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		copy(path.Layers[i][:], arr)
+		copy(v.Layers[i][:], arr)
 	}
-	path.Subject = subject
-	return path, nil
+	v.Subject = subject
+	return nil
 }

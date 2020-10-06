@@ -10,6 +10,22 @@ import (
 	"unsafe"
 )
 
+// Serialize - Serializes struct to bytes.
+type Serialize interface {
+	ToVbkEncoding(stream io.Writer) error
+}
+
+// Deserialize - Deserializes bytes to struct.
+type Deserialize interface {
+	FromVbkEncoding(stream io.Reader) error
+}
+
+// Serde - Serializes struct to bytes and deserializes bytes to struct.
+type Serde interface {
+	Serialize
+	Deserialize
+}
+
 // ReverseBytes - reverses bytes.
 func ReverseBytes(src []byte) []byte {
 	newBytes := make([]byte, len(src))

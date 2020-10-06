@@ -42,12 +42,11 @@ func TestVtbDeserialize(t *testing.T) {
 
 	vtbBytes := parseHex(defaultVtbEncoded)
 	stream := bytes.NewReader(vtbBytes)
-	decoded, err := VtbFromVbkEncoding(stream)
-	assert.NoError(err)
+	decoded := Vtb{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
-	address, err := AddressFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX")
-	assert.NoError(err)
-	assert.Equal(*address, decoded.Transaction.Address)
+	address := addressFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX")
+	assert.Equal(address, decoded.Transaction.Address)
 }
 
 func TestVtbSerialize(t *testing.T) {
@@ -64,14 +63,12 @@ func TestVtbRoundTrip(t *testing.T) {
 
 	vtbBytes := parseHex(defaultVtbEncoded)
 	stream := bytes.NewReader(vtbBytes)
-	decoded, err := VtbFromVbkEncoding(stream)
-	assert.NoError(err)
-	address, err := AddressFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX")
-	assert.NoError(err)
-	assert.Equal(*address, decoded.Transaction.Address)
+	decoded := Vtb{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
+	address := addressFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX")
+	assert.Equal(address, decoded.Transaction.Address)
 
 	outputStream := new(bytes.Buffer)
-	err = defaultVtb.ToVbkEncoding(outputStream)
-	assert.NoError(err)
+	assert.NoError(defaultVtb.ToVbkEncoding(outputStream))
 	assert.Equal(defaultVtbEncoded, hex.EncodeToString(outputStream.Bytes()))
 }

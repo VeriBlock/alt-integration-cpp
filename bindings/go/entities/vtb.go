@@ -16,51 +16,34 @@ type Vtb struct {
 
 // ToVbkEncoding ...
 func (v *Vtb) ToVbkEncoding(stream io.Writer) error {
-	err := binary.Write(stream, binary.BigEndian, v.Version)
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, v.Version); err != nil {
 		return err
 	}
 	if v.Version != 1 {
 		return fmt.Errorf("VTB serialization version=%d is not implemented", v.Version)
 	}
-	err = v.Transaction.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.Transaction.ToVbkEncoding(stream); err != nil {
 		return err
 	}
-	err = v.MerklePath.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.MerklePath.ToVbkEncoding(stream); err != nil {
 		return err
 	}
 	return v.ContainingBlock.ToVbkEncoding(stream)
 }
 
-// VtbFromVbkEncoding ...
-func VtbFromVbkEncoding(stream io.Reader) (*Vtb, error) {
-	var version uint32
-	err := binary.Read(stream, binary.BigEndian, &version)
-	if err != nil {
-		return nil, err
+// FromVbkEncoding ...
+func (v *Vtb) FromVbkEncoding(stream io.Reader) error {
+	if err := binary.Read(stream, binary.BigEndian, &v.Version); err != nil {
+		return err
 	}
-	if version != 1 {
-		return nil, fmt.Errorf("VTB serialization version=%d is not implemented", version)
+	if v.Version != 1 {
+		return fmt.Errorf("VTB serialization version=%d is not implemented", v.Version)
 	}
-	transaction, err := VbkPopTxFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+	if err := v.Transaction.FromVbkEncoding(stream); err != nil {
+		return err
 	}
-	merklePath, err := VbkMerklePathFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+	if err := v.MerklePath.FromVbkEncoding(stream); err != nil {
+		return err
 	}
-	containingBlock, err := VbkBlockFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
-	}
-	vtb := Vtb{
-		version,
-		*transaction,
-		*merklePath,
-		*containingBlock,
-	}
-	return &vtb, nil
+	return v.ContainingBlock.FromVbkEncoding(stream)
 }

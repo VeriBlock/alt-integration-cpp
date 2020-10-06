@@ -49,8 +49,8 @@ func TestVbkBlockDeserialize(t *testing.T) {
 
 	vbkblock := parseHex(defaultVbkBlockEncoded)
 	stream := bytes.NewReader(vbkblock)
-	block, err := VbkBlockFromVbkEncoding(stream)
-	assert.NoError(err)
+	block := VbkBlock{}
+	assert.NoError(block.FromVbkEncoding(stream))
 
 	assert.Equal(defaultVbkBlock.Height, block.Height)
 	assert.Equal(defaultVbkBlock.Version, block.Version)
@@ -67,8 +67,7 @@ func TestVbkBlockSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	err := defaultVbkBlock.ToVbkEncoding(stream)
-	assert.NoError(err)
+	assert.NoError(defaultVbkBlock.ToVbkEncoding(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultVbkBlockEncoded, blockEncoded)
 }
@@ -79,13 +78,12 @@ func TestVbkBlockRoundTrip(t *testing.T) {
 	blockEncoded, err := hex.DecodeString(defaultVbkBlockEncoded)
 	assert.NoError(err)
 	stream := bytes.NewReader(blockEncoded)
-	decoded, err := VbkBlockFromVbkEncoding(stream)
-	assert.NoError(err)
+	decoded := VbkBlock{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
 	assert.Equal(defaultVbkBlock.Version, decoded.Version)
 
 	outputStream := new(bytes.Buffer)
-	err = decoded.ToVbkEncoding(outputStream)
-	assert.NoError(err)
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	assert.Equal(defaultVbkBlockEncoded, hex.EncodeToString(outputStream.Bytes()))
 }
 
@@ -105,6 +103,7 @@ func TestVbkBlockGetBlockHash(t *testing.T) {
 
 	hash, err := block.GetHash()
 	assert.NoError(err)
+	// TODO: Add progPowHash
 	assert.NotEqual(parseHex("00000000000000001f45c91342b8ac0ea7ae4d721be2445dc86ddc3f0e454f60"), hash[:])
 }
 
@@ -114,8 +113,8 @@ func TestVbkBlockGetID(t *testing.T) {
 	atvBytes, err := hex.DecodeString(defaultVbkBlockEncoded)
 	assert.NoError(err)
 	stream := bytes.NewReader(atvBytes)
-	vbkblock, err := VbkBlockFromVbkEncoding(stream)
-	assert.NoError(err)
+	vbkblock := VbkBlock{}
+	assert.NoError(vbkblock.FromVbkEncoding(stream))
 	id, err := vbkblock.GetID()
 	assert.NoError(err)
 	assert.NotEqual("cd97599e23096ad42f119b5a", hex.EncodeToString(id[:]))

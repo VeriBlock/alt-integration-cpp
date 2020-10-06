@@ -17,15 +17,10 @@ func (v *Output) ToVbkEncoding(stream io.Writer) error {
 	return v.Coin.ToVbkEncoding(stream)
 }
 
-// OutputFromVbkEncoding ...
-func OutputFromVbkEncoding(stream io.Reader) (*Output, error) {
-	address, err := AddressFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+// FromVbkEncoding ...
+func (v *Output) FromVbkEncoding(stream io.Reader) error {
+	if err := v.Address.FromVbkEncoding(stream); err != nil {
+		return err
 	}
-	coin, err := CoinFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
-	}
-	return &Output{*address, *coin}, nil
+	return v.Coin.FromVbkEncoding(stream)
 }
