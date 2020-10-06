@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	outputBytes      = veriblock.Parse("01166772F51AB208D32771AB1506970EEB664462730B838E020539")
+	outputBytes      = parseHex("01166772F51AB208D32771AB1506970EEB664462730B838E020539")
 	outputAddress, _ = AddressFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX")
 	outputValue      = Output{*outputAddress, Coin{1337}}
 )

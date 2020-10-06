@@ -2,7 +2,6 @@ package entities
 
 import (
 	"bytes"
-	"encoding/hex"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,8 +9,8 @@ import (
 
 // Standard address
 var (
-	AddressValue    = "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"
-	AddressBytes, _ = hex.DecodeString("01166772F51AB208D32771AB1506970EEB664462730B838E")
+	AddressValue = "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"
+	AddressBytes = parseHex("01166772F51AB208D32771AB1506970EEB664462730B838E")
 )
 
 func TestAddressDeserialize(t *testing.T) {
@@ -77,7 +76,7 @@ func TestAddressValidMultisig(t *testing.T) {
 func TestAddressDerivedFromPublicKey(t *testing.T) {
 	assert := assert.New(t)
 
-	publicKey, _ := hex.DecodeString("3056301006072a8648ce3d020106052b8104000a03420004cb427e41a0114874080a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002f6c86952be4823a4c08e65e4cdbeb904a8b95763aa")
+	publicKey := parseHex("3056301006072a8648ce3d020106052b8104000a03420004cb427e41a0114874080a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002f6c86952be4823a4c08e65e4cdbeb904a8b95763aa")
 	addressString := "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d"
 	address, err := AddressFromString(addressString)
 	assert.NoError(err)
@@ -87,7 +86,7 @@ func TestAddressDerivedFromPublicKey(t *testing.T) {
 func TestAddressNotDerivedFromPublicKey(t *testing.T) {
 	assert := assert.New(t)
 
-	publicKey, _ := hex.DecodeString("3056301006072a8648ce3d020106052b8104000a03420004cb427e41a0114874080a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002f6c86952be4823a4c08e65e4cdbeb904a8b95763aa")
+	publicKey := parseHex("3056301006072a8648ce3d020106052b8104000a03420004cb427e41a0114874080a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002f6c86952be4823a4c08e65e4cdbeb904a8b95763aa")
 	addressString := "V23Cuyc34u5rdk9psJ86aFcwhB1md0"
 	address, err := AddressFromString(addressString)
 	assert.NoError(err)
