@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Standard address
 var (
 	defaultBtcBlock = BtcBlock{
 		536870912,
