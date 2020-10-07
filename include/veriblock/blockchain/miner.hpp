@@ -23,78 +23,47 @@ struct Miner {
   using nonce_t = typename worker_t::nonce_t;
 
   Miner(const ChainParams& params, size_t threads = 0)
-      : params_(params), threads_(threads) {
+      : params_(params) {
+    // prepare signals for workers
+    finishedSignal_ = std::make_shared<std::condition_variable>();
+    finishedLock_ = std::make_shared<std::mutex>();
+
     // try to detect concurrent threads count
-    if (threads_ == 0) {
-      threads_ = std::thread::hardware_concurrency();
+    if (threads == 0) {
+      threads = std::thread::hardware_concurrency();
     }
     // make sure we have at least one worker thread
-    if (threads_ == 0) {
-      threads_ = 1;
+    if (threads == 0) {
+      threads = 1;
     }
-  }
 
-  std::vector<range_t> getRanges() {
-    assert(threads_ > 0);
-    nonce_t workerRangeSize =
-        (nonce_t)(std::numeric_limits<nonce_t>::max() / threads_);
-    nonce_t workerRangeLeftovers = std::numeric_limits<nonce_t>::max() -
-                                   (nonce_t)(workerRangeSize * threads_);
-    assert(workerRangeSize > 0);
+    workers_.reserve(threads);
+    auto ranges = getRanges(threads);
 
-    std::vector<range_t> ranges;
-    ranges.reserve(threads_);
-    nonce_t begin = 0;
-    for (size_t i = 0; i < threads_; i++) {
-      nonce_t end = begin + workerRangeSize - 1;
-      if (workerRangeLeftovers > 0) {
-        end++;
-        workerRangeLeftovers--;
-      }
-      auto range = range_t(begin, end);
-      ranges.push_back(range);
-      begin = end + 1;
-    }
-    return ranges;
-  }
-
-  std::vector<std::shared_ptr<worker_t>> createWorkers(
-      const Block& blockTemplate,
-      std::condition_variable& finishedSignal,
-      std::mutex& lock) {
-    std::vector<std::shared_ptr<worker_t>> workers;
-    workers.reserve(threads_);
-    auto ranges = getRanges();
-
-    for (size_t i = 0; i < threads_; i++) {
+    for (size_t i = 0; i < threads; i++) {
       auto worker = std::make_shared<worker_t>(
-          params_, ranges[i], blockTemplate, finishedSignal, lock);
-      workers.push_back(worker);
+          params_, ranges[i], *finishedSignal_, *finishedLock_);
+      workers_.push_back(worker);
     }
-    return workers;
   }
 
   void createBlock(Block& block) {
-    std::mutex lock;
-    std::condition_variable finishedSignal;
-    auto workers = createWorkers(block, finishedSignal, lock);
-
     {
-      std::unique_lock<std::mutex> guard(lock);
-      for (const auto& w : workers) {
-        w->start();
+      std::unique_lock<std::mutex> guard(*finishedLock_);
+      for (const auto& w : workers_) {
+        w->start(block);
       }
-      finishedSignal.wait(guard);
+      finishedSignal_->wait(guard);
     }
     
     // stop all workers to avoid useless computing cycles
-    for (const auto& w : workers) {
+    for (const auto& w : workers_) {
       w->stop();
     }
 
     bool blockReady = false;
     // we wait for all threads to finish but save only first result
-    for (const auto& w : workers) {
+    for (const auto& w : workers_) {
       auto candidate = w->waitResult();
       if (candidate.first == false) continue;
       if (blockReady) continue;
@@ -123,7 +92,33 @@ struct Miner {
 
  private:
   const ChainParams& params_;
-  size_t threads_;
+  std::vector<std::shared_ptr<worker_t>> workers_;
+  std::shared_ptr<std::condition_variable> finishedSignal_;
+  std::shared_ptr<std::mutex> finishedLock_;
+
+  std::vector<range_t> getRanges(size_t threads) {
+    assert(threads > 0);
+    nonce_t workerRangeSize =
+        (nonce_t)(std::numeric_limits<nonce_t>::max() / threads);
+    nonce_t workerRangeLeftovers = std::numeric_limits<nonce_t>::max() -
+                                   (nonce_t)(workerRangeSize * threads);
+    assert(workerRangeSize > 0);
+
+    std::vector<range_t> ranges;
+    ranges.reserve(threads);
+    nonce_t begin = 0;
+    for (size_t i = 0; i < threads; i++) {
+      nonce_t end = begin + workerRangeSize - 1;
+      if (workerRangeLeftovers > 0) {
+        end++;
+        workerRangeLeftovers--;
+      }
+      auto range = range_t(begin, end);
+      ranges.push_back(range);
+      begin = end + 1;
+    }
+    return ranges;
+  }
 };
 
 }  // namespace altintegration

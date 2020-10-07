@@ -31,23 +31,23 @@ struct MinerWorker {
    */
   MinerWorker(const ChainParams& params,
               const range_t& nonce_range,
-              const Block& block_template,
               std::condition_variable& finished_signal,
               std::mutex& finished_lock)
       : params_(params),
         nonce_range_(nonce_range),
-        block_(block_template),
         finished_(finished_signal),
         finished_lock_(finished_lock) {
     VBK_ASSERT(nonce_range.first <= nonce_range.second &&
                "invalid nonce range");
-    block_.setNonce(nonce_range_.first);
   }
 
   /**
    * Ask worker to start running.
    */
-  void start() {
+  void start(const Block& block_template) {
+    assert(!runner.joinable() && "thread already running");
+    block_ = block_template;
+    block_.setNonce(nonce_range_.first);
     runner = std::thread(&MinerWorker<Block, ChainParams>::run, this);
   }
 
