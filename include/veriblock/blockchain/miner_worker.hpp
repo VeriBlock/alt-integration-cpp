@@ -48,6 +48,8 @@ struct MinerWorker {
     assert(!runner.joinable() && "thread already running");
     block_ = block_template;
     block_.setNonce(nonce_range_.first);
+    terminated_ = false;
+    block_ready_ = false;
     runner = std::thread(&MinerWorker<Block, ChainParams>::run, this);
   }
 
