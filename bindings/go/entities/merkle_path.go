@@ -45,7 +45,7 @@ func (v *MerklePath) ToRaw(stream io.Writer) error {
 		return err
 	}
 	for _, layer := range v.Layers {
-		if err := veriblock.WriteSingleByteLenValue(stream, layer[:]); err != nil {
+		if err := veriblock.WriteSingleByteLenValue(stream, layer); err != nil {
 			return err
 		}
 	}
