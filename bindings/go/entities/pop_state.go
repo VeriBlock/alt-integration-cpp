@@ -31,7 +31,6 @@ func (v *PopState) ToRaw(stream io.Writer) error {
 		endorsement, ok := val.(*VbkEndorsement)
 		if !ok {
 			endorsement = val.(*AltEndorsement)
-			v.IsAlt = true
 		}
 		return endorsement.ToVbkEncoding(stream)
 	})

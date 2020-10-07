@@ -54,6 +54,7 @@ type GenericBlockHeader interface {
 
 // BlockIndex ...
 type BlockIndex struct {
+	addon veriblock.SerdeRaw
 	// Height of the entry in the chain
 	Height uint32
 	// Block header
@@ -88,8 +89,7 @@ func (v *BlockIndex) ToRaw(stream io.Writer) error {
 	if err := binary.Write(stream, binary.BigEndian, uint32(v.Status)); err != nil {
 		return err
 	}
-	// addon_t::toRaw(stream);
-	return nil
+	return v.addon.ToRaw(stream)
 }
 
 // FromRaw ...
@@ -105,6 +105,5 @@ func (v *BlockIndex) FromRaw(stream io.Reader) error {
 		return err
 	}
 	v.Status = BlockStatus(status)
-	// addon_t::initAddonFromRaw(stream);
-	return nil
+	return v.addon.FromRaw(stream)
 }
