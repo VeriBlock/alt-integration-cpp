@@ -154,9 +154,9 @@ func WriteSingleFixedBEValue(stream io.Writer, value interface{}) error {
 }
 
 // ReadSingleByteLenValue ...
-func ReadSingleByteLenValue(r io.Reader, minLen, maxLen int32) ([]byte, error) {
+func ReadSingleByteLenValue(stream io.Reader, minLen, maxLen int32) ([]byte, error) {
 	var length byte
-	err := binary.Read(r, binary.BigEndian, &length)
+	err := binary.Read(stream, binary.BigEndian, &length)
 	if err != nil {
 		return nil, err
 	}
@@ -165,11 +165,16 @@ func ReadSingleByteLenValue(r io.Reader, minLen, maxLen int32) ([]byte, error) {
 		return nil, err
 	}
 	buf := make([]byte, length)
-	_, err = r.Read(buf)
+	_, err = stream.Read(buf)
 	if err != nil {
 		return nil, err
 	}
 	return buf, nil
+}
+
+// ReadSingleByteLenValueDefault ...
+func ReadSingleByteLenValueDefault(stream io.Reader) ([]byte, error) {
+	return ReadSingleByteLenValue(stream, 0, math.MaxInt32)
 }
 
 // ReadSingleBEValue ...
