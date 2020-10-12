@@ -8,12 +8,12 @@ import "unsafe"
 
 // Exported functions
 var (
-	OnGetAltchainID      = func() int { panic("") }
-	OnGetBootstrapBlock  = func() string { panic("") }
-	OnGetBlockHeaderHash = func() { panic("") }
-	OnGetAtv             = func() { panic("") }
-	OnGetVtb             = func() { panic("") }
-	OnGetVbk             = func() { panic("") }
+	OnGetAltchainID      = func() int { panic("OnGetAltchainID not set") }
+	OnGetBootstrapBlock  = func() string { panic("OnGetBootstrapBlock not set") }
+	OnGetBlockHeaderHash = func() { panic("OnGetBlockHeaderHash not set") }
+	OnGetAtv             = func() { panic("OnGetAtv not set") }
+	OnGetVtb             = func() { panic("OnGetVtb not set") }
+	OnGetVbk             = func() { panic("OnGetVbk not set") }
 )
 
 // PopContext ...
