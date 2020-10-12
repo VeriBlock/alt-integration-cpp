@@ -117,8 +117,7 @@ TEST_F(MemPoolFixture, removeAll_test1) {
   std::exit(0);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
   submitATV(atv);
@@ -190,8 +189,7 @@ TEST_F(MemPoolFixture, removeAll_test2) {
   ATV atv = popminer->applyATV(tx, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
   submitATV(atv);
@@ -255,8 +253,7 @@ TEST_F(MemPoolFixture, removeAll_test3) {
   ATV atv = popminer->applyATV(tx, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
   submitATV(atv);
@@ -330,8 +327,7 @@ TEST_F(MemPoolFixture, removeAll_test4) {
   ATV atv = popminer->applyATV(tx, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
   submitATV(atv);
@@ -376,8 +372,7 @@ TEST_F(MemPoolFixture, removeAll_test4) {
   EXPECT_EQ(vtbs.size(), 1);
 
   context.clear();
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(vtbs);
   submitVTB(vtbs[0]);
@@ -425,8 +420,7 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   ATV atv = popminer->applyATV(tx, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
   submitATV(atv);
@@ -478,8 +472,7 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->getHeight(), 65);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
   ASSERT_EQ(context.size(), 65);
 
   // validate that we have valid vbk block context
@@ -619,8 +612,7 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   ATV atv = popminer->applyATV(tx, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
   submitATV(atv);
@@ -676,8 +668,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   ATV atv = popminer->applyATV(tx, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv);
   submitATV(atv);
@@ -792,8 +783,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   ATV atv2 = popminer->applyATV(tx2, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv1);
   payloadsProvider.write(atv2);
@@ -942,8 +932,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   ATV atv1 = popminer->applyATV(tx1, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv1);
   payloadsProvider.write(vtb1);
@@ -984,8 +973,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   ATV atv1 = popminer->applyATV(tx1, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv1);
   payloadsProvider.write(context);
@@ -1031,8 +1019,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   ATV atv1 = popminer->applyATV(tx1, state);
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv1);
   payloadsProvider.write(vtb1);
@@ -1095,8 +1082,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock2));
   ATV atv2 = popminer->applyATV(tx2, state);
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv2);
   submitATV(atv2);
@@ -1135,8 +1121,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
       generatePublicationData(endorsedBlock1));
   ATV atv1 = popminer->applyATV(tx1, state);
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv1);
   submitATV(atv1);
@@ -1159,8 +1144,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
       generatePublicationData(endorsedBlock1));
   ATV atv2 = popminer->applyATV(tx2, state);
   context.clear();
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   payloadsProvider.write(atv2);
   submitATV(atv2);
@@ -1207,8 +1191,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
         generatePublicationData(endorsedBlock1));
     ATV atv = popminer->applyATV(tx, state);
     std::vector<VbkBlock> context;
-    fillVbkContext(
-        context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+    fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
     payloadsProvider.write(atv);
     submitATV(atv);
@@ -1267,8 +1250,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
   for (const auto& blk : context) {
     submitVBK(blk);
   }
@@ -1338,8 +1320,7 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   VTB vtb2 = popminer->vbkPayloads[containingVbkBlock->getHash()][1];
 
   std::vector<VbkBlock> context;
-  fillVbkContext(
-      context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   EXPECT_EQ(vtb1.containingBlock, vtb2.containingBlock);
 
@@ -1374,4 +1355,57 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   EXPECT_TRUE(popData.context.empty());
 
   applyInNextBlock(popData);
+}
+
+// Test scenrio when we have added into the mempool some statefull invalid
+// payloads (duplicate) and they shoud be removed from the inFlight storage
+// later
+TEST_F(MemPoolFixture, getPop_scenario_14) {
+  popminer->mineBtcBlocks(100);
+  auto* vbkTip = popminer->mineVbkBlocks(54);
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  // endorse VBK blocks
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+
+  generatePopTx(endorsedVbkBlock1->getHeader());
+  generatePopTx(endorsedVbkBlock2->getHeader());
+
+  auto* containingVbkBlock = popminer->mineVbkBlocks(1);
+  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock->getHash()].size(), 2);
+  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock->getHash()][0];
+  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock->getHash()][1];
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+
+  payloadsProvider.write(vtb1);
+  submitVTB(vtb1);
+  payloadsProvider.write(vtb2);
+  submitVTB(vtb2);
+
+  payloadsProvider.write(context);
+  for (const auto& b : context) {
+    submitVBK(b);
+  }
+
+  PopData popData = checkedGetPop();
+
+  EXPECT_EQ(popData.atvs.size(), 0);
+  EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_TRUE(!popData.context.empty());
+
+  applyInNextBlock(popData);
+  mempool->removeAll(popData);
+
+  // again submit payloads into the mempool
+  submitVTB(vtb1);
+  submitVTB(vtb2);
+
+  EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
+  EXPECT_EQ(mempool->getInFlightMap<VTB>().size(), 2);
+
 }
