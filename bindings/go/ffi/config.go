@@ -6,12 +6,12 @@ package ffi
 import "C"
 import "unsafe"
 
-// Config ...
+// Config - Configuration for Veriblock integration
 type Config struct {
 	ref *C.Config_t
 }
 
-// NewConfig ...
+// NewConfig - Returns instance of Config struct. Allocates memory
 func NewConfig() Config { return Config{ref: C.VBK_NewConfig()} }
 
 // Free ...
