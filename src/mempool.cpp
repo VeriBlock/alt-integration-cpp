@@ -88,7 +88,7 @@ PopData MemPool::getPop() {
   return ret;
 }
 
-void MemPool::clean() {
+void MemPool::cleanUp() {
   auto& vbk_tree = mempool_tree_.vbk().getStableTree();
 
   for (auto it = relations_.begin(); it != relations_.end();) {
@@ -224,7 +224,7 @@ void MemPool::removeAll(const PopData& pop) {
     ++it;
   }
 
-  this->clean();
+  this->cleanUp();
 }
 
 VbkPayloadsRelations& MemPool::touchVbkPayloadRelation(

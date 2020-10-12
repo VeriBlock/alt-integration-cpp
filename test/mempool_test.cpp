@@ -1406,7 +1406,7 @@ TEST_F(MemPoolFixture, getPop_scenario_14) {
   EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   EXPECT_EQ(mempool->getInFlightMap<VTB>().size(), 2);
 
-  mempool->clean();
+  mempool->cleanUp();
 
   EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   EXPECT_EQ(mempool->getInFlightMap<VTB>().size(), 0);

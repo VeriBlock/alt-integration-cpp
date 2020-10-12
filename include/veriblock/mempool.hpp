@@ -224,7 +224,7 @@ struct MemPool {
    * payloads)
    *@ingroup api
    */
-  void clean();
+  void cleanUp();
 
   /**
    * Clear mempool from all payloads.
