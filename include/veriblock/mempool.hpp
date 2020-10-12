@@ -82,7 +82,7 @@ struct MemPool {
 
     const auto& inflight = getInFlightMap<T>();
     auto it2 = inflight.find(id);
-    if(it2 != inflight.end()) {
+    if (it2 != inflight.end()) {
       return it2->second.get();
     }
 
@@ -213,11 +213,18 @@ struct MemPool {
    * Remove payloads from mempool by their IDs.
    *
    * Use it when new block arrives and it contains PopData. Doing this, mempool
-   * will not contain duplicates (payloads that are already in blockchain).
+   * also executes clean() method.
    * @ingroup api
    * @param[in] popData altintegration::PopData
    */
   void removeAll(const PopData& popData);
+
+  /**
+   * Remove paylaods that are statefully invalid anymore (duplicated, staled
+   * payloads)
+   *@ingroup api
+   */
+  void cleanUp();
 
   /**
    * Clear mempool from all payloads.
@@ -266,8 +273,6 @@ struct MemPool {
   signals::Signal<void(const Pop&)>& getSignal() {
     static_assert(sizeof(Pop) == 0, "Unknown type in getSignal");
   }
-
-  void vacuum(const PopData& pop);
 };
 
 // clang-format off
