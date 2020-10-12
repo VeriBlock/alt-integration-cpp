@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -89,36 +88,36 @@ PopData MemPool::getPop() {
   return ret;
 }
 
-void MemPool::vacuum(const PopData& pop) {
-  auto vbkblockids = make_idset(pop.context);
-  auto vtbids = make_idset(pop.vtbs);
-  auto atvids = make_idset(pop.atvs);
-
-  // cascade removal of relation and stored payloads
-  auto removeRelation = [&](decltype(relations_.begin()) it) {
-    auto& rel = *it->second;
-    vbkblocks_.erase(it->first);
-    for (auto& vtb : rel.vtbs) {
-      stored_vtbs_.erase(vtb->getId());
-    }
-    for (auto& atv : rel.atvs) {
-      stored_atvs_.erase(atv->getId());
-    }
-    return relations_.erase(it);
-  };
+void MemPool::cleanUp() {
+  auto& vbk_tree = mempool_tree_.vbk().getStableTree();
 
   for (auto it = relations_.begin(); it != relations_.end();) {
-    auto blockHash = it->second->header->getHash();
-    auto& vbk = mempool_tree_.vbk().getStableTree();
-    auto* index = vbk.getBlockIndex(blockHash);
-    auto* tip = vbk.getBestChain().tip();
-    auto maxReorgBlocks = vbk.getParams().getMaxReorgBlocks();
     auto& rel = *it->second;
+    auto* index = vbk_tree.getBlockIndex(it->second->header->getHash());
 
-    bool tooOld = tip->getHeight() - maxReorgBlocks > rel.header->getHeight();
+    bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
+                      vbk_tree.getParams().getMaxReorgBlocks() >
+                  rel.header->getHeight();
+
+    // cleanup stale relations
     if (tooOld) {
-      // VBK block is too old to be included or modified
-      it = removeRelation(it);
+      // remove ATVs
+      for (const auto& atv : rel.atvs) {
+        stored_atvs_.erase(atv->getId());
+        mempool_tree_.removePayloads(*atv);
+      }
+
+      // remove VTBs
+      for (const auto& vtb : rel.vtbs) {
+        stored_vtbs_.erase(vtb->getId());
+        mempool_tree_.removePayloads(*vtb);
+      }
+
+      // remove vbk block
+      vbkblocks_.erase(rel.header->getId());
+      mempool_tree_.removePayloads(*rel.header);
+      it = relations_.erase(it);
+
       continue;
     }
 
@@ -126,66 +125,107 @@ void MemPool::vacuum(const PopData& pop) {
     for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
       auto& vtb = **vtbit;
       ValidationState state;
-      auto id = vtb.getId();
-      if (vtbids.count(id) > 0 ||
-          !mempool_tree_.checkContextually(vtb, state)) {
-        stored_vtbs_.erase(id);
-        vtbit = rel.vtbs.erase(vtbit);
-      } else {
-        ++vtbit;
-      }
+      vtbit = !mempool_tree_.checkContextually(vtb, state)
+                  ? (stored_vtbs_.erase(vtb.getId()), rel.vtbs.erase(vtbit))
+                  : std::next(vtbit);
     }
 
     // cleanup stale ATVs
     for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
       auto& atv = **atvit;
-      auto id = atv.getId();
       ValidationState state;
-      if (atvids.count(id) > 0 ||
-          !mempool_tree_.checkContextually(atv, state)) {
-        stored_atvs_.erase(id);
-        atvit = rel.atvs.erase(atvit);
-      } else {
-        ++atvit;
-      }
+      atvit = !mempool_tree_.checkContextually(atv, state)
+                  ? (stored_atvs_.erase(atv.getId()), rel.atvs.erase(atvit))
+                  : std::next(atvit);
     }
 
-    if (index != nullptr) {
-      // VBK tree knows about this VBK block
-      // does it know about stored VTBs?
-      auto& v = index->getPayloadIds<VTB>();
-      std::set<VTB::id_t> ids(v.begin(), v.end());
-      // include vtbs that have just been included into new block
-      std::transform(pop.vtbs.begin(),
-                     pop.vtbs.end(),
-                     std::inserter(ids, std::end(ids)),
-                     get_id<VTB>);
-
-      for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
-        auto id = (*vtbit)->getId();
-        // mempool contains VBK block, which already exists in VBK tree, and
-        // we found a VTB which exists in that VBK block. we can remove VTB
-        // from mempool
-        vtbit = ids.count(id) ? rel.vtbs.erase(vtbit) : std::next(vtbit);
-      }
-
-      if (rel.empty()) {
-        it = removeRelation(it);
-        continue;
-      }
-    }
-
-    // if header is recently added to new block or relation is empty, cleanup
-    if (vbkblockids.count(rel.header->getId()) && rel.empty()) {
-      it = removeRelation(it);
+    if (index != nullptr && rel.empty()) {
+      vbkblocks_.erase(rel.header->getId());
+      mempool_tree_.removePayloads(*rel.header);
+      it = relations_.erase(it);
       continue;
     }
 
     ++it;
   }
+
+  // // remove payloads from inFlight storage
+  for (auto atvit = atvs_in_flight_.begin(); atvit != atvs_in_flight_.end();)
+  {
+    // cleanup stale ATVs
+    auto& atv = *atvit->second;
+    ValidationState state;
+    atvit = !mempool_tree_.checkContextually(atv, state)
+                ? atvs_in_flight_.erase(atvit)
+                : std::next(atvit);
+  }
+
+  for (auto vtbit = vtbs_in_flight_.begin(); vtbit != vtbs_in_flight_.end();)
+  {
+    // cleanup stale VTBs
+    auto& vtb = *vtbit->second;
+    ValidationState state;
+    vtbit = !mempool_tree_.checkContextually(vtb, state)
+                ? vtbs_in_flight_.erase(vtbit)
+                : std::next(vtbit);
+  }
+
+  for (auto vbkit = vbkblocks_in_flight_.begin();
+       vbkit != vbkblocks_in_flight_.end();) {
+    // cleanup stale VBKs
+    auto& vbk = *vbkit->second;
+    auto* index = vbk_tree.getBlockIndex(vbk.getHash());
+    bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
+                      vbk_tree.getParams().getMaxReorgBlocks() >
+                  vbk.getHeight();
+
+    vbkit =
+        tooOld || index ? vbkblocks_in_flight_.erase(vbkit) :
+        std::next(vbkit);
+  }
 }
 
-void MemPool::removeAll(const PopData& pop) { vacuum(pop); }
+void MemPool::removeAll(const PopData& pop) {
+  auto vbkblockids = make_idset(pop.context);
+  auto vtbids = make_idset(pop.vtbs);
+  auto atvids = make_idset(pop.atvs);
+
+  for (auto it = relations_.begin(); it != relations_.end();) {
+    auto& rel = *it->second;
+    auto block_id = rel.header->getId();
+
+    // remove ATVs
+    for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
+      auto id = (*atvit)->getId();
+      atvit = atvids.count(id) ? (stored_atvs_.erase(id),
+                                  mempool_tree_.removePayloads(**atvit),
+                                  rel.atvs.erase(atvit))
+                               : std::next(atvit);
+    }
+
+    // remove VTBs
+    for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
+      auto id = (*vtbit)->getId();
+      vtbit = vtbids.count(id) ? (stored_vtbs_.erase(id),
+                                  mempool_tree_.removePayloads(**vtbit),
+                                  rel.vtbs.erase(vtbit))
+                               : std::next(vtbit);
+    }
+
+    // if header is recently added to new block or relation is empty, cleanup
+
+    if (vbkblockids.count(block_id) && rel.empty()) {
+      vbkblocks_.erase(block_id);
+      mempool_tree_.removePayloads(*rel.header);
+      it = relations_.erase(it);
+      continue;
+    }
+
+    ++it;
+  }
+
+  this->cleanUp();
+}
 
 VbkPayloadsRelations& MemPool::touchVbkPayloadRelation(
     const std::shared_ptr<VbkBlock>& block_ptr) {
