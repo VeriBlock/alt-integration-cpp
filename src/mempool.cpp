@@ -145,42 +145,44 @@ void MemPool::clean() {
       it = relations_.erase(it);
       continue;
     }
+
+    ++it;
   }
 
   // // remove payloads from inFlight storage
-  // for (auto atvit = atvs_in_flight_.begin(); atvit != atvs_in_flight_.end();)
-  // {
-  //   // cleanup stale ATVs
-  //   auto& atv = *atvit->second;
-  //   ValidationState state;
-  //   atvit = !mempool_tree_.checkContextually(atv, state)
-  //               ? atvs_in_flight_.erase(atvit)
-  //               : std::next(atvit);
-  // }
+  for (auto atvit = atvs_in_flight_.begin(); atvit != atvs_in_flight_.end();)
+  {
+    // cleanup stale ATVs
+    auto& atv = *atvit->second;
+    ValidationState state;
+    atvit = !mempool_tree_.checkContextually(atv, state)
+                ? atvs_in_flight_.erase(atvit)
+                : std::next(atvit);
+  }
 
-  // for (auto vtbit = vtbs_in_flight_.begin(); vtbit != vtbs_in_flight_.end();)
-  // {
-  //   // cleanup stale VTBs
-  //   auto& vtb = *vtbit->second;
-  //   ValidationState state;
-  //   vtbit = !mempool_tree_.checkContextually(vtb, state)
-  //               ? vtbs_in_flight_.erase(vtbit)
-  //               : std::next(vtbit);
-  // }
+  for (auto vtbit = vtbs_in_flight_.begin(); vtbit != vtbs_in_flight_.end();)
+  {
+    // cleanup stale VTBs
+    auto& vtb = *vtbit->second;
+    ValidationState state;
+    vtbit = !mempool_tree_.checkContextually(vtb, state)
+                ? vtbs_in_flight_.erase(vtbit)
+                : std::next(vtbit);
+  }
 
-  // for (auto vbkit = vbkblocks_in_flight_.begin();
-  //      vbkit != vbkblocks_in_flight_.end();) {
-  //   // cleanup stale VBKs
-  //   auto& vbk = *vbkit->second;
-  //   auto* index = vbk_tree.getBlockIndex(vbk.getHash());
-  //   bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
-  //                     vbk_tree.getParams().getMaxReorgBlocks() >
-  //                 vbk.getHeight();
+  for (auto vbkit = vbkblocks_in_flight_.begin();
+       vbkit != vbkblocks_in_flight_.end();) {
+    // cleanup stale VBKs
+    auto& vbk = *vbkit->second;
+    auto* index = vbk_tree.getBlockIndex(vbk.getHash());
+    bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
+                      vbk_tree.getParams().getMaxReorgBlocks() >
+                  vbk.getHeight();
 
-  //   vbkit =
-  //       tooOld || index ? vbkblocks_in_flight_.erase(vbkit) :
-  //       std::next(vbkit);
-  // }
+    vbkit =
+        tooOld || index ? vbkblocks_in_flight_.erase(vbkit) :
+        std::next(vbkit);
+  }
 }
 
 void MemPool::removeAll(const PopData& pop) {
@@ -216,7 +218,10 @@ void MemPool::removeAll(const PopData& pop) {
       vbkblocks_.erase(block_id);
       mempool_tree_.removePayloads(*rel.header);
       it = relations_.erase(it);
+      continue;
     }
+
+    ++it;
   }
 
   this->clean();

@@ -1121,12 +1121,12 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
-  payloadsProvider.write(atv1);
-  submitATV(atv1);
   payloadsProvider.write(context);
   for (const auto& b : context) {
     submitVBK(b);
   }
+  payloadsProvider.write(atv1);
+  submitATV(atv1);
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData v_popData = checkedGetPop();
@@ -1144,12 +1144,12 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   context.clear();
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
-  payloadsProvider.write(atv2);
-  submitATV(atv2);
   payloadsProvider.write(context);
   for (const auto& b : context) {
     submitVBK(b);
   }
+  payloadsProvider.write(atv2);
+  submitATV(atv2);
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   v_popData = checkedGetPop();
