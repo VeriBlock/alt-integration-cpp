@@ -9,6 +9,26 @@ import (
 	ffi "github.com/VeriBlock/alt-integration-cpp/ffi"
 )
 
+// AltBlockTree ...
+type AltBlockTree interface {
+	AcceptBlockHeader(block entities.AltBlock) error
+	AcceptBlock(hash []byte, payloads entities.PopData) error
+	AddPayloads(hash []byte, payloads entities.PopData) error
+	LoadTip(hash []byte)
+	ComparePopScore(hashA []byte, hashB []byte) int
+	RemoveSubtree(hash []byte)
+	SetState(hash []byte) error
+}
+
+// MemPool ...
+type MemPool interface {
+	SubmitAtv(block entities.Atv) error
+	SubmitVtb(block entities.Vtb) error
+	SubmitVbk(block entities.VbkBlock) error
+	GetPop() (*entities.PopData, error)
+	RemoveAll(payloads entities.PopData) error
+}
+
 // PopContext ...
 type PopContext struct {
 	popContext ffi.PopContext
@@ -39,17 +59,6 @@ func (v *PopContext) Config() *Config {
 func (v *PopContext) Free() {
 	v.popContext.MemPoolClear()
 	v.popContext.Free()
-}
-
-// AltBlockTree ...
-type AltBlockTree interface {
-	AcceptBlockHeader(block entities.AltBlock) error
-	AcceptBlock(hash []byte, payloads entities.PopData) error
-	AddPayloads(hash []byte, payloads entities.PopData) error
-	LoadTip(hash []byte)
-	ComparePopScore(hashA []byte, hashB []byte) int
-	RemoveSubtree(hash []byte)
-	SetState(hash []byte) error
 }
 
 // AcceptBlockHeader - Returns nil if block is valid, and added
@@ -176,15 +185,6 @@ func (v PopContext) SetState(hash []byte) error {
 //                            int hash_bytes_size,
 //                            uint8_t** blockindex,
 //                            int* blockindex_size);
-
-// MemPool ...
-type MemPool interface {
-	SubmitAtv(block entities.Atv) error
-	SubmitVtb(block entities.Vtb) error
-	SubmitVbk(block entities.VbkBlock) error
-	GetPop() (*entities.PopData, error)
-	RemoveAll(payloads entities.PopData) error
-}
 
 // SubmitAtv - Returns nil if payload is valid
 func (v *PopContext) SubmitAtv(block entities.Atv) error {
