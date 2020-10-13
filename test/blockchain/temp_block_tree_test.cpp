@@ -15,22 +15,26 @@ template <typename T>
 T getGenesisBlockHelper();
 
 template <>
-VbkBlock getGenesisBlockHelper() {return GetRegTestVbkBlock();}
+VbkBlock getGenesisBlockHelper() {
+  return GetRegTestVbkBlock();
+}
 template <>
-BtcBlock getGenesisBlockHelper() {return GetRegTestBtcBlock();}
+BtcBlock getGenesisBlockHelper() {
+  return GetRegTestBtcBlock();
+}
 
 using BtcBlockTree = typename VbkBlockTree::BtcTree;
 
 template <typename TreeType>
-const TreeType& getTree(const AltBlockTree& tree);
+TreeType& getTree(AltBlockTree& tree);
 
 template <>
-const VbkBlockTree& getTree<VbkBlockTree>(const AltBlockTree& tree) {
+VbkBlockTree& getTree<VbkBlockTree>(AltBlockTree& tree) {
   return tree.vbk();
 }
 
 template <>
-const BtcBlockTree& getTree<BtcBlockTree>(const AltBlockTree& tree) {
+BtcBlockTree& getTree<BtcBlockTree>(AltBlockTree& tree) {
   return tree.btc();
 }
 
@@ -149,8 +153,9 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_2) {
   EXPECT_FALSE(areOnSameChain(*fork2, *fork1, this->temp_block_tree));
 }
 
-// test removeTempSingleBlock() method
+// test cleanUp() method
 TYPED_TEST_P(TempBlockTreeTest, scenario_3) {
+  using block_tree_t = TypeParam;
   using block_t = typename TypeParam::block_t;
 
   auto gen_block = getGenesisBlockHelper<block_t>();
@@ -177,21 +182,21 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_3) {
       this->temp_block_tree.getStableTree().getBlockIndex(block->getHash()),
       nullptr);
 
-  this->temp_block_tree.removeTempSingleBlock(block->getHash());
+  // add block into the stable tree
+  auto& stable_tree = getTree<block_tree_t>(this->alttree);
 
-  EXPECT_EQ(this->temp_block_tree.getBlockIndex(block->getHash()), nullptr);
-  EXPECT_EQ(
+  EXPECT_TRUE(stable_tree.acceptBlock(block, this->state));
+
+  EXPECT_NE(this->temp_block_tree.getTempBlockIndex(block->getHash()), nullptr);
+  EXPECT_NE(
       this->temp_block_tree.getStableTree().getBlockIndex(block->getHash()),
       nullptr);
 
-  // twice add the same block
-  EXPECT_TRUE(this->temp_block_tree.acceptBlock(block, this->state));
-  EXPECT_TRUE(this->temp_block_tree.acceptBlock(block, this->state));
+  // cleanUp temp tree
+  this->temp_block_tree.cleanUp();
 
-  this->temp_block_tree.removeTempSingleBlock(block->getHash());
-
-  EXPECT_NE(this->temp_block_tree.getBlockIndex(block->getHash()), nullptr);
-  EXPECT_EQ(
+  EXPECT_EQ(this->temp_block_tree.getTempBlockIndex(block->getHash()), nullptr);
+  EXPECT_NE(
       this->temp_block_tree.getStableTree().getBlockIndex(block->getHash()),
       nullptr);
 }

@@ -61,29 +61,19 @@ struct TempBlockTree {
     return true;
   }
 
-  void removeTempSingleBlock(const typename block_t::hash_t& hash) {
-    auto* index = getTempBlockIndex(hash);
-
-    if (index != nullptr) {
-      removeTempSingleBlock(*index);
-    }
-  }
-
-  void removeTempSingleBlock(index_t& index) {
-    auto shortHash = tree_->makePrevHash(index.getHash());
-    auto it = temp_blocks_.at(shortHash);
-    // the remove_ container
-    if (it->refCount() == 0) {
-      // TODO: it is a hack because we do not erase blocks and just move them to
-      it->setNull();
-      removed_blocks_[shortHash] = it;
-      temp_blocks_.erase(shortHash);
-    } else {
-      it->removeRef(0);
-    }
-  }
-
   const block_tree_t& getStableTree() const { return *tree_; }
+
+  /**
+   * Remove block from the temp store that are already in the stable tree
+   */
+  void cleanUp() {
+    for (auto blk_it = temp_blocks_.begin(); blk_it != temp_blocks_.end();) {
+      auto short_hash = tree_->makePrevHash(blk_it->second->getHash());
+      auto* index = tree_->getBlockIndex(short_hash);
+
+      blk_it = index ? temp_blocks_.erase(blk_it) : std::next(blk_it);
+    }
+  }
 
   void clear() { temp_blocks_.clear(); }
 
@@ -92,7 +82,6 @@ struct TempBlockTree {
     auto hash = header->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {
-      current->addRef(0);
       // it is a duplicate
       return current;
     }
@@ -126,15 +115,7 @@ struct TempBlockTree {
       return it->second.get();
     }
 
-    std::shared_ptr<index_t> newIndex = nullptr;
-
-    auto itr = removed_blocks_.find(shortHash);
-    if (itr != removed_blocks_.end()) {
-      newIndex = itr->second;
-      removed_blocks_.erase(itr);
-    } else {
-      newIndex = std::make_shared<index_t>();
-    }
+    std::shared_ptr<index_t> newIndex = std::make_shared<index_t>();
 
     newIndex->setNull();
     it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;
@@ -143,7 +124,6 @@ struct TempBlockTree {
 
  private:
   block_index_t temp_blocks_;
-  block_index_t removed_blocks_;
   const block_tree_t* tree_;
 };
 
