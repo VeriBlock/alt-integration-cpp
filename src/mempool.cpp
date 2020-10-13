@@ -104,18 +104,15 @@ void MemPool::cleanUp() {
       // remove ATVs
       for (const auto& atv : rel.atvs) {
         stored_atvs_.erase(atv->getId());
-        mempool_tree_.removePayloads(*atv);
       }
 
       // remove VTBs
       for (const auto& vtb : rel.vtbs) {
         stored_vtbs_.erase(vtb->getId());
-        mempool_tree_.removePayloads(*vtb);
       }
 
       // remove vbk block
       vbkblocks_.erase(rel.header->getId());
-      mempool_tree_.removePayloads(*rel.header);
       it = relations_.erase(it);
 
       continue;
@@ -141,7 +138,6 @@ void MemPool::cleanUp() {
 
     if (index != nullptr && rel.empty()) {
       vbkblocks_.erase(rel.header->getId());
-      mempool_tree_.removePayloads(*rel.header);
       it = relations_.erase(it);
       continue;
     }
@@ -150,8 +146,7 @@ void MemPool::cleanUp() {
   }
 
   // // remove payloads from inFlight storage
-  for (auto atvit = atvs_in_flight_.begin(); atvit != atvs_in_flight_.end();)
-  {
+  for (auto atvit = atvs_in_flight_.begin(); atvit != atvs_in_flight_.end();) {
     // cleanup stale ATVs
     auto& atv = *atvit->second;
     ValidationState state;
@@ -160,8 +155,7 @@ void MemPool::cleanUp() {
                 : std::next(atvit);
   }
 
-  for (auto vtbit = vtbs_in_flight_.begin(); vtbit != vtbs_in_flight_.end();)
-  {
+  for (auto vtbit = vtbs_in_flight_.begin(); vtbit != vtbs_in_flight_.end();) {
     // cleanup stale VTBs
     auto& vtb = *vtbit->second;
     ValidationState state;
@@ -180,9 +174,10 @@ void MemPool::cleanUp() {
                   vbk.getHeight();
 
     vbkit =
-        tooOld || index ? vbkblocks_in_flight_.erase(vbkit) :
-        std::next(vbkit);
+        tooOld || index ? vbkblocks_in_flight_.erase(vbkit) : std::next(vbkit);
   }
+
+  mempool_tree_.cleanUp();
 }
 
 void MemPool::removeAll(const PopData& pop) {
@@ -197,18 +192,14 @@ void MemPool::removeAll(const PopData& pop) {
     // remove ATVs
     for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
       auto id = (*atvit)->getId();
-      atvit = atvids.count(id) ? (stored_atvs_.erase(id),
-                                  mempool_tree_.removePayloads(**atvit),
-                                  rel.atvs.erase(atvit))
+      atvit = atvids.count(id) ? (stored_atvs_.erase(id), rel.atvs.erase(atvit))
                                : std::next(atvit);
     }
 
     // remove VTBs
     for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
       auto id = (*vtbit)->getId();
-      vtbit = vtbids.count(id) ? (stored_vtbs_.erase(id),
-                                  mempool_tree_.removePayloads(**vtbit),
-                                  rel.vtbs.erase(vtbit))
+      vtbit = vtbids.count(id) ? (stored_vtbs_.erase(id), rel.vtbs.erase(vtbit))
                                : std::next(vtbit);
     }
 
@@ -216,7 +207,6 @@ void MemPool::removeAll(const PopData& pop) {
 
     if (vbkblockids.count(block_id) && rel.empty()) {
       vbkblocks_.erase(block_id);
-      mempool_tree_.removePayloads(*rel.header);
       it = relations_.erase(it);
       continue;
     }
