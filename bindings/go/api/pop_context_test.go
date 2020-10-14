@@ -3,7 +3,7 @@ package api
 import (
 	"testing"
 
-	entities "github.com/VeriBlock/alt-integration-cpp/entities"
+	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/stretchr/testify/assert"
 )
 

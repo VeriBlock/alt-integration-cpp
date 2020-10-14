@@ -1,7 +1,7 @@
 package api
 
 import (
-	ffi "github.com/VeriBlock/alt-integration-cpp/ffi"
+	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // Config - Configuration for Veriblock integration

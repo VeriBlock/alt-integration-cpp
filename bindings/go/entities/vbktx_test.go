@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	"github.com/stretchr/testify/assert"
 )
 
