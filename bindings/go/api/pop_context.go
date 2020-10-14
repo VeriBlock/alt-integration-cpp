@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	entities "github.com/VeriBlock/alt-integration-cpp/entities"
-	ffi "github.com/VeriBlock/alt-integration-cpp/ffi"
+	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
+	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // AltBlockTree ...

@@ -7,7 +7,7 @@ import (
 	"io"
 	"unsafe"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // MerklePath ...

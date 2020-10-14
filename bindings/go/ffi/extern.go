@@ -4,6 +4,7 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/config.h>
 import "C"
+import "unsafe"
 
 //export VBK_getAltchainId
 func VBK_getAltchainId() C.int64_t {
@@ -17,7 +18,11 @@ func VBK_getBootstrapBlock() *C.char {
 
 //export VBK_getBlockHeaderHash
 func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *C.int) {
-	OnGetBlockHeaderHash()
+	bytesSize := int(inlen)
+	resBytes := (*(*[]byte)(unsafe.Pointer(in)))[:bytesSize:bytesSize]
+	data := OnGetBlockHeaderHash(resBytes)
+	*outlen = C.int(len(data))
+	*out = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
 }
 
 // PayloadsProvider externs

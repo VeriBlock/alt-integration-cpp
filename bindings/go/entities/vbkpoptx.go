@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // VbkPopTx ...
