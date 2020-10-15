@@ -148,7 +148,8 @@ void Address::toVbkEncoding(WriteStream& stream) const {
 
 void Address::getPopBytes(WriteStream& stream) const {
   std::vector<uint8_t> bytes = DecodeBase58(m_Address.substr(1));
-  stream.write(std::vector<uint8_t>(bytes.begin(), bytes.begin() + 16));
+  stream.write(std::vector<uint8_t>(
+      bytes.begin(), bytes.begin() + ADDRESS_POP_DATA_SIZE_PROGPOW));
 }
 
 Address::Address(const std::string& input) {
@@ -214,7 +215,7 @@ Address::Address(const std::string& input) {
 }
 
 bool Address::operator==(const Address& other) const noexcept {
-	return m_Address == other.m_Address;
+  return m_Address == other.m_Address;
 }
 
 bool Address::operator!=(const Address& other) const noexcept {
@@ -224,9 +225,7 @@ bool Address::operator==(const std::string& other) const noexcept {
   return m_Address == other;
 }
 
-bool Deserialize(ReadStream& stream,
-                                 Address& out,
-                                 ValidationState& state) {
+bool Deserialize(ReadStream& stream, Address& out, ValidationState& state) {
   uint8_t addressType;
   if (!stream.readLE<uint8_t>(addressType, state)) {
     return state.Invalid("address-type");

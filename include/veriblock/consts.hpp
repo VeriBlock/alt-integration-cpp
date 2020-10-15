@@ -27,6 +27,7 @@ enum class TxType {
   VBK_POP_TX = 0x02,
 };
 
+constexpr const auto ADDRESS_POP_DATA_SIZE_PROGPOW = 15;
 constexpr const auto SHA256_HASH_SIZE = 32;
 constexpr const auto BTC_TX_MAX_RAW_SIZE = 4 * 1000 * 1000;
 constexpr const uint32_t BTC_HEADER_SIZE = 80;
