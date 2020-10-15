@@ -29,3 +29,4 @@ addtest(mempool_prioritization_test mempool_prioritization_test.cpp)
 set_tests_properties(mempool_test PROPERTIES
         COST 10000 # 10 sec
         )
+addtest(stateless_vtb_test stateless_vtb_test.cpp)
