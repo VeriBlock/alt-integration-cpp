@@ -134,6 +134,7 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
   WriteStream stream;
   tx.publishedBlock.toRaw(stream);
   tx.address.getPopBytes(stream);
+  VBK_ASSERT(stream.data().size() == 80);
 
   // finding that stream data contains in the tx.bitcoinTransaction
   for (size_t i = 0, j = 0;

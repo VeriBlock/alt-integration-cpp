@@ -12,6 +12,7 @@
 #include <veriblock/hashutil.hpp>
 #include <veriblock/serde.hpp>
 #include <veriblock/slice.hpp>
+#include <veriblock/third_party/lru_cache.hpp>
 
 #include "libethash/internal.hpp"
 #include "veriblock/crypto/progpow/ethash.hpp"
@@ -578,9 +579,21 @@ std::string hash32_t::toHex() const {
 }
 }  // namespace progpow
 
-static std::shared_ptr<progpow::ethash_cache> gLastCachedLight;
-static std::vector<uint32_t> gLastCachedDag;
-static std::mutex gLastCachedMutex;
+#ifndef VBK_PROGPOW_CACHE_SIZE
+#define VBK_PROGPOW_CACHE_SIZE 4
+#endif
+
+#ifndef VBK_PROGPOW_CACHE_ELASTICITY
+#define VBK_PROGPOW_CACHE_ELASTICITY 1
+#endif
+
+struct CacheEntry {
+  std::shared_ptr<progpow::ethash_cache> light = nullptr;
+  std::vector<uint32_t> dag;
+};
+
+static lru11::Cache<int, CacheEntry, std::mutex> gCache(
+    VBK_PROGPOW_CACHE_SIZE, VBK_PROGPOW_CACHE_ELASTICITY);
 
 uint192 progPowHash(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
@@ -592,24 +605,23 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   // nonce is only 40 bits (5 bytes)
   nonce &= 0x000000FFFFFFFFFFLL;
 
-  // build cache
-  {
-    // lock mutex, because of (potential) shared access to
-    // gLastCachedLight->epoch
-    std::unique_lock<std::mutex> lock(gLastCachedMutex);
-    if (gLastCachedLight == nullptr || epoch != gLastCachedLight->epoch) {
-      VBK_LOG_WARN(
-          "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
-          epoch,
-          progpow::ethash_get_cachesize(height));
-      gLastCachedLight = progpow::ethash_make_cache(height);
-      gLastCachedDag = progpow::createDagCache(gLastCachedLight.get());
-    }
+  CacheEntry cacheEntry;
+  if (!gCache.tryGet(epoch, cacheEntry)) {
+    VBK_LOG_WARN(
+        "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
+        epoch,
+        progpow::ethash_get_cachesize(height));
+
+    // build cache. this takes ~2.6sec
+    cacheEntry.light = progpow::ethash_make_cache(height);
+    cacheEntry.dag = progpow::createDagCache(cacheEntry.light.get());
+
+    gCache.insert(epoch, cacheEntry);
   }
 
-  VBK_ASSERT(gLastCachedLight);
-  auto& dag = gLastCachedDag;
-  auto* light = gLastCachedLight.get();
+  VBK_ASSERT(cacheEntry.light);
+  auto& dag = cacheEntry.dag;
+  auto* light = cacheEntry.light.get();
   auto hash = progpow::progPowHash(height, nonce, headerHash, dag, light);
 
   WriteStream w(32);
