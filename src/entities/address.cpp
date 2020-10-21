@@ -107,7 +107,7 @@ Address Address::fromString(const std::string& input) { return Address(input); }
 std::string Address::toString() const noexcept { return m_Address; }
 
 Address Address::fromVbkEncoding(ReadStream& stream) {
-  auto addressType = (AddressType)stream.readLE<uint8_t>();
+  auto addressType = (AddressType)stream.readBE<uint8_t>();
   auto addressBytes =
       readSingleByteLenValue(stream, 0, altintegration::ADDRESS_SIZE);
 
@@ -227,7 +227,7 @@ bool Address::operator==(const std::string& other) const noexcept {
 
 bool Deserialize(ReadStream& stream, Address& out, ValidationState& state) {
   uint8_t addressType;
-  if (!stream.readLE<uint8_t>(addressType, state)) {
+  if (!stream.readBE<uint8_t>(addressType, state)) {
     return state.Invalid("address-type");
   }
 
