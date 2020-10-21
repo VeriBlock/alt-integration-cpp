@@ -13,3 +13,23 @@ func SetOnGetAltchainID(fn func() int) {
 func SetOnGetBootstrapBlock(fn func() string) {
 	ffi.OnGetBootstrapBlock = fn
 }
+
+// SetOnGetBlockHeaderHash ...
+func SetOnGetBlockHeaderHash(fn func(toBeHashed []byte) []byte) {
+	ffi.OnGetBlockHeaderHash = fn
+}
+
+// SetOnGetAtv ...
+func SetOnGetAtv(fn func(id []byte) []byte) {
+	ffi.OnGetAtv = fn
+}
+
+// SetOnGetVtb ...
+func SetOnGetVtb(fn func(id []byte) []byte) {
+	ffi.OnGetVtb = fn
+}
+
+// SetOnGetVbk ...
+func SetOnGetVbk(fn func(id []byte) []byte) {
+	ffi.OnGetVbk = fn
+}
