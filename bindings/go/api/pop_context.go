@@ -47,14 +47,6 @@ func NewPopContext(config *Config) *PopContext {
 	}
 }
 
-// Config - Returns the configuration struct of PopContext
-func (v *PopContext) Config() *Config {
-	if v.popContext.Config == nil {
-		return nil
-	}
-	return &Config{v.popContext.Config}
-}
-
 // Free - Frees memory allocated for the pop context
 func (v *PopContext) Free() {
 	v.popContext.MemPoolClear()

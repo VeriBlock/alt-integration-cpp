@@ -8,8 +8,6 @@ import "unsafe"
 
 // PopContext ...
 type PopContext struct {
-	Config *Config
-
 	ref     *C.PopContext
 	popData []byte
 }
@@ -17,7 +15,6 @@ type PopContext struct {
 // NewPopContext ...
 func NewPopContext(config *Config) PopContext {
 	return PopContext{
-		Config:  config,
 		ref:     C.VBK_NewPopContext(config.ref),
 		popData: make([]byte, config.GetMaxPopDataSize()),
 	}
