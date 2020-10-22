@@ -348,8 +348,8 @@ jobs:
           wget -P ${GITHUB_WORKSPACE}/sdk-sources https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX10.14.sdk.tar.xz
           mkdir -p ${GITHUB_WORKSPACE}/SDKs
           tar -xf ${GITHUB_WORKSPACE}/sdk-sources/MacOSX10.14.sdk.tar.xz -C ${GITHUB_WORKSPACE}/SDKs
-      - name: install ccache
-        run: brew install ccache
+      - name: install tools
+        run: sudo apt-get install curl librsvg2-bin libtiff-tools bsdmainutils cmake imagemagick libcap-dev libz-dev libbz2-dev python3-setuptools libtinfo5
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
