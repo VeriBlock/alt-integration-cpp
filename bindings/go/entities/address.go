@@ -6,7 +6,7 @@ import (
 	"errors"
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // AddressType ...
@@ -90,19 +90,19 @@ func addressChecksum(address Address) string {
 	return calculateChecksum(address.ToString(), address.GetType() == AddressTypeMultisig)
 }
 
-// AddressFromPublicKey ...
-func AddressFromPublicKey(publicKey []byte) Address {
+// FromPublicKey ...
+func (v *Address) FromPublicKey(publicKey []byte) {
 	keyHash := sha256.Sum256(publicKey)
 	keyHashEncoded := veriblock.EncodeBase58(keyHash[:])
-	data :=
-		"V" + keyHashEncoded[0:MultisigAddressDataEnd]
+	data := "V" + keyHashEncoded[0:MultisigAddressDataEnd]
 	checksum := calculateChecksum(data, false)
-	return Address{AddressTypeStandard, data + checksum}
+	*v = Address{AddressTypeStandard, data + checksum}
 }
 
 // IsDerivedFromPublicKey ...
 func (v *Address) IsDerivedFromPublicKey(publicKey []byte) bool {
-	expectedAddress := AddressFromPublicKey(publicKey)
+	expectedAddress := Address{}
+	expectedAddress.FromPublicKey(publicKey)
 	if *v != expectedAddress {
 		return false
 	}
@@ -112,16 +112,15 @@ func (v *Address) IsDerivedFromPublicKey(publicKey []byte) bool {
 	return true
 }
 
-// AddressFromVbkEncoding ...
-func AddressFromVbkEncoding(r io.Reader) (*Address, error) {
+// FromVbkEncoding ...
+func (v *Address) FromVbkEncoding(stream io.Reader) error {
 	var addressType uint8
-	err := binary.Read(r, binary.LittleEndian, &addressType)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.LittleEndian, &addressType); err != nil {
+		return err
 	}
-	addressBytes, err := veriblock.ReadSingleByteLenValue(r, 0, veriblock.AddressSize)
+	addressBytes, err := veriblock.ReadSingleByteLenValue(stream, 0, veriblock.AddressSize)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	var addressText string
 	switch AddressType(addressType) {
@@ -132,14 +131,19 @@ func AddressFromVbkEncoding(r io.Reader) (*Address, error) {
 		addressText = veriblock.EncodeBase59(addressBytes)
 		break
 	default:
-		return nil, errors.New("invalid-address-type")
+		return errors.New("invalid-address-type")
 	}
-	return AddressFromString(addressText)
+	return v.FromString(addressText)
 }
 
-// AddressFromString ...
-func AddressFromString(str string) (*Address, error) {
-	return NewAddress(str)
+// FromString ...
+func (v *Address) FromString(str string) error {
+	address, err := NewAddress(str)
+	if err != nil {
+		return err
+	}
+	*v = *address
+	return nil
 }
 
 // ToVbkEncoding ...
@@ -155,7 +159,7 @@ func (v *Address) ToVbkEncoding(stream io.Writer) error {
 		decoded, err = veriblock.DecodeBase59(v.ToString())
 		break
 	default:
-		// if we don't know address type, do not encode anything
+		// If we don't know address type, do not encode anything
 		return errors.New("Unsupported address type")
 	}
 	if err != nil {

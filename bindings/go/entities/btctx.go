@@ -3,7 +3,7 @@ package entities
 import (
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // BtcTx ...
@@ -16,11 +16,12 @@ func (v *BtcTx) ToVbkEncoding(stream io.Writer) error {
 	return veriblock.WriteVarLenValue(stream, v.Tx)
 }
 
-// BtcTxFromVbkEncoding ...
-func BtcTxFromVbkEncoding(stream io.Reader) (*BtcTx, error) {
+// FromVbkEncoding ...
+func (v *BtcTx) FromVbkEncoding(stream io.Reader) error {
 	tx, err := veriblock.ReadVarLenValue(stream, 0, veriblock.BtcTxMaxRawSize)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &BtcTx{tx}, nil
+	v.Tx = tx
+	return nil
 }

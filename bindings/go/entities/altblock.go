@@ -13,30 +13,40 @@ type AltBlock struct {
 	Timestamp     uint32
 }
 
+// GetHash ...
+func (v *AltBlock) GetHash() []byte {
+	return v.Hash
+}
+
+// GetBlockTime ...
+func (v *AltBlock) GetBlockTime() uint32 {
+	return v.Timestamp
+}
+
+// GetDifficulty ...
+func (v *AltBlock) GetDifficulty() uint32 {
+	return 0
+}
+
 // ToVbkEncoding ...
 func (v *AltBlock) ToVbkEncoding(stream io.Writer) error {
-	err := binary.Write(stream, binary.BigEndian, uint32(len(v.Hash)))
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, uint32(len(v.Hash))); err != nil {
 		return err
 	}
 	for i := 0; i < len(v.Hash); i++ {
-		err = binary.Write(stream, binary.BigEndian, v.Hash[i])
-		if err != nil {
+		if err := binary.Write(stream, binary.BigEndian, v.Hash[i]); err != nil {
 			return err
 		}
 	}
-	err = binary.Write(stream, binary.BigEndian, uint32(len(v.PreviousBlock)))
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, uint32(len(v.PreviousBlock))); err != nil {
 		return err
 	}
 	for i := 0; i < len(v.PreviousBlock); i++ {
-		err = binary.Write(stream, binary.BigEndian, v.PreviousBlock[i])
-		if err != nil {
+		if err := binary.Write(stream, binary.BigEndian, v.PreviousBlock[i]); err != nil {
 			return err
 		}
 	}
-	err = binary.Write(stream, binary.BigEndian, v.Height)
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, v.Height); err != nil {
 		return err
 	}
 	return binary.Write(stream, binary.BigEndian, v.Timestamp)
@@ -47,44 +57,34 @@ func (v *AltBlock) ToRaw(stream io.Writer) error {
 	return v.ToVbkEncoding(stream)
 }
 
-// AltBlockFromVbkEncoding ...
-func AltBlockFromVbkEncoding(stream io.Reader) (*AltBlock, error) {
-	block := AltBlock{}
+// FromVbkEncoding ...
+func (v *AltBlock) FromVbkEncoding(stream io.Reader) error {
 	var hashSize uint32
-	err := binary.Read(stream, binary.BigEndian, &hashSize)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &hashSize); err != nil {
+		return err
 	}
-	block.Hash = make([]byte, hashSize)
+	v.Hash = make([]byte, hashSize)
 	for i := uint32(0); i < hashSize; i++ {
-		err = binary.Read(stream, binary.BigEndian, &block.Hash[i])
-		if err != nil {
-			return nil, err
+		if err := binary.Read(stream, binary.BigEndian, &v.Hash[i]); err != nil {
+			return err
 		}
 	}
-	err = binary.Read(stream, binary.BigEndian, &hashSize)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &hashSize); err != nil {
+		return err
 	}
-	block.PreviousBlock = make([]byte, hashSize)
+	v.PreviousBlock = make([]byte, hashSize)
 	for i := uint32(0); i < hashSize; i++ {
-		err = binary.Read(stream, binary.BigEndian, &block.PreviousBlock[i])
-		if err != nil {
-			return nil, err
+		if err := binary.Read(stream, binary.BigEndian, &v.PreviousBlock[i]); err != nil {
+			return err
 		}
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.Height)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &v.Height); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.Timestamp)
-	if err != nil {
-		return nil, err
-	}
-	return &block, nil
+	return binary.Read(stream, binary.BigEndian, &v.Timestamp)
 }
 
-// AltBlockFromRaw ...
-func AltBlockFromRaw(stream io.Reader) (*AltBlock, error) {
-	return AltBlockFromVbkEncoding(stream)
+// FromRaw ...
+func (v *AltBlock) FromRaw(stream io.Reader) error {
+	return v.FromVbkEncoding(stream)
 }

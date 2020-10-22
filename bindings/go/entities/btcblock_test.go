@@ -5,11 +5,9 @@ import (
 	"encoding/hex"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
-// Standard address
 var (
 	defaultBtcBlock = BtcBlock{
 		536870912,
@@ -22,8 +20,13 @@ var (
 	defaultBtcBlockEncoded = "0000002000000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def75e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f82213b75c841a011a2e00f29a"
 )
 
+func parseHex(src string) []byte {
+	res, _ := hex.DecodeString(src)
+	return res
+}
+
 func parse32Bytes(src string) [32]byte {
-	buf := veriblock.Parse(src)
+	buf := parseHex(src)
 	var block [32]byte
 	copy(block[:], buf)
 	return block
@@ -32,10 +35,10 @@ func parse32Bytes(src string) [32]byte {
 func TestBtcBlockDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	blockEncoded := veriblock.Parse(defaultBtcBlockEncoded)
+	blockEncoded := parseHex(defaultBtcBlockEncoded)
 	stream := bytes.NewReader(blockEncoded)
-	decoded, err := BtcBlockFromRaw(stream)
-	assert.NoError(err)
+	decoded := BtcBlock{}
+	assert.NoError(decoded.FromRaw(stream))
 
 	assert.Equal(defaultBtcBlock.Version, decoded.Version)
 	assert.Equal(defaultBtcBlock.PreviousBlock, decoded.PreviousBlock)
@@ -51,7 +54,7 @@ func TestBtcBlockSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	defaultBtcBlock.ToRaw(stream)
+	assert.NoError(defaultBtcBlock.ToRaw(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultBtcBlockEncoded, blockEncoded)
 }
@@ -59,14 +62,14 @@ func TestBtcBlockSerialize(t *testing.T) {
 func TestBtcBlockRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	blockEncoded := veriblock.Parse(defaultBtcBlockEncoded)
+	blockEncoded := parseHex(defaultBtcBlockEncoded)
 	stream := bytes.NewReader(blockEncoded)
-	decoded, err := BtcBlockFromRaw(stream)
-	assert.NoError(err)
+	decoded := BtcBlock{}
+	assert.NoError(decoded.FromRaw(stream))
 	assert.Equal(defaultBtcBlock.Version, decoded.Version)
 
 	outputStream := new(bytes.Buffer)
-	decoded.ToRaw(outputStream)
+	assert.NoError(decoded.ToRaw(outputStream))
 	blockReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultBtcBlockEncoded, blockReEncoded)
 }

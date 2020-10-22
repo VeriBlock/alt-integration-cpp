@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,7 +26,7 @@ var (
 		117556515,
 		1589362332,
 	}
-	btcTxBytes  = veriblock.Parse("01000000010ce74f1fb694a001eebb1d7d08ce6208033f5bf7263ebad2de07bbf518672732000000006a47304402200cf4998aba1682abeb777e762807a9dd2635a0b77773f66491b83ee3c87099ba022033b7ca24dc520915b8b0200cbdcf95ba6ae866354585af9c53ee86f27362ebec012103e5baf0709c395a82ef0bd63bc8847564ac201d69a8e6bf448d87aa53a1c431aaffffffff02b7270d00000000001976a9148b9ea8545059f3a922457afd14ddf3855d8b109988ac0000000000000000536a4c50000013350002a793c872d6f6460e90bed62342bb968195f8c515d3eed7277a09efac4be99f95f0a15628b06ba3b44c0190b5c0495c9b8acd0701c5235ebbbe9cd4e943efe1864df04216615cf92083f400000000")
+	btcTxBytes  = parseHex("01000000010ce74f1fb694a001eebb1d7d08ce6208033f5bf7263ebad2de07bbf518672732000000006a47304402200cf4998aba1682abeb777e762807a9dd2635a0b77773f66491b83ee3c87099ba022033b7ca24dc520915b8b0200cbdcf95ba6ae866354585af9c53ee86f27362ebec012103e5baf0709c395a82ef0bd63bc8847564ac201d69a8e6bf448d87aa53a1c431aaffffffff02b7270d00000000001976a9148b9ea8545059f3a922457afd14ddf3855d8b109988ac0000000000000000536a4c50000013350002a793c872d6f6460e90bed62342bb968195f8c515d3eed7277a09efac4be99f95f0a15628b06ba3b44c0190b5c0495c9b8acd0701c5235ebbbe9cd4e943efe1864df04216615cf92083f400000000")
 	defaultPath = MerklePath{
 		1659,
 		parse32Bytes("94E097B110BA3ADBB7B6C4C599D31D675DE7BE6E722407410C08EF352BE585F1"),
@@ -77,12 +77,12 @@ var (
 		388767596,
 		4040279113,
 	}
-	defaultSignature          = veriblock.Parse("3045022100f4dce45edcc6bfc4a1f44ef04e47e90a348efd471f742f18b882ac77a8d0e89e0220617cf7c4a22211991687b17126c1bb007a3b2a25c550f75d66b857a8fd9d75e7")
-	defaultPublicKey          = veriblock.Parse("3056301006072a8648ce3d020106052b8104000a03420004b3c10470c8e8e426f1937758d9fb5e97a1891176cb37d4c12d4af4107b1aa3e8a8a754c06a22760e44c60642fba883967c19740d5231336326f7962750c8df99")
-	defaultVbkPopTxAddress, _ = AddressFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX")
-	defaultVbkPopTx           = VbkPopTx{
+	defaultSignature       = parseHex("3045022100f4dce45edcc6bfc4a1f44ef04e47e90a348efd471f742f18b882ac77a8d0e89e0220617cf7c4a22211991687b17126c1bb007a3b2a25c550f75d66b857a8fd9d75e7")
+	defaultPublicKey       = parseHex("3056301006072a8648ce3d020106052b8104000a03420004b3c10470c8e8e426f1937758d9fb5e97a1891176cb37d4c12d4af4107b1aa3e8a8a754c06a22760e44c60642fba883967c19740d5231336326f7962750c8df99")
+	defaultVbkPopTxAddress = addressFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX")
+	defaultVbkPopTx        = VbkPopTx{
 		networkByte,
-		*defaultVbkPopTxAddress,
+		defaultVbkPopTxAddress,
 		defaultPopTxVbkBlock,
 		BtcTx{btcTxBytes},
 		defaultPath,
@@ -97,10 +97,10 @@ var (
 func TestVbkPopTxDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	vbktx := veriblock.Parse(defaultVbkPopTxEncoded)
+	vbktx := parseHex(defaultVbkPopTxEncoded)
 	stream := bytes.NewReader(vbktx)
-	decoded, err := VbkPopTxFromVbkEncoding(stream)
-	assert.NoError(err)
+	decoded := VbkPopTx{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(defaultVbkPopTx.NetworkOrType.TypeID, decoded.NetworkOrType.TypeID)
 	assert.Equal(defaultVbkPopTx.Address, decoded.Address)
@@ -120,22 +120,20 @@ func TestVbkPopTxSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	err := defaultVbkPopTx.ToVbkEncoding(stream)
-	assert.NoError(err)
+	assert.NoError(defaultVbkPopTx.ToVbkEncoding(stream))
 	assert.Equal(defaultVbkPopTxEncoded, hex.EncodeToString(stream.Bytes()))
 }
 
 func TestVbkPopTxRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	txEncoded := veriblock.Parse(defaultVbkPopTxEncoded)
+	txEncoded := parseHex(defaultVbkPopTxEncoded)
 	stream := bytes.NewReader(txEncoded)
-	decoded, err := VbkPopTxFromVbkEncoding(stream)
-	assert.NoError(err)
-	assert.Equal(*defaultVbkPopTxAddress, decoded.Address)
+	decoded := VbkPopTx{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
+	assert.Equal(defaultVbkPopTxAddress, decoded.Address)
 
 	outputStream := new(bytes.Buffer)
-	err = decoded.ToVbkEncoding(outputStream)
-	assert.NoError(err)
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	assert.Equal(defaultVbkPopTxEncoded, hex.EncodeToString(outputStream.Bytes()))
 }

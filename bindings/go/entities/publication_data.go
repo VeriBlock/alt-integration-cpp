@@ -3,7 +3,7 @@ package entities
 import (
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // PublicationData ...
@@ -20,39 +20,35 @@ type PublicationData struct {
 
 // ToRaw ...
 func (v *PublicationData) ToRaw(stream io.Writer) error {
-	err := veriblock.WriteSingleBEValue(stream, v.Identifier)
-	if err != nil {
+	if err := veriblock.WriteSingleBEValue(stream, v.Identifier); err != nil {
 		return err
 	}
-	err = veriblock.WriteVarLenValue(stream, v.Header)
-	if err != nil {
+	if err := veriblock.WriteVarLenValue(stream, v.Header); err != nil {
 		return err
 	}
-	err = veriblock.WriteVarLenValue(stream, v.ContextInfo)
-	if err != nil {
+	if err := veriblock.WriteVarLenValue(stream, v.ContextInfo); err != nil {
 		return err
 	}
 	return veriblock.WriteVarLenValue(stream, v.PayoutInfo)
 }
 
-// PublicationDataFromRaw ...
-func PublicationDataFromRaw(stream io.Reader) (*PublicationData, error) {
-	data := PublicationData{}
-	err := veriblock.ReadSingleBEValue(stream, &data.Identifier)
+// FromRaw ...
+func (v *PublicationData) FromRaw(stream io.Reader) error {
+	err := veriblock.ReadSingleBEValue(stream, &v.Identifier)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	data.Header, err = veriblock.ReadVarLenValue(stream, 0, veriblock.MaxHeaderSizePublicationData)
+	v.Header, err = veriblock.ReadVarLenValue(stream, 0, veriblock.MaxHeaderSizePublicationData)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	data.ContextInfo, err = veriblock.ReadVarLenValue(stream, 0, veriblock.MaxContextSizePublicationData)
+	v.ContextInfo, err = veriblock.ReadVarLenValue(stream, 0, veriblock.MaxContextSizePublicationData)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	data.PayoutInfo, err = veriblock.ReadVarLenValue(stream, 0, veriblock.MaxPayoutSizePublicationData)
+	v.PayoutInfo, err = veriblock.ReadVarLenValue(stream, 0, veriblock.MaxPayoutSizePublicationData)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &data, nil
+	return nil
 }

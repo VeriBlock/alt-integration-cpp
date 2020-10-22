@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // VbkTx ...
@@ -23,16 +23,13 @@ type VbkTx struct {
 // ToVbkEncoding ...
 func (v *VbkTx) ToVbkEncoding(stream io.Writer) error {
 	txStream := new(bytes.Buffer)
-	err := v.ToRaw(txStream)
-	if err != nil {
+	if err := v.ToRaw(txStream); err != nil {
 		return err
 	}
-	err = veriblock.WriteVarLenValue(stream, txStream.Bytes())
-	if err != nil {
+	if err := veriblock.WriteVarLenValue(stream, txStream.Bytes()); err != nil {
 		return err
 	}
-	err = veriblock.WriteSingleByteLenValue(stream, v.Signature)
-	if err != nil {
+	if err := veriblock.WriteSingleByteLenValue(stream, v.Signature); err != nil {
 		return err
 	}
 	return veriblock.WriteSingleByteLenValue(stream, v.PublicKey)
@@ -40,105 +37,84 @@ func (v *VbkTx) ToVbkEncoding(stream io.Writer) error {
 
 // ToRaw ...
 func (v *VbkTx) ToRaw(stream io.Writer) error {
-	err := v.NetworkOrType.Write(stream)
-	if err != nil {
+	if err := v.NetworkOrType.Write(stream); err != nil {
 		return err
 	}
-	err = v.SourceAddress.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.SourceAddress.ToVbkEncoding(stream); err != nil {
 		return err
 	}
-	err = v.SourceAmount.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.SourceAmount.ToVbkEncoding(stream); err != nil {
 		return err
 	}
-	err = binary.Write(stream, binary.BigEndian, uint8(len(v.Outputs)))
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, uint8(len(v.Outputs))); err != nil {
 		return err
 	}
 	for _, output := range v.Outputs {
-		err = output.ToVbkEncoding(stream)
-		if err != nil {
+		if err := output.ToVbkEncoding(stream); err != nil {
 			return err
 		}
 	}
-	err = veriblock.WriteSingleBEValue(stream, v.SignatureIndex)
-	if err != nil {
+	if err := veriblock.WriteSingleBEValue(stream, v.SignatureIndex); err != nil {
 		return err
 	}
 	pubBytesStream := new(bytes.Buffer)
-	err = v.PublicationData.ToRaw(pubBytesStream)
-	if err != nil {
+	if err := v.PublicationData.ToRaw(pubBytesStream); err != nil {
 		return err
 	}
 	return veriblock.WriteVarLenValue(stream, pubBytesStream.Bytes())
 }
 
-// VbkTxFromVbkEncoding ...
-func VbkTxFromVbkEncoding(stream io.Reader) (*VbkTx, error) {
+// FromVbkEncoding ...
+func (v *VbkTx) FromVbkEncoding(stream io.Reader) error {
 	rawTx, err := veriblock.ReadVarLenValue(stream, 0, veriblock.MaxRawtxSizeVbktx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	signature, err := veriblock.ReadSingleByteLenValue(stream, 0, veriblock.MaxSignatureSize)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	publicKey, err := veriblock.ReadSingleByteLenValue(stream, 0, veriblock.PublicKeySize)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	rawTxStream := bytes.NewReader(rawTx)
-	return VbkTxFromRaw(rawTxStream, signature, publicKey)
+	return v.FromRaw(rawTxStream, signature, publicKey)
 }
 
-// VbkTxFromRaw ...
-func VbkTxFromRaw(stream io.Reader, signature []byte, publicKey []byte) (*VbkTx, error) {
-	networkOrType, err := veriblock.ReadNetworkByte(stream, veriblock.TxTypeVbkTx)
-	if err != nil {
-		return nil, err
+// FromRaw ...
+func (v *VbkTx) FromRaw(stream io.Reader, signature []byte, publicKey []byte) error {
+	if err := v.NetworkOrType.Read(stream, veriblock.TxTypeVbkTx); err != nil {
+		return err
 	}
-	sourceAddress, err := AddressFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+	if err := v.SourceAddress.FromVbkEncoding(stream); err != nil {
+		return err
 	}
-	sourceAmount, err := CoinFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+	if err := v.SourceAmount.FromVbkEncoding(stream); err != nil {
+		return err
 	}
 	var outputSize uint8
-	err = binary.Read(stream, binary.BigEndian, &outputSize)
-	outputs := make([]Output, outputSize)
-	for i := 0; i < int(outputSize); i++ {
-		output, err := OutputFromVbkEncoding(stream)
-		if err != nil {
-			return nil, err
-		}
-		outputs[i] = *output
+	if err := binary.Read(stream, binary.BigEndian, &outputSize); err != nil {
+		return err
 	}
-	var signatureIndex int64
-	err = veriblock.ReadSingleBEValue(stream, &signatureIndex)
-	if err != nil {
-		return nil, err
+	v.Outputs = make([]Output, outputSize)
+	for i := 0; i < int(outputSize); i++ {
+		if err := v.Outputs[i].FromVbkEncoding(stream); err != nil {
+			return err
+		}
+	}
+	if err := veriblock.ReadSingleBEValue(stream, &v.SignatureIndex); err != nil {
+		return err
 	}
 	pubBytes, err := veriblock.ReadVarLenValue(stream, 0, veriblock.MaxSizePublicationData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	pubBytesStream := bytes.NewReader(pubBytes)
-	publicationData, err := PublicationDataFromRaw(pubBytesStream)
-	if err != nil {
-		return nil, err
+	if err := v.PublicationData.FromRaw(pubBytesStream); err != nil {
+		return err
 	}
-	tx := VbkTx{
-		*networkOrType,
-		*sourceAddress,
-		*sourceAmount,
-		outputs,
-		signatureIndex,
-		*publicationData,
-		signature,
-		publicKey,
-	}
-	return &tx, nil
+	v.Signature = signature
+	v.PublicKey = publicKey
+	return nil
 }

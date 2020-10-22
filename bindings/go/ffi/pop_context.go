@@ -6,19 +6,8 @@ package ffi
 import "C"
 import "unsafe"
 
-var (
-	onGetAltchainID      = func() int { return 1 }
-	onGetBootstrapBlock  = func() string { return "" }
-	onGetBlockHeaderHash = func() {}
-	// onGetAltchainID      = func() int { panic("") }
-	// onGetBootstrapBlock  = func() string { panic("") }
-	// onGetBlockHeaderHash = func() { panic("") }
-)
-
 // PopContext ...
 type PopContext struct {
-	Config *Config
-
 	ref     *C.PopContext
 	popData []byte
 }
@@ -26,7 +15,6 @@ type PopContext struct {
 // NewPopContext ...
 func NewPopContext(config *Config) PopContext {
 	return PopContext{
-		Config:  config,
 		ref:     C.VBK_NewPopContext(config.ref),
 		popData: make([]byte, config.GetMaxPopDataSize()),
 	}
@@ -80,9 +68,10 @@ func (v PopContext) AltBlockTreeRemoveSubtree(hashBytes []byte) {
 
 // AltBlockTreeSetState return `false` if intermediate or target block is invalid. In this
 // case tree will rollback into original state. `true` if state change is successful.
-func (v PopContext) AltBlockTreeSetState(hashBytes []byte) {
+func (v PopContext) AltBlockTreeSetState(hashBytes []byte) bool {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
-	C.VBK_AltBlockTree_setState(v.ref, hashBytesC, C.int(len(hashBytes)))
+	res := C.VBK_AltBlockTree_setState(v.ref, hashBytesC, C.int(len(hashBytes)))
+	return bool(res)
 }
 
 // BtcGetBlockIndex ...

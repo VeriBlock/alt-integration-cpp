@@ -2,10 +2,11 @@ package entities
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/binary"
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // BtcBlock ...
@@ -18,11 +19,30 @@ type BtcBlock struct {
 	Nonce         uint32
 }
 
+// GetHash ...
+func (v *BtcBlock) GetHash() []byte {
+	stream := new(bytes.Buffer)
+	if err := v.ToRaw(stream); err != nil {
+		return nil
+	}
+	hash := sha256.Sum256(stream.Bytes())
+	return hash[:]
+}
+
+// GetBlockTime ...
+func (v *BtcBlock) GetBlockTime() uint32 {
+	return v.Timestamp
+}
+
+// GetDifficulty ...
+func (v *BtcBlock) GetDifficulty() uint32 {
+	return v.Bits
+}
+
 // ToVbkEncoding ...
 func (v *BtcBlock) ToVbkEncoding(stream io.Writer) error {
 	blockStream := new(bytes.Buffer)
-	err := v.ToRaw(blockStream)
-	if err != nil {
+	if err := v.ToRaw(blockStream); err != nil {
 		return err
 	}
 	return veriblock.WriteSingleByteLenValue(stream, blockStream.Bytes())
@@ -30,71 +50,52 @@ func (v *BtcBlock) ToVbkEncoding(stream io.Writer) error {
 
 // ToRaw ...
 func (v *BtcBlock) ToRaw(stream io.Writer) error {
-	err := binary.Write(stream, binary.LittleEndian, v.Version)
-	if err != nil {
+	if err := binary.Write(stream, binary.LittleEndian, v.Version); err != nil {
 		return err
 	}
-	_, err = stream.Write(veriblock.ReverseBytes(v.PreviousBlock[:]))
-	if err != nil {
+	if _, err := stream.Write(veriblock.ReverseBytes(v.PreviousBlock[:])); err != nil {
 		return err
 	}
-	_, err = stream.Write(veriblock.ReverseBytes(v.MerkleRoot[:]))
-	if err != nil {
+	if _, err := stream.Write(veriblock.ReverseBytes(v.MerkleRoot[:])); err != nil {
 		return err
 	}
-	err = binary.Write(stream, binary.LittleEndian, v.Timestamp)
-	if err != nil {
+	if err := binary.Write(stream, binary.LittleEndian, v.Timestamp); err != nil {
 		return err
 	}
-	err = binary.Write(stream, binary.LittleEndian, v.Bits)
-	if err != nil {
+	if err := binary.Write(stream, binary.LittleEndian, v.Bits); err != nil {
 		return err
 	}
-	err = binary.Write(stream, binary.LittleEndian, v.Nonce)
-	if err != nil {
-		return err
-	}
-	return nil
+	return binary.Write(stream, binary.LittleEndian, v.Nonce)
 }
 
-// BtcBlockFromVbkEncoding ...
-func BtcBlockFromVbkEncoding(stream io.Reader) (*BtcBlock, error) {
+// FromVbkEncoding ...
+func (v *BtcBlock) FromVbkEncoding(stream io.Reader) error {
 	blockBytes, err := veriblock.ReadSingleByteLenValue(stream, veriblock.BtcHeaderSize, veriblock.BtcHeaderSize)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	blockStream := bytes.NewReader(blockBytes)
-	return BtcBlockFromRaw(blockStream)
+	return v.FromRaw(blockStream)
 }
 
-// BtcBlockFromRaw ...
-func BtcBlockFromRaw(stream io.Reader) (*BtcBlock, error) {
-	block := &BtcBlock{}
-	err := binary.Read(stream, binary.LittleEndian, &block.Version)
-	if err != nil {
-		return nil, err
+// FromRaw ...
+func (v *BtcBlock) FromRaw(stream io.Reader) error {
+	if err := binary.Read(stream, binary.LittleEndian, &v.Version); err != nil {
+		return err
 	}
-	_, err = stream.Read(block.PreviousBlock[:])
-	if err != nil {
-		return nil, err
+	if _, err := stream.Read(v.PreviousBlock[:]); err != nil {
+		return err
 	}
-	copy(block.PreviousBlock[:], veriblock.ReverseBytes(block.PreviousBlock[:]))
-	_, err = stream.Read(block.MerkleRoot[:])
-	if err != nil {
-		return nil, err
+	copy(v.PreviousBlock[:], veriblock.ReverseBytes(v.PreviousBlock[:]))
+	if _, err := stream.Read(v.MerkleRoot[:]); err != nil {
+		return err
 	}
-	copy(block.MerkleRoot[:], veriblock.ReverseBytes(block.MerkleRoot[:]))
-	err = binary.Read(stream, binary.LittleEndian, &block.Timestamp)
-	if err != nil {
-		return nil, err
+	copy(v.MerkleRoot[:], veriblock.ReverseBytes(v.MerkleRoot[:]))
+	if err := binary.Read(stream, binary.LittleEndian, &v.Timestamp); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.LittleEndian, &block.Bits)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.LittleEndian, &v.Bits); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.LittleEndian, &block.Nonce)
-	if err != nil {
-		return nil, err
-	}
-	return block, nil
+	return binary.Read(stream, binary.LittleEndian, &v.Nonce)
 }

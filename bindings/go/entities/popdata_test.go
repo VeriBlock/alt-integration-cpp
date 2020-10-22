@@ -4,28 +4,27 @@ import (
 	"bytes"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPopDataRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	atvBytes := veriblock.Parse(defaultAtvEncoded)
+	atvBytes := parseHex(defaultAtvEncoded)
 	stream := bytes.NewReader(atvBytes)
-	atv, err := AtvFromVbkEncoding(stream)
-	assert.NoError(err)
+	atv := Atv{}
+	assert.NoError(atv.FromVbkEncoding(stream))
 
-	vtbBytes := veriblock.Parse(defaultVtbEncoded)
+	vtbBytes := parseHex(defaultVtbEncoded)
 	stream = bytes.NewReader(vtbBytes)
-	vtb, err := VtbFromVbkEncoding(stream)
-	assert.NoError(err)
+	vtb := Vtb{}
+	assert.NoError(vtb.FromVbkEncoding(stream))
 
-	expectedPopData := PopData{1, []VbkBlock{}, []Vtb{*vtb}, []Atv{*atv}}
+	expectedPopData := PopData{1, []VbkBlock{}, []Vtb{vtb}, []Atv{atv}}
 	outputStream := new(bytes.Buffer)
-	err = expectedPopData.ToVbkEncoding(outputStream)
-	assert.NoError(err)
+	assert.NoError(expectedPopData.ToVbkEncoding(outputStream))
 
-	decodedPopData, err := PopDataFromVbkEncoding(outputStream)
-	assert.Equal(expectedPopData, *decodedPopData)
+	decodedPopData := PopData{}
+	assert.NoError(decodedPopData.FromVbkEncoding(outputStream))
+	assert.Equal(expectedPopData, decodedPopData)
 }

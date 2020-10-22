@@ -14,7 +14,7 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev
+    container: veriblock/alt-integration-cpp-dev:feature-go-interface
     strategy:
       fail-fast: false
       matrix:
@@ -23,7 +23,7 @@ jobs:
           "-DASAN=ON",
           "-DUBSAN=ON",
           # release build with all dependencies
-          "-DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"
+          "-DTESTING_GO=ON -DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"
         ]
     env:
       CC: clang

@@ -12,10 +12,9 @@ func TestBtcTxRound(t *testing.T) {
 
 	btcTx := BtcTx{[]byte{1, 2, 3}}
 	stream := new(bytes.Buffer)
-	err := btcTx.ToVbkEncoding(stream)
-	assert.NoError(err)
-	decoded, err := BtcTxFromVbkEncoding(stream)
-	assert.NoError(err)
+	assert.NoError(btcTx.ToVbkEncoding(stream))
+	decoded := BtcTx{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(btcTx.Tx, decoded.Tx)
 	assert.Equal(0, stream.Len(), "Stream has more data")
