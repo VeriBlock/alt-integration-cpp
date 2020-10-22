@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,10 +21,10 @@ var (
 func TestPublicationDataDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	pub := veriblock.Parse(defaultPublicationEncoded)
+	pub := parseHex(defaultPublicationEncoded)
 	stream := bytes.NewReader(pub)
-	decoded, err := PublicationDataFromRaw(stream)
-	assert.NoError(err)
+	decoded := PublicationData{}
+	assert.NoError(decoded.FromRaw(stream))
 
 	assert.Equal(defaultPublication.Identifier, decoded.Identifier)
 	assert.Equal(defaultPublication.Header, decoded.Header)
@@ -39,22 +38,20 @@ func TestPublicationDataSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	err := defaultPublication.ToRaw(stream)
-	assert.NoError(err)
+	assert.NoError(defaultPublication.ToRaw(stream))
 	assert.Equal(defaultPublicationEncoded, hex.EncodeToString(stream.Bytes()))
 }
 
 func TestPublicationDataRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	pub := veriblock.Parse(defaultPublicationEncoded)
+	pub := parseHex(defaultPublicationEncoded)
 	stream := bytes.NewReader(pub)
-	decoded, err := PublicationDataFromRaw(stream)
-	assert.NoError(err)
+	decoded := PublicationData{}
+	assert.NoError(decoded.FromRaw(stream))
 	assert.Equal(defaultPublication.Identifier, decoded.Identifier)
 
 	outputStream := new(bytes.Buffer)
-	err = decoded.ToRaw(outputStream)
-	assert.NoError(err)
+	assert.NoError(decoded.ToRaw(outputStream))
 	assert.Equal(defaultPublicationEncoded, hex.EncodeToString(outputStream.Bytes()))
 }

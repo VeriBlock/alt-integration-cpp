@@ -1,4 +1,5 @@
 FROM ubuntu:18.04
+
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         gpg \
@@ -10,7 +11,6 @@ RUN apt-get update && \
         python3-pip \
         python3-setuptools \
         python3-dev \
-
     && wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main" && \
     apt-add-repository -y ppa:bitcoin/bitcoin && \
@@ -58,6 +58,7 @@ RUN apt-get install --no-install-recommends -y \
         lcov \
         vim \
         unzip \
+        golang \
     && rm -rf /var/lib/apt/lists/*
 
 # set default compilers and tools
@@ -97,6 +98,7 @@ RUN set -e; \
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
+ENV PATH $PATH:/usr/local/go/bin
 RUN pip3 install --upgrade setuptools wheel bashlex compiledb gcovr
 
 WORKDIR /

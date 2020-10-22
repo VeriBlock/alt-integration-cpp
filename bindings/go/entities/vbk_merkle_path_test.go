@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,10 +22,10 @@ var (
 func TestVbkMerklePathDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	merklePath := veriblock.Parse(defaultVbkMerklePathEncoded)
+	merklePath := parseHex(defaultVbkMerklePathEncoded)
 	stream := bytes.NewReader(merklePath)
-	decoded, err := VbkMerklePathFromVbkEncoding(stream)
-	assert.NoError(err)
+	decoded := VbkMerklePath{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(defaultVbkMerklePathTreeIndex, decoded.TreeIndex)
 	assert.Equal(defaultVbkMerklePathIndex, decoded.Index)
@@ -42,7 +41,7 @@ func TestVbkMerklePathSerialize(t *testing.T) {
 	subject := parse32Bytes(defaultVbkMerklePathSubject)
 	path := VbkMerklePath{defaultVbkMerklePathTreeIndex, defaultVbkMerklePathIndex, subject, defaultVbkMerklePathLayers}
 	stream := new(bytes.Buffer)
-	path.ToVbkEncoding(stream)
+	assert.NoError(path.ToVbkEncoding(stream))
 	pathEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultVbkMerklePathEncoded, pathEncoded)
 }
@@ -50,14 +49,14 @@ func TestVbkMerklePathSerialize(t *testing.T) {
 func TestVbkMerklePathRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	merklePath := veriblock.Parse(defaultVbkMerklePathEncoded)
+	merklePath := parseHex(defaultVbkMerklePathEncoded)
 	stream := bytes.NewReader(merklePath)
-	decoded, err := VbkMerklePathFromVbkEncoding(stream)
-	assert.NoError(err)
+	decoded := VbkMerklePath{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
 	assert.Equal(defaultVbkMerklePathIndex, decoded.Index)
 
 	outputStream := new(bytes.Buffer)
-	decoded.ToVbkEncoding(outputStream)
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	pathReEncoded := hex.EncodeToString(outputStream.Bytes())
 
 	assert.Equal(defaultVbkMerklePathEncoded, pathReEncoded)

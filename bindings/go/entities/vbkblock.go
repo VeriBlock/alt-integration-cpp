@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // VbkBlock ...
@@ -21,9 +21,28 @@ type VbkBlock struct {
 	Nonce                  uint64
 }
 
-// GetID - returns id of VBKBlock
+// GetHash ...
+func (v *VbkBlock) GetHash() []byte {
+	hash, err := v.GetBlockHash()
+	if err != nil {
+		return nil
+	}
+	return hash[:]
+}
+
+// GetBlockTime ...
+func (v *VbkBlock) GetBlockTime() uint32 {
+	return uint32(v.Timestamp)
+}
+
+// GetDifficulty ...
+func (v *VbkBlock) GetDifficulty() uint32 {
+	return uint32(v.Difficulty)
+}
+
+// GetID - Returns id of VBKBlock
 func (v *VbkBlock) GetID() ([12]byte, error) {
-	hash, err := v.GetHash()
+	hash, err := v.GetBlockHash()
 	if err != nil {
 		return [12]byte{}, err
 	}
@@ -32,11 +51,10 @@ func (v *VbkBlock) GetID() ([12]byte, error) {
 	return res, nil
 }
 
-// GetHash - returns progPowHash of VBKBlock
-func (v *VbkBlock) GetHash() ([24]byte, error) {
+// GetBlockHash - Returns progPowHash of VBKBlock
+func (v *VbkBlock) GetBlockHash() ([24]byte, error) {
 	blockStream := new(bytes.Buffer)
-	err := v.ToRaw(blockStream)
-	if err != nil {
+	if err := v.ToRaw(blockStream); err != nil {
 		return [24]byte{}, err
 	}
 	var res [24]byte
@@ -48,8 +66,7 @@ func (v *VbkBlock) GetHash() ([24]byte, error) {
 // ToVbkEncoding ...
 func (v *VbkBlock) ToVbkEncoding(stream io.Writer) error {
 	blockStream := new(bytes.Buffer)
-	err := v.ToRaw(blockStream)
-	if err != nil {
+	if err := v.ToRaw(blockStream); err != nil {
 		return err
 	}
 	return veriblock.WriteSingleByteLenValue(stream, blockStream.Bytes())
@@ -57,36 +74,28 @@ func (v *VbkBlock) ToVbkEncoding(stream io.Writer) error {
 
 // ToRaw ...
 func (v *VbkBlock) ToRaw(stream io.Writer) error {
-	err := binary.Write(stream, binary.BigEndian, v.Height)
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, v.Height); err != nil {
 		return err
 	}
-	err = binary.Write(stream, binary.BigEndian, v.Version)
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, v.Version); err != nil {
 		return err
 	}
-	_, err = stream.Write(v.PreviousBlock[:])
-	if err != nil {
+	if _, err := stream.Write(v.PreviousBlock[:]); err != nil {
 		return err
 	}
-	_, err = stream.Write(v.PreviousKeystone[:])
-	if err != nil {
+	if _, err := stream.Write(v.PreviousKeystone[:]); err != nil {
 		return err
 	}
-	_, err = stream.Write(v.SecondPreviousKeystone[:])
-	if err != nil {
+	if _, err := stream.Write(v.SecondPreviousKeystone[:]); err != nil {
 		return err
 	}
-	_, err = stream.Write(v.MerkleRoot[:])
-	if err != nil {
+	if _, err := stream.Write(v.MerkleRoot[:]); err != nil {
 		return err
 	}
-	err = binary.Write(stream, binary.BigEndian, v.Timestamp)
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, v.Timestamp); err != nil {
 		return err
 	}
-	err = binary.Write(stream, binary.BigEndian, v.Difficulty)
-	if err != nil {
+	if err := binary.Write(stream, binary.BigEndian, v.Difficulty); err != nil {
 		return err
 	}
 	nonce := make([]byte, 5)
@@ -98,56 +107,46 @@ func (v *VbkBlock) ToRaw(stream io.Writer) error {
 	return binary.Write(stream, binary.BigEndian, nonce)
 }
 
-// VbkBlockFromVbkEncoding ...
-func VbkBlockFromVbkEncoding(stream io.Reader) (*VbkBlock, error) {
+// FromVbkEncoding ...
+func (v *VbkBlock) FromVbkEncoding(stream io.Reader) error {
 	blockBytes, err := veriblock.ReadSingleByteLenValue(stream, veriblock.VbkHeaderSizeProgpow, veriblock.VbkHeaderSizeProgpow)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	blockStream := bytes.NewReader(blockBytes)
-	return VbkBlockFromRaw(blockStream)
+	return v.FromRaw(blockStream)
 }
 
-// VbkBlockFromRaw ...
-func VbkBlockFromRaw(stream io.Reader) (*VbkBlock, error) {
-	block := &VbkBlock{}
-	err := binary.Read(stream, binary.BigEndian, &block.Height)
-	if err != nil {
-		return nil, err
+// FromRaw ...
+func (v *VbkBlock) FromRaw(stream io.Reader) error {
+	if err := binary.Read(stream, binary.BigEndian, &v.Height); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.Version)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &v.Version); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.PreviousBlock)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &v.PreviousBlock); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.PreviousKeystone)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &v.PreviousKeystone); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.SecondPreviousKeystone)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &v.SecondPreviousKeystone); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.MerkleRoot)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &v.MerkleRoot); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.Timestamp)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &v.Timestamp); err != nil {
+		return err
 	}
-	err = binary.Read(stream, binary.BigEndian, &block.Difficulty)
-	if err != nil {
-		return nil, err
+	if err := binary.Read(stream, binary.BigEndian, &v.Difficulty); err != nil {
+		return err
 	}
 	b := make([]byte, 5)
-	_, err = stream.Read(b)
-	if err != nil {
-		return nil, err
+	if _, err := stream.Read(b); err != nil {
+		return err
 	}
-	block.Nonce = uint64(b[0])<<32 | uint64(b[1])<<24 | uint64(b[2])<<16 | uint64(b[3])<<8 | uint64(b[4])
-	return block, nil
+	v.Nonce = uint64(b[0])<<32 | uint64(b[1])<<24 | uint64(b[2])<<16 | uint64(b[3])<<8 | uint64(b[4])
+	return nil
 }

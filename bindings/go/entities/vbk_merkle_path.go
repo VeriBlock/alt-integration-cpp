@@ -3,7 +3,7 @@ package entities
 import (
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // VbkMerklePath ...
@@ -20,56 +20,48 @@ type VbkMerklePath struct {
 
 // ToVbkEncoding ...
 func (v *VbkMerklePath) ToVbkEncoding(stream io.Writer) error {
-	err := veriblock.WriteSingleFixedBEValue(stream, v.TreeIndex)
-	if err != nil {
+	if err := veriblock.WriteSingleFixedBEValue(stream, v.TreeIndex); err != nil {
 		return err
 	}
-	err = veriblock.WriteSingleFixedBEValue(stream, v.Index)
-	if err != nil {
+	if err := veriblock.WriteSingleFixedBEValue(stream, v.Index); err != nil {
 		return err
 	}
-	err = veriblock.WriteSingleByteLenValue(stream, v.Subject[:])
-	if err != nil {
+	if err := veriblock.WriteSingleByteLenValue(stream, v.Subject[:]); err != nil {
 		return err
 	}
-	err = veriblock.WriteSingleFixedBEValue(stream, int32(len(v.Layers)))
-	if err != nil {
+	if err := veriblock.WriteSingleFixedBEValue(stream, int32(len(v.Layers))); err != nil {
 		return err
 	}
 	for _, layer := range v.Layers {
-		err = veriblock.WriteSingleByteLenValue(stream, layer)
-		if err != nil {
+		if err := veriblock.WriteSingleByteLenValue(stream, layer); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-// VbkMerklePathFromVbkEncoding ...
-func VbkMerklePathFromVbkEncoding(stream io.Reader) (*VbkMerklePath, error) {
-	path := VbkMerklePath{}
-	err := veriblock.ReadSingleBEValue(stream, &path.TreeIndex)
-	if err != nil {
-		return nil, err
+// FromVbkEncoding ...
+func (v *VbkMerklePath) FromVbkEncoding(stream io.Reader) error {
+	if err := veriblock.ReadSingleBEValue(stream, &v.TreeIndex); err != nil {
+		return err
 	}
-	err = veriblock.ReadSingleBEValue(stream, &path.Index)
-	if err != nil {
-		return nil, err
+	if err := veriblock.ReadSingleBEValue(stream, &v.Index); err != nil {
+		return err
 	}
 	subject, err := veriblock.ReadSingleByteLenValue(stream, veriblock.Sha256HashSize, veriblock.Sha256HashSize)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	copy(path.Subject[:], subject)
+	copy(v.Subject[:], subject)
 	layers, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxLayerCountMerkle, func(stream io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValue(stream, veriblock.Sha256HashSize, veriblock.Sha256HashSize)
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	path.Layers = make([][32]byte, len(layers))
+	v.Layers = make([][32]byte, len(layers))
 	for i, layer := range layers {
-		copy(path.Layers[i][:], layer.([]byte))
+		copy(v.Layers[i][:], layer.([]byte))
 	}
-	return &path, nil
+	return nil
 }

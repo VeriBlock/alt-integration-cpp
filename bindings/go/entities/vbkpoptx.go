@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"io"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp"
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // VbkPopTx ...
@@ -24,16 +24,13 @@ type VbkPopTx struct {
 // ToVbkEncoding ...
 func (v *VbkPopTx) ToVbkEncoding(stream io.Writer) error {
 	txStream := new(bytes.Buffer)
-	err := v.ToRaw(txStream)
-	if err != nil {
+	if err := v.ToRaw(txStream); err != nil {
 		return err
 	}
-	err = veriblock.WriteVarLenValue(stream, txStream.Bytes())
-	if err != nil {
+	if err := veriblock.WriteVarLenValue(stream, txStream.Bytes()); err != nil {
 		return err
 	}
-	err = veriblock.WriteSingleByteLenValue(stream, v.Signature)
-	if err != nil {
+	if err := veriblock.WriteSingleByteLenValue(stream, v.Signature); err != nil {
 		return err
 	}
 	return veriblock.WriteSingleByteLenValue(stream, v.PublicKey)
@@ -41,109 +38,91 @@ func (v *VbkPopTx) ToVbkEncoding(stream io.Writer) error {
 
 // ToRaw ...
 func (v *VbkPopTx) ToRaw(stream io.Writer) error {
-	err := v.NetworkOrType.Write(stream)
-	if err != nil {
+	if err := v.NetworkOrType.Write(stream); err != nil {
 		return err
 	}
-	err = v.Address.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.Address.ToVbkEncoding(stream); err != nil {
 		return err
 	}
-	err = v.PublishedBlock.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.PublishedBlock.ToVbkEncoding(stream); err != nil {
 		return err
 	}
-	err = v.BitcoinTransaction.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.BitcoinTransaction.ToVbkEncoding(stream); err != nil {
 		return err
 	}
-	err = v.MerklePath.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.MerklePath.ToVbkEncoding(stream); err != nil {
 		return err
 	}
-	err = v.BlockOfProof.ToVbkEncoding(stream)
-	if err != nil {
+	if err := v.BlockOfProof.ToVbkEncoding(stream); err != nil {
 		return err
 	}
-	err = veriblock.WriteSingleBEValue(stream, int64(len(v.BlockOfProofContext)))
-	if err != nil {
+	if err := veriblock.WriteSingleBEValue(stream, int64(len(v.BlockOfProofContext))); err != nil {
 		return err
 	}
 	for _, block := range v.BlockOfProofContext {
-		err = block.ToVbkEncoding(stream)
-		if err != nil {
+		if err := block.ToVbkEncoding(stream); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-// VbkPopTxFromVbkEncoding ...
-func VbkPopTxFromVbkEncoding(stream io.Reader) (*VbkPopTx, error) {
+// FromVbkEncoding ...
+func (v *VbkPopTx) FromVbkEncoding(stream io.Reader) error {
 	rawTx, err := veriblock.ReadVarLenValue(stream, 0, veriblock.MaxRawtxSizeVbkpoptx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	signature, err := veriblock.ReadSingleByteLenValue(stream, 0, veriblock.MaxSignatureSize)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	publicKey, err := veriblock.ReadSingleByteLenValue(stream, 0, veriblock.PublicKeySize)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	rawTxStream := bytes.NewReader(rawTx)
-	return VbkPopTxFromRaw(rawTxStream, signature, publicKey)
+	return v.FromRaw(rawTxStream, signature, publicKey)
 }
 
-// VbkPopTxFromRaw ...
-func VbkPopTxFromRaw(stream io.Reader, signature []byte, publicKey []byte) (*VbkPopTx, error) {
-	networkOrType, err := veriblock.ReadNetworkByte(stream, veriblock.TxTypeVbkPopTx)
-	if err != nil {
-		return nil, err
+// FromRaw ...
+func (v *VbkPopTx) FromRaw(stream io.Reader, signature []byte, publicKey []byte) error {
+	if err := v.NetworkOrType.Read(stream, veriblock.TxTypeVbkPopTx); err != nil {
+		return err
 	}
-	address, err := AddressFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+	if err := v.Address.FromVbkEncoding(stream); err != nil {
+		return err
 	}
-	publishedBlock, err := VbkBlockFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+	if err := v.PublishedBlock.FromVbkEncoding(stream); err != nil {
+		return err
 	}
-	bitcoinTransaction, err := BtcTxFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+	if err := v.BitcoinTransaction.FromVbkEncoding(stream); err != nil {
+		return err
 	}
-	hashFirst := sha256.Sum256(bitcoinTransaction.Tx)
+	hashFirst := sha256.Sum256(v.BitcoinTransaction.Tx)
 	hash := sha256.Sum256(hashFirst[:])
-	merklePath, err := MerklePathFromVbkEncoding(stream, hash)
-	if err != nil {
-		return nil, err
+	if err := v.MerklePath.FromVbkEncoding(stream, hash); err != nil {
+		return err
 	}
-	blockOfProof, err := BtcBlockFromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
+	if err := v.BlockOfProof.FromVbkEncoding(stream); err != nil {
+		return err
 	}
 	bopcs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCount, func(stream io.Reader) (interface{}, error) {
-		return BtcBlockFromVbkEncoding(stream)
+		block := BtcBlock{}
+		err := block.FromVbkEncoding(stream)
+		if err != nil {
+			return nil, err
+		}
+		return &block, nil
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	blockOfProofContext := make([]BtcBlock, len(bopcs))
+	v.BlockOfProofContext = make([]BtcBlock, len(bopcs))
 	for i, bopc := range bopcs {
-		blockOfProofContext[i] = *bopc.(*BtcBlock)
+		v.BlockOfProofContext[i] = *bopc.(*BtcBlock)
 	}
-	tx := VbkPopTx{
-		*networkOrType,
-		*address,
-		*publishedBlock,
-		*bitcoinTransaction,
-		*merklePath,
-		*blockOfProof,
-		blockOfProofContext,
-		signature,
-		publicKey,
-	}
-	return &tx, nil
+	v.Signature = signature
+	v.PublicKey = publicKey
+	return nil
 }

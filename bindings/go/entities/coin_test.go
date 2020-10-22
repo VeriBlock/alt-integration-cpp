@@ -15,8 +15,8 @@ func TestCoinRound(t *testing.T) {
 	err := coin.ToVbkEncoding(stream)
 	assert.NoError(err)
 	assert.Equal([]byte{1, 1}, stream.Bytes())
-	decoded, err := CoinFromVbkEncoding(stream)
-	assert.NoError(err)
+	decoded := Coin{}
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(coin.Units, decoded.Units)
 	assert.Equal(0, stream.Len(), "Stream has more data")
