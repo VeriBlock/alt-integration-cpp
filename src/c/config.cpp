@@ -11,6 +11,7 @@
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/c/extern.h"
 #include "veriblock/config.hpp"
+#include "veriblock/bootstraps.hpp"
 
 struct AltChainParamsImpl : public altintegration::AltChainParams {
   int64_t getIdentifier() const noexcept { return VBK_getAltchainId(); }
@@ -69,7 +70,7 @@ bool VBK_SelectVbkParams(Config_t* config,
                          int startHeight,
                          const char* blocks) {
   if (blocks == nullptr) {
-    config->config->SelectVbkParams(net, startHeight, {});
+    config->config->SelectVbkParams(net, startHeight, {altintegration::GetRegTestVbkBlock().toHex()});
     return true;
   }
 
@@ -87,7 +88,7 @@ bool VBK_SelectBtcParams(Config_t* config,
                          int startHeight,
                          const char* blocks) {
   if (blocks == nullptr) {
-    config->config->SelectBtcParams(net, startHeight, {});
+    config->config->SelectBtcParams(net, startHeight, {altintegration::GetRegTestBtcBlock().toHex()});
     return true;
   }
 

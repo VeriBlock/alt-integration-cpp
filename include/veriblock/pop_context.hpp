@@ -62,7 +62,7 @@ struct PopContext {
       ctx->altTree->btc().bootstrapWithChain(
           ctx->config->btc.startHeight, ctx->config->btc.blocks, state);
     }
-    VBK_ASSERT(state.IsValid());
+    VBK_ASSERT_MSG(state.IsValid(), "BTC bootstrap block is invalid: %s", state.toString());
 
     // then, bootstrap VBK
     if (ctx->config->vbk.blocks.size() == 0) {
@@ -74,7 +74,7 @@ struct PopContext {
       ctx->altTree->vbk().bootstrapWithChain(
           ctx->config->vbk.startHeight, ctx->config->vbk.blocks, state);
     }
-    VBK_ASSERT(state.IsValid());
+    VBK_ASSERT_MSG(state.IsValid(), "VBK bootstrap block is invalid: %s", state.toString());
 
     // then, bootstrap ALT
     ctx->altTree->bootstrap(state);
