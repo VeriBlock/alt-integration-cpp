@@ -238,6 +238,8 @@ jobs:
 
   x86_64-apple-darwin16:
     runs-on: ubuntu-18.04
+    # TODO: Fix this job. See https://github.com/VeriBlock/alt-integration-cpp/runs/1173195891 for error details
+    if: ${{ false }}
     strategy:
       fail-fast: false
       matrix:

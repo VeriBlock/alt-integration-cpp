@@ -3,7 +3,7 @@ if(TESTING AND TESTING_GO)
     add_test(
             NAME go_test
             COMMAND go test ./...
-            WORKING_DIRECTORY
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
     set_tests_properties(go_test PROPERTIES
             ENVIRONMENT
