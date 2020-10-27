@@ -64,14 +64,13 @@ struct TempBlockTree {
   const block_tree_t& getStableTree() const { return *tree_; }
 
   /**
-   * Remove block from the temp store that are already in the stable tree
+   * Remove blocks from the temp store that are already in the stable tree
    */
   void cleanUp() {
-    for (auto blk_it = temp_blocks_.begin(); blk_it != temp_blocks_.end();) {
-      auto short_hash = tree_->makePrevHash(blk_it->second->getHash());
+    for (auto it = temp_blocks_.begin(); it != temp_blocks_.end();) {
+      auto short_hash = tree_->makePrevHash(it->second->getHash());
       auto* index = tree_->getBlockIndex(short_hash);
-
-      blk_it = index ? temp_blocks_.erase(blk_it) : std::next(blk_it);
+      it = index ? temp_blocks_.erase(it) : std::next(it);
     }
   }
 

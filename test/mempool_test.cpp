@@ -1160,7 +1160,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
 
   applyInNextBlock(v_popData);
 
-  ASSERT_EQ(totalBlocks, 69);
+  ASSERT_EQ(totalBlocks, 67);
   ASSERT_EQ(totalVtbs, 0);
   ASSERT_EQ(totalAtvs, 2);
 }

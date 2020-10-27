@@ -264,14 +264,38 @@ struct MemPool {
   vtb_map_t vtbs_in_flight_;
   vbkblock_map_t vbkblocks_in_flight_;
 
-  VbkPayloadsRelations& touchVbkPayloadRelation(
+  VbkPayloadsRelations& getOrPutVbkRelation(
       const std::shared_ptr<VbkBlock>& block);
 
   void resubmit_payloads();
 
+  template <typename T>
+  void makePayloadConnected(const std::shared_ptr<T>& t) {
+    auto& signal = getSignal<T>();
+    auto& inflight = getInFlightMapMut<T>();
+    auto& connected = getMapMut<T>();
+
+    auto id = t->getId();
+    connected[id] = t;
+    inflight.erase(id);
+    signal.emit(*t);
+  }
+
   template <typename Pop>
   signals::Signal<void(const Pop&)>& getSignal() {
     static_assert(sizeof(Pop) == 0, "Unknown type in getSignal");
+  }
+
+  //! @private
+  template <typename T>
+  payload_map<T>& getMapMut() {
+    return const_cast<payload_map<T>&>(this->getMap<T>());
+  }
+
+  //! @private
+  template <typename T>
+  payload_map<T>& getInFlightMapMut() {
+    return const_cast<payload_map<T>&>(this->getInFlightMap<T>());
   }
 };
 

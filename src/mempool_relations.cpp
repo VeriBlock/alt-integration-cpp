@@ -13,11 +13,24 @@ PopData VbkPayloadsRelations::toPopData() const {
     pop.atvs.push_back(*atv);
   }
 
-  // we sort VTBs in ascending order of their containing VBK blocks to guarantee
-  // that within a single block they all are connected.
-  std::sort(pop.vtbs.begin(), pop.vtbs.end(), [](const VTB& a, const VTB& b) {
-    return a.containingBlock.getHeight() < b.containingBlock.getHeight();
-  });
+  VBK_ASSERT(
+      std::all_of(pop.vtbs.begin(), pop.vtbs.end(), [this](const VTB& a) {
+        return a.containingBlock == *header;
+      }));
+
+  // all VTBs have same VBK containing block, sort them based on time of
+  // earliest BTC block (based on time).
+  // note: use stable sort to preserve relative insertion order to mempool
+  std::stable_sort(
+      pop.vtbs.begin(), pop.vtbs.end(), [](const VTB& a, const VTB& b) {
+        auto& earliestA = a.transaction.blockOfProofContext.empty()
+                              ? a.transaction.blockOfProof
+                              : a.transaction.blockOfProofContext.front();
+        auto& earliestB = b.transaction.blockOfProofContext.empty()
+                              ? b.transaction.blockOfProof
+                              : b.transaction.blockOfProofContext.front();
+        return earliestA.timestamp < earliestB.timestamp;
+      });
 
   return pop;
 }

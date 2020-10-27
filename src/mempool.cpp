@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -217,18 +218,15 @@ void MemPool::removeAll(const PopData& pop) {
   this->cleanUp();
 }
 
-VbkPayloadsRelations& MemPool::touchVbkPayloadRelation(
-    const std::shared_ptr<VbkBlock>& block_ptr) {
-  auto block_id = block_ptr->getId();
-
-  vbkblocks_[block_id] = block_ptr;
-
+VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
+    const std::shared_ptr<VbkBlock>& block) {
+  auto block_id = block->getId();
+  vbkblocks_.insert({block_id, block});
   auto& val = relations_[block_id];
   if (val == nullptr) {
-    val = std::make_shared<VbkPayloadsRelations>(block_ptr);
+    val = std::make_shared<VbkPayloadsRelations>(block);
+    on_vbkblock_accepted.emit(*block);
   }
-
-  on_vbkblock_accepted.emit(*block_ptr);
 
   return *val;
 }
@@ -277,27 +275,23 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
             state.Invalid("pop-mempool-submit-atv-stateless")};
   }
 
-  std::shared_ptr<VbkBlock> blockOfProof_ptr =
-      std::make_shared<VbkBlock>(atv->blockOfProof);
+  auto id = atv->getId();
+  auto blockOfProof_ptr = std::make_shared<VbkBlock>(atv->blockOfProof);
 
   // stateful validation
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
-    atvs_in_flight_[atv->getId()] = atv;
+    atvs_in_flight_[id] = atv;
     on_atv_accepted.emit(*atv);
     return {MemPool::FAILED_STATEFUL,
             state.Invalid("pop-mempool-submit-atv-stateful")};
   }
 
-  auto& rel = touchVbkPayloadRelation(blockOfProof_ptr);
-  auto pair = std::make_pair(atv->getId(), atv);
+  auto& rel = getOrPutVbkRelation(blockOfProof_ptr);
   rel.atvs.push_back(atv);
 
   // store atv id in containing block index
-  stored_atvs_.insert(pair);
+  makePayloadConnected<ATV>(atv);
 
-  on_atv_accepted.emit(*atv);
-
-  atvs_in_flight_.erase(atv->getId());
   if (resubmit) {
     resubmit_payloads();
   }
@@ -315,25 +309,20 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
             state.Invalid("pop-mempool-submit-vtb-stateless")};
   }
 
-  std::shared_ptr<VbkBlock> containingBlock_ptr =
-      std::make_shared<VbkBlock>(vtb->containingBlock);
+  auto id = vtb->getId();
+  auto containingBlock_ptr = std::make_shared<VbkBlock>(vtb->containingBlock);
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
-    vtbs_in_flight_[vtb->getId()] = vtb;
+    vtbs_in_flight_[id] = vtb;
     on_vtb_accepted.emit(*vtb);
     return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vtb-stateful")};
   }
 
-  auto& rel = touchVbkPayloadRelation(containingBlock_ptr);
-  auto pair = std::make_pair(vtb->getId(), vtb);
+  auto& rel = getOrPutVbkRelation(containingBlock_ptr);
   rel.vtbs.push_back(vtb);
+  makePayloadConnected<VTB>(vtb);
 
-  stored_vtbs_.insert(pair);
-
-  on_vtb_accepted.emit(*vtb);
-
-  vtbs_in_flight_.erase(vtb->getId());
   if (resubmit) {
     resubmit_payloads();
   }
@@ -353,17 +342,18 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
             state.Invalid("pop-mempool-submit-vbkblock-stateless")};
   }
 
+  auto id = blk->getId();
+
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
-    vbkblocks_in_flight_[blk->getId()] = blk;
+    vbkblocks_in_flight_[id] = blk;
     on_vbkblock_accepted.emit(*blk);
     return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vbk-stateful")};
   }
 
   // stateful validation
   if (!mempool_tree_.vbk().getStableTree().getBlockIndex(blk->getHash())) {
-    // duplicate
-    touchVbkPayloadRelation(blk);
+    getOrPutVbkRelation(blk);
   }
 
   vbkblocks_in_flight_.erase(blk->getId());
