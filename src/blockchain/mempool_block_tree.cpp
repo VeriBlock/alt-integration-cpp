@@ -1,5 +1,6 @@
-#include "veriblock/blockchain/blockchain_util.hpp"
 #include "veriblock/blockchain/mempool_block_tree.hpp"
+
+#include "veriblock/blockchain/blockchain_util.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/keystone_util.hpp"
 
@@ -8,6 +9,26 @@ namespace altintegration {
 bool MemPoolBlockTree::acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
                                       ValidationState& state) {
   return temp_vbk_tree_.acceptBlock(blk, state);
+}
+
+bool MemPoolBlockTree::checkContextually(const VbkBlock& block,
+                                         ValidationState& state) {
+  auto hash = block.getHash();
+  auto index = vbk().getBlockIndex(hash);
+  if (index) {
+    // duplicate
+    return state.Invalid("duplicate");
+  }
+
+  auto& stableVbk = vbk().getStableTree();
+  bool tooOld = stableVbk.getBestChain().tip()->getHeight() -
+                    stableVbk.getParams().getMaxReorgBlocks() >
+                block.getHeight();
+  if(tooOld) {
+    return state.Invalid("too-old");
+  }
+
+  return true;
 }
 
 bool MemPoolBlockTree::checkContextually(const ATV& atv,

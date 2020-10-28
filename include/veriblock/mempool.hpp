@@ -264,14 +264,63 @@ struct MemPool {
   vtb_map_t vtbs_in_flight_;
   vbkblock_map_t vbkblocks_in_flight_;
 
-  VbkPayloadsRelations& touchVbkPayloadRelation(
+  VbkPayloadsRelations& getOrPutVbkRelation(
       const std::shared_ptr<VbkBlock>& block);
 
   void resubmit_payloads();
 
+  template <typename T>
+  void makePayloadConnected(const std::shared_ptr<T>& t) {
+    auto& signal = getSignal<T>();
+    auto& inflight = getInFlightMapMut<T>();
+    auto& connected = getMapMut<T>();
+
+    auto id = t->getId();
+    connected[id] = t;
+    inflight.erase(id);
+    signal.emit(*t);
+  }
+
+  template <typename POP>
+  void cleanupStale(std::vector<std::shared_ptr<POP>>& c, std::function<void(POP&)> remove) {
+    for (auto it = c.begin(); it != c.end();) {
+      auto& pl = **it;
+      ValidationState state;
+      auto valid = mempool_tree_.checkContextually(pl, state);
+      if (!valid) {
+        remove(pl);
+        it = c.erase(it);
+      } else {
+        ++it;
+      }
+    }
+  }
+
+  template <typename POP>
+  void cleanupStale(payload_map<POP>& c) {
+    for (auto it = c.begin(); it != c.end();) {
+      auto& pl = *it->second;
+      ValidationState state;
+      auto valid = mempool_tree_.checkContextually(pl, state);
+      it = !valid ? c.erase(it) : std::next(it);
+    }
+  }
+
   template <typename Pop>
   signals::Signal<void(const Pop&)>& getSignal() {
     static_assert(sizeof(Pop) == 0, "Unknown type in getSignal");
+  }
+
+  //! @private
+  template <typename T>
+  payload_map<T>& getMapMut() {
+    return const_cast<payload_map<T>&>(this->getMap<T>());
+  }
+
+  //! @private
+  template <typename T>
+  payload_map<T>& getInFlightMapMut() {
+    return const_cast<payload_map<T>&>(this->getInFlightMap<T>());
   }
 };
 

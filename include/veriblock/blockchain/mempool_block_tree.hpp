@@ -32,14 +32,9 @@ struct MemPoolBlockTree {
                  ValidationState& state);
 
   bool checkContextually(const ATV& atv, ValidationState& state);
-
   bool checkContextually(const VTB& vtb, ValidationState& state);
+  bool checkContextually(const VbkBlock& block, ValidationState& state);
 
-  void removePayloads(const VbkBlock& blk);
-
-  void removePayloads(const VTB& vtb);
-
-  void removePayloads(const ATV& atv);
 
   /**
    * Compares ATVs for the strongly equivalence

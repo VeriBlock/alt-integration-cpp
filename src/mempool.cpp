@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -119,22 +120,12 @@ void MemPool::cleanUp() {
     }
 
     // cleanup stale VTBs
-    for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
-      auto& vtb = **vtbit;
-      ValidationState state;
-      vtbit = !mempool_tree_.checkContextually(vtb, state)
-                  ? (stored_vtbs_.erase(vtb.getId()), rel.vtbs.erase(vtbit))
-                  : std::next(vtbit);
-    }
+    cleanupStale<VTB>(rel.vtbs,
+                      [this](const VTB& v) { stored_vtbs_.erase(v.getId()); });
 
     // cleanup stale ATVs
-    for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
-      auto& atv = **atvit;
-      ValidationState state;
-      atvit = !mempool_tree_.checkContextually(atv, state)
-                  ? (stored_atvs_.erase(atv.getId()), rel.atvs.erase(atvit))
-                  : std::next(atvit);
-    }
+    cleanupStale<ATV>(rel.atvs,
+                      [this](const ATV& v) { stored_atvs_.erase(v.getId()); });
 
     if (index != nullptr && rel.empty()) {
       vbkblocks_.erase(rel.header->getId());
@@ -145,39 +136,17 @@ void MemPool::cleanUp() {
     ++it;
   }
 
-  // // remove payloads from inFlight storage
-  for (auto atvit = atvs_in_flight_.begin(); atvit != atvs_in_flight_.end();) {
-    // cleanup stale ATVs
-    auto& atv = *atvit->second;
-    ValidationState state;
-    atvit = !mempool_tree_.checkContextually(atv, state)
-                ? atvs_in_flight_.erase(atvit)
-                : std::next(atvit);
-  }
-
-  for (auto vtbit = vtbs_in_flight_.begin(); vtbit != vtbs_in_flight_.end();) {
-    // cleanup stale VTBs
-    auto& vtb = *vtbit->second;
-    ValidationState state;
-    vtbit = !mempool_tree_.checkContextually(vtb, state)
-                ? vtbs_in_flight_.erase(vtbit)
-                : std::next(vtbit);
-  }
-
-  for (auto vbkit = vbkblocks_in_flight_.begin();
-       vbkit != vbkblocks_in_flight_.end();) {
-    // cleanup stale VBKs
-    auto& vbk = *vbkit->second;
-    auto* index = vbk_tree.getBlockIndex(vbk.getHash());
-    bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
-                      vbk_tree.getParams().getMaxReorgBlocks() >
-                  vbk.getHeight();
-
-    vbkit =
-        tooOld || index ? vbkblocks_in_flight_.erase(vbkit) : std::next(vbkit);
-  }
+  // remove payloads from inFlight storage
+  cleanupStale<VTB>(vtbs_in_flight_);
+  cleanupStale<ATV>(atvs_in_flight_);
+  cleanupStale<VbkBlock>(vbkblocks_in_flight_);
 
   mempool_tree_.cleanUp();
+
+  VBK_ASSERT_MSG(relations_.size() == vbkblocks_.size(),
+                 "Relations=%d, vbkblocks=%d",
+                 relations_.size(),
+                 vbkblocks_.size());
 }
 
 void MemPool::removeAll(const PopData& pop) {
@@ -217,18 +186,15 @@ void MemPool::removeAll(const PopData& pop) {
   this->cleanUp();
 }
 
-VbkPayloadsRelations& MemPool::touchVbkPayloadRelation(
-    const std::shared_ptr<VbkBlock>& block_ptr) {
-  auto block_id = block_ptr->getId();
-
-  vbkblocks_[block_id] = block_ptr;
-
+VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
+    const std::shared_ptr<VbkBlock>& block) {
+  auto block_id = block->getId();
+  vbkblocks_.insert({block_id, block});
   auto& val = relations_[block_id];
   if (val == nullptr) {
-    val = std::make_shared<VbkPayloadsRelations>(block_ptr);
+    val = std::make_shared<VbkPayloadsRelations>(block);
+    on_vbkblock_accepted.emit(*block);
   }
-
-  on_vbkblock_accepted.emit(*block_ptr);
 
   return *val;
 }
@@ -277,27 +243,23 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
             state.Invalid("pop-mempool-submit-atv-stateless")};
   }
 
-  std::shared_ptr<VbkBlock> blockOfProof_ptr =
-      std::make_shared<VbkBlock>(atv->blockOfProof);
+  auto id = atv->getId();
+  auto blockOfProof_ptr = std::make_shared<VbkBlock>(atv->blockOfProof);
 
   // stateful validation
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
-    atvs_in_flight_[atv->getId()] = atv;
+    atvs_in_flight_[id] = atv;
     on_atv_accepted.emit(*atv);
     return {MemPool::FAILED_STATEFUL,
             state.Invalid("pop-mempool-submit-atv-stateful")};
   }
 
-  auto& rel = touchVbkPayloadRelation(blockOfProof_ptr);
-  auto pair = std::make_pair(atv->getId(), atv);
+  auto& rel = getOrPutVbkRelation(blockOfProof_ptr);
   rel.atvs.push_back(atv);
 
   // store atv id in containing block index
-  stored_atvs_.insert(pair);
+  makePayloadConnected<ATV>(atv);
 
-  on_atv_accepted.emit(*atv);
-
-  atvs_in_flight_.erase(atv->getId());
   if (resubmit) {
     resubmit_payloads();
   }
@@ -315,25 +277,20 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
             state.Invalid("pop-mempool-submit-vtb-stateless")};
   }
 
-  std::shared_ptr<VbkBlock> containingBlock_ptr =
-      std::make_shared<VbkBlock>(vtb->containingBlock);
+  auto id = vtb->getId();
+  auto containingBlock_ptr = std::make_shared<VbkBlock>(vtb->containingBlock);
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
-    vtbs_in_flight_[vtb->getId()] = vtb;
+    vtbs_in_flight_[id] = vtb;
     on_vtb_accepted.emit(*vtb);
     return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vtb-stateful")};
   }
 
-  auto& rel = touchVbkPayloadRelation(containingBlock_ptr);
-  auto pair = std::make_pair(vtb->getId(), vtb);
+  auto& rel = getOrPutVbkRelation(containingBlock_ptr);
   rel.vtbs.push_back(vtb);
+  makePayloadConnected<VTB>(vtb);
 
-  stored_vtbs_.insert(pair);
-
-  on_vtb_accepted.emit(*vtb);
-
-  vtbs_in_flight_.erase(vtb->getId());
   if (resubmit) {
     resubmit_payloads();
   }
@@ -353,17 +310,18 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
             state.Invalid("pop-mempool-submit-vbkblock-stateless")};
   }
 
+  auto id = blk->getId();
+
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
-    vbkblocks_in_flight_[blk->getId()] = blk;
+    vbkblocks_in_flight_[id] = blk;
     on_vbkblock_accepted.emit(*blk);
     return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vbk-stateful")};
   }
 
   // stateful validation
   if (!mempool_tree_.vbk().getStableTree().getBlockIndex(blk->getHash())) {
-    // duplicate
-    touchVbkPayloadRelation(blk);
+    getOrPutVbkRelation(blk);
   }
 
   vbkblocks_in_flight_.erase(blk->getId());
