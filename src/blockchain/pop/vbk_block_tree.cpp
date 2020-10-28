@@ -191,23 +191,24 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                       ValidationState& state) {
   auto& tx = vtb.transaction;
 
-  auto& firstBlock = tx.blockOfProofContext.size() > 0
-                         ? tx.blockOfProofContext[0]
-                         : tx.blockOfProof;
+  std::vector<BtcBlock> context = tx.blockOfProofContext;
+  context.push_back(tx.blockOfProof);
+  BlockIndex<BtcBlock>* connectingIndex = nullptr;
+  for (auto& it : context) {
+    auto* index = btc().getBlockIndex(it.getHash());
+    if (index == nullptr) {
+      break;
+    }
 
-  auto connectingHash = firstBlock.previousBlock != ArithUint256()
-                            ? firstBlock.previousBlock
-                            : firstBlock.getHash();
+    connectingIndex = index;
+  }
 
-  auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (!connectingIndex) {
-    VBK_LOG_DEBUG("Could not find block %s that payload %s needs to connect to",
-                  connectingHash.toHex(),
+    VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
                   vtb.toPrettyString());
     return state.Invalid("vtb-btc-context-unknown-previous-block",
                          "Can not find the BTC block referenced by the first "
-                         "block of the VTB context: " +
-                             connectingHash.toHex());
+                         "block of the VTB context");
   }
 
   bool isValid = std::any_of(connectingIndex->getRefs().begin(),
@@ -216,13 +217,18 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
-  return isValid
-             ? true
-             : state.Invalid("vtb-btc-context-block-referenced-too-early",
-                             "The BTC block referenced by the first block of "
-                             "the VTB context is added "
-                             "by blocks that follow the containing block: " +
-                                 connectingHash.toHex());
+  if (!isValid) {
+    VBK_LOG_INFO("block=%s refs=%s vtbContainingHeight=%d",
+                 connectingIndex->toPrettyString(),
+                 fmt::format("{}",
+                             fmt::join(connectingIndex->getRefs().begin(),
+                                       connectingIndex->getRefs().end(),
+                                       ",")),
+                 vtb.containingBlock.getHeight());
+  }
+
+  return isValid ? true
+                 : state.Invalid("vtb-btc-context-block-referenced-too-early");
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,

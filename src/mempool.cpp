@@ -120,22 +120,12 @@ void MemPool::cleanUp() {
     }
 
     // cleanup stale VTBs
-    for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
-      auto& vtb = **vtbit;
-      ValidationState state;
-      vtbit = !mempool_tree_.checkContextually(vtb, state)
-                  ? (stored_vtbs_.erase(vtb.getId()), rel.vtbs.erase(vtbit))
-                  : std::next(vtbit);
-    }
+    cleanupStale<VTB>(rel.vtbs,
+                      [this](const VTB& v) { stored_vtbs_.erase(v.getId()); });
 
     // cleanup stale ATVs
-    for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
-      auto& atv = **atvit;
-      ValidationState state;
-      atvit = !mempool_tree_.checkContextually(atv, state)
-                  ? (stored_atvs_.erase(atv.getId()), rel.atvs.erase(atvit))
-                  : std::next(atvit);
-    }
+    cleanupStale<ATV>(rel.atvs,
+                      [this](const ATV& v) { stored_atvs_.erase(v.getId()); });
 
     if (index != nullptr && rel.empty()) {
       vbkblocks_.erase(rel.header->getId());
@@ -146,39 +136,17 @@ void MemPool::cleanUp() {
     ++it;
   }
 
-  // // remove payloads from inFlight storage
-  for (auto atvit = atvs_in_flight_.begin(); atvit != atvs_in_flight_.end();) {
-    // cleanup stale ATVs
-    auto& atv = *atvit->second;
-    ValidationState state;
-    atvit = !mempool_tree_.checkContextually(atv, state)
-                ? atvs_in_flight_.erase(atvit)
-                : std::next(atvit);
-  }
-
-  for (auto vtbit = vtbs_in_flight_.begin(); vtbit != vtbs_in_flight_.end();) {
-    // cleanup stale VTBs
-    auto& vtb = *vtbit->second;
-    ValidationState state;
-    vtbit = !mempool_tree_.checkContextually(vtb, state)
-                ? vtbs_in_flight_.erase(vtbit)
-                : std::next(vtbit);
-  }
-
-  for (auto vbkit = vbkblocks_in_flight_.begin();
-       vbkit != vbkblocks_in_flight_.end();) {
-    // cleanup stale VBKs
-    auto& vbk = *vbkit->second;
-    auto* index = vbk_tree.getBlockIndex(vbk.getHash());
-    bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
-                      vbk_tree.getParams().getMaxReorgBlocks() >
-                  vbk.getHeight();
-
-    vbkit =
-        tooOld || index ? vbkblocks_in_flight_.erase(vbkit) : std::next(vbkit);
-  }
+  // remove payloads from inFlight storage
+  cleanupStale<VTB>(vtbs_in_flight_);
+  cleanupStale<ATV>(atvs_in_flight_);
+  cleanupStale<VbkBlock>(vbkblocks_in_flight_);
 
   mempool_tree_.cleanUp();
+
+  VBK_ASSERT_MSG(relations_.size() == vbkblocks_.size(),
+                 "Relations=%d, vbkblocks=%d",
+                 relations_.size(),
+                 vbkblocks_.size());
 }
 
 void MemPool::removeAll(const PopData& pop) {

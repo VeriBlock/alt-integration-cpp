@@ -32,8 +32,8 @@ struct MemPoolBlockTree {
                  ValidationState& state);
 
   bool checkContextually(const ATV& atv, ValidationState& state);
-
   bool checkContextually(const VTB& vtb, ValidationState& state);
+  bool checkContextually(const VbkBlock& block, ValidationState& state);
 
 
   /**
