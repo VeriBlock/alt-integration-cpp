@@ -46,17 +46,21 @@ struct AddEndorsement : public Command {
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     if (!endorsed) {
-      return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
-                           "Endorsed block not found in the tree");
+      return state.Invalid(
+          protected_block_t::name() + "-no-endorsed-block",
+          fmt::sprintf("Endorsed block=%s not found in the tree",
+                       HexStr(e_->endorsedHash)));
     }
 
-    if (!containing->isDescendantOf(*endorsed)) {
+    auto actualEndorsed = containing->getAncestor(endorsed->getHeight());
+    if (actualEndorsed == nullptr || endorsed != actualEndorsed) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
               "Endorsed block is on a different chain. Expected: %s, got %s",
               endorsed->toShortPrettyString(),
-              HexStr(e_->endorsedHash)));
+              (actualEndorsed ? actualEndorsed->toShortPrettyString()
+                              : "nullptr")));
     }
 
     if (containing->getHeight() - endorsed->getHeight() >

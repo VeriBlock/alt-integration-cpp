@@ -127,6 +127,10 @@ struct PopStateMachine {
 
           if (continueOnInvalid_) {
             removePayloadsFromIndex<block_t>(payloadsIndex_, index, *cgroup);
+            VBK_LOG_INFO("%s=%s can't be connected: %s",
+                         *cgroup->payload_type_name,
+                         HexStr(cgroup->id),
+                         state.toString());
             state.clear();
             continue;
           }
