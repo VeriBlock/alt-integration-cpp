@@ -1355,8 +1355,8 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   applyInNextBlock(popData);
 }
 
-// Test scenrio when we have added into the mempool some statefull invalid
-// payloads (duplicate) and they shoud be removed from the inFlight storage
+// Test scenrio when we have added into the mempool some statefully invalid
+// payloads (duplicates) and they should be removed from the inFlight storage
 // later
 TEST_F(MemPoolFixture, getPop_scenario_14) {
   popminer->mineBtcBlocks(100);

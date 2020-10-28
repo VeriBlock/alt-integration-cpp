@@ -302,7 +302,7 @@ struct MemPool {
       auto& pl = *it->second;
       ValidationState state;
       auto valid = mempool_tree_.checkContextually(pl, state);
-      it = valid ? c.erase(it) : std::next(it);
+      it = !valid ? c.erase(it) : std::next(it);
     }
   }
 
