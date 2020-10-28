@@ -53,13 +53,14 @@ struct AddEndorsement : public Command {
     }
 
     auto actualEndorsed = containing->getAncestor(endorsed->getHeight());
-    if (endorsed != actualEndorsed) {
+    if (actualEndorsed == nullptr || endorsed != actualEndorsed) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
           fmt::sprintf(
               "Endorsed block is on a different chain. Expected: %s, got %s",
               endorsed->toShortPrettyString(),
-              actualEndorsed->toShortPrettyString()));
+              (actualEndorsed ? actualEndorsed->toShortPrettyString()
+                              : "nullptr")));
     }
 
     if (containing->getHeight() - endorsed->getHeight() >

@@ -132,7 +132,8 @@ TEST_F(PopContextFixture, A) {
     ASSERT_TRUE(local.acceptBlock(containing->getHeader(), state));
     payloadsProvider.write(vtbs);
     ASSERT_TRUE(
-        local.addPayloads(containing->getHeader().getHash(), {vtbs}, state));
+        local.addPayloads(containing->getHeader().getHash(), {vtbs}, state))
+        << state.toString();
   };
 
   // and now accept VBK tip again, with VTBs
@@ -158,5 +159,6 @@ TEST_F(PopContextFixture, A) {
             remote.btc().getBestChain().tip()->getHash());
 
   // but now we know blocks from chain A
-  ASSERT_TRUE(local.btc().getBlockIndex(chainAtip->getHash()));
+  ASSERT_TRUE(local.btc().getBlockIndex(chainAtip->getHash()))
+      << state.toString();
 }
