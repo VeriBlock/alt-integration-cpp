@@ -193,7 +193,16 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
 
   std::vector<BtcBlock> context = tx.blockOfProofContext;
   context.push_back(tx.blockOfProof);
-  BlockIndex<BtcBlock>* connectingIndex = nullptr;
+
+  BlockIndex<BtcBlock>* connectingIndex =
+      btc().getBlockIndex(context.back().getHash());
+  if (connectingIndex) {
+    // blockOfProof already exists on chain, it means that all previous blocks
+    // are already present in BTC chain
+    return true;
+  }
+
+  // attempt to find last existing BTC block
   for (auto& it : context) {
     auto* index = btc().getBlockIndex(it.getHash());
     if (index == nullptr) {
@@ -201,6 +210,11 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
     }
 
     connectingIndex = index;
+  }
+
+  // attempt to use prev block of context[0] as connecting index
+  if (connectingIndex == nullptr) {
+    connectingIndex = btc().getBlockIndex(context.front().getPreviousBlock());
   }
 
   if (!connectingIndex) {
