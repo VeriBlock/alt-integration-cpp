@@ -13,18 +13,18 @@ bool MemPoolBlockTree::acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
 
 bool MemPoolBlockTree::checkContextually(const VbkBlock& block,
                                          ValidationState& state) {
+  auto& vbkstable = vbk().getStableTree();
   auto hash = block.getHash();
-  auto index = vbk().getBlockIndex(hash);
+  auto index = vbkstable.getBlockIndex(hash);
   if (index) {
     // duplicate
     return state.Invalid("duplicate");
   }
 
-  auto& stableVbk = vbk().getStableTree();
-  bool tooOld = stableVbk.getBestChain().tip()->getHeight() -
-                    stableVbk.getParams().getMaxReorgBlocks() >
+  bool tooOld = vbkstable.getBestChain().tip()->getHeight() -
+                    vbkstable.getParams().getMaxReorgBlocks() >
                 block.getHeight();
-  if(tooOld) {
+  if (tooOld) {
     return state.Invalid("too-old");
   }
 
