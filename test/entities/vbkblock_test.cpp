@@ -83,6 +83,13 @@ TEST(VbkBlock, RoundTripNew) {
   EXPECT_EQ(blockReEncoded, defaultBlockEncoded);
 }
 
+TEST(VbkBlock, RoundTripWithHash) {
+  const auto blockEncoded = defaultBlock.toRawAddHash();
+  auto bytes = std::string(blockEncoded.begin(), blockEncoded.end());
+  auto decoded = VbkBlock::fromRawAddHash(bytes);
+  EXPECT_EQ(decoded, defaultBlock);
+}
+
 TEST(VbkBlock, getBlockHash_test) {
   VbkBlock block;
   block.setHeight(5000);
