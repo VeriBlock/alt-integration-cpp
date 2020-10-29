@@ -58,6 +58,28 @@ std::vector<uint8_t> VbkBlock::toVbkEncoding() const {
   return stream.data();
 }
 
+void VbkBlock::toRawAddHash(WriteStream& stream) const {
+  toRaw(stream);
+  stream.write(getHash());
+}
+
+std::vector<uint8_t> VbkBlock::toRawAddHash() const {
+  WriteStream stream;
+  toRawAddHash(stream);
+  return stream.data();
+}
+
+VbkBlock VbkBlock::fromRawAddHash(ReadStream& stream) {
+  auto block = VbkBlock::fromRaw(stream);
+  block.hash_ = stream.readSlice(VBLAKE_BLOCK_HASH_SIZE);
+  return block;
+}
+
+VbkBlock VbkBlock::fromRawAddHash(const std::string& bytes) {
+  ReadStream stream(bytes);
+  return fromRawAddHash(stream);
+}
+
 uint32_t VbkBlock::getDifficulty() const { return difficulty; }
 
 uint32_t VbkBlock::getBlockTime() const { return timestamp; }

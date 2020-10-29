@@ -106,6 +106,35 @@ struct VbkBlock {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  /**
+   * Convert VbkBlock to bytes data using VbkBlock basic byte format. Add hash
+   * to serialized bytes.
+   * @param stream data stream to write into
+   */
+  void toRawAddHash(WriteStream& stream) const;
+
+  /**
+   * Convert VbkBlock to bytes data using VbkBlock basic byte format. Add hash
+   * to serialized bytes.
+   * @return bytes data
+   */
+  std::vector<uint8_t> toRawAddHash() const;
+
+  /**
+   * Read VBK data plus hash from the stream and convert it to VbkBlock
+   * @param stream data stream to read from
+   * @return VbkBlock
+   */
+  static VbkBlock fromRawAddHash(ReadStream& stream);
+
+  /**
+   * Read VBK data plus hash from the string representation
+   * and convert it to VbkBlock.
+   * @param bytes data bytes to read from
+   * @return VbkBlock
+   */
+  static VbkBlock fromRawAddHash(const std::string& bytes);
+
   /*
    * Getter for difficulty
    * @return block difficulty
