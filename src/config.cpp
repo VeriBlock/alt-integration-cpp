@@ -52,16 +52,16 @@ static std::shared_ptr<altintegration::BtcChainParams> ParseBtcNetwork(
 }
 
 void Config::SelectBtcParams(std::string net,
-                     int startHeight,
-                     const std::vector<std::string>& blocks) {
+                             int startHeight,
+                             const std::vector<std::string>& blocks) {
   auto param = ParseBtcNetwork(std::move(net));
   VBK_ASSERT_MSG(param, "BTC network can be either main/test/regtest");
   setBTC(startHeight, blocks, param);
 }
 
 void Config::SelectVbkParams(std::string net,
-                     int startHeight,
-                     const std::vector<std::string>& blocks) {
+                             int startHeight,
+                             const std::vector<std::string>& blocks) {
   auto param = ParseVbkNetwork(std::move(net));
   VBK_ASSERT_MSG(param, "VBK network can be either main/test/regtest/alpha");
   setVBK(startHeight, blocks, param);
@@ -102,7 +102,8 @@ void Config::validate() const {
       throw std::invalid_argument(
           "Config: you have to specify at least " +
           std::to_string(vbk.params->numBlocksForBootstrap()) +
-          " VBK blocks to bootstrap.");
+          " VBK blocks to bootstrap. Current size: " +
+          std::to_string(vbk.blocks.size()));
     }
 
     if (!checkVbkBlocks(vbk.blocks, state, *vbk.params)) {
@@ -114,7 +115,9 @@ void Config::validate() const {
     if (vbk.startHeight != vbk.blocks[0].getHeight()) {
       throw std::invalid_argument(
           "Config: vbk startHeight does not match height of first VBK "
-          "bootstrap block");
+          "bootstrap block. StartHeight height: " +
+          std::to_string(vbk.startHeight) +
+          ", current heigth: " + std::to_string(vbk.blocks[0].getHeight()));
     }
   }
 
@@ -123,7 +126,8 @@ void Config::validate() const {
       throw std::invalid_argument(
           "Config: you have to specify at least " +
           std::to_string(btc.params->numBlocksForBootstrap()) +
-          " BTC blocks to bootstrap.");
+          " BTC blocks to bootstrap. Current size: " +
+          std::to_string(btc.blocks.size()));
     }
 
     if (!checkBtcBlocks(btc.blocks, state, *btc.params)) {
@@ -134,16 +138,10 @@ void Config::validate() const {
   }
 }
 
-const BtcChainParams& Config::getBtcParams() const {
-  return *btc.params;
-}
+const BtcChainParams& Config::getBtcParams() const { return *btc.params; }
 
-const VbkChainParams& Config::getVbkParams() const {
-  return *vbk.params;
-}
+const VbkChainParams& Config::getVbkParams() const { return *vbk.params; }
 
-const AltChainParams& Config::getAltParams() const {
-  return *alt;
-}
+const AltChainParams& Config::getAltParams() const { return *alt; }
 
 }  // namespace altintegration
