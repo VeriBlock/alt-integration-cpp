@@ -104,21 +104,24 @@ bool MemPoolBlockTree::acceptVTB(
       "containingBlock should be equal to the vtb containingBlock block");
 
   if (!checkContextually(vtb, state)) {
-    return false;
+    return state.Invalid("vtb-contextual");
   }
 
   if (!this->temp_vbk_tree_.acceptBlock(containingBlock, state)) {
-    return false;
+    return state.Invalid("bad-containing-block");
   }
 
+  size_t i = 0;
   for (const auto& blk : vtb.transaction.blockOfProofContext) {
     if (!temp_btc_tree_.acceptBlock(blk, state)) {
-      return false;
+      return state.Invalid("bad-block-of-proof-context", i);
     }
+
+    i++;
   }
 
   if (!temp_btc_tree_.acceptBlock(vtb.transaction.blockOfProof, state)) {
-    return false;
+    return state.Invalid("bad-block-of-proof");
   }
 
   return true;
@@ -132,11 +135,11 @@ bool MemPoolBlockTree::acceptATV(const ATV& atv,
       "containingBlock should be equal to the atv blockOfProof block");
 
   if (!checkContextually(atv, state)) {
-    return false;
+    return state.Invalid("atv-contextual");
   }
 
   if (!temp_vbk_tree_.acceptBlock(blockOfProof, state)) {
-    return false;
+    return state.Invalid("bad-block-of-proof");
   }
 
   return true;

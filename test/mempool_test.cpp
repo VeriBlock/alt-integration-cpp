@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <vector>
+#include <veriblock/alt-util.hpp>
 
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
@@ -1412,4 +1413,186 @@ TEST_F(MemPoolFixture, getPop_scenario_14) {
 
   EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   EXPECT_EQ(mempool->getInFlightMap<VTB>().size(), 0);
+}
+
+TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
+  // scenario:
+  // [1..(10)] = BTC context from BTC1 to BTC9. BTC10 is block of proof
+  // VBK8  contains VTB0 with BTC[1..(6)]
+  // VBK9  contains VTB1 with BTC[8..(9)]
+  // VBK10 contains VTB2 with BTC[7..(11)]
+  // send all VBK blocks first -> expect them to connect
+  // send VTB0 -> expect it to connect
+  // send VTB2 -> expect it to connect
+  // send VTB1 -> expect it to connect (!!!)
+
+  /// First, prepare VTB0, VTB1, VTB2
+  auto vbkendorsed = popminer->mineVbkBlocks(7);
+  auto btctx0 =
+      popminer->createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
+  auto btctx1 =
+      popminer->createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
+  auto btctx2 =
+      popminer->createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
+
+  // mine BTC1..5
+  popminer->mineBtcBlocks(5);
+  // mine VTB0 block of proof
+  popminer->btcmempool.push_back(btctx0);
+  auto btc6 = popminer->mineBtcBlocks(1);
+  ASSERT_EQ(btc6->getHeight(), 6);
+  auto btc7 = popminer->mineBtcBlocks(1);
+  // BTC8
+  popminer->mineBtcBlocks(1);
+  // mine VTB1 block of proof
+  popminer->btcmempool.push_back(btctx1);
+  auto btc9 = popminer->mineBtcBlocks(1);
+  ASSERT_EQ(btc9->getHeight(), 9);
+  // BTC10
+  popminer->mineBtcBlocks(1);
+  // mine VTB2 block of proof
+  popminer->btcmempool.push_back(btctx2);
+  auto btc11 = popminer->mineBtcBlocks(1);
+  ASSERT_EQ(btc11->getHeight(), 11);
+
+  // create POP TX for VTB0
+  auto poptx0 =
+      popminer->createVbkPopTxEndorsingVbkBlock(btc6->getHeader(),
+                                                btctx0,
+                                                vbkendorsed->getHeader(),
+                                                // equals to genesis
+                                                getLastKnownBtcBlock());
+  // create POP TX for VTB1
+  auto poptx1 =
+      popminer->createVbkPopTxEndorsingVbkBlock(btc9->getHeader(),
+                                                btctx1,
+                                                vbkendorsed->getHeader(),
+                                                // context starts at 8
+                                                btc7->getHash());
+  // create POP TX for VTB2
+  auto poptx2 =
+      popminer->createVbkPopTxEndorsingVbkBlock(btc11->getHeader(),
+                                                btctx2,
+                                                vbkendorsed->getHeader(),
+                                                // context starts at 8
+                                                btc6->getHash());
+
+  // apply VTB0 in VBK8
+  auto vtb0containing = popminer->applyVTB(
+      vbkendorsed->getHash(), popminer->vbk(), poptx0, state);
+  auto& VTB0 = popminer->vbkPayloads.at(vtb0containing.getHash()).at(0);
+  // apply VTB1 in VBK9
+  auto vtb1containing = popminer->applyVTB(
+      vtb0containing.getHash(), popminer->vbk(), poptx1, state);
+  auto& VTB1 = popminer->vbkPayloads.at(vtb1containing.getHash()).at(0);
+  // apply VTB2 in VBK10
+  auto vtb2containing = popminer->applyVTB(
+      vtb1containing.getHash(), popminer->vbk(), poptx2, state);
+  auto& VTB2 = popminer->vbkPayloads.at(vtb2containing.getHash()).at(0);
+
+  /// All set up. Check that env is correct
+  {
+    ASSERT_EQ(VTB0.containingBlock.getHeight(), 8);
+    ASSERT_EQ(VTB0.transaction.blockOfProof.getHash(), btc6->getHash());
+    ASSERT_EQ(VTB0.transaction.blockOfProofContext.size(), 5 /*1..5*/);
+
+    ASSERT_EQ(VTB1.containingBlock.getHeight(), 9);
+    ASSERT_EQ(VTB1.transaction.blockOfProof.getHash(), btc9->getHash());
+    ASSERT_EQ(VTB1.transaction.blockOfProofContext.size(), 1 /*8*/);
+
+    ASSERT_EQ(VTB2.containingBlock.getHeight(), 10);
+    ASSERT_EQ(VTB2.transaction.blockOfProof.getHash(), btc11->getHash());
+    ASSERT_EQ(VTB2.transaction.blockOfProofContext.size(), 4 /*7..10*/);
+  }
+
+  /// Send VTB0 (expect to fail stateful validation), then send connecting VBK
+  /// blocks (expect them to connect VTB0)
+  {
+    // add to mempool
+    ASSERT_FALSE(mempool->submit<VTB>(VTB0, state)) << state.toString();
+    state.clear();
+    auto vbkContext0 =
+        getContext(popminer->vbk(), VTB0.containingBlock.getHash(), 8);
+    for (auto& block : reverse_iterate(vbkContext0)) {
+      ASSERT_TRUE(mempool->submit<VbkBlock>(block, state));
+    }
+    // mine VTB0 to ALT1
+    mineAltBlocks(1, chain, false, false);
+    auto pop0 = mempool->getPop();
+    ASSERT_EQ(pop0.vtbs.size(), 1);
+    ASSERT_EQ(pop0.vtbs.at(0), VTB0);
+    ASSERT_EQ(pop0.atvs.size(), 0);
+    ASSERT_EQ(pop0.context.size(), 8);
+    // activate ALT1
+    ASSERT_TRUE(AddPayloads(alttree, chain.back().getHash(), pop0));
+    ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
+    // verify last known BTC/VBK
+    ASSERT_EQ(getLastKnownBtcBlock(), btc6->getHash());
+    ASSERT_EQ(getLastKnownVbkBlock(), vtb0containing.getHash());
+
+    // remove accepted data from mempool
+    mempool->removeAll(pop0);
+  }
+
+  /// Send VBK context + VTB2; expect to be connected
+  {
+    // add to mempool
+    ASSERT_FALSE(mempool->submit<VTB>(VTB2, state)) << state.toString();
+    state.clear();
+    auto vbkContext2 =
+        getContext(popminer->vbk(), VTB2.containingBlock.getHash(), 2);
+    for (auto& block : reverse_iterate(vbkContext2)) {
+      ASSERT_TRUE(mempool->submit<VbkBlock>(block, state));
+    }
+
+    // mine VTB2 in ALT2
+    mineAltBlocks(1, chain, false, false);
+    auto pop2 = mempool->getPop();
+    ASSERT_EQ(pop2.vtbs.size(), 1);
+    ASSERT_EQ(pop2.vtbs.at(0), VTB2);
+    ASSERT_EQ(pop2.atvs.size(), 0);
+    ASSERT_EQ(pop2.context.size(), 2);
+
+    // activate ALT2
+    ASSERT_TRUE(AddPayloads(alttree, chain.back().getHash(), pop2));
+    ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
+    // verify last known BTC/VBK
+    ASSERT_EQ(getLastKnownBtcBlock(), btc11->getHash());
+    ASSERT_EQ(getLastKnownVbkBlock(), vtb2containing.getHash());
+
+    // remove accepted data from mempool
+    mempool->removeAll(pop2);
+  }
+
+  /// Send VTB1, expect it to connect
+  {
+    // add to mempool
+    ASSERT_TRUE(mempool->submit<VTB>(VTB1, state)) << state.toString();
+
+    // mine VTB1 in ALT3
+    mineAltBlocks(1, chain, false, false);
+    auto pop1 = mempool->getPop();
+    ASSERT_EQ(pop1.vtbs.size(), 1);
+    ASSERT_EQ(pop1.vtbs.at(0), VTB1);
+    ASSERT_EQ(pop1.atvs.size(), 0);
+    ASSERT_EQ(pop1.context.size(), 0);
+
+    // activate ALT3
+    ASSERT_TRUE(AddPayloads(alttree, chain.back().getHash(), pop1));
+    ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
+    // verify last known BTC/VBK
+    ASSERT_EQ(getLastKnownBtcBlock(), btc11->getHash());
+    ASSERT_EQ(getLastKnownVbkBlock(), vtb2containing.getHash());
+
+    // remove accepted data from mempool
+    mempool->removeAll(pop1);
+  }
+
+  // at this point mempool must be empty
+  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
+  ASSERT_TRUE(mempool->getMap<VTB>().empty());
+  ASSERT_TRUE(mempool->getMap<ATV>().empty());
+  ASSERT_TRUE(mempool->getInFlightMap<VbkBlock>().empty());
+  ASSERT_TRUE(mempool->getInFlightMap<VTB>().empty());
+  ASSERT_TRUE(mempool->getInFlightMap<ATV>().empty());
 }

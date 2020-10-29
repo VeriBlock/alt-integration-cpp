@@ -195,6 +195,7 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
   context.push_back(tx.blockOfProof);
 
   auto* connectingIndex = btc().getBlockIndex(context.back().getHash());
+  connectingIndex = nullptr;
   if (connectingIndex) {
     // blockOfProof already exists on chain, it means that all previous blocks
     // are already present in BTC chain
@@ -228,16 +229,22 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                          "block of the VTB context");
   }
 
-  return true;
-  // TODO: fix
-//  bool isValid = std::any_of(connectingIndex->getRefs().begin(),
-//                             connectingIndex->getRefs().end(),
-//                             [&](BtcTree::index_t::ref_height_t height) {
-//                               return height <= vtb.containingBlock.getHeight();
-//                             });
-//
-//  return isValid ? true
-//                 : state.Invalid("vtb-btc-context-block-referenced-too-early");
+  bool isValid = std::any_of(connectingIndex->getRefs().begin(),
+                             connectingIndex->getRefs().end(),
+                             [&](BtcTree::index_t::ref_height_t height) {
+                               return height <= vtb.containingBlock.getHeight();
+                             });
+
+  fmt::printf("VTB=%s refs=%s containingHeight=%d\n",
+              vtb.getId().toHex(),
+              fmt::format("{}",
+                          fmt::join(connectingIndex->getRefs().begin(),
+                                    connectingIndex->getRefs().end(),
+                                    ",")),
+              vtb.containingBlock.getHeight());
+
+  return isValid ? true
+                 : state.Invalid("vtb-btc-context-block-referenced-too-early");
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
