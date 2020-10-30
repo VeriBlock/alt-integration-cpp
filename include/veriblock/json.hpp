@@ -83,6 +83,17 @@ void putIntKV(Object& /*object to modify*/,
 }
 
 /**
+ * Sets a key-value pair where `value` is `double`.
+ * @tparam Object
+ */
+template <typename Object>
+void putDoubleKV(Object& object,
+                 const std::string& key,
+                 double value) {
+  json::putKV(object, key, ToJSON<Object>(value));
+}
+
+/**
  * Sets `object[key] = null`
  * @tparam Object
  */

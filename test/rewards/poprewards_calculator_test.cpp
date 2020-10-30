@@ -31,7 +31,7 @@ TEST_F(RewardsCalculatorTestFixture, basicReward_test) {
   auto minerReward = rewardsCalculator.calculateMinerReward(
       0, defaultScore, blockReward);
   ASSERT_TRUE(minerReward > 0.0);
-  ASSERT_EQ(minerReward, chainParams.getRewardParams().roundRatios()[height]);
+  ASSERT_EQ(minerReward, chainParams.getPayoutParams().roundRatios()[height]);
 
   // score < 1.0 is on the flat reward rate
   PopRewardsBigDecimal halfScore = defaultScore / 2.0;

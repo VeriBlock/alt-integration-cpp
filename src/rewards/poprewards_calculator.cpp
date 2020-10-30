@@ -9,7 +9,7 @@
 
 namespace altintegration {
 
-static bool isKeystoneRound(const PopRewardsParams& rewardParams,
+static bool isKeystoneRound(const PopPayoutsParams& rewardParams,
                             uint32_t payoutRound) {
   return payoutRound == rewardParams.keystoneRound();
 }
@@ -18,19 +18,19 @@ static bool isKeystoneRound(const PopRewardsParams& rewardParams,
 static bool isFirstRoundAfterKeystone(const AltChainParams& altParams,
                                       uint32_t height) {
   uint32_t blockAfterKeystone = height % altParams.getKeystoneInterval();
-  if (altParams.getRewardParams().payoutRounds() == 0) {
+  if (altParams.getPayoutParams().payoutRounds() == 0) {
     return true;
   }
-  return blockAfterKeystone / altParams.getRewardParams().payoutRounds() == 0;
+  return blockAfterKeystone / altParams.getPayoutParams().payoutRounds() == 0;
 }
 
-static PopRewardsBigDecimal getRoundRatio(const PopRewardsParams& rewardParams,
+static PopRewardsBigDecimal getRoundRatio(const PopPayoutsParams& rewardParams,
                                           uint32_t payoutRound) {
   return rewardParams.roundRatios().at(payoutRound);
 }
 
 static PopRewardsBigDecimal getMaxScoreThreshold(
-    const PopRewardsParams& rewardParams, uint32_t payoutRound) {
+    const PopPayoutsParams& rewardParams, uint32_t payoutRound) {
   if (isKeystoneRound(rewardParams, payoutRound)) {
     return rewardParams.maxScoreThresholdKeystone();
   }
@@ -38,7 +38,7 @@ static PopRewardsBigDecimal getMaxScoreThreshold(
 }
 
 // slope is how the payout is decreased for each additional block score
-static PopRewardsBigDecimal getRoundSlope(const PopRewardsParams& params,
+static PopRewardsBigDecimal getRoundSlope(const PopPayoutsParams& params,
                                           uint32_t payoutRound) {
   auto slopeRatio = params.slopeNormal();
   if (payoutRound == params.keystoneRound()) {
@@ -50,7 +50,7 @@ static PopRewardsBigDecimal getRoundSlope(const PopRewardsParams& params,
 // apply the reward curve to the score and subtract it from the current round
 // multiplier
 static PopRewardsBigDecimal calculateSlopeRatio(
-    const PopRewardsParams& params,
+    const PopPayoutsParams& params,
     const PopRewardsBigDecimal& score,
     uint32_t payoutRound) {
   const auto& slope = getRoundSlope(params, payoutRound);
@@ -66,7 +66,7 @@ static PopRewardsBigDecimal calculateSlopeRatio(
 
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
 uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
-  const PopRewardsParams& params = altParams_->getRewardParams();
+  const PopPayoutsParams& params = altParams_->getPayoutParams();
   if (height % altParams_->getKeystoneInterval() == 0) {
     return params.keystoneRound();
   }
@@ -83,7 +83,7 @@ uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
 
 PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
     int relativeBlock) const {
-  auto table = altParams_->getRewardParams().relativeScoreLookupTable();
+  auto table = altParams_->getPayoutParams().relativeScoreLookupTable();
   if (relativeBlock < 0 || relativeBlock >= static_cast<int>(table.size())) {
     return 0.0;
   }
@@ -95,7 +95,7 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateBlockReward(
     uint32_t height,
     PopRewardsBigDecimal popscore,
     PopRewardsBigDecimal popdifficulty) const {
-  const auto& params = altParams_->getRewardParams();
+  const auto& params = altParams_->getPayoutParams();
   uint32_t payoutRound = getRoundForBlockNumber(height);
 
   if (params.useFlatScoreRound() && payoutRound == params.flatScoreRound() &&

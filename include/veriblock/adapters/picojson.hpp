@@ -27,6 +27,26 @@ inline picojson::value ToJSON(const std::string& t) {
   return picojson::value(t);
 }
 
+template <>
+inline picojson::value ToJSON(const int& t) {
+  return picojson::value((int64_t)t);
+}
+
+template <>
+inline picojson::value ToJSON(const double& t) {
+  return picojson::value(t);
+}
+
+template <>
+inline picojson::value ToJSON(const unsigned int& t) {
+  return picojson::value((int64_t)t);
+}
+
+template <>
+inline picojson::value ToJSON(const picojson::value& t) {
+  return t;
+}
+
 namespace json {
 
 template <>
