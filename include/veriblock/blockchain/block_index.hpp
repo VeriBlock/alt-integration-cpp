@@ -291,8 +291,9 @@ struct BlockIndex : public Block::addon_t {
     return fromRaw(stream);
   }
 
-  template <typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value)>::type>
+  template <bool EnableBool = true,
+            typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
   void toRawAddHash(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
     header->toRawAddHash(stream);
@@ -308,8 +309,9 @@ struct BlockIndex : public Block::addon_t {
     return stream.data();
   }
 
-  template <typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value)>::type>
+  template <bool EnableBool = true,
+            typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
   void initFromRawAddHash(ReadStream& stream) {
     height = stream.readBE<uint32_t>();
     header = std::make_shared<VbkBlock>(VbkBlock::fromRawAddHash(stream));
@@ -318,16 +320,18 @@ struct BlockIndex : public Block::addon_t {
     setDirty();
   }
 
-  template <typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value)>::type>
+  template <bool EnableBool = true,
+            typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
   static BlockIndex fromRawAddHash(ReadStream& stream) {
     BlockIndex index{};
     index.initFromRawAddHash(stream);
     return index;
   }
 
-  template <typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value)>::type>
+  template <bool EnableBool = true,
+            typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
   static BlockIndex fromRawAddHash(Slice<const uint8_t> bytes) {
     ReadStream stream(bytes);
     return fromRawAddHash(stream);
