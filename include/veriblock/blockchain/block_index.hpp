@@ -350,20 +350,6 @@ struct BlockIndex : public Block::addon_t {
 
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;
-
-  /*void initFromRawVbkAddHash(ReadStream& stream) {
-    height = stream.readBE<uint32_t>();
-    header = std::make_shared<VbkBlock>(VbkBlock::fromRawAddHash(stream));
-    status = stream.readBE<uint32_t>();
-    addon_t::initAddonFromRaw(stream);
-    setDirty();
-  }*/
-
-  /*void initAddonFromRawVbk(ReadStream& r) {
-    addon_t::initAddonFromRaw(r);
-  }
-
-  friend BlockIndex<VbkBlock> fromRawVbkAddHash(ReadStream& stream);*/
 };
 
 /**
@@ -404,36 +390,6 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
   json::putIntKV(obj, "status", i.status);
   return obj;
 }
-
-/*inline BlockIndex<VbkBlock> fromRawVbkAddHash(ReadStream& stream) {
-  using addon_t = typename VbkBlock::addon_t;
-  BlockIndex<VbkBlock> index{};
-  index.height = stream.readBE<uint32_t>();
-  index.header = std::make_shared<VbkBlock>(VbkBlock::fromRawAddHash(stream));
-  index.status = stream.readBE<uint32_t>();
-  index.initAddonFromRawVbk(stream);
-  index.setDirty();
-  return index;
-}
-
-inline BlockIndex<VbkBlock> fromRawVbkAddHash(Slice<const uint8_t> bytes) {
-  ReadStream stream(bytes);
-  return fromRawVbkAddHash(stream);
-}
-
-inline void toRawAddHash(BlockIndex<VbkBlock> index, WriteStream& stream) {
-  using addon_t = typename VbkBlock::addon_t;
-  stream.writeBE<uint32_t>(index.getHeight());
-  index.getHeader().toRawAddHash(stream);
-  stream.writeBE<uint32_t>(index.getStatus());
-  ((addon_t) index).toRaw(stream);
-}
-
-inline std::vector<uint8_t> toRawAddHash(BlockIndex<VbkBlock> index) {
-  WriteStream stream;
-  toRawAddHash(index, stream);
-  return stream.data();
-}*/
 
 }  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_
