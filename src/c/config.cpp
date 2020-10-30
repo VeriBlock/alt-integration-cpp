@@ -102,44 +102,44 @@ bool VBK_SelectBtcParams(Config_t* config,
 }
 
 void VBK_SetStartOfSlope(Config_t* params, double val) {
-  params->config->alt->mPopRewardsParams->mStartOfSlope = val;
+  params->config->alt->mPopPayoutsParams->mStartOfSlope = val;
 }
 void VBK_SetSlopeNormal(Config_t* params, double val) {
-  params->config->alt->mPopRewardsParams->mSlopeNormal = val;
+  params->config->alt->mPopPayoutsParams->mSlopeNormal = val;
 }
 void VBK_SetSlopeKeystone(Config_t* params, double val) {
-  params->config->alt->mPopRewardsParams->mSlopeKeystone = val;
+  params->config->alt->mPopPayoutsParams->mSlopeKeystone = val;
 }
 void VBK_SetKeystoneRound(Config_t* params, uint32_t val) {
-  params->config->alt->mPopRewardsParams->mKeystoneRound = val;
+  params->config->alt->mPopPayoutsParams->mKeystoneRound = val;
 }
 void VBK_SetFlatScoreRound(Config_t* params, uint32_t val) {
-  params->config->alt->mPopRewardsParams->mFlatScoreRound = val;
+  params->config->alt->mPopPayoutsParams->mFlatScoreRound = val;
 }
 void VBK_SetUseFlatScoreRound(Config_t* params, bool val) {
-  params->config->alt->mPopRewardsParams->mUseFlatScoreRound = val;
+  params->config->alt->mPopPayoutsParams->mUseFlatScoreRound = val;
 }
 void VBK_SetMaxScoreThresholdNormal(Config_t* params, double val) {
-  params->config->alt->mPopRewardsParams->mMaxScoreThresholdNormal = val;
+  params->config->alt->mPopPayoutsParams->mMaxScoreThresholdNormal = val;
 }
 void VBK_SetMaxScoreThresholdKeystone(Config_t* params, double val) {
-  params->config->alt->mPopRewardsParams->mMaxScoreThresholdKeystone = val;
+  params->config->alt->mPopPayoutsParams->mMaxScoreThresholdKeystone = val;
 }
 void VBK_SetDifficultyAveragingInterval(Config_t* params, uint32_t val) {
-  params->config->alt->mPopRewardsParams->mDifficultyAveragingInterval = val;
+  params->config->alt->mPopPayoutsParams->mDifficultyAveragingInterval = val;
 }
 void VBK_SetRoundRatios(Config_t* params, const double* vals, int valslen) {
-  params->config->alt->mPopRewardsParams->mRoundRatios =
+  params->config->alt->mPopPayoutsParams->mRoundRatios =
       std::vector<double>{vals, vals + valslen};
 }
 void VBK_SetPopRewardsLookupTable(Config_t* params,
                                   const double* vals,
                                   int valslen) {
-  params->config->alt->mPopRewardsParams->mLookupTable =
+  params->config->alt->mPopPayoutsParams->mLookupTable =
       std::vector<double>{vals, vals + valslen};
 }
 void VBK_SetMaxFutureBlockTime(Config_t* params, uint32_t val) {
-  params->config->alt->mMaxFutureBlockTime = val;
+  params->config->alt->mMaxAltchainFutureBlockTime = val;
 }
 void VBK_SetKeystoneInterval(Config_t* params, uint32_t val) {
   params->config->alt->mKeystoneInterval = val;

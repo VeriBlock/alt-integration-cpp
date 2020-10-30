@@ -21,7 +21,7 @@ struct PopRewardsCache : public PopRewards {
       : PopRewards(altParams, vbk_tree),
         altParams_(&altParams),
         vbkTree_(&vbk_tree),
-        history_(altParams.getRewardParams().difficultyAveragingInterval() *
+        history_(altParams.getPayoutParams().difficultyAveragingInterval() *
                  2) {}
 
   virtual ~PopRewardsCache() = default;

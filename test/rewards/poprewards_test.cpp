@@ -94,7 +94,7 @@ TEST_F(RewardsTestFixture, basicReward_test) {
       sampleCalculator->getRoundForBlockNumber(endorsedBlock.height);
   ASSERT_EQ(payouts.begin()->second,
             (int64_t)PopRewardsBigDecimal::decimals *
-                altparam.getRewardParams().roundRatios()[payoutBlockRound]);
+                altparam.getPayoutParams().roundRatios()[payoutBlockRound]);
   // keystone payout is 3 reward points
   ASSERT_NEAR(
       ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
@@ -111,7 +111,7 @@ TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
-            altparam.getRewardParams().keystoneRound());
+            altparam.getPayoutParams().keystoneRound());
   // and total miners' reward is 5.1 reward points
   ASSERT_NEAR(
       ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
@@ -128,7 +128,7 @@ TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
-            altparam.getRewardParams().keystoneRound());
+            altparam.getPayoutParams().keystoneRound());
   // and total miners' reward is 5.1 reward points
   ASSERT_NEAR(
       ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
@@ -150,7 +150,7 @@ TEST_F(RewardsTestFixture, largeFlatReward_test) {
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
-            altparam.getRewardParams().flatScoreRound());
+            altparam.getPayoutParams().flatScoreRound());
   // and total miners' reward is 1.07 reward points
   ASSERT_NEAR(
       ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
@@ -172,7 +172,7 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
-            altparam.getRewardParams().flatScoreRound());
+            altparam.getPayoutParams().flatScoreRound());
   // and total miners' reward is 1.07 reward points
   ASSERT_NEAR(
       ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
@@ -190,7 +190,9 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
 
   EXPECT_EQ(altchain.back().height, 101);
   EXPECT_EQ(sampleRewards->scoreFromEndorsements(*endorsedIndex), 1.0);
-  mineAltBlocks(altparam.getPopPayoutDelay() - (101 - 95), altchain, true);
+  mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95),
+                altchain,
+                true);
 
   auto payouts = alttree.getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
@@ -240,7 +242,9 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
 
   EXPECT_EQ(altchain.back().height, 101);
   EXPECT_EQ(sampleRewards->scoreFromEndorsements(*endorsedIndex), 1.0);
-  mineAltBlocks(altparam.getPopPayoutDelay() - (101 - 95), altchain, true);
+  mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95),
+                altchain,
+                true);
 
   auto payouts = alttree.getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);

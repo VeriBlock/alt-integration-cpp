@@ -22,12 +22,12 @@
 namespace altintegration {
 
 /**
- * @struct PopRewardsParams
+ * @struct PopPayoutParams
  *
- * Defines config for POP rewards.
+ * Defines config for POP payouts.
  * @ingroup config, interfaces
  */
-struct PopRewardsParams {
+struct PopPayoutsParams {
   //! we start decreasing rewards after this score
   double startOfSlope() const noexcept { return mStartOfSlope; }
 
@@ -80,6 +80,10 @@ struct PopRewardsParams {
     return mLookupTable;
   }
 
+  //! number of blocks in ALT between endorsed block and payout block
+  int32_t getPopPayoutDelay() const noexcept { return mPopPayoutDelay; }
+
+  // it is public for C wrapper
  public:
   double mStartOfSlope = 1.0;
   double mSlopeNormal = 0.2;
@@ -91,6 +95,7 @@ struct PopRewardsParams {
   double mMaxScoreThresholdNormal = 2.0;
   double mMaxScoreThresholdKeystone = 3.0;
   uint32_t mDifficultyAveragingInterval = 50;
+  int32_t mPopPayoutDelay = 50;
 
   std::vector<double> mRoundRatios{0.97, 1.03, 1.07, 3.00};
 
@@ -105,6 +110,28 @@ struct PopRewardsParams {
       0.02627801, 0.02544253, 0.02465739, 0.02391820, 0.02322107, 0.02256255,
       0.02193952, 0.02134922};
 };
+
+template <typename JsonValue>
+JsonValue ToJSON(const PopPayoutsParams& p) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+  json::putArrayKV(obj, "lookupTable", p.relativeScoreLookupTable());
+  json::putArrayKV(obj, "roundRatios", p.roundRatios());
+  json::putIntKV(
+      obj, "difficultyAveragingInterval", p.difficultyAveragingInterval());
+  json::putDoubleKV(
+      obj, "maxScoreThresholdKeystone", p.maxScoreThresholdKeystone());
+  json::putDoubleKV(
+      obj, "maxScoreThresholdNormal", p.maxScoreThresholdNormal());
+  json::putBoolKV(obj, "useFlatScoreRound", p.useFlatScoreRound());
+  json::putIntKV(obj, "flatScoreRound", p.flatScoreRound());
+  json::putIntKV(obj, "payoutRounds", p.payoutRounds());
+  json::putIntKV(obj, "keystoneRound", p.keystoneRound());
+  json::putDoubleKV(obj, "slopeKeystone", p.slopeKeystone());
+  json::putDoubleKV(obj, "slopeNormal", p.slopeNormal());
+  json::putDoubleKV(obj, "startOfSlope", p.startOfSlope());
+  json::putIntKV(obj, "popPayoutDelay", p.getPopPayoutDelay());
+  return obj;
+}
 
 /**
  * @ingroup config, interfaces
@@ -135,19 +162,18 @@ struct AltChainParams {
     return mEndorsementSettlementInterval;
   }
 
-  //! number of blocks in ALT between endorsed block and payout block
-  int32_t getPopPayoutDelay() const noexcept { return mPopPayoutDelay; }
-
   //! maximum size of single PopData in a single ALT block, in bytes
   uint32_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
 
   //! getter for reward parameters
-  const PopRewardsParams& getRewardParams() const noexcept {
-    return *mPopRewardsParams;
+  const PopPayoutsParams& getPayoutParams() const noexcept {
+    return *mPopPayoutsParams;
   }
 
   //! Maximum future block time for altchain blocks.
-  uint32_t maxFutureBlockTime() const noexcept { return mMaxFutureBlockTime; }
+  uint32_t maxAltchainFutureBlockTime() const noexcept {
+    return mMaxAltchainFutureBlockTime;
+  }
 
   //! unique POP ID for the chain; identifies altchain in VBK
   virtual int64_t getIdentifier() const noexcept = 0;
@@ -163,25 +189,43 @@ struct AltChainParams {
    * Calculate hash from block header.
    * @param bytes serialized block header
    * @return hash
-   * @note if input data is not valid block header, still calculate hash from input data.
+   * @note if input data is not valid block header, still calculate hash from
+   * input data.
    */
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
  public:
-  std::shared_ptr<PopRewardsParams> mPopRewardsParams =
-      std::make_shared<PopRewardsParams>();
+  std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
+      std::make_shared<PopPayoutsParams>();
 
-  uint32_t mMaxFutureBlockTime = 10 * 60;  // 10 min
+  uint32_t mMaxAltchainFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;
-  int32_t mPopPayoutDelay = 50;
   uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
+
+template <typename JsonValue>
+JsonValue ToJSON(const AltChainParams& p) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+  json::putArrayKV(
+      obj, "forkResolutionLookupTable", p.getForkResolutionLookUpTable());
+  json::putIntKV(obj, "maxPopDataSize", p.getMaxPopDataSize());
+  json::putIntKV(obj,
+                 "endorsementSettlementInterval",
+                 p.getEndorsementSettlementInterval());
+  json::putIntKV(obj, "finalityDelay", p.getFinalityDelay());
+  json::putIntKV(obj, "keystoneInterval", p.getKeystoneInterval());
+  json::putIntKV(
+      obj, "maxAltchainFutureBlockTime", p.maxAltchainFutureBlockTime());
+  json::putKV(obj, "payoutParams", ToJSON<JsonValue>(p.getPayoutParams()));
+  json::putKV(obj, "bootstrapBlock", ToJSON<JsonValue>(p.getBootstrapBlock()));
+  return obj;
+}
 
 }  // namespace altintegration
 

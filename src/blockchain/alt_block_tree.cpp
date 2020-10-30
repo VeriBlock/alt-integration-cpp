@@ -26,7 +26,7 @@ bool checkBlockTime(const BlockIndex<AltBlock>& prev,
                     const AltChainParams& params) {
   (void)prev;
   int64_t blockTime = block.getBlockTime();
-  int64_t maxTime = currentTimestamp4() + params.maxFutureBlockTime();
+  int64_t maxTime = currentTimestamp4() + params.maxAltchainFutureBlockTime();
   if (blockTime > maxTime) {
     return state.Invalid("alt-time-too-new",
                          "ALT block timestamp too far in the future");
@@ -153,9 +153,9 @@ void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
 
 void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   VBK_LOG_DEBUG("%s add %s to block %s",
-               block_t::name(),
-               payloads.toPrettyString(),
-               index.toShortPrettyString());
+                block_t::name(),
+                payloads.toPrettyString(),
+                index.toShortPrettyString());
 
   VBK_ASSERT_MSG(index.getValidityLevel() == BLOCK_VALID_TREE,
                  "block %s already contains payloads",
@@ -302,8 +302,8 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
                  "Block %s is not connected",
                  index->toPrettyString());
 
-  auto* endorsedBlock =
-      index->getAncestorBlocksBehind(alt_config_->getPopPayoutDelay());
+  auto* endorsedBlock = index->getAncestorBlocksBehind(
+      alt_config_->getPayoutParams().getPopPayoutDelay());
   if (endorsedBlock == nullptr) {
     // not enough blocks for payout
     return {};
