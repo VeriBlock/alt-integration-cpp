@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/blockchain/block_index.hpp"
 
 #include <gtest/gtest.h>
 
@@ -88,6 +89,15 @@ TEST(VbkBlock, RoundTripWithHash) {
   auto bytes = std::string(blockEncoded.begin(), blockEncoded.end());
   auto decoded = VbkBlock::fromRawAddHash(bytes);
   EXPECT_EQ(decoded, defaultBlock);
+}
+
+TEST(VbkBlock, RoundTripBlockIndexWithHash) {
+  BlockIndex<VbkBlock> defaultBlockIndex{};
+  defaultBlockIndex.setHeader(std::make_shared<VbkBlock>(defaultBlock));
+  const auto blockEncoded = defaultBlockIndex.toRawAddHash();
+  auto bytes = std::string(blockEncoded.begin(), blockEncoded.end());
+  auto decoded = BlockIndex<VbkBlock>::fromRawAddHash(bytes);
+  EXPECT_EQ(decoded.getHeader(), defaultBlock);
 }
 
 TEST(VbkBlock, getBlockHash_test) {

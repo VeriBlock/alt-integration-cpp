@@ -14,6 +14,7 @@
 #include <veriblock/blockchain/command.hpp>
 #include <veriblock/blockchain/command_group.hpp>
 #include <veriblock/entities/endorsements.hpp>
+#include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/validation_state.hpp>
 #include <veriblock/write_stream.hpp>
@@ -288,6 +289,48 @@ struct BlockIndex : public Block::addon_t {
   static BlockIndex fromRaw(Slice<const uint8_t> bytes) {
     ReadStream stream(bytes);
     return fromRaw(stream);
+  }
+
+  template <typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value)>::type>
+  void toRawAddHash(WriteStream& stream) const {
+    stream.writeBE<uint32_t>(height);
+    header->toRawAddHash(stream);
+    stream.writeBE<uint32_t>(status);
+    addon_t::toRaw(stream);
+  }
+
+  template <typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value)>::type>
+  std::vector<uint8_t> toRawAddHash() const {
+    WriteStream stream;
+    toRawAddHash(stream);
+    return stream.data();
+  }
+
+  template <typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value)>::type>
+  void initFromRawAddHash(ReadStream& stream) {
+    height = stream.readBE<uint32_t>();
+    header = std::make_shared<VbkBlock>(VbkBlock::fromRawAddHash(stream));
+    status = stream.readBE<uint32_t>();
+    addon_t::initAddonFromRaw(stream);
+    setDirty();
+  }
+
+  template <typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value)>::type>
+  static BlockIndex fromRawAddHash(ReadStream& stream) {
+    BlockIndex index{};
+    index.initFromRawAddHash(stream);
+    return index;
+  }
+
+  template <typename = typename std::enable_if<
+                (std::is_same<Block, VbkBlock>::value)>::type>
+  static BlockIndex fromRawAddHash(Slice<const uint8_t> bytes) {
+    ReadStream stream(bytes);
+    return fromRawAddHash(stream);
   }
 
  protected:
