@@ -22,8 +22,8 @@ This page describes steps needed to integrate POP protocol into **any** blockcha
 - VBK TX - VeriBlock transaction.
 - BTC TX - Bitcoin transaction.
 - VBK POP TX - VeriBlock POP transaction.
-- POP Payout Delay - PopRewardsParams::getPopPayoutDelay() - POP payout will occur after this amount of blocks after endorsed block.
-- Endorsement Settlement Interval - PopRewardsParams::getEndorsementSettlementInterval() - validity window for ATV.
+- POP Payout Delay - PopPayoutsParams::getPopPayoutDelay() - POP payout will occur after this amount of blocks after endorsed block.
+- Endorsement Settlement Interval - PopPayoutsParams::getEndorsementSettlementInterval() - validity window for ATV.
 - POP MemPool - memory pool for POP-related payloads. Represents the content of the "next" block after current tip.
 - SPV - simplified payment verification.
 - Finalized/Finalization - this term can be applied to a block or transaction. A block is finalized if it can not be reorganized with very high probability (99.99%). For Bitcoin, finality is equal to 11 blocks. For VeriBlock, finality is 2000 blocks.
@@ -81,8 +81,8 @@ Then, go to [POP Parameters](@ref popparameters) page to select correct paramete
 
 Create derived class, and implement pure virtual methods.
 
-Then, overwrite default values in AltChainParams and PopRewardsParams if needed. 
-They are protected in PopRewardsParams, so derive that class and set values once in constructor, then use instance of derived type in configs.
+Then, overwrite default values in AltChainParams and PopPayoutsParams if needed. 
+They are protected in PopPayoutsParams, so derive that class and set values once in constructor, then use instance of derived type in configs.
 
 <code>
 <pre>

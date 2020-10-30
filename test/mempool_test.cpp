@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -10,7 +12,6 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
-#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -562,7 +563,8 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
 
   AltBlock endorsedBlock = chain[5];
 
-  mineAltBlocks(alttree.getParams().getPopPayoutDelay(), chain);
+  mineAltBlocks(alttree.getParams().getPayoutParams().getPopPayoutDelay(),
+                chain);
 
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));

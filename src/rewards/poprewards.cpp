@@ -44,7 +44,7 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
 PopRewardsBigDecimal PopRewards::calculateDifficulty(
     const BlockIndex<AltBlock>& tip) {
   PopRewardsBigDecimal difficulty = 0.0;
-  auto& params = calculator_.getAltParams().getRewardParams();
+  auto& params = calculator_.getAltParams().getPayoutParams();
   const BlockIndex<AltBlock>* currentBlock = tip.pprev;
 
   for (size_t i = 0; i < params.difficultyAveragingInterval(); i++) {

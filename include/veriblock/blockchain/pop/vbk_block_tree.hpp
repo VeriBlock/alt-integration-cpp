@@ -215,7 +215,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putIntKV(obj, "height", i.getHeight());
   json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
   json::putIntKV(obj, "status", i.getStatus());
-  json::putIntKV(obj, "ref", i.refCount());
+  json::putIntKV(obj, "altrefs", i.refCount());
 
   auto stored = json::makeEmptyObject<JsonValue>();
   json::putArrayKV(stored, "vtbids", i.getPayloadIds<VTB>());
@@ -232,8 +232,7 @@ JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   json::putIntKV(obj, "height", i.getHeight());
   json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
   json::putIntKV(obj, "status", i.getStatus());
-  json::putIntKV(obj, "ref", i.refCount());
-
+  json::putArrayKV(obj, "vbkrefs", i.getRefs());
   return obj;
 }
 

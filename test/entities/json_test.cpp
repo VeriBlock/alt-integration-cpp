@@ -456,13 +456,14 @@ TEST(ToJson, ATV) {
   ASSERT_EQ(expected, actual) << actual;
 }
 
-TEST(ToJson, BlockIndex) {
+TEST(ToJson, VbkBlockIndex) {
   MockMiner m;
   picojson::value block =
       ToJSON<picojson::value>(*m.vbk().getBestChain().tip());
   std::string actual = block.serialize(true);
 
   std::string expected = R"({
+  "altrefs": 1,
   "chainWork": "0000000000000000000000000000000000000000000000000000000000000001",
   "containingEndorsements": [],
   "endorsedBy": [],
@@ -480,10 +481,142 @@ TEST(ToJson, BlockIndex) {
     "version": 2
   },
   "height": 0,
-  "ref": 1,
   "status": 354,
   "stored": {
     "vtbids": []
+  }
+}
+)";
+
+  ASSERT_EQ(expected, actual) << actual;
+}
+
+TEST(ToJson, BtcBlockIndex) {
+  MockMiner m;
+  auto* index = m.btc().getBestChain().tip();
+  picojson::value block = ToJSON<picojson::value>(*index);
+  std::string actual = block.serialize(true);
+
+  std::string expected = R"({
+  "chainWork": "0000000000000000000000000000000000000000000000000000000000000002",
+  "header": {
+    "bits": 545259519,
+    "hash": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
+    "merkleRoot": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+    "nonce": 2,
+    "previousBlock": "0000000000000000000000000000000000000000000000000000000000000000",
+    "timestamp": 1296688602,
+    "version": 1
+  },
+  "height": 0,
+  "status": 354,
+  "vbkrefs": [
+    0
+  ]
+}
+)";
+
+  ASSERT_EQ(expected, actual) << actual;
+}
+
+TEST(ToJson, AltParams) {
+  std::shared_ptr<AltChainParams> rt = std::make_shared<AltChainParamsRegTest>();
+  auto json = ToJSON<picojson::value>(*rt);
+  std::string actual = json.serialize(true);
+
+  std::string expected = R"({
+  "bootstrapBlock": {
+    "hash": "010203",
+    "height": 0,
+    "previousBlock": "",
+    "timestamp": 0
+  },
+  "endorsementSettlementInterval": 50,
+  "finalityDelay": 100,
+  "forkResolutionLookupTable": [
+    100,
+    100,
+    95,
+    89,
+    80,
+    69,
+    56,
+    40,
+    21
+  ],
+  "keystoneInterval": 5,
+  "maxAltchainFutureBlockTime": 600,
+  "maxPopDataSize": 1048576,
+  "payoutParams": {
+    "difficultyAveragingInterval": 50,
+    "flatScoreRound": 2,
+    "keystoneRound": 3,
+    "lookupTable": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0.48296815999999998,
+      0.31551694000000002,
+      0.23325824000000001,
+      0.18453616,
+      0.15238462999999999,
+      0.12961254999999999,
+      0.1126563,
+      0.099550940000000004,
+      0.089125090000000004,
+      0.080637609999999998,
+      0.073596919999999996,
+      0.067664279999999993,
+      0.062598730000000005,
+      0.058224280000000003,
+      0.054409409999999998,
+      0.05105386,
+      0.04807993,
+      0.045426439999999998,
+      0.043044579999999999,
+      0.040894949999999999,
+      0.038945399999999998,
+      0.03716941,
+      0.035544970000000002,
+      0.034053590000000002,
+      0.032679689999999997,
+      0.03141,
+      0.03023319,
+      0.029139499999999999,
+      0.028120470000000002,
+      0.02716878,
+      0.026278010000000001,
+      0.025442530000000001,
+      0.024657390000000001,
+      0.023918200000000001,
+      0.02322107,
+      0.022562550000000001,
+      0.021939520000000001,
+      0.021349219999999999
+    ],
+    "maxScoreThresholdKeystone": 3,
+    "maxScoreThresholdNormal": 2,
+    "payoutRounds": 4,
+    "popPayoutDelay": 50,
+    "roundRatios": [
+      0.96999999999999997,
+      1.03,
+      1.0700000000000001,
+      3
+    ],
+    "slopeKeystone": 0.21325,
+    "slopeNormal": 0.20000000000000001,
+    "startOfSlope": 1,
+    "useFlatScoreRound": true
   }
 }
 )";
