@@ -2,12 +2,11 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-#include "veriblock/c/pop_context.h"
-
 #include "config.hpp"
 #include "pop_context.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/c/extern.h"
+#include "veriblock/c/pop_context.h"
 #include "veriblock/pop_context.hpp"
 
 struct PayloadsProviderImpl : public altintegration::PayloadsProvider {

@@ -1,4 +1,5 @@
 add_library(veriblock-pop-c OBJECT
         config.cpp
         pop_context.cpp
+        entities_utils.cpp
         )

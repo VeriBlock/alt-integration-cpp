@@ -83,3 +83,15 @@ func TestAtvRoundTrip(t *testing.T) {
 	assert.NoError(defaultAtv.ToVbkEncoding(outputStream))
 	assert.Equal(defaultAtvEncoded, hex.EncodeToString(outputStream.Bytes()))
 }
+
+func TestAtvGetId(t *testing.T) {
+	assert := assert.New(t)
+
+	atvBytes := parseHex(defaultAtvEncoded)
+	stream := bytes.NewReader(atvBytes)
+	atv := Atv{}
+	assert.NoError(atv.FromVbkEncoding(stream))
+
+	id := atv.GetID()
+	assert.Equal("c6d96b8e87f3e347aa1d1051bb3af39c8ea60612ced905d11c6f92d7b6bd50f5", hex.EncodeToString(id[:]))
+}

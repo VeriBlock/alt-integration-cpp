@@ -17,6 +17,9 @@
 
 namespace altintegration {
 
+// If you will change some values, do not forget update the same values in the
+// bindigs implementation
+
 /**
  * Veriblock transaction type.
  */

@@ -1,9 +1,12 @@
 package entities
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
+
+	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // Atv ...
@@ -12,6 +15,12 @@ type Atv struct {
 	Transaction  VbkTx
 	MerklePath   VbkMerklePath
 	BlockOfProof VbkBlock
+}
+
+func (v *Atv) GetID() []byte {
+	buffer := new(bytes.Buffer)
+	v.ToVbkEncoding(buffer)
+	return ffi.Atv_getId(buffer.Bytes())
 }
 
 // ToVbkEncoding ...
