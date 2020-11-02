@@ -14,7 +14,8 @@ RUN apt-get update && \
     && wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main" && \
     apt-add-repository -y ppa:bitcoin/bitcoin && \
-    add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    add-apt-repository ppa:longsleep/golang-backports
 
 # install dependencies
 RUN apt-get update && apt-get upgrade -y && \
@@ -58,7 +59,7 @@ RUN apt-get install --no-install-recommends -y \
         lcov \
         vim \
         unzip \
-        golang \
+        golang-go \
     && rm -rf /var/lib/apt/lists/*
 
 # set default compilers and tools

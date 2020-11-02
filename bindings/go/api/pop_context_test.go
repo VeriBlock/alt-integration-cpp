@@ -5,6 +5,8 @@ import (
 
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/stretchr/testify/assert"
+	// entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
+	// "github.com/stretchr/testify/assert"
 )
 
 func TestPopContext(t *testing.T) {
@@ -12,10 +14,10 @@ func TestPopContext(t *testing.T) {
 
 	config := NewConfig()
 	defer config.Free()
-	if !config.SelectVbkParams("regtest", 1, nil) {
+	if !config.SelectVbkParams("test", 1, nil) {
 		t.Error("Failed to select btc params")
 	}
-	if !config.SelectBtcParams("regtest", 1, nil) {
+	if !config.SelectBtcParams("test", 1, nil) {
 		t.Error("Failed to select btc params")
 	}
 	SetOnGetAltchainID(func() int { return 1 })
