@@ -598,7 +598,7 @@ static lru11::Cache<int, CacheEntry, std::mutex> gCache(
 uint192 progPowHash(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);
-  const auto epoch = progpow::ethash_get_epoch(height);
+  const int epoch = (int) progpow::ethash_get_epoch(height);
   const auto headerHash = progpow::getVbkHeaderHash(header);
   auto nonce = progpow::getVbkBlockNonce(header);
 
