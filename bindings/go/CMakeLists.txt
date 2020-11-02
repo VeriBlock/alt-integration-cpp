@@ -2,8 +2,8 @@ if(TESTING AND TESTING_GO)
     find_program(GO go REQUIRED)
     add_test(
             NAME go_test
-            COMMAND env
-            WORKING_DIRECTORY
+            COMMAND go test ./...
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
     set_tests_properties(go_test PROPERTIES
             ENVIRONMENT
