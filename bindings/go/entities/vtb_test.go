@@ -72,3 +72,15 @@ func TestVtbRoundTrip(t *testing.T) {
 	assert.NoError(defaultVtb.ToVbkEncoding(outputStream))
 	assert.Equal(defaultVtbEncoded, hex.EncodeToString(outputStream.Bytes()))
 }
+
+func TestVtbGetID(t *testing.T) {
+	assert := assert.New(t)
+
+	vtbBytes := parseHex(defaultVtbEncoded)
+	stream := bytes.NewReader(vtbBytes)
+	vtb := Vtb{}
+	assert.NoError(vtb.FromVbkEncoding(stream))
+
+	id := vtb.GetID()
+	assert.Equal("32dd01ab6285a92318e374fcdbd6b023c1ae1268150ce3484961870b8beb71fc", hex.EncodeToString(id[:]))
+}

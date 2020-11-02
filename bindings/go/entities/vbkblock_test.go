@@ -18,9 +18,9 @@ var (
 		parse16Bytes("26bbfda7d5e4462ef24ae02d67e47d78"),
 		1553699059,
 		16842752,
-		123317,
+		1,
 	}
-	defaultVbkBlockEncoded = "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f301010000000001e1b5"
+	defaultVbkBlockEncoded = "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001"
 )
 
 func parse12Bytes(src string) [12]byte {
@@ -101,10 +101,8 @@ func TestVbkBlockGetBlockHash(t *testing.T) {
 	block.Difficulty = 117586646
 	block.Nonce = 1924857207
 
-	hash, err := block.GetBlockHash()
-	assert.NoError(err)
-	// TODO: Add progPowHash
-	assert.NotEqual(parseHex("00000000000000001f45c91342b8ac0ea7ae4d721be2445dc86ddc3f0e454f60"), hash[:])
+	hash := block.GetHash()
+	assert.Equal("1f45c91342b8ac0ea7ae4d721be2445dc86ddc3f0e454f60", hex.EncodeToString(hash[:]))
 }
 
 func TestVbkBlockGetID(t *testing.T) {
@@ -115,7 +113,6 @@ func TestVbkBlockGetID(t *testing.T) {
 	stream := bytes.NewReader(atvBytes)
 	vbkblock := VbkBlock{}
 	assert.NoError(vbkblock.FromVbkEncoding(stream))
-	id, err := vbkblock.GetID()
-	assert.NoError(err)
-	assert.NotEqual("cd97599e23096ad42f119b5a", hex.EncodeToString(id[:]))
+	id := vbkblock.GetID()
+	assert.Equal("cd97599e23096ad42f119b5a", hex.EncodeToString(id[:]))
 }

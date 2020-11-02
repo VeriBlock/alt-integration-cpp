@@ -73,3 +73,15 @@ func TestBtcBlockRoundTrip(t *testing.T) {
 	blockReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultBtcBlockEncoded, blockReEncoded)
 }
+
+func TestBtcBlockGetBlockHash(t *testing.T) {
+	assert := assert.New(t)
+
+	blockEncoded := parseHex(defaultBtcBlockEncoded)
+	stream := bytes.NewReader(blockEncoded)
+	block := BtcBlock{}
+	assert.NoError(block.FromRaw(stream))
+
+	hash := block.GetHash()
+	assert.Equal("ebaa22c5ffd827e96c4450ad5dd35dbec2aa45e15cdb5ce9928f543f4cebf10e", hex.EncodeToString(hash[:]))
+}

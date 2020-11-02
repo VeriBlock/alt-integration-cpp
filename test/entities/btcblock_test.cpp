@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/btcblock.hpp"
-
 #include <gtest/gtest.h>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/entities/btcblock.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -36,6 +35,11 @@ TEST(BtcBlock, Deserialize) {
   EXPECT_EQ(decoded.getBlockTime(), defaultBlock.getBlockTime());
   EXPECT_EQ(decoded.getDifficulty(), defaultBlock.getDifficulty());
   EXPECT_EQ(decoded.nonce, defaultBlock.nonce);
+
+  EXPECT_EQ(
+      ArithUint256::fromLEBytes(decoded.getHash()),
+      ArithUint256::fromHex(
+          "ebaa22c5ffd827e96c4450ad5dd35dbec2aa45e15cdb5ce9928f543f4cebf10e"));
 
   EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }

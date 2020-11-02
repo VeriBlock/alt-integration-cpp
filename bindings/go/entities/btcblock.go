@@ -2,11 +2,11 @@ package entities
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/binary"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
+	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // BtcBlock ...
@@ -21,12 +21,9 @@ type BtcBlock struct {
 
 // GetHash ...
 func (v *BtcBlock) GetHash() []byte {
-	stream := new(bytes.Buffer)
-	if err := v.ToRaw(stream); err != nil {
-		return nil
-	}
-	hash := sha256.Sum256(stream.Bytes())
-	return hash[:]
+	buffer := new(bytes.Buffer)
+	v.ToVbkEncoding(buffer)
+	return ffi.BtcBlock_getHash(buffer.Bytes())
 }
 
 // GetBlockTime ...
