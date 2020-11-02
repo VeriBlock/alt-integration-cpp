@@ -42,23 +42,28 @@ struct VbkBlock {
 
   std::string toPrettyString() const;
 
-  static VbkBlock fromHex(const std::string& hex);
+  static VbkBlock fromHex(
+      const std::string& hex, const hash_t& precalculatedHash = hash_t());
 
   /**
    * Read basic blockheader data from the vector of bytes
    * and convert it to VbkBlock
    *
-   * @param bytes data to read fromm
+   * @param bytes data to read from
+   * @param precalculatedHash optionally pass externally calculated hash
    * @return VbkBlock
    */
-  static VbkBlock fromRaw(Slice<const uint8_t> bytes);
+  static VbkBlock fromRaw(Slice<const uint8_t> bytes,
+                          const hash_t& precalculatedHash = hash_t());
 
   /**
    * Read basic blockheader data from the stream and convert it to VbkBlock
    * @param stream data stream to read from
+   * @param precalculatedHash optionally pass externally calculated hash
    * @return VbkBlock
    */
-  static VbkBlock fromRaw(ReadStream& stream);
+  static VbkBlock fromRaw(ReadStream& stream,
+                          const hash_t& precalculatedHash = hash_t());
 
   /**
    * Read VBK data from the stream and convert it to VbkBlock
@@ -104,35 +109,6 @@ struct VbkBlock {
    * @param stream data stream to write into
    */
   void toVbkEncoding(WriteStream& stream) const;
-
-  /**
-   * Convert VbkBlock to bytes data using VbkBlock basic byte format. Add hash
-   * to serialized bytes.
-   * @param stream data stream to write into
-   */
-  void toRawAddHash(WriteStream& stream) const;
-
-  /**
-   * Convert VbkBlock to bytes data using VbkBlock basic byte format. Add hash
-   * to serialized bytes.
-   * @return bytes data
-   */
-  std::vector<uint8_t> toRawAddHash() const;
-
-  /**
-   * Read VBK data plus hash from the stream and convert it to VbkBlock
-   * @param stream data stream to read from
-   * @return VbkBlock
-   */
-  static VbkBlock fromRawAddHash(ReadStream& stream);
-
-  /**
-   * Read VBK data plus hash from the string representation
-   * and convert it to VbkBlock.
-   * @param bytes data bytes to read from
-   * @return VbkBlock
-   */
-  static VbkBlock fromRawAddHash(const std::string& bytes);
 
   /*
    * Getter for difficulty

@@ -266,76 +266,30 @@ struct BlockIndex : public Block::addon_t {
     addon_t::toRaw(stream);
   }
 
-  void initFromRaw(ReadStream& stream) {
-    height = stream.readBE<uint32_t>();
-    header = std::make_shared<Block>(Block::fromRaw(stream));
-    status = stream.readBE<uint32_t>();
-    addon_t::initAddonFromRaw(stream);
-    setDirty();
-  }
-
   std::vector<uint8_t> toRaw() const {
     WriteStream stream;
     toRaw(stream);
     return stream.data();
   }
 
-  static BlockIndex fromRaw(ReadStream& stream) {
+  void initAddon(ReadStream& stream) { addon_t::initAddonFromRaw(stream); }
+
+  static BlockIndex fromRaw(ReadStream& stream,
+                            const hash_t& precalculatedHash = hash_t()) {
     BlockIndex index{};
-    index.initFromRaw(stream);
+    index.height = stream.readBE<uint32_t>();
+    index.header =
+        std::make_shared<Block>(fromRawHeader(stream, precalculatedHash));
+    index.status = stream.readBE<uint32_t>();
+    index.initAddon(stream);
+    index.setDirty();
     return index;
   }
 
-  static BlockIndex fromRaw(Slice<const uint8_t> bytes) {
+  static BlockIndex fromRaw(Slice<const uint8_t> bytes,
+                            const hash_t& precalculatedHash = hash_t()) {
     ReadStream stream(bytes);
-    return fromRaw(stream);
-  }
-
-  template <bool EnableBool = true,
-            typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
-  void toRawAddHash(WriteStream& stream) const {
-    stream.writeBE<uint32_t>(height);
-    header->toRawAddHash(stream);
-    stream.writeBE<uint32_t>(status);
-    addon_t::toRaw(stream);
-  }
-
-  template <bool EnableBool = true,
-            typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
-  std::vector<uint8_t> toRawAddHash() const {
-    WriteStream stream;
-    toRawAddHash(stream);
-    return stream.data();
-  }
-
-  template <bool EnableBool = true,
-            typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
-  void initFromRawAddHash(ReadStream& stream) {
-    height = stream.readBE<uint32_t>();
-    header = std::make_shared<VbkBlock>(VbkBlock::fromRawAddHash(stream));
-    status = stream.readBE<uint32_t>();
-    addon_t::initAddonFromRaw(stream);
-    setDirty();
-  }
-
-  template <bool EnableBool = true,
-            typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
-  static BlockIndex fromRawAddHash(ReadStream& stream) {
-    BlockIndex index{};
-    index.initFromRawAddHash(stream);
-    return index;
-  }
-
-  template <bool EnableBool = true,
-            typename = typename std::enable_if<
-                (std::is_same<Block, VbkBlock>::value && EnableBool)>::type>
-  static BlockIndex fromRawAddHash(Slice<const uint8_t> bytes) {
-    ReadStream stream(bytes);
-    return fromRawAddHash(stream);
+    return fromRaw(stream, precalculatedHash);
   }
 
  protected:
@@ -350,6 +304,11 @@ struct BlockIndex : public Block::addon_t {
 
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;
+
+  static Block fromRawHeader(ReadStream& stream, const hash_t& /* ignore */) {
+    // default is to ignore precalculated hash
+    return Block::fromRaw(stream);
+  }
 };
 
 /**
@@ -389,6 +348,13 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
   json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
   json::putIntKV(obj, "status", i.status);
   return obj;
+}
+
+template <>
+inline VbkBlock BlockIndex<VbkBlock>::fromRawHeader(
+    ReadStream& stream,
+    const hash_t& precalculatedHash) {
+  return VbkBlock::fromRaw(stream, precalculatedHash);
 }
 
 }  // namespace altintegration

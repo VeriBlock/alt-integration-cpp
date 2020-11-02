@@ -85,18 +85,20 @@ TEST(VbkBlock, RoundTripNew) {
 }
 
 TEST(VbkBlock, RoundTripWithHash) {
-  const auto blockEncoded = defaultBlock.toRawAddHash();
+  const auto blockEncoded = defaultBlock.toRaw();
+  const auto& hash = defaultBlock.getHash();
   auto bytes = std::string(blockEncoded.begin(), blockEncoded.end());
-  auto decoded = VbkBlock::fromRawAddHash(bytes);
+  auto decoded = VbkBlock::fromRaw(bytes, hash);
   EXPECT_EQ(decoded, defaultBlock);
 }
 
 TEST(VbkBlock, RoundTripBlockIndexWithHash) {
   BlockIndex<VbkBlock> defaultBlockIndex{};
   defaultBlockIndex.setHeader(std::make_shared<VbkBlock>(defaultBlock));
-  const auto blockEncoded = defaultBlockIndex.toRawAddHash();
+  const auto blockEncoded = defaultBlockIndex.toRaw();
+  const auto& hash = defaultBlock.getHash();
   auto bytes = std::string(blockEncoded.begin(), blockEncoded.end());
-  auto decoded = BlockIndex<VbkBlock>::fromRawAddHash(bytes);
+  auto decoded = BlockIndex<VbkBlock>::fromRaw(bytes, hash);
   EXPECT_EQ(decoded.getHeader(), defaultBlock);
 }
 
