@@ -14,12 +14,14 @@ namespace altintegration {
 
 const std::string VbkBlock::_name = "VBK";
 
-VbkBlock VbkBlock::fromRaw(Slice<const uint8_t> bytes) {
+VbkBlock VbkBlock::fromRaw(Slice<const uint8_t> bytes,
+                           const hash_t& precalculatedHash) {
   ReadStream stream(bytes);
-  return fromRaw(stream);
+  return fromRaw(stream, precalculatedHash);
 }
 
-VbkBlock VbkBlock::fromRaw(ReadStream& stream) {
+VbkBlock VbkBlock::fromRaw(ReadStream& stream,
+                           const hash_t& precalculatedHash) {
   VbkBlock block{};
   block.height = stream.readBE<int32_t>();
   block.version = stream.readBE<int16_t>();
@@ -31,6 +33,7 @@ VbkBlock VbkBlock::fromRaw(ReadStream& stream) {
   block.timestamp = stream.readBE<int32_t>();
   block.difficulty = stream.readBE<int32_t>();
   block.nonce = stream.readBE<uint64_t>(5);
+  block.hash_ = precalculatedHash;
   return block;
 }
 
@@ -82,9 +85,10 @@ VbkBlock::short_hash_t VbkBlock::getShortHash() const {
   return getHash().trimLE<VbkBlock::short_hash_t::size()>();
 }
 
-VbkBlock VbkBlock::fromHex(const std::string& hex) {
+VbkBlock VbkBlock::fromHex(const std::string& hex,
+                           const hash_t& precalculatedHash) {
   auto v = ParseHex(hex);
-  return VbkBlock::fromRaw(v);
+  return VbkBlock::fromRaw(v, precalculatedHash);
 }
 
 std::string VbkBlock::toHex() const { return HexStr(toRaw()); }
