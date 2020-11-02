@@ -101,10 +101,9 @@ func TestVbkBlockGetBlockHash(t *testing.T) {
 	block.Difficulty = 117586646
 	block.Nonce = 1924857207
 
-	hash, err := block.GetBlockHash()
-	assert.NoError(err)
+	hash := block.GetHash()
 	// TODO: Add progPowHash
-	assert.NotEqual(parseHex("00000000000000001f45c91342b8ac0ea7ae4d721be2445dc86ddc3f0e454f60"), hash[:])
+	assert.Equal("1f45c91342b8ac0ea7ae4d721be2445dc86ddc3f0e454f60", hex.EncodeToString(hash[:]))
 }
 
 func TestVbkBlockGetID(t *testing.T) {
@@ -115,7 +114,6 @@ func TestVbkBlockGetID(t *testing.T) {
 	stream := bytes.NewReader(atvBytes)
 	vbkblock := VbkBlock{}
 	assert.NoError(vbkblock.FromVbkEncoding(stream))
-	id, err := vbkblock.GetID()
-	assert.NoError(err)
-	assert.NotEqual("cd97599e23096ad42f119b5a", hex.EncodeToString(id[:]))
+	id := vbkblock.GetID()
+	assert.Equal("cd97599e23096ad42f119b5a", hex.EncodeToString(id[:]))
 }

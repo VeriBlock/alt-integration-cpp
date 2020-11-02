@@ -6,6 +6,7 @@ import (
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
+	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // VbkBlock ...
@@ -23,11 +24,9 @@ type VbkBlock struct {
 
 // GetHash ...
 func (v *VbkBlock) GetHash() []byte {
-	hash, err := v.GetBlockHash()
-	if err != nil {
-		return nil
-	}
-	return hash[:]
+	buffer := new(bytes.Buffer)
+	v.ToVbkEncoding(buffer)
+	return ffi.VbkBlock_getHash(buffer.Bytes())
 }
 
 // GetBlockTime ...
@@ -41,26 +40,10 @@ func (v *VbkBlock) GetDifficulty() uint32 {
 }
 
 // GetID - Returns id of VBKBlock
-func (v *VbkBlock) GetID() ([12]byte, error) {
-	hash, err := v.GetBlockHash()
-	if err != nil {
-		return [12]byte{}, err
-	}
-	var res [12]byte
-	copy(res[:], hash[:])
-	return res, nil
-}
-
-// GetBlockHash - Returns progPowHash of VBKBlock
-func (v *VbkBlock) GetBlockHash() ([24]byte, error) {
-	blockStream := new(bytes.Buffer)
-	if err := v.ToRaw(blockStream); err != nil {
-		return [24]byte{}, err
-	}
-	var res [24]byte
-	// TODO: Get progPowHash
-	copy(res[:], blockStream.Bytes())
-	return res, nil
+func (v *VbkBlock) GetID() []byte {
+	buffer := new(bytes.Buffer)
+	v.ToVbkEncoding(buffer)
+	return ffi.VbkBlock_getId(buffer.Bytes())
 }
 
 // ToVbkEncoding ...

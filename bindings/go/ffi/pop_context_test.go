@@ -5,10 +5,10 @@ import "testing"
 func TestPopContext(t *testing.T) {
 	config := NewConfig()
 	defer config.Free()
-	if !config.SelectVbkParams("regtest", popvbkstartheight, nil) {
+	if !config.SelectVbkParams("regtest", 0, nil) {
 		t.Error("Failed to select btc params")
 	}
-	if !config.SelectBtcParams("regtest", popbtcstartheight, nil) {
+	if !config.SelectBtcParams("regtest", 0, nil) {
 		t.Error("Failed to select btc params")
 	}
 	OnGetAltchainID = func() int { return 1 }
