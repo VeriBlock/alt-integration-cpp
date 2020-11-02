@@ -83,5 +83,4 @@ func TestVtbGetID(t *testing.T) {
 
 	id := vtb.GetID()
 	assert.Equal("32dd01ab6285a92318e374fcdbd6b023c1ae1268150ce3484961870b8beb71fc", hex.EncodeToString(id[:]))
-
 }

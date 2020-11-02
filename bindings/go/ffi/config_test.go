@@ -30,8 +30,7 @@ func TestConfig(t *testing.T) {
 		t.Error("Failed to select btc params")
 	}
 
-	// TODO uncomment it after vbk blocks in the data_test.go have been updated.
-	// if !config.SelectVbkParams("test", popvbkstartheight, &popvbkblocks) || !config.SelectVbkParams("regtest", 0, nil) {
-	// 	t.Error("Failed to select vbk params")
-	// }
+	if !config.SelectVbkParams("test", popvbkstartheight, &popvbkblocks) || !config.SelectVbkParams("regtest", 0, nil) {
+		t.Error("Failed to select vbk params")
+	}
 }
