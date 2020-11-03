@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "veriblock/c/entities_utils.h"
+#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/vbkblock.hpp"
