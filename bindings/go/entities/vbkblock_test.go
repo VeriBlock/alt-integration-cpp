@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	defaultVbkBlock = VbkBlock{
+	DefaultVbkBlock = VbkBlock{
 		5000,
 		2,
 		parse12Bytes("449c60619294546ad825af03"),
@@ -20,7 +20,7 @@ var (
 		16842752,
 		1,
 	}
-	defaultVbkBlockEncoded = "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001"
+	DefaultVbkBlockEncoded = "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001"
 )
 
 func parse12Bytes(src string) [12]byte {
@@ -47,44 +47,44 @@ func parse16Bytes(src string) [16]byte {
 func TestVbkBlockDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	vbkblock := parseHex(defaultVbkBlockEncoded)
+	vbkblock := parseHex(DefaultVbkBlockEncoded)
 	stream := bytes.NewReader(vbkblock)
 	block := VbkBlock{}
 	assert.NoError(block.FromVbkEncoding(stream))
 
-	assert.Equal(defaultVbkBlock.Height, block.Height)
-	assert.Equal(defaultVbkBlock.Version, block.Version)
-	assert.Equal(hex.EncodeToString(defaultVbkBlock.PreviousBlock[:]), hex.EncodeToString(block.PreviousBlock[:]))
-	assert.Equal(hex.EncodeToString(defaultVbkBlock.PreviousKeystone[:]), hex.EncodeToString(block.PreviousKeystone[:]))
-	assert.Equal(hex.EncodeToString(defaultVbkBlock.SecondPreviousKeystone[:]), hex.EncodeToString(block.SecondPreviousKeystone[:]))
-	assert.Equal(hex.EncodeToString(defaultVbkBlock.MerkleRoot[:]), hex.EncodeToString(block.MerkleRoot[:]))
-	assert.Equal(defaultVbkBlock.Timestamp, block.Timestamp)
-	assert.Equal(defaultVbkBlock.Difficulty, block.Difficulty)
-	assert.Equal(defaultVbkBlock.Nonce, block.Nonce)
+	assert.Equal(DefaultVbkBlock.Height, block.Height)
+	assert.Equal(DefaultVbkBlock.Version, block.Version)
+	assert.Equal(hex.EncodeToString(DefaultVbkBlock.PreviousBlock[:]), hex.EncodeToString(block.PreviousBlock[:]))
+	assert.Equal(hex.EncodeToString(DefaultVbkBlock.PreviousKeystone[:]), hex.EncodeToString(block.PreviousKeystone[:]))
+	assert.Equal(hex.EncodeToString(DefaultVbkBlock.SecondPreviousKeystone[:]), hex.EncodeToString(block.SecondPreviousKeystone[:]))
+	assert.Equal(hex.EncodeToString(DefaultVbkBlock.MerkleRoot[:]), hex.EncodeToString(block.MerkleRoot[:]))
+	assert.Equal(DefaultVbkBlock.Timestamp, block.Timestamp)
+	assert.Equal(DefaultVbkBlock.Difficulty, block.Difficulty)
+	assert.Equal(DefaultVbkBlock.Nonce, block.Nonce)
 }
 
 func TestVbkBlockSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	assert.NoError(defaultVbkBlock.ToVbkEncoding(stream))
+	assert.NoError(DefaultVbkBlock.ToVbkEncoding(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
-	assert.Equal(defaultVbkBlockEncoded, blockEncoded)
+	assert.Equal(DefaultVbkBlockEncoded, blockEncoded)
 }
 
 func TestVbkBlockRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	blockEncoded, err := hex.DecodeString(defaultVbkBlockEncoded)
+	blockEncoded, err := hex.DecodeString(DefaultVbkBlockEncoded)
 	assert.NoError(err)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := VbkBlock{}
 	assert.NoError(decoded.FromVbkEncoding(stream))
-	assert.Equal(defaultVbkBlock.Version, decoded.Version)
+	assert.Equal(DefaultVbkBlock.Version, decoded.Version)
 
 	outputStream := new(bytes.Buffer)
 	assert.NoError(decoded.ToVbkEncoding(outputStream))
-	assert.Equal(defaultVbkBlockEncoded, hex.EncodeToString(outputStream.Bytes()))
+	assert.Equal(DefaultVbkBlockEncoded, hex.EncodeToString(outputStream.Bytes()))
 }
 
 func TestVbkBlockGetBlockHash(t *testing.T) {
@@ -108,7 +108,7 @@ func TestVbkBlockGetBlockHash(t *testing.T) {
 func TestVbkBlockGetID(t *testing.T) {
 	assert := assert.New(t)
 
-	atvBytes, err := hex.DecodeString(defaultVbkBlockEncoded)
+	atvBytes, err := hex.DecodeString(DefaultVbkBlockEncoded)
 	assert.NoError(err)
 	stream := bytes.NewReader(atvBytes)
 	vbkblock := VbkBlock{}
