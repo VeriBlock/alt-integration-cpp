@@ -10,12 +10,12 @@ import (
 func TestPopDataRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	atvBytes := parseHex(defaultAtvEncoded)
+	atvBytes := parseHex(DefaultAtvEncoded)
 	stream := bytes.NewReader(atvBytes)
 	atv := Atv{}
 	assert.NoError(atv.FromVbkEncoding(stream))
 
-	vtbBytes := parseHex(defaultVtbEncoded)
+	vtbBytes := parseHex(DefaultVtbEncoded)
 	stream = bytes.NewReader(vtbBytes)
 	vtb := Vtb{}
 	assert.NoError(vtb.FromVbkEncoding(stream))
