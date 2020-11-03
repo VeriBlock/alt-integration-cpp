@@ -2,7 +2,7 @@ package ffi
 
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
-// #include <veriblock/c/entities_utils.h>
+// #include <veriblock/c/utils.h>
 import "C"
 import (
 	"unsafe"
