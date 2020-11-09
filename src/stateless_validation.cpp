@@ -401,15 +401,15 @@ bool hasDuplicateIds(const std::vector<I> payloads) {
   return false;
 }
 
-bool checkPopData(const PopData& popData, ValidationState& state) {
+bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
   if (hasDuplicateIds(popData.context)) {
-    return state.Invalid("popdata-duplicate-vbk", "duplicate VBK blocks");
+    return state.Invalid("duplicate-vbk", "duplicate VBK blocks");
   }
   if (hasDuplicateIds(popData.vtbs)) {
-    return state.Invalid("popdata-duplicate-vtb", "duplicate VTBs");
+    return state.Invalid("duplicate-vtb", "duplicate VTBs");
   }
   if (hasDuplicateIds(popData.atvs)) {
-    return state.Invalid("popdata-duplicate-atv", "duplicate ATVs");
+    return state.Invalid("duplicate-atv", "duplicate ATVs");
   }
   return true;
 }

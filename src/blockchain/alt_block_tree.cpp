@@ -170,7 +170,7 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
 
   ValidationState state;
   VBK_ASSERT_MSG_DEBUG(
-      checkPopData(payloads, state),
+      checkPopDataForDuplicates(payloads, state),
       "attempted to add statelessly invalid payloads to block %s: %s",
       index.toPrettyString(),
       state.toString());
@@ -191,7 +191,6 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
                  "state corruption: block %s is applied",
                  index.toPrettyString());
-
   VBK_ASSERT_MSG(index.pprev->isConnected(),
                  "the previous block of block %s must be connected",
                  index.toPrettyString());
@@ -217,23 +216,20 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
   if (index.isValid()) {
     onBlockConnected.emit(index);
+    // connect the descendants
+    for (auto* successor : index.pnext) {
+      if (successor->isValidUpTo(BLOCK_HAS_PAYLOADS)) {
+        ValidationState dummy;
+        connectBlock(*successor, dummy);
+      }
+    }
   } else {
     onInvalidBlockConnected.emit(index, state);
   };
 
-  // connect the descendants
-  for (auto* successor : index.pnext) {
-    if (successor->isValidUpTo(BLOCK_HAS_PAYLOADS)) {
-      ValidationState dummy;
-      connectBlock(*successor, dummy);
-    }
-  }
-
   return index.isValid();
 }
 
-// in !StrictAddPayloadsOrdering mode, payloads can be added to any block, which
-// may trigger incorrect AltTree behavior in certain cases
 bool AltBlockTree::addPayloads(index_t& index,
                                PopData& payloads,
                                ValidationState& state) {
@@ -247,6 +243,10 @@ bool AltBlockTree::addPayloads(index_t& index,
   if (!index.isValid()) {
     return state.Invalid(block_t::name() + "-bad-chain",
                          "Containing block has been marked as invalid");
+  }
+
+  if (checkPopDataForDuplicates(payloads, state)) {
+    return state.Invalid("popdata");
   }
 
   setPayloads(index, payloads);
