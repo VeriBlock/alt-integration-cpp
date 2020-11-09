@@ -245,7 +245,7 @@ bool AltBlockTree::addPayloads(index_t& index,
                          "Containing block has been marked as invalid");
   }
 
-  if (checkPopDataForDuplicates(payloads, state)) {
+  if (!checkPopDataForDuplicates(payloads, state)) {
     return state.Invalid("popdata");
   }
 
