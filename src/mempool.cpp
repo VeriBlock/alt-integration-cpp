@@ -77,8 +77,6 @@ PopData generatePopData(
 }  // namespace
 
 PopData MemPool::getPop() {
-  VBK_ASSERT(false);
-
   // sorted array of VBK blocks (ascending order)
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
