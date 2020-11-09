@@ -35,7 +35,7 @@
 
 // same as VBK_ASSERT but executes only when compiled in DEBUG mode. similar to
 // how <assert.h> works
-#if defined(NDEBUG)
+#if defined(NDEBUG) || defined(_DEBUG)
 #define VBK_ASSERT_MSG_DEBUG(x, ...)
 #define VBK_ASSERT_DEBUG(x)
 #else
