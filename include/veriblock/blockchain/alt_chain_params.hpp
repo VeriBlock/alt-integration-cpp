@@ -177,7 +177,7 @@ struct AltChainParams {
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;
   int32_t mPopPayoutDelay = 50;
-  uint32_t mMaxPopDataSize = 1 * 1024 * 1024;  // 1 MB
+  uint32_t mMaxPopDataSize = 5'500'000;  // 5.5 MB
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
