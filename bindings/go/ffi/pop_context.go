@@ -1,7 +1,7 @@
 package ffi
 
 // #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -fsanitize=address
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/pop_context.h>
 import "C"
 import "unsafe"
