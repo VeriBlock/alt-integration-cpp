@@ -19,21 +19,28 @@ AltBlock AltBlock::fromRaw(ReadStream& stream) {
 }
 
 AltBlock AltBlock::fromVbkEncoding(ReadStream& stream) {
-  AltBlock block;
-  uint32_t hash_size = stream.readBE<uint32_t>();
-  block.hash.resize(hash_size);
-  for (uint32_t i = 0; i < hash_size; ++i) {
-    block.hash[i] = stream.readBE<uint8_t>();
-  }
-  hash_size = stream.readBE<uint32_t>();
-  block.previousBlock.resize(hash_size);
-  for (uint32_t i = 0; i < hash_size; ++i) {
-    block.previousBlock[i] = stream.readBE<uint8_t>();
-  }
-  block.height = stream.readBE<int32_t>();
-  block.timestamp = stream.readBE<uint32_t>();
+  try {
+    AltBlock block;
+    uint32_t hash_size = stream.readBE<uint32_t>();
+    block.hash.resize(hash_size);
+    for (uint32_t i = 0; i < hash_size; ++i) {
+      block.hash[i] = stream.readBE<uint8_t>();
+    }
+    hash_size = stream.readBE<uint32_t>();
+    block.previousBlock.resize(hash_size);
+    for (uint32_t i = 0; i < hash_size; ++i) {
+      block.previousBlock[i] = stream.readBE<uint8_t>();
+    }
+    block.height = stream.readBE<int32_t>();
+    block.timestamp = stream.readBE<uint32_t>();
 
-  return block;
+    return block;
+  } catch (const std::exception& e) {
+    throw std::invalid_argument(
+        fmt::format("Can not deserialize ALT block ({}) from {}",
+                    e.what(),
+                    HexStr(stream.remainingBytes())));
+  }
 }
 
 AltBlock AltBlock::fromVbkEncoding(const std::string& bytes) {
