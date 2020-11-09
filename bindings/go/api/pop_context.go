@@ -49,7 +49,6 @@ func NewPopContext(config *Config) *PopContext {
 
 // Free - Frees memory allocated for the pop context
 func (v *PopContext) Free() {
-	v.popContext.MemPoolClear()
 	v.popContext.Free()
 }
 

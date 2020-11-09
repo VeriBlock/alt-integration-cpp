@@ -1,7 +1,7 @@
 package ffi
 
 // #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -fsanitize=address
 // #include <veriblock/c/pop_context.h>
 import "C"
 import "unsafe"
@@ -156,6 +156,9 @@ func (v PopContext) MemPoolGetPop() []byte {
 	var bytesSize int
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&v.popData[0]))
 	bytesSizeC := (*C.int)(unsafe.Pointer(&bytesSize))
+	if v.ref == nil {
+	  panic("PopContext is nil!")
+	}
 	C.VBK_MemPool_getPop(v.ref, bytesC, bytesSizeC)
 	out := make([]byte, bytesSize)
 	copy(out, v.popData)

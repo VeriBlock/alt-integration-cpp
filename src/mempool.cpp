@@ -77,12 +77,15 @@ PopData generatePopData(
 }  // namespace
 
 PopData MemPool::getPop() {
+  VBK_ASSERT(false);
+
   // sorted array of VBK blocks (ascending order)
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
   std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
     return a.second->header->getHeight() < b.second->header->getHeight();
   });
+
 
   PopData ret = generatePopData(blocks, mempool_tree_.alt().getParams());
   mempool_tree_.alt().filterInvalidPayloads(ret);
