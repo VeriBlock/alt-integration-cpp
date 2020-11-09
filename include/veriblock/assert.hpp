@@ -33,6 +33,17 @@
 
 #define VBK_ASSERT(x) VBK_ASSERT_MSG(x, " ");
 
+// same as VBK_ASSERT but executes only when compiled in DEBUG mode. similar to
+// how <assert.h> works
+#if defined(NDEBUG)
+#define VBK_ASSERT_MSG_DEBUG(x, ...)
+#define VBK_ASSERT_DEBUG(x)
+#else
+#define VBK_ASSERT_MSG_DEBUG(x, ...) VBK_ASSERT_MSG(x, __VA_ARGS__)
+#define VBK_ASSERT_DEBUG(x) VBK_ASSERT(x)
+#endif
+
+// Similar to C++17 [[nodiscard]]
 #if defined(__GNUC__) && (__GNUC__ >= 4)
 #define VBK_CHECK_RETURN __attribute__((warn_unused_result))
 #elif defined(_MSC_VER) && (_MSC_VER >= 1700)

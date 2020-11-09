@@ -30,7 +30,7 @@ void assertBlockCanBeApplied(index_t& index) {
                  "state corruption: tried to apply an already applied block %s",
                  index.toPrettyString());
   // an expensive check; might want to  disable it eventually
-  VBK_ASSERT_MSG(
+  VBK_ASSERT_MSG_DEBUG(
       index.allDescendantsUnapplied(),
       "state corruption: found an unapplied block that has some of its "
       "descendants applied %s",
