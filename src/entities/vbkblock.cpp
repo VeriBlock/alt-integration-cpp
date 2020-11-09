@@ -22,19 +22,27 @@ VbkBlock VbkBlock::fromRaw(Slice<const uint8_t> bytes,
 
 VbkBlock VbkBlock::fromRaw(ReadStream& stream,
                            const hash_t& precalculatedHash) {
-  VbkBlock block{};
-  block.height = stream.readBE<int32_t>();
-  block.version = stream.readBE<int16_t>();
-  block.previousBlock = stream.readSlice(VBLAKE_PREVIOUS_BLOCK_HASH_SIZE);
-  block.previousKeystone = stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
-  block.secondPreviousKeystone =
-      stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
-  block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE);
-  block.timestamp = stream.readBE<int32_t>();
-  block.difficulty = stream.readBE<int32_t>();
-  block.nonce = stream.readBE<uint64_t>(5);
-  block.hash_ = precalculatedHash;
-  return block;
+  try {
+    VbkBlock block{};
+    block.height = stream.readBE<int32_t>();
+    block.version = stream.readBE<int16_t>();
+    block.previousBlock = stream.readSlice(VBLAKE_PREVIOUS_BLOCK_HASH_SIZE);
+    block.previousKeystone =
+        stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
+    block.secondPreviousKeystone =
+        stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
+    block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE);
+    block.timestamp = stream.readBE<int32_t>();
+    block.difficulty = stream.readBE<int32_t>();
+    block.nonce = stream.readBE<uint64_t>(5);
+    block.hash_ = precalculatedHash;
+    return block;
+  } catch (const std::exception& e) {
+    throw std::invalid_argument(
+        fmt::format("Can not deserialize VBK block ({}) from {}",
+                    e.what(),
+                    HexStr(stream.remainingBytes())));
+  }
 }
 
 VbkBlock VbkBlock::fromVbkEncoding(ReadStream& stream) {

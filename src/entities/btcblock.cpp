@@ -15,14 +15,21 @@ BtcBlock BtcBlock::fromRaw(const std::vector<uint8_t>& bytes) {
 }
 
 BtcBlock BtcBlock::fromRaw(ReadStream& stream) {
-  BtcBlock block{};
-  block.version = stream.readLE<uint32_t>();
-  block.previousBlock = stream.readSlice(SHA256_HASH_SIZE).reverse();
-  block.merkleRoot = stream.readSlice(SHA256_HASH_SIZE).reverse();
-  block.timestamp = stream.readLE<uint32_t>();
-  block.bits = stream.readLE<uint32_t>();
-  block.nonce = stream.readLE<uint32_t>();
-  return block;
+  try {
+    BtcBlock block{};
+    block.version = stream.readLE<uint32_t>();
+    block.previousBlock = stream.readSlice(SHA256_HASH_SIZE).reverse();
+    block.merkleRoot = stream.readSlice(SHA256_HASH_SIZE).reverse();
+    block.timestamp = stream.readLE<uint32_t>();
+    block.bits = stream.readLE<uint32_t>();
+    block.nonce = stream.readLE<uint32_t>();
+    return block;
+  } catch (const std::exception& e) {
+    throw std::invalid_argument(
+        fmt::format("Can not deserialize BTC block ({}) from {}",
+                    e.what(),
+                    HexStr(stream.remainingBytes())));
+  }
 }
 
 BtcBlock BtcBlock::fromVbkEncoding(ReadStream& stream) {

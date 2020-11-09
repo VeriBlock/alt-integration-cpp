@@ -82,4 +82,8 @@ Slice<const uint8_t> ReadStream::data() const {
   return Slice<const uint8_t>(m_Buffer, m_Size);
 }
 
+Slice<const uint8_t> ReadStream::remainingBytes() const {
+  return Slice<const uint8_t>(m_Buffer + m_Pos, m_Size - m_Pos);
+}
+
 }  // namespace altintegration

@@ -159,6 +159,7 @@ struct ReadStream {
   bool hasMore(size_t nbytes) const noexcept;
   void reset() noexcept;
   Slice<const uint8_t> data() const;
+  Slice<const uint8_t> remainingBytes() const;
 
  private:
   void assign(const void *buff, size_t numOfBytes);
