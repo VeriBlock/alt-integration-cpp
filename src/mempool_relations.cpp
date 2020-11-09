@@ -13,7 +13,7 @@ PopData VbkPayloadsRelations::toPopData() const {
     pop.atvs.push_back(*atv);
   }
 
-  VBK_ASSERT(
+  VBK_ASSERT_DEBUG(
       std::all_of(pop.vtbs.begin(), pop.vtbs.end(), [this](const VTB& a) {
         return a.containingBlock == *header;
       }));

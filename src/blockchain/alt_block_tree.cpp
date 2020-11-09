@@ -168,10 +168,8 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   VBK_ASSERT_MSG(index.pprev,
                  "Adding payloads to a bootstrap block is not allowed");
 
-  // FIXME: it should be impossible to construct popData without running this
-  // check
   ValidationState state;
-  VBK_ASSERT_MSG(
+  VBK_ASSERT_MSG_DEBUG(
       checkPopData(payloads, state),
       "attempted to add statelessly invalid payloads to block %s: %s",
       index.toPrettyString(),
@@ -197,9 +195,9 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_ASSERT_MSG(index.pprev->isConnected(),
                  "the previous block of block %s must be connected",
                  index.toPrettyString());
-  VBK_ASSERT_MSG(index.allDescendantsUnconnected(),
-                 "a descendant of block %s is connected",
-                 index.toPrettyString());
+  VBK_ASSERT_MSG_DEBUG(index.allDescendantsUnconnected(),
+                       "a descendant of block %s is connected",
+                       index.toPrettyString());
 
   bool success = index.raiseValidity(BLOCK_CONNECTED);
   VBK_ASSERT(success);
