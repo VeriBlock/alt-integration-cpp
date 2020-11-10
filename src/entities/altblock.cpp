@@ -37,9 +37,9 @@ AltBlock AltBlock::fromVbkEncoding(ReadStream& stream) {
     return block;
   } catch (const std::exception& e) {
     throw std::invalid_argument(
-        fmt::format("Can not deserialize ALT block ({}) from {}",
+        fmt::format("Can not deserialize ALT block ({}), left {} bytes",
                     e.what(),
-                    HexStr(stream.remainingBytes())));
+                    stream.remaining()));
   }
 }
 

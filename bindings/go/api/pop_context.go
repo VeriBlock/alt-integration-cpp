@@ -37,11 +37,11 @@ type PopContext struct {
 }
 
 // NewPopContext ...
-func NewPopContext(config *Config) *PopContext {
+func NewPopContext(config *Config) PopContext {
 	if config == nil {
-		return nil
+		panic("Config not provided")
 	}
-	return &PopContext{
+	return PopContext{
 		popContext: ffi.NewPopContext(config.Config),
 		mutex:      new(sync.Mutex),
 	}
@@ -49,7 +49,6 @@ func NewPopContext(config *Config) *PopContext {
 
 // Free - Frees memory allocated for the pop context
 func (v *PopContext) Free() {
-	v.popContext.MemPoolClear()
 	v.popContext.Free()
 }
 
