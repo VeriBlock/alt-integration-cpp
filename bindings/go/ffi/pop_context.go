@@ -14,6 +14,9 @@ type PopContext struct {
 
 // NewPopContext ...
 func NewPopContext(config *Config) PopContext {
+	if config == nil {
+		panic("Config not provided")
+	}
 	return PopContext{
 		ref:     C.VBK_NewPopContext(config.ref),
 		popData: make([]byte, config.GetMaxPopDataSize()),
@@ -157,7 +160,7 @@ func (v PopContext) MemPoolGetPop() []byte {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&v.popData[0]))
 	bytesSizeC := (*C.int)(unsafe.Pointer(&bytesSize))
 	if v.ref == nil {
-	  panic("PopContext is nil!")
+		panic("CGO ref on PopContext is nil!")
 	}
 	C.VBK_MemPool_getPop(v.ref, bytesC, bytesSizeC)
 	out := make([]byte, bytesSize)

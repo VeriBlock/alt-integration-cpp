@@ -5,8 +5,6 @@ import (
 
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/stretchr/testify/assert"
-	// entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
-	// "github.com/stretchr/testify/assert"
 )
 
 func TestPopContext(t *testing.T) {
