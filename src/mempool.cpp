@@ -84,6 +84,7 @@ PopData MemPool::getPop() {
     return a.second->header->getHeight() < b.second->header->getHeight();
   });
 
+
   PopData ret = generatePopData(blocks, mempool_tree_.alt().getParams());
   mempool_tree_.alt().filterInvalidPayloads(ret);
   return ret;
