@@ -108,7 +108,7 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state) {
+  SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state, bool resubmit = true) {
     ReadStream stream(bytes);
     T payload;
     if (Deserialize(stream, payload, state)) {
@@ -116,7 +116,7 @@ struct MemPool {
               state.Invalid("pop-mempool-submit-deserialize")};
     }
 
-    return submit<T>(payload, state);
+    return submit<T>(payload, state, resubmit);
   }
 
   /**
@@ -138,8 +138,10 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  SubmitResult submit(const T& pl, ValidationState& state) {
-    return submit<T>(std::make_shared<T>(pl), state);
+  SubmitResult submit(const T& pl,
+                      ValidationState& state,
+                      bool resubmit = true) {
+    return submit<T>(std::make_shared<T>(pl), state, resubmit);
   }
 
   /**
@@ -282,7 +284,8 @@ struct MemPool {
   }
 
   template <typename POP>
-  void cleanupStale(std::vector<std::shared_ptr<POP>>& c, std::function<void(POP&)> remove) {
+  void cleanupStale(std::vector<std::shared_ptr<POP>>& c,
+                    std::function<void(POP&)> remove) {
     for (auto it = c.begin(); it != c.end();) {
       auto& pl = **it;
       ValidationState state;
