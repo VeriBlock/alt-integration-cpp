@@ -134,24 +134,24 @@ func (v PopContext) BtcGetBlockIndex(hashBytes []byte) {
 //                            int* blockindex_size);
 
 // MemPoolSubmitAtv - returns true if payload is valid, false otherwise.
-func (v PopContext) MemPoolSubmitAtv(bytes []byte) bool {
+func (v PopContext) MemPoolSubmitAtv(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
 	res := C.VBK_MemPool_submit_atv(v.ref, bytesC, C.int(len(bytes)))
-	return bool(res)
+	return int(res)
 }
 
 // MemPoolSubmitVtb - returns true if payload is valid, false otherwise.
-func (v PopContext) MemPoolSubmitVtb(bytes []byte) bool {
+func (v PopContext) MemPoolSubmitVtb(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
 	res := C.VBK_MemPool_submit_vtb(v.ref, bytesC, C.int(len(bytes)))
-	return bool(res)
+	return int(res)
 }
 
 // MemPoolSubmitVbk - returns true if payload is valid, false otherwise.
-func (v PopContext) MemPoolSubmitVbk(bytes []byte) bool {
+func (v PopContext) MemPoolSubmitVbk(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
 	res := C.VBK_MemPool_submit_vbk(v.ref, bytesC, C.int(len(bytes)))
-	return bool(res)
+	return int(res)
 }
 
 // MemPoolGetPop ...
