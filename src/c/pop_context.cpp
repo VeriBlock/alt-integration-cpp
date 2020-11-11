@@ -2,8 +2,9 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-#include "config.hpp"
 #include "pop_context.hpp"
+
+#include "config.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/c/extern.h"
 #include "veriblock/c/pop_context.h"
@@ -74,8 +75,10 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
 
 PopContext* VBK_NewPopContext(Config_t* config) {
   VBK_ASSERT(config);
+  VBK_ASSERT(config->config);
   auto& c = config->config;
 
+  VBK_ASSERT(c->alt);
   auto maxPopDataSize = c->alt->getMaxPopDataSize();
   auto* v = new PopContext();
   // maxPopDataSize is the maximum size of payload per block, it is safe
@@ -95,6 +98,9 @@ void VBK_FreePopContext(PopContext* app) {
 bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
                                         const uint8_t* block_bytes,
                                         int bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(block_bytes);
+
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> bytes(block_bytes, bytes_size);
   altintegration::ReadStream stream(bytes);
@@ -104,6 +110,8 @@ bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
     return false;
   }
 
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   if (!self->context->altTree->acceptBlockHeader(blk, state)) {
     return false;
   }
@@ -116,6 +124,10 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
                                   int hash_bytes_size,
                                   const uint8_t* payloads_bytes,
                                   int payloads_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash_bytes);
+  VBK_ASSERT(payloads_bytes);
+
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> p_bytes(payloads_bytes,
                                                payloads_bytes_size);
@@ -126,6 +138,9 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
       res, "can not deserialize PopData, error: %s", state.toString());
 
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
+
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   self->context->altTree->acceptBlock(hash, popData);
 }
 
@@ -134,6 +149,10 @@ bool VBK_AltBlockTree_addPayloads(PopContext* self,
                                   int hash_bytes_size,
                                   const uint8_t* payloads_bytes,
                                   int payloads_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash_bytes);
+  VBK_ASSERT(payloads_bytes);
+
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> p_bytes(payloads_bytes,
                                                payloads_bytes_size);
@@ -144,14 +163,21 @@ bool VBK_AltBlockTree_addPayloads(PopContext* self,
   }
 
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
+
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   return self->context->altTree->addPayloads(hash, popData, state);
 }
 
 bool VBK_AltBlockTree_loadTip(PopContext* self,
                               const uint8_t* hash_bytes,
                               int hash_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash_bytes);
   altintegration::ValidationState state;
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   return self->context->altTree->loadTip(hash, state);
 }
 
@@ -160,23 +186,36 @@ int VBK_AltBlockTree_comparePopScore(PopContext* self,
                                      int A_hash_bytes_size,
                                      const uint8_t* B_hash_bytes,
                                      int B_hash_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(A_hash_bytes);
+  VBK_ASSERT(B_hash_bytes);
   std::vector<uint8_t> A_hash(A_hash_bytes, A_hash_bytes + A_hash_bytes_size);
   std::vector<uint8_t> B_hash(B_hash_bytes, B_hash_bytes + B_hash_bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   return self->context->altTree->comparePopScore(A_hash, B_hash);
 }
 
 void VBK_AltBlockTree_removeSubtree(PopContext* self,
                                     const uint8_t* hash_bytes,
                                     int hash_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash_bytes);
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   self->context->altTree->removeSubtree(hash);
 }
 
 bool VBK_AltBlockTree_setState(PopContext* self,
                                const uint8_t* hash_bytes,
                                int hash_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash_bytes);
   altintegration::ValidationState state;
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   return self->context->altTree->setState(hash, state);
 }
 
@@ -185,7 +224,13 @@ bool VBK_btc_getBlockIndex(PopContext* self,
                            int hash_bytes_size,
                            uint8_t** blockindex,
                            int* blockindex_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash_bytes);
+  VBK_ASSERT(blockindex);
+  VBK_ASSERT(blockindex_size);
   altintegration::Slice<const uint8_t> hash(hash_bytes, hash_bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* blockIndex = self->context->altTree->btc().getBlockIndex(
       altintegration::BtcBlock::hash_t(hash));
   if (blockIndex == nullptr) {
@@ -205,7 +250,13 @@ bool VBK_vbk_getBlockIndex(PopContext* self,
                            int hash_bytes_size,
                            uint8_t** blockindex,
                            int* blockindex_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash_bytes);
+  VBK_ASSERT(blockindex);
+  VBK_ASSERT(blockindex_size);
   altintegration::Slice<const uint8_t> hash(hash_bytes, hash_bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* blockIndex = self->context->altTree->vbk().getBlockIndex(
       altintegration::VbkBlock::hash_t(hash));
   if (blockIndex == nullptr) {
@@ -225,7 +276,13 @@ bool VBK_alt_getBlockIndex(PopContext* self,
                            int hash_bytes_size,
                            uint8_t** blockindex,
                            int* blockindex_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash_bytes);
+  VBK_ASSERT(blockindex);
+  VBK_ASSERT(blockindex_size);
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* blockIndex = self->context->altTree->getBlockIndex(hash);
   if (blockIndex == nullptr) {
     return false;
@@ -242,29 +299,46 @@ bool VBK_alt_getBlockIndex(PopContext* self,
 bool VBK_MemPool_submit_atv(PopContext* self,
                             const uint8_t* bytes,
                             int bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(bytes);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> atv_bytes(bytes, bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   return self->context->mempool->submit<altintegration::ATV>(atv_bytes, state);
 }
 
 bool VBK_MemPool_submit_vtb(PopContext* self,
                             const uint8_t* bytes,
                             int bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(bytes);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> vtb_bytes(bytes, bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   return self->context->mempool->submit<altintegration::VTB>(vtb_bytes, state);
 }
 
 bool VBK_MemPool_submit_vbk(PopContext* self,
                             const uint8_t* bytes,
                             int bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(bytes);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> vbk_bytes(bytes, bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   return self->context->mempool->submit<altintegration::VbkBlock>(vbk_bytes,
                                                                   state);
 }
 
 void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(out_bytes);
+  VBK_ASSERT(bytes_size);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   altintegration::PopData popData = self->context->mempool->getPop();
   std::vector<uint8_t> bytes = popData.toVbkEncoding();
 
@@ -275,6 +349,8 @@ void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size) {
 void VBK_MemPool_removeAll(PopContext* self,
                            const uint8_t* bytes,
                            int bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(bytes);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> p_bytes(bytes, bytes_size);
   altintegration::ReadStream stream(p_bytes);
@@ -282,7 +358,14 @@ void VBK_MemPool_removeAll(PopContext* self,
   bool res = altintegration::Deserialize(stream, popData, state);
   VBK_ASSERT_MSG(
       res, "can not deserialize PopData, error: %s", state.toString());
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   self->context->mempool->removeAll(popData);
 }
 
-void VBK_MemPool_clear(PopContext* self) { self->context->mempool->clear(); }
+void VBK_MemPool_clear(PopContext* self) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
+  self->context->mempool->clear();
+}
