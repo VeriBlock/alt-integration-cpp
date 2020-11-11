@@ -403,3 +403,38 @@ TEST_F(StatelessValidationTest, parallel_check_valid_atv) {
   auto result = validator.addCheck(validATV);
   ASSERT_TRUE(result.get().IsValid());
 }
+
+TEST_F(StatelessValidationTest, parallel_check_valid_pop) {
+  PopValidator validator(vbk, btc, alt);
+  PopData pop{};
+  pop.context.push_back(validVTB.containingBlock);
+  pop.vtbs.push_back(validVTB);
+  pop.atvs.push_back(validATV);
+  bool result = checkPopData(validator, pop, state);
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(state.IsValid());
+}
+
+TEST_F(StatelessValidationTest, parallel_check_invalid_pop) {
+  PopValidator validator(vbk, btc, alt);
+  PopData pop{};
+  VbkBlock block = validVTB.containingBlock;
+  block.setDifficulty(999999);
+  pop.context.push_back(block);
+  pop.vtbs.push_back(validVTB);
+  pop.atvs.push_back(validATV);
+  bool result = checkPopData(validator, pop, state);
+  ASSERT_FALSE(result);
+  ASSERT_FALSE(state.IsValid());
+  ASSERT_EQ(state.GetPathParts().front(), "pop-vbkblock-statelessly-invalid");
+
+  // clear state and try validating again to make sure validator's state does not matter
+  PopData pop2{};
+  state = ValidationState();
+  pop2.context.push_back(validVTB.containingBlock);
+  pop2.vtbs.push_back(validVTB);
+  pop2.atvs.push_back(validATV);
+  result = checkPopData(validator, pop2, state);
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(state.IsValid());
+}
