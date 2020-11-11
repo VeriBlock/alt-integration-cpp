@@ -177,49 +177,40 @@ func (v PopContext) SetState(hash []byte) error {
 //                            uint8_t** blockindex,
 //                            int* blockindex_size);
 
-// SubmitAtv - Returns nil if payload is valid
-func (v *PopContext) SubmitAtv(block entities.Atv) error {
+// SubmitAtv - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
+func (v *PopContext) SubmitAtv(block entities.Atv) int {
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
-		return err
+		return 2
 	}
 	defer v.lock()()
-	ok := v.popContext.MemPoolSubmitAtv(stream.Bytes())
-	if !ok {
-		return errors.New("Payload is invalid")
-	}
-	return nil
+	res := v.popContext.MemPoolSubmitAtv(stream.Bytes())
+	return res
 }
 
-// SubmitVtb - Returns nil if payload is valid
-func (v *PopContext) SubmitVtb(block entities.Vtb) error {
+// SubmitVtb - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
+func (v *PopContext) SubmitVtb(block entities.Vtb) int {
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
-		return err
+		return 2
 	}
 	defer v.lock()()
-	ok := v.popContext.MemPoolSubmitVtb(stream.Bytes())
-	if !ok {
-		return errors.New("Payload is invalid")
-	}
-	return nil
+	res := v.popContext.MemPoolSubmitVtb(stream.Bytes())
+	return res
 }
 
-// SubmitVbk - Returns nil if payload is valid
-func (v *PopContext) SubmitVbk(block entities.VbkBlock) error {
+// SubmitVbk - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
+func (v *PopContext) SubmitVbk(block entities.VbkBlock) int {
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
-		return err
+		return 2
 	}
 	defer v.lock()()
-	ok := v.popContext.MemPoolSubmitVbk(stream.Bytes())
-	if !ok {
-		return errors.New("Payload is invalid")
-	}
-	return nil
+	res := v.popContext.MemPoolSubmitVbk(stream.Bytes())
+	return res
 }
 
 // GetPop ...
