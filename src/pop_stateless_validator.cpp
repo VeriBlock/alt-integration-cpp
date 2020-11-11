@@ -8,23 +8,53 @@
 
 namespace altintegration {
 
-ValidationState PopCheckBlock::operator()() {
-  ValidationState state;
-  checkBlock(block_, state, vbk_);
-  return state;
-}
+class PopCheckBlock {
+ public:
+  PopCheckBlock(const VbkChainParams& vbk, const VbkBlock& block)
+      : vbk_(vbk), block_(block) {}
 
-ValidationState PopCheckVtb::operator()() {
-  ValidationState state;
-  checkVTB(vtb_, state, btc_);
-  return state;
-}
+  ValidationState operator()() {
+    ValidationState state;
+    checkBlock(block_, state, vbk_);
+    return state;
+  }
 
-ValidationState PopCheckAtv::operator()() {
-  ValidationState state;
-  checkATV(atv_, state, alt_);
-  return state;
-}
+ protected:
+  const VbkChainParams& vbk_;
+  const VbkBlock& block_;
+};
+
+class PopCheckVtb {
+ public:
+  PopCheckVtb(const BtcChainParams& btc, const VTB& vtb)
+      : btc_(btc), vtb_(vtb) {}
+
+  ValidationState operator()() {
+    ValidationState state;
+    checkVTB(vtb_, state, btc_);
+    return state;
+  }
+
+ protected:
+  const BtcChainParams& btc_;
+  const VTB& vtb_;
+};
+
+class PopCheckAtv {
+ public:
+  PopCheckAtv(const AltChainParams& alt, const ATV& atv)
+      : alt_(alt), atv_(atv) {}
+
+  ValidationState operator()() {
+    ValidationState state;
+    checkATV(atv_, state, alt_);
+    return state;
+  }
+
+ protected:
+  const AltChainParams& alt_;
+  const ATV& atv_;
+};
 
 PopValidator::PopValidator(const VbkChainParams& vbk,
                            const BtcChainParams& btc,
