@@ -435,7 +435,7 @@ bool checkPopData(PopValidator& validator,
   size_t index = 0;
   for (auto& r : results) {
     auto result = r.get();
-    if (result.IsInvalid()) {
+    if (result.IsValid()) {
       state = result;
 
       if (index < popData.context.size()) {
