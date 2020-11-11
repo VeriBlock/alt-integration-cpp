@@ -3,58 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/stateless_validation.hpp>
 #include <veriblock/pop_stateless_validator.hpp>
+#include <veriblock/stateless_validation.hpp>
 
 namespace altintegration {
-
-class PopCheckBlock {
- public:
-  PopCheckBlock(const VbkChainParams& vbk, const VbkBlock& block)
-      : vbk_(vbk), block_(block) {}
-
-  ValidationState operator()() {
-    ValidationState state;
-    checkBlock(block_, state, vbk_);
-    return state;
-  }
-
- protected:
-  const VbkChainParams& vbk_;
-  const VbkBlock& block_;
-};
-
-class PopCheckVtb {
- public:
-  PopCheckVtb(const BtcChainParams& btc, const VTB& vtb)
-      : btc_(btc), vtb_(vtb) {}
-
-  ValidationState operator()() {
-    ValidationState state;
-    checkVTB(vtb_, state, btc_);
-    return state;
-  }
-
- protected:
-  const BtcChainParams& btc_;
-  const VTB& vtb_;
-};
-
-class PopCheckAtv {
- public:
-  PopCheckAtv(const AltChainParams& alt, const ATV& atv)
-      : alt_(alt), atv_(atv) {}
-
-  ValidationState operator()() {
-    ValidationState state;
-    checkATV(atv_, state, alt_);
-    return state;
-  }
-
- protected:
-  const AltChainParams& alt_;
-  const ATV& atv_;
-};
 
 PopValidator::PopValidator(const VbkChainParams& vbk,
                            const BtcChainParams& btc,
@@ -74,28 +26,30 @@ PopValidator::PopValidator(const VbkChainParams& vbk,
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block)
-{
+std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
   return workers->enqueue([&] {
-    PopCheckBlock blockCheck(vbk_, block);
-    return blockCheck();
+    ValidationState state;
+    checkBlock(block, state, vbk_);
+    return state;
   });
 }
 
 template <>
 std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
   return workers->enqueue([&] {
-    PopCheckVtb vtbCheck(btc_, vtb);
-    return vtbCheck();
+    ValidationState state;
+    checkVTB(vtb, state, btc_);
+    return state;
   });
 }
 
 template <>
 std::future<ValidationState> PopValidator::addCheck(const ATV& atv) {
   return workers->enqueue([&] {
-    PopCheckAtv atvCheck(alt_, atv);
-    return atvCheck();
+    ValidationState state;
+    checkATV(atv, state, alt_);
+    return state;
   });
 }
 
-} // namespace altintegration
+}  // namespace altintegration

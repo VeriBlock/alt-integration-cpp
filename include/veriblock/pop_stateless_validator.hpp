@@ -6,6 +6,10 @@
 #ifndef ALT_INTEGRATION_VERIBLOCK_POP_STATELESS_VALIDATOR_HPP
 #define ALT_INTEGRATION_VERIBLOCK_POP_STATELESS_VALIDATOR_HPP
 
+#include <veriblock/blockchain/alt_chain_params.hpp>
+#include <veriblock/blockchain/btc_chain_params.hpp>
+#include <veriblock/blockchain/vbk_chain_params.hpp>
+#include <veriblock/validation_state.hpp>
 #include <veriblock/third_party/ThreadPool.h>
 
 namespace altintegration {
