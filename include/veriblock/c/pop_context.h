@@ -198,12 +198,13 @@ bool VBK_alt_getBlockIndex(PopContext* self,
  * @param[in] self PopContext
  * @param[in] bytes altintegration::ATV raw representation
  * @param[in] bytes_size bytes size
- * @return true if payload is valid, false otherwise
+ * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
+ * invalid
  * @ingroup c-api
  */
-bool VBK_MemPool_submit_atv(PopContext* self,
-                            const uint8_t* bytes,
-                            int bytes_size);
+int VBK_MemPool_submit_atv(PopContext* self,
+                           const uint8_t* bytes,
+                           int bytes_size);
 
 /**
  * @copybrief altintegration::MemPool::submit
@@ -211,10 +212,11 @@ bool VBK_MemPool_submit_atv(PopContext* self,
  * @param[in] self PopContext
  * @param[in] bytes altintegration::VTB raw representation
  * @param[in] bytes_size bytes size
- * @return true if payload is valid, false otherwise
+ * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
+ * invalid
  * @ingroup c-api
  */
-bool VBK_MemPool_submit_vtb(PopContext* self,
+int VBK_MemPool_submit_vtb(PopContext* self,
                             const uint8_t* bytes,
                             int bytes_size);
 
@@ -224,10 +226,11 @@ bool VBK_MemPool_submit_vtb(PopContext* self,
  * @param[in] self PopContext
  * @param[in] bytes altintegration::VbkBlock raw representation
  * @param[in] bytes_size bytes size
- * @return true if payload is valid, false otherwise
+ * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
+ * invalid
  * @ingroup c-api
  */
-bool VBK_MemPool_submit_vbk(PopContext* self,
+int VBK_MemPool_submit_vbk(PopContext* self,
                             const uint8_t* bytes,
                             int bytes_size);
 

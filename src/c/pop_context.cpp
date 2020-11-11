@@ -296,41 +296,60 @@ bool VBK_alt_getBlockIndex(PopContext* self,
   return true;
 }
 
-bool VBK_MemPool_submit_atv(PopContext* self,
-                            const uint8_t* bytes,
-                            int bytes_size) {
+static int handleSubmitResponse(altintegration::MemPool::SubmitResult e) {
+  using S = altintegration::MemPool::Status;
+  switch (e.status) {
+    case S::ACCEPTED:
+      return 0;
+    case S::FAILED_STATEFUL:
+      return 1;
+    case S::FAILED_STATELESS:
+      return 2;
+  }
+
+  VBK_ASSERT_MSG(false, "Unhandled case");
+}
+
+int VBK_MemPool_submit_atv(PopContext* self,
+                           const uint8_t* bytes,
+                           int bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(bytes);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> atv_bytes(bytes, bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
-  return self->context->mempool->submit<altintegration::ATV>(atv_bytes, state);
+  auto r =
+      self->context->mempool->submit<altintegration::ATV>(atv_bytes, state);
+  return handleSubmitResponse(r);
 }
 
-bool VBK_MemPool_submit_vtb(PopContext* self,
-                            const uint8_t* bytes,
-                            int bytes_size) {
+int VBK_MemPool_submit_vtb(PopContext* self,
+                           const uint8_t* bytes,
+                           int bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(bytes);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> vtb_bytes(bytes, bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
-  return self->context->mempool->submit<altintegration::VTB>(vtb_bytes, state);
+  auto r =
+      self->context->mempool->submit<altintegration::VTB>(vtb_bytes, state);
+  return handleSubmitResponse(r);
 }
 
-bool VBK_MemPool_submit_vbk(PopContext* self,
-                            const uint8_t* bytes,
-                            int bytes_size) {
+int VBK_MemPool_submit_vbk(PopContext* self,
+                           const uint8_t* bytes,
+                           int bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(bytes);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> vbk_bytes(bytes, bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
-  return self->context->mempool->submit<altintegration::VbkBlock>(vbk_bytes,
-                                                                  state);
+  auto r = self->context->mempool->submit<altintegration::VbkBlock>(vbk_bytes,
+                                                                    state);
+  return handleSubmitResponse(r);
 }
 
 void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size) {
