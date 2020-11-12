@@ -17,6 +17,7 @@
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vtb.hpp"
+#include "veriblock/pop_stateless_validator.hpp"
 #include "veriblock/time.hpp"
 
 namespace altintegration {
@@ -85,7 +86,9 @@ bool checkVTB(const VTB& vtb,
               ValidationState& state,
               const BtcChainParams& btc);
 
-bool checkPopData(const PopData& popData, ValidationState& state);
+bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state);
+
+bool checkPopData(PopValidator& validator, const PopData& popData, ValidationState& state);
 }  // namespace altintegration
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK_STATELESS_VALIDATION_H
