@@ -77,6 +77,9 @@ PopData generatePopData(
 }  // namespace
 
 PopData MemPool::getPop() {
+  // attempt to connect payloads
+  tryConnectPayloads();
+
   // sorted array of VBK blocks (ascending order)
   using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
   std::vector<P> blocks(relations_.begin(), relations_.end());
@@ -184,6 +187,9 @@ void MemPool::removeAll(const PopData& pop) {
   }
 
   this->cleanUp();
+
+  // attempt to connect payloads
+  tryConnectPayloads();
 }
 
 VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
@@ -235,8 +241,7 @@ void MemPool::clear() {
 
 template <>
 MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
-                                           ValidationState& state,
-                                           bool resubmit) {
+                                           ValidationState& state) {
   // stateless validation
   if (!checkATV(*atv, state, mempool_tree_.alt().getParams())) {
     return {MemPool::FAILED_STATELESS,
@@ -260,17 +265,12 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
   // store atv id in containing block index
   makePayloadConnected<ATV>(atv);
 
-  if (resubmit) {
-    resubmit_payloads();
-  }
-
   return true;
 }
 
 template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
-                                           ValidationState& state,
-                                           bool resubmit) {
+                                           ValidationState& state) {
   // stateless validation
   if (!checkVTB(*vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
     return {FAILED_STATELESS,
@@ -291,18 +291,12 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
   rel.vtbs.push_back(vtb);
   makePayloadConnected<VTB>(vtb);
 
-  if (resubmit) {
-    resubmit_payloads();
-  }
-
   return true;
 }
 
 template <>
 MemPool::SubmitResult MemPool::submit<VbkBlock>(
-    const std::shared_ptr<VbkBlock>& blk,
-    ValidationState& state,
-    bool resubmit) {
+    const std::shared_ptr<VbkBlock>& blk, ValidationState& state) {
   // stateless validation
   if (!checkBlock(
           *blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
@@ -325,14 +319,11 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
   }
 
   vbkblocks_in_flight_.erase(blk->getId());
-  if (resubmit) {
-    resubmit_payloads();
-  }
 
   return true;
 }
 
-void MemPool::resubmit_payloads() {
+void MemPool::tryConnectPayloads() {
   ValidationState state;
 
   // resubmit vbk blocks
@@ -343,7 +334,7 @@ void MemPool::resubmit_payloads() {
     return a.second->getHeight() < b.second->getHeight();
   });
   for (const auto& pair : blocks) {
-    submit<VbkBlock>(pair.second, state, false);
+    submit<VbkBlock>(pair.second, state);
   }
 
   // resubmit vtbs
@@ -354,7 +345,7 @@ void MemPool::resubmit_payloads() {
            b.second->containingBlock.getHeight();
   });
   for (const auto& pair : vtbs) {
-    submit<VTB>(pair.second, state, false);
+    submit<VTB>(pair.second, state);
   }
 
   // resubmit atvs
@@ -365,7 +356,7 @@ void MemPool::resubmit_payloads() {
            b.second->blockOfProof.getHeight();
   });
   for (const auto& pair : atvs) {
-    submit<ATV>(pair.second, state, false);
+    submit<ATV>(pair.second, state);
   }
 }
 
