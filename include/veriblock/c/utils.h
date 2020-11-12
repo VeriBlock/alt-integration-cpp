@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_ENTITIES_UTILS_H
-#define VERIBLOCK_POP_CPP_ENTITIES_UTILS_H
+#ifndef VERIBLOCK_POP_CPP_UTILS_H
+#define VERIBLOCK_POP_CPP_UTILS_H
 
 /**
  * @defgroup c-api C interface
