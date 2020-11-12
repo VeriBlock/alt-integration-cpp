@@ -6,6 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS
 #define VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS
 
+#include <memory>
+
 #include "veriblock/config.hpp"
 
 struct Config {

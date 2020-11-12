@@ -24,56 +24,62 @@ void VBK_FreeConfig(MockMiner_t* miner);
 /**
  * Mine new altintegration::BtcBlock on the top of the current btctree.
  *
- * @param[out] block_bytes altintegration::BtcBlock raw bytes, expect
- * ToVbkEncoding format (must be prealocated)
+ * @param[in] self MockMiner
+ * @param[out] block_bytes altintegration::BlockIndex<altintegration::BtcBlock>
+ * raw bytes (must be prealocated)
  * @param[out] block_bytes_size size of block bytes
- * @return true if block successfully mined, false otherwise
  * @ingroup c-api
  */
-bool VBK_mineBtcBlock(uint8_t* block_bytes, int* block_bytes_size);
+void VBK_mineBtcBlockTip(MockMiner_t* self,
+                         uint8_t* block_bytes,
+                         int* block_bytes_size);
 
 /**
  * Mine new altintegration::BtcBlock on the top of the provided block.
  *
- * @param[in] tip_block_bytes provided tip altintegration::BtcBlock raw bytes,
- * expect ToVbkEncoding
+ * @param[in] self MockMiner
+ * @param[in] tip_block_bytes provided tip
+ * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes
  * @param[in] tip_block_bytes_size size of the input block bytes
- * @param[out] block_bytes altintegration::BtcBlock raw bytes, expect
- * ToVbkEncoding format (must be prealocated)
+ * @param[out] block_bytes altintegration::BlockIndex<altintegration::BtcBlock>
+ * raw bytes (must be prealocated)
  * @param[out] block_bytes_size size of block bytes
- * @return true if block successfully mined, false otherwise
  * @ingroup c-api
  */
-bool VBK_mineBtcBlock(uint8_t* tip_block_bytes,
-                      int* tip_block_bytes_size,
+void VBK_mineBtcBlock(MockMiner_t* self,
+                      const uint8_t* tip_block_bytes,
+                      int tip_block_bytes_size,
                       uint8_t* block_bytes,
                       int* block_bytes_size);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the current vbktree.
  *
- * @param[out] block_bytes altintegration::VbkBlock raw bytes, expect
- * ToVbkEncoding format (must be prealocated)
+ * @param[in] self MockMiner
+ * @param[out] block_bytes altintegration::BlockIndex<altintegration::VbkBlock>
+ * raw bytes (must be prealocated)
  * @param[out] block_bytes_size size of block bytes
- * @return true if block successfully mined, false otherwise
  * @ingroup c-api
  */
-bool VBK_mineVbkBlock(uint8_t* block_bytes, int* block_bytes_size);
+void VBK_mineVbkBlockTip(MockMiner_t* self,
+                         uint8_t* block_bytes,
+                         int* block_bytes_size);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the provided block.
  *
- * @param[in] tip_block_bytes provided tip altintegration::VbkBlock raw bytes,
- * expect ToVbkEncoding
+ * @param[in] self MockMiner
+ * @param[in] tip_block_bytes provided tip
+ * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes
  * @param[in] tip_block_bytes_size size of the input block bytes
- * @param[out] block_bytes altintegration::VbkBlock raw bytes, expect
- * ToVbkEncoding format (must be prealocated)
+ * @param[out] block_bytes  altintegration::BlockIndex<altintegration::VbkBlock>
+ * raw bytes (must be prealocated)
  * @param[out] block_bytes_size size of block bytes
- * @return true if block successfully mined, false otherwise
  * @ingroup c-api
  */
-bool VBK_mineBtcBlock(uint8_t* tip_block_bytes,
-                      int* tip_block_bytes_size,
+void VBK_mineVbkBlock(MockMiner_t* self,
+                      const uint8_t* tip_block_bytes,
+                      int tip_block_bytes_size,
                       uint8_t* block_bytes,
                       int* block_bytes_size);
 
