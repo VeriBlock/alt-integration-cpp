@@ -417,6 +417,9 @@ bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
 bool checkPopData(PopValidator& validator,
   const PopData& popData,
   ValidationState& state) {
+  if (!checkPopDataForDuplicates(popData, state)) {
+    return state.Invalid("pop-statelessly-invalid-has-duplicates");
+  } 
 
   std::vector<std::future<ValidationState>> results;
   results.reserve(popData.context.size() + popData.vtbs.size() +
@@ -431,22 +434,12 @@ bool checkPopData(PopValidator& validator,
   for (const auto& atv : popData.atvs) {
     results.push_back(validator.addCheck(atv));
   }
-
-  size_t index = 0;
   for (auto& r : results) {
     auto result = r.get();
     if (!result.IsValid()) {
       state = result;
-
-      if (index < popData.context.size()) {
-        return state.Invalid("pop-vbkblock-statelessly-invalid");
-      }
-      if (index < (popData.context.size() + popData.vtbs.size())) {
-        return state.Invalid("pop-vtb-statelessly-invalid");
-      }
-      return state.Invalid("pop-atv-statelessly-invalid");
+      return state.Invalid("pop-statelessly-invalid");
     }
-    index++;
   }
   
   return true;

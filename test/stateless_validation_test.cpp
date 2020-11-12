@@ -426,7 +426,7 @@ TEST_F(StatelessValidationTest, parallel_check_invalid_pop) {
   bool result = checkPopData(validator, pop, state);
   ASSERT_FALSE(result);
   ASSERT_FALSE(state.IsValid());
-  ASSERT_EQ(state.GetPathParts().front(), "pop-vbkblock-statelessly-invalid");
+  ASSERT_EQ(state.GetPathParts().front(), "pop-statelessly-invalid");
 
   // clear state and try validating again to make sure validator's state does not matter
   PopData pop2{};
