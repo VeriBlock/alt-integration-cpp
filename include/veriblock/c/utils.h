@@ -23,8 +23,8 @@ extern "C" {
  * @param[in] block_bytes altintegration::VbkBlock raw bytes, expect
  * ToVbkEncoding format
  * @param[in] block_bytes_size size of input hash
- * @param[out] id_bytes altintegration::VbkBlock id, should be prealocated, with
- * size of altintegration::VbkBlock::short_hash_t
+ * @param[out] id_bytes altintegration::VbkBlock id with
+ * size of altintegration::VbkBlock::short_hash_t (must be prealocated)
  * @param[out] id_bytes_size id bytes size, equals to the
  * altintegration::VbkBlock::short_hash_t size
  * @ingroup c-api
@@ -40,8 +40,8 @@ void VBK_VbkBlock_getId(const uint8_t* block_bytes,
  * @param[in] vtb_bytes altintegration::VTB raw bytes, expect ToVbkEncoding
  * format
  * @param[in] vtb_bytes_size size of input hash
- * @param[out] id_bytes altintegration::VTB id, should be prealocated, with
- * size of altintegration::VTB::id_t
+ * @param[out] id_bytes altintegration::VTB id with
+ * size of altintegration::VTB::id_t (must be prealocated)
  * @param[out] id_bytes_size id bytes size, equals to the
  * altintegration::VTB::id_t size
  * @ingroup c-api
@@ -57,8 +57,8 @@ void VBK_VTB_getId(const uint8_t* vtb_bytes,
  * @param[in] atv_bytes altintegration::ATV raw bytes, expect ToVbkEncoding
  * format
  * @param[in] atv_bytes_size size of input hash
- * @param[out] id_bytes altintegration::ATV id, should be prealocated, with
- * size of altintegration::ATV::id_t
+ * @param[out] id_bytes altintegration::ATV id with
+ * size of altintegration::ATV::id_t (must be prealocated)
  * @param[out] id_bytes_size id bytes size, equals to the
  * altintegration::ATV::id_t size
  * @ingroup c-api
@@ -74,8 +74,8 @@ void VBK_ATV_getId(const uint8_t* atv_bytes,
  * @param[in] block_bytes altintegration::VbkBlock raw bytes, expect
  * ToVbkEncoding format
  * @param[in] block_bytes_size size of input hash
- * @param[out] hash_bytes altintegration::VbkBlock hash, should be prealocated,
- * with size of altintegration::VkbBlock::hash_t
+ * @param[out] hash_bytes altintegration::VbkBlock hash
+ * with size of altintegration::VkbBlock::hash_t (must be prealocated)
  * @param[out] hash_bytes_size hash bytes size, equals to the
  * altintegration::VkbBlock::hash_t size
  * @ingroup c-api
@@ -91,8 +91,8 @@ void VBK_VbkBlock_getHash(const uint8_t* block_bytes,
  * @param[in] block_bytes altintegration::BtcBlock raw bytes, expect
  * ToVbkEncoding format
  * @param[in] block_bytes_size size of input hash
- * @param[out] hash_bytes altintegration::BtcBlock hash, should be prealocated,
- * with size of altintegration::BtcBlock::hash_t
+ * @param[out] hash_bytes altintegration::BtcBlock hash
+ * with size of altintegration::BtcBlock::hash_t (must be prealocated)
  * @param[out] hash_bytes_size hash bytes size, equals to the
  * altintegration::BtcBlock::hash_t size
  * @ingroup c-api
