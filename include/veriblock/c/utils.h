@@ -10,6 +10,7 @@
  * @defgroup c-api C interface
  */
 
+#include <stddef.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -100,6 +101,25 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
                           int block_bytes_size,
                           uint8_t* hash_bytes,
                           int* hash_bytes_size);
+
+typedef struct VbkByteStream VBK_ByteStream;
+
+/**
+ * Read from VbkByteStream
+ * @param[in] stream input byte stream
+ * @param[out] buffer output buffer
+ * @param[in] toRead number of bytes to read
+ * @return number of bytes actually read.
+ */
+size_t VbkByteStream_Read(VBK_ByteStream* stream,
+                          uint8_t* buffer,
+                          size_t toRead);
+
+/**
+ * Closes stream and deallocates resources.
+ * @param[out] stream
+ */
+void VbkByteStream_Free(VBK_ByteStream* stream);
 
 #ifdef __cplusplus
 }  // end of extern "C"
