@@ -10,6 +10,7 @@
  * @defgroup c-api C interface
  */
 
+#include <stddef.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -110,7 +111,9 @@ typedef struct VbkByteStream VbkByteStream;
  * @param[in] toRead number of bytes to read
  * @return number of bytes actually read.
  */
-size_t VbkByteStream_Read(VbkByteStream* stream, uint8_t* buffer, size_t toRead);
+size_t VbkByteStream_Read(VbkByteStream* stream,
+                          uint8_t* buffer,
+                          size_t toRead);
 
 /**
  * Closes stream and deallocates resources.
