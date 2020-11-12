@@ -32,14 +32,10 @@ struct VbkByteStream {
   size_t ptr = 0;
 };
 
-// use this func in C++ to allocate new VbkByteStream, and return it to
-// Go/whatever. It should NOT be called from Go.
-VbkByteStream* VbkByteStream_New(std::vector<uint8_t> bytes);
-
-size_t VbkByteStream_Read(VbkByteStream* stream,
+size_t VBK_ByteStream_Read(VBK_ByteStream* stream,
                           uint8_t* buffer,
                           size_t toRead);
 
-void VbkByteStream_Free(VbkByteStream* stream);
+void VBK_ByteStream_Free(VBK_ByteStream* stream);
 
 #endif  // VERIBLOCK_POP_CPP_BYTESTREAM_HPP

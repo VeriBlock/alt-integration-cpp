@@ -32,7 +32,7 @@ VbkByteStream::VbkByteStream(Slice<const uint8_t> slice)
 VbkByteStream::VbkByteStream(std::vector<uint8_t> bytes)
     : data(std::move(bytes)) {}
 
-size_t VbkByteStream_Read(VbkByteStream* stream,
+size_t VBK_ByteStream_Read(VBK_ByteStream* stream,
                           uint8_t* buffer,
                           size_t toRead) {
   VBK_ASSERT(stream);
@@ -40,12 +40,8 @@ size_t VbkByteStream_Read(VbkByteStream* stream,
   return stream->read(buffer, toRead);
 }
 
-void VbkByteStream_Free(VbkByteStream* stream) {
+void VBK_ByteStream_Free(VBK_ByteStream* stream) {
   if (stream) {
     delete stream;
   }
-}
-
-VbkByteStream* VbkByteStream_New(std::vector<uint8_t> bytes) {
-  return new VbkByteStream(std::move(bytes));
 }
