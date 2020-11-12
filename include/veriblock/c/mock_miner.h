@@ -26,12 +26,12 @@ void VBK_FreeConfig(MockMiner_t* miner);
  *
  * @param[in] self MockMiner
  * @param[out] block_bytes altintegration::BlockIndex<altintegration::BtcBlock>
- * raw bytes (must be prealocated)
+ * raw bytes (memory will allocated by this method)
  * @param[out] block_bytes_size size of block bytes
  * @ingroup c-api
  */
 void VBK_mineBtcBlockTip(MockMiner_t* self,
-                         uint8_t* block_bytes,
+                         uint8_t** block_bytes,
                          int* block_bytes_size);
 
 /**
@@ -42,14 +42,14 @@ void VBK_mineBtcBlockTip(MockMiner_t* self,
  * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes
  * @param[in] tip_block_bytes_size size of the input block bytes
  * @param[out] block_bytes altintegration::BlockIndex<altintegration::BtcBlock>
- * raw bytes (must be prealocated)
+ * raw bytes (memory will allocated by this method)
  * @param[out] block_bytes_size size of block bytes
  * @ingroup c-api
  */
 void VBK_mineBtcBlock(MockMiner_t* self,
                       const uint8_t* tip_block_bytes,
                       int tip_block_bytes_size,
-                      uint8_t* block_bytes,
+                      uint8_t** block_bytes,
                       int* block_bytes_size);
 
 /**
@@ -57,12 +57,12 @@ void VBK_mineBtcBlock(MockMiner_t* self,
  *
  * @param[in] self MockMiner
  * @param[out] block_bytes altintegration::BlockIndex<altintegration::VbkBlock>
- * raw bytes (must be prealocated)
+ * raw bytes (memory will allocated by this method)
  * @param[out] block_bytes_size size of block bytes
  * @ingroup c-api
  */
 void VBK_mineVbkBlockTip(MockMiner_t* self,
-                         uint8_t* block_bytes,
+                         uint8_t** block_bytes,
                          int* block_bytes_size);
 
 /**
@@ -73,14 +73,14 @@ void VBK_mineVbkBlockTip(MockMiner_t* self,
  * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes
  * @param[in] tip_block_bytes_size size of the input block bytes
  * @param[out] block_bytes  altintegration::BlockIndex<altintegration::VbkBlock>
- * raw bytes (must be prealocated)
+ * raw bytes (memory will allocated by this method)
  * @param[out] block_bytes_size size of block bytes
  * @ingroup c-api
  */
 void VBK_mineVbkBlock(MockMiner_t* self,
                       const uint8_t* tip_block_bytes,
                       int tip_block_bytes_size,
-                      uint8_t* block_bytes,
+                      uint8_t** block_bytes,
                       int* block_bytes_size);
 
 #ifdef __cplusplus
