@@ -101,6 +101,23 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
                           uint8_t* hash_bytes,
                           int* hash_bytes_size);
 
+typedef struct VbkByteStream VbkByteStream;
+
+/**
+ * Read from VbkByteStream
+ * @param[in] stream input byte stream
+ * @param[out] buffer output buffer
+ * @param[in] toRead number of bytes to read
+ * @return number of bytes actually read.
+ */
+size_t VbkByteStream_Read(VbkByteStream* stream, uint8_t* buffer, size_t toRead);
+
+/**
+ * Closes stream and deallocates resources.
+ * @param[out] stream
+ */
+void VbkByteStream_Free(VbkByteStream* stream);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif
