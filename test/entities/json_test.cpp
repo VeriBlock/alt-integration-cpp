@@ -546,7 +546,7 @@ TEST(ToJson, AltParams) {
   ],
   "keystoneInterval": 5,
   "maxAltchainFutureBlockTime": 600,
-  "maxPopDataSize": 1048576,
+  "maxPopDataSize": 5500000,
   "payoutParams": {
     "difficultyAveragingInterval": 50,
     "flatScoreRound": 2,
