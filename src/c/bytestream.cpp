@@ -20,7 +20,7 @@ size_t VbkByteStream::read(uint8_t* buf, size_t toRead) {
 }
 size_t VbkByteStream::remaining() {
   auto size = data.size();
-  if (size < ptr) {
+  if (size <= ptr) {
     return 0;
   }
   return size - ptr;
