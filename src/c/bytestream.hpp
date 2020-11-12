@@ -8,6 +8,7 @@
 
 #include <veriblock/c/utils.h>
 
+#include <cstdint>
 #include <vector>
 #include <veriblock/assert.hpp>
 #include <veriblock/slice.hpp>
