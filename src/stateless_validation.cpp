@@ -414,4 +414,35 @@ bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
   return true;
 }
 
+bool checkPopData(PopValidator& validator,
+  const PopData& popData,
+  ValidationState& state) {
+  if (!checkPopDataForDuplicates(popData, state)) {
+    return state.Invalid("pop-statelessly-invalid-has-duplicates");
+  } 
+
+  std::vector<std::future<ValidationState>> results;
+  results.reserve(popData.context.size() + popData.vtbs.size() +
+                    popData.atvs.size());
+
+  for (const auto& b : popData.context) {
+    results.push_back(validator.addCheck(b));
+  }
+  for (const auto& vtb : popData.vtbs) {
+    results.push_back(validator.addCheck(vtb));
+  }
+  for (const auto& atv : popData.atvs) {
+    results.push_back(validator.addCheck(atv));
+  }
+  for (auto& r : results) {
+    auto result = r.get();
+    if (!result.IsValid()) {
+      state = result;
+      return state.Invalid("pop-statelessly-invalid");
+    }
+  }
+  
+  return true;
+}
+
 }  // namespace altintegration

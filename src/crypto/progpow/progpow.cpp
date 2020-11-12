@@ -579,8 +579,12 @@ std::string hash32_t::toHex() const {
 }
 }  // namespace progpow
 
-#ifndef VBK_PROGPOW_CACHE_SIZE
-#define VBK_PROGPOW_CACHE_SIZE 4
+#ifndef VBK_PROGPOW_ETHASH_CACHE_SIZE
+#define VBK_PROGPOW_ETHASH_CACHE_SIZE 4
+#endif
+
+#ifndef VBK_PROGPOW_HEADER_HASH_SIZE
+#define VBK_PROGPOW_HEADER_HASH_SIZE 100000
 #endif
 
 #ifndef VBK_PROGPOW_CACHE_ELASTICITY
@@ -592,13 +596,18 @@ struct CacheEntry {
   std::vector<uint32_t> dag;
 };
 
-static lru11::Cache<int, CacheEntry, std::mutex> gCache(
-    VBK_PROGPOW_CACHE_SIZE, VBK_PROGPOW_CACHE_ELASTICITY);
+// epoch -> ethash cache + dag
+static lru11::Cache<uint64_t, CacheEntry, std::mutex> gEthashCache(
+    VBK_PROGPOW_ETHASH_CACHE_SIZE, VBK_PROGPOW_CACHE_ELASTICITY);
 
-uint192 progPowHash(Slice<const uint8_t> header) {
+// sha256d(vbkheader) -> progpow hash
+static lru11::Cache<uint256, uint192, std::mutex> gProgpowHeaderCache(
+    VBK_PROGPOW_HEADER_HASH_SIZE);
+
+static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);
-  const int epoch = (int) progpow::ethash_get_epoch(height);
+  const uint64_t epoch = progpow::ethash_get_epoch(height);
   const auto headerHash = progpow::getVbkHeaderHash(header);
   auto nonce = progpow::getVbkBlockNonce(header);
 
@@ -606,7 +615,7 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   nonce &= 0x000000FFFFFFFFFFLL;
 
   CacheEntry cacheEntry;
-  if (!gCache.tryGet(epoch, cacheEntry)) {
+  if (!gEthashCache.tryGet(epoch, cacheEntry)) {
     VBK_LOG_WARN(
         "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
         epoch,
@@ -616,7 +625,7 @@ uint192 progPowHash(Slice<const uint8_t> header) {
     cacheEntry.light = progpow::ethash_make_cache(height);
     cacheEntry.dag = progpow::createDagCache(cacheEntry.light.get());
 
-    gCache.insert(epoch, cacheEntry);
+    gEthashCache.insert(epoch, cacheEntry);
   }
 
   VBK_ASSERT(cacheEntry.light);
@@ -652,6 +661,20 @@ uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
 
   auto& v = w.data();
   return uint192({v.data(), VBLAKE_HASH_SIZE});
+}
+
+uint192 progPowHash(Slice<const uint8_t> header) {
+  const auto headerSha256 = sha256twice(header);
+  uint192 ret;
+  if (gProgpowHeaderCache.tryGet(headerSha256, ret)) {
+    // cache hit
+    return ret;
+  }
+
+  // cache miss
+  ret = progPowHashImpl(header);
+  gProgpowHeaderCache.insert(headerSha256, ret);
+  return ret;
 }
 
 }  // namespace altintegration

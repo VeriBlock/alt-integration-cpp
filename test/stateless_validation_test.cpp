@@ -12,6 +12,7 @@
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/literals.hpp"
+#include "veriblock/pop_stateless_validator.hpp"
 
 using namespace altintegration;
 
@@ -137,6 +138,7 @@ static const VTB validVTB = DeserializeFromHex<VTB>(
 struct StatelessValidationTest : public ::testing::Test {
   BtcChainParamsRegTest btc;
   VbkChainParamsRegTest vbk;
+  AltChainParamsRegTest alt;
   ValidationState state;
 };
 
@@ -362,4 +364,77 @@ TEST_F(StatelessValidationTest, containsSplit_when_chunked) {
   ASSERT_TRUE(containsSplit(
       "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,
       buffer.data()));
+}
+
+TEST_F(StatelessValidationTest, parallel_check_valid_vbk_block) {
+  PopValidator validator(vbk, btc, alt);
+  auto result = validator.addCheck(validVTB.containingBlock);
+  ASSERT_TRUE(result.get().IsValid());
+}
+
+TEST_F(StatelessValidationTest, parallel_check_invalid_vbk_block) {
+  PopValidator validator(vbk, btc, alt);
+  VbkBlock block = validVTB.containingBlock;
+  block.setDifficulty(999999);
+  auto result = validator.addCheck(block);
+  ASSERT_FALSE(result.get().IsValid());
+}
+
+TEST_F(StatelessValidationTest, parallel_check_mixed_vbk_block) {
+  PopValidator validator(vbk, btc, alt);
+  std::vector<std::future<ValidationState>> results;
+  results.push_back(validator.addCheck(validVTB.containingBlock));
+  VbkBlock block = validVTB.containingBlock;
+  block.setDifficulty(999999);
+  results.push_back(validator.addCheck(block));
+  ASSERT_FALSE(results.back().get().IsValid());
+  results.pop_back();
+  ASSERT_TRUE(results.back().get().IsValid());
+}
+
+TEST_F(StatelessValidationTest, parallel_check_valid_vtb) {
+  PopValidator validator(vbk, btc, alt);
+  auto result = validator.addCheck(validVTB);
+  ASSERT_TRUE(result.get().IsValid());
+}
+
+TEST_F(StatelessValidationTest, parallel_check_valid_atv) {
+  PopValidator validator(vbk, btc, alt);
+  auto result = validator.addCheck(validATV);
+  ASSERT_TRUE(result.get().IsValid());
+}
+
+TEST_F(StatelessValidationTest, parallel_check_valid_pop) {
+  PopValidator validator(vbk, btc, alt);
+  PopData pop{};
+  pop.context.push_back(validVTB.containingBlock);
+  pop.vtbs.push_back(validVTB);
+  pop.atvs.push_back(validATV);
+  bool result = checkPopData(validator, pop, state);
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(state.IsValid());
+}
+
+TEST_F(StatelessValidationTest, parallel_check_invalid_pop) {
+  PopValidator validator(vbk, btc, alt);
+  PopData pop{};
+  VbkBlock block = validVTB.containingBlock;
+  block.setDifficulty(999999);
+  pop.context.push_back(block);
+  pop.vtbs.push_back(validVTB);
+  pop.atvs.push_back(validATV);
+  bool result = checkPopData(validator, pop, state);
+  ASSERT_FALSE(result);
+  ASSERT_FALSE(state.IsValid());
+  ASSERT_EQ(state.GetPathParts().front(), "pop-statelessly-invalid");
+
+  // clear state and try validating again to make sure validator's state does not matter
+  PopData pop2{};
+  state = ValidationState();
+  pop2.context.push_back(validVTB.containingBlock);
+  pop2.vtbs.push_back(validVTB);
+  pop2.atvs.push_back(validATV);
+  result = checkPopData(validator, pop2, state);
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(state.IsValid());
 }
