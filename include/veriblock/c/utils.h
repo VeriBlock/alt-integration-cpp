@@ -107,7 +107,7 @@ typedef struct VbkByteStream VBK_ByteStream;
 /**
  * Read from VbkByteStream
  * @param[in] stream input byte stream
- * @param[out] buffer output buffer
+ * @param[out] buffer output buffer (must be prealocated)
  * @param[in] toRead number of bytes to read
  * @return number of bytes actually read.
  */

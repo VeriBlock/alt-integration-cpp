@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 
+#include "bytestream.hpp"
 #include "mock_miner.hpp"
 #include "veriblock/c/mock_miner.h"
 
@@ -20,72 +21,44 @@ void VBK_FreeMockMiner(MockMiner_t* miner) {
   }
 }
 
-void VBK_mineBtcBlockTip(MockMiner_t* self,
-                         uint8_t** block_bytes,
-                         int* block_bytes_size) {
+VBK_ByteStream* VBK_mineBtcBlockTip(MockMiner_t* self) {
   VBK_ASSERT(self);
-  VBK_ASSERT(block_bytes);
-  VBK_ASSERT(block_bytes_size);
 
   auto* btc_block = self->miner->mineBtcBlocks(1);
-  std::vector<uint8_t> bytes = btc_block->toRaw();
-  *block_bytes = new uint8_t[bytes.size()];
-  memcpy(*block_bytes, bytes.data(), bytes.size());
-  *block_bytes_size = bytes.size();
+  return new VbkByteStream(btc_block->toRaw());
 }
 
-void VBK_mineBtcBlock(MockMiner_t* self,
-                      const uint8_t* tip_block_bytes,
-                      int tip_block_bytes_size,
-                      uint8_t** block_bytes,
-                      int* block_bytes_size) {
+VBK_ByteStream* VBK_mineBtcBlock(MockMiner_t* self,
+                                 const uint8_t* tip_block_bytes,
+                                 int tip_block_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(tip_block_bytes);
-  VBK_ASSERT(block_bytes);
-  VBK_ASSERT(block_bytes_size);
 
   altintegration::ReadStream read_stream(altintegration::Slice<const uint8_t>(
       tip_block_bytes, tip_block_bytes_size));
   auto tip = altintegration::BlockIndex<altintegration::BtcBlock>::fromRaw(
       read_stream);
-  auto btc_block = self->miner->mineBtcBlocks(tip, 1);
-  std::vector<uint8_t> bytes = btc_block->toRaw();
-  *block_bytes = new uint8_t[bytes.size()];
-  memcpy(*block_bytes, bytes.data(), bytes.size());
-  *block_bytes_size = bytes.size();
+  auto* btc_block = self->miner->mineBtcBlocks(tip, 1);
+  return new VbkByteStream(btc_block->toRaw());
 }
 
-void VBK_mineVbkBlockTip(MockMiner_t* self,
-                         uint8_t** block_bytes,
-                         int* block_bytes_size) {
+VBK_ByteStream* VBK_mineVbkBlockTip(MockMiner_t* self) {
   VBK_ASSERT(self);
-  VBK_ASSERT(block_bytes);
-  VBK_ASSERT(block_bytes_size);
 
   auto* vbk_block = self->miner->mineVbkBlocks(1);
-  std::vector<uint8_t> bytes = vbk_block->toRaw();
-  *block_bytes = new uint8_t[bytes.size()];
-  memcpy(*block_bytes, bytes.data(), bytes.size());
-  *block_bytes_size = bytes.size();
+  return new VbkByteStream(vbk_block->toRaw());
 }
 
-void VBK_mineVbkBlock(MockMiner_t* self,
-                      const uint8_t* tip_block_bytes,
-                      int tip_block_bytes_size,
-                      uint8_t** block_bytes,
-                      int* block_bytes_size) {
+VBK_ByteStream* VBK_mineVbkBlock(MockMiner_t* self,
+                                 const uint8_t* tip_block_bytes,
+                                 int tip_block_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(tip_block_bytes);
-  VBK_ASSERT(block_bytes);
-  VBK_ASSERT(block_bytes_size);
 
   altintegration::ReadStream read_stream(altintegration::Slice<const uint8_t>(
       tip_block_bytes, tip_block_bytes_size));
   auto tip = altintegration::BlockIndex<altintegration::VbkBlock>::fromRaw(
       read_stream);
   auto vbk_block = self->miner->mineVbkBlocks(tip, 1);
-  std::vector<uint8_t> bytes = vbk_block->toRaw();
-  *block_bytes = new uint8_t[bytes.size()];
-  memcpy(*block_bytes, bytes.data(), bytes.size());
-  *block_bytes_size = bytes.size();
+  return new VbkByteStream(vbk_block->toRaw());
 }

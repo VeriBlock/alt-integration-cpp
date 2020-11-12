@@ -10,7 +10,8 @@
  * @defgroup c-api C interface
  */
 
-#include "config.h"
+#include "veriblock/c/config.h"
+#include "veriblock/c/utils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -217,8 +218,8 @@ int VBK_MemPool_submit_atv(PopContext* self,
  * @ingroup c-api
  */
 int VBK_MemPool_submit_vtb(PopContext* self,
-                            const uint8_t* bytes,
-                            int bytes_size);
+                           const uint8_t* bytes,
+                           int bytes_size);
 
 /**
  * @copybrief altintegration::MemPool::submit
@@ -231,8 +232,8 @@ int VBK_MemPool_submit_vtb(PopContext* self,
  * @ingroup c-api
  */
 int VBK_MemPool_submit_vbk(PopContext* self,
-                            const uint8_t* bytes,
-                            int bytes_size);
+                           const uint8_t* bytes,
+                           int bytes_size);
 
 /**
  * @copybrief altintegration::MemPool::getPop
@@ -257,6 +258,54 @@ void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size);
 void VBK_MemPool_removeAll(PopContext* self,
                            const uint8_t* bytes,
                            int bytes_size);
+
+/**
+ * @copybrief return altintegration::MemPool known ATV`s ids
+ * @see altintegration::MemPool::getMap
+ * @param[in] self PopContext
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self);
+
+/**
+ * @copybrief return altintegration::MemPool known VTB`s ids
+ * @see altintegration::MemPool::getMap
+ * @param[in] self PopContext
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self);
+
+/**
+ * @copybrief return altintegration::MemPool known VbkBlock`s ids
+ * @see altintegration::MemPool::getMap
+ * @param[in] self PopContext
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_MemPool_GetVbkBlocks(PopContext* self);
+
+/**
+ * @copybrief return altintegration::MemPool known ATV`s inFlight ids
+ * @see altintegration::MemPool::getInFlightMap
+ * @param[in] self PopContext
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self);
+
+/**
+ * @copybrief return altintegration::MemPool known VTB`s inFlight ids
+ * @see altintegration::MemPool::getInFlightMap
+ * @param[in] self PopContext
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self);
+
+/**
+ * @copybrief return altintegration::MemPool known VbkBlock`s inFlight ids
+ * @see altintegration::MemPool::getInFlightMap
+ * @param[in] self PopContext
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self);
 
 /**
  * @copybrief altintegration::MemPool::clear
