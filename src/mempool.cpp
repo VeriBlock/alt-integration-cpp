@@ -96,6 +96,7 @@ void MemPool::cleanUp() {
     auto& rel = *it->second;
     auto* index = vbk_tree.getBlockIndex(it->second->header->getHash());
 
+    VBK_ASSERT_MSG(vbk_tree.getBestChain().tip() != nullptr, "vbktree bestchain tip should be initialized");
     bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
                       vbk_tree.getParams().getMaxReorgBlocks() >
                   rel.header->getHeight();
