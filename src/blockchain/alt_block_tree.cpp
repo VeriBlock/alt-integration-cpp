@@ -172,7 +172,7 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   // check
   ValidationState state;
   VBK_ASSERT_MSG(
-      checkPopDataForDuplicates(payloads, state),
+      checkPopData(payloads, state),
       "attempted to add statelessly invalid payloads to block %s: %s",
       index.toPrettyString(),
       state.toString());
