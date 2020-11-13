@@ -197,7 +197,7 @@ func (v *PopContext) RemoveAll(payloads entities.PopData) error {
 func (v *PopContext) GetAtv(id []byte) (*entities.Atv, error) {
 	stream := v.popContext.MemPoolGetAtv(id)
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	var atv entities.Atv
 	err := atv.FromVbkEncoding(&buffer)
@@ -210,7 +210,7 @@ func (v *PopContext) GetAtv(id []byte) (*entities.Atv, error) {
 func (v *PopContext) GetVtb(id []byte) (*entities.Vtb, error) {
 	stream := v.popContext.MemPoolGetVtb(id)
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	var vtb entities.Vtb
 	err := vtb.FromVbkEncoding(&buffer)
@@ -223,7 +223,7 @@ func (v *PopContext) GetVtb(id []byte) (*entities.Vtb, error) {
 func (v *PopContext) GetVbkBlock(id []byte) (*entities.VbkBlock, error) {
 	stream := v.popContext.MemPoolGetVbkBlock(id)
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	var vbkblock entities.VbkBlock
 	err := vbkblock.FromVbkEncoding(&buffer)
@@ -236,7 +236,7 @@ func (v *PopContext) GetVbkBlock(id []byte) (*entities.VbkBlock, error) {
 func (v *PopContext) GetAtvs() ([][]byte, error) {
 	stream := v.popContext.MemPoolGetAtvs()
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	atv_ids, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
@@ -257,7 +257,7 @@ func (v *PopContext) GetAtvs() ([][]byte, error) {
 func (v *PopContext) GetVtbs() ([][]byte, error) {
 	stream := v.popContext.MemPoolGetVtbs()
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	vtb_ids, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
@@ -278,7 +278,7 @@ func (v *PopContext) GetVtbs() ([][]byte, error) {
 func (v *PopContext) GetVbkBlocks() ([][]byte, error) {
 	stream := v.popContext.MemPoolGetVbkBlocks()
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	vbkblock_ids, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
@@ -299,7 +299,7 @@ func (v *PopContext) GetVbkBlocks() ([][]byte, error) {
 func (v *PopContext) GetAtvsInFlight() ([][]byte, error) {
 	stream := v.popContext.MemPoolGetAtvsInFlight()
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	atv_ids, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
@@ -320,7 +320,7 @@ func (v *PopContext) GetAtvsInFlight() ([][]byte, error) {
 func (v *PopContext) GetVtbsInFlight() ([][]byte, error) {
 	stream := v.popContext.MemPoolGetVtbsInFlight()
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	vtb_ids, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
@@ -341,7 +341,7 @@ func (v *PopContext) GetVtbsInFlight() ([][]byte, error) {
 func (v *PopContext) GetVbkBlocksInFlight() ([][]byte, error) {
 	stream := v.popContext.MemPoolGetVbkBlocksInFlight()
 	var buffer bytes.Buffer
-	buffer.Write(stream.ReadAll())
+	stream.ReadAll(&buffer)
 
 	vbkblock_ids, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
