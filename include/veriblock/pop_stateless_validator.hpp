@@ -22,6 +22,9 @@ class PopValidator {
                size_t threads = 0);
   ~PopValidator() {}
 
+  void start();
+  void stop();
+
   template <typename CheckType>
   std::future<ValidationState> addCheck(const CheckType& block);
 
@@ -30,6 +33,7 @@ class PopValidator {
   const VbkChainParams& vbk_;
   const BtcChainParams& btc_;
   const AltChainParams& alt_;
+  size_t threads_;
 };
 
 } // namespace altintegration

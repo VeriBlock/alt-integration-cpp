@@ -12,17 +12,24 @@ PopValidator::PopValidator(const VbkChainParams& vbk,
                            const BtcChainParams& btc,
                            const AltChainParams& alt,
                            size_t threads)
-    : vbk_(vbk), btc_(btc), alt_(alt) {
+    : vbk_(vbk), btc_(btc), alt_(alt), threads_(threads) {}
+
+void PopValidator::start() {
+  VBK_ASSERT(workers == nullptr && "PopValidator has already been started");
+
   // try to detect concurrent threads count
-  if (threads == 0) {
-    threads = std::thread::hardware_concurrency();
+  if (threads_ == 0) {
+    threads_ = std::thread::hardware_concurrency();
   }
   // make sure we have at least one worker thread
-  if (threads == 0) {
-    threads = 1;
+  if (threads_ == 0) {
+    threads_ = 1;
   }
+  workers = std::make_shared<ThreadPool>(threads_);
+}
 
-  workers = std::make_shared<ThreadPool>(threads);
+void PopValidator::stop() {
+  workers = nullptr;
 }
 
 template <>
