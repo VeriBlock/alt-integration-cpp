@@ -382,6 +382,39 @@ void VBK_MemPool_removeAll(PopContext* self,
   self->context->mempool->removeAll(popData);
 }
 
+VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
+                                   const uint8_t* id_bytes,
+                                   int id_bytes_size) {
+  auto atv_id = altintegration::ATV::id_t(
+      altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
+  auto atv = self->context->mempool->get<altintegration::ATV>(atv_id);
+  altintegration::WriteStream stream;
+  atv->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
+                                   const uint8_t* id_bytes,
+                                   int id_bytes_size) {
+  auto vtb_id = altintegration::ATV::id_t(
+      altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
+  auto vtb = self->context->mempool->get<altintegration::VTB>(vtb_id);
+  altintegration::WriteStream stream;
+  vtb->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
+                                        const uint8_t* id_bytes,
+                                        int id_bytes_size) {
+  auto vbk_id = altintegration::VbkBlock::id_t(
+      altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
+  auto vbk = self->context->mempool->get<altintegration::VbkBlock>(vbk_id);
+  altintegration::WriteStream stream;
+  vbk->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
 VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self) {
   auto atvs = self->context->mempool->getMap<altintegration::ATV>();
 
