@@ -2,9 +2,9 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-#include "pop_context.hpp"
-
+#include "bytestream.hpp"
 #include "config.hpp"
+#include "pop_context.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/c/extern.h"
 #include "veriblock/c/pop_context.h"
@@ -380,6 +380,136 @@ void VBK_MemPool_removeAll(PopContext* self,
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
   self->context->mempool->removeAll(popData);
+}
+
+VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
+                                   const uint8_t* id_bytes,
+                                   int id_bytes_size) {
+  auto atv_id = altintegration::ATV::id_t(
+      altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
+  auto atv = self->context->mempool->get<altintegration::ATV>(atv_id);
+  altintegration::WriteStream stream;
+  atv->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
+                                   const uint8_t* id_bytes,
+                                   int id_bytes_size) {
+  auto vtb_id = altintegration::ATV::id_t(
+      altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
+  auto vtb = self->context->mempool->get<altintegration::VTB>(vtb_id);
+  altintegration::WriteStream stream;
+  vtb->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
+                                        const uint8_t* id_bytes,
+                                        int id_bytes_size) {
+  auto vbk_id = altintegration::VbkBlock::id_t(
+      altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
+  auto vbk = self->context->mempool->get<altintegration::VbkBlock>(vbk_id);
+  altintegration::WriteStream stream;
+  vbk->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self) {
+  auto atvs = self->context->mempool->getMap<altintegration::ATV>();
+
+  std::vector<altintegration::ATV::id_t> atv_ids;
+  atv_ids.reserve(atvs.size());
+  for (const auto& el : atvs) {
+    atv_ids.push_back(el.first);
+  }
+
+  altintegration::WriteStream stream;
+  altintegration::writeArrayOf<altintegration::ATV::id_t>(
+      stream, atv_ids, altintegration::writeSingleByteLenValue);
+
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPoolGetVTBs(PopContext* self) {
+  auto vtbs = self->context->mempool->getMap<altintegration::VTB>();
+
+  std::vector<altintegration::VTB::id_t> vtb_ids;
+  vtb_ids.reserve(vtbs.size());
+  for (const auto& el : vtbs) {
+    vtb_ids.push_back(el.first);
+  }
+
+  altintegration::WriteStream stream;
+  altintegration::writeArrayOf<altintegration::VTB::id_t>(
+      stream, vtb_ids, altintegration::writeSingleByteLenValue);
+
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetVbkBlocks(PopContext* self) {
+  auto vbks = self->context->mempool->getMap<altintegration::VbkBlock>();
+
+  std::vector<altintegration::VbkBlock::id_t> vbk_ids;
+  vbk_ids.reserve(vbks.size());
+  for (const auto& el : vbks) {
+    vbk_ids.push_back(el.first);
+  }
+
+  altintegration::WriteStream stream;
+  altintegration::writeArrayOf<altintegration::VbkBlock::id_t>(
+      stream, vbk_ids, altintegration::writeSingleByteLenValue);
+
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self) {
+  auto atvs = self->context->mempool->getInFlightMap<altintegration::ATV>();
+
+  std::vector<altintegration::ATV::id_t> atv_ids;
+  atv_ids.reserve(atvs.size());
+  for (const auto& el : atvs) {
+    atv_ids.push_back(el.first);
+  }
+
+  altintegration::WriteStream stream;
+  altintegration::writeArrayOf<altintegration::ATV::id_t>(
+      stream, atv_ids, altintegration::writeSingleByteLenValue);
+
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self) {
+  auto vtbs = self->context->mempool->getInFlightMap<altintegration::VTB>();
+
+  std::vector<altintegration::VTB::id_t> vtb_ids;
+  vtb_ids.reserve(vtbs.size());
+  for (const auto& el : vtbs) {
+    vtb_ids.push_back(el.first);
+  }
+
+  altintegration::WriteStream stream;
+  altintegration::writeArrayOf<altintegration::VTB::id_t>(
+      stream, vtb_ids, altintegration::writeSingleByteLenValue);
+
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self) {
+  auto vbks =
+      self->context->mempool->getInFlightMap<altintegration::VbkBlock>();
+
+  std::vector<altintegration::VbkBlock::id_t> vbk_ids;
+  vbk_ids.reserve(vbks.size());
+  for (const auto& el : vbks) {
+    vbk_ids.push_back(el.first);
+  }
+
+  altintegration::WriteStream stream;
+  altintegration::writeArrayOf<altintegration::VbkBlock::id_t>(
+      stream, vbk_ids, altintegration::writeSingleByteLenValue);
+
+  return new VbkByteStream(stream.data());
 }
 
 void VBK_MemPool_clear(PopContext* self) {
