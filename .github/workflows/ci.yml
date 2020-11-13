@@ -102,13 +102,14 @@ jobs:
       - name: collect coverage
         shell: bash
         run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
-      - name: Setup sonarqube
-        uses: warchant/setup-sonar-scanner@v1
-      - name: Run sonarqube
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: sonar-scanner
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+# TODO: figure out why this takes 2h to run
+#      - name: Setup sonarqube
+#        uses: warchant/setup-sonar-scanner@v1
+#      - name: Run sonarqube
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: sonar-scanner
+#          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
   windows:
     runs-on: windows-latest
