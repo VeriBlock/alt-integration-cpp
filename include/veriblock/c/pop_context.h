@@ -261,6 +261,10 @@ void VBK_MemPool_removeAll(PopContext* self,
 
 /**
  * @copybrief return altintegration::MemPool known ATV`s ids
+ * 
+ * This method returns a vector of the payload`s ids serialized to the stream. 
+ * Each id has been serialized using the function altintegration::writeSingleByteLenValue().
+ * 
  * @see altintegration::MemPool::getMap
  * @param[in] self PopContext
  * @ingroup c-api
@@ -269,6 +273,10 @@ VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self);
 
 /**
  * @copybrief return altintegration::MemPool known VTB`s ids
+ * 
+ * This method returns a vector of the payload`s ids serialized to the stream. 
+ * Each id has been serialized using the function altintegration::writeSingleByteLenValue().
+ * 
  * @see altintegration::MemPool::getMap
  * @param[in] self PopContext
  * @ingroup c-api
@@ -277,6 +285,10 @@ VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self);
 
 /**
  * @copybrief return altintegration::MemPool known VbkBlock`s ids
+ * 
+ * This method returns a vector of the payload`s ids serialized to the stream. 
+ * Each id has been serialized using the function altintegration::writeSingleByteLenValue().
+ * 
  * @see altintegration::MemPool::getMap
  * @param[in] self PopContext
  * @ingroup c-api
@@ -285,6 +297,10 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlocks(PopContext* self);
 
 /**
  * @copybrief return altintegration::MemPool known ATV`s inFlight ids
+ * 
+ * This method returns a vector of the payload`s ids serialized to the stream. 
+ * Each id has been serialized using the function altintegration::writeSingleByteLenValue().
+ * 
  * @see altintegration::MemPool::getInFlightMap
  * @param[in] self PopContext
  * @ingroup c-api
@@ -293,6 +309,10 @@ VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self);
 
 /**
  * @copybrief return altintegration::MemPool known VTB`s inFlight ids
+ * 
+ * This method returns a vector of the payload`s ids serialized to the stream. 
+ * Each id has been serialized using the function altintegration::writeSingleByteLenValue().
+ * 
  * @see altintegration::MemPool::getInFlightMap
  * @param[in] self PopContext
  * @ingroup c-api
@@ -301,6 +321,10 @@ VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self);
 
 /**
  * @copybrief return altintegration::MemPool known VbkBlock`s inFlight ids
+ * 
+ * This method returns a vector of the payload`s ids serialized to the stream. 
+ * Each id has been serialized using the function altintegration::writeSingleByteLenValue().
+ * 
  * @see altintegration::MemPool::getInFlightMap
  * @param[in] self PopContext
  * @ingroup c-api
