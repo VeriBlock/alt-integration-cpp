@@ -21,7 +21,7 @@ typedef struct MockMiner MockMiner_t;
 //! allocate new mock miner
 MockMiner_t* VBK_NewMockMiner();
 //! deallocate mock miner
-void VBK_FreeConfig(MockMiner_t* miner);
+void VBK_FreeMockMiner(MockMiner_t* miner);
 
 /**
  * Mine new altintegration::BtcBlock on the top of the current btctree.
