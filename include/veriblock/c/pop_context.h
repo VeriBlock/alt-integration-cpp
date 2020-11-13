@@ -194,6 +194,63 @@ bool VBK_alt_getBlockIndex(PopContext* self,
                            int* blockindex_size);
 
 /**
+ * Return best block (tip) of the  AltTree
+ *
+ * @param[in] self PopContext
+ * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_alt_BestBlock(PopContext* self);
+
+/**
+ * Return best block (tip) of the  VbkBlockTree
+ *
+ * @param[in] self PopContext
+ * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self);
+
+/**
+ * Return best block (tip) of the  BtcBlockTree
+ *
+ * @param[in] self PopContext
+ * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_btc_BestBlock(PopContext* self);
+
+/**
+ * Return block on the curent height from the active chain of the AltTree
+ *
+ * @param[in] self PopContext
+ * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
+                                                   int height);
+
+/**
+ * Return block on the curent height from the active chain of the VbkBlockTree
+ *
+ * @param[in] self PopContext
+ * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
+                                                   int height);
+
+/**
+ * Return block on the curent height from the active chain of the BtcBlockTree
+ *
+ * @param[in] self PopContext
+ * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
+                                                   int height);
+
+/**
  * @copybrief altintegration::MemPool::submit
  * @see altintegration::MemPool::submit
  * @param[in] self PopContext
