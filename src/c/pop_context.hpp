@@ -6,6 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_POP_CONTEXT_HPP_BINDINGS
 #define VERIBLOCK_POP_CPP_POP_CONTEXT_HPP_BINDINGS
 
+#include <memory>
+
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/pop_context.hpp"
 

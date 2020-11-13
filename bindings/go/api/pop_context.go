@@ -121,62 +121,6 @@ func (v PopContext) SetState(hash []byte) error {
 	return nil
 }
 
-// // BtcGetBlockIndex ...
-// func (v PopContext) BtcGetBlockIndex(hashBytes []byte) {
-// 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
-// 	blockindexC := (*C.uint8_t)(unsafe.Pointer(nil))
-// 	var blockindexSize int = 0
-// 	blockindexSizeC := (*C.int)(unsafe.Pointer(&blockindexSize))
-// 	res := C.VBK_btc_getBlockIndex(v.ref, hashBytesC, C.int(len(hashBytes)), &blockindexC, blockindexSizeC)
-// 	if !bool(res) {
-// 		return
-// 	}
-// 	// blockindex := make([]byte, blockindexSize)
-// 	// TODO: Retrieve data from blockindex with blockindexSize
-// }
-
-// bool VBK_btc_getBlockIndex(PopContext* self,
-//                            const uint8_t* hash_bytes,
-//                            int hash_bytes_size,
-//                            uint8_t** blockindex,
-//                            int* blockindex_size);
-
-// /**
-//  * Find a VbkBlock index from the VbkTree
-//  *
-//  * @param[in] self PopContext
-//  * @param[in] hash_bytes altintegration::VbkBlock hash bytes
-//  * @param[in] hash_bytes_size size of input hash
-//  * @param[out] blockindex pointer to the blockindex bytes (memory will allocated
-//  * by this method)
-//  * @param[out] blockindex_size blockindex bytes size
-//  * @return `false` while block is not found. 'true' while block is found.
-//  * @ingroup c-api
-//  */
-// bool VBK_vbk_getBlockIndex(PopContext* self,
-//                            const uint8_t* hash_bytes,
-//                            int hash_bytes_size,
-//                            uint8_t** blockindex,
-//                            int* blockindex_size);
-
-// /**
-//  * Find a AltBlock index from the AltTree
-//  *
-//  * @param[in] self PopContext
-//  * @param[in] hash_bytes altintegration::AltBlock hash bytes
-//  * @param[in] hash_bytes_size size of input hash
-//  * @param[out] blockindex pointer to the blockindex bytes (memory will allocated
-//  * by this method)
-//  * @param[out] blockindex_size blockindex bytes size
-//  * @return `false` while block is not found. 'true' while block is found.
-//  * @ingroup c-api
-//  */
-// bool VBK_alt_getBlockIndex(PopContext* self,
-//                            const uint8_t* hash_bytes,
-//                            int hash_bytes_size,
-//                            uint8_t** blockindex,
-//                            int* blockindex_size);
-
 // SubmitAtv - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitAtv(block entities.Atv) int {
 	stream := new(bytes.Buffer)
