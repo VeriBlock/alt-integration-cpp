@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_BYTESTREAM_HPP
 #define VERIBLOCK_POP_CPP_BYTESTREAM_HPP
 
-#include <veriblock/c/utils.h>
+#include <veriblock/c/bytestream.h>
 
 #include <cstdint>
 #include <vector>
@@ -31,11 +31,5 @@ struct VbkByteStream {
   std::vector<uint8_t> data;
   size_t ptr = 0;
 };
-
-size_t VBK_ByteStream_Read(VBK_ByteStream* stream,
-                          uint8_t* buffer,
-                          size_t toRead);
-
-void VBK_ByteStream_Free(VBK_ByteStream* stream);
 
 #endif  // VERIBLOCK_POP_CPP_BYTESTREAM_HPP

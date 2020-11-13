@@ -132,6 +132,45 @@ func (v PopContext) MemPoolRemoveAll(bytes []byte) {
 	C.VBK_MemPool_removeAll(v.ref, bytesC, C.int(len(bytes)))
 }
 
+func (v PopContext) MemPoolGetAtv(atv_id []byte) VbkByteStream {
+	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&atv_id[0]))
+	return VbkByteStream{ref: C.VBK_MemPool_GetATV(v.ref, id_bytesC, C.int(len(atv_id)))}
+}
+
+func (v PopContext) MemPoolGetVtb(vtb_id []byte) VbkByteStream {
+	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&vtb_id[0]))
+	return VbkByteStream{ref: C.VBK_MemPool_GetVTB(v.ref, id_bytesC, C.int(len(vtb_id)))}
+}
+
+func (v PopContext) MemPoolGetVbkBlock(vbk_id []byte) VbkByteStream {
+	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&vbk_id[0]))
+	return VbkByteStream{ref: C.VBK_MemPool_GetVbkBlock(v.ref, id_bytesC, C.int(len(vbk_id)))}
+}
+
+func (v PopContext) MemPoolGetAtvs() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_MemPool_GetATVs(v.ref)}
+}
+
+func (v PopContext) MemPoolGetVtbs() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_MemPool_GetVTBs(v.ref)}
+}
+
+func (v PopContext) MemPoolGetVbkBlocks() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_MemPool_GetVbkBlocks(v.ref)}
+}
+
+func (v PopContext) MemPoolGetAtvsInFlight() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_MemPool_GetATVsInFlight(v.ref)}
+}
+
+func (v PopContext) MemPoolGetVtbsInFlight() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_MemPool_GetVTBsInFlight(v.ref)}
+}
+
+func (v PopContext) MemPoolGetVbkBlocksInFlight() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_MemPool_GetVbkBlocksInFlight(v.ref)}
+}
+
 // MemPoolClear ...
 func (v PopContext) MemPoolClear() {
 	C.VBK_MemPool_clear(v.ref)
