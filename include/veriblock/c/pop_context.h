@@ -10,8 +10,8 @@
  * @defgroup c-api C interface
  */
 
+#include "veriblock/c/bytestream.h"
 #include "veriblock/c/config.h"
-#include "veriblock/c/utils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -266,7 +266,8 @@ void VBK_MemPool_removeAll(PopContext* self,
  * @param[in] self PopContext
  * @param[in] id_bytes altintegration::ATV::id_t
  * @param[in] id_bytes_size size of the altintegration::ATV::id_t
- * @return return altintegration::ATV in the toVbkEncoding format
+ * @return return altintegration::ATV in the toVbkEncoding format, if cannot
+ * find payloads stream will empty
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
@@ -280,7 +281,8 @@ VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
  * @param[in] self PopContext
  * @param[in] id_bytes altintegration::VTB::id_t
  * @param[in] id_bytes_size size of the altintegration::VTB::id_t
- * @return return altintegration::VTB in the toVbkEncoding format
+ * @return return altintegration::VTB in the toVbkEncoding format, if cannot
+ * find payloads stream will empty
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
@@ -295,7 +297,8 @@ VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
  * @param[in] self PopContext
  * @param[in] id_bytes altintegration::VbkBlock::id_t
  * @param[in] id_bytes_size size of the altintegration::VbkBlock::id_t
- * @return return altintegration::VbkBlock in the toVbkEncoding format
+ * @return return altintegration::VbkBlock in the toVbkEncoding format, if
+ * cannot find payloads stream will empty
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,

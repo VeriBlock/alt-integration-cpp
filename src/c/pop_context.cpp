@@ -387,7 +387,10 @@ VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
                                    int id_bytes_size) {
   auto atv_id = altintegration::ATV::id_t(
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
-  auto atv = self->context->mempool->get<altintegration::ATV>(atv_id);
+  auto* atv = self->context->mempool->get<altintegration::ATV>(atv_id);
+  if (atv == nullptr) {
+    return new VbkByteStream(std::vector<uint8_t>{});
+  }
   altintegration::WriteStream stream;
   atv->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
@@ -398,7 +401,10 @@ VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
                                    int id_bytes_size) {
   auto vtb_id = altintegration::ATV::id_t(
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
-  auto vtb = self->context->mempool->get<altintegration::VTB>(vtb_id);
+  auto* vtb = self->context->mempool->get<altintegration::VTB>(vtb_id);
+  if (vtb == nullptr) {
+    return new VbkByteStream(std::vector<uint8_t>{});
+  }
   altintegration::WriteStream stream;
   vtb->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
@@ -409,7 +415,10 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
                                         int id_bytes_size) {
   auto vbk_id = altintegration::VbkBlock::id_t(
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
-  auto vbk = self->context->mempool->get<altintegration::VbkBlock>(vbk_id);
+  auto* vbk = self->context->mempool->get<altintegration::VbkBlock>(vbk_id);
+  if (vbk == nullptr) {
+    return new VbkByteStream(std::vector<uint8_t>{});
+  }
   altintegration::WriteStream stream;
   vbk->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
@@ -431,7 +440,7 @@ VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self) {
   return new VbkByteStream(stream.data());
 }
 
-VBK_ByteStream* VBK_MemPoolGetVTBs(PopContext* self) {
+VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self) {
   auto vtbs = self->context->mempool->getMap<altintegration::VTB>();
 
   std::vector<altintegration::VTB::id_t> vtb_ids;
