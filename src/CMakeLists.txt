@@ -107,3 +107,8 @@ set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
 configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
 install(FILES "${configured_pc}"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+
+
+enable_asan_on_target(${LIB_NAME})
+enable_tsan_on_target(${LIB_NAME})
+enable_ubsan_on_target(${LIB_NAME})
