@@ -12,7 +12,9 @@ PopValidator::PopValidator(const VbkChainParams& vbk,
                            const BtcChainParams& btc,
                            const AltChainParams& alt,
                            size_t threads)
-    : vbk_(vbk), btc_(btc), alt_(alt), threads_(threads) {}
+    : vbk_(vbk), btc_(btc), alt_(alt), threads_(threads) {
+  start();
+}
 
 void PopValidator::start() {
   VBK_ASSERT(workers == nullptr && "PopValidator has already been started");
