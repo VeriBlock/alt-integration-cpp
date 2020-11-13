@@ -13,7 +13,6 @@
 #include <veriblock/config.hpp>
 #include <veriblock/mempool.hpp>
 #include <veriblock/storage/payloads_index.hpp>
-#include <veriblock/pop_stateless_validator.hpp>
 
 /**
  * @defgroup api Public API
@@ -39,14 +38,6 @@ struct PopContext {
 
   static std::shared_ptr<PopContext> create(
       std::shared_ptr<Config> config, std::shared_ptr<PayloadsProvider> db) {
-    return create(config, db, std::make_shared<PopValidator>(
-        *config->vbk.params, *config->btc.params, *config->alt));
-  }
-
-  static std::shared_ptr<PopContext> create(
-      std::shared_ptr<Config> config,
-      std::shared_ptr<PayloadsProvider> db,
-      std::shared_ptr<PopValidator> popValidator) {
     config->validate();
 
     // because default constructor is hidden
@@ -58,7 +49,6 @@ struct PopContext {
                                                   *ctx->config->btc.params,
                                                   *ctx->payloadsProvider);
     ctx->mempool = std::make_shared<MemPool>(*ctx->altTree);
-    ctx->popValidator = std::move(popValidator);
 
     ValidationState state;
 
@@ -72,9 +62,7 @@ struct PopContext {
       ctx->altTree->btc().bootstrapWithChain(
           ctx->config->btc.startHeight, ctx->config->btc.blocks, state);
     }
-    VBK_ASSERT_MSG(state.IsValid(),
-                   "BTC bootstrap block is invalid: %s",
-                   state.toString());
+    VBK_ASSERT_MSG(state.IsValid(), "BTC bootstrap block is invalid: %s", state.toString());
 
     // then, bootstrap VBK
     if (ctx->config->vbk.blocks.size() == 0) {
@@ -86,20 +74,37 @@ struct PopContext {
       ctx->altTree->vbk().bootstrapWithChain(
           ctx->config->vbk.startHeight, ctx->config->vbk.blocks, state);
     }
-    VBK_ASSERT_MSG(state.IsValid(),
-                   "VBK bootstrap block is invalid: %s",
-                   state.toString());
+    VBK_ASSERT_MSG(state.IsValid(), "VBK bootstrap block is invalid: %s", state.toString());
 
     // then, bootstrap ALT
     ctx->altTree->bootstrap(state);
     return ctx;
   }
 
+  bool checkPopData(const PopData& popData, ValidationState& state) {
+    if (!checkVbkBlocks(popData.context, state, *config->vbk.params)) {
+      return state.Invalid("pop-vbkblock-statelessly-invalid");
+    }
+
+    for (const auto& vtb : popData.vtbs) {
+      if (!checkVTB(vtb, state, *config->btc.params)) {
+        return state.Invalid("pop-vtb-statelessly-invalid");
+      }
+    }
+
+    for (const auto& atv : popData.atvs) {
+      if (!checkATV(atv, state, *config->alt)) {
+        return state.Invalid("pop-atv-statelessly-invalid");
+      }
+    }
+
+    return true;
+  }
+
   std::shared_ptr<Config> config;
   std::shared_ptr<MemPool> mempool;
   std::shared_ptr<AltBlockTree> altTree;
   std::shared_ptr<PayloadsProvider> payloadsProvider;
-  std::shared_ptr<PopValidator> popValidator;
 
  private:
   PopContext() = default;

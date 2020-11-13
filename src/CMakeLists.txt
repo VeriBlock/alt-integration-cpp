@@ -26,7 +26,6 @@ set(SOURCES
         write_stream.cpp
         hashutil.cpp
         stateless_validation.cpp
-        pop_stateless_validator.cpp
         arith_uint256.cpp
         crypto/secp256k1.cpp
         mempool.cpp
