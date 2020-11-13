@@ -431,7 +431,7 @@ VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self) {
   return new VbkByteStream(stream.data());
 }
 
-VBK_ByteStream* VBK_MemPoolGetVTBs(PopContext* self) {
+VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self) {
   auto vtbs = self->context->mempool->getMap<altintegration::VTB>();
 
   std::vector<altintegration::VTB::id_t> vtb_ids;

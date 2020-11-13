@@ -11,7 +11,7 @@
  */
 
 #include "veriblock/c/config.h"
-#include "veriblock/c/utils.h"
+#include "veriblock/c/bytestream.h"
 
 #ifdef __cplusplus
 extern "C" {

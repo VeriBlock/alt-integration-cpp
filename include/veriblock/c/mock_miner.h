@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_MOCK_MINER_H
 #define VERIBLOCK_POP_CPP_MOCK_MINER_H
 
-#include "veriblock/c/utils.h"
+#include "veriblock/c/bytestream.h"
 
 /**
  * @defgroup c-api C interface
