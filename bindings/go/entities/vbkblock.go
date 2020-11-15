@@ -6,7 +6,7 @@ import (
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
-	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
+	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // VbkBlock ...
@@ -26,7 +26,7 @@ type VbkBlock struct {
 func (v *VbkBlock) GetHash() []byte {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
-	return ffi.VbkBlock_getHash(buffer.Bytes())
+	return ffi.VbkBlockGetHash(buffer.Bytes())
 }
 
 // GetBlockTime ...
@@ -43,7 +43,7 @@ func (v *VbkBlock) GetDifficulty() uint32 {
 func (v *VbkBlock) GetID() []byte {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
-	return ffi.VbkBlock_getId(buffer.Bytes())
+	return ffi.VbkBlockGetID(buffer.Bytes())
 }
 
 // ToVbkEncoding ...
