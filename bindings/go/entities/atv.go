@@ -17,10 +17,11 @@ type Atv struct {
 	BlockOfProof VbkBlock
 }
 
+// GetID ...
 func (v *Atv) GetID() []byte {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
-	return ffi.Atv_getId(buffer.Bytes())
+	return ffi.AtvGetID(buffer.Bytes())
 }
 
 // ToVbkEncoding ...

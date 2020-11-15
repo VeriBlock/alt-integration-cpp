@@ -132,43 +132,52 @@ func (v PopContext) MemPoolRemoveAll(bytes []byte) {
 	C.VBK_MemPool_removeAll(v.ref, bytesC, C.int(len(bytes)))
 }
 
-func (v PopContext) MemPoolGetAtv(atv_id []byte) VbkByteStream {
-	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&atv_id[0]))
-	return VbkByteStream{ref: C.VBK_MemPool_GetATV(v.ref, id_bytesC, C.int(len(atv_id)))}
+// MemPoolGetAtv ...
+func (v PopContext) MemPoolGetAtv(atvID []byte) VbkByteStream {
+	idBytesC := (*C.uint8_t)(unsafe.Pointer(&atvID[0]))
+	return NewVbkByteStream(C.VBK_MemPool_GetATV(v.ref, idBytesC, C.int(len(atvID))))
 }
 
-func (v PopContext) MemPoolGetVtb(vtb_id []byte) VbkByteStream {
-	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&vtb_id[0]))
-	return VbkByteStream{ref: C.VBK_MemPool_GetVTB(v.ref, id_bytesC, C.int(len(vtb_id)))}
+// MemPoolGetVtb ...
+func (v PopContext) MemPoolGetVtb(vtbID []byte) VbkByteStream {
+	idBytesC := (*C.uint8_t)(unsafe.Pointer(&vtbID[0]))
+	return NewVbkByteStream(C.VBK_MemPool_GetVTB(v.ref, idBytesC, C.int(len(vtbID))))
 }
 
-func (v PopContext) MemPoolGetVbkBlock(vbk_id []byte) VbkByteStream {
-	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&vbk_id[0]))
-	return VbkByteStream{ref: C.VBK_MemPool_GetVbkBlock(v.ref, id_bytesC, C.int(len(vbk_id)))}
+// MemPoolGetVbkBlock ...
+func (v PopContext) MemPoolGetVbkBlock(vbkID []byte) VbkByteStream {
+	idBytesC := (*C.uint8_t)(unsafe.Pointer(&vbkID[0]))
+	return NewVbkByteStream(C.VBK_MemPool_GetVbkBlock(v.ref, idBytesC, C.int(len(vbkID))))
 }
 
+// MemPoolGetAtvs ...
 func (v PopContext) MemPoolGetAtvs() VbkByteStream {
-	return VbkByteStream{ref: C.VBK_MemPool_GetATVs(v.ref)}
+	return NewVbkByteStream(C.VBK_MemPool_GetATVs(v.ref))
 }
 
+// MemPoolGetVtbs ...
 func (v PopContext) MemPoolGetVtbs() VbkByteStream {
-	return VbkByteStream{ref: C.VBK_MemPool_GetVTBs(v.ref)}
+	return NewVbkByteStream(C.VBK_MemPool_GetVTBs(v.ref))
 }
 
+// MemPoolGetVbkBlocks ...
 func (v PopContext) MemPoolGetVbkBlocks() VbkByteStream {
-	return VbkByteStream{ref: C.VBK_MemPool_GetVbkBlocks(v.ref)}
+	return NewVbkByteStream(C.VBK_MemPool_GetVbkBlocks(v.ref))
 }
 
+// MemPoolGetAtvsInFlight ...
 func (v PopContext) MemPoolGetAtvsInFlight() VbkByteStream {
-	return VbkByteStream{ref: C.VBK_MemPool_GetATVsInFlight(v.ref)}
+	return NewVbkByteStream(C.VBK_MemPool_GetATVsInFlight(v.ref))
 }
 
+// MemPoolGetVtbsInFlight ...
 func (v PopContext) MemPoolGetVtbsInFlight() VbkByteStream {
-	return VbkByteStream{ref: C.VBK_MemPool_GetVTBsInFlight(v.ref)}
+	return NewVbkByteStream(C.VBK_MemPool_GetVTBsInFlight(v.ref))
 }
 
+// MemPoolGetVbkBlocksInFlight ...
 func (v PopContext) MemPoolGetVbkBlocksInFlight() VbkByteStream {
-	return VbkByteStream{ref: C.VBK_MemPool_GetVbkBlocksInFlight(v.ref)}
+	return NewVbkByteStream(C.VBK_MemPool_GetVbkBlocksInFlight(v.ref))
 }
 
 // MemPoolClear ...
