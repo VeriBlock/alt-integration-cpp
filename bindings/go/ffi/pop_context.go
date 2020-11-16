@@ -91,6 +91,50 @@ func (v PopContext) BtcGetBlockIndex(hashBytes []byte) {
 	// TODO: Retrieve data from blockindex with blockindexSize
 }
 
+func (v PopContext) AltBestBlock() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_alt_BestBlock(v.ref)}
+}
+
+func (v PopContext) VbkBestBlock() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_vbk_BestBlock(v.ref)}
+}
+
+func (v PopContext) BtcBestBlock() VbkByteStream {
+	return VbkByteStream{ref: C.VBK_btc_BestBlock(v.ref)}
+}
+
+func (v PopContext) AltBlockAtActiveChainByHeight(height int) VbkByteStream {
+	return VbkByteStream{ref: C.VBK_alt_BlockAtActiveChainByHeight(v.ref, C.int(height))}
+}
+
+func (v PopContext) VbkBlockAtActiveChainByHeight(height int) VbkByteStream {
+	return VbkByteStream{ref: C.VBK_vbk_BlockAtActiveChainByHeight(v.ref, C.int(height))}
+}
+
+func (v PopContext) BtcBlockAtActiveChainByHeight(height int) VbkByteStream {
+	return VbkByteStream{ref: C.VBK_btc_BlockAtActiveChainByHeight(v.ref, C.int(height))}
+}
+
+func (v PopContext) AltGetATVContainingBlock(atv_id []byte) VbkByteStream {
+	atv_idC := (*C.uint8_t)(unsafe.Pointer(&atv_id[0]))
+	return VbkByteStream{ref: C.VBK_alt_getATVContainingBlock(v.ref, atv_idC, C.int(len(atv_id)))}
+}
+
+func (v PopContext) AltGetVTBContainingBlock(vtb_id []byte) VbkByteStream {
+	vtb_idC := (*C.uint8_t)(unsafe.Pointer(&vtb_id[0]))
+	return VbkByteStream{ref: C.VBK_alt_getVTBContainingBlock(v.ref, vtb_idC, C.int(len(vtb_id)))}
+}
+
+func (v PopContext) AltGetVbkBlockContainingBlock(vbk_id []byte) VbkByteStream {
+	vbk_idC := (*C.uint8_t)(unsafe.Pointer(&vbk_id[0]))
+	return VbkByteStream{ref: C.VBK_alt_getVbkBlockContainingBlock(v.ref, vbk_idC, C.int(len(vbk_id)))}
+}
+
+func (v PopContext) VbkGetVTBContainingBlock(vtb_id []byte) VbkByteStream {
+	vtb_idC := (*C.uint8_t)(unsafe.Pointer(&vtb_id[0]))
+	return VbkByteStream{ref: C.VBK_vbk_getVTBContainingBlock(v.ref, vtb_idC, C.int(len(vtb_id)))}
+}
+
 // MemPoolSubmitAtv - returns true if payload is valid, false otherwise.
 func (v PopContext) MemPoolSubmitAtv(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
