@@ -235,14 +235,6 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
-  fmt::printf("VTB=%s refs=%s containingHeight=%d\n",
-              vtb.getId().toHex(),
-              fmt::format("{}",
-                          fmt::join(connectingIndex->getRefs().begin(),
-                                    connectingIndex->getRefs().end(),
-                                    ",")),
-              vtb.containingBlock.getHeight());
-
   return isValid ? true
                  : state.Invalid("vtb-btc-context-block-referenced-too-early");
 }
