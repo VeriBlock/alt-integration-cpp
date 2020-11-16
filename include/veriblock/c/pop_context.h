@@ -197,7 +197,8 @@ bool VBK_alt_getBlockIndex(PopContext* self,
  * Return best block (tip) of the  AltTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block to the stream
+ * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
+ * to the stream
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_BestBlock(PopContext* self);
@@ -206,7 +207,8 @@ VBK_ByteStream* VBK_alt_BestBlock(PopContext* self);
  * Return best block (tip) of the  VbkBlockTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block to the stream
+ * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
+ * to the stream
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self);
@@ -215,7 +217,8 @@ VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self);
  * Return best block (tip) of the  BtcBlockTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block to the stream
+ * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
+ * to the stream
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_BestBlock(PopContext* self);
@@ -224,7 +227,8 @@ VBK_ByteStream* VBK_btc_BestBlock(PopContext* self);
  * Return block on the curent height from the active chain of the AltTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block to the stream
+ * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
+ * to the stream, if cannot find return nullptr
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
@@ -234,7 +238,8 @@ VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
  * Return block on the curent height from the active chain of the VbkBlockTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block to the stream
+ * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
+ * to the stream, if cannot find return nullptr
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
@@ -244,7 +249,8 @@ VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
  * Return block on the curent height from the active chain of the BtcBlockTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block to the stream
+ * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
+ * to the stream, if cannot find return nullptr
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
@@ -323,8 +329,8 @@ void VBK_MemPool_removeAll(PopContext* self,
  * @param[in] self PopContext
  * @param[in] id_bytes altintegration::ATV::id_t
  * @param[in] id_bytes_size size of the altintegration::ATV::id_t
- * @return return altintegration::ATV in the toVbkEncoding format, if cannot
- * find payloads stream will empty
+ * @return return altintegration::ATV in the toVbkEncoding format, if
+ * cannot find payloads return nullptr
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
@@ -338,8 +344,8 @@ VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
  * @param[in] self PopContext
  * @param[in] id_bytes altintegration::VTB::id_t
  * @param[in] id_bytes_size size of the altintegration::VTB::id_t
- * @return return altintegration::VTB in the toVbkEncoding format, if cannot
- * find payloads stream will empty
+ * @return return altintegration::VTB in the toVbkEncoding format, if
+ * cannot find payloads return nullptr
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
@@ -355,7 +361,7 @@ VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
  * @param[in] id_bytes altintegration::VbkBlock::id_t
  * @param[in] id_bytes_size size of the altintegration::VbkBlock::id_t
  * @return return altintegration::VbkBlock in the toVbkEncoding format, if
- * cannot find payloads stream will empty
+ * cannot find payloads return nullptr
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
