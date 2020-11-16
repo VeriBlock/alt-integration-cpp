@@ -13,6 +13,7 @@
 #include <veriblock/config.hpp>
 #include <veriblock/mempool.hpp>
 #include <veriblock/storage/payloads_index.hpp>
+#include <veriblock/pop_stateless_validator.hpp>
 
 /**
  * @defgroup api Public API
@@ -52,9 +53,9 @@ struct PopContext {
                                                   *ctx->config->btc.params,
                                                   *ctx->payloadsProvider);
     ctx->mempool = std::make_shared<MemPool>(*ctx->altTree);
-    ctx->popValidator = std::make_shared<PopValidator>(*config->vbk.params,
-                                                       *config->btc.params,
-                                                       *config->alt,
+    ctx->popValidator = std::make_shared<PopValidator>(*ctx->config->vbk.params,
+                                                       *ctx->config->btc.params,
+                                                       *ctx->config->alt,
                                                        validatorWorkers);
     ValidationState state;
 
@@ -101,6 +102,7 @@ struct PopContext {
   std::shared_ptr<MemPool> mempool;
   std::shared_ptr<AltBlockTree> altTree;
   std::shared_ptr<PayloadsProvider> payloadsProvider;
+  std::shared_ptr<PopValidator> popValidator;
 
  private:
   PopContext() = default;
