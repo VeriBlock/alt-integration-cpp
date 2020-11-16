@@ -23,7 +23,7 @@ type BtcBlock struct {
 func (v *BtcBlock) GetHash() []byte {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
-	return ffi.BtcBlock_getHash(buffer.Bytes())
+	return ffi.BtcBlockGetHash(buffer.Bytes())
 }
 
 // GetBlockTime ...

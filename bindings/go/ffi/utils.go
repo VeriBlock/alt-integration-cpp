@@ -10,62 +10,67 @@ import (
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
-func VbkBlock_getId(block_bytes []byte) []byte {
-	id_bytes := make([]byte, veriblock.VblakePreviousBlockHashSize)
-	var id_bytes_size int
+// VbkBlockGetID ...
+func VbkBlockGetID(blockBytes []byte) []byte {
+	idBytes := make([]byte, veriblock.VblakePreviousBlockHashSize)
+	var idBytesSize int
 
-	block_bytesC := (*C.uint8_t)(unsafe.Pointer(&block_bytes[0]))
-	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&id_bytes[0]))
-	id_bytes_sizeC := (*C.int)(unsafe.Pointer(&id_bytes_size))
-	C.VBK_VbkBlock_getId(block_bytesC, C.int(len(block_bytes)), id_bytesC, id_bytes_sizeC)
+	blockBytesC := (*C.uint8_t)(unsafe.Pointer(&blockBytes[0]))
+	idBytesC := (*C.uint8_t)(unsafe.Pointer(&idBytes[0]))
+	idBytesSizeC := (*C.int)(unsafe.Pointer(&idBytesSize))
+	C.VBK_VbkBlock_getId(blockBytesC, C.int(len(blockBytes)), idBytesC, idBytesSizeC)
 
-	return id_bytes
+	return idBytes
 }
 
-func Vtb_getId(vtb_bytes []byte) []byte {
-	id_bytes := make([]byte, veriblock.Sha256HashSize)
-	var id_bytes_size int
+// VtbGetID ...
+func VtbGetID(vtbBytes []byte) []byte {
+	idBytes := make([]byte, veriblock.Sha256HashSize)
+	var idBytesSize int
 
-	vtb_bytesC := (*C.uint8_t)(unsafe.Pointer(&vtb_bytes[0]))
-	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&id_bytes[0]))
-	id_bytes_sizeC := (*C.int)(unsafe.Pointer(&id_bytes_size))
-	C.VBK_VTB_getId(vtb_bytesC, C.int(len(vtb_bytes)), id_bytesC, id_bytes_sizeC)
+	vtbBytesC := (*C.uint8_t)(unsafe.Pointer(&vtbBytes[0]))
+	idBytesC := (*C.uint8_t)(unsafe.Pointer(&idBytes[0]))
+	idBytesSizeC := (*C.int)(unsafe.Pointer(&idBytesSize))
+	C.VBK_VTB_getId(vtbBytesC, C.int(len(vtbBytes)), idBytesC, idBytesSizeC)
 
-	return id_bytes
+	return idBytes
 }
 
-func Atv_getId(atv_bytes []byte) []byte {
-	id_bytes := make([]byte, veriblock.Sha256HashSize)
-	var id_bytes_size int
+// AtvGetID ...
+func AtvGetID(atvBytes []byte) []byte {
+	idBytes := make([]byte, veriblock.Sha256HashSize)
+	var idBytesSize int
 
-	atv_bytesC := (*C.uint8_t)(unsafe.Pointer(&atv_bytes[0]))
-	id_bytesC := (*C.uint8_t)(unsafe.Pointer(&id_bytes[0]))
-	id_bytes_sizeC := (*C.int)(unsafe.Pointer(&id_bytes_size))
-	C.VBK_ATV_getId(atv_bytesC, C.int(len(atv_bytes)), id_bytesC, id_bytes_sizeC)
+	atvBytesC := (*C.uint8_t)(unsafe.Pointer(&atvBytes[0]))
+	idBytesC := (*C.uint8_t)(unsafe.Pointer(&idBytes[0]))
+	idBytesSizeC := (*C.int)(unsafe.Pointer(&idBytesSize))
+	C.VBK_ATV_getId(atvBytesC, C.int(len(atvBytes)), idBytesC, idBytesSizeC)
 
-	return id_bytes
+	return idBytes
 }
 
-func VbkBlock_getHash(block_bytes []byte) []byte {
-	hash_bytes := make([]byte, veriblock.VblakeBlockHashSize)
-	var hash_bytes_size int
+// VbkBlockGetHash ...
+func VbkBlockGetHash(blockBytes []byte) []byte {
+	hashBytes := make([]byte, veriblock.VblakeBlockHashSize)
+	var hashBytesSize int
 
-	block_bytesC := (*C.uint8_t)(unsafe.Pointer(&block_bytes[0]))
-	hash_bytesC := (*C.uint8_t)(unsafe.Pointer(&hash_bytes[0]))
-	hash_bytes_sizeC := (*C.int)(unsafe.Pointer(&hash_bytes_size))
-	C.VBK_VbkBlock_getHash(block_bytesC, C.int(len(block_bytes)), hash_bytesC, hash_bytes_sizeC)
+	blockBytesC := (*C.uint8_t)(unsafe.Pointer(&blockBytes[0]))
+	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
+	hashBytesSizeC := (*C.int)(unsafe.Pointer(&hashBytesSize))
+	C.VBK_VbkBlock_getHash(blockBytesC, C.int(len(blockBytes)), hashBytesC, hashBytesSizeC)
 
-	return hash_bytes
+	return hashBytes
 }
 
-func BtcBlock_getHash(block_bytes []byte) []byte {
-	hash_bytes := make([]byte, veriblock.Sha256HashSize)
-	var hash_bytes_size int
+// BtcBlockGetHash ...
+func BtcBlockGetHash(blockBytes []byte) []byte {
+	hashBytes := make([]byte, veriblock.Sha256HashSize)
+	var hashBytesSize int
 
-	block_bytesC := (*C.uint8_t)(unsafe.Pointer(&block_bytes[0]))
-	hash_bytesC := (*C.uint8_t)(unsafe.Pointer(&hash_bytes[0]))
-	hash_bytes_sizeC := (*C.int)(unsafe.Pointer(&hash_bytes_size))
-	C.VBK_BtcBlock_getHash(block_bytesC, C.int(len(block_bytes)), hash_bytesC, hash_bytes_sizeC)
+	blockBytesC := (*C.uint8_t)(unsafe.Pointer(&blockBytes[0]))
+	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
+	hashBytesSizeC := (*C.int)(unsafe.Pointer(&hashBytesSize))
+	C.VBK_BtcBlock_getHash(blockBytesC, C.int(len(blockBytes)), hashBytesC, hashBytesSizeC)
 
-	return hash_bytes
+	return hashBytes
 }
