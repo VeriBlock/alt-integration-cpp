@@ -272,13 +272,30 @@ bool checkVbkPopTx(const VbkPopTx& tx,
     return state.Invalid("vbk-check-btc-blocks");
   }
 
+  if (tx.blockOfProofContext.size() > MAX_CONTEXT_COUNT_VBK_PUBLICATION) {
+    return state.Invalid(
+        "vbk-btc-context-too-many",
+        fmt::format("Maximum allowed BTC context size is {}, got {}",
+                    MAX_CONTEXT_COUNT_VBK_PUBLICATION,
+                    tx.blockOfProofContext.size()));
+  }
+
   return true;
 }
 
 bool checkVbkTx(const VbkTx& tx, ValidationState& state) {
   if (!checkSignature(tx, state)) {
-    return state.Invalid("vbk-check-signature");
+    return state.Invalid("vbktx-check-signature");
   }
+
+  if (tx.outputs.size() > MAX_OUTPUTS_COUNT) {
+    return state.Invalid(
+        "vbktx-too-many-outputs",
+        fmt::format("Too many outputs. Expected less than {}, got {}",
+                    MAX_OUTPUTS_COUNT,
+                    tx.outputs.size()));
+  }
+
   return true;
 }
 
@@ -411,6 +428,7 @@ bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
   if (hasDuplicateIds(popData.atvs)) {
     return state.Invalid("popdata-duplicate-atv", "duplicate ATVs");
   }
+
   return true;
 }
 
