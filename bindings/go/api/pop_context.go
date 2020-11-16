@@ -115,26 +115,26 @@ func (v *PopContext) AddPayloads(hash []byte, payloads entities.PopData) error {
 }
 
 // LoadTip ...
-func (v PopContext) LoadTip(hash []byte) {
+func (v *PopContext) LoadTip(hash []byte) {
 	defer v.lock()()
 	v.popContext.AltBlockTreeLoadTip(hash)
 }
 
 // ComparePopScore ...
-func (v PopContext) ComparePopScore(hashA []byte, hashB []byte) int {
+func (v *PopContext) ComparePopScore(hashA []byte, hashB []byte) int {
 	defer v.lock()()
 	return v.popContext.AltBlockTreeComparePopScore(hashA, hashB)
 }
 
 // RemoveSubtree ...
-func (v PopContext) RemoveSubtree(hash []byte) {
+func (v *PopContext) RemoveSubtree(hash []byte) {
 	defer v.lock()()
 	v.popContext.AltBlockTreeRemoveSubtree(hash)
 }
 
 // SetState - Return `false` if intermediate or target block is invalid. In this
 // case tree will rollback into original state. `true` if state change is successful.
-func (v PopContext) SetState(hash []byte) error {
+func (v *PopContext) SetState(hash []byte) error {
 	defer v.lock()()
 	ok := v.popContext.AltBlockTreeSetState(hash)
 	if !ok {
@@ -143,97 +143,90 @@ func (v PopContext) SetState(hash []byte) error {
 	return nil
 }
 
-func (v PopContext) AltBestBlock() (*entities.BlockIndex, error) {
+func (v *PopContext) AltBestBlock() (*entities.BlockIndex, error) {
+	defer v.lock()()
 	stream := v.popContext.AltBestBlock()
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
 	var alt_index entities.BlockIndex
-	err := alt_index.FromRaw(&buffer)
+	err := alt_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
 	}
 	return &alt_index, nil
 }
 
-func (v PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
+func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
+	defer v.lock()()
 	stream := v.popContext.VbkBestBlock()
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
 	var vbk_index entities.BlockIndex
-	err := vbk_index.FromRaw(&buffer)
+	err := vbk_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
 	}
 	return &vbk_index, nil
 }
 
-func (v PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
+func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
+	defer v.lock()()
 	stream := v.popContext.BtcBestBlock()
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
 	var btc_index entities.BlockIndex
-	err := btc_index.FromRaw(&buffer)
+	err := btc_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
 	}
 	return &btc_index, nil
 }
 
-func (v PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
+func (v *PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
+	defer v.lock()()
 	stream := v.popContext.AltBlockAtActiveChainByHeight(height)
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
 	var alt_index entities.BlockIndex
-	err := alt_index.FromRaw(&buffer)
+	err := alt_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
 	}
 	return &alt_index, nil
 }
 
-func (v PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
+func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
+	defer v.lock()()
 	stream := v.popContext.VbkBlockAtActiveChainByHeight(height)
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
 	var vbk_index entities.BlockIndex
-	err := vbk_index.FromRaw(&buffer)
+	err := vbk_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
 	}
 	return &vbk_index, nil
 }
 
-func (v PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
+func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
+	defer v.lock()()
 	stream := v.popContext.BtcBlockAtActiveChainByHeight(height)
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
 	var btc_index entities.BlockIndex
-	err := btc_index.FromRaw(&buffer)
+	err := btc_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
 	}
 	return &btc_index, nil
 }
 
-func (v PopContext) AltGetATVContainingBlock(atv_id []byte) ([][]byte, error) {
+func (v *PopContext) AltGetATVContainingBlock(atv_id []byte) ([][]byte, error) {
+	defer v.lock()()
 	stream := v.popContext.AltGetATVContainingBlock(atv_id)
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
-	encoded_hashes, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	encoded_hashes, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -246,13 +239,12 @@ func (v PopContext) AltGetATVContainingBlock(atv_id []byte) ([][]byte, error) {
 	return hashes, nil
 }
 
-func (v PopContext) AltGetVTBContainingBlock(vtb_id []byte) ([][]byte, error) {
+func (v *PopContext) AltGetVTBContainingBlock(vtb_id []byte) ([][]byte, error) {
+	defer v.lock()()
 	stream := v.popContext.AltGetATVContainingBlock(vtb_id)
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
-	encoded_hashes, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	encoded_hashes, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -265,13 +257,12 @@ func (v PopContext) AltGetVTBContainingBlock(vtb_id []byte) ([][]byte, error) {
 	return hashes, nil
 }
 
-func (v PopContext) AltGetVbkBlockContainingBlock(vbk_id []byte) ([][]byte, error) {
+func (v *PopContext) AltGetVbkBlockContainingBlock(vbk_id []byte) ([][]byte, error) {
+	defer v.lock()()
 	stream := v.popContext.AltGetATVContainingBlock(vbk_id)
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
-	encoded_hashes, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	encoded_hashes, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -284,13 +275,12 @@ func (v PopContext) AltGetVbkBlockContainingBlock(vbk_id []byte) ([][]byte, erro
 	return hashes, nil
 }
 
-func (v PopContext) VbkGetVTBContainingBlock(vtb_id []byte) ([][]byte, error) {
+func (v *PopContext) VbkGetVTBContainingBlock(vtb_id []byte) ([][]byte, error) {
+	defer v.lock()()
 	stream := v.popContext.AltGetATVContainingBlock(vtb_id)
 	defer stream.Free()
-	var buffer bytes.Buffer
-	stream.ReadAll(&buffer)
 
-	encoded_hashes, err := veriblock.ReadArrayOf(&buffer, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	encoded_hashes, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -305,6 +295,7 @@ func (v PopContext) VbkGetVTBContainingBlock(vtb_id []byte) ([][]byte, error) {
 
 // SubmitAtv - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitAtv(block *entities.Atv) int {
+	defer v.lock()()
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
@@ -317,6 +308,7 @@ func (v *PopContext) SubmitAtv(block *entities.Atv) int {
 
 // SubmitVtb - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVtb(block *entities.Vtb) int {
+	defer v.lock()()
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
@@ -329,6 +321,7 @@ func (v *PopContext) SubmitVtb(block *entities.Vtb) int {
 
 // SubmitVbk - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVbk(block *entities.VbkBlock) int {
+	defer v.lock()()
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
