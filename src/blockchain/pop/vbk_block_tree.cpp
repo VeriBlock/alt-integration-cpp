@@ -191,40 +191,20 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                       ValidationState& state) {
   auto& tx = vtb.transaction;
 
-  std::vector<BtcBlock> context = tx.blockOfProofContext;
-  context.push_back(tx.blockOfProof);
+  auto& firstBlock = !tx.blockOfProofContext.empty()
+                         ? tx.blockOfProofContext.front()
+                         : tx.blockOfProof;
 
-  auto* connectingIndex = btc().getBlockIndex(context.back().getHash());
-  connectingIndex = nullptr;
-  if (connectingIndex) {
-    // blockOfProof already exists on chain, it means that all previous blocks
-    // are already present in BTC chain
-    return true;
-  }
+  // if 'firstBlock' is not genesis block, use 'previousBlock' as connectingHash
+  auto connectingHash = firstBlock.previousBlock != ArithUint256()
+                            ? firstBlock.previousBlock
+                            : firstBlock.getHash();
 
-  // attempt to find last existing BTC block
-  for (auto& it : context) {
-    auto* index = btc().getBlockIndex(it.getHash());
-    if (index == nullptr) {
-      break;
-    }
-
-    connectingIndex = index;
-  }
-
-  // attempt to use 'prev hash' as connecting block
-  if (!connectingIndex) {
-    auto& front = context.front();
-    auto firstBlockHash = front.getPreviousBlock().isNull()
-                              ? front.getHash()
-                              : front.getPreviousBlock();
-    connectingIndex = btc().getBlockIndex(firstBlockHash);
-  }
-
+  auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (!connectingIndex) {
     VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
                   vtb.toPrettyString());
-    return state.Invalid("vtb-btc-context-unknown-previous-block",
+    return state.Invalid("bad-prev-block",
                          "Can not find the BTC block referenced by the first "
                          "block of the VTB context");
   }
@@ -235,8 +215,7 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
-  return isValid ? true
-                 : state.Invalid("vtb-btc-context-block-referenced-too-early");
+  return isValid ? true : state.Invalid("block-referenced-too-early");
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,

@@ -253,7 +253,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
     return {MemPool::FAILED_STATEFUL, state.Invalid("atv-stateful")};
   }
 
-  VBK_LOG_INFO("[POP mempool] ATV=%s is connected", id.toHex());
+  VBK_LOG_DEBUG("[POP mempool] ATV=%s is connected", id.toHex());
   auto& rel = getOrPutVbkRelation(blockOfProof_ptr);
   rel.atvs.push_back(atv);
   makePayloadConnected<ATV>(atv);
@@ -284,7 +284,7 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
     return {FAILED_STATEFUL, state.Invalid("vtb-stateful")};
   }
 
-  VBK_LOG_INFO("[POP mempool] VTB=%s is connected", id.toHex());
+  VBK_LOG_DEBUG("[POP mempool] VTB=%s is connected", id.toHex());
   auto& rel = getOrPutVbkRelation(containingBlock_ptr);
   rel.vtbs.push_back(vtb);
   makePayloadConnected<VTB>(vtb);
@@ -317,7 +317,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
   }
 
   // stateful validation
-  VBK_LOG_INFO("[POP mempool] VbkBlock=%s is connected", id.toHex());
+  VBK_LOG_DEBUG("[POP mempool] VbkBlock=%s is connected", id.toHex());
   if (!mempool_tree_.vbk().getStableTree().getBlockIndex(blk->getHash())) {
     getOrPutVbkRelation(blk);
   }

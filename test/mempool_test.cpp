@@ -1564,35 +1564,49 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
     mempool->removeAll(pop2);
   }
 
-  /// Send VTB1, expect it to connect
-  {
-    // add to mempool
-    ASSERT_TRUE(mempool->submit<VTB>(VTB1, state)) << state.toString();
+  // At this moment, VTB1 is not expected to be connected, because BTC block 8
+  // can not be connected to previous block 6.
+  // add to mempool
+  ASSERT_TRUE(mempool->submit<VTB>(VTB1, state)) << state.toString();
+  // mine VTB1 in ALT3
+  mineAltBlocks(1, chain, false, false);
+  auto pop1 = mempool->getPop();
+  ASSERT_EQ(pop1.vtbs.size(), 0);
+  ASSERT_EQ(pop1.atvs.size(), 0);
+  ASSERT_EQ(pop1.context.size(), 0);
 
-    // mine VTB1 in ALT3
-    mineAltBlocks(1, chain, false, false);
-    auto pop1 = mempool->getPop();
-    ASSERT_EQ(pop1.vtbs.size(), 1);
-    ASSERT_EQ(pop1.vtbs.at(0), VTB1);
-    ASSERT_EQ(pop1.atvs.size(), 0);
-    ASSERT_EQ(pop1.context.size(), 0);
-
-    // activate ALT3
-    ASSERT_TRUE(AddPayloads(alttree, chain.back().getHash(), pop1));
-    ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
-    // verify last known BTC/VBK
-    ASSERT_EQ(getLastKnownBtcBlock(), btc11->getHash());
-    ASSERT_EQ(getLastKnownVbkBlock(), vtb2containing.getHash());
-
-    // remove accepted data from mempool
-    mempool->removeAll(pop1);
-  }
-
-  // at this point mempool must be empty
-  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
-  ASSERT_TRUE(mempool->getMap<VTB>().empty());
-  ASSERT_TRUE(mempool->getMap<ATV>().empty());
-  ASSERT_TRUE(mempool->getInFlightMap<VbkBlock>().empty());
-  ASSERT_TRUE(mempool->getInFlightMap<VTB>().empty());
-  ASSERT_TRUE(mempool->getInFlightMap<ATV>().empty());
+  ///// If VTB1 is expected to be connected, uncomment this code
+  // {
+  //  /// Send VTB1, expect it to connect
+  //  {
+  //    // add to mempool
+  //    ASSERT_TRUE(mempool->submit<VTB>(VTB1, state)) << state.toString();
+  //
+  //    // mine VTB1 in ALT3
+  //    mineAltBlocks(1, chain, false, false);
+  //    auto pop1 = mempool->getPop();
+  //    ASSERT_EQ(pop1.vtbs.size(), 1);
+  //    ASSERT_EQ(pop1.vtbs.at(0), VTB1);
+  //    ASSERT_EQ(pop1.atvs.size(), 0);
+  //    ASSERT_EQ(pop1.context.size(), 0);
+  //
+  //    // activate ALT3
+  //    ASSERT_TRUE(AddPayloads(alttree, chain.back().getHash(), pop1));
+  //    ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
+  //    // verify last known BTC/VBK
+  //    ASSERT_EQ(getLastKnownBtcBlock(), btc11->getHash());
+  //    ASSERT_EQ(getLastKnownVbkBlock(), vtb2containing.getHash());
+  //
+  //    // remove accepted data from mempool
+  //    mempool->removeAll(pop1);
+  //  }
+  //
+  //  // at this point mempool must be empty
+  //  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
+  //  ASSERT_TRUE(mempool->getMap<VTB>().empty());
+  //  ASSERT_TRUE(mempool->getMap<ATV>().empty());
+  //  ASSERT_TRUE(mempool->getInFlightMap<VbkBlock>().empty());
+  //  ASSERT_TRUE(mempool->getInFlightMap<VTB>().empty());
+  //  ASSERT_TRUE(mempool->getInFlightMap<ATV>().empty());
+  // }
 }
