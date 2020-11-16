@@ -13,6 +13,7 @@
 #include <veriblock/config.hpp>
 #include <veriblock/mempool.hpp>
 #include <veriblock/storage/payloads_index.hpp>
+#include <veriblock/pop_stateless_validator.hpp>
 
 /**
  * @defgroup api Public API
@@ -32,12 +33,15 @@ namespace altintegration {
  */
 struct PopContext {
   static std::shared_ptr<PopContext> create(
-      const Config& config, std::shared_ptr<PayloadsProvider> db) {
-    return create(std::make_shared<Config>(config), std::move(db));
+      const Config& config, std::shared_ptr<PayloadsProvider> db, size_t validatorWorkers = 0) {
+    return create(
+        std::make_shared<Config>(config), std::move(db), validatorWorkers);
   }
 
   static std::shared_ptr<PopContext> create(
-      std::shared_ptr<Config> config, std::shared_ptr<PayloadsProvider> db) {
+      std::shared_ptr<Config> config,
+      std::shared_ptr<PayloadsProvider> db,
+      size_t validatorWorkers = 0) {
     config->validate();
 
     // because default constructor is hidden
@@ -49,7 +53,10 @@ struct PopContext {
                                                   *ctx->config->btc.params,
                                                   *ctx->payloadsProvider);
     ctx->mempool = std::make_shared<MemPool>(*ctx->altTree);
-
+    ctx->popValidator = std::make_shared<PopValidator>(*ctx->config->vbk.params,
+                                                       *ctx->config->btc.params,
+                                                       *ctx->config->alt,
+                                                       validatorWorkers);
     ValidationState state;
 
     // first, bootstrap BTC
@@ -81,30 +88,21 @@ struct PopContext {
     return ctx;
   }
 
-  bool checkPopData(const PopData& popData, ValidationState& state) {
-    if (!checkVbkBlocks(popData.context, state, *config->vbk.params)) {
-      return state.Invalid("pop-vbkblock-statelessly-invalid");
-    }
+  void start(size_t validatorWorkers = 0) {
+    VBK_ASSERT_MSG(popValidator != nullptr, "PopContext is not initialized");
+    popValidator->start(validatorWorkers);
+  }
 
-    for (const auto& vtb : popData.vtbs) {
-      if (!checkVTB(vtb, state, *config->btc.params)) {
-        return state.Invalid("pop-vtb-statelessly-invalid");
-      }
-    }
-
-    for (const auto& atv : popData.atvs) {
-      if (!checkATV(atv, state, *config->alt)) {
-        return state.Invalid("pop-atv-statelessly-invalid");
-      }
-    }
-
-    return true;
+  void stop() {
+    VBK_ASSERT_MSG(popValidator != nullptr, "PopContext is not initialized");
+    popValidator->stop();
   }
 
   std::shared_ptr<Config> config;
   std::shared_ptr<MemPool> mempool;
   std::shared_ptr<AltBlockTree> altTree;
   std::shared_ptr<PayloadsProvider> payloadsProvider;
+  std::shared_ptr<PopValidator> popValidator;
 
  private:
   PopContext() = default;
