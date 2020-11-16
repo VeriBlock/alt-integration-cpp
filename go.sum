@@ -1,3 +1,4 @@
+github.com/VeriBlock/alt-integration-cpp/bindings/go v0.0.0-20201021090234-5c866ae0c17b h1:ftrZrNMkB8JRbbCpdsjlfITxe9w2N371hpOM4DM8e7c=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/eknkc/basex v1.0.0 h1:R2zGRGJAcqEES03GqHU9leUF5n4Pg6ahazPbSTQWCWc=

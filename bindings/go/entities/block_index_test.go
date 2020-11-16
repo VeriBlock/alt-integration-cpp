@@ -25,7 +25,7 @@ func TestBlockIndexDeserialize(t *testing.T) {
 	stream := bytes.NewReader(blockEncoded)
 	decoded := BlockIndex{}
 	decoded.Header = &BtcBlock{}
-	decoded.addon = &BtcBlockAddon{}
+	decoded.Addon = &BtcBlockAddon{}
 	assert.NoError(decoded.FromRaw(stream))
 
 	assert.Equal(defaultBlockIndex.Height, decoded.Height)
@@ -49,7 +49,7 @@ func TestBlockIndexRoundTrip(t *testing.T) {
 	stream := bytes.NewReader(blockEncoded)
 	decoded := BlockIndex{}
 	decoded.Header = &BtcBlock{}
-	decoded.addon = &BtcBlockAddon{}
+	decoded.Addon = &BtcBlockAddon{}
 	assert.NoError(decoded.FromRaw(stream))
 	assert.Equal(defaultBlockIndex.Height, decoded.Height)
 

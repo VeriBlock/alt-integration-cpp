@@ -17,10 +17,11 @@ type Vtb struct {
 	ContainingBlock VbkBlock
 }
 
+// GetID ...
 func (v *Vtb) GetID() []byte {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
-	return ffi.Vtb_getId(buffer.Bytes())
+	return ffi.VtbGetID(buffer.Bytes())
 }
 
 // ToVbkEncoding ...

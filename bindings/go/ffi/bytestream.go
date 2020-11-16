@@ -9,11 +9,18 @@ import (
 	"unsafe"
 )
 
+// NewVbkByteStream - returns a new byte stream struct
+func NewVbkByteStream(ref *C.VBK_ByteStream) VbkByteStream {
+	return VbkByteStream{ref}
+}
+
+// VbkByteStream ...
 type VbkByteStream struct {
 	ref *C.VBK_ByteStream
 }
 
-func (v VbkByteStream) ReadAll(stream io.Writer) {
+// ReadAll ...
+func (v *VbkByteStream) ReadAll(stream io.Writer) {
 	buffer := make([]byte, 1024)
 	bufferC := (*C.uint8_t)(unsafe.Pointer(&buffer[0]))
 
@@ -27,6 +34,16 @@ func (v VbkByteStream) ReadAll(stream io.Writer) {
 	}
 }
 
-func (v VbkByteStream) Free() {
+// Read ...
+func (v *VbkByteStream) Read(p []byte) (n int, err error) {
+	// TODO: Check is this correct way
+	len := C.ulong(len(p))
+	bufferC := (*C.uint8_t)(unsafe.Pointer(&p[0]))
+	res := C.VBK_ByteStream_Read(v.ref, bufferC, len)
+	return int(res), nil
+}
+
+// Free ...
+func (v *VbkByteStream) Free() {
 	C.VBK_ByteStream_Free(v.ref)
 }
