@@ -25,12 +25,12 @@ func TestMockMiner(t *testing.T) {
 	popContext := NewPopContext(&config)
 	defer popContext.Free()
 
-	// mockMiner := NewMockMiner()
-	// defer mockMiner.Free()
+	mockMiner := NewMockMiner()
+	defer mockMiner.Free()
 
-	// blockTip, err := mockMiner.MineVbkBlockTip()
-	// assert.NoError(err)
-	// assert.Equal(uint32(1), blockTip.Height)
+	blockTip, err := mockMiner.MineVbkBlockTip()
+	assert.NoError(err)
+	assert.Equal(uint32(1), blockTip.Height)
 
 	// vbkBlock, err := mockMiner.MineVbkBlock(blockTip)
 	// assert.NoError(err)

@@ -52,14 +52,6 @@ type GenericBlockHeader interface {
 	GetDifficulty() uint32
 }
 
-// NewBlockIndex - Creates a new block index.
-func NewBlockIndex() BlockIndex {
-	blockIndex := BlockIndex{}
-	blockIndex.Header = &BtcBlock{}
-	blockIndex.Addon = &BtcBlockAddon{}
-	return blockIndex
-}
-
 // BlockIndex ...
 type BlockIndex struct {
 	Addon veriblock.SerdeRaw
