@@ -7,23 +7,23 @@
 namespace altintegration {
 
 VbkBlock GetRegTestVbkBlock() {
-  //  {
+  //{
   //  "height": 0,
   //  "version": 2,
   //  "previousBlock": "000000000000000000000000",
   //  "previousKeystone": "000000000000000000",
   //  "secondPreviousKeystone": "000000000000000000",
-  //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
-  //  "timestamp": 1553699987,
-  //  "difficulty": 117586646,
-  //  "nonce": 1924857207
+  //  "merkleRoot": "84E710F30BB8CFC9AF12622A8F39B917",
+  //  "timestamp": 1603044490,
+  //  "difficulty": 0x1010000,
+  //  "nonce": 0
   //}
   VbkBlock block;
   block.setHeight(0);
   block.setVersion(2);
-  block.setMerkleRoot(uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617"));
-  block.setTimestamp(1553699987);
-  block.setDifficulty(16842752);
+  block.setMerkleRoot(uint128::fromHex("84E710F30BB8CFC9AF12622A8F39B917"));
+  block.setTimestamp(1603044490);
+  block.setDifficulty(0x1010000);
   block.setNonce(0);
 
   return block;

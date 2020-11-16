@@ -225,21 +225,21 @@ struct VbkChainParamsRegTest : public VbkChainParams {
 //    //  "previousBlock": "000000000000000000000000",
 //    //  "previousKeystone": "000000000000000000",
 //    //  "secondPreviousKeystone": "000000000000000000",
-//    //  "merkleRoot": "a2ea7c29ef7915db412ebd4012a9c617",
-//    //  "timestamp": 1553699987,
-//    //  "difficulty": 117586646,
-//    //  "nonce": 1924857207
+//    //  "merkleRoot": "84E710F30BB8CFC9AF12622A8F39B917",
+//    //  "timestamp": 1603044490,
+//    //  "difficulty": 0x1010000,
+//    //  "nonce": 0
 //    //}
 //    VbkBlock block;
 //    block.height = 0;
 //    block.version = 2;
-//    block.merkleRoot = uint128::fromHex("a2ea7c29ef7915db412ebd4012a9c617");
-//    block.timestamp = 1553699987;
-//    block.difficulty = 16842752;
+//    block.merkleRoot = uint128::fromHex("84E710F30BB8CFC9AF12622A8F39B917");
+//    block.timestamp = 1603044490;
+//    block.difficulty = 0x1010000;
 //    block.nonce = 0;
 //
 //    VBK_ASSERT(block.getHash().toHex() ==
-//               "5113a60099c9f24260476a546ad38f8a5995053b4b04d16c");
+//               "63A038864D0DA31C9BF2DC6C2B992A52BE8DFF6652BB6772");
 //
 //    return block;
 //  }
