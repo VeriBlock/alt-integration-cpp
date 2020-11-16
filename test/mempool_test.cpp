@@ -1424,7 +1424,9 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   // send all VBK blocks first -> expect them to connect
   // send VTB0 -> expect it to connect
   // send VTB2 -> expect it to connect
-  // send VTB1 -> expect it to connect (!!!)
+  // send VTB1 -> expect it to NOT connect in mempool, because VTB1 context
+  // starts at 8, and previous VBK blocks bring only context up to 6, block 7 is
+  // missing. Error should be "btc block referenced too early".
 
   /// First, prepare VTB0, VTB1, VTB2
   auto vbkendorsed = popminer->mineVbkBlocks(7);
