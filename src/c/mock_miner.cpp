@@ -81,18 +81,18 @@ VBK_ByteStream* VBK_mineATV(MockMiner_t* self,
   VBK_ASSERT(self);
   VBK_ASSERT(publication_data);
 
-  altintegration::ReadStream stream(altintegration::Slice<const uint8_t>(
+  altintegration::ReadStream r_stream(altintegration::Slice<const uint8_t>(
       publication_data, publication_data_size));
   auto vbktx = self->miner->createVbkTxEndorsingAltBlock(
-      altintegration::PublicationData::fromRaw(stream));
+      altintegration::PublicationData::fromRaw(r_stream));
 
   altintegration::ValidationState state;
   auto atv = self->miner->applyATV(vbktx, state);
   VBK_ASSERT(state.IsValid());
 
-  altintegration::WriteStream stream;
-  atv.toVbkEncoding(stream);
-  return new VbkByteStream(stream.data())
+  altintegration::WriteStream w_stream;
+  atv.toVbkEncoding(w_stream);
+  return new VbkByteStream(w_stream.data());
 }
 
 VBK_ByteStream* VBK_mineVTB(MockMiner_t* self,
