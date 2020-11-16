@@ -428,19 +428,6 @@ bool checkPopData(const PopData& popData, ValidationState& state) {
   if (hasDuplicateIds(popData.atvs)) {
     return state.Invalid("popdata-duplicate-atv", "duplicate ATVs");
   }
-  for (const auto& vtb : popData.vtbs) {
-    results.push_back(validator.addCheck(vtb));
-  }
-  for (const auto& atv : popData.atvs) {
-    results.push_back(validator.addCheck(atv));
-  }
-  for (auto& r : results) {
-    auto result = r.get();
-    if (!result.IsValid()) {
-      state = result;
-      return state.Invalid("pop-statelessly-invalid");
-    }
-  }
 
   return true;
 }

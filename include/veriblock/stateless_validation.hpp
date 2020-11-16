@@ -85,9 +85,7 @@ bool checkVTB(const VTB& vtb,
               ValidationState& state,
               const BtcChainParams& btc);
 
-bool checkPopData(
-                  const PopData& popData,
-                  ValidationState& state);
+bool checkPopData(const PopData& popData, ValidationState& state);
 }  // namespace altintegration
 
 #endif  // ! ALT_INTEGRATION_INCLUDE_VERIBLOCK_STATELESS_VALIDATION_H
