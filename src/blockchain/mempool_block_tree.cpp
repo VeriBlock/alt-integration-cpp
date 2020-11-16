@@ -21,8 +21,9 @@ bool MemPoolBlockTree::checkContextually(const VbkBlock& block,
     return state.Invalid("duplicate");
   }
 
-  bool tooOld = vbkstable.getBestChain().tip()->getHeight() -
-                    vbkstable.getParams().getMaxReorgBlocks() >
+  auto* tip = vbkstable.getBestChain().tip();
+  VBK_ASSERT(tip);
+  bool tooOld = tip->getHeight() - vbkstable.getParams().getMaxReorgBlocks() >
                 block.getHeight();
   if (tooOld) {
     return state.Invalid("too-old");

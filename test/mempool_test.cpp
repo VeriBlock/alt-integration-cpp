@@ -57,10 +57,10 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   void submitATV(const ATV& atv) {
     bool res = mempool->submit(atv, state);
     if (!res) {
-      ASSERT_GE(state.GetPath().size(), 32);
+      ASSERT_GE(state.GetPath().size(), 12);
       std::string error = state.GetPath();
-      error = std::string{error.begin(), error.begin() + 31};
-      EXPECT_EQ(error, "pop-mempool-submit-atv-stateful");
+      error = std::string{error.begin(), error.begin() + 12};
+      EXPECT_EQ(error, "atv-stateful");
       state.clear();
     }
   }
@@ -68,10 +68,10 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   void submitVTB(const VTB& vtb) {
     bool res = mempool->submit(vtb, state);
     if (!res) {
-      ASSERT_GE(state.GetPath().size(), 32);
+      ASSERT_GE(state.GetPath().size(), 12);
       std::string error = state.GetPath();
-      error = std::string{error.begin(), error.begin() + 31};
-      EXPECT_EQ(error, "pop-mempool-submit-vtb-stateful");
+      error = std::string{error.begin(), error.begin() + 12};
+      EXPECT_EQ(error, "vtb-stateful");
       state.clear();
     }
   }
@@ -79,10 +79,10 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   void submitVBK(const VbkBlock& vbk) {
     bool res = mempool->submit(vbk, state);
     if (!res) {
-      ASSERT_GE(state.GetPath().size(), 32);
+      ASSERT_GE(state.GetPath().size(), 12);
       std::string error = state.GetPath();
-      error = std::string{error.begin(), error.begin() + 31};
-      EXPECT_EQ(error, "pop-mempool-submit-vbk-stateful");
+      error = std::string{error.begin(), error.begin() + 12};
+      EXPECT_EQ(error, "vbk-stateful");
       state.clear();
     }
   }
