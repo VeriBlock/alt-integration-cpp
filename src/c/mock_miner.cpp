@@ -24,41 +24,97 @@ void VBK_FreeMockMiner(MockMiner_t* miner) {
 VBK_ByteStream* VBK_mineBtcBlockTip(MockMiner_t* self) {
   VBK_ASSERT(self);
 
-  auto* btc_block = self->miner->mineBtcBlocks(1);
-  return new VbkByteStream(btc_block->toRaw());
+  auto* new_block = self->miner->mineBtcBlocks(1);
+  VBK_ASSERT(new_block);
+  return new VbkByteStream(new_block->toRaw());
 }
 
 VBK_ByteStream* VBK_mineBtcBlock(MockMiner_t* self,
-                                 const uint8_t* tip_block_bytes,
-                                 int tip_block_bytes_size) {
+                                 const uint8_t* block_hash,
+                                 int block_hash_size) {
   VBK_ASSERT(self);
-  VBK_ASSERT(tip_block_bytes);
+  VBK_ASSERT(block_hash);
 
-  altintegration::ReadStream read_stream(altintegration::Slice<const uint8_t>(
-      tip_block_bytes, tip_block_bytes_size));
-  auto tip = altintegration::BlockIndex<altintegration::BtcBlock>::fromRaw(
-      read_stream);
-  auto* btc_block = self->miner->mineBtcBlocks(tip, 1);
-  return new VbkByteStream(btc_block->toRaw());
+  altintegration::BtcBlock::hash_t hash(
+      altintegration::Slice<const uint8_t>(block_hash, block_hash_size));
+
+  auto* block = self->miner->btc().getBlockIndex(hash);
+  if (block == nullptr) {
+    return nullptr;
+  }
+
+  auto* new_block = self->miner->mineBtcBlocks(*block, 1);
+  VBK_ASSERT(new_block);
+  return new VbkByteStream(new_block->toRaw());
 }
 
 VBK_ByteStream* VBK_mineVbkBlockTip(MockMiner_t* self) {
   VBK_ASSERT(self);
 
-  auto* vbk_block = self->miner->mineVbkBlocks(1);
-  return new VbkByteStream(vbk_block->toRaw());
+  auto* new_block = self->miner->mineVbkBlocks(1);
+  VBK_ASSERT(new_block);
+  return new VbkByteStream(new_block->toRaw());
 }
 
 VBK_ByteStream* VBK_mineVbkBlock(MockMiner_t* self,
-                                 const uint8_t* tip_block_bytes,
-                                 int tip_block_bytes_size) {
+                                 const uint8_t* block_hash,
+                                 int block_hash_size) {
   VBK_ASSERT(self);
-  VBK_ASSERT(tip_block_bytes);
+  VBK_ASSERT(block_hash);
 
-  altintegration::ReadStream read_stream(altintegration::Slice<const uint8_t>(
-      tip_block_bytes, tip_block_bytes_size));
-  auto tip = altintegration::BlockIndex<altintegration::VbkBlock>::fromRaw(
-      read_stream);
-  auto vbk_block = self->miner->mineVbkBlocks(tip, 1);
-  return new VbkByteStream(vbk_block->toRaw());
+  altintegration::VbkBlock::hash_t hash(
+      altintegration::Slice<const uint8_t>(block_hash, block_hash_size));
+
+  auto* block = self->miner->vbk().getBlockIndex(hash);
+  if (block == nullptr) {
+    return nullptr;
+  }
+
+  auto* new_block = self->miner->mineVbkBlocks(*block, 1);
+  VBK_ASSERT(new_block);
+  return new VbkByteStream(new_block->toRaw());
+}
+
+VBK_ByteStream* VBK_mineATV(MockMiner_t* self,
+                            const uint8_t* publication_data,
+                            int publication_data_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(publication_data);
+
+  altintegration::ReadStream stream(altintegration::Slice<const uint8_t>(
+      publication_data, publication_data_size));
+  auto vbktx = self->miner->createVbkTxEndorsingAltBlock(
+      altintegration::PublicationData::fromRaw(stream));
+
+  altintegration::ValidationState state;
+  auto atv = self->miner->applyATV(vbktx, state);
+  VBK_ASSERT(state.IsValid());
+
+  altintegration::WriteStream stream;
+  atv.toVbkEncoding(stream);
+  return new VbkByteStream(stream.data())
+}
+
+VBK_ByteStream* VBK_mineVTB(MockMiner_t* self,
+                            const uint8_t* endorsed_vbk_block,
+                            int endorsed_vbk_block_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(endorsed_vbk_block);
+
+  altintegration::ReadStream r_stream(altintegration::Slice<const uint8_t>(
+      endorsed_vbk_block, endorsed_vbk_block_size));
+  auto vbk_block = altintegration::VbkBlock::fromVbkEncoding(r_stream);
+
+  altintegration::ValidationState state;
+  auto tx = self->miner->endorseVbkBlock(
+      vbk_block, self->miner->btc().getBestChain().tip()->getHash(), state);
+
+  VBK_ASSERT(state.IsValid());
+  auto containingBlock = self->miner->mineVbkBlocks(1);
+  auto vtbs = self->miner->vbkPayloads[containingBlock->getHash()];
+  VBK_ASSERT(vtbs.size() == 1);
+
+  altintegration::WriteStream w_stream;
+  vtbs[0].toVbkEncoding(w_stream);
+  return new VbkByteStream(w_stream.data());
 }
