@@ -22,7 +22,7 @@ class PopValidator {
                size_t threads = 0);
   ~PopValidator() {}
 
-  void start();
+  void start(size_t threads = 0);
   void stop();
 
   template <typename CheckType>
@@ -33,7 +33,6 @@ class PopValidator {
   const VbkChainParams& vbk_;
   const BtcChainParams& btc_;
   const AltChainParams& alt_;
-  size_t threads_;
 };
 
 } // namespace altintegration
