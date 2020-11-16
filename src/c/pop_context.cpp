@@ -367,7 +367,7 @@ VBK_ByteStream* VBK_alt_getATVContainingBlock(PopContext* self,
   std::vector<uint8_t> atv_id{p_id, p_id + p_id_size};
   auto alt_hashes =
       self->context->altTree->getPayloadsIndex().getContainingAltBlocks(atv_id);
-  if (alt_hashes.size()) {
+  if (alt_hashes.empty()) {
     return nullptr;
   }
   altintegration::WriteStream stream;
@@ -384,7 +384,7 @@ VBK_ByteStream* VBK_alt_getVTBContainingBlock(PopContext* self,
   std::vector<uint8_t> vtb_id{p_id, p_id + p_id_size};
   auto alt_hashes =
       self->context->altTree->getPayloadsIndex().getContainingAltBlocks(vtb_id);
-  if (alt_hashes.size()) {
+  if (alt_hashes.empty()) {
     return nullptr;
   }
   altintegration::WriteStream stream;
@@ -402,7 +402,7 @@ VBK_ByteStream* VBK_alt_getVbkBlockContainingBlock(PopContext* self,
   auto alt_hashes =
       self->context->altTree->getPayloadsIndex().getContainingAltBlocks(
           vbkblock_id);
-  if (alt_hashes.size()) {
+  if (alt_hashes.empty()) {
     return nullptr;
   }
   altintegration::WriteStream stream;
@@ -419,7 +419,7 @@ VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
   std::vector<uint8_t> vtb_id{p_id, p_id + p_id_size};
   auto vbk_hashes =
       self->context->altTree->getPayloadsIndex().getContainingAltBlocks(vtb_id);
-  if (vbk_hashes.size()) {
+  if (vbk_hashes.empty()) {
     return nullptr;
   }
   altintegration::WriteStream stream;
