@@ -31,7 +31,9 @@ func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.miner.MineBtcBlockTip()
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndex()
+	blockIndex := entities.BlockIndex{}
+	blockIndex.Header = &entities.BtcBlock{}
+	blockIndex.Addon = &entities.BtcBlockAddon{}
 	err := blockIndex.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -48,7 +50,9 @@ func (v *MockMiner) MineBtcBlock(tipBlockIndex *entities.BlockIndex) (*entities.
 	defer v.lock()()
 	stream := v.miner.MineBtcBlock(byteStream.Bytes())
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndex()
+	blockIndex := entities.BlockIndex{}
+	blockIndex.Header = &entities.BtcBlock{}
+	blockIndex.Addon = &entities.BtcBlockAddon{}
 	err := blockIndex.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -61,7 +65,9 @@ func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.miner.MineVbkBlockTip()
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndex()
+	blockIndex := entities.BlockIndex{}
+	blockIndex.Header = &entities.VbkBlock{}
+	blockIndex.Addon = &entities.VbkBlockAddon{}
 	err := blockIndex.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -78,7 +84,9 @@ func (v *MockMiner) MineVbkBlock(tipBlockIndex *entities.BlockIndex) (*entities.
 	defer v.lock()()
 	stream := v.miner.MineVbkBlock(byteStream.Bytes())
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndex()
+	blockIndex := entities.BlockIndex{}
+	blockIndex.Header = &entities.VbkBlock{}
+	blockIndex.Addon = &entities.VbkBlockAddon{}
 	err := blockIndex.FromRaw(&stream)
 	if err != nil {
 		return nil, err
