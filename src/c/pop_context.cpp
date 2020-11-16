@@ -328,7 +328,7 @@ VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
   VBK_ASSERT(self);
   auto* block = self->context->altTree->getBestChain()[height];
   if (block == nullptr) {
-    return new VbkByteStream(std::vector<uint8_t>{});
+    return nullptr;
   }
   altintegration::WriteStream stream;
   block->toRaw(stream);
@@ -340,7 +340,7 @@ VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
   VBK_ASSERT(self);
   auto* block = self->context->altTree->vbk().getBestChain()[height];
   if (block == nullptr) {
-    return new VbkByteStream(std::vector<uint8_t>{});
+    return nullptr;
   }
   altintegration::WriteStream stream;
   block->toRaw(stream);
@@ -352,7 +352,7 @@ VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
   VBK_ASSERT(self);
   auto* block = self->context->altTree->btc().getBestChain()[height];
   if (block == nullptr) {
-    return new VbkByteStream(std::vector<uint8_t>{});
+    return nullptr;
   }
   altintegration::WriteStream stream;
   block->toRaw(stream);
@@ -454,7 +454,7 @@ VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
   auto* atv = self->context->mempool->get<altintegration::ATV>(atv_id);
   if (atv == nullptr) {
-    return new VbkByteStream(std::vector<uint8_t>{});
+    return nullptr;
   }
   altintegration::WriteStream stream;
   atv->toVbkEncoding(stream);
@@ -470,7 +470,7 @@ VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
   auto* vtb = self->context->mempool->get<altintegration::VTB>(vtb_id);
   if (vtb == nullptr) {
-    return new VbkByteStream(std::vector<uint8_t>{});
+    return nullptr;
   }
   altintegration::WriteStream stream;
   vtb->toVbkEncoding(stream);
@@ -486,7 +486,7 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
   auto* vbk = self->context->mempool->get<altintegration::VbkBlock>(vbk_id);
   if (vbk == nullptr) {
-    return new VbkByteStream(std::vector<uint8_t>{});
+    return nullptr;
   }
   altintegration::WriteStream stream;
   vbk->toVbkEncoding(stream);
