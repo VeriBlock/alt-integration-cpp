@@ -257,6 +257,66 @@ VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
                                                    int height);
 
 /**
+ * Return an array that stores all altintegration::AltBlock hashes which contain
+ * the provided altintegration::ATV
+ *
+ * @param[in] self PopContext
+ * @param[in] p_id the altintegration::ATV::id_t
+ * @param[in] p_id_size size of the altintegration::ATV::id_t
+ * @return  VbkByteStream with the serialized vector of the
+ * altintegration::AltBlock hashes, if vector will empty return nullptr
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_alt_getATVContainingBlock(PopContext* self,
+                                              const uint8_t* p_id,
+                                              int p_id_size);
+
+/**
+ * Return an array that stores all altintegration::AltBlock hashes which contain
+ * the provided altintegration::VTB
+ *
+ * @param[in] self PopContext
+ * @param[in] p_id the altintegration::VTB::id_t
+ * @param[in] p_id_size size of the altintegration::VTB::id_t
+ * @return  VbkByteStream with the serialized vector of the
+ * altintegration::AltBlock hashes, if vector will empty return nullptr
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_alt_getVTBContainingBlock(PopContext* self,
+                                              const uint8_t* p_id,
+                                              int p_id_size);
+
+/**
+ * Return an array that stores all altintegration::AltBlock hashes which contain
+ * the provided altintegration::ATV
+ *
+ * @param[in] self PopContext
+ * @param[in] p_id the altintegration::VbkBlock::id_t
+ * @param[in] p_id_size size of the altintegration::VbkBlock::id_t
+ * @return  VbkByteStream with the serialized vector of the
+ * altintegration::AltBlock hashes, if vector will empty return nullptr
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_alt_getVbkBlockContainingBlock(PopContext* self,
+                                                   const uint8_t* p_id,
+                                                   int p_id_size);
+
+/**
+ * Return an array that stores all altintegration::VbkBlock hashes which contain
+ * the provided altintegration::VTB
+ *
+ * @param[in] self PopContext
+ * @param[in] p_id the altintegration::VTB::id_t
+ * @param[in] p_id_size size of the altintegration::VTB::id_t
+ * @return  VbkByteStream with the serialized vector of the
+ * altintegration::VbkBlock hashes, if vector will empty return nullptr
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
+                                              const uint8_t* p_id,
+                                              int p_id_size);
+
+/**
  * @copybrief altintegration::MemPool::submit
  * @see altintegration::MemPool::submit
  * @param[in] self PopContext

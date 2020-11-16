@@ -359,6 +359,75 @@ VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
   return new VbkByteStream(stream.data());
 }
 
+VBK_ByteStream* VBK_alt_getATVContainingBlock(PopContext* self,
+                                              const uint8_t* p_id,
+                                              int p_id_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(p_id);
+  std::vector<uint8_t> atv_id{p_id, p_id + p_id_size};
+  auto alt_hashes =
+      self->context->altTree->getPayloadsIndex().getContainingAltBlocks(atv_id);
+  if (alt_hashes.size()) {
+    return nullptr;
+  }
+  altintegration::WriteStream stream;
+  altintegration::writeContainer(
+      stream, alt_hashes, altintegration::writeSingleByteLenValue);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_alt_getVTBContainingBlock(PopContext* self,
+                                              const uint8_t* p_id,
+                                              int p_id_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(p_id);
+  std::vector<uint8_t> vtb_id{p_id, p_id + p_id_size};
+  auto alt_hashes =
+      self->context->altTree->getPayloadsIndex().getContainingAltBlocks(vtb_id);
+  if (alt_hashes.size()) {
+    return nullptr;
+  }
+  altintegration::WriteStream stream;
+  altintegration::writeContainer(
+      stream, alt_hashes, altintegration::writeSingleByteLenValue);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_alt_getVbkBlockContainingBlock(PopContext* self,
+                                                   const uint8_t* p_id,
+                                                   int p_id_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(p_id);
+  std::vector<uint8_t> vbkblock_id{p_id, p_id + p_id_size};
+  auto alt_hashes =
+      self->context->altTree->getPayloadsIndex().getContainingAltBlocks(
+          vbkblock_id);
+  if (alt_hashes.size()) {
+    return nullptr;
+  }
+  altintegration::WriteStream stream;
+  altintegration::writeContainer(
+      stream, alt_hashes, altintegration::writeSingleByteLenValue);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
+                                              const uint8_t* p_id,
+                                              int p_id_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(p_id);
+  std::vector<uint8_t> vtb_id{p_id, p_id + p_id_size};
+  auto vbk_hashes =
+      self->context->altTree->getPayloadsIndex().getContainingAltBlocks(vtb_id);
+  if (vbk_hashes.size()) {
+    return nullptr;
+  }
+  altintegration::WriteStream stream;
+  altintegration::writeContainer(
+      stream, vbk_hashes, altintegration::writeSingleByteLenValue);
+  return new VbkByteStream(stream.data());
+}
+
 static int handleSubmitResponse(altintegration::MemPool::SubmitResult e) {
   using S = altintegration::MemPool::Status;
   switch (e.status) {
