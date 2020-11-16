@@ -87,6 +87,11 @@ class MockMiner {
                     const VbkPopTx& tx,
                     ValidationState& state);
 
+  VbkBlock applyVTB(const VbkBlock::hash_t& tip,
+                    VbkBlockTree& tree,
+                    const VbkPopTx& tx,
+                    ValidationState& state);
+
   VbkBlock applyVTBs(VbkBlockTree& tree,
                      const std::vector<VbkPopTx>& txes,
                      ValidationState& state);
