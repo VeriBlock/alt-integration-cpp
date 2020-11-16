@@ -28,4 +28,6 @@ func TestPopContext(t *testing.T) {
 
 	popContext := NewPopContext(&config)
 	defer popContext.Free()
+
+	popContext.MemPoolGetAtvs()
 }
