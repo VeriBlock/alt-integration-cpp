@@ -14,6 +14,19 @@
 
 namespace altintegration {
 
+template <typename BlockTreeT>
+std::vector<typename BlockTreeT::block_t> getContext(
+    const BlockTreeT& tree, typename BlockTreeT::hash_t tip, size_t size = std::numeric_limits<size_t>::max()) {
+  std::vector<typename BlockTreeT::block_t> ret;
+  auto* cursor = tree.getBlockIndex(tip);
+  size_t i = 0;
+  while(cursor != nullptr && i++ < size) {
+    ret.push_back(cursor->getHeader());
+    cursor = cursor->pprev;
+  }
+  return ret;
+}
+
 template <typename BlockTree>
 std::vector<std::vector<uint8_t>> getLastKnownBlocks(const BlockTree& tree,
                                                      size_t size) {

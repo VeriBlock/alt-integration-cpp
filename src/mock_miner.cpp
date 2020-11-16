@@ -430,4 +430,13 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount) {
   return mineVbkBlocks(*tip, amount);
 }
 
+VbkBlock MockMiner::applyVTB(const VbkBlock::hash_t& tip,
+                             VbkBlockTree& tree,
+                             const VbkPopTx& tx,
+                             ValidationState& state) {
+  auto index = vbk().getBlockIndex(tip);
+  VBK_ASSERT(index);
+  return applyVTB(*index, tree, tx, state);
+}
+
 }  // namespace altintegration

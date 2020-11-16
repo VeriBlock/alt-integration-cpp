@@ -465,7 +465,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
     return;
   }
 
-  VBK_LOG_INFO("Called with %s", pop.toPrettyString());
+  VBK_LOG_INFO("Trying to add %s to next block...", pop.toPrettyString());
 
   // first, create tmp alt block
   AltBlock tmp;
@@ -492,7 +492,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
   removePayloadsIfInvalid(pop.vtbs, payloadsIndex_, *tmpindex);
   removePayloadsIfInvalid(pop.context, payloadsIndex_, *tmpindex);
 
-  VBK_LOG_INFO("After filter %s", pop.toPrettyString());
+  VBK_LOG_INFO("Filtered valid: %s", pop.toPrettyString());
 
   // at this point `pop` contains only valid payloads
 

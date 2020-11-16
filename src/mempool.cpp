@@ -84,7 +84,6 @@ PopData MemPool::getPop() {
     return a.second->header->getHeight() < b.second->header->getHeight();
   });
 
-
   PopData ret = generatePopData(blocks, mempool_tree_.alt().getParams());
   mempool_tree_.alt().filterInvalidPayloads(ret);
   return ret;
@@ -97,8 +96,9 @@ void MemPool::cleanUp() {
     auto& rel = *it->second;
     auto* index = vbk_tree.getBlockIndex(it->second->header->getHash());
 
-    bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
-                      vbk_tree.getParams().getMaxReorgBlocks() >
+    auto* tip = vbk_tree.getBestChain().tip();
+    VBK_ASSERT(tip);
+    bool tooOld = tip->getHeight() - vbk_tree.getParams().getMaxReorgBlocks() >
                   rel.header->getHeight();
 
     // cleanup stale relations
@@ -240,8 +240,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
                                            bool resubmit) {
   // stateless validation
   if (!checkATV(*atv, state, mempool_tree_.alt().getParams())) {
-    return {MemPool::FAILED_STATELESS,
-            state.Invalid("pop-mempool-submit-atv-stateless")};
+    return {MemPool::FAILED_STATELESS, state.Invalid("atv-stateless")};
   }
 
   auto id = atv->getId();
@@ -251,14 +250,12 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
     atvs_in_flight_[id] = atv;
     on_atv_accepted.emit(*atv);
-    return {MemPool::FAILED_STATEFUL,
-            state.Invalid("pop-mempool-submit-atv-stateful")};
+    return {MemPool::FAILED_STATEFUL, state.Invalid("atv-stateful")};
   }
 
+  VBK_LOG_DEBUG("[POP mempool] ATV=%s is connected", id.toHex());
   auto& rel = getOrPutVbkRelation(blockOfProof_ptr);
   rel.atvs.push_back(atv);
-
-  // store atv id in containing block index
   makePayloadConnected<ATV>(atv);
 
   if (resubmit) {
@@ -274,8 +271,7 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
                                            bool resubmit) {
   // stateless validation
   if (!checkVTB(*vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
-    return {FAILED_STATELESS,
-            state.Invalid("pop-mempool-submit-vtb-stateless")};
+    return {FAILED_STATELESS, state.Invalid("vtb-stateless")};
   }
 
   auto id = vtb->getId();
@@ -285,9 +281,10 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
     vtbs_in_flight_[id] = vtb;
     on_vtb_accepted.emit(*vtb);
-    return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vtb-stateful")};
+    return {FAILED_STATEFUL, state.Invalid("vtb-stateful")};
   }
 
+  VBK_LOG_DEBUG("[POP mempool] VTB=%s is connected", id.toHex());
   auto& rel = getOrPutVbkRelation(containingBlock_ptr);
   rel.vtbs.push_back(vtb);
   makePayloadConnected<VTB>(vtb);
@@ -307,8 +304,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
   // stateless validation
   if (!checkBlock(
           *blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
-    return {FAILED_STATELESS,
-            state.Invalid("pop-mempool-submit-vbkblock-stateless")};
+    return {FAILED_STATELESS, state.Invalid("vbkblock-stateless")};
   }
 
   auto id = blk->getId();
@@ -317,10 +313,11 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
     vbkblocks_in_flight_[id] = blk;
     on_vbkblock_accepted.emit(*blk);
-    return {FAILED_STATEFUL, state.Invalid("pop-mempool-submit-vbk-stateful")};
+    return {FAILED_STATEFUL, state.Invalid("vbk-stateful")};
   }
 
   // stateful validation
+  VBK_LOG_DEBUG("[POP mempool] VbkBlock=%s is connected", id.toHex());
   if (!mempool_tree_.vbk().getStableTree().getBlockIndex(blk->getHash())) {
     getOrPutVbkRelation(blk);
   }
