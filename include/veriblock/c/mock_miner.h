@@ -31,7 +31,7 @@ void VBK_FreeMockMiner(MockMiner_t* miner);
  * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineBtcBlockTip(MockMiner_t* self);
+VBK_ByteStream* VBK_MockMiner_mineBtcBlockTip(MockMiner_t* self);
 
 /**
  * Mine new altintegration::BtcBlock on the top of the provided block.
@@ -43,7 +43,7 @@ VBK_ByteStream* VBK_mineBtcBlockTip(MockMiner_t* self);
  * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineBtcBlock(MockMiner_t* self,
+VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
                                  const uint8_t* block_hash,
                                  int block_hash_size);
 
@@ -55,7 +55,7 @@ VBK_ByteStream* VBK_mineBtcBlock(MockMiner_t* self,
  * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineVbkBlockTip(MockMiner_t* self);
+VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the provided block.
@@ -67,7 +67,7 @@ VBK_ByteStream* VBK_mineVbkBlockTip(MockMiner_t* self);
  * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineVbkBlock(MockMiner_t* self,
+VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
                                  const uint8_t* block_hash,
                                  int block_hash_size);
 
@@ -82,7 +82,7 @@ VBK_ByteStream* VBK_mineVbkBlock(MockMiner_t* self,
  * VbkEncoding format
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineATV(MockMiner_t* self,
+VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
                             const uint8_t* publication_data,
                             int publication_data_size);
 
@@ -97,7 +97,7 @@ VBK_ByteStream* VBK_mineATV(MockMiner_t* self,
  * VbkEncoding format
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineVTB(MockMiner_t* self,
+VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
                             const uint8_t* endorsed_vbk_block,
                             int endorsed_vbk_block_size);
 

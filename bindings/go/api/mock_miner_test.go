@@ -1,44 +1,107 @@
 package api
 
 import (
+	"bytes"
 	"testing"
+
+	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestMockMiner(t *testing.T) {
-	// assert := assert.New(t)
+func TestMineBtcBlock(t *testing.T) {
+	assert := assert.New(t)
 
-	// config := NewConfig()
-	// defer config.Free()
-	// if !config.SelectVbkParams("regtest", 0, nil) {
-	// 	t.Error("Failed to select btc params")
-	// }
-	// if !config.SelectBtcParams("regtest", 0, nil) {
-	// 	t.Error("Failed to select btc params")
-	// }
-	// SetOnGetAltchainID(func() int { return 1 })
-	// SetOnGetBootstrapBlock(func() string {
-	// 	return "000000201fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c000000000000009c000005ba"
-	// })
+	popContext := generatePopContext(t)
+	defer popContext.Free()
 
-	// popContext := NewPopContext(&config)
-	// defer popContext.Free()
+	mockMiner := NewMockMiner()
+	defer mockMiner.Free()
 
-	// mockMiner := NewMockMiner()
-	// defer mockMiner.Free()
+	blockTip, err := mockMiner.MineBtcBlockTip()
+	assert.NoError(err)
+	assert.Equal(uint32(1), blockTip.Height)
 
-	// blockTip, err := mockMiner.MineVbkBlockTip()
-	// assert.NoError(err)
-	// assert.Equal(uint32(1), blockTip.Height)
+	blockTip, err = mockMiner.MineBtcBlock(blockTip.GetHash())
+	assert.NoError(err)
+	assert.Equal(uint32(2), blockTip.Height)
 
-	// vbkBlock, err := mockMiner.MineVbkBlock(blockTip)
-	// assert.NoError(err)
-	// assert.Equal(uint32(2), vbkBlock.Height)
+	blockTip, err = mockMiner.MineBtcBlockTip()
+	assert.NoError(err)
+	assert.Equal(uint32(3), blockTip.Height)
+}
 
-	// block := vbkBlock.Header.(*entities.VbkBlock)
-	// result := popContext.SubmitVbk(block)
-	// assert.Equal(2, result)
+func TestMineVbkBlock(t *testing.T) {
+	assert := assert.New(t)
 
-	// vbks, err := popContext.GetVbkBlocks()
-	// assert.NoError(err)
-	// assert.Equal(0, len(vbks))
+	popContext := generatePopContext(t)
+	defer popContext.Free()
+
+	mockMiner := NewMockMiner()
+	defer mockMiner.Free()
+
+	blockTip, err := mockMiner.MineVbkBlockTip()
+	assert.NoError(err)
+	assert.Equal(uint32(1), blockTip.Height)
+
+	blockTip, err = mockMiner.MineVbkBlock(blockTip.GetHash())
+	assert.NoError(err)
+	assert.Equal(uint32(2), blockTip.Height)
+
+	blockTip, err = mockMiner.MineVbkBlockTip()
+	assert.NoError(err)
+	assert.Equal(uint32(3), blockTip.Height)
+}
+
+func TestMineAtv(t *testing.T) {
+	assert := assert.New(t)
+
+	popContext := generatePopContext(t)
+	defer popContext.Free()
+
+	mockMiner := NewMockMiner()
+	defer mockMiner.Free()
+
+	var publication_data entities.PublicationData
+	publication_data.ContextInfo = []byte{1, 2, 3, 4}
+	publication_data.Header = []byte{1, 2, 3, 4, 5}
+	publication_data.Identifier = 10
+	publication_data.PayoutInfo = []byte{1, 2, 3, 4, 5, 6}
+
+	atv, err := mockMiner.MineAtv(&publication_data)
+	assert.NoError(err)
+	assert.True(bytes.Equal(atv.Transaction.PublicationData.ContextInfo, publication_data.ContextInfo))
+	assert.True(bytes.Equal(atv.Transaction.PublicationData.Header, publication_data.Header))
+	assert.True(bytes.Equal(atv.Transaction.PublicationData.PayoutInfo, publication_data.PayoutInfo))
+	assert.Equal(atv.Transaction.PublicationData.Identifier, publication_data.Identifier)
+}
+
+func TestMineVtb(t *testing.T) {
+	assert := assert.New(t)
+
+	popContext := generatePopContext(t)
+	defer popContext.Free()
+
+	mockMiner := NewMockMiner()
+	defer mockMiner.Free()
+
+	index, err := mockMiner.MineVbkBlockTip()
+	assert.NoError(err)
+
+	var buffer bytes.Buffer
+	index.ToRaw(&buffer)
+	var vbkBlock entities.VbkBlock
+	err = vbkBlock.FromRaw(&buffer)
+	assert.NoError(err)
+
+	vtb, err := mockMiner.MineVtb(&vbkBlock)
+	assert.NoError(err)
+	assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)
+	assert.Equal(vtb.Transaction.PublishedBlock.Height, vbkBlock.Height)
+	assert.Equal(vtb.Transaction.PublishedBlock.Nonce, vbkBlock.Nonce)
+	assert.Equal(vtb.Transaction.PublishedBlock.Timestamp, vbkBlock.Timestamp)
+	assert.Equal(vtb.Transaction.PublishedBlock.Version, vbkBlock.Version)
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.MerkleRoot[:], vbkBlock.MerkleRoot[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousBlock[:], vbkBlock.PreviousBlock[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousKeystone[:], vbkBlock.PreviousKeystone[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.SecondPreviousKeystone[:], vbkBlock.SecondPreviousKeystone[:]))
 }

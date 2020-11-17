@@ -21,7 +21,7 @@ void VBK_FreeMockMiner(MockMiner_t* miner) {
   }
 }
 
-VBK_ByteStream* VBK_mineBtcBlockTip(MockMiner_t* self) {
+VBK_ByteStream* VBK_MockMiner_mineBtcBlockTip(MockMiner_t* self) {
   VBK_ASSERT(self);
 
   auto* new_block = self->miner->mineBtcBlocks(1);
@@ -29,9 +29,9 @@ VBK_ByteStream* VBK_mineBtcBlockTip(MockMiner_t* self) {
   return new VbkByteStream(new_block->toRaw());
 }
 
-VBK_ByteStream* VBK_mineBtcBlock(MockMiner_t* self,
-                                 const uint8_t* block_hash,
-                                 int block_hash_size) {
+VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
+                                           const uint8_t* block_hash,
+                                           int block_hash_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(block_hash);
 
@@ -48,7 +48,7 @@ VBK_ByteStream* VBK_mineBtcBlock(MockMiner_t* self,
   return new VbkByteStream(new_block->toRaw());
 }
 
-VBK_ByteStream* VBK_mineVbkBlockTip(MockMiner_t* self) {
+VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self) {
   VBK_ASSERT(self);
 
   auto* new_block = self->miner->mineVbkBlocks(1);
@@ -56,9 +56,9 @@ VBK_ByteStream* VBK_mineVbkBlockTip(MockMiner_t* self) {
   return new VbkByteStream(new_block->toRaw());
 }
 
-VBK_ByteStream* VBK_mineVbkBlock(MockMiner_t* self,
-                                 const uint8_t* block_hash,
-                                 int block_hash_size) {
+VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
+                                           const uint8_t* block_hash,
+                                           int block_hash_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(block_hash);
 
@@ -75,9 +75,9 @@ VBK_ByteStream* VBK_mineVbkBlock(MockMiner_t* self,
   return new VbkByteStream(new_block->toRaw());
 }
 
-VBK_ByteStream* VBK_mineATV(MockMiner_t* self,
-                            const uint8_t* publication_data,
-                            int publication_data_size) {
+VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
+                                      const uint8_t* publication_data,
+                                      int publication_data_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(publication_data);
 
@@ -95,9 +95,9 @@ VBK_ByteStream* VBK_mineATV(MockMiner_t* self,
   return new VbkByteStream(w_stream.data());
 }
 
-VBK_ByteStream* VBK_mineVTB(MockMiner_t* self,
-                            const uint8_t* endorsed_vbk_block,
-                            int endorsed_vbk_block_size) {
+VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
+                                      const uint8_t* endorsed_vbk_block,
+                                      int endorsed_vbk_block_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(endorsed_vbk_block);
 
@@ -108,6 +108,7 @@ VBK_ByteStream* VBK_mineVTB(MockMiner_t* self,
   altintegration::ValidationState state;
   auto tx = self->miner->endorseVbkBlock(
       vbk_block, self->miner->btc().getBestChain().tip()->getHash(), state);
+  self->miner->vbkmempool.push_back(tx);
 
   VBK_ASSERT(state.IsValid());
   auto containingBlock = self->miner->mineVbkBlocks(1);
