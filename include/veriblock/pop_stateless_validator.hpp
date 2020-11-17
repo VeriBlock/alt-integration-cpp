@@ -22,6 +22,9 @@ class PopValidator {
                size_t threads = 0);
   ~PopValidator() {}
 
+  void start(size_t threads = 0);
+  void stop();
+
   template <typename CheckType>
   std::future<ValidationState> addCheck(const CheckType& block);
 

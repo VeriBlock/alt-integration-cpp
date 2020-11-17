@@ -272,13 +272,30 @@ bool checkVbkPopTx(const VbkPopTx& tx,
     return state.Invalid("vbk-check-btc-blocks");
   }
 
+  if (tx.blockOfProofContext.size() > MAX_CONTEXT_COUNT_VBK_PUBLICATION) {
+    return state.Invalid(
+        "vbk-btc-context-too-many",
+        fmt::format("Maximum allowed BTC context size is {}, got {}",
+                    MAX_CONTEXT_COUNT_VBK_PUBLICATION,
+                    tx.blockOfProofContext.size()));
+  }
+
   return true;
 }
 
 bool checkVbkTx(const VbkTx& tx, ValidationState& state) {
   if (!checkSignature(tx, state)) {
-    return state.Invalid("vbk-check-signature");
+    return state.Invalid("vbktx-check-signature");
   }
+
+  if (tx.outputs.size() > MAX_OUTPUTS_COUNT) {
+    return state.Invalid(
+        "vbktx-too-many-outputs",
+        fmt::format("Too many outputs. Expected less than {}, got {}",
+                    MAX_OUTPUTS_COUNT,
+                    tx.outputs.size()));
+  }
+
   return true;
 }
 
@@ -411,19 +428,20 @@ bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
   if (hasDuplicateIds(popData.atvs)) {
     return state.Invalid("duplicate-atv", "duplicate ATVs");
   }
+
   return true;
 }
 
 bool checkPopData(PopValidator& validator,
-  const PopData& popData,
-  ValidationState& state) {
+                  const PopData& popData,
+                  ValidationState& state) {
   if (!checkPopDataForDuplicates(popData, state)) {
     return state.Invalid("pop-statelessly-invalid-has-duplicates");
-  } 
+  }
 
   std::vector<std::future<ValidationState>> results;
   results.reserve(popData.context.size() + popData.vtbs.size() +
-                    popData.atvs.size());
+                  popData.atvs.size());
 
   for (const auto& b : popData.context) {
     results.push_back(validator.addCheck(b));
@@ -441,7 +459,7 @@ bool checkPopData(PopValidator& validator,
       return state.Invalid("pop-statelessly-invalid");
     }
   }
-  
+
   return true;
 }
 
