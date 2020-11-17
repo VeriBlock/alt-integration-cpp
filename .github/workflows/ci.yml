@@ -206,7 +206,7 @@ jobs:
       CC: clang
       CXX: clang++
       CTEST_OUTPUT_ON_FAILURE: 1
-      ASAN_OPTIONS: detect_container_overflow=0:verbosity=1:debug=1:detect_leaks=1:check_initialization_order=1:alloc_dealloc_mismatch=true:use_odr_indicator=true
+      ASAN_OPTIONS: detect_container_overflow=0:verbosity=1:debug=1:check_initialization_order=1:alloc_dealloc_mismatch=true:use_odr_indicator=true
     steps:
       - uses: actions/checkout@v1
         name: checkout
