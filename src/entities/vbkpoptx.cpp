@@ -21,7 +21,7 @@ VbkPopTx VbkPopTx::fromRaw(ReadStream& stream,
   tx.blockOfProof = BtcBlock::fromVbkEncoding(stream);
 
   tx.blockOfProofContext = readArrayOf<BtcBlock>(
-      stream, 0, MAX_CONTEXT_COUNT, BtcBlock::fromVbkEncoding);
+      stream, 0, MAX_CONTEXT_COUNT_VBK_PUBLICATION, BtcBlock::fromVbkEncoding);
   tx.signature = std::vector<uint8_t>(_signature.begin(), _signature.end());
   tx.publicKey = std::vector<uint8_t>(_publicKey.begin(), _publicKey.end());
 
@@ -110,7 +110,7 @@ bool DeserializeRaw(ReadStream& stream,
                              tx.blockOfProofContext,
                              state,
                              0,
-                             MAX_CONTEXT_COUNT,
+                             MAX_CONTEXT_COUNT_VBK_PUBLICATION,
                              static_cast<btcde>(Deserialize))) {
     return state.Invalid("vbkpoptx-btc-context");
   }
