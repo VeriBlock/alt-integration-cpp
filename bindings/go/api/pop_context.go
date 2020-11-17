@@ -149,6 +149,8 @@ func (v *PopContext) AltBestBlock() (*entities.BlockIndex, error) {
 	defer stream.Free()
 
 	var alt_index entities.BlockIndex
+	alt_index.Header = &entities.AltBlock{}
+	alt_index.Addon = &entities.AltBlockAddon{}
 	err := alt_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -162,6 +164,8 @@ func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
 	defer stream.Free()
 
 	var vbk_index entities.BlockIndex
+	vbk_index.Header = &entities.VbkBlock{}
+	vbk_index.Addon = &entities.VbkBlockAddon{}
 	err := vbk_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -175,6 +179,8 @@ func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
 	defer stream.Free()
 
 	var btc_index entities.BlockIndex
+	btc_index.Header = &entities.BtcBlock{}
+	btc_index.Addon = &entities.BtcBlockAddon{}
 	err := btc_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -188,6 +194,8 @@ func (v *PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockI
 	defer stream.Free()
 
 	var alt_index entities.BlockIndex
+	alt_index.Header = &entities.AltBlock{}
+	alt_index.Addon = &entities.AltBlockAddon{}
 	err := alt_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -201,6 +209,8 @@ func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockI
 	defer stream.Free()
 
 	var vbk_index entities.BlockIndex
+	vbk_index.Header = &entities.VbkBlock{}
+	vbk_index.Addon = &entities.VbkBlockAddon{}
 	err := vbk_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -214,6 +224,8 @@ func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockI
 	defer stream.Free()
 
 	var btc_index entities.BlockIndex
+	btc_index.Header = &entities.BtcBlock{}
+	btc_index.Addon = &entities.BtcBlockAddon{}
 	err := btc_index.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -295,7 +307,6 @@ func (v *PopContext) VbkGetVTBContainingBlock(vtb_id []byte) ([][]byte, error) {
 
 // SubmitAtv - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitAtv(block *entities.Atv) int {
-	defer v.lock()()
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
@@ -308,7 +319,6 @@ func (v *PopContext) SubmitAtv(block *entities.Atv) int {
 
 // SubmitVtb - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVtb(block *entities.Vtb) int {
-	defer v.lock()()
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
@@ -321,7 +331,6 @@ func (v *PopContext) SubmitVtb(block *entities.Vtb) int {
 
 // SubmitVbk - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVbk(block *entities.VbkBlock) int {
-	defer v.lock()()
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {

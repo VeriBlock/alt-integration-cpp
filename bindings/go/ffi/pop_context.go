@@ -24,17 +24,17 @@ func NewPopContext(config *Config) PopContext {
 }
 
 // Free ...
-func (v PopContext) Free() { C.VBK_FreePopContext(v.ref) }
+func (v *PopContext) Free() { C.VBK_FreePopContext(v.ref) }
 
 // AltBlockTreeAcceptBlockHeader - return true if block is valid, and added; false otherwise.
-func (v PopContext) AltBlockTreeAcceptBlockHeader(blockBytes []byte) bool {
+func (v *PopContext) AltBlockTreeAcceptBlockHeader(blockBytes []byte) bool {
 	valsC := (*C.uint8_t)(unsafe.Pointer(&blockBytes[0]))
 	res := C.VBK_AltBlockTree_acceptBlockHeader(v.ref, valsC, C.int(len(blockBytes)))
 	return bool(res)
 }
 
 // AltBlockTreeAcceptBlock - POP payloads stored in this block.
-func (v PopContext) AltBlockTreeAcceptBlock(hashBytes []byte, payloadsBytes []byte) {
+func (v *PopContext) AltBlockTreeAcceptBlock(hashBytes []byte, payloadsBytes []byte) {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	payloadsBytesC := (*C.uint8_t)(unsafe.Pointer(&payloadsBytes[0]))
 	C.VBK_AltBlockTree_acceptBlock(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)))
@@ -42,21 +42,21 @@ func (v PopContext) AltBlockTreeAcceptBlock(hashBytes []byte, payloadsBytes []by
 
 // AltBlockTreeAddPayloads - true if altintegration::PopData does not contain duplicates
 // (searched across active chain). However, it is far from certain that it is completely valid.
-func (v PopContext) AltBlockTreeAddPayloads(hashBytes []byte, payloadsBytes []byte) {
+func (v *PopContext) AltBlockTreeAddPayloads(hashBytes []byte, payloadsBytes []byte) {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	payloadsBytesC := (*C.uint8_t)(unsafe.Pointer(&payloadsBytes[0]))
 	C.VBK_AltBlockTree_addPayloads(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)))
 }
 
 // AltBlockTreeLoadTip - true on success, false otherwise.
-func (v PopContext) AltBlockTreeLoadTip(hashBytes []byte) bool {
+func (v *PopContext) AltBlockTreeLoadTip(hashBytes []byte) bool {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	res := C.VBK_AltBlockTree_loadTip(v.ref, hashBytesC, C.int(len(hashBytes)))
 	return bool(res)
 }
 
 // AltBlockTreeComparePopScore ...
-func (v PopContext) AltBlockTreeComparePopScore(hashBytesA []byte, hashBytesB []byte) int {
+func (v *PopContext) AltBlockTreeComparePopScore(hashBytesA []byte, hashBytesB []byte) int {
 	hashBytesAC := (*C.uint8_t)(unsafe.Pointer(&hashBytesA[0]))
 	hashBytesBC := (*C.uint8_t)(unsafe.Pointer(&hashBytesB[0]))
 	res := C.VBK_AltBlockTree_comparePopScore(v.ref, hashBytesAC, C.int(len(hashBytesA)), hashBytesBC, C.int(len(hashBytesB)))
@@ -64,21 +64,21 @@ func (v PopContext) AltBlockTreeComparePopScore(hashBytesA []byte, hashBytesB []
 }
 
 // AltBlockTreeRemoveSubtree ...
-func (v PopContext) AltBlockTreeRemoveSubtree(hashBytes []byte) {
+func (v *PopContext) AltBlockTreeRemoveSubtree(hashBytes []byte) {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	C.VBK_AltBlockTree_removeSubtree(v.ref, hashBytesC, C.int(len(hashBytes)))
 }
 
 // AltBlockTreeSetState return `false` if intermediate or target block is invalid. In this
 // case tree will rollback into original state. `true` if state change is successful.
-func (v PopContext) AltBlockTreeSetState(hashBytes []byte) bool {
+func (v *PopContext) AltBlockTreeSetState(hashBytes []byte) bool {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	res := C.VBK_AltBlockTree_setState(v.ref, hashBytesC, C.int(len(hashBytes)))
 	return bool(res)
 }
 
 // BtcGetBlockIndex ...
-func (v PopContext) BtcGetBlockIndex(hashBytes []byte) {
+func (v *PopContext) BtcGetBlockIndex(hashBytes []byte) {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	blockindexC := (*C.uint8_t)(unsafe.Pointer(nil))
 	var blockindexSize int = 0
@@ -91,73 +91,73 @@ func (v PopContext) BtcGetBlockIndex(hashBytes []byte) {
 	// TODO: Retrieve data from blockindex with blockindexSize
 }
 
-func (v PopContext) AltBestBlock() VbkByteStream {
+func (v *PopContext) AltBestBlock() VbkByteStream {
 	return VbkByteStream{ref: C.VBK_alt_BestBlock(v.ref)}
 }
 
-func (v PopContext) VbkBestBlock() VbkByteStream {
+func (v *PopContext) VbkBestBlock() VbkByteStream {
 	return VbkByteStream{ref: C.VBK_vbk_BestBlock(v.ref)}
 }
 
-func (v PopContext) BtcBestBlock() VbkByteStream {
+func (v *PopContext) BtcBestBlock() VbkByteStream {
 	return VbkByteStream{ref: C.VBK_btc_BestBlock(v.ref)}
 }
 
-func (v PopContext) AltBlockAtActiveChainByHeight(height int) VbkByteStream {
+func (v *PopContext) AltBlockAtActiveChainByHeight(height int) VbkByteStream {
 	return VbkByteStream{ref: C.VBK_alt_BlockAtActiveChainByHeight(v.ref, C.int(height))}
 }
 
-func (v PopContext) VbkBlockAtActiveChainByHeight(height int) VbkByteStream {
+func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) VbkByteStream {
 	return VbkByteStream{ref: C.VBK_vbk_BlockAtActiveChainByHeight(v.ref, C.int(height))}
 }
 
-func (v PopContext) BtcBlockAtActiveChainByHeight(height int) VbkByteStream {
+func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) VbkByteStream {
 	return VbkByteStream{ref: C.VBK_btc_BlockAtActiveChainByHeight(v.ref, C.int(height))}
 }
 
-func (v PopContext) AltGetATVContainingBlock(atv_id []byte) VbkByteStream {
+func (v *PopContext) AltGetATVContainingBlock(atv_id []byte) VbkByteStream {
 	atv_idC := (*C.uint8_t)(unsafe.Pointer(&atv_id[0]))
 	return VbkByteStream{ref: C.VBK_alt_getATVContainingBlock(v.ref, atv_idC, C.int(len(atv_id)))}
 }
 
-func (v PopContext) AltGetVTBContainingBlock(vtb_id []byte) VbkByteStream {
+func (v *PopContext) AltGetVTBContainingBlock(vtb_id []byte) VbkByteStream {
 	vtb_idC := (*C.uint8_t)(unsafe.Pointer(&vtb_id[0]))
 	return VbkByteStream{ref: C.VBK_alt_getVTBContainingBlock(v.ref, vtb_idC, C.int(len(vtb_id)))}
 }
 
-func (v PopContext) AltGetVbkBlockContainingBlock(vbk_id []byte) VbkByteStream {
+func (v *PopContext) AltGetVbkBlockContainingBlock(vbk_id []byte) VbkByteStream {
 	vbk_idC := (*C.uint8_t)(unsafe.Pointer(&vbk_id[0]))
 	return VbkByteStream{ref: C.VBK_alt_getVbkBlockContainingBlock(v.ref, vbk_idC, C.int(len(vbk_id)))}
 }
 
-func (v PopContext) VbkGetVTBContainingBlock(vtb_id []byte) VbkByteStream {
+func (v *PopContext) VbkGetVTBContainingBlock(vtb_id []byte) VbkByteStream {
 	vtb_idC := (*C.uint8_t)(unsafe.Pointer(&vtb_id[0]))
 	return VbkByteStream{ref: C.VBK_vbk_getVTBContainingBlock(v.ref, vtb_idC, C.int(len(vtb_id)))}
 }
 
 // MemPoolSubmitAtv - returns true if payload is valid, false otherwise.
-func (v PopContext) MemPoolSubmitAtv(bytes []byte) int {
+func (v *PopContext) MemPoolSubmitAtv(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
 	res := C.VBK_MemPool_submit_atv(v.ref, bytesC, C.int(len(bytes)))
 	return int(res)
 }
 
 // MemPoolSubmitVtb - returns true if payload is valid, false otherwise.
-func (v PopContext) MemPoolSubmitVtb(bytes []byte) int {
+func (v *PopContext) MemPoolSubmitVtb(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
 	res := C.VBK_MemPool_submit_vtb(v.ref, bytesC, C.int(len(bytes)))
 	return int(res)
 }
 
 // MemPoolSubmitVbk - returns true if payload is valid, false otherwise.
-func (v PopContext) MemPoolSubmitVbk(bytes []byte) int {
+func (v *PopContext) MemPoolSubmitVbk(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
 	res := C.VBK_MemPool_submit_vbk(v.ref, bytesC, C.int(len(bytes)))
 	return int(res)
 }
 
 // MemPoolGetPop ...
-func (v PopContext) MemPoolGetPop() []byte {
+func (v *PopContext) MemPoolGetPop() []byte {
 	var bytesSize int
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&v.popData[0]))
 	bytesSizeC := (*C.int)(unsafe.Pointer(&bytesSize))
@@ -171,60 +171,60 @@ func (v PopContext) MemPoolGetPop() []byte {
 }
 
 // MemPoolRemoveAll ...
-func (v PopContext) MemPoolRemoveAll(bytes []byte) {
+func (v *PopContext) MemPoolRemoveAll(bytes []byte) {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
 	C.VBK_MemPool_removeAll(v.ref, bytesC, C.int(len(bytes)))
 }
 
 // MemPoolGetAtv ...
-func (v PopContext) MemPoolGetAtv(atvID []byte) VbkByteStream {
+func (v *PopContext) MemPoolGetAtv(atvID []byte) VbkByteStream {
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&atvID[0]))
 	return NewVbkByteStream(C.VBK_MemPool_GetATV(v.ref, idBytesC, C.int(len(atvID))))
 }
 
 // MemPoolGetVtb ...
-func (v PopContext) MemPoolGetVtb(vtbID []byte) VbkByteStream {
+func (v *PopContext) MemPoolGetVtb(vtbID []byte) VbkByteStream {
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&vtbID[0]))
 	return NewVbkByteStream(C.VBK_MemPool_GetVTB(v.ref, idBytesC, C.int(len(vtbID))))
 }
 
 // MemPoolGetVbkBlock ...
-func (v PopContext) MemPoolGetVbkBlock(vbkID []byte) VbkByteStream {
+func (v *PopContext) MemPoolGetVbkBlock(vbkID []byte) VbkByteStream {
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&vbkID[0]))
 	return NewVbkByteStream(C.VBK_MemPool_GetVbkBlock(v.ref, idBytesC, C.int(len(vbkID))))
 }
 
 // MemPoolGetAtvs ...
-func (v PopContext) MemPoolGetAtvs() VbkByteStream {
+func (v *PopContext) MemPoolGetAtvs() VbkByteStream {
 	return NewVbkByteStream(C.VBK_MemPool_GetATVs(v.ref))
 }
 
 // MemPoolGetVtbs ...
-func (v PopContext) MemPoolGetVtbs() VbkByteStream {
+func (v *PopContext) MemPoolGetVtbs() VbkByteStream {
 	return NewVbkByteStream(C.VBK_MemPool_GetVTBs(v.ref))
 }
 
 // MemPoolGetVbkBlocks ...
-func (v PopContext) MemPoolGetVbkBlocks() VbkByteStream {
+func (v *PopContext) MemPoolGetVbkBlocks() VbkByteStream {
 	return NewVbkByteStream(C.VBK_MemPool_GetVbkBlocks(v.ref))
 }
 
 // MemPoolGetAtvsInFlight ...
-func (v PopContext) MemPoolGetAtvsInFlight() VbkByteStream {
+func (v *PopContext) MemPoolGetAtvsInFlight() VbkByteStream {
 	return NewVbkByteStream(C.VBK_MemPool_GetATVsInFlight(v.ref))
 }
 
 // MemPoolGetVtbsInFlight ...
-func (v PopContext) MemPoolGetVtbsInFlight() VbkByteStream {
+func (v *PopContext) MemPoolGetVtbsInFlight() VbkByteStream {
 	return NewVbkByteStream(C.VBK_MemPool_GetVTBsInFlight(v.ref))
 }
 
 // MemPoolGetVbkBlocksInFlight ...
-func (v PopContext) MemPoolGetVbkBlocksInFlight() VbkByteStream {
+func (v *PopContext) MemPoolGetVbkBlocksInFlight() VbkByteStream {
 	return NewVbkByteStream(C.VBK_MemPool_GetVbkBlocksInFlight(v.ref))
 }
 
 // MemPoolClear ...
-func (v PopContext) MemPoolClear() {
+func (v *PopContext) MemPoolClear() {
 	C.VBK_MemPool_clear(v.ref)
 }
