@@ -39,9 +39,7 @@ constexpr const auto VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT = 110000;
 constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
 constexpr const auto MAX_PAYOUT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
-constexpr const auto MAX_CONTEXT_COUNT = 15000;
-constexpr const auto MAX_CONTEXT_COUNT_ALT_PUBLICATION = 15000;
-constexpr const auto MAX_CONTEXT_COUNT_VBK_PUBLICATION = 15000;
+constexpr const auto MAX_CONTEXT_COUNT_VBK_PUBLICATION = 65535;
 constexpr const auto VBLAKE_BLOCK_HASH_SIZE = 24;
 constexpr const auto VBK_MERKLE_ROOT_HASH_SIZE = 16;
 constexpr const auto VBLAKE_PREVIOUS_BLOCK_HASH_SIZE = 12;
@@ -108,7 +106,7 @@ constexpr const auto MAX_RAWTX_SIZE_VBKPOPTX =
     1 + BTC_HEADER_SIZE +
     // blockOfProofContext.size.size, blockOfProofContext.size,
     // blockOfProofContext
-    5 + (BTC_HEADER_SIZE + 1) * MAX_CONTEXT_COUNT +
+    5 + (BTC_HEADER_SIZE + 1) * MAX_CONTEXT_COUNT_VBK_PUBLICATION +
     // signature.size, signature
     1 + MAX_SIGNATURE_SIZE +
     // publicKey.size, publicKey

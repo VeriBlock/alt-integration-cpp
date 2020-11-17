@@ -1168,70 +1168,6 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   ASSERT_EQ(totalAtvs, 2);
 }
 
-// in this test we have a context gap in VBK which is bigger than
-// maxPopDataSize() in bytes.
-// we expect that first getPop returns PopData which contains around 15k VBK
-// blocks (maxPopDataSize / 71 = 14768), 0 VTBs, and 0 ATVs
-TEST_F(MemPoolFixture, getPop_scenario_10) {
-  const auto estimatePopDataWithVbkSize = []() {
-    PopData p;
-    p.context.emplace_back();
-    return p.estimateSize();
-  };
-  // PopData with 1 VBK block is 71 bytes
-  const auto popDataWith1VBK = estimatePopDataWithVbkSize();
-  const auto max = alttree.getParams().getMaxPopDataSize();
-
-  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
-  popminer->mineVbkBlocks(max / popDataWith1VBK + 10);
-  mineAltBlocks(10, chain);
-  AltBlock endorsedBlock1 = chain[5];
-
-  for (size_t i = 0; i < 5; ++i) {
-    VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
-        generatePublicationData(endorsedBlock1));
-    ATV atv = popminer->applyATV(tx, state);
-    std::vector<VbkBlock> context;
-    fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
-
-    payloadsProvider.write(atv);
-    submitATV(atv);
-
-    payloadsProvider.write(context);
-    for (const auto& b : context) {
-      submitVBK(b);
-    }
-  }
-
-  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
-
-  {
-    PopData v_popData = checkedGetPop();
-    ASSERT_LE(v_popData.estimateSize(), max);
-    ASSERT_EQ(v_popData.context.size(), max / popDataWith1VBK);
-    ASSERT_EQ(v_popData.vtbs.size(), 0);
-    ASSERT_EQ(v_popData.atvs.size(), 0);
-  }
-  {
-    // second getPop should return same data
-    PopData v_popData = checkedGetPop();
-    ASSERT_LE(v_popData.estimateSize(), max);
-    ASSERT_EQ(v_popData.context.size(), max / popDataWith1VBK);
-    ASSERT_EQ(v_popData.vtbs.size(), 0);
-    ASSERT_EQ(v_popData.atvs.size(), 0);
-    // lets remove it
-    mempool->removeAll(v_popData);
-  }
-  {
-    // third getPop returns 0, as we removed popData but not added it to
-    // blockchain, so remaining data is not connected to blockchain
-    PopData v_popData = checkedGetPop();
-    ASSERT_EQ(v_popData.context.size(), 0);
-    ASSERT_EQ(v_popData.vtbs.size(), 0);
-    ASSERT_EQ(v_popData.atvs.size(), 0);
-  }
-}
-
 // This test scenrio tests the possible context gap in case that all payloads
 // contain in the same PopData which bigger than maxPopDataSize
 TEST_F(MemPoolFixture, getPop_scenario_11) {
@@ -1611,4 +1547,69 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   //  ASSERT_TRUE(mempool->getInFlightMap<VTB>().empty());
   //  ASSERT_TRUE(mempool->getInFlightMap<ATV>().empty());
   // }
+}
+
+// in this test we have a context gap in VBK which is bigger than
+// maxPopDataSize() in bytes.
+// we expect that first getPop returns PopData which contains around 15k VBK
+// blocks (1MB / 71 = 14768), 0 VTBs, and 0 ATVs
+// TODO: disabled because it takes A LOT of time to mine VBK blocks
+TEST_F(MemPoolFixture, DISABLED_getPop_scenario_10) {
+  const auto estimatePopDataWithVbkSize = []() {
+    PopData p;
+    p.context.emplace_back();
+    return p.estimateSize();
+  };
+  // PopData with 1 VBK block is 71 bytes
+  const auto popDataWith1VBK = estimatePopDataWithVbkSize();
+  const auto max = alttree.getParams().getMaxPopDataSize();
+
+  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
+  popminer->mineVbkBlocks(max / popDataWith1VBK + 10);
+  mineAltBlocks(10, chain);
+  AltBlock endorsedBlock1 = chain[5];
+
+  for (size_t i = 0; i < 5; ++i) {
+    VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+        generatePublicationData(endorsedBlock1));
+    ATV atv = popminer->applyATV(tx, state);
+    std::vector<VbkBlock> context;
+    fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+
+    payloadsProvider.write(atv);
+    submitATV(atv);
+
+    payloadsProvider.write(context);
+    for (const auto& b : context) {
+      submitVBK(b);
+    }
+  }
+
+  ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
+
+  {
+    PopData v_popData = checkedGetPop();
+    ASSERT_LE(v_popData.estimateSize(), max);
+    ASSERT_EQ(v_popData.context.size(), max / popDataWith1VBK);
+    ASSERT_EQ(v_popData.vtbs.size(), 0);
+    ASSERT_EQ(v_popData.atvs.size(), 0);
+  }
+  {
+    // second getPop should return same data
+    PopData v_popData = checkedGetPop();
+    ASSERT_LE(v_popData.estimateSize(), max);
+    ASSERT_EQ(v_popData.context.size(), max / popDataWith1VBK);
+    ASSERT_EQ(v_popData.vtbs.size(), 0);
+    ASSERT_EQ(v_popData.atvs.size(), 0);
+    // lets remove it
+    mempool->removeAll(v_popData);
+  }
+  {
+    // third getPop returns 0, as we removed popData but not added it to
+    // blockchain, so remaining data is not connected to blockchain
+    PopData v_popData = checkedGetPop();
+    ASSERT_EQ(v_popData.context.size(), 0);
+    ASSERT_EQ(v_popData.vtbs.size(), 0);
+    ASSERT_EQ(v_popData.atvs.size(), 0);
+  }
 }

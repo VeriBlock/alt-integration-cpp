@@ -108,7 +108,7 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state, bool resubmit = true) {
+  SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state) {
     ReadStream stream(bytes);
     T payload;
     if (Deserialize(stream, payload, state)) {
@@ -116,7 +116,7 @@ struct MemPool {
               state.Invalid("pop-mempool-submit-deserialize")};
     }
 
-    return submit<T>(payload, state, resubmit);
+    return submit<T>(payload, state);
   }
 
   /**
@@ -138,10 +138,8 @@ struct MemPool {
    * @ingroup api
    */
   template <typename T>
-  SubmitResult submit(const T& pl,
-                      ValidationState& state,
-                      bool resubmit = true) {
-    return submit<T>(std::make_shared<T>(pl), state, resubmit);
+  SubmitResult submit(const T& pl, ValidationState& state) {
+    return submit<T>(std::make_shared<T>(pl), state);
   }
 
   /**
@@ -158,18 +156,13 @@ struct MemPool {
    * @tparam shared_ptr<T> one of VTB, ATV, VbkBlock
    * @param[in] pl payload
    * @param[out] state validation state
-   * @param[in] resubmit if true, mempool performs contextual
-   * validation
    * @return true if payload is valid, false otherwise
    * @ingroup api
    */
   template <typename T>
-  SubmitResult submit(const std::shared_ptr<T>& pl,
-                      ValidationState& state,
-                      bool resubmit = true) {
+  SubmitResult submit(const std::shared_ptr<T>& pl, ValidationState& state) {
     (void)pl;
     (void)state;
-    (void)resubmit;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return {};
   }
@@ -269,7 +262,7 @@ struct MemPool {
   VbkPayloadsRelations& getOrPutVbkRelation(
       const std::shared_ptr<VbkBlock>& block);
 
-  void resubmit_payloads();
+  void tryConnectPayloads();
 
   template <typename T>
   void makePayloadConnected(const std::shared_ptr<T>& t) {
@@ -329,11 +322,11 @@ struct MemPool {
 
 // clang-format off
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state, bool resubmit);
+template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state);
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state, bool resubmit);
+template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state);
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state, bool resubmit);
+template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload
