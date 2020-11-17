@@ -5,6 +5,8 @@
 
 #include <stdio.h>
 
+#include <fstream>
+
 #include "bytestream.hpp"
 #include "mock_miner.hpp"
 #include "veriblock/c/mock_miner.h"
@@ -53,6 +55,35 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self) {
 
   auto* new_block = self->miner->mineVbkBlocks(1);
   VBK_ASSERT(new_block);
+
+  // TODO remove this
+  std::ofstream file;
+  file.open("log.txt");
+  file << "[" << std::to_string(new_block->getHash()[0]) << " "
+       << std::to_string(new_block->getHash()[1]) << " "
+       << std::to_string(new_block->getHash()[2]) << " "
+       << std::to_string(new_block->getHash()[3]) << " "
+       << std::to_string(new_block->getHash()[4]) << " "
+       << std::to_string(new_block->getHash()[5]) << " "
+       << std::to_string(new_block->getHash()[6]) << " "
+       << std::to_string(new_block->getHash()[7]) << " "
+       << std::to_string(new_block->getHash()[8]) << " "
+       << std::to_string(new_block->getHash()[9]) << " "
+       << std::to_string(new_block->getHash()[10]) << " "
+       << std::to_string(new_block->getHash()[11]) << " "
+       << std::to_string(new_block->getHash()[12]) << " "
+       << std::to_string(new_block->getHash()[13]) << " "
+       << std::to_string(new_block->getHash()[14]) << " "
+       << std::to_string(new_block->getHash()[15]) << " "
+       << std::to_string(new_block->getHash()[16]) << " "
+       << std::to_string(new_block->getHash()[17]) << " "
+       << std::to_string(new_block->getHash()[18]) << " "
+       << std::to_string(new_block->getHash()[19]) << " "
+       << std::to_string(new_block->getHash()[20]) << " "
+       << std::to_string(new_block->getHash()[21]) << " "
+       << std::to_string(new_block->getHash()[22]) << " "
+       << std::to_string(new_block->getHash()[23]) << "]";
+  file.close();
   return new VbkByteStream(new_block->toRaw());
 }
 
@@ -104,6 +135,36 @@ VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
   altintegration::ReadStream r_stream(altintegration::Slice<const uint8_t>(
       endorsed_vbk_block, endorsed_vbk_block_size));
   auto vbk_block = altintegration::VbkBlock::fromVbkEncoding(r_stream);
+
+  // TODO remove this
+  VBK_ASSERT_MSG(
+      self->miner->vbk().getBlockIndex(vbk_block.getHash()) != nullptr,
+      "[%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d "
+      "%d]",
+      vbk_block.getHash()[0],
+      vbk_block.getHash()[1],
+      vbk_block.getHash()[2],
+      vbk_block.getHash()[3],
+      vbk_block.getHash()[4],
+      vbk_block.getHash()[5],
+      vbk_block.getHash()[6],
+      vbk_block.getHash()[7],
+      vbk_block.getHash()[8],
+      vbk_block.getHash()[9],
+      vbk_block.getHash()[10],
+      vbk_block.getHash()[11],
+      vbk_block.getHash()[12],
+      vbk_block.getHash()[13],
+      vbk_block.getHash()[14],
+      vbk_block.getHash()[15],
+      vbk_block.getHash()[16],
+      vbk_block.getHash()[17],
+      vbk_block.getHash()[18],
+      vbk_block.getHash()[19],
+      vbk_block.getHash()[20],
+      vbk_block.getHash()[21],
+      vbk_block.getHash()[22],
+      vbk_block.getHash()[23]);
 
   altintegration::ValidationState state;
   auto tx = self->miner->endorseVbkBlock(

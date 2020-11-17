@@ -37,15 +37,15 @@ VBK_ByteStream* VBK_MockMiner_mineBtcBlockTip(MockMiner_t* self);
  * Mine new altintegration::BtcBlock on the top of the provided block.
  *
  * @param[in] self MockMiner
- * @param[in] block_hash hash of the altintegration::BtcBlock
+ * @param[in] block_hash hash of the previous altintegration::BtcBlock
  * @param[in] block_hash_size size of the input block hash
  * @return VBK_ByteStream* stream that stores
  * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
-                                 const uint8_t* block_hash,
-                                 int block_hash_size);
+                                           const uint8_t* block_hash,
+                                           int block_hash_size);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the current vbktree.
@@ -68,8 +68,8 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self);
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
-                                 const uint8_t* block_hash,
-                                 int block_hash_size);
+                                           const uint8_t* block_hash,
+                                           int block_hash_size);
 
 /**
  * Mine new altintegration::ATV.
@@ -83,8 +83,8 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
-                            const uint8_t* publication_data,
-                            int publication_data_size);
+                                      const uint8_t* publication_data,
+                                      int publication_data_size);
 
 /**
  * Mine new altintegration::VTB.
@@ -98,8 +98,8 @@ VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
-                            const uint8_t* endorsed_vbk_block,
-                            int endorsed_vbk_block_size);
+                                      const uint8_t* endorsed_vbk_block,
+                                      int endorsed_vbk_block_size);
 
 #ifdef __cplusplus
 }  // end of extern "C"

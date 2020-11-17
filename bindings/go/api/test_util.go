@@ -2,7 +2,7 @@ package api
 
 import "testing"
 
-func generatePopContext(t *testing.T) PopContext {
+func generateTestPopContext(t *testing.T) PopContext {
 	config := NewConfig()
 	defer config.Free()
 	if !config.SelectVbkParams("regtest", 0, nil) {

@@ -12,7 +12,7 @@ import (
 func TestPopContext(t *testing.T) {
 	assert := assert.New(t)
 
-	popContext := generatePopContext(t)
+	popContext := generateTestPopContext(t)
 	defer popContext.Free()
 
 	res, err := popContext.GetPop()
