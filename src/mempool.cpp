@@ -99,8 +99,9 @@ void MemPool::cleanUp() {
     auto& rel = *it->second;
     auto* index = vbk_tree.getBlockIndex(it->second->header->getHash());
 
-    bool tooOld = vbk_tree.getBestChain().tip()->getHeight() -
-                      vbk_tree.getParams().getMaxReorgBlocks() >
+    auto* tip = vbk_tree.getBestChain().tip();
+    VBK_ASSERT(tip);
+    bool tooOld = tip->getHeight() - vbk_tree.getParams().getMaxReorgBlocks() >
                   rel.header->getHeight();
 
     // cleanup stale relations
