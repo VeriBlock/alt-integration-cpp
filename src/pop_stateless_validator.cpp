@@ -13,6 +13,12 @@ PopValidator::PopValidator(const VbkChainParams& vbk,
                            const AltChainParams& alt,
                            size_t threads)
     : vbk_(vbk), btc_(btc), alt_(alt) {
+  start(threads);
+}
+
+void PopValidator::start(size_t threads) {
+  VBK_ASSERT_MSG(workers == nullptr, "PopValidator has already been started");
+
   // try to detect concurrent threads count
   if (threads == 0) {
     threads = std::thread::hardware_concurrency();
@@ -21,12 +27,16 @@ PopValidator::PopValidator(const VbkChainParams& vbk,
   if (threads == 0) {
     threads = 1;
   }
-
   workers = std::make_shared<ThreadPool>(threads);
+}
+
+void PopValidator::stop() {
+  workers = nullptr;
 }
 
 template <>
 std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
+  VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
   return workers->enqueue([&] {
     ValidationState state;
     checkBlock(block, state, vbk_);
@@ -36,6 +46,7 @@ std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
 
 template <>
 std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
+  VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
   return workers->enqueue([&] {
     ValidationState state;
     checkVTB(vtb, state, btc_);
@@ -45,6 +56,7 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
 
 template <>
 std::future<ValidationState> PopValidator::addCheck(const ATV& atv) {
+  VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
   return workers->enqueue([&] {
     ValidationState state;
     checkATV(atv, state, alt_);

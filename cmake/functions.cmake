@@ -43,6 +43,10 @@ function(addtest test_name)
                 -Wno-null-dereference
                 )
     endif()
+
+    enable_asan_on_target(${test_name})
+    enable_tsan_on_target(${test_name})
+    enable_ubsan_on_target(${test_name})
 endfunction()
 
 function(addtest_part test_name)
