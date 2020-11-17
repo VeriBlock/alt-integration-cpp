@@ -31,22 +31,21 @@ void VBK_FreeMockMiner(MockMiner_t* miner);
  * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineBtcBlockTip(MockMiner_t* self);
+VBK_ByteStream* VBK_MockMiner_mineBtcBlockTip(MockMiner_t* self);
 
 /**
  * Mine new altintegration::BtcBlock on the top of the provided block.
  *
  * @param[in] self MockMiner
- * @param[in] tip_block_bytes provided tip
- * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes
- * @param[in] tip_block_bytes_size size of the input block bytes
+ * @param[in] block_hash hash of the previous altintegration::BtcBlock
+ * @param[in] block_hash_size size of the input block hash
  * @return VBK_ByteStream* stream that stores
  * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineBtcBlock(MockMiner_t* self,
-                                 const uint8_t* tip_block_bytes,
-                                 int tip_block_bytes_size);
+VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
+                                           const uint8_t* block_hash,
+                                           int block_hash_size);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the current vbktree.
@@ -56,22 +55,51 @@ VBK_ByteStream* VBK_mineBtcBlock(MockMiner_t* self,
  * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineVbkBlockTip(MockMiner_t* self);
+VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the provided block.
  *
  * @param[in] self MockMiner
- * @param[in] tip_block_bytes provided tip
- * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes
- * @param[in] tip_block_bytes_size size of the input block bytes
+ * @param[in] block_hash hash of the altintegration::VbkBlock
+ * @param[in] block_hash_size size of the input block hash
  * @return VBK_ByteStream* stream that stores
  * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes
  * @ingroup c-api
  */
-VBK_ByteStream* VBK_mineVbkBlock(MockMiner_t* self,
-                                 const uint8_t* tip_block_bytes,
-                                 int tip_block_bytes_size);
+VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
+                                           const uint8_t* block_hash,
+                                           int block_hash_size);
+
+/**
+ * Mine new altintegration::ATV.
+ *
+ * @param[in] self MockMiner
+ * @param[in] publication_data altintegration::PublicationData of the
+ * altintegration::AltBlock
+ * @param[in] publication_data_size size of the publication data
+ * @return VBK_ByteStream* stream that stores altintgration::ATV in the
+ * VbkEncoding format
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
+                                      const uint8_t* publication_data,
+                                      int publication_data_size);
+
+/**
+ * Mine new altintegration::VTB.
+ *
+ * @param[in] self MockMiner
+ * @param[in] endorsed_vbk_block endorsed altintegration::VbkBlock in the
+ * VbkEncoding format
+ * @param[in] endorsed_vbk_block_size size of endorsed block
+ * @return VBK_ByteStream* stream that stores altintgration::VTB in the
+ * VbkEncoding format
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
+                                      const uint8_t* endorsed_vbk_block,
+                                      int endorsed_vbk_block_size);
 
 #ifdef __cplusplus
 }  // end of extern "C"
