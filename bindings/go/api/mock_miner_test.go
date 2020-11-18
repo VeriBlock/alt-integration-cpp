@@ -83,6 +83,7 @@ func TestMineVtb(t *testing.T) {
 
 	vtb, err := mockMiner.MineVtb(&vbkBlock)
 	assert.NoError(err)
+	assert.Equal(vtb.ContainingBlock.Height, vbkBlock.Height+1)
 	assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)
 	assert.Equal(vtb.Transaction.PublishedBlock.Height, vbkBlock.Height)
 	assert.Equal(vtb.Transaction.PublishedBlock.Nonce, vbkBlock.Nonce)

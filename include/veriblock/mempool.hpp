@@ -111,7 +111,7 @@ struct MemPool {
   SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state, bool resubmit = true) {
     ReadStream stream(bytes);
     T payload;
-    if (Deserialize(stream, payload, state)) {
+    if (!Deserialize(stream, payload, state)) {
       return {FAILED_STATELESS,
               state.Invalid("pop-mempool-submit-deserialize")};
     }

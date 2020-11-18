@@ -487,6 +487,7 @@ int VBK_MemPool_submit_vtb(PopContext* self,
   altintegration::Slice<const uint8_t> vtb_bytes(bytes, bytes_size);
   auto r =
       self->context->mempool->submit<altintegration::VTB>(vtb_bytes, state);
+  VBK_ASSERT_MSG(state.IsValid(), "%s", state.toString());
   return handleSubmitResponse(r);
 }
 
@@ -499,17 +500,8 @@ int VBK_MemPool_submit_vbk(PopContext* self,
   VBK_ASSERT(self->context->mempool);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> vbk_bytes(bytes, bytes_size);
-  // TODO remove it
-  altintegration::ReadStream r_stream(vbk_bytes);
-  altintegration::VbkBlock block =
-      altintegration::VbkBlock::fromVbkEncoding(r_stream);
-  altintegration::Deserialize(r_stream, block, state);
-  VBK_ASSERT_MSG(state.IsValid(), "here1: %s", state.toString().c_str());
-
   auto r = self->context->mempool->submit<altintegration::VbkBlock>(vbk_bytes,
                                                                     state);
-  // TODO remove it
-  VBK_ASSERT_MSG(state.IsValid(), "here2: %s", state.toString().c_str());
   return handleSubmitResponse(r);
 }
 
@@ -675,7 +667,7 @@ VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self) {
 
 VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self) {
   VBK_ASSERT(self);
-  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context)
   VBK_ASSERT(self->context->mempool);
   auto vtbs = self->context->mempool->getInFlightMap<altintegration::VTB>();
 
