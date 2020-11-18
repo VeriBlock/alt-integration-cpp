@@ -14,9 +14,9 @@ import (
 
 // AltBlockTree ...
 type AltBlockTree interface {
-	AcceptBlockHeader(block entities.AltBlock) error
-	AcceptBlock(hash []byte, payloads entities.PopData) error
-	AddPayloads(hash []byte, payloads entities.PopData) error
+	AcceptBlockHeader(block *entities.AltBlock) error
+	AcceptBlock(hash []byte, payloads *entities.PopData) error
+	AddPayloads(hash []byte, payloads *entities.PopData) error
 	LoadTip(hash []byte)
 	ComparePopScore(hashA []byte, hashB []byte) int
 	RemoveSubtree(hash []byte)
@@ -35,11 +35,11 @@ type AltBlockTree interface {
 
 // MemPool ...
 type MemPool interface {
-	SubmitAtv(block entities.Atv) error
-	SubmitVtb(block entities.Vtb) error
-	SubmitVbk(block entities.VbkBlock) error
+	SubmitAtv(block *entities.Atv) error
+	SubmitVtb(block *entities.Vtb) error
+	SubmitVbk(block *entities.VbkBlock) error
 	GetPop() (*entities.PopData, error)
-	RemoveAll(payloads entities.PopData) error
+	RemoveAll(payloads *entities.PopData) error
 	GetAtv(id []byte) (*entities.Atv, error)
 	GetVtb(id []byte) (*entities.Vtb, error)
 	GetVbkBlock(id []byte) (*entities.VbkBlock, error)
@@ -75,7 +75,7 @@ func (v *PopContext) Free() {
 }
 
 // AcceptBlockHeader - Returns nil if block is valid, and added
-func (v *PopContext) AcceptBlockHeader(block entities.AltBlock) error {
+func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
@@ -90,7 +90,7 @@ func (v *PopContext) AcceptBlockHeader(block entities.AltBlock) error {
 }
 
 // AcceptBlock - POP payloads stored in this block
-func (v *PopContext) AcceptBlock(hash []byte, payloads entities.PopData) error {
+func (v *PopContext) AcceptBlock(hash []byte, payloads *entities.PopData) error {
 	stream := new(bytes.Buffer)
 	err := payloads.ToVbkEncoding(stream)
 	if err != nil {
@@ -103,7 +103,7 @@ func (v *PopContext) AcceptBlock(hash []byte, payloads entities.PopData) error {
 
 // AddPayloads - Returns nil if PopData does not contain duplicates (searched across active chain).
 // However, it is far from certain that it is completely valid
-func (v *PopContext) AddPayloads(hash []byte, payloads entities.PopData) error {
+func (v *PopContext) AddPayloads(hash []byte, payloads *entities.PopData) error {
 	stream := new(bytes.Buffer)
 	err := payloads.ToVbkEncoding(stream)
 	if err != nil {
@@ -355,7 +355,7 @@ func (v *PopContext) GetPop() (*entities.PopData, error) {
 }
 
 // RemoveAll - Returns nil if payload is valid
-func (v *PopContext) RemoveAll(payloads entities.PopData) error {
+func (v *PopContext) RemoveAll(payloads *entities.PopData) error {
 	stream := new(bytes.Buffer)
 	err := payloads.ToVbkEncoding(stream)
 	if err != nil {
