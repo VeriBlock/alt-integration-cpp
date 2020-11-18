@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
@@ -68,31 +69,31 @@ func TestMineAtv(t *testing.T) {
 
 func TestMineVtb(t *testing.T) {
 	// TODO fix test
-	// assert := assert.New(t)
+	assert := assert.New(t)
 
-	// mockMiner := NewMockMiner()
-	// defer mockMiner.Free()
+	mockMiner := NewMockMiner()
+	defer mockMiner.Free()
 
-	// index, err := mockMiner.MineVbkBlockTip()
-	// assert.NoError(err)
+	index, err := mockMiner.MineVbkBlockTip()
+	assert.NoError(err)
 
-	// var buffer bytes.Buffer
-	// index.ToRaw(&buffer)
-	// var vbkBlock entities.VbkBlock
-	// err = vbkBlock.FromRaw(&buffer)
-	// assert.NoError(err)
-	// // TODO remove this
-	// fmt.Printf("vbkBlock hash: %v, prev: %v \n", vbkBlock.GetHash(), vbkBlock.PreviousBlock)
+	var buffer bytes.Buffer
+	index.ToRaw(&buffer)
+	var vbkBlock entities.VbkBlock
+	err = vbkBlock.FromRaw(&buffer)
+	assert.NoError(err)
+	// TODO remove this
+	fmt.Printf("vbkBlock hash: %v, prev: %v, difficulty: %d, nonce: %d \n", vbkBlock.GetHash(), vbkBlock.PreviousBlock, vbkBlock.Difficulty, vbkBlock.Nonce)
 
-	// vtb, err := mockMiner.MineVtb(&vbkBlock)
-	// assert.NoError(err)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Height, vbkBlock.Height)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Nonce, vbkBlock.Nonce)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Timestamp, vbkBlock.Timestamp)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Version, vbkBlock.Version)
-	// assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.MerkleRoot[:], vbkBlock.MerkleRoot[:]))
-	// assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousBlock[:], vbkBlock.PreviousBlock[:]))
-	// assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousKeystone[:], vbkBlock.PreviousKeystone[:]))
-	// assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.SecondPreviousKeystone[:], vbkBlock.SecondPreviousKeystone[:]))
+	vtb, err := mockMiner.MineVtb(&vbkBlock)
+	assert.NoError(err)
+	assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)
+	assert.Equal(vtb.Transaction.PublishedBlock.Height, vbkBlock.Height)
+	assert.Equal(vtb.Transaction.PublishedBlock.Nonce, vbkBlock.Nonce)
+	assert.Equal(vtb.Transaction.PublishedBlock.Timestamp, vbkBlock.Timestamp)
+	assert.Equal(vtb.Transaction.PublishedBlock.Version, vbkBlock.Version)
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.MerkleRoot[:], vbkBlock.MerkleRoot[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousBlock[:], vbkBlock.PreviousBlock[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousKeystone[:], vbkBlock.PreviousKeystone[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.SecondPreviousKeystone[:], vbkBlock.SecondPreviousKeystone[:]))
 }
