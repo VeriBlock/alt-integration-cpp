@@ -44,6 +44,11 @@ constexpr const auto VBLAKE_BLOCK_HASH_SIZE = 24;
 constexpr const auto VBK_MERKLE_ROOT_HASH_SIZE = 16;
 constexpr const auto VBLAKE_PREVIOUS_BLOCK_HASH_SIZE = 12;
 constexpr const auto VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE = 9;
+constexpr const auto MAX_POPDATA_VBKS = 50000;
+constexpr const auto MAX_POPDATA_ATVS = 50000;
+constexpr const auto MAX_POPDATA_VTBS = 50000;
+
+
 constexpr const uint32_t VBK_HEADER_SIZE_VBLAKE = 64;
 constexpr const uint32_t VBK_HEADER_SIZE_PROGPOW = 65;
 constexpr const auto MAX_LAYER_COUNT_MERKLE = 40;
