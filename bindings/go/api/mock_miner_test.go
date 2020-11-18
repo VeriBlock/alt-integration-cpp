@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
@@ -68,7 +67,6 @@ func TestMineAtv(t *testing.T) {
 }
 
 func TestMineVtb(t *testing.T) {
-	// TODO fix test
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner()
@@ -78,12 +76,10 @@ func TestMineVtb(t *testing.T) {
 	assert.NoError(err)
 
 	var buffer bytes.Buffer
-	index.ToRaw(&buffer)
+	index.Header.ToRaw(&buffer)
 	var vbkBlock entities.VbkBlock
 	err = vbkBlock.FromRaw(&buffer)
 	assert.NoError(err)
-	// TODO remove this
-	fmt.Printf("vbkBlock hash: %v, prev: %v, difficulty: %d, nonce: %d \n", vbkBlock.GetHash(), vbkBlock.PreviousBlock, vbkBlock.Difficulty, vbkBlock.Nonce)
 
 	vtb, err := mockMiner.MineVtb(&vbkBlock)
 	assert.NoError(err)

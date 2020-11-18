@@ -55,52 +55,6 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self) {
 
   auto* new_block = self->miner->mineVbkBlocks(1);
   VBK_ASSERT(new_block);
-
-  // TODO remove this
-  std::ofstream file;
-  file.open("log.txt");
-  file << "[" << std::to_string(new_block->getHash()[0]) << " "
-       << std::to_string(new_block->getHash()[1]) << " "
-       << std::to_string(new_block->getHash()[2]) << " "
-       << std::to_string(new_block->getHash()[3]) << " "
-       << std::to_string(new_block->getHash()[4]) << " "
-       << std::to_string(new_block->getHash()[5]) << " "
-       << std::to_string(new_block->getHash()[6]) << " "
-       << std::to_string(new_block->getHash()[7]) << " "
-       << std::to_string(new_block->getHash()[8]) << " "
-       << std::to_string(new_block->getHash()[9]) << " "
-       << std::to_string(new_block->getHash()[10]) << " "
-       << std::to_string(new_block->getHash()[11]) << " "
-       << std::to_string(new_block->getHash()[12]) << " "
-       << std::to_string(new_block->getHash()[13]) << " "
-       << std::to_string(new_block->getHash()[14]) << " "
-       << std::to_string(new_block->getHash()[15]) << " "
-       << std::to_string(new_block->getHash()[16]) << " "
-       << std::to_string(new_block->getHash()[17]) << " "
-       << std::to_string(new_block->getHash()[18]) << " "
-       << std::to_string(new_block->getHash()[19]) << " "
-       << std::to_string(new_block->getHash()[20]) << " "
-       << std::to_string(new_block->getHash()[21]) << " "
-       << std::to_string(new_block->getHash()[22]) << " "
-       << std::to_string(new_block->getHash()[23]) << "]" << std::endl;
-
-  file << "[" << std::to_string(new_block->getHeader().getPreviousBlock()[0])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[1])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[2])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[3])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[4])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[5])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[6])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[7])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[8])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[9])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[10])
-       << " " << std::to_string(new_block->getHeader().getPreviousBlock()[11])
-       << "]" << std::endl;
-
-  file << std::to_string(new_block->getHeader().getDifficulty()) << std::endl;
-  file << std::to_string(new_block->getHeader().getNonce()) << std::endl;
-  file.close();
   return new VbkByteStream(new_block->toRaw());
 }
 

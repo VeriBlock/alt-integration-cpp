@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/blockchain/block_index.hpp"
+
 #include <gtest/gtest.h>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/blockchain/block_index.hpp"
-#include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -99,27 +100,6 @@ TEST(VbkBlock, RoundTripBlockIndexWithHash) {
   auto bytes = std::string(blockEncoded.begin(), blockEncoded.end());
   auto decoded = BlockIndex<VbkBlock>::fromRaw(bytes, hash);
   EXPECT_EQ(decoded.getHeader(), defaultBlock);
-}
-
-TEST(VbkBlock, TEMP) {
-  // clang-format off
-  std::string vbk_block_addon_encoded = "00003085010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000018f85486026bf4ead8a37a42925332ec8b553f8e310974fea118f85486026bf4ead8a37a42925332ec8b553f8e310974fea120f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e20f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000";
-  // clang-format on
-  ReadStream stream(ParseHex(vbk_block_addon_encoded));
-  auto v1 = std::vector<uint8_t>(stream.data().begin(), stream.data().end());
-  auto v2 = std::vector<uint8_t>{1, 2, 3};
-  EXPECT_EQ(ParseHex(vbk_block_addon_encoded), v2);
-  EXPECT_EQ(v1, v2);
-
-  BlockIndex<VbkBlock> index;
-  index.setHeader(defaultBlock);
-  index.setHeight(12345);
-  index.setStatus(BlockStatus::BLOCK_VALID_UNKNOWN);
-  index.initAddon(stream);
-
-  WriteStream w_stream;
-  index.toRaw(w_stream);
-  EXPECT_EQ(HexStr(w_stream.data()), "");
 }
 
 TEST(VbkBlock, getBlockHash_test) {

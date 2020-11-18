@@ -3,7 +3,6 @@ package entities
 import (
 	"bytes"
 	"encoding/hex"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,8 +21,6 @@ func TestVbkBlockAddonDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultVbkBlockAddonEncoded)
-	fmt.Printf("%v \n", blockEncoded)
-	assert.True(false)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := VbkBlockAddon{}
 	assert.NoError(decoded.FromRaw(stream))
