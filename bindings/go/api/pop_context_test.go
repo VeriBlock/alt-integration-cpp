@@ -8,24 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPopContextGetPop(t *testing.T) {
-	assert := assert.New(t)
-
-	popContext := generateTestPopContext(t)
-	defer popContext.Free()
-
-	res, err := popContext.GetPop()
-	assert.NoError(err)
-	assert.Equal(
-		&entities.PopData{
-			Version: 1,
-			Context: []entities.VbkBlock{},
-			Vtbs:    []entities.Vtb{},
-			Atvs:    []entities.Atv{},
-		},
-		res,
-	)
-}
+// MemPool tests
 
 func TestPopContextSubmitVbk(t *testing.T) {
 	assert := assert.New(t)
@@ -48,6 +31,16 @@ func TestPopContextSubmitVbk(t *testing.T) {
 	state := popContext.SubmitVbk(&vbkBlock)
 	// state == 0, valid vbkBlock
 	assert.Equal(0, state)
+
+	ids, err := popContext.GetVtbs()
+	assert.NoError(err)
+	assert.Equal(0, len(ids))
+	ids, err = popContext.GetAtvs()
+	assert.NoError(err)
+	assert.Equal(0, len(ids))
+	ids, err = popContext.GetVbkBlocks()
+	assert.NoError(err)
+	assert.Equal(1, len(ids))
 }
 
 func TestPopContextSubmitVtb(t *testing.T) {
@@ -72,12 +65,25 @@ func TestPopContextSubmitVtb(t *testing.T) {
 	// state == 0, valid vbkBlock
 	assert.Equal(0, state)
 
-	vtb, err := miner.MineVtb(&vbkBlock)
+	btcTip, err := popContext.BtcBestBlock()
+	assert.NoError(err)
+
+	vtb, err := miner.MineVtb(&vbkBlock, btcTip.GetHash())
 	assert.NoError(err)
 
 	state = popContext.SubmitVtb(vtb)
 	// state == 0, valid vtb
 	assert.Equal(0, state)
+
+	ids, err := popContext.GetVtbs()
+	assert.NoError(err)
+	assert.Equal(1, len(ids))
+	ids, err = popContext.GetAtvs()
+	assert.NoError(err)
+	assert.Equal(0, len(ids))
+	ids, err = popContext.GetVbkBlocks()
+	assert.NoError(err)
+	assert.Equal(2, len(ids))
 }
 
 func TestPopContextSubmitAtv(t *testing.T) {
@@ -89,15 +95,25 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	miner := NewMockMiner()
 	defer miner.Free()
 
-	var publication_data entities.PublicationData
-	publication_data.ContextInfo = []byte{1, 2, 3, 4}
-	publication_data.Header = []byte{1, 2, 3, 4, 5, 7}
-	publication_data.Identifier = 1
-	publication_data.PayoutInfo = []byte{1, 2, 3, 4, 5, 6}
-	atv, err := miner.MineAtv(&publication_data)
+	var publicationData entities.PublicationData
+	publicationData.ContextInfo = []byte{1, 2, 3, 4}
+	publicationData.Header = []byte{1, 2, 3, 4, 5, 7}
+	publicationData.Identifier = 1
+	publicationData.PayoutInfo = []byte{1, 2, 3, 4, 5, 6}
+	atv, err := miner.MineAtv(&publicationData)
 	assert.NoError(err)
 
 	state := popContext.SubmitAtv(atv)
 	// state == 0, valid atv
 	assert.Equal(0, state)
+
+	ids, err := popContext.GetVtbs()
+	assert.NoError(err)
+	assert.Equal(0, len(ids))
+	ids, err = popContext.GetAtvs()
+	assert.NoError(err)
+	assert.Equal(1, len(ids))
+	ids, err = popContext.GetVbkBlocks()
+	assert.NoError(err)
+	assert.Equal(1, len(ids))
 }

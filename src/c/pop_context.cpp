@@ -473,7 +473,6 @@ int VBK_MemPool_submit_atv(PopContext* self,
   altintegration::Slice<const uint8_t> atv_bytes(bytes, bytes_size);
   auto r =
       self->context->mempool->submit<altintegration::ATV>(atv_bytes, state);
-  VBK_ASSERT_MSG(state.IsValid(), "%s", state.toString().c_str());
   return handleSubmitResponse(r);
 }
 

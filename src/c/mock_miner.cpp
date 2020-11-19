@@ -99,17 +99,22 @@ VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
 
 VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
                                       const uint8_t* endorsed_vbk_block,
-                                      int endorsed_vbk_block_size) {
+                                      int endorsed_vbk_block_size,
+                                      const uint8_t* last_known_btc_block_hash,
+                                      int last_known_btc_block_hash_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(endorsed_vbk_block);
+  VBK_ASSERT(last_known_btc_block_hash);
 
   altintegration::ReadStream r_stream(altintegration::Slice<const uint8_t>(
       endorsed_vbk_block, endorsed_vbk_block_size));
   auto vbk_block = altintegration::VbkBlock::fromVbkEncoding(r_stream);
 
+  altintegration::BtcBlock::hash_t hash(altintegration::Slice<const uint8_t>(
+      last_known_btc_block_hash, last_known_btc_block_hash_size));
+
   altintegration::ValidationState state;
-  auto tx = self->miner->endorseVbkBlock(
-      vbk_block, self->miner->btc().getBestChain().tip()->getHash(), state);
+  auto tx = self->miner->endorseVbkBlock(vbk_block, hash, state);
   self->miner->vbkmempool.push_back(tx);
 
   VBK_ASSERT(state.IsValid());

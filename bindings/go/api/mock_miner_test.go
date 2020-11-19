@@ -69,6 +69,10 @@ func TestMineAtv(t *testing.T) {
 func TestMineVtb(t *testing.T) {
 	assert := assert.New(t)
 
+	popContext := generateTestPopContext(t)
+	defer popContext.Free()
+	popContext.BtcBestBlock()
+
 	mockMiner := NewMockMiner()
 	defer mockMiner.Free()
 
@@ -81,7 +85,10 @@ func TestMineVtb(t *testing.T) {
 	err = vbkBlock.FromRaw(&buffer)
 	assert.NoError(err)
 
-	vtb, err := mockMiner.MineVtb(&vbkBlock)
+	btcTip, err := popContext.BtcBestBlock()
+	assert.NoError(err)
+
+	vtb, err := mockMiner.MineVtb(&vbkBlock, btcTip.GetHash())
 	assert.NoError(err)
 	assert.Equal(vtb.ContainingBlock.Height, vbkBlock.Height+1)
 	assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)

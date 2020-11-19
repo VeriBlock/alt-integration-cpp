@@ -106,7 +106,7 @@ func (v *MockMiner) MineAtv(publication_data *entities.PublicationData) (*entiti
 }
 
 // MineVtb ...
-func (v *MockMiner) MineVtb(endorsed_block *entities.VbkBlock) (*entities.Vtb, error) {
+func (v *MockMiner) MineVtb(endorsed_block *entities.VbkBlock, hash []byte) (*entities.Vtb, error) {
 	defer v.lock()()
 	var buffer bytes.Buffer
 	err := endorsed_block.ToVbkEncoding(&buffer)
@@ -114,7 +114,7 @@ func (v *MockMiner) MineVtb(endorsed_block *entities.VbkBlock) (*entities.Vtb, e
 		return nil, err
 	}
 
-	stream := v.miner.MineVtb(buffer.Bytes())
+	stream := v.miner.MineVtb(buffer.Bytes(), hash)
 	defer stream.Free()
 
 	var vtb entities.Vtb
