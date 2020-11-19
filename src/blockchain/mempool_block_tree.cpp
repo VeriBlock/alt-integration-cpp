@@ -1,6 +1,5 @@
-#include "veriblock/blockchain/mempool_block_tree.hpp"
-
 #include "veriblock/blockchain/blockchain_util.hpp"
+#include "veriblock/blockchain/mempool_block_tree.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/keystone_util.hpp"
 

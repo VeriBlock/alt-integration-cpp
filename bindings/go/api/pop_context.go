@@ -306,9 +306,9 @@ func (v *PopContext) VbkGetVTBContainingBlock(vtb_id []byte) ([][]byte, error) {
 }
 
 // SubmitAtv - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
-func (v *PopContext) SubmitAtv(block *entities.Atv) int {
+func (v *PopContext) SubmitAtv(atv *entities.Atv) int {
 	stream := new(bytes.Buffer)
-	err := block.ToVbkEncoding(stream)
+	err := atv.ToVbkEncoding(stream)
 	if err != nil {
 		return 2
 	}

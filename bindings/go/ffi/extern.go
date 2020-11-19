@@ -4,7 +4,9 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/config.h>
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 // Exported functions
 var (
@@ -26,10 +28,24 @@ func VBK_getBootstrapBlock() *C.char {
 	return C.CString(OnGetBootstrapBlock())
 }
 
+func convertToBytes(in *C.uint8_t, inlen C.int) []byte {
+	bytesSize := int(inlen)
+	bytes := make([]byte, 0, bytesSize)
+	for bytesSize > 0 {
+		buffer := (*[1024]byte)(unsafe.Pointer(in))
+		if bytesSize > 1024 {
+			bytes = append(bytes, buffer[:]...)
+		} else {
+			bytes = append(bytes, buffer[:bytesSize]...)
+		}
+		bytesSize -= 1024
+	}
+	return bytes
+}
+
 //export VBK_getBlockHeaderHash
 func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *C.int) {
-	bytesSize := int(inlen)
-	resBytes := (*(*[]byte)(unsafe.Pointer(in)))[:bytesSize:bytesSize]
+	resBytes := convertToBytes(in, inlen)
 	data := OnGetBlockHeaderHash(resBytes)
 	*outlen = C.int(len(data))
 	*out = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
@@ -39,8 +55,7 @@ func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *
 
 //export VBK_getATV
 func VBK_getATV(id *C.uint8_t, idSize C.int, atvBytesOut *C.uint8_t, atvBytesLen *C.int) {
-	bytesSize := int(idSize)
-	resBytes := (*(*[]byte)(unsafe.Pointer(id)))[:bytesSize:bytesSize]
+	resBytes := convertToBytes(id, idSize)
 	data := OnGetAtv(resBytes)
 	*atvBytesLen = C.int(len(data))
 	*atvBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
@@ -48,8 +63,7 @@ func VBK_getATV(id *C.uint8_t, idSize C.int, atvBytesOut *C.uint8_t, atvBytesLen
 
 //export VBK_getVTB
 func VBK_getVTB(id *C.uint8_t, idSize C.int, vtbBytesOut *C.uint8_t, vtbBytesLen *C.int) {
-	bytesSize := int(idSize)
-	resBytes := (*(*[]byte)(unsafe.Pointer(id)))[:bytesSize:bytesSize]
+	resBytes := convertToBytes(id, idSize)
 	data := OnGetVtb(resBytes)
 	*vtbBytesLen = C.int(len(data))
 	*vtbBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
@@ -57,8 +71,7 @@ func VBK_getVTB(id *C.uint8_t, idSize C.int, vtbBytesOut *C.uint8_t, vtbBytesLen
 
 //export VBK_getVBK
 func VBK_getVBK(id *C.uint8_t, idSize C.int, vbkBytesOut *C.uint8_t, vbkBytesLen *C.int) {
-	bytesSize := int(idSize)
-	resBytes := (*(*[]byte)(unsafe.Pointer(id)))[:bytesSize:bytesSize]
+	resBytes := convertToBytes(id, idSize)
 	data := OnGetVbk(resBytes)
 	*vbkBytesLen = C.int(len(data))
 	*vbkBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))

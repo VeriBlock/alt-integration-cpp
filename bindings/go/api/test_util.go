@@ -15,6 +15,9 @@ func generateTestPopContext(t *testing.T) PopContext {
 	SetOnGetBootstrapBlock(func() string {
 		return "000000201fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c000000000000009c000005ba"
 	})
+	SetOnGetBlockHeaderHash(func(header []byte) []byte {
+		return header
+	})
 
 	return NewPopContext(&config)
 }

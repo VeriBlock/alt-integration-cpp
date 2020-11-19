@@ -31,6 +31,7 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
    */
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept {
+    VBK_ASSERT(bytes.size() != 0);
     std::vector<uint8_t> hash(1024, 0);
     int size = 0;
     VBK_getBlockHeaderHash(bytes.data(), (int)bytes.size(), hash.data(), &size);
