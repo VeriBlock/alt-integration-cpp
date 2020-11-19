@@ -91,48 +91,58 @@ func (v *PopContext) BtcGetBlockIndex(hashBytes []byte) {
 	// TODO: Retrieve data from blockindex with blockindexSize
 }
 
+// AltBestBlock ...
 func (v *PopContext) AltBestBlock() VbkByteStream {
 	return VbkByteStream{ref: C.VBK_alt_BestBlock(v.ref)}
 }
 
+// VbkBestBlock ...
 func (v *PopContext) VbkBestBlock() VbkByteStream {
 	return VbkByteStream{ref: C.VBK_vbk_BestBlock(v.ref)}
 }
 
+// BtcBestBlock ...
 func (v *PopContext) BtcBestBlock() VbkByteStream {
 	return VbkByteStream{ref: C.VBK_btc_BestBlock(v.ref)}
 }
 
+// AltBlockAtActiveChainByHeight ...
 func (v *PopContext) AltBlockAtActiveChainByHeight(height int) VbkByteStream {
 	return VbkByteStream{ref: C.VBK_alt_BlockAtActiveChainByHeight(v.ref, C.int(height))}
 }
 
+// VbkBlockAtActiveChainByHeight ...
 func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) VbkByteStream {
 	return VbkByteStream{ref: C.VBK_vbk_BlockAtActiveChainByHeight(v.ref, C.int(height))}
 }
 
+// BtcBlockAtActiveChainByHeight ...
 func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) VbkByteStream {
 	return VbkByteStream{ref: C.VBK_btc_BlockAtActiveChainByHeight(v.ref, C.int(height))}
 }
 
-func (v *PopContext) AltGetATVContainingBlock(atv_id []byte) VbkByteStream {
-	atv_idC := (*C.uint8_t)(unsafe.Pointer(&atv_id[0]))
-	return VbkByteStream{ref: C.VBK_alt_getATVContainingBlock(v.ref, atv_idC, C.int(len(atv_id)))}
+// AltGetATVContainingBlock ...
+func (v *PopContext) AltGetATVContainingBlock(atvID []byte) VbkByteStream {
+	atvIDC := (*C.uint8_t)(unsafe.Pointer(&atvID[0]))
+	return VbkByteStream{ref: C.VBK_alt_getATVContainingBlock(v.ref, atvIDC, C.int(len(atvID)))}
 }
 
-func (v *PopContext) AltGetVTBContainingBlock(vtb_id []byte) VbkByteStream {
-	vtb_idC := (*C.uint8_t)(unsafe.Pointer(&vtb_id[0]))
-	return VbkByteStream{ref: C.VBK_alt_getVTBContainingBlock(v.ref, vtb_idC, C.int(len(vtb_id)))}
+// AltGetVTBContainingBlock ...
+func (v *PopContext) AltGetVTBContainingBlock(vtbID []byte) VbkByteStream {
+	vtbIDC := (*C.uint8_t)(unsafe.Pointer(&vtbID[0]))
+	return VbkByteStream{ref: C.VBK_alt_getVTBContainingBlock(v.ref, vtbIDC, C.int(len(vtbID)))}
 }
 
-func (v *PopContext) AltGetVbkBlockContainingBlock(vbk_id []byte) VbkByteStream {
-	vbk_idC := (*C.uint8_t)(unsafe.Pointer(&vbk_id[0]))
-	return VbkByteStream{ref: C.VBK_alt_getVbkBlockContainingBlock(v.ref, vbk_idC, C.int(len(vbk_id)))}
+// AltGetVbkBlockContainingBlock ...
+func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID []byte) VbkByteStream {
+	vbkIDC := (*C.uint8_t)(unsafe.Pointer(&vbkID[0]))
+	return VbkByteStream{ref: C.VBK_alt_getVbkBlockContainingBlock(v.ref, vbkIDC, C.int(len(vbkID)))}
 }
 
-func (v *PopContext) VbkGetVTBContainingBlock(vtb_id []byte) VbkByteStream {
-	vtb_idC := (*C.uint8_t)(unsafe.Pointer(&vtb_id[0]))
-	return VbkByteStream{ref: C.VBK_vbk_getVTBContainingBlock(v.ref, vtb_idC, C.int(len(vtb_id)))}
+// VbkGetVTBContainingBlock ...
+func (v *PopContext) VbkGetVTBContainingBlock(vtbID []byte) VbkByteStream {
+	vtbIDC := (*C.uint8_t)(unsafe.Pointer(&vtbID[0]))
+	return VbkByteStream{ref: C.VBK_vbk_getVTBContainingBlock(v.ref, vtbIDC, C.int(len(vtbID)))}
 }
 
 // MemPoolSubmitAtv - returns true if payload is valid, false otherwise.
