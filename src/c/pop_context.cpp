@@ -100,6 +100,8 @@ bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
                                         int bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(block_bytes);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
 
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> bytes(block_bytes, bytes_size);
@@ -110,8 +112,6 @@ bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
     return false;
   }
 
-  VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
   if (!self->context->altTree->acceptBlockHeader(blk, state)) {
     return false;
   }
@@ -127,6 +127,8 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
   VBK_ASSERT(self);
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(payloads_bytes);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
 
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> p_bytes(payloads_bytes,
@@ -139,8 +141,6 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
 
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
 
-  VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
   self->context->altTree->acceptBlock(hash, popData);
 }
 
@@ -152,6 +152,8 @@ bool VBK_AltBlockTree_addPayloads(PopContext* self,
   VBK_ASSERT(self);
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(payloads_bytes);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
 
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> p_bytes(payloads_bytes,
@@ -164,8 +166,6 @@ bool VBK_AltBlockTree_addPayloads(PopContext* self,
 
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
 
-  VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
   return self->context->altTree->addPayloads(hash, popData, state);
 }
 
@@ -174,10 +174,10 @@ bool VBK_AltBlockTree_loadTip(PopContext* self,
                               int hash_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash_bytes);
-  altintegration::ValidationState state;
-  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
+  altintegration::ValidationState state;
+  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   return self->context->altTree->loadTip(hash, state);
 }
 
@@ -189,10 +189,10 @@ int VBK_AltBlockTree_comparePopScore(PopContext* self,
   VBK_ASSERT(self);
   VBK_ASSERT(A_hash_bytes);
   VBK_ASSERT(B_hash_bytes);
-  std::vector<uint8_t> A_hash(A_hash_bytes, A_hash_bytes + A_hash_bytes_size);
-  std::vector<uint8_t> B_hash(B_hash_bytes, B_hash_bytes + B_hash_bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
+  std::vector<uint8_t> A_hash(A_hash_bytes, A_hash_bytes + A_hash_bytes_size);
+  std::vector<uint8_t> B_hash(B_hash_bytes, B_hash_bytes + B_hash_bytes_size);
   return self->context->altTree->comparePopScore(A_hash, B_hash);
 }
 
@@ -201,9 +201,9 @@ void VBK_AltBlockTree_removeSubtree(PopContext* self,
                                     int hash_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash_bytes);
-  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
+  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   self->context->altTree->removeSubtree(hash);
 }
 
@@ -212,10 +212,10 @@ bool VBK_AltBlockTree_setState(PopContext* self,
                                int hash_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash_bytes);
-  altintegration::ValidationState state;
-  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
+  altintegration::ValidationState state;
+  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   return self->context->altTree->setState(hash, state);
 }
 
@@ -228,9 +228,9 @@ bool VBK_btc_getBlockIndex(PopContext* self,
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(blockindex);
   VBK_ASSERT(blockindex_size);
-  altintegration::Slice<const uint8_t> hash(hash_bytes, hash_bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
+  altintegration::Slice<const uint8_t> hash(hash_bytes, hash_bytes_size);
   auto* blockIndex = self->context->altTree->btc().getBlockIndex(
       altintegration::BtcBlock::hash_t(hash));
   if (blockIndex == nullptr) {
@@ -254,9 +254,9 @@ bool VBK_vbk_getBlockIndex(PopContext* self,
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(blockindex);
   VBK_ASSERT(blockindex_size);
-  altintegration::Slice<const uint8_t> hash(hash_bytes, hash_bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
+  altintegration::Slice<const uint8_t> hash(hash_bytes, hash_bytes_size);
   auto* blockIndex = self->context->altTree->vbk().getBlockIndex(
       altintegration::VbkBlock::hash_t(hash));
   if (blockIndex == nullptr) {
@@ -280,9 +280,9 @@ bool VBK_alt_getBlockIndex(PopContext* self,
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(blockindex);
   VBK_ASSERT(blockindex_size);
-  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
+  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   auto* blockIndex = self->context->altTree->getBlockIndex(hash);
   if (blockIndex == nullptr) {
     return false;
@@ -298,6 +298,8 @@ bool VBK_alt_getBlockIndex(PopContext* self,
 
 VBK_ByteStream* VBK_alt_BestBlock(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* tip = self->context->altTree->getBestChain().tip();
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
@@ -307,6 +309,8 @@ VBK_ByteStream* VBK_alt_BestBlock(PopContext* self) {
 
 VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* tip = self->context->altTree->vbk().getBestChain().tip();
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
@@ -316,6 +320,8 @@ VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self) {
 
 VBK_ByteStream* VBK_btc_BestBlock(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* tip = self->context->altTree->btc().getBestChain().tip();
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
@@ -326,6 +332,8 @@ VBK_ByteStream* VBK_btc_BestBlock(PopContext* self) {
 VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
                                                    int height) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* block = self->context->altTree->getBestChain()[height];
   if (block == nullptr) {
     return nullptr;
@@ -338,6 +346,8 @@ VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
 VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
                                                    int height) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* block = self->context->altTree->vbk().getBestChain()[height];
   if (block == nullptr) {
     return nullptr;
@@ -350,6 +360,8 @@ VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
 VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
                                                    int height) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   auto* block = self->context->altTree->btc().getBestChain()[height];
   if (block == nullptr) {
     return nullptr;
@@ -364,6 +376,8 @@ VBK_ByteStream* VBK_alt_getATVContainingBlock(PopContext* self,
                                               int p_id_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(p_id);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   std::vector<uint8_t> atv_id{p_id, p_id + p_id_size};
   auto alt_hashes =
       self->context->altTree->getPayloadsIndex().getContainingAltBlocks(atv_id);
@@ -381,6 +395,8 @@ VBK_ByteStream* VBK_alt_getVTBContainingBlock(PopContext* self,
                                               int p_id_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(p_id);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   std::vector<uint8_t> vtb_id{p_id, p_id + p_id_size};
   auto alt_hashes =
       self->context->altTree->getPayloadsIndex().getContainingAltBlocks(vtb_id);
@@ -398,6 +414,8 @@ VBK_ByteStream* VBK_alt_getVbkBlockContainingBlock(PopContext* self,
                                                    int p_id_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(p_id);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   std::vector<uint8_t> vbkblock_id{p_id, p_id + p_id_size};
   auto alt_hashes =
       self->context->altTree->getPayloadsIndex().getContainingAltBlocks(
@@ -416,6 +434,8 @@ VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
                                               int p_id_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(p_id);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
   std::vector<uint8_t> vtb_id{p_id, p_id + p_id_size};
   auto vbk_hashes =
       self->context->altTree->getPayloadsIndex().getContainingAltBlocks(vtb_id);
@@ -447,10 +467,10 @@ int VBK_MemPool_submit_atv(PopContext* self,
                            int bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(bytes);
-  altintegration::ValidationState state;
-  altintegration::Slice<const uint8_t> atv_bytes(bytes, bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
+  altintegration::ValidationState state;
+  altintegration::Slice<const uint8_t> atv_bytes(bytes, bytes_size);
   auto r =
       self->context->mempool->submit<altintegration::ATV>(atv_bytes, state);
   return handleSubmitResponse(r);
@@ -461,10 +481,10 @@ int VBK_MemPool_submit_vtb(PopContext* self,
                            int bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(bytes);
-  altintegration::ValidationState state;
-  altintegration::Slice<const uint8_t> vtb_bytes(bytes, bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
+  altintegration::ValidationState state;
+  altintegration::Slice<const uint8_t> vtb_bytes(bytes, bytes_size);
   auto r =
       self->context->mempool->submit<altintegration::VTB>(vtb_bytes, state);
   return handleSubmitResponse(r);
@@ -475,10 +495,10 @@ int VBK_MemPool_submit_vbk(PopContext* self,
                            int bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(bytes);
-  altintegration::ValidationState state;
-  altintegration::Slice<const uint8_t> vbk_bytes(bytes, bytes_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
+  altintegration::ValidationState state;
+  altintegration::Slice<const uint8_t> vbk_bytes(bytes, bytes_size);
   auto r = self->context->mempool->submit<altintegration::VbkBlock>(vbk_bytes,
                                                                     state);
   return handleSubmitResponse(r);
@@ -502,6 +522,8 @@ void VBK_MemPool_removeAll(PopContext* self,
                            int bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(bytes);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> p_bytes(bytes, bytes_size);
   altintegration::ReadStream stream(p_bytes);
@@ -509,8 +531,6 @@ void VBK_MemPool_removeAll(PopContext* self,
   bool res = altintegration::Deserialize(stream, popData, state);
   VBK_ASSERT_MSG(
       res, "can not deserialize PopData, error: %s", state.toString());
-  VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->mempool);
   self->context->mempool->removeAll(popData);
 }
 
@@ -519,6 +539,8 @@ VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
                                    int id_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(id_bytes);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   auto atv_id = altintegration::ATV::id_t(
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
   auto* atv = self->context->mempool->get<altintegration::ATV>(atv_id);
@@ -535,6 +557,8 @@ VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
                                    int id_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(id_bytes);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   auto vtb_id = altintegration::ATV::id_t(
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
   auto* vtb = self->context->mempool->get<altintegration::VTB>(vtb_id);
@@ -551,6 +575,8 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
                                         int id_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(id_bytes);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   auto vbk_id = altintegration::VbkBlock::id_t(
       altintegration::Slice<const uint8_t>(id_bytes, id_bytes_size));
   auto* vbk = self->context->mempool->get<altintegration::VbkBlock>(vbk_id);
@@ -564,6 +590,8 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
 
 VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   auto atvs = self->context->mempool->getMap<altintegration::ATV>();
 
   std::vector<altintegration::ATV::id_t> atv_ids;
@@ -581,6 +609,8 @@ VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self) {
 
 VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   auto vtbs = self->context->mempool->getMap<altintegration::VTB>();
 
   std::vector<altintegration::VTB::id_t> vtb_ids;
@@ -598,6 +628,8 @@ VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self) {
 
 VBK_ByteStream* VBK_MemPool_GetVbkBlocks(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   auto vbks = self->context->mempool->getMap<altintegration::VbkBlock>();
 
   std::vector<altintegration::VbkBlock::id_t> vbk_ids;
@@ -615,6 +647,8 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlocks(PopContext* self) {
 
 VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   auto atvs = self->context->mempool->getInFlightMap<altintegration::ATV>();
 
   std::vector<altintegration::ATV::id_t> atv_ids;
@@ -632,6 +666,8 @@ VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self) {
 
 VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context)
+  VBK_ASSERT(self->context->mempool);
   auto vtbs = self->context->mempool->getInFlightMap<altintegration::VTB>();
 
   std::vector<altintegration::VTB::id_t> vtb_ids;
@@ -649,6 +685,8 @@ VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self) {
 
 VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self) {
   VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->mempool);
   auto vbks =
       self->context->mempool->getInFlightMap<altintegration::VbkBlock>();
 

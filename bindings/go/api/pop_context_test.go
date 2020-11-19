@@ -2,34 +2,118 @@ package api
 
 import (
 	"bytes"
-	"encoding/hex"
 	"testing"
 
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPopContext(t *testing.T) {
+// MemPool tests
+
+func TestPopContextSubmitVbk(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
 	defer popContext.Free()
 
-	res, err := popContext.GetPop()
+	miner := NewMockMiner()
+	defer miner.Free()
+
+	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)
-	assert.Equal(
-		&entities.PopData{
-			Version: 1,
-			Context: []entities.VbkBlock{},
-			Vtbs:    []entities.Vtb{},
-			Atvs:    []entities.Atv{},
-		},
-		res,
-	)
-	vbkblock, _ := hex.DecodeString("41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001")
-	stream := bytes.NewReader(vbkblock)
-	block := &entities.VbkBlock{}
-	assert.NoError(block.FromVbkEncoding(stream))
-	result := popContext.SubmitVbk(block)
-	assert.Equal(2, result)
+
+	var buffer bytes.Buffer
+	index.Header.ToRaw(&buffer)
+	var vbkBlock entities.VbkBlock
+	err = vbkBlock.FromRaw(&buffer)
+	assert.NoError(err)
+
+	state := popContext.SubmitVbk(&vbkBlock)
+	// state == 0, valid vbkBlock
+	assert.Equal(0, state)
+
+	ids, err := popContext.GetVtbs()
+	assert.NoError(err)
+	assert.Equal(0, len(ids))
+	ids, err = popContext.GetAtvs()
+	assert.NoError(err)
+	assert.Equal(0, len(ids))
+	ids, err = popContext.GetVbkBlocks()
+	assert.NoError(err)
+	assert.Equal(1, len(ids))
+}
+
+func TestPopContextSubmitVtb(t *testing.T) {
+	assert := assert.New(t)
+
+	popContext := generateTestPopContext(t)
+	defer popContext.Free()
+
+	miner := NewMockMiner()
+	defer miner.Free()
+
+	index, err := miner.MineVbkBlockTip()
+	assert.NoError(err)
+
+	var buffer bytes.Buffer
+	index.Header.ToRaw(&buffer)
+	var vbkBlock entities.VbkBlock
+	err = vbkBlock.FromRaw(&buffer)
+	assert.NoError(err)
+
+	state := popContext.SubmitVbk(&vbkBlock)
+	// state == 0, valid vbkBlock
+	assert.Equal(0, state)
+
+	btcTip, err := popContext.BtcBestBlock()
+	assert.NoError(err)
+
+	vtb, err := miner.MineVtb(&vbkBlock, btcTip.GetHash())
+	assert.NoError(err)
+
+	state = popContext.SubmitVtb(vtb)
+	// state == 0, valid vtb
+	assert.Equal(0, state)
+
+	ids, err := popContext.GetVtbs()
+	assert.NoError(err)
+	assert.Equal(1, len(ids))
+	ids, err = popContext.GetAtvs()
+	assert.NoError(err)
+	assert.Equal(0, len(ids))
+	ids, err = popContext.GetVbkBlocks()
+	assert.NoError(err)
+	assert.Equal(2, len(ids))
+}
+
+func TestPopContextSubmitAtv(t *testing.T) {
+	assert := assert.New(t)
+
+	popContext := generateTestPopContext(t)
+	defer popContext.Free()
+
+	miner := NewMockMiner()
+	defer miner.Free()
+
+	var publicationData entities.PublicationData
+	publicationData.ContextInfo = []byte{1, 2, 3, 4}
+	publicationData.Header = []byte{1, 2, 3, 4, 5, 7}
+	publicationData.Identifier = 1
+	publicationData.PayoutInfo = []byte{1, 2, 3, 4, 5, 6}
+	atv, err := miner.MineAtv(&publicationData)
+	assert.NoError(err)
+
+	state := popContext.SubmitAtv(atv)
+	// state == 0, valid atv
+	assert.Equal(0, state)
+
+	ids, err := popContext.GetVtbs()
+	assert.NoError(err)
+	assert.Equal(0, len(ids))
+	ids, err = popContext.GetAtvs()
+	assert.NoError(err)
+	assert.Equal(1, len(ids))
+	ids, err = popContext.GetVbkBlocks()
+	assert.NoError(err)
+	assert.Equal(1, len(ids))
 }

@@ -93,13 +93,19 @@ VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
  * @param[in] endorsed_vbk_block endorsed altintegration::VbkBlock in the
  * VbkEncoding format
  * @param[in] endorsed_vbk_block_size size of endorsed block
+ * @param[in] last_known_btc_block_hash altintegration::BtcBlock hash of the
+ * last known block
+ * @param[in] last_known_btc_block_hash_size size of the last known
+ * altintegration::BtcBlock hash
  * @return VBK_ByteStream* stream that stores altintgration::VTB in the
  * VbkEncoding format
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
                                       const uint8_t* endorsed_vbk_block,
-                                      int endorsed_vbk_block_size);
+                                      int endorsed_vbk_block_size,
+                                      const uint8_t* last_known_btc_block_hash,
+                                      int last_known_btc_block_hash_size);
 
 #ifdef __cplusplus
 }  // end of extern "C"

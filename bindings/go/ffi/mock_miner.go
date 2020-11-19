@@ -43,9 +43,10 @@ func (v *MockMiner) MineAtv(publication_data []byte) VbkByteStream {
 }
 
 // MineVtb ...
-func (v *MockMiner) MineVtb(vbk_block []byte) VbkByteStream {
+func (v *MockMiner) MineVtb(vbk_block []byte, hash []byte) VbkByteStream {
 	vbk_blockC := (*C.uint8_t)(unsafe.Pointer(&vbk_block[0]))
-	return NewVbkByteStream(C.VBK_MockMiner_mineVTB(v.ref, vbk_blockC, C.int(len(vbk_block))))
+	hashC := (*C.uint8_t)(unsafe.Pointer(&hash[0]))
+	return NewVbkByteStream(C.VBK_MockMiner_mineVTB(v.ref, vbk_blockC, C.int(len(vbk_block)), hashC, C.int(len(hash))))
 }
 
 // Free ...
