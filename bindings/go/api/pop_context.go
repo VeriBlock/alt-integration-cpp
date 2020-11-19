@@ -183,9 +183,12 @@ func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
 func (v *PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.AltBlockAtActiveChainByHeight(height)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewBlockIndexAlt()
-	if err := blockIndex.FromRaw(&stream); err != nil {
+	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -195,9 +198,12 @@ func (v *PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockI
 func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.VbkBlockAtActiveChainByHeight(height)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewBlockIndexVbk()
-	if err := blockIndex.FromRaw(&stream); err != nil {
+	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -207,20 +213,26 @@ func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockI
 func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.BtcBlockAtActiveChainByHeight(height)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewBlockIndexBtc()
-	if err := blockIndex.FromRaw(&stream); err != nil {
+	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
 }
 
-// AltGetATVContainingBlock ...
-func (v *PopContext) AltGetATVContainingBlock(atvID []byte) ([][]byte, error) {
+// AltGetAtvContainingBlock ...
+func (v *PopContext) AltGetAtvContainingBlock(atvID []byte) ([][]byte, error) {
 	defer v.lock()()
-	stream := v.popContext.AltGetATVContainingBlock(atvID)
+	stream := v.popContext.AltGetAtvContainingBlock(atvID)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-	encodedHashes, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	encodedHashes, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -233,13 +245,15 @@ func (v *PopContext) AltGetATVContainingBlock(atvID []byte) ([][]byte, error) {
 	return hashes, nil
 }
 
-// AltGetVTBContainingBlock ...
-func (v *PopContext) AltGetVTBContainingBlock(vtbID []byte) ([][]byte, error) {
+// AltGetVtbContainingBlock ...
+func (v *PopContext) AltGetVtbContainingBlock(vtbID []byte) ([][]byte, error) {
 	defer v.lock()()
-	stream := v.popContext.AltGetATVContainingBlock(vtbID)
+	stream := v.popContext.AltGetVtbContainingBlock(vtbID)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	encodedHashes, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	encodedHashes, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -255,10 +269,12 @@ func (v *PopContext) AltGetVTBContainingBlock(vtbID []byte) ([][]byte, error) {
 // AltGetVbkBlockContainingBlock ...
 func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID []byte) ([][]byte, error) {
 	defer v.lock()()
-	stream := v.popContext.AltGetATVContainingBlock(vbkID)
+	stream := v.popContext.AltGetVbkBlockContainingBlock(vbkID)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	encodedHashes, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	encodedHashes, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -271,13 +287,15 @@ func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID []byte) ([][]byte, erro
 	return hashes, nil
 }
 
-// VbkGetVTBContainingBlock ...
-func (v *PopContext) VbkGetVTBContainingBlock(vtbID []byte) ([][]byte, error) {
+// VbkGetVtbContainingBlock ...
+func (v *PopContext) VbkGetVtbContainingBlock(vtbID []byte) ([][]byte, error) {
 	defer v.lock()()
-	stream := v.popContext.AltGetATVContainingBlock(vtbID)
+	stream := v.popContext.VbkGetVtbContainingBlock(vtbID)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	encodedHashes, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	encodedHashes, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
