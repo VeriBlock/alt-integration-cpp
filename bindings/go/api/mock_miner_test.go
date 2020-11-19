@@ -67,32 +67,37 @@ func TestMineAtv(t *testing.T) {
 }
 
 func TestMineVtb(t *testing.T) {
-	// TODO fix test
-	// assert := assert.New(t)
+	assert := assert.New(t)
 
-	// mockMiner := NewMockMiner()
-	// defer mockMiner.Free()
+	popContext := generateTestPopContext(t)
+	defer popContext.Free()
+	popContext.BtcBestBlock()
 
-	// index, err := mockMiner.MineVbkBlockTip()
-	// assert.NoError(err)
+	mockMiner := NewMockMiner()
+	defer mockMiner.Free()
 
-	// var buffer bytes.Buffer
-	// index.ToRaw(&buffer)
-	// var vbkBlock entities.VbkBlock
-	// err = vbkBlock.FromRaw(&buffer)
-	// assert.NoError(err)
-	// // TODO remove this
-	// fmt.Printf("vbkBlock hash: %v, prev: %v \n", vbkBlock.GetHash(), vbkBlock.PreviousBlock)
+	index, err := mockMiner.MineVbkBlockTip()
+	assert.NoError(err)
 
-	// vtb, err := mockMiner.MineVtb(&vbkBlock)
-	// assert.NoError(err)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Height, vbkBlock.Height)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Nonce, vbkBlock.Nonce)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Timestamp, vbkBlock.Timestamp)
-	// assert.Equal(vtb.Transaction.PublishedBlock.Version, vbkBlock.Version)
-	// assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.MerkleRoot[:], vbkBlock.MerkleRoot[:]))
-	// assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousBlock[:], vbkBlock.PreviousBlock[:]))
-	// assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousKeystone[:], vbkBlock.PreviousKeystone[:]))
-	// assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.SecondPreviousKeystone[:], vbkBlock.SecondPreviousKeystone[:]))
+	var buffer bytes.Buffer
+	index.Header.ToRaw(&buffer)
+	var vbkBlock entities.VbkBlock
+	err = vbkBlock.FromRaw(&buffer)
+	assert.NoError(err)
+
+	btcTip, err := popContext.BtcBestBlock()
+	assert.NoError(err)
+
+	vtb, err := mockMiner.MineVtb(&vbkBlock, btcTip.GetHash())
+	assert.NoError(err)
+	assert.Equal(vtb.ContainingBlock.Height, vbkBlock.Height+1)
+	assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)
+	assert.Equal(vtb.Transaction.PublishedBlock.Height, vbkBlock.Height)
+	assert.Equal(vtb.Transaction.PublishedBlock.Nonce, vbkBlock.Nonce)
+	assert.Equal(vtb.Transaction.PublishedBlock.Timestamp, vbkBlock.Timestamp)
+	assert.Equal(vtb.Transaction.PublishedBlock.Version, vbkBlock.Version)
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.MerkleRoot[:], vbkBlock.MerkleRoot[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousBlock[:], vbkBlock.PreviousBlock[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousKeystone[:], vbkBlock.PreviousKeystone[:]))
+	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.SecondPreviousKeystone[:], vbkBlock.SecondPreviousKeystone[:]))
 }
