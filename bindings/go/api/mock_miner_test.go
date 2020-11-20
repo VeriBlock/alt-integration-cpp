@@ -52,18 +52,18 @@ func TestMineAtv(t *testing.T) {
 	mockMiner := NewMockMiner()
 	defer mockMiner.Free()
 
-	var publication_data entities.PublicationData
-	publication_data.ContextInfo = []byte{1, 2, 3, 4}
-	publication_data.Header = []byte{1, 2, 3, 4, 5}
-	publication_data.Identifier = 10
-	publication_data.PayoutInfo = []byte{1, 2, 3, 4, 5, 6}
+	var publicationData entities.PublicationData
+	publicationData.ContextInfo = []byte{1, 2, 3, 4}
+	publicationData.Header = []byte{1, 2, 3, 4, 5}
+	publicationData.Identifier = 10
+	publicationData.PayoutInfo = []byte{1, 2, 3, 4, 5, 6}
 
-	atv, err := mockMiner.MineAtv(&publication_data)
+	atv, err := mockMiner.MineAtv(&publicationData)
 	assert.NoError(err)
-	assert.True(bytes.Equal(atv.Transaction.PublicationData.ContextInfo, publication_data.ContextInfo))
-	assert.True(bytes.Equal(atv.Transaction.PublicationData.Header, publication_data.Header))
-	assert.True(bytes.Equal(atv.Transaction.PublicationData.PayoutInfo, publication_data.PayoutInfo))
-	assert.Equal(atv.Transaction.PublicationData.Identifier, publication_data.Identifier)
+	assert.True(bytes.Equal(atv.Transaction.PublicationData.ContextInfo, publicationData.ContextInfo))
+	assert.True(bytes.Equal(atv.Transaction.PublicationData.Header, publicationData.Header))
+	assert.True(bytes.Equal(atv.Transaction.PublicationData.PayoutInfo, publicationData.PayoutInfo))
+	assert.Equal(atv.Transaction.PublicationData.Identifier, publicationData.Identifier)
 }
 
 func TestMineVtb(t *testing.T) {
