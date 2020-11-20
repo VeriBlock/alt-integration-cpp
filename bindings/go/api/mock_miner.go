@@ -30,9 +30,7 @@ func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.miner.MineBtcBlockTip()
 	defer stream.Free()
-	blockIndex := entities.BlockIndex{}
-	blockIndex.Header = &entities.BtcBlock{}
-	blockIndex.Addon = &entities.BtcBlockAddon{}
+	blockIndex := entities.NewBtcBlockIndex()
 	err := blockIndex.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -41,13 +39,11 @@ func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 }
 
 // MineBtcBlock - Mine new altintegration::BtcBlock on the top of the provided block.
-func (v *MockMiner) MineBtcBlock(block_hash []byte) (*entities.BlockIndex, error) {
+func (v *MockMiner) MineBtcBlock(blockHash []byte) (*entities.BlockIndex, error) {
 	defer v.lock()()
-	stream := v.miner.MineBtcBlock(block_hash)
+	stream := v.miner.MineBtcBlock(blockHash)
 	defer stream.Free()
-	blockIndex := entities.BlockIndex{}
-	blockIndex.Header = &entities.BtcBlock{}
-	blockIndex.Addon = &entities.BtcBlockAddon{}
+	blockIndex := entities.NewBtcBlockIndex()
 	err := blockIndex.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -60,9 +56,7 @@ func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.miner.MineVbkBlockTip()
 	defer stream.Free()
-	blockIndex := entities.BlockIndex{}
-	blockIndex.Header = &entities.VbkBlock{}
-	blockIndex.Addon = &entities.VbkBlockAddon{}
+	blockIndex := entities.NewVbkBlockIndex()
 	err := blockIndex.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -71,13 +65,11 @@ func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
 }
 
 // MineVbkBlock - Mine new altintegration::VbkBlock on the top of the provided block.
-func (v *MockMiner) MineVbkBlock(block_hash []byte) (*entities.BlockIndex, error) {
+func (v *MockMiner) MineVbkBlock(blockHash []byte) (*entities.BlockIndex, error) {
 	defer v.lock()()
-	stream := v.miner.MineVbkBlock(block_hash)
+	stream := v.miner.MineVbkBlock(blockHash)
 	defer stream.Free()
-	blockIndex := entities.BlockIndex{}
-	blockIndex.Header = &entities.VbkBlock{}
-	blockIndex.Addon = &entities.VbkBlockAddon{}
+	blockIndex := entities.NewVbkBlockIndex()
 	err := blockIndex.FromRaw(&stream)
 	if err != nil {
 		return nil, err
@@ -86,17 +78,15 @@ func (v *MockMiner) MineVbkBlock(block_hash []byte) (*entities.BlockIndex, error
 }
 
 // MineAtv ...
-func (v *MockMiner) MineAtv(publication_data *entities.PublicationData) (*entities.Atv, error) {
+func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entities.Atv, error) {
 	defer v.lock()()
 	var buffer bytes.Buffer
-	err := publication_data.ToRaw(&buffer)
+	err := publicationData.ToRaw(&buffer)
 	if err != nil {
 		return nil, err
 	}
-
 	stream := v.miner.MineAtv(buffer.Bytes())
 	defer stream.Free()
-
 	var atv entities.Atv
 	err = atv.FromVbkEncoding(&stream)
 	if err != nil {
@@ -106,23 +96,21 @@ func (v *MockMiner) MineAtv(publication_data *entities.PublicationData) (*entiti
 }
 
 // MineVtb ...
-func (v *MockMiner) MineVtb(endorsed_block *entities.VbkBlock, hash []byte) (*entities.Vtb, error) {
+func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*entities.Vtb, error) {
 	defer v.lock()()
 	var buffer bytes.Buffer
-	err := endorsed_block.ToVbkEncoding(&buffer)
+	err := endorsedBlock.ToVbkEncoding(&buffer)
 	if err != nil {
 		return nil, err
 	}
 
 	stream := v.miner.MineVtb(buffer.Bytes(), hash)
 	defer stream.Free()
-
 	var vtb entities.Vtb
 	err = vtb.FromVbkEncoding(&stream)
 	if err != nil {
 		return nil, err
 	}
-
 	return &vtb, nil
 }
 

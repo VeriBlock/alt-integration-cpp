@@ -52,6 +52,30 @@ type GenericBlockHeader interface {
 	GetDifficulty() uint32
 }
 
+// NewBtcBlockIndex - Returns new BTC Block Index
+func NewBtcBlockIndex() BlockIndex {
+	blockIndex := BlockIndex{}
+	blockIndex.Header = &BtcBlock{}
+	blockIndex.Addon = &BtcBlockAddon{}
+	return blockIndex
+}
+
+// NewVbkBlockIndex - Returns new VBK Block Index
+func NewVbkBlockIndex() BlockIndex {
+	blockIndex := BlockIndex{}
+	blockIndex.Header = &VbkBlock{}
+	blockIndex.Addon = &VbkBlockAddon{}
+	return blockIndex
+}
+
+// NewAltBlockIndex - Returns new ALT Block Index
+func NewAltBlockIndex() BlockIndex {
+	blockIndex := BlockIndex{}
+	blockIndex.Header = &AltBlock{}
+	blockIndex.Addon = &AltBlockAddon{}
+	return blockIndex
+}
+
 // BlockIndex ...
 type BlockIndex struct {
 	Addon veriblock.SerdeRaw

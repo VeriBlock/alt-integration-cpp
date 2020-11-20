@@ -20,9 +20,9 @@ func (v *MockMiner) MineBtcBlockTip() VbkByteStream {
 }
 
 // MineBtcBlock - Mine new altintegration::BtcBlock on the top of the provided block.
-func (v *MockMiner) MineBtcBlock(block_hash []byte) VbkByteStream {
-	block_hashC := (*C.uint8_t)(unsafe.Pointer(&block_hash[0]))
-	return NewVbkByteStream(C.VBK_MockMiner_mineBtcBlock(v.ref, block_hashC, C.int(len(block_hash))))
+func (v *MockMiner) MineBtcBlock(blockHash []byte) VbkByteStream {
+	blockHashC := (*C.uint8_t)(unsafe.Pointer(&blockHash[0]))
+	return NewVbkByteStream(C.VBK_MockMiner_mineBtcBlock(v.ref, blockHashC, C.int(len(blockHash))))
 }
 
 // MineVbkBlockTip - Mine new altintegration::VbkBlock on the top of the current vbktree.
@@ -31,22 +31,22 @@ func (v *MockMiner) MineVbkBlockTip() VbkByteStream {
 }
 
 // MineVbkBlock - Mine new altintegration::VbkBlock on the top of the provided block.
-func (v *MockMiner) MineVbkBlock(block_hash []byte) VbkByteStream {
-	block_hashC := (*C.uint8_t)(unsafe.Pointer(&block_hash[0]))
-	return NewVbkByteStream(C.VBK_MockMiner_mineVbkBlock(v.ref, block_hashC, C.int(len(block_hash))))
+func (v *MockMiner) MineVbkBlock(blockHash []byte) VbkByteStream {
+	blockHashC := (*C.uint8_t)(unsafe.Pointer(&blockHash[0]))
+	return NewVbkByteStream(C.VBK_MockMiner_mineVbkBlock(v.ref, blockHashC, C.int(len(blockHash))))
 }
 
 // MineAtv ...
-func (v *MockMiner) MineAtv(publication_data []byte) VbkByteStream {
-	publication_dataC := (*C.uint8_t)(unsafe.Pointer(&publication_data[0]))
-	return NewVbkByteStream(C.VBK_MockMiner_mineATV(v.ref, publication_dataC, C.int(len(publication_data))))
+func (v *MockMiner) MineAtv(publicationData []byte) VbkByteStream {
+	publicationDataC := (*C.uint8_t)(unsafe.Pointer(&publicationData[0]))
+	return NewVbkByteStream(C.VBK_MockMiner_mineATV(v.ref, publicationDataC, C.int(len(publicationData))))
 }
 
 // MineVtb ...
-func (v *MockMiner) MineVtb(vbk_block []byte, hash []byte) VbkByteStream {
-	vbk_blockC := (*C.uint8_t)(unsafe.Pointer(&vbk_block[0]))
+func (v *MockMiner) MineVtb(vbkBlock []byte, hash []byte) VbkByteStream {
+	vbkBlockC := (*C.uint8_t)(unsafe.Pointer(&vbkBlock[0]))
 	hashC := (*C.uint8_t)(unsafe.Pointer(&hash[0]))
-	return NewVbkByteStream(C.VBK_MockMiner_mineVTB(v.ref, vbk_blockC, C.int(len(vbk_block)), hashC, C.int(len(hash))))
+	return NewVbkByteStream(C.VBK_MockMiner_mineVTB(v.ref, vbkBlockC, C.int(len(vbkBlock)), hashC, C.int(len(hash))))
 }
 
 // Free ...
