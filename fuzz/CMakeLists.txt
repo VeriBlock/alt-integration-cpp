@@ -7,6 +7,8 @@ Clean build dir and try this:
 ")
 endif()
 
+add_cache_flag(CMAKE_CXX_FLAGS -fprofile-instr-generate -fcoverage-mapping)
+
 add_custom_target(fuzz
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS fuzz_targets
@@ -29,9 +31,8 @@ function(add_fuzz FUZZ_TARGET)
             "${multiValueArgs}"
             ${ARGN})
 
-    if(NOT FUZZ_TIMEOUT)
-        # run each test 900 sec
-        set(FUZZ_TIMEOUT 900)
+    if(FUZZ_TIMEOUT)
+	set(FUZZ_TIMEOUT -max_total_time=${FUZZ_TIMEOUT})
     endif()
     if(NOT FUZZ_MAX_LEN)
         set(FUZZ_MAX_LEN 4096)
@@ -55,7 +56,7 @@ function(add_fuzz FUZZ_TARGET)
     add_custom_command(
             OUTPUT fuzz_targets APPEND
             COMMAND ${FUZZ_TARGET} ARGS
-                -max_total_time=${FUZZ_TIMEOUT}
+                ${FUZZ_TIMEOUT}
                 -max_len=${FUZZ_MAX_LEN}
                 -print_final_stats=1
                 -fork=${N_PROCESSORS}
@@ -65,6 +66,10 @@ function(add_fuzz FUZZ_TARGET)
             VERBATIM
     )
 
+    add_test(
+            NAME ${FUZZ_TARGET}
+            COMMAND ${FUZZ_TARGET} -runs=1 ${FUZZ_CORPUS_DIR}
+    )
 endfunction()
 
 add_fuzz(popdata_deserialization_fuzz

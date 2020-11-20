@@ -203,6 +203,5 @@ endif()
 
 
 if(FUZZING)
-    include(cmake/libprotobuffuzzer.cmake)
     add_subdirectory(fuzz)
 endif()
