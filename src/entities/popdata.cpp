@@ -83,18 +83,30 @@ bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
     return state.Invalid("pop-bad-version");
   }
 
-  if (!readArrayOf<VbkBlock>(
-          stream, pd.context, state, static_cast<vbkde>(Deserialize))) {
+  if (!readArrayOf<VbkBlock>(stream,
+                             pd.context,
+                             state,
+                             0,
+                             MAX_POPDATA_VBKS,
+                             static_cast<vbkde>(Deserialize))) {
     return state.Invalid("pop-vbk-context");
   }
 
-  if (!readArrayOf<ATV>(
-          stream, pd.atvs, state, static_cast<atvde>(Deserialize))) {
+  if (!readArrayOf<ATV>(stream,
+                        pd.atvs,
+                        state,
+                        0,
+                        MAX_POPDATA_ATVS,
+                        static_cast<atvde>(Deserialize))) {
     return state.Invalid("pop-atv-context");
   }
 
-  if (!readArrayOf<VTB>(
-          stream, pd.vtbs, state, static_cast<vtbde>(Deserialize))) {
+  if (!readArrayOf<VTB>(stream,
+                        pd.vtbs,
+                        state,
+                        0,
+                        MAX_POPDATA_VTBS,
+                        static_cast<vtbde>(Deserialize))) {
     return state.Invalid("pop-vtb-context");
   }
   out = pd;
