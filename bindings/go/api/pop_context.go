@@ -148,7 +148,7 @@ func (v *PopContext) AltBestBlock() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.AltBestBlock()
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndexAlt()
+	blockIndex := entities.NewAltBlockIndex()
 	if err := blockIndex.FromRaw(&stream); err != nil {
 		return nil, err
 	}
@@ -160,7 +160,7 @@ func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.VbkBestBlock()
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndexVbk()
+	blockIndex := entities.NewVbkBlockIndex()
 	if err := blockIndex.FromRaw(&stream); err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.BtcBestBlock()
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndexBtc()
+	blockIndex := entities.NewBtcBlockIndex()
 	if err := blockIndex.FromRaw(&stream); err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ func (v *PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockI
 		return nil, nil
 	}
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndexAlt()
+	blockIndex := entities.NewAltBlockIndex()
 	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockI
 		return nil, nil
 	}
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndexVbk()
+	blockIndex := entities.NewVbkBlockIndex()
 	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockI
 		return nil, nil
 	}
 	defer stream.Free()
-	blockIndex := entities.NewBlockIndexBtc()
+	blockIndex := entities.NewBtcBlockIndex()
 	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}

@@ -52,24 +52,24 @@ type GenericBlockHeader interface {
 	GetDifficulty() uint32
 }
 
-// NewBlockIndexBtc - Returns new BTC Block Index
-func NewBlockIndexBtc() BlockIndex {
+// NewBtcBlockIndex - Returns new BTC Block Index
+func NewBtcBlockIndex() BlockIndex {
 	blockIndex := BlockIndex{}
 	blockIndex.Header = &BtcBlock{}
 	blockIndex.Addon = &BtcBlockAddon{}
 	return blockIndex
 }
 
-// NewBlockIndexVbk - Returns new VBK Block Index
-func NewBlockIndexVbk() BlockIndex {
+// NewVbkBlockIndex - Returns new VBK Block Index
+func NewVbkBlockIndex() BlockIndex {
 	blockIndex := BlockIndex{}
 	blockIndex.Header = &VbkBlock{}
 	blockIndex.Addon = &VbkBlockAddon{}
 	return blockIndex
 }
 
-// NewBlockIndexAlt - Returns new ALT Block Index
-func NewBlockIndexAlt() BlockIndex {
+// NewAltBlockIndex - Returns new ALT Block Index
+func NewAltBlockIndex() BlockIndex {
 	blockIndex := BlockIndex{}
 	blockIndex.Header = &AltBlock{}
 	blockIndex.Addon = &AltBlockAddon{}
