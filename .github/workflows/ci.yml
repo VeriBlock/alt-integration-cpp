@@ -20,8 +20,9 @@ jobs:
       matrix:
         flags: [
           "-DCLANG_TIDY=ON",
-          "-DASAN=ON",
-          "-DUBSAN=ON",
+          # build fuzzers and run 1 iteration (with fixed corpus) during ctest
+          "-DASAN=ON -DFUZZING=ON",
+          "-DUBSAN=ON -DFUZZING=ON",
           # release build with all dependencies
           "-DTESTING_GO=ON -DWITH_PYPOPMINER=ON -DCMAKE_BUILD_TYPE=Release"
         ]
