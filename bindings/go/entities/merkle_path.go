@@ -3,6 +3,7 @@ package entities
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 	"errors"
 	"io"
 	"unsafe"
@@ -98,4 +99,18 @@ func (v *MerklePath) FromRaw(stream io.Reader, subject [32]byte) error {
 	}
 	v.Subject = subject
 	return nil
+}
+
+// ToJSON ...
+func (v *MerklePath) ToJSON() (map[string]interface{}, error) {
+	layers := make([]string, len(v.Layers))
+	for i, layer := range v.Layers {
+		layers[i] = hex.EncodeToString(layer[:])
+	}
+	res := map[string]interface{}{
+		"index":   v.Index,
+		"subject": hex.EncodeToString(v.Subject[:]),
+		"layers":  layers,
+	}
+	return res, nil
 }

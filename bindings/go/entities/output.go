@@ -24,3 +24,12 @@ func (v *Output) FromVbkEncoding(stream io.Reader) error {
 	}
 	return v.Coin.FromVbkEncoding(stream)
 }
+
+// ToJSON ...
+func (v *Output) ToJSON() (map[string]interface{}, error) {
+	res := map[string]interface{}{
+		"address": v.Address.ToString(),
+		"coin":    v.Coin.Units,
+	}
+	return res, nil
+}

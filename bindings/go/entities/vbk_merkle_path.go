@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"encoding/hex"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -64,4 +65,19 @@ func (v *VbkMerklePath) FromVbkEncoding(stream io.Reader) error {
 		copy(v.Layers[i][:], layer.([]byte))
 	}
 	return nil
+}
+
+// ToJSON ...
+func (v *VbkMerklePath) ToJSON() (map[string]interface{}, error) {
+	layers := make([]string, len(v.Layers))
+	for i, layer := range v.Layers {
+		layers[i] = hex.EncodeToString(layer[:])
+	}
+	res := map[string]interface{}{
+		"treeIndex": v.TreeIndex,
+		"index":     v.Index,
+		"subject":   hex.EncodeToString(v.Subject[:]),
+		"layers":    layers,
+	}
+	return res, nil
 }

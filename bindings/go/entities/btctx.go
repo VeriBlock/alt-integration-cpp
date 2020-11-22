@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"encoding/hex"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -24,4 +25,9 @@ func (v *BtcTx) FromVbkEncoding(stream io.Reader) error {
 	}
 	v.Tx = tx
 	return nil
+}
+
+// ToJSON ...
+func (v *BtcTx) ToJSON() (string, error) {
+	return hex.EncodeToString(v.Tx), nil
 }

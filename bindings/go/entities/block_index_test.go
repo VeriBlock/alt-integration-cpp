@@ -21,7 +21,7 @@ var (
 	defaultVbkBlockIndex = BlockIndex{
 		&defaultVbkBlockAddon,
 		12345,
-		&DefaultVbkBlock,
+		&defaultVbkBlock,
 		BlockValidUnknown,
 	}
 
