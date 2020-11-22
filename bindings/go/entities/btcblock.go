@@ -3,6 +3,7 @@ package entities
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -95,4 +96,18 @@ func (v *BtcBlock) FromRaw(stream io.Reader) error {
 		return err
 	}
 	return binary.Read(stream, binary.LittleEndian, &v.Nonce)
+}
+
+// ToJSON ...
+func (v *BtcBlock) ToJSON() (map[string]interface{}, error) {
+	res := map[string]interface{}{
+		"hash":          hex.EncodeToString(v.GetHash()),
+		"version":       v.Version,
+		"previousBlock": hex.EncodeToString(v.PreviousBlock[:]),
+		"merkleRoot":    hex.EncodeToString(v.MerkleRoot[:]),
+		"timestamp":     v.Timestamp,
+		"bits":          v.Bits,
+		"nonce":         v.Nonce,
+	}
+	return res, nil
 }
