@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"encoding/hex"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -51,4 +52,15 @@ func (v *PublicationData) FromRaw(stream io.Reader) error {
 		return err
 	}
 	return nil
+}
+
+// ToJSON ...
+func (v *PublicationData) ToJSON() (map[string]interface{}, error) {
+	res := map[string]interface{}{
+		"identifier":  v.Identifier,
+		"header":      hex.EncodeToString(v.Header),
+		"payoutInfo":  hex.EncodeToString(v.PayoutInfo),
+		"contextInfo": hex.EncodeToString(v.ContextInfo),
+	}
+	return res, nil
 }

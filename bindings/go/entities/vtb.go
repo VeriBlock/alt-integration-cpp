@@ -3,6 +3,7 @@ package entities
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"io"
 
@@ -56,4 +57,28 @@ func (v *Vtb) FromVbkEncoding(stream io.Reader) error {
 		return err
 	}
 	return v.ContainingBlock.FromVbkEncoding(stream)
+}
+
+// ToJSON ...
+func (v *Vtb) ToJSON() (map[string]interface{}, error) {
+	transaction, err := v.Transaction.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	merklePath, err := v.MerklePath.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	containingBlock, err := v.ContainingBlock.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	res := map[string]interface{}{
+		"id":              hex.EncodeToString(v.GetID()),
+		"version":         v.Version,
+		"transaction":     transaction,
+		"merklePath":      merklePath,
+		"containingBlock": containingBlock,
+	}
+	return res, nil
 }

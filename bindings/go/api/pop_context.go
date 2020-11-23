@@ -147,9 +147,12 @@ func (v *PopContext) SetState(hash []byte) error {
 func (v *PopContext) AltBestBlock() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.AltBestBlock()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewAltBlockIndex()
-	if err := blockIndex.FromRaw(&stream); err != nil {
+	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -159,9 +162,12 @@ func (v *PopContext) AltBestBlock() (*entities.BlockIndex, error) {
 func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.VbkBestBlock()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewVbkBlockIndex()
-	if err := blockIndex.FromRaw(&stream); err != nil {
+	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -171,9 +177,12 @@ func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
 func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.BtcBestBlock()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewBtcBlockIndex()
-	if err := blockIndex.FromRaw(&stream); err != nil {
+	if err := blockIndex.FromRaw(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -373,10 +382,12 @@ func (v *PopContext) RemoveAll(payloads *entities.PopData) error {
 func (v *PopContext) GetAtv(id []byte) (*entities.Atv, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetAtv(id)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
 	var atv entities.Atv
-	err := atv.FromVbkEncoding(&stream)
+	err := atv.FromVbkEncoding(stream)
 	if err != nil {
 		return nil, err
 	}
@@ -387,10 +398,12 @@ func (v *PopContext) GetAtv(id []byte) (*entities.Atv, error) {
 func (v *PopContext) GetVtb(id []byte) (*entities.Vtb, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVtb(id)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
 	var vtb entities.Vtb
-	err := vtb.FromVbkEncoding(&stream)
+	err := vtb.FromVbkEncoding(stream)
 	if err != nil {
 		return nil, err
 	}
@@ -401,10 +414,12 @@ func (v *PopContext) GetVtb(id []byte) (*entities.Vtb, error) {
 func (v *PopContext) GetVbkBlock(id []byte) (*entities.VbkBlock, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVbkBlock(id)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
 	var vbkblock entities.VbkBlock
-	err := vbkblock.FromVbkEncoding(&stream)
+	err := vbkblock.FromVbkEncoding(stream)
 	if err != nil {
 		return nil, err
 	}
@@ -415,9 +430,11 @@ func (v *PopContext) GetVbkBlock(id []byte) (*entities.VbkBlock, error) {
 func (v *PopContext) GetAtvs() ([][]byte, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetAtvs()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	atvIDs, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	atvIDs, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -434,9 +451,11 @@ func (v *PopContext) GetAtvs() ([][]byte, error) {
 func (v *PopContext) GetVtbs() ([][]byte, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVtbs()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	vtbIDs, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	vtbIDs, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -453,9 +472,11 @@ func (v *PopContext) GetVtbs() ([][]byte, error) {
 func (v *PopContext) GetVbkBlocks() ([][]byte, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVbkBlocks()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	vbkblockIDs, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	vbkblockIDs, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -472,9 +493,11 @@ func (v *PopContext) GetVbkBlocks() ([][]byte, error) {
 func (v *PopContext) GetAtvsInFlight() ([][]byte, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetAtvsInFlight()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	atvIDs, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	atvIDs, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -491,9 +514,11 @@ func (v *PopContext) GetAtvsInFlight() ([][]byte, error) {
 func (v *PopContext) GetVtbsInFlight() ([][]byte, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVtbsInFlight()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	vtbIDs, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	vtbIDs, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
@@ -510,9 +535,11 @@ func (v *PopContext) GetVtbsInFlight() ([][]byte, error) {
 func (v *PopContext) GetVbkBlocksInFlight() ([][]byte, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVbkBlocksInFlight()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
-
-	vbkblockIDs, err := veriblock.ReadArrayOf(&stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
+	vbkblockIDs, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(r io.Reader) (interface{}, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {

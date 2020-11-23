@@ -3,6 +3,7 @@ package entities
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -18,6 +19,13 @@ type VbkTx struct {
 	PublicationData PublicationData
 	Signature       []byte
 	PublicKey       []byte
+}
+
+// GetHash ...
+func (v *VbkTx) GetHash() []byte {
+	// TODO: Add hash of transaction
+	res := make([]byte, 32)
+	return res
 }
 
 // ToVbkEncoding ...
@@ -117,4 +125,33 @@ func (v *VbkTx) FromRaw(stream io.Reader, signature []byte, publicKey []byte) er
 	v.Signature = signature
 	v.PublicKey = publicKey
 	return nil
+}
+
+// ToJSON ...
+func (v *VbkTx) ToJSON() (map[string]interface{}, error) {
+	outputs := make([]interface{}, len(v.Outputs))
+	for i, output := range v.Outputs {
+		out, err := output.ToJSON()
+		if err != nil {
+			return nil, err
+		}
+		outputs[i] = out
+	}
+	publicationData, err := v.PublicationData.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	res := map[string]interface{}{
+		"hash":            hex.EncodeToString(v.GetHash()),
+		"networkByte":     v.NetworkOrType.NetworkByte,
+		"type":            v.NetworkOrType.TypeID,
+		"sourceAddress":   v.SourceAddress.ToString(),
+		"sourceAmount":    v.SourceAmount.Units,
+		"outputs":         outputs,
+		"signatureIndex":  v.SignatureIndex,
+		"publicationData": publicationData,
+		"signature":       hex.EncodeToString(v.Signature),
+		"publicKey":       hex.EncodeToString(v.PublicKey),
+	}
+	return res, nil
 }

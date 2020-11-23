@@ -3,6 +3,7 @@ package entities
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -132,4 +133,22 @@ func (v *VbkBlock) FromRaw(stream io.Reader) error {
 	}
 	v.Nonce = uint64(b[0])<<32 | uint64(b[1])<<24 | uint64(b[2])<<16 | uint64(b[3])<<8 | uint64(b[4])
 	return nil
+}
+
+// ToJSON ...
+func (v *VbkBlock) ToJSON() (map[string]interface{}, error) {
+	res := map[string]interface{}{
+		"id":                     hex.EncodeToString(v.GetID()),
+		"hash":                   hex.EncodeToString(v.GetHash()),
+		"height":                 v.Height,
+		"version":                v.Version,
+		"previousBlock":          hex.EncodeToString(v.PreviousBlock[:]),
+		"previousKeystone":       hex.EncodeToString(v.PreviousKeystone[:]),
+		"secondPreviousKeystone": hex.EncodeToString(v.SecondPreviousKeystone[:]),
+		"merkleRoot":             hex.EncodeToString(v.MerkleRoot[:]),
+		"timestamp":              v.Timestamp,
+		"difficulty":             v.Difficulty,
+		"nonce":                  v.Nonce,
+	}
+	return res, nil
 }

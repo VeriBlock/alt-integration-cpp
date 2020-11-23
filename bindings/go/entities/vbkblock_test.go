@@ -3,13 +3,14 @@ package entities
 import (
 	"bytes"
 	"encoding/hex"
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	DefaultVbkBlock = VbkBlock{
+	defaultVbkBlock = VbkBlock{
 		5000,
 		2,
 		parse12Bytes("449c60619294546ad825af03"),
@@ -20,7 +21,7 @@ var (
 		16842752,
 		1,
 	}
-	DefaultVbkBlockEncoded = "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001"
+	defaultVbkBlockEncoded = "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001"
 )
 
 func parse12Bytes(src string) [12]byte {
@@ -47,44 +48,44 @@ func parse16Bytes(src string) [16]byte {
 func TestVbkBlockDeserialize(t *testing.T) {
 	assert := assert.New(t)
 
-	vbkblock := parseHex(DefaultVbkBlockEncoded)
+	vbkblock := parseHex(defaultVbkBlockEncoded)
 	stream := bytes.NewReader(vbkblock)
 	block := VbkBlock{}
 	assert.NoError(block.FromVbkEncoding(stream))
 
-	assert.Equal(DefaultVbkBlock.Height, block.Height)
-	assert.Equal(DefaultVbkBlock.Version, block.Version)
-	assert.Equal(hex.EncodeToString(DefaultVbkBlock.PreviousBlock[:]), hex.EncodeToString(block.PreviousBlock[:]))
-	assert.Equal(hex.EncodeToString(DefaultVbkBlock.PreviousKeystone[:]), hex.EncodeToString(block.PreviousKeystone[:]))
-	assert.Equal(hex.EncodeToString(DefaultVbkBlock.SecondPreviousKeystone[:]), hex.EncodeToString(block.SecondPreviousKeystone[:]))
-	assert.Equal(hex.EncodeToString(DefaultVbkBlock.MerkleRoot[:]), hex.EncodeToString(block.MerkleRoot[:]))
-	assert.Equal(DefaultVbkBlock.Timestamp, block.Timestamp)
-	assert.Equal(DefaultVbkBlock.Difficulty, block.Difficulty)
-	assert.Equal(DefaultVbkBlock.Nonce, block.Nonce)
+	assert.Equal(defaultVbkBlock.Height, block.Height)
+	assert.Equal(defaultVbkBlock.Version, block.Version)
+	assert.Equal(hex.EncodeToString(defaultVbkBlock.PreviousBlock[:]), hex.EncodeToString(block.PreviousBlock[:]))
+	assert.Equal(hex.EncodeToString(defaultVbkBlock.PreviousKeystone[:]), hex.EncodeToString(block.PreviousKeystone[:]))
+	assert.Equal(hex.EncodeToString(defaultVbkBlock.SecondPreviousKeystone[:]), hex.EncodeToString(block.SecondPreviousKeystone[:]))
+	assert.Equal(hex.EncodeToString(defaultVbkBlock.MerkleRoot[:]), hex.EncodeToString(block.MerkleRoot[:]))
+	assert.Equal(defaultVbkBlock.Timestamp, block.Timestamp)
+	assert.Equal(defaultVbkBlock.Difficulty, block.Difficulty)
+	assert.Equal(defaultVbkBlock.Nonce, block.Nonce)
 }
 
 func TestVbkBlockSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	assert.NoError(DefaultVbkBlock.ToVbkEncoding(stream))
+	assert.NoError(defaultVbkBlock.ToVbkEncoding(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
-	assert.Equal(DefaultVbkBlockEncoded, blockEncoded)
+	assert.Equal(defaultVbkBlockEncoded, blockEncoded)
 }
 
 func TestVbkBlockRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	blockEncoded, err := hex.DecodeString(DefaultVbkBlockEncoded)
+	blockEncoded, err := hex.DecodeString(defaultVbkBlockEncoded)
 	assert.NoError(err)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := VbkBlock{}
 	assert.NoError(decoded.FromVbkEncoding(stream))
-	assert.Equal(DefaultVbkBlock.Version, decoded.Version)
+	assert.Equal(defaultVbkBlock.Version, decoded.Version)
 
 	outputStream := new(bytes.Buffer)
 	assert.NoError(decoded.ToVbkEncoding(outputStream))
-	assert.Equal(DefaultVbkBlockEncoded, hex.EncodeToString(outputStream.Bytes()))
+	assert.Equal(defaultVbkBlockEncoded, hex.EncodeToString(outputStream.Bytes()))
 }
 
 func TestVbkBlockGetBlockHash(t *testing.T) {
@@ -108,11 +109,23 @@ func TestVbkBlockGetBlockHash(t *testing.T) {
 func TestVbkBlockGetID(t *testing.T) {
 	assert := assert.New(t)
 
-	atvBytes, err := hex.DecodeString(DefaultVbkBlockEncoded)
+	atvBytes, err := hex.DecodeString(defaultVbkBlockEncoded)
 	assert.NoError(err)
 	stream := bytes.NewReader(atvBytes)
 	vbkblock := VbkBlock{}
 	assert.NoError(vbkblock.FromVbkEncoding(stream))
 	id := vbkblock.GetID()
 	assert.Equal("cd97599e23096ad42f119b5a", hex.EncodeToString(id[:]))
+}
+
+func TestVbkToJSON(t *testing.T) {
+	assert := assert.New(t)
+
+	defaultJSON := `{"difficulty":16842752,"hash":"2ba076219b4ff7ed36512275cd97599e23096ad42f119b5a","height":5000,"id":"cd97599e23096ad42f119b5a","merkleRoot":"26bbfda7d5e4462ef24ae02d67e47d78","nonce":1,"previousBlock":"449c60619294546ad825af03","previousKeystone":"b0935637860679ddd5","secondPreviousKeystone":"5ee4fd21082e18686e","timestamp":1553699059,"version":2}`
+	jsonmap, err := defaultVbkBlock.ToJSON()
+	assert.NoError(err)
+
+	res, err := json.Marshal(jsonmap)
+	assert.NoError(err)
+	assert.Equal(defaultJSON, string(res))
 }
