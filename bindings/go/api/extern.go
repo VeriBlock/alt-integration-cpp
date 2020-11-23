@@ -1,6 +1,7 @@
 package api
 
 import (
+	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
@@ -20,16 +21,28 @@ func SetOnGetBlockHeaderHash(fn func(toBeHashed []byte) []byte) {
 }
 
 // SetOnGetAtv ...
-func SetOnGetAtv(fn func(id []byte) []byte) {
-	ffi.OnGetAtv = fn
+func SetOnGetAtv(fn func(idBytes entities.AtvID) []byte) {
+	ffi.OnGetAtv = func(id []byte) []byte {
+		var idBytes entities.AtvID
+		copy(idBytes[:], id)
+		return fn(idBytes)
+	}
 }
 
 // SetOnGetVtb ...
-func SetOnGetVtb(fn func(id []byte) []byte) {
-	ffi.OnGetVtb = fn
+func SetOnGetVtb(fn func(id entities.VtbID) []byte) {
+	ffi.OnGetVtb = func(id []byte) []byte {
+		var idBytes entities.VtbID
+		copy(idBytes[:], id)
+		return fn(idBytes)
+	}
 }
 
 // SetOnGetVbk ...
-func SetOnGetVbk(fn func(id []byte) []byte) {
-	ffi.OnGetVbk = fn
+func SetOnGetVbk(fn func(id entities.VbkID) []byte) {
+	ffi.OnGetVbk = func(id []byte) []byte {
+		var idBytes entities.VbkID
+		copy(idBytes[:], id)
+		return fn(idBytes)
+	}
 }
