@@ -226,7 +226,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
     if (e == nullptr) {
       continue;
     }
-    json::arrayPushBack(bopEndorsements, e->getId());
+    json::arrayPushBack(bopEndorsements, ToJSON<JsonValue>(e->getId()));
   }
   json::putKV(obj, "blockOfProofEndorsements", bopEndorsements);
 
@@ -247,7 +247,7 @@ JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
     if (e == nullptr) {
       continue;
     }
-    json::arrayPushBack(bopEndorsements, e->getId());
+    json::arrayPushBack(bopEndorsements, ToJSON<JsonValue>(e->getId()));
   }
   json::putKV(obj, "blockOfProofEndorsements", bopEndorsements);
 
