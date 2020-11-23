@@ -91,6 +91,9 @@ PopData generatePopData(
     }
   }
 
+  VBK_ASSERT(ret.context.size() <= maxVbkBlocks);
+  VBK_ASSERT(ret.vtbs.size() <= maxVTBs);
+
   return ret;
 }
 

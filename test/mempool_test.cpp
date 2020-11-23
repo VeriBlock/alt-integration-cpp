@@ -1173,12 +1173,13 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
 // This test scenrio tests the possible context gap in case that all payloads
 // contain in the same PopData which bigger than maxPopDataSize
 TEST_F(MemPoolFixture, getPop_scenario_11) {
+  altparam.mMaxPopDataSize = 10000;
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   size_t vtbs_amount = 100;
   for (size_t i = 0; i < vtbs_amount; ++i) {
-    popminer->mineBtcBlocks(100);
+    popminer->mineBtcBlocks(10);
     generatePopTx(endorsedVbkBlock1->getHeader());
   }
 
@@ -1205,7 +1206,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
 
   PopData pop = checkedGetPop();
 
-  EXPECT_TRUE(pop.vtbs.size() < vtbs_amount);
+  EXPECT_LT(pop.vtbs.size(), vtbs_amount);
   applyInNextBlock(pop);
 }
 

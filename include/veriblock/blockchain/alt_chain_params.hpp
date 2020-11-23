@@ -166,7 +166,6 @@ struct AltChainParams {
   //! maximum size of single PopData in a single ALT block, in bytes.
   //! VTB can have a size up to 5.3 MB, so this number must be at least 5.3MB
   uint32_t getMaxPopDataSize() const noexcept {
-    VBK_ASSERT(mMaxPopDataSize >= 5300000);
     return mMaxPopDataSize;
   }
 
@@ -219,7 +218,7 @@ struct AltChainParams {
   uint32_t mMaxPopDataSize = 5500000;  // 5.5 MB
 
   size_t mMaxVbkBlocksInAltBlock = 250;
-  size_t mMaxVTBsInAltBlock = 250;
+  size_t mMaxVTBsInAltBlock = 25;
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
