@@ -21,7 +21,8 @@ namespace altintegration {
 /**
  * @struct VTB
  *
- * Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.
+ * Veriblock to Bitcoin publication, committed to Veriblock blockchain in
+ * containingBlock.
  *
  * @ingroup entities
  */
@@ -38,6 +39,8 @@ struct VTB {
   mutable bool checked{false};
 
   std::string toHex() const { return HexStr(toVbkEncoding()); }
+
+  size_t estimateSize() const { return toVbkEncoding().size(); }
 
   std::string toPrettyString() const;
 
