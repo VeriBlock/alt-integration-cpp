@@ -42,8 +42,8 @@ struct VbkBlock {
 
   std::string toPrettyString() const;
 
-  static VbkBlock fromHex(
-      const std::string& hex, const hash_t& precalculatedHash = hash_t());
+  static VbkBlock fromHex(const std::string& hex,
+                          const hash_t& precalculatedHash = hash_t());
 
   /**
    * Read basic blockheader data from the vector of bytes
@@ -115,6 +115,8 @@ struct VbkBlock {
    * @return block difficulty
    */
   uint32_t getDifficulty() const;
+
+  size_t estimateSize() const { return toVbkEncoding().size(); }
 
   /*
    * Getter for timestamp

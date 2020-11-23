@@ -16,6 +16,7 @@
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
+#include "veriblock/pop_context.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -435,8 +436,25 @@ bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
 bool checkPopData(PopValidator& validator,
                   const PopData& popData,
                   ValidationState& state) {
+  auto& altparam = validator.getAltParams();
+  if (popData.context.size() > altparam.getMaxVbkBlocksInAltBlock()) {
+    return state.Invalid(
+        "pop-sl-context-oversize",
+        fmt::format("Too many VBK blocks. Expected {} or less, got {}",
+                    altparam.getMaxVbkBlocksInAltBlock(),
+                    popData.context.size()));
+  }
+
+  if (popData.vtbs.size() > altparam.getMaxVTBsInAltBlock()) {
+    return state.Invalid(
+        "pop-sl-vtbs-oversize",
+        fmt::format("Too many VTBs. Expected {} or less, got {}",
+                    altparam.getMaxVTBsInAltBlock(),
+                    popData.vtbs.size()));
+  }
+
   if (!checkPopDataForDuplicates(popData, state)) {
-    return state.Invalid("pop-statelessly-invalid-has-duplicates");
+    return state.Invalid("pop-sl-invalid-has-duplicates");
   }
 
   std::vector<std::future<ValidationState>> results;
@@ -456,7 +474,7 @@ bool checkPopData(PopValidator& validator,
     auto result = r.get();
     if (!result.IsValid()) {
       state = result;
-      return state.Invalid("pop-statelessly-invalid");
+      return state.Invalid("pop-sl-invalid");
     }
   }
 
