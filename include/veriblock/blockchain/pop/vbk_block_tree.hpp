@@ -219,8 +219,16 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
 
   auto stored = json::makeEmptyObject<JsonValue>();
   json::putArrayKV(stored, "vtbids", i.getPayloadIds<VTB>());
-
   json::putKV(obj, "stored", stored);
+
+  auto bopEndorsements = json::makeEmptyArray<JsonValue>();
+  for (auto* e : i.blockOfProofEndorsements) {
+    if (e == nullptr) {
+      continue;
+    }
+    json::arrayPushBack(bopEndorsements, e->getId());
+  }
+  json::putKV(obj, "blockOfProofEndorsements", bopEndorsements);
 
   return obj;
 }
@@ -232,7 +240,16 @@ JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   json::putIntKV(obj, "height", i.getHeight());
   json::putKV(obj, "header", ToJSON<JsonValue>(i.getHeader()));
   json::putIntKV(obj, "status", i.getStatus());
-  json::putIntKV(obj, "ref", i.refCount());
+  json::putArrayKV(obj, "vbkrefs", i.getRefs());
+
+  auto bopEndorsements = json::makeEmptyArray<JsonValue>();
+  for (auto* e : i.blockOfProofEndorsements) {
+    if (e == nullptr) {
+      continue;
+    }
+    json::arrayPushBack(bopEndorsements, e->getId());
+  }
+  json::putKV(obj, "blockOfProofEndorsements", bopEndorsements);
 
   return obj;
 }
