@@ -4,7 +4,11 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/pop_context.h>
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
+)
 
 // PopContext ...
 type PopContext struct {
@@ -78,7 +82,7 @@ func (v *PopContext) AltBlockTreeSetState(hashBytes []byte) bool {
 }
 
 // BtcGetBlockIndex ...
-func (v *PopContext) BtcGetBlockIndex(hashBytes []byte) {
+func (v *PopContext) BtcGetBlockIndex(hashBytes [veriblock.Sha256HashSize]byte) {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	blockindexC := (*C.uint8_t)(unsafe.Pointer(nil))
 	var blockindexSize int = 0
@@ -122,25 +126,25 @@ func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) *VbkByteStream {
 }
 
 // AltGetAtvContainingBlock ...
-func (v *PopContext) AltGetAtvContainingBlock(atvID []byte) *VbkByteStream {
+func (v *PopContext) AltGetAtvContainingBlock(atvID [veriblock.Sha256HashSize]byte) *VbkByteStream {
 	atvIDC := (*C.uint8_t)(unsafe.Pointer(&atvID[0]))
 	return NewVbkByteStream(C.VBK_alt_getATVContainingBlock(v.ref, atvIDC, C.int(len(atvID))))
 }
 
 // AltGetVtbContainingBlock ...
-func (v *PopContext) AltGetVtbContainingBlock(vtbID []byte) *VbkByteStream {
+func (v *PopContext) AltGetVtbContainingBlock(vtbID [veriblock.Sha256HashSize]byte) *VbkByteStream {
 	vtbIDC := (*C.uint8_t)(unsafe.Pointer(&vtbID[0]))
 	return NewVbkByteStream(C.VBK_alt_getVTBContainingBlock(v.ref, vtbIDC, C.int(len(vtbID))))
 }
 
 // AltGetVbkBlockContainingBlock ...
-func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID []byte) *VbkByteStream {
+func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID [veriblock.VblakePreviousBlockHashSize]byte) *VbkByteStream {
 	vbkIDC := (*C.uint8_t)(unsafe.Pointer(&vbkID[0]))
 	return NewVbkByteStream(C.VBK_alt_getVbkBlockContainingBlock(v.ref, vbkIDC, C.int(len(vbkID))))
 }
 
 // VbkGetVtbContainingBlock ...
-func (v *PopContext) VbkGetVtbContainingBlock(vtbID []byte) *VbkByteStream {
+func (v *PopContext) VbkGetVtbContainingBlock(vtbID [veriblock.Sha256HashSize]byte) *VbkByteStream {
 	vtbIDC := (*C.uint8_t)(unsafe.Pointer(&vtbID[0]))
 	return NewVbkByteStream(C.VBK_vbk_getVTBContainingBlock(v.ref, vtbIDC, C.int(len(vtbID))))
 }
@@ -187,19 +191,19 @@ func (v *PopContext) MemPoolRemoveAll(bytes []byte) {
 }
 
 // MemPoolGetAtv ...
-func (v *PopContext) MemPoolGetAtv(atvID []byte) *VbkByteStream {
+func (v *PopContext) MemPoolGetAtv(atvID [veriblock.Sha256HashSize]byte) *VbkByteStream {
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&atvID[0]))
 	return NewVbkByteStream(C.VBK_MemPool_GetATV(v.ref, idBytesC, C.int(len(atvID))))
 }
 
 // MemPoolGetVtb ...
-func (v *PopContext) MemPoolGetVtb(vtbID []byte) *VbkByteStream {
+func (v *PopContext) MemPoolGetVtb(vtbID [veriblock.Sha256HashSize]byte) *VbkByteStream {
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&vtbID[0]))
 	return NewVbkByteStream(C.VBK_MemPool_GetVTB(v.ref, idBytesC, C.int(len(vtbID))))
 }
 
 // MemPoolGetVbkBlock ...
-func (v *PopContext) MemPoolGetVbkBlock(vbkID []byte) *VbkByteStream {
+func (v *PopContext) MemPoolGetVbkBlock(vbkID [veriblock.VblakePreviousBlockHashSize]byte) *VbkByteStream {
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&vbkID[0]))
 	return NewVbkByteStream(C.VBK_MemPool_GetVbkBlock(v.ref, idBytesC, C.int(len(vbkID))))
 }

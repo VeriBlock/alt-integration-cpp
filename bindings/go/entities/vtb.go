@@ -10,6 +10,9 @@ import (
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+// VtbID is 32 byte ID of Vtb
+type VtbID [32]byte
+
 // Vtb ...
 type Vtb struct {
 	Version         uint32
@@ -19,7 +22,7 @@ type Vtb struct {
 }
 
 // GetID ...
-func (v *Vtb) GetID() []byte {
+func (v *Vtb) GetID() VtbID {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
 	return ffi.VtbGetID(buffer.Bytes())
@@ -73,8 +76,9 @@ func (v *Vtb) ToJSON() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	id := v.GetID()
 	res := map[string]interface{}{
-		"id":              hex.EncodeToString(v.GetID()),
+		"id":              hex.EncodeToString(id[:]),
 		"version":         v.Version,
 		"transaction":     transaction,
 		"merklePath":      merklePath,
