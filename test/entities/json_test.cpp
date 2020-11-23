@@ -463,6 +463,7 @@ TEST(ToJson, BlockIndex) {
   std::string actual = block.serialize(true);
 
   std::string expected = R"({
+  "blockOfProofEndorsements": [],
   "chainWork": "0000000000000000000000000000000000000000000000000000000000000001",
   "containingEndorsements": [],
   "endorsedBy": [],
