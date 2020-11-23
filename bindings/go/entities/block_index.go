@@ -2,6 +2,7 @@ package entities
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -47,6 +48,7 @@ const (
 // GenericBlockHeader ...
 type GenericBlockHeader interface {
 	veriblock.SerdeRaw
+	ToJSON() (map[string]interface{}, error)
 	GetHash() []byte
 	GetBlockTime() uint32
 	GetDifficulty() uint32
@@ -130,4 +132,53 @@ func (v *BlockIndex) FromRaw(stream io.Reader) error {
 	}
 	v.Status = BlockStatus(status)
 	return v.Addon.FromRaw(stream)
+}
+
+// ToJSON ...
+func (v *BlockIndex) ToJSON() (map[string]interface{}, error) {
+	var header map[string]interface{}
+	var err error
+	switch val := v.Header.(type) {
+	case *VbkBlock:
+		header, err = val.ToJSON()
+	case *BtcBlock:
+		header, err = val.ToJSON()
+	case *AltBlock:
+		header, err = val.ToJSON()
+	default:
+		err = fmt.Errorf("Invalid Block Header")
+	}
+	if err != nil {
+		return nil, err
+	}
+	var res map[string]interface{}
+	switch val := v.Addon.(type) {
+	case *VbkBlockAddon:
+		// TODO: Support chainWork, containingEndorsements, endorsedBy, stored
+		res = map[string]interface{}{
+			"chainWork":              "",
+			"containingEndorsements": []interface{}{},
+			"endorsedBy":             []interface{}{},
+			"height":                 v.Height,
+			"header":                 header,
+			"status":                 v.Status,
+			"ref":                    val.RefCount,
+			"stored": map[string]interface{}{
+				"vtbids": []interface{}{},
+			},
+		}
+	case *BtcBlockAddon:
+		// TODO: Support chainWork
+		res = map[string]interface{}{
+			"chainWork": "",
+			"height":    v.Height,
+			"header":    header,
+			"status":    v.Status,
+			"ref":       len(val.Refs),
+		}
+	case *AltBlockAddon:
+	default:
+		return nil, fmt.Errorf("Invalid Block Addon")
+	}
+	return res, nil
 }

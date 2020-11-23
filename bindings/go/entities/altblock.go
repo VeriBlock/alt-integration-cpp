@@ -2,6 +2,7 @@ package entities
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"io"
 )
 
@@ -87,4 +88,15 @@ func (v *AltBlock) FromVbkEncoding(stream io.Reader) error {
 // FromRaw ...
 func (v *AltBlock) FromRaw(stream io.Reader) error {
 	return v.FromVbkEncoding(stream)
+}
+
+// ToJSON ...
+func (v *AltBlock) ToJSON() (map[string]interface{}, error) {
+	res := map[string]interface{}{
+		"hash":          hex.EncodeToString(v.GetHash()),
+		"previousBlock": hex.EncodeToString(v.PreviousBlock),
+		"height":        v.Height,
+		"timestamp":     v.Timestamp,
+	}
+	return res, nil
 }

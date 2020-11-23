@@ -29,9 +29,12 @@ func (v *MockMiner) Free() { v.miner.Free() }
 func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.miner.MineBtcBlockTip()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewBtcBlockIndex()
-	err := blockIndex.FromRaw(&stream)
+	err := blockIndex.FromRaw(stream)
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +45,12 @@ func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 func (v *MockMiner) MineBtcBlock(blockHash []byte) (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.miner.MineBtcBlock(blockHash)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewBtcBlockIndex()
-	err := blockIndex.FromRaw(&stream)
+	err := blockIndex.FromRaw(stream)
 	if err != nil {
 		return nil, err
 	}
@@ -55,9 +61,12 @@ func (v *MockMiner) MineBtcBlock(blockHash []byte) (*entities.BlockIndex, error)
 func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.miner.MineVbkBlockTip()
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	blockIndex := entities.NewVbkBlockIndex()
-	err := blockIndex.FromRaw(&stream)
+	err := blockIndex.FromRaw(stream)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +78,11 @@ func (v *MockMiner) MineVbkBlock(blockHash []byte) (*entities.BlockIndex, error)
 	defer v.lock()()
 	stream := v.miner.MineVbkBlock(blockHash)
 	defer stream.Free()
+	if stream == nil {
+		return nil, nil
+	}
 	blockIndex := entities.NewVbkBlockIndex()
-	err := blockIndex.FromRaw(&stream)
+	err := blockIndex.FromRaw(stream)
 	if err != nil {
 		return nil, err
 	}
@@ -86,9 +98,12 @@ func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entitie
 		return nil, err
 	}
 	stream := v.miner.MineAtv(buffer.Bytes())
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	var atv entities.Atv
-	err = atv.FromVbkEncoding(&stream)
+	err = atv.FromVbkEncoding(stream)
 	if err != nil {
 		return nil, err
 	}
@@ -103,11 +118,13 @@ func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*ent
 	if err != nil {
 		return nil, err
 	}
-
 	stream := v.miner.MineVtb(buffer.Bytes(), hash)
+	if stream == nil {
+		return nil, nil
+	}
 	defer stream.Free()
 	var vtb entities.Vtb
-	err = vtb.FromVbkEncoding(&stream)
+	err = vtb.FromVbkEncoding(stream)
 	if err != nil {
 		return nil, err
 	}

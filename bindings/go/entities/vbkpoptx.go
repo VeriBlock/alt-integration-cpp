@@ -3,6 +3,7 @@ package entities
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/hex"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -19,6 +20,13 @@ type VbkPopTx struct {
 	BlockOfProofContext []BtcBlock
 	Signature           []byte
 	PublicKey           []byte
+}
+
+// GetHash ...
+func (v *VbkPopTx) GetHash() []byte {
+	// TODO: Add hash of transaction
+	res := make([]byte, 32)
+	return res
 }
 
 // ToVbkEncoding ...
@@ -125,4 +133,46 @@ func (v *VbkPopTx) FromRaw(stream io.Reader, signature []byte, publicKey []byte)
 	v.Signature = signature
 	v.PublicKey = publicKey
 	return nil
+}
+
+// ToJSON ...
+func (v *VbkPopTx) ToJSON() (map[string]interface{}, error) {
+	publishedBlock, err := v.PublishedBlock.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	bitcoinTransaction, err := v.BitcoinTransaction.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	merklePath, err := v.MerklePath.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	blockOfProof, err := v.BlockOfProof.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	blockOfProofContext := make([]map[string]interface{}, len(v.BlockOfProofContext))
+	for i, bopc := range v.BlockOfProofContext {
+		res, err := bopc.ToJSON()
+		if err != nil {
+			return nil, err
+		}
+		blockOfProofContext[i] = res
+	}
+	res := map[string]interface{}{
+		"hash":                hex.EncodeToString(v.GetHash()),
+		"networkByte":         v.NetworkOrType.NetworkByte,
+		"type":                v.NetworkOrType.TypeID,
+		"address":             v.Address.ToString(),
+		"publishedBlock":      publishedBlock,
+		"bitcoinTransaction":  bitcoinTransaction,
+		"merklePath":          merklePath,
+		"blockOfProof":        blockOfProof,
+		"blockOfProofContext": blockOfProofContext,
+		"signature":           hex.EncodeToString(v.Signature),
+		"publicKey":           hex.EncodeToString(v.PublicKey),
+	}
+	return res, nil
 }
