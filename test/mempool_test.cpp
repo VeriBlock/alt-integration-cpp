@@ -300,7 +300,7 @@ TEST_F(MemPoolFixture, removeAll_test3) {
 
 TEST_F(MemPoolFixture, removeAll_test4) {
   // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
+  auto* vbkTip = popminer->mineVbkBlocks(15);
 
   // endorse VBK blocks
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
@@ -364,7 +364,7 @@ TEST_F(MemPoolFixture, removeAll_test4) {
   ASSERT_TRUE(mempool->getMap<VTB>().empty());
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 
-  popminer->mineVbkBlocks(popminer->vbk().getParams().getMaxReorgBlocks());
+  popminer->mineVbkBlocks(300);
   generatePopTx(popminer->vbk().getBestChain().tip()->getHeader());
   vbkTip = popminer->mineVbkBlocks(1);
   vtbs = popminer->vbkPayloads[vbkTip->getHash()];
@@ -381,14 +381,16 @@ TEST_F(MemPoolFixture, removeAll_test4) {
     submitVBK(b);
   }
 
-  popData = checkedGetPop();
-  applyInNextBlock(popData);
+  do {
+    popData = checkedGetPop();
+    applyInNextBlock(popData);
+    mempool->removeAll(popData);
+  } while (!popData.empty());
 
-  mempool->removeAll(popData);
-
-  ASSERT_TRUE(mempool->getMap<ATV>().empty());
-  ASSERT_TRUE(mempool->getMap<VTB>().empty());
-  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
+  ASSERT_TRUE(mempool->getMap<ATV>().empty()) << mempool->getMap<ATV>().size();
+  ASSERT_TRUE(mempool->getMap<VTB>().empty()) << mempool->getMap<VTB>().size();
+  ASSERT_TRUE(mempool->getMap<VbkBlock>().empty())
+      << mempool->getMap<VbkBlock>().size();
 }
 
 TEST_F(MemPoolFixture, removed_payloads_cache_test) {

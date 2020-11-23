@@ -28,6 +28,10 @@ class PopValidator {
   template <typename CheckType>
   std::future<ValidationState> addCheck(const CheckType& block);
 
+  const VbkChainParams& getVbkParams() const { return vbk_;}
+  const BtcChainParams& getBtcParams() const { return btc_;}
+  const AltChainParams& getAltParams() const { return alt_;}
+
  protected:
   std::shared_ptr<ThreadPool> workers;
   const VbkChainParams& vbk_;

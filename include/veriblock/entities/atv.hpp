@@ -42,6 +42,8 @@ struct ATV {
                         blockOfProof.getHash().toHex());
   }
 
+  size_t estimateSize() const { return toVbkEncoding().size(); }
+
   /**
    * Deserialize ATV from bytes
    * @param stream data stream to read from

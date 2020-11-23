@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -50,23 +51,43 @@ PopData generatePopData(
   // size in bytes of pop data added to
   size_t popSize = 0;
 
+  const auto& maxSize = params.getMaxPopDataSize();
+  const auto& maxVbkBlocks = params.getMaxVbkBlocksInAltBlock();
+  const auto& maxVTBs = params.getMaxVTBsInAltBlock();
   for (const auto& block : blocks) {
-    PopData pop = block.second->toPopData();
-    size_t estimated = pop.estimateSize();
-
-    while (popSize + estimated > params.getMaxPopDataSize() && !pop.empty()) {
-      estimated = cutPopData(pop, estimated);
-    }
-
-    if (popSize + estimated > params.getMaxPopDataSize() || pop.empty()) {
-      continue;
-    }
-
-    popSize += estimated;
-    ret.mergeFrom(pop);
-
-    if (popSize > params.getMaxPopDataSize()) {
+    // add VBK block if it fits
+    auto& header = *block.second->header;
+    if (ret.context.size() >= maxVbkBlocks ||
+        popSize + header.estimateSize() > maxSize) {
+      // PopData is full
       break;
+    }
+    // add VBK block to connect underlying ATVs/VTBs
+    ret.context.push_back(header);
+
+    // try to fit ATVs
+    auto& atvcandidates = block.second->atvs;
+    for (const auto& atv : atvcandidates) {
+      // by default fit all possible ATVs, thus no 'numeric' limit
+      if (popSize + atv->estimateSize() > maxSize) {
+        // do not consider this ATV, it does not fit
+        continue;
+      }
+
+      // this ATV fits
+      ret.atvs.push_back(*atv);
+    }
+
+    // try to fit VTBs
+    auto& vtbcandidates = block.second->vtbs;
+    for (const auto& vtb : vtbcandidates) {
+      if (ret.vtbs.size() > maxVTBs ||
+          popSize + vtb->estimateSize() > maxSize) {
+        // this VTB does not fit
+        continue;
+      }
+
+      ret.vtbs.push_back(*vtb);
     }
   }
 

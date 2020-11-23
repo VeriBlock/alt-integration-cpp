@@ -159,16 +159,29 @@ struct AltChainParams {
   //! Validity window for ATVs. If difference between endorsed/containing blocks
   //! is more than this number, endorsement becomes invalid.
   int32_t getEndorsementSettlementInterval() const noexcept {
+    VBK_ASSERT(mEndorsementSettlementInterval >= 1);
     return mEndorsementSettlementInterval;
   }
 
-  //! maximum size of single PopData in a single ALT block, in bytes
-  uint32_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
+  //! maximum size of single PopData in a single ALT block, in bytes.
+  //! VTB can have a size up to 5.3 MB, so this number must be at least 5.3MB
+  uint32_t getMaxPopDataSize() const noexcept {
+    VBK_ASSERT(mMaxPopDataSize >= 5300000);
+    return mMaxPopDataSize;
+  }
 
   //! getter for reward parameters
   const PopPayoutsParams& getPayoutParams() const noexcept {
     return *mPopPayoutsParams;
   }
+
+  //! total maximum number of VBK blocks per 1 ALT block
+  size_t getMaxVbkBlocksInAltBlock() const noexcept {
+    return mMaxVbkBlocksInAltBlock;
+  }
+
+  //! total maximum number of VTBs per 1 ALT block
+  size_t getMaxVTBsInAltBlock() const noexcept { return mMaxVTBsInAltBlock; }
 
   //! Maximum future block time for altchain blocks.
   uint32_t maxAltchainFutureBlockTime() const noexcept {
@@ -205,6 +218,9 @@ struct AltChainParams {
   int32_t mEndorsementSettlementInterval = 50;
   uint32_t mMaxPopDataSize = 5500000;  // 5.5 MB
 
+  size_t mMaxVbkBlocksInAltBlock = 250;
+  size_t mMaxVTBsInAltBlock = 250;
+
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
@@ -215,6 +231,8 @@ JsonValue ToJSON(const AltChainParams& p) {
   json::putArrayKV(
       obj, "forkResolutionLookupTable", p.getForkResolutionLookUpTable());
   json::putIntKV(obj, "maxPopDataSize", p.getMaxPopDataSize());
+  json::putIntKV(obj, "maxVbkBlocksInAltBlock", p.getMaxVbkBlocksInAltBlock());
+  json::putIntKV(obj, "maxVTBsInAltBlock", p.getMaxVTBsInAltBlock());
   json::putIntKV(obj,
                  "endorsementSettlementInterval",
                  p.getEndorsementSettlementInterval());
