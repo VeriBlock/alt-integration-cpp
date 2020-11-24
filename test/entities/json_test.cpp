@@ -464,6 +464,7 @@ TEST(ToJson, VbkBlockIndex) {
 
   std::string expected = R"({
   "altrefs": 1,
+  "blockOfProofEndorsements": [],
   "chainWork": "0000000000000000000000000000000000000000000000000000000000000001",
   "containingEndorsements": [],
   "endorsedBy": [],
@@ -498,6 +499,7 @@ TEST(ToJson, BtcBlockIndex) {
   std::string actual = block.serialize(true);
 
   std::string expected = R"({
+  "blockOfProofEndorsements": [],
   "chainWork": "0000000000000000000000000000000000000000000000000000000000000002",
   "header": {
     "bits": 545259519,
