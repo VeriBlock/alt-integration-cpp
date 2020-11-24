@@ -6,6 +6,9 @@ import (
 	"io"
 )
 
+// AltHash is dynamic byte hash of ALT blocks
+type AltHash []byte
+
 // AltBlock ...
 type AltBlock struct {
 	Hash          []byte
@@ -14,8 +17,8 @@ type AltBlock struct {
 	Timestamp     uint32
 }
 
-// GetHash ...
-func (v *AltBlock) GetHash() []byte {
+// GetGenericHash ...
+func (v *AltBlock) GetGenericHash() []byte {
 	return v.Hash
 }
 
@@ -93,7 +96,7 @@ func (v *AltBlock) FromRaw(stream io.Reader) error {
 // ToJSON ...
 func (v *AltBlock) ToJSON() (map[string]interface{}, error) {
 	res := map[string]interface{}{
-		"hash":          hex.EncodeToString(v.GetHash()),
+		"hash":          hex.EncodeToString(v.GetGenericHash()),
 		"previousBlock": hex.EncodeToString(v.PreviousBlock),
 		"height":        v.Height,
 		"timestamp":     v.Timestamp,

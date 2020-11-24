@@ -4,9 +4,7 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/config.h>
 import "C"
-import (
-	"unsafe"
-)
+import "unsafe"
 
 // Exported functions
 var (

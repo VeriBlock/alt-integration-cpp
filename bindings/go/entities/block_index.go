@@ -49,7 +49,7 @@ const (
 type GenericBlockHeader interface {
 	veriblock.SerdeRaw
 	ToJSON() (map[string]interface{}, error)
-	GetHash() []byte
+	GetGenericHash() []byte
 	GetBlockTime() uint32
 	GetDifficulty() uint32
 }
@@ -91,7 +91,7 @@ type BlockIndex struct {
 
 // GetHash ...
 func (v *BlockIndex) GetHash() []byte {
-	return v.Header.GetHash()
+	return v.Header.GetGenericHash()
 }
 
 // GetBlockTime ...

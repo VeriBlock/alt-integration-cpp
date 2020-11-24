@@ -4,11 +4,37 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
+	"fmt"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
+
+// VbkID is 12 byte ID of VbkBlock
+type VbkID [12]byte
+
+// ParseVbkID - Parses an VBK ID and panics if invalid size
+func ParseVbkID(idBytes []byte) (id VbkID) {
+	if len(idBytes) < 12 || len(idBytes) > 12 {
+		panic("Invalid size of VBK ID")
+	}
+	copy(id[:], idBytes)
+	return
+}
+
+// ParseErrVbkID - Parses an VBK ID and returns error if invalid size
+func ParseErrVbkID(idBytes []byte) (id VbkID, err error) {
+	if len(idBytes) < 12 || len(idBytes) > 12 {
+		err = fmt.Errorf("Invalid size of VBK ID")
+		return
+	}
+	copy(id[:], idBytes)
+	return
+}
+
+// VbkHash is 24 byte hash of VbkBlock
+type VbkHash [24]byte
 
 // VbkBlock ...
 type VbkBlock struct {
@@ -24,10 +50,16 @@ type VbkBlock struct {
 }
 
 // GetHash ...
-func (v *VbkBlock) GetHash() []byte {
+func (v *VbkBlock) GetHash() VbkHash {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
 	return ffi.VbkBlockGetHash(buffer.Bytes())
+}
+
+// GetGenericHash ...
+func (v *VbkBlock) GetGenericHash() []byte {
+	hash := v.GetHash()
+	return hash[:]
 }
 
 // GetBlockTime ...
@@ -41,7 +73,7 @@ func (v *VbkBlock) GetDifficulty() uint32 {
 }
 
 // GetID - Returns id of VBKBlock
-func (v *VbkBlock) GetID() []byte {
+func (v *VbkBlock) GetID() VbkID {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
 	return ffi.VbkBlockGetID(buffer.Bytes())
@@ -137,9 +169,11 @@ func (v *VbkBlock) FromRaw(stream io.Reader) error {
 
 // ToJSON ...
 func (v *VbkBlock) ToJSON() (map[string]interface{}, error) {
+	id := v.GetID()
+	hash := v.GetHash()
 	res := map[string]interface{}{
-		"id":                     hex.EncodeToString(v.GetID()),
-		"hash":                   hex.EncodeToString(v.GetHash()),
+		"id":                     hex.EncodeToString(id[:]),
+		"hash":                   hex.EncodeToString(hash[:]),
 		"height":                 v.Height,
 		"version":                v.Version,
 		"previousBlock":          hex.EncodeToString(v.PreviousBlock[:]),

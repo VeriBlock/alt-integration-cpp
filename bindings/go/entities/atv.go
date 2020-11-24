@@ -10,6 +10,28 @@ import (
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+// AtvID is 32 byte ID of ATV
+type AtvID [32]byte
+
+// ParseAtvID - Parses an ATV ID and panics if invalid size
+func ParseAtvID(idBytes []byte) (id AtvID) {
+	if len(idBytes) < 32 || len(idBytes) > 32 {
+		panic("Invalid size of ATV ID")
+	}
+	copy(id[:], idBytes)
+	return
+}
+
+// ParseErrAtvID - Parses an ATV ID and returns error if invalid size
+func ParseErrAtvID(idBytes []byte) (id AtvID, err error) {
+	if len(idBytes) < 32 || len(idBytes) > 32 {
+		err = fmt.Errorf("Invalid size of ATV ID")
+		return
+	}
+	copy(id[:], idBytes)
+	return
+}
+
 // Atv ...
 type Atv struct {
 	Version      uint32
@@ -19,7 +41,7 @@ type Atv struct {
 }
 
 // GetID ...
-func (v *Atv) GetID() []byte {
+func (v *Atv) GetID() AtvID {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
 	return ffi.AtvGetID(buffer.Bytes())
@@ -73,8 +95,9 @@ func (v *Atv) ToJSON() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	id := v.GetID()
 	res := map[string]interface{}{
-		"id":           hex.EncodeToString(v.GetID()),
+		"id":           hex.EncodeToString(id[:]),
 		"version":      v.Version,
 		"transaction":  transaction,
 		"merklePath":   merklePath,
