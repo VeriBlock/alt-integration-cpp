@@ -15,41 +15,47 @@ import (
 // AltBlockTree ...
 type AltBlockTree interface {
 	AcceptBlockHeader(block *entities.AltBlock) error
-	AcceptBlock(hash []byte, payloads *entities.PopData) error
-	AddPayloads(hash []byte, payloads *entities.PopData) error
-	LoadTip(hash []byte)
-	ComparePopScore(hashA []byte, hashB []byte) int
-	RemoveSubtree(hash []byte)
-	SetState(hash []byte) error
+	AcceptBlock(hash entities.AltHash, payloads *entities.PopData) error
+	AddPayloads(hash entities.AltHash, payloads *entities.PopData) error
+	LoadTip(hash entities.AltHash)
+	ComparePopScore(hashA entities.AltHash, hashB entities.AltHash) int
+	RemoveSubtree(hash entities.AltHash)
+	SetState(hash entities.AltHash) error
 	AltBestBlock() (*entities.BlockIndex, error)
 	VbkBestBlock() (*entities.BlockIndex, error)
 	BtcBestBlock() (*entities.BlockIndex, error)
 	AltBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error)
 	VbkBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error)
 	BtcBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error)
-	AltGetATVContainingBlock(atvID []byte) ([][]byte, error)
-	AltGetVTBContainingBlock(vtbID []byte) ([][]byte, error)
-	AltGetVbkBlockContainingBlock(vbkID []byte) ([][]byte, error)
-	VbkGetVTBContainingBlock(vtbID []byte) ([][]byte, error)
+	AltGetAtvContainingBlock(atvID entities.AtvID) ([]entities.AltHash, error)
+	AltGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.AltHash, error)
+	AltGetVbkBlockContainingBlock(vbkID entities.VbkID) ([]entities.AltHash, error)
+	VbkGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.VbkID, error)
 }
+
+// Code for interface test
+var _ AltBlockTree = &PopContext{}
 
 // MemPool ...
 type MemPool interface {
-	SubmitAtv(block *entities.Atv) error
-	SubmitVtb(block *entities.Vtb) error
-	SubmitVbk(block *entities.VbkBlock) error
+	SubmitAtv(block *entities.Atv) int
+	SubmitVtb(block *entities.Vtb) int
+	SubmitVbk(block *entities.VbkBlock) int
 	GetPop() (*entities.PopData, error)
 	RemoveAll(payloads *entities.PopData) error
-	GetAtv(id []byte) (*entities.Atv, error)
-	GetVtb(id []byte) (*entities.Vtb, error)
-	GetVbkBlock(id []byte) (*entities.VbkBlock, error)
-	GetAtvs() ([][]byte, error)
-	GetVtbs() ([][]byte, error)
-	GetVbkBlocks() ([][]byte, error)
-	GetAtvsInFlight() ([][]byte, error)
-	GetVtbsInFlight() ([][]byte, error)
-	GetVbkBlocksInFlight() ([][]byte, error)
+	GetAtv(id entities.AtvID) (*entities.Atv, error)
+	GetVtb(id entities.VtbID) (*entities.Vtb, error)
+	GetVbkBlock(id entities.VbkID) (*entities.VbkBlock, error)
+	GetAtvs() ([]entities.AtvID, error)
+	GetVtbs() ([]entities.VtbID, error)
+	GetVbkBlocks() ([]entities.VbkID, error)
+	GetAtvsInFlight() ([]entities.AtvID, error)
+	GetVtbsInFlight() ([]entities.VtbID, error)
+	GetVbkBlocksInFlight() ([]entities.VbkID, error)
 }
+
+// Code for interface test
+var _ MemPool = &PopContext{}
 
 // PopContext ...
 type PopContext struct {
@@ -90,7 +96,7 @@ func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
 }
 
 // AcceptBlock - POP payloads stored in this block
-func (v *PopContext) AcceptBlock(hash []byte, payloads *entities.PopData) error {
+func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopData) error {
 	stream := new(bytes.Buffer)
 	err := payloads.ToVbkEncoding(stream)
 	if err != nil {
@@ -103,7 +109,7 @@ func (v *PopContext) AcceptBlock(hash []byte, payloads *entities.PopData) error 
 
 // AddPayloads - Returns nil if PopData does not contain duplicates (searched across active chain).
 // However, it is far from certain that it is completely valid
-func (v *PopContext) AddPayloads(hash []byte, payloads *entities.PopData) error {
+func (v *PopContext) AddPayloads(hash entities.AltHash, payloads *entities.PopData) error {
 	stream := new(bytes.Buffer)
 	err := payloads.ToVbkEncoding(stream)
 	if err != nil {
@@ -115,26 +121,26 @@ func (v *PopContext) AddPayloads(hash []byte, payloads *entities.PopData) error 
 }
 
 // LoadTip ...
-func (v *PopContext) LoadTip(hash []byte) {
+func (v *PopContext) LoadTip(hash entities.AltHash) {
 	defer v.lock()()
 	v.popContext.AltBlockTreeLoadTip(hash)
 }
 
 // ComparePopScore ...
-func (v *PopContext) ComparePopScore(hashA []byte, hashB []byte) int {
+func (v *PopContext) ComparePopScore(hashA entities.AltHash, hashB entities.AltHash) int {
 	defer v.lock()()
 	return v.popContext.AltBlockTreeComparePopScore(hashA, hashB)
 }
 
 // RemoveSubtree ...
-func (v *PopContext) RemoveSubtree(hash []byte) {
+func (v *PopContext) RemoveSubtree(hash entities.AltHash) {
 	defer v.lock()()
 	v.popContext.AltBlockTreeRemoveSubtree(hash)
 }
 
 // SetState - Return `false` if intermediate or target block is invalid. In this
 // case tree will rollback into original state. `true` if state change is successful.
-func (v *PopContext) SetState(hash []byte) error {
+func (v *PopContext) SetState(hash entities.AltHash) error {
 	defer v.lock()()
 	ok := v.popContext.AltBlockTreeSetState(hash)
 	if !ok {
@@ -234,7 +240,7 @@ func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockI
 }
 
 // AltGetAtvContainingBlock ...
-func (v *PopContext) AltGetAtvContainingBlock(atvID []byte) ([][]byte, error) {
+func (v *PopContext) AltGetAtvContainingBlock(atvID entities.AtvID) ([]entities.AltHash, error) {
 	defer v.lock()()
 	stream := v.popContext.AltGetAtvContainingBlock(atvID)
 	if stream == nil {
@@ -245,9 +251,9 @@ func (v *PopContext) AltGetAtvContainingBlock(atvID []byte) ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.AltHash, 0), err
 	}
-	hashes := make([][]byte, len(encodedHashes))
+	hashes := make([]entities.AltHash, len(encodedHashes))
 	for i, encodedHash := range encodedHashes {
 		copy(hashes[i][:], encodedHash.([]byte))
 	}
@@ -255,7 +261,7 @@ func (v *PopContext) AltGetAtvContainingBlock(atvID []byte) ([][]byte, error) {
 }
 
 // AltGetVtbContainingBlock ...
-func (v *PopContext) AltGetVtbContainingBlock(vtbID []byte) ([][]byte, error) {
+func (v *PopContext) AltGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.AltHash, error) {
 	defer v.lock()()
 	stream := v.popContext.AltGetVtbContainingBlock(vtbID)
 	if stream == nil {
@@ -266,9 +272,9 @@ func (v *PopContext) AltGetVtbContainingBlock(vtbID []byte) ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.AltHash, 0), err
 	}
-	hashes := make([][]byte, len(encodedHashes))
+	hashes := make([]entities.AltHash, len(encodedHashes))
 	for i, encodedHash := range encodedHashes {
 		copy(hashes[i][:], encodedHash.([]byte))
 	}
@@ -276,7 +282,7 @@ func (v *PopContext) AltGetVtbContainingBlock(vtbID []byte) ([][]byte, error) {
 }
 
 // AltGetVbkBlockContainingBlock ...
-func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID []byte) ([][]byte, error) {
+func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID entities.VbkID) ([]entities.AltHash, error) {
 	defer v.lock()()
 	stream := v.popContext.AltGetVbkBlockContainingBlock(vbkID)
 	if stream == nil {
@@ -287,9 +293,9 @@ func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID []byte) ([][]byte, erro
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.AltHash, 0), err
 	}
-	hashes := make([][]byte, len(encodedHashes))
+	hashes := make([]entities.AltHash, len(encodedHashes))
 	for i, encodedHash := range encodedHashes {
 		copy(hashes[i][:], encodedHash.([]byte))
 	}
@@ -297,7 +303,7 @@ func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID []byte) ([][]byte, erro
 }
 
 // VbkGetVtbContainingBlock ...
-func (v *PopContext) VbkGetVtbContainingBlock(vtbID []byte) ([][]byte, error) {
+func (v *PopContext) VbkGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.VbkID, error) {
 	defer v.lock()()
 	stream := v.popContext.VbkGetVtbContainingBlock(vtbID)
 	if stream == nil {
@@ -308,9 +314,9 @@ func (v *PopContext) VbkGetVtbContainingBlock(vtbID []byte) ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.VbkID, 0), err
 	}
-	hashes := make([][]byte, len(encodedHashes))
+	hashes := make([]entities.VbkID, len(encodedHashes))
 	for i, encodedHash := range encodedHashes {
 		copy(hashes[i][:], encodedHash.([]byte))
 	}
@@ -379,7 +385,7 @@ func (v *PopContext) RemoveAll(payloads *entities.PopData) error {
 }
 
 // GetAtv ...
-func (v *PopContext) GetAtv(id []byte) (*entities.Atv, error) {
+func (v *PopContext) GetAtv(id entities.AtvID) (*entities.Atv, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetAtv(id)
 	if stream == nil {
@@ -395,7 +401,7 @@ func (v *PopContext) GetAtv(id []byte) (*entities.Atv, error) {
 }
 
 // GetVtb ...
-func (v *PopContext) GetVtb(id []byte) (*entities.Vtb, error) {
+func (v *PopContext) GetVtb(id entities.VtbID) (*entities.Vtb, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVtb(id)
 	if stream == nil {
@@ -411,7 +417,7 @@ func (v *PopContext) GetVtb(id []byte) (*entities.Vtb, error) {
 }
 
 // GetVbkBlock ...
-func (v *PopContext) GetVbkBlock(id []byte) (*entities.VbkBlock, error) {
+func (v *PopContext) GetVbkBlock(id entities.VbkID) (*entities.VbkBlock, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVbkBlock(id)
 	if stream == nil {
@@ -427,7 +433,7 @@ func (v *PopContext) GetVbkBlock(id []byte) (*entities.VbkBlock, error) {
 }
 
 // GetAtvs ...
-func (v *PopContext) GetAtvs() ([][]byte, error) {
+func (v *PopContext) GetAtvs() ([]entities.AtvID, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetAtvs()
 	if stream == nil {
@@ -438,9 +444,9 @@ func (v *PopContext) GetAtvs() ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.AtvID, 0), err
 	}
-	ids := make([][]byte, len(atvIDs))
+	ids := make([]entities.AtvID, len(atvIDs))
 	for i, atvID := range atvIDs {
 		copy(ids[i][:], atvID.([]byte))
 	}
@@ -448,7 +454,7 @@ func (v *PopContext) GetAtvs() ([][]byte, error) {
 }
 
 // GetVtbs ...
-func (v *PopContext) GetVtbs() ([][]byte, error) {
+func (v *PopContext) GetVtbs() ([]entities.VtbID, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVtbs()
 	if stream == nil {
@@ -459,9 +465,9 @@ func (v *PopContext) GetVtbs() ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.VtbID, 0), err
 	}
-	ids := make([][]byte, len(vtbIDs))
+	ids := make([]entities.VtbID, len(vtbIDs))
 	for i, vtbID := range vtbIDs {
 		copy(ids[i][:], vtbID.([]byte))
 	}
@@ -469,7 +475,7 @@ func (v *PopContext) GetVtbs() ([][]byte, error) {
 }
 
 // GetVbkBlocks ...
-func (v *PopContext) GetVbkBlocks() ([][]byte, error) {
+func (v *PopContext) GetVbkBlocks() ([]entities.VbkID, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVbkBlocks()
 	if stream == nil {
@@ -480,9 +486,9 @@ func (v *PopContext) GetVbkBlocks() ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.VbkID, 0), err
 	}
-	ids := make([][]byte, len(vbkblockIDs))
+	ids := make([]entities.VbkID, len(vbkblockIDs))
 	for i, vbkblockID := range vbkblockIDs {
 		copy(ids[i][:], vbkblockID.([]byte))
 	}
@@ -490,7 +496,7 @@ func (v *PopContext) GetVbkBlocks() ([][]byte, error) {
 }
 
 // GetAtvsInFlight ...
-func (v *PopContext) GetAtvsInFlight() ([][]byte, error) {
+func (v *PopContext) GetAtvsInFlight() ([]entities.AtvID, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetAtvsInFlight()
 	if stream == nil {
@@ -501,9 +507,9 @@ func (v *PopContext) GetAtvsInFlight() ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.AtvID, 0), err
 	}
-	ids := make([][]byte, len(atvIDs))
+	ids := make([]entities.AtvID, len(atvIDs))
 	for i, atvID := range atvIDs {
 		copy(ids[i][:], atvID.([]byte))
 	}
@@ -511,7 +517,7 @@ func (v *PopContext) GetAtvsInFlight() ([][]byte, error) {
 }
 
 // GetVtbsInFlight ...
-func (v *PopContext) GetVtbsInFlight() ([][]byte, error) {
+func (v *PopContext) GetVtbsInFlight() ([]entities.VtbID, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVtbsInFlight()
 	if stream == nil {
@@ -522,9 +528,9 @@ func (v *PopContext) GetVtbsInFlight() ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.VtbID, 0), err
 	}
-	ids := make([][]byte, len(vtbIDs))
+	ids := make([]entities.VtbID, len(vtbIDs))
 	for i, vtbID := range vtbIDs {
 		copy(ids[i][:], vtbID.([]byte))
 	}
@@ -532,7 +538,7 @@ func (v *PopContext) GetVtbsInFlight() ([][]byte, error) {
 }
 
 // GetVbkBlocksInFlight ...
-func (v *PopContext) GetVbkBlocksInFlight() ([][]byte, error) {
+func (v *PopContext) GetVbkBlocksInFlight() ([]entities.VbkID, error) {
 	defer v.lock()()
 	stream := v.popContext.MemPoolGetVbkBlocksInFlight()
 	if stream == nil {
@@ -543,9 +549,9 @@ func (v *PopContext) GetVbkBlocksInFlight() ([][]byte, error) {
 		return veriblock.ReadSingleByteLenValueDefault(r)
 	})
 	if err != nil {
-		return make([][]byte, 0), err
+		return make([]entities.VbkID, 0), err
 	}
-	ids := make([][]byte, len(vbkblockIDs))
+	ids := make([]entities.VbkID, len(vbkblockIDs))
 	for i, vbkblockID := range vbkblockIDs {
 		copy(ids[i][:], vbkblockID.([]byte))
 	}

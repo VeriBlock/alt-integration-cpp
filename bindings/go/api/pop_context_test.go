@@ -32,15 +32,15 @@ func TestPopContextSubmitVbk(t *testing.T) {
 	// state == 0, valid vbkBlock
 	assert.Equal(0, state)
 
-	ids, err := popContext.GetVtbs()
+	vtbIDs, err := popContext.GetVtbs()
 	assert.NoError(err)
-	assert.Equal(0, len(ids))
-	ids, err = popContext.GetAtvs()
+	assert.Equal(0, len(vtbIDs))
+	atvIDs, err := popContext.GetAtvs()
 	assert.NoError(err)
-	assert.Equal(0, len(ids))
-	ids, err = popContext.GetVbkBlocks()
+	assert.Equal(0, len(atvIDs))
+	vbkIDs, err := popContext.GetVbkBlocks()
 	assert.NoError(err)
-	assert.Equal(1, len(ids))
+	assert.Equal(1, len(vbkIDs))
 }
 
 func TestPopContextSubmitVtb(t *testing.T) {
@@ -75,15 +75,15 @@ func TestPopContextSubmitVtb(t *testing.T) {
 	// state == 0, valid vtb
 	assert.Equal(0, state)
 
-	ids, err := popContext.GetVtbs()
+	vtbIDs, err := popContext.GetVtbs()
 	assert.NoError(err)
-	assert.Equal(1, len(ids))
-	ids, err = popContext.GetAtvs()
+	assert.Equal(1, len(vtbIDs))
+	atvIDs, err := popContext.GetAtvs()
 	assert.NoError(err)
-	assert.Equal(0, len(ids))
-	ids, err = popContext.GetVbkBlocks()
+	assert.Equal(0, len(atvIDs))
+	vbkIDs, err := popContext.GetVbkBlocks()
 	assert.NoError(err)
-	assert.Equal(2, len(ids))
+	assert.Equal(2, len(vbkIDs))
 }
 
 func TestPopContextSubmitAtv(t *testing.T) {
@@ -107,13 +107,13 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	// state == 0, valid atv
 	assert.Equal(0, state)
 
-	ids, err := popContext.GetVtbs()
+	vtbIDs, err := popContext.GetVtbs()
 	assert.NoError(err)
-	assert.Equal(0, len(ids))
-	ids, err = popContext.GetAtvs()
+	assert.Equal(0, len(vtbIDs))
+	atvIDs, err := popContext.GetAtvs()
 	assert.NoError(err)
-	assert.Equal(1, len(ids))
-	ids, err = popContext.GetVbkBlocks()
+	assert.Equal(1, len(atvIDs))
+	vbkIDs, err := popContext.GetVbkBlocks()
 	assert.NoError(err)
-	assert.Equal(1, len(ids))
+	assert.Equal(1, len(vbkIDs))
 }

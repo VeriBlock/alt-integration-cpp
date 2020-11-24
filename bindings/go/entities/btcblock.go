@@ -10,6 +10,9 @@ import (
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+// BtcHash is 32 byte hash of BtcBlock
+type BtcHash [32]byte
+
 // BtcBlock ...
 type BtcBlock struct {
 	Version       uint32
@@ -21,10 +24,16 @@ type BtcBlock struct {
 }
 
 // GetHash ...
-func (v *BtcBlock) GetHash() []byte {
+func (v *BtcBlock) GetHash() BtcHash {
 	buffer := new(bytes.Buffer)
 	v.ToVbkEncoding(buffer)
 	return ffi.BtcBlockGetHash(buffer.Bytes())
+}
+
+// GetGenericHash ...
+func (v *BtcBlock) GetGenericHash() []byte {
+	hash := v.GetHash()
+	return hash[:]
 }
 
 // GetBlockTime ...
@@ -100,8 +109,9 @@ func (v *BtcBlock) FromRaw(stream io.Reader) error {
 
 // ToJSON ...
 func (v *BtcBlock) ToJSON() (map[string]interface{}, error) {
+	hash := v.GetHash()
 	res := map[string]interface{}{
-		"hash":          hex.EncodeToString(v.GetHash()),
+		"hash":          hex.EncodeToString(hash[:]),
 		"version":       v.Version,
 		"previousBlock": hex.EncodeToString(v.PreviousBlock[:]),
 		"merkleRoot":    hex.EncodeToString(v.MerkleRoot[:]),
