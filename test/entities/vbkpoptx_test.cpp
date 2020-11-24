@@ -123,7 +123,7 @@ static const auto defaultPublicKey =
 
 static const VbkPopTx defaultTx{
     networkByte,
-    Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
+    Address::assertFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
     defaultVbkBlock,
     BtcTx(btcTxBytes),
     defaultPath,
@@ -169,11 +169,8 @@ static const std::string defaultTxEncoded =
     "b3c10470c8e8e426f1937758d9fb5e97a1891176cb37d4c12d4af4107b1aa3e8a8a754c06a"
     "22760e44c60642fba883967c19740d5231336326f7962750c8df99";
 
-TEST(VbkPopTx, Deserialize) {
-  const auto vbktx = ParseHex(defaultTxEncoded);
-  auto stream = ReadStream(vbktx);
-  auto decoded = VbkPopTx::fromVbkEncoding(stream);
-
+TEST(VbkPopTx, DeserializeFromVbkEncoding) {
+  auto decoded = AssertDeserializeFromHex<VbkPopTx>(defaultTxEncoded);
   EXPECT_EQ(decoded.networkOrType.typeId, defaultTx.networkOrType.typeId);
   EXPECT_EQ(decoded.address, defaultTx.address);
   EXPECT_EQ(decoded.publishedBlock.getHeight(),
@@ -188,8 +185,6 @@ TEST(VbkPopTx, Deserialize) {
   EXPECT_EQ(decoded.merklePath.index, defaultTx.merklePath.index);
   EXPECT_EQ(decoded.signature, defaultTx.signature);
   EXPECT_EQ(decoded.publicKey, defaultTx.publicKey);
-
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
 
 TEST(VbkPopTx, Serialize) {
@@ -201,11 +196,9 @@ TEST(VbkPopTx, Serialize) {
 }
 
 TEST(VbkPopTx, RoundTrip) {
-  auto txEncoded = ParseHex(defaultTxEncoded);
-  auto stream = ReadStream(txEncoded);
-  auto decoded = VbkPopTx::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromHex<VbkPopTx>(defaultTxEncoded);
   EXPECT_EQ(decoded.address,
-            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+            Address::assertFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -218,11 +211,11 @@ TEST(VbkPopTx, RoundTripNew) {
   auto txEncoded = ParseHex(defaultTxEncoded);
   VbkPopTx decoded;
   ValidationState state;
-  bool ret = Deserialize(txEncoded, decoded, state);
+  bool ret = DeserializeFromVbkEncoding(txEncoded, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.address,
-            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+            Address::assertFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);

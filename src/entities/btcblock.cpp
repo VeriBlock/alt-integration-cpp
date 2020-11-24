@@ -5,38 +5,9 @@
 
 #include <veriblock/entities/btcblock.hpp>
 
-using namespace altintegration;
+namespace altintegration {
 
 const std::string BtcBlock::_name = "BTC";
-
-BtcBlock BtcBlock::fromRaw(const std::vector<uint8_t>& bytes) {
-  ReadStream stream(bytes);
-  return fromRaw(stream);
-}
-
-BtcBlock BtcBlock::fromRaw(ReadStream& stream) {
-  try {
-    BtcBlock block{};
-    block.version = stream.readLE<uint32_t>();
-    block.previousBlock = stream.readSlice(SHA256_HASH_SIZE).reverse();
-    block.merkleRoot = stream.readSlice(SHA256_HASH_SIZE).reverse();
-    block.timestamp = stream.readLE<uint32_t>();
-    block.bits = stream.readLE<uint32_t>();
-    block.nonce = stream.readLE<uint32_t>();
-    return block;
-  } catch (const std::exception& e) {
-    throw std::invalid_argument(
-        fmt::format("Can not deserialize BTC block ({}) from {}",
-                    e.what(),
-                    HexStr(stream.remainingBytes())));
-  }
-}
-
-BtcBlock BtcBlock::fromVbkEncoding(ReadStream& stream) {
-  ReadStream valStream(
-      readSingleByteLenValue(stream, BTC_HEADER_SIZE, BTC_HEADER_SIZE));
-  return BtcBlock::fromRaw(valStream);
-}
 
 void BtcBlock::toRaw(WriteStream& stream) const {
   stream.writeLE<uint32_t>(version);
@@ -63,18 +34,7 @@ uint256 BtcBlock::getHash() const {
   return sha256twice(stream.data()).reverse();
 }
 
-BtcBlock BtcBlock::fromHex(const std::string& hex) {
-  auto v = ParseHex(hex);
-  return BtcBlock::fromRaw(v);
-}
-
-std::string BtcBlock::toHex() const { return HexStr(this->toRaw()); }
-
-std::vector<uint8_t> BtcBlock::toRaw() const {
-  WriteStream stream;
-  this->toRaw(stream);
-  return stream.data();
-}
+std::string BtcBlock::toHex() const { return HexStr(SerializeToRaw(*this)); }
 
 std::string BtcBlock::toPrettyString() const {
   return fmt::sprintf(
@@ -88,10 +48,9 @@ std::string BtcBlock::toPrettyString() const {
       nonce);
 }
 
-bool altintegration::DeserializeRaw(ReadStream& stream,
-                                    BtcBlock& out,
-                                    ValidationState& state) {
-  BtcBlock block{};
+bool DeserializeFromRaw(ReadStream& stream,
+                        BtcBlock& block,
+                        ValidationState& state) {
   if (!stream.readLE<uint32_t>(block.version, state)) {
     return state.Invalid("btc-block-version");
   }
@@ -114,17 +73,19 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
   if (!stream.readLE<uint32_t>(block.nonce, state)) {
     return state.Invalid("btc-block-nonce");
   }
-  out = block;
   return true;
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
-                                 BtcBlock& out,
-                                 ValidationState& state) {
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                BtcBlock& out,
+                                ValidationState& state,
+                                const BtcBlock::hash_t& /*ignore*/) {
   Slice<const uint8_t> value;
   if (!readSingleByteLenValue(
           stream, value, state, BTC_HEADER_SIZE, BTC_HEADER_SIZE)) {
     return state.Invalid("btc-block-bad-header");
   }
-  return DeserializeRaw(value, out, state);
+  return DeserializeFromRaw(value, out, state);
 }
+
+}  // namespace altintegration

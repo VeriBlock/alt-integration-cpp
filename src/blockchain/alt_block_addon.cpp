@@ -12,19 +12,69 @@
 
 namespace altintegration {
 
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                AltBlockAddon& out,
+                                ValidationState& state) {
+  PopState<AltEndorsement>& pop = out;
+  if (!DeserializeFromVbkEncoding(stream, pop, state)) {
+    return state.Invalid("alt-block-addon-bad-popstate");
+  }
+
+  if (!readArrayOf<uint256>(
+          stream,
+          out._atvids,
+          state,
+          0,
+          MAX_POPDATA_ATV,
+          [&](uint256& o) -> bool {
+            return readSingleByteLenValue(
+                stream, o, state, uint256::size(), uint256::size());
+          })) {
+    return state.Invalid("alt-blocka-addon-bad-atvid");
+  }
+
+  if (!readArrayOf<uint256>(
+          stream,
+          out._vtbids,
+          state,
+          0,
+          MAX_POPDATA_VTB,
+          [&](uint256& o) -> bool {
+            return readSingleByteLenValue(
+                stream, o, state, uint256::size(), uint256::size());
+          })) {
+    return state.Invalid("alt-blocka-addon-bad-vtbid");
+  }
+
+  if (!readArrayOf<uint96>(
+          stream,
+          out._vbkblockids,
+          state,
+          0,
+          MAX_POPDATA_VBK,
+          [&](uint96& o) -> bool {
+            return readSingleByteLenValue(
+                stream, o, state, uint96::size(), uint96::size());
+          })) {
+    return state.Invalid("alt-blocka-addon-bad-vbkids");
+  }
+
+  return true;
+}
+
 void AltBlockAddon::setDirty() {
   static_cast<BlockIndex<AltBlock>*>(this)->setDirty();
 }
 
 template <>
-const std::vector<typename ATV::id_t>&
-AltBlockAddon::getPayloadIds<ATV>() const {
+const std::vector<typename ATV::id_t>& AltBlockAddon::getPayloadIds<ATV>()
+    const {
   return _atvids;
 }
 
 template <>
-const std::vector<typename VTB::id_t>&
-AltBlockAddon::getPayloadIds<VTB>() const {
+const std::vector<typename VTB::id_t>& AltBlockAddon::getPayloadIds<VTB>()
+    const {
   return _vtbids;
 }
 
@@ -35,14 +85,47 @@ AltBlockAddon::getPayloadIds<VbkBlock>() const {
 }
 
 template <>
-std::vector<typename ATV::id_t>&
-AltBlockAddon::getPayloadIdsInner<ATV>() {
+std::vector<typename ATV::id_t>& AltBlockAddon::getPayloadIdsInner<ATV>() {
   return _atvids;
 }
 
+std::string AltBlockAddon::toPrettyString() const {
+  return fmt::sprintf("ATV=%d, VTB=%d, VBK=%d",
+                      _atvids.size(),
+                      _vtbids.size(),
+                      _vbkblockids.size());
+}
+
+void AltBlockAddon::toRaw(WriteStream& w) const {
+  PopState<AltEndorsement>::toRaw(w);
+  writeArrayOf<uint256>(w, _atvids, writeSingleByteLenValue);
+  writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
+  writeArrayOf<uint96>(w, _vbkblockids, writeSingleByteLenValue);
+}
+
+void AltBlockAddon::setNullInmemFields() {
+  chainWork = 0;
+  endorsedBy.clear();
+}
+
+bool AltBlockAddon::hasPayloads() const {
+  return !_atvids.empty() || !_vtbids.empty() || !_vbkblockids.empty();
+}
+
+void AltBlockAddon::clearPayloads() {
+  _atvids.clear();
+  _vtbids.clear();
+  _vbkblockids.clear();
+}
+
+void AltBlockAddon::setNull() {
+  PopState<AltEndorsement>::setNull();
+  chainWork = 0;
+  clearPayloads();
+}
+
 template <>
-std::vector<typename VTB::id_t>&
-AltBlockAddon::getPayloadIdsInner<VTB>() {
+std::vector<typename VTB::id_t>& AltBlockAddon::getPayloadIdsInner<VTB>() {
   return _vtbids;
 }
 

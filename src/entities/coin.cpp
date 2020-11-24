@@ -7,10 +7,6 @@
 
 using namespace altintegration;
 
-Coin Coin::fromVbkEncoding(ReadStream& stream) {
-  return Coin(readSingleBEValue<int64_t>(stream));
-}
-
 void Coin::toVbkEncoding(WriteStream& stream) const {
   writeSingleBEValue(stream, units);
 }
@@ -23,7 +19,7 @@ std::string Coin::toPrettyString() const {
   return fmt::sprintf("Coin{%lld}", units);
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
+bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                  Coin& out,
                                  ValidationState& state) {
   int64_t amount;

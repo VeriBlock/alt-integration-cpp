@@ -10,7 +10,6 @@
 #include <sstream>
 #include <vector>
 
-#include "veriblock/fmt.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -33,29 +32,7 @@ struct PublicationData {
   //! TBD
   std::vector<uint8_t> contextInfo{};
 
-  std::string toPrettyString() const {
-    return fmt::sprintf("PublicationData{id=%lld, header=%s, payoutInfo=%s}",
-                        identifier,
-                        HexStr(header),
-                        HexStr(payoutInfo));
-  }
-
-  /**
-   * Read data from the vector of bytes and convert it to
-   * PublicationData
-   * @param bytes data stream to read from
-   * @return PublicationData
-   */
-  static PublicationData fromRaw(const std::vector<uint8_t>& bytes);
-
-  /**
-   * Read data from the stream and convert it to PublicationData
-   * @param stream data stream to read from
-   * @return PublicationData
-   */
-  static PublicationData fromRaw(ReadStream& stream);
-
-  static PublicationData generatePublicationData();
+  std::string toPrettyString() const;
 
   /**
    * Convert PublicationData to data stream using PublicationData byte
@@ -76,10 +53,9 @@ JsonValue ToJSON(const PublicationData& p) {
   return obj;
 }
 
-//! @overload
-bool Deserialize(ReadStream& stream,
-                 PublicationData& out,
-                 ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                PublicationData& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

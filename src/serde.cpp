@@ -8,6 +8,23 @@
 
 namespace altintegration {
 
+bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState& state) {
+  if (num < min) {
+    return state.Invalid(
+        "range-below",
+        fmt::format(
+            "Expected num to be more or equal to {}, but got {}", min, num));
+  }
+
+  if (num > max) {
+    return state.Invalid(
+        "range-above",
+        fmt::format(
+            "Expected num to be less or equal than {}, but got {}", max, num));
+  }
+  return true;
+}
+
 std::vector<uint8_t> trimmedArray(int64_t input) {
   size_t x = sizeof(int64_t);
   do {
@@ -26,14 +43,6 @@ std::vector<uint8_t> trimmedArray(int64_t input) {
   return output;
 }
 
-Slice<const uint8_t> readVarLenValue(ReadStream& stream,
-                                     int minLen,
-                                     int maxLen) {
-  auto length = readSingleBEValue<int32_t>(stream);
-  checkRange(length, minLen, maxLen);
-  return stream.readSlice(length);
-}
-
 bool readVarLenValue(ReadStream& stream,
                      Slice<const uint8_t>& out,
                      ValidationState& state,
@@ -44,17 +53,9 @@ bool readVarLenValue(ReadStream& stream,
     return state.Invalid("readvarlen-bad-length");
   }
   if (!checkRange(length, minLen, maxLen, state)) {
-    return state.Invalid("readvarlen-bad-length-range");
+    return state.Invalid("readvarlen-bad-range");
   }
   return stream.readSlice(length, out, state);
-}
-
-Slice<const uint8_t> readSingleByteLenValue(ReadStream& stream,
-                                            int minLen,
-                                            int maxLen) {
-  const auto lengthLength = stream.readBE<uint8_t>();
-  checkRange(lengthLength, minLen, maxLen);
-  return stream.readSlice(lengthLength);
 }
 
 bool readSingleByteLenValue(ReadStream& stream,
@@ -62,18 +63,21 @@ bool readSingleByteLenValue(ReadStream& stream,
                             ValidationState& state,
                             int minLen,
                             int maxLen) {
-  uint8_t lengthLength;
-  if (!stream.readBE<uint8_t>(lengthLength, state)) {
-    return state.Invalid("readsingle-invalid-length-of-length");
+  uint8_t length = 0;
+  if (!stream.readBE<uint8_t>(length, state)) {
+    return state.Invalid("readsingle-bad-length");
   }
-  if (!checkRange(lengthLength, minLen, maxLen, state)) {
-    return state.Invalid("readsingle-invalid-length-of-length-range");
+  if (!checkRange(length, minLen, maxLen, state)) {
+    return state.Invalid("readsingle-bad-range");
   }
-  return stream.readSlice(lengthLength, out, state);
+  return stream.readSlice(length, out, state);
 }
 
 void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value) {
-  checkRange(value.size(), 0, (std::numeric_limits<uint8_t>::max)());
+  ValidationState state;
+  VBK_ASSERT_MSG(
+      checkRange(value.size(), 0, (std::numeric_limits<uint8_t>::max)(), state),
+      "Can not writeSingleByteLen: " + state.toString());
   stream.writeBE<uint8_t>((uint8_t)value.size());
   stream.write(value);
 }
@@ -89,41 +93,24 @@ void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value) {
   stream.write(value);
 }
 
-NetworkBytePair readNetworkByte(ReadStream& stream, TxType type) {
-  NetworkBytePair ret;
-  auto networkOrType = stream.readBE<uint8_t>();
-
-  if (networkOrType == (uint8_t)type) {
-    ret.typeId = networkOrType;
-  } else {
-    ret.hasNetworkByte = true;
-    ret.networkByte = networkOrType;
-    ret.typeId = stream.readBE<uint8_t>();
-  }
-
-  return ret;
-}
-
 bool readNetworkByte(ReadStream& stream,
                      TxType type,
-                     NetworkBytePair& out,
+                     NetworkBytePair& ret,
                      ValidationState& state) {
-  uint8_t networkOrType;
+  uint8_t networkOrType = 0;
   if (!stream.readBE<uint8_t>(networkOrType, state)) {
-    return state.Invalid("readnetwork-invalid-network-byte");
+    return state.Invalid("bad-network-byte");
   }
 
-  NetworkBytePair ret;
   if (networkOrType == (uint8_t)type) {
     ret.typeId = networkOrType;
   } else {
     ret.hasNetworkByte = true;
     ret.networkByte = networkOrType;
     if (!stream.readBE<uint8_t>(ret.typeId, state)) {
-      return state.Invalid("readnetwork-invalid-type-id");
+      return state.Invalid("bad-type-id");
     }
   }
-  out = ret;
   return true;
 }
 
@@ -134,29 +121,4 @@ void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
   stream.writeBE<uint8_t>(networkOrType.typeId);
 }
 
-std::string readString(ReadStream& stream) {
-  const auto count = readSingleBEValue<int32_t>(stream);
-
-  std::string result;
-  result.reserve(count);
-
-  for (int32_t i = 0; i < count; ++i) {
-    result.push_back(stream.readBE<char>());
-  }
-
-  return result;
-}
-
-void writeDouble(WriteStream& stream, const double& val) {
-  uint64_t d = 0;
-  memcpy(&d, &val, sizeof(val));
-  stream.writeBE<uint64_t>(d);
-}
-
-double readDouble(ReadStream& stream) {
-  uint64_t d = stream.readBE<uint64_t>();
-  double r = 0;
-  memcpy(&r, &d, sizeof(d));
-  return r;
-}
 }  // namespace altintegration

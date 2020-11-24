@@ -60,7 +60,7 @@ TEST_P(ProgPowBlockHashTest, Regression) {
   auto [strheader, strhash] = GetParam();
 
   std::vector<uint8_t> header = ParseHex(strheader);
-  uint192 expected = uint192::fromHexStrict(strhash);
+  uint192 expected = uint192::assertFromHex(strhash);
 
   auto actual = progPowHash(header);
   ASSERT_EQ(actual, expected);

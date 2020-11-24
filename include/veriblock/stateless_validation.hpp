@@ -23,7 +23,7 @@
 namespace altintegration {
 
 bool containsSplit(const std::vector<uint8_t>& pop_data,
-                   const std::vector<uint8_t>& btcTx_data);
+                   const std::vector<uint8_t>& btcTx_data, ValidationState& state);
 
 template <typename MerklePathType, typename HashType1, typename HashType2>
 bool checkMerklePath(const MerklePathType& merklePath,

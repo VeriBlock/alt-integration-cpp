@@ -272,25 +272,25 @@ struct BlockIndex : public Block::addon_t {
     return stream.data();
   }
 
-  void initAddon(ReadStream& stream) { addon_t::initAddonFromRaw(stream); }
-
-  static BlockIndex fromRaw(ReadStream& stream,
-                            const hash_t& precalculatedHash = hash_t()) {
-    BlockIndex index{};
-    index.height = stream.readBE<uint32_t>();
-    index.header =
-        std::make_shared<Block>(fromRawHeader(stream, precalculatedHash));
-    index.status = stream.readBE<uint32_t>();
-    index.initAddon(stream);
-    index.setDirty();
-    return index;
-  }
-
-  static BlockIndex fromRaw(Slice<const uint8_t> bytes,
-                            const hash_t& precalculatedHash = hash_t()) {
-    ReadStream stream(bytes);
-    return fromRaw(stream, precalculatedHash);
-  }
+  //  void initAddon(ReadStream& stream) { addon_t::initAddonFromRaw(stream); }
+  //
+  //  static BlockIndex fromRaw(ReadStream& stream,
+  //                            const hash_t& precalculatedHash = hash_t()) {
+  //    BlockIndex index{};
+  //    index.height = stream.readBE<uint32_t>();
+  //    index.header =
+  //        std::make_shared<Block>(fromRawHeader(stream, precalculatedHash));
+  //    index.status = stream.readBE<uint32_t>();
+  //    index.initAddon(stream);
+  //    index.setDirty();
+  //    return index;
+  //  }
+  //
+  //  static BlockIndex fromRaw(Slice<const uint8_t> bytes,
+  //                            const hash_t& precalculatedHash = hash_t()) {
+  //    ReadStream stream(bytes);
+  //    return fromRaw(stream, precalculatedHash);
+  //  }
 
  protected:
   //! height of the entry in the chain
@@ -305,10 +305,11 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;
 
-  static Block fromRawHeader(ReadStream& stream, const hash_t& /* ignore */) {
-    // default is to ignore precalculated hash
-    return Block::fromRaw(stream);
-  }
+  template <typename T>
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         BlockIndex<T>& out,
+                                         ValidationState& state,
+                                         typename T::hash_t precalculatedHash);
 };
 
 /**
@@ -350,10 +351,29 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
   return obj;
 }
 
-template <>
-inline VbkBlock BlockIndex<VbkBlock>::fromRawHeader(
-    ReadStream& stream, const hash_t& precalculatedHash) {
-  return VbkBlock::fromRaw(stream, precalculatedHash);
+template <typename Block>
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream, BlockIndex<Block>& out,
+    ValidationState& state,
+    typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
+  const auto& name = Block::name();
+  if (!stream.readBE(out.height, state)) {
+    return state.Invalid(name + "-block-index-height");
+  }
+  if (!DeserializeFromVbkEncoding(
+          stream, out.header, state, precalculatedHash)) {
+    return state.Invalid(name + "-block-index-header");
+  }
+  if (!stream.readBE<uint32_t>(out.status, state)) {
+    return state.Invalid(name + "-block-index-status");
+  }
+
+  using addon_t = typename Block::addon_t;
+  addon_t& addon = out;
+  if (!DeserializeFromVbkEncoding(stream, addon, state)) {
+    return state.Invalid(name + "-block-index-addon");
+  }
+  return true;
 }
 
 }  // namespace altintegration

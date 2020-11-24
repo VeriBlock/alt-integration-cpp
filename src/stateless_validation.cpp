@@ -37,94 +37,113 @@ int getIntFromBits(const std::vector<bool>& bits,
 
 namespace altintegration {
 
+#define VBK_COMPARE_MAGIC(i, magic)             \
+  {                                             \
+    uint8_t byte = 0;                           \
+    if (!buffer.readBE<uint8_t>(byte, state)) { \
+      return state.Invalid("bad-magic", i);     \
+    }                                           \
+    if (byte != magic) {                        \
+      continue;                                 \
+    }                                           \
+  }
+
+#define VBK_READ_OR_RETURN(type, result, msg)
+
 bool containsSplit(const std::vector<uint8_t>& pop_data,
-                   const std::vector<uint8_t>& btcTx_data) {
-  static const std::vector<uint8_t> magicBytes = {0x92, 0x7a, 0x59};
+                   const std::vector<uint8_t>& btcTx_data,
+                   ValidationState& state) {
+  static const std::array<uint8_t, 3> magic = {0x92, 0x7a, 0x59};
 
   ReadStream buffer(btcTx_data);
 
-  try {
-    size_t lastPos = 0;
-    while (buffer.remaining() > 5) {
-      if (buffer.readBE<uint8_t>() != magicBytes[0] ||
-          buffer.readBE<uint8_t>() != magicBytes[1] ||
-          buffer.readBE<uint8_t>() != magicBytes[2]) {
-        continue;
-      }
+  size_t lastPos = 0;
+  while (buffer.remaining() > 5) {
+    VBK_COMPARE_MAGIC(0, magic[0]);
+    VBK_COMPARE_MAGIC(1, magic[1]);
+    VBK_COMPARE_MAGIC(2, magic[2]);
 
-      lastPos = buffer.position();
-      // Parse the first byte to get the number of chunks, their positions and
-      // lengths
-      auto descriptor = buffer.readBE<uint8_t>();
-
-      uint32_t chunks = 0;
-      uint32_t offsetLength = 4;
-      uint32_t sectionLength = 4;
-      for (int i = 0; i < 8; ++i) {
-        if ((descriptor >> i) & 1) {
-          if (i < 2) {
-            sectionLength += 1 << i;
-          } else if (i < 4) {
-            offsetLength += 1 << i;
-          } else {
-            chunks += 1 << (i - 4);
-          }
-        }
-      }
-
-      // Parse the actual chunk descriptors now that we know the sizes
-
-      uint32_t chunkDescriptorBitLength =
-          (chunks * offsetLength) + (sectionLength * (chunks - 1));
-      uint32_t chunkDescriptorBytesLength =
-          (chunkDescriptorBitLength + 8 - (chunkDescriptorBitLength % 8)) / 8;
-      uint32_t waste =
-          chunkDescriptorBytesLength * 8 - chunkDescriptorBitLength;
-
-      std::vector<uint8_t> chunkDescriptorBytes =
-          buffer.readSlice(chunkDescriptorBytesLength).reverse();
-      std::vector<bool> chunkDescriptor;
-      // Read from Slice bits
-      uint32_t chunkDescriptorLength = 0;
-      for (const auto& i1 : chunkDescriptorBytes) {
-        std::bitset<8> temp(i1);
-        for (uint32_t i2 = 0; i2 < 8; ++i2) {
-          chunkDescriptor.push_back(temp[i2]);
-          if (temp[i2]) {
-            chunkDescriptorLength = (uint32_t)chunkDescriptor.size();
-          }
-        }
-      }
-
-      int totalBytesRead = 0;
-      buffer.setPosition(0);
-      std::vector<uint8_t> extracted;
-      for (int i = chunks - 1; i >= 0; --i) {
-        uint32_t chunkOffset = waste + (i * (offsetLength + sectionLength));
-        uint32_t limit =
-            (std::min)(chunkDescriptorLength, chunkOffset + offsetLength);
-        int sectionOffsetValue =
-            ::getIntFromBits(chunkDescriptor, chunkOffset, limit);
-
-        uint32_t sectionLengthValue = 0;
-        if (i == 0) {
-          sectionLengthValue = (uint32_t)pop_data.size() - totalBytesRead;
-        } else {
-          sectionLengthValue = ::getIntFromBits(
-              chunkDescriptor, chunkOffset - sectionLength, chunkOffset);
-        }
-        buffer.setPosition(buffer.position() + sectionOffsetValue);
-        Slice<const uint8_t> bytes = buffer.readSlice(sectionLengthValue);
-        totalBytesRead += sectionLengthValue;
-        extracted.insert(extracted.end(), bytes.begin(), bytes.end());
-      }
-
-      if (pop_data == extracted) {
-        return true;
-      }
-      buffer.setPosition(lastPos);
+    lastPos = buffer.position();
+    // Parse the first byte to get the number of chunks, their positions and
+    // lengths
+    uint8_t descriptor = 0;
+    if (!buffer.readBE<uint8_t>(descriptor, state)) {
+      return state.Invalid("bad-descriptor");
     }
-  } catch (const std::exception&) {
+
+    uint32_t chunks = 0;
+    uint32_t offsetLength = 4;
+    uint32_t sectionLength = 4;
+    for (int i = 0; i < 8; ++i) {
+      if ((descriptor >> i) & 1) {
+        if (i < 2) {
+          sectionLength += 1 << i;
+        } else if (i < 4) {
+          offsetLength += 1 << i;
+        } else {
+          chunks += 1 << (i - 4);
+        }
+      }
+    }
+
+    // Parse the actual chunk descriptors now that we know the sizes
+
+    uint32_t chunkDescriptorBitLength =
+        (chunks * offsetLength) + (sectionLength * (chunks - 1));
+    uint32_t chunkDescriptorBytesLength =
+        (chunkDescriptorBitLength + 8 - (chunkDescriptorBitLength % 8)) / 8;
+    uint32_t waste = chunkDescriptorBytesLength * 8 - chunkDescriptorBitLength;
+
+    Slice<const uint8_t> out;
+    if (buffer.readSlice(chunkDescriptorBytesLength, out, state)) {
+      return state.Invalid("bad-descriptor-bytes");
+    }
+
+    std::vector<uint8_t> chunkDescriptorBytes = out.reverse();
+    std::vector<bool> chunkDescriptor;
+    // Read from Slice bits
+    uint32_t chunkDescriptorLength = 0;
+    for (const auto& i1 : chunkDescriptorBytes) {
+      std::bitset<8> temp(i1);
+      for (uint32_t i2 = 0; i2 < 8; ++i2) {
+        chunkDescriptor.push_back(temp[i2]);
+        if (temp[i2]) {
+          chunkDescriptorLength = (uint32_t)chunkDescriptor.size();
+        }
+      }
+    }
+
+    int totalBytesRead = 0;
+    buffer.setPosition(0);
+    std::vector<uint8_t> extracted;
+    for (int i = chunks - 1; i >= 0; --i) {
+      uint32_t chunkOffset = waste + (i * (offsetLength + sectionLength));
+      uint32_t limit =
+          std::min(chunkDescriptorLength, chunkOffset + offsetLength);
+      int sectionOffsetValue =
+          getIntFromBits(chunkDescriptor, chunkOffset, limit);
+
+      uint32_t sectionLengthValue = 0;
+      if (i == 0) {
+        sectionLengthValue = (uint32_t)pop_data.size() - totalBytesRead;
+      } else {
+        sectionLengthValue = ::getIntFromBits(
+            chunkDescriptor, chunkOffset - sectionLength, chunkOffset);
+      }
+      buffer.setPosition(buffer.position() + sectionOffsetValue);
+      Slice<const uint8_t> bytes;
+      if (!buffer.readSlice(sectionLengthValue, bytes, state)) {
+        return state.Invalid("bad-section-length", i);
+      }
+      totalBytesRead += sectionLengthValue;
+      extracted.insert(extracted.end(), bytes.begin(), bytes.end());
+    }
+
+    if (pop_data == extracted) {
+      return true;
+    }
+
+    buffer.setPosition(lastPos);
   }
 
   return false;
@@ -153,7 +172,7 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
     }
   }
 
-  if (!containsSplit(stream.data(), tx.bitcoinTransaction.tx)) {
+  if (!containsSplit(stream.data(), tx.bitcoinTransaction.tx, state)) {
     return state.Invalid(
         "invalid-vbk-pop-tx",
         "Bitcoin transaction does not contain PoP publication data");

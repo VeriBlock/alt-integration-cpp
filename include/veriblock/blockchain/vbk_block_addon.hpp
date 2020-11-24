@@ -94,7 +94,10 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   void toRaw(WriteStream& w) const {
     w.writeBE<uint32_t>(_refCount);
     PopState<VbkEndorsement>::toRaw(w);
-    writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
+    writeArrayOf<uint256>(
+        w, _vtbids, [&](WriteStream& /*ignore*/, const uint256& u) {
+          writeSingleByteLenValue(w, u);
+        });
   }
 
  protected:
@@ -112,14 +115,14 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
     _vtbids.clear();
   }
 
-  void initAddonFromRaw(ReadStream& r) {
-    _refCount = r.readBE<uint32_t>();
-    PopState<VbkEndorsement>::initAddonFromRaw(r);
-
-    _vtbids = readArrayOf<uint256>(
-        r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
-  }
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         VbkBlockAddon& out,
+                                         ValidationState& state);
 };
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VbkBlockAddon& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

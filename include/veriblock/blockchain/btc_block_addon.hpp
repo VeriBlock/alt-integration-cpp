@@ -63,14 +63,9 @@ struct BtcBlockAddon {
   void toRaw(WriteStream& w) const {
     // save only refs
     writeArrayOf<ref_height_t>(
-        w, refs, [](WriteStream& stream, ref_height_t value) {
-          stream.writeBE<ref_height_t>(value);
+        w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
+          w.writeBE<ref_height_t>(value);
         });
-  }
-
-  void initAddonFromRaw(ReadStream& r) {
-    refs = readArrayOf<ref_height_t>(
-        r, [](ReadStream& stream) { return stream.readBE<ref_height_t>(); });
   }
 
   std::string toPrettyString() const {
@@ -97,7 +92,16 @@ struct BtcBlockAddon {
     refs.clear();
     chainWork = 0;
   }
+
+ private:
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         BtcBlockAddon& out,
+                                         ValidationState& state);
 };
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                BtcBlockAddon& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

@@ -37,7 +37,7 @@ bool checkBlockTime(const BlockIndex<AltBlock>& prev,
 
 bool AltBlockTree::bootstrap(ValidationState& state) {
   if (base::isBootstrapped()) {
-    return state.Error("already bootstrapped");
+    return state.Invalid("already bootstrapped");
   }
 
   auto block = alt_config_->getBootstrapBlock();

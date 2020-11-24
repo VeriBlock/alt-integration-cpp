@@ -14,7 +14,7 @@ using namespace altintegration;
 struct StatelessVtbTest : public ::testing::TestWithParam<std::string> {};
 
 TEST_P(StatelessVtbTest, validateVtbStatelessly) {
-  VTB vtb = VTB::fromHex(GetParam());
+  VTB vtb = AssertDeserializeFromVbkEncoding<VTB>(GetParam());
   ValidationState state;
   BtcChainParamsTest param;
   bool result = checkVTB(vtb, state, param);

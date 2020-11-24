@@ -4,11 +4,11 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/vbkblock.hpp"
-#include "veriblock/blockchain/block_index.hpp"
 
 #include <gtest/gtest.h>
 
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -27,10 +27,8 @@ static const std::string defaultBlockEncoded =
     "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e"
     "26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001";
 
-TEST(VbkBlock, Deserialize) {
-  const auto vbkblock = ParseHex(defaultBlockEncoded);
-  auto stream = ReadStream(vbkblock);
-  auto block = VbkBlock::fromVbkEncoding(stream);
+TEST(VbkBlock, DeserializeFromVbkEncoding) {
+  auto block = AssertDeserializeFromVbkEncoding<VbkBlock>(defaultBlockEncoded);
 
   EXPECT_EQ(block.getHeight(), defaultBlock.getHeight());
   EXPECT_EQ(block.getVersion(), defaultBlock.getVersion());
@@ -56,9 +54,8 @@ TEST(VbkBlock, Serialize) {
 }
 
 TEST(VbkBlock, RoundTrip) {
-  auto blockEncoded = ParseHex(defaultBlockEncoded);
-  auto stream = ReadStream(blockEncoded);
-  auto decoded = VbkBlock::fromVbkEncoding(stream);
+  auto decoded =
+      AssertDeserializeFromVbkEncoding<VbkBlock>(defaultBlockEncoded);
   EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
 
   WriteStream outputStream;
@@ -72,7 +69,7 @@ TEST(VbkBlock, RoundTripNew) {
   auto blockEncoded = ParseHex(defaultBlockEncoded);
   VbkBlock decoded;
   ValidationState state;
-  bool ret = Deserialize(blockEncoded, decoded, state);
+  bool ret = DeserializeFromVbkEncoding(blockEncoded, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
@@ -87,9 +84,11 @@ TEST(VbkBlock, RoundTripNew) {
 TEST(VbkBlock, RoundTripWithHash) {
   const auto blockEncoded = defaultBlock.toRaw();
   const auto& hash = defaultBlock.getHash();
-  auto bytes = std::string(blockEncoded.begin(), blockEncoded.end());
-  auto decoded = VbkBlock::fromRaw(bytes, hash);
-  EXPECT_EQ(decoded, defaultBlock);
+  VbkBlock block;
+  ValidationState state;
+  ReadStream stream(blockEncoded);
+  EXPECT_TRUE(DeserializeFromVbkEncoding(stream, block, state, hash));
+  EXPECT_EQ(block, defaultBlock);
 }
 
 TEST(VbkBlock, RoundTripBlockIndexWithHash) {
@@ -97,8 +96,11 @@ TEST(VbkBlock, RoundTripBlockIndexWithHash) {
   defaultBlockIndex.setHeader(std::make_shared<VbkBlock>(defaultBlock));
   const auto blockEncoded = defaultBlockIndex.toRaw();
   const auto& hash = defaultBlock.getHash();
-  auto bytes = std::string(blockEncoded.begin(), blockEncoded.end());
-  auto decoded = BlockIndex<VbkBlock>::fromRaw(bytes, hash);
+
+  ReadStream stream(blockEncoded);
+  BlockIndex<VbkBlock> decoded;
+  ValidationState state;
+  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, decoded, state, hash));
   EXPECT_EQ(decoded.getHeader(), defaultBlock);
 }
 
@@ -121,9 +123,6 @@ TEST(VbkBlock, getBlockHash_test) {
 }
 
 TEST(VbkBlock, getId_test) {
-  auto atvBytes = ParseHex(defaultBlockEncoded);
-  auto stream = ReadStream(atvBytes);
-  auto vbkblock = VbkBlock::fromVbkEncoding(stream);
-
+  auto vbkblock = AssertDeserializeFromHex<VbkBlock>(defaultBlockEncoded);
   EXPECT_EQ(vbkblock.getId().toHex(), "cd97599e23096ad42f119b5a");
 }

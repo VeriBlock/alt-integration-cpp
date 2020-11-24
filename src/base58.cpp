@@ -6,10 +6,10 @@
 
 #include "veriblock/base58.hpp"
 
-#include <veriblock/assert.hpp>
 #include <cstring>
 #include <stdexcept>
 #include <vector>
+#include <veriblock/assert.hpp>
 
 namespace altintegration {
 
@@ -146,25 +146,17 @@ std::string EncodeBase58(const unsigned char *pbegin,
   return str;
 }
 
-static bool DecodeBase58(const std::string &str,
-                         std::vector<unsigned char> &vchRet,
-                         size_t max_ret_len) {
+bool DecodeBase58(const std::string &str, std::vector<unsigned char> &out) {
   if (!ValidAsCString(str)) {
     return false;
   }
-  return DecodeBase58(str.c_str(), vchRet, max_ret_len);
+  return DecodeBase58(str.c_str(), out, str.size() + 1);
 }
 
-//std::string EncodeBase58(const uint8_t *buf, size_t size) {
-//  return EncodeBase58(buf, buf + size);
-//}
-
-std::vector<uint8_t> DecodeBase58(const std::string &str) {
+std::vector<uint8_t> AssertDecodeBase58(const std::string &str) {
   std::vector<uint8_t> vch;
-  bool status = DecodeBase58(str, vch, str.size() + 1);
-  if (!status) {
-    throw std::invalid_argument("DecodeBase58(): invalid input");
-  };
+  bool status = DecodeBase58(str, vch);
+  VBK_ASSERT_MSG(status, "Invalid input");
   return vch;
 }
 

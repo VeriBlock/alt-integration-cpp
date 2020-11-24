@@ -18,17 +18,14 @@ static const std::string defaultPublicationEncoded =
 static const PublicationData defaultPublication{
     0, "header bytes"_v, "payout info bytes"_v, "context info bytes"_v};
 
-TEST(PublicationData, Deserialize) {
-  auto pub = ParseHex(defaultPublicationEncoded);
-  auto stream = ReadStream(pub);
-  auto decoded = PublicationData::fromRaw(stream);
+TEST(PublicationData, DeserializeFromVbkEncoding) {
+  auto decoded = AssertDeserializeFromVbkEncoding<PublicationData>(
+      defaultPublicationEncoded);
 
   EXPECT_EQ(decoded.identifier, defaultPublication.identifier);
   EXPECT_EQ(decoded.header, defaultPublication.header);
   EXPECT_EQ(decoded.payoutInfo, defaultPublication.payoutInfo);
   EXPECT_EQ(decoded.contextInfo, defaultPublication.contextInfo);
-
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
 
 TEST(PublicationData, Serialize) {
@@ -40,9 +37,8 @@ TEST(PublicationData, Serialize) {
 }
 
 TEST(PublicationData, RoundTrip) {
-  auto pub = ParseHex(defaultPublicationEncoded);
-  auto stream = ReadStream(pub);
-  auto decoded = PublicationData::fromRaw(stream);
+  auto decoded = AssertDeserializeFromVbkEncoding<PublicationData>(
+      defaultPublicationEncoded);
   EXPECT_EQ(decoded.identifier, defaultPublication.identifier);
 
   WriteStream outputStream;

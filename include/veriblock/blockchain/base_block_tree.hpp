@@ -76,7 +76,7 @@ struct BaseBlockTree {
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
     auto* tip = getBlockIndex(hash);
     if (!tip) {
-      return state.Error(block_t::name() + "-no-tip");
+      return state.Invalid(block_t::name() + "-no-tip");
     }
 
     this->overrideTip(*tip);

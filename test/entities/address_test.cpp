@@ -3,13 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/entities/address.hpp>
-#include <veriblock/serde.hpp>
-
 #include <gtest/gtest.h>
 
 #include <ostream>
 #include <string>
+#include <veriblock/entities/address.hpp>
+#include <veriblock/serde.hpp>
 
 #include "veriblock/literals.hpp"
 
@@ -20,18 +19,15 @@ static auto ADDRESS_BYTES =
     "01166772F51AB208D32771AB1506970EEB664462730B838E"_unhex;
 static std::string ADDRESS_VALUE = "V5Ujv72h4jEBcKnALGc4fKqs6CDAPX";
 
-TEST(Address, Deserialize) {
-  auto stream = ReadStream(ADDRESS_BYTES);
-  auto address = Address::fromVbkEncoding(stream);
+TEST(Address, DeserializeFromVbkEncoding) {
+  auto address = AssertDeserializeFromVbkEncoding<Address>(ADDRESS_BYTES);
 
   EXPECT_EQ(address.toString(), ADDRESS_VALUE);
   EXPECT_EQ(address.getType(), AddressType::STANDARD);
-
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
 
 TEST(Address, Serialize) {
-  auto address = Address::fromString(ADDRESS_VALUE);
+  auto address = Address::assertFromString(ADDRESS_VALUE);
   auto stream = WriteStream();
 
   address.toVbkEncoding(stream);
@@ -40,8 +36,7 @@ TEST(Address, Serialize) {
 }
 
 TEST(Address, RoundTrip) {
-  auto stream = ReadStream(ADDRESS_BYTES);
-  auto decoded = Address::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromVbkEncoding<Address>(ADDRESS_BYTES);
   EXPECT_EQ(decoded.toString(), ADDRESS_VALUE);
 
   WriteStream outputStream;
@@ -53,7 +48,7 @@ TEST(Address, RoundTrip) {
 TEST(Address, RoundTripNew) {
   Address decoded;
   ValidationState state;
-  bool ret = Deserialize(ADDRESS_BYTES, decoded, state);
+  bool ret = DeserializeFromVbkEncoding(ADDRESS_BYTES, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.toString(), ADDRESS_VALUE);
@@ -66,14 +61,14 @@ TEST(Address, RoundTripNew) {
 
 TEST(Address, ValidStandard) {
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
-  Address address = Address::fromString(addressString);
+  Address address = Address::assertFromString(addressString);
   EXPECT_EQ(address.getType(), AddressType::STANDARD);
   EXPECT_EQ(address.toString(), addressString);
 }
 
 TEST(Address, ValidMultisig) {
   std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
-  Address address = Address::fromString(addressString);
+  Address address = Address::assertFromString(addressString);
   EXPECT_EQ(address.getType(), AddressType::MULTISIG);
   EXPECT_EQ(address.toString(), addressString);
 }
@@ -84,7 +79,7 @@ TEST(Address, DerivedFromPublicKey) {
       "a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002"
       "f6c86952be4823a4c08e65e4cdbeb904a8b95763aa"_unhex;
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
-  Address address = Address::fromString(addressString);
+  Address address = Address::assertFromString(addressString);
   EXPECT_TRUE(address.isDerivedFromPublicKey(publicKey));
 }
 
@@ -94,34 +89,30 @@ TEST(Address, NotDerivedFromPublicKey) {
       "a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002"
       "f6c86952be4823a4c08e65e4cdbeb904a8b95763aa"_unhex;
   std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
-  Address address = Address::fromString(addressString);
+  Address address = Address::assertFromString(addressString);
   EXPECT_FALSE(address.isDerivedFromPublicKey(publicKey));
 }
 
 TEST(Address, ParseStandard) {
   std::string addressString = "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d";
-  Address address = Address::fromString(addressString);
+  Address address = Address::assertFromString(addressString);
   WriteStream outputStream;
   address.toVbkEncoding(outputStream);
   auto bytes = outputStream.data();
-  auto stream = ReadStream(bytes);
-  auto decoded = Address::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromVbkEncoding<Address>(bytes);
 
   EXPECT_EQ(decoded.toString(), addressString);
   EXPECT_EQ(decoded.getType(), AddressType::STANDARD);
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
 
 TEST(Address, ParseMultisig) {
   std::string addressString = "V23Cuyc34u5rdk9psJ86aFcwhB1md0";
-  Address address = Address::fromString(addressString);
+  Address address = Address::assertFromString(addressString);
   WriteStream outputStream;
   address.toVbkEncoding(outputStream);
   auto bytes = outputStream.data();
-  auto stream = ReadStream(bytes);
-  auto decoded = Address::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromVbkEncoding<Address>(bytes);
 
   EXPECT_EQ(decoded.toString(), addressString);
   EXPECT_EQ(decoded.getType(), AddressType::MULTISIG);
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }

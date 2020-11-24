@@ -32,36 +32,6 @@ struct AltBlock {
   using addon_t = AltBlockAddon;
 
   /**
-   * Read basic blockheader data from the vector of bytes and convert it to
-   * AltBlock
-   * @param bytes data to read fromm
-   * @return AltBlock
-   */
-  static AltBlock fromRaw(Slice<const uint8_t> bytes);
-
-  /**
-   * Read basic blockheader data from the stream and convert it to AltBlock
-   * @param stream data stream to read from
-   * @return AltBlock
-   */
-  static AltBlock fromRaw(ReadStream& stream);
-
-  /**
-   * Read VBK data from the stream and convert it to AltBlock
-   * @param stream data stream to read from
-   * @return AltBlock
-   */
-  static AltBlock fromVbkEncoding(ReadStream& stream);
-
-  /**
-   * Read VBK data from the string raw byte representation and convert it to
-   * AltBlock
-   * @param bytes data bytes to read from
-   * @return AltBlock
-   */
-  static AltBlock fromVbkEncoding(const std::string& bytes);
-
-  /**
    * Convert AltBlock to data stream using AltBlock basic byte format
    * @param stream data stream to write into
    */
@@ -105,9 +75,7 @@ struct AltBlock {
    * Print this entity
    * @return
    */
-  std::string toPrettyString() const {
-    return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
-  }
+  std::string toPrettyString() const;
 
   hash_t getPreviousBlock() const { return previousBlock; }
   uint32_t getTimestamp() const { return timestamp; }
@@ -137,7 +105,11 @@ inline void PrintTo(const AltBlock& block, ::std::ostream* os) {
   *os << block.toPrettyString();
 }
 
-bool Deserialize(ReadStream& stream, AltBlock& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    AltBlock& out,
+    ValidationState& state,
+    const AltBlock::hash_t& /* ignore */ = AltBlock::hash_t{});
 
 }  // namespace altintegration
 

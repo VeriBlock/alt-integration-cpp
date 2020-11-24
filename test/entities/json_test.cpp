@@ -201,7 +201,7 @@ TEST(ToJson, VTB) {
 
   static const VbkPopTx defaultTx{
       networkByte,
-      Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
+      Address::assertFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
       defaultVbkBlock,
       BtcTx(btcTxBytes),
       defaultPath,
@@ -373,7 +373,7 @@ TEST(ToJson, ATV) {
 
   static const VbkTx defaultTx{
       NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
-      Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
+      Address::assertFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
       Coin(1000),
       std::vector<Output>{},
       7,

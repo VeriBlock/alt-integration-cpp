@@ -40,13 +40,6 @@ struct BtcTx {
   }
 
   /**
-   * Read VBK data from the stream and convert it to BtcTx
-   * @param stream data stream to read from
-   * @return BtcTx
-   */
-  static BtcTx fromVbkEncoding(ReadStream& stream);
-
-  /**
    * Convert BtcTx to data stream using BtcTx VBK byte format
    * @param stream data stream to write into
    */
@@ -61,7 +54,7 @@ struct BtcTx {
   std::string toHex() const;
 };
 
-bool Deserialize(ReadStream& stream, BtcTx& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream, BtcTx& out, ValidationState& state);
 
 }  // namespace altintegration
 

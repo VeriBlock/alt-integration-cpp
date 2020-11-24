@@ -196,6 +196,7 @@ uint64_t ArithUint256::getLow64() const {
   const uint32_t* p2 = (uint32_t*)(&data_[4]);
   return *p1 | (uint64_t)*p2 << 32;
 }
+
 ArithUint256 ArithUint256::fromHex(const std::string& hex) {
   ArithUint256 u;
   u.setHex(hex);

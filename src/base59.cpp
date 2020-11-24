@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <veriblock/assert.hpp>
 
 namespace altintegration {
 
@@ -93,9 +94,10 @@ std::string EncodeBase59(const unsigned char *pbegin,
   return EncodeBase59(pbegin, pend - pbegin);
 };
 
-std::vector<uint8_t> DecodeBase59(const std::string &input) {
+bool DecodeBase59(const std::string &input, std::vector<uint8_t> &out) {
   if (input.empty()) {
-    return {};
+    // empty input is a valid base59
+    return true;
   }
 
   std::vector<uint8_t> input59(input.size());
@@ -104,7 +106,7 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
   for (size_t i = 0; i < input.size(); ++i) {
     int8_t digit59 = g_Indexes[input[i]];
     if (digit59 < 0) {
-      throw std::invalid_argument("DecodeBase59() : Not a Base59 input");
+      return false;
     }
 
     input59[i] = digit59;
@@ -134,7 +136,16 @@ std::vector<uint8_t> DecodeBase59(const std::string &input) {
   while (j < temp.size() && temp[j] == 0) {
     ++j;
   }
-  return std::vector<uint8_t>{temp.begin() + j - zeroCount, temp.end()};
+
+  out = std::vector<uint8_t>{temp.begin() + j - zeroCount, temp.end()};
+  return true;
+}
+
+std::vector<uint8_t> AssertDecodeBase59(const std::string &str) {
+  std::vector<uint8_t> out;
+  bool success = DecodeBase59(str, out);
+  VBK_ASSERT(success);
+  return out;
 }
 
 }  // namespace altintegration

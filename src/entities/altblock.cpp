@@ -9,45 +9,6 @@ namespace altintegration {
 
 const std::string AltBlock::_name = "ALT";
 
-AltBlock AltBlock::fromRaw(Slice<const uint8_t> bytes) {
-  ReadStream stream(bytes);
-  return fromRaw(stream);
-}
-
-AltBlock AltBlock::fromRaw(ReadStream& stream) {
-  return fromVbkEncoding(stream);
-}
-
-AltBlock AltBlock::fromVbkEncoding(ReadStream& stream) {
-  try {
-    AltBlock block;
-    uint32_t hash_size = stream.readBE<uint32_t>();
-    block.hash.resize(hash_size);
-    for (uint32_t i = 0; i < hash_size; ++i) {
-      block.hash[i] = stream.readBE<uint8_t>();
-    }
-    hash_size = stream.readBE<uint32_t>();
-    block.previousBlock.resize(hash_size);
-    for (uint32_t i = 0; i < hash_size; ++i) {
-      block.previousBlock[i] = stream.readBE<uint8_t>();
-    }
-    block.height = stream.readBE<int32_t>();
-    block.timestamp = stream.readBE<uint32_t>();
-
-    return block;
-  } catch (const std::exception& e) {
-    throw std::invalid_argument(
-        fmt::format("Can not deserialize ALT block ({}), left {} bytes",
-                    e.what(),
-                    stream.remaining()));
-  }
-}
-
-AltBlock AltBlock::fromVbkEncoding(const std::string& bytes) {
-  ReadStream stream(bytes);
-  return fromVbkEncoding(stream);
-}
-
 void AltBlock::toRaw(WriteStream& stream) const {
   return toVbkEncoding(stream);
 }
@@ -59,14 +20,8 @@ std::vector<uint8_t> AltBlock::toRaw() const {
 }
 
 void AltBlock::toVbkEncoding(WriteStream& stream) const {
-  stream.writeBE<uint32_t>((uint32_t)hash.size());
-  for (size_t i = 0; i < hash.size(); ++i) {
-    stream.writeBE<uint8_t>(hash[i]);
-  }
-  stream.writeBE<uint32_t>((uint32_t)previousBlock.size());
-  for (size_t i = 0; i < previousBlock.size(); ++i) {
-    stream.writeBE<uint8_t>(previousBlock[i]);
-  }
+  writeSingleByteLenValue(stream, hash);
+  writeSingleByteLenValue(stream, previousBlock);
   stream.writeBE<int32_t>(height);
   stream.writeBE<uint32_t>(timestamp);
 }
@@ -86,14 +41,27 @@ bool operator==(const AltBlock& a, const AltBlock& b) {
 }
 bool operator!=(const AltBlock& a, const AltBlock& b) { return !(a == b); }
 
-bool Deserialize(ReadStream& stream, AltBlock& out, ValidationState& state) {
-  (void)stream;
-  (void)state;
-  AltBlock block;
+std::string AltBlock::toPrettyString() const {
+  return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
+}
 
-  // TODO: implement
-
-  out = block;
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                AltBlock& out,
+                                ValidationState& state,
+                                const AltBlock::hash_t& /* ignore */) {
+  if (!readSingleByteLenValue(stream, out.hash, state, 0, MAX_ALT_HASH_SIZE)) {
+    return state.Invalid("alt-block-hash");
+  }
+  if (!readSingleByteLenValue(
+          stream, out.previousBlock, state, 0, MAX_ALT_HASH_SIZE)) {
+    return state.Invalid("alt-block-prevhash");
+  }
+  if (!stream.readBE<int32_t>(out.height, state)) {
+    return state.Invalid("alt-block-height");
+  }
+  if (!stream.readBE<uint32_t>(out.timestamp, state)) {
+    return state.Invalid("alt-block-timestamp");
+  }
   return true;
 }
 

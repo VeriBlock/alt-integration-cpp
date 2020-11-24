@@ -56,9 +56,10 @@ struct PopState {
     writeContainer<decltype(_containingEndorsements)>(
         stream,
         _containingEndorsements,
-        [](WriteStream& w,
-           const typename decltype(_containingEndorsements)::value_type& endorsement) {
-          endorsement.second->toVbkEncoding(w);
+        [&](WriteStream&,
+            const typename decltype(
+                _containingEndorsements)::value_type& endorsement) {
+          endorsement.second->toVbkEncoding(stream);
         });
   }
 
@@ -74,24 +75,34 @@ struct PopState {
     endorsedBy.clear();
   }
 
-  void initAddonFromRaw(ReadStream& stream) {
-    // read containingEndorsements as vector
-    auto endorsements = readArrayOf<endorsement_t>(
-        stream, [](ReadStream& r) { return endorsement_t::fromVbkEncoding(r); });
-
-    for (auto& endorsement : endorsements) {
-      auto pair = _containingEndorsements.emplace(
-          endorsement.getId(), std::make_shared<endorsement_t>(endorsement));
-      VBK_ASSERT(pair->second);
-    }
-    // do not restore 'endorsedBy', it will be done later
-  }
-
-  void initAddonFromOther(const PopState& other) {
-    _containingEndorsements = other._containingEndorsements;
-    endorsedBy = other.endorsedBy;
-  }
+  template <typename T>
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         PopState<T>& out,
+                                         ValidationState& state);
 };
+
+template <typename T>
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                PopState<T>& out,
+                                ValidationState& state) {
+  std::vector<T> endorsements;
+  auto max = std::max(MAX_POPDATA_ATV, MAX_POPDATA_VTB);
+  if (!readArrayOf<T>(stream, endorsements, state, 0, max, [&](T& t) -> bool {
+        return DeserializeFromVbkEncoding(stream, t, state);
+      })) {
+    return state.Invalid("popstate-bad-endorsement");
+  }
+
+  for (const auto& endorsement : endorsements) {
+    auto it = out._containingEndorsements.emplace(
+        endorsement.getId(), std::make_shared<T>(endorsement));
+    // newly created endorsement must not be null
+    VBK_ASSERT(it->second);
+  }
+  // do not restore 'endorsedBy' here, it will be done later during tree
+  // loading
+  return true;
+}
 
 }  // namespace altintegration
 

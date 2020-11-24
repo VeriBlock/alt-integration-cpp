@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/entities/btcblock.hpp"
+
 #include <gtest/gtest.h>
 
 #include "veriblock/arith_uint256.hpp"
-#include "veriblock/entities/btcblock.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -24,10 +25,9 @@ static const std::string defaultBlockEncoded =
     "16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f82213b75c841a"
     "011a2e00f29a";
 
-TEST(BtcBlock, Deserialize) {
+TEST(BtcBlock, DeserializeFromVbkEncoding) {
   auto blockEncoded = ParseHex(defaultBlockEncoded);
-  auto stream = ReadStream(blockEncoded);
-  auto decoded = BtcBlock::fromRaw(stream);
+  auto decoded = AssertDeserializeFromRaw<BtcBlock>(blockEncoded);
 
   EXPECT_EQ(decoded.version, defaultBlock.version);
   EXPECT_EQ(decoded.previousBlock.toHex(), defaultBlock.previousBlock.toHex());
@@ -40,8 +40,6 @@ TEST(BtcBlock, Deserialize) {
       ArithUint256::fromLEBytes(decoded.getHash()),
       ArithUint256::fromHex(
           "ebaa22c5ffd827e96c4450ad5dd35dbec2aa45e15cdb5ce9928f543f4cebf10e"));
-
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
 
 TEST(BtcBlock, Serialize) {
@@ -54,8 +52,7 @@ TEST(BtcBlock, Serialize) {
 
 TEST(BtcBlock, RoundTrip) {
   auto blockEncoded = ParseHex(defaultBlockEncoded);
-  auto stream = ReadStream(blockEncoded);
-  auto decoded = BtcBlock::fromRaw(stream);
+  auto decoded = AssertDeserializeFromRaw<BtcBlock>(blockEncoded);
   EXPECT_EQ(decoded.version, defaultBlock.version);
 
   WriteStream outputStream;
@@ -69,7 +66,7 @@ TEST(BtcBlock, RoundTripNew) {
   auto blockEncoded = ParseHex(defaultBlockEncoded);
   BtcBlock decoded;
   ValidationState state;
-  bool ret = DeserializeRaw(blockEncoded, decoded, state);
+  bool ret = DeserializeFromRaw(blockEncoded, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.version, defaultBlock.version);

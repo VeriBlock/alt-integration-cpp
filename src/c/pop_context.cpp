@@ -2,9 +2,10 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+#include "pop_context.hpp"
+
 #include "bytestream.hpp"
 #include "config.hpp"
-#include "pop_context.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/c/extern.h"
 #include "veriblock/c/pop_context.h"
@@ -24,7 +25,7 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::ATV atv_out;
-      if (!altintegration::Deserialize(stream, atv_out, state)) {
+      if (!altintegration::DeserializeFromVbkEncoding(stream, atv_out, state)) {
         return state.Invalid("get-atv");
       }
       out.push_back(atv_out);
@@ -42,7 +43,7 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::VTB vtb_out;
-      if (!altintegration::Deserialize(stream, vtb_out, state)) {
+      if (!altintegration::DeserializeFromVbkEncoding(stream, vtb_out, state)) {
         return state.Invalid("get-atv");
       }
       out.push_back(vtb_out);
@@ -60,7 +61,7 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::VbkBlock vbk_out;
-      if (!altintegration::Deserialize(stream, vbk_out, state)) {
+      if (!altintegration::DeserializeFromVbkEncoding(stream, vbk_out, state)) {
         return state.Invalid("get-atv");
       }
       out.push_back(vbk_out);
@@ -108,7 +109,7 @@ bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
   altintegration::ReadStream stream(bytes);
   altintegration::AltBlock blk;
 
-  if (!altintegration::Deserialize(stream, blk, state)) {
+  if (!altintegration::DeserializeFromVbkEncoding(stream, blk, state)) {
     return false;
   }
 
@@ -135,7 +136,7 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
                                                payloads_bytes_size);
   altintegration::ReadStream stream(p_bytes);
   altintegration::PopData popData;
-  bool res = altintegration::Deserialize(stream, popData, state);
+  bool res = altintegration::DeserializeFromVbkEncoding(stream, popData, state);
   VBK_ASSERT_MSG(
       res, "can not deserialize PopData, error: %s", state.toString());
 
@@ -160,7 +161,7 @@ bool VBK_AltBlockTree_addPayloads(PopContext* self,
                                                payloads_bytes_size);
   altintegration::ReadStream stream(p_bytes);
   altintegration::PopData popData;
-  if (!altintegration::Deserialize(stream, popData, state)) {
+  if (!altintegration::DeserializeFromVbkEncoding(stream, popData, state)) {
     return false;
   }
 
@@ -528,7 +529,7 @@ void VBK_MemPool_removeAll(PopContext* self,
   altintegration::Slice<const uint8_t> p_bytes(bytes, bytes_size);
   altintegration::ReadStream stream(p_bytes);
   altintegration::PopData popData;
-  bool res = altintegration::Deserialize(stream, popData, state);
+  bool res = altintegration::DeserializeFromVbkEncoding(stream, popData, state);
   VBK_ASSERT_MSG(
       res, "can not deserialize PopData, error: %s", state.toString());
   self->context->mempool->removeAll(popData);

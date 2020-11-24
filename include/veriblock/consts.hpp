@@ -40,13 +40,32 @@ constexpr const auto MAX_HEADER_SIZE_PUBLICATION_DATA = 1024;
 constexpr const auto MAX_PAYOUT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 100;
 constexpr const auto MAX_CONTEXT_COUNT_VBK_PUBLICATION = 65535;
-constexpr const auto VBLAKE_BLOCK_HASH_SIZE = 24;
+constexpr const auto BTC_BLOCK_HASH_SIZE = 32;
+constexpr const auto VBK_BLOCK_HASH_SIZE = 24;
 constexpr const auto VBK_MERKLE_ROOT_HASH_SIZE = 16;
 constexpr const auto VBLAKE_PREVIOUS_BLOCK_HASH_SIZE = 12;
 constexpr const auto VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE = 9;
-constexpr const auto MAX_POPDATA_VBKS = 50000;
-constexpr const auto MAX_POPDATA_ATVS = 50000;
-constexpr const auto MAX_POPDATA_VTBS = 50000;
+
+//! absolute maximum number of VBK blocks per ALT block
+constexpr const auto MAX_POPDATA_VBK = 50000;
+//! absolute maximum number of VTB blocks per ALT block
+constexpr const auto MAX_POPDATA_VTB = 50000;
+//! absolute maximum number of ATV blocks per ALT block
+constexpr const auto MAX_POPDATA_ATV = 50000;
+//! absolute maximum allowed size for altchain hash
+constexpr const auto MIN_ALT_HASH_SIZE = 12;
+constexpr const auto MAX_ALT_HASH_SIZE = 1024;
+//! absolute maximum of 'refs' for BTC addon
+constexpr const auto MAX_BTCADDON_REFS = 65536;
+//! absolute maximum number of PopTxes (VTBs) per VBK block
+constexpr const auto MAX_VBKPOPTX_PER_VBK_BLOCK = 1024;
+constexpr const auto VTB_ID_SIZE = 32;
+constexpr const auto ATV_ID_SIZE = 32;
+constexpr const auto VBK_ID_SIZE = 12;
+constexpr const auto MIN_PAYOUT_INFO_SIZE = 0;
+// https://bitcoin.stackexchange.com/a/35881/85437
+constexpr const auto MAX_PAYOUT_INFO_SIZE = 10000;
+
 
 
 constexpr const uint32_t VBK_HEADER_SIZE_VBLAKE = 64;

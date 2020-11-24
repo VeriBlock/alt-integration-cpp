@@ -98,11 +98,8 @@ struct Blob {
     return Blob<N>(data);
   }
 
-  static Blob<N> fromHexStrict(const std::string& hex) {
-    if (hex.size() / 2 != N) {
-      throw std::invalid_argument(
-          fmt::sprintf("bad hex length %d, expected %d", hex.size(), N * 2));
-    }
+  static Blob<N> assertFromHex(const std::string& hex) {
+    VBK_ASSERT(hex.size() / 2 == N);
     return fromHex(hex);
   }
 
@@ -213,6 +210,9 @@ struct Blob {
   std::string toPrettyString() const {
     return fmt::sprintf("Blob<%llu>(%s)", N, toHex());
   }
+
+  //! helper for readSingleByteLenValue
+  void resize(size_t size) { VBK_ASSERT(size == N); }
 
  protected:
   inline void assign(Slice<const uint8_t> slice) {

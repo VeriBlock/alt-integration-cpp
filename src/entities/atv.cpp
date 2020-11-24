@@ -11,26 +11,6 @@ using namespace altintegration;
 
 const std::string ATV::_name = "ATV";
 
-ATV ATV::fromVbkEncoding(ReadStream& stream) {
-  ATV atv{};
-  atv.version = stream.readBE<uint32_t>();
-  if (atv.version == 1) {
-    atv.transaction = VbkTx::fromVbkEncoding(stream);
-    atv.merklePath = VbkMerklePath::fromVbkEncoding(stream);
-    atv.blockOfProof = VbkBlock::fromVbkEncoding(stream);
-  } else {
-    throw std::domain_error(fmt::format(
-        "ATV deserialization version={} is not implemented", atv.version));
-  }
-
-  return atv;
-}
-
-ATV ATV::fromVbkEncoding(Slice<const uint8_t> bytes) {
-  ReadStream stream(bytes);
-  return fromVbkEncoding(stream);
-}
-
 void ATV::toVbkEncoding(WriteStream& stream) const {
   stream.writeBE<uint32_t>(version);
   if (version == 1) {
@@ -49,39 +29,40 @@ std::vector<uint8_t> ATV::toVbkEncoding() const {
   return stream.data();
 }
 
-ATV ATV::fromHex(const std::string& h) {
-  auto data = ParseHex(h);
-  ReadStream stream(data);
-  return ATV::fromVbkEncoding(stream);
-}
-
 ATV::id_t ATV::getId() const {
   auto left = transaction.getHash();
   auto right = blockOfProof.getHash();
   return sha256(left, right);
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
-                                 ATV& out,
-                                 ValidationState& state) {
-  ATV atv{};
+std::string ATV::toPrettyString() const {
+  return fmt::sprintf("ATV{containingTx=%s, containingBlock=%s}",
+                      transaction.getHash().toHex(),
+                      blockOfProof.getHash().toHex());
+}
+
+std::string ATV::toHex() const { return HexStr(toVbkEncoding()); }
+
+bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
+                                                ATV& atv,
+                                                ValidationState& state) {
   if (!stream.readBE<uint32_t>(atv.version, state)) {
     return state.Invalid("atv-version");
   }
   if (atv.version != 1) {
-    return state.Invalid("atv-bad-version");
+    return state.Invalid(
+        "atv-bad-version",
+        fmt::format("Expected version=1, got={}", atv.version));
   }
 
-  if (!Deserialize(stream, atv.transaction, state)) {
+  if (!DeserializeFromVbkEncoding(stream, atv.transaction, state)) {
     return state.Invalid("atv-transaction");
   }
-  if (!Deserialize(stream, atv.merklePath, state)) {
+  if (!DeserializeFromVbkEncoding(stream, atv.merklePath, state)) {
     return state.Invalid("atv-merkle-path");
   }
-  if (!Deserialize(stream, atv.blockOfProof, state)) {
+  if (!DeserializeFromVbkEncoding(stream, atv.blockOfProof, state)) {
     return state.Invalid("atv-containing-block");
   }
-
-  out = atv;
   return true;
 }

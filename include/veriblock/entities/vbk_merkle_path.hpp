@@ -32,13 +32,6 @@ struct VbkMerklePath {
   std::vector<uint256> layers{};
 
   /**
-   * Read VBK data from the stream and convert it to VbkMerklePath
-   * @param stream data stream to read from
-   * @return VbkMerklePath
-   */
-  static VbkMerklePath fromVbkEncoding(ReadStream& stream);
-
-  /**
    * Convert VbkMerklePath to data stream using VbkMerklePath VBK byte format
    * @param stream data stream to write into
    */
@@ -61,9 +54,9 @@ JsonValue ToJSON(const VbkMerklePath& mp) {
   return obj;
 }
 
-bool Deserialize(ReadStream& stream,
-                 VbkMerklePath& out,
-                 ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VbkMerklePath& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

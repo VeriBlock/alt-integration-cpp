@@ -16,10 +16,10 @@ static const std::vector<uint8_t> emptyBytes64(64);
 
 static const VbkTx defaultTx{
     NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
-    Address::fromString("V8dy5tWcP7y36kxiJwxKPKUrWAJbjs"),
+    Address::assertFromString("V8dy5tWcP7y36kxiJwxKPKUrWAJbjs"),
     Coin(3500000000),
-    std::vector<Output>{Output(
-        Address::fromString("V7GghFKRA6BKqtHD7LTdT2ao93DRNA"),
+    std::vector<Output>{
+        Output(Address::assertFromString("V7GghFKRA6BKqtHD7LTdT2ao93DRNA"),
                Coin(3499999999))},
     5904,
     publicationData,
@@ -34,10 +34,8 @@ static const std::string defaultTxEncoded =
     "00000000000000000000000000000000000000000000000000000000000000000000000000"
     "0000000000000000000000000000000000000000";
 
-TEST(VbkTx, Deserialize) {
-  const auto vbktx = ParseHex(defaultTxEncoded);
-  auto stream = ReadStream(vbktx);
-  auto decoded = VbkTx::fromVbkEncoding(stream);
+TEST(VbkTx, DeserializeFromVbkEncoding) {
+  auto decoded = AssertDeserializeFromHex<VbkTx>(defaultTxEncoded);
 
   EXPECT_EQ(decoded.networkOrType.typeId, defaultTx.networkOrType.typeId);
   EXPECT_EQ(decoded.sourceAddress, defaultTx.sourceAddress);
@@ -45,11 +43,10 @@ TEST(VbkTx, Deserialize) {
   EXPECT_EQ(decoded.signatureIndex, defaultTx.signatureIndex);
   EXPECT_EQ(decoded.outputs.size(), defaultTx.outputs.size());
   EXPECT_EQ(decoded.outputs[0], defaultTx.outputs[0]);
-  EXPECT_EQ(decoded.publicationData.identifier, defaultTx.publicationData.identifier);
+  EXPECT_EQ(decoded.publicationData.identifier,
+            defaultTx.publicationData.identifier);
   EXPECT_EQ(decoded.signature, defaultTx.signature);
   EXPECT_EQ(decoded.publicKey, defaultTx.publicKey);
-
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
 
 TEST(VbkTx, Serialize) {
@@ -61,9 +58,7 @@ TEST(VbkTx, Serialize) {
 }
 
 TEST(VbkTx, RoundTrip) {
-  auto txEncoded = ParseHex(defaultTxEncoded);
-  auto stream = ReadStream(txEncoded);
-  auto decoded = VbkTx::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromHex<VbkTx>(defaultTxEncoded);
   EXPECT_EQ(decoded.signatureIndex, defaultTx.signatureIndex);
 
   WriteStream outputStream;
@@ -77,7 +72,7 @@ TEST(VbkTx, RoundTripNew) {
   auto txEncoded = ParseHex(defaultTxEncoded);
   VbkTx decoded;
   ValidationState state;
-  bool ret = Deserialize(txEncoded, decoded, state);
+  bool ret = DeserializeFromVbkEncoding(txEncoded, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.signatureIndex, defaultTx.signatureIndex);

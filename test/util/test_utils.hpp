@@ -101,9 +101,7 @@ struct AltChainParamsTest : public AltChainParams {
 
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
-    ReadStream stream(bytes);
-    AltBlock altBlock = AltBlock::fromVbkEncoding(stream);
-    return altBlock.getHash();
+    return AssertDeserializeFromVbkEncoding<AltBlock>(bytes).getHash();
   }
 };
 

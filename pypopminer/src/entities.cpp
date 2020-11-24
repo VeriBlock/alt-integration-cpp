@@ -20,6 +20,15 @@ std::string toVbkEncodingHex(E& self_) {
   return HexStr(w.data());
 }
 
+boost::shared_ptr<Address> makeAddress(std::string s) {
+  Address addr;
+  ValidationState state;
+  if (!addr.fromString(s, state)) {
+    throw std::invalid_argument(state.toString());
+  }
+  return boost::shared_ptr<Address>(new Address(std::move(addr)));
+}
+
 void init_entities() {
   class_<PublicationData, boost::shared_ptr<PublicationData>>("PublicationData")
       .def("__repr__", &PublicationData::toPrettyString)
@@ -34,7 +43,8 @@ void init_entities() {
       .value("PROOF_OF_PROOF", AddressType::PROOF_OF_PROOF)
       .value("MULTISIG", AddressType::MULTISIG);
 
-  class_<Address, boost::shared_ptr<Address>>("Address", init<std::string>())
+  class_<Address, boost::shared_ptr<Address>>("Address")
+      .def("__init__", make_constructor(makeAddress))
       .def("__repr__", &Address::toString)
       .def("__str__", &Address::toString)
       .def_readonly("type", &Address::getType);
@@ -132,11 +142,20 @@ void init_entities() {
       .def("getHash", &VbkBlock::getHash)
       .add_property("height", &VbkBlock::getHeight, &VbkBlock::setHeight)
       .add_property("version", &VbkBlock::getVersion, &VbkBlock::setVersion)
-      .add_property("previousBlock", &VbkBlock::getPreviousBlock, &VbkBlock::setPreviousBlock)
-      .add_property("previousKeystone", &VbkBlock::getPreviousKeystone, &VbkBlock::setPreviousKeystone)
-      .add_property("secondPreviousKeystone", &VbkBlock::getSecondPreviousKeystone, &VbkBlock::setSecondPreviousKeystone)
-      .add_property("merkleRoot", &VbkBlock::getMerkleRoot, &VbkBlock::setMerkleRoot)
-      .add_property("timestamp", &VbkBlock::getTimestamp, &VbkBlock::setTimestamp)
-      .add_property("difficulty", &VbkBlock::getDifficulty, &VbkBlock::setDifficulty)
+      .add_property("previousBlock",
+                    &VbkBlock::getPreviousBlock,
+                    &VbkBlock::setPreviousBlock)
+      .add_property("previousKeystone",
+                    &VbkBlock::getPreviousKeystone,
+                    &VbkBlock::setPreviousKeystone)
+      .add_property("secondPreviousKeystone",
+                    &VbkBlock::getSecondPreviousKeystone,
+                    &VbkBlock::setSecondPreviousKeystone)
+      .add_property(
+          "merkleRoot", &VbkBlock::getMerkleRoot, &VbkBlock::setMerkleRoot)
+      .add_property(
+          "timestamp", &VbkBlock::getTimestamp, &VbkBlock::setTimestamp)
+      .add_property(
+          "difficulty", &VbkBlock::getDifficulty, &VbkBlock::setDifficulty)
       .add_property("nonce", &VbkBlock::getNonce, &VbkBlock::setNonce);
 }
