@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
+	"fmt"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -12,6 +13,25 @@ import (
 
 // VbkID is 12 byte ID of VbkBlock
 type VbkID [12]byte
+
+// ParseVbkID - Parses an VBK ID and panics if invalid size
+func ParseVbkID(idBytes []byte) (id VbkID) {
+	if len(idBytes) < 12 || len(idBytes) > 12 {
+		panic("Invalid size of VBK ID")
+	}
+	copy(id[:], idBytes)
+	return
+}
+
+// ParseErrVbkID - Parses an VBK ID and returns error if invalid size
+func ParseErrVbkID(idBytes []byte) (id VbkID, err error) {
+	if len(idBytes) < 12 || len(idBytes) > 12 {
+		err = fmt.Errorf("Invalid size of VBK ID")
+		return
+	}
+	copy(id[:], idBytes)
+	return
+}
 
 // VbkHash is 24 byte hash of VbkBlock
 type VbkHash [24]byte

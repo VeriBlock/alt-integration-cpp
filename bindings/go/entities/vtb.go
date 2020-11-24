@@ -13,6 +13,25 @@ import (
 // VtbID is 32 byte ID of Vtb
 type VtbID [32]byte
 
+// ParseVtbID - Parses an VTB ID and panics if invalid size
+func ParseVtbID(idBytes []byte) (id VtbID) {
+	if len(idBytes) < 32 || len(idBytes) > 32 {
+		panic("Invalid size of VTB ID")
+	}
+	copy(id[:], idBytes)
+	return
+}
+
+// ParseErrVtbID - Parses an VTB ID and returns error if invalid size
+func ParseErrVtbID(idBytes []byte) (id VtbID, err error) {
+	if len(idBytes) < 32 || len(idBytes) > 32 {
+		err = fmt.Errorf("Invalid size of VTB ID")
+		return
+	}
+	copy(id[:], idBytes)
+	return
+}
+
 // Vtb ...
 type Vtb struct {
 	Version         uint32
