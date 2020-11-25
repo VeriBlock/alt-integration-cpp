@@ -352,8 +352,7 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
 
 template <>
 inline VbkBlock BlockIndex<VbkBlock>::fromRawHeader(
-    ReadStream& stream,
-    const hash_t& precalculatedHash) {
+    ReadStream& stream, const hash_t& precalculatedHash) {
   return VbkBlock::fromRaw(stream, precalculatedHash);
 }
 
