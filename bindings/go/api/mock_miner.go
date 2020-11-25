@@ -10,7 +10,7 @@ import (
 
 // MockMiner ...
 type MockMiner struct {
-	miner ffi.MockMiner
+	miner *ffi.MockMiner
 	mutex *sync.Mutex
 }
 
