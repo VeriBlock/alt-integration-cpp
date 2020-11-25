@@ -14,6 +14,7 @@ add_subdirectory(entities)
 add_subdirectory(commands)
 add_subdirectory(crypto)
 
+addtest(genesis_block_test genesis_block_test.cpp)
 addtest(streamutils_test streamutils_test.cpp)
 addtest(base58_test base58_test.cpp)
 addtest(base59_test base59_test.cpp)
