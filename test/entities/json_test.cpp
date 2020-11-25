@@ -470,10 +470,10 @@ TEST(ToJson, VbkBlockIndex) {
   "endorsedBy": [],
   "header": {
     "difficulty": 16842752,
-    "hash": "63a038864d0da31c9bf2dc6c2b992a52be8dff6652bb6772",
+    "hash": "a3e77a18a8f7b4568a062f69340d1ad4360382e5bc218a8c",
     "height": 0,
-    "id": "2b992a52be8dff6652bb6772",
-    "merkleRoot": "84e710f30bb8cfc9af12622a8f39b917",
+    "id": "340d1ad4360382e5bc218a8c",
+    "merkleRoot": "80d7178046d25ca9ad283c5af587a7c5",
     "nonce": 0,
     "previousBlock": "000000000000000000000000",
     "previousKeystone": "000000000000000000",
@@ -522,7 +522,8 @@ TEST(ToJson, BtcBlockIndex) {
 }
 
 TEST(ToJson, AltParams) {
-  std::shared_ptr<AltChainParams> rt = std::make_shared<AltChainParamsRegTest>();
+  std::shared_ptr<AltChainParams> rt =
+      std::make_shared<AltChainParamsRegTest>();
   auto json = ToJSON<picojson::value>(*rt);
   std::string actual = json.serialize(true);
 
