@@ -7,15 +7,21 @@ import (
 	"fmt"
 	"io"
 
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // AtvID is 32 byte ID of ATV
-type AtvID [32]byte
+type AtvID [veriblock.Sha256HashSize]byte
+
+// UnmarshalJSON parses a hash in hex syntax.
+func (h *AtvID) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, h[:])
+}
 
 // ParseAtvID - Parses an ATV ID and panics if invalid size
 func ParseAtvID(idBytes []byte) (id AtvID) {
-	if len(idBytes) < 32 || len(idBytes) > 32 {
+	if len(idBytes) < veriblock.Sha256HashSize || len(idBytes) > veriblock.Sha256HashSize {
 		panic("Invalid size of ATV ID")
 	}
 	copy(id[:], idBytes)
@@ -24,7 +30,7 @@ func ParseAtvID(idBytes []byte) (id AtvID) {
 
 // ParseErrAtvID - Parses an ATV ID and returns error if invalid size
 func ParseErrAtvID(idBytes []byte) (id AtvID, err error) {
-	if len(idBytes) < 32 || len(idBytes) > 32 {
+	if len(idBytes) < veriblock.Sha256HashSize || len(idBytes) > veriblock.Sha256HashSize {
 		err = fmt.Errorf("Invalid size of ATV ID")
 		return
 	}

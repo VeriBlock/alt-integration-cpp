@@ -11,9 +11,9 @@ import (
 type AltBlockAddon struct {
 	popState PopState
 	// List of changes introduced in this block
-	AtvIDs      [][32]byte
-	VtbIDs      [][32]byte
-	VbkBlockIDs [][12]byte
+	AtvIDs      []AtvID
+	VtbIDs      []VtbID
+	VbkBlockIDs []VbkID
 }
 
 // ToRaw ...
@@ -41,7 +41,7 @@ func (v *AltBlockAddon) FromRaw(stream io.Reader) error {
 	if err != nil {
 		return err
 	}
-	v.AtvIDs = make([][32]byte, len(atvids))
+	v.AtvIDs = make([]AtvID, len(atvids))
 	for i, atvid := range atvids {
 		copy(v.AtvIDs[i][:], atvid.([]byte))
 	}
@@ -49,7 +49,7 @@ func (v *AltBlockAddon) FromRaw(stream io.Reader) error {
 	if err != nil {
 		return err
 	}
-	v.VtbIDs = make([][32]byte, len(vtbids))
+	v.VtbIDs = make([]VtbID, len(vtbids))
 	for i, vtbid := range vtbids {
 		copy(v.VtbIDs[i][:], vtbid.([]byte))
 	}
@@ -57,7 +57,7 @@ func (v *AltBlockAddon) FromRaw(stream io.Reader) error {
 	if err != nil {
 		return err
 	}
-	v.VbkBlockIDs = make([][12]byte, len(vbkblockids))
+	v.VbkBlockIDs = make([]VbkID, len(vbkblockids))
 	for i, vbkblockid := range vbkblockids {
 		copy(v.VbkBlockIDs[i][:], vbkblockid.([]byte))
 	}

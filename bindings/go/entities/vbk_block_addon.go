@@ -14,7 +14,7 @@ type VbkBlockAddon struct {
 	// Reference counter for fork resolution
 	RefCount uint32
 	// List of changes introduced in this block
-	VtbIDs [][32]byte
+	VtbIDs []VtbID
 }
 
 // ToRaw ...
@@ -42,7 +42,7 @@ func (v *VbkBlockAddon) FromRaw(stream io.Reader) error {
 	if err != nil {
 		return err
 	}
-	v.VtbIDs = make([][32]byte, len(vtbids))
+	v.VtbIDs = make([]VtbID, len(vtbids))
 	for i, vtbid := range vtbids {
 		copy(v.VtbIDs[i][:], vtbid.([]byte))
 	}
