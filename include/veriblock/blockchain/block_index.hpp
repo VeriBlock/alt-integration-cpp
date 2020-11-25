@@ -245,14 +245,6 @@ struct BlockIndex : public Block::addon_t {
     return index;
   }
 
-  uint256 getContextContainerHash(uint32_t keystoneInterval) const {
-    VBK_ASSERT_MSG(keystoneInterval, "keystone interval should be more then 0");
-    WriteStream stream;
-    stream.writeBE<height_t>(getHeight());
-
-    return sha256twice(stream.data());
-  }
-
   std::string toPrettyString(size_t level = 0) const {
     return fmt::sprintf("%s%sBlockIndex(height=%d, hash=%s, status=%d, %s)",
                         std::string(level, ' '),
