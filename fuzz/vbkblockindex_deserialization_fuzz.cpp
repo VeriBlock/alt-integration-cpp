@@ -12,7 +12,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   ReadStream stream(Data, Size);
   ValidationState state;
   PopData popData;
-  Deserialize(stream, popData, state);
+  DeserializeFromVbkEncoding(stream, popData, state);
 
   return 0;
 }
