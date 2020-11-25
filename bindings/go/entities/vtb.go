@@ -7,11 +7,17 @@ import (
 	"fmt"
 	"io"
 
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // VtbID is 32 byte ID of Vtb
 type VtbID [32]byte
+
+// UnmarshalJSON parses a hash in hex syntax.
+func (h *VtbID) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, h[:])
+}
 
 // ParseVtbID - Parses an VTB ID and panics if invalid size
 func ParseVtbID(idBytes []byte) (id VtbID) {

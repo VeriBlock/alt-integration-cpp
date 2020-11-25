@@ -13,6 +13,11 @@ import (
 // BtcHash is 32 byte hash of BtcBlock
 type BtcHash [32]byte
 
+// UnmarshalJSON parses a hash in hex syntax.
+func (h *BtcHash) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, h[:])
+}
+
 // BtcBlock ...
 type BtcBlock struct {
 	Version       uint32

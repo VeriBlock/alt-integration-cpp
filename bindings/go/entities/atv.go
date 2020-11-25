@@ -7,11 +7,17 @@ import (
 	"fmt"
 	"io"
 
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 // AtvID is 32 byte ID of ATV
 type AtvID [32]byte
+
+// UnmarshalJSON parses a hash in hex syntax.
+func (h *AtvID) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, h[:])
+}
 
 // ParseAtvID - Parses an ATV ID and panics if invalid size
 func ParseAtvID(idBytes []byte) (id AtvID) {

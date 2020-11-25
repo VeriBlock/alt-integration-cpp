@@ -14,6 +14,11 @@ import (
 // VbkID is 12 byte ID of VbkBlock
 type VbkID [12]byte
 
+// UnmarshalJSON parses a hash in hex syntax.
+func (h *VbkID) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, h[:])
+}
+
 // ParseVbkID - Parses an VBK ID and panics if invalid size
 func ParseVbkID(idBytes []byte) (id VbkID) {
 	if len(idBytes) < 12 || len(idBytes) > 12 {
