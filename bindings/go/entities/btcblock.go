@@ -11,13 +11,18 @@ import (
 )
 
 // BtcHash is 32 byte hash of BtcBlock
-type BtcHash [32]byte
+type BtcHash [veriblock.Sha256HashSize]byte
+
+// UnmarshalJSON parses a hash in hex syntax.
+func (h *BtcHash) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, h[:])
+}
 
 // BtcBlock ...
 type BtcBlock struct {
 	Version       uint32
-	PreviousBlock [32]byte
-	MerkleRoot    [32]byte
+	PreviousBlock [veriblock.Sha256HashSize]byte
+	MerkleRoot    [veriblock.Sha256HashSize]byte
 	Timestamp     uint32
 	Bits          uint32
 	Nonce         uint32

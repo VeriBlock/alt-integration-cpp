@@ -12,11 +12,16 @@ import (
 )
 
 // VbkID is 12 byte ID of VbkBlock
-type VbkID [12]byte
+type VbkID [veriblock.VblakePreviousBlockHashSize]byte
+
+// UnmarshalJSON parses a hash in hex syntax.
+func (h *VbkID) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, h[:])
+}
 
 // ParseVbkID - Parses an VBK ID and panics if invalid size
 func ParseVbkID(idBytes []byte) (id VbkID) {
-	if len(idBytes) < 12 || len(idBytes) > 12 {
+	if len(idBytes) < veriblock.VblakePreviousBlockHashSize || len(idBytes) > veriblock.VblakePreviousBlockHashSize {
 		panic("Invalid size of VBK ID")
 	}
 	copy(id[:], idBytes)
@@ -25,7 +30,7 @@ func ParseVbkID(idBytes []byte) (id VbkID) {
 
 // ParseErrVbkID - Parses an VBK ID and returns error if invalid size
 func ParseErrVbkID(idBytes []byte) (id VbkID, err error) {
-	if len(idBytes) < 12 || len(idBytes) > 12 {
+	if len(idBytes) < veriblock.VblakePreviousBlockHashSize || len(idBytes) > veriblock.VblakePreviousBlockHashSize {
 		err = fmt.Errorf("Invalid size of VBK ID")
 		return
 	}
@@ -34,13 +39,13 @@ func ParseErrVbkID(idBytes []byte) (id VbkID, err error) {
 }
 
 // VbkHash is 24 byte hash of VbkBlock
-type VbkHash [24]byte
+type VbkHash [veriblock.VblakeBlockHashSize]byte
 
 // VbkBlock ...
 type VbkBlock struct {
 	Height                 int32
 	Version                int16
-	PreviousBlock          [12]byte
+	PreviousBlock          [veriblock.VblakePreviousBlockHashSize]byte
 	PreviousKeystone       [9]byte
 	SecondPreviousKeystone [9]byte
 	MerkleRoot             [16]byte
