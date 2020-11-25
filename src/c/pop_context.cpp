@@ -304,7 +304,7 @@ VBK_ByteStream* VBK_alt_BestBlock(PopContext* self) {
   auto* tip = self->context->altTree->getBestChain().tip();
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
-  tip->toRaw(stream);
+  tip->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
 }
 
@@ -315,7 +315,7 @@ VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self) {
   auto* tip = self->context->altTree->vbk().getBestChain().tip();
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
-  tip->toRaw(stream);
+  tip->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
 }
 
@@ -326,7 +326,7 @@ VBK_ByteStream* VBK_btc_BestBlock(PopContext* self) {
   auto* tip = self->context->altTree->btc().getBestChain().tip();
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
-  tip->toRaw(stream);
+  tip->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
 }
 
@@ -340,7 +340,7 @@ VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
     return nullptr;
   }
   altintegration::WriteStream stream;
-  block->toRaw(stream);
+  block->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
 }
 
@@ -354,7 +354,7 @@ VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
     return nullptr;
   }
   altintegration::WriteStream stream;
-  block->toRaw(stream);
+  block->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
 }
 
@@ -368,7 +368,7 @@ VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
     return nullptr;
   }
   altintegration::WriteStream stream;
-  block->toRaw(stream);
+  block->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
 }
 

@@ -259,16 +259,16 @@ struct BlockIndex : public Block::addon_t {
     return fmt::sprintf("%s:%d:%s", Block::name(), height, HexStr(getHash()));
   }
 
-  void toRaw(WriteStream& stream) const {
+  void toVbkEncoding(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
     header->toVbkEncoding(stream);
     stream.writeBE<uint32_t>(status);
-    addon_t::toRaw(stream);
+    addon_t::toVbkEncoding(stream);
   }
 
   std::vector<uint8_t> toVbkEncoding() const {
     WriteStream stream;
-    toRaw(stream);
+    toVbkEncoding(stream);
     return stream.data();
   }
 
@@ -333,7 +333,8 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
 
 template <typename Block>
 bool DeserializeFromVbkEncoding(
-    ReadStream& stream, BlockIndex<Block>& out,
+    ReadStream& stream,
+    BlockIndex<Block>& out,
     ValidationState& state,
     typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
   const auto& name = Block::name();
