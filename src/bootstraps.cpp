@@ -6,6 +6,7 @@
 
 namespace altintegration {
 
+// corresponds to "regtest_progpow" VBK network
 VbkBlock GetRegTestVbkBlock() {
   //{
   //  "height": 0,
@@ -13,7 +14,7 @@ VbkBlock GetRegTestVbkBlock() {
   //  "previousBlock": "000000000000000000000000",
   //  "previousKeystone": "000000000000000000",
   //  "secondPreviousKeystone": "000000000000000000",
-  //  "merkleRoot": "84E710F30BB8CFC9AF12622A8F39B917",
+  //  "merkleRoot": "80D7178046D25CA9AD283C5AF587A7C5",
   //  "timestamp": 1603044490,
   //  "difficulty": 0x1010000,
   //  "nonce": 0
@@ -21,7 +22,7 @@ VbkBlock GetRegTestVbkBlock() {
   VbkBlock block;
   block.setHeight(0);
   block.setVersion(2);
-  block.setMerkleRoot(uint128::fromHex("84E710F30BB8CFC9AF12622A8F39B917"));
+  block.setMerkleRoot(uint128::fromHex("80D7178046D25CA9AD283C5AF587A7C5"));
   block.setTimestamp(1603044490);
   block.setDifficulty(0x1010000);
   block.setNonce(0);
