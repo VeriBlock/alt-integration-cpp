@@ -5,6 +5,7 @@
 
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/entities/altblock.hpp>
 
 // libFuzzer
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {

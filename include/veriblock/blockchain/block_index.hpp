@@ -342,10 +342,12 @@ bool DeserializeFromVbkEncoding(
   if (!stream.readBE<height_t>(out.height, state)) {
     return state.Invalid(name + "-block-index-height");
   }
+  Block block{};
   if (!DeserializeFromVbkEncoding(
-          stream, out.header, state, precalculatedHash)) {
+          stream, block, state, precalculatedHash)) {
     return state.Invalid(name + "-block-index-header");
   }
+  out.setHeader(block);
   if (!stream.readBE<uint32_t>(out.status, state)) {
     return state.Invalid(name + "-block-index-status");
   }

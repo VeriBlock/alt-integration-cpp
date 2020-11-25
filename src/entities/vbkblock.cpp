@@ -217,17 +217,4 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
   return DeserializeFromRaw(s, out, state, precalculatedHash);
 }
 
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                std::shared_ptr<VbkBlock>& out,
-                                ValidationState& state,
-                                const VbkBlock::hash_t& hash) {
-  VbkBlock block;
-  if (!DeserializeFromVbkEncoding(stream, block, state, hash)) {
-    return false;
-  }
-
-  out = std::make_shared<VbkBlock>(std::move(block));
-  return true;
-}
-
 }  // namespace altintegration

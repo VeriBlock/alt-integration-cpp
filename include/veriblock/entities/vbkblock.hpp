@@ -191,12 +191,6 @@ bool DeserializeFromVbkEncoding(
     ValidationState& state,
     const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
 
-bool DeserializeFromVbkEncoding(
-    ReadStream& stream,
-    std::shared_ptr<VbkBlock>& out,
-    ValidationState& state,
-    const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
-
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKBLOCK_HPP_
