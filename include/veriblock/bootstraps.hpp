@@ -11,6 +11,7 @@
 
 namespace altintegration {
 
+// corresponds to "regtest_progpow" VBK network
 extern VbkBlock GetRegTestVbkBlock();
 extern BtcBlock GetRegTestBtcBlock();
 
