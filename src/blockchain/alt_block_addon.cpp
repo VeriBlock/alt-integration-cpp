@@ -96,8 +96,8 @@ std::string AltBlockAddon::toPrettyString() const {
                       _vbkblockids.size());
 }
 
-void AltBlockAddon::toRaw(WriteStream& w) const {
-  PopState<AltEndorsement>::toRaw(w);
+void AltBlockAddon::toVbkEncoding(WriteStream& w) const {
+  PopState<AltEndorsement>::toVbkEncoding(w);
   writeArrayOf<uint256>(w, _atvids, writeSingleByteLenValue);
   writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
   writeArrayOf<uint96>(w, _vbkblockids, writeSingleByteLenValue);

@@ -91,9 +91,9 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
     return fmt::sprintf("VTB=%d", _vtbids.size());
   }
 
-  void toRaw(WriteStream& w) const {
+  void toVbkEncoding(WriteStream& w) const {
     w.writeBE<uint32_t>(_refCount);
-    PopState<VbkEndorsement>::toRaw(w);
+    PopState<VbkEndorsement>::toVbkEncoding(w);
     writeArrayOf<uint256>(
         w, _vtbids, [&](WriteStream& /*ignore*/, const uint256& u) {
           writeSingleByteLenValue(w, u);

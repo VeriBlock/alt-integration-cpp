@@ -60,7 +60,7 @@ struct BtcBlockAddon {
     setDirty();
   }
 
-  void toRaw(WriteStream& w) const {
+  void toVbkEncoding(WriteStream& w) const {
     // save only refs
     writeArrayOf<ref_height_t>(
         w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {

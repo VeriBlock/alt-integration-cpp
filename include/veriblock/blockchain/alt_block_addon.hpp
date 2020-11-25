@@ -62,7 +62,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
 
   std::string toPrettyString() const;
 
-  void toRaw(WriteStream& w) const;
+  void toVbkEncoding(WriteStream& w) const;
 
  protected:
   //! list of changes introduced in this block

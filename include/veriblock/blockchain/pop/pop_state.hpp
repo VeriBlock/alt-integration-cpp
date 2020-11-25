@@ -51,7 +51,7 @@ struct PopState {
     setDirty();
   }
 
-  void toRaw(WriteStream& stream) const {
+  void toVbkEncoding(WriteStream& stream) const {
     // write containingEndorsements as vector
     writeContainer<decltype(_containingEndorsements)>(
         stream,
