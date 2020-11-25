@@ -4,15 +4,15 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/entities/popdata.hpp>
-
+#include <veriblock/blockchain/block_index.hpp>
 // libFuzzer
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   using namespace altintegration;
 
   ReadStream stream(Data, Size);
   ValidationState state;
-  PopData popData;
-  DeserializeFromVbkEncoding(stream, popData, state);
+  BlockIndex<BtcBlock> index;
+  DeserializeFromVbkEncoding(stream, index, state);
 
   return 0;
 }
