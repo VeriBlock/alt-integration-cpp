@@ -28,7 +28,7 @@ static const std::string defaultBlockEncoded =
     "26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001";
 
 TEST(VbkBlock, DeserializeFromVbkEncoding) {
-  auto block = AssertDeserializeFromVbkEncoding<VbkBlock>(defaultBlockEncoded);
+  auto block = AssertDeserializeFromHex<VbkBlock>(defaultBlockEncoded);
 
   EXPECT_EQ(block.getHeight(), defaultBlock.getHeight());
   EXPECT_EQ(block.getVersion(), defaultBlock.getVersion());
@@ -54,8 +54,7 @@ TEST(VbkBlock, Serialize) {
 }
 
 TEST(VbkBlock, RoundTrip) {
-  auto decoded =
-      AssertDeserializeFromVbkEncoding<VbkBlock>(defaultBlockEncoded);
+  auto decoded = AssertDeserializeFromHex<VbkBlock>(defaultBlockEncoded);
   EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
 
   WriteStream outputStream;
@@ -87,14 +86,15 @@ TEST(VbkBlock, RoundTripWithHash) {
   VbkBlock block;
   ValidationState state;
   ReadStream stream(blockEncoded);
-  EXPECT_TRUE(DeserializeFromVbkEncoding(stream, block, state, hash));
+  EXPECT_TRUE(DeserializeFromRaw(stream, block, state, hash))
+      << state.toString();
   EXPECT_EQ(block, defaultBlock);
 }
 
 TEST(VbkBlock, RoundTripBlockIndexWithHash) {
   BlockIndex<VbkBlock> defaultBlockIndex{};
   defaultBlockIndex.setHeader(std::make_shared<VbkBlock>(defaultBlock));
-  const auto blockEncoded = defaultBlockIndex.toRaw();
+  const auto blockEncoded = defaultBlockIndex.toVbkEncoding();
   const auto& hash = defaultBlock.getHash();
 
   ReadStream stream(blockEncoded);

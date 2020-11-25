@@ -48,7 +48,7 @@ bool readVarLenValue(ReadStream& stream,
                      ValidationState& state,
                      int32_t minLen,
                      int32_t maxLen) {
-  int32_t length;
+  int32_t length = 0;
   if (!readSingleBEValue<int32_t>(stream, length, state)) {
     return state.Invalid("readvarlen-bad-length");
   }

@@ -333,7 +333,7 @@ std::vector<uint8_t> SerializeToVbkEncoding(const T& obj) {
 template <typename T>
 std::vector<uint8_t> SerializeToRaw(const T& obj) {
   WriteStream w;
-  obj.toRaw(w);
+  obj.toVbkEncoding(w);
   return w.data();
 }
 

@@ -49,11 +49,15 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 AltBlock& out,
                                 ValidationState& state,
                                 const AltBlock::hash_t& /* ignore */) {
-  if (!readSingleByteLenValue(stream, out.hash, state, 0, MAX_ALT_HASH_SIZE)) {
+  if (!readSingleByteLenValue(
+          stream, out.hash, state, MIN_ALT_HASH_SIZE, MAX_ALT_HASH_SIZE)) {
     return state.Invalid("alt-block-hash");
   }
-  if (!readSingleByteLenValue(
-          stream, out.previousBlock, state, 0, MAX_ALT_HASH_SIZE)) {
+  if (!readSingleByteLenValue(stream,
+                              out.previousBlock,
+                              state,
+                              MIN_ALT_HASH_SIZE,
+                              MAX_ALT_HASH_SIZE)) {
     return state.Invalid("alt-block-prevhash");
   }
   if (!stream.readBE<int32_t>(out.height, state)) {

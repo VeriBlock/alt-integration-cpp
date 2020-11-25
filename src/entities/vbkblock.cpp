@@ -155,7 +155,8 @@ void VbkBlock::setDifficulty(int32_t diff) {
 
 bool DeserializeFromRaw(ReadStream& stream,
                         VbkBlock& block,
-                        ValidationState& state) {
+                        ValidationState& state,
+                        const VbkBlock::hash_t& hash) {
   if (!stream.readBE<int32_t>(block.height, state)) {
     return state.Invalid("vbk-block-height");
   }
@@ -195,6 +196,7 @@ bool DeserializeFromRaw(ReadStream& stream,
   if (!stream.readBE<uint64_t>(block.nonce, state, 5)) {
     return state.Invalid("vbk-block-nonce");
   }
+  block.hash_ = hash;
   return true;
 }
 
@@ -211,8 +213,8 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("vbk-block-bad-header");
   }
 
-  out.hash_ = precalculatedHash;
-  return DeserializeFromRaw(value, out, state);
+  ReadStream s(value);
+  return DeserializeFromRaw(s, out, state, precalculatedHash);
 }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,

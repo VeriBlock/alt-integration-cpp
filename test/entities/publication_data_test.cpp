@@ -19,8 +19,8 @@ static const PublicationData defaultPublication{
     0, "header bytes"_v, "payout info bytes"_v, "context info bytes"_v};
 
 TEST(PublicationData, DeserializeFromVbkEncoding) {
-  auto decoded = AssertDeserializeFromVbkEncoding<PublicationData>(
-      defaultPublicationEncoded);
+  auto decoded =
+      AssertDeserializeFromHex<PublicationData>(defaultPublicationEncoded);
 
   EXPECT_EQ(decoded.identifier, defaultPublication.identifier);
   EXPECT_EQ(decoded.header, defaultPublication.header);
@@ -37,8 +37,8 @@ TEST(PublicationData, Serialize) {
 }
 
 TEST(PublicationData, RoundTrip) {
-  auto decoded = AssertDeserializeFromVbkEncoding<PublicationData>(
-      defaultPublicationEncoded);
+  auto decoded =
+      AssertDeserializeFromHex<PublicationData>(defaultPublicationEncoded);
   EXPECT_EQ(decoded.identifier, defaultPublication.identifier);
 
   WriteStream outputStream;

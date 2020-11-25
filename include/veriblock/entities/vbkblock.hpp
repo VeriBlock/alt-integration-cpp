@@ -158,13 +158,8 @@ struct VbkBlock {
 
   friend bool DeserializeFromRaw(ReadStream& stream,
                                  VbkBlock& out,
-                                 ValidationState& state);
-
-  friend bool DeserializeFromVbkEncoding(
-      ReadStream& stream,
-      VbkBlock& out,
-      ValidationState& state,
-      const VbkBlock::hash_t& precalculatedHash);
+                                 ValidationState& state,
+                                 const VbkBlock::hash_t& precalculatedHash);
 };
 
 template <typename JsonValue>
@@ -187,7 +182,8 @@ JsonValue ToJSON(const VbkBlock& b) {
 
 bool DeserializeFromRaw(ReadStream& stream,
                         VbkBlock& out,
-                        ValidationState& state);
+                        ValidationState& state,
+                        const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
 
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,

@@ -16,7 +16,8 @@ struct AltChainParamsRegTest : public AltChainParams {
 
   AltBlock getBootstrapBlock() const noexcept override {
     AltBlock b;
-    b.hash = {1, 2, 3};
+    b.hash = std::vector<uint8_t>(MIN_ALT_HASH_SIZE, 1);
+    b.previousBlock = std::vector<uint8_t>(MIN_ALT_HASH_SIZE, 0);
     b.height = 0;
     b.timestamp = 0;
     return b;

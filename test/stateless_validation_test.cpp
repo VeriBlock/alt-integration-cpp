@@ -243,9 +243,8 @@ TEST_F(StatelessValidationTest, VbkPopTx_different_address_invalid) {
 
 TEST_F(StatelessValidationTest, checkBitcoinTransactionForPoPData_invalid) {
   VbkPopTx tx = validVTB.transaction;
-  tx.publishedBlock = AssertDeserializeFromHex<VbkBlock>(
-      "00001388000294E7DC3E3BE21A96ECCF0FBDF5F62A3331DC995C36B0935637860679DDD5"
-      "DB0F135312B2C27867C9A83EF1B99B985C9B949307023AD672BAFD7700");
+  tx.publishedBlock = AssertDeserializeFromRaw<VbkBlock>(
+      "00001388000294E7DC3E3BE21A96ECCF0FBDF5F62A3331DC995C36B0935637860679DDD5DB0F135312B2C27867C9A83EF1B99B985C9B949307023AD672BAFD7700"_unhex);
   ASSERT_FALSE(checkBitcoinTransactionForPoPData(tx, state));
 }
 
@@ -261,11 +260,11 @@ TEST_F(StatelessValidationTest,
 }
 
 TEST_F(StatelessValidationTest,
-       checkBitcoinMerklePath_merkle_root_do_not_match_invalid) {
+       checkBitcoinMerklePath_merkle_root_does_not_match_invalid) {
   VbkPopTx tx = validVTB.transaction;
-  tx.blockOfProof = AssertDeserializeFromHex<BtcBlock>(
+  tx.blockOfProof = AssertDeserializeFromRaw<BtcBlock>(
       "00000020BAA42E40345A7F826A31D37DB1A5D64B67B72732477422000000000000000000"
-      "A33AD6BE0634647B26633AB85FA8DE258480BBB25E59C68E48BB0B608B12362B10919B5C"
+      "A33AD6BE0634647B26633AB85FA8DE258480BBB25E59C68E48BB0B608B12362B10919B5C"_unhex
       "6C1F2C1749C4D1F0");
   ASSERT_FALSE(checkMerklePath(tx.merklePath,
                                tx.bitcoinTransaction.getHash(),
@@ -331,7 +330,8 @@ TEST_F(StatelessValidationTest, containsSplit_when_descriptor_before_chunks) {
   ASSERT_TRUE(containsSplit(
       "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,
       buffer.data(),
-      state));
+      state))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest, containsSplit_when_chunked) {
@@ -367,7 +367,8 @@ TEST_F(StatelessValidationTest, containsSplit_when_chunked) {
   ASSERT_TRUE(containsSplit(
       "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,
       buffer.data(),
-      state));
+      state))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_valid_vbk_block) {

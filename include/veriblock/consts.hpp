@@ -65,6 +65,9 @@ constexpr const auto VBK_ID_SIZE = 12;
 constexpr const auto MIN_PAYOUT_INFO_SIZE = 0;
 // https://bitcoin.stackexchange.com/a/35881/85437
 constexpr const auto MAX_PAYOUT_INFO_SIZE = 10000;
+// 65 = VBK header + 15 POP bytes of Address
+constexpr const auto VBK_PUBLICATIONDATA_SIZE = 80;
+
 
 
 

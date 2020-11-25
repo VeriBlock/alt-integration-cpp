@@ -261,36 +261,16 @@ struct BlockIndex : public Block::addon_t {
 
   void toRaw(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
-    header->toRaw(stream);
+    header->toVbkEncoding(stream);
     stream.writeBE<uint32_t>(status);
     addon_t::toRaw(stream);
   }
 
-  std::vector<uint8_t> toRaw() const {
+  std::vector<uint8_t> toVbkEncoding() const {
     WriteStream stream;
     toRaw(stream);
     return stream.data();
   }
-
-  //  void initAddon(ReadStream& stream) { addon_t::initAddonFromRaw(stream); }
-  //
-  //  static BlockIndex fromRaw(ReadStream& stream,
-  //                            const hash_t& precalculatedHash = hash_t()) {
-  //    BlockIndex index{};
-  //    index.height = stream.readBE<uint32_t>();
-  //    index.header =
-  //        std::make_shared<Block>(fromRawHeader(stream, precalculatedHash));
-  //    index.status = stream.readBE<uint32_t>();
-  //    index.initAddon(stream);
-  //    index.setDirty();
-  //    return index;
-  //  }
-  //
-  //  static BlockIndex fromRaw(Slice<const uint8_t> bytes,
-  //                            const hash_t& precalculatedHash = hash_t()) {
-  //    ReadStream stream(bytes);
-  //    return fromRaw(stream, precalculatedHash);
-  //  }
 
  protected:
   //! height of the entry in the chain
@@ -357,7 +337,8 @@ bool DeserializeFromVbkEncoding(
     ValidationState& state,
     typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
   const auto& name = Block::name();
-  if (!stream.readBE(out.height, state)) {
+  using height_t = typename Block::height_t;
+  if (!stream.readBE<height_t>(out.height, state)) {
     return state.Invalid(name + "-block-index-height");
   }
   if (!DeserializeFromVbkEncoding(

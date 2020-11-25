@@ -22,7 +22,7 @@ std::string Coin::toPrettyString() const {
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                  Coin& out,
                                  ValidationState& state) {
-  int64_t amount;
+  int64_t amount = 0;
   if (!readSingleBEValue<int64_t>(stream, amount, state)) {
     return state.Invalid("invalid-amount");
   }

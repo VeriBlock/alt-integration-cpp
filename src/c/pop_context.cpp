@@ -238,7 +238,7 @@ bool VBK_btc_getBlockIndex(PopContext* self,
     return false;
   }
 
-  std::vector<uint8_t> bytes = blockIndex->toRaw();
+  std::vector<uint8_t> bytes = blockIndex->toVbkEncoding();
   *blockindex = new uint8_t[bytes.size()];
   memcpy(*blockindex, bytes.data(), bytes.size());
   *blockindex_size = (int)bytes.size();
@@ -264,7 +264,7 @@ bool VBK_vbk_getBlockIndex(PopContext* self,
     return false;
   }
 
-  std::vector<uint8_t> bytes = blockIndex->toRaw();
+  std::vector<uint8_t> bytes = blockIndex->toVbkEncoding();
   *blockindex = new uint8_t[bytes.size()];
   memcpy(*blockindex, bytes.data(), bytes.size());
   *blockindex_size = (int)bytes.size();
@@ -289,7 +289,7 @@ bool VBK_alt_getBlockIndex(PopContext* self,
     return false;
   }
 
-  std::vector<uint8_t> bytes = blockIndex->toRaw();
+  std::vector<uint8_t> bytes = blockIndex->toVbkEncoding();
   *blockindex = new uint8_t[bytes.size()];
   memcpy(*blockindex, bytes.data(), bytes.size());
   *blockindex_size = (int)bytes.size();

@@ -40,5 +40,7 @@ TEST(Coin, Invalid) {
   ValidationState state;
   Coin coin;
   ASSERT_FALSE(DeserializeFromVbkEncoding(readStream, coin, state));
-  ASSERT_EQ(state.GetPath(), "");
+  ASSERT_EQ(
+      state.GetPath(),
+      "invalid-amount+readsinglebe-bad-data+readsingle-bad-range+range-above");
 }

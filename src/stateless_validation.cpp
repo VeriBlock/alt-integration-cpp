@@ -95,7 +95,7 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
     uint32_t waste = chunkDescriptorBytesLength * 8 - chunkDescriptorBitLength;
 
     Slice<const uint8_t> out;
-    if (buffer.readSlice(chunkDescriptorBytesLength, out, state)) {
+    if (!buffer.readSlice(chunkDescriptorBytesLength, out, state)) {
       return state.Invalid("bad-descriptor-bytes");
     }
 
@@ -154,7 +154,12 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
   WriteStream stream;
   tx.publishedBlock.toRaw(stream);
   tx.address.getPopBytes(stream);
-  VBK_ASSERT(stream.data().size() == 80);
+  if (stream.data().size() != VBK_PUBLICATIONDATA_SIZE) {
+    return state.Invalid("bad-pubdata",
+                         fmt::format("Expected size for pubdata is {}, got {}",
+                                     VBK_PUBLICATIONDATA_SIZE,
+                                     stream.data().size()));
+  }
 
   // finding that stream data contains in the tx.bitcoinTransaction
   for (size_t i = 0, j = 0;

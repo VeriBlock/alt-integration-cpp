@@ -28,7 +28,7 @@ static const int defaultTreeIndex = 1;
 static const int defaultIndex = 0;
 
 TEST(VbkMerklePath, DeserializeFromVbkEncoding) {
-  auto decoded = AssertDeserializeFromVbkEncoding<VbkMerklePath>(defaultPathEncoded);
+  auto decoded = AssertDeserializeFromHex<VbkMerklePath>(defaultPathEncoded);
 
   EXPECT_EQ(decoded.treeIndex, defaultTreeIndex);
   EXPECT_EQ(decoded.index, defaultIndex);
@@ -49,7 +49,7 @@ TEST(VbkMerklePath, Serialize) {
 }
 
 TEST(VbkMerklePath, RoundTrip) {
-  auto decoded = AssertDeserializeFromVbkEncoding<VbkMerklePath>(defaultPathEncoded);
+  auto decoded = AssertDeserializeFromHex<VbkMerklePath>(defaultPathEncoded);
   EXPECT_EQ(decoded.index, defaultIndex);
 
   WriteStream outputStream;
