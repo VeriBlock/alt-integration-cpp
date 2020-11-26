@@ -9,18 +9,24 @@
 #include <algorithm>
 #include <cstdint>
 #include <vector>
-#include <veriblock/blockchain/blocktree.hpp>
-#include <veriblock/validation_state.hpp>
+
+#include "veriblock/blockchain/blocktree.hpp"
+#include "veriblock/entities/popdata.hpp"
+#include "veriblock/hashutil.hpp"
+#include "veriblock/keystone_util.hpp"
+#include "veriblock/validation_state.hpp"
 
 namespace altintegration {
 
 template <typename BlockTreeT>
 std::vector<typename BlockTreeT::block_t> getContext(
-    const BlockTreeT& tree, typename BlockTreeT::hash_t tip, size_t size = std::numeric_limits<size_t>::max()) {
+    const BlockTreeT& tree,
+    typename BlockTreeT::hash_t tip,
+    size_t size = std::numeric_limits<size_t>::max()) {
   std::vector<typename BlockTreeT::block_t> ret;
   auto* cursor = tree.getBlockIndex(tip);
   size_t i = 0;
-  while(cursor != nullptr && i++ < size) {
+  while (cursor != nullptr && i++ < size) {
     ret.push_back(cursor->getHeader());
     cursor = cursor->pprev;
   }
@@ -57,6 +63,11 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
 
   return true;
 }
+
+// Calculate ContextInfoContainer top Hash
+uint256 CalculateContextInfoContainerHash(const PopData& popData,
+                                          const BlockIndex<AltBlock>& prevBlock,
+                                          uint32_t keystoneInterval);
 
 }  // namespace altintegration
 

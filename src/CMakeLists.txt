@@ -34,6 +34,7 @@ set(SOURCES
         mock_miner.cpp
         config.cpp
         command_group_cache.cpp
+        alt-util.cpp
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:blockchain>
         $<TARGET_OBJECTS:storage>
