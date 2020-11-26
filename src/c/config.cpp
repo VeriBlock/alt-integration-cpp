@@ -23,7 +23,7 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
     ValidationState state;
     AltBlock block;
     auto data = ParseHex(VBK_getBootstrapBlock());
-    bool result = DeserializeFromVbkEncoding<AltBlock>(data, block, state);
+    bool result = DeserializeFromRaw<AltBlock>(data, block, state);
     VBK_ASSERT_MSG(
         result,
         "VBK_getBootstrapBlock should provide AltBlock, but doesn't: %s",

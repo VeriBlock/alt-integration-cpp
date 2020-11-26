@@ -90,8 +90,8 @@ inline std::vector<uint8_t> generateRandomBytesVector(size_t n) {
 struct AltChainParamsTest : public AltChainParams {
   AltBlock getBootstrapBlock() const noexcept override {
     AltBlock genesisBlock;
-    genesisBlock.hash = {1, 2, 3};
-    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.hash = std::vector<uint8_t>(1, MIN_ALT_HASH_SIZE);
+    genesisBlock.previousBlock = std::vector<uint8_t>(2, MIN_ALT_HASH_SIZE);
     genesisBlock.height = 0;
     genesisBlock.timestamp = 0;
     return genesisBlock;
@@ -101,7 +101,7 @@ struct AltChainParamsTest : public AltChainParams {
 
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
-    return AssertDeserializeFromVbkEncoding<AltBlock>(bytes).getHash();
+    return AssertDeserializeFromRaw<AltBlock>(bytes).getHash();
   }
 };
 

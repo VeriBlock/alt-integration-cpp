@@ -27,7 +27,7 @@ struct AltChainParamsRegTest : public AltChainParams {
 
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
-    return AssertDeserializeFromVbkEncoding<AltBlock>(bytes).getHash();
+    return AssertDeserializeFromRaw<AltBlock>(bytes).getHash();
   }
 
   int64_t id = 0;

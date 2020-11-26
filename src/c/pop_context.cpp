@@ -109,7 +109,7 @@ bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
   altintegration::ReadStream stream(bytes);
   altintegration::AltBlock blk;
 
-  if (!altintegration::DeserializeFromVbkEncoding(stream, blk, state)) {
+  if (!altintegration::DeserializeFromRaw(stream, blk, state)) {
     return false;
   }
 

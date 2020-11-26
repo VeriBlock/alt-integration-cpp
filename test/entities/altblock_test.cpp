@@ -18,9 +18,8 @@ static const AltBlock defaultBlock{
     1466};
 
 TEST(AltBlock, RoundTrip) {
-  std::vector<uint8_t> bytes = defaultBlock.toVbkEncoding();
-  AltBlock deserializedBlock =
-      AssertDeserializeFromVbkEncoding<AltBlock>(bytes);
+  std::vector<uint8_t> bytes = defaultBlock.toRaw();
+  AltBlock deserializedBlock = AssertDeserializeFromRaw<AltBlock>(bytes);
 
   EXPECT_EQ(deserializedBlock.getHash(), defaultBlock.getHash());
   EXPECT_EQ(deserializedBlock.height, defaultBlock.height);

@@ -50,7 +50,8 @@ std::string BtcBlock::toPrettyString() const {
 
 bool DeserializeFromRaw(ReadStream& stream,
                         BtcBlock& block,
-                        ValidationState& state) {
+                        ValidationState& state,
+                        const BtcBlock::hash_t& /*ignore*/) {
   if (!stream.readLE<uint32_t>(block.version, state)) {
     return state.Invalid("btc-block-version");
   }

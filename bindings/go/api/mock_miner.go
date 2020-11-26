@@ -30,7 +30,7 @@ func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.miner.MineBtcBlockTip()
 	if stream == nil {
-		return nil, nil
+		panic("MineBtcBlockTip returned nullptr")
 	}
 	defer stream.Free()
 	blockIndex := entities.NewBtcBlockIndex()

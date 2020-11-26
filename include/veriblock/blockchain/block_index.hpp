@@ -261,7 +261,7 @@ struct BlockIndex : public Block::addon_t {
 
   void toVbkEncoding(WriteStream& stream) const {
     stream.writeBE<uint32_t>(height);
-    header->toVbkEncoding(stream);
+    header->toRaw(stream);
     stream.writeBE<uint32_t>(status);
     addon_t::toVbkEncoding(stream);
   }
@@ -343,7 +343,7 @@ bool DeserializeFromVbkEncoding(
     return state.Invalid(name + "-block-index-height");
   }
   Block block{};
-  if (!DeserializeFromVbkEncoding(
+  if (!DeserializeFromRaw(
           stream, block, state, precalculatedHash)) {
     return state.Invalid(name + "-block-index-header");
   }

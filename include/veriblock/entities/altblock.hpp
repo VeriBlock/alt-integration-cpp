@@ -37,23 +37,14 @@ struct AltBlock {
    */
   void toRaw(WriteStream& stream) const;
 
+  //! for AltBlock Raw format == VbkEncoding
+  void toVbkEncoding(WriteStream& stream) const;
+
   /**
    * Convert AltBlock to bytes data using AltBlock basic byte format
    * @return string represantation of the data
    */
   std::vector<uint8_t> toRaw() const;
-
-  /**
-   * Convert AltBlock to data stream using Vbk byte format
-   * @param stream data stream to write into
-   */
-  void toVbkEncoding(WriteStream& stream) const;
-
-  /**
-   * Convert AltBlock to raw bytes data using Vbk byte format
-   * @return bytes data
-   */
-  std::vector<uint8_t> toVbkEncoding() const;
 
   uint32_t getBlockTime() const noexcept;
 
@@ -105,7 +96,7 @@ inline void PrintTo(const AltBlock& block, ::std::ostream* os) {
   *os << block.toPrettyString();
 }
 
-bool DeserializeFromVbkEncoding(
+bool DeserializeFromRaw(
     ReadStream& stream,
     AltBlock& out,
     ValidationState& state,

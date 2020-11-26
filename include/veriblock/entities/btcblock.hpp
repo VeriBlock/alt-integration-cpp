@@ -116,7 +116,8 @@ JsonValue ToJSON(const BtcBlock& b) {
 
 bool DeserializeFromRaw(ReadStream& stream,
                         BtcBlock& out,
-                        ValidationState& state);
+                        ValidationState& state,
+                        const BtcBlock::hash_t& /*ignore*/ = BtcBlock::hash_t{});
 
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
