@@ -7,10 +7,6 @@
 
 using namespace altintegration;
 
-BtcTx BtcTx::fromVbkEncoding(ReadStream& stream) {
-  return BtcTx(readVarLenValue(stream, 0, BTC_TX_MAX_RAW_SIZE));
-}
-
 void BtcTx::toVbkEncoding(WriteStream& stream) const {
   writeVarLenValue(stream, tx);
 }
@@ -21,7 +17,7 @@ std::string BtcTx::toHex() const {
   return HexStr(tx);
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
+bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                  BtcTx& out,
                                  ValidationState& state) {
   Slice<const uint8_t> tx;

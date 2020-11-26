@@ -194,7 +194,7 @@ struct PopTestFixture {
     pubData.payoutInfo = getPayoutInfo();
     pubData.identifier = 0;
     pubData.contextInfo = {1, 2, 3, 4, 5};
-    pubData.header = block.toVbkEncoding();
+    pubData.header = block.toRaw();
 
     return pubData;
   }

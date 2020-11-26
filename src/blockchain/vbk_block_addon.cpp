@@ -20,4 +20,32 @@ const std::vector<typename VTB::id_t>& VbkBlockAddon::getPayloadIds<VTB>()
   return _vtbids;
 }
 
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VbkBlockAddon& out,
+                                ValidationState& state) {
+  if (!stream.readBE(out._refCount, state)) {
+    return state.Invalid("vbk-addon-bad-ref-count");
+  }
+
+  PopState<VbkEndorsement>& pop = out;
+  if (!DeserializeFromVbkEncoding(stream, pop, state)) {
+    return state.Invalid("vbk-addon-bad-popstate");
+  }
+
+  if (!readArrayOf<uint256>(
+          stream,
+          out._vtbids,
+          state,
+          0,
+          MAX_VBKPOPTX_PER_VBK_BLOCK,
+          [&](uint256& o) -> bool {
+            return readSingleByteLenValue(
+                stream, o, state, uint256::size(), uint256::size());
+          })) {
+    return state.Invalid("vbk-addon-bad-vtbid");
+  }
+
+  return true;
+}
+
 }  // namespace altintegration

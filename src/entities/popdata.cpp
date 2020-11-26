@@ -17,51 +17,24 @@ std::string PopData::toPrettyString() const {
                       version);
 }
 
-PopData PopData::fromVbkEncoding(ReadStream& stream) {
-  PopData pd;
-  pd.version = stream.readBE<uint32_t>();
-  if (pd.version == 1) {
-    pd.context = readArrayOf<VbkBlock>(
-        stream, (VbkBlock(*)(ReadStream&))VbkBlock::fromVbkEncoding);
-
-    pd.atvs =
-        readArrayOf<ATV>(stream, (ATV(*)(ReadStream&))ATV::fromVbkEncoding);
-
-    pd.vtbs =
-        readArrayOf<VTB>(stream, (VTB(*)(ReadStream&))VTB::fromVbkEncoding);
-  } else {
-    throw std::domain_error(fmt::format(
-        "PopData deserialization version={} is not implemented", pd.version));
-  }
-  return pd;
-}
-
-PopData PopData::fromVbkEncoding(Slice<const uint8_t> raw_bytes) {
-  ReadStream stream(raw_bytes);
-  return fromVbkEncoding(stream);
-}
-
+// VbkBlocks, then VTBs, then ATVs
 void PopData::toVbkEncoding(WriteStream& stream) const {
   stream.writeBE<uint32_t>(version);
-  if (version == 1) {
-    writeSingleBEValue(stream, context.size());
-    for (const auto& b : context) {
-      b.toVbkEncoding(stream);
-    }
+  VBK_ASSERT_MSG(version == 1,
+                 "PopData serialization version=%d is not implemented",
+                 version);
+  writeArrayOf<VbkBlock>(
+      stream, context, [&](WriteStream& /*ignore*/, const VbkBlock& v) {
+        v.toVbkEncoding(stream);
+      });
 
-    writeSingleBEValue(stream, atvs.size());
-    for (const auto& atv : atvs) {
-      atv.toVbkEncoding(stream);
-    }
+  writeArrayOf<VTB>(stream, vtbs, [&](WriteStream& /*ignore*/, const VTB& v) {
+    v.toVbkEncoding(stream);
+  });
 
-    writeSingleBEValue(stream, vtbs.size());
-    for (const auto& vtb : vtbs) {
-      vtb.toVbkEncoding(stream);
-    }
-  } else {
-    VBK_ASSERT_MSG(
-        false, "PopData serialization version=%d is not implemented", version);
-  }
+  writeArrayOf<ATV>(stream, atvs, [&](WriteStream& /*ignore*/, const ATV& atv) {
+    atv.toVbkEncoding(stream);
+  });
 }
 
 std::vector<uint8_t> PopData::toVbkEncoding() const {
@@ -70,46 +43,44 @@ std::vector<uint8_t> PopData::toVbkEncoding() const {
   return stream.data();
 }
 
-bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state) {
-  PopData pd;
-  typedef bool (*vbkde)(ReadStream&, VbkBlock&, ValidationState&);
-  typedef bool (*atvde)(ReadStream&, ATV&, ValidationState&);
-  typedef bool (*vtbde)(ReadStream&, VTB&, ValidationState&);
-
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                PopData& pd,
+                                ValidationState& state) {
   if (!stream.readBE<uint32_t>(pd.version, state)) {
     return state.Invalid("pop-version");
   }
   if (pd.version != 1) {
-    return state.Invalid("pop-bad-version");
+    return state.Invalid("pop-bad-version",
+                         fmt::format("Expected version=1, got {}", pd.version));
   }
 
-  if (!readArrayOf<VbkBlock>(stream,
-                             pd.context,
-                             state,
-                             0,
-                             MAX_POPDATA_VBKS,
-                             static_cast<vbkde>(Deserialize))) {
-    return state.Invalid("pop-vbk-context");
+  size_t i = 0;
+  if (!readArrayOf<VbkBlock>(
+          stream, pd.context, state, 0, MAX_POPDATA_VBK, [&](VbkBlock& out) {
+            i++;
+            return DeserializeFromVbkEncoding(stream, out, state);
+          })) {
+    return state.Invalid("popdata-vbk", i);
   }
 
-  if (!readArrayOf<ATV>(stream,
-                        pd.atvs,
-                        state,
-                        0,
-                        MAX_POPDATA_ATVS,
-                        static_cast<atvde>(Deserialize))) {
-    return state.Invalid("pop-atv-context");
+  i = 0;
+  if (!readArrayOf<VTB>(
+          stream, pd.vtbs, state, 0, MAX_POPDATA_VTB, [&](VTB& out) {
+            i++;
+            return DeserializeFromVbkEncoding(stream, out, state);
+          })) {
+    return state.Invalid("popdata-vtb", i);
   }
 
-  if (!readArrayOf<VTB>(stream,
-                        pd.vtbs,
-                        state,
-                        0,
-                        MAX_POPDATA_VTBS,
-                        static_cast<vtbde>(Deserialize))) {
-    return state.Invalid("pop-vtb-context");
+  i = 0;
+  if (!readArrayOf<ATV>(
+          stream, pd.atvs, state, 0, MAX_POPDATA_ATV, [&](ATV& out) {
+            i++;
+            return DeserializeFromVbkEncoding(stream, out, state);
+          })) {
+    return state.Invalid("popdata-atv", i);
   }
-  out = pd;
+
   return true;
 }
 

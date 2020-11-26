@@ -19,11 +19,8 @@ TEST(Coin, Serialize) {
   EXPECT_EQ(HexStr(coinEncoded), "04d09dc300");
 }
 
-TEST(Coin, Deserialize) {
-  auto coinBytes = "04d09dc300"_unhex;
-  ReadStream readStream(coinBytes);
-  auto output = Coin::fromVbkEncoding(readStream);
-
+TEST(Coin, DeserializeFromVbkEncoding) {
+  auto output = AssertDeserializeFromHex<Coin>("04d09dc300");
   EXPECT_EQ(output.units, 3500000000);
 }
 
@@ -32,8 +29,7 @@ TEST(Coin, RoundTrip) {
   WriteStream stream;
   input.toVbkEncoding(stream);
   auto coinEncoded = stream.data();
-  ReadStream readStream(coinEncoded);
-  auto output = Coin::fromVbkEncoding(readStream);
+  auto output = AssertDeserializeFromVbkEncoding<Coin>(coinEncoded);
 
   EXPECT_EQ(output.units, input.units);
 }
@@ -41,6 +37,10 @@ TEST(Coin, RoundTrip) {
 TEST(Coin, Invalid) {
   std::vector<uint8_t> coinEncoded(9, 0xFF);
   ReadStream readStream(coinEncoded);
-
-  EXPECT_THROW(Coin::fromVbkEncoding(readStream), std::out_of_range);
+  ValidationState state;
+  Coin coin;
+  ASSERT_FALSE(DeserializeFromVbkEncoding(readStream, coin, state));
+  ASSERT_EQ(
+      state.GetPath(),
+      "invalid-amount+readsinglebe-bad-data+readsingle-bad-range+range-above");
 }

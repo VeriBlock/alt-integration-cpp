@@ -70,7 +70,7 @@ TEST_P(Base59Test, Encode) {
 
 TEST_P(Base59Test, Decode) {
   auto tc = GetParam();
-  EXPECT_EQ(altintegration::DecodeBase59(tc.baseData), tc.binData);
+  EXPECT_EQ(altintegration::AssertDecodeBase59(tc.baseData), tc.binData);
 }
 
 INSTANTIATE_TEST_SUITE_P(Base59Regression,

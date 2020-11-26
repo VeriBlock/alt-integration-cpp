@@ -24,7 +24,6 @@ function(addtest test_name)
     addtest_part(${test_name} ${ARGN})
     target_link_libraries(${test_name}
             gtest
-            gmock
             Threads::Threads
             )
     add_test(

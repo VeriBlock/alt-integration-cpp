@@ -21,7 +21,6 @@ namespace altintegration {
  * ValidationState can be in 3 states:
  * - valid (when default initialized)
  * - invalid - validation failed. Example: invalid signature in transaction.
- * - error - internal error during validation. Example: database corrupted.
  *
  * @ingroup api
  */
@@ -30,7 +29,7 @@ class ValidationState {
  public:
   ValidationState() : m_mode(MODE_VALID) {}
 
-  std::string toString() const { return GetPath() + ", " + GetDebugMessage(); }
+  std::string toString() const;
 
   void clear() {
     stack_trace.clear();
@@ -39,16 +38,7 @@ class ValidationState {
   }
 
   bool Invalid(const std::string &reject_reason,
-               const std::string &debug_message = "") {
-    stack_trace.push_back(reject_reason);
-    if (!debug_message.empty()) {
-      m_debug_message = debug_message;
-    }
-    if (m_mode != MODE_ERROR) {
-      m_mode = MODE_INVALID;
-    }
-    return false;
-  }
+               const std::string &debug_message = "");
 
   /**
    * Changes this ValidationState into "INVALID" mode.
@@ -70,51 +60,18 @@ class ValidationState {
     return Invalid(reject_reason, "", index);
   }
 
-  /**
-   * Changes this ValidationState into "ERROR" mode.
-   * @param reject_reason - supply a short, unique message that identifies this
-   * class of validation. Example: mandatory-script-verify-flag-failed
-   * @return always returns false
-   */
-  bool Error(const std::string &reject_reason) {
-    // log first reject reason
-    if (m_mode == MODE_VALID) {
-      stack_trace.push_back(reject_reason);
-    }
-    m_mode = MODE_ERROR;
-    return false;
-  }
-
   bool IsValid() const { return m_mode == MODE_VALID; }
   bool IsInvalid() const { return m_mode == MODE_INVALID; }
-  bool IsError() const { return m_mode == MODE_ERROR; }
   std::string GetDebugMessage() const { return m_debug_message; }
 
-  std::vector<std::string> GetPathParts() const {
-    std::vector<std::string> copy(stack_trace.size());
-    std::reverse_copy(stack_trace.begin(), stack_trace.end(), copy.begin());
-    return copy;
-  }
+  std::vector<std::string> GetPathParts() const;
 
-  std::string GetPath() const {
-    auto parts = GetPathParts();
-    std::ostringstream ss;
-    if (parts.empty()) {
-      return {};
-    }
-    ss << parts[0];
-    for (size_t i = 1; i < parts.size(); i++) {
-      ss << "+";
-      ss << parts[i];
-    }
-    return ss.str();
-  }
+  std::string GetPath() const;
 
  private:
   enum mode_state {
     MODE_VALID,    //!< everything ok
     MODE_INVALID,  //!< network rule violation
-    MODE_ERROR,    //!< run-time error
   } m_mode;
   std::string m_debug_message;
   std::vector<std::string> stack_trace;
@@ -129,8 +86,6 @@ JsonValue ToJSON(const ValidationState &s) {
     return obj;
   } else if (s.IsInvalid()) {
     json::putStringKV(obj, "state", "invalid");
-  } else if (s.IsError()) {
-    json::putStringKV(obj, "state", "error");
   }
 
   json::putStringKV(obj, "code", s.GetPath());

@@ -11,31 +11,6 @@ using namespace altintegration;
 
 const std::string VTB::_name = "VTB";
 
-VTB VTB::fromVbkEncoding(ReadStream& stream) {
-  VTB vtb{};
-  vtb.version = stream.readBE<uint32_t>();
-  if (vtb.version == 1) {
-    vtb.transaction = VbkPopTx::fromVbkEncoding(stream);
-    vtb.merklePath = VbkMerklePath::fromVbkEncoding(stream);
-    vtb.containingBlock = VbkBlock::fromVbkEncoding(stream);
-  } else {
-    throw std::domain_error(
-        fmt::format("VTB version={} is not implemented", vtb.version));
-  }
-
-  return vtb;
-}
-
-VTB VTB::fromVbkEncoding(Slice<const uint8_t> bytes) {
-  ReadStream stream(bytes);
-  return fromVbkEncoding(stream);
-}
-
-VTB VTB::fromVbkEncoding(const std::string& bytes) {
-  ReadStream stream(bytes);
-  return fromVbkEncoding(stream);
-}
-
 void VTB::toVbkEncoding(WriteStream& stream) const {
   stream.writeBE<uint32_t>(version);
   if (version == 1) {
@@ -62,15 +37,9 @@ VTB::id_t VTB::getId() const {
   return sha256(btcTx, temp);
 }
 
-VTB VTB::fromHex(const std::string& hex) {
-  auto data = ParseHex(hex);
-  return fromVbkEncoding(data);
-}
-
-bool altintegration::Deserialize(ReadStream& stream,
-                                 VTB& out,
-                                 ValidationState& state) {
-  VTB vtb{};
+bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
+                                                VTB& vtb,
+                                                ValidationState& state) {
   if (!stream.readBE<uint32_t>(vtb.version, state)) {
     return state.Invalid("vtb-version");
   }
@@ -78,17 +47,15 @@ bool altintegration::Deserialize(ReadStream& stream,
     return state.Invalid("vtb-bad-version");
   }
 
-  if (!Deserialize(stream, vtb.transaction, state)) {
+  if (!DeserializeFromVbkEncoding(stream, vtb.transaction, state)) {
     return state.Invalid("vtb-transaction");
   }
-  if (!Deserialize(stream, vtb.merklePath, state)) {
+  if (!DeserializeFromVbkEncoding(stream, vtb.merklePath, state)) {
     return state.Invalid("vtb-merkle-path");
   }
-  if (!Deserialize(stream, vtb.containingBlock, state)) {
+  if (!DeserializeFromVbkEncoding(stream, vtb.containingBlock, state)) {
     return state.Invalid("vtb-containing-block");
   }
-
-  out = vtb;
   return true;
 }
 

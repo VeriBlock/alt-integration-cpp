@@ -30,68 +30,32 @@ struct ReadStream {
   explicit ReadStream(const std::string &s);
 
   /**
-   * Read vector of 'size' bytes
+   * Read type T of 'size' bytes
    * @param size bytes to be read
-   * @param out vector of bytes read from a stream
+   * @param out preallocated array of at least `size`
    * @param state will return error description here
    * @return true if read is OK, false otherwise
    */
-  bool read(size_t size, std::vector<uint8_t> &out, ValidationState &state);
+  bool read(size_t size, uint8_t *out, ValidationState &state);
 
-  /**
-   * Read vector of 'size' bytes
-   * @param size bytes to be read
-   * @return vector of bytes read from a stream
-   */
-  std::vector<uint8_t> read(size_t size);
-
-  /**
-   * Read type T of 'size' bytes
-   * @tparam T any contiguous storage type (std::string, std::vector)
-   * @param size bytes to be read
-   * @param out T of bytes read from a stream
-   * @param state will return error description here
-   * @return true if read is OK, false otherwise
-   */
-  template <typename T,
-            typename = typename std::enable_if<sizeof(typename T::value_type) ==
-                                               1>::type>
-  bool read(size_t size, T &out, ValidationState &state) {
-    if (!hasMore(size)) {
-      return state.Invalid("read-buffer-underflow");
-    }
-
-    T result;
-    result.resize(size);
-    std::copy(m_Buffer + m_Pos, m_Buffer + m_Pos + size, result.data());
-    m_Pos += size;
-    out = result;
-    return true;
-  }
-
-  /**
-   * Read type T of 'size' bytes
-   * @tparam T any contiguous storage type (std::string, std::vector)
-   * @param size bytes to be read
-   * @return T of bytes read from a stream
-   */
-  template <typename T,
-            typename = typename std::enable_if<sizeof(typename T::value_type) ==
-                                               1>::type>
-  T read(size_t size) {
-    T out;
-    ValidationState state;
-    if (!read(size, out, state)) {
-      throw std::out_of_range("stream.read(): out of data");
-    }
-    return out;
-  }
+  std::vector<uint8_t> assertRead(size_t size);
 
   bool readSlice(size_t size,
                  Slice<const uint8_t> &out,
                  ValidationState &state);
 
-  Slice<const uint8_t> readSlice(size_t size);
+  Slice<const uint8_t> assertReadSlice(size_t size);
+
+  template <
+      typename T,
+      typename = typename std::enable_if<std::is_integral<T>::value>::type>
+  T assertReadBE(size_t bytes = sizeof(T)) {
+    ValidationState state;
+    T t = 0;
+    bool result = readBE<T>(t, state, bytes);
+    VBK_ASSERT_MSG(result, "Can't readBE: %s", state.toString());
+    return t;
+  }
 
   // big endian
   template <
@@ -99,28 +63,29 @@ struct ReadStream {
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
   bool readBE(T &out, ValidationState &state, size_t bytes = sizeof(T)) {
     if (!hasMore(bytes)) {
-      return state.Invalid("readbe-buffer-underflow");
+      return state.Invalid(
+          "readbe-underflow",
+          fmt::format("Tried to read {} bytes from stream, but it has {} bytes",
+                      bytes,
+                      remaining()));
     }
     T t = 0;
-    for (size_t i = 0, shift = (bytes - 1) * 8; i < bytes;
-         i++, shift -= 8) {
+    for (size_t i = 0, shift = (bytes - 1) * 8; i < bytes; i++, shift -= 8) {
       t += ((T)m_Buffer[m_Pos++]) << shift;
     }
     out = t;
     return true;
   }
 
-  // big endian
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  T readBE(size_t bytes = sizeof(T)) {
-    T out{};
+  T assertReadLE() {
     ValidationState state;
-    if (!readBE(out, state, bytes)) {
-      throw std::out_of_range("stream.readBE(): out of data");
-    }
-    return out;
+    T t = 0;
+    bool result = readLE<T>(t, state);
+    VBK_ASSERT_MSG(result, "Can't readLE: %s", state.toString());
+    return t;
   }
 
   // little endian
@@ -129,7 +94,11 @@ struct ReadStream {
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
   bool readLE(T &out, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
-      return state.Invalid("readle-buffer-underflow");
+      return state.Invalid(
+          "readle-underflow",
+          fmt::format("Tried to read {} bytes from stream, but it has {} bytes",
+                      sizeof(T),
+                      remaining()));
     }
 
     T t = 0;
@@ -138,19 +107,6 @@ struct ReadStream {
     }
     out = t;
     return true;
-  }
-
-  // little endian
-  template <
-      typename T,
-      typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  T readLE() {
-    T out{};
-    ValidationState state;
-    if (!readLE(out, state)) {
-      throw std::out_of_range("stream.readLE(): out of data");
-    }
-    return out;
   }
 
   size_t position() const noexcept;

@@ -12,7 +12,7 @@ type MockMiner struct {
 }
 
 // NewMockMiner ...
-func NewMockMiner() MockMiner { return MockMiner{ref: C.VBK_NewMockMiner()} }
+func NewMockMiner() *MockMiner { return &MockMiner{ref: C.VBK_NewMockMiner()} }
 
 // MineBtcBlockTip - Mine new altintegration::BtcBlock on the top of the current btctree.
 func (v *MockMiner) MineBtcBlockTip() *VbkByteStream {

@@ -42,25 +42,6 @@ struct VbkPopTx {
   std::vector<uint8_t> publicKey{};
 
   /**
-   * Read basic data from the stream, signature, publicKey and convert it to
-   * VbkPopTx
-   * @param stream data stream to read from
-   * @param _signature bytes
-   * @param _publicKey bytes
-   * @return VbkPopTx
-   */
-  static VbkPopTx fromRaw(ReadStream& stream,
-                          Slice<const uint8_t> _signature,
-                          Slice<const uint8_t> _publicKey);
-
-  /**
-   * Read VBK data from the stream and convert it to VbkPopTx
-   * @param stream data stream to read from
-   * @return VbkPopTx
-   */
-  static VbkPopTx fromVbkEncoding(ReadStream& stream);
-
-  /**
    * Convert VbkPopTx to data stream using VbkPopTx basic byte format without
    * signature and publicKey data
    * @param stream data stream to write into
@@ -103,19 +84,15 @@ JsonValue ToJSON(const VbkPopTx& tx) {
   return obj;
 }
 
-bool DeserializeRaw(ReadStream& stream,
-                    Slice<const uint8_t> signature,
-                    Slice<const uint8_t> publicKey,
-                    VbkPopTx& out,
-                    ValidationState& state);
+bool DeserializeFromRaw(ReadStream& stream,
+                        Slice<const uint8_t> signature,
+                        Slice<const uint8_t> publicKey,
+                        VbkPopTx& out,
+                        ValidationState& state);
 
-bool DeserializeRaw(Slice<const uint8_t> data,
-                    Slice<const uint8_t> signature,
-                    Slice<const uint8_t> publicKey,
-                    VbkPopTx& out,
-                    ValidationState& state);
-
-bool Deserialize(ReadStream& stream, VbkPopTx& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VbkPopTx& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

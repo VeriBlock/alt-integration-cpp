@@ -46,7 +46,7 @@ struct VbkTestCase {
       if (v.empty()) {
         continue;
       }
-      ret.push_back(VbkBlock::fromRaw(v));
+      ret.push_back(AssertDeserializeFromRaw<VbkBlock>(v));
     }
     return ret;
   }

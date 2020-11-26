@@ -62,11 +62,10 @@ struct Config {
       b.params = std::move(params);
 
       b.blocks.reserve(hexblocks.size());
-      std::transform(
-          hexblocks.begin(),
-          hexblocks.end(),
-          std::back_inserter(b.blocks),
-          [](const std::string& hexblock) { return Block::fromHex(hexblock); });
+      std::transform(hexblocks.begin(),
+                     hexblocks.end(),
+                     std::back_inserter(b.blocks),
+                     AssertDeserializeFromHex<Block>);
 
       return b;
     }

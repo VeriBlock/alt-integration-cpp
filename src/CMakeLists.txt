@@ -16,26 +16,35 @@ add_library(strutil OBJECT
         strutil.cpp
         )
 
-set(SOURCES
-        bootstraps.cpp
-        time.cpp
-        checks.cpp
+add_library(serde OBJECT
         serde.cpp
-        keystone_util.cpp
         read_stream.cpp
         write_stream.cpp
+        )
+
+add_library(mempool OBJECT
+        mempool.cpp
+        mempool_relations.cpp
+        )
+
+set(SOURCES
+        validation_state.cpp
+        bootstraps.cpp
+        time.cpp
+        serde.cpp
+        keystone_util.cpp
         hashutil.cpp
         stateless_validation.cpp
         pop_stateless_validator.cpp
         arith_uint256.cpp
         crypto/secp256k1.cpp
-        mempool.cpp
-        mempool_relations.cpp
         mock_miner.cpp
         config.cpp
         command_group_cache.cpp
         alt-util.cpp
+        $<TARGET_OBJECTS:mempool>
         $<TARGET_OBJECTS:strutil>
+        $<TARGET_OBJECTS:serde>
         $<TARGET_OBJECTS:blockchain>
         $<TARGET_OBJECTS:storage>
         $<TARGET_OBJECTS:poprewards>

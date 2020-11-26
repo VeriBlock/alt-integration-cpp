@@ -35,41 +35,11 @@ struct BtcBlock {
   using merkle_t = uint256;
   using addon_t = BtcBlockAddon;
 
-  static BtcBlock fromHex(const std::string& hex);
-
-  /**
-   * Read basic blockheader data from the vector of bytes and convert it to
-   * BtcBlock
-   * @param bytes data to read from
-   * @return BtcBlock
-   */
-  static BtcBlock fromRaw(const std::vector<uint8_t>& bytes);
-
-  /**
-   * Read basic blockheader data from the stream and convert it to BtcBlock
-   * @param stream data to read from
-   * @return BtcBlock
-   */
-  static BtcBlock fromRaw(ReadStream& stream);
-
-  /**
-   * Read VBK data from the stream and convert it to BtcBlock
-   * @param stream data stream to read from
-   * @return BtcBlock
-   */
-  static BtcBlock fromVbkEncoding(ReadStream& stream);
-
   /**
    * Convert BtcBlock to data stream using BtcBlock basic byte format
    * @param stream data stream to write into
    */
   void toRaw(WriteStream& stream) const;
-
-  /**
-   * Convert BtcBlock to bytes data using BtcBlock basic byte format
-   * @return string represantation of the data
-   */
-  std::vector<uint8_t> toRaw() const;
 
   /**
    * Convert BtcBlock to Hex string using BtcBlock basic byte format
@@ -144,9 +114,16 @@ JsonValue ToJSON(const BtcBlock& b) {
   return object;
 }
 
-bool DeserializeRaw(ReadStream& stream, BtcBlock& out, ValidationState& state);
+bool DeserializeFromRaw(ReadStream& stream,
+                        BtcBlock& out,
+                        ValidationState& state,
+                        const BtcBlock::hash_t& /*ignore*/ = BtcBlock::hash_t{});
 
-bool Deserialize(ReadStream& stream, BtcBlock& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    BtcBlock& out,
+    ValidationState& state,
+    const BtcBlock::hash_t& /*ignore*/ = BtcBlock::hash_t{});
 
 }  // namespace altintegration
 

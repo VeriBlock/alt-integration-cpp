@@ -46,7 +46,7 @@ struct GetProofTest : public testing::Test {
       EXPECT_TRUE(file >> cumulDifficulty);
       std::string blockHeader;
       EXPECT_TRUE(file >> blockHeader);
-      VbkBlock block = VbkBlock::fromHex(blockHeader);
+      VbkBlock block = AssertDeserializeFromHex<VbkBlock>(blockHeader);
       auto difficultyParsed = std::stoull(cumulDifficulty);
       allBlocks.push_back(block);
       cumulativeDifficulties.emplace_back(difficultyParsed);

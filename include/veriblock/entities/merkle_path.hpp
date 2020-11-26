@@ -28,22 +28,6 @@ struct MerklePath {
   std::vector<uint256> layers{};
 
   /**
-   * Read basic data from the stream and convert it to MerklePath
-   * @param stream data stream to read from
-   * @param subject proof subject - leaf for which this proof has been built
-   * @return MerklePath
-   */
-  static MerklePath fromRaw(ReadStream& stream, const uint256& subject);
-
-  /**
-   * Read VBK data from the stream and convert it to MerklePath
-   * @param stream data stream to read from
-   * @param subject proof subject - leaf for which this proof has been built
-   * @return MerklePath
-   */
-  static MerklePath fromVbkEncoding(ReadStream& stream, const uint256& subject);
-
-  /**
    * Convert MerklePath to data stream using MerklePath basic byte format
    * @param stream data stream to write into
    */
@@ -71,25 +55,15 @@ JsonValue ToJSON(const MerklePath& m) {
   return obj;
 }
 
-bool DeserializeRaw(ReadStream& stream,
-                    const uint256& subject,
-                    MerklePath& out,
-                    ValidationState& state);
+bool DeserializeFromRaw(ReadStream& stream,
+                        const uint256& subject,
+                        MerklePath& out,
+                        ValidationState& state);
 
-bool DeserializeRaw(Slice<const uint8_t> data,
-                    const uint256& subject,
-                    MerklePath& out,
-                    ValidationState& state);
-
-bool Deserialize(ReadStream& stream,
-                 const uint256& subject,
-                 MerklePath& out,
-                 ValidationState& state);
-
-bool Deserialize(Slice<const uint8_t> data,
-                 const uint256& subject,
-                 MerklePath& out,
-                 ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                const uint256& subject,
+                                MerklePath& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

@@ -24,22 +24,13 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   // remove this
   uint8_t chainWork;
 
-  void setNullInmemFields() {
-    chainWork = 0;
-    endorsedBy.clear();
-  }
+  void setNullInmemFields();
 
   static constexpr auto validTipLevel = BLOCK_CONNECTED;
 
-  bool hasPayloads() const {
-    return !_atvids.empty() || !_vtbids.empty() || !_vbkblockids.empty();
-  }
+  bool hasPayloads() const;
 
-  void clearPayloads() {
-    _atvids.clear();
-    _vtbids.clear();
-    _vbkblockids.clear();
-  }
+  void clearPayloads();
 
   template <typename pop_t>
   const std::vector<typename pop_t::id_t>& getPayloadIds() const;
@@ -69,19 +60,9 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
     setDirty();
   }
 
-  std::string toPrettyString() const {
-    return fmt::sprintf("ATV=%d, VTB=%d, VBK=%d",
-                        _atvids.size(),
-                        _vtbids.size(),
-                        _vbkblockids.size());
-  }
+  std::string toPrettyString() const;
 
-  void toRaw(WriteStream& w) const {
-    PopState<AltEndorsement>::toRaw(w);
-    writeArrayOf<uint256>(w, _atvids, writeSingleByteLenValue);
-    writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
-    writeArrayOf<uint96>(w, _vbkblockids, writeSingleByteLenValue);
-  }
+  void toVbkEncoding(WriteStream& w) const;
 
  protected:
   //! list of changes introduced in this block
@@ -94,25 +75,19 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
 
   void setDirty();
 
-  void setNull() {
-    PopState<AltEndorsement>::setNull();
-    chainWork = 0;
-    clearPayloads();
-  }
-
-  void initAddonFromRaw(ReadStream& r) {
-    PopState<AltEndorsement>::initAddonFromRaw(r);
-    _atvids = readArrayOf<uint256>(
-        r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
-    _vtbids = readArrayOf<uint256>(
-        r, [](ReadStream& s) -> uint256 { return readSingleByteLenValue(s); });
-    _vbkblockids = readArrayOf<uint96>(
-        r, [](ReadStream& s) -> uint96 { return readSingleByteLenValue(s); });
-  }
+  void setNull();
 
   template <typename pop_t>
   std::vector<typename pop_t::id_t>& getPayloadIdsInner();
+
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         AltBlockAddon& out,
+                                         ValidationState& state);
 };
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                AltBlockAddon& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

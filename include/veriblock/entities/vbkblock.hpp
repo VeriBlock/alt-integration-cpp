@@ -42,44 +42,6 @@ struct VbkBlock {
 
   std::string toPrettyString() const;
 
-  static VbkBlock fromHex(const std::string& hex,
-                          const hash_t& precalculatedHash = hash_t());
-
-  /**
-   * Read basic blockheader data from the vector of bytes
-   * and convert it to VbkBlock
-   *
-   * @param bytes data to read from
-   * @param precalculatedHash optionally pass externally calculated hash
-   * @return VbkBlock
-   */
-  static VbkBlock fromRaw(Slice<const uint8_t> bytes,
-                          const hash_t& precalculatedHash = hash_t());
-
-  /**
-   * Read basic blockheader data from the stream and convert it to VbkBlock
-   * @param stream data stream to read from
-   * @param precalculatedHash optionally pass externally calculated hash
-   * @return VbkBlock
-   */
-  static VbkBlock fromRaw(ReadStream& stream,
-                          const hash_t& precalculatedHash = hash_t());
-
-  /**
-   * Read VBK data from the stream and convert it to VbkBlock
-   * @param stream data stream to read from
-   * @return VbkBlock
-   */
-  static VbkBlock fromVbkEncoding(ReadStream& stream);
-
-  /**
-   * Read VBK data from the string raw byte representation
-   * and convert it to VbkBlock
-   * @param bytes data bytes to read from
-   * @return VbkBlock
-   */
-  static VbkBlock fromVbkEncoding(const std::string& bytes);
-
   /**
    * Convert VbkBlock to data stream using VbkBlock basic byte format
    * @param stream data stream to write into
@@ -194,9 +156,10 @@ struct VbkBlock {
 
   void invalidateHash() { hash_.fill(0); }
 
-  friend bool DeserializeRaw(ReadStream& stream,
-                             VbkBlock& out,
-                             ValidationState& state);
+  friend bool DeserializeFromRaw(ReadStream& stream,
+                                 VbkBlock& out,
+                                 ValidationState& state,
+                                 const VbkBlock::hash_t& precalculatedHash);
 };
 
 template <typename JsonValue>
@@ -217,9 +180,16 @@ JsonValue ToJSON(const VbkBlock& b) {
   return obj;
 }
 
-bool DeserializeRaw(ReadStream& stream, VbkBlock& out, ValidationState& state);
+bool DeserializeFromRaw(ReadStream& stream,
+                        VbkBlock& out,
+                        ValidationState& state,
+                        const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
 
-bool Deserialize(ReadStream& stream, VbkBlock& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    VbkBlock& out,
+    ValidationState& state,
+    const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
 
 }  // namespace altintegration
 

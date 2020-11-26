@@ -3,7 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <veriblock/blockchain/alt_chain_params.hpp>
@@ -14,10 +13,6 @@
 #include "util/test_utils.hpp"
 
 using namespace altintegration;
-using ::testing::_;
-using ::testing::Field;
-using ::testing::Return;
-using ::testing::StrictMock;
 
 struct DummyAddon {
   std::string toPrettyString() const { return {}; }

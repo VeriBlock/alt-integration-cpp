@@ -11,12 +11,6 @@ bool Output::operator==(const Output& other) const noexcept {
   return address == other.address && coin == other.coin;
 }
 
-Output Output::fromVbkEncoding(ReadStream& stream) {
-  auto addr = Address::fromVbkEncoding(stream);
-  auto amount = Coin::fromVbkEncoding(stream);
-  return Output(addr, amount);
-}
-
 void Output::toVbkEncoding(WriteStream& stream) const {
   address.toVbkEncoding(stream);
   coin.toVbkEncoding(stream);
@@ -27,15 +21,15 @@ std::string Output::toPrettyString() const {
       "Output{address=%s, coin=%lld}", address.toString(), coin.units);
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
+bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                  Output& out,
                                  ValidationState& state) {
   Address address;
   Coin amount;
-  if (!Deserialize(stream, address, state)) {
+  if (!DeserializeFromVbkEncoding(stream, address, state)) {
     return state.Invalid("output-address");
   }
-  if (!Deserialize(stream, amount, state)) {
+  if (!DeserializeFromVbkEncoding(stream, amount, state)) {
     return state.Invalid("output-amount");
   }
   out = Output(address, amount);

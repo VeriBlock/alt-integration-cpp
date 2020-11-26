@@ -34,13 +34,6 @@ struct Output {
   bool operator==(const Output& other) const noexcept;
 
   /**
-   * Read VBK data from the stream and convert it to Output
-   * @param stream data stream to read from
-   * @return Output
-   */
-  static Output fromVbkEncoding(ReadStream& stream);
-
-  /**
    * Convert Output to data stream using Output VBK byte format
    * @param stream data stream to write into
    */
@@ -57,7 +50,7 @@ JsonValue ToJSON(const Output& o) {
   return obj;
 }
 
-bool Deserialize(ReadStream& stream, Output& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream, Output& out, ValidationState& state);
 
 }  // namespace altintegration
 

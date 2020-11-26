@@ -3,13 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/entities/vtb.hpp"
+
 #include <gtest/gtest.h>
 
 #include <string>
 #include <vector>
 
 #include "util/test_utils.hpp"
-#include "veriblock/entities/vtb.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -126,7 +127,7 @@ static const auto defaultPublicKey =
 
 static const VbkPopTx defaultTx{
     networkByte,
-    Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
+    Address::assertFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"),
     defaultVbkBlock,
     BtcTx(btcTxBytes),
     defaultPath,
@@ -166,13 +167,11 @@ static const VbkBlock vtbVbkBlock{4976,
 
 static const VTB defaultVtb{1, defaultTx, vtbProofPath, vtbVbkBlock};
 
-TEST(VTB, Deserialize) {
-  const auto vtbBytes = ParseHex(defaultVtbEncoded);
-  auto stream = ReadStream(vtbBytes);
-  auto decoded = VTB::fromVbkEncoding(stream);
+TEST(VTB, DeserializeFromVbkEncoding) {
+  auto decoded = AssertDeserializeFromHex<VTB>(defaultVtbEncoded);
 
   EXPECT_EQ(decoded.transaction.address,
-            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+            Address::assertFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 }
 
 TEST(VTB, Serialize) {
@@ -184,11 +183,9 @@ TEST(VTB, Serialize) {
 }
 
 TEST(VTB, RoundTrip) {
-  auto vtbBytes = ParseHex(defaultVtbEncoded);
-  auto stream = ReadStream(vtbBytes);
-  auto decoded = VTB::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromHex<VTB>(defaultVtbEncoded);
   EXPECT_EQ(decoded.transaction.address,
-            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+            Address::assertFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -201,11 +198,11 @@ TEST(VTB, RoundTripNew) {
   auto vtbBytes = ParseHex(defaultVtbEncoded);
   VTB decoded;
   ValidationState state;
-  bool ret = Deserialize(vtbBytes, decoded, state);
+  bool ret = DeserializeFromVbkEncoding(vtbBytes, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.transaction.address,
-            Address::fromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
+            Address::assertFromString("VE6MJFzmGdYdrxC8o6UCovVv7BdhdX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -215,10 +212,7 @@ TEST(VTB, RoundTripNew) {
 }
 
 TEST(VTB, getId_test) {
-  auto atvBytes = ParseHex(defaultVtbEncoded);
-  auto stream = ReadStream(atvBytes);
-  auto vtb = VTB::fromVbkEncoding(stream);
-
+  auto vtb = AssertDeserializeFromHex<VTB>(defaultVtbEncoded);
   EXPECT_EQ(vtb.getId().toHex(),
             "32dd01ab6285a92318e374fcdbd6b023c1ae1268150ce3484961870b8beb71fc");
 }

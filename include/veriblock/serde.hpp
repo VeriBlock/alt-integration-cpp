@@ -7,22 +7,33 @@
 #define ALT_INTEGRATION_VERIBLOCK_SERDE_HPP
 
 #include <functional>
+#include <iterator>
 #include <limits>
 #include <stdexcept>
 #include <vector>
 
-#include "checks.hpp"
 #include "consts.hpp"
 #include "read_stream.hpp"
 #include "slice.hpp"
-#include "write_stream.hpp"
 #include "strutil.hpp"
+#include "write_stream.hpp"
 
 /**
  * Contains veriblock-specific serialization and deserialziation primitives.
  */
 
 namespace altintegration {
+
+/**
+ * Checks if expression 'min' <= 'num' <= 'max' is true. If false, returns
+ * invalid state with error description.
+ * @param num number to check
+ * @param min min value
+ * @param max max value
+ * @param state will return error description here
+ * @return true if check is OK, false otherwise
+ */
+bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState& state);
 
 /**
  * Converts the input to the byte array and trims it's size to the
@@ -46,41 +57,6 @@ std::vector<uint8_t> fixedArray(T input) {
 }
 
 /**
- * Pad container 'v' to have size at least 'size', by adding leading zeroes
- * @tparam T input container type
- * @param v input container
- * @param size output vector will have at least 'size' bytes
- * @return new vector with padded data
- */
-template <typename T>
-std::vector<uint8_t> pad(const T& v, size_t size) {
-  if (v.size() > size) {
-    return std::vector<uint8_t>(v.begin(), v.end());
-  }
-
-  std::vector<uint8_t> ret(size, 0);
-  // get absolute value of difference between size and v.size()
-  const auto diff = size > v.size() ? size - v.size() : v.size() - size;
-  std::copy(v.begin(), v.end(), ret.begin() + diff);
-  return ret;
-}
-
-/**
- * Read variable length value, which consists of
- * `[N=(4 bytes = size of slice) | N bytes slice]`
- * Size of slice should be within range [minLen; maxLen]
- * @param stream read data from this stream
- * @param minLen minimum possible value of slice size
- * @param maxLen maximum possible value of slice size
- * @throws std::out_of_range if size is out of range or stream is out of data
- * @return slice with data
- */
-Slice<const uint8_t> readVarLenValue(
-    ReadStream& stream,
-    int32_t minLen = 0,
-    int32_t maxLen = (std::numeric_limits<int32_t>::max)());
-
-/**
  * Read variable length value, which consists of
  * `[N=(4 bytes = size of slice) | N bytes slice]`
  * Size of slice should be within range [minLen; maxLen]
@@ -102,21 +78,6 @@ bool readVarLenValue(ReadStream& stream,
  * `[N=(1 byte = size of slice) | N bytes slice]`
  * Size of slice should be within range [minLen; maxLen]
  * @param stream read data from this stream
- * @param minLen minimum possible value of slice size
- * @param maxLen maximum possible value of slice size
- * @throws std::out_of_range if size is out of range or stream is out of data
- * @return slice with data
- */
-Slice<const uint8_t> readSingleByteLenValue(
-    ReadStream& stream,
-    int32_t minLen = 0,
-    int32_t maxLen = (std::numeric_limits<int32_t>::max)());
-
-/**
- * Read variable length value, which consists of
- * `[N=(1 byte = size of slice) | N bytes slice]`
- * Size of slice should be within range [minLen; maxLen]
- * @param stream read data from this stream
  * @param out slice with data
  * @param state will return error description here
  * @param minLen minimum possible value of slice size
@@ -129,26 +90,30 @@ bool readSingleByteLenValue(ReadStream& stream,
                             int minLen,
                             int maxLen);
 
-/**
- * Read single Big-Endian value from a stream.
- * This function interprets sizeof(T) bytes as Big-Endian number and returns it.
- * @tparam T number type - uint64_t, etc.
- * @param stream read data from this stream
- * @throws std::out_of_range if stream is out of data
- * @return read number
- */
-template <typename T,
-          typename = typename std::enable_if<std::is_integral<T>::value>::type>
-T readSingleBEValue(ReadStream& stream) {
-  auto data = readSingleByteLenValue(stream, 0, sizeof(T));
-  auto padded = pad(data, sizeof(T));
-  auto dataStream = ReadStream(padded);
-  return dataStream.readBE<T>();
+//! @overload
+template <typename Container,
+          typename = typename std::enable_if<
+              sizeof(typename Container::value_type) == 1>::type>
+bool readSingleByteLenValue(ReadStream& stream,
+                            Container& out,
+                            ValidationState& state,
+                            int minLen,
+                            int maxLen) {
+  uint8_t length = 0;
+  if (!stream.readBE<uint8_t>(length, state)) {
+    return state.Invalid("readsingle-bad-length");
+  }
+  if (!checkRange(length, minLen, maxLen, state)) {
+    return state.Invalid("readsingle-bad-range");
+  }
+  out.resize(length);
+  return stream.read(length, out.data(), state);
 }
 
 /**
  * Read single Big-Endian value from a stream.
- * This function interprets sizeof(T) bytes as Big-Endian number and returns it.
+ * This function interprets sizeof(T) bytes as Big-Endian number and returns
+ * it.
  * @tparam T number type - uint64_t, etc.
  * @param stream read data from this stream
  * @param out read number
@@ -162,9 +127,8 @@ bool readSingleBEValue(ReadStream& stream, T& out, ValidationState& state) {
   if (!readSingleByteLenValue(stream, data, state, 0, sizeof(T))) {
     return state.Invalid("readsinglebe-bad-data");
   }
-  auto padded = pad(data, sizeof(T));
-  auto dataStream = ReadStream(padded);
-  return dataStream.readBE<T>(out, state);
+  auto dataStream = ReadStream(data);
+  return dataStream.readBE<T>(out, state, data.size());
 }
 
 /**
@@ -267,19 +231,18 @@ void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
  * @return true if read is OK, false otherwise
  */
 template <typename T>
-bool readArrayOf(
-    ReadStream& stream,
-    std::vector<T>& out,
-    ValidationState& state,
-    int32_t min,
-    int32_t max,
-    std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
+bool readArrayOf(ReadStream& stream,
+                 std::vector<T>& out,
+                 ValidationState& state,
+                 int32_t min,
+                 int32_t max,
+                 std::function<bool(T&)> readFunc) {
   int32_t count = 0;
   if (!readSingleBEValue<int32_t>(stream, count, state)) {
     return state.Invalid("readarray-bad-count");
   }
   if (!checkRange(count, min, max, state)) {
-    return state.Invalid("readarray-bad-count-range");
+    return state.Invalid("readarray-bad-range");
   }
 
   std::vector<T> items;
@@ -287,7 +250,7 @@ bool readArrayOf(
 
   for (int32_t i = 0; i < count; i++) {
     T item;
-    if (!readFunc(stream, item, state)) {
+    if (!readFunc(item)) {
       return state.Invalid("readarray-bad-item", i);
     }
     items.push_back(item);
@@ -308,51 +271,19 @@ bool readArrayOf(
  * @return vector of read elements of type T
  */
 template <typename T>
-std::vector<T> readArrayOf(ReadStream& stream,
-                           int32_t min,
-                           int32_t max,
-                           std::function<T(ReadStream&)> readFunc) {
-  const auto count = readSingleBEValue<int32_t>(stream);
-  checkRange(count, min, max);
-
-  std::vector<T> items;
-  items.reserve(count);
-
-  for (int32_t i = 0; i < count; i++) {
-    items.push_back(readFunc(stream));
-  }
-
-  return items;
-}
-
-template <typename T>
-bool readArrayOf(
-    ReadStream& stream,
-    std::vector<T>& out,
-    ValidationState& state,
-    std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
+bool readArrayOf(ReadStream& stream,
+                 std::vector<T>& out,
+                 ValidationState& state,
+                 std::function<bool(T&)> readFunc) {
   int32_t max = std::numeric_limits<int32_t>::max();
   return readArrayOf<T>(stream, out, state, 0, max, readFunc);
 }
-
-template <typename T>
-std::vector<T> readArrayOf(ReadStream& stream,
-                           std::function<T(ReadStream&)> readFunc) {
-  int32_t max = std::numeric_limits<int32_t>::max();
-  return readArrayOf<T>(stream, 0, max, readFunc);
-}
-
-std::string readString(ReadStream& stream);
-
-void writeDouble(WriteStream& stream, const double& val);
-
-double readDouble(ReadStream& stream);
 
 template <typename Container>
 void writeContainer(
     WriteStream& w,
     const Container& t,
-    std::function<void(WriteStream& w, const typename Container::value_type& t)>
+    std::function<void(WriteStream&, const typename Container::value_type& t)>
         f) {
   writeSingleBEValue(w, (int64_t)t.size());
   for (auto& v : t) {
@@ -363,33 +294,33 @@ void writeContainer(
 template <typename T>
 void writeArrayOf(WriteStream& w,
                   const std::vector<T>& t,
-                  std::function<void(WriteStream& w, const T& t)> f) {
+                  std::function<void(WriteStream&, const T& t)> f) {
   return writeContainer<std::vector<T>>(w, t, f);
 }
 
 template <typename T>
-T fromRaw(const std::vector<uint8_t>& bytes) {
-  ReadStream r(bytes);
-  return T::fromRaw(r);
-}
-
-template <typename T>
-bool Deserialize(Slice<const uint8_t> data, T& out, ValidationState& state) {
+bool DeserializeFromVbkEncoding(Slice<const uint8_t> data,
+                                T& out,
+                                ValidationState& state) {
   ReadStream stream(data);
-  return Deserialize(stream, out, state);
+  return DeserializeFromVbkEncoding(stream, out, state);
 }
 
 template <typename T>
-bool DeserializeRaw(Slice<const uint8_t> data, T& out, ValidationState& state) {
+bool DeserializeFromRaw(Slice<const uint8_t> data,
+                        T& out,
+                        ValidationState& state) {
   ReadStream stream(data);
-  return DeserializeRaw(stream, out, state);
+  return DeserializeFromRaw(stream, out, state);
 }
 
 template <typename T>
-T DeserializeFromHex(const std::string& hex) {
+bool DeserializeFromHex(const std::string& hex,
+                        T& out,
+                        ValidationState& state) {
   auto data = ParseHex(hex);
   ReadStream stream(data);
-  return T::fromVbkEncoding(stream);
+  return DeserializeFromVbkEncoding(stream, out, state);
 }
 
 template <typename T>
@@ -397,6 +328,45 @@ std::vector<uint8_t> SerializeToVbkEncoding(const T& obj) {
   WriteStream w;
   obj.toVbkEncoding(w);
   return w.data();
+}
+
+template <typename T>
+std::vector<uint8_t> SerializeToRaw(const T& obj) {
+  WriteStream w;
+  obj.toRaw(w);
+  return w.data();
+}
+
+template <typename T>
+std::string SerializeToHex(const T& obj) {
+  return HexStr(SerializeToRaw<T>(obj));
+}
+
+template <typename T>
+T AssertDeserializeFromRaw(std::vector<uint8_t> raw) {
+  T t;
+  ValidationState state;
+  bool result = DeserializeFromRaw(raw, t, state);
+  VBK_ASSERT_MSG(result, "Can't deserialize: %s", state.toString());
+  return t;
+}
+
+template <typename T>
+T AssertDeserializeFromVbkEncoding(Slice<const uint8_t> raw) {
+  T t;
+  ValidationState state;
+  bool result = DeserializeFromVbkEncoding(raw, t, state);
+  VBK_ASSERT_MSG(result, "Can't deserialize: %s", state.toString());
+  return t;
+}
+
+template <typename T>
+T AssertDeserializeFromHex(std::string hex) {
+  T t;
+  ValidationState state;
+  bool result = DeserializeFromHex(hex, t, state);
+  VBK_ASSERT_MSG(result, "Can't deserialize: %s", state.toString());
+  return t;
 }
 
 }  // namespace altintegration
