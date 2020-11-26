@@ -31,6 +31,7 @@ uint256 CalculateContextInfoContainerHash(const PopData& popData,
   stream.write(secondPreviousKeystone != nullptr
                    ? secondPreviousKeystone->getHash()
                    : zeroHash);
+  auto contextHash = sha256twice(stream.data());
 
   auto atvMerkleRoot =
       PayloadsMerkleTree<ATV>(map_get_id(popData.atvs)).getMerkleRoot();
@@ -40,7 +41,7 @@ uint256 CalculateContextInfoContainerHash(const PopData& popData,
       PayloadsMerkleTree<VbkBlock>(map_get_id(popData.context)).getMerkleRoot();
 
   uint256 left = sha256twice(vbkMerkleRoot, vtbMerkleRoot);
-  uint256 right = sha256twice(atvMerkleRoot, stream.data());
+  uint256 right = sha256twice(atvMerkleRoot, contextHash);
 
   return sha256twice(left, right);
 }
