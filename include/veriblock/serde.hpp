@@ -326,7 +326,7 @@ bool DeserializeFromHex(const std::string& hex,
 template <typename T>
 std::vector<uint8_t> SerializeToVbkEncoding(const T& obj) {
   WriteStream w;
-  obj.toRaw(w);
+  obj.toVbkEncoding(w);
   return w.data();
 }
 

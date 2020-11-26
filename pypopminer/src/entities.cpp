@@ -16,7 +16,7 @@ using namespace boost::python;
 template <typename E>
 std::string toVbkEncodingHex(E& self_) {
   WriteStream w;
-  self_.toRaw(w);
+  self_.toVbkEncoding(w);
   return HexStr(w.data());
 }
 

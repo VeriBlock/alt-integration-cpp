@@ -38,6 +38,13 @@ void AltBlock::toVbkEncoding(WriteStream& stream) const {
   return toRaw(stream);
 }
 
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                AltBlock& out,
+                                ValidationState& state,
+                                const AltBlock::hash_t& /* ignore */) {
+  return DeserializeFromRaw(stream, out, state);
+}
+
 bool DeserializeFromRaw(ReadStream& stream,
                         AltBlock& out,
                         ValidationState& state,

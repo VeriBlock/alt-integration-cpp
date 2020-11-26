@@ -102,6 +102,12 @@ bool DeserializeFromRaw(
     ValidationState& state,
     const AltBlock::hash_t& /* ignore */ = AltBlock::hash_t{});
 
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    AltBlock& out,
+    ValidationState& state,
+    const AltBlock::hash_t& /* ignore */ = AltBlock::hash_t{});
+
 }  // namespace altintegration
 
 //! @private
