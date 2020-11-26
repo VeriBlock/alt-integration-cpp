@@ -12,24 +12,19 @@
 
 using namespace altintegration;
 
-TEST(AltPopTx, Deserialize) {
-  const auto atvBytes = ParseHex(defaultAtvEncoded);
-  auto stream = ReadStream(atvBytes);
-  ATV atv = ATV::fromVbkEncoding(stream);
+TEST(AltPopTx, DeserializeFromVbkEncoding) {
+  ATV atv = AssertDeserializeFromHex<ATV>(defaultAtvEncoded);
+  VTB vtb = AssertDeserializeFromHex<VTB>(defaultVtbEncoded);
 
-  const auto vtbBytes = ParseHex(defaultVtbEncoded);
-  stream = ReadStream(vtbBytes);
-  VTB vtb = VTB::fromVbkEncoding(stream);
-
-  PopData expectedPopData = {1, {}, {vtb}, {atv}};
+  PopData expectedPopData = {1, {atv.blockOfProof}, {vtb}, {atv}};
   std::vector<uint8_t> bytes = expectedPopData.toVbkEncoding();
 
-  PopData decodedPopData = PopData::fromVbkEncoding(bytes);
+  PopData decodedPopData = AssertDeserializeFromVbkEncoding<PopData>(bytes);
   EXPECT_EQ(decodedPopData, expectedPopData);
 
   PopData decodedPopDataNew;
   ValidationState state;
-  bool ret = Deserialize(bytes, decodedPopDataNew, state);
+  bool ret = DeserializeFromVbkEncoding(bytes, decodedPopDataNew, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decodedPopDataNew, expectedPopData);

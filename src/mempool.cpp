@@ -14,35 +14,6 @@ namespace altintegration {
 
 namespace {
 
-template <typename pop_t>
-bool process_cut_payloads(std::vector<pop_t>& payloads, size_t& current_size) {
-  if (!payloads.empty()) {
-    auto& p = payloads.back();
-    current_size -= p.toVbkEncoding().size();
-    payloads.pop_back();
-    return true;
-  }
-
-  return false;
-}
-
-size_t cutPopData(PopData& popData, size_t current_size) {
-  // first remove vtb
-  if (process_cut_payloads(popData.vtbs, current_size)) {
-    return current_size;
-  }
-  // second remove atv
-  if (process_cut_payloads(popData.atvs, current_size)) {
-    return current_size;
-  }
-  // third remove vbk blocks
-  if (process_cut_payloads(popData.context, current_size)) {
-    return current_size;
-  }
-
-  return current_size;
-}
-
 PopData generatePopData(
     const std::vector<std::pair<VbkBlock::id_t,
                                 std::shared_ptr<VbkPayloadsRelations>>>& blocks,

@@ -44,12 +44,13 @@ static const std::string defaultSubject =
 
 static const int defaultIndex = 1659;
 
-TEST(MerklePath, Deserialize) {
+TEST(MerklePath, DeserializeFromVbkEncoding) {
   auto merklePath = ParseHex(defaultPathEncoded);
   auto subject = ParseHex(defaultSubject);
   auto stream = ReadStream(merklePath);
-  auto decoded = MerklePath::fromVbkEncoding(stream, uint256(subject));
-
+  ValidationState state;
+  MerklePath decoded;
+  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, uint256(subject), decoded, state));
   EXPECT_EQ(decoded.index, defaultIndex);
   EXPECT_EQ(decoded.subject.toHex(), defaultSubject);
   EXPECT_EQ(decoded.layers, defaultLayers);
@@ -73,7 +74,9 @@ TEST(MerklePath, RoundTrip) {
   auto merklePath = ParseHex(defaultPathEncoded);
   auto subject = ParseHex(defaultSubject);
   auto stream = ReadStream(merklePath);
-  auto decoded = MerklePath::fromVbkEncoding(stream, uint256(subject));
+  MerklePath decoded;
+  ValidationState state;
+  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, uint256(subject), decoded, state));
   EXPECT_EQ(decoded.index, defaultIndex);
 
   WriteStream outputStream;
@@ -87,9 +90,10 @@ TEST(MerklePath, RoundTrip) {
 TEST(MerklePath, RoundTripNew) {
   auto merklePath = ParseHex(defaultPathEncoded);
   auto subject = ParseHex(defaultSubject);
+  ReadStream stream(merklePath);
   MerklePath decoded;
   ValidationState state;
-  bool ret = Deserialize(merklePath, subject, decoded, state);
+  bool ret = DeserializeFromVbkEncoding(stream, subject, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.index, defaultIndex);

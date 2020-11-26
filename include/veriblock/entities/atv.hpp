@@ -14,7 +14,6 @@
 #include "veriblock/entities/vbk_merkle_path.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vbktx.hpp"
-#include "veriblock/fmt.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/uint.hpp"
 
@@ -34,24 +33,11 @@ struct ATV {
   //! (memory only) indicates whether we already did 'checkATV' on this ATV
   mutable bool checked{false};
 
-  std::string toHex() const { return HexStr(toVbkEncoding()); }
+  std::string toHex() const;
 
-  std::string toPrettyString() const {
-    return fmt::sprintf("ATV{containingTx=%s, containingBlock=%s}",
-                        transaction.getHash().toHex(),
-                        blockOfProof.getHash().toHex());
-  }
+  std::string toPrettyString() const;
 
   size_t estimateSize() const { return toVbkEncoding().size(); }
-
-  /**
-   * Deserialize ATV from bytes
-   * @param stream data stream to read from
-   * @return ATV
-   */
-  static ATV fromVbkEncoding(ReadStream& stream);
-  //! @overload
-  static ATV fromVbkEncoding(Slice<const uint8_t> bytes);
 
   /**
    * Convert ATV to data stream using Vbk byte format
@@ -71,16 +57,16 @@ struct ATV {
    */
   id_t getId() const;
 
-  static const std::string _name;
   static const std::string& name() { return _name; }
-
-  static ATV fromHex(const std::string& h);
 
   friend bool operator==(const ATV& a, const ATV& b) {
     return a.getId() == b.getId();
   }
 
   friend bool operator!=(const ATV& a, const ATV& b) { return !(a == b); }
+
+ private:
+  static const std::string _name;
 };
 
 template <typename JsonValue>
@@ -94,7 +80,7 @@ JsonValue ToJSON(const ATV& atv) {
   return obj;
 }
 
-bool Deserialize(ReadStream& stream, ATV& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream, ATV& out, ValidationState& state);
 
 }  // namespace altintegration
 

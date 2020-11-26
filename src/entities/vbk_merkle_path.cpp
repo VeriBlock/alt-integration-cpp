@@ -9,22 +9,6 @@
 
 using namespace altintegration;
 
-VbkMerklePath VbkMerklePath::fromVbkEncoding(ReadStream& stream) {
-  VbkMerklePath path{};
-  path.treeIndex = readSingleBEValue<int32_t>(stream);
-  path.index = readSingleBEValue<int32_t>(stream);
-  path.subject =
-      readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
-
-  path.layers = readArrayOf<uint256>(
-      stream, 0, MAX_LAYER_COUNT_MERKLE, [](ReadStream& stream) {
-        return readSingleByteLenValue(
-            stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
-      });
-
-  return path;
-}
-
 void VbkMerklePath::toVbkEncoding(WriteStream& stream) const {
   writeSingleFixedBEValue<int32_t>(stream, treeIndex);
   writeSingleFixedBEValue<int32_t>(stream, index);
@@ -60,42 +44,32 @@ uint128 VbkMerklePath::calculateMerkleRoot() const {
   return cursor.trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
-                                 VbkMerklePath& out,
-                                 ValidationState& state) {
-  VbkMerklePath path{};
-
+bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
+                                                VbkMerklePath& path,
+                                                ValidationState& state) {
   if (!readSingleBEValue<int32_t>(stream, path.treeIndex, state)) {
     return state.Invalid("vbkmerkle-tree-index");
   }
   if (!readSingleBEValue<int32_t>(stream, path.index, state)) {
     return state.Invalid("vbkmerkle-index");
   }
-  Slice<const uint8_t> subject;
   if (!readSingleByteLenValue(
-          stream, subject, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
+          stream, path.subject, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
     return state.Invalid("vbkmerkle-subject");
   }
-  path.subject = subject;
 
-  if(!readArrayOf<uint256>(
-      stream,
-      path.layers,
-      state,
-      0,
-      MAX_LAYER_COUNT_MERKLE,
-      [](ReadStream& stream, uint256& out, ValidationState& state) {
-        Slice<const uint8_t> layer;
-        if (!readSingleByteLenValue(
-                stream, layer, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE)) {
-          return false;
-        }
-        out = layer;
-        return true;
+  if (!readArrayOf<uint256>(
+          stream,
+          path.layers,
+          state,
+          0,
+          MAX_LAYER_COUNT_MERKLE,
+          [&](uint256& out) {
+            return readSingleByteLenValue(
+                stream, out, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
           })) {
     return state.Invalid("vbkmerkle-layers");
   }
 
-  out = path;
   return true;
 }

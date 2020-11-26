@@ -7,40 +7,6 @@
 
 using namespace altintegration;
 
-MerklePath MerklePath::fromRaw(ReadStream& stream, const uint256& subject) {
-  MerklePath path{};
-  path.index = readSingleBEValue<int32_t>(stream);
-  const auto numLayers = readSingleBEValue<int32_t>(stream);
-  checkRange(numLayers, 0, MAX_LAYER_COUNT_MERKLE);
-
-  const auto sizeOfSizeBottomData = readSingleBEValue<int32_t>(stream);
-  if (sizeOfSizeBottomData != sizeof(int32_t)) {
-    throw std::invalid_argument(
-        "MerklePath.fromRaw(): bad sizeOfSizeBottomData");
-  }
-  const auto sizeOfBottomData = stream.readBE<int32_t>();
-  if (sizeOfBottomData != SHA256_HASH_SIZE) {
-    throw std::invalid_argument(
-        "MerklePath.fromRaw(): bad size of bottom data");
-  }
-
-  path.layers.reserve(numLayers);
-  for (int i = 0; i < numLayers; i++) {
-    path.layers.emplace_back(
-        readSingleByteLenValue(stream, SHA256_HASH_SIZE, SHA256_HASH_SIZE));
-  }
-
-  path.subject = subject;
-  return path;
-}
-
-MerklePath MerklePath::fromVbkEncoding(ReadStream& stream,
-                                       const uint256& subject) {
-  auto merkleBytes = readVarLenValue(stream, 0, MAX_MERKLE_BYTES);
-  ReadStream merkleStream(merkleBytes);
-  return MerklePath::fromRaw(merkleStream, subject);
-}
-
 void MerklePath::toRaw(WriteStream& stream) const {
   writeSingleFixedBEValue<int32_t>(stream, index);
   writeSingleFixedBEValue<int32_t>(stream, (int32_t)layers.size());
@@ -76,10 +42,10 @@ uint256 MerklePath::calculateMerkleRoot() const {
   return cursor;
 }
 
-bool altintegration::DeserializeRaw(ReadStream& stream,
-                                    const uint256& subject,
-                                    MerklePath& out,
-                                    ValidationState& state) {
+bool altintegration::DeserializeFromRaw(ReadStream& stream,
+                                        const uint256& subject,
+                                        MerklePath& out,
+                                        ValidationState& state) {
   MerklePath path{};
   if (!readSingleBEValue<int32_t>(stream, path.index, state)) {
     return state.Invalid("merkle-index");
@@ -123,29 +89,14 @@ bool altintegration::DeserializeRaw(ReadStream& stream,
   return true;
 }
 
-bool altintegration::DeserializeRaw(Slice<const uint8_t> data,
-                                    const uint256& subject,
-                                    MerklePath& out,
-                                    ValidationState& state) {
-  ReadStream stream(data);
-  return DeserializeRaw(stream, subject, out, state);
-}
-
-bool altintegration::Deserialize(ReadStream& stream,
-                                 const uint256& subject,
-                                 MerklePath& out,
-                                 ValidationState& state) {
+bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
+                                                const uint256& subject,
+                                                MerklePath& out,
+                                                ValidationState& state) {
   Slice<const uint8_t> merkleBytes;
   if (!readVarLenValue(stream, merkleBytes, state, 0, MAX_MERKLE_BYTES)) {
     return state.Invalid("merkle-bytes");
   }
-  return DeserializeRaw(merkleBytes, subject, out, state);
-}
-
-bool altintegration::Deserialize(Slice<const uint8_t> data,
-                                 const uint256& subject,
-                                 MerklePath& out,
-                                 ValidationState& state) {
-  ReadStream stream(data);
-  return Deserialize(stream, subject, out, state);
+  ReadStream ms(merkleBytes);
+  return DeserializeFromRaw(ms, subject, out, state);
 }

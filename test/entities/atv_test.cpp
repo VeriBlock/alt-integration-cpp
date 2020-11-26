@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/entities/atv.hpp"
+
 #include <gtest/gtest.h>
 
 #include "util/test_utils.hpp"
-#include "veriblock/entities/atv.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -26,7 +27,7 @@ static const auto defaultPublicKey =
 
 static const VbkTx defaultTx{
     NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
-    Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
+    Address::assertFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
     Coin(1000),
     std::vector<Output>{},
     7,
@@ -57,13 +58,11 @@ static const VbkBlock defaultVbkBlock{5000,
 
 static const ATV defaultAtv{1, defaultTx, defaultPath, defaultVbkBlock};
 
-TEST(ATV, Deserialize) {
-  const auto atvBytes = ParseHex(defaultAtvEncoded);
-  auto stream = ReadStream(atvBytes);
-  auto decoded = ATV::fromVbkEncoding(stream);
+TEST(ATV, DeserializeFromVbkEncoding) {
+  auto decoded = AssertDeserializeFromHex<ATV>(defaultAtvEncoded);
 
   EXPECT_EQ(decoded.transaction.sourceAddress,
-            Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+            Address::assertFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 }
 
 TEST(ATV, Serialize) {
@@ -75,11 +74,9 @@ TEST(ATV, Serialize) {
 }
 
 TEST(ATV, RoundTrip) {
-  auto atvBytes = ParseHex(defaultAtvEncoded);
-  auto stream = ReadStream(atvBytes);
-  auto decoded = ATV::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromHex<ATV>(defaultAtvEncoded);
   EXPECT_EQ(decoded.transaction.sourceAddress,
-            Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+            Address::assertFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -92,11 +89,11 @@ TEST(ATV, RoundTripNew) {
   auto atvBytes = ParseHex(defaultAtvEncoded);
   ATV decoded;
   ValidationState state;
-  bool ret = Deserialize(atvBytes, decoded, state);
+  bool ret = DeserializeFromVbkEncoding(atvBytes, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.transaction.sourceAddress,
-            Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
+            Address::assertFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"));
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
@@ -106,9 +103,7 @@ TEST(ATV, RoundTripNew) {
 }
 
 TEST(ATV, getId_test) {
-  auto atvBytes = ParseHex(defaultAtvEncoded);
-  auto stream = ReadStream(atvBytes);
-  auto atv = ATV::fromVbkEncoding(stream);
+  auto atv = AssertDeserializeFromHex<ATV>(defaultAtvEncoded);
 
   EXPECT_EQ(atv.getId().toHex(),
             "c6d96b8e87f3e347aa1d1051bb3af39c8ea60612ced905d11c6f92d7b6bd50f5");

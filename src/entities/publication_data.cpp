@@ -7,23 +7,6 @@
 
 using namespace altintegration;
 
-PublicationData PublicationData::fromRaw(const std::vector<uint8_t>& bytes) {
-  ReadStream stream(bytes);
-  return fromRaw(stream);
-}
-
-PublicationData PublicationData::fromRaw(ReadStream& stream) {
-  PublicationData pub;
-  pub.identifier = readSingleBEValue<int64_t>(stream);
-  pub.header =
-      readVarLenValue(stream, 0, MAX_HEADER_SIZE_PUBLICATION_DATA).asVector();
-  pub.contextInfo =
-      readVarLenValue(stream, 0, MAX_CONTEXT_SIZE_PUBLICATION_DATA).asVector();
-  pub.payoutInfo =
-      readVarLenValue(stream, 0, MAX_PAYOUT_SIZE_PUBLICATION_DATA).asVector();
-  return pub;
-}
-
 void PublicationData::toRaw(WriteStream& stream) const {
   writeSingleBEValue(stream, identifier);
   writeVarLenValue(stream, header);
@@ -31,7 +14,14 @@ void PublicationData::toRaw(WriteStream& stream) const {
   writeVarLenValue(stream, payoutInfo);
 }
 
-bool altintegration::Deserialize(ReadStream& stream,
+std::string PublicationData::toPrettyString() const {
+	return fmt::sprintf("PublicationData{id=%lld, header=%s, payoutInfo=%s}",
+						identifier,
+						HexStr(header),
+						HexStr(payoutInfo));
+}
+
+bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                  PublicationData& out,
                                  ValidationState& state) {
   PublicationData pub;

@@ -16,16 +16,12 @@ using namespace altintegration;
 static const auto OUTPUT_BYTES =
     "01166772F51AB208D32771AB1506970EEB664462730B838E020539"_unhex;
 
-static const Output OUTPUT_VALUE =
-    Output(Address::fromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"), Coin(1337));
+static const Output OUTPUT_VALUE = Output(
+    Address::assertFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"), Coin(1337));
 
-TEST(Output, Deserialize) {
-  auto stream = ReadStream(OUTPUT_BYTES);
-  auto output = Output::fromVbkEncoding(stream);
-
+TEST(Output, DeserializeFromVbkEncoding) {
+  auto output = AssertDeserializeFromVbkEncoding<Output>(OUTPUT_BYTES);
   EXPECT_EQ(output, OUTPUT_VALUE);
-
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
 
 TEST(Output, Serialize) {
@@ -35,8 +31,7 @@ TEST(Output, Serialize) {
 }
 
 TEST(Output, RoundTrip) {
-  auto stream = ReadStream(OUTPUT_BYTES);
-  auto decoded = Output::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromVbkEncoding<Output>(OUTPUT_BYTES);
   EXPECT_EQ(decoded, OUTPUT_VALUE);
 
   WriteStream outputStream;

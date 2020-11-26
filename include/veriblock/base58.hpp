@@ -24,7 +24,9 @@ std::string EncodeBase58(const T &container) {
   return EncodeBase58(ptr, ptr + container.size());
 }
 
-std::vector<uint8_t> DecodeBase58(const std::string &str);
+bool DecodeBase58(const std::string &str, std::vector<unsigned char> &out);
+
+std::vector<uint8_t> AssertDecodeBase58(const std::string &str);
 
 }  // namespace altintegration
 

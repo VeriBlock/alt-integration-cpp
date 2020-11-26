@@ -44,7 +44,7 @@ struct BtcTestCase {
       if (v.empty()) {
         continue;
       }
-      ret.push_back(BtcBlock::fromRaw(v));
+      ret.push_back(AssertDeserializeFromRaw<BtcBlock>(v));
     }
     return ret;
   }

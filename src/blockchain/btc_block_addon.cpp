@@ -9,6 +9,25 @@
 
 namespace altintegration {
 
-void BtcBlockAddon::setDirty() { static_cast<BlockIndex<BtcBlock>*>(this)->setDirty(); }
+void BtcBlockAddon::setDirty() {
+  static_cast<BlockIndex<BtcBlock>*>(this)->setDirty();
+}
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                BtcBlockAddon& out,
+                                ValidationState& state) {
+  if (!readArrayOf<int32_t>(stream,
+                            out.refs,
+                            state,
+                            0,
+                            MAX_BTCADDON_REFS,
+                            [&](int32_t& out) -> bool {
+                              return stream.readBE<int32_t>(out, state);
+                            })) {
+    return state.Invalid("bad-refs");
+  }
+
+  return true;
+}
 
 }  // namespace altintegration

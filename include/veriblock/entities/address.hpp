@@ -29,8 +29,7 @@ enum class AddressType {
  * Represents address on VBK chain.
  */
 struct Address {
-  Address() = default;
-  explicit Address(const std::string& input);
+  Address();
 
   bool operator==(const Address& other) const noexcept;
   bool operator!=(const Address& other) const noexcept;
@@ -65,25 +64,17 @@ struct Address {
   /**
    * Parse provided string and convert it to VBK address
    * @param input should contain text representation of an address
-   * @throws std::invalid_argument if provided string is not valid
    * @return Address containing VBK address
    */
-  static Address fromString(const std::string& input);
+  bool fromString(const std::string& input, ValidationState& state);
+
+  static Address assertFromString(const std::string& input);
 
   /**
    * Convert VBK address to text representation
    * @return string with VBK address
    */
   std::string toString() const noexcept;
-
-  /**
-   * Read data from the stream and convert it to VBK address
-   * @param stream data stream to read from
-   * @throws std::invalid_argument if stream data cannot be converted
-   * to the VBK address
-   * @return Address containing VBK address
-   */
-  static Address fromVbkEncoding(ReadStream& stream);
 
   /**
    * Convert VBK address to data stream using VBK byte format
@@ -96,6 +87,10 @@ struct Address {
   Address(AddressType type, std::string addr)
       : m_Type(type), m_Address(std::move(addr)) {}
 
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         Address& out,
+                                         ValidationState& state);
+
   AddressType m_Type{};
   std::string m_Address{};
 };
@@ -106,8 +101,16 @@ inline Value ToJSON(const Address& addr) {
   return ToJSON<Value>(addr.toString());
 }
 
-//! @overload
-bool Deserialize(ReadStream& stream, Address& out, ValidationState& state);
+/**
+ * Read data from the stream and convert it to VBK address
+ * @param stream data stream to read from
+ * @param[out] out output address
+ * @param[out] state
+ * @return Address containing VBK address
+ */
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                Address& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

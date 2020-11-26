@@ -14,49 +14,6 @@ namespace altintegration {
 
 const std::string VbkBlock::_name = "VBK";
 
-VbkBlock VbkBlock::fromRaw(Slice<const uint8_t> bytes,
-                           const hash_t& precalculatedHash) {
-  ReadStream stream(bytes);
-  return fromRaw(stream, precalculatedHash);
-}
-
-VbkBlock VbkBlock::fromRaw(ReadStream& stream,
-                           const hash_t& precalculatedHash) {
-  try {
-    VbkBlock block{};
-    block.height = stream.readBE<int32_t>();
-    block.version = stream.readBE<int16_t>();
-    block.previousBlock = stream.readSlice(VBLAKE_PREVIOUS_BLOCK_HASH_SIZE);
-    block.previousKeystone =
-        stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
-    block.secondPreviousKeystone =
-        stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
-    block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE);
-    block.timestamp = stream.readBE<int32_t>();
-    block.difficulty = stream.readBE<int32_t>();
-    block.nonce = stream.readBE<uint64_t>(5);
-    block.hash_ = precalculatedHash;
-    return block;
-  } catch (const std::exception& e) {
-    throw std::invalid_argument(
-        fmt::format("Can not deserialize VBK block ({}) from {}",
-                    e.what(),
-                    HexStr(stream.remainingBytes())));
-  }
-}
-
-VbkBlock VbkBlock::fromVbkEncoding(ReadStream& stream) {
-  auto blockBytes = readSingleByteLenValue(
-      stream, VBK_HEADER_SIZE_PROGPOW, VBK_HEADER_SIZE_PROGPOW);
-  ReadStream blockStream(blockBytes);
-  return VbkBlock::fromRaw(blockStream);
-}
-
-VbkBlock VbkBlock::fromVbkEncoding(const std::string& bytes) {
-  ReadStream stream(bytes);
-  return fromVbkEncoding(stream);
-}
-
 void VbkBlock::toVbkEncoding(WriteStream& stream) const {
   WriteStream blockStream;
   toRaw(blockStream);
@@ -91,12 +48,6 @@ VbkBlock::hash_t VbkBlock::getHash() const {
 
 VbkBlock::short_hash_t VbkBlock::getShortHash() const {
   return getHash().trimLE<VbkBlock::short_hash_t::size()>();
-}
-
-VbkBlock VbkBlock::fromHex(const std::string& hex,
-                           const hash_t& precalculatedHash) {
-  auto v = ParseHex(hex);
-  return VbkBlock::fromRaw(v, precalculatedHash);
 }
 
 std::string VbkBlock::toHex() const { return HexStr(toRaw()); }
@@ -169,50 +120,6 @@ void VbkBlock::setNonce(uint64_t nnc) {
   nonce = nnc;
   invalidateHash();
 }
-
-bool DeserializeRaw(ReadStream& stream, VbkBlock& out, ValidationState& state) {
-  VbkBlock block{};
-  if (!stream.readBE<int32_t>(block.height, state)) {
-    return state.Invalid("vbk-block-height");
-  }
-  if (!stream.readBE<int16_t>(block.version, state)) {
-    return state.Invalid("vbk-block-version");
-  }
-  Slice<const uint8_t> previousBlock;
-  if (!stream.readSlice(
-          VBLAKE_PREVIOUS_BLOCK_HASH_SIZE, previousBlock, state)) {
-    return state.Invalid("vbk-block-previous");
-  }
-  block.previousBlock = previousBlock;
-  Slice<const uint8_t> previousKeystone;
-  if (!stream.readSlice(
-          VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, previousKeystone, state)) {
-    return state.Invalid("vbk-block-previous-keystone");
-  }
-  block.previousKeystone = previousKeystone;
-  Slice<const uint8_t> secondPreviousKeystone;
-  if (!stream.readSlice(
-          VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, secondPreviousKeystone, state)) {
-    return state.Invalid("vbk-block-second-previous-keystone");
-  }
-  block.secondPreviousKeystone = secondPreviousKeystone;
-  Slice<const uint8_t> merkleRoot;
-  if (!stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE, merkleRoot, state)) {
-    return state.Invalid("vbk-block-merkle-root");
-  }
-  block.merkleRoot = merkleRoot;
-  if (!stream.readBE<int32_t>(block.timestamp, state)) {
-    return state.Invalid("vbk-block-timestamp");
-  }
-  if (!stream.readBE<int32_t>(block.difficulty, state)) {
-    return state.Invalid("vbk-block-difficulty");
-  }
-  if (!stream.readBE<uint64_t>(block.nonce, state, 5)) {
-    return state.Invalid("vbk-block-nonce");
-  }
-  out = block;
-  return true;
-}
 void VbkBlock::setHeight(int32_t h) {
   height = h;
   invalidateHash();
@@ -246,7 +153,57 @@ void VbkBlock::setDifficulty(int32_t diff) {
   invalidateHash();
 }
 
-bool Deserialize(ReadStream& stream, VbkBlock& out, ValidationState& state) {
+bool DeserializeFromRaw(ReadStream& stream,
+                        VbkBlock& block,
+                        ValidationState& state,
+                        const VbkBlock::hash_t& hash) {
+  if (!stream.readBE<int32_t>(block.height, state)) {
+    return state.Invalid("vbk-block-height");
+  }
+  if (!stream.readBE<int16_t>(block.version, state)) {
+    return state.Invalid("vbk-block-version");
+  }
+  Slice<const uint8_t> previousBlock;
+  if (!stream.readSlice(
+          VBLAKE_PREVIOUS_BLOCK_HASH_SIZE, previousBlock, state)) {
+    return state.Invalid("vbk-block-previous");
+  }
+  block.previousBlock = previousBlock;
+  Slice<const uint8_t> previousKeystone;
+  if (!stream.readSlice(
+          VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, previousKeystone, state)) {
+    return state.Invalid("vbk-block-keystone1");
+  }
+  block.previousKeystone = previousKeystone;
+  Slice<const uint8_t> secondPreviousKeystone;
+  if (!stream.readSlice(
+          VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, secondPreviousKeystone, state)) {
+    return state.Invalid("vbk-block-keystone2");
+  }
+  block.secondPreviousKeystone = secondPreviousKeystone;
+  Slice<const uint8_t> merkleRoot;
+  if (!stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE, merkleRoot, state)) {
+    return state.Invalid("vbk-block-merkle-root");
+  }
+  block.merkleRoot = merkleRoot;
+  if (!stream.readBE<int32_t>(block.timestamp, state)) {
+    return state.Invalid("vbk-block-timestamp");
+  }
+  if (!stream.readBE<int32_t>(block.difficulty, state)) {
+    return state.Invalid("vbk-block-difficulty");
+  }
+  // VBK block nonce is 5 bytes after ProgPow fork
+  if (!stream.readBE<uint64_t>(block.nonce, state, 5)) {
+    return state.Invalid("vbk-block-nonce");
+  }
+  block.hash_ = hash;
+  return true;
+}
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VbkBlock& out,
+                                ValidationState& state,
+                                const VbkBlock::hash_t& precalculatedHash) {
   Slice<const uint8_t> value;
   if (!readSingleByteLenValue(stream,
                               value,
@@ -255,7 +212,9 @@ bool Deserialize(ReadStream& stream, VbkBlock& out, ValidationState& state) {
                               VBK_HEADER_SIZE_PROGPOW)) {
     return state.Invalid("vbk-block-bad-header");
   }
-  return DeserializeRaw(value, out, state);
+
+  ReadStream s(value);
+  return DeserializeFromRaw(s, out, state, precalculatedHash);
 }
 
 }  // namespace altintegration

@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <mutex>
 #include <vector>
+#include <veriblock/assert.hpp>
 #include <veriblock/consts.hpp>
 #include <veriblock/crypto/progpow.hpp>
 #include <veriblock/crypto/progpow/math.hpp>
@@ -290,7 +291,7 @@ hash32_t keccak_f800_progpow(const uint256& header,
   hash32_t hdr;
   ReadStream rh(header);
   for (int i = 0; i < 8; i++) {
-    hdr.uint32s[i] = rh.readLE<uint32_t>();
+    hdr.uint32s[i] = rh.assertReadLE<uint32_t>();
   }
   return keccak_f800_progpow(hdr, seed, digest);
 }
@@ -543,16 +544,18 @@ std::vector<uint32_t> createDagCache(ethash_cache* light) {
 
 hash32_t hash32_t::readLE(ReadStream& rs) {
   hash32_t ret;
+  ValidationState dummy;
   for (int i = 0; i < 8; i++) {
-    ret.uint32s[i] = rs.readLE<uint32_t>();
+    ret.uint32s[i] = rs.assertReadLE<uint32_t>();
   }
   return ret;
 }
 
 hash32_t hash32_t::readBE(ReadStream& rs) {
   hash32_t ret;
+  ValidationState dummy;
   for (int i = 0; i < 8; i++) {
-    ret.uint32s[i] = rs.readBE<uint32_t>();
+    ret.uint32s[i] = rs.assertReadBE<uint32_t>();
   }
   return ret;
 }

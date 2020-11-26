@@ -45,33 +45,10 @@ struct VTB {
   std::string toPrettyString() const;
 
   /**
-   * Read VBK data from the stream and convert it to VTB
-   * @param stream data stream to read from
-   * @return VTB
-   */
-  static VTB fromVbkEncoding(ReadStream& stream);
-
-  /**
-   * Read VBK data from the raw byte representation and convert it to VTB
-   * @param bytes data bytes to read from
-   * @return VTB
-   */
-  static VTB fromVbkEncoding(Slice<const uint8_t> bytes);
-
-  /**
-   * Read VBK data from the string raw byte representation and convert it to VTB
-   * @param bytes data bytes to read from
-   * @return VTB
-   */
-  static VTB fromVbkEncoding(const std::string& bytes);
-
-  /**
    * Convert VTB to data stream using Vbk byte format
    * @param stream data stream to write into
    */
   void toVbkEncoding(WriteStream& stream) const;
-
-  static VTB fromHex(const std::string& hex);
 
   /**
    * Convert VTB to raw bytes data using Vbk byte format
@@ -107,8 +84,9 @@ JsonValue ToJSON(const VTB& v) {
   return obj;
 }
 
-//! @overload
-bool Deserialize(ReadStream& stream, VTB& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VTB& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

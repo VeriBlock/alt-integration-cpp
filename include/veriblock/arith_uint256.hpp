@@ -268,6 +268,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
     return a.compareTo(b) == 0;
   }
 
+  //! @throws uint_error
   static ArithUint256 fromHex(const std::string& hex);
 
   template <size_t N>

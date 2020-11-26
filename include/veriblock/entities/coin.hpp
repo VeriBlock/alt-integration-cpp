@@ -24,13 +24,6 @@ struct Coin {
   explicit Coin(int64_t atomicUnits) : units(atomicUnits) {}
 
   /**
-   * Read VBK data from the stream and convert it to Coin
-   * @param stream data stream to read from
-   * @return Coin
-   */
-  static Coin fromVbkEncoding(ReadStream& stream);
-
-  /**
    * Convert Coin to data stream using BtcTx Coin byte format
    * @param stream data stream to write into
    */
@@ -44,7 +37,7 @@ struct Coin {
   bool operator==(const Coin& other) const noexcept;
 };
 
-bool Deserialize(ReadStream& stream, Coin& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream, Coin& out, ValidationState& state);
 
 }  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_

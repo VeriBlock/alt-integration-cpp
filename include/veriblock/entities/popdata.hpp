@@ -41,20 +41,6 @@ struct PopData {
   size_t estimateSize() const { return toVbkEncoding().size(); }
 
   /**
-   * Read VBK data from the stream and convert it to PopData
-   * @param stream data stream to read from
-   * @return PopData
-   */
-  static PopData fromVbkEncoding(ReadStream& stream);
-
-  /**
-   * Read VBK data from the raw byte representation and convert it to PopData
-   * @param bytes data bytes to read from
-   * @return PopData
-   */
-  static PopData fromVbkEncoding(Slice<const uint8_t> bytes);
-
-  /**
    * Convert PopData to data stream using Vbk byte format
    * @param stream data stream to write into
    */
@@ -109,7 +95,7 @@ JsonValue ToJSON(const PopData& p, bool verbose) {
   return obj;
 }
 
-bool Deserialize(ReadStream& stream, PopData& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream, PopData& out, ValidationState& state);
 
 }  // namespace altintegration
 

@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "config.hpp"
+
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
@@ -19,9 +20,15 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
   //! endorsed.
   altintegration::AltBlock getBootstrapBlock() const noexcept {
     using namespace altintegration;
-    auto v = ParseHex(VBK_getBootstrapBlock());
-    VBK_ASSERT_MSG(!v.empty(), "VBK_getBootstrapBlock must not be empty");
-    return AltBlock::fromRaw(v);
+    ValidationState state;
+    AltBlock block;
+    auto data = ParseHex(VBK_getBootstrapBlock());
+    bool result = DeserializeFromRaw<AltBlock>(data, block, state);
+    VBK_ASSERT_MSG(
+        result,
+        "VBK_getBootstrapBlock should provide AltBlock, but doesn't: %s",
+        state.toString());
+    return block;
   }
 
   /**

@@ -27,17 +27,13 @@ static const std::string defaultSubject =
 static const int defaultTreeIndex = 1;
 static const int defaultIndex = 0;
 
-TEST(VbkMerklePath, Deserialize) {
-  auto merklePath = ParseHex(defaultPathEncoded);
-  auto stream = ReadStream(merklePath);
-  auto decoded = VbkMerklePath::fromVbkEncoding(stream);
+TEST(VbkMerklePath, DeserializeFromVbkEncoding) {
+  auto decoded = AssertDeserializeFromHex<VbkMerklePath>(defaultPathEncoded);
 
   EXPECT_EQ(decoded.treeIndex, defaultTreeIndex);
   EXPECT_EQ(decoded.index, defaultIndex);
   EXPECT_EQ(decoded.subject.toHex(), defaultSubject);
   EXPECT_EQ(decoded.layers, defaultLayers);
-
-  EXPECT_FALSE(stream.hasMore(1)) << "stream has more data";
 }
 
 TEST(VbkMerklePath, Serialize) {
@@ -53,9 +49,7 @@ TEST(VbkMerklePath, Serialize) {
 }
 
 TEST(VbkMerklePath, RoundTrip) {
-  auto merklePath = ParseHex(defaultPathEncoded);
-  auto stream = ReadStream(merklePath);
-  auto decoded = VbkMerklePath::fromVbkEncoding(stream);
+  auto decoded = AssertDeserializeFromHex<VbkMerklePath>(defaultPathEncoded);
   EXPECT_EQ(decoded.index, defaultIndex);
 
   WriteStream outputStream;
@@ -70,7 +64,7 @@ TEST(VbkMerklePath, RoundTripNew) {
   auto merklePath = ParseHex(defaultPathEncoded);
   VbkMerklePath decoded;
   ValidationState state;
-  bool ret = Deserialize(merklePath, decoded, state);
+  bool ret = DeserializeFromVbkEncoding(merklePath, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decoded.index, defaultIndex);

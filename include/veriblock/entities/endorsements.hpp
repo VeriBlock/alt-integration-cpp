@@ -9,7 +9,6 @@
 #include "veriblock/entities/endorsement.hpp"
 #include "veriblock/fmt.hpp"
 
-
 //! @cond Doxygen_Suppress
 
 namespace altintegration {
@@ -56,6 +55,14 @@ inline std::string AltEndorsement::toPrettyString(size_t level) const {
       HexStr(endorsedHash),
       HexStr(blockOfProof));
 }
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VbkEndorsement& out,
+                                ValidationState& state);
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                AltEndorsement& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

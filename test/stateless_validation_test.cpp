@@ -16,7 +16,7 @@
 
 using namespace altintegration;
 
-static const ATV validATV = DeserializeFromHex<ATV>(
+static const ATV validATV = AssertDeserializeFromHex<ATV>(
     "000000010189bb01011667b55493722b4807bea7bb8ed2835d990885f3fe51c30203e80001"
     "070167010001500000002036cff5b91ed5d135be14654ca6c89f9da04043720696bd70c79b"
     "0a77b4c286ea000000205f1d18e6824ee01817e9432f8d926353f7d7a0a5d2c6534b6a30dd"
@@ -30,7 +30,7 @@ static const ATV validATV = DeserializeFromHex<ATV>(
     "b0d80c07c61cb745b3e7ed364ef191b08de0a2e63f9eade6b9ff6899e094e29329a75c9b94"
     "94010100000000000000");
 
-static const VTB validVTB = DeserializeFromHex<VTB>(
+static const VTB validVTB = AssertDeserializeFromHex<VTB>(
     "00000001020dbfbb02011667b55493722b4807bea7bb8ed2835d990885f3fe51c341000000"
     "0500026edd7a83dfbd4b56cad65ed577a1d330ec8c16fd6900000000000000000070e93ea1"
     "41e1fc673e017e97eadc6b965c9b949401010000000000000001510000000500026edd7a83"
@@ -243,9 +243,8 @@ TEST_F(StatelessValidationTest, VbkPopTx_different_address_invalid) {
 
 TEST_F(StatelessValidationTest, checkBitcoinTransactionForPoPData_invalid) {
   VbkPopTx tx = validVTB.transaction;
-  tx.publishedBlock = VbkBlock::fromHex(
-      "00001388000294E7DC3E3BE21A96ECCF0FBDF5F62A3331DC995C36B0935637860679DDD5"
-      "DB0F135312B2C27867C9A83EF1B99B985C9B949307023AD672BAFD7700");
+  tx.publishedBlock = AssertDeserializeFromRaw<VbkBlock>(
+      "00001388000294E7DC3E3BE21A96ECCF0FBDF5F62A3331DC995C36B0935637860679DDD5DB0F135312B2C27867C9A83EF1B99B985C9B949307023AD672BAFD7700"_unhex);
   ASSERT_FALSE(checkBitcoinTransactionForPoPData(tx, state));
 }
 
@@ -261,10 +260,12 @@ TEST_F(StatelessValidationTest,
 }
 
 TEST_F(StatelessValidationTest,
-       checkBitcoinMerklePath_merkle_root_do_not_match_invalid) {
+       checkBitcoinMerklePath_merkle_root_does_not_match_invalid) {
   VbkPopTx tx = validVTB.transaction;
-  tx.blockOfProof = BtcBlock::fromRaw(
-      "00000020BAA42E40345A7F826A31D37DB1A5D64B67B72732477422000000000000000000A33AD6BE0634647B26633AB85FA8DE258480BBB25E59C68E48BB0B608B12362B10919B5C6C1F2C1749C4D1F0"_unhex);
+  tx.blockOfProof = AssertDeserializeFromRaw<BtcBlock>(
+      "00000020BAA42E40345A7F826A31D37DB1A5D64B67B72732477422000000000000000000"
+      "A33AD6BE0634647B26633AB85FA8DE258480BBB25E59C68E48BB0B608B12362B10919B5C"_unhex
+      "6C1F2C1749C4D1F0");
   ASSERT_FALSE(checkMerklePath(tx.merklePath,
                                tx.bitcoinTransaction.getHash(),
                                tx.blockOfProof.getMerkleRoot(),
@@ -328,7 +329,9 @@ TEST_F(StatelessValidationTest, containsSplit_when_descriptor_before_chunks) {
 
   ASSERT_TRUE(containsSplit(
       "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,
-      buffer.data()));
+      buffer.data(),
+      state))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest, containsSplit_when_chunked) {
@@ -363,7 +366,9 @@ TEST_F(StatelessValidationTest, containsSplit_when_chunked) {
 
   ASSERT_TRUE(containsSplit(
       "00000767000193093228BD2B4906F6B84BE5E61809C0522626145DDFB988022A0684E2110D384FE2BFD38549CB19C41893C258BA5B9CAB24060BA2D41039DFC857801424B0F5DE63992A016F5F38FEB4"_unhex,
-      buffer.data()));
+      buffer.data(),
+      state))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_valid_vbk_block) {
