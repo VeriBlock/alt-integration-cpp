@@ -111,7 +111,7 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
     const uint8_t* pop_data_bytes,
     int pop_data_bytes_size,
     uint8_t* out_hash,
-    int out_hash_size);
+    int* out_hash_size);
 
 #ifdef __cplusplus
 }  // end of extern "C"
