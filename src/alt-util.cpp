@@ -11,16 +11,16 @@ namespace altintegration {
 
 uint256 CalculateContextInfoContainerHash(const PopData& popData,
                                           const BlockIndex<AltBlock>& prevBlock,
-                                          uint32_t keystoneInterval) {
+                                          const AltChainParams& params) {
   auto firstPreviousKeystone =
       prevBlock.getAncestor(getFirstPreviousKeystoneHeight(
-          prevBlock.getHeight() + 1, keystoneInterval));
+          prevBlock.getHeight() + 1, params.getKeystoneInterval()));
   auto secondPreviousKeystone =
       firstPreviousKeystone->getAncestor(getSecondPreviousKeystoneHeight(
-          prevBlock.getHeight() + 1, keystoneInterval));
+          prevBlock.getHeight() + 1, params.getKeystoneInterval()));
 
   WriteStream stream;
-  stream.writeBE<uint32_t>(keystoneInterval);
+  stream.writeBE<uint32_t>(params.getKeystoneInterval());
   stream.write(firstPreviousKeystone->getHash());
   stream.write(secondPreviousKeystone->getHash());
 

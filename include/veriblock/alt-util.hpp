@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/hashutil.hpp"
@@ -67,7 +68,7 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
 // Calculate ContextInfoContainer top Hash
 uint256 CalculateContextInfoContainerHash(const PopData& popData,
                                           const BlockIndex<AltBlock>& prevBlock,
-                                          uint32_t keystoneInterval);
+                                          const AltChainParams& params);
 
 }  // namespace altintegration
 
