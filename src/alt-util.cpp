@@ -24,11 +24,20 @@ uint256 CalculateContextInfoContainerHash(const PopData& popData,
   stream.write(firstPreviousKeystone->getHash());
   stream.write(secondPreviousKeystone->getHash());
 
-  PayloadsMerkleTree<ATV> atvMerkleTree(map_get_id(popData.atvs));
-  PayloadsMerkleTree<VTB> vtbMerkleTree(map_get_id(popData.vtbs));
-  PayloadsMerkleTree<VbkBlock> vbkMerkleTree(map_get_id(popData.context));
+  auto atvMerkleRoot =
+      PayloadsMerkleTree<ATV>(map_get_id(popData.atvs)).getMerkleRoot();
+  auto vtbMerkleRoot =
+      PayloadsMerkleTree<VTB>(map_get_id(popData.vtbs)).getMerkleRoot();
+  auto vbkMerkleRoot =
+      PayloadsMerkleTree<VbkBlock>(map_get_id(popData.context)).getMerkleRoot();
 
-  return sha256twice(stream.data());
+  uint256 left = sha256twice(atvMerkleRoot, vtbMerkleRoot);
+  uint256 right = sha256twice(vbkMerkleRoot, vbkMerkleRoot);
+
+  right = sha256twice(left, right);
+  left = sha256twice(stream.data());
+
+  return sha256twice(left, right);
 }
 
 }  // namespace altintegration
