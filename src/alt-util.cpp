@@ -12,6 +12,8 @@ namespace altintegration {
 uint256 CalculateContextInfoContainerHash(const PopData& popData,
                                           const BlockIndex<AltBlock>& prevBlock,
                                           const AltChainParams& params) {
+  size_t alt_hash_size = prevBlock.getHash().size();
+
   auto firstPreviousKeystone =
       prevBlock.getAncestor(getFirstPreviousKeystoneHeight(
           prevBlock.getHeight() + 1, params.getKeystoneInterval()));
@@ -21,8 +23,12 @@ uint256 CalculateContextInfoContainerHash(const PopData& popData,
 
   WriteStream stream;
   stream.writeBE<uint32_t>(params.getKeystoneInterval());
-  stream.write(firstPreviousKeystone->getHash());
-  stream.write(secondPreviousKeystone->getHash());
+  stream.write(firstPreviousKeystone != nullptr
+                   ? firstPreviousKeystone->getHash()
+                   : AltBlock::hash_t(alt_hash_size, 0));
+  stream.write(secondPreviousKeystone != nullptr
+                   ? secondPreviousKeystone->getHash()
+                   : AltBlock::hash_t(alt_hash_size, 0));
 
   auto atvMerkleRoot =
       PayloadsMerkleTree<ATV>(map_get_id(popData.atvs)).getMerkleRoot();
