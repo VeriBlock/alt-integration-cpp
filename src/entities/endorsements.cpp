@@ -73,8 +73,8 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
   if (!readSingleByteLenValue(stream,
                               out.blockOfProof,
                               state,
-                              BTC_BLOCK_HASH_SIZE,
-                              BTC_BLOCK_HASH_SIZE)) {
+                              VBK_BLOCK_HASH_SIZE,
+                              VBK_BLOCK_HASH_SIZE)) {
     return state.Invalid("bad-altendorsement-block-of-proof");
   }
 

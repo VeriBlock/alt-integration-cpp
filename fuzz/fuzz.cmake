@@ -11,7 +11,7 @@ target_compile_options(${LIB_NAME} PUBLIC -fprofile-instr-generate -fcoverage-ma
 target_link_options(${LIB_NAME} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
 
 add_custom_target(fuzz
-        WORKING_DIRECTORY ../cmake
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
         DEPENDS fuzz_targets
         )
 add_custom_command(
@@ -56,6 +56,7 @@ function(add_fuzz FUZZ_TARGET)
             )
     add_custom_command(
             OUTPUT fuzz_targets APPEND
+            COMMENT "Running ${FUZZ_TARGET}"
             COMMAND ${FUZZ_TARGET} ARGS
             ${FUZZ_TIMEOUT}
             -max_len=${FUZZ_MAX_LEN}

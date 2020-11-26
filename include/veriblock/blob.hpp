@@ -212,7 +212,7 @@ struct Blob {
   }
 
   //! helper for readSingleByteLenValue
-  void resize(size_t size) { VBK_ASSERT(size == N); }
+  void resize(size_t size) { VBK_ASSERT_MSG(size == N, "Size=%d N=%d", size, N); }
 
  protected:
   inline void assign(Slice<const uint8_t> slice) {

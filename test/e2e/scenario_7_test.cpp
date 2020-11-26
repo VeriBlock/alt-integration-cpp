@@ -77,4 +77,6 @@ TEST_F(Scenario7, scenario_7) {
       << state.toString();
   EXPECT_TRUE(state.IsValid());
   validateAlttreeIndexState(alttree, containingBlock, popData);
+
+  fmt::printf("%s\n", HexStr(popData.toVbkEncoding()));
 }

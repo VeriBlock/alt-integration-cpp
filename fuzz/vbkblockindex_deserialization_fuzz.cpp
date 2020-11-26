@@ -14,6 +14,5 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   ValidationState state;
   BlockIndex<VbkBlock> index{};
   DeserializeFromVbkEncoding(stream, index, state);
-
   return 0;
 }
