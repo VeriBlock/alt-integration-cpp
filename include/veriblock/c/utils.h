@@ -13,6 +13,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "veriblock/c/pop_context.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -101,6 +103,15 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
                           int block_bytes_size,
                           uint8_t* hash_bytes,
                           int* hash_bytes_size);
+
+void VBK_AltBlock_calculateContextInfoContainerHash(
+    PopContext* self,
+    const uint8_t* prev_block_hash,
+    int prev_block_hash_size,
+    const uint8_t* pop_data_bytes,
+    int pop_data_bytes_size,
+    uint8_t* out_hash,
+    int out_hash_size);
 
 #ifdef __cplusplus
 }  // end of extern "C"
