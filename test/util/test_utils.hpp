@@ -13,6 +13,7 @@
 #include <vector>
 #include <veriblock/blockchain/alt_chain_params.hpp>
 #include <veriblock/entities/altblock.hpp>
+#include <veriblock/entities/popdata.hpp>
 
 namespace altintegration {
 
@@ -85,6 +86,80 @@ inline std::vector<uint8_t> generateRandomBytesVector(size_t n) {
   std::vector<uint8_t> bytes(n);
   generateRandomBytes(bytes.begin(), bytes.end());
   return bytes;
+}
+
+template <size_t N>
+inline Blob<N> generateRandomBlob() {
+  return generateRandomBytesVector(N);
+}
+
+template <typename B>
+BlockIndex<B> getRandomIndex();
+
+template <>
+inline BlockIndex<BtcBlock> getRandomIndex() {
+  BlockIndex<BtcBlock> index;
+  index.setHeight(rand());
+
+  BtcBlock block;
+  block.version = rand();
+  block.previousBlock = generateRandomBytesVector(32);
+  block.timestamp = rand();
+  block.bits = rand();
+  block.nonce = rand();
+  block.merkleRoot = generateRandomBytesVector(32);
+  index.setHeader(block);
+  index.addRef(rand());
+  index.setStatus(rand() & 0x0f);
+
+  return index;
+}
+
+template <>
+inline BlockIndex<VbkBlock> getRandomIndex() {
+  BlockIndex<VbkBlock> index;
+  index.setHeight(rand());
+
+  VbkBlock block;
+  block.setVersion(rand());
+  block.setPreviousBlock(generateRandomBytesVector(uint96::size()));
+  block.setPreviousKeystone(generateRandomBytesVector(uint72::size()));
+  block.setSecondPreviousKeystone(generateRandomBytesVector(uint72::size()));
+  block.setTimestamp(rand());
+  block.setDifficulty(rand());
+  block.setNonce(rand());
+  block.setMerkleRoot(generateRandomBytesVector(uint128::size()));
+  index.setHeader(block);
+  index.addRef(100);
+  index.chainWork = generateRandomBytesVector(uint256::size());
+  index.insertPayloadId<VTB>(generateRandomBlob<32>());
+  index.setStatus(rand() & 0x0f);
+
+  return index;
+}
+
+template <>
+inline BlockIndex<AltBlock> getRandomIndex() {
+  BlockIndex<AltBlock> index;
+  index.setHeight(rand());
+
+  AltBlock block;
+  block.hash = generateRandomBytesVector(12);
+  block.previousBlock = generateRandomBytesVector(12);
+  block.timestamp = rand();
+  block.height = rand();
+
+  index.setHeader(block);
+  index.insertPayloadIds<VTB>(
+      {generateRandomBlob<32>(), generateRandomBlob<32>()});
+  index.insertPayloadIds<ATV>(
+      {generateRandomBlob<32>(), generateRandomBlob<32>()});
+  index.insertPayloadIds<VbkBlock>(
+      {generateRandomBlob<VbkBlock::short_hash_t::size()>(),
+       generateRandomBlob<VbkBlock::short_hash_t::size()>()});
+  index.setStatus(rand() & 0x0f);
+
+  return index;
 }
 
 struct AltChainParamsTest : public AltChainParams {

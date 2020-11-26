@@ -5,42 +5,26 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <util/test_utils.hpp>
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/btcblock.hpp>
+#include <veriblock/entities/popdata.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/serde.hpp>
 
 static const std::string AltBlockIndexVbkEncoded =
-    "00000016000000207b7d4979c91f10b52a23b3c477582cc855be035dde1552017383a4a152"
-    "9155cd0000002085ac9095fe4cd696eb0b13fe9953a46851fd913b072012f5225d31a32ece"
-    "edb30000001600000016000000c80100010120b8eada970e8e6a1709246688df98c142c2bb"
-    "f654f82e53c2d6ebc31890e383d1010120c5a370443608ed9a068464e9ddb553ca79c05891"
-    "283539fe60de75b4638e03ff01440cfbd58d6e25fa183dff8c499b0cb8350c1e2317d0df60"
-    "75f7130c3de9e7ffa84eb01ae5fcda1c0c0fda42b0553ae350acf509e80c88dce1ae2392c8"
-    "012b0a1e880ceb4a8b1a67dd12c193c459f30c3e7c09210907ede7910391f20c1bfc65abf8"
-    "76c25c31ca5b560ceffc1c57d659f9fb774491240c95c570d09968d57c60bb6ab00c620c15"
-    "b7a9ca2d73e2b1eb0f0c621b844b52561859a1a08f940c1c54d530ac72d3f60095c51f0c83"
-    "bc8984eb020cf594e512f60c6b81cf5a354a54833045934a0c6a7a7eefa0013f450858d062"
-    "0caee5c649be69ca179a4f9c1e0c197ec90a078e307bb43bdcbd0ce954495ce27295feef40"
-    "c14a0cca4db49b54beeb0e975116040c5f3321448da21d559b4ed9170c98b64d822925394b"
-    "640cf79a0cb48420f24645c71ad74d18420cf89f4b83eebaf67e8e0749d30c53b6119d21c1"
-    "c938414601620c0bc41e4ecd251564f53439150cf52c730434dd429b94200cb10c988d5bc9"
-    "7995698ac66dc5d60c001ff8730a3912b947d1345b0c5812967cbf1fe63d1fe1cf350cd432"
-    "67647cc34a2588c66e100c0b526a50a6d144ea3ce503e00cd81d5ab87e6221cf6f4004fb0c"
-    "f947f8c3b54a0db0c75eb0dd0c4d341e7048e911fa137b0fad0c6dc7dad2d879d9987a2be2"
-    "ae0c386077206c9793a02417fec30c299723dd02e452c5de1070b10c3329f027216d6b6326"
-    "d55d1d0cda0c0f30fbe25f14df653a9e0c3d77a0977c3c560eb56808a00cd11ae3f002080b"
-    "38a04091fa0cce7ff2a4041729069c7ee9ff0c439f68649a308ed36797df2e0cc74b692d61"
-    "68c3db0048babd0c5301f51bfc9da035e2d722280cbdce322405a4e45730f098460ca3dc82"
-    "c96e6fe7dca71941ea0cc7c3b21bae74f256948cae140caf08ee25e6d389ff894635590cd5"
-    "d5ffe26af15bb2b0c852000cbb266b2db2908c7324c729a50cd6b41e1451d135b51a518501"
-    "0c16c7e81eddb45e70974e2aca0ceca56b4743a8b96060ebb3d20cba4c980c0c8ec126530b"
-    "a7a90cb26ddd6b02087a81d73b6c300c2c41fe3830c7832a8e1b7e700cbcff0bccf4ccfc82"
-    "16a797b30c7ed2c2f068644a61959238850cef773a2cc892e575bc6795f10c8066c7757e51"
-    "1321c42900280c03e00f0d69d4c42cc3d285fb0c4311f586620790913a0d26270ce0975a0b"
-    "5b0fc631e49cccb60cdd5179ee90f2d59ab819ab1c0c155cee0bcb2e82ee6120d9110c061e"
-    "55dad51364ca7651348f";
+    "0000006600000020de1046c3a19258aa7964f655d291502b9bcf02aa7e9ddb9542c77fb8f4"
+    "ca82d20000002054b1c57ce5914c9409e60c4cdc6d9bfb59097fd60fae9b3117a5ebea762d"
+    "4bca00000066000000660000016001000100010120e5bc64c81bb00ac853022ee4cd33560b"
+    "f351af6700cf4767ee2b64cd240ae67701150c7272f1db71a75c040c19214d0c55162625a7"
+    "2855a1559606fb0cbdd3ecff62045dae767eb5a70c677faaf298168148d2fb9e740c4d358f"
+    "043831066e2483ef860cf2d8b4f5c30e4e5fcd1782ca0c30256c889fa25fb437c9c1c80c63"
+    "1ea82dd64b8e09391dbd5e0c4766061bf7e1ea2987e7340d0c886de74a9639190f1bee350d"
+    "0c80ef33351c75f021ba04dbaf0c61c6218d0e89351834af871c0c54cfcf428c3674a88429"
+    "900b0c038861cd80085db0a1de6efb0c06476879bdd745763c9f80640cdda3988184b18c67"
+    "47ce7a390cf76a730e84c535dd5814b0570c620234afc35a64b7b3fa39040c6b616a753312"
+    "89070ea41db30c6f849eee87863e2677a257590c5591714cd94807de9977cd52";
 
 static const std::string VbkBlockIndexVbkEncoded =
     "00000043000000430002dd5179ee90f2d59ab819ab1cf068644a619592388530fbe25f14df"
@@ -82,3 +66,35 @@ TEST(BlockIndex, ALT) {
   ASSERT_TRUE(DeserializeFromVbkEncoding(stream, index, state))
       << state.toString();
 }
+
+template <typename TestCase>
+struct BlockIndexTest : public ::testing::Test {};
+
+TYPED_TEST_SUITE_P(BlockIndexTest);
+
+TYPED_TEST_P(BlockIndexTest, RoundTrip) {
+  using Block = TypeParam;
+  using Index = BlockIndex<Block>;
+  Index index = getRandomIndex<Block>();
+  ValidationState state;
+
+  auto vbkencoded = SerializeToVbkEncoding<Index>(index);
+  Index decodedVbk;
+  ASSERT_TRUE(DeserializeFromVbkEncoding<Index>(vbkencoded, decodedVbk, state));
+  ASSERT_TRUE(state.IsValid());
+  ASSERT_EQ(index.toVbkEncoding(), decodedVbk.toVbkEncoding());
+}
+
+// clang-format off
+typedef ::testing::Types<
+    BtcBlock,
+    VbkBlock,
+    AltBlock
+> TypesUnderTest;
+// clang-format on
+
+REGISTER_TYPED_TEST_SUITE_P(BlockIndexTest, RoundTrip);
+
+INSTANTIATE_TYPED_TEST_SUITE_P(BlockIndexTestSuite,
+                               BlockIndexTest,
+                               TypesUnderTest);
