@@ -57,6 +57,7 @@ function(add_fuzz FUZZ_TARGET)
     add_custom_command(
             OUTPUT fuzz_targets APPEND
             COMMENT "Running ${FUZZ_TARGET}"
+            COMMAND ${CMAKE_EXECUTE_PROCESS_COMMAND_ECHO}
             COMMAND ${FUZZ_TARGET} ARGS
             ${FUZZ_TIMEOUT}
             -max_len=${FUZZ_MAX_LEN}
