@@ -66,8 +66,8 @@ jobs:
     runs-on: ubuntu-18.04
     container: veriblock/alt-integration-cpp-dev
     env:
-      CC: gcc
-      CXX: g++
+      CC: clang
+      CXX: clang++
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
       - uses: actions/checkout@v1
