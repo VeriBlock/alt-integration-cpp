@@ -65,7 +65,7 @@ struct Config {
       std::transform(hexblocks.begin(),
                      hexblocks.end(),
                      std::back_inserter(b.blocks),
-                     AssertDeserializeFromHex<Block>);
+                     AssertDeserializeFromRawHex<Block>);
 
       return b;
     }
