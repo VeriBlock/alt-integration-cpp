@@ -42,12 +42,6 @@ struct BtcBlock {
   void toRaw(WriteStream& stream) const;
 
   /**
-   * Convert BtcBlock to Hex string using BtcBlock basic byte format
-   * @return Hex represantation of the data
-   */
-  std::string toHex() const;
-
-  /**
    * Convert BtcBlock to data stream using BtcBlock VBK byte format
    * @param stream data stream to write into
    */
@@ -114,10 +108,11 @@ JsonValue ToJSON(const BtcBlock& b) {
   return object;
 }
 
-bool DeserializeFromRaw(ReadStream& stream,
-                        BtcBlock& out,
-                        ValidationState& state,
-                        const BtcBlock::hash_t& /*ignore*/ = BtcBlock::hash_t{});
+bool DeserializeFromRaw(
+    ReadStream& stream,
+    BtcBlock& out,
+    ValidationState& state,
+    const BtcBlock::hash_t& /*ignore*/ = BtcBlock::hash_t{});
 
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
