@@ -7,18 +7,12 @@
 #include <boost/python.hpp>
 #include <boost/python/to_python_converter.hpp>
 #include <veriblock/mock_miner.hpp>
+#include <veriblock/serde.hpp>
 
 #include "vector.hpp"
 
 using namespace altintegration;
 using namespace boost::python;
-
-template <typename E>
-std::string toVbkEncodingHex(E& self_) {
-  WriteStream w;
-  self_.toVbkEncoding(w);
-  return HexStr(w.data());
-}
 
 boost::shared_ptr<Address> makeAddress(std::string s) {
   Address addr;
@@ -62,7 +56,7 @@ void init_entities() {
 
   class_<VbkPopTx, boost::shared_ptr<VbkPopTx>>("VbkPopTx")
       .def("__repr__", &VbkPopTx::toPrettyString)
-      .def("toVbkEncodingHex", &toVbkEncodingHex<VbkPopTx>)
+      .def("toVbkEncodingHex", &SerializeToHex<VbkPopTx>)
       .def("getHash", &VbkPopTx::getHash)
       .def_readwrite("networkOrType", &VbkPopTx::networkOrType)
       .def_readwrite("address", &VbkPopTx::address)
@@ -85,7 +79,7 @@ void init_entities() {
 
   class_<VbkTx, boost::shared_ptr<VbkTx>>("VbkTx")
       .def("getHash", &VbkTx::getHash)
-      .def("toVbkEncodingHex", &toVbkEncodingHex<VbkTx>)
+      .def("toVbkEncodingHex", &SerializeToHex<VbkTx>)
       .def_readwrite("networkOrType", &VbkTx::networkOrType)
       .def_readwrite("sourceAddress", &VbkTx::sourceAddress)
       .def_readwrite("sourceAmount", &VbkTx::sourceAmount)
@@ -96,36 +90,36 @@ void init_entities() {
       .def_readwrite("publicKey", &VbkTx::publicKey);
 
   class_<VTB, boost::shared_ptr<VTB>>("VTB")
-      .def("__str__", &VTB::toHex)
+      .def("__str__", &SerializeToHex<ATV>)
       .def("__repr__", &VTB::toPrettyString)
-      .def("toHex", &VTB::toHex)
-      .def("toVbkEncodingHex", &toVbkEncodingHex<VTB>)
+      .def("toHex", &SerializeToHex<ATV>)
+      .def("toVbkEncodingHex", &SerializeToHex<VTB>)
       .def("getId", &VTB::getId)
       .def_readwrite("transaction", &VTB::transaction)
       .def_readwrite("merklePath", &VTB::merklePath)
       .def_readwrite("containingBlock", &VTB::containingBlock);
 
   class_<ATV, boost::shared_ptr<ATV>>("ATV")
-      .def("__str__", &ATV::toHex)
+      .def("__str__", &SerializeToHex<ATV>)
       .def("__repr__", &ATV::toPrettyString)
-      .def("toHex", &ATV::toHex)
-      .def("toVbkEncodingHex", &toVbkEncodingHex<ATV>)
+      .def("toHex", &SerializeToHex<ATV>)
+      .def("toVbkEncodingHex", &SerializeToHex<ATV>)
       .def("getId", &ATV::getId)
       .def_readwrite("transaction", &ATV::transaction)
       .def_readwrite("merklePath", &ATV::merklePath)
       .def_readwrite("blockOfProof", &ATV::blockOfProof);
 
   class_<BtcTx, boost::shared_ptr<BtcTx>>("BtcTx")
-      .def("__str__", &BtcTx::toHex)
-      .def("__repr__", &BtcTx::toHex)
+      .def("__str__", &SerializeToHex<BtcTx>)
+      .def("__repr__", &SerializeToHex<BtcTx>)
       .def("getHash", &BtcTx::getHash)
       .def_readwrite("tx", &BtcTx::tx);
 
   class_<BtcBlock, boost::shared_ptr<BtcBlock>>("BtcBlock")
-      .def("__str__", &BtcBlock::toHex)
+      .def("__str__", &SerializeToRawHex<BtcBlock>)
       .def("__repr__", &BtcBlock::toPrettyString)
-      .def("toHex", &BtcBlock::toHex)
-      .def("toVbkEncodingHex", &toVbkEncodingHex<BtcBlock>)
+      .def("toHex", &SerializeToRawHex<BtcBlock>)
+      .def("toVbkEncodingHex", &SerializeToHex<BtcBlock>)
       .def("getHash", &BtcBlock::getHash)
       .def_readwrite("version", &BtcBlock::version)
       .def_readwrite("previousBlock", &BtcBlock::previousBlock)
@@ -135,10 +129,10 @@ void init_entities() {
       .def_readwrite("nonce", &BtcBlock::nonce);
 
   class_<VbkBlock, boost::shared_ptr<VbkBlock>>("VbkBlock")
-      .def("__str__", &VbkBlock::toHex)
+      .def("__str__", &SerializeToRawHex<VbkBlock>)
       .def("__repr__", &VbkBlock::toPrettyString)
-      .def("toHex", &VbkBlock::toHex)
-      .def("toVbkEncodingHex", &toVbkEncodingHex<VbkBlock>)
+      .def("toHex", &SerializeToRawHex<VbkBlock>)
+      .def("toVbkEncodingHex", &SerializeToHex<VbkBlock>)
       .def("getHash", &VbkBlock::getHash)
       .add_property("height", &VbkBlock::getHeight, &VbkBlock::setHeight)
       .add_property("version", &VbkBlock::getVersion, &VbkBlock::setVersion)

@@ -33,8 +33,6 @@ struct ATV {
   //! (memory only) indicates whether we already did 'checkATV' on this ATV
   mutable bool checked{false};
 
-  std::string toHex() const;
-
   std::string toPrettyString() const;
 
   size_t estimateSize() const { return toVbkEncoding().size(); }
@@ -80,7 +78,9 @@ JsonValue ToJSON(const ATV& atv) {
   return obj;
 }
 
-bool DeserializeFromVbkEncoding(ReadStream& stream, ATV& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                ATV& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

@@ -50,11 +50,11 @@ struct BtcTx {
    * @return hash transaction hash
    */
   hash_t getHash() const;
-
-  std::string toHex() const;
 };
 
-bool DeserializeFromVbkEncoding(ReadStream& stream, BtcTx& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                BtcTx& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "config.hpp"
-
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
@@ -78,7 +77,9 @@ bool VBK_SelectVbkParams(Config_t* config,
                          const char* blocks) {
   if (blocks == nullptr) {
     config->config->SelectVbkParams(
-        net, startHeight, {altintegration::GetRegTestVbkBlock().toHex()});
+        net,
+        startHeight,
+        {SerializeToHex(altintegration::GetRegTestVbkBlock())});
     return true;
   }
 
@@ -97,7 +98,7 @@ bool VBK_SelectBtcParams(Config_t* config,
                          const char* blocks) {
   if (blocks == nullptr) {
     config->config->SelectBtcParams(
-        net, startHeight, {altintegration::GetRegTestBtcBlock().toHex()});
+        net, startHeight, {SerializeToHex(altintegration::GetRegTestBtcBlock())});
     return true;
   }
 

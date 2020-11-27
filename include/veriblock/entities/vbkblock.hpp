@@ -61,12 +61,6 @@ struct VbkBlock {
   std::vector<uint8_t> toRaw() const;
 
   /**
-   * Convert VbkBlock to Hex string using VbkBlock basic byte format
-   * @return Hex represantation of the data
-   */
-  std::string toHex() const;
-
-  /**
    * Convert VbkBlock to data stream using VbkBlock VBK byte format
    * @param stream data stream to write into
    */
