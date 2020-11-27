@@ -51,6 +51,7 @@ bool DeserializeFromRaw(ReadStream& stream,
                         const AltBlock::hash_t& /* ignore */) {
   if (!readSingleByteLenValue(
           stream, out.hash, state, MIN_ALT_HASH_SIZE, MAX_ALT_HASH_SIZE)) {
+    VBK_ASSERT_MSG(false, "stream, data: %s", HexStr(stream.data()).c_str());
     return state.Invalid("alt-block-hash");
   }
   if (!readSingleByteLenValue(stream,

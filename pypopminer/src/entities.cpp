@@ -110,8 +110,8 @@ void init_entities() {
       .def_readwrite("blockOfProof", &ATV::blockOfProof);
 
   class_<BtcTx, boost::shared_ptr<BtcTx>>("BtcTx")
-      .def("__str__", &SerializeToHex<BtcTx>)
-      .def("__repr__", &SerializeToHex<BtcTx>)
+      .def("__str__", &SerializeToRawHex<BtcTx>)
+      .def("__repr__", &SerializeToRawHex<BtcTx>)
       .def("getHash", &BtcTx::getHash)
       .def_readwrite("tx", &BtcTx::tx);
 

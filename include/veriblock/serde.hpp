@@ -383,6 +383,15 @@ T AssertDeserializeFromHex(std::string hex) {
   return t;
 }
 
+template <typename T>
+T AssertDeserializeFromRawHex(std::string hex) {
+  T t;
+  ValidationState state;
+  bool result = DeserializeFromRawHex(hex, t, state);
+  VBK_ASSERT_MSG(result, "Can`t deserialize: %s", state.toString());
+  return t;
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_SERDE_HPP

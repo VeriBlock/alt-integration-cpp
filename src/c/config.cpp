@@ -18,16 +18,8 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
   //! first ALT block used in AltBlockTree. This is first block that can be
   //! endorsed.
   altintegration::AltBlock getBootstrapBlock() const noexcept {
-    using namespace altintegration;
-    ValidationState state;
-    AltBlock block;
-    auto data = ParseHex(VBK_getBootstrapBlock());
-    bool result = DeserializeFromRaw<AltBlock>(data, block, state);
-    VBK_ASSERT_MSG(
-        result,
-        "VBK_getBootstrapBlock should provide AltBlock, but doesn't: %s",
-        state.toString());
-    return block;
+    return altintegration::AssertDeserializeFromRawHex<
+        altintegration::AltBlock>(VBK_getBootstrapBlock());
   }
 
   /**
@@ -79,7 +71,7 @@ bool VBK_SelectVbkParams(Config_t* config,
     config->config->SelectVbkParams(
         net,
         startHeight,
-        {SerializeToHex(altintegration::GetRegTestVbkBlock())});
+        {SerializeToRawHex(altintegration::GetRegTestVbkBlock())});
     return true;
   }
 
@@ -98,7 +90,9 @@ bool VBK_SelectBtcParams(Config_t* config,
                          const char* blocks) {
   if (blocks == nullptr) {
     config->config->SelectBtcParams(
-        net, startHeight, {SerializeToHex(altintegration::GetRegTestBtcBlock())});
+        net,
+        startHeight,
+        {SerializeToRawHex(altintegration::GetRegTestBtcBlock())});
     return true;
   }
 

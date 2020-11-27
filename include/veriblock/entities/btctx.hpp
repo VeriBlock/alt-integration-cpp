@@ -46,6 +46,12 @@ struct BtcTx {
   void toVbkEncoding(WriteStream& stream) const;
 
   /**
+   * Convert BtcTx to data stream using BtcTx basic byte format
+   * @param stream data stream to write into
+   */
+  void toRaw(WriteStream& stream) const;
+
+  /**
    * Calculate the hash of the btc transaction
    * @return hash transaction hash
    */
