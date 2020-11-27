@@ -34,8 +34,6 @@ uint256 BtcBlock::getHash() const {
   return sha256twice(stream.data()).reverse();
 }
 
-std::string BtcBlock::toHex() const { return HexStr(SerializeToRaw(*this)); }
-
 std::string BtcBlock::toPrettyString() const {
   return fmt::sprintf(
       "BtcBlock{version=%lu, prev=%s, merkleRoot=%s, timestamp=%lu, "
