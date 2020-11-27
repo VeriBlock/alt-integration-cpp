@@ -38,8 +38,6 @@ struct VTB {
   //! (memory only) indicates whether we already did 'checkPayloads' on this VTB
   mutable bool checked{false};
 
-  std::string toHex() const { return HexStr(toVbkEncoding()); }
-
   size_t estimateSize() const { return toVbkEncoding().size(); }
 
   std::string toPrettyString() const;

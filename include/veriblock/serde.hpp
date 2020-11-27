@@ -324,6 +324,15 @@ bool DeserializeFromHex(const std::string& hex,
 }
 
 template <typename T>
+bool DeserializeFromRawHex(const std::string& hex,
+                           T& out,
+                           ValidationState& state) {
+  auto data = ParseHex(hex);
+  ReadStream stream(data);
+  return DeserializeFromRaw(stream, out, state);
+}
+
+template <typename T>
 std::vector<uint8_t> SerializeToVbkEncoding(const T& obj) {
   WriteStream w;
   obj.toVbkEncoding(w);
@@ -339,6 +348,11 @@ std::vector<uint8_t> SerializeToRaw(const T& obj) {
 
 template <typename T>
 std::string SerializeToHex(const T& obj) {
+  return HexStr(SerializeToVbkEncoding<T>(obj));
+}
+
+template <typename T>
+std::string SerializeToRawHex(const T& obj) {
   return HexStr(SerializeToRaw<T>(obj));
 }
 

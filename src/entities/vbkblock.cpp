@@ -50,8 +50,6 @@ VbkBlock::short_hash_t VbkBlock::getShortHash() const {
   return getHash().trimLE<VbkBlock::short_hash_t::size()>();
 }
 
-std::string VbkBlock::toHex() const { return HexStr(toRaw()); }
-
 void VbkBlock::toRaw(WriteStream& stream) const {
   stream.writeBE<int32_t>(height);
   stream.writeBE<int16_t>(version);

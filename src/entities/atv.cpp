@@ -41,8 +41,6 @@ std::string ATV::toPrettyString() const {
                       blockOfProof.getHash().toHex());
 }
 
-std::string ATV::toHex() const { return HexStr(toVbkEncoding()); }
-
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                                 ATV& atv,
                                                 ValidationState& state) {

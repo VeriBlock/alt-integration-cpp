@@ -13,10 +13,6 @@ void BtcTx::toVbkEncoding(WriteStream& stream) const {
 
 uint256 BtcTx::getHash() const { return sha256twice(tx); }
 
-std::string BtcTx::toHex() const {
-  return HexStr(tx);
-}
-
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                  BtcTx& out,
                                  ValidationState& state) {
