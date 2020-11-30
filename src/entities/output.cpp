@@ -16,6 +16,13 @@ void Output::toVbkEncoding(WriteStream& stream) const {
   coin.toVbkEncoding(stream);
 }
 
+size_t Output::estimateSize() const {
+  size_t size = 0;
+  size += address.estimateSize();
+  size += coin.estimateSize();
+  return size;
+}
+
 std::string Output::toPrettyString() const {
   return fmt::sprintf(
       "Output{address=%s, coin=%lld}", address.toString(), coin.units);

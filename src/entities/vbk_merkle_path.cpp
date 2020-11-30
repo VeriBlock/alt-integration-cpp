@@ -19,6 +19,18 @@ void VbkMerklePath::toVbkEncoding(WriteStream& stream) const {
   }
 }
 
+size_t VbkMerklePath::estimateSize() const {
+  size_t size = 0;
+  size += singleFixedBEValueSize(treeIndex);
+  size += singleFixedBEValueSize(index);
+  size += singleByteLenValueSize(subject);
+  size += singleFixedBEValueSize((int32_t)layers.size());
+  for (const auto& layer: layers) {
+    size += singleByteLenValueSize(layer);
+  }
+  return size;
+}
+
 uint128 VbkMerklePath::calculateMerkleRoot() const {
   if (layers.empty()) {
     return subject.trim<VBK_MERKLE_ROOT_HASH_SIZE>();

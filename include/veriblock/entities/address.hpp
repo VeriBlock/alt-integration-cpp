@@ -83,6 +83,8 @@ struct Address {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
  private:
   Address(AddressType type, std::string addr)
       : m_Type(type), m_Address(std::move(addr)) {}

@@ -29,6 +29,20 @@ std::vector<uint8_t> ATV::toVbkEncoding() const {
   return stream.data();
 }
 
+size_t ATV::estimateSize() const {
+  size_t size = 0;
+  size += sizeof(version);
+  if (version == 1) {
+    size += transaction.estimateSize();
+    size += merklePath.estimateSize();
+    size += blockOfProof.estimateSize();
+  } else {
+    VBK_ASSERT_MSG(
+        false, "ATV estimate size version=%d is not implemented", version);
+  }
+  return size;
+}
+
 ATV::id_t ATV::getId() const {
   auto left = transaction.getHash();
   auto right = blockOfProof.getHash();

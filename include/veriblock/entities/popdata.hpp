@@ -38,8 +38,6 @@ struct PopData {
     atvs.insert(atvs.end(), p.atvs.begin(), p.atvs.end());
   }
 
-  size_t estimateSize() const { return toVbkEncoding().size(); }
-
   /**
    * Convert PopData to data stream using Vbk byte format
    * @param stream data stream to write into
@@ -51,6 +49,8 @@ struct PopData {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  size_t estimateSize() const;
 
   std::string toPrettyString() const;
 

@@ -77,6 +77,10 @@ static const std::string defaultVtbEncoded =
     "b0935637860679ddd55ee4fd21082e18686eb53c1f4e259e6a0df23721a0b3b4b7ab5c9b92"
     "11070211cafff01c3f01";
 
+static const std::string defaultVbkBlockEncoded =
+    "41000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e"
+    "26bbfda7d5e4462ef24ae02d67e47d785c9b90f3010100000000000001";
+
 template <typename T>
 void generateRandomBytes(T begin, T end) {
   std::generate(begin, end, []() -> uint8_t { return rand() & 0xFF; });
