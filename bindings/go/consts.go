@@ -37,6 +37,9 @@ const (
 	PublicKeySize       = 88
 	AddressSize         = 30
 	MultisigAddressSize = 30
+	//! absolute maximum allowed size for altchain hash
+	MinAltHashSize = 12
+	MaxAltHashSize = 1024
 
 	VbkMaximumDifficulty = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
 

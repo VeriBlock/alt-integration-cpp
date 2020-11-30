@@ -8,8 +8,8 @@ import (
 )
 
 var defaultAltBlock = AltBlock{
-	parseHex("1fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c"),
-	[]byte{},
+	[]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14},
+	[]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 	156,
 	1466,
 }

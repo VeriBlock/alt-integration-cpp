@@ -105,6 +105,42 @@ func (v *BlockIndex) GetDifficulty() uint32 {
 	return v.Header.GetDifficulty()
 }
 
+// GetVbkBlockHeader...
+func (v *BlockIndex) GetVbkBlockHeader() (block *VbkBlock, err error) {
+	block = new(VbkBlock)
+	var buffer bytes.Buffer
+	err = v.Header.ToRaw(&buffer)
+	if err != nil {
+		return nil, err
+	}
+	err = block.FromRaw(&buffer)
+	return block, err
+}
+
+// GetBtcBlockHeader ...
+func (v *BlockIndex) GetBtcBlockHeader() (block *BtcBlock, err error) {
+	block = new(BtcBlock)
+	var buffer bytes.Buffer
+	err = v.Header.ToRaw(&buffer)
+	if err != nil {
+		return nil, err
+	}
+	err = block.FromRaw(&buffer)
+	return block, err
+}
+
+// GetAltBlockHeader ...
+func (v *BlockIndex) GetAltBlockHeader() (block *AltBlock, err error) {
+	block = new(AltBlock)
+	var buffer bytes.Buffer
+	err = v.Header.ToRaw(&buffer)
+	if err != nil {
+		return nil, err
+	}
+	err = block.FromRaw(&buffer)
+	return block, err
+}
+
 // ToRaw ...
 func (v *BlockIndex) ToRaw(stream io.Writer) error {
 	if err := binary.Write(stream, binary.BigEndian, v.Height); err != nil {
