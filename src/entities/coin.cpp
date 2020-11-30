@@ -11,6 +11,10 @@ void Coin::toVbkEncoding(WriteStream& stream) const {
   writeSingleBEValue(stream, units);
 }
 
+size_t Coin::estimateSize() const {
+  return singleBEValueSize(units);
+}
+
 bool Coin::operator==(const Coin& other) const noexcept {
   return units == other.units;
 }

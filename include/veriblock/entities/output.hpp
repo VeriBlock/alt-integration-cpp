@@ -39,6 +39,8 @@ struct Output {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   std::string toPrettyString() const;
 };
 

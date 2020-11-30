@@ -38,8 +38,6 @@ struct VTB {
   //! (memory only) indicates whether we already did 'checkPayloads' on this VTB
   mutable bool checked{false};
 
-  size_t estimateSize() const { return toVbkEncoding().size(); }
-
   std::string toPrettyString() const;
 
   /**
@@ -53,6 +51,8 @@ struct VTB {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  size_t estimateSize() const;
 
   /**
    * Calculate a VTB id that is the sha256 hash of the VTB rawBytes

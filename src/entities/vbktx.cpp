@@ -30,6 +30,26 @@ void VbkTx::toVbkEncoding(WriteStream& stream) const {
   writeSingleByteLenValue(stream, publicKey);
 }
 
+size_t VbkTx::estimateSize() const {
+  size_t rawSize = 0;
+  rawSize += networkByteSize(networkOrType);
+  rawSize += sourceAddress.estimateSize();
+  rawSize += sourceAmount.estimateSize();
+  rawSize += sizeof((uint8_t)outputs.size());
+  for (const auto& output : outputs) {
+    rawSize += output.estimateSize();
+  }
+  rawSize += singleBEValueSize(signatureIndex);
+  rawSize += publicationData.estimateSize();
+
+  size_t size = 0;
+  size += varLenValueSize(rawSize);
+  size += singleByteLenValueSize(signature);
+  size += singleByteLenValueSize(publicKey);
+
+  return size;
+}
+
 uint256 VbkTx::getHash() const {
   WriteStream stream;
   toRaw(stream);

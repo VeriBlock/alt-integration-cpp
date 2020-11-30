@@ -29,6 +29,28 @@ void VbkPopTx::toVbkEncoding(WriteStream& stream) const {
   writeSingleByteLenValue(stream, publicKey);
 }
 
+size_t VbkPopTx::estimateSize() const {
+  size_t rawSize = 0;
+  rawSize += networkByteSize(networkOrType);
+  rawSize += address.estimateSize();
+  rawSize += publishedBlock.estimateSize();
+  rawSize += bitcoinTransaction.estimateSize();
+  rawSize += merklePath.estimateSize();
+  rawSize += blockOfProof.estimateSize();
+
+  rawSize += singleBEValueSize(blockOfProofContext.size());
+  for (const auto& block : blockOfProofContext) {
+    rawSize += block.estimateSize();
+  }
+
+  size_t size = 0;
+  size += varLenValueSize(rawSize);
+  size += singleByteLenValueSize(signature);
+  size += singleByteLenValueSize(publicKey);
+
+  return size;
+}
+
 uint256 VbkPopTx::getHash() const {
   WriteStream stream;
   toRaw(stream);

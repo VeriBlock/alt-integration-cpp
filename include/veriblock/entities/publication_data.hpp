@@ -40,6 +40,8 @@ struct PublicationData {
    * @param stream data stream to write into
    */
   void toRaw(WriteStream& stream) const;
+
+  size_t estimateSize() const;
 };
 
 //! @private

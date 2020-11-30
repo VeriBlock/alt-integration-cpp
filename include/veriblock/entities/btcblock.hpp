@@ -47,6 +47,8 @@ struct BtcBlock {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   uint32_t getDifficulty() const;
 
   uint32_t getBlockTime() const;

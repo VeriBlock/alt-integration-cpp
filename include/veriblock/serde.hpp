@@ -177,6 +177,24 @@ void writeSingleFixedBEValue(WriteStream& stream, T value) {
  */
 void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value);
 
+size_t singleByteLenValueSize(Slice<const uint8_t> value);
+
+size_t singleByteLenValueSize(size_t valueSize);
+
+size_t singleBEValueSize(int64_t value);
+
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type>
+size_t singleFixedBEValueSize(T value) {
+  WriteStream dataStream;
+  dataStream.writeBE<T>(value);
+  return singleByteLenValueSize(dataStream.data());
+}
+
+size_t varLenValueSize(Slice<const uint8_t> value);
+
+size_t varLenValueSize(size_t valueSize);
+
 /**
  * Stores pair of TxType and VBK network byte.
  */
@@ -218,6 +236,8 @@ bool readNetworkByte(ReadStream& stream,
  * byte after
  */
 void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
+
+size_t networkByteSize(NetworkBytePair networkOrType);
 
 /**
  * Reads array of entities of type T.
@@ -296,6 +316,25 @@ void writeArrayOf(WriteStream& w,
                   const std::vector<T>& t,
                   std::function<void(WriteStream&, const T& t)> f) {
   return writeContainer<std::vector<T>>(w, t, f);
+}
+
+template <typename Container>
+size_t estimateContainerSize(
+    const Container& t,
+    std::function<size_t(const typename Container::value_type& t)>
+        f) {
+  size_t size = 0;
+  size += singleBEValueSize((int64_t)t.size());
+  for (auto& v : t) {
+    size += f(v);
+  }
+  return size;
+}
+
+template <typename T>
+size_t estimateArraySizeOf(const std::vector<T>& t,
+                           std::function<size_t(const T& t)> f) {
+  return estimateContainerSize<std::vector<T>>(t, f);
 }
 
 template <typename T>

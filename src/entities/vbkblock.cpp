@@ -26,6 +26,23 @@ std::vector<uint8_t> VbkBlock::toVbkEncoding() const {
   return stream.data();
 }
 
+size_t VbkBlock::estimateSize() const {
+  size_t rawSize = 0;
+  rawSize += sizeof(height);
+  rawSize += sizeof(version);
+  rawSize += previousBlock.size();
+  rawSize += previousKeystone.size();
+  rawSize += secondPreviousKeystone.size();
+  rawSize += merkleRoot.size();
+  rawSize += sizeof(timestamp);
+  rawSize += sizeof(difficulty);
+  rawSize += 5; // nonce
+
+  size_t size = 0;
+  size += singleByteLenValueSize(rawSize);
+  return size;
+}
+
 uint32_t VbkBlock::getDifficulty() const { return difficulty; }
 
 uint32_t VbkBlock::getBlockTime() const { return timestamp; }

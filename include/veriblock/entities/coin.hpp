@@ -29,6 +29,8 @@ struct Coin {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   /**
    * Compare two Coins for equality
    * @param other Coin

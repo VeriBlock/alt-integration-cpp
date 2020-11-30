@@ -29,3 +29,12 @@ TEST(AltPopTx, DeserializeFromVbkEncoding) {
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(decodedPopDataNew, expectedPopData);
 }
+
+TEST(PopData, EstimateSize) {
+  ATV atv = AssertDeserializeFromHex<ATV>(defaultAtvEncoded);
+  VTB vtb = AssertDeserializeFromHex<VTB>(defaultVtbEncoded);
+  VbkBlock vbkBlock = AssertDeserializeFromHex<VbkBlock>(defaultVbkBlockEncoded);
+
+  PopData popData = {1, {vbkBlock}, {vtb}, {atv}};
+  EXPECT_EQ(popData.estimateSize(), popData.toVbkEncoding().size());
+}

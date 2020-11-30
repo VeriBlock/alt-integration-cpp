@@ -53,6 +53,8 @@ struct VbkTx {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   /**
    * Calculate the hash of the vbk transaction
    * @return hash vbk transaction hash

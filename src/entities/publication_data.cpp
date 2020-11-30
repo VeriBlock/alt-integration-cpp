@@ -14,6 +14,18 @@ void PublicationData::toRaw(WriteStream& stream) const {
   writeVarLenValue(stream, payoutInfo);
 }
 
+size_t PublicationData::estimateSize() const {
+  size_t rawSize = 0;
+  rawSize += singleBEValueSize(identifier);
+  rawSize += varLenValueSize(header);
+  rawSize += varLenValueSize(contextInfo);
+  rawSize += varLenValueSize(payoutInfo);
+
+  size_t size = 0;
+  size += varLenValueSize(rawSize);
+  return size;
+}
+
 std::string PublicationData::toPrettyString() const {
 	return fmt::sprintf("PublicationData{id=%lld, header=%s, payoutInfo=%s}",
 						identifier,

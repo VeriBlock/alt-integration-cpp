@@ -43,6 +43,27 @@ std::vector<uint8_t> PopData::toVbkEncoding() const {
   return stream.data();
 }
 
+size_t PopData::estimateSize() const {
+  size_t size = 0;
+  size += sizeof(version);
+  VBK_ASSERT_MSG(version == 1,
+                 "PopData estimate size version=%d is not implemented",
+                 version);
+  size += estimateArraySizeOf<VbkBlock>(
+    context, [&](const VbkBlock& v) {
+      return v.estimateSize();
+    });
+  size += estimateArraySizeOf<VTB>(
+    vtbs, [&](const VTB& vtb) {
+      return vtb.estimateSize();
+    });
+  size += estimateArraySizeOf<ATV>(
+    atvs, [&](const ATV& atv) {
+      return atv.estimateSize();
+    });
+  return size;
+}
+
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 PopData& pd,
                                 ValidationState& state) {
