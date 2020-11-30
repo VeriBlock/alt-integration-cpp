@@ -46,10 +46,11 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
       height >= 0,
       "AltBlockTree can be bootstrapped with block height >= 0, got=%d",
       height);
+  auto max = std::numeric_limits<block_height_t>::max() / 2;
   VBK_ASSERT_MSG(
-      height < std::numeric_limits<block_height_t>::max() / 2,
+      height < max,
       "AltBlockTree can be bootstrapped with block height <= %d, got=%d",
-      std::numeric_limits<block_height_t>::max() / 2,
+      max,
       height);
 
   auto* index =
@@ -57,8 +58,7 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
-  auto height = index->getHeight();
-
+  height = index->getHeight();
   index->setFlag(BLOCK_APPLIED);
   ++appliedBlockCount;
   index->setFlag(BLOCK_BOOTSTRAP);
