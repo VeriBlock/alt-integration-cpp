@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"io"
 	"math"
 
@@ -28,6 +29,13 @@ func (v *AltBlockAddon) ToRaw(stream io.Writer) error {
 		return err
 	}
 	return veriblock.WriteArrayOf(stream, v.VbkBlockIDs, veriblock.WriteSingleByteLenValue)
+}
+
+// ToRawBytes ...
+func (v *AltBlockAddon) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
 }
 
 // FromRaw ...
@@ -62,4 +70,10 @@ func (v *AltBlockAddon) FromRaw(stream io.Reader) error {
 		copy(v.VbkBlockIDs[i][:], vbkblockid.([]byte))
 	}
 	return nil
+}
+
+// FromRawBytes ...
+func (v *AltBlockAddon) FromRawBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer)
 }
