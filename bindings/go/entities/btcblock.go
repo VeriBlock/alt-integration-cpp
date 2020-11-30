@@ -60,6 +60,13 @@ func (v *BtcBlock) ToVbkEncoding(stream io.Writer) error {
 	return veriblock.WriteSingleByteLenValue(stream, blockStream.Bytes())
 }
 
+// ToVbkEncodingBytes ...
+func (v *BtcBlock) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
+}
+
 // ToRaw ...
 func (v *BtcBlock) ToRaw(stream io.Writer) error {
 	if err := binary.Write(stream, binary.LittleEndian, v.Version); err != nil {
@@ -80,6 +87,13 @@ func (v *BtcBlock) ToRaw(stream io.Writer) error {
 	return binary.Write(stream, binary.LittleEndian, v.Nonce)
 }
 
+// ToRawBytes ...
+func (v *BtcBlock) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromVbkEncoding ...
 func (v *BtcBlock) FromVbkEncoding(stream io.Reader) error {
 	blockBytes, err := veriblock.ReadSingleByteLenValue(stream, veriblock.BtcHeaderSize, veriblock.BtcHeaderSize)
@@ -88,6 +102,12 @@ func (v *BtcBlock) FromVbkEncoding(stream io.Reader) error {
 	}
 	blockStream := bytes.NewReader(blockBytes)
 	return v.FromRaw(blockStream)
+}
+
+// FromVbkEncodingBytes ...
+func (v *BtcBlock) FromVbkEncodingBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer)
 }
 
 // FromRaw ...
@@ -110,6 +130,12 @@ func (v *BtcBlock) FromRaw(stream io.Reader) error {
 		return err
 	}
 	return binary.Read(stream, binary.LittleEndian, &v.Nonce)
+}
+
+// FromRawBytes ...
+func (v *BtcBlock) FromRawBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer)
 }
 
 // ToJSON ...

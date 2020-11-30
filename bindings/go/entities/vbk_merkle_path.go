@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"encoding/hex"
 	"io"
 
@@ -41,6 +42,13 @@ func (v *VbkMerklePath) ToVbkEncoding(stream io.Writer) error {
 	return nil
 }
 
+// ToVbkEncodingBytes ...
+func (v *VbkMerklePath) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromVbkEncoding ...
 func (v *VbkMerklePath) FromVbkEncoding(stream io.Reader) error {
 	if err := veriblock.ReadSingleBEValue(stream, &v.TreeIndex); err != nil {
@@ -65,6 +73,12 @@ func (v *VbkMerklePath) FromVbkEncoding(stream io.Reader) error {
 		copy(v.Layers[i][:], layer.([]byte))
 	}
 	return nil
+}
+
+// FromVbkEncodingBytes ...
+func (v *VbkMerklePath) FromVbkEncodingBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer)
 }
 
 // ToJSON ...

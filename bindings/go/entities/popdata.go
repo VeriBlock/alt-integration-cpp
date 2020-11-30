@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -49,6 +50,13 @@ func (v *PopData) ToVbkEncoding(stream io.Writer) error {
 		}
 	}
 	return nil
+}
+
+// ToVbkEncodingBytes ...
+func (v *PopData) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
 }
 
 // FromVbkEncoding ...
@@ -105,4 +113,10 @@ func (v *PopData) FromVbkEncoding(stream io.Reader) error {
 		v.Vtbs[i] = *vtb.(*Vtb)
 	}
 	return nil
+}
+
+// FromVbkEncodingBytes ...
+func (v *PopData) FromVbkEncodingBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer)
 }

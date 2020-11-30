@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"encoding/binary"
 	"io"
 	"math"
@@ -20,6 +21,13 @@ func (v *BtcBlockAddon) ToRaw(stream io.Writer) error {
 	})
 }
 
+// ToRawBytes ...
+func (v *BtcBlockAddon) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromRaw ...
 func (v *BtcBlockAddon) FromRaw(stream io.Reader) error {
 	refs, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt32, func(r io.Reader) (interface{}, error) {
@@ -37,4 +45,10 @@ func (v *BtcBlockAddon) FromRaw(stream io.Reader) error {
 		v.Refs[i] = *ref.(*int32)
 	}
 	return nil
+}
+
+// FromRawBytes ...
+func (v *BtcBlockAddon) FromRawBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer)
 }
