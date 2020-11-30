@@ -40,21 +40,11 @@ func (v *AltBlock) GetDifficulty() uint32 {
 
 // ToVbkEncoding ...
 func (v *AltBlock) ToVbkEncoding(stream io.Writer) error {
-	if err := binary.Write(stream, binary.BigEndian, uint32(len(v.Hash))); err != nil {
+	if err := veriblock.WriteSingleByteLenValue(stream, v.Hash); err != nil {
 		return err
 	}
-	for i := 0; i < len(v.Hash); i++ {
-		if err := binary.Write(stream, binary.BigEndian, v.Hash[i]); err != nil {
-			return err
-		}
-	}
-	if err := binary.Write(stream, binary.BigEndian, uint32(len(v.PreviousBlock))); err != nil {
+	if err := veriblock.WriteSingleByteLenValue(stream, v.PreviousBlock); err != nil {
 		return err
-	}
-	for i := 0; i < len(v.PreviousBlock); i++ {
-		if err := binary.Write(stream, binary.BigEndian, v.PreviousBlock[i]); err != nil {
-			return err
-		}
 	}
 	if err := binary.Write(stream, binary.BigEndian, v.Height); err != nil {
 		return err
@@ -83,24 +73,12 @@ func (v *AltBlock) ToRawBytes() ([]byte, error) {
 
 // FromVbkEncoding ...
 func (v *AltBlock) FromVbkEncoding(stream io.Reader) error {
-	var hashSize uint32
-	if err := binary.Read(stream, binary.BigEndian, &hashSize); err != nil {
+	var err error
+	if v.Hash, err = veriblock.ReadSingleByteLenValue(stream, veriblock.MinAltHashSize, veriblock.MaxAltHashSize); err != nil {
 		return err
 	}
-	v.Hash = make([]byte, hashSize)
-	for i := uint32(0); i < hashSize; i++ {
-		if err := binary.Read(stream, binary.BigEndian, &v.Hash[i]); err != nil {
-			return err
-		}
-	}
-	if err := binary.Read(stream, binary.BigEndian, &hashSize); err != nil {
+	if v.PreviousBlock, err = veriblock.ReadSingleByteLenValue(stream, veriblock.MinAltHashSize, veriblock.MaxAltHashSize); err != nil {
 		return err
-	}
-	v.PreviousBlock = make([]byte, hashSize)
-	for i := uint32(0); i < hashSize; i++ {
-		if err := binary.Read(stream, binary.BigEndian, &v.PreviousBlock[i]); err != nil {
-			return err
-		}
 	}
 	if err := binary.Read(stream, binary.BigEndian, &v.Height); err != nil {
 		return err

@@ -63,6 +63,9 @@ struct MerkleTree {
  protected:
   void buildTree(std::vector<hash_t> layer) {
     size_t n = layer.size();
+    if (n == 0) {
+      return;
+    }
     if (n == 1) {
       layers = {layer};
       return;
@@ -172,7 +175,9 @@ struct PayloadsMerkleTree
   }
 
   hash_t finalizeRoot() {
-    VBK_ASSERT(!this->layers.empty());
+    if (this->layers.empty()) {
+      return hash_t();
+    }
     return this->layers[0][0].reverse();
   }
 };

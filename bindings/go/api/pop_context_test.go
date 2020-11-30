@@ -1,7 +1,6 @@
 package api
 
 import (
-	"bytes"
 	"testing"
 
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
@@ -22,13 +21,10 @@ func TestPopContextSubmitVbk(t *testing.T) {
 	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)
 
-	var buffer bytes.Buffer
-	index.Header.ToRaw(&buffer)
-	var vbkBlock entities.VbkBlock
-	err = vbkBlock.FromRaw(&buffer)
+	vbkBlock, err := index.GetVbkBlockHeader()
 	assert.NoError(err)
 
-	state := popContext.SubmitVbk(&vbkBlock)
+	state := popContext.SubmitVbk(vbkBlock)
 	// state == 0, valid vbkBlock
 	assert.Equal(0, state)
 
@@ -55,20 +51,17 @@ func TestPopContextSubmitVtb(t *testing.T) {
 	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)
 
-	var buffer bytes.Buffer
-	index.Header.ToRaw(&buffer)
-	var vbkBlock entities.VbkBlock
-	err = vbkBlock.FromRaw(&buffer)
+	vbkBlock, err := index.GetVbkBlockHeader()
 	assert.NoError(err)
 
-	state := popContext.SubmitVbk(&vbkBlock)
+	state := popContext.SubmitVbk(vbkBlock)
 	// state == 0, valid vbkBlock
 	assert.Equal(0, state)
 
 	btcTip, err := popContext.BtcBestBlock()
 	assert.NoError(err)
 
-	vtb, err := miner.MineVtb(&vbkBlock, btcTip.GetHash())
+	vtb, err := miner.MineVtb(vbkBlock, btcTip.GetHash())
 	assert.NoError(err)
 
 	state = popContext.SubmitVtb(vtb)
