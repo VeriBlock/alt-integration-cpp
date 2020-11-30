@@ -51,7 +51,6 @@ set(SOURCES
         $<TARGET_OBJECTS:pop_utils>
         $<TARGET_OBJECTS:entities>
         $<TARGET_OBJECTS:sha256>
-        $<TARGET_OBJECTS:bigdecimal>
         $<TARGET_OBJECTS:vblake>
         $<TARGET_OBJECTS:progpow>
         $<TARGET_OBJECTS:ethash>

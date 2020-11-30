@@ -72,6 +72,13 @@ function(add_flag flag)
     endif ()
 endfunction()
 
+function(target_add_flag target visibility flag)
+    check_cxx_compiler_flag(${flag} CXXFLAG_${flag})
+    if (CXXFLAG_${flag} EQUAL 1)
+        target_compile_options(${target} ${visibility} ${flag})
+    endif ()
+endfunction()
+
 function(add_c_flag flag)
     check_c_compiler_flag(${flag} CFLAG_${flag})
     if (CFLAG_${flag} EQUAL 1)
