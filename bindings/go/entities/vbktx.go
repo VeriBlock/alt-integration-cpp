@@ -43,6 +43,13 @@ func (v *VbkTx) ToVbkEncoding(stream io.Writer) error {
 	return veriblock.WriteSingleByteLenValue(stream, v.PublicKey)
 }
 
+// ToVbkEncodingBytes ...
+func (v *VbkTx) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
+}
+
 // ToRaw ...
 func (v *VbkTx) ToRaw(stream io.Writer) error {
 	if err := v.NetworkOrType.Write(stream); err != nil {
@@ -72,6 +79,13 @@ func (v *VbkTx) ToRaw(stream io.Writer) error {
 	return veriblock.WriteVarLenValue(stream, pubBytesStream.Bytes())
 }
 
+// ToRawBytes ...
+func (v *VbkTx) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromVbkEncoding ...
 func (v *VbkTx) FromVbkEncoding(stream io.Reader) error {
 	rawTx, err := veriblock.ReadVarLenValue(stream, 0, veriblock.MaxRawtxSizeVbktx)
@@ -88,6 +102,12 @@ func (v *VbkTx) FromVbkEncoding(stream io.Reader) error {
 	}
 	rawTxStream := bytes.NewReader(rawTx)
 	return v.FromRaw(rawTxStream, signature, publicKey)
+}
+
+// FromVbkEncodingBytes ...
+func (v *VbkTx) FromVbkEncodingBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer)
 }
 
 // FromRaw ...
@@ -125,6 +145,12 @@ func (v *VbkTx) FromRaw(stream io.Reader, signature []byte, publicKey []byte) er
 	v.Signature = signature
 	v.PublicKey = publicKey
 	return nil
+}
+
+// FromRawBytes ...
+func (v *VbkTx) FromRawBytes(data []byte, signature []byte, publicKey []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer, signature, publicKey)
 }
 
 // ToJSON ...

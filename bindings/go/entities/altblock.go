@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"encoding/binary"
 	"encoding/hex"
 	"io"
@@ -61,9 +62,23 @@ func (v *AltBlock) ToVbkEncoding(stream io.Writer) error {
 	return binary.Write(stream, binary.BigEndian, v.Timestamp)
 }
 
+// ToVbkEncodingBytes ...
+func (v *AltBlock) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
+}
+
 // ToRaw ...
 func (v *AltBlock) ToRaw(stream io.Writer) error {
 	return v.ToVbkEncoding(stream)
+}
+
+// ToRawBytes ...
+func (v *AltBlock) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
 }
 
 // FromVbkEncoding ...
@@ -93,9 +108,21 @@ func (v *AltBlock) FromVbkEncoding(stream io.Reader) error {
 	return binary.Read(stream, binary.BigEndian, &v.Timestamp)
 }
 
+// FromVbkEncodingBytes ...
+func (v *AltBlock) FromVbkEncodingBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer)
+}
+
 // FromRaw ...
 func (v *AltBlock) FromRaw(stream io.Reader) error {
 	return v.FromVbkEncoding(stream)
+}
+
+// FromRawBytes
+func (v *AltBlock) FromRawBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer)
 }
 
 // ToJSON ...

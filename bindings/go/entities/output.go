@@ -1,6 +1,9 @@
 package entities
 
-import "io"
+import (
+	"bytes"
+	"io"
+)
 
 // Output ...
 type Output struct {
@@ -17,12 +20,25 @@ func (v *Output) ToVbkEncoding(stream io.Writer) error {
 	return v.Coin.ToVbkEncoding(stream)
 }
 
+// ToVbkEncodingBytes ...
+func (v *Output) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromVbkEncoding ...
 func (v *Output) FromVbkEncoding(stream io.Reader) error {
 	if err := v.Address.FromVbkEncoding(stream); err != nil {
 		return err
 	}
 	return v.Coin.FromVbkEncoding(stream)
+}
+
+// FromVbkEncodingBytes ...
+func (v *Output) FromVbkEncodingBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer)
 }
 
 // ToJSON ...

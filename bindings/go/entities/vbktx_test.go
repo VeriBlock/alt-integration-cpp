@@ -22,7 +22,7 @@ var (
 		},
 		vbktxAddress1,
 		Coin{3500000000},
-		[]Output{Output{
+		[]Output{{
 			vbktxAddress2,
 			Coin{3499999999},
 		}},

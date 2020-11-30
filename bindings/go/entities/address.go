@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
 	"errors"
@@ -136,6 +137,12 @@ func (v *Address) FromVbkEncoding(stream io.Reader) error {
 	return v.FromString(addressText)
 }
 
+// FromVbkEncodingBytes ...
+func (v *Address) FromVbkEncodingBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer)
+}
+
 // FromString ...
 func (v *Address) FromString(str string) error {
 	address, err := NewAddress(str)
@@ -167,6 +174,13 @@ func (v *Address) ToVbkEncoding(stream io.Writer) error {
 	}
 	veriblock.WriteSingleByteLenValue(stream, decoded)
 	return nil
+}
+
+// ToVbkEncodingBytes ...
+func (v *Address) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
 }
 
 // ToString ...
