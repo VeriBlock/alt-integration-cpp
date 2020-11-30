@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/hex"
-	"fmt"
 	"math/rand"
 	"testing"
 
@@ -26,8 +25,7 @@ func generateTestPopContext(t *testing.T) PopContext {
 		block.PreviousBlock = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 		block.Timestamp = 100
 		blockBytes, _ := block.ToVbkEncodingBytes()
-		fmt.Println(hex.EncodeToString(blockBytes))
-		return "0c0102030405060708090a0b0c0c0000000000000000000000000000000100000064"
+		return hex.EncodeToString(blockBytes)
 	})
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
 		return header

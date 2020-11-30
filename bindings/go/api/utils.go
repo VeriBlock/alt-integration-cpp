@@ -18,7 +18,7 @@ func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlock *entities.Al
 	}
 
 	popDataBytes, err := popData.ToVbkEncodingBytes()
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 
