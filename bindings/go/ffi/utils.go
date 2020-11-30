@@ -64,3 +64,15 @@ func BtcBlockGetHash(blockBytes []byte) [veriblock.Sha256HashSize]byte {
 	C.VBK_BtcBlock_getHash(blockBytesC, C.int(len(blockBytes)), hashBytesC, hashBytesSizeC)
 	return hashBytes
 }
+
+// AltBlockCalculateContextInfoContainerHash ...
+func (v *PopContext) AltBlockCalculateContextInfoContainerHash(prevBlockHash []byte, popDataBytes []byte) [veriblock.Sha256HashSize]byte {
+	var hashBytesSize int
+	var hashBytes [veriblock.Sha256HashSize]byte
+	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
+	hashBytesSizeC := (*C.int)(unsafe.Pointer(&hashBytesSize))
+	prevBlockHashC := (*C.uint8_t)(unsafe.Pointer(&prevBlockHash[0]))
+	popDataBytesC := (*C.uint8_t)(unsafe.Pointer(&popDataBytes[0]))
+	C.VBK_AltBlock_calculateContextInfoContainerHash(v.ref, prevBlockHashC, C.int(len(prevBlockHash)), popDataBytesC, C.int(len(popDataBytes)), hashBytesC, hashBytesSizeC)
+	return hashBytes
+}

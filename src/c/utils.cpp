@@ -3,14 +3,16 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/c/utils.h"
-
 #include <stdio.h>
 
 #include <vector>
 
+#include "pop_context.hpp"
+#include "veriblock/alt-util.hpp"
+#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vtb.hpp"
 
@@ -98,4 +100,34 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
 
   std::copy(id.begin(), id.end(), hash_bytes);
   *hash_bytes_size = id.size();
+}
+
+void VBK_AltBlock_calculateContextInfoContainerHash(
+    PopContext* self,
+    const uint8_t* prev_block_hash,
+    int prev_block_hash_size,
+    const uint8_t* pop_data_bytes,
+    int pop_data_bytes_size,
+    uint8_t* out_hash,
+    int* out_hash_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+  VBK_ASSERT(out_hash);
+  VBK_ASSERT(out_hash_size);
+  VBK_ASSERT(pop_data_bytes);
+  VBK_ASSERT(prev_block_hash);
+
+  using namespace altintegration;
+  std::vector<uint8_t> block_hash(prev_block_hash,
+                                  prev_block_hash + prev_block_hash_size);
+  auto pop_data = AssertDeserializeFromVbkEncoding<PopData>(
+      Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
+  auto* index = self->context->altTree->getBlockIndex(block_hash);
+
+  auto hash = CalculateContextInfoContainerHash(
+      pop_data, *index, self->context->altTree->getParams());
+
+  memcpy(out_hash, hash.data(), hash.size());
+  *out_hash_size = hash.size();
 }
