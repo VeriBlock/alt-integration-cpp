@@ -41,18 +41,19 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
   }
 
   auto block = alt_config_->getBootstrapBlock();
+  auto height = block.getHeight();
   VBK_ASSERT_MSG(
-      block.getHeight() >= 0,
+      height >= 0,
       "AltBlockTree can be bootstrapped with block height >= 0, got=%d",
-      block.getHeight());
+      height);
   VBK_ASSERT_MSG(
-      block.getHeight() < std::numeric_limits<block_height_t>::max() / 2,
+      height < std::numeric_limits<block_height_t>::max() / 2,
       "AltBlockTree can be bootstrapped with block height <= %d, got=%d",
       std::numeric_limits<block_height_t>::max() / 2,
-      block.getHeight());
+      height);
 
-  auto* index = insertBlockHeader(std::make_shared<AltBlock>(std::move(block)),
-                                  block.getHeight());
+  auto* index =
+      insertBlockHeader(std::make_shared<AltBlock>(std::move(block)), height);
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
