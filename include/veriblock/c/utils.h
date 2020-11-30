@@ -13,6 +13,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "veriblock/c/pop_context.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -101,6 +103,31 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
                           int block_bytes_size,
                           uint8_t* hash_bytes,
                           int* hash_bytes_size);
+
+/**
+ * Calculate ContextInfoContainer hash for the provided altintegration::PopData
+ * and previous block hash for the current block
+ *
+ * @param[in] self PopContext
+ * @param[in] prev_block_hash, hash of the previous altintegration::AltBlock
+ * hash for the current block
+ * @param[in] prev_block_hash_size, size of the previous block hash
+ * @param[in] pop_data_bytes, bytes of the provided altintegration::PopData in
+ * the toVbkEncoding format
+ * @param[in] pop_data_bytes_size, size of the provided altintegration::PopData
+ * bytes
+ * @param[out] out_hash, sha256 hash of the ContextInfoContainer
+ * @param[out] out_hash_size, size of the sha256 hash size
+ * @ingroup c-api
+ */
+void VBK_AltBlock_calculateContextInfoContainerHash(
+    PopContext* self,
+    const uint8_t* prev_block_hash,
+    int prev_block_hash_size,
+    const uint8_t* pop_data_bytes,
+    int pop_data_bytes_size,
+    uint8_t* out_hash,
+    int* out_hash_size);
 
 #ifdef __cplusplus
 }  // end of extern "C"

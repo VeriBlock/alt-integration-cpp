@@ -4,10 +4,15 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"io"
+
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
 // AltHash is dynamic byte hash of ALT blocks
 type AltHash []byte
+
+// ContextInfoContainerHash
+type ContextInfoContainerHash [veriblock.Sha256HashSize]byte
 
 // AltBlock ...
 type AltBlock struct {
