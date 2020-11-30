@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -118,6 +119,13 @@ func (v *BlockIndex) ToRaw(stream io.Writer) error {
 	return v.Addon.ToRaw(stream)
 }
 
+// ToRawBytes ...
+func (v *BlockIndex) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromRaw ...
 func (v *BlockIndex) FromRaw(stream io.Reader) error {
 	if err := binary.Read(stream, binary.BigEndian, &v.Height); err != nil {
@@ -132,6 +140,12 @@ func (v *BlockIndex) FromRaw(stream io.Reader) error {
 	}
 	v.Status = BlockStatus(status)
 	return v.Addon.FromRaw(stream)
+}
+
+// FromRawBytes ...
+func (v *BlockIndex) FromRawBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer)
 }
 
 // ToJSON ...

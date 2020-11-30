@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -36,6 +37,13 @@ func (v *PopState) ToRaw(stream io.Writer) error {
 	})
 }
 
+// ToRawBytes ...
+func (v *PopState) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromRaw ...
 func (v *PopState) FromRaw(stream io.Reader) error {
 	containingEndorsements, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCount, func(stream io.Reader) (interface{}, error) {
@@ -57,4 +65,10 @@ func (v *PopState) FromRaw(stream io.Reader) error {
 		v.ContainingEndorsements[i] = containingEndorsement.(Endorsement)
 	}
 	return nil
+}
+
+// FromRawBytes ...
+func (v *PopState) FromRawBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer)
 }
