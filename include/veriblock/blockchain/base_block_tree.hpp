@@ -416,7 +416,8 @@ struct BaseBlockTree {
     return it->second.get();
   }
 
-  index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header) {
+  index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header,
+                               block_height_t bootstrapHeight = 0) {
     VBK_ASSERT(header != nullptr);
 
     index_t* current = touchBlockIndex(header->getHash());
@@ -433,7 +434,7 @@ struct BaseBlockTree {
         current->setFlag(BLOCK_FAILED_CHILD);
       }
     } else {
-      current->setHeight(0);
+      current->setHeight(bootstrapHeight);
     }
 
     tryAddTip(current);
@@ -441,7 +442,8 @@ struct BaseBlockTree {
     return current;
   }
 
-  index_t* insertBlockHeader(const std::shared_ptr<block_t>& block) {
+  index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
+                             block_height_t bootstrapHeight = 0) {
     auto hash = block->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {
@@ -449,7 +451,7 @@ struct BaseBlockTree {
       return current;
     }
 
-    current = doInsertBlockHeader(block);
+    current = doInsertBlockHeader(block, bootstrapHeight);
 
     current->chainWork = getBlockProof(*block);
     if (current->pprev) {

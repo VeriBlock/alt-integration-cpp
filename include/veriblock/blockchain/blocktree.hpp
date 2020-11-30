@@ -196,14 +196,12 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Invalid(block_t::name() + "-bootstrap");
     }
 
-    auto* index = base::insertBlockHeader(block);
+    auto* index = base::insertBlockHeader(block, height);
     VBK_ASSERT(index != nullptr &&
                "insertBlockHeader should have never returned nullptr");
 
     index->setHeight(height);
-
     base::activeChain_ = Chain<index_t>(height, index);
-
     index->setIsBootstrap(true);
 
     VBK_ASSERT(base::isBootstrapped());
