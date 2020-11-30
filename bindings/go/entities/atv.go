@@ -70,6 +70,13 @@ func (v *Atv) ToVbkEncoding(stream io.Writer) error {
 	return v.BlockOfProof.ToVbkEncoding(stream)
 }
 
+// ToVbkEncodingBytes ...
+func (v *Atv) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromVbkEncoding ...
 func (v *Atv) FromVbkEncoding(stream io.Reader) error {
 	if err := binary.Read(stream, binary.BigEndian, &v.Version); err != nil {
@@ -85,6 +92,12 @@ func (v *Atv) FromVbkEncoding(stream io.Reader) error {
 		return err
 	}
 	return v.BlockOfProof.FromVbkEncoding(stream)
+}
+
+// FromVbkEncodingBytes ...
+func (v *Atv) FromVbkEncodingBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer)
 }
 
 // ToJSON ...

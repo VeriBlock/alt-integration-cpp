@@ -27,6 +27,13 @@ func (v *MerklePath) ToVbkEncoding(stream io.Writer) error {
 	return veriblock.WriteVarLenValue(stream, blockStream.Bytes())
 }
 
+// ToVbkEncodingBytes ...
+func (v *MerklePath) ToVbkEncodingBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToVbkEncoding(&buffer)
+	return buffer.Bytes(), err
+}
+
 // ToRaw ...
 func (v *MerklePath) ToRaw(stream io.Writer) error {
 	if err := veriblock.WriteSingleFixedBEValue(stream, v.Index); err != nil {
@@ -53,6 +60,13 @@ func (v *MerklePath) ToRaw(stream io.Writer) error {
 	return nil
 }
 
+// ToRawBytes ...
+func (v *MerklePath) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromVbkEncoding ...
 func (v *MerklePath) FromVbkEncoding(stream io.Reader, subject [32]byte) error {
 	merkleBytes, err := veriblock.ReadVarLenValue(stream, 0, veriblock.MaxMerkleBytes)
@@ -61,6 +75,12 @@ func (v *MerklePath) FromVbkEncoding(stream io.Reader, subject [32]byte) error {
 	}
 	merkleStream := bytes.NewReader(merkleBytes)
 	return v.FromRaw(merkleStream, subject)
+}
+
+// FromVbkEncodingBytes ...
+func (v *MerklePath) FromVbkEncodingBytes(data []byte, subject [32]byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromVbkEncoding(buffer, subject)
 }
 
 // FromRaw ...
@@ -99,6 +119,12 @@ func (v *MerklePath) FromRaw(stream io.Reader, subject [32]byte) error {
 	}
 	v.Subject = subject
 	return nil
+}
+
+// FromRawBytes ...
+func (v *MerklePath) FromRawBytes(data []byte, subject [32]byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer, subject)
 }
 
 // ToJSON ...

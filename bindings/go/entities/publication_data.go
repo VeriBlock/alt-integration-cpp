@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"encoding/hex"
 	"io"
 
@@ -33,6 +34,13 @@ func (v *PublicationData) ToRaw(stream io.Writer) error {
 	return veriblock.WriteVarLenValue(stream, v.PayoutInfo)
 }
 
+// ToRawBytes ...
+func (v *PublicationData) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromRaw ...
 func (v *PublicationData) FromRaw(stream io.Reader) error {
 	err := veriblock.ReadSingleBEValue(stream, &v.Identifier)
@@ -52,6 +60,12 @@ func (v *PublicationData) FromRaw(stream io.Reader) error {
 		return err
 	}
 	return nil
+}
+
+// FromRawBytes ...
+func (v *PublicationData) FromRawBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer)
 }
 
 // ToJSON ...

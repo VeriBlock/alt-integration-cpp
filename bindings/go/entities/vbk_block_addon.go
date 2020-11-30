@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"bytes"
 	"encoding/binary"
 	"io"
 	"math"
@@ -28,6 +29,13 @@ func (v *VbkBlockAddon) ToRaw(stream io.Writer) error {
 	return veriblock.WriteArrayOf(stream, v.VtbIDs, veriblock.WriteSingleByteLenValue)
 }
 
+// ToRawBytes ...
+func (v *VbkBlockAddon) ToRawBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	err := v.ToRaw(&buffer)
+	return buffer.Bytes(), err
+}
+
 // FromRaw ...
 func (v *VbkBlockAddon) FromRaw(stream io.Reader) error {
 	if err := binary.Read(stream, binary.BigEndian, &v.RefCount); err != nil {
@@ -47,4 +55,10 @@ func (v *VbkBlockAddon) FromRaw(stream io.Reader) error {
 		copy(v.VtbIDs[i][:], vtbid.([]byte))
 	}
 	return nil
+}
+
+// FromRawBytes ...
+func (v *VbkBlockAddon) FromRawBytes(data []byte) error {
+	buffer := bytes.NewBuffer(data)
+	return v.FromRaw(buffer)
 }
