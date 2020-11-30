@@ -43,6 +43,29 @@ std::vector<uint8_t> PopData::toVbkEncoding() const {
   return stream.data();
 }
 
+size_t PopData::estimateSize() const {
+  size_t size = 0;
+  size += sizeof(version);
+  if (version == 1) {
+    size += singleBEValueSize(context.size());
+    for (const auto& b : context) {
+      size += b.estimateSize();
+    }
+    size += singleBEValueSize(atvs.size());
+    for (const auto& atv : atvs) {
+      size += atv.estimateSize();
+    }
+    size += singleBEValueSize(vtbs.size());
+    for (const auto& vtb : vtbs) {
+      size += vtb.estimateSize();
+    }
+  } else {
+    VBK_ASSERT_MSG(
+        false, "PopData estimate size version=%d is not implemented", version);
+  }
+  return size;
+}
+
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 PopData& pd,
                                 ValidationState& state) {

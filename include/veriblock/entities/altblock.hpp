@@ -46,6 +46,8 @@ struct AltBlock {
    */
   std::vector<uint8_t> toRaw() const;
 
+  size_t estimateSize() const;
+
   uint32_t getBlockTime() const noexcept;
 
   /**

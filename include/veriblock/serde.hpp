@@ -177,6 +177,24 @@ void writeSingleFixedBEValue(WriteStream& stream, T value) {
  */
 void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value);
 
+size_t singleByteLenValueSize(Slice<const uint8_t> value);
+
+size_t singleByteLenValueSize(size_t valueSize);
+
+size_t singleBEValueSize(int64_t value);
+
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type>
+size_t singleFixedBEValueSize(T value) {
+  WriteStream dataStream;
+  dataStream.writeBE<T>(value);
+  return singleByteLenValueSize(dataStream.data());
+}
+
+size_t varLenValueSize(Slice<const uint8_t> value);
+
+size_t varLenValueSize(size_t valueSize);
+
 /**
  * Stores pair of TxType and VBK network byte.
  */
@@ -218,6 +236,8 @@ bool readNetworkByte(ReadStream& stream,
  * byte after
  */
 void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
+
+size_t networkByteSize(NetworkBytePair networkOrType);
 
 /**
  * Reads array of entities of type T.

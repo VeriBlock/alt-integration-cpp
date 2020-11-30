@@ -37,6 +37,8 @@ struct VbkMerklePath {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   /**
    * Calculate the hash of the vb merkle root
    * @return hash merkle root hash

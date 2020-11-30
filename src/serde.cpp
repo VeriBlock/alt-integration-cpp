@@ -93,6 +93,50 @@ void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value) {
   stream.write(value);
 }
 
+size_t singleByteLenValueSize(Slice<const uint8_t> value) {
+  ValidationState state;
+  VBK_ASSERT_MSG(
+      checkRange(value.size(), 0, (std::numeric_limits<uint8_t>::max)(), state),
+      "Can not singleByteLenSize: " + state.toString());
+  size_t size = 0;
+  size += sizeof((uint8_t)value.size());
+  size += value.size();
+  return size;
+}
+
+size_t singleByteLenValueSize(size_t valueSize) {
+  ValidationState state;
+  VBK_ASSERT_MSG(
+      checkRange(valueSize, 0, (std::numeric_limits<uint8_t>::max)(), state),
+      "Can not singleByteLenSize: " + state.toString());
+  size_t size = 0;
+  size += sizeof((uint8_t)valueSize);
+  size += valueSize;
+  return size;
+}
+
+size_t singleBEValueSize(int64_t value) {
+  std::vector<uint8_t> dataBytes = trimmedArray(value);
+  size_t size = 0;
+  size += sizeof((uint8_t)dataBytes.size());
+  size += dataBytes.size();
+  return size;
+}
+
+size_t varLenValueSize(Slice<const uint8_t> value) {
+  size_t size = 0;
+  size += singleBEValueSize(value.size());
+  size += value.size();
+  return size;
+}
+
+size_t varLenValueSize(size_t valueSize) {
+  size_t size = 0;
+  size += singleBEValueSize(valueSize);
+  size += valueSize;
+  return size;
+}
+
 bool readNetworkByte(ReadStream& stream,
                      TxType type,
                      NetworkBytePair& ret,
@@ -119,6 +163,15 @@ void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
     stream.writeBE<uint8_t>(networkOrType.networkByte);
   }
   stream.writeBE<uint8_t>(networkOrType.typeId);
+}
+
+size_t networkByteSize(NetworkBytePair networkOrType) {
+  size_t size = 0;
+  if (networkOrType.hasNetworkByte) {
+    size += sizeof(networkOrType.networkByte);
+  }
+  size += sizeof(networkOrType.typeId);
+  return size;
 }
 
 }  // namespace altintegration

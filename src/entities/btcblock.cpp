@@ -24,6 +24,21 @@ void BtcBlock::toVbkEncoding(WriteStream& stream) const {
   writeSingleByteLenValue(stream, blockStream.data());
 }
 
+size_t BtcBlock::estimateSize() const {
+  size_t rawSize = 0;
+  rawSize += sizeof(version);
+  rawSize += previousBlock.size();
+  rawSize += merkleRoot.size();
+  rawSize += sizeof(timestamp);
+  rawSize += sizeof(bits);
+  rawSize += sizeof(nonce);
+
+  size_t size = 0;
+  size += singleByteLenValueSize(rawSize);
+
+  return size;
+}
+
 uint32_t BtcBlock::getDifficulty() const { return bits; }
 
 uint32_t BtcBlock::getBlockTime() const { return timestamp; }

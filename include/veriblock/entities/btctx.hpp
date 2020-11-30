@@ -51,6 +51,8 @@ struct BtcTx {
    */
   void toRaw(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   /**
    * Calculate the hash of the btc transaction
    * @return hash transaction hash

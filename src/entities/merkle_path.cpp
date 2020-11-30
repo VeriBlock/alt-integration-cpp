@@ -26,6 +26,25 @@ void MerklePath::toVbkEncoding(WriteStream& stream) const {
   writeVarLenValue(stream, pathStream.data());
 }
 
+size_t MerklePath::estimateSize() const {
+  size_t rawSize = 0;
+  rawSize += singleFixedBEValueSize(index);
+  rawSize += singleFixedBEValueSize((int32_t)layers.size());
+
+  const auto subjectSizeBytes = fixedArray((int32_t)subject.size());
+  rawSize += singleFixedBEValueSize((int32_t)subjectSizeBytes.size());
+  rawSize += subjectSizeBytes.size();
+
+  for (const auto& layer : layers) {
+    rawSize += singleByteLenValueSize(layer);
+  }
+
+  size_t size = 0;
+  size += varLenValueSize(rawSize);
+
+  return size;
+}
+
 uint256 MerklePath::calculateMerkleRoot() const {
   if (layers.empty()) {
     return subject;

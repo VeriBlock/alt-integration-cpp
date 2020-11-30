@@ -66,13 +66,13 @@ struct VbkBlock {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   /*
    * Getter for difficulty
    * @return block difficulty
    */
   uint32_t getDifficulty() const;
-
-  size_t estimateSize() const { return toVbkEncoding().size(); }
 
   /*
    * Getter for timestamp

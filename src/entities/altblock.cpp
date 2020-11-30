@@ -22,6 +22,17 @@ std::vector<uint8_t> AltBlock::toRaw() const {
   return stream.data();
 }
 
+size_t AltBlock::estimateSize() const {
+  size_t size = 0;
+  size += sizeof(uint32_t);
+  size += hash.size() * sizeof(uint8_t);
+  size += sizeof(uint32_t);
+  size += previousBlock.size() * sizeof(uint8_t);
+  size += sizeof(height);
+  size += sizeof(timestamp);
+  return size;
+}
+
 uint32_t AltBlock::getBlockTime() const noexcept { return timestamp; }
 
 AltBlock::hash_t AltBlock::getHash() const { return hash; }

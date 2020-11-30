@@ -39,6 +39,8 @@ struct MerklePath {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   /**
    * Calculate the hash of the merkle root
    * @return hash merkle root hash

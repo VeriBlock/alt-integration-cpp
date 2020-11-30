@@ -199,6 +199,26 @@ void Address::toVbkEncoding(WriteStream& stream) const {
   writeSingleByteLenValue(stream, decoded);
 }
 
+size_t Address::estimateSize() const {
+  size_t size = 0;
+  size += sizeof((uint8_t)getType());
+  std::vector<uint8_t> decoded;
+  switch (getType()) {
+    case AddressType::STANDARD:
+      decoded = AssertDecodeBase58(toString());
+      break;
+    case AddressType ::MULTISIG:
+      decoded = AssertDecodeBase58(toString());
+      break;
+    default:
+      // if we don't know address type, do not encode anything
+      return size;
+  }
+
+  size += singleByteLenValueSize(decoded);
+  return size;
+}
+
 void Address::getPopBytes(WriteStream& stream) const {
   std::vector<uint8_t> bytes = AssertDecodeBase58(m_Address.substr(1));
   stream.write(std::vector<uint8_t>(

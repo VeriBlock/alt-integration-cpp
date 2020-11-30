@@ -35,8 +35,6 @@ struct ATV {
 
   std::string toPrettyString() const;
 
-  size_t estimateSize() const { return toVbkEncoding().size(); }
-
   /**
    * Convert ATV to data stream using Vbk byte format
    * @param stream data stream to write into
@@ -48,6 +46,8 @@ struct ATV {
    * @return bytes data
    */
   std::vector<uint8_t> toVbkEncoding() const;
+
+  size_t estimateSize() const;
 
   /**
    * Calculate a ATV id that is the sha256 hash of the ATV rawBytes

@@ -54,6 +54,8 @@ struct VbkPopTx {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  size_t estimateSize() const;
+
   /**
    * Calculate the hash of the vbk pop transaction
    * @return hash vbk pop transaction hash
