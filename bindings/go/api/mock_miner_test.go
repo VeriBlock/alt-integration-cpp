@@ -79,16 +79,13 @@ func TestMineVtb(t *testing.T) {
 	index, err := mockMiner.MineVbkBlockTip()
 	assert.NoError(err)
 
-	var buffer bytes.Buffer
-	index.Header.ToRaw(&buffer)
-	var vbkBlock entities.VbkBlock
-	err = vbkBlock.FromRaw(&buffer)
+	vbkBlock, err := index.GetVbkBlockHeader()
 	assert.NoError(err)
 
 	btcTip, err := popContext.BtcBestBlock()
 	assert.NoError(err)
 
-	vtb, err := mockMiner.MineVtb(&vbkBlock, btcTip.GetHash())
+	vtb, err := mockMiner.MineVtb(vbkBlock, btcTip.GetHash())
 	assert.NoError(err)
 	assert.Equal(vtb.ContainingBlock.Height, vbkBlock.Height+1)
 	assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)

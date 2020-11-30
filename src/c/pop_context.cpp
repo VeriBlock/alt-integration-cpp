@@ -304,6 +304,7 @@ VBK_ByteStream* VBK_alt_BestBlock(PopContext* self) {
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
   tip->toVbkEncoding(stream);
+  VBK_ASSERT_MSG(false, "height: %d", tip->getHeight());
   return new VbkByteStream(stream.data());
 }
 

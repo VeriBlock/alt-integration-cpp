@@ -1,6 +1,11 @@
 package api
 
-import "testing"
+import (
+	"math/rand"
+	"testing"
+
+	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
+)
 
 func generateTestPopContext(t *testing.T) PopContext {
 	config := NewConfig()
@@ -20,4 +25,13 @@ func generateTestPopContext(t *testing.T) PopContext {
 	})
 
 	return NewPopContext(&config)
+}
+
+func GenerateNextAltBlock(current *entities.AltBlock) (next *entities.AltBlock) {
+	next.Hash = current.Hash
+	next.PreviousBlock = current.Hash
+	next.Height = current.Height + 1
+	next.Timestamp = current.Timestamp + 1
+	rand.Read(next.Hash)
+	return next
 }

@@ -3,13 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
-
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/block_batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -42,6 +41,10 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
 
   auto block = alt_config_->getBootstrapBlock();
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(std::move(block)));
+  VBK_ASSERT_MSG(false,
+                "bootstrap height: %d, tip height: %d",
+                block.getHeight(),
+                index->getHeight());
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 
