@@ -27,17 +27,19 @@ std::vector<uint8_t> VbkBlock::toVbkEncoding() const {
 }
 
 size_t VbkBlock::estimateSize() const {
+  size_t rawSize = 0;
+  rawSize += sizeof(height);
+  rawSize += sizeof(version);
+  rawSize += previousBlock.size();
+  rawSize += previousKeystone.size();
+  rawSize += secondPreviousKeystone.size();
+  rawSize += merkleRoot.size();
+  rawSize += sizeof(timestamp);
+  rawSize += sizeof(difficulty);
+  rawSize += 5; // nonce
+
   size_t size = 0;
-  size += sizeof(height);
-  size += sizeof(version);
-  size += previousBlock.size();
-  size += previousKeystone.size();
-  size += secondPreviousKeystone.size();
-  size += merkleRoot.size();
-  size += sizeof(timestamp);
-  size += sizeof(difficulty);
-  size += 5; // nonce
-  size += 1; // single byte len value
+  size += singleByteLenValueSize(rawSize);
   return size;
 }
 

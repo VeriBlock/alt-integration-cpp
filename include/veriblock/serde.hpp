@@ -318,6 +318,25 @@ void writeArrayOf(WriteStream& w,
   return writeContainer<std::vector<T>>(w, t, f);
 }
 
+template <typename Container>
+size_t estimateContainerSize(
+    const Container& t,
+    std::function<size_t(const typename Container::value_type& t)>
+        f) {
+  size_t size = 0;
+  size += singleBEValueSize((int64_t)t.size());
+  for (auto& v : t) {
+    size += f(v);
+  }
+  return size;
+}
+
+template <typename T>
+size_t estimateArraySizeOf(const std::vector<T>& t,
+                           std::function<size_t(const T& t)> f) {
+  return estimateContainerSize<std::vector<T>>(t, f);
+}
+
 template <typename T>
 bool DeserializeFromVbkEncoding(Slice<const uint8_t> data,
                                 T& out,

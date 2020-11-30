@@ -24,10 +24,8 @@ std::vector<uint8_t> AltBlock::toRaw() const {
 
 size_t AltBlock::estimateSize() const {
   size_t size = 0;
-  size += sizeof(uint32_t);
-  size += hash.size() * sizeof(uint8_t);
-  size += sizeof(uint32_t);
-  size += previousBlock.size() * sizeof(uint8_t);
+  size += singleByteLenValueSize(hash);
+  size += singleByteLenValueSize(previousBlock);
   size += sizeof(height);
   size += sizeof(timestamp);
   return size;
