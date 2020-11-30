@@ -41,10 +41,6 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
 
   auto block = alt_config_->getBootstrapBlock();
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(std::move(block)));
-  VBK_ASSERT_MSG(false,
-                "bootstrap height: %d, tip height: %d",
-                block.getHeight(),
-                index->getHeight());
   VBK_ASSERT(index != nullptr &&
              "insertBlockHeader should have never returned nullptr");
 

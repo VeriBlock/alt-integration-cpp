@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/hex"
+	"fmt"
 	"math/rand"
 	"testing"
 
@@ -18,7 +20,14 @@ func generateTestPopContext(t *testing.T) PopContext {
 	}
 	SetOnGetAltchainID(func() int { return 1 })
 	SetOnGetBootstrapBlock(func() string {
-		return "201fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c201aaaaaaaaaaaa9395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c000005ba0000009c"
+		var block entities.AltBlock
+		block.Height = 1
+		block.Hash = []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+		block.PreviousBlock = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+		block.Timestamp = 100
+		blockBytes, _ := block.ToVbkEncodingBytes()
+		fmt.Println(hex.EncodeToString(blockBytes))
+		return "0c0102030405060708090a0b0c0c0000000000000000000000000000000100000064"
 	})
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
 		return header
