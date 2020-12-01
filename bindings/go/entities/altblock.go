@@ -15,6 +15,14 @@ type AltHash []byte
 // ContextInfoContainerHash
 type ContextInfoContainerHash [veriblock.Sha256HashSize]byte
 
+func (v *AltHash) Bytes() []byte {
+	return *v
+}
+
+func (v *ContextInfoContainerHash) Bytes() []byte {
+	return v[:]
+}
+
 // AltBlock ...
 type AltBlock struct {
 	Hash          []byte
