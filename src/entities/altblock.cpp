@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/altblock.hpp"
+#include "veriblock/strutil.hpp"
 
 namespace altintegration {
 

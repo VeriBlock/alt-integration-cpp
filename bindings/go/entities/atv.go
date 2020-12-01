@@ -14,6 +14,10 @@ import (
 // AtvID is 32 byte ID of ATV
 type AtvID [veriblock.Sha256HashSize]byte
 
+func (v *AtvID) Bytes() []byte {
+	return v[:]
+}
+
 // UnmarshalJSON parses a hash in hex syntax.
 func (h *AtvID) UnmarshalJSON(input []byte) error {
 	return veriblock.UnmarshalJSON(input, h[:])

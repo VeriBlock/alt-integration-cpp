@@ -14,6 +14,10 @@ import (
 // VbkID is 12 byte ID of VbkBlock
 type VbkID [veriblock.VblakePreviousBlockHashSize]byte
 
+func (v *VbkID) Bytes() []byte {
+	return v[:]
+}
+
 // UnmarshalJSON parses a hash in hex syntax.
 func (h *VbkID) UnmarshalJSON(input []byte) error {
 	return veriblock.UnmarshalJSON(input, h[:])
