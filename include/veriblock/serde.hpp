@@ -321,8 +321,7 @@ void writeArrayOf(WriteStream& w,
 template <typename Container>
 size_t estimateContainerSize(
     const Container& t,
-    std::function<size_t(const typename Container::value_type& t)>
-        f) {
+    std::function<size_t(const typename Container::value_type& t)> f) {
   size_t size = 0;
   size += singleBEValueSize((int64_t)t.size());
   for (auto& v : t) {

@@ -20,8 +20,11 @@ uint256 CalculateContextInfoContainerHash(const PopData& popData,
 
   auto firstPreviousKeystone =
       prevBlock.getAncestor(getFirstPreviousKeystoneHeight(height, ki));
-  auto secondPreviousKeystone = firstPreviousKeystone->getAncestor(
-      getSecondPreviousKeystoneHeight(height, ki));
+  auto secondPreviousKeystone =
+      firstPreviousKeystone != nullptr
+          ? firstPreviousKeystone->getAncestor(
+                getSecondPreviousKeystoneHeight(height, ki))
+          : nullptr;
 
   WriteStream stream;
   stream.writeBE<uint32_t>(params.getKeystoneInterval());
