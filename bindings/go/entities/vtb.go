@@ -14,6 +14,10 @@ import (
 // VtbID is 32 byte ID of Vtb
 type VtbID [veriblock.Sha256HashSize]byte
 
+func (v *VtbID) Bytes() []byte {
+	return v[:]
+}
+
 // UnmarshalJSON parses a hash in hex syntax.
 func (h *VtbID) UnmarshalJSON(input []byte) error {
 	return veriblock.UnmarshalJSON(input, h[:])
