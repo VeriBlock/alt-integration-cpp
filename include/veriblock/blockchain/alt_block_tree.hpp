@@ -316,6 +316,9 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   void removeAllPayloads(index_t& index);
 };
 
+template <>
+void assertInsertBlockHeader(const AltBlock& block);
+
 //! @private
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<AltBlock>& i) {

@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <veriblock/algorithm.hpp>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/logger.hpp>
@@ -444,6 +445,8 @@ struct BaseBlockTree {
 
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
+    assertInsertBlockHeader(*block);
+
     auto hash = block->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {

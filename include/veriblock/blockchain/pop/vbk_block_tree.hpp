@@ -185,6 +185,12 @@ template <>
 void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index);
 
 template <>
+void assertInsertBlockHeader(const VbkBlock& block);
+
+template <>
+void assertInsertBlockHeader(const BtcBlock& block);
+
+template <>
 std::vector<CommandGroup> payloadsToCommandGroups(
     VbkBlockTree& tree,
     const std::vector<VTB>& pop,

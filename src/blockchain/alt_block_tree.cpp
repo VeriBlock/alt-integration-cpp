@@ -663,6 +663,13 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
+template <>
+void assertInsertBlockHeader(const AltBlock& block) {
+  VBK_ASSERT_MSG(
+      block.getHash() != block.getPreviousBlock(),
+      "previous block hash should be different with the current block hash");
+}
+
 template <typename Payloads>
 void removeId(PayloadsIndex& storage,
               BlockIndex<AltBlock>& index,
