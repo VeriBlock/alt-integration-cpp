@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <veriblock/algorithm.hpp>
+#include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/entities/popdata.hpp>
 
 #include "veriblock/hashutil.hpp"
@@ -62,6 +64,22 @@ size_t PopData::estimateSize() const {
       return atv.estimateSize();
     });
   return size;
+}
+uint256 PopData::getMerkleRoot() const {
+  WriteStream stream;
+  stream.writeBE<uint32_t>(version);
+
+  auto vbytes = sha256twice(stream.data());
+  auto atvMerkleRoot =
+      PayloadsMerkleTree<ATV>(map_get_id(atvs)).getMerkleRoot();
+  auto vtbMerkleRoot =
+      PayloadsMerkleTree<VTB>(map_get_id(vtbs)).getMerkleRoot();
+  auto vbkMerkleRoot =
+      PayloadsMerkleTree<VbkBlock>(map_get_id(context)).getMerkleRoot();
+
+  auto left = sha256twice(vbkMerkleRoot, vtbMerkleRoot);
+  auto right = sha256twice(atvMerkleRoot, vbytes);
+  return sha256twice(left, right);
 }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,

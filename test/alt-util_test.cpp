@@ -34,3 +34,8 @@ TEST_F(AltUtilTest, GetLastKnownBlocks) {
   auto many = getLastKnownBlocks(popminer.btc(), 1000ull);
   ASSERT_EQ(many.size(), 11ull);  // we know only 11 bocks, 10+genesis
 }
+
+TEST_F(AltUtilTest, CalculateContextInfoContainerHash) {
+  PopData empty;
+
+}
