@@ -3,13 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/c/utils.h"
+
 #include <stdio.h>
 
 #include <vector>
 
 #include "pop_context.hpp"
 #include "veriblock/alt-util.hpp"
-#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/popdata.hpp"
@@ -124,9 +125,11 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
   auto pop_data = AssertDeserializeFromVbkEncoding<PopData>(
       Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
   auto* index = self->context->altTree->getBlockIndex(block_hash);
-
   auto hash = CalculateContextInfoContainerHash(
-      pop_data, *index, self->context->altTree->getParams());
+      pop_data,
+      index,
+      self->context->altTree->getParams(),
+      self->context->config->getAltParams().getBootstrapBlock().getHeight());
 
   memcpy(out_hash, hash.data(), hash.size());
   *out_hash_size = hash.size();
