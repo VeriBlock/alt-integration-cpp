@@ -65,10 +65,21 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
   return true;
 }
 
-// Calculate ContextInfoContainer top Hash
-uint256 CalculateContextInfoContainerHash(const PopData& popData,
-                                          const BlockIndex<AltBlock>& prevBlock,
-                                          const AltChainParams& params);
+//! Calculates ContextInfoContainerHash which cryptographically authenticates
+//! block height, its position in blockchain (via keystones), and containing
+//! PopData
+uint256 CalculateContextInfoContainerHash(
+    const PopData& popData,
+    const BlockIndex<AltBlock>* prevBlock,
+    const uint32_t keystoneInterval,
+    const uint32_t altBootstrapHeight = 0);
+
+//! @overload
+uint256 CalculateContextInfoContainerHash(
+    const PopData& popData,
+    const BlockIndex<AltBlock>* prevBlock,
+    const AltChainParams& params,
+    const uint32_t altBootstrapHeight = 0);
 
 }  // namespace altintegration
 
