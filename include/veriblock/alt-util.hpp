@@ -78,8 +78,7 @@ uint256 CalculateContextInfoContainerHash(
 uint256 CalculateContextInfoContainerHash(
     const PopData& popData,
     const BlockIndex<AltBlock>* prevBlock,
-    const AltChainParams& params,
-    const uint32_t altBootstrapHeight = 0);
+    const AltChainParams& params);
 
 }  // namespace altintegration
 

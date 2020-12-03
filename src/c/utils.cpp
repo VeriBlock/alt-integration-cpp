@@ -126,10 +126,7 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
       Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
   auto* index = self->context->altTree->getBlockIndex(block_hash);
   auto hash = CalculateContextInfoContainerHash(
-      pop_data,
-      index,
-      self->context->altTree->getParams(),
-      self->context->config->getAltParams().getBootstrapBlock().getHeight());
+      pop_data, index, self->context->altTree->getParams());
 
   memcpy(out_hash, hash.data(), hash.size());
   *out_hash_size = hash.size();
