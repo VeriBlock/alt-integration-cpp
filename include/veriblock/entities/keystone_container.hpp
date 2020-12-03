@@ -22,6 +22,16 @@ struct KeystoneContainer {
   void write(WriteStream& stream) const;
 };
 
+template <typename JsonValue>
+JsonValue ToJSON(const KeystoneContainer& c) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+  json::putStringKV(
+      obj, "firstPreviousKeystone", HexStr(c.firstPreviousKeystone));
+  json::putStringKV(
+      obj, "secondPreviousKeystone", HexStr(c.secondPreviousKeystone));
+  return obj;
+}
+
 }  // namespace altintegration
 
 #endif  // VERIBLOCK_POP_CPP_KEYSTONE_CONTAINER_HPP
