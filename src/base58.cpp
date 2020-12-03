@@ -77,7 +77,8 @@ static bool DecodeBase58(const char *psz,
       "mapBase58.size() should be 256");  // guarantee not out of range
   while (*psz && !IsSpace(*psz)) {
     // Decode base58 character
-    int carry = mapBase58[uint8_t(*psz)];
+    // NOLINTNEXTLINE(cert-str34-c)
+    int carry = static_cast<int>(mapBase58[uint8_t(*psz)]);
     if (carry == -1)  // Invalid b58 character
       return false;
     size_t i = 0;

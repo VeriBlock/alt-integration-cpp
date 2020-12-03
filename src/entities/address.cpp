@@ -278,6 +278,7 @@ Address Address::assertFromString(const std::string& input) {
 }
 
 // this code verifies that default address is valid
+// NOLINTNEXTLINE(cert-err58-cpp)
 static Address defaultAddress = [] {
   Address addr;
   ValidationState state;

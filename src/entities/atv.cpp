@@ -9,6 +9,7 @@
 
 using namespace altintegration;
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 const std::string ATV::_name = "ATV";
 
 void ATV::toVbkEncoding(WriteStream& stream) const {

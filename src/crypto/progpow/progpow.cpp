@@ -600,10 +600,12 @@ struct CacheEntry {
 };
 
 // epoch -> ethash cache + dag
+// NOLINTNEXTLINE(cert-err58-cpp)
 static lru11::Cache<uint64_t, CacheEntry, std::mutex> gEthashCache(
     VBK_PROGPOW_ETHASH_CACHE_SIZE, VBK_PROGPOW_CACHE_ELASTICITY);
 
 // sha256d(vbkheader) -> progpow hash
+// NOLINTNEXTLINE(cert-err58-cpp)
 static lru11::Cache<uint256, uint192, std::mutex> gProgpowHeaderCache(
     VBK_PROGPOW_HEADER_HASH_SIZE);
 

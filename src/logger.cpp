@@ -10,6 +10,7 @@
 
 namespace altintegration {
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 static std::unique_ptr<Logger> logger = std::unique_ptr<Logger>(new Logger());
 
 Logger& GetLogger() {
