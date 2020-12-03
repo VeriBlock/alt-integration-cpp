@@ -451,6 +451,14 @@ void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index) {
 }
 
 template <>
+void assertBlockSanity(const VbkBlock& block) {
+  VBK_ASSERT_MSG(block.getShortHash() != block.getPreviousBlock(),
+                 "Previous block hash should NOT be equal to the current block "
+                 "hash: %s. A collision in altchain hash?",
+                 HexStr(block.getShortHash()));
+}
+
+template <>
 void removePayloadsFromIndex(PayloadsIndex& storage,
                              BlockIndex<VbkBlock>& index,
                              const CommandGroup& cg) {

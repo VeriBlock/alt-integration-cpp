@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <veriblock/algorithm.hpp>
 #include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/blockchain/chain.hpp>
 #include <veriblock/blockchain/tree_algo.hpp>
 #include <veriblock/logger.hpp>
@@ -329,8 +330,8 @@ struct BaseBlockTree {
       return false;
     }
 
-    VBK_ASSERT(
-        false &&
+    VBK_ASSERT_MSG(
+        false,
         "state corruption: the blockchain is neither bootstrapped nor empty");
     return false;
   }
@@ -434,6 +435,7 @@ struct BaseBlockTree {
         current->setFlag(BLOCK_FAILED_CHILD);
       }
     } else {
+      VBK_ASSERT(activeChain_.tip() == nullptr && blocks_.size() == 1);
       current->setHeight(bootstrapHeight);
     }
 
@@ -444,6 +446,7 @@ struct BaseBlockTree {
 
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
+    assertBlockSanity(*block);
     auto hash = block->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {

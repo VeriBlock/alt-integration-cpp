@@ -180,3 +180,30 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
   containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   EXPECT_TRUE(containingIndex->isValid());
 }
+
+TEST_F(AltTreeFixture, invalidBlockIndex_test) {
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  auto* index = alttree.getBlockIndex(chain.back().getHash());
+
+  EXPECT_EQ(index->getHash(), alttree.getBestChain().tip()->getHash());
+
+  index->setFlag(BlockStatus::BLOCK_FAILED_POP);
+  EXPECT_FALSE(index->isValid());
+
+  EXPECT_FALSE(alttree.acceptBlockHeader(index->getHeader(), state));
+}
+
+TEST_F(AltTreeFixture, assertBlockSanity_test) {
+  auto block = generateNextBlock(altparam.getBootstrapBlock());
+
+  block.hash = block.previousBlock;
+
+  EXPECT_EQ(block.getHash(), block.getPreviousBlock());
+
+  ASSERT_DEATH(
+      alttree.acceptBlockHeader(block, state),
+      "Previous block hash should NOT be equal to the current block hash");
+}
