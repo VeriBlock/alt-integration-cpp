@@ -455,7 +455,7 @@ void assertBlockSanity(const VbkBlock& block) {
   VBK_ASSERT_MSG(block.getShortHash() != block.getPreviousBlock(),
                  "Previous block hash should NOT be equal to the current block "
                  "hash: %s. A collision in altchain hash?",
-                 HexStr(block.getShortHash()).c_str());
+                 HexStr(block.getShortHash()));
 }
 
 template <>
