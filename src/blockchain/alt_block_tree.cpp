@@ -3,12 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/block_batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
-#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -266,6 +267,18 @@ bool AltBlockTree::addPayloads(index_t& index,
 
 bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
                                      ValidationState& state) {
+  // We don't calculate hash of AltBlock, thus users may call acceptBlockHeader
+  // with AltBlock, where hash == previousHash. If so, fail loudly.
+  assertBlockSanity(block);
+
+  // Handle edge case:
+  // If block tree is bootstrapped with genesis block, its 'prev' does not
+  // exist. When we execute 'acceptBlockHeader' on genesis block again, we fail
+  // that block validation, because it's previous block is not known.
+  if (isBootstrapped() && block.getHash() == activeChain_.first()->getHash()) {
+    return true;
+  }
+
   // we must know previous block, but not if `block` is bootstrap block
   auto* prev = getBlockIndex(block.previousBlock);
   if (prev == nullptr) {
