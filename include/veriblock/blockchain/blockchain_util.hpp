@@ -128,7 +128,7 @@ void assertBlockSanity(const Block& block) {
   VBK_ASSERT_MSG(block.getHash() != block.getPreviousBlock(),
                  "Previous block hash should NOT be equal to the current block "
                  "hash: %s. A collision in altchain hash?",
-                 HexStr(block.getHash()).c_str());
+                 HexStr(block.getHash()));
 }
 
 template <typename Tree, typename Pop>
