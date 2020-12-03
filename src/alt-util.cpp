@@ -5,8 +5,7 @@
 
 #include "veriblock/alt-util.hpp"
 
-#include "veriblock/algorithm.hpp"
-#include "veriblock/entities/merkle_tree.hpp"
+#include "veriblock/entities/keystone_container.hpp"
 
 namespace altintegration {
 
@@ -15,45 +14,34 @@ uint256 CalculateContextInfoContainerHash(const PopData& popData,
                                           const uint32_t keystoneInterval,
                                           const uint32_t altBootstrapHeight) {
   WriteStream stream;
-  if (prevBlock == nullptr) {
-    // write height of ALTchain bootstrap block
-    stream.writeBE<uint32_t>(altBootstrapHeight);
-  } else {
-    // write height of *this* block
-    const auto height = prevBlock->getHeight() + 1;
-    stream.writeBE<uint32_t>(height);
+  const uint32_t height =
+      prevBlock == nullptr ? altBootstrapHeight : prevBlock->getHeight() + 1u;
+  // first, write 4 BE bytes - block height
+  stream.writeBE<uint32_t>(height);
 
-    const auto ki = keystoneInterval;
-    const auto first = getFirstPreviousKeystoneHeight(height, ki);
-    const auto second = getSecondPreviousKeystoneHeight(height, ki);
+  // find and write previous keystones.
+  // if keystone does not exist, do not write anything.
+  // otherwise, write its hash
+  KeystoneContainer::fromPrevious(prevBlock, keystoneInterval).write(stream);
 
-    // write first previous keystone
-    auto firstPreviousKeystone = prevBlock->getAncestor(first);
-    if (firstPreviousKeystone != nullptr) {
-      stream.write(firstPreviousKeystone->getHash());
-
-      // write second previous keystone
-      auto secondPreviousKeystone = firstPreviousKeystone->getAncestor(second);
-      if (secondPreviousKeystone != nullptr) {
-        stream.write(secondPreviousKeystone->getHash());
-      }
-    }
-  }
-
+  // calculate PopData sha256double merkle root which includes 'version'
   auto popDataRoot = popData.getMerkleRoot();
 
-  // calculate context hash
-  auto contextHash = sha256twice(stream.data());
+  // calculate unauthenticated ContextInfoContainer hash
+  auto unauthContextInfoHash = sha256twice(stream.data());
 
-  return sha256twice(popDataRoot, contextHash);
+  // calculate authenticated ContextInfoContainer hash
+  return sha256twice(popDataRoot, unauthContextInfoHash);
 }
 
 uint256 CalculateContextInfoContainerHash(const PopData& popData,
                                           const BlockIndex<AltBlock>* prevBlock,
-                                          const AltChainParams& params,
-                                          const uint32_t altBootstrapHeight) {
+                                          const AltChainParams& params) {
   return CalculateContextInfoContainerHash(
-      popData, prevBlock, params.getKeystoneInterval(), altBootstrapHeight);
+      popData,
+      prevBlock,
+      params.getKeystoneInterval(),
+      params.getBootstrapBlock().getHeight());
 }
 
 }  // namespace altintegration

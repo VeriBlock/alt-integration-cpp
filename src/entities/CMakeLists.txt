@@ -15,4 +15,5 @@ add_library(entities OBJECT
         vtb.cpp
         altblock.cpp
         popdata.cpp
+        keystone_container.cpp
         )
