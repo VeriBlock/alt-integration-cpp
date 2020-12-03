@@ -1,5 +1,5 @@
 ---
-Checks:          '-*,performance-*,clang-analyzer-*,portability-*'
+Checks:          '-*,performance-*,clang-analyzer-*,portability-*,cert-*,concurrency-*'
 WarningsAsErrors: '*'
 AnalyzeTemporaryDtors: false
 FormatStyle:     .clang-format

@@ -9,8 +9,8 @@
 #include <cstring>
 #include <veriblock/crypto/vblake.hpp>
 
-#ifndef _countof
-#define _countof(x) (sizeof(x) / sizeof((x)[0]))
+#ifndef VBK_COUNTOF
+#define VBK_COUNTOF(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
 namespace altintegration {
@@ -232,13 +232,13 @@ static inline void vblake_create_ctx(vblake_ctx *ctx) {
   uint64_t i = 0;
 
   // state, "param block"
-  for (i = 0; i < _countof(ctx->h); i++) {
+  for (i = 0; i < VBK_COUNTOF(ctx->h); i++) {
     ctx->h[i] = vblake_iv[i];
   }
   ctx->h[0] ^= 0x01010000u ^ VBLAKE_HASH_SIZE;
 
   // zero input block
-  for (i = 0; i < _countof(ctx->b); i++) {
+  for (i = 0; i < VBK_COUNTOF(ctx->b); i++) {
     ctx->b[i] = 0;
   }
 }

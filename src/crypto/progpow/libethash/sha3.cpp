@@ -86,11 +86,11 @@ static inline void keccakf(void* state) {
 
 /*** Some helper macros. ***/
 
-#define _(S) \
+#define SHA3_(S) \
   do {       \
     S        \
   } while (0)
-#define FOR(i, ST, L, S) _(for (size_t i = 0; i < L; i += ST) { S; })
+#define FOR(i, ST, L, S) SHA3_(for (size_t i = 0; i < L; i += ST) { S; })
 #define mkapply_ds(NAME, S)                                               \
   static inline void NAME(uint8_t* dst, const uint8_t* src, size_t len) { \
     FOR(i, 1, len, S);                                                    \

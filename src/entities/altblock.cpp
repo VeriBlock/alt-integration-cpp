@@ -8,6 +8,7 @@
 
 namespace altintegration {
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 const std::string AltBlock::_name = "ALT";
 
 void AltBlock::toRaw(WriteStream& stream) const {

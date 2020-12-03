@@ -9,6 +9,7 @@
 
 using namespace altintegration;
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 const std::string VTB::_name = "VTB";
 
 void VTB::toVbkEncoding(WriteStream& stream) const {
