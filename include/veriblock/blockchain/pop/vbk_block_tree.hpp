@@ -185,10 +185,7 @@ template <>
 void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index);
 
 template <>
-void assertInsertBlockHeader(const VbkBlock& block);
-
-template <>
-void assertInsertBlockHeader(const BtcBlock& block);
+void assertBlockSanity(const VbkBlock& block);
 
 template <>
 std::vector<CommandGroup> payloadsToCommandGroups(

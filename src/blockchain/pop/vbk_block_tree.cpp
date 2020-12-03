@@ -451,17 +451,11 @@ void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index) {
 }
 
 template <>
-void assertInsertBlockHeader(const VbkBlock& block) {
-  VBK_ASSERT_MSG(
-      block.getShortHash() != block.getPreviousBlock(),
-      "previous block hash should be different with the current block hash");
-}
-
-template <>
-void assertInsertBlockHeader(const BtcBlock& block) {
-  VBK_ASSERT_MSG(
-      block.getHash() != block.getPreviousBlock(),
-      "previous block hash should be different with the current block hash");
+void assertBlockSanity(const VbkBlock& block) {
+  VBK_ASSERT_MSG(block.getShortHash() != block.getPreviousBlock(),
+                 "Previous block hash should NOT be equal to the current block "
+                 "hash: %s. A collision in altchain hash?",
+                 HexStr(block.getShortHash()).c_str());
 }
 
 template <>
