@@ -330,8 +330,8 @@ struct BaseBlockTree {
       return false;
     }
 
-    VBK_ASSERT(
-        false &&
+    VBK_ASSERT_MSG(
+        false,
         "state corruption: the blockchain is neither bootstrapped nor empty");
     return false;
   }
@@ -435,7 +435,7 @@ struct BaseBlockTree {
         current->setFlag(BLOCK_FAILED_CHILD);
       }
     } else {
-      //VBK_ASSERT(!isBootstrapped());
+      VBK_ASSERT(activeChain_.tip() == nullptr && blocks_.size() == 1);
       current->setHeight(bootstrapHeight);
     }
 
