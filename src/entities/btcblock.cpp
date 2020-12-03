@@ -7,6 +7,7 @@
 
 namespace altintegration {
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 const std::string BtcBlock::_name = "BTC";
 
 void BtcBlock::toRaw(WriteStream& stream) const {

@@ -12,6 +12,7 @@
 
 namespace altintegration {
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 const std::string VbkBlock::_name = "VBK";
 
 void VbkBlock::toVbkEncoding(WriteStream& stream) const {

@@ -18,7 +18,7 @@ namespace secp256k1 {
 struct Secp256k1Context {
   secp256k1_context* ctx;
 
-  Secp256k1Context(unsigned int flags) {
+  Secp256k1Context(unsigned int flags) noexcept {
     ctx = secp256k1_context_create(flags);
   }
 
@@ -38,12 +38,16 @@ struct Secp256k1Context {
 static const Secp256k1Context ctx(SECP256K1_CONTEXT_VERIFY |
                                   SECP256K1_CONTEXT_SIGN);
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 static const std::string ASN1_PREFIX_PRIVKEY =
     "303E020100301006072A8648CE3D020106052B8104000A042730250201010420";
+// NOLINTNEXTLINE(cert-err58-cpp)
 static const auto ASN1_PREFIX_PRIVKEY_BYTES = ParseHex(ASN1_PREFIX_PRIVKEY);
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 static const std::string ASN1_PREFIX_PUBKEY =
     "3056301006072A8648CE3D020106052B8104000A034200";
+// NOLINTNEXTLINE(cert-err58-cpp)
 static const auto ASN1_PREFIX_PUBKEY_BYTES = ParseHex(ASN1_PREFIX_PUBKEY);
 
 static const size_t PRIVATE_KEY_ASN1_SIZE =
