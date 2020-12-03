@@ -37,8 +37,7 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             const Block& block,
                             ValidationState& state,
                             const ChainParams& params,
-                            bool shouldVerifyNextWork = true
-                            );
+                            bool shouldVerifyNextWork = true);
 
 template <typename Block, typename Storage>
 void removePayloadsFromIndex(Storage& storage,
@@ -123,6 +122,14 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
 
 template <typename Block>
 void assertBlockCanBeRemoved(const Block& block);
+
+template <typename Block>
+void assertBlockSanity(const Block& block) {
+  VBK_ASSERT_MSG(block.getHash() != block.getPreviousBlock(),
+                 "Previous block hash should NOT be equal to the current block "
+                 "hash: %s. A collision in altchain hash?",
+                 HexStr(block.getHash()));
+}
 
 template <typename Tree, typename Pop>
 void payloadToCommands(Tree& tree,

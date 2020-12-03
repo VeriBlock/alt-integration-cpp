@@ -266,11 +266,6 @@ bool AltBlockTree::addPayloads(index_t& index,
 
 bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
                                      ValidationState& state) {
-  if (getBlockIndex(block.getHash()) != nullptr) {
-    // duplicate
-    return true;
-  }
-
   // we must know previous block, but not if `block` is bootstrap block
   auto* prev = getBlockIndex(block.previousBlock);
   if (prev == nullptr) {
