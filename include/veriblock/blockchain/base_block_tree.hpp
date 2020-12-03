@@ -435,6 +435,7 @@ struct BaseBlockTree {
         current->setFlag(BLOCK_FAILED_CHILD);
       }
     } else {
+      //VBK_ASSERT(!isBootstrapped());
       current->setHeight(bootstrapHeight);
     }
 
@@ -446,7 +447,6 @@ struct BaseBlockTree {
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
     assertBlockSanity(*block);
-
     auto hash = block->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {
