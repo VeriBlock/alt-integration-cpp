@@ -12,8 +12,8 @@
 #include <veriblock/bootstraps.hpp>
 #include <veriblock/config.hpp>
 #include <veriblock/mempool.hpp>
-#include <veriblock/storage/payloads_index.hpp>
 #include <veriblock/pop_stateless_validator.hpp>
+#include <veriblock/storage/payloads_index.hpp>
 
 /**
  * @defgroup api Public API
@@ -33,7 +33,9 @@ namespace altintegration {
  */
 struct PopContext {
   static std::shared_ptr<PopContext> create(
-      const Config& config, std::shared_ptr<PayloadsProvider> db, size_t validatorWorkers = 0) {
+      const Config& config,
+      std::shared_ptr<PayloadsProvider> db,
+      size_t validatorWorkers = 0) {
     return create(
         std::make_shared<Config>(config), std::move(db), validatorWorkers);
   }
@@ -69,7 +71,9 @@ struct PopContext {
       ctx->altTree->btc().bootstrapWithChain(
           ctx->config->btc.startHeight, ctx->config->btc.blocks, state);
     }
-    VBK_ASSERT_MSG(state.IsValid(), "BTC bootstrap block is invalid: %s", state.toString());
+    VBK_ASSERT_MSG(state.IsValid(),
+                   "BTC bootstrap block is invalid: %s",
+                   state.toString());
 
     // then, bootstrap VBK
     if (ctx->config->vbk.blocks.size() == 0) {
@@ -81,10 +85,15 @@ struct PopContext {
       ctx->altTree->vbk().bootstrapWithChain(
           ctx->config->vbk.startHeight, ctx->config->vbk.blocks, state);
     }
-    VBK_ASSERT_MSG(state.IsValid(), "VBK bootstrap block is invalid: %s", state.toString());
+    VBK_ASSERT_MSG(state.IsValid(),
+                   "VBK bootstrap block is invalid: %s",
+                   state.toString());
 
     // then, bootstrap ALT
     ctx->altTree->bootstrap(state);
+    VBK_ASSERT_MSG(state.IsValid(),
+                   "ALT bootstrap block is invalid: %s",
+                   state.toString());
     return ctx;
   }
 
