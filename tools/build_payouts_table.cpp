@@ -12,8 +12,8 @@ using namespace altintegration;
 struct AltChainParamsTest : public AltChainParams {
   AltBlock getBootstrapBlock() const noexcept override {
     AltBlock genesisBlock;
-    genesisBlock.hash = {1, 2, 3};
-    genesisBlock.previousBlock = {4, 5, 6};
+    genesisBlock.hash = std::vector<uint8_t>(MIN_ALT_HASH_SIZE, 1);
+    genesisBlock.previousBlock = std::vector<uint8_t>(MIN_ALT_HASH_SIZE, 2);
     genesisBlock.height = 0;
     genesisBlock.timestamp = 0;
     return genesisBlock;
@@ -23,8 +23,7 @@ struct AltChainParamsTest : public AltChainParams {
 
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
-    ReadStream stream(bytes);
-    AltBlock altBlock = AltBlock::fromVbkEncoding(stream);
+    AltBlock altBlock = AssertDeserializeFromVbkEncoding<AltBlock>(bytes);
     return altBlock.getHash();
   }
 };
