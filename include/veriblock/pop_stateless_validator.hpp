@@ -12,11 +12,9 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/validation_state.hpp>
 
-#ifndef VBK_NO_THREADS
 namespace third_party {
 class ThreadPool;
 }
-#endif
 
 namespace altintegration {
 
@@ -39,9 +37,7 @@ class PopValidator {
   const AltChainParams& getAltParams() const { return alt_;}
 
  protected:
-#ifndef VBK_NO_THREADS
   std::shared_ptr<third_party::ThreadPool> workers;
-#endif
   const VbkChainParams& vbk_;
   const BtcChainParams& btc_;
   const AltChainParams& alt_;
