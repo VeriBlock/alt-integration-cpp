@@ -6,11 +6,15 @@
 #ifndef ALT_INTEGRATION_VERIBLOCK_POP_STATELESS_VALIDATOR_HPP
 #define ALT_INTEGRATION_VERIBLOCK_POP_STATELESS_VALIDATOR_HPP
 
+#include <future>
 #include <veriblock/blockchain/alt_chain_params.hpp>
 #include <veriblock/blockchain/btc_chain_params.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/validation_state.hpp>
-#include <veriblock/third_party/ThreadPool.h>
+
+namespace third_party {
+class ThreadPool;
+}
 
 namespace altintegration {
 
@@ -20,7 +24,7 @@ class PopValidator {
                const BtcChainParams& btc,
                const AltChainParams& alt,
                size_t threads = 0);
-  ~PopValidator() {}
+  ~PopValidator();
 
   void start(size_t threads = 0);
   void stop();
@@ -33,12 +37,12 @@ class PopValidator {
   const AltChainParams& getAltParams() const { return alt_;}
 
  protected:
-  std::shared_ptr<ThreadPool> workers;
+  std::shared_ptr<third_party::ThreadPool> workers;
   const VbkChainParams& vbk_;
   const BtcChainParams& btc_;
   const AltChainParams& alt_;
 };
 
-} // namespace altintegration
+}  // namespace altintegration
 
-#endif //ALT_INTEGRATION_VERIBLOCK_POP_STATELESS_VALIDATOR_HPP
+#endif  // ALT_INTEGRATION_VERIBLOCK_POP_STATELESS_VALIDATOR_HPP
