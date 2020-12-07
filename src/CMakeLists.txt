@@ -27,6 +27,13 @@ add_library(mempool OBJECT
         mempool_relations.cpp
         )
 
+add_library(pop_stateless_validator OBJECT
+        pop_stateless_validator.cpp
+        )
+if(VBK_NO_THREADS)
+    target_compile_definitions(pop_stateless_validator PRIVATE VBK_NO_THREADS)
+endif()
+
 set(SOURCES
         validation_state.cpp
         bootstraps.cpp
@@ -35,7 +42,6 @@ set(SOURCES
         keystone_util.cpp
         hashutil.cpp
         stateless_validation.cpp
-        pop_stateless_validator.cpp
         arith_uint256.cpp
         crypto/secp256k1.cpp
         mock_miner.cpp
@@ -43,6 +49,7 @@ set(SOURCES
         command_group_cache.cpp
         alt-util.cpp
         $<TARGET_OBJECTS:mempool>
+        $<TARGET_OBJECTS:pop_stateless_validator>
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:serde>
         $<TARGET_OBJECTS:blockchain>
