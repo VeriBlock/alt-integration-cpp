@@ -32,6 +32,12 @@ namespace altintegration {
  * @ingroup api
  */
 struct PopContext {
+  ~PopContext() {
+    if (popValidator) {
+      shutdown();
+    }
+  }
+
   static std::shared_ptr<PopContext> create(
       const Config& config,
       std::shared_ptr<PayloadsProvider> db,
@@ -97,12 +103,7 @@ struct PopContext {
     return ctx;
   }
 
-  void start(size_t validatorWorkers = 0) {
-    VBK_ASSERT_MSG(popValidator != nullptr, "PopContext is not initialized");
-    popValidator->start(validatorWorkers);
-  }
-
-  void stop() {
+  void shutdown() {
     VBK_ASSERT_MSG(popValidator != nullptr, "PopContext is not initialized");
     popValidator->stop();
   }
