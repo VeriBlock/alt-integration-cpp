@@ -16,6 +16,13 @@ add_library(strutil OBJECT
         strutil.cpp
         )
 
+add_library(pop_stateless_validator OBJECT
+        pop_stateless_validator.cpp
+        )
+if(VBK_NO_THREADS)
+    target_compile_definitions(pop_stateless_validator PRIVATE VBK_NO_THREADS)
+endif()
+
 set(SOURCES
         bootstraps.cpp
         time.cpp
@@ -26,7 +33,6 @@ set(SOURCES
         write_stream.cpp
         hashutil.cpp
         stateless_validation.cpp
-        pop_stateless_validator.cpp
         arith_uint256.cpp
         crypto/secp256k1.cpp
         mempool.cpp
@@ -34,6 +40,7 @@ set(SOURCES
         mock_miner.cpp
         config.cpp
         command_group_cache.cpp
+        $<TARGET_OBJECTS:pop_stateless_validator>
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:blockchain>
         $<TARGET_OBJECTS:storage>
