@@ -221,7 +221,7 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
                                             const payloads_t& payload,
                                             ValidationState& state) {
-  VBK_ASSERT(index.hasFlags(BLOCK_APPLIED));
+  VBK_ASSERT(index.hasFlags(BLOCK_ACTIVE));
 
   auto pid = payload.getId();
   VBK_LOG_DEBUG("Adding and applying payload %s in block %s",
@@ -420,7 +420,7 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   VBK_ASSERT(tip);
   appliedBlockCount = 0;
   while (tip) {
-    tip->setFlag(BLOCK_APPLIED);
+    tip->setFlag(BLOCK_ACTIVE);
     ++appliedBlockCount;
     tip->raiseValidity(BLOCK_CAN_BE_APPLIED);
     tip = tip->pprev;

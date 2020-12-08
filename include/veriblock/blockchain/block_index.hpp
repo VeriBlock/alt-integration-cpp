@@ -187,7 +187,7 @@ struct BlockIndex : public Block::addon_t {
   bool allDescendantsUnapplied() const {
     return pnext.empty() ||
            std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
-             return !index->hasFlags(BLOCK_APPLIED);
+             return !index->hasFlags(BLOCK_ACTIVE);
            });
   }
 
