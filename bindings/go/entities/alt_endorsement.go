@@ -61,7 +61,7 @@ func (v *AltEndorsement) ToVbkEncoding(stream io.Writer) error {
 	return nil
 }
 
-// ToVbkEncodingBytes
+// ToVbkEncodingBytes ...
 func (v *AltEndorsement) ToVbkEncodingBytes() ([]byte, error) {
 	var buffer bytes.Buffer
 	err := v.ToVbkEncoding(&buffer)

@@ -11,16 +11,20 @@ import (
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+// VbkBlockName ...
+const VbkBlockName = "VBK"
+
 // VbkID is 12 byte ID of VbkBlock
 type VbkID [veriblock.VblakePreviousBlockHashSize]byte
 
+// Bytes ...
 func (v *VbkID) Bytes() []byte {
 	return v[:]
 }
 
 // UnmarshalJSON parses a hash in hex syntax.
-func (h *VbkID) UnmarshalJSON(input []byte) error {
-	return veriblock.UnmarshalJSON(input, h[:])
+func (v *VbkID) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, v[:])
 }
 
 // ParseVbkID - Parses an VBK ID and panics if invalid size

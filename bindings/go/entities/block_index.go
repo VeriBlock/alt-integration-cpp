@@ -105,7 +105,7 @@ func (v *BlockIndex) GetDifficulty() uint32 {
 	return v.Header.GetDifficulty()
 }
 
-// GetVbkBlockHeader...
+// GetVbkBlockHeader ...
 func (v *BlockIndex) GetVbkBlockHeader() (block *VbkBlock, err error) {
 	block = new(VbkBlock)
 	var buffer bytes.Buffer

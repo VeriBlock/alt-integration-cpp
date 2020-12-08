@@ -11,16 +11,20 @@ import (
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+// VtbBlockName ...
+const VtbBlockName = "VTB"
+
 // VtbID is 32 byte ID of Vtb
 type VtbID [veriblock.Sha256HashSize]byte
 
+// Bytes ...
 func (v *VtbID) Bytes() []byte {
 	return v[:]
 }
 
 // UnmarshalJSON parses a hash in hex syntax.
-func (h *VtbID) UnmarshalJSON(input []byte) error {
-	return veriblock.UnmarshalJSON(input, h[:])
+func (v *VtbID) UnmarshalJSON(input []byte) error {
+	return veriblock.UnmarshalJSON(input, v[:])
 }
 
 // ParseVtbID - Parses an VTB ID and panics if invalid size
