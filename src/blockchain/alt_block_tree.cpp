@@ -47,7 +47,7 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
 
   auto height = index->getHeight();
 
-  index->setFlag(BLOCK_APPLIED);
+  index->setFlag(BLOCK_ACTIVE);
   ++appliedBlockCount;
   index->setFlag(BLOCK_BOOTSTRAP);
   index->raiseValidity(BLOCK_CAN_BE_APPLIED);
@@ -161,7 +161,7 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
                  "block %s already contains payloads",
                  index.toPrettyString());
 
-  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE),
                  "state corruption: block %s is applied",
                  index.toPrettyString());
 
@@ -190,7 +190,7 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_ASSERT_MSG(index.getValidityLevel() == BLOCK_HAS_PAYLOADS,
                  "block %s must have payloads added and not be connected",
                  index.toPrettyString());
-  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE),
                  "state corruption: block %s is applied",
                  index.toPrettyString());
 
@@ -407,7 +407,7 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
   VBK_ASSERT_MSG(index.pprev, "can not remove payloads from the genesis block");
   VBK_ASSERT_MSG(index.isValidUpTo(BLOCK_HAS_PAYLOADS),
                  "Can remove payloads only from blocks with payloads");
-  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED), "block is applied");
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE), "block is applied");
 
   VBK_ASSERT_MSG(index.allDescendantsUnconnected(),
                  "can remove payloads only from connected leaves");
@@ -620,7 +620,7 @@ bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
   VBK_ASSERT(tip);
   appliedBlockCount = 0;
   while (tip) {
-    tip->setFlag(BLOCK_APPLIED);
+    tip->setFlag(BLOCK_ACTIVE);
     ++appliedBlockCount;
     tip->raiseValidity(BLOCK_CAN_BE_APPLIED);
     tip = tip->pprev;

@@ -23,19 +23,23 @@ enum BlockStatus : uint32_t {
   //! all invalidity flags
   BLOCK_FAILED_MASK =
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
-  //! the block has been applied via PopStateMachine
-  BLOCK_APPLIED = 1 << 5,
+  //! the block is currently applied via SetState.
+  BLOCK_ACTIVE = 1 << 5,
 
   //! acceptBlockHeader succeded. All ancestors are at least at this state.
   BLOCK_VALID_TREE = 1 << 6,
-  //! acceptBlock has been executed on this block; payloads are statelessly
-  //! valid
+  //! acceptBlock has been executed on this block; payloads are at least
+  //! statelessly valid
   BLOCK_HAS_PAYLOADS = 2 << 6,
-  //! the block is connected via connectBlock
+  //! the block is connected via connectBlock, which means that this block and
+  //! all ancestors are at least "BLOCK_HAS_PAYLOADS"
   BLOCK_CONNECTED = 3 << 6,
-  //! the block has been successfully applied, likely along with another chain
-  BLOCK_HAS_BEEN_APPLIED = 4 << 6,
-  //! the chain with the block at its tip is fully valid
+  //! the block has been successfully applied, but may not be fully valid,
+  //! because it may connect to the "other" chain when two chains are applied
+  //! together during POP FR
+  BLOCK_CAN_BE_APPLIED_MAYBE_WITH_OTHER_CHAIN = 4 << 6,
+  //! the chain with the block at its tip is fully valid, so if we do SetState
+  //! on this block, it is guaranteed to succeed.
   BLOCK_CAN_BE_APPLIED = 5 << 6,
 
   //! all stateful validity levels
@@ -43,7 +47,8 @@ enum BlockStatus : uint32_t {
   // not belong here since it does not depend on other block contents
   BLOCK_VALID_MASK = BLOCK_VALID_UNKNOWN | BLOCK_VALID_TREE |
                      BLOCK_HAS_PAYLOADS | BLOCK_CONNECTED |
-                     BLOCK_HAS_BEEN_APPLIED | BLOCK_CAN_BE_APPLIED,
+                     BLOCK_CAN_BE_APPLIED_MAYBE_WITH_OTHER_CHAIN |
+                     BLOCK_CAN_BE_APPLIED,
 
   // DEV NOTE: new flags should be added in the end
 };
