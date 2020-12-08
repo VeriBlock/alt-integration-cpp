@@ -629,8 +629,7 @@ struct BaseBlockTree {
 
     auto shortHash = makePrevHash(block.getHash());
     auto it = blocks_.at(shortHash);
-    // TODO: it is a hack because we do not erase blocks and just move them to
-    // the remove_ container
+
     it->setNull();
     removed_[shortHash] = it;
     blocks_.erase(shortHash);
@@ -660,7 +659,6 @@ struct BaseBlockTree {
   //! stores ALL blocks, including valid and invalid
   block_index_t blocks_;
   //! stores all removed blocks, to ensure pointers to blocks remain stable
-  // TODO(bogdan): remove for future releases
   block_index_t removed_;
   //! stores ONLY VALID tips, including currently active tip
   std::unordered_set<index_t*> tips_;

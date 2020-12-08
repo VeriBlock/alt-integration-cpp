@@ -30,37 +30,17 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   //! this block. must be a vector, because we can have duplicates here
   std::vector<AltEndorsement*> blockOfProofEndorsements;
 
-  void setNullInmemFields() {
-    chainWork = 0;
-    blockOfProofEndorsements.clear();
-    endorsedBy.clear();
-  }
+  void setNullInmemFields();
 
   static constexpr auto validTipLevel = BLOCK_VALID_TREE;
 
   uint32_t refCount() const { return _refCount; }
 
-  void addRef(ref_height_t) {
-    ++_refCount;
-    setDirty();
-  }
+  void addRef(ref_height_t);
 
-  void removeRef(ref_height_t) {
-    VBK_ASSERT(_refCount > 0 &&
-               "state corruption: attempted to remove a nonexitent reference "
-               "to a VBK block");
-    --_refCount;
-    setDirty();
-  }
+  void removeRef(ref_height_t);
 
-  void setIsBootstrap(bool isBootstrap) {
-    if (isBootstrap) {
-      // pretend this block is referenced by the genesis block of the SI chain
-      addRef(0);
-    } else {
-      VBK_ASSERT(false && "not supported");
-    }
-  }
+  void setIsBootstrap(bool isBootstrap);
 
   bool hasPayloads() const { return !_vtbids.empty(); }
 
@@ -87,18 +67,9 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
     setDirty();
   }
 
-  std::string toPrettyString() const {
-    return fmt::sprintf("VTB=%d", _vtbids.size());
-  }
+  std::string toPrettyString() const;
 
-  void toVbkEncoding(WriteStream& w) const {
-    w.writeBE<uint32_t>(_refCount);
-    PopState<VbkEndorsement>::toVbkEncoding(w);
-    writeArrayOf<uint256>(
-        w, _vtbids, [&](WriteStream& /*ignore*/, const uint256& u) {
-          writeSingleByteLenValue(w, u);
-        });
-  }
+  void toVbkEncoding(WriteStream& w) const;
 
  protected:
   //! reference counter for fork resolution
@@ -108,12 +79,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
 
   void setDirty();
 
-  void setNull() {
-    _refCount = 0;
-    chainWork = 0;
-    PopState<VbkEndorsement>::setNull();
-    _vtbids.clear();
-  }
+  void setNull();
 
   friend bool DeserializeFromVbkEncoding(ReadStream& stream,
                                          VbkBlockAddon& out,
