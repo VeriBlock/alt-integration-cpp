@@ -210,7 +210,7 @@ struct BlockTree : public BaseBlockTree<Block> {
                "insertBlockHeader");
 
     base::tryAddTip(index);
-    index->setFlag(BLOCK_APPLIED);
+    index->setFlag(BLOCK_ACTIVE);
     bool success = index->raiseValidity(BLOCK_CAN_BE_APPLIED);
     VBK_ASSERT(success);
     index->setFlag(BLOCK_BOOTSTRAP);
