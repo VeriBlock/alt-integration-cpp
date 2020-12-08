@@ -10,6 +10,9 @@ import (
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+// BtcBlockName ...
+const BtcBlockName = "BTC"
+
 // BtcHash is 32 byte hash of BtcBlock
 type BtcHash [veriblock.Sha256HashSize]byte
 
