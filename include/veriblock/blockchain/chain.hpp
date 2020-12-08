@@ -97,7 +97,6 @@ struct Chain {
     height_t innerHeight = toInnerHeight(index->getHeight());
     chain.resize(innerHeight + 1);
 
-    /// TODO: may stuck here forever when fed with malformed data
     while (index != nullptr && !contains(index) &&
            index->getHeight() >= startHeight_) {
       innerHeight = toInnerHeight(index->getHeight());

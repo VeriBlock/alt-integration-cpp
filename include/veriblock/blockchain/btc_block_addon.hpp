@@ -28,52 +28,25 @@ struct BtcBlockAddon {
 
   static constexpr auto validTipLevel = BLOCK_VALID_TREE;
 
-  void setNullInmemFields() {
-    chainWork = 0;
-    blockOfProofEndorsements.clear();
-  }
+  void setNullInmemFields();
 
-  void setIsBootstrap(bool isBootstrap) {
-    if (isBootstrap) {
-      // pretend this block is referenced by the genesis block of the SI chain
-      addRef(0);
-    } else {
-      VBK_ASSERT(false && "not supported");
-    }
-  }
+  void setIsBootstrap(bool isBootstrap);
 
-  uint32_t refCount() const { return (uint32_t)refs.size(); }
+  uint32_t refCount() const;
 
   const std::vector<ref_height_t>& getRefs() const { return refs; }
 
-  void addRef(ref_height_t referencedAtHeight) {
-    refs.push_back(referencedAtHeight);
-    setDirty();
-  }
+  void addRef(ref_height_t referencedAtHeight);
 
-  void removeRef(ref_height_t referencedAtHeight) {
-    auto ref_it = find(refs.begin(), refs.end(), referencedAtHeight);
-    VBK_ASSERT(ref_it != refs.end() &&
-               "state corruption: tried removing a nonexistent reference to a "
-               "BTC block");
-    refs.erase(ref_it);
-    setDirty();
-  }
+  void removeRef(ref_height_t referencedAtHeight);
 
-  void toVbkEncoding(WriteStream& w) const {
-    // save only refs
-    writeArrayOf<ref_height_t>(
-        w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
-          w.writeBE<ref_height_t>(value);
-        });
-  }
+  void toVbkEncoding(WriteStream& w) const;
 
-  std::string toPrettyString() const {
-    return fmt::format("chainwork={}", chainWork.toHex());
-  }
+  std::string toPrettyString() const;
 
  protected:
-  //! reference counter for fork resolution
+  //! reference counter for fork resolution. Stores heights of VBK blocks that
+  //! contain VTBs which add this BTC block.
   // Ideally we would want a sorted collection with cheap addition, deletion and
   // lookup. In practice, due to VBK/BTC block time ratio(20x) and multiple APMs
   // running, there's little chance of VTBs shipping non-empty BTC context. The
@@ -83,15 +56,11 @@ struct BtcBlockAddon {
   // that during fork resolution making std::vector the fastest storage option
   // in this case.
   // TODO: figure out if this is somehow abusable by spammers/dosers
-
   std::vector<ref_height_t> refs{};
 
   void setDirty();
 
-  void setNull() {
-    refs.clear();
-    chainWork = 0;
-  }
+  void setNull();
 
  private:
   friend bool DeserializeFromVbkEncoding(ReadStream& stream,
