@@ -18,6 +18,9 @@ func VbkBlockGetID(blockBytes []byte) [veriblock.VblakePreviousBlockHashSize]byt
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&idBytes[0]))
 	idBytesSizeC := (*C.int)(unsafe.Pointer(&idBytesSize))
 	C.VBK_VbkBlock_getId(blockBytesC, C.int(len(blockBytes)), idBytesC, idBytesSizeC)
+	if idBytesSize != len(idBytes) {
+		panic("invalid bytes size")
+	}
 	return idBytes
 }
 
@@ -29,6 +32,9 @@ func VtbGetID(vtbBytes []byte) [veriblock.Sha256HashSize]byte {
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&idBytes[0]))
 	idBytesSizeC := (*C.int)(unsafe.Pointer(&idBytesSize))
 	C.VBK_VTB_getId(vtbBytesC, C.int(len(vtbBytes)), idBytesC, idBytesSizeC)
+	if idBytesSize != len(idBytes) {
+		panic("invalid bytes size")
+	}
 	return idBytes
 }
 
@@ -40,6 +46,9 @@ func AtvGetID(atvBytes []byte) [veriblock.Sha256HashSize]byte {
 	idBytesC := (*C.uint8_t)(unsafe.Pointer(&idBytes[0]))
 	idBytesSizeC := (*C.int)(unsafe.Pointer(&idBytesSize))
 	C.VBK_ATV_getId(atvBytesC, C.int(len(atvBytes)), idBytesC, idBytesSizeC)
+	if idBytesSize != len(idBytes) {
+		panic("invalid bytes size")
+	}
 	return idBytes
 }
 
@@ -51,6 +60,9 @@ func VbkBlockGetHash(blockBytes []byte) [veriblock.VblakeBlockHashSize]byte {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	hashBytesSizeC := (*C.int)(unsafe.Pointer(&hashBytesSize))
 	C.VBK_VbkBlock_getHash(blockBytesC, C.int(len(blockBytes)), hashBytesC, hashBytesSizeC)
+	if hashBytesSize != len(hashBytes) {
+		panic("invalid bytes size")
+	}
 	return hashBytes
 }
 
@@ -62,6 +74,9 @@ func BtcBlockGetHash(blockBytes []byte) [veriblock.Sha256HashSize]byte {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	hashBytesSizeC := (*C.int)(unsafe.Pointer(&hashBytesSize))
 	C.VBK_BtcBlock_getHash(blockBytesC, C.int(len(blockBytes)), hashBytesC, hashBytesSizeC)
+	if hashBytesSize != len(hashBytes) {
+		panic("invalid bytes size")
+	}
 	return hashBytes
 }
 
@@ -74,5 +89,8 @@ func (v *PopContext) AltBlockCalculateContextInfoContainerHash(prevBlockHash []b
 	prevBlockHashC := (*C.uint8_t)(unsafe.Pointer(&prevBlockHash[0]))
 	popDataBytesC := (*C.uint8_t)(unsafe.Pointer(&popDataBytes[0]))
 	C.VBK_AltBlock_calculateContextInfoContainerHash(v.ref, prevBlockHashC, C.int(len(prevBlockHash)), popDataBytesC, C.int(len(popDataBytes)), hashBytesC, hashBytesSizeC)
+	if hashBytesSize != len(hashBytes) {
+		panic("invalid bytes size")
+	}
 	return hashBytes
 }
