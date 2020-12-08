@@ -348,9 +348,6 @@ inline void PrintTo(const AltBlockTree& tree, std::ostream* os) {
   *os << tree.toPrettyString();
 }
 
-//! @private
-inline uint8_t getBlockProof(const AltBlock&) { return 0; }
-
 }  // namespace altintegration
 
 #endif  // !

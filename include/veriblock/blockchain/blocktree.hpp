@@ -278,6 +278,14 @@ struct BlockTree : public BaseBlockTree<Block> {
       this->setState(candidate, state);
     }
   }
+
+  //! whenever new block is inserted, BlockTree has to update its ChainWork
+  void onBlockInserted(index_t* newIndex) override final {
+    newIndex->chainWork = getBlockProof(newIndex->getHeader());
+    if (newIndex->pprev) {
+      newIndex->chainWork += newIndex->pprev->chainWork;
+    }
+  }
 };
 
 template <typename Block, typename ChainParams>
