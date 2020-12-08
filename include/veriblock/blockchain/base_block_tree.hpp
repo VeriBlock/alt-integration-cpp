@@ -455,11 +455,7 @@ struct BaseBlockTree {
     }
 
     current = doInsertBlockHeader(block, bootstrapHeight);
-
-    current->chainWork = getBlockProof(*block);
-    if (current->pprev) {
-      current->chainWork += current->pprev->chainWork;
-    }
+    this->onBlockInserted(current);
 
     // raise validity may return false if block is invalid
     current->raiseValidity(BLOCK_VALID_TREE);
@@ -524,6 +520,11 @@ struct BaseBlockTree {
   }
 
  protected:
+  //! callback which is executed when new block is added to a tree
+  virtual void onBlockInserted(index_t* /*ignore*/) {
+    /* do nothing in base tree */
+  }
+
   /**
    * Find all tips affected by a block modification and schedule or do fork
    * resolution

@@ -104,7 +104,6 @@ void AltBlockAddon::toVbkEncoding(WriteStream& w) const {
 }
 
 void AltBlockAddon::setNullInmemFields() {
-  chainWork = 0;
   endorsedBy.clear();
 }
 
@@ -120,7 +119,6 @@ void AltBlockAddon::clearPayloads() {
 
 void AltBlockAddon::setNull() {
   PopState<AltEndorsement>::setNull();
-  chainWork = 0;
   clearPayloads();
 }
 

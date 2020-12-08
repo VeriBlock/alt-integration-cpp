@@ -411,7 +411,7 @@ VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
       payloadsProvider_(storagePayloads),
       payloadsIndex_(payloadsIndex) {}
 
-bool VbkBlockTree::loadTip(const Blob<24>& hash, ValidationState& state) {
+bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   if (!base::loadTip(hash, state)) {
     return false;
   }
