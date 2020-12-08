@@ -9,16 +9,21 @@ import (
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
+// AltBlockName ...
+const AltBlockName = "ALT"
+
 // AltHash is dynamic byte hash of ALT blocks
 type AltHash []byte
 
-// ContextInfoContainerHash
+// ContextInfoContainerHash ...
 type ContextInfoContainerHash [veriblock.Sha256HashSize]byte
 
+// Bytes ...
 func (v *AltHash) Bytes() []byte {
 	return *v
 }
 
+// Bytes ...
 func (v *ContextInfoContainerHash) Bytes() []byte {
 	return v[:]
 }
@@ -105,7 +110,7 @@ func (v *AltBlock) FromRaw(stream io.Reader) error {
 	return v.FromVbkEncoding(stream)
 }
 
-// FromRawBytes
+// FromRawBytes ...
 func (v *AltBlock) FromRawBytes(data []byte) error {
 	buffer := bytes.NewBuffer(data)
 	return v.FromRaw(buffer)
