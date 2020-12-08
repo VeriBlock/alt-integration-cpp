@@ -20,10 +20,6 @@ struct PopData;
 struct AltBlockAddon : public PopState<AltEndorsement> {
   using payloads_t = PopData;
 
-  // TODO: refactor base block tree, and move chainwork to blocktree.hpp, then
-  // remove this
-  uint8_t chainWork;
-
   void setNullInmemFields();
 
   static constexpr auto validTipLevel = BLOCK_CONNECTED;
