@@ -26,20 +26,22 @@ enum BlockStatus : uint32_t {
   //! the block is currently applied via SetState.
   BLOCK_ACTIVE = 1 << 5,
 
-  //! acceptBlockHeader succeded. All ancestors are at least at this state.
+  //! acceptBlockHeader succeded. All ancestors are at least at this state and
+  //! statelessly valid.
   BLOCK_VALID_TREE = 1 << 6,
-  //! acceptBlock has been executed on this block; payloads are at least
-  //! statelessly valid
+  //! acceptBlock has been executed on this block; payloads are at least in
+  //! BLOCK_VALID_TREE state.
   BLOCK_HAS_PAYLOADS = 2 << 6,
   //! the block is connected via connectBlock, which means that this block and
   //! all ancestors are at least "BLOCK_HAS_PAYLOADS"
   BLOCK_CONNECTED = 3 << 6,
   //! the block has been successfully applied, but may not be fully valid,
   //! because it may connect to the "other" chain when two chains are applied
-  //! together during POP FR
+  //! together during POP FR. All ancestors are at least BLOCK_CONNECTED.
   BLOCK_CAN_BE_APPLIED_MAYBE_WITH_OTHER_CHAIN = 4 << 6,
   //! the chain with the block at its tip is fully valid, so if we do SetState
-  //! on this block, it is guaranteed to succeed.
+  //! on this block, it is guaranteed to succeed. All ancestors are at least
+  //! BLOCK_CONNECTED.
   BLOCK_CAN_BE_APPLIED = 5 << 6,
 
   //! all stateful validity levels
