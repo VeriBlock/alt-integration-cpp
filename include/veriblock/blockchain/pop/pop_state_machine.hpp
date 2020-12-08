@@ -21,12 +21,12 @@ template <typename index_t>
 void assertBlockCanBeApplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot apply the genesis block");
 
-  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
+  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_ACTIVE),
                  "state corruption: tried to apply a block that follows an "
                  "unapplied block %s",
                  index.pprev->toPrettyString());
 
-  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_APPLIED),
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE),
                  "state corruption: tried to apply an already applied block %s",
                  index.toPrettyString());
   // an expensive check; might want to  disable it eventually
@@ -46,10 +46,10 @@ void assertBlockCanBeUnapplied(index_t& index) {
   VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
 
   VBK_ASSERT_MSG(
-      index.hasFlags(BLOCK_APPLIED),
+      index.hasFlags(BLOCK_ACTIVE),
       "state corruption: tried to unapply an already unapplied block %s",
       index.toPrettyString());
-  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_APPLIED),
+  VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_ACTIVE),
                  "state corruption: tried to unapply a block that follows an "
                  "unapplied block %s",
                  index.pprev->toPrettyString());
@@ -163,10 +163,10 @@ struct PopStateMachine {
             ed_.getRoot().getHeight() + ed_.appliedBlockCount) {
       index.raiseValidity(BLOCK_CAN_BE_APPLIED);
     } else {
-      index.raiseValidity(BLOCK_HAS_BEEN_APPLIED);
+      index.raiseValidity(BLOCK_CAN_BE_APPLIED_MAYBE_WITH_OTHER_CHAIN);
     }
 
-    index.setFlag(BLOCK_APPLIED);
+    index.setFlag(BLOCK_ACTIVE);
     ++ed_.appliedBlockCount;
 
     return true;
@@ -196,7 +196,7 @@ struct PopStateMachine {
       }
     }
 
-    index.unsetFlag(BLOCK_APPLIED);
+    index.unsetFlag(BLOCK_ACTIVE);
     VBK_ASSERT(ed_.appliedBlockCount > 0);
     --ed_.appliedBlockCount;
   }
