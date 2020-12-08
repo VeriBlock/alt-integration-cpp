@@ -219,81 +219,48 @@ bool VBK_AltBlockTree_setState(PopContext* self,
   return self->context->altTree->setState(hash, state);
 }
 
-bool VBK_btc_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size,
-                           uint8_t** blockindex,
-                           int* blockindex_size) {
+VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash_bytes);
-  VBK_ASSERT(blockindex);
-  VBK_ASSERT(blockindex_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
-  altintegration::Slice<const uint8_t> hash(hash_bytes, hash_bytes_size);
-  auto* blockIndex = self->context->altTree->btc().getBlockIndex(
-      altintegration::BtcBlock::hash_t(hash));
-  if (blockIndex == nullptr) {
-    return false;
-  }
-
-  std::vector<uint8_t> bytes = blockIndex->toVbkEncoding();
-  *blockindex = new uint8_t[bytes.size()];
-  memcpy(*blockindex, bytes.data(), bytes.size());
-  *blockindex_size = (int)bytes.size();
-
-  return true;
+  altintegration::BtcBlock::hash_t hash(
+      altintegration::Slice<const uint8_t>(hash_bytes, hash_bytes_size));
+  auto* blockIndex = self->context->altTree->btc().getBlockIndex(hash);
+  altintegration::WriteStream stream;
+  blockIndex->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
 }
 
-bool VBK_vbk_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size,
-                           uint8_t** blockindex,
-                           int* blockindex_size) {
+VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash_bytes);
-  VBK_ASSERT(blockindex);
-  VBK_ASSERT(blockindex_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
-  altintegration::Slice<const uint8_t> hash(hash_bytes, hash_bytes_size);
-  auto* blockIndex = self->context->altTree->vbk().getBlockIndex(
-      altintegration::VbkBlock::hash_t(hash));
-  if (blockIndex == nullptr) {
-    return false;
-  }
-
-  std::vector<uint8_t> bytes = blockIndex->toVbkEncoding();
-  *blockindex = new uint8_t[bytes.size()];
-  memcpy(*blockindex, bytes.data(), bytes.size());
-  *blockindex_size = (int)bytes.size();
-
-  return true;
+  altintegration::VbkBlock::hash_t hash(
+      altintegration::Slice<const uint8_t>(hash_bytes, hash_bytes_size));
+  auto* blockIndex = self->context->altTree->vbk().getBlockIndex(hash);
+  altintegration::WriteStream stream;
+  blockIndex->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
 }
 
-bool VBK_alt_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size,
-                           uint8_t** blockindex,
-                           int* blockindex_size) {
+VBK_ByteStream* VBK_alt_getBlockIndex(PopContext* self,
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash_bytes);
-  VBK_ASSERT(blockindex);
-  VBK_ASSERT(blockindex_size);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   auto* blockIndex = self->context->altTree->getBlockIndex(hash);
-  if (blockIndex == nullptr) {
-    return false;
-  }
-
-  std::vector<uint8_t> bytes = blockIndex->toVbkEncoding();
-  *blockindex = new uint8_t[bytes.size()];
-  memcpy(*blockindex, bytes.data(), bytes.size());
-  *blockindex_size = (int)bytes.size();
-
-  return true;
+  altintegration::WriteStream stream;
+  blockIndex->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
 }
 
 VBK_ByteStream* VBK_alt_BestBlock(PopContext* self) {
