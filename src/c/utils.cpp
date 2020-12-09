@@ -3,14 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/c/utils.h"
-
 #include <stdio.h>
 
 #include <vector>
 
 #include "pop_context.hpp"
 #include "veriblock/alt-util.hpp"
+#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/popdata.hpp"
