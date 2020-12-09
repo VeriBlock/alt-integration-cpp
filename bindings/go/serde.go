@@ -12,6 +12,11 @@ import (
 	"unsafe"
 )
 
+// WithName - Can return a name of item.
+type WithName interface {
+	Name() string
+}
+
 // Serde - Serializes struct to Vbk Encoded bytes and deserializes Vbk Encoded bytes to struct.
 type Serde interface {
 	ToVbkEncoding(stream io.Writer) error
