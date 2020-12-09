@@ -1,9 +1,7 @@
 package api
 
 import (
-	"encoding/hex"
 	"errors"
-	"fmt"
 
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 )
@@ -22,6 +20,5 @@ func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlockHash entities
 
 	var hash entities.ContextInfoContainerHash
 	hash = v.popContext.AltBlockCalculateContextInfoContainerHash(prevAltBlockHash, popDataBytes)
-	fmt.Printf("CalculateContextInfoContainerHash hash: %s \n", hex.EncodeToString(hash[:]))
 	return &hash, nil
 }
