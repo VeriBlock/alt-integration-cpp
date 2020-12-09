@@ -12,6 +12,7 @@
 #include <vector>
 #include <veriblock/algorithm.hpp>
 #include <veriblock/blockchain/alt_chain_params.hpp>
+#include <veriblock/crypto/progpow.hpp>
 
 #include "veriblock/arith_uint256.hpp"
 #include "veriblock/blob.hpp"
@@ -208,7 +209,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
     if (vbkBlocks[i].getHeight() != lastHeight + 1 ||
         vbkBlocks[i].getPreviousBlock() !=
-            lastHash.template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
+            lastHash.template trimLE<VBK_PREVIOUS_BLOCK_HASH_SIZE>()) {
       return state.Invalid("invalid-vbk-block", "Blocks are not contiguous");
     }
     lastHeight = vbkBlocks[i].getHeight();
@@ -385,9 +386,94 @@ bool checkVTB(const VTB& vtb,
   return true;
 }
 
+bool checkVbkBlockPlausibility(const VbkBlock& block,
+                               ValidationState& state,
+                               const VbkChainParams& params) {
+  const auto progPowForkHeight = params.getProgPowForkHeight();
+  if (block.getHeight() < progPowForkHeight) {
+    return state.Invalid("height-too-low",
+                         fmt::format("Too low height. Supporting blocks "
+                                     "starting with height={}, got height={}",
+                                     params.getProgPowForkHeight(),
+                                     block.getHeight()));
+  }
+
+  const auto epoch = progpow::ethashGetEpochWithoutOffset(block.getHeight());
+  if (epoch > VBK_MAX_CALCULATED_EPOCHS_SIZE) {
+    const auto maxHeight =
+        VBK_MAX_CALCULATED_EPOCHS_SIZE * VBK_ETHASH_EPOCH_LENGTH;
+    return state.Invalid("height-too-high",
+                         fmt::format("Too high height. Supporting blocks "
+                                     "starting with height={}, got height={}",
+                                     maxHeight,
+                                     block.getHeight()));
+  }
+
+  // if this check id disabled, return early
+  if (!params.isProgPowStartTimeEpochEnabled()) {
+    return true;
+  }
+
+  // estimate blockchain expected block height to get rid of blocks that are
+  // too high, thus invalidating how progpow caches.
+  // algorithm is copied from Nodecore
+  const auto height = block.getHeight();
+  const auto blocktimeSeconds = params.getTargetBlockTime();
+  const auto startTimeEpoch = params.getProgPowStartTimeEpoch();
+  const auto gracePeriodDays = 5;
+  const auto timestamp = block.getTimestamp();
+  if (timestamp < startTimeEpoch) {
+    return state.Invalid(
+        "timestamp-too-low",
+        fmt::format("Too low timestamp. Supporting blocks starting with "
+                    "timestamp={}, got timestamp={}",
+                    startTimeEpoch,
+                    timestamp));
+  }
+
+  static const auto secondsInDay = 24 * 60 * 60;
+
+  const uint32_t upperBound =
+      startTimeEpoch +
+      ((blocktimeSeconds * (double)(height - progPowForkHeight) * 1.2)) +
+      (secondsInDay * gracePeriodDays);
+
+  uint32_t lowerBound =
+      startTimeEpoch +
+      ((blocktimeSeconds * (double)(height - progPowForkHeight) / 1.2)) -
+      (secondsInDay * gracePeriodDays);
+
+  lowerBound = std::max({lowerBound, startTimeEpoch});
+
+  if (timestamp > upperBound) {
+    // Timestamp is more than upper bound, invalid
+    return state.Invalid(
+        "timestamp-upper-bound",
+        fmt::format("Timestamp higher than upper bound={}, timestamp={}",
+                    upperBound,
+                    timestamp));
+  }
+
+  if (timestamp < lowerBound) {
+    // Timestamp is less than upper bound, invalid
+    return state.Invalid(
+        "timestamp-lower-bound",
+        fmt::format("Timestamp lower than lower bound={}, timestamp={}",
+                    lowerBound,
+                    timestamp));
+  }
+
+  return true;
+}
+
 bool checkBlock(const VbkBlock& block,
                 ValidationState& state,
                 const VbkChainParams& params) {
+  // before we calculate PoW, determine its plausibility
+  if (!checkVbkBlockPlausibility(block, state, params)) {
+    return state.Invalid("vbk-bad-block");
+  }
+
   if (!checkProofOfWork(block, params)) {
     return state.Invalid("vbk-bad-pow", "Invalid Block proof of work");
   }

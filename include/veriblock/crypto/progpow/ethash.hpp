@@ -27,8 +27,6 @@
 #define VBK_ETHASH_DATASET_BYTES_GROWTH 8388608U   // 2**23
 #define VBK_ETHASH_CACHE_BYTES_INIT 1073741824U    // 2**24
 #define VBK_ETHASH_CACHE_BYTES_GROWTH 131072U      // 2**17
-#define VBK_ETHASH_EPOCH_LENGTH 8000U
-#define VBK_ETHASH_EPOCH_OFFSET 323
 #define VBK_ETHASH_MIX_BYTES 128
 #define VBK_ETHASH_HASH_BYTES 64
 #define VBK_ETHASH_DATASET_PARENTS 256
@@ -38,8 +36,6 @@
 
 namespace altintegration {
 namespace progpow {
-
-uint64_t ethash_get_epoch(uint64_t block);
 
 struct ethash_cache {
   void* cache;
