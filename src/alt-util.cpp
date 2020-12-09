@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/alt-util.hpp"
-
 #include "veriblock/entities/keystone_container.hpp"
 
 namespace altintegration {
