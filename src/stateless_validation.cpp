@@ -209,7 +209,7 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 
     if (vbkBlocks[i].getHeight() != lastHeight + 1 ||
         vbkBlocks[i].getPreviousBlock() !=
-            lastHash.template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>()) {
+            lastHash.template trimLE<VBK_PREVIOUS_BLOCK_HASH_SIZE>()) {
       return state.Invalid("invalid-vbk-block", "Blocks are not contiguous");
     }
     lastHeight = vbkBlocks[i].getHeight();
