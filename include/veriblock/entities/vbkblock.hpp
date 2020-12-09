@@ -120,7 +120,7 @@ struct VbkBlock {
     return secondPreviousKeystone;
   }
   uint128 getMerkleRoot() const { return merkleRoot; }
-  int32_t getTimestamp() const { return timestamp; }
+  uint32_t getTimestamp() const { return timestamp; }
   uint64_t getNonce() const { return nonce; }
 
   void setHeight(int32_t h);
@@ -129,7 +129,7 @@ struct VbkBlock {
   void setPreviousKeystone(const keystone_t& ks);
   void setSecondPreviousKeystone(const keystone_t& ks);
   void setMerkleRoot(const uint128& mroot);
-  void setTimestamp(int32_t ts);
+  void setTimestamp(uint32_t ts);
   void setDifficulty(int32_t diff);
   void setNonce(uint64_t nnc);
 
@@ -142,7 +142,7 @@ struct VbkBlock {
   keystone_t previousKeystone{};
   keystone_t secondPreviousKeystone{};
   uint128 merkleRoot{};
-  int32_t timestamp{};
+  uint32_t timestamp{};
   int32_t difficulty{};
   uint64_t nonce{};
 

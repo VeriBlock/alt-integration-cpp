@@ -74,6 +74,8 @@ bool checkBlock(const BtcBlock& block,
                 ValidationState& state,
                 const BtcChainParams& params);
 
+bool checkVbkBlockPlausibility(const VbkBlock& block, ValidationState& state, const VbkChainParams& params);
+
 bool checkBlock(const VbkBlock& block,
                 ValidationState& state,
                 const VbkChainParams& params);
