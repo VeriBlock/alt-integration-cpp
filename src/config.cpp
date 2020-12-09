@@ -14,9 +14,7 @@ static std::shared_ptr<altintegration::VbkChainParams> ParseVbkNetwork(
   static const std::vector<std::shared_ptr<VbkChainParams>> all{
       std::make_shared<VbkChainParamsMain>(),
       std::make_shared<VbkChainParamsTest>(),
-      std::make_shared<VbkChainParamsRegTest>(),
-      std::make_shared<VbkChainParamsAlpha>(),
-  };
+      std::make_shared<VbkChainParamsRegTest>()};
 
   auto it = std::find_if(
       all.begin(), all.end(), [&](const std::shared_ptr<VbkChainParams>& p) {

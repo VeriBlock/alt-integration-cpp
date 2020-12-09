@@ -439,3 +439,76 @@ TEST_F(StatelessValidationTest, parallel_check_invalid_pop) {
   ASSERT_TRUE(result);
   ASSERT_TRUE(state.IsValid());
 }
+
+TEST(VbkBlockPlausibility, Height) {
+  const VbkChainParamsMain param;
+  const auto forkHeight = param.getProgPowForkHeight();
+  const auto forkTimestamp = param.getProgPowStartTimeEpoch();
+  ValidationState state;
+  VbkBlock block;
+  // set valid timestamp
+  block.setTimestamp(forkTimestamp);
+
+  // too low
+  block.setHeight(forkHeight - 1);
+  EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
+      << state.toString();
+  EXPECT_EQ(state.GetPath(), "height-too-low");
+  state.clear();
+
+  // ok
+  block.setHeight(forkHeight);
+  EXPECT_TRUE(checkVbkBlockPlausibility(block, state, param))
+      << state.toString();
+  state.clear();
+
+  // too high
+  const auto firstInvalidHeight =
+      VBK_ETHASH_EPOCH_LENGTH * (VBK_MAX_CALCULATED_EPOCHS_SIZE + 1);
+  block.setHeight(firstInvalidHeight);
+  // set valid timestamp
+  block.setTimestamp(forkTimestamp * 1.5);
+  EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
+      << state.toString();
+  EXPECT_EQ(state.GetPath(), "height-too-high");
+  state.clear();
+}
+
+TEST(VbkBlockPlausibility, Timestamp) {
+  const VbkChainParamsMain param;
+  const auto forkHeight = param.getProgPowForkHeight();
+  const auto forkTimestamp = param.getProgPowStartTimeEpoch();
+  ValidationState state;
+  VbkBlock block;
+  // set valid height
+  block.setHeight(forkHeight);
+
+  // lower than progpow start time epoch
+  block.setTimestamp(forkTimestamp - 1);
+  EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
+      << state.toString();
+  EXPECT_EQ(state.GetPath(), "timestamp-too-low");
+  state.clear();
+
+  // too low
+  block.setHeight(forkHeight * 2);
+  block.setTimestamp(forkTimestamp);  // valid but under expected timestamp
+  EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
+      << state.toString();
+  EXPECT_EQ(state.GetPath(), "timestamp-lower-bound");
+  state.clear();
+
+  // ok, right at upper bound for height=(forkHeight * 2)
+  const auto upperBound = 1655580052;
+  block.setTimestamp(upperBound);
+  EXPECT_TRUE(checkVbkBlockPlausibility(block, state, param))
+      << state.toString();
+  state.clear();
+
+  // too high
+  block.setTimestamp(upperBound + 1);
+  EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
+      << state.toString();
+  EXPECT_EQ(state.GetPath(), "timestamp-upper-bound");
+  state.clear();
+}

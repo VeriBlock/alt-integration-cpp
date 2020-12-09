@@ -33,7 +33,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
   block.setPreviousBlock(
       tip.getHeader()
           .getHash()
-          .template trimLE<VBLAKE_PREVIOUS_BLOCK_HASH_SIZE>());
+          .template trimLE<VBK_PREVIOUS_BLOCK_HASH_SIZE>());
   block.setMerkleRoot(merkle);
   block.setHeight(tip.getHeight() + 1);
   // set first previous keystone
@@ -49,7 +49,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     VBK_ASSERT(prevKeystoneIndex != nullptr);
     block.setPreviousKeystone(
         prevKeystoneIndex->getHash()
-            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>());
+            .template trimLE<VBK_PREVIOUS_KEYSTONE_HASH_SIZE>());
   }
 
   // set second previous keystone
@@ -59,7 +59,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     VBK_ASSERT(secondPrevKeystoneIndex != nullptr);
     block.setSecondPreviousKeystone(
         secondPrevKeystoneIndex->getHash()
-            .template trimLE<VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE>());
+            .template trimLE<VBK_PREVIOUS_KEYSTONE_HASH_SIZE>());
   }
 
   block.setTimestamp((std::max)(tip.getBlockTime(), currentTimestamp4()));

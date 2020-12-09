@@ -19,8 +19,7 @@
 
 #include <cstdint>
 #include <veriblock/uint.hpp>
-
-#include "consts.hpp"
+#include <veriblock/consts.hpp>
 
 namespace altintegration {
 namespace progpow {
@@ -40,7 +39,7 @@ namespace progpow {
 // w.flush();
 // w.close();
 
-extern const uint64_t dag_sizes[VBK_MAX_EPOCHS_SIZE];
+extern const uint64_t dag_sizes[VBK_MAX_CALCULATED_EPOCHS_SIZE];
 
 // Generated with the following Java code, in Nodecore:
 //
@@ -57,7 +56,7 @@ extern const uint64_t dag_sizes[VBK_MAX_EPOCHS_SIZE];
 // w.flush();
 // w.close();
 
-extern const uint64_t cache_sizes[VBK_MAX_EPOCHS_SIZE];
+extern const uint64_t cache_sizes[VBK_MAX_CALCULATED_EPOCHS_SIZE];
 
 // Calculated with the following C++ code:
 //
@@ -71,7 +70,7 @@ extern const uint64_t cache_sizes[VBK_MAX_EPOCHS_SIZE];
 //    fmt::printf("}},\n");
 //  }
 //}
-extern const uint256 dag_seeds[VBK_MAX_EPOCHS_SIZE];
+extern const uint256 dag_seeds[VBK_MAX_CALCULATED_EPOCHS_SIZE];
 
 }  // namespace progpow
 }  // namespace altintegration
