@@ -160,7 +160,7 @@ void VbkBlock::setMerkleRoot(const uint128& mroot) {
   merkleRoot = mroot;
   invalidateHash();
 }
-void VbkBlock::setTimestamp(int32_t ts) {
+void VbkBlock::setTimestamp(uint32_t ts) {
   timestamp = ts;
   invalidateHash();
 }
@@ -180,20 +180,19 @@ bool DeserializeFromRaw(ReadStream& stream,
     return state.Invalid("vbk-block-version");
   }
   Slice<const uint8_t> previousBlock;
-  if (!stream.readSlice(
-          VBLAKE_PREVIOUS_BLOCK_HASH_SIZE, previousBlock, state)) {
+  if (!stream.readSlice(VBK_PREVIOUS_BLOCK_HASH_SIZE, previousBlock, state)) {
     return state.Invalid("vbk-block-previous");
   }
   block.previousBlock = previousBlock;
   Slice<const uint8_t> previousKeystone;
   if (!stream.readSlice(
-          VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, previousKeystone, state)) {
+          VBK_PREVIOUS_KEYSTONE_HASH_SIZE, previousKeystone, state)) {
     return state.Invalid("vbk-block-keystone1");
   }
   block.previousKeystone = previousKeystone;
   Slice<const uint8_t> secondPreviousKeystone;
   if (!stream.readSlice(
-          VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE, secondPreviousKeystone, state)) {
+          VBK_PREVIOUS_KEYSTONE_HASH_SIZE, secondPreviousKeystone, state)) {
     return state.Invalid("vbk-block-keystone2");
   }
   block.secondPreviousKeystone = secondPreviousKeystone;
@@ -202,7 +201,7 @@ bool DeserializeFromRaw(ReadStream& stream,
     return state.Invalid("vbk-block-merkle-root");
   }
   block.merkleRoot = merkleRoot;
-  if (!stream.readBE<int32_t>(block.timestamp, state)) {
+  if (!stream.readBE<uint32_t>(block.timestamp, state)) {
     return state.Invalid("vbk-block-timestamp");
   }
   if (!stream.readBE<int32_t>(block.difficulty, state)) {

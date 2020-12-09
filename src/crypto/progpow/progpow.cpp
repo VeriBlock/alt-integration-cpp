@@ -612,7 +612,7 @@ static lru11::Cache<uint256, uint192, std::mutex> gProgpowHeaderCache(
 static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);
-  const uint64_t epoch = progpow::ethash_get_epoch(height);
+  const uint64_t epoch = progpow::ethashGetEpoch(height);
   const auto headerHash = progpow::getVbkHeaderHash(header);
   auto nonce = progpow::getVbkBlockNonce(header);
 

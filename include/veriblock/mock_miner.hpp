@@ -113,7 +113,7 @@ class MockMiner {
     ret = vbktree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state_);
     VBK_ASSERT(ret);
     ret = vbktree.bootstrapWithGenesis(GetRegTestVbkBlock(), state_);
-    VBK_ASSERT(ret);
+    VBK_ASSERT_MSG(ret, state_.toString());
   }
 
   InmemPayloadsProvider& getPayloadsProvider() { return payloadsProvider; }
