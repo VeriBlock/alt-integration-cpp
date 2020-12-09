@@ -57,7 +57,7 @@ func (v *PopContext) checkVbkBlock(blk *entities.VbkBlock) error {
 
 	bytes, err := blk.ToVbkEncodingBytes()
 	if err != nil {
-		return nil
+		return err
 	}
 	ok := v.popContext.CheckVbkBlock(bytes)
 	if !ok {
