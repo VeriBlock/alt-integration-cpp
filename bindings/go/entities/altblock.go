@@ -30,8 +30,8 @@ func (v *ContextInfoContainerHash) Bytes() []byte {
 
 // AltBlock ...
 type AltBlock struct {
-	Hash          []byte
-	PreviousBlock []byte
+	Hash          AltHash
+	PreviousBlock AltHash
 	Height        int32
 	Timestamp     uint32
 }
