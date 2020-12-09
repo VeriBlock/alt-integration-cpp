@@ -129,6 +129,50 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
     uint8_t* out_hash,
     int* out_hash_size);
 
+/**
+ * Stateless validation for the altintegration::ATV.
+ *
+ * @param[in] atv_bytes, bytes of the altintegration::ATV raw bytes, expect
+ * ToVbkEncoding format.
+ * @param[in] atv_bytes_size, size of the atv bytes.
+ * @return true if atv is valid, false otherwise.
+ * @ingroup c-api
+ */
+bool VBK_checkATV(const uint8_t* atv_bytes, int atv_bytes_size);
+
+/**
+ * Stateless validation for the altintegration::VTB.
+ *
+ * @param[in] vtb_bytes, bytes of the altintegration::VTB raw bytes, expect
+ * ToVbkEncoding format.
+ * @param[in] vtb_bytes_size, size of the vtb bytes.
+ * @return true if vtb is valid, false otherwise.
+ * @ingroup c-api
+ */
+bool VBK_checkVTB(const uint8_t* vtb_bytes, int vtb_bytes_size);
+
+/**
+ * Stateless validation for the altintegration::VbkBlock.
+ *
+ * @param[in] vbk_bytes, bytes of the altintegration::VbkBlock raw bytes, expect
+ * ToVbkEncoding format.
+ * @param[in] vbk_bytes_size, size of the vbk bytes.
+ * @return true if vbk is valid, false otherwise.
+ * @ingroup c-api
+ */
+bool VBK_checkVbkBlock(const uint8_t* vbk_bytes, int vbk_bytes_size);
+
+/**
+ * Stateless validation for the altintegration::PopData.
+ *
+ * @param[in] pop_data_bytes, bytes of the altintegration::PopData raw bytes,
+ * expect ToVbkEncoding format.
+ * @param[in] pop_data_bytes_size, size of the vbk bytes.
+ * @return true if pop_data is valid, false otherwise.
+ * @ingroup c-api
+ */
+bool VBK_checkPopData(const uint8_t* pop_data_bytes, int pop_data_bytes_size);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif
