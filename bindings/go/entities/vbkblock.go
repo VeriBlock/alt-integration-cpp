@@ -62,6 +62,9 @@ type VbkBlock struct {
 	Nonce                  uint64
 }
 
+// Name ...
+func (v *VbkBlock) Name() string { return VbkBlockName }
+
 // GetHash ...
 func (v *VbkBlock) GetHash() VbkHash {
 	buffer := new(bytes.Buffer)

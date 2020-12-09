@@ -43,8 +43,11 @@ var _ AltBlockTree = &PopContext{}
 // MemPool ...
 type MemPool interface {
 	SubmitAtv(block *entities.Atv) int
+	SubmitAtvBytes(data []byte) int
 	SubmitVtb(block *entities.Vtb) int
+	SubmitVtbBytes(data []byte) int
 	SubmitVbk(block *entities.VbkBlock) int
+	SubmitVbkBytes(data []byte) int
 	GetPop() (*entities.PopData, error)
 	RemoveAll(payloads *entities.PopData) error
 	GetAtv(id entities.AtvID) (*entities.Atv, error)
@@ -384,6 +387,13 @@ func (v *PopContext) SubmitAtv(atv *entities.Atv) int {
 	return res
 }
 
+// SubmitAtvBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
+func (v *PopContext) SubmitAtvBytes(data []byte) int {
+	defer v.lock()()
+	res := v.popContext.MemPoolSubmitAtv(data)
+	return res
+}
+
 // SubmitVtb - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVtb(block *entities.Vtb) int {
 	stream := new(bytes.Buffer)
@@ -396,6 +406,13 @@ func (v *PopContext) SubmitVtb(block *entities.Vtb) int {
 	return res
 }
 
+// SubmitVtbBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
+func (v *PopContext) SubmitVtbBytes(data []byte) int {
+	defer v.lock()()
+	res := v.popContext.MemPoolSubmitVtb(data)
+	return res
+}
+
 // SubmitVbk - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVbk(block *entities.VbkBlock) int {
 	stream := new(bytes.Buffer)
@@ -405,6 +422,13 @@ func (v *PopContext) SubmitVbk(block *entities.VbkBlock) int {
 	}
 	defer v.lock()()
 	res := v.popContext.MemPoolSubmitVbk(stream.Bytes())
+	return res
+}
+
+// SubmitVbkBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
+func (v *PopContext) SubmitVbkBytes(data []byte) int {
+	defer v.lock()()
+	res := v.popContext.MemPoolSubmitVbk(data)
 	return res
 }
 

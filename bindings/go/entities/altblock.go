@@ -36,6 +36,9 @@ type AltBlock struct {
 	Timestamp     uint32
 }
 
+// Name ...
+func (v *AltBlock) Name() string { return AltBlockName }
+
 // GetGenericHash ...
 func (v *AltBlock) GetGenericHash() []byte {
 	return v.Hash
