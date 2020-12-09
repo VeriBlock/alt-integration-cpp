@@ -82,17 +82,21 @@ func (v *PopContext) AltBlockTreeSetState(hashBytes []byte) bool {
 }
 
 // BtcGetBlockIndex ...
-func (v *PopContext) BtcGetBlockIndex(hashBytes [veriblock.Sha256HashSize]byte) {
+func (v *PopContext) BtcGetBlockIndex(hashBytes [veriblock.Sha256HashSize]byte) *VbkByteStream {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
-	blockindexC := (*C.uint8_t)(unsafe.Pointer(nil))
-	var blockindexSize int = 0
-	blockindexSizeC := (*C.int)(unsafe.Pointer(&blockindexSize))
-	res := C.VBK_btc_getBlockIndex(v.ref, hashBytesC, C.int(len(hashBytes)), &blockindexC, blockindexSizeC)
-	if !bool(res) {
-		return
-	}
-	// blockindex := make([]byte, blockindexSize)
-	// TODO: Retrieve data from blockindex with blockindexSize
+	return NewVbkByteStream(C.VBK_btc_getBlockIndex(v.ref, hashBytesC, C.int(len(hashBytes))))
+}
+
+// VbkGetBlockIndex ...
+func (v *PopContext) VbkGetBlockIndex(hashBytes [veriblock.VblakeBlockHashSize]byte) *VbkByteStream {
+	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
+	return NewVbkByteStream(C.VBK_vbk_getBlockIndex(v.ref, hashBytesC, C.int(len(hashBytes))))
+}
+
+// AltGetBlockIndex ...
+func (v *PopContext) AltGetBlockIndex(hashBytes []byte) *VbkByteStream {
+	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
+	return NewVbkByteStream(C.VBK_alt_getBlockIndex(v.ref, hashBytesC, C.int(len(hashBytes))))
 }
 
 // AltBestBlock ...
