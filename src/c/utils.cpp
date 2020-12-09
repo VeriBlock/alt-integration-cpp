@@ -3,19 +3,19 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/c/utils.h"
-
 #include <stdio.h>
 
 #include <vector>
 
 #include "pop_context.hpp"
 #include "veriblock/alt-util.hpp"
+#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vtb.hpp"
+#include "veriblock/stateless_validation.hpp"
 
 void VBK_VbkBlock_getId(const uint8_t* block_bytes,
                         int block_bytes_size,
@@ -130,4 +130,63 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
 
   memcpy(out_hash, hash.data(), hash.size());
   *out_hash_size = hash.size();
+}
+
+bool VBK_checkATV(PopContext* self, uint8_t* atv_bytes, int atv_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->config);
+  VBK_ASSERT(atv_bytes);
+
+  using namespace altintegration;
+  ATV atv = AssertDeserializeFromVbkEncoding<ATV>(
+      Slice<const uint8_t>(atv_bytes, atv_bytes_size));
+  ValidationState state;
+  return checkATV(atv, state, self->context->config->getAltParams());
+}
+
+bool VBK_checkVTB(PopContext* self,
+                  const uint8_t* vtb_bytes,
+                  int vtb_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->config);
+  VBK_ASSERT(vtb_bytes);
+
+  using namespace altintegration;
+  VTB vtb = AssertDeserializeFromVbkEncoding<VTB>(
+      Slice<const uint8_t>(vtb_bytes, vtb_bytes_size));
+  ValidationState state;
+  return checkVTB(vtb, state, self->context->config->getBtcParams());
+}
+
+bool VBK_checkVbkBlock(PopContext* self,
+                       const uint8_t* vbk_bytes,
+                       int vbk_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->config);
+  VBK_ASSERT(vbk_bytes);
+
+  using namespace altintegration;
+  VbkBlock block = AssertDeserializeFromVbkEncoding<VbkBlock>(
+      Slice<const uint8_t>(vbk_bytes, vbk_bytes_size));
+  ValidationState state;
+  return checkBlock(block, state, self->context->config->getVbkParams());
+}
+
+bool VBK_checkPopData(PopContext* self,
+                      const uint8_t* pop_data_bytes,
+                      int pop_data_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->config);
+  VBK_ASSERT(self->context->popValidator);
+  VBK_ASSERT(pop_data_bytes);
+
+  using namespace altintegration;
+  PopData pop_data = AssertDeserializeFromVbkEncoding<PopData>(
+      Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
+  ValidationState state;
+  return checkPopData(*self->context->popValidator, pop_data, state);
 }
