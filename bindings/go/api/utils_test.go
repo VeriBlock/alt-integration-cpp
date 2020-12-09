@@ -25,7 +25,7 @@ func TestCalculateContextInfoContainerHash(t *testing.T) {
 	var popData entities.PopData
 	popData.Version = 1
 
-	hash, err := popContext.CalculateContextInfoContainerHash(block, &popData)
+	hash, err := popContext.CalculateContextInfoContainerHash(block.PreviousBlock, &popData)
 	assert.NoError(err)
 	fmt.Println(hex.EncodeToString(hash[:]))
 

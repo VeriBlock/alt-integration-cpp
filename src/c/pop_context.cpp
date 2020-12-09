@@ -229,6 +229,9 @@ VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
   altintegration::BtcBlock::hash_t hash(
       altintegration::Slice<const uint8_t>(hash_bytes, hash_bytes_size));
   auto* blockIndex = self->context->altTree->btc().getBlockIndex(hash);
+  if (blockIndex == nullptr) {
+    return nullptr;
+  }
   altintegration::WriteStream stream;
   blockIndex->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
@@ -244,6 +247,9 @@ VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
   altintegration::VbkBlock::hash_t hash(
       altintegration::Slice<const uint8_t>(hash_bytes, hash_bytes_size));
   auto* blockIndex = self->context->altTree->vbk().getBlockIndex(hash);
+  if (blockIndex == nullptr) {
+    return nullptr;
+  }
   altintegration::WriteStream stream;
   blockIndex->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
@@ -258,6 +264,9 @@ VBK_ByteStream* VBK_alt_getBlockIndex(PopContext* self,
   VBK_ASSERT(self->context->altTree);
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
   auto* blockIndex = self->context->altTree->getBlockIndex(hash);
+  if (blockIndex == nullptr) {
+    return nullptr;
+  }
   altintegration::WriteStream stream;
   blockIndex->toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
