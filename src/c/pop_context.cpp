@@ -414,7 +414,7 @@ VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
   VBK_ASSERT(self->context->altTree);
   std::vector<uint8_t> vtb_id{p_id, p_id + p_id_size};
   auto vbk_hashes =
-      self->context->altTree->getPayloadsIndex().getContainingAltBlocks(vtb_id);
+      self->context->altTree->getPayloadsIndex().getContainingVbkBlocks(vtb_id);
   if (vbk_hashes.empty()) {
     return nullptr;
   }
