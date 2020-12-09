@@ -32,7 +32,7 @@ void VBK_VbkBlock_getId(const uint8_t* block_bytes,
   auto id = block.getId();
 
   std::copy(id.begin(), id.end(), id_bytes);
-  *id_bytes_size = id.size();
+  *id_bytes_size = (int)id.size();
 }
 
 void VBK_VTB_getId(const uint8_t* vtb_bytes,
@@ -48,7 +48,7 @@ void VBK_VTB_getId(const uint8_t* vtb_bytes,
   auto vtb = AssertDeserializeFromVbkEncoding<VTB>(bytes);
   auto id = vtb.getId();
   std::copy(id.begin(), id.end(), id_bytes);
-  *id_bytes_size = id.size();
+  *id_bytes_size = (int)id.size();
 }
 
 void VBK_ATV_getId(const uint8_t* atv_bytes,
@@ -64,7 +64,7 @@ void VBK_ATV_getId(const uint8_t* atv_bytes,
   auto atv = AssertDeserializeFromVbkEncoding<ATV>(bytes);
   auto id = atv.getId();
   std::copy(id.begin(), id.end(), id_bytes);
-  *id_bytes_size = id.size();
+  *id_bytes_size = (int)id.size();
 }
 
 void VBK_VbkBlock_getHash(const uint8_t* block_bytes,
@@ -82,7 +82,7 @@ void VBK_VbkBlock_getHash(const uint8_t* block_bytes,
   auto id = block.getHash();
 
   std::copy(id.begin(), id.end(), hash_bytes);
-  *hash_bytes_size = id.size();
+  *hash_bytes_size = (int)id.size();
 }
 
 void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
@@ -100,7 +100,7 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
   auto id = block.getHash();
 
   std::copy(id.begin(), id.end(), hash_bytes);
-  *hash_bytes_size = id.size();
+  *hash_bytes_size = (int)id.size();
 }
 
 void VBK_AltBlock_calculateContextInfoContainerHash(
@@ -129,5 +129,5 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
       pop_data, index, self->context->altTree->getParams());
 
   memcpy(out_hash, hash.data(), hash.size());
-  *out_hash_size = hash.size();
+  *out_hash_size = (int)hash.size();
 }

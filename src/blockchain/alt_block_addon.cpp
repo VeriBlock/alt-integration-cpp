@@ -28,7 +28,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           MAX_POPDATA_ATV,
           [&](uint256& o) -> bool {
             return readSingleByteLenValue(
-                stream, o, state, uint256::size(), uint256::size());
+                stream, o, state, (int)uint256::size(), (int)uint256::size());
           })) {
     return state.Invalid("alt-blocka-addon-bad-atvid");
   }
@@ -41,7 +41,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           MAX_POPDATA_VTB,
           [&](uint256& o) -> bool {
             return readSingleByteLenValue(
-                stream, o, state, uint256::size(), uint256::size());
+                stream, o, state, (int)uint256::size(), (int)uint256::size());
           })) {
     return state.Invalid("alt-blocka-addon-bad-vtbid");
   }
@@ -54,7 +54,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           MAX_POPDATA_VBK,
           [&](uint96& o) -> bool {
             return readSingleByteLenValue(
-                stream, o, state, uint96::size(), uint96::size());
+                stream, o, state, (int)uint96::size(), (int)uint96::size());
           })) {
     return state.Invalid("alt-blocka-addon-bad-vbkids");
   }

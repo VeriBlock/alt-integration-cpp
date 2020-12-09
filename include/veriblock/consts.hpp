@@ -52,8 +52,8 @@ constexpr const auto MAX_POPDATA_VBK = 50000;
 constexpr const auto MAX_POPDATA_VTB = 50000;
 //! absolute maximum number of ATV blocks per ALT block
 constexpr const auto MAX_POPDATA_ATV = 50000;
-//! absolute maximum allowed size for altchain hash
 constexpr const auto MIN_ALT_HASH_SIZE = 12;
+//! absolute maximum allowed size for altchain hash
 constexpr const auto MAX_ALT_HASH_SIZE = 1024;
 //! absolute maximum of 'refs' for BTC addon
 constexpr const auto MAX_BTCADDON_REFS = 65536;

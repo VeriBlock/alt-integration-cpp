@@ -17,6 +17,12 @@ static const AltBlock defaultBlock{
     156,
     1466};
 
+static const AltBlock genesisBlock{
+    "1fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c"_unhex,
+    {},
+    100,
+    0};
+
 TEST(AltBlock, RoundTrip) {
   std::vector<uint8_t> bytes = defaultBlock.toRaw();
   AltBlock deserializedBlock = AssertDeserializeFromRaw<AltBlock>(bytes);
@@ -26,4 +32,15 @@ TEST(AltBlock, RoundTrip) {
   EXPECT_EQ(deserializedBlock.getBlockTime(), defaultBlock.getBlockTime());
   EXPECT_EQ(deserializedBlock.getPreviousBlock(),
             defaultBlock.getPreviousBlock());
+}
+
+TEST(AltBlock, RoundTripGenesis) {
+  std::vector<uint8_t> bytes = genesisBlock.toRaw();
+  AltBlock deserializedBlock = AssertDeserializeFromRaw<AltBlock>(bytes);
+
+  EXPECT_EQ(deserializedBlock.getHash(), genesisBlock.getHash());
+  EXPECT_EQ(deserializedBlock.height, genesisBlock.height);
+  EXPECT_EQ(deserializedBlock.getBlockTime(), genesisBlock.getBlockTime());
+  EXPECT_EQ(deserializedBlock.getPreviousBlock(),
+            genesisBlock.getPreviousBlock());
 }

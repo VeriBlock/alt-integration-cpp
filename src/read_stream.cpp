@@ -53,6 +53,8 @@ Slice<const uint8_t> ReadStream::remainingBytes() const {
 }
 
 bool ReadStream::read(size_t size, uint8_t *out, ValidationState &state) {
+  if (size == 0) return true;
+
   VBK_ASSERT(out);
 
   if (!hasMore(size)) {

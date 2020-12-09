@@ -40,7 +40,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           MAX_VBKPOPTX_PER_VBK_BLOCK,
           [&](uint256& o) -> bool {
             return readSingleByteLenValue(
-                stream, o, state, uint256::size(), uint256::size());
+                stream, o, state, (int)uint256::size(), (int)uint256::size());
           })) {
     return state.Invalid("vbk-addon-bad-vtbid");
   }
