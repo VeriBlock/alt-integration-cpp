@@ -21,6 +21,9 @@ type AltBlockTree interface {
 	ComparePopScore(hashA entities.AltHash, hashB entities.AltHash) int
 	RemoveSubtree(hash entities.AltHash)
 	SetState(hash entities.AltHash) error
+	BtcGetBlockIndex(hash entities.BtcHash) (*entities.BlockIndex, error)
+	VbkGetBlockIndex(hash entities.VbkHash) (*entities.BlockIndex, error)
+	AltGetBlockIndex(hash entities.AltHash) (*entities.BlockIndex, error)
 	AltBestBlock() (*entities.BlockIndex, error)
 	VbkBestBlock() (*entities.BlockIndex, error)
 	BtcBestBlock() (*entities.BlockIndex, error)
@@ -148,6 +151,51 @@ func (v *PopContext) SetState(hash entities.AltHash) error {
 		return errors.New("Intermediate or target block is invalid")
 	}
 	return nil
+}
+
+// BtcGetBlockIndex ...
+func (v *PopContext) BtcGetBlockIndex(hash entities.BtcHash) (*entities.BlockIndex, error) {
+	defer v.lock()()
+	stream := v.popContext.BtcGetBlockIndex([veriblock.Sha256HashSize]byte(hash))
+	if stream == nil {
+		return nil, nil
+	}
+	defer stream.Free()
+	blockIndex := entities.NewBtcBlockIndex()
+	if err := blockIndex.FromRaw(stream); err != nil {
+		return nil, err
+	}
+	return &blockIndex, nil
+}
+
+// VbkGetBlockIndex ...
+func (v *PopContext) VbkGetBlockIndex(hash entities.VbkHash) (*entities.BlockIndex, error) {
+	defer v.lock()()
+	stream := v.popContext.VbkGetBlockIndex([veriblock.VblakeBlockHashSize]byte(hash))
+	if stream == nil {
+		return nil, nil
+	}
+	defer stream.Free()
+	blockIndex := entities.NewVbkBlockIndex()
+	if err := blockIndex.FromRaw(stream); err != nil {
+		return nil, err
+	}
+	return &blockIndex, nil
+}
+
+// AltGetBlockIndex ...
+func (v *PopContext) AltGetBlockIndex(hash entities.AltHash) (*entities.BlockIndex, error) {
+	defer v.lock()()
+	stream := v.popContext.AltGetBlockIndex([]byte(hash))
+	if stream == nil {
+		return nil, nil
+	}
+	defer stream.Free()
+	blockIndex := entities.NewAltBlockIndex()
+	if err := blockIndex.FromRaw(stream); err != nil {
+		return nil, err
+	}
+	return &blockIndex, nil
 }
 
 // AltBestBlock ...

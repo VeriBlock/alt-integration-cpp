@@ -145,17 +145,13 @@ bool VBK_AltBlockTree_setState(PopContext* self,
  * @param[in] self PopContext
  * @param[in] hash_bytes altintegration::BtcBlock hash bytes
  * @param[in] hash_bytes_size size of input hash
- * @param[out] blockindex pointer to the blockindex bytes (memory will allocated
- * by this method)
- * @param[out] blockindex_size blockindex bytes size
- * @return `false` while block is not found. 'true' while block is found.
+ * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
+ * to the stream
  * @ingroup c-api
  */
-bool VBK_btc_getBlockIndex(PopContext* self,
+VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
                            const uint8_t* hash_bytes,
-                           int hash_bytes_size,
-                           uint8_t** blockindex,
-                           int* blockindex_size);
+                           int hash_bytes_size);
 
 /**
  * Find a VbkBlock index from the VbkTree
@@ -163,17 +159,13 @@ bool VBK_btc_getBlockIndex(PopContext* self,
  * @param[in] self PopContext
  * @param[in] hash_bytes altintegration::VbkBlock hash bytes
  * @param[in] hash_bytes_size size of input hash
- * @param[out] blockindex pointer to the blockindex bytes (memory will allocated
- * by this method)
- * @param[out] blockindex_size blockindex bytes size
- * @return `false` while block is not found. 'true' while block is found.
+ * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
+ * to the stream
  * @ingroup c-api
  */
-bool VBK_vbk_getBlockIndex(PopContext* self,
+VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
                            const uint8_t* hash_bytes,
-                           int hash_bytes_size,
-                           uint8_t** blockindex,
-                           int* blockindex_size);
+                           int hash_bytes_size);
 
 /**
  * Find a AltBlock index from the AltTree
@@ -181,17 +173,13 @@ bool VBK_vbk_getBlockIndex(PopContext* self,
  * @param[in] self PopContext
  * @param[in] hash_bytes altintegration::AltBlock hash bytes
  * @param[in] hash_bytes_size size of input hash
- * @param[out] blockindex pointer to the blockindex bytes (memory will allocated
- * by this method)
- * @param[out] blockindex_size blockindex bytes size
- * @return `false` while block is not found. 'true' while block is found.
+ * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
+ * to the stream
  * @ingroup c-api
  */
-bool VBK_alt_getBlockIndex(PopContext* self,
+VBK_ByteStream* VBK_alt_getBlockIndex(PopContext* self,
                            const uint8_t* hash_bytes,
-                           int hash_bytes_size,
-                           uint8_t** blockindex,
-                           int* blockindex_size);
+                           int hash_bytes_size);
 
 /**
  * Return best block (tip) of the  AltTree
