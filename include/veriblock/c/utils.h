@@ -138,7 +138,7 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
  * @return true if atv is valid, false otherwise.
  * @ingroup c-api
  */
-bool VBK_ATV_statelessValidation(const uint8_t* atv_bytes, int atv_bytes_size);
+bool VBK_checkATV(const uint8_t* atv_bytes, int atv_bytes_size);
 
 /**
  * Stateless validation for the altintegration::VTB.
@@ -149,7 +149,7 @@ bool VBK_ATV_statelessValidation(const uint8_t* atv_bytes, int atv_bytes_size);
  * @return true if vtb is valid, false otherwise.
  * @ingroup c-api
  */
-bool VBK_VTB_statelessValidation(const uint8_t* vtb_bytes, int vtb_bytes_size);
+bool VBK_checkVTB(const uint8_t* vtb_bytes, int vtb_bytes_size);
 
 /**
  * Stateless validation for the altintegration::VbkBlock.
@@ -160,8 +160,7 @@ bool VBK_VTB_statelessValidation(const uint8_t* vtb_bytes, int vtb_bytes_size);
  * @return true if vbk is valid, false otherwise.
  * @ingroup c-api
  */
-bool VBK_VbkBlock_statelessValidation(const uint8_t* vbk_bytes,
-                                      int vbk_bytes_size);
+bool VBK_checkVbkBlock(const uint8_t* vbk_bytes, int vbk_bytes_size);
 
 /**
  * Stateless validation for the altintegration::PopData.
@@ -172,8 +171,7 @@ bool VBK_VbkBlock_statelessValidation(const uint8_t* vbk_bytes,
  * @return true if pop_data is valid, false otherwise.
  * @ingroup c-api
  */
-bool VBK_PopData_statelessValidation(const uint8_t* pop_data_bytes,
-                                     int pop_data_bytes_size);
+bool VBK_checkPopData(const uint8_t* pop_data_bytes, int pop_data_bytes_size);
 
 #ifdef __cplusplus
 }  // end of extern "C"
