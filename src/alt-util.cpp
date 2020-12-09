@@ -30,7 +30,6 @@ uint256 CalculateContextInfoContainerHash(const PopData& popData,
   auto unauthContextInfoHash = sha256twice(stream.data());
 
   // calculate authenticated ContextInfoContainer hash
-  return unauthContextInfoHash;
   return sha256twice(popDataRoot, unauthContextInfoHash);
 }
 
