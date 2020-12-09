@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/stateless_validation.hpp"
-
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -18,6 +16,7 @@
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
+#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -547,6 +546,15 @@ bool checkPopData(PopValidator& validator,
                   const PopData& popData,
                   ValidationState& state) {
   auto& altparam = validator.getAltParams();
+  size_t estimate_size = popData.estimateSize();
+  if (estimate_size > altparam.getMaxPopDataSize()) {
+    return state.Invalid("pop-sl-oversize",
+                         fmt::format("popData raw size more than allowed, "
+                                     "current size: {}, allowed size: {}",
+                                     estimate_size,
+                                     altparam.getMaxPopDataSize()));
+  }
+
   if (popData.context.size() > altparam.getMaxVbkBlocksInAltBlock()) {
     return state.Invalid(
         "pop-sl-context-oversize",

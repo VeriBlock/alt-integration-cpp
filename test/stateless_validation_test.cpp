@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/stateless_validation.hpp"
-
 #include <gtest/gtest.h>
 
 #include "util/alt_chain_params_regtest.hpp"
@@ -13,6 +11,7 @@
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/literals.hpp"
 #include "veriblock/pop_stateless_validator.hpp"
+#include "veriblock/stateless_validation.hpp"
 
 using namespace altintegration;
 
@@ -443,6 +442,17 @@ TEST_F(StatelessValidationTest, parallel_check_invalid_pop) {
   result = checkPopData(validator, pop2, state);
   ASSERT_TRUE(result);
   ASSERT_TRUE(state.IsValid());
+}
+
+TEST_F(StatelessValidationTest, parallel_check_invalid_pop_size) {
+  PopValidator validator(vbk, btc, alt);
+  PopData pop{};
+  VbkBlock block = validVTB.containingBlock;
+  pop.context = std::vector<VbkBlock>(150000, block);
+  bool result = checkPopData(validator, pop, state);
+  ASSERT_FALSE(result);
+  ASSERT_FALSE(state.IsValid());
+  ASSERT_EQ(state.GetPathParts().front(), "pop-sl-oversize");
 }
 
 TEST(VbkBlockPlausibility, Height) {
