@@ -276,7 +276,7 @@ VBK_ByteStream* VBK_alt_getVTBContainingBlock(PopContext* self,
 
 /**
  * Return an array that stores all altintegration::AltBlock hashes which contain
- * the provided altintegration::ATV
+ * the provided altintegration::VbkBlock
  *
  * @param[in] self PopContext
  * @param[in] p_id the altintegration::VbkBlock::id_t

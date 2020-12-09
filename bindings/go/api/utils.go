@@ -6,12 +6,8 @@ import (
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 )
 
-func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlock *entities.AltBlock, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
+func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
 	defer v.lock()()
-
-	if prevAltBlock == nil {
-		return nil, errors.New("prevAltBlock should be defined")
-	}
 
 	if popData == nil {
 		return nil, errors.New("popData should be defined")
@@ -23,7 +19,7 @@ func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlock *entities.Al
 	}
 
 	var hash entities.ContextInfoContainerHash
-	hash = v.popContext.AltBlockCalculateContextInfoContainerHash(prevAltBlock.Hash, popDataBytes)
+	hash = v.popContext.AltBlockCalculateContextInfoContainerHash(prevAltBlockHash, popDataBytes)
 	return &hash, nil
 }
 
