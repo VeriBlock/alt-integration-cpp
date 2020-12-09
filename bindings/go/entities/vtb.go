@@ -54,6 +54,9 @@ type Vtb struct {
 	ContainingBlock VbkBlock
 }
 
+// Name ...
+func (v *Vtb) Name() string { return VtbBlockName }
+
 // GetID ...
 func (v *Vtb) GetID() VtbID {
 	buffer := new(bytes.Buffer)

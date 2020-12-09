@@ -31,6 +31,9 @@ type BtcBlock struct {
 	Nonce         uint32
 }
 
+// Name ...
+func (v *BtcBlock) Name() string { return BtcBlockName }
+
 // GetHash ...
 func (v *BtcBlock) GetHash() BtcHash {
 	buffer := new(bytes.Buffer)

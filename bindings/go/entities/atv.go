@@ -54,6 +54,9 @@ type Atv struct {
 	BlockOfProof VbkBlock
 }
 
+// Name ...
+func (v *Atv) Name() string { return AtvBlockName }
+
 // GetID ...
 func (v *Atv) GetID() AtvID {
 	buffer := new(bytes.Buffer)
