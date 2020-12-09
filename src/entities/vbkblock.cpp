@@ -30,7 +30,7 @@ VbkBlock VbkBlock::fromRaw(ReadStream& stream,
   block.secondPreviousKeystone =
       stream.readSlice(VBLAKE_PREVIOUS_KEYSTONE_HASH_SIZE);
   block.merkleRoot = stream.readSlice(VBK_MERKLE_ROOT_HASH_SIZE);
-  block.timestamp = stream.readBE<int32_t>();
+  block.timestamp = stream.readBE<uint32_t>();
   block.difficulty = stream.readBE<int32_t>();
   block.nonce = stream.readBE<uint64_t>(5);
   block.hash_ = precalculatedHash;
@@ -193,7 +193,7 @@ bool DeserializeRaw(ReadStream& stream, VbkBlock& out, ValidationState& state) {
     return state.Invalid("vbk-block-merkle-root");
   }
   block.merkleRoot = merkleRoot;
-  if (!stream.readBE<int32_t>(block.timestamp, state)) {
+  if (!stream.readBE<uint32_t>(block.timestamp, state)) {
     return state.Invalid("vbk-block-timestamp");
   }
   if (!stream.readBE<int32_t>(block.difficulty, state)) {
@@ -229,7 +229,7 @@ void VbkBlock::setMerkleRoot(const uint128& mroot) {
   merkleRoot = mroot;
   invalidateHash();
 }
-void VbkBlock::setTimestamp(int32_t ts) {
+void VbkBlock::setTimestamp(uint32_t ts) {
   timestamp = ts;
   invalidateHash();
 }

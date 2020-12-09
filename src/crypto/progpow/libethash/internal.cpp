@@ -27,23 +27,22 @@
 #include "fnv.hpp"
 #include "sha3.hpp"
 #include "veriblock/crypto/endian.hpp"
+#include "veriblock/crypto/progpow.hpp"
 #include "veriblock/crypto/progpow/ethash.hpp"
 
 namespace altintegration {
 namespace progpow {
 
-uint64_t ethash_get_epoch(uint64_t block) {
-  return (block / VBK_ETHASH_EPOCH_LENGTH) + VBK_ETHASH_EPOCH_OFFSET;
-}
-
 uint64_t ethash_get_datasize(uint64_t const block_number) {
-  VBK_ASSERT(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
-  return dag_sizes[block_number / VBK_ETHASH_EPOCH_LENGTH];
+  const auto epoch = ethashGetEpochWithoutOffset(block_number);
+  VBK_ASSERT(epoch < VBK_MAX_CALCULATED_EPOCHS_SIZE);
+  return dag_sizes[epoch];
 }
 
 uint64_t ethash_get_cachesize(uint64_t const block_number) {
-  VBK_ASSERT(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
-  return cache_sizes[block_number / VBK_ETHASH_EPOCH_LENGTH];
+  const auto epoch = ethashGetEpochWithoutOffset(block_number);
+  VBK_ASSERT(epoch < VBK_MAX_CALCULATED_EPOCHS_SIZE);
+  return cache_sizes[epoch];
 }
 
 // Follows Sergio's "STRICT MEMORY HARD HASHING FUNCTIONS" (2014)
@@ -147,7 +146,8 @@ uint256 ethash_get_seedhash(uint64_t block_number) {
   uint256 ret;
   if (block_number + (VBK_ETHASH_EPOCH_OFFSET * VBK_ETHASH_EPOCH_LENGTH) >=
       VBK_ETHASH_EPOCH_LENGTH) {
-    VBK_ASSERT(block_number / VBK_ETHASH_EPOCH_LENGTH < VBK_MAX_EPOCHS_SIZE);
+    VBK_ASSERT(block_number / VBK_ETHASH_EPOCH_LENGTH <
+               VBK_MAX_CALCULATED_EPOCHS_SIZE);
     return dag_seeds[block_number / VBK_ETHASH_EPOCH_LENGTH];
   }
   return ret;
@@ -157,7 +157,7 @@ uint256 ethash_calculate_seedhash(uint64_t block_number) {
   uint256 ret;
   if (block_number + (VBK_ETHASH_EPOCH_OFFSET * VBK_ETHASH_EPOCH_LENGTH) >=
       VBK_ETHASH_EPOCH_LENGTH) {
-    uint64_t const epochs = ethash_get_epoch(block_number);
+    uint64_t const epochs = ethashGetEpoch(block_number);
     for (uint32_t i = 0; i < epochs; ++i) {
       SHA3_256(&ret, (uint8_t*)&ret, 32);
     }
@@ -194,7 +194,7 @@ ethash_cache* ethash_light_new(uint64_t block_number) {
   if (!ret) {
     return NULL;
   }
-  ret->epoch = ethash_get_epoch(block_number);
+  ret->epoch = ethashGetEpoch(block_number);
   return ret;
 }
 

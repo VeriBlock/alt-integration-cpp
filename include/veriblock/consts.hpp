@@ -53,6 +53,13 @@ constexpr const auto PUBLIC_KEY_SIZE = 88;
 constexpr const auto ADDRESS_SIZE = 30;
 constexpr const auto MULTISIG_ADDRESS_SIZE = 30;
 
+//! maximum number of Ethash cache sizes stored in this library.
+constexpr const auto VBK_MAX_CALCULATED_EPOCHS_SIZE = 4096U;
+//! size of 1 ethash epoch in progpow
+constexpr const auto VBK_ETHASH_EPOCH_LENGTH = 8000U;
+constexpr const auto VBK_ETHASH_EPOCH_OFFSET = 323U;
+
+
 constexpr const auto VBK_MAXIMUM_DIFFICULTY =
     "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
 
