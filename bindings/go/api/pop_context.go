@@ -35,6 +35,10 @@ type AltBlockTree interface {
 	AltGetVbkBlockContainingBlock(vbkID entities.VbkID) ([]entities.AltHash, error)
 	VbkGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.VbkID, error)
 	CalculateContextInfoContainerHash(prevAltBlock *entities.AltBlock, popData *entities.PopData) (*entities.ContextInfoContainerHash, error)
+	checkATV(atv *entities.Atv) error
+	checkVTB(vtb *entities.Vtb) error
+	checkVbkBlock(blk *entities.VbkBlock) error
+	checkPopData(popData *entities.PopData) error
 }
 
 // Code for interface test

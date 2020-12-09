@@ -26,3 +26,60 @@ func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlock *entities.Al
 	hash = v.popContext.AltBlockCalculateContextInfoContainerHash(prevAltBlock.Hash, popDataBytes)
 	return &hash, nil
 }
+
+func (v *PopContext) checkATV(atv *entities.Atv) error {
+	defer v.lock()()
+
+	bytes, err := atv.ToVbkEncodingBytes()
+	if err != nil {
+		return err
+	}
+	ok := v.popContext.CheckATV(bytes)
+	if !ok {
+		return errors.New("ATV stateless invalid")
+	}
+
+	return nil
+}
+
+func (v *PopContext) checkVTB(vtb *entities.Vtb) error {
+	defer v.lock()()
+
+	bytes, err := vtb.ToVbkEncodingBytes()
+	if err != nil {
+		return err
+	}
+	ok := v.popContext.CheckVTB(bytes)
+	if !ok {
+		return errors.New("VTB stateless invalid")
+	}
+	return nil
+}
+
+func (v *PopContext) checkVbkBlock(blk *entities.VbkBlock) error {
+	defer v.lock()()
+
+	bytes, err := blk.ToVbkEncodingBytes()
+	if err != nil {
+		return nil
+	}
+	ok := v.popContext.CheckVbkBlock(bytes)
+	if !ok {
+		return errors.New("VbkBlock stateless invalid")
+	}
+	return nil
+}
+
+func (v *PopContext) checkPopData(popData *entities.PopData) error {
+	defer v.lock()()
+
+	bytes, err := popData.ToVbkEncodingBytes()
+	if err != nil {
+		return err
+	}
+	ok := v.popContext.CheckPopData(bytes)
+	if !ok {
+		return errors.New("PopData stateless invalid")
+	}
+	return nil
+}
