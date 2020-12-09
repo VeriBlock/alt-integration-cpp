@@ -146,8 +146,8 @@ uint256 ethash_get_seedhash(uint64_t block_number) {
   uint256 ret;
   if (block_number + (VBK_ETHASH_EPOCH_OFFSET * VBK_ETHASH_EPOCH_LENGTH) >=
       VBK_ETHASH_EPOCH_LENGTH) {
-    VBK_ASSERT(block_number / VBK_ETHASH_EPOCH_LENGTH <
-               VBK_MAX_CALCULATED_EPOCHS_SIZE);
+    const auto epoch = ethashGetEpochWithoutOffset(block_number);
+    VBK_ASSERT(epoch < VBK_MAX_CALCULATED_EPOCHS_SIZE);
     return dag_seeds[block_number / VBK_ETHASH_EPOCH_LENGTH];
   }
   return ret;
