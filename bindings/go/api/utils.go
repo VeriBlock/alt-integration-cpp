@@ -23,7 +23,7 @@ func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlockHash entities
 	return &hash, nil
 }
 
-func (v *PopContext) checkATV(atv *entities.Atv) error {
+func (v *PopContext) CheckATV(atv *entities.Atv) error {
 	defer v.lock()()
 
 	bytes, err := atv.ToVbkEncodingBytes()
@@ -38,7 +38,7 @@ func (v *PopContext) checkATV(atv *entities.Atv) error {
 	return nil
 }
 
-func (v *PopContext) checkVTB(vtb *entities.Vtb) error {
+func (v *PopContext) CheckVTB(vtb *entities.Vtb) error {
 	defer v.lock()()
 
 	bytes, err := vtb.ToVbkEncodingBytes()
@@ -52,7 +52,7 @@ func (v *PopContext) checkVTB(vtb *entities.Vtb) error {
 	return nil
 }
 
-func (v *PopContext) checkVbkBlock(blk *entities.VbkBlock) error {
+func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 	defer v.lock()()
 
 	bytes, err := blk.ToVbkEncodingBytes()
@@ -66,7 +66,7 @@ func (v *PopContext) checkVbkBlock(blk *entities.VbkBlock) error {
 	return nil
 }
 
-func (v *PopContext) checkPopData(popData *entities.PopData) error {
+func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	defer v.lock()()
 
 	bytes, err := popData.ToVbkEncodingBytes()
