@@ -8,7 +8,6 @@ import (
 
 func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
 	defer v.lock()()
-
 	if popData == nil {
 		return nil, errors.New("popData should be defined")
 	}
@@ -25,7 +24,6 @@ func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlockHash entities
 
 func (v *PopContext) CheckATV(atv *entities.Atv) error {
 	defer v.lock()()
-
 	bytes, err := atv.ToVbkEncodingBytes()
 	if err != nil {
 		return err
@@ -40,7 +38,6 @@ func (v *PopContext) CheckATV(atv *entities.Atv) error {
 
 func (v *PopContext) CheckVTB(vtb *entities.Vtb) error {
 	defer v.lock()()
-
 	bytes, err := vtb.ToVbkEncodingBytes()
 	if err != nil {
 		return err
@@ -54,7 +51,6 @@ func (v *PopContext) CheckVTB(vtb *entities.Vtb) error {
 
 func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 	defer v.lock()()
-
 	bytes, err := blk.ToVbkEncodingBytes()
 	if err != nil {
 		return err
@@ -68,7 +64,6 @@ func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 
 func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	defer v.lock()()
-
 	bytes, err := popData.ToVbkEncodingBytes()
 	if err != nil {
 		return err
