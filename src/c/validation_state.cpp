@@ -13,3 +13,9 @@ const char* VBK_ValidationState_getErrorMessage(VBK_ValidationState* self) {
 
   return self->validation_state->toString().c_str();
 }
+
+void VBK_ValidationState_Free(VBK_ValidationState* self) {
+  if (self) {
+    delete self;
+  }
+}
