@@ -132,7 +132,9 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
   *out_hash_size = hash.size();
 }
 
-bool VBK_checkATV(PopContext* self, uint8_t* atv_bytes, int atv_bytes_size) {
+bool VBK_checkATV(PopContext* self,
+                  const uint8_t* atv_bytes,
+                  int atv_bytes_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->config);
