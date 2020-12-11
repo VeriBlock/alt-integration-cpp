@@ -20,11 +20,17 @@ void VBK_FreeValidationState(VBK_ValidationState* self) {
 const char* VBK_ValidationState_getErrorMessage(VBK_ValidationState* self) {
   VBK_ASSERT(self);
 
-  return self->validation_state.toString().c_str();
+  return self->GetErrorMessage();
 }
 
-bool VBK_ValidationState_isValid(VBK_ValidationState* self) {
+bool VBK_ValidationState_isValid(const VBK_ValidationState* self) {
   VBK_ASSERT(self);
 
-  return self->validation_state.IsInvalid();
+  return self->IsValid();
+}
+
+bool VBK_ValidationState_isInvalid(const VBK_ValidationState* self) {
+  VBK_ASSERT(self);
+
+  return self->IsInvalid();
 }

@@ -12,6 +12,7 @@
 
 #include "veriblock/c/bytestream.h"
 #include "veriblock/c/config.h"
+#include "veriblock/c/validation_state.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -150,8 +151,8 @@ bool VBK_AltBlockTree_setState(PopContext* self,
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size);
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size);
 
 /**
  * Find a VbkBlock index from the VbkTree
@@ -164,8 +165,8 @@ VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size);
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size);
 
 /**
  * Find a AltBlock index from the AltTree
@@ -178,8 +179,8 @@ VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size);
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size);
 
 /**
  * Return best block (tip) of the  AltTree
