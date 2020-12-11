@@ -24,9 +24,10 @@ func TestPopContextSubmitVbk(t *testing.T) {
 	vbkBlock, err := index.GetVbkBlockHeader()
 	assert.NoError(err)
 
-	state := popContext.SubmitVbk(vbkBlock)
+	state, err := popContext.SubmitVbk(vbkBlock)
 	// state == 0, valid vbkBlock
 	assert.Equal(0, state)
+	assert.NoError(err)
 
 	vtbIDs, err := popContext.GetVtbs()
 	assert.NoError(err)
@@ -54,9 +55,10 @@ func TestPopContextSubmitVtb(t *testing.T) {
 	vbkBlock, err := index.GetVbkBlockHeader()
 	assert.NoError(err)
 
-	state := popContext.SubmitVbk(vbkBlock)
+	state, err := popContext.SubmitVbk(vbkBlock)
 	// state == 0, valid vbkBlock
 	assert.Equal(0, state)
+	assert.NoError(err)
 
 	btcTip, err := popContext.BtcBestBlock()
 	assert.NoError(err)
@@ -64,9 +66,10 @@ func TestPopContextSubmitVtb(t *testing.T) {
 	vtb, err := miner.MineVtb(vbkBlock, btcTip.GetHash())
 	assert.NoError(err)
 
-	state = popContext.SubmitVtb(vtb)
+	state, err = popContext.SubmitVtb(vtb)
 	// state == 0, valid vtb
 	assert.Equal(0, state)
+	assert.NoError(err)
 
 	vtbIDs, err := popContext.GetVtbs()
 	assert.NoError(err)
@@ -96,9 +99,10 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	atv, err := miner.MineAtv(&publicationData)
 	assert.NoError(err)
 
-	state := popContext.SubmitAtv(atv)
+	state, err := popContext.SubmitAtv(atv)
 	// state == 0, valid atv
 	assert.Equal(0, state)
+	assert.NoError(err)
 
 	vtbIDs, err := popContext.GetVtbs()
 	assert.NoError(err)

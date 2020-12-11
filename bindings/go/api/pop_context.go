@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"errors"
 	"io"
 	"math"
 	"sync"
@@ -46,12 +45,12 @@ var _ AltBlockTree = &PopContext{}
 
 // MemPool ...
 type MemPool interface {
-	SubmitAtv(block *entities.Atv) int
-	SubmitAtvBytes(data []byte) int
-	SubmitVtb(block *entities.Vtb) int
-	SubmitVtbBytes(data []byte) int
-	SubmitVbk(block *entities.VbkBlock) int
-	SubmitVbkBytes(data []byte) int
+	SubmitAtv(block *entities.Atv) (int, error)
+	SubmitAtvBytes(data []byte) (int, error)
+	SubmitVtb(block *entities.Vtb) (int, error)
+	SubmitVtbBytes(data []byte) (int, error)
+	SubmitVbk(block *entities.VbkBlock) (int, error)
+	SubmitVbkBytes(data []byte) (int, error)
 	GetPop() (*entities.PopData, error)
 	RemoveAll(payloads *entities.PopData) error
 	GetAtv(id entities.AtvID) (*entities.Atv, error)
@@ -99,9 +98,10 @@ func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
 		return err
 	}
 	defer v.lock()()
-	ok := v.popContext.AltBlockTreeAcceptBlockHeader(stream.Bytes())
+	ok, state := v.popContext.AltBlockTreeAcceptBlockHeader(stream.Bytes())
+	defer state.Free()
 	if !ok {
-		return errors.New("Failed to validate and add block header")
+		return state.Error()
 	}
 	return nil
 }
@@ -153,9 +153,10 @@ func (v *PopContext) RemoveSubtree(hash entities.AltHash) {
 // case tree will rollback into original state. `true` if state change is successful.
 func (v *PopContext) SetState(hash entities.AltHash) error {
 	defer v.lock()()
-	ok := v.popContext.AltBlockTreeSetState(hash)
+	ok, state := v.popContext.AltBlockTreeSetState(hash)
+	defer state.Free()
 	if !ok {
-		return errors.New("Intermediate or target block is invalid")
+		return state.Error()
 	}
 	return nil
 }
@@ -380,60 +381,66 @@ func (v *PopContext) VbkGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.
 }
 
 // SubmitAtv - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
-func (v *PopContext) SubmitAtv(atv *entities.Atv) int {
+func (v *PopContext) SubmitAtv(atv *entities.Atv) (int, error) {
 	stream := new(bytes.Buffer)
 	err := atv.ToVbkEncoding(stream)
 	if err != nil {
-		return 2
+		return 2, err
 	}
 	defer v.lock()()
-	res := v.popContext.MemPoolSubmitAtv(stream.Bytes())
-	return res
+	res, state := v.popContext.MemPoolSubmitAtv(stream.Bytes())
+	defer state.Free()
+	return res, state.Error()
 }
 
 // SubmitAtvBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
-func (v *PopContext) SubmitAtvBytes(data []byte) int {
+func (v *PopContext) SubmitAtvBytes(data []byte) (int, error) {
 	defer v.lock()()
-	res := v.popContext.MemPoolSubmitAtv(data)
-	return res
+	res, state := v.popContext.MemPoolSubmitAtv(data)
+	defer state.Free()
+	return res, state.Error()
 }
 
 // SubmitVtb - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
-func (v *PopContext) SubmitVtb(block *entities.Vtb) int {
+func (v *PopContext) SubmitVtb(block *entities.Vtb) (int, error) {
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
-		return 2
+		return 2, err
 	}
 	defer v.lock()()
-	res := v.popContext.MemPoolSubmitVtb(stream.Bytes())
-	return res
+	res, state := v.popContext.MemPoolSubmitVtb(stream.Bytes())
+	defer state.Free()
+	return res, state.Error()
 }
 
 // SubmitVtbBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
-func (v *PopContext) SubmitVtbBytes(data []byte) int {
+func (v *PopContext) SubmitVtbBytes(data []byte) (int, error) {
 	defer v.lock()()
-	res := v.popContext.MemPoolSubmitVtb(data)
-	return res
+	res, state := v.popContext.MemPoolSubmitVtb(data)
+	defer state.Free()
+	return res, state.Error()
 }
 
 // SubmitVbk - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
-func (v *PopContext) SubmitVbk(block *entities.VbkBlock) int {
+func (v *PopContext) SubmitVbk(block *entities.VbkBlock) (int, error) {
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
-		return 2
+		return 2, err
 	}
 	defer v.lock()()
-	res := v.popContext.MemPoolSubmitVbk(stream.Bytes())
-	return res
+	res, state := v.popContext.MemPoolSubmitVbk(stream.Bytes())
+	defer state.Free()
+	return res, state.Error()
 }
 
 // SubmitVbkBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
-func (v *PopContext) SubmitVbkBytes(data []byte) int {
+func (v *PopContext) SubmitVbkBytes(data []byte) (int, error) {
 	defer v.lock()()
-	res := v.popContext.MemPoolSubmitVbk(data)
-	return res
+	res, state := v.popContext.MemPoolSubmitVbk(data)
+	defer state.Free()
+	return res, state.Error()
 }
 
 // GetPop ...

@@ -4,6 +4,9 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/validation_state.h>
 import "C"
+import (
+	"errors"
+)
 
 // ValidationState ...
 type ValidationState struct {
@@ -26,14 +29,21 @@ func (v *ValidationState) GetErrorMessage() string {
 	return C.GoString(c_str)
 }
 
-// // IsValid ...
-// func (v *ValidationState) IsValid() bool {
-// 	res := C.VBK_ValidationState_isValid(v.ref)
-// 	return bool(res)
-// }
+// IsValid ...
+func (v *ValidationState) IsValid() bool {
+	res := C.VBK_ValidationState_isValid(v.ref)
+	return bool(res)
+}
 
-// // IsInvalid ...
-// func (v *ValidationState) IsInvalid() bool {
-// 	res := C.VBK_ValidationState_isInvalid(v.ref)
-// 	return bool(res)
-// }
+// IsInvalid ...
+func (v *ValidationState) IsInvalid() bool {
+	res := C.VBK_ValidationState_isInvalid(v.ref)
+	return bool(res)
+}
+
+func (v *ValidationState) Error() error {
+	if v.IsInvalid() {
+		return errors.New(v.GetErrorMessage())
+	}
+	return nil
+}

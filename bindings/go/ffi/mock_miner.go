@@ -37,18 +37,18 @@ func (v *MockMiner) MineVbkBlock(blockHash []byte) *VbkByteStream {
 }
 
 // MineAtv ...
-func (v *MockMiner) MineAtv(publicationData []byte) *VbkByteStream {
+func (v *MockMiner) MineAtv(publicationData []byte) (*VbkByteStream, *ValidationState) {
 	publicationDataC := (*C.uint8_t)(unsafe.Pointer(&publicationData[0]))
 	state := NewValidationState()
-	return NewVbkByteStream(C.VBK_MockMiner_mineATV(v.ref, publicationDataC, C.int(len(publicationData)), state.ref))
+	return NewVbkByteStream(C.VBK_MockMiner_mineATV(v.ref, publicationDataC, C.int(len(publicationData)), state.ref)), &state
 }
 
 // MineVtb ...
-func (v *MockMiner) MineVtb(vbkBlock []byte, hash []byte) *VbkByteStream {
+func (v *MockMiner) MineVtb(vbkBlock []byte, hash []byte) (*VbkByteStream, *ValidationState) {
 	vbkBlockC := (*C.uint8_t)(unsafe.Pointer(&vbkBlock[0]))
 	hashC := (*C.uint8_t)(unsafe.Pointer(&hash[0]))
 	state := NewValidationState()
-	return NewVbkByteStream(C.VBK_MockMiner_mineVTB(v.ref, vbkBlockC, C.int(len(vbkBlock)), hashC, C.int(len(hash)), state.ref))
+	return NewVbkByteStream(C.VBK_MockMiner_mineVTB(v.ref, vbkBlockC, C.int(len(vbkBlock)), hashC, C.int(len(hash)), state.ref)), &state
 }
 
 // Free ...

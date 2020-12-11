@@ -28,9 +28,10 @@ func (v *PopContext) CheckATV(atv *entities.Atv) error {
 	if err != nil {
 		return err
 	}
-	ok := v.popContext.CheckATV(bytes)
+	ok, state := v.popContext.CheckATV(bytes)
+	defer state.Free()
 	if !ok {
-		return errors.New("ATV stateless invalid")
+		return state.Error()
 	}
 
 	return nil
@@ -42,9 +43,10 @@ func (v *PopContext) CheckVTB(vtb *entities.Vtb) error {
 	if err != nil {
 		return err
 	}
-	ok := v.popContext.CheckVTB(bytes)
+	ok, state := v.popContext.CheckVTB(bytes)
+	defer state.Free()
 	if !ok {
-		return errors.New("VTB stateless invalid")
+		return state.Error()
 	}
 	return nil
 }
@@ -55,9 +57,10 @@ func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 	if err != nil {
 		return err
 	}
-	ok := v.popContext.CheckVbkBlock(bytes)
+	ok, state := v.popContext.CheckVbkBlock(bytes)
+	defer state.Free()
 	if !ok {
-		return errors.New("VbkBlock stateless invalid")
+		return state.Error()
 	}
 	return nil
 }
@@ -68,9 +71,10 @@ func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	if err != nil {
 		return err
 	}
-	ok := v.popContext.CheckPopData(bytes)
+	ok, state := v.popContext.CheckPopData(bytes)
+	defer state.Free()
 	if !ok {
-		return errors.New("PopData stateless invalid")
+		return state.Error()
 	}
 	return nil
 }
