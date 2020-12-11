@@ -12,6 +12,8 @@
 #include "veriblock/validation_state.hpp"
 
 struct VbkValidationState {
+  altintegration::ValidationState& getState() { return validation_state; }
+
   bool IsValid() const { return validation_state.IsValid(); }
 
   bool IsInvalid() const { return validation_state.IsInvalid(); }

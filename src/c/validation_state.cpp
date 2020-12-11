@@ -7,29 +7,29 @@
 #include "veriblock/assert.hpp"
 #include "veriblock/c/validation_state.h"
 
-VBK_ValidationState* VBK_NewValidationState() {
+VbkValidationState* VBK_NewValidationState() {
   return new VbkValidationState();
 }
 
-void VBK_FreeValidationState(VBK_ValidationState* self) {
+void VBK_FreeValidationState(VbkValidationState* self) {
   if (self) {
     delete self;
   }
 }
 
-const char* VBK_ValidationState_getErrorMessage(VBK_ValidationState* self) {
+const char* VBK_ValidationState_getErrorMessage(VbkValidationState* self) {
   VBK_ASSERT(self);
 
   return self->GetErrorMessage();
 }
 
-bool VBK_ValidationState_isValid(const VBK_ValidationState* self) {
+bool VBK_ValidationState_isValid(const VbkValidationState* self) {
   VBK_ASSERT(self);
 
   return self->IsValid();
 }
 
-bool VBK_ValidationState_isInvalid(const VBK_ValidationState* self) {
+bool VBK_ValidationState_isInvalid(const VbkValidationState* self) {
   VBK_ASSERT(self);
 
   return self->IsInvalid();

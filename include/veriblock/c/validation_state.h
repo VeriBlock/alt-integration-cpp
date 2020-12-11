@@ -17,21 +17,21 @@
 extern "C" {
 #endif
 
-typedef struct VbkValidationState VBK_ValidationState;
+typedef struct VbkValidationState VbkValidationState;
 
 /**
  * Allocates instance of the VbkValidationState.
  *
  * @return pointer of the VbkValidationState.
  */
-VBK_ValidationState* VBK_NewValidationState();
+VbkValidationState* VBK_NewValidationState();
 
 /**
  * Deallocates resources of the VbkValidationState.
  *
  * @param[out] self VbkValidationState.
  */
-void VBK_FreeValidationState(VBK_ValidationState* self);
+void VBK_FreeValidationState(VbkValidationState* self);
 
 /**
  * Get a debug message as a 'C' string.
@@ -39,7 +39,7 @@ void VBK_FreeValidationState(VBK_ValidationState* self);
  * @param[in] self VbkValidationState.
  * @return debug 'C' string debug message.
  */
-const char* VBK_ValidationState_getErrorMessage(VBK_ValidationState* self);
+const char* VBK_ValidationState_getErrorMessage(VbkValidationState* self);
 
 /**
  * Returns that VbkValidationState has an errors or not.
@@ -47,7 +47,7 @@ const char* VBK_ValidationState_getErrorMessage(VBK_ValidationState* self);
  * @param[in] self VbkValidationState.
  * @return true if VbkValidationState HASN`T ERRORS, false otherwise.
  */
-bool VBK_ValidationState_isValid(const VBK_ValidationState* self);
+bool VBK_ValidationState_isValid(const VbkValidationState* self);
 
 /**
  * Returns that VbkValidationState has an errors or not.
@@ -55,7 +55,7 @@ bool VBK_ValidationState_isValid(const VBK_ValidationState* self);
  * @param[in] self VbkValidationState.
  * @return true if VbkValidationState HAS ERRORS, false otherwise.
  */
-bool VBK_ValidationState_isInvalid(const VBK_ValidationState* self);
+bool VBK_ValidationState_isInvalid(const VbkValidationState* self);
 
 #ifdef __cplusplus
 }  // end of extern "C"

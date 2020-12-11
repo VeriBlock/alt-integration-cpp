@@ -3,13 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "mock_miner.hpp"
-
 #include <stdio.h>
 
 #include <fstream>
 
 #include "bytestream.hpp"
+#include "mock_miner.hpp"
+#include "validation_state.hpp"
 #include "veriblock/c/mock_miner.h"
 
 MockMiner_t* VBK_NewMockMiner() {
@@ -80,24 +80,24 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
 
 VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
                                       const uint8_t* publication_data,
-                                      int publication_data_size) {
+                                      int publication_data_size,
+                                      VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(publication_data);
 
   using namespace altintegration;
 
   Slice<const uint8_t> slice(publication_data, publication_data_size);
   PublicationData pubdata;
-  ValidationState state;
-  if (!DeserializeFromVbkEncoding(slice, pubdata, state)) {
+  if (!DeserializeFromVbkEncoding(slice, pubdata, state->getState())) {
     // can't deserialize
-    // TODO: expose 'state'
     return nullptr;
   }
 
   auto vbktx = self->miner->createVbkTxEndorsingAltBlock(pubdata);
-  auto atv = self->miner->applyATV(vbktx, state);
-  VBK_ASSERT(state.IsValid());
+  auto atv = self->miner->applyATV(vbktx, state->getState());
+  VBK_ASSERT(state->IsValid());
 
   WriteStream w_stream;
   atv.toVbkEncoding(w_stream);
@@ -108,8 +108,10 @@ VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
                                       const uint8_t* endorsed_vbk_block,
                                       int endorsed_vbk_block_size,
                                       const uint8_t* last_known_btc_block_hash,
-                                      int last_known_btc_block_hash_size) {
+                                      int last_known_btc_block_hash_size,
+                                      VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(endorsed_vbk_block);
   VBK_ASSERT(last_known_btc_block_hash);
 
@@ -121,19 +123,18 @@ VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
                                              last_known_btc_block_hash_size);
 
   VbkBlock vbk_block;
-  ValidationState state;
-  if (!DeserializeFromVbkEncoding(endorsedVbkBlock, vbk_block, state)) {
+  if (!DeserializeFromVbkEncoding(
+          endorsedVbkBlock, vbk_block, state->getState())) {
     // can't deserialize
-    // TODO: expose 'state'
     return nullptr;
   }
 
   altintegration::BtcBlock::hash_t hash = lastKnownBtcBlockHash;
 
-  auto tx = self->miner->endorseVbkBlock(vbk_block, hash, state);
+  auto tx = self->miner->endorseVbkBlock(vbk_block, hash, state->getState());
   self->miner->vbkmempool.push_back(tx);
 
-  VBK_ASSERT(state.IsValid());
+  VBK_ASSERT(state->IsValid());
   auto containingBlock = self->miner->mineVbkBlocks(1);
   auto vtbs = self->miner->vbkPayloads[containingBlock->getHash()];
   VBK_ASSERT(vtbs.size() == 1);

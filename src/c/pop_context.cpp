@@ -5,6 +5,7 @@
 #include "bytestream.hpp"
 #include "config.hpp"
 #include "pop_context.hpp"
+#include "validation_state.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/c/extern.h"
 #include "veriblock/c/pop_context.h"
@@ -97,22 +98,23 @@ void VBK_FreePopContext(PopContext* app) {
 
 bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
                                         const uint8_t* block_bytes,
-                                        int bytes_size) {
+                                        int bytes_size,
+                                        VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(block_bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
 
-  altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> bytes(block_bytes, bytes_size);
   altintegration::ReadStream stream(bytes);
   altintegration::AltBlock blk;
 
-  if (!altintegration::DeserializeFromRaw(stream, blk, state)) {
+  if (!altintegration::DeserializeFromRaw(stream, blk, state->getState())) {
     return false;
   }
 
-  if (!self->context->altTree->acceptBlockHeader(blk, state)) {
+  if (!self->context->altTree->acceptBlockHeader(blk, state->getState())) {
     return false;
   }
 
@@ -123,21 +125,23 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
                                   const uint8_t* hash_bytes,
                                   int hash_bytes_size,
                                   const uint8_t* payloads_bytes,
-                                  int payloads_bytes_size) {
+                                  int payloads_bytes_size,
+                                  VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(payloads_bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
 
-  altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> p_bytes(payloads_bytes,
                                                payloads_bytes_size);
   altintegration::ReadStream stream(p_bytes);
   altintegration::PopData popData;
-  bool res = altintegration::DeserializeFromVbkEncoding(stream, popData, state);
+  bool res = altintegration::DeserializeFromVbkEncoding(
+      stream, popData, state->getState());
   VBK_ASSERT_MSG(
-      res, "can not deserialize PopData, error: %s", state.toString());
+      res, "can not deserialize PopData, error: %s", state->GetErrorMessage());
 
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
 
@@ -148,37 +152,41 @@ bool VBK_AltBlockTree_addPayloads(PopContext* self,
                                   const uint8_t* hash_bytes,
                                   int hash_bytes_size,
                                   const uint8_t* payloads_bytes,
-                                  int payloads_bytes_size) {
+                                  int payloads_bytes_size,
+                                  VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(payloads_bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
 
-  altintegration::ValidationState state;
   altintegration::Slice<const uint8_t> p_bytes(payloads_bytes,
                                                payloads_bytes_size);
   altintegration::ReadStream stream(p_bytes);
   altintegration::PopData popData;
-  if (!altintegration::DeserializeFromVbkEncoding(stream, popData, state)) {
+  if (!altintegration::DeserializeFromVbkEncoding(
+          stream, popData, state->getState())) {
     return false;
   }
 
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
 
-  return self->context->altTree->addPayloads(hash, popData, state);
+  return self->context->altTree->addPayloads(hash, popData, state->getState());
 }
 
 bool VBK_AltBlockTree_loadTip(PopContext* self,
                               const uint8_t* hash_bytes,
-                              int hash_bytes_size) {
+                              int hash_bytes_size,
+                              VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
-  altintegration::ValidationState state;
+
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
-  return self->context->altTree->loadTip(hash, state);
+  return self->context->altTree->loadTip(hash, state->getState());
 }
 
 int VBK_AltBlockTree_comparePopScore(PopContext* self,
@@ -209,14 +217,16 @@ void VBK_AltBlockTree_removeSubtree(PopContext* self,
 
 bool VBK_AltBlockTree_setState(PopContext* self,
                                const uint8_t* hash_bytes,
-                               int hash_bytes_size) {
+                               int hash_bytes_size,
+                               VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(hash_bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
-  altintegration::ValidationState state;
+
   std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
-  return self->context->altTree->setState(hash, state);
+  return self->context->altTree->setState(hash, state->getState());
 }
 
 VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
@@ -440,43 +450,49 @@ static int handleSubmitResponse(altintegration::MemPool::SubmitResult e) {
 
 int VBK_MemPool_submit_atv(PopContext* self,
                            const uint8_t* bytes,
-                           int bytes_size) {
+                           int bytes_size,
+                           VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
-  altintegration::ValidationState state;
+
   altintegration::Slice<const uint8_t> atv_bytes(bytes, bytes_size);
-  auto r =
-      self->context->mempool->submit<altintegration::ATV>(atv_bytes, state);
+  auto r = self->context->mempool->submit<altintegration::ATV>(
+      atv_bytes, state->getState());
   return handleSubmitResponse(r);
 }
 
 int VBK_MemPool_submit_vtb(PopContext* self,
                            const uint8_t* bytes,
-                           int bytes_size) {
+                           int bytes_size,
+                           VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
-  altintegration::ValidationState state;
+
   altintegration::Slice<const uint8_t> vtb_bytes(bytes, bytes_size);
-  auto r =
-      self->context->mempool->submit<altintegration::VTB>(vtb_bytes, state);
+  auto r = self->context->mempool->submit<altintegration::VTB>(
+      vtb_bytes, state->getState());
   return handleSubmitResponse(r);
 }
 
 int VBK_MemPool_submit_vbk(PopContext* self,
                            const uint8_t* bytes,
-                           int bytes_size) {
+                           int bytes_size,
+                           VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
-  altintegration::ValidationState state;
+
   altintegration::Slice<const uint8_t> vbk_bytes(bytes, bytes_size);
-  auto r = self->context->mempool->submit<altintegration::VbkBlock>(vbk_bytes,
-                                                                    state);
+  auto r = self->context->mempool->submit<altintegration::VbkBlock>(
+      vbk_bytes, state->getState());
   return handleSubmitResponse(r);
 }
 
@@ -495,18 +511,21 @@ void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size) {
 
 void VBK_MemPool_removeAll(PopContext* self,
                            const uint8_t* bytes,
-                           int bytes_size) {
+                           int bytes_size,
+                           VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(bytes);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
-  altintegration::ValidationState state;
+
   altintegration::Slice<const uint8_t> p_bytes(bytes, bytes_size);
   altintegration::ReadStream stream(p_bytes);
   altintegration::PopData popData;
-  bool res = altintegration::DeserializeFromVbkEncoding(stream, popData, state);
+  bool res = altintegration::DeserializeFromVbkEncoding(
+      stream, popData, state->getState());
   VBK_ASSERT_MSG(
-      res, "can not deserialize PopData, error: %s", state.toString());
+      res, "can not deserialize PopData, error: %s", state->GetErrorMessage());
   self->context->mempool->removeAll(popData);
 }
 
