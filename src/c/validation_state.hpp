@@ -11,7 +11,7 @@
 #include "veriblock/validation_state.hpp"
 
 struct VbkValidationState {
-  std::shared_ptr<altintegration::ValidationState> validation_state;
+  altintegration::ValidationState validation_state{};
 };
 
 #endif

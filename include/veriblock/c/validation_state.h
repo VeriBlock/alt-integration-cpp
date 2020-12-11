@@ -19,19 +19,35 @@ extern "C" {
 
 typedef struct VbkValidationState VBK_ValidationState;
 
+/** 
+ * Allocates instance of the VbkValidationState.
+ * 
+ * @return pointer of the VbkValidationState.
+ */
+VBK_ValidationState* VBK_NewValidationState();
+
 /**
- * Get a debug message as a 'C' string
+ * Deallocates resources of the VbkValidationState.
+ * 
+ * @param[out] self VbkValidationState.
+ */
+void VBK_FreeValidationState(VBK_ValidationState* self);
+
+/**
+ * Get a debug message as a 'C' string.
  *
- * @param[in] self VbkValidationState
- * @return debug 'C' string debug message
+ * @param[in] self VbkValidationState.
+ * @return debug 'C' string debug message.
  */
 const char* VBK_ValidationState_getErrorMessage(VBK_ValidationState* self);
 
 /**
- * deallocates resources.
- * @param[out] self VbkValidationState
+ * Returns that VbkValidationState has an errors or not.
+ *
+ * @param[in] self VbkValidationState.
+ * @return true if VbkValidationState has no errors, false otherwise.
  */
-void VBK_ValidationState_Free(VBK_ValidationState* self);
+bool VBK_ValidationState_isValid(VBK_ValidationState* self);
 
 #ifdef __cplusplus
 }  // end of extern "C"
