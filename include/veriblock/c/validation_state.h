@@ -6,6 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_VALIDATION_STATE_H
 #define VERIBLOCK_POP_CPP_VALIDATION_STATE_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
