@@ -6,13 +6,13 @@
 #ifndef VERIBLOCK_POP_CPP_POP_CONTEXT_H
 #define VERIBLOCK_POP_CPP_POP_CONTEXT_H
 
-/**
- * @defgroup c-api C interface
- */
-
 #include "veriblock/c/bytestream.h"
 #include "veriblock/c/config.h"
 #include "veriblock/c/validation_state.h"
+
+/**
+ * @defgroup c-api C interface
+ */
 
 #ifdef __cplusplus
 extern "C" {

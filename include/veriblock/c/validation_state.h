@@ -47,7 +47,7 @@ const char* VBK_ValidationState_getErrorMessage(VbkValidationState* self);
  * @param[in] self VbkValidationState.
  * @return true if VbkValidationState HASN`T ERRORS, false otherwise.
  */
-bool VBK_ValidationState_isValid(const VbkValidationState* self);
+bool VBK_ValidationState_isValid(VbkValidationState* self);
 
 /**
  * Returns that VbkValidationState has an errors or not.
@@ -55,7 +55,7 @@ bool VBK_ValidationState_isValid(const VbkValidationState* self);
  * @param[in] self VbkValidationState.
  * @return true if VbkValidationState HAS ERRORS, false otherwise.
  */
-bool VBK_ValidationState_isInvalid(const VbkValidationState* self);
+bool VBK_ValidationState_isInvalid(VbkValidationState* self);
 
 #ifdef __cplusplus
 }  // end of extern "C"

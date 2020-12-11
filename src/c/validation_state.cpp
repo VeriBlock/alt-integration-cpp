@@ -23,13 +23,13 @@ const char* VBK_ValidationState_getErrorMessage(VbkValidationState* self) {
   return self->GetErrorMessage();
 }
 
-bool VBK_ValidationState_isValid(const VbkValidationState* self) {
+bool VBK_ValidationState_isValid(VbkValidationState* self) {
   VBK_ASSERT(self);
 
   return self->IsValid();
 }
 
-bool VBK_ValidationState_isInvalid(const VbkValidationState* self) {
+bool VBK_ValidationState_isInvalid(VbkValidationState* self) {
   VBK_ASSERT(self);
 
   return self->IsInvalid();

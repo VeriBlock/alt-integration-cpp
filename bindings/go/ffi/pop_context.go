@@ -33,7 +33,8 @@ func (v *PopContext) Free() { C.VBK_FreePopContext(v.ref) }
 // AltBlockTreeAcceptBlockHeader - return true if block is valid, and added; false otherwise.
 func (v *PopContext) AltBlockTreeAcceptBlockHeader(blockBytes []byte) bool {
 	valsC := (*C.uint8_t)(unsafe.Pointer(&blockBytes[0]))
-	res := C.VBK_AltBlockTree_acceptBlockHeader(v.ref, valsC, C.int(len(blockBytes)))
+	state := NewValidationState()
+	res := C.VBK_AltBlockTree_acceptBlockHeader(v.ref, valsC, C.int(len(blockBytes)), state.ref)
 	return bool(res)
 }
 
@@ -41,7 +42,8 @@ func (v *PopContext) AltBlockTreeAcceptBlockHeader(blockBytes []byte) bool {
 func (v *PopContext) AltBlockTreeAcceptBlock(hashBytes []byte, payloadsBytes []byte) {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	payloadsBytesC := (*C.uint8_t)(unsafe.Pointer(&payloadsBytes[0]))
-	C.VBK_AltBlockTree_acceptBlock(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)))
+	state := NewValidationState()
+	C.VBK_AltBlockTree_acceptBlock(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)), state.ref)
 }
 
 // AltBlockTreeAddPayloads - true if altintegration::PopData does not contain duplicates
@@ -49,13 +51,15 @@ func (v *PopContext) AltBlockTreeAcceptBlock(hashBytes []byte, payloadsBytes []b
 func (v *PopContext) AltBlockTreeAddPayloads(hashBytes []byte, payloadsBytes []byte) {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
 	payloadsBytesC := (*C.uint8_t)(unsafe.Pointer(&payloadsBytes[0]))
-	C.VBK_AltBlockTree_addPayloads(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)))
+	state := NewValidationState()
+	C.VBK_AltBlockTree_addPayloads(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)), state.ref)
 }
 
 // AltBlockTreeLoadTip - true on success, false otherwise.
 func (v *PopContext) AltBlockTreeLoadTip(hashBytes []byte) bool {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
-	res := C.VBK_AltBlockTree_loadTip(v.ref, hashBytesC, C.int(len(hashBytes)))
+	state := NewValidationState()
+	res := C.VBK_AltBlockTree_loadTip(v.ref, hashBytesC, C.int(len(hashBytes)), state.ref)
 	return bool(res)
 }
 
@@ -77,7 +81,8 @@ func (v *PopContext) AltBlockTreeRemoveSubtree(hashBytes []byte) {
 // case tree will rollback into original state. `true` if state change is successful.
 func (v *PopContext) AltBlockTreeSetState(hashBytes []byte) bool {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
-	res := C.VBK_AltBlockTree_setState(v.ref, hashBytesC, C.int(len(hashBytes)))
+	state := NewValidationState()
+	res := C.VBK_AltBlockTree_setState(v.ref, hashBytesC, C.int(len(hashBytes)), state.ref)
 	return bool(res)
 }
 
@@ -156,21 +161,24 @@ func (v *PopContext) VbkGetVtbContainingBlock(vtbID [veriblock.Sha256HashSize]by
 // MemPoolSubmitAtv - returns true if payload is valid, false otherwise.
 func (v *PopContext) MemPoolSubmitAtv(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
-	res := C.VBK_MemPool_submit_atv(v.ref, bytesC, C.int(len(bytes)))
+	state := NewValidationState()
+	res := C.VBK_MemPool_submit_atv(v.ref, bytesC, C.int(len(bytes)), state.ref)
 	return int(res)
 }
 
 // MemPoolSubmitVtb - returns true if payload is valid, false otherwise.
 func (v *PopContext) MemPoolSubmitVtb(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
-	res := C.VBK_MemPool_submit_vtb(v.ref, bytesC, C.int(len(bytes)))
+	state := NewValidationState()
+	res := C.VBK_MemPool_submit_vtb(v.ref, bytesC, C.int(len(bytes)), state.ref)
 	return int(res)
 }
 
 // MemPoolSubmitVbk - returns true if payload is valid, false otherwise.
 func (v *PopContext) MemPoolSubmitVbk(bytes []byte) int {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
-	res := C.VBK_MemPool_submit_vbk(v.ref, bytesC, C.int(len(bytes)))
+	state := NewValidationState()
+	res := C.VBK_MemPool_submit_vbk(v.ref, bytesC, C.int(len(bytes)), state.ref)
 	return int(res)
 }
 
@@ -191,7 +199,8 @@ func (v *PopContext) MemPoolGetPop() []byte {
 // MemPoolRemoveAll ...
 func (v *PopContext) MemPoolRemoveAll(bytes []byte) {
 	bytesC := (*C.uint8_t)(unsafe.Pointer(&bytes[0]))
-	C.VBK_MemPool_removeAll(v.ref, bytesC, C.int(len(bytes)))
+	state := NewValidationState()
+	C.VBK_MemPool_removeAll(v.ref, bytesC, C.int(len(bytes)), state.ref)
 }
 
 // MemPoolGetAtv ...
