@@ -21,20 +21,21 @@ typedef struct VbkByteStream VBK_ByteStream;
 
 /**
  * Read from VbkByteStream
- * @param[in] stream input byte stream
+ *
+ * @param[in] self VbkByteStream
  * @param[out] buffer output buffer (must be prealocated)
  * @param[in] toRead number of bytes to read
  * @return number of bytes actually read.
  */
-size_t VBK_ByteStream_Read(VBK_ByteStream* stream,
-                          uint8_t* buffer,
-                          size_t toRead);
+size_t VBK_ByteStream_Read(VBK_ByteStream* self,
+                           uint8_t* buffer,
+                           size_t toRead);
 
 /**
  * Closes stream and deallocates resources.
- * @param[out] stream
+ * @param[in] self VbkByteStream
  */
-void VBK_ByteStream_Free(VBK_ByteStream* stream);
+void VBK_ByteStream_Free(VBK_ByteStream* self);
 
 #ifdef __cplusplus
 }  // end of extern "C"

@@ -50,6 +50,7 @@ Config_t* VBK_NewConfig() {
 void VBK_FreeConfig(Config_t* config) {
   if (config) {
     delete config;
+    config = nullptr;
   }
 }
 

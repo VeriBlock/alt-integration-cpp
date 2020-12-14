@@ -469,13 +469,13 @@ TEST(VbkBlockPlausibility, Height) {
   EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
       << state.toString();
   EXPECT_EQ(state.GetPath(), "height-too-low");
-  state.clear();
+  state.reset();
 
   // ok
   block.setHeight(forkHeight);
   EXPECT_TRUE(checkVbkBlockPlausibility(block, state, param))
       << state.toString();
-  state.clear();
+  state.reset();
 
   // too high
   const auto firstInvalidHeight =
@@ -486,7 +486,7 @@ TEST(VbkBlockPlausibility, Height) {
   EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
       << state.toString();
   EXPECT_EQ(state.GetPath(), "height-too-high");
-  state.clear();
+  state.reset();
 }
 
 TEST(VbkBlockPlausibility, Timestamp) {
@@ -503,7 +503,7 @@ TEST(VbkBlockPlausibility, Timestamp) {
   EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
       << state.toString();
   EXPECT_EQ(state.GetPath(), "timestamp-too-low");
-  state.clear();
+  state.reset();
 
   // too low
   block.setHeight(forkHeight * 2);
@@ -511,19 +511,19 @@ TEST(VbkBlockPlausibility, Timestamp) {
   EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
       << state.toString();
   EXPECT_EQ(state.GetPath(), "timestamp-lower-bound");
-  state.clear();
+  state.reset();
 
   // ok, right at upper bound for height=(forkHeight * 2)
   const auto upperBound = 1655580052;
   block.setTimestamp(upperBound);
   EXPECT_TRUE(checkVbkBlockPlausibility(block, state, param))
       << state.toString();
-  state.clear();
+  state.reset();
 
   // too high
   block.setTimestamp(upperBound + 1);
   EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
       << state.toString();
   EXPECT_EQ(state.GetPath(), "timestamp-upper-bound");
-  state.clear();
+  state.reset();
 }

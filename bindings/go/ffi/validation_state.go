@@ -1,0 +1,63 @@
+package ffi
+
+// #cgo CFLAGS: -I../../../include
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
+// #include <veriblock/c/validation_state.h>
+import "C"
+import (
+	"errors"
+	"runtime"
+)
+
+// ValidationState ...
+type ValidationState struct {
+	ref *C.VbkValidationState
+}
+
+// NewValidationState ...
+func NewValidationState() *ValidationState {
+	state := &ValidationState{ref: C.VBK_NewValidationState()}
+	runtime.SetFinalizer(state, func(v *ValidationState) {
+		v.Free()
+	})
+	return state
+}
+
+// Free - Dealocates memory allocated for the state.
+func (v *ValidationState) Free() {
+	if v.ref != nil {
+		C.VBK_FreeValidationState(v.ref)
+		v.ref = nil
+	}
+}
+
+// GetErrorMessage ...
+func (v *ValidationState) GetErrorMessage() string {
+	c_str := C.VBK_ValidationState_getErrorMessage(v.ref)
+	return C.GoString(c_str)
+}
+
+// IsValid ...
+func (v *ValidationState) IsValid() bool {
+	res := C.VBK_ValidationState_isValid(v.ref)
+	return bool(res)
+}
+
+// IsInvalid ...
+func (v *ValidationState) IsInvalid() bool {
+	res := C.VBK_ValidationState_isInvalid(v.ref)
+	return bool(res)
+}
+
+// Error ...
+func (v *ValidationState) Error() error {
+	if v.IsInvalid() {
+		return errors.New(v.GetErrorMessage())
+	}
+	return nil
+}
+
+// Reset ...
+func (v *ValidationState) Reset() {
+	C.VBK_ValidationState_Reset(v.ref)
+}

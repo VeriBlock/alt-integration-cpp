@@ -5,6 +5,7 @@ package ffi
 // #include <veriblock/c/bytestream.h>
 import "C"
 import (
+	"runtime"
 	"unsafe"
 )
 
@@ -13,7 +14,19 @@ func NewVbkByteStream(ref *C.VBK_ByteStream) *VbkByteStream {
 	if ref == nil {
 		return nil
 	}
-	return &VbkByteStream{ref}
+	stream := &VbkByteStream{ref}
+	runtime.SetFinalizer(stream, func(v *VbkByteStream) {
+		v.Free()
+	})
+	return stream
+}
+
+// Free - Dealocates memory allocated for the VbkByteStream.
+func (v *VbkByteStream) Free() {
+	if v.ref != nil {
+		C.VBK_ByteStream_Free(v.ref)
+		v.ref = nil
+	}
 }
 
 // VbkByteStream ...
@@ -28,9 +41,4 @@ func (v *VbkByteStream) Read(p []byte) (n int, err error) {
 	bufferC := (*C.uint8_t)(unsafe.Pointer(&p[0]))
 	res := C.VBK_ByteStream_Read(v.ref, bufferC, len)
 	return int(res), nil
-}
-
-// Free ...
-func (v *VbkByteStream) Free() {
-	C.VBK_ByteStream_Free(v.ref)
 }

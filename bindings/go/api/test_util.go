@@ -8,9 +8,8 @@ import (
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 )
 
-func generateTestPopContext(t *testing.T) PopContext {
+func generateTestPopContext(t *testing.T) *PopContext {
 	config := NewConfig()
-	defer config.Free()
 	if !config.SelectVbkParams("regtest", 0, nil) {
 		t.Error("Failed to select btc params")
 	}
@@ -31,7 +30,7 @@ func generateTestPopContext(t *testing.T) PopContext {
 		return header
 	})
 
-	return NewPopContext(&config)
+	return NewPopContext(config)
 }
 
 func GenerateNextAltBlock(current *entities.AltBlock) (next *entities.AltBlock) {

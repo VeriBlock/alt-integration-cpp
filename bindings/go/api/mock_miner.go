@@ -22,9 +22,6 @@ func NewMockMiner() *MockMiner {
 	}
 }
 
-// Free ...
-func (v *MockMiner) Free() { v.miner.Free() }
-
 // MineBtcBlockTip - Mine new altintegration::BtcBlock on the top of the current btctree.
 func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 	defer v.lock()()
@@ -97,9 +94,11 @@ func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entitie
 	if err != nil {
 		return nil, err
 	}
-	stream := v.miner.MineAtv(buffer.Bytes())
+	state := ffi.NewValidationState()
+	defer state.Free()
+	stream := v.miner.MineAtv(buffer.Bytes(), state)
 	if stream == nil {
-		return nil, nil
+		return nil, state.Error()
 	}
 	defer stream.Free()
 	var atv entities.Atv
@@ -118,9 +117,11 @@ func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*ent
 	if err != nil {
 		return nil, err
 	}
-	stream := v.miner.MineVtb(buffer.Bytes(), hash)
+	state := ffi.NewValidationState()
+	defer state.Free()
+	stream := v.miner.MineVtb(buffer.Bytes(), hash, state)
 	if stream == nil {
-		return nil, nil
+		return nil, state.Error()
 	}
 	defer stream.Free()
 	var vtb entities.Vtb
