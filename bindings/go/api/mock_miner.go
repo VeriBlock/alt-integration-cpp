@@ -12,7 +12,6 @@ import (
 type MockMiner struct {
 	miner *ffi.MockMiner
 	mutex *sync.Mutex
-	state *ffi.ValidationState
 }
 
 // NewMockMiner ...
@@ -20,12 +19,8 @@ func NewMockMiner() *MockMiner {
 	return &MockMiner{
 		miner: ffi.NewMockMiner(),
 		mutex: new(sync.Mutex),
-		state: ffi.NewValidationState(),
 	}
 }
-
-// Free ...
-func (v *MockMiner) Free() { v.miner.Free() }
 
 // MineBtcBlockTip - Mine new altintegration::BtcBlock on the top of the current btctree.
 func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
@@ -99,10 +94,11 @@ func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entitie
 	if err != nil {
 		return nil, err
 	}
-	v.state.Reset()
-	stream := v.miner.MineAtv(buffer.Bytes(), v.state)
+	state := ffi.NewValidationState()
+	defer state.Free()
+	stream := v.miner.MineAtv(buffer.Bytes(), state)
 	if stream == nil {
-		return nil, v.state.Error()
+		return nil, state.Error()
 	}
 	defer stream.Free()
 	var atv entities.Atv
@@ -121,10 +117,11 @@ func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*ent
 	if err != nil {
 		return nil, err
 	}
-	v.state.Reset()
-	stream := v.miner.MineVtb(buffer.Bytes(), hash, v.state)
+	state := ffi.NewValidationState()
+	defer state.Free()
+	stream := v.miner.MineVtb(buffer.Bytes(), hash, state)
 	if stream == nil {
-		return nil, v.state.Error()
+		return nil, state.Error()
 	}
 	defer stream.Free()
 	var vtb entities.Vtb
