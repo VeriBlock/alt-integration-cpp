@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include "veriblock/c/pop_context.h"
+#include "veriblock/c/validation_state.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -136,12 +137,14 @@ void VBK_AltBlock_calculateContextInfoContainerHash(
  * @param[in] atv_bytes, bytes of the altintegration::ATV raw bytes, expect
  * ToVbkEncoding format.
  * @param[in] atv_bytes_size, size of the atv bytes.
+ * @param[out] state VbkValidationState.
  * @return true if atv is valid, false otherwise.
  * @ingroup c-api
  */
 bool VBK_checkATV(PopContext* self,
                   const uint8_t* atv_bytes,
-                  int atv_bytes_size);
+                  int atv_bytes_size,
+                  VbkValidationState* state);
 
 /**
  * Stateless validation for the altintegration::VTB.
@@ -150,12 +153,14 @@ bool VBK_checkATV(PopContext* self,
  * @param[in] vtb_bytes, bytes of the altintegration::VTB raw bytes, expect
  * ToVbkEncoding format.
  * @param[in] vtb_bytes_size, size of the vtb bytes.
+ * @param[out] state VbkValidationState.
  * @return true if vtb is valid, false otherwise.
  * @ingroup c-api
  */
 bool VBK_checkVTB(PopContext* self,
                   const uint8_t* vtb_bytes,
-                  int vtb_bytes_size);
+                  int vtb_bytes_size,
+                  VbkValidationState* state);
 
 /**
  * Stateless validation for the altintegration::VbkBlock.
@@ -164,12 +169,14 @@ bool VBK_checkVTB(PopContext* self,
  * @param[in] vbk_bytes, bytes of the altintegration::VbkBlock raw bytes, expect
  * ToVbkEncoding format.
  * @param[in] vbk_bytes_size, size of the vbk bytes.
+ * @param[out] state VbkValidationState.
  * @return true if vbk is valid, false otherwise.
  * @ingroup c-api
  */
 bool VBK_checkVbkBlock(PopContext* self,
                        const uint8_t* vbk_bytes,
-                       int vbk_bytes_size);
+                       int vbk_bytes_size,
+                       VbkValidationState* state);
 
 /**
  * Stateless validation for the altintegration::PopData.
@@ -178,12 +185,14 @@ bool VBK_checkVbkBlock(PopContext* self,
  * @param[in] pop_data_bytes, bytes of the altintegration::PopData raw bytes,
  * expect ToVbkEncoding format.
  * @param[in] pop_data_bytes_size, size of the vbk bytes.
+ * @param[out] state VbkValidationState.
  * @return true if pop_data is valid, false otherwise.
  * @ingroup c-api
  */
 bool VBK_checkPopData(PopContext* self,
                       const uint8_t* pop_data_bytes,
-                      int pop_data_bytes_size);
+                      int pop_data_bytes_size,
+                      VbkValidationState* state);
 
 #ifdef __cplusplus
 }  // end of extern "C"

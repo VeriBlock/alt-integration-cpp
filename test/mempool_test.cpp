@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -13,6 +11,7 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
+#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -61,7 +60,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
       std::string error = state.GetPath();
       error = std::string{error.begin(), error.begin() + 12};
       EXPECT_EQ(error, "atv-stateful");
-      state.clear();
+      state.reset();
     }
   }
 
@@ -72,7 +71,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
       std::string error = state.GetPath();
       error = std::string{error.begin(), error.begin() + 12};
       EXPECT_EQ(error, "vtb-stateful");
-      state.clear();
+      state.reset();
     }
   }
 
@@ -83,7 +82,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
       std::string error = state.GetPath();
       error = std::string{error.begin(), error.begin() + 12};
       EXPECT_EQ(error, "vbk-stateful");
-      state.clear();
+      state.reset();
     }
   }
 };
@@ -1451,7 +1450,7 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   {
     // add to mempool
     ASSERT_FALSE(mempool->submit<VTB>(VTB0, state)) << state.toString();
-    state.clear();
+    state.reset();
     auto vbkContext0 =
         getContext(popminer->vbk(), VTB0.containingBlock.getHash(), 8);
     for (auto& block : reverse_iterate(vbkContext0)) {
@@ -1479,7 +1478,7 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   {
     // add to mempool
     ASSERT_FALSE(mempool->submit<VTB>(VTB2, state)) << state.toString();
-    state.clear();
+    state.reset();
     auto vbkContext2 =
         getContext(popminer->vbk(), VTB2.containingBlock.getHash(), 2);
     for (auto& block : reverse_iterate(vbkContext2)) {

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
+	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
@@ -28,9 +29,11 @@ func (v *PopContext) CheckATV(atv *entities.Atv) error {
 	if err != nil {
 		return err
 	}
-	ok := v.popContext.CheckATV(bytes)
+	state := ffi.NewValidationState()
+	defer state.Free()
+	ok := v.popContext.CheckATV(bytes, state)
 	if !ok {
-		return errors.New("ATV stateless invalid")
+		return state.Error()
 	}
 
 	return nil
@@ -42,9 +45,11 @@ func (v *PopContext) CheckVTB(vtb *entities.Vtb) error {
 	if err != nil {
 		return err
 	}
-	ok := v.popContext.CheckVTB(bytes)
+	state := ffi.NewValidationState()
+	defer state.Free()
+	ok := v.popContext.CheckVTB(bytes, state)
 	if !ok {
-		return errors.New("VTB stateless invalid")
+		return state.Error()
 	}
 	return nil
 }
@@ -55,9 +60,11 @@ func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 	if err != nil {
 		return err
 	}
-	ok := v.popContext.CheckVbkBlock(bytes)
+	state := ffi.NewValidationState()
+	defer state.Free()
+	ok := v.popContext.CheckVbkBlock(bytes, state)
 	if !ok {
-		return errors.New("VbkBlock stateless invalid")
+		return state.Error()
 	}
 	return nil
 }
@@ -68,9 +75,11 @@ func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	if err != nil {
 		return err
 	}
-	ok := v.popContext.CheckPopData(bytes)
+	state := ffi.NewValidationState()
+	defer state.Free()
+	ok := v.popContext.CheckPopData(bytes, state)
 	if !ok {
-		return errors.New("PopData stateless invalid")
+		return state.Error()
 	}
 	return nil
 }

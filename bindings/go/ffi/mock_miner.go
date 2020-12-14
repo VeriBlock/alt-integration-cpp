@@ -4,7 +4,10 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/mock_miner.h>
 import "C"
-import "unsafe"
+import (
+	"runtime"
+	"unsafe"
+)
 
 // MockMiner ...
 type MockMiner struct {
@@ -12,7 +15,21 @@ type MockMiner struct {
 }
 
 // NewMockMiner ...
-func NewMockMiner() *MockMiner { return &MockMiner{ref: C.VBK_NewMockMiner()} }
+func NewMockMiner() *MockMiner {
+	miner := &MockMiner{ref: C.VBK_NewMockMiner()}
+	runtime.SetFinalizer(miner, func(v *MockMiner) {
+		miner.Free()
+	})
+	return miner
+}
+
+// Free - Dealocates memory allocated for the miner.
+func (v *MockMiner) Free() {
+	if v.ref != nil {
+		C.VBK_FreeMockMiner(v.ref)
+		v.ref = nil
+	}
+}
 
 // MineBtcBlockTip - Mine new altintegration::BtcBlock on the top of the current btctree.
 func (v *MockMiner) MineBtcBlockTip() *VbkByteStream {
@@ -37,17 +54,14 @@ func (v *MockMiner) MineVbkBlock(blockHash []byte) *VbkByteStream {
 }
 
 // MineAtv ...
-func (v *MockMiner) MineAtv(publicationData []byte) *VbkByteStream {
+func (v *MockMiner) MineAtv(publicationData []byte, state *ValidationState) *VbkByteStream {
 	publicationDataC := (*C.uint8_t)(unsafe.Pointer(&publicationData[0]))
-	return NewVbkByteStream(C.VBK_MockMiner_mineATV(v.ref, publicationDataC, C.int(len(publicationData))))
+	return NewVbkByteStream(C.VBK_MockMiner_mineATV(v.ref, publicationDataC, C.int(len(publicationData)), state.ref))
 }
 
 // MineVtb ...
-func (v *MockMiner) MineVtb(vbkBlock []byte, hash []byte) *VbkByteStream {
+func (v *MockMiner) MineVtb(vbkBlock []byte, hash []byte, state *ValidationState) *VbkByteStream {
 	vbkBlockC := (*C.uint8_t)(unsafe.Pointer(&vbkBlock[0]))
 	hashC := (*C.uint8_t)(unsafe.Pointer(&hash[0]))
-	return NewVbkByteStream(C.VBK_MockMiner_mineVTB(v.ref, vbkBlockC, C.int(len(vbkBlock)), hashC, C.int(len(hash))))
+	return NewVbkByteStream(C.VBK_MockMiner_mineVTB(v.ref, vbkBlockC, C.int(len(vbkBlock)), hashC, C.int(len(hash)), state.ref))
 }
-
-// Free ...
-func (v *MockMiner) Free() { C.VBK_FreeMockMiner(v.ref) }

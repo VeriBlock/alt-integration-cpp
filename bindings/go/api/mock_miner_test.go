@@ -12,7 +12,6 @@ func TestMineBtcBlock(t *testing.T) {
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner()
-	defer mockMiner.Free()
 
 	blockTip, err := mockMiner.MineBtcBlockTip()
 	assert.NoError(err)
@@ -31,7 +30,6 @@ func TestMineVbkBlock(t *testing.T) {
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner()
-	defer mockMiner.Free()
 
 	blockTip, err := mockMiner.MineVbkBlockTip()
 	assert.NoError(err)
@@ -50,7 +48,6 @@ func TestMineAtv(t *testing.T) {
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner()
-	defer mockMiner.Free()
 
 	var publicationData entities.PublicationData
 	publicationData.ContextInfo = []byte{1, 2, 3, 4}
@@ -70,11 +67,9 @@ func TestMineVtb(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
-	defer popContext.Free()
 	popContext.BtcBestBlock()
 
 	mockMiner := NewMockMiner()
-	defer mockMiner.Free()
 
 	index, err := mockMiner.MineVbkBlockTip()
 	assert.NoError(err)

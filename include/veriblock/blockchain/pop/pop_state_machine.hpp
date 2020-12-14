@@ -131,7 +131,7 @@ struct PopStateMachine {
                          *cgroup->payload_type_name,
                          HexStr(cgroup->id),
                          state.toString());
-            state.clear();
+            state.reset();
             continue;
           }
 

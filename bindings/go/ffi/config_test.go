@@ -2,6 +2,12 @@ package ffi
 
 import "testing"
 
+func TestConfigFree(t *testing.T) {
+	config := NewConfig()
+	config.Free()
+	config.Free()
+}
+
 func TestConfig(t *testing.T) {
 	config := NewConfig()
 	defer config.Free()

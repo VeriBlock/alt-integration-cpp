@@ -4,4 +4,5 @@ add_library(veriblock-pop-c OBJECT
         utils.cpp
         bytestream.cpp
         mock_miner.cpp
+        validation_state.cpp
         )

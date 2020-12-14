@@ -6,12 +6,15 @@
 #ifndef VERIBLOCK_POP_CPP_POP_CONTEXT_H
 #define VERIBLOCK_POP_CPP_POP_CONTEXT_H
 
-/**
- * @defgroup c-api C interface
- */
+#include <stdbool.h>
 
 #include "veriblock/c/bytestream.h"
 #include "veriblock/c/config.h"
+#include "veriblock/c/validation_state.h"
+
+/**
+ * @defgroup c-api C interface
+ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,12 +31,14 @@ void VBK_FreePopContext(PopContext* app);
  * @param[in] self PopContext
  * @param[in] block_bytes altintegration::AltBlock raw represantation
  * @param[in] bytes_size block bytes size
+ * @param[out] state VbkValidationState
  * @return true if block is valid, and added; false otherwise.
  * @ingroup c-api
  */
 bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
                                         const uint8_t* block_bytes,
-                                        int bytes_size);
+                                        int bytes_size,
+                                        VbkValidationState* state);
 
 /**
  * @copybrief altintegration::AltBlockTree::acceptBlock
@@ -44,6 +49,7 @@ bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
  * @param[in] payloads_bytes altintegration::PopData raw represantation of all
  * POP payloads stored in this block
  * @param[in] payloads_bytes_size payloads bytes size
+ * @param[out] state VbkValidationState
  *
  * @ingroup c-api
  */
@@ -51,7 +57,8 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
                                   const uint8_t* hash_bytes,
                                   int hash_bytes_size,
                                   const uint8_t* payloads_bytes,
-                                  int payloads_bytes_size);
+                                  int payloads_bytes_size,
+                                  VbkValidationState* state);
 
 /**
  * @copybrief altintegration::AltBlockTree::addPayloads
@@ -63,6 +70,7 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
  * @param[in] payloads_bytes altintegration::PopData raw represantation of all
  * POP payloads stored in this block
  * @param[in] payloads_bytes_size payloads bytes size
+ * @param[out] state VbkValidationState
  * @return true if altintegration::PopData does not contain duplicates (searched
  * across active chain). However, it is far from certain that it is completely
  * valid.
@@ -72,7 +80,8 @@ bool VBK_AltBlockTree_addPayloads(PopContext* self,
                                   const uint8_t* hash_bytes,
                                   int hash_bytes_size,
                                   const uint8_t* payloads_bytes,
-                                  int payloads_bytes_size);
+                                  int payloads_bytes_size,
+                                  VbkValidationState* state);
 
 /**
  * @copybrief altintegration::AltBlockTree::loadTip
@@ -80,12 +89,14 @@ bool VBK_AltBlockTree_addPayloads(PopContext* self,
  * @param[in] self PopContext
  * @param[in] hash_bytes altintegration::AltBlock hash bytes of the tip
  * @param[in] hash_bytes_size hash bytes size
+ * @param[out] state VbkValidationState
  * @return true on success, false otherwise
  * @ingroup c-api
  */
 bool VBK_AltBlockTree_loadTip(PopContext* self,
                               const uint8_t* hash_bytes,
-                              int hash_bytes_size);
+                              int hash_bytes_size,
+                              VbkValidationState* state);
 
 /**
  * @copybrief altintegration::AltBlockTree::comparePopScore
@@ -128,6 +139,7 @@ void VBK_AltBlockTree_removeSubtree(PopContext* self,
  * @param[in] hash_bytes altintegration::AltBlock hash bytes of the block to
  * tree will be switched to this block
  * @param[in] hash_bytes_size size of input hash
+ * @param[out] state VbkValidationState
  * @return `false` if intermediate or target block is invalid. In this case
  * tree will rollback into original state. `true` if state change is
  * successful.
@@ -137,7 +149,8 @@ void VBK_AltBlockTree_removeSubtree(PopContext* self,
  */
 bool VBK_AltBlockTree_setState(PopContext* self,
                                const uint8_t* hash_bytes,
-                               int hash_bytes_size);
+                               int hash_bytes_size,
+                               VbkValidationState* state);
 
 /**
  * Find a BtcBlock index from the BtcTree
@@ -150,8 +163,8 @@ bool VBK_AltBlockTree_setState(PopContext* self,
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size);
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size);
 
 /**
  * Find a VbkBlock index from the VbkTree
@@ -164,8 +177,8 @@ VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size);
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size);
 
 /**
  * Find a AltBlock index from the AltTree
@@ -178,8 +191,8 @@ VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_getBlockIndex(PopContext* self,
-                           const uint8_t* hash_bytes,
-                           int hash_bytes_size);
+                                      const uint8_t* hash_bytes,
+                                      int hash_bytes_size);
 
 /**
  * Return best block (tip) of the  AltTree
@@ -310,13 +323,15 @@ VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
  * @param[in] self PopContext
  * @param[in] bytes altintegration::ATV raw representation
  * @param[in] bytes_size bytes size
+ * @param[out] state VbkValidationState
  * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
  * invalid
  * @ingroup c-api
  */
 int VBK_MemPool_submit_atv(PopContext* self,
                            const uint8_t* bytes,
-                           int bytes_size);
+                           int bytes_size,
+                           VbkValidationState* state);
 
 /**
  * @copybrief altintegration::MemPool::submit
@@ -324,13 +339,15 @@ int VBK_MemPool_submit_atv(PopContext* self,
  * @param[in] self PopContext
  * @param[in] bytes altintegration::VTB raw representation
  * @param[in] bytes_size bytes size
+ * @param[out] state VbkValidationState
  * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
  * invalid
  * @ingroup c-api
  */
 int VBK_MemPool_submit_vtb(PopContext* self,
                            const uint8_t* bytes,
-                           int bytes_size);
+                           int bytes_size,
+                           VbkValidationState* state);
 
 /**
  * @copybrief altintegration::MemPool::submit
@@ -338,13 +355,15 @@ int VBK_MemPool_submit_vtb(PopContext* self,
  * @param[in] self PopContext
  * @param[in] bytes altintegration::VbkBlock raw representation
  * @param[in] bytes_size bytes size
+ * @param[out] state VbkValidationState
  * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
  * invalid
  * @ingroup c-api
  */
 int VBK_MemPool_submit_vbk(PopContext* self,
                            const uint8_t* bytes,
-                           int bytes_size);
+                           int bytes_size,
+                           VbkValidationState* state);
 
 /**
  * @copybrief altintegration::MemPool::getPop
@@ -364,11 +383,13 @@ void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size);
  * @param[in] self PopContext
  * @param[in] bytes altintegration::PopData raw representation
  * @param[in] bytes_size bytes size
+ * @param[out] state VbkValidationState
  * @ingroup c-api
  */
 void VBK_MemPool_removeAll(PopContext* self,
                            const uint8_t* bytes,
-                           int bytes_size);
+                           int bytes_size,
+                           VbkValidationState* state);
 
 /**
  * @copybrief return altintegration::MemPool known altintegration::ATV by its id

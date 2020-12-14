@@ -10,7 +10,7 @@ type Config struct {
 }
 
 // NewConfig - Returns instance of Config struct. Allocates memory
-func NewConfig() Config {
+func NewConfig() *Config {
 	cfg := ffi.NewConfig()
-	return Config{&cfg}
+	return &Config{cfg}
 }
