@@ -17,11 +17,11 @@ type PopContext struct {
 }
 
 // NewPopContext ...
-func NewPopContext(config *Config) PopContext {
+func NewPopContext(config *Config) *PopContext {
 	if config == nil {
 		panic("Config not provided")
 	}
-	return PopContext{
+	return &PopContext{
 		ref:     C.VBK_NewPopContext(config.ref),
 		popData: make([]byte, config.GetMaxPopDataSize()),
 	}

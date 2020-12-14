@@ -12,7 +12,7 @@ type Config struct {
 }
 
 // NewConfig - Returns instance of Config struct. Allocates memory
-func NewConfig() Config { return Config{ref: C.VBK_NewConfig()} }
+func NewConfig() *Config { return &Config{ref: C.VBK_NewConfig()} }
 
 // Free ...
 func (v *Config) Free() { C.VBK_FreeConfig(v.ref) }

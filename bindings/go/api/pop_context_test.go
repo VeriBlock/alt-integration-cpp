@@ -13,10 +13,8 @@ func TestPopContextSubmitVbk(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
-	defer popContext.Free()
 
 	miner := NewMockMiner()
-	defer miner.Free()
 
 	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)
@@ -44,10 +42,8 @@ func TestPopContextSubmitVtb(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
-	defer popContext.Free()
 
 	miner := NewMockMiner()
-	defer miner.Free()
 
 	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)
@@ -86,10 +82,8 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
-	defer popContext.Free()
 
 	miner := NewMockMiner()
-	defer miner.Free()
 
 	var publicationData entities.PublicationData
 	publicationData.ContextInfo = []byte{1, 2, 3, 4}

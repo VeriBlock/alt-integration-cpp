@@ -14,7 +14,6 @@ func TestCalculateContextInfoContainerHash(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
-	defer popContext.Free()
 
 	index, err := popContext.AltBestBlock()
 	assert.NoError(err)

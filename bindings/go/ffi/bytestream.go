@@ -5,6 +5,7 @@ package ffi
 // #include <veriblock/c/bytestream.h>
 import "C"
 import (
+	"runtime"
 	"unsafe"
 )
 
@@ -13,7 +14,11 @@ func NewVbkByteStream(ref *C.VBK_ByteStream) *VbkByteStream {
 	if ref == nil {
 		return nil
 	}
-	return &VbkByteStream{ref}
+	stream := &VbkByteStream{ref}
+	runtime.SetFinalizer(stream, func(v *VbkByteStream) {
+		v.Free()
+	})
+	return stream
 }
 
 // VbkByteStream ...
