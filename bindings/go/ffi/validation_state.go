@@ -6,6 +6,7 @@ package ffi
 import "C"
 import (
 	"errors"
+	"runtime"
 )
 
 // ValidationState ...
@@ -15,12 +16,19 @@ type ValidationState struct {
 
 // NewValidationState ...
 func NewValidationState() *ValidationState {
-	return &ValidationState{ref: C.VBK_NewValidationState()}
+	state := &ValidationState{ref: C.VBK_NewValidationState()}
+	runtime.SetFinalizer(state, func(v *ValidationState) {
+		v.Free()
+	})
+	return state
 }
 
-// Free ...
+// Free - Dealocates memory allocated for the state.
 func (v *ValidationState) Free() {
-	C.VBK_FreeValidationState(v.ref)
+	if v.ref != nil {
+		C.VBK_FreeValidationState(v.ref)
+		v.ref = nil
+	}
 }
 
 // GetErrorMessage ...

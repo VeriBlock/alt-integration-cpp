@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"math"
-	"runtime"
 	"sync"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -79,20 +78,10 @@ func NewPopContext(config *Config) *PopContext {
 	if config == nil {
 		panic("Config not provided")
 	}
-
-	popContext := &PopContext{
+	return &PopContext{
 		popContext: ffi.NewPopContext(config.Config),
 		mutex:      new(sync.Mutex),
 	}
-	runtime.SetFinalizer(popContext, func(v *PopContext) {
-		v.Free()
-	})
-	return popContext
-}
-
-// Free - Frees memory allocated for the pop context
-func (v *PopContext) Free() {
-	v.popContext.Free()
 }
 
 // AcceptBlockHeader - Returns nil if block is valid, and added

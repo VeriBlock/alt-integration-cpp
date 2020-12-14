@@ -5,6 +5,7 @@ package ffi
 // #include <veriblock/c/pop_context.h>
 import "C"
 import (
+	"runtime"
 	"unsafe"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -21,14 +22,23 @@ func NewPopContext(config *Config) *PopContext {
 	if config == nil {
 		panic("Config not provided")
 	}
-	return &PopContext{
+	context := &PopContext{
 		ref:     C.VBK_NewPopContext(config.ref),
 		popData: make([]byte, config.GetMaxPopDataSize()),
 	}
+	runtime.SetFinalizer(context, func(v *PopContext) {
+		v.Free()
+	})
+	return context
 }
 
-// Free ...
-func (v *PopContext) Free() { C.VBK_FreePopContext(v.ref) }
+// Free - Dealocates memory allocated for the context.
+func (v *PopContext) Free() {
+	if v.ref != nil {
+		C.VBK_FreePopContext(v.ref)
+		v.ref = nil
+	}
+}
 
 // AltBlockTreeAcceptBlockHeader - return true if block is valid, and added; false otherwise.
 func (v *PopContext) AltBlockTreeAcceptBlockHeader(blockBytes []byte, state *ValidationState) bool {

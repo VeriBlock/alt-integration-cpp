@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"runtime"
 	"sync"
 
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
@@ -17,19 +16,10 @@ type MockMiner struct {
 
 // NewMockMiner ...
 func NewMockMiner() *MockMiner {
-	mockMiner := &MockMiner{
+	return &MockMiner{
 		miner: ffi.NewMockMiner(),
 		mutex: new(sync.Mutex),
 	}
-	runtime.SetFinalizer(mockMiner, func(v *MockMiner) {
-		v.Free()
-	})
-	return mockMiner
-}
-
-// Free ...
-func (v *MockMiner) Free() {
-	v.miner.Free()
 }
 
 // MineBtcBlockTip - Mine new altintegration::BtcBlock on the top of the current btctree.

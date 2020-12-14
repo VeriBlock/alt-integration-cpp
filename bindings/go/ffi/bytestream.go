@@ -21,6 +21,14 @@ func NewVbkByteStream(ref *C.VBK_ByteStream) *VbkByteStream {
 	return stream
 }
 
+// Free - Dealocates memory allocated for the VbkByteStream.
+func (v *VbkByteStream) Free() {
+	if v.ref != nil {
+		C.VBK_ByteStream_Free(v.ref)
+		v.ref = nil
+	}
+}
+
 // VbkByteStream ...
 type VbkByteStream struct {
 	ref *C.VBK_ByteStream
@@ -33,9 +41,4 @@ func (v *VbkByteStream) Read(p []byte) (n int, err error) {
 	bufferC := (*C.uint8_t)(unsafe.Pointer(&p[0]))
 	res := C.VBK_ByteStream_Read(v.ref, bufferC, len)
 	return int(res), nil
-}
-
-// Free ...
-func (v *VbkByteStream) Free() {
-	C.VBK_ByteStream_Free(v.ref)
 }

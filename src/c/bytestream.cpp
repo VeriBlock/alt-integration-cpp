@@ -33,8 +33,8 @@ VbkByteStream::VbkByteStream(std::vector<uint8_t> bytes)
     : data(std::move(bytes)) {}
 
 size_t VBK_ByteStream_Read(VBK_ByteStream* stream,
-                          uint8_t* buffer,
-                          size_t toRead) {
+                           uint8_t* buffer,
+                           size_t toRead) {
   VBK_ASSERT(stream);
   VBK_ASSERT(buffer);
   return stream->read(buffer, toRead);
@@ -43,5 +43,6 @@ size_t VBK_ByteStream_Read(VBK_ByteStream* stream,
 void VBK_ByteStream_Free(VBK_ByteStream* stream) {
   if (stream) {
     delete stream;
+    stream = nullptr;
   }
 }

@@ -21,6 +21,7 @@ MockMiner_t* VBK_NewMockMiner() {
 void VBK_FreeMockMiner(MockMiner_t* miner) {
   if (miner) {
     delete miner;
+    miner = nullptr;
   }
 }
 
