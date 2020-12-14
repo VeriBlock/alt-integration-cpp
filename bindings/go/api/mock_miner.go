@@ -12,6 +12,7 @@ import (
 type MockMiner struct {
 	miner *ffi.MockMiner
 	mutex *sync.Mutex
+	state *ffi.ValidationState
 }
 
 // NewMockMiner ...
@@ -19,6 +20,7 @@ func NewMockMiner() *MockMiner {
 	return &MockMiner{
 		miner: ffi.NewMockMiner(),
 		mutex: new(sync.Mutex),
+		state: ffi.NewValidationState(),
 	}
 }
 
@@ -97,10 +99,9 @@ func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entitie
 	if err != nil {
 		return nil, err
 	}
-	stream, state := v.miner.MineAtv(buffer.Bytes())
-	defer state.Free()
+	stream := v.miner.MineAtv(buffer.Bytes(), v.state)
 	if stream == nil {
-		return nil, state.Error()
+		return nil, v.state.Error()
 	}
 	defer stream.Free()
 	var atv entities.Atv
@@ -119,10 +120,9 @@ func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*ent
 	if err != nil {
 		return nil, err
 	}
-	stream, state := v.miner.MineVtb(buffer.Bytes(), hash)
-	defer state.Free()
+	stream := v.miner.MineVtb(buffer.Bytes(), hash, v.state)
 	if stream == nil {
-		return nil, state.Error()
+		return nil, v.state.Error()
 	}
 	defer stream.Free()
 	var vtb entities.Vtb

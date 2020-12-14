@@ -16,7 +16,7 @@ type AltBlockTree interface {
 	AcceptBlockHeader(block *entities.AltBlock) error
 	AcceptBlock(hash entities.AltHash, payloads *entities.PopData) error
 	AddPayloads(hash entities.AltHash, payloads *entities.PopData) error
-	LoadTip(hash entities.AltHash)
+	LoadTip(hash entities.AltHash) error
 	ComparePopScore(hashA entities.AltHash, hashB entities.AltHash) int
 	RemoveSubtree(hash entities.AltHash)
 	SetState(hash entities.AltHash) error
@@ -70,8 +70,8 @@ var _ MemPool = &PopContext{}
 // PopContext ...
 type PopContext struct {
 	popContext ffi.PopContext
-
-	mutex *sync.Mutex
+	mutex      *sync.Mutex
+	state      *ffi.ValidationState
 }
 
 // NewPopContext ...
@@ -82,6 +82,7 @@ func NewPopContext(config *Config) PopContext {
 	return PopContext{
 		popContext: ffi.NewPopContext(config.Config),
 		mutex:      new(sync.Mutex),
+		state:      ffi.NewValidationState(),
 	}
 }
 
@@ -98,10 +99,9 @@ func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
 		return err
 	}
 	defer v.lock()()
-	ok, state := v.popContext.AltBlockTreeAcceptBlockHeader(stream.Bytes())
-	defer state.Free()
+	ok := v.popContext.AltBlockTreeAcceptBlockHeader(stream.Bytes(), v.state)
 	if !ok {
-		return state.Error()
+		return v.state.Error()
 	}
 	return nil
 }
@@ -114,8 +114,8 @@ func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopDa
 		return err
 	}
 	defer v.lock()()
-	v.popContext.AltBlockTreeAcceptBlock(hash, stream.Bytes())
-	return nil
+	v.popContext.AltBlockTreeAcceptBlock(hash, stream.Bytes(), v.state)
+	return v.state.Error()
 }
 
 // AddPayloads - Returns nil if PopData does not contain duplicates (searched across active chain).
@@ -127,14 +127,15 @@ func (v *PopContext) AddPayloads(hash entities.AltHash, payloads *entities.PopDa
 		return err
 	}
 	defer v.lock()()
-	v.popContext.AltBlockTreeAddPayloads(hash, stream.Bytes())
-	return nil
+	v.popContext.AltBlockTreeAddPayloads(hash, stream.Bytes(), v.state)
+	return v.state.Error()
 }
 
 // LoadTip ...
-func (v *PopContext) LoadTip(hash entities.AltHash) {
+func (v *PopContext) LoadTip(hash entities.AltHash) error {
 	defer v.lock()()
-	v.popContext.AltBlockTreeLoadTip(hash)
+	v.popContext.AltBlockTreeLoadTip(hash, v.state)
+	return v.state.Error()
 }
 
 // ComparePopScore ...
@@ -153,10 +154,9 @@ func (v *PopContext) RemoveSubtree(hash entities.AltHash) {
 // case tree will rollback into original state. `true` if state change is successful.
 func (v *PopContext) SetState(hash entities.AltHash) error {
 	defer v.lock()()
-	ok, state := v.popContext.AltBlockTreeSetState(hash)
-	defer state.Free()
+	ok := v.popContext.AltBlockTreeSetState(hash, v.state)
 	if !ok {
-		return state.Error()
+		return v.state.Error()
 	}
 	return nil
 }
@@ -388,17 +388,15 @@ func (v *PopContext) SubmitAtv(atv *entities.Atv) (int, error) {
 		return 2, err
 	}
 	defer v.lock()()
-	res, state := v.popContext.MemPoolSubmitAtv(stream.Bytes())
-	defer state.Free()
-	return res, state.Error()
+	res := v.popContext.MemPoolSubmitAtv(stream.Bytes(), v.state)
+	return res, v.state.Error()
 }
 
 // SubmitAtvBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitAtvBytes(data []byte) (int, error) {
 	defer v.lock()()
-	res, state := v.popContext.MemPoolSubmitAtv(data)
-	defer state.Free()
-	return res, state.Error()
+	res := v.popContext.MemPoolSubmitAtv(data, v.state)
+	return res, v.state.Error()
 }
 
 // SubmitVtb - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
@@ -409,17 +407,15 @@ func (v *PopContext) SubmitVtb(block *entities.Vtb) (int, error) {
 		return 2, err
 	}
 	defer v.lock()()
-	res, state := v.popContext.MemPoolSubmitVtb(stream.Bytes())
-	defer state.Free()
-	return res, state.Error()
+	res := v.popContext.MemPoolSubmitVtb(stream.Bytes(), v.state)
+	return res, v.state.Error()
 }
 
 // SubmitVtbBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVtbBytes(data []byte) (int, error) {
 	defer v.lock()()
-	res, state := v.popContext.MemPoolSubmitVtb(data)
-	defer state.Free()
-	return res, state.Error()
+	res := v.popContext.MemPoolSubmitVtb(data, v.state)
+	return res, v.state.Error()
 }
 
 // SubmitVbk - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
@@ -430,17 +426,15 @@ func (v *PopContext) SubmitVbk(block *entities.VbkBlock) (int, error) {
 		return 2, err
 	}
 	defer v.lock()()
-	res, state := v.popContext.MemPoolSubmitVbk(stream.Bytes())
-	defer state.Free()
-	return res, state.Error()
+	res := v.popContext.MemPoolSubmitVbk(stream.Bytes(), v.state)
+	return res, v.state.Error()
 }
 
 // SubmitVbkBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVbkBytes(data []byte) (int, error) {
 	defer v.lock()()
-	res, state := v.popContext.MemPoolSubmitVbk(data)
-	defer state.Free()
-	return res, state.Error()
+	res := v.popContext.MemPoolSubmitVbk(data, v.state)
+	return res, v.state.Error()
 }
 
 // GetPop ...
@@ -464,8 +458,8 @@ func (v *PopContext) RemoveAll(payloads *entities.PopData) error {
 		return err
 	}
 	defer v.lock()()
-	v.popContext.MemPoolRemoveAll(stream.Bytes())
-	return nil
+	v.popContext.MemPoolRemoveAll(stream.Bytes(), v.state)
+	return v.state.Error()
 }
 
 // GetAtv ...

@@ -96,33 +96,29 @@ func (v *PopContext) AltBlockCalculateContextInfoContainerHash(prevBlockHash []b
 }
 
 // checkATV ...
-func (v *PopContext) CheckATV(atv_bytes []byte) (bool, *ValidationState) {
+func (v *PopContext) CheckATV(atv_bytes []byte, state *ValidationState) bool {
 	atvBytesC := (*C.uint8_t)(unsafe.Pointer(&atv_bytes[0]))
-	state := NewValidationState()
 	res := C.VBK_checkATV(v.ref, atvBytesC, C.int(len(atv_bytes)), state.ref)
-	return bool(res), &state
+	return bool(res)
 }
 
 // checkVTB ...
-func (v *PopContext) CheckVTB(vtb_bytes []byte) (bool, *ValidationState) {
+func (v *PopContext) CheckVTB(vtb_bytes []byte, state *ValidationState) bool {
 	vtbBytesC := (*C.uint8_t)(unsafe.Pointer(&vtb_bytes[0]))
-	state := NewValidationState()
 	res := C.VBK_checkVTB(v.ref, vtbBytesC, C.int(len(vtb_bytes)), state.ref)
-	return bool(res), &state
+	return bool(res)
 }
 
 // checkVbkBlock ...
-func (v *PopContext) CheckVbkBlock(vbk_bytes []byte) (bool, *ValidationState) {
+func (v *PopContext) CheckVbkBlock(vbk_bytes []byte, state *ValidationState) bool {
 	vbkBytesC := (*C.uint8_t)(unsafe.Pointer(&vbk_bytes[0]))
-	state := NewValidationState()
 	res := C.VBK_checkVbkBlock(v.ref, vbkBytesC, C.int(len(vbk_bytes)), state.ref)
-	return bool(res), &state
+	return bool(res)
 }
 
 // checkPopData ...
-func (v *PopContext) CheckPopData(pop_data_bytes []byte) (bool, *ValidationState) {
+func (v *PopContext) CheckPopData(pop_data_bytes []byte, state *ValidationState) bool {
 	popDataBytesC := (*C.uint8_t)(unsafe.Pointer(&pop_data_bytes[0]))
-	state := NewValidationState()
 	res := C.VBK_checkPopData(v.ref, popDataBytesC, C.int(len(pop_data_bytes)), state.ref)
-	return bool(res), &state
+	return bool(res)
 }

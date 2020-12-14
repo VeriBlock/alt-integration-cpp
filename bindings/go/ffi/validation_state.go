@@ -14,8 +14,8 @@ type ValidationState struct {
 }
 
 // NewValidationState ...
-func NewValidationState() ValidationState {
-	return ValidationState{ref: C.VBK_NewValidationState()}
+func NewValidationState() *ValidationState {
+	return &ValidationState{ref: C.VBK_NewValidationState()}
 }
 
 // Free ...
