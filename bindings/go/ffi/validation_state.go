@@ -41,9 +41,15 @@ func (v *ValidationState) IsInvalid() bool {
 	return bool(res)
 }
 
+// Error ...
 func (v *ValidationState) Error() error {
 	if v.IsInvalid() {
 		return errors.New(v.GetErrorMessage())
 	}
 	return nil
+}
+
+// Reset ...
+func (v *ValidationState) Reset() {
+	C.VBK_ValidationState_Reset(v.ref)
 }

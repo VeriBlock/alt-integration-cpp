@@ -58,6 +58,13 @@ bool VBK_ValidationState_isValid(VbkValidationState* self);
  */
 bool VBK_ValidationState_isInvalid(VbkValidationState* self);
 
+/**
+ * Reset VbkValidationState
+ *
+ * @param[in] self VbkValidationState.
+ */
+void VBK_ValidationState_Reset(VbkValidationState* self);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif

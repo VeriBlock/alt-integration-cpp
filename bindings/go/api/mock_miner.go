@@ -99,6 +99,7 @@ func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entitie
 	if err != nil {
 		return nil, err
 	}
+	v.state.Reset()
 	stream := v.miner.MineAtv(buffer.Bytes(), v.state)
 	if stream == nil {
 		return nil, v.state.Error()
@@ -120,6 +121,7 @@ func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*ent
 	if err != nil {
 		return nil, err
 	}
+	v.state.Reset()
 	stream := v.miner.MineVtb(buffer.Bytes(), hash, v.state)
 	if stream == nil {
 		return nil, v.state.Error()

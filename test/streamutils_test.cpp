@@ -21,7 +21,7 @@ TEST(ReadStream, Read) {
   EXPECT_EQ(stream.assertRead(1), std::vector<uint8_t>{3});
   ASSERT_FALSE(stream.readBE<uint8_t>(byte, state));
   ASSERT_EQ(state.GetPath(), "readbe-underflow");
-  state.clear();
+  state.reset();
 
   stream.reset();
 
@@ -37,7 +37,7 @@ TEST(ReadStream, Read) {
   std::vector<uint8_t> out(5, 0);
   ASSERT_FALSE(stream.read(5, out.data(), state));
   ASSERT_EQ(state.GetPath(), "read-underflow");
-  state.clear();
+  state.reset();
 
   stream.reset();
 

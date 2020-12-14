@@ -34,3 +34,9 @@ bool VBK_ValidationState_isInvalid(VbkValidationState* self) {
 
   return self->IsInvalid();
 }
+
+void VBK_ValidationState_Reset(VbkValidationState* self) {
+  VBK_ASSERT(self);
+
+  self->Reset();
+}

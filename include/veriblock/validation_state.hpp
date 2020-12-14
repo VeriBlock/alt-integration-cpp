@@ -31,7 +31,7 @@ class ValidationState {
 
   std::string toString() const;
 
-  void clear() {
+  void reset() {
     stack_trace.clear();
     m_debug_message.clear();
     m_mode = MODE_VALID;

@@ -23,6 +23,11 @@ struct VbkValidationState {
     return error.c_str();
   }
 
+  void Reset() {
+    error = "";
+    validation_state.reset();
+  }
+
  private:
   altintegration::ValidationState validation_state{};
   std::string error;
