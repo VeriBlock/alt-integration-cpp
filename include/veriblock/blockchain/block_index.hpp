@@ -60,7 +60,7 @@ struct BlockIndex : public Block::addon_t {
     return level;
   }
 
-  bool isValid(enum BlockStatus upTo = BLOCK_VALID_TREE) const {
+  bool isValid(enum BlockStateStatus upTo = BLOCK_VALID_TREE) const {
     if ((status & BLOCK_FAILED_MASK) != 0u) {
       // block failed
       return false;
@@ -68,10 +68,7 @@ struct BlockIndex : public Block::addon_t {
     return isValidUpTo(upTo);
   }
 
-  bool isValidUpTo(enum BlockStatus upTo) const {
-    VBK_ASSERT_MSG(!(upTo & ~BLOCK_VALID_MASK),
-                   "Only validity flags are allowed");
-
+  bool isValidUpTo(enum BlockStateStatus upTo) const {
     auto validityLevel = getValidityLevel();
     VBK_ASSERT_MSG(
         validityLevel != BLOCK_CAN_BE_APPLIED || !hasFlags(BLOCK_FAILED_POP),
@@ -98,8 +95,7 @@ struct BlockIndex : public Block::addon_t {
     this->pnext.clear();
   }
 
-  bool raiseValidity(enum BlockStatus upTo) {
-    VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+  bool raiseValidity(enum BlockStateStatus upTo) {
     // we can't raise the validity of a block that's known to be invalid due to
     // PoP it's ok to raise the validity of a block invalidated by altchain
     if ((status & BLOCK_FAILED_POP) != 0u) {
@@ -117,8 +113,7 @@ struct BlockIndex : public Block::addon_t {
     return false;
   }
 
-  bool lowerValidity(enum BlockStatus upTo) {
-    VBK_ASSERT(!(upTo & ~BLOCK_VALID_MASK));  // Only validity flags allowed.
+  bool lowerValidity(enum BlockStateStatus upTo) {
     // we can't lower the validity of a block that's known to be invalid due to
     // PoP, as that would incorrectly label another validity level as failed.
     // BLOCK_FAILED_POP has to be cleared first via revalidateSubtree it's ok to
@@ -137,16 +132,16 @@ struct BlockIndex : public Block::addon_t {
   void unsetDirty() { this->dirty = false; }
   bool isDirty() const { return this->dirty; }
 
-  void setFlag(enum BlockStatus s) {
+  void setFlag(enum BlockValidityStatus s) {
     this->status |= s;
     setDirty();
   }
-  void unsetFlag(enum BlockStatus s) {
+  void unsetFlag(enum BlockValidityStatus s) {
     this->status &= ~s;
     setDirty();
   }
 
-  bool hasFlags(BlockStatus s) const { return this->status & s; }
+  bool hasFlags(enum BlockValidityStatus s) const { return this->status & s; }
 
   hash_t getHash() const { return header->getHash(); }
   uint32_t getBlockTime() const { return header->getBlockTime(); }
@@ -343,8 +338,7 @@ bool DeserializeFromVbkEncoding(
     return state.Invalid(name + "-block-index-height");
   }
   Block block{};
-  if (!DeserializeFromRaw(
-          stream, block, state, precalculatedHash)) {
+  if (!DeserializeFromRaw(stream, block, state, precalculatedHash)) {
     return state.Invalid(name + "-block-index-header");
   }
   out.setHeader(block);
