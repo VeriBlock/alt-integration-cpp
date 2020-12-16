@@ -187,7 +187,7 @@ func (v *BlockIndex) FromRaw(stream io.Reader) error {
 	if err := binary.Read(stream, binary.LittleEndian, &status); err != nil {
 		return err
 	}
-	v.Status = BlockStatus(status)
+	v.Status = status
 	return v.Addon.FromRaw(stream)
 }
 
