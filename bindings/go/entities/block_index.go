@@ -13,37 +13,45 @@ import (
 type BlockStatus uint32
 
 const (
-	// BlockValidUnknown - Default state for validity - validity state is unknown
-	BlockValidUnknown BlockStatus = 0
-	// BlockBootstrap - This is a bootstrap block
-	BlockBootstrap BlockStatus = 1 << 1
-	// BlockFailedBlock - Block is statelessly valid, but the altchain marked it as failed
-	BlockFailedBlock BlockStatus = 1 << 2
-	// BlockFailedPop - Block failed state{less,ful} validation due to its payloads
-	BlockFailedPop BlockStatus = 1 << 3
-	// BlockFailedChild - Block is state{lessly,fully} valid and the altchain did not report it as
-	// invalid, but some of the ancestor blocks are invalid
-	BlockFailedChild BlockStatus = 1 << 4
-	// BlockFailedMask - All invalidity flags
-	BlockFailedMask BlockStatus = BlockFailedChild | BlockFailedPop | BlockFailedBlock
-	// BlockApplied - The block has been applied via PopStateMachine
-	BlockApplied BlockStatus = 1 << 5
+
+	//! BlockStateStatus flags
 
 	// BlockValidTree - AcceptBlockHeader succeded. All ancestors are at least at this state.
-	BlockValidTree BlockStatus = 1 << 6
-	// BlockHasPayloads - AcceptBlock has been executed on this block; payloads are statelessly valid
-	BlockHasPayloads BlockStatus = 2 << 6
+	BlockValidTree BlockStatus = 1
 	// BlockConnected - The block is connected via connectBlock
-	BlockConnected BlockStatus = 3 << 6
+	BlockConnected BlockStatus = 2
 	// BlockHasBeenApplied - The block has been successfully applied, likely along with another chain
-	BlockHasBeenApplied BlockStatus = 4 << 6
+	BlockCanBeAppliedMaybeWithOtherChain BlockStatus = 3
 	// BlockCanBeApplied - The chain with the block at its tip is fully valid
-	BlockCanBeApplied BlockStatus = 5 << 6
+	BlockCanBeApplied BlockStatus = 4
 	// BlockValidMask - All stateful validity levels
 	// FIXME: BlockHasPayloads is not really a stateful validity level and does
 	// not belong here since it does not depend on other block contents
-	BlockValidMask BlockStatus = BlockValidUnknown | BlockValidTree | BlockHasPayloads |
-		BlockConnected | BlockHasBeenApplied | BlockCanBeApplied
+	BlockValidMask BlockStatus = BlockValidTree |
+		BlockConnected | BlockCanBeAppliedMaybeWithOtherChain | BlockCanBeApplied
+
+	//! BlockValidityStatus flags
+
+	// BlockValidUnknown - Default state for validity - validity state is unknown
+	BlockValidUnknown BlockStatus = 0
+
+	//! all values from (0, 15] are reserved for BlockStateStatus
+
+	// BlockBootstrap - This is a bootstrap block
+	BlockBootstrap BlockStatus = 1 << 4
+	// BlockFailedBlock - Block is statelessly valid, but the altchain marked it as failed
+	BlockFailedBlock BlockStatus = 1 << 5
+	// BlockFailedPop - Block failed state{less,ful} validation due to its payloads
+	BlockFailedPop BlockStatus = 1 << 6
+	// BlockFailedChild - Block is state{lessly,fully} valid and the altchain did not report it as
+	// invalid, but some of the ancestor blocks are invalid
+	BlockFailedChild BlockStatus = 1 << 7
+	// BlockFailedMask - All invalidity flags
+	BlockFailedMask BlockStatus = BlockFailedChild | BlockFailedPop | BlockFailedBlock
+	// BlockHasPayloads - AcceptBlock has been executed on this block
+	BlockHasPayloads BlockStatus = 1 << 8
+	// BlockApplied - The block has been applied via PopStateMachine
+	BlockApplied BlockStatus = 1 << 9
 )
 
 // GenericBlockHeader ...
