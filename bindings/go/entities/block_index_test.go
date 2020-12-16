@@ -14,18 +14,18 @@ var (
 		&defaultBtcBlockAddon,
 		12345,
 		&defaultBtcBlock,
-		uint32(BlockValidUnknown),
+		uint32(BlockBootstrap),
 	}
-	defaultBtcBlockIndexEncoded = "000030390000002000000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def75e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f82213b75c841a011a2e00f29a0000000001060000007b00000084000000d5000000e70000014100000138"
+	defaultBtcBlockIndexEncoded = "000030390000002000000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def75e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f82213b75c841a011a2e00f29a0000001001060000007b00000084000000d5000000e70000014100000138"
 
 	defaultVbkBlockIndex = BlockIndex{
 		&defaultVbkBlockAddon,
 		12345,
 		&defaultVbkBlock,
-		uint32(BlockValidUnknown),
+		uint32(BlockBootstrap),
 	}
 
-	defaultVbkBlockIndexEncoded = "00003039000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f30101000000000000010000000000003085010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000018f85486026bf4ead8a37a42925332ec8b553f8e310974fea118f85486026bf4ead8a37a42925332ec8b553f8e310974fea120f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e20f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000"
+	defaultVbkBlockIndexEncoded = "00003039000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f30101000000000000010000001000003085010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000018f85486026bf4ead8a37a42925332ec8b553f8e310974fea118f85486026bf4ead8a37a42925332ec8b553f8e310974fea120f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e20f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000"
 )
 
 func TestBtcBlockIndexDeserialize(t *testing.T) {
@@ -37,6 +37,17 @@ func TestBtcBlockIndexDeserialize(t *testing.T) {
 	assert.NoError(decoded.FromRaw(stream))
 
 	assert.Equal(defaultBtcBlockIndex.Height, decoded.Height)
+	assert.Equal(defaultBtcBlockIndex.Status, decoded.Status)
+	defaultBlock, err := defaultBtcBlockIndex.GetBtcBlockHeader()
+	assert.NoError(err)
+	decodedBlock, err := decoded.GetBtcBlockHeader()
+	assert.NoError(err)
+	assert.Equal(defaultBlock.Bits, decodedBlock.Bits)
+	assert.Equal(defaultBlock.MerkleRoot, decodedBlock.MerkleRoot)
+	assert.Equal(defaultBlock.Nonce, decodedBlock.Nonce)
+	assert.Equal(defaultBlock.PreviousBlock, decodedBlock.PreviousBlock)
+	assert.Equal(defaultBlock.Timestamp, decodedBlock.Timestamp)
+	assert.Equal(defaultBlock.Version, decodedBlock.Version)
 
 	assert.Equal(0, stream.Len(), "Stream has more data")
 }
@@ -58,6 +69,17 @@ func TestBtcBlockIndexRoundTrip(t *testing.T) {
 	decoded := NewBtcBlockIndex()
 	assert.NoError(decoded.FromRaw(stream))
 	assert.Equal(defaultBtcBlockIndex.Height, decoded.Height)
+	assert.Equal(defaultBtcBlockIndex.Status, decoded.Status)
+	defaultBlock, err := defaultBtcBlockIndex.GetBtcBlockHeader()
+	assert.NoError(err)
+	decodedBlock, err := decoded.GetBtcBlockHeader()
+	assert.NoError(err)
+	assert.Equal(defaultBlock.Bits, decodedBlock.Bits)
+	assert.Equal(defaultBlock.MerkleRoot, decodedBlock.MerkleRoot)
+	assert.Equal(defaultBlock.Nonce, decodedBlock.Nonce)
+	assert.Equal(defaultBlock.PreviousBlock, decodedBlock.PreviousBlock)
+	assert.Equal(defaultBlock.Timestamp, decodedBlock.Timestamp)
+	assert.Equal(defaultBlock.Version, decodedBlock.Version)
 
 	outputStream := new(bytes.Buffer)
 	assert.NoError(decoded.ToRaw(outputStream))
@@ -76,6 +98,20 @@ func TestVbkBlockIndexDeserialize(t *testing.T) {
 	assert.NoError(decoded.FromRaw(stream))
 
 	assert.Equal(defaultVbkBlockIndex.Height, decoded.Height)
+	assert.Equal(defaultVbkBlockIndex.Status, decoded.Status)
+	defaultBlock, err := defaultVbkBlockIndex.GetVbkBlockHeader()
+	assert.NoError(err)
+	decodedBlock, err := decoded.GetVbkBlockHeader()
+	assert.NoError(err)
+	assert.Equal(defaultBlock.Difficulty, decodedBlock.Difficulty)
+	assert.Equal(defaultBlock.Version, decodedBlock.Version)
+	assert.Equal(defaultBlock.PreviousKeystone, decodedBlock.PreviousKeystone)
+	assert.Equal(defaultBlock.SecondPreviousKeystone, decodedBlock.SecondPreviousKeystone)
+	assert.Equal(defaultBlock.MerkleRoot, decodedBlock.MerkleRoot)
+	assert.Equal(defaultBlock.Nonce, decodedBlock.Nonce)
+	assert.Equal(defaultBlock.PreviousBlock, decodedBlock.PreviousBlock)
+	assert.Equal(defaultBlock.Timestamp, decodedBlock.Timestamp)
+	assert.Equal(defaultBlock.Version, decodedBlock.Version)
 
 	assert.Equal(0, stream.Len(), "Stream has more data")
 }
@@ -99,6 +135,20 @@ func TestVbkBlockIndexRoundTrip(t *testing.T) {
 	decoded.Addon = &VbkBlockAddon{}
 	assert.NoError(decoded.FromRaw(stream))
 	assert.Equal(defaultVbkBlockIndex.Height, decoded.Height)
+	assert.Equal(defaultVbkBlockIndex.Status, decoded.Status)
+	defaultBlock, err := defaultVbkBlockIndex.GetVbkBlockHeader()
+	assert.NoError(err)
+	decodedBlock, err := decoded.GetVbkBlockHeader()
+	assert.NoError(err)
+	assert.Equal(defaultBlock.Difficulty, decodedBlock.Difficulty)
+	assert.Equal(defaultBlock.Version, decodedBlock.Version)
+	assert.Equal(defaultBlock.PreviousKeystone, decodedBlock.PreviousKeystone)
+	assert.Equal(defaultBlock.SecondPreviousKeystone, decodedBlock.SecondPreviousKeystone)
+	assert.Equal(defaultBlock.MerkleRoot, decodedBlock.MerkleRoot)
+	assert.Equal(defaultBlock.Nonce, decodedBlock.Nonce)
+	assert.Equal(defaultBlock.PreviousBlock, decodedBlock.PreviousBlock)
+	assert.Equal(defaultBlock.Timestamp, decodedBlock.Timestamp)
+	assert.Equal(defaultBlock.Version, decodedBlock.Version)
 
 	outputStream := new(bytes.Buffer)
 	assert.NoError(decoded.ToRaw(outputStream))
@@ -109,7 +159,7 @@ func TestVbkBlockIndexRoundTrip(t *testing.T) {
 func TestVbkBlockIndexToJSON(t *testing.T) {
 	assert := assert.New(t)
 
-	defaultJSON := `{"chainWork":"","containingEndorsements":[],"endorsedBy":[],"header":{"difficulty":16842752,"hash":"2ba076219b4ff7ed36512275cd97599e23096ad42f119b5a","height":5000,"id":"cd97599e23096ad42f119b5a","merkleRoot":"26bbfda7d5e4462ef24ae02d67e47d78","nonce":1,"previousBlock":"449c60619294546ad825af03","previousKeystone":"b0935637860679ddd5","secondPreviousKeystone":"5ee4fd21082e18686e","timestamp":1553699059,"version":2},"height":12345,"ref":12421,"status":0,"stored":{"vtbids":[]}}`
+	defaultJSON := `{"chainWork":"","containingEndorsements":[],"endorsedBy":[],"header":{"difficulty":16842752,"hash":"2ba076219b4ff7ed36512275cd97599e23096ad42f119b5a","height":5000,"id":"cd97599e23096ad42f119b5a","merkleRoot":"26bbfda7d5e4462ef24ae02d67e47d78","nonce":1,"previousBlock":"449c60619294546ad825af03","previousKeystone":"b0935637860679ddd5","secondPreviousKeystone":"5ee4fd21082e18686e","timestamp":1553699059,"version":2},"height":12345,"ref":12421,"status":16,"stored":{"vtbids":[]}}`
 	jsonmap, err := defaultVbkBlockIndex.ToJSON()
 	assert.NoError(err)
 
@@ -121,7 +171,7 @@ func TestVbkBlockIndexToJSON(t *testing.T) {
 func TestBtcBlockIndexToJSON(t *testing.T) {
 	assert := assert.New(t)
 
-	defaultJSON := `{"chainWork":"","header":{"bits":436279940,"hash":"ebaa22c5ffd827e96c4450ad5dd35dbec2aa45e15cdb5ce9928f543f4cebf10e","merkleRoot":"f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e","nonce":2599551022,"previousBlock":"f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000","timestamp":1555501858,"version":536870912},"height":12345,"ref":6,"status":0}`
+	defaultJSON := `{"chainWork":"","header":{"bits":436279940,"hash":"ebaa22c5ffd827e96c4450ad5dd35dbec2aa45e15cdb5ce9928f543f4cebf10e","merkleRoot":"f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e","nonce":2599551022,"previousBlock":"f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000","timestamp":1555501858,"version":536870912},"height":12345,"ref":6,"status":16}`
 	jsonmap, err := defaultBtcBlockIndex.ToJSON()
 	assert.NoError(err)
 
