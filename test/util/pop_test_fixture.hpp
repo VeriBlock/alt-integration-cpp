@@ -95,13 +95,9 @@ struct PopTestFixture {
     VBK_ASSERT(index);
     while (index && !index->isValidUpTo(BLOCK_CONNECTED)) {
       index->raiseValidity(BLOCK_CONNECTED);
+      index->setFlag(BLOCK_HAS_PAYLOADS);
       index = index->pprev;
     }
-    // while (index && !index->hasFlags(BLOCK_CONNECTED)) {
-    //   index->setFlag(BLOCK_CONNECTED);
-    //   index->setFlag(BLOCK_HAS_PAYLOADS);
-    //   index = index->pprev;
-    // }
   }
 
   bool SetState(AltBlockTree& tree,

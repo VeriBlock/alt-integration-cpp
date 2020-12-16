@@ -482,7 +482,7 @@ TEST(ToJson, VbkBlockIndex) {
     "version": 2
   },
   "height": 0,
-  "status": 354,
+  "status": 533,
   "stored": {
     "vtbids": []
   }
@@ -511,7 +511,7 @@ TEST(ToJson, BtcBlockIndex) {
     "version": 1
   },
   "height": 0,
-  "status": 354,
+  "status": 533,
   "vbkrefs": [
     0
   ]
