@@ -184,7 +184,7 @@ func (v *BlockIndex) FromRaw(stream io.Reader) error {
 		return err
 	}
 	var status uint32
-	if err := binary.Read(stream, binary.LittleEndian, &status); err != nil {
+	if err := binary.Read(stream, binary.BigEndian, &status); err != nil {
 		return err
 	}
 	v.Status = status
