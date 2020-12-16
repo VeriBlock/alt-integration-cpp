@@ -3,13 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/blockchain/alt_block_tree.hpp"
-
 #include <veriblock/blockchain/commands/commands.hpp>
 #include <veriblock/reversed_range.hpp>
 #include <veriblock/storage/block_batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
 #include "veriblock/rewards/poprewards.hpp"
 #include "veriblock/rewards/poprewards_calculator.hpp"
@@ -169,7 +168,11 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
                 payloads.toPrettyString(),
                 index.toShortPrettyString());
 
-  VBK_ASSERT_MSG(index.getValidityLevel() == BLOCK_VALID_TREE,
+  VBK_ASSERT_MSG(index.isValidUpTo(BLOCK_VALID_TREE),
+                 "block %s should be valid",
+                 index.toPrettyString());
+
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s already contains payloads",
                  index.toPrettyString());
 
@@ -193,11 +196,11 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   commitPayloadsIds<ATV>(index, payloads.atvs, payloadsIndex_);
 
   // we successfully added this block payloads
-  index.raiseValidity(BLOCK_HAS_PAYLOADS);
+  index.setFlag(BLOCK_HAS_PAYLOADS);
 }
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
-  VBK_ASSERT_MSG(index.getValidityLevel() == BLOCK_HAS_PAYLOADS,
+  VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s must have payloads added and not be connected",
                  index.toPrettyString());
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE),
@@ -230,7 +233,7 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
     onBlockConnected.emit(index);
     // connect the descendants
     for (auto* successor : index.pnext) {
-      if (successor->isValidUpTo(BLOCK_HAS_PAYLOADS)) {
+      if (successor->hasFlags(BLOCK_HAS_PAYLOADS)) {
         ValidationState dummy;
         connectBlock(*successor, dummy);
       }
@@ -422,7 +425,7 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
 
   // we do not allow adding payloads to the genesis block
   VBK_ASSERT_MSG(index.pprev, "can not remove payloads from the genesis block");
-  VBK_ASSERT_MSG(index.isValidUpTo(BLOCK_HAS_PAYLOADS),
+  VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "Can remove payloads only from blocks with payloads");
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE), "block is applied");
 
