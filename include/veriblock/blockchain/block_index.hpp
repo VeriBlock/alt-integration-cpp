@@ -352,6 +352,7 @@ bool DeserializeFromVbkEncoding(
   if (!DeserializeFromVbkEncoding(stream, addon, state)) {
     return state.Invalid(name + "-block-index-addon");
   }
+  out.unsetDirty();
   return true;
 }
 

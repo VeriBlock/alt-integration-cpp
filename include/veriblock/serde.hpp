@@ -265,18 +265,16 @@ bool readArrayOf(ReadStream& stream,
     return state.Invalid("readarray-bad-range");
   }
 
-  std::vector<T> items;
-  items.reserve(count);
+  out.reserve(count);
 
   for (int32_t i = 0; i < count; i++) {
     T item;
     if (!readFunc(item)) {
       return state.Invalid("readarray-bad-item", i);
     }
-    items.push_back(item);
+    out.push_back(item);
   }
 
-  out = items;
   return true;
 }
 
