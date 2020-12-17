@@ -8,10 +8,11 @@
 namespace altintegration {
 
 PopRewardsBigDecimal PopRewardsCache::scoreFromEndorsements(
+    const PopRewardsCalculatorInterface& calculator,
     const BlockIndex<AltBlock>& endorsedBlock) {
   const auto it = cache_.find(&endorsedBlock);
   if (it == cache_.end()) {
-    return PopRewards::scoreFromEndorsements(endorsedBlock);
+    return PopRewards::scoreFromEndorsements(calculator, endorsedBlock);
   }
   return it->second;
 }
@@ -34,6 +35,7 @@ static std::vector<const PopRewardsCache::index_t*> fetchBlocksUntil(
 }
 
 std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
+    const PopRewardsCalculatorInterface& calculator,
     const index_t& endorsedBlock) {
   // make sure cache is in valid state, eg contains all necessary
   // blocks to calculate POP difficulty for the endorsed block
@@ -79,12 +81,13 @@ std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
       fetchBlocksUntil(endorsedBlock.pprev, historyLast, toFetch);
 
   for (const auto& b : reverse_iterate(difficultyBlocks)) {
-    appendToCache(*b);
+    appendToCache(calculator, *b);
   }
 
-  auto blockScore = appendToCache(endorsedBlock);
-  auto popDifficulty = calculateDifficulty(endorsedBlock);
-  return calculatePayoutsInner(endorsedBlock, blockScore, popDifficulty);
+  auto blockScore = appendToCache(calculator, endorsedBlock);
+  auto popDifficulty = calculateDifficulty(calculator, endorsedBlock);
+  return calculatePayoutsInner(
+      calculator, endorsedBlock, blockScore, popDifficulty);
 }
 
 void PopRewardsCache::invalidateCache() {
@@ -102,7 +105,8 @@ void PopRewardsCache::eraseCacheHistory(uint32_t blocks) {
   }
 }
 
-PopRewardsBigDecimal PopRewardsCache::appendToCache(const index_t& block) {
+PopRewardsBigDecimal PopRewardsCache::appendToCache(
+    const PopRewardsCalculatorInterface& calculator, const index_t& block) {
   const index_t* frontBlock = nullptr;
   const index_t* backBlock = nullptr;
   if (!history_.empty()) {
@@ -118,7 +122,7 @@ PopRewardsBigDecimal PopRewardsCache::appendToCache(const index_t& block) {
     return existing->second;
   }
 
-  auto score = PopRewards::scoreFromEndorsements(block);
+  auto score = PopRewards::scoreFromEndorsements(calculator, block);
 
   history_.push_back(&block);
   cache_.insert({&block, score});

@@ -8,7 +8,7 @@
 
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/rewards/poprewards_bigdecimal.hpp>
-#include <veriblock/rewards/poprewards_calculator.hpp>
+#include <veriblock/rewards/poprewards_calculator_interface.hpp>
 
 namespace altintegration {
 
@@ -17,8 +17,7 @@ namespace altintegration {
  */
 struct PopRewards {
   PopRewards(const AltChainParams& altParams, const VbkBlockTree& vbk_tree)
-      : calculator_(altParams),
-        vbkTree_(&vbk_tree) {}
+      : altParams_(altParams), vbkTree_(&vbk_tree) {}
 
   virtual ~PopRewards() = default;
 
@@ -29,6 +28,7 @@ struct PopRewards {
    * @return PopRewardsBigDecimal resulting score
    */
   virtual PopRewardsBigDecimal scoreFromEndorsements(
+      const PopRewardsCalculatorInterface& calculator,
       const BlockIndex<AltBlock>& endorsedBlock);
 
   /**
@@ -40,6 +40,7 @@ struct PopRewards {
    * @return PopRewardsBigDecimal resulting difficulty
    */
   virtual PopRewardsBigDecimal calculateDifficulty(
+      const PopRewardsCalculatorInterface& calculator,
       const BlockIndex<AltBlock>& tip);
 
   /**
@@ -51,10 +52,11 @@ struct PopRewards {
    * key and reward amount as a value
    */
   virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
+      const PopRewardsCalculatorInterface& calculator,
       const BlockIndex<AltBlock>& endorsedBlock);
 
  protected:
-  PopRewardsCalculator calculator_;
+  const AltChainParams& altParams_;
   const VbkBlockTree* vbkTree_;
 
   /**
@@ -71,6 +73,7 @@ struct PopRewards {
    * key and reward amount as a value
    */
   virtual std::map<std::vector<uint8_t>, int64_t> calculatePayoutsInner(
+      const PopRewardsCalculatorInterface& calculator,
       const BlockIndex<AltBlock>& endorsedBlock,
       const PopRewardsBigDecimal& endorsedBlockScore,
       const PopRewardsBigDecimal& popDifficulty);

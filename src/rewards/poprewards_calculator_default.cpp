@@ -5,7 +5,7 @@
 
 #include <cassert>
 #include <vector>
-#include <veriblock/rewards/poprewards_calculator.hpp>
+#include <veriblock/rewards/poprewards_calculator_default.hpp>
 
 namespace altintegration {
 
@@ -65,7 +65,7 @@ static PopRewardsBigDecimal calculateSlopeRatio(
 }
 
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
-uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
+uint32_t PopRewardsCalculatorDefault::getRoundForBlockNumber(uint32_t height) const {
   const PopPayoutsParams& params = altParams_->getPayoutParams();
   if (height % altParams_->getKeystoneInterval() == 0) {
     return params.keystoneRound();
@@ -81,7 +81,8 @@ uint32_t PopRewardsCalculator::getRoundForBlockNumber(uint32_t height) const {
   return round;
 }
 
-PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
+PopRewardsBigDecimal
+PopRewardsCalculatorDefault::getScoreMultiplierFromRelativeBlock(
     int relativeBlock) const {
   auto table = altParams_->getPayoutParams().relativeScoreLookupTable();
   if (relativeBlock < 0 || relativeBlock >= static_cast<int>(table.size())) {
@@ -91,7 +92,7 @@ PopRewardsBigDecimal PopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
   return table[relativeBlock];
 }
 
-PopRewardsBigDecimal PopRewardsCalculator::calculateBlockReward(
+PopRewardsBigDecimal PopRewardsCalculatorDefault::calculateBlockReward(
     uint32_t height,
     PopRewardsBigDecimal popscore,
     PopRewardsBigDecimal popdifficulty) const {
@@ -132,24 +133,7 @@ PopRewardsBigDecimal PopRewardsCalculator::calculateBlockReward(
     slope = calculateSlopeRatio(params, scoreToDifficulty, payoutRound);
   }
 
-  return slope * scoreToDifficulty * roundRatio / popdifficulty;
-}
-
-PopRewardsBigDecimal PopRewardsCalculator::calculateMinerReward(
-    uint32_t vbkRelativeHeight,
-    const PopRewardsBigDecimal& scoreForThisBlock,
-    const PopRewardsBigDecimal& blockReward) const {
-  if (scoreForThisBlock == 0.0) {
-    return 0.0;
-  }
-  auto endorsementLevelWeight =
-      getScoreMultiplierFromRelativeBlock(vbkRelativeHeight);
-  return blockReward * endorsementLevelWeight / scoreForThisBlock;
-}
-
-// getter for altchain parameters
-const AltChainParams& PopRewardsCalculator::getAltParams() const noexcept {
-  return *altParams_;
+  return slope * scoreToDifficulty * roundRatio;
 }
 
 }  // namespace altintegration

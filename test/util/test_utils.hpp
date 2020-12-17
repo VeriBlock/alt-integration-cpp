@@ -125,7 +125,7 @@ inline BlockIndex<VbkBlock> getRandomIndex() {
   index.setHeight(rand());
 
   VbkBlock block;
-  block.setVersion(rand());
+  block.setVersion((int16_t)rand());
   block.setPreviousBlock(generateRandomBytesVector(uint96::size()));
   block.setPreviousKeystone(generateRandomBytesVector(uint72::size()));
   block.setSecondPreviousKeystone(generateRandomBytesVector(uint72::size()));

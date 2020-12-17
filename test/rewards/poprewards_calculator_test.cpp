@@ -8,14 +8,15 @@
 #include "veriblock/blockchain/miner.hpp"
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/mock_miner.hpp"
-#include "veriblock/rewards/poprewards_calculator.hpp"
+#include "veriblock/rewards/poprewards_calculator_default.hpp"
 #include "util/test_utils.hpp"
 
 using namespace altintegration;
 
 struct RewardsCalculatorTestFixture : ::testing::Test {
   AltChainParamsTest chainParams{};
-  PopRewardsCalculator rewardsCalculator = PopRewardsCalculator(chainParams);
+  PopRewardsCalculatorDefault rewardsCalculator =
+      PopRewardsCalculatorDefault(chainParams);
   PopRewardsBigDecimal defaultScore = 1.0;
   PopRewardsBigDecimal defaultDifficulty = 1.0;
 
@@ -79,6 +80,16 @@ TEST_F(RewardsCalculatorTestFixture, basicReward_test) {
       20, defaultScore * 4.0, defaultDifficulty);
   // we see that the reward is no longer growing
   ASSERT_EQ(blockReward6, blockReward5);
+
+  auto blockReward7 = rewardsCalculator.calculateBlockReward(
+      height, defaultScore, defaultDifficulty * 2.0);
+  auto minerReward7 =
+      rewardsCalculator.calculateMinerReward(0, defaultScore, blockReward7);
+  ASSERT_TRUE(minerReward7 > 0.0);
+  ASSERT_NEAR(
+      (double)blockReward7.value.getLow64() / PopRewardsBigDecimal::decimals,
+      0.5,
+      0.1);
 }
 
 TEST_F(RewardsCalculatorTestFixture, specialReward_test) {

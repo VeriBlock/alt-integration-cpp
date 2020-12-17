@@ -14,6 +14,7 @@
 #include <veriblock/mempool.hpp>
 #include <veriblock/pop_stateless_validator.hpp>
 #include <veriblock/storage/payloads_index.hpp>
+#include <veriblock/rewards/poprewards_calculator_default.hpp>
 
 /**
  * @defgroup api Public API
@@ -60,6 +61,8 @@ struct PopContext {
                                                   *ctx->config->vbk.params,
                                                   *ctx->config->btc.params,
                                                   *ctx->payloadsProvider);
+    ctx->popRewardsCalculator = std::make_shared<PopRewardsCalculatorDefault>(
+        *ctx->config->alt);
     ctx->mempool = std::make_shared<MemPool>(*ctx->altTree);
     ctx->popValidator = std::make_shared<PopValidator>(*ctx->config->vbk.params,
                                                        *ctx->config->btc.params,
@@ -113,6 +116,7 @@ struct PopContext {
   std::shared_ptr<AltBlockTree> altTree;
   std::shared_ptr<PayloadsProvider> payloadsProvider;
   std::shared_ptr<PopValidator> popValidator;
+  std::shared_ptr<PopRewardsCalculatorInterface> popRewardsCalculator;
 
  private:
   PopContext() = default;

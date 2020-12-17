@@ -33,6 +33,7 @@ struct PopRewardsCache : public PopRewards {
    * @return PopRewardsBigDecimal resulting score
    */
   PopRewardsBigDecimal scoreFromEndorsements(
+      const PopRewardsCalculatorInterface& calculator,
       const index_t& endorsedBlock) override;
 
   /**
@@ -44,6 +45,7 @@ struct PopRewardsCache : public PopRewards {
    * key and reward amount as a value
    */
   std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
+      const PopRewardsCalculatorInterface& calculator,
       const BlockIndex<AltBlock>& endorsedBlock) override;
 
   /**
@@ -68,7 +70,8 @@ struct PopRewardsCache : public PopRewards {
    * @param block calculate score for this block.
    * @return PopRewardsBigDecimal score of the block
    */
-  PopRewardsBigDecimal appendToCache(const index_t& block);
+  PopRewardsBigDecimal appendToCache(
+      const PopRewardsCalculatorInterface& calculator, const index_t& block);
 };
 
 }  // namespace altintegration

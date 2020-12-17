@@ -210,7 +210,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @warning Expensive operation.
    * @ingroup api
    */
-  std::map<std::vector<uint8_t>, int64_t> getPopPayout(const hash_t& tip);
+  std::map<std::vector<uint8_t>, int64_t> getPopPayout(
+      const PopRewardsCalculatorInterface& calculator, const hash_t& tip);
 
   /**
    * Switch AltBlockTree from the current tip to different block, while doing

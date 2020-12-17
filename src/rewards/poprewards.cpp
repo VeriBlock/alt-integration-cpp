@@ -7,7 +7,6 @@
 #include <vector>
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/rewards/poprewards.hpp>
-#include <veriblock/rewards/poprewards_calculator.hpp>
 
 namespace altintegration {
 
@@ -24,6 +23,7 @@ static int getBestPublicationHeight(const BlockIndex<AltBlock>& endorsedBlock,
 }
 
 PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
+    const PopRewardsCalculatorInterface& calculator,
     const BlockIndex<AltBlock>& endorsedBlock) {
   PopRewardsBigDecimal totalScore = 0.0;
   // we simply find the lowest VBK height in the endorsements
@@ -36,20 +36,21 @@ PopRewardsBigDecimal PopRewards::scoreFromEndorsements(
     int relativeHeight = b->getHeight() - bestPublication;
     assert(relativeHeight >= 0);
     totalScore +=
-        calculator_.getScoreMultiplierFromRelativeBlock(relativeHeight);
+        calculator.getScoreMultiplierFromRelativeBlock(relativeHeight);
   }
   return totalScore;
 }
 
 PopRewardsBigDecimal PopRewards::calculateDifficulty(
+    const PopRewardsCalculatorInterface& calculator,
     const BlockIndex<AltBlock>& tip) {
   PopRewardsBigDecimal difficulty = 0.0;
-  auto& params = calculator_.getAltParams().getPayoutParams();
+  auto& params = altParams_.getPayoutParams();
   const BlockIndex<AltBlock>* currentBlock = tip.pprev;
 
   for (size_t i = 0; i < params.difficultyAveragingInterval(); i++) {
     if (currentBlock == nullptr) break;
-    difficulty += scoreFromEndorsements(*currentBlock);
+    difficulty += scoreFromEndorsements(calculator, * currentBlock);
     currentBlock = currentBlock->pprev;
   }
 
@@ -63,7 +64,9 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
   return difficulty;
 }
 
-std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayoutsInner(
+std::map<std::vector<uint8_t>, int64_t>
+PopRewards::calculatePayoutsInner(
+    const PopRewardsCalculatorInterface& calculator,
     const BlockIndex<AltBlock>& endorsedBlock,
     const PopRewardsBigDecimal& endorsedBlockScore,
     const PopRewardsBigDecimal& popDifficulty) {
@@ -74,7 +77,7 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayoutsInner(
   }
 
   // precalculate block reward - it helps calculating each miner's reward
-  auto blockReward = calculator_.calculateBlockReward(
+  auto blockReward = calculator.calculateBlockReward(
       endorsedBlock.getHeight(), endorsedBlockScore, popDifficulty);
 
   // pay reward for each of the endorsements
@@ -85,7 +88,7 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayoutsInner(
     int veriBlockHeight = b->getHeight();
     int relativeHeight = veriBlockHeight - bestPublication;
     assert(relativeHeight >= 0);
-    auto minerReward = calculator_.calculateMinerReward(
+    auto minerReward = calculator.calculateMinerReward(
         relativeHeight, endorsedBlockScore, blockReward);
     rewards[e->payoutInfo] += minerReward.value.getLow64();
   }
@@ -93,10 +96,12 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayoutsInner(
 }
 
 std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
+    const PopRewardsCalculatorInterface& calculator,
     const BlockIndex<AltBlock>& endorsedBlock) {
-  auto blockScore = scoreFromEndorsements(endorsedBlock);
-  auto popDifficulty = calculateDifficulty(endorsedBlock);
-  return calculatePayoutsInner(endorsedBlock, blockScore, popDifficulty);
+  auto blockScore = scoreFromEndorsements(calculator, endorsedBlock);
+  auto popDifficulty = calculateDifficulty(calculator, endorsedBlock);
+  return calculatePayoutsInner(
+      calculator, endorsedBlock, blockScore, popDifficulty);
 }
 
 }  // namespace altintegration

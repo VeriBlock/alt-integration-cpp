@@ -11,8 +11,6 @@
 
 #include "veriblock/algorithm.hpp"
 #include "veriblock/command_group_cache.hpp"
-#include "veriblock/rewards/poprewards.hpp"
-#include "veriblock/rewards/poprewards_calculator.hpp"
 
 namespace altintegration {
 
@@ -305,6 +303,7 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
 }
 
 std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
+    const PopRewardsCalculatorInterface& calculator,
     const AltBlock::hash_t& tip) {
   VBK_ASSERT(isBootstrapped() && "not bootstrapped");
 
@@ -332,11 +331,8 @@ std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
       "Block %s is not finalized for PoP payouts",
       endorsedBlock->toPrettyString());
 
-  auto ret = rewards_.calculatePayouts(*endorsedBlock);
-  auto difficulty = rewards_.calculateDifficulty(*endorsedBlock);
-
-  VBK_LOG_DEBUG("Pop Difficulty=%s for block %s, paying to %d addresses",
-                difficulty.toPrettyString(),
+  auto ret = rewards_.calculatePayouts(calculator, *endorsedBlock);
+  VBK_LOG_DEBUG("Block %s, paying to %d addresses",
                 index->toShortPrettyString(),
                 ret.size());
   return ret;
