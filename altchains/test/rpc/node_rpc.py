@@ -34,14 +34,35 @@ class NodeRpc:
     def getblockcount(self):
         return self.call('getblockcount', [])
 
+    def getbestblockhash(self):
+        return self.call('getbestblockhash', [])
+
+    def getblockheader(self, block_hash):
+        return self.call('getblockheader', [block_hash])
+
     def getnewaddress(self):
         return self.call('getnewaddress', [])
 
     def generatetoaddress(self, nblocks, address):
         return self.call('generatetoaddress', [nblocks, address])
 
+    def getbtcbestblockhash(self):
+        return self.call('getbtcbestblockhash', [])
+
+    def getvbkbestblockhash(self):
+        return self.call('getvbkbestblockhash', [])
+
     def getpopdata(self, height):
         return self.call('getpopdata', [height])
 
-    def submitpop(self, vbkBlocks, vtbs, atvs):
-        return self.call('submitpop', [vbkBlocks, vtbs, atvs])
+    def submitpop(self, vbk_blocks, vtbs, atvs):
+        return self.call('submitpop', [vbk_blocks, vtbs, atvs])
+
+    def submitpopATV(self, atv):
+        return self.call('submitpopATV', [atv])
+
+    def submitpopVBK(self, vbk_block):
+        return self.call('submitpopVBK', [vbk_block])
+
+    def submitpopVTB(self, vtb):
+        return self.call('submitpopVTB', [vtb])

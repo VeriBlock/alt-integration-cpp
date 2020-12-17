@@ -1,10 +1,7 @@
-import logging
-
 from random import Random
 
 from rpc.pop_miner import PopMiner
-
-logger = logging.getLogger()
+from util.logging import logger
 
 
 class RandomMiner:
@@ -32,11 +29,11 @@ class RandomMiner:
         logger.info('Executing mine BTC block')
         btc_tip = self.pick_btc_block()
         btc_txs = self.random_pop(self.btc_txs)
-        btc_block = self.miner.mine_btc_block(btc_tip, btc_txs)
+        btc_block = self.miner.mine_btc_block(btc_tip.getHash(), btc_txs)
 
         for btc_tx in btc_txs:
             vbk_block = self.btc_tx_vbk_block[btc_tx]
-            vbk_pop_tx = self.miner.create_vbk_pop_tx(vbk_block, btc_tx, btc_block)
+            vbk_pop_tx = self.miner.create_vbk_pop_tx(vbk_block, btc_tx, btc_block, btc_tip.getHash())
             self.vbk_pop_txs.append(vbk_pop_tx)
 
     def mine_vbk_block(self):
@@ -44,7 +41,8 @@ class RandomMiner:
         vbk_tip = self.pick_vbk_block()
         vbk_pop_txs = self.random_pop(self.vbk_pop_txs)
         vbk_txs = self.random_pop(self.vbk_txs)
-        vbk_block, vtbs, atvs = self.miner.mine_vbk_block(vbk_tip, vbk_pop_txs + vbk_txs)
+        vbk_block, vtbs = self.miner.mine_vbk_block(vbk_tip, vbk_pop_txs)
+        vbk_block_2, atvs = self.miner.mine_vbk_block(vbk_tip, vbk_txs)
         self.vbk_blocks.append(vbk_block)
         self.vtbs.extend(vtbs)
         self.vbk_block_vtbs[vbk_block] = vtbs
@@ -79,12 +77,9 @@ class RandomMiner:
         return tasks[target]()
 
     def random_pop(self, items):
-        target = self.random_value(len(items))
-        return items.pop(target)
-
-    def random_pick(self, items):
-        target = self.random_value(len(items))
-        return items.pop(target)
+        items_copy = list(items)
+        items.clear()
+        return items_copy
 
     def random_value(self, bound):
         target = self.random.randrange(bound)

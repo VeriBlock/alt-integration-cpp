@@ -7,10 +7,10 @@ def load_test(node, apm, max_blocks, max_hours, seed=None):
     info = node.getblockchaininfo()
     chain = info['chain']
     if chain != 'regtest':
-        raise Exception('chain should be "regtest" (actual: {})'.format(chain))
+        raise Exception('Unexpected chain (expected: regtest, actual: {})'.format(chain))
     blocks = info['blocks']
     if blocks > 0:
-        raise Exception('blocks count should be 0 (actual: {})'.format(blocks))
+        raise Exception('Unexpected blocks count (expected: 0, actual: {})'.format(blocks))
 
     miner = RandomMiner(node, apm, seed)
 

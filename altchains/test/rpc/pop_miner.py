@@ -1,8 +1,6 @@
-import logging
-
 from pypopminer import PublicationData
 
-logger = logging.getLogger()
+from util.logging import logger
 
 
 class PopMiner:
@@ -15,7 +13,7 @@ class PopMiner:
         logger.info('Mining BTC block with tip={} and txs={}'.format(self.encode(tip), self.encode(txs)))
         self.apm.submitBtcTxs(txs)
         btc_block = self.apm.mineBtcBlocks(tip, 1)
-        logging.info('Mined BTC block={}'.format(self.encode(btc_block)))
+        logger.info('Mined BTC block={}'.format(self.encode(btc_block)))
         return btc_block
 
     def mine_vbk_block(self, tip, txs):
@@ -24,7 +22,8 @@ class PopMiner:
         vbk_block = self.apm.mineVbkBlocks(tip, 1)
         vtbs = self.apm.getVTBs(vbk_block)
         atvs = self.apm.getATVs(vbk_block)
-        logging.info('Mined VBK block={} with VTBs={} and ATVs={}'.format(self.encode(vbk_block), self.encode(vtbs), self.encode(atvs)))
+        logger.info('Mined VBK block={} with VTBs={} and ATVs={}'
+                    .format(self.encode(vbk_block), self.encode(vtbs), self.encode(atvs)))
         return vbk_block, vtbs, atvs
 
     def mine_alt_block(self, tip, vbk_blocks, vtbs, atvs):
@@ -32,28 +31,27 @@ class PopMiner:
                     .format(self.encode(tip), self.encode(vbk_blocks), self.encode(vtbs), self.encode(atvs)))
         self.node.submitpop(self.encode(vbk_blocks), self.encode(vtbs), self.encode(atvs))
         address = self.node.getnewaddress()
-        alt_block = self.node.generatetoaddress(1, tip, address)
-        logging.info('Mined ALT block={}'.format(self.encode(alt_block)))
+        alt_block = self.node.generatetoaddress(1, address)[0]
+        logger.info('Mined ALT block={}'.format(alt_block))
         return alt_block
 
     def create_btc_tx(self, vbk_block):
         logger.info('Creating BTC tx with VBK block={}'.format(self.encode(vbk_block)))
         btc_tx = self.apm.createBtcTxEndorsingVbkBlock(vbk_block)
-        logging.info('Created BTC tx={}'.format(self.encode(btc_tx)))
+        logger.info('Created BTC tx={}'.format(self.encode(btc_tx)))
         return btc_tx
 
-    def create_vbk_pop_tx(self, vbk_block, btc_tx, btc_block):
+    def create_vbk_pop_tx(self, vbk_block, btc_tx, btc_block, last_btc_block_hash):
         logger.info('Creating VBK POP tx with VBK block={} and BTC tx={} and BTC block={}'
                     .format(self.encode(vbk_block), self.encode(btc_tx), self.encode(btc_block)))
-        vbk_pop_tx = self.apm.createVbkPopTxEndorsingVbkBlock(btc_block, btc_tx, vbk_block, self.apm.btcTip.getHash())
+        vbk_pop_tx = self.apm.createVbkPopTxEndorsingVbkBlock(btc_block, btc_tx, vbk_block, last_btc_block_hash)
         logger.info('Created VBK POP tx={}'.format(self.encode(vbk_pop_tx)))
         return vbk_pop_tx
 
     def create_vbk_tx(self, alt_block):
-        logger.info('Creating VBK tx with ALT block={}'.format(self.encode(alt_block)))
-        pop_data = self.node.getpopdata(alt_block)
-        last_btc = pop_data['last_known_bitcoin_blocks'][0]
-        last_vbk = pop_data['last_known_veriblock_blocks'][0]
+        logger.info('Creating VBK tx with ALT block={}'.format(alt_block))
+        height = self.node.getblockheader(alt_block)['height']
+        pop_data = self.node.getpopdata(height)
         header = pop_data['block_header']
 
         address = self.node.getnewaddress()
@@ -64,28 +62,27 @@ class PopMiner:
         pub.identifier = 0x3ae6ca
 
         vbk_tx = self.apm.createVbkTxEndorsingAltBlock(pub)
-        logging.info('Created VBK tx={}'.format(self.encode(vbk_tx)))
+        logger.info('Created VBK tx={}'.format(self.encode(vbk_tx)))
         return vbk_tx
 
     def get_btc_tip(self):
-        btc_tip = self.apm.getBtcTip()
-        logging.info('Requested BTC tip={}'.format(self.encode(btc_tip)))
+        btc_tip = self.apm.btcTip
+        logger.info('Requested BTC tip={}'.format(self.encode(btc_tip)))
         return btc_tip
 
     def get_vbk_tip(self):
-        vbk_tip = self.apm.getVbkTip()
-        logging.info('Requested VBK tip={}'.format(self.encode(vbk_tip)))
+        vbk_tip = self.apm.vbkTip
+        logger.info('Requested VBK tip={}'.format(self.encode(vbk_tip)))
         return vbk_tip
 
     def get_alt_tip(self):
-        alt_tip = self.node.getbestblock()
-        logging.info('Returned ALT tip={}'.format(self.encode(alt_tip)))
+        alt_tip = self.node.getbestblockhash()
+        logger.info('Returned ALT tip={}'.format(alt_tip))
         return alt_tip
 
     @staticmethod
     def encode(obj):
+        if obj is list:
+            return [item.toVbkEncodingHex() for item in obj]
         return obj.toVbkEncodingHex()
 
-    @staticmethod
-    def encode(coll):
-        return [item.toVbkEncodingHex() for item in coll]

@@ -2,10 +2,11 @@ import argparse
 import os
 import sys
 
+from pypopminer import MockMiner2
+from random import randrange
+
 from rpc.node_rpc import NodeRpc
 from util.load_test_util import load_test
-from pypopminer import MockMiner
-from random import randrange
 
 
 def main():
@@ -48,16 +49,18 @@ def main():
         sys.exit(2)
 
     node = NodeRpc(args.url, args.user, args.password)
-    apm = MockMiner()
+    apm = MockMiner2()
+    max_blocks = args.max_blocks
+    max_hours = args.max_hours
     seed = args.seed or randrange(sys.maxsize)
 
     print('Load test starting')
-    print('- Max height: {} blocks'.format(args.max_blocks))
-    print('- Max execution time: {} hours'.format(args.max_hours))
+    print('- Max height: {} blocks'.format(max_blocks))
+    print('- Max execution time: {} hours'.format(max_hours))
     print('- Seed: {}'.format(seed))
 
     try:
-        blocks, elapsed = load_test(node, apm, args.max_blocks, args.max_hours, seed)
+        blocks, elapsed = load_test(node, apm, max_blocks, max_hours, seed)
 
         print('Load test finished')
         print('- Height: {} blocks'.format(blocks))
