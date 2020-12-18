@@ -81,7 +81,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
   if (!readSingleByteLenValue(stream,
                               out.payoutInfo,
                               state,
-                              MIN_PAYOUT_INFO_SIZE,
+                              0,
                               MAX_PAYOUT_INFO_SIZE)) {
     return state.Invalid("bad-altendorsement-payout-info");
   }

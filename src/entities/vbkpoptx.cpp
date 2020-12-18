@@ -101,7 +101,7 @@ bool DeserializeFromRaw(ReadStream& stream,
                              tx.blockOfProofContext,
                              state,
                              0,
-                             MAX_CONTEXT_COUNT_VBK_PUBLICATION,
+                             MAX_BTC_BLOCKS_IN_VBKPOPTX,
                              [&](BtcBlock& out) {
                                return DeserializeFromVbkEncoding(
                                    stream, out, state);
@@ -118,7 +118,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkPopTx& out,
                                 ValidationState& state) {
   Slice<const uint8_t> rawTx;
-  if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKPOPTX)) {
+  if (!readVarLenValue(stream, rawTx, state, 0, MAX_POPDATA_SIZE)) {
     return state.Invalid("vbkpoptx-invalid-tx");
   }
   Slice<const uint8_t> signature;
@@ -127,7 +127,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("vbkpoptx-invalid-signature");
   }
   Slice<const uint8_t> publicKey;
-  if (!readSingleByteLenValue(stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
+  if (!readSingleByteLenValue(stream, publicKey, state, 0, MAX_PUBLIC_KEY_SIZE)) {
     return state.Invalid("vbkpoptx-invalid-public-key");
   }
 
