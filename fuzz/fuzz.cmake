@@ -54,21 +54,25 @@ function(add_fuzz FUZZ_TARGET)
     target_link_options(${FUZZ_TARGET} PRIVATE
             -fsanitize=fuzzer,address
             )
+    add_custom_target(run_${FUZZ_TARGET}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            DEPENDS ${FUZZ_TARGET}
+            COMMAND ${CMAKE_EXECUTE_PROCESS_COMMAND_ECHO}
+            COMMAND ${FUZZ_TARGET}
+                ${FUZZ_TIMEOUT}
+                -max_len=${FUZZ_MAX_LEN}
+                -print_final_stats=1
+                -fork=${N_PROCESSORS}
+                ${ARGS}
+                ${FUZZ_CORPUS_DIR}
+                USES_TERMINAL
+                VERBATIM
+            )
     add_custom_command(
             OUTPUT fuzz_targets APPEND
             COMMENT "Running ${FUZZ_TARGET}"
-            COMMAND ${CMAKE_EXECUTE_PROCESS_COMMAND_ECHO}
-            COMMAND ${FUZZ_TARGET} ARGS
-            ${FUZZ_TIMEOUT}
-            -max_len=${FUZZ_MAX_LEN}
-            -print_final_stats=1
-            -fork=${N_PROCESSORS}
-            ${ARGS}
-            ${FUZZ_CORPUS_DIR}
-            USES_TERMINAL
-            VERBATIM
+            COMMAND run_${FUZZ_TARGET}
     )
-
     add_test(
             NAME ${FUZZ_TARGET}
             COMMAND ${FUZZ_TARGET} -runs=1 ${FUZZ_CORPUS_DIR}
