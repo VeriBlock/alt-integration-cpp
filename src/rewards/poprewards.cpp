@@ -53,8 +53,7 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
     currentBlock = currentBlock->pprev;
   }
 
-  difficulty /=
-      static_cast<uint64_t>(params.difficultyAveragingInterval());
+  difficulty /= static_cast<uint64_t>(params.difficultyAveragingInterval());
 
   // Minimum difficulty
   if (difficulty < 1.0) {
@@ -63,14 +62,14 @@ PopRewardsBigDecimal PopRewards::calculateDifficulty(
   return difficulty;
 }
 
-std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayoutsInner(
+PopPayouts PopRewards::calculatePayoutsInner(
     const BlockIndex<AltBlock>& endorsedBlock,
     const PopRewardsBigDecimal& endorsedBlockScore,
     const PopRewardsBigDecimal& popDifficulty) {
-  std::map<std::vector<uint8_t>, int64_t> rewards{};
+  PopPayouts payouts{};
   int bestPublication = getBestPublicationHeight(endorsedBlock, *vbkTree_);
   if (bestPublication < 0) {
-    return rewards;
+    return payouts;
   }
 
   // precalculate block reward - it helps calculating each miner's reward
@@ -87,12 +86,13 @@ std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayoutsInner(
     assert(relativeHeight >= 0);
     auto minerReward = calculator_.calculateMinerReward(
         relativeHeight, endorsedBlockScore, blockReward);
-    rewards[e->payoutInfo] += minerReward.value.getLow64();
+
+    payouts.add(PopPayoutValue{e->payoutInfo, minerReward.value.getLow64()});
   }
-  return rewards;
+  return payouts;
 }
 
-std::map<std::vector<uint8_t>, int64_t> PopRewards::calculatePayouts(
+PopPayouts PopRewards::calculatePayouts(
     const BlockIndex<AltBlock>& endorsedBlock) {
   auto blockScore = scoreFromEndorsements(endorsedBlock);
   auto popDifficulty = calculateDifficulty(endorsedBlock);

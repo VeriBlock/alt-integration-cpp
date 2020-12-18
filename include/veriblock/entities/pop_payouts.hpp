@@ -21,7 +21,7 @@ namespace altintegration {
  */
 struct PopPayoutValue {
   std::vector<uint8_t> address;
-  int64_t amount;
+  uint64_t amount;
 
   /**
    * Convert PopPayoutValue to data stream
@@ -43,6 +43,17 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
  */
 struct PopPayouts {
   std::vector<PopPayoutValue> values{};
+
+  void add(const PopPayoutValue& value);
+
+  size_t size() const;
+
+  bool empty() const;
+
+  std::vector<PopPayoutValue> find_payouts(
+      const std::vector<uint8_t>& address) const;
+
+  uint64_t amount_for_address(const std::vector<uint8_t>& address) const;
 
   /**
    * Convert PopRewards to data stream

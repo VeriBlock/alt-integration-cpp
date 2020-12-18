@@ -8,7 +8,6 @@
 
 #include <functional>
 #include <iterator>
-#include <limits>
 #include <stdexcept>
 #include <vector>
 
@@ -70,8 +69,8 @@ std::vector<uint8_t> fixedArray(T input) {
 bool readVarLenValue(ReadStream& stream,
                      Slice<const uint8_t>& out,
                      ValidationState& state,
-                     int32_t minLen = 0,
-                     int32_t maxLen = (std::numeric_limits<int32_t>::max)());
+                     int32_t minLen,
+                     int32_t maxLen);
 
 /**
  * Read variable length value, which consists of
@@ -88,18 +87,17 @@ bool readSingleByteLenValue(ReadStream& stream,
                             Slice<const uint8_t>& out,
                             ValidationState& state,
                             int minLen,
-                            int maxLen = (std::numeric_limits<int32_t>::max)());
+                            int maxLen);
 
 //! @overload
 template <typename Container,
           typename = typename std::enable_if<
               sizeof(typename Container::value_type) == 1>::type>
-bool readSingleByteLenValue(
-    ReadStream& stream,
-    Container& out,
-    ValidationState& state,
-    int minLen,
-    int maxLen = (std::numeric_limits<int32_t>::max)()) {
+bool readSingleByteLenValue(ReadStream& stream,
+                            Container& out,
+                            ValidationState& state,
+                            int minLen,
+                            int maxLen) {
   uint8_t length = 0;
   if (!stream.readBE<uint8_t>(length, state)) {
     return state.Invalid("readsingle-bad-length");

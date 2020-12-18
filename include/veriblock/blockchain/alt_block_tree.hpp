@@ -20,6 +20,7 @@
 #include "veriblock/blockchain/pop/vbk_block_tree.hpp"
 #include "veriblock/entities/altblock.hpp"
 #include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/pop_payouts.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/fmt.hpp"
@@ -27,7 +28,6 @@
 #include "veriblock/storage/payloads_index.hpp"
 #include "veriblock/storage/payloads_provider.hpp"
 #include "veriblock/validation_state.hpp"
-#include "veriblock/entities/pop_payouts.hpp"
 namespace altintegration {
 
 // defined in alt_block_tree.cpp
@@ -210,7 +210,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @warning Expensive operation.
    * @ingroup api
    */
-  std::map<std::vector<uint8_t>, int64_t> getPopPayout(const hash_t& tip);
+  PopPayouts getPopPayout(const hash_t& tip);
 
   /**
    * Switch AltBlockTree from the current tip to different block, while doing

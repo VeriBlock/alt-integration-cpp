@@ -103,7 +103,7 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
 
   for (size_t i = 0; i < 10000; i++) {
-    std::map<std::vector<uint8_t>, int64_t> payout;
+    PopPayouts payout;
     ASSERT_TRUE(SetState(alttree, chain[i].getHash()));
     ASSERT_NO_FATAL_FAILURE(payout = alttree.getPopPayout(chain[i].getHash()));
     // no endorsements = no payouts
@@ -134,8 +134,8 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
   auto miner1 = getPayoutInfo();
   miner1.push_back(0);
   miner1.push_back(1);
-  ASSERT_TRUE(payout.count(miner1));
-  ASSERT_GT(payout[miner1], 0);
+  ASSERT_TRUE(!payout.find_payouts(miner1).empty());
+  ASSERT_GT(payout.amount_for_address(miner1), 0);
 }
 
 /*
@@ -165,8 +165,9 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
   miner2.push_back(0);
   miner2.push_back(1);
   ASSERT_NE(miner1, miner2);
-  ASSERT_EQ(payout[miner1], payout[miner2]);
-  ASSERT_GT(payout[miner1], 0);
+  ASSERT_EQ(payout.amount_for_address(miner1),
+            payout.amount_for_address(miner2));
+  ASSERT_GT(payout.amount_for_address(miner1), 0);
 }
 
 /*
@@ -219,7 +220,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   // we can see that despite we had 101 block without endorsements,
   // rewards stays the same
   ASSERT_EQ(payout2.size(), payout.size());
-  ASSERT_EQ(payout2.begin()->second, payout.begin()->second);
+  ASSERT_EQ(payout2.values.begin()->amount, payout.values.begin()->amount);
 }
 
 /*
@@ -251,8 +252,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  AltBlockTree alttree2 =
-      AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
+  AltBlockTree alttree2(altparam, vbkparam, btcparam, payloadsProvider);
   EXPECT_TRUE(
       alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
@@ -273,7 +273,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   // endorsed block
   ASSERT_EQ(firstBlock->getHeight(), secondBlock->getHeight());
   ASSERT_EQ(payout2.size(), payout.size());
-  ASSERT_GT(payout2.begin()->second, payout.begin()->second);
+  ASSERT_GT(payout2.values.begin()->amount, payout.values.begin()->amount);
 }
 
 /*
@@ -288,7 +288,7 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
   mineAltBlocksWithTree(
       alttree, altparam.getPayoutParams().getPopPayoutDelay() - 1, chain);
 
-  int64_t highestReward = 0;
+  uint64_t highestReward = 0;
   int blockNumber = 0;
   auto initialBlock = alttree.getBlockIndex(chain.back().getHash());
 
@@ -296,8 +296,8 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
   for (size_t i = 0; i < altparam.getKeystoneInterval(); i++) {
     ASSERT_TRUE(alttree.setState(initialBlock->getHash(), state));
     auto payout = alttree.getPopPayout(initialBlock->getHash());
-    if (payout.begin()->second > highestReward) {
-      highestReward = payout.begin()->second;
+    if (payout.values.begin()->amount > highestReward) {
+      highestReward = payout.values.begin()->amount;
       auto endorsedBlock = initialBlock->getAncestorBlocksBehind(
           altparam.getPayoutParams().getPopPayoutDelay());
       blockNumber = endorsedBlock->getHeight();

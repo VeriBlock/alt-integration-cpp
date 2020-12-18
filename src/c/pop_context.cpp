@@ -241,14 +241,8 @@ VBK_ByteStream* VBK_AltBlockTree_getPopPayout(PopContext* self,
                             tip_hash_bytes + tip_hash_bytes_size};
   auto ret = self->context->altTree->getPopPayout(hash);
 
-  altintegration::PopPayouts payouts;
-  for (const auto& el : ret) {
-    altintegration::PopPayoutValue val{el.first, el.second};
-    payouts.values.push_back(val);
-  }
-
   altintegration::WriteStream stream;
-  payouts.toVbkEncoding(stream);
+  ret.toVbkEncoding(stream);
   return new VbkByteStream(stream.data());
 }
 
