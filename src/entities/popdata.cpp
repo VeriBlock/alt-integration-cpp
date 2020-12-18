@@ -26,15 +26,15 @@ void PopData::toVbkEncoding(WriteStream& stream) const {
                  "PopData serialization version=%d is not implemented",
                  version);
   writeArrayOf<VbkBlock>(
-      stream, context, [&](WriteStream& /*ignore*/, const VbkBlock& v) {
+      stream, context, [](WriteStream& stream, const VbkBlock& v) {
         v.toVbkEncoding(stream);
       });
 
-  writeArrayOf<VTB>(stream, vtbs, [&](WriteStream& /*ignore*/, const VTB& v) {
+  writeArrayOf<VTB>(stream, vtbs, [](WriteStream& stream, const VTB& v) {
     v.toVbkEncoding(stream);
   });
 
-  writeArrayOf<ATV>(stream, atvs, [&](WriteStream& /*ignore*/, const ATV& atv) {
+  writeArrayOf<ATV>(stream, atvs, [](WriteStream& stream, const ATV& atv) {
     atv.toVbkEncoding(stream);
   });
 }
@@ -52,17 +52,11 @@ size_t PopData::estimateSize() const {
                  "PopData estimate size version=%d is not implemented",
                  version);
   size += estimateArraySizeOf<VbkBlock>(
-    context, [&](const VbkBlock& v) {
-      return v.estimateSize();
-    });
+      context, [&](const VbkBlock& v) { return v.estimateSize(); });
   size += estimateArraySizeOf<VTB>(
-    vtbs, [&](const VTB& vtb) {
-      return vtb.estimateSize();
-    });
+      vtbs, [&](const VTB& vtb) { return vtb.estimateSize(); });
   size += estimateArraySizeOf<ATV>(
-    atvs, [&](const ATV& atv) {
-      return atv.estimateSize();
-    });
+      atvs, [&](const ATV& atv) { return atv.estimateSize(); });
   return size;
 }
 uint256 PopData::getMerkleRoot() const {

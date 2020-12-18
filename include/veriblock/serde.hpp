@@ -88,17 +88,18 @@ bool readSingleByteLenValue(ReadStream& stream,
                             Slice<const uint8_t>& out,
                             ValidationState& state,
                             int minLen,
-                            int maxLen);
+                            int maxLen = (std::numeric_limits<int32_t>::max)());
 
 //! @overload
 template <typename Container,
           typename = typename std::enable_if<
               sizeof(typename Container::value_type) == 1>::type>
-bool readSingleByteLenValue(ReadStream& stream,
-                            Container& out,
-                            ValidationState& state,
-                            int minLen,
-                            int maxLen) {
+bool readSingleByteLenValue(
+    ReadStream& stream,
+    Container& out,
+    ValidationState& state,
+    int minLen,
+    int maxLen = (std::numeric_limits<int32_t>::max)()) {
   uint8_t length = 0;
   if (!stream.readBE<uint8_t>(length, state)) {
     return state.Invalid("readsingle-bad-length");

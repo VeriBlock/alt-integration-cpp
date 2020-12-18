@@ -16,4 +16,5 @@ add_library(entities OBJECT
         altblock.cpp
         popdata.cpp
         keystone_container.cpp
+        pop_rewards.cpp
         )

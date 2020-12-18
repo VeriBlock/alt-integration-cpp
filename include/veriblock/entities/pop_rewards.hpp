@@ -7,7 +7,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_POP_REWARDS_HPP_
 
 #include <cstdint>
-#include <map>
+#include <utility>
 #include <vector>
 
 #include "veriblock/serde.hpp"
@@ -20,7 +20,10 @@ namespace altintegration {
  * @ingroup entities
  */
 struct PopRewards {
-  std::map<std::vector<uint8_t>, int64_t> payout;
+  using payout_value_t = std::pair<std::vector<uint8_t>, int64_t>;
+  using payots_container_t = std::vector<payout_value_t>;
+
+  payots_container_t payout;
 
   /**
    * Convert PopRewards to data stream using PublicationData byte
