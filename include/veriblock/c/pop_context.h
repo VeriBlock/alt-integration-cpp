@@ -163,12 +163,12 @@ bool VBK_AltBlockTree_setState(PopContext* self,
  * @param[in] self PopContext
  * @param[in] tip_hash_bytes altintegration::AltBlock hash bytes of the tip
  * @param[in] tip_hash_bytes_size size of input hash
- * @return VbkByteStream with the serialized 
+ * @return VbkByteStream with the serialized altintegration::PopPayouts
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_AltBlockTree_getPopPayout(PopContext* self,
-                                             const uint8_t* tip_hash_bytes,
-                                             int tip_hash_bytes_size);
+                                              const uint8_t* tip_hash_bytes,
+                                              int tip_hash_bytes_size);
 
 /**
  * Find a BtcBlock index from the BtcTree

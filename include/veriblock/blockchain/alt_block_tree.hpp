@@ -27,7 +27,7 @@
 #include "veriblock/storage/payloads_index.hpp"
 #include "veriblock/storage/payloads_provider.hpp"
 #include "veriblock/validation_state.hpp"
-
+#include "veriblock/entities/pop_payouts.hpp"
 namespace altintegration {
 
 // defined in alt_block_tree.cpp
