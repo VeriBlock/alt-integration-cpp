@@ -252,12 +252,13 @@ size_t networkByteSize(NetworkBytePair networkOrType);
  * @return true if read is OK, false otherwise
  */
 template <typename T>
-bool readArrayOf(ReadStream& stream,
-                 std::vector<T>& out,
-                 ValidationState& state,
-                 int32_t min,
-                 int32_t max,
-                 std::function<bool(T&)> readFunc) {
+bool readArrayOf(
+    ReadStream& stream,
+    std::vector<T>& out,
+    ValidationState& state,
+    int32_t min,
+    int32_t max,
+    std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
   int32_t count = 0;
   if (!readSingleBEValue<int32_t>(stream, count, state)) {
     return state.Invalid("readarray-bad-count");
@@ -270,7 +271,7 @@ bool readArrayOf(ReadStream& stream,
 
   for (int32_t i = 0; i < count; i++) {
     T item;
-    if (!readFunc(item)) {
+    if (!readFunc(stream, item, state)) {
       return state.Invalid("readarray-bad-item", i);
     }
     out.push_back(item);
@@ -290,10 +291,11 @@ bool readArrayOf(ReadStream& stream,
  * @return vector of read elements of type T
  */
 template <typename T>
-bool readArrayOf(ReadStream& stream,
-                 std::vector<T>& out,
-                 ValidationState& state,
-                 std::function<bool(T&)> readFunc) {
+bool readArrayOf(
+    ReadStream& stream,
+    std::vector<T>& out,
+    ValidationState& state,
+    std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
   int32_t max = std::numeric_limits<int32_t>::max();
   return readArrayOf<T>(stream, out, state, 0, max, readFunc);
 }

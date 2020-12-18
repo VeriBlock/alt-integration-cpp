@@ -38,7 +38,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_VBKPOPTX_PER_VBK_BLOCK,
-          [&](uint256& o) -> bool {
+          [](ReadStream stream, uint256& o, ValidationState& state) -> bool {
             return readSingleByteLenValue(
                 stream, o, state, uint256::size(), uint256::size());
           })) {
@@ -92,9 +92,9 @@ void VbkBlockAddon::addRef(VbkBlockAddon::ref_height_t) {
 }
 
 void VbkBlockAddon::setNullInmemFields() {
-	chainWork = 0;
-	blockOfProofEndorsements.clear();
-	endorsedBy.clear();
+  chainWork = 0;
+  blockOfProofEndorsements.clear();
+  endorsedBy.clear();
 }
 
 }  // namespace altintegration

@@ -27,7 +27,9 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_PAYOUT,
-          [&](typename PopRewards::payout_value_t& val) {
+          [&i](ReadStream& stream,
+               typename PopRewards::payout_value_t& val,
+               ValidationState& state) {
             ++i;
             return readSingleByteLenValue<std::vector<uint8_t>>(
                 stream, val.first, state, 0);
