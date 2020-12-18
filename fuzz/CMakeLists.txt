@@ -16,3 +16,7 @@ add_fuzz(vbkblockindex_deserialization_fuzz
         SOURCES vbkblockindex_deserialization_fuzz.cpp
         CORPUS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/corpus/vbkblockindex
         )
+add_fuzz(popstate_fuzz
+        SOURCES popstate_fuzz.cpp
+        CORPUS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/corpus/popstate
+        )

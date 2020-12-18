@@ -36,6 +36,7 @@ struct PopState {
   }
 
   void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
+    VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
     _containingEndorsements.emplace(e->id, std::move(e));
     setDirty();
   }
