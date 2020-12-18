@@ -54,12 +54,11 @@ struct PopState {
 
   void toVbkEncoding(WriteStream& stream) const {
     // write containingEndorsements as vector
+    using value_t = typename decltype(_containingEndorsements)::value_type;
     writeContainer<decltype(_containingEndorsements)>(
         stream,
         _containingEndorsements,
-        [&](WriteStream&,
-            const typename decltype(
-                _containingEndorsements)::value_type& endorsement) {
+        [&](WriteStream&, const value_t& endorsement) {
           endorsement.second->toVbkEncoding(stream);
         });
   }
