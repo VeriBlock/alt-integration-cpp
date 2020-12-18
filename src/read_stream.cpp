@@ -26,12 +26,6 @@ size_t ReadStream::position() const noexcept { return m_Pos; }
 
 void ReadStream::setPosition(const size_t &pos) noexcept { m_Pos = pos; }
 
-size_t ReadStream::remaining() const noexcept { return (m_Size - m_Pos); }
-
-bool ReadStream::hasMore(size_t nbytes) const noexcept {
-  return (remaining() >= nbytes);
-}
-
 void ReadStream::reset() noexcept { m_Pos = 0; }
 
 ReadStream::ReadStream(const std::vector<uint8_t> &v)
@@ -53,7 +47,7 @@ Slice<const uint8_t> ReadStream::remainingBytes() const {
 }
 
 bool ReadStream::read(size_t size, uint8_t *out, ValidationState &state) {
-  if(size == 0) {
+  if (size == 0) {
     return true;
   }
 
@@ -80,26 +74,29 @@ bool ReadStream::readSlice(size_t size,
     return state.Invalid("readslice-underflow");
   }
 
-  Slice<const uint8_t> data(m_Buffer + m_Pos, size);
+  out = Slice<const uint8_t>(m_Buffer + m_Pos, size);
   m_Pos += size;
-  out = data;
   return true;
 }
 
 std::vector<uint8_t> ReadStream::assertRead(size_t size) {
-	std::vector<uint8_t> ret(size, 0);
-	ValidationState state;
-	bool result = read(size, ret.data(), state);
-	VBK_ASSERT_MSG(result, state.toString());
-	return ret;
+  if (size == 0) {
+    return {};
+  }
+
+  std::vector<uint8_t> ret(size, 0);
+  ValidationState state;
+  bool result = read(size, ret.data(), state);
+  VBK_ASSERT_MSG(result, state.toString());
+  return ret;
 }
 
 Slice<const uint8_t> ReadStream::assertReadSlice(size_t size) {
-	Slice<const uint8_t> ret;
-	ValidationState state;
-	bool result = readSlice(size, ret, state);
-	VBK_ASSERT_MSG(result, state.toString());
-	return ret;
+  Slice<const uint8_t> ret;
+  ValidationState state;
+  bool result = readSlice(size, ret, state);
+  VBK_ASSERT_MSG(result, state.toString());
+  return ret;
 }
 
 }  // namespace altintegration

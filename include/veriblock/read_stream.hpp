@@ -61,7 +61,7 @@ struct ReadStream {
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  bool readBE(T &out, ValidationState &state, size_t bytes = sizeof(T)) {
+  bool readBE(T &t, ValidationState &state, size_t bytes = sizeof(T)) {
     if (!hasMore(bytes)) {
       return state.Invalid(
           "readbe-underflow",
@@ -69,11 +69,9 @@ struct ReadStream {
                       bytes,
                       remaining()));
     }
-    T t = 0;
     for (size_t i = 0, shift = (bytes - 1) * 8; i < bytes; i++, shift -= 8) {
       t += ((T)m_Buffer[m_Pos++]) << shift;
     }
-    out = t;
     return true;
   }
 
@@ -92,7 +90,7 @@ struct ReadStream {
   template <
       typename T,
       typename = typename std::enable_if<std::is_integral<T>::value>::type>
-  bool readLE(T &out, ValidationState &state) {
+  bool readLE(T &t, ValidationState &state) {
     if (!hasMore(sizeof(T))) {
       return state.Invalid(
           "readle-underflow",
@@ -101,18 +99,18 @@ struct ReadStream {
                       remaining()));
     }
 
-    T t = 0;
     for (size_t i = 0, shift = 0; i < sizeof(T); i++, shift += 8) {
       t += m_Buffer[m_Pos++] << shift;
     }
-    out = t;
     return true;
   }
 
   size_t position() const noexcept;
   void setPosition(const size_t &) noexcept;
-  size_t remaining() const noexcept;
-  bool hasMore(size_t nbytes) const noexcept;
+  size_t remaining() const noexcept {
+    { return (m_Size - m_Pos); }
+  }
+  bool hasMore(size_t nbytes) const noexcept { return (remaining() >= nbytes); }
   void reset() noexcept;
   Slice<const uint8_t> data() const;
   Slice<const uint8_t> remainingBytes() const;
