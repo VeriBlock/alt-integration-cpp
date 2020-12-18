@@ -38,7 +38,6 @@ set(SOURCES
         validation_state.cpp
         bootstraps.cpp
         time.cpp
-        serde.cpp
         keystone_util.cpp
         hashutil.cpp
         stateless_validation.cpp

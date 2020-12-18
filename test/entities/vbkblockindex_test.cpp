@@ -18,12 +18,17 @@ static const std::vector<std::string> cases = {
 };
 // clang-format on
 
-TEST(BlockIndex, VBK2) {
+struct ParseVbkBlockIndex : public ::testing::TestWithParam<std::string> {};
+
+TEST_P(ParseVbkBlockIndex, Parse) {
   BlockIndex<VbkBlock> index;
-  auto data = ParseHex(
-      );
+  auto data = ParseHex(GetParam());
   ReadStream stream(data);
   ValidationState state;
   ASSERT_TRUE(DeserializeFromVbkEncoding(stream, index, state))
       << state.toString();
 }
+
+INSTANTIATE_TEST_SUITE_P(VbkBlockIndex,
+                         ParseVbkBlockIndex,
+                         testing::ValuesIn(cases));
