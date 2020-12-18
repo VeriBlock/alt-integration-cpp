@@ -41,7 +41,15 @@ void PopPayouts::toVbkEncoding(WriteStream& stream) const {
       });
 }
 
-void PopPayouts::add(const PopPayoutValue& val) { this->values.push_back(val); }
+void PopPayouts::add(const PopPayoutValue& val) {
+  for (auto& el : values) {
+    if (el.address == val.address) {
+      el.amount += val.amount;
+      return;
+    }
+  }
+  this->values.push_back(val);
+}
 
 size_t PopPayouts::size() const { return this->values.size(); }
 
