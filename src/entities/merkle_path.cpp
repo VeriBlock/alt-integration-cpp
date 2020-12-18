@@ -113,7 +113,7 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                                 MerklePath& out,
                                                 ValidationState& state) {
   Slice<const uint8_t> merkleBytes;
-  if (!readVarLenValue(stream, merkleBytes, state, 0, MAX_MERKLE_BYTES)) {
+  if (!readVarLenValue(stream, merkleBytes, state, 0, MAX_POPDATA_SIZE)) {
     return state.Invalid("merkle-bytes");
   }
   ReadStream ms(merkleBytes);

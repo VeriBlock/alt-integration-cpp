@@ -27,15 +27,15 @@ size_t PublicationData::estimateSize() const {
 }
 
 std::string PublicationData::toPrettyString() const {
-	return fmt::sprintf("PublicationData{id=%lld, header=%s, payoutInfo=%s}",
-						identifier,
-						HexStr(header),
-						HexStr(payoutInfo));
+  return fmt::sprintf("PublicationData{id=%lld, header=%s, payoutInfo=%s}",
+                      identifier,
+                      HexStr(header),
+                      HexStr(payoutInfo));
 }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
-                                 PublicationData& out,
-                                 ValidationState& state) {
+                                                PublicationData& out,
+                                                ValidationState& state) {
   PublicationData pub;
   if (!readSingleBEValue<int64_t>(stream, pub.identifier, state)) {
     return state.Invalid("pub-identifier");
@@ -53,8 +53,7 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
   }
   pub.contextInfo = contextInfo.asVector();
   Slice<const uint8_t> payoutInfo;
-  if (!readVarLenValue(
-          stream, payoutInfo, state, 0, MAX_PAYOUT_SIZE_PUBLICATION_DATA)) {
+  if (!readVarLenValue(stream, payoutInfo, state, 0, MAX_PAYOUT_INFO_SIZE)) {
     return state.Invalid("pub-payout-info");
   }
   pub.payoutInfo = payoutInfo.asVector();

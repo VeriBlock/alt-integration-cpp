@@ -297,11 +297,11 @@ bool checkVbkPopTx(const VbkPopTx& tx,
     return state.Invalid("vbk-check-btc-blocks");
   }
 
-  if (tx.blockOfProofContext.size() > MAX_CONTEXT_COUNT_VBK_PUBLICATION) {
+  if (tx.blockOfProofContext.size() > MAX_BTC_BLOCKS_IN_VBKPOPTX) {
     return state.Invalid(
         "vbk-btc-context-too-many",
         fmt::format("Maximum allowed BTC context size is {}, got {}",
-                    MAX_CONTEXT_COUNT_VBK_PUBLICATION,
+                    MAX_BTC_BLOCKS_IN_VBKPOPTX,
                     tx.blockOfProofContext.size()));
   }
 
