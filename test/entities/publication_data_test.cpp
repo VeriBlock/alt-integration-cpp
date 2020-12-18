@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/publication_data.hpp"
-
 #include <gtest/gtest.h>
 
+#include "veriblock/entities/publication_data.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;

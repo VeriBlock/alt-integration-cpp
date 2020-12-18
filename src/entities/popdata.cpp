@@ -52,11 +52,11 @@ size_t PopData::estimateSize() const {
                  "PopData estimate size version=%d is not implemented",
                  version);
   size += estimateArraySizeOf<VbkBlock>(
-      context, [&](const VbkBlock& v) { return v.estimateSize(); });
+      context, [](const VbkBlock& v) { return v.estimateSize(); });
   size += estimateArraySizeOf<VTB>(
-      vtbs, [&](const VTB& vtb) { return vtb.estimateSize(); });
+      vtbs, [](const VTB& vtb) { return vtb.estimateSize(); });
   size += estimateArraySizeOf<ATV>(
-      atvs, [&](const ATV& atv) { return atv.estimateSize(); });
+      atvs, [](const ATV& atv) { return atv.estimateSize(); });
   return size;
 }
 uint256 PopData::getMerkleRoot() const {

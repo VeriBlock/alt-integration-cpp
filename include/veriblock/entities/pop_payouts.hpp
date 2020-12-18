@@ -16,27 +16,43 @@
 namespace altintegration {
 
 /**
- * @struct PopRewards
+ * @struct PopPayoutValue
  * @ingroup entities
  */
-struct PopRewards {
-  using payout_value_t = std::pair<std::vector<uint8_t>, int64_t>;
-  using payots_container_t = std::vector<payout_value_t>;
-
-  payots_container_t payout;
+struct PopPayoutValue {
+  std::vector<uint8_t> address;
+  int64_t amount;
 
   /**
-   * Convert PopRewards to data stream using PublicationData byte
-   * format
+   * Convert PopPayoutValue to data stream
    * @param stream data stream to write into
    */
   void toVbkEncoding(WriteStream& stream) const;
 
-  size_t estimateSize() const;
+  friend bool operator==(const PopPayoutValue& a, const PopPayoutValue& b);
+  friend bool operator!=(const PopPayoutValue& a, const PopPayoutValue& b);
 };
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                PopRewards& out,
+                                PopPayoutValue& out,
+                                ValidationState& state);
+
+/**
+ * @struct PopRewards
+ * @ingroup entities
+ */
+struct PopPayouts {
+  std::vector<PopPayoutValue> values{};
+
+  /**
+   * Convert PopRewards to data stream
+   * @param stream data stream to write into
+   */
+  void toVbkEncoding(WriteStream& stream) const;
+};
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                PopPayouts& out,
                                 ValidationState& state);
 
 }  // namespace altintegration
