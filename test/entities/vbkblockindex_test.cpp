@@ -20,7 +20,7 @@ static const std::vector<std::string> cases = {
 
 struct ParseVbkBlockIndex : public ::testing::TestWithParam<std::string> {};
 
-TEST_P(ParseVbkBlockIndex, Parse) {
+TEST_P(ParseVbkBlockIndex, DISABLED_Parse) {
   BlockIndex<VbkBlock> index;
   auto data = ParseHex(GetParam());
   ReadStream stream(data);

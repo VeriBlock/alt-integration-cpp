@@ -9,5 +9,4 @@ add_library(blockchain OBJECT
         btc_block_addon.cpp
         commands.cpp
         mempool_block_tree.cpp
-        $<TARGET_OBJECTS:pop_utils>
         )

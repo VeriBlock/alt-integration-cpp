@@ -52,6 +52,7 @@ set(SOURCES
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:serde>
         $<TARGET_OBJECTS:blockchain>
+        $<TARGET_OBJECTS:pop_utils>
         $<TARGET_OBJECTS:storage>
         $<TARGET_OBJECTS:poprewards>
         $<TARGET_OBJECTS:entities>
