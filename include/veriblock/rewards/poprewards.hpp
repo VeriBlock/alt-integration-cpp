@@ -7,6 +7,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_HPP_
 
 #include <veriblock/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/entities/pop_payouts.hpp>
 #include <veriblock/rewards/poprewards_bigdecimal.hpp>
 #include <veriblock/rewards/poprewards_calculator.hpp>
 
@@ -17,8 +18,7 @@ namespace altintegration {
  */
 struct PopRewards {
   PopRewards(const AltChainParams& altParams, const VbkBlockTree& vbk_tree)
-      : calculator_(altParams),
-        vbkTree_(&vbk_tree) {}
+      : calculator_(altParams), vbkTree_(&vbk_tree) {}
 
   virtual ~PopRewards() = default;
 
@@ -50,7 +50,7 @@ struct PopRewards {
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
    * key and reward amount as a value
    */
-  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
+  virtual PopPayouts calculatePayouts(
       const BlockIndex<AltBlock>& endorsedBlock);
 
  protected:
@@ -70,7 +70,7 @@ struct PopRewards {
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
    * key and reward amount as a value
    */
-  virtual std::map<std::vector<uint8_t>, int64_t> calculatePayoutsInner(
+  virtual PopPayouts calculatePayoutsInner(
       const BlockIndex<AltBlock>& endorsedBlock,
       const PopRewardsBigDecimal& endorsedBlockScore,
       const PopRewardsBigDecimal& popDifficulty);

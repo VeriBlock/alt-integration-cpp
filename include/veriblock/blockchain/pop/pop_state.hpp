@@ -87,9 +87,15 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 ValidationState& state) {
   std::vector<T> endorsements;
   auto max = std::max(MAX_POPDATA_ATV, MAX_POPDATA_VTB);
-  if (!readArrayOf<T>(stream, endorsements, state, 0, max, [&](T& t) -> bool {
-        return DeserializeFromVbkEncoding(stream, t, state);
-      })) {
+  if (!readArrayOf<T>(
+          stream,
+          endorsements,
+          state,
+          0,
+          max,
+          [](ReadStream& stream, T& t, ValidationState& state) -> bool {
+            return DeserializeFromVbkEncoding(stream, t, state);
+          })) {
     return state.Invalid("popstate-bad-endorsement");
   }
 

@@ -153,13 +153,31 @@ bool VBK_AltBlockTree_setState(PopContext* self,
                                VbkValidationState* state);
 
 /**
+ * @copybrief altintegration::AltBlockTree::getPopPayout
+ * @see altintegration::AltBlockTree::getPopPayout
+ *
+ * Before executing this method the state should be switched to the provided
+ * block, should execute VBK_AltBlockTree_setState() for the provided block
+ * before executing this function.
+ *
+ * @param[in] self PopContext
+ * @param[in] tip_hash_bytes altintegration::AltBlock hash bytes of the tip
+ * @param[in] tip_hash_bytes_size size of input hash
+ * @return VbkByteStream with the serialized altintegration::PopPayouts
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_AltBlockTree_getPopPayout(PopContext* self,
+                                              const uint8_t* tip_hash_bytes,
+                                              int tip_hash_bytes_size);
+
+/**
  * Find a BtcBlock index from the BtcTree
  *
  * @param[in] self PopContext
  * @param[in] hash_bytes altintegration::BtcBlock hash bytes
  * @param[in] hash_bytes_size size of input hash
- * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
- * to the stream
+ * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized
+ * block to the stream
  * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,

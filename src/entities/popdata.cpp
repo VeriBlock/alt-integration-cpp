@@ -26,15 +26,15 @@ void PopData::toVbkEncoding(WriteStream& stream) const {
                  "PopData serialization version=%d is not implemented",
                  version);
   writeArrayOf<VbkBlock>(
-      stream, context, [&](WriteStream& /*ignore*/, const VbkBlock& v) {
+      stream, context, [](WriteStream& stream, const VbkBlock& v) {
         v.toVbkEncoding(stream);
       });
 
-  writeArrayOf<VTB>(stream, vtbs, [&](WriteStream& /*ignore*/, const VTB& v) {
+  writeArrayOf<VTB>(stream, vtbs, [](WriteStream& stream, const VTB& v) {
     v.toVbkEncoding(stream);
   });
 
-  writeArrayOf<ATV>(stream, atvs, [&](WriteStream& /*ignore*/, const ATV& atv) {
+  writeArrayOf<ATV>(stream, atvs, [](WriteStream& stream, const ATV& atv) {
     atv.toVbkEncoding(stream);
   });
 }
@@ -52,17 +52,11 @@ size_t PopData::estimateSize() const {
                  "PopData estimate size version=%d is not implemented",
                  version);
   size += estimateArraySizeOf<VbkBlock>(
-    context, [&](const VbkBlock& v) {
-      return v.estimateSize();
-    });
+      context, [](const VbkBlock& v) { return v.estimateSize(); });
   size += estimateArraySizeOf<VTB>(
-    vtbs, [&](const VTB& vtb) {
-      return vtb.estimateSize();
-    });
+      vtbs, [](const VTB& vtb) { return vtb.estimateSize(); });
   size += estimateArraySizeOf<ATV>(
-    atvs, [&](const ATV& atv) {
-      return atv.estimateSize();
-    });
+      atvs, [](const ATV& atv) { return atv.estimateSize(); });
   return size;
 }
 uint256 PopData::getMerkleRoot() const {
@@ -95,8 +89,13 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
   size_t i = 0;
   if (!readArrayOf<VbkBlock>(
-          stream, pd.context, state, 0, MAX_POPDATA_VBK, [&](VbkBlock& out) {
-            i++;
+          stream,
+          pd.context,
+          state,
+          0,
+          MAX_POPDATA_VBK,
+          [&i](ReadStream& stream, VbkBlock& out, ValidationState& state) {
+            ++i;
             return DeserializeFromVbkEncoding(stream, out, state);
           })) {
     return state.Invalid("popdata-vbk", i);
@@ -104,8 +103,13 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
   i = 0;
   if (!readArrayOf<VTB>(
-          stream, pd.vtbs, state, 0, MAX_POPDATA_VTB, [&](VTB& out) {
-            i++;
+          stream,
+          pd.vtbs,
+          state,
+          0,
+          MAX_POPDATA_VTB,
+          [&i](ReadStream& stream, VTB& out, ValidationState& state) {
+            ++i;
             return DeserializeFromVbkEncoding(stream, out, state);
           })) {
     return state.Invalid("popdata-vtb", i);
@@ -113,8 +117,13 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
   i = 0;
   if (!readArrayOf<ATV>(
-          stream, pd.atvs, state, 0, MAX_POPDATA_ATV, [&](ATV& out) {
-            i++;
+          stream,
+          pd.atvs,
+          state,
+          0,
+          MAX_POPDATA_ATV,
+          [&i](ReadStream& stream, ATV& out, ValidationState& state) {
+            ++i;
             return DeserializeFromVbkEncoding(stream, out, state);
           })) {
     return state.Invalid("popdata-atv", i);

@@ -307,8 +307,7 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
   return true;
 }
 
-std::map<std::vector<uint8_t>, int64_t> AltBlockTree::getPopPayout(
-    const AltBlock::hash_t& tip) {
+PopPayouts AltBlockTree::getPopPayout(const AltBlock::hash_t& tip) {
   VBK_ASSERT(isBootstrapped() && "not bootstrapped");
 
   auto* index = getBlockIndex(tip);

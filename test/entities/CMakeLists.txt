@@ -15,6 +15,7 @@ addtest(entities_serde_test
         merkle_tree_test.cpp
         popdata_test.cpp
         blockindex_test.cpp
+        pop_payouts_test.cpp
         )
 
 addtest(json_test
