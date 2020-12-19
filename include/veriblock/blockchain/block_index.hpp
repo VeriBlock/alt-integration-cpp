@@ -259,7 +259,9 @@ struct BlockIndex : public Block::addon_t {
     stream.writeBE<uint32_t>(height);
     header->toRaw(stream);
     stream.writeBE<uint32_t>(status);
-    addon_t::toVbkEncoding(stream);
+
+    const addon_t* t = this;
+    t->toVbkEncoding(stream);
   }
 
   std::vector<uint8_t> toVbkEncoding() const {

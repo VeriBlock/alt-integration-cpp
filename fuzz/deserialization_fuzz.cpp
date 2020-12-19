@@ -6,12 +6,27 @@
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/popdata.hpp>
 
-#define DEFINE_DESER_FUZZ(type)                       \
-  {                                                   \
-    type value{};                                     \
-    DeserializeFromVbkEncoding(stream, value, state); \
-    state.reset();                                    \
-    stream.reset();                                   \
+#define XSTR(s) STR(s)
+#define STR(s) #s
+
+#define DEFINE_DESER_FUZZ(type)                                                \
+  {                                                                            \
+    type value;                                                                \
+    if (DeserializeFromVbkEncoding(stream, value, state)) {                    \
+      WriteStream w;                                                           \
+      value.toVbkEncoding(w);                                                  \
+      type value2;                                                             \
+      if (!DeserializeFromVbkEncoding(w.data(), value2, state)) {              \
+        /* we serialized an entity but were not able to deserialize it back */ \
+        VBK_ASSERT_MSG(false,                                                  \
+                       "type=%s\nbytes=%s\nstate=%s",                          \
+                       STR(type),                                              \
+                       HexStr(w.data()),                                       \
+                       state.toString());                                      \
+      }                                                                        \
+    }                                                                          \
+    state.reset();                                                             \
+    stream.reset();                                                            \
   }
 
 // neither of these should fail with memory bug or assert

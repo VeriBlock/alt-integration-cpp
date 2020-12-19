@@ -30,7 +30,7 @@ TEST(PublicationData, DeserializeFromVbkEncoding) {
 
 TEST(PublicationData, Serialize) {
   WriteStream stream;
-  defaultPublication.toRaw(stream);
+  defaultPublication.toVbkEncoding(stream);
   auto pubBytes = stream.data();
   auto pubEncoded = HexStr(pubBytes);
   EXPECT_EQ(pubEncoded, defaultPublicationEncoded);
@@ -42,7 +42,7 @@ TEST(PublicationData, RoundTrip) {
   EXPECT_EQ(decoded.identifier, defaultPublication.identifier);
 
   WriteStream outputStream;
-  decoded.toRaw(outputStream);
+  decoded.toVbkEncoding(outputStream);
   auto pubBytes = outputStream.data();
   auto pubReEncoded = HexStr(pubBytes);
   EXPECT_EQ(pubReEncoded, defaultPublicationEncoded);

@@ -23,7 +23,7 @@ const std::vector<typename VTB::id_t>& VbkBlockAddon::getPayloadIds<VTB>()
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkBlockAddon& out,
                                 ValidationState& state) {
-  if (!stream.readBE(out._refCount, state)) {
+  if (!stream.readBE<uint32_t>(out._refCount, state)) {
     return state.Invalid("vbk-addon-bad-ref-count");
   }
 
@@ -50,7 +50,8 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
 void VbkBlockAddon::toVbkEncoding(WriteStream& w) const {
   w.writeBE<uint32_t>(_refCount);
-  PopState<VbkEndorsement>::toVbkEncoding(w);
+  const PopState<VbkEndorsement>* e = this;
+  e->toVbkEncoding(w);
   writeArrayOf<uint256>(
       w, _vtbids, [&](WriteStream& /*ignore*/, const uint256& u) {
         writeSingleByteLenValue(w, u);
