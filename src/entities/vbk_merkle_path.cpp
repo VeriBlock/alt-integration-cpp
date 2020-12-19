@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/vbk_merkle_path.hpp"
-
 #include "veriblock/entities/vbkpoptx.hpp"
 
 using namespace altintegration;
@@ -25,7 +24,7 @@ size_t VbkMerklePath::estimateSize() const {
   size += singleFixedBEValueSize(index);
   size += singleByteLenValueSize(subject);
   size += singleFixedBEValueSize((int32_t)layers.size());
-  for (const auto& layer: layers) {
+  for (const auto& layer : layers) {
     size += singleByteLenValueSize(layer);
   }
   return size;
@@ -76,7 +75,7 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_LAYER_COUNT_MERKLE,
-          [&](uint256& out) {
+          [](ReadStream& stream, uint256& out, ValidationState& state) {
             return readSingleByteLenValue(
                 stream, out, state, SHA256_HASH_SIZE, SHA256_HASH_SIZE);
           })) {

@@ -22,7 +22,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_BTCADDON_REFS,
-          [&](int32_t& out) -> bool {
+          [](ReadStream& stream, int32_t& out, ValidationState& state) -> bool {
             return stream.readBE<BtcBlockAddon::ref_height_t>(out, state);
           })) {
     return state.Invalid("bad-refs");

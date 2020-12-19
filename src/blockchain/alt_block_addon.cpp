@@ -26,11 +26,11 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_POPDATA_ATV,
-          [&](uint256& o) -> bool {
+          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
             return readSingleByteLenValue(
                 stream, o, state, uint256::size(), uint256::size());
           })) {
-    return state.Invalid("alt-blocka-addon-bad-atvid");
+    return state.Invalid("alt-block-addon-bad-atvid");
   }
 
   if (!readArrayOf<uint256>(
@@ -39,11 +39,11 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_POPDATA_VTB,
-          [&](uint256& o) -> bool {
+          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
             return readSingleByteLenValue(
                 stream, o, state, uint256::size(), uint256::size());
           })) {
-    return state.Invalid("alt-blocka-addon-bad-vtbid");
+    return state.Invalid("alt-block-addon-bad-vtbid");
   }
 
   if (!readArrayOf<uint96>(
@@ -52,11 +52,11 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_POPDATA_VBK,
-          [&](uint96& o) -> bool {
+          [](ReadStream& stream, uint96& o, ValidationState& state) -> bool {
             return readSingleByteLenValue(
                 stream, o, state, uint96::size(), uint96::size());
           })) {
-    return state.Invalid("alt-blocka-addon-bad-vbkids");
+    return state.Invalid("alt-block-addon-bad-vbkids");
   }
 
   return true;
@@ -103,9 +103,7 @@ void AltBlockAddon::toVbkEncoding(WriteStream& w) const {
   writeArrayOf<uint96>(w, _vbkblockids, writeSingleByteLenValue);
 }
 
-void AltBlockAddon::setNullInmemFields() {
-  endorsedBy.clear();
-}
+void AltBlockAddon::setNullInmemFields() { endorsedBy.clear(); }
 
 bool AltBlockAddon::hasPayloads() const {
   return !_atvids.empty() || !_vtbids.empty() || !_vbkblockids.empty();

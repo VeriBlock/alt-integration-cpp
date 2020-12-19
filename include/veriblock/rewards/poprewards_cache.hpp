@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CACHE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CACHE_HPP_
 
+#include <veriblock/entities/pop_payouts.hpp>
 #include <veriblock/rewards/poprewards.hpp>
 #include <veriblock/rewards/ring_buffer.hpp>
 
@@ -43,7 +44,7 @@ struct PopRewardsCache : public PopRewards {
    * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
    * key and reward amount as a value
    */
-  std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
+  PopPayouts calculatePayouts(
       const BlockIndex<AltBlock>& endorsedBlock) override;
 
   /**

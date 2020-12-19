@@ -33,8 +33,7 @@ static std::vector<const PopRewardsCache::index_t*> fetchBlocksUntil(
   return blocks;
 }
 
-std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
-    const index_t& endorsedBlock) {
+PopPayouts PopRewardsCache::calculatePayouts(const index_t& endorsedBlock) {
   // make sure cache is in valid state, eg contains all necessary
   // blocks to calculate POP difficulty for the endorsed block
 
@@ -44,7 +43,8 @@ std::map<std::vector<uint8_t>, int64_t> PopRewardsCache::calculatePayouts(
   }
   auto* historyLast = history_.empty() ? nullptr : history_.back();
   size_t historySize = history_.size();
-  auto missingBlocks = fetchBlocksUntil(endorsedBlock.pprev, historyLast, toFetch);
+  auto missingBlocks =
+      fetchBlocksUntil(endorsedBlock.pprev, historyLast, toFetch);
 
   bool beginOk = true;
   bool endOk = true;
