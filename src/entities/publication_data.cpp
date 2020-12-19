@@ -7,7 +7,7 @@
 
 using namespace altintegration;
 
-void PublicationData::toRaw(WriteStream& stream) const {
+void PublicationData::toVbkEncoding(WriteStream& stream) const {
   writeSingleBEValue(stream, identifier);
   writeVarLenValue(stream, header);
   writeVarLenValue(stream, contextInfo);

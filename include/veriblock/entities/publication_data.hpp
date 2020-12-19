@@ -39,7 +39,7 @@ struct PublicationData {
    * format
    * @param stream data stream to write into
    */
-  void toRaw(WriteStream& stream) const;
+  void toVbkEncoding(WriteStream& stream) const;
 
   size_t estimateSize() const;
 };

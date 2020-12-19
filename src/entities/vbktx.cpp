@@ -18,7 +18,7 @@ void VbkTx::toRaw(WriteStream& stream) const {
   writeSingleBEValue(stream, signatureIndex);
 
   WriteStream pubBytesStream;
-  publicationData.toRaw(pubBytesStream);
+  publicationData.toVbkEncoding(pubBytesStream);
   writeVarLenValue(stream, pubBytesStream.data());
 }
 
