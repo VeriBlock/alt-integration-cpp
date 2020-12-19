@@ -127,7 +127,8 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("vbkpoptx-invalid-signature");
   }
   Slice<const uint8_t> publicKey;
-  if (!readSingleByteLenValue(stream, publicKey, state, 0, MAX_PUBLIC_KEY_SIZE)) {
+  if (!readSingleByteLenValue(
+          stream, publicKey, state, 0, MAX_PUBLIC_KEY_SIZE)) {
     return state.Invalid("vbkpoptx-invalid-public-key");
   }
 

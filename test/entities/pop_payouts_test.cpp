@@ -32,8 +32,7 @@ TEST(PopPayouts, Serialize) {
 }
 
 TEST(PopPayouts, RoundTrip) {
-  auto decoded =
-  AssertDeserializeFromHex<PopPayouts>(defaultPopPayoutsEncoded);
+  auto decoded = AssertDeserializeFromHex<PopPayouts>(defaultPopPayoutsEncoded);
   EXPECT_EQ(decoded.payouts, defaultPopPayouts.payouts);
 
   WriteStream outputStream;
