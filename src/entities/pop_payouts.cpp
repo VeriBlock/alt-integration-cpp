@@ -11,7 +11,7 @@ void PopPayouts::toVbkEncoding(WriteStream& stream) const {
   writeContainer<std::map<address_t, amount_t>>(
       stream,
       payouts,
-      [](WriteStream& stream, const std::pair<address_t, amount_t> value) {
+      [](WriteStream& stream, const std::pair<address_t, amount_t>& value) {
         writeSingleByteLenValue(stream, value.first);
         stream.writeBE<uint64_t>(value.second);
       });
