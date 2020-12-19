@@ -134,8 +134,8 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
   auto miner1 = getPayoutInfo();
   miner1.push_back(0);
   miner1.push_back(1);
-  ASSERT_TRUE(!payout.find_payouts(miner1).empty());
-  ASSERT_GT(payout.amount_for_address(miner1), 0);
+  ASSERT_TRUE(payout.payouts.count(miner1));
+  ASSERT_GT(payout.payouts[miner1], 0);
 }
 
 /*
@@ -165,9 +165,8 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
   miner2.push_back(0);
   miner2.push_back(1);
   ASSERT_NE(miner1, miner2);
-  ASSERT_EQ(payout.amount_for_address(miner1),
-            payout.amount_for_address(miner2));
-  ASSERT_GT(payout.amount_for_address(miner1), 0);
+  ASSERT_EQ(payout.payouts[miner1], payout.payouts[miner2]);
+  ASSERT_GT(payout.payouts[miner1], 0);
 }
 
 /*
@@ -220,7 +219,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   // we can see that despite we had 101 block without endorsements,
   // rewards stays the same
   ASSERT_EQ(payout2.size(), payout.size());
-  ASSERT_EQ(payout2.values.begin()->amount, payout.values.begin()->amount);
+  ASSERT_EQ(payout2.payouts.begin()->second, payout.payouts.begin()->second);
 }
 
 /*
@@ -273,7 +272,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   // endorsed block
   ASSERT_EQ(firstBlock->getHeight(), secondBlock->getHeight());
   ASSERT_EQ(payout2.size(), payout.size());
-  ASSERT_GT(payout2.values.begin()->amount, payout.values.begin()->amount);
+  ASSERT_GT(payout2.payouts.begin()->second, payout.payouts.begin()->second);
 }
 
 /*
@@ -296,8 +295,8 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
   for (size_t i = 0; i < altparam.getKeystoneInterval(); i++) {
     ASSERT_TRUE(alttree.setState(initialBlock->getHash(), state));
     auto payout = alttree.getPopPayout(initialBlock->getHash());
-    if (payout.values.begin()->amount > highestReward) {
-      highestReward = payout.values.begin()->amount;
+    if (payout.payouts.begin()->second > highestReward) {
+      highestReward = payout.payouts.begin()->second;
       auto endorsedBlock = initialBlock->getAncestorBlocksBehind(
           altparam.getPayoutParams().getPopPayoutDelay());
       blockNumber = endorsedBlock->getHeight();

@@ -87,7 +87,7 @@ PopPayouts PopRewards::calculatePayoutsInner(
     auto minerReward = calculator_.calculateMinerReward(
         relativeHeight, endorsedBlockScore, blockReward);
 
-    payouts.add(PopPayoutValue{e->payoutInfo, minerReward.value.getLow64()});
+    payouts.add(e->payoutInfo, minerReward.value.getLow64());
   }
   return payouts;
 }

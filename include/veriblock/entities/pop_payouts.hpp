@@ -7,6 +7,7 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_POP_REWARDS_HPP_
 
 #include <cstdint>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -16,55 +17,31 @@
 namespace altintegration {
 
 /**
- * @struct PopPayoutValue
- * @ingroup entities
- */
-struct PopPayoutValue {
-  std::vector<uint8_t> address;
-  uint64_t amount;
-
-  /**
-   * Convert PopPayoutValue to data stream
-   * @param stream data stream to write into
-   */
-  void toVbkEncoding(WriteStream& stream) const;
-
-  friend bool operator==(const PopPayoutValue& a, const PopPayoutValue& b);
-  friend bool operator!=(const PopPayoutValue& a, const PopPayoutValue& b);
-};
-
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                PopPayoutValue& out,
-                                ValidationState& state);
-
-/**
  * @struct PopRewards
  * @ingroup entities
  */
 struct PopPayouts {
-  std::vector<PopPayoutValue> values{};
+  using address_t = std::vector<uint8_t>;
+  using amount_t = uint64_t;
 
-  void add(const PopPayoutValue& value);
+  std::map<address_t, amount_t> payouts;
+
+  void add(const address_t& address, amount_t amount);
 
   size_t size() const;
 
   bool empty() const;
-
-  std::vector<PopPayoutValue> find_payouts(
-      const std::vector<uint8_t>& address) const;
-
-  uint64_t amount_for_address(const std::vector<uint8_t>& address) const;
 
   /**
    * Convert PopRewards to data stream
    * @param stream data stream to write into
    */
   void toVbkEncoding(WriteStream& stream) const;
-};
 
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                PopPayouts& out,
-                                ValidationState& state);
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         PopPayouts& out,
+                                         ValidationState& state);
+};
 
 }  // namespace altintegration
 

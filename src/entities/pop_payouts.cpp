@@ -7,92 +7,59 @@
 
 namespace altintegration {
 
-void PopPayoutValue::toVbkEncoding(WriteStream& stream) const {
-  writeSingleByteLenValue(stream, address);
-  stream.writeBE<uint64_t>(amount);
-}
-
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                PopPayoutValue& out,
-                                ValidationState& state) {
-  if (!readSingleByteLenValue<std::vector<uint8_t>>(
-          stream, out.address, state, 0, MAX_PAYOUT_INFO_SIZE)) {
-    return state.Invalid("pop-payout-value-address");
-  }
-
-  if (!stream.readBE<uint64_t>(out.amount, state)) {
-    return state.Invalid("pop-payout-value-amount");
-  }
-  return true;
-}
-
-bool operator==(const PopPayoutValue& a, const PopPayoutValue& b) {
-  return a.address == b.address && a.amount == b.amount;
-}
-
-bool operator!=(const PopPayoutValue& a, const PopPayoutValue& b) {
-  return !(a == b);
-}
-
 void PopPayouts::toVbkEncoding(WriteStream& stream) const {
-  writeArrayOf<PopPayoutValue>(
-      stream, values, [](WriteStream& stream, const PopPayoutValue& val) {
-        val.toVbkEncoding(stream);
+  writeContainer<std::map<address_t, amount_t>>(
+      stream,
+      payouts,
+      [](WriteStream& stream, const std::pair<address_t, amount_t> value) {
+        writeSingleByteLenValue(stream, value.first);
+        stream.writeBE<uint64_t>(value.second);
       });
 }
 
-void PopPayouts::add(const PopPayoutValue& val) {
-  for (auto& el : values) {
-    if (el.address == val.address) {
-      el.amount += val.amount;
-      return;
-    }
-  }
-  this->values.push_back(val);
+void PopPayouts::add(const address_t& address, amount_t amount) {
+  this->payouts[address] += amount;
 }
 
-size_t PopPayouts::size() const { return this->values.size(); }
+size_t PopPayouts::size() const { return this->payouts.size(); }
 
-bool PopPayouts::empty() const { return this->values.empty(); }
-
-std::vector<PopPayoutValue> PopPayouts::find_payouts(
-    const std::vector<uint8_t>& address) const {
-  std::vector<PopPayoutValue> res;
-  for (const auto& val : values) {
-    if (val.address == address) {
-      res.push_back(val);
-    }
-  }
-  return res;
-}
-
-uint64_t PopPayouts::amount_for_address(
-    const std::vector<uint8_t>& address) const {
-  uint64_t res = 0;
-  for (const auto& val : values) {
-    if (val.address == address) {
-      res += val.amount;
-    }
-  }
-  return res;
-}
+bool PopPayouts::empty() const { return this->payouts.empty(); }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 PopPayouts& out,
                                 ValidationState& state) {
+  using address_t = typename PopPayouts::address_t;
+  using amount_t = typename PopPayouts::amount_t;
+
+  std::vector<std::pair<address_t, amount_t>> out_vec;
   size_t i = 0;
-  if (!readArrayOf<PopPayoutValue>(
+  if (!readArrayOf<std::pair<address_t, amount_t>>(
           stream,
-          out.values,
+          out_vec,
           state,
           0,
           MAX_PAYOUT,
-          [&i](
-              ReadStream& stream, PopPayoutValue& val, ValidationState& state) {
+          [&i](ReadStream& stream,
+               std::pair<address_t, amount_t>& val,
+               ValidationState& state) {
             ++i;
-            return DeserializeFromVbkEncoding(stream, val, state);
+
+            if (!readSingleByteLenValue<std::vector<uint8_t>>(
+                    stream, val.first, state, 0, MAX_PAYOUT_INFO_SIZE)) {
+              return state.Invalid("address");
+            }
+
+            if (!stream.readBE<uint64_t>(val.second, state)) {
+              return state.Invalid("amount");
+            }
+
+            return true;
           })) {
     return state.Invalid("pop-payouts-values", i);
+  }
+
+  for (const auto& el : out_vec) {
+    out.payouts[el.first] += el.second;
   }
 
   return true;

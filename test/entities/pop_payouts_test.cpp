@@ -20,7 +20,7 @@ static const PopPayouts defaultPopPayouts{
 TEST(PopPayouts, DeserializeFromVbkEncoding) {
   auto decoded = AssertDeserializeFromHex<PopPayouts>(defaultPopPayoutsEncoded);
 
-  EXPECT_EQ(decoded.values, defaultPopPayouts.values);
+  EXPECT_EQ(decoded.payouts, defaultPopPayouts.payouts);
 }
 
 TEST(PopPayouts, Serialize) {
@@ -34,7 +34,7 @@ TEST(PopPayouts, Serialize) {
 TEST(PopPayouts, RoundTrip) {
   auto decoded =
   AssertDeserializeFromHex<PopPayouts>(defaultPopPayoutsEncoded);
-  EXPECT_EQ(decoded.values, defaultPopPayouts.values);
+  EXPECT_EQ(decoded.payouts, defaultPopPayouts.payouts);
 
   WriteStream outputStream;
   decoded.toVbkEncoding(outputStream);
