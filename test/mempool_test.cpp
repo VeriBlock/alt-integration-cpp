@@ -1564,7 +1564,7 @@ TEST_F(MemPoolFixture, DISABLED_getPop_scenario_10) {
   };
   // PopData with 1 VBK block is 71 bytes
   const auto popDataWith1VBK = estimatePopDataWithVbkSize();
-  const auto max = alttree.getParams().getMaxPopDataSize();
+  const auto max = MAX_POPDATA_SIZE;
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
   popminer->mineVbkBlocks(max / popDataWith1VBK + 10);

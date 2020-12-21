@@ -51,7 +51,8 @@ constexpr const auto MAX_CONTEXT_SIZE_PUBLICATION_DATA = 10000;
 constexpr const auto MAX_PUBLICATIONDATA_SIZE =
     1 + sizeof(int64_t) + 1 + MAX_HEADER_SIZE_PUBLICATION_DATA + 1 +
     MAX_PAYOUT_INFO_SIZE + 1 + MAX_CONTEXT_SIZE_PUBLICATION_DATA;
-//! absolute maximum size for a PopData in bytes
+//! maximum size of single PopData in a single ALT block, in bytes.
+//! VTB can have a size up to 5.3 MB, so this number must be at least 5.3MB
 constexpr const auto MAX_POPDATA_SIZE = 5500000;
 //! absolute maximum number of VBK blocks per ALT block
 constexpr const auto MAX_POPDATA_VBK = 50000;

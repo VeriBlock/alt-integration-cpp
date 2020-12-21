@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include "bytestream.hpp"
 #include "config.hpp"
+#include "veriblock/consts.hpp"
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
@@ -80,7 +81,7 @@ PopContext* VBK_NewPopContext(Config_t* config) {
   auto& c = config->config;
 
   VBK_ASSERT(c->alt);
-  auto maxPopDataSize = c->alt->getMaxPopDataSize();
+  const auto maxPopDataSize = altintegration::MAX_POPDATA_SIZE;
   auto* v = new PopContext();
   // maxPopDataSize is the maximum size of payload per block, it is safe
   // to allocate buffer with this size for all operations
