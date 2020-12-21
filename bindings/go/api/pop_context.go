@@ -20,6 +20,7 @@ type AltBlockTree interface {
 	ComparePopScore(hashA entities.AltHash, hashB entities.AltHash) int
 	RemoveSubtree(hash entities.AltHash)
 	SetState(hash entities.AltHash) error
+	GetPopPayout(tipHash entities.AltHash) (*entities.PopPayouts, error)
 	BtcGetBlockIndex(hash entities.BtcHash) (*entities.BlockIndex, error)
 	VbkGetBlockIndex(hash entities.VbkHash) (*entities.BlockIndex, error)
 	AltGetBlockIndex(hash entities.AltHash) (*entities.BlockIndex, error)
@@ -162,6 +163,17 @@ func (v *PopContext) SetState(hash entities.AltHash) error {
 		return state.Error()
 	}
 	return nil
+}
+
+func (v *PopContext) GetPopPayout(tipHash entities.AltHash) (*entities.PopPayouts, error) {
+	defer v.lock()()
+	stream := v.popContext.AltBlockTreeGetPopPayout(tipHash)
+	defer stream.Free()
+	popPayouts := &entities.PopPayouts{}
+	if err := popPayouts.FromVbkEncoding(stream); err != nil {
+		return nil, err
+	}
+	return popPayouts, nil
 }
 
 // BtcGetBlockIndex ...
