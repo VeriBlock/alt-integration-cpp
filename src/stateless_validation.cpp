@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/stateless_validation.hpp"
+
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -16,7 +18,6 @@
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
-#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -569,6 +570,14 @@ bool checkPopData(PopValidator& validator,
         fmt::format("Too many VTBs. Expected {} or less, got {}",
                     altparam.getMaxVTBsInAltBlock(),
                     popData.vtbs.size()));
+  }
+
+  if (popData.atvs.size() > altparam.getMaxATVsInAltBlock()) {
+    return state.Invalid(
+        "pop-sl-atvs-oversize",
+        fmt::format("Too many ATVs. Expected {} or less, got {}",
+                    altparam.getMaxVTBsInAltBlock(),
+                    popData.atvs.size()));
   }
 
   if (!checkPopDataForDuplicates(popData, state)) {
