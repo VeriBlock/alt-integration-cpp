@@ -11,50 +11,6 @@
 
 using namespace altintegration;
 
-struct TestCase {
-  uint32_t height;
-  double score;
-  double difficulty;
-  double reward;
-};
-
-struct CalculatorTableFixture : public testing::TestWithParam<TestCase>,
-                                public PopTestFixture {
-  std::shared_ptr<PopRewardsCalculatorDefault> sampleCalculator;
-  ValidationState state;
-
-  CalculatorTableFixture() {
-    sampleCalculator = std::make_shared<PopRewardsCalculatorDefault>(alttree);
-  }
-};
-
-static const double POP_REWARD_MULTIPLIER = 20.0;
-
-static std::vector<TestCase> calculatorTable_cases = {{3, 1.0, 1.0, 19.4},
-                                                      {3, 2.0, 1.0, 31.04},
-                                                      {3, 5.0, 1.0, 31.04},
-                                                      {3, 10.0, 1.0, 31.04},
-                                                      {3, 25.0, 1.0, 31.04},
-                                                      {3, 1.0, 2.0, 9.7},
-                                                      {3, 2.0, 2.0, 19.4},
-                                                      {3, 5.0, 2.0, 31.04},
-                                                      {3, 10.0, 2.0, 31.04},
-                                                      {3, 25.0, 2.0, 31.04}};
-
-TEST_P(CalculatorTableFixture, calculatorTable_test) {
-  auto value = GetParam();
-  const auto reward = sampleCalculator->calculateBlockReward(
-      value.height, value.score, value.difficulty);
-  ASSERT_NEAR((double)reward.value.getLow64() / PopRewardsBigDecimal::decimals *
-                  POP_REWARD_MULTIPLIER,
-              value.reward,
-              0.01);
-}
-
-INSTANTIATE_TEST_SUITE_P(calculatorTableRegression,
-                         CalculatorTableFixture,
-                         testing::ValuesIn(calculatorTable_cases));
-
 struct RewardsTestFixture : public testing::TestWithParam<int>,
                             public PopTestFixture {
   BlockIndex<BtcBlock>* btctip;
@@ -473,3 +429,55 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   ASSERT_EQ(payoutsUncached.payouts.begin()->second,
             payouts.payouts.begin()->second);
 }
+
+struct TestCase {
+  uint32_t height;
+  double score;
+  double difficulty;
+  double reward;
+};
+
+struct CalculatorTableFixture : public testing::TestWithParam<TestCase>,
+                                public PopTestFixture {
+  std::shared_ptr<PopRewardsCalculatorDefault> sampleCalculator;
+  ValidationState state;
+
+  CalculatorTableFixture() {
+    sampleCalculator = std::make_shared<PopRewardsCalculatorDefault>(alttree);
+  }
+};
+
+static const double POP_REWARD_MULTIPLIER = 20.0;
+
+static std::vector<TestCase> calculatorTable_cases = {
+    {3, 1.0, 1.0, 19.4},    {3, 2.0, 1.0, 31.04},   {3, 5.0, 1.0, 31.04},
+    {3, 10.0, 1.0, 31.04},  {3, 25.0, 1.0, 31.04},  {3, 1.0, 2.0, 9.7},
+    {3, 2.0, 2.0, 19.4},    {3, 5.0, 2.0, 31.04},   {3, 10.0, 2.0, 31.04},
+    {3, 25.0, 2.0, 31.04},  {3, 1.0, 5.0, 3.88},    {3, 2.0, 5.0, 7.76},
+    {3, 5.0, 5.0, 19.4},    {3, 10.0, 5.0, 31.04},  {3, 25.0, 5.0, 31.04},
+    {3, 1.0, 10.0, 1.94},   {3, 2.0, 10.0, 3.88},   {3, 5.0, 10.0, 9.7},
+    {3, 10.0, 10.0, 19.4},  {3, 25.0, 10.0, 31.04}, {3, 1.0, 25.0, 0.775},
+    {3, 2.0, 25.0, 1.5525}, {3, 5.0, 25.0, 3.88},   {3, 10.0, 25.0, 7.76},
+    {3, 25.0, 25.0, 19.4},  {4, 1.0, 1.0, 20.6},    {4, 2.0, 1.0, 32.96},
+    {4, 5.0, 1.0, 32.96},   {4, 10.0, 1.0, 32.96},  {4, 25.0, 1.0, 32.96},
+    {4, 1.0, 2.0, 10.3},    {4, 2.0, 2.0, 20.6},    {4, 5.0, 2.0, 32.96},
+    {4, 10.0, 2.0, 32.96},  {4, 25.0, 2.0, 32.96},  {4, 1.0, 5.0, 4.12},
+    {4, 2.0, 5.0, 8.24},    {4, 5.0, 5.0, 20.6},    {4, 10.0, 5.0, 32.96},
+    {4, 25.0, 5.0, 32.96},  {4, 1.0, 10.0, 2.06},   {4, 2.0, 10.0, 4.12},
+    {4, 5.0, 10.0, 10.3},   {4, 10.0, 10.0, 20.6},  {4, 25.0, 10.0, 32.96},
+    {4, 1.0, 25.0, 0.825},  {4, 2.0, 25.0, 1.6475}, {4, 5.0, 25.0, 4.12},
+    {4, 10.0, 25.0, 8.24},  {4, 25.0, 25.0, 20.6}};
+
+TEST_P(CalculatorTableFixture, calculatorTable_test) {
+  auto value = GetParam();
+  const auto reward = sampleCalculator->calculateBlockReward(
+      value.height, value.score, value.difficulty);
+  ASSERT_NEAR((double)reward.value.getLow64() / PopRewardsBigDecimal::decimals *
+                  POP_REWARD_MULTIPLIER,
+              value.reward,
+              0.01);
+}
+
+INSTANTIATE_TEST_SUITE_P(calculatorTableRegression,
+                         CalculatorTableFixture,
+                         testing::ValuesIn(calculatorTable_cases));
