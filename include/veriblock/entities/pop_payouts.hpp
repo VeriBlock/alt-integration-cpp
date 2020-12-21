@@ -32,6 +32,13 @@ struct PopPayouts {
 
   bool empty() const;
 
+  // explicit cast operator of this struct to std::map
+  explicit operator decltype(payouts)() { return payouts; }
+  auto begin() -> decltype(payouts.begin()) { return payouts.begin(); }
+  auto end() -> decltype(payouts.end()) { return payouts.end(); }
+  auto begin() const -> decltype(payouts.begin()) { return payouts.begin(); }
+  auto end() const -> decltype(payouts.end()) { return payouts.end(); }
+
   /**
    * Convert PopRewards to data stream
    * @param stream data stream to write into
