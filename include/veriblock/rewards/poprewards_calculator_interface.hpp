@@ -21,11 +21,10 @@ struct PopRewardsCalculatorInterface {
    * the endorsed block which is PopPayoutDelay blocks behind the tip.
    * @param tip block that contains POP payout. Usually the tip of the
    * active chain.
-   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
-   * key and reward amount as a value
+   * @return PopPayouts map with miner address as a key and reward
+   * amount as a value
    */
-  virtual std::map<std::vector<uint8_t>, int64_t> getPopPayout(
-      const AltBlockTree::hash_t& tip) = 0;
+  virtual PopPayouts getPopPayout(const AltBlockTree::hash_t& tip) = 0;
 };
 
 }  // namespace altintegration

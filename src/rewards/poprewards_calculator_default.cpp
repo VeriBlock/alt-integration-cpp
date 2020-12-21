@@ -222,12 +222,11 @@ PopRewardsBigDecimal PopRewardsCalculatorDefault::calculateDifficulty(
   return difficulty;
 }
 
-std::map<std::vector<uint8_t>, int64_t>
-PopRewardsCalculatorDefault::calculatePayoutsInner(
+PopPayouts PopRewardsCalculatorDefault::calculatePayoutsInner(
     const BlockIndex<AltBlock>& endorsedBlock,
     const PopRewardsBigDecimal& endorsedBlockScore,
     const PopRewardsBigDecimal& popDifficulty) {
-  std::map<std::vector<uint8_t>, int64_t> rewards{};
+  PopPayouts rewards{};
   int bestPublication = getBestPublicationHeight(endorsedBlock, tree_.vbk());
   if (bestPublication < 0) {
     return rewards;
@@ -247,7 +246,7 @@ PopRewardsCalculatorDefault::calculatePayoutsInner(
     assert(relativeHeight >= 0);
     auto minerReward =
         calculateMinerReward(relativeHeight, endorsedBlockScore, blockReward);
-    rewards[e->payoutInfo] += minerReward.value.getLow64();
+    rewards.payouts[e->payoutInfo] += minerReward.value.getLow64();
   }
   return rewards;
 }
@@ -287,8 +286,7 @@ PopRewardsBigDecimal PopRewardsCalculatorDefault::appendToCache(
   return score;
 }
 
-std::map<std::vector<uint8_t>, int64_t>
-PopRewardsCalculatorDefault::calculatePayouts(
+PopPayouts PopRewardsCalculatorDefault::calculatePayouts(
     const BlockIndex<AltBlock>& endorsedBlock) {
   // make sure cache is in valid state, eg contains all necessary
   // blocks to calculate POP difficulty for the endorsed block
@@ -369,8 +367,7 @@ void PopRewardsCalculatorDefault::onOverrideTip(const index_t& index) {
   eraseCacheHistory(invalidBlocks);
 }
 
-std::map<std::vector<uint8_t>, int64_t>
-PopRewardsCalculatorDefault::getPopPayout(
+PopPayouts PopRewardsCalculatorDefault::getPopPayout(
     const AltBlockTree::hash_t& tip) {
   VBK_ASSERT(tree_.isBootstrapped() && "not bootstrapped");
 

@@ -30,18 +30,17 @@ struct PopRewardsCalculatorDefault : public PopRewardsCalculatorInterface {
   }
   virtual ~PopRewardsCalculatorDefault() = default;
 
-  std::map<std::vector<uint8_t>, int64_t> getPopPayout(const AltBlockTree::hash_t& tip) override;
+  PopPayouts getPopPayout(const AltBlockTree::hash_t& tip) override;
 
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
    * the endorsed block. Score is calculated from the endorsements (slow).
    * @param endorsedBlock endorsed altchain block which we are paying reward
    * for.
-   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
+   * @return PopPayouts map with miner address as a
    * key and reward amount as a value
    */
-  std::map<std::vector<uint8_t>, int64_t> calculatePayouts(
-      const BlockIndex<AltBlock>& endorsedBlock);
+  PopPayouts calculatePayouts( const BlockIndex<AltBlock>& endorsedBlock);
 
   /**
    * Erase N blocks from the cache history.
@@ -136,10 +135,10 @@ struct PopRewardsCalculatorDefault : public PopRewardsCalculatorInterface {
    * scoreFromEndorsements() for reference.
    * @param popDifficulty endorsed altchain block difficulty - see
    * calculateDifficulty() for reference.
-   * @return std::map<std::vector<uint8_t>, int64_t> map with miner address as a
-   * key and reward amount as a value
+   * @return PopPayouts map with miner address as a key and reward
+   * amount as a value
    */
-  std::map<std::vector<uint8_t>, int64_t> calculatePayoutsInner(
+  PopPayouts calculatePayoutsInner(
       const BlockIndex<AltBlock>& endorsedBlock,
       const PopRewardsBigDecimal& endorsedBlockScore,
       const PopRewardsBigDecimal& popDifficulty);

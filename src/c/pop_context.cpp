@@ -239,7 +239,7 @@ VBK_ByteStream* VBK_AltBlockTree_getPopPayout(PopContext* self,
 
   std::vector<uint8_t> hash{tip_hash_bytes,
                             tip_hash_bytes + tip_hash_bytes_size};
-  auto ret = self->context->altTree->getPopPayout(hash);
+  auto ret = self->context->popRewardsCalculator->getPopPayout(hash);
 
   altintegration::WriteStream stream;
   ret.toVbkEncoding(stream);
