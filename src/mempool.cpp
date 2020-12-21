@@ -22,7 +22,7 @@ PopData generatePopData(
   // size in bytes of pop data added to
   size_t popSize = 0;
 
-  const auto& maxSize = params.getMaxPopDataSize();
+  const auto& maxSize = MAX_POPDATA_SIZE;
   const auto& maxVbkBlocks = params.getMaxVbkBlocksInAltBlock();
   const auto& maxVTBs = params.getMaxVTBsInAltBlock();
   for (const auto& block : blocks) {

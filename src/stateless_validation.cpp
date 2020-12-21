@@ -547,12 +547,12 @@ bool checkPopData(PopValidator& validator,
                   ValidationState& state) {
   auto& altparam = validator.getAltParams();
   size_t estimate_size = popData.estimateSize();
-  if (estimate_size > altparam.getMaxPopDataSize()) {
+  if (estimate_size > MAX_POPDATA_SIZE) {
     return state.Invalid("pop-sl-oversize",
                          fmt::format("popData raw size more than allowed, "
                                      "current size: {}, allowed size: {}",
                                      estimate_size,
-                                     altparam.getMaxPopDataSize()));
+                                     MAX_POPDATA_SIZE));
   }
 
   if (popData.context.size() > altparam.getMaxVbkBlocksInAltBlock()) {

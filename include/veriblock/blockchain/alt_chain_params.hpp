@@ -163,12 +163,6 @@ struct AltChainParams {
     return mEndorsementSettlementInterval;
   }
 
-  //! maximum size of single PopData in a single ALT block, in bytes.
-  //! VTB can have a size up to 5.3 MB, so this number must be at least 5.3MB
-  uint32_t getMaxPopDataSize() const noexcept {
-    return mMaxPopDataSize;
-  }
-
   //! getter for reward parameters
   const PopPayoutsParams& getPayoutParams() const noexcept {
     return *mPopPayoutsParams;
@@ -181,6 +175,9 @@ struct AltChainParams {
 
   //! total maximum number of VTBs per 1 ALT block
   size_t getMaxVTBsInAltBlock() const noexcept { return mMaxVTBsInAltBlock; }
+
+  //! total maximum number of ATVs per 1 ALT block
+  size_t getMaxATVsInAltBlock() const noexcept { return mMaxATVsInAltBlock; }
 
   //! Maximum future block time for altchain blocks.
   uint32_t maxAltchainFutureBlockTime() const noexcept {
@@ -221,6 +218,7 @@ struct AltChainParams {
 
   size_t mMaxVbkBlocksInAltBlock = 250;
   size_t mMaxVTBsInAltBlock = 25;
+  size_t mMaxATVsInAltBlock = 1024;
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
@@ -231,9 +229,9 @@ JsonValue ToJSON(const AltChainParams& p) {
   auto obj = json::makeEmptyObject<JsonValue>();
   json::putArrayKV(
       obj, "forkResolutionLookupTable", p.getForkResolutionLookUpTable());
-  json::putIntKV(obj, "maxPopDataSize", p.getMaxPopDataSize());
   json::putIntKV(obj, "maxVbkBlocksInAltBlock", p.getMaxVbkBlocksInAltBlock());
   json::putIntKV(obj, "maxVTBsInAltBlock", p.getMaxVTBsInAltBlock());
+  json::putIntKV(obj, "maxATVsInAltBlock", p.getMaxATVsInAltBlock());
   json::putIntKV(obj,
                  "endorsementSettlementInterval",
                  p.getEndorsementSettlementInterval());

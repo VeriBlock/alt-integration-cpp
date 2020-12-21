@@ -548,8 +548,8 @@ TEST(ToJson, AltParams) {
     21
   ],
   "keystoneInterval": 5,
+  "maxATVsInAltBlock": 1024,
   "maxAltchainFutureBlockTime": 600,
-  "maxPopDataSize": 5500000,
   "maxVTBsInAltBlock": 25,
   "maxVbkBlocksInAltBlock": 250,
   "payoutParams": {
