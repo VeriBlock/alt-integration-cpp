@@ -81,7 +81,7 @@ PopContext* VBK_NewPopContext(Config_t* config) {
   auto& c = config->config;
 
   VBK_ASSERT(c->alt);
-  const auto maxPopDataSize = altintegration::MAX_POPDATA_SIZE;
+  const auto maxPopDataSize = c->getAltParams().getMaxPopDataSize();
   auto* v = new PopContext();
   // maxPopDataSize is the maximum size of payload per block, it is safe
   // to allocate buffer with this size for all operations

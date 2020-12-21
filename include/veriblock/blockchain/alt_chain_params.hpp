@@ -179,6 +179,9 @@ struct AltChainParams {
   //! total maximum number of ATVs per 1 ALT block
   size_t getMaxATVsInAltBlock() const noexcept { return mMaxATVsInAltBlock; }
 
+  //! maximum size (in bytes) of single PopData per single ALT block
+  size_t getMaxPopDataSize() const noexcept { return mMaxPopDataSize; }
+
   //! Maximum future block time for altchain blocks.
   uint32_t maxAltchainFutureBlockTime() const noexcept {
     return mMaxAltchainFutureBlockTime;
@@ -214,11 +217,11 @@ struct AltChainParams {
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   int32_t mEndorsementSettlementInterval = 50;
-  uint32_t mMaxPopDataSize = 5500000;  // 5.5 MB
+  uint32_t mMaxPopDataSize = MAX_POPDATA_SIZE;
 
-  size_t mMaxVbkBlocksInAltBlock = 250;
-  size_t mMaxVTBsInAltBlock = 25;
-  size_t mMaxATVsInAltBlock = 1024;
+  size_t mMaxVbkBlocksInAltBlock = 200;
+  size_t mMaxVTBsInAltBlock = 200;
+  size_t mMaxATVsInAltBlock = 1000;
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
