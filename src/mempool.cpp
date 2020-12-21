@@ -22,9 +22,10 @@ PopData generatePopData(
   // size in bytes of pop data added to
   size_t popSize = 0;
 
-  const auto& maxSize = MAX_POPDATA_SIZE;
+  const auto& maxSize = params.getMaxPopDataSize();
   const auto& maxVbkBlocks = params.getMaxVbkBlocksInAltBlock();
   const auto& maxVTBs = params.getMaxVTBsInAltBlock();
+  const auto& maxATVs = params.getMaxATVsInAltBlock();
   for (const auto& block : blocks) {
     // add VBK block if it fits
     auto& header = *block.second->header;
@@ -39,8 +40,8 @@ PopData generatePopData(
     // try to fit ATVs
     auto& atvcandidates = block.second->atvs;
     for (const auto& atv : atvcandidates) {
-      // by default fit all possible ATVs, thus no 'numeric' limit
-      if (popSize + atv->estimateSize() >= maxSize) {
+      if (ret.atvs.size() >= maxATVs ||
+          popSize + atv->estimateSize() >= maxSize) {
         // do not consider this ATV, it does not fit
         continue;
       }

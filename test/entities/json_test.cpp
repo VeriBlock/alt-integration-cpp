@@ -548,10 +548,10 @@ TEST(ToJson, AltParams) {
     21
   ],
   "keystoneInterval": 5,
-  "maxATVsInAltBlock": 1024,
+  "maxATVsInAltBlock": 1000,
   "maxAltchainFutureBlockTime": 600,
-  "maxVTBsInAltBlock": 25,
-  "maxVbkBlocksInAltBlock": 250,
+  "maxVTBsInAltBlock": 200,
+  "maxVbkBlocksInAltBlock": 200,
   "payoutParams": {
     "difficultyAveragingInterval": 50,
     "flatScoreRound": 2,

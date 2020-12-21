@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -11,7 +13,6 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
-#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -1553,10 +1554,7 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
 
 // in this test we have a context gap in VBK which is bigger than
 // maxPopDataSize() in bytes.
-// we expect that first getPop returns PopData which contains around 15k VBK
-// blocks (1MB / 71 = 14768), 0 VTBs, and 0 ATVs
-// TODO: disabled because it takes A LOT of time to mine VBK blocks
-TEST_F(MemPoolFixture, DISABLED_getPop_scenario_10) {
+TEST_F(MemPoolFixture, getPop_scenario_10) {
   const auto estimatePopDataWithVbkSize = []() {
     PopData p;
     p.context.emplace_back();
@@ -1564,7 +1562,9 @@ TEST_F(MemPoolFixture, DISABLED_getPop_scenario_10) {
   };
   // PopData with 1 VBK block is 71 bytes
   const auto popDataWith1VBK = estimatePopDataWithVbkSize();
-  const auto max = MAX_POPDATA_SIZE;
+  altparam.mMaxPopDataSize =
+      (altparam.getMaxVbkBlocksInAltBlock() + 1) * popDataWith1VBK;
+  const auto max = altparam.getMaxPopDataSize();
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
   popminer->mineVbkBlocks(max / popDataWith1VBK + 10);
@@ -1592,7 +1592,7 @@ TEST_F(MemPoolFixture, DISABLED_getPop_scenario_10) {
   {
     PopData v_popData = checkedGetPop();
     ASSERT_LE(v_popData.estimateSize(), max);
-    ASSERT_EQ(v_popData.context.size(), max / popDataWith1VBK);
+    ASSERT_EQ(v_popData.context.size(), altparam.getMaxVbkBlocksInAltBlock());
     ASSERT_EQ(v_popData.vtbs.size(), 0);
     ASSERT_EQ(v_popData.atvs.size(), 0);
   }
@@ -1600,7 +1600,7 @@ TEST_F(MemPoolFixture, DISABLED_getPop_scenario_10) {
     // second getPop should return same data
     PopData v_popData = checkedGetPop();
     ASSERT_LE(v_popData.estimateSize(), max);
-    ASSERT_EQ(v_popData.context.size(), max / popDataWith1VBK);
+    ASSERT_EQ(v_popData.context.size(), altparam.getMaxVbkBlocksInAltBlock());
     ASSERT_EQ(v_popData.vtbs.size(), 0);
     ASSERT_EQ(v_popData.atvs.size(), 0);
     // lets remove it
