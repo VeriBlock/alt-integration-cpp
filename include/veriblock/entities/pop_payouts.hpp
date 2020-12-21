@@ -21,12 +21,12 @@ namespace altintegration {
  * @ingroup entities
  */
 struct PopPayouts {
-  using address_t = std::vector<uint8_t>;
+  using payout_info_t = std::vector<uint8_t>;
   using amount_t = uint64_t;
 
-  std::map<address_t, amount_t> payouts;
+  std::map<payout_info_t, amount_t> payouts;
 
-  void add(const address_t& address, amount_t amount);
+  void add(const payout_info_t& address, amount_t amount);
 
   size_t size() const;
 
