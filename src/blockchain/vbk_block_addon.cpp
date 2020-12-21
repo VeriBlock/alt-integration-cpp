@@ -23,7 +23,7 @@ const std::vector<typename VTB::id_t>& VbkBlockAddon::getPayloadIds<VTB>()
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkBlockAddon& out,
                                 ValidationState& state) {
-  if (!stream.readBE(out._refCount, state)) {
+  if (!stream.readBE<uint32_t>(out._refCount, state)) {
     return state.Invalid("vbk-addon-bad-ref-count");
   }
 
@@ -38,7 +38,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_VBKPOPTX_PER_VBK_BLOCK,
-          [&](uint256& o) -> bool {
+          [](ReadStream stream, uint256& o, ValidationState& state) -> bool {
             return readSingleByteLenValue(
                 stream, o, state, uint256::size(), uint256::size());
           })) {
@@ -50,7 +50,8 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
 void VbkBlockAddon::toVbkEncoding(WriteStream& w) const {
   w.writeBE<uint32_t>(_refCount);
-  PopState<VbkEndorsement>::toVbkEncoding(w);
+  const PopState<VbkEndorsement>* e = this;
+  e->toVbkEncoding(w);
   writeArrayOf<uint256>(
       w, _vtbids, [&](WriteStream& /*ignore*/, const uint256& u) {
         writeSingleByteLenValue(w, u);
@@ -91,9 +92,9 @@ void VbkBlockAddon::addRef(VbkBlockAddon::ref_height_t) {
 }
 
 void VbkBlockAddon::setNullInmemFields() {
-	chainWork = 0;
-	blockOfProofEndorsements.clear();
-	endorsedBy.clear();
+  chainWork = 0;
+  blockOfProofEndorsements.clear();
+  endorsedBy.clear();
 }
 
 }  // namespace altintegration

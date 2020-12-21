@@ -203,6 +203,8 @@ struct AltChainParams {
    * @return hash
    * @note if input data is not valid block header, still calculate hash from
    * input data.
+   *
+   * @warning SHOULD NOT THROW
    */
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;

@@ -97,15 +97,15 @@ bool DeserializeFromRaw(ReadStream& stream,
     return state.Invalid("vbkpoptx-block-of-proof");
   }
 
-  if (!readArrayOf<BtcBlock>(stream,
-                             tx.blockOfProofContext,
-                             state,
-                             0,
-                             MAX_CONTEXT_COUNT_VBK_PUBLICATION,
-                             [&](BtcBlock& out) {
-                               return DeserializeFromVbkEncoding(
-                                   stream, out, state);
-                             })) {
+  if (!readArrayOf<BtcBlock>(
+          stream,
+          tx.blockOfProofContext,
+          state,
+          0,
+          MAX_BTC_BLOCKS_IN_VBKPOPTX,
+          [](ReadStream& stream, BtcBlock& out, ValidationState& state) {
+            return DeserializeFromVbkEncoding(stream, out, state);
+          })) {
     return state.Invalid("vbkpoptx-btc-context");
   }
 
@@ -118,7 +118,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkPopTx& out,
                                 ValidationState& state) {
   Slice<const uint8_t> rawTx;
-  if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKPOPTX)) {
+  if (!readVarLenValue(stream, rawTx, state, 0, MAX_POPDATA_SIZE)) {
     return state.Invalid("vbkpoptx-invalid-tx");
   }
   Slice<const uint8_t> signature;
@@ -127,7 +127,8 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("vbkpoptx-invalid-signature");
   }
   Slice<const uint8_t> publicKey;
-  if (!readSingleByteLenValue(stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
+  if (!readSingleByteLenValue(
+          stream, publicKey, state, 0, MAX_PUBLIC_KEY_SIZE)) {
     return state.Invalid("vbkpoptx-invalid-public-key");
   }
 

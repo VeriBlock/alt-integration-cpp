@@ -190,7 +190,7 @@ TEST_F(AltTreeFixture, invalidBlockIndex_test) {
 
   EXPECT_EQ(index->getHash(), alttree.getBestChain().tip()->getHash());
 
-  index->setFlag(BlockStatus::BLOCK_FAILED_POP);
+  index->setFlag(BLOCK_FAILED_POP);
   EXPECT_FALSE(index->isValid());
 
   EXPECT_FALSE(alttree.acceptBlockHeader(index->getHeader(), state));

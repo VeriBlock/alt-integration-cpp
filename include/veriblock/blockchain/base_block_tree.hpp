@@ -74,6 +74,12 @@ struct BaseBlockTree {
     return it == blocks_.end() ? nullptr : it->second.get();
   }
 
+  //! @overload
+  index_t* getBlockIndex(const std::string& hex) const {
+    auto data = ParseHex(hex);
+    return getBlockIndex(makePrevHash(data));
+  }
+
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
     auto* tip = getBlockIndex(hash);
     if (!tip) {
@@ -205,7 +211,7 @@ struct BaseBlockTree {
    * undefined state.
    */
   void invalidateSubtree(index_t& toBeInvalidated,
-                         enum BlockStatus reason,
+                         enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
     VBK_LOG_INFO("Invalidating %s subtree: reason=%d block=%s",
                  block_t::name(),
@@ -258,7 +264,7 @@ struct BaseBlockTree {
   //! @overload
   //! @invariant block must exist in a tree
   void invalidateSubtree(const hash_t& toBeInvalidated,
-                         enum BlockStatus reason,
+                         enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
     auto* index = getBlockIndex(toBeInvalidated);
     VBK_ASSERT(index && "cannot find the subtree to invalidate");
@@ -266,7 +272,7 @@ struct BaseBlockTree {
   }
 
   void revalidateSubtree(const hash_t& hash,
-                         enum BlockStatus reason,
+                         enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
     auto* index = this->getBlockIndex(hash);
     VBK_ASSERT(index && "cannot find the subtree to revalidate");
@@ -278,7 +284,7 @@ struct BaseBlockTree {
    * function.
    */
   void revalidateSubtree(index_t& toBeValidated,
-                         enum BlockStatus reason,
+                         enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
     VBK_LOG_DEBUG("Revalidating %s subtree: reason=%d block=%s",
                   block_t::name(),
@@ -296,7 +302,7 @@ struct BaseBlockTree {
     // if the block has any invalidity flags other than `reason`, its
     // descendants are already flagged as BLOCK_FAILED_CHILD and should stay so
     if (toBeValidated.hasFlags(
-            static_cast<enum BlockStatus>(BLOCK_FAILED_MASK & ~reason))) {
+            static_cast<enum BlockValidityStatus>(BLOCK_FAILED_MASK & ~reason))) {
       doReValidate(toBeValidated, reason);
       return;
     }
@@ -635,7 +641,7 @@ struct BaseBlockTree {
     blocks_.erase(shortHash);
   }
 
-  void doInvalidate(index_t& block, enum BlockStatus reason) {
+  void doInvalidate(index_t& block, enum BlockValidityStatus reason) {
     VBK_ASSERT_MSG(
         !block.isValidUpTo(BLOCK_CAN_BE_APPLIED) ||
             (reason & BLOCK_FAILED_POP) == 0u,
@@ -649,7 +655,7 @@ struct BaseBlockTree {
     validity_sig_.emit(block);
   }
 
-  void doReValidate(index_t& block, enum BlockStatus reason) {
+  void doReValidate(index_t& block, enum BlockValidityStatus reason) {
     block.unsetFlag(reason);
     tryAddTip(&block);
     validity_sig_.emit(block);

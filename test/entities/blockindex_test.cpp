@@ -145,7 +145,8 @@ TYPED_TEST_P(BlockIndexTest, RoundTrip) {
 
   auto vbkencoded = SerializeToVbkEncoding<Index>(index);
   Index decodedVbk;
-  ASSERT_TRUE(DeserializeFromVbkEncoding<Index>(vbkencoded, decodedVbk, state));
+  ASSERT_TRUE(DeserializeFromVbkEncoding<Index>(vbkencoded, decodedVbk, state))
+      << state.toString();
   ASSERT_TRUE(state.IsValid());
   ASSERT_EQ(index.toVbkEncoding(), decodedVbk.toVbkEncoding());
 }

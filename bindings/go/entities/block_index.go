@@ -9,41 +9,50 @@ import (
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 )
 
-// BlockStatus ...
-type BlockStatus uint32
+// BlockStateStatus ...
+type BlockStateStatus uint32
+
+// BlockValidityStatus ...
+type BlockValidityStatus uint32
 
 const (
-	// BlockValidUnknown - Default state for validity - validity state is unknown
-	BlockValidUnknown BlockStatus = 0
-	// BlockBootstrap - This is a bootstrap block
-	BlockBootstrap BlockStatus = 1 << 1
-	// BlockFailedBlock - Block is statelessly valid, but the altchain marked it as failed
-	BlockFailedBlock BlockStatus = 1 << 2
-	// BlockFailedPop - Block failed state{less,ful} validation due to its payloads
-	BlockFailedPop BlockStatus = 1 << 3
-	// BlockFailedChild - Block is state{lessly,fully} valid and the altchain did not report it as
-	// invalid, but some of the ancestor blocks are invalid
-	BlockFailedChild BlockStatus = 1 << 4
-	// BlockFailedMask - All invalidity flags
-	BlockFailedMask BlockStatus = BlockFailedChild | BlockFailedPop | BlockFailedBlock
-	// BlockApplied - The block has been applied via PopStateMachine
-	BlockApplied BlockStatus = 1 << 5
+
+	//! BlockStateStatus flags
 
 	// BlockValidTree - AcceptBlockHeader succeded. All ancestors are at least at this state.
-	BlockValidTree BlockStatus = 1 << 6
-	// BlockHasPayloads - AcceptBlock has been executed on this block; payloads are statelessly valid
-	BlockHasPayloads BlockStatus = 2 << 6
+	BlockValidTree BlockStateStatus = 1
 	// BlockConnected - The block is connected via connectBlock
-	BlockConnected BlockStatus = 3 << 6
+	BlockConnected BlockStateStatus = 2
 	// BlockHasBeenApplied - The block has been successfully applied, likely along with another chain
-	BlockHasBeenApplied BlockStatus = 4 << 6
+	BlockCanBeAppliedMaybeWithOtherChain BlockStateStatus = 3
 	// BlockCanBeApplied - The chain with the block at its tip is fully valid
-	BlockCanBeApplied BlockStatus = 5 << 6
+	BlockCanBeApplied BlockStateStatus = 4
 	// BlockValidMask - All stateful validity levels
-	// FIXME: BlockHasPayloads is not really a stateful validity level and does
-	// not belong here since it does not depend on other block contents
-	BlockValidMask BlockStatus = BlockValidUnknown | BlockValidTree | BlockHasPayloads |
-		BlockConnected | BlockHasBeenApplied | BlockCanBeApplied
+	BlockValidMask BlockStateStatus = BlockValidTree |
+		BlockConnected | BlockCanBeAppliedMaybeWithOtherChain | BlockCanBeApplied
+
+	//! BlockValidityStatus flags
+
+	// BlockValidUnknown - Default state for validity - validity state is unknown
+	BlockValidUnknown BlockValidityStatus = 0
+
+	//! all values from (0, 15] are reserved for BlockStateStatus
+
+	// BlockBootstrap - This is a bootstrap block
+	BlockBootstrap BlockValidityStatus = 1 << 4
+	// BlockFailedBlock - Block is statelessly valid, but the altchain marked it as failed
+	BlockFailedBlock BlockValidityStatus = 1 << 5
+	// BlockFailedPop - Block failed state{less,ful} validation due to its payloads
+	BlockFailedPop BlockValidityStatus = 1 << 6
+	// BlockFailedChild - Block is state{lessly,fully} valid and the altchain did not report it as
+	// invalid, but some of the ancestor blocks are invalid
+	BlockFailedChild BlockValidityStatus = 1 << 7
+	// BlockFailedMask - All invalidity flags
+	BlockFailedMask BlockValidityStatus = BlockFailedChild | BlockFailedPop | BlockFailedBlock
+	// BlockHasPayloads - AcceptBlock has been executed on this block
+	BlockHasPayloads BlockValidityStatus = 1 << 8
+	// BlockApplied - The block has been applied via PopStateMachine
+	BlockApplied BlockValidityStatus = 1 << 9
 )
 
 // GenericBlockHeader ...
@@ -87,7 +96,7 @@ type BlockIndex struct {
 	// Block header
 	Header GenericBlockHeader
 	// Contains status flags
-	Status BlockStatus
+	Status uint32
 }
 
 // GetHash ...
@@ -141,6 +150,10 @@ func (v *BlockIndex) GetAltBlockHeader() (block *AltBlock, err error) {
 	return block, err
 }
 
+func (v *BlockIndex) HasFlags(flag BlockValidityStatus) bool {
+	return v.Status&uint32(flag) != 0
+}
+
 // ToRaw ...
 func (v *BlockIndex) ToRaw(stream io.Writer) error {
 	if err := binary.Write(stream, binary.BigEndian, v.Height); err != nil {
@@ -171,10 +184,10 @@ func (v *BlockIndex) FromRaw(stream io.Reader) error {
 		return err
 	}
 	var status uint32
-	if err := binary.Read(stream, binary.LittleEndian, &status); err != nil {
+	if err := binary.Read(stream, binary.BigEndian, &status); err != nil {
 		return err
 	}
-	v.Status = BlockStatus(status)
+	v.Status = status
 	return v.Addon.FromRaw(stream)
 }
 

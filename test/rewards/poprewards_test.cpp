@@ -219,14 +219,14 @@ TEST_F(RewardsTestFixture, basicReward_test) {
 
   auto payoutBlockRound =
       sampleCalculator->getRoundForBlockNumber(endorsedBlock.height);
-  ASSERT_EQ(payouts.begin()->second,
+  ASSERT_EQ(payouts.payouts.begin()->second,
             (int64_t)PopRewardsBigDecimal::decimals *
                 altparam.getPayoutParams().roundRatios()[payoutBlockRound]);
   // keystone payout is 3 reward points
-  ASSERT_NEAR(
-      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
-      3,
-      0.01);
+  ASSERT_NEAR(((double)payouts.payouts.begin()->second) /
+                  PopRewardsBigDecimal::decimals,
+              3,
+              0.01);
 }
 
 TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
@@ -240,10 +240,10 @@ TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getPayoutParams().keystoneRound());
   // and total miners' reward is 5.1 reward points
-  ASSERT_NEAR(
-      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
-      5.1,
-      0.1);
+  ASSERT_NEAR(((double)payouts.payouts.begin()->second) /
+                  PopRewardsBigDecimal::decimals,
+              5.1,
+              0.1);
 }
 
 TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
@@ -257,10 +257,10 @@ TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getPayoutParams().keystoneRound());
   // and total miners' reward is 5.1 reward points
-  ASSERT_NEAR(
-      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
-      5.1,
-      0.1);
+  ASSERT_NEAR(((double)payouts.payouts.begin()->second) /
+                  PopRewardsBigDecimal::decimals,
+              5.1,
+              0.1);
 }
 
 TEST_F(RewardsTestFixture, largeFlatReward_test) {
@@ -279,10 +279,10 @@ TEST_F(RewardsTestFixture, largeFlatReward_test) {
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getPayoutParams().flatScoreRound());
   // and total miners' reward is 1.07 reward points
-  ASSERT_NEAR(
-      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
-      1.07,
-      0.1);
+  ASSERT_NEAR(((double)payouts.payouts.begin()->second) /
+                  PopRewardsBigDecimal::decimals,
+              1.07,
+              0.1);
 }
 
 TEST_F(RewardsTestFixture, hugeFlatReward_test) {
@@ -301,10 +301,10 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
             altparam.getPayoutParams().flatScoreRound());
   // and total miners' reward is 1.07 reward points
-  ASSERT_NEAR(
-      ((double)payouts.begin()->second) / PopRewardsBigDecimal::decimals,
-      1.07,
-      0.1);
+  ASSERT_NEAR(((double)payouts.payouts.begin()->second) /
+                  PopRewardsBigDecimal::decimals,
+              1.07,
+              0.1);
 }
 
 TEST_F(RewardsTestFixture, basicCacheReward_test) {
@@ -326,7 +326,8 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
 
   auto payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
   ASSERT_EQ(payoutsUncached.size(), 1);
-  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
+  ASSERT_EQ(payoutsUncached.payouts.begin()->second,
+            payouts.payouts.begin()->second);
 
   // generate new fork with the new altPayloads
   reorg(5);
@@ -342,7 +343,8 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
   payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
 
   ASSERT_EQ(payoutsUncached.size(), 1);
-  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
+  ASSERT_EQ(payoutsUncached.payouts.begin()->second,
+            payouts.payouts.begin()->second);
 }
 
 static AltChainParamsRegTest altparam1{};
@@ -378,7 +380,8 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
 
   auto payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
   ASSERT_EQ(payoutsUncached.size(), 1);
-  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
+  ASSERT_EQ(payoutsUncached.payouts.begin()->second,
+            payouts.payouts.begin()->second);
 
   // generate new fork with the new altPayloads
   reorg(depth);
@@ -424,5 +427,6 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
 
   ASSERT_EQ(payoutsUncached.size(), 1);
-  ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
+  ASSERT_EQ(payoutsUncached.payouts.begin()->second,
+            payouts.payouts.begin()->second);
 }

@@ -18,7 +18,7 @@ void VbkTx::toRaw(WriteStream& stream) const {
   writeSingleBEValue(stream, signatureIndex);
 
   WriteStream pubBytesStream;
-  publicationData.toRaw(pubBytesStream);
+  publicationData.toVbkEncoding(pubBytesStream);
   writeVarLenValue(stream, pubBytesStream.data());
 }
 
@@ -91,7 +91,7 @@ bool altintegration::DeserializeFromRaw(ReadStream& stream,
   }
 
   Slice<const uint8_t> pubBytes;
-  if (!readVarLenValue(stream, pubBytes, state, 0, MAX_SIZE_PUBLICATION_DATA)) {
+  if (!readVarLenValue(stream, pubBytes, state, 0, MAX_PUBLICATIONDATA_SIZE)) {
     return state.Invalid("vbktx-publication-bytes");
   }
 
@@ -108,7 +108,7 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                                 VbkTx& out,
                                                 ValidationState& state) {
   Slice<const uint8_t> rawTx;
-  if (!readVarLenValue(stream, rawTx, state, 0, MAX_RAWTX_SIZE_VBKTX)) {
+  if (!readVarLenValue(stream, rawTx, state, 0, MAX_POPDATA_SIZE)) {
     return state.Invalid("vbktx-header");
   }
   Slice<const uint8_t> signature;
@@ -117,7 +117,8 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("vbktx-signature");
   }
   Slice<const uint8_t> publicKey;
-  if (!readSingleByteLenValue(stream, publicKey, state, 0, PUBLIC_KEY_SIZE)) {
+  if (!readSingleByteLenValue(
+          stream, publicKey, state, 0, MAX_PUBLIC_KEY_SIZE)) {
     return state.Invalid("vbktx-public-key");
   }
   ReadStream txstream(rawTx);

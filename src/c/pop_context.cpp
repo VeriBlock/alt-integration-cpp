@@ -230,6 +230,22 @@ bool VBK_AltBlockTree_setState(PopContext* self,
   return self->context->altTree->setState(hash, state->getState());
 }
 
+VBK_ByteStream* VBK_AltBlockTree_getPopPayout(PopContext* self,
+                                              const uint8_t* tip_hash_bytes,
+                                              int tip_hash_bytes_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+
+  std::vector<uint8_t> hash{tip_hash_bytes,
+                            tip_hash_bytes + tip_hash_bytes_size};
+  auto ret = self->context->altTree->getPopPayout(hash);
+
+  altintegration::WriteStream stream;
+  ret.toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
 VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
                                       const uint8_t* hash_bytes,
                                       int hash_bytes_size) {

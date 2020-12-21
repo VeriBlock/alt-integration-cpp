@@ -16,14 +16,15 @@ void BtcBlockAddon::setDirty() {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 BtcBlockAddon& out,
                                 ValidationState& state) {
-  if (!readArrayOf<int32_t>(stream,
-                            out.refs,
-                            state,
-                            0,
-                            MAX_BTCADDON_REFS,
-                            [&](int32_t& out) -> bool {
-                              return stream.readBE<int32_t>(out, state);
-                            })) {
+  if (!readArrayOf<BtcBlockAddon::ref_height_t>(
+          stream,
+          out.refs,
+          state,
+          0,
+          MAX_BTCADDON_REFS,
+          [](ReadStream& stream, int32_t& out, ValidationState& state) -> bool {
+            return stream.readBE<BtcBlockAddon::ref_height_t>(out, state);
+          })) {
     return state.Invalid("bad-refs");
   }
 

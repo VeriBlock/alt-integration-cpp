@@ -36,6 +36,7 @@ struct PopState {
   }
 
   void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
+    VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
     _containingEndorsements.emplace(e->id, std::move(e));
     setDirty();
   }
@@ -53,12 +54,11 @@ struct PopState {
 
   void toVbkEncoding(WriteStream& stream) const {
     // write containingEndorsements as vector
+    using value_t = typename decltype(_containingEndorsements)::value_type;
     writeContainer<decltype(_containingEndorsements)>(
         stream,
         _containingEndorsements,
-        [&](WriteStream&,
-            const typename decltype(
-                _containingEndorsements)::value_type& endorsement) {
+        [&](WriteStream&, const value_t& endorsement) {
           endorsement.second->toVbkEncoding(stream);
         });
   }
@@ -87,9 +87,15 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 ValidationState& state) {
   std::vector<T> endorsements;
   auto max = std::max(MAX_POPDATA_ATV, MAX_POPDATA_VTB);
-  if (!readArrayOf<T>(stream, endorsements, state, 0, max, [&](T& t) -> bool {
-        return DeserializeFromVbkEncoding(stream, t, state);
-      })) {
+  if (!readArrayOf<T>(
+          stream,
+          endorsements,
+          state,
+          0,
+          max,
+          [](ReadStream& stream, T& t, ValidationState& state) -> bool {
+            return DeserializeFromVbkEncoding(stream, t, state);
+          })) {
     return state.Invalid("popstate-bad-endorsement");
   }
 

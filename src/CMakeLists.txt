@@ -38,7 +38,6 @@ set(SOURCES
         validation_state.cpp
         bootstraps.cpp
         time.cpp
-        serde.cpp
         keystone_util.cpp
         hashutil.cpp
         stateless_validation.cpp
@@ -53,9 +52,9 @@ set(SOURCES
         $<TARGET_OBJECTS:strutil>
         $<TARGET_OBJECTS:serde>
         $<TARGET_OBJECTS:blockchain>
+        $<TARGET_OBJECTS:pop_utils>
         $<TARGET_OBJECTS:storage>
         $<TARGET_OBJECTS:poprewards>
-        $<TARGET_OBJECTS:pop_utils>
         $<TARGET_OBJECTS:entities>
         $<TARGET_OBJECTS:sha256>
         $<TARGET_OBJECTS:vblake>

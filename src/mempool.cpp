@@ -29,7 +29,7 @@ PopData generatePopData(
     // add VBK block if it fits
     auto& header = *block.second->header;
     if (ret.context.size() >= maxVbkBlocks ||
-        popSize + header.estimateSize() > maxSize) {
+        popSize + header.estimateSize() >= maxSize) {
       // PopData is full
       break;
     }
@@ -40,7 +40,7 @@ PopData generatePopData(
     auto& atvcandidates = block.second->atvs;
     for (const auto& atv : atvcandidates) {
       // by default fit all possible ATVs, thus no 'numeric' limit
-      if (popSize + atv->estimateSize() > maxSize) {
+      if (popSize + atv->estimateSize() >= maxSize) {
         // do not consider this ATV, it does not fit
         continue;
       }
@@ -52,8 +52,8 @@ PopData generatePopData(
     // try to fit VTBs
     auto& vtbcandidates = block.second->vtbs;
     for (const auto& vtb : vtbcandidates) {
-      if (ret.vtbs.size() > maxVTBs ||
-          popSize + vtb->estimateSize() > maxSize) {
+      if (ret.vtbs.size() >= maxVTBs ||
+          popSize + vtb->estimateSize() >= maxSize) {
         // this VTB does not fit
         continue;
       }

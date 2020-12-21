@@ -46,12 +46,11 @@ struct PopTestFixture {
   std::shared_ptr<MockMiner> popminer;
 
   // trees
-  AltBlockTree alttree =
-      AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
+  AltBlockTree alttree;
 
   ValidationState state;
 
-  PopTestFixture() {
+  PopTestFixture() : alttree(altparam, vbkparam, btcparam, payloadsProvider) {
     auto BTCgenesis = GetRegTestBtcBlock();
     auto VBKgenesis = GetRegTestVbkBlock();
 
@@ -94,8 +93,8 @@ struct PopTestFixture {
   void ConnectBlocksUntil(AltBlockTree& tree, const AltBlock::hash_t& hash) {
     auto* index = tree.getBlockIndex(hash);
     VBK_ASSERT(index);
-    while (index && !index->hasFlags(BLOCK_CONNECTED)) {
-      index->setFlag(BLOCK_CONNECTED);
+    while (index && !index->isValidUpTo(BLOCK_CONNECTED)) {
+      index->raiseValidity(BLOCK_CONNECTED);
       index->setFlag(BLOCK_HAS_PAYLOADS);
       index = index->pprev;
     }

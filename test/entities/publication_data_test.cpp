@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/entities/publication_data.hpp"
-
 #include <gtest/gtest.h>
 
+#include "veriblock/entities/publication_data.hpp"
 #include "veriblock/literals.hpp"
 
 using namespace altintegration;
@@ -30,7 +29,7 @@ TEST(PublicationData, DeserializeFromVbkEncoding) {
 
 TEST(PublicationData, Serialize) {
   WriteStream stream;
-  defaultPublication.toRaw(stream);
+  defaultPublication.toVbkEncoding(stream);
   auto pubBytes = stream.data();
   auto pubEncoded = HexStr(pubBytes);
   EXPECT_EQ(pubEncoded, defaultPublicationEncoded);
@@ -42,7 +41,7 @@ TEST(PublicationData, RoundTrip) {
   EXPECT_EQ(decoded.identifier, defaultPublication.identifier);
 
   WriteStream outputStream;
-  decoded.toRaw(outputStream);
+  decoded.toVbkEncoding(outputStream);
   auto pubBytes = outputStream.data();
   auto pubReEncoded = HexStr(pubBytes);
   EXPECT_EQ(pubReEncoded, defaultPublicationEncoded);
