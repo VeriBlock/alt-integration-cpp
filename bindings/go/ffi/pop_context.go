@@ -91,6 +91,12 @@ func (v *PopContext) AltBlockTreeSetState(hashBytes []byte, state *ValidationSta
 	return bool(res)
 }
 
+// AltBlockTreeGetPopPayout return PopPayouts serialized to the VbkByteStream
+func (v *PopContext) AltBlockTreeGetPopPayout(tipHashBytes []byte) *VbkByteStream {
+	tipHashBytesC := (*C.uint8_t)(unsafe.Pointer(&tipHashBytes[0]))
+	return NewVbkByteStream(C.VBK_AltBlockTree_getPopPayout(v.ref, tipHashBytesC, C.int(len(tipHashBytes))))
+}
+
 // BtcGetBlockIndex ...
 func (v *PopContext) BtcGetBlockIndex(hashBytes [veriblock.Sha256HashSize]byte) *VbkByteStream {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))

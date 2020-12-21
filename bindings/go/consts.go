@@ -17,8 +17,8 @@ const (
 	HistoryForTimestampAverage          = 20
 	VbkMinimumTimestampOnsetBlockHeight = 110000
 	MaxHeaderSizePublicationData        = 1024
-	MaxPayoutSizePublicationData        = 100
-	MaxContextSizePublicationData       = 100
+	MaxPayoutSizePublicationData        = 10000
+	MaxContextSizePublicationData       = 10000
 	MaxContextCount                     = 15000
 	MaxContextCountAltPublication       = 15000
 	MaxContextCountVbkPublication       = 15000
@@ -29,6 +29,8 @@ const (
 	VbkHeaderSizeVblake                 = 64
 	VbkHeaderSizeProgpow                = 65
 	MaxLayerCountMerkle                 = 40
+	//! absolute maximum number of pauouts per ALT block
+	MaxPayout = 50000
 	//! NodeCore is using byte value when serializing outputs so we limit to 255
 	MaxOutputsCount = 255
 	//! ASN.1/DER ECDSA encoding max value

@@ -8,16 +8,16 @@
 namespace altintegration {
 
 void PopPayouts::toVbkEncoding(WriteStream& stream) const {
-  writeContainer<std::map<address_t, amount_t>>(
+  writeContainer<std::map<payout_info_t, amount_t>>(
       stream,
       payouts,
-      [](WriteStream& stream, const std::pair<address_t, amount_t>& value) {
+      [](WriteStream& stream, const std::pair<payout_info_t, amount_t>& value) {
         writeSingleByteLenValue(stream, value.first);
         stream.writeBE<uint64_t>(value.second);
       });
 }
 
-void PopPayouts::add(const address_t& address, amount_t amount) {
+void PopPayouts::add(const payout_info_t& address, amount_t amount) {
   this->payouts[address] += amount;
 }
 
@@ -28,19 +28,19 @@ bool PopPayouts::empty() const { return this->payouts.empty(); }
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 PopPayouts& out,
                                 ValidationState& state) {
-  using address_t = typename PopPayouts::address_t;
+  using payout_info_t = typename PopPayouts::payout_info_t;
   using amount_t = typename PopPayouts::amount_t;
 
-  std::vector<std::pair<address_t, amount_t>> out_vec;
+  std::vector<std::pair<payout_info_t, amount_t>> out_vec;
   size_t i = 0;
-  if (!readArrayOf<std::pair<address_t, amount_t>>(
+  if (!readArrayOf<std::pair<payout_info_t, amount_t>>(
           stream,
           out_vec,
           state,
           0,
           MAX_PAYOUT,
           [&i](ReadStream& stream,
-               std::pair<address_t, amount_t>& val,
+               std::pair<payout_info_t, amount_t>& val,
                ValidationState& state) {
             ++i;
 
