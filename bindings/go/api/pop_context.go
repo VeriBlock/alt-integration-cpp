@@ -167,15 +167,13 @@ func (v *PopContext) SetState(hash entities.AltHash) error {
 
 func (v *PopContext) GetPopPayout(tipHash entities.AltHash) (*entities.PopPayouts, error) {
 	defer v.lock()()
-
 	stream := v.popContext.AltBlockTreeGetPopPayout(tipHash)
 	defer stream.Free()
-	var popPayouts entities.PopPayouts
+	popPayouts := &entities.PopPayouts{}
 	if err := popPayouts.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
-
-	return &popPayouts, nil
+	return popPayouts, nil
 }
 
 // BtcGetBlockIndex ...
