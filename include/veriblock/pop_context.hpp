@@ -61,8 +61,7 @@ struct PopContext {
                                                   *ctx->config->vbk.params,
                                                   *ctx->config->btc.params,
                                                   *ctx->payloadsProvider);
-    ctx->popRewardsCalculator = std::make_shared<PopRewardsCalculatorDefault>(
-        *ctx->config->alt);
+    ctx->popRewardsCalculator = std::make_shared<PopRewardsCalculatorDefault>(*ctx->altTree);
     ctx->mempool = std::make_shared<MemPool>(*ctx->altTree);
     ctx->popValidator = std::make_shared<PopValidator>(*ctx->config->vbk.params,
                                                        *ctx->config->btc.params,

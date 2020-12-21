@@ -5,9 +5,9 @@
 
 #include <gtest/gtest.h>
 
-#include "util/pop_test_fixture.hpp"
-#include <veriblock/rewards/poprewards.hpp>
 #include <veriblock/rewards/poprewards_calculator_default.hpp>
+
+#include "util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 
@@ -17,9 +17,10 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
   BlockIndex<VbkBlock>* vbktip;
   std::vector<AltBlock> altchain;
   std::shared_ptr<PopRewardsCalculatorDefault> sampleCalculator;
-  std::shared_ptr<PopRewards> sampleRewards;
 
   ValidationState state;
+  PopRewardsBigDecimal defaultScore = 1.0;
+  PopRewardsBigDecimal defaultDifficulty = 1.0;
 
   RewardsTestFixture() {
     btctip = popminer->mineBtcBlocks(10);
@@ -28,8 +29,8 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     altchain = {altparam.getBootstrapBlock()};
     mineAltBlocks(10, altchain);
 
-    sampleCalculator = std::make_shared<PopRewardsCalculatorDefault>(altparam);
-    sampleRewards = std::make_shared<PopRewards>(altparam, alttree.vbk());
+    sampleCalculator =
+        std::make_shared<PopRewardsCalculatorDefault>(alttree);
 
     EXPECT_EQ(altchain.size(), 11);
     EXPECT_EQ(altchain.at(altchain.size() - 1).height, 10);
@@ -84,12 +85,136 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
   }
 };
 
+TEST_F(RewardsTestFixture, basicCalculator_test) {
+  // blockNumber is used to detect current round only. Let's start with round 1.
+  uint32_t height = 1;
+
+  auto blockReward = sampleCalculator->calculateBlockReward(
+      height, defaultScore, defaultDifficulty);
+  auto minerReward =
+      sampleCalculator->calculateMinerReward(0, defaultScore, blockReward);
+  ASSERT_TRUE(minerReward > 0.0);
+  ASSERT_EQ(minerReward, altparam.getPayoutParams().roundRatios()[height]);
+
+  // score < 1.0 is on the flat reward rate
+  PopRewardsBigDecimal halfScore = defaultScore / 2.0;
+  auto blockReward2 = sampleCalculator->calculateBlockReward(
+      height, halfScore, defaultDifficulty);
+  auto minerReward2 =
+      sampleCalculator->calculateMinerReward(0, halfScore, blockReward2);
+  ASSERT_TRUE(minerReward2 > 0.0);
+  ASSERT_EQ(minerReward, minerReward2);
+
+  // when score is higher than difficulty we begin to gradually decrease the
+  // reward
+  PopRewardsBigDecimal doubleScore = defaultScore * 2.0;
+  auto blockReward3 = sampleCalculator->calculateBlockReward(
+      height, doubleScore, defaultDifficulty);
+  auto minerReward3 =
+      sampleCalculator->calculateMinerReward(0, doubleScore, blockReward3);
+
+  ASSERT_TRUE(minerReward3 > 0.0);
+  // single miner reward is lower due to decreasing payout after 1.0 score
+  // but 2.0 score means there are more miners hence higher total reward
+  ASSERT_GT(minerReward, minerReward3);
+  ASSERT_GT(blockReward3, blockReward);
+
+  // we limit the reward to 200% threshold (for normal blocks). Let's check
+  // this.
+  PopRewardsBigDecimal doublePlusScore = defaultScore * 2.1;
+  auto blockReward4 = sampleCalculator->calculateBlockReward(
+      height, doublePlusScore, defaultDifficulty);
+  auto minerReward4 =
+      sampleCalculator->calculateMinerReward(0, doublePlusScore, blockReward4);
+  ASSERT_GT(minerReward3, minerReward4);
+  ASSERT_EQ(blockReward3, blockReward4);
+
+  // test the keystone highest reward
+  // assume three endorsements having 3.0 score in total
+  auto blockReward5 = sampleCalculator->calculateBlockReward(
+      20, defaultScore * 3.0, defaultDifficulty);
+  ASSERT_GT(blockReward5, blockReward4);
+
+  // multiple endorsements may increase the score to 3.0, keystone block ratio
+  // is 1.7 (due to reward curve) so the payout is 3.0 * 1.7 = 5.1
+  ASSERT_NEAR(
+      (double)blockReward5.value.getLow64() / PopRewardsBigDecimal::decimals,
+      5.1,
+      0.1);
+
+  // test over the highest reward
+  auto blockReward6 = sampleCalculator->calculateBlockReward(
+      20, defaultScore * 4.0, defaultDifficulty);
+  // we see that the reward is no longer growing
+  ASSERT_EQ(blockReward6, blockReward5);
+
+  auto blockReward7 = sampleCalculator->calculateBlockReward(
+      height, defaultScore, defaultDifficulty * 2.0);
+  auto minerReward7 =
+      sampleCalculator->calculateMinerReward(0, defaultScore, blockReward7);
+  ASSERT_TRUE(minerReward7 > 0.0);
+  ASSERT_NEAR(
+      (double)blockReward7.value.getLow64() / PopRewardsBigDecimal::decimals,
+      0.5,
+      0.1);
+}
+
+TEST_F(RewardsTestFixture, specialReward_test) {
+  // blockNumber is used to detect current round only. Let's start with round 1.
+  uint32_t height = 1;
+
+  // let's start with hardcoded difficulty
+  PopRewardsBigDecimal doubleScore = defaultScore * 2.0;
+  auto blockReward = sampleCalculator->calculateBlockReward(
+      height, defaultScore, defaultDifficulty);
+  auto minerReward1 =
+      sampleCalculator->calculateMinerReward(0, defaultScore, blockReward);
+  auto blockReward2 = sampleCalculator->calculateBlockReward(
+      height, doubleScore, defaultDifficulty);
+  auto minerReward2 =
+      sampleCalculator->calculateMinerReward(0, doubleScore, blockReward2);
+  // single miner reward is lower due to decreasing payout after 1.0 score
+  // but 2.0 score means there are more miners hence higher total reward
+  ASSERT_GT(blockReward2, blockReward);
+  ASSERT_GT(minerReward1, minerReward2);
+
+  blockReward = sampleCalculator->calculateBlockReward(
+      height + 1, defaultScore, defaultDifficulty);
+  auto minerReward3 =
+      sampleCalculator->calculateMinerReward(0, defaultScore, blockReward);
+  blockReward2 = sampleCalculator->calculateBlockReward(
+      height + 1, doubleScore, defaultDifficulty);
+  auto minerReward4 =
+      sampleCalculator->calculateMinerReward(0, doubleScore, blockReward2);
+
+  // round 2 special case - any score has the same reward
+  ASSERT_EQ(blockReward, blockReward2);
+  ASSERT_GT(minerReward3, minerReward4);
+
+  // now let's see how the keystone block is being rewarded
+  blockReward = sampleCalculator->calculateBlockReward(
+      altparam.getKeystoneInterval(), defaultScore, defaultDifficulty);
+  auto minerRewardKeystone1 =
+      sampleCalculator->calculateMinerReward(0, defaultScore, blockReward);
+  blockReward = sampleCalculator->calculateBlockReward(
+      altparam.getKeystoneInterval(), doubleScore, defaultDifficulty);
+  auto minerRewardKeystone2 =
+      sampleCalculator->calculateMinerReward(0, doubleScore, blockReward);
+  ASSERT_GT(minerRewardKeystone1, minerRewardKeystone2);
+
+  // we see that even when cut down the keystone reward is higher than any
+  // normal reward from rounds 0-2
+  ASSERT_GT(minerRewardKeystone2, minerReward1);
+  ASSERT_GT(minerRewardKeystone2, minerReward2);
+  ASSERT_GT(minerRewardKeystone2, minerReward3);
+  ASSERT_GT(minerRewardKeystone2, minerReward4);
+}
+
 TEST_F(RewardsTestFixture, basicReward_test) {
   AltBlock endorsedBlock = altchain[10];
   endorseForRewardLastBlock(1);
 
-  auto payouts =
-      alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_TRUE(payouts.size());
 
   auto payoutBlockRound =
@@ -109,8 +234,7 @@ TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
   AltBlock endorsedBlock = altchain[10];
   endorseForRewardLastBlock(30);
 
-  auto payouts =
-      alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -127,8 +251,7 @@ TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
   AltBlock endorsedBlock = altchain[10];
   endorseForRewardLastBlock(100);
 
-  auto payouts =
-      alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -150,8 +273,7 @@ TEST_F(RewardsTestFixture, largeFlatReward_test) {
   AltBlock endorsedBlock = altchain[12];
   endorseForRewardLastBlock(30);
 
-  auto payouts =
-      alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -173,8 +295,7 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
   AltBlock endorsedBlock = altchain[12];
   endorseForRewardLastBlock(100);
 
-  auto payouts =
-      alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -195,19 +316,15 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
   auto* endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
 
   EXPECT_EQ(altchain.back().height, 101);
-  EXPECT_EQ(
-      sampleRewards->scoreFromEndorsements(*sampleCalculator, *endorsedIndex),
-      1.0);
+  EXPECT_EQ(sampleCalculator->scoreFromEndorsements(*endorsedIndex), 1.0);
   mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95),
                 altchain,
                 true);
 
-  auto payouts =
-      alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
 
-  auto payoutsUncached =
-      sampleRewards->calculatePayouts(*sampleCalculator, *endorsedIndex);
+  auto payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
 
@@ -217,14 +334,12 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
 
   // after reorg the score has changed
-  EXPECT_FALSE(sampleRewards->scoreFromEndorsements(*sampleCalculator,
-                                                    *endorsedIndex) == 1.0);
+  EXPECT_FALSE(sampleCalculator->scoreFromEndorsements(*endorsedIndex) == 1.0);
 
   mineAltBlocks(4, altchain, true);
-  payouts = alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
-  payoutsUncached =
-      sampleRewards->calculatePayouts(*sampleCalculator, *endorsedIndex);
+  payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
 
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
@@ -253,19 +368,15 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   ASSERT_EQ(endorsedPrevIndex->endorsedBy.size(), 0);
 
   EXPECT_EQ(altchain.back().height, 101);
-  EXPECT_EQ(
-      sampleRewards->scoreFromEndorsements(*sampleCalculator, *endorsedIndex),
-      1.0);
+  EXPECT_EQ(sampleCalculator->scoreFromEndorsements(*endorsedIndex), 1.0);
   mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95),
                 altchain,
                 true);
 
-  auto payouts =
-      alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
 
-  auto payoutsUncached =
-      sampleRewards->calculatePayouts(*sampleCalculator, *endorsedIndex);
+  auto payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
 
@@ -287,8 +398,7 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
   endorsedPrevIndex = alttree.getBlockIndex(endorsedPrevBlock.getHash());
 
-  EXPECT_FALSE(sampleRewards->scoreFromEndorsements(*sampleCalculator,
-                                                    *endorsedIndex) == 1.0);
+  EXPECT_FALSE(sampleCalculator->scoreFromEndorsements(*endorsedIndex) == 1.0);
 
   mineAltBlocks(depth - 1, altchain, true);
 
@@ -309,10 +419,9 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
     ASSERT_EQ(endorsedPrevIndex->endorsedBy.size(), 100);
   }
 
-  payouts = alttree.getPopPayout(*sampleCalculator, altchain.back().getHash());
+  payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
   ASSERT_EQ(payouts.size(), 1);
-  payoutsUncached =
-      sampleRewards->calculatePayouts(*sampleCalculator, *endorsedIndex);
+  payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
 
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.begin()->second, payouts.begin()->second);
