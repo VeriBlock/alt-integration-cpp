@@ -74,6 +74,12 @@ struct BaseBlockTree {
     return it == blocks_.end() ? nullptr : it->second.get();
   }
 
+  //! @overload
+  index_t* getBlockIndex(const std::string& hex) const {
+    auto data = ParseHex(hex);
+    return getBlockIndex(makePrevHash(data));
+  }
+
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
     auto* tip = getBlockIndex(hash);
     if (!tip) {
