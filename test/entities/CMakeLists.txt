@@ -16,6 +16,7 @@ addtest(entities_serde_test
         popdata_test.cpp
         blockindex_test.cpp
         pop_payouts_test.cpp
+        estimate_size_test.cpp
         )
 
 addtest(json_test
