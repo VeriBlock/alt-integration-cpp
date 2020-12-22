@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/rewards/poprewards_calculator_default.hpp>
+#include <veriblock/rewards/default_poprewards_calculator.hpp>
 
 #include "util/pop_test_fixture.hpp"
 
@@ -16,7 +16,7 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
   BlockIndex<BtcBlock>* btctip;
   BlockIndex<VbkBlock>* vbktip;
   std::vector<AltBlock> altchain;
-  std::shared_ptr<PopRewardsCalculatorDefault> sampleCalculator;
+  std::shared_ptr<DefaultPopRewardsCalculator> sampleCalculator;
 
   ValidationState state;
   PopRewardsBigDecimal defaultScore = 1.0;
@@ -29,7 +29,7 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     altchain = {altparam.getBootstrapBlock()};
     mineAltBlocks(10, altchain);
 
-    sampleCalculator = std::make_shared<PopRewardsCalculatorDefault>(alttree);
+    sampleCalculator = std::make_shared<DefaultPopRewardsCalculator>(alttree);
 
     EXPECT_EQ(altchain.size(), 11);
     EXPECT_EQ(altchain.at(altchain.size() - 1).height, 10);
@@ -439,11 +439,11 @@ struct TestCase {
 
 struct CalculatorTableFixture : public testing::TestWithParam<TestCase>,
                                 public PopTestFixture {
-  std::shared_ptr<PopRewardsCalculatorDefault> sampleCalculator;
+  std::shared_ptr<DefaultPopRewardsCalculator> sampleCalculator;
   ValidationState state;
 
   CalculatorTableFixture() {
-    sampleCalculator = std::make_shared<PopRewardsCalculatorDefault>(alttree);
+    sampleCalculator = std::make_shared<DefaultPopRewardsCalculator>(alttree);
   }
 };
 

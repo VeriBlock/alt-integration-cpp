@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/rewards/poprewards_calculator_default.hpp>
+#include <veriblock/rewards/default_poprewards_calculator.hpp>
 #include <util/pop_test_fixture.hpp>
 
 using namespace altintegration;
@@ -97,7 +97,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     }
   }
 
-  PopRewardsCalculatorDefault calculator_;
+  DefaultPopRewardsCalculator calculator_;
 };
 
 TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
@@ -194,7 +194,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2 =
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
-  auto calculator2 = PopRewardsCalculatorDefault(alttree2);
+  auto calculator2 = DefaultPopRewardsCalculator(alttree2);
   EXPECT_TRUE(
       alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
@@ -255,7 +255,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2 =
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
-  auto calculator2 = PopRewardsCalculatorDefault(alttree2);
+  auto calculator2 = DefaultPopRewardsCalculator(alttree2);
   EXPECT_TRUE(
       alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));

@@ -6,7 +6,7 @@
 #include <cassert>
 #include <vector>
 #include <veriblock/entities/atv.hpp>
-#include <veriblock/rewards/poprewards_calculator_default.hpp>
+#include <veriblock/rewards/default_poprewards_calculator.hpp>
 
 namespace altintegration {
 
@@ -77,13 +77,13 @@ static PopRewardsBigDecimal calculateSlopeRatio(
   return (maxScoreDecrease - scoreDecrease);
 }
 
-static std::vector<const PopRewardsCalculatorDefault::index_t*>
-fetchBlocksUntil(const PopRewardsCalculatorDefault::index_t* from,
-                 const PopRewardsCalculatorDefault::index_t* check,
+static std::vector<const DefaultPopRewardsCalculator::index_t*>
+fetchBlocksUntil(const DefaultPopRewardsCalculator::index_t* from,
+                 const DefaultPopRewardsCalculator::index_t* check,
                  size_t count) {
-  std::vector<const PopRewardsCalculatorDefault::index_t*> blocks;
+  std::vector<const DefaultPopRewardsCalculator::index_t*> blocks;
   blocks.reserve(count);
-  const PopRewardsCalculatorDefault::index_t* curBlock = from;
+  const DefaultPopRewardsCalculator::index_t* curBlock = from;
 
   for (size_t i = 0; i < count; i++) {
     if (curBlock == nullptr) break;
@@ -95,7 +95,7 @@ fetchBlocksUntil(const PopRewardsCalculatorDefault::index_t* from,
 }
 
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
-uint32_t PopRewardsCalculatorDefault::getRoundForBlockNumber(
+uint32_t DefaultPopRewardsCalculator::getRoundForBlockNumber(
     uint32_t height) const {
   const PopPayoutsParams& params = tree_.getParams().getPayoutParams();
   if (height % tree_.getParams().getKeystoneInterval() == 0) {
@@ -113,7 +113,7 @@ uint32_t PopRewardsCalculatorDefault::getRoundForBlockNumber(
 }
 
 PopRewardsBigDecimal
-PopRewardsCalculatorDefault::getScoreMultiplierFromRelativeBlock(
+DefaultPopRewardsCalculator::getScoreMultiplierFromRelativeBlock(
     int relativeBlock) const {
   auto table = tree_.getParams().getPayoutParams().relativeScoreLookupTable();
   if (relativeBlock < 0 || relativeBlock >= static_cast<int>(table.size())) {
@@ -123,7 +123,7 @@ PopRewardsCalculatorDefault::getScoreMultiplierFromRelativeBlock(
   return table[relativeBlock];
 }
 
-PopRewardsBigDecimal PopRewardsCalculatorDefault::calculateBlockReward(
+PopRewardsBigDecimal DefaultPopRewardsCalculator::calculateBlockReward(
     uint32_t height,
     PopRewardsBigDecimal popscore,
     PopRewardsBigDecimal popdifficulty) const {
@@ -167,7 +167,7 @@ PopRewardsBigDecimal PopRewardsCalculatorDefault::calculateBlockReward(
   return slope * scoreToDifficulty * roundRatio;
 }
 
-PopRewardsBigDecimal PopRewardsCalculatorDefault::calculateMinerReward(
+PopRewardsBigDecimal DefaultPopRewardsCalculator::calculateMinerReward(
     uint32_t vbkRelativeHeight,
     const PopRewardsBigDecimal& scoreForThisBlock,
     const PopRewardsBigDecimal& blockReward) const {
@@ -179,7 +179,7 @@ PopRewardsBigDecimal PopRewardsCalculatorDefault::calculateMinerReward(
   return blockReward * endorsementLevelWeight / scoreForThisBlock;
 }
 
-PopRewardsBigDecimal PopRewardsCalculatorDefault::scoreFromEndorsements(
+PopRewardsBigDecimal DefaultPopRewardsCalculator::scoreFromEndorsements(
     const BlockIndex<AltBlock>& endorsedBlock) {
   const auto it = cache_.find(&endorsedBlock);
   if (it != cache_.end()) {
@@ -201,7 +201,7 @@ PopRewardsBigDecimal PopRewardsCalculatorDefault::scoreFromEndorsements(
   return totalScore;
 }
 
-PopRewardsBigDecimal PopRewardsCalculatorDefault::calculateDifficulty(
+PopRewardsBigDecimal DefaultPopRewardsCalculator::calculateDifficulty(
     const BlockIndex<AltBlock>& tip) {
   PopRewardsBigDecimal difficulty = 0.0;
   auto& params = tree_.getParams().getPayoutParams();
@@ -222,7 +222,7 @@ PopRewardsBigDecimal PopRewardsCalculatorDefault::calculateDifficulty(
   return difficulty;
 }
 
-PopPayouts PopRewardsCalculatorDefault::calculatePayoutsInner(
+PopPayouts DefaultPopRewardsCalculator::calculatePayoutsInner(
     const BlockIndex<AltBlock>& endorsedBlock,
     const PopRewardsBigDecimal& endorsedBlockScore,
     const PopRewardsBigDecimal& popDifficulty) {
@@ -251,7 +251,7 @@ PopPayouts PopRewardsCalculatorDefault::calculatePayoutsInner(
   return rewards;
 }
 
-PopRewardsBigDecimal PopRewardsCalculatorDefault::appendToCache(
+PopRewardsBigDecimal DefaultPopRewardsCalculator::appendToCache(
     const index_t& block) {
   const index_t* frontBlock = nullptr;
   const index_t* backBlock = nullptr;
@@ -286,7 +286,7 @@ PopRewardsBigDecimal PopRewardsCalculatorDefault::appendToCache(
   return score;
 }
 
-PopPayouts PopRewardsCalculatorDefault::calculatePayouts(
+PopPayouts DefaultPopRewardsCalculator::calculatePayouts(
     const BlockIndex<AltBlock>& endorsedBlock) {
   // make sure cache is in valid state, eg contains all necessary
   // blocks to calculate POP difficulty for the endorsed block
@@ -341,12 +341,12 @@ PopPayouts PopRewardsCalculatorDefault::calculatePayouts(
   return calculatePayoutsInner(endorsedBlock, blockScore, popDifficulty);
 }
 
-void PopRewardsCalculatorDefault::invalidateCache() {
+void DefaultPopRewardsCalculator::invalidateCache() {
   cache_.clear();
   history_.clear();
 }
 
-void PopRewardsCalculatorDefault::eraseCacheHistory(uint32_t blocks) {
+void DefaultPopRewardsCalculator::eraseCacheHistory(uint32_t blocks) {
   for (uint32_t i = 0; i < blocks; i++) {
     if (history_.empty()) break;
     const auto* block = history_.pop_back();
@@ -356,7 +356,7 @@ void PopRewardsCalculatorDefault::eraseCacheHistory(uint32_t blocks) {
   }
 }
 
-void PopRewardsCalculatorDefault::onOverrideTip(const index_t& index) {
+void DefaultPopRewardsCalculator::onOverrideTip(const index_t& index) {
   // invalidate rewards cache if necessary
   uint32_t invalidBlocks = std::numeric_limits<uint32_t>::max();
 
@@ -367,7 +367,7 @@ void PopRewardsCalculatorDefault::onOverrideTip(const index_t& index) {
   eraseCacheHistory(invalidBlocks);
 }
 
-PopPayouts PopRewardsCalculatorDefault::getPopPayout(
+PopPayouts DefaultPopRewardsCalculator::getPopPayout(
     const AltBlockTree::hash_t& tip) {
   VBK_ASSERT(tree_.isBootstrapped() && "not bootstrapped");
 

@@ -3,12 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_DEFAULT_HPP_
-#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_DEFAULT_HPP_
+#ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_DEFAULT_POPREWARDS_CALCULATOR_HPP_
+#define ALT_INTEGRATION_INCLUDE_VERIBLOCK_DEFAULT_POPREWARDS_CALCULATOR_HPP_
 
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/rewards/poprewards_bigdecimal.hpp>
-#include <veriblock/rewards/poprewards_calculator_interface.hpp>
+#include <veriblock/rewards/poprewards_calculator.hpp>
 #include <veriblock/rewards/ring_buffer.hpp>
 
 namespace altintegration {
@@ -16,10 +16,10 @@ namespace altintegration {
 /**
  * @invariant does not modify any on-disk state.
  */
-struct PopRewardsCalculatorDefault : public PopRewardsCalculatorInterface {
+struct DefaultPopRewardsCalculator : public PopRewardsCalculator {
   using index_t = AltBlockTree::index_t;
 
-  PopRewardsCalculatorDefault(AltBlockTree& tree)
+  DefaultPopRewardsCalculator(AltBlockTree& tree)
       : tree_(tree),
         history_(tree.getParams().getPayoutParams().difficultyAveragingInterval() *
                  2) {
@@ -28,7 +28,7 @@ struct PopRewardsCalculatorDefault : public PopRewardsCalculatorInterface {
         this->onOverrideTip(i);
       });
   }
-  virtual ~PopRewardsCalculatorDefault() = default;
+  ~DefaultPopRewardsCalculator() override = default;
 
   PopPayouts getPopPayout(const AltBlockTree::hash_t& tip) override;
 
@@ -153,4 +153,4 @@ struct PopRewardsCalculatorDefault : public PopRewardsCalculatorInterface {
 
 }  // namespace altintegration
 
-#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_DEFAULT_HPP_
+#endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_DEFAULT_POPREWARDS_CALCULATOR_HPP_
