@@ -46,6 +46,10 @@ function(add_fuzz FUZZ_TARGET)
     endif()
 
     add_executable(${FUZZ_TARGET} ${FUZZ_SOURCES})
+    set_target_properties(${FUZZ_TARGET} PROPERTIES
+            CXX_STANDARD 17
+            CXX_STANDARD_REQUIRED TRUE
+            )
     target_link_libraries(${FUZZ_TARGET} ${LIB_NAME})
     target_compile_options(${FUZZ_TARGET} PRIVATE
             -fsanitize=fuzzer,address
