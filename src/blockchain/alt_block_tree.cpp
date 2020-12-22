@@ -10,8 +10,6 @@
 #include "veriblock/algorithm.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
-#include "veriblock/rewards/poprewards.hpp"
-#include "veriblock/rewards/poprewards_calculator.hpp"
 
 namespace altintegration {
 
@@ -307,43 +305,6 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
   return true;
 }
 
-PopPayouts AltBlockTree::getPopPayout(const AltBlock::hash_t& tip) {
-  VBK_ASSERT(isBootstrapped() && "not bootstrapped");
-
-  auto* index = getBlockIndex(tip);
-  VBK_ASSERT_MSG(index, "can not find block %s", HexStr(tip));
-  VBK_ASSERT_MSG(index == activeChain_.tip(),
-                 "AltTree is at unexpected state: Tip=%s ExpectedTip=%s",
-                 activeChain_.tip()->toPrettyString(),
-                 index->toPrettyString());
-
-  VBK_ASSERT_MSG(index->isValidUpTo(BLOCK_CONNECTED),
-                 "Block %s is not connected",
-                 index->toPrettyString());
-
-  auto* endorsedBlock = index->getAncestorBlocksBehind(
-      alt_config_->getPayoutParams().getPopPayoutDelay());
-  if (endorsedBlock == nullptr) {
-    // not enough blocks for payout
-    return {};
-  }
-
-  VBK_ASSERT_MSG(
-      index->getHeight() >= (endorsedBlock->getHeight() +
-                             alt_config_->getEndorsementSettlementInterval()),
-      "Block %s is not finalized for PoP payouts",
-      endorsedBlock->toPrettyString());
-
-  auto ret = rewards_.calculatePayouts(*endorsedBlock);
-  auto difficulty = rewards_.calculateDifficulty(*endorsedBlock);
-
-  VBK_LOG_DEBUG("Pop Difficulty=%s for block %s, paying to %d addresses",
-                difficulty.toPrettyString(),
-                index->toShortPrettyString(),
-                ret.size());
-  return ret;
-}
-
 std::string AltBlockTree::toPrettyString(size_t level) const {
   std::string pad(level, ' ');
   return fmt::sprintf("%sAltTree{blocks=%llu\n%s\n%s\n%s}",
@@ -557,15 +518,7 @@ void AltBlockTree::overrideTip(index_t& to) {
                  "the active chain tip(%s) must be fully valid",
                  to.toPrettyString());
 
-  // invalidate rewards cache if necessary
-  uint32_t invalidBlocks = std::numeric_limits<uint32_t>::max();
-
-  const auto* fork = activeChain_.findFork(&to);
-  if (fork != nullptr) {
-    invalidBlocks = activeChain_.tip()->getHeight() - fork->getHeight();
-  }
-  rewards_.eraseCacheHistory(invalidBlocks);
-
+  onBeforeOverrideTip.emit(to);
   activeChain_.setTip(&to);
 }
 
@@ -621,7 +574,6 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
            alt_config,
            payloadsProvider,
            payloadsIndex_),
-      rewards_(alt_config, cmp_.getProtectingBlockTree()),
       payloadsProvider_(payloadsProvider) {}
 
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
