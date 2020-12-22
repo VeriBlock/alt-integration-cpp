@@ -6,7 +6,7 @@ import (
 )
 
 // SetOnGetAltchainID ...
-func SetOnGetAltchainID(fn func() int) {
+func SetOnGetAltchainID(fn func() int64) {
 	ffi.OnGetAltchainID = fn
 }
 
