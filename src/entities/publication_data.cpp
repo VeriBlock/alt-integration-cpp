@@ -20,10 +20,7 @@ size_t PublicationData::estimateSize() const {
   rawSize += varLenValueSize(header);
   rawSize += varLenValueSize(contextInfo);
   rawSize += varLenValueSize(payoutInfo);
-
-  size_t size = 0;
-  size += varLenValueSize(rawSize);
-  return size;
+  return rawSize;
 }
 
 std::string PublicationData::toPrettyString() const {
@@ -36,8 +33,7 @@ std::string PublicationData::toPrettyString() const {
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                                 PublicationData& out,
                                                 ValidationState& state) {
-  PublicationData pub;
-  if (!readSingleBEValue<int64_t>(stream, pub.identifier, state)) {
+  if (!readSingleBEValue<int64_t>(stream, out.identifier, state)) {
     return state.Invalid("pub-identifier");
   }
   Slice<const uint8_t> header;
@@ -45,18 +41,17 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
           stream, header, state, 0, MAX_HEADER_SIZE_PUBLICATION_DATA)) {
     return state.Invalid("pub-header");
   }
-  pub.header = header.asVector();
+  out.header = header.asVector();
   Slice<const uint8_t> contextInfo;
   if (!readVarLenValue(
           stream, contextInfo, state, 0, MAX_CONTEXT_SIZE_PUBLICATION_DATA)) {
     return state.Invalid("pub-context-info");
   }
-  pub.contextInfo = contextInfo.asVector();
+  out.contextInfo = contextInfo.asVector();
   Slice<const uint8_t> payoutInfo;
   if (!readVarLenValue(stream, payoutInfo, state, 0, MAX_PAYOUT_INFO_SIZE)) {
     return state.Invalid("pub-payout-info");
   }
-  pub.payoutInfo = payoutInfo.asVector();
-  out = pub;
+  out.payoutInfo = payoutInfo.asVector();
   return true;
 }

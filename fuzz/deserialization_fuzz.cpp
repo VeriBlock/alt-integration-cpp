@@ -3,11 +3,36 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <type_traits>
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/popdata.hpp>
 
 #define XSTR(s) STR(s)
 #define STR(s) #s
+
+template <typename T>
+class hasEstimateSize {
+  typedef char one;
+  struct two {
+    char x[2];
+  };
+
+  template <typename C>
+  static one test(decltype(&C::estimateSize));
+  template <typename C>
+  static two test(...);
+
+ public:
+  enum { value = sizeof(test<T>(0)) == sizeof(char) };
+};
+
+template <typename T>
+typename std::enable_if<hasEstimateSize<T>::value, size_t>::type
+getEstimateSize(T& t) {
+  return t.estimateSize();
+}
+
+auto getEstimateSize(...) { return 0ul; }
 
 #define DEFINE_DESER_FUZZ(type)                                                \
   {                                                                            \
@@ -24,13 +49,29 @@
                        HexStr(w.data()),                                       \
                        state.toString());                                      \
       }                                                                        \
+      /* if given type provides .estimateSize() method */                      \
+      /* compare its output to size of toVbkEncoding output */                 \
+      if constexpr (hasEstimateSize<type>::value) {                            \
+        auto expectedSize = w.data().size();                                   \
+        auto estimatedSize1 = getEstimateSize(value);                          \
+        auto estimatedSize2 = getEstimateSize(value2);                         \
+        VBK_ASSERT_MSG(                                                        \
+            expectedSize == estimatedSize1 &&                                  \
+                estimatedSize1 == estimatedSize2,                              \
+            "type=%s\nbytes=%s\nexpected=%d\nestimated1=%d\nestimated2=%d\n",  \
+            STR(type),                                                         \
+            HexStr(w.data()),                                                  \
+            expectedSize,                                                      \
+            estimatedSize1,                                                    \
+            estimatedSize2);                                                   \
+      }                                                                        \
     }                                                                          \
     state.reset();                                                             \
     stream.reset();                                                            \
   }
 
 // neither of these should fail with memory bug or assert
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   using namespace altintegration;
 
   ReadStream stream(Data, Size);

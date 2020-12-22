@@ -40,7 +40,7 @@ size_t VbkTx::estimateSize() const {
     rawSize += output.estimateSize();
   }
   rawSize += singleBEValueSize(signatureIndex);
-  rawSize += publicationData.estimateSize();
+  rawSize += varLenValueSize(publicationData.estimateSize());
 
   size_t size = 0;
   size += varLenValueSize(rawSize);
