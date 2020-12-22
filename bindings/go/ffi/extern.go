@@ -8,7 +8,7 @@ import "unsafe"
 
 // Exported functions
 var (
-	OnGetAltchainID      = func() int { panic("OnGetAltchainID not set") }
+	OnGetAltchainID      = func() int64 { panic("OnGetAltchainID not set") }
 	OnGetBootstrapBlock  = func() string { panic("OnGetBootstrapBlock not set") }
 	OnGetBlockHeaderHash = func(toBeHashed []byte) []byte { panic("OnGetBlockHeaderHash not set") }
 	OnGetAtv             = func(id []byte) []byte { panic("OnGetAtv not set") }
