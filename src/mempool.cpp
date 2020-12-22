@@ -36,23 +36,27 @@ PopData generatePopData(
     }
     // add VBK block to connect underlying ATVs/VTBs
     ret.context.push_back(header);
+    popSize += header.estimateSize();
 
     // try to fit ATVs
     auto& atvcandidates = block.second->atvs;
     for (const auto& atv : atvcandidates) {
+      const auto estimate = atv->estimateSize();
       if (ret.atvs.size() >= maxATVs ||
-          popSize + atv->estimateSize() >= maxSize) {
+          popSize + estimate >= maxSize) {
         // do not consider this ATV, it does not fit
         continue;
       }
 
       // this ATV fits
       ret.atvs.push_back(*atv);
+      popSize += estimate;
     }
 
     // try to fit VTBs
     auto& vtbcandidates = block.second->vtbs;
     for (const auto& vtb : vtbcandidates) {
+      const auto estimate = vtb->estimateSize();
       if (ret.vtbs.size() >= maxVTBs ||
           popSize + vtb->estimateSize() >= maxSize) {
         // this VTB does not fit
@@ -60,11 +64,15 @@ PopData generatePopData(
       }
 
       ret.vtbs.push_back(*vtb);
+      popSize += estimate;
     }
   }
 
   VBK_ASSERT(ret.context.size() <= maxVbkBlocks);
   VBK_ASSERT(ret.vtbs.size() <= maxVTBs);
+  VBK_ASSERT(ret.atvs.size() <= maxATVs);
+  const auto estimate = ret.estimateSize();
+  VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
 
   return ret;
 }
