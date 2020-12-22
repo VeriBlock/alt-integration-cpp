@@ -327,7 +327,7 @@ struct BaseBlockTree {
    *
    * @return true if the blockchain is bootstrapped, false otherwise
    */
-  bool isBootstrapped() {
+  bool isBootstrapped() const {
     if (!blocks_.empty() && activeChain_.tip() != nullptr) {
       return true;
     }

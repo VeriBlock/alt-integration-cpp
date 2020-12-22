@@ -24,7 +24,6 @@
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/fmt.hpp"
-#include "veriblock/rewards/poprewards_cache.hpp"
 #include "veriblock/storage/payloads_index.hpp"
 #include "veriblock/storage/payloads_provider.hpp"
 #include "veriblock/validation_state.hpp"
@@ -121,6 +120,9 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! a block has been successfully handed over to the underlying tree
   signals::Signal<void(index_t& index)> onBlockConnected;
 
+  //! chain reorg signal - the tip is being changed
+  signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
+
   /**
    * Add a block body to the block header. Can be done once per each block.
    * Blocks with added payloads must form a tree.
@@ -197,20 +199,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @ingroup api
    */
   int comparePopScore(const AltBlock::hash_t& A, const AltBlock::hash_t& B);
-
-  /**
-   * Calculate POP Rewards for block following current tip.
-   *
-   * @param[in] tip hash of altchain tip.
-   * @return map with reward recipient as a key and reward amount as a value.
-   * Map will contain combined reward for all endorsements sent by specific
-   * miner.
-   * @invariant AltBlockTree tip must correspond to tip provided in the
-   * argument.
-   * @warning Expensive operation.
-   * @ingroup api
-   */
-  PopPayouts getPopPayout(const hash_t& tip);
 
   /**
    * Switch AltBlockTree from the current tip to different block, while doing
@@ -296,7 +284,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   const vbk_config_t* vbk_config_;
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
-  PopRewardsCache rewards_;
   PayloadsIndex payloadsIndex_;
   PayloadsProvider& payloadsProvider_;
 

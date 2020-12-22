@@ -45,7 +45,7 @@ kiss99_t progPowInit(uint64_t prog_seed,
 struct ethash_cache;
 
 inline uint32_t ethashGetEpochWithoutOffset(int64_t height) {
-  return height / VBK_ETHASH_EPOCH_LENGTH;
+  return (uint32_t)(height / VBK_ETHASH_EPOCH_LENGTH);
 }
 
 inline uint32_t ethashGetEpoch(int64_t height) {
