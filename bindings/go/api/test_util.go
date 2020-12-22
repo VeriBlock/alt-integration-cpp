@@ -16,7 +16,7 @@ func generateTestPopContext(t *testing.T) *PopContext {
 	if !config.SelectBtcParams("regtest", 0, nil) {
 		t.Error("Failed to select btc params")
 	}
-	SetOnGetAltchainID(func() int { return 1 })
+	SetOnGetAltchainID(func() int64 { return 1 })
 	SetOnGetBootstrapBlock(func() string {
 		var block entities.AltBlock
 		block.Height = 1
