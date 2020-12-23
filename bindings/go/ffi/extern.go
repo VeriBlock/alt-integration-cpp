@@ -26,7 +26,7 @@ func VBK_getBootstrapBlock() *C.char {
 	return C.CString(OnGetBootstrapBlock())
 }
 
-func ConvertToBytes(in *C.uint8_t, inlen C.int) []byte {
+func convertToBytes(in *C.uint8_t, inlen C.int) []byte {
 	bytesSize := int(inlen)
 	bytes := make([]byte, 0, bytesSize)
 	for bytesSize > 0 {
@@ -43,7 +43,7 @@ func ConvertToBytes(in *C.uint8_t, inlen C.int) []byte {
 
 //export VBK_getBlockHeaderHash
 func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *C.int) {
-	resBytes := ConvertToBytes(in, inlen)
+	resBytes := convertToBytes(in, inlen)
 	data := OnGetBlockHeaderHash(resBytes)
 	*outlen = C.int(len(data))
 	*out = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
@@ -53,7 +53,7 @@ func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *
 
 //export VBK_getATV
 func VBK_getATV(id *C.uint8_t, idSize C.int, atvBytesOut *C.uint8_t, atvBytesLen *C.int) C.int {
-	resBytes := ConvertToBytes(id, idSize)
+	resBytes := convertToBytes(id, idSize)
 	data := OnGetAtv(resBytes)
 	if data == nil {
 		// false
@@ -67,7 +67,7 @@ func VBK_getATV(id *C.uint8_t, idSize C.int, atvBytesOut *C.uint8_t, atvBytesLen
 
 //export VBK_getVTB
 func VBK_getVTB(id *C.uint8_t, idSize C.int, vtbBytesOut *C.uint8_t, vtbBytesLen *C.int) C.int {
-	resBytes := ConvertToBytes(id, idSize)
+	resBytes := convertToBytes(id, idSize)
 	data := OnGetVtb(resBytes)
 	if data == nil {
 		// false
@@ -81,7 +81,7 @@ func VBK_getVTB(id *C.uint8_t, idSize C.int, vtbBytesOut *C.uint8_t, vtbBytesLen
 
 //export VBK_getVBK
 func VBK_getVBK(id *C.uint8_t, idSize C.int, vbkBytesOut *C.uint8_t, vbkBytesLen *C.int) C.int {
-	resBytes := ConvertToBytes(id, idSize)
+	resBytes := convertToBytes(id, idSize)
 	data := OnGetVbk(resBytes)
 	if data == nil {
 		// false
