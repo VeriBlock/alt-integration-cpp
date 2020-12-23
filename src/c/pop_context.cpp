@@ -722,16 +722,6 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self) {
   return new VbkByteStream(stream.data());
 }
 
-void VBK_MemPool_onAcceptedATV(PopContext* self,
-                               void (*signal)(const uint8_t* atv_bytes,
-                                              int atv_bytes_size)) {
-  VBK_ASSERT(self);
-  VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->mempool);
-
-  self->context->mempool->onAcceptedRaw<altintegration::ATV>(signal);
-}
-
 void VBK_MemPool_clear(PopContext* self) {
   VBK_ASSERT(self);
   VBK_ASSERT(self->context);

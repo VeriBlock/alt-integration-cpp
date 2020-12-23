@@ -540,21 +540,6 @@ VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self);
 VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self);
 
 /**
- *
- * This method returns a vector of the payload`s ids serialized to the stream.
- * Each id has been serialized using the function
- * altintegration::writeSingleByteLenValue().
- *
- * @see altintegration::MemPool::getInFlightMap
- * @param[in] self PopContext
- * @param[in] signal provided function.
- * @ingroup c-api
- */
-void VBK_MemPool_onAcceptedATV(PopContext* self,
-                               void (*signal)(const uint8_t* atv_bytes,
-                                              int atv_bytes_size));
-
-/**
  * @copybrief altintegration::MemPool::clear
  * @see altintegration::MemPool::clear
  * @param[in] self PopContext
