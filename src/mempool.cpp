@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -42,8 +41,7 @@ PopData generatePopData(
     auto& atvcandidates = block.second->atvs;
     for (const auto& atv : atvcandidates) {
       const auto estimate = atv->estimateSize();
-      if (ret.atvs.size() >= maxATVs ||
-          popSize + estimate >= maxSize) {
+      if (ret.atvs.size() >= maxATVs || popSize + estimate >= maxSize) {
         // do not consider this ATV, it does not fit
         continue;
       }
@@ -204,6 +202,8 @@ VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
   if (val == nullptr) {
     val = std::make_shared<VbkPayloadsRelations>(block);
     on_vbkblock_accepted.emit(*block);
+    auto bytes = SerializeToVbkEncoding<VbkBlock>(*block);
+    on_vbkblock_accepted_raw.emit(bytes.data(), bytes.size());
   }
 
   return *val;
@@ -258,6 +258,8 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
     atvs_in_flight_[id] = atv;
     on_atv_accepted.emit(*atv);
+    auto bytes = SerializeToVbkEncoding<ATV>(*atv);
+    on_atv_accepted_raw.emit(bytes.data(), bytes.size());
     return {MemPool::FAILED_STATEFUL, state.Invalid("atv-stateful")};
   }
 
@@ -284,6 +286,8 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
     vtbs_in_flight_[id] = vtb;
     on_vtb_accepted.emit(*vtb);
+    auto bytes = SerializeToVbkEncoding<VTB>(*vtb);
+    on_vtb_accepted_raw.emit(bytes.data(), bytes.size());
     return {FAILED_STATEFUL, state.Invalid("vtb-stateful")};
   }
 
@@ -310,6 +314,8 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
     vbkblocks_in_flight_[id] = blk;
     on_vbkblock_accepted.emit(*blk);
+    auto bytes = SerializeToVbkEncoding<VbkBlock>(*blk);
+    on_vbkblock_accepted_raw.emit(bytes.data(), bytes.size());
     return {FAILED_STATEFUL, state.Invalid("vbk-stateful")};
   }
 
@@ -404,6 +410,24 @@ signals::Signal<void(const VTB&)>& MemPool::getSignal() {
 template <>
 signals::Signal<void(const VbkBlock&)>& MemPool::getSignal() {
   return on_vbkblock_accepted;
+}
+
+template <>
+signals::Signal<void(const uint8_t* bytes, int bytes_size)>&
+MemPool::getSignalRaw<ATV>() {
+  return on_atv_accepted_raw;
+}
+
+template <>
+signals::Signal<void(const uint8_t* bytes, int bytes_size)>&
+MemPool::getSignalRaw<VTB>() {
+  return on_vtb_accepted_raw;
+}
+
+template <>
+signals::Signal<void(const uint8_t* bytes, int bytes_size)>&
+MemPool::getSignalRaw<VbkBlock>() {
+  return on_vbkblock_accepted_raw;
 }
 
 }  // namespace altintegration

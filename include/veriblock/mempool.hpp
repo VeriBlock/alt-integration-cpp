@@ -240,12 +240,28 @@ struct MemPool {
     return sig.connect(f);
   }
 
+  template <typename Pop>
+  size_t onAcceptedRaw(
+      std::function<void(const uint8_t* bytes, int bytes_size)> f) {
+    auto& sig = getSignalRaw<Pop>();
+    return sig.connect(f);
+  }
+
   //! fires when new valid ATV is accepted to mempool
   signals::Signal<void(const ATV& atv)> on_atv_accepted;
   //! fires when new valid VTB is accepted to mempool
   signals::Signal<void(const VTB& atv)> on_vtb_accepted;
   //! fires when new valid VbkBlock is accepted to mempool
   signals::Signal<void(const VbkBlock& atv)> on_vbkblock_accepted;
+
+  signals::Signal<void(const uint8_t* bytes, int bytes_size)>
+      on_atv_accepted_raw;
+  //! fires when new valid VTB is accepted to mempool
+  signals::Signal<void(const uint8_t* bytes, int bytes_size)>
+      on_vtb_accepted_raw;
+  //! fires when new valid VbkBlock is accepted to mempool
+  signals::Signal<void(const uint8_t* bytes, int bytes_size)>
+      on_vbkblock_accepted_raw;
 
  private:
   MemPoolBlockTree mempool_tree_;
@@ -267,6 +283,7 @@ struct MemPool {
   template <typename T>
   void makePayloadConnected(const std::shared_ptr<T>& t) {
     auto& signal = getSignal<T>();
+    auto& signal_raw = getSignalRaw<T>();
     auto& inflight = getInFlightMapMut<T>();
     auto& connected = getMapMut<T>();
 
@@ -274,6 +291,8 @@ struct MemPool {
     connected[id] = t;
     inflight.erase(id);
     signal.emit(*t);
+    auto bytes = SerializeToVbkEncoding<T>(*t);
+    signal_raw.emit(bytes.data(), bytes.size());
   }
 
   template <typename POP>
@@ -306,6 +325,9 @@ struct MemPool {
   signals::Signal<void(const Pop&)>& getSignal() {
     static_assert(sizeof(Pop) == 0, "Unknown type in getSignal");
   }
+
+  template <typename Pop>
+  signals::Signal<void(const uint8_t* bytes, int bytes_size)>& getSignalRaw();
 
   //! @private
   template <typename T>
