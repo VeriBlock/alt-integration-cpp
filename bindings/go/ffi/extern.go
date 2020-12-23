@@ -52,25 +52,43 @@ func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *
 // PayloadsProvider externs
 
 //export VBK_getATV
-func VBK_getATV(id *C.uint8_t, idSize C.int, atvBytesOut *C.uint8_t, atvBytesLen *C.int) {
+func VBK_getATV(id *C.uint8_t, idSize C.int, atvBytesOut *C.uint8_t, atvBytesLen *C.int) C.int {
 	resBytes := convertToBytes(id, idSize)
 	data := OnGetAtv(resBytes)
+	if data == nil {
+		// false
+		return 0
+	}
 	*atvBytesLen = C.int(len(data))
 	*atvBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
+	// true
+	return 1
 }
 
 //export VBK_getVTB
-func VBK_getVTB(id *C.uint8_t, idSize C.int, vtbBytesOut *C.uint8_t, vtbBytesLen *C.int) {
+func VBK_getVTB(id *C.uint8_t, idSize C.int, vtbBytesOut *C.uint8_t, vtbBytesLen *C.int) C.int {
 	resBytes := convertToBytes(id, idSize)
 	data := OnGetVtb(resBytes)
+	if data == nil {
+		// false
+		return 0
+	}
 	*vtbBytesLen = C.int(len(data))
 	*vtbBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
+	// true
+	return 1
 }
 
 //export VBK_getVBK
-func VBK_getVBK(id *C.uint8_t, idSize C.int, vbkBytesOut *C.uint8_t, vbkBytesLen *C.int) {
+func VBK_getVBK(id *C.uint8_t, idSize C.int, vbkBytesOut *C.uint8_t, vbkBytesLen *C.int) C.int {
 	resBytes := convertToBytes(id, idSize)
 	data := OnGetVbk(resBytes)
+	if data == nil {
+		// false
+		return 0
+	}
 	*vbkBytesLen = C.int(len(data))
 	*vbkBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
+	// true
+	return 1
 }
