@@ -42,8 +42,7 @@ PopData generatePopData(
     auto& atvcandidates = block.second->atvs;
     for (const auto& atv : atvcandidates) {
       const auto estimate = atv->estimateSize();
-      if (ret.atvs.size() >= maxATVs ||
-          popSize + estimate >= maxSize) {
+      if (ret.atvs.size() >= maxATVs || popSize + estimate >= maxSize) {
         // do not consider this ATV, it does not fit
         continue;
       }
@@ -57,8 +56,7 @@ PopData generatePopData(
     auto& vtbcandidates = block.second->vtbs;
     for (const auto& vtb : vtbcandidates) {
       const auto estimate = vtb->estimateSize();
-      if (ret.vtbs.size() >= maxVTBs ||
-          popSize + vtb->estimateSize() >= maxSize) {
+      if (ret.vtbs.size() >= maxVTBs || popSize + estimate >= maxSize) {
         // this VTB does not fit
         continue;
       }
