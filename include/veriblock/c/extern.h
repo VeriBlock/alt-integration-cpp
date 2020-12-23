@@ -6,6 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_EXTERN_H
 #define VERIBLOCK_POP_CPP_EXTERN_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -24,37 +25,40 @@ const char* VBK_getBootstrapBlock();
 //! @param[out] out output byte array (must be pre-allocated)
 //! @param[out] output hash size
 void VBK_getBlockHeaderHash(const uint8_t* in,
-                                   int inlen,
-                                   uint8_t* out,
-                                   int* outlen);
+                            int inlen,
+                            uint8_t* out,
+                            int* outlen);
 
 // PayloadsProvider externs
 //! @param[in] in input ATV`s id byte array
 //! @param[in] inlen input ATV`s id byte array length
 //! @param[out] out output ATV`s payload byte array  (must be pre-allocated)
 //! @param[out] output ATV`s payload byte array len
-void VBK_getATV(const uint8_t* id_bytes,
-                       int id_size,
-                       uint8_t* atv_bytes_out,
-                       int* atv_bytes_len);
+//! @return true if ATV has been found, false otherwise
+bool VBK_getATV(const uint8_t* id_bytes,
+                int id_size,
+                uint8_t* atv_bytes_out,
+                int* atv_bytes_len);
 
 //! @param[in] in input VTB`s id byte array
 //! @param[in] inlen input VTB`s id byte array length
 //! @param[out] out output VTB`s payload byte array  (must be pre-allocated)
 //! @param[out] output VTB`s payload byte array len
-void VBK_getVTB(const uint8_t* id_bytes,
-                       int id_size,
-                       uint8_t* vtb_bytes_out,
-                       int* vtb_bytes_len);
+//! @return true if VTB has been found, false otherwise
+bool VBK_getVTB(const uint8_t* id_bytes,
+                int id_size,
+                uint8_t* vtb_bytes_out,
+                int* vtb_bytes_len);
 
 //! @param[in] in input VBK`s id byte array
 //! @param[in] inlen input VBK`s id byte array length
 //! @param[out] out output VBK`s payload byte array  (must be pre-allocated)
 //! @param[out] output VBK`s payload byte array len
-void VBK_getVBK(const uint8_t* id_bytes,
-                       int id_size,
-                       uint8_t* vbk_bytes_out,
-                       int* vbk_bytes_len);
+//! @return true if VBK has been found, false otherwise
+bool VBK_getVBK(const uint8_t* id_bytes,
+                int id_size,
+                uint8_t* vbk_bytes_out,
+                int* vbk_bytes_len);
 
 #ifdef __cplusplus
 }  // end of extern "C"
