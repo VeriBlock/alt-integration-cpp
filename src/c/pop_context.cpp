@@ -4,12 +4,12 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include "bytestream.hpp"
 #include "config.hpp"
-#include "veriblock/consts.hpp"
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/c/extern.h"
 #include "veriblock/c/pop_context.h"
+#include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
 
 struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
@@ -22,12 +22,14 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
                altintegration::ValidationState& state) override {
     for (const auto& id : ids) {
       int size = 0;
-      VBK_getATV(id.data(), (int)id.size(), buffer.data(), &size);
+      if (!VBK_getATV(id.data(), (int)id.size(), buffer.data(), &size)) {
+        return state.Invalid("get-atv", "atv has been not found");
+      }
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::ATV atv_out;
       if (!altintegration::DeserializeFromVbkEncoding(stream, atv_out, state)) {
-        return state.Invalid("get-atv");
+        return state.Invalid("get-atv", "cannot deserialize atv");
       }
       out.push_back(atv_out);
     }
@@ -40,12 +42,14 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
                altintegration::ValidationState& state) override {
     for (const auto& id : ids) {
       int size = 0;
-      VBK_getVTB(id.data(), (int)id.size(), buffer.data(), &size);
+      if (!VBK_getVTB(id.data(), (int)id.size(), buffer.data(), &size)) {
+        return state.Invalid("get-vtb", "vtb has been not found");
+      }
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::VTB vtb_out;
       if (!altintegration::DeserializeFromVbkEncoding(stream, vtb_out, state)) {
-        return state.Invalid("get-atv");
+        return state.Invalid("get-vtb", "cannot deserialize vtb");
       }
       out.push_back(vtb_out);
     }
@@ -58,12 +62,14 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
                altintegration::ValidationState& state) override {
     for (const auto& id : ids) {
       int size = 0;
-      VBK_getVBK(id.data(), (int)id.size(), buffer.data(), &size);
+      if (!VBK_getVBK(id.data(), (int)id.size(), buffer.data(), &size)) {
+        return state.Invalid("get-vbk", "vbk has been not found");
+      }
       altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
       altintegration::ReadStream stream(bytes);
       altintegration::VbkBlock vbk_out;
       if (!altintegration::DeserializeFromVbkEncoding(stream, vbk_out, state)) {
-        return state.Invalid("get-atv");
+        return state.Invalid("get-vbk", "cannot deserialize vbk");
       }
       out.push_back(vbk_out);
     }
