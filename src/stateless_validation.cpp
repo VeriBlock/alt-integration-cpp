@@ -309,7 +309,52 @@ bool checkVbkPopTx(const VbkPopTx& tx,
   return true;
 }
 
-bool checkVbkTx(const VbkTx& tx, ValidationState& state) {
+bool checkPublicationData(const PublicationData& pub,
+                          const AltChainParams& params,
+                          ValidationState& state) {
+  if (!params.isHeader(pub.header)) {
+    return state.Invalid(
+        "bad-header",
+        "Publication Data contains garbage, expected block header");
+  }
+
+  if (pub.identifier != params.getIdentifier()) {
+    return state.Invalid(
+        "bad-altchain-id",
+        fmt::format(
+            "Expected id={}, got={}", params.getIdentifier(), pub.identifier));
+  }
+
+  ReadStream stream(pub.contextInfo);
+  AuthenticatedContextInfoContainer c;
+  if (!DeserializeFromVbkEncoding(stream, c, state)) {
+    return state.Invalid("bad-contextinfo");
+  }
+
+  // check if 'contextInfo' is cryptographically authenticated to 'header'
+  auto root = c.getTopLevelMerkleRoot();
+  std::string header = HexStr(pub.header);
+  std::string tlroot = HexStr(root);
+
+  // TODO(warchant): one could implement similar .find function for std::vector
+  // search substring `tlroot` in `header`
+  if (header.find(tlroot) == std::string::npos) {
+    // merkle root not found in header, thus we conclude that contextInfo can
+    // not be authenticated to provided block header
+    return state.Invalid(
+        "ctx-not-authenticated",
+        fmt::format(
+            "Unable to find top level merkle root={} in published header={}",
+            tlroot,
+            header));
+  }
+
+  return true;
+}
+
+bool checkVbkTx(const VbkTx& tx,
+                const AltChainParams& params,
+                ValidationState& state) {
   if (!checkSignature(tx, state)) {
     return state.Invalid("vbktx-check-signature");
   }
@@ -320,6 +365,10 @@ bool checkVbkTx(const VbkTx& tx, ValidationState& state) {
         fmt::format("Too many outputs. Expected less than {}, got {}",
                     MAX_OUTPUTS_COUNT,
                     tx.outputs.size()));
+  }
+
+  if (!checkPublicationData(tx.publicationData, params, state)) {
+    return state.Invalid("bad-publicationdata");
   }
 
   return true;
@@ -362,16 +411,7 @@ bool checkATV(const ATV& atv,
     return true;
   }
 
-  auto id = atv.transaction.publicationData.identifier;
-  auto eid = altp.getIdentifier();
-  if (eid != id) {
-    return state.Invalid("atv-bad-identifier",
-                         "Wrong chain identifier. Expected " +
-                             std::to_string(eid) + ", got " +
-                             std::to_string(id) + ".");
-  }
-
-  if (!checkVbkTx(atv.transaction, state)) {
+  if (!checkVbkTx(atv.transaction, altp, state)) {
     return state.Invalid("vbk-check-tx");
   }
 

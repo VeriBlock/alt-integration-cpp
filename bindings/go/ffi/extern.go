@@ -14,6 +14,7 @@ var (
 	OnGetAtv             = func(id []byte) []byte { panic("OnGetAtv not set") }
 	OnGetVtb             = func(id []byte) []byte { panic("OnGetVtb not set") }
 	OnGetVbk             = func(id []byte) []byte { panic("OnGetVbk not set") }
+	OnIsHeader           = func(data []byte) bool { panic("OnIsHeader not set") }
 	OnAcceptedATV        = func(data []byte) { panic("OnAcceptedATV not set") }
 	OnAcceptedVTB        = func(data []byte) { panic("OnAcceptedVTB not set") }
 	OnAcceptedVBK        = func(data []byte) { panic("OnAcceptedVBK not set") }
@@ -50,6 +51,16 @@ func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *
 	data := OnGetBlockHeaderHash(resBytes)
 	*outlen = C.int(len(data))
 	*out = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
+}
+
+//export VBK_isHeader
+func VBK_isHeader(in *C.uint8_t, inlen C.int) C.int {
+	data := convertToBytes(in, inlen)
+	res := OnIsHeader(data)
+	if res == true {
+		return 1
+	}
+	return 0
 }
 
 // PayloadsProvider externs

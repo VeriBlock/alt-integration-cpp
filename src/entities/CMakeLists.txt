@@ -17,4 +17,5 @@ add_library(entities OBJECT
         popdata.cpp
         keystone_container.cpp
         pop_payouts.cpp
+        context_info_container.cpp
         )

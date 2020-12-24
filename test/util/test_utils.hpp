@@ -169,8 +169,8 @@ inline BlockIndex<AltBlock> getRandomIndex() {
 struct AltChainParamsTest : public AltChainParams {
   AltBlock getBootstrapBlock() const noexcept override {
     AltBlock genesisBlock;
-    genesisBlock.hash = std::vector<uint8_t>(1, MIN_ALT_HASH_SIZE);
-    genesisBlock.previousBlock = std::vector<uint8_t>(2, MIN_ALT_HASH_SIZE);
+    genesisBlock.hash = std::vector<uint8_t>(10, 1);
+    genesisBlock.previousBlock = std::vector<uint8_t>(10, 2);
     genesisBlock.height = 0;
     genesisBlock.timestamp = 0;
     return genesisBlock;
@@ -181,6 +181,10 @@ struct AltChainParamsTest : public AltChainParams {
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
     return AssertDeserializeFromRaw<AltBlock>(bytes).getHash();
+  }
+
+  bool isHeader(const std::vector<uint8_t>&) const noexcept override {
+    return true;
   }
 };
 

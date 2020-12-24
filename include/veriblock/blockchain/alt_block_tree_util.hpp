@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_ALT_BLOCK_TREE_UTIL_HPP
 
 #include <veriblock/entities/altblock.hpp>
+#include <veriblock/entities/publication_data.hpp>
 #include <veriblock/validation_state.hpp>
 
 #include "block_index.hpp"
@@ -26,7 +27,9 @@ bool checkBlockTime(const BlockIndex<AltBlock>& prev,
 
 template <>
 std::vector<CommandGroup> payloadsToCommandGroups(
-    AltBlockTree& tree, const PopData& pop, const AltBlock::hash_t& containinghash);
+    AltBlockTree& tree,
+    const PopData& pop,
+    const AltBlock::hash_t& containinghash);
 
 }  // namespace altintegration
 

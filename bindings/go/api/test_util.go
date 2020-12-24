@@ -30,6 +30,10 @@ func generateTestPopContext(t *testing.T) *PopContext {
 		return header
 	})
 
+	SetOnIsHeader(func(data []byte) bool {
+		return true
+	})
+
 	return NewPopContext(config)
 }
 
