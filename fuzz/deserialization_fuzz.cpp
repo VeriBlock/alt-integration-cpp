@@ -7,7 +7,7 @@
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/entities/keystone_container.hpp>
-#include <veriblock/entities/context_info_container.hpp.>
+#include <veriblock/entities/context_info_container.hpp>
 
 #define XSTR(s) STR(s)
 #define STR(s) #s
