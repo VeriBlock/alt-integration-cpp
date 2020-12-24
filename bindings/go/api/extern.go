@@ -20,6 +20,11 @@ func SetOnGetBlockHeaderHash(fn func(toBeHashed []byte) []byte) {
 	ffi.OnGetBlockHeaderHash = fn
 }
 
+// SetOnIsHeader ...
+func SetOnIsHeader(fn func(data []byte) bool) {
+	ffi.OnIsHeader = fn
+}
+
 // SetOnGetAtv ...
 func SetOnGetAtv(fn func(idBytes entities.AtvID) []byte) {
 	ffi.OnGetAtv = func(id []byte) []byte {
