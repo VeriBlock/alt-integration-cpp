@@ -29,6 +29,8 @@ bool PayloadsProvider::getCommands(AltBlockTree& tree,
   }
 
   auto containingHash = block.getHash();
+  // order is important! first, add all VBK blocks, then add all VTBs, then add
+  // all ATVs
   vectorPopToCommandGroup<AltBlockTree, VbkBlock>(
       tree, vbks, containingHash, out);
   vectorPopToCommandGroup<AltBlockTree, VTB>(tree, vtbs, containingHash, out);

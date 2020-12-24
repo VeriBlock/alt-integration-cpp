@@ -45,14 +45,12 @@ struct Endorsement {
   EndorsedHash endorsedHash;
   EndorsedHash containingHash;
   ContainingHash blockOfProof;
-  std::vector<uint8_t> payoutInfo;
 
   void toVbkEncoding(WriteStream& stream) const {
     writeSingleByteLenValue(stream, id);
     writeSingleByteLenValue(stream, endorsedHash);
     writeSingleByteLenValue(stream, containingHash);
     writeSingleByteLenValue(stream, blockOfProof);
-    writeSingleByteLenValue(stream, payoutInfo);
   }
 
   std::vector<uint8_t> toVbkEncoding() const {
@@ -92,14 +90,23 @@ struct Endorsement {
     if (a.endorsedHash > b.endorsedHash) return false;
     if (a.containingHash < b.containingHash) return true;
     if (a.containingHash > b.containingHash) return false;
-    if (a.blockOfProof < b.blockOfProof) return true;
-    if (a.blockOfProof > b.blockOfProof) return false;
-    return a.payoutInfo < b.payoutInfo;
+    return a.blockOfProof < b.blockOfProof;
   }
 
   bool operator!=(const type& other) const { return !operator==(other); }
 
-  std::string toPrettyString(size_t level = 0) const;
+  std::string toPrettyString(size_t level = 0) const {
+    return fmt::sprintf(
+        "%s%sEndorsement{id=%s, containing=%s, endorsed=%s, blockOfProof=%s}",
+        std::string(level, ' '),
+        type::name(),
+        HexStr(id),
+        HexStr(containingHash),
+        HexStr(endorsedHash),
+        HexStr(blockOfProof));
+  }
+
+  static const std::string name();
 };
 
 template <typename Value, class A, class B, class C>
@@ -109,7 +116,6 @@ Value ToJSON(const Endorsement<A, B, C>& e) {
   json::putStringKV(obj, "endorsedHash", HexStr(e.endorsedHash));
   json::putStringKV(obj, "containingHash", e.containingHash);
   json::putStringKV(obj, "blockOfProof", e.blockOfProof);
-  json::putStringKV(obj, "payoutInfo", e.payoutInfo);
   return obj;
 }
 
