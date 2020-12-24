@@ -20,7 +20,7 @@ std::vector<uint8_t> ParseHex(const std::string& hex);
 
 constexpr inline bool IsSpace(char c) noexcept {
   return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' ||
-      c == '\v';
+         c == '\v';
 }
 
 template <typename T>
@@ -44,6 +44,8 @@ inline std::string HexStr(const T& vch) {
 }
 
 std::vector<uint8_t> toBytes(const std::string& input);
+
+
 
 }  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_STRUTIL_HPP_

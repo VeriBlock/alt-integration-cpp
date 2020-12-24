@@ -41,13 +41,6 @@ struct VbkTx {
   std::vector<uint8_t> publicKey{};
 
   /**
-   * Convert VbkTx to data stream using VbkTx basic byte format without
-   * signature and publicKey data
-   * @param stream data stream to write into
-   */
-  void toRaw(WriteStream& stream) const;
-
-  /**
    * Convert VbkTx to data stream using VbkTx VBK byte format
    * @param stream data stream to write into
    */
@@ -60,6 +53,14 @@ struct VbkTx {
    * @return hash vbk transaction hash
    */
   uint256 getHash() const;
+
+ private:
+  /**
+ * Convert VbkTx to data stream using VbkTx basic byte format without
+ * signature and publicKey data
+ * @param stream data stream to write into
+ */
+  void toRaw(WriteStream& stream) const;
 };
 
 template <typename JsonValue>

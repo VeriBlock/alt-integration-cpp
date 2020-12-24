@@ -23,7 +23,8 @@
 namespace altintegration {
 
 bool containsSplit(const std::vector<uint8_t>& pop_data,
-                   const std::vector<uint8_t>& btcTx_data, ValidationState& state);
+                   const std::vector<uint8_t>& btcTx_data,
+                   ValidationState& state);
 
 template <typename MerklePathType, typename HashType1, typename HashType2>
 bool checkMerklePath(const MerklePathType& merklePath,
@@ -68,13 +69,21 @@ bool checkVbkPopTx(const VbkPopTx& tx,
                    ValidationState& state,
                    const BtcChainParams& param);
 
-bool checkVbkTx(const VbkTx& tx, ValidationState& state);
+bool checkVbkTx(const VbkTx& tx,
+                const AltChainParams& params,
+                ValidationState& state);
+
+bool checkPublicationData(const PublicationData& pub,
+                          const AltChainParams& params,
+                          ValidationState& state);
 
 bool checkBlock(const BtcBlock& block,
                 ValidationState& state,
                 const BtcChainParams& params);
 
-bool checkVbkBlockPlausibility(const VbkBlock& block, ValidationState& state, const VbkChainParams& params);
+bool checkVbkBlockPlausibility(const VbkBlock& block,
+                               ValidationState& state,
+                               const VbkChainParams& params);
 
 bool checkBlock(const VbkBlock& block,
                 ValidationState& state,

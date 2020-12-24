@@ -81,17 +81,14 @@ func BtcBlockGetHash(blockBytes []byte) [veriblock.Sha256HashSize]byte {
 }
 
 // AltBlockCalculateContextInfoContainerHash ...
-func (v *PopContext) AltBlockCalculateContextInfoContainerHash(prevBlockHash []byte, popDataBytes []byte) [veriblock.Sha256HashSize]byte {
-	var hashBytesSize int
+func (v *PopContext) AltBlockCalculateTopLevelMerkleRoot(txRootHash [veriblock.Sha256HashSize]byte, prevBlockHash []byte, popDataBytes []byte) [veriblock.Sha256HashSize]byte {
 	var hashBytes [veriblock.Sha256HashSize]byte
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
-	hashBytesSizeC := (*C.int)(unsafe.Pointer(&hashBytesSize))
 	prevBlockHashC := (*C.uint8_t)(unsafe.Pointer(&prevBlockHash[0]))
 	popDataBytesC := (*C.uint8_t)(unsafe.Pointer(&popDataBytes[0]))
-	C.VBK_AltBlock_calculateContextInfoContainerHash(v.ref, prevBlockHashC, C.int(len(prevBlockHash)), popDataBytesC, C.int(len(popDataBytes)), hashBytesC, hashBytesSizeC)
-	if hashBytesSize != len(hashBytes) {
-		panic("invalid bytes size")
-	}
+	txRootHashC := (*C.uint8_t)(unsafe.Pointer(&txRootHash[0]))
+
+	C.VBK_AltBlock_calculateTopLevelMerkleRoot(v.ref, txRootHashC, prevBlockHashC, C.int(len(prevBlockHash)), popDataBytesC, C.int(len(popDataBytes)), hashBytesC)
 	return hashBytes
 }
 

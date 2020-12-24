@@ -121,14 +121,14 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
  * @param[out] out_hash_size, size of the sha256 hash size
  * @ingroup c-api
  */
-void VBK_AltBlock_calculateContextInfoContainerHash(
+void VBK_AltBlock_calculateTopLevelMerkleRoot(
     PopContext* self,
+    const uint8_t txRoot[32],
     const uint8_t* prev_block_hash,
     int prev_block_hash_size,
     const uint8_t* pop_data_bytes,
     int pop_data_bytes_size,
-    uint8_t* out_hash,
-    int* out_hash_size);
+    uint8_t out_hash[32]);
 
 /**
  * Stateless validation for the altintegration::ATV.

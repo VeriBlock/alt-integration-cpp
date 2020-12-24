@@ -7,13 +7,13 @@
 
 namespace altintegration {
 
-KeystoneContainer KeystoneContainer::fromPrevious(
-    const BlockIndex<AltBlock>* prev, const uint32_t ki) {
+KeystoneContainer KeystoneContainer::createFromPrevious(
+    const BlockIndex<AltBlock>* prev, const uint32_t keystoneInterval) {
   KeystoneContainer c;
 
   const auto height = prev == nullptr ? 0 : prev->getHeight() + 1;
-  const auto first = getFirstPreviousKeystoneHeight(height, ki);
-  const auto second = getSecondPreviousKeystoneHeight(height, ki);
+  const auto first = getFirstPreviousKeystoneHeight(height, keystoneInterval);
+  const auto second = getSecondPreviousKeystoneHeight(height, keystoneInterval);
 
   if (prev != nullptr) {
     auto* firstPreviousKeystone = prev->getAncestor(first);
@@ -31,8 +31,35 @@ KeystoneContainer KeystoneContainer::fromPrevious(
   return c;
 }
 
-void KeystoneContainer::write(WriteStream& stream) const {
-  stream.write(firstPreviousKeystone);
-  stream.write(secondPreviousKeystone);
+void KeystoneContainer::toVbkEncoding(WriteStream& stream) const {
+  writeSingleByteLenValue(stream, firstPreviousKeystone);
+  writeSingleByteLenValue(stream, secondPreviousKeystone);
 }
+size_t KeystoneContainer::estimateSize() const {
+  return singleByteLenValueSize(firstPreviousKeystone) +
+         singleByteLenValueSize(secondPreviousKeystone);
+}
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                KeystoneContainer& container,
+                                ValidationState& state) {
+  if (!readSingleByteLenValue(stream,
+                              container.firstPreviousKeystone,
+                              state,
+                              MIN_ALT_HASH_SIZE,
+                              MAX_ALT_HASH_SIZE)) {
+    return state.Invalid("bad-keystone1");
+  }
+
+  if (!readSingleByteLenValue(stream,
+                              container.secondPreviousKeystone,
+                              state,
+                              MIN_ALT_HASH_SIZE,
+                              MAX_ALT_HASH_SIZE)) {
+    return state.Invalid("bad-keystone2");
+  }
+
+  return true;
+}
+
 }  // namespace altintegration

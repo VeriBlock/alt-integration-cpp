@@ -7,9 +7,9 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_PUBLICATION_DATA_HPP_
 
 #include <cstdint>
-#include <sstream>
 #include <vector>
 
+#include "context_info_container.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/strutil.hpp"
 
@@ -29,7 +29,7 @@ struct PublicationData {
   std::vector<uint8_t> header{};
   //! bitcoin script or POP payout address
   std::vector<uint8_t> payoutInfo{};
-  //! TBD
+  //! serialized AuthenticatedContextInfoContainer
   std::vector<uint8_t> contextInfo{};
 
   std::string toPrettyString() const;

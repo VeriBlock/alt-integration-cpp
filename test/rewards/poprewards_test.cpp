@@ -41,8 +41,8 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     std::vector<VbkTx> popTxs{};
     for (size_t i = 0; i < endorsements; i++) {
       for (const auto& b : endorsedBlocks) {
-        auto pubdata = generatePublicationData(b);
-        pubdata.contextInfo.push_back((unsigned char)i);
+        uint256 stateRoot = generateRandomBytesVector(32);
+        auto pubdata = generatePublicationData(b, stateRoot);
         VbkTx tx = popminer->createVbkTxEndorsingAltBlock(pubdata);
         popTxs.push_back(tx);
       }
@@ -59,7 +59,7 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     auto nextBlock = generateNextBlock(altTip->getHeader());
     altchain.push_back(nextBlock);
     EXPECT_TRUE(alttree.acceptBlockHeader(nextBlock, state));
-    ASSERT_TRUE(validatePayloads(nextBlock.getHash(), popData));
+    ASSERT_TRUE(validatePayloads(nextBlock.getHash(), popData)) << state.toString();
     ASSERT_TRUE(state.IsValid());
     EXPECT_EQ(altchain.size(), chainSize + 1);
   }

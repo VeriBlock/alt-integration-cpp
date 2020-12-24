@@ -209,6 +209,17 @@ struct AltChainParams {
   virtual std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
+  /**
+   * This function should return true if given bytes can be deserialized to
+   * altchain header.
+   * @param bytes
+   * @return true if `bytes` can be deserialized to altchain header, false
+   * otherwise.
+   *
+   * @warning SHOULD NOT THROW
+   */
+  virtual bool isHeader(const std::vector<uint8_t>& bytes) const noexcept = 0;
+
  public:
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
       std::make_shared<PopPayoutsParams>();

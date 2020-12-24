@@ -42,13 +42,6 @@ struct VbkPopTx {
   std::vector<uint8_t> publicKey{};
 
   /**
-   * Convert VbkPopTx to data stream using VbkPopTx basic byte format without
-   * signature and publicKey data
-   * @param stream data stream to write into
-   */
-  void toRaw(WriteStream& stream) const;
-
-  /**
    * Convert VbkPopTx to data stream using VbkPopTx VBK byte format
    * @param stream data stream to write into
    */
@@ -63,6 +56,14 @@ struct VbkPopTx {
   hash_t getHash() const;
 
   std::string toPrettyString() const;
+
+ private:
+  /**
+   * Convert VbkPopTx to data stream using VbkPopTx basic byte format without
+   * signature and publicKey data
+   * @param stream data stream to write into
+   */
+  void toRaw(WriteStream& stream) const;
 };
 
 template <typename JsonValue>
