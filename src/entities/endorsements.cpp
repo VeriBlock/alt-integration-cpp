@@ -18,7 +18,6 @@ VbkEndorsement VbkEndorsement::fromContainer(const VTB& c) {
   e.blockOfProof = c.transaction.blockOfProof.getHash();
   e.containingHash = c.containingBlock.getHash();
   e.endorsedHash = c.transaction.publishedBlock.getHash();
-  e.payoutInfo = {};
   return e;
 }
 
@@ -32,7 +31,6 @@ AltEndorsement AltEndorsement::fromContainer(
   e.blockOfProof = c.blockOfProof.getHash();
   e.endorsedHash = endorsedHash;
   e.containingHash = containingHash;
-  e.payoutInfo = c.transaction.publicationData.payoutInfo;
   return e;
 }
 
@@ -78,14 +76,6 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("bad-altendorsement-block-of-proof");
   }
 
-  if (!readSingleByteLenValue(stream,
-                              out.payoutInfo,
-                              state,
-                              0,
-                              MAX_PAYOUT_INFO_SIZE)) {
-    return state.Invalid("bad-altendorsement-payout-info");
-  }
-
   return true;
 }
 
@@ -118,14 +108,6 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("bad-vbkendorsement-block-of-proof");
   }
 
-  // this one should be empty
-  if (!readSingleByteLenValue(stream,
-                              out.payoutInfo,
-                              state,
-                              0,
-                              0)) {
-    return state.Invalid("bad-vbkendorsement-payout-info");
-  }
   return true;
 }
 

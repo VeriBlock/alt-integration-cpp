@@ -923,7 +923,6 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);
   auto E2 = VbkEndorsement::fromContainer(vtb2);
-  EXPECT_EQ(E1.payoutInfo, E2.payoutInfo);
   EXPECT_EQ(E1.blockOfProof, E2.blockOfProof);
   EXPECT_EQ(E1.endorsedHash, E2.endorsedHash);
   EXPECT_NE(E1.containingHash, E2.containingHash);
@@ -1075,7 +1074,6 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);
   auto E2 = VbkEndorsement::fromContainer(vtb2);
-  EXPECT_EQ(E1.payoutInfo, E2.payoutInfo);
   EXPECT_EQ(E1.blockOfProof, E2.blockOfProof);
   EXPECT_EQ(E1.endorsedHash, E2.endorsedHash);
   EXPECT_NE(E1.containingHash, E2.containingHash);
