@@ -183,7 +183,7 @@ struct AltChainParamsTest : public AltChainParams {
     return AssertDeserializeFromRaw<AltBlock>(bytes).getHash();
   }
 
-  bool isHeader(const std::vector<uint8_t>&) const noexcept override {
+  bool checkBlockHeader(const std::vector<uint8_t>&) const noexcept override {
     return true;
   }
 };

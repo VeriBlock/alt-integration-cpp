@@ -30,9 +30,9 @@ func SetOnGetBlockHeaderHash(fn func(toBeHashed []byte) []byte) {
 	ffi.OnGetBlockHeaderHash = fn
 }
 
-// SetOnIsHeader ...
-func SetOnIsHeader(fn func(data []byte) bool) {
-	ffi.OnIsHeader = fn
+// SetOnCheckBlockHeader ...
+func SetOnCheckBlockHeader(fn func(data []byte) bool) {
+	ffi.OnCheckBlockHeader = fn
 }
 
 // SetOnGetAtv ...

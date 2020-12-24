@@ -14,7 +14,7 @@ var (
 	OnGetAtv             = func(id []byte) []byte { panic("OnGetAtv not set") }
 	OnGetVtb             = func(id []byte) []byte { panic("OnGetVtb not set") }
 	OnGetVbk             = func(id []byte) []byte { panic("OnGetVbk not set") }
-	OnIsHeader           = func(data []byte) bool { panic("OnIsHeader not set") }
+	OnCheckBlockHeader   = func(data []byte) bool { panic("OnCheckBlockHeader not set") }
 	OnAcceptedATV        = func(data []byte) { panic("OnAcceptedATV not set") }
 	OnAcceptedVTB        = func(data []byte) { panic("OnAcceptedVTB not set") }
 	OnAcceptedVBK        = func(data []byte) { panic("OnAcceptedVBK not set") }
@@ -54,7 +54,7 @@ func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *
 }
 
 //export VBK_isHeader
-func VBK_isHeader(in *C.uint8_t, inlen C.int) C.int {
+func VBK_checkBlockHeader(in *C.uint8_t, inlen C.int) C.int {
 	data := convertToBytes(in, inlen)
 	res := OnIsHeader(data)
 	if res == true {

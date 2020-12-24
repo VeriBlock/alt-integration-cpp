@@ -9,6 +9,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "validation_state.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,9 +31,10 @@ void VBK_getBlockHeaderHash(const uint8_t* in,
                             uint8_t* out,
                             int* outlen);
 
-//! Accepts arbitrary bytes. Should return 0 if these bytes can NOT be
-//! deserialized to altchain header, and non-0 otherwise.
-int VBK_isHeader(const uint8_t* in, int inlen);
+//! Accepts arbitrary bytes.
+//! Should return 0 if input bytes are statelessly INVALID block header.
+//! Should return non-0 if input bytes are statelessly VALID block header.
+int VBK_checkBlockHeader(const uint8_t* in, int inlen);
 
 // PayloadsProvider externs
 //! @param[in] in input ATV`s id byte array
