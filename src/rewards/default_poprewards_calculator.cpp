@@ -236,17 +236,38 @@ PopPayouts DefaultPopRewardsCalculator::calculatePayoutsInner(
   auto blockReward = calculateBlockReward(
       endorsedBlock.getHeight(), endorsedBlockScore, popDifficulty);
 
-  // pay reward for each of the endorsements
+  // prepare IDs of ATVs that have to be fetched
+  std::vector<uint256> atvids;
+  atvids.reserve(endorsedBlock.endorsedBy.size());
   for (const auto* e : endorsedBlock.endorsedBy) {
-    auto* b = tree_.vbk().getBlockIndex(e->blockOfProof);
-    if (!tree_.vbk().getBestChain().contains(b)) continue;
+    atvids.push_back(e->getId());
+  }
+
+  // fetch ATVs
+  std::vector<ATV> atvs;
+  atvs.reserve(atvids.size());
+  ValidationState state;
+  if (!tree_.getPayloadsProvider().getATVs(atvids, atvs, state)) {
+    VBK_ASSERT_MSG(false,
+                   "Expected to fetch all ATVs(size=%d), but got=%d",
+                   atvids.size(),
+                   atvs.size());
+  }
+
+  // pay reward for each of the endorsements
+  for (const auto& atv : atvs) {
+    auto* b = tree_.vbk().getBlockIndex(atv.blockOfProof.getHash());
+    if (!tree_.vbk().getBestChain().contains(b)) {
+      continue;
+    }
 
     int veriBlockHeight = b->getHeight();
     int relativeHeight = veriBlockHeight - bestPublication;
     assert(relativeHeight >= 0);
     auto minerReward =
         calculateMinerReward(relativeHeight, endorsedBlockScore, blockReward);
-    rewards.payouts[e->payoutInfo] += minerReward.value.getLow64();
+    auto payoutInfo = atv.transaction.publicationData.payoutInfo;
+    rewards.payouts[payoutInfo] += minerReward.value.getLow64();
   }
   return rewards;
 }
@@ -291,7 +312,8 @@ PopPayouts DefaultPopRewardsCalculator::calculatePayouts(
   // make sure cache is in valid state, eg contains all necessary
   // blocks to calculate POP difficulty for the endorsed block
 
-  size_t toFetch = tree_.getParams().getPayoutParams().difficultyAveragingInterval();
+  size_t toFetch =
+      tree_.getParams().getPayoutParams().difficultyAveragingInterval();
   if ((int)toFetch > endorsedBlock.getHeight()) {
     toFetch = endorsedBlock.getHeight();
   }

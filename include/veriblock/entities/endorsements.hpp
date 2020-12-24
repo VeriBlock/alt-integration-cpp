@@ -34,26 +34,15 @@ AltEndorsement AltEndorsement ::fromContainer(
     const std::vector<uint8_t>& endorsedHash);
 template <>
 AltEndorsement::id_t AltEndorsement::getId(const ATV& c);
+
 template <>
-inline std::string VbkEndorsement::toPrettyString(size_t level) const {
-  return fmt::sprintf(
-      "%sVbkEndorsement{id=%s, containing=%s, endorsed=%s, blockOfProof=%s}",
-      std::string(level, ' '),
-      HexStr(id),
-      HexStr(containingHash),
-      HexStr(endorsedHash),
-      HexStr(blockOfProof));
+inline const std::string AltEndorsement::name() {
+  return "ALT";
 }
 
 template <>
-inline std::string AltEndorsement::toPrettyString(size_t level) const {
-  return fmt::sprintf(
-      "%sAltEndorsement{id=%s, containing=%s, endorsed=%s, blockOfProof=%s}",
-      std::string(level, ' '),
-      HexStr(id),
-      HexStr(containingHash),
-      HexStr(endorsedHash),
-      HexStr(blockOfProof));
+inline const std::string VbkEndorsement::name() {
+  return "VBK";
 }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,
