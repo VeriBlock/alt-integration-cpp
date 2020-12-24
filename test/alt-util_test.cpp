@@ -7,6 +7,7 @@
 
 #include <veriblock/alt-util.hpp>
 #include <veriblock/mock_miner.hpp>
+#include <util/alt_chain_params_regtest.hpp>
 
 using namespace altintegration;
 
@@ -34,20 +35,25 @@ TEST_F(AltUtilTest, GetLastKnownBlocks) {
   ASSERT_EQ(many.size(), 11ull);  // we know only 11 bocks, 10+genesis
 }
 
-TEST_F(AltUtilTest, CalculateContextInfoContainerHash) {
-  PopData empty;
-  empty.version = 2;
-  auto mroot2 = empty.getMerkleRoot();
-  empty.version = 1;
-  auto mroot1 = empty.getMerkleRoot();
+TEST(TopLevelMerkleRoot, Algorithm) {
+  AltChainParamsRegTest p;
+  uint256 txRoot = uint256::fromHex("01");
+  uint256 popDataRoot = uint256::fromHex("02");
 
-  EXPECT_EQ(HexStr(mroot2),
-            "2bb64e7e70e4596fd0db265a75a3537079f0d77aaf0935aee6379b004db8ff9d");
-  EXPECT_EQ(HexStr(mroot1), "eaac496a5eab315c9255fb85c871cef7fd87047adcd2e81ba7d55d6bdeb1737f");
+  ContextInfoContainer container;
+  container.height = 10;
+  container.keystones.firstPreviousKeystone = ParseHex("03");
+  container.keystones.secondPreviousKeystone = ParseHex("04");
 
-  auto hash0 = CalculateContextInfoContainerHash(empty, nullptr, 5, 0);
-  EXPECT_EQ(HexStr(hash0), "73511044b1dc34f9d920e8fb85ab1a1b10de4e31dc6272ce23386fe0d8b5b600");
+  auto left = sha256twice(txRoot, popDataRoot);
+  auto right = container.getHash();
+  auto topLevel = sha256twice(left, right);
 
-  auto hash1 = CalculateContextInfoContainerHash(empty, nullptr, 5, 1);
-  EXPECT_EQ(HexStr(hash1), "6cca10728ad80e77554b41850c4b22d1016d75e8eca3d0916da916eb760fc350");
+  AuthenticatedContextInfoContainer c;
+  c.stateRoot = left;
+  c.ctx = container;
+
+  ASSERT_EQ(topLevel, c.getTopLevelMerkleRoot());
+  ASSERT_EQ(topLevel, CalculateTopLevelMerkleRoot(txRoot, popDataRoot, container));
+  ASSERT_EQ(topLevel, CalculateTopLevelMerkleRoot(c));
 }

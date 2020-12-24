@@ -12,6 +12,7 @@
 
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
+#include "veriblock/entities/context_info_container.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/keystone_util.hpp"
@@ -65,20 +66,20 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
   return true;
 }
 
-//! Calculates ContextInfoContainerHash which cryptographically authenticates
-//! block height, its position in blockchain (via keystones), and containing
-//! PopData
-uint256 CalculateContextInfoContainerHash(
-    const PopData& popData,
-    const BlockIndex<AltBlock>* prevBlock,
-    const uint32_t keystoneInterval,
-    const uint32_t altBootstrapHeight = 0);
+//! calculates top level merkle root that cryptographically authenticates block
+//! content (transactions, PopData, context info) to a block
+uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
+                                    const uint256& popDataMerkleRoot,
+                                    const ContextInfoContainer& ctx);
 
 //! @overload
-uint256 CalculateContextInfoContainerHash(
-    const PopData& popData,
-    const BlockIndex<AltBlock>* prevBlock,
-    const AltChainParams& params);
+uint256 CalculateTopLevelMerkleRoot(const AuthenticatedContextInfoContainer& ctx);
+
+//! @overload
+uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
+                                    const PopData& popData,
+                                    const BlockIndex<AltBlock>* prevBlock,
+                                    const AltChainParams& params);
 
 }  // namespace altintegration
 

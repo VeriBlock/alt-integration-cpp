@@ -6,6 +6,8 @@
 #include <type_traits>
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/popdata.hpp>
+#include <veriblock/entities/keystone_container.hpp>
+#include <veriblock/entities/context_info_container.hpp.>
 
 #define XSTR(s) STR(s)
 #define STR(s) #s
@@ -84,6 +86,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   DEFINE_DESER_FUZZ(PublicationData);
   DEFINE_DESER_FUZZ(Coin);
   DEFINE_DESER_FUZZ(VbkMerklePath);
+  DEFINE_DESER_FUZZ(KeystoneContainer);
+  DEFINE_DESER_FUZZ(ContextInfoContainer);
+  DEFINE_DESER_FUZZ(AuthenticatedContextInfoContainer);
   DEFINE_DESER_FUZZ(AltBlock);
   DEFINE_DESER_FUZZ(BtcBlock);
   DEFINE_DESER_FUZZ(VbkBlock);

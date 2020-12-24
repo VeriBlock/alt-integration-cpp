@@ -5,6 +5,7 @@
 
 #include <veriblock/blockchain/alt_chain_params.hpp>
 #include <veriblock/logger.hpp>
+#include <veriblock/pop_context.hpp>
 #include <veriblock/rewards/poprewards_calculator.hpp>
 
 using namespace altintegration;
@@ -12,8 +13,8 @@ using namespace altintegration;
 struct AltChainParamsTest : public AltChainParams {
   AltBlock getBootstrapBlock() const noexcept override {
     AltBlock genesisBlock;
-    genesisBlock.hash = std::vector<uint8_t>(MIN_ALT_HASH_SIZE, 1);
-    genesisBlock.previousBlock = std::vector<uint8_t>(MIN_ALT_HASH_SIZE, 2);
+    genesisBlock.hash = std::vector<uint8_t>(10, 1);
+    genesisBlock.previousBlock = std::vector<uint8_t>(10, 2);
     genesisBlock.height = 0;
     genesisBlock.timestamp = 0;
     return genesisBlock;
@@ -25,6 +26,10 @@ struct AltChainParamsTest : public AltChainParams {
       const std::vector<uint8_t>& bytes) const noexcept override {
     AltBlock altBlock = AssertDeserializeFromVbkEncoding<AltBlock>(bytes);
     return altBlock.getHash();
+  }
+
+  bool isHeader(const std::vector<uint8_t>&) const noexcept override {
+    return true;
   }
 };
 

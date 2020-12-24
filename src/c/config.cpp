@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "config.hpp"
+
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
@@ -37,6 +38,10 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
     hash.resize(size);
     return hash;
   }
+
+  bool isHeader(const std::vector<uint8_t>& bytes) const noexcept {
+    return VBK_isHeader(bytes.data(), (int)bytes.size());
+  };
 };
 
 // Config itself is defined in config.hpp

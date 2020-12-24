@@ -4,43 +4,31 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/alt-util.hpp"
+
 #include "veriblock/entities/keystone_container.hpp"
 
 namespace altintegration {
 
-uint256 CalculateContextInfoContainerHash(const PopData& popData,
-                                          const BlockIndex<AltBlock>* prevBlock,
-                                          const uint32_t keystoneInterval,
-                                          const uint32_t altBootstrapHeight) {
-  WriteStream stream;
-  const uint32_t height =
-      prevBlock == nullptr ? altBootstrapHeight : prevBlock->getHeight() + 1u;
-  // first, write 4 BE bytes - block height
-  stream.writeBE<uint32_t>(height);
-
-  // find and write previous keystones.
-  // if keystone does not exist, do not write anything.
-  // otherwise, write its hash
-  KeystoneContainer::fromPrevious(prevBlock, keystoneInterval).write(stream);
-
-  // calculate PopData sha256double merkle root which includes 'version'
-  auto popDataRoot = popData.getMerkleRoot();
-
-  // calculate unauthenticated ContextInfoContainer hash
-  auto unauthContextInfoHash = sha256twice(stream.data());
-
-  // calculate authenticated ContextInfoContainer hash
-  return sha256twice(popDataRoot, unauthContextInfoHash);
+uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
+                                    const PopData& popData,
+                                    const BlockIndex<AltBlock>* prevBlock,
+                                    const AltChainParams& params) {
+  auto ctx = ContextInfoContainer::createFromPrevious(prevBlock, params);
+  auto popDataMerkleRoot = popData.getMerkleRoot();
+  return CalculateTopLevelMerkleRoot(txMerkleRoot, popDataMerkleRoot, ctx);
 }
 
-uint256 CalculateContextInfoContainerHash(const PopData& popData,
-                                          const BlockIndex<AltBlock>* prevBlock,
-                                          const AltChainParams& params) {
-  return CalculateContextInfoContainerHash(
-      popData,
-      prevBlock,
-      params.getKeystoneInterval(),
-      params.getBootstrapBlock().getHeight());
+uint256 CalculateTopLevelMerkleRoot(const AuthenticatedContextInfoContainer& ctx) {
+  return ctx.getTopLevelMerkleRoot();
+}
+
+uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
+                                    const uint256& popDataMerkleRoot,
+                                    const ContextInfoContainer& ctx) {
+  AuthenticatedContextInfoContainer c;
+  c.stateRoot = sha256twice(txMerkleRoot, popDataMerkleRoot);
+  c.ctx = ctx;
+  return CalculateTopLevelMerkleRoot(c);
 }
 
 }  // namespace altintegration

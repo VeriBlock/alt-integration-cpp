@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/stateless_validation.hpp"
+
 #include <gtest/gtest.h>
 
 #include "util/alt_chain_params_regtest.hpp"
@@ -11,23 +13,24 @@
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/literals.hpp"
 #include "veriblock/pop_stateless_validator.hpp"
-#include "veriblock/stateless_validation.hpp"
 
 using namespace altintegration;
 
 static const ATV validATV = AssertDeserializeFromHex<ATV>(
-    "000000010189bb01011667b55493722b4807bea7bb8ed2835d990885f3fe51c30203e80001"
-    "070167010001500000002036cff5b91ed5d135be14654ca6c89f9da04043720696bd70c79b"
-    "0a77b4c286ea000000205f1d18e6824ee01817e9432f8d926353f7d7a0a5d2c6534b6a30dd"
-    "9ab019b70f000000050000000501050102030405010a0102030405060708090a4630440220"
-    "6d1927c66b9a5f56f085fab309f756e11621e510b51736ca2d9c42eb8de6a97c0220111a2a"
-    "9b8d4f480495ed9e5e0cc72aea1824008ba20446019566ddf3099ad17f583056301006072a"
-    "8648ce3d020106052b8104000a034200042fca63a20cb5208c2a55ff5099ca1966b7f52e68"
-    "7600784d1de062c1dd9c8a5fe55b2ba5d906c703d37cbd02ecd9c97a806110fa05d9014a10"
-    "2a0513dd354ec50400000000040000000020a2e63f9eade6b9ff6899e094e29329a7225f23"
-    "766afd8d5cd65bd4c0b406084c040000000041000000430002efeafedd566efa5d34395974"
-    "b0d80c07c61cb745b3e7ed364ef191b08de0a2e63f9eade6b9ff6899e094e29329a75c9b94"
-    "94010100000000000000");
+    "0000000101dcbb01011667b55493722b4807bea7bb8ed2835d990885f3fe51c30203e80001"
+    "0701ba0100016a20636ff0ad45e996d94acb675205c98ad797ce634f76091ecac408cd7da6"
+    "3e68092032c4ff054ad6f9e99460348e083a6237d2cd448bb8a8a6cf54bbe903b99e70eb00"
+    "00000500000005fd94ec804d0b703debf5411271360fee6996e42b8c8ebd10a2e2550a1888"
+    "7735013e000000050c0101010101010101010101010c010101010101010101010101000000"
+    "0000000000000000000000000000000000000000000000000000000000010a010203040506"
+    "0708090a46304402207ff4cb421f3c5a17340606dff87ecdeb2cadb4d19258b70769c3feca"
+    "5156af5702207386ff8653d4b4e1a764f8b419ce9d8416b316f91fb54ef10f5d36682d6536"
+    "c5583056301006072a8648ce3d020106052b8104000a034200042fca63a20cb5208c2a55ff"
+    "5099ca1966b7f52e687600784d1de062c1dd9c8a5fe55b2ba5d906c703d37cbd02ecd9c97a"
+    "806110fa05d9014a102a0513dd354ec50400000000040000000020f16bf1d4cb1d617730bb"
+    "afbeeaec5716fb78e5d040e4b3338083e97556e4ce23040000000041000000430002e4edf0"
+    "9186bdf8f39469a1d402508210a3c4e2cf37a767f180c4c118958bf16bf1d4cb1d617730bb"
+    "afbeeaec57165f8c848b010100000000000000");
 
 static const VTB validVTB = AssertDeserializeFromHex<VTB>(
     "00000001020dbfbb02011667b55493722b4807bea7bb8ed2835d990885f3fe51c341000000"
@@ -165,7 +168,7 @@ TEST_F(StatelessValidationTest,
 
 TEST_F(StatelessValidationTest, ATV_valid) {
   AltChainParamsRegTest altp;
-  ASSERT_TRUE(checkATV(validATV, state, altp)) << state.GetDebugMessage();
+  ASSERT_TRUE(checkATV(validATV, state, altp)) << state.toString();
 }
 
 TEST_F(StatelessValidationTest,
@@ -278,14 +281,14 @@ TEST_F(StatelessValidationTest, checkBitcoinBlocks_when_not_contiguous) {
 }
 
 TEST_F(StatelessValidationTest, checkVbkTx_valid) {
-  ASSERT_TRUE(checkVbkTx(validATV.transaction, state));
+  ASSERT_TRUE(checkVbkTx(validATV.transaction, alt, state));
 }
 
 TEST_F(StatelessValidationTest, VbkTx_checkSignature_signature_invalid) {
   VbkTx tx = validATV.transaction;
   tx.signature =
       "30440220398B74708DC8F8AEE68FCE0C47B8959E6FCE6354665DA3ED87583F708E62AA6B02202E6C00C00487763C55E92C7B8E1DD538B7375D8DF2B2117E75ACBB9DB7DEB3C7"_unhex;
-  ASSERT_FALSE(checkVbkTx(tx, state));
+  ASSERT_FALSE(checkVbkTx(tx, alt, state));
 }
 
 TEST_F(StatelessValidationTest, VbkTx_different_address_invalid) {
