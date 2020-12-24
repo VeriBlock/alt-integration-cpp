@@ -14,6 +14,9 @@ var (
 	OnGetAtv             = func(id []byte) []byte { panic("OnGetAtv not set") }
 	OnGetVtb             = func(id []byte) []byte { panic("OnGetVtb not set") }
 	OnGetVbk             = func(id []byte) []byte { panic("OnGetVbk not set") }
+	OnAcceptedATV        = func(data []byte) { panic("OnAcceptedATV not set") }
+	OnAcceptedVTB        = func(data []byte) { panic("OnAcceptedVTB not set") }
+	OnAcceptedVBK        = func(data []byte) { panic("OnAcceptedVBK not set") }
 )
 
 //export VBK_getAltchainId
@@ -91,4 +94,22 @@ func VBK_getVBK(id *C.uint8_t, idSize C.int, vbkBytesOut *C.uint8_t, vbkBytesLen
 	*vbkBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
 	// true
 	return 1
+}
+
+//export VBK_MemPool_onAcceptedATV
+func VBK_MemPool_onAcceptedATV(bytes *C.uint8_t, size C.int) {
+	data := convertToBytes(bytes, size)
+	OnAcceptedATV(data)
+}
+
+//export VBK_MemPool_onAcceptedVTB
+func VBK_MemPool_onAcceptedVTB(bytes *C.uint8_t, size C.int) {
+	data := convertToBytes(bytes, size)
+	OnAcceptedVTB(data)
+}
+
+//export VBK_MemPool_onAcceptedVBK
+func VBK_MemPool_onAcceptedVBK(bytes *C.uint8_t, size C.int) {
+	data := convertToBytes(bytes, size)
+	OnAcceptedVBK(data)
 }

@@ -60,6 +60,12 @@ bool VBK_getVBK(const uint8_t* id_bytes,
                 uint8_t* vbk_bytes_out,
                 int* vbk_bytes_len);
 
+bool VBK_MemPool_onAcceptedATV(const uint8_t* bytes, int size);
+
+bool VBK_MemPool_onAcceptedVTB(const uint8_t* bytes, int size);
+
+bool VBK_MemPool_onAcceptedVBK(const uint8_t* bytes, int size);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif

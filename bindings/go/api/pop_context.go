@@ -79,6 +79,38 @@ func NewPopContext(config *Config) *PopContext {
 	if config == nil {
 		panic("Config not provided")
 	}
+
+	// setup signals
+	ffi.OnAcceptedATV = func(data []byte) {
+		var atv entities.Atv
+		if err := atv.FromVbkEncodingBytes(data); err != nil {
+			panic(err)
+		}
+		for _, fn := range onAcceptedATV {
+			fn(&atv)
+		}
+	}
+
+	ffi.OnAcceptedVTB = func(data []byte) {
+		var vtb entities.Vtb
+		if err := vtb.FromVbkEncodingBytes(data); err != nil {
+			panic(err)
+		}
+		for _, fn := range onAcceptedVTB {
+			fn(&vtb)
+		}
+	}
+
+	ffi.OnAcceptedVBK = func(data []byte) {
+		var vbk entities.VbkBlock
+		if err := vbk.FromVbkEncodingBytes(data); err != nil {
+			panic(err)
+		}
+		for _, fn := range onAcceptedVBK {
+			fn(&vbk)
+		}
+	}
+
 	return &PopContext{
 		popContext: ffi.NewPopContext(config.Config),
 		mutex:      new(sync.Mutex),

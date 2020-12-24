@@ -94,6 +94,25 @@ PopContext* VBK_NewPopContext(Config_t* config) {
   v->provider = std::make_shared<PayloadsProviderImpl>(maxPopDataSize);
   v->context = altintegration::PopContext::create(c, v->provider);
 
+  // setup signals
+  v->context->mempool->onAccepted<altintegration::ATV>(
+      [](const altintegration::ATV& atv) {
+        auto bytes = altintegration::SerializeToVbkEncoding(atv);
+        VBK_MemPool_onAcceptedATV(bytes.data(), bytes.size());
+      });
+
+  v->context->mempool->onAccepted<altintegration::VTB>(
+      [](const altintegration::VTB& vtb) {
+        auto bytes = altintegration::SerializeToVbkEncoding(vtb);
+        VBK_MemPool_onAcceptedVTB(bytes.data(), bytes.size());
+      });
+
+  v->context->mempool->onAccepted<altintegration::VbkBlock>(
+      [](const altintegration::VbkBlock& vbk) {
+        auto bytes = altintegration::SerializeToVbkEncoding(vbk);
+        VBK_MemPool_onAcceptedVBK(bytes.data(), bytes.size());
+      });
+
   return v;
 }
 
