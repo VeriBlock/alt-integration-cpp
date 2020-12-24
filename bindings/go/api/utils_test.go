@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"testing"
 
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCalculateContextInfoContainerHash(t *testing.T) {
+func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
@@ -24,7 +25,9 @@ func TestCalculateContextInfoContainerHash(t *testing.T) {
 	var popData entities.PopData
 	popData.Version = 1
 
-	hash, err := popContext.CalculateContextInfoContainerHash(block.PreviousBlock, &popData)
+	txRootHash := [veriblock.Sha256HashSize]byte{}
+
+	hash, err := popContext.CalculateTopLevelMerkleRoot(txRootHash, block.PreviousBlock, &popData)
 	assert.NoError(err)
 	fmt.Println(hex.EncodeToString(hash[:]))
 

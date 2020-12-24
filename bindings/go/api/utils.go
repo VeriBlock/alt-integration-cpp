@@ -3,11 +3,12 @@ package api
 import (
 	"errors"
 
+	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
-func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
+func (v *PopContext) CalculateTopLevelMerkleRoot(txRootHash [veriblock.Sha256HashSize]byte, prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
 	defer v.lock()()
 	if popData == nil {
 		return nil, errors.New("popData should be defined")
@@ -19,7 +20,7 @@ func (v *PopContext) CalculateContextInfoContainerHash(prevAltBlockHash entities
 	}
 
 	var hash entities.ContextInfoContainerHash
-	hash = v.popContext.AltBlockCalculateContextInfoContainerHash(prevAltBlockHash, popDataBytes)
+	hash = v.popContext.AltBlockCalculateTopLevelMerkleRoot(txRootHash, prevAltBlockHash, popDataBytes)
 	return &hash, nil
 }
 
