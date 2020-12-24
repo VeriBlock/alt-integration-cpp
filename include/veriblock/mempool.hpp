@@ -240,13 +240,6 @@ struct MemPool {
     return sig.connect(f);
   }
 
-  template <typename Pop>
-  size_t onAcceptedRaw(
-      std::function<void(const uint8_t* bytes, int bytes_size)> f) {
-    auto& sig = getSignalRaw<Pop>();
-    return sig.connect(f);
-  }
-
   //! fires when new valid ATV is accepted to mempool
   signals::Signal<void(const ATV& atv)> on_atv_accepted;
   //! fires when new valid VTB is accepted to mempool
@@ -274,7 +267,6 @@ struct MemPool {
   template <typename T>
   void makePayloadConnected(const std::shared_ptr<T>& t) {
     auto& signal = getSignal<T>();
-    auto& signal_raw = getSignalRaw<T>();
     auto& inflight = getInFlightMapMut<T>();
     auto& connected = getMapMut<T>();
 

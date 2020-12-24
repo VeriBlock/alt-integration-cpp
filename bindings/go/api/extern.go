@@ -5,6 +5,16 @@ import (
 	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+type onAcceptedATVSignature func(atv *entities.Atv)
+type onAcceptedVTBSignature func(atv *entities.Vtb)
+type onAcceptedVBKSignature func(atv *entities.VbkBlock)
+
+var (
+	onAcceptedATV = []onAcceptedATVSignature{}
+	onAcceptedVTB = []onAcceptedVTBSignature{}
+	onAcceptedVBK = []onAcceptedVBKSignature{}
+)
+
 // SetOnGetAltchainID ...
 func SetOnGetAltchainID(fn func() int64) {
 	ffi.OnGetAltchainID = fn
@@ -39,4 +49,19 @@ func SetOnGetVbk(fn func(id entities.VbkID) []byte) {
 	ffi.OnGetVbk = func(id []byte) []byte {
 		return fn(entities.ParseVbkID(id))
 	}
+}
+
+// SetOnAcceptedATV ...
+func SetOnAcceptedATV(fn onAcceptedATVSignature) {
+	onAcceptedATV = append(onAcceptedATV, fn)
+}
+
+// SetOnAcceptedVTB ...
+func SetOnAcceptedVTB(fn onAcceptedVTBSignature) {
+	onAcceptedVTB = append(onAcceptedVTB, fn)
+}
+
+// SetOnAcceptedVBK ...
+func SetOnAcceptedVBK(fn onAcceptedVBKSignature) {
+	onAcceptedVBK = append(onAcceptedVBK, fn)
 }
