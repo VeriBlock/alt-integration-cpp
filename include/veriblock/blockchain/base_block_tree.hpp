@@ -77,7 +77,14 @@ struct BaseBlockTree {
   //! @overload
   index_t* getBlockIndex(const std::string& hex) const {
     auto data = ParseHex(hex);
-    return getBlockIndex(makePrevHash(data));
+    prev_block_hash_t hash;
+    if (data.size() == prev_block_hash_t::size()) {
+      hash = makePrevHash<prev_block_hash_t>(data);
+    } else if (data.size() == hash_t::size()) {
+      hash = makePrevHash<hash_t>(data);
+    }
+
+    return getBlockIndex(hash);
   }
 
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
@@ -301,8 +308,8 @@ struct BaseBlockTree {
 
     // if the block has any invalidity flags other than `reason`, its
     // descendants are already flagged as BLOCK_FAILED_CHILD and should stay so
-    if (toBeValidated.hasFlags(
-            static_cast<enum BlockValidityStatus>(BLOCK_FAILED_MASK & ~reason))) {
+    if (toBeValidated.hasFlags(static_cast<enum BlockValidityStatus>(
+            BLOCK_FAILED_MASK & ~reason))) {
       doReValidate(toBeValidated, reason);
       return;
     }
