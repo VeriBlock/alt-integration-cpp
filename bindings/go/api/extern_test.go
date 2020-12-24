@@ -15,11 +15,11 @@ func TestOnAcceptedVBK(t *testing.T) {
 	isExecuted1 := false
 	isExecuted2 := false
 
-	popContext.SetOnAcceptedVBK(func(*entities.VbkBlock) {
+	popContext.AddOnAcceptedVBK(func(*entities.VbkBlock) {
 		isExecuted1 = true
 	})
 
-	popContext.SetOnAcceptedVBK(func(*entities.VbkBlock) {
+	popContext.AddOnAcceptedVBK(func(*entities.VbkBlock) {
 		isExecuted2 = true
 	})
 
@@ -51,11 +51,11 @@ func TestOnAcceptedVTB(t *testing.T) {
 	isExecuted1 := false
 	isExecuted2 := false
 
-	popContext.SetOnAcceptedVTB(func(*entities.Vtb) {
+	popContext.AddOnAcceptedVTB(func(*entities.Vtb) {
 		isExecuted1 = true
 	})
 
-	popContext.SetOnAcceptedVTB(func(*entities.Vtb) {
+	popContext.AddOnAcceptedVTB(func(*entities.Vtb) {
 		isExecuted2 = true
 	})
 
@@ -98,11 +98,11 @@ func TestOnAcceptedATV(t *testing.T) {
 	isExecuted1 := false
 	isExecuted2 := false
 
-	popContext.SetOnAcceptedATV(func(*entities.Atv) {
+	popContext.AddOnAcceptedATV(func(*entities.Atv) {
 		isExecuted1 = true
 	})
 
-	popContext.SetOnAcceptedATV(func(*entities.Atv) {
+	popContext.AddOnAcceptedATV(func(*entities.Atv) {
 		isExecuted2 = true
 	})
 

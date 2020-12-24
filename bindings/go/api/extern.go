@@ -51,20 +51,20 @@ func SetOnGetVbk(fn func(id entities.VbkID) []byte) {
 	}
 }
 
-// SetOnAcceptedATV ...
-func (v *PopContext) SetOnAcceptedATV(fn onAcceptedATVSignature) {
+// AddOnAcceptedATV ...
+func (v *PopContext) AddOnAcceptedATV(fn onAcceptedATVSignature) {
 	defer v.lock()()
 	onAcceptedATV = append(onAcceptedATV, fn)
 }
 
 // SetOnAcceptedVTB ...
-func (v *PopContext) SetOnAcceptedVTB(fn onAcceptedVTBSignature) {
+func (v *PopContext) AddOnAcceptedVTB(fn onAcceptedVTBSignature) {
 	defer v.lock()()
 	onAcceptedVTB = append(onAcceptedVTB, fn)
 }
 
-// SetOnAcceptedVBK ...
-func (v *PopContext) SetOnAcceptedVBK(fn onAcceptedVBKSignature) {
+// AddOnAcceptedVBK ...
+func (v *PopContext) AddOnAcceptedVBK(fn onAcceptedVBKSignature) {
 	defer v.lock()()
 	onAcceptedVBK = append(onAcceptedVBK, fn)
 }
