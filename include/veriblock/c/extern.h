@@ -29,6 +29,10 @@ void VBK_getBlockHeaderHash(const uint8_t* in,
                             uint8_t* out,
                             int* outlen);
 
+//! Accepts arbitrary bytes. Should return 0 if these bytes can NOT be
+//! deserialized to altchain header, and non-0 otherwise.
+int VBK_isHeader(const uint8_t* in, int inlen);
+
 // PayloadsProvider externs
 //! @param[in] in input ATV`s id byte array
 //! @param[in] inlen input ATV`s id byte array length

@@ -104,6 +104,8 @@ TEST_F(Scenario3, scenario_3) {
   PopData altPayloads1 =
       generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
+  fmt::printf(HexStr(altPayloads1.atvs.at(0).toVbkEncoding()));
+
   // new tip is the next block after vbkTip1
   ASSERT_TRUE(cmp(*popminer->vbk().getBestChain().tip()->pprev, *vbkTip1));
   vbkTip1 = popminer->vbk().getBestChain().tip();

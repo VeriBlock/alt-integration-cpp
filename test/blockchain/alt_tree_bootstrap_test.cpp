@@ -16,8 +16,8 @@ struct AltChainParamsNon0Bootstrap : public AltChainParams {
 
   AltBlock getBootstrapBlock() const noexcept override {
     AltBlock b;
-    b.hash = std::vector<uint8_t>(MIN_ALT_HASH_SIZE, 1);
-    b.previousBlock = std::vector<uint8_t>(MIN_ALT_HASH_SIZE, 0);
+    b.hash = std::vector<uint8_t>(12, 1);
+    b.previousBlock = std::vector<uint8_t>(12, 0);
     b.height = height;
     b.timestamp = 0;
     return b;
@@ -28,6 +28,10 @@ struct AltChainParamsNon0Bootstrap : public AltChainParams {
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
     return AssertDeserializeFromRaw<AltBlock>(bytes).getHash();
+  }
+
+  bool isHeader(const std::vector<uint8_t>&) const noexcept override {
+    return true;
   }
 
   int64_t id = 0;
