@@ -121,14 +121,34 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
  * @param[out] out_hash_size, size of the sha256 hash size
  * @ingroup c-api
  */
-void VBK_AltBlock_calculateTopLevelMerkleRoot(
+void VBK_AltBlock_calculateTopLevelMerkleRoot(PopContext* self,
+                                              const uint8_t txRoot[32],
+                                              const uint8_t* prev_block_hash,
+                                              int prev_block_hash_size,
+                                              const uint8_t* pop_data_bytes,
+                                              int pop_data_bytes_size,
+                                              uint8_t out_hash[32]);
+
+/**
+ * Generate altintegration::PublicationData for the provided endorsed block
+ *
+ * @param[in] self PopContext
+ * @param[in] endorsed_block_header, header bytes of the endorsed block
+ * @param[in] endorsed_block_header_size, size of the provided block hash
+ * @param[in] pop_data_bytes, bytes of the provided altintegration::PopData in
+ * the toVbkEncoding format
+ * @param[in] payout_info, the payout info the PoP miner
+ * @param[in] payout_info_size, size of the provided payout info
+ * @return altintgration::PublicationData serialized in the toVbkEncoding format
+ * to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_AltBlock_generatePublicationData(
     PopContext* self,
-    const uint8_t txRoot[32],
-    const uint8_t* prev_block_hash,
-    int prev_block_hash_size,
-    const uint8_t* pop_data_bytes,
-    int pop_data_bytes_size,
-    uint8_t out_hash[32]);
+    const uint8_t* endorsed_block_header,
+    int endorsed_block_header_size,
+    const uint8_t* payout_info,
+    int payout_info_size);
 
 /**
  * Stateless validation for the altintegration::ATV.

@@ -4,10 +4,42 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/alt-util.hpp"
-
 #include "veriblock/entities/keystone_container.hpp"
+#include "veriblock/entities/publication_data.hpp"
 
 namespace altintegration {
+
+bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
+                             const std::vector<uint8_t>& payoutInfo,
+                             const AltBlockTree& tree,
+                             PublicationData& out) {
+  auto header_hash = tree.getParams().getHash(endorsedBlockHeader);
+  auto index = tree.getBlockIndex(header_hash);
+
+  if (index != nullptr) {
+    out = GeneratePublicationData(
+        endorsedBlockHeader, *index, payoutInfo, tree.getParams());
+    return true;
+  }
+  return false;
+}
+
+PublicationData GeneratePublicationData(
+    const std::vector<uint8_t>& endorsedBlockHeader,
+    const BlockIndex<AltBlock>& endorsedBlock,
+    const std::vector<uint8_t>& payoutInfo,
+    const AltChainParams& params) {
+  auto ctx =
+      ContextInfoContainer::createFromPrevious(endorsedBlock.pprev, params);
+
+  PublicationData res;
+  res.payoutInfo = payoutInfo;
+  res.identifier = params.getIdentifier();
+  res.payoutInfo = SerializeToVbkEncoding(ctx);
+  res.header = endorsedBlockHeader;
+
+  return res;
+}
 
 uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
                                     const PopData& popData,
@@ -18,7 +50,8 @@ uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
   return CalculateTopLevelMerkleRoot(txMerkleRoot, popDataMerkleRoot, ctx);
 }
 
-uint256 CalculateTopLevelMerkleRoot(const AuthenticatedContextInfoContainer& ctx) {
+uint256 CalculateTopLevelMerkleRoot(
+    const AuthenticatedContextInfoContainer& ctx) {
   return ctx.getTopLevelMerkleRoot();
 }
 

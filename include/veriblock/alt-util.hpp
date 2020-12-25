@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "veriblock/blockchain/alt_chain_params.hpp"
+#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/blocktree.hpp"
 #include "veriblock/entities/context_info_container.hpp"
 #include "veriblock/entities/popdata.hpp"
@@ -66,14 +66,26 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
   return true;
 }
 
-//! calculates top level merkle root that cryptographically authenticates block
-//! content (transactions, PopData, context info) to a block
+bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
+                             const std::vector<uint8_t>& payoutInfo,
+                             const AltBlockTree& tree,
+                             PublicationData& out);
+
+PublicationData GeneratePublicationData(
+    const std::vector<uint8_t>& endorsedBlockHeader,
+    const BlockIndex<AltBlock>& endorsedBlock,
+    const std::vector<uint8_t>& payoutInfo,
+    const AltChainParams& params);
+
+//! calculates top level merkle root that cryptographically authenticates
+//! block content (transactions, PopData, context info) to a block
 uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
                                     const uint256& popDataMerkleRoot,
                                     const ContextInfoContainer& ctx);
 
 //! @overload
-uint256 CalculateTopLevelMerkleRoot(const AuthenticatedContextInfoContainer& ctx);
+uint256 CalculateTopLevelMerkleRoot(
+    const AuthenticatedContextInfoContainer& ctx);
 
 //! @overload
 uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,

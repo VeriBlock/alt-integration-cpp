@@ -3,15 +3,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/c/utils.h"
-
 #include <stdio.h>
 
 #include <vector>
 
+#include "bytestream.hpp"
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/alt-util.hpp"
+#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/popdata.hpp"
@@ -135,6 +135,31 @@ void VBK_AltBlock_calculateTopLevelMerkleRoot(PopContext* self,
       txmroot, pop_data, index, self->context->altTree->getParams());
 
   std::copy(hash.begin(), hash.end(), out_hash);
+}
+
+VBK_ByteStream* VBK_AltBlock_generatePublicationData(
+    PopContext* self,
+    const uint8_t* endorsed_block_header,
+    int endorsed_block_header_size,
+    const uint8_t* payout_info,
+    int payout_info_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+  VBK_ASSERT(payout_info);
+  VBK_ASSERT(endorsed_block_header);
+
+  std::vector<uint8_t> header(
+      endorsed_block_header,
+      endorsed_block_header + endorsed_block_header_size);
+  std::vector<uint8_t> payout(payout_info, payout_info + payout_info_size);
+
+  altintegration::PublicationData res;
+  if (altintegration::GeneratePublicationData(
+          header, payout, *self->context->altTree, res)) {
+    return new VbkByteStream(altintegration::SerializeToVbkEncoding(res));
+  }
+  return nullptr;
 }
 
 bool VBK_checkATV(PopContext* self,
