@@ -30,7 +30,7 @@ struct AltChainParamsRegTest : public AltChainParams {
     return AssertDeserializeFromRaw<AltBlock>(bytes).getHash();
   }
 
-  bool isHeader(
+  bool checkBlockHeader(
       const std::vector<uint8_t>& /* ignore */) const noexcept override {
     return true;
   }

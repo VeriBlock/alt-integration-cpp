@@ -30,7 +30,7 @@ func generateTestPopContext(t *testing.T) *PopContext {
 		return header
 	})
 
-	SetOnIsHeader(func(data []byte) bool {
+	SetOnCheckBlockHeader(func(data []byte) bool {
 		return true
 	})
 
