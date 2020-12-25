@@ -3,6 +3,7 @@ package api
 import (
 	"testing"
 
+	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -88,9 +89,11 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	assert.NoError(err)
 
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := [32]byte{}
+	popData := entities.PopData{Version: 1}
 
-	publicationData := popContext.GeneratePublicationData(endorsedBytes, payoutInfo)
-	assert.True(publicationData != nil)
+	publicationData, err := popContext.GeneratePublicationData(endorsedBytes, txRoot, &popData, payoutInfo)
+	assert.NoError(err)
 
 	atv, err := miner.MineAtv(publicationData)
 	assert.NoError(err)

@@ -141,6 +141,9 @@ VBK_ByteStream* VBK_AltBlock_generatePublicationData(
     PopContext* self,
     const uint8_t* endorsed_block_header,
     int endorsed_block_header_size,
+    const uint8_t txRoot[32],
+    const uint8_t* pop_data_bytes,
+    int pop_data_bytes_size,
     const uint8_t* payout_info,
     int payout_info_size) {
   VBK_ASSERT(self);
@@ -148,15 +151,25 @@ VBK_ByteStream* VBK_AltBlock_generatePublicationData(
   VBK_ASSERT(self->context->altTree);
   VBK_ASSERT(payout_info);
   VBK_ASSERT(endorsed_block_header);
+  VBK_ASSERT(txRoot);
+  VBK_ASSERT(pop_data_bytes);
+
+  using namespace altintegration;
+
+  Slice<const uint8_t> txRootSlice(txRoot, 32);
+  uint256 txmroot(txRootSlice);
+
+  auto pop_data = AssertDeserializeFromVbkEncoding<PopData>(
+      Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
 
   std::vector<uint8_t> header(
       endorsed_block_header,
       endorsed_block_header + endorsed_block_header_size);
   std::vector<uint8_t> payout(payout_info, payout_info + payout_info_size);
 
-  altintegration::PublicationData res;
-  if (altintegration::GeneratePublicationData(
-          header, payout, *self->context->altTree, res)) {
+  PublicationData res;
+  if (GeneratePublicationData(
+          header, txmroot, pop_data, payout, *self->context->altTree, res)) {
     return new VbkByteStream(altintegration::SerializeToVbkEncoding(res));
   }
   return nullptr;

@@ -10,6 +10,8 @@
 namespace altintegration {
 
 bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
+                             const uint256& txMerkleRoot,
+                             const PopData& popData,
                              const std::vector<uint8_t>& payoutInfo,
                              const AltBlockTree& tree,
                              PublicationData& out) {
@@ -17,8 +19,12 @@ bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
   auto index = tree.getBlockIndex(header_hash);
 
   if (index != nullptr) {
-    out = GeneratePublicationData(
-        endorsedBlockHeader, *index, payoutInfo, tree.getParams());
+    out = GeneratePublicationData(endorsedBlockHeader,
+                                  *index,
+                                  txMerkleRoot,
+                                  popData,
+                                  payoutInfo,
+                                  tree.getParams());
     return true;
   }
   return false;
@@ -27,15 +33,21 @@ bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
 PublicationData GeneratePublicationData(
     const std::vector<uint8_t>& endorsedBlockHeader,
     const BlockIndex<AltBlock>& endorsedBlock,
+    const uint256& txMerkleRoot,
+    const PopData& popData,
     const std::vector<uint8_t>& payoutInfo,
     const AltChainParams& params) {
-  auto ctx =
+  auto popDataRoot = popData.getMerkleRoot();
+
+  AuthenticatedContextInfoContainer ctx;
+  ctx.stateRoot = sha256twice(txMerkleRoot, popDataRoot);
+  ctx.ctx =
       ContextInfoContainer::createFromPrevious(endorsedBlock.pprev, params);
 
   PublicationData res;
   res.payoutInfo = payoutInfo;
   res.identifier = params.getIdentifier();
-  res.payoutInfo = SerializeToVbkEncoding(ctx);
+  res.contextInfo = SerializeToVbkEncoding(ctx);
   res.header = endorsedBlockHeader;
 
   return res;

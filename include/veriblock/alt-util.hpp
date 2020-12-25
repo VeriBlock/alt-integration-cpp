@@ -67,6 +67,8 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
 }
 
 bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
+                             const uint256& txMerkleRoot,
+                             const PopData& popData,
                              const std::vector<uint8_t>& payoutInfo,
                              const AltBlockTree& tree,
                              PublicationData& out);
@@ -74,6 +76,8 @@ bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
 PublicationData GeneratePublicationData(
     const std::vector<uint8_t>& endorsedBlockHeader,
     const BlockIndex<AltBlock>& endorsedBlock,
+    const uint256& txMerkleRoot,
+    const PopData& popData,
     const std::vector<uint8_t>& payoutInfo,
     const AltChainParams& params);
 

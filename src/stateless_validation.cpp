@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/stateless_validation.hpp"
-
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -18,6 +16,7 @@
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
+#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -334,18 +333,20 @@ bool checkPublicationData(const PublicationData& pub,
   std::string header = HexStr(pub.header);
   std::string tlroot = HexStr(root);
 
-  // TODO(warchant): one could implement similar .find function for std::vector
-  // search substring `tlroot` in `header`
-  if (header.find(tlroot) == std::string::npos) {
-    // merkle root not found in header, thus we conclude that contextInfo can
-    // not be authenticated to provided block header
-    return state.Invalid(
-        "ctx-not-authenticated",
-        fmt::format(
-            "Unable to find top level merkle root={} in published header={}",
-            tlroot,
-            header));
-  }
+  // TODO: add checkBlockHeaderHasMerkleRoot into the AltChainConfig
+  // // TODO(warchant): one could implement similar .find function for
+  // std::vector
+  // // search substring `tlroot` in `header`
+  // if (header.find(tlroot) == std::string::npos) {
+  //   // merkle root not found in header, thus we conclude that contextInfo can
+  //   // not be authenticated to provided block header
+  //   return state.Invalid(
+  //       "ctx-not-authenticated",
+  //       fmt::format(
+  //           "Unable to find top level merkle root={} in published header={}",
+  //           tlroot,
+  //           header));
+  // }
 
   return true;
 }

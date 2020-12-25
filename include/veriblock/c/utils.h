@@ -110,6 +110,7 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
  * and previous block hash for the current block
  *
  * @param[in] self PopContext
+ * @param[in] txRoot, hash of the transactions root
  * @param[in] prev_block_hash, hash of the previous altintegration::AltBlock
  * hash for the current block
  * @param[in] prev_block_hash_size, size of the previous block hash
@@ -135,6 +136,7 @@ void VBK_AltBlock_calculateTopLevelMerkleRoot(PopContext* self,
  * @param[in] self PopContext
  * @param[in] endorsed_block_header, header bytes of the endorsed block
  * @param[in] endorsed_block_header_size, size of the provided block hash
+ * @param[in] txRoot, hash of the transactions root
  * @param[in] pop_data_bytes, bytes of the provided altintegration::PopData in
  * the toVbkEncoding format
  * @param[in] payout_info, the payout info the PoP miner
@@ -147,6 +149,9 @@ VBK_ByteStream* VBK_AltBlock_generatePublicationData(
     PopContext* self,
     const uint8_t* endorsed_block_header,
     int endorsed_block_header_size,
+    const uint8_t txRoot[32],
+    const uint8_t* pop_data_bytes,
+    int pop_data_bytes_size,
     const uint8_t* payout_info,
     int payout_info_size);
 
