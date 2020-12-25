@@ -2,11 +2,19 @@ package api
 
 import (
 	"encoding/hex"
+	"fmt"
 	"math/rand"
 	"testing"
 
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 )
+
+var boostrapBlock = entities.AltBlock{
+	Height:        1,
+	Hash:          []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+	PreviousBlock: []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	Timestamp:     100,
+}
 
 func generateTestPopContext(t *testing.T) *PopContext {
 	config := NewConfig()
@@ -18,16 +26,14 @@ func generateTestPopContext(t *testing.T) *PopContext {
 	}
 	SetOnGetAltchainID(func() int64 { return 1 })
 	SetOnGetBootstrapBlock(func() string {
-		var block entities.AltBlock
-		block.Height = 1
-		block.Hash = []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-		block.PreviousBlock = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-		block.Timestamp = 100
-		blockBytes, _ := block.ToVbkEncodingBytes()
+		blockBytes, _ := boostrapBlock.ToVbkEncodingBytes()
 		return hex.EncodeToString(blockBytes)
 	})
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
-		return header
+		var altblock entities.AltBlock
+		altblock.FromVbkEncodingBytes(header)
+		fmt.Println(hex.EncodeToString(altblock.Hash))
+		return altblock.Hash
 	})
 
 	SetOnCheckBlockHeader(func(data []byte) bool {
@@ -38,6 +44,7 @@ func generateTestPopContext(t *testing.T) *PopContext {
 }
 
 func GenerateNextAltBlock(current *entities.AltBlock) (next *entities.AltBlock) {
+	// TODO generate random next.Hash
 	next.Hash = current.Hash
 	next.PreviousBlock = current.Hash
 	next.Height = current.Height + 1

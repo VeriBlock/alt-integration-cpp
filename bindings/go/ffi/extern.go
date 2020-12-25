@@ -3,8 +3,13 @@ package ffi
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
 // #include <veriblock/c/config.h>
+// #include <string.h>
 import "C"
-import "unsafe"
+import (
+	"encoding/hex"
+	"fmt"
+	"unsafe"
+)
 
 // Exported functions
 var (
@@ -49,8 +54,12 @@ func convertToBytes(in *C.uint8_t, inlen C.int) []byte {
 func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *C.int) {
 	resBytes := convertToBytes(in, inlen)
 	data := OnGetBlockHeaderHash(resBytes)
+	fmt.Println(hex.EncodeToString(data))
 	*outlen = C.int(len(data))
 	*out = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
+
+	*outlen = C.int(len(data))
+	C.memcpy(unsafe.Pointer(out), unsafe.Pointer(&data[0]), C.size_t(len(data)))
 }
 
 //export VBK_checkBlockHeader
@@ -74,7 +83,7 @@ func VBK_getATV(id *C.uint8_t, idSize C.int, atvBytesOut *C.uint8_t, atvBytesLen
 		return 0
 	}
 	*atvBytesLen = C.int(len(data))
-	*atvBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
+	C.memcpy(unsafe.Pointer(atvBytesOut), unsafe.Pointer(&data[0]), C.size_t(len(data)))
 	// true
 	return 1
 }
@@ -88,7 +97,7 @@ func VBK_getVTB(id *C.uint8_t, idSize C.int, vtbBytesOut *C.uint8_t, vtbBytesLen
 		return 0
 	}
 	*vtbBytesLen = C.int(len(data))
-	*vtbBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
+	C.memcpy(unsafe.Pointer(vtbBytesOut), unsafe.Pointer(&data[0]), C.size_t(len(data)))
 	// true
 	return 1
 }
@@ -102,7 +111,7 @@ func VBK_getVBK(id *C.uint8_t, idSize C.int, vbkBytesOut *C.uint8_t, vbkBytesLen
 		return 0
 	}
 	*vbkBytesLen = C.int(len(data))
-	*vbkBytesOut = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
+	C.memcpy(unsafe.Pointer(vbkBytesOut), unsafe.Pointer(&data[0]), C.size_t(len(data)))
 	// true
 	return 1
 }
