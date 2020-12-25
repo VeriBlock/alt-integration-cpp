@@ -53,10 +53,10 @@ func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *
 	*out = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
 }
 
-//export VBK_isHeader
+//export VBK_checkBlockHeader
 func VBK_checkBlockHeader(in *C.uint8_t, inlen C.int) C.int {
 	data := convertToBytes(in, inlen)
-	res := OnIsHeader(data)
+	res := OnCheckBlockHeader(data)
 	if res == true {
 		return 1
 	}
