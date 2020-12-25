@@ -24,7 +24,7 @@ func TestPublicationDataDeserialize(t *testing.T) {
 	pub := parseHex(defaultPublicationEncoded)
 	stream := bytes.NewReader(pub)
 	decoded := PublicationData{}
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(defaultPublication.Identifier, decoded.Identifier)
 	assert.Equal(defaultPublication.Header, decoded.Header)
@@ -38,7 +38,7 @@ func TestPublicationDataSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	assert.NoError(defaultPublication.ToRaw(stream))
+	assert.NoError(defaultPublication.ToVbkEncoding(stream))
 	assert.Equal(defaultPublicationEncoded, hex.EncodeToString(stream.Bytes()))
 }
 
@@ -48,10 +48,10 @@ func TestPublicationDataRoundTrip(t *testing.T) {
 	pub := parseHex(defaultPublicationEncoded)
 	stream := bytes.NewReader(pub)
 	decoded := PublicationData{}
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 	assert.Equal(defaultPublication.Identifier, decoded.Identifier)
 
 	outputStream := new(bytes.Buffer)
-	assert.NoError(decoded.ToRaw(outputStream))
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	assert.Equal(defaultPublicationEncoded, hex.EncodeToString(outputStream.Bytes()))
 }

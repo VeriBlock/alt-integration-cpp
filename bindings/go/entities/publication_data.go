@@ -21,7 +21,7 @@ type PublicationData struct {
 }
 
 // ToRaw ...
-func (v *PublicationData) ToRaw(stream io.Writer) error {
+func (v *PublicationData) ToVbkEncoding(stream io.Writer) error {
 	if err := veriblock.WriteSingleBEValue(stream, v.Identifier); err != nil {
 		return err
 	}
@@ -35,14 +35,14 @@ func (v *PublicationData) ToRaw(stream io.Writer) error {
 }
 
 // ToRawBytes ...
-func (v *PublicationData) ToRawBytes() ([]byte, error) {
+func (v *PublicationData) ToVbkEncodingBytes() ([]byte, error) {
 	var buffer bytes.Buffer
-	err := v.ToRaw(&buffer)
+	err := v.ToVbkEncoding(&buffer)
 	return buffer.Bytes(), err
 }
 
 // FromRaw ...
-func (v *PublicationData) FromRaw(stream io.Reader) error {
+func (v *PublicationData) FromVbkEncoding(stream io.Reader) error {
 	err := veriblock.ReadSingleBEValue(stream, &v.Identifier)
 	if err != nil {
 		return err
@@ -63,9 +63,9 @@ func (v *PublicationData) FromRaw(stream io.Reader) error {
 }
 
 // FromRawBytes ...
-func (v *PublicationData) FromRawBytes(data []byte) error {
+func (v *PublicationData) FromVbkEncodingBytes(data []byte) error {
 	buffer := bytes.NewBuffer(data)
-	return v.FromRaw(buffer)
+	return v.FromVbkEncoding(buffer)
 }
 
 // ToJSON ...

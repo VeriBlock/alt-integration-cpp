@@ -8,6 +8,21 @@ import (
 	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, payoutInfo []byte) *entities.PublicationData {
+	defer v.lock()()
+
+	stream := v.popContext.AltBlockGeneratePublicationData(endorsedBlockHeader, payoutInfo)
+	if stream == nil {
+		return nil
+	}
+	defer stream.Free()
+
+	publicationData := &entities.PublicationData{}
+	publicationData.FromVbkEncoding(stream)
+
+	return publicationData
+}
+
 func (v *PopContext) CalculateTopLevelMerkleRoot(txRootHash [veriblock.Sha256HashSize]byte, prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
 	defer v.lock()()
 	if popData == nil {

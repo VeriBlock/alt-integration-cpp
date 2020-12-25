@@ -92,11 +92,15 @@ func (v *PopContext) AltBlockCalculateTopLevelMerkleRoot(txRootHash [veriblock.S
 	return hashBytes
 }
 
-func (v *PopContext) AltBlockGeneratePublicationData(endorsedBlockHash []byte, payoutInfo []byte) *VbkByteStream {
-	endorsedBlockHashC := (*C.uint8_t)(unsafe.Pointer(&endorsedBlockHash[0]))
+func (v *PopContext) AltBlockGeneratePublicationData(endorsedBlockHeader []byte, payoutInfo []byte) *VbkByteStream {
+	endorsedBlockHeaderC := (*C.uint8_t)(unsafe.Pointer(&endorsedBlockHeader[0]))
 	payoutInfoC := (*C.uint8_t)(unsafe.Pointer(&payoutInfo[0]))
 
-	return NewVbkByteStream(C.VBK_AltBlock_generatePublicationData(v.ref, endorsedBlockHashC, C.int(len(endorsedBlockHash)), payoutInfoC, C.int(len(payoutInfo))))
+	res := C.VBK_AltBlock_generatePublicationData(v.ref, endorsedBlockHeaderC, C.int(len(endorsedBlockHeader)), payoutInfoC, C.int(len(payoutInfo)))
+	if res == nil {
+		return nil
+	}
+	return NewVbkByteStream(res)
 }
 
 // checkATV ...
