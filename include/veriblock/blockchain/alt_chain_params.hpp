@@ -219,7 +219,8 @@ struct AltChainParams {
    * @warning SHOULD NOT THROW
    */
   virtual bool checkBlockHeader(
-      const std::vector<uint8_t>& bytes) const noexcept = 0;
+      const std::vector<uint8_t>& bytes,
+      const std::vector<uint8_t>& root) const noexcept = 0;
 
  public:
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =

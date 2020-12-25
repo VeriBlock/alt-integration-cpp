@@ -34,7 +34,7 @@ void VBK_getBlockHeaderHash(const uint8_t* in,
 //! Accepts arbitrary bytes.
 //! Should return 0 if input bytes are statelessly INVALID block header.
 //! Should return non-0 if input bytes are statelessly VALID block header.
-int VBK_checkBlockHeader(const uint8_t* in, int inlen);
+bool VBK_checkBlockHeader(const uint8_t* in, int inlen, const uint8_t* root, int root_size);
 
 // PayloadsProvider externs
 //! @param[in] in input ATV`s id byte array

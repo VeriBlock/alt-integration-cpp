@@ -28,7 +28,8 @@ struct AltChainParamsTest : public AltChainParams {
     return altBlock.getHash();
   }
 
-  bool checkBlockHeader(const std::vector<uint8_t>&) const noexcept override {
+  bool checkBlockHeader(const std::vector<uint8_t>&,
+                        const std::vector<uint8_t>&) const noexcept override {
     return true;
   }
 };

@@ -318,35 +318,17 @@ bool checkPublicationData(const PublicationData& pub,
             "Expected id={}, got={}", params.getIdentifier(), pub.identifier));
   }
 
-  if (!params.checkBlockHeader(pub.header)) {
-    return state.Invalid("bad-endorsedheader", "Bad endorsed header");
-  }
-
   ReadStream stream(pub.contextInfo);
   AuthenticatedContextInfoContainer c;
   if (!DeserializeFromVbkEncoding(stream, c, state)) {
     return state.Invalid("bad-contextinfo");
   }
 
-  // check if 'contextInfo' is cryptographically authenticated to 'header'
   auto root = c.getTopLevelMerkleRoot();
-  std::string header = HexStr(pub.header);
-  std::string tlroot = HexStr(root);
 
-  // TODO: add checkBlockHeaderHasMerkleRoot into the AltChainConfig
-  // // TODO(warchant): one could implement similar .find function for
-  // std::vector
-  // // search substring `tlroot` in `header`
-  // if (header.find(tlroot) == std::string::npos) {
-  //   // merkle root not found in header, thus we conclude that contextInfo can
-  //   // not be authenticated to provided block header
-  //   return state.Invalid(
-  //       "ctx-not-authenticated",
-  //       fmt::format(
-  //           "Unable to find top level merkle root={} in published header={}",
-  //           tlroot,
-  //           header));
-  // }
+  if (!params.checkBlockHeader(pub.header, root.asVector())) {
+    return state.Invalid("bad-endorsedheader", "Bad endorsed header");
+  }
 
   return true;
 }

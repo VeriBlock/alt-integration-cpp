@@ -36,7 +36,7 @@ func generateTestPopContext(t *testing.T) *PopContext {
 		return altblock.Hash
 	})
 
-	SetOnCheckBlockHeader(func(data []byte) bool {
+	SetOnCheckBlockHeader(func(header []byte, root []byte) bool {
 		return true
 	})
 
