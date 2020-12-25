@@ -39,8 +39,8 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
     return hash;
   }
 
-  bool isHeader(const std::vector<uint8_t>& bytes) const noexcept {
-    return VBK_isHeader(bytes.data(), (int)bytes.size());
+  bool checkBlockHeader(const std::vector<uint8_t>& bytes) const noexcept {
+    return VBK_checkBlockHeader(bytes.data(), (int)bytes.size());
   };
 };
 

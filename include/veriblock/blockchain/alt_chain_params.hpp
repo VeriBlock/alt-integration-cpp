@@ -210,15 +210,16 @@ struct AltChainParams {
       const std::vector<uint8_t>& bytes) const noexcept = 0;
 
   /**
-   * This function should return true if given bytes can be deserialized to
-   * altchain header.
+   * Returns true if input `bytes`:
+   *  - can be deserialized to a header
+   *  - statelessly valid (time, POW... etc)
    * @param bytes
-   * @return true if `bytes` can be deserialized to altchain header, false
-   * otherwise.
+   * @return true if input bytes is valid block header
    *
    * @warning SHOULD NOT THROW
    */
-  virtual bool isHeader(const std::vector<uint8_t>& bytes) const noexcept = 0;
+  virtual bool checkBlockHeader(
+      const std::vector<uint8_t>& bytes) const noexcept = 0;
 
  public:
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =

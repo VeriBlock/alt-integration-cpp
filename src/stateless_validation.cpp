@@ -312,17 +312,15 @@ bool checkVbkPopTx(const VbkPopTx& tx,
 bool checkPublicationData(const PublicationData& pub,
                           const AltChainParams& params,
                           ValidationState& state) {
-  if (!params.isHeader(pub.header)) {
-    return state.Invalid(
-        "bad-header",
-        "Publication Data contains garbage, expected block header");
-  }
-
   if (pub.identifier != params.getIdentifier()) {
     return state.Invalid(
         "bad-altchain-id",
         fmt::format(
             "Expected id={}, got={}", params.getIdentifier(), pub.identifier));
+  }
+
+  if (!params.checkBlockHeader(pub.header)) {
+    return state.Invalid("bad-endorsedheader", "Bad endorsed header");
   }
 
   ReadStream stream(pub.contextInfo);
