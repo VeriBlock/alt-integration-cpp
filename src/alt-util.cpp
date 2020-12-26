@@ -38,11 +38,8 @@ PublicationData GeneratePublicationData(
     const std::vector<uint8_t>& payoutInfo,
     const AltChainParams& params) {
   auto popDataRoot = popData.getMerkleRoot();
-
-  AuthenticatedContextInfoContainer ctx;
-  ctx.stateRoot = sha256twice(txMerkleRoot, popDataRoot);
-  ctx.ctx =
-      ContextInfoContainer::createFromPrevious(endorsedBlock.pprev, params);
+  auto ctx = AuthenticatedContextInfoContainer::createFromPrevious(
+      sha256twice(txMerkleRoot, popDataRoot), endorsedBlock.pprev, params);
 
   PublicationData res;
   res.payoutInfo = payoutInfo;
