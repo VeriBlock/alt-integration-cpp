@@ -7,7 +7,9 @@
 
 #include <gtest/gtest.h>
 
+#include <veriblock/third_party/ThreadPool.h>
 #include "util/alt_chain_params_regtest.hpp"
+#include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
@@ -137,12 +139,60 @@ static const VTB validVTB = AssertDeserializeFromHex<VTB>(
     "00000b0002f1606ebb9390033c3532bceb77a1d330ec8c16fd690000000000000000006bf3"
     "d41c8059c843d202fd75631d9ded5c9b9494010100000000000000");
 
-struct StatelessValidationTest : public ::testing::Test {
+struct StatelessValidationTest : public ::testing::Test, public PopTestFixture {
   BtcChainParamsRegTest btc;
   VbkChainParamsRegTest vbk;
   AltChainParamsRegTest alt;
   ValidationState state;
 };
+
+TEST_F(StatelessValidationTest, parallel_check_speedup) {
+  std::cerr << std::thread::hardware_concurrency() << "\r\n";
+
+  std::vector<VbkTx> transactions;
+  for (size_t i = 0; i < 100; i++) {
+    PublicationData pubData;
+    pubData.payoutInfo = {1,
+                          2,
+                          3,
+                          4,
+                          5,
+                          6,
+                          7,
+                          8,
+                          (unsigned char)((i >> 8) & 0xFF),
+                          (unsigned char)(i & 0xFF)};
+    pubData.identifier = 0;
+    pubData.contextInfo = {1, 2, 3, 4, 5};
+    transactions.push_back(popminer->createVbkTxEndorsingAltBlock(pubData));
+  }
+  auto pop =
+      generateAltPayloads(transactions, GetRegTestVbkBlock().getHash(), 1);
+
+  {
+    PopValidator validator(vbk, btc, alt, 1);
+    auto before = std::chrono::steady_clock::now();
+    bool result = checkPopData(validator, pop, state);
+    ASSERT_TRUE(result);
+    ASSERT_TRUE(state.IsValid());
+    auto after = std::chrono::steady_clock::now();
+    auto linearRunTime = after - before;
+    std::cerr << linearRunTime.count() << "\r\n";
+  }
+
+  {
+    PopValidator validator(vbk, btc, alt, 4);
+    auto before = std::chrono::steady_clock::now();
+    auto result = checkPopData(validator, pop, state);
+    ASSERT_TRUE(result);
+    ASSERT_TRUE(state.IsValid());
+    auto after = std::chrono::steady_clock::now();
+    auto parallelRunTime = after - before;
+    std::cerr << parallelRunTime.count() << "\r\n";
+  }
+
+  //ASSERT_TRUE(parallelRunTime < linearRunTime);
+}
 
 TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
   ASSERT_TRUE(checkBlock(validVTB.transaction.blockOfProof, state, btc));

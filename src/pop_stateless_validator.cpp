@@ -61,7 +61,8 @@ std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
   return workers->enqueue([&] {
     ValidationState state;
-    checkBlock(block, state, vbk_);
+    VbkBlock block_ = block;
+    checkBlock(block_, state, vbk_);
     return state;
   });
 #else
@@ -77,7 +78,8 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
   return workers->enqueue([&] {
     ValidationState state;
-    checkVTB(vtb, state, btc_);
+    VTB vtb_ = vtb;
+    checkVTB(vtb_, state, btc_);
     return state;
   });
 #else
@@ -93,7 +95,8 @@ std::future<ValidationState> PopValidator::addCheck(const ATV& atv) {
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
   return workers->enqueue([&] {
     ValidationState state;
-    checkATV(atv, state, alt_);
+    ATV atv_ = atv;
+    checkATV(atv_, state, alt_);
     return state;
   });
 #else

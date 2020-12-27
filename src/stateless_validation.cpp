@@ -617,6 +617,7 @@ bool checkPopData(PopValidator& validator,
   for (const auto& atv : popData.atvs) {
     results.push_back(validator.addCheck(atv));
   }
+
   for (auto& r : results) {
     auto result = r.get();
     if (!result.IsValid()) {
