@@ -30,7 +30,8 @@ struct AltChainParamsNon0Bootstrap : public AltChainParams {
     return AssertDeserializeFromRaw<AltBlock>(bytes).getHash();
   }
 
-  bool checkBlockHeader(const std::vector<uint8_t>&) const noexcept override {
+  bool checkBlockHeader(const std::vector<uint8_t>&,
+                        const std::vector<uint8_t>&) const noexcept override {
     return true;
   }
 
