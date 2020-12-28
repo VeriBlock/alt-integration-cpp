@@ -13,7 +13,9 @@
 #include "veriblock/config.hpp"
 
 struct AltChainParamsImpl : public altintegration::AltChainParams {
-  int64_t getIdentifier() const noexcept override { return VBK_getAltchainId(); }
+  int64_t getIdentifier() const noexcept override {
+    return VBK_getAltchainId();
+  }
 
   //! first ALT block used in AltBlockTree. This is first block that can be
   //! endorsed.
@@ -164,12 +166,16 @@ void VBK_SetEndorsementSettlementInterval(Config_t* params, uint32_t val) {
 void VBK_SetMaxPopDataSize(Config_t* params, uint32_t val) {
   params->config->alt->mMaxPopDataSize = val;
 }
-uint32_t VBK_GetMaxPopDataSize(Config_t* params) {
-  return params->config->alt->mMaxPopDataSize;
-}
 void VBK_SetForkResolutionLookupTable(Config_t* params,
                                       const uint32_t* vals,
                                       int valslen) {
   params->config->alt->mForkResolutionLookUpTable =
       std::vector<uint32_t>{vals, vals + valslen};
+}
+void VBK_SetPopPayoutDelay(Config_t* params, int32_t val) {
+  params->config->alt->mPopPayoutsParams->mPopPayoutDelay = val;
+}
+
+uint32_t VBK_GetMaxPopDataSize(Config_t* params) {
+  return params->config->alt->mMaxPopDataSize;
 }

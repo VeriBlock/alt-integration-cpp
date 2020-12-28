@@ -54,10 +54,12 @@ void VBK_SetKeystoneInterval(Config_t* params, uint32_t val);
 void VBK_SetVbkFinalityDelay(Config_t* params, uint32_t val);
 void VBK_SetEndorsementSettlementInterval(Config_t* params, uint32_t val);
 void VBK_SetMaxPopDataSize(Config_t* params, uint32_t val);
-uint32_t VBK_GetMaxPopDataSize(Config_t* params);
 void VBK_SetForkResolutionLookupTable(Config_t* params,
                                       const uint32_t* vals,
                                       int valslen);
+void VBK_SetPopPayoutDelay(Config_t* params, int32_t val);
+
+uint32_t VBK_GetMaxPopDataSize(Config_t* params);
 
 #ifdef __cplusplus
 }  // end of extern "C"
