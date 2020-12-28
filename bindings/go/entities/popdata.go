@@ -33,19 +33,20 @@ func (v *PopData) ToVbkEncoding(stream io.Writer) error {
 			return err
 		}
 	}
-	if err := veriblock.WriteSingleBEValue(stream, int64(len(v.Atvs))); err != nil {
-		return err
-	}
-	for _, atv := range v.Atvs {
-		if err := atv.ToVbkEncoding(stream); err != nil {
-			return err
-		}
-	}
 	if err := veriblock.WriteSingleBEValue(stream, int64(len(v.Vtbs))); err != nil {
 		return err
 	}
 	for _, vtb := range v.Vtbs {
 		if err := vtb.ToVbkEncoding(stream); err != nil {
+			return err
+		}
+	}
+
+	if err := veriblock.WriteSingleBEValue(stream, int64(len(v.Atvs))); err != nil {
+		return err
+	}
+	for _, atv := range v.Atvs {
+		if err := atv.ToVbkEncoding(stream); err != nil {
 			return err
 		}
 	}
@@ -82,21 +83,6 @@ func (v *PopData) FromVbkEncoding(stream io.Reader) error {
 	for i, context := range contexts {
 		v.Context[i] = *context.(*VbkBlock)
 	}
-	atvs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCountAltPublication, func(stream io.Reader) (interface{}, error) {
-		atv := Atv{}
-		err := atv.FromVbkEncoding(stream)
-		if err != nil {
-			return nil, err
-		}
-		return &atv, nil
-	})
-	if err != nil {
-		return err
-	}
-	v.Atvs = make([]Atv, len(atvs))
-	for i, atv := range atvs {
-		v.Atvs[i] = *atv.(*Atv)
-	}
 	vtbs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCountVbkPublication, func(stream io.Reader) (interface{}, error) {
 		vtb := Vtb{}
 		err := vtb.FromVbkEncoding(stream)
@@ -111,6 +97,21 @@ func (v *PopData) FromVbkEncoding(stream io.Reader) error {
 	v.Vtbs = make([]Vtb, len(vtbs))
 	for i, vtb := range vtbs {
 		v.Vtbs[i] = *vtb.(*Vtb)
+	}
+	atvs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCountAltPublication, func(stream io.Reader) (interface{}, error) {
+		atv := Atv{}
+		err := atv.FromVbkEncoding(stream)
+		if err != nil {
+			return nil, err
+		}
+		return &atv, nil
+	})
+	if err != nil {
+		return err
+	}
+	v.Atvs = make([]Atv, len(atvs))
+	for i, atv := range atvs {
+		v.Atvs[i] = *atv.(*Atv)
 	}
 	return nil
 }
