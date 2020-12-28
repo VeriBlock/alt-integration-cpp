@@ -149,5 +149,5 @@ func (v *Config) SetForkResolutionLookupTable(vals []uint32) {
 
 // SetPopPayoutDelay ...
 func (v *Config) SetPopPayoutDelay(val int32) {
-	C.VBK_SetPopPayoutDelay(v.ref, C.int32(val))
+	C.VBK_SetPopPayoutDelay(v.ref, C.int32_t(val))
 }
