@@ -34,6 +34,7 @@ type AltBlockTree interface {
 	AltGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.AltHash, error)
 	AltGetVbkBlockContainingBlock(vbkID entities.VbkID) ([]entities.AltHash, error)
 	VbkGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.VbkID, error)
+	GeneratePublicationData(endorsedBlockHeader []byte, txRootHash [veriblock.Sha256HashSize]byte, popData *entities.PopData, payoutInfo []byte) (*entities.PublicationData, error)
 	CalculateTopLevelMerkleRoot(txRootHash [veriblock.Sha256HashSize]byte, prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error)
 	CheckATV(atv *entities.Atv) error
 	CheckVTB(vtb *entities.Vtb) error

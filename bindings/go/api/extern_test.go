@@ -91,40 +91,44 @@ func TestOnAcceptedVTB(t *testing.T) {
 }
 
 func TestOnAcceptedATV(t *testing.T) {
-	// TODO fix it
-	// assert := assert.New(t)
+	assert := assert.New(t)
 
-	// popContext := generateTestPopContext(t)
+	popContext := generateTestPopContext(t)
 
-	// isExecuted1 := false
-	// isExecuted2 := false
+	isExecuted1 := false
+	isExecuted2 := false
 
-	// popContext.AddOnAcceptedATV(func(*entities.Atv) {
-	// 	isExecuted1 = true
-	// })
+	popContext.AddOnAcceptedATV(func(*entities.Atv) {
+		isExecuted1 = true
+	})
 
-	// popContext.AddOnAcceptedATV(func(*entities.Atv) {
-	// 	isExecuted2 = true
-	// })
+	popContext.AddOnAcceptedATV(func(*entities.Atv) {
+		isExecuted2 = true
+	})
 
-	// miner := NewMockMiner()
+	miner := NewMockMiner()
 
-	// var publicationData entities.PublicationData
-	// publicationData.ContextInfo = []byte{1, 2, 3, 4}
-	// publicationData.Header = []byte{1, 2, 3, 4, 5, 7}
-	// publicationData.Identifier = 1
-	// publicationData.PayoutInfo = []byte{1, 2, 3, 4, 5, 6}
-	// atv, err := miner.MineAtv(&publicationData)
-	// assert.NoError(err)
+	endorsedBytes, err := boostrapBlock.ToVbkEncodingBytes()
+	assert.NoError(err)
 
-	// assert.False(isExecuted1)
-	// assert.False(isExecuted2)
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := [32]byte{}
+	popData := entities.PopData{Version: 1}
 
-	// state, err := popContext.SubmitAtv(atv)
-	// // state == 0, valid atv
-	// assert.Equal(0, state)
-	// assert.NoError(err)
+	publicationData, err := popContext.GeneratePublicationData(endorsedBytes, txRoot, &popData, payoutInfo)
+	assert.NoError(err)
 
-	// assert.True(isExecuted1)
-	// assert.True(isExecuted2)
+	atv, err := miner.MineAtv(publicationData)
+	assert.NoError(err)
+
+	assert.False(isExecuted1)
+	assert.False(isExecuted2)
+
+	state, err := popContext.SubmitAtv(atv)
+	// state == 0, valid atv
+	assert.Equal(0, state)
+	assert.NoError(err)
+
+	assert.True(isExecuted1)
+	assert.True(isExecuted2)
 }

@@ -90,7 +90,7 @@ func (v *MockMiner) MineVbkBlock(blockHash []byte) (*entities.BlockIndex, error)
 func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entities.Atv, error) {
 	defer v.lock()()
 	var buffer bytes.Buffer
-	err := publicationData.ToRaw(&buffer)
+	err := publicationData.ToVbkEncoding(&buffer)
 	if err != nil {
 		return nil, err
 	}

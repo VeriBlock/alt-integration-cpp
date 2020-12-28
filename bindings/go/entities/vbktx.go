@@ -73,7 +73,7 @@ func (v *VbkTx) ToRaw(stream io.Writer) error {
 		return err
 	}
 	pubBytesStream := new(bytes.Buffer)
-	if err := v.PublicationData.ToRaw(pubBytesStream); err != nil {
+	if err := v.PublicationData.ToVbkEncoding(pubBytesStream); err != nil {
 		return err
 	}
 	return veriblock.WriteVarLenValue(stream, pubBytesStream.Bytes())
@@ -139,7 +139,7 @@ func (v *VbkTx) FromRaw(stream io.Reader, signature []byte, publicKey []byte) er
 		return err
 	}
 	pubBytesStream := bytes.NewReader(pubBytes)
-	if err := v.PublicationData.FromRaw(pubBytesStream); err != nil {
+	if err := v.PublicationData.FromVbkEncoding(pubBytesStream); err != nil {
 		return err
 	}
 	v.Signature = signature
