@@ -59,6 +59,8 @@ void VBK_SetForkResolutionLookupTable(Config_t* params,
                                       int valslen);
 void VBK_SetPopPayoutDelay(Config_t* params, int32_t val);
 
+uint32_t VBK_GetMaxPopDataSize(Config_t* params);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif

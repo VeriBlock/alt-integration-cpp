@@ -151,3 +151,9 @@ func (v *Config) SetForkResolutionLookupTable(vals []uint32) {
 func (v *Config) SetPopPayoutDelay(val int32) {
 	C.VBK_SetPopPayoutDelay(v.ref, C.int32_t(val))
 }
+
+// GetMaxPopDataSize ...
+func (v *Config) GetMaxPopDataSize() uint32 {
+	res := C.VBK_GetMaxPopDataSize(v.ref)
+	return uint32(res)
+}
