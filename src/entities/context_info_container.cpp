@@ -75,6 +75,16 @@ AuthenticatedContextInfoContainer::createFromPrevious(
   return c;
 }
 
+AuthenticatedContextInfoContainer
+AuthenticatedContextInfoContainer::createFromPrevious(
+    const uint256& txRoot,
+    const uint256& popDataRoot,
+    const BlockIndex<AltBlock>* prev,
+    const AltChainParams& p) {
+  auto stateRoot = sha256twice(txRoot, popDataRoot);
+  return createFromPrevious(stateRoot, prev, p);
+}
+
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 AuthenticatedContextInfoContainer& ctx,
                                 ValidationState& state) {
