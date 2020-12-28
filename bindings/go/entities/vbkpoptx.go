@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -92,22 +91,18 @@ func (v *VbkPopTx) ToRawBytes() ([]byte, error) {
 
 // FromVbkEncoding ...
 func (v *VbkPopTx) FromVbkEncoding(stream io.Reader) error {
-	fmt.Println("VbkPopTx read rawTx")
 	rawTx, err := veriblock.ReadVarLenValue(stream, 0, veriblock.MaxRawtxSizeVbkpoptx)
 	if err != nil {
 		return err
 	}
-	fmt.Println("VbkPopTx read signature")
 	signature, err := veriblock.ReadSingleByteLenValue(stream, 0, veriblock.MaxSignatureSize)
 	if err != nil {
 		return err
 	}
-	fmt.Println("VbkPopTx read publicKey")
 	publicKey, err := veriblock.ReadSingleByteLenValue(stream, 0, veriblock.PublicKeySize)
 	if err != nil {
 		return err
 	}
-	fmt.Println("VbkPopTx read rawTxStream")
 	rawTxStream := bytes.NewReader(rawTx)
 	return v.FromRaw(rawTxStream, signature, publicKey)
 }

@@ -90,22 +90,18 @@ func (v *Vtb) ToVbkEncodingBytes() ([]byte, error) {
 
 // FromVbkEncoding ...
 func (v *Vtb) FromVbkEncoding(stream io.Reader) error {
-	fmt.Println("Vtb read version")
 	if err := binary.Read(stream, binary.BigEndian, &v.Version); err != nil {
 		return err
 	}
 	if v.Version != 1 {
 		return fmt.Errorf("VTB serialization version=%d is not implemented", v.Version)
 	}
-	fmt.Println("Vtb read Transaction")
 	if err := v.Transaction.FromVbkEncoding(stream); err != nil {
 		return err
 	}
-	fmt.Println("Vtb read MerklePath")
 	if err := v.MerklePath.FromVbkEncoding(stream); err != nil {
 		return err
 	}
-	fmt.Println("Vtb read ContainingBlock")
 	return v.ContainingBlock.FromVbkEncoding(stream)
 }
 
