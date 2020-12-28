@@ -207,20 +207,21 @@ struct AltChainParams {
    * @warning SHOULD NOT THROW
    */
   virtual std::vector<uint8_t> getHash(
-      const std::vector<uint8_t>& bytes) const noexcept = 0;
+      const std::vector<uint8_t>& bytes) const = 0;
 
   /**
    * Returns true if input `bytes`:
    *  - can be deserialized to a header
-   *  - statelessly valid (time, POW... etc)
+   *  - statelessly valid (time, POW, version... etc)
+   *  - top level merkle root is equal to 'root'
    * @param bytes
-   * @return true if input bytes is valid block header
+   * @param root top level merkle root to validate
+   * @return false if any of checks fail
    *
    * @warning SHOULD NOT THROW
    */
-  virtual bool checkBlockHeader(
-      const std::vector<uint8_t>& bytes,
-      const std::vector<uint8_t>& root) const noexcept = 0;
+  virtual bool checkBlockHeader(const std::vector<uint8_t>& bytes,
+                                const std::vector<uint8_t>& root) const = 0;
 
  public:
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =

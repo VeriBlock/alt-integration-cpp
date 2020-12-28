@@ -13,11 +13,11 @@
 #include "veriblock/config.hpp"
 
 struct AltChainParamsImpl : public altintegration::AltChainParams {
-  int64_t getIdentifier() const noexcept { return VBK_getAltchainId(); }
+  int64_t getIdentifier() const noexcept override { return VBK_getAltchainId(); }
 
   //! first ALT block used in AltBlockTree. This is first block that can be
   //! endorsed.
-  altintegration::AltBlock getBootstrapBlock() const noexcept {
+  altintegration::AltBlock getBootstrapBlock() const noexcept override {
     return altintegration::AssertDeserializeFromRawHex<
         altintegration::AltBlock>(VBK_getBootstrapBlock());
   }
@@ -28,7 +28,7 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
    * @return hash
    */
   std::vector<uint8_t> getHash(
-      const std::vector<uint8_t>& bytes) const noexcept {
+      const std::vector<uint8_t>& bytes) const override {
     VBK_ASSERT(bytes.size() != 0);
     std::vector<uint8_t> hash(1024, 0);
     int size = 0;
@@ -39,7 +39,7 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
   }
 
   bool checkBlockHeader(const std::vector<uint8_t>& bytes,
-                        const std::vector<uint8_t>& root) const noexcept {
+                        const std::vector<uint8_t>& root) const override {
     return VBK_checkBlockHeader(
         bytes.data(), (int)bytes.size(), root.data(), (int)root.size());
   };
