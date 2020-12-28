@@ -44,6 +44,13 @@ struct AuthenticatedContextInfoContainer {
       const BlockIndex<AltBlock>* prev,
       const AltChainParams& p);
 
+  //! @overload
+  static AuthenticatedContextInfoContainer createFromPrevious(
+      const uint256& txRoot,
+      const uint256& popDataRoot,
+      const BlockIndex<AltBlock>* prev,
+      const AltChainParams& p);
+
   bool operator==(const AuthenticatedContextInfoContainer& other) const {
     return ctx == other.ctx && stateRoot == other.stateRoot;
   }
