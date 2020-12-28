@@ -141,14 +141,13 @@ func (v *Config) SetMaxPopDataSize(val uint32) {
 	C.VBK_SetMaxPopDataSize(v.ref, C.uint32_t(val))
 }
 
-// GetMaxPopDataSize ...
-func (v *Config) GetMaxPopDataSize() int {
-	res := C.VBK_GetMaxPopDataSize(v.ref)
-	return int(res)
-}
-
 // SetForkResolutionLookupTable ...
 func (v *Config) SetForkResolutionLookupTable(vals []uint32) {
 	valsC := (*C.uint32_t)(unsafe.Pointer(&vals[0]))
 	C.VBK_SetForkResolutionLookupTable(v.ref, valsC, C.int(len(vals)))
+}
+
+// SetPopPayoutDelay ...
+func (v *Config) SetPopPayoutDelay(val int32) {
+	C.VBK_SetPopPayoutDelay(v.ref, C.int32(val))
 }
