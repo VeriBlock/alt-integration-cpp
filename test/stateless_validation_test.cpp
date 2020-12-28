@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/third_party/ThreadPool.h>
 #include "util/alt_chain_params_regtest.hpp"
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
