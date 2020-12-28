@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/hex"
-	"fmt"
 	"math/rand"
 	"testing"
 
@@ -32,7 +31,6 @@ func generateTestPopContext(t *testing.T) *PopContext {
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
 		var altblock entities.AltBlock
 		altblock.FromVbkEncodingBytes(header)
-		fmt.Println(hex.EncodeToString(altblock.Hash))
 		return altblock.Hash
 	})
 

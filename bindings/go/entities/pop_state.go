@@ -46,7 +46,7 @@ func (v *PopState) ToRawBytes() ([]byte, error) {
 
 // FromRaw ...
 func (v *PopState) FromRaw(stream io.Reader) error {
-	containingEndorsements, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCount, func(stream io.Reader) (interface{}, error) {
+	containingEndorsements, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxPopDataVbkBlock, func(stream io.Reader) (interface{}, error) {
 		var endorsement Endorsement = &VbkEndorsement{}
 		if v.IsAlt {
 			endorsement = &AltEndorsement{}

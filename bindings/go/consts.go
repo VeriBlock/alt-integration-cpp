@@ -19,9 +19,9 @@ const (
 	MaxHeaderSizePublicationData        = 1024
 	MaxPayoutSizePublicationData        = 10000
 	MaxContextSizePublicationData       = 10000
-	MaxContextCount                     = 15000
-	MaxContextCountAltPublication       = 15000
-	MaxContextCountVbkPublication       = 15000
+	MaxPopDataVbkBlock                  = 50000
+	MaxPopDataVtb                       = 50000
+	MaxPopDataAtv                       = 50000
 	VblakeBlockHashSize                 = 24
 	VbkMerkleRootHashSize               = 16
 	VblakePreviousBlockHashSize         = 12
@@ -91,7 +91,7 @@ const (
 		1 + BtcHeaderSize +
 		// blockOfProofContext.size.size, blockOfProofContext.size,
 		// blockOfProofContext
-		5 + (BtcHeaderSize+1)*MaxContextCount +
+		5 + (BtcHeaderSize+1)*MaxPopDataVbkBlock +
 		// signature.size, signature
 		1 + MaxSignatureSize +
 		// publicKey.size, publicKey

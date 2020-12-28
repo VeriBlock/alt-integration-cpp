@@ -6,8 +6,6 @@ package ffi
 // #include <string.h>
 import "C"
 import (
-	"encoding/hex"
-	"fmt"
 	"unsafe"
 )
 
@@ -54,7 +52,6 @@ func convertToBytes(in *C.uint8_t, inlen C.int) []byte {
 func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *C.int) {
 	resBytes := convertToBytes(in, inlen)
 	data := OnGetBlockHeaderHash(resBytes)
-	fmt.Println(hex.EncodeToString(data))
 	*outlen = C.int(len(data))
 	*out = *(*C.uint8_t)(unsafe.Pointer(&data[0]))
 
