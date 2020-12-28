@@ -6,10 +6,6 @@
 #include <veriblock/pop_stateless_validator.hpp>
 #include <veriblock/stateless_validation.hpp>
 
-#ifndef VBK_NO_THREADS
-#include <veriblock/third_party/ThreadPool.h>
-#endif
-
 namespace altintegration {
 
 // hack to build std::future if VBK_NO_THREADS is defined
@@ -43,7 +39,9 @@ void PopValidator::start(size_t threads) {
   if (threads == 0) {
     threads = 1;
   }
-  workers = std::make_shared<third_party::ThreadPool>(threads);
+  tp::ThreadPoolOptions options;
+  options.setThreadCount(threads);
+  workers = std::make_shared<tp::ThreadPool>(options);
 #endif
 }
 
@@ -59,12 +57,16 @@ template <>
 std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
-  return workers->enqueue([&] {
+
+  std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
     VbkBlock block_ = block;
     checkBlock(block_, state, vbk_);
     return state;
   });
+  std::future<ValidationState> r = t.get_future();
+  workers->post(t);
+  return r;
 #else
   ValidationState state;
   checkBlock(block, state, vbk_);
@@ -76,12 +78,16 @@ template <>
 std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
-  return workers->enqueue([&] {
+
+  std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
     VTB vtb_ = vtb;
     checkVTB(vtb_, state, btc_);
     return state;
   });
+  std::future<ValidationState> r = t.get_future();
+  workers->post(t);
+  return r;
 #else
   ValidationState state;
   checkVTB(vtb, state, btc_);
@@ -93,12 +99,16 @@ template <>
 std::future<ValidationState> PopValidator::addCheck(const ATV& atv) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
-  return workers->enqueue([&] {
+
+  std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
     ATV atv_ = atv;
     checkATV(atv_, state, alt_);
     return state;
   });
+  std::future<ValidationState> r = t.get_future();
+  workers->post(t);
+  return r;
 #else
   ValidationState state;
   checkATV(atv, state, alt_);

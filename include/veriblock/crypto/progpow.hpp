@@ -58,6 +58,8 @@ void clearEthashCache();
 
 }  // namespace progpow
 
+void clearEthashCache();
+
 /**
  * Calculate vPROGPOW hash of given VbkBlock header (65 bytes)
  *

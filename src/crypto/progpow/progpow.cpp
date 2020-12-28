@@ -662,6 +662,8 @@ static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   return uint192({v.data(), VBLAKE_HASH_SIZE});
 }
 
+void clearEthashCache() { gEthashCache.clear(); }
+
 uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);
