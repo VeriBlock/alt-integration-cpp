@@ -68,7 +68,7 @@ func (v *PopData) FromVbkEncoding(stream io.Reader) error {
 	if v.Version != 1 {
 		return fmt.Errorf("PopData serialization version=%d is not implemented", v.Version)
 	}
-	contexts, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCount, func(stream io.Reader) (interface{}, error) {
+	contexts, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxPopDataVbkBlock, func(stream io.Reader) (interface{}, error) {
 		block := VbkBlock{}
 		err := block.FromVbkEncoding(stream)
 		if err != nil {
@@ -83,7 +83,7 @@ func (v *PopData) FromVbkEncoding(stream io.Reader) error {
 	for i, context := range contexts {
 		v.Context[i] = *context.(*VbkBlock)
 	}
-	vtbs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCountVbkPublication, func(stream io.Reader) (interface{}, error) {
+	vtbs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxPopDataVtb, func(stream io.Reader) (interface{}, error) {
 		vtb := Vtb{}
 		err := vtb.FromVbkEncoding(stream)
 		if err != nil {
@@ -98,7 +98,7 @@ func (v *PopData) FromVbkEncoding(stream io.Reader) error {
 	for i, vtb := range vtbs {
 		v.Vtbs[i] = *vtb.(*Vtb)
 	}
-	atvs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCountAltPublication, func(stream io.Reader) (interface{}, error) {
+	atvs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxPopDataAtv, func(stream io.Reader) (interface{}, error) {
 		atv := Atv{}
 		err := atv.FromVbkEncoding(stream)
 		if err != nil {
