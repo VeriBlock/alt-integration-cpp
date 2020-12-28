@@ -3,7 +3,6 @@ package entities
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -64,7 +63,6 @@ func (v *PopPayouts) FromVbkEncoding(stream io.Reader) error {
 	}
 
 	v.payouts = make([]Payout, len(payouts))
-	fmt.Println(len(payouts))
 	for i, payout := range payouts {
 		v.payouts[i] = *payout.(*Payout)
 	}

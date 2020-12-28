@@ -83,12 +83,12 @@ func (v *PopData) FromVbkEncoding(stream io.Reader) error {
 		v.Context[i] = *context.(*VbkBlock)
 	}
 	atvs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCountAltPublication, func(stream io.Reader) (interface{}, error) {
-		block := Atv{}
-		err := block.FromVbkEncoding(stream)
+		atv := Atv{}
+		err := atv.FromVbkEncoding(stream)
 		if err != nil {
 			return nil, err
 		}
-		return &block, nil
+		return &atv, nil
 	})
 	if err != nil {
 		return err
@@ -98,12 +98,12 @@ func (v *PopData) FromVbkEncoding(stream io.Reader) error {
 		v.Atvs[i] = *atv.(*Atv)
 	}
 	vtbs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCountVbkPublication, func(stream io.Reader) (interface{}, error) {
-		block := Vtb{}
-		err := block.FromVbkEncoding(stream)
+		vtb := Vtb{}
+		err := vtb.FromVbkEncoding(stream)
 		if err != nil {
 			return nil, err
 		}
-		return &block, nil
+		return &vtb, nil
 	})
 	if err != nil {
 		return err
