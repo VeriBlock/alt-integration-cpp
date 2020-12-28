@@ -135,7 +135,7 @@ func (v *VbkPopTx) FromRaw(stream io.Reader, signature []byte, publicKey []byte)
 	if err := v.BlockOfProof.FromVbkEncoding(stream); err != nil {
 		return err
 	}
-	bopcs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxContextCount, func(stream io.Reader) (interface{}, error) {
+	bopcs, err := veriblock.ReadArrayOf(stream, 0, veriblock.MaxPopDataVbkBlock, func(stream io.Reader) (interface{}, error) {
 		block := BtcBlock{}
 		err := block.FromVbkEncoding(stream)
 		if err != nil {

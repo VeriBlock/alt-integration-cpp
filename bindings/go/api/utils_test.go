@@ -2,8 +2,6 @@ package api
 
 import (
 	"bytes"
-	"encoding/hex"
-	"fmt"
 	"testing"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -29,7 +27,6 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 
 	hash, err := popContext.CalculateTopLevelMerkleRoot(txRootHash, block.PreviousBlock, &popData)
 	assert.NoError(err)
-	fmt.Println(hex.EncodeToString(hash[:]))
 
 	assert.False(bytes.Equal(hash[:], []byte{}))
 }
