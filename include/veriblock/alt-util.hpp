@@ -67,7 +67,7 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
 }
 
 bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
-                             const uint256& txMerkleRoot,
+                             const std::vector<uint8_t>& txMerkleRoot,
                              const PopData& popData,
                              const std::vector<uint8_t>& payoutInfo,
                              const AltBlockTree& tree,
@@ -76,14 +76,14 @@ bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
 PublicationData GeneratePublicationData(
     const std::vector<uint8_t>& endorsedBlockHeader,
     const BlockIndex<AltBlock>& endorsedBlock,
-    const uint256& txMerkleRoot,
+    const std::vector<uint8_t>& txMerkleRoot,
     const PopData& popData,
     const std::vector<uint8_t>& payoutInfo,
     const AltChainParams& params);
 
 //! calculates top level merkle root that cryptographically authenticates
 //! block content (transactions, PopData, context info) to a block
-uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
+uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
                                     const uint256& popDataMerkleRoot,
                                     const ContextInfoContainer& ctx);
 
@@ -92,7 +92,7 @@ uint256 CalculateTopLevelMerkleRoot(
     const AuthenticatedContextInfoContainer& ctx);
 
 //! @overload
-uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
+uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
                                     const PopData& popData,
                                     const BlockIndex<AltBlock>* prevBlock,
                                     const AltChainParams& params);

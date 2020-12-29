@@ -5,9 +5,9 @@
 
 #include <gtest/gtest.h>
 
+#include <util/alt_chain_params_regtest.hpp>
 #include <veriblock/alt-util.hpp>
 #include <veriblock/mock_miner.hpp>
-#include <util/alt_chain_params_regtest.hpp>
 
 using namespace altintegration;
 
@@ -54,6 +54,8 @@ TEST(TopLevelMerkleRoot, Algorithm) {
   c.ctx = container;
 
   ASSERT_EQ(topLevel, c.getTopLevelMerkleRoot());
-  ASSERT_EQ(topLevel, CalculateTopLevelMerkleRoot(txRoot, popDataRoot, container));
+  ASSERT_EQ(
+      topLevel,
+      CalculateTopLevelMerkleRoot(txRoot.asVector(), popDataRoot, container));
   ASSERT_EQ(topLevel, CalculateTopLevelMerkleRoot(c));
 }

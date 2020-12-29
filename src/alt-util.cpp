@@ -10,7 +10,7 @@
 namespace altintegration {
 
 bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
-                             const uint256& txMerkleRoot,
+                             const std::vector<uint8_t>& txMerkleRoot,
                              const PopData& popData,
                              const std::vector<uint8_t>& payoutInfo,
                              const AltBlockTree& tree,
@@ -33,7 +33,7 @@ bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
 PublicationData GeneratePublicationData(
     const std::vector<uint8_t>& endorsedBlockHeader,
     const BlockIndex<AltBlock>& endorsedBlock,
-    const uint256& txMerkleRoot,
+    const std::vector<uint8_t>& txMerkleRoot,
     const PopData& popData,
     const std::vector<uint8_t>& payoutInfo,
     const AltChainParams& params) {
@@ -50,7 +50,7 @@ PublicationData GeneratePublicationData(
   return res;
 }
 
-uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
+uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
                                     const PopData& popData,
                                     const BlockIndex<AltBlock>* prevBlock,
                                     const AltChainParams& params) {
@@ -64,7 +64,7 @@ uint256 CalculateTopLevelMerkleRoot(
   return ctx.getTopLevelMerkleRoot();
 }
 
-uint256 CalculateTopLevelMerkleRoot(const uint256& txMerkleRoot,
+uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
                                     const uint256& popDataMerkleRoot,
                                     const ContextInfoContainer& ctx) {
   AuthenticatedContextInfoContainer c;
