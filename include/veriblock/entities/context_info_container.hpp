@@ -46,7 +46,7 @@ struct AuthenticatedContextInfoContainer {
 
   //! @overload
   static AuthenticatedContextInfoContainer createFromPrevious(
-      const uint256& txRoot,
+      const std::vector<uint8_t>& txRoot,
       const uint256& popDataRoot,
       const BlockIndex<AltBlock>* prev,
       const AltChainParams& p);
