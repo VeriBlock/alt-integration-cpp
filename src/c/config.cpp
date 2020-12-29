@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "config.hpp"
+
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
@@ -30,18 +31,20 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
    * @return hash
    */
   std::vector<uint8_t> getHash(
-      const std::vector<uint8_t>& bytes) const override {
+      const std::vector<uint8_t>& bytes) const noexcept override {
     VBK_ASSERT(bytes.size() != 0);
-    std::vector<uint8_t> hash(1024, 0);
+    std::vector<uint8_t> hash(altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA,
+                              0);
     int size = 0;
     VBK_getBlockHeaderHash(bytes.data(), (int)bytes.size(), hash.data(), &size);
-    VBK_ASSERT(size <= 1024);
+    VBK_ASSERT(size <= altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA);
     hash.resize(size);
     return hash;
   }
 
-  bool checkBlockHeader(const std::vector<uint8_t>& bytes,
-                        const std::vector<uint8_t>& root) const override {
+  bool checkBlockHeader(
+      const std::vector<uint8_t>& bytes,
+      const std::vector<uint8_t>& root) const noexcept override {
     return VBK_checkBlockHeader(
         bytes.data(), (int)bytes.size(), root.data(), (int)root.size());
   };

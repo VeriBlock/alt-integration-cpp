@@ -207,7 +207,7 @@ struct AltChainParams {
    * @warning SHOULD NOT THROW
    */
   virtual std::vector<uint8_t> getHash(
-      const std::vector<uint8_t>& bytes) const = 0;
+      const std::vector<uint8_t>& bytes) const noexcept = 0;
 
   /**
    * Returns true if input `bytes`:
@@ -220,8 +220,9 @@ struct AltChainParams {
    *
    * @warning SHOULD NOT THROW
    */
-  virtual bool checkBlockHeader(const std::vector<uint8_t>& bytes,
-                                const std::vector<uint8_t>& root) const = 0;
+  virtual bool checkBlockHeader(
+      const std::vector<uint8_t>& bytes,
+      const std::vector<uint8_t>& root) const noexcept = 0;
 
  public:
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
