@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 
 #include <util/alt_chain_params_regtest.hpp>
+#include <util/pop_test_fixture.hpp>
 #include <veriblock/alt-util.hpp>
 #include <veriblock/mock_miner.hpp>
 
@@ -58,4 +59,39 @@ TEST(TopLevelMerkleRoot, Algorithm) {
       topLevel,
       CalculateTopLevelMerkleRoot(txRoot.asVector(), popDataRoot, container));
   ASSERT_EQ(topLevel, CalculateTopLevelMerkleRoot(c));
+}
+
+TEST(EmptyPopData, MerkleRoot) {
+  PopData p;
+  p.version = 1;
+  auto root = p.getMerkleRoot();
+  ASSERT_EQ(HexStr(root),
+            "eaac496a5eab315c9255fb85c871cef7fd87047adcd2e81ba7d55d6bdeb1737f");
+}
+
+TEST(TopLevelMerkleRoot, Sanity) {
+  ContextInfoContainer ctx;
+  ctx.height = 1337;
+  ctx.keystones.firstPreviousKeystone = std::vector<uint8_t>{1, 2, 3};
+  ctx.keystones.secondPreviousKeystone = std::vector<uint8_t>{4, 5, 6};
+
+  WriteStream w;
+  ctx.toVbkEncoding(w);
+  ASSERT_EQ(HexStr(w.data()), "000005390301020303040506");
+  ASSERT_EQ(HexStr(ctx.getHash()),
+            "db35aad09a65b667a6c9e09cbd47b8d6b378b9ec705db604a4d5cd489afd2bc6");
+
+  std::vector<uint8_t> txRoot = ParseHex(
+      "bf9fb4901a0d8fc9b0d3bf38546191f77a3f2ea5d543546aac0574290c0a9e83");
+  PopData p;
+  p.version = 1;
+  auto popDataRoot = p.getMerkleRoot();
+
+  auto stateRoot = sha256twice(txRoot, popDataRoot);
+  ASSERT_EQ(HexStr(stateRoot),
+            "e9e547df56daa0ea36de14b923aa2efd9ad09c6207e6304584d900904a03596a");
+
+  auto tlmr = CalculateTopLevelMerkleRoot(txRoot, popDataRoot, ctx);
+  ASSERT_EQ(HexStr(tlmr),
+            "700c1abb69dd1899796b4cafa81c0eefa7b7d0c5aaa4b2bcb67713b2918edb52");
 }

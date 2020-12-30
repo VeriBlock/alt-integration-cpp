@@ -552,6 +552,7 @@ TEST(ToJson, AltParams) {
   "maxAltchainFutureBlockTime": 600,
   "maxVTBsInAltBlock": 200,
   "maxVbkBlocksInAltBlock": 200,
+  "networkId": 0,
   "payoutParams": {
     "difficultyAveragingInterval": 50,
     "flatScoreRound": 2,
