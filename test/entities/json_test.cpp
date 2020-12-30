@@ -12,7 +12,7 @@
 #include "util/pop_test_fixture.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/literals.hpp"
-#include "veriblock/mock_miner.hpp"
+#include "veriblock/mock_miner_2.hpp"
 
 using namespace altintegration;
 
@@ -457,7 +457,7 @@ TEST(ToJson, ATV) {
 }
 
 TEST(ToJson, VbkBlockIndex) {
-  MockMiner m;
+  MockMiner2 m;
   picojson::value block =
       ToJSON<picojson::value>(*m.vbk().getBestChain().tip());
   std::string actual = block.serialize(true);
@@ -493,7 +493,7 @@ TEST(ToJson, VbkBlockIndex) {
 }
 
 TEST(ToJson, BtcBlockIndex) {
-  MockMiner m;
+  MockMiner2 m;
   auto* index = m.btc().getBestChain().tip();
   picojson::value block = ToJSON<picojson::value>(*index);
   std::string actual = block.serialize(true);
