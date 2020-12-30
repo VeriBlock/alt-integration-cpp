@@ -224,7 +224,7 @@ struct MockMiner2Proxy : private MockMiner2 {
   }
 };
 
-boost::shared_ptr<MockMiner2Proxy> makeMiner() {
+boost::shared_ptr<MockMiner2Proxy> makeMiner2() {
   return boost::shared_ptr<MockMiner2Proxy>(new MockMiner2Proxy());
 }
 
@@ -260,7 +260,7 @@ BOOST_PYTHON_MODULE(pypopminer2) {
 
   class_<MockMiner2Proxy, boost::noncopyable, boost::shared_ptr<MockMiner2Proxy>>(
       "MockMiner2", no_init)
-      .def("__init__", make_constructor(makeMiner))
+      .def("__init__", make_constructor(makeMiner2))
       .def("__repr__", &MockMiner2Proxy::toPrettyString)
       .def_readonly(
           "vbkTip", &MockMiner2Proxy::getVbkTip, "Current BtcTip in MockMiner2")
