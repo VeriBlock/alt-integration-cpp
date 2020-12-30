@@ -1,7 +1,7 @@
 from random import Random
 
-from rpc.pop_miner import PopMiner
-from util.logging import logger
+from .logging import logger
+from .pop_miner import PopMiner
 
 
 class RandomMiner:

@@ -2,11 +2,11 @@ import argparse
 import os
 import sys
 
-from pypopminer import MockMiner2
+from pypopminer import MockMiner
 from random import randrange
 
-from rpc.node_rpc import NodeRpc
-from util.load_test_util import load_test
+from .node_rpc import NodeRpc
+from .load_test import load_test
 
 
 def main():
@@ -49,7 +49,7 @@ def main():
         sys.exit(2)
 
     node = NodeRpc(args.url, args.user, args.password)
-    apm = MockMiner2()
+    apm = MockMiner()
     max_blocks = args.max_blocks
     max_hours = args.max_hours
     seed = args.seed or randrange(sys.maxsize)

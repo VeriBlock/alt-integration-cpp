@@ -1,6 +1,6 @@
 from pypopminer import PublicationData
 
-from util.logging import logger
+from .logging import logger
 
 
 class PopMiner:
