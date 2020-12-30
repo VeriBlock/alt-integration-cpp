@@ -130,9 +130,9 @@ struct MockMiner2Proxy : private MockMiner2 {
     return base::createVbkTxEndorsingAltBlock(publicationData);
   }
 
-  void submitVbkTx(const VbkTx& tx) {
-    vbkmempool.push_back(tx);
-  }
+//  void submitVbkTx(const VbkTx& tx) {
+//    vbkmempool.push_back(tx);
+//  }
 
   void endorseVbkBlock(const VbkBlock& block,
                        const std::string& lastKnownBtcHash,
@@ -281,7 +281,7 @@ BOOST_PYTHON_MODULE(pypopminer2) {
       .def("createVbkPopTxEndorsingVbkBlock", &MockMiner2Proxy::createVbkPopTxEndorsingVbkBlock)
       .def("submitVbkPopTx", &MockMiner2Proxy::submitVbkPopTx)
       .def("createVbkTxEndorsingAltBlock", &MockMiner2Proxy::createVbkTxEndorsingAltBlock)
-      .def("submitVbkTx", &MockMiner2Proxy::submitVbkTx)
+//      .def("submitVbkTx", &MockMiner2Proxy::submitVbkTx)
       .def("endorseVbkBlock", fx5)
       .def("endorseVbkBlock", fx6)
       .def("endorseAltBlock", &MockMiner2Proxy::endorseAltBlock);
