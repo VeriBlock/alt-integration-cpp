@@ -16,12 +16,12 @@ KeystoneContainer KeystoneContainer::createFromPrevious(
   const auto second = getSecondPreviousKeystoneHeight(height, keystoneInterval);
 
   if (prev != nullptr) {
-    auto* firstPreviousKeystone = prev->getAncestor(first);
+    const auto* firstPreviousKeystone = prev->getAncestor(first);
     if (firstPreviousKeystone != nullptr) {
       c.firstPreviousKeystone = firstPreviousKeystone->getHash();
 
       // write second previous keystone
-      auto secondPreviousKeystone = firstPreviousKeystone->getAncestor(second);
+      auto* secondPreviousKeystone = firstPreviousKeystone->getAncestor(second);
       if (secondPreviousKeystone != nullptr) {
         c.secondPreviousKeystone = secondPreviousKeystone->getHash();
       }
