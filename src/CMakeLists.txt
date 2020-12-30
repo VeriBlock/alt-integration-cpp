@@ -44,6 +44,7 @@ set(SOURCES
         arith_uint256.cpp
         crypto/secp256k1.cpp
         mock_miner.cpp
+        mock_miner_2.cpp
         config.cpp
         command_group_cache.cpp
         alt-util.cpp
