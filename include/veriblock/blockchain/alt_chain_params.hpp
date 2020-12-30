@@ -245,6 +245,7 @@ struct AltChainParams {
 template <typename JsonValue>
 JsonValue ToJSON(const AltChainParams& p) {
   auto obj = json::makeEmptyObject<JsonValue>();
+  json::putIntKV(obj, "networkId", p.getIdentifier());
   json::putArrayKV(
       obj, "forkResolutionLookupTable", p.getForkResolutionLookUpTable());
   json::putIntKV(obj, "maxVbkBlocksInAltBlock", p.getMaxVbkBlocksInAltBlock());
