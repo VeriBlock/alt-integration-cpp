@@ -1,4 +1,4 @@
-from pypopminer import PublicationData
+from pypoptools import PublicationData
 
 from .logging import logger
 

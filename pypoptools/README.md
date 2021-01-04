@@ -18,16 +18,20 @@ sudo make install
 
 Now pypopminer is installed.
 
-### Use 
+### Use
 
 ```python
->>> from pypopminer import MockMiner, PublicationData
->>> m = MockMiner()
->>> m.vbkTip
-VbkBlock{height=0, version=2, prev=000000000000000000000000, ks1=000000000000000000, ks2=000000000000000000, mroot=a2ea7c29ef7915db412ebd4012a9c617, timestamp=1553699987, diff=16842752, nonce=0}
->>> m.btcTip
-BtcBlock{version=1, prev=0000000000000000000000000000000000000000000000000000000000000000, merkleRoot=4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b, timestamp=1296688602, bits=545259519, nonce=2}
->>> m.btcTip.toHex()
+>> > from pypoptools import MockMiner, PublicationData
+>> > m = MockMiner()
+>> > m.vbkTip
+VbkBlock
+{
+    height = 0, version = 2, prev = 000000000000000000000000, ks1 = 000000000000000000, ks2 = 000000000000000000, mroot = a2ea7c29ef7915db412ebd4012a9c617, timestamp = 1553699987, diff = 16842752, nonce = 0}
+>> > m.btcTip
+BtcBlock
+{version = 1, prev = 0000000000000000000000000000000000000000000000000000000000000000, merkleRoot = 4
+a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b, timestamp = 1296688602, bits = 545259519, nonce = 2}
+>> > m.btcTip.toHex()
 '0100000000000000000000000000000000000000000000000000000000000000000000003ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4adae5494dffff7f2002000000'
 ```
 
