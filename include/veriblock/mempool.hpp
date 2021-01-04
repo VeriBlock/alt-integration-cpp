@@ -36,10 +36,10 @@ namespace altintegration {
  * @ingroup api
  */
 struct MemPool {
-  enum Status { ACCEPTED, FAILED_STATELESS, FAILED_STATEFUL };
+  enum Status { VALID, FAILED_STATELESS, FAILED_STATEFUL };
 
   struct SubmitResult {
-    Status status = ACCEPTED;
+    Status status = VALID;
 
     // by default created in valid state
     SubmitResult() = default;
@@ -51,7 +51,15 @@ struct MemPool {
 
     SubmitResult(Status status, bool /* ignore */) : status(status) {}
 
-    operator bool() const { return status == ACCEPTED; }
+    operator bool() const { return isAccepted(); }
+
+    bool isAccepted() const {
+      return status == VALID || status == FAILED_STATEFUL;
+    }
+
+    bool isValid() const { return status == VALID; }
+
+    bool isFailedStateless() const { return status == FAILED_STATELESS; }
 
     bool isFailedStateful() const { return status == FAILED_STATEFUL; }
   };
@@ -104,7 +112,7 @@ struct MemPool {
    * @param[in] bytes payload`s bytes
    * @param[out] state validation state
    * validation
-   * @return true if payload is valid, false otherwise
+   * @return true if payload is accepted to mempool, false otherwise
    * @ingroup api
    */
   template <typename T>
@@ -134,7 +142,7 @@ struct MemPool {
    * @param[in] pl payload
    * @param[out] state validation state
    * validation
-   * @return true if payload is valid, false otherwise
+   * @return true if payload is accepted to mempool, false otherwise
    * @ingroup api
    */
   template <typename T>
@@ -156,7 +164,7 @@ struct MemPool {
    * @tparam shared_ptr<T> one of VTB, ATV, VbkBlock
    * @param[in] pl payload
    * @param[out] state validation state
-   * @return true if payload is valid, false otherwise
+   * @return true if payload is accepted to mempool, false otherwise
    * @ingroup api
    */
   template <typename T>
