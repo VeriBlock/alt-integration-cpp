@@ -8,10 +8,10 @@
 
 #include <memory>
 
-#include "veriblock/mock_miner.hpp"
+#include "veriblock/mock_miner_2.hpp"
 
 struct MockMiner {
-  std::shared_ptr<altintegration::MockMiner> miner;
+  std::shared_ptr<altintegration::MockMiner2> miner;
 };
 
 #endif  // VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS

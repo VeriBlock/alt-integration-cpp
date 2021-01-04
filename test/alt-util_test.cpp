@@ -8,12 +8,12 @@
 #include <util/alt_chain_params_regtest.hpp>
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/alt-util.hpp>
-#include <veriblock/mock_miner.hpp>
+#include <veriblock/mock_miner_2.hpp>
 
 using namespace altintegration;
 
 struct AltUtilTest : public ::testing::Test {
-  MockMiner popminer;
+  MockMiner2 popminer;
 };
 
 TEST_F(AltUtilTest, GetLastKnownBlocks) {

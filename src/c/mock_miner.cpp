@@ -14,7 +14,7 @@
 
 MockMiner_t* VBK_NewMockMiner() {
   auto* miner = new MockMiner();
-  miner->miner = std::make_shared<altintegration::MockMiner>();
+  miner->miner = std::make_shared<altintegration::MockMiner2>();
   return miner;
 }
 

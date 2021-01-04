@@ -14,7 +14,7 @@
 using namespace altintegration;
 
 struct VbkBlockTreeTestFixture : public ::testing::Test {
-  MockMiner popminer;
+  MockMiner2 popminer;
 
   void endorseVBK(size_t height) {
     auto* endorsedIndex = popminer.vbk().getBestChain()[(int32_t)height];
