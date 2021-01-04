@@ -206,32 +206,6 @@ VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
   return *val;
 }
 
-namespace {
-
-template <typename pop_t>
-void process_submit(
-    MemPool& memPool,
-    const std::vector<pop_t>& payloads,
-    std::vector<std::pair<typename pop_t::id_t, ValidationState>>& res) {
-  for (const auto& p : payloads) {
-    ValidationState state;
-    memPool.submit<pop_t>(p, state);
-    res.emplace_back(p.getId(), state);
-  }
-}
-
-}  // namespace
-
-MempoolResult MemPool::submitAll(const PopData& pop) {
-  MempoolResult r;
-
-  process_submit(*this, pop.context, r.context);
-  process_submit(*this, pop.vtbs, r.vtbs);
-  process_submit(*this, pop.atvs, r.atvs);
-
-  return r;
-}
-
 void MemPool::clear() {
   mempool_tree_.clear();
   relations_.clear();

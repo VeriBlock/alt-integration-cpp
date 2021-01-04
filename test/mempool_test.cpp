@@ -32,8 +32,10 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
     auto containingBlock = generateNextBlock(chain.back());
     chain.push_back(containingBlock);
     ASSERT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+    ASSERT_TRUE(state.IsValid()) << state.toString();
     ASSERT_TRUE(AddPayloads(containingBlock.getHash(), pop))
         << state.toString();
+    ASSERT_TRUE(state.IsValid());
     ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
     ASSERT_TRUE(state.IsValid());
     validateAlttreeIndexState(alttree, containingBlock, pop);
@@ -55,8 +57,8 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 
   void submitATV(const ATV& atv) {
-    bool res = mempool->submit(atv, state);
-    if (!res) {
+    mempool->submit(atv, state);
+    if (!state.IsValid()) {
       ASSERT_GE(state.GetPath().size(), 12);
       std::string error = state.GetPath();
       error = std::string{error.begin(), error.begin() + 12};
@@ -66,8 +68,8 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 
   void submitVTB(const VTB& vtb) {
-    bool res = mempool->submit(vtb, state);
-    if (!res) {
+    mempool->submit(vtb, state);
+    if (!state.IsValid()) {
       ASSERT_GE(state.GetPath().size(), 12);
       std::string error = state.GetPath();
       error = std::string{error.begin(), error.begin() + 12};
@@ -77,8 +79,8 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 
   void submitVBK(const VbkBlock& vbk) {
-    bool res = mempool->submit(vbk, state);
-    if (!res) {
+    mempool->submit(vbk, state);
+    if (!state.IsValid()) {
       ASSERT_GE(state.GetPath().size(), 12);
       std::string error = state.GetPath();
       error = std::string{error.begin(), error.begin() + 12};
@@ -1448,7 +1450,8 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   /// blocks (expect them to connect VTB0)
   {
     // add to mempool
-    ASSERT_FALSE(mempool->submit<VTB>(VTB0, state)) << state.toString();
+    auto result = mempool->submit<VTB>(VTB0, state);
+    ASSERT_TRUE(result.isFailedStateful());
     state.reset();
     auto vbkContext0 =
         getContext(popminer->vbk(), VTB0.containingBlock.getHash(), 8);
@@ -1473,10 +1476,11 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
     mempool->removeAll(pop0);
   }
 
-  /// Send VBK context + VTB2; expect to be connected
+  /// Send VBK context + VTB2; expect it to be statefully invalid
   {
     // add to mempool
-    ASSERT_FALSE(mempool->submit<VTB>(VTB2, state)) << state.toString();
+    auto result = mempool->submit<VTB>(VTB2, state);
+    ASSERT_TRUE(result.isFailedStateful());
     state.reset();
     auto vbkContext2 =
         getContext(popminer->vbk(), VTB2.containingBlock.getHash(), 2);

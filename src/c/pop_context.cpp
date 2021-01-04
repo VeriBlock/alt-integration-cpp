@@ -480,7 +480,7 @@ VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
 static int handleSubmitResponse(altintegration::MemPool::SubmitResult e) {
   using S = altintegration::MemPool::Status;
   switch (e.status) {
-    case S::ACCEPTED:
+    case S::VALID:
       return 0;
     case S::FAILED_STATEFUL:
       return 1;
