@@ -201,7 +201,10 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
-                 "block %s must have payloads added and not be connected",
+                 "block %s must have payloads added",
+                 index.toPrettyString());
+  VBK_ASSERT_MSG(!index.isConnected(),
+                 "block %s must not be connected",
                  index.toPrettyString());
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE),
                  "state corruption: block %s is applied",
