@@ -13,15 +13,17 @@ enum BlockStateStatus : uint32_t {
   //! statelessly valid.
   BLOCK_VALID_TREE = 1,
   //! the block is connected via connectBlock, which means that this block and
-  //! all ancestors are at least "BLOCK_HAS_PAYLOADS"
+  //! all its ancestors are at least BLOCK_CONNECTED and have BLOCK_HAS_PAYLOADS
+  //! set.
   BLOCK_CONNECTED = 2,
   //! the block has been successfully applied, but may not be fully valid,
   //! because it may connect to the "other" chain when two chains are applied
-  //! together during POP FR. All ancestors are at least BLOCK_CONNECTED.
+  //! together during POP FR. All the ancestors are at least
+  //! BLOCK_CAN_BE_APPLIED_MAYBE_WITH_OTHER_CHAIN.
   BLOCK_CAN_BE_APPLIED_MAYBE_WITH_OTHER_CHAIN = 3,
   //! the chain with the block at its tip is fully valid, so if we do SetState
-  //! on this block, it is guaranteed to succeed. All ancestors are at least
-  //! BLOCK_CONNECTED.
+  //! on this block, it is guaranteed to succeed. All the ancestors are at least
+  //! BLOCK_CAN_BE_APPLIED.
   BLOCK_CAN_BE_APPLIED = 4,
 
   //! all stateful validity levels
