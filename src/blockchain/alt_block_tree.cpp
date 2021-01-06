@@ -406,9 +406,15 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
 
   VBK_ASSERT(!index.hasPayloads());
 
+  index.unsetFlag(BLOCK_HAS_PAYLOADS);
+
   revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-  bool success = index.lowerValidity(BLOCK_VALID_TREE);
-  VBK_ASSERT(success);
+
+  // allow removing payloads from unconnected blocks
+  if (index.isConnected()) {
+    bool success = index.lowerValidity(BLOCK_VALID_TREE);
+    VBK_ASSERT(success);
+  }
 
   // the current block is no longer a tip
   tips_.erase(&index);
