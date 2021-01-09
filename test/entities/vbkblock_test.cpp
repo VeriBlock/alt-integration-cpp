@@ -80,30 +80,6 @@ TEST(VbkBlock, RoundTripNew) {
   EXPECT_EQ(blockReEncoded, defaultBlockEncoded);
 }
 
-TEST(VbkBlock, RoundTripWithHash) {
-  const auto blockEncoded = defaultBlock.toRaw();
-  const auto& hash = defaultBlock.getHash();
-  VbkBlock block;
-  ValidationState state;
-  ReadStream stream(blockEncoded);
-  EXPECT_TRUE(DeserializeFromRaw(stream, block, state, hash))
-      << state.toString();
-  EXPECT_EQ(block, defaultBlock);
-}
-
-TEST(VbkBlock, RoundTripBlockIndexWithHash) {
-  BlockIndex<VbkBlock> defaultBlockIndex{};
-  defaultBlockIndex.setHeader(std::make_shared<VbkBlock>(defaultBlock));
-  const auto blockEncoded = defaultBlockIndex.toVbkEncoding();
-  const auto& hash = defaultBlock.getHash();
-
-  ReadStream stream(blockEncoded);
-  BlockIndex<VbkBlock> decoded;
-  ValidationState state;
-  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, decoded, state, hash));
-  EXPECT_EQ(decoded.getHeader(), defaultBlock);
-}
-
 TEST(VbkBlock, getBlockHash_test) {
   VbkBlock block;
   block.setHeight(5000);
