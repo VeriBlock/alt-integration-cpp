@@ -52,6 +52,10 @@ inline uint32_t ethashGetEpoch(int64_t height) {
   return ethashGetEpochWithoutOffset(height) + VBK_ETHASH_EPOCH_OFFSET;
 }
 
+void insertHeaderCacheEntry(Slice<const uint8_t> header, uint192 progpowHash);
+void clearHeaderCache();
+void clearEthashCache();
+
 }  // namespace progpow
 
 /**

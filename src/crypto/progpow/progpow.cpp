@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <cstdint>
 #include <mutex>
+#include <utility>
 #include <vector>
 #include <veriblock/assert.hpp>
 #include <veriblock/consts.hpp>
@@ -586,12 +587,16 @@ std::string hash32_t::toHex() const {
 #define VBK_PROGPOW_ETHASH_CACHE_SIZE 4
 #endif
 
+#ifndef VBK_PROGPOW_ETHASH_CACHE_ELASTICITY
+#define VBK_PROGPOW_ETHASH_CACHE_ELASTICITY 1
+#endif
+
 #ifndef VBK_PROGPOW_HEADER_HASH_SIZE
 #define VBK_PROGPOW_HEADER_HASH_SIZE 100000
 #endif
 
-#ifndef VBK_PROGPOW_CACHE_ELASTICITY
-#define VBK_PROGPOW_CACHE_ELASTICITY 1
+#ifndef VBK_PROGPOW_HEADER_HASH_ELASTICITY
+#define VBK_PROGPOW_HEADER_HASH_ELASTICITY 1000
 #endif
 
 struct CacheEntry {
@@ -602,12 +607,22 @@ struct CacheEntry {
 // epoch -> ethash cache + dag
 // NOLINTNEXTLINE(cert-err58-cpp)
 static lru11::Cache<uint64_t, CacheEntry, std::mutex> gEthashCache(
-    VBK_PROGPOW_ETHASH_CACHE_SIZE, VBK_PROGPOW_CACHE_ELASTICITY);
+    VBK_PROGPOW_ETHASH_CACHE_SIZE, VBK_PROGPOW_ETHASH_CACHE_ELASTICITY);
 
 // sha256d(vbkheader) -> progpow hash
 // NOLINTNEXTLINE(cert-err58-cpp)
 static lru11::Cache<uint256, uint192, std::mutex> gProgpowHeaderCache(
-    VBK_PROGPOW_HEADER_HASH_SIZE);
+    VBK_PROGPOW_HEADER_HASH_SIZE, VBK_PROGPOW_HEADER_HASH_ELASTICITY);
+
+void progpow::insertHeaderCacheEntry(Slice<const uint8_t> header,
+                                     uint192 progpowHash) {
+  VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
+  auto hsha = sha256twice(header);
+  gProgpowHeaderCache.insert(hsha, std::move(progpowHash));
+}
+
+void progpow::clearHeaderCache() { gProgpowHeaderCache.clear(); }
+void progpow::clearEthashCache() { gEthashCache.clear(); }
 
 static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
