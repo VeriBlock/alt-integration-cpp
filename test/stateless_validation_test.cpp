@@ -204,7 +204,7 @@ TEST_F(StatelessValidationTest, parallel_check_speedup) {
   ASSERT_TRUE(parallelRunTime < linearRunTime);
 }
 
-/*TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
+TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
   ASSERT_TRUE(checkBlock(validVTB.transaction.blockOfProof, state, btc));
 }
 
@@ -589,4 +589,4 @@ TEST(VbkBlockPlausibility, Timestamp) {
       << state.toString();
   EXPECT_EQ(state.GetPath(), "timestamp-upper-bound");
   state.reset();
-}*/
+}

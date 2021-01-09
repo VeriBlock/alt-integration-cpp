@@ -72,13 +72,12 @@ void PopValidator::clear() {
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const VbkBlock& arg) {
+std::future<ValidationState> PopValidator::addCheck(const VbkBlock& b) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
 
   std::packaged_task<ValidationState()> t([&]() -> ValidationState {
     ValidationState state;
-    auto b = arg;
     checkBlock(b, state, vbk_);
     return state;
   });
@@ -90,19 +89,18 @@ std::future<ValidationState> PopValidator::addCheck(const VbkBlock& arg) {
   return r;
 #else
   ValidationState state;
-  checkBlock(block, state, vbk_);
+  checkBlock(b, state, vbk_);
   return make_future<ValidationState>(std::move(state));
 #endif
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const VTB& arg) {
+std::future<ValidationState> PopValidator::addCheck(const VTB& b) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
 
   std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    auto b = arg;
     checkVTB(b, state, btc_);
     return state;
   });
@@ -114,19 +112,18 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& arg) {
   return r;
 #else
   ValidationState state;
-  checkVTB(vtb, state, btc_);
+  checkVTB(b, state, btc_);
   return make_future<ValidationState>(std::move(state));
 #endif
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const ATV& arg) {
+std::future<ValidationState> PopValidator::addCheck(const ATV& b) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
 
   std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    auto b = arg;
     checkATV(b, state, alt_);
     return state;
   });
@@ -138,7 +135,7 @@ std::future<ValidationState> PopValidator::addCheck(const ATV& arg) {
   return r;
 #else
   ValidationState state;
-  checkATV(atv, state, alt_);
+  checkATV(b, state, alt_);
   return make_future<ValidationState>(std::move(state));
 #endif
 }
