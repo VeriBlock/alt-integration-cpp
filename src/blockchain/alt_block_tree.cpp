@@ -201,7 +201,10 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
-                 "block %s must have payloads added and not be connected",
+                 "block %s must have payloads added",
+                 index.toPrettyString());
+  VBK_ASSERT_MSG(!index.isConnected(),
+                 "block %s must not be connected",
                  index.toPrettyString());
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE),
                  "state corruption: block %s is applied",
@@ -403,9 +406,15 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
 
   VBK_ASSERT(!index.hasPayloads());
 
+  index.unsetFlag(BLOCK_HAS_PAYLOADS);
+
   revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-  bool success = index.lowerValidity(BLOCK_VALID_TREE);
-  VBK_ASSERT(success);
+
+  // allow removing payloads from unconnected blocks
+  if (index.isConnected()) {
+    bool success = index.lowerValidity(BLOCK_VALID_TREE);
+    VBK_ASSERT(success);
+  }
 
   // the current block is no longer a tip
   tips_.erase(&index);
