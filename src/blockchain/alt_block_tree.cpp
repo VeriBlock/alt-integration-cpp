@@ -460,6 +460,10 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
 
   VBK_LOG_INFO("Trying to add %s to next block...", pop.toPrettyString());
 
+  // suppress the VBK fork resolution as we don't care about the best chain
+  auto guard = vbk().deferForkResolutionGuard();
+  auto originalTip = vbk().getBestChain().tip();
+
   // first, create tmp alt block
   AltBlock tmp;
   ValidationState state;
@@ -488,8 +492,9 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
   VBK_LOG_INFO("Filtered valid: %s", pop.toPrettyString());
 
   // at this point `pop` contains only valid payloads
-
   this->removeSubtree(*tmpindex);
+
+  guard.overrideDeferredForkResolution(originalTip);
 }
 
 bool AltBlockTree::addPayloads(const hash_t& block,
