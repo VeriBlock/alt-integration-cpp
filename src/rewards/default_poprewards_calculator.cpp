@@ -97,8 +97,9 @@ fetchBlocksUntil(const DefaultPopRewardsCalculator::index_t* from,
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
 uint32_t DefaultPopRewardsCalculator::getRoundForBlockNumber(
     uint32_t height) const {
+  const auto ki = tree_.getParams().getKeystoneInterval();
   const PopPayoutsParams& params = tree_.getParams().getPayoutParams();
-  if (height % tree_.getParams().getKeystoneInterval() == 0) {
+  if (isKeystone(height, ki) == 0) {
     return params.keystoneRound();
   }
 
@@ -107,8 +108,7 @@ uint32_t DefaultPopRewardsCalculator::getRoundForBlockNumber(
   }
 
   VBK_ASSERT(height > 0);
-  uint32_t round = (height % tree_.getParams().getKeystoneInterval()) %
-                   (params.payoutRounds() - 1);
+  uint32_t round = (height % ki) % (params.payoutRounds() - 1);
   return round;
 }
 

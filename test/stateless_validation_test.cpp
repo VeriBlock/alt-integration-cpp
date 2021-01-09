@@ -178,14 +178,13 @@ TEST_F(StatelessValidationTest, parallel_check_speedup) {
     for (auto& b : pop.context) {
       b.setTimestamp(b.getTimestamp());
     }
-    clearEthashCache();
     auto before = std::chrono::steady_clock::now();
     bool result = checkPopData(validator, pop, state);
     ASSERT_TRUE(result);
     ASSERT_TRUE(state.IsValid());
     auto after = std::chrono::steady_clock::now();
     linearRunTime = after - before;
-    std::cerr << linearRunTime.count() << "\r\n";
+    std::cerr << "linear=" << linearRunTime.count() << "\r\n";
   }
 
   {
@@ -193,14 +192,13 @@ TEST_F(StatelessValidationTest, parallel_check_speedup) {
     for (auto& b : pop.context) {
       b.setTimestamp(b.getTimestamp());
     }
-    clearEthashCache();
     auto before = std::chrono::steady_clock::now();
     auto result = checkPopData(validator, pop, state);
     ASSERT_TRUE(result);
     ASSERT_TRUE(state.IsValid());
     auto after = std::chrono::steady_clock::now();
     parallelRunTime = after - before;
-    std::cerr << parallelRunTime.count() << "\r\n";
+    std::cerr << "parallel=" << parallelRunTime.count() << "\r\n";
   }
 
   ASSERT_TRUE(parallelRunTime < linearRunTime);

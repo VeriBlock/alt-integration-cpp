@@ -21,12 +21,12 @@ PopValidator::PopValidator(const VbkChainParams& vbk,
                            const BtcChainParams& btc,
                            const AltChainParams& alt,
                            size_t threads)
-    : vbk_(vbk), btc_(btc), alt_(alt) {
+    : threads_(threads), vbk_(vbk), btc_(btc), alt_(alt) {
   start(threads);
 }
 
 void PopValidator::start(size_t threads) {
-  (void)threads;
+  threads_ = threads;
 
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers == nullptr, "PopValidator has already been started");
@@ -41,6 +41,8 @@ void PopValidator::start(size_t threads) {
   }
   tp::ThreadPoolOptions options;
   options.setThreadCount(threads);
+  // queue size can "at least" contain full PopData
+  options.setQueueSize(alt_.maxWorkerQueueSize());
   workers = std::make_shared<tp::ThreadPool>(options);
 #endif
 }
@@ -53,19 +55,26 @@ void PopValidator::stop() {
 
 PopValidator::~PopValidator() { stop(); }
 
+void PopValidator::clear() {
+  stop();
+  start(threads_);
+}
+
 template <>
 std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
 
-  std::packaged_task<ValidationState()> t([&]() {
+  std::packaged_task<ValidationState()> t([&]() -> ValidationState {
     ValidationState state;
-    VbkBlock block_ = block;
-    checkBlock(block_, state, vbk_);
+    checkBlock(block, state, vbk_);
     return state;
   });
   std::future<ValidationState> r = t.get_future();
-  workers->post(t);
+  bool success = workers->tryPost(t);
+  VBK_ASSERT_MSG(success,
+                 "Worker queue is full, can't add new item. Max size=%d",
+                 alt_.maxWorkerQueueSize());
   return r;
 #else
   ValidationState state;
@@ -81,12 +90,14 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
 
   std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    VTB vtb_ = vtb;
-    checkVTB(vtb_, state, btc_);
+    checkVTB(vtb, state, btc_);
     return state;
   });
   std::future<ValidationState> r = t.get_future();
-  workers->post(t);
+  bool success = workers->tryPost(t);
+  VBK_ASSERT_MSG(success,
+                 "Worker queue is full, can't add new item. Max size=%d",
+                 alt_.maxWorkerQueueSize());
   return r;
 #else
   ValidationState state;
@@ -102,12 +113,14 @@ std::future<ValidationState> PopValidator::addCheck(const ATV& atv) {
 
   std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    ATV atv_ = atv;
-    checkATV(atv_, state, alt_);
+    checkATV(atv, state, alt_);
     return state;
   });
   std::future<ValidationState> r = t.get_future();
-  workers->post(t);
+  bool success = workers->tryPost(t);
+  VBK_ASSERT_MSG(success,
+                 "Worker queue is full, can't add new item. Max size=%d",
+                 alt_.maxWorkerQueueSize());
   return r;
 #else
   ValidationState state;

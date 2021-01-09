@@ -621,6 +621,7 @@ bool checkPopData(PopValidator& validator,
   for (auto& r : results) {
     auto result = r.get();
     if (!result.IsValid()) {
+      validator.clear();
       state = result;
       return state.Invalid("pop-sl-invalid");
     }
