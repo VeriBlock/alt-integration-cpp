@@ -18,6 +18,10 @@
 
 namespace altintegration {
 
+using ValidationThreadPool =
+    // 32 = size of single task lambda
+    tp::ThreadPoolImpl<tp::FixedFunction<void(), 32>, tp::MPMCBoundedQueue>;
+
 class PopValidator {
  public:
   PopValidator(const VbkChainParams& vbk,
@@ -41,7 +45,7 @@ class PopValidator {
  protected:
   size_t threads_ = 0;
 #ifndef VBK_NO_THREADS
-  std::shared_ptr<tp::ThreadPool> workers;
+  std::shared_ptr<ValidationThreadPool> workers;
 #endif
   const VbkChainParams& vbk_;
   const BtcChainParams& btc_;
