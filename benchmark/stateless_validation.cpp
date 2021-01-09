@@ -12,15 +12,17 @@
 #include <veriblock/literals.hpp>
 #include <veriblock/pop_stateless_validator.hpp>
 #include <veriblock/stateless_validation.hpp>
+#include <veriblock/blockchain/miner.hpp>
+#include <veriblock/bootstraps.hpp>
 
-#include "../test/util/alt_chain_params_regtest.hpp"
+#include <iostream>
 
 using namespace altintegration;
 
 struct AltChainParamsImpl : public AltChainParams {
   ~AltChainParamsImpl() override = default;
 
-  AltChainParamsImpl() { mMaxVbkBlocksInAltBlock = 9999; }
+  AltChainParamsImpl() { mMaxVbkBlocksInAltBlock = 5000; }
 
   AltBlock getBootstrapBlock() const noexcept override {
     AltBlock b;
@@ -49,55 +51,65 @@ struct AltChainParamsImpl : public AltChainParams {
 static BtcChainParamsRegTest btc;
 static VbkChainParamsRegTest vbk;
 static AltChainParamsImpl alt;
+#define TOTAL 30
+#define THREADS 2
 
 PopData makePopData(int blocks) {
+  Miner<VbkBlock, VbkChainParams> miner(vbk);
   PopData pd;
   pd.version = 1;
 
-  for (int i = 0; i < blocks; i++) {
-    VbkBlock block;
-    block.setHeight(vbk.getProgPowForkHeight() + i);
-    block.setTimestamp(vbk.getProgPowStartTimeEpoch() +
-                       i * vbk.getRetargetPeriod());
+  auto last = GetRegTestVbkBlock();
 
-    pd.context.push_back(block);
+  for (int i = 0; i < blocks; i++) {
+    VbkBlock dummy;
+    dummy.setDifficulty(last.getDifficulty());
+    dummy.setHeight(vbk.getProgPowForkHeight() + i);
+    dummy.setTimestamp(vbk.getProgPowStartTimeEpoch() +
+                       i * vbk.getRetargetPeriod());
+    miner.createBlock(dummy);
+    pd.context.push_back(dummy);
   }
   return pd;
 }
 
-void precalcCache() {
+static PopData pdclear = makePopData(TOTAL);
+// popdata with VBK blocks with empty 'hash_'
+static PopData pd = pdclear;
+
+void warmupEthashCache() {
   VbkBlock block;
   block.setHeight(vbk.getProgPowForkHeight() + 0);
   block.setTimestamp(vbk.getProgPowStartTimeEpoch());
   block.calculateHash();
 }
 
-#define TOTAL 100
-
 static void SerialPopDataValidation(benchmark::State& state) {
-  precalcCache();
+  warmupEthashCache();
 
   for (auto _ : state) {
     state.PauseTiming();
+    pd = pdclear;
     ValidationState st;
-    const auto pd = makePopData(TOTAL);
     progpow::clearHeaderCache();
     state.ResumeTiming();
 
     // serially verify
     for (auto& block : pd.context) {
-      checkBlock(block, st, vbk);
+      if(!checkBlock(block, st, vbk)) {
+        break;
+      }
     }
   }
 }
 
 static void ParallelPopDataValidation(benchmark::State& state) {
-  static PopValidator val(vbk, btc, alt, 2);
-  precalcCache();
+  static PopValidator val(vbk, btc, alt, THREADS);
+  warmupEthashCache();
 
   for (auto _ : state) {
     state.PauseTiming();
-    const auto pd = makePopData(TOTAL);
+    pd = pdclear;
     progpow::clearHeaderCache();
     ValidationState st;
     state.ResumeTiming();
@@ -111,27 +123,31 @@ static void ParallelPopDataValidation(benchmark::State& state) {
       for (auto& fut : f) {
         ValidationState s = fut.get();
         VBK_ASSERT_MSG(s.GetPath() == "vbk-bad-pow", s.toString());
+        if (!s.IsValid()) {
+          break;
+        }
       }
     }
   }
 }
 
 static void ParallelPopDataValidation2(benchmark::State& state) {
-  static PopValidator val(vbk, btc, alt, 2);
-  precalcCache();
+  static PopValidator val(vbk, btc, alt, THREADS);
+  warmupEthashCache();
 
   for (auto _ : state) {
     state.PauseTiming();
-    const auto pd = makePopData(TOTAL);
+    pd = pdclear;
     progpow::clearHeaderCache();
     ValidationState st;
     state.ResumeTiming();
 
-    {
-      checkPopData(val, pd, st);
-    }
+    checkPopData(val, pd, st);
   }
 }
+
+// As a result of this benchmark, we can see that parallelized checkPopData is
+// at least THREADS times faster than sequential version
 
 BENCHMARK(SerialPopDataValidation)->Unit(benchmark::kMillisecond);
 BENCHMARK(ParallelPopDataValidation)->Unit(benchmark::kMillisecond);

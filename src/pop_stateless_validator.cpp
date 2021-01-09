@@ -8,6 +8,17 @@
 
 namespace altintegration {
 
+static unsigned long upper_power_of_two(uint32_t v) {
+  v--;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+  v++;
+  return v;
+}
+
 // hack to build std::future if VBK_NO_THREADS is defined
 template <typename T>
 std::future<T> make_future(T&& t) {
@@ -42,7 +53,8 @@ void PopValidator::start(size_t threads) {
   tp::ThreadPoolOptions options;
   options.setThreadCount(threads);
   // queue size can "at least" contain full PopData
-  options.setQueueSize(alt_.maxWorkerQueueSize());
+  auto size = upper_power_of_two(alt_.maxWorkerQueueSize());
+  options.setQueueSize(size);
   workers = std::make_shared<tp::ThreadPool>(options);
 #endif
 }
@@ -56,18 +68,18 @@ void PopValidator::stop() {
 PopValidator::~PopValidator() { stop(); }
 
 void PopValidator::clear() {
-  stop();
-  start(threads_);
+  // TODO: clear validation queue
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
+std::future<ValidationState> PopValidator::addCheck(const VbkBlock& arg) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
 
   std::packaged_task<ValidationState()> t([&]() -> ValidationState {
     ValidationState state;
-    checkBlock(block, state, vbk_);
+    auto b = arg;
+    checkBlock(b, state, vbk_);
     return state;
   });
   std::future<ValidationState> r = t.get_future();
@@ -84,13 +96,14 @@ std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
+std::future<ValidationState> PopValidator::addCheck(const VTB& arg) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
 
   std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    checkVTB(vtb, state, btc_);
+    auto b = arg;
+    checkVTB(b, state, btc_);
     return state;
   });
   std::future<ValidationState> r = t.get_future();
@@ -107,13 +120,14 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const ATV& atv) {
+std::future<ValidationState> PopValidator::addCheck(const ATV& arg) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
 
   std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    checkATV(atv, state, alt_);
+    auto b = arg;
+    checkATV(b, state, alt_);
     return state;
   });
   std::future<ValidationState> r = t.get_future();

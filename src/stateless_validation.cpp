@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/stateless_validation.hpp"
+
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -16,7 +18,6 @@
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
-#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -326,7 +327,8 @@ bool checkPublicationData(const PublicationData& pub,
 
   auto root = c.getTopLevelMerkleRoot();
   if (!params.checkBlockHeader(pub.header, root.asVector())) {
-    return state.Invalid("bad-endorsedheader", "Bad endorsed header or unauthenticated contextInfo");
+    return state.Invalid("bad-endorsedheader",
+                         "Bad endorsed header or unauthenticated contextInfo");
   }
 
   return true;
@@ -600,10 +602,6 @@ bool checkPopData(PopValidator& validator,
                     popData.atvs.size()));
   }
 
-  if (!checkPopDataForDuplicates(popData, state)) {
-    return state.Invalid("pop-sl-invalid-has-duplicates");
-  }
-
   std::vector<std::future<ValidationState>> results;
   results.reserve(popData.context.size() + popData.vtbs.size() +
                   popData.atvs.size());
@@ -625,6 +623,12 @@ bool checkPopData(PopValidator& validator,
       state = result;
       return state.Invalid("pop-sl-invalid");
     }
+  }
+
+  // this check has to be after parallel stateless validation, as it requires
+  // hash to be calculated, and it is faster to calculate hashes in thread pool
+  if (!checkPopDataForDuplicates(popData, state)) {
+    return state.Invalid("pop-sl-invalid-has-duplicates");
   }
 
   return true;
