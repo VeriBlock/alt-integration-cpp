@@ -5,17 +5,16 @@
 
 #include <benchmark/benchmark.h>
 
+#include <iostream>
 #include <veriblock/blockchain/btc_chain_params.hpp>
+#include <veriblock/blockchain/miner.hpp>
 #include <veriblock/blockchain/vbk_chain_params.hpp>
+#include <veriblock/bootstraps.hpp>
 #include <veriblock/crypto/progpow.hpp>
 #include <veriblock/entities/popdata.hpp>
 #include <veriblock/literals.hpp>
 #include <veriblock/pop_stateless_validator.hpp>
 #include <veriblock/stateless_validation.hpp>
-#include <veriblock/blockchain/miner.hpp>
-#include <veriblock/bootstraps.hpp>
-
-#include <iostream>
 
 using namespace altintegration;
 
@@ -52,7 +51,7 @@ static BtcChainParamsRegTest btc;
 static VbkChainParamsRegTest vbk;
 static AltChainParamsImpl alt;
 #define TOTAL 30
-#define THREADS 2
+#define THREADS 4
 
 PopData makePopData(int blocks) {
   Miner<VbkBlock, VbkChainParams> miner(vbk);
@@ -73,32 +72,29 @@ PopData makePopData(int blocks) {
   return pd;
 }
 
-static PopData pdclear = makePopData(TOTAL);
-// popdata with VBK blocks with empty 'hash_'
-static PopData pd = pdclear;
+static PopData pd;
 
 void warmupEthashCache() {
   VbkBlock block;
   block.setHeight(vbk.getProgPowForkHeight() + 0);
   block.setTimestamp(vbk.getProgPowStartTimeEpoch());
-  block.calculateHash();
+  block.getHash();
 }
 
 static void SerialPopDataValidation(benchmark::State& state) {
   warmupEthashCache();
+  pd = makePopData(TOTAL);
 
   for (auto _ : state) {
     state.PauseTiming();
-    pd = pdclear;
     ValidationState st;
     progpow::clearHeaderCache();
     state.ResumeTiming();
 
     // serially verify
     for (auto& block : pd.context) {
-      if(!checkBlock(block, st, vbk)) {
-        break;
-      }
+      checkBlock(block, st, vbk);
+      VBK_ASSERT(st.IsValid());
     }
   }
 }
@@ -106,10 +102,10 @@ static void SerialPopDataValidation(benchmark::State& state) {
 static void ParallelPopDataValidation(benchmark::State& state) {
   static PopValidator val(vbk, btc, alt, THREADS);
   warmupEthashCache();
+  pd = makePopData(TOTAL);
 
   for (auto _ : state) {
     state.PauseTiming();
-    pd = pdclear;
     progpow::clearHeaderCache();
     ValidationState st;
     state.ResumeTiming();
@@ -122,10 +118,7 @@ static void ParallelPopDataValidation(benchmark::State& state) {
       }
       for (auto& fut : f) {
         ValidationState s = fut.get();
-        VBK_ASSERT_MSG(s.GetPath() == "vbk-bad-pow", s.toString());
-        if (!s.IsValid()) {
-          break;
-        }
+        VBK_ASSERT(s.IsValid());
       }
     }
   }
@@ -134,15 +127,16 @@ static void ParallelPopDataValidation(benchmark::State& state) {
 static void ParallelPopDataValidation2(benchmark::State& state) {
   static PopValidator val(vbk, btc, alt, THREADS);
   warmupEthashCache();
+  pd = makePopData(TOTAL);
 
   for (auto _ : state) {
     state.PauseTiming();
-    pd = pdclear;
     progpow::clearHeaderCache();
     ValidationState st;
     state.ResumeTiming();
 
     checkPopData(val, pd, st);
+    VBK_ASSERT(st.IsValid());
   }
 }
 
