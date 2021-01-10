@@ -6,11 +6,18 @@
 #include <veriblock/pop_stateless_validator.hpp>
 #include <veriblock/stateless_validation.hpp>
 
-#ifndef VBK_NO_THREADS
-#include <veriblock/third_party/ThreadPool.h>
-#endif
-
 namespace altintegration {
+
+static unsigned long upper_power_of_two(uint32_t v) {
+  v--;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+  v++;
+  return v;
+}
 
 // hack to build std::future if VBK_NO_THREADS is defined
 template <typename T>
@@ -25,12 +32,12 @@ PopValidator::PopValidator(const VbkChainParams& vbk,
                            const BtcChainParams& btc,
                            const AltChainParams& alt,
                            size_t threads)
-    : vbk_(vbk), btc_(btc), alt_(alt) {
+    : threads_(threads), vbk_(vbk), btc_(btc), alt_(alt) {
   start(threads);
 }
 
 void PopValidator::start(size_t threads) {
-  (void)threads;
+  threads_ = threads;
 
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers == nullptr, "PopValidator has already been started");
@@ -43,7 +50,12 @@ void PopValidator::start(size_t threads) {
   if (threads == 0) {
     threads = 1;
   }
-  workers = std::make_shared<third_party::ThreadPool>(threads);
+  tp::ThreadPoolOptions options;
+  options.setThreadCount(threads);
+  // queue size can "at least" contain full PopData
+  auto size = upper_power_of_two(alt_.maxWorkerQueueSize());
+  options.setQueueSize(size);
+  workers = std::make_shared<ValidationThreadPool>(options);
 #endif
 }
 
@@ -55,50 +67,75 @@ void PopValidator::stop() {
 
 PopValidator::~PopValidator() { stop(); }
 
+void PopValidator::clear() {
+  // TODO: clear validation queue
+}
+
 template <>
-std::future<ValidationState> PopValidator::addCheck(const VbkBlock& block) {
+std::future<ValidationState> PopValidator::addCheck(const VbkBlock& b) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
-  return workers->enqueue([&] {
+
+  std::packaged_task<ValidationState()> t([&]() -> ValidationState {
     ValidationState state;
-    checkBlock(block, state, vbk_);
+    checkBlock(b, state, vbk_);
     return state;
   });
+  std::future<ValidationState> r = t.get_future();
+  bool success = workers->tryPost(t);
+  VBK_ASSERT_MSG(success,
+                 "Worker queue is full, can't add new item. Max size=%d",
+                 upper_power_of_two(alt_.maxWorkerQueueSize()));
+  return r;
 #else
   ValidationState state;
-  checkBlock(block, state, vbk_);
+  checkBlock(b, state, vbk_);
   return make_future<ValidationState>(std::move(state));
 #endif
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const VTB& vtb) {
+std::future<ValidationState> PopValidator::addCheck(const VTB& b) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
-  return workers->enqueue([&] {
+
+  std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    checkVTB(vtb, state, btc_);
+    checkVTB(b, state, btc_);
     return state;
   });
+  std::future<ValidationState> r = t.get_future();
+  bool success = workers->tryPost(t);
+  VBK_ASSERT_MSG(success,
+                 "Worker queue is full, can't add new item. Max size=%d",
+                 upper_power_of_two(alt_.maxWorkerQueueSize()));
+  return r;
 #else
   ValidationState state;
-  checkVTB(vtb, state, btc_);
+  checkVTB(b, state, btc_);
   return make_future<ValidationState>(std::move(state));
 #endif
 }
 
 template <>
-std::future<ValidationState> PopValidator::addCheck(const ATV& atv) {
+std::future<ValidationState> PopValidator::addCheck(const ATV& b) {
 #ifndef VBK_NO_THREADS
   VBK_ASSERT_MSG(workers != nullptr, "PopValidator is stopped");
-  return workers->enqueue([&] {
+
+  std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    checkATV(atv, state, alt_);
+    checkATV(b, state, alt_);
     return state;
   });
+  std::future<ValidationState> r = t.get_future();
+  bool success = workers->tryPost(t);
+  VBK_ASSERT_MSG(success,
+                 "Worker queue is full, can't add new item. Max size=%d",
+                 upper_power_of_two(alt_.maxWorkerQueueSize()));
+  return r;
 #else
   ValidationState state;
-  checkATV(atv, state, alt_);
+  checkATV(b, state, alt_);
   return make_future<ValidationState>(std::move(state));
 #endif
 }

@@ -6,7 +6,8 @@
 #include <veriblock/blockchain/alt_chain_params.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/pop_context.hpp>
-#include <veriblock/rewards/poprewards_calculator.hpp>
+#include <veriblock/rewards/default_poprewards_calculator.hpp>
+#include <veriblock/storage/inmem_payloads_provider.hpp>
 
 using namespace altintegration;
 
@@ -29,14 +30,18 @@ struct AltChainParamsTest : public AltChainParams {
   }
 
   bool checkBlockHeader(const std::vector<uint8_t>&,
-                        const std::vector<uint8_t>&) const override {
+                        const std::vector<uint8_t>&) const noexcept override {
     return true;
   }
 };
 
 int main() {
+  BtcChainParamsRegTest btcparam{};
+  VbkChainParamsRegTest vbkparam{};
   AltChainParamsTest chainParams{};
-  PopRewardsCalculator rewardsCalculator = PopRewardsCalculator(chainParams);
+  InmemPayloadsProvider payloadsProvider;
+  AltBlockTree tree(chainParams, vbkparam, btcparam, payloadsProvider);
+  DefaultPopRewardsCalculator rewardsCalculator(tree);
   PopRewardsBigDecimal score = 1.0;
   PopRewardsBigDecimal difficulty = 1.0;
   // pay 20 VBTC for each reward point

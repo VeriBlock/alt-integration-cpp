@@ -56,7 +56,7 @@ struct Logger {
     (void)msg;
   }
 
-  LogLevel level = LogLevel::info;
+  LogLevel level = LogLevel::off;
 };
 
 //! getter for global logger instance
@@ -85,12 +85,12 @@ LogLevel StringToLevel(const std::string&);
 #endif
 
 //! @private
-#define VBK_LOG(lvl, format, ...)                                             \
-  do {                                                                        \
-    if (altintegration::GetLogger().level <= lvl) {                           \
-      altintegration::GetLogger().log(lvl,                                    \
-                                      VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
-    }                                                                         \
+#define VBK_LOG(lvl, format, ...)                             \
+  do {                                                        \
+    auto& logger = altintegration::GetLogger();               \
+    if (logger.level <= lvl) {                                \
+      logger.log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
+    }                                                         \
   } while (0)
 
 // clang-format off

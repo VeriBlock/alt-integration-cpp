@@ -52,6 +52,7 @@ inline uint32_t ethashGetEpoch(int64_t height) {
   return ethashGetEpochWithoutOffset(height) + VBK_ETHASH_EPOCH_OFFSET;
 }
 
+//! Use this function to warm-up VBK Header cache if their hashes are known
 void insertHeaderCacheEntry(Slice<const uint8_t> header, uint192 progpowHash);
 void clearHeaderCache();
 void clearEthashCache();

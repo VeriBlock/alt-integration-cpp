@@ -12,11 +12,14 @@
 #include <veriblock/blockchain/vbk_chain_params.hpp>
 #include <veriblock/validation_state.hpp>
 
-namespace third_party {
-class ThreadPool;
-}
+#ifndef VBK_NO_THREADS
+#include <veriblock/third_party/thread_pool.hpp>
+#endif
 
 namespace altintegration {
+
+using ValidationThreadPool =
+    tp::ThreadPoolImpl<tp::FixedFunction<void(), 128>, tp::MPMCBoundedQueue>;
 
 class PopValidator {
  public:
@@ -32,12 +35,17 @@ class PopValidator {
   template <typename CheckType>
   std::future<ValidationState> addCheck(const CheckType& block);
 
-  const VbkChainParams& getVbkParams() const { return vbk_;}
-  const BtcChainParams& getBtcParams() const { return btc_;}
-  const AltChainParams& getAltParams() const { return alt_;}
+  const VbkChainParams& getVbkParams() const { return vbk_; }
+  const BtcChainParams& getBtcParams() const { return btc_; }
+  const AltChainParams& getAltParams() const { return alt_; }
+
+  void clear();
 
  protected:
-  std::shared_ptr<third_party::ThreadPool> workers;
+  size_t threads_ = 0;
+#ifndef VBK_NO_THREADS
+  std::shared_ptr<ValidationThreadPool> workers;
+#endif
   const VbkChainParams& vbk_;
   const BtcChainParams& btc_;
   const AltChainParams& alt_;
