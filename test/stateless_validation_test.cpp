@@ -146,64 +146,6 @@ struct StatelessValidationTest : public ::testing::Test, public PopTestFixture {
   ValidationState state;
 };
 
-TEST_F(StatelessValidationTest, parallel_check_speedup) {
-  std::cerr << std::thread::hardware_concurrency() << "\r\n";
-
-  std::vector<VbkTx> transactions;
-  for (size_t i = 0; i < 100; i++) {
-    PublicationData pubData;
-    pubData.payoutInfo = {1,
-                          2,
-                          3,
-                          4,
-                          5,
-                          6,
-                          7,
-                          8,
-                          (unsigned char)((i >> 8) & 0xFF),
-                          (unsigned char)(i & 0xFF)};
-    pubData.identifier = 0;
-    pubData.contextInfo = {1, 2, 3, 4, 5};
-    transactions.push_back(popminer->createVbkTxEndorsingAltBlock(pubData));
-  }
-  auto pop =
-      generateAltPayloads(transactions, GetRegTestVbkBlock().getHash(), 1);
-  pop.atvs.clear();
-  pop.vtbs.clear();
-
-  std::chrono::nanoseconds linearRunTime;
-  std::chrono::nanoseconds parallelRunTime;
-  {
-    PopValidator validator(vbk, btc, alt, 1);
-    for (auto& b : pop.context) {
-      b.setTimestamp(b.getTimestamp());
-    }
-    auto before = std::chrono::steady_clock::now();
-    bool result = checkPopData(validator, pop, state);
-    ASSERT_TRUE(result);
-    ASSERT_TRUE(state.IsValid());
-    auto after = std::chrono::steady_clock::now();
-    linearRunTime = after - before;
-    std::cerr << "linear=" << linearRunTime.count() << "\r\n";
-  }
-
-  {
-    PopValidator validator(vbk, btc, alt, 4);
-    for (auto& b : pop.context) {
-      b.setTimestamp(b.getTimestamp());
-    }
-    auto before = std::chrono::steady_clock::now();
-    auto result = checkPopData(validator, pop, state);
-    ASSERT_TRUE(result);
-    ASSERT_TRUE(state.IsValid());
-    auto after = std::chrono::steady_clock::now();
-    parallelRunTime = after - before;
-    std::cerr << "parallel=" << parallelRunTime.count() << "\r\n";
-  }
-
-  ASSERT_TRUE(parallelRunTime < linearRunTime);
-}
-
 TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
   ASSERT_TRUE(checkBlock(validVTB.transaction.blockOfProof, state, btc));
 }
