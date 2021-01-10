@@ -99,7 +99,7 @@ uint32_t DefaultPopRewardsCalculator::getRoundForBlockNumber(
     uint32_t height) const {
   const auto ki = tree_.getParams().getKeystoneInterval();
   const PopPayoutsParams& params = tree_.getParams().getPayoutParams();
-  if (isKeystone(height, ki) == 0) {
+  if (isKeystone(height, ki)) {
     return params.keystoneRound();
   }
 

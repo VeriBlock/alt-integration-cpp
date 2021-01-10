@@ -55,7 +55,7 @@ void PopValidator::start(size_t threads) {
   // queue size can "at least" contain full PopData
   auto size = upper_power_of_two(alt_.maxWorkerQueueSize());
   options.setQueueSize(size);
-  workers = std::make_shared<tp::ThreadPool>(options);
+  workers = std::make_shared<ValidationThreadPool>(options);
 #endif
 }
 
