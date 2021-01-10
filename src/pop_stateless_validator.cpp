@@ -85,7 +85,7 @@ std::future<ValidationState> PopValidator::addCheck(const VbkBlock& b) {
   bool success = workers->tryPost(t);
   VBK_ASSERT_MSG(success,
                  "Worker queue is full, can't add new item. Max size=%d",
-                 alt_.maxWorkerQueueSize());
+                 upper_power_of_two(alt_.maxWorkerQueueSize()));
   return r;
 #else
   ValidationState state;
@@ -108,7 +108,7 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& b) {
   bool success = workers->tryPost(t);
   VBK_ASSERT_MSG(success,
                  "Worker queue is full, can't add new item. Max size=%d",
-                 alt_.maxWorkerQueueSize());
+                 upper_power_of_two(alt_.maxWorkerQueueSize()));
   return r;
 #else
   ValidationState state;
@@ -131,7 +131,7 @@ std::future<ValidationState> PopValidator::addCheck(const ATV& b) {
   bool success = workers->tryPost(t);
   VBK_ASSERT_MSG(success,
                  "Worker queue is full, can't add new item. Max size=%d",
-                 alt_.maxWorkerQueueSize());
+                 upper_power_of_two(alt_.maxWorkerQueueSize()));
   return r;
 #else
   ValidationState state;
