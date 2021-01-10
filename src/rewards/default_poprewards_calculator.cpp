@@ -384,7 +384,9 @@ void DefaultPopRewardsCalculator::onOverrideTip(const index_t& index) {
 
   const auto* fork = tree_.getBestChain().findFork(&index);
   if (fork != nullptr) {
-    invalidBlocks = tree_.getBestChain().tip()->getHeight() - fork->getHeight();
+    auto* tip = tree_.getBestChain().tip();
+    VBK_ASSERT(tip);
+    invalidBlocks = tip->getHeight() - fork->getHeight();
   }
   eraseCacheHistory(invalidBlocks);
 }
