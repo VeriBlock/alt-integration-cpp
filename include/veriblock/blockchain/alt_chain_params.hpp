@@ -143,6 +143,17 @@ JsonValue ToJSON(const PopPayoutsParams& p) {
 struct AltChainParams {
   virtual ~AltChainParams() = default;
 
+  size_t maxWorkerQueueSize() const noexcept {
+    const auto ret = getMaxATVsInAltBlock() + getMaxVTBsInAltBlock() +
+                     getMaxVbkBlocksInAltBlock();
+    static const auto MAX = 400000;
+    VBK_ASSERT_MSG(ret < MAX,
+                   "Worker size queue can not be more than %d, otherwise it "
+                   "would take more than 50MB of RAM",
+                   MAX);
+    return ret;
+  }
+
   //! number of blocks in single keystone interval. 5 means that blocks with
   //! heights 5,6,7,8,9 are blocks within same keystone interval
   uint32_t getKeystoneInterval() const noexcept { return mKeystoneInterval; }

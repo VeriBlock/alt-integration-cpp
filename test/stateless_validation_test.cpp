@@ -8,11 +8,13 @@
 #include <gtest/gtest.h>
 
 #include "util/alt_chain_params_regtest.hpp"
+#include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
 #include "veriblock/literals.hpp"
 #include "veriblock/pop_stateless_validator.hpp"
+#include "veriblock/crypto/progpow.hpp"
 
 using namespace altintegration;
 
@@ -137,7 +139,7 @@ static const VTB validVTB = AssertDeserializeFromHex<VTB>(
     "00000b0002f1606ebb9390033c3532bceb77a1d330ec8c16fd690000000000000000006bf3"
     "d41c8059c843d202fd75631d9ded5c9b9494010100000000000000");
 
-struct StatelessValidationTest : public ::testing::Test {
+struct StatelessValidationTest : public ::testing::Test, public PopTestFixture {
   BtcChainParamsRegTest btc;
   VbkChainParamsRegTest vbk;
   AltChainParamsRegTest alt;
