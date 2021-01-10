@@ -19,8 +19,7 @@
 namespace altintegration {
 
 using ValidationThreadPool =
-    // 32 = size of single task lambda
-    tp::ThreadPoolImpl<tp::FixedFunction<void(), 64>, tp::MPMCBoundedQueue>;
+    tp::ThreadPoolImpl<tp::FixedFunction<void(), 128>, tp::MPMCBoundedQueue>;
 
 class PopValidator {
  public:
