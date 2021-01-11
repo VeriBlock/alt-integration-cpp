@@ -28,19 +28,16 @@ namespace altintegration {
  *
  * @ingroup interfaces
  */
-
-struct StorageIterator {
-  virtual ~StorageIterator() = default;
+struct BlockHashIterator {
+  virtual ~BlockHashIterator() = default;
 
   virtual bool next() = 0;
-
-  virtual std::vector<uint8_t> key() const = 0;
 
   virtual std::vector<uint8_t> value() const = 0;
 
   virtual bool valid() const = 0;
 
-  virtual bool seek() = 0;
+  virtual bool seek_start() = 0;
 };
 
 }  // namespace altintegration
