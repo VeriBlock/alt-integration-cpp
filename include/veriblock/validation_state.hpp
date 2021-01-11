@@ -78,8 +78,12 @@ class ValidationState {
 };
 
 template <typename JsonValue>
-JsonValue ToJSON(const ValidationState &s) {
+JsonValue ToJSON(const ValidationState &s, bool *acceptedToMempool = nullptr) {
   auto obj = json::makeEmptyObject<JsonValue>();
+
+  if (acceptedToMempool != nullptr) {
+    json::putBoolKV(obj, "accepted", *acceptedToMempool);
+  }
 
   if (s.IsValid()) {
     json::putStringKV(obj, "state", "valid");
