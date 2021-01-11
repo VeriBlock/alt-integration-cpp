@@ -49,6 +49,11 @@ func ParseErrVbkID(idBytes []byte) (id VbkID, err error) {
 // VbkHash is 24 byte hash of VbkBlock
 type VbkHash [veriblock.VblakeBlockHashSize]byte
 
+// Bytes ...
+func (v *VbkHash) Bytes() []byte {
+	return v[:]
+}
+
 // VbkBlock ...
 type VbkBlock struct {
 	Height                 int32
