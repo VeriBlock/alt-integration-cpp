@@ -13,10 +13,10 @@ using namespace altintegration;
 static void ProgpowEpochCached(benchmark::State& state) {
   VbkBlock block;
   block.setHeight(0);
-  block.calculateHash();
+  block.getHash();
   for (auto _ : state) {
     block.setHeight((block.getHeight() + 1) % 8000);
-    benchmark::DoNotOptimize(block.calculateHash());
+    benchmark::DoNotOptimize(block.getHash());
   }
 }
 
@@ -25,7 +25,7 @@ static void ProgpowEpochUnCached(benchmark::State& state) {
   block.setHeight(8000);
   for (auto _ : state) {
     block.setHeight(block.getHeight() + 8000);
-    benchmark::DoNotOptimize(block.calculateHash());
+    benchmark::DoNotOptimize(block.getHash());
   }
 }
 

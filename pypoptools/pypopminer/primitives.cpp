@@ -2,7 +2,7 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS 1
 #include <boost/noncopyable.hpp>
 #include <boost/python.hpp>
 #include <boost/python/to_python_converter.hpp>
