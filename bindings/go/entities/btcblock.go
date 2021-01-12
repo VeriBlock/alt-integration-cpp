@@ -16,6 +16,11 @@ const BtcBlockName = "BTC"
 // BtcHash is 32 byte hash of BtcBlock
 type BtcHash [veriblock.Sha256HashSize]byte
 
+// Bytes ...
+func (v *BtcHash) Bytes() []byte {
+	return v[:]
+}
+
 // UnmarshalJSON parses a hash in hex syntax.
 func (h *BtcHash) UnmarshalJSON(input []byte) error {
 	return veriblock.UnmarshalJSON(input, h[:])
