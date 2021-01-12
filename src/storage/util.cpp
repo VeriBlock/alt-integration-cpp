@@ -9,11 +9,12 @@
 
 namespace altintegration {
 
-bool LoadAllTrees(AltBlockTree& out,
-                  BlockHashIterator& it,
-                  BlockProvider& provider,
-                  ValidationState& state) {
-  using index_t = BlockIndex<AltBlock>;
+template <typename BlockTreeT>
+bool LoadTree(BlockTreeT& out,
+              BlockHashIterator& it,
+              BlockProvider& provider,
+              ValidationState& state) {
+  using index_t = typename BlockTreeT::index_t;
 
   if (!it.seek_start()) {
     return state.Invalid("bad-iter", "cannot seek iterator to start");
@@ -47,13 +48,29 @@ bool LoadAllTrees(AltBlockTree& out,
     return state.Invalid("bad-provider", "cannot get tip");
   }
 
-  if (!LoadTree(out, blocks, {}, state)) {
+  if (!LoadTree(out, blocks, tip.getHash(), state)) {
     return state.Invalid("bad-tree");
   }
 
   auto* t = out.getBestChain().tip();
   VBK_ASSERT(t != nullptr);
 
+  return true;
+}
+
+bool LoadAllTrees(AltBlockTree& tree,
+                  BlockHashIterator& it,
+                  BlockProvider& provider,
+                  ValidationState& state) {
+  if (LoadTree(tree.btc(), it, provider, state)) {
+    state.Invalid("failed to load btc tree");
+  }
+  if (LoadTree(tree.vbk(), it, provider, state)) {
+    state.Invalid("failed to load vbk tree");
+  }
+  if (LoadTree(tree, it, provider, state)) {
+    state.Invalid("failed to load alt tree");
+  }
   return true;
 }
 
