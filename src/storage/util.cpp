@@ -11,38 +11,29 @@ namespace altintegration {
 
 template <typename BlockTreeT>
 bool LoadTree(BlockTreeT& out,
-              BlockHashIterator<typename BlockTreeT::block_t>& it,
-              BlockProvider& provider,
+              BlockProvider<typename BlockTreeT::block_t>& provider,
               ValidationState& state) {
   using index_t = typename BlockTreeT::index_t;
+  using hash_t = typename index_t::hash_t;
 
-  if (!it.seek_start()) {
+  auto it = provider.getBlockIterator();
+
+  if (!it->seek_start()) {
     return state.Invalid("bad-iter", "cannot seek iterator to start");
   }
 
   std::vector<index_t> blocks;
 
-  while (it.valid()) {
-    auto hash = it.value();
-    index_t blk;
-    if (!provider.getBlock(hash, blk)) {
-      return state.Invalid("bad-provider",
-                           "cannot get block by the providing hash");
-    }
-
-    blocks.push_back(blk);
-
-    if (!it.next()) {
-      return state.Invalid("bad-iter", "cannot get next value");
-    }
+  for (; it->valid(); it->next()) {
+    blocks.push_back(it->value());
   }
 
-  index_t tip;
-  if (!provider.getTip(tip)) {
+  hash_t tip_hash;
+  if (!provider.getTipHash(tip_hash)) {
     return state.Invalid("bad-provider", "cannot get tip");
   }
 
-  if (!LoadTree(out, blocks, tip.getHash(), state)) {
+  if (!LoadTree(out, blocks, tip_hash, state)) {
     return state.Invalid("bad-tree");
   }
 
@@ -53,18 +44,17 @@ bool LoadTree(BlockTreeT& out,
 }
 
 bool LoadAllTrees(AltBlockTree& tree,
-                  BlockHashIterator<BtcBlock>& btc_it,
-                  BlockHashIterator<VbkBlock>& vbk_it,
-                  BlockHashIterator<AltBlock>& alt_it,
-                  BlockProvider& provider,
+                  BlockProvider<BtcBlock>& btc_provider,
+                  BlockProvider<VbkBlock>& vbk_provider,
+                  BlockProvider<AltBlock>& alt_provider,
                   ValidationState& state) {
-  if (!LoadTree(tree.btc(), btc_it, provider, state)) {
+  if (!LoadTree(tree.btc(), btc_provider, state)) {
     return state.Invalid("failed to load btc tree");
   }
-  if (!LoadTree(tree.vbk(), vbk_it, provider, state)) {
+  if (!LoadTree(tree.vbk(), vbk_provider, state)) {
     return state.Invalid("failed to load vbk tree");
   }
-  if (!LoadTree(tree, alt_it, provider, state)) {
+  if (!LoadTree(tree, alt_provider, state)) {
     return state.Invalid("failed to load alt tree");
   }
   return true;

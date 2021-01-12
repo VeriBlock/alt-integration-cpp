@@ -10,6 +10,8 @@
 
 #include <vector>
 
+#include "veriblock/blockchain/block_index.hpp"
+
 /**
  * @defgroup interfaces Interfaces to be implemented
  * These interfaces must be implemented by Altchain developers for integration
@@ -30,14 +32,16 @@ namespace altintegration {
  */
 
 template <typename BlockT>
-struct BlockHashIterator {
+struct BlockIterator {
   using hash_t = typename BlockT::hash_t;
 
-  virtual ~BlockHashIterator() = default;
+  virtual ~BlockIterator() = default;
 
-  virtual bool next() = 0;
+  virtual void next() = 0;
 
-  virtual hash_t value() const = 0;
+  virtual BlockIndex<BlockT> value() const = 0;
+
+  virtual hash_t key() const = 0;
 
   virtual bool valid() const = 0;
 

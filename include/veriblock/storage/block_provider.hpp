@@ -6,11 +6,14 @@
 #ifndef VERIBLOCK_POP_CPP_BLOCK_PROVIDER_HPP
 #define VERIBLOCK_POP_CPP_BLOCK_PROVIDER_HPP
 
-#include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/entities/altblock.hpp>
-#include <veriblock/entities/btcblock.hpp>
-#include <veriblock/entities/vbkblock.hpp>
-#include <veriblock/validation_state.hpp>
+#include <memory>
+
+#include "veriblock/blockchain/block_index.hpp"
+#include "veriblock/entities/altblock.hpp"
+#include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/vbkblock.hpp"
+#include "veriblock/storage/block_iterator.hpp"
+#include "veriblock/validation_state.hpp"
 
 /**
  * @defgroup interfaces Interfaces to be implemented
@@ -30,19 +33,18 @@ namespace altintegration {
  *
  * @ingroup interfaces
  */
+
+template <typename BlockT>
 struct BlockProvider {
+  using hash_t = typename BlockT::hash_t;
+
   virtual ~BlockProvider() = default;
 
-  virtual bool getTip(BlockIndex<BtcBlock>& out) const = 0;
-  virtual bool getTip(BlockIndex<VbkBlock>& out) const = 0;
-  virtual bool getTip(BlockIndex<AltBlock>& out) const = 0;
+  virtual bool getTipHash(hash_t& out) const = 0;
 
-  virtual bool getBlock(const typename BtcBlock::hash_t& hash,
-                        BlockIndex<BtcBlock>& out) const = 0;
-  virtual bool getBlock(const typename VbkBlock::hash_t& hash,
-                        BlockIndex<VbkBlock>& out) const = 0;
-  virtual bool getBlock(const typename AltBlock::hash_t& hash,
-                        BlockIndex<AltBlock>& out) const = 0;
+  virtual bool getBlock(const hash_t& hash, BlockIndex<BlockT>& out) const = 0;
+
+  virtual std::shared_ptr<BlockIterator<BlockT>> getBlockIterator() const = 0;
 };
 
 }  // namespace altintegration
