@@ -370,7 +370,7 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
 
   EXPECT_EQ(altchain.back().height, 101);
   EXPECT_EQ(sampleCalculator->scoreFromEndorsements(*endorsedIndex), 1.0);
-  mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95),
+  mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95) - 1,
                 altchain,
                 true);
 

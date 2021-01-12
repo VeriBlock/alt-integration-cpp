@@ -5,8 +5,8 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/rewards/default_poprewards_calculator.hpp>
 #include <util/pop_test_fixture.hpp>
+#include <veriblock/rewards/default_poprewards_calculator.hpp>
 
 using namespace altintegration;
 
@@ -106,7 +106,8 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
   for (size_t i = 0; i < 10000; i++) {
     PopPayouts payout;
     ASSERT_TRUE(SetState(alttree, chain[i].getHash()));
-    ASSERT_NO_FATAL_FAILURE(payout = calculator_.getPopPayout(chain[i].getHash()));
+    ASSERT_NO_FATAL_FAILURE(payout =
+                                calculator_.getPopPayout(chain[i].getHash()));
     // no endorsements = no payouts
     ASSERT_TRUE(payout.empty());
 
@@ -127,8 +128,10 @@ TEST_F(PopPayoutsE2Etest, OnePayout) {
 
   state = ValidationState();
   mineAltBlocksWithTree(
-      alttree, altparam.getPayoutParams().getPopPayoutDelay() - 1, chain);
+      alttree, altparam.getPayoutParams().getPopPayoutDelay() - 1 - 1, chain);
 
+  ASSERT_EQ(endorsed.height + altparam.getPayoutParams().getPopPayoutDelay(),
+            chain.back().height + 1);
   payout = calculator_.getPopPayout(chain.back().getHash());
   ASSERT_FALSE(payout.empty());
 
@@ -155,7 +158,7 @@ TEST_F(PopPayoutsE2Etest, ManyEndorsementsSameReward) {
 
   state = ValidationState();
   mineAltBlocksWithTree(
-      alttree, altparam.getPayoutParams().getPopPayoutDelay() - 2, chain);
+      alttree, altparam.getPayoutParams().getPopPayoutDelay() - 2 - 1, chain);
 
   payout = calculator_.getPopPayout(chain.back().getHash());
   ASSERT_EQ(payout.size(), 2);
