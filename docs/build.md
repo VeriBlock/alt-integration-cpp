@@ -34,4 +34,4 @@ Flags:
    It depends on `python3`, `python3-dev`, `libboost-all-dev` and `libboost-python-dev`
 - `-DSHARED={ON,[OFF]}` - build shared library (`.so, .dll, .dylib`) or static library (`.a, .lib`)
 
-Full list of flags can be found at [root CMakeLists.txt#41](./CMakeLists.txt#41).
+Full list of flags can be found at [root CMakeLists.txt#55-70](https://github.com/VeriBlock/alt-integration-cpp/blob/master/CMakeLists.txt#L55-L70).
