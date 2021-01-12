@@ -39,6 +39,11 @@ type AltBlock struct {
 // Name ...
 func (v *AltBlock) Name() string { return AltBlockName }
 
+// GetHash ...
+func (v *AltBlock) GetHash() AltHash {
+	return v.Hash
+}
+
 // GetGenericHash ...
 func (v *AltBlock) GetGenericHash() []byte {
 	return v.Hash
@@ -122,7 +127,7 @@ func (v *AltBlock) FromRawBytes(data []byte) error {
 // ToJSON ...
 func (v *AltBlock) ToJSON() (map[string]interface{}, error) {
 	res := map[string]interface{}{
-		"hash":          hex.EncodeToString(v.GetGenericHash()),
+		"hash":          hex.EncodeToString(v.GetHash()),
 		"previousBlock": hex.EncodeToString(v.PreviousBlock),
 		"height":        v.Height,
 		"timestamp":     v.Timestamp,
