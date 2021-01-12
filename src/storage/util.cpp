@@ -11,7 +11,7 @@ namespace altintegration {
 
 template <typename BlockTreeT>
 bool LoadTree(BlockTreeT& out,
-              BlockHashIterator& it,
+              BlockHashIterator<typename BlockTreeT::block_t>& it,
               BlockProvider& provider,
               ValidationState& state) {
   using index_t = typename BlockTreeT::index_t;
@@ -37,12 +37,6 @@ bool LoadTree(BlockTreeT& out,
     }
   }
 
-  std::sort(blocks.begin(),
-            blocks.end(),
-            [](const index_t& a, const index_t& b) -> bool {
-              return a.getHeight() < b.getHeight();
-            });
-
   index_t tip;
   if (!provider.getTip(tip)) {
     return state.Invalid("bad-provider", "cannot get tip");
@@ -59,17 +53,19 @@ bool LoadTree(BlockTreeT& out,
 }
 
 bool LoadAllTrees(AltBlockTree& tree,
-                  BlockHashIterator& it,
+                  BlockHashIterator<BtcBlock>& btc_it,
+                  BlockHashIterator<VbkBlock>& vbk_it,
+                  BlockHashIterator<AltBlock>& alt_it,
                   BlockProvider& provider,
                   ValidationState& state) {
-  if (LoadTree(tree.btc(), it, provider, state)) {
-    state.Invalid("failed to load btc tree");
+  if (!LoadTree(tree.btc(), btc_it, provider, state)) {
+    return state.Invalid("failed to load btc tree");
   }
-  if (LoadTree(tree.vbk(), it, provider, state)) {
-    state.Invalid("failed to load vbk tree");
+  if (!LoadTree(tree.vbk(), vbk_it, provider, state)) {
+    return state.Invalid("failed to load vbk tree");
   }
-  if (LoadTree(tree, it, provider, state)) {
-    state.Invalid("failed to load alt tree");
+  if (!LoadTree(tree, alt_it, provider, state)) {
+    return state.Invalid("failed to load alt tree");
   }
   return true;
 }

@@ -28,12 +28,16 @@ namespace altintegration {
  *
  * @ingroup interfaces
  */
+
+template <typename BlockT>
 struct BlockHashIterator {
+  using hash_t = typename BlockT::hash_t;
+
   virtual ~BlockHashIterator() = default;
 
   virtual bool next() = 0;
 
-  virtual std::vector<uint8_t> value() const = 0;
+  virtual hash_t value() const = 0;
 
   virtual bool valid() const = 0;
 

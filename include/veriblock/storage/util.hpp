@@ -66,7 +66,9 @@ struct AltBlockTree;
 void SaveAllTrees(AltBlockTree& tree, BlockBatchAdaptor& batch);
 
 bool LoadAllTrees(AltBlockTree& tree,
-                  BlockHashIterator& it,
+                  BlockHashIterator<BtcBlock>& btc_it,
+                  BlockHashIterator<VbkBlock>& vbk_it,
+                  BlockHashIterator<AltBlock>& alt_it,
                   BlockProvider& provider,
                   ValidationState& state);
 

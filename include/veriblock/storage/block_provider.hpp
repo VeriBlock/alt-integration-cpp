@@ -10,6 +10,7 @@
 #include <veriblock/entities/altblock.hpp>
 #include <veriblock/entities/btcblock.hpp>
 #include <veriblock/entities/vbkblock.hpp>
+#include <veriblock/validation_state.hpp>
 
 /**
  * @defgroup interfaces Interfaces to be implemented
@@ -36,11 +37,11 @@ struct BlockProvider {
   virtual bool getTip(BlockIndex<VbkBlock>& out) const = 0;
   virtual bool getTip(BlockIndex<AltBlock>& out) const = 0;
 
-  virtual bool getBlock(const std::vector<uint8_t>& hash,
+  virtual bool getBlock(const typename BtcBlock::hash_t& hash,
                         BlockIndex<BtcBlock>& out) const = 0;
-  virtual bool getBlock(const std::vector<uint8_t>& hash,
+  virtual bool getBlock(const typename VbkBlock::hash_t& hash,
                         BlockIndex<VbkBlock>& out) const = 0;
-  virtual bool getBlock(const std::vector<uint8_t>& hash,
+  virtual bool getBlock(const typename AltBlock::hash_t& hash,
                         BlockIndex<AltBlock>& out) const = 0;
 };
 
