@@ -87,7 +87,11 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
   ASSERT_TRUE(SetState(alttree, chain[60].getHash())) << state.toString();
   // we applied block 60, but pass 100 as left fork. expect logic_error
   ASSERT_DEATH(
-      alttree.comparePopScore(chain[100].getHash(), chain[60].getHash()),
+      {
+        int r =
+            alttree.comparePopScore(chain[100].getHash(), chain[60].getHash());
+        (void)r;
+      },
       "left fork must be applied");
   ASSERT_TRUE(SetState(alttree, chain[100].getHash()));
   ASSERT_EQ(alttree.comparePopScore(chain[100].getHash(), chain[60].getHash()),

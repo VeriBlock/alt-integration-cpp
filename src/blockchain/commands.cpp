@@ -32,14 +32,24 @@ void payloadToCommands(AltBlockTree& tree,
                        std::vector<CommandPtr>& cmds) {
   addBlock(tree.vbk(), pop.blockOfProof, cmds);
 
-  std::vector<uint8_t> endorsed_hash =
+  std::vector<uint8_t> endorsedHash =
       tree.getParams().getHash(pop.transaction.publicationData.header);
 
-  auto e = AltEndorsement::fromContainerPtr(pop, containingHash, endorsed_hash);
+  {
+    // add cmd CheckPublicationData
+    auto cmd = std::make_shared<CheckPublicationData>(
+        pop.transaction.publicationData, tree, endorsedHash);
+    cmds.push_back(std::move(cmd));
+  }
 
-  auto cmd =
-      std::make_shared<AddAltEndorsement>(tree.vbk(), tree, std::move(e));
-  cmds.push_back(std::move(cmd));
+  {
+    // add cmd AddAltEndorsement
+    auto e =
+        AltEndorsement::fromContainerPtr(pop, containingHash, endorsedHash);
+    auto cmd =
+        std::make_shared<AddAltEndorsement>(tree.vbk(), tree, std::move(e));
+    cmds.push_back(std::move(cmd));
+  }
 }
 
 template <>

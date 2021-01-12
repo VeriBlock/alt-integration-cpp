@@ -29,6 +29,10 @@ struct ContextInfoContainer {
     return height == other.height && keystones == other.keystones;
   }
 
+  bool operator!=(const ContextInfoContainer& other) const {
+    return !(this->operator==(other));
+  }
+
   std::string toPrettyString() const;
 };
 

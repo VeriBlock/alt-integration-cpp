@@ -73,7 +73,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @return true in success, false if block is invalid.
    * @ingroup api
    */
-  bool bootstrap(ValidationState& state);
+  VBK_CHECK_RETURN bool bootstrap(ValidationState& state);
 
   /**
    * Validate and add ALT block header to AltBlockTree.
@@ -82,7 +82,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @return true if block is valid, and added; false otherwise.
    * @ingroup api
    */
-  bool acceptBlockHeader(const AltBlock& block, ValidationState& state);
+  VBK_CHECK_RETURN bool acceptBlockHeader(const AltBlock& block,
+                                          ValidationState& state);
 
   /**
    * Attach "block body" - PopData to block header, which already exists in
@@ -152,7 +153,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * and can not be used. Tip: ask user to run with '-reindex'.
    * @ingroup api
    */
-  bool loadBlock(const index_t& index, ValidationState& state) override;
+  VBK_CHECK_RETURN bool loadBlock(const index_t& index,
+                                  ValidationState& state) override;
 
   /**
    * After all blocks loaded, efficiently set current tip.
@@ -161,7 +163,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @return true on success, false otherwise
    * @ingroup api
    */
-  bool loadTip(const hash_t& hash, ValidationState& state) override;
+  VBK_CHECK_RETURN bool loadTip(const hash_t& hash,
+                                ValidationState& state) override;
 
   /**
    * Efficiently compares current tip (A) and any other block (B).
@@ -198,7 +201,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * becomes the tip)
    * @ingroup api
    */
-  int comparePopScore(const AltBlock::hash_t& A, const AltBlock::hash_t& B);
+  VBK_CHECK_RETURN int comparePopScore(const AltBlock::hash_t& A,
+                                       const AltBlock::hash_t& B);
 
   /**
    * Switch AltBlockTree from the current tip to different block, while doing
@@ -218,7 +222,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @warning Expensive operation.
    * @ingroup api
    */
-  bool setState(index_t& to, ValidationState& state) override;
+  VBK_CHECK_RETURN bool setState(index_t& to, ValidationState& state) override;
   //! @overload
   using base::setState;
 
