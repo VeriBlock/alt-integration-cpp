@@ -244,7 +244,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
 
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree, altparam.getPayoutParams().getPopPayoutDelay() - 1, chain);
+      alttree, altparam.getPayoutParams().getPopPayoutDelay() - 1 - 1, chain);
 
   // each block is endorsed by the next one but we have higher difficulty
   // since before each block was endorsed by two miners
@@ -268,7 +268,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
       alttree2, altparam.getPayoutParams().getPopPayoutDelay() + 2, chain2);
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree2, altparam.getPayoutParams().getPopPayoutDelay() - 1, chain2);
+      alttree2, altparam.getPayoutParams().getPopPayoutDelay() - 1 - 1, chain2);
 
   auto payout2 = calculator2.getPopPayout(chain2.back().getHash());
   auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
@@ -292,7 +292,7 @@ TEST_F(PopPayoutsE2Etest, HigherRewardForKeystone) {
 
   // wait for the reward
   mineAltBlocksWithTree(
-      alttree, altparam.getPayoutParams().getPopPayoutDelay() - 1, chain);
+      alttree, altparam.getPayoutParams().getPopPayoutDelay() - 1 - 1, chain);
 
   uint64_t highestReward = 0;
   int blockNumber = 0;
