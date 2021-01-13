@@ -39,8 +39,12 @@ std::string HexStr(const T itbegin, const T itend) {
 }
 
 template <typename T>
-inline std::string HexStr(const T& vch) {
-  return HexStr(vch.begin(), vch.end());
+inline std::string HexStr(const T& vch, bool reverseHex = false) {
+  if(reverseHex) {
+    return HexStr(vch.rbegin(), vch.rend());
+  } else {
+    return HexStr(vch.begin(), vch.end());
+  }
 }
 
 std::vector<uint8_t> toBytes(const std::string& input);

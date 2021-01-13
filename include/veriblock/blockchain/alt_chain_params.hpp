@@ -254,7 +254,7 @@ struct AltChainParams {
 };
 
 template <typename JsonValue>
-JsonValue ToJSON(const AltChainParams& p) {
+JsonValue ToJSON(const AltChainParams& p, bool reverseAltHashes = true) {
   auto obj = json::makeEmptyObject<JsonValue>();
   json::putIntKV(obj, "networkId", p.getIdentifier());
   json::putArrayKV(
@@ -270,7 +270,9 @@ JsonValue ToJSON(const AltChainParams& p) {
   json::putIntKV(
       obj, "maxAltchainFutureBlockTime", p.maxAltchainFutureBlockTime());
   json::putKV(obj, "payoutParams", ToJSON<JsonValue>(p.getPayoutParams()));
-  json::putKV(obj, "bootstrapBlock", ToJSON<JsonValue>(p.getBootstrapBlock()));
+  json::putKV(obj,
+              "bootstrapBlock",
+              ToJSON<JsonValue>(p.getBootstrapBlock(), reverseAltHashes));
   return obj;
 }
 

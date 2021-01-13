@@ -84,10 +84,10 @@ struct AltBlock {
 };
 
 template <typename JsonValue>
-JsonValue ToJSON(const AltBlock& alt) {
+JsonValue ToJSON(const AltBlock& alt, bool reverseHashes = true) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
-  json::putStringKV(object, "hash", HexStr(alt.getHash()));
-  json::putStringKV(object, "previousBlock", HexStr(alt.previousBlock));
+  json::putStringKV(object, "hash", HexStr(alt.getHash(), reverseHashes));
+  json::putStringKV(object, "previousBlock", HexStr(alt.previousBlock, reverseHashes));
   json::putIntKV(object, "timestamp", alt.getBlockTime());
   json::putIntKV(object, "height", alt.height);
   return object;
