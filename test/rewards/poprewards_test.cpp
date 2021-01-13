@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2020 Xenios SEZC
+// Copyright (c) 2019-2020 Xenios SEZC
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
@@ -73,7 +73,7 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     endorseBlock(endorsedBlock, endorsements);
     // mine rewardSettlementInterval blocks + 1 - endorsed block - endorsement
     // block
-    mineAltBlocks(altparam.getEndorsementSettlementInterval() - 1, altchain);
+    mineAltBlocks(altparam.getEndorsementSettlementInterval() - 1 - 1, altchain);
   }
 
   void reorg(size_t blocks) {
@@ -316,7 +316,7 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
 
   EXPECT_EQ(altchain.back().height, 101);
   EXPECT_EQ(sampleCalculator->scoreFromEndorsements(*endorsedIndex), 1.0);
-  mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95),
+  mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95) - 1,
                 altchain,
                 true);
 
@@ -350,7 +350,7 @@ static AltChainParamsRegTest altparam1{};
 INSTANTIATE_TEST_SUITE_P(
     rewardsCacheRegression,
     RewardsTestFixture,
-    testing::Range(1, altparam1.getEndorsementSettlementInterval() + 1));
+    testing::Range(1, altparam1.getEndorsementSettlementInterval()));
 
 TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   int depth = GetParam();
@@ -370,7 +370,7 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
 
   EXPECT_EQ(altchain.back().height, 101);
   EXPECT_EQ(sampleCalculator->scoreFromEndorsements(*endorsedIndex), 1.0);
-  mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95),
+  mineAltBlocks(altparam.getPayoutParams().getPopPayoutDelay() - (101 - 95) - 1,
                 altchain,
                 true);
 
@@ -404,10 +404,10 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
 
   mineAltBlocks(depth - 1, altchain, true);
 
-  // current block height is 101 + 50 - 101 + 95 + 1 = 146
-  // reorgs longer than 45 blocks erase initial endorsement
+  // current block height is 101 + 50 -1 - 101 + 95 + 1 = 145
+  // reorgs longer than 44 blocks erase initial endorsement
   // therefore we only have 100 endorsements left
-  if (depth < 45) {
+  if (depth < 44) {
     ASSERT_EQ(endorsedIndex->endorsedBy.size(), 101);
   } else {
     ASSERT_EQ(endorsedIndex->endorsedBy.size(), 100);
