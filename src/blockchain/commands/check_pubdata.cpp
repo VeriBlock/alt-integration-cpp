@@ -24,6 +24,7 @@ bool CheckPublicationData::Execute(ValidationState& state) {
   auto ctx =
       ContextInfoContainer::createFromPrevious(endorsed->pprev, params);
   if (c.ctx != ctx) {
+    fmt::printf("endorsed: %s\n", endorsed->toPrettyString());
     return state.Invalid("bad-sf-context",
                          fmt::format("Expected context={}, got={}",
                                      ctx.toPrettyString(),

@@ -5,8 +5,8 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/rewards/default_poprewards_calculator.hpp>
 #include <util/pop_test_fixture.hpp>
+#include <veriblock/rewards/default_poprewards_calculator.hpp>
 
 using namespace altintegration;
 
@@ -42,7 +42,7 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
                              AltBlock& endorsed,
                              size_t num,
                              std::vector<AltBlock>& chain) {
-    auto data = generatePublicationData(endorsed);
+    auto data = generatePublicationData(tree, endorsed);
     // change reward recipient so we can get distinct rewards
     data.payoutInfo.push_back((uint8_t)(num >> 8));
     data.payoutInfo.push_back((uint8_t)num);
@@ -73,13 +73,13 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
                            std::vector<AltBlock>& chain) {
     for (size_t i = 0; i < num; i++) {
       auto endorsed = chain.back();
-      auto data = generatePublicationData(endorsed);
+      auto data = generatePublicationData(tree, endorsed);
       // change reward recipient so we can get distinct rewards
       data.payoutInfo.push_back((uint8_t)(i >> 8));
       data.payoutInfo.push_back((uint8_t)i);
       auto vbktx1 = popminer->createVbkTxEndorsingAltBlock(data);
 
-      data = generatePublicationData(endorsed);
+      data = generatePublicationData(tree, endorsed);
       // change reward recipient so we can get distinct rewards
       data.payoutInfo.push_back((uint8_t)(i >> 8) + 10);
       data.payoutInfo.push_back((uint8_t)i);
@@ -106,7 +106,8 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
   for (size_t i = 0; i < 10000; i++) {
     PopPayouts payout;
     ASSERT_TRUE(SetState(alttree, chain[i].getHash()));
-    ASSERT_NO_FATAL_FAILURE(payout = calculator_.getPopPayout(chain[i].getHash()));
+    ASSERT_NO_FATAL_FAILURE(payout =
+                                calculator_.getPopPayout(chain[i].getHash()));
     // no endorsements = no payouts
     ASSERT_TRUE(payout.empty());
 
