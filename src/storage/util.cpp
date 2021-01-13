@@ -16,15 +16,10 @@ bool LoadTree(BlockTreeT& out,
   using index_t = typename BlockTreeT::index_t;
   using hash_t = typename index_t::hash_t;
 
-  auto it = provider.getBlockIterator();
-
-  if (!it->seek_start()) {
-    return state.Invalid("bad-iter", "cannot seek iterator to start");
-  }
-
   std::vector<index_t> blocks;
 
-  for (; it->valid(); it->next()) {
+  auto it = provider.getBlockIterator();
+  for (it->seek_start(); it->valid(); it->next()) {
     blocks.push_back(it->value());
   }
 
