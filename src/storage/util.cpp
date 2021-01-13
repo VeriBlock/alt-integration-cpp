@@ -22,16 +22,15 @@ bool LoadTree(BlockTreeT& out,
   for (it->seek_start(); it->valid(); it->next()) {
     index_t val;
     if (!it->value(val)) {
-      return state.Invalid("bad-it", "Can not get block value");
+      return state.Invalid("bad-value", "Can not get block value");
     }
     blocks.push_back(val);
   }
 
   hash_t tip_hash;
   if (!provider.getTipHash(tip_hash)) {
-    return state.Invalid("bad-tip",
-                         fmt::format("Can not read tip of {} block tip",
-                                     index_t::block_t::name()));
+    return state.Invalid(index_t::block_t::name() + "-bad-value",
+                         "Can not read block tip");
   }
 
   if (!LoadTree(out, blocks, tip_hash, state)) {
