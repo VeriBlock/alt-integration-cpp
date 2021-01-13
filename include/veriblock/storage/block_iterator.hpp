@@ -40,13 +40,13 @@ struct BlockIterator {
    * Return the current block value
    * @return current block, altintegration::BlockIndex
    */
-  virtual BlockIndex<BlockT> value() const = 0;
+  virtual bool value(BlockIndex<BlockT>& out) const = 0;
 
   /**
    * Return the current block hash key
    * @return current block hash
    */
-  virtual hash_t key() const = 0;
+  virtual bool key(hash_t& out) const = 0;
 
   /**
    * Return if valid iterator or not

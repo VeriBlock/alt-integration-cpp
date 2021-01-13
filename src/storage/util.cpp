@@ -20,7 +20,11 @@ bool LoadTree(BlockTreeT& out,
 
   auto it = provider.getBlockIterator();
   for (it->seek_start(); it->valid(); it->next()) {
-    blocks.push_back(it->value());
+    index_t val;
+    if (it->value(val)) {
+      return state.Invalid("bad-it", "Can not get block value");
+    }
+    blocks.push_back(val);
   }
 
   hash_t tip_hash;
@@ -46,13 +50,13 @@ bool LoadAllTrees(AltBlockTree& tree,
                   BlockProvider<AltBlock>& alt_provider,
                   ValidationState& state) {
   if (!LoadTree(tree.btc(), btc_provider, state)) {
-    return state.Invalid("failed to load btc tree");
+    return state.Invalid("failed-to-load-btc-tree");
   }
   if (!LoadTree(tree.vbk(), vbk_provider, state)) {
-    return state.Invalid("failed to load vbk tree");
+    return state.Invalid("failed-to-load-vbk-tree");
   }
   if (!LoadTree(tree, alt_provider, state)) {
-    return state.Invalid("failed to load alt tree");
+    return state.Invalid("failed-to-load-alt-tree");
   }
   return true;
 }
