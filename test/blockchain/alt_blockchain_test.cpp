@@ -204,6 +204,9 @@ TEST_F(AltTreeFixture, assertBlockSanity_test) {
   EXPECT_EQ(block.getHash(), block.getPreviousBlock());
 
   ASSERT_DEATH(
-      alttree.acceptBlockHeader(block, state),
+      {
+        bool ok = alttree.acceptBlockHeader(block, state);
+        (void)ok;
+      },
       "Previous block hash should NOT be equal to the current block hash");
 }

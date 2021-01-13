@@ -33,13 +33,6 @@ struct AddVTB : public Command {
                                              vtb_.getId());
   }
 
-  size_t getId() const override { return vtb_.getId().getLow64(); }
-
-  //! debug method. returns a string describing this command
-  std::string toPrettyString(size_t level = 0) const override {
-    return fmt::sprintf("%sAddVTB{id=%llu}", std::string(level, ' '), getId());
-  };
-
  private:
   AltBlockTree& tree_;
   VTB vtb_;

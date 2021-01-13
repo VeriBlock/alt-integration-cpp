@@ -14,19 +14,11 @@ namespace altintegration {
 
 //! @private
 struct Command {
-  using payload_t = bool;
-
   virtual ~Command() = default;
 
   //! @invariant atomic
-  virtual bool Execute(ValidationState& state) = 0;
+  VBK_CHECK_RETURN virtual bool Execute(ValidationState& state) = 0;
   virtual void UnExecute() = 0;
-
-  // returns unique id for this command
-  virtual size_t getId() const = 0;
-
-  //! debug method. returns a string describing this command
-  virtual std::string toPrettyString(size_t level = 0) const = 0;
 };
 
 using CommandPtr = std::shared_ptr<Command>;

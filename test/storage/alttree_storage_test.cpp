@@ -79,8 +79,8 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   AltBlock containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
-  PopData altPayloads1 = this->generateAltPayloads(
-      {tx}, GetRegTestVbkBlock().getHash());
+  PopData altPayloads1 =
+      this->generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // mine 1 VBK blocks
   this->popminer->mineVbkBlocks(1);
@@ -98,7 +98,8 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  reloadedAltTree.bootstrap(this->state);
+  bool bootstrapped = reloadedAltTree.bootstrap(this->state);
+  ASSERT_TRUE(bootstrapped);
 
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
@@ -132,8 +133,8 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   AltBlock containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
-  PopData altPayloads1 = this->generateAltPayloads(
-      {tx1, tx2}, GetRegTestVbkBlock().getHash());
+  PopData altPayloads1 =
+      this->generateAltPayloads({tx1, tx2}, GetRegTestVbkBlock().getHash());
 
   // mine 1 VBK blocks
   this->popminer->mineVbkBlocks(1);
@@ -152,7 +153,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  reloadedAltTree.bootstrap(this->state);
+  ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
@@ -194,9 +195,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   PopData popData;
   popData.vtbs = vtbs;
   this->fillVbkContext(
-      popData.context,
-      GetRegTestVbkBlock().getHash(),
-      this->popminer->vbk());
+      popData.context, GetRegTestVbkBlock().getHash(), this->popminer->vbk());
   auto containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
@@ -228,7 +227,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  reloadedAltTree.bootstrap(this->state);
+  ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
