@@ -15,12 +15,12 @@
 namespace altintegration {
 
 /**
- * @struct StorageIterator
+ * @struct BlockIterator
  *
- * An abstraction over on-disk storage iterator.
+ * An abstraction over on-disk storage block iterator.
  *
- * veriblock-pop-cpp does not dictate how to iterate over the storage. Altchain
- * must create derived class.
+ * veriblock-pop-cpp does not dictate how to iterate blocks over the storage.
+ * Altchain must create derived class.
  *
  * @ingroup interfaces
  */
@@ -31,15 +31,33 @@ struct BlockIterator {
 
   virtual ~BlockIterator() = default;
 
+  /**
+   * Iterate to the next block.
+   */
   virtual void next() = 0;
 
+  /**
+   * Return the current block value
+   * @return current block, altintegration::BlockIndex
+   */
   virtual BlockIndex<BlockT> value() const = 0;
 
+  /**
+   * Return the current block hash key
+   * @return current block hash
+   */
   virtual hash_t key() const = 0;
 
+  /**
+   * Return if valid iterator or not
+   * @return true if the iterator is valid, false otherwise
+   */
   virtual bool valid() const = 0;
 
-  virtual bool seek_start() = 0;
+  /**
+   * Set iterator to the start of the collection
+   */
+  virtual void seek_start() = 0;
 };
 
 }  // namespace altintegration

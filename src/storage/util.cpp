@@ -30,7 +30,9 @@ bool LoadTree(BlockTreeT& out,
 
   hash_t tip_hash;
   if (!provider.getTipHash(tip_hash)) {
-    return state.Invalid("bad-provider", "cannot get tip");
+    return state.Invalid("bad-tip",
+                         fmt::format("Can not read tip of {} block tip",
+                                     index_t::block_t::name()));
   }
 
   if (!LoadTree(out, blocks, tip_hash, state)) {
