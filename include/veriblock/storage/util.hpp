@@ -10,6 +10,7 @@
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/storage/block_batch_adaptor.hpp>
+#include <veriblock/storage/block_provider.hpp>
 #include <veriblock/validation_state.hpp>
 
 namespace altintegration {
@@ -46,7 +47,6 @@ bool LoadTree(BlockTreeT& tree,
   return tree.loadTip(tiphash, state);
 }
 
-//! Save blocks and tip to batch
 template <typename BlockTreeT>
 void SaveTree(BlockTreeT& tree, BlockBatchAdaptor& batch) {
   for (auto& block : tree.getBlocks()) {
@@ -63,6 +63,12 @@ void SaveTree(BlockTreeT& tree, BlockBatchAdaptor& batch) {
 struct AltBlockTree;
 
 void SaveAllTrees(AltBlockTree& tree, BlockBatchAdaptor& batch);
+
+bool LoadAllTrees(AltBlockTree& tree,
+                  BlockProvider<BtcBlock>& btc_provider,
+                  BlockProvider<VbkBlock>& vbk_provider,
+                  BlockProvider<AltBlock>& alt_provider,
+                  ValidationState& state);
 
 }  // namespace altintegration
 
