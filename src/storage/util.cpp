@@ -21,7 +21,7 @@ bool LoadTree(BlockTreeT& out,
   auto it = provider.getBlockIterator();
   for (it->seek_start(); it->valid(); it->next()) {
     index_t val;
-    if (it->value(val)) {
+    if (!it->value(val)) {
       return state.Invalid("bad-it", "Can not get block value");
     }
     blocks.push_back(val);
