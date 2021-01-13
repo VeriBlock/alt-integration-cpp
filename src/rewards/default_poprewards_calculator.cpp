@@ -406,8 +406,10 @@ PopPayouts DefaultPopRewardsCalculator::getPopPayout(
                  "Block %s is not connected",
                  index->toPrettyString());
 
+  // -1 because we want to pay for a block E in block E+PD,
+  // where E is endorsed height, PD is payout delay.
   auto* endorsedBlock = index->getAncestorBlocksBehind(
-      tree_.getParams().getPayoutParams().getPopPayoutDelay());
+      tree_.getParams().getPayoutParams().getPopPayoutDelay() - 1);
   if (endorsedBlock == nullptr) {
     // not enough blocks for payout
     return {};
@@ -415,7 +417,7 @@ PopPayouts DefaultPopRewardsCalculator::getPopPayout(
 
   VBK_ASSERT_MSG(index->getHeight() >=
                      (endorsedBlock->getHeight() +
-                      tree_.getParams().getEndorsementSettlementInterval()),
+                      tree_.getParams().getEndorsementSettlementInterval() - 1),
                  "Block %s is not finalized for PoP payouts",
                  endorsedBlock->toPrettyString());
 
