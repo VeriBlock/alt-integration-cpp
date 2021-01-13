@@ -12,12 +12,6 @@
 
 #include "veriblock/blockchain/block_index.hpp"
 
-/**
- * @defgroup interfaces Interfaces to be implemented
- * These interfaces must be implemented by Altchain developers for integration
- * of POP protocol.
- */
-
 namespace altintegration {
 
 /**

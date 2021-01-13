@@ -15,12 +15,6 @@
 #include "veriblock/storage/block_iterator.hpp"
 #include "veriblock/validation_state.hpp"
 
-/**
- * @defgroup interfaces Interfaces to be implemented
- * These interfaces must be implemented by Altchain developers for integration
- * of POP protocol.
- */
-
 namespace altintegration {
 
 /**
