@@ -38,13 +38,15 @@ struct BlockIterator {
 
   /**
    * Return the current block value
-   * @return current block, altintegration::BlockIndex
+   * @param[out] current block, altintegration::BlockIndex
+   * @return true if we can successfully return value, false otherwise
    */
   virtual bool value(BlockIndex<BlockT>& out) const = 0;
 
   /**
    * Return the current block hash key
-   * @return current block hash
+   * @param[out] current block hash
+   * @return true if we can successfully return key, false otherwise
    */
   virtual bool key(hash_t& out) const = 0;
 
