@@ -74,7 +74,12 @@ TEST_P(NegativeTest, BootstrapFail) {
 
   AltBlockTree tree(alt, vbk, btc, pp);
   ValidationState state;
-  ASSERT_DEATH(tree.bootstrap(state), "");
+  ASSERT_DEATH(
+      {
+        bool success = tree.bootstrap(state);
+        (void)success;
+      },
+      "");
 }
 
 INSTANTIATE_TEST_SUITE_P(AltBlockTree,

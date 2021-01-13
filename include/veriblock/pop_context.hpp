@@ -13,8 +13,8 @@
 #include <veriblock/config.hpp>
 #include <veriblock/mempool.hpp>
 #include <veriblock/pop_stateless_validator.hpp>
-#include <veriblock/storage/payloads_index.hpp>
 #include <veriblock/rewards/default_poprewards_calculator.hpp>
+#include <veriblock/storage/payloads_index.hpp>
 
 /**
  * @defgroup api Public API
@@ -99,7 +99,9 @@ struct PopContext {
                    state.toString());
 
     // then, bootstrap ALT
-    ctx->altTree->bootstrap(state);
+    bool bootstrapped = ctx->altTree->bootstrap(state);
+    VBK_ASSERT_MSG(
+        bootstrapped, "Can not bootstrap Alt Tree: %s", state.toString());
     VBK_ASSERT_MSG(state.IsValid(),
                    "ALT bootstrap block is invalid: %s",
                    state.toString());

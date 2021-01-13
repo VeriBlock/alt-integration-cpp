@@ -136,13 +136,6 @@ struct AddEndorsement : public Command {
     containing->removeContainingEndorsement(Eit);
   }
 
-  size_t getId() const override { return e_->id.getLow64(); }
-
-  std::string toPrettyString(size_t level = 0) const override {
-    return fmt::sprintf(
-        "%sAdd%s", std::string(level, ' '), e_->toPrettyString());
-  }
-
  private:
   ProtectingTree* ing_;
   ProtectedTree* ed_;

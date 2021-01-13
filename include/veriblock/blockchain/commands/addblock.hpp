@@ -63,10 +63,6 @@ struct AddBlock : public Command {
     }
   }
 
-  size_t getId() const override { return block_->getHash().getLow64(); }
-
-  std::string toPrettyString(size_t level = 0) const override;
-
  private:
   Tree* tree_;
   std::shared_ptr<Block> block_;
@@ -75,23 +71,6 @@ struct AddBlock : public Command {
 
 using AddBtcBlock = AddBlock<BtcBlock, BtcChainParams>;
 using AddVbkBlock = AddBlock<VbkBlock, VbkChainParams>;
-
-template <>
-inline std::string AddBtcBlock::toPrettyString(size_t level) const {
-  return fmt::sprintf("%sAddBtcBlock{prev=%s, block=%s}",
-                      std::string(level, ' '),
-                      block_->previousBlock.toHex(),
-                      block_->getHash().toHex());
-}
-
-template <>
-inline std::string AddVbkBlock::toPrettyString(size_t level) const {
-  return fmt::sprintf("%sAddVbkBlock{prev=%s, block=%s, height=%ld}",
-                      std::string(level, ' '),
-                      block_->getPreviousBlock().toHex(),
-                      block_->getHash().toHex(),
-                      block_->getHeight());
-}
 
 template <typename BlockTree>
 void addBlock(BlockTree& tree,

@@ -7,7 +7,8 @@
 #define ALTINTEGRATION_COMMANDS_HPP
 
 #include "addblock.hpp"
-#include "addvtb.hpp"
 #include "addendorsement.hpp"
+#include "addvtb.hpp"
+#include "check_pubdata.hpp"
 
 #endif  // ALTINTEGRATION_COMMANDS_HPP
