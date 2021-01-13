@@ -8,7 +8,8 @@
 
 #define FMT_HEADER_ONLY 1
 
-#include <fmt/format.h>
-#include <fmt/printf.h>
+#define VBK_FMT_VERSION 7.1.3
+#include "third_party/fmt/format.h"
+#include "third_party/fmt/printf.h"
 
 #endif  // VERIBLOCK_POP_CPP_FMT_HPP
