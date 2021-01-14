@@ -2,6 +2,8 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+#include "adaptors/block_provider_impl.hpp"
+#include "adaptors/payload_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "config.hpp"
 #include "pop_context.hpp"
@@ -11,75 +13,6 @@
 #include "veriblock/c/pop_context.h"
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
-
-struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
-  ~PayloadsProviderImpl() override = default;
-
-  PayloadsProviderImpl(size_t maxSize) { buffer.resize(maxSize); }
-
-  bool getATVs(const std::vector<altintegration::ATV::id_t>& ids,
-               std::vector<altintegration::ATV>& out,
-               altintegration::ValidationState& state) override {
-    for (const auto& id : ids) {
-      int size = 0;
-      if (!VBK_getATV(id.data(), (int)id.size(), buffer.data(), &size)) {
-        return state.Invalid("get-atv", "atv has been not found");
-      }
-      altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
-      altintegration::ReadStream stream(bytes);
-      altintegration::ATV atv_out;
-      if (!altintegration::DeserializeFromVbkEncoding(stream, atv_out, state)) {
-        return state.Invalid("get-atv", "cannot deserialize atv");
-      }
-      out.push_back(atv_out);
-    }
-
-    return true;
-  }
-
-  bool getVTBs(const std::vector<altintegration::VTB::id_t>& ids,
-               std::vector<altintegration::VTB>& out,
-               altintegration::ValidationState& state) override {
-    for (const auto& id : ids) {
-      int size = 0;
-      if (!VBK_getVTB(id.data(), (int)id.size(), buffer.data(), &size)) {
-        return state.Invalid("get-vtb", "vtb has been not found");
-      }
-      altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
-      altintegration::ReadStream stream(bytes);
-      altintegration::VTB vtb_out;
-      if (!altintegration::DeserializeFromVbkEncoding(stream, vtb_out, state)) {
-        return state.Invalid("get-vtb", "cannot deserialize vtb");
-      }
-      out.push_back(vtb_out);
-    }
-
-    return true;
-  }
-
-  bool getVBKs(const std::vector<altintegration::VbkBlock::id_t>& ids,
-               std::vector<altintegration::VbkBlock>& out,
-               altintegration::ValidationState& state) override {
-    for (const auto& id : ids) {
-      int size = 0;
-      if (!VBK_getVBK(id.data(), (int)id.size(), buffer.data(), &size)) {
-        return state.Invalid("get-vbk", "vbk has been not found");
-      }
-      altintegration::Slice<const uint8_t> bytes(buffer.data(), size);
-      altintegration::ReadStream stream(bytes);
-      altintegration::VbkBlock vbk_out;
-      if (!altintegration::DeserializeFromVbkEncoding(stream, vbk_out, state)) {
-        return state.Invalid("get-vbk", "cannot deserialize vbk");
-      }
-      out.push_back(vbk_out);
-    }
-
-    return true;
-  }
-
- private:
-  std::vector<uint8_t> buffer;
-};
 
 PopContext* VBK_NewPopContext(Config_t* config) {
   VBK_ASSERT(config);
@@ -91,8 +24,12 @@ PopContext* VBK_NewPopContext(Config_t* config) {
   auto* v = new PopContext();
   // maxPopDataSize is the maximum size of payload per block, it is safe
   // to allocate buffer with this size for all operations
-  v->provider = std::make_shared<PayloadsProviderImpl>(maxPopDataSize);
-  v->context = altintegration::PopContext::create(c, v->provider);
+  v->payloads_provider =
+      std::make_shared<adaptors::PayloadsProviderImpl>(maxPopDataSize);
+  v->block_provider = std::make_shared<adaptors::BlockProviderImpl>();
+
+  v->context = altintegration::PopContext::create(
+      c, v->payloads_provider, v->block_provider);
 
   // setup signals
   v->context->mempool->onAccepted<altintegration::ATV>(

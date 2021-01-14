@@ -10,9 +10,10 @@
 namespace altintegration {
 
 template <typename BlockTreeT>
-bool LoadTree(BlockTreeT& out,
-              BlockProvider<typename BlockTreeT::block_t>& provider,
-              ValidationState& state) {
+bool LoadTree(
+    BlockTreeT& out,
+    details::GenericBlockProvider<typename BlockTreeT::block_t>& provider,
+    ValidationState& state) {
   using index_t = typename BlockTreeT::index_t;
   using hash_t = typename index_t::hash_t;
 
@@ -43,18 +44,20 @@ bool LoadTree(BlockTreeT& out,
   return true;
 }
 
-bool LoadAllTrees(AltBlockTree& tree,
-                  BlockProvider<BtcBlock>& btc_provider,
-                  BlockProvider<VbkBlock>& vbk_provider,
-                  BlockProvider<AltBlock>& alt_provider,
-                  ValidationState& state) {
-  if (!LoadTree(tree.btc(), btc_provider, state)) {
+bool LoadAllTrees(PopContext& context, ValidationState& state) {
+  if (!LoadTree(context.altTree->btc(),
+                *context.blockProvider->getBtcBlockProvider(),
+                state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
-  if (!LoadTree(tree.vbk(), vbk_provider, state)) {
+  if (!LoadTree(context.altTree->vbk(),
+                *context.blockProvider->getVbkBlockProvider(),
+                state)) {
     return state.Invalid("failed-to-load-vbk-tree");
   }
-  if (!LoadTree(tree, alt_provider, state)) {
+  if (!LoadTree(*context.altTree,
+                *context.blockProvider->getAltBlockProvider(),
+                state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
   return true;
