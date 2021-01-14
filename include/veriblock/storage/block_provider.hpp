@@ -28,17 +28,33 @@ namespace altintegration {
  * @ingroup interfaces
  */
 
+namespace details {
 template <typename BlockT>
-struct BlockProvider {
+struct GenericBlockProvider {
   using hash_t = typename BlockT::hash_t;
 
-  virtual ~BlockProvider() = default;
+  virtual ~GenericBlockProvider() = default;
 
   virtual bool getTipHash(hash_t& out) const = 0;
 
   virtual bool getBlock(const hash_t& hash, BlockIndex<BlockT>& out) const = 0;
 
   virtual std::shared_ptr<BlockIterator<BlockT>> getBlockIterator() const = 0;
+};
+
+}  // namespace details
+
+struct BlockProvider {
+  virtual ~BlockProvider() = default;
+
+  virtual std::shared_ptr<details::GenericBlockProvider<AltBlock>>
+  getAltBlockProvider() const = 0;
+
+  virtual std::shared_ptr<details::GenericBlockProvider<VbkBlock>>
+  getVbkBlockProvider() const = 0;
+
+  virtual std::shared_ptr<details::GenericBlockProvider<BtcBlock>>
+  getBtcBlockProvider() const = 0;
 };
 
 }  // namespace altintegration
