@@ -14,6 +14,7 @@
 #include <veriblock/mempool.hpp>
 #include <veriblock/pop_stateless_validator.hpp>
 #include <veriblock/rewards/default_poprewards_calculator.hpp>
+#include <veriblock/storage/block_provider.hpp>
 #include <veriblock/storage/payloads_index.hpp>
 
 /**
@@ -41,22 +42,27 @@ struct PopContext {
 
   static std::shared_ptr<PopContext> create(
       const Config& config,
-      std::shared_ptr<PayloadsProvider> db,
+      std::shared_ptr<PayloadsProvider> payloadsProvider,
+      std::shared_ptr<BlockProvider> blockProvider,
       size_t validatorWorkers = 0) {
-    return create(
-        std::make_shared<Config>(config), std::move(db), validatorWorkers);
+    return create(std::make_shared<Config>(config),
+                  std::move(payloadsProvider),
+                  std::move(blockProvider),
+                  validatorWorkers);
   }
 
   static std::shared_ptr<PopContext> create(
       std::shared_ptr<Config> config,
-      std::shared_ptr<PayloadsProvider> db,
+      std::shared_ptr<PayloadsProvider> payloadsProvider,
+      std::shared_ptr<BlockProvider> blockProvider,
       size_t validatorWorkers = 0) {
     config->validate();
 
     // because default constructor is hidden
     auto ctx = std::shared_ptr<PopContext>(new PopContext());
     ctx->config = std::move(config);
-    ctx->payloadsProvider = std::move(db);
+    ctx->payloadsProvider = std::move(payloadsProvider);
+    ctx->blockProvider = std::move(blockProvider);
     ctx->altTree = std::make_shared<AltBlockTree>(*ctx->config->alt,
                                                   *ctx->config->vbk.params,
                                                   *ctx->config->btc.params,
@@ -116,9 +122,10 @@ struct PopContext {
   std::shared_ptr<Config> config;
   std::shared_ptr<MemPool> mempool;
   std::shared_ptr<AltBlockTree> altTree;
-  std::shared_ptr<PayloadsProvider> payloadsProvider;
   std::shared_ptr<PopValidator> popValidator;
   std::shared_ptr<PopRewardsCalculator> popRewardsCalculator;
+  std::shared_ptr<PayloadsProvider> payloadsProvider;
+  std::shared_ptr<BlockProvider> blockProvider;
 
  private:
   PopContext() = default;

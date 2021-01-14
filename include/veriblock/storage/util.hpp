@@ -9,6 +9,7 @@
 #include <vector>
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/logger.hpp>
+#include <veriblock/pop_context.hpp>
 #include <veriblock/storage/block_batch_adaptor.hpp>
 #include <veriblock/storage/block_provider.hpp>
 #include <veriblock/validation_state.hpp>
@@ -64,11 +65,7 @@ struct AltBlockTree;
 
 void SaveAllTrees(AltBlockTree& tree, BlockBatchAdaptor& batch);
 
-bool LoadAllTrees(AltBlockTree& tree,
-                  BlockProvider<BtcBlock>& btc_provider,
-                  BlockProvider<VbkBlock>& vbk_provider,
-                  BlockProvider<AltBlock>& alt_provider,
-                  ValidationState& state);
+bool LoadAllTrees(PopContext& context, ValidationState& state);
 
 }  // namespace altintegration
 

@@ -10,11 +10,13 @@
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/pop_context.hpp"
+#include "veriblock/storage/block_provider.hpp"
 
 // all-in-one thing
 struct PopContext {
   std::shared_ptr<altintegration::PopContext> context;
-  std::shared_ptr<altintegration::PayloadsProvider> provider;
+  std::shared_ptr<altintegration::PayloadsProvider> payloads_provider;
+  std::shared_ptr<altintegration::BlockProvider> block_provider;
 };
 
 #endif  // VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS
