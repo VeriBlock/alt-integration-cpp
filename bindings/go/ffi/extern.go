@@ -14,9 +14,6 @@ var (
 	OnGetAltchainID      = func() int64 { panic("OnGetAltchainID not set") }
 	OnGetBootstrapBlock  = func() string { panic("OnGetBootstrapBlock not set") }
 	OnGetBlockHeaderHash = func(toBeHashed []byte) []byte { panic("OnGetBlockHeaderHash not set") }
-	OnGetAtv             = func(id []byte) []byte { panic("OnGetAtv not set") }
-	OnGetVtb             = func(id []byte) []byte { panic("OnGetVtb not set") }
-	OnGetVbk             = func(id []byte) []byte { panic("OnGetVbk not set") }
 	OnCheckBlockHeader   = func(header []byte, root []byte) bool { panic("OnCheckBlockHeader not set") }
 	OnAcceptedATV        = func(data []byte) { panic("OnAcceptedATV not set") }
 	OnAcceptedVTB        = func(data []byte) { panic("OnAcceptedVTB not set") }
@@ -68,50 +65,6 @@ func VBK_checkBlockHeader(header *C.uint8_t, headerlen C.int, root *C.uint8_t, r
 		return 1
 	}
 	return 0
-}
-
-// PayloadsProvider externs
-
-//export VBK_getATV
-func VBK_getATV(id *C.uint8_t, idSize C.int, atvBytesOut *C.uint8_t, atvBytesLen *C.int) C.int {
-	resBytes := convertToBytes(id, idSize)
-	data := OnGetAtv(resBytes)
-	if data == nil {
-		// false
-		return 0
-	}
-	*atvBytesLen = C.int(len(data))
-	C.memcpy(unsafe.Pointer(atvBytesOut), unsafe.Pointer(&data[0]), C.size_t(len(data)))
-	// true
-	return 1
-}
-
-//export VBK_getVTB
-func VBK_getVTB(id *C.uint8_t, idSize C.int, vtbBytesOut *C.uint8_t, vtbBytesLen *C.int) C.int {
-	resBytes := convertToBytes(id, idSize)
-	data := OnGetVtb(resBytes)
-	if data == nil {
-		// false
-		return 0
-	}
-	*vtbBytesLen = C.int(len(data))
-	C.memcpy(unsafe.Pointer(vtbBytesOut), unsafe.Pointer(&data[0]), C.size_t(len(data)))
-	// true
-	return 1
-}
-
-//export VBK_getVBK
-func VBK_getVBK(id *C.uint8_t, idSize C.int, vbkBytesOut *C.uint8_t, vbkBytesLen *C.int) C.int {
-	resBytes := convertToBytes(id, idSize)
-	data := OnGetVbk(resBytes)
-	if data == nil {
-		// false
-		return 0
-	}
-	*vbkBytesLen = C.int(len(data))
-	C.memcpy(unsafe.Pointer(vbkBytesOut), unsafe.Pointer(&data[0]), C.size_t(len(data)))
-	// true
-	return 1
 }
 
 //export VBK_MemPool_onAcceptedATV

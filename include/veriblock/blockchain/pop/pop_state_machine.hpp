@@ -101,11 +101,7 @@ struct PopStateMachine {
 
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
-      bool success = payloadsProvider_.getCommands(ed_, index, cgroups, state);
-      VBK_ASSERT_MSG(success,
-                     "failed to load commands from block=%s, reason=%s",
-                     index.toPrettyString(),
-                     state.toString());
+      payloadsProvider_.getCommands(ed_, index, cgroups, state);
 
       const auto containingHash = index.getHash();
       for (auto cgroup = cgroups.cbegin(); cgroup != cgroups.cend(); ++cgroup) {
@@ -182,11 +178,7 @@ struct PopStateMachine {
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
       ValidationState state;
-      bool success = payloadsProvider_.getCommands(ed_, index, cgroups, state);
-      VBK_ASSERT_MSG(success,
-                     "failed to load commands from block=%s, reason=%s",
-                     index.toPrettyString(),
-                     state.toString());
+      payloadsProvider_.getCommands(ed_, index, cgroups, state);
 
       for (const auto& cgroup : reverse_iterate(cgroups)) {
         VBK_LOG_DEBUG("Unapplying payload %s from block %s",

@@ -6,6 +6,7 @@
 #include <cassert>
 #include <vector>
 #include <veriblock/entities/atv.hpp>
+#include <veriblock/exceptions/state_corrupted.hpp>
 #include <veriblock/rewards/default_poprewards_calculator.hpp>
 
 namespace altintegration {
@@ -236,29 +237,19 @@ PopPayouts DefaultPopRewardsCalculator::calculatePayoutsInner(
   auto blockReward = calculateBlockReward(
       endorsedBlock.getHeight(), endorsedBlockScore, popDifficulty);
 
-  // prepare IDs of ATVs that have to be fetched
-  std::vector<uint256> atvids;
-  atvids.reserve(endorsedBlock.endorsedBy.size());
-  for (const auto* e : endorsedBlock.endorsedBy) {
-    atvids.push_back(e->getId());
-  }
-
-  // fetch ATVs
-  std::vector<ATV> atvs;
-  atvs.reserve(atvids.size());
-  ValidationState state;
-  if (!tree_.getPayloadsProvider().getATVs(atvids, atvs, state)) {
-    VBK_ASSERT_MSG(false,
-                   "Expected to fetch all ATVs(size=%d), but got=%d",
-                   atvids.size(),
-                   atvs.size());
-  }
-
   // pay reward for each of the endorsements
-  for (const auto& atv : atvs) {
-    auto* b = tree_.vbk().getBlockIndex(atv.blockOfProof.getHash());
+  for (const auto* e : endorsedBlock.endorsedBy) {
+    VBK_ASSERT(e != nullptr);
+    auto* b = tree_.vbk().getBlockIndex(e->blockOfProof);
     if (!tree_.vbk().getBestChain().contains(b)) {
       continue;
+    }
+
+    ATV atv;
+    ValidationState state;
+    if (!tree_.getPayloadsProvider().getATV(e->getId(), atv, state)) {
+      state.Invalid(fmt::format("cant-load-atv-{}", HexStr(e->getId())));
+      throw StateCorruptedException(endorsedBlock, state);
     }
 
     int veriBlockHeight = b->getHeight();
