@@ -17,13 +17,21 @@ struct InmemPayloadsProvider : public PayloadsProvider {
   ~InmemPayloadsProvider() override = default;
 
   bool getContainingAltPayloads(const BlockIndex<AltBlock>& block,
-                              PopData& out,
-                              ValidationState& state) override {
-    (void) state;
+                                PopData& out,
+                                ValidationState& state) override {
+    (void)state;
     out.version = 1;
     out.context = getPayload<VbkBlock>(block.getPayloadIds<VbkBlock>());
     out.vtbs = getPayload<VTB>(block.getPayloadIds<VTB>());
     out.atvs = getPayload<ATV>(block.getPayloadIds<ATV>());
+    return true;
+  }
+
+  bool getATV(const ATV::id_t& id, ATV& out, ValidationState& state) override {
+    (void)state;
+    auto vec = getPayload<ATV>({id});
+    VBK_ASSERT(vec.size() == 1);
+    out = vec.at(0);
     return true;
   }
 
@@ -35,9 +43,9 @@ struct InmemPayloadsProvider : public PayloadsProvider {
    * @return true if payload has been loaded, false otherwise
    */
   bool getContainingVbkPayloads(const BlockIndex<VbkBlock>& block,
-                              std::vector<VTB>& out,
-                              ValidationState& state) override {
-    (void) state;
+                                std::vector<VTB>& out,
+                                ValidationState& state) override {
+    (void)state;
     out = getPayload<VTB>(block.getPayloadIds<VTB>());
     return true;
   }

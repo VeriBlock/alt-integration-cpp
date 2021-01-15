@@ -63,7 +63,7 @@ struct PayloadsProvider {
    * @param[out] out Validation state in case of error
    * @return false, if any read error occurs
    */
-  virtual bool getATV(const ATV::id_t& id, ATV& out, ValidationState) = 0;
+  virtual bool getATV(const ATV::id_t& id, ATV& out, ValidationState& state) = 0;
 
   /**
    * Load commands from a particular block.
