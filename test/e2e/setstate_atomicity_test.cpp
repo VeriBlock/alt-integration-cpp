@@ -27,8 +27,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   chainA = generateNextBlock(chainA);
   auto payloads = endorseAltBlock({altForkPoint}, 1);
   ASSERT_TRUE(alttree.acceptBlockHeader(chainA, state)) << state.toString();
-  ASSERT_TRUE(AddPayloads(chainA.getHash(), {payloads}))
-      << state.toString();
+  ASSERT_TRUE(AddPayloads(chainA.getHash(), {payloads})) << state.toString();
 
   // make a copy that we will use later to create corrupted payloads
   VTB corruptedVtb = payloads.vtbs.at(0);
@@ -39,8 +38,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
       payloads.context.begin(),
       payloads.context.begin() + (payloads.context.size() - 2));
   ASSERT_TRUE(alttree.acceptBlockHeader(chainA, state)) << state.toString();
-  ASSERT_TRUE(AddPayloads(chainA.getHash(), payloads))
-      << state.toString();
+  ASSERT_TRUE(AddPayloads(chainA.getHash(), payloads)) << state.toString();
 
   // corrupted payloads
   std::vector<uint8_t> invalid_hash = {1, 2, 3, 9, 8, 2};
@@ -56,8 +54,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
 
   ASSERT_TRUE(alttree.acceptBlockHeader(corruptedAltBlock, state))
       << state.toString();
-  ASSERT_TRUE(AddPayloads(
-      corruptedAltBlock.getHash(), corruptedPayloads))
+  ASSERT_TRUE(AddPayloads(corruptedAltBlock.getHash(), corruptedPayloads))
       << state.toString();
 
   auto chainB = corruptedAltBlock;
@@ -75,7 +72,10 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
 
   EXPECT_FALSE(alttree.setState(chainB.getHash(), state)) << state.toString();
 
-  validateAlttreeIndexState(alttree, chainB, corruptedPayloads, false);
+  // all payloads are marked valid as there's no correctly implemented
+  // invalidation
+  validateAlttreeIndexState(
+      alttree, chainB, corruptedPayloads, /*payloads_validation =*/true);
 
   EXPECT_EQ(originalBtcTip, alttree.btc().getBestChain().tip());
   EXPECT_EQ(originalVbkTip, alttree.vbk().getBestChain().tip());

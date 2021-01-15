@@ -92,7 +92,10 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   ASSERT_TRUE(AddPayloads(chain[10].getHash(), p2));
   ASSERT_FALSE(alttree.setState(chain[10].getHash(), state));
-  validateAlttreeIndexState(alttree, chain[10], p2, false);
+  // all payloads are marked valid as there's no correctly implemented
+  // invalidation
+  validateAlttreeIndexState(
+      alttree, chain[10], p2, /*payloads_validation =*/true);
 }
 
 TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
@@ -117,18 +120,16 @@ TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
       popminer->createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
   auto *btcTip = popminer->mineBtcBlocks(1);
 
-  popminer->createVbkPopTxEndorsingVbkBlock(
-      btcTip->getHeader(),
-      btcTx,
-      endorsedBlock->getHeader(),
-      GetRegTestBtcBlock().getHash());
+  popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
+                                            btcTx,
+                                            endorsedBlock->getHeader(),
+                                            GetRegTestBtcBlock().getHash());
   tipA = popminer->mineVbkBlocks(*tipA, 1);
 
-  popminer->createVbkPopTxEndorsingVbkBlock(
-      btcTip->getHeader(),
-      btcTx,
-      endorsedBlock->getHeader(),
-      GetRegTestBtcBlock().getHash());
+  popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
+                                            btcTx,
+                                            endorsedBlock->getHeader(),
+                                            GetRegTestBtcBlock().getHash());
   tipB = popminer->mineVbkBlocks(*tipB, 1);
 
   ASSERT_TRUE(tipA->isValid());
