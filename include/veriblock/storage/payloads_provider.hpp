@@ -42,9 +42,9 @@ struct PayloadsProvider {
    * @param[out] state in case of error, will contain error message
    * @return true if payload has been loaded, false otherwise
    */
-  virtual bool getAltPayloads(const BlockIndex<AltBlock>& block,
-                              PopData& out,
-                              ValidationState& state) = 0;
+  virtual bool getContainingAltPayloads(const BlockIndex<AltBlock>& block,
+                                        PopData& out,
+                                        ValidationState& state) = 0;
 
   /**
    * Returns std::vector<VTB> stored in a block.
@@ -53,9 +53,9 @@ struct PayloadsProvider {
    * @param[out] state in case of error, will contain error message
    * @return true if payload has been loaded, false otherwise
    */
-  virtual bool getVbkPayloads(const BlockIndex<VbkBlock>& block,
-                              std::vector<VTB>& out,
-                              ValidationState& state) = 0;
+  virtual bool getContainingVbkPayloads(const BlockIndex<VbkBlock>& block,
+                                        std::vector<VTB>& out,
+                                        ValidationState& state) = 0;
 
   /**
    * Returns ATV body given its ID.

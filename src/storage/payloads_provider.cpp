@@ -13,7 +13,7 @@ void PayloadsProvider::getCommands(AltBlockTree& tree,
                                    std::vector<CommandGroup>& out,
                                    ValidationState& state) {
   PopData pop;
-  if (!getAltPayloads(block, pop, state)) {
+  if (!getContainingAltPayloads(block, pop, state)) {
     throw StateCorruptedException(block, state);
   }
 
@@ -33,7 +33,7 @@ void PayloadsProvider::getCommands(VbkBlockTree& tree,
                                    std::vector<CommandGroup>& out,
                                    ValidationState& state) {
   std::vector<VTB> vtbs;
-  if (!getVbkPayloads(block, vtbs, state)) {
+  if (!getContainingVbkPayloads(block, vtbs, state)) {
     throw StateCorruptedException(block, state);
   }
 

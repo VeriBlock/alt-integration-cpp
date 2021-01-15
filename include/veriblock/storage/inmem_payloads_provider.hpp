@@ -16,7 +16,7 @@ namespace altintegration {
 struct InmemPayloadsProvider : public PayloadsProvider {
   ~InmemPayloadsProvider() override = default;
 
-  bool getAltPayloads(const BlockIndex<AltBlock>& block,
+  bool getContainingAltPayloads(const BlockIndex<AltBlock>& block,
                               PopData& out,
                               ValidationState& state) override {
     (void) state;
@@ -34,7 +34,7 @@ struct InmemPayloadsProvider : public PayloadsProvider {
    * @param[out] state in case of error, will contain error message
    * @return true if payload has been loaded, false otherwise
    */
-  bool getVbkPayloads(const BlockIndex<VbkBlock>& block,
+  bool getContainingVbkPayloads(const BlockIndex<VbkBlock>& block,
                               std::vector<VTB>& out,
                               ValidationState& state) override {
     (void) state;
