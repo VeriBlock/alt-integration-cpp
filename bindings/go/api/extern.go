@@ -35,27 +35,6 @@ func SetOnCheckBlockHeader(fn func(header []byte, root []byte) bool) {
 	ffi.OnCheckBlockHeader = fn
 }
 
-// SetOnGetAtv ...
-func SetOnGetAtv(fn func(idBytes entities.AtvID) []byte) {
-	ffi.OnGetAtv = func(id []byte) []byte {
-		return fn(entities.ParseAtvID(id))
-	}
-}
-
-// SetOnGetVtb ...
-func SetOnGetVtb(fn func(id entities.VtbID) []byte) {
-	ffi.OnGetVtb = func(id []byte) []byte {
-		return fn(entities.ParseVtbID(id))
-	}
-}
-
-// SetOnGetVbk ...
-func SetOnGetVbk(fn func(id entities.VbkID) []byte) {
-	ffi.OnGetVbk = func(id []byte) []byte {
-		return fn(entities.ParseVbkID(id))
-	}
-}
-
 // AddOnAcceptedATV ...
 func (v *PopContext) AddOnAcceptedATV(fn onAcceptedATVSignature) {
 	defer v.lock()()

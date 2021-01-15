@@ -410,7 +410,7 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
 
   std::vector<CommandGroup> commands;
   ValidationState state;
-  ASSERT_TRUE(payloadsProvider.getCommands(
+  EXPECT_NO_THROW(payloadsProvider.getCommands(
       tree, *tree.getBlockIndex(containingHash), commands, state))
       << state.toString();
 

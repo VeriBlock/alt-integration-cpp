@@ -27,26 +27,43 @@ struct VbkBlockTree;
  * An abstraction over on-disk storage.
  *
  * veriblock-pop-cpp does not dictate how to store payloads on-disk. Altchains
- * must create derived class and provide it to AltBlockTree, so that it can fetch
- * payloads from disk during state changes.
+ * must create derived class and provide it to AltBlockTree, so that it can
+ * fetch payloads from disk during state changes.
  *
  * @ingroup interfaces
  */
 struct PayloadsProvider {
   virtual ~PayloadsProvider() = default;
 
-  //! should write ALL ATVs identified by `id` into `out`, or return false
-  virtual bool getATVs(const std::vector<ATV::id_t>& id,
-                       std::vector<ATV>& out,
-                       ValidationState& state) = 0;
-  //! should write ALL VTBs identified by `id` into `out`, or return false
-  virtual bool getVTBs(const std::vector<VTB::id_t>& id,
-                       std::vector<VTB>& out,
-                       ValidationState& state) = 0;
-  //! should write ALL VbkBlocks identified by `id` into `out`, or return false
-  virtual bool getVBKs(const std::vector<VbkBlock::id_t>& id,
-                       std::vector<VbkBlock>& out,
-                       ValidationState& state) = 0;
+  /**
+   * Returns PopData stored in a block.
+   * @param[in] block input block
+   * @param[out] out PopData stored in a block
+   * @param[out] state in case of error, will contain error message
+   * @return true if payload has been loaded, false otherwise
+   */
+  virtual bool getContainingAltPayloads(const BlockIndex<AltBlock>& block,
+                                        PopData& out,
+                                        ValidationState& state) = 0;
+
+  /**
+   * Returns std::vector<VTB> stored in a block.
+   * @param[in] block input block
+   * @param[out] out std::vector<VTB> stored in a block
+   * @param[out] state in case of error, will contain error message
+   * @return true if payload has been loaded, false otherwise
+   */
+  virtual bool getContainingVbkPayloads(const BlockIndex<VbkBlock>& block,
+                                        std::vector<VTB>& out,
+                                        ValidationState& state) = 0;
+
+  /**
+   * Returns ATV body given its ID.
+   * @param[in] id ATV id
+   * @param[out] out Validation state in case of error
+   * @return false, if any read error occurs
+   */
+  virtual bool getATV(const ATV::id_t& id, ATV& out, ValidationState& state) = 0;
 
   /**
    * Load commands from a particular block.
@@ -54,9 +71,8 @@ struct PayloadsProvider {
    * @param[in] block load from this block
    * @param[out] out output vector of commands
    * @param[out] state if commands can't be loaded, will be set to Error
-   * @return true if loaded successfully, false otherwise
    */
-  virtual bool getCommands(AltBlockTree& tree,
+  virtual void getCommands(AltBlockTree& tree,
                            const BlockIndex<AltBlock>& block,
                            std::vector<CommandGroup>& out,
                            ValidationState& state);
@@ -67,9 +83,8 @@ struct PayloadsProvider {
    * @param[in] block load from this block
    * @param[out] out output vector of commands
    * @param[out] state if commands can't be loaded, will be set to Error
-   * @return true if loaded successfully, false otherwise
    */
-  virtual bool getCommands(VbkBlockTree& tree,
+  virtual void getCommands(VbkBlockTree& tree,
                            const BlockIndex<VbkBlock>& block,
                            std::vector<CommandGroup>& out,
                            ValidationState& state);
