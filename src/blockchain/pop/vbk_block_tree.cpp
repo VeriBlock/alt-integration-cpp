@@ -151,16 +151,11 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   }
 
   bool isApplied = activeChain_.contains(&index);
-
   if (isApplied) {
     ValidationState dummy;
     std::vector<CommandGroup> cmdGroups;
-    bool success =
-        payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
-    VBK_ASSERT_MSG(success,
-                   "failed to load commands from block=%s, reason=%s",
-                   index.toPrettyString(),
-                   dummy.toString());
+    payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
+
     auto group_it = std::find_if(
         cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
           return group.id == pid;
@@ -242,11 +237,8 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
   // load commands from block
   std::vector<CommandGroup> cmdGroups;
-  bool success = payloadsProvider_.getCommands(*this, index, cmdGroups, state);
-  VBK_ASSERT_MSG(success,
-                 "failed to load commands from block=%s, reason=%s",
-                 index.toPrettyString(),
-                 state.toString());
+  payloadsProvider_.getCommands(*this, index, cmdGroups, state);
+
   auto group_it = std::find_if(
       cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
         return group.id == pid;

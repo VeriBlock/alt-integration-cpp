@@ -16,6 +16,32 @@ namespace altintegration {
 struct InmemPayloadsProvider : public PayloadsProvider {
   ~InmemPayloadsProvider() override = default;
 
+  bool getAltPayloads(const BlockIndex<AltBlock>& block,
+                              PopData& out,
+                              ValidationState& state) override {
+    (void) state;
+    out.version = 1;
+    out.context = getPayload<VbkBlock>(block.getPayloadIds<VbkBlock>());
+    out.vtbs = getPayload<VTB>(block.getPayloadIds<VTB>());
+    out.atvs = getPayload<ATV>(block.getPayloadIds<ATV>());
+    return true;
+  }
+
+  /**
+   * Returns std::vector<VTB> stored in a block.
+   * @param[in] block input block
+   * @param[out] out std::vector<VTB> stored in a block
+   * @param[out] state in case of error, will contain error message
+   * @return true if payload has been loaded, false otherwise
+   */
+  bool getVbkPayloads(const BlockIndex<VbkBlock>& block,
+                              std::vector<VTB>& out,
+                              ValidationState& state) override {
+    (void) state;
+    out = getPayload<VTB>(block.getPayloadIds<VTB>());
+    return true;
+  }
+
   void write(const PopData& data) {
     write(data.context);
     write(data.vtbs);
@@ -32,25 +58,6 @@ struct InmemPayloadsProvider : public PayloadsProvider {
   void write(const T& v) {
     auto& m = getMap<T>();
     m.insert({v.getId(), std::make_shared<T>(v)});
-  }
-
-  bool getATVs(const std::vector<ATV::id_t>& ids,
-               std::vector<ATV>& out,
-               ValidationState& /* ignore */) override {
-    out = getPayload<ATV>(ids);
-    return true;
-  }
-  bool getVTBs(const std::vector<VTB::id_t>& ids,
-               std::vector<VTB>& out,
-               ValidationState& /* ignore */) override {
-    out = getPayload<VTB>(ids);
-    return true;
-  }
-  bool getVBKs(const std::vector<VbkBlock::id_t>& ids,
-               std::vector<VbkBlock>& out,
-               ValidationState& /* ignore */) override {
-    out = getPayload<VbkBlock>(ids);
-    return true;
   }
 
   template <typename T>

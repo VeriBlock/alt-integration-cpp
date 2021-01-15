@@ -97,6 +97,9 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @invariant must not be executed on bootstrap block
    * @invariant PopData must be statelessly validated before passing it here
    *
+   * @throws StateCorruptedException when we detect state corruption and we can
+   * not recover.
+   *
    * @param[in] block hash of block where to add the block body
    * @param[in] payloads all POP payloads stored in this block
    *
@@ -199,6 +202,11 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @invariant if neither chain wins, A stays applied.
    * @invariant if chain B wins, the tree automatically switches to chain B (it
    * becomes the tip)
+   *
+   * @throws StateCorruptedException when we detect state corruption and we can
+   * not recover.
+   *
+   * @warning Operation can be expensive for long forks.
    * @ingroup api
    */
   VBK_CHECK_RETURN int comparePopScore(const AltBlock::hash_t& A,
@@ -219,7 +227,9 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * applied
    * @invariant both the current and new chains are fully valid; full validation
    * of [genesis .. to] is a side effect
-   * @warning Expensive operation.
+   * @warning Expensive operation when we need to do long reorgs.
+   * @throws StateCorruptedException when we detect state corruption and we can
+   * not recover.
    * @ingroup api
    */
   VBK_CHECK_RETURN bool setState(index_t& to, ValidationState& state) override;
