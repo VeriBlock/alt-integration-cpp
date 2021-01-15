@@ -568,6 +568,10 @@ bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
 bool checkPopData(PopValidator& validator,
                   const PopData& popData,
                   ValidationState& state) {
+  if (popData.checked) {
+    return true;
+  }
+
   auto& altparam = validator.getAltParams();
   size_t estimate_size = popData.estimateSize();
   if (estimate_size > altparam.getMaxPopDataSize()) {
@@ -631,6 +635,7 @@ bool checkPopData(PopValidator& validator,
     return state.Invalid("pop-sl-invalid-has-duplicates");
   }
 
+  popData.checked = true;
   return true;
 }
 

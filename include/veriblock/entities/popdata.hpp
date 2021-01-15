@@ -63,6 +63,9 @@ struct PopData {
     return a.toVbkEncoding() == b.toVbkEncoding();
     // clang-format on
   }
+
+  // if true, then this PopData and all its contents have been statelessly checked already
+  mutable bool checked = false;
 };
 
 namespace detail {
