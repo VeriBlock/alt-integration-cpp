@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_INMEM_BLOCK_STORAGE_HPP
 #define VERIBLOCK_POP_CPP_INMEM_BLOCK_STORAGE_HPP
 
-#include "block_batch_adaptor.hpp"
 #include "veriblock/storage/block_provider.hpp"
 
 namespace altintegration {

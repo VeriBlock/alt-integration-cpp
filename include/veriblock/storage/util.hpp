@@ -10,7 +10,6 @@
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/pop_context.hpp>
-#include <veriblock/storage/block_batch_adaptor.hpp>
 #include <veriblock/storage/block_provider.hpp>
 #include <veriblock/validation_state.hpp>
 
