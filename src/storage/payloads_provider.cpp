@@ -8,10 +8,10 @@
 
 namespace altintegration {
 
-void PayloadsProvider::getCommands(AltBlockTree& tree,
-                                   const BlockIndex<AltBlock>& block,
-                                   std::vector<CommandGroup>& out,
-                                   ValidationState& state) {
+void details::PayloadsReader::getCommands(AltBlockTree& tree,
+                                          const BlockIndex<AltBlock>& block,
+                                          std::vector<CommandGroup>& out,
+                                          ValidationState& state) {
   PopData pop;
   if (!getContainingAltPayloads(block, pop, state)) {
     throw StateCorruptedException(block, state);
@@ -28,10 +28,10 @@ void PayloadsProvider::getCommands(AltBlockTree& tree,
       tree, pop.atvs, containingHash, out);
 }
 
-void PayloadsProvider::getCommands(VbkBlockTree& tree,
-                                   const BlockIndex<VbkBlock>& block,
-                                   std::vector<CommandGroup>& out,
-                                   ValidationState& state) {
+void details::PayloadsReader::getCommands(VbkBlockTree& tree,
+                                          const BlockIndex<VbkBlock>& block,
+                                          std::vector<CommandGroup>& out,
+                                          ValidationState& state) {
   std::vector<VTB> vtbs;
   if (!getContainingVbkPayloads(block, vtbs, state)) {
     throw StateCorruptedException(block, state);

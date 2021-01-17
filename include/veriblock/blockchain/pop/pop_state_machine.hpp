@@ -75,12 +75,12 @@ struct PopStateMachine {
 
   PopStateMachine(ProtectedTree& ed,
                   ProtectingBlockTree& ing,
-                  PayloadsProvider& payloadsProvider,
+                  details::PayloadsReader& payloadsReader,
                   PayloadsIndex& payloadsIndex,
                   bool continueOnInvalid = false)
       : ed_(ed),
         ing_(ing),
-        payloadsProvider_(payloadsProvider),
+        payloadsReader_(payloadsReader),
         payloadsIndex_(payloadsIndex),
         continueOnInvalid_(continueOnInvalid) {}
 
@@ -101,7 +101,7 @@ struct PopStateMachine {
 
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
-      payloadsProvider_.getCommands(ed_, index, cgroups, state);
+      payloadsReader_.getCommands(ed_, index, cgroups, state);
 
       const auto containingHash = index.getHash();
       for (auto cgroup = cgroups.cbegin(); cgroup != cgroups.cend(); ++cgroup) {
@@ -178,7 +178,7 @@ struct PopStateMachine {
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
       ValidationState state;
-      payloadsProvider_.getCommands(ed_, index, cgroups, state);
+      payloadsReader_.getCommands(ed_, index, cgroups, state);
 
       for (const auto& cgroup : reverse_iterate(cgroups)) {
         VBK_LOG_DEBUG("Unapplying payload %s from block %s",
@@ -330,7 +330,7 @@ struct PopStateMachine {
  private:
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
-  PayloadsProvider& payloadsProvider_;
+  details::PayloadsReader& payloadsReader_;
   PayloadsIndex& payloadsIndex_;
   bool continueOnInvalid_ = false;
 };

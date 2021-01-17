@@ -11,10 +11,11 @@
 
 namespace adaptors {
 
-struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
-  ~PayloadsProviderImpl() override = default;
+namespace details {
+struct PayloadsReaderImpl : public altintegration::details::PayloadsReader {
+  ~PayloadsReaderImpl() override = default;
 
-  PayloadsProviderImpl(size_t maxSize) { buffer.resize(maxSize); }
+  PayloadsReaderImpl(size_t maxSize) { buffer.resize(maxSize); }
 
   bool getContainingAltPayloads(
       const altintegration::BlockIndex<altintegration::AltBlock>& block,
@@ -51,6 +52,39 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
  private:
   std::vector<uint8_t> buffer;
 };
+
+struct PayloadsWriterImpl : public altintegration::details::PayloadsWriter {
+  ~PayloadsWriterImpl() override = default;
+
+  bool writePayloads(const altintegration::BlockIndex<altintegration::AltBlock>&
+                         containing_block,
+                     const altintegration::PopData& pop_data) override {
+    (void)containing_block;
+    (void)pop_data;
+    return true;
+  }
+};
+
+}  // namespace details
+
+struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
+  ~PayloadsProviderImpl() override = default;
+
+  PayloadsProviderImpl(size_t maxSize) : reader(maxSize) {}
+
+  altintegration::details::PayloadsReader& getPayloadsReader() {
+    return reader;
+  }
+
+  altintegration::details::PayloadsWriter& getPayloadsWriter() {
+    return writer;
+  }
+
+ private:
+  details::PayloadsReaderImpl reader;
+  details::PayloadsWriterImpl writer;
+};
+
 }  // namespace adaptors
 
 #endif

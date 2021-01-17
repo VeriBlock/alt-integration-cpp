@@ -21,19 +21,9 @@ namespace altintegration {
 struct AltBlockTree;
 struct VbkBlockTree;
 
-/**
- * @struct PayloadsProvider
- *
- * An abstraction over on-disk storage.
- *
- * veriblock-pop-cpp does not dictate how to store payloads on-disk. Altchains
- * must create derived class and provide it to AltBlockTree, so that it can
- * fetch payloads from disk during state changes.
- *
- * @ingroup interfaces
- */
-struct PayloadsProvider {
-  virtual ~PayloadsProvider() = default;
+namespace details {
+struct PayloadsReader {
+  virtual ~PayloadsReader() = default;
 
   /**
    * Returns PopData stored in a block.
@@ -63,7 +53,9 @@ struct PayloadsProvider {
    * @param[out] out Validation state in case of error
    * @return false, if any read error occurs
    */
-  virtual bool getATV(const ATV::id_t& id, ATV& out, ValidationState& state) = 0;
+  virtual bool getATV(const ATV::id_t& id,
+                      ATV& out,
+                      ValidationState& state) = 0;
 
   /**
    * Load commands from a particular block.
@@ -88,6 +80,34 @@ struct PayloadsProvider {
                            const BlockIndex<VbkBlock>& block,
                            std::vector<CommandGroup>& out,
                            ValidationState& state);
+};
+
+struct PayloadsWriter {
+  virtual ~PayloadsWriter() = default;
+
+  virtual bool writePayloads(const BlockIndex<AltBlock>& containing_block,
+                            const PopData& pop_data) = 0;
+};
+
+}  // namespace details
+
+/**
+ * @struct PayloadsProvider
+ *
+ * An abstraction over on-disk storage.
+ *
+ * veriblock-pop-cpp does not dictate how to store payloads on-disk. Altchains
+ * must create derived class and provide it to AltBlockTree, so that it can
+ * fetch payloads from disk during state changes.
+ *
+ * @ingroup interfaces
+ */
+struct PayloadsProvider {
+  virtual ~PayloadsProvider() = default;
+
+  virtual details::PayloadsReader& getPayloadsReader() = 0;
+
+  virtual details::PayloadsWriter& getPayloadsWriter() = 0;
 };
 
 }  // namespace altintegration

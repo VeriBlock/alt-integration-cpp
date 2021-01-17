@@ -154,7 +154,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   if (isApplied) {
     ValidationState dummy;
     std::vector<CommandGroup> cmdGroups;
-    payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
+    payloadsReader_.getCommands(*this, index, cmdGroups, dummy);
 
     auto group_it = std::find_if(
         cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
@@ -237,7 +237,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
   // load commands from block
   std::vector<CommandGroup> cmdGroups;
-  payloadsProvider_.getCommands(*this, index, cmdGroups, state);
+  payloadsReader_.getCommands(*this, index, cmdGroups, state);
 
   auto group_it = std::find_if(
       cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
@@ -393,14 +393,14 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            const BtcChainParams& btcp,
-                           PayloadsProvider& storagePayloads,
+                           details::PayloadsReader& payloadsReader,
                            PayloadsIndex& payloadsIndex)
     : VbkTree(vbkp),
       cmp_(std::make_shared<BtcTree>(btcp),
            vbkp,
-           storagePayloads,
+           payloadsReader,
            payloadsIndex),
-      payloadsProvider_(storagePayloads),
+      payloadsReader_(payloadsReader),
       payloadsIndex_(payloadsIndex) {}
 
 bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
