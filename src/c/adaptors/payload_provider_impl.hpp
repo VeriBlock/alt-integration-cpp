@@ -58,9 +58,34 @@ struct PayloadsWriterImpl : public altintegration::details::PayloadsWriter {
 
   bool writePayloads(const altintegration::BlockIndex<altintegration::AltBlock>&
                          containing_block,
-                     const altintegration::PopData& pop_data) override {
+                     const std::vector<altintegration::ATV>& atvs) override {
     (void)containing_block;
-    (void)pop_data;
+    (void)atvs;
+    return true;
+  }
+
+  bool writePayloads(const altintegration::BlockIndex<altintegration::AltBlock>&
+                         containing_block,
+                     const std::vector<altintegration::VTB>& vtbs) override {
+    (void)containing_block;
+    (void)vtbs;
+    return true;
+  }
+
+  bool writePayloads(
+      const altintegration::BlockIndex<altintegration::AltBlock>&
+          containing_block,
+      const std::vector<altintegration::VbkBlock>& blks) override {
+    (void)containing_block;
+    (void)blks;
+    return true;
+  }
+
+  bool writePayloads(const altintegration::BlockIndex<altintegration::VbkBlock>&
+                         containing_block,
+                     const std::vector<altintegration::VTB>& vtbs) override {
+    (void)containing_block;
+    (void)vtbs;
     return true;
   }
 };

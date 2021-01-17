@@ -349,7 +349,8 @@ VbkBlock MockMiner2::applyVTBs(const BlockIndex<VbkBlock>& tip,
     throw std::domain_error(state.toString());
   }
 
-  payloadsProvider.write(vtbs);
+  // TODO fix it
+  // payloadsProvider.write(vtbs);
   if (!tree.addPayloads(containingHash, vtbs, state)) {
     auto* containingIndex = tree.getBlockIndex(containingHash);
     VBK_ASSERT(containingIndex != nullptr);

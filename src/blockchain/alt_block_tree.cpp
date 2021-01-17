@@ -193,7 +193,9 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   commitPayloadsIds<VTB>(index, payloads.vtbs, payloadsIndex_);
   commitPayloadsIds<ATV>(index, payloads.atvs, payloadsIndex_);
 
-  payloadsProvider_.getPayloadsWriter().writePayloads(index, payloads);
+  payloadsProvider_.getPayloadsWriter().writePayloads(index, payloads.atvs);
+  payloadsProvider_.getPayloadsWriter().writePayloads(index, payloads.vtbs);
+  payloadsProvider_.getPayloadsWriter().writePayloads(index, payloads.context);
 
   // we successfully added this block payloads
   index.setFlag(BLOCK_HAS_PAYLOADS);
@@ -585,8 +587,10 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
     : alt_config_(&alt_config),
       vbk_config_(&vbk_config),
       btc_config_(&btc_config),
-      cmp_(std::make_shared<VbkBlockTree>(
-               vbk_config, btc_config, payloadsProvider, payloadsIndex_),
+      cmp_(std::make_shared<VbkBlockTree>(vbk_config,
+                                          btc_config,
+                                          payloadsProvider.getPayloadsReader(),
+                                          payloadsIndex_),
            alt_config,
            payloadsProvider.getPayloadsReader(),
            payloadsIndex_),

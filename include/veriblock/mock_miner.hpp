@@ -129,7 +129,10 @@ class MockMiner {
   Miner<VbkBlock, VbkChainParams> vbk_miner =
       Miner<VbkBlock, VbkChainParams>(vbk_params);
 
-  VbkBlockTree vbktree{vbk_params, btc_params, payloadsProvider, payloadsIndex};
+  VbkBlockTree vbktree{vbk_params,
+                       btc_params,
+                       payloadsProvider.getPayloadsReader(),
+                       payloadsIndex};
 
   std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes;
 

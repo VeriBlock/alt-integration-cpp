@@ -86,7 +86,16 @@ struct PayloadsWriter {
   virtual ~PayloadsWriter() = default;
 
   virtual bool writePayloads(const BlockIndex<AltBlock>& containing_block,
-                            const PopData& pop_data) = 0;
+                             const std::vector<ATV>& atvs) = 0;
+
+  virtual bool writePayloads(const BlockIndex<AltBlock>& containing_block,
+                             const std::vector<VTB>& vtbs) = 0;
+
+  virtual bool writePayloads(const BlockIndex<AltBlock>& containing_block,
+                             const std::vector<VbkBlock>& blks) = 0;
+
+  virtual bool writePayloads(const BlockIndex<VbkBlock>& containing_block,
+                             const std::vector<VTB>& vtbs) = 0;
 };
 
 }  // namespace details
