@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/crypto/secp256k1.hpp"
-
 #include <utility>
 #include <veriblock/assert.hpp>
 
+#include "veriblock/crypto/secp256k1.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/strutil.hpp"
 #include "veriblock/third_party/secp256k1.hpp"
@@ -23,7 +22,7 @@ struct Secp256k1Context {
   }
 
   ~Secp256k1Context() {
-    if (ctx) {
+    if (ctx != nullptr) {
       secp256k1_context_destroy(ctx);
       ctx = NULL;
     }
@@ -73,14 +72,14 @@ static PrivateKey getPrivateKeyFromAsn1(Slice<const uint8_t> keyEncoded) {
 static PublicKey publicKeyUncompress(Slice<const uint8_t> publicKey) {
   VBK_ASSERT(publicKey.size() == PUBLIC_KEY_COMPRESSED_SIZE);
   secp256k1_pubkey pubkey;
-  if (!secp256k1_ec_pubkey_parse(
+  if (!(bool)secp256k1_ec_pubkey_parse(
           ctx, &pubkey, publicKey.data(), publicKey.size())) {
     throw std::invalid_argument("publicKeyUncompress(): invalid public key");
   }
 
   size_t outputlen = PUBLIC_KEY_UNCOMPRESSED_SIZE;
   std::vector<uint8_t> output(outputlen);
-  if (!secp256k1_ec_pubkey_serialize(
+  if (!(bool)secp256k1_ec_pubkey_serialize(
           ctx, output.data(), &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED)) {
     throw std::invalid_argument(
         "publicKeyUncompress(): public key serialize failed");
@@ -157,7 +156,7 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
 
   size_t outputlen = PUBLIC_KEY_UNCOMPRESSED_SIZE;
   std::vector<uint8_t> output(outputlen);
-  bool ret = secp256k1_ec_pubkey_serialize(
+  bool ret = (bool)secp256k1_ec_pubkey_serialize(
       ctx, output.data(), &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
   VBK_ASSERT_MSG(ret, "can not serialize public key");
   return output;
@@ -167,7 +166,7 @@ Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
   auto messageHash = sha256(message);
 
   secp256k1_ecdsa_signature signature;
-  bool ret = secp256k1_ecdsa_sign(
+  bool ret = (bool)secp256k1_ecdsa_sign(
       ctx, &signature, messageHash.data(), privateKey.data(), NULL, NULL);
   VBK_ASSERT_MSG(ret, "can not sign message");
 
@@ -181,7 +180,7 @@ int verify(Slice<const uint8_t> message,
            Signature signature,
            PublicKey publicKey) {
   secp256k1_pubkey pubkey;
-  if (!secp256k1_ec_pubkey_parse(
+  if (!(bool)secp256k1_ec_pubkey_parse(
           ctx, &pubkey, publicKey.data(), publicKey.size())) {
     throw std::invalid_argument("veriBlockVerify(): cannot parse public key");
   }

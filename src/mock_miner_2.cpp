@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mock_miner_2.hpp"
-
 #include <stdexcept>
 
 #include "veriblock/crypto/secp256k1.hpp"
 #include "veriblock/entities/address.hpp"
+#include "veriblock/mock_miner_2.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {
@@ -110,7 +109,7 @@ ATV MockMiner2::applyATV(const VbkTx& transaction, ValidationState& state) {
 }
 
 std::vector<ATV> MockMiner2::applyATVs(const std::vector<VbkTx>& transactions,
-                                      ValidationState& state) {
+                                       ValidationState& state) {
   // build merkle tree
   auto hashes = hashAll<VbkTx>(transactions);
   const int32_t treeIndex = 0;  // this is POP tx
@@ -168,7 +167,7 @@ VbkPopTx MockMiner2::createVbkPopTxEndorsingVbkBlock(
     const BtcBlock::hash_t& lastKnownBtcBlockHash) {
   const auto& btc = vbktree.btc();
   auto containingBlockIndex = btc.getBlockIndex(containingBlock.getHash());
-  if (!containingBlockIndex) {
+  if (containingBlockIndex == nullptr) {
     throw std::domain_error("containing block with hash " +
                             containingBlock.getHash().toHex() +
                             " does not exist in BTC ");
@@ -215,7 +214,7 @@ VbkPopTx MockMiner2::createVbkPopTxEndorsingVbkBlock(
   popTx.merklePath.layers = mtree.getMerklePathLayers(txhashes[txindex]);
 
   for (auto* walkBlock = containingBlockIndex->pprev;
-       walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
+       walkBlock != nullptr && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
     const auto& header = walkBlock->getHeader();
     popTx.blockOfProofContext.push_back(header);
@@ -253,7 +252,7 @@ VbkPopTx MockMiner2::endorseVbkBlock(
   assert(tip != nullptr && "BTC blockchain is not bootstrapped");
 
   for (auto* walkBlock = tip;
-       walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
+       walkBlock != nullptr && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
     popTx.blockOfProofContext.push_back(walkBlock->getHeader());
   }
@@ -280,32 +279,32 @@ VbkPopTx MockMiner2::endorseVbkBlock(
 }
 
 VbkBlock MockMiner2::applyVTB(const BlockIndex<VbkBlock>& tip,
-                             VbkBlockTree& tree,
-                             const VbkPopTx& tx,
-                             ValidationState& state) {
+                              VbkBlockTree& tree,
+                              const VbkPopTx& tx,
+                              ValidationState& state) {
   return applyVTBs(tip, tree, {tx}, state);
 }
 
 VbkBlock MockMiner2::applyVTB(VbkBlockTree& tree,
-                             const VbkPopTx& tx,
-                             ValidationState& state) {
+                              const VbkPopTx& tx,
+                              ValidationState& state) {
   auto* tip = tree.getBestChain().tip();
   assert(tip && "VBK blockchain is not bootstrapped");
   return applyVTB(*tip, tree, tx, state);
 }
 
 VbkBlock MockMiner2::applyVTBs(VbkBlockTree& tree,
-                              const std::vector<VbkPopTx>& txes,
-                              ValidationState& state) {
+                               const std::vector<VbkPopTx>& txes,
+                               ValidationState& state) {
   auto* tip = tree.getBestChain().tip();
   assert(tip && "VBK blockchain is not bootstrapped");
   return applyVTBs(*tip, tree, txes, state);
 }
 
 VbkBlock MockMiner2::applyVTBs(const BlockIndex<VbkBlock>& tip,
-                              VbkBlockTree& tree,
-                              const std::vector<VbkPopTx>& txes,
-                              ValidationState& state) {
+                               VbkBlockTree& tree,
+                               const std::vector<VbkPopTx>& txes,
+                               ValidationState& state) {
   std::vector<VTB> vtbs;
   vtbs.reserve(txes.size());
   VbkBlock containingBlock;
@@ -364,7 +363,7 @@ VbkBlock MockMiner2::applyVTBs(const BlockIndex<VbkBlock>& tip,
 }
 
 BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
-                                               size_t amount) {
+                                                size_t amount) {
   BtcBlock::hash_t last = tip.getHash();
   if (!btcmempool.empty() && amount > 0) {
     //! we "simulate" mempool - a vector of transactions that can be added for
@@ -396,7 +395,7 @@ BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
 }
 
 BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
-                                               size_t amount) {
+                                                size_t amount) {
   auto* last = &tip;
   for (size_t i = 0; i < amount; i++) {
     // the mempool is just a vector of transactions
@@ -433,9 +432,9 @@ BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(size_t amount) {
 }
 
 VbkBlock MockMiner2::applyVTB(const VbkBlock::hash_t& tip,
-                             VbkBlockTree& tree,
-                             const VbkPopTx& tx,
-                             ValidationState& state) {
+                              VbkBlockTree& tree,
+                              const VbkPopTx& tx,
+                              ValidationState& state) {
   auto index = vbk().getBlockIndex(tip);
   VBK_ASSERT(index);
   return applyVTB(*index, tree, tx, state);

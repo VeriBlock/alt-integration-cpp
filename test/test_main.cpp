@@ -28,11 +28,11 @@ int main(int argc, char** argv) {
   int seed = 0;
   LogLevel level = LogLevel::off;
 
-  if (argc >= 2 && argv[1]) {
+  if (argc >= 2 && argv[1] != nullptr) {
     str2int(seed, argv[1]);
   }
 
-  if (argc >= 3 && argv[2]) {
+  if (argc >= 3 && argv[2] != nullptr) {
     level = StringToLevel(argv[2]);
   }
 
