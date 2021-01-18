@@ -64,23 +64,20 @@ struct PayloadsReaderImpl : public altintegration::details::PayloadsReader {
 struct PayloadsWriterImpl : public altintegration::details::PayloadsWriter {
   ~PayloadsWriterImpl() override = default;
 
-  bool writePayloads(const std::vector<altintegration::ATV>& atvs) override {
+  void writePayloads(const std::vector<altintegration::ATV>& atvs) override {
     (void)atvs;
     // TODO implement
-    return true;
   }
 
-  bool writePayloads(const std::vector<altintegration::VTB>& vtbs) override {
+  void writePayloads(const std::vector<altintegration::VTB>& vtbs) override {
     (void)vtbs;
     // TODO implement
-    return true;
   }
 
-  bool writePayloads(
+  void writePayloads(
       const std::vector<altintegration::VbkBlock>& vbks) override {
     (void)vbks;
     // TODO implement
-    return true;
   }
 };
 

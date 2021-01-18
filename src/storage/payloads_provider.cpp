@@ -53,16 +53,9 @@ void details::PayloadsReader::getCommands(VbkBlockTree& tree,
   vectorPopToCommandGroup<VbkBlockTree, VTB>(tree, vtbs, containingHash, out);
 }
 
-bool details::PayloadsWriter::writePayloads(const PopData& payloads) {
-  if (!writePayloads(payloads.atvs)) {
-    return false;
-  }
-  if (!writePayloads(payloads.vtbs)) {
-    return false;
-  }
-  if (!writePayloads(payloads.context)) {
-    return false;
-  }
-  return true;
+void details::PayloadsWriter::writePayloads(const PopData& payloads) {
+  writePayloads(payloads.atvs);
+  writePayloads(payloads.vtbs);
+  writePayloads(payloads.context);
 }
 }  // namespace altintegration

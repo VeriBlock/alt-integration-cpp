@@ -72,30 +72,26 @@ struct InmemPayloadsProvider : public PayloadsProvider,
   template <typename T>
   std::unordered_map<typename T::id_t, std::shared_ptr<T>>& getMap();
 
-  bool writePayloads(const std::vector<ATV>& atvs) override {
+  void writePayloads(const std::vector<ATV>& atvs) override {
     for (const auto& atv : atvs) {
       atvs_.insert({atv.getId(), std::make_shared<ATV>(atv)});
       vbkblocks_.insert({atv.blockOfProof.getId(),
                          std::make_shared<VbkBlock>(atv.blockOfProof)});
     }
-    return true;
   }
 
-  bool writePayloads(const std::vector<VTB>& vtbs) override {
+  void writePayloads(const std::vector<VTB>& vtbs) override {
     for (const auto& vtb : vtbs) {
       vtbs_.insert({vtb.getId(), std::make_shared<VTB>(vtb)});
       vbkblocks_.insert({vtb.containingBlock.getId(),
                          std::make_shared<VbkBlock>(vtb.containingBlock)});
     }
-    return true;
   }
 
-  bool writePayloads(const std::vector<VbkBlock>& vbks) override {
+  void writePayloads(const std::vector<VbkBlock>& vbks) override {
     for (const auto& vbk : vbks) {
       vbkblocks_.insert({vbk.getId(), std::make_shared<VbkBlock>(vbk)});
     }
-
-    return true;
   }
 
  private:

@@ -70,13 +70,13 @@ struct PayloadsReader {
 struct PayloadsWriter {
   virtual ~PayloadsWriter() = default;
 
-  virtual bool writePayloads(const std::vector<ATV>& atvs) = 0;
+  virtual void writePayloads(const std::vector<ATV>& atvs) = 0;
 
-  virtual bool writePayloads(const std::vector<VTB>& vtbs) = 0;
+  virtual void writePayloads(const std::vector<VTB>& vtbs) = 0;
 
-  virtual bool writePayloads(const std::vector<VbkBlock>& vbks) = 0;
+  virtual void writePayloads(const std::vector<VbkBlock>& vbks) = 0;
 
-  bool writePayloads(const PopData& payloads);
+  void writePayloads(const PopData& payloads);
 };
 
 }  // namespace details
