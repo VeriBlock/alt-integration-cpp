@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/assert.hpp"
 #include "veriblock/arith_uint256.hpp"
+#include "veriblock/assert.hpp"
 
 using namespace altintegration;
 
@@ -21,10 +21,10 @@ ArithUint256 ArithUint256::fromBits(uint32_t bits,
     target = nWord;
     target <<= 8 * (nSize - 3);
   }
-  if (negative) {
+  if (negative != nullptr) {
     *negative = (nWord != 0) && ((bits & 0x00800000u) != 0);
   }
-  if (overflow) {
+  if (overflow != nullptr) {
     *overflow = nWord != 0 && ((nSize > 34) || (nWord > 0xff && nSize > 33) ||
                                (nWord > 0xffff && nSize > 32));
   }
@@ -47,7 +47,7 @@ std::string ArithUint256::toString() const {
 }
 
 ArithUint256 ArithUint256::fromString(const std::string& num) {
-  ArithUint256 tmp = 0; 
+  ArithUint256 tmp = 0;
   for (char sym : num) {
     tmp *= 10;
     tmp += (sym - '0');
@@ -156,9 +156,9 @@ ArithUint256& ArithUint256::operator/=(const ArithUint256& b) {
 
 unsigned int ArithUint256::bits() const {
   for (int pos = SHA256_HASH_SIZE - 1; pos >= 0; pos--) {
-    if (data_[pos]) {
+    if (data_[pos] != 0) {
       for (int nbits = 7; nbits > 0; nbits--) {
-        if (data_[pos] & 1U << nbits) {
+        if ((data_[pos] & 1U << nbits) != 0) {
           return 8 * pos + nbits + 1;
         }
       }
@@ -180,14 +180,14 @@ uint32_t ArithUint256::toBits(bool negative) const {
   // The 0x00800000 bit denotes the sign.
   // Thus, if it is already set, divide the mantissa by 256 and increase the
   // exponent.
-  if (nCompact & 0x00800000) {
+  if ((nCompact & 0x00800000) != 0) {
     nCompact >>= 8;
     nSize++;
   }
   VBK_ASSERT((nCompact & ~0x007fffff) == 0);
   VBK_ASSERT(nSize < 256);
   nCompact |= nSize << 24;
-  nCompact |= (negative && (nCompact & 0x007fffff) ? 0x00800000 : 0);
+  nCompact |= (negative && (bool)(nCompact & 0x007fffff) ? 0x00800000 : 0);
   return nCompact;
 }
 

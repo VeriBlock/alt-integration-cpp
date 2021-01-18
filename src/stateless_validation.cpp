@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/stateless_validation.hpp"
-
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -18,6 +16,7 @@
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
+#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -76,7 +75,7 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
     uint32_t offsetLength = 4;
     uint32_t sectionLength = 4;
     for (int i = 0; i < 8; ++i) {
-      if ((descriptor >> i) & 1) {
+      if (((descriptor >> i) & 1) != 0) {
         if (i < 2) {
           sectionLength += 1 << i;
         } else if (i < 4) {
@@ -363,7 +362,7 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
   }
 
   auto hash = tx.getHash();
-  if (!secp256k1::verify(
+  if (!(bool)secp256k1::verify(
           hash, tx.signature, secp256k1::publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("invalid-vbk-tx",
                          "Vbk transaction is incorrectly signed");
@@ -377,7 +376,7 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
                          "Vbk Pop transaction contains an invalid public key");
   }
   auto hash = tx.getHash();
-  if (!secp256k1::verify(
+  if (!(bool)secp256k1::verify(
           hash, tx.signature, secp256k1::publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("invalid-vbk-pop-tx",
                          "Vbk Pop transaction is incorrectly signed");

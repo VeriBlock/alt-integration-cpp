@@ -24,7 +24,7 @@ bool CommandGroupCache::get(const CommandGroupCache::id_t& cid,
     return false;
   } else {
     refer(cid);
-    if (out) {
+    if (out != nullptr) {
       *out = it->second;
     }
   }

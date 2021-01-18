@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mock_miner.hpp"
-
 #include <stdexcept>
 
 #include "veriblock/crypto/secp256k1.hpp"
 #include "veriblock/entities/address.hpp"
+#include "veriblock/mock_miner.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {
@@ -168,7 +167,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
     const BtcBlock::hash_t& lastKnownBtcBlockHash) {
   const auto& btc = vbktree.btc();
   auto containingBlockIndex = btc.getBlockIndex(containingBlock.getHash());
-  if (!containingBlockIndex) {
+  if (containingBlockIndex == nullptr) {
     throw std::domain_error("containing block with hash " +
                             containingBlock.getHash().toHex() +
                             " does not exist in BTC ");
@@ -215,7 +214,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   popTx.merklePath.layers = mtree.getMerklePathLayers(txhashes[txindex]);
 
   for (auto* walkBlock = containingBlockIndex->pprev;
-       walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
+       walkBlock != nullptr && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
     const auto& header = walkBlock->getHeader();
     popTx.blockOfProofContext.push_back(header);
@@ -253,7 +252,7 @@ VbkPopTx MockMiner::endorseVbkBlock(
   assert(tip != nullptr && "BTC blockchain is not bootstrapped");
 
   for (auto* walkBlock = tip;
-       walkBlock && walkBlock->getHash() != lastKnownBtcBlockHash;
+       walkBlock != nullptr && walkBlock->getHash() != lastKnownBtcBlockHash;
        walkBlock = walkBlock->pprev) {
     popTx.blockOfProofContext.push_back(walkBlock->getHeader());
   }
