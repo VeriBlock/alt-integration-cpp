@@ -315,9 +315,6 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     }
   }
 
-  // save payloads
-  payloadsProvider_.getPayloadsWriter().writePayloads(*index, payloads);
-
   // apply payloads
   std::vector<pid_t> appliedPayloads;
 

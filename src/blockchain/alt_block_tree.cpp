@@ -193,9 +193,7 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   commitPayloadsIds<VTB>(index, payloads.vtbs, payloadsIndex_);
   commitPayloadsIds<ATV>(index, payloads.atvs, payloadsIndex_);
 
-  payloadsProvider_.getPayloadsWriter().writePayloads(index, payloads.atvs);
-  payloadsProvider_.getPayloadsWriter().writePayloads(index, payloads.vtbs);
-  payloadsProvider_.getPayloadsWriter().writePayloads(index, payloads.context);
+  payloadsProvider_.getPayloadsWriter().writePayloads(payloads);
 
   // we successfully added this block payloads
   index.setFlag(BLOCK_HAS_PAYLOADS);

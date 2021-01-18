@@ -12,20 +12,30 @@ void details::PayloadsReader::getCommands(AltBlockTree& tree,
                                           const BlockIndex<AltBlock>& block,
                                           std::vector<CommandGroup>& out,
                                           ValidationState& state) {
-  PopData pop;
-  if (!getContainingAltPayloads(block, pop, state)) {
+  std::vector<ATV> atvs;
+  atvs.reserve(block.getPayloadIds<ATV>().size());
+  std::vector<VTB> vtbs;
+  vtbs.reserve(block.getPayloadIds<VTB>().size());
+  std::vector<VbkBlock> vbks;
+  vbks.reserve(block.getPayloadIds<VbkBlock>().size());
+
+  if (!getVBKs(block.getPayloadIds<VbkBlock>(), vbks, state)) {
+    throw StateCorruptedException(block, state);
+  }
+  if (!getVTBs(block.getPayloadIds<VTB>(), vtbs, state)) {
+    throw StateCorruptedException(block, state);
+  }
+  if (!getATVs(block.getPayloadIds<ATV>(), atvs, state)) {
     throw StateCorruptedException(block, state);
   }
 
   auto containingHash = block.getHash();
-  // order is important!
-  // first, add all VBK blocks, then add all VTBs, then add all ATVs
+  // order is important! first, add all VBK blocks, then add all VTBs, then add
+  // all ATVs
   vectorPopToCommandGroup<AltBlockTree, VbkBlock>(
-      tree, pop.context, containingHash, out);
-  vectorPopToCommandGroup<AltBlockTree, VTB>(
-      tree, pop.vtbs, containingHash, out);
-  vectorPopToCommandGroup<AltBlockTree, ATV>(
-      tree, pop.atvs, containingHash, out);
+      tree, vbks, containingHash, out);
+  vectorPopToCommandGroup<AltBlockTree, VTB>(tree, vtbs, containingHash, out);
+  vectorPopToCommandGroup<AltBlockTree, ATV>(tree, atvs, containingHash, out);
 }
 
 void details::PayloadsReader::getCommands(VbkBlockTree& tree,
@@ -33,11 +43,26 @@ void details::PayloadsReader::getCommands(VbkBlockTree& tree,
                                           std::vector<CommandGroup>& out,
                                           ValidationState& state) {
   std::vector<VTB> vtbs;
-  if (!getContainingVbkPayloads(block, vtbs, state)) {
+  vtbs.reserve(block.getPayloadIds<VTB>().size());
+
+  if (!getVTBs(block.getPayloadIds<VTB>(), vtbs, state)) {
     throw StateCorruptedException(block, state);
   }
 
   auto containingHash = block.getHash().asVector();
   vectorPopToCommandGroup<VbkBlockTree, VTB>(tree, vtbs, containingHash, out);
+}
+
+bool details::PayloadsWriter::writePayloads(const PopData& payloads) {
+  if (!writePayloads(payloads.atvs)) {
+    return false;
+  }
+  if (!writePayloads(payloads.vtbs)) {
+    return false;
+  }
+  if (!writePayloads(payloads.context)) {
+    return false;
+  }
+  return true;
 }
 }  // namespace altintegration

@@ -17,22 +17,30 @@ struct PayloadsReaderImpl : public altintegration::details::PayloadsReader {
 
   PayloadsReaderImpl(size_t maxSize) { buffer.resize(maxSize); }
 
-  bool getContainingAltPayloads(
-      const altintegration::BlockIndex<altintegration::AltBlock>& block,
-      altintegration::PopData& out,
-      altintegration::ValidationState& state) override {
-    (void)block;
+  bool getATVs(const std::vector<typename altintegration::ATV::id_t>& ids,
+               std::vector<typename altintegration::ATV>& out,
+               altintegration::ValidationState& state) override {
+    (void)ids;
     (void)out;
     (void)state;
     // TODO implement
     return true;
   }
 
-  bool getContainingVbkPayloads(
-      const altintegration::BlockIndex<altintegration::VbkBlock>& block,
-      std::vector<altintegration::VTB>& out,
-      altintegration::ValidationState& state) override {
-    (void)block;
+  bool getVTBs(const std::vector<typename altintegration::VTB::id_t>& ids,
+               std::vector<altintegration::VTB>& out,
+               altintegration::ValidationState& state) override {
+    (void)ids;
+    (void)out;
+    (void)state;
+    // TODO implement
+    return true;
+  }
+
+  bool getVBKs(const std::vector<typename altintegration::VbkBlock::id_t>& ids,
+               std::vector<altintegration::VbkBlock>& out,
+               altintegration::ValidationState& state) override {
+    (void)ids;
     (void)out;
     (void)state;
     // TODO implement
@@ -56,36 +64,22 @@ struct PayloadsReaderImpl : public altintegration::details::PayloadsReader {
 struct PayloadsWriterImpl : public altintegration::details::PayloadsWriter {
   ~PayloadsWriterImpl() override = default;
 
-  bool writePayloads(const altintegration::BlockIndex<altintegration::AltBlock>&
-                         containing_block,
-                     const std::vector<altintegration::ATV>& atvs) override {
-    (void)containing_block;
+  bool writePayloads(const std::vector<altintegration::ATV>& atvs) override {
     (void)atvs;
+    // TODO implement
     return true;
   }
 
-  bool writePayloads(const altintegration::BlockIndex<altintegration::AltBlock>&
-                         containing_block,
-                     const std::vector<altintegration::VTB>& vtbs) override {
-    (void)containing_block;
+  bool writePayloads(const std::vector<altintegration::VTB>& vtbs) override {
     (void)vtbs;
+    // TODO implement
     return true;
   }
 
   bool writePayloads(
-      const altintegration::BlockIndex<altintegration::AltBlock>&
-          containing_block,
-      const std::vector<altintegration::VbkBlock>& blks) override {
-    (void)containing_block;
-    (void)blks;
-    return true;
-  }
-
-  bool writePayloads(const altintegration::BlockIndex<altintegration::VbkBlock>&
-                         containing_block,
-                     const std::vector<altintegration::VTB>& vtbs) override {
-    (void)containing_block;
-    (void)vtbs;
+      const std::vector<altintegration::VbkBlock>& vbks) override {
+    (void)vbks;
+    // TODO implement
     return true;
   }
 };
@@ -97,11 +91,11 @@ struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
 
   PayloadsProviderImpl(size_t maxSize) : reader(maxSize) {}
 
-  altintegration::details::PayloadsReader& getPayloadsReader() {
+  altintegration::details::PayloadsReader& getPayloadsReader() override {
     return reader;
   }
 
-  altintegration::details::PayloadsWriter& getPayloadsWriter() {
+  altintegration::details::PayloadsWriter& getPayloadsWriter() override {
     return writer;
   }
 

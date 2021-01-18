@@ -25,34 +25,19 @@ namespace details {
 struct PayloadsReader {
   virtual ~PayloadsReader() = default;
 
-  /**
-   * Returns PopData stored in a block.
-   * @param[in] block input block
-   * @param[out] out PopData stored in a block
-   * @param[out] state in case of error, will contain error message
-   * @return true if payload has been loaded, false otherwise
-   */
-  virtual bool getContainingAltPayloads(const BlockIndex<AltBlock>& block,
-                                        PopData& out,
-                                        ValidationState& state) = 0;
+  //! should write ALL ATVs identified by `id` into `out`, or return false
+  virtual bool getATVs(const std::vector<ATV::id_t>& ids,
+                       std::vector<ATV>& out,
+                       ValidationState& state) = 0;
+  //! should write ALL VTBs identified by `id` into `out`, or return false
+  virtual bool getVTBs(const std::vector<VTB::id_t>& ids,
+                       std::vector<VTB>& out,
+                       ValidationState& state) = 0;
+  //! should write ALL VbkBlocks identified by `id` into `out`, or return false
+  virtual bool getVBKs(const std::vector<VbkBlock::id_t>& ids,
+                       std::vector<VbkBlock>& out,
+                       ValidationState& state) = 0;
 
-  /**
-   * Returns std::vector<VTB> stored in a block.
-   * @param[in] block input block
-   * @param[out] out std::vector<VTB> stored in a block
-   * @param[out] state in case of error, will contain error message
-   * @return true if payload has been loaded, false otherwise
-   */
-  virtual bool getContainingVbkPayloads(const BlockIndex<VbkBlock>& block,
-                                        std::vector<VTB>& out,
-                                        ValidationState& state) = 0;
-
-  /**
-   * Returns ATV body given its ID.
-   * @param[in] id ATV id
-   * @param[out] out Validation state in case of error
-   * @return false, if any read error occurs
-   */
   virtual bool getATV(const ATV::id_t& id,
                       ATV& out,
                       ValidationState& state) = 0;
@@ -85,17 +70,13 @@ struct PayloadsReader {
 struct PayloadsWriter {
   virtual ~PayloadsWriter() = default;
 
-  virtual bool writePayloads(const BlockIndex<AltBlock>& containing_block,
-                             const std::vector<ATV>& atvs) = 0;
+  virtual bool writePayloads(const std::vector<ATV>& atvs) = 0;
 
-  virtual bool writePayloads(const BlockIndex<AltBlock>& containing_block,
-                             const std::vector<VTB>& vtbs) = 0;
+  virtual bool writePayloads(const std::vector<VTB>& vtbs) = 0;
 
-  virtual bool writePayloads(const BlockIndex<AltBlock>& containing_block,
-                             const std::vector<VbkBlock>& blks) = 0;
+  virtual bool writePayloads(const std::vector<VbkBlock>& vbks) = 0;
 
-  virtual bool writePayloads(const BlockIndex<VbkBlock>& containing_block,
-                             const std::vector<VTB>& vtbs) = 0;
+  virtual bool writePayloads(const PopData& payloads);
 };
 
 }  // namespace details

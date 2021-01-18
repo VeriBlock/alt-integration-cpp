@@ -23,14 +23,22 @@ struct InmemPayloadsReader : public details::PayloadsReader {
       std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>& vbkblocks)
       : atvs_(atvs), vtbs_(vtbs), vbkblocks_(vbkblocks) {}
 
-  bool getContainingAltPayloads(const BlockIndex<AltBlock>& block,
-                                PopData& out,
-                                ValidationState& state) override {
-    (void)state;
-    out.version = 1;
-    out.context = getPayload<VbkBlock>(block.getPayloadIds<VbkBlock>());
-    out.vtbs = getPayload<VTB>(block.getPayloadIds<VTB>());
-    out.atvs = getPayload<ATV>(block.getPayloadIds<ATV>());
+  bool getATVs(const std::vector<ATV::id_t>& ids,
+               std::vector<ATV>& out,
+               ValidationState& /* ignore */) override {
+    out = getPayload<ATV>(ids);
+    return true;
+  }
+  bool getVTBs(const std::vector<VTB::id_t>& ids,
+               std::vector<VTB>& out,
+               ValidationState& /* ignore */) override {
+    out = getPayload<VTB>(ids);
+    return true;
+  }
+  bool getVBKs(const std::vector<VbkBlock::id_t>& ids,
+               std::vector<VbkBlock>& out,
+               ValidationState& /* ignore */) override {
+    out = getPayload<VbkBlock>(ids);
     return true;
   }
 
@@ -39,21 +47,6 @@ struct InmemPayloadsReader : public details::PayloadsReader {
     auto vec = getPayload<ATV>({id});
     VBK_ASSERT(vec.size() == 1);
     out = vec.at(0);
-    return true;
-  }
-
-  /**
-   * Returns std::vector<VTB> stored in a block.
-   * @param[in] block input block
-   * @param[out] out std::vector<VTB> stored in a block
-   * @param[out] state in case of error, will contain error message
-   * @return true if payload has been loaded, false otherwise
-   */
-  bool getContainingVbkPayloads(const BlockIndex<VbkBlock>& block,
-                                std::vector<VTB>& out,
-                                ValidationState& state) override {
-    (void)state;
-    out = getPayload<VTB>(block.getPayloadIds<VTB>());
     return true;
   }
 
@@ -67,11 +60,11 @@ struct InmemPayloadsReader : public details::PayloadsReader {
       auto it = m.find(id);
       // when fails, it means that AddPayloads was executed but according
       // payloadsProvider.write was not
-      VBK_ASSERT_MSG(it != m.end(),
-                     "requested %s with id=%s not found in "
-                     "InmemPayloadsProvider. Have you called 'write'?",
-                     T::name(),
-                     HexStr(id));
+      VBK_ASSERT_MSG(
+          it != m.end(),
+          "requested %s with id=%s not found in InmemPayloadsProvider.",
+          T::name(),
+          HexStr(id));
       ret.push_back(*it->second);
     }
 
@@ -112,51 +105,27 @@ struct InmemPayloadsWriter : public PayloadsWriter {
       std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>& vbkblocks)
       : atvs_(atvs), vtbs_(vtbs), vbkblocks_(vbkblocks) {}
 
-  bool writePayloads(const BlockIndex<AltBlock>& containing_block,
-                     const std::vector<ATV>& atvs) override {
-    (void)containing_block;
-
+  bool writePayloads(const std::vector<ATV>& atvs) override {
     for (const auto& atv : atvs) {
       atvs_.insert({atv.getId(), std::make_shared<ATV>(atv)});
       vbkblocks_.insert({atv.blockOfProof.getId(),
                          std::make_shared<VbkBlock>(atv.blockOfProof)});
     }
-
     return true;
   }
 
-  bool writePayloads(const BlockIndex<AltBlock>& containing_block,
-                     const std::vector<VTB>& vtbs) override {
-    (void)containing_block;
-
+  bool writePayloads(const std::vector<VTB>& vtbs) override {
     for (const auto& vtb : vtbs) {
       vtbs_.insert({vtb.getId(), std::make_shared<VTB>(vtb)});
       vbkblocks_.insert({vtb.containingBlock.getId(),
                          std::make_shared<VbkBlock>(vtb.containingBlock)});
     }
-
     return true;
   }
 
-  bool writePayloads(const BlockIndex<AltBlock>& containing_block,
-                     const std::vector<VbkBlock>& vbks) override {
-    (void)containing_block;
-
+  bool writePayloads(const std::vector<VbkBlock>& vbks) override {
     for (const auto& vbk : vbks) {
       vbkblocks_.insert({vbk.getId(), std::make_shared<VbkBlock>(vbk)});
-    }
-
-    return true;
-  }
-
-  bool writePayloads(const BlockIndex<VbkBlock>& containing_block,
-                     const std::vector<VTB>& vtbs) override {
-    (void)containing_block;
-
-    for (const auto& vtb : vtbs) {
-      vtbs_.insert({vtb.getId(), std::make_shared<VTB>(vtb)});
-      vbkblocks_.insert({vtb.containingBlock.getId(),
-                         std::make_shared<VbkBlock>(vtb.containingBlock)});
     }
 
     return true;
