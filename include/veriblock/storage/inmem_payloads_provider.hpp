@@ -12,16 +12,14 @@
 
 namespace altintegration {
 
-namespace details {
-//! In-memory implementation of payloads provider. Used in tests.
-struct InmemPayloadsReader : public details::PayloadsReader {
-  ~InmemPayloadsReader() override = default;
+struct InmemPayloadsProvider : public PayloadsProvider,
+                               public details::PayloadsWriter,
+                               public details::PayloadsReader {
+  ~InmemPayloadsProvider() override = default;
 
-  InmemPayloadsReader(
-      std::unordered_map<ATV::id_t, std::shared_ptr<ATV>>& atvs,
-      std::unordered_map<VTB::id_t, std::shared_ptr<VTB>>& vtbs,
-      std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>& vbkblocks)
-      : atvs_(atvs), vtbs_(vtbs), vbkblocks_(vbkblocks) {}
+  details::PayloadsReader& getPayloadsReader() override { return *this; }
+
+  details::PayloadsWriter& getPayloadsWriter() override { return *this; }
 
   bool getATVs(const std::vector<ATV::id_t>& ids,
                std::vector<ATV>& out,
@@ -74,37 +72,6 @@ struct InmemPayloadsReader : public details::PayloadsReader {
   template <typename T>
   std::unordered_map<typename T::id_t, std::shared_ptr<T>>& getMap();
 
- private:
-  std::unordered_map<ATV::id_t, std::shared_ptr<ATV>>& atvs_;
-  std::unordered_map<VTB::id_t, std::shared_ptr<VTB>>& vtbs_;
-  std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>& vbkblocks_;
-};
-
-template <>
-inline std::unordered_map<ATV::id_t, std::shared_ptr<ATV>>&
-InmemPayloadsReader::getMap() {
-  return atvs_;
-}
-template <>
-inline std::unordered_map<VTB::id_t, std::shared_ptr<VTB>>&
-InmemPayloadsReader::getMap() {
-  return vtbs_;
-}
-template <>
-inline std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>&
-InmemPayloadsReader::getMap() {
-  return vbkblocks_;
-}
-
-struct InmemPayloadsWriter : public PayloadsWriter {
-  ~InmemPayloadsWriter() override = default;
-
-  InmemPayloadsWriter(
-      std::unordered_map<ATV::id_t, std::shared_ptr<ATV>>& atvs,
-      std::unordered_map<VTB::id_t, std::shared_ptr<VTB>>& vtbs,
-      std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>& vbkblocks)
-      : atvs_(atvs), vtbs_(vtbs), vbkblocks_(vbkblocks) {}
-
   bool writePayloads(const std::vector<ATV>& atvs) override {
     for (const auto& atv : atvs) {
       atvs_.insert({atv.getId(), std::make_shared<ATV>(atv)});
@@ -132,31 +99,26 @@ struct InmemPayloadsWriter : public PayloadsWriter {
   }
 
  private:
-  std::unordered_map<ATV::id_t, std::shared_ptr<ATV>>& atvs_;
-  std::unordered_map<VTB::id_t, std::shared_ptr<VTB>>& vtbs_;
-  std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>& vbkblocks_;
-};
-
-}  // namespace details
-
-struct InmemPayloadsProvider : public PayloadsProvider {
-  ~InmemPayloadsProvider() override = default;
-
-  InmemPayloadsProvider()
-      : reader(atvs_, vtbs_, vbkblocks_), writer(atvs_, vtbs_, vbkblocks_) {}
-
-  details::PayloadsReader& getPayloadsReader() override { return reader; }
-
-  details::PayloadsWriter& getPayloadsWriter() override { return writer; }
-
- private:
   std::unordered_map<ATV::id_t, std::shared_ptr<ATV>> atvs_;
   std::unordered_map<VTB::id_t, std::shared_ptr<VTB>> vtbs_;
   std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>> vbkblocks_;
-
-  details::InmemPayloadsReader reader;
-  details::InmemPayloadsWriter writer;
 };
+
+template <>
+inline std::unordered_map<ATV::id_t, std::shared_ptr<ATV>>&
+InmemPayloadsProvider::getMap() {
+  return atvs_;
+}
+template <>
+inline std::unordered_map<VTB::id_t, std::shared_ptr<VTB>>&
+InmemPayloadsProvider::getMap() {
+  return vtbs_;
+}
+template <>
+inline std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>&
+InmemPayloadsProvider::getMap() {
+  return vbkblocks_;
+}
 
 }  // namespace altintegration
 
