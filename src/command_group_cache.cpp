@@ -22,12 +22,13 @@ bool CommandGroupCache::get(const CommandGroupCache::id_t& cid,
   auto it = _cache.find(cid);
   if (it == _cache.end()) {
     return false;
-  } else {
-    refer(cid);
-    if (out != nullptr) {
-      *out = it->second;
-    }
   }
+
+  refer(cid);
+  if (out != nullptr) {
+    *out = it->second;
+  }
+
   return true;
 }
 

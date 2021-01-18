@@ -659,7 +659,7 @@ static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   });
 
   auto& v = w.data();
-  return uint192({v.data(), VBLAKE_HASH_SIZE});
+  return {{v.data(), VBLAKE_HASH_SIZE}};
 }
 
 uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
@@ -680,7 +680,7 @@ uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
   });
 
   auto& v = w.data();
-  return uint192({v.data(), VBLAKE_HASH_SIZE});
+  return {{v.data(), VBLAKE_HASH_SIZE}};
 }
 
 uint192 progPowHash(Slice<const uint8_t> header) {

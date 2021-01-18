@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <utility>
 #include <veriblock/blockchain/commands/check_pubdata.hpp>
 
 namespace altintegration {
@@ -21,8 +22,7 @@ bool CheckPublicationData::Execute(ValidationState& state) {
                                      HexStr(endorsed_hash)));
   }
 
-  auto ctx =
-      ContextInfoContainer::createFromPrevious(endorsed->pprev, params);
+  auto ctx = ContextInfoContainer::createFromPrevious(endorsed->pprev, params);
   if (c.ctx != ctx) {
     return state.Invalid("bad-sf-context",
                          fmt::format("Expected context={}, got={}",
@@ -33,8 +33,10 @@ bool CheckPublicationData::Execute(ValidationState& state) {
   return true;
 }
 
-CheckPublicationData::CheckPublicationData(const PublicationData& pub,
+CheckPublicationData::CheckPublicationData(PublicationData pub,
                                            AltBlockTree& tree,
                                            AltBlock::hash_t endorsed_hash)
-    : pub(pub), endorsed_hash(std::move(endorsed_hash)), tree(&tree) {}
-}
+    : pub(std::move(pub)),
+      endorsed_hash(std::move(endorsed_hash)),
+      tree(&tree) {}
+}  // namespace altintegration
