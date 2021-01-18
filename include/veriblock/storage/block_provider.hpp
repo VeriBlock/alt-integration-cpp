@@ -29,11 +29,21 @@ namespace altintegration {
  */
 
 namespace details {
+
 template <typename BlockT>
-struct GenericBlockProvider {
+struct GenericBlockWriter {
+  virtual ~GenericBlockWriter() = default;
+
+  virtual bool writeBlock(const BlockIndex<BlockT>& value) = 0;
+
+  virtual bool writeTip(const BlockIndex<BlockT>& value) = 0;
+};
+
+template <typename BlockT>
+struct GenericBlockReader {
   using hash_t = typename BlockT::hash_t;
 
-  virtual ~GenericBlockProvider() = default;
+  virtual ~GenericBlockReader() = default;
 
   virtual bool getTipHash(hash_t& out) const = 0;
 
@@ -47,14 +57,23 @@ struct GenericBlockProvider {
 struct BlockProvider {
   virtual ~BlockProvider() = default;
 
-  virtual std::shared_ptr<details::GenericBlockProvider<AltBlock>>
-  getAltBlockProvider() const = 0;
+  virtual std::shared_ptr<details::GenericBlockReader<AltBlock>>
+  getAltBlockReader() const = 0;
 
-  virtual std::shared_ptr<details::GenericBlockProvider<VbkBlock>>
-  getVbkBlockProvider() const = 0;
+  virtual std::shared_ptr<details::GenericBlockReader<VbkBlock>>
+  getVbkBlockReader() const = 0;
 
-  virtual std::shared_ptr<details::GenericBlockProvider<BtcBlock>>
-  getBtcBlockProvider() const = 0;
+  virtual std::shared_ptr<details::GenericBlockReader<BtcBlock>>
+  getBtcBlockReader() const = 0;
+
+  virtual std::shared_ptr<details::GenericBlockWriter<AltBlock>>
+  getAltBlockWriter() const = 0;
+
+  virtual std::shared_ptr<details::GenericBlockWriter<VbkBlock>>
+  getVbkBlockWriter() const = 0;
+
+  virtual std::shared_ptr<details::GenericBlockWriter<BtcBlock>>
+  getBtcBlockWriter() const = 0;
 };
 
 }  // namespace altintegration

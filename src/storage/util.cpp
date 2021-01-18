@@ -10,16 +10,15 @@
 namespace altintegration {
 
 template <typename BlockTreeT>
-bool LoadTree(
-    BlockTreeT& out,
-    details::GenericBlockProvider<typename BlockTreeT::block_t>& provider,
-    ValidationState& state) {
+bool LoadTree(BlockTreeT& out,
+              details::GenericBlockReader<typename BlockTreeT::block_t>& reader,
+              ValidationState& state) {
   using index_t = typename BlockTreeT::index_t;
   using hash_t = typename index_t::hash_t;
 
   std::vector<index_t> blocks;
 
-  auto it = provider.getBlockIterator();
+  auto it = reader.getBlockIterator();
   for (it->seek_start(); it->valid(); it->next()) {
     index_t val;
     if (!it->value(val)) {
@@ -29,7 +28,7 @@ bool LoadTree(
   }
 
   hash_t tip_hash;
-  if (!provider.getTipHash(tip_hash)) {
+  if (!reader.getTipHash(tip_hash)) {
     return state.Invalid(index_t::block_t::name() + "-bad-value",
                          "Can not read block tip");
   }
@@ -46,27 +45,40 @@ bool LoadTree(
 
 bool LoadAllTrees(PopContext& context, ValidationState& state) {
   if (!LoadTree(context.altTree->btc(),
-                *context.blockProvider->getBtcBlockProvider(),
+                *context.blockProvider->getBtcBlockReader(),
                 state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
   if (!LoadTree(context.altTree->vbk(),
-                *context.blockProvider->getVbkBlockProvider(),
+                *context.blockProvider->getVbkBlockReader(),
                 state)) {
     return state.Invalid("failed-to-load-vbk-tree");
   }
   if (!LoadTree(*context.altTree,
-                *context.blockProvider->getAltBlockProvider(),
+                *context.blockProvider->getAltBlockReader(),
                 state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
   return true;
 }
 
-void SaveAllTrees(AltBlockTree& tree, BlockBatchAdaptor& batch) {
-  SaveTree(tree.btc(), batch);
-  SaveTree(tree.vbk(), batch);
-  SaveTree(tree, batch);
+bool SaveAllTrees(PopContext& context, ValidationState& state) {
+  if (!SaveTree(context.altTree->btc(),
+                *context.blockProvider->getBtcBlockWriter(),
+                state)) {
+    return state.Invalid("btc-tree-save-failed");
+  }
+  if (!SaveTree(context.altTree->vbk(),
+                *context.blockProvider->getVbkBlockWriter(),
+                state)) {
+    return state.Invalid("vbk-tree-save-failed");
+  }
+  if (!SaveTree(*context.altTree,
+                *context.blockProvider->getAltBlockWriter(),
+                state)) {
+    return state.Invalid("alt-tree-save-failed");
+  }
+  return true;
 }
 
 }  // namespace altintegration
