@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -13,20 +11,14 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
+#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
 struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
-  MemPoolFixture() {
-    GetLogger().level = altintegration::LogLevel::info;
-    // clang-format off
-    mempool->onAccepted<VbkBlock>([&](const VbkBlock& block) { payloadsProvider.write(block); });
-    mempool->onAccepted<ATV>([&](const ATV& a) { payloadsProvider.write(a); });
-    mempool->onAccepted<VTB>([&](const VTB& v) { payloadsProvider.write(v); });
-    // clang-format on
-  }
+  MemPoolFixture() { GetLogger().level = altintegration::LogLevel::info; }
 
   void applyInNextBlock(const PopData& pop) {
     auto containingBlock = generateNextBlock(chain.back());
@@ -121,14 +113,12 @@ TEST_F(MemPoolFixture, removeAll_test1) {
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
-  payloadsProvider.write(atv);
   submitATV(atv);
 
-  payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
     submitVTB(vtb);
   }
-  payloadsProvider.write(context);
+
   for (const auto& b : context) {
     submitVBK(b);
   }
@@ -193,13 +183,10 @@ TEST_F(MemPoolFixture, removeAll_test2) {
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
-  payloadsProvider.write(atv);
   submitATV(atv);
-  payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
     submitVTB(vtb);
   }
-  payloadsProvider.write(context);
   for (const auto& b : context) {
     submitVBK(b);
   }
@@ -257,13 +244,10 @@ TEST_F(MemPoolFixture, removeAll_test3) {
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
-  payloadsProvider.write(atv);
   submitATV(atv);
-  payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
     submitVTB(vtb);
   }
-  payloadsProvider.write(context);
   for (const auto& b : context) {
     submitVBK(b);
   }
@@ -331,13 +315,10 @@ TEST_F(MemPoolFixture, removeAll_test4) {
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
-  payloadsProvider.write(atv);
   submitATV(atv);
-  payloadsProvider.write(vtbs);
   for (const auto& vtb : vtbs) {
     submitVTB(vtb);
   }
-  payloadsProvider.write(context);
   for (const auto& b : context) {
     submitVBK(b);
   }
@@ -1580,10 +1561,8 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
     std::vector<VbkBlock> context;
     fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
-    payloadsProvider.write(atv);
     submitATV(atv);
 
-    payloadsProvider.write(context);
     for (const auto& b : context) {
       submitVBK(b);
     }
