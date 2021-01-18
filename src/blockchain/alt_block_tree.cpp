@@ -587,12 +587,10 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
     : alt_config_(&alt_config),
       vbk_config_(&vbk_config),
       btc_config_(&btc_config),
-      cmp_(std::make_shared<VbkBlockTree>(vbk_config,
-                                          btc_config,
-                                          payloadsProvider.getPayloadsReader(),
-                                          payloadsIndex_),
+      cmp_(std::make_shared<VbkBlockTree>(
+               vbk_config, btc_config, payloadsProvider, payloadsIndex_),
            alt_config,
-           payloadsProvider.getPayloadsReader(),
+           payloadsProvider,
            payloadsIndex_),
       payloadsProvider_(payloadsProvider) {}
 

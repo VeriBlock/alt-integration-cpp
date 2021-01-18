@@ -35,7 +35,8 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   // do not bootstrap VBK
   ASSERT_TRUE(test_alttree.bootstrap(state));
-  ASSERT_TRUE(test_alttree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+  ASSERT_TRUE(
+      test_alttree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
 
   // Step1
   // mine 10 Vbk blocks in the pop miner
@@ -76,7 +77,6 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   altPayloads.vtbs.push_back(vtb);
 
   EXPECT_TRUE(test_alttree.acceptBlockHeader(containingAltBlock, state));
-  payloadsProvider.write(altPayloads);
   ASSERT_TRUE(test_alttree.addPayloads(
       containingAltBlock.getHash(), altPayloads, state));
   EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));

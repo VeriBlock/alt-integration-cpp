@@ -444,11 +444,11 @@ struct PopAwareForkResolutionComparator {
 
   PopAwareForkResolutionComparator(std::shared_ptr<ProtectingBlockTree> tree,
                                    const protected_params_t& protectedParams,
-                                   details::PayloadsReader& payloadsReader,
+                                   PayloadsProvider& payloadsProvider,
                                    PayloadsIndex& payloadsIndex)
       : ing_(std::move(tree)),
         protectedParams_(&protectedParams),
-        payloadsReader_(payloadsReader),
+        payloadsProvider_(payloadsProvider),
         payloadsIndex_(payloadsIndex) {
     VBK_ASSERT(protectedParams.getKeystoneInterval() > 0);
   }
@@ -480,7 +480,7 @@ struct PopAwareForkResolutionComparator {
     auto guard = ing_->deferForkResolutionGuard();
     auto originalTip = ing_->getBestChain().tip();
 
-    sm_t sm(ed, *ing_, payloadsReader_, payloadsIndex_, continueOnInvalid);
+    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, continueOnInvalid);
     if (sm.setState(*currentActive, to, state)) {
       return true;
     }
@@ -529,7 +529,7 @@ struct PopAwareForkResolutionComparator {
 
       auto guard = ing_->deferForkResolutionGuard();
 
-      sm_t sm(ed, *ing_, payloadsReader_, payloadsIndex_, bestTip->getHeight());
+      sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, bestTip->getHeight());
       if (!sm.apply(*bestTip, candidate, state)) {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
@@ -579,7 +579,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed, *ing_, payloadsReader_, payloadsIndex_);
+    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);
 
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the
@@ -669,7 +669,7 @@ struct PopAwareForkResolutionComparator {
   std::shared_ptr<ProtectingBlockTree> ing_;
 
   const protected_params_t* protectedParams_;
-  details::PayloadsReader& payloadsReader_;
+  PayloadsProvider& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
 };
 
