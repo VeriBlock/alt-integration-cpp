@@ -79,6 +79,10 @@ struct PayloadsWriterImpl : public altintegration::details::PayloadsWriter {
     (void)vbks;
     // TODO implement
   }
+
+  void writePayloads(const altintegration::PopData& payloads) override {
+    altintegration::details::PayloadsWriter::writePayloads(payloads);
+  }
 };
 
 }  // namespace details

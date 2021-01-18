@@ -94,6 +94,10 @@ struct InmemPayloadsProvider : public PayloadsProvider,
     }
   }
 
+  void writePayloads(const PopData& payloads) override {
+    details::PayloadsWriter::writePayloads(payloads);
+  }
+
  private:
   std::unordered_map<ATV::id_t, std::shared_ptr<ATV>> atvs_;
   std::unordered_map<VTB::id_t, std::shared_ptr<VTB>> vtbs_;
