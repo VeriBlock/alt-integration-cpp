@@ -1,8 +1,8 @@
 ---
-Checks:          '-*,performance-*,clang-analyzer-*,portability-*,cert-*,concurrency-*'
+Checks:          '-*,performance-*,clang-analyzer-*,portability-*,cert-*,concurrency-*,readability-implicit-bool-conversion,modernize-use-bool-literals'
 WarningsAsErrors: '*'
 AnalyzeTemporaryDtors: false
-FormatStyle:     .clang-format
+FormatStyle:     file
 CheckOptions:
   - key:             bugprone-argument-comment.StrictMode
     value:           '0'

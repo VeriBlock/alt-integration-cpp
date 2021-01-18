@@ -196,7 +196,7 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                             : firstBlock.getHash();
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
-  if (!connectingIndex) {
+  if (connectingIndex == nullptr) {
     VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
                   vtb.toPrettyString());
     return state.Invalid("bad-prev-block",
@@ -276,12 +276,12 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
   }
 
   auto* index = VbkTree::getBlockIndex(hash);
-  if (!index) {
+  if (index == nullptr) {
     return state.Invalid(block_t::name() + "-bad-containing",
                          "Can not find VTB containing block: " + hash.toHex());
   }
 
-  if (!index->pprev) {
+  if (index->pprev == nullptr) {
     return state.Invalid(block_t::name() + "-bad-containing-prev",
                          "It is forbidden to add payloads to bootstrap block");
   }
@@ -411,7 +411,7 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   auto* tip = activeChain_.tip();
   VBK_ASSERT(tip);
   appliedBlockCount = 0;
-  while (tip) {
+  while (tip != nullptr) {
     tip->setFlag(BLOCK_ACTIVE);
     ++appliedBlockCount;
     tip->raiseValidity(BLOCK_CAN_BE_APPLIED);

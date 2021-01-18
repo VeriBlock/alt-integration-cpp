@@ -46,8 +46,8 @@ uint128 VbkMerklePath::calculateMerkleRoot() const {
     }
 
     auto& layer = layers[i];
-    auto& left = layerIndex & 1u ? layer : cursor;
-    auto& right = layerIndex & 1u ? cursor : layer;
+    auto& left = (layerIndex & 1u) != 0u ? layer : cursor;
+    auto& right = (layerIndex & 1u) != 0u ? cursor : layer;
     cursor = sha256(left, right);
     layerIndex >>= 1u;
   }

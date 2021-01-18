@@ -606,7 +606,7 @@ bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
   auto* tip = activeChain_.tip();
   VBK_ASSERT(tip);
   appliedBlockCount = 0;
-  while (tip) {
+  while (tip != nullptr) {
     tip->setFlag(BLOCK_ACTIVE);
     ++appliedBlockCount;
     tip->raiseValidity(BLOCK_CAN_BE_APPLIED);

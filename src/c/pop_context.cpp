@@ -54,7 +54,7 @@ PopContext* VBK_NewPopContext(Config_t* config) {
 }
 
 void VBK_FreePopContext(PopContext* app) {
-  if (app) {
+  if (app != nullptr) {
     delete app;
     app = nullptr;
   }

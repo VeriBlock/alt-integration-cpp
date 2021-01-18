@@ -165,20 +165,22 @@ void MemPool::removeAll(const PopData& pop) {
     // remove ATVs
     for (auto atvit = rel.atvs.begin(); atvit != rel.atvs.end();) {
       auto id = (*atvit)->getId();
-      atvit = atvids.count(id) ? (stored_atvs_.erase(id), rel.atvs.erase(atvit))
-                               : std::next(atvit);
+      atvit = atvids.count(id) != 0u
+                  ? (stored_atvs_.erase(id), rel.atvs.erase(atvit))
+                  : std::next(atvit);
     }
 
     // remove VTBs
     for (auto vtbit = rel.vtbs.begin(); vtbit != rel.vtbs.end();) {
       auto id = (*vtbit)->getId();
-      vtbit = vtbids.count(id) ? (stored_vtbs_.erase(id), rel.vtbs.erase(vtbit))
-                               : std::next(vtbit);
+      vtbit = vtbids.count(id) != 0u
+                  ? (stored_vtbs_.erase(id), rel.vtbs.erase(vtbit))
+                  : std::next(vtbit);
     }
 
     // if header is recently added to new block or relation is empty, cleanup
 
-    if (vbkblockids.count(block_id) && rel.empty()) {
+    if ((vbkblockids.count(block_id) != 0u) && rel.empty()) {
       vbkblocks_.erase(block_id);
       it = relations_.erase(it);
       continue;
@@ -286,7 +288,8 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
 
   // stateful validation
   VBK_LOG_DEBUG("[POP mempool] VbkBlock=%s is connected", id.toHex());
-  if (!mempool_tree_.vbk().getStableTree().getBlockIndex(blk->getHash())) {
+  if (mempool_tree_.vbk().getStableTree().getBlockIndex(blk->getHash()) ==
+      nullptr) {
     getOrPutVbkRelation(blk);
   }
 

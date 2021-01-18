@@ -53,8 +53,8 @@ uint256 MerklePath::calculateMerkleRoot() const {
   auto cursor = subject;
   auto layerIndex = index;
   for (const auto& layer : layers) {
-    auto& left = layerIndex & 1u ? layer : cursor;
-    auto& right = layerIndex & 1u ? cursor : layer;
+    auto& left = (layerIndex & 1u) != 0 ? layer : cursor;
+    auto& right = (layerIndex & 1u) != 0 ? cursor : layer;
     cursor = sha256twice(left, right);
     layerIndex >>= 1u;
   }
