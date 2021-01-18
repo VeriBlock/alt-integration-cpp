@@ -76,7 +76,7 @@ struct PayloadsWriter {
 
   virtual bool writePayloads(const std::vector<VbkBlock>& vbks) = 0;
 
-  virtual bool writePayloads(const PopData& payloads);
+  bool writePayloads(const PopData& payloads);
 };
 
 }  // namespace details

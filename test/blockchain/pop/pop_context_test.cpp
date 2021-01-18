@@ -130,6 +130,7 @@ TEST_F(PopContextFixture, A) {
     auto& vtbs = it->second;
 
     ASSERT_TRUE(local.acceptBlock(containing->getHeader(), state));
+    payloadsProvider.getPayloadsWriter().writePayloads(vtbs);
     ASSERT_TRUE(
         local.addPayloads(containing->getHeader().getHash(), {vtbs}, state))
         << state.toString();
