@@ -12,7 +12,7 @@ VbkValidationState* VBK_NewValidationState() {
 }
 
 void VBK_FreeValidationState(VbkValidationState* self) {
-  if (self) {
+  if (self != nullptr) {
     delete self;
     self = nullptr;
   }

@@ -49,7 +49,7 @@ static uint8_t divmod256(std::vector<uint8_t> &number59, size_t startAt) {
 }
 
 std::string EncodeBase59(const uint8_t *buf, size_t nSize) {
-  if (!nSize) {
+  if (nSize == 0u) {
     return {};
   }
 

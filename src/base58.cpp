@@ -58,7 +58,7 @@ static bool DecodeBase58(const char *psz,
                          std::vector<unsigned char> &vch,
                          size_t max_ret_len) {
   // Skip leading spaces.
-  while (*psz && IsSpace(*psz)) psz++;
+  while ((*psz != 0) && IsSpace(*psz)) psz++;
   // Skip and count leading '1's.
   size_t zeroes = 0;
   size_t length = 0;
@@ -75,7 +75,7 @@ static bool DecodeBase58(const char *psz,
   static_assert(
       sizeof(mapBase58) / sizeof(mapBase58[0]) == 256,
       "mapBase58.size() should be 256");  // guarantee not out of range
-  while (*psz && !IsSpace(*psz)) {
+  while ((*psz != 0) && !IsSpace(*psz)) {
     // Decode base58 character
     // NOLINTNEXTLINE(cert-str34-c)
     int carry = static_cast<int>(mapBase58[uint8_t(*psz)]);

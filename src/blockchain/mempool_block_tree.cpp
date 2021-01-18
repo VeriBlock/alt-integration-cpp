@@ -15,7 +15,7 @@ bool MemPoolBlockTree::checkContextually(const VbkBlock& block,
   auto& vbkstable = vbk().getStableTree();
   auto hash = block.getHash();
   auto index = vbkstable.getBlockIndex(hash);
-  if (index) {
+  if (index != nullptr) {
     // duplicate
     return state.Invalid("duplicate");
   }
@@ -37,7 +37,7 @@ bool MemPoolBlockTree::checkContextually(const ATV& atv,
   int32_t window = tree_->getParams().getEndorsementSettlementInterval();
   auto duplicate = findBlockContainingEndorsement(
       tree_->getBestChain(), tree_->getBestChain().tip(), atv.getId(), window);
-  if (duplicate) {
+  if (duplicate != nullptr) {
     return state.Invalid(
         "atv-duplicate",
         fmt::sprintf("ATV=%s already added to active chain in block %s",
@@ -72,10 +72,10 @@ bool MemPoolBlockTree::checkContextually(const VTB& vtb,
       vbk.getBestChain(),
       // if containing exists on chain, then search for duplicates starting from
       // containing, else search starting from tip
-      (containing ? containing : vbk.getBestChain().tip()),
+      (containing != nullptr ? containing : vbk.getBestChain().tip()),
       vtb.getId(),
       window);
-  if (duplicate) {
+  if (duplicate != nullptr) {
     return state.Invalid(
         "vtb-duplicate",
         fmt::sprintf("VTB=%s already added to active chain in block %s",

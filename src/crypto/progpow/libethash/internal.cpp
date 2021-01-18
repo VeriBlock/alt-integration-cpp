@@ -169,11 +169,11 @@ ethash_cache* ethash_light_new_internal(uint64_t cache_size,
                                         uint256 const* seed) {
   struct ethash_cache* ret;
   ret = (ethash_cache*)calloc(sizeof(*ret), 1);
-  if (!ret) {
+  if (ret == nullptr) {
     return NULL;
   }
   ret->cache = malloc((size_t)cache_size);
-  if (!ret->cache) {
+  if (ret->cache == nullptr) {
     free(ret);
     return NULL;
   }
@@ -191,7 +191,7 @@ ethash_cache* ethash_light_new(uint64_t block_number) {
   uint256 seedhash = ethash_get_seedhash(block_number);
   uint64_t cachesize = ethash_get_cachesize(block_number);
   ethash_cache* ret = ethash_light_new_internal(cachesize, &seedhash);
-  if (!ret) {
+  if (ret == nullptr) {
     return NULL;
   }
   ret->epoch = ethashGetEpoch(block_number);
@@ -199,7 +199,7 @@ ethash_cache* ethash_light_new(uint64_t block_number) {
 }
 
 void ethash_light_delete(ethash_cache* light) {
-  if (light->cache) {
+  if (light->cache != nullptr) {
     free(light->cache);
   }
   free(light);

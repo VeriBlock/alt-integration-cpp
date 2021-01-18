@@ -41,7 +41,7 @@ size_t VBK_ByteStream_Read(VBK_ByteStream* stream,
 }
 
 void VBK_ByteStream_Free(VBK_ByteStream* stream) {
-  if (stream) {
+  if (stream != nullptr) {
     delete stream;
     stream = nullptr;
   }
