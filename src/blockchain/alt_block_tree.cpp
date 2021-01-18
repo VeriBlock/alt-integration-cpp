@@ -6,7 +6,6 @@
 #include "veriblock/blockchain/alt_block_tree.hpp"
 
 #include <veriblock/reversed_range.hpp>
-#include <veriblock/storage/block_batch_adaptor.hpp>
 
 #include "veriblock/algorithm.hpp"
 #include "veriblock/alt-util.hpp"

@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_INMEM_BLOCK_STORAGE_HPP
 #define VERIBLOCK_POP_CPP_INMEM_BLOCK_STORAGE_HPP
 
-#include "block_batch_adaptor.hpp"
+#include "veriblock/storage/block_provider.hpp"
 
 namespace altintegration {
 
@@ -64,9 +64,11 @@ template <> inline AltBlock::hash_t InmemBlockStorage::getTip<AltBlock>() const 
 // clang-format on
 
 //! @private
-struct InmemBlockBatch : public BlockBatchAdaptor {
-  InmemBlockBatch(InmemBlockStorage& storage) : storage_(storage) {}
-  ~InmemBlockBatch() override = default;
+struct InmemBlockWriter : public details::GenericBlockWriter<BtcBlock>,
+                          public details::GenericBlockWriter<VbkBlock>,
+                          public details::GenericBlockWriter<AltBlock> {
+  InmemBlockWriter(InmemBlockStorage& storage) : storage_(storage) {}
+  ~InmemBlockWriter() override = default;
 
   bool writeBlock(const BlockIndex<BtcBlock>& value) override {
     storage_.btc[value.getHash()] =

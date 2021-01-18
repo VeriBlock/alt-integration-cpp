@@ -17,20 +17,38 @@ struct BlockProviderImpl : public altintegration::BlockProvider {
   ~BlockProviderImpl() override = default;
 
   std::shared_ptr<
-      altintegration::details::GenericBlockProvider<altintegration::AltBlock>>
-  getAltBlockProvider() const override {
+      altintegration::details::GenericBlockReader<altintegration::AltBlock>>
+  getAltBlockReader() const override {
     return nullptr;
   }
 
   std::shared_ptr<
-      altintegration::details::GenericBlockProvider<altintegration::VbkBlock>>
-  getVbkBlockProvider() const override {
+      altintegration::details::GenericBlockReader<altintegration::VbkBlock>>
+  getVbkBlockReader() const override {
     return nullptr;
   }
 
   std::shared_ptr<
-      altintegration::details::GenericBlockProvider<altintegration::BtcBlock>>
-  getBtcBlockProvider() const override {
+      altintegration::details::GenericBlockReader<altintegration::BtcBlock>>
+  getBtcBlockReader() const override {
+    return nullptr;
+  }
+
+  std::shared_ptr<
+      altintegration::details::GenericBlockWriter<altintegration::AltBlock>>
+  getAltBlockWriter() const override {
+    return nullptr;
+  }
+
+  std::shared_ptr<
+      altintegration::details::GenericBlockWriter<altintegration::VbkBlock>>
+  getVbkBlockWriter() const override {
+    return nullptr;
+  }
+
+  std::shared_ptr<
+      altintegration::details::GenericBlockWriter<altintegration::BtcBlock>>
+  getBtcBlockWriter() const override {
     return nullptr;
   }
 
