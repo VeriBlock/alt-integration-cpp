@@ -5,7 +5,6 @@ add_subdirectory(storage)
 add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
-add_subdirectory(c)
 add_subdirectory(crypto)
 
 add_library(vblake OBJECT crypto/vblake.cpp)
@@ -61,8 +60,16 @@ set(SOURCES
         $<TARGET_OBJECTS:vblake>
         $<TARGET_OBJECTS:progpow>
         $<TARGET_OBJECTS:ethash>
-        $<TARGET_OBJECTS:veriblock-pop-c>
         )
+
+if(WITH_C_WRAPPER)
+        if(NOT WITH_ROCKSDB)
+                message(FATAL_ERROR "For the c wrapper you should specify the storage which you will build, -DWITH_ROCKSDB=ON ")
+        endif()
+add_subdirectory(c)
+list(APPEND SOURCES $<TARGET_OBJECTS:veriblock-pop-c>)
+endif()
+        
 if(WITH_SECP256K1)
     list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
 endif()
