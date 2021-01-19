@@ -361,7 +361,7 @@ kiss99_t progPowInit(uint64_t prog_seed,
     mix_seq_dst[i] = i;
     mix_seq_src[i] = i;
   }
-  for (int i = PROGPOW_REGS - 1, j; i > 0; i--) {
+  for (int i = PROGPOW_REGS - 1, j = 0; i > 0; i--) {
     j = kiss99(prog_rnd) % (i + 1);
     std::swap(mix_seq_dst[i], mix_seq_dst[j]);
     j = kiss99(prog_rnd) % (i + 1);
@@ -477,7 +477,7 @@ hash32_t progPowHash(const uint64_t block_number,  // height
                      const std::vector<uint32_t>& dag,
                      ethash_cache* light) {
   hash32_t digest, zero, seed_256;
-  uint64_t seed;
+  uint64_t seed = 0;
   uint32_t mix[PROGPOW_LANES][PROGPOW_REGS];
 
   // keccak(header..nonce)

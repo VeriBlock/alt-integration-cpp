@@ -167,7 +167,7 @@ uint256 ethash_calculate_seedhash(uint64_t block_number) {
 
 ethash_cache* ethash_light_new_internal(uint64_t cache_size,
                                         uint256 const* seed) {
-  struct ethash_cache* ret;
+  struct ethash_cache* ret = nullptr;
   ret = (ethash_cache*)calloc(sizeof(*ret), 1);
   if (ret == nullptr) {
     return NULL;
