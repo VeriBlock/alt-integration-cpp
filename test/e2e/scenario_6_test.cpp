@@ -81,8 +81,12 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
       containingAltBlock.getHash(), altPayloads, state));
   EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));
 
-  validateAlttreeIndexState(
-      test_alttree, containingAltBlock, altPayloads, false);
+  // all payloads are marked valid as there's no correctly implemented
+  // invalidation
+  validateAlttreeIndexState(test_alttree,
+                            containingAltBlock,
+                            altPayloads,
+                            /*payloads_validation =*/true);
 
   EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->getHash(),
             vbkTip->getHash());

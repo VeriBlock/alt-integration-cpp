@@ -104,24 +104,12 @@ struct PopStateMachine {
       payloadsProvider_.getPayloadsReader().getCommands(
           ed_, index, cgroups, state);
 
-      const auto containingHash = index.getHash();
       for (auto cgroup = cgroups.cbegin(); cgroup != cgroups.cend(); ++cgroup) {
         VBK_LOG_DEBUG("Applying payload %s from block %s",
                       HexStr(cgroup->id),
                       index.toShortPrettyString());
 
-        if (cgroup->execute(state)) {
-          // we were able to apply the command group, so flag it as valid,
-          // unless we are in in 'continueOnInvalid' mode which precludes
-          // payload re-validation
-          if (!continueOnInvalid_) {
-            payloadsIndex_.setValidity(containingHash, cgroup->id, true);
-          }
-
-        } else {
-          // flag the command group as invalid
-          payloadsIndex_.setValidity(containingHash, cgroup->id, false);
-
+        if (!cgroup->execute(state)) {
           if (continueOnInvalid_) {
             removePayloadsFromIndex<block_t>(payloadsIndex_, index, *cgroup);
             VBK_LOG_INFO("%s=%s can't be connected: %s",

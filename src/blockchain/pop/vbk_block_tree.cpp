@@ -99,7 +99,6 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(success);
   }
 
-  auto containingHash = index.getHash();
   for (const auto& pid : pids) {
     auto& vtbids = index.getPayloadIds<VTB>();
     auto it = std::find(vtbids.begin(), vtbids.end(), pid);
@@ -107,9 +106,11 @@ void VbkBlockTree::removePayloads(index_t& index,
     // if there are multiple pids
     VBK_ASSERT(it != vtbids.end() && "could not find the payload to remove");
 
-    if (!payloadsIndex_.getValidity(containingHash, pid)) {
-      revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-    }
+    // removing a payload cannot alter the block validity as addPayloads adds
+    // only valid payloads
+    VBK_ASSERT_MSG(!index.hasFlags(BLOCK_FAILED_POP),
+                   "block %s unexpectedly has BLOCK_FAILED_POP set",
+                   index.toPrettyString());
 
     index.removePayloadId<VTB>(pid);
     payloadsIndex_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
@@ -139,16 +140,16 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
                 pid.toPrettyString(),
                 index.toPrettyString());
 
-  auto containingHash = index.getHash();
   auto& vtbids = index.getPayloadIds<VTB>();
   auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
   VBK_ASSERT(vtbid_it != vtbids.end() &&
              "state corruption: the block does not contain the payload");
 
-  // removing an invalid payload might render the block valid
-  if (!payloadsIndex_.getValidity(containingHash, pid)) {
-    revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-  }
+  // removing a payload cannot alter the block validity as addPayloads adds only
+  // valid payloads
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_FAILED_POP),
+                 "block %s unexpectedly has BLOCK_FAILED_POP set",
+                 index.toPrettyString());
 
   bool isApplied = activeChain_.contains(&index);
   if (isApplied) {

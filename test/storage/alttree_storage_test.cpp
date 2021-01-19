@@ -237,7 +237,11 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), popData));
   EXPECT_FALSE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_FALSE(this->state.IsValid());
-  validateAlttreeIndexState(this->alttree, containingBlock, popData, false);
+
+  // all payloads are marked valid as there's no correctly implemented
+  // invalidation
+  validateAlttreeIndexState(
+      this->alttree, containingBlock, popData, /*payloads_validation =*/true);
 
   auto writer = InmemBlockWriter(blockStorage);
   ASSERT_TRUE(SaveTree(this->alttree.vbk(),
@@ -263,9 +267,11 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk(), this->alttree.vbk()));
-  EXPECT_FALSE(this->cmp(reloadedAltTree, this->alttree, true));
+  // all payloads are marked valid as there's no correctly implemented
+  // invalidation thus the reloaded tree has to have identical contents
+  EXPECT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 
-  VBK_LOG_DEBUG("set state that validity flags should be the same");
+  VBK_LOG_DEBUG("set state so that validity flags end up to be the same");
   EXPECT_FALSE(
       reloadedAltTree.setState(containingBlock.getHash(), this->state));
   EXPECT_FALSE(this->alttree.setState(containingBlock.getHash(), this->state));

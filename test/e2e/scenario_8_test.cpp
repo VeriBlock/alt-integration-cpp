@@ -149,7 +149,10 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(),
             "ALT-bad-command+VBK-invalid-payloads+VBK-expired");
-  validateAlttreeIndexState(alttree, containingBlock, popData2, false);
+  // all payloads are marked valid as there's no correctly implemented
+  // invalidation
+  validateAlttreeIndexState(
+      alttree, containingBlock, popData2, /*payloads_validation =*/true);
 
   // VBK subtree 501 (contains expired VTB) is VALID - because we tried to add
   // VTB, it was invalid, so we immediately removed it

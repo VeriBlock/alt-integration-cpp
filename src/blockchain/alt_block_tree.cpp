@@ -366,16 +366,11 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   return result;
 }
 
-template <typename Pop, typename Tree, typename Index>
-static void clearSideEffects(Tree& tree, Index& index, PayloadsIndex& storage) {
+template <typename Pop, typename Index>
+static void clearSideEffects(Index& index, PayloadsIndex& storage) {
   auto containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
   for (const auto& pid : payloadIds) {
-    if (!storage.getValidity(containingHash, pid)) {
-      tree.revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-      storage.setValidity(containingHash, pid, true);  // cleanup validity
-    }
-
     storage.removeAltPayloadIndex(containingHash, pid.asVector());
   }
 }
@@ -398,9 +393,9 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
                  "can remove payloads only from connected leaves");
 
   if (index.hasPayloads()) {
-    clearSideEffects<VbkBlock>(*this, index, payloadsIndex_);
-    clearSideEffects<VTB>(*this, index, payloadsIndex_);
-    clearSideEffects<ATV>(*this, index, payloadsIndex_);
+    clearSideEffects<VbkBlock>(index, payloadsIndex_);
+    clearSideEffects<VTB>(index, payloadsIndex_);
+    clearSideEffects<ATV>(index, payloadsIndex_);
     index.clearPayloads();
   }
 
@@ -422,21 +417,18 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
   tryAddTip(index.pprev);
 }
 
-template <typename Payloads, typename BlockIndex>
-void removePayloadsIfInvalid(std::vector<Payloads>& p,
-                             PayloadsIndex& storage,
-                             BlockIndex& index) {
-  auto containing = index.getHash();
-  auto it = std::remove_if(p.begin(), p.end(), [&](const Payloads& payloads) {
-    auto pid = payloads.getId().asVector();
-    bool isValid = storage.getValidity(containing, pid);
-    // reset validity for this block, as this payload is in temporary block
-    if (!isValid) {
-      storage.setValidity(containing, pid, true);
-    }
-    return !isValid;
-  });
-  p.erase(it, p.end());
+template <typename Payload, typename BlockIndex>
+void removePayloadsIfNotInBlock(std::vector<Payload>& payloads,
+                                BlockIndex& index) {
+  auto payloadIds = index.template getPayloadIds<Payload>();
+  std::set<typename Payload::id_t> ids(payloadIds.begin(), payloadIds.end());
+
+  auto it = std::remove_if(
+      payloads.begin(), payloads.end(), [&](const Payload& payload) {
+        auto pid = payload.getId();
+        return ids.count(pid) == 0;
+      });
+  payloads.erase(it, payloads.end());
 }
 
 void addPayloadsContinueOnInvalid(AltBlockTree& tree,
@@ -485,9 +477,9 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
   // setState in 'continueOnInvalid' mode
   setTipContinueOnInvalid(*tmpindex);
 
-  removePayloadsIfInvalid(pop.atvs, payloadsIndex_, *tmpindex);
-  removePayloadsIfInvalid(pop.vtbs, payloadsIndex_, *tmpindex);
-  removePayloadsIfInvalid(pop.context, payloadsIndex_, *tmpindex);
+  removePayloadsIfNotInBlock(pop.atvs, *tmpindex);
+  removePayloadsIfNotInBlock(pop.vtbs, *tmpindex);
+  removePayloadsIfNotInBlock(pop.context, *tmpindex);
 
   VBK_LOG_INFO("Filtered valid: %s", pop.toPrettyString());
 
