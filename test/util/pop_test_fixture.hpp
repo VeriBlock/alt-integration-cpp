@@ -122,9 +122,6 @@ struct PopTestFixture {
   bool AddPayloads(AltBlockTree& tree,
                    const AltBlock::hash_t& hash,
                    const PopData& pop) {
-    popminer->getPayloadsProvider().write(pop);
-    payloadsProvider.write(pop);
-
     auto index = tree.getBlockIndex(hash);
     EXPECT_TRUE(index);
 
@@ -410,7 +407,7 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
 
   std::vector<CommandGroup> commands;
   ValidationState state;
-  EXPECT_NO_THROW(payloadsProvider.getCommands(
+  EXPECT_NO_THROW(payloadsProvider.getPayloadsReader().getCommands(
       tree, *tree.getBlockIndex(containingHash), commands, state))
       << state.toString();
 

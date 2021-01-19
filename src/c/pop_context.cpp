@@ -3,7 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include "adaptors/block_provider_impl.hpp"
-#include "adaptors/payload_provider_impl.hpp"
+#include "adaptors/payloads_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "config.hpp"
 #include "pop_context.hpp"
