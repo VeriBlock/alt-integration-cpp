@@ -1,6 +1,6 @@
 if(TESTING AND TESTING_GO)
     if(NOT WITH_C_WRAPPER)
-        message(FATAL_ERROR "you should build library with the c wrapper, -DWTIH_C_WRAPPER=ON")
+        message(FATAL_ERROR "Please build library with the c wrapper, -DWTIH_C_WRAPPER=ON")
     endif()
 
     find_program(GO go REQUIRED)

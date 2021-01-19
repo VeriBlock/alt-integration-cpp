@@ -1,3 +1,5 @@
+add_subdirectory(storage)
+
 add_library(veriblock-pop-c OBJECT
         config.cpp
         pop_context.cpp
