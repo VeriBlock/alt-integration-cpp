@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -11,7 +13,6 @@
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 #include "veriblock/hashutil.hpp"
-#include "veriblock/mempool.hpp"
 
 using namespace altintegration;
 
@@ -555,7 +556,8 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   submitATV(atv);
   EXPECT_EQ(mempool->getMap<ATV>().size(), 0);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(checkVTB(vtb, state, popminer->getBtcParams()));
+    EXPECT_TRUE(checkVTB(
+        vtb, state, popminer->getBtcParams(), popminer->getVbkParams()));
     submitVTB(vtb);
     EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   }
@@ -878,7 +880,8 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
   vtb2.containingBlock = containingVbkBlock;
 
-  EXPECT_TRUE(checkVTB(vtb2, state, popminer->btc().getParams()));
+  EXPECT_TRUE(checkVTB(
+      vtb2, state, popminer->btc().getParams(), popminer->getVbkParams()));
 
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);
@@ -1020,7 +1023,8 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
   vtb2.containingBlock = containingVbkBlock;
 
-  EXPECT_TRUE(checkVTB(vtb2, state, popminer->btc().getParams()));
+  EXPECT_TRUE(checkVTB(
+      vtb2, state, popminer->btc().getParams(), popminer->getVbkParams()));
 
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);

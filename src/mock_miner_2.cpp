@@ -63,10 +63,7 @@ VbkTx MockMiner2::createVbkTxEndorsingAltBlock(
     const PublicationData& publicationData) {
   VbkTx transaction;
   transaction.signatureIndex = 7;
-  transaction.networkOrType.hasNetworkByte =
-      vbk_params.getTransactionMagicByte().hasValue;
-  transaction.networkOrType.networkByte =
-      vbk_params.getTransactionMagicByte().value;
+  transaction.networkOrType.networkType = vbk_params.getTransactionMagicByte();
   transaction.networkOrType.typeId = (uint8_t)TxType::VBK_TX;
   transaction.sourceAmount = Coin(1000);
   transaction.sourceAddress = Address::fromPublicKey(defaultPublicKeyVbk);
@@ -174,9 +171,7 @@ VbkPopTx MockMiner2::createVbkPopTxEndorsingVbkBlock(
   }
 
   VbkPopTx popTx;
-  popTx.networkOrType.hasNetworkByte =
-      vbk_params.getTransactionMagicByte().hasValue;
-  popTx.networkOrType.networkByte = vbk_params.getTransactionMagicByte().value;
+  popTx.networkOrType.networkType = vbk_params.getTransactionMagicByte();
   popTx.networkOrType.typeId = (uint8_t)TxType::VBK_POP_TX;
   popTx.address = Address::fromPublicKey(defaultPublicKeyVbk);
   popTx.publishedBlock = publishedBlock;
@@ -236,9 +231,7 @@ VbkPopTx MockMiner2::endorseVbkBlock(
     const BtcBlock::hash_t& lastKnownBtcBlockHash,
     ValidationState& state) {
   VbkPopTx popTx;
-  popTx.networkOrType.hasNetworkByte =
-      vbk_params.getTransactionMagicByte().hasValue;
-  popTx.networkOrType.networkByte = vbk_params.getTransactionMagicByte().value;
+  popTx.networkOrType.networkType = vbk_params.getTransactionMagicByte();
   popTx.networkOrType.typeId = (uint8_t)TxType::VBK_POP_TX;
   popTx.address = Address::fromPublicKey(defaultPublicKeyVbk);
   popTx.publishedBlock = publishedBlock;

@@ -56,21 +56,17 @@ struct VbkTx {
 
  private:
   /**
- * Convert VbkTx to data stream using VbkTx basic byte format without
- * signature and publicKey data
- * @param stream data stream to write into
- */
+   * Convert VbkTx to data stream using VbkTx basic byte format without
+   * signature and publicKey data
+   * @param stream data stream to write into
+   */
   void toRaw(WriteStream& stream) const;
 };
 
 template <typename JsonValue>
 JsonValue ToJSON(const VbkTx& tx) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
-  if (tx.networkOrType.hasNetworkByte) {
-    json::putIntKV(obj, "networkByte", tx.networkOrType.networkByte);
-  } else {
-    json::putNullKV(obj, "networkByte");
-  }
+  tx.networkOrType.networkType.template putJson<JsonValue>(obj);
   json::putStringKV(obj, "hash", tx.getHash().toHex());
   json::putIntKV(obj, "type", tx.networkOrType.typeId);
   json::putStringKV(obj, "sourceAddress", tx.sourceAddress.toString());

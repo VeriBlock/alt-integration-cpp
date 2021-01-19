@@ -6,7 +6,7 @@ from pypopminer2 import MockMiner2
 from random import randrange
 
 from .node_rpc import NodeRpc
-from .load_test import load_test
+from pypoptesting.load_test import load_test
 
 
 def main():

@@ -92,7 +92,7 @@ TEST(ToJson, BtcBlock) {
 
 TEST(ToJson, VTB) {
   static const NetworkBytePair networkByte{
-      false, 0, (uint8_t)TxType::VBK_POP_TX};
+      {false, 0}, (uint8_t)TxType::VBK_POP_TX};
 
   static const VbkBlock defaultVbkBlock{
       4917,
@@ -372,7 +372,7 @@ TEST(ToJson, ATV) {
       "a28838da60a8c9dd60190c14c59b82cb90319e"_unhex;
 
   static const VbkTx defaultTx{
-      NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
+      NetworkBytePair{{false, 0}, (uint8_t)TxType::VBK_TX},
       Address::assertFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
       Coin(1000),
       std::vector<Output>{},

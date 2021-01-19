@@ -10,6 +10,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <vector>
+#include <veriblock/entities/network_byte_pair.hpp>
 
 #include "consts.hpp"
 #include "read_stream.hpp"
@@ -193,16 +194,6 @@ size_t singleFixedBEValueSize(T value) {
 size_t varLenValueSize(Slice<const uint8_t> value);
 
 size_t varLenValueSize(size_t valueSize);
-
-/**
- * Stores pair of TxType and VBK network byte.
- */
-struct NetworkBytePair {
-  ///< works as std::optional. if hasNetworkByte is true, networkByte is set
-  bool hasNetworkByte = false;
-  uint8_t networkByte = 0;
-  uint8_t typeId = 0;
-};
 
 /**
  * Read optional network byte from the stream

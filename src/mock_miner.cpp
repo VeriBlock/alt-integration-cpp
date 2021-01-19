@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mock_miner.hpp"
+
 #include <stdexcept>
 
 #include "veriblock/crypto/secp256k1.hpp"
 #include "veriblock/entities/address.hpp"
-#include "veriblock/mock_miner.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {
@@ -63,10 +64,7 @@ VbkTx MockMiner::createVbkTxEndorsingAltBlock(
     const PublicationData& publicationData) {
   VbkTx transaction;
   transaction.signatureIndex = 7;
-  transaction.networkOrType.hasNetworkByte =
-      vbk_params.getTransactionMagicByte().hasValue;
-  transaction.networkOrType.networkByte =
-      vbk_params.getTransactionMagicByte().value;
+  transaction.networkOrType.networkType = vbk_params.getTransactionMagicByte();
   transaction.networkOrType.typeId = (uint8_t)TxType::VBK_TX;
   transaction.sourceAmount = Coin(1000);
   transaction.sourceAddress = Address::fromPublicKey(defaultPublicKeyVbk);
@@ -174,9 +172,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   }
 
   VbkPopTx popTx;
-  popTx.networkOrType.hasNetworkByte =
-      vbk_params.getTransactionMagicByte().hasValue;
-  popTx.networkOrType.networkByte = vbk_params.getTransactionMagicByte().value;
+  popTx.networkOrType.networkType = vbk_params.getTransactionMagicByte();
   popTx.networkOrType.typeId = (uint8_t)TxType::VBK_POP_TX;
   popTx.address = Address::fromPublicKey(defaultPublicKeyVbk);
   popTx.publishedBlock = publishedBlock;
@@ -236,9 +232,7 @@ VbkPopTx MockMiner::endorseVbkBlock(
     const BtcBlock::hash_t& lastKnownBtcBlockHash,
     ValidationState& state) {
   VbkPopTx popTx;
-  popTx.networkOrType.hasNetworkByte =
-      vbk_params.getTransactionMagicByte().hasValue;
-  popTx.networkOrType.networkByte = vbk_params.getTransactionMagicByte().value;
+  popTx.networkOrType.networkType = vbk_params.getTransactionMagicByte();
   popTx.networkOrType.typeId = (uint8_t)TxType::VBK_POP_TX;
   popTx.address = Address::fromPublicKey(defaultPublicKeyVbk);
   popTx.publishedBlock = publishedBlock;

@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -220,7 +221,8 @@ template <>
 MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
                                            ValidationState& state) {
   // stateless validation
-  if (!checkATV(*atv, state, mempool_tree_.alt().getParams())) {
+  auto& alttree = mempool_tree_.alt();
+  if (!checkATV(*atv, state, alttree.getParams(), alttree.vbk().getParams())) {
     return {MemPool::FAILED_STATELESS, state.Invalid("atv-stateless")};
   }
 
@@ -246,7 +248,10 @@ template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
                                            ValidationState& state) {
   // stateless validation
-  if (!checkVTB(*vtb, state, mempool_tree_.btc().getStableTree().getParams())) {
+  if (!checkVTB(*vtb,
+                state,
+                mempool_tree_.btc().getStableTree().getParams(),
+                mempool_tree_.vbk().getStableTree().getParams())) {
     return {FAILED_STATELESS, state.Invalid("vtb-stateless")};
   }
 

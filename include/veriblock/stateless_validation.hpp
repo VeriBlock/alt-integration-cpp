@@ -67,10 +67,12 @@ bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param);
 
 bool checkVbkPopTx(const VbkPopTx& tx,
                    ValidationState& state,
-                   const BtcChainParams& param);
+                   const BtcChainParams& param,
+                   const VbkChainParams& vbk);
 
 bool checkVbkTx(const VbkTx& tx,
                 const AltChainParams& params,
+                const VbkChainParams& vbkparams,
                 ValidationState& state);
 
 bool checkPublicationData(const PublicationData& pub,
@@ -91,11 +93,13 @@ bool checkBlock(const VbkBlock& block,
 
 bool checkATV(const ATV& atv,
               ValidationState& state,
-              const AltChainParams& alt);
+              const AltChainParams& alt,
+              const VbkChainParams& vbkp);
 
 bool checkVTB(const VTB& vtb,
               ValidationState& state,
-              const BtcChainParams& btc);
+              const BtcChainParams& btc,
+              const VbkChainParams& vbk);
 
 bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state);
 

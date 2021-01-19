@@ -1,124 +1,85 @@
-"""
-Generic Node library.
+from abc import ABC, abstractmethod
 
-This module does stuff.
-"""
+from pypoptesting.entities import *
 
 
-class NodeRPCs:
-    @classmethod
-    def get_pop_params(self):
-        print('getpopparams')
+class Node(ABC):
+    @abstractmethod
+    def getpopparams(self) -> PopParamsResponse:
         pass
 
-    @classmethod
-    def submit_pop_atv(self):
-        print('submitpopatv')
+    @abstractmethod
+    def submitpopatv(self, atv: Hexstr) -> SubmitPopResponse:
         pass
 
-    @classmethod
-    def submit_pop_vtb(self):
-        print('submitpopvtb')
+    @abstractmethod
+    def submitpopvtb(self, vtb: Hexstr) -> SubmitPopResponse:
         pass
 
-    @classmethod
-    def submit_pop_vbk(self):
-        print('submitpopvbk')
+    @abstractmethod
+    def submitpopvbk(self, vbk: Hexstr) -> SubmitPopResponse:
         pass
 
-    @classmethod
-    def get_popdata_by_height(self):
-        print('getpopdatabyheight')
+    @abstractmethod
+    def getpopdatabyheight(self, height: int) -> GetpopdataResponse:
         pass
 
-    @classmethod
-    def get_popdata_by_hash(self):
-        print('getpopdatabyhash')
+    @abstractmethod
+    def getpopdatabyhash(self) -> GetpopdataResponse:
         pass
 
-    @classmethod
-    def get_btc_best_block_hash(self):
-        print('getbtcbestblockhash')
+    @abstractmethod
+    def getbtcbestblockhash(self) -> Hexstr:
         pass
 
-    @classmethod
-    def get_vbk_best_block_hash(self):
-        print('getvbkbestblockhash')
+    @abstractmethod
+    def getvbkbestblockhash(self) -> Hexstr:
         pass
 
-    @classmethod
-    def get_raw_atv(self):
-        print('getrawatv')
+    @abstractmethod
+    def getrawatvverbose(self, atvid: Hexstr) -> AtvResponse:
         pass
 
-    @classmethod
-    def get_raw_vtb(self):
-        print('getrawvtb')
+    @abstractmethod
+    def getrawvtbverbose(self, vtbid: Hexstr) -> VtbResponse:
         pass
 
-    @classmethod
-    def get_raw_vbkblock(self):
-        print('getrawvbkblock')
+    @abstractmethod
+    def getrawvbkblockverbose(self, vbkblockid: Hexstr) -> VbkBlockResponse:
         pass
 
-    @classmethod
-    def get_raw_pop_mempool(self):
-        print('getrawpopmempool')
+    @abstractmethod
+    def getrawpopmempool(self) -> RawPopMempoolResponse:
         pass
 
-    @classmethod
-    def generate_new_blocks(self):
-        print('generate_new_blocks')
+    @abstractmethod
+    def generate(self, nblocks: int):
         pass
 
-    @classmethod
-    def get_block_hash_by_height(self):
-        print('get_block_hash_by_height')
+    @abstractmethod
+    def getblockhash(self, height: int) -> Hexstr:
         pass
 
-    @classmethod
-    def get_block_by_hash(self):
-        print('get_block_by_hash')
+    @abstractmethod
+    def getblock(self, hash: Hexstr) -> BlockWithPopData:
         pass
 
-    @classmethod
-    def start(self):
-        print('start')
+    @abstractmethod
+    def start(self) -> None:
         pass
 
-    @classmethod
-    def stop(self):
-        print('stop')
+    @abstractmethod
+    def stop(self) -> None:
         pass
 
-    @classmethod
-    def restart(self):
-        print('restart')
+    @abstractmethod
+    def restart(self) -> None:
         pass
 
-    @classmethod
-    def is_started(self):
-        print('is_started')
+    @abstractmethod
+    def is_started(self) -> bool:
         pass
 
-    @classmethod
-    def is_rpc_available(self):
-        print('is_rpc_available')
+    @abstractmethod
+    def is_rpc_available(self) -> bool:
         pass
-
-
-class Node(NodeRPCs):
-    @classmethod
-    def launch(self):
-        print('Start node')
-        self.startNode()
-
-
-def main():
-    print('Main')
-    Node.launch()
-
-
-if __name__ == '__main__':
-    main()
-
