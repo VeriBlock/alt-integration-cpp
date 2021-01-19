@@ -17,38 +17,28 @@ struct PayloadsReaderImpl : public altintegration::details::PayloadsReader {
 
   PayloadsReaderImpl(size_t maxSize) { buffer.resize(maxSize); }
 
-  bool getATVs(const std::vector<typename altintegration::ATV::id_t>& ids,
-               std::vector<typename altintegration::ATV>& out,
-               altintegration::ValidationState& state) override {
-    (void)ids;
-    (void)out;
-    (void)state;
-    // TODO implement
-    return true;
-  }
-
-  bool getVTBs(const std::vector<typename altintegration::VTB::id_t>& ids,
-               std::vector<altintegration::VTB>& out,
-               altintegration::ValidationState& state) override {
-    (void)ids;
-    (void)out;
-    (void)state;
-    // TODO implement
-    return true;
-  }
-
-  bool getVBKs(const std::vector<typename altintegration::VbkBlock::id_t>& ids,
-               std::vector<altintegration::VbkBlock>& out,
-               altintegration::ValidationState& state) override {
-    (void)ids;
-    (void)out;
-    (void)state;
-    // TODO implement
-    return true;
-  }
-
-  bool getATV(const typename altintegration::ATV::id_t& id,
+  bool getATV(const altintegration::ATV::id_t& id,
               altintegration::ATV& out,
+              altintegration::ValidationState& state) override {
+    (void)id;
+    (void)out;
+    (void)state;
+    // TODO implement
+    return true;
+  }
+
+  bool getVTB(const altintegration::VTB::id_t& id,
+              altintegration::VTB& out,
+              altintegration::ValidationState& state) override {
+    (void)id;
+    (void)out;
+    (void)state;
+    // TODO implement
+    return true;
+  }
+
+  bool getVBK(const altintegration::VbkBlock::id_t& id,
+              altintegration::VbkBlock& out,
               altintegration::ValidationState& state) override {
     (void)id;
     (void)out;

@@ -21,28 +21,26 @@ struct InmemPayloadsProvider : public PayloadsProvider,
 
   details::PayloadsWriter& getPayloadsWriter() override { return *this; }
 
-  bool getATVs(const std::vector<ATV::id_t>& ids,
-               std::vector<ATV>& out,
-               ValidationState& /* ignore */) override {
-    out = getPayload<ATV>(ids);
-    return true;
-  }
-  bool getVTBs(const std::vector<VTB::id_t>& ids,
-               std::vector<VTB>& out,
-               ValidationState& /* ignore */) override {
-    out = getPayload<VTB>(ids);
-    return true;
-  }
-  bool getVBKs(const std::vector<VbkBlock::id_t>& ids,
-               std::vector<VbkBlock>& out,
-               ValidationState& /* ignore */) override {
-    out = getPayload<VbkBlock>(ids);
-    return true;
-  }
-
-  bool getATV(const ATV::id_t& id, ATV& out, ValidationState& state) override {
-    (void)state;
+  bool getATV(const ATV::id_t& id,
+              ATV& out,
+              ValidationState& /* ignore */) override {
     auto vec = getPayload<ATV>({id});
+    VBK_ASSERT(vec.size() == 1);
+    out = vec.at(0);
+    return true;
+  }
+  bool getVTB(const VTB::id_t& id,
+              VTB& out,
+              ValidationState& /* ignore */) override {
+    auto vec = getPayload<VTB>({id});
+    VBK_ASSERT(vec.size() == 1);
+    out = vec.at(0);
+    return true;
+  }
+  bool getVBK(const VbkBlock::id_t& id,
+              VbkBlock& out,
+              ValidationState& /* ignore */) override {
+    auto vec = getPayload<VbkBlock>({id});
     VBK_ASSERT(vec.size() == 1);
     out = vec.at(0);
     return true;

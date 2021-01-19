@@ -25,21 +25,17 @@ namespace details {
 struct PayloadsReader {
   virtual ~PayloadsReader() = default;
 
-  //! should write ALL ATVs identified by `id` into `out`, or return false
-  virtual bool getATVs(const std::vector<ATV::id_t>& ids,
-                       std::vector<ATV>& out,
-                       ValidationState& state) = 0;
-  //! should write ALL VTBs identified by `id` into `out`, or return false
-  virtual bool getVTBs(const std::vector<VTB::id_t>& ids,
-                       std::vector<VTB>& out,
-                       ValidationState& state) = 0;
-  //! should write ALL VbkBlocks identified by `id` into `out`, or return false
-  virtual bool getVBKs(const std::vector<VbkBlock::id_t>& ids,
-                       std::vector<VbkBlock>& out,
-                       ValidationState& state) = 0;
-
-  virtual bool getATV(const ATV::id_t& id,
+  //! should write ATV identified by `id` into `out`, or return false
+  virtual bool getATV(const ATV::id_t& ids,
                       ATV& out,
+                      ValidationState& state) = 0;
+  //! should write VTB identified by `id` into `out`, or return false
+  virtual bool getVTB(const VTB::id_t& ids,
+                      VTB& out,
+                      ValidationState& state) = 0;
+  //! should write VbkBlock identified by `id` into `out`, or return false
+  virtual bool getVBK(const VbkBlock::id_t& id,
+                      VbkBlock& out,
                       ValidationState& state) = 0;
 
   /**

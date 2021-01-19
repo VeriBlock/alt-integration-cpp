@@ -12,21 +12,39 @@ void details::PayloadsReader::getCommands(AltBlockTree& tree,
                                           const BlockIndex<AltBlock>& block,
                                           std::vector<CommandGroup>& out,
                                           ValidationState& state) {
-  std::vector<ATV> atvs;
-  atvs.reserve(block.getPayloadIds<ATV>().size());
-  std::vector<VTB> vtbs;
-  vtbs.reserve(block.getPayloadIds<VTB>().size());
-  std::vector<VbkBlock> vbks;
-  vbks.reserve(block.getPayloadIds<VbkBlock>().size());
+  const auto& atv_ids = block.getPayloadIds<ATV>();
+  const auto& vtb_ids = block.getPayloadIds<VTB>();
+  const auto& vbk_ids = block.getPayloadIds<VbkBlock>();
 
-  if (!getVBKs(block.getPayloadIds<VbkBlock>(), vbks, state)) {
-    throw StateCorruptedException(block, state);
+  std::vector<ATV> atvs;
+  atvs.reserve(atv_ids.size());
+  std::vector<VTB> vtbs;
+  vtbs.reserve(vtb_ids.size());
+  std::vector<VbkBlock> vbks;
+  vbks.reserve(vbk_ids.size());
+
+  for (size_t i = 0; i < atv_ids.size(); ++i) {
+    ATV val;
+    if (!getATV(atv_ids[i], val, state)) {
+      throw StateCorruptedException(block, state);
+    }
+    atvs.push_back(val);
   }
-  if (!getVTBs(block.getPayloadIds<VTB>(), vtbs, state)) {
-    throw StateCorruptedException(block, state);
+
+  for (size_t i = 0; i < vtb_ids.size(); ++i) {
+    VTB val;
+    if (!getVTB(vtb_ids[i], val, state)) {
+      throw StateCorruptedException(block, state);
+    }
+    vtbs.push_back(val);
   }
-  if (!getATVs(block.getPayloadIds<ATV>(), atvs, state)) {
-    throw StateCorruptedException(block, state);
+
+  for (size_t i = 0; i < vbk_ids.size(); ++i) {
+    VbkBlock val;
+    if (!getVBK(vbk_ids[i], val, state)) {
+      throw StateCorruptedException(block, state);
+    }
+    vbks.push_back(val);
   }
 
   auto containingHash = block.getHash();
@@ -42,11 +60,17 @@ void details::PayloadsReader::getCommands(VbkBlockTree& tree,
                                           const BlockIndex<VbkBlock>& block,
                                           std::vector<CommandGroup>& out,
                                           ValidationState& state) {
-  std::vector<VTB> vtbs;
-  vtbs.reserve(block.getPayloadIds<VTB>().size());
+  const auto& vtb_ids = block.getPayloadIds<VTB>();
 
-  if (!getVTBs(block.getPayloadIds<VTB>(), vtbs, state)) {
-    throw StateCorruptedException(block, state);
+  std::vector<VTB> vtbs;
+  vtbs.reserve(vtb_ids.size());
+
+  for (size_t i = 0; i < vtb_ids.size(); ++i) {
+    VTB val;
+    if (!getVTB(vtb_ids[i], val, state)) {
+      throw StateCorruptedException(block, state);
+    }
+    vtbs.push_back(val);
   }
 
   auto containingHash = block.getHash().asVector();
