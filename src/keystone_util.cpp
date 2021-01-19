@@ -32,10 +32,9 @@ int32_t firstKeystoneAfter(int32_t blockNumber, uint32_t keystoneInterval) {
 
   if (isKeystone(blockNumber, keystoneInterval)) {
     return blockNumber + keystoneInterval;
-  } else {
-    int32_t diff = blockNumber % keystoneInterval;
-    return blockNumber + (keystoneInterval - diff);
   }
+  int32_t diff = blockNumber % keystoneInterval;
+  return blockNumber + (keystoneInterval - diff);
 }
 
 int32_t highestBlockWhichConnectsKeystoneToPrevious(

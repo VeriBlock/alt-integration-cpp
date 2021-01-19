@@ -91,16 +91,16 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
       if (block.getBlockTime() >
           prevBlock.getBlockTime() + params.getPowTargetSpacing() * 2) {
         return nProofOfWorkLimit;
-      } else {
-        // Return the last non-special-min-difficulty-rules-block
-        const BlockIndex<BtcBlock>* pindex = &prevBlock;
-        while (pindex->pprev != nullptr &&
-               pindex->getHeight() % params.getDifficultyAdjustmentInterval() !=
-                   0 &&
-               pindex->getDifficulty() == nProofOfWorkLimit)
-          pindex = pindex->pprev;
-        return pindex->getDifficulty();
       }
+
+      // Return the last non-special-min-difficulty-rules-block
+      const BlockIndex<BtcBlock>* pindex = &prevBlock;
+      while (pindex->pprev != nullptr &&
+             pindex->getHeight() % params.getDifficultyAdjustmentInterval() !=
+                 0 &&
+             pindex->getDifficulty() == nProofOfWorkLimit)
+        pindex = pindex->pprev;
+      return pindex->getDifficulty();
     }
     return prevBlock.getDifficulty();
   }
