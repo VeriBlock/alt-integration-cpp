@@ -14,6 +14,7 @@
 namespace altintegration {
 namespace secp256k1 {
 
+// NOLINTNEXTLINE
 struct Secp256k1Context {
   secp256k1_context* ctx;
 
