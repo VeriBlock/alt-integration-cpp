@@ -62,7 +62,7 @@ static inline void keccakf(void* state) {
   uint64_t* a = (uint64_t*)state;
   uint64_t b[5] = {0};
   uint64_t t = 0;
-  uint8_t x, y;
+  uint8_t x = 0, y = 0;
 
   for (int i = 0; i < 24; i++) {
     // Theta

@@ -113,7 +113,7 @@ static void vblake_B2B_G(uint64_t *v,
 // Compression function. "last" flag indicates last block.
 //
 static void vblake_compress(vblake_ctx *ctx) {
-  uint64_t i;
+  uint64_t i = 0;
   static const uint64_t kNumOfRounds = 16;
   uint64_t v[kNumOfRounds] = {};
   uint64_t m[kNumOfRounds] = {};
