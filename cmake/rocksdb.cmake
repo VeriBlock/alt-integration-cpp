@@ -11,8 +11,8 @@ set(CMAKE_DISABLE_FIND_PACKAGE_NUMA TRUE CACHE BOOL "disable find NUMA package")
 
 FetchContent_Declare(
         rocksdb
-        URL "https://github.com/facebook/rocksdb/archive/v6.10.2.tar.gz"
-        URL_HASH SHA256=514b315c64159dd767bbbf6430d33313903c0c9240d4249bddead5c4297d128f
+        GIT_REPOSITORY https://github.com/facebook/rocksdb.git
+        GIT_TAG        v6.15.2
 )
 
 FetchContent_GetProperties(rocksdb)
