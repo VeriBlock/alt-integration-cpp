@@ -25,7 +25,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def getpopdatabyhash(self) -> GetpopdataResponse:
+    def getpopdatabyhash(self, hash: Hexstr) -> GetpopdataResponse:
         pass
 
     @abstractmethod
@@ -37,15 +37,19 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def getrawatvverbose(self, atvid: Hexstr) -> AtvResponse:
+    def getbestblockhash(self) -> Hexstr:
         pass
 
     @abstractmethod
-    def getrawvtbverbose(self, vtbid: Hexstr) -> VtbResponse:
+    def getrawatv(self, atvid: Hexstr) -> AtvResponse:
         pass
 
     @abstractmethod
-    def getrawvbkblockverbose(self, vbkblockid: Hexstr) -> VbkBlockResponse:
+    def getrawvtb(self, vtbid: Hexstr) -> VtbResponse:
+        pass
+
+    @abstractmethod
+    def getrawvbkblock(self, vbkblockid: Hexstr) -> VbkBlockResponse:
         pass
 
     @abstractmethod
@@ -53,7 +57,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def generate(self, nblocks: int):
+    def generate(self, nblocks: int) -> None:
         pass
 
     @abstractmethod
