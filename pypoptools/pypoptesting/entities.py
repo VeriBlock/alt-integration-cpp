@@ -6,6 +6,12 @@ from typing import List, Optional
 class Hexstr:
     value: str
 
+    def __str__(self) -> str:
+        return self.value
+
+    def __repr__(self) -> str:
+        return self.value
+
 
 @dataclass
 class SubmitPopResponse:
