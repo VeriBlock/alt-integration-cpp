@@ -12,60 +12,38 @@
 
 namespace altintegration {
 
-//! In-memory implementation of payloads provider. Used in tests.
-struct InmemPayloadsProvider : public PayloadsProvider {
+struct InmemPayloadsProvider : public PayloadsProvider,
+                               public details::PayloadsWriter,
+                               public details::PayloadsReader {
   ~InmemPayloadsProvider() override = default;
 
-  bool getContainingAltPayloads(const BlockIndex<AltBlock>& block,
-                                PopData& out,
-                                ValidationState& state) override {
-    (void)state;
-    out.version = 1;
-    out.context = getPayload<VbkBlock>(block.getPayloadIds<VbkBlock>());
-    out.vtbs = getPayload<VTB>(block.getPayloadIds<VTB>());
-    out.atvs = getPayload<ATV>(block.getPayloadIds<ATV>());
-    return true;
-  }
+  details::PayloadsReader& getPayloadsReader() override { return *this; }
 
-  bool getATV(const ATV::id_t& id, ATV& out, ValidationState& state) override {
-    (void)state;
+  details::PayloadsWriter& getPayloadsWriter() override { return *this; }
+
+  bool getATV(const ATV::id_t& id,
+              ATV& out,
+              ValidationState& /* ignore */) override {
     auto vec = getPayload<ATV>({id});
     VBK_ASSERT(vec.size() == 1);
     out = vec.at(0);
     return true;
   }
-
-  /**
-   * Returns std::vector<VTB> stored in a block.
-   * @param[in] block input block
-   * @param[out] out std::vector<VTB> stored in a block
-   * @param[out] state in case of error, will contain error message
-   * @return true if payload has been loaded, false otherwise
-   */
-  bool getContainingVbkPayloads(const BlockIndex<VbkBlock>& block,
-                                std::vector<VTB>& out,
-                                ValidationState& state) override {
-    (void)state;
-    out = getPayload<VTB>(block.getPayloadIds<VTB>());
+  bool getVTB(const VTB::id_t& id,
+              VTB& out,
+              ValidationState& /* ignore */) override {
+    auto vec = getPayload<VTB>({id});
+    VBK_ASSERT(vec.size() == 1);
+    out = vec.at(0);
     return true;
   }
-
-  void write(const PopData& data) {
-    write(data.context);
-    write(data.vtbs);
-    write(data.atvs);
-  }
-
-  template <typename T>
-  void write(const std::vector<T>& vs) {
-    for (auto& v : vs) {
-      write(v);
-    }
-  }
-  template <typename T>
-  void write(const T& v) {
-    auto& m = getMap<T>();
-    m.insert({v.getId(), std::make_shared<T>(v)});
+  bool getVBK(const VbkBlock::id_t& id,
+              VbkBlock& out,
+              ValidationState& /* ignore */) override {
+    auto vec = getPayload<VbkBlock>({id});
+    VBK_ASSERT(vec.size() == 1);
+    out = vec.at(0);
+    return true;
   }
 
   template <typename T>
@@ -78,11 +56,11 @@ struct InmemPayloadsProvider : public PayloadsProvider {
       auto it = m.find(id);
       // when fails, it means that AddPayloads was executed but according
       // payloadsProvider.write was not
-      VBK_ASSERT_MSG(it != m.end(),
-                     "requested %s with id=%s not found in "
-                     "InmemPayloadsProvider. Have you called 'write'?",
-                     T::name(),
-                     HexStr(id));
+      VBK_ASSERT_MSG(
+          it != m.end(),
+          "requested %s with id=%s not found in InmemPayloadsProvider.",
+          T::name(),
+          HexStr(id));
       ret.push_back(*it->second);
     }
 
@@ -92,40 +70,52 @@ struct InmemPayloadsProvider : public PayloadsProvider {
   template <typename T>
   std::unordered_map<typename T::id_t, std::shared_ptr<T>>& getMap();
 
+  void writePayloads(const std::vector<ATV>& atvs) override {
+    for (const auto& atv : atvs) {
+      atvs_.insert({atv.getId(), std::make_shared<ATV>(atv)});
+      vbkblocks_.insert({atv.blockOfProof.getId(),
+                         std::make_shared<VbkBlock>(atv.blockOfProof)});
+    }
+  }
+
+  void writePayloads(const std::vector<VTB>& vtbs) override {
+    for (const auto& vtb : vtbs) {
+      vtbs_.insert({vtb.getId(), std::make_shared<VTB>(vtb)});
+      vbkblocks_.insert({vtb.containingBlock.getId(),
+                         std::make_shared<VbkBlock>(vtb.containingBlock)});
+    }
+  }
+
+  void writePayloads(const std::vector<VbkBlock>& vbks) override {
+    for (const auto& vbk : vbks) {
+      vbkblocks_.insert({vbk.getId(), std::make_shared<VbkBlock>(vbk)});
+    }
+  }
+
+  void writePayloads(const PopData& payloads) override {
+    details::PayloadsWriter::writePayloads(payloads);
+  }
+
  private:
-  std::unordered_map<ATV::id_t, std::shared_ptr<ATV>> atvs;
-  std::unordered_map<VTB::id_t, std::shared_ptr<VTB>> vtbs;
-  std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>> vbkblocks;
+  std::unordered_map<ATV::id_t, std::shared_ptr<ATV>> atvs_;
+  std::unordered_map<VTB::id_t, std::shared_ptr<VTB>> vtbs_;
+  std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>> vbkblocks_;
 };
 
 template <>
 inline std::unordered_map<ATV::id_t, std::shared_ptr<ATV>>&
 InmemPayloadsProvider::getMap() {
-  return atvs;
+  return atvs_;
 }
 template <>
 inline std::unordered_map<VTB::id_t, std::shared_ptr<VTB>>&
 InmemPayloadsProvider::getMap() {
-  return vtbs;
+  return vtbs_;
 }
 template <>
 inline std::unordered_map<VbkBlock::id_t, std::shared_ptr<VbkBlock>>&
 InmemPayloadsProvider::getMap() {
-  return vbkblocks;
-}
-
-template <>
-inline void InmemPayloadsProvider::write(const ATV& v) {
-  auto& m = getMap<ATV>();
-  m.insert({v.getId(), std::make_shared<ATV>(v)});
-  write(v.blockOfProof);
-}
-
-template <>
-inline void InmemPayloadsProvider::write(const VTB& v) {
-  auto& m = getMap<VTB>();
-  m.insert({v.getId(), std::make_shared<VTB>(v)});
-  write(v.containingBlock);
+  return vbkblocks_;
 }
 
 }  // namespace altintegration

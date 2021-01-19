@@ -21,49 +21,22 @@ namespace altintegration {
 struct AltBlockTree;
 struct VbkBlockTree;
 
-/**
- * @struct PayloadsProvider
- *
- * An abstraction over on-disk storage.
- *
- * veriblock-pop-cpp does not dictate how to store payloads on-disk. Altchains
- * must create derived class and provide it to AltBlockTree, so that it can
- * fetch payloads from disk during state changes.
- *
- * @ingroup interfaces
- */
-struct PayloadsProvider {
-  virtual ~PayloadsProvider() = default;
+namespace details {
+struct PayloadsReader {
+  virtual ~PayloadsReader() = default;
 
-  /**
-   * Returns PopData stored in a block.
-   * @param[in] block input block
-   * @param[out] out PopData stored in a block
-   * @param[out] state in case of error, will contain error message
-   * @return true if payload has been loaded, false otherwise
-   */
-  virtual bool getContainingAltPayloads(const BlockIndex<AltBlock>& block,
-                                        PopData& out,
-                                        ValidationState& state) = 0;
-
-  /**
-   * Returns std::vector<VTB> stored in a block.
-   * @param[in] block input block
-   * @param[out] out std::vector<VTB> stored in a block
-   * @param[out] state in case of error, will contain error message
-   * @return true if payload has been loaded, false otherwise
-   */
-  virtual bool getContainingVbkPayloads(const BlockIndex<VbkBlock>& block,
-                                        std::vector<VTB>& out,
-                                        ValidationState& state) = 0;
-
-  /**
-   * Returns ATV body given its ID.
-   * @param[in] id ATV id
-   * @param[out] out Validation state in case of error
-   * @return false, if any read error occurs
-   */
-  virtual bool getATV(const ATV::id_t& id, ATV& out, ValidationState& state) = 0;
+  //! should write ATV identified by `id` into `out`, or return false
+  virtual bool getATV(const ATV::id_t& ids,
+                      ATV& out,
+                      ValidationState& state) = 0;
+  //! should write VTB identified by `id` into `out`, or return false
+  virtual bool getVTB(const VTB::id_t& ids,
+                      VTB& out,
+                      ValidationState& state) = 0;
+  //! should write VbkBlock identified by `id` into `out`, or return false
+  virtual bool getVBK(const VbkBlock::id_t& id,
+                      VbkBlock& out,
+                      ValidationState& state) = 0;
 
   /**
    * Load commands from a particular block.
@@ -88,6 +61,39 @@ struct PayloadsProvider {
                            const BlockIndex<VbkBlock>& block,
                            std::vector<CommandGroup>& out,
                            ValidationState& state);
+};
+
+struct PayloadsWriter {
+  virtual ~PayloadsWriter() = default;
+
+  virtual void writePayloads(const std::vector<ATV>& atvs) = 0;
+
+  virtual void writePayloads(const std::vector<VTB>& vtbs) = 0;
+
+  virtual void writePayloads(const std::vector<VbkBlock>& vbks) = 0;
+
+  virtual void writePayloads(const PopData& payloads);
+};
+
+}  // namespace details
+
+/**
+ * @struct PayloadsProvider
+ *
+ * An abstraction over on-disk storage.
+ *
+ * veriblock-pop-cpp does not dictate how to store payloads on-disk. Altchains
+ * must create derived class and provide it to AltBlockTree, so that it can
+ * fetch payloads from disk during state changes.
+ *
+ * @ingroup interfaces
+ */
+struct PayloadsProvider {
+  virtual ~PayloadsProvider() = default;
+
+  virtual details::PayloadsReader& getPayloadsReader() = 0;
+
+  virtual details::PayloadsWriter& getPayloadsWriter() = 0;
 };
 
 }  // namespace altintegration

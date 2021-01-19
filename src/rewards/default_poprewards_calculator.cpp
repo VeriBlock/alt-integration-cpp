@@ -247,7 +247,8 @@ PopPayouts DefaultPopRewardsCalculator::calculatePayoutsInner(
 
     ATV atv;
     ValidationState state;
-    if (!tree_.getPayloadsProvider().getATV(e->getId(), atv, state)) {
+    if (!tree_.getPayloadsProvider().getPayloadsReader().getATV(
+            e->getId(), atv, state)) {
       state.Invalid(fmt::format("cant-load-atv-{}", HexStr(e->getId())));
       throw StateCorruptedException(endorsedBlock, state);
     }

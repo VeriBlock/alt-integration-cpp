@@ -3,13 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/pop_context.hpp"
-
 #include <gtest/gtest.h>
 
 #include <veriblock/config.hpp>
 #include <veriblock/mock_miner_2.hpp>
 #include <veriblock/storage/inmem_payloads_provider.hpp>
+
+#include "veriblock/pop_context.hpp"
 
 using namespace altintegration;
 
@@ -130,7 +130,7 @@ TEST_F(PopContextFixture, A) {
     auto& vtbs = it->second;
 
     ASSERT_TRUE(local.acceptBlock(containing->getHeader(), state));
-    payloadsProvider.write(vtbs);
+    payloadsProvider.getPayloadsWriter().writePayloads(vtbs);
     ASSERT_TRUE(
         local.addPayloads(containing->getHeader().getHash(), {vtbs}, state))
         << state.toString();

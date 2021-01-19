@@ -166,8 +166,7 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   VTB& vtb1 = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
   VTB& vtb2 = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(1);
 
-  payloadsProvider.write(vtb1);
-  payloadsProvider.write(vtb2);
+  payloadsProvider.getPayloadsWriter().writePayloads({vtb1, vtb2});
 
   auto cmd1 = std::make_shared<AddVTB>(alttree, vtb1);
 

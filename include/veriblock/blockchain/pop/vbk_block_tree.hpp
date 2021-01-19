@@ -97,7 +97,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   VbkBlockTree(const VbkChainParams& vbkp,
                const BtcChainParams& btcp,
-               PayloadsProvider& storagePayloads,
+               PayloadsProvider& payloadsProvider,
                PayloadsIndex& payloadsIndex);
 
   //! efficiently connect `index` to current tree, loaded from disk
