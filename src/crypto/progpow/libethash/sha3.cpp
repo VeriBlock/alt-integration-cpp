@@ -8,10 +8,10 @@
  */
 #include "sha3.hpp"
 
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 namespace altintegration {
 namespace progpow {
@@ -87,8 +87,8 @@ static inline void keccakf(void* state) {
 /*** Some helper macros. ***/
 
 #define SHA3_(S) \
-  do {       \
-    S        \
+  do {           \
+    S            \
   } while (0)
 #define FOR(i, ST, L, S) SHA3_(for (size_t i = 0; i < L; i += ST) { S; })
 #define mkapply_ds(NAME, S)                                               \

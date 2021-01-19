@@ -38,12 +38,10 @@ ReadStream::ReadStream(Slice<const uint8_t> slice)
     : m_Buffer(reinterpret_cast<const uint8_t *>(slice.data())),
       m_Size(slice.size()) {}
 
-Slice<const uint8_t> ReadStream::data() const {
-  return Slice<const uint8_t>(m_Buffer, m_Size);
-}
+Slice<const uint8_t> ReadStream::data() const { return {m_Buffer, m_Size}; }
 
 Slice<const uint8_t> ReadStream::remainingBytes() const {
-  return Slice<const uint8_t>(m_Buffer + m_Pos, m_Size - m_Pos);
+  return {m_Buffer + m_Pos, m_Size - m_Pos};
 }
 
 bool ReadStream::read(size_t size, uint8_t *out, ValidationState &state) {

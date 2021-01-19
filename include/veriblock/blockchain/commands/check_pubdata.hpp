@@ -13,7 +13,7 @@ namespace altintegration {
 struct CheckPublicationData : public Command {
   ~CheckPublicationData() override = default;
 
-  CheckPublicationData(const PublicationData& pub,
+  CheckPublicationData(PublicationData pub,
                        AltBlockTree& tree,
                        AltBlock::hash_t endorsed_hash);
 

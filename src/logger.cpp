@@ -43,15 +43,20 @@ std::string LevelToString(LogLevel l) {
 LogLevel StringToLevel(const std::string& str) {
   if (str == "debug") {
     return LogLevel::debug;
-  } else if (str == "info") {
+  }
+  if (str == "info") {
     return LogLevel::info;
-  } else if (str == "warn") {
+  }
+  if (str == "warn") {
     return LogLevel::warn;
-  } else if (str == "error") {
+  }
+  if (str == "error") {
     return LogLevel::error;
-  } else if (str == "critical") {
+  }
+  if (str == "critical") {
     return LogLevel::critical;
-  } else if (str == "off") {
+  }
+  if (str == "off") {
     return LogLevel::off;
   }
   throw std::invalid_argument(

@@ -16,9 +16,9 @@
 */
 #include "internal.hpp"
 
-#include <assert.h>
-#include <inttypes.h>
-#include <stddef.h>
+#include <cassert>
+#include <cinttypes>
+#include <cstddef>
 
 #include <cstring>
 
