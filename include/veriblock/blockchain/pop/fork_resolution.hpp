@@ -529,8 +529,7 @@ struct PopAwareForkResolutionComparator {
 
       auto guard = ing_->deferForkResolutionGuard();
 
-      sm_t sm(
-          ed, *ing_, payloadsProvider_, payloadsIndex_, bestTip->getHeight());
+      sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);
       if (!sm.apply(*bestTip, candidate, state)) {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",

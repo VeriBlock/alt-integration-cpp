@@ -5,8 +5,7 @@
 
 #include "veriblock/c/utils.h"
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <vector>
 
 #include "bytestream.hpp"
