@@ -55,10 +55,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     """Base class for a pop integration test script.
     Individual pop integration test scripts should subclass this class and override the
     set_test_params(), run_test() and setup_network() methods.
-    Individual tests can also override the following methods to customize the test setup:
-    - add_options()
-    - setup_chain()
-    - setup_nodes()
+    Individual tests can also override setup_nodes() to customize the node setup.
     The __init__() and main() methods should not be overridden.
     This class also contains various public and private helper methods."""
 
@@ -69,7 +66,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         self.num_nodes = 0
         self.set_test_params()
 
-    def main(self, factory_lambda: Callable[[], Node]):
+    def main(self, factory_lambda: Callable[[str], Node]):
         """Main function. This should not be overridden by the subclass test scripts."""
 
         assert hasattr(self, "num_nodes"), "Test must set self.num_nodes in set_test_params()"
@@ -113,12 +110,12 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
 
         self.success = TestStatus.PASSED
 
-    def skip_test_if_missing_module(self):
-        """Override this method to skip a test if a module is not compiled"""
+    def setup_nodes(self):
+        """"Override this method to customize the node setup"""
         pass
 
-    def add_options(self, parser):
-        """Override this method to add command-line options to the test"""
+    def skip_test_if_missing_module(self):
+        """Override this method to skip a test if a module is not compiled"""
         pass
 
     def set_test_params(self):
@@ -154,10 +151,10 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
             # Issue RPC to stop nodes
             node.stop()
 
-    def _create_nodes_(self, factory_lambda: Callable[[], Node]):
+    def _create_nodes_(self, factory_lambda: Callable[[str], Node]):
         for i in range(self.num_nodes):
-            self.nodes.append(factory_lambda)
             datadir = os.path.join(self.temp_dir, "node" + str(i))
+            self.nodes.append(factory_lambda(datadir))
             if not os.path.isdir(datadir):
                 os.makedirs(datadir)
 
