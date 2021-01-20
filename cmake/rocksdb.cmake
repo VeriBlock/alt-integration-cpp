@@ -43,3 +43,5 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 disable_clang_tidy(rocksdb)
+
+add_compile_definitions(WITH_ROCKSDB)

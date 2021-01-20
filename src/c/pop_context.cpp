@@ -4,6 +4,9 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include "adaptors/block_provider_impl.hpp"
 #include "adaptors/payloads_provider_impl.hpp"
+#ifdef WITH_ROCKSDB
+#include "adaptors/rocksdb_impl.hpp"
+#endif
 #include "bytestream.hpp"
 #include "config.hpp"
 #include "pop_context.hpp"
@@ -14,22 +17,29 @@
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
 
-PopContext* VBK_NewPopContext(Config_t* config) {
+const static std::string DB_STORAGE_NAME = "altintegration_storage";
+
+PopContext* VBK_NewPopContext(Config_t* config,
+                              const uint8_t* db_path,
+                              int db_path_size) {
   VBK_ASSERT(config);
   VBK_ASSERT(config->config);
   auto& c = config->config;
 
   VBK_ASSERT(c->alt);
-  const auto maxPopDataSize = c->getAltParams().getMaxPopDataSize();
-  auto* v = new PopContext();
-  // maxPopDataSize is the maximum size of payload per block, it is safe
-  // to allocate buffer with this size for all operations
-  v->payloads_provider =
-      std::make_shared<adaptors::PayloadsProviderImpl>(maxPopDataSize);
-  v->block_provider = std::make_shared<adaptors::BlockProviderImpl>();
+  VBK_ASSERT(db_path);
 
-  v->context = altintegration::PopContext::create(
-      c, v->payloads_provider, v->block_provider);
+  std::string db_path_str(db_path, db_path + db_path_size);
+
+  auto* v = new PopContext();
+#ifdef WITH_ROCKSDB
+  v->storage =
+      std::make_shared<adaptors::RocksDBStorage>(db_path_str + DB_STORAGE_NAME);
+  v->payloads_storage =
+      std::make_shared<adaptors::PayloadsStorageImpl>(*v->storage);
+#endif
+
+  v->context = altintegration::PopContext::create(c, v->payloads_storage);
 
   // setup signals
   v->context->mempool->onAccepted<altintegration::ATV>(

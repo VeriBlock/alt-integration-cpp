@@ -3,8 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/c/utils.h"
-
 #include <cstdio>
 #include <vector>
 
@@ -12,6 +10,7 @@
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/alt-util.hpp"
+#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/popdata.hpp"
@@ -186,8 +185,10 @@ bool VBK_checkATV(PopContext* self,
   using namespace altintegration;
   ATV atv = AssertDeserializeFromVbkEncoding<ATV>(
       Slice<const uint8_t>(atv_bytes, atv_bytes_size));
-  return checkATV(
-      atv, state->getState(), self->context->config->getAltParams());
+  return checkATV(atv,
+                  state->getState(),
+                  self->context->config->getAltParams(),
+                  self->context->config->getVbkParams());
 }
 
 bool VBK_checkVTB(PopContext* self,
@@ -203,8 +204,10 @@ bool VBK_checkVTB(PopContext* self,
   using namespace altintegration;
   VTB vtb = AssertDeserializeFromVbkEncoding<VTB>(
       Slice<const uint8_t>(vtb_bytes, vtb_bytes_size));
-  return checkVTB(
-      vtb, state->getState(), self->context->config->getBtcParams());
+  return checkVTB(vtb,
+                  state->getState(),
+                  self->context->config->getBtcParams(),
+                  self->context->config->getVbkParams());
 }
 
 bool VBK_checkVbkBlock(PopContext* self,
