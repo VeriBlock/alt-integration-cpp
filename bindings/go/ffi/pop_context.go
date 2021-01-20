@@ -18,12 +18,13 @@ type PopContext struct {
 }
 
 // NewPopContext ...
-func NewPopContext(config *Config) *PopContext {
+func NewPopContext(config *Config, db_path string) *PopContext {
 	if config == nil {
 		panic("Config not provided")
 	}
+	db_pathC := (*C.uint8_t)(unsafe.Pointer(&db_path))
 	context := &PopContext{
-		ref:     C.VBK_NewPopContext(config.ref),
+		ref:     C.VBK_NewPopContext(config.ref, db_pathC, C.int(len(db_path))),
 		popData: make([]byte, config.GetMaxPopDataSize()),
 	}
 	runtime.SetFinalizer(context, func(v *PopContext) {

@@ -74,7 +74,7 @@ struct RocksDBWriteBatch : public WriteBatch {
  private:
   rocksdb::DB& db_;
   rocksdb::WriteOptions& write_options_;
-  rocksdb::WriteBatch batch_;
+  rocksdb::WriteBatch batch_{};
 };
 
 struct RocksDBStorage : public Storage {
@@ -112,9 +112,9 @@ struct RocksDBStorage : public Storage {
   }
 
  private:
-  rocksdb::DB* db_;
-  rocksdb::WriteOptions write_options_;
-  rocksdb::ReadOptions read_options_;
+  rocksdb::DB* db_{nullptr};
+  rocksdb::WriteOptions write_options_{};
+  rocksdb::ReadOptions read_options_{};
 };
 
 }  // namespace adaptors
