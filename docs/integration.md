@@ -249,7 +249,7 @@ Bootstrapping protocol for BTC/VBK:
 </tr>
 </table>
 
-## 2. Implement PayloadsProvider and BlockBatchAdaptor
+## 2. Implement PayloadsStorage and BlockBatchAdaptor
 
 See comments on these interfaces. 
 
@@ -264,7 +264,7 @@ PopContext is main class-context for all data structures in this library.
 \#include <veriblock/storage/payloads_provider.hpp>
 \#include <veriblock/pop_context.hpp>
 
-std::shared_ptr<altintegration::PayloadsProvider> provider = std::make_shared<PayloadsProviderImpl>();
+std::shared_ptr<altintegration::PayloadsStorage> provider = std::make_shared<PayloadsProviderImpl>();
 std::shared_ptr<altintegration::PopContext> popctx = altintegration::PopContext::create(config, provider);
 
 // example of making popctx globally available

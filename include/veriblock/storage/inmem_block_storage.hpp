@@ -6,16 +6,17 @@
 #ifndef VERIBLOCK_POP_CPP_INMEM_BLOCK_STORAGE_HPP
 #define VERIBLOCK_POP_CPP_INMEM_BLOCK_STORAGE_HPP
 
-#include "veriblock/storage/block_provider.hpp"
+#include "block_batch.hpp"
+#include "veriblock/storage/block_reader.hpp"
 
 namespace altintegration {
 
 /**
- * @class InmemBlockStorage
+ * @class InmemBlockProvider
  * In-memory block storage, used in tests.
  * @private
  */
-struct InmemBlockStorage {
+struct InmemBlockProvider {
   template <typename T>
   using M =
       std::unordered_map<typename T::hash_t, std::shared_ptr<BlockIndex<T>>>;
@@ -55,56 +56,48 @@ struct InmemBlockStorage {
 };
 
 // clang-format off
-template <> inline InmemBlockStorage::M<BtcBlock>& InmemBlockStorage::getBlocks() { return btc; }
-template <> inline InmemBlockStorage::M<VbkBlock>& InmemBlockStorage::getBlocks() { return vbk; }
-template <> inline InmemBlockStorage::M<AltBlock>& InmemBlockStorage::getBlocks() { return alt; }
-template <> inline BtcBlock::hash_t InmemBlockStorage::getTip<BtcBlock>() const { return btcTip; }
-template <> inline VbkBlock::hash_t InmemBlockStorage::getTip<VbkBlock>() const { return vbkTip; }
-template <> inline AltBlock::hash_t InmemBlockStorage::getTip<AltBlock>() const { return altTip; }
+template <> inline InmemBlockProvider::M<BtcBlock>& InmemBlockProvider::getBlocks() { return btc; }
+template <> inline InmemBlockProvider::M<VbkBlock>& InmemBlockProvider::getBlocks() { return vbk; }
+template <> inline InmemBlockProvider::M<AltBlock>& InmemBlockProvider::getBlocks() { return alt; }
+template <> inline BtcBlock::hash_t InmemBlockProvider::getTip<BtcBlock>() const { return btcTip; }
+template <> inline VbkBlock::hash_t InmemBlockProvider::getTip<VbkBlock>() const { return vbkTip; }
+template <> inline AltBlock::hash_t InmemBlockProvider::getTip<AltBlock>() const { return altTip; }
 // clang-format on
 
 //! @private
-struct InmemBlockWriter : public details::GenericBlockWriter<BtcBlock>,
-                          public details::GenericBlockWriter<VbkBlock>,
-                          public details::GenericBlockWriter<AltBlock> {
-  InmemBlockWriter(InmemBlockStorage& storage) : storage_(storage) {}
-  ~InmemBlockWriter() override = default;
+struct InmemBlockBatch : public BlockBatch {
+  InmemBlockBatch(InmemBlockProvider& storage) : storage_(storage) {}
+  ~InmemBlockBatch() override = default;
 
-  bool writeBlock(const BlockIndex<BtcBlock>& value) override {
+  void writeBlock(const BlockIndex<BtcBlock>& value) override {
     storage_.btc[value.getHash()] =
         std::make_shared<BlockIndex<BtcBlock>>(value);
-    return true;
   }
 
-  bool writeBlock(const BlockIndex<VbkBlock>& value) override {
+  void writeBlock(const BlockIndex<VbkBlock>& value) override {
     storage_.vbk[value.getHash()] =
         std::make_shared<BlockIndex<VbkBlock>>(value);
-    return true;
   }
 
-  bool writeBlock(const BlockIndex<AltBlock>& value) override {
+  void writeBlock(const BlockIndex<AltBlock>& value) override {
     storage_.alt[value.getHash()] =
         std::make_shared<BlockIndex<AltBlock>>(value);
-    return true;
   }
 
-  bool writeTip(const BlockIndex<BtcBlock>& value) override {
+  void writeTip(const BlockIndex<BtcBlock>& value) override {
     storage_.btcTip = value.getHash();
-    return true;
   }
 
-  bool writeTip(const BlockIndex<VbkBlock>& value) override {
+  void writeTip(const BlockIndex<VbkBlock>& value) override {
     storage_.vbkTip = value.getHash();
-    return true;
   }
 
-  bool writeTip(const BlockIndex<AltBlock>& value) override {
+  void writeTip(const BlockIndex<AltBlock>& value) override {
     storage_.altTip = value.getHash();
-    return true;
   }
 
  private:
-  InmemBlockStorage& storage_;
+  InmemBlockProvider& storage_;
 };
 
 }  // namespace altintegration

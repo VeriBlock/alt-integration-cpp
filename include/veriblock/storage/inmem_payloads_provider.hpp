@@ -12,14 +12,8 @@
 
 namespace altintegration {
 
-struct InmemPayloadsProvider : public PayloadsProvider,
-                               public details::PayloadsWriter,
-                               public details::PayloadsReader {
+struct InmemPayloadsProvider : public PayloadsStorage {
   ~InmemPayloadsProvider() override = default;
-
-  details::PayloadsReader& getPayloadsReader() override { return *this; }
-
-  details::PayloadsWriter& getPayloadsWriter() override { return *this; }
 
   bool getATV(const ATV::id_t& id,
               ATV& out,
@@ -70,30 +64,22 @@ struct InmemPayloadsProvider : public PayloadsProvider,
   template <typename T>
   std::unordered_map<typename T::id_t, std::shared_ptr<T>>& getMap();
 
-  void writePayloads(const std::vector<ATV>& atvs) override {
-    for (const auto& atv : atvs) {
-      atvs_.insert({atv.getId(), std::make_shared<ATV>(atv)});
-      vbkblocks_.insert({atv.blockOfProof.getId(),
-                         std::make_shared<VbkBlock>(atv.blockOfProof)});
+  void writePayloads(const PopData& p) override {
+    for (const auto& vbk : p.context) {
+      vbkblocks_.insert({vbk.getId(), std::make_shared<VbkBlock>(vbk)});
     }
-  }
 
-  void writePayloads(const std::vector<VTB>& vtbs) override {
-    for (const auto& vtb : vtbs) {
+    for (const auto& vtb : p.vtbs) {
       vtbs_.insert({vtb.getId(), std::make_shared<VTB>(vtb)});
       vbkblocks_.insert({vtb.containingBlock.getId(),
                          std::make_shared<VbkBlock>(vtb.containingBlock)});
     }
-  }
 
-  void writePayloads(const std::vector<VbkBlock>& vbks) override {
-    for (const auto& vbk : vbks) {
-      vbkblocks_.insert({vbk.getId(), std::make_shared<VbkBlock>(vbk)});
+    for (const auto& atv : p.atvs) {
+      atvs_.insert({atv.getId(), std::make_shared<ATV>(atv)});
+      vbkblocks_.insert({atv.blockOfProof.getId(),
+                         std::make_shared<VbkBlock>(atv.blockOfProof)});
     }
-  }
-
-  void writePayloads(const PopData& payloads) override {
-    details::PayloadsWriter::writePayloads(payloads);
   }
 
  private:

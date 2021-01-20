@@ -62,7 +62,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   explicit AltBlockTree(const alt_config_t& alt_config,
                         const vbk_config_t& vbk_config,
                         const btc_config_t& btc_config,
-                        PayloadsProvider& storagePayloads);
+                        PayloadsStorage& storagePayloads);
 
   /**
    * Set very first (bootstrap) altchain block with enabled POP.
@@ -278,9 +278,9 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! @private
   const PayloadsIndex& getPayloadsIndex() const { return payloadsIndex_; }
   //! @private
-  PayloadsProvider& getPayloadsProvider()  { return payloadsProvider_; }
+  PayloadsStorage& getPayloadsProvider()  { return payloadsProvider_; }
   //! @private
-  const PayloadsProvider& getPayloadsProvider() const { return payloadsProvider_; }
+  const PayloadsStorage& getPayloadsProvider() const { return payloadsProvider_; }
   // clang-format on
 
   //! @private
@@ -299,7 +299,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   const btc_config_t* btc_config_;
   PopForkComparator cmp_;
   PayloadsIndex payloadsIndex_;
-  PayloadsProvider& payloadsProvider_;
+  PayloadsStorage& payloadsProvider_;
 
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 

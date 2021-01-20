@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/blockchain/alt_block_tree.hpp"
+
 #include <veriblock/reversed_range.hpp>
 
 #include "veriblock/algorithm.hpp"
 #include "veriblock/alt-util.hpp"
-#include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/command_group_cache.hpp"
 #include "veriblock/entities/context_info_container.hpp"
 
@@ -193,7 +194,7 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   commitPayloadsIds<VTB>(index, payloads.vtbs, payloadsIndex_);
   commitPayloadsIds<ATV>(index, payloads.atvs, payloadsIndex_);
 
-  payloadsProvider_.getPayloadsWriter().writePayloads(payloads);
+  payloadsProvider_.writePayloads(payloads);
 
   // we successfully added this block payloads
   index.setFlag(BLOCK_HAS_PAYLOADS);
@@ -573,7 +574,7 @@ bool AltBlockTree::loadBlock(const AltBlockTree::index_t& index,
 AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            const AltBlockTree::vbk_config_t& vbk_config,
                            const AltBlockTree::btc_config_t& btc_config,
-                           PayloadsProvider& payloadsProvider)
+                           PayloadsStorage& payloadsProvider)
     : alt_config_(&alt_config),
       vbk_config_(&vbk_config),
       btc_config_(&btc_config),

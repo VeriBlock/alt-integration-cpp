@@ -7,7 +7,7 @@
 #define VERIBLOCK_POP_CPP_ADAPTORS_BLOCK_PROVIDER_IMPL_BINDINGS
 
 #include "veriblock/c/extern.h"
-#include "veriblock/storage/block_provider.hpp"
+#include "veriblock/storage/block_reader.hpp"
 
 namespace adaptors {
 

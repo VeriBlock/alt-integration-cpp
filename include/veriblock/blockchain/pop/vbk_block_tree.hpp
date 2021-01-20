@@ -97,7 +97,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   VbkBlockTree(const VbkChainParams& vbkp,
                const BtcChainParams& btcp,
-               PayloadsProvider& payloadsProvider,
+               PayloadsStorage& payloadsProvider,
                PayloadsIndex& payloadsIndex);
 
   //! efficiently connect `index` to current tree, loaded from disk
@@ -175,7 +175,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
   PopForkComparator cmp_;
-  PayloadsProvider& payloadsProvider_;
+  PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
 };
 

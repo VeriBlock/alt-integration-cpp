@@ -41,7 +41,7 @@ struct PopTestFixture {
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
   InmemPayloadsProvider payloadsProvider;
-  InmemBlockStorage blockStorage;
+  InmemBlockProvider blockStorage;
 
   // miners
   std::shared_ptr<MockMiner2> popminer;
@@ -355,7 +355,7 @@ struct PopTestFixture {
     using index_t = typename Tree::index_t;
     auto blocks = LoadBlocksFromDisk<index_t>();
     auto tip = LoadTipFromDisk<index_t>();
-    return LoadTree<Tree>(tree, blocks, tip, state);
+    return LoadBlocks<Tree>(tree, blocks, tip, state);
   }
 };
 
@@ -407,7 +407,7 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
 
   std::vector<CommandGroup> commands;
   ValidationState state;
-  EXPECT_NO_THROW(payloadsProvider.getPayloadsReader().getCommands(
+  EXPECT_NO_THROW(payloadsProvider.getCommands(
       tree, *tree.getBlockIndex(containingHash), commands, state))
       << state.toString();
 

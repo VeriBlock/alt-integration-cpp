@@ -41,13 +41,9 @@ TEST_F(AltTreeRepositoryTest, ValidBlocks) {
   // mine txA into VBK 2nd block
   vbkTip = this->popminer->mineVbkBlocks(1);
 
-  auto writer = InmemBlockWriter(blockStorage);
-  ASSERT_TRUE(SaveTree(this->popminer->btc(),
-                       (details::GenericBlockWriter<BtcBlock>&)writer,
-                       state));
-  ASSERT_TRUE(SaveTree(this->popminer->vbk(),
-                       (details::GenericBlockWriter<VbkBlock>&)writer,
-                       state));
+  auto writer = InmemBlockBatch(blockStorage);
+  SaveTree(this->popminer->btc(), writer);
+  SaveTree(this->popminer->vbk(), writer);
 
   VbkBlockTree newvbk{this->vbkparam,
                       this->btcparam,
@@ -95,15 +91,8 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto writer = InmemBlockWriter(blockStorage);
-  ASSERT_TRUE(SaveTree(this->alttree.vbk(),
-                       (details::GenericBlockWriter<VbkBlock>&)writer,
-                       state));
-  ASSERT_TRUE(SaveTree(this->alttree.btc(),
-                       (details::GenericBlockWriter<BtcBlock>&)writer,
-                       state));
-  ASSERT_TRUE(SaveTree(
-      this->alttree, (details::GenericBlockWriter<AltBlock>&)writer, state));
+  auto writer = InmemBlockBatch(blockStorage);
+  SaveAllTrees(this->alttree, writer);
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
@@ -157,15 +146,8 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto writer = InmemBlockWriter(blockStorage);
-  ASSERT_TRUE(SaveTree(this->alttree.vbk(),
-                       (details::GenericBlockWriter<VbkBlock>&)writer,
-                       state));
-  ASSERT_TRUE(SaveTree(this->alttree.btc(),
-                       (details::GenericBlockWriter<BtcBlock>&)writer,
-                       state));
-  ASSERT_TRUE(SaveTree(
-      this->alttree, (details::GenericBlockWriter<AltBlock>&)writer, state));
+  auto writer = InmemBlockBatch(blockStorage);
+  SaveAllTrees(this->alttree, writer);
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
@@ -243,15 +225,8 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   validateAlttreeIndexState(
       this->alttree, containingBlock, popData, /*payloads_validation =*/true);
 
-  auto writer = InmemBlockWriter(blockStorage);
-  ASSERT_TRUE(SaveTree(this->alttree.vbk(),
-                       (details::GenericBlockWriter<VbkBlock>&)writer,
-                       state));
-  ASSERT_TRUE(SaveTree(this->alttree.btc(),
-                       (details::GenericBlockWriter<BtcBlock>&)writer,
-                       state));
-  ASSERT_TRUE(SaveTree(
-      this->alttree, (details::GenericBlockWriter<AltBlock>&)writer, state));
+  auto writer = InmemBlockBatch(blockStorage);
+  SaveAllTrees(this->alttree, writer);
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};

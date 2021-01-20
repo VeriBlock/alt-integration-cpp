@@ -10,7 +10,7 @@
 
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/pop_context.hpp"
-#include "veriblock/storage/block_provider.hpp"
+#include "veriblock/storage/block_reader.hpp"
 
 // all-in-one thing
 struct PopContext {

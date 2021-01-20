@@ -444,7 +444,7 @@ struct PopAwareForkResolutionComparator {
 
   PopAwareForkResolutionComparator(std::shared_ptr<ProtectingBlockTree> tree,
                                    const protected_params_t& protectedParams,
-                                   PayloadsProvider& payloadsProvider,
+                                   PayloadsStorage& payloadsProvider,
                                    PayloadsIndex& payloadsIndex)
       : ing_(std::move(tree)),
         protectedParams_(&protectedParams),
@@ -669,7 +669,7 @@ struct PopAwareForkResolutionComparator {
   std::shared_ptr<ProtectingBlockTree> ing_;
 
   const protected_params_t* protectedParams_;
-  PayloadsProvider& payloadsProvider_;
+  PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
 };
 
