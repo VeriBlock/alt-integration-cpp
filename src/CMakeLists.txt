@@ -69,7 +69,6 @@ if(WITH_C_WRAPPER)
 add_subdirectory(c)
 list(APPEND SOURCES $<TARGET_OBJECTS:veriblock-pop-c>)
 endif()
-        
 if(WITH_SECP256K1)
     list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
 endif()
@@ -86,6 +85,10 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
+
+if(WITH_ROCKSDB)
+        target_link_libraries(${LIB_NAME} rocksdb)
+endif()
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}

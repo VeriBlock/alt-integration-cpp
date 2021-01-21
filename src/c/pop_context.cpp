@@ -35,6 +35,7 @@ PopContext* VBK_NewPopContext(Config_t* config,
 #ifdef WITH_ROCKSDB
   v->storage =
       std::make_shared<adaptors::RocksDBStorage>(db_path_str + DB_STORAGE_NAME);
+  VBK_ASSERT(false);
   v->payloads_storage =
       std::make_shared<adaptors::PayloadsStorageImpl>(*v->storage);
 #endif
