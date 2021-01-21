@@ -1,7 +1,7 @@
 package ffi
 
 // #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb
 // #include <veriblock/c/mock_miner.h>
 import "C"
 import (

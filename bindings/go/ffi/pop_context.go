@@ -1,7 +1,7 @@
 package ffi
 
 // #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb
 // #include <veriblock/c/pop_context.h>
 import "C"
 import (
@@ -18,13 +18,12 @@ type PopContext struct {
 }
 
 // NewPopContext ...
-func NewPopContext(config *Config, db_path string) *PopContext {
+func NewPopContext(config *Config, c string) *PopContext {
 	if config == nil {
 		panic("Config not provided")
 	}
-	db_pathC := (*C.uint8_t)(unsafe.Pointer(&db_path))
 	context := &PopContext{
-		ref:     C.VBK_NewPopContext(config.ref, db_pathC, C.int(len(db_path))),
+		ref:     C.VBK_NewPopContext(config.ref, C.CString(db_path)),
 		popData: make([]byte, config.GetMaxPopDataSize()),
 	}
 	runtime.SetFinalizer(context, func(v *PopContext) {
