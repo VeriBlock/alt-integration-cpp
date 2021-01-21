@@ -84,7 +84,7 @@ struct RocksDBStorage : public Storage {
     rocksdb::Options options;
     options.create_if_missing = true;
     rocksdb::Status status = rocksdb::DB::Open(options, path, &db_);
-    VBK_ASSERT(status.ok());
+    VBK_ASSERT_MSG(status.ok(), status.getState());
   }
 
   void write(const std::vector<uint8_t>& key,

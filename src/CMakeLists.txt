@@ -85,13 +85,6 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
-if(WITH_ROCKSDB)
-    target_link_libraries(${LIB_NAME} PUBLIC
-            rocksdb
-            )
-    set(ADDITIONAL_TARGETS rocksdb)
-    set(ADDITIONAL_EXPORTS RocksDBTargets)
-endif()
 
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}

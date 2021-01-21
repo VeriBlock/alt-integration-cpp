@@ -3,6 +3,8 @@ find_file(ROCKSDB_HEADER rocksdb/db.h REQUIRED)
 
 link_libraries(${ROCKSDB_LIB})
 
+add_compile_definitions(WITH_ROCKSDB)
+
 #set(WITH_GFLAGS 0 CACHE BOOL "build with gflags")
 #set(WITH_TESTS OFF CACHE BOOL "build with tests")
 #set(WITH_BENCHMARK_TOOLS OFF CACHE BOOL "build with benchmarks")

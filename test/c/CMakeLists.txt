@@ -1,1 +1,0 @@
-addtest(c_pop_context_test pop_context_test.cpp)

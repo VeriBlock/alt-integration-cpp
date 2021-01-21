@@ -19,9 +19,7 @@
 
 const static std::string DB_STORAGE_NAME = "altintegration_storage";
 
-PopContext* VBK_NewPopContext(Config_t* config,
-                              const uint8_t* db_path,
-                              int db_path_size) {
+PopContext* VBK_NewPopContext(Config_t* config, const char* db_path) {
   VBK_ASSERT(config);
   VBK_ASSERT(config->config);
   auto& c = config->config;
@@ -29,13 +27,10 @@ PopContext* VBK_NewPopContext(Config_t* config,
   VBK_ASSERT(c->alt);
   VBK_ASSERT(db_path);
 
-  std::string db_path_str(db_path, db_path + db_path_size);
-
   auto* v = new PopContext();
 #ifdef WITH_ROCKSDB
-  v->storage =
-      std::make_shared<adaptors::RocksDBStorage>(db_path_str + DB_STORAGE_NAME);
-  VBK_ASSERT(false);
+  v->storage = std::make_shared<adaptors::RocksDBStorage>(std::string(db_path) +
+                                                          DB_STORAGE_NAME);
   v->payloads_storage =
       std::make_shared<adaptors::PayloadsStorageImpl>(*v->storage);
 #endif
