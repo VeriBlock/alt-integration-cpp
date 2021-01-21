@@ -11,7 +11,7 @@ class MockMinerTestCase(unittest.TestCase):
         try:
             import pypopminer
         except Exception as e:
-            self.fail("pypopminer can not be imported: " + e)
+            self.fail("pypopminer can not be imported: {}".format(e))
 
     def test_mock_miner_can_produce_publications(self):
         from pypopminer import MockMiner, PublicationData

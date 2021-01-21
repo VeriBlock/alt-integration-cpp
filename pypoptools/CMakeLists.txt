@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 
-find_package(PythonInterp 3 REQUIRED)
+find_package(Python3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
 include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
 
