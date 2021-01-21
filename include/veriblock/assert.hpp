@@ -18,6 +18,22 @@
 #define VBK_UNLIKELY(condition) (condition)
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+#define VBK_DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define VBK_DEPRECATED __declspec(deprecated)
+#else
+#define VBK_DEPRECATED
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+#define VBK_DEPRECATED_MSG(msg) __attribute__((deprecated(msg)))
+#elif defined(_MSC_VER)
+#define VBK_DEPRECATED_MSG(msg) __declspec(deprecated)
+#else
+#define VBK_DEPRECATED_MSG
+#endif
+
 #define VBK_ASSERT_MSG(x, ...)                                               \
   if (!VBK_LIKELY((x))) {                                                    \
     auto msg = fmt::format("Assertion failed at {}:{} inside {}:\n{}\n{}\n", \
