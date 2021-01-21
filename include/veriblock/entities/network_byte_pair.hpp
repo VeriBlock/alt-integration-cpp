@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_NETWORK_BYTE_PAIR_HPP
 
 #include <cstdint>
+#include <string>
 #include <veriblock/json.hpp>
 
 namespace altintegration {
@@ -18,16 +19,22 @@ struct VbkNetworkType {
   //! otherwise, use value for network ID
   uint8_t value = 0;
 
-  operator bool() const {
-    return hasValue;
+  operator bool() const { return hasValue; }
+
+  bool operator==(const VbkNetworkType& other) const {
+    if (!hasValue && !other.hasValue) {
+      return true;
+    }
+
+    return hasValue && other.hasValue && value == other.value;
   }
 
   std::string toPrettyString() const {
-    if(hasValue) {
+    if (hasValue) {
       return std::to_string(value);
     }
 
-    return "null";
+    return {"null"};
   }
 
   template <typename JsonValue>
@@ -48,7 +55,6 @@ struct NetworkBytePair {
   VbkNetworkType networkType;
   uint8_t typeId = 0;
 };
-
 
 }  // namespace altintegration
 
