@@ -1,25 +1,24 @@
-from enum import Enum
-from typing import Callable
-from node import Node
-
 import datetime
 import logging
-import os
+import pathlib
 import subprocess
 import sys
 import tempfile
 import time
+from abc import abstractmethod
+from enum import Enum
+from typing import Callable, List
+
+from pypoptesting.framework.node import Node
+from pypoptesting.framework.test_util import TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED, CreateNodeFunction
+from pypoptesting.framework.util import sync_blocks, sync_pop_mempools, sync_pop_tips, sync_all, \
+    wait_for_rpc_availability
 
 
 class TestStatus(Enum):
     PASSED = 1
     FAILED = 2
     SKIPPED = 3
-
-
-TEST_EXIT_PASSED = 0
-TEST_EXIT_FAILED = 1
-TEST_EXIT_SKIPPED = 77
 
 
 TMPDIR_PREFIX = "pypoptesting_"
@@ -61,19 +60,21 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
 
     def __init__(self):
         """Sets test framework defaults. Do not override this method. Instead, override the set_test_params() method"""
-        self.success = False
-        self.nodes = []
-        self.num_nodes = 0
+        self.success: bool = False
+        self.nodes: List[Node] = []
+        self.num_nodes: int = 0
+        self.dir: pathlib.Path = pathlib.Path()
         self.set_test_params()
 
-    def main(self, factory_lambda: Callable[[str], Node]):
+    def main(self, create_node: CreateNodeFunction):
         """Main function. This should not be overridden by the subclass test scripts."""
 
         assert hasattr(self, "num_nodes"), "Test must set self.num_nodes in set_test_params()"
 
         try:
             self.setup()
-            self._create_nodes_(factory_lambda)
+            self._create_nodes_(create_node)
+            self.setup_network()
             self.run_test()
         except SkipTest as e:
             self.log.warning("Test Skipped: %s" % e.message)
@@ -101,14 +102,23 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         """Call this method to start up the test framework object with options set."""
         # Set up temp directory and start logging
         timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
-        self.temp_dir = tempfile.mkdtemp(prefix=TMPDIR_PREFIX+timestamp)
+        self.dir = tempfile.mkdtemp(prefix=TMPDIR_PREFIX + timestamp)
 
         self._start_logging()
-
         self.skip_test_if_missing_module()
-        self.setup_network()
-
         self.success = TestStatus.PASSED
+
+    def sync_blocks(self, nodes=None, **kwargs):
+        sync_blocks(nodes or self.nodes, **kwargs)
+
+    def sync_pop_mempools(self, nodes=None, **kwargs):
+        sync_pop_mempools(nodes or self.nodes, **kwargs)
+
+    def sync_pop_tips(self, nodes=None, **kwargs):
+        sync_pop_tips(nodes or self.nodes, **kwargs)
+
+    def sync_all(self, nodes=None, **kwargs):
+        sync_all(nodes or self.nodes, **kwargs)
 
     def setup_nodes(self):
         """"Override this method to customize the node setup"""
@@ -118,16 +128,24 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         """Override this method to skip a test if a module is not compiled"""
         pass
 
+    @abstractmethod
     def set_test_params(self):
         """Tests must this method to change default values for number of nodes, topology, etc"""
         raise NotImplementedError
 
+    def setup_network(self):
+        """
+        Default implementation of setup_network starts `num_nodes` and waits for their RPC availability.
+        """
+        for i in self.nodes:
+            i.start()
+
+        for i in self.nodes:
+            wait_for_rpc_availability(i)
+
+    @abstractmethod
     def run_test(self):
         """Tests must override this method to define test logic"""
-        raise NotImplementedError
-
-    def setup_network(self):
-        """Tests must override this method to setup test network topology"""
         raise NotImplementedError
 
     def shutdown(self) -> int:
@@ -140,7 +158,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
             self.log.info("Test skipped")
             exit_code = TEST_EXIT_SKIPPED
         else:
-            self.log.error("Test failed. Test logging available at %s/test_framework.log", self.temp_dir)
+            self.log.error("Test failed. Test logging available at %s/test_framework.log", self.dir)
             exit_code = TEST_EXIT_FAILED
 
         return exit_code
@@ -151,19 +169,18 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
             # Issue RPC to stop nodes
             node.stop()
 
-    def _create_nodes_(self, factory_lambda: Callable[[str], Node]):
+    def _create_nodes_(self, factory_lambda: CreateNodeFunction):
         for i in range(self.num_nodes):
-            datadir = os.path.join(self.temp_dir, "node" + str(i))
-            self.nodes.append(factory_lambda(datadir))
-            if not os.path.isdir(datadir):
-                os.makedirs(datadir)
+            datadir = pathlib.Path(self.dir, "node" + str(i))
+            datadir.mkdir()
+            self.nodes.append(factory_lambda(i, datadir))
 
     def _start_logging(self):
         # Add logger and logging handlers
         self.log = logging.getLogger('TestFramework')
         self.log.setLevel(logging.DEBUG)
         # Create file handler to log all messages
-        fh = logging.FileHandler(self.temp_dir + '/test_framework.log', encoding='utf-8')
+        fh = logging.FileHandler(self.dir + '/test_framework.log', encoding='utf-8')
         fh.setLevel(logging.DEBUG)
         # Create console handler to log messages to stderr.
         ch = logging.StreamHandler(sys.stdout)

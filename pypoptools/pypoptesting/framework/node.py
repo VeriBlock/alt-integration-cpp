@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from pypoptesting.entities import *
+from pypoptesting.framework.entities import *
 
 
 class Node(ABC):
@@ -87,3 +87,18 @@ class Node(ABC):
     @abstractmethod
     def is_rpc_available(self) -> bool:
         pass
+
+    @abstractmethod
+    def connect(self, node):
+        """
+        Should block until this node is connected to other
+        :param node: other Node
+        """
+        pass
+
+    @abstractmethod
+    def disconnect(self, node):
+        """
+        Should block until this node is disconnected from other
+        :param node: other node
+        """
