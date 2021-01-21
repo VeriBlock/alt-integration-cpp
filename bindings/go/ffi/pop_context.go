@@ -1,7 +1,7 @@
 package ffi
 
 // #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/c/pop_context.h>
 import "C"
 import (
@@ -18,7 +18,7 @@ type PopContext struct {
 }
 
 // NewPopContext ...
-func NewPopContext(config *Config, c string) *PopContext {
+func NewPopContext(config *Config, db_path string) *PopContext {
 	if config == nil {
 		panic("Config not provided")
 	}
