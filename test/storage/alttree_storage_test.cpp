@@ -30,7 +30,7 @@ TEST_F(AltTreeRepositoryTest, ValidBlocks) {
   auto* chainAtip = this->popminer->mineBtcBlocks(1, {btctx});
 
   // create VBK pop tx that has 'block of proof=CHAIN A'
-  this->popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkpoptx = this->popminer->createVbkPopTxEndorsingVbkBlock(
       chainAtip->getHeader(),
       btctx,
       vbkTip->getHeader(),
@@ -39,7 +39,7 @@ TEST_F(AltTreeRepositoryTest, ValidBlocks) {
   this->popminer->btc().removeLeaf(*this->popminer->btc().getBestChain().tip());
 
   // mine txA into VBK 2nd block
-  vbkTip = this->popminer->mineVbkBlocks(1);
+  this->popminer->mineVbkBlocks(1, {vbkpoptx});
 
   auto writer = InmemBlockBatch(blockStorage);
   SaveTree(this->popminer->btc(), writer);
@@ -180,14 +180,14 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   auto* chainAtip = this->popminer->mineBtcBlocks(1, {btctx});
 
   VBK_LOG_DEBUG("create a VBK PoP tx that has 'block of proof=CHAIN A'");
-  this->popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkpoptx = this->popminer->createVbkPopTxEndorsingVbkBlock(
       chainAtip->getHeader(),
       btctx,
       vbkTip->getHeader(),
       lastKnownLocalBtcBlock(*this->popminer));
 
   // mine txA into VBK 2nd block
-  vbkTip = this->popminer->mineVbkBlocks(1);
+  vbkTip = this->popminer->mineVbkBlocks(1, {vbkpoptx});
 
   auto vtbs = this->popminer->vbkPayloads[vbkTip->getHash()];
 

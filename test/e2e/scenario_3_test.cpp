@@ -62,7 +62,6 @@ TEST_F(Scenario3, scenario_3) {
   auto popTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
   popminer->mineBtcBlocks(100);
   auto popTx3 = generatePopTx(endorsedVbkBlock1->getHeader());
-  popminer->vbkmempool.clear();
 
   auto* vbkTip2 = popminer->mineVbkBlocks(1, *endorsedVbkBlock2, {popTx2});
 

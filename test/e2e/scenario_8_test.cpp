@@ -50,14 +50,7 @@ TEST_F(Scenario8, scenario_8) {
       vbkTip->getHeight() - 10 - vbkparam.getEndorsementSettlementInterval());
 
   VbkPopTx popTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
-  // remove this popTx from the mempool, so vbk blocks can mine correctly
-  ASSERT_EQ(popminer->vbkmempool.size(), 1);
-  popminer->vbkmempool.erase(popminer->vbkmempool.begin());
-
   VbkPopTx popTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
-  // remove this popTx from the mempool, so vbk blocks can mine correctly
-  ASSERT_EQ(popminer->vbkmempool.size(), 1);
-  popminer->vbkmempool.erase(popminer->vbkmempool.begin());
 
   // generate invalid VTB
   // build merkle tree

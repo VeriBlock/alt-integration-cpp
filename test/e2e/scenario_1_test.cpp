@@ -106,7 +106,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
         btctxA,
         vbkAendorsed->getHeader(),
         GetRegTestBtcBlock().getHash());
-    vbkAtip = popminer->mineVbkBlocks(5, *vbkAendorsed);
+    vbkAtip = popminer->mineVbkBlocks(5, *vbkAendorsed, {vbktxA});
     EXPECT_EQ(btcAtip->getHeight(), 55);
     EXPECT_EQ(btcBtip->getHeight(), 57);
 
@@ -117,7 +117,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
         GetRegTestBtcBlock().getHash());
     EXPECT_EQ(btcAtip->getHeight(), 55);
     EXPECT_EQ(btcBtip->getHeight(), 57);
-    vbkBtip = popminer->mineVbkBlocks(5, *vbkBendorsed);
+    vbkBtip = popminer->mineVbkBlocks(5, *vbkBendorsed, {vbktxB});
     EXPECT_EQ(btcAtip->getHeight(), 55);
     EXPECT_EQ(btcBtip->getHeight(), 57);
 

@@ -20,12 +20,12 @@ TEST_F(Scenario4, scenario_4) {
   // endorse VBK blocks
   auto* endorsedVbkBlock1 = vbkTip.getAncestor(vbkTip.getHeight() - 10);
   auto* endorsedVbkBlock2 = vbkTip.getAncestor(vbkTip.getHeight() - 11);
-  generatePopTx(endorsedVbkBlock1->getHeader());
-  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
+  auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
+  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx1});
   vbkTip = *popminer->mineVbkBlocks(50);
-  generatePopTx(endorsedVbkBlock2->getHeader());
+  auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
-  auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
+  auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
   vbkTip = *containingVbkBlock2;
 
   auto vtbs1 = popminer->vbkPayloads[containingVbkBlock1->getHash()];

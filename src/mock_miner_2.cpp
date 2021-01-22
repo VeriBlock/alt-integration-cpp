@@ -163,12 +163,7 @@ BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
 BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
     size_t amount,
     const BlockIndex<VbkBlock>& tip) {
-  BlockIndex<VbkBlock>* blockIndex = mineVbkBlocks(1, tip, vbkmempool);
-  vbkmempool.clear();
-  if (amount == 1) {
-    return blockIndex;
-  }
-  return mineVbkBlocks(amount - 1, *blockIndex, std::vector<VbkPopTx>());
+  return mineVbkBlocks(amount, tip, std::vector<VbkTx>());
 }
 
 BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
@@ -179,7 +174,9 @@ BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
   BlockIndex<VbkBlock>* blockIndex = nullptr;
   for (size_t i = 0; i < amount; i++) {
     blockIndex = MineBlock(vbk_miner, vbktree, *lastBlockIndex, transactions);
-    vbkTxs[blockIndex->getHash()] = transactions;
+    if (!transactions.empty()) {
+      vbkTxs[blockIndex->getHash()] = transactions;
+    }
     lastBlockIndex = blockIndex;
   }
   return blockIndex;
@@ -193,8 +190,10 @@ BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
   BlockIndex<VbkBlock>* blockIndex = nullptr;
   for (size_t i = 0; i < amount; i++) {
     blockIndex = MineBlock(vbk_miner, vbktree, *lastBlockIndex, transactions);
-    vbkPopTxs[blockIndex->getHash()] = transactions;
-    savePayloads(blockIndex);
+    if (!transactions.empty()) {
+      vbkPopTxs[blockIndex->getHash()] = transactions;
+      savePayloads(blockIndex);
+    }
     lastBlockIndex = blockIndex;
   }
   return blockIndex;
@@ -325,8 +324,6 @@ VbkPopTx MockMiner2::createVbkPopTxEndorsingVbkBlock(
   auto hash = popTx.getHash();
   popTx.signature =
       secp256k1::sign(hash, secp256k1::privateKeyFromVbk(defaultPrivateKeyVbk));
-
-  vbkmempool.push_back(popTx);
 
   return popTx;
 }

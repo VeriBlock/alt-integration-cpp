@@ -42,18 +42,20 @@ struct Scenario5 : public ::testing::Test, public PopTestFixture {
   Scenario5()
       : vbkContextStart(GetRegTestBtcBlock().getHash()) {}
 
-  void mineVbkFork(BlockIndex<VbkBlock>*& tip, size_t blockCount) {
-    tip = popminer->mineVbkBlocks(blockCount, *tip);
+  void mineVbkFork(size_t blockCount,
+                   BlockIndex<VbkBlock>*& tip,
+                   const std::vector<VbkPopTx>& transactions = {}) {
+    tip = popminer->mineVbkBlocks(blockCount, *tip, transactions);
   }
 
-  void popMineVbkFork(BlockIndex<VbkBlock>*& tip, int endorsedAncestorHeight) {
+  void popMineVbkFork(int endorsedAncestorHeight, BlockIndex<VbkBlock>*& tip) {
     auto endorsedBlock = tip->getAncestor(endorsedAncestorHeight)->getHeader();
     auto btcTx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
     auto* btcTip = popminer->mineBtcBlocks(1, {btcTx});
 
-    popminer->createVbkPopTxEndorsingVbkBlock(
+    auto vbkPopTx = popminer->createVbkPopTxEndorsingVbkBlock(
         btcTip->getHeader(), btcTx, endorsedBlock, vbkContextStart);
-    mineVbkFork(tip, 1);
+    mineVbkFork(1, tip, {vbkPopTx});
   }
 
   void assertBestChain(BlockIndex<VbkBlock>* tipA, BlockIndex<VbkBlock>* tipB) {
@@ -86,23 +88,23 @@ TEST_F(Scenario5, scenario_5) {
         popminer->createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
     auto* btcTip = popminer->mineBtcBlocks(1, {btcTx});
 
-    popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
+    auto vbkPopTxA = popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
                                               btcTx,
                                               endorsedBlock->getHeader(),
                                               vbkContextStart);
-    mineVbkFork(tipA, 1);
+    mineVbkFork(1, tipA, {vbkPopTxA});
 
     btcTx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
     btcTip = popminer->mineBtcBlocks(1, {btcTx});
-    popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
+    auto vbkPopTxB = popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
                                               btcTx,
                                               endorsedBlock->getHeader(),
                                               vbkContextStart);
-    mineVbkFork(tipB, 1);
+    mineVbkFork(1, tipB, {vbkPopTxB});
   }
 
-  mineVbkFork(tipA, 9);
-  mineVbkFork(tipB, 9);
+  mineVbkFork(9, tipA);
+  mineVbkFork(9, tipB);
 
   {
     //100 = contains endorsement of A40 present in A50
@@ -115,63 +117,63 @@ TEST_F(Scenario5, scenario_5) {
     auto btcTxA = popminer->createBtcTxEndorsingVbkBlock(endorsedBlockA);
     auto* btcTip = popminer->mineBtcBlocks(1, {btcTxA});
 
-    popminer->createVbkPopTxEndorsingVbkBlock(
+    auto vbkPopTxA = popminer->createVbkPopTxEndorsingVbkBlock(
         btcTip->getHeader(), btcTxA, endorsedBlockA, vbkContextStart);
-    mineVbkFork(tipA, 1);
+    mineVbkFork(1, tipA, {vbkPopTxA});
 
     // 101 = contains endorsement of B40 present in B50
     auto btcTxB = popminer->createBtcTxEndorsingVbkBlock(endorsedBlockB);
     btcTip = popminer->mineBtcBlocks(1, {btcTxB});
 
-    popminer->createVbkPopTxEndorsingVbkBlock(
+    auto vbkPopTxB = popminer->createVbkPopTxEndorsingVbkBlock(
         btcTip->getHeader(), btcTxB, endorsedBlockB, vbkContextStart);
-    mineVbkFork(tipB, 1);
+    mineVbkFork(1, tipB, {vbkPopTxB});
   }
 
-  mineVbkFork(tipA, 19);
+  mineVbkFork(19, tipA);
 
   // 102 = contains endorsement of A60, present in A70
   ASSERT_EQ(101, popminer->btc().getBestChain().tip()->getHeight());
   ASSERT_EQ(69, tipA->getHeight());
-  popMineVbkFork(tipA, 60);
+  popMineVbkFork(60, tipA);
 
   assertBestChain(tipA, tipB);  // A is the best chain as it has an endorsement
 
-  mineVbkFork(tipB, 10);
+  mineVbkFork(10, tipB);
 
   // 103 = contains endorsement of B60, present in B61
   ASSERT_EQ(102, popminer->btc().getBestChain().tip()->getHeight());
   ASSERT_EQ(60, tipB->getHeight());
-  popMineVbkFork(tipB, 60);
+  popMineVbkFork(60, tipB);
 
   assertBestChain(tipA, tipB);  // A is still the best chain as it has an
                                 // earlier endorsement of block 60
 
   popminer->mineBtcBlocks(7);
-  mineVbkFork(tipB, 23);
+  mineVbkFork(23, tipB);
 
   // 111 = contains endorsement of B80, present in B85
   ASSERT_EQ(110, popminer->btc().getBestChain().tip()->getHeight());
   ASSERT_EQ(84, tipB->getHeight());
-  popMineVbkFork(tipB, 80);
+  popMineVbkFork(80, tipB);
 
   assertBestChain(
       tipB, tipA);  // B becomes the best chain as it has more endorsements
 
   popminer->mineBtcBlocks(2);
-  mineVbkFork(tipA, 21);
+  mineVbkFork(21, tipA);
 
   // 114 = contains endorsement of A80, present in A92
   ASSERT_EQ(113, popminer->btc().getBestChain().tip()->getHeight());
   ASSERT_EQ(91, tipA->getHeight());
-  popMineVbkFork(tipA, 80);
+  popMineVbkFork(80, tipA);
 
   assertBestChain(
       tipB,
       tipA);  // B remains the best chain as A has a late block 80 endorsement
 
-  mineVbkFork(tipA, 8);
-  mineVbkFork(tipB, 10);
+  mineVbkFork(8, tipA);
+  mineVbkFork(10, tipB);
 
   // check the final outcome
   ASSERT_EQ(114, popminer->btc().getBestChain().tip()->getHeight());

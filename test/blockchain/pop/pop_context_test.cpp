@@ -59,7 +59,7 @@ struct PopContextFixture : public ::testing::Test {
                                                       lastKnownLocalBtcBlock());
 
     // mine txA into VBK 101-th block
-    vbkTip = remote.mineVbkBlocks(1);
+    vbkTip = remote.mineVbkBlocks(1, {txa});
 
     // create VBK pop tx that has 'block of proof=CHAIN B'
     auto txb =
@@ -69,7 +69,7 @@ struct PopContextFixture : public ::testing::Test {
                                                lastKnownLocalBtcBlock());
 
     // mine this tx into 102-th block
-    vbkTip = remote.mineVbkBlocks(1);
+    vbkTip = remote.mineVbkBlocks(1, {txb});
 
     // we have 2 distinct VTBs
     ASSERT_EQ(remote.vbkPayloads.at(vbkTip->pprev->getHash()).size(), 1);

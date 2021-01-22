@@ -31,9 +31,9 @@ TEST_F(Scenario7, scenario_7) {
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
 
-  generatePopTx(endorsedVbkBlock1->getHeader());
+  auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
 
-  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1);
+  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx1});
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
   VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
 
@@ -49,9 +49,9 @@ TEST_F(Scenario7, scenario_7) {
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
 
-  generatePopTx(endorsedVbkBlock2->getHeader());
+  auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
-  auto* containingVbkBlock2 = popminer->mineVbkBlocks(1);
+  auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
   ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
   VTB vtb2 = popminer->vbkPayloads[containingVbkBlock2->getHash()][0];
 

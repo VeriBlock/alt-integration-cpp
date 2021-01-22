@@ -134,10 +134,9 @@ VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
   altintegration::BtcBlock::hash_t hash = lastKnownBtcBlockHash;
 
   auto tx = self->miner->createVbkPopTxEndorsingVbkBlock(vbk_block, hash);
-  self->miner->vbkmempool.push_back(tx);
 
   VBK_ASSERT(state->IsValid());
-  auto containingBlock = self->miner->mineVbkBlocks(1);
+  auto containingBlock = self->miner->mineVbkBlocks(1, {tx});
   auto vtbs = self->miner->vbkPayloads[containingBlock->getHash()];
   VBK_ASSERT(vtbs.size() == 1);
 

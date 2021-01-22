@@ -24,10 +24,9 @@ TEST_F(PopVbkForkResolution, DISABLED_TooLateToAddPayloads) {
       popminer->createVbkPopTxEndorsingVbkBlock(
           popminer->vbk().getBestChain()[1]->getHeader(),
           getLastKnownBtcBlock());
-  popminer->vbkmempool.push_back(vbkpoptx);
 
   auto limit = popminer->getVbkParams().getHistoryOverwriteLimit();
-  auto vbkcontaining = popminer->mineVbkBlocks(1);
+  auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
 
   // save the generated VTB and remove it from its containing block
   // to avoid triggering the duplicate check
@@ -74,7 +73,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
 
   // mine one block on top of smaller chain A.
   // this block will contain endorsement of chain A
-  auto Avbkcontaining1 = popminer->mineVbkBlocks(1, *chainAtip);
+  auto Avbkcontaining1 = popminer->mineVbkBlocks(1, *chainAtip, {Apoptx1});
 
   // chain changed to chain A, because its POP score is higher
   ASSERT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *Avbkcontaining1));
@@ -94,7 +93,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
       B60->getHeader(),
       GetRegTestBtcBlock().getHash());
 
-  popminer->mineVbkBlocks(1, *chainBtip);
+  popminer->mineVbkBlocks(1, *chainBtip, {Bpoptx1});
 
   // chain is still at chain A, because endorsement was erlier
   EXPECT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *Avbkcontaining1));
@@ -120,7 +119,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
 
   auto* btcBlockTip2 = popminer->mineBtcBlocks(1, *btcForkPoint, {Atx1});
 
-  popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
       btcBlockTip2->getHeader(),
       Atx1,
       vbkBlockTip->getHeader(),
@@ -132,7 +131,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
   ASSERT_EQ(popminer->btc().getBestChain().tip()->getHash(),
             btcBlockTip2->getHash());
 
-  vbkBlockTip = popminer->mineVbkBlocks(1);
+  vbkBlockTip = popminer->mineVbkBlocks(1, {vbkPopTx1});
 
   EXPECT_EQ(vbkBlockTip->pprev->endorsedBy.size(), 1);
 
@@ -192,7 +191,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
   btcBlockTip1 = popminer->mineBtcBlocks(1, {Atx1});
   EXPECT_TRUE(cmp(*btcBlockTip1, *popminer->btc().getBestChain().tip()));
 
-  popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
       btcBlockTip1->getHeader(),
       Atx1,
       endorsedVbkBlock->getHeader(),
@@ -200,7 +199,8 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
 
   auto vbktip1 = popminer->vbk().getBestChain().tip();
   // should not throw, as we removed call to 'invalidateSubtree'
-  ASSERT_THROW(popminer->mineVbkBlocks(1, *vbkBlockTip2), std::domain_error);
+  ASSERT_THROW(popminer->mineVbkBlocks(1, *vbkBlockTip2, {vbkPopTx1}),
+               std::domain_error);
   auto vbktip3 = popminer->vbk().getBestChain().tip();
 
   ASSERT_TRUE(cmp(*vbktip1, *vbktip3)) << "tip has been changed wrongly";
@@ -234,17 +234,17 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
   ASSERT_EQ(btcBlockTip1->getHash(),
             popminer->btc().getBestChain().tip()->getHash());
 
-  popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkPopTxA = popminer->createVbkPopTxEndorsingVbkBlock(
       btcBlockTip1->getHeader(),
       Atx1,
       endorsedVbkBlock->getHeader(),
       GetRegTestBtcBlock().getHash());
 
   // mine the first endorsement
-  popminer->mineVbkBlocks(1);
+  popminer->mineVbkBlocks(1, {vbkPopTxA});
   ASSERT_EQ(endorsedVbkBlock->endorsedBy.size(), 1);
 
-  popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkPopTxB = popminer->createVbkPopTxEndorsingVbkBlock(
       btcBlockTip1->getHeader(),
       Atx1,
       endorsedVbkBlock->getHeader(),
@@ -261,7 +261,7 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
   // the block is invalid
 
   auto vbktip1 = popminer->vbk().getBestChain().tip();
-  popminer->mineVbkBlocks(1);
+  popminer->mineVbkBlocks(1, {vbkPopTxB});
   auto vbktip3 = popminer->vbk().getBestChain().tip();
 
   ASSERT_EQ(vbktip1, vbktip3->pprev);

@@ -44,7 +44,6 @@ class MockMiner2 {
   using vbk_block_tree = VbkBlockTree;
 
  public:
-  std::vector<VbkPopTx> vbkmempool;
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkPayloads;
 
   ATV endorseAltBlock(const PublicationData& publicationData);

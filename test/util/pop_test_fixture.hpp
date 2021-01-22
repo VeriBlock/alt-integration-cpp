@@ -314,19 +314,19 @@ struct PopTestFixture {
     return alttree.btc().getBestChain().tip()->getHash();
   }
 
-  void endorseVbkTip() {
+  VbkPopTx endorseVbkTip() {
     auto* tip = popminer->vbk().getBestChain().tip();
     VBK_ASSERT(tip);
-    auto tx = popminer->createVbkPopTxEndorsingVbkBlock(
+    return popminer->createVbkPopTxEndorsingVbkBlock(
         tip->getHeader(), getLastKnownBtcBlock());
-    popminer->vbkmempool.push_back(tx);
   }
 
   void createEndorsedAltChain(size_t blocks, size_t vtbs = 1) {
+    std::vector<VbkPopTx> transactions(vtbs);
     for (size_t i = 0; i < vtbs; i++) {
-      endorseVbkTip();
+      transactions[i] = endorseVbkTip();
     }
-    popminer->mineVbkBlocks(1);
+    popminer->mineVbkBlocks(1, transactions);
 
     auto* altTip = alttree.getBestChain().tip();
     VBK_ASSERT(altTip);

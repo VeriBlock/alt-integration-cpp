@@ -49,8 +49,8 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   // endorsed vbk block
   auto* endorsedBlock = vbkTip->getAncestor(vbkTip->getHeight() - 5);
-  generatePopTx(endorsedBlock->getHeader());
-  vbkTip = popminer->mineVbkBlocks(1);
+  auto vbkPopTx = generatePopTx(endorsedBlock->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
   auto it = popminer->vbkPayloads.find(vbkTip->getHash());
   ASSERT_TRUE(it != popminer->vbkPayloads.end());
   ASSERT_EQ(it->second.size(), 1);
