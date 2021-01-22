@@ -37,8 +37,8 @@ struct PopContextFixture : public ::testing::Test {
   void SetUp() override {
     // BTC: 100 blocks, then fork A: +50 blocks, fork B: +100 blocks
     forkPoint = remote.mineBtcBlocks(100);
-    chainAtip = remote.mineBtcBlocks(*forkPoint, 50);
-    chainBtip = remote.mineBtcBlocks(*forkPoint, 100);
+    chainAtip = remote.mineBtcBlocks(50, *forkPoint);
+    chainBtip = remote.mineBtcBlocks(100, *forkPoint);
 
     // mine 100 VBK blocks
     vbkTip = remote.mineVbkBlocks(100);
@@ -47,11 +47,11 @@ struct PopContextFixture : public ::testing::Test {
     // BTC_B_101
     auto btctx = remote.createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
     // add BTC tx endorsing VBKTIP into next block after chain A tip
-    chainAtip = remote.mineBtcBlocks(*chainAtip, 1);
+    chainAtip = remote.mineBtcBlocks(1, *chainAtip);
     // add same btctx to mempool again
     remote.btcmempool.push_back(btctx);
     // add BTC tx endorsing VBKTIP into next block after chain B tip
-    chainBtip = remote.mineBtcBlocks(*chainBtip, 1);
+    chainBtip = remote.mineBtcBlocks(1, *chainBtip);
 
     // create VBK pop tx that has 'block of proof=CHAIN A'
     auto txa = remote.createVbkPopTxEndorsingVbkBlock(chainAtip->getHeader(),

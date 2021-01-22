@@ -43,7 +43,7 @@ struct Scenario5 : public ::testing::Test, public PopTestFixture {
       : vbkContextStart(GetRegTestBtcBlock().getHash()) {}
 
   void mineVbkFork(BlockIndex<VbkBlock>*& tip, size_t blockCount) {
-    tip = popminer->mineVbkBlocks(*tip, blockCount);
+    tip = popminer->mineVbkBlocks(blockCount, *tip);
   }
 
   void popMineVbkFork(BlockIndex<VbkBlock>*& tip, int endorsedAncestorHeight) {
@@ -69,8 +69,8 @@ TEST_F(Scenario5, scenario_5) {
 
   auto* vbkForkPoint = popminer->mineVbkBlocks(20);
 
-  auto* tipA = popminer->mineVbkBlocks(*vbkForkPoint, 19);
-  auto* tipB = popminer->mineVbkBlocks(*vbkForkPoint, 19);
+  auto* tipA = popminer->mineVbkBlocks(19, *vbkForkPoint);
+  auto* tipB = popminer->mineVbkBlocks(19, *vbkForkPoint);
 
   // make sure we have actually forked the blockchain
   ASSERT_NE(tipA->getHeader(), tipB->getHeader());

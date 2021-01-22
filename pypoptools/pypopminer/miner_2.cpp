@@ -84,7 +84,7 @@ struct MockMiner2Proxy : private MockMiner2 {
                              prevHash);
     }
 
-    return base::mineVbkBlocks(*index, num)->getHeader();
+    return base::mineVbkBlocks(num, *index)->getHeader();
   }
   BtcBlock mineBtcBlocks(const std::string& prevHash, size_t num) {
     auto* index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(prevHash));
@@ -93,15 +93,15 @@ struct MockMiner2Proxy : private MockMiner2 {
                              prevHash);
     }
 
-    return base::mineBtcBlocks(*index, num)->getHeader();
+    return base::mineBtcBlocks(num, *index)->getHeader();
   }
   VbkBlock mineVbkBlocks(size_t num) {
     auto* index = vbk().getBestChain().tip();
-    return base::mineVbkBlocks(*index, num)->getHeader();
+    return base::mineVbkBlocks(num, *index)->getHeader();
   }
   BtcBlock mineBtcBlocks(size_t num) {
     auto* index = btc().getBestChain().tip();
-    return base::mineBtcBlocks(*index, num)->getHeader();
+    return base::mineBtcBlocks(num, *index)->getHeader();
   }
 
   BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock) {

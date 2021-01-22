@@ -77,24 +77,24 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 
   Scenario1() {
     auto* btcFork = popminer->mineBtcBlocks(50);
-    btcAtip = popminer->mineBtcBlocks(*btcFork, 2);
-    btcBtip = popminer->mineBtcBlocks(*btcFork, 4);
+    btcAtip = popminer->mineBtcBlocks(2, *btcFork);
+    btcBtip = popminer->mineBtcBlocks(4, *btcFork);
 
     vbkFork = popminer->mineVbkBlocks(50);
     // build up more blocks since POP fork resolution only works after
     // keystone interval has been passed
-    auto* vbkAendorsed = popminer->mineVbkBlocks(*vbkFork, 20);
-    auto* vbkBendorsed = popminer->mineVbkBlocks(*vbkFork, 20);
+    auto* vbkAendorsed = popminer->mineVbkBlocks(20, *vbkFork);
+    auto* vbkBendorsed = popminer->mineVbkBlocks(20, *vbkFork);
 
     auto btctxA =
         popminer->createBtcTxEndorsingVbkBlock(vbkAendorsed->getHeader());
-    auto* btcAContaining = popminer->mineBtcBlocks(*btcAtip, 1);
-    btcAtip = popminer->mineBtcBlocks(*btcAContaining, 2);
+    auto* btcAContaining = popminer->mineBtcBlocks(1, *btcAtip);
+    btcAtip = popminer->mineBtcBlocks(2, *btcAContaining);
 
     auto btctxB =
         popminer->createBtcTxEndorsingVbkBlock(vbkBendorsed->getHeader());
-    auto* btcBContaining = popminer->mineBtcBlocks(*btcBtip, 1);
-    btcBtip = popminer->mineBtcBlocks(*btcBContaining, 2);
+    auto* btcBContaining = popminer->mineBtcBlocks(1, *btcBtip);
+    btcBtip = popminer->mineBtcBlocks(2, *btcBContaining);
 
     EXPECT_EQ(btcBtip->getHash(),
               popminer->btc().getBestChain().tip()->getHash());
@@ -106,7 +106,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
         btctxA,
         vbkAendorsed->getHeader(),
         GetRegTestBtcBlock().getHash());
-    vbkAtip = popminer->mineVbkBlocks(*vbkAendorsed, 5);
+    vbkAtip = popminer->mineVbkBlocks(5, *vbkAendorsed);
     EXPECT_EQ(btcAtip->getHeight(), 55);
     EXPECT_EQ(btcBtip->getHeight(), 57);
 
@@ -117,7 +117,7 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
         GetRegTestBtcBlock().getHash());
     EXPECT_EQ(btcAtip->getHeight(), 55);
     EXPECT_EQ(btcBtip->getHeight(), 57);
-    vbkBtip = popminer->mineVbkBlocks(*vbkBendorsed, 5);
+    vbkBtip = popminer->mineVbkBlocks(5, *vbkBendorsed);
     EXPECT_EQ(btcAtip->getHeight(), 55);
     EXPECT_EQ(btcBtip->getHeight(), 57);
 

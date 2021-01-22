@@ -18,10 +18,10 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
   BlockIndex<BtcBlock>* mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
                                       size_t amount) {
     EXPECT_NE(amount, 0);
-    BlockIndex<BtcBlock>* blk = popminer->mineBtcBlocks(tip, 1);
+    BlockIndex<BtcBlock>* blk = popminer->mineBtcBlocks(1, tip);
     EXPECT_TRUE(alttree.btc().acceptBlock(blk->getHeader(), state));
     for (size_t i = 1; i < amount; ++i) {
-      blk = popminer->mineBtcBlocks(*blk, 1);
+      blk = popminer->mineBtcBlocks(1, *blk);
       EXPECT_TRUE(alttree.btc().acceptBlock(blk->getHeader(), state));
     }
     return blk;
@@ -36,12 +36,12 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
   BlockIndex<VbkBlock>* mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
                                       size_t amount) {
     EXPECT_NE(amount, 0);
-    BlockIndex<VbkBlock>* blk = popminer->mineVbkBlocks(tip, 1);
+    BlockIndex<VbkBlock>* blk = popminer->mineVbkBlocks(1, tip);
     EXPECT_TRUE(alttree.vbk().acceptBlock(blk->getHeader(), state));
     EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
               GetRegTestVbkBlock().getHeight());
     for (size_t i = 1; i < amount; ++i) {
-      blk = popminer->mineVbkBlocks(*blk, 1);
+      blk = popminer->mineVbkBlocks(1, *blk);
       EXPECT_TRUE(alttree.vbk().acceptBlock(blk->getHeader(), state));
       EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
                 GetRegTestVbkBlock().getHeight());

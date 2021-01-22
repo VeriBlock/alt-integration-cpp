@@ -51,7 +51,7 @@ TEST_F(Scenario3, scenario_3) {
   // endorse VBK blocks
   auto* endorsedVbkBlock1 = vbkTip1->getAncestor(vbkTip1->getHeight() - 10);
   auto* vbkForkPoint = vbkTip1->getAncestor(vbkTip1->getHeight() - 30);
-  auto endorsedVbkBlock2 = popminer->mineVbkBlocks(*vbkForkPoint, 23);
+  auto endorsedVbkBlock2 = popminer->mineVbkBlocks(23, *vbkForkPoint);
 
   ASSERT_TRUE(popminer->vbk().getBestChain().contains(endorsedVbkBlock1));
   ASSERT_FALSE(popminer->vbk().getBestChain().contains(endorsedVbkBlock2));
@@ -64,7 +64,7 @@ TEST_F(Scenario3, scenario_3) {
   auto popTx3 = generatePopTx(endorsedVbkBlock1->getHeader());
   popminer->vbkmempool.clear();
 
-  auto* vbkTip2 = popminer->mineVbkBlocks(*endorsedVbkBlock2, {popTx2});
+  auto* vbkTip2 = popminer->mineVbkBlocks(1, *endorsedVbkBlock2, {popTx2});
 
   // vbkTip1 heigher than vbkTip2
   ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());
@@ -72,7 +72,7 @@ TEST_F(Scenario3, scenario_3) {
 
   ASSERT_TRUE(cmp(*vbkTip2, *popminer->vbk().getBestChain().tip()));
 
-  vbkTip1 = popminer->mineVbkBlocks(*vbkTip1, {popTx1, popTx3});
+  vbkTip1 = popminer->mineVbkBlocks(1, *vbkTip1, {popTx1, popTx3});
 
   // now we switch active chain to the better endorsements
   ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());

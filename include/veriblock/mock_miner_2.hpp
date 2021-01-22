@@ -60,38 +60,32 @@ class MockMiner2 {
 
   VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData);
 
-  // TODO: Rename after getting rid of copy
-  BtcBlock mineBtcBlocks_(size_t amount);
-  BtcBlock mineBtcBlocks(size_t amount, const BlockIndex<BtcBlock>& tip);
+  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount);
+  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount,
+                                      const std::vector<BtcTx>& transactions);
+  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount,
+                                      const BlockIndex<BtcBlock>& tip);
+  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount,
+                                      const BlockIndex<BtcBlock>& tip,
+                                      const std::vector<BtcTx>& transactions);
 
-  BtcBlock mineBtcBlock(const BlockIndex<BtcBlock>& tip);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const std::vector<VbkPopTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const std::vector<VbkTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const BlockIndex<VbkBlock>& tip);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const BlockIndex<VbkBlock>& tip,
+                                      const std::vector<VbkPopTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const BlockIndex<VbkBlock>& tip,
+                                      const std::vector<VbkTx>& transactions);
 
-  BtcBlock mineBtcBlock(const std::vector<BtcTx>& transactions);
-  BtcBlock mineBtcBlock(const std::vector<BtcTx>& transactions,
-                        const BlockIndex<BtcBlock>& tip);
-  // TODO: Rename after getting rid of copy
-  VbkBlock mineVbkBlocks_(size_t amount);
-  VbkBlock mineVbkBlocks(size_t amount, const BlockIndex<VbkBlock>& tip);
+  std::vector<VTB> getVTBs(const BlockIndex<VbkBlock>& block) const;
 
-  VbkBlock mineVbkBlock(const BlockIndex<VbkBlock>& tip);
-
-  VbkBlock mineVbkBlock(const std::vector<VbkPopTx>& transactions);
-  VbkBlock mineVbkBlock(const std::vector<VbkPopTx>& transactions,
-                        const BlockIndex<VbkBlock>& tip);
-
-  VbkBlock mineVbkBlock(const std::vector<VbkTx>& transactions);
-  VbkBlock mineVbkBlock(const std::vector<VbkTx>& transactions,
-                        const BlockIndex<VbkBlock>& tip);
-
-  std::vector<VTB> getVTBs(const VbkBlock& block) const;
-
-  std::vector<ATV> getATVs(const VbkBlock& block) const;
-
-  BlockIndex<BtcBlock>* getBtcBlockIndex(const BtcBlock& block);
-  BlockIndex<BtcBlock>* getBtcBlockIndex(const BtcBlock::hash_t& blockHash);
-
-  BlockIndex<VbkBlock>* getVbkBlockIndex(const VbkBlock& block);
-  BlockIndex<VbkBlock>* getVbkBlockIndex(const VbkBlock::hash_t& hash);
+  std::vector<ATV> getATVs(const BlockIndex<VbkBlock>& block) const;
 
   const BtcBlock getBtcTip() const;
   const BlockIndex<BtcBlock>* getBtcTipIndex() const;
@@ -107,14 +101,6 @@ class MockMiner2 {
   const BtcChainParams& getBtcParams() const { return btc_params; }
 
   // TODO: Inline and get rid of
-  BlockIndex<BtcBlock>* mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
-                                      size_t amount);
-  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount);
-  BlockIndex<VbkBlock>* mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
-                                      size_t amount);
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount);
-  BlockIndex<VbkBlock>* mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
-                                      const std::vector<VbkPopTx>& poptxs);
   VbkBlock applyVTB(const VbkPopTx& tx);
   VbkBlock applyVTB(const VbkBlock::hash_t& tip, const VbkPopTx& tx);
   VbkBlock applyVTBs(const std::vector<VbkPopTx>& txes);
@@ -150,7 +136,7 @@ class MockMiner2 {
   std::unordered_map<VbkBlock::hash_t, std::vector<VbkPopTx>> vbkPopTxs;
   std::unordered_map<VbkBlock::hash_t, std::vector<VbkTx>> vbkTxs;
 
-  void savePayloads(const VbkBlock& block);
+  void savePayloads(BlockIndex<VbkBlock>* blockIndex);
 };
 
 }  // namespace altintegration

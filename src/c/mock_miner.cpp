@@ -47,7 +47,7 @@ VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
     return nullptr;
   }
 
-  auto* new_block = self->miner->mineBtcBlocks(*block, 1);
+  auto* new_block = self->miner->mineBtcBlocks(1, *block);
   VBK_ASSERT(new_block);
   return new VbkByteStream(new_block->toVbkEncoding());
 }
@@ -74,7 +74,7 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
     return nullptr;
   }
 
-  auto* new_block = self->miner->mineVbkBlocks(*block, 1);
+  auto* new_block = self->miner->mineVbkBlocks(1, *block);
   VBK_ASSERT(new_block);
   return new VbkByteStream(new_block->toVbkEncoding());
 }

@@ -61,7 +61,7 @@ std::shared_ptr<VbkBlock> mineBlock<VbkBlock>(
   auto* tip = mock_miner.vbk().getBlockIndex(hash);
   VBK_ASSERT(tip != nullptr);
   return std::make_shared<VbkBlock>(
-      mock_miner.mineVbkBlocks(*tip, 1)->getHeader());
+      mock_miner.mineVbkBlocks(1, *tip)->getHeader());
 }
 
 template <>
@@ -69,7 +69,7 @@ std::shared_ptr<BtcBlock> mineBlock<BtcBlock>(
     const typename BtcBlock::hash_t& hash, MockMiner2& mock_miner) {
   auto* tip = mock_miner.btc().getBlockIndex(hash);
   return std::make_shared<BtcBlock>(
-      mock_miner.mineBtcBlocks(*tip, 1)->getHeader());
+      mock_miner.mineBtcBlocks(1, *tip)->getHeader());
 }
 
 template <typename BlockTreeType>

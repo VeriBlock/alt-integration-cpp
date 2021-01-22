@@ -62,10 +62,10 @@ uint128 calculateMerkleRoot(const std::vector<VbkTx>& transactions) {
 }
 
 template <typename Miner, typename BlockTree, typename Block, typename Tx>
-Block mineBlock(Miner& miner,
-                BlockTree& tree,
-                const std::vector<Tx>& transactions,
-                const BlockIndex<Block>& tip) {
+BlockIndex<Block>* mineBlock(Miner& miner,
+                             BlockTree& tree,
+                             const BlockIndex<Block>& tip,
+                             const std::vector<Tx>& transactions) {
   Block block;
   if (transactions.empty()) {
     block = miner.createNextBlock(tip);
@@ -75,16 +75,19 @@ Block mineBlock(Miner& miner,
   }
   ValidationState state;
   Check(acceptBlock(tree, block, state), state.toString());
-  return block;
+  BlockIndex<Block>* index = tree.getBlockIndex(block.getHash());
+  Check(index != nullptr, "Index not found for " + block.toPrettyString());
+  return index;
 }
 
 VbkPopTx MockMiner2::endorseVbkBlock(
     const VbkBlock& publishedBlock,
     const BtcBlock::hash_t& lastKnownBtcBlockHash) {
   BtcTx containingTx = createBtcTxEndorsingVbkBlock(publishedBlock);
-  BtcBlock containingBlock = mineBtcBlock({containingTx});
+  BlockIndex<BtcBlock>* containingBlockIndex = mineBtcBlocks(1, {containingTx});
   VbkPopTx popTx = createVbkPopTxEndorsingVbkBlock(
-      containingBlock, containingTx, publishedBlock, lastKnownBtcBlockHash);
+      containingBlockIndex->getHeader(), containingTx,
+      publishedBlock, lastKnownBtcBlockHash);
   return popTx;
 }
 
@@ -181,84 +184,100 @@ VbkTx MockMiner2::createVbkTxEndorsingAltBlock(
   return transaction;
 }
 
-BtcBlock MockMiner2::mineBtcBlocks_(size_t amount) {
+BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(size_t amount) {
   return mineBtcBlocks(amount, *getBtcTipIndex());
 }
 
-BtcBlock MockMiner2::mineBtcBlocks(size_t amount,
-                                   const BlockIndex<BtcBlock>& tip) {
-  BtcBlock lastBlock;
-  const BlockIndex<BtcBlock>* lastBlockIndex = &tip;
-  for (size_t i = 0; i < amount; i++) {
-    lastBlock = mineBtcBlock(*lastBlockIndex);
-    lastBlockIndex = getBtcBlockIndex(lastBlock);
-  }
-  return lastBlock;
+BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(
+    size_t amount,
+    const std::vector<BtcTx>& transactions) {
+  return mineBtcBlocks(amount, *getBtcTipIndex(), transactions);
 }
 
-BtcBlock MockMiner2::mineBtcBlock(const BlockIndex<BtcBlock>& tip) {
-  BtcBlock block = mineBtcBlock(btcmempool, tip);
+BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(
+    size_t amount,
+    const BlockIndex<BtcBlock>& tip) {
+  BlockIndex<BtcBlock>* blockIndex = mineBtcBlocks(1, tip, btcmempool);
   btcmempool.clear();
-  return block;
+  if (amount == 1) {
+    return blockIndex;
+  }
+  return mineBtcBlocks(amount - 1, *blockIndex, {});
 }
 
-BtcBlock MockMiner2::mineBtcBlock(const std::vector<BtcTx>& transactions) {
-  return mineBtcBlock(transactions, *getBtcTipIndex());
+BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(
+    size_t amount,
+    const BlockIndex<BtcBlock>& tip,
+    const std::vector<BtcTx>& transactions) {
+  const BlockIndex<BtcBlock>* lastBlockIndex = &tip;
+  BlockIndex<BtcBlock>* blockIndex = nullptr;
+  for (size_t i = 0; i < amount; i++) {
+    blockIndex =
+        mineBlock(btc_miner, vbktree.btc(), *lastBlockIndex, transactions);
+    btcTxs[blockIndex->getHash()] = transactions;
+    lastBlockIndex = blockIndex;
+  }
+  return blockIndex;
 }
 
-BtcBlock MockMiner2::mineBtcBlock(const std::vector<BtcTx>& transactions,
-                                  const BlockIndex<BtcBlock>& tip) {
-  BtcBlock block = mineBlock(btc_miner, vbktree.btc(), transactions, tip);
-  btcTxs[block.getHash()] = transactions;
-  return block;
-}
-
-VbkBlock MockMiner2::mineVbkBlocks_(size_t amount) {
+BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(size_t amount) {
   return mineVbkBlocks(amount, *getVbkTipIndex());
 }
 
-VbkBlock MockMiner2::mineVbkBlocks(size_t amount,
-                                   const BlockIndex<VbkBlock>& tip) {
-  VbkBlock lastBlock;
-  const BlockIndex<VbkBlock>* lastBlockIndex = &tip;
-  for (size_t i = 0; i < amount; i++) {
-    lastBlock = mineVbkBlock(*lastBlockIndex);
-    lastBlockIndex = getVbkBlockIndex(lastBlock);
-  }
-  return lastBlock;
+BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
+    size_t amount,
+    const std::vector<VbkPopTx>& transactions) {
+  return mineVbkBlocks(amount, *getVbkTipIndex(), transactions);
 }
 
-VbkBlock MockMiner2::mineVbkBlock(const BlockIndex<VbkBlock>& tip) {
-  VbkBlock block = mineVbkBlock(vbkmempool, tip);
+BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
+    size_t amount,
+    const std::vector<VbkTx>& transactions) {
+  return mineVbkBlocks(amount, *getVbkTipIndex(), transactions);
+}
+
+BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(size_t amount,
+                                                const BlockIndex<VbkBlock>& tip) {
+  BlockIndex<VbkBlock>* blockIndex = mineVbkBlocks(1, tip, vbkmempool);
   vbkmempool.clear();
-  return block;
+  if (amount == 1) {
+    return blockIndex;
+  }
+  return mineVbkBlocks(amount - 1, *blockIndex, std::vector<VbkPopTx>());
 }
 
-VbkBlock MockMiner2::mineVbkBlock(const std::vector<VbkPopTx>& transactions) {
-  return mineVbkBlock(transactions, *getVbkTipIndex());
+BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
+    size_t amount,
+    const BlockIndex<VbkBlock>& tip,
+    const std::vector<VbkPopTx>& transactions) {
+  const BlockIndex<VbkBlock>* lastBlockIndex = &tip;
+  BlockIndex<VbkBlock>* blockIndex = nullptr;
+  for (size_t i = 0; i < amount; i++) {
+    blockIndex = mineBlock(vbk_miner, vbktree, *lastBlockIndex, transactions);
+    vbkPopTxs[blockIndex->getHash()] = transactions;
+    savePayloads(blockIndex);
+    lastBlockIndex = blockIndex;
+  }
+  return blockIndex;
 }
 
-VbkBlock MockMiner2::mineVbkBlock(const std::vector<VbkPopTx>& transactions,
-                                  const BlockIndex<VbkBlock>& tip) {
-  VbkBlock block = mineBlock(vbk_miner, vbktree, transactions, tip);
-  vbkPopTxs[block.getHash()] = transactions;
-  savePayloads(block);
-  return block;
+BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
+    size_t amount,
+    const BlockIndex<VbkBlock>& tip,
+    const std::vector<VbkTx>& transactions) {
+  const BlockIndex<VbkBlock>* lastBlockIndex = &tip;
+  BlockIndex<VbkBlock>* blockIndex = nullptr;
+  for (size_t i = 0; i < amount; i++) {
+    blockIndex = mineBlock(vbk_miner, vbktree, *lastBlockIndex, transactions);
+    vbkTxs[blockIndex->getHash()] = transactions;
+    lastBlockIndex = blockIndex;
+  }
+  return blockIndex;
 }
 
-VbkBlock MockMiner2::mineVbkBlock(const std::vector<VbkTx>& transactions) {
-  return mineVbkBlock(transactions, *getVbkTipIndex());
-}
-
-VbkBlock MockMiner2::mineVbkBlock(const std::vector<VbkTx>& transactions,
-                                  const BlockIndex<VbkBlock>& tip) {
-  VbkBlock block = mineBlock(vbk_miner, vbktree, transactions, tip);
-  vbkTxs[block.getHash()] = transactions;
-  return block;
-}
-
-std::vector<VTB> MockMiner2::getVTBs(const VbkBlock& block) const {
-  auto it = vbkPopTxs.find(block.getHash());
+std::vector<VTB> MockMiner2::getVTBs(
+    const BlockIndex<VbkBlock>& blockIndex) const {
+  auto it = vbkPopTxs.find(blockIndex.getHash());
   if (it == vbkPopTxs.end()) {
     return {};
   }
@@ -274,13 +293,14 @@ std::vector<VTB> MockMiner2::getVTBs(const VbkBlock& block) const {
     vtb.merklePath.index = i;
     vtb.merklePath.subject = hashes[i];
     vtb.merklePath.layers = merkleTree.getMerklePathLayers(hashes[i]);
-    vtb.containingBlock = block;
+    vtb.containingBlock = blockIndex.getHeader();
   }
   return vtbs;
 }
 
-std::vector<ATV> MockMiner2::getATVs(const VbkBlock& block) const {
-  auto it = vbkTxs.find(block.getHash());
+std::vector<ATV> MockMiner2::getATVs(
+    const BlockIndex<VbkBlock>& blockIndex) const {
+  auto it = vbkTxs.find(blockIndex.getHash());
   if (it == vbkTxs.end()) {
     return {};
   }
@@ -296,33 +316,9 @@ std::vector<ATV> MockMiner2::getATVs(const VbkBlock& block) const {
     atv.merklePath.index = i;
     atv.merklePath.subject = hashes[i];
     atv.merklePath.layers = merkleTree.getMerklePathLayers(hashes[i]);
-    atv.blockOfProof = block;
+    atv.blockOfProof = blockIndex.getHeader();
   }
   return atvs;
-}
-
-BlockIndex<BtcBlock>* MockMiner2::getBtcBlockIndex(const BtcBlock& block) {
-  return getBtcBlockIndex(block.getHash());
-}
-
-BlockIndex<BtcBlock>* MockMiner2::getBtcBlockIndex(
-    const BtcBlock::hash_t& blockHash) {
-  BlockIndex<BtcBlock>* index = vbktree.btc().getBlockIndex(blockHash);
-  Check(index != nullptr,
-        "Index not found in BTC tree for " + blockHash.toPrettyString());
-  return index;
-}
-
-BlockIndex<VbkBlock>* MockMiner2::getVbkBlockIndex(const VbkBlock& block) {
-  return getVbkBlockIndex(block.getHash());
-}
-
-BlockIndex<VbkBlock>* MockMiner2::getVbkBlockIndex(
-    const VbkBlock::hash_t& blockHash) {
-  BlockIndex<VbkBlock>* index = vbktree.getBlockIndex(blockHash);
-  Check(index != nullptr,
-        "Index not found in VBK tree for " + blockHash.toPrettyString());
-  return index;
 }
 
 const BtcBlock MockMiner2::getBtcTip() const {
@@ -347,68 +343,44 @@ const BlockIndex<VbkBlock>* MockMiner2::getVbkTipIndex() const {
   return index;
 }
 
-void MockMiner2::savePayloads(const VbkBlock& block) {
-  std::vector<VTB> vtbs = getVTBs(block);
-  const auto hash = block.getHash();
+void MockMiner2::savePayloads(BlockIndex<VbkBlock>* blockIndex) {
+  std::vector<VTB> vtbs = getVTBs(*blockIndex);
   PopData pd;
   pd.vtbs = vtbs;
   payloadsProvider.writePayloads(pd);
+  const auto hash = blockIndex->getHash();
   ValidationState state;
   if (!vbktree.addPayloads(hash, vtbs, state)) {
-    BlockIndex<VbkBlock>* index = getVbkBlockIndex(hash);
-    index->removeRef(0);
-    vbktree.removeLeaf(*index);
+    blockIndex->removeRef(0);
+    vbktree.removeLeaf(*blockIndex);
     throw std::domain_error(state.toString());
   }
   vbkPayloads[hash] = vtbs;
 }
 
 // TODO: Inline and get rid of
-BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
-                                                size_t amount) {
-  BtcBlock block = mineBtcBlocks(amount, tip);
-  return getBtcBlockIndex(block);
-}
-BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(size_t amount) {
-  BtcBlock block = mineBtcBlocks_(amount);
-  return getBtcBlockIndex(block);
-}
-BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
-                                                size_t amount) {
-  VbkBlock block = mineVbkBlocks(amount, tip);
-  return getVbkBlockIndex(block);
-}
-BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(size_t amount) {
-  VbkBlock block = mineVbkBlocks_(amount);
-  return getVbkBlockIndex(block);
-}
-BlockIndex<VbkBlock>* MockMiner2::mineVbkBlocks(
-    const BlockIndex<VbkBlock>& tip,
-    const std::vector<VbkPopTx>& poptxs) {
-  VbkBlock block = mineVbkBlock(poptxs, tip);
-  return getVbkBlockIndex(block);
-}
 VbkBlock MockMiner2::applyVTB(const VbkPopTx& tx) {
-  return mineVbkBlock({tx});
+  return mineVbkBlocks(1, {tx})->getHeader();
 }
 VbkBlock MockMiner2::applyVTB(const VbkBlock::hash_t& tip,
                               const VbkPopTx& tx) {
-  return mineVbkBlock({tx}, *getVbkBlockIndex(tip));
+  const BlockIndex<VbkBlock>* tipIndex = vbktree.getBlockIndex(tip);
+  return mineVbkBlocks(1, *tipIndex, {tx})->getHeader();
 }
 VbkBlock MockMiner2::applyVTBs(const std::vector<VbkPopTx>& txes) {
-  return mineVbkBlock(txes);
+  return mineVbkBlocks(1, txes)->getHeader();
 }
 VbkBlock MockMiner2::applyVTBs(const BlockIndex<VbkBlock>& tip,
                                const std::vector<VbkPopTx>& txes) {
-  return mineVbkBlock(txes, tip);
+  return mineVbkBlocks(1, tip, txes)->getHeader();
 }
 ATV MockMiner2::applyATV(const VbkTx& transaction) {
-  VbkBlock block = mineVbkBlock({transaction});
-  return getATVs(block)[0];
+  BlockIndex<VbkBlock>* blockIndex = mineVbkBlocks(1, {transaction});
+  return getATVs(*blockIndex)[0];
 }
 std::vector<ATV> MockMiner2::applyATVs(const std::vector<VbkTx>& transactions) {
-  VbkBlock block = mineVbkBlock(transactions);
-  return getATVs(block);
+  BlockIndex<VbkBlock>* blockIndex = mineVbkBlocks(1, transactions);
+  return getATVs(*blockIndex);
 }
 
 }  // namespace altintegration
