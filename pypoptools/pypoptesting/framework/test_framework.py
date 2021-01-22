@@ -21,7 +21,7 @@ class TestStatus(Enum):
     SKIPPED = 3
 
 
-TMPDIR_PREFIX = "pypoptesting_"
+TMPDIR_PREFIX = "pypoptesting"
 
 
 class SkipTest(Exception):
@@ -66,13 +66,16 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         self.dir: pathlib.Path = pathlib.Path()
         self.set_test_params()
 
-    def main(self, create_node: CreateNodeFunction):
+    def name(self) -> str:
+        return type(self).__name__
+
+    def main(self, create_node: CreateNodeFunction, tmpdir):
         """Main function. This should not be overridden by the subclass test scripts."""
 
         assert hasattr(self, "num_nodes"), "Test must set self.num_nodes in set_test_params()"
 
         try:
-            self.setup()
+            self.setup(tmpdir)
             self._create_nodes_(create_node)
             self.setup_network()
             self.run_test()
@@ -98,12 +101,11 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
             exit_code = self.shutdown()
             sys.exit(exit_code)
 
-    def setup(self):
+    def setup(self, parent):
         """Call this method to start up the test framework object with options set."""
         # Set up temp directory and start logging
-        timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
-        self.dir = tempfile.mkdtemp(prefix=TMPDIR_PREFIX + timestamp)
-
+        timestamp = datetime.datetime.now().strftime("%y%m%d%H%M%S")
+        self.dir = tempfile.mkdtemp(dir=parent, prefix="{}_{}_".format(timestamp, self.name()))
         self._start_logging()
         self.skip_test_if_missing_module()
         self.success = TestStatus.PASSED
@@ -178,10 +180,10 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     def _start_logging(self):
         # Add logger and logging handlers
         self.log = logging.getLogger('TestFramework')
-        self.log.setLevel(logging.DEBUG)
+        self.log.setLevel(logging.ERROR)
         # Create file handler to log all messages
         fh = logging.FileHandler(pathlib.Path(self.dir, 'test_framework.log'), encoding='utf-8')
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(logging.INFO)
         # Create console handler to log messages to stderr.
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.ERROR)
