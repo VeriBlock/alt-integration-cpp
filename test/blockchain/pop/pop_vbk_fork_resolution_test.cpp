@@ -22,8 +22,7 @@ TEST_F(PopVbkForkResolution, DISABLED_TooLateToAddPayloads) {
   // generate a VTB
   auto vbkpoptx =
       popminer->endorseVbkBlock(popminer->vbk().getBestChain()[1]->getHeader(),
-                                getLastKnownBtcBlock(),
-                                state);
+                                getLastKnownBtcBlock());
   popminer->vbkmempool.push_back(vbkpoptx);
 
   auto limit = popminer->getVbkParams().getHistoryOverwriteLimit();

@@ -47,7 +47,7 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
         popTxs.push_back(tx);
       }
     }
-    auto atvs = popminer->applyATVs(popTxs, state);
+    auto atvs = popminer->applyATVs(popTxs);
 
     PopData popData;
     popData.atvs = atvs;

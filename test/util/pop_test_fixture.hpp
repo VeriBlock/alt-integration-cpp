@@ -280,13 +280,13 @@ struct PopTestFixture {
 
     for (size_t i = 0; i < VTBs; i++) {
       auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
-      auto vbkcontaining = popminer->applyVTB(popminer->vbk(), vbkpoptx, state);
+      auto vbkcontaining = popminer->applyVTB(vbkpoptx);
       auto newvtb = popminer->vbkPayloads.at(vbkcontaining.getHash()).back();
       popData.vtbs.push_back(newvtb);
     }
 
     for (const auto& t : transactions) {
-      popData.atvs.push_back(popminer->applyATV(t, state));
+      popData.atvs.push_back(popminer->applyATV(t));
     }
 
     fillVbkContext(popData.context, lastVbk, popminer->vbk());
@@ -316,7 +316,7 @@ struct PopTestFixture {
     auto* tip = popminer->vbk().getBestChain().tip();
     VBK_ASSERT(tip);
     auto tx = popminer->endorseVbkBlock(
-        tip->getHeader(), getLastKnownBtcBlock(), state);
+        tip->getHeader(), getLastKnownBtcBlock());
     popminer->vbkmempool.push_back(tx);
   }
 

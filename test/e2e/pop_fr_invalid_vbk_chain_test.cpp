@@ -24,9 +24,9 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // next block in B endorses block number 25 in its chain twice, and
   // containing is block 39
   auto vbkpoptx1 = popminer->endorseVbkBlock(
-      tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock(), state);
+      tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock());
   auto vbkpoptx2 = popminer->endorseVbkBlock(
-      tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock(), state);
+      tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock());
   popminer->vbkmempool.push_back(vbkpoptx1);
   popminer->vbkmempool.push_back(vbkpoptx2);
 
@@ -43,7 +43,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto missingVbkBlock = popminer->mineVbkBlocks(*tipB, 1);
   tipB = missingVbkBlock;
   auto vbkpoptx = popminer->endorseVbkBlock(
-      tipB->getAncestor(26)->getHeader(), getLastKnownBtcBlock(), state);
+      tipB->getAncestor(26)->getHeader(), getLastKnownBtcBlock());
   popminer->vbkmempool.push_back(vbkpoptx);
   tipB = popminer->mineVbkBlocks(*tipB, 1);
   ASSERT_EQ(tipB->getHeight(), 41);
@@ -56,7 +56,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // endorse ALT5
   auto vbktx1 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
-  auto atv1 = popminer->applyATV(vbktx1, state);
+  auto atv1 = popminer->applyATV(vbktx1);
   ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
   // mine 10 more blocks on top of tipB
@@ -80,7 +80,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // endorse ALT5
   auto vbktx2 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
-  auto atv2 = popminer->applyATV(vbktx1, state);
+  auto atv2 = popminer->applyATV(vbktx1);
   ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
   auto vtb2 = popminer->vbkPayloads[vtbcontaining.getHash()][1];

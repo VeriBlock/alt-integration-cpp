@@ -18,16 +18,13 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
 
   vbkPopTxs.emplace_back(popminer->endorseVbkBlock(
       popminer->vbk().getBestChain().tip()->getHeader(),
-      popminer->btc().getBestChain().tip()->getHash(),
-      state));
+      popminer->btc().getBestChain().tip()->getHash()));
   vbkPopTxs.emplace_back(popminer->endorseVbkBlock(
       popminer->vbk().getBestChain().tip()->getHeader(),
-      popminer->btc().getBestChain().tip()->getHash(),
-      state));
+      popminer->btc().getBestChain().tip()->getHash()));
 
   // both VTBs should be contained in the same block
-  VbkBlock containingVbkBlock =
-      popminer->applyVTBs(popminer->vbk(), vbkPopTxs, state);
+  VbkBlock containingVbkBlock = popminer->applyVTBs(vbkPopTxs);
 
   popData.vtbs = popminer->vbkPayloads.at(containingVbkBlock.getHash());
   fillVbkContext(popData.context,

@@ -172,7 +172,6 @@ struct MockMiner2Proxy : private MockMiner2 {
   Payloads endorseAltBlock(const PublicationData& pub,
                            const std::string& lastVbkBlock) {
     Payloads payloads;
-    ValidationState state;
     auto vbkindex =
         vbk().getBlockIndex(VbkBlock::hash_t::fromHex(lastVbkBlock));
     if (!vbkindex) {
@@ -181,11 +180,7 @@ struct MockMiner2Proxy : private MockMiner2 {
           lastVbkBlock);
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    payloads.atv = base::applyATV(vbktx, state);
-    if (!state.IsValid()) {
-      throw std::logic_error("MockMiner2: can't create ATV: " +
-                             state.toString());
-    }
+    payloads.atv = base::applyATV(vbktx);
 
     std::vector<VbkBlock> context;
     // in range of blocks [lastVbkBlock... vbk tip] look for VTBs and put them
