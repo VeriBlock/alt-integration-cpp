@@ -358,10 +358,4 @@ void MockMiner2::savePayloads(BlockIndex<VbkBlock>* blockIndex) {
   vbkPayloads[hash] = vtbs;
 }
 
-// TODO: Inline and get rid of
-ATV MockMiner2::applyATV(const VbkTx& transaction) {
-  BlockIndex<VbkBlock>* blockIndex = mineVbkBlocks(1, {transaction});
-  return getATVs(*blockIndex)[0];
-}
-
 }  // namespace altintegration

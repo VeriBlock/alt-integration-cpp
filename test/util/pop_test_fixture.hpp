@@ -285,8 +285,10 @@ struct PopTestFixture {
       popData.vtbs.push_back(newvtb);
     }
 
-    for (const auto& t : transactions) {
-      popData.atvs.push_back(popminer->applyATV(t));
+    for (const auto& tx : transactions) {
+      auto* block = popminer->mineVbkBlocks(1, {tx});
+      ATV atv = popminer->getATVs(*block)[0];
+      popData.atvs.push_back(atv);
     }
 
     fillVbkContext(popData.context, lastVbk, popminer->vbk());

@@ -102,7 +102,8 @@ TEST_F(Scenario8, scenario_8) {
   AltBlock endorsedBlock = chain[5];
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  ATV atv1 = popminer->applyATV(tx1);
+  auto* block1 = popminer->mineVbkBlocks(1, {tx1});
+  ATV atv1 = popminer->getATVs(*block1)[0];
 
   PopData popData1;
   popData1.atvs = {atv1};
@@ -132,7 +133,8 @@ TEST_F(Scenario8, scenario_8) {
 
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  ATV atv2 = popminer->applyATV(tx1);
+  auto* block2 = popminer->mineVbkBlocks(1, {tx2});
+  ATV atv2 = popminer->getATVs(*block2)[0];
 
   PopData popData2;
   popData2.atvs = {atv2};

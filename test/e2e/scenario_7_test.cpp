@@ -43,9 +43,8 @@ TEST_F(Scenario7, scenario_7) {
   AltBlock endorsedBlock1 = chain[5];
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
-  ATV atv1 = popminer->applyATV(tx1);
-
-  vbkTip = popminer->vbk().getBestChain().tip();
+  auto* block1 = popminer->mineVbkBlocks(1, {tx1});
+  ATV atv1 = popminer->getATVs(*block1)[0];
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -59,7 +58,8 @@ TEST_F(Scenario7, scenario_7) {
   AltBlock endorsedBlock2 = chain[5];
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock2));
-  ATV atv2 = popminer->applyATV(tx2);
+  auto* block2 = popminer->mineVbkBlocks(1, {tx2});
+  ATV atv2 = popminer->getATVs(*block2)[0];
 
   PopData popData;
   popData.atvs = {atv1, atv2};

@@ -97,7 +97,8 @@ VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
   }
 
   auto vbktx = self->miner->createVbkTxEndorsingAltBlock(pubdata);
-  auto atv = self->miner->applyATV(vbktx);
+  auto* block = self->miner->mineVbkBlocks(1, {vbktx});
+  auto atv = self->miner->getATVs(*block)[0];
   VBK_ASSERT(state->IsValid());
 
   WriteStream w_stream;

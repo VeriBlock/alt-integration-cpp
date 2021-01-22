@@ -100,9 +100,6 @@ class MockMiner2 {
   const VbkChainParams& getVbkParams() const { return vbk_params; }
   const BtcChainParams& getBtcParams() const { return btc_params; }
 
-  // TODO: Inline and get rid of
-  ATV applyATV(const VbkTx& transaction);
-
   MockMiner2() {
     ValidationState state;
     bool ret = vbktree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state);

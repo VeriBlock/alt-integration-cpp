@@ -180,7 +180,8 @@ struct MockMiner2Proxy : private MockMiner2 {
           lastVbkBlock);
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    payloads.atv = base::applyATV(vbktx);
+    auto* vbkblock = base::mineVbkBlocks(1, {vbktx});
+    payloads.atv = base::getATVs(*vbkblock)[0];
 
     std::vector<VbkBlock> context;
     // in range of blocks [lastVbkBlock... vbk tip] look for VTBs and put them
