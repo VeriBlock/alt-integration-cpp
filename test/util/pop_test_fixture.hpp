@@ -317,7 +317,7 @@ struct PopTestFixture {
   void endorseVbkTip() {
     auto* tip = popminer->vbk().getBestChain().tip();
     VBK_ASSERT(tip);
-    auto tx = popminer->endorseVbkBlock(
+    auto tx = popminer->createVbkPopTxEndorsingVbkBlock(
         tip->getHeader(), getLastKnownBtcBlock());
     popminer->vbkmempool.push_back(tx);
   }

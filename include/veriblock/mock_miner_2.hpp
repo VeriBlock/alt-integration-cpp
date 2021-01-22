@@ -47,18 +47,36 @@ class MockMiner2 {
   std::vector<VbkPopTx> vbkmempool;
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkPayloads;
 
-  VbkPopTx endorseVbkBlock(const VbkBlock& publishedBlock,
-                           const BtcBlock::hash_t& lastKnownBtcBlockHash);
+  ATV endorseAltBlock(const PublicationData& publicationData);
 
-  BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock);
+  VTB endorseVbkBlock(const VbkBlock& publishedBlock);
 
-  VbkPopTx createVbkPopTxEndorsingVbkBlock(
-      const BtcBlock& containingBlock,
-      const BtcTx& containingTx,
-      const VbkBlock& publishedBlock,
-      const BtcBlock::hash_t& lastKnownBtcBlockHash);
+  VTB endorseVbkBlock(const VbkBlock& publishedBlock,
+                      const BtcBlock::hash_t& lastKnownBtcBlockHash);
 
-  VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData);
+  std::vector<ATV> getATVs(const BlockIndex<VbkBlock>& block) const;
+
+  std::vector<VTB> getVTBs(const BlockIndex<VbkBlock>& block) const;
+
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const std::vector<VbkTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const std::vector<VbkPopTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const BlockIndex<VbkBlock>& tip);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const BlockIndex<VbkBlock>& tip,
+      const std::vector<VbkTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const BlockIndex<VbkBlock>& tip,
+      const std::vector<VbkPopTx>& transactions);
 
   BlockIndex<BtcBlock>* mineBtcBlocks(
       size_t amount,
@@ -68,34 +86,31 @@ class MockMiner2 {
       const BlockIndex<BtcBlock>& tip,
       const std::vector<BtcTx>& transactions = {});
 
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount);
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
-                                      const std::vector<VbkPopTx>& transactions);
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
-                                      const std::vector<VbkTx>& transactions);
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
-                                      const BlockIndex<VbkBlock>& tip);
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
-                                      const BlockIndex<VbkBlock>& tip,
-                                      const std::vector<VbkPopTx>& transactions);
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
-                                      const BlockIndex<VbkBlock>& tip,
-                                      const std::vector<VbkTx>& transactions);
+  const BlockIndex<VbkBlock>* getVbkTip() const;
 
-  std::vector<VTB> getVTBs(const BlockIndex<VbkBlock>& block) const;
+  const BlockIndex<BtcBlock>* getBtcTip() const;
 
-  std::vector<ATV> getATVs(const BlockIndex<VbkBlock>& block) const;
+  VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData);
 
-  const BtcBlock getBtcTip() const;
-  const BlockIndex<BtcBlock>* getBtcTipIndex() const;
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const VbkBlock& publishedBlock);
 
-  const VbkBlock getVbkTip() const;
-  const BlockIndex<VbkBlock>* getVbkTipIndex() const;
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const VbkBlock& publishedBlock,
+      const BtcBlock::hash_t& lastKnownBtcBlockHash);
 
-  btc_block_tree& btc() { return vbktree.btc(); }
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const BtcBlock& containingBlock,
+      const BtcTx& containingTx,
+      const VbkBlock& publishedBlock,
+      const BtcBlock::hash_t& lastKnownBtcBlockHash);
+
+  BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock);
+
   vbk_block_tree& vbk() { return vbktree; }
-  const btc_block_tree& btc() const { return vbktree.btc(); }
+  btc_block_tree& btc() { return vbktree.btc(); }
   const vbk_block_tree& vbk() const { return vbktree; }
+  const btc_block_tree& btc() const { return vbktree.btc(); }
   const VbkChainParams& getVbkParams() const { return vbk_params; }
   const BtcChainParams& getBtcParams() const { return btc_params; }
 

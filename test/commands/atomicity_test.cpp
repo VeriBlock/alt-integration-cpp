@@ -153,9 +153,9 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   // endorsed
   auto vbk5 = popminer->vbk().getBestChain().tip()->getAncestor(5);
   ASSERT_TRUE(vbk5);
-  auto vbkpoptx1 = popminer->endorseVbkBlock(
+  auto vbkpoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
       vbk5->getHeader(), getLastKnownBtcBlock());
-  auto vbkpoptx2 = popminer->endorseVbkBlock(
+  auto vbkpoptx2 = popminer->createVbkPopTxEndorsingVbkBlock(
       vbk5->getHeader(), getLastKnownBtcBlock());
   popminer->vbkmempool.push_back(vbkpoptx1);
   popminer->vbkmempool.push_back(vbkpoptx2);
