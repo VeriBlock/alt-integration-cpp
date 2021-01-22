@@ -13,7 +13,8 @@ from requests.auth import HTTPBasicAuth
 
 from pypoptesting.framework.bin_util import assert_dir_accessible, get_open_port
 from pypoptesting.framework.entities import Hexstr, BlockWithPopData, RawPopMempoolResponse, VbkBlockResponse, \
-    VtbResponse, AtvResponse, GetpopdataResponse, SubmitPopResponse, PopParamsResponse, GenericBlock, BlockAndNetwork
+    VtbResponse, AtvResponse, GetpopdataResponse, SubmitPopResponse, PopParamsResponse, GenericBlock, BlockAndNetwork, \
+    ATV, VbkTx, PublicationData, VTB, VbkPopTx, VbkBlock, BtcBlock
 from pypoptesting.framework.jsonrpc_api import JsonRpcApi, JSONRPCException
 from pypoptesting.framework.node import Node
 
@@ -33,8 +34,8 @@ class VBitcoindNode(Node):
         assert_dir_accessible(datadir)
 
         self.rpc_timeout = 60  # sec
-        self.stderr = tempfile.NamedTemporaryFile(dir=self.datadir, delete=False)
-        self.stdout = tempfile.NamedTemporaryFile(dir=self.datadir, delete=False)
+        self.stderr = pathlib.Path(self.datadir, "stderr")
+        self.stdout = pathlib.Path(self.datadir, "stdout")
 
         # quickly check that vbitcoind is installed
         self.exe = distutils.spawn.find_executable("vbitcoind")
@@ -233,19 +234,46 @@ class VBitcoindNode(Node):
         )
 
     def submitpopatv(self, atv: Hexstr) -> SubmitPopResponse:
-        pass
+        s = self.rpc.submitpopatv(atv)
+        return SubmitPopResponse(
+            accepted=s['accepted'],
+            code=s['code'],
+            message=s['message']
+        )
 
     def submitpopvtb(self, vtb: Hexstr) -> SubmitPopResponse:
-        pass
+        s = self.rpc.submitpopvtb(vtb)
+        return SubmitPopResponse(
+            accepted=s['accepted'],
+            code=s['code'],
+            message=s['message']
+        )
 
     def submitpopvbk(self, vbk: Hexstr) -> SubmitPopResponse:
-        pass
+        s = self.rpc.submitpopvbk(vbk)
+        return SubmitPopResponse(
+            accepted=s['accepted'],
+            code=s['code'],
+            message=s['message']
+        )
 
     def getpopdatabyheight(self, height: int) -> GetpopdataResponse:
-        pass
+        s = self.rpc.getpopdatabyheight(height)
+        return GetpopdataResponse(
+            header=s['block_header'],
+            authenticated_context=s['authenticated_context']['serialized'],
+            last_known_vbk_block=s['last_known_veriblock_blocks'][-1],
+            last_known_btc_block=s['last_known_bitcoin_blocks'][-1],
+        )
 
     def getpopdatabyhash(self, hash: Hexstr) -> GetpopdataResponse:
-        pass
+        s = self.rpc.getpopdatabyheight(hash)
+        return GetpopdataResponse(
+            header=s['block_header'],
+            authenticated_context=s['authenticated_context']['serialized'],
+            last_known_vbk_block=s['last_known_veriblock_blocks'][-1],
+            last_known_btc_block=s['last_known_bitcoin_blocks'][-1],
+        )
 
     def getbtcbestblockhash(self) -> Hexstr:
         return self.rpc.getbtcbestblockhash()
@@ -260,22 +288,100 @@ class VBitcoindNode(Node):
         return self.rpc.getbalance(address)
 
     def getrawatv(self, atvid: Hexstr) -> AtvResponse:
-        pass
+        s = self.rpc.getrawatv(atvid, 1)
+        r = AtvResponse()
+        r.in_active_chain = s['in_active_chain']
+        r.confirmations = s['confirmations']
+        if r.confirmations > 0:
+            # in block
+            r.blockhash = s['blockhash']
+            r.blockheight = s['blockheight']
+            r.containingBlocks = s['containing_blocks']
+
+        a = s['atv']
+        tx = a['transaction']
+        pd = tx['publicationData']
+        bop = a['blockOfProof']
+        r.atv = ATV(
+            id=a['id'],
+            tx=VbkTx(
+                hash=tx['hash'],
+                publicationData=PublicationData(**pd)
+            ),
+            blockOfProof=GenericBlock(
+                hash=bop['hash'],
+                prevhash=bop['previousBlock'],
+                height=bop['height']
+            )
+        )
+
+        return r
 
     def getrawvtb(self, vtbid: Hexstr) -> VtbResponse:
-        pass
+        s = self.rpc.getrawvtb(vtbid, 1)
+        r = VtbResponse()
+        r.in_active_chain = s['in_active_chain']
+        r.confirmations = s['confirmations']
+        if r.confirmations > 0:
+            # in block
+            r.blockhash = s['blockhash']
+            r.blockheight = s['blockheight']
+            r.containingBlocks = s['containing_blocks']
+
+        v = s['vtb']
+        tx = v['transaction']
+        cb = v['containingBlock']
+        r.atv = VTB(
+            id=v['id'],
+            tx=VbkPopTx(
+                hash=tx['hash'],
+                publishedBlock=VbkBlock(**tx['publishedBlock']),
+                blockOfProof=BtcBlock(**tx['blockOfProof']),
+                blockOfProofContext=[BtcBlock(**x) for x in tx['blockOfProofContext']]
+            ),
+            containingBlock=GenericBlock(
+                hash=cb['hash'],
+                prevhash=cb['previousBlock'],
+                height=cb['height']
+            )
+        )
+
+        return r
 
     def getrawvbkblock(self, vbkblockid: Hexstr) -> VbkBlockResponse:
-        pass
+        s = self.rpc.getrawvbkblock(vbkblockid, 1)
+        r = VbkBlockResponse()
+        r.in_active_chain = s['in_active_chain']
+        r.confirmations = s['confirmations']
+        if r.confirmations > 0:
+            # in block
+            r.blockhash = s['blockhash']
+            r.blockheight = s['blockheight']
+            r.containingBlocks = s['containing_blocks']
+
+        r.vbkblock = VbkBlock(**s['vbkblock'])
+        return r
 
     def getrawpopmempool(self) -> RawPopMempoolResponse:
-        pass
+        s = self.rpc.getrawpopmempool()
+        return RawPopMempoolResponse(**s)
 
     def generate(self, nblocks: int, address: str) -> None:
         return self.rpc.generatetoaddress(nblocks, address)
 
     def getblockhash(self, height: int) -> Hexstr:
-        pass
+        return self.rpc.getblockhash(height)
 
     def getblock(self, hash: Hexstr) -> BlockWithPopData:
-        pass
+        s = self.rpc.getblock(hash)
+        return BlockWithPopData(
+            hash=s['hash'],
+            height=s['height'],
+            prevhash=s['previousblockhash'],
+            confirmations=s['confirmations'],
+            endorsedBy=[],  # TODO
+            blockOfProofEndorsements=[],  # TODO
+            containingATVs=s['pop']['data']['atvs'],
+            containingVTBs=s['pop']['data']['vtbs'],
+            containingVBKs=s['pop']['data']['vbkblocks']
+        )

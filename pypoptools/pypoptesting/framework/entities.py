@@ -57,6 +57,7 @@ class BtcBlock:
 
 @dataclass
 class BlockWithPopData(GenericBlock):
+    confirmations: int
     endorsedBy: List[Hexstr]
     blockOfProofEndorsements: List[Hexstr]
     containingATVs: List[Hexstr]
@@ -121,34 +122,36 @@ class VTB:
 @dataclass
 class ATV:
     id: Hexstr
-    version: int
     tx: VbkTx
     blockOfProof: GenericBlock
 
 
-@dataclass
+@dataclass(init=False)
 class AtvResponse:
     in_active_chain: bool
     confirmations: int
-    block: Optional[GenericBlock]
+    blockhash: Hexstr
+    blockheight: int
     atv: ATV
     containingBlocks: List[Hexstr]
 
 
-@dataclass
+@dataclass(init=False)
 class VtbResponse:
     in_active_chain: bool
     confirmations: int
-    block: Optional[GenericBlock]
+    blockhash: Hexstr
+    blockheight: int
     vtb: VTB
     containingBlocks: List[Hexstr]
 
 
-@dataclass
+@dataclass(init=False)
 class VbkBlockResponse:
     in_active_chain: bool
     confirmations: int
-    block: Optional[GenericBlock]
+    blockhash: Hexstr
+    blockheight: int
     vbkblock: VbkBlock
     containingBlocks: List[Hexstr]
 
