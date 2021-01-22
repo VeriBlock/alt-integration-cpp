@@ -8,6 +8,7 @@ import time
 from typing import Callable
 
 from pypoptesting.framework.node import Node
+import multiprocessing as mp
 
 CreateNodeFunction = Callable[[int, pathlib.Path], Node]
 
@@ -90,12 +91,41 @@ class TestResult:
 
 
 def run_tests(test_list, create_node: CreateNodeFunction):
+    mp.set_start_method('fork')
+
     for test in test_list:
         name = type(test).__name__
         print("{}... ".format(name), end="")
-        try:
-            test.main(create_node)
-            print("PASSED")
-        except Exception as e:
+
+        p = mp.Process(name=name, target=lambda: test.main(create_node))
+        p.start()
+        p.join()
+
+        if p.exitcode == TEST_EXIT_PASSED:
+            print("OK")
+        elif p.exitcode == TEST_EXIT_FAILED:
             print("FAILED")
-            print(e)
+        elif p.exitcode == TEST_EXIT_SKIPPED:
+            print("SKIPPED")
+        else:
+            print("UNKNOWN: {}".format(p.exitcode))
+
+
+def assert_not_equal(thing1, thing2, *args):
+    if thing1 == thing2 or any(thing1 == arg for arg in args):
+        raise AssertionError("not(%s)" % " != ".join(str(arg) for arg in (thing1, thing2) + args))
+
+
+def assert_equal(thing1, thing2, *args):
+    if thing1 != thing2 or any(thing1 != arg for arg in args):
+        raise AssertionError("not(%s)" % " == ".join(str(arg) for arg in (thing1, thing2) + args))
+
+
+def assert_greater_than(thing1, thing2):
+    if thing1 <= thing2:
+        raise AssertionError("%s <= %s" % (str(thing1), str(thing2)))
+
+
+def assert_greater_than_or_equal(thing1, thing2):
+    if thing1 < thing2:
+        raise AssertionError("%s < %s" % (str(thing1), str(thing2)))

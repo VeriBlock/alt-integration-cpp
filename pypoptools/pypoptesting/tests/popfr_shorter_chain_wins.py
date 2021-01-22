@@ -16,3 +16,5 @@ class PopForkResolutionShorterChainWins(PopIntegrationTestFramework):
         best2 = self.nodes[0].getbestblockhash()
 
         assert best != best2, "Best blocks are equal! Pre={}, post={}".format(best, best2)
+
+        # TODO: implement actual test

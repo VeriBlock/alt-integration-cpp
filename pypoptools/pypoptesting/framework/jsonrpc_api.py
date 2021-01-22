@@ -3,14 +3,8 @@ from requests.auth import HTTPBasicAuth
 
 
 class JSONRPCException(Exception):
-    def __init__(self, rpc_error, http_status=None):
-        try:
-            errmsg = '%(message)s (%(code)i)' % rpc_error
-        except (KeyError, TypeError):
-            errmsg = ''
-        super().__init__(errmsg)
-        self.error = rpc_error
-        self.http_status = http_status
+    def __init__(self, response):
+        self.response = response
 
 
 class JsonRpcApi:

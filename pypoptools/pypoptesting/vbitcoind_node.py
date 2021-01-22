@@ -34,8 +34,8 @@ class VBitcoindNode(Node):
         assert_dir_accessible(datadir)
 
         self.rpc_timeout = 60  # sec
-        self.stderr = pathlib.Path(self.datadir, "stderr")
-        self.stdout = pathlib.Path(self.datadir, "stdout")
+        self.stderr = None
+        self.stdout = None
 
         # quickly check that vbitcoind is installed
         self.exe = distutils.spawn.find_executable("vbitcoind")
@@ -102,6 +102,8 @@ class VBitcoindNode(Node):
         return "[node %d] %s" % (self.number, msg)
 
     def start(self) -> None:
+        self.stderr = tempfile.NamedTemporaryFile(prefix="stderr", dir=self.datadir, delete=False)
+        self.stdout = tempfile.NamedTemporaryFile(prefix="stdout", dir=self.datadir, delete=False)
         self.process = subprocess.Popen(
             self.args,
             cwd=self.datadir,
@@ -285,7 +287,7 @@ class VBitcoindNode(Node):
         return self.rpc.getbestblockhash()
 
     def getbalance(self, address: str) -> float:
-        return self.rpc.getbalance(address)
+        return self.rpc.getbalance()
 
     def getrawatv(self, atvid: Hexstr) -> AtvResponse:
         s = self.rpc.getrawatv(atvid, 1)
@@ -379,8 +381,8 @@ class VBitcoindNode(Node):
             height=s['height'],
             prevhash=s['previousblockhash'],
             confirmations=s['confirmations'],
-            endorsedBy=[],  # TODO
-            blockOfProofEndorsements=[],  # TODO
+            endorsedBy=s['pop']['state']['endorsedBy'],
+            blockOfProofEndorsements=[],
             containingATVs=s['pop']['data']['atvs'],
             containingVTBs=s['pop']['data']['vtbs'],
             containingVBKs=s['pop']['data']['vbkblocks']

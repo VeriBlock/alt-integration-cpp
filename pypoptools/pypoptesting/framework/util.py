@@ -109,12 +109,4 @@ def wait_until(predicate, *, attempts=float('inf'), timeout=float('inf'), lock=N
 
 
 def wait_for_rpc_availability(node: Node, timeout=60) -> None:
-    """Sets up an RPC connection to the vbitcoind process. Returns False if unable to connect."""
-    # Poll at a rate of four times per second
-    poll_per_s = 4
-    for _ in range(poll_per_s * timeout):
-        if node.is_rpc_available():
-            return
-
-        time.sleep(1.0 / poll_per_s)
-    raise AssertionError("Unable to connect to vbitcoind")
+    wait_until(lambda: node.is_rpc_available(), timeout=timeout)
