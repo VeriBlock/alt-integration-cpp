@@ -78,7 +78,10 @@ struct RocksDBWriteBatch : public WriteBatch {
 };
 
 struct RocksDBStorage : public Storage {
-  ~RocksDBStorage() override = default;
+  ~RocksDBStorage() override {
+    db_->Close();
+    delete db_;
+  }
 
   RocksDBStorage(const std::string& path) {
     rocksdb::Options options;

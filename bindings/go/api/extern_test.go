@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
@@ -10,7 +11,9 @@ import (
 func TestOnAcceptedVBK(t *testing.T) {
 	assert := assert.New(t)
 
+	fmt.Println("TestOnAcceptedVBK run")
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	isExecuted1 := false
 	isExecuted2 := false
@@ -46,7 +49,9 @@ func TestOnAcceptedVBK(t *testing.T) {
 func TestOnAcceptedVTB(t *testing.T) {
 	assert := assert.New(t)
 
+	fmt.Println("TestOnAcceptedVTB run")
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	isExecuted1 := false
 	isExecuted2 := false
@@ -93,7 +98,9 @@ func TestOnAcceptedVTB(t *testing.T) {
 func TestOnAcceptedATV(t *testing.T) {
 	assert := assert.New(t)
 
+	fmt.Println("TestOnAcceptedATV run")
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	isExecuted1 := false
 	isExecuted2 := false

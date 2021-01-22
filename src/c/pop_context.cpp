@@ -28,13 +28,18 @@ PopContext* VBK_NewPopContext(Config_t* config, const char* db_path) {
   VBK_ASSERT(db_path);
 
   auto* v = new PopContext();
+
 #ifdef WITH_ROCKSDB
   v->storage = std::make_shared<adaptors::RocksDBStorage>(std::string(db_path) +
                                                           DB_STORAGE_NAME);
-  v->payloads_storage =
-      std::make_shared<adaptors::PayloadsStorageImpl>(*v->storage);
 #endif
 
+  VBK_ASSERT_MSG(
+      v->storage,
+      "Storage is not initialized, you should initialize the storage");
+
+  v->payloads_storage =
+      std::make_shared<adaptors::PayloadsStorageImpl>(*v->storage);
   v->context = altintegration::PopContext::create(c, v->payloads_storage);
 
   // setup signals
