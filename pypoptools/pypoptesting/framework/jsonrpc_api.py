@@ -29,7 +29,10 @@ class JsonRpcApi:
             response = post(
                 url=self.url,
                 auth=self.auth,
-                json=payload
+                json=payload,
+                headers={
+                    "Content-type": "application/json"
+                }
             )
             self.nonce += 1
             if response.status_code == 200:
