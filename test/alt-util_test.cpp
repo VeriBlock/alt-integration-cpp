@@ -95,3 +95,31 @@ TEST(TopLevelMerkleRoot, Sanity) {
   ASSERT_EQ(HexStr(tlmr),
             "700c1abb69dd1899796b4cafa81c0eefa7b7d0c5aaa4b2bcb67713b2918edb52");
 }
+
+TEST(TopLevelMerkleRoot, Case1) {
+  // data that we got from getblocktemplate
+  // clang-format off
+  const int height = 4207;
+  const std::vector<uint8_t> firstPreviousKeystone = ParseHex("e665f741498cf23a4abfc5e52c675307ae7b28ea75cda72a48af89de02000000");
+  const std::vector<uint8_t> secondPreviousKeystone = ParseHex("714233a5a9c3a984c621ebdfd188dba90fccc47b162a648c1f2929d90c000000");
+  const std::vector<uint8_t> tx_root = ParseHex("31deca6d182a7be32cc5edf0ac6724be82ae41afc363abf35d715755ff4a0ba2");
+  const std::vector<uint8_t> pop_data_root = ParseHex("eaac496a5eab315c9255fb85c871cef7fd87047adcd2e81ba7d55d6bdeb1737f");
+  const std::vector<uint8_t> pop_context_serialized = ParseHex("0000106f20e665f741498cf23a4abfc5e52c675307ae7b28ea75cda72a48af89de0200000020714233a5a9c3a984c621ebdfd188dba90fccc47b162a648c1f2929d90c000000e68be583d1048006108729c02781c228afe9a1b785d067692054bb39d1658ddc");
+  const std::vector<uint8_t> state_root = ParseHex("e68be583d1048006108729c02781c228afe9a1b785d067692054bb39d1658ddc");
+  // clang-format on
+
+  auto stateRoot = sha256twice(tx_root, pop_data_root);
+  ASSERT_EQ(stateRoot.toHex(), HexStr(state_root));
+
+  ContextInfoContainer ctx;
+  ctx.height = height;
+  ctx.keystones.firstPreviousKeystone = firstPreviousKeystone;
+  ctx.keystones.secondPreviousKeystone = secondPreviousKeystone;
+
+  AuthenticatedContextInfoContainer actx;
+  actx.ctx = ctx;
+  actx.stateRoot = stateRoot;
+  ASSERT_EQ(SerializeToHex(actx), HexStr(pop_context_serialized));
+  ASSERT_EQ(actx.getTopLevelMerkleRoot().toHex(),
+            "756ecf78c55aa5b82bf475d5573fce78197e2312232a28241d3a2b2068331f02");
+}
