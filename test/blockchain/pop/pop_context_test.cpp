@@ -47,11 +47,10 @@ struct PopContextFixture : public ::testing::Test {
     // BTC_B_101
     auto btctx = remote.createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
     // add BTC tx endorsing VBKTIP into next block after chain A tip
-    chainAtip = remote.mineBtcBlocks(1, *chainAtip);
+    chainAtip = remote.mineBtcBlocks(1, *chainAtip, {btctx});
     // add same btctx to mempool again
-    remote.btcmempool.push_back(btctx);
     // add BTC tx endorsing VBKTIP into next block after chain B tip
-    chainBtip = remote.mineBtcBlocks(1, *chainBtip);
+    chainBtip = remote.mineBtcBlocks(1, *chainBtip, {btctx, btctx});
 
     // create VBK pop tx that has 'block of proof=CHAIN A'
     auto txa = remote.createVbkPopTxEndorsingVbkBlock(chainAtip->getHeader(),

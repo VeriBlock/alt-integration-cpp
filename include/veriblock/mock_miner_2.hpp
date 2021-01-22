@@ -44,7 +44,6 @@ class MockMiner2 {
   using vbk_block_tree = VbkBlockTree;
 
  public:
-  std::vector<BtcTx> btcmempool;
   std::vector<VbkPopTx> vbkmempool;
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkPayloads;
 
@@ -53,21 +52,21 @@ class MockMiner2 {
 
   BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock);
 
-  VbkPopTx createVbkPopTxEndorsingVbkBlock(const BtcBlock& containingBlock,
-                                           const BtcTx& containingTx,
-                                           const VbkBlock& publishedBlock,
-                                           const BtcBlock::hash_t& lastKnownBtcBlockHash);
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const BtcBlock& containingBlock,
+      const BtcTx& containingTx,
+      const VbkBlock& publishedBlock,
+      const BtcBlock::hash_t& lastKnownBtcBlockHash);
 
   VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData);
 
-  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount);
-  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount,
-                                      const std::vector<BtcTx>& transactions);
-  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount,
-                                      const BlockIndex<BtcBlock>& tip);
-  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount,
-                                      const BlockIndex<BtcBlock>& tip,
-                                      const std::vector<BtcTx>& transactions);
+  BlockIndex<BtcBlock>* mineBtcBlocks(
+      size_t amount,
+      const std::vector<BtcTx>& transactions = {});
+  BlockIndex<BtcBlock>* mineBtcBlocks(
+      size_t amount,
+      const BlockIndex<BtcBlock>& tip,
+      const std::vector<BtcTx>& transactions = {});
 
   BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount);
   BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,

@@ -49,7 +49,7 @@ struct Scenario5 : public ::testing::Test, public PopTestFixture {
   void popMineVbkFork(BlockIndex<VbkBlock>*& tip, int endorsedAncestorHeight) {
     auto endorsedBlock = tip->getAncestor(endorsedAncestorHeight)->getHeader();
     auto btcTx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
-    auto* btcTip = popminer->mineBtcBlocks(1);
+    auto* btcTip = popminer->mineBtcBlocks(1, {btcTx});
 
     popminer->createVbkPopTxEndorsingVbkBlock(
         btcTip->getHeader(), btcTx, endorsedBlock, vbkContextStart);
@@ -84,7 +84,7 @@ TEST_F(Scenario5, scenario_5) {
 
     auto btcTx =
         popminer->createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
-    auto* btcTip = popminer->mineBtcBlocks(1);
+    auto* btcTip = popminer->mineBtcBlocks(1, {btcTx});
 
     popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
                                               btcTx,
@@ -93,7 +93,7 @@ TEST_F(Scenario5, scenario_5) {
     mineVbkFork(tipA, 1);
 
     btcTx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
-    btcTip = popminer->mineBtcBlocks(1);
+    btcTip = popminer->mineBtcBlocks(1, {btcTx});
     popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
                                               btcTx,
                                               endorsedBlock->getHeader(),
@@ -113,7 +113,7 @@ TEST_F(Scenario5, scenario_5) {
     auto& endorsedBlockB = tipB->getAncestor(40)->getHeader();
 
     auto btcTxA = popminer->createBtcTxEndorsingVbkBlock(endorsedBlockA);
-    auto* btcTip = popminer->mineBtcBlocks(1);
+    auto* btcTip = popminer->mineBtcBlocks(1, {btcTxA});
 
     popminer->createVbkPopTxEndorsingVbkBlock(
         btcTip->getHeader(), btcTxA, endorsedBlockA, vbkContextStart);
@@ -121,7 +121,7 @@ TEST_F(Scenario5, scenario_5) {
 
     // 101 = contains endorsement of B40 present in B50
     auto btcTxB = popminer->createBtcTxEndorsingVbkBlock(endorsedBlockB);
-    btcTip = popminer->mineBtcBlocks(1);
+    btcTip = popminer->mineBtcBlocks(1, {btcTxB});
 
     popminer->createVbkPopTxEndorsingVbkBlock(
         btcTip->getHeader(), btcTxB, endorsedBlockB, vbkContextStart);

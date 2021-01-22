@@ -27,7 +27,7 @@ TEST_F(AltTreeRepositoryTest, ValidBlocks) {
   auto btctx =
       this->popminer->createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
   // add BTC tx endorsing VBKTIP into next block
-  auto* chainAtip = this->popminer->mineBtcBlocks(1);
+  auto* chainAtip = this->popminer->mineBtcBlocks(1, {btctx});
 
   // create VBK pop tx that has 'block of proof=CHAIN A'
   this->popminer->createVbkPopTxEndorsingVbkBlock(
@@ -177,7 +177,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   auto btctx =
       this->popminer->createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
   VBK_LOG_DEBUG("add a BTC tx endorsing VBKTIP to the next block");
-  auto* chainAtip = this->popminer->mineBtcBlocks(1);
+  auto* chainAtip = this->popminer->mineBtcBlocks(1, {btctx});
 
   VBK_LOG_DEBUG("create a VBK PoP tx that has 'block of proof=CHAIN A'");
   this->popminer->createVbkPopTxEndorsingVbkBlock(

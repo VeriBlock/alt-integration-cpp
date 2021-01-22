@@ -59,7 +59,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
 
   // create 1 endorsement and put it into
   auto Atx1 = popminer->createBtcTxEndorsingVbkBlock(chainAtip->getHeader());
-  auto Abtccontaining1 = popminer->mineBtcBlocks(1);
+  auto Abtccontaining1 = popminer->mineBtcBlocks(1, {Atx1});
   ASSERT_TRUE(popminer->btc().getBestChain().contains(Abtccontaining1));
 
   auto Apoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
@@ -84,7 +84,7 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
 
   auto* B60 = chainBtip->getAncestor(60);
   auto Btx1 = popminer->createBtcTxEndorsingVbkBlock(B60->getHeader());
-  auto Bbtccontaining1 = popminer->mineBtcBlocks(1);
+  auto Bbtccontaining1 = popminer->mineBtcBlocks(1, {Btx1});
   ASSERT_TRUE(popminer->btc().getBestChain().contains(Bbtccontaining1));
 
   auto Bpoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
@@ -117,7 +117,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
   // create 1 endorsement and put it into
   auto Atx1 = popminer->createBtcTxEndorsingVbkBlock(vbkBlockTip->getHeader());
 
-  auto* btcBlockTip2 = popminer->mineBtcBlocks(1, *btcForkPoint);
+  auto* btcBlockTip2 = popminer->mineBtcBlocks(1, *btcForkPoint, {Atx1});
 
   popminer->createVbkPopTxEndorsingVbkBlock(
       btcBlockTip2->getHeader(),
@@ -188,7 +188,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
   auto Atx1 =
       popminer->createBtcTxEndorsingVbkBlock(endorsedVbkBlock->getHeader());
 
-  btcBlockTip1 = popminer->mineBtcBlocks(1);
+  btcBlockTip1 = popminer->mineBtcBlocks(1, {Atx1});
   EXPECT_TRUE(cmp(*btcBlockTip1, *popminer->btc().getBestChain().tip()));
 
   popminer->createVbkPopTxEndorsingVbkBlock(
@@ -229,7 +229,7 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
   auto Atx1 =
       popminer->createBtcTxEndorsingVbkBlock(endorsedVbkBlock->getHeader());
 
-  btcBlockTip1 = popminer->mineBtcBlocks(1);
+  btcBlockTip1 = popminer->mineBtcBlocks(1, {Atx1});
   ASSERT_EQ(btcBlockTip1->getHash(),
             popminer->btc().getBestChain().tip()->getHash());
 

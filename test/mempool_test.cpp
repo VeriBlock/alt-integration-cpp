@@ -1332,21 +1332,18 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   // mine BTC1..5
   popminer->mineBtcBlocks(5);
   // mine VTB0 block of proof
-  popminer->btcmempool.push_back(btctx0);
-  auto btc6 = popminer->mineBtcBlocks(1);
+  auto btc6 = popminer->mineBtcBlocks(1, {btctx0});
   ASSERT_EQ(btc6->getHeight(), 6);
   auto btc7 = popminer->mineBtcBlocks(1);
   // BTC8
   popminer->mineBtcBlocks(1);
   // mine VTB1 block of proof
-  popminer->btcmempool.push_back(btctx1);
-  auto btc9 = popminer->mineBtcBlocks(1);
+  auto btc9 = popminer->mineBtcBlocks(1, {btctx1});
   ASSERT_EQ(btc9->getHeight(), 9);
   // BTC10
   popminer->mineBtcBlocks(1);
   // mine VTB2 block of proof
-  popminer->btcmempool.push_back(btctx2);
-  auto btc11 = popminer->mineBtcBlocks(1);
+  auto btc11 = popminer->mineBtcBlocks(1, {btctx2});
   ASSERT_EQ(btc11->getHeight(), 11);
 
   // create POP TX for VTB0

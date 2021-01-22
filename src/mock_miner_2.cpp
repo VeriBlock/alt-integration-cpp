@@ -98,7 +98,6 @@ BtcTx MockMiner2::createBtcTxEndorsingVbkBlock(
   auto addr = Address::fromPublicKey(defaultPublicKeyVbk);
   addr.getPopBytes(stream);
   auto tx = BtcTx(stream.data());
-  btcmempool.push_back(tx);
   return tx;
 }
 
@@ -184,25 +183,10 @@ VbkTx MockMiner2::createVbkTxEndorsingAltBlock(
   return transaction;
 }
 
-BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(size_t amount) {
-  return mineBtcBlocks(amount, *getBtcTipIndex());
-}
-
 BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(
     size_t amount,
     const std::vector<BtcTx>& transactions) {
   return mineBtcBlocks(amount, *getBtcTipIndex(), transactions);
-}
-
-BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(
-    size_t amount,
-    const BlockIndex<BtcBlock>& tip) {
-  BlockIndex<BtcBlock>* blockIndex = mineBtcBlocks(1, tip, btcmempool);
-  btcmempool.clear();
-  if (amount == 1) {
-    return blockIndex;
-  }
-  return mineBtcBlocks(amount - 1, *blockIndex, {});
 }
 
 BlockIndex<BtcBlock>* MockMiner2::mineBtcBlocks(

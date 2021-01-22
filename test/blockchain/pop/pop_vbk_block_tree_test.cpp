@@ -20,7 +20,7 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
     auto* endorsedIndex = popminer.vbk().getBestChain()[(int32_t)height];
     ASSERT_TRUE(endorsedIndex);
     auto btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedIndex->getHeader());
-    auto btccontaining = popminer.mineBtcBlocks(1);
+    auto btccontaining = popminer.mineBtcBlocks(1, {btctx});
     auto vbkpoptx = popminer.createVbkPopTxEndorsingVbkBlock(
         btccontaining->getHeader(),
         btctx,
@@ -30,11 +30,11 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
   }
 
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
-    auto Btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
-    auto* btcBlockTip = popminer.mineBtcBlocks(1);
+    auto btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
+    auto* btcblock = popminer.mineBtcBlocks(1, {btctx});
     return popminer.createVbkPopTxEndorsingVbkBlock(
-        btcBlockTip->getHeader(),
-        Btctx,
+        btcblock->getHeader(),
+        btctx,
         endorsedBlock,
         GetRegTestBtcBlock().getHash());
   }

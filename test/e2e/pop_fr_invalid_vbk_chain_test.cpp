@@ -120,7 +120,7 @@ TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
 
   auto btcTx =
       popminer->createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
-  auto *btcTip = popminer->mineBtcBlocks(1);
+  auto *btcTip = popminer->mineBtcBlocks(1, {btcTx});
 
   popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
                                             btcTx,

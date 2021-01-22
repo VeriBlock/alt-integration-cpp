@@ -88,12 +88,12 @@ struct Scenario1 : public ::testing::Test, public PopTestFixture {
 
     auto btctxA =
         popminer->createBtcTxEndorsingVbkBlock(vbkAendorsed->getHeader());
-    auto* btcAContaining = popminer->mineBtcBlocks(1, *btcAtip);
+    auto* btcAContaining = popminer->mineBtcBlocks(1, *btcAtip, {btctxA});
     btcAtip = popminer->mineBtcBlocks(2, *btcAContaining);
 
     auto btctxB =
         popminer->createBtcTxEndorsingVbkBlock(vbkBendorsed->getHeader());
-    auto* btcBContaining = popminer->mineBtcBlocks(1, *btcBtip);
+    auto* btcBContaining = popminer->mineBtcBlocks(1, *btcBtip, {btctxB});
     btcBtip = popminer->mineBtcBlocks(2, *btcBContaining);
 
     EXPECT_EQ(btcBtip->getHash(),
