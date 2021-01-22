@@ -171,7 +171,7 @@ class TestHandler:
             proc.kill()
 
         for proc in procs:
-            proc.join()
+            proc.close()
 
 
 def print_results(test_results, max_len_name, runtime):
@@ -229,6 +229,13 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
             print(BOLD[1] + 'stderr:\n' + BOLD[0] + stderr + '\n')
 
     print_results(test_results, max_len_name, (int(time.time() - start_time)))
+
+    # Clear up the temp directory if all subdirectories are gone
+    if not os.listdir(tmpdir):
+        os.rmdir(tmpdir)
+
+    all_passed = all(map(lambda test_result: test_result.was_successful, test_results))
+    sys.exit(not all_passed)
 
 
 def assert_not_equal(thing1, thing2, *args):

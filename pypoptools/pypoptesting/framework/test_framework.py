@@ -1,6 +1,7 @@
 import datetime
 import logging
 import pathlib
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -153,6 +154,23 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     def shutdown(self) -> int:
         """Call this method to shut down the test framework object."""
 
+        if self.nodes:
+            # stop all nodes
+            [x.stop() for x in self.nodes]
+
+        for h in list(self.log.handlers):
+            h.flush()
+            h.close()
+            self.log.removeHandler(h)
+
+        should_clean_up = self.success != TestStatus.FAILED
+        if should_clean_up:
+            self.log.info("Cleaning up {} on exit".format(self.dir))
+            cleanup_tree_on_exit = True
+        else:
+            self.log.warning("Not cleaning up dir {}".format(self.dir))
+            cleanup_tree_on_exit = False
+
         if self.success == TestStatus.PASSED:
             self.log.info("Tests successful")
             exit_code = TEST_EXIT_PASSED
@@ -162,6 +180,11 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         else:
             self.log.error("Test failed. Test logging available at %s/test_framework.log", self.dir)
             exit_code = TEST_EXIT_FAILED
+
+        if cleanup_tree_on_exit:
+            shutil.rmtree(self.dir)
+
+        self.nodes.clear()
 
         return exit_code
 
