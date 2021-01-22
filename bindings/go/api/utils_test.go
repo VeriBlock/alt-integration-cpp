@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -13,7 +12,6 @@ import (
 func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	assert := assert.New(t)
 
-	fmt.Println("TestCalculateTopLevelMerkleRoot run")
 	popContext := generateTestPopContext(t)
 	defer popContext.popContext.Free()
 

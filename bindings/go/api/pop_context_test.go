@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
@@ -13,7 +12,6 @@ import (
 func TestPopContextSubmitVbk(t *testing.T) {
 	assert := assert.New(t)
 
-	fmt.Println("TestPopContextSubmitVbk run")
 	popContext := generateTestPopContext(t)
 	defer popContext.popContext.Free()
 
@@ -44,7 +42,6 @@ func TestPopContextSubmitVbk(t *testing.T) {
 func TestPopContextSubmitVtb(t *testing.T) {
 	assert := assert.New(t)
 
-	fmt.Println("TestPopContextSubmitVtb run")
 	popContext := generateTestPopContext(t)
 	defer popContext.popContext.Free()
 
@@ -86,7 +83,6 @@ func TestPopContextSubmitVtb(t *testing.T) {
 func TestPopContextSubmitAtv(t *testing.T) {
 	assert := assert.New(t)
 
-	fmt.Println("TestPopContextSubmitAtv run")
 	popContext := generateTestPopContext(t)
 	defer popContext.popContext.Free()
 
@@ -119,4 +115,37 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	vbkIDs, err := popContext.GetVbkBlocks()
 	assert.NoError(err)
 	assert.Equal(1, len(vbkIDs))
+}
+
+func TestPopContextAcceptBlock(t *testing.T) {
+	assert := assert.New(t)
+
+	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
+
+	miner := NewMockMiner()
+
+	index, err := miner.MineVbkBlockTip()
+	assert.NoError(err)
+
+	vbkBlock, err := index.GetVbkBlockHeader()
+	assert.NoError(err)
+
+	state, err := popContext.SubmitVbk(vbkBlock)
+	// state == 0, valid vbkBlock
+	assert.Equal(0, state)
+	assert.NoError(err)
+
+	// generate new block
+	newBlock := generateNextAltBlock(&boostrapBlock)
+
+	err = popContext.AcceptBlockHeader(newBlock)
+	assert.NoError(err)
+
+	popData, err := popContext.GetPop()
+	assert.NotEqual(popData, nil)
+	assert.NoError(err)
+
+	err = popContext.AcceptBlock(newBlock.Hash, popData)
+	assert.NoError(err)
 }

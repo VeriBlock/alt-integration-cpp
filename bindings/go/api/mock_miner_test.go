@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
@@ -67,7 +66,6 @@ func TestMineAtv(t *testing.T) {
 func TestMineVtb(t *testing.T) {
 	assert := assert.New(t)
 
-	fmt.Println("TestMineVtb run")
 	popContext := generateTestPopContext(t)
 	defer popContext.popContext.Free()
 
