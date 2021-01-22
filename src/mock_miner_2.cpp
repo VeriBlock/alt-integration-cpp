@@ -359,28 +359,9 @@ void MockMiner2::savePayloads(BlockIndex<VbkBlock>* blockIndex) {
 }
 
 // TODO: Inline and get rid of
-VbkBlock MockMiner2::applyVTB(const VbkPopTx& tx) {
-  return mineVbkBlocks(1, {tx})->getHeader();
-}
-VbkBlock MockMiner2::applyVTB(const VbkBlock::hash_t& tip,
-                              const VbkPopTx& tx) {
-  const BlockIndex<VbkBlock>* tipIndex = vbktree.getBlockIndex(tip);
-  return mineVbkBlocks(1, *tipIndex, {tx})->getHeader();
-}
-VbkBlock MockMiner2::applyVTBs(const std::vector<VbkPopTx>& txes) {
-  return mineVbkBlocks(1, txes)->getHeader();
-}
-VbkBlock MockMiner2::applyVTBs(const BlockIndex<VbkBlock>& tip,
-                               const std::vector<VbkPopTx>& txes) {
-  return mineVbkBlocks(1, tip, txes)->getHeader();
-}
 ATV MockMiner2::applyATV(const VbkTx& transaction) {
   BlockIndex<VbkBlock>* blockIndex = mineVbkBlocks(1, {transaction});
   return getATVs(*blockIndex)[0];
-}
-std::vector<ATV> MockMiner2::applyATVs(const std::vector<VbkTx>& transactions) {
-  BlockIndex<VbkBlock>* blockIndex = mineVbkBlocks(1, transactions);
-  return getATVs(*blockIndex);
 }
 
 }  // namespace altintegration

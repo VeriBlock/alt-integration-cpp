@@ -101,13 +101,7 @@ class MockMiner2 {
   const BtcChainParams& getBtcParams() const { return btc_params; }
 
   // TODO: Inline and get rid of
-  VbkBlock applyVTB(const VbkPopTx& tx);
-  VbkBlock applyVTB(const VbkBlock::hash_t& tip, const VbkPopTx& tx);
-  VbkBlock applyVTBs(const std::vector<VbkPopTx>& txes);
-  VbkBlock applyVTBs(const BlockIndex<VbkBlock>& tip,
-                     const std::vector<VbkPopTx>& txes);
   ATV applyATV(const VbkTx& transaction);
-  std::vector<ATV> applyATVs(const std::vector<VbkTx>& transactions);
 
   MockMiner2() {
     ValidationState state;

@@ -280,8 +280,8 @@ struct PopTestFixture {
 
     for (size_t i = 0; i < VTBs; i++) {
       auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
-      auto vbkcontaining = popminer->applyVTB(vbkpoptx);
-      auto newvtb = popminer->vbkPayloads.at(vbkcontaining.getHash()).back();
+      auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
+      auto newvtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).back();
       popData.vtbs.push_back(newvtb);
     }
 

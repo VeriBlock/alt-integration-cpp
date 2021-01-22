@@ -24,12 +24,13 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
       popminer->btc().getBestChain().tip()->getHash()));
 
   // both VTBs should be contained in the same block
-  VbkBlock containingVbkBlock = popminer->applyVTBs(vbkPopTxs);
+  BlockIndex<VbkBlock>* containingVbkBlock =
+      popminer->mineVbkBlocks(1, vbkPopTxs);
 
-  popData.vtbs = popminer->vbkPayloads.at(containingVbkBlock.getHash());
+  popData.vtbs = popminer->vbkPayloads.at(containingVbkBlock->getHash());
   fillVbkContext(popData.context,
                  alttree.vbk().getBestChain().tip()->getHash(),
-                 containingVbkBlock.getHash(),
+                 containingVbkBlock->getHash(),
                  popminer->vbk());
 
   payloadsProvider.writePayloads(popData);
@@ -51,11 +52,11 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
   }
 
   auto* containingIndex =
-      alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
+      alttree.vbk().getBlockIndex(containingVbkBlock->getHash());
   ASSERT_NE(containingIndex, nullptr)
       << "the containing VBK block should exist";
 
   ASSERT_TRUE(alttree.vbk().addPayloads(
-      containingVbkBlock.getHash(), popData.vtbs, state))
+      containingVbkBlock->getHash(), popData.vtbs, state))
       << state.toString();
 }

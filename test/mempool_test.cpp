@@ -1356,14 +1356,14 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
                                                 btc6->getHash());
 
   // apply VTB0 in VBK8
-  auto vtb0containing = popminer->applyVTB(vbkendorsed->getHash(), poptx0);
-  auto& VTB0 = popminer->vbkPayloads.at(vtb0containing.getHash()).at(0);
+  auto vtb0containing = popminer->mineVbkBlocks(1, *vbkendorsed, {poptx0});
+  auto& VTB0 = popminer->vbkPayloads.at(vtb0containing->getHash()).at(0);
   // apply VTB1 in VBK9
-  auto vtb1containing = popminer->applyVTB(vtb0containing.getHash(), poptx1);
-  auto& VTB1 = popminer->vbkPayloads.at(vtb1containing.getHash()).at(0);
+  auto vtb1containing = popminer->mineVbkBlocks(1, *vtb0containing, {poptx1});
+  auto& VTB1 = popminer->vbkPayloads.at(vtb1containing->getHash()).at(0);
   // apply VTB2 in VBK10
-  auto vtb2containing = popminer->applyVTB(vtb1containing.getHash(), poptx2);
-  auto& VTB2 = popminer->vbkPayloads.at(vtb2containing.getHash()).at(0);
+  auto vtb2containing = popminer->mineVbkBlocks(1, *vtb1containing, {poptx2});
+  auto& VTB2 = popminer->vbkPayloads.at(vtb2containing->getHash()).at(0);
 
   /// All set up. Check that env is correct
   {
@@ -1404,7 +1404,7 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
     ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
     // verify last known BTC/VBK
     ASSERT_EQ(getLastKnownBtcBlock(), btc6->getHash());
-    ASSERT_EQ(getLastKnownVbkBlock(), vtb0containing.getHash());
+    ASSERT_EQ(getLastKnownVbkBlock(), vtb0containing->getHash());
 
     // remove accepted data from mempool
     mempool->removeAll(pop0);
@@ -1435,7 +1435,7 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
     ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
     // verify last known BTC/VBK
     ASSERT_EQ(getLastKnownBtcBlock(), btc11->getHash());
-    ASSERT_EQ(getLastKnownVbkBlock(), vtb2containing.getHash());
+    ASSERT_EQ(getLastKnownVbkBlock(), vtb2containing->getHash());
 
     // remove accepted data from mempool
     mempool->removeAll(pop2);
