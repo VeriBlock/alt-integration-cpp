@@ -66,8 +66,6 @@ std::vector<uint8_t> block_key<altintegration::BtcBlock>(
   return res;
 }
 
-namespace details {}  // namespace details
-
 struct BlockReaderImpl : public altintegration::BlockReader {
   ~BlockReaderImpl() override = default;
 
