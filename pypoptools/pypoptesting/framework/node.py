@@ -57,7 +57,19 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def generate(self, nblocks: int) -> None:
+    def generate(self, nblocks: int, address: str) -> None:
+        pass
+
+    @abstractmethod
+    def getnewaddress(self) -> str:
+        pass
+
+    @abstractmethod
+    def getpayoutinfo(self, address: Optional[str]) -> Hexstr:
+        pass
+
+    @abstractmethod
+    def getbalance(self, address: str) -> float:
         pass
 
     @abstractmethod

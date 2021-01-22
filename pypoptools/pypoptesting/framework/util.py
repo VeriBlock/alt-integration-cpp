@@ -113,6 +113,8 @@ def wait_for_rpc_availability(node: Node, timeout=60) -> None:
     # Poll at a rate of four times per second
     poll_per_s = 4
     for _ in range(poll_per_s * timeout):
-        node.is_rpc_available()
+        if node.is_rpc_available():
+            return
+
         time.sleep(1.0 / poll_per_s)
     raise AssertionError("Unable to connect to vbitcoind")

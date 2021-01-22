@@ -6,13 +6,14 @@ import pathlib
 import subprocess
 import tempfile
 import time
+from typing import Optional
 
 from requests import post
 from requests.auth import HTTPBasicAuth
 
 from pypoptesting.framework.bin_util import assert_dir_accessible, get_open_port
 from pypoptesting.framework.entities import Hexstr, BlockWithPopData, RawPopMempoolResponse, VbkBlockResponse, \
-    VtbResponse, AtvResponse, GetpopdataResponse, SubmitPopResponse, PopParamsResponse
+    VtbResponse, AtvResponse, GetpopdataResponse, SubmitPopResponse, PopParamsResponse, GenericBlock, BlockAndNetwork
 from pypoptesting.framework.jsonrpc_api import JsonRpcApi, JSONRPCException
 from pypoptesting.framework.node import Node
 
@@ -51,6 +52,8 @@ class VBitcoindNode(Node):
             f.write("[{}]\n".format("regtest"))
             f.write("port={}\n".format(self.p2p_port))
             f.write("rpcport={}\n".format(self.rpc_port))
+            f.write("rpcuser={}\n".format(self.user))
+            f.write("rpcpassword={}\n".format(self.password))
             f.write("fallbackfee=0.0002\n")
             f.write("server=1\n")
             f.write("keypool=1\n")
@@ -64,11 +67,8 @@ class VBitcoindNode(Node):
             f.write("popbtcnetwork=regtest\n")
             f.write("poplogverbosity=info\n")
 
-        self.url = "http://{h}:{p}/".format(
-            h=BIND_TO,
-            p=self.rpc_port
-        )
-        self.rpc = JsonRpcApi(url=self.user, user=self.user, password=self.password)
+        self.url = "http://{}:{}/".format(BIND_TO, self.rpc_port)
+        self.rpc = JsonRpcApi(url=self.url, user=self.user, password=self.password)
         # Add a new stdout and stderr file each time vbitcoind is started
 
         self.running = False
@@ -90,11 +90,10 @@ class VBitcoindNode(Node):
     def __del__(self):
         # Ensure that we don't leave any vbitcoind processes lying around after
         # the test ends
-        if self.process:
+        if self.process is not None:
             # Should only happen on test failure
             # Avoid using logger, as that may have already been shutdown when
             # this destructor is called.
-            print(self._node_msg("Cleaning up leftover process"))
             self.process.kill()
 
     def _node_msg(self, msg: str) -> str:
@@ -134,7 +133,7 @@ class VBitcoindNode(Node):
         if not self.process:
             return False
 
-        if self.process.poll() is None:
+        if self.process.poll() is not None:
             self.running = False
             return False
 
@@ -148,21 +147,10 @@ class VBitcoindNode(Node):
             self.rpc.getblockcount()
             # If the call to getblockcount() succeeds then the RPC connection is up
             self.log.debug("RPC successfully started")
-            self.rpc_connected = True
             return True
-        except IOError as e:
-            if e.errno != errno.ECONNREFUSED:  # Port not yet open?
-                raise  # unknown IO error
-        except JSONRPCException as e:  # Initialization phase
-            # -28 RPC in warmup
-            # -342 Service unavailable, RPC server started but is shutting down due to error
-            if e.error['code'] != -28 and e.error['code'] != -342:
-                raise  # unknown JSON RPC exception
-        except ValueError as e:  # cookie file not found and no rpcuser or rpcassword. vbitcoind still starting
-            if "No RPC credentials" not in str(e):
-                raise
-
-        return False
+        except Exception as e:
+            self.log.debug("No RPC connection... {}".format(e))
+            return False
 
     def connect(self, node):
         ip_port = "{}:{}".format(BIND_TO, node.p2p_port)
@@ -189,8 +177,60 @@ class VBitcoindNode(Node):
         wait_until(lambda: [peer['id'] for peer in from_connection.getpeerinfo() if
                             "testnode%d" % node_num in peer['subver']] == [], timeout=5)
 
+    def getnewaddress(self) -> str:
+        return self.rpc.getnewaddress()
+
+    def getpayoutinfo(self, address: Optional[str]) -> Hexstr:
+        if address is None:
+            addr = self.getnewaddress()
+            return self.getpayoutinfo(addr)
+
+        s = self.rpc.validateaddress(address)
+        return s['scriptPubKey']
+
     def getpopparams(self) -> PopParamsResponse:
-        pass
+        s = self.rpc.getpopparams()
+        bootstrap = GenericBlock(
+            hash=s['bootstrapBlock']['hash'],
+            prevhash=s['bootstrapBlock']['previousBlock'],
+            height=s['bootstrapBlock']['height']
+        )
+
+        vbkBootstrap = BlockAndNetwork(
+            block=GenericBlock(
+                hash=s['vbkBootstrapBlock']['hash'],
+                prevhash=s['vbkBootstrapBlock']['previousBlock'],
+                height=s['vbkBootstrapBlock']['height']
+            ),
+            network=s['vbkBootstrapBlock']['network']
+        )
+
+        btcBootstrap = BlockAndNetwork(
+            block=GenericBlock(
+                hash=s['btcBootstrapBlock']['hash'],
+                prevhash=s['btcBootstrapBlock']['previousBlock'],
+                height=s['btcBootstrapBlock']['height']
+            ),
+            network=s['btcBootstrapBlock']['network']
+        )
+
+        return PopParamsResponse(
+            popActivationHeight=s['popActivationHeight'],
+            popRewardPercentage=s['popRewardPercentage'],
+            popRewardCoefficient=s['popRewardCoefficient'],
+            popPayoutDelay=s['payoutParams']['popPayoutDelay'],
+            bootstrapBlock=bootstrap,
+            vbkBootstrap=vbkBootstrap,
+            btcBootstrap=btcBootstrap,
+            networkId=s['networkId'],
+            maxVbkBlocksInAltBlock=s['maxVbkBlocksInAltBlock'],
+            maxVTBsInAltBlock=s['maxVTBsInAltBlock'],
+            maxATVsInAltBlock=s['maxATVsInAltBlock'],
+            endorsementSettlementInterval=s['endorsementSettlementInterval'],
+            finalityDelay=s['finalityDelay'],
+            keystoneInterval=s['keystoneInterval'],
+            maxAltchainFutureBlockTime=s['maxAltchainFutureBlockTime']
+        )
 
     def submitpopatv(self, atv: Hexstr) -> SubmitPopResponse:
         pass
@@ -208,13 +248,16 @@ class VBitcoindNode(Node):
         pass
 
     def getbtcbestblockhash(self) -> Hexstr:
-        pass
+        return self.rpc.getbtcbestblockhash()
 
     def getvbkbestblockhash(self) -> Hexstr:
-        pass
+        return self.rpc.getvbkbestblockhash()
 
     def getbestblockhash(self) -> Hexstr:
-        pass
+        return self.rpc.getbestblockhash()
+
+    def getbalance(self, address: str) -> float:
+        return self.rpc.getbalance(address)
 
     def getrawatv(self, atvid: Hexstr) -> AtvResponse:
         pass
@@ -228,8 +271,8 @@ class VBitcoindNode(Node):
     def getrawpopmempool(self) -> RawPopMempoolResponse:
         pass
 
-    def generate(self, nblocks: int) -> None:
-        pass
+    def generate(self, nblocks: int, address: str) -> None:
+        return self.rpc.generatetoaddress(nblocks, address)
 
     def getblockhash(self, height: int) -> Hexstr:
         pass

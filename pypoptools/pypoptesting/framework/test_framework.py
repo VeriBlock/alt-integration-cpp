@@ -40,9 +40,9 @@ class PopIntegrationTestMetaClass(type):
 
     def __new__(cls, clsname, bases, dct):
         if not clsname == 'PopIntegrationTestFramework':
-            if not ('run_test' in dct and 'set_test_params' in dct and 'setup_network' in dct):
+            if not ('run_test' in dct and 'set_test_params' in dct):
                 raise TypeError("PopIntegrationTestFramework subclasses must override "
-                                "'run_test', 'set_test_params' and 'setup_network'")
+                                "'run_test', 'set_test_params'")
             if '__init__' in dct or 'main' in dct:
                 raise TypeError("PopIntegrationTestFramework subclasses may not override "
                                 "'__init__' or 'main'")
@@ -180,7 +180,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         self.log = logging.getLogger('TestFramework')
         self.log.setLevel(logging.DEBUG)
         # Create file handler to log all messages
-        fh = logging.FileHandler(self.dir + '/test_framework.log', encoding='utf-8')
+        fh = logging.FileHandler(pathlib.Path(self.dir, 'test_framework.log'), encoding='utf-8')
         fh.setLevel(logging.DEBUG)
         # Create console handler to log messages to stderr.
         ch = logging.StreamHandler(sys.stdout)
