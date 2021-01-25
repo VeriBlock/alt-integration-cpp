@@ -52,6 +52,8 @@ jobs:
           restore-keys: |
             linux-ccache-matrix-${{ matrix.flags }}-
             linux-ccache-matrix-
+      - name: install rocks-db
+        run: apt-get install librocksdb-dev
       - name: install new cmake
         run: |
           apt-get update

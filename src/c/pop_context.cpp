@@ -17,8 +17,6 @@
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
 
-const static std::string DB_STORAGE_NAME = "altintegration_storage";
-
 PopContext* VBK_NewPopContext(Config_t* config, const char* db_path) {
   VBK_ASSERT(config);
   VBK_ASSERT(config->config);
@@ -30,8 +28,7 @@ PopContext* VBK_NewPopContext(Config_t* config, const char* db_path) {
   auto* v = new PopContext();
 
 #ifdef WITH_ROCKSDB
-  v->storage = std::make_shared<adaptors::RocksDBStorage>(std::string(db_path) +
-                                                          DB_STORAGE_NAME);
+  v->storage = std::make_shared<adaptors::RocksDBStorage>(db_path);
 #endif
 
   VBK_ASSERT_MSG(

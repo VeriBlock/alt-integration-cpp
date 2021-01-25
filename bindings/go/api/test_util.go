@@ -38,7 +38,7 @@ func generateTestPopContext(t *testing.T) *PopContext {
 		return true
 	})
 
-	return NewPopContext(config, "/tmp/")
+	return NewPopContext(config, "/tmp/test-storage")
 }
 
 func generateNextAltBlock(current *entities.AltBlock) *entities.AltBlock {
