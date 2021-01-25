@@ -11,12 +11,12 @@ function(pytest _name _py)
     add_dependencies(pypopminer_${_name} pypopminer)
     add_test(
             NAME pypopminer_${_name}
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${_name}.py
+            COMMAND ${PYTHON_EXECUTABLE} ${_py}
             WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
     )
 endfunction()
 
 if(TESTING)
-    pytest(mock_miner_test tests/mock_miner_test.py)
-    pytest(test_imports tests/test_imports.py)
+    pytest(mock_miner_test ${CMAKE_CURRENT_LIST_DIR}/tests/mock_miner_test.py)
+    pytest(test_imports ${CMAKE_CURRENT_LIST_DIR}/tests/test_imports.py)
 endif()
