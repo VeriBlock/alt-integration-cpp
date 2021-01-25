@@ -30,7 +30,10 @@ jobs:
       - name: install reqs on ubuntu
         if: matrix.runson == 'ubuntu-latest'
         run: sudo apt-get install -y python-setuptools python3-setuptools libboost-python-dev
+      - name: install reqs on mac
+        if: matrix.runson == 'macos-latest'
+        run: brew install boost-python
       - name: prepare
-        run: pip install --upgrade pip cmake pathlib
+        run: pip install --user --upgrade pip cmake pathlib
       - name: build
-        run: sudo python setup.py install --user
+        run: python setup.py install --user
