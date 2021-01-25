@@ -6,7 +6,7 @@ setuptools.setup(
     author="VeriBlock",
     author_email="info@VeriBlock.com",
     description="Testing package for PoP protocol",
-    url="https://github.com/VeriBlock/alt-integration-cpp/tree/feature/pypoptesting/pypoptools/pypoptesting",
+    url="https://github.com/VeriBlock/alt-integration-cpp",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
