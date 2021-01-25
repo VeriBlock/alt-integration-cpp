@@ -17,7 +17,6 @@ namespace altintegration {
  * can't recover.
  */
 struct StateCorruptedException : public std::domain_error {
- public:
   StateCorruptedException(const std::string& msg) : std::domain_error(msg) {}
 
   template <typename Block>

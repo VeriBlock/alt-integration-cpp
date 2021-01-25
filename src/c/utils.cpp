@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <vector>
 
+#include "adaptors/block_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "pop_context.hpp"
 #include "validation_state.hpp"
@@ -16,7 +17,9 @@
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vtb.hpp"
+#include "veriblock/exceptions/storage_io.hpp"
 #include "veriblock/stateless_validation.hpp"
+#include "veriblock/storage/util.hpp"
 
 void VBK_VbkBlock_getId(const uint8_t* block_bytes,
                         int block_bytes_size,
@@ -243,4 +246,25 @@ bool VBK_checkPopData(PopContext* self,
       Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
   return checkPopData(
       *self->context->popValidator, pop_data, state->getState());
+}
+
+bool VBK_SaveAllTrees(PopContext* self) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->storage);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+
+  using namespace altintegration;
+  auto write_batch = self->storage->generateWriteBatch();
+  adaptors::BlockBatchImpl block_batch(*write_batch);
+  try {
+    SaveAllTrees(*self->context->altTree, block_batch);
+    write_batch->writeBatch();
+  } catch (const StorageIOException&) {
+    return false;
+  } catch (...) {
+    VBK_ASSERT_MSG(false, "catched unexpected exception");
+  }
+
+  return true;
 }

@@ -104,3 +104,12 @@ func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	}
 	return nil
 }
+
+func (v *PopContext) SaveAllTrees() error {
+	defer v.lock()()
+	res := v.popContext.SaveAllTrees()
+	if !res {
+		return errors.New("can not save trees")
+	}
+	return nil
+}
