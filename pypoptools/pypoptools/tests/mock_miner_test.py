@@ -6,6 +6,7 @@
 
 import unittest
 
+
 class MockMinerTestCase(unittest.TestCase):
     def test_can_import_entities(self):
         try:
@@ -14,7 +15,7 @@ class MockMinerTestCase(unittest.TestCase):
             self.fail("pypopminer can not be imported: {}".format(e))
 
     def test_mock_miner_can_produce_publications(self):
-        from pypopminer import MockMiner, PublicationData
+        from pypoptools.pypopminer import MockMiner, PublicationData
         m = MockMiner()
         self.assertEqual(m.vbkTip.previousBlock, "000000000000000000000000")
         self.assertEqual(m.vbkTip.height, 0)
@@ -33,7 +34,7 @@ class MockMinerTestCase(unittest.TestCase):
         self.assertEqual(m.vbkTip.height, 102)
 
     def test_uints_handle_both_bytes_and_uint8(self):
-        from pypopminer import PublicationData, BtcBlock
+        from pypoptools.pypopminer import PublicationData, BtcBlock
         p = PublicationData()
         p.header = '11'
         p.payoutInfo = b'22'
@@ -48,6 +49,6 @@ class MockMinerTestCase(unittest.TestCase):
         b.merkleRoot = b'2222222222222222222222222222222222222222222222222222222222222222'
         self.assertEqual(str(b.merkleRoot), "2222222222222222222222222222222222222222222222222222222222222222")
 
+
 if __name__ == '__main__':
     unittest.main()
-

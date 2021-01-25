@@ -7,9 +7,11 @@ class ImportsTest(unittest.TestCase):
 
     def test_can_import_node(self):
         from pypoptools.pypoptesting import Node
+        from pypoptools import Node
 
     def test_can_import_mock_miner(self):
         from pypoptools.pypopminer import MockMiner
+        from pypoptools import MockMiner
 
 
 if __name__ == '__main__':

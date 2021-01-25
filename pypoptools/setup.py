@@ -12,7 +12,15 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 
 thisdir = pathlib.Path(__file__).parent
+cwd = os.getcwd()
 
+if cwd != str(thisdir):
+    raise Exception("""
+    
+pypoptools is installable only from dir with setup.py!
+    Current working dir: {}
+    setup.py dir       : {}
+    """.format(cwd, thisdir))
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):
@@ -86,6 +94,7 @@ packages = [
     'pypoptools.pypoptesting',
     'pypoptools.pypoptesting.framework',
     'pypoptools.pypoptesting.tests',
+    'pypoptools.pypopminer',
 ]
 
 setup(
