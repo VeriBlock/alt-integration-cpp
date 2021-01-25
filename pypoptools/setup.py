@@ -43,13 +43,16 @@ class CMakeBuild(build_ext):
             os.path.dirname(self.get_ext_fullpath(ext.name)))
         cfg = 'Debug' if self.debug else 'Release'
 
+        sodir = pathlib.Path(extdir, 'pypoptools')
+        sodir = pathlib.Path(sodir, 'pypopminer')
         cmake_args = [
-            '-DPYPOPMINER_OUTPUT_DIR=' + str(extdir),
+            '-DPYPOPMINER_OUTPUT_DIR=' + str(sodir),
             '-DCMAKE_BUILD_TYPE=' + cfg,
             '-DWITH_PYPOPTOOLS=ON',
             '-DFUZZING=OFF',
             '-DTESTING=OFF',
             '-DBENCHMARKING=OFF',
+            '-DWERROR=NO',
             '-DPYTHON_EXECUTABLE=' + sys.executable
         ]
 
@@ -82,6 +85,8 @@ class CMakeExtension(Extension):
 
 packages = [
     'pypoptools',
+    'pypoptools.pypoptesting',
+    'pypoptools.pypopminer',
 ]
 
 setup(
@@ -94,7 +99,7 @@ setup(
     author_email='',
     description='',
     python_requires='>=3.6',
-    ext_modules=[CMakeExtension('pypopminer', sourcedir='..')],
+    ext_modules=[CMakeExtension('pypopminerzz', sourcedir='..')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )

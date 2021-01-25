@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 
-from pypopminer2 import MockMiner2
+from pypopminer import MockMiner
 from random import randrange
 
 from pypoptesting.framework.jsonrpc_api import JsonRpcApi
