@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from pypoptesting.entities import *
+from pypoptesting.framework.entities import *
 
 
 class Node(ABC):
@@ -57,7 +57,19 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def generate(self, nblocks: int) -> None:
+    def generate(self, nblocks: int, address: str) -> None:
+        pass
+
+    @abstractmethod
+    def getnewaddress(self) -> str:
+        pass
+
+    @abstractmethod
+    def getpayoutinfo(self, address: Optional[str]) -> Hexstr:
+        pass
+
+    @abstractmethod
+    def getbalance(self, address: str) -> float:
         pass
 
     @abstractmethod
@@ -87,3 +99,18 @@ class Node(ABC):
     @abstractmethod
     def is_rpc_available(self) -> bool:
         pass
+
+    @abstractmethod
+    def connect(self, node):
+        """
+        Should block until this node is connected to other
+        :param node: other Node
+        """
+        pass
+
+    @abstractmethod
+    def disconnect(self, node):
+        """
+        Should block until this node is disconnected from other
+        :param node: other node
+        """
