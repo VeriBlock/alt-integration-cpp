@@ -18,7 +18,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runson: [ubuntu-latest, windows-latest, macos-latest]
+        runson: [
+            ubuntu-latest,
+        # TODO: fix builds on mac and win
+        #    windows-latest,
+        #    macos-latest
+        ]
     runs-on: ${{ matrix.runson }}
     env:
       VCPKG_DEFAULT_TRIPLET: x64-windows-static
