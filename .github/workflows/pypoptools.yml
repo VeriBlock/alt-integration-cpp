@@ -20,7 +20,8 @@ jobs:
       matrix:
         runson: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.runson }}
-
+    env:
+      VCPKG_DEFAULT_TRIPLET: x64-windows-static
     steps:
       - uses: actions/checkout@v1
         name: checkout
@@ -36,7 +37,12 @@ jobs:
         run: sudo apt-get install -y python-setuptools python3-setuptools libboost-python-dev
       - name: install reqs on mac
         if: matrix.runson == 'macos-latest'
-        run: brew install boost-python
+        run: brew install boost --with-python --build-from-source
+      - name: install reqs on windows
+        if: matrix.runson == 'windows-latest'
+        run: |
+          vcpkg integrate install
+          vcpkg install boost
       - name: prepare
         run: pip install --user --upgrade pip cmake pathlib
       - name: build
