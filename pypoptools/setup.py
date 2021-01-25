@@ -108,7 +108,7 @@ setup(
     description='',
     python_requires='>=3.6',
     install_requires=['requests', 'dataclasses'],
-    ext_modules=[CMakeExtension('pypopminer', sourcedir='..')],
+    ext_modules=[CMakeExtension('pypopminer', sourcedir=str(pathlib.Path(thisdir, '..')))],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )
