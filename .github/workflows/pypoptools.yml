@@ -33,4 +33,4 @@ jobs:
         if: matrix.runson == 'ubuntu-latest'
         run: sudo apt-get install -y python-setuptools python3-setuptools
       - name: build
-        run: pip3 install -e .
+        run: python setup.py install --user
