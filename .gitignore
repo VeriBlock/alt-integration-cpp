@@ -9,3 +9,5 @@ __init__.py
 venv
 *.pyd
 __pycache__
+*.egg-info
+dist
