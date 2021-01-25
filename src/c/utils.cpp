@@ -248,8 +248,9 @@ bool VBK_checkPopData(PopContext* self,
       *self->context->popValidator, pop_data, state->getState());
 }
 
-bool VBK_SaveAllTrees(PopContext* self) {
+bool VBK_SaveAllTrees(PopContext* self, VbkValidationState* state) {
   VBK_ASSERT(self);
+  VBK_ASSERT(state);
   VBK_ASSERT(self->storage);
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->altTree);
@@ -260,11 +261,25 @@ bool VBK_SaveAllTrees(PopContext* self) {
   try {
     SaveAllTrees(*self->context->altTree, block_batch);
     write_batch->writeBatch();
-  } catch (const StorageIOException&) {
+  } catch (const StorageIOException& e) {
+    state->getState().Invalid("failed-save-trees", e.what());
     return false;
   } catch (...) {
     VBK_ASSERT_MSG(false, "catched unexpected exception");
   }
 
   return true;
+}
+
+bool VBK_LoadAllTrees(PopContext* self, VbkValidationState* state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(state);
+  VBK_ASSERT(self->storage);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+
+  using namespace altintegration;
+
+  adaptors::BlockReaderImpl block_reader(*self->storage);
+  return LoadAllTrees(*self->context, block_reader, state->getState());
 }

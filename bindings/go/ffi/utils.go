@@ -142,7 +142,7 @@ func (v *PopContext) CheckPopData(pop_data_bytes []byte, state *ValidationState)
 	return bool(res)
 }
 
-func (v *PopContext) SaveAllTrees() bool {
-	res := C.VBK_SaveAllTrees(v.ref)
+func (v *PopContext) SaveAllTrees(state *ValidationState) bool {
+	res := C.VBK_SaveAllTrees(v.ref, state.ref)
 	return bool(res)
 }

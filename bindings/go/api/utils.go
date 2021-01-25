@@ -107,9 +107,13 @@ func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 
 func (v *PopContext) SaveAllTrees() error {
 	defer v.lock()()
-	res := v.popContext.SaveAllTrees()
-	if !res {
-		return errors.New("can not save trees")
+
+	state := ffi.NewValidationState()
+	defer state.Free()
+
+	ok := v.popContext.SaveAllTrees(state)
+	if !ok {
+		return state.Error()
 	}
 	return nil
 }

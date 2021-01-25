@@ -66,6 +66,43 @@ inline std::vector<uint8_t> block_key<altintegration::BtcBlock>(
   return res;
 }
 
+template <typename BlockT>
+struct BlockIteratorImpl : public altintegration::BlockIterator<BlockT> {
+  ~BlockIteratorImpl() override = default;
+
+  BlockIteratorImpl(std::shared_ptr<StorageIterator> it) : it_(it) {}
+
+  void next() override { it_->next(); }
+
+  bool value(altintegration::BlockIndex<BlockT>& out) const override {
+    std::vector<uint8_t> bytes;
+    if (!it_->value(bytes)) {
+      return false;
+    }
+    altintegration::ValidationState tmp;
+    if (!altintegration::DeserializeFromVbkEncoding(bytes, out, tmp)) {
+      return false;
+    }
+    return true;
+  }
+
+  bool key(typename BlockT::hash_t& out) const override {
+    std::vector<uint8_t> bytes;
+    if (!it_->key(bytes)) {
+      return false;
+    }
+    out = bytes;
+    return true;
+  }
+
+  bool valid() const override { return it_->valid(); }
+
+  void seek_start() override { it_->seek(block_key<BlockT>({})); }
+
+ private:
+  std::shared_ptr<StorageIterator> it_;
+};
+
 struct BlockReaderImpl : public altintegration::BlockReader {
   ~BlockReaderImpl() override = default;
 
@@ -98,15 +135,18 @@ struct BlockReaderImpl : public altintegration::BlockReader {
 
   std::shared_ptr<altintegration::BlockIterator<altintegration::AltBlock>>
   getAltBlockIterator() const override {
-    return nullptr;
+    return std::make_shared<BlockIteratorImpl<altintegration::AltBlock>>(
+        storage_.generateIterator());
   }
   std::shared_ptr<altintegration::BlockIterator<altintegration::VbkBlock>>
   getVbkBlockIterator() const override {
-    return nullptr;
+    return std::make_shared<BlockIteratorImpl<altintegration::VbkBlock>>(
+        storage_.generateIterator());
   }
   std::shared_ptr<altintegration::BlockIterator<altintegration::BtcBlock>>
   getBtcBlockIterator() const override {
-    return nullptr;
+    return std::make_shared<BlockIteratorImpl<altintegration::BtcBlock>>(
+        storage_.generateIterator());
   }
 
  private:
