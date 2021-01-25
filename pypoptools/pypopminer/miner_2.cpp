@@ -84,7 +84,7 @@ struct MockMiner2Proxy : private MockMiner2 {
                              prevHash);
     }
 
-    return base::mineVbkBlocks(*index, num)->getHeader();
+    return base::mineVbkBlocks(num, *index)->getHeader();
   }
   BtcBlock mineBtcBlocks(const std::string& prevHash, size_t num) {
     auto* index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(prevHash));
@@ -93,23 +93,19 @@ struct MockMiner2Proxy : private MockMiner2 {
                              prevHash);
     }
 
-    return base::mineBtcBlocks(*index, num)->getHeader();
+    return base::mineBtcBlocks(num, *index)->getHeader();
   }
   VbkBlock mineVbkBlocks(size_t num) {
     auto* index = vbk().getBestChain().tip();
-    return base::mineVbkBlocks(*index, num)->getHeader();
+    return base::mineVbkBlocks(num, *index)->getHeader();
   }
   BtcBlock mineBtcBlocks(size_t num) {
     auto* index = btc().getBestChain().tip();
-    return base::mineBtcBlocks(*index, num)->getHeader();
+    return base::mineBtcBlocks(num, *index)->getHeader();
   }
 
   BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock) {
     return base::createBtcTxEndorsingVbkBlock(publishedBlock);
-  }
-
-  void submitBtcTx(const BtcTx& tx) {
-    btcmempool.push_back(tx);
   }
 
   VbkPopTx createVbkPopTxEndorsingVbkBlock(
@@ -124,17 +120,9 @@ struct MockMiner2Proxy : private MockMiner2 {
       lastKnownBtcBlockHash);
   }
 
-  void submitVbkPopTx(const VbkPopTx& tx) {
-    vbkmempool.push_back(tx);
-  }
-
   VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData) {
     return base::createVbkTxEndorsingAltBlock(publicationData);
   }
-
-//  void submitVbkTx(const VbkTx& tx) {
-//    vbkmempool.push_back(tx);
-//  }
 
   void endorseVbkBlock(const VbkBlock& block,
                        const std::string& lastKnownBtcHash,
@@ -184,7 +172,6 @@ struct MockMiner2Proxy : private MockMiner2 {
   Payloads endorseAltBlock(const PublicationData& pub,
                            const std::string& lastVbkBlock) {
     Payloads payloads;
-    ValidationState state;
     auto vbkindex =
         vbk().getBlockIndex(VbkBlock::hash_t::fromHex(lastVbkBlock));
     if (!vbkindex) {
@@ -193,11 +180,8 @@ struct MockMiner2Proxy : private MockMiner2 {
           lastVbkBlock);
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    payloads.atv = base::applyATV(vbktx, state);
-    if (!state.IsValid()) {
-      throw std::logic_error("MockMiner2: can't create ATV: " +
-                             state.toString());
-    }
+    auto* vbkblock = base::mineVbkBlocks(1, {vbktx});
+    payloads.atv = base::getATVs(*vbkblock)[0];
 
     std::vector<VbkBlock> context;
     // in range of blocks [lastVbkBlock... vbk tip] look for VTBs and put them
@@ -279,11 +263,8 @@ BOOST_PYTHON_MODULE(pypopminer2) {
       .def("mineVbkBlocks", fx3)
       .def("mineVbkBlocks", fx4)
       .def("createBtcTxEndorsingVbkBlock", &MockMiner2Proxy::createBtcTxEndorsingVbkBlock)
-      .def("submitBtcTx", &MockMiner2Proxy::submitBtcTx)
       .def("createVbkPopTxEndorsingVbkBlock", &MockMiner2Proxy::createVbkPopTxEndorsingVbkBlock)
-      .def("submitVbkPopTx", &MockMiner2Proxy::submitVbkPopTx)
       .def("createVbkTxEndorsingAltBlock", &MockMiner2Proxy::createVbkTxEndorsingAltBlock)
-//      .def("submitVbkTx", &MockMiner2Proxy::submitVbkTx)
       .def("endorseVbkBlock", fx5)
       .def("endorseVbkBlock", fx6)
       .def("endorseAltBlock", &MockMiner2Proxy::endorseAltBlock);

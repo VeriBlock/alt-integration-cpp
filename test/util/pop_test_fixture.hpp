@@ -232,10 +232,10 @@ struct PopTestFixture {
   }
 
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
-    auto Btctx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
-    auto* btcBlockTip = popminer->mineBtcBlocks(1);
+    auto btctx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
+    auto* btcblock = popminer->mineBtcBlocks(1, {btctx});
     return popminer->createVbkPopTxEndorsingVbkBlock(
-        btcBlockTip->getHeader(), Btctx, endorsedBlock, getLastKnownBtcBlock());
+        btcblock->getHeader(), btctx, endorsedBlock, getLastKnownBtcBlock());
   }
 
   void fillVbkContext(std::vector<VbkBlock>& out,
@@ -280,13 +280,15 @@ struct PopTestFixture {
 
     for (size_t i = 0; i < VTBs; i++) {
       auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
-      auto vbkcontaining = popminer->applyVTB(popminer->vbk(), vbkpoptx, state);
-      auto newvtb = popminer->vbkPayloads.at(vbkcontaining.getHash()).back();
+      auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
+      auto newvtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).back();
       popData.vtbs.push_back(newvtb);
     }
 
-    for (const auto& t : transactions) {
-      popData.atvs.push_back(popminer->applyATV(t, state));
+    for (const auto& tx : transactions) {
+      auto* block = popminer->mineVbkBlocks(1, {tx});
+      ATV atv = popminer->getATVs(*block)[0];
+      popData.atvs.push_back(atv);
     }
 
     fillVbkContext(popData.context, lastVbk, popminer->vbk());
@@ -312,19 +314,19 @@ struct PopTestFixture {
     return alttree.btc().getBestChain().tip()->getHash();
   }
 
-  void endorseVbkTip() {
+  VbkPopTx endorseVbkTip() {
     auto* tip = popminer->vbk().getBestChain().tip();
     VBK_ASSERT(tip);
-    auto tx = popminer->endorseVbkBlock(
-        tip->getHeader(), getLastKnownBtcBlock(), state);
-    popminer->vbkmempool.push_back(tx);
+    return popminer->createVbkPopTxEndorsingVbkBlock(
+        tip->getHeader(), getLastKnownBtcBlock());
   }
 
   void createEndorsedAltChain(size_t blocks, size_t vtbs = 1) {
+    std::vector<VbkPopTx> transactions(vtbs);
     for (size_t i = 0; i < vtbs; i++) {
-      endorseVbkTip();
+      transactions[i] = endorseVbkTip();
     }
-    popminer->mineVbkBlocks(1);
+    popminer->mineVbkBlocks(1, transactions);
 
     auto* altTip = alttree.getBestChain().tip();
     VBK_ASSERT(altTip);

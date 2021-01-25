@@ -50,14 +50,7 @@ TEST_F(Scenario8, scenario_8) {
       vbkTip->getHeight() - 10 - vbkparam.getEndorsementSettlementInterval());
 
   VbkPopTx popTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
-  // remove this popTx from the mempool, so vbk blocks can mine correctly
-  ASSERT_EQ(popminer->vbkmempool.size(), 1);
-  popminer->vbkmempool.erase(popminer->vbkmempool.begin());
-
   VbkPopTx popTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
-  // remove this popTx from the mempool, so vbk blocks can mine correctly
-  ASSERT_EQ(popminer->vbkmempool.size(), 1);
-  popminer->vbkmempool.erase(popminer->vbkmempool.begin());
 
   // generate invalid VTB
   // build merkle tree
@@ -102,7 +95,8 @@ TEST_F(Scenario8, scenario_8) {
   AltBlock endorsedBlock = chain[5];
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  ATV atv1 = popminer->applyATV(tx1, state);
+  auto* block1 = popminer->mineVbkBlocks(1, {tx1});
+  ATV atv1 = popminer->getATVs(*block1)[0];
 
   PopData popData1;
   popData1.atvs = {atv1};
@@ -132,7 +126,8 @@ TEST_F(Scenario8, scenario_8) {
 
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  ATV atv2 = popminer->applyATV(tx1, state);
+  auto* block2 = popminer->mineVbkBlocks(1, {tx2});
+  ATV atv2 = popminer->getATVs(*block2)[0];
 
   PopData popData2;
   popData2.atvs = {atv2};

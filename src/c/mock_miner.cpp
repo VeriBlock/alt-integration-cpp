@@ -47,7 +47,7 @@ VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
     return nullptr;
   }
 
-  auto* new_block = self->miner->mineBtcBlocks(*block, 1);
+  auto* new_block = self->miner->mineBtcBlocks(1, *block);
   VBK_ASSERT(new_block);
   return new VbkByteStream(new_block->toVbkEncoding());
 }
@@ -74,7 +74,7 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
     return nullptr;
   }
 
-  auto* new_block = self->miner->mineVbkBlocks(*block, 1);
+  auto* new_block = self->miner->mineVbkBlocks(1, *block);
   VBK_ASSERT(new_block);
   return new VbkByteStream(new_block->toVbkEncoding());
 }
@@ -97,7 +97,8 @@ VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
   }
 
   auto vbktx = self->miner->createVbkTxEndorsingAltBlock(pubdata);
-  auto atv = self->miner->applyATV(vbktx, state->getState());
+  auto* block = self->miner->mineVbkBlocks(1, {vbktx});
+  auto atv = self->miner->getATVs(*block)[0];
   VBK_ASSERT(state->IsValid());
 
   WriteStream w_stream;
@@ -132,11 +133,10 @@ VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
 
   altintegration::BtcBlock::hash_t hash = lastKnownBtcBlockHash;
 
-  auto tx = self->miner->endorseVbkBlock(vbk_block, hash, state->getState());
-  self->miner->vbkmempool.push_back(tx);
+  auto tx = self->miner->createVbkPopTxEndorsingVbkBlock(vbk_block, hash);
 
   VBK_ASSERT(state->IsValid());
-  auto containingBlock = self->miner->mineVbkBlocks(1);
+  auto containingBlock = self->miner->mineVbkBlocks(1, {tx});
   auto vtbs = self->miner->vbkPayloads[containingBlock->getHash()];
   VBK_ASSERT(vtbs.size() == 1);
 

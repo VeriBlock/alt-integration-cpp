@@ -112,13 +112,13 @@ TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   auto& btc = popminer->btc();
   auto* fourth = btc.getBestChain().tip()->getAncestor(4);
   auto* sixth = btc.getBestChain().tip()->getAncestor(6);
-  auto* Atip = popminer->mineBtcBlocks(*fourth, 5);
+  auto* Atip = popminer->mineBtcBlocks(5, *fourth);
   auto* Btip = btc.getBestChain().tip();
   auto* B5 = Btip->getAncestor(5);
-  auto* Ctip = popminer->mineBtcBlocks(*sixth, 3);
-  auto* Dtip = popminer->mineBtcBlocks(*Ctip->getAncestor(7), 1);
-  auto* Etip = popminer->mineBtcBlocks(*sixth, 2);  // 7-8
-  auto* Ftip = popminer->mineBtcBlocks(*sixth, 1);  // 9
+  auto* Ctip = popminer->mineBtcBlocks(3, *sixth);
+  auto* Dtip = popminer->mineBtcBlocks(1, *Ctip->getAncestor(7));
+  auto* Etip = popminer->mineBtcBlocks(2, *sixth);  // 7-8
+  auto* Ftip = popminer->mineBtcBlocks(1, *sixth);  // 9
 
   ASSERT_EQ(btc.getBlocks().size(), 11 + 5 + 3 + 1 + 2 + 1);
   ASSERT_EQ(btc.getTips().size(), 6);

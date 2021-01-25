@@ -44,29 +44,59 @@ class MockMiner2 {
   using vbk_block_tree = VbkBlockTree;
 
  public:
-  std::vector<BtcTx> btcmempool;
-  std::vector<VbkPopTx> vbkmempool;
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vbkPayloads;
+
+  ATV endorseAltBlock(const PublicationData& publicationData);
+
+  VTB endorseVbkBlock(const VbkBlock& publishedBlock);
+
+  VTB endorseVbkBlock(const VbkBlock& publishedBlock,
+                      const BtcBlock::hash_t& lastKnownBtcBlockHash);
+
+  std::vector<ATV> getATVs(const BlockIndex<VbkBlock>& block) const;
+
+  std::vector<VTB> getVTBs(const BlockIndex<VbkBlock>& block) const;
+
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const std::vector<VbkTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const std::vector<VbkPopTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const BlockIndex<VbkBlock>& tip);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const BlockIndex<VbkBlock>& tip,
+      const std::vector<VbkTx>& transactions);
+  BlockIndex<VbkBlock>* mineVbkBlocks(
+      size_t amount,
+      const BlockIndex<VbkBlock>& tip,
+      const std::vector<VbkPopTx>& transactions);
+
+  BlockIndex<BtcBlock>* mineBtcBlocks(
+      size_t amount,
+      const std::vector<BtcTx>& transactions = {});
+  BlockIndex<BtcBlock>* mineBtcBlocks(
+      size_t amount,
+      const BlockIndex<BtcBlock>& tip,
+      const std::vector<BtcTx>& transactions = {});
+
+  const BlockIndex<VbkBlock>* getVbkTip() const;
+
+  const BlockIndex<BtcBlock>* getBtcTip() const;
 
   VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData);
 
-  ATV applyATV(const VbkTx& transaction, ValidationState& state);
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const VbkBlock& publishedBlock);
 
-  std::vector<ATV> applyATVs(const std::vector<VbkTx>& transactions,
-                             ValidationState& state);
-
-  BlockIndex<BtcBlock>* mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
-                                      size_t amount);
-  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount);
-
-  BlockIndex<VbkBlock>* mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
-                                      size_t amount);
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount);
-
-  BlockIndex<VbkBlock>* mineVbkBlocks(const BlockIndex<VbkBlock>& tip,
-                                      const std::vector<VbkPopTx>& poptxs);
-
-  BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock);
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const VbkBlock& publishedBlock,
+      const BtcBlock::hash_t& lastKnownBtcBlockHash);
 
   VbkPopTx createVbkPopTxEndorsingVbkBlock(
       const BtcBlock& containingBlock,
@@ -74,46 +104,21 @@ class MockMiner2 {
       const VbkBlock& publishedBlock,
       const BtcBlock::hash_t& lastKnownBtcBlockHash);
 
-  VbkPopTx endorseVbkBlock(const VbkBlock& publishedBlock,
-                           const BtcBlock::hash_t& lastKnownBtcBlockHash,
-                           ValidationState& state);
+  BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock);
 
-  VbkBlock applyVTB(VbkBlockTree& tree,
-                    const VbkPopTx& tx,
-                    ValidationState& state);
-
-  VbkBlock applyVTB(const BlockIndex<VbkBlock>& tip,
-                    VbkBlockTree& tree,
-                    const VbkPopTx& tx,
-                    ValidationState& state);
-
-  VbkBlock applyVTB(const VbkBlock::hash_t& tip,
-                    VbkBlockTree& tree,
-                    const VbkPopTx& tx,
-                    ValidationState& state);
-
-  VbkBlock applyVTBs(VbkBlockTree& tree,
-                     const std::vector<VbkPopTx>& txes,
-                     ValidationState& state);
-
-  VbkBlock applyVTBs(const BlockIndex<VbkBlock>& tip,
-                     VbkBlockTree& tree,
-                     const std::vector<VbkPopTx>& txes,
-                     ValidationState& state);
-
-  btc_block_tree& btc() { return vbktree.btc(); }
   vbk_block_tree& vbk() { return vbktree; }
-  const btc_block_tree& btc() const { return vbktree.btc(); }
+  btc_block_tree& btc() { return vbktree.btc(); }
   const vbk_block_tree& vbk() const { return vbktree; }
+  const btc_block_tree& btc() const { return vbktree.btc(); }
   const VbkChainParams& getVbkParams() const { return vbk_params; }
   const BtcChainParams& getBtcParams() const { return btc_params; }
 
   MockMiner2() {
-    bool ret = false;
-    ret = vbktree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state_);
+    ValidationState state;
+    bool ret = vbktree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state);
     VBK_ASSERT(ret);
-    ret = vbktree.bootstrapWithGenesis(GetRegTestVbkBlock(), state_);
-    VBK_ASSERT_MSG(ret, state_.toString());
+    ret = vbktree.bootstrapWithGenesis(GetRegTestVbkBlock(), state);
+    VBK_ASSERT_MSG(ret, state.toString());
   }
 
   InmemPayloadsProvider& getPayloadsProvider() { return payloadsProvider; }
@@ -131,9 +136,11 @@ class MockMiner2 {
 
   VbkBlockTree vbktree{vbk_params, btc_params, payloadsProvider, payloadsIndex};
 
-  std::map<BtcBlock::hash_t, std::vector<BtcTx>> btctxes;
+  std::unordered_map<BtcBlock::hash_t, std::vector<BtcTx>> btcTxs;
+  std::unordered_map<VbkBlock::hash_t, std::vector<VbkPopTx>> vbkPopTxs;
+  std::unordered_map<VbkBlock::hash_t, std::vector<VbkTx>> vbkTxs;
 
-  ValidationState state_;
+  void savePayloads(BlockIndex<VbkBlock>* blockIndex);
 };
 
 }  // namespace altintegration
