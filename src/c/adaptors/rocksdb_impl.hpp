@@ -70,10 +70,8 @@ struct RocksDBWriteBatch : public WriteBatch {
     rocksdb::Slice value_slice((char*)value.data(), value.size());
     rocksdb::Status status = batch_.Put(key_slice, value_slice);
     if (!status.ok()) {
-      throw altintegration::StorageIOException(
-          fmt::format("failed to write into the storage, key: %s, value: %s",
-                      altintegration::HexStr(key),
-                      altintegration::HexStr(value)));
+      throw altintegration::StorageIOException(fmt::format(
+          "failed to write into the storage, err: %s", status.ToString()));
     }
   }
 
@@ -81,7 +79,8 @@ struct RocksDBWriteBatch : public WriteBatch {
     rocksdb::Status status = db_.Write(write_options_, &batch_);
     if (!status.ok()) {
       throw altintegration::StorageIOException(
-          "failed to write batch into the storage");
+          fmt::format("failed to write batch into the storage, err: %s",
+                      status.ToString()));
     }
   }
 
@@ -108,10 +107,8 @@ struct RocksDBStorage : public Storage {
 
     rocksdb::Status status = db_->Put(write_options_, key_slice, value_slice);
     if (!status.ok()) {
-      throw altintegration::StorageIOException(
-          fmt::format("failed to write into the storage, key: %s, value: %s",
-                      altintegration::HexStr(key),
-                      altintegration::HexStr(value)));
+      throw altintegration::StorageIOException(fmt::format(
+          "failed to write into the storage, err: %s", status.ToString()));
     }
   }
 
