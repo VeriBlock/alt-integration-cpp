@@ -99,7 +99,11 @@ setup(
     author_email='',
     description='',
     python_requires='>=3.6',
-    install_requires=['requests', 'dataclasses'],
+    install_requires=[
+        'pathlib',
+        'requests',
+        'dataclasses'
+    ],
     ext_modules=[CMakeExtension('pypopminer', sourcedir=str(thisdir))],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
