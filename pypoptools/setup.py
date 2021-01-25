@@ -86,7 +86,6 @@ packages = [
     'pypoptools.pypoptesting',
     'pypoptools.pypoptesting.framework',
     'pypoptools.pypoptesting.tests',
-    'pypoptools.pypopminer',
 ]
 
 setup(
@@ -99,7 +98,8 @@ setup(
     author_email='',
     description='',
     python_requires='>=3.6',
-    ext_modules=[CMakeExtension('pypopminerzz', sourcedir='..')],
+    install_requires=['requests', 'dataclasses'],
+    ext_modules=[CMakeExtension('pypopminer', sourcedir='..')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )
