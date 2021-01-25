@@ -11,19 +11,6 @@ from distutils.version import LooseVersion
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 
-thisdir = pathlib.Path(__file__).parent
-cwd = os.getcwd()
-
-# if cwd != str(thisdir):
-#     raise Exception("""
-#
-# pypoptools is installable only from dir with setup.py!
-#     Current working dir: {}
-#     setup.py dir       : {this}
-#
-#     cd {this}
-#     python3 setup.py install --user
-#     """.format(cwd, this=thisdir))
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):
@@ -99,6 +86,8 @@ packages = [
     'pypoptools.pypoptesting.tests',
     'pypoptools.pypopminer',
 ]
+
+thisdir = pathlib.Path(__file__).parent
 
 setup(
     name='pypoptools',
