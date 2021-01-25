@@ -37,7 +37,7 @@ jobs:
         run: sudo apt-get install -y python-setuptools python3-setuptools libboost-python-dev
       - name: install reqs on mac
         if: matrix.runson == 'macos-latest'
-        run: brew install boost boost-python
+        run: brew install boost-python --with-python3
       - name: install reqs on windows
         if: matrix.runson == 'windows-latest'
         run: |
