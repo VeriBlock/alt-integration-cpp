@@ -1,2 +1,2 @@
-from .pypoptesting import *
 from .pypopminer import *
+from .pypoptesting import *

@@ -1,12 +1,9 @@
 import os
 import pathlib
-import subprocess
 import platform
 import re
+import subprocess
 import sys
-
-from setuptools import Extension
-from setuptools import setup
 from distutils.version import LooseVersion
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
