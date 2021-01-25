@@ -29,5 +29,8 @@ jobs:
           clean: true
       - name: prepare
         run: pip3 install --user --upgrade pip cmake
+      - name: install reqs on ubuntu
+        if: matrix.runson == 'ubuntu-latest'
+        run: sudo apt-get install -y python-setuptools python3-setuptools
       - name: build
-        run: python3 setup.py install --user
+        run: pip3 install -e .
