@@ -84,6 +84,8 @@ class CMakeExtension(Extension):
 packages = [
     'pypoptools',
     'pypoptools.pypoptesting',
+    'pypoptools.pypoptesting.framework',
+    'pypoptools.pypoptesting.tests',
     'pypoptools.pypopminer',
 ]
 
