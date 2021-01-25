@@ -89,7 +89,7 @@ thisdir = pathlib.Path(__file__).parent
 setup(
     name='pypoptools',
     version='0.0.0',
-    packages=find_packages(where=str(pathlib.Path(thisdir, 'pypoptesting'))),
+    packages=packages,
     url='https://github.com/VeriBlock/alt-integration-cpp',
     license='MIT',
     author='warchant',
