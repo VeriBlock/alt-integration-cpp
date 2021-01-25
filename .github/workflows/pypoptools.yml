@@ -28,6 +28,6 @@ jobs:
           submodules: recursive
           clean: true
       - name: prepare
-        run: pip3 install --upgrade pip cmake
+        run: pip3 install --user --upgrade pip cmake
       - name: build
         run: python3 setup.py install --user
