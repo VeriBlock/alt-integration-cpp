@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/config.hpp>
-#include <veriblock/mock_miner_2.hpp>
+#include <veriblock/mock_miner.hpp>
 #include <veriblock/storage/inmem_payloads_provider.hpp>
 
 using namespace altintegration;
@@ -20,7 +20,7 @@ struct PopContextFixture : public ::testing::Test {
   PayloadsIndex payloadsIndex;
   VbkBlockTree local =
       VbkBlockTree(vbkp, btcp, payloadsProvider, payloadsIndex);
-  MockMiner2 remote;
+  MockMiner remote;
 
   BlockIndex<BtcBlock>* forkPoint;
   BlockIndex<BtcBlock>* chainAtip;

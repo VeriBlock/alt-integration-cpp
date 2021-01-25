@@ -15,7 +15,7 @@ struct AltTreeRepositoryTest : public ::testing::Test, public PopTestFixture {
   PayloadsIndex payloadsIndex;
 };
 
-BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner2& miner) {
+BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
   auto tip = miner.btc().getBestChain().tip();
   EXPECT_TRUE(tip);
   return tip->getHash();

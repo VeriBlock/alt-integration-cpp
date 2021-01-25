@@ -18,7 +18,7 @@
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/mempool.hpp>
-#include <veriblock/mock_miner_2.hpp>
+#include <veriblock/mock_miner.hpp>
 #include <veriblock/storage/inmem_block_storage.hpp>
 #include <veriblock/storage/util.hpp>
 
@@ -44,7 +44,7 @@ struct PopTestFixture {
   InmemBlockProvider blockStorage;
 
   // miners
-  std::shared_ptr<MockMiner2> popminer;
+  std::shared_ptr<MockMiner> popminer;
 
   // trees
   AltBlockTree alttree;
@@ -65,7 +65,7 @@ struct PopTestFixture {
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(VBKgenesis, state));
     EXPECT_TRUE(alttree.bootstrap(state));
 
-    popminer = std::make_shared<MockMiner2>();
+    popminer = std::make_shared<MockMiner>();
     mempool = std::make_shared<MemPool>(alttree);
   }
 

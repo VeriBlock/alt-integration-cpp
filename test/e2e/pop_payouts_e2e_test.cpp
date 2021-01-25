@@ -193,7 +193,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
                             altparam.getPayoutParams().getPopPayoutDelay() - 1);
 
   state = ValidationState();
-  popminer = std::make_shared<MockMiner2>();
+  popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2 =
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
@@ -254,7 +254,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
                             altparam.getPayoutParams().getPopPayoutDelay() - 1);
 
   state = ValidationState();
-  popminer = std::make_shared<MockMiner2>();
+  popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2 =
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);

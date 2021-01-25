@@ -84,7 +84,7 @@ struct MockMinerProxy : private MockMiner {
                              prevHash);
     }
 
-    return base::mineVbkBlocks(*index, num)->getHeader();
+    return base::mineVbkBlocks(num, *index)->getHeader();
   }
   BtcBlock mineBtcBlocks(const std::string& prevHash, size_t num) {
     auto* index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(prevHash));
@@ -93,15 +93,32 @@ struct MockMinerProxy : private MockMiner {
                              prevHash);
     }
 
-    return base::mineBtcBlocks(*index, num)->getHeader();
+    return base::mineBtcBlocks(num, *index)->getHeader();
   }
   VbkBlock mineVbkBlocks(size_t num) {
     auto* index = vbk().getBestChain().tip();
-    return base::mineVbkBlocks(*index, num)->getHeader();
+    return base::mineVbkBlocks(num, *index)->getHeader();
   }
   BtcBlock mineBtcBlocks(size_t num) {
     auto* index = btc().getBestChain().tip();
-    return base::mineBtcBlocks(*index, num)->getHeader();
+    return base::mineBtcBlocks(num, *index)->getHeader();
+  }
+
+  BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock) {
+    return base::createBtcTxEndorsingVbkBlock(publishedBlock);
+  }
+
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const BtcBlock& containingBlock,
+      const BtcTx& containingTx,
+      const VbkBlock& publishedBlock,
+      const BtcBlock::hash_t& lastKnownBtcBlockHash) {
+    return base::createVbkPopTxEndorsingVbkBlock(
+        containingBlock, containingTx, publishedBlock, lastKnownBtcBlockHash);
+  }
+
+  VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData) {
+    return base::createVbkTxEndorsingAltBlock(publicationData);
   }
 
   void endorseVbkBlock(const VbkBlock& block,
@@ -152,7 +169,6 @@ struct MockMinerProxy : private MockMiner {
   Payloads endorseAltBlock(const PublicationData& pub,
                            const std::string& lastVbkBlock) {
     Payloads payloads;
-    ValidationState state;
     auto vbkindex =
         vbk().getBlockIndex(VbkBlock::hash_t::fromHex(lastVbkBlock));
     if (!vbkindex) {
@@ -161,11 +177,8 @@ struct MockMinerProxy : private MockMiner {
           lastVbkBlock);
     }
     auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    payloads.atv = base::applyATV(vbktx, state);
-    if (!state.IsValid()) {
-      throw std::logic_error("MockMiner: can't create ATV: " +
-                             state.toString());
-    }
+    auto* vbkblock = base::mineVbkBlocks(1, {vbktx});
+    payloads.atv = base::getATVs(*vbkblock)[0];
 
     std::vector<VbkBlock> context;
     // in range of blocks [lastVbkBlock... vbk tip] look for VTBs and put them
@@ -194,14 +207,14 @@ struct MockMinerProxy : private MockMiner {
   }
 };
 
-boost::shared_ptr<MockMinerProxy> makeMiner() {
+boost::shared_ptr<MockMinerProxy> makeMiner2() {
   return boost::shared_ptr<MockMinerProxy>(new MockMinerProxy());
 }
 
 void init_primitives();
 void init_entities();
 
-BOOST_PYTHON_MODULE(pypopminer) {
+BOOST_PYTHON_MODULE(pypopminer2) {
   init_primitives();
   init_entities();
 
@@ -230,7 +243,7 @@ BOOST_PYTHON_MODULE(pypopminer) {
 
   class_<MockMinerProxy, boost::noncopyable, boost::shared_ptr<MockMinerProxy>>(
       "MockMiner", no_init)
-      .def("__init__", make_constructor(makeMiner))
+      .def("__init__", make_constructor(makeMiner2))
       .def("__repr__", &MockMinerProxy::toPrettyString)
       .def_readonly(
           "vbkTip", &MockMinerProxy::getVbkTip, "Current BtcTip in MockMiner")
@@ -246,6 +259,12 @@ BOOST_PYTHON_MODULE(pypopminer) {
       .def("mineBtcBlocks", fx2)
       .def("mineVbkBlocks", fx3)
       .def("mineVbkBlocks", fx4)
+      .def("createBtcTxEndorsingVbkBlock",
+           &MockMinerProxy::createBtcTxEndorsingVbkBlock)
+      .def("createVbkPopTxEndorsingVbkBlock",
+           &MockMinerProxy::createVbkPopTxEndorsingVbkBlock)
+      .def("createVbkTxEndorsingAltBlock",
+           &MockMinerProxy::createVbkTxEndorsingAltBlock)
       .def("endorseVbkBlock", fx5)
       .def("endorseVbkBlock", fx6)
       .def("endorseAltBlock", &MockMinerProxy::endorseAltBlock);

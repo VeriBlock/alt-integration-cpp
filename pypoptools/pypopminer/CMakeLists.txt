@@ -22,7 +22,6 @@ endfunction()
 
 add_library(pypopminer MODULE
         miner.cpp
-        miner_2.cpp
         entities.cpp
         primitives.cpp
         )

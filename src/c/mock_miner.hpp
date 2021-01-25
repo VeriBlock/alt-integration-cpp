@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "veriblock/mock_miner_2.hpp"
+#include "veriblock/mock_miner.hpp"
 
 struct MockMiner {
   std::shared_ptr<altintegration::MockMiner2> miner;
