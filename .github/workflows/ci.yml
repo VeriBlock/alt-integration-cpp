@@ -1,7 +1,11 @@
-name : CI
+name: CI
 
-           on : push : branches : -master -
-                                  develop - release/*
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - release/*
   pull_request:
     branches:
       - master
@@ -162,7 +166,7 @@ jobs:
         run: |
           $env:Path += ";c:\buildcache"
           cmake --build build --parallel 2
-#      TODO: takes TOO long to run tests
+#      TODO: takes TOO long to run tess
 #      - name: test
 #        run: cmake --build build --target RUN_TESTS
 
