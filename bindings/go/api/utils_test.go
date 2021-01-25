@@ -13,6 +13,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	index, err := popContext.AltBestBlock()
 	assert.NoError(err)

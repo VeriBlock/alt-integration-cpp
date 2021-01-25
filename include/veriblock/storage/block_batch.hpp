@@ -6,6 +6,11 @@
 #ifndef VERIBLOCK_POP_CPP_BLOCK_BATCH_HPP
 #define VERIBLOCK_POP_CPP_BLOCK_BATCH_HPP
 
+#include "veriblock/blockchain/block_index.hpp"
+#include "veriblock/entities/altblock.hpp"
+#include "veriblock/entities/btcblock.hpp"
+#include "veriblock/entities/vbkblock.hpp"
+
 namespace altintegration {
 
 struct BlockBatch {

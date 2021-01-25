@@ -13,6 +13,7 @@ func TestPopContextSubmitVbk(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	miner := NewMockMiner()
 
@@ -42,6 +43,7 @@ func TestPopContextSubmitVtb(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	miner := NewMockMiner()
 
@@ -82,6 +84,7 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	miner := NewMockMiner()
 
@@ -112,4 +115,37 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	vbkIDs, err := popContext.GetVbkBlocks()
 	assert.NoError(err)
 	assert.Equal(1, len(vbkIDs))
+}
+
+func TestPopContextAcceptBlock(t *testing.T) {
+	assert := assert.New(t)
+
+	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
+
+	miner := NewMockMiner()
+
+	index, err := miner.MineVbkBlockTip()
+	assert.NoError(err)
+
+	vbkBlock, err := index.GetVbkBlockHeader()
+	assert.NoError(err)
+
+	state, err := popContext.SubmitVbk(vbkBlock)
+	// state == 0, valid vbkBlock
+	assert.Equal(0, state)
+	assert.NoError(err)
+
+	// generate new block
+	newBlock := generateNextAltBlock(&boostrapBlock)
+
+	err = popContext.AcceptBlockHeader(newBlock)
+	assert.NoError(err)
+
+	popData, err := popContext.GetPop()
+	assert.NotEqual(popData, nil)
+	assert.NoError(err)
+
+	err = popContext.AcceptBlock(newBlock.Hash, popData)
+	assert.NoError(err)
 }

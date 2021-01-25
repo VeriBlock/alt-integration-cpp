@@ -11,6 +11,7 @@ func TestOnAcceptedVBK(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	isExecuted1 := false
 	isExecuted2 := false
@@ -47,6 +48,7 @@ func TestOnAcceptedVTB(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	isExecuted1 := false
 	isExecuted2 := false
@@ -94,6 +96,7 @@ func TestOnAcceptedATV(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	isExecuted1 := false
 	isExecuted2 := false

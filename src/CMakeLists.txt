@@ -63,13 +63,12 @@ set(SOURCES
         )
 
 if(WITH_C_WRAPPER)
-        if(NOT WITH_ROCKSDB)
-                message(FATAL_ERROR "For the c wrapper you should specify the storage which you will build, -DWITH_ROCKSDB=ON ")
-        endif()
-add_subdirectory(c)
-list(APPEND SOURCES $<TARGET_OBJECTS:veriblock-pop-c>)
+    if(NOT WITH_ROCKSDB)
+            message(FATAL_ERROR "For the c wrapper you should specify the storage which you will build, -DWITH_ROCKSDB=ON ")
+    endif()
+    add_subdirectory(c)
+    list(APPEND SOURCES $<TARGET_OBJECTS:veriblock-pop-c>)
 endif()
-        
 if(WITH_SECP256K1)
     list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
 endif()
