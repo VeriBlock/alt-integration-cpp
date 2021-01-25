@@ -92,7 +92,7 @@ thisdir = pathlib.Path(__file__).parent
 setup(
     name='pypoptools',
     version='0.0.0',
-    packages=packages,
+    packages=find_packages(where=str(pathlib.Path(thisdir, 'pypoptesting'))),
     url='https://github.com/VeriBlock/alt-integration-cpp',
     license='MIT',
     author='warchant',
@@ -100,7 +100,7 @@ setup(
     description='',
     python_requires='>=3.6',
     install_requires=['requests', 'dataclasses'],
-    ext_modules=[CMakeExtension('pypopminer', sourcedir=str(pathlib.Path(thisdir, '..')))],
+    ext_modules=[CMakeExtension('pypopminer', sourcedir=str(thisdir))],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )
