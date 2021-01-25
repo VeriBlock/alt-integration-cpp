@@ -1,6 +1,6 @@
-from pypoptesting.framework.test_framework import PopIntegrationTestFramework
-from pypoptesting.framework.test_util import assert_equal, assert_greater_than, assert_not_equal
-from pypoptesting.framework.util import wait_for_rpc_availability
+from ..framework.test_framework import PopIntegrationTestFramework
+from ..framework.test_util import assert_equal, assert_greater_than, assert_not_equal
+from ..framework.util import wait_for_rpc_availability
 
 
 class PreflightChecks(PopIntegrationTestFramework):

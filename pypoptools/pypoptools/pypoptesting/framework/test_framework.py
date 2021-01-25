@@ -10,9 +10,9 @@ from abc import abstractmethod
 from enum import Enum
 from typing import Callable, List
 
-from pypoptesting.framework.node import Node
-from pypoptesting.framework.test_util import TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED, CreateNodeFunction
-from pypoptesting.framework.util import sync_blocks, sync_pop_mempools, sync_pop_tips, sync_all, \
+from .node import Node
+from .test_util import TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED, CreateNodeFunction
+from .util import sync_blocks, sync_pop_mempools, sync_pop_tips, sync_all, \
     wait_for_rpc_availability
 
 

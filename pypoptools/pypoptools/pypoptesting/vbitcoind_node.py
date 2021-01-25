@@ -1,26 +1,19 @@
-import errno
+import http
+import distutils.spawn
 import http
 import logging
-import os
 import pathlib
 import subprocess
 import tempfile
-import time
 from typing import Optional
 
-from requests import post
-from requests.auth import HTTPBasicAuth
-
-from pypoptesting.framework.bin_util import assert_dir_accessible, get_open_port
-from pypoptesting.framework.entities import Hexstr, BlockWithPopData, RawPopMempoolResponse, VbkBlockResponse, \
+from .framework.bin_util import assert_dir_accessible, get_open_port
+from .framework.entities import Hexstr, BlockWithPopData, RawPopMempoolResponse, VbkBlockResponse, \
     VtbResponse, AtvResponse, GetpopdataResponse, SubmitPopResponse, PopParamsResponse, GenericBlock, BlockAndNetwork, \
     ATV, VbkTx, PublicationData, VTB, VbkPopTx, VbkBlock, BtcBlock
-from pypoptesting.framework.jsonrpc_api import JsonRpcApi, JSONRPCException
-from pypoptesting.framework.node import Node
-
-import distutils.spawn
-
-from pypoptesting.framework.util import wait_until
+from .framework.jsonrpc_api import JsonRpcApi, JSONRPCException
+from .framework.node import Node
+from .framework.util import wait_until
 
 PORT_MIN = 15000
 PORT_MAX = 25000

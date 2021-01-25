@@ -3,3 +3,5 @@
 *.pyd
 MANIFEST
 .idea
+*.egg-info
+dist

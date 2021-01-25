@@ -35,6 +35,12 @@ target_link_libraries(pypopminer
 set_target_properties(pypopminer PROPERTIES
         PREFIX ""
         )
+if(PYPOPMINER_OUTPUT_DIR)
+        set_target_properties(pypopminer PROPERTIES
+                LIBRARY_OUTPUT_DIRECTORY ${PYPOPMINER_OUTPUT_DIR}
+                )
+
+endif()
 
 configure_file(__init__.py ${CMAKE_CURRENT_BINARY_DIR}/__init__.py COPYONLY)
 

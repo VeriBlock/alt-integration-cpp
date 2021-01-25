@@ -1,0 +1,2 @@
+add_subdirectory(pypopminer)
+add_subdirectory(pypoptesting)
