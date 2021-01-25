@@ -219,6 +219,15 @@ bool VBK_checkPopData(PopContext* self,
                       int pop_data_bytes_size,
                       VbkValidationState* state);
 
+/**
+ * Save library`s trees state into the database.
+ *
+ * @param[in] self PopContext
+ * @return true if successfullty saved, false otherwise.
+ * @ingroup c-api
+ */
+bool VBK_SaveAllTrees(PopContext* self);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif

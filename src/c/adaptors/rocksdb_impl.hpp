@@ -9,6 +9,8 @@
 #include "rocksdb/db.h"
 #include "storage_interface.hpp"
 #include "veriblock/assert.hpp"
+#include "veriblock/exceptions/storage_write.hpp"
+#include "veriblock/strutil.hpp"
 
 namespace adaptors {
 
@@ -66,10 +68,22 @@ struct RocksDBWriteBatch : public WriteBatch {
              const std::vector<uint8_t>& value) override {
     rocksdb::Slice key_slice((char*)key.data(), key.size());
     rocksdb::Slice value_slice((char*)value.data(), value.size());
-    batch_.Put(key_slice, value_slice);
+    rocksdb::Status status = batch_.Put(key_slice, value_slice);
+    if (!status.ok()) {
+      throw altintegration::StorageWriteException(
+          fmt::format("failed to write into the storage, key: %s, value: %s",
+                      altintegration::HexStr(key),
+                      altintegration::HexStr(value)));
+    }
   }
 
-  void writeBatch() override { db_.Write(write_options_, &batch_); }
+  void writeBatch() override {
+    rocksdb::Status status = db_.Write(write_options_, &batch_);
+    if (!status.ok()) {
+      throw altintegration::StorageWriteException(
+          "failed to write batch into the storage");
+    }
+  }
 
  private:
   rocksdb::DB& db_;
@@ -91,7 +105,14 @@ struct RocksDBStorage : public Storage {
              const std::vector<uint8_t>& value) override {
     rocksdb::Slice key_slice((char*)key.data(), key.size());
     rocksdb::Slice value_slice((char*)value.data(), value.size());
-    db_->Put(write_options_, key_slice, value_slice);
+
+    rocksdb::Status status = db_->Put(write_options_, key_slice, value_slice);
+    if (!status.ok()) {
+      throw altintegration::StorageWriteException(
+          fmt::format("failed to write into the storage, key: %s, value: %s",
+                      altintegration::HexStr(key),
+                      altintegration::HexStr(value)));
+    }
   }
 
   bool read(const std::vector<uint8_t>& key,

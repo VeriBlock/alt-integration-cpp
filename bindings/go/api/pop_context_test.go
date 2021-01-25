@@ -148,4 +148,7 @@ func TestPopContextAcceptBlock(t *testing.T) {
 
 	err = popContext.AcceptBlock(newBlock.Hash, popData)
 	assert.NoError(err)
+
+	err = popContext.SetState(newBlock.Hash)
+	assert.NoError(err)
 }

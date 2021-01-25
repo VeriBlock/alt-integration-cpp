@@ -21,7 +21,7 @@ template <typename pop_t>
 std::vector<uint8_t> payloads_key(const typename pop_t::id_t& id);
 
 template <>
-std::vector<uint8_t> payloads_key<altintegration::ATV>(
+inline std::vector<uint8_t> payloads_key<altintegration::ATV>(
     const altintegration::ATV::id_t& id) {
   auto res = id.asVector();
   res.insert(res.begin(), DB_ATV_PREFIX);
@@ -29,7 +29,7 @@ std::vector<uint8_t> payloads_key<altintegration::ATV>(
 }
 
 template <>
-std::vector<uint8_t> payloads_key<altintegration::VTB>(
+inline std::vector<uint8_t> payloads_key<altintegration::VTB>(
     const altintegration::VTB::id_t& id) {
   auto res = id.asVector();
   res.insert(res.begin(), DB_VTB_PREFIX);
@@ -37,7 +37,7 @@ std::vector<uint8_t> payloads_key<altintegration::VTB>(
 }
 
 template <>
-std::vector<uint8_t> payloads_key<altintegration::VbkBlock>(
+inline std::vector<uint8_t> payloads_key<altintegration::VbkBlock>(
     const altintegration::VbkBlock::id_t& id) {
   auto res = id.asVector();
   res.insert(res.begin(), DB_VBK_PREFIX);
