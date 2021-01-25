@@ -164,6 +164,29 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
   return output;
 }
 
+
+#ifdef VBK_FUZZING_UNSAFE_FOR_PRODUCTION
+
+// implementation for fuzzing
+
+Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
+  (void)message;
+  (void)privateKey;
+  return {};
+}
+
+bool verify(Slice<const uint8_t> message,
+            Signature signature,
+            PublicKey publicKey) {
+  (void)message;
+  (void)signature;
+  (void)publicKey;
+  return true;
+}
+#else
+
+// real implementation
+
 Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
   auto messageHash = sha256(message);
 
@@ -200,6 +223,7 @@ bool verify(Slice<const uint8_t> message,
   return 0 != secp256k1_ecdsa_verify(
                   ctx, &normalizedSignature, messageHash.data(), &pubkey);
 }
+#endif
 
 }  // namespace secp256k1
 }  // namespace altintegration
