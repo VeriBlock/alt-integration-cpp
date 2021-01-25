@@ -9,7 +9,7 @@
 #include "rocksdb/db.h"
 #include "storage_interface.hpp"
 #include "veriblock/assert.hpp"
-#include "veriblock/exceptions/storage_write.hpp"
+#include "veriblock/exceptions/storage_io.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace adaptors {
@@ -70,7 +70,7 @@ struct RocksDBWriteBatch : public WriteBatch {
     rocksdb::Slice value_slice((char*)value.data(), value.size());
     rocksdb::Status status = batch_.Put(key_slice, value_slice);
     if (!status.ok()) {
-      throw altintegration::StorageWriteException(
+      throw altintegration::StorageIOException(
           fmt::format("failed to write into the storage, key: %s, value: %s",
                       altintegration::HexStr(key),
                       altintegration::HexStr(value)));
@@ -80,7 +80,7 @@ struct RocksDBWriteBatch : public WriteBatch {
   void writeBatch() override {
     rocksdb::Status status = db_.Write(write_options_, &batch_);
     if (!status.ok()) {
-      throw altintegration::StorageWriteException(
+      throw altintegration::StorageIOException(
           "failed to write batch into the storage");
     }
   }
@@ -108,7 +108,7 @@ struct RocksDBStorage : public Storage {
 
     rocksdb::Status status = db_->Put(write_options_, key_slice, value_slice);
     if (!status.ok()) {
-      throw altintegration::StorageWriteException(
+      throw altintegration::StorageIOException(
           fmt::format("failed to write into the storage, key: %s, value: %s",
                       altintegration::HexStr(key),
                       altintegration::HexStr(value)));

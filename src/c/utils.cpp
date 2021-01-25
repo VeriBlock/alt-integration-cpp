@@ -17,7 +17,7 @@
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vtb.hpp"
-#include "veriblock/exceptions/storage_write.hpp"
+#include "veriblock/exceptions/storage_io.hpp"
 #include "veriblock/stateless_validation.hpp"
 #include "veriblock/storage/util.hpp"
 
@@ -260,7 +260,7 @@ bool VBK_SaveAllTrees(PopContext* self) {
   try {
     SaveAllTrees(*self->context->altTree, block_batch);
     write_batch->writeBatch();
-  } catch (const StorageWriteException&) {
+  } catch (const StorageIOException&) {
     return false;
   } catch (...) {
     VBK_ASSERT_MSG(false, "catched unexpected exception");
