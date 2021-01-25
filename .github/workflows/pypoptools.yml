@@ -42,7 +42,7 @@ jobs:
         if: matrix.runson == 'windows-latest'
         run: |
           vcpkg integrate install
-          vcpkg install boost
+          vcpkg install boost-python
       - name: prepare
         run: pip install --user --upgrade pip cmake pathlib
       - name: build
