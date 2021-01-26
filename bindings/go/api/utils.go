@@ -117,3 +117,16 @@ func (v *PopContext) SaveAllTrees() error {
 	}
 	return nil
 }
+
+func (v *PopContext) LoadAllTrees() error {
+	defer v.lock()()
+
+	state := ffi.NewValidationState()
+	defer state.Free()
+
+	ok := v.popContext.LoadAllTrees(state)
+	if !ok {
+		return state.Error()
+	}
+	return nil
+}

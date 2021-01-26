@@ -91,11 +91,19 @@ struct BlockIteratorImpl : public altintegration::BlockIterator<BlockT> {
     if (!it_->key(bytes)) {
       return false;
     }
+    // remove prefix
+    bytes.erase(bytes.begin());
+
     out = bytes;
     return true;
   }
 
-  bool valid() const override { return it_->valid(); }
+  bool valid() const override {
+    static char prefix = block_key<BlockT>({})[0];
+
+    std::vector<uint8_t> key;
+    return it_->valid() && it_->key(key) && !key.empty() && key[0] == prefix;
+  }
 
   void seek_start() override { it_->seek(block_key<BlockT>({})); }
 

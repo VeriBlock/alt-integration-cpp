@@ -146,3 +146,8 @@ func (v *PopContext) SaveAllTrees(state *ValidationState) bool {
 	res := C.VBK_SaveAllTrees(v.ref, state.ref)
 	return bool(res)
 }
+
+func (v *PopContext) LoadAllTrees(state *ValidationState) bool {
+	res := C.VBK_LoadAllTrees(v.ref, state.ref)
+	return bool(res)
+}
