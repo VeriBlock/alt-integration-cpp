@@ -9,6 +9,13 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 
 
+thisdir = pathlib.Path(__file__).parent
+cwd = os.getcwd()
+try:
+    os.chdir(thisdir)
+finally:
+    os.chdir(cwd)
+
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):
         Extension.__init__(self, name, sources=[])
@@ -64,7 +71,9 @@ class CMakeBuild(build_ext):
 
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args,
+
+        print("THISDIR={}".format(thisdir))
+        subprocess.check_call(['cmake', str(thisdir)] + cmake_args,
                               cwd=self.build_temp)
         subprocess.check_call(['cmake', '--build', '.'] + build_args,
                               cwd=self.build_temp)
@@ -84,8 +93,6 @@ packages = [
     'pypoptools.pypopminer',
 ]
 
-thisdir = pathlib.Path(__file__).parent
-
 setup(
     name='pypoptools',
     version='0.0.0',
@@ -97,11 +104,17 @@ setup(
     description='',
     python_requires='>=3.6',
     install_requires=[
-        'pathlib',
         'requests',
         'dataclasses'
     ],
     ext_modules=[CMakeExtension('pypopminer', sourcedir=str(thisdir))],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
+    setup_requires=[
+        'pytest-runner',
+        'pathlib'
+    ],
+    tests_require=[
+        'pytest'
+    ],
 )
