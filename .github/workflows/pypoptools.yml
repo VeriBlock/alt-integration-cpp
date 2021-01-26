@@ -53,4 +53,4 @@ jobs:
       - name: build
         run: python setup.py install --user
       - name: test
-        run: python -c 'from pypoptools.pypopminer import MockMiner; MockMiner()'
+        run: python setup.py test
