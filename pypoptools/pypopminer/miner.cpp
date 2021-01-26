@@ -151,19 +151,18 @@ struct MockMinerProxy : private MockMiner {
           prevBtc);
     }
 
-    auto lastBtc = prevBtcIndex->getHash().toHex();
+    std::vector<VbkPopTx> popTransactions(vtbs);
     for (size_t i = 0; i < vtbs; i++) {
-      auto btctx = createBtcTxEndorsingVbkBlock(block);
-      auto btccontaining = this->mineBtcBlocks(lastBtc, 1);
-      auto vbkpoptx = createVbkPopTxEndorsingVbkBlock(
-          btccontaining,
+      auto btctx = base::createBtcTxEndorsingVbkBlock(block);
+      prevBtcIndex = base::mineBtcBlocks(1, *prevBtcIndex, {btctx});
+      popTransactions[i] = base::createVbkPopTxEndorsingVbkBlock(
+          prevBtcIndex->getHeader(),
           btctx,
           block,
           BtcBlock::hash_t::fromHex(lastKnownBtcHash));
-      lastBtc = btccontaining.getHash().toHex();
     }
 
-    this->mineVbkBlocks(prevVbkIndex->getHash().toHex(), 1);
+    base::mineVbkBlocks(1, *prevVbkIndex, popTransactions);
   }
 
   Payloads endorseAltBlock(const PublicationData& pub,
