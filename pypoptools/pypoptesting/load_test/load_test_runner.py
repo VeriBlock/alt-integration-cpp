@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 
-from pypopminer2 import MockMiner2
+from pypopminer import MockMiner
 from random import randrange
 
 from pypoptesting.framework.jsonrpc_api import JsonRpcApi
@@ -49,7 +49,7 @@ def main():
         sys.exit(2)
 
     node = JsonRpcApi(args.url, args.user, args.password)
-    apm = MockMiner2()
+    apm = MockMiner()
     max_blocks = args.max_blocks
     max_hours = args.max_hours
     seed = args.seed or randrange(sys.maxsize)

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from pypoptesting.framework.entities import *
+from .entities import *
 
 
 class Node(ABC):

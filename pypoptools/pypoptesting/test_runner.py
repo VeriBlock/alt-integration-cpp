@@ -1,9 +1,9 @@
 import pathlib
 
-from pypoptesting.framework.node import Node
-from pypoptesting.framework.test_util import run_tests
-from pypoptesting.test_list import ALL_TESTS
-from pypoptesting.vbitcoind_node import VBitcoindNode
+from .framework.node import Node
+from .framework.test_util import run_tests
+from .test_list import ALL_TESTS
+from .vbitcoind_node import VBitcoindNode
 
 
 def create_node(number: int, path: pathlib.Path) -> Node:

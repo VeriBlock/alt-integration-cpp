@@ -1,16 +1,14 @@
 import datetime
 import logging
+import multiprocessing as mp
 import os
 import pathlib
-import signal
-import subprocess
 import sys
 import tempfile
 import time
 from typing import Callable
 
-from pypoptesting.framework.node import Node
-import multiprocessing as mp
+from .node import Node
 
 CreateNodeFunction = Callable[[int, pathlib.Path], Node]
 
@@ -25,7 +23,7 @@ try:
     TICK = "✓ "
     CROSS = "✖ "
     CIRCLE = "○ "
-except UnicodeDecodeError:
+except:
     TICK = "P "
     CROSS = "x "
     CIRCLE = "o "

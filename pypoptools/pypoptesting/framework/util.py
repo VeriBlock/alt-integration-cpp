@@ -2,7 +2,7 @@ import inspect
 import time
 from typing import List
 
-from pypoptesting.framework.node import Node
+from .node import Node
 
 
 def sync_blocks(nodes: List[Node], *, wait=1, timeout=60):
