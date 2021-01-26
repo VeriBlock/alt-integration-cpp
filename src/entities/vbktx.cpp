@@ -30,6 +30,12 @@ void VbkTx::toVbkEncoding(WriteStream& stream) const {
   writeSingleByteLenValue(stream, publicKey);
 }
 
+std::vector<uint8_t> VbkTx::toVbkEncoding() const {
+  WriteStream stream;
+  toVbkEncoding(stream);
+  return stream.data();
+}
+
 size_t VbkTx::estimateSize() const {
   size_t rawSize = 0;
   rawSize += networkByteSize(networkOrType);
