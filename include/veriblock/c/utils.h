@@ -222,11 +222,22 @@ bool VBK_checkPopData(PopContext* self,
 /**
  * Save library`s trees state into the database.
  *
- * @param[in] self PopContext
+ * @param[in] self PopContext.
+ * @param[out] state VbkValidationState.
  * @return true if successfullty saved, false otherwise.
  * @ingroup c-api
  */
-bool VBK_SaveAllTrees(PopContext* self);
+bool VBK_SaveAllTrees(PopContext* self, VbkValidationState* state);
+
+/**
+ * Load library`s trees state from the database.
+ *
+ * @param[in] self PopContext.
+ * @param[out] state VbkValidationState.
+ * @return true if successfullty loaded, false loaded.
+ * @ingroup c-api
+ */
+bool VBK_LoadAllTrees(PopContext* self, VbkValidationState* state);
 
 #ifdef __cplusplus
 }  // end of extern "C"

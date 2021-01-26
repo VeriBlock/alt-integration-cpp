@@ -15,15 +15,15 @@
 namespace adaptors {
 
 struct RocksDBStorageIterator : public StorageIterator {
-  ~RocksDBStorageIterator() override = default;
+  ~RocksDBStorageIterator() override { delete it_; };
 
-  RocksDBStorageIterator(rocksdb::Iterator& it) : it_(it) {}
+  RocksDBStorageIterator(rocksdb::Iterator* it) : it_(it) {}
 
   bool value(std::vector<uint8_t>& out) const override {
-    if (!it_.Valid()) {
+    if (!it_->Valid()) {
       return false;
     }
-    auto value_slice = it_.value();
+    auto value_slice = it_->value();
     out.resize(value_slice.size());
     for (size_t i = 0; i < value_slice.size(); ++i) {
       out[i] = value_slice[i];
@@ -32,10 +32,10 @@ struct RocksDBStorageIterator : public StorageIterator {
   }
 
   bool key(std::vector<uint8_t>& out) const override {
-    if (!it_.Valid()) {
+    if (!it_->Valid()) {
       return false;
     }
-    auto key_slice = it_.key();
+    auto key_slice = it_->key();
     out.resize(key_slice.size());
     for (size_t i = 0; i < key_slice.size(); ++i) {
       out[i] = key_slice[i];
@@ -43,19 +43,19 @@ struct RocksDBStorageIterator : public StorageIterator {
     return true;
   }
 
-  void next() override { it_.Next(); }
+  void next() override { it_->Next(); }
 
-  bool valid() const override { return it_.Valid(); }
+  bool valid() const override { return it_->Valid(); }
 
-  void seek_start() override { it_.SeekToFirst(); }
+  void seek_start() override { it_->SeekToFirst(); }
 
   void seek(const std::vector<uint8_t>& val) override {
     rocksdb::Slice val_slice((char*)val.data(), val.size());
-    it_.Seek(val_slice);
+    it_->Seek(val_slice);
   }
 
  private:
-  rocksdb::Iterator& it_;
+  rocksdb::Iterator* it_;
 };
 
 struct RocksDBWriteBatch : public WriteBatch {
@@ -127,6 +127,11 @@ struct RocksDBStorage : public Storage {
 
   std::shared_ptr<WriteBatch> generateWriteBatch() override {
     return std::make_shared<RocksDBWriteBatch>(*db_, write_options_);
+  }
+
+  std::shared_ptr<StorageIterator> generateIterator() override {
+    return std::make_shared<RocksDBStorageIterator>(
+        db_->NewIterator(read_options_));
   }
 
  private:
