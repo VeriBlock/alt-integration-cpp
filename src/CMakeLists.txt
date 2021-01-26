@@ -96,29 +96,32 @@ set_property(
         COMPATIBLE_INTERFACE_STRING MAJOR_VERSION
 )
 
-install(TARGETS ${LIB_NAME}
-        EXPORT ${LIB_NAME}Config
-        COMPONENT devel
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
-        )
-install(
-        DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-install(
-        EXPORT ${LIB_NAME}Config
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
-        NAMESPACE veriblock::
-)
-export(
-        TARGETS ${LIB_NAME}
-        FILE ${LIB_NAME}Config.cmake
-)
+# make install is not defined with FUZZING=ON
+if(NOT FUZZING)
+    install(TARGETS ${LIB_NAME}
+            EXPORT ${LIB_NAME}Config
+            COMPONENT devel
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+            )
+    install(
+            DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+    install(
+            EXPORT ${LIB_NAME}Config
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
+            NAMESPACE veriblock::
+    )
+    export(
+            TARGETS ${LIB_NAME}
+            FILE ${LIB_NAME}Config.cmake
+    )
+endif()
 target_include_directories(${LIB_NAME}
         INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

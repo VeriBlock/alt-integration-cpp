@@ -84,6 +84,11 @@ LogLevel StringToLevel(const std::string&);
   fmt::sprintf(std::string("%s: ") + format, __func__, ##__VA_ARGS__)
 #endif
 
+#ifdef VBK_FUZZING_UNSAFE_FOR_PRODUCTION
+// disable logger when VBK_FUZZING_UNSAFE_FOR_PRODUCTION is defined
+#define VBK_LOG(...)
+#else
+
 //! @private
 #define VBK_LOG(lvl, format, ...)                             \
   do {                                                        \
@@ -92,6 +97,7 @@ LogLevel StringToLevel(const std::string&);
       logger.log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
     }                                                         \
   } while (0)
+#endif
 
 // clang-format off
 //! Format and log line in DEBUG
