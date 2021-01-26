@@ -168,7 +168,7 @@ void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
 size_t networkByteSize(NetworkBytePair networkOrType) {
   size_t size = 0;
   if (networkOrType.networkType) {
-    size += sizeof(networkOrType.networkType);
+    size += sizeof(networkOrType.networkType.value);
   }
   size += sizeof(networkOrType.typeId);
   return size;
