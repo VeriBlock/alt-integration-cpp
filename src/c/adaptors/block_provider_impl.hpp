@@ -92,9 +92,7 @@ struct BlockIteratorImpl : public altintegration::BlockIterator<BlockT> {
       return false;
     }
     // remove prefix
-    bytes.erase(bytes.begin());
-
-    out = bytes;
+    out = {bytes.begin() + 1, bytes.end()};
     return true;
   }
 
