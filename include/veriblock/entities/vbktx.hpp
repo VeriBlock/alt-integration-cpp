@@ -46,6 +46,12 @@ struct VbkTx {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  /**
+   * Convert VbkTx to raw bytes data using VBK byte format
+   * @return bytes data
+   */
+  std::vector<uint8_t> toVbkEncoding() const;
+
   size_t estimateSize() const;
 
   /**
