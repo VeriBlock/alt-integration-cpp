@@ -9,7 +9,12 @@ execute_process(
         OUTPUT_VARIABLE PYTHON_SITE
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-
-
 add_subdirectory(pypopminer)
 add_subdirectory(pypoptesting)
+
+add_custom_target(install_pypoptools
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} setup.py install --user
+        DEPENDS ${LIB_NAME}
+        COMMENT "Installing pypoptools..."
+        )
