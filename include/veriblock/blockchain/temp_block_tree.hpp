@@ -114,7 +114,7 @@ struct TempBlockTree {
       return it->second.get();
     }
 
-    std::shared_ptr<index_t> newIndex = std::make_shared<index_t>();
+    auto newIndex = std::unique_ptr<index_t>(new index_t{});
 
     newIndex->setNull();
     it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;

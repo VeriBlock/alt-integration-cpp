@@ -34,7 +34,7 @@ struct BaseBlockTree {
   using index_t = BlockIndex<Block>;
   using on_invalidate_t = void(const index_t&);
   using block_index_t =
-      std::unordered_map<prev_block_hash_t, std::shared_ptr<index_t>>;
+      std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
 
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
   const block_index_t& getBlocks() const { return blocks_; }
@@ -403,13 +403,13 @@ struct BaseBlockTree {
       return it->second.get();
     }
 
-    std::shared_ptr<index_t> newIndex = nullptr;
+    std::unique_ptr<index_t> newIndex = nullptr;
     auto itr = removed_.find(shortHash);
     if (itr != removed_.end()) {
-      newIndex = itr->second;
+      newIndex = std::move(itr->second);
       removed_.erase(itr);
     } else {
-      newIndex = std::make_shared<index_t>();
+      newIndex = std::unique_ptr<index_t>(new index_t{});
     }
 
     newIndex->setNull();
@@ -628,10 +628,10 @@ struct BaseBlockTree {
     }
 
     auto shortHash = makePrevHash(block.getHash());
-    auto it = blocks_.at(shortHash);
+    auto& it = blocks_.at(shortHash);
 
     it->setNull();
-    removed_[shortHash] = it;
+    removed_[shortHash] = std::move(it);
     blocks_.erase(shortHash);
   }
 
