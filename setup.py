@@ -6,7 +6,7 @@ import subprocess
 import sys
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
-
+import disutils
 
 thisdir = pathlib.Path(__file__).parent.resolve().absolute()
 cwd = os.getcwd()
