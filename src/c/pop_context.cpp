@@ -4,6 +4,9 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include "adaptors/block_provider_impl.hpp"
 #include "adaptors/payloads_provider_impl.hpp"
+#ifdef WITH_ROCKSDB
+#include "adaptors/rocksdb_impl.hpp"
+#endif
 #include "bytestream.hpp"
 #include "config.hpp"
 #include "pop_context.hpp"
@@ -14,41 +17,27 @@
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
 
-PopContext* VBK_NewPopContext(Config_t* config) {
+PopContext* VBK_NewPopContext(Config_t* config, const char* db_path) {
   VBK_ASSERT(config);
   VBK_ASSERT(config->config);
   auto& c = config->config;
 
   VBK_ASSERT(c->alt);
-  const auto maxPopDataSize = c->getAltParams().getMaxPopDataSize();
+  VBK_ASSERT(db_path);
+
   auto* v = new PopContext();
-  // maxPopDataSize is the maximum size of payload per block, it is safe
-  // to allocate buffer with this size for all operations
-  v->payloads_provider =
-      std::make_shared<adaptors::PayloadsProviderImpl>(maxPopDataSize);
-  v->block_provider = std::make_shared<adaptors::BlockProviderImpl>();
 
-  v->context = altintegration::PopContext::create(
-      c, v->payloads_provider, v->block_provider);
+#ifdef WITH_ROCKSDB
+  v->storage = std::make_shared<adaptors::RocksDBStorage>(db_path);
+#endif
 
-  // setup signals
-  v->context->mempool->onAccepted<altintegration::ATV>(
-      [](const altintegration::ATV& atv) {
-        auto bytes = altintegration::SerializeToVbkEncoding(atv);
-        VBK_MemPool_onAcceptedATV(bytes.data(), bytes.size());
-      });
+  VBK_ASSERT_MSG(
+      v->storage,
+      "Storage is not initialized, you should initialize the storage");
 
-  v->context->mempool->onAccepted<altintegration::VTB>(
-      [](const altintegration::VTB& vtb) {
-        auto bytes = altintegration::SerializeToVbkEncoding(vtb);
-        VBK_MemPool_onAcceptedVTB(bytes.data(), bytes.size());
-      });
-
-  v->context->mempool->onAccepted<altintegration::VbkBlock>(
-      [](const altintegration::VbkBlock& vbk) {
-        auto bytes = altintegration::SerializeToVbkEncoding(vbk);
-        VBK_MemPool_onAcceptedVBK(bytes.data(), bytes.size());
-      });
+  v->payloads_storage =
+      std::make_shared<adaptors::PayloadsStorageImpl>(*v->storage);
+  v->context = altintegration::PopContext::create(c, v->payloads_storage);
 
   return v;
 }

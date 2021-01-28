@@ -5,7 +5,6 @@ add_subdirectory(storage)
 add_subdirectory(rewards)
 add_subdirectory(third_party)
 add_subdirectory(entities)
-add_subdirectory(c)
 add_subdirectory(crypto)
 
 add_library(vblake OBJECT crypto/vblake.cpp)
@@ -44,7 +43,6 @@ set(SOURCES
         arith_uint256.cpp
         crypto/secp256k1.cpp
         mock_miner.cpp
-        mock_miner_2.cpp
         config.cpp
         command_group_cache.cpp
         alt-util.cpp
@@ -61,8 +59,15 @@ set(SOURCES
         $<TARGET_OBJECTS:vblake>
         $<TARGET_OBJECTS:progpow>
         $<TARGET_OBJECTS:ethash>
-        $<TARGET_OBJECTS:veriblock-pop-c>
         )
+
+if(WITH_C_WRAPPER)
+    if(NOT WITH_ROCKSDB)
+            message(FATAL_ERROR "For the c wrapper you should specify the storage which you will build, -DWITH_ROCKSDB=ON ")
+    endif()
+    add_subdirectory(c)
+    list(APPEND SOURCES $<TARGET_OBJECTS:veriblock-pop-c>)
+endif()
 if(WITH_SECP256K1)
     list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
 endif()
@@ -91,29 +96,32 @@ set_property(
         COMPATIBLE_INTERFACE_STRING MAJOR_VERSION
 )
 
-install(TARGETS ${LIB_NAME}
-        EXPORT ${LIB_NAME}Config
-        COMPONENT devel
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
-        )
-install(
-        DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-install(
-        EXPORT ${LIB_NAME}Config
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
-        NAMESPACE veriblock::
-)
-export(
-        TARGETS ${LIB_NAME}
-        FILE ${LIB_NAME}Config.cmake
-)
+# make install is not defined with FUZZING=ON
+if(NOT FUZZING)
+    install(TARGETS ${LIB_NAME}
+            EXPORT ${LIB_NAME}Config
+            COMPONENT devel
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+            )
+    install(
+            DIRECTORY ${CMAKE_SOURCE_DIR}/include/veriblock
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+    install(
+            EXPORT ${LIB_NAME}Config
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
+            NAMESPACE veriblock::
+    )
+    export(
+            TARGETS ${LIB_NAME}
+            FILE ${LIB_NAME}Config.cmake
+    )
+endif()
 target_include_directories(${LIB_NAME}
         INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

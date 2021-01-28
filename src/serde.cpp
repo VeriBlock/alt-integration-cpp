@@ -149,8 +149,8 @@ bool readNetworkByte(ReadStream& stream,
   if (networkOrType == (uint8_t)type) {
     ret.typeId = networkOrType;
   } else {
-    ret.hasNetworkByte = true;
-    ret.networkByte = networkOrType;
+    ret.networkType.hasValue = true;
+    ret.networkType.value = networkOrType;
     if (!stream.readBE<uint8_t>(ret.typeId, state)) {
       return state.Invalid("bad-type-id");
     }
@@ -159,16 +159,16 @@ bool readNetworkByte(ReadStream& stream,
 }
 
 void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType) {
-  if (networkOrType.hasNetworkByte) {
-    stream.writeBE<uint8_t>(networkOrType.networkByte);
+  if (networkOrType.networkType) {
+    stream.writeBE<uint8_t>(networkOrType.networkType.value);
   }
   stream.writeBE<uint8_t>(networkOrType.typeId);
 }
 
 size_t networkByteSize(NetworkBytePair networkOrType) {
   size_t size = 0;
-  if (networkOrType.hasNetworkByte) {
-    size += sizeof(networkOrType.networkByte);
+  if (networkOrType.networkType) {
+    size += sizeof(networkOrType.networkType.value);
   }
   size += sizeof(networkOrType.typeId);
   return size;

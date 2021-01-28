@@ -170,7 +170,7 @@ TEST_F(StatelessValidationTest,
 
 TEST_F(StatelessValidationTest, ATV_valid) {
   AltChainParamsRegTest altp;
-  ASSERT_TRUE(checkATV(validATV, state, altp)) << state.toString();
+  ASSERT_TRUE(checkATV(validATV, state, altp, vbk)) << state.toString();
 }
 
 TEST_F(StatelessValidationTest,
@@ -199,7 +199,7 @@ TEST_F(StatelessValidationTest,
 }
 
 TEST_F(StatelessValidationTest, VTB_valid) {
-  ASSERT_TRUE(checkVTB(validVTB, state, btc));
+  ASSERT_TRUE(checkVTB(validVTB, state, btc, vbk));
 }
 
 TEST_F(StatelessValidationTest,
@@ -226,7 +226,7 @@ TEST_F(StatelessValidationTest,
 }
 
 TEST_F(StatelessValidationTest, checkVbkPopTx_valid) {
-  ASSERT_TRUE(checkVbkPopTx(validVTB.transaction, state, btc))
+  ASSERT_TRUE(checkVbkPopTx(validVTB.transaction, state, btc, vbk))
       << state.toString();
 }
 
@@ -283,14 +283,14 @@ TEST_F(StatelessValidationTest, checkBitcoinBlocks_when_not_contiguous) {
 }
 
 TEST_F(StatelessValidationTest, checkVbkTx_valid) {
-  ASSERT_TRUE(checkVbkTx(validATV.transaction, alt, state));
+  ASSERT_TRUE(checkVbkTx(validATV.transaction, alt, vbk, state));
 }
 
 TEST_F(StatelessValidationTest, VbkTx_checkSignature_signature_invalid) {
   VbkTx tx = validATV.transaction;
   tx.signature =
       "30440220398B74708DC8F8AEE68FCE0C47B8959E6FCE6354665DA3ED87583F708E62AA6B02202E6C00C00487763C55E92C7B8E1DD538B7375D8DF2B2117E75ACBB9DB7DEB3C7"_unhex;
-  ASSERT_FALSE(checkVbkTx(tx, alt, state));
+  ASSERT_FALSE(checkVbkTx(tx, alt, vbk, state));
 }
 
 TEST_F(StatelessValidationTest, VbkTx_different_address_invalid) {

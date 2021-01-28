@@ -49,8 +49,8 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   // endorsed vbk block
   auto* endorsedBlock = vbkTip->getAncestor(vbkTip->getHeight() - 5);
-  generatePopTx(endorsedBlock->getHeader());
-  vbkTip = popminer->mineVbkBlocks(1);
+  auto vbkPopTx = generatePopTx(endorsedBlock->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
   auto it = popminer->vbkPayloads.find(vbkTip->getHash());
   ASSERT_TRUE(it != popminer->vbkPayloads.end());
   ASSERT_EQ(it->second.size(), 1);
@@ -81,8 +81,12 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
       containingAltBlock.getHash(), altPayloads, state));
   EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));
 
-  validateAlttreeIndexState(
-      test_alttree, containingAltBlock, altPayloads, false);
+  // all payloads are marked valid as there's no correctly implemented
+  // invalidation
+  validateAlttreeIndexState(test_alttree,
+                            containingAltBlock,
+                            altPayloads,
+                            /*payloads_validation =*/true);
 
   EXPECT_EQ(test_alttree.vbk().getBestChain().tip()->getHash(),
             vbkTip->getHash());

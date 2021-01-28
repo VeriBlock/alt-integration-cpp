@@ -15,7 +15,8 @@
 
 using namespace altintegration;
 
-static const NetworkBytePair networkByte{false, 0, (uint8_t)TxType::VBK_POP_TX};
+static const NetworkBytePair networkByte{{false, 0},
+                                         (uint8_t)TxType::VBK_POP_TX};
 
 static const VbkBlock defaultVbkBlock{4917,
                                       2,

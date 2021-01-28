@@ -99,7 +99,6 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(success);
   }
 
-  auto containingHash = index.getHash();
   for (const auto& pid : pids) {
     auto& vtbids = index.getPayloadIds<VTB>();
     auto it = std::find(vtbids.begin(), vtbids.end(), pid);
@@ -107,9 +106,11 @@ void VbkBlockTree::removePayloads(index_t& index,
     // if there are multiple pids
     VBK_ASSERT(it != vtbids.end() && "could not find the payload to remove");
 
-    if (!payloadsIndex_.getValidity(containingHash, pid)) {
-      revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-    }
+    // removing a payload cannot alter the block validity as addPayloads adds
+    // only valid payloads
+    VBK_ASSERT_MSG(!index.hasFlags(BLOCK_FAILED_POP),
+                   "block %s unexpectedly has BLOCK_FAILED_POP set",
+                   index.toPrettyString());
 
     index.removePayloadId<VTB>(pid);
     payloadsIndex_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
@@ -139,23 +140,22 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
                 pid.toPrettyString(),
                 index.toPrettyString());
 
-  auto containingHash = index.getHash();
   auto& vtbids = index.getPayloadIds<VTB>();
   auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
   VBK_ASSERT(vtbid_it != vtbids.end() &&
              "state corruption: the block does not contain the payload");
 
-  // removing an invalid payload might render the block valid
-  if (!payloadsIndex_.getValidity(containingHash, pid)) {
-    revalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
-  }
+  // removing a payload cannot alter the block validity as addPayloads adds only
+  // valid payloads
+  VBK_ASSERT_MSG(!index.hasFlags(BLOCK_FAILED_POP),
+                 "block %s unexpectedly has BLOCK_FAILED_POP set",
+                 index.toPrettyString());
 
   bool isApplied = activeChain_.contains(&index);
   if (isApplied) {
     ValidationState dummy;
     std::vector<CommandGroup> cmdGroups;
-    payloadsProvider_.getPayloadsReader().getCommands(
-        *this, index, cmdGroups, dummy);
+    payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
 
     auto group_it = std::find_if(
         cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
@@ -238,8 +238,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
   // load commands from block
   std::vector<CommandGroup> cmdGroups;
-  payloadsProvider_.getPayloadsReader().getCommands(
-      *this, index, cmdGroups, state);
+  payloadsProvider_.getCommands(*this, index, cmdGroups, state);
 
   auto group_it = std::find_if(
       cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
@@ -395,7 +394,7 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            const BtcChainParams& btcp,
-                           PayloadsProvider& payloadsProvider,
+                           PayloadsStorage& payloadsProvider,
                            PayloadsIndex& payloadsIndex)
     : VbkTree(vbkp),
       cmp_(std::make_shared<BtcTree>(btcp),

@@ -75,7 +75,7 @@ struct PopStateMachine {
 
   PopStateMachine(ProtectedTree& ed,
                   ProtectingBlockTree& ing,
-                  PayloadsProvider& payloadsProvider,
+                  PayloadsStorage& payloadsProvider,
                   PayloadsIndex& payloadsIndex,
                   bool continueOnInvalid = false)
       : ed_(ed),
@@ -101,27 +101,14 @@ struct PopStateMachine {
 
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
-      payloadsProvider_.getPayloadsReader().getCommands(
-          ed_, index, cgroups, state);
+      payloadsProvider_.getCommands(ed_, index, cgroups, state);
 
-      const auto containingHash = index.getHash();
       for (auto cgroup = cgroups.cbegin(); cgroup != cgroups.cend(); ++cgroup) {
         VBK_LOG_DEBUG("Applying payload %s from block %s",
                       HexStr(cgroup->id),
                       index.toShortPrettyString());
 
-        if (cgroup->execute(state)) {
-          // we were able to apply the command group, so flag it as valid,
-          // unless we are in in 'continueOnInvalid' mode which precludes
-          // payload re-validation
-          if (!continueOnInvalid_) {
-            payloadsIndex_.setValidity(containingHash, cgroup->id, true);
-          }
-
-        } else {
-          // flag the command group as invalid
-          payloadsIndex_.setValidity(containingHash, cgroup->id, false);
-
+        if (!cgroup->execute(state)) {
           if (continueOnInvalid_) {
             removePayloadsFromIndex<block_t>(payloadsIndex_, index, *cgroup);
             VBK_LOG_INFO("%s=%s can't be connected: %s",
@@ -179,8 +166,7 @@ struct PopStateMachine {
     if (index.hasPayloads()) {
       std::vector<CommandGroup> cgroups;
       ValidationState state;
-      payloadsProvider_.getPayloadsReader().getCommands(
-          ed_, index, cgroups, state);
+      payloadsProvider_.getCommands(ed_, index, cgroups, state);
 
       for (const auto& cgroup : reverse_iterate(cgroups)) {
         VBK_LOG_DEBUG("Unapplying payload %s from block %s",
@@ -332,7 +318,7 @@ struct PopStateMachine {
  private:
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
-  PayloadsProvider& payloadsProvider_;
+  PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
   bool continueOnInvalid_ = false;
 };

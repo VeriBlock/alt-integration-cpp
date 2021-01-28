@@ -17,7 +17,8 @@ TEST_P(StatelessVtbTest, validateVtbStatelessly) {
   VTB vtb = AssertDeserializeFromHex<VTB>(GetParam());
   ValidationState state;
   BtcChainParamsTest param;
-  bool result = checkVTB(vtb, state, param);
+  VbkChainParamsTest vbk;
+  bool result = checkVTB(vtb, state, param, vbk);
   ASSERT_TRUE(result) << state.toString();
 }
 

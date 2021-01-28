@@ -41,12 +41,12 @@ TEST_F(Scenario9, scenario_9) {
   // endorse VBK blocks
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
-  generatePopTx(endorsedVbkBlock1->getHeader());
+  auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   auto* btcBlockTip1 = popminer->btc().getBestChain().tip();
   popminer->mineBtcBlocks(100);
-  generatePopTx(endorsedVbkBlock2->getHeader());
+  auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
-  vbkTip = popminer->mineVbkBlocks(1);
+  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
 
   auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
 

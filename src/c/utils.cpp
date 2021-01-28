@@ -3,21 +3,23 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/c/utils.h"
-
 #include <cstdio>
 #include <vector>
 
+#include "adaptors/block_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/alt-util.hpp"
+#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/popdata.hpp"
 #include "veriblock/entities/vbkblock.hpp"
 #include "veriblock/entities/vtb.hpp"
+#include "veriblock/exceptions/storage_io.hpp"
 #include "veriblock/stateless_validation.hpp"
+#include "veriblock/storage/util.hpp"
 
 void VBK_VbkBlock_getId(const uint8_t* block_bytes,
                         int block_bytes_size,
@@ -186,8 +188,10 @@ bool VBK_checkATV(PopContext* self,
   using namespace altintegration;
   ATV atv = AssertDeserializeFromVbkEncoding<ATV>(
       Slice<const uint8_t>(atv_bytes, atv_bytes_size));
-  return checkATV(
-      atv, state->getState(), self->context->config->getAltParams());
+  return checkATV(atv,
+                  state->getState(),
+                  self->context->config->getAltParams(),
+                  self->context->config->getVbkParams());
 }
 
 bool VBK_checkVTB(PopContext* self,
@@ -203,8 +207,10 @@ bool VBK_checkVTB(PopContext* self,
   using namespace altintegration;
   VTB vtb = AssertDeserializeFromVbkEncoding<VTB>(
       Slice<const uint8_t>(vtb_bytes, vtb_bytes_size));
-  return checkVTB(
-      vtb, state->getState(), self->context->config->getBtcParams());
+  return checkVTB(vtb,
+                  state->getState(),
+                  self->context->config->getBtcParams(),
+                  self->context->config->getVbkParams());
 }
 
 bool VBK_checkVbkBlock(PopContext* self,
@@ -240,4 +246,40 @@ bool VBK_checkPopData(PopContext* self,
       Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
   return checkPopData(
       *self->context->popValidator, pop_data, state->getState());
+}
+
+bool VBK_SaveAllTrees(PopContext* self, VbkValidationState* state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(state);
+  VBK_ASSERT(self->storage);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+
+  using namespace altintegration;
+  auto write_batch = self->storage->generateWriteBatch();
+  adaptors::BlockBatchImpl block_batch(*write_batch);
+  try {
+    SaveAllTrees(*self->context->altTree, block_batch);
+    write_batch->writeBatch();
+  } catch (const StorageIOException& e) {
+    state->getState().Invalid("failed-save-trees", e.what());
+    return false;
+  } catch (...) {
+    VBK_ASSERT_MSG(false, "catched unexpected exception");
+  }
+
+  return true;
+}
+
+bool VBK_LoadAllTrees(PopContext* self, VbkValidationState* state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(state);
+  VBK_ASSERT(self->storage);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+
+  using namespace altintegration;
+
+  adaptors::BlockReaderImpl block_reader(*self->storage);
+  return LoadAllTrees(*self->context, block_reader, state->getState());
 }

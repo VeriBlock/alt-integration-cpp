@@ -13,6 +13,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
 
 	index, err := popContext.AltBestBlock()
 	assert.NoError(err)
@@ -29,4 +30,91 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	assert.NoError(err)
 
 	assert.False(bytes.Equal(hash[:], []byte{}))
+}
+
+func TestSaveLoadAllTrees(t *testing.T) {
+	assert := assert.New(t)
+
+	popContext := generateTestPopContext(t)
+
+	miner := NewMockMiner()
+
+	index, err := miner.MineVbkBlockTip()
+	assert.NoError(err)
+
+	vbkBlock, err := index.GetVbkBlockHeader()
+	assert.NoError(err)
+
+	state, err := popContext.SubmitVbk(vbkBlock)
+	// state == 0, valid vbkBlock
+	assert.Equal(0, state)
+	assert.NoError(err)
+
+	// generate new block
+	newBlock := generateNextAltBlock(&boostrapBlock)
+
+	err = popContext.AcceptBlockHeader(newBlock)
+	assert.NoError(err)
+
+	popData, err := popContext.GetPop()
+	assert.NotEqual(popData, nil)
+	assert.NoError(err)
+
+	err = popContext.AcceptBlock(newBlock.Hash, popData)
+	assert.NoError(err)
+
+	err = popContext.SetState(newBlock.Hash)
+	assert.NoError(err)
+
+	err = popContext.SaveAllTrees()
+	assert.NoError(err)
+
+	index, err = popContext.AltBestBlock()
+	assert.NoError(err)
+	assert.NotEqual(index, nil)
+
+	block, err := index.GetAltBlockHeader()
+	assert.NoError(err)
+	assert.NotEqual(block, nil)
+
+	assert.Equal(block.Hash, newBlock.Hash)
+	assert.Equal(block.Height, newBlock.Height)
+	assert.Equal(block.PreviousBlock, newBlock.PreviousBlock)
+	assert.Equal(block.Timestamp, newBlock.Timestamp)
+
+	// reset state of the popContext
+	popContext.popContext.Free()
+	popContext = generateTestPopContext(t)
+	defer popContext.popContext.Free()
+
+	index, err = popContext.AltBestBlock()
+	assert.NoError(err)
+	assert.NotEqual(index, nil)
+
+	block, err = index.GetAltBlockHeader()
+	assert.NoError(err)
+	assert.NotEqual(block, nil)
+
+	assert.NotEqual(block.Hash, newBlock.Hash)
+	assert.NotEqual(block.Height, newBlock.Height)
+	assert.NotEqual(block.PreviousBlock, newBlock.PreviousBlock)
+	assert.NotEqual(block.Timestamp, newBlock.Timestamp)
+	assert.Equal(block.Hash, newBlock.PreviousBlock)
+	assert.Equal(block.Height, newBlock.Height-1)
+
+	err = popContext.LoadAllTrees()
+	assert.NoError(err)
+
+	index, err = popContext.AltBestBlock()
+	assert.NoError(err)
+	assert.NotEqual(index, nil)
+
+	block, err = index.GetAltBlockHeader()
+	assert.NoError(err)
+	assert.NotEqual(block, nil)
+
+	assert.Equal(block.Hash, newBlock.Hash)
+	assert.Equal(block.Height, newBlock.Height)
+	assert.Equal(block.PreviousBlock, newBlock.PreviousBlock)
+	assert.Equal(block.Timestamp, newBlock.Timestamp)
 }

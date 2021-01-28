@@ -4,16 +4,17 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <gtest/gtest.h>
+#include <veriblock/c/merkle_root_util.h>
 
 #include <util/alt_chain_params_regtest.hpp>
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/alt-util.hpp>
-#include <veriblock/mock_miner_2.hpp>
+#include <veriblock/mock_miner.hpp>
 
 using namespace altintegration;
 
 struct AltUtilTest : public ::testing::Test {
-  MockMiner2 popminer;
+  MockMiner popminer;
 };
 
 TEST_F(AltUtilTest, GetLastKnownBlocks) {
@@ -94,4 +95,125 @@ TEST(TopLevelMerkleRoot, Sanity) {
   auto tlmr = CalculateTopLevelMerkleRoot(txRoot, popDataRoot, ctx);
   ASSERT_EQ(HexStr(tlmr),
             "700c1abb69dd1899796b4cafa81c0eefa7b7d0c5aaa4b2bcb67713b2918edb52");
+}
+
+extern "C" {
+void pop_sha256d(pop_uint256 output, const void* input, int size) {
+  // double sha256
+  auto h = sha256twice({(const uint8_t*)input, static_cast<size_t>(size)});
+  memcpy(output, h.data(), 32);
+}
+}
+
+// ~ » vbitcoin-cli getblocktemplate "{\"rules\": [\"segwit\"]}"
+//{
+//  "capabilities": [
+//    "proposal"
+//  ],
+//  "version": 536870912,
+//  "rules": [
+//  ],
+//  "vbavailable": {
+//  },
+//  "vbrequired": 0,
+//  "previousblockhash":
+//  00000000115f2f3286a442fe32aaf39abefa6fa1e5a4d7e5661cf2c6c664e0eb",
+//  "transactions": [
+//  ],
+//  "coinbaseaux": {
+//  },
+//  "coinbasevalue": 3000000000,
+//  "longpollid":
+//  00000000115f2f3286a442fe32aaf39abefa6fa1e5a4d7e5661cf2c6c664e0eb3754",
+//  "target":
+//  0000001217020000000000000000000000000000000000000000000000000000",
+//  "mintime": 1611315289,
+//  "mutable": [
+//    "time",
+//    "transactions",
+//    "prevblock"
+//  ],
+//  "noncerange": "00000000ffffffff",
+//  "sigoplimit": 80000,
+//  "sizelimit": 4000000,
+//  "weightlimit": 4000000,
+//  "curtime": 1611315938,
+//  "bits": "1d121702",
+//  "height": 4207,
+//  "default_witness_commitment":
+//  6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9",
+//  "pop_data_root":
+//  eaac496a5eab315c9255fb85c871cef7fd87047adcd2e81ba7d55d6bdeb1737f",
+//  "tx_root":
+//  31deca6d182a7be32cc5edf0ac6724be82ae41afc363abf35d715755ff4a0ba2",
+//  "pop_data": {
+//    "version": 1,
+//    "vbkblocks": [
+//    ],
+//    "vtbs": [
+//    ],
+//    "atvs": [
+//    ]
+//  },
+//  "pop_context": {
+//    "serialized":
+//    0000106f20e665f741498cf23a4abfc5e52c675307ae7b28ea75cda72a48af89de0200000020714233a5a9c3a984c621ebdfd188dba90fccc47b162a648c1f2929d90c000000e68be583d1048006108729c02781c228afe9a1b785d067692054bb39d1658ddc",
+//    "stateRoot":
+//    e68be583d1048006108729c02781c228afe9a1b785d067692054bb39d1658ddc",
+//    "context": {
+//      "height": 4207,
+//      "firstPreviousKeystone":
+//      e665f741498cf23a4abfc5e52c675307ae7b28ea75cda72a48af89de02000000",
+//      "secondPreviousKeystone":
+//      714233a5a9c3a984c621ebdfd188dba90fccc47b162a648c1f2929d90c000000"
+//    }
+//  },
+//  "pop_rewards": [
+//  ]
+//}
+TEST(TopLevelMerkleRoot, Case1) {
+  // data that we got from getblocktemplate
+  // clang-format off
+  const int height = 4207;
+  const std::vector<uint8_t> firstPreviousKeystone = ParseHex("e665f741498cf23a4abfc5e52c675307ae7b28ea75cda72a48af89de02000000");
+  const std::vector<uint8_t> secondPreviousKeystone = ParseHex("714233a5a9c3a984c621ebdfd188dba90fccc47b162a648c1f2929d90c000000");
+  const std::vector<uint8_t> tx_root = ParseHex("31deca6d182a7be32cc5edf0ac6724be82ae41afc363abf35d715755ff4a0ba2");
+  const std::vector<uint8_t> pop_data_root = ParseHex("eaac496a5eab315c9255fb85c871cef7fd87047adcd2e81ba7d55d6bdeb1737f");
+  const std::vector<uint8_t> pop_context_serialized = ParseHex("0000106f20e665f741498cf23a4abfc5e52c675307ae7b28ea75cda72a48af89de0200000020714233a5a9c3a984c621ebdfd188dba90fccc47b162a648c1f2929d90c000000e68be583d1048006108729c02781c228afe9a1b785d067692054bb39d1658ddc");
+  const std::vector<uint8_t> state_root = ParseHex("e68be583d1048006108729c02781c228afe9a1b785d067692054bb39d1658ddc");
+  // clang-format on
+
+  auto stateRoot = sha256twice(tx_root, pop_data_root);
+  ASSERT_EQ(stateRoot.toHex(), HexStr(state_root));
+
+  ContextInfoContainer ctx;
+  ctx.height = height;
+  ctx.keystones.firstPreviousKeystone = firstPreviousKeystone;
+  ctx.keystones.secondPreviousKeystone = secondPreviousKeystone;
+
+  AuthenticatedContextInfoContainer actx;
+  actx.ctx = ctx;
+  actx.stateRoot = stateRoot;
+  ASSERT_EQ(SerializeToHex(actx), HexStr(pop_context_serialized));
+
+  std::string expected = "756ecf78c55aa5b82bf475d5573fce78197e2312232a28241d3a2b2068331f02";
+  ASSERT_EQ(actx.getTopLevelMerkleRoot().toHex(), expected);
+
+
+  {
+    // test C helper
+
+    // clang-format off
+    pop_context_info cctx = pop_create_context_info(height, firstPreviousKeystone.data(), secondPreviousKeystone.data());
+
+    pop_uint256 context_hash;
+    pop_context_info_hash(context_hash, &cctx);
+    ASSERT_EQ(HexStr(context_hash, context_hash + 32), ctx.getHash().toHex());
+
+    pop_uint256 tlmr;
+    pop_calculate_top_level_merkle_root(tlmr, tx_root.data(), pop_data_root.data(), cctx);
+    // clang-format on
+
+    ASSERT_EQ(HexStr(tlmr, tlmr + 32), expected);
+  }
 }

@@ -3,10 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/crypto/secp256k1.hpp"
+
 #include <utility>
 #include <veriblock/assert.hpp>
 
-#include "veriblock/crypto/secp256k1.hpp"
 #include "veriblock/hashutil.hpp"
 #include "veriblock/strutil.hpp"
 #include "veriblock/third_party/secp256k1.hpp"
@@ -163,6 +164,29 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
   return output;
 }
 
+
+#ifdef VBK_FUZZING_UNSAFE_FOR_PRODUCTION
+
+// implementation for fuzzing
+
+Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
+  (void)message;
+  (void)privateKey;
+  return {};
+}
+
+bool verify(Slice<const uint8_t> message,
+            Signature signature,
+            PublicKey publicKey) {
+  (void)message;
+  (void)signature;
+  (void)publicKey;
+  return true;
+}
+#else
+
+// real implementation
+
 Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
   auto messageHash = sha256(message);
 
@@ -177,13 +201,13 @@ Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
   return Signature(sig, sig + outputlen);
 }
 
-int verify(Slice<const uint8_t> message,
-           Signature signature,
-           PublicKey publicKey) {
+bool verify(Slice<const uint8_t> message,
+            Signature signature,
+            PublicKey publicKey) {
   secp256k1_pubkey pubkey;
-  if (!(bool)secp256k1_ec_pubkey_parse(
-          ctx, &pubkey, publicKey.data(), publicKey.size())) {
-    throw std::invalid_argument("veriBlockVerify(): cannot parse public key");
+  if (0 == secp256k1_ec_pubkey_parse(
+               ctx, &pubkey, publicKey.data(), publicKey.size())) {
+    return false;
   }
 
   secp256k1_ecdsa_signature signatureDecoded;
@@ -196,9 +220,10 @@ int verify(Slice<const uint8_t> message,
       ctx, &normalizedSignature, &signatureDecoded);
 
   auto messageHash = sha256(message);
-  return secp256k1_ecdsa_verify(
-      ctx, &normalizedSignature, messageHash.data(), &pubkey);
+  return 0 != secp256k1_ecdsa_verify(
+                  ctx, &normalizedSignature, messageHash.data(), &pubkey);
 }
+#endif
 
 }  // namespace secp256k1
 }  // namespace altintegration

@@ -1,7 +1,7 @@
 package ffi
 
 // #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/c/utils.h>
 import "C"
 import (
@@ -139,5 +139,15 @@ func (v *PopContext) CheckVbkBlock(vbk_bytes []byte, state *ValidationState) boo
 func (v *PopContext) CheckPopData(pop_data_bytes []byte, state *ValidationState) bool {
 	popDataBytesC := (*C.uint8_t)(unsafe.Pointer(&pop_data_bytes[0]))
 	res := C.VBK_checkPopData(v.ref, popDataBytesC, C.int(len(pop_data_bytes)), state.ref)
+	return bool(res)
+}
+
+func (v *PopContext) SaveAllTrees(state *ValidationState) bool {
+	res := C.VBK_SaveAllTrees(v.ref, state.ref)
+	return bool(res)
+}
+
+func (v *PopContext) LoadAllTrees(state *ValidationState) bool {
+	res := C.VBK_LoadAllTrees(v.ref, state.ref)
 	return bool(res)
 }

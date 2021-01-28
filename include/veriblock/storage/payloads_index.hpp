@@ -22,6 +22,37 @@ class PayloadsIndex {
  public:
   virtual ~PayloadsIndex() = default;
 
+  /**
+   * The validity map should only be used for payloads that will always fail
+   * the validation and application of the block they are added to no matter
+   * what context is provided.
+   *
+   * Example:
+   *   * Block X at height N references block Y as its predecessor.
+   *   * Block Y is known to us.
+   *   * Block Y is at height N+10.
+   * Thus, block X is always invalid and can be added to this map.
+   *
+   * Example:
+   *   * Altchain block A contains VeriBlock block X as a payload.
+   *   * Block X references block Y as its predecesor.
+   *   * Block Y is unknown to us.
+   * Thus, block A is invalid, the validity of block X is unknown and it should
+   * NOT be added to this map as invalid despite block A validation failing at
+   * this specific payload.
+   *
+   * Example:
+   *   * Altchain block A contains VeriBlock block X as a payload.
+   *   * Block X references block Y as its predecesor.
+   *   * Block Y is known to us and is a valid predecessor of X.
+   *   * Neither block A nor its predecessors contain VeriBlock block Y as a
+   *     payload.
+   * Thus, block A is invalid, block X is valid and should NOT be added
+   * to this map as invalid despite block A validation failing at this specific
+   * payload.
+   *
+   * FIXME: this functionality is not used
+   */
   //! getter for cached payload validity
   bool getValidity(Slice<const uint8_t> containingBlockHash,
                    Slice<const uint8_t> payloadId) const;

@@ -69,11 +69,7 @@ struct VbkPopTx {
 template <typename JsonValue>
 JsonValue ToJSON(const VbkPopTx& tx) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
-  if (tx.networkOrType.hasNetworkByte) {
-    json::putIntKV(obj, "networkByte", tx.networkOrType.networkByte);
-  } else {
-    json::putNullKV(obj, "networkByte");
-  }
+  tx.networkOrType.networkType.template putJson<JsonValue>(obj);
   json::putStringKV(obj, "hash", tx.getHash().toHex());
   json::putIntKV(obj, "type", tx.networkOrType.typeId);
   json::putStringKV(obj, "address", tx.address.toString());
