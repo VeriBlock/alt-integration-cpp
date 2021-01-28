@@ -92,6 +92,9 @@ func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 
 func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	defer v.lock()()
+	if popData == nil {
+		return nil
+	}
 	bytes, err := popData.ToVbkEncodingBytes()
 	if err != nil {
 		return err
