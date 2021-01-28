@@ -87,6 +87,11 @@ func NewPopContext(config *Config, db_path string) *PopContext {
 	}
 }
 
+// Free
+func (v *PopContext) Free() {
+	v.popContext.Free()
+}
+
 // AcceptBlockHeader - Returns nil if block is valid, and added
 func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
 	stream := new(bytes.Buffer)
