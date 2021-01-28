@@ -2,7 +2,7 @@ import pathlib
 
 from .framework.node import Node
 from .framework.test_util import run_tests
-from .test_list import ALL_TESTS
+from .tests import ALL_TESTS
 from .vbitcoind_node import VBitcoindNode
 
 
