@@ -72,7 +72,7 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-        cmake_cmd = ['cmake', str(thisdir)] + cmake_args]
+        cmake_cmd = ['cmake', str(thisdir)] + cmake_args
 
         print("""
         {cmake}
