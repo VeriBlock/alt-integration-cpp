@@ -14,7 +14,7 @@ add_subdirectory(pypoptesting)
 
 add_custom_target(install_pypoptools
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        COMMAND ${PYTHON_EXECUTABLE} setup.py install --user
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/setup.py install --user
         DEPENDS ${LIB_NAME}
         COMMENT "Installing pypoptools..."
         )
