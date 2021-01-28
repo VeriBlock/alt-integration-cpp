@@ -10,8 +10,10 @@
 #include <veriblock/blockchain/alt_block_tree.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/pop_context.hpp>
-#include <veriblock/storage/block_provider.hpp>
+#include <veriblock/storage/block_reader.hpp>
 #include <veriblock/validation_state.hpp>
+
+#include "block_batch.hpp"
 
 namespace altintegration {
 
@@ -19,10 +21,10 @@ namespace altintegration {
 //! does validation of these blocks. Sets tip after loading.
 //! @invariant NOT atomic
 template <typename BlockTreeT>
-bool LoadTree(BlockTreeT& tree,
-              std::vector<typename BlockTreeT::index_t> blocks,
-              const typename BlockTreeT::hash_t& tiphash,
-              ValidationState& state) {
+bool LoadBlocks(BlockTreeT& tree,
+                std::vector<typename BlockTreeT::index_t>& blocks,
+                const typename BlockTreeT::hash_t& tiphash,
+                ValidationState& state) {
   using index_t = typename BlockTreeT::index_t;
   using block_t = typename BlockTreeT::block_t;
   VBK_LOG_WARN("Loading %d %s blocks with tip %s",
@@ -48,37 +50,25 @@ bool LoadTree(BlockTreeT& tree,
 }
 
 template <typename BlockTreeT>
-bool SaveTree(
-    BlockTreeT& tree,
-    details::GenericBlockWriter<typename BlockTreeT::block_t>& writer,
-    ValidationState& state) {
+void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
   for (auto& block : tree.getBlocks()) {
     auto& index = block.second;
     if (index->isDirty()) {
       index->unsetDirty();
-      if (!writer.writeBlock(*index)) {
-        return state.Invalid(
-            "bad-provider",
-            fmt::format("cannot write block into the block provider, block: %s",
-                        index->toPrettyString()));
-      }
+      batch.writeBlock(*index);
     }
   }
 
-  if (!writer.writeTip(*tree.getBestChain().tip())) {
-    return state.Invalid(
-        "bad-provider",
-        fmt::format("cannot write tip into the block provider, tip: %s",
-                    tree.getBestChain().tip()->toPrettyString()));
-  }
-  return true;
+  batch.writeTip(*tree.getBestChain().tip());
 }
 
 struct AltBlockTree;
 
-bool SaveAllTrees(PopContext& context, ValidationState& state);
+void SaveAllTrees(const AltBlockTree& tree, BlockBatch& batch);
 
-bool LoadAllTrees(PopContext& context, ValidationState& state);
+bool LoadAllTrees(PopContext& context,
+                  BlockReader& reader,
+                  ValidationState& state);
 
 }  // namespace altintegration
 

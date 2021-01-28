@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/stateless_validation.hpp"
+
 #include <algorithm>
 #include <bitset>
 #include <string>
@@ -16,7 +18,6 @@
 #include "veriblock/blob.hpp"
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
-#include "veriblock/stateless_validation.hpp"
 #include "veriblock/strutil.hpp"
 
 namespace {
@@ -277,9 +278,23 @@ bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
 
 bool checkVbkPopTx(const VbkPopTx& tx,
                    ValidationState& state,
-                   const BtcChainParams& btc) {
-  if (!checkSignature(tx, state)) {
-    return state.Invalid("vbk-check-signature");
+                   const BtcChainParams& btc,
+                   const VbkChainParams& vbk) {
+  // least expensive checks at start
+  if (tx.blockOfProofContext.size() > MAX_BTC_BLOCKS_IN_VBKPOPTX) {
+    return state.Invalid(
+        "vbk-btc-context-too-many",
+        fmt::format("Maximum allowed BTC context size is {}, got {}",
+                    MAX_BTC_BLOCKS_IN_VBKPOPTX,
+                    tx.blockOfProofContext.size()));
+  }
+
+  if (tx.networkOrType.networkType != vbk.getTransactionMagicByte()) {
+    return state.Invalid(
+        "vbkpoptx-bad-tx-byte",
+        fmt::format("Bad magic byte. Expected {}, got {}",
+                    vbk.getTransactionMagicByte().toPrettyString(),
+                    tx.networkOrType.networkType.toPrettyString()));
   }
 
   if (!checkBitcoinTransactionForPoPData(tx, state)) {
@@ -297,12 +312,9 @@ bool checkVbkPopTx(const VbkPopTx& tx,
     return state.Invalid("vbk-check-btc-blocks");
   }
 
-  if (tx.blockOfProofContext.size() > MAX_BTC_BLOCKS_IN_VBKPOPTX) {
-    return state.Invalid(
-        "vbk-btc-context-too-many",
-        fmt::format("Maximum allowed BTC context size is {}, got {}",
-                    MAX_BTC_BLOCKS_IN_VBKPOPTX,
-                    tx.blockOfProofContext.size()));
+  // most expensive checks in the end
+  if (!checkSignature(tx, state)) {
+    return state.Invalid("vbk-check-signature");
   }
 
   return true;
@@ -335,11 +347,8 @@ bool checkPublicationData(const PublicationData& pub,
 
 bool checkVbkTx(const VbkTx& tx,
                 const AltChainParams& params,
+                const VbkChainParams& vbkparams,
                 ValidationState& state) {
-  if (!checkSignature(tx, state)) {
-    return state.Invalid("vbktx-check-signature");
-  }
-
   if (tx.outputs.size() > MAX_OUTPUTS_COUNT) {
     return state.Invalid(
         "vbktx-too-many-outputs",
@@ -348,8 +357,21 @@ bool checkVbkTx(const VbkTx& tx,
                     tx.outputs.size()));
   }
 
+  if (tx.networkOrType.networkType != vbkparams.getTransactionMagicByte()) {
+    return state.Invalid(
+        "vbktx-bad-tx-byte",
+        fmt::format("Bad magic byte. Expected {}, got {}",
+                    vbkparams.getTransactionMagicByte().toPrettyString(),
+                    tx.networkOrType.networkType.toPrettyString()));
+  }
+
   if (!checkPublicationData(tx.publicationData, params, state)) {
-    return state.Invalid("bad-publicationdata");
+    return state.Invalid("vbktx-bad-publicationdata");
+  }
+
+  // most expensive check in the end
+  if (!checkSignature(tx, state)) {
+    return state.Invalid("vbktx-check-signature");
   }
 
   return true;
@@ -362,7 +384,7 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
   }
 
   auto hash = tx.getHash();
-  if (!(bool)secp256k1::verify(
+  if (!secp256k1::verify(
           hash, tx.signature, secp256k1::publicKeyFromVbk(tx.publicKey))) {
     return state.Invalid("invalid-vbk-tx",
                          "Vbk transaction is incorrectly signed");
@@ -376,23 +398,23 @@ bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
                          "Vbk Pop transaction contains an invalid public key");
   }
   auto hash = tx.getHash();
-  if (!(bool)secp256k1::verify(
+  if (!secp256k1::verify(
           hash, tx.signature, secp256k1::publicKeyFromVbk(tx.publicKey))) {
-    return state.Invalid("invalid-vbk-pop-tx",
-                         "Vbk Pop transaction is incorrectly signed");
+    return state.Invalid("invalid-vbk-pop-tx", "Invalid signature in VbkPopTx");
   }
   return true;
 }
 
 bool checkATV(const ATV& atv,
               ValidationState& state,
-              const AltChainParams& altp) {
+              const AltChainParams& altp,
+              const VbkChainParams& vbkp) {
   if (atv.checked) {
     // we've already checked that ATV
     return true;
   }
 
-  if (!checkVbkTx(atv.transaction, altp, state)) {
+  if (!checkVbkTx(atv.transaction, altp, vbkp, state)) {
     return state.Invalid("vbk-check-tx");
   }
 
@@ -410,13 +432,14 @@ bool checkATV(const ATV& atv,
 
 bool checkVTB(const VTB& vtb,
               ValidationState& state,
-              const BtcChainParams& btc) {
+              const BtcChainParams& btc,
+              const VbkChainParams& vbk) {
   if (vtb.checked) {
     // we've already checked that VTB
     return true;
   }
 
-  if (!checkVbkPopTx(vtb.transaction, state, btc)) {
+  if (!checkVbkPopTx(vtb.transaction, state, btc, vbk)) {
     return state.Invalid("vbk-check-pop-tx");
   }
 

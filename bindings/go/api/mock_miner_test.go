@@ -67,6 +67,8 @@ func TestMineVtb(t *testing.T) {
 	assert := assert.New(t)
 
 	popContext := generateTestPopContext(t)
+	defer popContext.popContext.Free()
+
 	popContext.BtcBestBlock()
 
 	mockMiner := NewMockMiner()

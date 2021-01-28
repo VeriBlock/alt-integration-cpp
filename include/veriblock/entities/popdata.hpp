@@ -85,8 +85,9 @@ inline void putArrayOfIds(JsonValue& obj,
 }  // namespace detail
 
 template <typename JsonValue>
-JsonValue ToJSON(const PopData& p, bool verbose = 0) {
+JsonValue ToJSON(const PopData& p, bool verbose = false) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
+  json::putIntKV(obj, "version", p.version);
   if (verbose) {
     json::putArrayKV(obj, "vbkblocks", p.context);
     json::putArrayKV(obj, "vtbs", p.vtbs);

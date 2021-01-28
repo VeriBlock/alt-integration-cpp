@@ -6,93 +6,119 @@
 #ifndef VERIBLOCK_POP_CPP_ADAPTORS_PAYLOADS_PROVIDER_IMPL_BINDINGS
 #define VERIBLOCK_POP_CPP_ADAPTORS_PAYLOADS_PROVIDER_IMPL_BINDINGS
 
+#include "storage_interface.hpp"
 #include "veriblock/c/extern.h"
+#include "veriblock/serde.hpp"
 #include "veriblock/storage/payloads_provider.hpp"
 
 namespace adaptors {
 
-namespace details {
-struct PayloadsReaderImpl : public altintegration::details::PayloadsReader {
-  ~PayloadsReaderImpl() override = default;
+const char DB_VBK_PREFIX = '^';
+const char DB_VTB_PREFIX = '<';
+const char DB_ATV_PREFIX = '>';
 
-  PayloadsReaderImpl(size_t maxSize) { buffer.resize(maxSize); }
+template <typename pop_t>
+std::vector<uint8_t> payloads_key(const typename pop_t::id_t& id);
+
+template <>
+inline std::vector<uint8_t> payloads_key<altintegration::ATV>(
+    const altintegration::ATV::id_t& id) {
+  auto res = id.asVector();
+  res.insert(res.begin(), DB_ATV_PREFIX);
+  return res;
+}
+
+template <>
+inline std::vector<uint8_t> payloads_key<altintegration::VTB>(
+    const altintegration::VTB::id_t& id) {
+  auto res = id.asVector();
+  res.insert(res.begin(), DB_VTB_PREFIX);
+  return res;
+}
+
+template <>
+inline std::vector<uint8_t> payloads_key<altintegration::VbkBlock>(
+    const altintegration::VbkBlock::id_t& id) {
+  auto res = id.asVector();
+  res.insert(res.begin(), DB_VBK_PREFIX);
+  return res;
+}
+
+struct PayloadsStorageImpl : public altintegration::PayloadsStorage {
+  ~PayloadsStorageImpl() override = default;
+
+  PayloadsStorageImpl(Storage& storage) : storage_(storage) {}
+
+  template <typename pop_t>
+  bool getPayloads(const typename pop_t::id_t& id,
+                   pop_t& out,
+                   altintegration::ValidationState& state) {
+    std::vector<uint8_t> bytes_out;
+    if (!storage_.read(payloads_key<pop_t>(id), bytes_out)) {
+      return state.Invalid(
+          "bad-" + pop_t::name(),
+          fmt::format("can not read %s from storage", pop_t::name()));
+    }
+
+    altintegration::ReadStream stream(bytes_out);
+    if (!altintegration::DeserializeFromVbkEncoding(stream, out, state)) {
+      return state.Invalid(
+          "bad-" + pop_t::name(),
+          fmt::format("can not deserialize %s from bytes", pop_t::name()));
+    }
+
+    return true;
+  }
 
   bool getATV(const altintegration::ATV::id_t& id,
               altintegration::ATV& out,
               altintegration::ValidationState& state) override {
-    (void)id;
-    (void)out;
-    (void)state;
-    // TODO implement
-    return true;
+    return getPayloads<altintegration::ATV>(id, out, state);
   }
 
   bool getVTB(const altintegration::VTB::id_t& id,
               altintegration::VTB& out,
               altintegration::ValidationState& state) override {
-    (void)id;
-    (void)out;
-    (void)state;
-    // TODO implement
-    return true;
+    return getPayloads<altintegration::VTB>(id, out, state);
   }
 
   bool getVBK(const altintegration::VbkBlock::id_t& id,
               altintegration::VbkBlock& out,
               altintegration::ValidationState& state) override {
-    (void)id;
-    (void)out;
-    (void)state;
-    // TODO implement
-    return true;
-  }
-
- private:
-  std::vector<uint8_t> buffer;
-};
-
-struct PayloadsWriterImpl : public altintegration::details::PayloadsWriter {
-  ~PayloadsWriterImpl() override = default;
-
-  void writePayloads(const std::vector<altintegration::ATV>& atvs) override {
-    (void)atvs;
-    // TODO implement
-  }
-
-  void writePayloads(const std::vector<altintegration::VTB>& vtbs) override {
-    (void)vtbs;
-    // TODO implement
-  }
-
-  void writePayloads(
-      const std::vector<altintegration::VbkBlock>& vbks) override {
-    (void)vbks;
-    // TODO implement
+    return getPayloads<altintegration::VbkBlock>(id, out, state);
   }
 
   void writePayloads(const altintegration::PopData& payloads) override {
-    altintegration::details::PayloadsWriter::writePayloads(payloads);
-  }
-};
+    auto batch = storage_.generateWriteBatch();
 
-}  // namespace details
+    for (const auto& atv : payloads.atvs) {
+      batch->write(
+          payloads_key<altintegration::VbkBlock>(atv.blockOfProof.getId()),
+          altintegration::SerializeToVbkEncoding(atv.blockOfProof));
 
-struct PayloadsProviderImpl : public altintegration::PayloadsProvider {
-  ~PayloadsProviderImpl() override = default;
+      batch->write(payloads_key<altintegration::ATV>(atv.getId()),
+                   altintegration::SerializeToVbkEncoding(atv));
+    }
 
-  PayloadsProviderImpl(size_t maxSize) : reader(maxSize) {}
+    for (const auto& vtb : payloads.vtbs) {
+      batch->write(
+          payloads_key<altintegration::VbkBlock>(vtb.containingBlock.getId()),
+          altintegration::SerializeToVbkEncoding(vtb.containingBlock));
 
-  altintegration::details::PayloadsReader& getPayloadsReader() override {
-    return reader;
-  }
+      batch->write(payloads_key<altintegration::VTB>(vtb.getId()),
+                   altintegration::SerializeToVbkEncoding(vtb));
+    }
 
-  altintegration::details::PayloadsWriter& getPayloadsWriter() override {
-    return writer;
+    for (const auto& vbk : payloads.context) {
+      batch->write(payloads_key<altintegration::VbkBlock>(vbk.getId()),
+                   altintegration::SerializeToVbkEncoding(vbk));
+    }
+
+    batch->writeBatch();
   }
 
  private:
-  details::PayloadsReaderImpl reader;
-  details::PayloadsWriterImpl writer;
+  Storage& storage_;
 };
 
 }  // namespace adaptors

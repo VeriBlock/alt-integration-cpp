@@ -15,7 +15,7 @@ static const PublicationData publicationData{0, ""_v, ""_v, ""_v};
 static const std::vector<uint8_t> emptyBytes64(64);
 
 static const VbkTx defaultTx{
-    NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
+    NetworkBytePair{{false, 0}, (uint8_t)TxType::VBK_TX},
     Address::assertFromString("V8dy5tWcP7y36kxiJwxKPKUrWAJbjs"),
     Coin(3500000000),
     std::vector<Output>{
@@ -82,4 +82,21 @@ TEST(VbkTx, RoundTripNew) {
   auto txBytes = outputStream.data();
   auto txReEncoded = HexStr(txBytes);
   EXPECT_EQ(txReEncoded, defaultTxEncoded);
+}
+
+TEST(VbkTx, EstimateSize) {
+  auto tx = AssertDeserializeFromHex<VbkTx>(
+      "012a580101166772f51ab208d32771ab1506970eeb664462730b838e0203e80001070108"
+      "01000100010001000000");
+  EXPECT_EQ(tx.estimateSize(), tx.toVbkEncoding().size());
+}
+
+TEST(VbkTx, EstimateSize2) {
+  auto tx = AssertDeserializeFromHex<VbkTx>(
+      "0145400101166772f51ab208d32771ab1506970eeb664462730b838e0201580101166772"
+      "f51ab208d32771ab1506970eeb664462730b838e0203e801000108010001000100010042"
+      "4242420018181b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b01000201012003dfff"
+      "ffffffff02ffff2cff02ff32ffff1818181818f51818181821604e1818181818c0351b18"
+      "181818188429205d40292020000020c2000062");
+  EXPECT_EQ(tx.estimateSize(), tx.toVbkEncoding().size());
 }

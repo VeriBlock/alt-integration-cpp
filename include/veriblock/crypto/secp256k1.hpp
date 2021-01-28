@@ -83,7 +83,7 @@ Signature sign(Slice<const uint8_t> message, PrivateKey privateKey);
  * @throws std::out_of_range if publicKey is malformed
  * @return 1 if signature is valid, 0 - otherwise
  */
-int verify(Slice<const uint8_t> message,
+bool verify(Slice<const uint8_t> message,
            Signature signature,
            PublicKey publicKey);
 

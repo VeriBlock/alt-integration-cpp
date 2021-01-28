@@ -16,26 +16,22 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
 
   std::vector<VbkPopTx> vbkPopTxs;
 
-  vbkPopTxs.emplace_back(popminer->endorseVbkBlock(
-      popminer->vbk().getBestChain().tip()->getHeader(),
-      popminer->btc().getBestChain().tip()->getHash(),
-      state));
-  vbkPopTxs.emplace_back(popminer->endorseVbkBlock(
-      popminer->vbk().getBestChain().tip()->getHeader(),
-      popminer->btc().getBestChain().tip()->getHash(),
-      state));
+  vbkPopTxs.emplace_back(popminer->createVbkPopTxEndorsingVbkBlock(
+      popminer->getVbkTip()->getHeader()));
+  vbkPopTxs.emplace_back(popminer->createVbkPopTxEndorsingVbkBlock(
+      popminer->getVbkTip()->getHeader()));
 
   // both VTBs should be contained in the same block
-  VbkBlock containingVbkBlock =
-      popminer->applyVTBs(popminer->vbk(), vbkPopTxs, state);
+  BlockIndex<VbkBlock>* containingVbkBlock =
+      popminer->mineVbkBlocks(1, vbkPopTxs);
 
-  popData.vtbs = popminer->vbkPayloads.at(containingVbkBlock.getHash());
+  popData.vtbs = popminer->vbkPayloads.at(containingVbkBlock->getHash());
   fillVbkContext(popData.context,
                  alttree.vbk().getBestChain().tip()->getHash(),
-                 containingVbkBlock.getHash(),
+                 containingVbkBlock->getHash(),
                  popminer->vbk());
 
-  payloadsProvider.getPayloadsWriter().writePayloads(popData);
+  payloadsProvider.writePayloads(popData);
 
   // BTC contexts should be empty
   ASSERT_EQ(popData.vtbs[0].transaction.blockOfProofContext.size(), 0);
@@ -54,11 +50,11 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
   }
 
   auto* containingIndex =
-      alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
+      alttree.vbk().getBlockIndex(containingVbkBlock->getHash());
   ASSERT_NE(containingIndex, nullptr)
       << "the containing VBK block should exist";
 
   ASSERT_TRUE(alttree.vbk().addPayloads(
-      containingVbkBlock.getHash(), popData.vtbs, state))
+      containingVbkBlock->getHash(), popData.vtbs, state))
       << state.toString();
 }

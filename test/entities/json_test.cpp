@@ -12,7 +12,7 @@
 #include "util/pop_test_fixture.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/literals.hpp"
-#include "veriblock/mock_miner_2.hpp"
+#include "veriblock/mock_miner.hpp"
 
 using namespace altintegration;
 
@@ -92,7 +92,7 @@ TEST(ToJson, BtcBlock) {
 
 TEST(ToJson, VTB) {
   static const NetworkBytePair networkByte{
-      false, 0, (uint8_t)TxType::VBK_POP_TX};
+      {false, 0}, (uint8_t)TxType::VBK_POP_TX};
 
   static const VbkBlock defaultVbkBlock{
       4917,
@@ -372,7 +372,7 @@ TEST(ToJson, ATV) {
       "a28838da60a8c9dd60190c14c59b82cb90319e"_unhex;
 
   static const VbkTx defaultTx{
-      NetworkBytePair{false, 0, (uint8_t)TxType::VBK_TX},
+      NetworkBytePair{{false, 0}, (uint8_t)TxType::VBK_TX},
       Address::assertFromString("V5Ujv72h4jEBcKnALGc4fKqs6CDAPX"),
       Coin(1000),
       std::vector<Output>{},
@@ -457,7 +457,7 @@ TEST(ToJson, ATV) {
 }
 
 TEST(ToJson, VbkBlockIndex) {
-  MockMiner2 m;
+  MockMiner m;
   picojson::value block =
       ToJSON<picojson::value>(*m.vbk().getBestChain().tip());
   std::string actual = block.serialize(true);
@@ -493,7 +493,7 @@ TEST(ToJson, VbkBlockIndex) {
 }
 
 TEST(ToJson, BtcBlockIndex) {
-  MockMiner2 m;
+  MockMiner m;
   auto* index = m.btc().getBestChain().tip();
   picojson::value block = ToJSON<picojson::value>(*index);
   std::string actual = block.serialize(true);

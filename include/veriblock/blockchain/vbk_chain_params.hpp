@@ -13,17 +13,6 @@
 
 namespace altintegration {
 
-//! works as optional<uint8_t>
-struct VbkNetworkType {
-  VbkNetworkType(bool _hasValue, uint8_t _value)
-      : hasValue(_hasValue), value(_value) {}
-
-  //! if hasValue == false, it is mainnet
-  bool hasValue = false;
-  //! otherwise, use value for network ID
-  uint8_t value = 0;
-};
-
 /**
  * VeriBlock chain parameters.
  */
@@ -99,7 +88,10 @@ struct VbkChainParamsMain : public VbkChainParams {
     return ArithUint256::fromHex("d18c2e2800");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
-    return VbkNetworkType(false, 0);
+    VbkNetworkType r;
+    r.hasValue = false;
+    r.value = 0;
+    return r;
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
 
@@ -135,7 +127,10 @@ struct VbkChainParamsTest : public VbkChainParams {
   }
 
   VbkNetworkType getTransactionMagicByte() const noexcept override {
-    return VbkNetworkType(true, 0xAA);
+    VbkNetworkType r;
+    r.hasValue = true;
+    r.value = 0xAA;
+    return r;
   }
   bool getPowNoRetargeting() const noexcept override { return false; }
 
@@ -175,7 +170,10 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     return uint256::fromHex("1");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
-    return VbkNetworkType(true, 0xBB);
+    VbkNetworkType r;
+    r.hasValue = true;
+    r.value = 0xBB;
+    return r;
   }
   bool EnableTimeAdjustment() const noexcept override { return false; }
 

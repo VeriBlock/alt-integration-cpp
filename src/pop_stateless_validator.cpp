@@ -101,7 +101,7 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& b) {
 
   std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    checkVTB(b, state, btc_);
+    checkVTB(b, state, btc_, vbk_);
     return state;
   });
   std::future<ValidationState> r = t.get_future();
@@ -124,7 +124,7 @@ std::future<ValidationState> PopValidator::addCheck(const ATV& b) {
 
   std::packaged_task<ValidationState()> t([&]() {
     ValidationState state;
-    checkATV(b, state, alt_);
+    checkATV(b, state, alt_, vbk_);
     return state;
   });
   std::future<ValidationState> r = t.get_future();

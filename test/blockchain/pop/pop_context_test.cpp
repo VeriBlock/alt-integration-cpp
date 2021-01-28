@@ -3,13 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/pop_context.hpp"
+
 #include <gtest/gtest.h>
 
 #include <veriblock/config.hpp>
-#include <veriblock/mock_miner_2.hpp>
+#include <veriblock/mock_miner.hpp>
 #include <veriblock/storage/inmem_payloads_provider.hpp>
-
-#include "veriblock/pop_context.hpp"
 
 using namespace altintegration;
 
@@ -20,7 +20,7 @@ struct PopContextFixture : public ::testing::Test {
   PayloadsIndex payloadsIndex;
   VbkBlockTree local =
       VbkBlockTree(vbkp, btcp, payloadsProvider, payloadsIndex);
-  MockMiner2 remote;
+  MockMiner remote;
 
   BlockIndex<BtcBlock>* forkPoint;
   BlockIndex<BtcBlock>* chainAtip;
@@ -37,8 +37,8 @@ struct PopContextFixture : public ::testing::Test {
   void SetUp() override {
     // BTC: 100 blocks, then fork A: +50 blocks, fork B: +100 blocks
     forkPoint = remote.mineBtcBlocks(100);
-    chainAtip = remote.mineBtcBlocks(*forkPoint, 50);
-    chainBtip = remote.mineBtcBlocks(*forkPoint, 100);
+    chainAtip = remote.mineBtcBlocks(50, *forkPoint);
+    chainBtip = remote.mineBtcBlocks(100, *forkPoint);
 
     // mine 100 VBK blocks
     vbkTip = remote.mineVbkBlocks(100);
@@ -47,11 +47,10 @@ struct PopContextFixture : public ::testing::Test {
     // BTC_B_101
     auto btctx = remote.createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
     // add BTC tx endorsing VBKTIP into next block after chain A tip
-    chainAtip = remote.mineBtcBlocks(*chainAtip, 1);
+    chainAtip = remote.mineBtcBlocks(1, *chainAtip, {btctx});
     // add same btctx to mempool again
-    remote.btcmempool.push_back(btctx);
     // add BTC tx endorsing VBKTIP into next block after chain B tip
-    chainBtip = remote.mineBtcBlocks(*chainBtip, 1);
+    chainBtip = remote.mineBtcBlocks(1, *chainBtip, {btctx, btctx});
 
     // create VBK pop tx that has 'block of proof=CHAIN A'
     auto txa = remote.createVbkPopTxEndorsingVbkBlock(chainAtip->getHeader(),
@@ -60,7 +59,7 @@ struct PopContextFixture : public ::testing::Test {
                                                       lastKnownLocalBtcBlock());
 
     // mine txA into VBK 101-th block
-    vbkTip = remote.mineVbkBlocks(1);
+    vbkTip = remote.mineVbkBlocks(1, {txa});
 
     // create VBK pop tx that has 'block of proof=CHAIN B'
     auto txb =
@@ -70,7 +69,7 @@ struct PopContextFixture : public ::testing::Test {
                                                lastKnownLocalBtcBlock());
 
     // mine this tx into 102-th block
-    vbkTip = remote.mineVbkBlocks(1);
+    vbkTip = remote.mineVbkBlocks(1, {txb});
 
     // we have 2 distinct VTBs
     ASSERT_EQ(remote.vbkPayloads.at(vbkTip->pprev->getHash()).size(), 1);
@@ -130,7 +129,9 @@ TEST_F(PopContextFixture, A) {
     auto& vtbs = it->second;
 
     ASSERT_TRUE(local.acceptBlock(containing->getHeader(), state));
-    payloadsProvider.getPayloadsWriter().writePayloads(vtbs);
+    PopData pd;
+    pd.vtbs = vtbs;
+    payloadsProvider.writePayloads(pd);
     ASSERT_TRUE(
         local.addPayloads(containing->getHeader().getHash(), {vtbs}, state))
         << state.toString();

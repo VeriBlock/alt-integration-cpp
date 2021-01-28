@@ -5,35 +5,53 @@
 
 #include <algorithm>
 #include <veriblock/blockchain/alt_block_tree.hpp>
+#include <veriblock/crypto/progpow.hpp>
 #include <veriblock/storage/util.hpp>
 
 namespace altintegration {
 
+namespace detail {
+
+template <typename Block>
+using OnBlockCallback_t =
+    std::function<void(typename Block::hash_t, const BlockIndex<Block>&)>;
+
 template <typename BlockTreeT>
-bool LoadTree(BlockTreeT& out,
-              details::GenericBlockReader<typename BlockTreeT::block_t>& reader,
-              ValidationState& state) {
+bool LoadTree(
+    BlockTreeT& out,
+    BlockReader& storage,
+    ValidationState& state,
+    const OnBlockCallback_t<typename BlockTreeT::block_t>& onBlock = {}) {
   using index_t = typename BlockTreeT::index_t;
+  using block_t = typename BlockTreeT::block_t;
   using hash_t = typename index_t::hash_t;
 
   std::vector<index_t> blocks;
 
-  auto it = reader.getBlockIterator();
+  auto it = storage.getBlockIterator<block_t>();
   for (it->seek_start(); it->valid(); it->next()) {
     index_t val;
     if (!it->value(val)) {
-      return state.Invalid("bad-value", "Can not get block value");
+      return state.Invalid("bad-value", "Can not read block data");
+    }
+    // if callback is supplied, execute it
+    if (onBlock) {
+      hash_t hash;
+      if (!it->key(hash)) {
+        return state.Invalid("bad-key", "Can not read block key");
+      }
+      onBlock(hash, val);
     }
     blocks.push_back(val);
   }
 
   hash_t tip_hash;
-  if (!reader.getTipHash(tip_hash)) {
-    return state.Invalid(index_t::block_t::name() + "-bad-value",
+  if (!storage.getTip<block_t>(tip_hash)) {
+    return state.Invalid(index_t::block_t::name() + "-bad-tip",
                          "Can not read block tip");
   }
 
-  if (!LoadTree(out, blocks, tip_hash, state)) {
+  if (!LoadBlocks(out, blocks, tip_hash, state)) {
     return state.Invalid("bad-tree");
   }
 
@@ -43,42 +61,35 @@ bool LoadTree(BlockTreeT& out,
   return true;
 }
 
-bool LoadAllTrees(PopContext& context, ValidationState& state) {
-  if (!LoadTree(context.altTree->btc(),
-                *context.blockProvider->getBtcBlockReader(),
-                state)) {
+}  // namespace detail
+
+bool LoadAllTrees(PopContext& context,
+                  BlockReader& storage,
+                  ValidationState& state) {
+  if (!detail::LoadTree(context.altTree->btc(), storage, state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
-  if (!LoadTree(context.altTree->vbk(),
-                *context.blockProvider->getVbkBlockReader(),
-                state)) {
+  if (!detail::LoadTree(
+          context.altTree->vbk(),
+          storage,
+          state,
+          // on every block, take its hash and warmup progpow header cache
+          [](VbkBlock::hash_t hash, const BlockIndex<VbkBlock>& index) {
+            auto serializedHeader = SerializeToRaw(index.getHeader());
+            progpow::insertHeaderCacheEntry(serializedHeader, std::move(hash));
+          })) {
     return state.Invalid("failed-to-load-vbk-tree");
   }
-  if (!LoadTree(*context.altTree,
-                *context.blockProvider->getAltBlockReader(),
-                state)) {
+  if (!detail::LoadTree(*context.altTree, storage, state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
   return true;
 }
 
-bool SaveAllTrees(PopContext& context, ValidationState& state) {
-  if (!SaveTree(context.altTree->btc(),
-                *context.blockProvider->getBtcBlockWriter(),
-                state)) {
-    return state.Invalid("btc-tree-save-failed");
-  }
-  if (!SaveTree(context.altTree->vbk(),
-                *context.blockProvider->getVbkBlockWriter(),
-                state)) {
-    return state.Invalid("vbk-tree-save-failed");
-  }
-  if (!SaveTree(*context.altTree,
-                *context.blockProvider->getAltBlockWriter(),
-                state)) {
-    return state.Invalid("alt-tree-save-failed");
-  }
-  return true;
+void SaveAllTrees(const AltBlockTree& tree, BlockBatch& batch) {
+  SaveTree(tree.btc(), batch);
+  SaveTree(tree.vbk(), batch);
+  SaveTree(tree, batch);
 }
 
 }  // namespace altintegration

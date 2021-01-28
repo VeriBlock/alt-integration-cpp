@@ -8,10 +8,10 @@
 
 namespace altintegration {
 
-void details::PayloadsReader::getCommands(AltBlockTree& tree,
-                                          const BlockIndex<AltBlock>& block,
-                                          std::vector<CommandGroup>& out,
-                                          ValidationState& state) {
+void PayloadsStorage::getCommands(AltBlockTree& tree,
+                                  const BlockIndex<AltBlock>& block,
+                                  std::vector<CommandGroup>& out,
+                                  ValidationState& state) {
   const auto& atv_ids = block.getPayloadIds<ATV>();
   const auto& vtb_ids = block.getPayloadIds<VTB>();
   const auto& vbk_ids = block.getPayloadIds<VbkBlock>();
@@ -56,10 +56,10 @@ void details::PayloadsReader::getCommands(AltBlockTree& tree,
   vectorPopToCommandGroup<AltBlockTree, ATV>(tree, atvs, containingHash, out);
 }
 
-void details::PayloadsReader::getCommands(VbkBlockTree& tree,
-                                          const BlockIndex<VbkBlock>& block,
-                                          std::vector<CommandGroup>& out,
-                                          ValidationState& state) {
+void PayloadsStorage::getCommands(VbkBlockTree& tree,
+                                  const BlockIndex<VbkBlock>& block,
+                                  std::vector<CommandGroup>& out,
+                                  ValidationState& state) {
   const auto& vtb_ids = block.getPayloadIds<VTB>();
 
   std::vector<VTB> vtbs;
@@ -77,9 +77,4 @@ void details::PayloadsReader::getCommands(VbkBlockTree& tree,
   vectorPopToCommandGroup<VbkBlockTree, VTB>(tree, vtbs, containingHash, out);
 }
 
-void details::PayloadsWriter::writePayloads(const PopData& payloads) {
-  writePayloads(payloads.atvs);
-  writePayloads(payloads.vtbs);
-  writePayloads(payloads.context);
-}
 }  // namespace altintegration

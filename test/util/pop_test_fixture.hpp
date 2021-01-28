@@ -18,7 +18,7 @@
 #include <veriblock/entities/merkle_tree.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/mempool.hpp>
-#include <veriblock/mock_miner_2.hpp>
+#include <veriblock/mock_miner.hpp>
 #include <veriblock/storage/inmem_block_storage.hpp>
 #include <veriblock/storage/util.hpp>
 
@@ -41,10 +41,10 @@ struct PopTestFixture {
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
   InmemPayloadsProvider payloadsProvider;
-  InmemBlockStorage blockStorage;
+  InmemBlockProvider blockStorage;
 
   // miners
-  std::shared_ptr<MockMiner2> popminer;
+  std::shared_ptr<MockMiner> popminer;
 
   // trees
   AltBlockTree alttree;
@@ -65,7 +65,7 @@ struct PopTestFixture {
     EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(VBKgenesis, state));
     EXPECT_TRUE(alttree.bootstrap(state));
 
-    popminer = std::make_shared<MockMiner2>();
+    popminer = std::make_shared<MockMiner>();
     mempool = std::make_shared<MemPool>(alttree);
   }
 
@@ -232,10 +232,10 @@ struct PopTestFixture {
   }
 
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
-    auto Btctx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
-    auto* btcBlockTip = popminer->mineBtcBlocks(1);
+    auto btctx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
+    auto* btcblock = popminer->mineBtcBlocks(1, {btctx});
     return popminer->createVbkPopTxEndorsingVbkBlock(
-        btcBlockTip->getHeader(), Btctx, endorsedBlock, getLastKnownBtcBlock());
+        btcblock->getHeader(), btctx, endorsedBlock, getLastKnownBtcBlock());
   }
 
   void fillVbkContext(std::vector<VbkBlock>& out,
@@ -280,13 +280,15 @@ struct PopTestFixture {
 
     for (size_t i = 0; i < VTBs; i++) {
       auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
-      auto vbkcontaining = popminer->applyVTB(popminer->vbk(), vbkpoptx, state);
-      auto newvtb = popminer->vbkPayloads.at(vbkcontaining.getHash()).back();
+      auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
+      auto newvtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).back();
       popData.vtbs.push_back(newvtb);
     }
 
-    for (const auto& t : transactions) {
-      popData.atvs.push_back(popminer->applyATV(t, state));
+    for (const auto& tx : transactions) {
+      auto* block = popminer->mineVbkBlocks(1, {tx});
+      ATV atv = popminer->getATVs(*block)[0];
+      popData.atvs.push_back(atv);
     }
 
     fillVbkContext(popData.context, lastVbk, popminer->vbk());
@@ -312,19 +314,19 @@ struct PopTestFixture {
     return alttree.btc().getBestChain().tip()->getHash();
   }
 
-  void endorseVbkTip() {
+  VbkPopTx endorseVbkTip() {
     auto* tip = popminer->vbk().getBestChain().tip();
     VBK_ASSERT(tip);
-    auto tx = popminer->endorseVbkBlock(
-        tip->getHeader(), getLastKnownBtcBlock(), state);
-    popminer->vbkmempool.push_back(tx);
+    return popminer->createVbkPopTxEndorsingVbkBlock(
+        tip->getHeader(), getLastKnownBtcBlock());
   }
 
   void createEndorsedAltChain(size_t blocks, size_t vtbs = 1) {
+    std::vector<VbkPopTx> transactions(vtbs);
     for (size_t i = 0; i < vtbs; i++) {
-      endorseVbkTip();
+      transactions[i] = endorseVbkTip();
     }
-    popminer->mineVbkBlocks(1);
+    popminer->mineVbkBlocks(1, transactions);
 
     auto* altTip = alttree.getBestChain().tip();
     VBK_ASSERT(altTip);
@@ -355,7 +357,7 @@ struct PopTestFixture {
     using index_t = typename Tree::index_t;
     auto blocks = LoadBlocksFromDisk<index_t>();
     auto tip = LoadTipFromDisk<index_t>();
-    return LoadTree<Tree>(tree, blocks, tip, state);
+    return LoadBlocks<Tree>(tree, blocks, tip, state);
   }
 };
 
@@ -407,7 +409,7 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
 
   std::vector<CommandGroup> commands;
   ValidationState state;
-  EXPECT_NO_THROW(payloadsProvider.getPayloadsReader().getCommands(
+  EXPECT_NO_THROW(payloadsProvider.getCommands(
       tree, *tree.getBlockIndex(containingHash), commands, state))
       << state.toString();
 

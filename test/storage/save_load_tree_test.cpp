@@ -26,13 +26,8 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
 
   void save() {
-    auto writer = InmemBlockWriter(blockStorage);
-    ASSERT_TRUE(SaveTree(
-        alttree.vbk(), (details::GenericBlockWriter<VbkBlock>&)writer, state));
-    ASSERT_TRUE(SaveTree(
-        alttree.btc(), (details::GenericBlockWriter<BtcBlock>&)writer, state));
-    ASSERT_TRUE(SaveTree(
-        alttree, (details::GenericBlockWriter<AltBlock>&)writer, state));
+    auto writer = InmemBlockBatch(blockStorage);
+    SaveAllTrees(alttree, writer);
   }
 
   bool load() {

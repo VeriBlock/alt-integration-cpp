@@ -7,13 +7,13 @@ Helps Altchain to compare Altchain blocks by POP score (adding Endorsements
 in VBK chain increases POP score) in POP Fork Resolution and to calculate POP
 Rewards - payout to POP miners.
 
-AltBlockTree is initialized with Altchain, Veriblock and Bitcoin parameters, as well as with PayloadsProvider implementation.
+AltBlockTree is initialized with Altchain, Veriblock and Bitcoin parameters, as well as with PayloadsStorage implementation.
 ```c++
 // use mainnet for all chains, for instance
 AltChainParamsMain altp;
 VbkChainParamsMain vbkp;
 BtcChainParamsMain btcp;
-// your implementation of PayloadsProvider
+// your implementation of PayloadsStorage
 PayloadsProviderImpl provider;
 AltBlockTree tree(altp, vbkp, btcp, provider);
 ```
@@ -126,7 +126,7 @@ void UpdateTip(uint256 bestHash) {
 ```
 @invariant Current tip of your Altchain tree MUST correspond to `tree.getBestChain().tip()`, so calling AltBlockTree::setState() ensures they are in sync.
 
-@see PayloadsProvider
+@see PayloadsStorage
 @see AltChainParams
 @see VbkChainParams
 @see BtcChainParams

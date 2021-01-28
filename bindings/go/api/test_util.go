@@ -38,15 +38,15 @@ func generateTestPopContext(t *testing.T) *PopContext {
 		return true
 	})
 
-	return NewPopContext(config)
+	return NewPopContext(config, "/tmp/test-storage")
 }
 
-func GenerateNextAltBlock(current *entities.AltBlock) (next *entities.AltBlock) {
-	// TODO generate random next.Hash
-	next.Hash = current.Hash
+func generateNextAltBlock(current *entities.AltBlock) *entities.AltBlock {
+	var next entities.AltBlock
+	next.Hash = make([]byte, len(current.Hash))
+	rand.Read(next.Hash)
 	next.PreviousBlock = current.Hash
 	next.Height = current.Height + 1
 	next.Timestamp = current.Timestamp + 1
-	rand.Read(next.Hash)
-	return next
+	return &next
 }

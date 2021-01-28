@@ -92,6 +92,9 @@ func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 
 func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	defer v.lock()()
+	if popData == nil {
+		return nil
+	}
 	bytes, err := popData.ToVbkEncodingBytes()
 	if err != nil {
 		return err
@@ -99,6 +102,32 @@ func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	state := ffi.NewValidationState()
 	defer state.Free()
 	ok := v.popContext.CheckPopData(bytes, state)
+	if !ok {
+		return state.Error()
+	}
+	return nil
+}
+
+func (v *PopContext) SaveAllTrees() error {
+	defer v.lock()()
+
+	state := ffi.NewValidationState()
+	defer state.Free()
+
+	ok := v.popContext.SaveAllTrees(state)
+	if !ok {
+		return state.Error()
+	}
+	return nil
+}
+
+func (v *PopContext) LoadAllTrees() error {
+	defer v.lock()()
+
+	state := ffi.NewValidationState()
+	defer state.Free()
+
+	ok := v.popContext.LoadAllTrees(state)
 	if !ok {
 		return state.Error()
 	}

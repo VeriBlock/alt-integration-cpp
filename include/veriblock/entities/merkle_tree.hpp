@@ -25,7 +25,7 @@ struct MerkleTree {
     buildTree(transactions);
   }
 
-  std::vector<hash_t> getMerklePathLayers(const hash_t& hash) {
+  std::vector<hash_t> getMerklePathLayers(const hash_t& hash) const {
     VBK_ASSERT(!layers.empty());
     auto& leafs = layers[0];
     auto it = std::find(leafs.begin(), leafs.end(), hash);
