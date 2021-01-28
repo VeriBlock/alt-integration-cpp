@@ -9,7 +9,7 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 
 
-thisdir = pathlib.Path(__file__).parent
+thisdir = pathlib.Path(__file__).parent.resolve()
 cwd = os.getcwd()
 try:
     os.chdir(thisdir)
@@ -113,7 +113,7 @@ setup(
     license='MIT',
     author='warchant',
     author_email='',
-    description='',
+    description='POP-tools for testing',
     python_requires='>=3.6',
     install_requires=[
         'requests',
