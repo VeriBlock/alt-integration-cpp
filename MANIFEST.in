@@ -3,4 +3,4 @@ include LICENSE
 include setup.py
 recursive-include include *
 recursive-include src *
-CMakeLists.txt
+include CMakeLists.txt

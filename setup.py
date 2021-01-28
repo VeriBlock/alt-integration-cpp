@@ -9,12 +9,8 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 
 
-thisdir = pathlib.Path(__file__).parent.resolve()
+thisdir = pathlib.Path(__file__).parent.resolve().absolute()
 cwd = os.getcwd()
-try:
-    os.chdir(thisdir)
-finally:
-    os.chdir(cwd)
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):
