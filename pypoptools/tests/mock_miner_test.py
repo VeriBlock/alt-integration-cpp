@@ -43,6 +43,13 @@ class MockMinerTestCase(unittest.TestCase):
         b.merkleRoot = b'2222222222222222222222222222222222222222222222222222222222222222'
         self.assertEqual(str(b.merkleRoot), "2222222222222222222222222222222222222222222222222222222222222222")
 
+    def test_entities_default_constructible(self):
+        from pypoptools.pypopminer import MockMiner, PublicationData, BtcBlock, VbkBlock
+        a = MockMiner()
+        b = PublicationData()
+        c = BtcBlock()
+        d = VbkBlock()
+
 
 if __name__ == '__main__':
     unittest.main()

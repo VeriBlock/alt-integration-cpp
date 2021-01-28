@@ -1,5 +1,4 @@
 from .bin_util import *
-from .entities import *
 from .errors import *
 from .jsonrpc_api import *
 from .node import *
