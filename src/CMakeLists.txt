@@ -85,6 +85,12 @@ message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
 
+if(WITH_ROCKSDB)
+    target_include_directories(${LIB_NAME} PUBLIC
+            $<BUILD_INTERFACE:${ROCKSDB_INCLUDE_DIR}>
+            )
+endif()
+
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
         SOVERSION ${MAJOR_VERSION}

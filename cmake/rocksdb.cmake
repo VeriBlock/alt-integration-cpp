@@ -1,6 +1,11 @@
 find_library(ROCKSDB_LIB rocksdb REQUIRED)
 find_file(ROCKSDB_HEADER rocksdb/db.h REQUIRED)
 
+# strip db.h
+get_filename_component(ROCKSDB_INCLUDE_DIR ${ROCKSDB_HEADER} DIRECTORY)
+# strip rocksdb/
+get_filename_component(ROCKSDB_INCLUDE_DIR ${ROCKSDB_INCLUDE_DIR} DIRECTORY)
+
 link_libraries(${ROCKSDB_LIB})
 
 add_compile_definitions(WITH_ROCKSDB)
