@@ -3,8 +3,10 @@ from requests.auth import HTTPBasicAuth
 
 
 class JSONRPCException(Exception):
-    def __init__(self, response):
-        self.response = response
+    def __init__(self, error, http_status):
+        super().__init__('{} (code: {})'.format(error['message'], error['code']))
+        self.error = error
+        self.http_status = http_status
 
 
 class JsonRpcApi:
@@ -29,9 +31,17 @@ class JsonRpcApi:
                 }
             )
             self.nonce += 1
-            if response.status_code == 200:
-                return response.json()['result']
+
+            response_body = response.json()
+            http_status = response.status_code
+
+            if response_body['error'] is not None:
+                raise JSONRPCException(response_body['error'], http_status)
+            elif 'result' not in response_body:
+                raise JSONRPCException({'code': -343, 'message': 'missing JSON-RPC result'}, http_status)
+            elif http_status != 200:
+                raise JSONRPCException({'code': -342, 'message': 'non-200 HTTP status code'}, http_status)
             else:
-                raise JSONRPCException(response)
+                return response_body['result']
 
         return method

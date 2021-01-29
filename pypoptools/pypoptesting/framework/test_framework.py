@@ -12,8 +12,11 @@ from typing import Callable, List
 
 from .node import Node
 from .test_util import TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED, CreateNodeFunction
-from .util import sync_blocks, sync_pop_mempools, sync_pop_tips, sync_all, \
-    wait_for_rpc_availability
+from .util import (
+    sync_blocks, sync_pop_mempools, sync_pop_tips, sync_all,
+    wait_for_rpc_availability,
+    mine_until_pop_enabled
+)
 
 
 class TestStatus(Enum):
@@ -125,7 +128,18 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
 
     def setup_nodes(self):
         """"Override this method to customize the node setup"""
-        pass
+        for node in self.nodes:
+            node.start()
+
+        for node in self.nodes:
+            wait_for_rpc_availability(node)
+
+    def skip_if_no_pypopminer(self):
+        """Attempt to import the pypopminer package and skip the test if the import fails."""
+        try:
+            import pypopminer  # noqa
+        except ImportError:
+            raise SkipTest("pypopminer module not available.")
 
     def skip_test_if_missing_module(self):
         """Override this method to skip a test if a module is not compiled"""
@@ -140,11 +154,13 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         """
         Default implementation of setup_network starts `num_nodes` and waits for their RPC availability.
         """
-        for i in self.nodes:
-            i.start()
+        self.setup_nodes()
+        mine_until_pop_enabled(self.nodes[0])
 
-        for i in self.nodes:
-            wait_for_rpc_availability(i)
+        # all nodes connected and synced
+        for i in range(self.num_nodes - 1):
+            self.nodes[i + 1].connect(self.nodes[i])
+        self.sync_all()
 
     @abstractmethod
     def run_test(self):

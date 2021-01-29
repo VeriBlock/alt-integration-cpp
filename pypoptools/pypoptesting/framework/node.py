@@ -57,7 +57,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def generate(self, nblocks: int, address: str) -> None:
+    def generate(self, nblocks: int, address: Optional[str] = None) -> List[Hexstr]:
         pass
 
     @abstractmethod
@@ -65,11 +65,23 @@ class Node(ABC):
         pass
 
     @abstractmethod
+    def getblockchaininfo(self) -> dict:
+        pass
+
+    @abstractmethod
+    def getpeerinfo(self) -> dict:
+        pass
+
+    @abstractmethod
+    def getaddressinfo(self, address: str) -> dict:
+        pass
+
+    @abstractmethod
     def getpayoutinfo(self, address: Optional[str]) -> Hexstr:
         pass
 
     @abstractmethod
-    def getbalance(self, address: str) -> float:
+    def getbalance(self) -> float:
         pass
 
     @abstractmethod
@@ -78,6 +90,17 @@ class Node(ABC):
 
     @abstractmethod
     def getblock(self, hash: Hexstr) -> BlockWithPopData:
+        pass
+
+    def getbestblock(self) -> BlockWithPopData:
+        pass
+
+    @abstractmethod
+    def getblockcount(self) -> int:
+        pass
+
+    @abstractmethod
+    def waitforblockheight(self, height: int):
         pass
 
     @abstractmethod

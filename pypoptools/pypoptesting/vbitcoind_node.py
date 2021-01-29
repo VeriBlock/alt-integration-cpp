@@ -4,7 +4,7 @@ import logging
 import pathlib
 import subprocess
 import tempfile
-from typing import Optional
+from typing import List, Optional
 
 from .framework.bin_util import assert_dir_accessible, get_open_port
 from .framework.entities import Hexstr, BlockWithPopData, RawPopMempoolResponse, VbkBlockResponse, \
@@ -160,7 +160,7 @@ class VBitcoindNode(Node):
         for peer_id in [peer['id'] for peer in from_connection.getpeerinfo() if
                         "testnode%d" % node_num in peer['subver']]:
             try:
-                from_connection.disconnectnode(nodeid=peer_id)
+                from_connection.disconnectnode(address='', nodeid=peer_id)
             except JSONRPCException as e:
                 # If this node is disconnected between calculating the peer id
                 # and issuing the disconnect, don't worry about it.
@@ -174,6 +174,15 @@ class VBitcoindNode(Node):
 
     def getnewaddress(self) -> str:
         return self.rpc.getnewaddress()
+
+    def getblockchaininfo(self) -> dict:
+        return self.rpc.getblockchaininfo()
+
+    def getpeerinfo(self) -> dict:
+        return self.rpc.getpeerinfo()
+
+    def getaddressinfo(self, address: str) -> dict:
+        return self.rpc.getaddressinfo(address)
 
     def getpayoutinfo(self, address: Optional[str]) -> Hexstr:
         if address is None:
@@ -278,7 +287,7 @@ class VBitcoindNode(Node):
     def getbestblockhash(self) -> Hexstr:
         return self.rpc.getbestblockhash()
 
-    def getbalance(self, address: str) -> float:
+    def getbalance(self) -> float:
         return self.rpc.getbalance()
 
     def getrawatv(self, atvid: Hexstr) -> AtvResponse:
@@ -360,8 +369,8 @@ class VBitcoindNode(Node):
         s = self.rpc.getrawpopmempool()
         return RawPopMempoolResponse(**s)
 
-    def generate(self, nblocks: int, address: str) -> None:
-        return self.rpc.generatetoaddress(nblocks, address)
+    def generate(self, nblocks: int, address: Optional[str] = None) -> List[Hexstr]:
+        return self.rpc.generatetoaddress(nblocks, address or self.getnewaddress())
 
     def getblockhash(self, height: int) -> Hexstr:
         return self.rpc.getblockhash(height)
@@ -379,3 +388,13 @@ class VBitcoindNode(Node):
             containingVTBs=s['pop']['data']['vtbs'],
             containingVBKs=s['pop']['data']['vbkblocks']
         )
+
+    def getbestblock(self) -> BlockWithPopData:
+        block_hash = self.getbestblockhash()
+        return self.getblock(block_hash)
+
+    def getblockcount(self) -> int:
+        return self.rpc.getblockcount()
+
+    def waitforblockheight(self, height: int):
+        return self.rpc.waitforblockheight(height)
