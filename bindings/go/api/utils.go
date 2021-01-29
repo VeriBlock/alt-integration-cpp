@@ -11,6 +11,10 @@ import (
 func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash [veriblock.Sha256HashSize]byte, popData *entities.PopData, payoutInfo []byte) (*entities.PublicationData, error) {
 	defer v.lock()()
 
+	if popData == nil {
+		popData = entities.GetEmptyPopData()
+	}
+
 	popDataBytes, err := popData.ToVbkEncodingBytes()
 	if err != nil {
 		return nil, err
