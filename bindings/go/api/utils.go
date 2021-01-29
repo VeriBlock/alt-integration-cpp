@@ -11,6 +11,10 @@ import (
 func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash [veriblock.Sha256HashSize]byte, popData *entities.PopData, payoutInfo []byte) (*entities.PublicationData, error) {
 	defer v.lock()()
 
+	if popData == nil {
+		popData = entities.GetEmptyPopData()
+	}
+
 	popDataBytes, err := popData.ToVbkEncodingBytes()
 	if err != nil {
 		return nil, err
@@ -92,6 +96,9 @@ func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 
 func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 	defer v.lock()()
+	if popData == nil {
+		return nil
+	}
 	bytes, err := popData.ToVbkEncodingBytes()
 	if err != nil {
 		return err
@@ -107,9 +114,26 @@ func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 
 func (v *PopContext) SaveAllTrees() error {
 	defer v.lock()()
-	res := v.popContext.SaveAllTrees()
-	if !res {
-		return errors.New("can not save trees")
+
+	state := ffi.NewValidationState()
+	defer state.Free()
+
+	ok := v.popContext.SaveAllTrees(state)
+	if !ok {
+		return state.Error()
+	}
+	return nil
+}
+
+func (v *PopContext) LoadAllTrees() error {
+	defer v.lock()()
+
+	state := ffi.NewValidationState()
+	defer state.Free()
+
+	ok := v.popContext.LoadAllTrees(state)
+	if !ok {
+		return state.Error()
 	}
 	return nil
 }

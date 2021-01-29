@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include setup.py
+recursive-include include *
+recursive-include src *
+include CMakeLists.txt

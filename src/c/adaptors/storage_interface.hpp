@@ -44,8 +44,10 @@ struct Storage {
 
   virtual bool read(const std::vector<uint8_t>& key,
                     std::vector<uint8_t>& out) = 0;
-                    
+
   virtual std::shared_ptr<WriteBatch> generateWriteBatch() = 0;
+
+  virtual std::shared_ptr<StorageIterator> generateIterator() = 0;
 };
 
 }  // namespace adaptors

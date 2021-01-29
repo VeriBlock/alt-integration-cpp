@@ -1,5 +1,5 @@
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.test_util import assert_equal, assert_greater_than, assert_not_equal
+from ..framework.test_util import assert_greater_than, assert_not_equal
 from ..framework.util import wait_for_rpc_availability
 
 

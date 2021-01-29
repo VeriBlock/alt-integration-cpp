@@ -39,13 +39,13 @@ struct TestComparator {
   }
 
   template <typename K, typename V>
-  bool operator()(const std::unordered_map<K, std::shared_ptr<V>>& a,
-                  const std::unordered_map<K, std::shared_ptr<V>>& b,
+  bool operator()(const std::unordered_map<K, std::unique_ptr<V>>& a,
+                  const std::unordered_map<K, std::unique_ptr<V>>& b,
                   bool suppress = false) {
     VBK_EXPECT_EQ(a.size(), b.size(), suppress);
     for (const auto& k : a) {
       auto key = k.first;
-      auto value = k.second;
+      auto& value = k.second;
       auto expectedValue = b.find(key);
       // key exists in map A but does not exist in map B
       VBK_EXPECT_NE(expectedValue, b.end(), suppress);

@@ -1,4 +1,3 @@
-import http
 import distutils.spawn
 import http
 import logging

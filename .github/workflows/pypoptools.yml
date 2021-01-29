@@ -1,0 +1,56 @@
+name: pypoptools
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - release/*
+  pull_request:
+    branches:
+      - master
+      - develop
+      - trunk/*
+      - release/*
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        runson: [
+            ubuntu-latest,
+        # TODO: fix builds on mac and win
+        #    windows-latest,
+        #    macos-latest
+        ]
+    runs-on: ${{ matrix.runson }}
+    env:
+      VCPKG_DEFAULT_TRIPLET: x64-windows-static
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: recursive
+          clean: true
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+      - name: install reqs on ubuntu
+        if: matrix.runson == 'ubuntu-latest'
+        run: sudo apt-get install -y python-setuptools python3-setuptools libboost-python-dev
+      - name: install reqs on mac
+        if: matrix.runson == 'macos-latest'
+        run: brew install boost-python --with-python3
+      - name: install reqs on windows
+        if: matrix.runson == 'windows-latest'
+        run: |
+          vcpkg integrate install
+          vcpkg install boost-python
+      - name: prepare
+        run: pip install --user --upgrade pip cmake pathlib
+      - name: build
+        run: python setup.py install --user
+      - name: test
+        run: python setup.py test

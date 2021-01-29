@@ -23,7 +23,7 @@ try:
     TICK = "✓ "
     CROSS = "✖ "
     CIRCLE = "○ "
-except UnicodeDecodeError:
+except:
     TICK = "P "
     CROSS = "x "
     CIRCLE = "o "

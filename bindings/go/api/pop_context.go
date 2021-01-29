@@ -53,7 +53,7 @@ type MemPool interface {
 	SubmitVtbBytes(data []byte) (int, error)
 	SubmitVbk(block *entities.VbkBlock) (int, error)
 	SubmitVbkBytes(data []byte) (int, error)
-	GetPop() (*entities.PopData, error)
+	GetPopData() (*entities.PopData, error)
 	RemoveAll(payloads *entities.PopData) error
 	GetAtv(id entities.AtvID) (*entities.Atv, error)
 	GetVtb(id entities.VtbID) (*entities.Vtb, error)
@@ -81,41 +81,15 @@ func NewPopContext(config *Config, db_path string) *PopContext {
 		panic("Config not provided")
 	}
 
-	// setup signals
-	ffi.OnAcceptedATV = func(data []byte) {
-		var atv entities.Atv
-		if err := atv.FromVbkEncodingBytes(data); err != nil {
-			panic(err)
-		}
-		for _, fn := range onAcceptedATV {
-			fn(&atv)
-		}
-	}
-
-	ffi.OnAcceptedVTB = func(data []byte) {
-		var vtb entities.Vtb
-		if err := vtb.FromVbkEncodingBytes(data); err != nil {
-			panic(err)
-		}
-		for _, fn := range onAcceptedVTB {
-			fn(&vtb)
-		}
-	}
-
-	ffi.OnAcceptedVBK = func(data []byte) {
-		var vbk entities.VbkBlock
-		if err := vbk.FromVbkEncodingBytes(data); err != nil {
-			panic(err)
-		}
-		for _, fn := range onAcceptedVBK {
-			fn(&vbk)
-		}
-	}
-
 	return &PopContext{
 		popContext: ffi.NewPopContext(config.Config, db_path),
 		mutex:      new(sync.Mutex),
 	}
+}
+
+// Free
+func (v *PopContext) Free() {
+	v.popContext.Free()
 }
 
 // AcceptBlockHeader - Returns nil if block is valid, and added
@@ -498,7 +472,7 @@ func (v *PopContext) SubmitVbkBytes(data []byte) (int, error) {
 }
 
 // GetPop ...
-func (v *PopContext) GetPop() (*entities.PopData, error) {
+func (v *PopContext) GetPopData() (*entities.PopData, error) {
 	defer v.lock()()
 	popBytes := v.popContext.MemPoolGetPop()
 	stream := bytes.NewReader(popBytes)
