@@ -2,7 +2,7 @@
 Test with multiple nodes, and multiple PoP endorsements, checking to make sure nodes stay in sync.
 """
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import endorse_block, KEYSTONE_INTERVAL
+from ..framework.util import endorse_block, wait_for_block_height, KEYSTONE_INTERVAL
 
 
 class PopSync(PopIntegrationTestFramework):
@@ -13,7 +13,7 @@ class PopSync(PopIntegrationTestFramework):
         self.skip_if_no_pypopminer()
 
     def run_test(self):
-        from pypopminer import MockMiner
+        from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
 
         addr0 = self.nodes[0].getnewaddress()
@@ -23,17 +23,17 @@ class PopSync(PopIntegrationTestFramework):
         for height in range(self.nodes[0].getblockcount(), 52):
             self.nodes[0].generate(nblocks=1)
             # endorse every block
-            self.nodes[2].waitforblockheight(height)
+            wait_for_block_height(self.nodes[2], height)
             self.log.info("node2 endorsing block {} by miner {}".format(height, addr2))
             node2_atv_id = endorse_block(self.nodes[2], apm, height, addr2)
 
             # endorse each keystone
             if height % KEYSTONE_INTERVAL == 0:
-                self.nodes[0].waitforblockheight(height)
+                wait_for_block_height(self.nodes[0], height)
                 self.log.info("node0 endorsing block {} by miner {}".format(height, addr0))
                 node0_atv_id = endorse_block(self.nodes[0], apm, height, addr0)
 
-                self.nodes[1].waitforblockheight(height)
+                wait_for_block_height(self.nodes[1], height)
                 self.log.info("node1 endorsing block {} by miner {}".format(height, addr1))
                 node1_atv_id = endorse_block(self.nodes[1], apm, height, addr1)
 
@@ -45,8 +45,8 @@ class PopSync(PopIntegrationTestFramework):
                 containing_block_hash = self.nodes[1].generate(nblocks=1)[0]
                 containing_block = self.nodes[1].getblock(containing_block_hash)
                 self.log.info("node1 mined containing block={}".format(containing_block.hash))
-                self.nodes[0].waitforblockheight(containing_block.height)
-                self.nodes[2].waitforblockheight(containing_block.height)
+                wait_for_block_height(self.nodes[0], containing_block.height)
+                wait_for_block_height(self.nodes[2], containing_block.height)
                 self.log.info("node0 and node2 got containing block over p2p")
 
                 # assert that all atv_ids exist in this block

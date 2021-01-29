@@ -1,5 +1,5 @@
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import mine_vbk_blocks
+from ..framework.util import mine_vbk_blocks, get_best_block
 
 
 class PopMempoolReorg(PopIntegrationTestFramework):
@@ -10,7 +10,7 @@ class PopMempoolReorg(PopIntegrationTestFramework):
         self.skip_if_no_pypopminer()
 
     def run_test(self):
-        from pypopminer import MockMiner
+        from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
 
         self.nodes[0].generate(nblocks=10)
@@ -29,9 +29,9 @@ class PopMempoolReorg(PopIntegrationTestFramework):
 
         assert len(vbk_blocks) == vbk_blocks_amount
         assert len(node0_tip.containingVBKs) == vbk_blocks_amount
-        assert node0_tip == self.nodes[0].getbestblock()
+        assert node0_tip == get_best_block(self.nodes[0])
 
-        node1_tip = self.nodes[1].getbestblock()
+        node1_tip = get_best_block(self.nodes[1])
 
         assert node1_tip.hash != node0_tip.hash
 
@@ -39,7 +39,7 @@ class PopMempoolReorg(PopIntegrationTestFramework):
         node1_tip_hash = self.nodes[1].generate(nblocks=10)[9]
         node1_tip = self.nodes[1].getblock(node1_tip_hash)
 
-        assert node1_tip == self.nodes[1].getbestblock()
+        assert node1_tip == get_best_block(self.nodes[1])
 
         self.nodes[0].connect(self.nodes[1])
         self.log.info("connect node 1 and node 0")
@@ -47,7 +47,7 @@ class PopMempoolReorg(PopIntegrationTestFramework):
         self.sync_all(self.nodes, timeout=30)
         self.log.info("nodes[0,1] are in sync")
 
-        assert self.nodes[1].getbestblock() == self.nodes[0].getbestblock()
+        assert get_best_block(self.nodes[1]) == get_best_block(self.nodes[0])
 
         # mine a block on node[1] with these vbk blocks
         tip_hash = self.nodes[1].generate(nblocks=1)[0]

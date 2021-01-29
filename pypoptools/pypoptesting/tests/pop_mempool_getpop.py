@@ -17,7 +17,7 @@ class PopMempoolGetpop(PopIntegrationTestFramework):
         self.nodes[0].generate(nblocks=10)
         self.sync_all(self.nodes)
 
-        from pypopminer import MockMiner
+        from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
 
         self._test_case_vbk(apm, 113)

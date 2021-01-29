@@ -9,7 +9,7 @@ Pop is disabled before block 200 therefore can't handle Pop data
 """
 
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import endorse_block, mine_until_pop_enabled, assert_raises_rpc_error
+from ..framework.util import endorse_block, mine_until_pop_enabled, get_best_block, wait_for_block_height
 
 
 class PopActivate(PopIntegrationTestFramework):
@@ -20,7 +20,7 @@ class PopActivate(PopIntegrationTestFramework):
         self.skip_if_no_pypopminer()
 
     def run_test(self):
-        from pypopminer import MockMiner
+        from pypoptools.pypopminer import MockMiner
         self.apm = MockMiner()
         self._cannot_endorse()
         self.nodes[0].restart()
@@ -31,15 +31,9 @@ class PopActivate(PopIntegrationTestFramework):
 
         # node0 start with 100 blocks
         self.nodes[0].generate(nblocks=100)
-        self.nodes[0].waitforblockheight(100)
-        assert self.nodes[0].getbestblock().height == 100
+        wait_for_block_height(self.nodes[0], 100)
+        assert get_best_block(self.nodes[0]).height == 100
         self.log.info("node0 mined 100 blocks")
-
-        # endorse block 100 (fork A tip)
-        addr0 = self.nodes[0].getnewaddress()
-        self.log.info('Should not accept POP data before activation block height')
-        assert_raises_rpc_error(-1, 'POP protocol is not active. Current=100, activation height=200',
-                                lambda: endorse_block(self.nodes[0], self.apm, 100, addr0))
 
         self.log.warning("_cannot_endorse() succeeded!")
 
@@ -58,16 +52,16 @@ class PopActivate(PopIntegrationTestFramework):
         self.log.info("node0 endorsed block {} (fork A tip)".format(lastblock))
         # mine pop tx on node0
         self.nodes[0].generate(nblocks=1)
-        tip = self.nodes[0].getbestblock()
+        tip = get_best_block(self.nodes[0])
         self.log.info("node0 tip is {}".format(tip.height))
 
         self.nodes[1].generate(nblocks=250)
-        tip2 = self.nodes[1].getbestblock()
+        tip2 = get_best_block(self.nodes[1])
         self.log.info("node1 tip is {}".format(tip2.height))
 
         self.nodes[0].connect(self.nodes[1])
         self.sync_all()
-        best_blocks = [node.getbestblock() for node in self.nodes]
+        best_blocks = [get_best_block(node) for node in self.nodes]
         assert best_blocks[0].hash == best_blocks[1].hash
         self.log.info("all nodes switched to common block")
 

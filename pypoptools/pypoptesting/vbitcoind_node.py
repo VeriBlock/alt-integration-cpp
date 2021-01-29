@@ -4,12 +4,9 @@ import logging
 import pathlib
 import subprocess
 import tempfile
-from typing import List, Optional
 
 from .framework.bin_util import assert_dir_accessible, get_open_port
-from .framework.entities import Hexstr, BlockWithPopData, RawPopMempoolResponse, VbkBlockResponse, \
-    VtbResponse, AtvResponse, GetpopdataResponse, SubmitPopResponse, PopParamsResponse, GenericBlock, BlockAndNetwork, \
-    ATV, VbkTx, PublicationData, VTB, VbkPopTx, VbkBlock, BtcBlock
+from .framework.entities import *
 from .framework.jsonrpc_api import JsonRpcApi, JSONRPCException
 from .framework.node import Node
 from .framework.util import wait_until
@@ -175,14 +172,14 @@ class VBitcoindNode(Node):
     def getnewaddress(self) -> str:
         return self.rpc.getnewaddress()
 
-    def getblockchaininfo(self) -> dict:
-        return self.rpc.getblockchaininfo()
-
-    def getpeerinfo(self) -> dict:
-        return self.rpc.getpeerinfo()
-
-    def getaddressinfo(self, address: str) -> dict:
-        return self.rpc.getaddressinfo(address)
+    def getpeerinfo(self) -> List[PeerInfo]:
+        s = self.rpc.getpeerinfo()
+        return [
+            PeerInfo(
+                id=x['id'],
+                banscore=x['banscore']
+            ) for x in s
+        ]
 
     def getpayoutinfo(self, address: Optional[str]) -> Hexstr:
         if address is None:
@@ -203,7 +200,7 @@ class VBitcoindNode(Node):
         vbkBootstrap = BlockAndNetwork(
             block=GenericBlock(
                 hash=s['vbkBootstrapBlock']['hash'],
-                prevhash=s['vbkBootstrapBlock']['previousBlock'],
+                prevhash=s['vbkBootstrapBlock'].get('previousBlock', ''),
                 height=s['vbkBootstrapBlock']['height']
             ),
             network=s['vbkBootstrapBlock']['network']
@@ -212,7 +209,7 @@ class VBitcoindNode(Node):
         btcBootstrap = BlockAndNetwork(
             block=GenericBlock(
                 hash=s['btcBootstrapBlock']['hash'],
-                prevhash=s['btcBootstrapBlock']['previousBlock'],
+                prevhash=s['btcBootstrapBlock'].get('previousBlock', ''),
                 height=s['btcBootstrapBlock']['height']
             ),
             network=s['btcBootstrapBlock']['network']
@@ -389,12 +386,5 @@ class VBitcoindNode(Node):
             containingVBKs=s['pop']['data']['vbkblocks']
         )
 
-    def getbestblock(self) -> BlockWithPopData:
-        block_hash = self.getbestblockhash()
-        return self.getblock(block_hash)
-
     def getblockcount(self) -> int:
         return self.rpc.getblockcount()
-
-    def waitforblockheight(self, height: int):
-        return self.rpc.waitforblockheight(height)

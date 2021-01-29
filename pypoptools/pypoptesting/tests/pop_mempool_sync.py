@@ -2,7 +2,7 @@
 Test with multiple nodes, and multiple PoP endorsements, checking to make sure nodes stay in sync.
 """
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import endorse_block
+from ..framework.util import endorse_block, get_best_block
 
 
 class PopMempoolSync(PopIntegrationTestFramework):
@@ -13,14 +13,14 @@ class PopMempoolSync(PopIntegrationTestFramework):
         self.skip_if_no_pypopminer()
 
     def run_test(self):
-        from pypopminer import MockMiner
+        from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
         addr0 = self.nodes[0].getnewaddress()
 
         self.log.info("node0 endorses block 5")
         self.nodes[0].generate(nblocks=10)
 
-        tip_height = self.nodes[0].getbestblock().height
+        tip_height = get_best_block(self.nodes[0]).height
         atv_id = endorse_block(self.nodes[0], apm, tip_height - 5, addr0)
 
         self.sync_pop_mempools(self.nodes, timeout=20)

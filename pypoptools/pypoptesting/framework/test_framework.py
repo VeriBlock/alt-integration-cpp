@@ -137,7 +137,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     def skip_if_no_pypopminer(self):
         """Attempt to import the pypopminer package and skip the test if the import fails."""
         try:
-            import pypopminer  # noqa
+            import pypoptools.pypopminer  # noqa
         except ImportError:
             raise SkipTest("pypopminer module not available.")
 

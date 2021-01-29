@@ -14,7 +14,7 @@ node[3] started with 0 blocks.
 After sync has been completed, expect all nodes to be on same height (fork A, block 323)
 """
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import create_endorsed_chain, endorse_block
+from ..framework.util import create_endorsed_chain, endorse_block, get_best_block, wait_for_block_height
 
 
 class PopForkResolution(PopIntegrationTestFramework):
@@ -25,7 +25,7 @@ class PopForkResolution(PopIntegrationTestFramework):
         self.skip_if_no_pypopminer()
 
     def run_test(self):
-        from pypopminer import MockMiner
+        from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
 
         self._shorter_endorsed_chain_wins(apm)
@@ -43,9 +43,9 @@ class PopForkResolution(PopIntegrationTestFramework):
         self.nodes[0].generate(nblocks=103)
         self.log.info("node0 mined 103 blocks")
         self.sync_blocks([self.nodes[0], self.nodes[1], self.nodes[2]], timeout=20)
-        assert self.nodes[0].getbestblock().height == last_block + 103
-        assert self.nodes[1].getbestblock().height == last_block + 103
-        assert self.nodes[2].getbestblock().height == last_block + 103
+        assert get_best_block(self.nodes[0]).height == last_block + 103
+        assert get_best_block(self.nodes[1]).height == last_block + 103
+        assert get_best_block(self.nodes[2]).height == last_block + 103
         self.log.info("nodes[0,1,2] synced are at block %d", last_block + 103)
 
         # node2 is disconnected from others
@@ -58,10 +58,10 @@ class PopForkResolution(PopIntegrationTestFramework):
 
         # fork A is at 303 (last_block = 200)
         # fork B is at 400
-        self.nodes[2].waitforblockheight(last_block + 200)
+        wait_for_block_height(self.nodes[2], last_block + 200)
         self.log.info("node2 mined 97 more blocks, total height is %d", last_block + 200)
 
-        best_blocks = [node.getbestblock() for node in self.nodes[0:3]]
+        best_blocks = [get_best_block(node) for node in self.nodes[0:3]]
 
         assert best_blocks[0] != best_blocks[2], "node[0,2] have same best hashes"
         assert best_blocks[0] == best_blocks[1], "node[0,1] have different best hashes: {} vs {}".format(best_blocks[0],
@@ -88,7 +88,7 @@ class PopForkResolution(PopIntegrationTestFramework):
 
         assert self.nodes[1].getblock(block_hashes[0]).hash == containing_block.hash
 
-        tip = self.nodes[0].getbestblock()
+        tip = get_best_block(self.nodes[0])
         assert atv_id in containing_block.containingATVs, "pop tx is not in containing block"
         self.sync_blocks(self.nodes[0:2])
         self.log.info("nodes[0,1] are in sync, pop tx containing block is {}".format(containing_block.height))
@@ -107,7 +107,7 @@ class PopForkResolution(PopIntegrationTestFramework):
         self.log.info("nodes[0,1,2,3] are in sync")
 
         # expected best block hash is fork A (has higher pop score)
-        best_blocks = [node.getbestblock() for node in self.nodes]
+        best_blocks = [get_best_block(node) for node in self.nodes]
         assert best_blocks[0].hash == best_blocks[1].hash
         assert best_blocks[0].hash == best_blocks[2].hash
         assert best_blocks[0].hash == best_blocks[3].hash
@@ -118,12 +118,6 @@ class PopForkResolution(PopIntegrationTestFramework):
                 "node[{}] expected to select shorter chain ({}) with higher pop score\n" \
                 "but selected longer chain ({})".format(i, tip.height, best_blocks[i].height)
 
-        # get best headers view
-        blockchain_info = [x.getblockchaininfo() for x in self.nodes]
-        for n in blockchain_info:
-            assert n['blocks'] == n['headers']
-
-        self.log.info("all nodes selected fork A as best chain")
         self.log.warning("_shorter_endorsed_chain_wins() succeeded!")
 
     def _4_chains_converge(self, apm):
@@ -145,7 +139,7 @@ class PopForkResolution(PopIntegrationTestFramework):
             create_endorsed_chain(node, apm, to_mine, addr)
 
         # all nodes have different tips at height 323
-        best_blocks = [node.getbestblock() for node in self.nodes]
+        best_blocks = [get_best_block(node) for node in self.nodes]
         for b in best_blocks:
             assert b.height == last_block + to_mine
         assert len(set([block.hash for block in best_blocks])) == len(best_blocks)
@@ -162,7 +156,7 @@ class PopForkResolution(PopIntegrationTestFramework):
         self.log.info("all nodes have common tip")
 
         expected_best = best_blocks[0]
-        best_blocks = [node.getbestblock() for node in self.nodes]
+        best_blocks = [get_best_block(node) for node in self.nodes]
         for best in best_blocks:
             assert best == expected_best
 

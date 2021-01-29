@@ -161,3 +161,9 @@ class RawPopMempoolResponse:
     vbkblocks: List[Hexstr]
     vtbs: List[Hexstr]
     atvs: List[Hexstr]
+
+
+@dataclass
+class PeerInfo:
+    id: int
+    banscore: int

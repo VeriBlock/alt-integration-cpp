@@ -11,7 +11,7 @@ Reconsider block 101.
 Ensure shorter fork wins and new tip is block 120.
 """
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import endorse_block, wait_until
+from ..framework.util import endorse_block, wait_until, get_best_block
 
 
 class PopReconsider(PopIntegrationTestFramework):
@@ -22,7 +22,7 @@ class PopReconsider(PopIntegrationTestFramework):
         self.skip_if_no_pypopminer()
 
     def run_test(self):
-        from pypopminer import MockMiner
+        from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
         
         last_block = self.nodes[0].getblockcount()
@@ -43,7 +43,7 @@ class PopReconsider(PopIntegrationTestFramework):
 
         containing_block = self.nodes[0].getblock(chain_a_tip_hash)
 
-        tip = self.nodes[0].getbestblock()
+        tip = get_best_block(self.nodes[0])
         assert atv_id in containing_block.containingATVs, "pop tx is not in containing block"
         self.log.info("node tip is {}".format(tip.height))
 
@@ -59,7 +59,7 @@ class PopReconsider(PopIntegrationTestFramework):
         self.log.info("invalidating block next to fork block {}:{}".format(invalidated_height, invalidated))
         self.nodes[0].invalidateblock(invalidated)
 
-        tip = self.nodes[0].getbestblock()
+        tip = get_best_block(self.nodes[0])
         assert tip.height == fork_height
         assert tip.hash == fork_hash
 
@@ -75,7 +75,7 @@ class PopReconsider(PopIntegrationTestFramework):
         chain_b_tip_hash = self.nodes[0].generate(nblocks=199)[-1]
         self.log.info("node mined 199 blocks")
 
-        tip = self.nodes[0].getbestblock()
+        tip = get_best_block(self.nodes[0])
         self.log.info("node tip is {}".format(tip.height))
         assert tip.hash == self.nodes[0].getbestblockhash()
 

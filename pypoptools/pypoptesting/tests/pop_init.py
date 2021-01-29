@@ -8,7 +8,7 @@ Expect that BTC/VBK tree state on nodes[0,1] is same as before shutdown (test ag
 """
 
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import create_endorsed_chain
+from ..framework.util import create_endorsed_chain, get_best_block
 
 
 class PopInit(PopIntegrationTestFramework):
@@ -19,7 +19,7 @@ class PopInit(PopIntegrationTestFramework):
         self.skip_if_no_pypopminer()
 
     def run_test(self):
-        from pypopminer import MockMiner
+        from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
         size = 20
         addr0 = self.nodes[0].getnewaddress()
@@ -40,7 +40,7 @@ class PopInit(PopIntegrationTestFramework):
         self.sync_all(self.nodes, timeout=30)
         self.log.info("nodes are in sync")
 
-        best_blocks = [node.getbestblock() for node in self.nodes]
+        best_blocks = [get_best_block(node) for node in self.nodes]
         pop_data = [node.getpopdatabyheight(best_blocks[0].height) for node in self.nodes]
 
         # when node0 stops, its VBK/BTC trees get cleared. When we start it again, it MUST load payloads into trees.

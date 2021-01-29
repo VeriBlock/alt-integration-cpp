@@ -65,15 +65,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def getblockchaininfo(self) -> dict:
-        pass
-
-    @abstractmethod
-    def getpeerinfo(self) -> dict:
-        pass
-
-    @abstractmethod
-    def getaddressinfo(self, address: str) -> dict:
+    def getpeerinfo(self) -> List[PeerInfo]:
         pass
 
     @abstractmethod
@@ -92,15 +84,8 @@ class Node(ABC):
     def getblock(self, hash: Hexstr) -> BlockWithPopData:
         pass
 
-    def getbestblock(self) -> BlockWithPopData:
-        pass
-
     @abstractmethod
     def getblockcount(self) -> int:
-        pass
-
-    @abstractmethod
-    def waitforblockheight(self, height: int):
         pass
 
     @abstractmethod
