@@ -17,6 +17,10 @@ type PopData struct {
 	Atvs    []Atv
 }
 
+func GetEmptyPopData() *PopData {
+	return &PopData{Version: 1}
+}
+
 // ToVbkEncoding ...
 func (v *PopData) ToVbkEncoding(stream io.Writer) error {
 	if err := binary.Write(stream, binary.BigEndian, v.Version); err != nil {
