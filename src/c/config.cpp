@@ -182,8 +182,8 @@ void VBK_SetPopPayoutDelay(Config_t* params, int32_t val) {
 uint32_t VBK_GetMaxPopDataSize(Config_t* params) {
   return params->config->alt->mMaxPopDataSize;
 }
-std::vector<uint32_t> VBK_GetForkResolutionLookupTable(Config_t* params) {
-  return params->config->alt->mForkResolutionLookUpTable;
+uint32_t* VBK_GetForkResolutionLookupTable(Config_t* params) {
+  return params->config->alt->mForkResolutionLookUpTable.data();
 }
 size_t VBK_GetMaxVbkBlocksInAltBlock(Config_t* params) {
   return params->config->alt->mMaxVbkBlocksInAltBlock;
@@ -205,13 +205,4 @@ uint32_t VBK_GetKeystoneInterval(Config_t* params) {
 }
 uint32_t VBK_GetMaxAltchainFutureBlockTime(Config_t* params) {
   return params->config->alt->mMaxAltchainFutureBlockTime;
-}
-altintegration::AltBlock VBK_GetBoostrapBlock(Config_t* params) {
-  return params->config->alt->getBootstrapBlock();
-}
-altintegration::Config::Bootstrap<altintegration::BtcBlock, altintegration::BtcChainParams> VBK_GetBtcBootstrapBlock (Config_t* params) {
-  return params->config->btc;
-}
-altintegration::Config::Bootstrap<altintegration::VbkBlock, altintegration::VbkChainParams> VBK_GetVbkBootstrapBlock (Config_t* params) {
-  return params->config->vbk;
 }
