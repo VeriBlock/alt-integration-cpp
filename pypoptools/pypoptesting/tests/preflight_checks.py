@@ -15,13 +15,13 @@ class PreflightChecks(PopIntegrationTestFramework):
         self.log.info("new address={}".format(addr))
 
         best = self.nodes[0].getbestblockhash()
-        balance1 = self.nodes[0].getbalance(addr)
+        balance1 = self.nodes[0].getbalance()
 
         N = 500
         self.log.info("generating {} blocks...".format(N))
         self.nodes[0].generate(N, addr)
         best2 = self.nodes[0].getbestblockhash()
-        balance2 = self.nodes[0].getbalance(addr)
+        balance2 = self.nodes[0].getbalance()
 
         assert_not_equal(best, best2)
         assert_greater_than(balance2, balance1)
