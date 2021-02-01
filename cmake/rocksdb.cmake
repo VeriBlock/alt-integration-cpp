@@ -16,14 +16,25 @@ FetchContent_Declare(
         GIT_TAG        v6.15.2
 )
 
+function(disable_from_all target)
+    set_target_properties(${target} PROPERTIES
+            EXCLUDE_FROM_ALL TRUE
+            )
+endfunction()
+
 FetchContent_GetProperties(rocksdb)
 if(NOT rocksdb_POPULATED)
     message(STATUS "Downloading rocksdb...")
     FetchContent_Populate(rocksdb)
-    add_subdirectory(${rocksdb_SOURCE_DIR} ${rocksdb_BINARY_DIR} EXCLUDE_FROM_ALL)
+    add_subdirectory(${rocksdb_SOURCE_DIR} ${rocksdb_BINARY_DIR})
     target_include_directories(rocksdb PUBLIC
             $<BUILD_INTERFACE:${rocksdb_SOURCE_DIR}/include>
             )
+    disable_from_all(ldb)
+    disable_clang_tidy(ldb)
+
+    disable_from_all(sst_dump)
+    disable_clang_tidy(sst_dump)
 endif()
 
 
@@ -43,7 +54,5 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     # disable warning: '=': conversion from 'uint32_t' to 'unsigned char', possible loss of data
     target_add_flag(rocksdb /wd4242)
 endif()
-
-disable_clang_tidy(rocksdb)
 
 add_compile_definitions(WITH_ROCKSDB)
