@@ -160,7 +160,7 @@ def mine_vbk_blocks(node: Node, apm, amount: int) -> list[str]:
     for i in range(amount):
         vbk_block = apm.mineVbkBlocks(1)
         node.submitpopvbk(vbk_block.toVbkEncodingHex())
-        vbk_blocks.append(vbk_block.getHash().toHex())
+        vbk_blocks.append(vbk_block.getHash())
     return vbk_blocks
 
 

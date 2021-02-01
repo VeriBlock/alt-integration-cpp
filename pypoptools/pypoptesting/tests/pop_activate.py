@@ -30,9 +30,10 @@ class PopActivate(PopIntegrationTestFramework):
         self.log.warning("starting _cannot_endorse()")
 
         # node0 start with 100 blocks
+        tip_height = self.nodes[0].getblockcount()
         self.nodes[0].generate(nblocks=100)
         wait_for_block_height(self.nodes[0], 100)
-        assert get_best_block(self.nodes[0]).height == 100
+        assert get_best_block(self.nodes[0]).height == tip_height + 100
         self.log.info("node0 mined 100 blocks")
 
         self.log.warning("_cannot_endorse() succeeded!")
@@ -44,12 +45,12 @@ class PopActivate(PopIntegrationTestFramework):
         self.nodes[1].disconnect(self.nodes[0])
 
         mine_until_pop_enabled(self.nodes[0])
-        lastblock = self.nodes[0].getblockcount()
+        tip_height = self.nodes[0].getblockcount()
 
         # endorse block 200 (fork A tip)
         addr0 = self.nodes[0].getnewaddress()
-        endorse_block(self.nodes[0], self.apm, lastblock, addr0)
-        self.log.info("node0 endorsed block {} (fork A tip)".format(lastblock))
+        endorse_block(self.nodes[0], self.apm, tip_height, addr0)
+        self.log.info("node0 endorsed block {} (fork A tip)".format(tip_height))
         # mine pop tx on node0
         self.nodes[0].generate(nblocks=1)
         tip = get_best_block(self.nodes[0])

@@ -152,12 +152,11 @@ class VBitcoindNode(Node):
         wait_until(lambda: all(peer['version'] != 0 for peer in self.rpc.getpeerinfo()))
 
     def disconnect(self, node):
-        from_connection = self.rpc
         node_num = node.number
-        for peer_id in [peer['id'] for peer in from_connection.getpeerinfo() if
-                        "testnode%d" % node_num in peer['subver']]:
+        for peer_id in [peer['id'] for peer in self.rpc.getpeerinfo() if
+                        "testnode{}".format(node_num) in peer['subver']]:
             try:
-                from_connection.disconnectnode(address='', nodeid=peer_id)
+                self.rpc.disconnectnode(address='', nodeid=peer_id)
             except JSONRPCException as e:
                 # If this node is disconnected between calculating the peer id
                 # and issuing the disconnect, don't worry about it.
@@ -166,8 +165,9 @@ class VBitcoindNode(Node):
                     raise
 
         # wait to disconnect
-        wait_until(lambda: [peer['id'] for peer in from_connection.getpeerinfo() if
-                            "testnode%d" % node_num in peer['subver']] == [], timeout=5)
+        wait_until(
+            lambda: not any(["testnode{}".format(node_num) in peer['subver'] for peer in self.rpc.getpeerinfo()]),
+            timeout=5)
 
     def getnewaddress(self) -> str:
         return self.rpc.getnewaddress()
@@ -237,24 +237,24 @@ class VBitcoindNode(Node):
         s = self.rpc.submitpopatv(atv)
         return SubmitPopResponse(
             accepted=s['accepted'],
-            code=s['code'],
-            message=s['message']
+            code=s.get('code', ''),
+            message=s.get('message', '')
         )
 
     def submitpopvtb(self, vtb: Hexstr) -> SubmitPopResponse:
         s = self.rpc.submitpopvtb(vtb)
         return SubmitPopResponse(
             accepted=s['accepted'],
-            code=s['code'],
-            message=s['message']
+            code=s.get('code', ''),
+            message=s.get('message', '')
         )
 
     def submitpopvbk(self, vbk: Hexstr) -> SubmitPopResponse:
         s = self.rpc.submitpopvbk(vbk)
         return SubmitPopResponse(
             accepted=s['accepted'],
-            code=s['code'],
-            message=s['message']
+            code=s.get('code', ''),
+            message=s.get('message', '')
         )
 
     def getpopdatabyheight(self, height: int) -> GetpopdataResponse:
