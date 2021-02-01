@@ -101,33 +101,6 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
   self->context->altTree->acceptBlock(hash, popData);
 }
 
-bool VBK_AltBlockTree_addPayloads(PopContext* self,
-                                  const uint8_t* hash_bytes,
-                                  int hash_bytes_size,
-                                  const uint8_t* payloads_bytes,
-                                  int payloads_bytes_size,
-                                  VbkValidationState* state) {
-  VBK_ASSERT(self);
-  VBK_ASSERT(state);
-  VBK_ASSERT(hash_bytes);
-  VBK_ASSERT(payloads_bytes);
-  VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
-
-  altintegration::Slice<const uint8_t> p_bytes(payloads_bytes,
-                                               payloads_bytes_size);
-  altintegration::ReadStream stream(p_bytes);
-  altintegration::PopData popData;
-  if (!altintegration::DeserializeFromVbkEncoding(
-          stream, popData, state->getState())) {
-    return false;
-  }
-
-  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
-
-  return self->context->altTree->addPayloads(hash, popData, state->getState());
-}
-
 bool VBK_AltBlockTree_loadTip(PopContext* self,
                               const uint8_t* hash_bytes,
                               int hash_bytes_size,

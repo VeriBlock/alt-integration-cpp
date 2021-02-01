@@ -14,6 +14,8 @@ namespace altintegration {
 
 namespace {
 
+// generates a PopData which is not bigger than 'maxPopDataSize' in serialized
+// size
 PopData generatePopData(
     const std::vector<std::pair<VbkBlock::id_t,
                                 std::shared_ptr<VbkPayloadsRelations>>>& blocks,
@@ -23,14 +25,10 @@ PopData generatePopData(
   size_t popSize = 0;
 
   const auto& maxSize = params.getMaxPopDataSize();
-  const auto& maxVbkBlocks = params.getMaxVbkBlocksInAltBlock();
-  const auto& maxVTBs = params.getMaxVTBsInAltBlock();
-  const auto& maxATVs = params.getMaxATVsInAltBlock();
   for (const auto& block : blocks) {
     // add VBK block if it fits
     auto& header = *block.second->header;
-    if (ret.context.size() >= maxVbkBlocks ||
-        popSize + header.estimateSize() >= maxSize) {
+    if (popSize + header.estimateSize() >= maxSize) {
       // PopData is full
       break;
     }
@@ -42,7 +40,7 @@ PopData generatePopData(
     auto& atvcandidates = block.second->atvs;
     for (const auto& atv : atvcandidates) {
       const auto estimate = atv->estimateSize();
-      if (ret.atvs.size() >= maxATVs || popSize + estimate >= maxSize) {
+      if (popSize + estimate >= maxSize) {
         // do not consider this ATV, it does not fit
         continue;
       }
@@ -56,7 +54,7 @@ PopData generatePopData(
     auto& vtbcandidates = block.second->vtbs;
     for (const auto& vtb : vtbcandidates) {
       const auto estimate = vtb->estimateSize();
-      if (ret.vtbs.size() >= maxVTBs || popSize + estimate >= maxSize) {
+      if (popSize + estimate >= maxSize) {
         // this VTB does not fit
         continue;
       }
@@ -66,9 +64,6 @@ PopData generatePopData(
     }
   }
 
-  VBK_ASSERT(ret.context.size() <= maxVbkBlocks);
-  VBK_ASSERT(ret.vtbs.size() <= maxVTBs);
-  VBK_ASSERT(ret.atvs.size() <= maxATVs);
   const auto estimate = ret.estimateSize();
   VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
 

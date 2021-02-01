@@ -106,6 +106,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @ingroup api
    */
   void acceptBlock(const hash_t& block, const PopData& payloads);
+  void acceptBlock(index_t& index, const PopData& payloads, ValidationState& state);
   //! @overload
   void acceptBlock(index_t& index, const PopData& payloads);
 
@@ -126,22 +127,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
 
   //! chain reorg signal - the tip is being changed
   signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
-
-  /**
-   * Add a block body to the block header. Can be done once per each block.
-   * Blocks with added payloads must form a tree.
-   * @param[in] block hash of ALT block where block body is added.
-   * @param[in] popData POP block body
-   * @param[out] state validation state
-   * @return true if PopData does not contain duplicates (searched across active
-   * chain). However, it is far from certain that it is completely valid.
-   * @ingroup api
-   */
-  bool addPayloads(const hash_t& block,
-                   const PopData& popData,
-                   ValidationState& state);
-  //! @overload
-  bool addPayloads(index_t& index, PopData& payloads, ValidationState& state);
 
   /**
    * Efficiently connect block loaded from disk.
