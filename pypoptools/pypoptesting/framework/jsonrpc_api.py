@@ -13,8 +13,8 @@ class JsonRpcApi:
     def __init__(self, url, **kwargs):
         self.url = url
         self.nonce = 0
-        if "username" in kwargs and "password" in kwargs:
-            self.auth = HTTPBasicAuth(kwargs['username'], kwargs['password'])
+        if "user" in kwargs and "password" in kwargs:
+            self.auth = HTTPBasicAuth(kwargs['user'], kwargs['password'])
 
     def __getattr__(self, name):
         def method(*args, **kwargs):
