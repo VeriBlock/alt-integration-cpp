@@ -189,7 +189,7 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
                  "Adding payloads to a bootstrap block is not allowed");
 
   ValidationState state;
-  VBK_ASSERT_MSG_DEBUG(
+  VBK_ASSERT_MSG(
       checkPopDataForDuplicates(payloads, state),
       "attempted to add statelessly invalid payloads to block %s: %s",
       index.toPrettyString(),
