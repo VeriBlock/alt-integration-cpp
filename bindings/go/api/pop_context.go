@@ -53,7 +53,7 @@ type MemPool interface {
 	SubmitVtbBytes(data []byte) (int, error)
 	SubmitVbk(block *entities.VbkBlock) (int, error)
 	SubmitVbkBytes(data []byte) (int, error)
-	GetPop() (*entities.PopData, error)
+	GetPopData() (*entities.PopData, error)
 	RemoveAll(payloads *entities.PopData) error
 	GetAtv(id entities.AtvID) (*entities.Atv, error)
 	GetVtb(id entities.VtbID) (*entities.Vtb, error)
@@ -472,7 +472,7 @@ func (v *PopContext) SubmitVbkBytes(data []byte) (int, error) {
 }
 
 // GetPop ...
-func (v *PopContext) GetPop() (*entities.PopData, error) {
+func (v *PopContext) GetPopData() (*entities.PopData, error) {
 	defer v.lock()()
 	popBytes := v.popContext.MemPoolGetPop()
 	stream := bytes.NewReader(popBytes)
