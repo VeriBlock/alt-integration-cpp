@@ -6,3 +6,6 @@ add_library(veriblock-pop-c OBJECT
         mock_miner.cpp
         validation_state.cpp
         )
+target_link_libraries(veriblock-pop-c
+        rocksdb
+        )
