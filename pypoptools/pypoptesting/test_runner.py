@@ -1,4 +1,5 @@
 import pathlib
+import sys
 
 from pypoptools.pypoptesting.framework.node import Node
 from pypoptools.pypoptesting.framework.test_util import run_tests
@@ -11,4 +12,9 @@ def create_node(number: int, path: pathlib.Path) -> Node:
 
 
 if __name__ == '__main__':
-    run_tests(all_tests, create_node)
+    if len(sys.argv) > 1:
+        all_tests_by_name = dict([(test.name(), test) for test in all_tests])
+        tests = [all_tests_by_name[name] for name in sys.argv[1:]]
+    else:
+        tests = all_tests
+    run_tests(tests, create_node)
