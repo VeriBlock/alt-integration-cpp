@@ -8,8 +8,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <memory>
-#include <vector>
 
 
 #ifdef __cplusplus
@@ -63,10 +61,9 @@ void VBK_SetForkResolutionLookupTable(Config_t* params,
 void VBK_SetPopPayoutDelay(Config_t* params, int32_t val);
 
 uint32_t VBK_GetMaxPopDataSize(Config_t* params);
-uint32_t* VBK_GetForkResolutionLookupTable(Config_t* params);
-size_t VBK_GetMaxVbkBlocksInAltBlock(Config_t* params);
-size_t VBK_GetMaxVTBsInAltBlock(Config_t* params);
-size_t VBK_GetMaxATVsInAltBlock(Config_t* params);
+uint32_t VBK_GetMaxVbkBlocksInAltBlock(Config_t* params);
+uint32_t VBK_GetMaxVTBsInAltBlock(Config_t* params);
+uint32_t VBK_GetMaxATVsInAltBlock(Config_t* params);
 int32_t VBK_GetEndorsementSettlementInterval(Config_t* params);
 uint32_t VBK_GetFinalityDelay(Config_t* params);
 uint32_t VBK_GetKeystoneInterval(Config_t* params);

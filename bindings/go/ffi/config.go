@@ -158,12 +158,6 @@ func (v *Config) GetMaxPopDataSize() uint32 {
 	return uint32(res)
 }
 
-// GetForkResolutionLookupTable ...
-func (v *Config) GetForkResolutionLookupTable() []uint32 {
-	res := C.VBK_GetForkResolutionLookupTable(v.ref)
-	return []uint32(res)
-}
-
 // GetMaxVbkBlocksInAltBlock ...
 func (v *Config) GetMaxVbkBlocksInAltBlock() int {
 	res := C.VBK_GetMaxVbkBlocksInAltBlock(v.ref)
@@ -203,17 +197,5 @@ func (v *Config) GetKeystoneInterval() uint32 {
 // GetMaxAltchainFutureBlockTime ...
 func (v *Config) GetMaxAltchainFutureBlockTime() uint32 {
 	res := C.VBK_GetMaxAltchainFutureBlockTime(v.ref)
-	return uint32(res)
-}
-
-// GetFinalityDelay ...
-func (v *Config) GetFinalityDelay() uint32 {
-	res := C.VBK_GetFinalityDelay(v.ref)
-	return uint32(res)
-}
-
-// GetFinalityDelay ...
-func (v *Config) GetFinalityDelay() uint32 {
-	res := C.VBK_GetFinalityDelay(v.ref)
 	return uint32(res)
 }

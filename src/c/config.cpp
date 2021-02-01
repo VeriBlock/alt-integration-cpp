@@ -182,17 +182,14 @@ void VBK_SetPopPayoutDelay(Config_t* params, int32_t val) {
 uint32_t VBK_GetMaxPopDataSize(Config_t* params) {
   return params->config->alt->mMaxPopDataSize;
 }
-uint32_t* VBK_GetForkResolutionLookupTable(Config_t* params) {
-  return params->config->alt->mForkResolutionLookUpTable.data();
+uint32_t VBK_GetMaxVbkBlocksInAltBlock(Config_t* params) {
+  return (uint32_t)params->config->alt->mMaxVbkBlocksInAltBlock;
 }
-size_t VBK_GetMaxVbkBlocksInAltBlock(Config_t* params) {
-  return params->config->alt->mMaxVbkBlocksInAltBlock;
+uint32_t VBK_GetMaxVTBsInAltBlock(Config_t* params) {
+  return (uint32_t)params->config->alt->mMaxVTBsInAltBlock;
 }
-size_t VBK_GetMaxVTBsInAltBlock(Config_t* params) {
-  return params->config->alt->mMaxVTBsInAltBlock;
-}
-size_t VBK_GetMaxATVsInAltBlock(Config_t* params) {
-  return params->config->alt->mMaxATVsInAltBlock;
+uint32_t VBK_GetMaxATVsInAltBlock(Config_t* params) {
+  return (uint32_t)params->config->alt->mMaxATVsInAltBlock;
 }
 int32_t VBK_GetEndorsementSettlementInterval(Config_t* params) {
   return params->config->alt->mEndorsementSettlementInterval;
