@@ -219,9 +219,9 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_ASSERT_MSG(index.pprev->isConnected(),
                  "the previous block of block %s must be connected",
                  index.toPrettyString());
-  VBK_ASSERT_MSG_DEBUG(index.allDescendantsUnconnected(),
-                       "a descendant of block %s is connected",
-                       index.toPrettyString());
+  VBK_ASSERT_MSG(index.allDescendantsUnconnected(),
+                 "a descendant of block %s is connected",
+                 index.toPrettyString());
 
   bool success = index.raiseValidity(BLOCK_CONNECTED);
   VBK_ASSERT(success);
