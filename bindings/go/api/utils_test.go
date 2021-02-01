@@ -56,7 +56,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	err = popContext.AcceptBlockHeader(newBlock)
 	assert.NoError(err)
 
-	popData, err := popContext.GetPop()
+	popData, err := popContext.GetPopData()
 	assert.NotEqual(popData, nil)
 	assert.NoError(err)
 
