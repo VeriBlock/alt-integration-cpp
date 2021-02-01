@@ -2,15 +2,18 @@
 Test with multiple nodes, and multiple PoP endorsements, checking to make sure nodes stay in sync.
 """
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import endorse_block, wait_for_block_height, KEYSTONE_INTERVAL
+from ..framework.pop_util import endorse_block, mine_until_pop_enabled, KEYSTONE_INTERVAL
+from ..framework.sync_util import connect_all, sync_all, wait_for_block_height
 
 
 class PopSync(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 3
 
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_pypopminer()
+    def setup_network(self):
+        mine_until_pop_enabled(self.nodes[0])
+        connect_all(self.nodes)
+        sync_all(self.nodes)
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner
@@ -38,7 +41,7 @@ class PopSync(PopIntegrationTestFramework):
                 node1_atv_id = endorse_block(self.nodes[1], apm, height, addr1)
 
                 # wait until node[1] gets relayed pop tx
-                self.sync_all(self.nodes, timeout=20)
+                sync_all(self.nodes, timeout=20)
                 self.log.info("transactions relayed")
 
                 # mine a block on node[1] with this pop tx
@@ -57,4 +60,5 @@ class PopSync(PopIntegrationTestFramework):
                             "containing block {} does not contain ATV {}".format(containing_block_hash, atv_id)
 
                 # assert that node height matches
-                assert self.nodes[0].getblockcount() == self.nodes[1].getblockcount() == self.nodes[2].getblockcount()
+                assert self.nodes[0].getblockcount() == self.nodes[1].getblockcount()
+                assert self.nodes[0].getblockcount() == self.nodes[2].getblockcount()

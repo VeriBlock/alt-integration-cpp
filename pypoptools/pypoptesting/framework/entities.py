@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List, Optional
 
 
 @dataclass
@@ -58,11 +57,11 @@ class BtcBlock:
 @dataclass
 class BlockWithPopData(GenericBlock):
     confirmations: int
-    endorsedBy: List[Hexstr]
-    blockOfProofEndorsements: List[Hexstr]
-    containingATVs: List[Hexstr]
-    containingVTBs: List[Hexstr]
-    containingVBKs: List[Hexstr]
+    endorsedBy: list[Hexstr]
+    blockOfProofEndorsements: list[Hexstr]
+    containingATVs: list[Hexstr]
+    containingVTBs: list[Hexstr]
+    containingVBKs: list[Hexstr]
 
 
 @dataclass
@@ -109,7 +108,7 @@ class VbkPopTx:
     hash: Hexstr
     publishedBlock: VbkBlock
     blockOfProof: BtcBlock
-    blockOfProofContext: List[BtcBlock]
+    blockOfProofContext: list[BtcBlock]
 
 
 @dataclass
@@ -133,7 +132,7 @@ class AtvResponse:
     blockhash: Hexstr
     blockheight: int
     atv: ATV
-    containingBlocks: List[Hexstr]
+    containingBlocks: list[Hexstr]
 
 
 @dataclass(init=False)
@@ -143,7 +142,7 @@ class VtbResponse:
     blockhash: Hexstr
     blockheight: int
     vtb: VTB
-    containingBlocks: List[Hexstr]
+    containingBlocks: list[Hexstr]
 
 
 @dataclass(init=False)
@@ -153,14 +152,14 @@ class VbkBlockResponse:
     blockhash: Hexstr
     blockheight: int
     vbkblock: VbkBlock
-    containingBlocks: List[Hexstr]
+    containingBlocks: list[Hexstr]
 
 
 @dataclass
 class RawPopMempoolResponse:
-    vbkblocks: List[Hexstr]
-    vtbs: List[Hexstr]
-    atvs: List[Hexstr]
+    vbkblocks: list[Hexstr]
+    vtbs: list[Hexstr]
+    atvs: list[Hexstr]
 
 
 @dataclass

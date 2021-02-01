@@ -6,7 +6,6 @@ from .pop_mempool_getpop import PopMempoolGetpop
 from .pop_mempool_reorg import PopMempoolReorg
 from .pop_mempool_sync import PopMempoolSync
 from .pop_params import PopParams
-from .pop_reconsider import PopReconsider
 from .pop_sync import PopSync
 from .popfr_shorter_chain_wins import PopForkResolutionShorterChainWins
 from .preflight_checks import PreflightChecks
@@ -20,7 +19,6 @@ all_tests = [
     PopMempoolReorg(),
     PopMempoolSync(),
     PopParams(),
-    PopReconsider(),
     PopSync(),
     PopForkResolutionShorterChainWins(),
     PreflightChecks()

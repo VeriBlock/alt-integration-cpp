@@ -9,7 +9,7 @@ from .framework.bin_util import assert_dir_accessible, get_open_port
 from .framework.entities import *
 from .framework.jsonrpc_api import JsonRpcApi, JSONRPCException
 from .framework.node import Node
-from .framework.util import wait_until
+from .framework.sync_util import wait_until
 
 PORT_MIN = 15000
 PORT_MAX = 25000
@@ -18,9 +18,9 @@ BIND_TO = '127.0.0.1'
 
 class VBitcoindNode(Node):
     def __init__(self, number: int, datadir: pathlib.Path):
+        assert_dir_accessible(datadir)
         self.number = number
         self.datadir = datadir
-        assert_dir_accessible(datadir)
 
         self.rpc_timeout = 60  # sec
         self.stderr = None
@@ -86,10 +86,6 @@ class VBitcoindNode(Node):
             # this destructor is called.
             self.process.kill()
 
-    def _node_msg(self, msg: str) -> str:
-        """Return a modified msg that identifies this node by its index as a debugging aid."""
-        return "[node %d] %s" % (self.number, msg)
-
     def start(self) -> None:
         self.stderr = tempfile.NamedTemporaryFile(prefix="stderr", dir=self.datadir, delete=False)
         self.stdout = tempfile.NamedTemporaryFile(prefix="stdout", dir=self.datadir, delete=False)
@@ -117,11 +113,7 @@ class VBitcoindNode(Node):
         self.stdout.close()
         self.stderr.close()
 
-    def restart(self) -> None:
-        self.stop()
-        self.start()
-
-    def is_started(self) -> bool:
+    def isstarted(self) -> bool:
         if not self.process:
             return False
 
@@ -131,10 +123,10 @@ class VBitcoindNode(Node):
 
         return self.running
 
-    def is_rpc_available(self) -> bool:
+    def isrpcavailable(self) -> bool:
         if self.process.poll() is not None:
-            raise Exception(self._node_msg(
-                'vbitcoind exited with status {} during initialization'.format(self.process.returncode)))
+            raise Exception('[node {}] vbitcoind exited with status {} during initialization'
+                            .format(self.number, self.process.returncode))
         try:
             self.rpc.getblockcount()
             # If the call to getblockcount() succeeds then the RPC connection is up
@@ -146,7 +138,7 @@ class VBitcoindNode(Node):
 
     def connect(self, node):
         ip_port = "{}:{}".format(BIND_TO, node.p2p_port)
-        self.rpc.addnode(ip_port, 'onetry')
+        self.rpc.addnode(ip_port, 'add')
         # poll until version handshake complete to avoid race conditions
         # with transaction relaying
         wait_until(lambda: all(peer['version'] != 0 for peer in self.rpc.getpeerinfo()))
@@ -169,25 +161,74 @@ class VBitcoindNode(Node):
             lambda: not any(["testnode{}".format(node_num) in peer['subver'] for peer in self.rpc.getpeerinfo()]),
             timeout=5)
 
+    def getnetworkid(self) -> int:
+        return 0x3ae6ca
+
+    def getpeerinfo(self) -> list[PeerInfo]:
+        s = self.rpc.getpeerinfo()
+        return [PeerInfo(
+            id=x['id'],
+            banscore=x['banscore']
+        ) for x in s]
+
+    def getbalance(self) -> float:
+        return self.rpc.getbalance()
+
     def getnewaddress(self) -> str:
         return self.rpc.getnewaddress()
 
-    def getpeerinfo(self) -> List[PeerInfo]:
-        s = self.rpc.getpeerinfo()
-        return [
-            PeerInfo(
-                id=x['id'],
-                banscore=x['banscore']
-            ) for x in s
-        ]
-
-    def getpayoutinfo(self, address: Optional[str]) -> Hexstr:
-        if address is None:
-            addr = self.getnewaddress()
-            return self.getpayoutinfo(addr)
-
+    def getpayoutinfo(self, address: str = None) -> Hexstr:
+        address = address or self.getnewaddress()
         s = self.rpc.validateaddress(address)
         return s['scriptPubKey']
+
+    def generate(self, nblocks: int, address: str = None) -> list[Hexstr]:
+        address = address or self.getnewaddress()
+        return self.rpc.generatetoaddress(nblocks, address)
+
+    def getbestblockhash(self) -> Hexstr:
+        return self.rpc.getbestblockhash()
+
+    def getblock(self, hash: Hexstr) -> BlockWithPopData:
+        s = self.rpc.getblock(hash)
+        return BlockWithPopData(
+            hash=s['hash'],
+            height=s['height'],
+            prevhash=s.get('previousblockhash', ''),
+            confirmations=s['confirmations'],
+            endorsedBy=s['pop']['state']['endorsedBy'],
+            blockOfProofEndorsements=[],
+            containingATVs=s['pop']['data']['atvs'],
+            containingVTBs=s['pop']['data']['vtbs'],
+            containingVBKs=s['pop']['data']['vbkblocks']
+        )
+
+    def getblockcount(self) -> int:
+        return self.rpc.getblockcount()
+
+    def getblockhash(self, height: int) -> Hexstr:
+        return self.rpc.getblockhash(height)
+
+    def getbtcbestblockhash(self) -> Hexstr:
+        return self.rpc.getbtcbestblockhash()
+
+    def getpopdatabyhash(self, hash: Hexstr) -> GetpopdataResponse:
+        s = self.rpc.getpopdatabyheight(hash)
+        return GetpopdataResponse(
+            header=s['block_header'],
+            authenticated_context=s['authenticated_context']['serialized'],
+            last_known_vbk_block=s['last_known_veriblock_blocks'][-1],
+            last_known_btc_block=s['last_known_bitcoin_blocks'][-1],
+        )
+
+    def getpopdatabyheight(self, height: int) -> GetpopdataResponse:
+        s = self.rpc.getpopdatabyheight(height)
+        return GetpopdataResponse(
+            header=s['block_header'],
+            authenticated_context=s['authenticated_context']['serialized'],
+            last_known_vbk_block=s['last_known_veriblock_blocks'][-1],
+            last_known_btc_block=s['last_known_bitcoin_blocks'][-1],
+        )
 
     def getpopparams(self) -> PopParamsResponse:
         s = self.rpc.getpopparams()
@@ -233,60 +274,6 @@ class VBitcoindNode(Node):
             maxAltchainFutureBlockTime=s['maxAltchainFutureBlockTime']
         )
 
-    def submitpopatv(self, atv: Hexstr) -> SubmitPopResponse:
-        s = self.rpc.submitpopatv(atv)
-        return SubmitPopResponse(
-            accepted=s['accepted'],
-            code=s.get('code', ''),
-            message=s.get('message', '')
-        )
-
-    def submitpopvtb(self, vtb: Hexstr) -> SubmitPopResponse:
-        s = self.rpc.submitpopvtb(vtb)
-        return SubmitPopResponse(
-            accepted=s['accepted'],
-            code=s.get('code', ''),
-            message=s.get('message', '')
-        )
-
-    def submitpopvbk(self, vbk: Hexstr) -> SubmitPopResponse:
-        s = self.rpc.submitpopvbk(vbk)
-        return SubmitPopResponse(
-            accepted=s['accepted'],
-            code=s.get('code', ''),
-            message=s.get('message', '')
-        )
-
-    def getpopdatabyheight(self, height: int) -> GetpopdataResponse:
-        s = self.rpc.getpopdatabyheight(height)
-        return GetpopdataResponse(
-            header=s['block_header'],
-            authenticated_context=s['authenticated_context']['serialized'],
-            last_known_vbk_block=s['last_known_veriblock_blocks'][-1],
-            last_known_btc_block=s['last_known_bitcoin_blocks'][-1],
-        )
-
-    def getpopdatabyhash(self, hash: Hexstr) -> GetpopdataResponse:
-        s = self.rpc.getpopdatabyheight(hash)
-        return GetpopdataResponse(
-            header=s['block_header'],
-            authenticated_context=s['authenticated_context']['serialized'],
-            last_known_vbk_block=s['last_known_veriblock_blocks'][-1],
-            last_known_btc_block=s['last_known_bitcoin_blocks'][-1],
-        )
-
-    def getbtcbestblockhash(self) -> Hexstr:
-        return self.rpc.getbtcbestblockhash()
-
-    def getvbkbestblockhash(self) -> Hexstr:
-        return self.rpc.getvbkbestblockhash()
-
-    def getbestblockhash(self) -> Hexstr:
-        return self.rpc.getbestblockhash()
-
-    def getbalance(self) -> float:
-        return self.rpc.getbalance()
-
     def getrawatv(self, atvid: Hexstr) -> AtvResponse:
         s = self.rpc.getrawatv(atvid, 1)
         r = AtvResponse()
@@ -317,6 +304,24 @@ class VBitcoindNode(Node):
 
         return r
 
+    def getrawpopmempool(self) -> RawPopMempoolResponse:
+        s = self.rpc.getrawpopmempool()
+        return RawPopMempoolResponse(**s)
+
+    def getrawvbkblock(self, vbkblockid: Hexstr) -> VbkBlockResponse:
+        s = self.rpc.getrawvbkblock(vbkblockid, 1)
+        r = VbkBlockResponse()
+        r.in_active_chain = s['in_active_chain']
+        r.confirmations = s['confirmations']
+        if r.confirmations > 0:
+            # in block
+            r.blockhash = s['blockhash']
+            r.blockheight = s['blockheight']
+            r.containingBlocks = s['containing_blocks']
+
+        r.vbkblock = VbkBlock(**s['vbkblock'])
+        return r
+
     def getrawvtb(self, vtbid: Hexstr) -> VtbResponse:
         s = self.rpc.getrawvtb(vtbid, 1)
         r = VtbResponse()
@@ -331,7 +336,7 @@ class VBitcoindNode(Node):
         v = s['vtb']
         tx = v['transaction']
         cb = v['containingBlock']
-        r.atv = VTB(
+        r.vtb = VTB(
             id=v['id'],
             tx=VbkPopTx(
                 hash=tx['hash'],
@@ -348,43 +353,29 @@ class VBitcoindNode(Node):
 
         return r
 
-    def getrawvbkblock(self, vbkblockid: Hexstr) -> VbkBlockResponse:
-        s = self.rpc.getrawvbkblock(vbkblockid, 1)
-        r = VbkBlockResponse()
-        r.in_active_chain = s['in_active_chain']
-        r.confirmations = s['confirmations']
-        if r.confirmations > 0:
-            # in block
-            r.blockhash = s['blockhash']
-            r.blockheight = s['blockheight']
-            r.containingBlocks = s['containing_blocks']
+    def getvbkbestblockhash(self) -> Hexstr:
+        return self.rpc.getvbkbestblockhash()
 
-        r.vbkblock = VbkBlock(**s['vbkblock'])
-        return r
-
-    def getrawpopmempool(self) -> RawPopMempoolResponse:
-        s = self.rpc.getrawpopmempool()
-        return RawPopMempoolResponse(**s)
-
-    def generate(self, nblocks: int, address: Optional[str] = None) -> List[Hexstr]:
-        return self.rpc.generatetoaddress(nblocks, address or self.getnewaddress())
-
-    def getblockhash(self, height: int) -> Hexstr:
-        return self.rpc.getblockhash(height)
-
-    def getblock(self, hash: Hexstr) -> BlockWithPopData:
-        s = self.rpc.getblock(hash)
-        return BlockWithPopData(
-            hash=s['hash'],
-            height=s['height'],
-            prevhash=s['previousblockhash'],
-            confirmations=s['confirmations'],
-            endorsedBy=s['pop']['state']['endorsedBy'],
-            blockOfProofEndorsements=[],
-            containingATVs=s['pop']['data']['atvs'],
-            containingVTBs=s['pop']['data']['vtbs'],
-            containingVBKs=s['pop']['data']['vbkblocks']
+    def submitpopatv(self, atv: Hexstr) -> SubmitPopResponse:
+        s = self.rpc.submitpopatv(atv)
+        return SubmitPopResponse(
+            accepted=s['accepted'],
+            code=s.get('code', ''),
+            message=s.get('message', '')
         )
 
-    def getblockcount(self) -> int:
-        return self.rpc.getblockcount()
+    def submitpopvbk(self, vbk: Hexstr) -> SubmitPopResponse:
+        s = self.rpc.submitpopvbk(vbk)
+        return SubmitPopResponse(
+            accepted=s['accepted'],
+            code=s.get('code', ''),
+            message=s.get('message', '')
+        )
+
+    def submitpopvtb(self, vtb: Hexstr) -> SubmitPopResponse:
+        s = self.rpc.submitpopvtb(vtb)
+        return SubmitPopResponse(
+            accepted=s['accepted'],
+            code=s.get('code', ''),
+            message=s.get('message', '')
+        )

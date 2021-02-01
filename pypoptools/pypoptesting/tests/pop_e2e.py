@@ -1,19 +1,21 @@
 """
 Test with multiple nodes, and multiple PoP endorsements, checking to make sure nodes stay in sync.
 """
+import time
 
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import NETWORK_ID
-
-import time
+from ..framework.pop_util import endorse_block, mine_until_pop_enabled
+from ..framework.sync_util import connect_all, sync_all
 
 
 class PopE2E(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
 
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_pypopminer()
+    def setup_network(self):
+        mine_until_pop_enabled(self.nodes[0])
+        connect_all(self.nodes)
+        sync_all(self.nodes)
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner, PublicationData
@@ -26,7 +28,6 @@ class PopE2E(PopIntegrationTestFramework):
         vbk_blocks = []
         for i in range(vbk_blocks_amount):
             vbk_blocks.append(apm.mineVbkBlocks(1))
-
         assert len(vbk_blocks) == vbk_blocks_amount
 
         vtbs_amount = 20
@@ -36,22 +37,10 @@ class PopE2E(PopIntegrationTestFramework):
 
         self.nodes[0].generate(nblocks=10)
         last_block = self.nodes[0].getblockcount()
-
         assert last_block >= 5
+
         self.log.info("endorse {} alt block".format(last_block - 5))
-        pop_data = self.nodes[0].getpopdatabyheight(last_block - 5)
-        p = PublicationData()
-        p.identifier = NETWORK_ID
-        p.header = pop_data.header
-        p.contextInfo = pop_data.authenticated_context
-        p.payoutInfo = "0014aaddff"
-
-        pop_data = apm.endorseAltBlock(p, vbk_blocks[0].getHash())
-        assert len(pop_data.vtbs) == vtbs_amount
-
-        [self.nodes[0].submitpopvbk(b.toVbkEncodingHex()) for b in vbk_blocks]
-        [self.nodes[0].submitpopvtb(b.toVbkEncodingHex()) for b in pop_data.vtbs]
-        self.nodes[0].submitpopatv(pop_data.atv.toVbkEncodingHex())
+        endorse_block(self.nodes[0], apm, last_block - 5)
 
         self._assert_nodes_peer_info()
 
@@ -63,17 +52,7 @@ class PopE2E(PopIntegrationTestFramework):
 
         assert last_block >= 6
         self.log.info("endorse {} alt block".format(last_block - 6))
-        p = PublicationData()
-        p.identifier = NETWORK_ID
-        p.header = self.nodes[0].getpopdatabyheight(last_block - 6).header
-        p.payoutInfo = "0014aaddff"
-
-        pop_data = apm.endorseAltBlock(p, vbk_blocks[0].getHash())
-        assert len(pop_data.vtbs) == vtbs_amount
-
-        [self.nodes[0].submitpopvbk(b.toVbkEncodingHex()) for b in vbk_blocks]
-        [self.nodes[0].submitpopvtb(b.toVbkEncodingHex()) for b in pop_data.vtbs]
-        self.nodes[0].submitpopatv(pop_data.atv.toVbkEncodingHex())
+        endorse_block(self.nodes[0], apm, last_block - 6)
 
         self._assert_nodes_peer_info()
 
@@ -81,7 +60,9 @@ class PopE2E(PopIntegrationTestFramework):
         time.sleep(5)
 
         self.log.info("sync all nodes")
-        self.sync_all(self.nodes)
+        sync_all(self.nodes)
+
+        self._assert_nodes_peer_info()
 
     def _assert_nodes_peer_info(self):
         self._assert_node_peer_info(self.nodes[0])
