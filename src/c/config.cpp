@@ -182,3 +182,24 @@ void VBK_SetPopPayoutDelay(Config_t* params, int32_t val) {
 uint32_t VBK_GetMaxPopDataSize(Config_t* params) {
   return params->config->alt->mMaxPopDataSize;
 }
+uint32_t VBK_GetMaxVbkBlocksInAltBlock(Config_t* params) {
+  return (uint32_t)params->config->alt->mMaxVbkBlocksInAltBlock;
+}
+uint32_t VBK_GetMaxVTBsInAltBlock(Config_t* params) {
+  return (uint32_t)params->config->alt->mMaxVTBsInAltBlock;
+}
+uint32_t VBK_GetMaxATVsInAltBlock(Config_t* params) {
+  return (uint32_t)params->config->alt->mMaxATVsInAltBlock;
+}
+int32_t VBK_GetEndorsementSettlementInterval(Config_t* params) {
+  return params->config->alt->mEndorsementSettlementInterval;
+}
+uint32_t VBK_GetFinalityDelay(Config_t* params) {
+  return params->config->alt->mFinalityDelay;
+}
+uint32_t VBK_GetKeystoneInterval(Config_t* params) {
+  return params->config->alt->mKeystoneInterval;
+}
+uint32_t VBK_GetMaxAltchainFutureBlockTime(Config_t* params) {
+  return params->config->alt->mMaxAltchainFutureBlockTime;
+}
