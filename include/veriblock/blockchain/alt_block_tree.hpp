@@ -106,6 +106,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @ingroup api
    */
   void acceptBlock(const hash_t& block, const PopData& payloads);
+  //! @overload
   void acceptBlock(index_t& index, const PopData& payloads, ValidationState& state);
   //! @overload
   void acceptBlock(index_t& index, const PopData& payloads);

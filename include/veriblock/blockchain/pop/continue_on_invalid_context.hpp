@@ -17,6 +17,7 @@ namespace altintegration {
 struct ContinueOnInvalidContext {
   ContinueOnInvalidContext(const AltChainParams& params) : params_(params) {}
 
+  //! returns true if given command group can fit into a block
   bool canFit(const CommandGroup& g) noexcept {
     if (g.payload_type_name == &ATV::name()) {
       if (atvs >= params_.getMaxATVsInAltBlock()) {
