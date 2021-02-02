@@ -153,11 +153,17 @@ void AltBlockTree::acceptBlock(const hash_t& block, const PopData& payloads) {
 }
 
 void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
+  ValidationState dummy;
+  acceptBlock(index, payloads, dummy);
+}
+
+void AltBlockTree::acceptBlock(index_t& index,
+                               const PopData& payloads,
+                               ValidationState& state) {
   setPayloads(index, payloads);
 
   if (index.pprev->isConnected()) {
-    ValidationState dummy;
-    connectBlock(index, dummy);
+    connectBlock(index, state);
   }
 }
 
@@ -183,7 +189,7 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
                  "Adding payloads to a bootstrap block is not allowed");
 
   ValidationState state;
-  VBK_ASSERT_MSG_DEBUG(
+  VBK_ASSERT_MSG(
       checkPopDataForDuplicates(payloads, state),
       "attempted to add statelessly invalid payloads to block %s: %s",
       index.toPrettyString(),
@@ -213,9 +219,9 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_ASSERT_MSG(index.pprev->isConnected(),
                  "the previous block of block %s must be connected",
                  index.toPrettyString());
-  VBK_ASSERT_MSG_DEBUG(index.allDescendantsUnconnected(),
-                       "a descendant of block %s is connected",
-                       index.toPrettyString());
+  VBK_ASSERT_MSG(index.allDescendantsUnconnected(),
+                 "a descendant of block %s is connected",
+                 index.toPrettyString());
 
   bool success = index.raiseValidity(BLOCK_CONNECTED);
   VBK_ASSERT(success);
@@ -247,29 +253,6 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   };
 
   return index.isValid();
-}
-
-bool AltBlockTree::addPayloads(index_t& index,
-                               PopData& payloads,
-                               ValidationState& state) {
-  // atomicity: ensure we can not just add payloads but also connect the block
-  VBK_ASSERT_MSG(index.pprev->isConnected(),
-                 "the previous block of block %s must be connected",
-                 index.toPrettyString());
-
-  // NOTE: we should be able to add payloads to an invalid block
-  // this check is for backwards-compatibility only
-  if (!index.isValid()) {
-    return state.Invalid(block_t::name() + "-bad-chain",
-                         "Containing block has been marked as invalid");
-  }
-
-  if (!checkPopDataForDuplicates(payloads, state)) {
-    return state.Invalid("popdata");
-  }
-
-  setPayloads(index, payloads);
-  return connectBlock(index, state);
 }
 
 bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
@@ -432,17 +415,16 @@ void removePayloadsIfNotInBlock(std::vector<Payload>& payloads,
   payloads.erase(it, payloads.end());
 }
 
-void addPayloadsContinueOnInvalid(AltBlockTree& tree,
-                                  AltBlockTree::index_t& index,
-                                  PopData& payloads,
-                                  ValidationState& state) {
-  // filter out statefully duplicate payloads
-  removeDuplicates<VbkBlock>(index, payloads.context, tree);
-  removeDuplicates<VTB>(index, payloads.vtbs, tree);
-  removeDuplicates<ATV>(index, payloads.atvs, tree);
-
-  bool success = tree.addPayloads(index, payloads, state);
-  VBK_ASSERT(success);
+static void assertPopDataFits(PopData& pop, const AltChainParams& params) {
+  const auto& maxSize = params.getMaxPopDataSize();
+  const auto& maxVbkBlocks = params.getMaxVbkBlocksInAltBlock();
+  const auto& maxVTBs = params.getMaxVTBsInAltBlock();
+  const auto& maxATVs = params.getMaxATVsInAltBlock();
+  VBK_ASSERT(pop.context.size() <= maxVbkBlocks);
+  VBK_ASSERT(pop.vtbs.size() <= maxVTBs);
+  VBK_ASSERT(pop.atvs.size() <= maxATVs);
+  const auto estimate = pop.estimateSize();
+  VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
 }
 
 void AltBlockTree::filterInvalidPayloads(PopData& pop) {
@@ -473,7 +455,13 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
   auto* tmpindex = getBlockIndex(tmp.getHash());
   VBK_ASSERT(tmpindex != nullptr);
 
-  addPayloadsContinueOnInvalid(*this, *tmpindex, pop, state);
+  // filter out statefully duplicate payloads
+  removeDuplicates<VbkBlock>(*tmpindex, pop.context, *this);
+  removeDuplicates<VTB>(*tmpindex, pop.vtbs, *this);
+  removeDuplicates<ATV>(*tmpindex, pop.atvs, *this);
+
+  // add payloads to a block
+  acceptBlock(*tmpindex, pop);
 
   // setState in 'continueOnInvalid' mode
   setTipContinueOnInvalid(*tmpindex);
@@ -482,21 +470,15 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
   removePayloadsIfNotInBlock(pop.vtbs, *tmpindex);
   removePayloadsIfNotInBlock(pop.context, *tmpindex);
 
+  // assert PopData does not surpass limits
+  assertPopDataFits(pop, getParams());
+
   VBK_LOG_INFO("Filtered valid: %s", pop.toPrettyString());
 
   // at this point `pop` contains only valid payloads
   this->removeSubtree(*tmpindex);
 
   guard.overrideDeferredForkResolution(originalTip);
-}
-
-bool AltBlockTree::addPayloads(const hash_t& block,
-                               const PopData& popData,
-                               ValidationState& state) {
-  auto copy = popData;
-  auto* index = getBlockIndex(block);
-  VBK_ASSERT_MSG(index, "can't find block %s", HexStr(block));
-  return addPayloads(*index, copy, state);
 }
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
@@ -532,8 +514,9 @@ void AltBlockTree::overrideTip(index_t& to) {
 }
 
 void AltBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
+  ContinueOnInvalidContext c(getParams());
   ValidationState dummy;
-  bool success = cmp_.setState(*this, to, dummy, /*continueOnInvalid=*/true);
+  bool success = cmp_.setState(*this, to, dummy, /*continueOnInvalid=*/&c);
   VBK_ASSERT(success);
   overrideTip(to);
 }

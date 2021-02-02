@@ -54,14 +54,6 @@ func (v *PopContext) AltBlockTreeAcceptBlock(hashBytes []byte, payloadsBytes []b
 	C.VBK_AltBlockTree_acceptBlock(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)), state.ref)
 }
 
-// AltBlockTreeAddPayloads - true if altintegration::PopData does not contain duplicates
-// (searched across active chain). However, it is far from certain that it is completely valid.
-func (v *PopContext) AltBlockTreeAddPayloads(hashBytes []byte, payloadsBytes []byte, state *ValidationState) {
-	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
-	payloadsBytesC := (*C.uint8_t)(unsafe.Pointer(&payloadsBytes[0]))
-	C.VBK_AltBlockTree_addPayloads(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)), state.ref)
-}
-
 // AltBlockTreeLoadTip - true on success, false otherwise.
 func (v *PopContext) AltBlockTreeLoadTip(hashBytes []byte, state *ValidationState) bool {
 	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
