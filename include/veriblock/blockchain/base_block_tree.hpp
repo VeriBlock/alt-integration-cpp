@@ -520,6 +520,115 @@ struct BaseBlockTree {
   }
 
  protected:
+  //! Marks `block` as finalized.
+  //!
+  //! Final blocks can not be reorganized, thus we can remove outdated blocks
+  //! from tips_ and free some RAM by deallocating blocks past last final block
+  //! minus `N` (`preserveBlocksBehindFinal) blocks. In ALT and VBK chains N
+  //! will equal to at least Endorsement Settlement Interval, so that containing
+  //! blocks after finalized block will point to an existing block.
+  //!
+  //! @param[in] block hash of block to be finalized. Must be part of active
+  //! chain.
+  //!
+  //! @warning This action is irreversible. You will need to reload the whole
+  //! tree to recover in case if this func is called by mistake.
+  //!
+  //! @returns false if block not found or prereq are not met
+  virtual bool finalizeBlock(const hash_t& block,
+                             // see config.preserveBlocksBehindFinal()
+                             uint32_t preserveBlocksBehindFinal) {
+    auto* index = getBlockIndex(block);
+    if (!index) {
+      return false;
+    }
+
+    // block is already final
+    if (index->finalized) {
+      return true;
+    }
+
+    // prereq is not met - finalized block must be on active chain
+    if (!activeChain_.contains(index)) {
+      return false;
+    }
+
+    // first, erase candidates from tips_ that will never be activated
+    std::vector<const index_t*> outdated_tips;
+    tips_.erase(std::remove_if(tips_.begin(),
+                               tips_.end(),
+                               [this, &outdated_tips](const index_t* tip) {
+                                 VBK_ASSERT(tip);
+
+                                 // active chain can not be outdated
+                                 if (activeChain_.contains(tip)) {
+                                   return false;
+                                 }
+
+                                 if (isBlockOutdated(*index, *tip)) {
+                                   outdated_tips.push_back(tip);
+                                   return true;
+                                 }
+
+                                 return false;
+                               }),
+                tips_.end());
+
+    auto deallocate = [this](block_index_t& blocks, const index_t& index) {
+      auto shortHash = makePrevHash(index.getHash());
+      blocks.erase(shortHash);
+    };
+
+    // second, remove all blocks (which are not part of main chain) behind
+    // outdated tips
+    for (const auto* tip : outdated_tips) {
+      // walk backwards and deallocate outdated chains
+      while (!activeChain_.contains(tip)) {
+        deallocate(removed_, *tip);
+        deallocate(blocks_, *tip);
+        tip = tip->pprev;
+      }
+    }
+
+    // third, update active chain (it should start with
+    // 'index' but we also need to preserve `preserveBlocksBehindFinal` blocks).
+    // all outdated blocks behind this block will be deallocated
+    auto firstBlockHeight =
+        index->getHeight() - preserveBlocksBehindFinal /*excluding index*/ - 1;
+    activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
+
+    auto* first = activeChain_.first();
+
+    // fourth, deallocate blocks that are outdated, if any
+    {
+      auto eraseBlocks = [&](block_index_t& blocks) {
+        auto begin = blocks.cbegin();
+        auto end = blocks.cend();
+        for (auto it = begin; it != end;) {
+          auto* candidate = it.second.get();
+          if (isBlockOutdated(*first, *candidate)) {
+            blocks.erase(it);
+          } else {
+            ++it;
+          }
+        }
+      };
+
+      // removed_ will likely not store any blocks behind final, but remove
+      // anyway
+      eraseBlocks(removed_);
+      eraseBlocks(blocks_);
+    }
+
+    // fifth, mark `index` and all predecessors as finalized
+    while (index != nullptr) {
+      index->finalized = true;
+      index = index->pprev;
+    }
+
+    return true;
+  }
+
   //! callback which is executed when new block is added to a tree
   virtual void onBlockInserted(index_t* /*ignore*/) {
     /* do nothing in base tree */
