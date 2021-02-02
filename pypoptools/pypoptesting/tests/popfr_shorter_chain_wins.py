@@ -6,8 +6,8 @@ class PopForkResolutionShorterChainWins(PopIntegrationTestFramework):
         self.num_nodes = 1
 
     def run_test(self):
-        assert self.nodes[0].is_started()
-        assert self.nodes[0].is_rpc_available()
+        assert self.nodes[0].isstarted()
+        assert self.nodes[0].isrpcavailable()
 
         addr = self.nodes[0].getnewaddress()
 

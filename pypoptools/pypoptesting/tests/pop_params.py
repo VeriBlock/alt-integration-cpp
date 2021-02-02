@@ -1,5 +1,4 @@
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.entities import Hexstr
 
 
 class PopParams(PopIntegrationTestFramework):
@@ -19,7 +18,7 @@ class PopParams(PopIntegrationTestFramework):
             pass
 
         try:
-            reversed_bootstrap_hash = Hexstr(value=bytes.fromhex(bootstrap_hash)[::-1].hex())
+            reversed_bootstrap_hash = bytes.fromhex(bootstrap_hash)[::-1].hex()
             self.nodes[0].getblock(reversed_bootstrap_hash)
             self.log.info("Test passed: bootstrap block={} exists (direction B)!".format(reversed_bootstrap_hash))
         except:
