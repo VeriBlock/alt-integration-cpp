@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
@@ -13,4 +14,12 @@ type Config struct {
 func NewConfig() *Config {
 	cfg := ffi.NewConfig()
 	return &Config{cfg}
+}
+
+func (v *Config) AltGetBootstrapBlock() *entities.AltBlock {
+	stream := v.Config.AltGetBootstrapBlock()
+	defer stream.Free()
+	var blk entities.AltBlock
+	blk.FromVbkEncoding(stream)
+	return &blk
 }

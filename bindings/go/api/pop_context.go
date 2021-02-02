@@ -111,6 +111,10 @@ func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
 
 // AcceptBlock - POP payloads stored in this block
 func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopData) error {
+	if payloads == nil {
+		payloads = entities.GetEmptyPopData()
+	}
+
 	stream := new(bytes.Buffer)
 	err := payloads.ToVbkEncoding(stream)
 	if err != nil {
