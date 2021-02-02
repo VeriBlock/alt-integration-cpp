@@ -14,15 +14,22 @@ node[3] started with 0 blocks.
 After sync has been completed, expect all nodes to be on same height (fork A, block 323)
 """
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import create_endorsed_chain, endorse_block, get_best_block, wait_for_block_height
+from ..framework.pop_util import create_endorsed_chain, endorse_block, mine_until_pop_enabled
+from ..framework.sync_util import (
+    start_all_and_wait, connect_all, sync_all, sync_blocks, sync_pop_tips,
+    wait_for_block_height, wait_for_rpc_availability
+)
 
 
 class PopForkResolution(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 4
 
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_pypopminer()
+    def setup_nodes(self):
+        start_all_and_wait(self.nodes)
+        mine_until_pop_enabled(self.nodes[0])
+        connect_all(self.nodes)
+        sync_all(self.nodes)
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner
@@ -42,10 +49,10 @@ class PopForkResolution(PopIntegrationTestFramework):
         # all nodes start with last_block + 103 blocks
         self.nodes[0].generate(nblocks=103)
         self.log.info("node0 mined 103 blocks")
-        self.sync_blocks([self.nodes[0], self.nodes[1], self.nodes[2]], timeout=20)
-        assert get_best_block(self.nodes[0]).height == last_block + 103
-        assert get_best_block(self.nodes[1]).height == last_block + 103
-        assert get_best_block(self.nodes[2]).height == last_block + 103
+        sync_blocks(self.nodes[0:2], timeout=20)
+        assert self.nodes[0].getbestblock().height == last_block + 103
+        assert self.nodes[1].getbestblock().height == last_block + 103
+        assert self.nodes[2].getbestblock().height == last_block + 103
         self.log.info("nodes[0,1,2] synced are at block %d", last_block + 103)
 
         # node2 is disconnected from others
@@ -61,7 +68,7 @@ class PopForkResolution(PopIntegrationTestFramework):
         wait_for_block_height(self.nodes[2], last_block + 200)
         self.log.info("node2 mined 97 more blocks, total height is %d", last_block + 200)
 
-        best_blocks = [get_best_block(node) for node in self.nodes[0:3]]
+        best_blocks = [node.getbestblock() for node in self.nodes[0:3]]
 
         assert best_blocks[0] != best_blocks[2], "node[0,2] have same best hashes"
         assert best_blocks[0] == best_blocks[1], "node[0,1] have different best hashes: {} vs {}".format(best_blocks[0],
@@ -69,7 +76,7 @@ class PopForkResolution(PopIntegrationTestFramework):
 
         # mine 10 more blocks to fork A
         self.nodes[0].generate(nblocks=10)
-        self.sync_all(self.nodes[0:2])
+        sync_all(self.nodes[0:2])
         self.log.info("nodes[0,1] are in sync and are at fork A (%d...%d blocks)", last_block + 103, last_block + 113)
 
         # fork B is at 400
@@ -83,14 +90,14 @@ class PopForkResolution(PopIntegrationTestFramework):
         # mine pop tx on node0
         block_hashes = self.nodes[0].generate(nblocks=10)
         self.log.info("node0 mines 10 more blocks")
-        self.sync_all(self.nodes[0:2])
+        sync_all(self.nodes[0:2])
         containing_block = self.nodes[0].getblock(block_hashes[0])
 
         assert self.nodes[1].getblock(block_hashes[0]).hash == containing_block.hash
 
-        tip = get_best_block(self.nodes[0])
+        tip = self.nodes[0].getbestblock()
         assert atv_id in containing_block.containingATVs, "pop tx is not in containing block"
-        self.sync_blocks(self.nodes[0:2])
+        sync_blocks(self.nodes[0:2])
         self.log.info("nodes[0,1] are in sync, pop tx containing block is {}".format(containing_block.height))
         self.log.info("node0 tip is {}".format(tip.height))
 
@@ -99,15 +106,16 @@ class PopForkResolution(PopIntegrationTestFramework):
         self.log.info("node2 connected to nodes[0,1]")
 
         self.nodes[3].start()
+        wait_for_rpc_availability(self.nodes[3])
         self.nodes[3].connect(self.nodes[0])
         self.nodes[3].connect(self.nodes[2])
         self.log.info("node3 started with 0 blocks, connected to nodes[0,2]")
 
-        self.sync_blocks(self.nodes, timeout=30)
+        sync_blocks(self.nodes, timeout=30)
         self.log.info("nodes[0,1,2,3] are in sync")
 
         # expected best block hash is fork A (has higher pop score)
-        best_blocks = [get_best_block(node) for node in self.nodes]
+        best_blocks = [node.getbestblock() for node in self.nodes]
         assert best_blocks[0].hash == best_blocks[1].hash
         assert best_blocks[0].hash == best_blocks[2].hash
         assert best_blocks[0].hash == best_blocks[3].hash
@@ -139,7 +147,7 @@ class PopForkResolution(PopIntegrationTestFramework):
             create_endorsed_chain(node, apm, to_mine, addr)
 
         # all nodes have different tips at height 323
-        best_blocks = [get_best_block(node) for node in self.nodes]
+        best_blocks = [node.getbestblock() for node in self.nodes]
         for b in best_blocks:
             assert b.height == last_block + to_mine
         assert len(set([block.hash for block in best_blocks])) == len(best_blocks)
@@ -151,12 +159,12 @@ class PopForkResolution(PopIntegrationTestFramework):
                 node.connect(self.nodes[i])
 
         self.log.info("all nodes connected")
-        self.sync_blocks(self.nodes, timeout=60)
-        self.sync_pop_tips(self.nodes, timeout=60)
+        sync_blocks(self.nodes, timeout=60)
+        sync_pop_tips(self.nodes, timeout=60)
         self.log.info("all nodes have common tip")
 
         expected_best = best_blocks[0]
-        best_blocks = [get_best_block(node) for node in self.nodes]
+        best_blocks = [node.getbestblock() for node in self.nodes]
         for best in best_blocks:
             assert best == expected_best
 

@@ -8,39 +8,42 @@ Expect that BTC/VBK tree state on nodes[0,1] is same as before shutdown (test ag
 """
 
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import create_endorsed_chain, get_best_block
+from ..framework.pop_util import create_endorsed_chain, mine_until_pop_enabled
+from ..framework.sync_util import start_all_and_wait, connect_all, sync_all, sync_blocks
 
 
 class PopInit(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 3
 
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_pypopminer()
+    def setup_nodes(self):
+        start_all_and_wait(self.nodes)
+        mine_until_pop_enabled(self.nodes[0])
+        connect_all(self.nodes)
+        sync_all(self.nodes)
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
         size = 20
-        addr0 = self.nodes[0].getnewaddress()
 
         # 100 blocks without endorsements
         self.nodes[0].generate(nblocks=100)
         self.log.info("node0 started mining of {} endorsed blocks".format(size))
-        create_endorsed_chain(self.nodes[0], apm, size, addr0)
+        create_endorsed_chain(self.nodes[0], apm, size)
         self.log.info("node0 finished creation of {} endorsed blocks".format(size))
 
-        self.sync_blocks(self.nodes)
+        sync_blocks(self.nodes)
         self.log.info("nodes are in sync")
 
         # stop node0
         self.nodes[0].restart()
         self.nodes[1].restart()
         self.log.info("nodes[0,1] restarted")
-        self.sync_all(self.nodes, timeout=30)
+        sync_all(self.nodes, timeout=30)
         self.log.info("nodes are in sync")
 
-        best_blocks = [get_best_block(node) for node in self.nodes]
+        best_blocks = [node.getbestblock() for node in self.nodes]
         pop_data = [node.getpopdatabyheight(best_blocks[0].height) for node in self.nodes]
 
         # when node0 stops, its VBK/BTC trees get cleared. When we start it again, it MUST load payloads into trees.

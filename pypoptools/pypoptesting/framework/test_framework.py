@@ -8,15 +8,11 @@ import tempfile
 import time
 from abc import abstractmethod
 from enum import Enum
-from typing import Callable, List
+from typing import List
 
 from .node import Node
-from .test_util import TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED, CreateNodeFunction
-from .util import (
-    sync_blocks, sync_pop_mempools, sync_pop_tips, sync_all,
-    wait_for_rpc_availability,
-    mine_until_pop_enabled
-)
+from .sync_util import start_all_and_wait
+from .test_util import CreateNodeFunction, TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED
 
 
 class TestStatus(Enum):
@@ -57,8 +53,7 @@ class PopIntegrationTestMetaClass(type):
 class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     """Base class for a pop integration test script.
     Individual pop integration test scripts should subclass this class and override the
-    set_test_params(), run_test() and setup_network() methods.
-    Individual tests can also override setup_nodes() to customize the node setup.
+    set_test_params(), setup_nodes() and run_test() methods.
     The __init__() and main() methods should not be overridden.
     This class also contains various public and private helper methods."""
 
@@ -79,9 +74,9 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         assert hasattr(self, "num_nodes"), "Test must set self.num_nodes in set_test_params()"
 
         try:
-            self.setup(tmpdir)
-            self._create_nodes_(create_node)
-            self.setup_network()
+            self._setup(tmpdir)
+            self._create_nodes(create_node)
+            self.setup_nodes()
             self.run_test()
         except SkipTest as e:
             self.log.warning("Test Skipped: %s" % e.message)
@@ -102,10 +97,28 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
             self.log.warning("Exiting after keyboard interrupt")
             self.success = TestStatus.FAILED
         finally:
-            exit_code = self.shutdown()
+            exit_code = self._shutdown()
             sys.exit(exit_code)
 
-    def setup(self, parent):
+    @abstractmethod
+    def set_test_params(self):
+        """Tests must this method to change default values for number of nodes, topology, etc"""
+        raise NotImplementedError
+
+    @abstractmethod
+    def run_test(self):
+        """Tests must override this method to define test logic"""
+        raise NotImplementedError
+
+    def skip_test_if_missing_module(self):
+        """Override this method to skip a test if a module is not compiled"""
+        pass
+
+    def setup_nodes(self):
+        """"Override this method to customize the node setup"""
+        start_all_and_wait(self.nodes)
+
+    def _setup(self, parent):
         """Call this method to start up the test framework object with options set."""
         # Set up temp directory and start logging
         timestamp = datetime.datetime.now().strftime("%y%m%d%H%M%S")
@@ -114,62 +127,33 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         self.skip_test_if_missing_module()
         self.success = TestStatus.PASSED
 
-    def sync_blocks(self, nodes=None, **kwargs):
-        sync_blocks(nodes or self.nodes, **kwargs)
+    def _create_nodes(self, create_node: CreateNodeFunction):
+        for i in range(self.num_nodes):
+            datadir = pathlib.Path(self.dir, "node" + str(i))
+            datadir.mkdir()
+            self.nodes.append(create_node(i, datadir))
 
-    def sync_pop_mempools(self, nodes=None, **kwargs):
-        sync_pop_mempools(nodes or self.nodes, **kwargs)
+    def _start_logging(self):
+        # Add logger and logging handlers
+        self.log = logging.getLogger('TestFramework')
+        self.log.setLevel(logging.ERROR)
+        # Create file handler to log all messages
+        fh = logging.FileHandler(pathlib.Path(self.dir, 'test_framework.log'), encoding='utf-8')
+        fh.setLevel(logging.INFO)
+        # Create console handler to log messages to stderr.
+        ch = logging.StreamHandler(sys.stdout)
+        ch.setLevel(logging.ERROR)
 
-    def sync_pop_tips(self, nodes=None, **kwargs):
-        sync_pop_tips(nodes or self.nodes, **kwargs)
+        formatter = logging.Formatter(fmt='%(asctime)s.%(msecs)03d000Z %(name)s (%(levelname)s): %(message)s',
+                                      datefmt='%Y-%m-%dT%H:%M:%S')
+        formatter.converter = time.gmtime
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
+        # add the handlers to the logger
+        self.log.addHandler(fh)
+        self.log.addHandler(ch)
 
-    def sync_all(self, nodes=None, **kwargs):
-        sync_all(nodes or self.nodes, **kwargs)
-
-    def setup_nodes(self):
-        """"Override this method to customize the node setup"""
-        for node in self.nodes:
-            node.start()
-
-        for node in self.nodes:
-            wait_for_rpc_availability(node)
-
-    def skip_if_no_pypopminer(self):
-        """Attempt to import the pypopminer package and skip the test if the import fails."""
-        try:
-            import pypoptools.pypopminer  # noqa
-        except ImportError:
-            raise SkipTest("pypopminer module not available.")
-
-    def skip_test_if_missing_module(self):
-        """Override this method to skip a test if a module is not compiled"""
-        pass
-
-    @abstractmethod
-    def set_test_params(self):
-        """Tests must this method to change default values for number of nodes, topology, etc"""
-        raise NotImplementedError
-
-    def setup_network(self):
-        """
-        Default implementation of setup_network starts `num_nodes` and waits for their RPC availability.
-        """
-        self.setup_nodes()
-        mine_until_pop_enabled(self.nodes[0])
-
-        # all nodes connected and synced
-        for i in range(self.num_nodes - 1):
-            self.nodes[i + 1].connect(self.nodes[i])
-        self.sync_all()
-
-    @abstractmethod
-    def run_test(self):
-        """Tests must override this method to define test logic"""
-        raise NotImplementedError
-
-    def shutdown(self) -> int:
-        """Call this method to shut down the test framework object."""
-
+    def _shutdown(self) -> int:
         if self.nodes:
             # stop all nodes
             [x.stop() for x in self.nodes]
@@ -203,35 +187,3 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         self.nodes.clear()
 
         return exit_code
-
-    def stop_nodes(self):
-        """Stop multiple test nodes"""
-        for node in self.nodes:
-            # Issue RPC to stop nodes
-            node.stop()
-
-    def _create_nodes_(self, factory_lambda: CreateNodeFunction):
-        for i in range(self.num_nodes):
-            datadir = pathlib.Path(self.dir, "node" + str(i))
-            datadir.mkdir()
-            self.nodes.append(factory_lambda(i, datadir))
-
-    def _start_logging(self):
-        # Add logger and logging handlers
-        self.log = logging.getLogger('TestFramework')
-        self.log.setLevel(logging.ERROR)
-        # Create file handler to log all messages
-        fh = logging.FileHandler(pathlib.Path(self.dir, 'test_framework.log'), encoding='utf-8')
-        fh.setLevel(logging.INFO)
-        # Create console handler to log messages to stderr.
-        ch = logging.StreamHandler(sys.stdout)
-        ch.setLevel(logging.ERROR)
-
-        formatter = logging.Formatter(fmt='%(asctime)s.%(msecs)03d000Z %(name)s (%(levelname)s): %(message)s',
-                                      datefmt='%Y-%m-%dT%H:%M:%S')
-        formatter.converter = time.gmtime
-        fh.setFormatter(formatter)
-        ch.setFormatter(formatter)
-        # add the handlers to the logger
-        self.log.addHandler(fh)
-        self.log.addHandler(ch)

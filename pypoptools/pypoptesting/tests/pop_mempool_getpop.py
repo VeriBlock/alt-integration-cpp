@@ -3,19 +3,23 @@ Feature POP popdata max size test
 
 """
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.util import endorse_block, mine_vbk_blocks
+from ..framework.pop_util import endorse_block, mine_vbk_blocks, mine_until_pop_enabled
+from ..framework.sync_util import start_all_and_wait, connect_all, sync_all
 
 
 class PopMempoolGetpop(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
 
-    def skip_test_if_missing_module(self):
-        self.skip_if_no_pypopminer()
+    def setup_nodes(self):
+        start_all_and_wait(self.nodes)
+        mine_until_pop_enabled(self.nodes[0])
+        connect_all(self.nodes)
+        sync_all(self.nodes)
 
     def run_test(self):
         self.nodes[0].generate(nblocks=10)
-        self.sync_all(self.nodes)
+        sync_all(self.nodes)
 
         from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
@@ -48,10 +52,9 @@ class PopMempoolGetpop(PopIntegrationTestFramework):
         # endorse block last_block - 5
         last_block = self.nodes[0].getblockcount()
         assert last_block >= 5
-        addr = self.nodes[0].getnewaddress()
         for i in range(payloads_amount):
-            self.log.info("endorsing block {} on node0 by miner {}".format(last_block - 5, addr))
-            endorse_block(self.nodes[0], apm, last_block - 5, addr)
+            self.log.info("endorsing block {} on node0".format(last_block - 5))
+            endorse_block(self.nodes[0], apm, last_block - 5)
 
         # mine a block on node[1] with this pop tx
         containing_block_hash = self.nodes[0].generate(nblocks=1)[0]

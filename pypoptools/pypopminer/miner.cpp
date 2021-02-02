@@ -217,11 +217,12 @@ BOOST_PYTHON_MODULE(pypopminer) {
   init_primitives();
   init_entities();
 
-  class_<Payloads>("Payloads")
+  class_<Payloads, boost::shared_ptr<Payloads>>("Payloads")
       .def("__repr__", &Payloads::toPrettyString)
       .def("prepare", &Payloads::prepare)
       .def_readonly("atv", &Payloads::atv)
-      .def_readonly("vtbs", &Payloads::vtbs);
+      .def_readonly("vtbs", &Payloads::vtbs)
+      .def_readonly("context", &Payloads::context);
 
   // required to deal with function overloading
   BtcBlock (MockMinerProxy::*fx1)(const std::string&, size_t) =
