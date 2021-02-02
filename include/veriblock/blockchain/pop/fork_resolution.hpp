@@ -462,11 +462,11 @@ struct PopAwareForkResolutionComparator {
   bool setState(ProtectedBlockTree& ed,
                 protected_index_t& to,
                 ValidationState& state,
-                // if true, setState will be in "validation mode"
+                // if set, setState will be in "validation mode"
                 // if invalid payloads found, mark it as invalid and continue
-                bool continueOnInvalid = false) {
+                ContinueOnInvalidContext* continueOnInvalid = nullptr) {
     auto* currentActive = ed.getBestChain().tip();
-    VBK_ASSERT(currentActive && "should be bootstrapped");
+    VBK_ASSERT(currentActive != nullptr && "should be bootstrapped");
 
     VBK_ASSERT_MSG(currentActive->getHeight() + 1 ==
                        ed.getRoot().getHeight() + ed.appliedBlockCount,

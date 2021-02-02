@@ -128,7 +128,9 @@ struct PopTestFixture {
     if (index->pprev) {
       ConnectBlocksUntil(tree, index->pprev->getHash());
     }
-    return tree.addPayloads(hash, pop, state);
+
+    tree.acceptBlock(*index, pop, state);
+    return state.IsValid();
   }
 
   bool validatePayloads(const AltBlock::hash_t& block_hash,
