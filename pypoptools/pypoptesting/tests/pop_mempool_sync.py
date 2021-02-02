@@ -3,14 +3,18 @@ Test with multiple nodes, and multiple PoP endorsements, checking to make sure n
 """
 from ..framework.test_framework import PopIntegrationTestFramework
 from ..framework.pop_util import endorse_block, mine_until_pop_enabled
-from ..framework.sync_util import connect_all, sync_all, sync_pop_mempools, wait_for_rpc_availability
+from ..framework.sync_util import (
+    start_all_and_wait, connect_all,
+    sync_all, sync_pop_mempools, wait_for_rpc_availability
+)
 
 
 class PopMempoolSync(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
 
-    def setup_network(self):
+    def setup_nodes(self):
+        start_all_and_wait(self.nodes)
         mine_until_pop_enabled(self.nodes[0])
         connect_all(self.nodes)
         sync_all(self.nodes)

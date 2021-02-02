@@ -11,7 +11,7 @@ from enum import Enum
 from typing import List
 
 from .node import Node
-from .sync_util import wait_for_rpc_availability
+from .sync_util import start_all_and_wait
 from .test_util import CreateNodeFunction, TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED
 
 
@@ -53,8 +53,7 @@ class PopIntegrationTestMetaClass(type):
 class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     """Base class for a pop integration test script.
     Individual pop integration test scripts should subclass this class and override the
-    set_test_params(), setup_network() and run_test() methods.
-    Individual tests can also override setup_nodes() to customize the node setup.
+    set_test_params(), setup_nodes() and run_test() methods.
     The __init__() and main() methods should not be overridden.
     This class also contains various public and private helper methods."""
 
@@ -78,7 +77,6 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
             self._setup(tmpdir)
             self._create_nodes(create_node)
             self.setup_nodes()
-            self.setup_network()
             self.run_test()
         except SkipTest as e:
             self.log.warning("Test Skipped: %s" % e.message)
@@ -118,15 +116,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
 
     def setup_nodes(self):
         """"Override this method to customize the node setup"""
-        for node in self.nodes:
-            node.start()
-
-        for node in self.nodes:
-            wait_for_rpc_availability(node)
-
-    def setup_network(self):
-        """Override this method to define initial nodes connection and sync"""
-        pass
+        start_all_and_wait(self.nodes)
 
     def _setup(self, parent):
         """Call this method to start up the test framework object with options set."""

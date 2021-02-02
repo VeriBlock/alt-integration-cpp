@@ -16,7 +16,7 @@ After sync has been completed, expect all nodes to be on same height (fork A, bl
 from ..framework.test_framework import PopIntegrationTestFramework
 from ..framework.pop_util import create_endorsed_chain, endorse_block, mine_until_pop_enabled
 from ..framework.sync_util import (
-    connect_all, sync_all, sync_blocks, sync_pop_tips,
+    start_all_and_wait, connect_all, sync_all, sync_blocks, sync_pop_tips,
     wait_for_block_height, wait_for_rpc_availability
 )
 
@@ -25,7 +25,8 @@ class PopForkResolution(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 4
 
-    def setup_network(self):
+    def setup_nodes(self):
+        start_all_and_wait(self.nodes)
         mine_until_pop_enabled(self.nodes[0])
         connect_all(self.nodes)
         sync_all(self.nodes)

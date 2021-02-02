@@ -4,14 +4,15 @@ Feature POP popdata max size test
 """
 from ..framework.test_framework import PopIntegrationTestFramework
 from ..framework.pop_util import endorse_block, mine_vbk_blocks, mine_until_pop_enabled
-from ..framework.sync_util import connect_all, sync_all
+from ..framework.sync_util import start_all_and_wait, connect_all, sync_all
 
 
 class PopMempoolGetpop(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
 
-    def setup_network(self):
+    def setup_nodes(self):
+        start_all_and_wait(self.nodes)
         mine_until_pop_enabled(self.nodes[0])
         connect_all(self.nodes)
         sync_all(self.nodes)

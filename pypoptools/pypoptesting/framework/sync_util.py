@@ -5,6 +5,14 @@ from typing import List
 from .node import Node
 
 
+def start_all_and_wait(nodes: List[Node]):
+    for node in nodes:
+        node.start()
+
+    for node in nodes:
+        wait_for_rpc_availability(node)
+
+
 def connect_all(nodes: List[Node]):
     for i in range(len(nodes) - 1):
         nodes[i + 1].connect(nodes[i])
