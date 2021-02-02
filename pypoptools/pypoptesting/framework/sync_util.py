@@ -1,21 +1,22 @@
 import inspect
 import time
+from typing import List
 
 from .node import Node
 
 
-def connect_all(nodes: list[Node]):
+def connect_all(nodes: List[Node]):
     for i in range(len(nodes) - 1):
         nodes[i + 1].connect(nodes[i])
 
 
-def sync_all(nodes: list[Node], **kwargs):
+def sync_all(nodes: List[Node], **kwargs):
     sync_blocks(nodes, **kwargs)
     sync_pop_mempools(nodes, **kwargs)
     sync_pop_tips(nodes, **kwargs)
 
 
-def sync_blocks(nodes: list[Node], *, wait=1, timeout=60):
+def sync_blocks(nodes: List[Node], *, wait=1, timeout=60):
     """
     Wait until everybody has the same tip.
 
@@ -33,7 +34,7 @@ def sync_blocks(nodes: list[Node], *, wait=1, timeout=60):
     raise AssertionError("Block sync timed out:{}".format("".join("\n  {!r}".format(b) for b in best_hash)))
 
 
-def sync_pop_mempools(nodes: list[Node], *, wait=1, timeout=60):
+def sync_pop_mempools(nodes: List[Node], *, wait=1, timeout=60):
     """
     Wait until everybody has the same POP data in their POP mempools
     """
@@ -61,7 +62,7 @@ def sync_pop_mempools(nodes: list[Node], *, wait=1, timeout=60):
     ))
 
 
-def sync_pop_tips(nodes: list[Node], *, wait=1, timeout=10):
+def sync_pop_tips(nodes: List[Node], *, wait=1, timeout=10):
     """
     Wait until everybody has the same POP TIPS (BTC tip and VBK tip)
     """

@@ -10,6 +10,8 @@ from typing import Callable
 
 from .node import Node
 
+CreateNodeFunction = Callable[[int, pathlib.Path], Node]
+
 TEST_EXIT_PASSED = 0
 TEST_EXIT_FAILED = 1
 TEST_EXIT_SKIPPED = 77
@@ -170,7 +172,7 @@ class TestHandler:
             proc.close()
 
 
-def run_tests(test_list, create_node: Callable[[int, pathlib.Path], Node], timeout=float('inf')):
+def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
     try:
         import pypoptools.pypopminer
     except ImportError:

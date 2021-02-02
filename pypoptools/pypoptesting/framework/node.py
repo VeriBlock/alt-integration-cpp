@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 from .entities import *
 
@@ -41,7 +42,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def getpeerinfo(self) -> list[PeerInfo]:
+    def getpeerinfo(self) -> List[PeerInfo]:
         pass
 
     # Wallet
@@ -61,7 +62,7 @@ class Node(ABC):
     # Blockchain
 
     @abstractmethod
-    def generate(self, nblocks: int, address: str = None) -> list[Hexstr]:
+    def generate(self, nblocks: int, address: str = None) -> List[Hexstr]:
         pass
 
     def getbestblock(self) -> BlockWithPopData:

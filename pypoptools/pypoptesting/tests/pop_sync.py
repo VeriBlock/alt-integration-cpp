@@ -2,7 +2,7 @@
 Test with multiple nodes, and multiple PoP endorsements, checking to make sure nodes stay in sync.
 """
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.pop_util import endorse_block, mine_until_pop_enabled, KEYSTONE_INTERVAL
+from ..framework.pop_util import endorse_block, mine_until_pop_enabled
 from ..framework.sync_util import connect_all, sync_all, wait_for_block_height
 
 
@@ -19,26 +19,24 @@ class PopSync(PopIntegrationTestFramework):
         from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
 
-        addr0 = self.nodes[0].getnewaddress()
-        addr1 = self.nodes[1].getnewaddress()
-        addr2 = self.nodes[2].getnewaddress()
+        keystone_interval = self.nodes[0].getpopparams().keystoneInterval
 
         for height in range(self.nodes[0].getblockcount(), 52):
             self.nodes[0].generate(nblocks=1)
             # endorse every block
             wait_for_block_height(self.nodes[2], height)
-            self.log.info("node2 endorsing block {} by miner {}".format(height, addr2))
-            node2_atv_id = endorse_block(self.nodes[2], apm, height, addr2)
+            self.log.info("node2 endorsing block {}".format(height))
+            node2_atv_id = endorse_block(self.nodes[2], apm, height)
 
             # endorse each keystone
-            if height % KEYSTONE_INTERVAL == 0:
+            if height % keystone_interval == 0:
                 wait_for_block_height(self.nodes[0], height)
-                self.log.info("node0 endorsing block {} by miner {}".format(height, addr0))
-                node0_atv_id = endorse_block(self.nodes[0], apm, height, addr0)
+                self.log.info("node0 endorsing block {}".format(height))
+                node0_atv_id = endorse_block(self.nodes[0], apm, height)
 
                 wait_for_block_height(self.nodes[1], height)
-                self.log.info("node1 endorsing block {} by miner {}".format(height, addr1))
-                node1_atv_id = endorse_block(self.nodes[1], apm, height, addr1)
+                self.log.info("node1 endorsing block {}".format(height))
+                node1_atv_id = endorse_block(self.nodes[1], apm, height)
 
                 # wait until node[1] gets relayed pop tx
                 sync_all(self.nodes, timeout=20)

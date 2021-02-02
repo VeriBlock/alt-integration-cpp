@@ -1,7 +1,7 @@
+from typing import List
+
 from .node import Node
 from .sync_util import wait_for_block_height
-
-KEYSTONE_INTERVAL = 5
 
 
 # size = size of chain to be created
@@ -44,7 +44,7 @@ def endorse_block(node: Node, apm, height: int, address: str = None) -> str:
     return payloads.atv.getId()
 
 
-def mine_vbk_blocks(node: Node, apm, amount: int) -> list[str]:
+def mine_vbk_blocks(node: Node, apm, amount: int) -> List[str]:
     vbk_blocks = []
     for i in range(amount):
         vbk_block = apm.mineVbkBlocks(1)

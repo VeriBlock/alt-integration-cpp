@@ -4,6 +4,7 @@ import logging
 import pathlib
 import subprocess
 import tempfile
+from typing import List
 
 from .framework.bin_util import assert_dir_accessible, get_open_port
 from .framework.entities import *
@@ -164,7 +165,7 @@ class VBitcoindNode(Node):
     def getnetworkid(self) -> int:
         return 0x3ae6ca
 
-    def getpeerinfo(self) -> list[PeerInfo]:
+    def getpeerinfo(self) -> List[PeerInfo]:
         s = self.rpc.getpeerinfo()
         return [PeerInfo(
             id=x['id'],
@@ -182,7 +183,7 @@ class VBitcoindNode(Node):
         s = self.rpc.validateaddress(address)
         return s['scriptPubKey']
 
-    def generate(self, nblocks: int, address: str = None) -> list[Hexstr]:
+    def generate(self, nblocks: int, address: str = None) -> List[Hexstr]:
         address = address or self.getnewaddress()
         return self.rpc.generatetoaddress(nblocks, address)
 

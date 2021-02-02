@@ -8,11 +8,11 @@ import tempfile
 import time
 from abc import abstractmethod
 from enum import Enum
-from typing import Callable
+from typing import List
 
 from .node import Node
 from .sync_util import wait_for_rpc_availability
-from .test_util import TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED
+from .test_util import CreateNodeFunction, TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED
 
 
 class TestStatus(Enum):
@@ -61,7 +61,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     def __init__(self):
         """Sets test framework defaults. Do not override this method. Instead, override the set_test_params() method"""
         self.success: bool = False
-        self.nodes: list[Node] = []
+        self.nodes: List[Node] = []
         self.num_nodes: int = 0
         self.dir: pathlib.Path = pathlib.Path()
         self.set_test_params()
@@ -69,7 +69,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     def name(self) -> str:
         return type(self).__name__
 
-    def main(self, create_node: Callable[[int, pathlib.Path], Node], tmpdir):
+    def main(self, create_node: CreateNodeFunction, tmpdir):
         """Main function. This should not be overridden by the subclass test scripts."""
 
         assert hasattr(self, "num_nodes"), "Test must set self.num_nodes in set_test_params()"
@@ -77,7 +77,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         try:
             self._setup(tmpdir)
             self._create_nodes(create_node)
-            self._start_nodes()
+            self.setup_nodes()
             self.setup_network()
             self.run_test()
         except SkipTest as e:
@@ -116,6 +116,14 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         """Override this method to skip a test if a module is not compiled"""
         pass
 
+    def setup_nodes(self):
+        """"Override this method to customize the node setup"""
+        for node in self.nodes:
+            node.start()
+
+        for node in self.nodes:
+            wait_for_rpc_availability(node)
+
     def setup_network(self):
         """Override this method to define initial nodes connection and sync"""
         pass
@@ -129,18 +137,11 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         self.skip_test_if_missing_module()
         self.success = TestStatus.PASSED
 
-    def _create_nodes(self, create_node: Callable[[int, pathlib.Path], Node]):
+    def _create_nodes(self, create_node: CreateNodeFunction):
         for i in range(self.num_nodes):
             datadir = pathlib.Path(self.dir, "node" + str(i))
             datadir.mkdir()
             self.nodes.append(create_node(i, datadir))
-
-    def _start_nodes(self):
-        for node in self.nodes:
-            node.start()
-
-        for node in self.nodes:
-            wait_for_rpc_availability(node)
 
     def _start_logging(self):
         # Add logger and logging handlers
