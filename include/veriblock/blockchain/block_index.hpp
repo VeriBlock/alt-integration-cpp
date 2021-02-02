@@ -39,6 +39,25 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) a set of pointers for forward iteration
   std::set<BlockIndex*> pnext{};
 
+  //! (memory only) if true, this block can not be reorganized
+  bool finalized = false;
+
+  ~BlockIndex() {
+    // make sure we deleted this block from prev->pnext
+    if (pprev != nullptr) {
+      pprev->pnext.erase(this);
+    }
+
+    // make sure we deleted this block from next blocks pprev.
+    // it is ok to deallocate a block in a middle of chain. we will detect
+    // orphaned blocks and cleanup later.
+    for (auto* next : pnext) {
+      if (next != nullptr) {
+        next->pprev = nullptr;
+      }
+    }
+  }
+
   /**
    * Block is connected if it contains block body (PopData), and all its
    * ancestors are connected.
@@ -296,7 +315,7 @@ struct BlockIndex : public Block::addon_t {
  * the complexity is O(n)
  */
 template <typename Block>
-BlockIndex<Block>& getForkBlock(BlockIndex<Block>& a, BlockIndex<Block>& b) {
+BlockIndex<Block>* getForkBlock(BlockIndex<Block>& a, BlockIndex<Block>& b) {
   const auto initialHeight = std::min(a.getHeight(), b.getHeight());
 
   for (auto cursorA = a.getAncestor(initialHeight),
@@ -308,10 +327,41 @@ BlockIndex<Block>& getForkBlock(BlockIndex<Block>& a, BlockIndex<Block>& b) {
     }
   }
 
-  VBK_ASSERT_MSG(false,
-                 "blocks %s and %s must be part of the same tree",
-                 a.toPrettyString(),
-                 b.toPrettyString());
+  // chain `b` is not connected to `a`
+  return nullptr;
+}
+
+//! a `candidate` is considered outdated iff it is behind `finalBlock`, or on
+//! same height and not equal to `finalBlock`, or its fork block is outdated
+template <typename Block>
+bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
+                     const BlockIndex<Block>& candidate) {
+  // all candidates behind final block are outdated
+  if (candidate->getHeight() < finalBlock->getHeight()) {
+    return true;
+  }
+
+  // all parallel blocks (on same height as final, but not final) are outdated
+  if (candidate->getHeight() == finalBlock->getHeight() &&
+      &finalBlock != &candidate) {
+    return true;
+  }
+
+  // candidate is after finalBlock
+  if (candidate.getAncestor(&finalBlock) == &finalBlock) {
+    return false;
+  }
+
+  // candidate is on a fork
+  auto* fork = getForkBlock(finalBlock, candidate);
+
+  // candidate does not connect to finalBlock
+  if (fork == nullptr) {
+    return true;
+  }
+
+  // if fork block is outdated, then candidate is also outdated
+  return isBlockOutdated(finalBlock, fork);
 }
 
 template <typename Block>

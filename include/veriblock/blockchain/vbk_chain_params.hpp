@@ -58,6 +58,13 @@ struct VbkChainParams {
     return 400;
   }
 
+  //! when finalizeBlock is called, this many blocks behind final block will be
+  //! preserved in RAM.
+  //! In VBK this number depends on
+  uint32_t preserveAncestorsBehindFinal() const noexcept {
+    return getEndorsementSettlementInterval();
+  }
+
  protected:
   uint32_t mMaxFutureBlockTime = 5 * 60;  // 5 min
   std::vector<uint32_t> forkResolutionLookUpTable_{
