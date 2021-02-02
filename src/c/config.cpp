@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "bytestream.hpp"
 #include "config.hpp"
-
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
@@ -202,4 +202,9 @@ uint32_t VBK_GetKeystoneInterval(Config_t* params) {
 }
 uint32_t VBK_GetMaxAltchainFutureBlockTime(Config_t* params) {
   return params->config->alt->mMaxAltchainFutureBlockTime;
+}
+
+VBK_ByteStream* VBK_AltGetBootstrapBlock(Config_t* params) {
+  return new VbkByteStream(altintegration::SerializeToVbkEncoding(
+      params->config->alt->getBootstrapBlock()));
 }

@@ -199,3 +199,8 @@ func (v *Config) GetMaxAltchainFutureBlockTime() uint32 {
 	res := C.VBK_GetMaxAltchainFutureBlockTime(v.ref)
 	return uint32(res)
 }
+
+func (v *Config) AltGetBootstrapBlock() *VbkByteStream {
+	res := C.VBK_AltGetBootstrapBlock(v.ref)
+	return NewVbkByteStream(res)
+}
