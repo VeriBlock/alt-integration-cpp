@@ -91,13 +91,24 @@ struct RocksDBWriteBatch : public WriteBatch {
 };
 
 struct RocksDBStorage : public Storage {
-  ~RocksDBStorage() override { delete db_; }
+  ~RocksDBStorage() override {
+    if (db_ != nullptr) {
+      delete db_;
+    }
+  }
 
   RocksDBStorage(const std::string& path) {
     rocksdb::Options options;
+    options.IncreaseParallelism();
+    options.OptimizeLevelStyleCompaction();
     options.create_if_missing = true;
+
+    db_ = nullptr;
     rocksdb::Status status = rocksdb::DB::Open(options, path, &db_);
-    VBK_ASSERT_MSG(status.ok(), status.getState());
+    if (!status.ok()) {
+      throw altintegration::StorageIOException(fmt::format(
+          "failed to open rocksdb storage, err: %s", status.ToString()));
+    }
   }
 
   void write(const std::vector<uint8_t>& key,
