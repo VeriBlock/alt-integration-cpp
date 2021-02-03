@@ -10,6 +10,7 @@ from .pop_params import PopParams
 from .pop_sync import PopSync
 from .popfr_shorter_chain_wins import PopForkResolutionShorterChainWins
 from .preflight_checks import PreflightChecks
+from .restart_and_sync import RestartAndSync
 
 all_tests = [
     ConnectAndSync(),
@@ -23,5 +24,6 @@ all_tests = [
     PopParams(),
     PopSync(),
     PopForkResolutionShorterChainWins(),
-    PreflightChecks()
+    PreflightChecks(),
+    RestartAndSync()
 ]
