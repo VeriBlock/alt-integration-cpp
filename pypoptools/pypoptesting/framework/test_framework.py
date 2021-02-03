@@ -157,6 +157,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         if self.nodes:
             # stop all nodes
             [x.stop() for x in self.nodes]
+            time.sleep(5)
 
         for h in list(self.log.handlers):
             h.flush()
