@@ -139,7 +139,7 @@ class VBitcoindNode(Node):
 
     def connect(self, node):
         ip_port = "{}:{}".format(BIND_TO, node.p2p_port)
-        self.rpc.addnode(ip_port, 'add')
+        self.rpc.addnode(ip_port, 'onetry')
         # poll until version handshake complete to avoid race conditions
         # with transaction relaying
         wait_until(lambda: all(peer['version'] != 0 for peer in self.rpc.getpeerinfo()))
