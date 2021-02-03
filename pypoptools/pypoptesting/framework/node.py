@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -25,6 +26,7 @@ class Node(ABC):
 
     def restart(self) -> None:
         self.stop()
+        time.sleep(5)
         self.start()
 
     # Network
