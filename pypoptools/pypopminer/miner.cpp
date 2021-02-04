@@ -217,7 +217,7 @@ BOOST_PYTHON_MODULE(pypopminer) {
   init_primitives();
   init_entities();
 
-  class_<Payloads>("Payloads")
+  class_<Payloads, boost::shared_ptr<Payloads>>("Payloads")
       .def("__repr__", &Payloads::toPrettyString)
       .def("prepare", &Payloads::prepare)
       .def_readonly("atv", &Payloads::atv)
