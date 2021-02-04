@@ -1,5 +1,4 @@
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.sync_util import wait_for_rpc_availability
 
 
 class PreflightChecks(PopIntegrationTestFramework):
@@ -26,7 +25,6 @@ class PreflightChecks(PopIntegrationTestFramework):
         assert balance1 < balance2
 
         self.nodes[0].restart()
-        wait_for_rpc_availability(self.nodes[0])
 
         best3 = self.nodes[0].getbestblockhash()
         assert best != best3

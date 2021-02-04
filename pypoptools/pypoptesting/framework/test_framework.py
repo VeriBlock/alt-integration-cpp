@@ -11,7 +11,7 @@ from enum import Enum
 from typing import List
 
 from .node import Node
-from .sync_util import start_all_and_wait
+from .sync_util import start_all
 from .test_util import CreateNodeFunction, TEST_EXIT_PASSED, TEST_EXIT_SKIPPED, TEST_EXIT_FAILED
 
 
@@ -116,7 +116,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
 
     def setup_nodes(self):
         """"Override this method to customize the node setup"""
-        start_all_and_wait(self.nodes)
+        start_all(self.nodes)
 
     def _setup(self, parent):
         """Call this method to start up the test framework object with options set."""
@@ -157,7 +157,6 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         if self.nodes:
             # stop all nodes
             [x.stop() for x in self.nodes]
-            time.sleep(5)
 
         for h in list(self.log.handlers):
             h.flush()

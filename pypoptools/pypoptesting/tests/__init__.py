@@ -13,17 +13,17 @@ from .preflight_checks import PreflightChecks
 from .restart_and_sync import RestartAndSync
 
 all_tests = [
-    ConnectAndSync(),
-    PopActivate(),
-    PopE2E(),
     PopForkResolution(),
-    PopInit(),
     PopMempoolGetpop(),
-    PopMempoolReorg(),
-    PopMempoolSync(),
-    PopParams(),
-    PopSync(),
-    PopForkResolutionShorterChainWins(),
+    PopInit(),
+    PopActivate(),
     PreflightChecks(),
-    RestartAndSync()
+    PopE2E(),
+    PopMempoolSync(),
+    PopSync(),
+    PopMempoolReorg(),
+    RestartAndSync(),
+    ConnectAndSync(),
+    PopForkResolutionShorterChainWins(),
+    PopParams(),
 ]
