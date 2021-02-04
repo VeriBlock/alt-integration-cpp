@@ -1,5 +1,5 @@
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.sync_util import connect_all, sync_all, wait_for_block_height, wait_for_rpc_availability
+from ..framework.sync_util import connect_all, sync_all, wait_for_block_height
 
 
 class RestartAndSync(PopIntegrationTestFramework):
@@ -16,7 +16,6 @@ class RestartAndSync(PopIntegrationTestFramework):
         assert self.nodes[0].getblockcount() == 100
 
         self.nodes[0].restart()
-        wait_for_rpc_availability(self.nodes[0])
 
         assert self.nodes[0].getblockcount() == 100
 

@@ -5,12 +5,9 @@ from typing import List
 from .node import Node
 
 
-def start_all_and_wait(nodes: List[Node]):
+def start_all(nodes: List[Node]):
     for node in nodes:
         node.start()
-
-    for node in nodes:
-        wait_for_rpc_availability(node)
 
 
 def connect_all(nodes: List[Node]):
@@ -92,10 +89,6 @@ def sync_pop_tips(nodes: List[Node], *, wait=1, timeout=10):
         "".join("\n  {!r}".format(m) for m in btc),
         "".join("\n  {!r}".format(m) for m in vbk),
     ))
-
-
-def wait_for_rpc_availability(node: Node, timeout=60):
-    wait_until(lambda: node.isrpcavailable(), timeout=timeout)
 
 
 def wait_for_block_height(node: Node, height: int, timeout=60):

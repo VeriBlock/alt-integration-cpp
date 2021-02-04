@@ -99,20 +99,10 @@ class VBitcoindNode(Node):
         self.running = True
         self.log.debug("vbitcoind started, waiting for RPC to come up")
 
-    def stop(self) -> None:
-        """Stop the node."""
-        if not self.running:
-            return
-        self.log.debug("Stopping node")
-        self.running = False
+        self.wait_until_started()
 
-        try:
-            self.rpc.stop(wait=0)
-        except http.client.CannotSendRequest:
-            self.log.exception("Unable to stop node.")
-
-        self.stdout.close()
-        self.stderr.close()
+    def wait_until_started(self) -> None:
+        wait_until(lambda: self.isrpcavailable(), timeout=60)
 
     def isstarted(self) -> bool:
         if not self.process:
@@ -136,6 +126,40 @@ class VBitcoindNode(Node):
         except Exception as e:
             self.log.debug("No RPC connection... {}".format(e))
             return False
+
+    def stop(self) -> None:
+        """Stop the node."""
+        if not self.running:
+            return
+        self.log.debug("Stopping node")
+
+        try:
+            self.rpc.stop(wait=0)
+        except http.client.CannotSendRequest:
+            self.log.exception("Unable to stop node.")
+
+        self.stdout.close()
+        self.stderr.close()
+
+        self.wait_until_stopped()
+
+    def wait_until_stopped(self,):
+        wait_until(self.is_node_stopped, timeout=60)
+
+    def is_node_stopped(self):
+        if not self.running:
+            return True
+        return_code = self.process.poll()
+        if return_code is None:
+            return False
+
+        # process has stopped. Assert that it didn't return an error code.
+        assert return_code == 0, \
+            "[node{}] Node returned non-zero exit code ({}) when stopping".format(self.number, return_code)
+        self.running = False
+        self.process = None
+        self.log.debug("Node stopped")
+        return True
 
     def connect(self, node):
         ip_port = "{}:{}".format(BIND_TO, node.p2p_port)
