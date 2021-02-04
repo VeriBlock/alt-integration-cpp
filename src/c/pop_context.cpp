@@ -7,6 +7,7 @@
 #ifdef WITH_ROCKSDB
 #include "adaptors/rocksdb_impl.hpp"
 #endif
+#include "adaptors/inmem_storage_impl.hpp"
 #include "bytestream.hpp"
 #include "config.hpp"
 #include "pop_context.hpp"
@@ -27,9 +28,13 @@ PopContext* VBK_NewPopContext(Config_t* config, const char* db_path) {
 
   auto* v = new PopContext();
 
+  if (std::string(db_path) == std::string(":inmem:")) {
+    v->storage = std::make_shared<adaptors::InmemStorageImpl>();
+  } else {
 #ifdef WITH_ROCKSDB
-  v->storage = std::make_shared<adaptors::RocksDBStorage>(db_path);
+    v->storage = std::make_shared<adaptors::RocksDBStorage>(db_path);
 #endif
+  }
 
   VBK_ASSERT_MSG(
       v->storage,
