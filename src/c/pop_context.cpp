@@ -28,7 +28,7 @@ PopContext* VBK_NewPopContext(Config_t* config, const char* db_path) {
 
   auto* v = new PopContext();
 
-  if (db_path == ":inmem:") {
+  if (std::strcmp(db_path, ":inmem:") == 0) {
     v->storage = std::make_shared<adaptors::InmemStorageImpl>();
   } else {
 #ifdef WITH_ROCKSDB

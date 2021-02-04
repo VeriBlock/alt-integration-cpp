@@ -38,7 +38,7 @@ struct InmemStorageIterator : public StorageIterator {
 
   void seek_start() override { it_ = storage_.begin(); }
 
-  void seek(const std::vector<uint8_t>& val) {
+  void seek(const std::vector<uint8_t>& val) override {
     it_ = storage_.begin();
     for (; it_ != storage_.end(); ++it_) {
       if (is_sub_vec(it_->first, val)) {
