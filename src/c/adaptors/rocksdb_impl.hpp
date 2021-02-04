@@ -19,29 +19,9 @@ struct RocksDBStorageIterator : public StorageIterator {
 
   RocksDBStorageIterator(rocksdb::Iterator* it) : it_(it) {}
 
-  bool value(std::vector<uint8_t>& out) const override {
-    if (!it_->Valid()) {
-      return false;
-    }
-    auto value_slice = it_->value();
-    out.resize(value_slice.size());
-    for (size_t i = 0; i < value_slice.size(); ++i) {
-      out[i] = value_slice[i];
-    }
-    return true;
-  }
+  bool value(std::vector<uint8_t>& out) const override;
 
-  bool key(std::vector<uint8_t>& out) const override {
-    if (!it_->Valid()) {
-      return false;
-    }
-    auto key_slice = it_->key();
-    out.resize(key_slice.size());
-    for (size_t i = 0; i < key_slice.size(); ++i) {
-      out[i] = key_slice[i];
-    }
-    return true;
-  }
+  bool key(std::vector<uint8_t>& out) const override;
 
   void next() override { it_->Next(); }
 
@@ -49,10 +29,7 @@ struct RocksDBStorageIterator : public StorageIterator {
 
   void seek_start() override { it_->SeekToFirst(); }
 
-  void seek(const std::vector<uint8_t>& val) override {
-    rocksdb::Slice val_slice((char*)val.data(), val.size());
-    it_->Seek(val_slice);
-  }
+  void seek(const std::vector<uint8_t>& val) override;
 
  private:
   rocksdb::Iterator* it_;
@@ -65,24 +42,9 @@ struct RocksDBWriteBatch : public WriteBatch {
       : db_(db), write_options_(write_options) {}
 
   void write(const std::vector<uint8_t>& key,
-             const std::vector<uint8_t>& value) override {
-    rocksdb::Slice key_slice((char*)key.data(), key.size());
-    rocksdb::Slice value_slice((char*)value.data(), value.size());
-    rocksdb::Status status = batch_.Put(key_slice, value_slice);
-    if (!status.ok()) {
-      throw altintegration::StorageIOException(fmt::format(
-          "failed to write into the storage, err: %s", status.ToString()));
-    }
-  }
+             const std::vector<uint8_t>& value) override;
 
-  void writeBatch() override {
-    rocksdb::Status status = db_.Write(write_options_, &batch_);
-    if (!status.ok()) {
-      throw altintegration::StorageIOException(
-          fmt::format("failed to write batch into the storage, err: %s",
-                      status.ToString()));
-    }
-  }
+  void writeBatch() override;
 
  private:
   rocksdb::DB& db_;
@@ -91,50 +53,15 @@ struct RocksDBWriteBatch : public WriteBatch {
 };
 
 struct RocksDBStorage : public Storage {
-  ~RocksDBStorage() override {
-    if (db_ != nullptr) {
-      delete db_;
-    }
-  }
+  ~RocksDBStorage() override;
 
-  RocksDBStorage(const std::string& path) {
-    rocksdb::Options options;
-    options.IncreaseParallelism();
-    options.OptimizeLevelStyleCompaction();
-    options.create_if_missing = true;
-
-    db_ = nullptr;
-    rocksdb::Status status = rocksdb::DB::Open(options, path, &db_);
-    if (!status.ok()) {
-      throw altintegration::StorageIOException(fmt::format(
-          "failed to open rocksdb storage, err: %s", status.ToString()));
-    }
-  }
+  RocksDBStorage(const std::string& path);
 
   void write(const std::vector<uint8_t>& key,
-             const std::vector<uint8_t>& value) override {
-    rocksdb::Slice key_slice((char*)key.data(), key.size());
-    rocksdb::Slice value_slice((char*)value.data(), value.size());
-
-    rocksdb::Status status = db_->Put(write_options_, key_slice, value_slice);
-    if (!status.ok()) {
-      throw altintegration::StorageIOException(fmt::format(
-          "failed to write into the storage, err: %s", status.ToString()));
-    }
-  }
+             const std::vector<uint8_t>& value) override;
 
   bool read(const std::vector<uint8_t>& key,
-            std::vector<uint8_t>& value) override {
-    rocksdb::Slice key_slice((char*)key.data(), key.size());
-    std::string str_value;
-
-    rocksdb::Status status = db_->Get(read_options_, key_slice, &str_value);
-    value.resize(str_value.size());
-    for (size_t i = 0; i < str_value.size(); ++i) {
-      value[i] = str_value[i];
-    }
-    return status.ok();
-  }
+            std::vector<uint8_t>& value) override;
 
   std::shared_ptr<WriteBatch> generateWriteBatch() override {
     return std::make_shared<RocksDBWriteBatch>(*db_, write_options_);
