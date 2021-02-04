@@ -19,7 +19,8 @@ struct VbkBlockTreeTestFixture : public ::testing::Test {
   void endorseVBK(size_t height) {
     auto* endorsedIndex = popminer.vbk().getBestChain()[(int32_t)height];
     ASSERT_TRUE(endorsedIndex);
-    auto btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedIndex->getHeader());
+    auto btctx =
+        popminer.createBtcTxEndorsingVbkBlock(endorsedIndex->getHeader());
     auto btccontaining = popminer.mineBtcBlocks(1, {btctx});
     auto vbkpoptx = popminer.createVbkPopTxEndorsingVbkBlock(
         btccontaining->getHeader(),
@@ -62,50 +63,73 @@ TEST_F(VbkBlockTreeTestFixture, FilterChainForForkResolution) {
   popminer.mineVbkBlocks(1);
   ASSERT_EQ(best.blocksCount(), numVbkBlocks + 11);
 
-  auto protoContext =
-      getProtoKeystoneContext(best, popminer.btc(), popminer.getVbkParams());
+  auto hashes = best.getAllHashesInChain();
 
-  EXPECT_EQ(protoContext.size(),
+  auto protoContext = getProtoKeystoneContext(
+      20, best, hashes, popminer.btc(), popminer.getVbkParams());
+
+  EXPECT_EQ(protoContext.blockHeight, 20);
+  EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
+
+  protoContext = getProtoKeystoneContext(
+      40, best, hashes, popminer.btc(), popminer.getVbkParams());
+  EXPECT_EQ(protoContext.blockHeight, 40);
+  EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
+
+  protoContext = getProtoKeystoneContext(
+      60, best, hashes, popminer.btc(), popminer.getVbkParams());
+  EXPECT_EQ(protoContext.blockHeight, 60);
+  EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
+
+  protoContext = getProtoKeystoneContext(
+      80, best, hashes, popminer.btc(), popminer.getVbkParams());
+  EXPECT_EQ(protoContext.blockHeight, 80);
+  EXPECT_EQ(protoContext.referencedByBlocks.size(), 4);
+
+  protoContext = getProtoKeystoneContext(
+      100, best, hashes, popminer.btc(), popminer.getVbkParams());
+  EXPECT_EQ(protoContext.blockHeight, 100);
+  EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
+
+  protoContext = getProtoKeystoneContext(
+      120, best, hashes, popminer.btc(), popminer.getVbkParams());
+  EXPECT_EQ(protoContext.blockHeight, 120);
+  EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
+
+  protoContext = getProtoKeystoneContext(
+      140, best, hashes, popminer.btc(), popminer.getVbkParams());
+  EXPECT_EQ(protoContext.blockHeight, 140);
+  EXPECT_EQ(protoContext.referencedByBlocks.size(), 2);
+
+  protoContext = getProtoKeystoneContext(
+      160, best, hashes, popminer.btc(), popminer.getVbkParams());
+  EXPECT_EQ(protoContext.blockHeight, 160);
+  EXPECT_EQ(protoContext.referencedByBlocks.size(), 3);
+
+  internal::ReducedPublicationView reducedPublicationView{
+      best, popminer.getVbkParams(), popminer.btc()};
+
+  EXPECT_EQ(reducedPublicationView.size(),
             numVbkBlocks / popminer.getVbkParams().getKeystoneInterval());
 
-  EXPECT_EQ(protoContext[0].blockHeight, 20);
-  EXPECT_EQ(protoContext[0].referencedByBlocks.size(), 0);
-  EXPECT_EQ(protoContext[1].blockHeight, 40);
-  EXPECT_EQ(protoContext[1].referencedByBlocks.size(), 0);
-  EXPECT_EQ(protoContext[2].blockHeight, 60);
-  EXPECT_EQ(protoContext[2].referencedByBlocks.size(), 0);
-  EXPECT_EQ(protoContext[3].blockHeight, 80);
-  EXPECT_EQ(protoContext[3].referencedByBlocks.size(), 4);
-  EXPECT_EQ(protoContext[4].blockHeight, 100);
-  EXPECT_EQ(protoContext[4].referencedByBlocks.size(), 0);
-  EXPECT_EQ(protoContext[5].blockHeight, 120);
-  EXPECT_EQ(protoContext[5].referencedByBlocks.size(), 0);
-  EXPECT_EQ(protoContext[6].blockHeight, 140);
-  EXPECT_EQ(protoContext[6].referencedByBlocks.size(), 2);
-  EXPECT_EQ(protoContext[7].blockHeight, 160);
-  EXPECT_EQ(protoContext[7].referencedByBlocks.size(), 3);
+  auto max = internal::NO_ENDORSEMENT;
 
-  auto keystoneContext = getKeystoneContext(protoContext, popminer.btc());
-  EXPECT_EQ(keystoneContext.size(),
-            numVbkBlocks / popminer.getVbkParams().getKeystoneInterval());
-
-  auto max = (std::numeric_limits<int32_t>::max)();
-  EXPECT_EQ(keystoneContext[0].blockHeight, 20);
-  EXPECT_EQ(keystoneContext[0].firstBlockPublicationHeight, max);
-  EXPECT_EQ(keystoneContext[1].blockHeight, 40);
-  EXPECT_EQ(keystoneContext[1].firstBlockPublicationHeight, max);
-  EXPECT_EQ(keystoneContext[2].blockHeight, 60);
-  EXPECT_EQ(keystoneContext[2].firstBlockPublicationHeight, max);
-  EXPECT_EQ(keystoneContext[3].blockHeight, 80);
-  EXPECT_EQ(keystoneContext[3].firstBlockPublicationHeight, 6);
-  EXPECT_EQ(keystoneContext[4].blockHeight, 100);
-  EXPECT_EQ(keystoneContext[4].firstBlockPublicationHeight, max);
-  EXPECT_EQ(keystoneContext[5].blockHeight, 120);
-  EXPECT_EQ(keystoneContext[5].firstBlockPublicationHeight, max);
-  EXPECT_EQ(keystoneContext[6].blockHeight, 140);
-  EXPECT_EQ(keystoneContext[6].firstBlockPublicationHeight, 4);
-  EXPECT_EQ(keystoneContext[7].blockHeight, 160);
-  EXPECT_EQ(keystoneContext[7].firstBlockPublicationHeight, 1);
+  EXPECT_EQ(reducedPublicationView[20]->blockHeight, 20);
+  EXPECT_EQ(reducedPublicationView[20]->firstBlockPublicationHeight, max);
+  EXPECT_EQ(reducedPublicationView[40]->blockHeight, 40);
+  EXPECT_EQ(reducedPublicationView[40]->firstBlockPublicationHeight, max);
+  EXPECT_EQ(reducedPublicationView[60]->blockHeight, 60);
+  EXPECT_EQ(reducedPublicationView[60]->firstBlockPublicationHeight, max);
+  EXPECT_EQ(reducedPublicationView[80]->blockHeight, 80);
+  EXPECT_EQ(reducedPublicationView[80]->firstBlockPublicationHeight, 6);
+  EXPECT_EQ(reducedPublicationView[100]->blockHeight, 100);
+  EXPECT_EQ(reducedPublicationView[100]->firstBlockPublicationHeight, max);
+  EXPECT_EQ(reducedPublicationView[120]->blockHeight, 120);
+  EXPECT_EQ(reducedPublicationView[120]->firstBlockPublicationHeight, max);
+  EXPECT_EQ(reducedPublicationView[140]->blockHeight, 140);
+  EXPECT_EQ(reducedPublicationView[140]->firstBlockPublicationHeight, 4);
+  EXPECT_EQ(reducedPublicationView[160]->blockHeight, 160);
+  EXPECT_EQ(reducedPublicationView[160]->firstBlockPublicationHeight, 1);
 }
 
 TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
@@ -144,8 +168,8 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   auto vbkPopTx4 = generatePopTx(endorsedVbkBlock4->getHeader());
   auto vbkPopTx5 = generatePopTx(endorsedVbkBlock5->getHeader());
 
-  vbkBlockTip = popminer.mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2, vbkPopTx3,
-                                           vbkPopTx4, vbkPopTx5});
+  vbkBlockTip = popminer.mineVbkBlocks(
+      1, {vbkPopTx1, vbkPopTx2, vbkPopTx3, vbkPopTx4, vbkPopTx5});
 
   ASSERT_EQ(popminer.vbk().getBestChain().tip()->getHash(),
             vbkBlockTip->getHash());
@@ -185,10 +209,9 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   ASSERT_GT(vbkPopTx1.blockOfProofContext.size(), 0);
   vbkPopTx1.blockOfProofContext[0].previousBlock = uint256(new_hash);
 
-  EXPECT_THROW(
-      popminer.mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2, vbkPopTx3,
-                                 vbkPopTx4, vbkPopTx5}),
-      std::domain_error);
+  EXPECT_THROW(popminer.mineVbkBlocks(
+                   1, {vbkPopTx1, vbkPopTx2, vbkPopTx3, vbkPopTx4, vbkPopTx5}),
+               std::domain_error);
 
   // check that all endorsement have not been applied
   ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);

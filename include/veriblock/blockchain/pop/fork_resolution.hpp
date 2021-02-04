@@ -38,6 +38,10 @@ struct ProtoKeystoneContext {
 };
 
 //! @private
+// FIXME: we don't use block height
+// FIXME: this is really asking to be converted to an optional(but it isn't
+// available in C++14) or a pseudo-optional where firstBlockPublicationHeight ==
+// NO_ENDORSEMENT is the check for the missing value
 struct KeystoneContext {
   int blockHeight;
   int firstBlockPublicationHeight;
@@ -62,212 +66,204 @@ int getConsensusScoreFromRelativeBlockStartingAtZero(int64_t relativeBlock,
   return config.getForkResolutionLookUpTable()[relativeBlock];
 }
 
-//! @private
-struct KeystoneContextList {
-  std::vector<KeystoneContext> ctx;
-  const int keystoneInterval;
-
-  KeystoneContextList(const std::vector<KeystoneContext>& c, int keystoneInt)
-      : ctx(c), keystoneInterval(keystoneInt) {
-    VBK_ASSERT(
-        std::is_sorted(ctx.begin(),
-                       ctx.end(),
-                       [](const KeystoneContext& a, const KeystoneContext& b) {
-                         return a.blockHeight < b.blockHeight;
-                       }));
-  }
-
-  size_t size() const { return ctx.size(); }
-
-  bool empty() const { return ctx.empty(); }
-
-  int firstKeystone() const { return ctx.front().blockHeight; }
-
-  int lastKeystone() const { return ctx.back().blockHeight; }
-
-  void chopAtKeystone(int keystoneToChop) {
-    VBK_ASSERT_MSG(
-        keystoneToChop >= firstKeystone(),
-        "Cannot chop a keystone context to %d when its first keystone is %d",
-        keystoneToChop,
-        firstKeystone());
-    VBK_ASSERT(isKeystone(keystoneToChop, keystoneInterval));
-
-    if (ctx.empty()) {
-      return;
-    }
-
-    if (keystoneToChop > lastKeystone()) {
-      return;
-    }
-
-    // erase all keystone contexts >= 'keystoneToChop'
-    auto newend = std::remove_if(
-        ctx.begin(), ctx.end(), [keystoneToChop](const KeystoneContext& kc) {
-          return kc.blockHeight >= keystoneToChop;
-        });
-
-    ctx.erase(newend, ctx.end());
-  }
-
-  const KeystoneContext* getKeystone(int blockNumber) const {
-    VBK_ASSERT_MSG(
-        isKeystone(blockNumber, keystoneInterval),
-        "getKeystone can not be called with a non-keystone block number");
-
-    if (blockNumber < this->firstKeystone()) {
-      return nullptr;
-    }
-
-    if (blockNumber > this->lastKeystone()) {
-      return nullptr;
-    }
-
-    auto it = std::find_if(
-        ctx.begin(), ctx.end(), [blockNumber](const KeystoneContext& kc) {
-          return kc.blockHeight == blockNumber;
-        });
-
-    if (it == ctx.end()) {
-      return nullptr;
-    }
-
-    return &*it;
-  }
-};
+constexpr int NO_ENDORSEMENT = (std::numeric_limits<int32_t>::max)();
 
 template <typename ProtectingBlockT, typename ProtectingChainParams>
-std::vector<KeystoneContext> getKeystoneContext(
-    const std::vector<ProtoKeystoneContext<ProtectingBlockT>>& chain,
+KeystoneContext getKeystoneContext(
+    const ProtoKeystoneContext<ProtectingBlockT>& pkc,
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree) {
-  std::vector<KeystoneContext> ret;
-  ret.reserve(chain.size());
-  for (const auto& pkc : chain) {
-    int earliestEndorsementIndex = (std::numeric_limits<int32_t>::max)();
-    for (const auto* btcIndex : pkc.referencedByBlocks) {
-      if (btcIndex == nullptr) {
-        continue;
-      }
+  int earliestEndorsementIndex = NO_ENDORSEMENT;
+  for (const auto* btcIndex : pkc.referencedByBlocks) {
+    if (btcIndex == nullptr) {
+      continue;
+    }
 
-      auto endorsementIndex = btcIndex->getHeight();
-      if (endorsementIndex >= earliestEndorsementIndex) {
-        continue;
-      }
+    auto endorsementIndex = btcIndex->getHeight();
+    if (endorsementIndex >= earliestEndorsementIndex) {
+      continue;
+    }
 
-      bool EnableTimeAdjustment = tree.getParams().EnableTimeAdjustment();
-      if (!EnableTimeAdjustment ||
-          pkc.timestampOfEndorsedBlock < btcIndex->getBlockTime()) {
-        earliestEndorsementIndex = endorsementIndex;
-        continue;
-      }
+    bool EnableTimeAdjustment = tree.getParams().EnableTimeAdjustment();
+    if (!EnableTimeAdjustment ||
+        pkc.timestampOfEndorsedBlock < btcIndex->getBlockTime()) {
+      earliestEndorsementIndex = endorsementIndex;
+      continue;
+    }
 
-      // look at the future BTC blocks and set the--0
-      // earliestEndorsementIndex to a future Bitcoin block
-      auto best = tree.getBestChain();
-      for (int adjustedEndorsementIndex = endorsementIndex + 1;
-           adjustedEndorsementIndex <= best.chainHeight();
-           adjustedEndorsementIndex++) {
-        // Ensure that the keystone's block time isn't later than the
-        // block time of the Bitcoin block it's endorsed in
-        auto* index = best[adjustedEndorsementIndex];
-        VBK_ASSERT(index != nullptr);
-        if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
-          // Timestamp of VeriBlock block is lower than Bitcoin block,
-          // set this as the adjusted index if another lower index has
-          // not already been set
-          if (adjustedEndorsementIndex < earliestEndorsementIndex) {
-            earliestEndorsementIndex = adjustedEndorsementIndex;
-          }
+    // look at the future BTC blocks and set the
+    // earliestEndorsementIndex to a future Bitcoin block
+    auto best = tree.getBestChain();
+    for (int adjustedEndorsementIndex = endorsementIndex + 1;
+         adjustedEndorsementIndex <= best.chainHeight();
+         adjustedEndorsementIndex++) {
+      // Ensure that the keystone's block time isn't later than the
+      // block time of the Bitcoin block it's endorsed in
+      auto* index = best[adjustedEndorsementIndex];
+      VBK_ASSERT(index != nullptr);
+      if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
+        // Timestamp of VeriBlock block is lower than Bitcoin block,
+        // set this as the adjusted index if another lower index has
+        // not already been set
+        if (adjustedEndorsementIndex < earliestEndorsementIndex) {
+          earliestEndorsementIndex = adjustedEndorsementIndex;
+        }
 
-          // Always break; we found a valid Bitcoin index and any
-          // future adjustedEndorsementIndex is going to be higher
-          break;
-        }  // end if
-      }    // end for
-    }      // end for
+        // Always break; we found a valid Bitcoin index and any
+        // future adjustedEndorsementIndex is going to be higher
+        break;
+      }  // end if
+    }    // end for
+  }      // end for
 
-    ret.push_back(KeystoneContext{pkc.blockHeight, earliestEndorsementIndex});
-  }
-
-  return ret;
+  return {pkc.blockHeight, earliestEndorsementIndex};
 }
 
 template <typename ProtectedBlockT,
           typename ProtectingBlockT,
           typename ProtectingChainParams,
           typename ProtectedChainParams>
-std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
+ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
+    int keystoneToConsider,
     const Chain<BlockIndex<ProtectedBlockT>>& chain,
+    const std::unordered_set<typename ProtectedBlockT::hash_t>&
+        allHashesInChain,
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree,
     const ProtectedChainParams& config) {
-  std::vector<ProtoKeystoneContext<ProtectingBlockT>> ret;
-
   auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
-  VBK_ASSERT(tip != nullptr && "tip must not be nullptr");
+  VBK_ASSERT(tip != nullptr && "chain must not be empty");
 
+  auto highestConnectingBlock =
+      highestBlockWhichConnectsKeystoneToPrevious(keystoneToConsider, ki);
   auto highestPossibleEndorsedBlockHeaderHeight = tip->getHeight();
-  auto lastKeystone = highestKeystoneAtOrBefore(tip->getHeight(), ki);
-  auto firstKeystone = firstKeystoneAfter(chain.first()->getHeight(), ki);
-  const auto allHashesInChain = chain.getAllHashesInChain();
+  auto highestEndorsedBlock = std::min(
+      highestConnectingBlock, highestPossibleEndorsedBlockHeaderHeight);
 
-  // For each keystone, find the endorsements of itself and other blocks which
+  ProtoKeystoneContext<ProtectingBlockT> pkc(
+      keystoneToConsider, chain[keystoneToConsider]->getBlockTime());
+
+  // Find the endorsements of the keystone block and other blocks which
   // reference it, and look at the earliest Bitcoin block that any of those
   // endorsements are contained within.
-  for (auto keystoneToConsider = firstKeystone;
-       keystoneToConsider <= lastKeystone;
-       keystoneToConsider = firstKeystoneAfter(keystoneToConsider, ki)) {
-    ProtoKeystoneContext<ProtectingBlockT> pkc(
-        keystoneToConsider, chain[keystoneToConsider]->getBlockTime());
+  for (auto relevantEndorsedBlock = keystoneToConsider;
+       relevantEndorsedBlock <= highestEndorsedBlock;
+       relevantEndorsedBlock++) {
+    auto* index = chain[relevantEndorsedBlock];
 
-    auto highestConnectingBlock =
-        highestBlockWhichConnectsKeystoneToPrevious(keystoneToConsider, ki);
-    for (auto relevantEndorsedBlock = keystoneToConsider;
-         relevantEndorsedBlock <= highestConnectingBlock &&
-         relevantEndorsedBlock <= highestPossibleEndorsedBlockHeaderHeight;
-         relevantEndorsedBlock++) {
-      auto* index = chain[relevantEndorsedBlock];
+    // chain must contain relevantEndorsedBlock
+    VBK_ASSERT(index != nullptr);
 
-      // chain must contain relevantEndorsedBlock
-      VBK_ASSERT(index != nullptr);
+    for (const auto* e : index->endorsedBy) {
+      if (!allHashesInChain.count(e->containingHash)) {
+        // do not count endorsement whose containingHash is not on the same
+        // chain as 'endorsedHash'
+        continue;
+      }
 
-      for (const auto* e : index->endorsedBy) {
-        if (!allHashesInChain.count(e->containingHash)) {
-          // do not count endorsement whose containingHash is not on the same
-          // chain as 'endorsedHash'
-          continue;
-        }
+      auto* ind = tree.getBlockIndex(e->blockOfProof);
+      VBK_ASSERT(ind != nullptr &&
+                 "state corruption: could not find the block of proof of "
+                 "an applied endorsement");
+      if (!tree.getBestChain().contains(ind)) {
+        continue;
+      }
 
-        auto* ind = tree.getBlockIndex(e->blockOfProof);
-        VBK_ASSERT(ind != nullptr &&
-                   "state corruption: could not find the block of proof of "
-                   "an applied endorsement");
-        if (!tree.getBestChain().contains(ind)) {
-          continue;
-        }
+      // include only endorsements that are on best chain of protecting chain,
+      // and whose 'containingHash' is on the same chain as 'endorsedHash'
+      pkc.referencedByBlocks.insert(ind);
 
-        // include only endorsements that are on best chain of protecting chain,
-        // and whose 'containingHash' is on the same chain as 'endorsedHash'
-        pkc.referencedByBlocks.insert(ind);
+    }  // end for
+  }    // end for
 
-      }  // end for
-    }    // end for
-
-    ret.push_back(std::move(pkc));
-  }  // end for
-
-  return ret;
+  return pkc;
 }
 
-template <typename ProtectedChainConfig>
-int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
-                        const std::vector<KeystoneContext>& chainB,
-                        const ProtectedChainConfig& config) {
-  VBK_ASSERT(config.getKeystoneInterval() > 0);
-  auto ki = config.getKeystoneInterval();
-  KeystoneContextList a(chainA, ki);
-  KeystoneContextList b(chainB, ki);
+//! @private
+// AKA KeystoneContextList
+template <typename ProtectedBlockT,
+          typename ProtectingBlockT,
+          typename ProtectingChainParams,
+          typename ProtectedChainParams>
+struct ReducedPublicationView {
+  using protecting_block_t = ProtectingBlockT;
+  using protected_block_t = ProtectedBlockT;
+  using protecting_chain_params_t = ProtectingChainParams;
+  using protected_chain_params_t = ProtectedChainParams;
+  using protected_chain_t = Chain<BlockIndex<protected_block_t>>;
+  using protecting_tree_t =
+      BlockTree<protecting_block_t, protecting_chain_params_t>;
 
+  const protected_chain_params_t& config;
+  const int keystoneInterval;
+  const protected_chain_t& chain;
+
+  // FIXME: get rid of this hack
+  std::unordered_set<typename protected_chain_t::hash_t> allHashesInChain;
+
+  const protecting_tree_t& protectingTree;
+
+  const int firstKeystoneHeight;
+  const int lastKeystoneHeight;
+
+  KeystoneContext currentKeystoneContext;  // FIXME: UGLY
+
+  ReducedPublicationView(const protected_chain_t& _chain,
+                         const protected_chain_params_t& _config,
+                         const protecting_tree_t& _tree)
+      : config(_config),
+        keystoneInterval(config.getKeystoneInterval()),
+        chain(_chain),
+        allHashesInChain(chain.getAllHashesInChain()),
+        protectingTree(_tree),
+        firstKeystoneHeight(
+            firstKeystoneAfter(chain.first()->getHeight(), keystoneInterval)),
+        lastKeystoneHeight(highestKeystoneAtOrBefore(chain.tip()->getHeight(),
+                                                     keystoneInterval)) {
+    VBK_ASSERT(keystoneInterval > 0);
+  }
+
+  const protected_chain_params_t& getConfig() const { return config; }
+
+  size_t size() const {
+    return blockHeightToKeystoneNumber(lastKeystone(), keystoneInterval) -
+           blockHeightToKeystoneNumber(firstKeystone(), keystoneInterval) + 1;
+  }
+
+  bool empty() const { return size() == 0; }
+
+  int firstKeystone() const { return firstKeystoneHeight; }
+
+  int lastKeystone() const { return lastKeystoneHeight; }
+
+  int nextKeystoneAfter(int keystoneHeight) const {
+    return keystoneHeight + keystoneInterval;
+  }
+
+  const KeystoneContext* operator[](int blockHeight) {
+    return getKeystone(blockHeight);
+  }
+
+  const KeystoneContext* getKeystone(int blockHeight) {
+    VBK_ASSERT_MSG(
+        isKeystone(blockHeight, keystoneInterval),
+        "getKeystone can not be called with a non-keystone block height");
+
+    if (blockHeight < firstKeystone() || blockHeight > lastKeystone()) {
+      return nullptr;
+    }
+
+    // FIXME: there's no need to store the intermediate list of blocks and thus
+    // no need for ProtoKeystoneContext entity
+    auto pkc = getProtoKeystoneContext(
+        blockHeight, chain, allHashesInChain, protectingTree, config);
+
+    currentKeystoneContext = getKeystoneContext(pkc, protectingTree);
+    return &currentKeystoneContext;
+  }
+};
+
+template <typename PublicationView>
+int comparePopScoreImpl(PublicationView& a, PublicationView& b) {
   if (a.empty() && b.empty()) {
     return 0;
   }
@@ -282,8 +278,6 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
     return 1;
   }
 
-  VBK_ASSERT(!chainA.empty());
-  VBK_ASSERT(!chainB.empty());
   VBK_LOG_DEBUG(
       "Comparing POP scores of chains A(first=%d, tip=%d) "
       "and B(first=%d, tip=%d)",
@@ -296,102 +290,106 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
   VBK_ASSERT(earliestKeystone == b.firstKeystone());
   int latestKeystone = (std::max)(a.lastKeystone(), b.lastKeystone());
 
+  auto& config = a.getConfig();
+  VBK_ASSERT(&config == &b.getConfig());  // FIXME: comparing pointers is UGLY
   // clang-format off
-  // If either chain has a keystone the other chain is missing, chop the other chain
+  // If either chain has a keystone the other chain is missing, the other chain
+  // goes outside finality.
   //
   // Example:
   // Chain A has keystones VBK20:BTC100, VBK40:BTC101, VBK60:BTC103, VBK100:BTC104
   // Chain B has keystones VBK20:BTC100, VBK40:BTC101, VBK100:BTC102
   //
   // Chain A has keystone 60 but chain B does not, so Chain B is
-  // chopped to VBK20:BTC100, VBK40:BTC101. Also chop a chain which contains a
-  // keystone which violates the Bitcoin finality delay based on the previous
-  // keystone in the chain.
+  // chopped to VBK20:BTC100, VBK40:BTC101.
+  
+  // Also, the chain goes out of finality if it contains a keystone which violates
+  // the Bitcoin finality delay based on the previous keystone in the chain.
   // clang-format on
-  for (int keystoneToCompare = earliestKeystone;
-       keystoneToCompare <= latestKeystone;
-       keystoneToCompare += ki) {
-    auto* A = a.getKeystone(keystoneToCompare);
-    auto* B = b.getKeystone(keystoneToCompare);
-
-    if (A == nullptr && B == nullptr) {
-      // both chains are missing keystone at this height, ignore...
-      continue;
-    } else if (B == nullptr) {
-      // chain B is missing the keystone but A isn't, chop B after this point
-      b.chopAtKeystone(keystoneToCompare);
-    } else if (A == nullptr) {
-      // chain A is missing the keystone but B isn't, chop A after this point
-      a.chopAtKeystone(keystoneToCompare);
-    } else {
-      // both chains have a keystone at this height
-      // can't check first keystone for violating Bitcoin finality delay
-      auto* Aprev = a.getKeystone(keystoneToCompare - ki);
-      auto* Bprev = b.getKeystone(keystoneToCompare - ki);
-
-      // Aprev could be null if keystoneToCompare is right after an allowed gap,
-      // and Bitcoin finality delay violations cannot (and should not) be
-      // checked
-      if (Aprev != nullptr &&
-          publicationViolatesFinality(A->firstBlockPublicationHeight,
-                                      Aprev->firstBlockPublicationHeight,
-                                      config)) {
-        a.chopAtKeystone(keystoneToCompare);
-      }
-
-      // Bprev could be null if keystoneToCompare is right after an allowed gap,
-      // and Bitcoin finality delay violations cannot (and should not) be
-      // checked
-      if (Bprev != nullptr &&
-          publicationViolatesFinality(B->firstBlockPublicationHeight,
-                                      Bprev->firstBlockPublicationHeight,
-                                      config)) {
-        b.chopAtKeystone(keystoneToCompare);
-      }
-    }
-  }
 
   bool aOutsideFinality = false;
   bool bOutsideFinality = false;
   int chainAscore = 0;
   int chainBscore = 0;
+  int previousPublicationA = NO_ENDORSEMENT;
+  int previousPublicationB = NO_ENDORSEMENT;
+
   for (int keystoneToCompare = earliestKeystone;
        keystoneToCompare <= latestKeystone;
-       keystoneToCompare += ki) {
-    auto* actx = a.getKeystone(keystoneToCompare);
-    auto* bctx = b.getKeystone(keystoneToCompare);
+       keystoneToCompare = a.nextKeystoneAfter(keystoneToCompare)) {
+    auto* actx = aOutsideFinality ? nullptr : a.getKeystone(keystoneToCompare);
+    auto* bctx = bOutsideFinality ? nullptr : b.getKeystone(keystoneToCompare);
 
-    if (aOutsideFinality) {
+    int earliestPublicationA =
+        actx == nullptr ? NO_ENDORSEMENT : actx->firstBlockPublicationHeight;
+    int earliestPublicationB =
+        bctx == nullptr ? NO_ENDORSEMENT : bctx->firstBlockPublicationHeight;
+
+    // if keystoneToCompare is right after a gap, publicationViolatesFinality
+    // will return false, thus we only compare the finality delay violations
+    // between endorsements that exist
+    if (actx != nullptr &&
+        publicationViolatesFinality(
+            earliestPublicationA, previousPublicationA, config)) {
+      aOutsideFinality = true;
       actx = nullptr;
+      VBK_LOG_DEBUG(
+          "Chain A is outside finality: the gap between adjacent keystone "
+          "endorsements is too large");
     }
+    previousPublicationA = earliestPublicationA;
 
-    if (bOutsideFinality) {
+    if (bctx != nullptr &&
+        publicationViolatesFinality(
+            earliestPublicationB, previousPublicationB, config)) {
+      bOutsideFinality = true;
       bctx = nullptr;
+      VBK_LOG_DEBUG(
+          "Chain B is outside finality: the gap between adjacent keystone "
+          "endorsements is too large");
     }
+    previousPublicationB = earliestPublicationB;
 
+    // if both chains are missing keystone at this height, ignore
+    // if both are outside finality, break
     if (actx == nullptr && bctx == nullptr) {
+      if (aOutsideFinality && bOutsideFinality) {
+        break;
+      }
       continue;
     }
 
     if (actx == nullptr) {
       chainBscore += config.getForkResolutionLookUpTable()[0];
       // Nothing added to chainA; it doesn't have an endorsed keystone at
-      // this height (or any additional height) Optimization note: if chainB
-      // score is greater than A here, we can exit early as A will not have
-      // any additional points
+      // this height (or any additional height)
+
+      // chain A is missing the keystone that chain B isn't
+      aOutsideFinality = true;
+
+      if (chainBscore > chainAscore) {
+        // exit early as the score of A will stay the same
+        break;
+      }
 
       continue;
     }
 
     if (bctx == nullptr) {
       chainAscore += config.getForkResolutionLookUpTable()[0];
-      // Optimization note: if chainA score is greater than B here, we can
-      // exit early as B will not have any additional points
+
+      // chain B is missing the keystone that chain A isn't
+      bOutsideFinality = true;
+
+      if (chainAscore > chainBscore) {
+        // exit early as the score of chain B will stay the same
+        break;
+      }
+
       continue;
     }
 
-    int earliestPublicationA = actx->firstBlockPublicationHeight;
-    int earliestPublicationB = bctx->firstBlockPublicationHeight;
+    // both chains have a keystone at this height
 
     int earliestPublicationOfEither =
         (std::min)(earliestPublicationA, earliestPublicationB);
@@ -403,18 +401,14 @@ int comparePopScoreImpl(const std::vector<KeystoneContext>& chainA,
 
     if (publicationViolatesFinality(
             earliestPublicationA, earliestPublicationB, config)) {
-      VBK_LOG_DEBUG("Chain A is outside finality");
+      VBK_LOG_DEBUG("Chain A is outside finality: way behind chain B");
       aOutsideFinality = true;
     }
 
     if (publicationViolatesFinality(
             earliestPublicationB, earliestPublicationA, config)) {
-      VBK_LOG_DEBUG("Chain B is outside finality");
+      VBK_LOG_DEBUG("Chain B is outside finality: way behind chain A");
       bOutsideFinality = true;
-    }
-
-    if (aOutsideFinality && bOutsideFinality) {
-      break;
     }
   }
 
@@ -441,6 +435,12 @@ struct PopAwareForkResolutionComparator {
                                ProtectedBlockTree,
                                BlockIndex<protected_block_t>,
                                protected_params_t>;
+
+  using reduced_publication_view_t =
+      internal::ReducedPublicationView<protected_block_t,
+                                       protecting_block_t,
+                                       protecting_params_t,
+                                       protected_params_t>;
 
   PopAwareForkResolutionComparator(std::shared_ptr<ProtectingBlockTree> tree,
                                    const protected_params_t& protectedParams,
@@ -598,25 +598,13 @@ struct PopAwareForkResolutionComparator {
 
     // now the tree contains payloads from both chains
 
-    // rename
-    const auto& filter1 = internal::getProtoKeystoneContext<protected_block_t,
-                                                            protecting_block_t,
-                                                            protecting_params_t,
-                                                            protected_params_t>;
-    const auto& filter2 =
-        internal::getKeystoneContext<protecting_block_t, protecting_params_t>;
+    auto reducedPublicationViewA =
+        reduced_publication_view_t(chainA, *protectedParams_, *ing_);
+    auto reducedPublicationViewB =
+        reduced_publication_view_t(chainB, *protectedParams_, *ing_);
 
-    // filter chainA
-    auto pkcChain1 = filter1(chainA, *ing_, *protectedParams_);
-    auto kcChain1 = filter2(pkcChain1, *ing_);
-
-    // filter chainB
-    auto pkcChain2 = filter1(chainB, *ing_, *protectedParams_);
-    auto kcChain2 = filter2(pkcChain2, *ing_);
-
-    // current tree contains both chains.
-    int result = internal::comparePopScoreImpl<protected_params_t>(
-        kcChain1, kcChain2, *protectedParams_);
+    int result = internal::comparePopScoreImpl(reducedPublicationViewA,
+                                               reducedPublicationViewB);
     if (result >= 0) {
       // chain A remains the best one. unapply B and leave A applied
       auto guard = ing_->deferForkResolutionGuard();

@@ -20,10 +20,8 @@ TEST_F(PopVbkForkResolution, DISABLED_TooLateToAddPayloads) {
   popminer->mineVbkBlocks(2);
 
   // generate a VTB
-  auto vbkpoptx =
-      popminer->createVbkPopTxEndorsingVbkBlock(
-          popminer->vbk().getBestChain()[1]->getHeader(),
-          getLastKnownBtcBlock());
+  auto vbkpoptx = popminer->createVbkPopTxEndorsingVbkBlock(
+      popminer->vbk().getBestChain()[1]->getHeader(), getLastKnownBtcBlock());
 
   auto limit = popminer->getVbkParams().getHistoryOverwriteLimit();
   auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
@@ -62,11 +60,11 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   auto Abtccontaining1 = popminer->mineBtcBlocks(1, {Atx1});
   ASSERT_TRUE(popminer->btc().getBestChain().contains(Abtccontaining1));
 
-  auto Apoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      Abtccontaining1->getHeader(),
-      Atx1,
-      chainAtip->getHeader(),
-      GetRegTestBtcBlock().getHash());
+  auto Apoptx1 =
+      popminer->createVbkPopTxEndorsingVbkBlock(Abtccontaining1->getHeader(),
+                                                Atx1,
+                                                chainAtip->getHeader(),
+                                                GetRegTestBtcBlock().getHash());
 
   // state is still at chain B
   ASSERT_EQ(popminer->vbk().getBestChain().tip(), chainBtip);
@@ -87,11 +85,11 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
   auto Bbtccontaining1 = popminer->mineBtcBlocks(1, {Btx1});
   ASSERT_TRUE(popminer->btc().getBestChain().contains(Bbtccontaining1));
 
-  auto Bpoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      Bbtccontaining1->getHeader(),
-      Btx1,
-      B60->getHeader(),
-      GetRegTestBtcBlock().getHash());
+  auto Bpoptx1 =
+      popminer->createVbkPopTxEndorsingVbkBlock(Bbtccontaining1->getHeader(),
+                                                Btx1,
+                                                B60->getHeader(),
+                                                GetRegTestBtcBlock().getHash());
 
   popminer->mineVbkBlocks(1, *chainBtip, {Bpoptx1});
 
@@ -119,11 +117,11 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
 
   auto* btcBlockTip2 = popminer->mineBtcBlocks(1, *btcForkPoint, {Atx1});
 
-  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      btcBlockTip2->getHeader(),
-      Atx1,
-      vbkBlockTip->getHeader(),
-      GetRegTestBtcBlock().getHash());
+  auto vbkPopTx1 =
+      popminer->createVbkPopTxEndorsingVbkBlock(btcBlockTip2->getHeader(),
+                                                Atx1,
+                                                vbkBlockTip->getHeader(),
+                                                GetRegTestBtcBlock().getHash());
 
   // Test the same case but in the getProtoKeystoneContext() function
   // make btcBlockTtip2 active chain tip
@@ -137,19 +135,22 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
 
   Chain<BlockIndex<VbkBlock>> chain(0, vbkBlockTip);
 
-  auto context = internal::getProtoKeystoneContext(
-      chain, popminer->btc(), popminer->getVbkParams());
+  internal::ReducedPublicationView reducedPublicationView{
+      chain, popminer->getVbkParams(), popminer->btc()};
 
-  EXPECT_EQ(context[context.size() - 1].referencedByBlocks.size(), 1);
+  EXPECT_NE(
+      reducedPublicationView.getKeystone(reducedPublicationView.lastKeystone())
+          ->firstBlockPublicationHeight,
+      internal::NO_ENDORSEMENT);
 
   // change active chain to the another branch
   btcBlockTip1 = popminer->mineBtcBlocks(90, *btcBlockTip1);
   ASSERT_TRUE(cmp(*popminer->btc().getBestChain().tip(), *btcBlockTip1));
 
-  context = internal::getProtoKeystoneContext(
-      chain, popminer->btc(), popminer->getVbkParams());
-
-  EXPECT_EQ(context[context.size() - 1].referencedByBlocks.size(), 0);
+  EXPECT_EQ(
+      reducedPublicationView.getKeystone(reducedPublicationView.lastKeystone())
+          ->firstBlockPublicationHeight,
+      internal::NO_ENDORSEMENT);
 }
 
 TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
@@ -191,11 +192,11 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
   btcBlockTip1 = popminer->mineBtcBlocks(1, {Atx1});
   EXPECT_TRUE(cmp(*btcBlockTip1, *popminer->btc().getBestChain().tip()));
 
-  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      btcBlockTip1->getHeader(),
-      Atx1,
-      endorsedVbkBlock->getHeader(),
-      GetRegTestBtcBlock().getHash());
+  auto vbkPopTx1 =
+      popminer->createVbkPopTxEndorsingVbkBlock(btcBlockTip1->getHeader(),
+                                                Atx1,
+                                                endorsedVbkBlock->getHeader(),
+                                                GetRegTestBtcBlock().getHash());
 
   auto vbktip1 = popminer->vbk().getBestChain().tip();
   // should not throw, as we removed call to 'invalidateSubtree'
@@ -234,21 +235,21 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
   ASSERT_EQ(btcBlockTip1->getHash(),
             popminer->btc().getBestChain().tip()->getHash());
 
-  auto vbkPopTxA = popminer->createVbkPopTxEndorsingVbkBlock(
-      btcBlockTip1->getHeader(),
-      Atx1,
-      endorsedVbkBlock->getHeader(),
-      GetRegTestBtcBlock().getHash());
+  auto vbkPopTxA =
+      popminer->createVbkPopTxEndorsingVbkBlock(btcBlockTip1->getHeader(),
+                                                Atx1,
+                                                endorsedVbkBlock->getHeader(),
+                                                GetRegTestBtcBlock().getHash());
 
   // mine the first endorsement
   popminer->mineVbkBlocks(1, {vbkPopTxA});
   ASSERT_EQ(endorsedVbkBlock->endorsedBy.size(), 1);
 
-  auto vbkPopTxB = popminer->createVbkPopTxEndorsingVbkBlock(
-      btcBlockTip1->getHeader(),
-      Atx1,
-      endorsedVbkBlock->getHeader(),
-      GetRegTestBtcBlock().getHash());
+  auto vbkPopTxB =
+      popminer->createVbkPopTxEndorsingVbkBlock(btcBlockTip1->getHeader(),
+                                                Atx1,
+                                                endorsedVbkBlock->getHeader(),
+                                                GetRegTestBtcBlock().getHash());
 
   // mine another copy of the same endorsement
 
