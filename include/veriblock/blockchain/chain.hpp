@@ -138,10 +138,8 @@ struct Chain {
     std::unordered_set<hash_t> ret;
     ret.reserve(chain.size());
 
-    auto* current = tip();
-    while (current) {
-      ret.insert(current->getHash());
-      current = current->pprev;
+    for (auto* block : *this) {
+      ret.emplace(block->getHash());
     }
 
     return ret;
