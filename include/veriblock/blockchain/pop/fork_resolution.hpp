@@ -218,7 +218,7 @@ std::vector<ProtoKeystoneContext<ProtectingBlockT>> getProtoKeystoneContext(
        keystoneToConsider <= lastKeystone;
        keystoneToConsider = firstKeystoneAfter(keystoneToConsider, ki)) {
     ProtoKeystoneContext<ProtectingBlockT> pkc(
-        keystoneToConsider, chain[keystoneToConsider]->getHeight());
+        keystoneToConsider, chain[keystoneToConsider]->getBlockTime());
 
     auto highestConnectingBlock =
         highestBlockWhichConnectsKeystoneToPrevious(keystoneToConsider, ki);
