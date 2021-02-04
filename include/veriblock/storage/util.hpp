@@ -51,12 +51,30 @@ bool LoadBlocks(BlockTreeT& tree,
 
 template <typename BlockTreeT>
 void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
+  using index_t = typename BlockTreeT::index_t;
+  std::vector<const index_t*> dirty_indices;
+
+  // map pair<hash, shared_ptr<index_t>> to vector<index_t*>
   for (auto& block : tree.getBlocks()) {
     auto& index = block.second;
     if (index->isDirty()) {
       index->unsetDirty();
-      batch.writeBlock(*index);
+      dirty_indices.push_back(index.get());
     }
+  }
+
+  // sort by height in descending order, because we need to calculate index hash
+  // during saving. this is needed to be progpow-cache friendly, as cache will
+  // be warm for last blocks.
+  std::sort(dirty_indices.begin(),
+            dirty_indices.end(),
+            [](const index_t* a, const index_t* b) {
+              return b->getHeight() < a->getHeight();
+            });
+
+  // write indices
+  for (const index_t* index : dirty_indices) {
+    batch.writeBlock(*index);
   }
 
   batch.writeTip(*tree.getBestChain().tip());
