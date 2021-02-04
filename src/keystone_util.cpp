@@ -18,6 +18,11 @@ int32_t highestKeystoneAtOrBefore(int32_t blockNumber,
   return blockNumber - diff;
 }
 
+int32_t blockHeightToKeystoneNumber(int32_t blockHeight,
+                                    uint32_t keystoneInterval) {
+  return blockHeight / keystoneInterval;
+}
+
 bool isKeystone(int32_t blockNumber, uint32_t keystoneInterval) {
   VBK_ASSERT_MSG(blockNumber >= 0,
                  "can not be called with a negative block "
