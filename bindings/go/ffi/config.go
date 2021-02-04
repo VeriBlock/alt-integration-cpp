@@ -157,3 +157,50 @@ func (v *Config) GetMaxPopDataSize() uint32 {
 	res := C.VBK_GetMaxPopDataSize(v.ref)
 	return uint32(res)
 }
+
+// GetMaxVbkBlocksInAltBlock ...
+func (v *Config) GetMaxVbkBlocksInAltBlock() int {
+	res := C.VBK_GetMaxVbkBlocksInAltBlock(v.ref)
+	return int(res)
+}
+
+// GetMaxVTBsInAltBlock ...
+func (v *Config) GetMaxVTBsInAltBlock() int {
+	res := C.VBK_GetMaxVTBsInAltBlock(v.ref)
+	return int(res)
+}
+
+// GetMaxATVsInAltBlock ...
+func (v *Config) GetMaxATVsInAltBlock() int {
+	res := C.VBK_GetMaxATVsInAltBlock(v.ref)
+	return int(res)
+}
+
+// GetEndorsementSettlementInterval ...
+func (v *Config) GetEndorsementSettlementInterval() int32 {
+	res := C.VBK_GetEndorsementSettlementInterval(v.ref)
+	return int32(res)
+}
+
+// GetFinalityDelay ...
+func (v *Config) GetFinalityDelay() uint32 {
+	res := C.VBK_GetFinalityDelay(v.ref)
+	return uint32(res)
+}
+
+// GetKeystoneInterval ...
+func (v *Config) GetKeystoneInterval() uint32 {
+	res := C.VBK_GetKeystoneInterval(v.ref)
+	return uint32(res)
+}
+
+// GetMaxAltchainFutureBlockTime ...
+func (v *Config) GetMaxAltchainFutureBlockTime() uint32 {
+	res := C.VBK_GetMaxAltchainFutureBlockTime(v.ref)
+	return uint32(res)
+}
+
+func (v *Config) AltGetBootstrapBlock() *VbkByteStream {
+	res := C.VBK_AltGetBootstrapBlock(v.ref)
+	return NewVbkByteStream(res)
+}

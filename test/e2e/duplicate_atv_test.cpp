@@ -173,6 +173,5 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   payloads.atvs.push_back(payloads.atvs.at(0));
 
   // should fail due to payloads being statelessly invalid(duplicate ids)
-  ASSERT_FALSE(AddPayloads(chain[100].getHash(), payloads));
-  ASSERT_TRUE(state.IsInvalid());
+  ASSERT_DEATH(AddPayloads(chain[100].getHash(), payloads), "checkPopDataForDuplicates");
 }

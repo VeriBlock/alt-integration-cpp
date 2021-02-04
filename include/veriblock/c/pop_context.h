@@ -61,29 +61,6 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
                                   VbkValidationState* state);
 
 /**
- * @copybrief altintegration::AltBlockTree::addPayloads
- * @see altintegration::AltBlockTree::addPayloads
- * @param[in] self PopContext
- * @param[in] hash_bytes altintegration::AltBlock hash bytes of block where to
- * add the block body
- * @param[in] hash_bytes_size hash bytes size
- * @param[in] payloads_bytes altintegration::PopData raw represantation of all
- * POP payloads stored in this block
- * @param[in] payloads_bytes_size payloads bytes size
- * @param[out] state VbkValidationState
- * @return true if altintegration::PopData does not contain duplicates (searched
- * across active chain). However, it is far from certain that it is completely
- * valid.
- * @ingroup c-api
- */
-bool VBK_AltBlockTree_addPayloads(PopContext* self,
-                                  const uint8_t* hash_bytes,
-                                  int hash_bytes_size,
-                                  const uint8_t* payloads_bytes,
-                                  int payloads_bytes_size,
-                                  VbkValidationState* state);
-
-/**
  * @copybrief altintegration::AltBlockTree::loadTip
  * @see altintegration::AltBlockTree::loadTip
  * @param[in] self PopContext

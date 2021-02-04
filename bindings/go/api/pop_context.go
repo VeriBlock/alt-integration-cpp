@@ -15,7 +15,6 @@ import (
 type AltBlockTree interface {
 	AcceptBlockHeader(block *entities.AltBlock) error
 	AcceptBlock(hash entities.AltHash, payloads *entities.PopData) error
-	AddPayloads(hash entities.AltHash, payloads *entities.PopData) error
 	LoadTip(hash entities.AltHash) error
 	ComparePopScore(hashA entities.AltHash, hashB entities.AltHash) int
 	RemoveSubtree(hash entities.AltHash)
@@ -53,7 +52,7 @@ type MemPool interface {
 	SubmitVtbBytes(data []byte) (int, error)
 	SubmitVbk(block *entities.VbkBlock) (int, error)
 	SubmitVbkBytes(data []byte) (int, error)
-	GetPop() (*entities.PopData, error)
+	GetPopData() (*entities.PopData, error)
 	RemoveAll(payloads *entities.PopData) error
 	GetAtv(id entities.AtvID) (*entities.Atv, error)
 	GetVtb(id entities.VtbID) (*entities.Vtb, error)
@@ -111,6 +110,10 @@ func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
 
 // AcceptBlock - POP payloads stored in this block
 func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopData) error {
+	if payloads == nil {
+		payloads = entities.GetEmptyPopData()
+	}
+
 	stream := new(bytes.Buffer)
 	err := payloads.ToVbkEncoding(stream)
 	if err != nil {
@@ -120,21 +123,6 @@ func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopDa
 	state := ffi.NewValidationState()
 	defer state.Free()
 	v.popContext.AltBlockTreeAcceptBlock(hash, stream.Bytes(), state)
-	return state.Error()
-}
-
-// AddPayloads - Returns nil if PopData does not contain duplicates (searched across active chain).
-// However, it is far from certain that it is completely valid
-func (v *PopContext) AddPayloads(hash entities.AltHash, payloads *entities.PopData) error {
-	stream := new(bytes.Buffer)
-	err := payloads.ToVbkEncoding(stream)
-	if err != nil {
-		return err
-	}
-	defer v.lock()()
-	state := ffi.NewValidationState()
-	defer state.Free()
-	v.popContext.AltBlockTreeAddPayloads(hash, stream.Bytes(), state)
 	return state.Error()
 }
 
@@ -472,7 +460,7 @@ func (v *PopContext) SubmitVbkBytes(data []byte) (int, error) {
 }
 
 // GetPop ...
-func (v *PopContext) GetPop() (*entities.PopData, error) {
+func (v *PopContext) GetPopData() (*entities.PopData, error) {
 	defer v.lock()()
 	popBytes := v.popContext.MemPoolGetPop()
 	stream := bytes.NewReader(popBytes)

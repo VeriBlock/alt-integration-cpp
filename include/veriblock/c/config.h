@@ -9,6 +9,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "veriblock/c/bytestream.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -60,6 +62,14 @@ void VBK_SetForkResolutionLookupTable(Config_t* params,
 void VBK_SetPopPayoutDelay(Config_t* params, int32_t val);
 
 uint32_t VBK_GetMaxPopDataSize(Config_t* params);
+uint32_t VBK_GetMaxVbkBlocksInAltBlock(Config_t* params);
+uint32_t VBK_GetMaxVTBsInAltBlock(Config_t* params);
+uint32_t VBK_GetMaxATVsInAltBlock(Config_t* params);
+int32_t VBK_GetEndorsementSettlementInterval(Config_t* params);
+uint32_t VBK_GetFinalityDelay(Config_t* params);
+uint32_t VBK_GetKeystoneInterval(Config_t* params);
+uint32_t VBK_GetMaxAltchainFutureBlockTime(Config_t* params);
+VBK_ByteStream* VBK_AltGetBootstrapBlock(Config_t* params);
 
 #ifdef __cplusplus
 }  // end of extern "C"

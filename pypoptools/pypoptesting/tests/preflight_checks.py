@@ -1,6 +1,5 @@
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.test_util import assert_greater_than, assert_not_equal
-from ..framework.util import wait_for_rpc_availability
+from ..framework.sync_util import wait_for_rpc_availability
 
 
 class PreflightChecks(PopIntegrationTestFramework):
@@ -8,26 +7,26 @@ class PreflightChecks(PopIntegrationTestFramework):
         self.num_nodes = 1
 
     def run_test(self):
-        assert self.nodes[0].is_started()
-        assert self.nodes[0].is_rpc_available()
+        assert self.nodes[0].isstarted()
+        assert self.nodes[0].isrpcavailable()
 
         addr = self.nodes[0].getnewaddress()
         self.log.info("new address={}".format(addr))
 
         best = self.nodes[0].getbestblockhash()
-        balance1 = self.nodes[0].getbalance(addr)
+        balance1 = self.nodes[0].getbalance()
 
         N = 500
         self.log.info("generating {} blocks...".format(N))
         self.nodes[0].generate(N, addr)
         best2 = self.nodes[0].getbestblockhash()
-        balance2 = self.nodes[0].getbalance(addr)
+        balance2 = self.nodes[0].getbalance()
 
-        assert_not_equal(best, best2)
-        assert_greater_than(balance2, balance1)
+        assert best != best2
+        assert balance1 < balance2
 
         self.nodes[0].restart()
         wait_for_rpc_availability(self.nodes[0])
 
         best3 = self.nodes[0].getbestblockhash()
-        assert_not_equal(best, best3)
+        assert best != best3

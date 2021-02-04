@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
 
 
 @dataclass
@@ -161,3 +161,9 @@ class RawPopMempoolResponse:
     vbkblocks: List[Hexstr]
     vtbs: List[Hexstr]
     atvs: List[Hexstr]
+
+
+@dataclass
+class PeerInfo:
+    id: int
+    banscore: int

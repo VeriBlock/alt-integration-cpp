@@ -77,8 +77,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   altPayloads.vtbs.push_back(vtb);
 
   EXPECT_TRUE(test_alttree.acceptBlockHeader(containingAltBlock, state));
-  ASSERT_TRUE(test_alttree.addPayloads(
-      containingAltBlock.getHash(), altPayloads, state));
+  test_alttree.acceptBlock(containingAltBlock.getHash(), altPayloads);
   EXPECT_FALSE(test_alttree.setState(containingAltBlock.getHash(), state));
 
   // all payloads are marked valid as there's no correctly implemented

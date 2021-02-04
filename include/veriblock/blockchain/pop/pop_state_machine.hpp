@@ -13,6 +13,8 @@
 #include <veriblock/storage/payloads_index.hpp>
 #include <veriblock/storage/payloads_provider.hpp>
 
+#include "continue_on_invalid_context.hpp"
+
 namespace altintegration {
 
 namespace {
@@ -77,7 +79,7 @@ struct PopStateMachine {
                   ProtectingBlockTree& ing,
                   PayloadsStorage& payloadsProvider,
                   PayloadsIndex& payloadsIndex,
-                  bool continueOnInvalid = false)
+                  ContinueOnInvalidContext* continueOnInvalid = nullptr)
       : ed_(ed),
         ing_(ing),
         payloadsProvider_(payloadsProvider),
@@ -108,8 +110,16 @@ struct PopStateMachine {
                       HexStr(cgroup->id),
                       index.toShortPrettyString());
 
-        if (!cgroup->execute(state)) {
-          if (continueOnInvalid_) {
+        bool thisPayloadDoesNotFit = false;
+        if ((continueOnInvalid_ != nullptr) &&
+            !continueOnInvalid_->canFit(*cgroup)) {
+          // this payload does not fit current block
+          thisPayloadDoesNotFit = true;
+        }
+
+        // if payloads does not fit, it will be removed from a block
+        if (thisPayloadDoesNotFit || !cgroup->execute(state)) {
+          if (continueOnInvalid_ != nullptr) {
             removePayloadsFromIndex<block_t>(payloadsIndex_, index, *cgroup);
             VBK_LOG_INFO("%s=%s can't be connected: %s",
                          *cgroup->payload_type_name,
@@ -147,6 +157,7 @@ struct PopStateMachine {
             ed_.getRoot().getHeight() + ed_.appliedBlockCount) {
       index.raiseValidity(BLOCK_CAN_BE_APPLIED);
     } else {
+      // this block is applied together with the other chain during POP FR
       index.raiseValidity(BLOCK_CAN_BE_APPLIED_MAYBE_WITH_OTHER_CHAIN);
     }
 
@@ -320,7 +331,7 @@ struct PopStateMachine {
   ProtectingBlockTree& ing_;
   PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
-  bool continueOnInvalid_ = false;
+  ContinueOnInvalidContext* continueOnInvalid_ = nullptr;
 };
 
 }  // namespace altintegration
