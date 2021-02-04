@@ -23,9 +23,20 @@ class PayloadsIndex {
   virtual ~PayloadsIndex() = default;
 
   /**
+   * Payloads that cause the block validation to fail are not necessarily
+   * invalid either globally or within the block. Changing the order of
+   * payloads in a block is enough to change the payload validity.
+   *
+   * Recording the reason why block validation failed using
+   * (containingBlock, payloadId)->validity map makes no sense.
+   * Block validation aborts on the first payload that fails to validate.
+   * Any change to the payloads(addition, removal, reordering) invalidates
+   * the cached validity status for all payloads that follow.
+   *
    * The validity map should only be used for payloads that will always fail
    * the validation and application of the block they are added to no matter
-   * what context is provided.
+   * what context is provided. Such a map would be payloadId->validity and
+   * not tied to the containing block.
    *
    * Example:
    *   * Block X at height N references block Y as its predecessor.
