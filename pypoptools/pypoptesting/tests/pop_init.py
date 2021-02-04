@@ -9,7 +9,7 @@ Expect that BTC/VBK tree state on nodes[0,1] is same as before shutdown (test ag
 
 from ..framework.test_framework import PopIntegrationTestFramework
 from ..framework.pop_util import create_endorsed_chain, mine_until_pop_enabled
-from ..framework.sync_util import start_all_and_wait, connect_all, sync_all, sync_blocks, wait_for_rpc_availability
+from ..framework.sync_util import start_all, connect_all, sync_all, sync_blocks
 
 
 class PopInit(PopIntegrationTestFramework):
@@ -17,7 +17,7 @@ class PopInit(PopIntegrationTestFramework):
         self.num_nodes = 3
 
     def setup_nodes(self):
-        start_all_and_wait(self.nodes)
+        start_all(self.nodes)
         mine_until_pop_enabled(self.nodes[0])
         connect_all(self.nodes)
         sync_all(self.nodes)
@@ -39,8 +39,6 @@ class PopInit(PopIntegrationTestFramework):
         # stop node0
         self.nodes[0].restart()
         self.nodes[1].restart()
-        wait_for_rpc_availability(self.nodes[0])
-        wait_for_rpc_availability(self.nodes[1])
         self.log.info("nodes[0,1] restarted")
         sync_all(self.nodes, timeout=30)
         self.log.info("nodes are in sync")

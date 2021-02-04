@@ -9,7 +9,7 @@ Pop is disabled before block 200 therefore can't handle Pop data
 """
 from ..framework.test_framework import PopIntegrationTestFramework
 from ..framework.pop_util import endorse_block, mine_until_pop_enabled
-from ..framework.sync_util import sync_all, wait_for_block_height, wait_for_rpc_availability
+from ..framework.sync_util import sync_all, wait_for_block_height
 
 
 class PopActivate(PopIntegrationTestFramework):
@@ -40,7 +40,6 @@ class PopActivate(PopIntegrationTestFramework):
             pass
 
         self.nodes[0].restart()
-        wait_for_rpc_availability(self.nodes[0])
         self.nodes[0].connect(self.nodes[1])
         sync_all(self.nodes)
         self.nodes[1].disconnect(self.nodes[0])

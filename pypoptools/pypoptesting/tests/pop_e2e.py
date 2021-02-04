@@ -5,7 +5,7 @@ import time
 
 from ..framework.test_framework import PopIntegrationTestFramework
 from ..framework.pop_util import endorse_block, mine_until_pop_enabled
-from ..framework.sync_util import start_all_and_wait, connect_all, sync_all
+from ..framework.sync_util import start_all, connect_all, sync_all
 
 
 class PopE2E(PopIntegrationTestFramework):
@@ -13,7 +13,7 @@ class PopE2E(PopIntegrationTestFramework):
         self.num_nodes = 2
 
     def setup_nodes(self):
-        start_all_and_wait(self.nodes)
+        start_all(self.nodes)
         mine_until_pop_enabled(self.nodes[0])
         connect_all(self.nodes)
         sync_all(self.nodes)
