@@ -10,6 +10,7 @@
 
 #include "veriblock/c/bytestream.h"
 #include "veriblock/c/config.h"
+#include "veriblock/c/storage.h"
 #include "veriblock/c/validation_state.h"
 
 /**
@@ -22,7 +23,7 @@ extern "C" {
 
 typedef struct PopContext PopContext;
 
-PopContext* VBK_NewPopContext(Config_t* config, const char* db_path);
+PopContext* VBK_NewPopContext(Config_t* config, Storage_t* storage);
 void VBK_FreePopContext(PopContext* app);
 
 /**

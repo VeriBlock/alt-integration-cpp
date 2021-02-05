@@ -15,7 +15,7 @@ var boostrapBlock = entities.AltBlock{
 	Timestamp:     100,
 }
 
-func generateTestPopContext(t *testing.T) *PopContext {
+func generateTestPopContext(t *testing.T, storage *Storage) *PopContext {
 	config := NewConfig()
 	if !config.SelectVbkParams("regtest", 0, nil) {
 		t.Error("Failed to select btc params")
@@ -38,7 +38,7 @@ func generateTestPopContext(t *testing.T) *PopContext {
 		return true
 	})
 
-	return NewPopContext(config, "/tmp/test-storage")
+	return NewPopContext(config, storage)
 }
 
 func generateNextAltBlock(current *entities.AltBlock) *entities.AltBlock {
