@@ -4,13 +4,10 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include "adaptors/block_provider_impl.hpp"
 #include "adaptors/payloads_provider_impl.hpp"
-#ifdef WITH_ROCKSDB
-#include "adaptors/rocksdb_impl.hpp"
-#endif
-#include "adaptors/inmem_storage_impl.hpp"
 #include "bytestream.hpp"
 #include "config.hpp"
 #include "pop_context.hpp"
+#include "storage.hpp"
 #include "validation_state.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/c/extern.h"
@@ -18,27 +15,16 @@
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
 
-PopContext* VBK_NewPopContext(Config_t* config, const char* db_path) {
+PopContext* VBK_NewPopContext(Config_t* config, Storage_t* storage) {
   VBK_ASSERT(config);
   VBK_ASSERT(config->config);
   auto& c = config->config;
 
   VBK_ASSERT(c->alt);
-  VBK_ASSERT(db_path);
 
   auto* v = new PopContext();
 
-  if (std::string(db_path) == std::string(":inmem:")) {
-    v->storage = std::make_shared<adaptors::InmemStorageImpl>();
-  } else {
-#ifdef WITH_ROCKSDB
-    v->storage = std::make_shared<adaptors::RocksDBStorage>(db_path);
-#endif
-  }
-
-  VBK_ASSERT_MSG(
-      v->storage,
-      "Storage is not initialized, you should initialize the storage");
+  v->storage = storage->storage;
 
   v->payloads_storage =
       std::make_shared<adaptors::PayloadsStorageImpl>(*v->storage);

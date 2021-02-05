@@ -75,13 +75,13 @@ type PopContext struct {
 }
 
 // NewPopContext ...
-func NewPopContext(config *Config, db_path string) *PopContext {
+func NewPopContext(config *Config, storage *Storage) *PopContext {
 	if config == nil {
 		panic("Config not provided")
 	}
 
 	return &PopContext{
-		popContext: ffi.NewPopContext(config.Config, db_path),
+		popContext: ffi.NewPopContext(config.Config, storage.Storage),
 		mutex:      new(sync.Mutex),
 	}
 }

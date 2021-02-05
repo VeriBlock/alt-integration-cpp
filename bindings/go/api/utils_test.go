@@ -12,7 +12,7 @@ import (
 func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	assert := assert.New(t)
 
-	popContext := generateTestPopContext(t)
+	popContext := generateTestPopContext(t, NewStorage(":inmem:"))
 	defer popContext.popContext.Free()
 
 	index, err := popContext.AltBestBlock()
@@ -35,7 +35,8 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 func TestSaveLoadAllTrees(t *testing.T) {
 	assert := assert.New(t)
 
-	popContext := generateTestPopContext(t)
+	storage := NewStorage("/tmp/alt-integration")
+	popContext := generateTestPopContext(t, storage)
 
 	miner := NewMockMiner()
 
@@ -84,8 +85,9 @@ func TestSaveLoadAllTrees(t *testing.T) {
 
 	// reset state of the popContext
 	popContext.popContext.Free()
-	popContext = generateTestPopContext(t)
+	popContext = generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
+	defer storage.Free()
 
 	index, err = popContext.AltBestBlock()
 	assert.NoError(err)

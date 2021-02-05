@@ -7,6 +7,7 @@ add_library(veriblock-pop-c OBJECT
         bytestream.cpp
         mock_miner.cpp
         validation_state.cpp
+        storage.cpp
         )
 target_link_libraries(veriblock-pop-c
         rocksdb
