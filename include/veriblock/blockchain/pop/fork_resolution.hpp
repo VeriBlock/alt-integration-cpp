@@ -236,6 +236,7 @@ struct ReducedPublicationView {
   int lastKeystone() const { return lastKeystoneHeight; }
 
   int nextKeystoneAfter(int keystoneHeight) const {
+    VBK_ASSERT(isKeystone(keystoneHeight, keystoneInterval));
     return keystoneHeight + keystoneInterval;
   }
 
