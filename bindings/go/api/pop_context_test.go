@@ -12,7 +12,10 @@ import (
 func TestPopContextSubmitVbk(t *testing.T) {
 	assert := assert.New(t)
 
-	popContext := generateTestPopContext(t, NewStorage(":inmem:"))
+	storage, err := NewStorage(":inmem:")
+	assert.NoError(err)
+
+	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 
 	miner := NewMockMiner()
@@ -42,7 +45,10 @@ func TestPopContextSubmitVbk(t *testing.T) {
 func TestPopContextSubmitVtb(t *testing.T) {
 	assert := assert.New(t)
 
-	popContext := generateTestPopContext(t, NewStorage(":inmem:"))
+	storage, err := NewStorage(":inmem:")
+	assert.NoError(err)
+
+	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 
 	miner := NewMockMiner()
@@ -83,7 +89,10 @@ func TestPopContextSubmitVtb(t *testing.T) {
 func TestPopContextSubmitAtv(t *testing.T) {
 	assert := assert.New(t)
 
-	popContext := generateTestPopContext(t, NewStorage(":inmem:"))
+	storage, err := NewStorage(":inmem:")
+	assert.NoError(err)
+
+	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 
 	miner := NewMockMiner()
@@ -120,7 +129,10 @@ func TestPopContextSubmitAtv(t *testing.T) {
 func TestPopContextAcceptBlock(t *testing.T) {
 	assert := assert.New(t)
 
-	popContext := generateTestPopContext(t, NewStorage(":inmem:"))
+	storage, err := NewStorage(":inmem:")
+	assert.NoError(err)
+
+	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 
 	miner := NewMockMiner()

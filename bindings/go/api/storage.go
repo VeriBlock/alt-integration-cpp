@@ -6,7 +6,14 @@ type Storage struct {
 	*ffi.Storage
 }
 
-func NewStorage(path string) *Storage {
-	cfg := ffi.NewStorage(path)
-	return &Storage{cfg}
+func NewStorage(path string) (*Storage, error) {
+	state := ffi.NewValidationState()
+	defer state.Free()
+
+	cfg := ffi.NewStorage(path, state)
+	if state.IsInvalid() {
+		return nil, state.Error()
+	} else {
+		return &Storage{cfg}, nil
+	}
 }
