@@ -10,8 +10,8 @@ type Storage struct {
 	ref *C.Storage_t
 }
 
-func NewStorage(path string) *Storage {
-	storage := &Storage{ref: C.VBK_NewStorage(C.CString(path))}
+func NewStorage(path string, state *ValidationState) *Storage {
+	storage := &Storage{ref: C.VBK_NewStorage(C.CString(path), state.ref)}
 	runtime.SetFinalizer(storage, func(v *Storage) {
 		v.Free()
 	})
