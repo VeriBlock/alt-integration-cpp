@@ -12,6 +12,9 @@
 namespace altintegration {
 
 bool isKeystone(int32_t blockNumber, uint32_t keystoneInterval);
+
+int32_t blockHeightToKeystoneNumber(int32_t blockHeight, uint32_t keystoneInterval);
+
 int32_t highestKeystoneAtOrBefore(int32_t blockNumber,
                                   uint32_t keystoneInterval);
 int32_t firstKeystoneAfter(int32_t blockNumber, uint32_t keystoneInterval);

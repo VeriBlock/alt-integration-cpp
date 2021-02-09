@@ -12,10 +12,43 @@ using namespace altintegration;
 
 const static VbkChainParamsRegTest param;
 
+struct MockReducedPublicationView
+    : private std::vector<internal::KeystoneContext> {
+  using base_t = std::vector<internal::KeystoneContext>;
+
+  MockReducedPublicationView(
+      std::initializer_list<internal::KeystoneContext> il)
+      : vector(il) {}
+
+  using base_t::empty;
+  using base_t::size;
+  int firstKeystone() const { return (*this)[0].blockHeight; }
+
+  int lastKeystone() const { return (*this)[size() - 1].blockHeight; }
+
+  const VbkChainParamsRegTest& getConfig() const { return param; }
+  int nextKeystoneAfter(int keystoneHeight) const {
+    return keystoneHeight + getConfig().getKeystoneInterval();
+  }
+
+  const internal::KeystoneContext* getKeystone(int blockHeight) {
+    if (blockHeight < firstKeystone() || blockHeight > lastKeystone()) {
+      return nullptr;
+    }
+
+    auto it = std::find_if(
+        begin(), end(), [blockHeight](const internal::KeystoneContext& kc) {
+          return kc.blockHeight == blockHeight;
+        });
+
+    return it == end() ? nullptr : &*it;
+  }
+};
+
 struct TestCase {
   using V = std::vector<internal::KeystoneContext>;
-  V A;
-  V B;
+  MockReducedPublicationView A;
+  MockReducedPublicationView B;
 };
 
 struct PopForkResolutionEqual : public ::testing::TestWithParam<TestCase> {};
@@ -23,14 +56,14 @@ struct PopForkResolutionAwins : public ::testing::TestWithParam<TestCase> {};
 
 TEST_P(PopForkResolutionEqual, Equal) {
   auto [A, B] = GetParam();
-  ASSERT_EQ(comparePopScoreImpl(A, B, param), 0);
-  ASSERT_EQ(comparePopScoreImpl(B, A, param), 0);
+  ASSERT_EQ(internal::comparePopScoreImpl(A, B), 0);
+  ASSERT_EQ(internal::comparePopScoreImpl(B, A), 0);
 }
 
 TEST_P(PopForkResolutionAwins, Awins) {
   auto [A, B] = GetParam();
-  ASSERT_GT(comparePopScoreImpl(A, B, param), 0);
-  ASSERT_LT(comparePopScoreImpl(B, A, param), 0);
+  ASSERT_GT(internal::comparePopScoreImpl(A, B), 0);
+  ASSERT_LT(internal::comparePopScoreImpl(B, A), 0);
 }
 
 static const std::vector<TestCase> EqualCases = {
