@@ -42,6 +42,16 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) if true, this block can not be reorganized
   bool finalized = false;
 
+  BlockIndex(BlockIndex* prev) {
+    if (prev != nullptr) {
+      pprev = prev;
+      prev->pnext.insert(this);
+      height = prev->getHeight() + 1;
+    } else {
+      height = 0;
+    }
+  }
+
   ~BlockIndex() {
     // make sure we deleted this block from prev->pnext
     if (pprev != nullptr) {
@@ -57,6 +67,22 @@ struct BlockIndex : public Block::addon_t {
       }
     }
   }
+
+  // BlockIndex is not copyable
+  // BlockIndex it movable
+  BlockIndex(BlockIndex&& other) noexcept = default;
+  BlockIndex& operator=(BlockIndex&& other) noexcept = default;
+
+  // returns a copy of BlockIndex without inmem fields
+  BlockIndex<Block> clone() const {
+    BlockIndex<Block> ret = *this;
+    ret.setNullInmemFields();
+    return ret;
+  }
+
+  // loads on-disk fields from 'other' block index.
+  // works like (explicit) copy constructor
+  void mergeFrom(const BlockIndex& other) { *this = other.clone(); }
 
   /**
    * Block is connected if it contains block body (PopData), and all its
@@ -261,13 +287,15 @@ struct BlockIndex : public Block::addon_t {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    return fmt::sprintf("%s%sBlockIndex(height=%d, hash=%s, status=%d, %s)",
-                        std::string(level, ' '),
-                        Block::name(),
-                        height,
-                        HexStr(getHash()),
-                        status,
-                        addon_t::toPrettyString());
+    return fmt::sprintf(
+        "%s%sBlockIndex(height=%d, hash=%s, status=%d, header=%s, %s)",
+        std::string(level, ' '),
+        Block::name(),
+        height,
+        HexStr(getHash()),
+        status,
+        header->toPrettyString(),
+        addon_t::toPrettyString());
   }
 
   std::string toShortPrettyString() const {
@@ -306,6 +334,11 @@ struct BlockIndex : public Block::addon_t {
   friend bool DeserializeFromVbkEncoding(ReadStream& stream,
                                          BlockIndex<T>& out,
                                          ValidationState& state);
+
+ private:
+  // make it non-copyable
+  BlockIndex(const BlockIndex& other) = default;
+  BlockIndex& operator=(const BlockIndex& other) = default;
 };
 
 /**
@@ -315,7 +348,8 @@ struct BlockIndex : public Block::addon_t {
  * the complexity is O(n)
  */
 template <typename Block>
-BlockIndex<Block>* getForkBlock(BlockIndex<Block>& a, BlockIndex<Block>& b) {
+BlockIndex<Block>* getForkBlock(const BlockIndex<Block>& a,
+                                const BlockIndex<Block>& b) {
   const auto initialHeight = std::min(a.getHeight(), b.getHeight());
 
   for (auto cursorA = a.getAncestor(initialHeight),
@@ -323,7 +357,7 @@ BlockIndex<Block>* getForkBlock(BlockIndex<Block>& a, BlockIndex<Block>& b) {
        cursorA != nullptr && cursorB != nullptr;
        cursorA = cursorA->getPrev(), cursorB = cursorB->getPrev()) {
     if (cursorA == cursorB) {
-      return *cursorA;
+      return cursorA;
     }
   }
 
@@ -335,20 +369,26 @@ BlockIndex<Block>* getForkBlock(BlockIndex<Block>& a, BlockIndex<Block>& b) {
 //! same height and not equal to `finalBlock`, or its fork block is outdated
 template <typename Block>
 bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
-                     const BlockIndex<Block>& candidate) {
+                     const BlockIndex<Block>& candidate,
+                     int window = 0) {
+  // finalBlock is ancestor of candidate
+  if (candidate.getAncestor(finalBlock.getHeight()) == &finalBlock) {
+    return false;
+  }
+
   // all candidates behind final block are outdated
-  if (candidate->getHeight() < finalBlock->getHeight()) {
+  if (candidate.getHeight() < finalBlock.getHeight() - window) {
     return true;
   }
 
   // all parallel blocks (on same height as final, but not final) are outdated
-  if (candidate->getHeight() == finalBlock->getHeight() &&
+  if (candidate.getHeight() == finalBlock.getHeight() &&
       &finalBlock != &candidate) {
     return true;
   }
 
-  // candidate is after finalBlock
-  if (candidate.getAncestor(&finalBlock) == &finalBlock) {
+  // candidate is ancestor of finalBlock and within window
+  if (finalBlock.getAncestor(candidate.getHeight()) == &candidate) {
     return false;
   }
 
@@ -361,7 +401,7 @@ bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
   }
 
   // if fork block is outdated, then candidate is also outdated
-  return isBlockOutdated(finalBlock, fork);
+  return isBlockOutdated(finalBlock, *fork);
 }
 
 template <typename Block>

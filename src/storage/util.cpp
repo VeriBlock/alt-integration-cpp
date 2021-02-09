@@ -30,7 +30,7 @@ bool LoadTree(
 
   auto it = storage.getBlockIterator<block_t>();
   for (it->seek_start(); it->valid(); it->next()) {
-    index_t val;
+    index_t val(nullptr);
     if (!it->value(val)) {
       return state.Invalid("bad-value", "Can not read block data");
     }
@@ -42,7 +42,7 @@ bool LoadTree(
       }
       onBlock(hash, val);
     }
-    blocks.push_back(val);
+    blocks.push_back(std::move(val));
   }
 
   hash_t tip_hash;

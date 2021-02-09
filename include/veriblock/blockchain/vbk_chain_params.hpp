@@ -58,10 +58,10 @@ struct VbkChainParams {
     return 400;
   }
 
-  //! when finalizeBlock is called, this many blocks behind final block will be
+  //! when finalizeBlockImpl is called, this many blocks behind final block will be
   //! preserved in RAM.
-  //! In VBK this number depends on
-  uint32_t preserveAncestorsBehindFinal() const noexcept {
+  //! In VBK this number depends on endorsement settlement interval.
+  uint32_t preserveBlocksBehindFinal() const noexcept {
     return getEndorsementSettlementInterval();
   }
 
