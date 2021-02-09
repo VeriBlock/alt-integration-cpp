@@ -211,7 +211,9 @@ TEST(Vbk, CheckBlockTime1) {
   const auto startTime = 1'527'000'000;
   std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain;
   for (int i = 0; i < 1000; i++) {
-    chain.push_back(std::make_shared<BlockIndex<VbkBlock>>(chain.back().get()));
+    auto b = std::make_shared<BlockIndex<VbkBlock>>(
+        i == 0 ? nullptr : chain.back().get());
+    chain.push_back(std::move(b));
     auto& index = chain.back();
     VbkBlock blockTmp{};
     blockTmp.setTimestamp(startTime + (120 * i));
