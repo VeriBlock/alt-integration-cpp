@@ -9,6 +9,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "veriblock/c/validation_state.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,7 +18,7 @@ extern "C" {
 typedef struct Storage Storage_t;
 
 //! allocate new storage
-Storage_t* VBK_NewStorage(const char* path);
+Storage_t* VBK_NewStorage(const char* path, VbkValidationState* state);
 //! deallocate config
 void VBK_FreeStorage(Storage_t* Storage);
 

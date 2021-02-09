@@ -12,14 +12,14 @@ void adaptors::RocksDBWriteBatch::write(const std::vector<uint8_t>& key,
   rocksdb::Status status = batch_.Put(key_slice, value_slice);
   if (!status.ok()) {
     throw altintegration::StorageIOException(fmt::format(
-        "failed to write into the storage, err: %s", status.ToString()));
+        "failed to write into the storage, err: {}", status.ToString()));
   }
 }
 void adaptors::RocksDBWriteBatch::writeBatch() {
   rocksdb::Status status = db_.Write(write_options_, &batch_);
   if (!status.ok()) {
     throw altintegration::StorageIOException(fmt::format(
-        "failed to write batch into the storage, err: %s", status.ToString()));
+        "failed to write batch into the storage, err: {}", status.ToString()));
   }
 }
 adaptors::RocksDBStorage::~RocksDBStorage() {
@@ -37,7 +37,7 @@ adaptors::RocksDBStorage::RocksDBStorage(const std::string& path) {
   rocksdb::Status status = rocksdb::DB::Open(options, path, &db_);
   if (!status.ok()) {
     throw altintegration::StorageIOException(fmt::format(
-        "failed to open rocksdb storage, err: %s", status.ToString()));
+        "failed to open rocksdb storage, err: {}", status.ToString()));
   }
 }
 void adaptors::RocksDBStorage::write(const std::vector<uint8_t>& key,
@@ -48,7 +48,7 @@ void adaptors::RocksDBStorage::write(const std::vector<uint8_t>& key,
   rocksdb::Status status = db_->Put(write_options_, key_slice, value_slice);
   if (!status.ok()) {
     throw altintegration::StorageIOException(fmt::format(
-        "failed to write into the storage, err: %s", status.ToString()));
+        "failed to write into the storage, err: {}", status.ToString()));
   }
 }
 bool adaptors::RocksDBStorage::read(const std::vector<uint8_t>& key,

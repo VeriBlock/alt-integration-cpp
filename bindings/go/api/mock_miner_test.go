@@ -66,7 +66,10 @@ func TestMineAtv(t *testing.T) {
 func TestMineVtb(t *testing.T) {
 	assert := assert.New(t)
 
-	popContext := generateTestPopContext(t, NewStorage(":inmem:"))
+	storage, err := NewStorage(":inmem:")
+	assert.NoError(err)
+
+	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 
 	popContext.BtcBestBlock()
