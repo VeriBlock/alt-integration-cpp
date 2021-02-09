@@ -40,7 +40,7 @@ struct InmemBlockProvider {
 
     for (auto& b : m) {
       auto& bi = b.second;
-      ret.push_back(*bi);
+      ret.push_back(std::move(*bi));
     }
 
     return ret;
@@ -71,17 +71,17 @@ struct InmemBlockBatch : public BlockBatch {
 
   void writeBlock(const BlockIndex<BtcBlock>& value) override {
     storage_.btc[value.getHash()] =
-        std::make_shared<BlockIndex<BtcBlock>>(value);
+        std::make_shared<BlockIndex<BtcBlock>>(value.clone());
   }
 
   void writeBlock(const BlockIndex<VbkBlock>& value) override {
     storage_.vbk[value.getHash()] =
-        std::make_shared<BlockIndex<VbkBlock>>(value);
+        std::make_shared<BlockIndex<VbkBlock>>(value.clone());
   }
 
   void writeBlock(const BlockIndex<AltBlock>& value) override {
     storage_.alt[value.getHash()] =
-        std::make_shared<BlockIndex<AltBlock>>(value);
+        std::make_shared<BlockIndex<AltBlock>>(value.clone());
   }
 
   void writeTip(const BlockIndex<BtcBlock>& value) override {

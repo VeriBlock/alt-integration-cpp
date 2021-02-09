@@ -41,7 +41,7 @@ bool LoadBlocks(BlockTreeT& tree,
 
   for (auto& block : blocks) {
     // load blocks one by one
-    if (!tree.loadBlock(block, state)) {
+    if (!tree.loadBlock(std::move(block), state)) {
       return state.Invalid("load-tree");
     }
   }

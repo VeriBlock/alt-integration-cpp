@@ -306,12 +306,13 @@ struct PopStateMachine {
       return true;
     }
 
-    auto& forkBlock = getForkBlock(from, to);
+    auto* forkBlock = getForkBlock(from, to);
+    VBK_ASSERT_MSG(forkBlock, "Fork Block must exist!");
 
-    unapply(from, forkBlock);
-    if (!apply(forkBlock, to, state)) {
+    unapply(from, *forkBlock);
+    if (!apply(*forkBlock, to, state)) {
       // attempted to switch to an invalid block, rollback
-      bool success = apply(forkBlock, from, state);
+      bool success = apply(*forkBlock, from, state);
       VBK_ASSERT_MSG(success,
                      "state corruption: failed to rollback the state: %s",
                      state.toString());

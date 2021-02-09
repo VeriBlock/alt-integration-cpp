@@ -521,14 +521,15 @@ void AltBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
   overrideTip(to);
 }
 
-bool AltBlockTree::loadBlock(const AltBlockTree::index_t& index,
+bool AltBlockTree::loadBlock(AltBlockTree::index_t index,
                              ValidationState& state) {
-  if (!base::loadBlock(index, state)) {
+  auto containingHash = index.getHash();
+  auto height = index.getHeight();
+  if (!base::loadBlock(std::move(index), state)) {
     return false;  // already set
   }
 
   // load endorsements
-  auto containingHash = index.getHash();
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
@@ -542,8 +543,8 @@ bool AltBlockTree::loadBlock(const AltBlockTree::index_t& index,
   }
 
   // recover `endorsedBy` and `blockOfProofEndorsements`
-  auto window = std::max(
-      0, index.getHeight() - getParams().getEndorsementSettlementInterval());
+  auto window =
+      std::max(0, height - (int)getParams().getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsements(*this, chain, *current, state)) {
     return state.Invalid("bad-endorsements");
@@ -615,6 +616,11 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   }
 
   return candidates;
+}
+
+bool AltBlockTree::finalizeBlock(const AltBlockTree::hash_t& block) {
+  return base::finalizeBlockImpl(block,
+                                 getParams().preserveBlocksBehindFinal());
 }
 
 template <typename Payloads>

@@ -170,7 +170,6 @@ struct AltChainParams {
   //! Validity window for ATVs. If difference between endorsed/containing blocks
   //! is more than this number, endorsement becomes invalid.
   uint32_t getEndorsementSettlementInterval() const noexcept {
-    VBK_ASSERT(mEndorsementSettlementInterval >= 1);
     return mEndorsementSettlementInterval;
   }
 
@@ -202,15 +201,17 @@ struct AltChainParams {
   //!
   //! As implication, we store last N blocks in RAM and effectively
   //! `tip-maxReorgDistance` block is finalized.
-  uint32_t getMaxReorgDistance() const noexcept { return mMaxReorgDistance; }
+  uint32_t getMaxReorgDistance() const noexcept {
+    VBK_ASSERT(mMaxReorgDistance > mEndorsementSettlementInterval);
+    return mMaxReorgDistance;
+  }
 
-  //! when finalizeBlock is called, this many blocks behind final block will be
-  //! preserved in RAM.
-  //! In ALT we should preserve at least  last `endorsementSettlementInterval`
-  //! blocks before finalized (not including finalized).
-  uint32_t preserveAncestorsBehindFinal() const noexcept {
-    VBK_ASSERT(mPreserveBlocksBehindFinal >=
-               getEndorsementSettlementInterval());
+  //! when finalizeBlockImpl is called, this many blocks behind final block will
+  //! be preserved in RAM. In ALT we should preserve at least  last
+  //! `endorsementSettlementInterval` blocks before finalized (not including
+  //! finalized).
+  uint32_t preserveBlocksBehindFinal() const noexcept {
+    VBK_ASSERT(mPreserveBlocksBehindFinal >= mEndorsementSettlementInterval);
     return mPreserveBlocksBehindFinal;
   }
 
@@ -255,12 +256,12 @@ struct AltChainParams {
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
       std::make_shared<PopPayoutsParams>();
 
-  uint32_t mPreserveBlocksBehindFinal = getEndorsementSettlementInterval();
   uint32_t mMaxReorgDistance = 50000;              // blocks
   uint32_t mMaxAltchainFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   uint32_t mEndorsementSettlementInterval = 50;
+  uint32_t mPreserveBlocksBehindFinal = mEndorsementSettlementInterval;
   uint32_t mMaxPopDataSize = MAX_POPDATA_SIZE;
 
   size_t mMaxVbkBlocksInAltBlock = 200;

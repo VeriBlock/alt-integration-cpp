@@ -319,8 +319,8 @@ struct PopTestFixture {
   VbkPopTx endorseVbkTip() {
     auto* tip = popminer->vbk().getBestChain().tip();
     VBK_ASSERT(tip);
-    return popminer->createVbkPopTxEndorsingVbkBlock(
-        tip->getHeader(), getLastKnownBtcBlock());
+    return popminer->createVbkPopTxEndorsingVbkBlock(tip->getHeader(),
+                                                     getLastKnownBtcBlock());
   }
 
   void createEndorsedAltChain(size_t blocks, size_t vtbs = 1) {
@@ -360,6 +360,37 @@ struct PopTestFixture {
     auto blocks = LoadBlocksFromDisk<index_t>();
     auto tip = LoadTipFromDisk<index_t>();
     return LoadBlocks<Tree>(tree, blocks, tip, state);
+  }
+
+  template <typename Tree>
+  void assertBlockTreeHasNoOrphans(const Tree& tree) {
+    // orphan = block whose pprev == nullptr, and this block is not `genesis`
+    // (root/bootstrap) block
+    for (auto& p : tree.getBlocks()) {
+      auto* index = p.second.get();
+      ASSERT_TRUE(index);
+
+      if (index->pprev == nullptr &&
+          index->getHash() != tree.getRoot().getHash()) {
+        FAIL() << "block " << index->toPrettyString() << " is orphan!";
+      }
+    }
+  }
+
+  void assertTreesHaveNoOrphans(AltBlockTree& tree) {
+    assertBlockTreeHasNoOrphans(tree);
+    assertBlockTreeHasNoOrphans(tree.vbk());
+    assertBlockTreeHasNoOrphans(tree.btc());
+  }
+
+  template <typename Tree>
+  void assertTreeTips(Tree& tree,
+                      std::vector<typename Tree::index_t*> expected) {
+    const auto& tips = tree.getTips();
+    EXPECT_EQ(tips.size(), expected.size());
+    for (auto* i : expected) {
+      EXPECT_TRUE(tips.count(i));
+    }
   }
 };
 
