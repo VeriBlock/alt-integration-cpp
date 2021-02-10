@@ -53,6 +53,10 @@ bool LoadTree(
                          "Can not read block tip");
   }
 
+  if (res && blocks.empty()) {
+    return state.Invalid(index_t::block_t::name() + "-state-corruption");
+  }
+
   // skip loading because storage is empty
   if (!res && blocks.empty()) {
     return true;

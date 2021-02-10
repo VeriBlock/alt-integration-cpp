@@ -95,8 +95,9 @@ struct InmemStorageImpl : public Storage {
     const auto& it = storage_.find(key);
     if (it != storage_.end()) {
       value = it->second;
+      return true;
     }
-    return true;
+    return false;
   }
 
   std::shared_ptr<WriteBatch> generateWriteBatch() override {
