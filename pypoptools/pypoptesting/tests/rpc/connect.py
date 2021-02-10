@@ -1,8 +1,8 @@
-from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.sync_util import connect_all, sync_all, wait_for_block_height
+from pypoptesting.framework.test_framework import PopIntegrationTestFramework
+from pypoptesting.framework.sync_util import connect_all, sync_all, wait_for_block_height
 
 
-class ConnectAndSync(PopIntegrationTestFramework):
+class RpcConnectTest(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 3
 
