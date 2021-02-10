@@ -1,4 +1,4 @@
-from pypoptesting.framework.test_framework import PopIntegrationTestFramework
+from ...framework.test_framework import PopIntegrationTestFramework
 
 
 class NodeStopTest(PopIntegrationTestFramework):

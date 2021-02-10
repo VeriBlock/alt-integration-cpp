@@ -91,6 +91,9 @@ packages = [
     'pypoptools.pypoptesting',
     'pypoptools.pypoptesting.framework',
     'pypoptools.pypoptesting.tests',
+    'pypoptools.pypoptesting.tests.node',
+    'pypoptools.pypoptesting.tests.rpc',
+    'pypoptools.pypoptesting.tests.pop',
     'pypoptools.pypopminer',
 ]
 

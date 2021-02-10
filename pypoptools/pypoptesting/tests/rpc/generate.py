@@ -1,5 +1,5 @@
-from pypoptesting.framework.test_framework import PopIntegrationTestFramework
-from pypoptesting.framework.sync_util import wait_for_block_height
+from ...framework.test_framework import PopIntegrationTestFramework
+from ...framework.sync_util import wait_for_block_height
 
 
 class RpcGenerateTest(PopIntegrationTestFramework):
