@@ -92,20 +92,6 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
   self->context->altTree->acceptBlock(hash, popData);
 }
 
-bool VBK_AltBlockTree_loadTip(PopContext* self,
-                              const uint8_t* hash_bytes,
-                              int hash_bytes_size,
-                              VbkValidationState* state) {
-  VBK_ASSERT(self);
-  VBK_ASSERT(state);
-  VBK_ASSERT(hash_bytes);
-  VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
-
-  std::vector<uint8_t> hash(hash_bytes, hash_bytes + hash_bytes_size);
-  return self->context->altTree->loadTip(hash, state->getState());
-}
-
 int VBK_AltBlockTree_comparePopScore(PopContext* self,
                                      const uint8_t* A_hash_bytes,
                                      int A_hash_bytes_size,
