@@ -44,7 +44,7 @@ static std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> getChain(
     blockTmp.setHeight((int32_t)i + 1);
     blockTmp.setTimestamp(chain[i - 1]->getHeader().getBlockTime() + deltaTime);
     blockTmp.setDifficulty(difficulty);
-    auto temp = std::make_shared<BlockIndex<VbkBlock>>(chain.back().get());
+    auto temp = std::make_shared<BlockIndex<VbkBlock>>(chain[i - 1].get());
     temp->setHeader(blockTmp);
     temp->setHeight(blockTmp.getHeight());
 
