@@ -1,7 +1,7 @@
-from ..framework.test_framework import PopIntegrationTestFramework
+from pypoptesting.framework.test_framework import PopIntegrationTestFramework
 
 
-class PopParams(PopIntegrationTestFramework):
+class PopParamsTest(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 1
 

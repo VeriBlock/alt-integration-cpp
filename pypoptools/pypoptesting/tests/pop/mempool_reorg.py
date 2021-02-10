@@ -1,9 +1,9 @@
-from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.pop_util import mine_vbk_blocks, mine_until_pop_enabled
-from ..framework.sync_util import start_all, connect_all, sync_all
+from pypoptesting.framework.test_framework import PopIntegrationTestFramework
+from pypoptesting.framework.pop_util import mine_vbk_blocks, mine_until_pop_enabled
+from pypoptesting.framework.sync_util import start_all, connect_all, sync_all
 
 
-class PopMempoolReorg(PopIntegrationTestFramework):
+class PopMempoolReorgTest(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
 
