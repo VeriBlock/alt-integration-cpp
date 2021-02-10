@@ -62,21 +62,6 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
                                   VbkValidationState* state);
 
 /**
- * @copybrief altintegration::AltBlockTree::loadTip
- * @see altintegration::AltBlockTree::loadTip
- * @param[in] self PopContext
- * @param[in] hash_bytes altintegration::AltBlock hash bytes of the tip
- * @param[in] hash_bytes_size hash bytes size
- * @param[out] state VbkValidationState
- * @return true on success, false otherwise
- * @ingroup c-api
- */
-bool VBK_AltBlockTree_loadTip(PopContext* self,
-                              const uint8_t* hash_bytes,
-                              int hash_bytes_size,
-                              VbkValidationState* state);
-
-/**
  * @copybrief altintegration::AltBlockTree::comparePopScore
  * @see altintegration::AltBlockTree::comparePopScore
  * @param[in] self PopContext

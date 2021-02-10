@@ -58,13 +58,6 @@ func (v *PopContext) AltBlockTreeAcceptBlock(hashBytes []byte, payloadsBytes []b
 	C.VBK_AltBlockTree_acceptBlock(v.ref, hashBytesC, C.int(len(hashBytes)), payloadsBytesC, C.int(len(payloadsBytes)), state.ref)
 }
 
-// AltBlockTreeLoadTip - true on success, false otherwise.
-func (v *PopContext) AltBlockTreeLoadTip(hashBytes []byte, state *ValidationState) bool {
-	hashBytesC := (*C.uint8_t)(unsafe.Pointer(&hashBytes[0]))
-	res := C.VBK_AltBlockTree_loadTip(v.ref, hashBytesC, C.int(len(hashBytes)), state.ref)
-	return bool(res)
-}
-
 // AltBlockTreeComparePopScore ...
 func (v *PopContext) AltBlockTreeComparePopScore(hashBytesA []byte, hashBytesB []byte) int {
 	hashBytesAC := (*C.uint8_t)(unsafe.Pointer(&hashBytesA[0]))

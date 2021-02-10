@@ -15,7 +15,6 @@ import (
 type AltBlockTree interface {
 	AcceptBlockHeader(block *entities.AltBlock) error
 	AcceptBlock(hash entities.AltHash, payloads *entities.PopData) error
-	LoadTip(hash entities.AltHash) error
 	ComparePopScore(hashA entities.AltHash, hashB entities.AltHash) int
 	RemoveSubtree(hash entities.AltHash)
 	SetState(hash entities.AltHash) error
@@ -123,15 +122,6 @@ func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopDa
 	state := ffi.NewValidationState()
 	defer state.Free()
 	v.popContext.AltBlockTreeAcceptBlock(hash, stream.Bytes(), state)
-	return state.Error()
-}
-
-// LoadTip ...
-func (v *PopContext) LoadTip(hash entities.AltHash) error {
-	defer v.lock()()
-	state := ffi.NewValidationState()
-	defer state.Free()
-	v.popContext.AltBlockTreeLoadTip(hash, state)
 	return state.Error()
 }
 
