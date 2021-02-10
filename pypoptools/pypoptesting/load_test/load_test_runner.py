@@ -5,7 +5,7 @@ import sys
 from pypopminer import MockMiner
 from random import randrange
 
-from pypoptesting.framework.jsonrpc_api import JsonRpcApi
+from pypoptesting.framework.json_rpc import JsonRpcApi
 from pypoptesting.load_test import load_test
 
 

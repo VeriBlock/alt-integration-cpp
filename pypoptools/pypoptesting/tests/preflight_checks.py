@@ -6,9 +6,6 @@ class PreflightChecks(PopIntegrationTestFramework):
         self.num_nodes = 1
 
     def run_test(self):
-        assert self.nodes[0].isstarted()
-        assert self.nodes[0].isrpcavailable()
-
         addr = self.nodes[0].getnewaddress()
         self.log.info("new address={}".format(addr))
 
