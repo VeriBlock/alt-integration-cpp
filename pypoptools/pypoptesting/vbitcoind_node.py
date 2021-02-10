@@ -117,8 +117,9 @@ class VBitcoindNode(Node):
             for peer in s
         ]
 
-    def getbalance(self) -> float:
-        return self.rpc.getbalance()
+    def getbalance(self) -> int:
+        # convert to satoshi
+        return int(self.rpc.getbalance() * 10**8)
 
     def getnewaddress(self) -> str:
         return self.rpc.getnewaddress()
