@@ -19,7 +19,7 @@ class PopE2E(PopIntegrationTestFramework):
         sync_all(self.nodes)
 
     def run_test(self):
-        from pypoptools.pypopminer import MockMiner, PublicationData
+        from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
 
         self._assert_nodes_peer_info()
@@ -70,6 +70,6 @@ class PopE2E(PopIntegrationTestFramework):
         self._assert_node_peer_info(self.nodes[1])
 
     def _assert_node_peer_info(self, node):
-        peer_info = node.getpeerinfo()
+        peer_info = node.getpeers()
         assert len(peer_info) == 1
         assert peer_info[0].banscore == 0

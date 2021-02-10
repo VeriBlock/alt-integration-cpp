@@ -121,8 +121,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     def _setup(self, parent):
         """Call this method to start up the test framework object with options set."""
         # Set up temp directory and start logging
-        timestamp = datetime.datetime.now().strftime("%y%m%d%H%M%S")
-        self.dir = tempfile.mkdtemp(dir=parent, prefix="{}_{}_".format(timestamp, self.name()))
+        self.dir = tempfile.mkdtemp(dir=parent, prefix="{}_".format(self.name()))
         self._start_logging()
         self.skip_test_if_missing_module()
         self.success = TestStatus.PASSED

@@ -1,20 +1,10 @@
-import time
 from abc import ABC, abstractmethod
-from typing import List
 
 from .entities import *
 
 
 class Node(ABC):
     # Control
-
-    @abstractmethod
-    def isstarted(self) -> bool:
-        pass
-
-    @abstractmethod
-    def isrpcavailable(self) -> bool:
-        pass
 
     @abstractmethod
     def start(self) -> None:
@@ -39,11 +29,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def getnetworkid(self) -> int:
-        pass
-
-    @abstractmethod
-    def getpeerinfo(self) -> List[PeerInfo]:
+    def getpeers(self) -> List[Peer]:
         pass
 
     # Wallet

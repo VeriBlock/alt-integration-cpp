@@ -182,7 +182,7 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
     mp.set_start_method('fork')
 
     timestamp = datetime.datetime.now().strftime("%y%m%d%H%M%S")
-    tmpdir = tempfile.mkdtemp(prefix="pypoptesting_{}_".format(timestamp))
+    tmpdir = tempfile.mkdtemp(dir="/tmp", prefix="pop_{}_".format(timestamp), suffix="")
     job_queue = TestHandler(
         create_node=create_node,
         tmpdir=tmpdir,

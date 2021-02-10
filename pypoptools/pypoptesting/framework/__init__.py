@@ -1,5 +1,5 @@
 from .bin_util import *
-from .jsonrpc_api import *
+from .json_rpc import *
 from .node import *
 from .pop_util import *
 from .sync_util import *
