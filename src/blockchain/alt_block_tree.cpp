@@ -521,10 +521,10 @@ void AltBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
   overrideTip(to);
 }
 
-bool AltBlockTree::loadBlock(AltBlockTree::index_t index,
+bool AltBlockTree::loadBlock(std::unique_ptr<index_t> index,
                              ValidationState& state) {
-  auto containingHash = index.getHash();
-  auto height = index.getHeight();
+  auto containingHash = index->getHash();
+  auto height = index->getHeight();
   if (!base::loadBlock(std::move(index), state)) {
     return false;  // already set
   }

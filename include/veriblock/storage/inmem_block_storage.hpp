@@ -33,14 +33,15 @@ struct InmemBlockProvider {
   }
 
   template <typename T>
-  std::vector<BlockIndex<T>> load() {
-    std::vector<BlockIndex<T>> ret;
+  std::vector<std::unique_ptr<BlockIndex<T>>> load() {
+    std::vector<std::unique_ptr<BlockIndex<T>>> ret;
     auto& m = getBlocks<T>();
     ret.reserve(m.size());
 
     for (auto& b : m) {
       auto& bi = b.second;
-      ret.push_back(std::move(*bi));
+      auto index = make_unique<BlockIndex<T>>(bi->clone());
+      ret.push_back(std::move(index));
     }
 
     return ret;

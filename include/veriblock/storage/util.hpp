@@ -21,10 +21,11 @@ namespace altintegration {
 //! does validation of these blocks. Sets tip after loading.
 //! @invariant NOT atomic
 template <typename BlockTreeT>
-bool LoadBlocks(BlockTreeT& tree,
-                std::vector<typename BlockTreeT::index_t>& blocks,
-                const typename BlockTreeT::hash_t& tiphash,
-                ValidationState& state) {
+bool LoadBlocks(
+    BlockTreeT& tree,
+    std::vector<std::unique_ptr<typename BlockTreeT::index_t>>& blocks,
+    const typename BlockTreeT::hash_t& tiphash,
+    ValidationState& state) {
   using index_t = typename BlockTreeT::index_t;
   using block_t = typename BlockTreeT::block_t;
   VBK_LOG_WARN("Loading %d %s blocks with tip %s",
@@ -35,8 +36,10 @@ bool LoadBlocks(BlockTreeT& tree,
 
   // first, sort them by height
   std::sort(
-      blocks.begin(), blocks.end(), [](const index_t& a, const index_t& b) {
-        return a.getHeight() < b.getHeight();
+      blocks.begin(),
+      blocks.end(),
+      [](const std::unique_ptr<index_t>& a, const std::unique_ptr<index_t>& b) {
+        return a->getHeight() < b->getHeight();
       });
 
   for (auto& block : blocks) {
