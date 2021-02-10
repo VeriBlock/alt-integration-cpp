@@ -15,6 +15,8 @@ class JsonRpcApi:
         self.nonce = 0
         if "user" in kwargs and "password" in kwargs:
             self.auth = HTTPBasicAuth(kwargs['user'], kwargs['password'])
+        else:
+            self.auth = None
 
     def __getattr__(self, name):
         def method(*args, **kwargs):
@@ -36,7 +38,7 @@ class JsonRpcApi:
             response_body = response.json()
             http_status = response.status_code
 
-            if response_body['error'] is not None:
+            if 'error' in response_body:
                 raise JSONRPCException(response_body['error'], http_status)
             elif 'result' not in response_body:
                 raise JSONRPCException({'code': -343, 'message': 'missing JSON-RPC result'}, http_status)
