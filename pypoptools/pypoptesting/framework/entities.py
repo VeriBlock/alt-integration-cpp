@@ -164,6 +164,6 @@ class RawPopMempoolResponse:
 
 
 @dataclass
-class PeerInfo:
+class Peer:
     id: int
     banscore: int

@@ -2,7 +2,7 @@ from requests import post
 from requests.auth import HTTPBasicAuth
 
 
-class JSONRPCException(Exception):
+class JsonRpcException(Exception):
     def __init__(self, error, http_status):
         super().__init__('{} (code: {})'.format(error['message'], error['code']))
         self.error = error
@@ -10,11 +10,11 @@ class JSONRPCException(Exception):
 
 
 class JsonRpcApi:
-    def __init__(self, url, **kwargs):
+    def __init__(self, url, user=None, password=None):
         self.url = url
         self.nonce = 0
-        if "user" in kwargs and "password" in kwargs:
-            self.auth = HTTPBasicAuth(kwargs['user'], kwargs['password'])
+        if user is not None and password is not None:
+            self.auth = HTTPBasicAuth(user, password)
         else:
             self.auth = None
 
@@ -38,12 +38,12 @@ class JsonRpcApi:
             response_body = response.json()
             http_status = response.status_code
 
-            if 'error' in response_body:
-                raise JSONRPCException(response_body['error'], http_status)
+            if response_body.get('error', None) is not None:
+                raise JsonRpcException(response_body['error'], http_status)
             elif 'result' not in response_body:
-                raise JSONRPCException({'code': -343, 'message': 'missing JSON-RPC result'}, http_status)
+                raise JsonRpcException({'code': -343, 'message': 'missing JSON-RPC result'}, http_status)
             elif http_status != 200:
-                raise JSONRPCException({'code': -342, 'message': 'non-200 HTTP status code'}, http_status)
+                raise JsonRpcException({'code': -342, 'message': 'non-200 HTTP status code'}, http_status)
             else:
                 return response_body['result']
 
