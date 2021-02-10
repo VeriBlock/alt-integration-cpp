@@ -523,8 +523,8 @@ void AltBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
 
 bool AltBlockTree::loadBlock(std::unique_ptr<index_t> index,
                              ValidationState& state) {
-  auto containingHash = index->getHash();
-  auto height = index->getHeight();
+  const auto containingHash = index->getHash();
+  const auto height = index->getHeight();
   if (!base::loadBlock(std::move(index), state)) {
     return false;  // already set
   }
@@ -533,9 +533,9 @@ bool AltBlockTree::loadBlock(std::unique_ptr<index_t> index,
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
-  auto vbkblocks = current->getPayloadIds<VbkBlock>();
-  auto vtbs = current->getPayloadIds<VTB>();
-  auto atvs = current->getPayloadIds<ATV>();
+  const auto& vbkblocks = current->getPayloadIds<VbkBlock>();
+  const auto& vtbs = current->getPayloadIds<VTB>();
+  const auto& atvs = current->getPayloadIds<ATV>();
   if (hasDuplicates<VbkBlock>(*current, vbkblocks, *this, state) ||
       hasDuplicates<VTB>(*current, vtbs, *this, state) ||
       hasDuplicates<ATV>(*current, atvs, *this, state)) {
@@ -543,8 +543,8 @@ bool AltBlockTree::loadBlock(std::unique_ptr<index_t> index,
   }
 
   // recover `endorsedBy` and `blockOfProofEndorsements`
-  auto window =
-      std::max(0, height - (int)getParams().getEndorsementSettlementInterval());
+  const int si = getParams().getEndorsementSettlementInterval();
+  auto window = std::max(0, height - si);
   Chain<index_t> chain(window, current);
   if (!recoverEndorsements(*this, chain, *current, state)) {
     return state.Invalid("bad-endorsements");
