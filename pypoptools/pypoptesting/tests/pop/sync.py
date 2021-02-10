@@ -1,12 +1,12 @@
 """
 Test with multiple nodes, and multiple PoP endorsements, checking to make sure nodes stay in sync.
 """
-from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.pop_util import endorse_block, mine_until_pop_enabled
-from ..framework.sync_util import start_all, connect_all, sync_all, wait_for_block_height
+from ...framework.test_framework import PopIntegrationTestFramework
+from ...framework.pop_util import endorse_block, mine_until_pop_enabled
+from ...framework.sync_util import start_all, connect_all, sync_all, wait_for_block_height
 
 
-class PopSync(PopIntegrationTestFramework):
+class PopSyncTest(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 3
 
