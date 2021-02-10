@@ -30,7 +30,7 @@ def endorse_block(node: Node, apm, height: int, address: str = None) -> str:
     pub = PublicationData()
     pub.header = pop_data.header
     pub.payoutInfo = node.getpayoutinfo(address)
-    pub.identifier = node.getnetworkid()
+    pub.identifier = node.getpopparams().networkId
     pub.contextInfo = pop_data.authenticated_context
 
     payloads = apm.endorseAltBlock(pub, pop_data.last_known_vbk_block)

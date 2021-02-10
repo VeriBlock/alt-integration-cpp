@@ -1,14 +1,10 @@
 import distutils.spawn
-import http
-import logging
 import pathlib
-import subprocess
-import tempfile
-from typing import List
 
 from .framework.bin_util import assert_dir_accessible, get_open_port
 from .framework.entities import *
-from .framework.jsonrpc_api import JsonRpcApi, JSONRPCException
+from .framework.json_rpc import JsonRpcApi, JsonRpcException
+from .framework.managers import ProcessManager
 from .framework.node import Node
 from .framework.sync_util import wait_until
 
@@ -17,55 +13,50 @@ PORT_MAX = 25000
 BIND_TO = '127.0.0.1'
 
 
+def _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password):
+    bitcoin_conf_file = pathlib.Path(datadir, "vbitcoin.conf")
+    with open(bitcoin_conf_file, 'w', encoding='utf8') as f:
+        f.write("regtest=1\n")
+        f.write("[{}]\n".format("regtest"))
+        f.write("port={}\n".format(p2p_port))
+        f.write("rpcport={}\n".format(rpc_port))
+        f.write("rpcuser={}\n".format(rpc_user))
+        f.write("rpcpassword={}\n".format(rpc_password))
+        f.write("fallbackfee=0.0002\n")
+        f.write("server=1\n")
+        f.write("keypool=1\n")
+        f.write("discover=0\n")
+        f.write("dnsseed=0\n")
+        f.write("listenonion=0\n")
+        f.write("printtoconsole=0\n")
+        f.write("upnp=0\n")
+        f.write("shrinkdebugfile=0\n")
+        f.write("popvbknetwork=regtest\n")
+        f.write("popbtcnetwork=regtest\n")
+        f.write("poplogverbosity=info\n")
+
+
 class VBitcoindNode(Node):
     def __init__(self, number: int, datadir: pathlib.Path):
-        assert_dir_accessible(datadir)
         self.number = number
-        self.datadir = datadir
 
-        self.rpc_timeout = 60  # sec
-        self.stderr = None
-        self.stdout = None
+        p2p_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)
+        self.p2p_address = "{}:{}".format(BIND_TO, p2p_port)
 
-        # quickly check that vbitcoind is installed
-        self.exe = distutils.spawn.find_executable("vbitcoind")
-        if not self.exe:
+        rpc_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)
+        rpc_url = "http://{}:{}/".format(BIND_TO, rpc_port)
+        rpc_user = 'testuser'
+        rpc_password = 'testpassword'
+        self.rpc = JsonRpcApi(rpc_url, user=rpc_user, password=rpc_password)
+
+        exe = distutils.spawn.find_executable("vbitcoind")
+        if not exe:
             raise Exception("VBitcoinNode: vbitcoind is not found in PATH")
 
-        self.p2p_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)
-        self.rpc_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)
-        self.user = 'testuser'
-        self.password = 'testpassword'
-
-        self.bitcoinconf = pathlib.Path(self.datadir, "vbitcoin.conf")
-        with open(self.bitcoinconf, 'w', encoding='utf8') as f:
-            f.write("regtest=1\n")
-            f.write("[{}]\n".format("regtest"))
-            f.write("port={}\n".format(self.p2p_port))
-            f.write("rpcport={}\n".format(self.rpc_port))
-            f.write("rpcuser={}\n".format(self.user))
-            f.write("rpcpassword={}\n".format(self.password))
-            f.write("fallbackfee=0.0002\n")
-            f.write("server=1\n")
-            f.write("keypool=1\n")
-            f.write("discover=0\n")
-            f.write("dnsseed=0\n")
-            f.write("listenonion=0\n")
-            f.write("printtoconsole=0\n")
-            f.write("upnp=0\n")
-            f.write("shrinkdebugfile=0\n")
-            f.write("popvbknetwork=regtest\n")
-            f.write("popbtcnetwork=regtest\n")
-            f.write("poplogverbosity=info\n")
-
-        self.url = "http://{}:{}/".format(BIND_TO, self.rpc_port)
-        self.rpc = JsonRpcApi(url=self.url, user=self.user, password=self.password)
-        # Add a new stdout and stderr file each time vbitcoind is started
-
-        self.running = False
-        self.args = [
-            self.exe,
-            "-datadir=" + str(self.datadir),
+        assert_dir_accessible(datadir)
+        args = [
+            exe,
+            "-datadir=" + str(datadir),
             "-logtimemicros",
             "-logthreadnames",
             "-debug",
@@ -74,96 +65,26 @@ class VBitcoindNode(Node):
             "-txindex",
             "-uacomment=testnode{}".format(number)
         ]
+        self.manager = ProcessManager(args, datadir)
 
-        self.log = logging.getLogger('TestFramework.node%d' % number)
-        self.process = None
-
-    def __del__(self):
-        # Ensure that we don't leave any vbitcoind processes lying around after
-        # the test ends
-        if self.process is not None:
-            # Should only happen on test failure
-            # Avoid using logger, as that may have already been shutdown when
-            # this destructor is called.
-            self.process.kill()
+        _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password)
 
     def start(self) -> None:
-        self.stderr = tempfile.NamedTemporaryFile(prefix="stderr", dir=self.datadir, delete=False)
-        self.stdout = tempfile.NamedTemporaryFile(prefix="stdout", dir=self.datadir, delete=False)
-        self.process = subprocess.Popen(
-            self.args,
-            cwd=self.datadir,
-            stdout=self.stdout,
-            stderr=self.stderr
-        )
-        self.running = True
-        self.log.debug("vbitcoind started, waiting for RPC to come up")
+        self.manager.start()
+        wait_until(lambda: self.is_rpc_available(), timeout=60)
 
-        self.wait_until_started()
-
-    def wait_until_started(self) -> None:
-        wait_until(lambda: self.isrpcavailable(), timeout=60)
-
-    def isstarted(self) -> bool:
-        if not self.process:
-            return False
-
-        if self.process.poll() is not None:
-            self.running = False
-            return False
-
-        return self.running
-
-    def isrpcavailable(self) -> bool:
-        if self.process.poll() is not None:
-            raise Exception('[node {}] vbitcoind exited with status {} during initialization'
-                            .format(self.number, self.process.returncode))
+    def is_rpc_available(self) -> bool:
         try:
             self.rpc.getblockcount()
-            # If the call to getblockcount() succeeds then the RPC connection is up
-            self.log.debug("RPC successfully started")
             return True
         except Exception as e:
-            self.log.debug("No RPC connection... {}".format(e))
             return False
 
     def stop(self) -> None:
-        """Stop the node."""
-        if not self.running:
-            return
-        self.log.debug("Stopping node")
-
-        try:
-            self.rpc.stop(wait=0)
-        except http.client.CannotSendRequest:
-            self.log.exception("Unable to stop node.")
-
-        self.stdout.close()
-        self.stderr.close()
-
-        self.wait_until_stopped()
-
-    def wait_until_stopped(self,):
-        wait_until(self.is_node_stopped, timeout=60)
-
-    def is_node_stopped(self):
-        if not self.running:
-            return True
-        return_code = self.process.poll()
-        if return_code is None:
-            return False
-
-        # process has stopped. Assert that it didn't return an error code.
-        assert return_code == 0, \
-            "[node{}] Node returned non-zero exit code ({}) when stopping".format(self.number, return_code)
-        self.running = False
-        self.process = None
-        self.log.debug("Node stopped")
-        return True
+        self.manager.stop()
 
     def connect(self, node):
-        ip_port = "{}:{}".format(BIND_TO, node.p2p_port)
-        self.rpc.addnode(ip_port, 'onetry')
+        self.rpc.addnode(node.p2p_address, 'onetry')
         # poll until version handshake complete to avoid race conditions
         # with transaction relaying
         wait_until(lambda: all(peer['version'] != 0 for peer in self.rpc.getpeerinfo()))
@@ -174,7 +95,7 @@ class VBitcoindNode(Node):
                         "testnode{}".format(node_num) in peer['subver']]:
             try:
                 self.rpc.disconnectnode(address='', nodeid=peer_id)
-            except JSONRPCException as e:
+            except JsonRpcException as e:
                 # If this node is disconnected between calculating the peer id
                 # and issuing the disconnect, don't worry about it.
                 # This avoids a race condition if we're mass-disconnecting peers.
@@ -186,15 +107,15 @@ class VBitcoindNode(Node):
             lambda: not any(["testnode{}".format(node_num) in peer['subver'] for peer in self.rpc.getpeerinfo()]),
             timeout=5)
 
-    def getnetworkid(self) -> int:
-        return 0x3ae6ca
-
-    def getpeerinfo(self) -> List[PeerInfo]:
+    def getpeers(self) -> List[Peer]:
         s = self.rpc.getpeerinfo()
-        return [PeerInfo(
-            id=x['id'],
-            banscore=x['banscore']
-        ) for x in s]
+        return [
+            Peer(
+                id=peer['id'],
+                banscore=peer['banscore']
+            )
+            for peer in s
+        ]
 
     def getbalance(self) -> float:
         return self.rpc.getbalance()
