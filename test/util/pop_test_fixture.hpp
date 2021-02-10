@@ -345,7 +345,7 @@ struct PopTestFixture {
   }
 
   template <typename index_t>
-  std::vector<index_t> LoadBlocksFromDisk() {
+  std::vector<std::unique_ptr<index_t>> LoadBlocksFromDisk() {
     return blockStorage.load<typename index_t::block_t>();
   }
 

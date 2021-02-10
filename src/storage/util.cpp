@@ -26,12 +26,12 @@ bool LoadTree(
   using block_t = typename BlockTreeT::block_t;
   using hash_t = typename index_t::hash_t;
 
-  std::vector<index_t> blocks;
+  std::vector<std::unique_ptr<index_t>> blocks;
 
   auto it = storage.getBlockIterator<block_t>();
   for (it->seek_start(); it->valid(); it->next()) {
-    index_t val(nullptr);
-    if (!it->value(val)) {
+    auto val = make_unique<index_t>(nullptr);
+    if (!it->value(*val)) {
       return state.Invalid("bad-value", "Can not read block data");
     }
     // if callback is supplied, execute it
@@ -40,7 +40,7 @@ bool LoadTree(
       if (!it->key(hash)) {
         return state.Invalid("bad-key", "Can not read block key");
       }
-      onBlock(hash, val);
+      onBlock(hash, *val);
     }
     blocks.push_back(std::move(val));
   }

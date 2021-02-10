@@ -144,7 +144,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * and can not be used. Tip: ask user to run with '-reindex'.
    * @ingroup api
    */
-  VBK_CHECK_RETURN bool loadBlock(index_t index,
+  VBK_CHECK_RETURN bool loadBlock(std::unique_ptr<index_t> index,
                                   ValidationState& state) override;
 
   /**

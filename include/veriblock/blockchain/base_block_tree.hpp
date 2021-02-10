@@ -92,25 +92,27 @@ struct BaseBlockTree {
    * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
    * state.
    */
-  virtual bool loadBlock(index_t index, ValidationState& state) {
+  virtual bool loadBlock(std::unique_ptr<index_t> index,
+                         ValidationState& state) {
+    VBK_ASSERT(index != nullptr);
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
     const auto& root = getRoot();
-    if (index.getHeight() < root.getHeight()) {
+    if (index->getHeight() < root.getHeight()) {
       return state.Invalid("cant-connect", "Loaded block is too far");
     }
 
-    if (index.getHeight() == root.getHeight() &&
-        index.getHash() != root.getHash()) {
+    if (index->getHeight() == root.getHeight() &&
+        index->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
       return state.Invalid(
           "bad-root",
           fmt::format("Can't overwrite root block with block {}",
-                      index.toPrettyString()));
+                      index->toPrettyString()));
     }
 
-    auto currentHash = index.getHash();
+    auto currentHash = index->getHash();
     auto* current = getBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block
@@ -122,7 +124,7 @@ struct BaseBlockTree {
 
     // if current block is not known, and previous also not known
     if (current == nullptr &&
-        !getBlockIndex(index.getHeader().getPreviousBlock())) {
+        !getBlockIndex(index->getHeader().getPreviousBlock())) {
       return state.Invalid("bad-prev",
                            "Block does not connect to current tree");
     }
@@ -131,16 +133,18 @@ struct BaseBlockTree {
     // move index_t to blocks_
     if (current == nullptr) {
       // loaded block is not known to current block tree.
-      auto newIndex = make_unique<index_t>(std::move(index));
-      current = newIndex.get();
-      blocks_[shortHash] = std::move(newIndex);
+      current = index.get();
+      blocks_[shortHash] = std::move(index);
     } else {
       // touchBlockIndex may return existing block (one of bootstrap blocks), so
       // backup its 'pnext'
       auto next = current->pnext;
       // block that is being loaded is already known. this can happen with
       // bootstrap blocks. load on-disk fields
-      current->mergeFrom(index);
+      current->mergeFrom(*index);
+      // we no longer need to use `index`
+      index.reset();
+
       current->setNullInmemFields();
 
       // recover pnext
