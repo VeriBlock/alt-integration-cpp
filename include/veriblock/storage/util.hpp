@@ -39,6 +39,11 @@ bool LoadBlocks(BlockTreeT& tree,
         return a.getHeight() < b.getHeight();
       });
 
+  // if tip of such chain exists in the tree we should not load it
+  if (tree.getBlockIndex(blocks.back().getHash()) != nullptr) {
+    return true;
+  }
+
   for (auto& block : blocks) {
     // load blocks one by one
     if (!tree.loadBlock(block, state)) {

@@ -46,9 +46,16 @@ bool LoadTree(
   }
 
   hash_t tip_hash;
-  if (!storage.getTip<block_t>(tip_hash)) {
+  bool res = storage.getTip<block_t>(tip_hash);
+
+  if (!res && !blocks.empty()) {
     return state.Invalid(index_t::block_t::name() + "-bad-tip",
                          "Can not read block tip");
+  }
+
+  // skip loading because storage is empty
+  if (!res && blocks.empty()) {
+    return true;
   }
 
   if (!LoadBlocks(out, blocks, tip_hash, state)) {
