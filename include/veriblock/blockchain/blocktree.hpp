@@ -129,7 +129,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       return state.Invalid("bad-header");
     }
 
-    auto hash = index->getHash();
+    const auto hash = index->getHash();
     if (!base::loadBlock(std::move(index), state)) {
       return false;
     }

@@ -112,7 +112,7 @@ struct BaseBlockTree {
                       index->toPrettyString()));
     }
 
-    auto currentHash = index->getHash();
+    const auto currentHash = index->getHash();
     auto* current = getBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block
@@ -129,7 +129,7 @@ struct BaseBlockTree {
                            "Block does not connect to current tree");
     }
 
-    auto shortHash = makePrevHash(currentHash);
+    const auto shortHash = makePrevHash(currentHash);
     // move index_t to blocks_
     if (current == nullptr) {
       // loaded block is not known to current block tree.

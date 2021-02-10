@@ -36,9 +36,6 @@ addtest(btc_blockchain_test
         ${btc_gen_1}
         ${btc_gen_2}
         )
-set_target_properties(btc_blockchain_test PROPERTIES
-        COST 10000  # 10 sec
-        )
 
 addtest(vbk_blockchain_test
         vbk_blockchain_test.cpp
@@ -60,6 +57,7 @@ set_tests_properties(vbk_getblockproof_test PROPERTIES
 
 addtest(chain_test chain_test.cpp)
 addtest(blockchain_test blockchain_test.cpp)
+set_test_cost(blockchain_test 105000) # 105 sec
 addtest(chainparams_test chainparams_test.cpp)
 addtest(alt_blockchain_test alt_blockchain_test.cpp)
 addtest(alt_invalidation_test alt_invalidation_test.cpp)
