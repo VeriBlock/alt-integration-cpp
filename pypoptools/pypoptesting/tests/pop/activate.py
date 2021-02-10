@@ -7,9 +7,9 @@ node[0] mines pop tx in block 101 (fork A tip)
 
 Pop is disabled before block 200 therefore can't handle Pop data
 """
-from pypoptesting.framework.test_framework import PopIntegrationTestFramework
-from pypoptesting.framework.pop_util import endorse_block, mine_until_pop_enabled
-from pypoptesting.framework.sync_util import sync_all, wait_for_block_height
+from ...framework.test_framework import PopIntegrationTestFramework
+from ...framework.pop_util import endorse_block, mine_until_pop_enabled
+from ...framework.sync_util import sync_all, wait_for_block_height
 
 
 class PopActivateTest(PopIntegrationTestFramework):

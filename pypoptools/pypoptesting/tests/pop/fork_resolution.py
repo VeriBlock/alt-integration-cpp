@@ -13,9 +13,9 @@ node[3] started with 0 blocks.
 
 After sync has been completed, expect all nodes to be on same height (fork A, block 323)
 """
-from pypoptesting.framework.test_framework import PopIntegrationTestFramework
-from pypoptesting.framework.pop_util import create_endorsed_chain, endorse_block, mine_until_pop_enabled
-from pypoptesting.framework.sync_util import (
+from ...framework.test_framework import PopIntegrationTestFramework
+from ...framework.pop_util import create_endorsed_chain, endorse_block, mine_until_pop_enabled
+from ...framework.sync_util import (
     start_all, connect_all,
     sync_all, sync_blocks, sync_pop_tips,
     wait_for_block_height
