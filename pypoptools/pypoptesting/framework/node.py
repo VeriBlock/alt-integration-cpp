@@ -35,7 +35,7 @@ class Node(ABC):
     # Wallet
 
     @abstractmethod
-    def getbalance(self) -> float:
+    def getbalance(self) -> int:
         pass
 
     @abstractmethod
