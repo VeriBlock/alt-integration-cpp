@@ -62,14 +62,13 @@ struct BlockIndex : public Block::addon_t {
     // it is ok to deallocate a block in a middle of chain. we will detect
     // orphaned blocks and cleanup later.
     for (auto* next : pnext) {
-      if (next != nullptr) {
-        next->pprev = nullptr;
-      }
+      VBK_ASSERT(next);
+      next->pprev = nullptr;
     }
   }
 
   // BlockIndex is not copyable
-  // BlockIndex it movable
+  // BlockIndex is movable
   BlockIndex(BlockIndex&& other) noexcept = default;
   BlockIndex& operator=(BlockIndex&& other) noexcept = default;
 

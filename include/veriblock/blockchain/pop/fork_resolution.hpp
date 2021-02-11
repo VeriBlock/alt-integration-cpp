@@ -499,10 +499,6 @@ struct PopAwareForkResolutionComparator {
   int comparePopScore(ProtectedBlockTree& ed,
                       protected_index_t& candidate,
                       ValidationState& state) {
-    VBK_ASSERT_MSG(!candidate.finalized,
-                   "In POP FR candidate block is finalized: %s",
-                   candidate.toPrettyString());
-
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"
       VBK_LOG_INFO("Candidate %s is invalid, the current chain wins",
@@ -518,7 +514,7 @@ struct PopAwareForkResolutionComparator {
       return 1;
     }
 
-    if (bestTip->finalized) {
+    if (bestTip->finalized && candidate.getHeight() <= bestTip->getHeight()) {
       // finalized blocks can not be reorganized
       return 1;
     }
