@@ -10,7 +10,6 @@
 #include <array>
 #include <functional>
 #include <memory>
-#include <mutex>
 #include <veriblock/time.hpp>
 
 namespace altintegration {
@@ -18,8 +17,8 @@ namespace cache {
 
 //! time-based LFRU cache.
 //!
-//! if cache item is newer than TimeWindow min, evict less frequently used
-//! element.
+//! if all cache items are newer than TimeWindow min, evict less frequently used
+//! element. otherwise, evict oldest item, with lowest frequency.
 //!
 //! has O(Size) complexity, thus works best for caches with small number of keys
 template <typename Key,
@@ -33,10 +32,6 @@ struct SmallLFRUCache {
     size_t lastAccessed = 0;
     Key key;
     std::shared_ptr<Value> value = nullptr;
-
-    bool operator<(const Item& other) const {
-      return frequency < other.frequency;
-    }
   };
 
   std::shared_ptr<Value> getOrDefault(
@@ -124,17 +119,10 @@ struct SmallLFRUCache {
   }
 
  private:
-  void set(int index, Key key, std::shared_ptr<Value> value) {
-    container_[index] = std::make_pair(key, std::move(value));
-  }
-
- private:
   std::array<Item, Size> container_;
 
   // number of elements in a cache
   size_t size_ = 0;
-
-  std::mutex mutex_;
 };
 
 }  // namespace cache
