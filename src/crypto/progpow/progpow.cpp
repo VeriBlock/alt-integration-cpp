@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 #include <veriblock/assert.hpp>
+#include <veriblock/cache/small_lfu_cache.hpp>
 #include <veriblock/consts.hpp>
 #include <veriblock/crypto/progpow.hpp>
 #include <veriblock/crypto/progpow/math.hpp>
@@ -584,19 +585,11 @@ std::string hash32_t::toHex() const {
 }  // namespace progpow
 
 #ifndef VBK_PROGPOW_ETHASH_CACHE_SIZE
-#define VBK_PROGPOW_ETHASH_CACHE_SIZE 4
-#endif
-
-#ifndef VBK_PROGPOW_ETHASH_CACHE_ELASTICITY
-#define VBK_PROGPOW_ETHASH_CACHE_ELASTICITY 1
+#define VBK_PROGPOW_ETHASH_CACHE_SIZE 6
 #endif
 
 #ifndef VBK_PROGPOW_HEADER_HASH_SIZE
 #define VBK_PROGPOW_HEADER_HASH_SIZE 100000
-#endif
-
-#ifndef VBK_PROGPOW_HEADER_HASH_ELASTICITY
-#define VBK_PROGPOW_HEADER_HASH_ELASTICITY 1000
 #endif
 
 struct CacheEntry {
@@ -606,13 +599,16 @@ struct CacheEntry {
 
 // epoch -> ethash cache + dag
 // NOLINTNEXTLINE(cert-err58-cpp)
-static lru11::Cache<uint64_t, CacheEntry, std::mutex> gEthashCache(
-    VBK_PROGPOW_ETHASH_CACHE_SIZE, VBK_PROGPOW_ETHASH_CACHE_ELASTICITY);
+static cache::
+    SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>
+        gEthashCache;
+// protects gEthashCache
+static std::mutex csEthashCache;
 
 // sha256d(vbkheader) -> progpow hash
 // NOLINTNEXTLINE(cert-err58-cpp)
 static lru11::Cache<uint256, uint192, std::mutex> gProgpowHeaderCache(
-    VBK_PROGPOW_HEADER_HASH_SIZE, VBK_PROGPOW_HEADER_HASH_ELASTICITY);
+    VBK_PROGPOW_HEADER_HASH_SIZE, 1000);
 
 void progpow::insertHeaderCacheEntry(Slice<const uint8_t> header,
                                      uint192 progpowHash) {
@@ -622,7 +618,10 @@ void progpow::insertHeaderCacheEntry(Slice<const uint8_t> header,
 }
 
 void progpow::clearHeaderCache() { gProgpowHeaderCache.clear(); }
-void progpow::clearEthashCache() { gEthashCache.clear(); }
+void progpow::clearEthashCache() {
+  std::lock_guard<std::mutex> lock(csEthashCache);
+  gEthashCache.clear();
+}
 
 static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
@@ -634,23 +633,26 @@ static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   // nonce is only 40 bits (5 bytes)
   nonce &= 0x000000FFFFFFFFFFLL;
 
-  CacheEntry cacheEntry;
-  if (!gEthashCache.tryGet(epoch, cacheEntry)) {
-    VBK_LOG_WARN(
-        "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
-        epoch,
-        progpow::ethash_get_cachesize(height));
-
-    // build cache. this takes ~2.6sec
-    cacheEntry.light = progpow::ethash_make_cache(height);
-    cacheEntry.dag = progpow::createDagCache(cacheEntry.light.get());
-
-    gEthashCache.insert(epoch, cacheEntry);
+  std::shared_ptr<CacheEntry> cacheEntry;
+  {
+    // cache miss
+    std::lock_guard<std::mutex> lock(csEthashCache);
+    cacheEntry = gEthashCache.getOrDefault(epoch, [epoch, height] {
+      VBK_LOG_WARN(
+          "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
+          epoch,
+          progpow::ethash_get_cachesize(height));
+      auto entry = std::make_shared<CacheEntry>();
+      // build cache. this takes ~2.6sec
+      entry->light = progpow::ethash_make_cache(height);
+      entry->dag = progpow::createDagCache(entry->light.get());
+      return entry;
+    });
   }
 
-  VBK_ASSERT(cacheEntry.light);
-  auto& dag = cacheEntry.dag;
-  auto* light = cacheEntry.light.get();
+  VBK_ASSERT(cacheEntry->light);
+  auto& dag = cacheEntry->dag;
+  auto* light = cacheEntry->light.get();
   auto hash = progpow::progPowHash(height, nonce, headerHash, dag, light);
 
   WriteStream w(32);

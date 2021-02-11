@@ -1,0 +1,1 @@
+addtest(static_lfu_cache small_lfu_cache.cpp)

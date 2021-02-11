@@ -6,6 +6,7 @@ add_library(test_main OBJECT test_main.cpp)
 target_link_libraries(test_main PUBLIC gtest)
 
 add_subdirectory(e2e)
+add_subdirectory(cache)
 add_subdirectory(storage)
 add_subdirectory(blockchain)
 add_subdirectory(rewards)
