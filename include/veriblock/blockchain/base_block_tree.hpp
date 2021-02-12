@@ -598,20 +598,33 @@ struct BaseBlockTree {
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
     // second, erase candidates from tips_ that will never be activated
-    erase_if<index_t>(tips_, [this, index](const index_t* tip) -> bool {
-      VBK_ASSERT(tip);
+    std::vector<const index_t*> outdated_tips;
+    erase_if<index_t>(
+        tips_, [this, index, &outdated_tips](const index_t* tip) -> bool {
+          VBK_ASSERT(tip);
 
-      // active chain can not be outdated
-      if (activeChain_.contains(tip)) {
-        return false;
+          // active chain can not be outdated
+          if (activeChain_.contains(tip)) {
+            return false;
+          }
+
+          if (isBlockOutdated(*index, *tip)) {
+            outdated_tips.push_back(tip);
+            return true;
+          }
+
+          return false;
+        });
+
+    // optimization:
+    // for every outdated tip, remove its chain connecting to active chain
+    for (const auto* tip : outdated_tips) {
+      while (tip != nullptr && !activeChain_.contains(tip)) {
+        auto shortHash = makePrevHash(tip->getHash());
+        tip = tip->pprev;
+        blocks_.erase(shortHash);
       }
-
-      if (isBlockOutdated(*index, *tip)) {
-        return true;
-      }
-
-      return false;
-    });
+    }
 
     // third, deallocate blocks that are outdated, if any
     {
