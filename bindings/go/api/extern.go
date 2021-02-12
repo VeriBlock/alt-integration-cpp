@@ -20,6 +20,6 @@ func SetOnGetBlockHeaderHash(fn func(toBeHashed []byte) []byte) {
 }
 
 // SetOnCheckBlockHeader ...
-func SetOnCheckBlockHeader(fn func(header []byte, root []byte) bool) {
+func SetOnCheckBlockHeader(fn func(header []byte, root []byte, state *ffi.ValidationState) bool) {
 	ffi.OnCheckBlockHeader = fn
 }

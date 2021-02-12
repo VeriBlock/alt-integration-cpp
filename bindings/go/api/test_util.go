@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
+	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
 var boostrapBlock = entities.AltBlock{
@@ -34,7 +35,7 @@ func generateTestPopContext(t *testing.T, storage *Storage) *PopContext {
 		return altblock.Hash
 	})
 
-	SetOnCheckBlockHeader(func(header []byte, root []byte) bool {
+	SetOnCheckBlockHeader(func(header []byte, root []byte, state *ffi.ValidationState) bool {
 		return true
 	})
 

@@ -5,6 +5,7 @@
 
 #include "bytestream.hpp"
 #include "config.hpp"
+#include "validation_state.hpp"
 #include "veriblock/blockchain/alt_chain_params.hpp"
 #include "veriblock/blockchain/btc_chain_params.hpp"
 #include "veriblock/blockchain/vbk_chain_params.hpp"
@@ -44,9 +45,17 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
 
   bool checkBlockHeader(
       const std::vector<uint8_t>& bytes,
-      const std::vector<uint8_t>& root) const noexcept override {
-    return VBK_checkBlockHeader(
-        bytes.data(), (int)bytes.size(), root.data(), (int)root.size());
+      const std::vector<uint8_t>& root,
+      altintegration::ValidationState& state) const noexcept override {
+    VbkValidationState c_state;
+    if (!VBK_checkBlockHeader(bytes.data(),
+                              (int)bytes.size(),
+                              root.data(),
+                              (int)root.size(),
+                              &c_state)) {
+      return state.Invalid(c_state.GetErrorMessage());
+    }
+    return true;
   };
 };
 
