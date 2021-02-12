@@ -37,6 +37,11 @@ func (v *ValidationState) GetErrorMessage() string {
 	return C.GoString(c_str)
 }
 
+func (v *ValidationState) Invalid(reject_reason string, debug_reason string) bool {
+	res := C.VBK_ValidationState_Invalid(v.ref, C.CString(reject_reason), C.CString(debug_reason))
+	return bool(res)
+}
+
 // IsValid ...
 func (v *ValidationState) IsValid() bool {
 	res := C.VBK_ValidationState_isValid(v.ref)

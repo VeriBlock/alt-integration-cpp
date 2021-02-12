@@ -34,7 +34,11 @@ void VBK_getBlockHeaderHash(const uint8_t* in,
 //! Accepts arbitrary bytes.
 //! Should return 0 if input bytes are statelessly INVALID block header.
 //! Should return non-0 if input bytes are statelessly VALID block header.
-bool VBK_checkBlockHeader(const uint8_t* in, int inlen, const uint8_t* root, int root_size);
+bool VBK_checkBlockHeader(const uint8_t* in,
+                          int inlen,
+                          const uint8_t* root,
+                          int root_size,
+                          VbkValidationState* state);
 
 #ifdef __cplusplus
 }  // end of extern "C"

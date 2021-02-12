@@ -337,7 +337,7 @@ bool checkPublicationData(const PublicationData& pub,
   }
 
   auto root = c.getTopLevelMerkleRoot();
-  if (!params.checkBlockHeader(pub.header, root.asVector())) {
+  if (!params.checkBlockHeader(pub.header, root.asVector(), state)) {
     return state.Invalid("bad-endorsedheader",
                          "Bad endorsed header or unauthenticated contextInfo");
   }

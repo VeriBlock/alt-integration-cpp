@@ -111,6 +111,7 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	assert.NoError(err)
 
 	state, err := popContext.SubmitAtv(atv)
+
 	// state == 0, valid atv
 	assert.Equal(0, state)
 	assert.NoError(err)

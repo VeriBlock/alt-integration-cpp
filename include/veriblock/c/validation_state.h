@@ -43,6 +43,20 @@ void VBK_FreeValidationState(VbkValidationState* self);
 const char* VBK_ValidationState_getErrorMessage(VbkValidationState* self);
 
 /**
+ * Changes this ValidationState into "INVALID" mode.
+ *
+ * @param[in] self VbkValidationState.
+ * @param[in] reject_reason - supply a short, unique message that identifies
+ * this class of validation. Example: mandatory-script-verify-flag-failed
+ * @param[in] debug_message - supply arbitrary message that will help to debug
+ * the error.
+ * @return always returns false.
+ */
+bool VBK_ValidationState_Invalid(VbkValidationState* self,
+                                 const char* reject_reason,
+                                 const char* debug_message);
+
+/**
  * Returns that VbkValidationState has an errors or not.
  *
  * @param[in] self VbkValidationState.
