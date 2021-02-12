@@ -30,7 +30,7 @@ struct VbkValidationState {
 
  private:
   altintegration::ValidationState validation_state{};
-  std::string error;
+  std::string error{};
 };
 
 #endif
