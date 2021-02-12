@@ -107,7 +107,7 @@ static const std::string BtcBlockIndexVbkEncoded =
 using namespace altintegration;
 
 TEST(BlockIndex, BTC) {
-  BlockIndex<BtcBlock> index;
+  BlockIndex<BtcBlock> index(nullptr);
   auto data = ParseHex(BtcBlockIndexVbkEncoded);
   ReadStream stream(data);
   ValidationState state;
@@ -115,7 +115,7 @@ TEST(BlockIndex, BTC) {
 }
 
 TEST(BlockIndex, VBK) {
-  BlockIndex<VbkBlock> index;
+  BlockIndex<VbkBlock> index(nullptr);
   auto data = ParseHex(VbkBlockIndexVbkEncoded);
   ReadStream stream(data);
   ValidationState state;
@@ -123,7 +123,7 @@ TEST(BlockIndex, VBK) {
 }
 
 TEST(BlockIndex, ALT) {
-  BlockIndex<AltBlock> index;
+  BlockIndex<AltBlock> index(nullptr);
   auto data = ParseHex(AltBlockIndexVbkEncoded);
   ReadStream stream(data);
   ValidationState state;
@@ -143,7 +143,7 @@ TYPED_TEST_P(BlockIndexTest, RoundTrip) {
   ValidationState state;
 
   auto vbkencoded = SerializeToVbkEncoding<Index>(index);
-  Index decodedVbk;
+  Index decodedVbk(nullptr);
   ASSERT_TRUE(DeserializeFromVbkEncoding<Index>(vbkencoded, decodedVbk, state))
       << state.toString();
   ASSERT_TRUE(state.IsValid());

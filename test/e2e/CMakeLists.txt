@@ -6,8 +6,10 @@ addtest(scenario_5_test scenario_5_test.cpp)
 addtest(scenario_6_test scenario_6_test.cpp)
 addtest(scenario_7_test scenario_7_test.cpp)
 addtest(scenario_8_test scenario_8_test.cpp)
+set_test_cost(scenario_8_test 24500) # 24.5 sec
 addtest(scenario_9_test scenario_9_test.cpp)
 addtest(pop_payouts_e2e_test pop_payouts_e2e_test.cpp)
+set_test_cost(pop_payouts_e2e_test 31500) # 31.5 sec
 addtest(duplicate_atv_test duplicate_atv_test.cpp)
 addtest(pop_fr_invalid_vbk_chain_test pop_fr_invalid_vbk_chain_test.cpp)
 addtest(setstate_atomicity_test setstate_atomicity_test.cpp)

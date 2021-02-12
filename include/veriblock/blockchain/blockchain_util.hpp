@@ -8,6 +8,7 @@
 
 #include <veriblock/blockchain/block_index.hpp>
 #include <veriblock/blockchain/chain.hpp>
+#include <veriblock/blockchain/command_group.hpp>
 #include <veriblock/validation_state.hpp>
 
 namespace altintegration {

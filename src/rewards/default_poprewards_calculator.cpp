@@ -406,7 +406,7 @@ PopPayouts DefaultPopRewardsCalculator::getPopPayout(
     return {};
   }
 
-  VBK_ASSERT_MSG(index->getHeight() >=
+  VBK_ASSERT_MSG((uint32_t)index->getHeight() >=
                      (endorsedBlock->getHeight() +
                       tree_.getParams().getEndorsementSettlementInterval() - 1),
                  "Block %s is not finalized for PoP payouts",
