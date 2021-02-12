@@ -53,7 +53,7 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
                               root.data(),
                               (int)root.size(),
                               &c_state)) {
-      return state.Invalid(c_state.GetErrorMessage());
+      return state.Invalid(c_state.getState().GetPath());
     }
     return true;
   }
