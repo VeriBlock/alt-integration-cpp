@@ -31,7 +31,8 @@ struct AltChainParamsRegTest : public AltChainParams {
   }
 
   bool checkBlockHeader(const std::vector<uint8_t>&,
-                        const std::vector<uint8_t>&) const noexcept override {
+                        const std::vector<uint8_t>&,
+                        ValidationState&) const noexcept override {
     return true;
   }
 

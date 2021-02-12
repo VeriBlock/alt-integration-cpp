@@ -12,6 +12,7 @@
 #include "veriblock/blockchain/block_index.hpp"
 #include "veriblock/entities/altblock.hpp"
 #include "veriblock/serde.hpp"
+#include "veriblock/validation_state.hpp"
 
 /**
  * @defgroup config Altchain Config
@@ -231,9 +232,9 @@ struct AltChainParams {
    *
    * @warning SHOULD NOT THROW
    */
-  virtual bool checkBlockHeader(
-      const std::vector<uint8_t>& bytes,
-      const std::vector<uint8_t>& root) const noexcept = 0;
+  virtual bool checkBlockHeader(const std::vector<uint8_t>& bytes,
+                                const std::vector<uint8_t>& root,
+                                ValidationState& state) const noexcept = 0;
 
  public:
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =

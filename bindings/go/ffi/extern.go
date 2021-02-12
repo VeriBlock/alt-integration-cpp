@@ -3,6 +3,7 @@ package ffi
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/c/config.h>
+// #include <veriblock/c/validation_state.h>
 // #include <string.h>
 import "C"
 import (
@@ -14,7 +15,7 @@ var (
 	OnGetAltchainID      = func() int64 { panic("OnGetAltchainID not set") }
 	OnGetBootstrapBlock  = func() string { panic("OnGetBootstrapBlock not set") }
 	OnGetBlockHeaderHash = func(toBeHashed []byte) []byte { panic("OnGetBlockHeaderHash not set") }
-	OnCheckBlockHeader   = func(header []byte, root []byte) bool { panic("OnCheckBlockHeader not set") }
+	OnCheckBlockHeader   = func(header []byte, root []byte, state *ValidationState) bool { panic("OnCheckBlockHeader not set") }
 )
 
 //export VBK_getAltchainId
@@ -54,10 +55,11 @@ func VBK_getBlockHeaderHash(in *C.uint8_t, inlen C.int, out *C.uint8_t, outlen *
 }
 
 //export VBK_checkBlockHeader
-func VBK_checkBlockHeader(header *C.uint8_t, headerlen C.int, root *C.uint8_t, rootlen C.int) C.int {
+func VBK_checkBlockHeader(header *C.uint8_t, headerlen C.int, root *C.uint8_t, rootlen C.int, c_state *C.VbkValidationState) C.int {
+	state := &ValidationState{ref: c_state}
 	header_bytes := convertToBytes(header, headerlen)
 	root_bytes := convertToBytes(root, rootlen)
-	res := OnCheckBlockHeader(header_bytes, root_bytes)
+	res := OnCheckBlockHeader(header_bytes, root_bytes, state)
 	if res == true {
 		return 1
 	}

@@ -24,6 +24,17 @@ const char* VBK_ValidationState_getErrorMessage(VbkValidationState* self) {
   return self->GetErrorMessage();
 }
 
+bool VBK_ValidationState_Invalid(VbkValidationState* self,
+                                 const char* reject_reason,
+                                 const char* debug_message) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(reject_reason);
+  VBK_ASSERT(debug_message);
+
+  return self->getState().Invalid(std::string(reject_reason),
+                                  std::string(debug_message));
+}
+
 bool VBK_ValidationState_isValid(VbkValidationState* self) {
   VBK_ASSERT(self);
 
