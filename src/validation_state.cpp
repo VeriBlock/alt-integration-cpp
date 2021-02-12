@@ -28,6 +28,9 @@ bool ValidationState::Invalid(const std::string& reject_reason,
 }
 
 std::string ValidationState::toString() const {
-  return GetPath() + ", " + GetDebugMessage();
+  if (IsInvalid()) {
+    return GetPath() + ", " + GetDebugMessage();
+  }
+  return "";
 }
 }  // namespace altintegration
