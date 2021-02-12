@@ -56,7 +56,7 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
       return state.Invalid(c_state.GetErrorMessage());
     }
     return true;
-  };
+  }
 };
 
 // Config itself is defined in config.hpp
