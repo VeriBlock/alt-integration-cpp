@@ -11,7 +11,6 @@
 #include <vector>
 #include <veriblock/blockchain/alt_block_addon.hpp>
 #include <veriblock/blockchain/block_index.hpp>
-#include <veriblock/entities/endorsements.hpp>
 #include <veriblock/hashers.hpp>
 #include <veriblock/json.hpp>
 #include <veriblock/serde.hpp>
