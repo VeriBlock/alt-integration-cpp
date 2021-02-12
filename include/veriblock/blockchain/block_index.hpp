@@ -11,13 +11,9 @@
 #include <vector>
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/blockchain/block_status.hpp>
-#include <veriblock/blockchain/command.hpp>
-#include <veriblock/blockchain/command_group.hpp>
-#include <veriblock/entities/endorsements.hpp>
 #include <veriblock/entities/vbkblock.hpp>
 #include <veriblock/logger.hpp>
 #include <veriblock/validation_state.hpp>
-#include <veriblock/write_stream.hpp>
 
 namespace altintegration {
 
