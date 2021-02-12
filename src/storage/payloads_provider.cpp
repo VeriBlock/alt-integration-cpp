@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <veriblock/blockchain/alt_block_tree.hpp>
+#include <veriblock/blockchain/blockchain_util.hpp>
 #include <veriblock/exceptions/state_corrupted.hpp>
 #include <veriblock/storage/payloads_provider.hpp>
 

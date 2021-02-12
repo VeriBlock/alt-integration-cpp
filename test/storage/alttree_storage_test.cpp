@@ -102,12 +102,24 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   bool bootstrapped = reloadedAltTree.bootstrap(this->state);
   ASSERT_TRUE(bootstrapped);
 
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
 
-  ASSERT_TRUE(
-      this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc())) << state.toString();
+  ASSERT_TRUE(this->cmp(reloadedAltTree.vbk().btc(), this->alttree.btc()))
+                << "initial : \n"
+                << alttree.toPrettyString() << "\n\n"
+                << "reloaded: \n"
+                << reloadedAltTree.toPrettyString();
+
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
+  ASSERT_TRUE(this->cmp(reloadedAltTree.vbk(), this->alttree.vbk()));
+  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
+  ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
+
+  ASSERT_TRUE(this->cmp(reloadedAltTree.btc(), this->alttree.btc()))
+                << "initial : \n"
+                << alttree.toPrettyString() << "\n\n"
+                << "reloaded: \n"
+                << reloadedAltTree.toPrettyString();
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk(), this->alttree.vbk()));
   ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 

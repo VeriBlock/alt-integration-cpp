@@ -64,7 +64,7 @@ struct AddEndorsement : public Command {
     }
 
     if (containing->getHeight() - endorsed->getHeight() >
-        ed_->getParams().getEndorsementSettlementInterval()) {
+        (int)ed_->getParams().getEndorsementSettlementInterval()) {
       return state.Invalid(protected_block_t::name() + "-expired",
                            "Endorsement expired");
     }
