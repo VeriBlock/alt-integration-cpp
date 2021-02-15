@@ -428,7 +428,7 @@ bool VbkBlockTree::isBlockOld(height_t height) const {
   auto* tip = getBestChain().tip();
   VBK_ASSERT(tip);
 
-  return tip->getHeight() - height > getParams().getMaxReorgBlocks();
+  return tip->getHeight() - height > getParams().getHistoryOverwriteLimit();
 }
 
 template <>
