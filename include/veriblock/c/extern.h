@@ -40,6 +40,11 @@ bool VBK_checkBlockHeader(const uint8_t* in,
                           int root_size,
                           VbkValidationState* state);
 
+//! Log message.
+//! @param[in] log_level, log level altintegration::LogLevel
+//! @param[in] msg, log message.
+void VBK_Logger_log(const char* log_level, const char* msg);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif

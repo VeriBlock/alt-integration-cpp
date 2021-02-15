@@ -51,10 +51,7 @@ enum class LogLevel { debug, info, warn, error, critical, off };
 struct Logger {
   virtual ~Logger() = default;
 
-  virtual void log(LogLevel lvl, const std::string& msg) {
-    (void)lvl;
-    (void)msg;
-  }
+  virtual void log(LogLevel, const std::string&) {}
 
   LogLevel level = LogLevel::off;
 };
