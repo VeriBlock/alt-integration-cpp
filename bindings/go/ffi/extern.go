@@ -16,6 +16,7 @@ var (
 	OnGetBootstrapBlock  = func() string { panic("OnGetBootstrapBlock not set") }
 	OnGetBlockHeaderHash = func(toBeHashed []byte) []byte { panic("OnGetBlockHeaderHash not set") }
 	OnCheckBlockHeader   = func(header []byte, root []byte, state *ValidationState) bool { panic("OnCheckBlockHeader not set") }
+	OnLog                = func(log_level string, msg string) { panic("OnLog not set") }
 )
 
 //export VBK_getAltchainId
@@ -64,4 +65,9 @@ func VBK_checkBlockHeader(header *C.uint8_t, headerlen C.int, root *C.uint8_t, r
 		return 1
 	}
 	return 0
+}
+
+//export VBK_Logger_log
+func VBK_Logger_log(log_level *C.char, msg *C.char) {
+	OnLog(C.GoString(log_level), C.GoString(msg))
 }
