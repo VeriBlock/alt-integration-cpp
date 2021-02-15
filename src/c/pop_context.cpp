@@ -25,7 +25,7 @@ PopContext* VBK_NewPopContext(Config_t* config, Storage_t* storage) {
 
   // set logger
   altintegration::SetLogger(
-      std::unique_ptr<altintegration::Logger>(new adaptors::Logger()));
+      altintegration::make_unique<altintegration::Logger>(adaptors::Logger()));
 
   auto* v = new PopContext();
 

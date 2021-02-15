@@ -18,10 +18,10 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 
-	index, err := popContext.AltBestBlock()
-	assert.NoError(err)
+	// generate new block
+	newBlock := generateNextAltBlock(&boostrapBlock)
 
-	block, err := index.GetAltBlockHeader()
+	err = popContext.AcceptBlockHeader(newBlock)
 	assert.NoError(err)
 
 	var popData entities.PopData
@@ -29,7 +29,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 
 	txRootHash := [veriblock.Sha256HashSize]byte{}
 
-	hash, err := popContext.CalculateTopLevelMerkleRoot(txRootHash, block.PreviousBlock, &popData)
+	hash, err := popContext.CalculateTopLevelMerkleRoot(txRootHash, newBlock.PreviousBlock, &popData)
 	assert.NoError(err)
 
 	assert.False(bytes.Equal(hash[:], []byte{}))
