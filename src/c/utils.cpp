@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/c/utils.h"
+
 #include <cstdio>
 #include <vector>
 
@@ -11,7 +13,6 @@
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/alt-util.hpp"
-#include "veriblock/c/utils.h"
 #include "veriblock/entities/atv.hpp"
 #include "veriblock/entities/btcblock.hpp"
 #include "veriblock/entities/popdata.hpp"
@@ -125,12 +126,16 @@ void VBK_AltBlock_calculateTopLevelMerkleRoot(PopContext* self,
   using namespace altintegration;
   std::vector<uint8_t> txmroot(txRoot, txRoot + 32);
 
-  std::vector<uint8_t> block_hash(prev_block_hash,
-                                  prev_block_hash + prev_block_hash_size);
+  std::vector<uint8_t> prev_hash(prev_block_hash,
+                                 prev_block_hash + prev_block_hash_size);
   auto pop_data = AssertDeserializeFromVbkEncoding<PopData>(
       Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
 
-  auto* index = self->context->altTree->getBlockIndex(block_hash);
+  auto* index = self->context->altTree->getBlockIndex(prev_hash);
+  VBK_ASSERT_MSG(index != nullptr,
+                 "Can't find a block with hash %s. Did you forget to make "
+                 "TopLevelMerkleRoot calculation stateful?",
+                 HexStr(prev_hash));
 
   auto hash = CalculateTopLevelMerkleRoot(
       txmroot, pop_data, index, self->context->altTree->getParams());
