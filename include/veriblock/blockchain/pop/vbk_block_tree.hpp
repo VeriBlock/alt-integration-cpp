@@ -132,6 +132,12 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void removePayloads(index_t& index, const std::vector<pid_t>& pids);
 
   /**
+   * Returns true if `height` is more than `maxReorgBlocks` behind current tip.
+   * @param height block height
+   */
+  bool isBlockOld(height_t height) const;
+
+  /**
    * If we add payloads to the VBK tree in the following order: A1, B2, A3.
    *
    * Ending up with the tree looking like this:

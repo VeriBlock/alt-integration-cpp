@@ -424,6 +424,13 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   return true;
 }
 
+bool VbkBlockTree::isBlockOld(height_t height) const {
+  auto* tip = getBestChain().tip();
+  VBK_ASSERT(tip);
+
+  return tip->getHeight() - height > getParams().getMaxReorgBlocks();
+}
+
 template <>
 void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index) {
   VBK_ASSERT_MSG(index.blockOfProofEndorsements.empty(),
