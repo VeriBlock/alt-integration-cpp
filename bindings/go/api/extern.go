@@ -23,3 +23,8 @@ func SetOnGetBlockHeaderHash(fn func(toBeHashed []byte) []byte) {
 func SetOnCheckBlockHeader(fn func(header []byte, root []byte, state *ffi.ValidationState) bool) {
 	ffi.OnCheckBlockHeader = fn
 }
+
+// SetOnLog ...
+func SetOnLog(fn func(log_lvl string, msg string)) {
+	ffi.OnLog = fn
+}

@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include "adaptors/block_provider_impl.hpp"
+#include "adaptors/logger.hpp"
 #include "adaptors/payloads_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "config.hpp"
@@ -21,6 +22,9 @@ PopContext* VBK_NewPopContext(Config_t* config, Storage_t* storage) {
   auto& c = config->config;
 
   VBK_ASSERT(c->alt);
+
+  // set logger
+  altintegration::SetLogger<adaptors::Logger>();
 
   auto* v = new PopContext();
 
