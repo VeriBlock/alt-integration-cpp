@@ -64,7 +64,8 @@ struct PopData {
     // clang-format on
   }
 
-  // if true, then this PopData and all its contents have been statelessly checked already
+  // if true, then this PopData and all its contents have been statelessly
+  // checked already
   mutable bool checked = false;
 };
 
@@ -82,6 +83,25 @@ inline void putArrayOfIds(JsonValue& obj,
   json::putKV(obj, key, arr);
 }
 
+template <typename JsonValue, typename Pop>
+JsonValue putPopPayload(const Pop& thing) {
+  auto obj = json::makeEmptyObject<JsonValue>();
+  json::putKV(obj, "id", ToJSON<JsonValue>(thing.getId()));
+  json::putKV(obj, "data", ToJSON<JsonValue>(SerializeToHex(thing)));
+  return obj;
+}
+
+template <typename Value, typename Item>
+void putArrayKV(Value& object,
+                const std::string& key,
+                const std::vector<Item>& val) {
+  auto arr = json::makeEmptyArray<Value>();
+  for (const auto& it : val) {
+    json::arrayPushBack(arr, putPopPayload<Value, Item>(it));
+  }
+  json::putKV(object, key, arr);
+}
+
 }  // namespace detail
 
 template <typename JsonValue>
@@ -89,9 +109,9 @@ JsonValue ToJSON(const PopData& p, bool verbose = false) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
   json::putIntKV(obj, "version", p.version);
   if (verbose) {
-    json::putArrayKV(obj, "vbkblocks", p.context);
-    json::putArrayKV(obj, "vtbs", p.vtbs);
-    json::putArrayKV(obj, "atv", p.atvs);
+    detail::putArrayKV(obj, "vbkblocks", p.context);
+    detail::putArrayKV(obj, "vtbs", p.vtbs);
+    detail::putArrayKV(obj, "atv", p.atvs);
   } else {
     detail::putArrayOfIds(obj, "vbkblocks", p.context);
     detail::putArrayOfIds(obj, "vtbs", p.vtbs);
@@ -101,7 +121,9 @@ JsonValue ToJSON(const PopData& p, bool verbose = false) {
   return obj;
 }
 
-bool DeserializeFromVbkEncoding(ReadStream& stream, PopData& out, ValidationState& state);
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                PopData& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 
