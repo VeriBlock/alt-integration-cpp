@@ -23,10 +23,10 @@ static bool str2int(int& i, char const* s) {
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   using namespace altintegration;
-  SetLogger<FmtLogger>();
+
+  LogLevel level = LogLevel::off;
 
   int seed = 0;
-  LogLevel level = LogLevel::off;
 
   if (argc >= 2 && argv[1] != nullptr) {
     str2int(seed, argv[1]);
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
   }
 
   srand(seed);
-  GetLogger().level = level;
+  SetLogger<FmtLogger>(level);
   fmt::printf("[~~~~~~~~~~] Seed=%d\n", seed);
   fmt::printf("[~~~~~~~~~~] LogLevel=%s\n", LevelToString(level));
 

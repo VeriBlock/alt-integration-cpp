@@ -59,12 +59,12 @@ struct Logger {
 //! getter for global logger instance
 Logger& GetLogger();
 //! setter for global logger instance
-void SetLogger(std::unique_ptr<Logger> lgr);
+void SetLogger(std::unique_ptr<Logger> lgr, LogLevel log_lvl = LogLevel::info);
 
 //! setter for global logger instance
 template <typename L>
-void SetLogger() {
-  SetLogger(std::unique_ptr<L>(new L()));
+void SetLogger(LogLevel log_lvl = LogLevel::info) {
+  SetLogger(std::unique_ptr<L>(new L()), log_lvl);
 }
 
 //! convert loglevel to string
@@ -93,7 +93,7 @@ LogLevel StringToLevel(const std::string&);
     if (logger.level <= lvl) {                                \
       logger.log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
     }                                                         \
-  } while (0)
+  } while (false)
 #endif
 
 // clang-format off

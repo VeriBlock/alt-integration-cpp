@@ -16,9 +16,10 @@ Logger& GetLogger() {
   return *logger;
 }
 
-void SetLogger(std::unique_ptr<Logger> lgr) {
+void SetLogger(std::unique_ptr<Logger> lgr, LogLevel log_lvl) {
   VBK_ASSERT(lgr != nullptr);
   logger = std::move(lgr);
+  logger->level = log_lvl;
 }
 
 std::string LevelToString(LogLevel l) {
@@ -61,7 +62,8 @@ LogLevel StringToLevel(const std::string& str) {
   }
   throw std::invalid_argument(
       fmt::format("{} is not valid log level. Expected one of "
-                  "debug/info/warn/error/critical/off"));
+                  "debug/info/warn/error/critical/off",
+                  str));
 
   return LogLevel::off;
 }
