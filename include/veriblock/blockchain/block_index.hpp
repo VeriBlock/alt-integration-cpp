@@ -65,8 +65,8 @@ struct BlockIndex : public Block::addon_t {
 
   // BlockIndex is not copyable
   // BlockIndex is movable
-  BlockIndex(BlockIndex&& other) noexcept = default;
-  BlockIndex& operator=(BlockIndex&& other) noexcept = default;
+  BlockIndex(BlockIndex&& other) = default;
+  BlockIndex& operator=(BlockIndex&& other) = default;
 
   // returns a copy of BlockIndex without inmem fields
   BlockIndex<Block> clone() const {
