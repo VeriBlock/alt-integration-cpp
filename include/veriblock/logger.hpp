@@ -93,7 +93,7 @@ LogLevel StringToLevel(const std::string&);
     if (logger.level <= lvl) {                                \
       logger.log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
     }                                                         \
-  } while (false);
+  } while (false)
 #endif
 
 // clang-format off
