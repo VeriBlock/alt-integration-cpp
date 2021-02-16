@@ -16,15 +16,19 @@
 #include "veriblock/consts.hpp"
 #include "veriblock/pop_context.hpp"
 
-PopContext* VBK_NewPopContext(Config_t* config, Storage_t* storage) {
+PopContext* VBK_NewPopContext(Config_t* config,
+                              Storage_t* storage,
+                              const char* log_lvl) {
   VBK_ASSERT(config);
+  VBK_ASSERT(log_lvl);
   VBK_ASSERT(config->config);
   auto& c = config->config;
 
   VBK_ASSERT(c->alt);
 
   // set logger
-  altintegration::SetLogger<adaptors::Logger>();
+  altintegration::SetLogger<adaptors::Logger>(
+      altintegration::StringToLevel(log_lvl));
 
   auto* v = new PopContext();
 

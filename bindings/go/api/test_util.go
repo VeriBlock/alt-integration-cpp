@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/hex"
+	"fmt"
 	"math/rand"
 	"testing"
 
@@ -39,7 +40,11 @@ func generateTestPopContext(t *testing.T, storage *Storage) *PopContext {
 		return true
 	})
 
-	return NewPopContext(config, storage)
+	SetOnLog(func(log_lvl string, msg string) {
+		fmt.Printf("[POP] [%s]\t%s \n", log_lvl, msg)
+	})
+
+	return NewPopContext(config, storage, "debug")
 }
 
 func generateNextAltBlock(current *entities.AltBlock) *entities.AltBlock {

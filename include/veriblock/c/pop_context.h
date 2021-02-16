@@ -23,7 +23,9 @@ extern "C" {
 
 typedef struct PopContext PopContext;
 
-PopContext* VBK_NewPopContext(Config_t* config, Storage_t* storage);
+PopContext* VBK_NewPopContext(Config_t* config,
+                              Storage_t* storage,
+                              const char* log_lvl);
 void VBK_FreePopContext(PopContext* app);
 
 /**
