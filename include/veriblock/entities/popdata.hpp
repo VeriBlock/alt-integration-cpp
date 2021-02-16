@@ -111,7 +111,7 @@ JsonValue ToJSON(const PopData& p, bool verbose = false) {
   if (verbose) {
     detail::putArrayKV(obj, "vbkblocks", p.context);
     detail::putArrayKV(obj, "vtbs", p.vtbs);
-    detail::putArrayKV(obj, "atv", p.atvs);
+    detail::putArrayKV(obj, "atvs", p.atvs);
   } else {
     detail::putArrayOfIds(obj, "vbkblocks", p.context);
     detail::putArrayOfIds(obj, "vtbs", p.vtbs);
