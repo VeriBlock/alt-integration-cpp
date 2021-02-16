@@ -59,11 +59,11 @@ struct Logger {
 //! getter for global logger instance
 Logger& GetLogger();
 //! setter for global logger instance
-void SetLogger(std::unique_ptr<Logger> lgr, LogLevel log_lvl);
+void SetLogger(std::unique_ptr<Logger> lgr, LogLevel log_lvl = LogLevel::info);
 
 //! setter for global logger instance
 template <typename L>
-void SetLogger(LogLevel log_lvl) {
+void SetLogger(LogLevel log_lvl = LogLevel::info) {
   SetLogger(std::unique_ptr<L>(new L()), log_lvl);
 }
 
@@ -88,12 +88,12 @@ LogLevel StringToLevel(const std::string&);
 
 //! @private
 #define VBK_LOG(lvl, format, ...)                             \
-  {                                                           \
+  do {                                                        \
     auto& logger = altintegration::GetLogger();               \
     if (logger.level <= lvl) {                                \
       logger.log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
     }                                                         \
-  }
+  } while (false);
 #endif
 
 // clang-format off
