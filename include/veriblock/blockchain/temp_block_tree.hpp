@@ -107,8 +107,11 @@ struct TempBlockTree {
       return it->second.get();
     }
 
-    auto newIndex = make_unique<index_t>(prev);
+    auto newIndex = std::unique_ptr<index_t>(new index_t{});
+
+    newIndex->setNull();
     it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;
+    it->second->pprev = prev;
     return it->second.get();
   }
 

@@ -48,23 +48,10 @@ struct BlockIndex : public Block::addon_t {
     }
   }
 
-  ~BlockIndex() {
-    // make sure we deleted this block from prev->pnext
-    if (pprev != nullptr) {
-      pprev->pnext.erase(this);
-    }
-
-    // make sure we deleted this block from next blocks pprev.
-    // it is ok to deallocate a block in a middle of chain. we will detect
-    // orphaned blocks and cleanup later.
-    for (auto* next : pnext) {
-      VBK_ASSERT(next);
-      next->pprev = nullptr;
-    }
-  }
 
   // BlockIndex is not copyable
   // BlockIndex is movable
+  BlockIndex() = default;
   BlockIndex(BlockIndex&& other) = default;
   BlockIndex& operator=(BlockIndex&& other) = default;
 
