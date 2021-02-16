@@ -218,7 +218,8 @@ struct ReducedPublicationView {
         firstKeystoneHeight(
             firstKeystoneAfter(chain.first()->getHeight(), keystoneInterval)),
         lastKeystoneHeight(highestKeystoneAtOrBefore(chain.tip()->getHeight(),
-                                                     keystoneInterval)) {
+                                                     keystoneInterval)),
+        currentKeystoneContext() {
     VBK_ASSERT(keystoneInterval > 0);
   }
 
