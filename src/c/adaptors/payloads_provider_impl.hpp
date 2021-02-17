@@ -57,14 +57,14 @@ struct PayloadsStorageImpl : public altintegration::PayloadsStorage {
     if (!storage_.read(payloads_key<pop_t>(id), bytes_out)) {
       return state.Invalid(
           "bad-" + pop_t::name(),
-          fmt::format("can not read %s from storage", pop_t::name()));
+          fmt::format("can not read {} from storage", pop_t::name()));
     }
 
     altintegration::ReadStream stream(bytes_out);
     if (!altintegration::DeserializeFromVbkEncoding(stream, out, state)) {
       return state.Invalid(
           "bad-" + pop_t::name(),
-          fmt::format("can not deserialize %s from bytes", pop_t::name()));
+          fmt::format("can not deserialize {} from bytes", pop_t::name()));
     }
 
     return true;
