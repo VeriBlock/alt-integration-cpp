@@ -10,7 +10,6 @@
 #include <functional>
 #include <iterator>
 #include <set>
-#include <unordered_set>
 #include <vector>
 #include <veriblock/assert.hpp>
 #include <veriblock/blob.hpp>
@@ -79,26 +78,6 @@ bool erase_last_item_if(std::vector<T*>& v,
   v.erase(it);
 
   return true;
-}
-
-//! removes all elements from unordered set, which satisfy given condition
-template <typename T>
-void erase_if(std::unordered_set<T*>& set,
-              std::function<bool(const T*)> condition) {
-  for (auto it = set.begin(), end = set.end(); it != end;) {
-    if (condition(*it)) {
-      it = set.erase(it);
-    } else {
-      ++it;
-    }
-  }
-}
-
-// it's a shame that C++11 does not have std::make_unique
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args) {
-  auto* ptr = new T(std::forward<Args...>(args)...);
-  return std::unique_ptr<T>(ptr);
 }
 
 }  // namespace altintegration

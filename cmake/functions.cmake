@@ -13,12 +13,6 @@ function(disable_clang_tidy target)
             )
 endfunction()
 
-function(set_test_cost target cost)
-    set_tests_properties(${target} PROPERTIES
-            COST ${cost}
-            )
-endfunction()
-
 function(addtest test_name)
     set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads REQUIRED)

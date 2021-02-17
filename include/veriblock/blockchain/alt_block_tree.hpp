@@ -107,9 +107,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    */
   void acceptBlock(const hash_t& block, const PopData& payloads);
   //! @overload
-  void acceptBlock(index_t& index,
-                   const PopData& payloads,
-                   ValidationState& state);
+  void acceptBlock(index_t& index, const PopData& payloads, ValidationState& state);
   //! @overload
   void acceptBlock(index_t& index, const PopData& payloads);
 
@@ -144,7 +142,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * and can not be used. Tip: ask user to run with '-reindex'.
    * @ingroup api
    */
-  VBK_CHECK_RETURN bool loadBlock(std::unique_ptr<index_t> index,
+  VBK_CHECK_RETURN bool loadBlock(const index_t& index,
                                   ValidationState& state) override;
 
   /**
@@ -223,8 +221,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   VBK_CHECK_RETURN bool setState(index_t& to, ValidationState& state) override;
   //! @overload
   using base::setState;
-
-  bool finalizeBlock(const hash_t& block);
 
   /**
    * Removes given block and all blocks after it.
