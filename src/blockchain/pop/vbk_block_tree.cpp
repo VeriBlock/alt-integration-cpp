@@ -142,8 +142,8 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
 
   auto& vtbids = index.getPayloadIds<VTB>();
   auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
-  VBK_ASSERT(vtbid_it != vtbids.end() &&
-             "state corruption: the block does not contain the payload");
+  VBK_ASSERT_MSG(vtbid_it != vtbids.end(),
+                 "state corruption: the block does not contain the payload");
 
   // removing a payload cannot alter the block validity as addPayloads adds only
   // valid payloads
