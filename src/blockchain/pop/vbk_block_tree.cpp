@@ -26,7 +26,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 
   if (bestTip->getHeight() >
       candidate.getHeight() + param_->getMaxReorgBlocks()) {
-    VBK_LOG_DEBUG("%s Candidate is behind tip more than %d blocks",
+    VBK_LOG_DEBUG("%s Candidate: %s is behind tip more than %d blocks",
                   block_t::name(),
                   candidate.toShortPrettyString(),
                   param_->getMaxReorgBlocks());
@@ -142,8 +142,8 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
 
   auto& vtbids = index.getPayloadIds<VTB>();
   auto vtbid_it = std::find(vtbids.begin(), vtbids.end(), pid);
-  VBK_ASSERT(vtbid_it != vtbids.end() &&
-             "state corruption: the block does not contain the payload");
+  VBK_ASSERT_MSG(vtbid_it != vtbids.end(),
+                 "state corruption: the block does not contain the payload");
 
   // removing a payload cannot alter the block validity as addPayloads adds only
   // valid payloads
