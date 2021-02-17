@@ -217,3 +217,10 @@ VBK_ByteStream* VBK_AltGetBootstrapBlock(Config_t* params) {
   return new VbkByteStream(altintegration::SerializeToVbkEncoding(
       params->config->alt->getBootstrapBlock()));
 }
+
+const char* VBK_GetVbkNetworkName(Config_t* params) {
+  return params->config->getVbkParams().networkName().c_str();
+}
+const char* VBK_GetBtcNetworkName(Config_t* params) {
+  return params->config->getBtcParams().networkName().c_str();
+}
