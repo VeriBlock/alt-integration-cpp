@@ -17,16 +17,15 @@ static BtcChainParamsRegTest btc;
 static VbkChainParamsRegTest vbk;
 static AltChainParamsRegTest alt;
 
-VbkBlock warmupEthashCache() {
+VbkBlock makeBlock() {
   VbkBlock block;
   block.setHeight(vbk.getProgPowForkHeight() + 0);
   block.setTimestamp(vbk.getProgPowStartTimeEpoch());
-  block.getHash();
   return block;
 }
 
 TEST(ProgpowHeaderCache, Warmup) {
-  auto block = warmupEthashCache();
+  auto block = makeBlock();
   progpow::clearHeaderCache();
 
   uint192 hash = uint192::fromHex("abcde");
