@@ -12,7 +12,6 @@
 
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
-#include "command_group.hpp"
 
 namespace altintegration {
 
