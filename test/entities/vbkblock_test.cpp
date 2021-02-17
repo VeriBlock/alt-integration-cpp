@@ -80,6 +80,17 @@ TEST(VbkBlock, RoundTripNew) {
   EXPECT_EQ(blockReEncoded, defaultBlockEncoded);
 }
 
+TEST(VbkBlock, RoundTripWithHash) {
+  const auto blockEncoded = defaultBlock.toRaw();
+  const auto& hash = defaultBlock.getHash();
+  VbkBlock block;
+  ValidationState state;
+  ReadStream stream(blockEncoded);
+  EXPECT_TRUE(DeserializeFromRaw(stream, block, state, hash))
+      << state.toString();
+  EXPECT_EQ(block, defaultBlock);
+}
+
 TEST(VbkBlock, getBlockHash_test) {
   VbkBlock block;
   block.setHeight(5000);

@@ -367,6 +367,7 @@ bool VbkBlockTree::loadBlock(std::unique_ptr<index_t> index,
                              ValidationState& state) {
   const auto height = index->getHeight();
   const auto hash = index->getHash();
+
   if (!VbkTree::loadBlock(std::move(index), state)) {
     return false;  // already set
   }
