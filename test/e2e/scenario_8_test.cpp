@@ -63,7 +63,7 @@ TEST_F(Scenario8, scenario_8) {
       *popminer->vbk().getBestChain().tip(),
       mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
 
-  // Create VTB
+  // Create VTV
   VTB vtb1;
   vtb1.transaction = popTx1;
   vtb1.merklePath.treeIndex = treeIndex;
@@ -72,10 +72,10 @@ TEST_F(Scenario8, scenario_8) {
   vtb1.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
   vtb1.containingBlock = containingVbkBlock;
 
-  ASSERT_TRUE(checkVTB(
-      vtb1, state, popminer->btc().getParams(), popminer->vbk().getParams())) << state.toString();
+  EXPECT_TRUE(checkVTB(
+      vtb1, state, popminer->btc().getParams(), popminer->vbk().getParams()));
 
-  // Create VTB
+  // Create VTV
   VTB vtb2;
   vtb2.transaction = popTx2;
   vtb2.merklePath.treeIndex = treeIndex;
