@@ -60,6 +60,8 @@ struct MerkleTree {
 
   hash_t getMerkleRoot() { return instance.finalizeRoot(); }
 
+  const std::vector<std::vector<hash_t>>& getLayers() const { return layers; }
+
  protected:
   void buildTree(std::vector<hash_t> layer) {
     size_t n = layer.size();
