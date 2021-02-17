@@ -160,7 +160,7 @@ class VBitcoindNode(Node):
         return self.rpc.getbtcbestblockhash()
 
     def getpopdatabyhash(self, hash: Hexstr) -> GetpopdataResponse:
-        s = self.rpc.getpopdatabyheight(hash)
+        s = self.rpc.getpopdatabyhash(hash)
         return GetpopdataResponse(
             header=s['block_header'],
             authenticated_context=s['authenticated_context']['serialized'],
