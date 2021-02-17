@@ -49,8 +49,9 @@ struct BlockTree : public BaseBlockTree<Block> {
   virtual bool bootstrapWithGenesis(const block_t& block,
                                     ValidationState& state) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    return this->bootstrap(0, block, state) ||
-           state.Invalid(block_t::name() + "-bootstrap-genesis");
+    return !this->bootstrap(0, block, state)
+               ? state.Invalid(block_t::name() + "-bootstrap-genesis")
+               : true;
   }
 
   /**
@@ -123,18 +124,16 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   //! @invariant NOT atomic.
-  bool loadBlock(std::unique_ptr<index_t> index, ValidationState& state) override {
-    VBK_ASSERT(index != nullptr);
-    if (!checkBlock(index->getHeader(), state, *param_)) {
+  bool loadBlock(const index_t& index, ValidationState& state) override {
+    if (!checkBlock(index.getHeader(), state, *param_)) {
       return state.Invalid("bad-header");
     }
 
-    const auto hash = index->getHash();
-    if (!base::loadBlock(std::move(index), state)) {
+    if (!base::loadBlock(index, state)) {
       return false;
     }
 
-    auto* current = base::getBlockIndex(hash);
+    auto* current = base::getBlockIndex(index.getHash());
     VBK_ASSERT(current);
 
     auto* prev = current->pprev;
@@ -156,10 +155,6 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     current->raiseValidity(BLOCK_VALID_TREE);
     return true;
-  }
-
-  bool finalizeBlock(const hash_t& block) {
-    return base::finalizeBlockImpl(block, param_->preserveBlocksBehindFinal());
   }
 
  protected:
