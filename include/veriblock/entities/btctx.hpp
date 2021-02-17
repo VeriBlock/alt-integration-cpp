@@ -7,7 +7,6 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCTX_HPP_
 
 #include <cstdint>
-#include <utility>
 #include <vector>
 
 #include "veriblock/hashutil.hpp"
@@ -28,7 +27,8 @@ struct BtcTx {
   std::vector<uint8_t> tx{};
 
   BtcTx() = default;
-  BtcTx(std::vector<uint8_t> bytes) : tx(std::move(bytes)) {}
+
+  BtcTx(const std::vector<uint8_t>& bytes) : tx(bytes) {}
   BtcTx(Slice<const uint8_t> slice) : tx(slice.begin(), slice.end()) {}
 
   friend bool operator==(const BtcTx& a, const BtcTx& b) {

@@ -44,7 +44,8 @@ struct TempBlockTree {
     return acceptBlock(std::make_shared<block_t>(header), state);
   }
 
-  bool acceptBlock(std::shared_ptr<block_t> header, ValidationState& state) {
+  bool acceptBlock(const std::shared_ptr<block_t>& header,
+                   ValidationState& state) {
     auto* prev = getBlockIndex(header->getPreviousBlock());
 
     if (prev == nullptr) {
@@ -53,7 +54,7 @@ struct TempBlockTree {
           "can not find previous block: " + HexStr(header->getPreviousBlock()));
     }
 
-    auto index = insertBlockHeader(std::move(header));
+    auto index = insertBlockHeader(header);
     VBK_ASSERT(index != nullptr &&
                "insertBlockHeader should have never returned nullptr");
 
@@ -76,7 +77,7 @@ struct TempBlockTree {
   void clear() { temp_blocks_.clear(); }
 
  private:
-  index_t* insertBlockHeader(std::shared_ptr<block_t> header) {
+  index_t* insertBlockHeader(const std::shared_ptr<block_t>& header) {
     auto hash = header->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {
@@ -84,30 +85,38 @@ struct TempBlockTree {
       return current;
     }
 
-    current = doInsertBlockHeader(std::move(header));
+    current = doInsertBlockHeader(header);
     VBK_ASSERT(current != nullptr);
 
     return current;
   }
 
-  index_t* doInsertBlockHeader(std::shared_ptr<block_t> header) {
+  index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header) {
     VBK_ASSERT(header != nullptr);
-    auto* prev = getBlockIndex(header->getPreviousBlock());
-    index_t* current = touchBlockIndex(header->getHash(), prev);
+    index_t* current = touchBlockIndex(header->getHash());
     current->setHeader(std::move(header));
+    current->pprev = getBlockIndex(header->getPreviousBlock());
+
+    if (current->pprev != nullptr) {
+      // prev block found
+      current->setHeight(current->pprev->getHeight() + 1);
+    } else {
+      current->setHeight(0);
+    }
 
     return current;
   }
 
-  index_t* touchBlockIndex(const typename block_t::hash_t& hash,
-                           index_t* prev) {
+  index_t* touchBlockIndex(const typename block_t::hash_t& hash) {
     auto shortHash = tree_->makePrevHash(hash);
     auto it = temp_blocks_.find(shortHash);
     if (it != temp_blocks_.end()) {
       return it->second.get();
     }
 
-    auto newIndex = make_unique<index_t>(prev);
+    auto newIndex = std::unique_ptr<index_t>(new index_t{});
+
+    newIndex->setNull();
     it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;
     return it->second.get();
   }

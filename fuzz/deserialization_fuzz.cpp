@@ -5,9 +5,9 @@
 
 #include <type_traits>
 #include <veriblock/entities/altblock.hpp>
-#include <veriblock/entities/context_info_container.hpp>
-#include <veriblock/entities/keystone_container.hpp>
 #include <veriblock/entities/popdata.hpp>
+#include <veriblock/entities/keystone_container.hpp>
+#include <veriblock/entities/context_info_container.hpp>
 
 #define XSTR(s) STR(s)
 #define STR(s) #s
@@ -30,34 +30,19 @@ class hasEstimateSize {
 
 template <typename T>
 typename std::enable_if<hasEstimateSize<T>::value, size_t>::type
-getEstimateSize(const T& t) {
+getEstimateSize(T& t) {
   return t.estimateSize();
 }
-template <typename T>
-typename std::enable_if<!hasEstimateSize<T>::value, size_t>::type
-getEstimateSize(const T&) {
-  return -1;
-}
 
-using altintegration::AltBlock;
-using altintegration::BlockIndex;
-using altintegration::BtcBlock;
-using altintegration::VbkBlock;
-
-// clang-format off
-template <typename T> T create() { return {}; }
-template <> BlockIndex<BtcBlock> create() { return {nullptr}; }
-template <> BlockIndex<VbkBlock> create() { return {nullptr}; }
-template <> BlockIndex<AltBlock> create() { return {nullptr}; }
-// clang-format on
+auto getEstimateSize(...) { return 0ul; }
 
 #define DEFINE_DESER_FUZZ(type)                                                \
   {                                                                            \
-    auto value = create<type>();                                               \
+    type value;                                                                \
     if (DeserializeFromVbkEncoding(stream, value, state)) {                    \
       WriteStream w;                                                           \
       value.toVbkEncoding(w);                                                  \
-      auto value2 = create<type>();                                            \
+      type value2;                                                             \
       if (!DeserializeFromVbkEncoding(w.data(), value2, state)) {              \
         /* we serialized an entity but were not able to deserialize it back */ \
         VBK_ASSERT_MSG(false,                                                  \

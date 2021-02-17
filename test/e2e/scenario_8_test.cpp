@@ -118,6 +118,8 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
             popminer->vbk().getBestChain().tip()->getHash());
 
+  auto altStateVbkTip = *alttree.vbk().getBestChain().tip();
+
   auto* vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   EXPECT_NE(vbkBlock, nullptr);
   validityFlagCheck(*vbkBlock, true);

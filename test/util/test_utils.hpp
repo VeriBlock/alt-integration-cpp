@@ -102,7 +102,7 @@ BlockIndex<B> getRandomIndex();
 
 template <>
 inline BlockIndex<BtcBlock> getRandomIndex() {
-  BlockIndex<BtcBlock> index(nullptr);
+  BlockIndex<BtcBlock> index;
   index.setHeight(rand());
 
   BtcBlock block;
@@ -121,7 +121,7 @@ inline BlockIndex<BtcBlock> getRandomIndex() {
 
 template <>
 inline BlockIndex<VbkBlock> getRandomIndex() {
-  BlockIndex<VbkBlock> index(nullptr);
+  BlockIndex<VbkBlock> index;
   index.setHeight(rand());
 
   VbkBlock block;
@@ -144,7 +144,7 @@ inline BlockIndex<VbkBlock> getRandomIndex() {
 
 template <>
 inline BlockIndex<AltBlock> getRandomIndex() {
-  BlockIndex<AltBlock> index(nullptr);
+  BlockIndex<AltBlock> index;
   index.setHeight(rand());
 
   AltBlock block;

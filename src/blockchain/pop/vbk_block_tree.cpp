@@ -363,23 +363,20 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
-bool VbkBlockTree::loadBlock(std::unique_ptr<index_t> index,
+bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
                              ValidationState& state) {
-  const auto height = index->getHeight();
-  const auto hash = index->getHash();
-
-  if (!VbkTree::loadBlock(std::move(index), state)) {
+  if (!VbkTree::loadBlock(index, state)) {
     return false;  // already set
   }
 
-  auto* current = getBlockIndex(hash);
+  auto* current = getBlockIndex(index.getHash());
   VBK_ASSERT(current);
 
   // TODO: check for duplicates
 
   // recover `endorsedBy`
-  const auto si = param_->getEndorsementSettlementInterval();
-  const auto window = std::max(0, height - si);
+  auto window = std::max(
+      0, index.getHeight() - param_->getEndorsementSettlementInterval());
   Chain<index_t> chain(window, current);
   if (!recoverEndorsements(*this, chain, *current, state)) {
     return state.Invalid("bad-endorsements");
