@@ -60,8 +60,6 @@ struct MerkleTree {
 
   hash_t getMerkleRoot() { return instance.finalizeRoot(); }
 
-  const std::vector<hash_t>& getLayers() const { return layers; }
-
  protected:
   void buildTree(std::vector<hash_t> layer) {
     size_t n = layer.size();
@@ -77,7 +75,7 @@ struct MerkleTree {
 
     layer.resize(n % 2 == 0 ? n : n + 1);
     while (n > 1) {
-      if ((n % 2) != 0u) {
+      if (n % 2) {
         layer[n] = layer[n - 1];
         ++n;
       }
@@ -153,13 +151,8 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
   }
 
   hash_t finalizeRoot() {
-    if (layers.empty()) {
-      return hash_t{};
-    }
-
-    auto& root = layers.back();
-    VBK_ASSERT(root.size() == 1);
-    return root[0].reverse();
+    VBK_ASSERT(!layers.empty());
+    return layers[0][0].reverse();
   }
 };
 
@@ -183,12 +176,9 @@ struct PayloadsMerkleTree
 
   hash_t finalizeRoot() {
     if (this->layers.empty()) {
-      return hash_t{};
+      return hash_t();
     }
-
-    auto& root = this->layers.back();
-    VBK_ASSERT(root.size() == 1);
-    return root[0].reverse();
+    return this->layers[0][0].reverse();
   }
 };
 
