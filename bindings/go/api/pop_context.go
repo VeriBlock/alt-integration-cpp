@@ -25,6 +25,8 @@ type AltBlockTree interface {
 	AltBestBlock() (*entities.BlockIndex, error)
 	VbkBestBlock() (*entities.BlockIndex, error)
 	BtcBestBlock() (*entities.BlockIndex, error)
+	VbkBootstrapBlock() (*entities.BlockIndex, error)
+	BtcBootstrapBlock() (*entities.BlockIndex, error)
 	AltBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error)
 	VbkBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error)
 	BtcBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error)
@@ -240,6 +242,36 @@ func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
 func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
 	defer v.lock()()
 	stream := v.popContext.BtcBestBlock()
+	if stream == nil {
+		return nil, nil
+	}
+	defer stream.Free()
+	blockIndex := entities.NewBtcBlockIndex()
+	if err := blockIndex.FromRaw(stream); err != nil {
+		return nil, err
+	}
+	return &blockIndex, nil
+}
+
+// VbkBootstrapBlock ...
+func (v *PopContext) VbkBootstrapBlock() (*entities.BlockIndex, error) {
+	defer v.lock()()
+	stream := v.popContext.VbkBootstrapBlock()
+	if stream == nil {
+		return nil, nil
+	}
+	defer stream.Free()
+	blockIndex := entities.NewVbkBlockIndex()
+	if err := blockIndex.FromRaw(stream); err != nil {
+		return nil, err
+	}
+	return &blockIndex, nil
+}
+
+// BtcBootstrapBlock ...
+func (v *PopContext) BtcBootstrapBlock() (*entities.BlockIndex, error) {
+	defer v.lock()()
+	stream := v.popContext.BtcBootstrapBlock()
 	if stream == nil {
 		return nil, nil
 	}

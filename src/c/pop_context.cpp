@@ -242,6 +242,28 @@ VBK_ByteStream* VBK_btc_BestBlock(PopContext* self) {
   return new VbkByteStream(stream.data());
 }
 
+VBK_ByteStream* VBK_vbk_BootstrapBlock(PopContext* self) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+  auto* first = self->context->altTree->vbk().getBestChain().first();
+  VBK_ASSERT(first);
+  altintegration::WriteStream stream;
+  first->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
+VBK_ByteStream* VBK_btc_BootstrapBlock(PopContext* self) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(self->context);
+  VBK_ASSERT(self->context->altTree);
+  auto* first = self->context->altTree->btc().getBestChain().first();
+  VBK_ASSERT(first);
+  altintegration::WriteStream stream;
+  first->toVbkEncoding(stream);
+  return new VbkByteStream(stream.data());
+}
+
 VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
                                                    int height) {
   VBK_ASSERT(self);
