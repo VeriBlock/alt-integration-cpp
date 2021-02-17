@@ -26,7 +26,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 
   if (bestTip->getHeight() >
       candidate.getHeight() + param_->getMaxReorgBlocks()) {
-    VBK_LOG_DEBUG("%s Candidate is behind tip more than %d blocks",
+    VBK_LOG_DEBUG("%s Candidate is behind tip %s more than %d blocks",
                   block_t::name(),
                   candidate.toShortPrettyString(),
                   param_->getMaxReorgBlocks());
