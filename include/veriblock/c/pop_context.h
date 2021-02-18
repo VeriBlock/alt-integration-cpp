@@ -208,6 +208,24 @@ VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self);
 VBK_ByteStream* VBK_btc_BestBlock(PopContext* self);
 
 /**
+ * Return bootsrap block (first) of the VbkBlockTree
+ * @param[in] self PopContext
+ * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
+ * to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_vbk_BootstrapBlock(PopContext* self);
+
+/**
+ * Return bootsrap block (first) of the BtcBlockTree
+ * @param[in] self PopContext
+ * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
+ * to the stream
+ * @ingroup c-api
+ */
+VBK_ByteStream* VBK_btc_BootstrapBlock(PopContext* self);
+
+/**
  * Return block on the curent height from the active chain of the AltTree
  *
  * @param[in] self PopContext
