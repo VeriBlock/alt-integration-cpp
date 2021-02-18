@@ -69,7 +69,7 @@ TEST_F(Scenario8, scenario_8) {
   vtb1.merklePath.treeIndex = treeIndex;
   vtb1.merklePath.index = 0;
   vtb1.merklePath.subject = hashes[0];
-  vtb1.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
+  vtb1.merklePath.layers = mtree.getMerklePathLayers(0);
   vtb1.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
@@ -81,7 +81,7 @@ TEST_F(Scenario8, scenario_8) {
   vtb2.merklePath.treeIndex = treeIndex;
   vtb2.merklePath.index = 1;
   vtb2.merklePath.subject = hashes[1];
-  vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[1]);
+  vtb2.merklePath.layers = mtree.getMerklePathLayers(1);
   vtb2.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
