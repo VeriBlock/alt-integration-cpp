@@ -145,10 +145,13 @@ struct VbkBlock {
   uint32_t timestamp{};
   int32_t difficulty{};
   uint64_t nonce{};
+  mutable hash_t hash_{};
 
+  void invalidateHash() { hash_.fill(0); }
   friend bool DeserializeFromRaw(ReadStream& stream,
                                  VbkBlock& out,
-                                 ValidationState& state);
+                                 ValidationState& state,
+                                 const VbkBlock::hash_t& precalculatedHash);
 };
 
 template <typename JsonValue>
@@ -169,9 +172,16 @@ JsonValue ToJSON(const VbkBlock& b) {
   return obj;
 }
 
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                VbkBlock& out,
-                                ValidationState& state);
+bool DeserializeFromRaw(ReadStream& stream,
+                        VbkBlock& out,
+                        ValidationState& state,
+                        const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
+
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    VbkBlock& out,
+    ValidationState& state,
+    const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
 
 }  // namespace altintegration
 
