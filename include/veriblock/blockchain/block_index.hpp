@@ -286,7 +286,9 @@ struct BlockIndex : public Block::addon_t {
   template <typename T>
   friend bool DeserializeFromVbkEncoding(ReadStream& stream,
                                          BlockIndex<T>& out,
-                                         ValidationState& state);
+                                         ValidationState& state,
+                                         typename T::hash_t precalculatedHash);
+
 };
 
 /**
@@ -329,16 +331,18 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
 }
 
 template <typename Block>
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                BlockIndex<Block>& out,
-                                ValidationState& state) {
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    BlockIndex<Block>& out,
+    ValidationState& state,
+    typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
   const auto& name = Block::name();
   using height_t = typename Block::height_t;
   if (!stream.readBE<height_t>(out.height, state)) {
     return state.Invalid(name + "-block-index-height");
   }
   Block block{};
-  if (!DeserializeFromRaw(stream, block, state)) {
+  if (!DeserializeFromRaw(stream, block, state, precalculatedHash)) {
     return state.Invalid(name + "-block-index-header");
   }
   out.setHeader(block);
