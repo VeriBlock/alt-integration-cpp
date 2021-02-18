@@ -208,12 +208,12 @@ func (v *Config) AltGetBootstrapBlock() *VbkByteStream {
 
 // GetVbkNetworkName ...
 func (v *Config) GetVbkNetworkName() string {
-	res := C.VBK_GetVbkNetworkName(v.ref)
-	return string(res)
+	c_str := C.VBK_GetVbkNetworkName(v.ref)
+	return C.GoString(c_str)
 }
 
 // GetBtcNetworkName ...
 func (v *Config) GetBtcNetworkName() string {
-	res := C.VBK_GetBtcNetworkName(v.ref)
-	return string(res)
+	c_str := C.VBK_GetBtcNetworkName(v.ref)
+	return C.GoString(c_str)
 }
