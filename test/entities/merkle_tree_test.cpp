@@ -27,7 +27,7 @@ struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
 
   VbkMerklePath makePath(int n) {
     VbkMerklePath path;
-    path.layers = mtree->getMerklePathLayers(txes[n]);
+    path.layers = mtree->getMerklePathLayers(n);
     path.subject = txes[n];
     path.treeIndex = treeIndex;
     path.index = n;

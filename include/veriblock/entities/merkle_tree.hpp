@@ -25,19 +25,13 @@ struct MerkleTree {
     buildTree(transactions);
   }
 
-  std::vector<hash_t> getMerklePathLayers(const hash_t& hash) const {
+  std::vector<hash_t> getMerklePathLayers(size_t index) const {
     VBK_ASSERT(!layers.empty());
     auto& leafs = layers[0];
-    auto it = std::find(leafs.begin(), leafs.end(), hash);
-    VBK_ASSERT_MSG(it != leafs.end(),
-                   "can not find transaction in merkle tree");
-
     if (leafs.size() == 1) {
       // no layers
       return {};
     }
-
-    size_t index = std::distance(leafs.begin(), it);
     VBK_ASSERT(index < leafs.size());
     std::vector<hash_t> merklePath{};
     for (size_t i = 0; i < layers.size() - 1; i++) {
