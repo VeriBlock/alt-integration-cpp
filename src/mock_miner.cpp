@@ -116,7 +116,7 @@ std::vector<ATV> MockMiner::getATVs(
     atv.merklePath.treeIndex = treeIndex;
     atv.merklePath.index = i;
     atv.merklePath.subject = hashes[i];
-    atv.merklePath.layers = merkleTree.getMerklePathLayers(hashes[i]);
+    atv.merklePath.layers = merkleTree.getMerklePathLayers(i);
     atv.blockOfProof = blockIndex.getHeader();
   }
   return atvs;
@@ -139,7 +139,7 @@ std::vector<VTB> MockMiner::getVTBs(
     vtb.merklePath.treeIndex = treeIndex;
     vtb.merklePath.index = i;
     vtb.merklePath.subject = hashes[i];
-    vtb.merklePath.layers = merkleTree.getMerklePathLayers(hashes[i]);
+    vtb.merklePath.layers = merkleTree.getMerklePathLayers(i);
     vtb.containingBlock = blockIndex.getHeader();
   }
   return vtbs;
@@ -311,7 +311,7 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   popTx.bitcoinTransaction = *txit;
   popTx.merklePath.index = txindex;
   popTx.merklePath.subject = txhashes[txindex];
-  popTx.merklePath.layers = mtree.getMerklePathLayers(txhashes[txindex]);
+  popTx.merklePath.layers = mtree.getMerklePathLayers(txindex);
 
   for (auto* walkBlock = containingBlockIndex->pprev;
        walkBlock != nullptr && walkBlock->getHash() != lastKnownBtcBlockHash;

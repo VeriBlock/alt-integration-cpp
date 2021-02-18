@@ -531,7 +531,7 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
                    vtb.merklePath.index = index;
                    vtb.merklePath.subject = hashes[index];
                    vtb.merklePath.layers =
-                       mtree.getMerklePathLayers(hashes[index]);
+                       mtree.getMerklePathLayers(index);
                    vtb.containingBlock = containingBlock;
                    index++;
 
@@ -882,7 +882,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   vtb2.merklePath.treeIndex = treeIndex;
   vtb2.merklePath.index = 0;
   vtb2.merklePath.subject = hashes[0];
-  vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
+  vtb2.merklePath.layers = mtree.getMerklePathLayers(0);
   vtb2.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
@@ -1028,7 +1028,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   vtb2.merklePath.treeIndex = treeIndex;
   vtb2.merklePath.index = 0;
   vtb2.merklePath.subject = hashes[0];
-  vtb2.merklePath.layers = mtree.getMerklePathLayers(hashes[0]);
+  vtb2.merklePath.layers = mtree.getMerklePathLayers(0);
   vtb2.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
