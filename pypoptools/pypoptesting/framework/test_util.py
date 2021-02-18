@@ -95,8 +95,7 @@ class TestHandler:
     Trigger the test scripts passed in via the list.
     """
 
-    def __init__(self, *, create_node, num_tests_parallel, tmpdir, test_list, timeout_duration,
-                 use_term_control=True):
+    def __init__(self, *, create_node, num_tests_parallel, tmpdir, test_list, timeout_duration):
         assert num_tests_parallel >= 1
         self.create_node = create_node
         self.num_jobs = num_tests_parallel
@@ -105,7 +104,6 @@ class TestHandler:
         self.test_list = test_list
         self.num_running = 0
         self.jobs = []
-        self.use_term_control = use_term_control
 
     def get_next(self):
 
@@ -125,11 +123,6 @@ class TestHandler:
         if not self.jobs:
             raise IndexError('pop from empty list')
 
-        # Print remaining running jobs when all jobs have been started.
-        if not self.test_list:
-            print("Remaining jobs: [{}]".format(", ".join(j[0].name() for j in self.jobs)))
-
-        dot_count = 0
         while True:
             # Return first proc that finishes
             time.sleep(.5)
@@ -152,14 +145,7 @@ class TestHandler:
                         status = "Failed"
                     self.num_running -= 1
                     self.jobs.remove(job)
-                    if self.use_term_control:
-                        clearline = '\r' + (' ' * dot_count) + '\r'
-                        print(clearline, end='', flush=True)
-                    dot_count = 0
                     return TestResult(name, status, int(time.time() - start_time)), test.dir, stdout, stderr
-            if self.use_term_control:
-                print('.', end='', flush=True)
-            dot_count += 1
 
     def kill_and_join(self):
         """Send SIGKILL to all jobs and block until all have ended."""
@@ -182,7 +168,7 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
     mp.set_start_method('fork')
 
     timestamp = datetime.datetime.now().strftime("%y%m%d%H%M%S")
-    tmpdir = tempfile.mkdtemp(dir="/tmp", prefix="pop_{}_".format(timestamp), suffix="")
+    tmpdir = tempfile.mkdtemp(prefix="pop_{}_".format(timestamp))
     job_queue = TestHandler(
         create_node=create_node,
         tmpdir=tmpdir,
@@ -200,9 +186,9 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
         test_results.append(test_result)
         done_str = "{}/{} - {}{}{}".format(i + 1, test_count, BOLD[1], test_result.name, BOLD[0])
         if test_result.status == "Passed":
-            logging.debug("%s passed, Duration: %s s" % (done_str, test_result.time))
+            print("%s passed, Duration: %s s" % (done_str, test_result.time))
         elif test_result.status == "Skipped":
-            logging.debug("%s skipped" % (done_str))
+            print("%s skipped" % (done_str))
         else:
             print("%s failed, Duration: %s s\n" % (done_str, test_result.time))
             print(BOLD[1] + 'stdout:\n' + BOLD[0] + stdout + '\n')
