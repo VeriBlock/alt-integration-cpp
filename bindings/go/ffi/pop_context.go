@@ -119,6 +119,16 @@ func (v *PopContext) BtcBestBlock() *VbkByteStream {
 	return NewVbkByteStream(C.VBK_btc_BestBlock(v.ref))
 }
 
+// VbkBootstrapBlock ...
+func (v *PopContext) VbkBootstrapBlock() *VbkByteStream {
+	return NewVbkByteStream(C.VBK_vbk_BootstrapBlock(v.ref))
+}
+
+// BtcBootstrapBlock ...
+func (v *PopContext) BtcBootstrapBlock() *VbkByteStream {
+	return NewVbkByteStream(C.VBK_btc_BootstrapBlock(v.ref))
+}
+
 // AltBlockAtActiveChainByHeight ...
 func (v *PopContext) AltBlockAtActiveChainByHeight(height int) *VbkByteStream {
 	return NewVbkByteStream(C.VBK_alt_BlockAtActiveChainByHeight(v.ref, C.int(height)))

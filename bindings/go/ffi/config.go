@@ -200,7 +200,20 @@ func (v *Config) GetMaxAltchainFutureBlockTime() uint32 {
 	return uint32(res)
 }
 
+// AltGetBootstrapBlock ...
 func (v *Config) AltGetBootstrapBlock() *VbkByteStream {
 	res := C.VBK_AltGetBootstrapBlock(v.ref)
 	return NewVbkByteStream(res)
+}
+
+// GetVbkNetworkName ...
+func (v *Config) GetVbkNetworkName() string {
+	c_str := C.VBK_GetVbkNetworkName(v.ref)
+	return C.GoString(c_str)
+}
+
+// GetBtcNetworkName ...
+func (v *Config) GetBtcNetworkName() string {
+	c_str := C.VBK_GetBtcNetworkName(v.ref)
+	return C.GoString(c_str)
 }
