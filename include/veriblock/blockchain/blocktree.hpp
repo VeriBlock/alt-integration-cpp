@@ -49,9 +49,8 @@ struct BlockTree : public BaseBlockTree<Block> {
   virtual bool bootstrapWithGenesis(const block_t& block,
                                     ValidationState& state) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    return !this->bootstrap(0, block, state)
-               ? state.Invalid(block_t::name() + "-bootstrap-genesis")
-               : true;
+    return this->bootstrap(0, block, state) ||
+           state.Invalid(block_t::name() + "-bootstrap-genesis");
   }
 
   /**

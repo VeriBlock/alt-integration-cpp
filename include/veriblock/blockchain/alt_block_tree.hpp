@@ -107,7 +107,9 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    */
   void acceptBlock(const hash_t& block, const PopData& payloads);
   //! @overload
-  void acceptBlock(index_t& index, const PopData& payloads, ValidationState& state);
+  void acceptBlock(index_t& index,
+                   const PopData& payloads,
+                   ValidationState& state);
   //! @overload
   void acceptBlock(index_t& index, const PopData& payloads);
 

@@ -44,8 +44,7 @@ struct TempBlockTree {
     return acceptBlock(std::make_shared<block_t>(header), state);
   }
 
-  bool acceptBlock(const std::shared_ptr<block_t>& header,
-                   ValidationState& state) {
+  bool acceptBlock(std::shared_ptr<block_t> header, ValidationState& state) {
     auto* prev = getBlockIndex(header->getPreviousBlock());
 
     if (prev == nullptr) {
