@@ -152,4 +152,10 @@ void init_entities() {
       .add_property(
           "difficulty", &VbkBlock::getDifficulty, &VbkBlock::setDifficulty)
       .add_property("nonce", &VbkBlock::getNonce, &VbkBlock::setNonce);
+
+  class_<PopData, boost::shared_ptr<PopData>>("PopData")
+      .def("__repr__", &PopData::toPrettyString)
+      .def_readonly("atvs", &PopData::atvs)
+      .def_readonly("vtbs", &PopData::vtbs)
+      .def_readonly("context", &PopData::context);
 }

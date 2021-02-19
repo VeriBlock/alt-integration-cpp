@@ -13,196 +13,178 @@
 using namespace boost::python;
 using namespace altintegration;
 
-struct Payloads {
-  ATV atv;
-  std::vector<VTB> vtbs;
-  std::vector<VbkBlock> context;
-
-  std::string toPrettyString() const {
-    return fmt::sprintf("Payloads(atv, vtbs=%d)", vtbs.size());
-  }
-
-  list prepare() const {
-    list args;
-
-    list listctx;
-    list listvtbs;
-    for (const auto& vtb : vtbs) {
-      listvtbs.append(HexStr(vtb.toVbkEncoding()));
-    }
-
-    for (const auto& b : context) {
-      listctx.append(HexStr(b.toVbkEncoding()));
-    }
-
-    list listatvs;
-    listatvs.append(HexStr(atv.toVbkEncoding()));
-
-    args.append(listctx);
-    args.append(listvtbs);
-    args.append(listatvs);
-    return args;
-  }
-};
-
 struct MockMinerProxy : private MockMiner {
   using base = MockMiner;
 
   std::string toPrettyString() {
     std::ostringstream ss;
-    ss << "MockMiner(btc=" << this->getBtcTip().toPrettyString();
-    ss << ", vbk=" << this->getVbkTip().toPrettyString();
+    ss << "MockMiner(btc=" << this->btcTip().toPrettyString();
+    ss << ", vbk=" << this->vbkTip().toPrettyString();
     ss << ")";
     return ss.str();
   }
 
-  VbkBlock getVbkTip() { return vbk().getBestChain().tip()->getHeader(); }
-  BtcBlock getBtcTip() { return btc().getBestChain().tip()->getHeader(); }
-
-  VbkBlock getVbkBlock(const std::string& hash) {
-    auto index = vbk().getBlockIndex(VbkBlock::hash_t::fromHex(hash));
-    if (!index) {
-      throw std::invalid_argument("Can not find VbkBlock " + hash);
-    }
-
-    return index->getHeader();
+  PopData endorseAltBlock(
+      const PublicationData& publicationData,
+      const std::string& lastKnownVbkBlockHashHex) {
+    const auto& lastKnownVbkBlockHash =
+        VbkBlock::hash_t::fromHex(lastKnownVbkBlockHashHex);
+    return base::endorseAltBlock(publicationData, lastKnownVbkBlockHash);
   }
 
-  BtcBlock getBtcBlock(const std::string& hash) {
-    auto index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(hash));
-    if (!index) {
-      throw std::invalid_argument("Can not find BtcBlock " + hash);
-    }
-
-    return index->getHeader();
-  }
-
-  VbkBlock mineVbkBlocks(const std::string& prevHash, size_t num) {
-    auto* index = vbk().getBlockIndex(VbkBlock::hash_t::fromHex(prevHash));
-    if (!index) {
-      throw std::logic_error("MockMiner: can't find prev block for mining: " +
-                             prevHash);
-    }
-
-    return base::mineVbkBlocks(num, *index)->getHeader();
-  }
-  BtcBlock mineBtcBlocks(const std::string& prevHash, size_t num) {
-    auto* index = btc().getBlockIndex(BtcBlock::hash_t::fromHex(prevHash));
-    if (!index) {
-      throw std::logic_error("MockMiner: can't find prev block for mining: " +
-                             prevHash);
-    }
-
-    return base::mineBtcBlocks(num, *index)->getHeader();
-  }
-  VbkBlock mineVbkBlocks(size_t num) {
-    auto* index = vbk().getBestChain().tip();
-    return base::mineVbkBlocks(num, *index)->getHeader();
-  }
-  BtcBlock mineBtcBlocks(size_t num) {
-    auto* index = btc().getBestChain().tip();
-    return base::mineBtcBlocks(num, *index)->getHeader();
-  }
-
-  BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock) {
-    return base::createBtcTxEndorsingVbkBlock(publishedBlock);
-  }
-
-  VbkPopTx createVbkPopTxEndorsingVbkBlock(
-      const BtcBlock& containingBlock,
-      const BtcTx& containingTx,
+  VbkPopTx endorseVbkBlock(
       const VbkBlock& publishedBlock,
-      const BtcBlock::hash_t& lastKnownBtcBlockHash) {
-    return base::createVbkPopTxEndorsingVbkBlock(
-        containingBlock, containingTx, publishedBlock, lastKnownBtcBlockHash);
+      const std::string& lastKnownBtcBlockHashHex) {
+    const auto& lastKnownBtcBlockHash =
+        BtcBlock::hash_t::fromHex(lastKnownBtcBlockHashHex);
+    return base::endorseVbkBlock(publishedBlock, lastKnownBtcBlockHash);
   }
 
-  VbkTx createVbkTxEndorsingAltBlock(const PublicationData& publicationData) {
+  PopData createPopDataEndorsingAltBlock(
+      const VbkBlock& blockOfProof,
+      const VbkTx& transaction,
+      const std::string& lastKnownVbkBlockHashHex) {
+    const auto& lastKnownVbkBlockHash =
+        VbkBlock::hash_t::fromHex(lastKnownVbkBlockHashHex);
+    return base::createPopDataEndorsingAltBlock(
+          blockOfProof, transaction, lastKnownVbkBlockHash);
+  }
+
+  ATV createATV(
+      const VbkBlock& blockOfProof,
+      const VbkTx& transaction) const {
+    return base::createATV(blockOfProof, transaction);
+  }
+
+  VbkTx createVbkTxEndorsingAltBlock(
+      const PublicationData& publicationData) const {
     return base::createVbkTxEndorsingAltBlock(publicationData);
   }
 
-  void endorseVbkBlock(const VbkBlock& block,
-                       const std::string& lastKnownBtcHash,
-                       size_t vtbs = 1) {
-    return endorseVbkBlock(block,
-                           getVbkTip().getHash().toHex(),
-                           getBtcTip().getHash().toHex(),
-                           lastKnownBtcHash,
-                           vtbs);
+  VTB createVTB(
+      const VbkBlock& containingBlock,
+      const VbkPopTx& transaction) const {
+    return base::createVTB(containingBlock, transaction);
   }
 
-  void endorseVbkBlock(const VbkBlock& block,
-                       const std::string& prevVbk,
-                       const std::string& prevBtc,
-                       const std::string& lastKnownBtcHash,
-                       size_t vtbs = 1) {
-    auto* prevVbkIndex =
-        vbk().getBlockIndex(VbkBlock::hash_t::fromHex(prevVbk));
-    if (!prevVbkIndex) {
-      throw std::logic_error(
-          "MockMiner: endorseVbkBlock - can not find prevVbkIndex: " + prevVbk);
-    }
-
-    auto* prevBtcIndex =
-        btc().getBlockIndex(BtcBlock::hash_t::fromHex(prevBtc));
-    if (!prevBtcIndex) {
-      throw std::logic_error(
-          "MockMiner: envdorseVbkBlock - can not find prevBtcIndex: " +
-          prevBtc);
-    }
-
-    std::vector<VbkPopTx> popTransactions(vtbs);
-    for (size_t i = 0; i < vtbs; i++) {
-      auto btctx = base::createBtcTxEndorsingVbkBlock(block);
-      prevBtcIndex = base::mineBtcBlocks(1, *prevBtcIndex, {btctx});
-      popTransactions[i] = base::createVbkPopTxEndorsingVbkBlock(
-          prevBtcIndex->getHeader(),
-          btctx,
-          block,
-          BtcBlock::hash_t::fromHex(lastKnownBtcHash));
-    }
-
-    base::mineVbkBlocks(1, *prevVbkIndex, popTransactions);
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const BtcBlock& blockOfProof,
+      const BtcTx& transaction,
+      const VbkBlock& publishedBlock,
+      const std::string& lastKnownBtcBlockHashHex) const {
+    const auto& lastKnownBtcBlockHash =
+        BtcBlock::hash_t::fromHex(lastKnownBtcBlockHashHex);
+    return base::createVbkPopTxEndorsingVbkBlock(
+        blockOfProof, transaction, publishedBlock, lastKnownBtcBlockHash);
   }
 
-  Payloads endorseAltBlock(const PublicationData& pub,
-                           const std::string& lastVbkBlock) {
-    Payloads payloads;
-    auto vbkindex =
-        vbk().getBlockIndex(VbkBlock::hash_t::fromHex(lastVbkBlock));
-    if (!vbkindex) {
-      throw std::logic_error(
-          "MockMiner: endorseAltBlock called with unknown lastVbkBlock: " +
-          lastVbkBlock);
+  BtcTx createBtcTxEndorsingVbkBlock(const VbkBlock& publishedBlock) const {
+    return base::createBtcTxEndorsingVbkBlock(publishedBlock);
+  }
+
+  VbkBlock mineVbkBlocks(
+      size_t amount) {
+    return base::mineVbkBlocks(amount)->getHeader();
+  }
+
+  VbkBlock mineVbkBlocks(
+      size_t amount,
+      const std::vector<VbkTx>& transactions) {
+    return base::mineVbkBlocks(amount, transactions)->getHeader();
+  }
+
+  VbkBlock mineVbkBlocks(
+      size_t amount,
+      const std::vector<VbkPopTx>& transactions) {
+    return base::mineVbkBlocks(amount, transactions)->getHeader();
+  }
+
+  VbkBlock mineVbkBlocks(
+      size_t amount,
+      const std::string& tipHashHex) {
+    const auto& tipHash = VbkBlock::hash_t::fromHex(tipHashHex);
+    const auto* tip = getVbkBlockIndex(tipHash);
+    return base::mineVbkBlocks(amount, *tip)->getHeader();
+  }
+
+  VbkBlock mineVbkBlocks(
+      size_t amount,
+      const std::string& tipHashHex,
+      const std::vector<VbkTx>& transactions) {
+    const auto& tipHash = VbkBlock::hash_t::fromHex(tipHashHex);
+    const auto* tip = getVbkBlockIndex(tipHash);
+    return base::mineVbkBlocks(amount, *tip, transactions)->getHeader();
+  }
+
+  VbkBlock mineVbkBlocks(
+      size_t amount,
+      const std::string& tipHashHex,
+      const std::vector<VbkPopTx>& transactions) {
+    const auto& tipHash = VbkBlock::hash_t::fromHex(tipHashHex);
+    const auto* tip = getVbkBlockIndex(tipHash);
+    return base::mineVbkBlocks(amount, *tip, transactions)->getHeader();
+  }
+
+  BtcBlock mineBtcBlocks(
+      size_t amount) {
+    return base::mineBtcBlocks(amount)->getHeader();
+  }
+
+  BtcBlock mineBtcBlocks(
+      size_t amount,
+      const std::vector<BtcTx>& transactions) {
+    return base::mineBtcBlocks(amount, transactions)->getHeader();
+  }
+
+  BtcBlock mineBtcBlocks(
+      size_t amount,
+      const std::string& tipHashHex) {
+    const auto& tipHash = BtcBlock::hash_t::fromHex(tipHashHex);
+    const auto* tip = getBtcBlockIndex(tipHash);
+    return base::mineBtcBlocks(amount, *tip)->getHeader();
+  }
+
+  BtcBlock mineBtcBlocks(
+      size_t amount,
+      const std::string& tipHashHex,
+      const std::vector<BtcTx>& transactions) {
+    const auto& tipHash = BtcBlock::hash_t::fromHex(tipHashHex);
+    const auto* tip = getBtcBlockIndex(tipHash);
+    return base::mineBtcBlocks(amount, *tip, transactions)->getHeader();
+  }
+
+  VbkBlock vbkTip() const { return base::vbkTip()->getHeader(); }
+
+  BtcBlock btcTip() const { return base::btcTip()->getHeader(); }
+
+  std::vector<VbkBlock> vbkTips() const {
+    std::vector<VbkBlock> tips;
+    for (auto it : vbk().getTips()) {
+      tips.push_back(it->getHeader());
     }
-    auto vbktx = base::createVbkTxEndorsingAltBlock(pub);
-    auto* vbkblock = base::mineVbkBlocks(1, {vbktx});
-    payloads.atv = base::getATVs(*vbkblock)[0];
+    return tips;
+  }
 
-    std::vector<VbkBlock> context;
-    // in range of blocks [lastVbkBlock... vbk tip] look for VTBs and put them
-    // into Payloads
-    auto vbktip = vbk().getBestChain().tip();
-    auto last =
-        vbkindex->pprev ? vbkindex->pprev->getHash() : vbkindex->getHash();
-    auto& vtbs = payloads.vtbs;
-    while (vbktip->getHash() != last) {
-      auto it = vbkPayloads.find(vbktip->getHash());
-      if (it != vbkPayloads.end()) {
-        // insert in reverse order
-        std::for_each(it->second.rbegin(),
-                      it->second.rend(),
-                      [&](const VTB& vtb) { vtbs.push_back(vtb); });
-      }
-      context.push_back(vbktip->getHeader());
-      vbktip = vbktip->pprev;
+  std::vector<BtcBlock> btcTips() const {
+    std::vector<BtcBlock> tips;
+    for (auto it : btc().getTips()) {
+      tips.push_back(it->getHeader());
     }
-    std::reverse(vtbs.begin(), vtbs.end());
+    return tips;
+  }
 
-    std::reverse(context.begin(), context.end());
-    payloads.context = context;
+  VbkBlock getAncestor(const VbkBlock& block, size_t height) {
+    const auto* index = base::getVbkBlockIndex(block.getHash());
+    const auto* ancestorIndex = index->getAncestor(height);
+    VBK_ASSERT(ancestorIndex != nullptr);
+    return ancestorIndex->getHeader();
+  }
 
-    return payloads;
+  BtcBlock getAncestor(const BtcBlock& block, size_t height) {
+    const auto* index = base::getBtcBlockIndex(block.getHash());
+    const auto* ancestorIndex = index->getAncestor(height);
+    VBK_ASSERT(ancestorIndex != nullptr);
+    return ancestorIndex->getHeader();
   }
 };
 
@@ -217,55 +199,86 @@ BOOST_PYTHON_MODULE(pypopminer) {
   init_primitives();
   init_entities();
 
-  class_<Payloads, boost::shared_ptr<Payloads>>("Payloads")
-      .def("__repr__", &Payloads::toPrettyString)
-      .def("prepare", &Payloads::prepare)
-      .def_readonly("atv", &Payloads::atv)
-      .def_readonly("vtbs", &Payloads::vtbs)
-      .def_readonly("context", &Payloads::context);
+  VbkBlock (MockMinerProxy::*mineVbkBlocks1)(
+      size_t amount) =
+    &MockMinerProxy::mineVbkBlocks;
+  VbkBlock (MockMinerProxy::*mineVbkBlocks2)(
+      size_t amount,
+      const std::vector<VbkTx>& transactions) =
+    &MockMinerProxy::mineVbkBlocks;
+  VbkBlock (MockMinerProxy::*mineVbkBlocks3)(
+      size_t amount,
+      const std::vector<VbkPopTx>& transactions) =
+    &MockMinerProxy::mineVbkBlocks;
+  VbkBlock (MockMinerProxy::*mineVbkBlocks4)(
+      size_t amount,
+      const std::string& tipHash) =
+    &MockMinerProxy::mineVbkBlocks;
+  VbkBlock (MockMinerProxy::*mineVbkBlocks5)(
+      size_t amount,
+      const std::string& tipHash,
+      const std::vector<VbkTx>& transactions) =
+    &MockMinerProxy::mineVbkBlocks;
+  VbkBlock (MockMinerProxy::*mineVbkBlocks6)(
+      size_t amount,
+      const std::string& tipHash,
+      const std::vector<VbkPopTx>& transactions) =
+    &MockMinerProxy::mineVbkBlocks;
 
-  // required to deal with function overloading
-  BtcBlock (MockMinerProxy::*fx1)(const std::string&, size_t) =
-      &MockMinerProxy::mineBtcBlocks;
-  BtcBlock (MockMinerProxy::*fx2)(size_t) = &MockMinerProxy::mineBtcBlocks;
-  VbkBlock (MockMinerProxy::*fx3)(const std::string&, size_t) =
-      &MockMinerProxy::mineVbkBlocks;
-  VbkBlock (MockMinerProxy::*fx4)(size_t) = &MockMinerProxy::mineVbkBlocks;
+  BtcBlock (MockMinerProxy::*mineBtcBlocks1)(
+      size_t amount) =
+    &MockMinerProxy::mineBtcBlocks;
+  BtcBlock (MockMinerProxy::*mineBtcBlocks2)(
+      size_t amount,
+      const std::vector<BtcTx>& transactions) =
+    &MockMinerProxy::mineBtcBlocks;
+  BtcBlock (MockMinerProxy::*mineBtcBlocks3)(
+      size_t amount,
+      const std::string& tipHash) =
+    &MockMinerProxy::mineBtcBlocks;
+  BtcBlock (MockMinerProxy::*mineBtcBlocks4)(
+      size_t amount,
+      const std::string& tipHash,
+      const std::vector<BtcTx>& transactions) =
+    &MockMinerProxy::mineBtcBlocks;
 
-  void (MockMinerProxy::*fx5)(
-      const VbkBlock& block, const std::string& lastKnownBtcHash, size_t) =
-      &MockMinerProxy::endorseVbkBlock;
-  void (MockMinerProxy::*fx6)(const VbkBlock& block,
-                              const std::string& prevVbk,
-                              const std::string& prevBtc,
-                              const std::string& lastKnownBtcHash,
-                              size_t) = &MockMinerProxy::endorseVbkBlock;
+  VbkBlock (MockMinerProxy::*getAncestor1)(
+      const VbkBlock& block,
+      size_t height) =
+    &MockMinerProxy::getAncestor;
+  BtcBlock (MockMinerProxy::*getAncestor2)(
+    const BtcBlock& block,
+    size_t height) =
+    &MockMinerProxy::getAncestor;
 
   class_<MockMinerProxy, boost::noncopyable, boost::shared_ptr<MockMinerProxy>>(
       "MockMiner", no_init)
       .def("__init__", make_constructor(makeMiner))
       .def("__repr__", &MockMinerProxy::toPrettyString)
-      .def_readonly(
-          "vbkTip", &MockMinerProxy::getVbkTip, "Current BtcTip in MockMiner")
-      .def_readonly(
-          "btcTip", &MockMinerProxy::getBtcTip, "Current VbkTip in MockMiner")
-      .def("getBtcBlock",
-           &MockMinerProxy::getBtcBlock,
-           "Given block hash, returns BtcBlock if it exists, throws otherwise")
-      .def("getVbkBlock",
-           &MockMinerProxy::getVbkBlock,
-           "Given block hash, returns VbkBlock if it exists, throws otherwise")
-      .def("mineBtcBlocks", fx1)
-      .def("mineBtcBlocks", fx2)
-      .def("mineVbkBlocks", fx3)
-      .def("mineVbkBlocks", fx4)
-      .def("createBtcTxEndorsingVbkBlock",
-           &MockMinerProxy::createBtcTxEndorsingVbkBlock)
-      .def("createVbkPopTxEndorsingVbkBlock",
-           &MockMinerProxy::createVbkPopTxEndorsingVbkBlock)
+      .def("endorseAltBlock", &MockMinerProxy::endorseAltBlock)
+      .def("endorseVbkBlock", &MockMinerProxy::endorseVbkBlock)
+      .def("createATV", &MockMinerProxy::createATV)
       .def("createVbkTxEndorsingAltBlock",
            &MockMinerProxy::createVbkTxEndorsingAltBlock)
-      .def("endorseVbkBlock", fx5)
-      .def("endorseVbkBlock", fx6)
-      .def("endorseAltBlock", &MockMinerProxy::endorseAltBlock);
+      .def("createVTB", &MockMinerProxy::createVTB)
+      .def("createVbkPopTxEndorsingVbkBlock",
+           &MockMinerProxy::createVbkPopTxEndorsingVbkBlock)
+      .def("createBtcTxEndorsingVbkBlock",
+           &MockMinerProxy::createBtcTxEndorsingVbkBlock)
+      .def("mineVbkBlocks", mineVbkBlocks1)
+      .def("mineVbkBlocks", mineVbkBlocks2)
+      .def("mineVbkBlocks", mineVbkBlocks3)
+      .def("mineVbkBlocks", mineVbkBlocks4)
+      .def("mineVbkBlocks", mineVbkBlocks5)
+      .def("mineVbkBlocks", mineVbkBlocks6)
+      .def("mineBtcBlocks", mineBtcBlocks1)
+      .def("mineBtcBlocks", mineBtcBlocks2)
+      .def("mineBtcBlocks", mineBtcBlocks3)
+      .def("mineBtcBlocks", mineBtcBlocks4)
+      .def_readonly("vbkTip", &MockMinerProxy::vbkTip)
+      .def_readonly("btcTip", &MockMinerProxy::btcTip)
+      .def_readonly("vbkTips", &MockMinerProxy::vbkTips)
+      .def_readonly("btcTips", &MockMinerProxy::btcTips)
+      .def("getAncestor", getAncestor1)
+      .def("getAncestor", getAncestor2);
 }

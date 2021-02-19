@@ -16,16 +16,18 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
 
   std::vector<VbkPopTx> vbkPopTxs;
 
-  vbkPopTxs.emplace_back(popminer->createVbkPopTxEndorsingVbkBlock(
-      popminer->getVbkTip()->getHeader()));
-  vbkPopTxs.emplace_back(popminer->createVbkPopTxEndorsingVbkBlock(
-      popminer->getVbkTip()->getHeader()));
+  auto vbkPopTx1 = popminer->endorseVbkBlock(
+      popminer->vbkTip()->getHeader(), popminer->btcTip()->getHash());
+  auto vbkPopTx2 = popminer->endorseVbkBlock(
+      popminer->vbkTip()->getHeader(), popminer->btcTip()->getHash());
 
   // both VTBs should be contained in the same block
   BlockIndex<VbkBlock>* containingVbkBlock =
-      popminer->mineVbkBlocks(1, vbkPopTxs);
+      popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
 
-  popData.vtbs = popminer->vbkPayloads.at(containingVbkBlock->getHash());
+  auto vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx2);
+  popData.vtbs = {vtb1, vtb2};
   fillVbkContext(popData.context,
                  alttree.vbk().getBestChain().tip()->getHash(),
                  containingVbkBlock->getHash(),

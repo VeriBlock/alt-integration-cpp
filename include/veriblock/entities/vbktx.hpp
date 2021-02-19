@@ -60,6 +60,14 @@ struct VbkTx {
    */
   uint256 getHash() const;
 
+  friend bool operator==(const VbkTx& a, const VbkTx& b) {
+    return a.getHash() == b.getHash();
+  }
+
+  friend bool operator!=(const VbkTx& a, const VbkTx& b) {
+    return !(a == b);
+  }
+
  private:
   /**
    * Convert VbkTx to data stream using VbkTx basic byte format without

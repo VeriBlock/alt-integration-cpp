@@ -153,15 +153,15 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   // endorsed
   auto vbk5 = popminer->vbk().getBestChain().tip()->getAncestor(5);
   ASSERT_TRUE(vbk5);
-  auto vbkpoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      vbk5->getHeader(), getLastKnownBtcBlock());
-  auto vbkpoptx2 = popminer->createVbkPopTxEndorsingVbkBlock(
-      vbk5->getHeader(), getLastKnownBtcBlock());
+  auto vbkpoptx1 =
+      popminer->endorseVbkBlock(vbk5->getHeader(), getLastKnownBtcBlock());
+  auto vbkpoptx2 =
+      popminer->endorseVbkBlock(vbk5->getHeader(), getLastKnownBtcBlock());
   auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx1, vbkpoptx2});
 
   // now we have 2 valid VTBs endorsing VBK5
-  VTB& vtb1 = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
-  VTB& vtb2 = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(1);
+  VTB vtb1 = popminer->createVTB(vbkcontaining->getHeader(), vbkpoptx1);
+  VTB vtb2 = popminer->createVTB(vbkcontaining->getHeader(), vbkpoptx2);
 
   PopData pd;
   pd.vtbs = {vtb1, vtb2};

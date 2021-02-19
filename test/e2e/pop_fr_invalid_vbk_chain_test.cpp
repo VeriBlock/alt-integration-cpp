@@ -23,10 +23,10 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   // next block in B endorses block number 25 in its chain twice, and
   // containing is block 39
-  auto vbkpoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock());
-  auto vbkpoptx2 = popminer->createVbkPopTxEndorsingVbkBlock(
-      tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock());
+  auto vbkpoptx1 = popminer->endorseVbkBlock(tipB->getAncestor(25)->getHeader(),
+                                             getLastKnownBtcBlock());
+  auto vbkpoptx2 = popminer->endorseVbkBlock(tipB->getAncestor(25)->getHeader(),
+                                             getLastKnownBtcBlock());
 
   auto vbkcontaining = popminer->mineVbkBlocks(1, *tipB, {vbkpoptx1, vbkpoptx2});
   EXPECT_EQ(vbkcontaining->getHeight(), 39);
@@ -40,8 +40,8 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // endorse block 26 in chain B, containing is B40
   auto missingVbkBlock = popminer->mineVbkBlocks(1, *tipB);
   tipB = missingVbkBlock;
-  auto vbkpoptx = popminer->createVbkPopTxEndorsingVbkBlock(
-      tipB->getAncestor(26)->getHeader(), getLastKnownBtcBlock());
+  auto vbkpoptx = popminer->endorseVbkBlock(tipB->getAncestor(26)->getHeader(),
+                                            getLastKnownBtcBlock());
   tipB = popminer->mineVbkBlocks(1, *tipB, {vbkpoptx});
   ASSERT_EQ(tipB->getHeight(), 41);
 
@@ -54,14 +54,14 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbktx1 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
   auto* vbkblock1 = popminer->mineVbkBlocks(1, {vbktx1});
-  ATV atv1 = popminer->getATVs(*vbkblock1)[0];
+  ATV atv1 = popminer->createATV(vbkblock1->getHeader(), vbktx1);
   ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
   // mine 10 more blocks on top of tipB
   tipB = popminer->mineVbkBlocks(10, *tipB);
 
   //! act: add ATV1, VTB1 to ALT9. should be valid.
-  auto vtb1 = popminer->vbkPayloads[vtbcontaining.getHash()][0];
+  auto vtb1 = popminer->createVTB(vtbcontaining, vbkpoptx1);
   PopData p1;
   p1.atvs = {atv1};
   p1.vtbs = {vtb1};
@@ -79,10 +79,10 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbktx2 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
   auto* vbkblock2 = popminer->mineVbkBlocks(1, {vbktx2});
-  ATV atv2 = popminer->getATVs(*vbkblock2)[0];
+  ATV atv2 = popminer->createATV(vbkblock2->getHeader(), vbktx2);
   ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
-  auto vtb2 = popminer->vbkPayloads[vtbcontaining.getHash()][1];
+  auto vtb2 = popminer->createVTB(vtbcontaining, vbkpoptx2);
   PopData p2;
   p2.atvs = {atv2};
   // break VTB2: break hash of containing block
