@@ -367,7 +367,7 @@ struct BaseBlockTree {
     return validity_sig_.disconnect(id);
   }
 
-  index_t& getRoot() {
+  index_t& getRoot() const {
     VBK_ASSERT_MSG(isBootstrapped(), "must be bootstrapped");
     return *getBestChain().first();
   }
