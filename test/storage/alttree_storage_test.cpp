@@ -189,12 +189,10 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   // mine txA into VBK 2nd block
   vbkTip = this->popminer->mineVbkBlocks(1, {vbkpoptx});
 
-  auto vtbs = this->popminer->vbkPayloads[vbkTip->getHash()];
-
-  ASSERT_EQ(vtbs.size(), 1);
+  auto vtb = this->popminer->createVTB(vbkTip->getHeader(), vbkpoptx);
 
   PopData popData;
-  popData.vtbs = vtbs;
+  popData.vtbs = {vtb};
   this->fillVbkContext(
       popData.context, GetRegTestVbkBlock().getHash(), this->popminer->vbk());
   auto containingBlock = this->generateNextBlock(chain.back());

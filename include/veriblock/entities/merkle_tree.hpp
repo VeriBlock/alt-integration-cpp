@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <deque>
 #include <vector>
+#include <unordered_map>
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/entities/atv.hpp>
 #include <veriblock/entities/merkle_path.hpp>
@@ -20,9 +21,19 @@ template <typename Specific, typename TxHash>
 struct MerkleTree {
   using hash_t = TxHash;
 
-  MerkleTree(Specific& instance, const std::vector<hash_t>& transactions)
+  MerkleTree(Specific& instance, const std::vector<hash_t>& hashes)
       : instance(instance) {
-    buildTree(transactions);
+    buildTree(hashes);
+    for (size_t i = 0; i < hashes.size(); i++) {
+      hash_indices[hashes[i]] = i;
+    }
+  }
+
+  std::vector<hash_t> getMerklePathLayers(const hash_t& hash) const {
+    auto it = hash_indices.find(hash);
+    VBK_ASSERT(it != hash_indices.end());
+    size_t index = it->second;
+    return getMerklePathLayers(index);
   }
 
   std::vector<hash_t> getMerklePathLayers(size_t index) const {
@@ -86,6 +97,7 @@ struct MerkleTree {
  protected:
   Specific& instance;
   std::vector<std::vector<hash_t>> layers;
+  std::unordered_map<hash_t, size_t> hash_indices;
 };
 
 //! @private
@@ -130,6 +142,19 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree, uint256> {
     return hash(metapackageHash, cursor);
   }
 
+  VbkMerklePath getMerklePath(const hash_t& hash) const {
+    auto it = hash_indices.find(hash);
+    VBK_ASSERT(it != hash_indices.end());
+    size_t index = it->second;
+
+    VbkMerklePath merklePath;
+    merklePath.treeIndex = treeIndex;
+    merklePath.index = index;
+    merklePath.subject = hash;
+    merklePath.layers = getMerklePathLayers(index);
+    return merklePath;
+  }
+
  private:
   int treeIndex = 0;
 };
@@ -149,6 +174,18 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
   hash_t finalizeRoot() {
     VBK_ASSERT(!layers.empty());
     return layers[0][0].reverse();
+  }
+
+  MerklePath getMerklePath(const hash_t& hash) const {
+    auto it = hash_indices.find(hash);
+    VBK_ASSERT(it != hash_indices.end());
+    size_t index = it->second;
+
+    MerklePath merklePath;
+    merklePath.index = index;
+    merklePath.subject = hash;
+    merklePath.layers = getMerklePathLayers(index);
+    return merklePath;
   }
 };
 

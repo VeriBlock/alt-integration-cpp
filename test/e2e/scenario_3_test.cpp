@@ -65,10 +65,11 @@ TEST_F(Scenario3, scenario_3) {
 
   auto* vbkTip2 = popminer->mineVbkBlocks(1, *endorsedVbkBlock2, {popTx2});
 
-  // vbkTip1 heigher than vbkTip2
+  // vbkTip1 higher than vbkTip2
   ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());
   // but active chain on the vbkTip2 because this chain has endorsements
-
+  std::cout << vbkTip2->toPrettyString() << std::endl;
+  std::cout << popminer->vbk().getBestChain().tip()->toPrettyString() << std::endl;
   ASSERT_TRUE(cmp(*vbkTip2, *popminer->vbk().getBestChain().tip()));
 
   vbkTip1 = popminer->mineVbkBlocks(1, *vbkTip1, {popTx1, popTx3});
@@ -77,16 +78,14 @@ TEST_F(Scenario3, scenario_3) {
   ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());
   ASSERT_TRUE(cmp(*vbkTip1, *popminer->vbk().getBestChain().tip()));
 
-  auto vtbs1 = popminer->vbkPayloads[vbkTip1->getHash()];
-  auto vtbs2 = popminer->vbkPayloads[vbkTip2->getHash()];
-
-  ASSERT_EQ(vtbs1.size(), 2);
-  ASSERT_EQ(vtbs2.size(), 1);
+  auto vtb11 = popminer->createVTB(vbkTip1->getHeader(), popTx1);
+  auto vtb12 = popminer->createVTB(vbkTip1->getHeader(), popTx3);
+  auto vtb2 = popminer->createVTB(vbkTip2->getHeader(), popTx2);
 
   auto* btcContaininBlock1 = popminer->btc().getBlockIndex(
-      vtbs1[0].transaction.blockOfProof.getHash());
+      vtb11.transaction.blockOfProof.getHash());
   auto* btcContaininBlock2 = popminer->btc().getBlockIndex(
-      vtbs1[1].transaction.blockOfProof.getHash());
+      vtb12.transaction.blockOfProof.getHash());
 
   // check vtbs1[0] is better for scorring than vtbs1[1]
   ASSERT_LT(btcContaininBlock1->getHeight(), btcContaininBlock2->getHeight());
@@ -108,10 +107,10 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer->vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads1.vtbs = {vtbs1[1]};
+  altPayloads1.vtbs = {vtb12};
   fillVbkContext(altPayloads1.context,
                  GetRegTestVbkBlock().getHash(),
-                 vtbs1[1].containingBlock.getHash(),
+                 vtb12.containingBlock.getHash(),
                  popminer->vbk());
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
@@ -124,13 +123,13 @@ TEST_F(Scenario3, scenario_3) {
   validateAlttreeIndexState(alttree, containingBlock, altPayloads1);
 
   auto* containingVbkBlock =
-      alttree.vbk().getBlockIndex(vtbs1[1].containingBlock.getHash());
+      alttree.vbk().getBlockIndex(vtb12.containingBlock.getHash());
 
   // check endorsements
   EXPECT_FALSE(containingVbkBlock->getContainingEndorsements().count(
-      VbkEndorsement::getId(vtbs1[0])));
+      VbkEndorsement::getId(vtb11)));
   EXPECT_TRUE(containingVbkBlock->getContainingEndorsements().count(
-      VbkEndorsement::getId(vtbs1[1])));
+      VbkEndorsement::getId(vtb12)));
 
   VBK_LOG_DEBUG("Step 3");
   containingBlock = generateNextBlock(chain.back());
@@ -143,11 +142,11 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer->vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads2.vtbs = {vtbs2[0]};
+  altPayloads2.vtbs = {vtb2};
 
   fillVbkContext(altPayloads2.context,
                  vbkForkPoint->getHash(),
-                 vtbs2[0].containingBlock.getHash(),
+                 vtb2.containingBlock.getHash(),
                  popminer->vbk());
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
@@ -170,7 +169,7 @@ TEST_F(Scenario3, scenario_3) {
   vbkTip1 = popminer->vbk().getBestChain().tip();
 
   // store vtbs in different altPayloads
-  altPayloads3.vtbs = {vtbs1[0]};
+  altPayloads3.vtbs = {vtb11};
   altPayloads3.context.clear();
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads3));
@@ -180,9 +179,9 @@ TEST_F(Scenario3, scenario_3) {
 
   // check endorsements
   EXPECT_TRUE(containingVbkBlock->getContainingEndorsements().count(
-      VbkEndorsement::getId(vtbs1[0])));
+      VbkEndorsement::getId(vtb11)));
   EXPECT_TRUE(containingVbkBlock->getContainingEndorsements().count(
-      VbkEndorsement::getId(vtbs1[1])));
+      VbkEndorsement::getId(vtb12)));
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip1->getHash());
 }

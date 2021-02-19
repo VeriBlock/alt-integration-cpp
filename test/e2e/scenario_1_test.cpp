@@ -150,12 +150,12 @@ TEST_F(Scenario1, scenario_1) {
 
   PopData altPayloadsVBA71;
 
-  auto vtbsVBA71 = popminer->vbkPayloads[vbkAtip->getAncestor(71)->getHash()];
+  auto VBA71 = vbkAtip->getAncestor(71);
   fillVbkContext(altPayloadsVBA71.context,
                  GetRegTestVbkBlock().getHash(),
-                 vtbsVBA71[0].containingBlock.getHash(),
+                 VBA71->getHash(),
                  popminer->vbk());
-  altPayloadsVBA71.vtbs = {vtbsVBA71[0]};
+  altPayloadsVBA71.vtbs = popminer->getVTBs(VBA71->getHeader());
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state))
       << state.toString();
   ASSERT_TRUE(AddPayloads(containingBlock.getHash(), altPayloadsVBA71))
@@ -196,12 +196,12 @@ TEST_F(Scenario1, scenario_1) {
   PopData altPayloadsVBB71;
 
   // send VTB_vBc71 (only VTB) in ALT block 102 (in chain A of ALT)
-  auto vtbsVBB71 = popminer->vbkPayloads[vbkBtip->getAncestor(71)->getHash()];
+  auto VBB71 = vbkBtip->getAncestor(71);
   fillVbkContext(altPayloadsVBB71.context,
                  vbkFork->getHash(),
-                 vtbsVBB71[0].containingBlock.getHash(),
+                 VBB71->getHash(),
                  popminer->vbk());
-  altPayloadsVBB71.vtbs = {vtbsVBB71[0]};
+  altPayloadsVBB71.vtbs = popminer->getVTBs(VBB71->getHeader());
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   ASSERT_TRUE(AddPayloads(containingBlock.getHash(), altPayloadsVBB71))
       << state.toString();
