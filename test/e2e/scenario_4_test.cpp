@@ -15,18 +15,18 @@ TEST_F(Scenario4, scenario_4) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
-  auto vbkTip = *popminer->mineVbkBlocks(65);
+  auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
-  auto* endorsedVbkBlock1 = vbkTip.getAncestor(vbkTip.getHeight() - 10);
-  auto* endorsedVbkBlock2 = vbkTip.getAncestor(vbkTip.getHeight() - 11);
+  auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx1});
-  vbkTip = *popminer->mineVbkBlocks(50);
+  vbkTip = popminer->mineVbkBlocks(50);
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
-  vbkTip = *containingVbkBlock2;
+  vbkTip = containingVbkBlock2;
 
   auto vtbs1 = popminer->vbkPayloads[containingVbkBlock1->getHash()];
   auto vtbs2 = popminer->vbkPayloads[containingVbkBlock2->getHash()];
@@ -49,8 +49,8 @@ TEST_F(Scenario4, scenario_4) {
 
   // new tip is the next block after vbkTip
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
-            vbkTip.getHash());
-  vbkTip = *popminer->vbk().getBestChain().tip();
+            vbkTip->getHash());
+  vbkTip = popminer->vbk().getBestChain().tip();
 
   altPayloads1.vtbs = {vtbs1[0]};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
@@ -60,7 +60,7 @@ TEST_F(Scenario4, scenario_4) {
   validateAlttreeIndexState(alttree, containingBlock, altPayloads1);
 
   // check vbk tree state
-  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip.getHash());
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip->getHash());
 
   mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
 
@@ -71,8 +71,8 @@ TEST_F(Scenario4, scenario_4) {
 
   // new tip is the next block after vbkTip
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
-            vbkTip.getHash());
-  vbkTip = *popminer->vbk().getBestChain().tip();
+            vbkTip->getHash());
+  vbkTip = popminer->vbk().getBestChain().tip();
 
   altPayloads2.vtbs = {vtbs2[0]};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
@@ -82,7 +82,7 @@ TEST_F(Scenario4, scenario_4) {
   validateAlttreeIndexState(alttree, containingBlock, altPayloads2);
 
   // check vbk tree state
-  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip.getHash());
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip->getHash());
 
   // reset state of the cmp_ in the altTree
   // generate new fork with the new altPayloads
@@ -95,8 +95,8 @@ TEST_F(Scenario4, scenario_4) {
 
   // new tip is the next block after vbkTip
   ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
-            vbkTip.getHash());
-  vbkTip = *popminer->vbk().getBestChain().tip();
+            vbkTip->getHash());
+  vbkTip = popminer->vbk().getBestChain().tip();
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads3));
@@ -105,5 +105,5 @@ TEST_F(Scenario4, scenario_4) {
   validateAlttreeIndexState(alttree, containingBlock, altPayloads3);
 
   // check vbk tree state
-  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip.getHash());
+  EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip->getHash());
 }

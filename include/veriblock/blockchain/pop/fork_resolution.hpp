@@ -303,7 +303,7 @@ int comparePopScoreImpl(PublicationView& a, PublicationView& b) {
   //
   // Chain A has keystone 60 but chain B does not, so Chain B is
   // chopped to VBK20:BTC100, VBK40:BTC101.
-  
+
   // Also, the chain goes out of finality if it contains a keystone which violates
   // the Bitcoin finality delay based on the previous keystone in the chain.
   // clang-format on
