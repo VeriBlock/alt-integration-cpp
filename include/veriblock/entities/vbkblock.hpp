@@ -13,9 +13,7 @@
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/blockchain/vbk_block_addon.hpp>
 #include <veriblock/entities/btcblock.hpp>
-#include <veriblock/entities/endorsements.hpp>
 #include <veriblock/fmt.hpp>
-#include <veriblock/hashutil.hpp>
 #include <veriblock/serde.hpp>
 #include <veriblock/uint.hpp>
 

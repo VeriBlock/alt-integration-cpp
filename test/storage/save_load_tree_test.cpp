@@ -36,6 +36,8 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
   }
 
   auto assertTreesEqual() {
+    assertTreesHaveNoOrphans(alttree);
+    assertTreesHaveNoOrphans(alttree2);
     ASSERT_TRUE(cmp(alttree, alttree2));
     auto tip = alttree.getBestChain().tip();
     auto to1 = alttree.getBestChain().first()->getHash();

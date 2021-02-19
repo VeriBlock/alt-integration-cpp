@@ -26,9 +26,10 @@ addtest(keystone_util_test keystone_util_test.cpp)
 addtest(validationstate_test validationstate_test.cpp)
 addtest(alt-util_test alt-util_test.cpp)
 addtest(mempool_test mempool_test.cpp)
+set_test_cost(mempool_test 41000) # 41 sec
+addtest(mempool_getpop_test mempool_getpop_test.cpp)
+set_test_cost(mempool_getpop_test 42000) # 42 sec
 addtest(mempool_prioritization_test mempool_prioritization_test.cpp)
-set_tests_properties(mempool_test PROPERTIES
-        COST 10000 # 10 sec
-        )
+set_test_cost(mempool_prioritization_test 23500) # 23.5 sec
 addtest(stateless_vtb_test stateless_vtb_test.cpp)
 addtest(merkle_pool_test merkle_pool_test.cpp)
