@@ -107,6 +107,10 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree, uint256> {
   }
 
   hash_t finalizeRoot() {
+    if (layers.empty()) {
+      return hash_t{};
+    }
+
     if (layers.size() == 1) {
       // the only layer
       VBK_ASSERT(layers[0].size() == 1);
