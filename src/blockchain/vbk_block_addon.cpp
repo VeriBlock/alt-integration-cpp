@@ -66,7 +66,12 @@ void VbkBlockAddon::setNull() {
 }
 
 std::string VbkBlockAddon::toPrettyString() const {
-  return fmt::sprintf("VTB=%d", _vtbids.size());
+  auto res = fmt::sprintf("VTB=%d", _vtbids.size());
+  res += "VTBs: ";
+  for (const auto& vtb : _vtbids) {
+    res += vtb.toPrettyString() + ", ";
+  }
+  return res;
 }
 
 void VbkBlockAddon::setIsBootstrap(bool isBootstrap) {

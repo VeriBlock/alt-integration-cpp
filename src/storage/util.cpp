@@ -78,6 +78,8 @@ bool LoadTree(
 bool LoadAllTrees(PopContext& context,
                   BlockReader& storage,
                   ValidationState& state) {
+  VBK_LOG_DEBUG("Loading all trees");
+
   if (!detail::LoadTree(context.altTree->btc(), storage, state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
@@ -95,10 +97,13 @@ bool LoadAllTrees(PopContext& context,
   if (!detail::LoadTree(*context.altTree, storage, state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
+
+  VBK_LOG_DEBUG("tree: \n%s", context.altTree->toPrettyString());
   return true;
 }
 
 void SaveAllTrees(const AltBlockTree& tree, BlockBatch& batch) {
+  VBK_LOG_DEBUG("Saving all trees, tree: \n%s", tree.toPrettyString());
   SaveTree(tree.btc(), batch);
   SaveTree(tree.vbk(), batch);
   SaveTree(tree, batch);

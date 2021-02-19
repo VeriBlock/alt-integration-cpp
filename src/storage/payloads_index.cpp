@@ -77,6 +77,9 @@ void PayloadsIndex::addBlockToIndex(const BlockIndex<AltBlock>& block) {
 
 void PayloadsIndex::addBlockToIndex(const BlockIndex<VbkBlock>& block) {
   auto containing = block.getHash();
+  // VBK_LOG_DEBUG("addBlockToIndex() block hash: %s, size: %d",
+  //               containing.toPrettyString(),
+  //               block.getPayloadIds<VTB>().size());
   for (auto& pid : block.getPayloadIds<VTB>()) {
     this->addVbkPayloadIndex(containing, pid.asVector());
   }
@@ -88,6 +91,9 @@ void PayloadsIndex::addAltPayloadIndex(const AltBlock::hash_t& containing,
 }
 void PayloadsIndex::addVbkPayloadIndex(const VbkBlock::hash_t& containing,
                                        const std::vector<uint8_t>& payloadId) {
+  // VBK_LOG_DEBUG("addVbkPayloadIndex() containing: %s, payloadId: %s",
+  //               containing.toPrettyString(),
+  //               HexStr(payloadId));
   payload_in_vbk[payloadId].insert(containing);
 }
 
@@ -98,6 +104,9 @@ void PayloadsIndex::removeAltPayloadIndex(
 
 void PayloadsIndex::removeVbkPayloadIndex(
     const VbkBlock::hash_t& containing, const std::vector<uint8_t>& payloadId) {
+  // VBK_LOG_DEBUG("removeVbkPayloadIndex() containing: %s, payloadId: %s",
+  //               containing.toPrettyString(),
+  //               HexStr(payloadId));
   payload_in_vbk[payloadId].erase(containing);
 }
 
