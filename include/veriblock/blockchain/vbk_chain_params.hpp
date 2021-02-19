@@ -21,7 +21,7 @@ struct VbkChainParams {
   virtual int getProgPowForkHeight() const = 0;
   virtual uint32_t getProgPowStartTimeEpoch() const noexcept = 0;
   virtual bool isProgPowStartTimeEpochEnabled() const noexcept { return true; }
-  virtual std::string networkName() const = 0;
+  virtual const char* networkName() const = 0;
   virtual uint256 getMinimumDifficulty() const = 0;
   virtual VbkNetworkType getTransactionMagicByte() const noexcept = 0;
   virtual bool getPowNoRetargeting() const noexcept = 0;
@@ -77,7 +77,7 @@ struct VbkChainParamsMain : public VbkChainParams {
     return 1600716052U;
   }
 
-  std::string networkName() const override { return "main"; }
+  const char* networkName() const override { return "main"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
     return getRetargetPeriod();
@@ -115,7 +115,7 @@ struct VbkChainParamsTest : public VbkChainParams {
     return 1600444017U;
   }
 
-  std::string networkName() const override { return "test"; }
+  const char* networkName() const override { return "test"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
     return getRetargetPeriod();
@@ -161,7 +161,7 @@ struct VbkChainParamsRegTest : public VbkChainParams {
     return false;
   }
 
-  std::string networkName() const override { return "regtest"; }
+  const char* networkName() const override { return "regtest"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override { return 0; }
 

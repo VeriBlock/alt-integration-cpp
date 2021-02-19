@@ -29,7 +29,7 @@ struct BtcChainParams {
   }
   //! minimum number of BTC blocks needed to bootstrap chain
   virtual uint32_t numBlocksForBootstrap() const noexcept = 0;
-  virtual std::string networkName() const noexcept = 0;
+  virtual const char* networkName() const noexcept = 0;
   virtual uint32_t maxFutureBlockTime() const noexcept {
     return mMaxFutureBlockTime;
   }
@@ -50,7 +50,7 @@ struct BtcChainParamsMain : public BtcChainParams {
 
   bool EnableTimeAdjustment() const noexcept override { return true; }
 
-  std::string networkName() const noexcept override { return "main"; }
+  const char* networkName() const noexcept override { return "main"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
     return getDifficultyAdjustmentInterval();
@@ -97,7 +97,7 @@ struct BtcChainParamsTest : public BtcChainParams {
 
   bool EnableTimeAdjustment() const noexcept override { return true; }
 
-  std::string networkName() const noexcept override { return "test"; }
+  const char* networkName() const noexcept override { return "test"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override {
     return getDifficultyAdjustmentInterval();
@@ -145,7 +145,7 @@ struct BtcChainParamsRegTest : public BtcChainParams {
   //! time adjustment is disabled in regtest mode
   bool EnableTimeAdjustment() const noexcept override { return false; }
 
-  std::string networkName() const noexcept override { return "regtest"; }
+  const char* networkName() const noexcept override { return "regtest"; }
 
   uint32_t numBlocksForBootstrap() const noexcept override { return 1; };
 
