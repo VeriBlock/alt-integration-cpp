@@ -228,4 +228,8 @@ int MemPoolBlockTree::weaklyCompare(const VTB& vtb1, const VTB& vtb2) {
   return 0;
 }
 
+bool MemPoolBlockTree::isBlockOld(const VbkBlock& block) const {
+  return tree_->vbk().isBlockOld(block.getHeight());
+}
+
 }  // namespace altintegration

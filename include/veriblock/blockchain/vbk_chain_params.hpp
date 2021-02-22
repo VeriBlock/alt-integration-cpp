@@ -46,7 +46,13 @@ struct VbkChainParams {
   /// number of blocks behind of current tip in active chain
   virtual int32_t getHistoryOverwriteLimit() const noexcept {
     /* roughly 100h worth of VBK block production */
+    // equal to 1.5*8000 (1.5 progpow epochs)
     return 12000;
+  }
+
+  //! all blocks further than this number of blocks are considered "old"
+  virtual int32_t getOldBlocksWindow() const noexcept {
+    return getHistoryOverwriteLimit();
   }
 
   virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()

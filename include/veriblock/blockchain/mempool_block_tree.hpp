@@ -35,6 +35,8 @@ struct MemPoolBlockTree {
   bool checkContextually(const VTB& vtb, ValidationState& state);
   bool checkContextually(const VbkBlock& block, ValidationState& state);
 
+  bool isBlockOld(const VbkBlock& block) const;
+
 
   /**
    * Compares ATVs for the strongly equivalence

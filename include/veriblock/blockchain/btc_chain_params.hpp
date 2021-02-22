@@ -34,6 +34,9 @@ struct BtcChainParams {
     return mMaxFutureBlockTime;
   }
 
+  //! all blocks further than this number of blocks are considered "old"
+  int32_t getOldBlocksWindow() const noexcept { return 1000; }
+
  protected:
   uint32_t mMaxFutureBlockTime = 2 * 60 * 60;  // 2 hours
 };
