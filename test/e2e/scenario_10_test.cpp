@@ -23,12 +23,19 @@ TEST_F(Scenario10, scenario_10) {
   popminer->mineBtcBlocks(50);
 
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
+  popminer->mineBtcBlocks(100);
+  auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
-  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx1});
+  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
 
   auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
-  ASSERT_EQ(vtbs.size(), 1);
+
+  ASSERT_EQ(vtbs.size(), 2);
+  auto E1 = VbkEndorsement::fromContainer(vtbs[0]);
+  auto E2 = VbkEndorsement::fromContainer(vtbs[1]);
+  ASSERT_NE(E1.id, E2.id);
 
   PopData payloads1 =
       generateAltPayloads({}, alttree.vbk().getBestChain().tip()->getHash(), 0);
@@ -68,7 +75,7 @@ TEST_F(Scenario10, scenario_10) {
                 .getBlockIndex(vbkTip->getHash())
                 ->getPayloadIds<VTB>()
                 .size(),
-            1);
+            2);
 
   VBK_LOG_DEBUG("Step 3");
   // mine 10 blocks to the chainA
@@ -108,7 +115,7 @@ TEST_F(Scenario10, scenario_10) {
                 .getBlockIndex(vbkTip->getHash())
                 ->getPayloadIds<VTB>()
                 .size(),
-            1);
+            2);
 
   ASSERT_TRUE(reloadedAltTree.setState(chainA.back().getHash(), state));
   ASSERT_TRUE(state.IsValid());
