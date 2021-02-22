@@ -429,6 +429,16 @@ bool VbkBlockTree::isBlockOld(height_t height) const {
   return tip->getHeight() - height > getParams().getHistoryOverwriteLimit();
 }
 
+bool VbkBlockTree::isBlockOld(const hash_t& hash) const {
+  auto* index = getBlockIndex(hash);
+  if (index == nullptr) {
+    // block is unknown
+    return false;
+  }
+
+  return isBlockOld(index->getHeight());
+}
+
 template <>
 void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index) {
   VBK_ASSERT_MSG(index.blockOfProofEndorsements.empty(),
