@@ -422,22 +422,6 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   return true;
 }
 
-bool VbkBlockTree::isBlockOld(height_t height) const {
-  auto* tip = getBestChain().tip();
-  VBK_ASSERT(tip);
-
-  return tip->getHeight() - height > getParams().getHistoryOverwriteLimit();
-}
-
-bool VbkBlockTree::isBlockOld(const hash_t& hash) const {
-  auto* index = getBlockIndex(hash);
-  if (index == nullptr) {
-    // block is unknown
-    return false;
-  }
-
-  return isBlockOld(index->getHeight());
-}
 
 template <>
 void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index) {

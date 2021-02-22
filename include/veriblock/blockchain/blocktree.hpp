@@ -156,6 +156,26 @@ struct BlockTree : public BaseBlockTree<Block> {
     return true;
   }
 
+  //! block is considered old if it is behind current tip further than 'old
+  //! blocks window' blocks
+  bool isBlockOld(height_t height) const {
+    auto* tip = base::getBestChain().tip();
+    VBK_ASSERT(tip);
+
+    return tip->getHeight() - height > getParams().getOldBlocksWindow();
+  }
+
+  //! @overload
+  bool isBlockOld(const hash_t& hash) const {
+    auto* index = base::getBlockIndex(hash);
+    if (index == nullptr) {
+      // block is unknown, so not "old"
+      return false;
+    }
+
+    return isBlockOld(index->getHeight());
+  }
+
  protected:
   const ChainParams* param_ = nullptr;
 

@@ -45,6 +45,7 @@ struct TempBlockTree {
   }
 
   bool acceptBlock(std::shared_ptr<block_t> header, ValidationState& state) {
+    VBK_ASSERT(header);
     auto* prev = getBlockIndex(header->getPreviousBlock());
 
     if (prev == nullptr) {

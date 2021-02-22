@@ -215,6 +215,13 @@ void MemPool::clear() {
 template <>
 MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
                                            ValidationState& state) {
+  VBK_ASSERT(atv);
+
+  // before any checks and validations, check if payload is old or not
+  if (mempool_tree_.isBlockOld(atv->blockOfProof)) {
+    return {FAILED_STATELESS, state.Invalid("too-old")};
+  }
+
   // stateless validation
   auto& alttree = mempool_tree_.alt();
   if (!checkATV(*atv, state, alttree.getParams(), alttree.vbk().getParams())) {
@@ -242,6 +249,13 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
                                            ValidationState& state) {
+  VBK_ASSERT(vtb);
+
+  // before any checks and validations, check if payload is old or not
+  if (mempool_tree_.isBlockOld(vtb->containingBlock)) {
+    return {FAILED_STATELESS, state.Invalid("too-old")};
+  }
+
   // stateless validation
   if (!checkVTB(*vtb,
                 state,
@@ -271,6 +285,13 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
 template <>
 MemPool::SubmitResult MemPool::submit<VbkBlock>(
     const std::shared_ptr<VbkBlock>& blk, ValidationState& state) {
+  VBK_ASSERT(blk);
+
+  // before any checks and validations, check if payload is old or not
+  if (mempool_tree_.isBlockOld(*blk)) {
+    return {FAILED_STATELESS, state.Invalid("too-old")};
+  }
+
   // stateless validation
   if (!checkBlock(
           *blk, state, mempool_tree_.vbk().getStableTree().getParams())) {
