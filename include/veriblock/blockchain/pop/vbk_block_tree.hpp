@@ -136,6 +136,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
    * @param height block height
    */
   bool isBlockOld(height_t height) const;
+  //! @overload
+  bool isBlockOld(const hash_t& hash) const;
 
   /**
    * If we add payloads to the VBK tree in the following order: A1, B2, A3.
