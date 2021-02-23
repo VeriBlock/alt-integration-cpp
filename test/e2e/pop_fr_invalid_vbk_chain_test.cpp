@@ -54,14 +54,14 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbktx1 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
   auto* vbkblock1 = popminer->mineVbkBlocks(1, {vbktx1});
-  ATV atv1 = popminer->getATVs(*vbkblock1)[0];
+  ATV atv1 = popminer->createATV(vbkblock1->getHeader(), vbktx1);
   ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
   // mine 10 more blocks on top of tipB
   tipB = popminer->mineVbkBlocks(10, *tipB);
 
   //! act: add ATV1, VTB1 to ALT9. should be valid.
-  auto vtb1 = popminer->vbkPayloads[vtbcontaining.getHash()][0];
+  auto vtb1 = popminer->createVTB(vtbcontaining, vbkpoptx1);
   PopData p1;
   p1.atvs = {atv1};
   p1.vtbs = {vtb1};
@@ -79,10 +79,10 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbktx2 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
   auto* vbkblock2 = popminer->mineVbkBlocks(1, {vbktx2});
-  ATV atv2 = popminer->getATVs(*vbkblock2)[0];
+  ATV atv2 = popminer->createATV(vbkblock2->getHeader(), vbktx2);
   ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
-  auto vtb2 = popminer->vbkPayloads[vtbcontaining.getHash()][1];
+  auto vtb2 = popminer->createVTB(vtbcontaining, vbkpoptx2);
   PopData p2;
   p2.atvs = {atv2};
   // break VTB2: break hash of containing block

@@ -16,15 +16,15 @@ class MockMinerTestCase(unittest.TestCase):
 
         endorsed = m.mineVbkBlocks(100)
         self.assertEqual(endorsed.height, 100)
-        m.endorseVbkBlock(endorsed, m.btcTip.getHash(), 10)
+        m.endorseVbkBlock(endorsed, m.btcTip.getHash())
 
         p = PublicationData()
         p.identifier = 1337
         p.header = "0011223344"
         p.payoutInfo = "0014aaddff"
-        payloads = m.endorseAltBlock(p, m.vbkTip.getHash())
+        payloads = m.endorseAltBlock(p, endorsed.getHash())
         print(repr(payloads))
-        self.assertEqual(len(payloads.vtbs), 10)
+        self.assertEqual(len(payloads.vtbs), 1)
         self.assertEqual(m.vbkTip.height, 102)
 
     def test_uints_handle_both_bytes_and_uint8(self):

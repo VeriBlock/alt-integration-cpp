@@ -57,6 +57,14 @@ struct VbkPopTx {
 
   std::string toPrettyString() const;
 
+  friend bool operator==(const VbkPopTx& a, const VbkPopTx& b) {
+    return a.getHash() == b.getHash();
+  }
+
+  friend bool operator!=(const VbkPopTx& a, const VbkPopTx& b) {
+    return !(a == b);
+  }
+
  private:
   /**
    * Convert VbkPopTx to data stream using VbkPopTx basic byte format without

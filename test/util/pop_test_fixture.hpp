@@ -283,13 +283,13 @@ struct PopTestFixture {
     for (size_t i = 0; i < VTBs; i++) {
       auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
       auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
-      auto newvtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).back();
+      auto newvtb = popminer->createVTB(vbkcontaining->getHeader(), vbkpoptx);
       popData.vtbs.push_back(newvtb);
     }
 
     for (const auto& tx : transactions) {
       auto* block = popminer->mineVbkBlocks(1, {tx});
-      ATV atv = popminer->getATVs(*block)[0];
+      ATV atv = popminer->createATV(block->getHeader(), tx);
       popData.atvs.push_back(atv);
     }
 

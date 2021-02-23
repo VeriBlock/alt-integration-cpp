@@ -34,7 +34,7 @@ class PopE2ETest(PopIntegrationTestFramework):
         vtbs_amount = 20
         self.log.info("generate vtbs on node0, amount {}".format(vtbs_amount))
         for i in range(vtbs_amount):
-            apm.endorseVbkBlock(apm.vbkTip, apm.btcTip.getHash(), 1)
+            apm.endorseVbkBlock(apm.vbkTip, apm.btcTip.getHash())
 
         self.nodes[0].generate(nblocks=10)
         last_block = self.nodes[0].getblockcount()

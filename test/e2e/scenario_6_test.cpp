@@ -51,11 +51,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   auto* endorsedBlock = vbkTip->getAncestor(vbkTip->getHeight() - 5);
   auto vbkPopTx = generatePopTx(endorsedBlock->getHeader());
   vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
-  auto it = popminer->vbkPayloads.find(vbkTip->getHash());
-  ASSERT_TRUE(it != popminer->vbkPayloads.end());
-  ASSERT_EQ(it->second.size(), 1);
-
-  auto vtb = it->second[0];
+  auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
 
   // corrupt vtb
   std::vector<uint8_t> new_hash = {1, 2, 3, 9, 8, 2};

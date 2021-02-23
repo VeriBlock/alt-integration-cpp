@@ -34,8 +34,7 @@ TEST_F(Scenario7, scenario_7) {
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx1});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
+  auto vtb1 = popminer->createVTB(containingVbkBlock1->getHeader(), vbkPopTx1);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -44,7 +43,7 @@ TEST_F(Scenario7, scenario_7) {
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   auto* block1 = popminer->mineVbkBlocks(1, {tx1});
-  ATV atv1 = popminer->getATVs(*block1)[0];
+  ATV atv1 = popminer->createATV(block1->getHeader(), tx1);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -52,14 +51,13 @@ TEST_F(Scenario7, scenario_7) {
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
-  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock2->getHash()][0];
+  auto vtb2 = popminer->createVTB(containingVbkBlock2->getHeader(), vbkPopTx2);
 
   AltBlock endorsedBlock2 = chain[5];
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock2));
   auto* block2 = popminer->mineVbkBlocks(1, {tx2});
-  ATV atv2 = popminer->getATVs(*block2)[0];
+  ATV atv2 = popminer->createATV(block2->getHeader(), tx2);
 
   PopData popData;
   popData.atvs = {atv1, atv2};

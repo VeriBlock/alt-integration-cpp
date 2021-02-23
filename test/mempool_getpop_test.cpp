@@ -18,12 +18,12 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
 
   vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
 
-  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
 
-  ASSERT_EQ(vtbs.size(), 2);
-  ASSERT_NE(VbkEndorsement::fromContainer(vtbs[0]).id,
-            VbkEndorsement::fromContainer(vtbs[1]).id);
-  ASSERT_NE(vtbs[0].getId(), vtbs[1].getId());
+  ASSERT_NE(VbkEndorsement::fromContainer(vtb1).id,
+            VbkEndorsement::fromContainer(vtb2).id);
+  ASSERT_NE(vtb1.getId(), vtb2.getId());
 
   // mine 10 blocks
   mineAltBlocks(10, chain);
@@ -33,15 +33,14 @@ TEST_F(MemPoolFixture, getPop_scenario_1) {
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   auto* block = popminer->mineVbkBlocks(1, {tx});
-  ATV atv = popminer->getATVs(*block)[0];
+  ATV atv = popminer->createATV(block->getHeader(), tx);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   submitATV(atv);
-  for (const auto& vtb : vtbs) {
-    submitVTB(vtb);
-  }
+  submitVTB(vtb1);
+  submitVTB(vtb2);
   for (const auto& b : context) {
     submitVBK(b);
   }
@@ -62,8 +61,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx1});
-  ASSERT_EQ(popminer->vbkPayloads.at(containingVbkBlock1->getHash()).size(), 1);
-  VTB vtb1 = popminer->vbkPayloads.at(containingVbkBlock1->getHash()).at(0);
+  VTB vtb1 = popminer->createVTB(containingVbkBlock1->getHeader(), vbkPopTx1);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -71,8 +69,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
-  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock2->getHash()][0];
+  VTB vtb2 = popminer->createVTB(containingVbkBlock2->getHeader(), vbkPopTx2);
 
   ASSERT_NE(VbkEndorsement::fromContainer(vtb1).id,
             VbkEndorsement::fromContainer(vtb2).id);
@@ -85,7 +82,7 @@ TEST_F(MemPoolFixture, getPop_scenario_2) {
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   auto* block = popminer->mineVbkBlocks(1, {tx});
-  ATV atv = popminer->getATVs(*block)[0];
+  ATV atv = popminer->createATV(block->getHeader(), tx);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
@@ -120,7 +117,7 @@ TEST_F(MemPoolFixture, getPop_scenario_3) {
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   auto* block = popminer->mineVbkBlocks(1, {tx});
-  ATV atv = popminer->getATVs(*block)[0];
+  ATV atv = popminer->createATV(block->getHeader(), tx);
 
   submitATV(atv);
 
@@ -144,7 +141,7 @@ TEST_F(MemPoolFixture, getPop_scenario_4) {
   VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   auto* block = popminer->mineVbkBlocks(1, {tx});
-  ATV atv = popminer->getATVs(*block)[0];
+  ATV atv = popminer->createATV(block->getHeader(), tx);
 
   submitATV(atv);
 
@@ -170,8 +167,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx1});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
+  VTB vtb1 = popminer->createVTB(containingVbkBlock1->getHeader(), vbkPopTx1);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -180,7 +176,7 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   auto* block1 = popminer->mineVbkBlocks(1, {tx1});
-  ATV atv1 = popminer->getATVs(*block1)[0];
+  ATV atv1 = popminer->createATV(block1->getHeader(), tx1);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -188,14 +184,13 @@ TEST_F(MemPoolFixture, getPop_scenario_5) {
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock2->getHash()].size(), 1);
-  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock2->getHash()][0];
+  VTB vtb2 = popminer->createVTB(containingVbkBlock2->getHeader(), vbkPopTx2);
 
   AltBlock endorsedBlock2 = chain[5];
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock2));
   auto* block2 = popminer->mineVbkBlocks(1, {tx2});
-  ATV atv2 = popminer->getATVs(*block2)[0];
+  ATV atv2 = popminer->createATV(block2->getHeader(), tx2);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
@@ -295,8 +290,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   auto vbkPopTx = generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
+  VTB vtb1 = popminer->createVTB(containingVbkBlock1->getHeader(), vbkPopTx);
 
   popminer->mineBtcBlocks(100);
   popminer->mineVbkBlocks(54);
@@ -325,7 +319,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   vtb2.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer->btc().getParams(), popminer->getVbkParams()));
+      vtb2, state, popminer->btc().getParams(), popminer->vbkParams()));
 
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);
@@ -339,7 +333,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   auto* block1 = popminer->mineVbkBlocks(1, {tx1});
-  ATV atv1 = popminer->getATVs(*block1)[0];
+  ATV atv1 = popminer->createATV(block1->getHeader(), tx1);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
@@ -377,7 +371,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   auto* block1 = popminer->mineVbkBlocks(1, {tx1});
-  ATV atv1 = popminer->getATVs(*block1)[0];
+  ATV atv1 = popminer->createATV(block1->getHeader(), tx1);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
@@ -415,14 +409,13 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   auto vbkPopTx = generatePopTx(endorsedVbkBlock1->getHeader());
 
   auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock1->getHash()].size(), 1);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock1->getHash()][0];
+  VTB vtb1 = popminer->createVTB(containingVbkBlock1->getHeader(), vbkPopTx);
 
   AltBlock endorsedBlock1 = chain[5];
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   auto* block1 = popminer->mineVbkBlocks(1, {tx1});
-  ATV atv1 = popminer->getATVs(*block1)[0];
+  ATV atv1 = popminer->createATV(block1->getHeader(), tx1);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
@@ -471,7 +464,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   vtb2.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer->btc().getParams(), popminer->getVbkParams()));
+      vtb2, state, popminer->btc().getParams(), popminer->vbkParams()));
 
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);
@@ -485,7 +478,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock2));
   auto* block2 = popminer->mineVbkBlocks(1, {tx2});
-  ATV atv2 = popminer->getATVs(*block2)[0];
+  ATV atv2 = popminer->createATV(block2->getHeader(), tx2);
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   submitATV(atv2);
@@ -521,7 +514,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   auto* block1 = popminer->mineVbkBlocks(1, {tx1});
-  ATV atv1 = popminer->getATVs(*block1)[0];
+  ATV atv1 = popminer->createATV(block1->getHeader(), tx1);
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
@@ -543,7 +536,7 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   auto* block2 = popminer->mineVbkBlocks(1, {tx2});
-  ATV atv2 = popminer->getATVs(*block2)[0];
+  ATV atv2 = popminer->createATV(block2->getHeader(), tx2);
   context.clear();
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
@@ -582,7 +575,10 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
 
   vbkTip = popminer->mineVbkBlocks(1, transactions);
 
-  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+  std::vector<VTB> vtbs(vtbs_amount);
+  for (size_t i = 0; i < vtbs_amount; i++) {
+    vtbs[i] = popminer->createVTB(vbkTip->getHeader(), transactions[i]);
+  }
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
@@ -648,9 +644,8 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock->getHash()].size(), 2);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock->getHash()][0];
-  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock->getHash()][1];
+  VTB vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
+  VTB vtb2 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx2);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
@@ -704,9 +699,8 @@ TEST_F(MemPoolFixture, getPop_scenario_14) {
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
   auto* containingVbkBlock = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
-  ASSERT_EQ(popminer->vbkPayloads[containingVbkBlock->getHash()].size(), 2);
-  VTB vtb1 = popminer->vbkPayloads[containingVbkBlock->getHash()][0];
-  VTB vtb2 = popminer->vbkPayloads[containingVbkBlock->getHash()][1];
+  VTB vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
+  VTB vtb2 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx2);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
