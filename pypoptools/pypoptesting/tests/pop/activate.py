@@ -22,7 +22,7 @@ class PopActivateTest(PopIntegrationTestFramework):
 
         assert self.nodes[0].getblockcount() == 0
         pop_activation_height = self.nodes[0].getpopparams().popActivationHeight
-        assert pop_activation_height == 200
+        assert pop_activation_height == 100
 
         # node0 start with 100 blocks
         self.nodes[0].generate(nblocks=100)
