@@ -107,6 +107,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wno-error=null-dereference)
     add_flag(-Wno-error=nonnull-compare)
     add_flag(-Wno-error=unknown-pragmas)
+    add_flag(-Wno-error=strict-overflow)
     add_cxx_flag(-Wno-error=literal-suffix)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Release")

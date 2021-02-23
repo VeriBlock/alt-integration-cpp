@@ -146,6 +146,7 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
             vbkBlockTip->getHash());
 
   // Make 5 endorsements valid endorsements
+  ASSERT_GE(vbkBlockTip->getHeight(), 15);
   auto* endorsedVbkBlock1 =
       vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 11);
   ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
@@ -187,6 +188,7 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
             vbkBlockTip->getHash());
 
   // Make 5 endorsements valid endorsements
+  ASSERT_GE(vbkBlockTip->getHeight(), 15);
   endorsedVbkBlock1 = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 11);
   ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
   endorsedVbkBlock2 = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 12);
