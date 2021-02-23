@@ -56,15 +56,12 @@ TEST_F(Scenario10, scenario_10) {
                 .size(),
             0);
 
-  // create chainB
-  std::vector<AltBlock> chainB = chainA;
-
   PopData payloads2 =
       generateAltPayloads({}, alttree.vbk().getBestChain().tip()->getHash(), 0);
   payloads2.vtbs = vtbs;
 
-  AltBlock containingBlock2 = generateNextBlock(chainB.back());
-  chainB.push_back(containingBlock2);
+  AltBlock containingBlock2 = generateNextBlock(chainA.back());
+  chainA.push_back(containingBlock2);
 
   VBK_LOG_DEBUG("Step 2");
   ASSERT_TRUE(alttree.acceptBlockHeader(containingBlock2, state));
@@ -78,20 +75,10 @@ TEST_F(Scenario10, scenario_10) {
             2);
 
   VBK_LOG_DEBUG("Step 3");
-  // mine 10 blocks to the chainA
-  mineAltBlocks(10, chainA, /*connectBlocks=*/true, /*setState=*/true);
-  ASSERT_EQ(chainA.back().getHash(), alttree.getBestChain().tip()->getHash());
-  ASSERT_EQ(alttree.vbk()
-                .getBlockIndex(vbkTip->getHash())
-                ->getPayloadIds<VTB>()
-                .size(),
-            0);
-
-  VBK_LOG_DEBUG("Step 4");
   auto writer = InmemBlockBatch(blockStorage);
   SaveAllTrees(alttree, writer);
 
-  VBK_LOG_DEBUG("Step 5");
+  VBK_LOG_DEBUG("Step 4");
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
@@ -104,24 +91,16 @@ TEST_F(Scenario10, scenario_10) {
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
 
-  ASSERT_TRUE(reloadedAltTree.getBlockIndex(chainB.back().getHash()) !=
-              nullptr);
   ASSERT_TRUE(reloadedAltTree.getBlockIndex(chainA.back().getHash()) !=
               nullptr);
 
-  ASSERT_TRUE(reloadedAltTree.setState(chainB.back().getHash(), state));
-  ASSERT_TRUE(state.IsValid());
   ASSERT_EQ(reloadedAltTree.vbk()
                 .getBlockIndex(vbkTip->getHash())
                 ->getPayloadIds<VTB>()
                 .size(),
             2);
 
-  ASSERT_TRUE(reloadedAltTree.setState(chainA.back().getHash(), state));
+  ASSERT_TRUE(
+      reloadedAltTree.setState(chainA[chainA.size() - 5].getHash(), state));
   ASSERT_TRUE(state.IsValid());
-  ASSERT_EQ(reloadedAltTree.vbk()
-                .getBlockIndex(vbkTip->getHash())
-                ->getPayloadIds<VTB>()
-                .size(),
-            0);
 }
