@@ -10,6 +10,7 @@ TEST_F(MemPoolFixture, removeAll_test1) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
+  ASSERT_GE(vbkTip->getHeight(), 11);
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
@@ -80,6 +81,7 @@ TEST_F(MemPoolFixture, removeAll_test2) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
+  ASSERT_GE(vbkTip->getHeight(), 11);
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
@@ -141,6 +143,7 @@ TEST_F(MemPoolFixture, removeAll_test3) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
+  ASSERT_GE(vbkTip->getHeight(), 11);
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
@@ -212,6 +215,7 @@ TEST_F(MemPoolFixture, removeAll_test4) {
   auto* vbkTip = popminer->mineVbkBlocks(15);
 
   // endorse VBK blocks
+  ASSERT_GE(vbkTip->getHeight(), 11);
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
@@ -300,6 +304,7 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
+  ASSERT_GE(vbkTip->getHeight(), 11);
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
@@ -409,6 +414,7 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   auto* vbkTip = popminer->mineVbkBlocks(65);
 
   // endorse VBK blocks
+  ASSERT_GE(vbkTip->getHeight(), 11);
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
 
