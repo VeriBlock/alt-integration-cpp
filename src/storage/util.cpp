@@ -78,8 +78,6 @@ bool LoadTree(
 bool LoadAllTrees(PopContext& context,
                   BlockReader& storage,
                   ValidationState& state) {
-  VBK_LOG_DEBUG("Loading all trees");
-
   if (!detail::LoadTree(context.altTree->btc(), storage, state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
