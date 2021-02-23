@@ -123,16 +123,18 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   //! @invariant NOT atomic.
-  bool loadBlock(const index_t& index, ValidationState& state) override {
-    if (!checkBlock(index.getHeader(), state, *param_)) {
+  bool loadBlock(std::unique_ptr<index_t> index,
+                 ValidationState& state) override {
+    if (!checkBlock(index->getHeader(), state, *param_)) {
       return state.Invalid("bad-header");
     }
 
-    if (!base::loadBlock(index, state)) {
+    auto hash = index->getHash();
+    if (!base::loadBlock(std::move(index), state)) {
       return false;
     }
 
-    auto* current = base::getBlockIndex(index.getHash());
+    auto* current = base::getBlockIndex(hash);
     VBK_ASSERT(current);
 
     auto* prev = current->pprev;
