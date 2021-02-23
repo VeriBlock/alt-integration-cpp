@@ -16,9 +16,9 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
 
   std::vector<VbkPopTx> vbkPopTxs;
 
-  auto vbkPopTx1 = popminer->endorseVbkBlock(
+  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
       popminer->vbkTip()->getHeader(), popminer->btcTip()->getHash());
-  auto vbkPopTx2 = popminer->endorseVbkBlock(
+  auto vbkPopTx2 = popminer->createVbkPopTxEndorsingVbkBlock(
       popminer->vbkTip()->getHeader(), popminer->btcTip()->getHash());
 
   // both VTBs should be contained in the same block

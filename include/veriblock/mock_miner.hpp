@@ -45,7 +45,11 @@ class MockMiner {
       const PublicationData& publicationData,
       const VbkBlock::hash_t& lastKnownVbkBlockHash);
 
-  VbkPopTx endorseVbkBlock(
+  VTB endorseVbkBlock(
+      const VbkBlock& publishedBlock,
+      const BtcBlock::hash_t& lastKnownBtcBlockHash);
+
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
       const VbkBlock& publishedBlock,
       const BtcBlock::hash_t& lastKnownBtcBlockHash);
 

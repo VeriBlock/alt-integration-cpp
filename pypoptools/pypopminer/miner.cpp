@@ -32,12 +32,21 @@ struct MockMinerProxy : private MockMiner {
     return base::endorseAltBlock(publicationData, lastKnownVbkBlockHash);
   }
 
-  VbkPopTx endorseVbkBlock(
+  VTB endorseVbkBlock(
       const VbkBlock& publishedBlock,
       const std::string& lastKnownBtcBlockHashHex) {
     const auto& lastKnownBtcBlockHash =
         BtcBlock::hash_t::fromHex(lastKnownBtcBlockHashHex);
     return base::endorseVbkBlock(publishedBlock, lastKnownBtcBlockHash);
+  }
+
+  VbkPopTx createVbkPopTxEndorsingVbkBlock(
+      const VbkBlock& publishedBlock,
+      const std::string& lastKnownBtcBlockHashHex) {
+    const auto& lastKnownBtcBlockHash =
+        BtcBlock::hash_t::fromHex(lastKnownBtcBlockHashHex);
+    return base::createVbkPopTxEndorsingVbkBlock(
+        publishedBlock, lastKnownBtcBlockHash);
   }
 
   PopData createPopDataEndorsingAltBlock(
@@ -199,6 +208,17 @@ BOOST_PYTHON_MODULE(pypopminer) {
   init_primitives();
   init_entities();
 
+  VbkPopTx (MockMinerProxy::*createVbkPopTxEndorsingVbkBlock1)(
+      const VbkBlock& publishedBlock,
+      const std::string& lastKnownBtcBlockHashHex) =
+    &MockMinerProxy::createVbkPopTxEndorsingVbkBlock;
+  VbkPopTx (MockMinerProxy::*createVbkPopTxEndorsingVbkBlock2)(
+      const BtcBlock& blockOfProof,
+      const BtcTx& transaction,
+      const VbkBlock& publishedBlock,
+      const std::string& lastKnownBtcBlockHashHex) const =
+    &MockMinerProxy::createVbkPopTxEndorsingVbkBlock;
+
   VbkBlock (MockMinerProxy::*mineVbkBlocks1)(
       size_t amount) =
     &MockMinerProxy::mineVbkBlocks;
@@ -257,12 +277,12 @@ BOOST_PYTHON_MODULE(pypopminer) {
       .def("__repr__", &MockMinerProxy::toPrettyString)
       .def("endorseAltBlock", &MockMinerProxy::endorseAltBlock)
       .def("endorseVbkBlock", &MockMinerProxy::endorseVbkBlock)
+      .def("createVbkPopTxEndorsingVbkBlock", createVbkPopTxEndorsingVbkBlock1)
       .def("createATV", &MockMinerProxy::createATV)
       .def("createVbkTxEndorsingAltBlock",
            &MockMinerProxy::createVbkTxEndorsingAltBlock)
       .def("createVTB", &MockMinerProxy::createVTB)
-      .def("createVbkPopTxEndorsingVbkBlock",
-           &MockMinerProxy::createVbkPopTxEndorsingVbkBlock)
+      .def("createVbkPopTxEndorsingVbkBlock", createVbkPopTxEndorsingVbkBlock2)
       .def("createBtcTxEndorsingVbkBlock",
            &MockMinerProxy::createBtcTxEndorsingVbkBlock)
       .def("mineVbkBlocks", mineVbkBlocks1)

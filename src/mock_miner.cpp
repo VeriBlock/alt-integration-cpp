@@ -33,7 +33,16 @@ PopData MockMiner::endorseAltBlock(
   return createPopDataEndorsingAltBlock(block, tx, lastKnownVbkBlockHash);
 }
 
-VbkPopTx MockMiner::endorseVbkBlock(
+VTB MockMiner::endorseVbkBlock(
+    const VbkBlock& publishedBlock,
+    const BtcBlock::hash_t& lastKnownBtcBlockHash) {
+  const auto& tx =
+      createVbkPopTxEndorsingVbkBlock(publishedBlock, lastKnownBtcBlockHash);
+  const auto& block = mineVbkBlocks(1, {tx});
+  return createVTB(block->getHeader(), tx);
+}
+
+VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
     const VbkBlock& publishedBlock,
     const BtcBlock::hash_t& lastKnownBtcBlockHash) {
   const auto& tx = createBtcTxEndorsingVbkBlock(publishedBlock);
