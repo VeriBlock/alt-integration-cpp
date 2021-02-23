@@ -23,12 +23,12 @@ TEST_F(PopVbkForkResolution, DISABLED_TooLateToAddPayloads) {
   auto vbkpoptx = popminer->createVbkPopTxEndorsingVbkBlock(
       popminer->vbk().getBestChain()[1]->getHeader(), getLastKnownBtcBlock());
 
-  auto limit = popminer->getVbkParams().getHistoryOverwriteLimit();
+  auto limit = popminer->vbkParams().getHistoryOverwriteLimit();
   auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
 
   // save the generated VTB and remove it from its containing block
   // to avoid triggering the duplicate check
-  VTB vtb = popminer->vbkPayloads.at(vbkcontaining->getHash()).at(0);
+  VTB vtb = popminer->createVTB(vbkcontaining->getHeader(), vbkpoptx);
   popminer->vbk().removePayloads(vbkcontaining->getHash(), {vtb.getId()});
 
   // try adding the VTB to the block preceeding
@@ -136,7 +136,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
   Chain<BlockIndex<VbkBlock>> chain(0, vbkBlockTip);
 
   internal::ReducedPublicationView reducedPublicationView{
-      chain, popminer->getVbkParams(), popminer->btc()};
+      chain, popminer->vbkParams(), popminer->btc()};
 
   EXPECT_NE(
       reducedPublicationView.getKeystone(reducedPublicationView.lastKeystone())

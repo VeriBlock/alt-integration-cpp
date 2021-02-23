@@ -28,13 +28,11 @@ TEST_F(Scenario4, scenario_4) {
   auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
   vbkTip = containingVbkBlock2;
 
-  auto vtbs1 = popminer->vbkPayloads[containingVbkBlock1->getHash()];
-  auto vtbs2 = popminer->vbkPayloads[containingVbkBlock2->getHash()];
+  auto vtb1 = popminer->createVTB(containingVbkBlock1->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer->createVTB(containingVbkBlock2->getHeader(), vbkPopTx2);
 
-  ASSERT_EQ(vtbs1.size(), 1);
-  ASSERT_EQ(vtbs2.size(), 1);
-  ASSERT_NE(VbkEndorsement::fromContainer(vtbs1[0]).id,
-            VbkEndorsement::fromContainer(vtbs2[0]).id);
+  ASSERT_NE(VbkEndorsement::fromContainer(vtb1).id,
+            VbkEndorsement::fromContainer(vtb2).id);
 
   // mine 10 blocks
   mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
@@ -52,7 +50,7 @@ TEST_F(Scenario4, scenario_4) {
             vbkTip->getHash());
   vbkTip = popminer->vbk().getBestChain().tip();
 
-  altPayloads1.vtbs = {vtbs1[0]};
+  altPayloads1.vtbs = {vtb1};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads1));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
@@ -74,7 +72,7 @@ TEST_F(Scenario4, scenario_4) {
             vbkTip->getHash());
   vbkTip = popminer->vbk().getBestChain().tip();
 
-  altPayloads2.vtbs = {vtbs2[0]};
+  altPayloads2.vtbs = {vtb2};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads2));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));

@@ -55,7 +55,11 @@ void init_primitives() {
   reg_vector<uint256>("std_vector_uint256");
   reg_vector<BtcBlock>("std_vector_BtcBlock");
   reg_vector<VbkBlock>("std_vector_VbkBlock");
+  reg_vector<VbkTx>("std_vector_VbkTx");
+  reg_vector<VbkPopTx>("std_vector_VbkPopTx");
+  reg_vector<BtcTx>("std_vector_BtcTx");
   reg_vector<VTB>("std_vector_VTB");
+  reg_vector<ATV>("std_vector_ATV");
   reg_vector<Coin>("std_vector_Coin");
   reg_vector<Output>("std_vector_Output");
 }

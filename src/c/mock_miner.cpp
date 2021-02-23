@@ -98,7 +98,7 @@ VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
 
   auto vbktx = self->miner->createVbkTxEndorsingAltBlock(pubdata);
   auto* block = self->miner->mineVbkBlocks(1, {vbktx});
-  auto atv = self->miner->getATVs(*block)[0];
+  auto atv = self->miner->createATV(block->getHeader(), vbktx);
   VBK_ASSERT(state->IsValid());
 
   WriteStream w_stream;
@@ -133,14 +133,9 @@ VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
 
   altintegration::BtcBlock::hash_t hash = lastKnownBtcBlockHash;
 
-  auto tx = self->miner->createVbkPopTxEndorsingVbkBlock(vbk_block, hash);
-
-  VBK_ASSERT(state->IsValid());
-  auto containingBlock = self->miner->mineVbkBlocks(1, {tx});
-  auto vtbs = self->miner->vbkPayloads[containingBlock->getHash()];
-  VBK_ASSERT(vtbs.size() == 1);
+  auto vtb = self->miner->endorseVbkBlock(vbk_block, hash);
 
   altintegration::WriteStream w_stream;
-  vtbs[0].toVbkEncoding(w_stream);
+  vtb.toVbkEncoding(w_stream);
   return new VbkByteStream(w_stream.data());
 }

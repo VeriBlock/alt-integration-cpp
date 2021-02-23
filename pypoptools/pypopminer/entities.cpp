@@ -23,9 +23,29 @@ boost::shared_ptr<Address> makeAddress(std::string s) {
   return boost::shared_ptr<Address>(new Address(std::move(addr)));
 }
 
+list SerializePopData(const PopData& self) {
+  list atvs;
+  for (const auto& atv: self.atvs) {
+    atvs.append(SerializeToHex(atv));
+  }
+  list vtbs;
+  for (const auto& vtb: self.vtbs) {
+    vtbs.append(SerializeToHex(vtb));
+  }
+  list context;
+  for (const auto& block: self.context) {
+    context.append(SerializeToHex(block));
+  }
+  list data;
+  data.append(atvs);
+  data.append(vtbs);
+  data.append(context);
+  return data;
+}
+
 void init_entities() {
   class_<PublicationData, boost::shared_ptr<PublicationData>>("PublicationData")
-      .def("__repr__", &PublicationData::toPrettyString)
+      .def("__str__", &PublicationData::toPrettyString)
       .def_readwrite("identifier", &PublicationData::identifier)
       .def_readwrite("header", &PublicationData::header)
       .def_readwrite("payoutInfo", &PublicationData::payoutInfo)
@@ -55,7 +75,7 @@ void init_entities() {
       .def_readwrite("layers", &VbkMerklePath::layers);
 
   class_<VbkPopTx, boost::shared_ptr<VbkPopTx>>("VbkPopTx")
-      .def("__repr__", &VbkPopTx::toPrettyString)
+      .def("__str__", &VbkPopTx::toPrettyString)
       .def("toVbkEncodingHex", &SerializeToHex<VbkPopTx>)
       .def("getHash", &VbkPopTx::getHash)
       .def_readwrite("networkOrType", &VbkPopTx::networkOrType)
@@ -69,11 +89,11 @@ void init_entities() {
       .def_readwrite("publicKey", &VbkPopTx::publicKey);
 
   class_<Coin, boost::shared_ptr<Coin>>("Coin")
-      .def("__repr__", &Coin::toPrettyString)
+      .def("__str__", &Coin::toPrettyString)
       .def_readwrite("units", &Coin::units);
 
   class_<Output, boost::shared_ptr<Output>>("Output")
-      .def("__repr__", &Output::toPrettyString)
+      .def("__str__", &Output::toPrettyString)
       .def_readwrite("address", &Output::address)
       .def_readwrite("coin", &Output::coin);
 
@@ -90,9 +110,8 @@ void init_entities() {
       .def_readwrite("publicKey", &VbkTx::publicKey);
 
   class_<VTB, boost::shared_ptr<VTB>>("VTB")
-      .def("__str__", &SerializeToHex<ATV>)
-      .def("__repr__", &VTB::toPrettyString)
-      .def("toHex", &SerializeToHex<ATV>)
+      .def("__str__", &VTB::toPrettyString)
+      .def("toHex", &SerializeToHex<VTB>)
       .def("toVbkEncodingHex", &SerializeToHex<VTB>)
       .def("getId", &VTB::getId)
       .def_readwrite("transaction", &VTB::transaction)
@@ -100,8 +119,7 @@ void init_entities() {
       .def_readwrite("containingBlock", &VTB::containingBlock);
 
   class_<ATV, boost::shared_ptr<ATV>>("ATV")
-      .def("__str__", &SerializeToHex<ATV>)
-      .def("__repr__", &ATV::toPrettyString)
+      .def("__str__", &ATV::toPrettyString)
       .def("toHex", &SerializeToHex<ATV>)
       .def("toVbkEncodingHex", &SerializeToHex<ATV>)
       .def("getId", &ATV::getId)
@@ -111,13 +129,11 @@ void init_entities() {
 
   class_<BtcTx, boost::shared_ptr<BtcTx>>("BtcTx")
       .def("__str__", &SerializeToRawHex<BtcTx>)
-      .def("__repr__", &SerializeToRawHex<BtcTx>)
       .def("getHash", &BtcTx::getHash)
       .def_readwrite("tx", &BtcTx::tx);
 
   class_<BtcBlock, boost::shared_ptr<BtcBlock>>("BtcBlock")
-      .def("__str__", &SerializeToRawHex<BtcBlock>)
-      .def("__repr__", &BtcBlock::toPrettyString)
+      .def("__str__", &BtcBlock::toPrettyString)
       .def("toHex", &SerializeToRawHex<BtcBlock>)
       .def("toVbkEncodingHex", &SerializeToHex<BtcBlock>)
       .def("getHash", &BtcBlock::getHash)
@@ -129,8 +145,7 @@ void init_entities() {
       .def_readwrite("nonce", &BtcBlock::nonce);
 
   class_<VbkBlock, boost::shared_ptr<VbkBlock>>("VbkBlock")
-      .def("__str__", &SerializeToRawHex<VbkBlock>)
-      .def("__repr__", &VbkBlock::toPrettyString)
+      .def("__str__", &VbkBlock::toPrettyString)
       .def("toHex", &SerializeToRawHex<VbkBlock>)
       .def("toVbkEncodingHex", &SerializeToHex<VbkBlock>)
       .def("getHash", &VbkBlock::getHash)
@@ -152,4 +167,11 @@ void init_entities() {
       .add_property(
           "difficulty", &VbkBlock::getDifficulty, &VbkBlock::setDifficulty)
       .add_property("nonce", &VbkBlock::getNonce, &VbkBlock::setNonce);
+
+  class_<PopData, boost::shared_ptr<PopData>>("PopData")
+      .def("__str__", &PopData::toPrettyString)
+      .def("serialize", &SerializePopData)
+      .def_readonly("atvs", &PopData::atvs)
+      .def_readonly("vtbs", &PopData::vtbs)
+      .def_readonly("context", &PopData::context);
 }

@@ -71,9 +71,11 @@ struct PopContextFixture : public ::testing::Test {
     // mine this tx into 102-th block
     vbkTip = remote.mineVbkBlocks(1, {txb});
 
+    auto vtbsPrev = remote.getVTBs(vbkTip->pprev->getHeader());
+    auto vtbs = remote.getVTBs(vbkTip->getHeader());
     // we have 2 distinct VTBs
-    ASSERT_EQ(remote.vbkPayloads.at(vbkTip->pprev->getHash()).size(), 1);
-    ASSERT_EQ(remote.vbkPayloads.at(vbkTip->getHash()).size(), 1);
+    ASSERT_EQ(vtbsPrev.size(), 1);
+    ASSERT_EQ(vtbs.size(), 1);
   }
 
   BtcBlock::hash_t lastKnownLocalBtcBlock() {
@@ -124,9 +126,7 @@ TEST_F(PopContextFixture, A) {
             remote.btc().getBestChain().tip()->getHash());
 
   auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
-    auto it = remote.vbkPayloads.find(containing->getHash());
-    ASSERT_NE(it, remote.vbkPayloads.end());
-    auto& vtbs = it->second;
+    auto vtbs = remote.getVTBs(containing->getHeader());
 
     ASSERT_TRUE(local.acceptBlock(containing->getHeader(), state));
     PopData pd;
