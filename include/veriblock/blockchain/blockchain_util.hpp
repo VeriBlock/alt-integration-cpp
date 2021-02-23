@@ -85,7 +85,7 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
                                        e.toPrettyString()));
     }
 
-    auto* blockOfProof = ing.getBlockIndex(e.blockOfProof);
+    auto* blockOfProof = as_mut(ing).getBlockIndex(e.blockOfProof);
     if (!blockOfProof) {
       return state.Invalid(
           "bad-blockofproof",
@@ -94,7 +94,7 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
     }
 
     // make sure it is accessible in lambda
-    auto* endorsement = &e;
+    const auto* endorsement = &e;
 
     // delay execution. this ensures atomic changes - if any of endorsemens fail
     // validation, no 'action' is actually executed.
