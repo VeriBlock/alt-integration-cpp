@@ -102,9 +102,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 }
 
 template <typename T>
-const T& as_const(T& t) {
-  const T& r = t;
-  return r;
+const T& as_const(const T& t) {
+  return t;
 }
 
 template <typename T>
