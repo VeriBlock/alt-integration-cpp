@@ -23,10 +23,10 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
 
   // next block in B endorses block number 25 in its chain twice, and
   // containing is block 39
-  auto vbkpoptx1 = popminer->endorseVbkBlock(tipB->getAncestor(25)->getHeader(),
-                                             getLastKnownBtcBlock());
-  auto vbkpoptx2 = popminer->endorseVbkBlock(tipB->getAncestor(25)->getHeader(),
-                                             getLastKnownBtcBlock());
+  auto vbkpoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
+      tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock());
+  auto vbkpoptx2 = popminer->createVbkPopTxEndorsingVbkBlock(
+      tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock());
 
   auto vbkcontaining = popminer->mineVbkBlocks(1, *tipB, {vbkpoptx1, vbkpoptx2});
   EXPECT_EQ(vbkcontaining->getHeight(), 39);
@@ -40,8 +40,8 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // endorse block 26 in chain B, containing is B40
   auto missingVbkBlock = popminer->mineVbkBlocks(1, *tipB);
   tipB = missingVbkBlock;
-  auto vbkpoptx = popminer->endorseVbkBlock(tipB->getAncestor(26)->getHeader(),
-                                            getLastKnownBtcBlock());
+  auto vbkpoptx = popminer->createVbkPopTxEndorsingVbkBlock(
+      tipB->getAncestor(26)->getHeader(), getLastKnownBtcBlock());
   tipB = popminer->mineVbkBlocks(1, *tipB, {vbkpoptx});
   ASSERT_EQ(tipB->getHeight(), 41);
 
