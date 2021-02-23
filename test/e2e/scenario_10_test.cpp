@@ -30,11 +30,11 @@ TEST_F(Scenario10, scenario_10) {
 
   vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
 
-  auto& vtbs = popminer->vbkPayloads[vbkTip->getHash()];
+  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
 
-  ASSERT_EQ(vtbs.size(), 2);
-  auto E1 = VbkEndorsement::fromContainer(vtbs[0]);
-  auto E2 = VbkEndorsement::fromContainer(vtbs[1]);
+  auto E1 = VbkEndorsement::fromContainer(vtb1);
+  auto E2 = VbkEndorsement::fromContainer(vtb2);
   ASSERT_NE(E1.id, E2.id);
 
   PopData payloads1 =
@@ -58,7 +58,7 @@ TEST_F(Scenario10, scenario_10) {
 
   PopData payloads2 =
       generateAltPayloads({}, alttree.vbk().getBestChain().tip()->getHash(), 0);
-  payloads2.vtbs = vtbs;
+  payloads2.vtbs = {vtb1, vtb2};
 
   AltBlock containingBlock2 = generateNextBlock(chainA.back());
   chainA.push_back(containingBlock2);
