@@ -212,7 +212,9 @@ struct Blob {
   }
 
   //! helper for readSingleByteLenValue
-  void resize(size_t size) { VBK_ASSERT_MSG(size == N, "Size=%d N=%d", size, N); }
+  void resize(size_t size) {
+    VBK_ASSERT_MSG(size == N, "Size=%d N=%d", size, N);
+  }
 
  protected:
   inline void assign(Slice<const uint8_t> slice) {
@@ -266,6 +268,26 @@ struct std::hash<altintegration::Blob<N>> {
     // else use std::string hasher
     typename std::conditional<N >= 8, std::true_type, std::false_type>::type f;
     return operator()(f, x);
+  }
+};
+
+template <size_t N>
+struct fmt::formatter<altintegration::Blob<N>> {
+  auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) {
+    auto it = ctx.begin(), end = ctx.end();
+    // Check if reached the end of the range:
+    if (it != end && *it != '}') {
+      FMT_THROW("invalid format");
+    }
+
+    // Return an iterator past the end of the parsed range:
+    return it;
+  }
+
+  template <typename FormatContext>
+  auto format(const altintegration::Blob<N>& val, FormatContext& ctx)
+      -> decltype(ctx.out()) {
+    return format_to(ctx.out(), "{:s}", val.toPrettyString());
   }
 };
 

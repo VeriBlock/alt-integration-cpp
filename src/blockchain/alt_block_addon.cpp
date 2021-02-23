@@ -90,22 +90,14 @@ std::vector<typename ATV::id_t>& AltBlockAddon::getPayloadIdsInner<ATV>() {
 }
 
 std::string AltBlockAddon::toPrettyString() const {
-  auto res = fmt::sprintf("ATV=%d, VTB=%d, VBK=%d \n",
-                          _atvids.size(),
-                          _vtbids.size(),
-                          _vbkblockids.size());
-  res += "ATVs: ";
-  for (const auto& atv : _atvids) {
-    res += atv.toPrettyString() + ", ";
-  }
-  res += "VTBs: ";
-  for (const auto& vtb : _vtbids) {
-    res += vtb.toPrettyString() + ", ";
-  }
-  for (const auto& vbk : _vbkblockids) {
-    res += vbk.toPrettyString() + ", ";
-  }
-  return res;
+  return fmt::format(
+      "ATV={}, VTB={}, VBK={} \n ATVs:[{}] \n VTBs:[{}] \n VBKs:[{}]",
+      _atvids.size(),
+      _vtbids.size(),
+      _vbkblockids.size(),
+      fmt::join(_atvids, ","),
+      fmt::join(_vtbids, ","),
+      fmt::join(_vbkblockids, ","));
 }
 
 void AltBlockAddon::toVbkEncoding(WriteStream& w) const {
