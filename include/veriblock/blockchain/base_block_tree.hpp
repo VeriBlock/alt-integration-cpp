@@ -68,7 +68,17 @@ struct BaseBlockTree {
             typename = typename std::enable_if<
                 std::is_same<T, hash_t>::value ||
                 std::is_same<T, prev_block_hash_t>::value>::type>
-  index_t* getBlockIndex(const T& hash) const {
+  index_t* getBlockIndex(const T& hash) {
+    const auto& t = as_const(*this);
+    return const_cast<index_t*>(t.getBlockIndex(hash));
+  }
+
+  //! @overload
+  template <typename T,
+            typename = typename std::enable_if<
+                std::is_same<T, hash_t>::value ||
+                std::is_same<T, prev_block_hash_t>::value>::type>
+  const index_t* getBlockIndex(const T& hash) const {
     auto shortHash = makePrevHash(hash);
     auto it = blocks_.find(shortHash);
     return it == blocks_.end() ? nullptr : it->second.get();

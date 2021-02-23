@@ -9,6 +9,7 @@
 #include <memory>
 #include <set>
 #include <vector>
+#include <veriblock/algorithm.hpp>
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/blockchain/block_status.hpp>
 #include <veriblock/blockchain/command.hpp>
@@ -205,7 +206,7 @@ struct BlockIndex : public Block::addon_t {
     return this->getAncestor(this->height - steps);
   }
 
-  BlockIndex* getPrev() const {
+  const BlockIndex* getPrev() const {
     VBK_ASSERT_MSG(pprev == nullptr || getHeight() == pprev->getHeight() + 1,
                    "state corruption: unexpected height of the previous block "
                    "%s of block %s",
@@ -213,6 +214,11 @@ struct BlockIndex : public Block::addon_t {
                    toPrettyString());
 
     return pprev;
+  }
+
+  BlockIndex* getPrev() {
+    const auto& t = as_const(*this);
+    return const_cast<BlockIndex*>(t.getPrev());
   }
 
   bool isDescendantOf(const BlockIndex& ancestor) const {
@@ -223,7 +229,10 @@ struct BlockIndex : public Block::addon_t {
     return descendant.getAncestor(getHeight()) == this;
   }
 
-  BlockIndex* getAncestor(height_t _height) const {
+  //! @returns a pointer to ancestor on height `_height`, if any. If no ancestor
+  //! on this height, or height is greater than this block height, returns
+  //! nullptr.
+  const BlockIndex* getAncestor(height_t _height) const {
     VBK_ASSERT(_height >= 0);
     if (_height > this->height) {
       return nullptr;
@@ -232,13 +241,19 @@ struct BlockIndex : public Block::addon_t {
     // TODO: this algorithm is not optimal. for O(n) seek backwards until we hit
     // valid height. also it assumes whole blockchain is in memory (pprev is
     // valid until given height)
-    BlockIndex* index = const_cast<BlockIndex*>(this);
+    const BlockIndex* index = this;
     while (index != nullptr && index->height > _height) {
       index = index->getPrev();
     }
 
     VBK_ASSERT(index == nullptr || index->height == _height);
     return index;
+  }
+
+  //! @overload
+  BlockIndex* getAncestor(height_t _height) {
+    const auto& t = as_const(*this);
+    return const_cast<BlockIndex*>(t.getAncestor(_height));
   }
 
   std::string toPrettyString(size_t level = 0) const {
@@ -288,7 +303,6 @@ struct BlockIndex : public Block::addon_t {
                                          BlockIndex<T>& out,
                                          ValidationState& state,
                                          typename T::hash_t precalculatedHash);
-
 };
 
 /**

@@ -24,7 +24,7 @@ struct BtcBlockAddon {
 
   //! (memory-only) a list of endorsements of VBK blocks, whose BlockOfProof is
   //! this block. must be a vector, because we can have duplicates here
-  std::vector<VbkEndorsement*> blockOfProofEndorsements;
+  std::vector<const VbkEndorsement*> blockOfProofEndorsements;
 
   static constexpr auto validTipLevel = BLOCK_VALID_TREE;
 
