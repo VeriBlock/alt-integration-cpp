@@ -25,13 +25,13 @@ struct PopState {
 
   //! (memory-only) list of endorsements pointing to this block.
   // must be a vector, because we can have duplicates here
-  std::vector<endorsement_t*> endorsedBy;
+  std::vector<const endorsement_t*> endorsedBy;
 
   const containing_endorsement_store_t& getContainingEndorsements() const {
     return _containingEndorsements;
   }
 
-  const std::vector<endorsement_t*>& getEndorsedBy() const {
+  const std::vector<const endorsement_t*>& getEndorsedBy() const {
     return endorsedBy;
   }
 
