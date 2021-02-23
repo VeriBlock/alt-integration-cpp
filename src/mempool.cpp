@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
@@ -113,7 +112,7 @@ void MemPool::cleanUp() {
       }
 
       // remove vbk block
-      vbkblocks_.erase(rel.header->getId());
+      stored_vbkblocks_.erase(rel.header->getId());
       it = relations_.erase(it);
 
       continue;
@@ -128,7 +127,7 @@ void MemPool::cleanUp() {
                       [this](const ATV& v) { stored_atvs_.erase(v.getId()); });
 
     if (index != nullptr && rel.empty()) {
-      vbkblocks_.erase(rel.header->getId());
+      stored_vbkblocks_.erase(rel.header->getId());
       it = relations_.erase(it);
       continue;
     }
@@ -143,10 +142,10 @@ void MemPool::cleanUp() {
 
   mempool_tree_.cleanUp();
 
-  VBK_ASSERT_MSG(relations_.size() == vbkblocks_.size(),
+  VBK_ASSERT_MSG(relations_.size() == stored_vbkblocks_.size(),
                  "Relations=%d, vbkblocks=%d",
                  relations_.size(),
-                 vbkblocks_.size());
+                 stored_vbkblocks_.size());
 }
 
 void MemPool::removeAll(const PopData& pop) {
@@ -177,7 +176,7 @@ void MemPool::removeAll(const PopData& pop) {
     // if header is recently added to new block or relation is empty, cleanup
 
     if ((vbkblockids.count(block_id) != 0u) && rel.empty()) {
-      vbkblocks_.erase(block_id);
+      stored_vbkblocks_.erase(block_id);
       it = relations_.erase(it);
       continue;
     }
@@ -194,7 +193,7 @@ void MemPool::removeAll(const PopData& pop) {
 VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
     const std::shared_ptr<VbkBlock>& block) {
   auto block_id = block->getId();
-  vbkblocks_.insert({block_id, block});
+  stored_vbkblocks_.insert({block_id, block});
   auto& val = relations_[block_id];
   if (val == nullptr) {
     val = std::make_shared<VbkPayloadsRelations>(block);
@@ -207,7 +206,7 @@ VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
 void MemPool::clear() {
   mempool_tree_.clear();
   relations_.clear();
-  vbkblocks_.clear();
+  stored_vbkblocks_.clear();
   stored_vtbs_.clear();
   stored_atvs_.clear();
 }
@@ -302,7 +301,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
-    vbkblocks_in_flight_[id] = blk;
+    vbkblocks_in_flight_.insert(blk);
     on_vbkblock_accepted.emit(*blk);
     return {FAILED_STATEFUL, state.Invalid("vbk-stateful")};
   }
@@ -314,7 +313,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
     getOrPutVbkRelation(blk);
   }
 
-  vbkblocks_in_flight_.erase(blk->getId());
+  vbkblocks_in_flight_.erase(blk);
 
   return true;
 }
@@ -323,14 +322,8 @@ void MemPool::tryConnectPayloads() {
   ValidationState state;
 
   // resubmit vbk blocks
-  using P1 = std::pair<vbkblock_map_t::key_type, vbkblock_map_t::mapped_type>;
-  std::vector<P1> blocks(vbkblocks_in_flight_.begin(),
-                         vbkblocks_in_flight_.end());
-  std::sort(blocks.begin(), blocks.end(), [](const P1& a, const P1& b) -> bool {
-    return a.second->getHeight() < b.second->getHeight();
-  });
-  for (const auto& pair : blocks) {
-    submit<VbkBlock>(pair.second, state);
+  for (const auto& blk : vbkblocks_in_flight_) {
+    submit<VbkBlock>(blk, state);
   }
 
   // resubmit vtbs
@@ -357,8 +350,8 @@ void MemPool::tryConnectPayloads() {
 }
 
 template <>
-const MemPool::vbkblock_map_t& MemPool::getMap() const {
-  return vbkblocks_;
+const MemPool::vbk_map_t& MemPool::getMap() const {
+  return stored_vbkblocks_;
 }
 
 template <>
@@ -372,17 +365,17 @@ const MemPool::vtb_map_t& MemPool::getMap() const {
 }
 
 template <>
-const MemPool::vbkblock_map_t& MemPool::getInFlightMap() const {
+const MemPool::vbk_set_t& MemPool::getInFlightSet() const {
   return vbkblocks_in_flight_;
 }
 
 template <>
-const MemPool::atv_map_t& MemPool::getInFlightMap() const {
+const MemPool::atv_set_t& MemPool::getInFlightSet() const {
   return atvs_in_flight_;
 }
 
 template <>
-const MemPool::vtb_map_t& MemPool::getInFlightMap() const {
+const MemPool::vtb_set_t& MemPool::getInFlightSet() const {
   return vtbs_in_flight_;
 }
 

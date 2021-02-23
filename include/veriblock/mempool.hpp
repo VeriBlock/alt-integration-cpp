@@ -8,6 +8,7 @@
 
 #include <map>
 #include <set>
+#include <type_traits>
 #include <unordered_map>
 #include <vector>
 
@@ -19,6 +20,28 @@
 #include "veriblock/signals.hpp"
 
 namespace altintegration {
+
+struct VbkCmp {
+  bool operator()(const std::shared_ptr<VbkBlock>& val1,
+                  const std::shared_ptr<VbkBlock>& val2) {
+    return val1->getHeight() < val2->getHeight();
+  }
+};
+
+struct VTBCmp {
+  bool operator()(const std::shared_ptr<VTB>& val1,
+                  const std::shared_ptr<VTB>& val2) {
+    return val1->containingBlock.getHeight() <
+           val2->containingBlock.getHeight();
+  }
+};
+
+struct ATVCmp {
+  bool operator()(const std::shared_ptr<ATV>& val1,
+                  const std::shared_ptr<ATV>& val2) {
+    return val1->blockOfProof.getHeight() < val2->blockOfProof.getHeight();
+  }
+};
 
 /**
  * @struct MemPool
@@ -70,10 +93,17 @@ struct MemPool {
   using payload_map =
       std::unordered_map<typename Payload::id_t, std::shared_ptr<Payload>>;
 
-  using vbkblock_map_t = payload_map<VbkBlock>;
+  template <typename Payload, typename PayloadCmp>
+  using payload_set = std::set<std::shared_ptr<Payload>, PayloadCmp>;
+
+  using vbk_map_t = payload_map<VbkBlock>;
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
   using relations_map_t = payload_map<VbkPayloadsRelations>;
+
+  using vbk_set_t = payload_set<VbkBlock, VbkCmp>;
+  using atv_set_t = payload_set<ATV, ATVCmp>;
+  using vtb_set_t = payload_set<VTB, VTBCmp>;
 
   ~MemPool() = default;
   MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
@@ -88,7 +118,7 @@ struct MemPool {
       return it->second.get();
     }
 
-    const auto& inflight = getInFlightMap<T>();
+    const auto& inflight = getInFlightSet<T>();
     auto it2 = inflight.find(id);
     if (it2 != inflight.end()) {
       return it2->second.get();
@@ -191,10 +221,10 @@ struct MemPool {
   }
 
   //! @private
-  template <typename T>
-  const payload_map<T>& getInFlightMap() const {
+  template <typename T, typename TCmp>
+  const payload_set<T, TCmp>& getInFlightSet() const {
     static_assert(sizeof(T) == 0,
-                  "Undefined type used in MemPool::getInFlightMap");
+                  "Undefined type used in MemPool::getInFlightSet");
   }
 
   /**
@@ -259,13 +289,13 @@ struct MemPool {
   MemPoolBlockTree mempool_tree_;
   // relations between VBK block and payloads
   relations_map_t relations_;
-  vbkblock_map_t vbkblocks_;
+  vbk_map_t stored_vbkblocks_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
   atv_map_t atvs_in_flight_;
   vtb_map_t vtbs_in_flight_;
-  vbkblock_map_t vbkblocks_in_flight_;
+  vbk_set_t vbkblocks_in_flight_;
 
   VbkPayloadsRelations& getOrPutVbkRelation(
       const std::shared_ptr<VbkBlock>& block);
@@ -275,12 +305,12 @@ struct MemPool {
   template <typename T>
   void makePayloadConnected(const std::shared_ptr<T>& t) {
     auto& signal = getSignal<T>();
-    auto& inflight = getInFlightMapMut<T>();
+    auto& inflight = getInFlightSetMut<T>();
     auto& connected = getMapMut<T>();
 
     auto id = t->getId();
     connected[id] = t;
-    inflight.erase(id);
+    inflight.erase(t);
     signal.emit(*t);
   }
 
@@ -300,10 +330,10 @@ struct MemPool {
     }
   }
 
-  template <typename POP>
-  void cleanupStale(payload_map<POP>& c) {
+  template <typename P, typename PCmp>
+  void cleanupStale(payload_set<P, PCmp>& c) {
     for (auto it = c.begin(); it != c.end();) {
-      auto& pl = *it->second;
+      auto& pl = *it;
       ValidationState state;
       auto valid = mempool_tree_.checkContextually(pl, state);
       it = !valid ? c.erase(it) : std::next(it);
@@ -322,9 +352,9 @@ struct MemPool {
   }
 
   //! @private
-  template <typename T>
-  payload_map<T>& getInFlightMapMut() {
-    return const_cast<payload_map<T>&>(this->getInFlightMap<T>());
+  template <typename T, typename TCmp>
+  payload_set<T, TCmp>& getInFlightSetMut() {
+    return const_cast<payload_set<T, TCmp>&>(this->getInFlightSet<T, TCmp>());
   }
 };
 
@@ -336,17 +366,17 @@ template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB
 //! @overload
 template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state);
 //! @overload
-template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
+template <> const MemPool::vbk_map_t& MemPool::getMap() const;
 //! @overload
-template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
+template <> const MemPool::atv_map_t& MemPool::getMap() const;
 //! @overload
-template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
+template <> const MemPool::vtb_map_t& MemPool::getMap() const;
 //! @overload
-template<> const MemPool::payload_map<VbkBlock>& MemPool::getInFlightMap() const;
+template<> const MemPool::vbk_set_t& MemPool::getInFlightSet() const;
 //! @overload
-template<> const MemPool::payload_map<ATV>& MemPool::getInFlightMap() const;
+template<> const MemPool::vtb_set_t& MemPool::getInFlightSet() const;
 //! @overload
-template<> const MemPool::payload_map<VTB>& MemPool::getInFlightMap() const;
+template<> const MemPool::atv_set_t& MemPool::getInFlightSet() const;
 //! @overload
 template <> signals::Signal<void(const ATV&)>& MemPool::getSignal();
 //! @overload
@@ -364,8 +394,8 @@ inline void mapToJson(Value& obj, const MemPool& mp, const std::string& key) {
   for (auto& p : mp.getMap<T>()) {
     json::arrayPushBack(arr, ToJSON<Value>(p.first));
   }
-  for (auto& p : mp.getInFlightMap<T>()) {
-    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+  for (auto& p : mp.getInFlightSet<T>()) {
+    json::arrayPushBack(arr, ToJSON<Value>(p->getId()));
   }
   json::putKV(obj, key, arr);
 }

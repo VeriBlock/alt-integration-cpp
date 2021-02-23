@@ -632,7 +632,7 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self) {
   VBK_ASSERT(self->context);
   VBK_ASSERT(self->context->mempool);
   auto vbks =
-      self->context->mempool->getInFlightMap<altintegration::VbkBlock>();
+      self->context->mempool->getInFlightSet<altintegration::VbkBlock>();
 
   std::vector<altintegration::VbkBlock::id_t> vbk_ids;
   vbk_ids.reserve(vbks.size());
