@@ -287,7 +287,7 @@ struct fmt::formatter<altintegration::Blob<N>> {
   template <typename FormatContext>
   auto format(const altintegration::Blob<N>& val, FormatContext& ctx)
       -> decltype(ctx.out()) {
-    return format_to(ctx.out(), "{:s}", val.toPrettyString());
+    return format_to(ctx.out(), "{:s}", val.toHex());
   }
 };
 
