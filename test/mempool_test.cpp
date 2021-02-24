@@ -38,7 +38,6 @@ TEST_F(MemPoolFixture, removeAll_test1) {
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
   submitATV(atv);
-
   submitVTB(vtb1);
   submitVTB(vtb2);
 
@@ -48,6 +47,7 @@ TEST_F(MemPoolFixture, removeAll_test1) {
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
   PopData popData = checkedGetPop();
+  ASSERT_TRUE(false);
 
   EXPECT_EQ(popData.vtbs.size(), 2);
   EXPECT_EQ(popData.atvs.size(), 1);
@@ -58,6 +58,7 @@ TEST_F(MemPoolFixture, removeAll_test1) {
   popData = checkedGetPop();
 
   EXPECT_EQ(popData.vtbs.size(), 2);
+  EXPECT_EQ(popData.atvs.size(), 1);
   EXPECT_EQ(popData.atvs.at(0), atv);
 
   // remove from mempool
@@ -262,7 +263,7 @@ TEST_F(MemPoolFixture, removeAll_test4) {
 
   submitATV(atv);
   ASSERT_EQ(mempool->getMap<ATV>().size(), 0);
-  ASSERT_EQ(mempool->getInFlightMap<ATV>().size(), 1);
+  ASSERT_EQ(mempool->getInFlightSet<ATV>().size(), 1);
   // ASSERT_EQ(state.GetPath(),
   // "pop-mempool-submit-atv-stateful+atv-duplicate"); state.clear();
 
@@ -271,7 +272,8 @@ TEST_F(MemPoolFixture, removeAll_test4) {
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 
   popminer->mineVbkBlocks(300);
-  auto vbkPopTx = generatePopTx(popminer->vbk().getBestChain().tip()->getHeader());
+  auto vbkPopTx =
+      generatePopTx(popminer->vbk().getBestChain().tip()->getHeader());
   vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
   auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
 
@@ -400,7 +402,7 @@ TEST_F(MemPoolFixture, submit_vbk_blocks) {
 
   submitVBK(context.back());
   EXPECT_EQ(mempool->getMap<VbkBlock>().size(), context.size() - 1);
-  EXPECT_EQ(mempool->getInFlightMap<VbkBlock>().size(), 1);
+  EXPECT_EQ(mempool->getInFlightSet<VbkBlock>().size(), 1);
 }
 
 TEST_F(MemPoolFixture, submit_deprecated_payloads) {
@@ -445,8 +447,7 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
                    vtb.merklePath.treeIndex = treeIndex;
                    vtb.merklePath.index = index;
                    vtb.merklePath.subject = hashes[index];
-                   vtb.merklePath.layers =
-                       mtree.getMerklePathLayers(index);
+                   vtb.merklePath.layers = mtree.getMerklePathLayers(index);
                    vtb.containingBlock = containingBlock;
                    index++;
 
@@ -474,8 +475,8 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   submitATV(atv);
   EXPECT_EQ(mempool->getMap<ATV>().size(), 0);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(checkVTB(
-        vtb, state, popminer->btcParams(), popminer->vbkParams()));
+    EXPECT_TRUE(
+        checkVTB(vtb, state, popminer->btcParams(), popminer->vbkParams()));
     submitVTB(vtb);
     EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   }

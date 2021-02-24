@@ -3,13 +3,29 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <deque>
-#include <veriblock/reversed_range.hpp>
+#include <algorithm>
 
 #include "veriblock/mempool.hpp"
+#include "veriblock/reversed_range.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
+
+bool PayloadComparator<VbkBlock>::operator()(
+    const std::shared_ptr<VbkBlock>& val1,
+    const std::shared_ptr<VbkBlock>& val2) {
+  return val1->getHeight() < val2->getHeight();
+}
+
+bool PayloadComparator<VTB>::operator()(const std::shared_ptr<VTB>& val1,
+                                        const std::shared_ptr<VTB>& val2) {
+  return val1->containingBlock.getHeight() < val2->containingBlock.getHeight();
+}
+
+bool PayloadComparator<ATV>::operator()(const std::shared_ptr<ATV>& val1,
+                                        const std::shared_ptr<ATV>& val2) {
+  return val1->blockOfProof.getHeight() < val2->blockOfProof.getHeight();
+}
 
 namespace {
 
@@ -232,7 +248,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
   // stateful validation
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
-    atvs_in_flight_[id] = atv;
+    atvs_in_flight_.insert(atv);
     on_atv_accepted.emit(*atv);
     return {MemPool::FAILED_STATEFUL, state.Invalid("atv-stateful")};
   }
@@ -242,6 +258,8 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
   rel.atvs.push_back(atv);
   makePayloadConnected<ATV>(atv);
 
+  // erasePayloadFromSet(atvs_in_flight_, id);
+
   return true;
 }
 
@@ -250,11 +268,11 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
                                            ValidationState& state) {
   VBK_ASSERT(vtb);
 
+  printf("submit VTB here 1 %d \n", vtb.get() != nullptr);
   // before any checks and validations, check if payload is old or not
   if (mempool_tree_.isBlockOld(vtb->containingBlock)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
   }
-
   // stateless validation
   if (!checkVTB(*vtb,
                 state,
@@ -268,7 +286,7 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
-    vtbs_in_flight_[id] = vtb;
+    vtbs_in_flight_.insert(vtb);
     on_vtb_accepted.emit(*vtb);
     return {FAILED_STATEFUL, state.Invalid("vtb-stateful")};
   }
@@ -277,6 +295,8 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
   auto& rel = getOrPutVbkRelation(containingBlock_ptr);
   rel.vtbs.push_back(vtb);
   makePayloadConnected<VTB>(vtb);
+
+  // erasePayloadFromSet(vtbs_in_flight_, id);
 
   return true;
 }
@@ -313,7 +333,10 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
     getOrPutVbkRelation(blk);
   }
 
-  vbkblocks_in_flight_.erase(blk);
+  erase_if<payload_set<VbkBlock>, std::shared_ptr<VbkBlock>>(
+      vbkblocks_in_flight_, [&id](const std::shared_ptr<VbkBlock>& val) {
+        return val->getId() == id;
+      });
 
   return true;
 }
@@ -326,26 +349,12 @@ void MemPool::tryConnectPayloads() {
     submit<VbkBlock>(blk, state);
   }
 
-  // resubmit vtbs
-  using P2 = std::pair<vtb_map_t::key_type, vtb_map_t::mapped_type>;
-  std::vector<P2> vtbs(vtbs_in_flight_.begin(), vtbs_in_flight_.end());
-  std::sort(vtbs.begin(), vtbs.end(), [](const P2& a, const P2& b) -> bool {
-    return a.second->containingBlock.getHeight() <
-           b.second->containingBlock.getHeight();
-  });
-  for (const auto& pair : vtbs) {
-    submit<VTB>(pair.second, state);
+  for (const auto& vtb : vtbs_in_flight_) {
+    submit<VTB>(vtb, state);
   }
 
-  // resubmit atvs
-  using P3 = std::pair<atv_map_t::key_type, atv_map_t::mapped_type>;
-  std::vector<P3> atvs(atvs_in_flight_.begin(), atvs_in_flight_.end());
-  std::sort(atvs.begin(), atvs.end(), [](const P3& a, const P3& b) -> bool {
-    return a.second->blockOfProof.getHeight() <
-           b.second->blockOfProof.getHeight();
-  });
-  for (const auto& pair : atvs) {
-    submit<ATV>(pair.second, state);
+  for (const auto& atv : atvs_in_flight_) {
+    submit<ATV>(atv, state);
   }
 }
 

@@ -391,7 +391,7 @@ TEST_F(MemPoolFixture, getPop_scenario_7) {
   mempool->removeAll(v_popData);
   submitATV(atv1);
   ASSERT_EQ(mempool->getMap<ATV>().size(), 0);
-  ASSERT_EQ(mempool->getInFlightMap<ATV>().size(), 1);
+  ASSERT_EQ(mempool->getInFlightSet<ATV>().size(), 1);
 }
 
 TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
@@ -726,10 +726,10 @@ TEST_F(MemPoolFixture, getPop_scenario_14) {
   submitVTB(vtb2);
 
   EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
-  EXPECT_EQ(mempool->getInFlightMap<VTB>().size(), 2);
+  EXPECT_EQ(mempool->getInFlightSet<VTB>().size(), 2);
 
   mempool->cleanUp();
 
   EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
-  EXPECT_EQ(mempool->getInFlightMap<VTB>().size(), 0);
+  EXPECT_EQ(mempool->getInFlightSet<VTB>().size(), 0);
 }

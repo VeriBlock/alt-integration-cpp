@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "veriblock/algorithm.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
 #include "veriblock/blockchain/mempool_block_tree.hpp"
 #include "veriblock/entities/popdata.hpp"
@@ -20,27 +21,25 @@
 #include "veriblock/signals.hpp"
 
 namespace altintegration {
+template <typename Payload>
+struct PayloadComparator {};
 
-struct VbkCmp {
+template <>
+struct PayloadComparator<VbkBlock> {
   bool operator()(const std::shared_ptr<VbkBlock>& val1,
-                  const std::shared_ptr<VbkBlock>& val2) {
-    return val1->getHeight() < val2->getHeight();
-  }
+                  const std::shared_ptr<VbkBlock>& val2);
 };
 
-struct VTBCmp {
+template <>
+struct PayloadComparator<VTB> {
   bool operator()(const std::shared_ptr<VTB>& val1,
-                  const std::shared_ptr<VTB>& val2) {
-    return val1->containingBlock.getHeight() <
-           val2->containingBlock.getHeight();
-  }
+                  const std::shared_ptr<VTB>& val2);
 };
 
-struct ATVCmp {
+template <>
+struct PayloadComparator<ATV> {
   bool operator()(const std::shared_ptr<ATV>& val1,
-                  const std::shared_ptr<ATV>& val2) {
-    return val1->blockOfProof.getHeight() < val2->blockOfProof.getHeight();
-  }
+                  const std::shared_ptr<ATV>& val2);
 };
 
 /**
@@ -93,17 +92,18 @@ struct MemPool {
   using payload_map =
       std::unordered_map<typename Payload::id_t, std::shared_ptr<Payload>>;
 
-  template <typename Payload, typename PayloadCmp>
-  using payload_set = std::set<std::shared_ptr<Payload>, PayloadCmp>;
+  template <typename Payload>
+  using payload_set =
+      std::set<std::shared_ptr<Payload>, PayloadComparator<Payload>>;
 
   using vbk_map_t = payload_map<VbkBlock>;
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
   using relations_map_t = payload_map<VbkPayloadsRelations>;
 
-  using vbk_set_t = payload_set<VbkBlock, VbkCmp>;
-  using atv_set_t = payload_set<ATV, ATVCmp>;
-  using vtb_set_t = payload_set<VTB, VTBCmp>;
+  using vbk_set_t = payload_set<VbkBlock>;
+  using atv_set_t = payload_set<ATV>;
+  using vtb_set_t = payload_set<VTB>;
 
   ~MemPool() = default;
   MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
@@ -119,9 +119,13 @@ struct MemPool {
     }
 
     const auto& inflight = getInFlightSet<T>();
-    auto it2 = inflight.find(id);
+
+    auto it2 = std::find_if(
+        inflight.begin(), inflight.end(), [&id](const std::shared_ptr<T>& val) {
+          return val->getId() == id;
+        });
     if (it2 != inflight.end()) {
-      return it2->second.get();
+      return it2->get();
     }
 
     return nullptr;
@@ -221,8 +225,8 @@ struct MemPool {
   }
 
   //! @private
-  template <typename T, typename TCmp>
-  const payload_set<T, TCmp>& getInFlightSet() const {
+  template <typename T>
+  const payload_set<T>& getInFlightSet() const {
     static_assert(sizeof(T) == 0,
                   "Undefined type used in MemPool::getInFlightSet");
   }
@@ -293,8 +297,8 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  atv_map_t atvs_in_flight_;
-  vtb_map_t vtbs_in_flight_;
+  atv_set_t atvs_in_flight_;
+  vtb_set_t vtbs_in_flight_;
   vbk_set_t vbkblocks_in_flight_;
 
   VbkPayloadsRelations& getOrPutVbkRelation(
@@ -310,7 +314,9 @@ struct MemPool {
 
     auto id = t->getId();
     connected[id] = t;
-    inflight.erase(t);
+    erase_if<payload_set<T>, std::shared_ptr<T>>(
+        inflight,
+        [&id](const std::shared_ptr<T>& val) { return val->getId() == id; });
     signal.emit(*t);
   }
 
@@ -330,12 +336,12 @@ struct MemPool {
     }
   }
 
-  template <typename P, typename PCmp>
-  void cleanupStale(payload_set<P, PCmp>& c) {
+  template <typename P>
+  void cleanupStale(payload_set<P>& c) {
     for (auto it = c.begin(); it != c.end();) {
       auto& pl = *it;
       ValidationState state;
-      auto valid = mempool_tree_.checkContextually(pl, state);
+      auto valid = mempool_tree_.checkContextually(*pl, state);
       it = !valid ? c.erase(it) : std::next(it);
     }
   }
@@ -352,9 +358,9 @@ struct MemPool {
   }
 
   //! @private
-  template <typename T, typename TCmp>
-  payload_set<T, TCmp>& getInFlightSetMut() {
-    return const_cast<payload_set<T, TCmp>&>(this->getInFlightSet<T, TCmp>());
+  template <typename T>
+  payload_set<T>& getInFlightSetMut() {
+    return const_cast<payload_set<T>&>(this->getInFlightSet<T>());
   }
 };
 
