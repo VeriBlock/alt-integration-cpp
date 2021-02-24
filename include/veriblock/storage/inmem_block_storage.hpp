@@ -19,7 +19,7 @@ namespace altintegration {
 struct InmemBlockProvider {
   template <typename T>
   using M =
-      std::unordered_map<typename T::hash_t, std::shared_ptr<BlockIndex<T>>>;
+      std::unordered_map<typename T::hash_t, std::unique_ptr<BlockIndex<T>>>;
 
   template <typename T>
   M<T>& getBlocks();
@@ -33,14 +33,14 @@ struct InmemBlockProvider {
   }
 
   template <typename T>
-  std::vector<BlockIndex<T>> load() {
-    std::vector<BlockIndex<T>> ret;
+  std::vector<std::unique_ptr<BlockIndex<T>>> load() {
+    std::vector<std::unique_ptr<BlockIndex<T>>> ret;
     auto& m = getBlocks<T>();
     ret.reserve(m.size());
 
     for (auto& b : m) {
       auto& bi = b.second;
-      ret.push_back(*bi);
+      ret.push_back(std::move(bi));
     }
 
     return ret;
@@ -70,18 +70,15 @@ struct InmemBlockBatch : public BlockBatch {
   ~InmemBlockBatch() override = default;
 
   void writeBlock(const BlockIndex<BtcBlock>& value) override {
-    storage_.btc[value.getHash()] =
-        std::make_shared<BlockIndex<BtcBlock>>(value);
+    storage_.btc[value.getHash()] = make_unique<BlockIndex<BtcBlock>>(value);
   }
 
   void writeBlock(const BlockIndex<VbkBlock>& value) override {
-    storage_.vbk[value.getHash()] =
-        std::make_shared<BlockIndex<VbkBlock>>(value);
+    storage_.vbk[value.getHash()] = make_unique<BlockIndex<VbkBlock>>(value);
   }
 
   void writeBlock(const BlockIndex<AltBlock>& value) override {
-    storage_.alt[value.getHash()] =
-        std::make_shared<BlockIndex<AltBlock>>(value);
+    storage_.alt[value.getHash()] = make_unique<BlockIndex<AltBlock>>(value);
   }
 
   void writeTip(const BlockIndex<BtcBlock>& value) override {
