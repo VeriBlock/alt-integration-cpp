@@ -15,4 +15,4 @@ jobs:
           token: ${{ secrets.VBTC_REPO_TOKEN }}
           repository: VeriBlock/vbk-ri-btc
           event-type: update
-          client-payload: '{"sha": "${{ github.sha }}"}'
+          client-payload: '{"sha": "${{ github.sha }}", "actor": "${{ github.actor }}"}'
