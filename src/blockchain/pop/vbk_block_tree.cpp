@@ -363,20 +363,22 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
-bool VbkBlockTree::loadBlock(const VbkBlockTree::index_t& index,
+bool VbkBlockTree::loadBlock(std::unique_ptr<index_t> index,
                              ValidationState& state) {
-  if (!VbkTree::loadBlock(index, state)) {
+  auto hash = index->getHash();
+  auto height = index->getHeight();
+  if (!VbkTree::loadBlock(std::move(index), state)) {
     return false;  // already set
   }
 
-  auto* current = getBlockIndex(index.getHash());
+  auto* current = getBlockIndex(hash);
   VBK_ASSERT(current);
 
   // TODO: check for duplicates
 
   // recover `endorsedBy`
-  auto window = std::max(
-      0, index.getHeight() - param_->getEndorsementSettlementInterval());
+  const auto si = param_->getEndorsementSettlementInterval();
+  auto window = std::max(0, height - si);
   Chain<index_t> chain(window, current);
   if (!recoverEndorsements(*this, chain, *current, state)) {
     return state.Invalid("bad-endorsements");
@@ -421,7 +423,6 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
 
   return true;
 }
-
 
 template <>
 void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index) {

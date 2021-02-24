@@ -345,7 +345,7 @@ struct PopTestFixture {
   }
 
   template <typename index_t>
-  std::vector<index_t> LoadBlocksFromDisk() {
+  std::vector<std::unique_ptr<index_t>> LoadBlocksFromDisk() {
     return blockStorage.load<typename index_t::block_t>();
   }
 
@@ -362,8 +362,6 @@ struct PopTestFixture {
     return LoadBlocks<Tree>(tree, blocks, tip, state);
   }
 };
-
-namespace {
 
 template <typename pop_t>
 void validatePayloadsIndexState(PayloadsIndex& storage,
@@ -420,8 +418,6 @@ void assertTreeTips(Tree& tree, std::vector<typename Tree::index_t*> expected) {
     EXPECT_TRUE(tips.count(i));
   }
 }
-
-}  // namespace
 
 inline void validateAlttreeIndexState(AltBlockTree& tree,
                                       const AltBlock& containing,

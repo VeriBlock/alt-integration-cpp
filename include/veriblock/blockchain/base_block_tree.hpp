@@ -102,20 +102,42 @@ struct BaseBlockTree {
    * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
    * state.
    */
-  virtual bool loadBlock(const index_t& index, ValidationState& state) {
+  virtual bool loadBlock(std::unique_ptr<index_t> index,
+                         ValidationState& state) {
+    VBK_ASSERT(index != nullptr);
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
-    auto currentHash = index.getHash();
+    // quick check if given block is sane
+    const auto& root = getRoot();
+    if (index->getHeight() < root.getHeight()) {
+      return state.Invalid("cant-connect", "Loaded block is too far");
+    }
+
+    if (index->getHeight() == root.getHeight() &&
+        index->getHash() != root.getHash()) {
+      // root is finalized, we can't load a block on same height
+      return state.Invalid(
+          "bad-root",
+          fmt::format("Can't overwrite root block with block {}",
+                      index->toPrettyString()));
+    }
+
+    auto& header = index->getHeader();
+    auto currentHash = index->getHash();
     auto* current = getBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block
     if (current && !current->hasFlags(BLOCK_BOOTSTRAP)) {
-      return state.Invalid("block-exists");
+      return state.Invalid(
+          "block-exists",
+          "Found duplicate block, which is not bootstrap block");
     }
 
     // if current block is not known, and previous also not known
-    if (!current && !getBlockIndex(index.getHeader().getPreviousBlock())) {
-      return state.Invalid("bad-prev");
+    auto* prev = getBlockIndex(header.getPreviousBlock());
+    if (!current && !prev) {
+      return state.Invalid("bad-prev",
+                           "Block does not connect to current tree");
     }
 
     current = touchBlockIndex(currentHash);
@@ -126,14 +148,14 @@ struct BaseBlockTree {
     auto next = current->pnext;
 
     // copy all fields
-    *current = index;
+    *current = *index;
     // clear inmem fields
     current->setNullInmemFields();
     current->unsetDirty();
     // recover pnext
     current->pnext = next;
     // recover pprev
-    current->pprev = getBlockIndex(index.getHeader().getPreviousBlock());
+    current->pprev = prev;
 
     if (current->pprev != nullptr) {
       // prev block found
