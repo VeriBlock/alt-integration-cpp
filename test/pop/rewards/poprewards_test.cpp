@@ -61,7 +61,8 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     auto nextBlock = generateNextBlock(altTip->getHeader());
     altchain.push_back(nextBlock);
     EXPECT_TRUE(alttree.acceptBlockHeader(nextBlock, state));
-    ASSERT_TRUE(validatePayloads(nextBlock.getHash(), popData)) << state.toString();
+    ASSERT_TRUE(validatePayloads(nextBlock.getHash(), popData))
+        << state.toString();
     ASSERT_TRUE(state.IsValid());
     EXPECT_EQ(altchain.size(), chainSize + 1);
   }
@@ -75,7 +76,8 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     endorseBlock(endorsedBlock, endorsements);
     // mine rewardSettlementInterval blocks + 1 - endorsed block - endorsement
     // block
-    mineAltBlocks(altparam.getEndorsementSettlementInterval() - 1 - 1, altchain);
+    mineAltBlocks(altparam.getEndorsementSettlementInterval() - 1 - 1,
+                  altchain);
   }
 
   void reorg(size_t blocks) {
@@ -352,7 +354,7 @@ static AltChainParamsRegTest altparam1{};
 INSTANTIATE_TEST_SUITE_P(
     rewardsCacheRegression,
     RewardsTestFixture,
-    testing::Range(1, altparam1.getEndorsementSettlementInterval()));
+    testing::Range(1, (int)altparam1.getEndorsementSettlementInterval()));
 
 TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   int depth = GetParam();

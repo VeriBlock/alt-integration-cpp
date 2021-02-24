@@ -46,6 +46,9 @@ using altintegration::VbkBlock;
 
 // clang-format off
 template <typename T> T create() { return {}; }
+template <> BlockIndex<BtcBlock> create() { return {nullptr}; }
+template <> BlockIndex<VbkBlock> create() { return {nullptr}; }
+template <> BlockIndex<AltBlock> create() { return {nullptr}; }
 // clang-format on
 
 #define DEFINE_DESER_FUZZ(type)                                                \

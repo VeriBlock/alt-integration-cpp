@@ -515,6 +515,11 @@ struct PopAwareForkResolutionComparator {
       return 1;
     }
 
+    if (bestTip->finalized && candidate.getHeight() <= bestTip->getHeight()) {
+      // finalized blocks can not be reorganized
+      return 1;
+    }
+
     if (currentBest.contains(&candidate)) {
       VBK_LOG_INFO(
           "Candidate %s is part of the active chain, the current chain wins",
@@ -558,6 +563,17 @@ struct PopAwareForkResolutionComparator {
         bestTip->toPrettyString(),
         candidate.toPrettyString());
 
+    // if block next to fork is finalized, we don't do FR, since it can not be
+    // reorganized.
+    auto* nextToFork = currentBest[fork->getHeight() + 1];
+    if (nextToFork != nullptr && nextToFork->finalized) {
+      // block `fork+1` is on active chain, and ancestor of currentBest.
+      // which means that `fork+1` can not be reorganized and candidate will
+      // never win.
+      return 1;
+    }
+
+    // multi-keystone POP FR starts
     bool AcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(fork->getHeight(), bestTip->getHeight(), ki);
     bool BcrossedKeystoneBoundary =
