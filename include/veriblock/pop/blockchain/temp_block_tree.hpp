@@ -74,7 +74,7 @@ struct TempBlockTree {
           "can not find previous block: " + HexStr(header->getPreviousBlock()));
     }
 
-    auto index = insertBlockHeader(header);
+    auto index = insertBlockHeader(std::move(header), prev);
     VBK_ASSERT(index != nullptr &&
                "insertBlockHeader should have never returned nullptr");
 
@@ -97,7 +97,7 @@ struct TempBlockTree {
   void clear() { temp_blocks_.clear(); }
 
  private:
-  index_t* insertBlockHeader(const std::shared_ptr<block_t>& header) {
+  index_t* insertBlockHeader(std::shared_ptr<block_t> header, index_t* prev) {
     auto hash = header->getHash();
     index_t* current = getBlockIndex(hash);
     if (current != nullptr) {
@@ -105,17 +105,17 @@ struct TempBlockTree {
       return current;
     }
 
-    current = doInsertBlockHeader(header);
+    current = doInsertBlockHeader(std::move(header), prev);
     VBK_ASSERT(current != nullptr);
 
     return current;
   }
 
-  index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header) {
+  index_t* doInsertBlockHeader(std::shared_ptr<block_t> header, index_t* prev) {
     VBK_ASSERT(header != nullptr);
     index_t* current = touchBlockIndex(header->getHash());
     current->setHeader(std::move(header));
-    current->pprev = getBlockIndex(header->getPreviousBlock());
+    current->pprev = prev;
 
     if (current->pprev != nullptr) {
       // prev block found
@@ -134,8 +134,7 @@ struct TempBlockTree {
       return it->second.get();
     }
 
-    auto newIndex = std::unique_ptr<index_t>(new index_t{});
-
+    auto newIndex = make_unique<index_t>(nullptr);
     newIndex->setNull();
     it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;
     return it->second.get();
