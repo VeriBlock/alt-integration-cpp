@@ -34,7 +34,7 @@ struct ProtoKeystoneContext {
   // A map of the Endorsement blocks which reference (endorse a block header
   // which is the represented block or references the represented block) to the
   // index of the earliest
-  std::set<BlockIndex<ProtectingBlockT>*> referencedByBlocks;
+  std::set<const BlockIndex<ProtectingBlockT>*> referencedByBlocks;
 };
 
 //! @private

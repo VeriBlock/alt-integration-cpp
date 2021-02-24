@@ -28,7 +28,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
 
   //! (memory-only) a list of endorsements of ALT blocks, whose BlockOfProof is
   //! this block. must be a vector, because we can have duplicates here
-  std::vector<AltEndorsement*> blockOfProofEndorsements;
+  std::vector<const AltEndorsement*> blockOfProofEndorsements;
 
   void setNullInmemFields();
 

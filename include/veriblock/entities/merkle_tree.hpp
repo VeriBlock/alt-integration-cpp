@@ -82,7 +82,7 @@ struct MerkleTree {
 
     layer.resize(n % 2 == 0 ? n : n + 1);
     while (n > 1) {
-      if (n % 2) {
+      if ((n % 2) != 0u) {
         layer[n] = layer[n - 1];
         ++n;
       }
@@ -119,6 +119,10 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree, uint256> {
   }
 
   hash_t finalizeRoot() {
+    if (layers.empty()) {
+      return hash_t{};
+    }
+
     if (layers.size() == 1) {
       // the only layer
       VBK_ASSERT(layers[0].size() == 1);
@@ -172,8 +176,13 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
   }
 
   hash_t finalizeRoot() {
-    VBK_ASSERT(!layers.empty());
-    return layers[0][0].reverse();
+    if (layers.empty()) {
+      return hash_t{};
+    }
+
+    auto& root = layers.back();
+    VBK_ASSERT(root.size() == 1);
+    return root[0].reverse();
   }
 
   MerklePath getMerklePath(const hash_t& hash) const {
@@ -209,9 +218,12 @@ struct PayloadsMerkleTree
 
   hash_t finalizeRoot() {
     if (this->layers.empty()) {
-      return hash_t();
+      return hash_t{};
     }
-    return this->layers[0][0].reverse();
+
+    auto& root = this->layers.back();
+    VBK_ASSERT(root.size() == 1);
+    return root[0].reverse();
   }
 };
 

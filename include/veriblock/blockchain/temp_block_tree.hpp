@@ -25,19 +25,39 @@ struct TempBlockTree {
             typename = typename std::enable_if<
                 std::is_same<T, typename block_t::hash_t>::value ||
                 std::is_same<T, typename block_t::prev_hash_t>::value>::type>
-  index_t* getTempBlockIndex(const T& hash) const {
+  const index_t* getTempBlockIndex(const T& hash) const {
     auto shortHash = tree_->makePrevHash(hash);
     auto it = temp_blocks_.find(shortHash);
     return it == temp_blocks_.end() ? nullptr : it->second.get();
+  }
+
+  //! @overload
+  template <typename T,
+            typename = typename std::enable_if<
+                std::is_same<T, typename block_t::hash_t>::value ||
+                std::is_same<T, typename block_t::prev_hash_t>::value>::type>
+  index_t* getTempBlockIndex(const T& hash) {
+    const auto& t = as_const(*this);
+    return const_cast<index_t*>(t.getTempBlockIndex(hash));
   }
 
   template <typename T,
             typename = typename std::enable_if<
                 std::is_same<T, typename block_t::hash_t>::value ||
                 std::is_same<T, typename block_t::prev_hash_t>::value>::type>
-  index_t* getBlockIndex(const T& hash) const {
+  const index_t* getBlockIndex(const T& hash) const {
     auto* index = getTempBlockIndex(hash);
     return index == nullptr ? tree_->getBlockIndex(hash) : index;
+  }
+
+  //! @overload
+  template <typename T,
+            typename = typename std::enable_if<
+                std::is_same<T, typename block_t::hash_t>::value ||
+                std::is_same<T, typename block_t::prev_hash_t>::value>::type>
+  index_t* getBlockIndex(const T& hash) {
+    const auto& t = as_const(*this);
+    return const_cast<index_t*>(t.getBlockIndex(hash));
   }
 
   bool acceptBlock(const block_t& header, ValidationState& state) {

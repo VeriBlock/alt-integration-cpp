@@ -118,14 +118,15 @@ struct AddEndorsement : public Command {
     };
 
     // erase endorsedBy
-    bool p1 = erase_last_item_if<endorsement_t>(endorsed->endorsedBy, rm);
+    bool p1 =
+        erase_last_item_if<const endorsement_t*>(endorsed->endorsedBy, rm);
     VBK_ASSERT_MSG(p1,
                    "Failed to remove endorsement %s from endorsedBy in "
                    "AddEndorsement::Unexecute",
                    e_->toPrettyString());
 
     // erase blockOfProof
-    bool p2 = erase_last_item_if<endorsement_t>(
+    bool p2 = erase_last_item_if<const endorsement_t*>(
         blockOfProof->blockOfProofEndorsements, rm);
     VBK_ASSERT_MSG(p2,
                    "Failed to remove endorsement %s from blockOfProof in "

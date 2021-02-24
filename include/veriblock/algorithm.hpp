@@ -58,12 +58,12 @@ std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
 }
 
 template <typename T>
-bool erase_last_item_if(std::vector<T*>& v,
-                        const std::function<bool(const T*)>& locator) {
+bool erase_last_item_if(std::vector<T>& v,
+                        const std::function<bool(const T&)>& locator) {
   // find and erase the last occurrence of item
   size_t last = v.size();
   for (size_t i = v.size(); i-- > 0;) {
-    const T* el = v[i];
+    const T& el = v[i];
     if (locator(el)) {
       last = i;
       break;
@@ -99,6 +99,16 @@ template <typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args&&... args) {
   auto* ptr = new T(std::forward<Args...>(args)...);
   return std::unique_ptr<T>(ptr);
+}
+
+template <typename T>
+const T& as_const(const T& t) {
+  return t;
+}
+
+template <typename T>
+T& as_mut(const T& t) {
+  return const_cast<T&>(t);
 }
 
 }  // namespace altintegration
