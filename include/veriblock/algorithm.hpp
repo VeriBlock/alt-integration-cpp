@@ -81,16 +81,11 @@ bool erase_last_item_if(std::vector<T>& v,
   return true;
 }
 
-//! removes all elements from unordered set, which satisfy given condition
-template <typename T>
-void erase_if(std::unordered_set<T>& set,
-              std::function<bool(const T&)> condition) {
-  for (auto it = set.begin(), end = set.end(); it != end;) {
-    if (condition(*it)) {
-      it = set.erase(it);
-    } else {
-      ++it;
-    }
+//! removes all elements from container, which satisfy given predicate
+template <typename container_t, typename val_t>
+void erase_if(container_t& c, std::function<bool(const val_t&)> pred) {
+  for (auto it = c.begin(), end = c.end(); it != end;) {
+    it = pred(*it) ? c.erase(it) : std::next(it);
   }
 }
 
