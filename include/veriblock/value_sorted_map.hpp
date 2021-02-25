@@ -7,6 +7,7 @@
 #define ALTINTEGRATION_VALUE_SORTED_MAP___
 
 #include <algorithm>
+#include <functional>
 #include <set>
 #include <unordered_map>
 
@@ -14,34 +15,19 @@
 
 namespace altintegration {
 
-template <typename key_t, typename val_t, typename cmp_t>
+template <typename key_t, typename val_t>
 struct ValueSortedMap {
   using pair_t = std::pair<key_t, val_t>;
+  using set_t =
+      typename std::multiset<pair_t,
+                             std::function<bool(const pair_t&, const pair_t&)>>;
 
- private:
-  struct SetCmp {
-    ~SetCmp() = default;
-
-    SetCmp() = default;
-
-    SetCmp(const cmp_t& cmp) : cmp_(cmp) {}
-
-    bool operator()(const pair_t& val1, const pair_t& val2) const {
-      return cmp_(val1.second, val2.second);
-    }
-
-   private:
-    cmp_t cmp_{};
-  };
-
- public:
-  using iterator_t = typename std::set<pair_t, SetCmp>::iterator;
+  using iterator_t = typename set_t::iterator;
 
   ~ValueSortedMap() = default;
 
-  ValueSortedMap() = default;
-
-  ValueSortedMap(const cmp_t& cmp) : set_(SetCmp(cmp)), map_() {}
+  ValueSortedMap(const std::function<bool(const val_t&, const val_t&)>& cmp)
+      : cmp_(cmp) {}
 
   iterator_t find(const key_t& key) const {
     auto it = map_.find(key);
@@ -130,7 +116,12 @@ struct ValueSortedMap {
   }
 
  private:
-  std::multiset<pair_t, SetCmp> set_{};
+  std::function<bool(const val_t&, const val_t&)> cmp_;
+
+  set_t set_{[this](const pair_t& val1, const pair_t& val2) -> bool {
+    return cmp_(val1.second, val2.second);
+  }};
+
   std::unordered_map<key_t, val_t> map_{};
 };
 
