@@ -63,7 +63,7 @@ struct ValueSortedMap {
     }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and set incompetible map: %d, set: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
   }
@@ -73,7 +73,7 @@ struct ValueSortedMap {
     auto res = set_.erase(it);
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and set incompetible map: %d, set: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
 
@@ -97,14 +97,14 @@ struct ValueSortedMap {
     }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and set incompetible map: %d, set: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
   }
 
   size_t size() const {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and set incompetible map: %d, set: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
 
@@ -113,7 +113,7 @@ struct ValueSortedMap {
 
   void clear() {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and set incompetible map: %d, set: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
     set_.clear();
@@ -122,7 +122,7 @@ struct ValueSortedMap {
 
   bool empty() const {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and set incompetible map: %d, set: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
 
