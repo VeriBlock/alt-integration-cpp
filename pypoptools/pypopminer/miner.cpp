@@ -7,11 +7,17 @@
 
 #include <boost/noncopyable.hpp>
 #include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
 #include <boost/python/to_python_converter.hpp>
 #include <veriblock/pop/mock_miner.hpp>
 
 using namespace boost::python;
 using namespace altintegration;
+
+template <typename T>
+inline std::vector<T> to_vector(const list& list) {
+  return std::vector<T>(stl_input_iterator<T>(list), stl_input_iterator<T>());
+}
 
 struct MockMinerProxy : private MockMiner {
   using base = MockMiner;
@@ -24,17 +30,15 @@ struct MockMinerProxy : private MockMiner {
     return ss.str();
   }
 
-  PopData endorseAltBlock(
-      const PublicationData& publicationData,
-      const std::string& lastKnownVbkBlockHashHex) {
+  PopData endorseAltBlock(const PublicationData& publicationData,
+                          const std::string& lastKnownVbkBlockHashHex) {
     const auto& lastKnownVbkBlockHash =
         VbkBlock::hash_t::fromHex(lastKnownVbkBlockHashHex);
     return base::endorseAltBlock(publicationData, lastKnownVbkBlockHash);
   }
 
-  VTB endorseVbkBlock(
-      const VbkBlock& publishedBlock,
-      const std::string& lastKnownBtcBlockHashHex) {
+  VTB endorseVbkBlock(const VbkBlock& publishedBlock,
+                      const std::string& lastKnownBtcBlockHashHex) {
     const auto& lastKnownBtcBlockHash =
         BtcBlock::hash_t::fromHex(lastKnownBtcBlockHashHex);
     return base::endorseVbkBlock(publishedBlock, lastKnownBtcBlockHash);
@@ -45,8 +49,8 @@ struct MockMinerProxy : private MockMiner {
       const std::string& lastKnownBtcBlockHashHex) {
     const auto& lastKnownBtcBlockHash =
         BtcBlock::hash_t::fromHex(lastKnownBtcBlockHashHex);
-    return base::createVbkPopTxEndorsingVbkBlock(
-        publishedBlock, lastKnownBtcBlockHash);
+    return base::createVbkPopTxEndorsingVbkBlock(publishedBlock,
+                                                 lastKnownBtcBlockHash);
   }
 
   PopData createPopDataEndorsingAltBlock(
@@ -56,12 +60,10 @@ struct MockMinerProxy : private MockMiner {
     const auto& lastKnownVbkBlockHash =
         VbkBlock::hash_t::fromHex(lastKnownVbkBlockHashHex);
     return base::createPopDataEndorsingAltBlock(
-          blockOfProof, transaction, lastKnownVbkBlockHash);
+        blockOfProof, transaction, lastKnownVbkBlockHash);
   }
 
-  ATV createATV(
-      const VbkBlock& blockOfProof,
-      const VbkTx& transaction) const {
+  ATV createATV(const VbkBlock& blockOfProof, const VbkTx& transaction) const {
     return base::createATV(blockOfProof, transaction);
   }
 
@@ -70,9 +72,8 @@ struct MockMinerProxy : private MockMiner {
     return base::createVbkTxEndorsingAltBlock(publicationData);
   }
 
-  VTB createVTB(
-      const VbkBlock& containingBlock,
-      const VbkPopTx& transaction) const {
+  VTB createVTB(const VbkBlock& containingBlock,
+                const VbkPopTx& transaction) const {
     return base::createVTB(containingBlock, transaction);
   }
 
@@ -91,75 +92,64 @@ struct MockMinerProxy : private MockMiner {
     return base::createBtcTxEndorsingVbkBlock(publishedBlock);
   }
 
-  VbkBlock mineVbkBlocks(
-      size_t amount) {
+  VbkBlock mineVbkBlocks(size_t amount) {
     return base::mineVbkBlocks(amount)->getHeader();
   }
 
-  VbkBlock mineVbkBlocks(
-      size_t amount,
-      const std::vector<VbkTx>& transactions) {
-    return base::mineVbkBlocks(amount, transactions)->getHeader();
+  VbkBlock mineVbkBlocks(size_t amount,
+                         const list& transactions,
+                         bool pop = false) {
+    if (pop) {
+      return base::mineVbkBlocks(amount, to_vector<VbkPopTx>(transactions))
+          ->getHeader();
+    }
+    return base::mineVbkBlocks(amount, to_vector<VbkTx>(transactions))
+        ->getHeader();
   }
 
-  VbkBlock mineVbkBlocks(
-      size_t amount,
-      const std::vector<VbkPopTx>& transactions) {
-    return base::mineVbkBlocks(amount, transactions)->getHeader();
-  }
-
-  VbkBlock mineVbkBlocks(
-      size_t amount,
-      const std::string& tipHashHex) {
+  VbkBlock mineVbkBlocks(size_t amount, const std::string& tipHashHex) {
     const auto& tipHash = VbkBlock::hash_t::fromHex(tipHashHex);
     const auto* tip = getVbkBlockIndex(tipHash);
     return base::mineVbkBlocks(amount, *tip)->getHeader();
   }
 
-  VbkBlock mineVbkBlocks(
-      size_t amount,
-      const std::string& tipHashHex,
-      const std::vector<VbkTx>& transactions) {
+  VbkBlock mineVbkBlocks(size_t amount,
+                         const std::string& tipHashHex,
+                         const list& transactions,
+                         bool pop = false) {
     const auto& tipHash = VbkBlock::hash_t::fromHex(tipHashHex);
     const auto* tip = getVbkBlockIndex(tipHash);
-    return base::mineVbkBlocks(amount, *tip, transactions)->getHeader();
+    if (pop) {
+      return base::mineVbkBlocks(
+                 amount, *tip, to_vector<VbkPopTx>(transactions))
+          ->getHeader();
+    }
+    return base::mineVbkBlocks(amount, *tip, to_vector<VbkTx>(transactions))
+        ->getHeader();
   }
 
-  VbkBlock mineVbkBlocks(
-      size_t amount,
-      const std::string& tipHashHex,
-      const std::vector<VbkPopTx>& transactions) {
-    const auto& tipHash = VbkBlock::hash_t::fromHex(tipHashHex);
-    const auto* tip = getVbkBlockIndex(tipHash);
-    return base::mineVbkBlocks(amount, *tip, transactions)->getHeader();
-  }
-
-  BtcBlock mineBtcBlocks(
-      size_t amount) {
+  BtcBlock mineBtcBlocks(size_t amount) {
     return base::mineBtcBlocks(amount)->getHeader();
   }
 
-  BtcBlock mineBtcBlocks(
-      size_t amount,
-      const std::vector<BtcTx>& transactions) {
-    return base::mineBtcBlocks(amount, transactions)->getHeader();
+  BtcBlock mineBtcBlocks(size_t amount, const list& transactions) {
+    return base::mineBtcBlocks(amount, to_vector<BtcTx>(transactions))
+        ->getHeader();
   }
 
-  BtcBlock mineBtcBlocks(
-      size_t amount,
-      const std::string& tipHashHex) {
+  BtcBlock mineBtcBlocks(size_t amount, const std::string& tipHashHex) {
     const auto& tipHash = BtcBlock::hash_t::fromHex(tipHashHex);
     const auto* tip = getBtcBlockIndex(tipHash);
     return base::mineBtcBlocks(amount, *tip)->getHeader();
   }
 
-  BtcBlock mineBtcBlocks(
-      size_t amount,
-      const std::string& tipHashHex,
-      const std::vector<BtcTx>& transactions) {
+  BtcBlock mineBtcBlocks(size_t amount,
+                         const std::string& tipHashHex,
+                         const list& transactions) {
     const auto& tipHash = BtcBlock::hash_t::fromHex(tipHashHex);
     const auto* tip = getBtcBlockIndex(tipHash);
-    return base::mineBtcBlocks(amount, *tip, transactions)->getHeader();
+    return base::mineBtcBlocks(amount, *tip, to_vector<BtcTx>(transactions))
+        ->getHeader();
   }
 
   VbkBlock vbkTip() const { return base::vbkTip()->getHeader(); }
@@ -211,65 +201,43 @@ BOOST_PYTHON_MODULE(pypopminer) {
   VbkPopTx (MockMinerProxy::*createVbkPopTxEndorsingVbkBlock1)(
       const VbkBlock& publishedBlock,
       const std::string& lastKnownBtcBlockHashHex) =
-    &MockMinerProxy::createVbkPopTxEndorsingVbkBlock;
+      &MockMinerProxy::createVbkPopTxEndorsingVbkBlock;
   VbkPopTx (MockMinerProxy::*createVbkPopTxEndorsingVbkBlock2)(
       const BtcBlock& blockOfProof,
       const BtcTx& transaction,
       const VbkBlock& publishedBlock,
       const std::string& lastKnownBtcBlockHashHex) const =
-    &MockMinerProxy::createVbkPopTxEndorsingVbkBlock;
+      &MockMinerProxy::createVbkPopTxEndorsingVbkBlock;
 
-  VbkBlock (MockMinerProxy::*mineVbkBlocks1)(
-      size_t amount) =
-    &MockMinerProxy::mineVbkBlocks;
+  VbkBlock (MockMinerProxy::*mineVbkBlocks1)(size_t amount) =
+      &MockMinerProxy::mineVbkBlocks;
   VbkBlock (MockMinerProxy::*mineVbkBlocks2)(
-      size_t amount,
-      const std::vector<VbkTx>& transactions) =
-    &MockMinerProxy::mineVbkBlocks;
-  VbkBlock (MockMinerProxy::*mineVbkBlocks3)(
-      size_t amount,
-      const std::vector<VbkPopTx>& transactions) =
-    &MockMinerProxy::mineVbkBlocks;
-  VbkBlock (MockMinerProxy::*mineVbkBlocks4)(
-      size_t amount,
-      const std::string& tipHash) =
-    &MockMinerProxy::mineVbkBlocks;
-  VbkBlock (MockMinerProxy::*mineVbkBlocks5)(
-      size_t amount,
-      const std::string& tipHash,
-      const std::vector<VbkTx>& transactions) =
-    &MockMinerProxy::mineVbkBlocks;
-  VbkBlock (MockMinerProxy::*mineVbkBlocks6)(
-      size_t amount,
-      const std::string& tipHash,
-      const std::vector<VbkPopTx>& transactions) =
-    &MockMinerProxy::mineVbkBlocks;
+      size_t amount, const list& transactions, bool pop) =
+      &MockMinerProxy::mineVbkBlocks;
+  VbkBlock (MockMinerProxy::*mineVbkBlocks3)(size_t amount,
+                                             const std::string& tipHash) =
+      &MockMinerProxy::mineVbkBlocks;
+  VbkBlock (MockMinerProxy::*mineVbkBlocks4)(size_t amount,
+                                             const std::string& tipHash,
+                                             const list& transactions,
+                                             bool pop) =
+      &MockMinerProxy::mineVbkBlocks;
 
-  BtcBlock (MockMinerProxy::*mineBtcBlocks1)(
-      size_t amount) =
-    &MockMinerProxy::mineBtcBlocks;
+  BtcBlock (MockMinerProxy::*mineBtcBlocks1)(size_t amount) =
+      &MockMinerProxy::mineBtcBlocks;
   BtcBlock (MockMinerProxy::*mineBtcBlocks2)(
-      size_t amount,
-      const std::vector<BtcTx>& transactions) =
-    &MockMinerProxy::mineBtcBlocks;
-  BtcBlock (MockMinerProxy::*mineBtcBlocks3)(
-      size_t amount,
-      const std::string& tipHash) =
-    &MockMinerProxy::mineBtcBlocks;
+      size_t amount, const list& transactions) = &MockMinerProxy::mineBtcBlocks;
+  BtcBlock (MockMinerProxy::*mineBtcBlocks3)(size_t amount,
+                                             const std::string& tipHash) =
+      &MockMinerProxy::mineBtcBlocks;
   BtcBlock (MockMinerProxy::*mineBtcBlocks4)(
-      size_t amount,
-      const std::string& tipHash,
-      const std::vector<BtcTx>& transactions) =
-    &MockMinerProxy::mineBtcBlocks;
+      size_t amount, const std::string& tipHash, const list& transactions) =
+      &MockMinerProxy::mineBtcBlocks;
 
   VbkBlock (MockMinerProxy::*getAncestor1)(
-      const VbkBlock& block,
-      size_t height) =
-    &MockMinerProxy::getAncestor;
+      const VbkBlock& block, size_t height) = &MockMinerProxy::getAncestor;
   BtcBlock (MockMinerProxy::*getAncestor2)(
-    const BtcBlock& block,
-    size_t height) =
-    &MockMinerProxy::getAncestor;
+      const BtcBlock& block, size_t height) = &MockMinerProxy::getAncestor;
 
   class_<MockMinerProxy, boost::noncopyable, boost::shared_ptr<MockMinerProxy>>(
       "MockMiner", no_init)
@@ -278,6 +246,8 @@ BOOST_PYTHON_MODULE(pypopminer) {
       .def("endorseAltBlock", &MockMinerProxy::endorseAltBlock)
       .def("endorseVbkBlock", &MockMinerProxy::endorseVbkBlock)
       .def("createVbkPopTxEndorsingVbkBlock", createVbkPopTxEndorsingVbkBlock1)
+      .def("createPopDataEndorsingAltBlock",
+           &MockMinerProxy::createPopDataEndorsingAltBlock)
       .def("createATV", &MockMinerProxy::createATV)
       .def("createVbkTxEndorsingAltBlock",
            &MockMinerProxy::createVbkTxEndorsingAltBlock)
@@ -289,8 +259,6 @@ BOOST_PYTHON_MODULE(pypopminer) {
       .def("mineVbkBlocks", mineVbkBlocks2)
       .def("mineVbkBlocks", mineVbkBlocks3)
       .def("mineVbkBlocks", mineVbkBlocks4)
-      .def("mineVbkBlocks", mineVbkBlocks5)
-      .def("mineVbkBlocks", mineVbkBlocks6)
       .def("mineBtcBlocks", mineBtcBlocks1)
       .def("mineBtcBlocks", mineBtcBlocks2)
       .def("mineBtcBlocks", mineBtcBlocks3)

@@ -2,22 +2,22 @@ import itertools
 import random
 import time
 
-from .random_miner import RandomVbkPopMiner, RandomAltPopMiner
+from .random_miner import RandomPopMiner
 
 
-def generate_endorsed(node, mock_miner, atvs, vtbs, alt_blocks, vbk_blocks, btc_blocks, timeout=60, seed=None):
-    if seed is None:
-        seed = random.randrange(2 ** 32)
-    vpm = RandomVbkPopMiner(mock_miner, seed)
-    apm = RandomAltPopMiner(node, mock_miner, seed)
+def generate_endorsed(node, mock_miner, atvs, vtbs, alt_blocks, vbk_blocks, btc_blocks, seed, timeout=60):
+    m = RandomPopMiner(node, mock_miner, seed)
 
     commands = chain_random(
         [
-            itertools.repeat(apm.mine_alt_block, times=alt_blocks),
-            itertools.repeat(vpm.mine_btc_block, times=btc_blocks),
-            iter(random.choices([apm.mine_vbk_block, vpm.mine_vbk_block], weights=[atvs, vtbs], k=vbk_blocks)),
-            iter(parentheses_sequence(vpm.submit_btc_tx, vpm.submit_vbk_pop_tx, n=vtbs)),
-            iter(parentheses_sequence(apm.submit_vbk_tx, apm.submit_alt_pop_data, n=atvs))
+            itertools.repeat(m.mine_alt_block, times=alt_blocks),
+            itertools.repeat(m.mine_btc_block, times=btc_blocks),
+            iter(random.choices(
+                [lambda: m.mine_vbk_block(pop=True), lambda: m.mine_vbk_block(pop=False)],
+                weights=[atvs, vtbs],
+                k=vbk_blocks)),
+            iter(parentheses_sequence(m.submit_btc_tx, m.submit_vbk_pop_tx, n=vtbs)),
+            iter(parentheses_sequence(m.submit_vbk_tx, m.submit_alt_pop_data, n=atvs))
         ],
         sizes=[
             alt_blocks,
@@ -36,19 +36,17 @@ def generate_endorsed(node, mock_miner, atvs, vtbs, alt_blocks, vbk_blocks, btc_
 
 
 def parentheses_sequence(open_object, close_object, n):
-    c = [0] * (n + 1)
-    c[0] = 1
-    for i in range(1, n + 1):
-        for j in range(i):
-            c[i] += c[j] * c[i - 1 - j]
-
-    seq = [None] * (2 * n)
+    def calc():
+        c[0] = 1
+        for k in range(1, n + 1):
+            for i in range(k):
+                c[k] += c[i] * c[k - 1 - i]
 
     def rec(a, b):
-        assert (b - a) % 2 == 0
-        k = (b - a) / 2
-        if k == 0:
+        if a == b:
             return
+        assert (b - a) % 2 == 0
+        k = int((b - a) / 2)
         weights = [c[i] * c[k - 1 - i] for i in range(k)]
         index = random.choices(range(k), weights=weights)[0]
         m = a + 1 + 2 * index
@@ -57,6 +55,10 @@ def parentheses_sequence(open_object, close_object, n):
         rec(a + 1, m)
         rec(m + 1, b)
 
+    c = [0] * (n + 1)
+    calc()
+
+    seq = [None] * (2 * n)
     rec(0, 2 * n)
 
     return seq
