@@ -34,6 +34,9 @@ struct ValueSortedMap {
     cmp_t cmp_{};
   };
 
+  std::set<pair_t, SetCmp> set_{};
+  std::unordered_map<key_t, val_t> map_{};
+
  public:
   using iterator_t = typename std::set<pair_t, SetCmp>::iterator;
 
@@ -45,15 +48,12 @@ struct ValueSortedMap {
 
   iterator_t find(const key_t& key) {
     auto it = map_.find(key);
-    if (it != map_.end()) {
-      return set_.find(*it);
-    }
-    return set_.end();
+    return it != map_.end() ? set_.find(*it) : set_.end();
   }
 
-  iterator_t& begin() { return set_.begin(); }
+  iterator_t begin() const { return set_.begin(); }
 
-  iterator_t end() { return set_.end(); }
+  iterator_t end() const { return set_.end(); }
 
   void erase(const key_t& key) {
     auto it = map_.find(key);
@@ -72,7 +72,14 @@ struct ValueSortedMap {
     pair_t pair(key, value);
 
     auto it = map_.find(key);
-
+    if (it != map_.end()) {
+      set_.erase(*it);
+      it->second = value;
+      set_.insert(pair);
+    } else {
+      map_.insert(pair);
+      set_.insert(pair);
+    }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
                    "size of the map and vector incompetible map: %d, vec: %d",
@@ -106,10 +113,6 @@ struct ValueSortedMap {
 
     return map_.empty();
   }
-
- private:
-  std::set<pair_t, SetCmp> set_{};
-  std::unordered_map<key_t, val_t> map_{};
 };
 
 }  // namespace altintegration

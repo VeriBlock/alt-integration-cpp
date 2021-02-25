@@ -49,4 +49,28 @@ TEST(ValueSortedMap, find_test) {
   auto it = map.find("hello 2");
   EXPECT_NE(it, map.end());
   EXPECT_EQ(it->second, 6);
+
+  it = map.find("hello");
+  EXPECT_NE(it, map.end());
+  EXPECT_EQ(it->second, 10);
+}
+
+TEST(ValueSortedMap, value_sort_test) {
+  IntCmp cmp;
+  ValueSortedMap<std::string, int, IntCmp> map(cmp);
+  using pair_t = typename ValueSortedMap<std::string, int, IntCmp>::pair_t;
+
+  map.insert("key 1", 4);
+  map.insert("key 4", 2);
+  map.insert("key 5", 6);
+  map.insert("key 6", 1);
+  map.insert("key 7", 12);
+
+  auto it = map.begin();
+
+  EXPECT_EQ(*(it++), pair_t("key 6", 1));
+  EXPECT_EQ(*(it++), pair_t("key 4", 2));
+  EXPECT_EQ(*(it++), pair_t("key 1", 4));
+  EXPECT_EQ(*(it++), pair_t("key 5", 6));
+  EXPECT_EQ(*(it++), pair_t("key 7", 12));
 }
