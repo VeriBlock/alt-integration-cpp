@@ -338,34 +338,19 @@ void MemPool::tryConnectPayloads() {
   ValidationState state;
 
   // resubmit vbk blocks
-  using P1 = std::pair<vbk_map_t::key_type, vbk_map_t::mapped_type>;
-  std::vector<P1> blocks(vbkblocks_in_flight_.begin(),
-                         vbkblocks_in_flight_.end());
-  std::sort(blocks.begin(), blocks.end(), [](const P1& a, const P1& b) -> bool {
-    return a.second->getHeight() < b.second->getHeight();
-  });
+  auto blocks = vbkblocks_in_flight_;
   for (const auto& pair : blocks) {
     submit<VbkBlock>(pair.second, state);
   }
 
   // resubmit vtbs
-  using P2 = std::pair<vtb_map_t::key_type, vtb_map_t::mapped_type>;
-  std::vector<P2> vtbs(vtbs_in_flight_.begin(), vtbs_in_flight_.end());
-  std::sort(vtbs.begin(), vtbs.end(), [](const P2& a, const P2& b) -> bool {
-    return a.second->containingBlock.getHeight() <
-           b.second->containingBlock.getHeight();
-  });
+  auto vtbs = vtbs_in_flight_;
   for (const auto& pair : vtbs) {
     submit<VTB>(pair.second, state);
   }
 
   // resubmit atvs
-  using P3 = std::pair<atv_map_t::key_type, atv_map_t::mapped_type>;
-  std::vector<P3> atvs(atvs_in_flight_.begin(), atvs_in_flight_.end());
-  std::sort(atvs.begin(), atvs.end(), [](const P3& a, const P3& b) -> bool {
-    return a.second->blockOfProof.getHeight() <
-           b.second->blockOfProof.getHeight();
-  });
+  auto atvs = atvs_in_flight_;
   for (const auto& pair : atvs) {
     submit<ATV>(pair.second, state);
   }
