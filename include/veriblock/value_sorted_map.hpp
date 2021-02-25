@@ -53,16 +53,13 @@ struct ValueSortedMap {
   iterator_t end() const { return set_.end(); }
 
   void erase(const key_t& key) {
-    auto it = map_.find(key);
+    auto map_it = map_.find(key);
 
-    printf("erase map: %ld, set: %ld \n", map_.size(), set_.size());
-    // for (const auto& el : set_) {
-    //   printf("el: %s \n", el.second->toPrettyString().c_str());
-    // }
-
-    if (it != map_.end()) {
-      set_.erase(*it);
-      map_.erase(it);
+    if (map_it != map_.end()) {
+      auto set_it = set_.find(*map_it);
+      VBK_ASSERT(set_it != set_.end());
+      set_.erase(set_it);
+      map_.erase(map_it);
     }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
@@ -86,10 +83,13 @@ struct ValueSortedMap {
   void insert(const key_t& key, const val_t& value) {
     pair_t pair(key, value);
 
-    auto it = map_.find(key);
-    if (it != map_.end()) {
-      set_.erase(*it);
-      it->second = value;
+    auto map_it = map_.find(key);
+    if (map_it != map_.end()) {
+      auto set_it = set_.find(*map_it);
+      VBK_ASSERT(set_it != set_.end());
+      set_.erase(set_it);
+
+      map_it->second = value;
       set_.insert(pair);
     } else {
       map_.insert(pair);
