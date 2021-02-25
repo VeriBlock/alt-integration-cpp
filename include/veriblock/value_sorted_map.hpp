@@ -34,9 +34,6 @@ struct ValueSortedMap {
     cmp_t cmp_{};
   };
 
-  std::set<pair_t, SetCmp> set_{};
-  std::unordered_map<key_t, val_t> map_{};
-
  public:
   using iterator_t = typename std::set<pair_t, SetCmp>::iterator;
 
@@ -113,6 +110,10 @@ struct ValueSortedMap {
 
     return map_.empty();
   }
+
+ private:
+  std::multiset<pair_t, SetCmp> set_{};
+  std::unordered_map<key_t, val_t> map_{};
 };
 
 }  // namespace altintegration

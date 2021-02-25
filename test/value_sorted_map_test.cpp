@@ -65,12 +65,16 @@ TEST(ValueSortedMap, value_sort_test) {
   map.insert("key 5", 6);
   map.insert("key 6", 1);
   map.insert("key 7", 12);
+  map.insert("key 8", 4);
+  map.insert("key 9", 6);
 
   auto it = map.begin();
 
   EXPECT_EQ(*(it++), pair_t("key 6", 1));
   EXPECT_EQ(*(it++), pair_t("key 4", 2));
   EXPECT_EQ(*(it++), pair_t("key 1", 4));
+  EXPECT_EQ(*(it++), pair_t("key 8", 4));
   EXPECT_EQ(*(it++), pair_t("key 5", 6));
+  EXPECT_EQ(*(it++), pair_t("key 9", 6));
   EXPECT_EQ(*(it++), pair_t("key 7", 12));
 }
