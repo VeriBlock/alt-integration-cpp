@@ -16,7 +16,7 @@ struct IntCmp {
 };
 
 TEST(ValueSortedMap, Basic_test) {
-  ValueSortedMap<std::string, int, IntCmp> map;
+  ValueSortedMap<std::string, int> map{IntCmp()};
 
   map.insert("hello", 5);
   map.insert("hello 2", 6);
@@ -32,7 +32,7 @@ TEST(ValueSortedMap, Basic_test) {
 }
 
 TEST(ValueSortedMap, find_test) {
-  ValueSortedMap<std::string, int, IntCmp> map;
+  ValueSortedMap<std::string, int> map{IntCmp()};
 
   map.insert("hello", 5);
   map.insert("hello 2", 6);
@@ -50,7 +50,7 @@ TEST(ValueSortedMap, find_test) {
 }
 
 TEST(ValueSortedMap, erase_test) {
-  ValueSortedMap<std::string, int, IntCmp> map;
+  ValueSortedMap<std::string, int> map{IntCmp()};
 
   map.insert("key 1", 5);
   map.insert("key 2", 6);
@@ -72,9 +72,8 @@ TEST(ValueSortedMap, erase_test) {
 }
 
 TEST(ValueSortedMap, value_sort_test) {
-  IntCmp cmp;
-  ValueSortedMap<std::string, int, IntCmp> map(cmp);
-  using pair_t = typename ValueSortedMap<std::string, int, IntCmp>::pair_t;
+  ValueSortedMap<std::string, int> map{IntCmp()};
+  using pair_t = typename ValueSortedMap<std::string, int>::pair_t;
 
   map.insert("key 1", 4);
   map.insert("key 4", 2);

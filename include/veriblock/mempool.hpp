@@ -99,9 +99,8 @@ struct MemPool {
       std::unordered_map<typename Payload::id_t, std::shared_ptr<Payload>>;
 
   template <typename Payload>
-  using payload_value_sorted_map = ValueSortedMap<typename Payload::id_t,
-                                                  std::shared_ptr<Payload>,
-                                                  PayloadCmp<Payload>>;
+  using payload_value_sorted_map =
+      ValueSortedMap<typename Payload::id_t, std::shared_ptr<Payload>>;
 
   using vbk_map_t = payload_map<VbkBlock>;
   using atv_map_t = payload_map<ATV>;
@@ -300,9 +299,9 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  atv_value_sorted_map_t atvs_in_flight_;
-  vtb_value_sorted_map_t vtbs_in_flight_;
-  vbk_value_sorted_map_t vbkblocks_in_flight_;
+  atv_value_sorted_map_t atvs_in_flight_{PayloadCmp<ATV>()};
+  vtb_value_sorted_map_t vtbs_in_flight_{PayloadCmp<VTB>()};
+  vbk_value_sorted_map_t vbkblocks_in_flight_{PayloadCmp<VbkBlock>()};
 
   VbkPayloadsRelations& getOrPutVbkRelation(
       const std::shared_ptr<VbkBlock>& block);
