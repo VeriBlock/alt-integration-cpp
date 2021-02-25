@@ -12,6 +12,5 @@ class ImportsTest(unittest.TestCase):
         from pypoptools.pypopminer import MockMiner
 
 
-
 if __name__ == '__main__':
     unittest.main()
