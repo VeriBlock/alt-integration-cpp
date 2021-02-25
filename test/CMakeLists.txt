@@ -33,3 +33,4 @@ addtest(mempool_prioritization_test mempool_prioritization_test.cpp)
 set_test_cost(mempool_prioritization_test 23500) # 23.5 sec
 addtest(stateless_vtb_test stateless_vtb_test.cpp)
 addtest(merkle_pool_test merkle_pool_test.cpp)
+addtest(value_sorted_map_test value_sorted_map_test.cpp)
