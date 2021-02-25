@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/vtb.hpp"
-
 #include "veriblock/hashutil.hpp"
 
 using namespace altintegration;
@@ -75,9 +74,11 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
 }
 
 std::string VTB::toPrettyString() const {
-  return fmt::sprintf("VTB(version=%d,containingTx=%s(%s), containingBlock=%s)",
-                      version,
-                      transaction.getHash().toHex(),
-                      transaction.toPrettyString(),
-                      containingBlock.getHash().toHex());
+  return fmt::sprintf(
+      "VTB(version=%d,containingTx=%s(%s), containingBlock=%s(%s))",
+      version,
+      transaction.getHash().toHex(),
+      transaction.toPrettyString(),
+      containingBlock.getHash().toHex(),
+      containingBlock.toPrettyString());
 }

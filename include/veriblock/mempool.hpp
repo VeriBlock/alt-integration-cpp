@@ -17,8 +17,36 @@
 #include "veriblock/mempool_result.hpp"
 #include "veriblock/serde.hpp"
 #include "veriblock/signals.hpp"
+#include "veriblock/value_sorted_map.hpp"
 
 namespace altintegration {
+
+template <typename P>
+struct PayloadCmp {
+  bool operator()(const std::shared_ptr<P>&, const std::shared_ptr<P>&) const {
+    static_assert(sizeof(P) == 0,
+                  "Undefined type used in PayloadCmp::operator()");
+    return false;
+  }
+};
+
+template <>
+struct PayloadCmp<VbkBlock> {
+  bool operator()(const std::shared_ptr<VbkBlock>&,
+                  const std::shared_ptr<VbkBlock>&) const;
+};
+
+template <>
+struct PayloadCmp<VTB> {
+  bool operator()(const std::shared_ptr<VTB>&,
+                  const std::shared_ptr<VTB>&) const;
+};
+
+template <>
+struct PayloadCmp<ATV> {
+  bool operator()(const std::shared_ptr<ATV>&,
+                  const std::shared_ptr<ATV>&) const;
+};
 
 /**
  * @struct MemPool
@@ -70,10 +98,19 @@ struct MemPool {
   using payload_map =
       std::unordered_map<typename Payload::id_t, std::shared_ptr<Payload>>;
 
-  using vbkblock_map_t = payload_map<VbkBlock>;
+  template <typename Payload>
+  using payload_value_sorted_map = ValueSortedMap<typename Payload::id_t,
+                                                  std::shared_ptr<Payload>,
+                                                  PayloadCmp<Payload>>;
+
+  using vbk_map_t = payload_map<VbkBlock>;
   using atv_map_t = payload_map<ATV>;
   using vtb_map_t = payload_map<VTB>;
   using relations_map_t = payload_map<VbkPayloadsRelations>;
+
+  using vbk_value_sorted_map_t = payload_value_sorted_map<VbkBlock>;
+  using vtb_value_sorted_map_t = payload_value_sorted_map<VTB>;
+  using atv_value_sorted_map_t = payload_value_sorted_map<ATV>;
 
   ~MemPool() = default;
   MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
@@ -192,7 +229,7 @@ struct MemPool {
 
   //! @private
   template <typename T>
-  const payload_map<T>& getInFlightMap() const {
+  const payload_value_sorted_map<T>& getInFlightMap() const {
     static_assert(sizeof(T) == 0,
                   "Undefined type used in MemPool::getInFlightMap");
   }
@@ -259,13 +296,13 @@ struct MemPool {
   MemPoolBlockTree mempool_tree_;
   // relations between VBK block and payloads
   relations_map_t relations_;
-  vbkblock_map_t vbkblocks_;
+  vbk_map_t vbkblocks_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  atv_map_t atvs_in_flight_;
-  vtb_map_t vtbs_in_flight_;
-  vbkblock_map_t vbkblocks_in_flight_;
+  atv_value_sorted_map_t atvs_in_flight_;
+  vtb_value_sorted_map_t vtbs_in_flight_;
+  vbk_value_sorted_map_t vbkblocks_in_flight_;
 
   VbkPayloadsRelations& getOrPutVbkRelation(
       const std::shared_ptr<VbkBlock>& block);
@@ -301,7 +338,7 @@ struct MemPool {
   }
 
   template <typename POP>
-  void cleanupStale(payload_map<POP>& c) {
+  void cleanupStale(payload_value_sorted_map<POP>& c) {
     for (auto it = c.begin(); it != c.end();) {
       auto& pl = *it->second;
       ValidationState state;
@@ -323,8 +360,8 @@ struct MemPool {
 
   //! @private
   template <typename T>
-  payload_map<T>& getInFlightMapMut() {
-    return const_cast<payload_map<T>&>(this->getInFlightMap<T>());
+  payload_value_sorted_map<T>& getInFlightMapMut() {
+    return const_cast<payload_value_sorted_map<T>&>(this->getInFlightMap<T>());
   }
 };
 
@@ -342,11 +379,11 @@ template <> const MemPool::payload_map<ATV>& MemPool::getMap() const;
 //! @overload
 template <> const MemPool::payload_map<VTB>& MemPool::getMap() const;
 //! @overload
-template<> const MemPool::payload_map<VbkBlock>& MemPool::getInFlightMap() const;
+template<> const MemPool::payload_value_sorted_map<VbkBlock>& MemPool::getInFlightMap() const;
 //! @overload
-template<> const MemPool::payload_map<ATV>& MemPool::getInFlightMap() const;
+template<> const MemPool::payload_value_sorted_map<ATV>& MemPool::getInFlightMap() const;
 //! @overload
-template<> const MemPool::payload_map<VTB>& MemPool::getInFlightMap() const;
+template<> const MemPool::payload_value_sorted_map<VTB>& MemPool::getInFlightMap() const;
 //! @overload
 template <> signals::Signal<void(const ATV&)>& MemPool::getSignal();
 //! @overload
