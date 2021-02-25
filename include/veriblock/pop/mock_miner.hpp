@@ -125,7 +125,7 @@ class MockMiner {
   template <typename BlockTree, typename Block>
   static std::vector<Block> getBlocks(
       BlockTree& tree,
-      const BlockIndex<Block>* tip,
+      const Block& tip,
       const typename Block::hash_t& lastKnownHash);
 
   template <typename BlockTree, typename Block>
@@ -148,8 +148,10 @@ class MockMiner {
   void saveVTBs(BlockIndex<VbkBlock>* blockIndex,
                 const std::vector<VbkPopTx>& transactions);
 
-  const VbkMerkleTree& getVbkMerkleTree(const VbkBlock& block) const;
-  const BtcMerkleTree& getBtcMerkleTree(const BtcBlock& block) const;
+  VbkMerklePath getMerklePath(const VbkBlock& block,
+                              const uint256& txHash) const;
+  MerklePath getMerklePath(const BtcBlock& block,
+                           const uint256& txHash) const;
 
   BtcChainParamsRegTest btc_params_{};
   VbkChainParamsRegTest vbk_params_{};

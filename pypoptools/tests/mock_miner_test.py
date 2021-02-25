@@ -54,14 +54,16 @@ class MockMinerTestCase(unittest.TestCase):
         from pypoptools.pypopminer import MockMiner, PublicationData
         m = MockMiner()
 
-        last_known_btc = m.btcTip
-        last_known_vbk = m.vbkTip
+        last_known_btc_hash = m.btcTip.getHash()
+        last_known_vbk_hash = m.vbkTip.getHash()
+        m.mineBtcBlocks(1)
+        m.mineVbkBlocks(1)
 
         endorsed_block = m.vbkTip
         btc_tx = m.createBtcTxEndorsingVbkBlock(endorsed_block)
         btc_block_of_proof = m.mineBtcBlocks(1, [btc_tx])
         vbk_pop_tx = m.createVbkPopTxEndorsingVbkBlock(
-            btc_block_of_proof, btc_tx, endorsed_block, last_known_btc.getHash())
+            btc_block_of_proof, btc_tx, endorsed_block, last_known_btc_hash)
         self.assertEqual(vbk_pop_tx.publishedBlock.toHex(), endorsed_block.toHex())
         self.assertEqual(vbk_pop_tx.bitcoinTransaction.getHash(), btc_tx.getHash())
         self.assertEqual(vbk_pop_tx.blockOfProof.getHash(), btc_block_of_proof.getHash())
@@ -82,7 +84,7 @@ class MockMinerTestCase(unittest.TestCase):
         self.assertEqual(atv.transaction.getHash(), vbk_tx.getHash())
         self.assertEqual(atv.blockOfProof.getHash(), vbk_block_of_proof.getHash())
 
-        pop_data = m.createPopDataEndorsingAltBlock(vbk_block_of_proof, vbk_tx, last_known_vbk.getHash())
+        pop_data = m.createPopDataEndorsingAltBlock(vbk_block_of_proof, vbk_tx, last_known_vbk_hash)
         self.assertEqual(len(pop_data.atvs), 1)
         self.assertEqual(len(pop_data.vtbs), 1)
         self.assertEqual(len(pop_data.context), 2)
@@ -90,24 +92,31 @@ class MockMinerTestCase(unittest.TestCase):
     def test_complex_methods(self):
         from pypoptools.pypopminer import MockMiner, PublicationData
         m = MockMiner()
+
+        last_known_btc_hash = m.btcTip.getHash()
+        m.mineBtcBlocks(1)
+
         endorsed_block = m.vbkTip
-        vbk_pop_tx = m.createVbkPopTxEndorsingVbkBlock(endorsed_block, m.btcTip.getHash())
+        vbk_pop_tx = m.createVbkPopTxEndorsingVbkBlock(endorsed_block, last_known_btc_hash)
         self.assertEqual(vbk_pop_tx.publishedBlock.getHash(), endorsed_block.getHash())
         self.assertEqual(len(vbk_pop_tx.blockOfProofContext), 1)
 
+        last_known_vbk_hash = m.vbkTip.getHash()
+        m.mineVbkBlocks(1, [vbk_pop_tx], True)
+
         endorsed_block = m.vbkTip
-        vtb = m.endorseVbkBlock(endorsed_block, m.btcTip.getHash())
+        vtb = m.endorseVbkBlock(endorsed_block, last_known_btc_hash)
         self.assertEqual(vtb.transaction.publishedBlock.getHash(), endorsed_block.getHash())
-        self.assertEqual(len(vtb.transaction.blockOfProofContext), 1)
+        self.assertEqual(len(vtb.transaction.blockOfProofContext), 2)
 
         pub_data = PublicationData()
         pub_data.identifier = 1337
         pub_data.header = "0011223344"
         pub_data.payoutInfo = "0014aaddff"
-        pop_data = m.endorseAltBlock(pub_data, m.vbkTip.getHash())
+        pop_data = m.endorseAltBlock(pub_data, last_known_vbk_hash)
         self.assertEqual(len(pop_data.atvs), 1)
-        self.assertEqual(len(pop_data.vtbs), 0)
-        self.assertEqual(len(pop_data.context), 1)
+        self.assertEqual(len(pop_data.vtbs), 2)
+        self.assertEqual(len(pop_data.context), 2)
 
 
 if __name__ == '__main__':
