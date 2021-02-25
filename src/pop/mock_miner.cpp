@@ -247,7 +247,7 @@ std::vector<Block> MockMiner::getBlocks(
   auto lastKnownIndex = tree.getBlockIndex(lastKnownHash);
   VBK_ASSERT_MSG(lastKnownIndex != nullptr, "");
   std::vector<Block> blocks;
-  for (auto* block = tip->pprev;
+  for (auto* block = tip;
        block != nullptr && block->getHash() != lastKnownHash;
        block = block->pprev) {
     const auto& header = block->getHeader();
