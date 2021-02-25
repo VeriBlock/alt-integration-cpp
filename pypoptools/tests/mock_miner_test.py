@@ -50,6 +50,65 @@ class MockMinerTestCase(unittest.TestCase):
         c = BtcBlock()
         d = VbkBlock()
 
+    def test_atomic_methods(self):
+        from pypoptools.pypopminer import MockMiner, PublicationData
+        m = MockMiner()
+
+        last_known_btc = m.btcTip
+        last_known_vbk = m.vbkTip
+
+        endorsed_block = m.vbkTip
+        btc_tx = m.createBtcTxEndorsingVbkBlock(endorsed_block)
+        btc_block_of_proof = m.mineBtcBlocks(1, [btc_tx])
+        vbk_pop_tx = m.createVbkPopTxEndorsingVbkBlock(
+            btc_block_of_proof, btc_tx, endorsed_block, last_known_btc.getHash())
+        self.assertEqual(vbk_pop_tx.publishedBlock.toHex(), endorsed_block.toHex())
+        self.assertEqual(vbk_pop_tx.bitcoinTransaction.getHash(), btc_tx.getHash())
+        self.assertEqual(vbk_pop_tx.blockOfProof.getHash(), btc_block_of_proof.getHash())
+        self.assertEqual(len(vbk_pop_tx.blockOfProofContext), 1)
+
+        vbk_containing_block = m.mineVbkBlocks(1, [vbk_pop_tx], True)
+        vtb = m.createVTB(vbk_containing_block, vbk_pop_tx)
+        self.assertEqual(vtb.transaction.getHash(), vbk_pop_tx.getHash())
+        self.assertEqual(vtb.containingBlock.getHash(), vbk_containing_block.getHash())
+
+        pub_data = PublicationData()
+        pub_data.identifier = 1337
+        pub_data.header = "0011223344"
+        pub_data.payoutInfo = "0014aaddff"
+        vbk_tx = m.createVbkTxEndorsingAltBlock(pub_data)
+        vbk_block_of_proof = m.mineVbkBlocks(1, [vbk_tx], False)
+        atv = m.createATV(vbk_block_of_proof, vbk_tx)
+        self.assertEqual(atv.transaction.getHash(), vbk_tx.getHash())
+        self.assertEqual(atv.blockOfProof.getHash(), vbk_block_of_proof.getHash())
+
+        pop_data = m.createPopDataEndorsingAltBlock(vbk_block_of_proof, vbk_tx, last_known_vbk.getHash())
+        self.assertEqual(len(pop_data.atvs), 1)
+        self.assertEqual(len(pop_data.vtbs), 1)
+        self.assertEqual(len(pop_data.context), 2)
+
+    def test_complex_methods(self):
+        from pypoptools.pypopminer import MockMiner, PublicationData
+        m = MockMiner()
+        endorsed_block = m.vbkTip
+        vbk_pop_tx = m.createVbkPopTxEndorsingVbkBlock(endorsed_block, m.btcTip.getHash())
+        self.assertEqual(vbk_pop_tx.publishedBlock.getHash(), endorsed_block.getHash())
+        self.assertEqual(len(vbk_pop_tx.blockOfProofContext), 1)
+
+        endorsed_block = m.vbkTip
+        vtb = m.endorseVbkBlock(endorsed_block, m.btcTip.getHash())
+        self.assertEqual(vtb.transaction.publishedBlock.getHash(), endorsed_block.getHash())
+        self.assertEqual(len(vtb.transaction.blockOfProofContext), 1)
+
+        pub_data = PublicationData()
+        pub_data.identifier = 1337
+        pub_data.header = "0011223344"
+        pub_data.payoutInfo = "0014aaddff"
+        pop_data = m.endorseAltBlock(pub_data, m.vbkTip.getHash())
+        self.assertEqual(len(pop_data.atvs), 1)
+        self.assertEqual(len(pop_data.vtbs), 0)
+        self.assertEqual(len(pop_data.context), 1)
+
 
 if __name__ == '__main__':
     unittest.main()
