@@ -25,12 +25,6 @@ TEST(ValueSortedMap, Basic_test) {
   EXPECT_EQ(map.size(), 2);
   EXPECT_FALSE(map.empty());
 
-  map.erase("hello 1");
-  map.erase("hello");
-
-  EXPECT_EQ(map.size(), 1);
-  EXPECT_FALSE(map.empty());
-
   map.clear();
 
   EXPECT_EQ(map.size(), 0);
@@ -53,6 +47,28 @@ TEST(ValueSortedMap, find_test) {
   it = map.find("hello");
   EXPECT_NE(it, map.end());
   EXPECT_EQ(it->second, 10);
+}
+
+TEST(ValueSortedMap, erase_test) {
+  ValueSortedMap<std::string, int, IntCmp> map;
+
+  map.insert("key 1", 5);
+  map.insert("key 2", 6);
+  map.insert("key 3", 10);
+  map.insert("key 4", 5);
+
+  EXPECT_EQ(map.size(), 4);
+  EXPECT_FALSE(map.empty());
+
+  EXPECT_NE(map.find("key 1"), map.end());
+  EXPECT_NE(map.find("key 2"), map.end());
+  EXPECT_NE(map.find("key 3"), map.end());
+  EXPECT_NE(map.find("key 4"), map.end());
+
+  map.erase("key 4");
+
+  EXPECT_EQ(map.size(), 3);
+  EXPECT_FALSE(map.empty());
 }
 
 TEST(ValueSortedMap, value_sort_test) {

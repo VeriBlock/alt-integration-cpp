@@ -43,7 +43,7 @@ struct ValueSortedMap {
 
   ValueSortedMap(const cmp_t& cmp) : set_(SetCmp(cmp)), map_() {}
 
-  iterator_t find(const key_t& key) {
+  iterator_t find(const key_t& key) const {
     auto it = map_.find(key);
     return it != map_.end() ? set_.find(*it) : set_.end();
   }
@@ -54,15 +54,33 @@ struct ValueSortedMap {
 
   void erase(const key_t& key) {
     auto it = map_.find(key);
+
+    printf("erase map: %ld, set: %ld \n", map_.size(), set_.size());
+    // for (const auto& el : set_) {
+    //   printf("el: %s \n", el.second->toPrettyString().c_str());
+    // }
+
     if (it != map_.end()) {
       set_.erase(*it);
       map_.erase(it);
     }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of the map and set incompetible map: %d, set: %d",
                    map_.size(),
                    set_.size());
+  }
+
+  iterator_t erase(const iterator_t& it) {
+    map_.erase(it->first);
+    auto res = set_.erase(it);
+
+    VBK_ASSERT_MSG(map_.size() == set_.size(),
+                   "size of the map and set incompetible map: %d, set: %d",
+                   map_.size(),
+                   set_.size());
+
+    return res;
   }
 
   void insert(const key_t& key, const val_t& value) {
@@ -79,14 +97,14 @@ struct ValueSortedMap {
     }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of the map and set incompetible map: %d, set: %d",
                    map_.size(),
                    set_.size());
   }
 
   size_t size() const {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of the map and set incompetible map: %d, set: %d",
                    map_.size(),
                    set_.size());
 
@@ -95,7 +113,7 @@ struct ValueSortedMap {
 
   void clear() {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of the map and set incompetible map: %d, set: %d",
                    map_.size(),
                    set_.size());
     set_.clear();
@@ -104,7 +122,7 @@ struct ValueSortedMap {
 
   bool empty() const {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of the map and set incompetible map: %d, set: %d",
                    map_.size(),
                    set_.size());
 

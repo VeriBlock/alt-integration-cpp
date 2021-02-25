@@ -3,14 +3,29 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/mempool.hpp"
-
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
+#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
+
+bool PayloadCmp<VbkBlock>::operator()(
+    const std::shared_ptr<VbkBlock>& val1,
+    const std::shared_ptr<VbkBlock>& val2) const {
+  return val1->getHeight() < val2->getHeight();
+}
+
+bool PayloadCmp<VTB>::operator()(const std::shared_ptr<VTB>& val1,
+                                 const std::shared_ptr<VTB>& val2) const {
+  return val1->containingBlock.getHeight() < val2->containingBlock.getHeight();
+}
+
+bool PayloadCmp<ATV>::operator()(const std::shared_ptr<ATV>& val1,
+                                 const std::shared_ptr<ATV>& val2) const {
+  return val1->blockOfProof.getHeight() < val2->blockOfProof.getHeight();
+}
 
 namespace {
 
@@ -233,7 +248,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
   // stateful validation
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
-    atvs_in_flight_[id] = atv;
+    atvs_in_flight_.insert(id, atv);
     on_atv_accepted.emit(*atv);
     return {MemPool::FAILED_STATEFUL, state.Invalid("atv-stateful")};
   }
@@ -269,7 +284,7 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
-    vtbs_in_flight_[id] = vtb;
+    vtbs_in_flight_.insert(id, vtb);
     on_vtb_accepted.emit(*vtb);
     return {FAILED_STATEFUL, state.Invalid("vtb-stateful")};
   }
@@ -302,7 +317,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
-    vbkblocks_in_flight_[id] = blk;
+    vbkblocks_in_flight_.insert(id, blk);
     on_vbkblock_accepted.emit(*blk);
     return {FAILED_STATEFUL, state.Invalid("vbk-stateful")};
   }
@@ -314,7 +329,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
     getOrPutVbkRelation(blk);
   }
 
-  vbkblocks_in_flight_.erase(blk->getId());
+  vbkblocks_in_flight_.erase(id);
 
   return true;
 }
@@ -323,7 +338,7 @@ void MemPool::tryConnectPayloads() {
   ValidationState state;
 
   // resubmit vbk blocks
-  using P1 = std::pair<vbkblock_map_t::key_type, vbkblock_map_t::mapped_type>;
+  using P1 = std::pair<vbk_map_t::key_type, vbk_map_t::mapped_type>;
   std::vector<P1> blocks(vbkblocks_in_flight_.begin(),
                          vbkblocks_in_flight_.end());
   std::sort(blocks.begin(), blocks.end(), [](const P1& a, const P1& b) -> bool {
@@ -357,7 +372,7 @@ void MemPool::tryConnectPayloads() {
 }
 
 template <>
-const MemPool::vbkblock_map_t& MemPool::getMap() const {
+const MemPool::vbk_map_t& MemPool::getMap() const {
   return vbkblocks_;
 }
 
@@ -372,17 +387,17 @@ const MemPool::vtb_map_t& MemPool::getMap() const {
 }
 
 template <>
-const MemPool::vbkblock_map_t& MemPool::getInFlightMap() const {
+const MemPool::vbk_value_sorted_map_t& MemPool::getInFlightMap() const {
   return vbkblocks_in_flight_;
 }
 
 template <>
-const MemPool::atv_map_t& MemPool::getInFlightMap() const {
+const MemPool::atv_value_sorted_map_t& MemPool::getInFlightMap() const {
   return atvs_in_flight_;
 }
 
 template <>
-const MemPool::vtb_map_t& MemPool::getInFlightMap() const {
+const MemPool::vtb_value_sorted_map_t& MemPool::getInFlightMap() const {
   return vtbs_in_flight_;
 }
 
