@@ -14,9 +14,8 @@ var (
 		parse24Bytes("f85486026bf4ead8a37a42925332ec8b553f8e310974fea1"),
 		parse24Bytes("f85486026bf4ead8a37a42925332ec8b553f8e310974fea1"),
 		parse32Bytes("f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"),
-		parseHex("f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"),
 	}
-	defaultVbkEndorsementEncoded = "20f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000018f85486026bf4ead8a37a42925332ec8b553f8e310974fea118f85486026bf4ead8a37a42925332ec8b553f8e310974fea120f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e20f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"
+	defaultVbkEndorsementEncoded = "20f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000018f85486026bf4ead8a37a42925332ec8b553f8e310974fea118f85486026bf4ead8a37a42925332ec8b553f8e310974fea120f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"
 )
 
 func TestVbkEndorsementDeserialize(t *testing.T) {
@@ -31,7 +30,6 @@ func TestVbkEndorsementDeserialize(t *testing.T) {
 	assert.Equal(defaultVbkEndorsement.EndorsedHash, decoded.EndorsedHash)
 	assert.Equal(defaultVbkEndorsement.ContainingHash, decoded.ContainingHash)
 	assert.Equal(defaultVbkEndorsement.BlockOfProof, decoded.BlockOfProof)
-	assert.Equal(defaultVbkEndorsement.PayoutInfo, decoded.PayoutInfo)
 
 	assert.Equal(0, stream.Len(), "Stream has more data")
 }

@@ -25,7 +25,7 @@ var (
 		uint32(BlockBootstrap),
 	}
 
-	defaultVbkBlockIndexEncoded = "00003039000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f30101000000000000010000001000003085010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000018f85486026bf4ead8a37a42925332ec8b553f8e310974fea118f85486026bf4ead8a37a42925332ec8b553f8e310974fea120f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e20f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000"
+	defaultVbkBlockIndexEncoded = "00003039000013880002449c60619294546ad825af03b0935637860679ddd55ee4fd21082e18686e26bbfda7d5e4462ef24ae02d67e47d785c9b90f30101000000000000010000001000003085010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000018f85486026bf4ead8a37a42925332ec8b553f8e310974fea118f85486026bf4ead8a37a42925332ec8b553f8e310974fea120f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e010120f7de2995898800ab109af96779b979a60715da9bf2bbb745b300000000000000"
 )
 
 func TestBtcBlockIndexDeserialize(t *testing.T) {
@@ -130,9 +130,7 @@ func TestVbkBlockIndexRoundTrip(t *testing.T) {
 
 	blockEncoded := parseHex(defaultVbkBlockIndexEncoded)
 	stream := bytes.NewReader(blockEncoded)
-	decoded := BlockIndex{}
-	decoded.Header = &VbkBlock{}
-	decoded.Addon = &VbkBlockAddon{}
+	decoded := NewVbkBlockIndex()
 	assert.NoError(decoded.FromVbkEncoding(stream))
 	assert.Equal(defaultVbkBlockIndex.Height, decoded.Height)
 	assert.Equal(defaultVbkBlockIndex.Status, decoded.Status)
@@ -154,6 +152,15 @@ func TestVbkBlockIndexRoundTrip(t *testing.T) {
 	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	blockReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultVbkBlockIndexEncoded, blockReEncoded)
+}
+
+func TestVbkBlockIndexRoundTrip1(t *testing.T) {
+	assert := assert.New(t)
+
+	blockEncoded := parseHex("00142907001429070002a4b7eba4bb00aeb4d1340cb96f125526d1662b280e99c20cbe8bf8edde4e639e92abf167444730386d504b12c7936037e277040b133b0000ba4680000002040000000101012022b4da7da14606ce232dc4370426a6cb0b8d35127d95e8b1143b4e8209f0184218000000151bc73dcee1332a6f5c53fe6f125526d1662b280e1800000000516bed35dea335872bf4f914e97590366e664887200000000000000001c9bd3eac6a2b97da33e90b50daebc75b906bfd944290e7f401012022b4da7da14606ce232dc4370426a6cb0b8d35127d95e8b1143b4e8209f01842")
+	stream := bytes.NewReader(blockEncoded)
+	decoded := NewVbkBlockIndex()
+	assert.NoError(decoded.FromVbkEncoding(stream))
 }
 
 func TestVbkBlockIndexToJSON(t *testing.T) {

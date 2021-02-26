@@ -14,7 +14,6 @@ type Endorsement interface {
 	GetEndorsedHash() []byte
 	GetContainingHash() []byte
 	GetBlockOfProof() []byte
-	GetPayoutInfo() []byte
 }
 
 // PopState ...
