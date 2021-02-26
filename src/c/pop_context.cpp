@@ -217,6 +217,9 @@ VBK_ByteStream* VBK_alt_BestBlock(PopContext* self) {
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
   tip->toVbkEncoding(stream);
+  VBK_LOG_DEBUG("tip: %s, hex bytes: %s",
+                tip->toPrettyString(),
+                altintegration::HexStr(stream.data()));
   return new VbkByteStream(stream.data());
 }
 
@@ -228,6 +231,9 @@ VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self) {
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
   tip->toVbkEncoding(stream);
+  VBK_LOG_DEBUG("tip: %s, hex bytes: %s",
+                tip->toPrettyString(),
+                altintegration::HexStr(stream.data()));
   return new VbkByteStream(stream.data());
 }
 
@@ -239,6 +245,9 @@ VBK_ByteStream* VBK_btc_BestBlock(PopContext* self) {
   VBK_ASSERT(tip);
   altintegration::WriteStream stream;
   tip->toVbkEncoding(stream);
+  VBK_LOG_DEBUG("tip: %s, hex bytes: %s",
+                tip->toPrettyString(),
+                altintegration::HexStr(stream.data()));
   return new VbkByteStream(stream.data());
 }
 
