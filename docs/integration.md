@@ -22,8 +22,8 @@ This page describes steps needed to integrate POP protocol into **any** blockcha
 - VBK TX - VeriBlock transaction.
 - BTC TX - Bitcoin transaction.
 - VBK POP TX - VeriBlock POP transaction.
-- POP Payout Delay - PopPayoutsParams::getPopPayoutDelay() - POP payout will occur after this amount of blocks after endorsed block.
-- Endorsement Settlement Interval - PopPayoutsParams::getEndorsementSettlementInterval() - validity window for ATV.
+- POP Payout Delay - altintegration::PopPayoutsParams::getPopPayoutDelay() - POP payout will occur after this amount of blocks after endorsed block.
+- Endorsement Settlement Interval - altintegration::AltChainParams::getEndorsementSettlementInterval() - validity window for ATV.
 - POP MemPool - memory pool for POP-related payloads. Represents the content of the "next" block after current tip.
 - SPV - simplified payment verification.
 - Finalized/Finalization - this term can be applied to a block or transaction. A block is finalized if it can not be reorganized with very high probability (99.99%). For Bitcoin, finality is equal to 11 blocks. For VeriBlock, finality is 2000 blocks.
@@ -44,11 +44,11 @@ In Altchain, we want to finalize block A100, then:
 4. APM builds cryptographic proof that endorsement of Altchain block is added to main chain. This proof is named ATV (Altchain to VeriBlock publication) and includes: VBK TX, Context (VBK blocks connecting V54 to V51 - V52..V53), Block Of Proof (V54), Merkle Path that proves that VBK TX is really inside V54.
 5. Then all this data is sent to Altchain, and added to POP MemPool.
 6. When next ALT block is created by POW miner, this ATV is included into block A104.
-7. If `POP payout delay` is 50, then payout for this endorsement will occur in block A150.
+7. If `POP Payout Delay` is 50, then payout for this endorsement will occur in block A150.
 
 @note ATV is contextually valid within `Endorsement Settlement Interval`, so if A100 is endorsed, and Settlement Interval is 50, then ATV can be added in any new block in range A101..A150. If ATV is not added to main chain within this range, it will expire and will be removed from POP MemPool.
 
-Continuing this example, VPM does exactly same algorithm but with VBK blocks.
+Continuing this example, VPM does exactly the same algorithm but with VBK blocks.
 
 @note Endorsement Settlement Interval for VeriBlock is 400 blocks, POP Payout Delay is also 400 blocks.
 
@@ -56,26 +56,322 @@ Block V54 contains proof for A100, and B16 contains proof for block V56.
 Since V56 is after V54, and V56 is finalized, we finalize all previous blocks, including V54, thus
 Altchain transitively inherits security of Bitcoin.
 
-@note We count endorsements, whose according block of proofs **are on main chains** of according blockchains. An endorsement whose block of proof is not on the main chain of SP chain is not eligible for POP Payout.
+@note We count endorsements, whose according blocks of proof **are on main chains** of according blockchains. An endorsement whose block of proof is not on the main chain of SP chain is not eligible for POP Payout.
 
 You can also notice that VTBs and VBK blocks are sent to Altchain. 
 This is needed to communicate Bitcoin and VeriBlock consensus information to Altchain.
 
 # Adding POP protocol
 
-## 1. Select POP parameters
+## 1. Build and install veriblock-pop-cpp library
 
-<code>
-<pre>
-\#include <veriblock/config.hpp>
+```sh
+git clone https://github.com/VeriBlock/alt-integration-cpp.git
+cd alt-integration-cpp
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DWITH_PYPOPTOOLS=ON
+make
+sudo make install
+cd ..
+sudo python3 setup.py install
+```
 
-// define config somewhere.
-// it does not have to be globally accessible 
-altintegration::Config config;
-</pre>
-</code>
+@note Building veriblock-pop-cpp library requires CMake 3.12 or newer
 
-Then, go to [POP Parameters](@ref popparameters) page to select correct parameters for your chain.
+## 2. Add veriblock-pop-cpp library dependency
+
+@note We use Bitcoin source code as reference. Other integrations should adhere to another project structure, build system, programming language, etc.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/configure.ac](https://github.com/VeriBlock/vbk-ri-btc/blob/master/configure.ac)
+```diff
+PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto not found.)])
++      # VeriBlock
++      echo "pkg-config is used..."
++      export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib64/pkgconfig
++      export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
++      export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig
++      export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig
++      PKG_CHECK_MODULES([VERIBLOCK_POP_CPP], [veriblock-pop-cpp],,[AC_MSG_ERROR(libveriblock-pop-cpp not found.)])
+```
+```diff
+else
++  # VeriBlock
++  AC_CHECK_HEADER([veriblock/pop_context.hpp],,AC_MSG_ERROR(veriblock-pop-cpp headers missing))
++  AC_CHECK_LIB([veriblock-pop-cpp],[main],[VERIBLOCK_POP_CPP_LIBS=" -lveriblock-pop-cpp"],AC_MSG_ERROR(veriblock-pop-cpp missing))
++
++  AC_ARG_VAR(VERIBLOCK_POP_CPP_LIBS, "linker flags for VERIBLOCK_POP_CPP")
++
+   AC_CHECK_HEADER([openssl/crypto.h],,AC_MSG_ERROR(libcrypto headers missing))
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
+```diff
+bitcoind_LDADD = \
++  $(VERIBLOCK_POP_CPP_LIBS) \
++  $(LIBBITCOIN_SERVER) \
+   $(LIBBITCOIN_WALLET) \
+   $(LIBBITCOIN_COMMON) \
+-  $(LIBBITCOIN_UTIL) \
+   $(LIBUNIVALUE) \
++  $(LIBBITCOIN_UTIL) \
+```
+```diff
++bitcoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
+```
+```diff
+bitcoin_cli_LDADD = \
+   $(LIBBITCOIN_CLI) \
+   $(LIBUNIVALUE) \
+   $(LIBBITCOIN_UTIL) \
+-  $(LIBBITCOIN_CRYPTO)
++  $(LIBBITCOIN_CRYPTO) \
++  $(VERIBLOCK_POP_CPP_LIBS)
+```
+```diff
+bitcoin_tx_LDADD = \
++  $(VERIBLOCK_POP_CPP_LIBS) \
+   $(LIBUNIVALUE) \
+   $(LIBBITCOIN_COMMON) \
+   $(LIBBITCOIN_UTIL) \
+```
+```diff
++bitcoin_tx_LDADD += $(BOOST_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
+```
+```diff
+bitcoin_wallet_LDADD = \
++  $(LIBBITCOIN_WALLET_TOOL) \
++  $(LIBBITCOIN_WALLET) \
+   $(LIBBITCOIN_COMMON) \
+-  $(LIBBITCOIN_UTIL) \
+-  $(LIBUNIVALUE) \
+   $(LIBBITCOIN_CONSENSUS) \
++  $(LIBBITCOIN_UTIL) \
+   $(LIBBITCOIN_CRYPTO) \
+-  $(LIBSECP256K1)
++  $(LIBBITCOIN_ZMQ) \
++  $(LIBLEVELDB) \
++  $(LIBLEVELDB_SSE42) \
++  $(LIBMEMENV) \
++  $(LIBSECP256K1) \
++  $(LIBUNIVALUE) \
++  $(VERIBLOCK_POP_CPP_LIBS)
+```
+```diff
++bitcoin_wallet_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(ZMQ_LIBS)
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.bench.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.bench.include)
+```diff
+bench_bench_bitcoin_LDADD = \
+   $(LIBSECP256K1) \
+   $(LIBUNIVALUE) \
+   $(EVENT_PTHREADS_LIBS) \
+-  $(EVENT_LIBS)
++  $(EVENT_LIBS) \
++  $(VERIBLOCK_POP_CPP_LIBS)
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
+```diff
+-test_test_bitcoin_LDADD += $(LIBBITCOIN_SERVER) $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) \
+-  $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(LIBSECP256K1) $(EVENT_LIBS) $(EVENT_PTHREADS_LIBS)
+-test_test_bitcoin_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
++test_test_bitcoin_LDADD += $(LIBSECP256K1) $(VERIBLOCK_POP_CPP_LIBS) $(LIBBITCOIN_SERVER) $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) \
++  $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(EVENT_LIBS) $(EVENT_PTHREADS_LIBS)
++test_test_bitcoin_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) -g -Og
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.qt.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.qt.include)
+```diff
+-bitcoin_qt_ldadd = qt/libbitcoinqt.a $(LIBBITCOIN_SERVER)
++bitcoin_qt_LDADD = qt/libbitcoinqt.a $(VERIBLOCK_POP_CPP_LIBS) $(LIBBITCOIN_SERVER)
+```
+```diff
++bitcoin_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) \
++  $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
++  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.qttest.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.qttest.include)
+```diff
+ qt_test_test_bitcoin_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) \
+   $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(QT_DBUS_LIBS) $(QT_TEST_LIBS) $(QT_LIBS) \
+-  $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(LIBSECP256K1) \
+-  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(SQLITE_LIBS)
+-qt_test_test_bitcoin_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
++  $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
++  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
+```
+
+## 2. Add PopData to the Block class
+
+We should add new PopData entity into the CBlock class in the block.h file and provide new nVersion flag. It is needed for storing VeriBlock specific information such as ATVs, VTBs, VBKs.
+First we will add new POP_BLOCK_VERSION_BIT flag, that will help to distinguish original blocks that don't have any VeriBlock specific data, and blocks that contain such data.
+Next, update serialization of the block, that will serialize/deserialize PopData if POP_BLOCK_VERSION_BIT is set. Finally extend serialization/deserialization for the PopData, so we can use the BitCash native serialization/deserialization.
+
+### Helper for the block hash serialization
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h)
+
+[class base_blob](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h#L20)
+```diff
+     {
+         s.read((char*)data, sizeof(data));
+     }
++
++    std::vector<uint8_t> asVector() const {
++        return std::vector<uint8_t>{begin(), end()};
++    }
+ };
+```
+
+### Define POP_BLOCK_VERSION_BIT flag.
+
+POP_BLOCK_VERSION_BIT is defined in [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk.hpp). Copy this file to your project.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/primitives/block.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/primitives/block.h)
+```diff
+ #include <serialize.h>
+ #include <uint256.h>
++#include <vbk/vbk.hpp>
++
++#include "veriblock/entities/popdata.hpp"
+```
+[class CBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/primitives/block.h#L75)
+```diff
+public:
+     // network and disk
+     std::vector<CTransactionRef> vtx;
++    // VeriBlock  data network and disk
++    altintegration::PopData popData;
+```
+```diff
+     // memory only
+     mutable bool fChecked;
+     inline void SerializationOp(Stream& s, Operation ser_action) {
+         READWRITEAS(CBlockHeader, *this);
+         READWRITE(vtx);
++        if (this->nVersion & VeriBlock::POP_BLOCK_VERSION_BIT) {
++            READWRITE(popData);
++        }
+     }
+
+     void SetNull()
+     {
+         CBlockHeader::SetNull();
+         vtx.clear();
++        popData.context.clear();
++        popData.vtbs.clear();
++        popData.atvs.clear();
+         fChecked = false;
+     }
+```
+
+### Add new PopData field into the BlockTransaction, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h)
+
+[class BlockTransactions](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h#L70)
+```diff
+// A BlockTransactions message
+     uint256 blockhash;
+     std::vector<CTransactionRef> txn;
++    // VeriBlock data
++    altintegration::PopData popData;
+```
+```diff 
+             for (size_t i = 0; i < txn.size(); i++)
+                 READWRITE(TransactionCompressor(txn[i]));
+         }
++
++        // VeriBlock data
++        READWRITE(popData);
+     }
+```
+
+[class CBlockHeaderAndShortTxIDs](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h#L134)
+```diff
+public:
+     CBlockHeader header;
++    // VeriBlock data
++    altintegration::PopData popData;
+```
+```diff 
+             }
+         }
+ 
++        if (this->header.nVersion & VeriBlock::POP_BLOCK_VERSION_BIT) {
++            READWRITE(popData);
++        }
++
++
+         READWRITE(prefilledtxn);
+```
+[class PartiallyDownloadedBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h#L206)
+```diff
+ public:
+     CBlockHeader header;
++    // VeriBlock data
++    altintegration::PopData popData;
++
+     explicit PartiallyDownloadedBlock(CTxMemPool* poolIn) : pool(poolIn) {}
+ 
+     // extra_txn is a list of extra transactions to look at, in <witness hash, reference> form
+     ReadStatus InitData(const CBlockHeaderAndShortTxIDs& cmpctblock, const std::vector<std::pair<uint256, CTransactionRef>>& extra_txn);
+     bool IsTxAvailable(size_t index) const;
+     ReadStatus FillBlock(CBlock& block, const std::vector<CTransactionRef>& vtx_missing);
++    ReadStatus FillBlock(CBlock& block, const std::vector<CTransactionRef>& vtx_missing, const altintegration::PopData& popData);
+ };
+```
+
+### Update PartiallyDownloadedBlock object initializing - fill PopData field.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp)
+
+[method CBlockHeaderAndShortTxIDs::CBlockHeaderAndShortTxIDs](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L21)
+```diff
+         const CTransaction& tx = *block.vtx[i];
+         shorttxids[i - 1] = GetShortID(fUseWTXID ? tx.GetWitnessHash() : tx.GetHash());
+     }
++    // VeriBlock
++    this->popData = block.popData;
+```
+[method PartiallyDownloadedBlock::InitData](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L53)
+```diff
+-    LogPrint(BCLog::CMPCTBLOCK, "Initialized PartiallyDownloadedBlock for block %s using a cmpctblock of size %lu\n", cmpctblock.header.GetHash().ToString(), GetSerializeSize(cmpctblock, PROTOCOL_VERSION));
++    // VeriBlock: set pop data
++    this->popData = cmpctblock.popData;
++
++    LogPrint(BCLog::CMPCTBLOCK, "Initialized PartiallyDownloadedBlock for block %s using a cmpctblock of size %lu with %d VBK %d VTB %d ATV\n", cmpctblock.header.GetHash().ToString(), GetSerializeSize(cmpctblock, PROTOCOL_VERSION), this->popData.context.size(), this->popData.vtbs.size(), this->popData.atvs.size());
+
+     return READ_STATUS_OK;
+```
+[method PartiallyDownloadedBlock::FillBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L184)
+```diff
++ReadStatus PartiallyDownloadedBlock::FillBlock(CBlock& block, const std::vector<CTransactionRef>& vtx_missing, const altintegration::PopData& popData) {
++    block.popData = popData;
++    ReadStatus status = FillBlock(block, vtx_missing);
++    return status;
++}
+```
+[method PartiallyDownloadedBlock::FillBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L190)
+```diff
+     if (vtx_missing.size() != tx_missing_offset)
+         return READ_STATUS_INVALID;
+
++    // VeriBlock: set popData before CheckBlock
++    block.popData = this->popData;
++
+     BlockValidationState state;
+```
+```diff
+-    LogPrint(BCLog::CMPCTBLOCK, "Successfully reconstructed block %s with %lu txn prefilled, %lu txn from mempool (incl at least %lu from extra pool) and %lu txn requested\n", hash.ToString(), prefilled_count, mempool_count, extra_count, vtx_missing.size());
++    LogPrint(BCLog::CMPCTBLOCK, "Successfully reconstructed block %s with %lu txn prefilled, %lu txn from mempool (incl at least %lu from extra pool) and %lu txn requested, and %d VBK %d VTB %d ATV\n", hash.ToString(), prefilled_count, mempool_count, extra_count, vtx_missing.size(), this->popData.context.size(), this->popData.vtbs.size(), this->popData.atvs.size());
+     if (vtx_missing.size() < 5) {
+```
+
+### Also update setup of the PopData fields during the net processing.
 
 ### 1.1 Derive AltChainParams and overwrite pure virtual methods
 
