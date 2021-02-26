@@ -17,10 +17,10 @@ namespace altintegration {
 
 template <typename key_t, typename val_t>
 struct ValueSortedMap {
-  using pair_t = std::pair<key_t, val_t>;
+  using pair_t = std::pair<const key_t, val_t>;
   using set_t =
-      typename std::multiset<pair_t,
-                             std::function<bool(const pair_t&, const pair_t&)>>;
+      typename std::multiset<const pair_t*,
+                             std::function<bool(const pair_t*, const pair_t*)>>;
 
   using iterator_t = typename set_t::iterator;
 
@@ -31,7 +31,7 @@ struct ValueSortedMap {
 
   iterator_t find(const key_t& key) const {
     auto it = map_.find(key);
-    return it != map_.end() ? set_.find(*it) : set_.end();
+    return it != map_.end() ? set_.find(&(*it)) : set_.end();
   }
 
   iterator_t begin() const { return set_.begin(); }
@@ -42,7 +42,7 @@ struct ValueSortedMap {
     auto map_it = map_.find(key);
 
     if (map_it != map_.end()) {
-      auto set_it = set_.find(*map_it);
+      auto set_it = set_.find(&(*map_it));
       VBK_ASSERT(set_it != set_.end());
       set_.erase(set_it);
       map_.erase(map_it);
@@ -55,8 +55,9 @@ struct ValueSortedMap {
   }
 
   iterator_t erase(const iterator_t& it) {
-    map_.erase(it->first);
+    auto key = (*it)->first;
     auto res = set_.erase(it);
+    map_.erase(key);
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
                    "size of map and set are different map: %d, set: %d",
@@ -71,15 +72,17 @@ struct ValueSortedMap {
 
     auto map_it = map_.find(key);
     if (map_it != map_.end()) {
-      auto set_it = set_.find(*map_it);
+      auto set_it = set_.find(&(*map_it));
       VBK_ASSERT(set_it != set_.end());
       set_.erase(set_it);
 
       map_it->second = value;
-      set_.insert(pair);
+      set_.insert(&*map_it);
     } else {
-      map_.insert(pair);
-      set_.insert(pair);
+      auto res = map_.insert(pair);
+      VBK_ASSERT(res.second);
+
+      set_.insert(&(*res.first));
     }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
@@ -118,8 +121,8 @@ struct ValueSortedMap {
  private:
   std::function<bool(const val_t&, const val_t&)> cmp_;
 
-  set_t set_{[this](const pair_t& val1, const pair_t& val2) -> bool {
-    return cmp_(val1.second, val2.second);
+  set_t set_{[this](const pair_t* val1, const pair_t* val2) -> bool {
+    return cmp_(val1->second, val2->second);
   }};
 
   std::unordered_map<key_t, val_t> map_{};

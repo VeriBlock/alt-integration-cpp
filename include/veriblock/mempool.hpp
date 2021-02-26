@@ -127,7 +127,7 @@ struct MemPool {
     const auto& inflight = getInFlightMap<T>();
     auto it2 = inflight.find(id);
     if (it2 != inflight.end()) {
-      return it2->second.get();
+      return (*it2)->second.get();
     }
 
     return nullptr;
@@ -339,7 +339,7 @@ struct MemPool {
   template <typename POP>
   void cleanupStale(payload_value_sorted_map<POP>& c) {
     for (auto it = c.begin(); it != c.end();) {
-      auto& pl = *it->second;
+      auto& pl = *(*it)->second;
       ValidationState state;
       auto valid = mempool_tree_.checkContextually(pl, state);
       it = !valid ? c.erase(it) : std::next(it);

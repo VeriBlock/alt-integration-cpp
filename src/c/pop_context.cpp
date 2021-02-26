@@ -607,7 +607,7 @@ VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self) {
   std::vector<altintegration::ATV::id_t> atv_ids;
   atv_ids.reserve(atvs.size());
   for (const auto& el : atvs) {
-    atv_ids.push_back(el.first);
+    atv_ids.push_back(el->first);
   }
 
   altintegration::WriteStream stream;
@@ -626,7 +626,7 @@ VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self) {
   std::vector<altintegration::VTB::id_t> vtb_ids;
   vtb_ids.reserve(vtbs.size());
   for (const auto& el : vtbs) {
-    vtb_ids.push_back(el.first);
+    vtb_ids.push_back(el->first);
   }
 
   altintegration::WriteStream stream;
@@ -646,7 +646,7 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self) {
   std::vector<altintegration::VbkBlock::id_t> vbk_ids;
   vbk_ids.reserve(vbks.size());
   for (const auto& el : vbks) {
-    vbk_ids.push_back(el.first);
+    vbk_ids.push_back(el->first);
   }
 
   altintegration::WriteStream stream;

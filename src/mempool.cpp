@@ -340,19 +340,19 @@ void MemPool::tryConnectPayloads() {
   // resubmit vbk blocks
   auto blocks = vbkblocks_in_flight_;
   for (const auto& pair : blocks) {
-    submit<VbkBlock>(pair.second, state);
+    submit<VbkBlock>(pair->second, state);
   }
 
   // resubmit vtbs
   auto vtbs = vtbs_in_flight_;
   for (const auto& pair : vtbs) {
-    submit<VTB>(pair.second, state);
+    submit<VTB>(pair->second, state);
   }
 
   // resubmit atvs
   auto atvs = atvs_in_flight_;
   for (const auto& pair : atvs) {
-    submit<ATV>(pair.second, state);
+    submit<ATV>(pair->second, state);
   }
 }
 
