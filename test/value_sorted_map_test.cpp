@@ -42,11 +42,11 @@ TEST(ValueSortedMap, find_test) {
 
   auto it = map.find("hello 2");
   EXPECT_NE(it, map.end());
-  EXPECT_EQ(it->second, 6);
+  EXPECT_EQ((*it)->second, 6);
 
   it = map.find("hello");
   EXPECT_NE(it, map.end());
-  EXPECT_EQ(it->second, 10);
+  EXPECT_EQ((*it)->second, 10);
 }
 
 TEST(ValueSortedMap, erase_test) {
@@ -85,11 +85,11 @@ TEST(ValueSortedMap, value_sort_test) {
 
   auto it = map.begin();
 
-  EXPECT_EQ(*(it++), pair_t("key 6", 1));
-  EXPECT_EQ(*(it++), pair_t("key 4", 2));
-  EXPECT_EQ(*(it++), pair_t("key 1", 4));
-  EXPECT_EQ(*(it++), pair_t("key 8", 4));
-  EXPECT_EQ(*(it++), pair_t("key 5", 6));
-  EXPECT_EQ(*(it++), pair_t("key 9", 6));
-  EXPECT_EQ(*(it++), pair_t("key 7", 12));
+  EXPECT_EQ(**(it++), pair_t("key 6", 1));
+  EXPECT_EQ(**(it++), pair_t("key 4", 2));
+  EXPECT_EQ(**(it++), pair_t("key 1", 4));
+  EXPECT_EQ(**(it++), pair_t("key 8", 4));
+  EXPECT_EQ(**(it++), pair_t("key 5", 6));
+  EXPECT_EQ(**(it++), pair_t("key 9", 6));
+  EXPECT_EQ(**(it++), pair_t("key 7", 12));
 }
