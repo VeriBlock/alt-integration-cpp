@@ -19,7 +19,7 @@ type VbkBlockAddon struct {
 }
 
 // ToRaw ...
-func (v *VbkBlockAddon) ToRaw(stream io.Writer) error {
+func (v *VbkBlockAddon) ToVbkEncoding(stream io.Writer) error {
 	if err := binary.Write(stream, binary.BigEndian, v.RefCount); err != nil {
 		return err
 	}
@@ -30,14 +30,14 @@ func (v *VbkBlockAddon) ToRaw(stream io.Writer) error {
 }
 
 // ToRawBytes ...
-func (v *VbkBlockAddon) ToRawBytes() ([]byte, error) {
+func (v *VbkBlockAddon) ToVbkEncodingBytes() ([]byte, error) {
 	var buffer bytes.Buffer
-	err := v.ToRaw(&buffer)
+	err := v.ToVbkEncoding(&buffer)
 	return buffer.Bytes(), err
 }
 
 // FromRaw ...
-func (v *VbkBlockAddon) FromRaw(stream io.Reader) error {
+func (v *VbkBlockAddon) FromVbkEncoding(stream io.Reader) error {
 	if err := binary.Read(stream, binary.BigEndian, &v.RefCount); err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (v *VbkBlockAddon) FromRaw(stream io.Reader) error {
 }
 
 // FromRawBytes ...
-func (v *VbkBlockAddon) FromRawBytes(data []byte) error {
+func (v *VbkBlockAddon) FromVbkEncodingBytes(data []byte) error {
 	buffer := bytes.NewBuffer(data)
-	return v.FromRaw(buffer)
+	return v.FromVbkEncoding(buffer)
 }

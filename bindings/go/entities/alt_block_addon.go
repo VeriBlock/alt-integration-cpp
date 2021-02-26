@@ -18,7 +18,7 @@ type AltBlockAddon struct {
 }
 
 // ToRaw ...
-func (v *AltBlockAddon) ToRaw(stream io.Writer) error {
+func (v *AltBlockAddon) ToVbkEncoding(stream io.Writer) error {
 	if err := v.popState.ToRaw(stream); err != nil {
 		return err
 	}
@@ -32,14 +32,14 @@ func (v *AltBlockAddon) ToRaw(stream io.Writer) error {
 }
 
 // ToRawBytes ...
-func (v *AltBlockAddon) ToRawBytes() ([]byte, error) {
+func (v *AltBlockAddon) ToVbkEncodingBytes() ([]byte, error) {
 	var buffer bytes.Buffer
-	err := v.ToRaw(&buffer)
+	err := v.ToVbkEncoding(&buffer)
 	return buffer.Bytes(), err
 }
 
 // FromRaw ...
-func (v *AltBlockAddon) FromRaw(stream io.Reader) error {
+func (v *AltBlockAddon) FromVbkEncoding(stream io.Reader) error {
 	readFunc := func(r io.Reader) (interface{}, error) { return veriblock.ReadSingleByteLenValueDefault(r) }
 	v.popState.IsAlt = true
 	if err := v.popState.FromRaw(stream); err != nil {
@@ -73,7 +73,7 @@ func (v *AltBlockAddon) FromRaw(stream io.Reader) error {
 }
 
 // FromRawBytes ...
-func (v *AltBlockAddon) FromRawBytes(data []byte) error {
+func (v *AltBlockAddon) FromVbkEncodingBytes(data []byte) error {
 	buffer := bytes.NewBuffer(data)
-	return v.FromRaw(buffer)
+	return v.FromVbkEncoding(buffer)
 }
