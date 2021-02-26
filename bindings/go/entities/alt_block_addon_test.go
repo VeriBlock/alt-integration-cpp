@@ -24,7 +24,7 @@ func TestAltBlockAddonDeserialize(t *testing.T) {
 	blockEncoded := parseHex(defaultAltBlockAddonEncoded)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := AltBlockAddon{}
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(defaultAltBlockAddon.AtvIDs, decoded.AtvIDs)
 	assert.Equal(defaultAltBlockAddon.VtbIDs, decoded.VtbIDs)
@@ -37,7 +37,7 @@ func TestAltBlockAddonSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	assert.NoError(defaultAltBlockAddon.ToRaw(stream))
+	assert.NoError(defaultAltBlockAddon.ToVbkEncoding(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultAltBlockAddonEncoded, blockEncoded)
 }
@@ -48,11 +48,11 @@ func TestAltBlockAddonRoundTrip(t *testing.T) {
 	blockEncoded := parseHex(defaultAltBlockAddonEncoded)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := AltBlockAddon{}
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 	assert.Equal(defaultAltBlockAddon.AtvIDs, decoded.AtvIDs)
 
 	outputStream := new(bytes.Buffer)
-	assert.NoError(decoded.ToRaw(outputStream))
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	blockReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultAltBlockAddonEncoded, blockReEncoded)
 }

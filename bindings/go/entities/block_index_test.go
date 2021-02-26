@@ -34,7 +34,7 @@ func TestBtcBlockIndexDeserialize(t *testing.T) {
 	blockEncoded := parseHex(defaultBtcBlockIndexEncoded)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := NewBtcBlockIndex()
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(defaultBtcBlockIndex.Height, decoded.Height)
 	assert.Equal(defaultBtcBlockIndex.Status, decoded.Status)
@@ -56,7 +56,7 @@ func TestBtcBlockIndexSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	assert.NoError(defaultBtcBlockIndex.ToRaw(stream))
+	assert.NoError(defaultBtcBlockIndex.ToVbkEncoding(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultBtcBlockIndexEncoded, blockEncoded)
 }
@@ -67,7 +67,7 @@ func TestBtcBlockIndexRoundTrip(t *testing.T) {
 	blockEncoded := parseHex(defaultBtcBlockIndexEncoded)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := NewBtcBlockIndex()
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 	assert.Equal(defaultBtcBlockIndex.Height, decoded.Height)
 	assert.Equal(defaultBtcBlockIndex.Status, decoded.Status)
 	defaultBlock, err := defaultBtcBlockIndex.GetBtcBlockHeader()
@@ -82,7 +82,7 @@ func TestBtcBlockIndexRoundTrip(t *testing.T) {
 	assert.Equal(defaultBlock.Version, decodedBlock.Version)
 
 	outputStream := new(bytes.Buffer)
-	assert.NoError(decoded.ToRaw(outputStream))
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	blockReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultBtcBlockIndexEncoded, blockReEncoded)
 }
@@ -95,7 +95,7 @@ func TestVbkBlockIndexDeserialize(t *testing.T) {
 	decoded := BlockIndex{}
 	decoded.Header = &VbkBlock{}
 	decoded.Addon = &VbkBlockAddon{}
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(defaultVbkBlockIndex.Height, decoded.Height)
 	assert.Equal(defaultVbkBlockIndex.Status, decoded.Status)
@@ -120,7 +120,7 @@ func TestVbkBlockIndexSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	assert.NoError(defaultVbkBlockIndex.ToRaw(stream))
+	assert.NoError(defaultVbkBlockIndex.ToVbkEncoding(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultVbkBlockIndexEncoded, blockEncoded)
 }
@@ -133,7 +133,7 @@ func TestVbkBlockIndexRoundTrip(t *testing.T) {
 	decoded := BlockIndex{}
 	decoded.Header = &VbkBlock{}
 	decoded.Addon = &VbkBlockAddon{}
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 	assert.Equal(defaultVbkBlockIndex.Height, decoded.Height)
 	assert.Equal(defaultVbkBlockIndex.Status, decoded.Status)
 	defaultBlock, err := defaultVbkBlockIndex.GetVbkBlockHeader()
@@ -151,7 +151,7 @@ func TestVbkBlockIndexRoundTrip(t *testing.T) {
 	assert.Equal(defaultBlock.Version, decodedBlock.Version)
 
 	outputStream := new(bytes.Buffer)
-	assert.NoError(decoded.ToRaw(outputStream))
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	blockReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultVbkBlockIndexEncoded, blockReEncoded)
 }

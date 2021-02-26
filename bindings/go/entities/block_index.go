@@ -90,7 +90,7 @@ func NewAltBlockIndex() BlockIndex {
 
 // BlockIndex ...
 type BlockIndex struct {
-	Addon veriblock.SerdeRaw
+	Addon veriblock.Serde
 	// Height of the entry in the chain
 	Height uint32
 	// Block header
@@ -155,46 +155,44 @@ func (v *BlockIndex) HasFlags(flag BlockValidityStatus) bool {
 }
 
 // ToRaw ...
-func (v *BlockIndex) ToRaw(stream io.Writer) error {
+func (v *BlockIndex) ToVbkEncoding(stream io.Writer) error {
 	if err := binary.Write(stream, binary.BigEndian, v.Height); err != nil {
 		return err
 	}
 	if err := v.Header.ToRaw(stream); err != nil {
 		return err
 	}
-	if err := binary.Write(stream, binary.BigEndian, uint32(v.Status)); err != nil {
+	if err := binary.Write(stream, binary.BigEndian, v.Status); err != nil {
 		return err
 	}
-	return v.Addon.ToRaw(stream)
+	return v.Addon.ToVbkEncoding(stream)
 }
 
 // ToRawBytes ...
-func (v *BlockIndex) ToRawBytes() ([]byte, error) {
+func (v *BlockIndex) ToVbkEncodingBytes() ([]byte, error) {
 	var buffer bytes.Buffer
-	err := v.ToRaw(&buffer)
+	err := v.ToVbkEncoding(&buffer)
 	return buffer.Bytes(), err
 }
 
 // FromRaw ...
-func (v *BlockIndex) FromRaw(stream io.Reader) error {
+func (v *BlockIndex) FromVbkEncoding(stream io.Reader) error {
 	if err := binary.Read(stream, binary.BigEndian, &v.Height); err != nil {
 		return err
 	}
 	if err := v.Header.FromRaw(stream); err != nil {
 		return err
 	}
-	var status uint32
-	if err := binary.Read(stream, binary.BigEndian, &status); err != nil {
+	if err := binary.Read(stream, binary.BigEndian, &v.Status); err != nil {
 		return err
 	}
-	v.Status = status
-	return v.Addon.FromRaw(stream)
+	return v.Addon.FromVbkEncoding(stream)
 }
 
 // FromRawBytes ...
-func (v *BlockIndex) FromRawBytes(data []byte) error {
+func (v *BlockIndex) FromVbkEncodingBytes(data []byte) error {
 	buffer := bytes.NewBuffer(data)
-	return v.FromRaw(buffer)
+	return v.FromVbkEncoding(buffer)
 }
 
 // ToJSON ...

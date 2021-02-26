@@ -23,7 +23,7 @@ func TestVbkBlockAddonDeserialize(t *testing.T) {
 	blockEncoded := parseHex(defaultVbkBlockAddonEncoded)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := VbkBlockAddon{}
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 
 	assert.Equal(defaultVbkBlockAddon.VtbIDs, decoded.VtbIDs)
 
@@ -34,7 +34,7 @@ func TestVbkBlockAddonSerialize(t *testing.T) {
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
-	assert.NoError(defaultVbkBlockAddon.ToRaw(stream))
+	assert.NoError(defaultVbkBlockAddon.ToVbkEncoding(stream))
 	blockEncoded := hex.EncodeToString(stream.Bytes())
 	assert.Equal(defaultVbkBlockAddonEncoded, blockEncoded)
 }
@@ -45,11 +45,11 @@ func TestVbkBlockAddonRoundTrip(t *testing.T) {
 	blockEncoded := parseHex(defaultVbkBlockAddonEncoded)
 	stream := bytes.NewReader(blockEncoded)
 	decoded := VbkBlockAddon{}
-	assert.NoError(decoded.FromRaw(stream))
+	assert.NoError(decoded.FromVbkEncoding(stream))
 	assert.Equal(defaultVbkBlockAddon.VtbIDs, decoded.VtbIDs)
 
 	outputStream := new(bytes.Buffer)
-	assert.NoError(decoded.ToRaw(outputStream))
+	assert.NoError(decoded.ToVbkEncoding(outputStream))
 	blockReEncoded := hex.EncodeToString(outputStream.Bytes())
 	assert.Equal(defaultVbkBlockAddonEncoded, blockReEncoded)
 }
